@@ -1,0 +1,28 @@
+{
+    "name": "mecano",
+    "description": "Tools commonly used to install and deploy",
+    "version": "0.0.0",
+    "author": "David Worms",
+    "contributors": [ 
+        { "name": "David Worms", "email": "david@adaltas.com" }
+    ],
+    "dependencies": {
+        "coffee-script": "latest",
+        "eco": "latest",
+        "ftp": "latest",
+        "rimraf": "latest",
+        "open-uri": "latest"
+    },
+    "devDependencies": {
+        "expresso": "latest",
+        "eco": "latest",
+        "rimraf": "latest",
+        "open-uri": "latest",
+        "jsDAV": "latest"
+    },
+    "keywords": ["fs", "install", "deploy", "build"],
+    "main": "index",
+    "engines": { "node": ">= 0.6.0" }
+}
+
+	
