@@ -256,7 +256,7 @@ mecano =
                 callback err, 1
         
     ###
-    `mkdir`: Create a directory and its subdirectory if necessary
+    `mkdir`: Create a directory and its parent if necessary
     -------------------------------------------------------------
 
     The behavior is similar to the Unix command `mkdir -p`
@@ -276,26 +276,38 @@ mecano =
         .on 'item', (next, option) ->
             option = { directory: option } if typeof option is 'string'
             return next new Error 'Missing directory option' unless option.directory?
-            option.chmod ?= 0755
-            tmpDirs = option.directory.split '/'
-            tmpDirCreate = ''
-            each( tmpDirs )
-            .on 'item', (next, tmpDir) ->
-                # Directory name contains variables
-                # eg 'hadoop.tmp.dir': './var/cache/${user.name}'
-                if option.exclude? and option.exclude instanceof RegExp
-                    return next() if option.exclude.test tmpDir
-                # Empty Dir caused by split
-                return next() if tmpDir is ''
-                tmpDirCreate += "/#{tmpDir}"
-                path.exists tmpDirCreate, (exists) ->
-                    return next() if exists
-                    fs.mkdir tmpDirCreate, option.chmod, (err) ->
-                        return next err if err
-                        created++
-                        next()
-            .on 'both', (err) ->
-                next err
+            check = () ->
+                fs.stat option.directory, (err, stat) ->
+                    return create() if err and err.code is 'ENOENT'
+                    return next err if err
+                    return next() if stat.isDirectory()
+                    next err 'Invalid source, got #{JSON.encode(option.directory)}'
+                # if exist and is a dir, skip
+                # if exists and isn't a dir, error
+            create = () ->
+                option.chmod ?= 0755
+                tmpDirs = option.directory.split '/'
+                tmpDirCreate = ''
+                dirCreated = false
+                each( tmpDirs )
+                .on 'item', (next, tmpDir) ->
+                    # Directory name contains variables
+                    # eg /\${/ on './var/cache/${user}' creates './var/cache/'
+                    if option.exclude? and option.exclude instanceof RegExp
+                        return next() if option.exclude.test tmpDir
+                    # Empty Dir caused by split
+                    return next() if tmpDir is ''
+                    tmpDirCreate += "/#{tmpDir}"
+                    path.exists tmpDirCreate, (exists) ->
+                        return next() if exists
+                        fs.mkdir tmpDirCreate, option.chmod, (err) ->
+                            return next err if err
+                            dirCreated = true
+                            next()
+                .on 'both', (err) ->
+                    created++ if dirCreated
+                    next err
+            check()
         .on 'both', (err) ->
             callback err, created
     
