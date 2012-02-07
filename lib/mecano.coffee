@@ -365,16 +365,36 @@ mecano =
             callback err, deleted
     
     ###
+    Run a command locally or with ssh
+    ---------------------------------
+    Command is send over ssh if the `host` is provided
+
     Options are
     *   cmd     , String, Object or array; Command to execute
     *   not_if  , Dont run the command if the file exists
+    *   host    , SSH host
+
     Callback parameters are
     *   err
     *   executed     , Number of executed commandes
+    *   stdout     , Stdout value(s)
+    *   stderr     , Stderr value(s)
+
     ###
+
     exec: (options, callback) ->
-        options = [options] unless Array.isArray options
+        isArray = Array.isArray options
+        options = [options] unless isArray
         executed = 0
+        stdouts = []
+        stderrs = []
+        escape = (cmd) ->
+            esccmd = ''
+            for char in cmd
+                if char is '$'
+                    esccmd += '\\'
+                esccmd += char
+            esccmd
         each( options )
         .on 'item', (next, option) ->
             option = { cmd: option } if typeof option is 'string'
@@ -382,9 +402,17 @@ mecano =
             cmdOption = {}
             cmdOption.cwd = option.cwd if option.cwd
             cmd = () ->
+                if option.host
+                    option.cmd = escape option.cmd
+                    option.cmd = option.host + ' "' + option.cmd + '"'
+                    if option.user
+                        option.cmd = option.user + '@'
+                    option.cmd = 'ssh -o StrictHostKeyChecking=no ' + option.cmd
                 exec option.cmd, cmdOption, (err, stdout, stderr) ->
                     return next err if err
                     executed++
+                    stdouts.push stdout
+                    stderrs.push stderr
                     next()
             if option.not_if
                 path.exists option.not_if, (exists) ->
@@ -392,7 +420,10 @@ mecano =
             else
                 cmd()
         .on 'both', (err) ->
-            callback err, executed
+            stdouts = stdouts[0] unless isArray
+            stderrs = stderrs[0] unless isArray
+            callback err, executed, stdouts, stderrs
+
     
     isPortOpen: (port, host, callback) ->
         if arguments.length is 2
