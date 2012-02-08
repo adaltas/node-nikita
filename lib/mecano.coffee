@@ -365,24 +365,38 @@ mecano =
             callback err, deleted
     
     ###
-    Run a command locally or with ssh
-    ---------------------------------
-    Command is send over ssh if the `host` is provided
 
-    Options are
-    *   cmd     , String, Object or array; Command to execute
-    *   not_if  , Dont run the command if the file exists
-    *   host    , SSH host
+    `exec([gopts], opts, callback)`: Run a command locally or with ssh
+    ------------------------------------------------------------------
+    Command is send over ssh if the `host` is provided. Global options is
+    optional and is used in case where options is defined as an array of 
+    multiple commands. Note, `opts` inherites all the properties of `gopts`.
 
-    Callback parameters are
+    `gopts` - Global options includes:
+    *   parallel    , Wether the command are run in sequential, parallel or 
+                      limited concurrent mode. See the `node-each` documentation 
+                      for more details. Default to sequential (false).
+                
+    `opts` - Command options includes:
+    *   cmd         , String, Object or array; Command to execute
+    *   code        , Expected code returned by the command, default to 0.
+    *   not_if      , Dont run the command if the file exists
+    *   host        , SSH host or IP address.
+    *   stdout      , Writable EventEmitter in which command output will be piped.
+    *   stderr      , Writable EventEmitter in which command error will be piped.
+
+    `callback` - Received parameters are:
     *   err
-    *   executed     , Number of executed commandes
-    *   stdout     , Stdout value(s)
-    *   stderr     , Stderr value(s)
+    *   executed    , Number of executed commandes
+    *   stdout      , Stdout value(s) unless `stdout` option is provided
+    *   stderr      , Stderr value(s) unless `stderr` option is provided
 
     ###
 
-    exec: (options, callback) ->
+    exec: (goptions, options, callback) ->
+        if arguments.length is 2
+            callback = options
+            options = goptions
         isArray = Array.isArray options
         options = [options] unless isArray
         executed = 0
@@ -396,9 +410,12 @@ mecano =
                 esccmd += char
             esccmd
         each( options )
-        .on 'item', (next, option) ->
+        .parallel( goptions.parallel )
+        .on 'item', (next, option, i) ->
             option = { cmd: option } if typeof option is 'string'
+            mecano.merge true, option, goptions
             return next new Error 'Missing cmd: #{option.cmd}' unless option.cmd?
+            option.code ?= 0
             cmdOption = {}
             cmdOption.cwd = option.cwd if option.cwd
             cmd = () ->
@@ -408,11 +425,22 @@ mecano =
                     if option.user
                         option.cmd = option.user + '@'
                     option.cmd = 'ssh -o StrictHostKeyChecking=no ' + option.cmd
-                exec option.cmd, cmdOption, (err, stdout, stderr) ->
-                    return next err if err
+                run = exec option.cmd, cmdOption
+                stdout = stderr = ''
+                if option.stdout
+                then run.stdout.pipe option.stdout
+                else run.stdout.on 'data', (data) -> stdout += data
+                if option.stderr
+                then run.stderr.pipe option.stderr
+                else run.stderr.on 'data', (data) -> stderr += data
+                run.on "exit", (code) ->
+                    if code isnt option.code
+                        err = new Error 'Failed to execute command'
+                        err.code = code
+                        return next err
                     executed++
-                    stdouts.push stdout
-                    stderrs.push stderr
+                    stdouts.push if option.stdout then null else stdout
+                    stderrs.push if option.stderr then null else stderr
                     next()
             if option.not_if
                 path.exists option.not_if, (exists) ->
@@ -433,6 +461,65 @@ mecano =
             return callback null, true unless err
             return callback null, false if err.code is 1
             callback err
+    ###
+    
+    `merge([inverse], obj1, obj2, ...]`: Recursively merge objects
+    --------------------------------------------------------------
+    On matching keys, the last object take precedence over previous ones 
+    unless the inverse arguments is provided as true. Only objects are 
+    merge, arrays are overwritten.
+
+    Enrich an existing object with a second one:
+        obj1 = { a_key: 'a value', b_key: 'b value'}
+        obj2 = { b_key: 'new b value'}
+        result = mecano.merge obj1, obj2
+        assert.eql result, obj1
+        assert.eql obj1.b_key, 'new b value'
+
+    Create a new object from two objects:
+        obj1 = { a_key: 'a value', b_key: 'b value'}
+        obj2 = { b_key: 'new b value'}
+        result = mecano.merge {}, obj1, obj2
+        assert.eql result.b_key, 'new b value'
+
+    Using inverse:
+        obj1 = { b_key: 'b value'}
+        obj2 = { a_key: 'a value', b_key: 'new b value'}
+        mecano.merge true, obj1, obj2
+        assert.eql obj1.a_key, 'a value'
+        assert.eql obj1.b_key, 'b value'
+
+    ###
+    merge: () ->
+        target = arguments[0]
+        from = 1
+        to = arguments.length
+        if typeof target is 'boolean'
+            inverse = !! target
+            target = arguments[1]
+            from = 2
+        # Handle case when target is a string or something (possible in deep copy)
+        if typeof target isnt "object" and typeof target isnt 'function'
+            target = {}
+        for i in [from ... to]
+            # Only deal with non-null/undefined values
+            if (options = arguments[ i ]) isnt null
+                # Extend the base object
+                for name of options 
+                    src = target[ name ]
+                    copy = options[ name ]
+                    # Prevent never-ending loop
+                    continue if target is copy
+                    # Recurse if we're merging plain objects
+                    if copy? and typeof copy is 'object' and not Array.isArray(copy)
+                        clone = src and ( if src and typeof src is 'object' then src else {} )
+                        # Never move original objects, clone them
+                        target[ name ] = mecano.merge false, clone, copy
+                    # Don't bring in undefined values
+                    else if copy isnt undefined
+                        target[ name ] = copy unless inverse and typeof target[ name ] isnt 'undefined'
+        # Return the modified object
+        target
 
 # Alias definitions
 
