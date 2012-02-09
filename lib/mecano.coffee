@@ -8,127 +8,155 @@ rimraf = require 'rimraf'
 exec = require('child_process').exec
 open = require 'open-uri'
 
-mecano = 
-    
-    ###
-    Download a file using various protocols
-    ---------------------------------------
+conditions = require './conditions'
+misc = require './misc'
 
-    The excellent [open-uri][https://github.com/publicclass/open-uri] module provide support for HTTP(S), 
+###
+
+Mecano gather a set of functions usually used during system deployment. All the functions share a 
+common API with flexible options.
+
+###
+mecano = module.exports = 
+    ###
+
+    `download(options, callback)` Download files using various protocols
+    --------------------------------------------------------------------
+
+    The excellent [open-uri](https://github.com/publicclass/open-uri) module provides support for HTTP(S), 
     file and FTP. All the options supported by open-uri are passed to it.
 
     Note, GIT is not yet supported but documented as a wished feature.
 
-    Options are   
-    *   source      , File, HTTP URL, FTP, GIT repository. File is the default
-                      protocol if source is provided without a scheme.   
-    *   destination , Path where the file is downloaded.   
-    *   force       , Overwrite destination file if it exists.   
+    `options`               Command options includes:   
 
-    Callback parameters are   
-    *   err         , Error object if any.   
-    *   downloaded  , Number of downloaded files
+    *   `source`            File, HTTP URL, FTP, GIT repository. File is the default protocol if source is provided without a scheme.   
+    *   `destination`       Path where the file is downloaded.   
+    *   `force`             Overwrite destination file if it exists.   
 
+    `callback`              Received parameters are:   
+
+    *   `err`               Error object if any.   
+    *   `downloaded`        Number of downloaded files
+
+    Basic example:
+        mecano.download
+            source: 'https://github.com/wdavidw/node-sigar/tarball/v0.0.1'
+            destination: 'node-sigar.tgz'
+        , (err, downloaded) ->
+            path.exists 'node-sigar.tgz', (exists) ->
+                assert.ok exists
+    
     ###
-
     download: (options, callback) ->
-        return callback new Error "Missing source: #{options.source}" unless options.source
-        return callback new Error "Missing destination: #{options.destination}" unless options.destination
-        options.force ?= false
-        download = () ->
-            destination = fs.createWriteStream(options.destination)
-            open(options.source, destination)
-            destination.on 'close', () ->
-                callback null, 1
-            destination.on 'error', (err) ->
-                callback err
-        path.exists options.destination, (exists) ->
-            # Use previous download
-            if exists and not options.force
-                return callback null, 0
-            # Remove previous dowload and download again
-            else if exists
-                return rimraf options.destination, (err) ->
-                    return callback err if err
-                    download()
-            else download()
-    
+        options = [options] unless Array.isArray options
+        downloaded = 0
+        each( options )
+        .on 'item', (next, options) ->
+            return next new Error "Missing source: #{options.source}" unless options.source
+            return next new Error "Missing destination: #{options.destination}" unless options.destination
+            options.force ?= false
+            download = () ->
+                destination = fs.createWriteStream(options.destination)
+                open(options.source, destination)
+                destination.on 'close', () ->
+                    downloaded++
+                    next()
+                destination.on 'error', (err) ->
+                    next err
+            path.exists options.destination, (exists) ->
+                # Use previous download
+                if exists and not options.force
+                    return next()
+                # Remove previous dowload and download again
+                else if exists
+                    return rimraf options.destination, (err) ->
+                        return next err if err
+                        download()
+                else download()
+        .on 'both', (err) ->
+            callback err, downloaded
     ###
 
-    Extract an archive, support multiple compression types
-    ------------------------------------------------------
+    `extract(options, callback)` Extract an archive
+    -----------------------------------------------
 
-    Unless specified as an option, format is derived from the 
-    source extension. At the moment, upported extensions are 
-    '.tgz', '.tar.gz' and '.zip'.
+    Multiple compression types are supported. Unless specified as 
+    an option, format is derived from the source extension. At the 
+    moment, supported extensions are '.tgz', '.tar.gz' and '.zip'.
 
-    Options are
-    *   source      , Archive to decompress
-    *   destination , Default to the source parent directory
-    *   format      , One of 'tgz' or 'zip'
-    *   creates     , Ensure the given file is created or an error is send in the callback.
-    *   not_if      , Cancel extraction if file exists
+    `options`               Command options includes:   
 
-    Callback parameters are
-    *   err         , Error object if any
-    *   extracted   , Number of extracted archives
+    *   `source`            Archive to decompress
+    *   `destination`       Default to the source parent directory
+    *   `format`            One of 'tgz' or 'zip'
+    *   `creates`           Ensure the given file is created or an error is send in the callback.
+    *   `not_if_exists`     Cancel extraction if file exists
+
+    `callback`              Received parameters are:   
+
+    *   `err`               Error object if any
+    *   `extracted`         Number of extracted archives
 
     ###
-
     extract: (options, callback) ->
-        return callback new Error "Missing source: #{options.source}" unless options.source
-        destination = options.destination ? path.dirname options.source
-        # Deal with format option
-        if options.format?
-            format = options.format
-        else
-            if /\.(tar\.gz|tgz)$/.test options.source
-                format = 'tgz'
-            else if /\.zip$/.test options.source
-                format = 'zip'
+        options = [options] unless Array.isArray options
+        extracted = 0
+        each( options )
+        .on 'item', (next, options) ->
+            return next new Error "Missing source: #{options.source}" unless options.source
+            destination = options.destination ? path.dirname options.source
+            # Deal with format option
+            if options.format?
+                format = options.format
             else
-                ext = path.extname options.source
-                return callback new Error "Unsupported extension, got #{JSON.stringify(ext)}"
-        # Step for `not_if`
-        not_if = () ->
-            return extract() unless options.not_if?
-            path.exists options.not_if, (exists) ->
-                return callback null, 0 if exists
-                extract()
-        # Working step
-        extract = () ->
-            cmd = null
-            switch format
-                when 'tgz' then cmd = "tar xzf #{options.source} -C #{destination}"
-                when 'zip' then cmd = "unzip -u #{options.source} -d #{destination}"
-            exec cmd, (err, stdout, stderr) ->
-                return callback err if err
-                creates()
-        # Step for `creates`
-        creates = () ->
-            return callback null, 1 unless options.creates?
-            path.exists options.creates, (exists) ->
-                return callback new Error 'Failed at creating expected file, manual cleanup is required' unless exists
-                callback null, 1
-        not_if()
-    
+                if /\.(tar\.gz|tgz)$/.test options.source
+                    format = 'tgz'
+                else if /\.zip$/.test options.source
+                    format = 'zip'
+                else
+                    ext = path.extname options.source
+                    return next new Error "Unsupported extension, got #{JSON.stringify(ext)}"
+            # Working step
+            extract = () ->
+                cmd = null
+                switch format
+                    when 'tgz' then cmd = "tar xzf #{options.source} -C #{destination}"
+                    when 'zip' then cmd = "unzip -u #{options.source} -d #{destination}"
+                exec cmd, (err, stdout, stderr) ->
+                    return next err if err
+                    creates()
+            # Step for `creates`
+            creates = () ->
+                return success() unless options.creates?
+                path.exists options.creates, (exists) ->
+                    return next new Error 'Failed at creating expected file, manual cleanup is required' unless exists
+                    success()
+            # Final step
+            success = () ->
+                extracted++
+                next()
+            conditions.all(options, next, extract)
+        .on 'both', (err) ->
+            callback err, extracted
     ###
 
     Create a symbolic link
     ----------------------
 
-    Options are
-    *   source      , Referenced file to be linked
-    *   destination , Symbolic link to be created
-    *   exec        , Create an executable file with an `exec` command
-    *   chmod       , Default to 0755
+    `options`               Command options includes:   
 
-    Callback parameters are
-    *   err         , Error object if any
-    *   linked      , Number of created links
+    *   `source`            Referenced file to be linked
+    *   `destination`       Symbolic link to be created
+    *   `exec`              Create an executable file with an `exec` command
+    *   `chmod`             Default to 0755
+
+    `callback`              Received parameters are:   
+
+    *   `err`               Error object if any
+    *   `linked`            Number of created links
 
     ###
-
     link: (options, callback) ->
         options = [options] unless Array.isArray options
         linked = 0
@@ -186,14 +214,16 @@ mecano =
     
     At the moment, we have only integrated the ECO templating engine.
 
-    Options are
-    *   content     ,
-    *   source      ,
-    *   destination , 
-    *   context     ,
+    `options`               Command options includes:   
+
+    *   content             
+    *   source              
+    *   destination         
+    *   context             
+
+    `callback`              Received parameters are:   
 
     ###
-
     render: (options, callback) ->
         options = [options] unless Array.isArray options
         rendered = 0
@@ -223,22 +253,29 @@ mecano =
             callback err, rendered
     
     ###
-    Copy a file
-    Options are
-    *   source      , 
-    *   destination , 
-    *   not_if      , Equals destination if true
-    *   chmod       , 
+
+    `copy(options, callback)`: Copy a file or a directory
+    -----------------------------------------------------
+
+    `options`               Command options includes:   
+
+    *   source              
+    *   destination         
+    *   not_if_exists              Equals destination if true
+    *   chmod               
+
+    `callback`              Received parameters are:   
+
     ###
     copy: (options, callback) ->
         return callback new Error 'Missing source' unless options.source
         return callback new Error 'Missing destination' unless options.destination
         options.destination = path.normalize options.destination
-        options.not_if = options.destination if options.not_if is true
-        options.not_if = path.normalize options.not_if if options.not_if
+        options.not_if_exists = options.destination if options.not_if_exists is true
+        options.not_if_exists = path.normalize options.not_if_exists if options.not_if_exists
         fs.stat options.destination, (err, dstStat) ->
             unless err
-                if options.not_if and options.not_if is options.destination
+                if options.not_if_exists and options.not_if_exists is options.destination
                     return chmod dstStat
                 else
                     # todo, we should check md5
@@ -254,20 +291,24 @@ mecano =
             return callback null, 1 if not options.chmod or options.chmod is dstStat.mode
             fs.chmod options.destination, options.chmod, (err) ->
                 callback err, 1
-        
     ###
+
     `mkdir`: Create a directory and its parent if necessary
     -------------------------------------------------------------
 
     The behavior is similar to the Unix command `mkdir -p`
 
-    Options are
-    *   directory   , Path or array of paths
-    *   exclude     , Regexp
-    *   chmod       , Default to 0755
-    Callback parameters are
-    *   err
-    *   created     , Number of created directories
+    `options`               Command options includes:   
+
+    *   `directory`         Path or array of paths
+    *   `exclude`           Regexp
+    *   `chmod`             Default to 0755
+
+    `callback`              Received parameters are:   
+
+    *   `err`
+    *   `created`           Number of created directories
+
     ###
     mkdir: (options, callback) ->
         options = [options] unless Array.isArray options
@@ -310,7 +351,6 @@ mecano =
             check()
         .on 'both', (err) ->
             callback err, created
-    
     ###
 
     `remove`, `rm`: Recursively remove a file or directory
@@ -319,33 +359,36 @@ mecano =
     Internally, the function use the unmissable 
     [rimraf][https://github.com/isaacs/rimraf] library.
 
-    Options are
-    *   source      , File or directory
-    *   options     , Options passed to rimraf
+    `options`               Command options includes:   
 
-    Callback parameters are
-    *   err
-    *   deleted     , Number of deleted sources
+    *   `source`            File or directory
+    *   `options`           Options passed to rimraf
+
+    `callback`              Received parameters are:   
+
+    *   `err`               
+    *   `deleted`           Number of deleted sources
 
     Exemple
 
-        mecano.rm __dirname, (err, removed) ->
+        mecano.rm './some/dir', (err, removed) ->
             console.log "#{removed} dir removed"
-        
+    
+    Removing a direcotry unless a given file exists
         mecano.rm
-            source: __dirname
-            not_if: __filename
+            source: './some/dir'
+            not_if_exists: './some/file'
         , (err, removed) ->
             console.log "#{removed} dir removed"
-        
+    
+    Removing multiple files and directories
         mecano.rm [
-            { source: __dirname, not_if: __filename }
-            process.cwd()
+            { source: './some/dir', not_if_exists: './some/file' }
+            './some/file'
         ], (err, removed) ->
             console.log "#{removed} dirs removed"
 
     ###
-
     remove: (options, callback) ->
         options = [options] unless Array.isArray options
         deleted = 0
@@ -363,36 +406,38 @@ mecano =
                     next()
         .on 'both', (err) ->
             callback err, deleted
-    
     ###
 
-    `exec([gopts], opts, callback)`: Run a command locally or with ssh
+    `exec([goptions], options, callback)`: Run a command locally or with ssh
     ------------------------------------------------------------------
     Command is send over ssh if the `host` is provided. Global options is
     optional and is used in case where options is defined as an array of 
-    multiple commands. Note, `opts` inherites all the properties of `gopts`.
+    multiple commands. Note, `opts` inherites all the properties of `goptions`.
 
-    `gopts` - Global options includes:
-    *   parallel    , Wether the command are run in sequential, parallel or 
-                      limited concurrent mode. See the `node-each` documentation 
-                      for more details. Default to sequential (false).
+    `goptions`              Global options includes:
+
+    *   `parallel`          Wether the command are run in sequential, parallel 
+    or limited concurrent mode. See the `node-each` documentation for more 
+    details. Default to sequential (false).
                 
-    `opts` - Command options includes:
-    *   cmd         , String, Object or array; Command to execute
-    *   code        , Expected code returned by the command, default to 0.
-    *   not_if      , Dont run the command if the file exists
-    *   host        , SSH host or IP address.
-    *   stdout      , Writable EventEmitter in which command output will be piped.
-    *   stderr      , Writable EventEmitter in which command error will be piped.
+    `options`               Command options includes:   
 
-    `callback` - Received parameters are:
-    *   err
-    *   executed    , Number of executed commandes
-    *   stdout      , Stdout value(s) unless `stdout` option is provided
-    *   stderr      , Stderr value(s) unless `stderr` option is provided
+    *   `cmd`               String, Object or array; Command to execute
+    *   `code`              Expected code returned by the command, default to 0.
+    *   `not_if_exists`     Dont run the command if the file exists
+    *   `host`              SSH host or IP address.
+    *   `username`          SSH host or IP address.
+    *   `stdout`            Writable EventEmitter in which command output will be piped.
+    *   `stderr`            Writable EventEmitter in which command error will be piped.
+
+    `callback`              Received parameters are:   
+
+    *   `err`               Error if any
+    *   `executed`          Number of executed commandes
+    *   `stdout`            Stdout value(s) unless `stdout` option is provided
+    *   `stderr`            Stderr value(s) unless `stderr` option is provided
 
     ###
-
     exec: (goptions, options, callback) ->
         if arguments.length is 2
             callback = options
@@ -413,8 +458,8 @@ mecano =
         .parallel( goptions.parallel )
         .on 'item', (next, option, i) ->
             option = { cmd: option } if typeof option is 'string'
-            mecano.merge true, option, goptions
-            return next new Error 'Missing cmd: #{option.cmd}' unless option.cmd?
+            misc.merge true, option, goptions
+            return next new Error "Missing cmd: #{option.cmd}" unless option.cmd?
             option.code ?= 0
             cmdOption = {}
             cmdOption.cwd = option.cwd if option.cwd
@@ -422,8 +467,8 @@ mecano =
                 if option.host
                     option.cmd = escape option.cmd
                     option.cmd = option.host + ' "' + option.cmd + '"'
-                    if option.user
-                        option.cmd = option.user + '@'
+                    if option.username
+                        option.cmd = option.username + '@' + option.cmd
                     option.cmd = 'ssh -o StrictHostKeyChecking=no ' + option.cmd
                 run = exec option.cmd, cmdOption
                 stdout = stderr = ''
@@ -434,16 +479,16 @@ mecano =
                 then run.stderr.pipe option.stderr
                 else run.stderr.on 'data', (data) -> stderr += data
                 run.on "exit", (code) ->
+                    executed++
+                    stdouts.push if option.stdout then null else stdout
+                    stderrs.push if option.stderr then null else stderr
                     if code isnt option.code
                         err = new Error 'Failed to execute command'
                         err.code = code
                         return next err
-                    executed++
-                    stdouts.push if option.stdout then null else stdout
-                    stderrs.push if option.stderr then null else stderr
                     next()
-            if option.not_if
-                path.exists option.not_if, (exists) ->
+            if option.not_if_exists
+                path.exists option.not_if_exists, (exists) ->
                     if exists then next() else cmd()
             else
                 cmd()
@@ -452,80 +497,10 @@ mecano =
             stderrs = stderrs[0] unless isArray
             callback err, executed, stdouts, stderrs
 
-    
-    isPortOpen: (port, host, callback) ->
-        if arguments.length is 2
-            callback = host
-            host = '127.0.0.1'
-        exec "nc #{host} #{port} < /dev/null", (err, stdout, stdout) ->
-            return callback null, true unless err
-            return callback null, false if err.code is 1
-            callback err
-    ###
-    
-    `merge([inverse], obj1, obj2, ...]`: Recursively merge objects
-    --------------------------------------------------------------
-    On matching keys, the last object take precedence over previous ones 
-    unless the inverse arguments is provided as true. Only objects are 
-    merge, arrays are overwritten.
-
-    Enrich an existing object with a second one:
-        obj1 = { a_key: 'a value', b_key: 'b value'}
-        obj2 = { b_key: 'new b value'}
-        result = mecano.merge obj1, obj2
-        assert.eql result, obj1
-        assert.eql obj1.b_key, 'new b value'
-
-    Create a new object from two objects:
-        obj1 = { a_key: 'a value', b_key: 'b value'}
-        obj2 = { b_key: 'new b value'}
-        result = mecano.merge {}, obj1, obj2
-        assert.eql result.b_key, 'new b value'
-
-    Using inverse:
-        obj1 = { b_key: 'b value'}
-        obj2 = { a_key: 'a value', b_key: 'new b value'}
-        mecano.merge true, obj1, obj2
-        assert.eql obj1.a_key, 'a value'
-        assert.eql obj1.b_key, 'b value'
-
-    ###
-    merge: () ->
-        target = arguments[0]
-        from = 1
-        to = arguments.length
-        if typeof target is 'boolean'
-            inverse = !! target
-            target = arguments[1]
-            from = 2
-        # Handle case when target is a string or something (possible in deep copy)
-        if typeof target isnt "object" and typeof target isnt 'function'
-            target = {}
-        for i in [from ... to]
-            # Only deal with non-null/undefined values
-            if (options = arguments[ i ]) isnt null
-                # Extend the base object
-                for name of options 
-                    src = target[ name ]
-                    copy = options[ name ]
-                    # Prevent never-ending loop
-                    continue if target is copy
-                    # Recurse if we're merging plain objects
-                    if copy? and typeof copy is 'object' and not Array.isArray(copy)
-                        clone = src and ( if src and typeof src is 'object' then src else {} )
-                        # Never move original objects, clone them
-                        target[ name ] = mecano.merge false, clone, copy
-                    # Don't bring in undefined values
-                    else if copy isnt undefined
-                        target[ name ] = copy unless inverse and typeof target[ name ] isnt 'undefined'
-        # Return the modified object
-        target
-
 # Alias definitions
 
 mecano.cp = mecano.copy
 mecano.ln = mecano.link
 mecano.rm = mecano.remove
 
-module.exports = mecano
 

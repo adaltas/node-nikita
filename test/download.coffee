@@ -5,7 +5,7 @@ http = require 'http'
 mecano = require '../'
 
 module.exports =
-    'simple # http': (next) ->
+    'download # http': (next) ->
         source = 'http://127.0.0.1:12345'
         destination = "#{__dirname}/download_test"
         server = http.createServer (req, res) ->
@@ -30,12 +30,12 @@ module.exports =
                     assert.eql downloaded, 0
                     server.close()
                     fs.unlink destination, next
-    'simple # ftp': (next) ->
+    'download # ftp': (next) ->
         source = 'ftp://ftp.gnu.org/gnu/glibc/README.glibc'
         destination = "#{__dirname}/download_test"
         # Download a non existing file
         mecano.download
-            source: 
+            source: source
             destination: destination
         , (err, downloaded) ->
             assert.ifError err
@@ -44,13 +44,13 @@ module.exports =
                 assert.ok content.indexOf('GNU') isnt -1
                 # Download on an existing file
                 mecano.download
-                    source: 
+                    source: source
                     destination: destination
                 , (err, downloaded) ->
                     assert.ifError err
                     assert.eql downloaded, 0
                     fs.unlink destination, next
-    'simple # file': (next) ->
+    'download # file': (next) ->
         source = "file://#{__filename}"
         destination = "#{__dirname}/download_test"
         # Download a non existing file

@@ -5,7 +5,7 @@ path = require 'path'
 mecano = require '../'
 
 module.exports = 
-    'option # source # parent exists': (next) ->
+    'mkdir # source # parent exists': (next) ->
         source = "#{__dirname}/a_dir"
         mecano.mkdir
             directory: source
@@ -18,7 +18,7 @@ module.exports =
                 assert.ifError err
                 assert.eql created, 0
                 mecano.rm source, next
-    'option # source # parent missing': (next) ->
+    'mkdir # source # parent missing': (next) ->
         source = "#{__dirname}/a_parent_dir/a_dir"
         mecano.mkdir
             directory: source
@@ -26,7 +26,7 @@ module.exports =
             assert.ifError err
             assert.eql created, 1
             mecano.rm path.dirname(source), next
-    'option # exlude': (next) ->
+    'mkdir # exlude': (next) ->
         source = "#{__dirname}/a_parent_dir/a_dir/do_not_create_this"
         mecano.mkdir
             directory: source

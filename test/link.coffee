@@ -4,7 +4,7 @@ fs = require 'fs'
 mecano = require '../'
 
 module.exports =
-    'simple # file': (next) ->
+    'link # file': (next) ->
         # Create a non existing link
         destination = "#{__dirname}/link_test"
         mecano.link
@@ -23,7 +23,7 @@ module.exports =
                 fs.lstat destination, (err, stat) ->
                     assert.ok stat.isSymbolicLink()
                     fs.unlink destination, next
-    'simple # file': (next) ->
+    'link # dir': (next) ->
         # Create a non existing link
         destination = "#{__dirname}/link_test"
         mecano.link
@@ -42,7 +42,7 @@ module.exports =
                 fs.lstat destination, (err, stat) ->
                     assert.ok stat.isSymbolicLink()
                     fs.unlink destination, next
-    'error # required arguments': (next) ->
+    'link # error # required arguments': (next) ->
         # Test missing source
         mecano.link
             destination: __filename

@@ -5,7 +5,7 @@ mecano = require '../'
 
 module.exports =
 
-    'option # content': (next) ->
+    'render # content': (next) ->
         destination = "#{__dirname}/render.eco"
         mecano.render
             content: 'Hello <%- @who %>'
@@ -18,7 +18,7 @@ module.exports =
                 assert.eql content, 'Hello you'
                 next()
     
-    'option # source': (next) ->
+    'render # source': (next) ->
         destination = "#{__dirname}/render.eco"
         mecano.render
             source: "#{__dirname}/../resources/render.eco"
@@ -31,7 +31,7 @@ module.exports =
                 assert.eql content, 'Hello you'
                 next()
     
-    'error # invalid source': (next) ->
+    'render # invalid source': (next) ->
         mecano.render
             source: "oups"
             destination: "#{__dirname}/render.eco"

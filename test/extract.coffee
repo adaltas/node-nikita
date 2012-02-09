@@ -4,7 +4,7 @@ mecano = require '../'
 
 module.exports =
 
-    'simple # ext .tgz': (next) ->
+    'extract # ext .tgz': (next) ->
         # Test a non existing extracted dir
         mecano.extract
             source: "#{__dirname}/../resources/a_dir.tgz"
@@ -23,7 +23,7 @@ module.exports =
                 assert.eql extracted, 1
                 mecano.rm "#{__dirname}/a_dir", next
     
-    'simple # ext .zip': (next) ->
+    'extract # ext .zip': (next) ->
         # Test a non existing extracted dir
         mecano.extract
             source: "#{__dirname}/../resources/a_dir.zip"
@@ -42,7 +42,7 @@ module.exports =
                 assert.eql extracted, 1
                 mecano.rm "#{__dirname}/a_dir", next
     
-    'option # creates': (next) ->
+    'extract # option # creates': (next) ->
         # Test with invalid creates option
         mecano.extract
             source: "#{__dirname}/../resources/a_dir.tgz"
@@ -60,18 +60,18 @@ module.exports =
                 assert.eql extracted, 1
                 mecano.rm "#{__dirname}/a_dir", next
     
-    'option # not_if': (next) ->
+    'extract # option # not_if_exists': (next) ->
         # Test with invalid creates option
         mecano.extract
             source: "#{__dirname}/../resources/a_dir.tgz"
             destination: __dirname
-            not_if: __dirname
+            not_if_exists: __dirname
         , (err, extracted) ->
             assert.ifError err
             assert.eql extracted, 0
             next()
 
-    'error # extension': (next) ->
+    'extract # error # extension': (next) ->
         mecano.extract
             source: __filename
         , (err, extracted) ->
