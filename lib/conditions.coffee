@@ -76,10 +76,13 @@ module.exports =
     ###
     if_exists: (options, failed, succeed) ->
         return succeed() unless options.if_exists?
-        path.exists options.if_exists, (exists) ->
-            if exists
-            then succeed()
-            else failed()
+        each(options.if_exists)
+        .on 'item', (next, if_exists) ->
+            path.exists if_exists, (exists) ->
+                if exists
+                then next()
+                else failed()
+        .on 'end', succeed
     ###
     `not_if_exists` Skip action if a file exists
     ---------------------------------------------
@@ -89,7 +92,10 @@ module.exports =
     ###
     not_if_exists: (options, failed, succeed) ->
         return succeed() unless options.not_if_exists?
-        path.exists options.not_if_exists, (exists) ->
-            if exists
-            then failed()
-            else succeed()
+        each(options.not_if_exists)
+        .on 'item', (next, not_if_exists) ->
+            path.exists not_if_exists, (exists) ->
+                if exists
+                then failed()
+                else next()
+        .on 'end', succeed
