@@ -20,8 +20,8 @@ common API with flexible options.
 mecano = module.exports = 
     ###
 
-    `cp` `copy(options, callback)` Copy a file or a directory
-    ----------------------------------------------------
+    `cp` `copy(options, callback)` Copy a file
+    ------------------------------------------
 
     `options`               Command options includes:   
 
@@ -35,28 +35,44 @@ mecano = module.exports =
     *   `err`               Error object if any.   
     *   `copied`            Number of files or parent directories copied.
 
-    todo: preserve permissions if `chmod` is `true`
+    todo:
+    *   deal with directories
+    *   preserve permissions if `chmod` is `true`
+    *   Compare files with checksum
 
     ###
     copy: (options, callback) ->
-        options = [options] unless Array.isArray options
+        options = misc.options options
         copied = 0
         each( options )
         .on 'item', (next, options) ->
             return next new Error 'Missing source' unless options.source
             return next new Error 'Missing destination' unless options.destination
             options.not_if_exists = options.destination if options.not_if_exists is true
-            copy = ->
-                fs.stat options.destination, (err, dstStat) ->
-                    return next null, 0 unless err
-                    path.exists options.source, (exists) ->
-                        return next new Error 'Source does not exists' unless exists
-                        input = fs.createReadStream options.source
-                        output = fs.createWriteStream options.destination
-                        util.pump input, output, (err) ->
-                            return next err if err
-                            chmod dstStat
-            chmod = (dstStat) ->
+            dstStat = null
+            source = ->
+                fs.stat options.source, (err, stat) ->
+                    # Source does not exists or any error occured
+                    return next err if err
+                    return next new Error 'Source is a directory' if stat.isDirectory()
+                    copy()
+            copy = (destination = options.destination) ->
+                fs.stat destination, (err, stat) ->
+                    dstStat = stat
+                    return next err if err and err.code isnt 'ENOENT'
+                    # do not copy if destination exists
+                    dirExists = not err and stat.isDirectory()
+                    fileExists = not err and stat.isFile()
+                    return next null, 0 if fileExists
+                    # Update destination name and call copy again
+                    return copy path.resolve options.destination, path.basename(options.source) if dirExists
+                    # Copy
+                    input = fs.createReadStream options.source
+                    output = fs.createWriteStream destination
+                    util.pump input, output, (err) ->
+                        return next err if err
+                        chmod()
+            chmod = ->
                 return finish() if not options.chmod or options.chmod is dstStat.mode
                 fs.chmod options.destination, options.chmod, (err) ->
                     return next err if err
@@ -98,7 +114,7 @@ mecano = module.exports =
     
     ###
     download: (options, callback) ->
-        options = [options] unless Array.isArray options
+        options = misc.options options
         downloaded = 0
         each( options )
         .on 'item', (next, options) ->
@@ -127,8 +143,8 @@ mecano = module.exports =
             callback err, downloaded
     ###
 
-    `exec([goptions], options, callback)` Run a command locally or with ssh
-    -----------------------------------------------------------------------
+    `exec` `execute`([goptions], options, callback)` Run a command locally or with ssh
+    ----------------------------------------------------------------------------------
     Command is send over ssh if the `host` is provided. Global options is
     optional and is used in case where options is defined as an array of 
     multiple commands. Note, `opts` inherites all the properties of `goptions`.
@@ -142,6 +158,10 @@ mecano = module.exports =
     `options`               Command options includes:   
 
     *   `cmd`               String, Object or array; Command to execute.   
+    *   `env`               Environment variables, default to `process.env`.   
+    *   `cwd`               Current working directory.   
+    *   `uid`               Unix user id.   
+    *   `gid`               Unix group id.   
     *   `code`              Expected code returned by the command, default to 0.   
     *   `not_if_exists`     Dont run the command if the file exists.   
     *   `host`              SSH host or IP address.   
@@ -157,12 +177,12 @@ mecano = module.exports =
     *   `stderr`            Stderr value(s) unless `stderr` option is provided.   
 
     ###
-    exec: (goptions, options, callback) ->
+    execute: (goptions, options, callback) ->
         if arguments.length is 2
             callback = options
             options = goptions
         isArray = Array.isArray options
-        options = [options] unless isArray
+        options = misc.options options
         executed = 0
         stdouts = []
         stderrs = []
@@ -181,7 +201,10 @@ mecano = module.exports =
             return next new Error "Missing cmd: #{option.cmd}" unless option.cmd?
             option.code ?= 0
             cmdOption = {}
-            cmdOption.cwd = option.cwd if option.cwd
+            cmdOption.env = option.env or process.env
+            cmdOption.cwd = option.cwd or null
+            cmdOption.uid = option.uid if options.uid
+            cmdOption.gid = option.gid if options.gid
             cmd = () ->
                 if option.host
                     option.cmd = escape option.cmd
@@ -239,7 +262,7 @@ mecano = module.exports =
 
     ###
     extract: (options, callback) ->
-        options = [options] unless Array.isArray options
+        options = misc.options options
         extracted = 0
         each( options )
         .on 'item', (next, options) ->
@@ -279,6 +302,69 @@ mecano = module.exports =
         .on 'both', (err) ->
             callback err, extracted
     ###
+    
+    `git`
+    ---------
+
+    `options`               Command options includes:   
+
+    *   `source`            Git source repository address.
+    *   `destination`       Directory where to clone the repository.
+    *   `revision`          Git revision, branch or tag.
+    
+    ###
+    git: (options, callback) ->
+        options = misc.options options
+        updated = 0
+        each( options )
+        .on 'item', (next, options) ->
+            options.revision ?= 'HEAD'
+            rev = null
+            prepare = ->
+                fs.stat options.destination, (err, stat) ->
+                    return clone() if err and err.code is 'ENOENT'
+                    return next new Error "Destination not a directory, got #{options.destination}" unless stat.isDirectory()
+                    gitDir = "#{options.destination}/.git"
+                    fs.stat gitDir, (err, stat) ->
+                        return next err if err or not stat.isDirectory()
+                        log()
+            clone = ->
+                mecano.exec
+                    #cmd: "git init && git remote add origin #{options.source} && git branch --track master origin/master && git pull"
+                    cmd: "git clone #{options.source} #{path.basename options.destination}"
+                    cwd: path.dirname options.destination
+                , (err) ->
+                    return next err if err
+                    checkout()
+            log = ->
+                mecano.exec
+                    cmd: "git log --pretty=format:'%H' -n 1"
+                    cwd: options.destination
+                , (err, executed, stdout, stderr) ->
+                    return next err if err
+                    current = stdout.trim()
+                    mecano.exec
+                        cmd: "git rev-list --max-count=1 #{options.revision}"
+                        cwd: options.destination
+                    , (err, executed, stdout, stderr) ->
+                        return next err if err
+                        if stdout.trim() isnt current
+                        then checkout()
+                        else next()
+            checkout = ->
+                mecano.exec
+                    cmd: "git checkout #{options.revision}"
+                    cwd: options.destination
+                , (err) ->
+                    return next err if err
+                    updated++
+                    next()
+            new_rev = ->
+            conditions.all options, next, prepare
+        .on 'both', (err) ->
+            callback err, updated
+
+    ###
 
     `ln` `link(options, callback)` Create a symbolic link
     ------------------------------------------------
@@ -297,7 +383,7 @@ mecano = module.exports =
 
     ###
     link: (options, callback) ->
-        options = [options] unless Array.isArray options
+        options = misc.options options
         linked = 0
         sym_exists = (option, callback) ->
             path.exists option.destination, (exists) ->
@@ -356,7 +442,8 @@ mecano = module.exports =
 
     `options`               Command options includes:   
 
-    *   `directory`         Path or array of paths.   
+    *   `source`            Path or array of paths.   
+    *   `directory`         Shortcut for `source`
     *   `exclude`           Regular expression.   
     *   `chmod`             Default to 0755.   
 
@@ -367,23 +454,24 @@ mecano = module.exports =
 
     ###
     mkdir: (options, callback) ->
-        options = [options] unless Array.isArray options
+        options = misc.options options
         created = 0
         each( options )
         .on 'item', (next, option) ->
-            option = { directory: option } if typeof option is 'string'
-            return next new Error 'Missing directory option' unless option.directory?
+            option = { source: option } if typeof option is 'string'
+            option.source = option.directory if not option.source? and option.directory?
+            return next new Error 'Missing source option' unless option.source?
             check = () ->
-                fs.stat option.directory, (err, stat) ->
+                # if exist and is a dir, skip
+                # if exists and isn't a dir, error
+                fs.stat option.source, (err, stat) ->
                     return create() if err and err.code is 'ENOENT'
                     return next err if err
                     return next() if stat.isDirectory()
-                    next err 'Invalid source, got #{JSON.encode(option.directory)}'
-                # if exist and is a dir, skip
-                # if exists and isn't a dir, error
+                    next err 'Invalid source, got #{JSON.encode(option.source)}'
             create = () ->
                 option.chmod ?= 0755
-                tmpDirs = option.directory.split '/'
+                tmpDirs = option.source.split '/'
                 tmpDirCreate = ''
                 dirCreated = false
                 each( tmpDirs )
@@ -430,7 +518,7 @@ mecano = module.exports =
         mecano.rm './some/dir', (err, removed) ->
             console.log "#{removed} dir removed"
     
-    Removing a direcotry unless a given file exists
+    Removing a directory unless a given file exists
         mecano.rm
             source: './some/dir'
             not_if_exists: './some/file'
@@ -446,7 +534,7 @@ mecano = module.exports =
 
     ###
     remove: (options, callback) ->
-        options = [options] unless Array.isArray options
+        options = misc.options options
         deleted = 0
         each( options )
         .on 'item', (next, options) ->
@@ -484,7 +572,7 @@ mecano = module.exports =
 
     ###
     render: (options, callback) ->
-        options = [options] unless Array.isArray options
+        options = misc.options options
         rendered = 0
         each( options )
         .on 'item', (next, option) ->
@@ -513,8 +601,9 @@ mecano = module.exports =
 
 # Alias definitions
 
-mecano.cp = mecano.copy
-mecano.ln = mecano.link
-mecano.rm = mecano.remove
+mecano.cp   = mecano.copy
+mecano.exec = mecano.execute
+mecano.ln   = mecano.link
+mecano.rm   = mecano.remove
 
 

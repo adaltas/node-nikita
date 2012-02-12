@@ -70,3 +70,18 @@ module.exports =
                         target[ name ] = copy unless inverse and typeof target[ name ] isnt 'undefined'
         # Return the modified object
         target
+    ###
+    `options(options)` Normalize options
+    ###
+    options: (options) ->
+        options = [options] unless Array.isArray options
+        for option in options
+            option.if = [option.if] if option.if? and not Array.isArray option.if
+            option.if_exists = [option.if_exists] if option.if_exists? and not Array.isArray option.if_exists
+            option.not_if_exists = [option.not_if_exists] if option.not_if_exists? and not Array.isArray option.not_if_exists
+        options
+
+
+
+
+
