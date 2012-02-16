@@ -2,7 +2,7 @@
 language: en
 layout: page
 title: "Node Mecano: Common functions for system deployment"
-date: 2012-02-12T14:19:20.721Z
+date: 2012-02-12T17:01:42.645Z
 comments: false
 sharing: false
 footer: false
@@ -11,8 +11,8 @@ github: https://github.com/wdavidw/node-mecano
 Mecano gather a set of functions usually used during system deployment. All the functions share a 
 common API with flexible options.
 
-`cp` `copy(options, callback)` Copy a file or a directory
-----------------------------------------------------
+`cp` `copy(options, callback)` Copy a file
+------------------------------------------
 
 `options`               Command options includes:   
 
@@ -26,7 +26,10 @@ common API with flexible options.
 *   `err`               Error object if any.   
 *   `copied`            Number of files or parent directories copied.
 
-todo: preserve permissions if `chmod` is `true`
+todo:
+*   deal with directories
+*   preserve permissions if `chmod` is `true`
+*   Compare files with checksum
 
 `download(options, callback)` Download files using various protocols
 --------------------------------------------------------------------
@@ -140,7 +143,8 @@ The behavior is similar to the Unix command `mkdir -p`
 
 `options`               Command options includes:   
 
-*   `directory`         Path or array of paths.   
+*   `source`            Path or array of paths.   
+*   `directory`         Shortcut for `source`
 *   `exclude`           Regular expression.   
 *   `chmod`             Default to 0755.   
 

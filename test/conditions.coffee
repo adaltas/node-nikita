@@ -60,6 +60,18 @@ module.exports =
             next
             () -> assert.ok false
         )
+    'conditions # if_exists # partial exists': (next) ->
+        conditions.if_exists(
+            if_exists: [__dirname, __filename]
+            () -> assert.ok false
+            next
+        )
+    'conditions # if_exists # partial not exists': (next) ->
+        conditions.if_exists(
+            if_exists: [__dirname, './oh_no']
+            next
+            () -> assert.ok false
+        )
     'conditions # not_if_exists # undefined': (next) ->
         conditions.not_if_exists(
             {}
@@ -77,5 +89,17 @@ module.exports =
             not_if_exists: './oh_no'
             () -> assert.ok false
             next
+        )
+    'conditions # not_if_exists # partial exists': (next) ->
+        conditions.not_if_exists(
+            not_if_exists: ['./oh_no', './eh_no']
+            () -> assert.ok false
+            next
+        )
+    'conditions # not_if_exists # partial exists': (next) ->
+        conditions.not_if_exists(
+            not_if_exists: ['./oh_no', __filename]
+            next
+            () -> assert.ok false
         )
 
