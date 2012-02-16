@@ -26,6 +26,20 @@ module.exports =
             cmd: 'text=yes; echo $text'
             stdout: evemit
         , (err, executed, stdout, stderr) ->
-            assert.eql stdout, null
+            assert.eql stdout, undefined
+    'exec # option # if_exists': (next) ->
+        mecano.exec
+            cmd: 'text=yes; echo $text'
+            if_exists: __dirname
+        , (err, executed, stdout, stderr) ->
+            assert.eql executed, 1
+            assert.eql stdout, 'yes\n'
+            mecano.exec
+                cmd: 'text=yes; echo $text'
+                if_exists: "__dirname/toto"
+            , (err, executed, stdout, stderr) ->
+                assert.eql executed, 0
+                assert.eql stdout, undefined
+                next()
 
 

@@ -155,7 +155,7 @@ mecano = module.exports =
     or limited concurrent mode. See the `node-each` documentation for more 
     details. Default to sequential (false).
                 
-    `options`               Command options includes:   
+    `options`               Include all conditions as well as:  
 
     *   `cmd`               String, Object or array; Command to execute.   
     *   `env`               Environment variables, default to `process.env`.   
@@ -163,7 +163,6 @@ mecano = module.exports =
     *   `uid`               Unix user id.   
     *   `gid`               Unix group id.   
     *   `code`              Expected code returned by the command, default to 0.   
-    *   `not_if_exists`     Dont run the command if the file exists.   
     *   `host`              SSH host or IP address.   
     *   `username`          SSH host or IP address.   
     *   `stdout`            Writable EventEmitter in which command output will be piped.   
@@ -222,18 +221,19 @@ mecano = module.exports =
                 else run.stderr.on 'data', (data) -> stderr += data
                 run.on "exit", (code) ->
                     executed++
-                    stdouts.push if option.stdout then null else stdout
-                    stderrs.push if option.stderr then null else stderr
+                    stdouts.push if option.stdout then undefined else stdout
+                    stderrs.push if option.stderr then undefined else stderr
                     if code isnt option.code
                         err = new Error 'Failed to execute command'
                         err.code = code
                         return next err
                     next()
-            if option.not_if_exists
-                path.exists option.not_if_exists, (exists) ->
-                    if exists then next() else cmd()
-            else
-                cmd()
+            # if option.not_if_exists
+            #     path.exists option.not_if_exists, (exists) ->
+            #         if exists then next() else cmd()
+            # else
+            #     cmd()
+            conditions.all(option, next, cmd)
         .on 'both', (err) ->
             stdouts = stdouts[0] unless isArray
             stderrs = stderrs[0] unless isArray
