@@ -41,15 +41,15 @@ module.exports =
             assert.ifError err
             mecano.git
                 source: "#{__dirname}/../resources/repo.git"
-                destination: "#{__dirname}/repo"
+                destination: "#{__dirname}/my_repo"
                 revision: 'v0.0.1'
             , (err, updated) ->
                 assert.eql updated, 1
                 mecano.git
                     source: "#{__dirname}/../resources/repo.git"
-                    destination: "#{__dirname}/repo"
+                    destination: "#{__dirname}/my_repo"
                     revision: 'v0.0.1'
                 , (err, updated) ->
                     assert.eql updated, 0
-                    mecano.rm "#{__dirname}/repo", next
+                    mecano.rm "#{__dirname}/my_repo", next
 

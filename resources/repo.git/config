@@ -1,6 +1,7 @@
 [core]
 	repositoryformatversion = 0
 	filemode = true
-	bare = false
-	logallrefupdates = true
+	bare = true
 	ignorecase = true
+[remote "origin"]
+	url = /Users/wdavidw/www/src/node/adaltas/heco/mecano/resources/../repo
