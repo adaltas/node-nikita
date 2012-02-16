@@ -27,6 +27,19 @@ module.exports =
             stdout: evemit
         , (err, executed, stdout, stderr) ->
             assert.eql stdout, undefined
+    'exec # option # code': (next) ->
+        # code undefined
+        mecano.exec
+            cmd: "ls -l #{__dirname}/toto"
+        , (err, executed, stdout, stderr) ->
+            assert.eql err.message, 'Invalid exec code 1'
+            # code defined in array
+            mecano.exec
+                cmd: "ls -l #{__dirname}/toto"
+                code: [0, 1]
+            , (err, executed, stdout, stderr) ->
+                assert.ifError err
+                next()
     'exec # option # if_exists': (next) ->
         mecano.exec
             cmd: 'text=yes; echo $text'

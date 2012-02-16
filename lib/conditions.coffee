@@ -51,9 +51,6 @@ module.exports =
 
     ###
     if: (options, failed, succeed) ->
-        # si = options.if
-        # return succeed() unless si?
-        # si = options.if = [si] unless Array.isArray si
         return succeed() unless options.if?
         ok = true
         each(options.if)

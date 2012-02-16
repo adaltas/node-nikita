@@ -162,7 +162,7 @@ mecano = module.exports =
     *   `cwd`               Current working directory.   
     *   `uid`               Unix user id.   
     *   `gid`               Unix group id.   
-    *   `code`              Expected code returned by the command, default to 0.   
+    *   `code`              Expected code(s) returned by the command, int or array of int, default to 0.   
     *   `host`              SSH host or IP address.   
     *   `username`          SSH host or IP address.   
     *   `stdout`            Writable EventEmitter in which command output will be piped.   
@@ -198,7 +198,8 @@ mecano = module.exports =
             option = { cmd: option } if typeof option is 'string'
             misc.merge true, option, goptions
             return next new Error "Missing cmd: #{option.cmd}" unless option.cmd?
-            option.code ?= 0
+            option.code ?= [0]
+            option.code = [option.code] unless Array.isArray option.code
             cmdOption = {}
             cmdOption.env = option.env or process.env
             cmdOption.cwd = option.cwd or null
@@ -223,8 +224,8 @@ mecano = module.exports =
                     executed++
                     stdouts.push if option.stdout then undefined else stdout
                     stderrs.push if option.stderr then undefined else stderr
-                    if code isnt option.code
-                        err = new Error 'Failed to execute command'
+                    if option.code.indexOf(code) is -1
+                        err = new Error "Invalid exec code #{code}"
                         err.code = code
                         return next err
                     next()
