@@ -1,11 +1,18 @@
 {
     "name": "mecano",
     "description": "Common functions for system deployment.",
+    "keywords": ["fs", "install", "deploy", "build"],
     "version": "0.0.1",
+    "homepage": "http://www.adaltas.com/projects/node-mecano/",
     "author": "David Worms",
-    "contributors": [ 
-        { "name": "David Worms", "email": "david@adaltas.com" }
-    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/wdavidw/node-mecano"
+    },
+    "bugs": {
+        "email": "open@adaltas.com",
+        "url": "http://github.com/wdavidw/node-mecano/issues"
+    },
     "dependencies": {
         "coffee-script": "latest",
         "eco": "latest",
@@ -17,7 +24,9 @@
         "expresso": "latest",
         "jsDAV": "latest"
     },
-    "keywords": ["fs", "install", "deploy", "build"],
+    "contributors": [ 
+        { "name": "David Worms", "email": "david@adaltas.com" }
+    ],
     "main": "index",
     "engines": { "node": ">= 0.6.0" }
 }

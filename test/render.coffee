@@ -16,7 +16,7 @@ module.exports =
             assert.eql rendered, 1
             fs.readFile destination, 'ascii', (err, content) ->
                 assert.eql content, 'Hello you'
-                next()
+                mecano.rm destination, next
     
     'render # source': (next) ->
         destination = "#{__dirname}/render.eco"
@@ -29,15 +29,16 @@ module.exports =
             assert.eql rendered, 1
             fs.readFile destination, 'ascii', (err, content) ->
                 assert.eql content, 'Hello you'
-                next()
+                mecano.rm destination, next
     
     'render # invalid source': (next) ->
+        destination = "#{__dirname}/render.eco"
         mecano.render
             source: "oups"
-            destination: "#{__dirname}/render.eco"
+            destination: destination
         , (err, rendered) ->
             assert.eql err.message, 'Invalid source, got "oups"'
-            next()
+            mecano.rm destination, next
 
 
 
