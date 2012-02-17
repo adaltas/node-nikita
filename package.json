@@ -22,7 +22,8 @@
     },
     "devDependencies": {
         "jsDAV": "latest",
-        "mocha": "latest"
+        "mocha": "latest",
+        "should": "latest"
     },
     "contributors": [ 
         { "name": "David Worms", "email": "david@adaltas.com" }
