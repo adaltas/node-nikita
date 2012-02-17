@@ -506,8 +506,7 @@ mecano = module.exports =
 
     `options`               Command options includes:   
 
-    *   `source`            File or directory.   
-    *   `options`           Options passed to rimraf.   
+    *   `source`            File or directory.     
 
     `callback`              Received parameters are:   
 
@@ -545,7 +544,7 @@ mecano = module.exports =
             fs.lstat options.source, (err, stat) ->
                 return next() if err
                 options.options ?= {}
-                rimraf options.source, options.options, (err) ->
+                rimraf options.source, (err) ->
                     return next err if err
                     deleted++
                     next()

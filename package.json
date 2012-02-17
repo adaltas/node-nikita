@@ -16,9 +16,10 @@
     "dependencies": {
         "coffee-script": "latest",
         "eco": "latest",
+        "each": "latest",
         "ftp": "latest",
-        "rimraf": "latest",
-        "open-uri": "latest"
+        "open-uri": "latest",
+        "rimraf": "latest"
     },
     "devDependencies": {
         "jsDAV": "latest",
