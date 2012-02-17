@@ -1,17 +1,17 @@
 
-assert = require 'assert'
+should = require 'should'
 mecano = require '../'
 
-module.exports =
+describe 'extract', ->
 
-    'extract # ext .tgz': (next) ->
+    it 'should see extension .tgz', (next) ->
         # Test a non existing extracted dir
         mecano.extract
             source: "#{__dirname}/../resources/a_dir.tgz"
             destination: __dirname
         , (err, extracted) ->
-            assert.ifError err
-            assert.eql extracted, 1
+            should.not.exist err
+            extracted.should.eql 1
             # Test an existing extracted dir
             # Note, there is no way for us to know which directory
             # it is in advance
@@ -19,18 +19,18 @@ module.exports =
                 source: "#{__dirname}/../resources/a_dir.tgz"
                 destination: __dirname
             , (err, extracted) ->
-                assert.ifError err
-                assert.eql extracted, 1
+                should.not.exist err
+                extracted.should.eql 1
                 mecano.rm "#{__dirname}/a_dir", next
     
-    'extract # ext .zip': (next) ->
+    it 'should see extension .zip', (next) ->
         # Test a non existing extracted dir
         mecano.extract
             source: "#{__dirname}/../resources/a_dir.zip"
             destination: __dirname
         , (err, extracted) ->
-            assert.ifError err
-            assert.eql extracted, 1
+            should.not.exist err
+            extracted.should.eql 1
             # Test an existing extracted dir
             # Note, there is no way for us to know which directory
             # it is in advance
@@ -38,42 +38,44 @@ module.exports =
                 source: "#{__dirname}/../resources/a_dir.zip"
                 destination: __dirname
             , (err, extracted) ->
-                assert.ifError err
-                assert.eql extracted, 1
+                should.not.exist err
+                extracted.should.eql 1
                 mecano.rm "#{__dirname}/a_dir", next
     
-    'extract # option # creates': (next) ->
+    it 'should validate a created file', (next) ->
         # Test with invalid creates option
         mecano.extract
             source: "#{__dirname}/../resources/a_dir.tgz"
             destination: __dirname
             creates: "#{__dirname}/oh_no"
         , (err, extracted) ->
-            assert.eql err.message, "Failed at creating expected file, manual cleanup is required"
+            err.message.should.eql "Failed to create 'oh_no'"
             # Test with valid creates option
             mecano.extract
                 source: "#{__dirname}/../resources/a_dir.tgz"
                 destination: __dirname
                 creates: "#{__dirname}/a_dir"
             , (err, extracted) ->
-                assert.ifError err
-                assert.eql extracted, 1
+                should.not.exist err
+                extracted.should.eql 1
                 mecano.rm "#{__dirname}/a_dir", next
     
-    'extract # option # not_if_exists': (next) ->
+    it 'should # option # not_if_exists', (next) ->
         # Test with invalid creates option
         mecano.extract
             source: "#{__dirname}/../resources/a_dir.tgz"
             destination: __dirname
             not_if_exists: __dirname
         , (err, extracted) ->
-            assert.ifError err
-            assert.eql extracted, 0
+            should.not.exist err
+            extracted.should.eql 0
             next()
 
-    'extract # error # extension': (next) ->
+    it 'should # error # extension', (next) ->
         mecano.extract
             source: __filename
         , (err, extracted) ->
-            assert.eql err.message, 'Unsupported extension, got ".coffee"'
+            err.message.should.eql 'Unsupported extension, got ".coffee"'
             next()
+
+

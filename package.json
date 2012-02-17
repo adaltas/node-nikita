@@ -21,14 +21,17 @@
         "open-uri": "latest"
     },
     "devDependencies": {
-        "expresso": "latest",
-        "jsDAV": "latest"
+        "jsDAV": "latest",
+        "mocha": "latest"
     },
     "contributors": [ 
         { "name": "David Worms", "email": "david@adaltas.com" }
     ],
     "main": "index",
-    "engines": { "node": ">= 0.6.0" }
+    "engines": { "node": ">= 0.6.0" },
+    "scripts": {
+        "test": "mocha"
+    }
 }
 
 	

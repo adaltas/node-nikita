@@ -1,58 +1,61 @@
 
-assert = require 'assert'
 fs = require 'fs'
+should = require 'should'
 mecano = require '../'
 
-module.exports =
-    'link # file': (next) ->
+describe 'link', ->
+
+    it 'should link file', (next) ->
         # Create a non existing link
         destination = "#{__dirname}/link_test"
         mecano.link
             source: __filename
             destination: destination
         , (err, linked) ->
-            assert.ifError err
-            assert.eql linked, 1
+            should.not.exist err
+            linked.should.eql 1
             # Create on an existing link
             mecano.link
                 source: __filename
                 destination: destination
             , (err, linked) ->
-                assert.ifError err
-                assert.eql linked, 0
+                should.not.exist err
+                linked.should.eql 0
                 fs.lstat destination, (err, stat) ->
-                    assert.ok stat.isSymbolicLink()
+                    stat.isSymbolicLink().should.be.ok
                     fs.unlink destination, next
-    'link # dir': (next) ->
+    
+    it 'should link dir', (next) ->
         # Create a non existing link
         destination = "#{__dirname}/link_test"
         mecano.link
             source: __dirname
             destination: destination
         , (err, linked) ->
-            assert.ifError err
-            assert.eql linked, 1
+            should.not.exist err
+            linked.should.eql 1
             # Create on an existing link
             mecano.link
                 source: __dirname
                 destination: destination
             , (err, linked) ->
-                assert.ifError err
-                assert.eql linked, 0
+                should.not.exist err
+                linked.should.eql 0
                 fs.lstat destination, (err, stat) ->
-                    assert.ok stat.isSymbolicLink()
+                    stat.isSymbolicLink().should.be.ok
                     fs.unlink destination, next
-    'link # error # required arguments': (next) ->
+    
+    it 'should validate arguments', (next) ->
         # Test missing source
         mecano.link
             destination: __filename
         , (err, linked) ->
-            assert.eql err.message, "Missing source, got undefined"
+            err.message.should.eql "Missing source, got undefined"
             # Test missing destination
             mecano.link
                 source: __filename
             , (err, linked) ->
-                assert.eql err.message, "Missing destination, got undefined"
+                err.message.should.eql "Missing destination, got undefined"
                 next()
 
 

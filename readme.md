@@ -6,3 +6,21 @@ Mecano gather a set of functions usually used during system deployment. All the 
 common API with flexible options.
 
 Documentation is available on the [project website](http://www.adaltas.com/projects/node-mecano/).
+
+Installation
+------------
+
+```bash
+    npm install mecano
+```
+
+Test
+----
+
+For the tests to execute successfully, you must:
+*   be online (attempt to fetch ftp file)
+*   be able to ssh yourself (eg `ssh $(whoami)@localhost`)
+
+```bash
+    npm test
+```

@@ -1,10 +1,10 @@
 
-assert = require 'assert'
-fs = require 'fs'
+should = require 'should'
 mecano = require '../'
 
-module.exports =
-    'remove # file': (next) ->
+describe 'remove', ->
+
+    it 'should delete a file', (next) ->
         mecano.copy
             source: "#{__dirname}/../resources/a_dir/a_file"
             destination: "#{__dirname}/a_file"
@@ -12,8 +12,8 @@ module.exports =
             mecano.remove
                 source: "#{__dirname}/a_file"
             , (err, removed) ->
-                assert.ifError err
-                assert.eql removed, 1
+                should.not.exist err
+                removed.should.eql 1
                 next()
 
 

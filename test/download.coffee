@@ -1,11 +1,15 @@
 
-assert = require 'assert'
 fs = require 'fs'
 http = require 'http'
+should = require 'should'
 mecano = require '../'
 
-module.exports =
-    'download # http': (next) ->
+describe 'download', ->
+
+    # beforeEach (next) ->
+    #     next()
+
+    it 'should deal with http scheme', (next) ->
         source = 'http://127.0.0.1:12345'
         destination = "#{__dirname}/download_test"
         server = http.createServer (req, res) ->
@@ -17,20 +21,22 @@ module.exports =
             source: source
             destination: destination
         , (err, downloaded) ->
-            assert.ifError err
-            assert.eql downloaded, 1
+            should.not.exist err
+            downloaded.should.eql 1
             fs.readFile destination, 'ascii', (err, content) ->
-                assert.eql content, 'okay'
+                content.should.eql 'okay'
                 # Download on an existing file
                 mecano.download
                     source: source
                     destination: destination
                 , (err, downloaded) ->
-                    assert.ifError err
-                    assert.eql downloaded, 0
+                    should.not.exist err
+                    downloaded.should.eql 0
                     server.close()
                     fs.unlink destination, next
-    'download # ftp': (next) ->
+    
+    it 'should deal with ftp scheme', (next) ->
+        @timeout 10000
         source = 'ftp://ftp.gnu.org/gnu/glibc/README.glibc'
         destination = "#{__dirname}/download_test"
         # Download a non existing file
@@ -38,19 +44,20 @@ module.exports =
             source: source
             destination: destination
         , (err, downloaded) ->
-            assert.ifError err
-            assert.eql downloaded, 1
+            should.not.exist err
+            downloaded.should.eql 1
             fs.readFile destination, 'ascii', (err, content) ->
-                assert.ok content.indexOf('GNU') isnt -1
+                content.should.include 'GNU'
                 # Download on an existing file
                 mecano.download
                     source: source
                     destination: destination
                 , (err, downloaded) ->
-                    assert.ifError err
-                    assert.eql downloaded, 0
+                    should.not.exist err
+                    downloaded.should.eql 0
                     fs.unlink destination, next
-    'download # file': (next) ->
+    
+    it 'should deal with file scheme', (next) ->
         source = "file://#{__filename}"
         destination = "#{__dirname}/download_test"
         # Download a non existing file
@@ -58,17 +65,17 @@ module.exports =
             source: source
             destination: destination
         , (err, downloaded) ->
-            assert.ifError err
-            assert.eql downloaded, 1
+            should.not.exist err
+            downloaded.should.eql 1
             fs.readFile destination, 'ascii', (err, content) ->
-                assert.ok content.indexOf('yeah') isnt -1
+                content.should.include 'yeah'
                 # Download on an existing file
                 mecano.download
                     source: source
                     destination: destination
                 , (err, downloaded) ->
-                    assert.ifError err
-                    assert.eql downloaded, 0
+                    should.not.exist err
+                    downloaded.should.eql 0
                     fs.unlink destination, next
 
 

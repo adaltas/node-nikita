@@ -293,7 +293,7 @@ mecano = module.exports =
             creates = () ->
                 return success() unless options.creates?
                 path.exists options.creates, (exists) ->
-                    return next new Error 'Failed at creating expected file, manual cleanup is required' unless exists
+                    return next new Error "Failed to create '#{path.basename options.creates}'" unless exists
                     success()
             # Final step
             success = () ->

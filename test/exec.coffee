@@ -1,58 +1,63 @@
 
 {EventEmitter} = require 'events'
-assert = require 'assert'
+should = require 'should'
 mecano = require '../'
 
-module.exports = 
-    'exec # option # cmd': (next) ->
+describe 'exec', ->
+
+    it 'should exec', (next) ->
         mecano.exec
             cmd: 'text=yes; echo $text'
         , (err, executed, stdout, stderr) ->
-            assert.eql stdout, 'yes\n'
+            stdout.should.eql 'yes\n'
             next()
-    'exec # option # host': (next) ->
+    
+    it 'should use ssh', (next) ->
         mecano.exec
             host: 'localhost'
             cmd: 'text=yes; echo $text'
         , (err, executed, stdout, stderr) ->
-            assert.eql stdout, 'yes\n'
+            stdout.should.eql 'yes\n'
             next()
-    'exec # option # stdout': (next) ->
+    
+    it 'should stream stdout', (next) ->
         evemit = new EventEmitter
-        evemit.on 'data', (data) -> assert.eql stdout, 'yes\n'
+        evemit.on 'data', (data) -> stdout.should.eql 'yes\n'
         evemit.end = next
         mecano.exec
             host: 'localhost'
             cmd: 'text=yes; echo $text'
             stdout: evemit
         , (err, executed, stdout, stderr) ->
-            assert.eql stdout, undefined
-    'exec # option # code': (next) ->
+            should.not.exist stdout
+    
+    it 'should validate exit code', (next) ->
         # code undefined
         mecano.exec
             cmd: "ls -l #{__dirname}/toto"
         , (err, executed, stdout, stderr) ->
-            assert.eql err.message, 'Invalid exec code 1'
+            err.message.should.eql 'Invalid exec code 1'
             # code defined in array
             mecano.exec
                 cmd: "ls -l #{__dirname}/toto"
                 code: [0, 1]
             , (err, executed, stdout, stderr) ->
-                assert.ifError err
+                should.not.exist err
                 next()
-    'exec # option # if_exists': (next) ->
+    
+    it 'should honore conditions', (next) ->
         mecano.exec
             cmd: 'text=yes; echo $text'
             if_exists: __dirname
         , (err, executed, stdout, stderr) ->
-            assert.eql executed, 1
-            assert.eql stdout, 'yes\n'
+            executed.should.eql 1
+            stdout.should.eql 'yes\n'
             mecano.exec
                 cmd: 'text=yes; echo $text'
                 if_exists: "__dirname/toto"
             , (err, executed, stdout, stderr) ->
-                assert.eql executed, 0
-                assert.eql stdout, undefined
+                executed.should.eql 0
+                should.not.exist stdout
                 next()
 
 
