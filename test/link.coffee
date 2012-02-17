@@ -2,12 +2,15 @@
 fs = require 'fs'
 should = require 'should'
 mecano = require '../'
+test = require './test'
 
 describe 'link', ->
 
+    scratch = test.scratch @
+
     it 'should link file', (next) ->
         # Create a non existing link
-        destination = "#{__dirname}/link_test"
+        destination = "#{scratch}/link_test"
         mecano.link
             source: __filename
             destination: destination
@@ -23,11 +26,11 @@ describe 'link', ->
                 linked.should.eql 0
                 fs.lstat destination, (err, stat) ->
                     stat.isSymbolicLink().should.be.ok
-                    fs.unlink destination, next
+                    next()
     
     it 'should link dir', (next) ->
         # Create a non existing link
-        destination = "#{__dirname}/link_test"
+        destination = "#{scratch}/link_test"
         mecano.link
             source: __dirname
             destination: destination
@@ -43,7 +46,7 @@ describe 'link', ->
                 linked.should.eql 0
                 fs.lstat destination, (err, stat) ->
                     stat.isSymbolicLink().should.be.ok
-                    fs.unlink destination, next
+                    next()
     
     it 'should validate arguments', (next) ->
         # Test missing source

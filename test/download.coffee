@@ -3,15 +3,15 @@ fs = require 'fs'
 http = require 'http'
 should = require 'should'
 mecano = require '../'
+test = require './test'
 
 describe 'download', ->
 
-    # beforeEach (next) ->
-    #     next()
+    scratch = test.scratch @
 
     it 'should deal with http scheme', (next) ->
         source = 'http://127.0.0.1:12345'
-        destination = "#{__dirname}/download_test"
+        destination = "#{scratch}/download_test"
         server = http.createServer (req, res) ->
             res.writeHead 200, {'Content-Type': 'text/plain'}
             res.end 'okay'
@@ -33,12 +33,12 @@ describe 'download', ->
                     should.not.exist err
                     downloaded.should.eql 0
                     server.close()
-                    fs.unlink destination, next
+                    next()
     
     it 'should deal with ftp scheme', (next) ->
         @timeout 10000
         source = 'ftp://ftp.gnu.org/gnu/glibc/README.glibc'
-        destination = "#{__dirname}/download_test"
+        destination = "#{scratch}/download_test"
         # Download a non existing file
         mecano.download
             source: source
@@ -55,11 +55,11 @@ describe 'download', ->
                 , (err, downloaded) ->
                     should.not.exist err
                     downloaded.should.eql 0
-                    fs.unlink destination, next
+                    next()
     
     it 'should deal with file scheme', (next) ->
         source = "file://#{__filename}"
-        destination = "#{__dirname}/download_test"
+        destination = "#{scratch}/download_test"
         # Download a non existing file
         mecano.download
             source: source
@@ -76,7 +76,7 @@ describe 'download', ->
                 , (err, downloaded) ->
                     should.not.exist err
                     downloaded.should.eql 0
-                    fs.unlink destination, next
+                    next()
 
 
 

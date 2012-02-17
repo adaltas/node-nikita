@@ -3,12 +3,15 @@ fs = require 'fs'
 path = require 'path'
 should = require 'should'
 mecano = require '../'
+test = require './test'
 
 describe 'copy', ->
 
+    scratch = test.scratch @
+
     it 'should only copy if destination does not exists', (next) ->
         source = "#{__dirname}/../resources/a_dir/a_file"
-        destination = "#{__dirname}/a_new_file"
+        destination = "#{scratch}/a_new_file"
         mecano.copy
             source: source
             destination: destination
@@ -21,11 +24,11 @@ describe 'copy', ->
             , (err, copied) ->
                 should.not.exist err
                 copied.should.eql 0
-                mecano.rm destination, next
+                next()
 
     it 'should copy a file into an existing directory', (next) ->
         source = "#{__dirname}/../resources/a_dir/a_file"
-        destination = "#{__dirname}/"
+        destination = "#{scratch}/"
         # Copy non existing file
         mecano.copy
             source: source
@@ -42,7 +45,7 @@ describe 'copy', ->
                 , (err, copied) ->
                     should.not.exist err
                     copied.should.eql 0
-                    mecano.rm "#{destination}/a_file", next
+                    next()
     
     # it 'should copy a directory', (next) ->
     #     source = "#{__dirname}/../resources/a_dir"
@@ -59,7 +62,7 @@ describe 'copy', ->
     #         , (err, copied) ->
     #             should.not.exist err
     #             copied.should.eql 0
-    #             mecano.rm destination, next
+    #             next()
 
 
 

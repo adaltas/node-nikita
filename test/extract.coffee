@@ -1,14 +1,17 @@
 
 should = require 'should'
 mecano = require '../'
+test = require './test'
 
 describe 'extract', ->
+
+    scratch = test.scratch @
 
     it 'should see extension .tgz', (next) ->
         # Test a non existing extracted dir
         mecano.extract
             source: "#{__dirname}/../resources/a_dir.tgz"
-            destination: __dirname
+            destination: scratch
         , (err, extracted) ->
             should.not.exist err
             extracted.should.eql 1
@@ -17,17 +20,17 @@ describe 'extract', ->
             # it is in advance
             mecano.extract
                 source: "#{__dirname}/../resources/a_dir.tgz"
-                destination: __dirname
+                destination: scratch
             , (err, extracted) ->
                 should.not.exist err
                 extracted.should.eql 1
-                mecano.rm "#{__dirname}/a_dir", next
+                next()
     
     it 'should see extension .zip', (next) ->
         # Test a non existing extracted dir
         mecano.extract
             source: "#{__dirname}/../resources/a_dir.zip"
-            destination: __dirname
+            destination: scratch
         , (err, extracted) ->
             should.not.exist err
             extracted.should.eql 1
@@ -36,35 +39,35 @@ describe 'extract', ->
             # it is in advance
             mecano.extract
                 source: "#{__dirname}/../resources/a_dir.zip"
-                destination: __dirname
+                destination: scratch
             , (err, extracted) ->
                 should.not.exist err
                 extracted.should.eql 1
-                mecano.rm "#{__dirname}/a_dir", next
+                next()
     
     it 'should validate a created file', (next) ->
         # Test with invalid creates option
         mecano.extract
             source: "#{__dirname}/../resources/a_dir.tgz"
-            destination: __dirname
-            creates: "#{__dirname}/oh_no"
+            destination: scratch
+            creates: "#{scratch}/oh_no"
         , (err, extracted) ->
             err.message.should.eql "Failed to create 'oh_no'"
             # Test with valid creates option
             mecano.extract
                 source: "#{__dirname}/../resources/a_dir.tgz"
-                destination: __dirname
-                creates: "#{__dirname}/a_dir"
+                destination: scratch
+                creates: "#{scratch}/a_dir"
             , (err, extracted) ->
                 should.not.exist err
                 extracted.should.eql 1
-                mecano.rm "#{__dirname}/a_dir", next
+                next()
     
     it 'should # option # not_if_exists', (next) ->
         # Test with invalid creates option
         mecano.extract
             source: "#{__dirname}/../resources/a_dir.tgz"
-            destination: __dirname
+            destination: scratch
             not_if_exists: __dirname
         , (err, extracted) ->
             should.not.exist err

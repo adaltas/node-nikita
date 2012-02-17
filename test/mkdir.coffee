@@ -3,11 +3,14 @@ fs = require 'fs'
 path = require 'path'
 should = require 'should'
 mecano = require '../'
+test = require './test'
 
 describe 'mkdir', ->
 
+    scratch = test.scratch @
+
     it 'should create dir', (next) ->
-        source = "#{__dirname}/a_dir"
+        source = "#{scratch}/a_dir"
         mecano.mkdir
             directory: source
         , (err, created) ->
@@ -18,19 +21,19 @@ describe 'mkdir', ->
             , (err, created) ->
                 should.not.exist err
                 created.should.eql 0
-                mecano.rm source, next
+                next()
     
     it 'should create dir recursively', (next) ->
-        source = "#{__dirname}/a_parent_dir/a_dir"
+        source = "#{scratch}/a_parent_dir/a_dir"
         mecano.mkdir
             directory: source
         , (err, created) ->
             should.not.exist err
             created.should.eql 1
-            mecano.rm path.dirname(source), next
+            next()
     
     it 'should stop when `exclude` match', (next) ->
-        source = "#{__dirname}/a_parent_dir/a_dir/do_not_create_this"
+        source = "#{scratch}/a_parent_dir/a_dir/do_not_create_this"
         mecano.mkdir
             directory: source
             exclude: /^do/
@@ -42,5 +45,5 @@ describe 'mkdir', ->
                 source = path.dirname source
                 path.exists source, (exists) ->
                     exists.should.be.ok 
-                    mecano.rm path.dirname(source), next
+                    next()
 
