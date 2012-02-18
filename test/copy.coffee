@@ -26,6 +26,24 @@ describe 'copy', ->
                 copied.should.eql 0
                 next()
 
+    it 'should always copy with `force` option', (next) ->
+        source = "#{__dirname}/../resources/a_dir/a_file"
+        destination = "#{scratch}/a_new_file"
+        mecano.copy
+            source: source
+            destination: destination
+        , (err, copied) ->
+            should.not.exist err
+            copied.should.eql 1
+            mecano.copy
+                source: source
+                destination: destination
+                force: true
+            , (err, copied) ->
+                should.not.exist err
+                copied.should.eql 1
+                next()
+
     it 'should copy a file into an existing directory', (next) ->
         source = "#{__dirname}/../resources/a_dir/a_file"
         destination = "#{scratch}/"

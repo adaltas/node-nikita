@@ -27,6 +27,7 @@ mecano = module.exports =
 
     *   `source`            The file or directory to copy.
     *   `destination`       Where the file or directory is copied.
+    *   `force`             Copy the file even if one already exists.
     *   `not_if_exists`     Equals destination if true.
     *   `chmod`             Permissions of the file or the parent directory
 
@@ -63,7 +64,7 @@ mecano = module.exports =
                     # do not copy if destination exists
                     dirExists = not err and stat.isDirectory()
                     fileExists = not err and stat.isFile()
-                    return next null, 0 if fileExists
+                    return next null, 0 if fileExists and not options.force
                     # Update destination name and call copy again
                     return copy path.resolve options.destination, path.basename(options.source) if dirExists
                     # Copy
