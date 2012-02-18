@@ -47,3 +47,14 @@ describe 'mkdir', ->
                     exists.should.be.ok 
                     next()
 
+    it 'should honore `cwd` for relative paths', (next) ->
+        mecano.mkdir
+            directory: './a_dir'
+            cwd: scratch
+        , (err, created) ->
+            should.not.exist err
+            created.should.eql 1
+            path.exists "#{scratch}/a_dir", (exists) ->
+                exists.should.be.ok
+                next()
+

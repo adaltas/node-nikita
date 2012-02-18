@@ -440,19 +440,27 @@ mecano = module.exports =
     `mkdir(options, callback)` Recursively create a directory
     ---------------------------------------------------------
 
-    The behavior is similar to the Unix command `mkdir -p`
+    The behavior is similar to the Unix command `mkdir -p`. It supports
+    an alternative syntax where options is simply the path of the directory
+    to create.
 
     `options`               Command options includes:   
 
     *   `source`            Path or array of paths.   
     *   `directory`         Shortcut for `source`
     *   `exclude`           Regular expression.   
-    *   `chmod`             Default to 0755.   
+    *   `chmod`             Default to 0755.    
+    *   `cwd`               Current working directory for relative paths.   
 
     `callback`              Received parameters are:   
 
     *   `err`               Error object if any.   
     *   `created`           Number of created directories
+
+    Simple usage:
+
+        mecano.mkdir './some/dir', (err, created) ->
+            console.log err?.message ? created
 
     ###
     mkdir: (options, callback) ->
@@ -462,6 +470,8 @@ mecano = module.exports =
         .on 'item', (next, option) ->
             option = { source: option } if typeof option is 'string'
             option.source = option.directory if not option.source? and option.directory?
+            cwd = option.cwd ? process.cwd()
+            option.source = path.resolve cwd, option.source
             return next new Error 'Missing source option' unless option.source?
             check = () ->
                 # if exist and is a dir, skip
@@ -473,21 +483,23 @@ mecano = module.exports =
                     next err 'Invalid source, got #{JSON.encode(option.source)}'
             create = () ->
                 option.chmod ?= 0755
-                tmpDirs = option.source.split '/'
-                tmpDirCreate = ''
+                current = ''
                 dirCreated = false
-                each( tmpDirs )
-                .on 'item', (next, tmpDir) ->
+                dirs = option.source.split '/'
+                each( dirs )
+                .on 'item', (next, dir) ->
                     # Directory name contains variables
                     # eg /\${/ on './var/cache/${user}' creates './var/cache/'
                     if option.exclude? and option.exclude instanceof RegExp
-                        return next() if option.exclude.test tmpDir
+                        return next() if option.exclude.test dir
                     # Empty Dir caused by split
-                    return next() if tmpDir is ''
-                    tmpDirCreate += "/#{tmpDir}"
-                    path.exists tmpDirCreate, (exists) ->
+                    # ..commented because `resolve` should clean the path
+                    # return next() if dir is ''
+                    current += "/#{dir}"
+                    # console.log current
+                    path.exists current, (exists) ->
                         return next() if exists
-                        fs.mkdir tmpDirCreate, option.chmod, (err) ->
+                        fs.mkdir current, option.chmod, (err) ->
                             return next err if err
                             dirCreated = true
                             next()
@@ -514,7 +526,7 @@ mecano = module.exports =
     *   `err`               Error object if any.   
     *   `deleted`           Number of deleted sources.   
 
-    Exemple
+    Example
 
         mecano.rm './some/dir', (err, removed) ->
             console.log "#{removed} dir removed"
@@ -556,7 +568,7 @@ mecano = module.exports =
     `render(options, callback)` Render a template file
     --------------------------------------------------
     
-    At the moment, only the ECO templating engine is integrated.
+    At the moment, only the [ECO](http://github.com/sstephenson/eco) templating engine is integrated.
 
     `options`               Command options includes:   
 

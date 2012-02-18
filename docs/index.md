@@ -2,7 +2,7 @@
 language: en
 layout: page
 title: "Node Mecano: Common functions for system deployment"
-date: 2012-02-18T02:24:21.619Z
+date: 2012-02-18T14:36:50.793Z
 comments: false
 sharing: false
 footer: false
@@ -139,20 +139,29 @@ moment, supported extensions are '.tgz', '.tar.gz' and '.zip'.
 `mkdir(options, callback)` Recursively create a directory
 ---------------------------------------------------------
 
-The behavior is similar to the Unix command `mkdir -p`
+The behavior is similar to the Unix command `mkdir -p`. It supports
+an alternative syntax where options is simply the path of the directory
+to create.
 
 `options`               Command options includes:   
 
 *   `source`            Path or array of paths.   
 *   `directory`         Shortcut for `source`
 *   `exclude`           Regular expression.   
-*   `chmod`             Default to 0755.   
+*   `chmod`             Default to 0755.    
+*   `cwd`               Current working directory for relative paths.   
 
 `callback`              Received parameters are:   
 
 *   `err`               Error object if any.   
 *   `created`           Number of created directories
 
+Simple usage:
+```coffeescript
+
+mecano.mkdir './some/dir', (err, created) ->
+    console.log err?.message ? created
+```
 `rm` `remove(options, callback)` Recursively remove a file or directory
 ------------------------------------------------------
 
@@ -168,7 +177,7 @@ library.
 *   `err`               Error object if any.   
 *   `deleted`           Number of deleted sources.   
 
-Exemple
+Example
 ```coffeescript
 
 mecano.rm './some/dir', (err, removed) ->
@@ -193,7 +202,7 @@ mecano.rm [
 `render(options, callback)` Render a template file
 --------------------------------------------------
 
-At the moment, only the ECO templating engine is integrated.
+At the moment, only the [ECO](http://github.com/sstephenson/eco) templating engine is integrated.
 
 `options`               Command options includes:   
 
