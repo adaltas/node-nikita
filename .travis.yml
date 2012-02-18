@@ -4,5 +4,3 @@ node_js:
   - 0.4
   - 0.6
   - 0.7
-before_script:
-  - "sudo ssh-copy-id ${whoami}@localhost"
