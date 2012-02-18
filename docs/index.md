@@ -2,7 +2,7 @@
 language: en
 layout: page
 title: "Node Mecano: Common functions for system deployment"
-date: 2012-02-12T17:01:42.645Z
+date: 2012-02-18T02:24:21.619Z
 comments: false
 sharing: false
 footer: false
@@ -18,6 +18,7 @@ common API with flexible options.
 
 *   `source`            The file or directory to copy.
 *   `destination`       Where the file or directory is copied.
+*   `force`             Copy the file even if one already exists.
 *   `not_if_exists`     Equals destination if true.
 *   `chmod`             Permissions of the file or the parent directory
 
@@ -71,15 +72,14 @@ multiple commands. Note, `opts` inherites all the properties of `goptions`.
 or limited concurrent mode. See the `node-each` documentation for more 
 details. Default to sequential (false).
             
-`options`               Command options includes:   
+`options`               Include all conditions as well as:  
 
 *   `cmd`               String, Object or array; Command to execute.   
 *   `env`               Environment variables, default to `process.env`.   
 *   `cwd`               Current working directory.   
 *   `uid`               Unix user id.   
 *   `gid`               Unix group id.   
-*   `code`              Expected code returned by the command, default to 0.   
-*   `not_if_exists`     Dont run the command if the file exists.   
+*   `code`              Expected code(s) returned by the command, int or array of int, default to 0.   
 *   `host`              SSH host or IP address.   
 *   `username`          SSH host or IP address.   
 *   `stdout`            Writable EventEmitter in which command output will be piped.   
@@ -161,8 +161,7 @@ library.
 
 `options`               Command options includes:   
 
-*   `source`            File or directory.   
-*   `options`           Options passed to rimraf.   
+*   `source`            File or directory.     
 
 `callback`              Received parameters are:   
 

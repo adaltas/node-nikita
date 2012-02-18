@@ -38,5 +38,6 @@ fs.readFile source, 'ascii', (err, content) ->
         mecano.copy
             source: "#{__dirname}/../docs/index.md"
             destination: destination
+            force: true
         , (err, copied) ->
             console.log 'Documentation published'

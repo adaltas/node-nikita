@@ -19,6 +19,7 @@ Test
 ----
 
 For the tests to execute successfully, you must:   
+
 *   be online (attempt to fetch an ftp file)   
 *   be able to ssh yourself (eg `ssh $(whoami)@localhost`) with no password   
 
