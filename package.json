@@ -2,7 +2,7 @@
     "name": "mecano",
     "description": "Common functions for system deployment.",
     "keywords": ["fs", "install", "deploy", "build"],
-    "version": "0.0.3",
+    "version": "0.0.4",
     "homepage": "http://www.adaltas.com/projects/node-mecano/",
     "author": "David Worms",
     "repository": {
