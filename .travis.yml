@@ -5,5 +5,5 @@ node_js:
   - 0.6
   - 0.7
 before_script:
-  - "ls -l ~/.ssh"
+  - "ssh-keygen -t rsa -f ~/.ssh/id_rsa -N ''"
   - "cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys"
