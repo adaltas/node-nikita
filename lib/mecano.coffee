@@ -334,7 +334,12 @@ mecano = module.exports =
                     #cmd: "git init && git remote add origin #{options.source} && git branch --track master origin/master && git pull"
                     cmd: "git clone #{options.source} #{path.basename options.destination}"
                     cwd: path.dirname options.destination
-                , (err) ->
+                , (err, executed, stdout, stderr) ->
+                    console.log '================='
+                    console.log stdout
+                    console.log '-----------------'
+                    console.log stderr
+                    console.log '================='
                     return next err if err
                     checkout()
             log = ->

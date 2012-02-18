@@ -5,4 +5,4 @@ node_js:
   - 0.6
   - 0.7
 before_script:
-  - "sudo apt-get install git"
+  - "sudo ssh-copy-id ${whoami}@localhost"

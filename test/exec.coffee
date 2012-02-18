@@ -21,25 +21,30 @@ describe 'exec', ->
             next()
     
     it 'should stream stdout', (next) ->
+        @timeout 10000000
+        end_called = null
         evemit = new EventEmitter
-        evemit.on 'data', (data) -> stdout.should.eql 'yes\n'
-        evemit.end = next
+        evemit.writable = true
+        evemit.write = (data) ->
+            data.should.include 'myself'
+        evemit.end = -> end_called = true
         mecano.exec
-            host: 'localhost'
-            cmd: 'text=yes; echo $text'
+            cmd: "cat #{__filename}"
             stdout: evemit
         , (err, executed, stdout, stderr) ->
             should.not.exist stdout
+            end_called.should.be.ok
+            next()
     
     it 'should validate exit code', (next) ->
         # code undefined
         mecano.exec
-            cmd: "ls -l #{__dirname}/toto"
+            cmd: "chown"
         , (err, executed, stdout, stderr) ->
             err.message.should.eql 'Invalid exec code 1'
             # code defined in array
             mecano.exec
-                cmd: "ls -l #{__dirname}/toto"
+                cmd: "chown"
                 code: [0, 1]
             , (err, executed, stdout, stderr) ->
                 should.not.exist err
