@@ -335,11 +335,6 @@ mecano = module.exports =
                     cmd: "git clone #{options.source} #{path.basename options.destination}"
                     cwd: path.dirname options.destination
                 , (err, executed, stdout, stderr) ->
-                    console.log '================='
-                    console.log stdout
-                    console.log '-----------------'
-                    console.log stderr
-                    console.log '================='
                     return next err if err
                     checkout()
             log = ->
