@@ -4,7 +4,7 @@
     "keywords": ["fs", "install", "deploy", "build"],
     "version": "0.0.4",
     "homepage": "http://www.adaltas.com/projects/node-mecano/",
-    "author": "David Worms",
+    "author": "David Worms <david@adaltas.com>",
     "repository": {
         "type": "git",
         "url": "https://github.com/wdavidw/node-mecano"
@@ -35,5 +35,3 @@
         "test": "mocha"
     }
 }
-
-	

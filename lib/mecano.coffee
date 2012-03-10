@@ -23,7 +23,7 @@ mecano = module.exports =
     `cp` `copy(options, callback)` Copy a file
     ------------------------------------------
 
-    `options`               Command options includes:   
+    `options`               Command options include:   
 
     *   `source`            The file or directory to copy.
     *   `destination`       Where the file or directory is copied.
@@ -94,7 +94,7 @@ mecano = module.exports =
 
     Note, GIT is not yet supported but documented as a wished feature.
 
-    `options`               Command options includes:   
+    `options`               Command options include:   
 
     *   `source`            File, HTTP URL, FTP, GIT repository. File is the default protocol if source is provided without a scheme.   
     *   `destination`       Path where the file is downloaded.   
@@ -249,7 +249,7 @@ mecano = module.exports =
     an option, format is derived from the source extension. At the 
     moment, supported extensions are '.tgz', '.tar.gz' and '.zip'.   
 
-    `options`               Command options includes:   
+    `options`               Command options include:   
 
     *   `source`            Archive to decompress.   
     *   `destination`       Default to the source parent directory.   
@@ -308,7 +308,7 @@ mecano = module.exports =
     `git`
     ---------
 
-    `options`               Command options includes:   
+    `options`               Command options include:   
 
     *   `source`            Git source repository address.
     *   `destination`       Directory where to clone the repository.
@@ -371,7 +371,7 @@ mecano = module.exports =
     `ln` `link(options, callback)` Create a symbolic link
     ------------------------------------------------
 
-    `options`               Command options includes:   
+    `options`               Command options include:   
 
     *   `source`            Referenced file to be linked.   
     *   `destination`       Symbolic link to be created.   
@@ -444,7 +444,7 @@ mecano = module.exports =
     an alternative syntax where options is simply the path of the directory
     to create.
 
-    `options`               Command options includes:   
+    `options`               Command options include:   
 
     *   `source`            Path or array of paths.   
     *   `directory`         Shortcut for `source`
@@ -517,7 +517,7 @@ mecano = module.exports =
     Internally, the function use the [rimraf](https://github.com/isaacs/rimraf) 
     library.
 
-    `options`               Command options includes:   
+    `options`               Command options include:   
 
     *   `source`            File or directory.     
 
@@ -570,7 +570,7 @@ mecano = module.exports =
     
     At the moment, only the [ECO](http://github.com/sstephenson/eco) templating engine is integrated.
 
-    `options`               Command options includes:   
+    `options`               Command options include:   
 
     *   `engine`            Template engine to use, default to "eco"
     *   `content`           Templated content, bypassed if source is provided.
