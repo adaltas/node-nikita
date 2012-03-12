@@ -20,8 +20,10 @@ common API with flexible options.
 mecano = module.exports = 
     ###
 
-    `cp` `copy(options, callback)` Copy a file
-    ------------------------------------------
+    `cp` `copy(options, callback)`
+    ------------------------------
+
+    Copy a file.
 
     `options`               Command options include:   
 
@@ -86,10 +88,11 @@ mecano = module.exports =
             callback err, copied
     ###
 
-    `download(options, callback)` Download files using various protocols
-    --------------------------------------------------------------------
+    `download(options, callback)`
+    -----------------------------
 
-    The excellent [open-uri](https://github.com/publicclass/open-uri) module provides support for HTTP(S), 
+    Download files using various protocols. The excellent 
+    [open-uri](https://github.com/publicclass/open-uri) module provides support for HTTP(S), 
     file and FTP. All the options supported by open-uri are passed to it.
 
     Note, GIT is not yet supported but documented as a wished feature.
@@ -144,9 +147,9 @@ mecano = module.exports =
             callback err, downloaded
     ###
 
-    `exec` `execute`([goptions], options, callback)` Run a command locally or with ssh
-    ----------------------------------------------------------------------------------
-    Command is send over ssh if the `host` is provided. Global options is
+    `exec` `execute`([goptions], options, callback)`
+    ------------------------------------------------
+    Run a command locally or with ssh if the `host` is provided. Global options is
     optional and is used in case where options is defined as an array of 
     multiple commands. Note, `opts` inherites all the properties of `goptions`.
 
@@ -242,11 +245,11 @@ mecano = module.exports =
             callback err, executed, stdouts, stderrs
     ###
 
-    `extract(options, callback)` Extract an archive
-    -----------------------------------------------
+    `extract(options, callback)` 
+    ----------------------------
 
-    Multiple compression types are supported. Unless specified as 
-    an option, format is derived from the source extension. At the 
+    Extract an archive. Multiple compression types are supported. Unless 
+    specified asan option, format is derived from the source extension. At the 
     moment, supported extensions are '.tgz', '.tar.gz' and '.zip'.   
 
     `options`               Command options include:   
@@ -306,7 +309,7 @@ mecano = module.exports =
     ###
     
     `git`
-    ---------
+    -----
 
     `options`               Command options include:   
 
@@ -368,8 +371,10 @@ mecano = module.exports =
 
     ###
 
-    `ln` `link(options, callback)` Create a symbolic link
-    ------------------------------------------------
+    `ln` `link(options, callback)`
+    ------------------------------
+    Create a symbolic link and it's parent directories if they don't yet
+    exist.
 
     `options`               Command options include:   
 
@@ -387,6 +392,7 @@ mecano = module.exports =
     link: (options, callback) ->
         options = misc.options options
         linked = 0
+
         sym_exists = (option, callback) ->
             path.exists option.destination, (exists) ->
                 return callback null, false unless exists
@@ -419,29 +425,34 @@ mecano = module.exports =
                     return callback err if err
                     linked++
                     callback()
-        each( options )
-        .parallel( true )
-        .on 'item', (next, option) ->
-            return next new Error "Missing source, got #{JSON.stringify(option.source)}" unless option.source
-            return next new Error "Missing destination, got #{JSON.stringify(option.destination)}" unless option.destination
-            option.chmod ?= 0755
-            if option.exec
-                exec_exists option, (err, exists) ->
-                    return next() if exists
-                    exec_create option, next
-            else
-                sym_exists option, (err, exists) ->
-                    return next() if exists
-                    sym_create option, next
-        .on 'both', (err) ->
-            callback err, linked
+        parents = for option in options then path.normalize path.dirname option.destination
+        mecano.mkdir parents, (err, created) ->
+            return callback err if err
+            each( options )
+            .parallel( true )
+            .on 'item', (next, option) ->
+                return next new Error "Missing source, got #{JSON.stringify(option.source)}" unless option.source
+                return next new Error "Missing destination, got #{JSON.stringify(option.destination)}" unless option.destination
+                option.chmod ?= 0755
+                dispatch = ->
+                    if option.exec
+                        exec_exists option, (err, exists) ->
+                            return next() if exists
+                            exec_create option, next
+                    else
+                        sym_exists option, (err, exists) ->
+                            return next() if exists
+                            sym_create option, next
+                dispatch()
+            .on 'both', (err) ->
+                callback err, linked
     ###
 
-    `mkdir(options, callback)` Recursively create a directory
-    ---------------------------------------------------------
+    `mkdir(options, callback)`
+    --------------------------
 
-    The behavior is similar to the Unix command `mkdir -p`. It supports
-    an alternative syntax where options is simply the path of the directory
+    Recursively create a directory. The behavior is similar to the Unix command `mkdir -p`. 
+    It supports an alternative syntax where options is simply the path of the directory
     to create.
 
     `options`               Command options include:   
@@ -511,11 +522,11 @@ mecano = module.exports =
             callback err, created
     ###
 
-    `rm` `remove(options, callback)` Recursively remove a file or directory
-    ------------------------------------------------------
+    `rm` `remove(options, callback)`
+    --------------------------------
 
-    Internally, the function use the [rimraf](https://github.com/isaacs/rimraf) 
-    library.
+    Recursively remove a file or directory. Internally, the function 
+    use the [rimraf](https://github.com/isaacs/rimraf) library.
 
     `options`               Command options include:   
 
@@ -565,10 +576,11 @@ mecano = module.exports =
             callback err, deleted
     ###
 
-    `render(options, callback)` Render a template file
-    --------------------------------------------------
+    `render(options, callback)`
+    ---------------------------
     
-    At the moment, only the [ECO](http://github.com/sstephenson/eco) templating engine is integrated.
+    Render a template file At the moment, only the 
+    [ECO](http://github.com/sstephenson/eco) templating engine is integrated.
 
     `options`               Command options include:   
 
