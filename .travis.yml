@@ -2,7 +2,7 @@
 language: node_js
 node_js:
   - 0.6
-  #- 0.7
+  - 0.7
 before_script:
   - "ssh-keygen -t rsa -f ~/.ssh/id_rsa -N ''"
   - "cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys"
