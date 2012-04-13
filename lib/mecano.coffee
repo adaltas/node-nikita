@@ -433,7 +433,7 @@ mecano = module.exports =
             .on 'item', (next, option) ->
                 return next new Error "Missing source, got #{JSON.stringify(option.source)}" unless option.source
                 return next new Error "Missing destination, got #{JSON.stringify(option.destination)}" unless option.destination
-                option.chmod ?= 0755
+                option.chmod ?= 0o0755
                 dispatch = ->
                     if option.exec
                         exec_exists option, (err, exists) ->
@@ -493,7 +493,7 @@ mecano = module.exports =
                     return next() if stat.isDirectory()
                     next err 'Invalid source, got #{JSON.encode(option.source)}'
             create = () ->
-                option.chmod ?= 0755
+                option.chmod ?= 0o0755
                 current = ''
                 dirCreated = false
                 dirs = option.source.split '/'

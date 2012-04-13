@@ -8,7 +8,7 @@ module.exports =
         if arguments.length is 2
             callback = host
             host = '127.0.0.1'
-        exec "nc #{host} #{port} < /dev/null", (err, stdout, stdout) ->
+        exec "nc #{host} #{port} < /dev/null", (err, stdout, stderr) ->
             return callback null, true unless err
             return callback null, false if err.code is 1
             callback err
