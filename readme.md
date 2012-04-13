@@ -3,8 +3,7 @@
 Node Mecano
 ===========
 
-Mecano gather a set of functions usually used during system deployment. All the functions share a 
-common API with flexible options.
+Mecano gather a set of functions usually used during system deployment. All the functions share a common API with flexible options.
 
 Documentation is available on the [project website](http://www.adaltas.com/projects/node-mecano/).
 
@@ -21,7 +20,7 @@ Test
 For the tests to execute successfully, you must:   
 
 *   be online (attempt to fetch an ftp file)   
-*   be able to ssh yourself (eg `ssh $(whoami)@localhost`) with no password   
+*   be able to ssh yourself (eg `ssh $(whoami)@localhost`) without a password   
 
 ```bash
     npm test
