@@ -57,7 +57,7 @@ mecano.download
     source: 'https://github.com/wdavidw/node-sigar/tarball/v0.0.1'
     destination: 'node-sigar.tgz'
 , (err, downloaded) ->
-    path.exists 'node-sigar.tgz', (exists) ->
+    fs.exists 'node-sigar.tgz', (exists) ->
         assert.ok exists
 ```
 `exec` `execute`([goptions], options, callback)` Run a command locally or with ssh
