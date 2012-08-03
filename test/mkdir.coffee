@@ -40,10 +40,10 @@ describe 'mkdir', ->
         , (err, created) ->
             should.not.exist err
             created.should.eql 1
-            path.exists source, (exists) ->
+            fs.exists source, (exists) ->
                 exists.should.not.be.ok
                 source = path.dirname source
-                path.exists source, (exists) ->
+                fs.exists source, (exists) ->
                     exists.should.be.ok 
                     next()
 
@@ -54,7 +54,7 @@ describe 'mkdir', ->
         , (err, created) ->
             should.not.exist err
             created.should.eql 1
-            path.exists "#{scratch}/a_dir", (exists) ->
+            fs.exists "#{scratch}/a_dir", (exists) ->
                 exists.should.be.ok
                 next()
 

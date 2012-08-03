@@ -1,6 +1,5 @@
 
 fs = require 'fs'
-path = require 'path'
 should = require 'should'
 mecano = require '../'
 test = require './test'
@@ -54,7 +53,7 @@ describe 'copy', ->
         , (err, copied) ->
             should.not.exist err
             copied.should.eql 1
-            path.exists "#{destination}/a_file", (exists) ->
+            fs.exists "#{destination}/a_file", (exists) ->
                 should.ok exists
                 # Copy over existing file
                 mecano.copy

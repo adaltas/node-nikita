@@ -22,19 +22,25 @@ describe 'exec', ->
     
     it 'should stream stdout', (next) ->
         @timeout 10000000
-        end_called = null
+        writer_done = callback_done = null
+        # Since version node 0.8, the `writer.end` function 
+        # is called after `mecano.exec` callback
         evemit = new EventEmitter
         evemit.writable = true
         evemit.write = (data) ->
             data.should.include 'myself'
-        evemit.end = -> end_called = true
+        evemit.end = ->
+            writer_done = true
+            done()
         mecano.exec
             cmd: "cat #{__filename}"
             stdout: evemit
         , (err, executed, stdout, stderr) ->
             should.not.exist stdout
-            end_called.should.be.ok
-            next()
+            callback_done = true
+            done()
+        done = ->
+            next() if writer_done and callback_done
     
     it 'should validate exit code', (next) ->
         # code undefined

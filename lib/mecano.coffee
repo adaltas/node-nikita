@@ -1,6 +1,7 @@
 
 fs = require 'fs'
 path = require 'path'
+exists = fs.exists or path.exists
 util = require 'util'
 each = require 'each'
 eco = require 'eco'
@@ -68,7 +69,7 @@ mecano = module.exports =
                     fileExists = not err and stat.isFile()
                     return next null, 0 if fileExists and not options.force
                     # Update destination name and call copy again
-                    return copy path.resolve options.destination, path.basename(options.source) if dirExists
+                    return copy path.resolve options.destination, path.basename options.source if dirExists
                     # Copy
                     input = fs.createReadStream options.source
                     output = fs.createWriteStream destination
@@ -113,7 +114,7 @@ mecano = module.exports =
             source: 'https://github.com/wdavidw/node-sigar/tarball/v0.0.1'
             destination: 'node-sigar.tgz'
         , (err, downloaded) ->
-            path.exists 'node-sigar.tgz', (exists) ->
+            exists 'node-sigar.tgz', (exists) ->
                 assert.ok exists
     
     ###
@@ -133,7 +134,7 @@ mecano = module.exports =
                     next()
                 destination.on 'error', (err) ->
                     next err
-            path.exists options.destination, (exists) ->
+            exists options.destination, (exists) ->
                 # Use previous download
                 if exists and not options.force
                     return next()
@@ -234,7 +235,7 @@ mecano = module.exports =
                         return next err
                     next()
             # if option.not_if_exists
-            #     path.exists option.not_if_exists, (exists) ->
+            #     exists option.not_if_exists, (exists) ->
             #         if exists then next() else cmd()
             # else
             #     cmd()
@@ -296,7 +297,7 @@ mecano = module.exports =
             # Step for `creates`
             creates = () ->
                 return success() unless options.creates?
-                path.exists options.creates, (exists) ->
+                exists options.creates, (exists) ->
                     return next new Error "Failed to create '#{path.basename options.creates}'" unless exists
                     success()
             # Final step
@@ -394,7 +395,7 @@ mecano = module.exports =
         linked = 0
 
         sym_exists = (option, callback) ->
-            path.exists option.destination, (exists) ->
+            exists option.destination, (exists) ->
                 return callback null, false unless exists
                 fs.readlink option.destination, (err, resolvedPath) ->
                     return callback err if err
@@ -408,7 +409,7 @@ mecano = module.exports =
                 linked++
                 callback()
         exec_exists = (option, callback) ->
-            path.exists option.destination, (exists) ->
+            exists option.destination, (exists) ->
                 return callback null, false unless exists
                 fs.readFile option.destination, 'ascii', (err, content) ->
                     return callback err if err
@@ -508,7 +509,7 @@ mecano = module.exports =
                     # return next() if dir is ''
                     current += "/#{dir}"
                     # console.log current
-                    path.exists current, (exists) ->
+                    exists current, (exists) ->
                         return next() if exists
                         fs.mkdir current, option.chmod, (err) ->
                             return next err if err
@@ -605,7 +606,7 @@ mecano = module.exports =
             return next new Error 'Missing destination' unless option.destination
             readSource = ->
                 return writeContent() unless option.source
-                path.exists option.source, (exists) ->
+                exists option.source, (exists) ->
                     return next new Error "Invalid source, got #{JSON.stringify(option.source)}" unless exists
                     fs.readFile option.source, (err, content) ->
                         return next err if err

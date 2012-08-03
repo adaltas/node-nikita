@@ -1,5 +1,7 @@
 
+fs = require 'fs'
 path = require 'path'
+exists = fs.exists or path.exists
 each = require 'each'
 
 ###
@@ -81,7 +83,7 @@ module.exports =
         return succeed() unless options.if_exists?
         each(options.if_exists)
         .on 'item', (next, if_exists) ->
-            path.exists if_exists, (exists) ->
+            exists if_exists, (exists) ->
                 if exists
                 then next()
                 else failed()
@@ -102,7 +104,7 @@ module.exports =
         return succeed() unless options.not_if_exists?
         each(options.not_if_exists)
         .on 'item', (next, not_if_exists) ->
-            path.exists not_if_exists, (exists) ->
+            exists not_if_exists, (exists) ->
                 if exists
                 then failed()
                 else next()
