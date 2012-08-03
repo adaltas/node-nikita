@@ -1,7 +1,7 @@
 
 fs = require 'fs'
 path = require 'path'
-exists = fs.exists or path.exists
+fs.exists ?= path.exists
 should = require 'should'
 mecano = require '../'
 test = require './test'
@@ -41,10 +41,10 @@ describe 'mkdir', ->
         , (err, created) ->
             should.not.exist err
             created.should.eql 1
-            exists source, (created) ->
+            fs.exists source, (created) ->
                 created.should.not.be.ok
                 source = path.dirname source
-                exists source, (created) ->
+                fs.exists source, (created) ->
                     created.should.be.ok 
                     next()
 
@@ -55,7 +55,7 @@ describe 'mkdir', ->
         , (err, created) ->
             should.not.exist err
             created.should.eql 1
-            exists "#{scratch}/a_dir", (created) ->
+            fs.exists "#{scratch}/a_dir", (created) ->
                 created.should.be.ok
                 next()
 

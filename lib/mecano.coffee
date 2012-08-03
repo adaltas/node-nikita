@@ -1,7 +1,7 @@
 
 fs = require 'fs'
 path = require 'path'
-exists = fs.exists or path.exists
+fs.exists ?= path.exists
 util = require 'util'
 each = require 'each'
 eco = require 'eco'
@@ -114,7 +114,7 @@ mecano = module.exports =
             source: 'https://github.com/wdavidw/node-sigar/tarball/v0.0.1'
             destination: 'node-sigar.tgz'
         , (err, downloaded) ->
-            exists 'node-sigar.tgz', (exists) ->
+            fs.exists 'node-sigar.tgz', (exists) ->
                 assert.ok exists
     
     ###
@@ -134,7 +134,7 @@ mecano = module.exports =
                     next()
                 destination.on 'error', (err) ->
                     next err
-            exists options.destination, (exists) ->
+            fs.exists options.destination, (exists) ->
                 # Use previous download
                 if exists and not options.force
                     return next()
@@ -235,7 +235,7 @@ mecano = module.exports =
                         return next err
                     next()
             # if option.not_if_exists
-            #     exists option.not_if_exists, (exists) ->
+            #     fs.exists option.not_if_exists, (exists) ->
             #         if exists then next() else cmd()
             # else
             #     cmd()
@@ -297,7 +297,7 @@ mecano = module.exports =
             # Step for `creates`
             creates = () ->
                 return success() unless options.creates?
-                exists options.creates, (exists) ->
+                fs.exists options.creates, (exists) ->
                     return next new Error "Failed to create '#{path.basename options.creates}'" unless exists
                     success()
             # Final step
@@ -395,7 +395,7 @@ mecano = module.exports =
         linked = 0
 
         sym_exists = (option, callback) ->
-            exists option.destination, (exists) ->
+            fs.exists option.destination, (exists) ->
                 return callback null, false unless exists
                 fs.readlink option.destination, (err, resolvedPath) ->
                     return callback err if err
@@ -409,7 +409,7 @@ mecano = module.exports =
                 linked++
                 callback()
         exec_exists = (option, callback) ->
-            exists option.destination, (exists) ->
+            fs.exists option.destination, (exists) ->
                 return callback null, false unless exists
                 fs.readFile option.destination, 'ascii', (err, content) ->
                     return callback err if err
@@ -509,7 +509,7 @@ mecano = module.exports =
                     # return next() if dir is ''
                     current += "/#{dir}"
                     # console.log current
-                    exists current, (exists) ->
+                    fs.exists current, (exists) ->
                         return next() if exists
                         fs.mkdir current, option.chmod, (err) ->
                             return next err if err
@@ -606,7 +606,7 @@ mecano = module.exports =
             return next new Error 'Missing destination' unless option.destination
             readSource = ->
                 return writeContent() unless option.source
-                exists option.source, (exists) ->
+                fs.exists option.source, (exists) ->
                     return next new Error "Invalid source, got #{JSON.stringify(option.source)}" unless exists
                     fs.readFile option.source, (err, content) ->
                         return next err if err
