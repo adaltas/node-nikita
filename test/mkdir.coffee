@@ -41,11 +41,11 @@ describe 'mkdir', ->
         , (err, created) ->
             should.not.exist err
             created.should.eql 1
-            exists source, (exists) ->
-                exists.should.not.be.ok
+            exists source, (created) ->
+                created.should.not.be.ok
                 source = path.dirname source
-                exists source, (exists) ->
-                    exists.should.be.ok 
+                exists source, (created) ->
+                    created.should.be.ok 
                     next()
 
     it 'should honore `cwd` for relative paths', (next) ->
@@ -55,7 +55,7 @@ describe 'mkdir', ->
         , (err, created) ->
             should.not.exist err
             created.should.eql 1
-            exists "#{scratch}/a_dir", (exists) ->
-                exists.should.be.ok
+            exists "#{scratch}/a_dir", (created) ->
+                created.should.be.ok
                 next()
 
