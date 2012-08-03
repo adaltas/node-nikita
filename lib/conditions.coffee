@@ -64,9 +64,8 @@ module.exports =
             else if typeof si is 'function'
                 si options, ( -> ok = false; next arguments...), next
         .on 'both', (err) ->
-            if err or not ok
-            then failed err
-            else succeed()
+            return failed err if err or not ok
+            succeed()
     ###
     
     `if_exists` Run action if a file exists
@@ -83,10 +82,10 @@ module.exports =
         return succeed() unless options.if_exists?
         each(options.if_exists)
         .on 'item', (next, if_exists) ->
-            fs.exists if_exists, (exists) ->
-                if exists
-                then next()
-                else failed()
+            await fs.exists if_exists, defer exists
+            if exists then next() else failed()
+            # await fs.exists if_exists, defer exists
+            # if exists then next() else failed()
         .on 'end', succeed
     ###
 
@@ -108,4 +107,6 @@ module.exports =
                 if exists
                 then failed()
                 else next()
+            # await fs.exists not_if_exists, defer exists
+            # if exists then failed() else next()
         .on 'end', succeed

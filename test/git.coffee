@@ -27,36 +27,36 @@ describe 'git', ->
     #             next()
 
     it 'should clone repo into new dir', (next) ->
-        mecano.git
+        await mecano.git
             source: "#{scratch}/repo.git"
             destination: "#{scratch}/my_repo"
-        , (err, updated) ->
-            should.not.exist err
-            updated.should.eql 1
-            mecano.git
-                source: "#{scratch}/repo.git"
-                destination: "#{scratch}/my_repo"
-            , (err, updated) ->
-                updated.should.eql 0
-                next()
+        , defer err, updated
+        should.not.exist err
+        updated.should.eql 1
+        await mecano.git
+            source: "#{scratch}/repo.git"
+            destination: "#{scratch}/my_repo"
+        , defer err, updated
+        updated.should.eql 0
+        next()
 
     it 'should honore revision', (next) ->
-        mecano.git
+        await mecano.git
             source: "#{scratch}/repo.git"
             destination: "#{scratch}/my_repo"
-        , (err, updated) ->
-            should.not.exist err
-            mecano.git
-                source: "#{scratch}/repo.git"
-                destination: "#{scratch}/my_repo"
-                revision: 'v0.0.1'
-            , (err, updated) ->
-                updated.should.eql 1
-                mecano.git
-                    source: "#{scratch}/repo.git"
-                    destination: "#{scratch}/my_repo"
-                    revision: 'v0.0.1'
-                , (err, updated) ->
-                    updated.should.eql 0
-                    next()
+        , defer err, updated
+        should.not.exist err
+        await mecano.git
+            source: "#{scratch}/repo.git"
+            destination: "#{scratch}/my_repo"
+            revision: 'v0.0.1'
+        , defer err, updated
+        updated.should.eql 1
+        await mecano.git
+            source: "#{scratch}/repo.git"
+            destination: "#{scratch}/my_repo"
+            revision: 'v0.0.1'
+        , defer err, updated
+        updated.should.eql 0
+        next()
 

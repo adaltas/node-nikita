@@ -14,7 +14,7 @@
         "url": "http://github.com/wdavidw/node-mecano/issues"
     },
     "dependencies": {
-        "coffee-script": "latest",
+        "iced-coffee-script": "latest",
         "eco": "latest",
         "each": "latest",
         "ftp": "latest",

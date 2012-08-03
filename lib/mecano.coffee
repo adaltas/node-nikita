@@ -134,16 +134,26 @@ mecano = module.exports =
                     next()
                 destination.on 'error', (err) ->
                     next err
-            fs.exists options.destination, (exists) ->
-                # Use previous download
-                if exists and not options.force
-                    return next()
-                # Remove previous dowload and download again
-                else if exists
-                    return rimraf options.destination, (err) ->
-                        return next err if err
-                        download()
-                else download()
+            # fs.exists options.destination, (exists) ->
+            #     # Use previous download
+            #     if exists and not options.force
+            #         return next()
+            #     # Remove previous dowload and download again
+            #     else if exists
+            #         return rimraf options.destination, (err) ->
+            #             return next err if err
+            #             download()
+            #     else download() 
+            await fs.exists options.destination, defer exists
+            # Use previous download
+            if exists and not options.force
+                next()
+            # Remove previous dowload and download again
+            else if exists
+                await rimraf options.destination, defer err
+                return next err if err
+                download()
+            else download()
         .on 'both', (err) ->
             callback err, downloaded
     ###
@@ -291,15 +301,15 @@ mecano = module.exports =
                 switch format
                     when 'tgz' then cmd = "tar xzf #{options.source} -C #{destination}"
                     when 'zip' then cmd = "unzip -u #{options.source} -d #{destination}"
-                exec cmd, (err, stdout, stderr) ->
-                    return next err if err
-                    creates()
+                await exec cmd, defer err, stdout, stderr
+                return next err if err
+                creates()
             # Step for `creates`
             creates = () ->
                 return success() unless options.creates?
-                fs.exists options.creates, (exists) ->
-                    return next new Error "Failed to create '#{path.basename options.creates}'" unless exists
-                    success()
+                await fs.exists options.creates, defer exists
+                return next new Error "Failed to create '#{path.basename options.creates}'" unless exists
+                success()
             # Final step
             success = () ->
                 extracted++
@@ -331,41 +341,39 @@ mecano = module.exports =
                     return clone() if err and err.code is 'ENOENT'
                     return next new Error "Destination not a directory, got #{options.destination}" unless stat.isDirectory()
                     gitDir = "#{options.destination}/.git"
-                    fs.stat gitDir, (err, stat) ->
-                        return next err if err or not stat.isDirectory()
-                        log()
+                    await fs.stat gitDir, defer err, stat
+                    return next err if err or not stat.isDirectory()
+                    log()
             clone = ->
-                mecano.exec
-                    #cmd: "git init && git remote add origin #{options.source} && git branch --track master origin/master && git pull"
+                await mecano.exec
                     cmd: "git clone #{options.source} #{path.basename options.destination}"
                     cwd: path.dirname options.destination
-                , (err, executed, stdout, stderr) ->
-                    return next err if err
-                    checkout()
+                , defer err, executed, stdout, stderr
+                return next err if err
+                checkout()
             log = ->
-                mecano.exec
+                await mecano.exec
                     cmd: "git log --pretty=format:'%H' -n 1"
                     cwd: options.destination
-                , (err, executed, stdout, stderr) ->
-                    return next err if err
-                    current = stdout.trim()
-                    mecano.exec
-                        cmd: "git rev-list --max-count=1 #{options.revision}"
-                        cwd: options.destination
-                    , (err, executed, stdout, stderr) ->
-                        return next err if err
-                        if stdout.trim() isnt current
-                        then checkout()
-                        else next()
+                , defer err, executed, stdout, stderr
+                return next err if err
+                current = stdout.trim()
+                await mecano.exec
+                    cmd: "git rev-list --max-count=1 #{options.revision}"
+                    cwd: options.destination
+                , defer err, executed, stdout, stderr
+                return next err if err
+                if stdout.trim() isnt current
+                then checkout()
+                else next()
             checkout = ->
-                mecano.exec
+                await mecano.exec
                     cmd: "git checkout #{options.revision}"
                     cwd: options.destination
-                , (err) ->
-                    return next err if err
-                    updated++
-                    next()
-            new_rev = ->
+                , defer err
+                return next err if err
+                updated++
+                next()
             conditions.all options, next, prepare
         .on 'both', (err) ->
             callback err, updated
@@ -395,58 +403,58 @@ mecano = module.exports =
         linked = 0
 
         sym_exists = (option, callback) ->
-            fs.exists option.destination, (exists) ->
-                return callback null, false unless exists
-                fs.readlink option.destination, (err, resolvedPath) ->
-                    return callback err if err
-                    return callback null, true if resolvedPath is option.source
-                    fs.unlink option.destination, (err) ->
-                        return callback err if err
-                        callback null, false
+            await fs.exists option.destination, defer exists
+            return callback null, false unless exists
+            await fs.readlink option.destination, defer err, resolvedPath
+            return callback err if err
+            return callback null, true if resolvedPath is option.source
+            await fs.unlink option.destination, defer err
+            return callback err if err
+            callback null, false
         sym_create = (option, callback) ->
-            fs.symlink option.source, option.destination, (err) ->
-                return callback err if err
-                linked++
-                callback()
+            await fs.symlink option.source, option.destination, defer err
+            return callback err if err
+            linked++
+            callback()
         exec_exists = (option, callback) ->
-            fs.exists option.destination, (exists) ->
-                return callback null, false unless exists
-                fs.readFile option.destination, 'ascii', (err, content) ->
-                    return callback err if err
-                    exec_cmd = /exec (.*) \$@/.exec(content)[1]
-                    callback null, exec_cmd and exec_cmd is option.source
+            await fs.exists option.destination, defer exists
+            return callback null, false unless exists
+            await fs.readFile option.destination, 'ascii', defer err, content
+            return callback err if err
+            exec_cmd = /exec (.*) \$@/.exec(content)[1]
+            callback null, exec_cmd and exec_cmd is option.source
         exec_create = (option, callback) ->
             content = """
             #!/bin/bash
             exec #{option.source} $@
             """
-            fs.writeFile option.destination, content, (err) ->
-                return callback err if err
-                fs.chmod option.destination, option.chmod, (err) ->
-                    return callback err if err
-                    linked++
-                    callback()
-        parents = for option in options then path.normalize path.dirname option.destination
-        mecano.mkdir parents, (err, created) ->
+            await fs.writeFile option.destination, content, defer err
             return callback err if err
-            each( options )
-            .parallel( true )
-            .on 'item', (next, option) ->
-                return next new Error "Missing source, got #{JSON.stringify(option.source)}" unless option.source
-                return next new Error "Missing destination, got #{JSON.stringify(option.destination)}" unless option.destination
-                option.chmod ?= 0o0755
-                dispatch = ->
-                    if option.exec
-                        exec_exists option, (err, exists) ->
-                            return next() if exists
-                            exec_create option, next
-                    else
-                        sym_exists option, (err, exists) ->
-                            return next() if exists
-                            sym_create option, next
-                dispatch()
-            .on 'both', (err) ->
-                callback err, linked
+            await fs.chmod option.destination, option.chmod, defer err
+            return callback err if err
+            linked++
+            callback()
+        parents = for option in options then path.normalize path.dirname option.destination
+        await mecano.mkdir parents, defer err, created
+        return callback err if err
+        each( options )
+        .parallel( true )
+        .on 'item', (next, option) ->
+            return next new Error "Missing source, got #{JSON.stringify(option.source)}" unless option.source
+            return next new Error "Missing destination, got #{JSON.stringify(option.destination)}" unless option.destination
+            option.chmod ?= 0o0755
+            dispatch = ->
+                if option.exec
+                    exec_exists option, (err, exists) ->
+                        return next() if exists
+                        exec_create option, next
+                else
+                    sym_exists option, (err, exists) ->
+                        return next() if exists
+                        sym_create option, next
+            dispatch()
+        .on 'both', (err) ->
+            callback err, linked
     ###
 
     `mkdir(options, callback)`
@@ -488,11 +496,11 @@ mecano = module.exports =
             check = () ->
                 # if exist and is a dir, skip
                 # if exists and isn't a dir, error
-                fs.stat option.source, (err, stat) ->
-                    return create() if err and err.code is 'ENOENT'
-                    return next err if err
-                    return next() if stat.isDirectory()
-                    next err 'Invalid source, got #{JSON.encode(option.source)}'
+                await fs.stat option.source, defer err, stat
+                return create() if err and err.code is 'ENOENT'
+                return next err if err
+                return next() if stat.isDirectory()
+                next err 'Invalid source, got #{JSON.encode(option.source)}'
             create = () ->
                 option.chmod ?= 0o0755
                 current = ''
@@ -509,12 +517,12 @@ mecano = module.exports =
                     # return next() if dir is ''
                     current += "/#{dir}"
                     # console.log current
-                    fs.exists current, (exists) ->
-                        return next() if exists
-                        fs.mkdir current, option.chmod, (err) ->
-                            return next err if err
-                            dirCreated = true
-                            next()
+                    await fs.exists current, defer exists
+                    return next() if exists
+                    await fs.mkdir current, option.chmod, defer err
+                    return next err if err
+                    dirCreated = true
+                    next()
                 .on 'both', (err) ->
                     created++ if dirCreated
                     next err
@@ -566,13 +574,13 @@ mecano = module.exports =
             options = source: options if typeof options is 'string'
             return next new Error 'Missing source: #{option.source}' unless options.source?
             # Use lstat instead of stat because it will report link presence
-            fs.lstat options.source, (err, stat) ->
-                return next() if err
-                options.options ?= {}
-                rimraf options.source, (err) ->
-                    return next err if err
-                    deleted++
-                    next()
+            await fs.lstat options.source, defer err, stat
+            return next() if err
+            options.options ?= {}
+            await rimraf options.source, defer err
+            return next err if err
+            deleted++
+            next()
         .on 'both', (err) ->
             callback err, deleted
     ###
@@ -606,21 +614,19 @@ mecano = module.exports =
             return next new Error 'Missing destination' unless option.destination
             readSource = ->
                 return writeContent() unless option.source
-                fs.exists option.source, (exists) ->
-                    return next new Error "Invalid source, got #{JSON.stringify(option.source)}" unless exists
-                    fs.readFile option.source, (err, content) ->
-                        return next err if err
-                        option.content = content
-                        writeContent()
+                await fs.exists option.source, defer exists
+                return next new Error "Invalid source, got #{JSON.stringify(option.source)}" unless exists
+                await fs.readFile option.source, defer err, content
+                return next err if err
+                option.content = content
+                writeContent()
             writeContent = ->
-                try
-                    content = eco.render option.content.toString(), option.context or {}
-                    fs.writeFile option.destination, content, (err) ->
-                        return next err if err
-                        rendered++
-                        next()
-                catch err
-                    next err
+                try content = eco.render option.content.toString(), option.context or {}
+                catch err then return next err
+                await fs.writeFile option.destination, content, defer err
+                return next err if err
+                rendered++
+                next()
             readSource()
         .on 'both', (err) ->
             callback err, rendered
