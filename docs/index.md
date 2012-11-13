@@ -2,7 +2,7 @@
 language: en
 layout: page
 title: "Node Mecano: Common functions for system deployment"
-date: 2012-02-18T14:36:50.793Z
+date: 2012-10-09T15:10:54.890Z
 comments: false
 sharing: false
 footer: false
@@ -11,10 +11,12 @@ github: https://github.com/wdavidw/node-mecano
 Mecano gather a set of functions usually used during system deployment. All the functions share a 
 common API with flexible options.
 
-`cp` `copy(options, callback)` Copy a file
-------------------------------------------
+`cp` `copy(options, callback)`
+------------------------------
 
-`options`               Command options includes:   
+Copy a file.
+
+`options`               Command options include:   
 
 *   `source`            The file or directory to copy.
 *   `destination`       Where the file or directory is copied.
@@ -32,15 +34,16 @@ todo:
 *   preserve permissions if `chmod` is `true`
 *   Compare files with checksum
 
-`download(options, callback)` Download files using various protocols
---------------------------------------------------------------------
+`download(options, callback)`
+-----------------------------
 
-The excellent [open-uri](https://github.com/publicclass/open-uri) module provides support for HTTP(S), 
+Download files using various protocols. The excellent 
+[open-uri](https://github.com/publicclass/open-uri) module provides support for HTTP(S), 
 file and FTP. All the options supported by open-uri are passed to it.
 
 Note, GIT is not yet supported but documented as a wished feature.
 
-`options`               Command options includes:   
+`options`               Command options include:   
 
 *   `source`            File, HTTP URL, FTP, GIT repository. File is the default protocol if source is provided without a scheme.   
 *   `destination`       Path where the file is downloaded.   
@@ -60,9 +63,9 @@ mecano.download
     fs.exists 'node-sigar.tgz', (exists) ->
         assert.ok exists
 ```
-`exec` `execute`([goptions], options, callback)` Run a command locally or with ssh
-----------------------------------------------------------------------------------
-Command is send over ssh if the `host` is provided. Global options is
+`exec` `execute([goptions], options, callback)`
+-----------------------------------------------
+Run a command locally or with ssh if the `host` is provided. Global options is
 optional and is used in case where options is defined as an array of 
 multiple commands. Note, `opts` inherites all the properties of `goptions`.
 
@@ -92,14 +95,14 @@ details. Default to sequential (false).
 *   `stdout`            Stdout value(s) unless `stdout` option is provided.   
 *   `stderr`            Stderr value(s) unless `stderr` option is provided.   
 
-`extract(options, callback)` Extract an archive
------------------------------------------------
+`extract(options, callback)` 
+----------------------------
 
-Multiple compression types are supported. Unless specified as 
-an option, format is derived from the source extension. At the 
+Extract an archive. Multiple compression types are supported. Unless 
+specified asan option, format is derived from the source extension. At the 
 moment, supported extensions are '.tgz', '.tar.gz' and '.zip'.   
 
-`options`               Command options includes:   
+`options`               Command options include:   
 
 *   `source`            Archive to decompress.   
 *   `destination`       Default to the source parent directory.   
@@ -113,18 +116,20 @@ moment, supported extensions are '.tgz', '.tar.gz' and '.zip'.
 *   `extracted`         Number of extracted archives.   
 
 `git`
----------
+-----
 
-`options`               Command options includes:   
+`options`               Command options include:   
 
 *   `source`            Git source repository address.
 *   `destination`       Directory where to clone the repository.
 *   `revision`          Git revision, branch or tag.
 
-`ln` `link(options, callback)` Create a symbolic link
-------------------------------------------------
+`ln` `link(options, callback)`
+------------------------------
+Create a symbolic link and it's parent directories if they don't yet
+exist.
 
-`options`               Command options includes:   
+`options`               Command options include:   
 
 *   `source`            Referenced file to be linked.   
 *   `destination`       Symbolic link to be created.   
@@ -136,14 +141,14 @@ moment, supported extensions are '.tgz', '.tar.gz' and '.zip'.
 *   `err`               Error object if any.   
 *   `linked`            Number of created links.   
 
-`mkdir(options, callback)` Recursively create a directory
----------------------------------------------------------
+`mkdir(options, callback)`
+--------------------------
 
-The behavior is similar to the Unix command `mkdir -p`. It supports
-an alternative syntax where options is simply the path of the directory
+Recursively create a directory. The behavior is similar to the Unix command `mkdir -p`. 
+It supports an alternative syntax where options is simply the path of the directory
 to create.
 
-`options`               Command options includes:   
+`options`               Command options include:   
 
 *   `source`            Path or array of paths.   
 *   `directory`         Shortcut for `source`
@@ -162,13 +167,13 @@ Simple usage:
 mecano.mkdir './some/dir', (err, created) ->
     console.log err?.message ? created
 ```
-`rm` `remove(options, callback)` Recursively remove a file or directory
-------------------------------------------------------
+`rm` `remove(options, callback)`
+--------------------------------
 
-Internally, the function use the [rimraf](https://github.com/isaacs/rimraf) 
-library.
+Recursively remove a file or directory. Internally, the function 
+use the [rimraf](https://github.com/isaacs/rimraf) library.
 
-`options`               Command options includes:   
+`options`               Command options include:   
 
 *   `source`            File or directory.     
 
@@ -199,12 +204,13 @@ mecano.rm [
 ], (err, removed) ->
     console.log "#{removed} dirs removed"
 ```
-`render(options, callback)` Render a template file
---------------------------------------------------
+`render(options, callback)`
+---------------------------
 
-At the moment, only the [ECO](http://github.com/sstephenson/eco) templating engine is integrated.
+Render a template file At the moment, only the 
+[ECO](http://github.com/sstephenson/eco) templating engine is integrated.
 
-`options`               Command options includes:   
+`options`               Command options include:   
 
 *   `engine`            Template engine to use, default to "eco"
 *   `content`           Templated content, bypassed if source is provided.
