@@ -1,5 +1,5 @@
 
-require('iced-coffee-script');
+require('coffee-script');
 
 var mecano = require('./lib/mecano');
 var misc = require('./lib/misc');
