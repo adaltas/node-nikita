@@ -5,7 +5,7 @@ mecano = require '..'
 date = -> d = (new Date).toISOString()
 
 source = "#{__dirname}/mecano.coffee"
-destination = "#{__dirname}/../docs/index.md"
+destination = "#{__dirname}/../doc/index.md"
 docs = """
 ---
 language: en
@@ -37,7 +37,7 @@ fs.readFile source, 'ascii', (err, content) ->
     console.log destination
     return unless destination
     mecano.copy
-      source: "#{__dirname}/../docs/index.md"
+      source: "#{__dirname}/../doc/index.md"
       destination: destination
       force: true
     , (err, copied) ->

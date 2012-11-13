@@ -8,7 +8,7 @@ test: build
 		--reporter $(REPORTER)
 
 doc: build
-	@./node_modules/.bin/coffee lib/doc $(MECANO_DOC)
+	@./node_modules/.bin/coffee src/doc $(MECANO_DOC)
 
 coverage: build
 	@jscoverage --no-highlight lib lib-cov
