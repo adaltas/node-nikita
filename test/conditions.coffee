@@ -2,7 +2,7 @@
 fs = require 'fs'
 http = require 'http'
 should = require 'should'
-conditions = require '../lib/conditions'
+conditions = if process.env.MECANO_COV then require '../lib-cov/conditions' else require '../lib/conditions'
 
 describe 'conditions', ->
 

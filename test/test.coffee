@@ -1,5 +1,5 @@
 
-mecano = require '../'
+mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
 
 scratch = "#{__dirname}/../resources/scratch"
 

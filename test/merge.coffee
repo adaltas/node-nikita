@@ -1,6 +1,6 @@
 
 should = require 'should'
-misc = require '../lib/misc'
+misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '../lib/misc'
 
 describe 'merge', ->
 

@@ -3,7 +3,7 @@ fs = require 'fs'
 path = require 'path'
 fs.exists ?= path.exists
 should = require 'should'
-mecano = require '../'
+mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
 test = require './test'
 
 describe 'copy', ->
