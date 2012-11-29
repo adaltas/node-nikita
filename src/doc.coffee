@@ -25,7 +25,7 @@ fs.readFile source, 'ascii', (err, content) ->
   match = re.exec content
   docs += match[1]
   while match = re.exec content
-    match[1] = match[1].split('\n').map((line)->line.substr(4)).join('\n')
+    match[1] = match[1].split('\n').map((line)->line.substr(2)).join('\n')
     match[1] = match[1].replace re_code, (str, code) ->
       code = code.split('\n').map((line)->line.substr(4)).join('\n')
       "\n```coffeescript\n#{code}\n```"
@@ -33,7 +33,8 @@ fs.readFile source, 'ascii', (err, content) ->
   fs.writeFile destination, docs, (err) ->
     return console.log err.message if err
     console.log 'Documentation generated'
-    destination = process.argv[2]
+    if process.argv[2] isnt undefined
+      destination = process.argv[2]
     console.log destination
     return unless destination
     mecano.copy
