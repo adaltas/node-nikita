@@ -33,13 +33,11 @@ fs.readFile source, 'ascii', (err, content) ->
   fs.writeFile destination, docs, (err) ->
     return console.log err.message if err
     console.log 'Documentation generated'
-    if process.argv[2] isnt undefined
-      destination = process.argv[2]
-    console.log destination
+    destination = process.argv[2]
     return unless destination
     mecano.copy
       source: "#{__dirname}/../doc/index.md"
       destination: destination
       force: true
     , (err, copied) ->
-      console.log 'Documentation published'
+      console.log "Documentation published: #{destination}"
