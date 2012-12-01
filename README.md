@@ -11,7 +11,7 @@ Installation
 ------------
 
 ```bash
-    npm install mecano
+npm install mecano
 ```
 
 Test
@@ -23,5 +23,5 @@ For the tests to execute successfully, you must:
 *   be able to ssh yourself (eg `ssh $(whoami)@localhost`) without a password   
 
 ```bash
-    npm test
+npm test
 ```

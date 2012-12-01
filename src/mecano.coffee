@@ -49,7 +49,7 @@ mecano = module.exports =
     options = misc.options options
     copied = 0
     each( options )
-    .on 'item', (next, options) ->
+    .on 'item', (options, next) ->
       return next new Error 'Missing source' unless options.source
       return next new Error 'Missing destination' unless options.destination
       options.not_if_exists = options.destination if options.not_if_exists is true
@@ -122,7 +122,7 @@ mecano = module.exports =
     options = misc.options options
     downloaded = 0
     each( options )
-    .on 'item', (next, options) ->
+    .on 'item', (options, next) ->
       return next new Error "Missing source: #{options.source}" unless options.source
       return next new Error "Missing destination: #{options.destination}" unless options.destination
       options.force ?= false
@@ -209,7 +209,7 @@ mecano = module.exports =
       esccmd
     each( options )
     .parallel( goptions.parallel )
-    .on 'item', (next, option, i) ->
+    .on 'item', (option, i, next) ->
       option = { cmd: option } if typeof option is 'string'
       misc.merge true, option, goptions
       return next new Error "Missing cmd: #{option.cmd}" unless option.cmd?
@@ -287,7 +287,7 @@ mecano = module.exports =
     options = misc.options options
     extracted = 0
     each( options )
-    .on 'item', (next, options) ->
+    .on 'item', (options, next) ->
       return next new Error "Missing source: #{options.source}" unless options.source
       destination = options.destination ? path.dirname options.source
       # Deal with format option
@@ -339,7 +339,7 @@ mecano = module.exports =
     options = misc.options options
     updated = 0
     each( options )
-    .on 'item', (next, options) ->
+    .on 'item', (options, next) ->
       options.revision ?= 'HEAD'
       rev = null
       prepare = ->
@@ -445,7 +445,7 @@ mecano = module.exports =
       return callback err if err
       each( options )
       .parallel( true )
-      .on 'item', (next, option) ->
+      .on 'item', (option, next) ->
         return next new Error "Missing source, got #{JSON.stringify(option.source)}" unless option.source
         return next new Error "Missing destination, got #{JSON.stringify(option.destination)}" unless option.destination
         option.chmod ?= 0o0755
@@ -493,7 +493,7 @@ mecano = module.exports =
     options = misc.options options
     created = 0
     each( options )
-    .on 'item', (next, option) ->
+    .on 'item', (option, next) ->
       option = { source: option } if typeof option is 'string'
       option.source = option.directory if not option.source? and option.directory?
       cwd = option.cwd ? process.cwd()
@@ -513,7 +513,7 @@ mecano = module.exports =
         dirCreated = false
         dirs = option.source.split '/'
         each( dirs )
-        .on 'item', (next, dir) ->
+        .on 'item', (dir, next) ->
           # Directory name contains variables
           # eg /\${/ on './var/cache/${user}' creates './var/cache/'
           if option.exclude? and option.exclude instanceof RegExp
@@ -577,7 +577,7 @@ mecano = module.exports =
     options = misc.options options
     deleted = 0
     each( options )
-    .on 'item', (next, options) ->
+    .on 'item', (options, next) ->
       options = source: options if typeof options is 'string'
       return next new Error 'Missing source: #{option.source}' unless options.source?
       # Use lstat instead of stat because it will report link presence
@@ -616,7 +616,7 @@ mecano = module.exports =
     options = misc.options options
     rendered = 0
     each( options )
-    .on 'item', (next, option) ->
+    .on 'item', (option, next) ->
       return next new Error 'Missing source or content' unless option.source or option.content
       return next new Error 'Missing destination' unless option.destination
       readSource = ->

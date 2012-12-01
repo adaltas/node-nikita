@@ -25,7 +25,7 @@ module.exports =
   ###
   all: (options, failed, succeed) -> 
     each([@if, @if_exists, @not_if_exists])
-    .on 'item', (next, condition) ->
+    .on 'item', (condition, next) ->
       condition(options, failed, next)
     .on('error', failed)
     .on('end', succeed)
@@ -57,7 +57,7 @@ module.exports =
     return succeed() unless options.if?
     ok = true
     each(options.if)
-    .on 'item', (next, si) ->
+    .on 'item', (si, next) ->
       return next() unless ok
       if typeof si is 'boolean'
         ok = false unless si
@@ -82,7 +82,7 @@ module.exports =
   if_exists: (options, failed, succeed) ->
     return succeed() unless options.if_exists?
     each(options.if_exists)
-    .on 'item', (next, if_exists) ->
+    .on 'item', (if_exists, next) ->
       # await fs.exists if_exists, defer exists
       # if exists then next() else failed()
       fs.exists if_exists, (exists) ->
@@ -103,7 +103,7 @@ module.exports =
   not_if_exists: (options, failed, succeed) ->
     return succeed() unless options.not_if_exists?
     each(options.not_if_exists)
-    .on 'item', (next, not_if_exists) ->
+    .on 'item', (not_if_exists, next) ->
       fs.exists not_if_exists, (exists) ->
         if exists
         then failed()
