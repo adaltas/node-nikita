@@ -1,5 +1,56 @@
 
-module.exports = 
+crypto = require 'crypto'
+fs = require 'fs'
+path = require 'path'
+fs.exists ?= path.exists
+each = require 'each'
+
+module.exports = misc = 
+  file: 
+    ###
+    `hash(file, callback)`
+    ----------------------
+    Output the message digest of a supplied file or files in hexadecimal
+    form. For now, the message digests is limited to md5 digest. 
+    Throw an error if file does not exist or is a directory.
+    ###
+    hash: (file, digest, callback) ->
+      if arguments.length is 2
+        callback = digest
+        digest = 'md5'
+      shasum = crypto.createHash 'md5'
+      fs.ReadStream(file)
+      .on 'data', (data) ->
+        shasum.update data
+      .on 'error', (err) ->
+        err.message = "Does not exist: #{file}" if err.code is 'ENOENT'
+        err.message = "Is a directory: #{file}" if err.code is 'EISDIR'
+        callback err
+      .on 'end', ->
+        callback null, shasum.digest 'hex'
+    ###
+    `compare(files, callback)`
+    --------------------------
+    Compare the hash of multiple file. Return the file md5 
+    if the file are the same or false otherwise.
+    ###
+    compare: (files, callback) ->
+      return callback new Error 'Minimum of 2 files' if files.length < 2
+      result = null
+      each(files)
+      .parallel(true)
+      .on 'item', (file, next) ->
+        misc.file.hash file, (err, md5) ->
+          return next err if err
+          if result is null
+            result = md5 
+          else if result isnt md5
+            result = false 
+          next()
+      .on 'error', (err) ->
+        callback err
+      .on 'end', ->
+        callback null, result
   ###
   `isPortOpen(port, host, callback)`: Check if a port is already open
 
