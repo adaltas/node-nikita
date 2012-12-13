@@ -24,13 +24,14 @@ mecano = module.exports =
   `cp` `copy(options, callback)`
   ------------------------------
 
-  Copy a file.
+  Copy a file. The behavior is similar to the one of the `cp` 
+  Unix utility. Copying a file over an existing file will 
+  overwrite it.
 
   `options`         Command options include:   
 
   *   `source`      The file or directory to copy.
   *   `destination`     Where the file or directory is copied.
-  *   `force`       Copy the file even if one already exists.
   *   `not_if_exists`   Equals destination if true.
   *   `chmod`       Permissions of the file or the parent directory
 
@@ -40,9 +41,7 @@ mecano = module.exports =
   *   `copied`      Number of files or parent directories copied.
 
   todo:
-  *   deal with directories
   *   preserve permissions if `chmod` is `true`
-  *   Compare files with checksum
 
   ###
   copy: (options, callback) ->
@@ -52,39 +51,67 @@ mecano = module.exports =
     .on 'item', (options, next) ->
       return next new Error 'Missing source' unless options.source
       return next new Error 'Missing destination' unless options.destination
+      # Cancel action if destination exists ? really ? no md5 comparaison, strange
       options.not_if_exists = options.destination if options.not_if_exists is true
-      dstStat = null
-      source = ->
+      search = ->
+        srcStat = null
+        dstStat = null
         fs.stat options.source, (err, stat) ->
-          # Source does not exists or any error occured
+          # Source must exists
           return next err if err
-          return next new Error 'Source is a directory' if stat.isDirectory()
-          copy()
-      copy = (destination = options.destination) ->
-        fs.stat destination, (err, stat) ->
-          dstStat = stat
-          return next err if err and err.code isnt 'ENOENT'
-          # do not copy if destination exists
-          dirExists = not err and stat.isDirectory()
-          fileExists = not err and stat.isFile()
-          return next null, 0 if fileExists and not options.force
-          # Update destination name and call copy again
-          return copy path.resolve options.destination, path.basename options.source if dirExists
-          # Copy
-          input = fs.createReadStream options.source
-          output = fs.createWriteStream destination
-          util.pump input, output, (err) ->
+          srcStat = stat
+          fs.stat options.destination, (err, stat) ->
+            dstStat = stat
+            sourceEndWithSlash = options.source.lastIndexOf('/') is options.source.length - 1
+            if srcStat.isDirectory() and dstStat and not sourceEndWithSlash
+              options.destination = path.resolve options.destination, path.basename options.source
+            if srcStat.isDirectory() then directory options.source else copy options.source, next
+        # Copy a directory
+        directory = (dir) ->
+          each()
+          .files("#{dir}/**")
+          .on 'item', (file, next) ->
+            copy file, next
+          .on 'both', next
+        copy = (source, next) ->
+          if srcStat.isDirectory()
+            destination = path.resolve options.destination, path.relative options.source, source
+          else if not srcStat.isDirectory() and dstStat?.isDirectory()
+            destination = path.resolve options.destination, path.basename source
+          else
+            destination = options.destination
+          fs.stat source, (err, stat) ->
+            if stat.isDirectory()
+            then copyDir source, destination, next
+            else copyFile source, destination, next
+        copyDir = (source, destination, next) ->
+          return next() if source is options.source
+          # todo, add permission
+          fs.mkdir destination, (err) ->
+            return next() if err?.code is 'EEXIST'
             return next err if err
-            chmod()
-      chmod = ->
-        return finish() if not options.chmod or options.chmod is dstStat.mode
-        fs.chmod options.destination, options.chmod, (err) ->
-          return next err if err
-          finish()
-      finish = ->
-        copied++
-        next()
-      conditions.all(options, next, copy)
+            finish next
+        # Copy a file
+        copyFile = (source, destination, next) ->
+          misc.file.compare [source, destination], (err, md5) ->
+            return next err if err and err.message.indexOf('Does not exist') isnt 0
+            # File are the same, we can skip copying
+            return next() if md5
+            # Copy
+            input = fs.createReadStream source
+            output = fs.createWriteStream destination
+            input.pipe(output).on 'close', (err) ->
+              return next err if err
+              chmod source, next
+        chmod = (file, next) ->
+          return finish next if not options.chmod or options.chmod is dstStat.mode
+          fs.chmod options.destination, options.chmod, (err) ->
+            return next err if err
+            finish next
+        finish = (next) ->
+          copied++
+          next()
+      conditions.all(options, next, search)
     .on 'both', (err) ->
       callback err, copied
   ###
@@ -542,9 +569,12 @@ mecano = module.exports =
   Recursively remove a file or directory. Internally, the function 
   use the [rimraf](https://github.com/isaacs/rimraf) library.
 
+  It is ok to remove a link but look at the "unlink" function if 
+  you are looking for a more advanced behavior.
+
   `options`         Command options include:   
 
-  *   `source`      File or directory.   
+  *   `source`      File, directory or pattern.   
 
   `callback`        Received parameters are:   
 
@@ -599,9 +629,9 @@ mecano = module.exports =
   
   Render a template file At the moment, only the 
   [ECO](http://github.com/sstephenson/eco) templating engine is integrated.
-
+  
   `options`           Command options include:   
-
+  
   *   `engine`        Template engine to use, default to "eco"
   *   `content`       Templated content, bypassed if source is provided.
   *   `source`        File path where to extract content from.
@@ -609,10 +639,10 @@ mecano = module.exports =
   *   `context`       Map of key values to inject into the template.
 
   `callback`          Received parameters are:   
-
+  
   *   `err`           Error object if any.   
   *   `rendered`      Number of rendered files.   
-
+  
   ###
   render: (options, callback) ->
     options = misc.options options
