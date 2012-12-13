@@ -580,14 +580,16 @@ mecano = module.exports =
     .on 'item', (options, next) ->
       options = source: options if typeof options is 'string'
       return next new Error 'Missing source: #{option.source}' unless options.source?
-      # Use lstat instead of stat because it will report link presence
-      fs.lstat options.source, (err, stat) ->
-        return next() if err
-        options.options ?= {}
-        rimraf options.source, (err) ->
-          return next err if err
-          deleted++
-          next()
+      options.options ?= {}
+      each()
+      .files(options.source)
+      .on 'item', (file, next) ->
+        deleted++
+        rimraf file, next
+      .on 'error', (err) ->
+        next err
+      .on 'end', ->
+        next()
     .on 'both', (err) ->
       callback err, deleted
   ###
