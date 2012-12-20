@@ -74,11 +74,18 @@ describe 'extract', ->
       extracted.should.eql 0
       next()
 
-  it 'should # error # extension', (next) ->
+  it 'should pass error for invalid extension', (next) ->
     mecano.extract
       source: __filename
     , (err, extracted) ->
       err.message.should.eql 'Unsupported extension, got ".coffee"'
+      next()
+
+  it 'should pass error for missing source file', (next) ->
+    mecano.extract
+      source: '/does/not/exist.tgz'
+    , (err, extracted) ->
+      err.message.should.eql 'File does not exist: /does/not/exist.tgz'
       next()
 
 

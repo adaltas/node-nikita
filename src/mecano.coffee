@@ -236,32 +236,32 @@ mecano = module.exports =
       esccmd
     each( options )
     .parallel( goptions.parallel )
-    .on 'item', (option, i, next) ->
-      option = { cmd: option } if typeof option is 'string'
-      misc.merge true, option, goptions
-      return next new Error "Missing cmd: #{option.cmd}" unless option.cmd?
-      option.code ?= [0]
-      option.code = [option.code] unless Array.isArray option.code
-      cmdOption = {}
-      cmdOption.env = option.env or process.env
-      cmdOption.cwd = option.cwd or null
-      cmdOption.uid = option.uid if options.uid
-      cmdOption.gid = option.gid if options.gid
+    .on 'item', (options, i, next) ->
+      options = { cmd: options } if typeof options is 'string'
+      misc.merge true, options, goptions
+      return next new Error "Missing cmd: #{options.cmd}" unless options.cmd?
+      options.code ?= [0]
+      options.code = [options.code] unless Array.isArray options.code
+      cmdOptions = {}
+      cmdOptions.env = options.env or process.env
+      cmdOptions.cwd = options.cwd or null
+      cmdOptions.uid = options.uid if options.uid
+      cmdOptions.gid = options.gid if options.gid
       cmd = () ->
-        if option.host
-          option.cmd = escape option.cmd
-          option.cmd = option.host + ' "' + option.cmd + '"'
-          if option.username
-            option.cmd = option.username + '@' + option.cmd
-          option.cmd = 'ssh -o StrictHostKeyChecking=no ' + option.cmd
-        run = exec option.cmd, cmdOption
+        if options.host
+          options.cmd = escape options.cmd
+          options.cmd = options.host + ' "' + options.cmd + '"'
+          if options.username
+            options.cmd = options.username + '@' + options.cmd
+          options.cmd = 'ssh -o StrictHostKeyChecking=no ' + options.cmd
+        run = exec options.cmd, cmdOptions
         stdout = stderr = ''
-        if option.stdout
-        then run.stdout.pipe option.stdout
+        if options.stdout
+        then run.stdout.pipe options.stdout
         else run.stdout.on 'data', (data) ->
           stdout += data
-        if option.stderr
-        then run.stderr.pipe option.stderr
+        if options.stderr
+        then run.stderr.pipe options.stderr
         else run.stderr.on 'data', (data) -> stderr += data
         run.on "exit", (code) ->
           # Givent some time because the "exit" event is sometimes
@@ -269,20 +269,15 @@ mecano = module.exports =
           # `make test`
           setTimeout ->
             executed++
-            stdouts.push if option.stdout then undefined else stdout
-            stderrs.push if option.stderr then undefined else stderr
-            if option.code.indexOf(code) is -1
+            stdouts.push if options.stdout then undefined else stdout
+            stderrs.push if options.stderr then undefined else stderr
+            if options.code.indexOf(code) is -1
               err = new Error "Invalid exec code #{code}"
               err.code = code
               return next err
             next()
           , 1
-      # if option.not_if_exists
-      #   fs.exists option.not_if_exists, (exists) ->
-      #     if exists then next() else cmd()
-      # else
-      #   cmd()
-      conditions.all(option, next, cmd)
+      conditions.all(options, next, cmd)
     .on 'both', (err) ->
       stdouts = stdouts[0] unless isArray
       stderrs = stderrs[0] unless isArray
@@ -347,6 +342,9 @@ mecano = module.exports =
       success = () ->
         extracted++
         next()
+      # Run conditions
+      if typeof options.should_exist is 'undefined'
+        options.should_exist = options.source
       conditions.all(options, next, extract)
     .on 'both', (err) ->
       callback err, extracted
