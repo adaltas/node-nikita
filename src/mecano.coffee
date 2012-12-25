@@ -153,6 +153,17 @@ mecano = module.exports =
       return next new Error "Missing source: #{options.source}" unless options.source
       return next new Error "Missing destination: #{options.destination}" unless options.destination
       options.force ?= false
+      prepare = () ->
+        fs.exists options.destination, (exists) ->
+          # Use previous download
+          if exists and not options.force
+            next()
+          # Remove previous dowload and download again
+          else if exists
+            rimraf options.destination, (err) ->
+              return next err if err
+              download()
+          else download()
       download = () ->
         destination = fs.createWriteStream(options.destination)
         open(options.source, destination)
@@ -160,27 +171,11 @@ mecano = module.exports =
           downloaded++
           next()
         destination.on 'error', (err) ->
-          next err
-      # fs.exists options.destination, (exists) ->
-      #   # Use previous download
-      #   if exists and not options.force
-      #     return next()
-      #   # Remove previous dowload and download again
-      #   else if exists
-      #     return rimraf options.destination, (err) ->
-      #       return next err if err
-      #       download()
-      #   else download() 
-      fs.exists options.destination, (exists) ->
-        # Use previous download
-        if exists and not options.force
-          next()
-        # Remove previous dowload and download again
-        else if exists
-          rimraf options.destination, (err) ->
-            return next err if err
-            download()
-        else download()
+          # No test agains this but error in case 
+          # of connection issue leave an empty file
+          mecano.remove destination, (err) ->
+            next err
+      prepare()
     .on 'both', (err) ->
       callback err, downloaded
   ###
@@ -561,14 +556,49 @@ mecano = module.exports =
       callback err, created
   ###
 
+  `mv` `move(options, callback)`
+  --------------------------------
+
+  More files and directories.
+
+  `options`         Command options include:   
+
+  *   `source`      File or directory to move.  
+  *   `destination` Final name of the moved resource.    
+
+  `callback`        Received parameters are:   
+
+  *   `err`         Error object if any.   
+  *   `moved`        Number of moved resources.
+
+  Example
+
+    mecano.mv
+      source: __dirname
+      desination: '/temp/my_dir'
+    , (err, moved) ->
+      console.log "#{moved} dir moved"
+
+  ###
+  move: (options, callback) ->
+    options = misc.options options
+    moved = 0
+    each( options )
+    .on 'item', (options, next) ->
+      fs.rename options.source, options.destination, (err) ->
+        return next err if err
+        moved++
+        next()
+    .on 'both', (err) ->
+      callback err, moved
+
+  ###
+
   `rm` `remove(options, callback)`
   --------------------------------
 
-  Recursively remove a file or directory. Internally, the function 
+  Recursively remove files, directories and links. Internally, the function 
   use the [rimraf](https://github.com/isaacs/rimraf) library.
-
-  It is ok to remove a link but look at the "unlink" function if 
-  you are looking for a more advanced behavior.
 
   `options`         Command options include:   
 
@@ -673,6 +703,7 @@ mecano = module.exports =
 mecano.cp   = mecano.copy
 mecano.exec = mecano.execute
 mecano.ln   = mecano.link
+mecano.mv   = mecano.move
 mecano.rm   = mecano.remove
 
 
