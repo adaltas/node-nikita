@@ -18,16 +18,42 @@ module.exports = misc =
       if arguments.length is 2
         callback = digest
         digest = 'md5'
-      shasum = crypto.createHash 'md5'
-      fs.ReadStream(file)
-      .on 'data', (data) ->
-        shasum.update data
-      .on 'error', (err) ->
-        err.message = "Does not exist: #{file}" if err.code is 'ENOENT'
-        err.message = "Is a directory: #{file}" if err.code is 'EISDIR'
-        callback err
-      .on 'end', ->
-        callback null, shasum.digest 'hex'
+      md5 = []
+      fs.stat file, (err, stat) ->
+        return callback new Error "Does not exist: #{file}" if err?.code is 'ENOENT'
+        return callback err if err
+        file += '/**' if stat.isDirectory()
+        each()
+        .files(file)
+        .on 'item', (item, next) ->
+          shasum = crypto.createHash 'md5'
+          fs.ReadStream(item)
+          .on 'data', (data) ->
+            shasum.update data
+          .on 'error', (err) ->
+            # err.message = "Does not exist: #{file}" if err.code is 'ENOENT'
+            # err.message = "Is a directory: #{file}" if err.code is 'EISDIR'
+            return next() if err.code is 'EISDIR'
+            next err
+          .on 'end', ->
+            md5.push shasum.digest 'hex'
+            next()
+        .on 'error', (err) ->
+          callback err
+        .on 'end', ->
+          switch md5.length
+            when 0
+              if stat.isFile() 
+              then callback new Error "Does not exist: #{file}"
+              else callback null, crypto.createHash('md5').update('').digest('hex')
+            when 1
+              return callback null, md5[0]
+            else
+              md5 = crypto.createHash('md5').update(md5.join('')).digest('hex')
+              return callback null, md5
+
+        # return md5[0] if md5.length is 1
+
     ###
     `compare(files, callback)`
     --------------------------
