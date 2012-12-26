@@ -493,7 +493,7 @@ mecano = module.exports =
   `options`           Command options include:   
 
   *   `source`        Path or array of paths.   
-  *   `directory`     Shortcut for `source`
+  *   `directory`     Alias for `source`
   *   `exclude`       Regular expression.   
   *   `chmod`         Default to 0755.  
   *   `cwd`           Current working directory for relative paths.   

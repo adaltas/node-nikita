@@ -23,6 +23,16 @@ describe 'mkdir', ->
         should.not.exist err
         created.should.eql 0
         next()
+
+  it 'should take source if first argument is a string', (next) ->
+    source = "#{scratch}/a_dir"
+    mecano.mkdir source, (err, created) ->
+      should.not.exist err
+      created.should.eql 1
+      mecano.mkdir source, (err, created) ->
+        should.not.exist err
+        created.should.eql 0
+        next()
   
   it 'should create dir recursively', (next) ->
     source = "#{scratch}/a_parent_dir/a_dir"
