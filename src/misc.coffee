@@ -141,7 +141,7 @@ module.exports = misc =
           if copy? and typeof copy is 'object' and not Array.isArray(copy)
             clone = src and ( if src and typeof src is 'object' then src else {} )
             # Never move original objects, clone them
-            target[ name ] = @merge false, clone, copy
+            target[ name ] = misc.merge false, clone, copy
           # Don't bring in undefined values
           else if copy isnt undefined
             target[ name ] = copy unless inverse and typeof target[ name ] isnt 'undefined'

@@ -591,7 +591,6 @@ mecano = module.exports =
         next()
     .on 'both', (err) ->
       callback err, moved
-
   ###
 
   `rm` `remove(options, callback)`
