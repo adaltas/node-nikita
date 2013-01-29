@@ -678,14 +678,6 @@ mecano = module.exports =
     .on 'item', (option, next) ->
       return next new Error 'Missing source or content' unless option.source or option.content
       return next new Error 'Missing destination' unless option.destination
-      destinationContentHash = null
-      readDestinationContent = ->
-        fs.exists option.destination, (exists) ->
-          return readSource() unless exists
-          fs.readFile option.destination, (err, content) ->
-            return next err if err
-            destinationContentHash = misc.string.hash content
-            readSource()
       readSource = ->
         return writeContent() unless option.source
         fs.exists option.source, (exists) ->
@@ -695,16 +687,56 @@ mecano = module.exports =
             option.content = content
             writeContent()
       writeContent = ->
+        mecano.write option, (err, written) ->
+          return next err if err
+          rendered++ if written
+          next()
+      readSource()
+    .on 'both', (err) ->
+      callback err, rendered
+  ###
+  `write(options, callback)`
+  --------------------------
+
+  Write a file or a portion of an existing file.
+  
+  `options`           Command options include:   
+  
+  *   `content`       Text to be written.
+  *   `destination`   File path where to write content to.
+
+  `callback`          Received parameters are:   
+  
+  *   `err`           Error object if any.   
+  *   `rendered`      Number of rendered files. 
+
+  ###
+  write: (options, callback) ->
+    options = misc.options options
+    written = 0
+    each( options )
+    .on 'item', (option, next) ->
+      return next new Error 'Missing source or content' unless option.source or option.content
+      return next new Error 'Missing destination' unless option.destination
+      destinationHash = null
+      readDestinationContent = ->
+        fs.exists option.destination, (exists) ->
+          return writeContent() unless exists
+          fs.readFile option.destination, (err, content) ->
+            return next err if err
+            destinationHash = misc.string.hash content
+            writeContent()
+      writeContent = ->
         try content = eco.render option.content.toString(), option.context or {}
         catch err then return next err
-        return next() if destinationContentHash is misc.string.hash content
+        return next() if destinationHash is misc.string.hash content
         fs.writeFile option.destination, content, (err) ->
           return next err if err
-          rendered++
+          written++
           next()
       readDestinationContent()
     .on 'both', (err) ->
-      callback err, rendered
+      callback err, written
 
 # Alias definitions
 
