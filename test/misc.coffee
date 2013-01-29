@@ -1,7 +1,9 @@
 
 crypto=require 'crypto'
 should = require 'should'
+mecano = require '../lib/mecano'
 misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '../lib/misc'
+test = require './test'
 
 describe 'misc', ->
 
@@ -23,12 +25,6 @@ describe 'misc', ->
           should.not.exist md5
           next()
 
-      # it 'throw error if file is a directory', (next) ->
-      #   misc.file.hash "#{__dirname}", (err, md5) ->
-      #     err.message.should.eql "Is a directory: #{__dirname}"
-      #     should.not.exist md5
-      #     next()
-
       it 'return the directory md5', (next) ->
         misc.file.hash "#{__dirname}/../resources", (err, md5) ->
           should.not.exist err
@@ -36,7 +32,7 @@ describe 'misc', ->
           next()
 
       it 'return the directory md5 when empty', (next) ->
-        misc.mkdir "#{scratch}/a_dir", (err, created) ->
+        mecano.mkdir "#{scratch}/a_dir", (err, created) ->
           return next err if err
           misc.file.hash "#{scratch}/a_dir", (err, md5) ->
             should.not.exist err
