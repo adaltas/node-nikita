@@ -10,21 +10,21 @@ module.exports = misc =
     ###
     `string.hash(file, [algorithm], callback)`
     ------------------------------------------
-    Output the hash of a supplied string in hexadecimal
-    form.
+    Output the hash of a supplied string in hexadecimal 
+    form. The default algorithm to compute the hash is md5.
     ###
-    hash: (data, algorithm, callback) ->
-      if arguments.length is 2
-        callback = algorithm
+    hash: (data, algorithm) ->
+      if arguments.length is 1
         algorithm = 'md5'
       crypto.createHash(algorithm).update(data).digest('hex')
   file: 
     ###
     `files.hash(file, [algorithm], callback)`
     -----------------------------------------
-    Output the hash of a supplied file in hexadecimal
-    form. If the provided file is a directory, the returned hash
-    is the sum of all the md5 of the files it recursively contains. 
+    Output the hash of a supplied file in hexadecimal 
+    form. If the provided file is a directory, the returned hash 
+    is the sum of all the hashs of the files it recursively 
+    contains. The default algorithm to compute the hash is md5.
 
     Throw an error if file does not exist unless it is a directory.
     ###

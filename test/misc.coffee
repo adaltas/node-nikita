@@ -14,7 +14,7 @@ describe 'misc', ->
     describe 'hash', ->
 
       it 'returns the string md5', ->
-        md5 = misc.string.hash "hello", () ->
+        md5 = misc.string.hash "hello"
         md5.should.eql '5d41402abc4b2a76b9719d911017c592'
 
   describe 'file', ->

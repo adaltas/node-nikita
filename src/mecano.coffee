@@ -678,6 +678,14 @@ mecano = module.exports =
     .on 'item', (option, next) ->
       return next new Error 'Missing source or content' unless option.source or option.content
       return next new Error 'Missing destination' unless option.destination
+      destinationContentHash = null
+      readDestinationContent = ->
+        fs.exists option.destination, (exists) ->
+          return readSource() unless exists
+          fs.readFile option.destination, (err, content) ->
+            return next err if err
+            destinationContentHash = misc.string.hash content
+            readSource()
       readSource = ->
         return writeContent() unless option.source
         fs.exists option.source, (exists) ->
@@ -689,11 +697,12 @@ mecano = module.exports =
       writeContent = ->
         try content = eco.render option.content.toString(), option.context or {}
         catch err then return next err
+        return next() if destinationContentHash is misc.string.hash content
         fs.writeFile option.destination, content, (err) ->
           return next err if err
           rendered++
           next()
-      readSource()
+      readDestinationContent()
     .on 'both', (err) ->
       callback err, rendered
 

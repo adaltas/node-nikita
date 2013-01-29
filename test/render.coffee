@@ -34,6 +34,24 @@ describe 'render', ->
         content.should.eql 'Hello you'
         next()
   
+  it 'doesnt increment if destination is same than generated content', (next) ->
+    destination = "#{scratch}/render.eco"
+    mecano.render
+      source: "#{__dirname}/../resources/render.eco"
+      destination: destination
+      context: who: 'you'
+    , (err, rendered) ->
+      should.not.exist err
+      rendered.should.eql 1
+      mecano.render
+        source: "#{__dirname}/../resources/render.eco"
+        destination: destination
+        context: who: 'you'
+      , (err, rendered) ->
+        should.not.exist err
+        rendered.should.eql 0
+        next()
+  
   it 'should be unhappy', (next) ->
     destination = "#{scratch}/render.eco"
     mecano.render
