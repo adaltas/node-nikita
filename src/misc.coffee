@@ -8,10 +8,13 @@ each = require 'each'
 module.exports = misc = 
   file: 
     ###
-    `hash(file, callback)`
-    ----------------------
-    Output the message digest of a supplied file or files in hexadecimal
-    form. For now, the message digests is limited to md5 digest. 
+    `hash(file, [digest], callback)`
+    --------------------------------
+    Output the message digest of a supplied file in hexadecimal
+    form. If the provided file is a directory, the returned hash
+    is the sum of all the files it contains. 
+
+    For now, the message digests is limited to md5. 
     Throw an error if file does not exist or is a directory.
     ###
     hash: (file, digest, callback) ->
@@ -31,8 +34,6 @@ module.exports = misc =
           .on 'data', (data) ->
             shasum.update data
           .on 'error', (err) ->
-            # err.message = "Does not exist: #{file}" if err.code is 'ENOENT'
-            # err.message = "Is a directory: #{file}" if err.code is 'EISDIR'
             return next() if err.code is 'EISDIR'
             next err
           .on 'end', ->
