@@ -6,22 +6,33 @@ fs.exists ?= path.exists
 each = require 'each'
 
 module.exports = misc = 
+  string:
+    ###
+    `string.hash(file, [algorithm], callback)`
+    ------------------------------------------
+    Output the hash of a supplied string in hexadecimal
+    form.
+    ###
+    hash: (data, algorithm, callback) ->
+      if arguments.length is 2
+        callback = algorithm
+        algorithm = 'md5'
+      crypto.createHash(algorithm).update(data).digest('hex')
   file: 
     ###
-    `hash(file, [digest], callback)`
-    --------------------------------
-    Output the message digest of a supplied file in hexadecimal
+    `files.hash(file, [algorithm], callback)`
+    -----------------------------------------
+    Output the hash of a supplied file in hexadecimal
     form. If the provided file is a directory, the returned hash
-    is the sum of all the files it contains. 
+    is the sum of all the md5 of the files it recursively contains. 
 
-    For now, the message digests is limited to md5. 
-    Throw an error if file does not exist or is a directory.
+    Throw an error if file does not exist unless it is a directory.
     ###
-    hash: (file, digest, callback) ->
+    hash: (file, algorithm, callback) ->
       if arguments.length is 2
-        callback = digest
-        digest = 'md5'
-      md5 = []
+        callback = algorithm
+        algorithm = 'md5'
+      hashs = []
       fs.stat file, (err, stat) ->
         return callback new Error "Does not exist: #{file}" if err?.code is 'ENOENT'
         return callback err if err
@@ -29,7 +40,7 @@ module.exports = misc =
         each()
         .files(file)
         .on 'item', (item, next) ->
-          shasum = crypto.createHash 'md5'
+          shasum = crypto.createHash algorithm
           fs.ReadStream(item)
           .on 'data', (data) ->
             shasum.update data
@@ -37,27 +48,25 @@ module.exports = misc =
             return next() if err.code is 'EISDIR'
             next err
           .on 'end', ->
-            md5.push shasum.digest 'hex'
+            hashs.push shasum.digest 'hex'
             next()
         .on 'error', (err) ->
           callback err
         .on 'end', ->
-          switch md5.length
+          switch hashs.length
             when 0
               if stat.isFile() 
               then callback new Error "Does not exist: #{file}"
-              else callback null, crypto.createHash('md5').update('').digest('hex')
+              else callback null, crypto.createHash(algorithm).update('').digest('hex')
             when 1
-              return callback null, md5[0]
+              return callback null, hashs[0]
             else
-              md5 = crypto.createHash('md5').update(md5.join('')).digest('hex')
-              return callback null, md5
-
-        # return md5[0] if md5.length is 1
+              hashs = crypto.createHash(algorithm).update(hashs.join('')).digest('hex')
+              return callback null, hashs
 
     ###
-    `compare(files, callback)`
-    --------------------------
+    `files.compare(files, callback)`
+    --------------------------------
     Compare the hash of multiple file. Return the file md5 
     if the file are the same or false otherwise.
     ###

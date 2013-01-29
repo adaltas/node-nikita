@@ -9,29 +9,37 @@ describe 'misc', ->
 
   scratch = test.scratch @
 
+  describe 'string', ->
+
+    describe 'hash', ->
+
+      it 'returns the string md5', ->
+        md5 = misc.string.hash "hello", () ->
+        md5.should.eql '5d41402abc4b2a76b9719d911017c592'
+
   describe 'file', ->
 
     describe 'hash', ->
 
-      it 'return the file md5', (next) ->
+      it 'returns the file md5', (next) ->
         misc.file.hash "#{__dirname}/../resources/render.eco", (err, md5) ->
           should.not.exist err
           md5.should.eql '287621a8df3c3f6c99c7b7645bd09ffd'
           next()
 
-      it 'throw error if file does not exist', (next) ->
+      it 'throws error if file does not exist', (next) ->
         misc.file.hash "#{__dirname}/does/not/exist", (err, md5) ->
           err.message.should.eql "Does not exist: #{__dirname}/does/not/exist"
           should.not.exist md5
           next()
 
-      it 'return the directory md5', (next) ->
+      it 'returns the directory md5', (next) ->
         misc.file.hash "#{__dirname}/../resources", (err, md5) ->
           should.not.exist err
           md5.should.eql 'e667d74986ef3f22b7b6b7fc66d5ea59'
           next()
 
-      it 'return the directory md5 when empty', (next) ->
+      it 'returns the directory md5 when empty', (next) ->
         mecano.mkdir "#{scratch}/a_dir", (err, created) ->
           return next err if err
           misc.file.hash "#{scratch}/a_dir", (err, md5) ->
