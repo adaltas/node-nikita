@@ -57,7 +57,7 @@ describe 'conditions', ->
       conditions.if_exists(
         if_exists: __dirname
         () -> should.be.ok false
-        next
+        -> next()
       )
     it 'should skip if file does not exists', (next) ->
       conditions.if_exists(
@@ -69,7 +69,7 @@ describe 'conditions', ->
       conditions.if_exists(
         if_exists: [__dirname, __filename]
         () -> should.be.ok false
-        next
+        -> next()
       )
     it 'should skip if at least one file exists', (next) ->
       conditions.if_exists(
@@ -96,13 +96,13 @@ describe 'conditions', ->
       conditions.not_if_exists(
         not_if_exists: './oh_no'
         () -> should.be.ok false
-        next
+        -> next()
       )
     it 'should succeed if no file exists', (next) ->
       conditions.not_if_exists(
         not_if_exists: ['./oh_no', './eh_no']
         () -> should.be.ok false
-        next
+        -> next()
       )
     it 'should skip if at least one file exists', (next) ->
       conditions.not_if_exists(
@@ -116,7 +116,7 @@ describe 'conditions', ->
       conditions.should_exist(
         should_exist: __filename
         () -> should.be.ok false
-        next
+        -> next()
       )
     it 'should failed if file does not exist', (next) ->
       conditions.should_exist(
