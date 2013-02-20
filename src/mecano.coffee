@@ -655,20 +655,23 @@ mecano = module.exports =
   ---------------------------
   
   Render a template file At the moment, only the 
-  [ECO](http://github.com/sstephenson/eco) templating engine is integrated.
+  [ECO](http://github.com/sstephenson/eco) templating engine is integrated.   
   
   `options`           Command options include:   
   
-  *   `engine`        Template engine to use, default to "eco"
-  *   `content`       Templated content, bypassed if source is provided.
-  *   `source`        File path where to extract content from.
-  *   `destination`   File path where to write content to.
+  *   `engine`        Template engine to use, default to "eco"   
+  *   `content`       Templated content, bypassed if source is provided.   
+  *   `source`        File path where to extract content from.   
+  *   `destination`   File path where to write content to or a callback.   
   *   `context`       Map of key values to inject into the template.
 
   `callback`          Received parameters are:   
   
   *   `err`           Error object if any.   
   *   `rendered`      Number of rendered files.   
+
+  If destination is a callback, it will be called multiple times with the   
+  generated content as its first argument.
   
   ###
   render: (options, callback) ->
@@ -702,6 +705,8 @@ mecano = module.exports =
   
   `options`           Command options include:   
   
+  *   `from`          Replace from after this marker, a string or a regular expression matching a line
+  *   `to`            Replace to before this marker, a string or a regular expression matching a line
   *   `content`       Text to be written.
   *   `destination`   File path where to write content to.
 
@@ -718,23 +723,70 @@ mecano = module.exports =
     .on 'item', (option, next) ->
       return next new Error 'Missing source or content' unless option.source or option.content
       return next new Error 'Missing destination' unless option.destination
+      destination  = null
       destinationHash = null
       readDestinationContent = ->
+        # no need to test changes if destination is a callback
+        return writeContent() if typeof option.destination is 'function'
         fs.exists option.destination, (exists) ->
           return writeContent() unless exists
           fs.readFile option.destination, (err, content) ->
             return next err if err
+            # destination = content if from or to
             destinationHash = misc.string.hash content
             writeContent()
       writeContent = ->
         try content = eco.render option.content.toString(), option.context or {}
         catch err then return next err
         return next() if destinationHash is misc.string.hash content
-        fs.writeFile option.destination, content, (err) ->
-          return next err if err
-          written++
+        if typeof option.destination is 'function'
+          option.destination content
           next()
+        else 
+          fs.writeFile option.destination, content, (err) ->
+            return next err if err
+            written++
+            next()
       readDestinationContent()
+    .on 'both', (err) ->
+      callback err, written
+  ###
+  `service(options, callback)`
+  ----------------------------
+  ###
+  service: (options, callback) ->
+    options = misc.options options
+    written = 0
+    each( options )
+    .on 'item', (option, next) ->
+      return next new Error 'Missing service name' unless option.name
+      # installed = ->
+      #   ctx.ssh.exec 'yum list installed | grep ^httpd\\\\.', (err, stream) ->
+      #     return next err if err
+      #     stream.on 'exit', (code, signal) ->
+      #       return next ctx.SKIPPED if code is 0
+      #       install()
+      # install = ->
+      #   ctx.ssh.exec 'yum install -y httpd', (err, stream) ->
+      #     return next err if err
+      #     stream.on 'exit', (code, signal) ->
+      #       next ctx.OK unless ctx.config.httpd.start
+      #       startup()
+      # startup = ->
+      #   return start unless ctx.config.startup
+      #   if ctx.config.startup
+      #     cmd = 'chkconfig httpd --add; chkconfig httpd on --level 2,3,5'
+      #   else 
+      #     cmd = 'chkconfig httpd off; chkconfig httpd --del'
+      #   ctx.ssh.exec cmd, (err, stream) ->
+      #     return next err if err
+      #     stream.on 'exit', (code, signal) ->
+      #       start()
+      # start = ->
+      #   ctx.ssh.exec 'service httpd start', (err, stream) ->
+      #     return next err if err
+      #     stream.on 'exit', (code, signal) ->
+      #       next ctx.OK
     .on 'both', (err) ->
       callback err, written
 

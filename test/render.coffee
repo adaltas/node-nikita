@@ -52,13 +52,23 @@ describe 'render', ->
         rendered.should.eql 0
         next()
   
-  it 'should be unhappy', (next) ->
-    destination = "#{scratch}/render.eco"
+  it 'complain if source doesnt exist', (next) -> 
     mecano.render
       source: "oups"
-      destination: destination
+      destination: "#{scratch}/render.eco"
     , (err, rendered) ->
       err.message.should.eql 'Invalid source, got "oups"'
+      next()
+  
+  it 'accept destination as a callback', (next) ->
+    content = null
+    mecano.render
+      source: "#{__dirname}/../resources/render.eco"
+      destination: (c) ->
+        content = c
+      context: who: 'you'
+    , (err, rendered) ->
+      content.should.eql 'Hello you'
       next()
 
 
