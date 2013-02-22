@@ -4,8 +4,69 @@ fs = require 'fs'
 path = require 'path'
 fs.exists ?= path.exists
 each = require 'each'
+ssh2 = require 'ssh2'
+util = require 'util'
+Stream = require 'stream'
+exec = require('child_process').exec
+{EventEmitter} = require 'events'
+fs = require 'fs'
+
+ProxyStream = () ->
+  # do nothing
+util.inherits ProxyStream, Stream
 
 module.exports = misc = 
+  exec: (options, callback) ->
+    if options.ssh
+      child = new EventEmitter
+      child.stdout = new ProxyStream
+      child.stderr = new ProxyStream
+      connection = null
+      connect = ->
+        if options.ssh instanceof ssh2
+          connection = options.ssh
+          return run()
+        connection = new ssh2()
+        connection.on 'error', (err) ->
+          child.emit 'error', err
+          callback err if callback
+        connection.on 'ready', ->
+          run()
+        options.ssh.username ?= process.env['USER']
+        options.ssh.port ?= 22
+        if not options.ssh.password and not options.ssh.privateKey
+          options.ssh.privateKey = fs.readFileSync("#{process.env['HOME']}/.ssh/id_rsa")
+        connection.connect options.ssh
+      run = ->
+        stdout = stderr = ''
+        connection.exec options.cmd, (err, stream) ->
+          if err
+            child.emit 'error', err
+            callback err if callback
+            return
+          stream.on 'data', (data, extended) ->
+            if extended is 'stderr'
+              type = 'stderr'
+              stderr += data if callback
+            else
+              type = 'stdout'
+              stdout += data if callback
+            child[type].emit 'data', data
+          stream.on 'exit', (code, signal) ->
+            if code isnt 0
+              err = new Error 'Error'
+              err.code = code
+              err.signal = signal
+            callback null, stdout, stderr if callback
+      connect()
+      child
+    else
+      cmdOptions = {}
+      cmdOptions.env = options.env or process.env
+      cmdOptions.cwd = options.cwd or null
+      cmdOptions.uid = options.uid if options.uid
+      cmdOptions.gid = options.gid if options.gid
+      exec options.cmd, cmdOptions, callback
   string:
     ###
     `string.hash(file, [algorithm], callback)`

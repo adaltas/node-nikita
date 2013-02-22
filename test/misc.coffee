@@ -9,6 +9,21 @@ describe 'misc', ->
 
   scratch = test.scratch @
 
+  describe 'exec', ->
+
+    it.only 'behave similarly with a normal command and a callback', (next) ->
+      misc.exec 
+        ssh: host: 'localhost'
+        cmd: 'ls -l'
+      , (err, sshstdout, sshstderr) ->
+        misc.exec
+          cwd: process.env['HOME']
+          cmd: 'ls -l'
+        , (err, stdout, stderr) ->
+          sshstdout.should.eql stdout
+          sshstderr.should.eql stderr
+          next()
+
   describe 'string', ->
 
     describe 'hash', ->
