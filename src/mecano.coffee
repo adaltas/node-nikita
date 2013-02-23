@@ -7,7 +7,7 @@ each = require 'each'
 eco = require 'eco'
 rimraf = require 'rimraf'
 open = require 'open-uri'
-{exec} = require 'child_process'
+exec = require 'superexec'
 
 conditions = require './conditions'
 misc = require './misc'
@@ -238,19 +238,20 @@ mecano = module.exports =
       return next new Error "Missing cmd: #{options.cmd}" unless options.cmd?
       options.code ?= [0]
       options.code = [options.code] unless Array.isArray options.code
-      cmdOptions = {}
-      cmdOptions.env = options.env or process.env
-      cmdOptions.cwd = options.cwd or null
-      cmdOptions.uid = options.uid if options.uid
-      cmdOptions.gid = options.gid if options.gid
+      # cmdOptions = {}
+      # cmdOptions.env = options.env or process.env
+      # cmdOptions.cwd = options.cwd or null
+      # cmdOptions.uid = options.uid if options.uid
+      # cmdOptions.gid = options.gid if options.gid
       cmd = () ->
-        if options.host
-          options.cmd = escape options.cmd
-          options.cmd = options.host + ' "' + options.cmd + '"'
-          if options.username
-            options.cmd = options.username + '@' + options.cmd
-          options.cmd = 'ssh -o StrictHostKeyChecking=no ' + options.cmd
-        run = exec options.cmd, cmdOptions
+        # if options.host
+        #   options.cmd = escape options.cmd
+        #   options.cmd = options.host + ' "' + options.cmd + '"'
+        #   if options.username
+        #     options.cmd = options.username + '@' + options.cmd
+        #   options.cmd = 'ssh -o StrictHostKeyChecking=no ' + options.cmd
+        # run = exec options.cmd, cmdOptions
+        run = exec options
         stdout = stderr = ''
         if options.stdout
         then run.stdout.pipe options.stdout
@@ -325,7 +326,9 @@ mecano = module.exports =
         switch format
           when 'tgz' then cmd = "tar xzf #{options.source} -C #{destination}"
           when 'zip' then cmd = "unzip -u #{options.source} -d #{destination}"
-        exec cmd, (err, stdout, stderr) ->
+        # exec cmd, (err, stdout, stderr) ->
+        options.cmd = cmd
+        exec options, (err, stdout, stderr) ->
           return next err if err
           creates()
       # Step for `creates`

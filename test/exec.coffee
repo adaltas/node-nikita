@@ -7,9 +7,8 @@ describe 'exec', ->
 
   it 'should exec', (next) ->
     mecano.exec
-      # cmd: 'text=yes; echo $text'
+      cmd: 'text=yes; echo $text'
       toto: true
-      cmd: 'echo "yes"'
     , (err, executed, stdout, stderr) ->
       executed.should.equal 1
       stdout.should.eql 'yes\n'
