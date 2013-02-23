@@ -40,6 +40,22 @@ describe 'git', ->
         updated.should.eql 0
         next()
 
+  it 'should clone accross ssh', (next) ->
+    mecano.git
+      ssh: host: 'localhost'
+      source: "#{scratch}/repo.git"
+      destination: "#{scratch}/my_repo"
+    , (err, updated) ->
+      should.not.exist err
+      updated.should.eql 1
+      mecano.git
+        ssh: host: 'localhost'
+        source: "#{scratch}/repo.git"
+        destination: "#{scratch}/my_repo"
+      , (err, updated) ->
+        updated.should.eql 0
+        next()
+
   it 'should honore revision', (next) ->
     mecano.git
       source: "#{scratch}/repo.git"

@@ -44,6 +44,17 @@ describe 'extract', ->
         should.not.exist err
         extracted.should.eql 1
         next()
+
+  it 'should work accross ssh', (next) ->
+    # Test a non existing extracted dir
+    mecano.extract
+      ssh: host: 'localhost'
+      source: "#{__dirname}/../resources/a_dir.tgz"
+      destination: scratch
+    , (err, extracted) ->
+      should.not.exist err
+      extracted.should.eql 1
+      next()
   
   it 'should validate a created file', (next) ->
     # Test with invalid creates option

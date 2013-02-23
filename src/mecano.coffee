@@ -194,7 +194,6 @@ mecano = module.exports =
         
   `options`         Include all conditions as well as:  
 
-  *   `ssh`         SSH connection options or an ssh2 instance
   *   `cmd`         String, Object or array; Command to execute.   
   *   `env`         Environment variables, default to `process.env`.   
   *   `cwd`         Current working directory.   
@@ -203,6 +202,7 @@ mecano = module.exports =
   *   `code`        Expected code(s) returned by the command, int or array of int, default to 0.   
   *   `host`        SSH host or IP address.   
   *   `username`    SSH host or IP address.   
+  *   `ssh`         SSH connection options or an ssh2 instance   
   *   `stdout`      Writable EventEmitter in which command output will be piped.   
   *   `stderr`      Writable EventEmitter in which command error will be piped.   
 
@@ -259,7 +259,8 @@ mecano = module.exports =
           stdout += data
         if options.stderr
         then run.stderr.pipe options.stderr
-        else run.stderr.on 'data', (data) -> stderr += data
+        else run.stderr.on 'data', (data) ->
+          stderr += data
         run.on "exit", (code) ->
           # Givent some time because the "exit" event is sometimes
           # called before the "stdout" "data" event when runing
@@ -295,6 +296,7 @@ mecano = module.exports =
   *   `format`          One of 'tgz' or 'zip'.   
   *   `creates`         Ensure the given file is created or an error is send in the callback.   
   *   `not_if_exists`   Cancel extraction if file exists.   
+  *   `ssh`             SSH connection options or an ssh2 instance     
 
   `callback`            Received parameters are:   
 
@@ -354,10 +356,10 @@ mecano = module.exports =
 
   `options`             Command options include:   
 
-  *   `ssh`             SSH connection options or an ssh2 instance
-  *   `source`          Git source repository address.
-  *   `destination`     Directory where to clone the repository.
-  *   `revision`        Git revision, branch or tag.
+  *   `source`          Git source repository address.   
+  *   `destination`     Directory where to clone the repository.   
+  *   `revision`        Git revision, branch or tag.   
+  *   `ssh`             SSH connection options or an ssh2 instance   
   
   ###
   git: (options, callback) ->
@@ -378,7 +380,7 @@ mecano = module.exports =
       clone = ->
         mecano.exec
           ssh: options.ssh
-          cmd: "git clone #{options.source} #{path.basename options.destination}"
+          cmd: "git clone #{options.source} #{options.destination}"
           cwd: path.dirname options.destination
         , (err, executed, stdout, stderr) ->
           return next err if err
