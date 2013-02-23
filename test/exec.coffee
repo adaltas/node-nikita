@@ -17,7 +17,7 @@ describe 'exec', ->
   
   it 'should use ssh', (next) ->
     mecano.exec
-      host: 'localhost'
+      ssh: host: 'localhost'
       cmd: 'text=yes; echo $text'
     , (err, executed, stdout, stderr) ->
       stdout.should.eql 'yes\n'

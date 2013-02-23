@@ -19,7 +19,8 @@
         "each": "latest",
         "ftp": "latest",
         "open-uri": "latest",
-        "rimraf": "latest"
+        "rimraf": "latest",
+        "superexec": "latest"
     },
     "devDependencies": {
         "jsDAV": "latest",

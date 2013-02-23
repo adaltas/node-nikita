@@ -4,25 +4,11 @@ should = require 'should'
 mecano = require '../lib/mecano'
 misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '../lib/misc'
 test = require './test'
+connect = require 'superexec/lib/connect'
 
 describe 'misc', ->
 
   scratch = test.scratch @
-
-  describe 'exec', ->
-
-    it.only 'behave similarly with a normal command and a callback', (next) ->
-      misc.exec 
-        ssh: host: 'localhost'
-        cmd: 'ls -l'
-      , (err, sshstdout, sshstderr) ->
-        misc.exec
-          cwd: process.env['HOME']
-          cmd: 'ls -l'
-        , (err, stdout, stderr) ->
-          sshstdout.should.eql stdout
-          sshstderr.should.eql stderr
-          next()
 
   describe 'string', ->
 

@@ -6,8 +6,8 @@ util = require 'util'
 each = require 'each'
 eco = require 'eco'
 rimraf = require 'rimraf'
-exec = require('child_process').exec
 open = require 'open-uri'
+{exec} = require 'child_process'
 
 conditions = require './conditions'
 misc = require './misc'
@@ -194,6 +194,7 @@ mecano = module.exports =
         
   `options`         Include all conditions as well as:  
 
+  *   `ssh`         SSH connection options or an ssh2 instance
   *   `cmd`         String, Object or array; Command to execute.   
   *   `env`         Environment variables, default to `process.env`.   
   *   `cwd`         Current working directory.   
@@ -283,7 +284,7 @@ mecano = module.exports =
   ----------------------------
 
   Extract an archive. Multiple compression types are supported. Unless 
-  specified asan option, format is derived from the source extension. At the 
+  specified as an option, format is derived from the source extension. At the 
   moment, supported extensions are '.tgz', '.tar.gz' and '.zip'.   
 
   `options`             Command options include:   
@@ -350,6 +351,7 @@ mecano = module.exports =
 
   `options`             Command options include:   
 
+  *   `ssh`             SSH connection options or an ssh2 instance
   *   `source`          Git source repository address.
   *   `destination`     Directory where to clone the repository.
   *   `revision`        Git revision, branch or tag.
@@ -372,6 +374,7 @@ mecano = module.exports =
             log()
       clone = ->
         mecano.exec
+          ssh: options.ssh
           cmd: "git clone #{options.source} #{path.basename options.destination}"
           cwd: path.dirname options.destination
         , (err, executed, stdout, stderr) ->
@@ -379,12 +382,14 @@ mecano = module.exports =
           checkout()
       log = ->
         mecano.exec
+          ssh: options.ssh
           cmd: "git log --pretty=format:'%H' -n 1"
           cwd: options.destination
         , (err, executed, stdout, stderr) ->
           return next err if err
           current = stdout.trim()
           mecano.exec
+            ssh: options.ssh
             cmd: "git rev-list --max-count=1 #{options.revision}"
             cwd: options.destination
           , (err, executed, stdout, stderr) ->
@@ -394,6 +399,7 @@ mecano = module.exports =
             else next()
       checkout = ->
         mecano.exec
+          ssh: options.ssh
           cmd: "git checkout #{options.revision}"
           cwd: options.destination
         , (err) ->
