@@ -31,7 +31,7 @@ describe 'git', ->
       source: "#{scratch}/repo.git"
       destination: "#{scratch}/my_repo"
     , (err, updated) ->
-      should.not.exist err
+      return next err if err
       updated.should.eql 1
       mecano.git
         source: "#{scratch}/repo.git"
@@ -46,7 +46,7 @@ describe 'git', ->
       source: "#{scratch}/repo.git"
       destination: "#{scratch}/my_repo"
     , (err, updated) ->
-      should.not.exist err
+      return next err if err
       updated.should.eql 1
       mecano.git
         ssh: host: 'localhost'
@@ -61,7 +61,7 @@ describe 'git', ->
       source: "#{scratch}/repo.git"
       destination: "#{scratch}/my_repo"
     , (err, updated) ->
-      should.not.exist err
+      return next err if err
       mecano.git
         source: "#{scratch}/repo.git"
         destination: "#{scratch}/my_repo"

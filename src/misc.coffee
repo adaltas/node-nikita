@@ -25,7 +25,70 @@ module.exports = misc =
       crypto.createHash(algorithm).update(data).digest('hex')
   file:
     ###
-    `exists(path, ssh, callback)`
+    `readFile(ssh, path, callback)`
+    -----------------------------------------
+    ###
+    readFile: (ssh, path, callback) ->
+      unless ssh
+        fs.readFile path, 'ascii', (err, content) ->
+          callback err, content
+      else
+        ssh.sftp (err, sftp) ->
+          # For now, we dont accept options
+          options = {}
+          s = sftp.createReadStream path, options
+          data = ''
+          s.on 'data', (d) ->
+            data += d.toString()
+          s.on 'error', (err) ->
+            callback err
+          s.on 'end', ->
+            callback null, data
+    ###
+    `writeFile(ssh, path, content, callback)`
+    -----------------------------------------
+    ###
+    writeFile: (ssh, path, content, callback) ->
+      unless ssh
+        fs.writeFile path, content, (err, content) ->
+          callback err, content
+      else
+        ssh.sftp (err, sftp) ->
+          # For now, we dont accept options
+          options = {}
+          options.flags ?= 'w'
+          s = sftp.createWriteStream path, options
+          if typeof content is 'string'
+            s.write content if content
+            s.end()
+          else
+            content.pipe s
+          s.on 'error', (err) ->
+            callback err
+          s.on 'end', ->
+            s.destroy()
+          s.on 'close', ->
+            return chown() if options.username and options.group
+            callback()
+    ###
+    `mkdir(ssh, path, [chmod], callback)`
+    -------------------------------------
+    ###
+    mkdir: (ssh, path, chmod, callback) ->
+      if arguments.length is 3
+        callback = chmod
+        chmod = 0o0755
+      unless ssh
+        fs.mkdir path, chmod, (err) ->
+          callback err
+      else
+        ssh.sftp (err, sftp) ->
+          return callback err if err
+          sftp.mkdir path, permissions: chmod, (err, attr) ->
+            callback null, if err then false else true
+
+    ###
+    `exists(ssh, path, callback)`
     ###
     exists: (ssh, path, callback) ->
       unless ssh

@@ -5,6 +5,7 @@ fs.exists ?= path.exists
 should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
 test = require './test'
+connect = require 'superexec/lib/connect'
 
 describe 'mkdir', ->
 
@@ -15,22 +16,22 @@ describe 'mkdir', ->
     mecano.mkdir
       directory: source
     , (err, created) ->
-      should.not.exist err
+      return next err if err
       created.should.eql 1
       mecano.mkdir
         directory: source
       , (err, created) ->
-        should.not.exist err
+        return next err if err
         created.should.eql 0
         next()
 
   it 'should take source if first argument is a string', (next) ->
     source = "#{scratch}/a_dir"
     mecano.mkdir source, (err, created) ->
-      should.not.exist err
+      return next err if err
       created.should.eql 1
       mecano.mkdir source, (err, created) ->
-        should.not.exist err
+        return next err if err
         created.should.eql 0
         next()
   
@@ -39,7 +40,7 @@ describe 'mkdir', ->
     mecano.mkdir
       directory: source
     , (err, created) ->
-      should.not.exist err
+      return next err if err
       created.should.eql 1
       next()
   
@@ -49,7 +50,7 @@ describe 'mkdir', ->
       directory: source
       exclude: /^do/
     , (err, created) ->
-      should.not.exist err
+      return next err if err
       created.should.eql 1
       fs.exists source, (created) ->
         created.should.not.be.ok
@@ -63,9 +64,32 @@ describe 'mkdir', ->
       directory: './a_dir'
       cwd: scratch
     , (err, created) ->
-      should.not.exist err
+      return next err if err
       created.should.eql 1
       fs.exists "#{scratch}/a_dir", (created) ->
         created.should.be.ok
         next()
+
+  it 'should work over ssh', (next) ->
+    connect host: 'localhost', (err, ssh) ->
+      mecano.mkdir
+        ssh: ssh
+        directory: "#{scratch}/ssh_dir_string"
+        chmod: '744'
+      , (err, created) ->
+        return next err if err
+        connect host: 'localhost', (err, ssh) ->
+          mecano.mkdir
+            ssh: ssh
+            directory: "#{scratch}/ssh_dir_octal"
+            chmod: 0o744
+          , (err, created) ->
+            return next err if err
+            ssh.sftp (err, sftp) ->
+              sftp.stat "#{scratch}/ssh_dir_string", (err, attr_string) ->
+                return next err if err
+                sftp.stat "#{scratch}/ssh_dir_octal", (err, attr_octal) ->
+                  return next err if err
+                  attr_string.permissions.should.eql attr_octal.permissions
+                  next()
 

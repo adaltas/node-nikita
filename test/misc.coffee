@@ -41,7 +41,7 @@ describe 'misc', ->
 
       it 'returns the file md5', (next) ->
         misc.file.hash "#{__dirname}/../resources/render.eco", (err, md5) ->
-          should.not.exist err
+          return next err if err
           md5.should.eql '287621a8df3c3f6c99c7b7645bd09ffd'
           next()
 
@@ -53,7 +53,7 @@ describe 'misc', ->
 
       it 'returns the directory md5', (next) ->
         misc.file.hash "#{__dirname}/../resources", (err, md5) ->
-          should.not.exist err
+          return next err if err
           md5.should.eql 'e667d74986ef3f22b7b6b7fc66d5ea59'
           next()
 
@@ -61,7 +61,7 @@ describe 'misc', ->
         mecano.mkdir "#{scratch}/a_dir", (err, created) ->
           return next err if err
           misc.file.hash "#{scratch}/a_dir", (err, md5) ->
-            should.not.exist err
+            return next err if err
             md5.should.eql crypto.createHash('md5').update('').digest('hex')
             next()
 
@@ -70,7 +70,7 @@ describe 'misc', ->
       it '2 differents files', (next) ->
         file = "#{__dirname}/../resources/render.eco"
         misc.file.compare [file, file], (err, md5) ->
-          should.not.exist err
+          return next err if err
           md5.should.eql '287621a8df3c3f6c99c7b7645bd09ffd'
           next()
 

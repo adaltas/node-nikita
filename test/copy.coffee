@@ -37,16 +37,16 @@ describe 'copy', ->
         source: source
         destination: destination
       , (err, copied) ->
-        should.not.exist err
+        return next err if err
         copied.should.eql 1
         misc.file.compare [source, destination], (err, md5) ->
-          should.not.exist err
+          return next err if err
           md5.should.eql '3fb7c40c70b0ed19da713bd69ee12014'
           mecano.copy
             source: source
             destination: destination
           , (err, copied) ->
-            should.not.exist err
+            return next err if err
             copied.should.eql 0
             next()
 
@@ -58,7 +58,7 @@ describe 'copy', ->
         source: source
         destination: destination
       , (err, copied) ->
-        should.not.exist err
+        return next err if err
         copied.should.eql 1
         fs.exists "#{destination}/a_file", (exists) ->
           exists.should.be.true
@@ -67,7 +67,7 @@ describe 'copy', ->
             source: source
             destination: destination
           , (err, copied) ->
-            should.not.exist err
+            return next err if err
             copied.should.eql 0
             next()
 
@@ -83,16 +83,16 @@ describe 'copy', ->
           source: source
           destination: destination
         , (err, copied) ->
-          should.not.exist err
+          return next err if err
           copied.should.eql 1
           misc.file.compare [source, destination], (err, md5) ->
-            should.not.exist err
+            return next err if err
             md5.should.eql '3fb7c40c70b0ed19da713bd69ee12014'
             mecano.copy
               source: source
               destination: destination
             , (err, copied) ->
-              should.not.exist err
+              return next err if err
               copied.should.eql 0
               next()
 

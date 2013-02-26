@@ -15,14 +15,14 @@ describe 'link', ->
       source: __filename
       destination: destination
     , (err, linked) ->
-      should.not.exist err
+      return next err if err
       linked.should.eql 1
       # Create on an existing link
       mecano.link
         source: __filename
         destination: destination
       , (err, linked) ->
-        should.not.exist err
+        return next err if err
         linked.should.eql 0
         fs.lstat destination, (err, stat) ->
           stat.isSymbolicLink().should.be.ok
@@ -35,14 +35,14 @@ describe 'link', ->
       source: __dirname
       destination: destination
     , (err, linked) ->
-      should.not.exist err
+      return next err if err
       linked.should.eql 1
       # Create on an existing link
       mecano.link
         source: __dirname
         destination: destination
       , (err, linked) ->
-        should.not.exist err
+        return next err if err
         linked.should.eql 0
         fs.lstat destination, (err, stat) ->
           stat.isSymbolicLink().should.be.ok
@@ -55,7 +55,7 @@ describe 'link', ->
       source: __dirname
       destination: destination
     , (err, linked) ->
-      should.not.exist err
+      return next err if err
       linked.should.eql 1
       fs.lstat destination, (err, stat) ->
         stat.isSymbolicLink().should.be.ok
@@ -68,7 +68,7 @@ describe 'link', ->
           source: "#{__dirname}/mkdir.coffee"
           destination: "#{destination}/mkdir.coffee"
         ], (err, linked) ->
-          should.not.exist err
+          return next err if err
           linked.should.eql 2
           next()
   

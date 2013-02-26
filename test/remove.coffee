@@ -17,7 +17,7 @@ describe 'remove', ->
       mecano.remove
         source: "#{scratch}/a_file"
       , (err, removed) ->
-        should.not.exist err
+        return next err if err
         removed.should.eql 1
         next()
 
@@ -26,7 +26,7 @@ describe 'remove', ->
       mecano.remove
         source: "#{scratch}/test"
       , (err, removed) ->
-        should.not.exist err
+        return next err if err
         removed.should.eql 1
         fs.lstat "#{scratch}/test", (err, stat) ->
           err.code.should.eql 'ENOENT'
@@ -40,7 +40,7 @@ describe 'remove', ->
       mecano.remove
         source: "#{scratch}/*gz"
       , (err, removed) ->
-        should.not.exist err
+        return next err if err
         removed.should.eql 2
         fs.readdir "#{scratch}", (err, files) ->
           files.should.not.include 'a_dir.tar.gz'

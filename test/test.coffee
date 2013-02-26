@@ -8,7 +8,7 @@ module.exports =
     context.beforeEach (next) ->
       mecano.rm scratch, ->
         mecano.mkdir scratch, next
-    context.afterEach (next) ->
-      mecano.rm scratch, next
+    # context.afterEach (next) ->
+    #   mecano.rm scratch, next
     scratch
 

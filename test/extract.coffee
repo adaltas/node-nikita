@@ -13,7 +13,7 @@ describe 'extract', ->
       source: "#{__dirname}/../resources/a_dir.tgz"
       destination: scratch
     , (err, extracted) ->
-      should.not.exist err
+      return next err if err
       extracted.should.eql 1
       # Test an existing extracted dir
       # Note, there is no way for us to know which directory
@@ -22,7 +22,7 @@ describe 'extract', ->
         source: "#{__dirname}/../resources/a_dir.tgz"
         destination: scratch
       , (err, extracted) ->
-        should.not.exist err
+        return next err if err
         extracted.should.eql 1
         next()
   
@@ -32,7 +32,7 @@ describe 'extract', ->
       source: "#{__dirname}/../resources/a_dir.zip"
       destination: scratch
     , (err, extracted) ->
-      should.not.exist err
+      return next err if err
       extracted.should.eql 1
       # Test an existing extracted dir
       # Note, there is no way for us to know which directory
@@ -41,7 +41,7 @@ describe 'extract', ->
         source: "#{__dirname}/../resources/a_dir.zip"
         destination: scratch
       , (err, extracted) ->
-        should.not.exist err
+        return next err if err
         extracted.should.eql 1
         next()
 
@@ -52,7 +52,7 @@ describe 'extract', ->
       source: "#{__dirname}/../resources/a_dir.tgz"
       destination: scratch
     , (err, extracted) ->
-      should.not.exist err
+      return next err if err
       extracted.should.eql 1
       next()
   
@@ -70,7 +70,7 @@ describe 'extract', ->
         destination: scratch
         creates: "#{scratch}/a_dir"
       , (err, extracted) ->
-        should.not.exist err
+        return next err if err
         extracted.should.eql 1
         next()
   
@@ -81,7 +81,7 @@ describe 'extract', ->
       destination: scratch
       not_if_exists: __dirname
     , (err, extracted) ->
-      should.not.exist err
+      return next err if err
       extracted.should.eql 0
       next()
 

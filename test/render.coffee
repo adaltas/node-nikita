@@ -15,7 +15,7 @@ describe 'render', ->
       destination: destination
       context: who: 'you'
     , (err, rendered) ->
-      should.not.exist err
+      return next err if err
       rendered.should.eql 1
       fs.readFile destination, 'ascii', (err, content) ->
         content.should.eql 'Hello you'
@@ -28,7 +28,7 @@ describe 'render', ->
       destination: destination
       context: who: 'you'
     , (err, rendered) ->
-      should.not.exist err
+      return next err if err
       rendered.should.eql 1
       fs.readFile destination, 'ascii', (err, content) ->
         content.should.eql 'Hello you'
@@ -41,14 +41,14 @@ describe 'render', ->
       destination: destination
       context: who: 'you'
     , (err, rendered) ->
-      should.not.exist err
+      return next err if err
       rendered.should.eql 1
       mecano.render
         source: "#{__dirname}/../resources/render.eco"
         destination: destination
         context: who: 'you'
       , (err, rendered) ->
-        should.not.exist err
+        return next err if err
         rendered.should.eql 0
         next()
   

@@ -87,7 +87,7 @@ mecano = module.exports =
         copyDir = (source, destination, next) ->
           return next() if source is options.source
           # todo, add permission
-          fs.mkdir destination, (err) ->
+          misc.file.mkdir options.ssh, destination, (err) ->
             return next() if err?.code is 'EEXIST'
             return next err if err
             finish next
@@ -439,7 +439,7 @@ mecano = module.exports =
     exec_exists = (option, callback) ->
       misc.file.exists options.ssh, option.destination, (err, exists) ->
         return callback null, false unless exists
-        fs.readFile option.destination, 'ascii', (err, content) ->
+        misc.file.readFile option.ssh, option.destination, (err, content) ->
           return callback err if err
           exec_cmd = /exec (.*) \$@/.exec(content)[1]
           callback null, exec_cmd and exec_cmd is option.source
@@ -448,7 +448,7 @@ mecano = module.exports =
       #!/bin/bash
       exec #{option.source} $@
       """
-      fs.writeFile option.destination, content, (err) ->
+      misc.file.writeFile options.ssh, option.destination, content, (err) ->
         return callback err if err
         fs.chmod option.destination, option.chmod, (err) ->
           return callback err if err
@@ -538,7 +538,7 @@ mecano = module.exports =
           current += "/#{dir}"
           misc.file.exists options.ssh, current, (err, exists) ->
             return next() if exists
-            fs.mkdir current, option.chmod, (err) ->
+            misc.file.mkdir option.ssh, current, option.chmod, (err) ->
               return next err if err
               dirCreated = true
               next()
@@ -679,11 +679,12 @@ mecano = module.exports =
         return writeContent() unless option.source
         misc.file.exists options.ssh, option.source, (err, exists) ->
           return next new Error "Invalid source, got #{JSON.stringify(option.source)}" unless exists
-          fs.readFile option.source, (err, content) ->
+          misc.file.readFile option.ssh, option.source, (err, content) ->
             return next err if err
             option.content = content
             writeContent()
       writeContent = ->
+        option.source = null
         mecano.write option, (err, written) ->
           return next err if err
           rendered++ if written
@@ -702,6 +703,7 @@ mecano = module.exports =
   *   `from`          Replace from after this marker, a string or a regular expression matching a line
   *   `to`            Replace to before this marker, a string or a regular expression matching a line
   *   `content`       Text to be written.
+  *   `source`        File path from where to extract the content, do not use conjointly with content.
   *   `destination`   File path where to write content to.
 
   `callback`          Received parameters are:   
@@ -716,32 +718,48 @@ mecano = module.exports =
     each( options )
     .on 'item', (option, next) ->
       return next new Error 'Missing source or content' unless option.source or option.content
+      return next new Error 'Define either source or content' if option.source and option.content
       return next new Error 'Missing destination' unless option.destination
       destination  = null
       destinationHash = null
-      readDestinationContent = ->
+      source = null
+      readSource = ->
+        if option.content
+          source = option.content
+          return readDestination()
+        # Option "local_source" force to bypass the ssh 
+        # connection, use by the upload function
+        ssh = if option.local_source then null else option.ssh
+        misc.file.readFile ssh, option.source, (err, content) ->
+          source = content
+          readDestination()
+      readDestination = ->
         # no need to test changes if destination is a callback
-        return writeContent() if typeof option.destination is 'function'
-        misc.file.exists options.ssh, option.destination, (err, exists) ->
-          return writeContent() unless exists
-          fs.readFile option.destination, (err, content) ->
+        return render() if typeof option.destination is 'function'
+        misc.file.exists option.ssh, option.destination, (err, exists) ->
+          return render() unless exists
+          misc.file.readFile option.ssh, option.destination, (err, content) ->
             return next err if err
             # destination = content if from or to
             destinationHash = misc.string.hash content
-            writeContent()
-      writeContent = ->
-        try content = eco.render option.content.toString(), option.context or {}
+            render()
+      render = ->
+        return writeContent() unless option.context?
+        try
+          source = eco.render source.toString(), option.context
         catch err then return next err
-        return next() if destinationHash is misc.string.hash content
+        writeContent()
+      writeContent = ->
+        return next() if destinationHash is misc.string.hash source
         if typeof option.destination is 'function'
-          option.destination content
+          option.destination source
           next()
-        else 
-          fs.writeFile option.destination, content, (err) ->
+        else
+          misc.file.writeFile option.ssh, option.destination, source, (err) ->
             return next err if err
             written++
             next()
-      readDestinationContent()
+      readSource()
     .on 'both', (err) ->
       callback err, written
   ###
@@ -783,6 +801,25 @@ mecano = module.exports =
       #       next ctx.OK
     .on 'both', (err) ->
       callback err, written
+  ###
+  `upload(options, callback)`
+  ---------------------------
+  
+  Upload a file to a remote location. Options are 
+  identical to the "write" function.
+
+  ###
+  upload: (options, callback) ->
+    options = misc.options options
+    uploaded = 0
+    each( options )
+    .on 'item', (option, next) ->
+      option = misc.merge option, local_source: true
+      mecano.write option, (err, written) ->
+        uploaded++ if written is 1
+        next err
+    .on 'both', (err) ->
+      callback err, uploaded
 
 # Alias definitions
 

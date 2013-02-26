@@ -21,7 +21,7 @@ describe 'download', ->
       source: source
       destination: destination
     , (err, downloaded) ->
-      should.not.exist err
+      return next err if err
       downloaded.should.eql 1
       fs.readFile destination, 'ascii', (err, content) ->
         content.should.eql 'okay'
@@ -30,7 +30,7 @@ describe 'download', ->
           source: source
           destination: destination
         , (err, downloaded) ->
-          should.not.exist err
+          return next err if err
           downloaded.should.eql 0
           server.close()
           next()
@@ -44,7 +44,7 @@ describe 'download', ->
       source: source
       destination: destination
     , (err, downloaded) ->
-      should.not.exist err
+      return next err if err
       downloaded.should.eql 1
       fs.readFile destination, 'ascii', (err, content) ->
         content.should.include 'GNU'
@@ -53,7 +53,7 @@ describe 'download', ->
           source: source
           destination: destination
         , (err, downloaded) ->
-          should.not.exist err
+          return next err if err
           downloaded.should.eql 0
           next()
   
@@ -65,7 +65,7 @@ describe 'download', ->
       source: source
       destination: destination
     , (err, downloaded) ->
-      should.not.exist err
+      return next err if err
       downloaded.should.eql 1
       fs.readFile destination, 'ascii', (err, content) ->
         content.should.include 'yeah'
@@ -74,7 +74,7 @@ describe 'download', ->
           source: source
           destination: destination
         , (err, downloaded) ->
-          should.not.exist err
+          return next err if err
           downloaded.should.eql 0
           next()
 

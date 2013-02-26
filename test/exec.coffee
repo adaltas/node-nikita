@@ -55,7 +55,7 @@ describe 'exec', ->
         cmd: "chown"
         code: [0, 1]
       , (err, executed, stdout, stderr) ->
-        should.not.exist err
+        return next err if err
         next()
   
   it 'should honore conditions', (next) ->

@@ -19,7 +19,7 @@ describe 'move', ->
         source: "#{scratch}/render.eco"
         destination: "#{scratch}/moved.eco"
       , (err, moved) ->
-        should.not.exist err
+        return next err if err
         moved.should.eql 1
         fs.exists "#{scratch}/moved.eco", (exists) ->
           exists.should.be.true
@@ -34,7 +34,7 @@ describe 'move', ->
         source: "#{scratch}/a_dir"
         destination: "#{scratch}/moved"
       , (err, moved) ->
-        should.not.exist err
+        return next err if err
         moved.should.eql 1
         fs.exists "#{scratch}/moved", (exists) ->
           exists.should.be.true
