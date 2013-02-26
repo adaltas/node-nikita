@@ -422,35 +422,35 @@ mecano = module.exports =
   link: (options, callback) ->
     options = misc.options options
     linked = 0
-    sym_exists = (option, callback) ->
-      misc.file.exists options.ssh, option.destination, (err, exists) ->
+    sym_exists = (options, callback) ->
+      misc.file.exists options.ssh, options.destination, (err, exists) ->
         return callback null, false unless exists
-        fs.readlink option.destination, (err, resolvedPath) ->
+        fs.readlink options.destination, (err, resolvedPath) ->
           return callback err if err
-          return callback null, true if resolvedPath is option.source
-          fs.unlink option.destination, (err) ->
+          return callback null, true if resolvedPath is options.source
+          fs.unlink options.destination, (err) ->
             return callback err if err
             callback null, false
-    sym_create = (option, callback) ->
-      fs.symlink option.source, option.destination, (err) ->
+    sym_create = (options, callback) ->
+      fs.symlink options.source, options.destination, (err) ->
         return callback err if err
         linked++
         callback()
-    exec_exists = (option, callback) ->
-      misc.file.exists options.ssh, option.destination, (err, exists) ->
+    exec_exists = (options, callback) ->
+      misc.file.exists options.ssh, options.destination, (err, exists) ->
         return callback null, false unless exists
-        misc.file.readFile option.ssh, option.destination, (err, content) ->
+        misc.file.readFile options.ssh, options.destination, (err, content) ->
           return callback err if err
           exec_cmd = /exec (.*) \$@/.exec(content)[1]
-          callback null, exec_cmd and exec_cmd is option.source
-    exec_create = (option, callback) ->
+          callback null, exec_cmd and exec_cmd is options.source
+    exec_create = (options, callback) ->
       content = """
       #!/bin/bash
-      exec #{option.source} $@
+      exec #{options.source} $@
       """
-      misc.file.writeFile options.ssh, option.destination, content, (err) ->
+      misc.file.writeFile options.ssh, options.destination, content, (err) ->
         return callback err if err
-        fs.chmod option.destination, option.chmod, (err) ->
+        fs.chmod options.destination, options.chmod, (err) ->
           return callback err if err
           linked++
           callback()
@@ -459,19 +459,19 @@ mecano = module.exports =
       return callback err if err
       each( options )
       .parallel( true )
-      .on 'item', (option, next) ->
-        return next new Error "Missing source, got #{JSON.stringify(option.source)}" unless option.source
-        return next new Error "Missing destination, got #{JSON.stringify(option.destination)}" unless option.destination
-        option.chmod ?= 0o0755
+      .on 'item', (options, next) ->
+        return next new Error "Missing source, got #{JSON.stringify(options.source)}" unless options.source
+        return next new Error "Missing destination, got #{JSON.stringify(options.destination)}" unless options.destination
+        options.chmod ?= 0o0755
         dispatch = ->
-          if option.exec
-            exec_exists option, (err, exists) ->
+          if options.exec
+            exec_exists options, (err, exists) ->
               return next() if exists
-              exec_create option, next
+              exec_create options, next
           else
-            sym_exists option, (err, exists) ->
+            sym_exists options, (err, exists) ->
               return next() if exists
-              sym_create option, next
+              sym_create options, next
         dispatch()
       .on 'both', (err) ->
         callback err, linked
@@ -507,38 +507,38 @@ mecano = module.exports =
     options = misc.options options
     created = 0
     each( options )
-    .on 'item', (option, next) ->
-      option = { source: option } if typeof option is 'string'
-      option.source = option.directory if not option.source? and option.directory?
-      cwd = option.cwd ? process.cwd()
-      option.source = path.resolve cwd, option.source
-      return next new Error 'Missing source option' unless option.source?
+    .on 'item', (options, next) ->
+      options = { source: options } if typeof options is 'string'
+      options.source = options.directory if not options.source? and options.directory?
+      cwd = options.cwd ? process.cwd()
+      options.source = path.resolve cwd, options.source
+      return next new Error 'Missing source option' unless options.source?
       check = () ->
         # if exist and is a dir, skip
         # if exists and isn't a dir, error
-        fs.stat option.source, (err, stat) ->
+        fs.stat options.source, (err, stat) ->
           return create() if err and err.code is 'ENOENT'
           return next err if err
           return next() if stat.isDirectory()
-          next err 'Invalid source, got #{JSON.encode(option.source)}'
+          next err 'Invalid source, got #{JSON.encode(options.source)}'
       create = () ->
-        option.chmod ?= 0o0755
+        options.chmod ?= 0o0755
         current = ''
         dirCreated = false
-        dirs = option.source.split '/'
+        dirs = options.source.split '/'
         each( dirs )
         .on 'item', (dir, next) ->
           # Directory name contains variables
           # eg /\${/ on './var/cache/${user}' creates './var/cache/'
-          if option.exclude? and option.exclude instanceof RegExp
-            return next() if option.exclude.test dir
+          if options.exclude? and options.exclude instanceof RegExp
+            return next() if options.exclude.test dir
           # Empty Dir caused by split
           # ..commented because `resolve` should clean the path
           # return next() if dir is ''
           current += "/#{dir}"
           misc.file.exists options.ssh, current, (err, exists) ->
             return next() if exists
-            misc.file.mkdir option.ssh, current, option.chmod, (err) ->
+            misc.file.mkdir options.ssh, current, options.chmod, (err) ->
               return next err if err
               dirCreated = true
               next()
@@ -630,7 +630,7 @@ mecano = module.exports =
     each( options )
     .on 'item', (options, next) ->
       options = source: options if typeof options is 'string'
-      return next new Error 'Missing source: #{option.source}' unless options.source?
+      return next new Error "Missing source: #{options.source}" unless options.source?
       options.options ?= {}
       each()
       .files(options.source)
@@ -672,20 +672,20 @@ mecano = module.exports =
     options = misc.options options
     rendered = 0
     each( options )
-    .on 'item', (option, next) ->
-      return next new Error 'Missing source or content' unless option.source or option.content
-      return next new Error 'Missing destination' unless option.destination
+    .on 'item', (options, next) ->
+      return next new Error 'Missing source or content' unless options.source or options.content
+      return next new Error 'Missing destination' unless options.destination
       readSource = ->
-        return writeContent() unless option.source
-        misc.file.exists options.ssh, option.source, (err, exists) ->
-          return next new Error "Invalid source, got #{JSON.stringify(option.source)}" unless exists
-          misc.file.readFile option.ssh, option.source, (err, content) ->
+        return writeContent() unless options.source
+        misc.file.exists options.ssh, options.source, (err, exists) ->
+          return next new Error "Invalid source, got #{JSON.stringify(options.source)}" unless exists
+          misc.file.readFile options.ssh, options.source, (err, content) ->
             return next err if err
-            option.content = content
+            options.content = content
             writeContent()
       writeContent = ->
-        option.source = null
-        mecano.write option, (err, written) ->
+        options.source = null
+        mecano.write options, (err, written) ->
           return next err if err
           rendered++ if written
           next()
@@ -716,46 +716,46 @@ mecano = module.exports =
     options = misc.options options
     written = 0
     each( options )
-    .on 'item', (option, next) ->
-      return next new Error 'Missing source or content' unless option.source or option.content
-      return next new Error 'Define either source or content' if option.source and option.content
-      return next new Error 'Missing destination' unless option.destination
+    .on 'item', (options, next) ->
+      return next new Error 'Missing source or content' unless options.source or options.content
+      return next new Error 'Define either source or content' if options.source and options.content
+      return next new Error 'Missing destination' unless options.destination
       destination  = null
       destinationHash = null
       source = null
       readSource = ->
-        if option.content
-          source = option.content
+        if options.content
+          source = options.content
           return readDestination()
         # Option "local_source" force to bypass the ssh 
         # connection, use by the upload function
-        ssh = if option.local_source then null else option.ssh
-        misc.file.readFile ssh, option.source, (err, content) ->
+        ssh = if options.local_source then null else options.ssh
+        misc.file.readFile ssh, options.source, (err, content) ->
           source = content
           readDestination()
       readDestination = ->
         # no need to test changes if destination is a callback
-        return render() if typeof option.destination is 'function'
-        misc.file.exists option.ssh, option.destination, (err, exists) ->
+        return render() if typeof options.destination is 'function'
+        misc.file.exists options.ssh, options.destination, (err, exists) ->
           return render() unless exists
-          misc.file.readFile option.ssh, option.destination, (err, content) ->
+          misc.file.readFile options.ssh, options.destination, (err, content) ->
             return next err if err
             # destination = content if from or to
             destinationHash = misc.string.hash content
             render()
       render = ->
-        return writeContent() unless option.context?
+        return writeContent() unless options.context?
         try
-          source = eco.render source.toString(), option.context
+          source = eco.render source.toString(), options.context
         catch err then return next err
         writeContent()
       writeContent = ->
         return next() if destinationHash is misc.string.hash source
-        if typeof option.destination is 'function'
-          option.destination source
+        if typeof options.destination is 'function'
+          options.destination source
           next()
         else
-          misc.file.writeFile option.ssh, option.destination, source, (err) ->
+          misc.file.writeFile options.ssh, options.destination, source, (err) ->
             return next err if err
             written++
             next()
@@ -770,8 +770,8 @@ mecano = module.exports =
     options = misc.options options
     written = 0
     each( options )
-    .on 'item', (option, next) ->
-      return next new Error 'Missing service name' unless option.name
+    .on 'item', (options, next) ->
+      return next new Error 'Missing service name' unless options.name
       # installed = ->
       #   ctx.ssh.exec 'yum list installed | grep ^httpd\\\\.', (err, stream) ->
       #     return next err if err
@@ -813,9 +813,9 @@ mecano = module.exports =
     options = misc.options options
     uploaded = 0
     each( options )
-    .on 'item', (option, next) ->
-      option = misc.merge option, local_source: true
-      mecano.write option, (err, written) ->
+    .on 'item', (options, next) ->
+      options = misc.merge options, local_source: true
+      mecano.write options, (err, written) ->
         uploaded++ if written is 1
         next err
     .on 'both', (err) ->
