@@ -20,6 +20,23 @@ describe 'misc', ->
 
   describe 'file', ->
 
+    describe 'exists', ->
+
+      it 'check local filesystem', (next) ->
+        misc.file.exists null, "#{__filename}", (err, exists) ->
+          exists.should.be.ok
+          misc.file.exists null, "#{__filename}/nothere", (err, exists) ->
+            exists.should.not.be.ok
+            next()
+
+      it 'check over ssh', (next) ->
+        connect host: 'localhost', (err, ssh) ->
+          misc.file.exists ssh, "#{__filename}", (err, exists) ->
+            exists.should.be.ok
+            misc.file.exists ssh, "#{__filename}/nothere", (err, exists) ->
+              exists.should.not.be.ok
+              next()
+
     describe 'hash', ->
 
       it 'returns the file md5', (next) ->

@@ -154,7 +154,7 @@ mecano = module.exports =
       return next new Error "Missing destination: #{options.destination}" unless options.destination
       options.force ?= false
       prepare = () ->
-        fs.exists options.destination, (exists) ->
+        misc.file.exists options.ssh, options.destination, (err, exists) ->
           # Use previous download
           if exists and not options.force
             next()
@@ -214,10 +214,7 @@ mecano = module.exports =
   *   `stderr`      Stderr value(s) unless `stderr` option is provided.   
 
   ###
-  execute: (goptions, options, callback) ->
-    if arguments.length is 2
-      callback = options
-      options = goptions
+  execute: (options, callback) ->
     isArray = Array.isArray options
     options = misc.options options
     executed = 0
@@ -231,26 +228,13 @@ mecano = module.exports =
         esccmd += char
       esccmd
     each( options )
-    .parallel( goptions.parallel )
+    .parallel( true )
     .on 'item', (options, i, next) ->
       options = { cmd: options } if typeof options is 'string'
-      misc.merge true, options, goptions
       return next new Error "Missing cmd: #{options.cmd}" unless options.cmd?
       options.code ?= [0]
       options.code = [options.code] unless Array.isArray options.code
-      # cmdOptions = {}
-      # cmdOptions.env = options.env or process.env
-      # cmdOptions.cwd = options.cwd or null
-      # cmdOptions.uid = options.uid if options.uid
-      # cmdOptions.gid = options.gid if options.gid
       cmd = () ->
-        # if options.host
-        #   options.cmd = escape options.cmd
-        #   options.cmd = options.host + ' "' + options.cmd + '"'
-        #   if options.username
-        #     options.cmd = options.username + '@' + options.cmd
-        #   options.cmd = 'ssh -o StrictHostKeyChecking=no ' + options.cmd
-        # run = exec options.cmd, cmdOptions
         run = exec options
         stdout = stderr = ''
         if options.stdout
@@ -336,7 +320,7 @@ mecano = module.exports =
       # Step for `creates`
       creates = () ->
         return success() unless options.creates?
-        fs.exists options.creates, (exists) ->
+        misc.file.exists options.ssh, options.creates, (err, exists) ->
           return next new Error "Failed to create '#{path.basename options.creates}'" unless exists
           success()
       # Final step
@@ -438,9 +422,8 @@ mecano = module.exports =
   link: (options, callback) ->
     options = misc.options options
     linked = 0
-
     sym_exists = (option, callback) ->
-      fs.exists option.destination, (exists) ->
+      misc.file.exists options.ssh, option.destination, (err, exists) ->
         return callback null, false unless exists
         fs.readlink option.destination, (err, resolvedPath) ->
           return callback err if err
@@ -454,7 +437,7 @@ mecano = module.exports =
         linked++
         callback()
     exec_exists = (option, callback) ->
-      fs.exists option.destination, (exists) ->
+      misc.file.exists options.ssh, option.destination, (err, exists) ->
         return callback null, false unless exists
         fs.readFile option.destination, 'ascii', (err, content) ->
           return callback err if err
@@ -553,7 +536,7 @@ mecano = module.exports =
           # ..commented because `resolve` should clean the path
           # return next() if dir is ''
           current += "/#{dir}"
-          fs.exists current, (exists) ->
+          misc.file.exists options.ssh, current, (err, exists) ->
             return next() if exists
             fs.mkdir current, option.chmod, (err) ->
               return next err if err
@@ -694,7 +677,7 @@ mecano = module.exports =
       return next new Error 'Missing destination' unless option.destination
       readSource = ->
         return writeContent() unless option.source
-        fs.exists option.source, (exists) ->
+        misc.file.exists options.ssh, option.source, (err, exists) ->
           return next new Error "Invalid source, got #{JSON.stringify(option.source)}" unless exists
           fs.readFile option.source, (err, content) ->
             return next err if err
@@ -739,7 +722,7 @@ mecano = module.exports =
       readDestinationContent = ->
         # no need to test changes if destination is a callback
         return writeContent() if typeof option.destination is 'function'
-        fs.exists option.destination, (exists) ->
+        misc.file.exists options.ssh, option.destination, (err, exists) ->
           return writeContent() unless exists
           fs.readFile option.destination, (err, content) ->
             return next err if err

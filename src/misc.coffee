@@ -23,7 +23,19 @@ module.exports = misc =
       if arguments.length is 1
         algorithm = 'md5'
       crypto.createHash(algorithm).update(data).digest('hex')
-  file: 
+  file:
+    ###
+    `exists(path, ssh, callback)`
+    ###
+    exists: (ssh, path, callback) ->
+      unless ssh
+        fs.exists path, (exists) ->
+          callback null, exists
+      else
+        ssh.sftp (err, sftp) ->
+          return callback err if err
+          sftp.stat path, (err, attr) ->
+            callback null, if err then false else true
     ###
     `files.hash(file, [algorithm], callback)`
     -----------------------------------------
