@@ -4,6 +4,7 @@ should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
 test = require './test'
 connect = require 'superexec/lib/connect'
+misc = require '../lib/misc'
 
 describe 'write', ->
 
@@ -19,6 +20,35 @@ describe 'write', ->
       fs.readFile "#{scratch}/file", 'ascii', (err, content) ->
         content.should.eql 'Hello'
         next()
+  
+  it 'create a backup', (next) ->
+    # First we create a file
+    mecano.write
+      content: 'Hello'
+      destination: "#{scratch}/file"
+      backup: true
+    , (err, written) ->
+      return next err if err
+      # If nothing has change, there should be no backup
+      mecano.write
+        content: 'Hello'
+        destination: "#{scratch}/file"
+        backup: '.bck'
+      , (err, written) ->
+        return next err if err
+        written.should.eql 0
+        misc.file.exists null, "#{scratch}/file.bck", (err, exists) ->
+          exists.should.be.false
+          # If content is different, check the backup
+          mecano.write
+            content: 'Hello Node'
+            destination: "#{scratch}/file"
+            backup: '.bck'
+          , (err, written) ->
+            return next err if err
+            fs.readFile "#{scratch}/file.bck", 'ascii', (err, content) ->
+              content.should.eql 'Hello Node'
+              next()
   
   it 'doesnt increment if destination is same than generated content', (next) ->
     mecano.write

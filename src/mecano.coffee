@@ -705,6 +705,7 @@ mecano = module.exports =
   *   `content`       Text to be written.
   *   `source`        File path from where to extract the content, do not use conjointly with content.
   *   `destination`   File path where to write content to.
+  *   `backup`        Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.
 
   `callback`          Received parameters are:   
   
@@ -758,7 +759,15 @@ mecano = module.exports =
           misc.file.writeFile options.ssh, options.destination, source, (err) ->
             return next err if err
             written++
-            next()
+            backup()
+      backup = ->
+        return next() unless options.backup
+        backup = options.backup
+        backup = ".#{Date.now()}" if backup is true
+        backup = "#{options.destination}#{backup}"
+        misc.file.writeFile options.ssh, backup, source, (err) ->
+          return next err if err
+          next()
       readSource()
     .on 'both', (err) ->
       callback err, written
