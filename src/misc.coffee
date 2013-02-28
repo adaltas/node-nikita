@@ -6,6 +6,7 @@ fs.exists ?= path.exists
 each = require 'each'
 util = require 'util'
 Stream = require 'stream'
+connect = require 'superexec/lib/connect'
 
 ProxyStream = () ->
   # do nothing
@@ -24,6 +25,23 @@ module.exports = misc =
         algorithm = 'md5'
       crypto.createHash(algorithm).update(data).digest('hex')
   file:
+    stat: (ssh, path, callback) ->
+      # Not yet test, no way to know if file is a direct or a link
+      unless ssh
+        # { dev: 16777218, mode: 16877, nlink: 19, uid: 501, gid: 20,
+        # rdev: 0, blksize: 4096, ino: 1736226, size: 646, blocks: 0,
+        # atime: Wed Feb 27 2013 23:25:07 GMT+0100 (CET), mtime: Tue Jan 29 2013 23:29:28 GMT+0100 (CET), ctime: Tue Jan 29 2013 23:29:28 GMT+0100 (CET) }
+        fs.stat path, (err, stat) ->
+          callback err, stat
+      else
+        # { size: 646, uid: 501, gid: 20, permissions: 16877, 
+        # atime: 1362003965, mtime: 1359498568 }
+        ssh.sftp (err, sftp) ->
+          return callback err if err
+          sftp.stat path, (err, attr) ->
+            callback err, attr
+
+
     ###
     `readFile(ssh, path, callback)`
     -----------------------------------------
@@ -34,6 +52,7 @@ module.exports = misc =
           callback err, content
       else
         ssh.sftp (err, sftp) ->
+          return callback err if err
           # For now, we dont accept options
           options = {}
           s = sftp.createReadStream path, options
@@ -239,15 +258,24 @@ module.exports = misc =
     # Return the modified object
     target
   ###
-  `options(options)` Normalize options
+  `options(options, callback)`
+  ----------------------------
+  Normalize options and create an ssh connection if needed
   ###
-  options: (options) ->
+  options: (options, callback) ->
     options = [options] unless Array.isArray options
-    for option in options
+    each(options)
+    .on 'item', (option, next) ->
       option.if = [option.if] if option.if? and not Array.isArray option.if
       option.if_exists = [option.if_exists] if option.if_exists? and not Array.isArray option.if_exists
       option.not_if_exists = [option.not_if_exists] if option.not_if_exists? and not Array.isArray option.not_if_exists
-    options
+      return next() unless option.ssh
+      connect option.ssh, (err, ssh) ->
+        return next err if err
+        option.ssh = ssh
+        next()
+    .on 'both', (err) ->
+      callback err, options
 
 
 

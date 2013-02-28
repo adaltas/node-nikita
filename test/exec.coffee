@@ -40,7 +40,7 @@ describe 'exec', ->
       cmd: "cat #{__filename}"
       stdout: evemit
     , (err, executed, stdout, stderr) ->
-      should.not.exist stdout
+      should.exist stdout
       callback_done = true
       done()
   
