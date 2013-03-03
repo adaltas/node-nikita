@@ -71,6 +71,7 @@ describe 'mkdir', ->
         next()
 
   it 'should work over ssh', (next) ->
+    @timeout 10000
     connect host: 'localhost', (err, ssh) ->
       mecano.mkdir
         ssh: ssh
