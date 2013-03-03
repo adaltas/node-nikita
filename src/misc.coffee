@@ -7,6 +7,7 @@ each = require 'each'
 util = require 'util'
 Stream = require 'stream'
 connect = require 'superexec/lib/connect'
+buffer = require 'buffer'
 
 ProxyStream = () ->
   # do nothing
@@ -43,18 +44,21 @@ module.exports = misc =
 
 
     ###
-    `readFile(ssh, path, callback)`
+    `readFile(ssh, path, [options], callback)`
     -----------------------------------------
     ###
-    readFile: (ssh, path, callback) ->
+    readFile: (ssh, path, options, callback) ->
+      if arguments.length is 3
+        callback = options
+        options = {}
+      options.encoding ?= 'utf8'
       unless ssh
-        fs.readFile path, 'ascii', (err, content) ->
+        fs.readFile path, options.encoding, (err, content) ->
           callback err, content
       else
         ssh.sftp (err, sftp) ->
           return callback err if err
           # For now, we dont accept options
-          options = {}
           s = sftp.createReadStream path, options
           data = ''
           s.on 'data', (d) ->
@@ -64,20 +68,20 @@ module.exports = misc =
           s.on 'end', ->
             callback null, data
     ###
-    `writeFile(ssh, path, content, callback)`
+    `writeFile(ssh, path, content, [options], callback)`
     -----------------------------------------
     ###
-    writeFile: (ssh, path, content, callback) ->
+    writeFile: (ssh, path, content, options, callback) ->
+      if arguments.length is 4
+        callback = options
+        options = {}
       unless ssh
         fs.writeFile path, content, (err, content) ->
           callback err, content
       else
         ssh.sftp (err, sftp) ->
-          # For now, we dont accept options
-          options = {}
-          options.flags ?= 'w'
           s = sftp.createWriteStream path, options
-          if typeof content is 'string'
+          if typeof content is 'string' or buffer.Buffer.isBuffer content
             s.write content if content
             s.end()
           else
@@ -87,7 +91,6 @@ module.exports = misc =
           s.on 'end', ->
             s.destroy()
           s.on 'close', ->
-            return chown() if options.username and options.group
             callback()
     ###
     `mkdir(ssh, path, [chmod], callback)`
