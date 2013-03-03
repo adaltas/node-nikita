@@ -194,19 +194,20 @@ mecano = module.exports =
   or limited concurrent mode. See the `node-each` documentation for more 
   details. Default to sequential (false).
         
-  `options`         Include all conditions as well as:  
+  `options`           Include all conditions as well as:  
 
-  *   `cmd`         String, Object or array; Command to execute.   
-  *   `env`         Environment variables, default to `process.env`.   
-  *   `cwd`         Current working directory.   
-  *   `uid`         Unix user id.   
-  *   `gid`         Unix group id.   
-  *   `code`        Expected code(s) returned by the command, int or array of int, default to 0.   
-  *   `host`        SSH host or IP address.   
-  *   `username`    SSH host or IP address.   
-  *   `ssh`         SSH connection options or an ssh2 instance   
-  *   `stdout`      Writable EventEmitter in which command output will be piped.   
-  *   `stderr`      Writable EventEmitter in which command error will be piped.   
+  *   `cmd`           String, Object or array; Command to execute.   
+  *   `env`           Environment variables, default to `process.env`.   
+  *   `cwd`           Current working directory.   
+  *   `uid`           Unix user id.   
+  *   `gid`           Unix group id.   
+  *   `code`          Expected code(s) returned by the command, int or array of int, default to 0.  
+  *   `code_skipped`  Expected code(s) returned by the command if it has no effect, executed will not be incremented, int or array of int.   
+  *   `host`          SSH host or IP address.   
+  *   `username`      SSH host or IP address.   
+  *   `ssh`           SSH connection options or an ssh2 instance   
+  *   `stdout`        Writable EventEmitter in which command output will be piped.   
+  *   `stderr`        Writable EventEmitter in which command error will be piped.   
 
   `callback`        Received parameters are:   
 
@@ -238,6 +239,8 @@ mecano = module.exports =
         return next new Error "Missing cmd: #{options.cmd}" unless options.cmd?
         options.code ?= [0]
         options.code = [options.code] unless Array.isArray options.code
+        options.code_skipped ?= []
+        options.code_skipped = [options.code_skipped] unless Array.isArray options.code_skipped
         cmd = () ->
           run = exec options
           stdout = stderr = ''
@@ -256,13 +259,13 @@ mecano = module.exports =
             # called before the "stdout" "data" event when runing
             # `make test`
             setTimeout ->
-              executed++
               stdouts.push if stds then stdout else undefined
               stderrs.push if stds then stderr else undefined
-              if options.code.indexOf(code) is -1
+              if options.code.indexOf(code) is -1 and options.code_skipped.indexOf(code) is -1 
                 err = new Error "Invalid exec code #{code}"
                 err.code = code
                 return next err
+              executed++ if options.code_skipped.indexOf(code) is -1 
               next()
             , 1
         conditions.all(options, next, cmd)

@@ -2,8 +2,11 @@
 {EventEmitter} = require 'events'
 should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
+test = require './test'
 
 describe 'exec', ->
+
+  scratch = test.scratch @
 
   it 'should exec', (next) ->
     mecano.exec
@@ -58,7 +61,25 @@ describe 'exec', ->
         return next err if err
         next()
   
-  it 'should honore conditions', (next) ->
+  it.only 'should honor code skipped', (next) ->
+    # code undefined
+    mecano.exec
+      cmd: "mkdir #{scratch}/my_dir"
+      code: 0
+      code_skipped: 1
+    , (err, executed, stdout, stderr) ->
+      return next err if err
+      executed.should.eql 1
+      mecano.exec
+        cmd: "mkdir #{scratch}/my_dir"
+        code: 0
+        code_skipped: 1
+      , (err, executed, stdout, stderr) ->
+        return next err if err
+        executed.should.eql 0
+        next()
+  
+  it 'should honor conditions', (next) ->
     mecano.exec
       cmd: 'text=yes; echo $text'
       if_exists: __dirname
