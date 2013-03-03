@@ -724,8 +724,8 @@ mecano = module.exports =
   
   `options`           Command options include:   
   
-  *   `from`          Replace from after this marker, a string or a regular expression matching a line
-  *   `to`            Replace to before this marker, a string or a regular expression matching a line
+  *   `from`          Replace from after this marker, a string or a regular expression matching a line.
+  *   `to`            Replace to before this marker, a string or a regular expression matching a line.
   *   `content`       Text to be written.
   *   `source`        File path from where to extract the content, do not use conjointly with content.
   *   `destination`   File path where to write content to.
@@ -841,7 +841,23 @@ mecano = module.exports =
   ---------------------------
   
   Upload a file to a remote location. Options are 
-  identical to the "write" function.
+  identical to the "write" function with the addition of 
+  the "binary" option.
+  
+  `options`           Command options include:   
+  
+  *   `binary`        Fast upload implementation, discard all the other option and use its own stream based implementation.
+  *   `from`          Replace from after this marker, a string or a regular expression matching a line.
+  *   `to`            Replace to before this marker, a string or a regular expression matching a line.
+  *   `content`       Text to be written.
+  *   `source`        File path from where to extract the content, do not use conjointly with content.
+  *   `destination`   File path where to write content to.
+  *   `backup`        Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.
+
+  `callback`          Received parameters are:   
+  
+  *   `err`           Error object if any.   
+  *   `rendered`      Number of rendered files. 
 
   ###
   upload: (options, callback) ->
@@ -850,6 +866,16 @@ mecano = module.exports =
       uploaded = 0
       each( options )
       .on 'item', (options, next) ->
+        if options.binary
+          return options.ssh.sftp (err, sftp) ->
+            from = fs.createReadStream options.source
+            to = sftp.createWriteStream options.destination
+            from.pipe to
+            from.on 'error', (err) ->
+              next err
+            from.on 'end', ->
+              uploaded++
+              next()
         options = misc.merge options, local_source: true
         mecano.write options, (err, written) ->
           uploaded++ if written is 1

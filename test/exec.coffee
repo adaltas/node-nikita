@@ -61,7 +61,7 @@ describe 'exec', ->
         return next err if err
         next()
   
-  it.only 'should honor code skipped', (next) ->
+  it 'should honor code skipped', (next) ->
     # code undefined
     mecano.exec
       cmd: "mkdir #{scratch}/my_dir"
