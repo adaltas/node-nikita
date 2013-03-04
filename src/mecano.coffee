@@ -112,7 +112,7 @@ mecano = module.exports =
           finish = (next) ->
             copied++
             next()
-        conditions.all(options, next, search)
+        conditions.all options, next, search
       .on 'both', (err) ->
         callback err, copied
   ###
@@ -268,7 +268,7 @@ mecano = module.exports =
               executed++ if options.code_skipped.indexOf(code) is -1 
               next()
             , 1
-        conditions.all(options, next, cmd)
+        conditions.all options, next, cmd
       .on 'both', (err) ->
         stdouts = stdouts[0] unless isArray
         stderrs = stderrs[0] unless isArray
@@ -340,7 +340,7 @@ mecano = module.exports =
         # Run conditions
         if typeof options.should_exist is 'undefined'
           options.should_exist = options.source
-        conditions.all(options, next, extract)
+        conditions.all options, next, extract
       .on 'both', (err) ->
         callback err, extracted
   ###
@@ -539,12 +539,9 @@ mecano = module.exports =
           misc.file.stat options.ssh, options.source, (err, stat) ->
             return create() if err and err.code is 'ENOENT'
             return next err if err
-            # if exist and is a dir, skip
-            # however, sftp.stat doesnt return any information about the file type
-            # so next 2 lines are a temporary fix
-            # return next() if stat.isDirectory()
-            return next() if (stat.isDirectory and stat.isDirectory()) or not stat.isDirectory
-            # if exists and isn't a dir, error
+            # nothing to do if exist and is a dir
+            return next() if stat.isDirectory()
+            # error if exists and isn't a dir
             next err 'Invalid source, got #{JSON.encode(options.source)}'
         create = () ->
           options.chmod ?= 0o0755
@@ -570,7 +567,7 @@ mecano = module.exports =
           .on 'both', (err) ->
             created++ if dirCreated
             next err
-        check()
+        conditions.all options, next, check
       .on 'both', (err) ->
         callback err, created
   ###
@@ -606,10 +603,12 @@ mecano = module.exports =
       each( options )
       .on 'item', (options, next) ->
         return next new Error 'SSH not yet supported' if options.ssh
-        fs.rename options.source, options.destination, (err) ->
-          return next err if err
-          moved++
-          next()
+        move = ->
+          fs.rename options.source, options.destination, (err) ->
+            return next err if err
+            moved++
+            next()
+        conditions.all options, next, move
       .on 'both', (err) ->
         callback err, moved
   ###
@@ -660,15 +659,17 @@ mecano = module.exports =
         options = source: options if typeof options is 'string'
         return next new Error "Missing source: #{options.source}" unless options.source?
         options.options ?= {}
-        each()
-        .files(options.source)
-        .on 'item', (file, next) ->
-          deleted++
-          rimraf file, next
-        .on 'error', (err) ->
-          next err
-        .on 'end', ->
-          next()
+        remove = ->
+          each()
+          .files(options.source)
+          .on 'item', (file, next) ->
+            deleted++
+            rimraf file, next
+          .on 'error', (err) ->
+            next err
+          .on 'end', ->
+            next()
+        conditions.all options, next, remove
       .on 'both', (err) ->
         callback err, deleted
   ###
@@ -718,7 +719,7 @@ mecano = module.exports =
             return next err if err
             rendered++ if written
             next()
-        readSource()
+        conditions.all options, next, readSource
       .on 'both', (err) ->
         callback err, rendered
   ###
@@ -798,7 +799,7 @@ mecano = module.exports =
           misc.file.writeFile options.ssh, backup, source, (err) ->
             return next err if err
             next()
-        readSource()
+        conditions.all options, next, readSource
       .on 'both', (err) ->
         callback err, written
   ###

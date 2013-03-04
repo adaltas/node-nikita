@@ -13,6 +13,31 @@ ProxyStream = () ->
   # do nothing
 util.inherits ProxyStream, Stream
 
+# (only valid with fs.lstat())
+
+ST_MODE = 
+  S_IFIFO:  parseInt '0010000', 8  # named pipe (fifo)
+  S_IFCHR:  parseInt '0020000', 8  # character special
+  S_IFDIR:  parseInt '0040000', 8  # directory
+  S_IFBLK:  parseInt '0060000', 8  # block special
+  S_IFREG:  parseInt '0100000', 8  # regular
+  S_IFLNK:  parseInt '0120000', 8  # symbolic link
+  S_IFSOCK: parseInt '0140000', 8  # socket */
+  S_IFWHT:  parseInt '0160000', 8  # whiteout */
+
+class Stat
+  constructor: (stat) ->
+    for k, v of stat
+      @[k] = v
+    @
+  isFile: -> if @permissions & ST_MODE.S_IFREG then true else false
+  isDirectory: -> if @permissions & ST_MODE.S_IFDIR then true else false
+  isBlockDevice: -> if @permissions & ST_MODE.S_IFBLK then true else false
+  isCharacterDevice: -> if @permissions & ST_MODE.S_IFCHR then true else false
+  isSymbolicLink: -> if @permissions & ST_MODE.S_IFLNK then true else false
+  isFIFO: -> if @permissions & ST_MODE.S_IFIFO then true else false
+  isSocket: -> if @permissions & ST_MODE.S_IFSOCK then true else false
+
 module.exports = misc = 
   string:
     ###
@@ -43,7 +68,7 @@ module.exports = misc =
             if err and err.type is 'NO_SUCH_FILE'
               err.code = 'ENOENT'
               return callback err
-            callback err, attr
+            callback err, new Stat attr
 
 
     ###

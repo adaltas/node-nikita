@@ -39,30 +39,30 @@ describe 'misc', ->
 
     describe 'stat', ->
 
-      it.skip 'check local file', (next) ->
+      it 'check local file', (next) ->
         misc.file.stat null, __filename, (err, stat) ->
           return next err if err
-          # console.log stat.isFile()
+          stat.isFile().should.be.ok
           next()
 
-      it.skip 'check remote file', (next) ->
+      it 'check remote file', (next) ->
         connect host: 'localhost', (err, ssh) ->
           misc.file.stat ssh, __filename, (err, stat) ->
             return next err if err
-            # console.log stat.isFile()
+            stat.isFile().should.be.ok
             next()
 
-      it.skip 'check local directory', (next) ->
+      it 'check local directory', (next) ->
         misc.file.stat null, __dirname, (err, stat) ->
           return next err if err
-          # console.log stat.isDirectory()
+          stat.isDirectory().should.be.ok
           next()
 
-      it.skip 'check remote directory', (next) ->
+      it 'check remote directory', (next) ->
         connect host: 'localhost', (err, ssh) ->
           misc.file.stat ssh, __dirname, (err, stat) ->
             return next err if err
-            # console.log stat.isDirectory()
+            stat.isDirectory().should.be.ok
             next()
 
       it 'check local does not exists', (next) ->
