@@ -1,7 +1,6 @@
 
 fs = require 'fs'
 path = require 'path'
-fs.exists ?= path.exists
 util = require 'util'
 each = require 'each'
 eco = require 'eco'
@@ -52,6 +51,7 @@ mecano = module.exports =
       .on 'item', (options, next) ->
         return next new Error 'Missing source' unless options.source
         return next new Error 'Missing destination' unless options.destination
+        return next new Error 'SSH not yet supported' if options.ssh
         # Cancel action if destination exists ? really ? no md5 comparaison, strange
         options.not_if_exists = options.destination if options.not_if_exists is true
         search = ->
@@ -441,6 +441,7 @@ mecano = module.exports =
   link: (options, callback) ->
     misc.options options, (err, options) ->
       return callback err if err
+      return next new Error 'SSH not yet supported' if options.ssh
       linked = 0
       sym_exists = (options, callback) ->
         misc.file.exists options.ssh, options.destination, (err, exists) ->
@@ -535,12 +536,15 @@ mecano = module.exports =
         options.source = path.resolve cwd, options.source
         return next new Error 'Missing source option' unless options.source?
         check = () ->
-          # if exist and is a dir, skip
-          # if exists and isn't a dir, error
-          fs.stat options.source, (err, stat) ->
+          misc.file.stat options.ssh, options.source, (err, stat) ->
             return create() if err and err.code is 'ENOENT'
             return next err if err
-            return next() if stat.isDirectory()
+            # if exist and is a dir, skip
+            # however, sftp.stat doesnt return any information about the file type
+            # so next 2 lines are a temporary fix
+            # return next() if stat.isDirectory()
+            return next() if (stat.isDirectory and stat.isDirectory()) or not stat.isDirectory
+            # if exists and isn't a dir, error
             next err 'Invalid source, got #{JSON.encode(options.source)}'
         create = () ->
           options.chmod ?= 0o0755
@@ -601,6 +605,7 @@ mecano = module.exports =
       moved = 0
       each( options )
       .on 'item', (options, next) ->
+        return next new Error 'SSH not yet supported' if options.ssh
         fs.rename options.source, options.destination, (err) ->
           return next err if err
           moved++

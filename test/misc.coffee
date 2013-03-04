@@ -37,6 +37,45 @@ describe 'misc', ->
               exists.should.not.be.ok
               next()
 
+    describe 'stat', ->
+
+      it.skip 'check local file', (next) ->
+        misc.file.stat null, __filename, (err, stat) ->
+          return next err if err
+          # console.log stat.isFile()
+          next()
+
+      it.skip 'check remote file', (next) ->
+        connect host: 'localhost', (err, ssh) ->
+          misc.file.stat ssh, __filename, (err, stat) ->
+            return next err if err
+            # console.log stat.isFile()
+            next()
+
+      it.skip 'check local directory', (next) ->
+        misc.file.stat null, __dirname, (err, stat) ->
+          return next err if err
+          # console.log stat.isDirectory()
+          next()
+
+      it.skip 'check remote directory', (next) ->
+        connect host: 'localhost', (err, ssh) ->
+          misc.file.stat ssh, __dirname, (err, stat) ->
+            return next err if err
+            # console.log stat.isDirectory()
+            next()
+
+      it 'check local does not exists', (next) ->
+        misc.file.stat null, "#{__dirname}/noone", (err, stat) ->
+          err.code.should.eql 'ENOENT'
+          next()
+
+      it 'check remote does not exists', (next) ->
+        connect host: 'localhost', (err, ssh) ->
+          misc.file.stat ssh, "#{__dirname}/noone", (err, stat) ->
+            err.code.should.eql 'ENOENT'
+            next()
+
     describe 'hash', ->
 
       it 'returns the file md5', (next) ->

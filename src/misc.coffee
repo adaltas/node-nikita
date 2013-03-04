@@ -40,6 +40,9 @@ module.exports = misc =
         ssh.sftp (err, sftp) ->
           return callback err if err
           sftp.stat path, (err, attr) ->
+            if err and err.type is 'NO_SUCH_FILE'
+              err.code = 'ENOENT'
+              return callback err
             callback err, attr
 
 
