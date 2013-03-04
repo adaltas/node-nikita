@@ -1,11 +1,10 @@
 
-fs = require 'fs'
-path = require 'path'
-fs.exists ?= path.exists
 each = require 'each'
+misc = require './misc'
 
 ###
 Conditionnal properties
+=======================
 ###
 module.exports = 
   ###
@@ -83,9 +82,7 @@ module.exports =
     return succeed() unless options.if_exists?
     each(options.if_exists)
     .on 'item', (if_exists, next) ->
-      # await fs.exists if_exists, defer exists
-      # if exists then next() else skip()
-      fs.exists if_exists, (exists) ->
+      misc.file.exists options.ssh, if_exists, (err, exists) ->
         if exists then next() else skip()
     .on 'end', succeed
   ###
@@ -104,7 +101,7 @@ module.exports =
     return succeed() unless options.not_if_exists?
     each(options.not_if_exists)
     .on 'item', (not_if_exists, next) ->
-      fs.exists not_if_exists, (exists) ->
+      misc.file.exists options.ssh, not_if_exists, (err, exists) ->
         if exists
         then next new Error
         else next()
@@ -116,7 +113,8 @@ module.exports =
   `should_exist` Ensure a file exist
   ----------------------------------
 
-  Work on the property `should_exist` in `options`. The value may 
+  Ensure that an action run if all the files present in the 
+  option "should_exist" exist. The value may 
   be a file path or an array of file paths.
 
   The callback `succeed` is called if all of the provided paths 
@@ -127,7 +125,7 @@ module.exports =
     return succeed() unless options.should_exist?
     each(options.should_exist)
     .on 'item', (should_exist, next) ->
-      fs.exists should_exist, (exists) ->
+      misc.file.exists options.ssh, should_exist, (err, exists) ->
         if exists
         then next()
         else next new Error "File does not exist: #{should_exist}"
@@ -139,7 +137,8 @@ module.exports =
   `should_not_exist` Ensure a file already exist
   ----------------------------------------------
 
-  Work on the property `should_not_exist` in `options`. The value may 
+  Ensure that an action run if none of the files present in the 
+  option "should_exist" exist. The value may 
   be a file path or an array of file paths.
 
   The callback `succeed` is called if none of the provided paths 
@@ -150,7 +149,7 @@ module.exports =
     return succeed() unless options.should_not_exist?
     each(options.should_not_exist)
     .on 'item', (should_not_exist, next) ->
-      fs.exists should_not_exist, (exists) ->
+      misc.file.exists options.ssh, should_not_exist, (err, exists) ->
         if exists
         then next new Error "File does not exist: #{should_not_exist}"
         else next()
