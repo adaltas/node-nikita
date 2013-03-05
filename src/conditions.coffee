@@ -22,7 +22,7 @@ module.exports =
   Succeed callback, only called if all the condition succeed
 
   ###
-  all: (options, skip, succeed) -> 
+  all: (options, skip, succeed) ->
     each([@if, @if_exists, @not_if_exists, @should_exist])
     .on 'item', (condition, next) ->
       condition(options, skip, next)
