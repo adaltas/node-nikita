@@ -805,43 +805,131 @@ mecano = module.exports =
   ###
   `service(options, callback)`
   ----------------------------
+
+  Install a service. For now, only yum over SSH.
+  
+  `options`             Command options include:   
+
+  *    name             Package name.
+  *    startup          Run service daemon on startup.
+  *    yum_name         Name used by the yum utility, default to "name".
+  *    chk_name         Name used by the chkconfig utility, default to "name".
+  *    srv_name         Name used by the service utility, default to "name".
+  *    start            Ensure the service is started, a boolean.
+  *    stop             Ensure the service is stopped, a boolean.
+  
+  `callback`            Received parameters are:   
+  
+  *   `err`             Error object if any.   
+  *   `modified`        Number of action taken (installed, updated, started or stoped). 
+
   ###
   service: (options, callback) ->
     misc.options options, (err, options) ->
       return callback err if err
-      written = 0
+      serviced = 0
       each( options )
       .on 'item', (options, next) ->
         return next new Error 'Missing service name' unless options.name
-        # installed = ->
-        #   ctx.ssh.exec 'yum list installed | grep ^httpd\\\\.', (err, stream) ->
-        #     return next err if err
-        #     stream.on 'exit', (code, signal) ->
-        #       return next ctx.SKIPPED if code is 0
-        #       install()
-        # install = ->
-        #   ctx.ssh.exec 'yum install -y httpd', (err, stream) ->
-        #     return next err if err
-        #     stream.on 'exit', (code, signal) ->
-        #       next ctx.OK unless ctx.config.httpd.start
-        #       startup()
-        # startup = ->
-        #   return start unless ctx.config.startup
-        #   if ctx.config.startup
-        #     cmd = 'chkconfig httpd --add; chkconfig httpd on --level 2,3,5'
-        #   else 
-        #     cmd = 'chkconfig httpd off; chkconfig httpd --del'
-        #   ctx.ssh.exec cmd, (err, stream) ->
-        #     return next err if err
-        #     stream.on 'exit', (code, signal) ->
-        #       start()
-        # start = ->
-        #   ctx.ssh.exec 'service httpd start', (err, stream) ->
-        #     return next err if err
-        #     stream.on 'exit', (code, signal) ->
-        #       next ctx.OK
+        return next new Error 'Restricted to Yum over SSH' unless options.ssh
+        return next new Error 'Invalid configuration, start conflict with stop' if options.start? and options.start is options.stop
+        pkgname = options.yum_name or options.name
+        chkname = options.chk_name or options.name
+        srvname = options.srv_name or options.name
+        if options.startup? and typeof options.startup isnt 'string'
+            options.startup = if options.startup then '235' else ''
+        modified = false
+        installed = ->
+          mecano.execute
+            ssh: options.ssh
+            cmd: "yum list installed | grep ^#{pkgname}\\\\."
+            code_skipped: 1
+          , (err, installed) ->
+            return next err if err
+            if installed then updates() else install()
+        updates = ->
+          mecano.execute
+            ssh: options.ssh
+            cmd: "yum list updates | grep ^#{pkgname}\\\\."
+            code_skipped: 1
+          , (err, outdated) ->
+            return next err if err
+            if outdated then install() else startuped()
+        install = ->
+          mecano.execute
+            ssh: options.ssh
+            cmd: "yum install -y #{pkgname}"
+            code_skipped: 1
+          , (err, succeed) ->
+            return next err if err
+            return next new Error "No package #{pkgname} available." unless succeed
+            modified = true if installed
+            startuped()
+        startuped = ->
+          return started() unless options.startup?
+          mecano.execute
+            ssh: options.ssh
+            cmd: "chkconfig --list #{chkname}"
+            code_skipped: 1
+          , (err, registered, stdout, stderr) ->
+            return next err if err
+            # Invalid service name return code is 0 and message in stderr start by error
+            return next new Error "Invalid chkconfig name #{chkname}" if /^error/.test stderr
+            current_startup = ''
+            if registered
+              for c in stdout.split(' ').pop().trim().split '\t'
+                [level, status] = c.split ':'
+                current_startup += level if status is 'on'
+            # console.log 'startup', options.startup, current_startup
+            return started() if options.startup is current_startup
+            modified = true
+            startup()
+        startup = ->
+          startup_on = startup_off = ''
+          for i in [0...6]
+            if options.startup.indexOf(i) isnt -1
+              startup_on += i
+            else
+              startup_off += i
+
+          if options.startup
+            cmd = "chkconfig --add #{chkname}; chkconfig --level #{options.startup} #{chkname} on"
+          else 
+            cmd = "chkconfig #{chkname} off; chkconfig --del #{chkname}"
+          console.log 'cmd', cmd
+          mecano.execute
+            ssh: options.ssh
+            cmd: cmd
+          , (err, stream) ->
+            return next err if err
+            started()
+        started = ->
+          return finish() unless options.start? and options.stop?
+          mecano.execute
+            ssh: options.ssh
+            cmd: "service #{srvname} status"
+            code_skipped: 3
+          , (err, started) ->
+            return next err if err
+            start = if options.start? then options.start else options.stop
+            if not started and start then start()
+            if started and not start then stop()
+            else finish()
+        start = ->
+          return finish() unless options.start?
+          cmd = if options.start then 'start' else 'stop'
+          mecano.execute
+            ssh: options.ssh
+            cmd: "service #{srvname} #{cmd}"
+          , (err, executed) ->
+            return next err if err
+            finish()
+        finish = ->
+          serviced++ if modified
+          next()
+        conditions.all options, next, installed
       .on 'both', (err) ->
-        callback err, written
+        callback err, serviced
   ###
   `upload(options, callback)`
   ---------------------------
