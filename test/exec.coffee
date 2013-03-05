@@ -3,6 +3,7 @@
 should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
 test = require './test'
+connect = require 'superexec/lib/connect'
 
 describe 'exec', ->
 
@@ -94,4 +95,14 @@ describe 'exec', ->
         should.not.exist stdout
         next()
 
+  it 'should not run ssh command if file exists', (next) ->
+    connect host: 'localhost', (err, ssh) ->
+      mecano.exec
+        ssh: ssh
+        cmd: "ls -l #{__dirname}"
+        not_if_exists: __dirname
+      , (err, executed, stdout, stderr) ->
+        return next err if err
+        executed.should.eql 0
+        next()
 
