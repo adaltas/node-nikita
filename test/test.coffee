@@ -1,4 +1,5 @@
 
+should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
 
 scratch = "/tmp/mecano-test"
@@ -11,4 +12,13 @@ module.exports =
     # context.afterEach (next) ->
     #   mecano.rm scratch, next
     scratch
-
+  config: ->
+    try
+      config = require '../resources/test.coffee'
+    catch err
+      throw err unless err.code is 'MODULE_NOT_FOUND'
+      fs.renameSync "#{__dirname}/../resources/test.coffee.sample", "#{__dirname}/../resources/test.coffee"
+      config = require '../resources/test.coffee'
+    if config.yum_over_ssh
+      config.yum_over_ssh.username.should.eql 'root' # sudo not yet supported
+    config
