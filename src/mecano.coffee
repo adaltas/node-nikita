@@ -813,7 +813,7 @@ mecano = module.exports =
   *    name             Package name.
   *    startup          Run service daemon on startup.
   *    yum_name         Name used by the yum utility, default to "name".
-  *    chk_name         Name used by the chkconfig utility, default to "name".
+  *    chk_name         Name used by the chkconfig utility, default to "srv_name" and "name".
   *    srv_name         Name used by the service utility, default to "name".
   *    start            Ensure the service is started, a boolean.
   *    stop             Ensure the service is stopped, a boolean.
@@ -834,10 +834,10 @@ mecano = module.exports =
         return next new Error 'Restricted to Yum over SSH' unless options.ssh
         return next new Error 'Invalid configuration, start conflict with stop' if options.start? and options.start is options.stop
         pkgname = options.yum_name or options.name
-        chkname = options.chk_name or options.name
+        chkname = options.chk_name or options.srv_name or options.name
         srvname = options.srv_name or options.name
         if options.startup? and typeof options.startup isnt 'string'
-            options.startup = if options.startup then '235' else ''
+            options.startup = if options.startup then '2345' else ''
         modified = false
         installed = ->
           mecano.execute
@@ -880,47 +880,54 @@ mecano = module.exports =
               for c in stdout.split(' ').pop().trim().split '\t'
                 [level, status] = c.split ':'
                 current_startup += level if status is 'on'
-            # console.log 'startup', options.startup, current_startup
             return started() if options.startup is current_startup
             modified = true
-            startup()
-        startup = ->
+            if options.startup
+            then startup_add()
+            else startup_del()
+        startup_add = ->
           startup_on = startup_off = ''
           for i in [0...6]
             if options.startup.indexOf(i) isnt -1
-              startup_on += i
-            else
-              startup_off += i
-
-          if options.startup
-            cmd = "chkconfig --add #{chkname}; chkconfig --level #{options.startup} #{chkname} on"
-          else 
-            cmd = "chkconfig #{chkname} off; chkconfig --del #{chkname}"
-          console.log 'cmd', cmd
+            then startup_on += i
+            else startup_off += i
+          cmd = "chkconfig --add #{chkname};"
+          cmd += "chkconfig --level #{startup_on} #{chkname} on;" if startup_on
+          cmd += "chkconfig --level #{startup_off} #{chkname} off;" if startup_off
           mecano.execute
             ssh: options.ssh
             cmd: cmd
           , (err, stream) ->
             return next err if err
             started()
+        startup_del = ->
+          mecano.execute
+            ssh: options.ssh
+            cmd: "chkconfig --del #{chkname}"
+          , (err, stream) ->
+            return next err if err
+            started()
         started = ->
-          return finish() unless options.start? and options.stop?
+          return finish() unless options.action
           mecano.execute
             ssh: options.ssh
             cmd: "service #{srvname} status"
             code_skipped: 3
           , (err, started) ->
             return next err if err
-            start = if options.start? then options.start else options.stop
-            if not started and start then start()
-            if started and not start then stop()
-            else finish()
-        start = ->
-          return finish() unless options.start?
-          cmd = if options.start then 'start' else 'stop'
+            if started
+              return action() unless options.action is 'start'
+            else
+              return action() unless options.action is 'stop'
+            finish() 
+            # action = if options.start? then 'start' else 'stop'
+            # if not started and action is start then start 'start'
+            # if started and action isnt start then start 'stop'
+            # else finish()
+        action = ->
           mecano.execute
             ssh: options.ssh
-            cmd: "service #{srvname} #{cmd}"
+            cmd: "service #{srvname} #{options.action}"
           , (err, executed) ->
             return next err if err
             finish()
