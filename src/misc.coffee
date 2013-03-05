@@ -86,14 +86,14 @@ module.exports = misc =
       else
         ssh.sftp (err, sftp) ->
           return callback err if err
-          # For now, we dont accept options
           s = sftp.createReadStream path, options
           data = ''
           s.on 'data', (d) ->
             data += d.toString()
           s.on 'error', (err) ->
             callback err
-          s.on 'end', ->
+          s.on 'close', ->
+            sftp.end()
             callback null, data
     ###
     `writeFile(ssh, path, content, [options], callback)`
@@ -108,6 +108,7 @@ module.exports = misc =
           callback err, content
       else
         ssh.sftp (err, sftp) ->
+          return callback err if err
           s = sftp.createWriteStream path, options
           if typeof content is 'string' or buffer.Buffer.isBuffer content
             s.write content if content
@@ -119,6 +120,7 @@ module.exports = misc =
           s.on 'end', ->
             s.destroy()
           s.on 'close', ->
+            sftp.end()
             callback()
     ###
     `mkdir(ssh, path, [chmod], callback)`
