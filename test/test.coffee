@@ -14,11 +14,11 @@ module.exports =
     scratch
   config: ->
     try
-      config = require '../resources/test.coffee'
+      config = require '../test.coffee'
     catch err
       throw err unless err.code is 'MODULE_NOT_FOUND'
-      fs.renameSync "#{__dirname}/../resources/test.coffee.sample", "#{__dirname}/../resources/test.coffee"
-      config = require '../resources/test.coffee'
+      fs.renameSync "#{__dirname}/../test.coffee.sample", "#{__dirname}/../test.coffee"
+      config = require '../test.coffee'
     if config.yum_over_ssh
       config.yum_over_ssh.username.should.eql 'root' # sudo not yet supported
     config

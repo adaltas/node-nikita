@@ -6,8 +6,10 @@ fs.exists ?= path.exists
 each = require 'each'
 util = require 'util'
 Stream = require 'stream'
+exec = require 'superexec'
 connect = require 'superexec/lib/connect'
 buffer = require 'buffer'
+rimraf = require 'rimraf'
 
 ProxyStream = () ->
   # do nothing
@@ -38,7 +40,7 @@ class Stat
   isFIFO: -> if @permissions & ST_MODE.S_IFIFO then true else false
   isSocket: -> if @permissions & ST_MODE.S_IFSOCK then true else false
 
-module.exports = misc = 
+misc = module.exports = 
   string:
     ###
     `string.hash(file, [algorithm], callback)`
@@ -69,8 +71,6 @@ module.exports = misc =
               err.code = 'ENOENT'
               return callback err
             callback err, new Stat attr
-
-
     ###
     `readFile(ssh, path, [options], callback)`
     -----------------------------------------
@@ -107,21 +107,59 @@ module.exports = misc =
         fs.writeFile path, content, (err, content) ->
           callback err, content
       else
-        ssh.sftp (err, sftp) ->
-          return callback err if err
-          s = sftp.createWriteStream path, options
-          if typeof content is 'string' or buffer.Buffer.isBuffer content
-            s.write content if content
-            s.end()
-          else
-            content.pipe s
-          s.on 'error', (err) ->
+        write = ->
+          ssh.sftp (err, sftp) ->
+            return callback err if err
+            s = sftp.createWriteStream path, options
+            if typeof content is 'string' or buffer.Buffer.isBuffer content
+              s.write content if content
+              s.end()
+            else
+              content.pipe s
+            s.on 'error', (err) ->
+              callback err
+            s.on 'end', ->
+              s.destroy()
+            s.on 'close', ->
+              sftp.end()
+              passwd()
+        passwd = ->
+          return callback() unless options.username and options.group
+          sftputils.passwd ssh, (err, passwd) ->
+            {uid, gid} = passwd[options.username]
+            options.uid ?= parseInt(uid)
+            options.gid ?= parseInt(gid)
+            chown()
+        chown = ->
+          sftp.chown path, options.uid, options.gid, (err) ->
             callback err
-          s.on 'end', ->
-            s.destroy()
-          s.on 'close', ->
-            sftp.end()
-            callback()
+        write()
+    ###
+    passwd(sftp, callback)
+    ----------------------
+    Return information present in '/etc/passwd' and cache the 
+    result in the provided ssh instance as "passwd".
+
+    Result look like: 
+        { root: {
+            uid: '0',
+            gid: '0',
+            comment: 'root',
+            home: '/root',
+            shell: '/bin/bash' }, ... }
+    ###
+    passwd: (ssh, callback) ->
+      return callback null, ssh.passwd if ssh.passwd
+      # Alternative is to use the id command, eg `id -u ubuntu` `id -g admin`
+      misc.file.readFile ssh, '/etc/passwd', (err, lines) ->
+        return callback err if err
+        passwd = []
+        for line in lines.split '\n'
+          info = /(.*)\:\w\:(.*)\:(.*)\:(.*)\:(.*)\:(.*)/.exec line
+          continue unless info
+          passwd[info[1]] = uid: info[2], gid: info[3], comment: info[4], home: info[5], shell: info[6]
+        ssh.passwd = passwd
+        callback null, passwd
     ###
     `mkdir(ssh, path, [chmod], callback)`
     -------------------------------------
@@ -141,6 +179,18 @@ module.exports = misc =
 
     ###
     `exists(ssh, path, callback)`
+    -----------------------------
+
+    `options`         Command options include:   
+
+    *   `ssh`         SSH connection in case of a remote file path.  
+    *   `path`        Path to test.   
+    *   `callback`    Callback to return the result.   
+
+    `callback`        Received parameters are:   
+
+    *   `err`         Error object if any.   
+    *   `exists`      True if the file exists.   
     ###
     exists: (ssh, path, callback) ->
       unless ssh
@@ -220,6 +270,19 @@ module.exports = misc =
         callback err
       .on 'end', ->
         callback null, result
+    ###
+    remove(ssh, path, callback)
+    ---------------------------
+    Remove a file or directory
+    ###
+    remove: (ssh, path, callback) ->
+      unless ssh
+        rimraf path, callback
+      else
+        # Not very pretty but fast and no time to try make a version of rimraf over ssh
+        child = exec "rm -rf #{path}", ssh: ssh
+        child.on 'exit', (code) ->
+          callback null, code
   ###
   `isPortOpen(port, host, callback)`: Check if a port is already open
 

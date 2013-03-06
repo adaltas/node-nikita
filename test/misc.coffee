@@ -120,3 +120,44 @@ describe 'misc', ->
       #     should.not.exist md5
       #     next()
 
+    describe 'remove', ->
+
+      it 'a local dir', (next) ->
+        mecano.mkdir
+          destination: "#{scratch}/remove_dir"
+        , (err, created) ->
+          next err if err
+          misc.file.remove null, "#{scratch}/remove_dir", (err) ->
+            misc.file.exists null, "#{scratch}/remove_dir", (err, exists) ->
+              return next err if err
+              exists.should.not.be.ok
+              next()
+
+      it 'a remote dir', (next) ->
+        connect host: 'localhost', (err, ssh) ->
+          mecano.mkdir
+            ssh: ssh
+            destination: "#{scratch}/remove_dir"
+          , (err, created) ->
+            next err if err
+            misc.file.remove ssh, "#{scratch}/remove_dir", (err) ->
+              misc.file.exists ssh, "#{scratch}/remove_dir", (err, exists) ->
+                return next err if err
+                exists.should.not.be.ok
+                next()
+
+      it 'handle a missing local dir', (next) ->
+        misc.file.remove null, "#{scratch}/remove_missing_dir", (err) ->
+          misc.file.exists null, "#{scratch}/remove_missing_dir", (err, exists) ->
+            return next err if err
+            exists.should.not.be.ok
+            next()
+
+      it 'handle a missing remote dir', (next) ->
+        connect host: 'localhost', (err, ssh) ->
+          misc.file.remove ssh, "#{scratch}/remove_missing_dir", (err) ->
+            misc.file.exists ssh, "#{scratch}/remove_missing_dir", (err, exists) ->
+              return next err if err
+              exists.should.not.be.ok
+              next()
+

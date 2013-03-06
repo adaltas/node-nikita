@@ -81,7 +81,20 @@ describe 'write', ->
           content.should.eql 'Hello'
           next()
   
-  it 'work over ssh', (next) ->
+  it 'over ssh', (next) ->
+    connect host: 'localhost', (err, ssh) ->
+      mecano.write
+        ssh: ssh
+        content: 'Hello'
+        destination: "#{scratch}/file"
+      , (err, written) ->
+        return next err if err
+        written.should.eql 1
+        misc.file.exists ssh, "#{scratch}/file", (err, exists) ->
+          exists.should.be.ok
+          next()
+  
+  it 'detect file changes', (next) ->
     connect host: 'localhost', (err, ssh) ->
       mecano.write
         ssh: ssh

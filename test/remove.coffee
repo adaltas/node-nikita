@@ -4,6 +4,7 @@ path = require 'path'
 should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
 test = require './test'
+connect = require 'superexec/lib/connect'
 
 describe 'remove', ->
 
@@ -48,4 +49,26 @@ describe 'remove', ->
           files.should.include 'a_dir.zip'
           next()
 
+  it 'work over ssh', (next) ->
+    @timeout 10000
+    connect host: 'localhost', (err, ssh) ->
+      mecano.mkdir
+        ssh: ssh
+        destination: "#{scratch}/remove_dir"
+      , (err, created) ->
+        return next err if err
+        mecano.remove
+          ssh: ssh
+          destination: "#{scratch}/remove_dir"
+        , (err, removed) ->
+          return next err if err
+          removed.should.eql 1
+          connect host: 'localhost', (err, ssh) ->
+            mecano.remove
+              ssh: ssh
+              destination: "#{scratch}/remove_dir"
+            , (err, removed) ->
+              return next err if err
+              removed.should.eql 0
+              next()
 

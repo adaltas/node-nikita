@@ -509,6 +509,7 @@ mecano = module.exports =
 
   *   `source`        Path or array of paths.   
   *   `directory`     Alias for `source`
+  *   `destination`   Alias for `source`
   *   `exclude`       Regular expression.   
   *   `chmod`         Default to 0755.  
   *   `cwd`           Current working directory for relative paths.   
@@ -531,10 +532,11 @@ mecano = module.exports =
       each( options )
       .on 'item', (options, next) ->
         options = { source: options } if typeof options is 'string'
-        options.source = options.directory if not options.source? and options.directory?
+        options.source ?= options.directory
+        options.source ?= options.destination
+        return next new Error 'Missing source option' unless options.source?
         cwd = options.cwd ? process.cwd()
         options.source = path.resolve cwd, options.source
-        return next new Error 'Missing source option' unless options.source?
         check = () ->
           misc.file.stat options.ssh, options.source, (err, stat) ->
             return create() if err and err.code is 'ENOENT'
@@ -621,12 +623,13 @@ mecano = module.exports =
 
   `options`         Command options include:   
 
-  *   `source`      File, directory or pattern.   
+  *   `source`      File, directory or pattern.  
+  *   `destination` Alias for "source". 
 
   `callback`        Received parameters are:   
 
   *   `err`         Error object if any.   
-  *   `deleted`     Number of deleted sources.   
+  *   `removed`     Number of removed sources.   
 
   Example
 
@@ -653,25 +656,31 @@ mecano = module.exports =
   remove: (options, callback) ->
     misc.options options, (err, options) ->
       return callback err if err
-      deleted = 0
+      removed = 0
       each( options )
       .on 'item', (options, next) ->
         options = source: options if typeof options is 'string'
-        return next new Error "Missing source: #{options.source}" unless options.source?
-        options.options ?= {}
+        options.source ?= options.destination
+        return next new Error "Missing source" unless options.source?
         remove = ->
-          each()
-          .files(options.source)
-          .on 'item', (file, next) ->
-            deleted++
-            rimraf file, next
-          .on 'error', (err) ->
-            next err
-          .on 'end', ->
-            next()
+          if options.ssh
+            misc.file.exists options.ssh, options.source, (err, exists) ->
+              return next err if err
+              removed++ if exists
+              misc.file.remove options.ssh, options.source, next
+          else
+            each()
+            .files(options.source)
+            .on 'item', (file, next) ->
+              removed++
+              misc.file.remove options.ssh, file, next
+            .on 'error', (err) ->
+              next err
+            .on 'end', ->
+              next()
         conditions.all options, next, remove
       .on 'both', (err) ->
-        callback err, deleted
+        callback err, removed
   ###
 
   `render(options, callback)`
