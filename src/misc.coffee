@@ -107,9 +107,9 @@ misc = module.exports =
         fs.writeFile path, content, (err, content) ->
           callback err, content
       else
-        write = ->
-          ssh.sftp (err, sftp) ->
-            return callback err if err
+        ssh.sftp (err, sftp) ->
+          return callback err if err
+          write = ->
             s = sftp.createWriteStream path, options
             if typeof content is 'string' or buffer.Buffer.isBuffer content
               s.write content if content
@@ -121,62 +121,61 @@ misc = module.exports =
             s.on 'end', ->
               s.destroy()
             s.on 'close', ->
-              sftp.end()
-              passwd()
-        passwd = ->
-          return callback() unless options.username and options.group
-          sftputils.passwd ssh, (err, passwd) ->
-            {uid, gid} = passwd[options.username]
-            options.uid ?= parseInt(uid)
-            options.gid ?= parseInt(gid)
-            chown()
-        chown = ->
-          sftp.chown path, options.uid, options.gid, (err) ->
-            callback err
-        write()
+              chown()
+          chown = ->
+            return end() unless options.uid or options.gid
+            sftp.chown path, options.uid, options.gid, (err) ->
+              return callback err if err
+              end()
+          end = ->
+            sftp.end()
+            callback()
+          write()
     ###
-    passwd(sftp, callback)
-    ----------------------
-    Return information present in '/etc/passwd' and cache the 
-    result in the provided ssh instance as "passwd".
-
-    Result look like: 
-        { root: {
-            uid: '0',
-            gid: '0',
-            comment: 'root',
-            home: '/root',
-            shell: '/bin/bash' }, ... }
-    ###
-    passwd: (ssh, callback) ->
-      return callback null, ssh.passwd if ssh.passwd
-      # Alternative is to use the id command, eg `id -u ubuntu` `id -g admin`
-      misc.file.readFile ssh, '/etc/passwd', (err, lines) ->
-        return callback err if err
-        passwd = []
-        for line in lines.split '\n'
-          info = /(.*)\:\w\:(.*)\:(.*)\:(.*)\:(.*)\:(.*)/.exec line
-          continue unless info
-          passwd[info[1]] = uid: info[2], gid: info[3], comment: info[4], home: info[5], shell: info[6]
-        ssh.passwd = passwd
-        callback null, passwd
-    ###
-    `mkdir(ssh, path, [chmod], callback)`
+    `mkdir(ssh, path, [options], callback)`
     -------------------------------------
+    Note, if option is not a string, it is considered to be the permission mode.
     ###
-    mkdir: (ssh, path, chmod, callback) ->
+    mkdir: (ssh, path, options, callback) ->
       if arguments.length is 3
-        callback = chmod
-        chmod = 0o0755
+        callback = options
+        options = 0o0755
+      if typeof options isnt 'object'
+        options = mode: options
+      if options.permissions
+        process.stderr.write 'Deprecated, use mode instead of permissions'
+        options.mode = options.permissions
       unless ssh
-        fs.mkdir path, chmod, (err) ->
+        fs.mkdir path, options.mode, (err) ->
           callback err
       else
         ssh.sftp (err, sftp) ->
           return callback err if err
-          sftp.mkdir path, permissions: chmod, (err, attr) ->
-            callback null, if err then false else true
-
+          # size - < integer > - Resource size in bytes.
+          # uid - < integer > - User ID of the resource.
+          # gid - < integer > - Group ID of the resource.
+          # permissions - < integer > - Permissions for the resource.
+          # atime - < integer > - UNIX timestamp of the access time of the resource.
+          # mtime - < integer > - UNIX timestamp of the modified time of the resource.
+          # console.log '??', options
+          # options = misc.merge {}, options
+          # options.permissions = options.mode if options.mode
+          # for k, v of options
+          #   console.log k, v if k isnt 'ssh'
+          mkdir = ->
+            sftp.mkdir path, options, (err, attr) ->
+              # callback null, if err then false else true
+              chown()
+          chown = ->
+            return chmod() unless options.uid or options.gid
+            sftp.chown path, options.uid, options.gid, (err) ->
+              return callback err if err
+              chmod()
+          chmod = ->
+            return callback() unless options.mode
+            sftp.chmod path, options.mode, (err) ->
+              callback err
+          mkdir()
     ###
     `exists(ssh, path, callback)`
     -----------------------------
@@ -246,7 +245,6 @@ misc = module.exports =
             else
               hashs = crypto.createHash(algorithm).update(hashs.join('')).digest('hex')
               return callback null, hashs
-
     ###
     `files.compare(files, callback)`
     --------------------------------
@@ -283,6 +281,83 @@ misc = module.exports =
         child = exec "rm -rf #{path}", ssh: ssh
         child.on 'exit', (code) ->
           callback null, code
+  ssh:
+    ###
+    passwd(sftp, [user], callback)
+    ----------------------
+    Return information present in '/etc/passwd' and cache the 
+    result in the provided ssh instance as "passwd".
+
+    Result look like: 
+        { root: {
+            uid: '0',
+            gid: '0',
+            comment: 'root',
+            home: '/root',
+            shell: '/bin/bash' }, ... }
+    ###
+    passwd: (ssh, username, callback) ->
+      if arguments.length is 3
+        # Group may be null, stop here
+        return callback null, null unless username
+        return misc.ssh.passwd ssh, (err, users) ->
+          return err if err
+          user = users[username]
+          return new Error "User #{username} does not exists" unless user
+          callback null, user
+      callback = username
+      username = null
+      # Grab passwd from the cache
+      return callback null, ssh.passwd if ssh.passwd
+      # Alternative is to use the id command, eg `id -u ubuntu`
+      misc.file.readFile ssh, '/etc/passwd', (err, lines) ->
+        return callback err if err
+        passwd = []
+        for line in lines.split '\n'
+          info = /(.*)\:\w\:(.*)\:(.*)\:(.*)\:(.*)\:(.*)/.exec line
+          continue unless info
+          passwd[info[1]] = uid: parseInt(info[2]), gid: parseInt(info[3]), comment: info[4], home: info[5], shell: info[6]
+        ssh.passwd = passwd
+        callback null, passwd
+    ###
+    group(sftp, [group], callback)
+    ----------------------
+    Return information present in '/etc/group' and cache the 
+    result in the provided ssh instance as "group".
+
+    Result look like: 
+        { root: {
+            password: 'x'
+            gid: 0,
+            user_list: [] },
+          bin: {
+            password: 'x',
+            gid: 1,
+            user_list: ['bin','daemon'] } }
+    ###
+    group: (ssh, group, callback) ->
+      if arguments.length is 3
+        # Group may be null, stop here
+        return callback null, null unless group
+        return misc.ssh.group ssh, (err, groups) ->
+          return err if err
+          group = groups[group]
+          return new Error "Group #{group} does not exists" unless group
+          callback null, group
+      callback = group
+      group = null
+      # Grab group from the cache
+      return callback null, ssh.group if ssh.group
+      # Alternative is to use the id command, eg `id -g admin`
+      misc.file.readFile ssh, '/etc/group', (err, lines) ->
+        return callback err if err
+        group = []
+        for line in lines.split '\n'
+          info = /(.*)\:(.*)\:(.*)\:(.*)/.exec line
+          continue unless info
+          group[info[1]] = password: info[2], gid: parseInt(info[3]), user_list: if info[4] then info[4].split ',' else []
+        ssh.group = group
+        callback null, group
   ###
   `isPortOpen(port, host, callback)`: Check if a port is already open
 
@@ -356,20 +431,37 @@ misc = module.exports =
   ###
   `options(options, callback)`
   ----------------------------
-  Normalize options and create an ssh connection if needed
+  Normalize options. An ssh connection if needed if the key "ssh" 
+  hold a configuration object. The 'uid' and 'gid' fields will 
+  be converted to integer if they match a username or a group.
   ###
   options: (options, callback) ->
     options = [options] unless Array.isArray options
     each(options)
-    .on 'item', (option, next) ->
-      option.if = [option.if] if option.if? and not Array.isArray option.if
-      option.if_exists = [option.if_exists] if option.if_exists? and not Array.isArray option.if_exists
-      option.not_if_exists = [option.not_if_exists] if option.not_if_exists? and not Array.isArray option.not_if_exists
-      return next() unless option.ssh
-      connect option.ssh, (err, ssh) ->
-        return next err if err
-        option.ssh = ssh
-        next()
+    .on 'item', (options, next) ->
+      options.if = [options.if] if options.if? and not Array.isArray options.if
+      options.if_exists = [options.if_exists] if options.if_exists? and not Array.isArray options.if_exists
+      options.not_if_exists = [options.not_if_exists] if options.not_if_exists? and not Array.isArray options.not_if_exists
+      connection = ->
+        return next() unless options.ssh
+        connect options.ssh, (err, ssh) ->
+          return next err if err
+          options.ssh = ssh
+          uid()
+      uid = ->
+        return gid() unless options.uid
+        return gid() if typeof options.uid is 'number' or /\d+/.test options.uid
+        misc.ssh.passwd options.ssh, options.uid, (err, user) ->
+          options.uid = user.uid
+          options.gid ?= user.gid
+          gid()
+      gid = ->
+        return next() unless options.gid
+        return next() if typeof options.gid is 'number' or /\d+/.test options.gid
+        misc.ssh.group options.ssh, options.gid, (err, group) ->
+          options.gid = group.gid if group
+          next()
+      connection()
     .on 'both', (err) ->
       callback err, options
 

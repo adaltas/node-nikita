@@ -93,6 +93,20 @@ describe 'write', ->
         content.should.eql ''
         next()
   
+  it 'empty file over ssh', (next) ->
+    connect host: 'localhost', (err, ssh) ->
+      mecano.write
+        ssh: ssh
+        content: ''
+        destination: "#{scratch}/empty_file"
+      , (err, written) ->
+        return next err if err
+        written.should.eql 1
+        misc.file.readFile ssh, "#{scratch}/empty_file", (err, content) ->
+          return next err if err
+          content.should.eql ''
+          next()
+  
   it 'over ssh', (next) ->
     connect host: 'localhost', (err, ssh) ->
       mecano.write

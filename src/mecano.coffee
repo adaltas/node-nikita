@@ -550,6 +550,7 @@ mecano = module.exports =
           current = ''
           dirCreated = false
           dirs = options.source.split '/'
+
           each( dirs )
           .on 'item', (dir, next) ->
             # Directory name contains variables
@@ -562,7 +563,7 @@ mecano = module.exports =
             current += "/#{dir}"
             misc.file.exists options.ssh, current, (err, exists) ->
               return next() if exists
-              misc.file.mkdir options.ssh, current, options.chmod, (err) ->
+              misc.file.mkdir options.ssh, current, options, (err) ->
                 return next err if err
                 dirCreated = true
                 next()
@@ -695,7 +696,8 @@ mecano = module.exports =
   *   `content`       Templated content, bypassed if source is provided.   
   *   `source`        File path where to extract content from.   
   *   `destination`   File path where to write content to or a callback.   
-  *   `context`       Map of key values to inject into the template.
+  *   `context`       Map of key values to inject into the template.   
+  *   `local_source`  Treat the source as local instead of remote, only apply with "ssh" option.   
 
   `callback`          Received parameters are:   
   
@@ -716,9 +718,10 @@ mecano = module.exports =
         return next new Error 'Missing destination' unless options.destination
         readSource = ->
           return writeContent() unless options.source
-          misc.file.exists options.ssh, options.source, (err, exists) ->
+          ssh = if options.local_source then null else options.ssh
+          misc.file.exists ssh, options.source, (err, exists) ->
             return next new Error "Invalid source, got #{JSON.stringify(options.source)}" unless exists
-            misc.file.readFile options.ssh, options.source, (err, content) ->
+            misc.file.readFile ssh, options.source, (err, content) ->
               return next err if err
               options.content = content
               writeContent()
