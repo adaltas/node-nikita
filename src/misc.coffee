@@ -104,8 +104,33 @@ misc = module.exports =
         callback = options
         options = {}
       unless ssh
-        fs.writeFile path, content, (err, content) ->
-          callback err, content
+        # fs.writeFile path, content, options, (err, content) ->
+        #   callback err, content
+        write = ->
+          stream = fs.createWriteStream path, options
+          if typeof content is 'string' or buffer.Buffer.isBuffer content
+            stream.write content if content
+            stream.end()
+          else
+            content.pipe stream
+          stream.on 'error', (err) ->
+            callback err
+          stream.on 'end', ->
+            s.destroy()
+          stream.on 'close', ->
+            chown()
+        chown = ->
+          return chmod() unless options.uid or options.gid
+          fs.chown path, options.uid, options.gid, (err) ->
+            return callback err if err
+            chmod()
+        chmod = ->
+          return finish() unless options.mode
+          fs.chmod path, options.mode, (err) ->
+            finish err
+        finish = (err) ->
+          callback err
+        write()
       else
         ssh.sftp (err, sftp) ->
           return callback err if err
@@ -123,13 +148,17 @@ misc = module.exports =
             s.on 'close', ->
               chown()
           chown = ->
-            return end() unless options.uid or options.gid
+            return chmod() unless options.uid or options.gid
             sftp.chown path, options.uid, options.gid, (err) ->
               return callback err if err
-              end()
-          end = ->
+              chmod()
+          chmod = ->
+            return finish() unless options.mode
+            sftp.chmod path, options.mode, (err) ->
+              finish err
+          finish = (err) ->
             sftp.end()
-            callback()
+            callback err
           write()
     ###
     `mkdir(ssh, path, [options], callback)`
@@ -164,17 +193,20 @@ misc = module.exports =
           #   console.log k, v if k isnt 'ssh'
           mkdir = ->
             sftp.mkdir path, options, (err, attr) ->
-              # callback null, if err then false else true
+              return finish err if err
               chown()
           chown = ->
             return chmod() unless options.uid or options.gid
             sftp.chown path, options.uid, options.gid, (err) ->
-              return callback err if err
+              return finish err if err
               chmod()
           chmod = ->
-            return callback() unless options.mode
+            return finish() unless options.mode
             sftp.chmod path, options.mode, (err) ->
-              callback err
+              finish err
+          finish = (err) ->
+            sftp.end()
+            callback err
           mkdir()
     ###
     `exists(ssh, path, callback)`

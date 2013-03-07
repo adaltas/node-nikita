@@ -748,7 +748,8 @@ mecano = module.exports =
   *   `source`        File path from where to extract the content, do not use conjointly with content.
   *   `destination`   File path where to write content to.
   *   `backup`        Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.
-
+  *   `append`        Append the content to the destination file if it exists.   
+  
   `callback`          Received parameters are:   
   
   *   `err`           Error object if any.   
@@ -799,7 +800,8 @@ mecano = module.exports =
             options.destination source
             next()
           else
-            misc.file.writeFile options.ssh, options.destination, source, (err) ->
+            options.flags ?= 'a' if options.append
+            misc.file.writeFile options.ssh, options.destination, source, options, (err) ->
               return next err if err
               written++
               backup()

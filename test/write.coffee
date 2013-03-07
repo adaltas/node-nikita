@@ -147,4 +147,25 @@ describe 'write', ->
       err.message.should.eql 'Define either source or content'
       next()
 
+  it 'append content', (next) ->
+    # File does not exists, it create one
+    mecano.write
+      content: 'hello'
+      destination: "#{scratch}/file"
+      append: true
+    , (err) ->
+      return next err if err
+      # File exists, it append to it
+      mecano.write
+        content: 'world'
+        destination: "#{scratch}/file"
+        append: true
+      , (err) ->
+        return next err if err
+        # Check file content
+        misc.file.readFile null, "#{scratch}/file", (err, content) ->
+          return next err if err
+          content.should.eql 'helloworld'
+          next()
+
 
