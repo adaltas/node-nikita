@@ -758,14 +758,14 @@ mecano = module.exports =
       written = 0
       each( options )
       .on 'item', (options, next) ->
-        return next new Error 'Missing source or content' unless options.source or options.content
+        return next new Error 'Missing source or content' unless options.source or options.content?
         return next new Error 'Define either source or content' if options.source and options.content
         return next new Error 'Missing destination' unless options.destination
         destination  = null
         destinationHash = null
         source = null
         readSource = ->
-          if options.content
+          if options.content?
             source = options.content
             return readDestination()
           # Option "local_source" force to bypass the ssh 
