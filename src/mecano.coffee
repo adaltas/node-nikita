@@ -757,93 +757,6 @@ mecano = module.exports =
       .on 'both', (err) ->
         callback err, rendered
   ###
-  `write(options, callback)`
-  --------------------------
-
-  Write a file or a portion of an existing file.
-  
-  `options`           Command options include:   
-  
-  *   `from`          Replace from after this marker, a string or a regular expression matching a line.
-  *   `to`            Replace to before this marker, a string or a regular expression matching a line.
-  *   `content`       Text to be written.
-  *   `source`        File path from where to extract the content, do not use conjointly with content.
-  *   `destination`   File path where to write content to.
-  *   `backup`        Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.
-  *   `append`        Append the content to the destination file if it exists.   
-
-  `callback`          Received parameters are:   
-  
-  *   `err`           Error object if any.   
-  *   `rendered`      Number of rendered files. 
-
-  ###
-  write: (options, callback) ->
-    result = child mecano
-    finish = (err, written) ->
-      callback err, written if callback
-      result.end err, written
-    misc.options options, (err, options) ->
-      return finish err if err
-      written = 0
-      each( options )
-      .on 'item', (options, next) ->
-        return next new Error 'Missing source or content' unless options.source or options.content?
-        return next new Error 'Define either source or content' if options.source and options.content
-        return next new Error 'Missing destination' unless options.destination
-        destination  = null
-        destinationHash = null
-        source = null
-        readSource = ->
-          if options.content?
-            source = options.content
-            return readDestination()
-          # Option "local_source" force to bypass the ssh 
-          # connection, use by the upload function
-          ssh = if options.local_source then null else options.ssh
-          misc.file.readFile ssh, options.source, (err, content) ->
-            source = content
-            readDestination()
-        readDestination = ->
-          # no need to test changes if destination is a callback
-          return render() if typeof options.destination is 'function'
-          misc.file.exists options.ssh, options.destination, (err, exists) ->
-            return render() unless exists
-            misc.file.readFile options.ssh, options.destination, (err, content) ->
-              return next err if err
-              # destination = content if from or to
-              destinationHash = misc.string.hash content
-              render()
-        render = ->
-          return writeContent() unless options.context?
-          try
-            source = eco.render source.toString(), options.context
-          catch err then return next err
-          writeContent()
-        writeContent = ->
-          return next() if destinationHash is misc.string.hash source
-          if typeof options.destination is 'function'
-            options.destination source
-            next()
-          else
-            options.flags ?= 'a' if options.append
-            misc.file.writeFile options.ssh, options.destination, source, options, (err) ->
-              return next err if err
-              written++
-              backup()
-        backup = ->
-          return next() unless options.backup
-          backup = options.backup
-          backup = ".#{Date.now()}" if backup is true
-          backup = "#{options.destination}#{backup}"
-          misc.file.writeFile options.ssh, backup, source, (err) ->
-            return next err if err
-            next()
-        conditions.all options, next, readSource
-      .on 'both', (err) ->
-        finish err, written
-    result
-  ###
   `service(options, callback)`
   ----------------------------
 
@@ -1031,6 +944,93 @@ mecano = module.exports =
           next err
       .on 'both', (err) ->
         callback err, uploaded
+  ###
+  `write(options, callback)`
+  --------------------------
+
+  Write a file or a portion of an existing file.
+  
+  `options`           Command options include:   
+  
+  *   `from`          Replace from after this marker, a string or a regular expression matching a line.
+  *   `to`            Replace to before this marker, a string or a regular expression matching a line.
+  *   `content`       Text to be written.
+  *   `source`        File path from where to extract the content, do not use conjointly with content.
+  *   `destination`   File path where to write content to.
+  *   `backup`        Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.
+  *   `append`        Append the content to the destination file if it exists.   
+
+  `callback`          Received parameters are:   
+  
+  *   `err`           Error object if any.   
+  *   `rendered`      Number of rendered files. 
+
+  ###
+  write: (options, callback) ->
+    result = child mecano
+    finish = (err, written) ->
+      callback err, written if callback
+      result.end err, written
+    misc.options options, (err, options) ->
+      return finish err if err
+      written = 0
+      each( options )
+      .on 'item', (options, next) ->
+        return next new Error 'Missing source or content' unless options.source or options.content?
+        return next new Error 'Define either source or content' if options.source and options.content
+        return next new Error 'Missing destination' unless options.destination
+        destination  = null
+        destinationHash = null
+        source = null
+        readSource = ->
+          if options.content?
+            source = options.content
+            return readDestination()
+          # Option "local_source" force to bypass the ssh 
+          # connection, use by the upload function
+          ssh = if options.local_source then null else options.ssh
+          misc.file.readFile ssh, options.source, (err, content) ->
+            source = content
+            readDestination()
+        readDestination = ->
+          # no need to test changes if destination is a callback
+          return render() if typeof options.destination is 'function'
+          misc.file.exists options.ssh, options.destination, (err, exists) ->
+            return render() unless exists
+            misc.file.readFile options.ssh, options.destination, (err, content) ->
+              return next err if err
+              # destination = content if from or to
+              destinationHash = misc.string.hash content
+              render()
+        render = ->
+          return writeContent() unless options.context?
+          try
+            source = eco.render source.toString(), options.context
+          catch err then return next err
+          writeContent()
+        writeContent = ->
+          return next() if destinationHash is misc.string.hash source
+          if typeof options.destination is 'function'
+            options.destination source
+            next()
+          else
+            options.flags ?= 'a' if options.append
+            misc.file.writeFile options.ssh, options.destination, source, options, (err) ->
+              return next err if err
+              written++
+              backup()
+        backup = ->
+          return next() unless options.backup
+          backup = options.backup
+          backup = ".#{Date.now()}" if backup is true
+          backup = "#{options.destination}#{backup}"
+          misc.file.writeFile options.ssh, backup, source, (err) ->
+            return next err if err
+            next()
+        conditions.all options, next, readSource
+      .on 'both', (err) ->
+        finish err, written
+    result
 
 # Alias definitions
 
