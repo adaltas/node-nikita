@@ -7,9 +7,12 @@ eco = require 'eco'
 rimraf = require 'rimraf'
 open = require 'open-uri'
 exec = require 'superexec'
+{EventEmitter} = require 'events'
 
 conditions = require './conditions'
 misc = require './misc'
+child = require './child'
+
 
 ###
 
@@ -147,8 +150,12 @@ mecano = module.exports =
   
   ###
   download: (options, callback) ->
+    result = child mecano
+    finish = (err, downloaded) ->
+      callback err, downloaded if callback
+      result.end err, downloaded
     misc.options options, (err, options) ->
-      return callback err if err
+      return finish err if err
       downloaded = 0
       each( options )
       .on 'item', (options, next) ->
@@ -179,7 +186,7 @@ mecano = module.exports =
               next err
         prepare()
       .on 'both', (err) ->
-        callback err, downloaded
+        finish err, downloaded
   ###
 
   `exec` `execute([goptions], options, callback)`
@@ -218,9 +225,13 @@ mecano = module.exports =
 
   ###
   execute: (options, callback) ->
+    result = child mecano
+    finish = (err, created, stdout, stderr) ->
+      callback err, created, stdout, stderr if callback
+      result.end err, created
     isArray = Array.isArray options
     misc.options options, (err, options) ->
-      return callback err if err
+      return finish err if err
       executed = 0
       stdouts = []
       stderrs = []
@@ -231,7 +242,7 @@ mecano = module.exports =
             esccmd += '\\'
           esccmd += char
         esccmd
-      stds = callback.length > 2
+      stds = if callback then callback.length > 2 else false
       each( options )
       .parallel( true )
       .on 'item', (options, i, next) ->
@@ -272,7 +283,8 @@ mecano = module.exports =
       .on 'both', (err) ->
         stdouts = stdouts[0] unless isArray
         stderrs = stderrs[0] unless isArray
-        callback err, executed, stdouts, stderrs
+        finish err, executed, stdouts, stderrs
+    result
   ###
 
   `extract(options, callback)` 
@@ -526,8 +538,12 @@ mecano = module.exports =
 
   ###
   mkdir: (options, callback) ->
+    result = child mecano
+    finish = (err, created) ->
+      callback err, created if callback
+      result.end err, created
     misc.options options, (err, options) ->
-      return callback err if err
+      return finish err if err
       created = 0
       each( options )
       .on 'item', (options, next) ->
@@ -572,7 +588,8 @@ mecano = module.exports =
             next err
         conditions.all options, next, check
       .on 'both', (err) ->
-        callback err, created
+        finish err, created
+    result
   ###
 
   `mv` `move(options, callback)`
@@ -655,8 +672,12 @@ mecano = module.exports =
 
   ###
   remove: (options, callback) ->
+    result = child mecano
+    finish = (err, removed) ->
+      callback err, removed if callback
+      result.end err, removed
     misc.options options, (err, options) ->
-      return callback err if err
+      return finish err if err
       removed = 0
       each( options )
       .on 'item', (options, next) ->
@@ -681,7 +702,8 @@ mecano = module.exports =
               next()
         conditions.all options, next, remove
       .on 'both', (err) ->
-        callback err, removed
+        finish err, removed
+    result
   ###
 
   `render(options, callback)`
@@ -749,7 +771,7 @@ mecano = module.exports =
   *   `destination`   File path where to write content to.
   *   `backup`        Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.
   *   `append`        Append the content to the destination file if it exists.   
-  
+
   `callback`          Received parameters are:   
   
   *   `err`           Error object if any.   
@@ -757,8 +779,12 @@ mecano = module.exports =
 
   ###
   write: (options, callback) ->
+    result = child mecano
+    finish = (err, written) ->
+      callback err, written if callback
+      result.end err, written
     misc.options options, (err, options) ->
-      return callback err if err
+      return finish err if err
       written = 0
       each( options )
       .on 'item', (options, next) ->
@@ -815,7 +841,8 @@ mecano = module.exports =
             next()
         conditions.all options, next, readSource
       .on 'both', (err) ->
-        callback err, written
+        finish err, written
+    result
   ###
   `service(options, callback)`
   ----------------------------
