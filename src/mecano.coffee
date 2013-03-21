@@ -853,11 +853,18 @@ mecano = module.exports =
         if options.startup? and typeof options.startup isnt 'string'
             options.startup = if options.startup then '2345' else ''
         modified = false
+        stderr = new EventEmitter()
+        stderr.writable = true
+        stderr.write = (data) ->
+          # if /Existing lock/.test data.toString()
+          # quit current process, thow an exception
         installed = ->
           mecano.execute
             ssh: options.ssh
             cmd: "yum list installed | grep ^#{pkgname}\\\\."
             code_skipped: 1
+            # stdout: stdout
+            stderr: stderr
           , (err, installed) ->
             return next err if err
             if installed then updates() else install()
