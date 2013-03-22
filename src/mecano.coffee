@@ -30,17 +30,18 @@ mecano = module.exports =
   Unix utility. Copying a file over an existing file will 
   overwrite it.
 
-  `options`         Command options include:   
+  `options`             Command options include:   
 
-  *   `source`      The file or directory to copy.
+  *   `source`          The file or directory to copy.
   *   `destination`     Where the file or directory is copied.
   *   `not_if_exists`   Equals destination if true.
-  *   `chmod`       Permissions of the file or the parent directory
+  *   `chmod`           Permissions of the file or the parent directory
+  *   `ssh`             Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+ 
+  `callback`            Received parameters are:   
 
-  `callback`        Received parameters are:   
-
-  *   `err`         Error object if any.   
-  *   `copied`      Number of files or parent directories copied.
+  *   `err`             Error object if any.   
+  *   `copied`          Number of files or parent directories copied.
 
   todo:
   *   preserve permissions if `chmod` is `true`
@@ -210,11 +211,9 @@ mecano = module.exports =
   *   `gid`           Unix group id.   
   *   `code`          Expected code(s) returned by the command, int or array of int, default to 0.  
   *   `code_skipped`  Expected code(s) returned by the command if it has no effect, executed will not be incremented, int or array of int.   
-  *   `host`          SSH host or IP address.   
-  *   `username`      SSH host or IP address.   
-  *   `ssh`           SSH connection options or an ssh2 instance   
   *   `stdout`        Writable EventEmitter in which command output will be piped.   
   *   `stderr`        Writable EventEmitter in which command error will be piped.   
+  *   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
 
   `callback`        Received parameters are:   
 
@@ -301,7 +300,7 @@ mecano = module.exports =
   *   `format`          One of 'tgz' or 'zip'.   
   *   `creates`         Ensure the given file is created or an error is send in the callback.   
   *   `not_if_exists`   Cancel extraction if file exists.   
-  *   `ssh`             SSH connection options or an ssh2 instance     
+  *   `ssh`             Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
 
   `callback`            Received parameters are:   
 
@@ -365,9 +364,9 @@ mecano = module.exports =
   *   `source`          Git source repository address.   
   *   `destination`     Directory where to clone the repository.   
   *   `revision`        Git revision, branch or tag.   
-  *   `ssh`             SSH connection options or an ssh2 instance.   
-  *   `stdout`      Writable EventEmitter in which command output will be piped.   
-  *   `stderr`      Writable EventEmitter in which command error will be piped.   
+  *   `ssh`             Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+  *   `stdout`          Writable EventEmitter in which command output will be piped.   
+  *   `stderr`          Writable EventEmitter in which command error will be piped.   
   
   ###
   git: (options, callback) ->
@@ -952,22 +951,23 @@ mecano = module.exports =
 
   Write a file or a portion of an existing file.
   
-  `options`           Command options include:   
+  `options`            Command options include:   
   
-  *   `from`          Replace from after this marker, a string or a regular expression.   
-  *   `to`            Replace to before this marker, a string or a regular expression.   
-  *   `match`         Replace this marker, a string or a regular expression.   
-  *   `replace`       The content to be inserted, used conjointly with the from, to or match options.   
-  *   `content`       Text to be written, an alternative to source which reference a file.   
-  *   `source`        File path from where to extract the content, do not use conjointly with content.   
-  *   `destination`   File path where to write content to.   
-  *   `backup`        Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
-  *   `append`        Append the content to the destination file if it exists.   
-
-  `callback`          Received parameters are:   
+  *   `from`           Replace from after this marker, a string or a regular expression.   
+  *   `to`             Replace to before this marker, a string or a regular expression.   
+  *   `match`          Replace this marker, a string or a regular expression.   
+  *   `replace`        The content to be inserted, used conjointly with the from, to or match options.   
+  *   `content`        Text to be written, an alternative to source which reference a file.   
+  *   `source`         File path from where to extract the content, do not use conjointly with content.   
+  *   `destination`    File path where to write content to.   
+  *   `backup`         Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
+  *   `append`         Append the content to the destination file if it exists.   
+  *   `ssh`            Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
   
-  *   `err`           Error object if any.   
-  *   `rendered`      Number of rendered files.   
+  `callback`           Received parameters are:   
+  
+  *   `err`            Error object if any.   
+  *   `rendered`       Number of rendered files.   
   
   Example replacing part of a file using from and to markers
 
