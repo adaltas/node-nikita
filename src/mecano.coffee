@@ -908,13 +908,15 @@ mecano = module.exports =
   
   `options`           Command options include:   
   
-  *   `binary`        Fast upload implementation, discard all the other option and use its own stream based implementation.
-  *   `from`          Replace from after this marker, a string or a regular expression matching a line.
-  *   `to`            Replace to before this marker, a string or a regular expression matching a line.
-  *   `content`       Text to be written.
-  *   `source`        File path from where to extract the content, do not use conjointly with content.
-  *   `destination`   File path where to write content to.
-  *   `backup`        Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.
+  *   `binary`        Fast upload implementation, discard all the other option and use its own stream based implementation.   
+  *   `from`          Replace from after this marker, a string or a regular expression.   
+  *   `to`            Replace to before this marker, a string or a regular expression.   
+  *   `match`         Replace this marker, a string or a regular expression.   
+  *   `replace`       The content to be inserted, used conjointly with the from, to or match options.   
+  *   `content`       Text to be written.   
+  *   `source`        File path from where to extract the content, do not use conjointly with content.   
+  *   `destination`   File path where to write content to.   
+  *   `backup`        Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
 
   `callback`          Received parameters are:   
   
@@ -952,18 +954,42 @@ mecano = module.exports =
   
   `options`           Command options include:   
   
-  *   `from`          Replace from after this marker, a string or a regular expression matching a line.
-  *   `to`            Replace to before this marker, a string or a regular expression matching a line.
-  *   `content`       Text to be written.
-  *   `source`        File path from where to extract the content, do not use conjointly with content.
-  *   `destination`   File path where to write content to.
-  *   `backup`        Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.
+  *   `from`          Replace from after this marker, a string or a regular expression.   
+  *   `to`            Replace to before this marker, a string or a regular expression.   
+  *   `match`         Replace this marker, a string or a regular expression.   
+  *   `replace`       The content to be inserted, used conjointly with the from, to or match options.   
+  *   `content`       Text to be written, an alternative to source which reference a file.   
+  *   `source`        File path from where to extract the content, do not use conjointly with content.   
+  *   `destination`   File path where to write content to.   
+  *   `backup`        Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
   *   `append`        Append the content to the destination file if it exists.   
 
   `callback`          Received parameters are:   
   
   *   `err`           Error object if any.   
-  *   `rendered`      Number of rendered files. 
+  *   `rendered`      Number of rendered files.   
+  
+  Example replacing part of a file using from and to markers
+
+      mecano.write
+        from: '# from\n'
+        to: '# to'
+        content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
+        replace: 'my friend\n'
+        destination: "#{scratch}/fromto.md"
+      , (err, written) ->
+        # here we are\n# from\nmy friend\n# to\nyou coquin
+  
+  Example replacing part of a file using a regular expression
+
+    connect host: 'localhost', (err, ssh) ->
+      mecano.write
+        match: /(.*try) (.*)/
+        content: 'here we are\nlets try to replace that one\nyou coquin'
+        replace: ['my friend, $1']
+        destination: "#{scratch}/fromto.md"
+      , (err, written) ->
+        # here we are\nmy friend, lets try\nyou coquin
 
   ###
   write: (options, callback) ->
@@ -981,41 +1007,68 @@ mecano = module.exports =
         return next new Error 'Missing destination' unless options.destination
         destination  = null
         destinationHash = null
-        source = null
+        content = fullContent = null
+        from = to = null
         readSource = ->
           if options.content?
-            source = options.content
-            return readDestination()
+            content = options.content
+            return extractPartial()
           # Option "local_source" force to bypass the ssh 
           # connection, use by the upload function
           ssh = if options.local_source then null else options.ssh
-          misc.file.readFile ssh, options.source, (err, content) ->
-            source = content
-            readDestination()
+          misc.file.readFile ssh, options.source, (err, src) ->
+            content = src
+            extractPartial()
+        extractPartial = ->
+          return readDestination() unless options.from? or options.to? or options.match?
+          # from = if options.from then content.indexOf(options.from) + options.from.length else 0
+          # to = if options.to then content.indexOf(options.to) else content.length
+          fullContent = content
+          # console.log content, from, to
+          # content = content.substring from, to
+          content = options.replace
+          readDestination()
         readDestination = ->
           # no need to test changes if destination is a callback
           return render() if typeof options.destination is 'function'
           misc.file.exists options.ssh, options.destination, (err, exists) ->
             return render() unless exists
-            misc.file.readFile options.ssh, options.destination, (err, content) ->
+            misc.file.readFile options.ssh, options.destination, (err, dest) ->
               return next err if err
-              # destination = content if from or to
-              destinationHash = misc.string.hash content
+              destinationHash = misc.string.hash dest
               render()
         render = ->
-          return writeContent() unless options.context?
+          return replacePartial() unless options.context?
           try
-            source = eco.render source.toString(), options.context
+            content = eco.render content.toString(), options.context
           catch err then return next err
+          replacePartial()
+        replacePartial = ->
+          return writeContent() unless fullContent?
+          if options.match
+            if options.match instanceof RegExp
+              # match = options.match.exec fullContent
+              # from = match.index
+              # to = from + match[0].length
+              content = fullContent.replace options.match, content
+            else
+              from = fullContent.indexOf(options.match)
+              to = from + options.match.length
+              content = fullContent.substr(0, from) + content + fullContent.substr(to)
+          else
+            from = if options.from then fullContent.indexOf(options.from) + options.from.length else 0
+            to = if options.to then fullContent.indexOf(options.to) else fullContent.length
+            content = fullContent.substr(0, from) + content + fullContent.substr(to)
+          fullContent = null
           writeContent()
         writeContent = ->
-          return next() if destinationHash is misc.string.hash source
+          return next() if destinationHash is misc.string.hash content
           if typeof options.destination is 'function'
-            options.destination source
+            options.destination content
             next()
           else
             options.flags ?= 'a' if options.append
-            misc.file.writeFile options.ssh, options.destination, source, options, (err) ->
+            misc.file.writeFile options.ssh, options.destination, content, options, (err) ->
               return next err if err
               written++
               backup()
@@ -1024,7 +1077,7 @@ mecano = module.exports =
           backup = options.backup
           backup = ".#{Date.now()}" if backup is true
           backup = "#{options.destination}#{backup}"
-          misc.file.writeFile options.ssh, backup, source, (err) ->
+          misc.file.writeFile options.ssh, backup, content, (err) ->
             return next err if err
             next()
         conditions.all options, next, readSource
