@@ -108,95 +108,114 @@ describe 'write', ->
           next()
   
   it 'with from and with to', (next) ->
-    connect host: 'localhost', (err, ssh) ->
-      mecano.write
-        from: '# from\n'
-        to: '# to'
-        content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
-        replace: 'my friend\n'
-        destination: "#{scratch}/fromto.md"
-      , (err, written) ->
+    mecano.write
+      from: '# from\n'
+      to: '# to'
+      content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
+      replace: 'my friend\n'
+      destination: "#{scratch}/fromto.md"
+    , (err, written) ->
+      return next err if err
+      written.should.eql 1
+      misc.file.readFile null, "#{scratch}/fromto.md", (err, content) ->
         return next err if err
-        written.should.eql 1
-        misc.file.readFile null, "#{scratch}/fromto.md", (err, content) ->
-          return next err if err
-          content.should.eql 'here we are\n# from\nmy friend\n# to\nyou coquin'
-          next()
+        content.should.eql 'here we are\n# from\nmy friend\n# to\nyou coquin'
+        next()
   
   it 'with from and without to', (next) ->
-    connect host: 'localhost', (err, ssh) ->
-      mecano.write
-        from: '# from\n'
-        content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
-        replace: 'my friend\n'
-        destination: "#{scratch}/fromto.md"
-      , (err, written) ->
+    mecano.write
+      from: '# from\n'
+      content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
+      replace: 'my friend\n'
+      destination: "#{scratch}/fromto.md"
+    , (err, written) ->
+      return next err if err
+      written.should.eql 1
+      misc.file.readFile null, "#{scratch}/fromto.md", (err, content) ->
         return next err if err
-        written.should.eql 1
-        misc.file.readFile null, "#{scratch}/fromto.md", (err, content) ->
-          return next err if err
-          content.should.eql 'here we are\n# from\nmy friend\n'
-          next()
+        content.should.eql 'here we are\n# from\nmy friend\n'
+        next()
   
   it 'without from and with to', (next) ->
-    connect host: 'localhost', (err, ssh) ->
-      mecano.write
-        to: '# to'
-        content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
-        replace: 'my friend\n'
-        destination: "#{scratch}/fromto.md"
-      , (err, written) ->
+    mecano.write
+      to: '# to'
+      content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
+      replace: 'my friend\n'
+      destination: "#{scratch}/fromto.md"
+    , (err, written) ->
+      return next err if err
+      written.should.eql 1
+      misc.file.readFile null, "#{scratch}/fromto.md", (err, content) ->
         return next err if err
-        written.should.eql 1
-        misc.file.readFile null, "#{scratch}/fromto.md", (err, content) ->
-          return next err if err
-          content.should.eql 'my friend\n# to\nyou coquin'
-          next()
+        content.should.eql 'my friend\n# to\nyou coquin'
+        next()
   
   it 'with match as a string', (next) ->
-    connect host: 'localhost', (err, ssh) ->
-      mecano.write
-        match: 'lets try to replace that one'
-        content: 'here we are\nlets try to replace that one\nyou coquin'
-        replace: 'my friend'
-        destination: "#{scratch}/fromto.md"
-      , (err, written) ->
+    mecano.write
+      match: 'lets try to replace that one'
+      content: 'here we are\nlets try to replace that one\nyou coquin'
+      replace: 'my friend'
+      destination: "#{scratch}/fromto.md"
+    , (err, written) ->
+      return next err if err
+      written.should.eql 1
+      misc.file.readFile null, "#{scratch}/fromto.md", (err, content) ->
         return next err if err
-        written.should.eql 1
-        misc.file.readFile null, "#{scratch}/fromto.md", (err, content) ->
-          return next err if err
-          content.should.eql 'here we are\nmy friend\nyou coquin'
-          next()
+        content.should.eql 'here we are\nmy friend\nyou coquin'
+        next()
   
   it 'with match as a regular expression', (next) ->
-    connect host: 'localhost', (err, ssh) ->
-      mecano.write
-        match: /(.*try.*)/
-        content: 'here we are\nlets try to replace that one\nyou coquin'
-        replace: 'my friend'
-        destination: "#{scratch}/fromto.md"
-      , (err, written) ->
+    mecano.write
+      match: /(.*try.*)/
+      content: 'here we are\nlets try to replace that one\nyou coquin'
+      replace: 'my friend'
+      destination: "#{scratch}/fromto.md"
+    , (err, written) ->
+      return next err if err
+      written.should.eql 1
+      misc.file.readFile null, "#{scratch}/fromto.md", (err, content) ->
         return next err if err
-        written.should.eql 1
-        misc.file.readFile null, "#{scratch}/fromto.md", (err, content) ->
-          return next err if err
-          content.should.eql 'here we are\nmy friend\nyou coquin'
-          next()
+        content.should.eql 'here we are\nmy friend\nyou coquin'
+        next()
   
   it 'with match as a regular expression and multiple content', (next) ->
-    connect host: 'localhost', (err, ssh) ->
+    mecano.write
+      match: /(.*try) (.*)/
+      content: 'here we are\nlets try to replace that one\nyou coquin'
+      replace: ['my friend, $1']
+      destination: "#{scratch}/fromto.md"
+    , (err, written) ->
+      return next err if err
+      written.should.eql 1
+      misc.file.readFile null, "#{scratch}/fromto.md", (err, content) ->
+        return next err if err
+        content.should.eql 'here we are\nmy friend, lets try\nyou coquin'
+        next()
+  
+  it 'will replace destination if source or content does not exists', (next) ->
+    mecano.write
+      content: 'This is\nsome content\nfor testing'
+      destination: "#{scratch}/a_file"
+    , (err, written) ->
+      return next err if err
       mecano.write
-        match: /(.*try) (.*)/
-        content: 'here we are\nlets try to replace that one\nyou coquin'
-        replace: ['my friend, $1']
-        destination: "#{scratch}/fromto.md"
+        match: /(.*content)/
+        replace: 'a text'
+        destination: "#{scratch}/a_file"
       , (err, written) ->
         return next err if err
         written.should.eql 1
-        misc.file.readFile null, "#{scratch}/fromto.md", (err, content) ->
+        mecano.write
+          match: /(.*content)/
+          replace: 'a text'
+          destination: "#{scratch}/a_file"
+        , (err, written) ->
           return next err if err
-          content.should.eql 'here we are\nmy friend, lets try\nyou coquin'
-          next()
+          written.should.eql 0
+          misc.file.readFile null, "#{scratch}/a_file", (err, content) ->
+            return next err if err
+            content.should.eql 'This is\na text\nfor testing'
+            next()
   
   it 'over ssh', (next) ->
     connect host: 'localhost', (err, ssh) ->

@@ -1002,7 +1002,7 @@ mecano = module.exports =
       written = 0
       each( options )
       .on 'item', (options, next) ->
-        return next new Error 'Missing source or content' unless options.source or options.content?
+        return next new Error 'Missing source or content' unless (options.source or options.content?) or options.replace
         return next new Error 'Define either source or content' if options.source and options.content
         return next new Error 'Missing destination' unless options.destination
         destination  = null
@@ -1015,8 +1015,10 @@ mecano = module.exports =
             return extractPartial()
           # Option "local_source" force to bypass the ssh 
           # connection, use by the upload function
+          options.source ?= options.destination
           ssh = if options.local_source then null else options.ssh
           misc.file.readFile ssh, options.source, (err, src) ->
+            return next err if err
             content = src
             extractPartial()
         extractPartial = ->

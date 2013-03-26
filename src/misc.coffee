@@ -80,6 +80,7 @@ misc = module.exports =
         callback = options
         options = {}
       options.encoding ?= 'utf8'
+      return callback new Error "Invalid path '#{path}'" unless path
       unless ssh
         fs.readFile path, options.encoding, (err, content) ->
           callback err, content
