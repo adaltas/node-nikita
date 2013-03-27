@@ -126,8 +126,9 @@ describe 'misc', ->
         mecano.mkdir
           destination: "#{scratch}/remove_dir"
         , (err, created) ->
-          next err if err
+          return next err if err
           misc.file.remove null, "#{scratch}/remove_dir", (err) ->
+            return next err if err
             misc.file.exists null, "#{scratch}/remove_dir", (err, exists) ->
               return next err if err
               exists.should.not.be.ok
@@ -139,8 +140,9 @@ describe 'misc', ->
             ssh: ssh
             destination: "#{scratch}/remove_dir"
           , (err, created) ->
-            next err if err
+            return next err if err
             misc.file.remove ssh, "#{scratch}/remove_dir", (err) ->
+              return next err if err
               misc.file.exists ssh, "#{scratch}/remove_dir", (err, exists) ->
                 return next err if err
                 exists.should.not.be.ok
