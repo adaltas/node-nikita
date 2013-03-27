@@ -11,6 +11,7 @@ describe 'service', ->
   config = test.config()
   # return if config
   beforeEach (next) ->
+    return next() unless config.yum_over_ssh
     connect config.yum_over_ssh, (err, con) ->
       return next err if err
       ssh = con
@@ -26,7 +27,7 @@ describe 'service', ->
   describe 'install', ->
 
     it 'validate installation', (next) ->
-      return next()
+      return next() unless config.yum_over_ssh
       mecano.service
         ssh: ssh
         name: 'ntp'
@@ -42,7 +43,7 @@ describe 'service', ->
           next()
     
     it 'skip if already installed', (next) ->
-      return next()
+      return next() unless config.yum_over_ssh
       mecano.service
         ssh: ssh
         name: 'ntp'
@@ -60,6 +61,7 @@ describe 'service', ->
   describe 'startup', ->
 
     it 'declare on startup with boolean', (next) ->
+      return next() unless config.yum_over_ssh
       mecano.service
         ssh: ssh
         name: 'ntp'
@@ -78,6 +80,7 @@ describe 'service', ->
           next()
 
     it 'skip if already declared', (next) ->
+      return next() unless config.yum_over_ssh
       mecano.service
         ssh: ssh
         name: 'ntp'
@@ -97,6 +100,7 @@ describe 'service', ->
           next()
 
     it 'notice a change in startup level', (next) ->
+      return next() unless config.yum_over_ssh
       mecano.service
         ssh: ssh
         name: 'ntp'
@@ -124,6 +128,7 @@ describe 'service', ->
             next()
 
     it 'remove after being defined', (next) ->
+      return next() unless config.yum_over_ssh
       # Register service
       mecano.service
         ssh: ssh
@@ -154,6 +159,7 @@ describe 'service', ->
   describe 'action', ->
 
     it 'should start', (next) ->
+      return next() unless config.yum_over_ssh
       mecano.service
         ssh: ssh
         name: 'ntp'
@@ -181,6 +187,7 @@ describe 'service', ->
             next()
 
     it 'should stop', (next) ->
+      return next() unless config.yum_over_ssh
       mecano.service
         ssh: ssh
         name: 'ntp'

@@ -5,7 +5,9 @@ module.exports =
     username: process.env.USER
     # no password, will use private key
     # if found in "~/.ssh/id_rsa"
-  yum_over_ssh:
-    host: '172.16.134.11'
-    username: 'root'
-    password: 'passepartout'
+  # Uncomment following lines if you wish
+  # to test the service function with yum
+  # yum_over_ssh:
+  #   host: '172.16.134.11'
+  #   username: 'root'
+  #   password: 'passepartout'
