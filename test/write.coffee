@@ -169,11 +169,11 @@ describe 'write', ->
       match: /(.*try.*)/
       content: 'here we are\nlets try to replace that one\nyou coquin'
       replace: 'my friend'
-      destination: "#{scratch}/fromto.md"
+      destination: "#{scratch}/replace"
     , (err, written) ->
       return next err if err
       written.should.eql 1
-      misc.file.readFile null, "#{scratch}/fromto.md", (err, content) ->
+      misc.file.readFile null, "#{scratch}/replace", (err, content) ->
         return next err if err
         content.should.eql 'here we are\nmy friend\nyou coquin'
         next()
@@ -183,13 +183,27 @@ describe 'write', ->
       match: /(.*try) (.*)/
       content: 'here we are\nlets try to replace that one\nyou coquin'
       replace: ['my friend, $1']
-      destination: "#{scratch}/fromto.md"
+      destination: "#{scratch}/replace"
     , (err, written) ->
       return next err if err
       written.should.eql 1
-      misc.file.readFile null, "#{scratch}/fromto.md", (err, content) ->
+      misc.file.readFile null, "#{scratch}/replace", (err, content) ->
         return next err if err
         content.should.eql 'here we are\nmy friend, lets try\nyou coquin'
+        next()
+  
+  it 'with match with global and multiles', (next) ->
+    mecano.write
+      match: /^property=.*$/mg
+      content: '#A config file\n#property=30\nproperty=10\n#End of Config'
+      replace: 'property=50'
+      destination: "#{scratch}/replace"
+    , (err, written) ->
+      return next err if err
+      written.should.eql 1
+      misc.file.readFile null, "#{scratch}/replace", (err, content) ->
+        return next err if err
+        content.should.eql '#A config file\n#property=30\nproperty=50\n#End of Config'
         next()
   
   it 'will replace destination if source or content does not exists', (next) ->
