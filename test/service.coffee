@@ -5,7 +5,7 @@ connect = require 'superexec/lib/connect'
 test = require './test'
 
 describe 'service', ->
-
+  
   @timeout 20000
   ssh = null
   config = test.config()

@@ -23,7 +23,6 @@ checkDir = (dir, callback) ->
       scratchFiles.should.eql dirFiles
       callback()
 
-
 describe 'copy', ->
 
   scratch = test.scratch @

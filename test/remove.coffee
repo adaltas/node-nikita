@@ -7,9 +7,9 @@ test = require './test'
 connect = require 'superexec/lib/connect'
 
 describe 'remove', ->
-
+  
   scratch = test.scratch @
-
+  
   it 'should delete a file', (next) ->
     mecano.copy
       source: "#{__dirname}/../resources/a_dir/a_file"
