@@ -67,6 +67,7 @@ misc = module.exports =
         ssh.sftp (err, sftp) ->
           return callback err if err
           sftp.stat path, (err, attr) ->
+            sftp.end()
             if err and err.type is 'NO_SUCH_FILE'
               err.code = 'ENOENT'
               return callback err
@@ -92,8 +93,10 @@ misc = module.exports =
           s.on 'data', (d) ->
             data += d.toString()
           s.on 'error', (err) ->
-            callback err
+            finish err
           s.on 'close', ->
+            finish null, data
+          finish = (err, data) ->
             sftp.end()
             callback null, data
     ###
@@ -143,7 +146,7 @@ misc = module.exports =
             else
               content.pipe s
             s.on 'error', (err) ->
-              callback err
+              finish err
             s.on 'end', ->
               s.destroy()
             s.on 'close', ->
@@ -151,7 +154,7 @@ misc = module.exports =
           chown = ->
             return chmod() unless options.uid or options.gid
             sftp.chown path, options.uid, options.gid, (err) ->
-              return callback err if err
+              return finish err if err
               chmod()
           chmod = ->
             return finish() unless options.mode
@@ -232,6 +235,7 @@ misc = module.exports =
         ssh.sftp (err, sftp) ->
           return callback err if err
           sftp.stat path, (err, attr) ->
+            sftp.end()
             callback null, if err then false else true
     ###
     `files.hash(file, [algorithm], callback)`
