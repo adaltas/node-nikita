@@ -307,24 +307,24 @@ mecano = module.exports =
         options.code_skipped = [options.code_skipped] unless Array.isArray options.code_skipped
         cmd = () ->
           run = exec options
-          stdout = stderr = ''
+          stdout = stderr = []
           if options.stdout
             run.stdout.pipe options.stdout
           if stds
             run.stdout.on 'data', (data) ->
-              stdout += data
+              stdout.push data
           if options.stderr
             run.stderr.pipe options.stderr
           if stds
             run.stderr.on 'data', (data) ->
-              stderr += data
+              stderr.push data
           run.on "exit", (code) ->
             # Givent some time because the "exit" event is sometimes
             # called before the "stdout" "data" event when runing
             # `make test`
             setTimeout ->
-              stdouts.push if stds then stdout else undefined
-              stderrs.push if stds then stderr else undefined
+              stdouts.push if stds then stdout.join('') else undefined
+              stderrs.push if stds then stderr.join('') else undefined
               if options.code.indexOf(code) is -1 and options.code_skipped.indexOf(code) is -1 
                 err = new Error "Invalid exec code #{code}"
                 err.code = code

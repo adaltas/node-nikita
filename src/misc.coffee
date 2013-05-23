@@ -89,13 +89,13 @@ misc = module.exports =
         ssh.sftp (err, sftp) ->
           return callback err if err
           s = sftp.createReadStream path, options
-          data = ''
+          data = []
           s.on 'data', (d) ->
-            data += d.toString()
+            data.push d.toString()
           s.on 'error', (err) ->
             finish err
           s.on 'close', ->
-            finish null, data
+            finish null, data.join ''
           finish = (err, data) ->
             sftp.end()
             callback null, data
