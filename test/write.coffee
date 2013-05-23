@@ -334,25 +334,28 @@ describe 'write', ->
             next()
 
     it 'will detect new line if no match', (next) ->
-      # File does not exists, it create one
-      mecano.write
-        content: 'here we are\nyou coquin'
-        destination: "#{scratch}/file"
-        append: true
-      , (err) ->
-        # File does not exist, it create it with the content
+      connect host: 'localhost', (err, ssh) ->
+        # File does not exists, it create one
         mecano.write
-          match: /will never be found/
+          ssh: ssh
+          content: 'here we are\nyou coquin'
           destination: "#{scratch}/file"
-          replace: 'Add this line'
           append: true
         , (err) ->
-          return next err if err
-          # Check file content
-          misc.file.readFile null, "#{scratch}/file", (err, content) ->
+          # File does not exist, it create it with the content
+          mecano.write
+            ssh: ssh
+            match: /will never be found/
+            destination: "#{scratch}/file"
+            replace: 'Add this line'
+            append: true
+          , (err) ->
             return next err if err
-            content.should.eql 'here we are\nyou coquin\nAdd this line'
-            next()
+            # Check file content
+            misc.file.readFile ssh, "#{scratch}/file", (err, content) ->
+              return next err if err
+              content.should.eql 'here we are\nyou coquin\nAdd this line'
+              next()
 
     it 'create file if not exists', (next) ->
       # File does not exist, it create it with the content

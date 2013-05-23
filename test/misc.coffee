@@ -20,6 +20,24 @@ describe 'misc', ->
 
   describe 'file', ->
 
+    describe 'append', ->
+
+      append = (ssh, next) ->
+        misc.file.writeFile ssh, "#{scratch}/a_file", "hello", flags: 'a', (err, exists) ->
+          return next err if err
+          misc.file.writeFile ssh, "#{scratch}/a_file", "world", flags: 'a', (err, exists) ->
+            return next err if err
+            misc.file.readFile ssh, "#{scratch}/a_file", (err, content) ->
+              content.should.eql "helloworld"
+              next()
+
+      it 'locally', (next) ->
+        append null, next
+
+      it 'remotely', (next) ->
+        connect host: 'localhost', (err, ssh) ->
+          append ssh, next
+
     describe 'exists', ->
 
       it 'check local filesystem', (next) ->
@@ -122,31 +140,25 @@ describe 'misc', ->
 
     describe 'remove', ->
 
-      it 'a local dir', (next) ->
+      remove = (ssh, next) ->
         mecano.mkdir
+          ssh: ssh
           destination: "#{scratch}/remove_dir"
         , (err, created) ->
           return next err if err
-          misc.file.remove null, "#{scratch}/remove_dir", (err) ->
+          misc.file.remove ssh, "#{scratch}/remove_dir", (err) ->
             return next err if err
-            misc.file.exists null, "#{scratch}/remove_dir", (err, exists) ->
+            misc.file.exists ssh, "#{scratch}/remove_dir", (err, exists) ->
               return next err if err
               exists.should.not.be.ok
               next()
 
+      it 'a local dir', (next) ->
+        remove null, next
+
       it 'a remote dir', (next) ->
         connect host: 'localhost', (err, ssh) ->
-          mecano.mkdir
-            ssh: ssh
-            destination: "#{scratch}/remove_dir"
-          , (err, created) ->
-            return next err if err
-            misc.file.remove ssh, "#{scratch}/remove_dir", (err) ->
-              return next err if err
-              misc.file.exists ssh, "#{scratch}/remove_dir", (err, exists) ->
-                return next err if err
-                exists.should.not.be.ok
-                next()
+          remove ssh, next
 
       it 'handle a missing local dir', (next) ->
         misc.file.remove null, "#{scratch}/remove_missing_dir", (err) ->
