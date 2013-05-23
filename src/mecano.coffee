@@ -967,7 +967,7 @@ mecano = module.exports =
   *   `source`         File path from where to extract the content, do not use conjointly with content.   
   *   `destination`    File path where to write content to.   
   *   `backup`         Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
-  *   `append`         Append the content to the destination file if it exists.   
+  *   `append`         Append the content to the destination file. If destination does not exist, the file will be created. When used with the `match` and `replace` options, it will append the `replace` value at the end of the file if no match if found and if the value is a string.   
   *   `ssh`            Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
   
   `callback`           Received parameters are:   
@@ -978,9 +978,9 @@ mecano = module.exports =
   Example replacing part of a file using from and to markers
 
       mecano.write
+        content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
         from: '# from\n'
         to: '# to'
-        content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
         replace: 'my friend\n'
         destination: "#{scratch}/a_file"
       , (err, written) ->
@@ -988,10 +988,9 @@ mecano = module.exports =
   
   Example replacing part of a file using a regular expression
 
-    connect host: 'localhost', (err, ssh) ->
       mecano.write
-        match: /(.*try) (.*)/
         content: 'here we are\nlets try to replace that one\nyou coquin'
+        match: /(.*try) (.*)/
         replace: ['my friend, $1']
         destination: "#{scratch}/a_file"
       , (err, written) ->
@@ -1000,8 +999,8 @@ mecano = module.exports =
   Example replacing with the global and multiple lines options
 
       mecano.write
-        match: /^property=.*$/mg
         content: '#A config file\n#property=30\nproperty=10\n#End of Config'
+        match: /^property=.*$/mg
         replace: 'property=50'
         destination: "#{scratch}/replace"
       , (err, written) ->
@@ -1065,10 +1064,11 @@ mecano = module.exports =
           return writeContent() unless fullContent?
           if options.match
             if options.match instanceof RegExp
-              # match = options.match.exec fullContent
-              # from = match.index
-              # to = from + match[0].length
+              # content is options.replace, may be a string or an array
               content = fullContent.replace options.match, content
+              if content is fullContent and options.append and typeof options.replace is 'string'
+                content = if content.substr(content.length - 1) is '\n' then '' else '\n'
+                content += options.replace
             else
               from = fullContent.indexOf(options.match)
               to = from + options.match.length

@@ -271,7 +271,7 @@ describe 'write', ->
       err.message.should.eql 'Define either source or content'
       next()
 
-  it 'append content', (next) ->
+  it 'append content to existing file', (next) ->
     # File does not exists, it create one
     mecano.write
       content: 'hello'
@@ -291,5 +291,64 @@ describe 'write', ->
           return next err if err
           content.should.eql 'helloworld'
           next()
+  describe 'append', ->
+
+    it 'append content to missing file', (next) ->
+      # File does not exist, it create it with the content
+      mecano.write
+        content: 'world'
+        destination: "#{scratch}/file"
+        append: true
+      , (err) ->
+        return next err if err
+        # Check file content
+        misc.file.readFile null, "#{scratch}/file", (err, content) ->
+          return next err if err
+          content.should.eql 'world'
+          next()
+
+  describe 'match & append', ->
+
+    it 'will append if no match', (next) ->
+      # File does not exists, it create one
+      mecano.write
+        content: 'here we are\nyou coquin\n'
+        destination: "#{scratch}/file"
+        append: true
+      , (err) ->
+        # File does not exist, it create it with the content
+        mecano.write
+          match: /will never work/
+          destination: "#{scratch}/file"
+          replace: 'Add this line'
+          append: true
+        , (err) ->
+          return next err if err
+          # Check file content
+          misc.file.readFile null, "#{scratch}/file", (err, content) ->
+            return next err if err
+            content.should.eql 'here we are\nyou coquin\nAdd this line'
+            next()
+
+    it 'will detect new line if no match', (next) ->
+      # File does not exists, it create one
+      mecano.write
+        content: 'here we are\nyou coquin'
+        destination: "#{scratch}/file"
+        append: true
+      , (err) ->
+        # File does not exist, it create it with the content
+        mecano.write
+          match: /will never work/
+          destination: "#{scratch}/file"
+          replace: 'Add this line'
+          append: true
+        , (err) ->
+          return next err if err
+          # Check file content
+          misc.file.readFile null, "#{scratch}/file", (err, content) ->
+            return next err if err
+            content.should.eql 'here we are\nyou coquin\nAdd this line'
+            next()
 
 
