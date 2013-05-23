@@ -93,20 +93,6 @@ describe 'write', ->
         content.should.eql ''
         next()
   
-  it 'empty file over ssh', (next) ->
-    connect host: 'localhost', (err, ssh) ->
-      mecano.write
-        ssh: ssh
-        content: ''
-        destination: "#{scratch}/empty_file"
-      , (err, written) ->
-        return next err if err
-        written.should.eql 1
-        misc.file.readFile ssh, "#{scratch}/empty_file", (err, content) ->
-          return next err if err
-          content.should.eql ''
-          next()
-  
   it 'with from and with to', (next) ->
     mecano.write
       from: '# from\n'
@@ -230,37 +216,6 @@ describe 'write', ->
             return next err if err
             content.should.eql 'This is\na text\nfor testing'
             next()
-  
-  it 'over ssh', (next) ->
-    connect host: 'localhost', (err, ssh) ->
-      mecano.write
-        ssh: ssh
-        content: 'Hello'
-        destination: "#{scratch}/file"
-      , (err, written) ->
-        return next err if err
-        written.should.eql 1
-        misc.file.exists ssh, "#{scratch}/file", (err, exists) ->
-          exists.should.be.ok
-          next()
-  
-  it 'detect file changes', (next) ->
-    connect host: 'localhost', (err, ssh) ->
-      mecano.write
-        ssh: ssh
-        content: 'Hello'
-        destination: "#{scratch}/file"
-      , (err, written) ->
-        return next err if err
-        written.should.eql 1
-        mecano.write
-          ssh: ssh
-          content: 'Hello'
-          destination: "#{scratch}/file"
-        , (err, written) ->
-          return next err if err
-          written.should.eql 0
-          next()
 
   it 'can not defined source and content', (next) ->
     mecano.write
@@ -291,6 +246,54 @@ describe 'write', ->
           return next err if err
           content.should.eql 'helloworld'
           next()
+
+  describe 'ssh', ->
+  
+    it 'with empty content', (next) ->
+      connect host: 'localhost', (err, ssh) ->
+        mecano.write
+          ssh: ssh
+          content: ''
+          destination: "#{scratch}/empty_file"
+        , (err, written) ->
+          return next err if err
+          written.should.eql 1
+          misc.file.readFile ssh, "#{scratch}/empty_file", (err, content) ->
+            return next err if err
+            content.should.eql ''
+            next()
+    
+    it 'write content', (next) ->
+      connect host: 'localhost', (err, ssh) ->
+        mecano.write
+          ssh: ssh
+          content: 'Hello'
+          destination: "#{scratch}/file"
+        , (err, written) ->
+          return next err if err
+          written.should.eql 1
+          misc.file.exists ssh, "#{scratch}/file", (err, exists) ->
+            exists.should.be.ok
+            next()
+  
+    it 'detect file changes', (next) ->
+      connect host: 'localhost', (err, ssh) ->
+        mecano.write
+          ssh: ssh
+          content: 'Hello'
+          destination: "#{scratch}/file"
+        , (err, written) ->
+          return next err if err
+          written.should.eql 1
+          mecano.write
+            ssh: ssh
+            content: 'Hello'
+            destination: "#{scratch}/file"
+          , (err, written) ->
+            return next err if err
+            written.should.eql 0
+            next()
+
   describe 'append', ->
 
     it 'append content to missing file', (next) ->
@@ -339,7 +342,7 @@ describe 'write', ->
       , (err) ->
         # File does not exist, it create it with the content
         mecano.write
-          match: /will never work/
+          match: /will never be found/
           destination: "#{scratch}/file"
           replace: 'Add this line'
           append: true
@@ -350,5 +353,20 @@ describe 'write', ->
             return next err if err
             content.should.eql 'here we are\nyou coquin\nAdd this line'
             next()
+
+    it 'create file if not exists', (next) ->
+      # File does not exist, it create it with the content
+      mecano.write
+        match: /will never be found/
+        destination: "#{scratch}/file"
+        replace: 'Add this line'
+        append: true
+      , (err) ->
+        return next err if err
+        # Check file content
+        misc.file.readFile null, "#{scratch}/file", (err, content) ->
+          return next err if err
+          content.should.eql 'Add this line'
+          next()
 
 

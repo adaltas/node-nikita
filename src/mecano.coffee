@@ -1082,10 +1082,15 @@ mecano = module.exports =
           # connection, use by the upload function
           options.source ?= options.destination
           ssh = if options.local_source then null else options.ssh
-          misc.file.readFile ssh, options.source, (err, src) ->
+          misc.file.exists ssh, options.source, (err, exists) ->
             return next err if err
-            content = src
-            extractPartial()
+            unless exists
+              content = ''
+              return extractPartial()
+            misc.file.readFile ssh, options.source, (err, src) ->
+              return next err if err
+              content = src
+              extractPartial()
         extractPartial = ->
           return readDestination() unless options.from? or options.to? or options.match?
           # from = if options.from then content.indexOf(options.from) + options.from.length else 0
@@ -1115,7 +1120,7 @@ mecano = module.exports =
               # content is options.replace, may be a string or an array
               content = fullContent.replace options.match, content
               if content is fullContent and options.append and typeof options.replace is 'string'
-                content = if content.substr(content.length - 1) is '\n' then '' else '\n'
+                content = if content.length is 0 or content.substr(content.length - 1) is '\n' then '' else '\n'
                 content += options.replace
             else
               from = fullContent.indexOf(options.match)
