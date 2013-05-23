@@ -1,12 +1,13 @@
 
 fs = require 'fs'
 path = require 'path'
+url = require 'url'
 util = require 'util'
 each = require 'each'
 eco = require 'eco'
-rimraf = require 'rimraf'
-open = require 'open-uri'
 exec = require 'superexec'
+request = require 'request'
+Ftp = require 'jsftp'
 {EventEmitter} = require 'events'
 
 conditions = require './conditions'
@@ -130,11 +131,12 @@ mecano = module.exports =
   `download(options, callback)`
   -----------------------------
 
-  Download files using various protocols. The excellent 
-  [open-uri](https://github.com/publicclass/open-uri) module provides support for HTTP(S), 
-  file and FTP. All the options supported by open-uri are passed to it.
+  Download files using various protocols.
 
-  Note, GIT is not yet supported but documented as a wished feature.
+  When executed locally: the `http` scheme is handled 
+  with the "request" module; the `ftp` scheme is handled 
+  with the "jsftp"; the `file` scheme is handle with the navite 
+  `fs` module.
 
   `options`         Command options include:   
 
@@ -147,13 +149,30 @@ mecano = module.exports =
   *   `err`         Error object if any.   
   *   `downloaded`  Number of downloaded files
 
-  Basic example:
+  File example
+
+      mecano.download
+        source: 'file://path/to/something'
+        destination: 'node-sigar.tgz'
+      , (err, downloaded) -> ...
+
+  HTTP example
+
       mecano.download
         source: 'https://github.com/wdavidw/node-sigar/tarball/v0.0.1'
         destination: 'node-sigar.tgz'
-      , (err, downloaded) ->
-        fs.exists 'node-sigar.tgz', (exists) ->
-          assert.ok exists
+      , (err, downloaded) -> ...
+
+  FTP example
+
+      mecano.download
+        source: 'ftp://myhost.com:3334/wdavidw/node-sigar/tarball/v0.0.1'
+        destination: 'node-sigar.tgz'
+        user: "johndoe",
+        pass: "12345"
+      , (err, downloaded) -> ...
+
+  File example
   
   ###
   download: (options, callback) ->
@@ -176,21 +195,50 @@ mecano = module.exports =
               next()
             # Remove previous dowload and download again
             else if exists
-              rimraf options.destination, (err) ->
+              mecano.remove
+                ssh: options.ssh
+                destination: options.destination
+              , (err) ->
                 return next err if err
                 download()
             else download()
         download = () ->
-          destination = fs.createWriteStream(options.destination)
-          open(options.source, destination)
-          destination.on 'close', () ->
-            downloaded++
-            next()
-          destination.on 'error', (err) ->
-            # No test agains this but error in case 
-            # of connection issue leave an empty file
-            mecano.remove destination, (err) ->
+          u = url.parse options.source
+          scheme = 'file' # For now, we temporary disable ftp and others schemes
+          if options.ssh
+            mecano.execute
+              ssh: options.ssh
+              cmd: "curl #{options.source} -o #{options.destination}"
+            , (err, executed) ->
               next err
+          else
+            destination = fs.createWriteStream(options.destination)
+            if u.protocol is 'http:'
+              options.url = options.source
+              request(options).pipe(destination)
+            else if u.protocol is 'ftp:'
+              options.host ?= u.hostname
+              options.port ?= u.port
+              if u.auth
+                {user, pass} = u.auth.split ':'
+              options.user ?= user
+              options.pass ?= pass
+              ftp = new Ftp options
+              ftp.getGetSocket u.pathname, (err, source) ->
+                return next err if err
+                source.pipe destination
+                source.resume()
+            else
+              source = fs.createReadStream(u.pathname)
+              source.pipe destination
+            destination.on 'close', () ->
+              downloaded++
+              next()
+            destination.on 'error', (err) ->
+              # No test agains this but error in case 
+              # of connection issue leave an empty file
+              mecano.remove destination, (err) ->
+                next err
         prepare()
       .on 'both', (err) ->
         finish err, downloaded
@@ -904,6 +952,7 @@ mecano = module.exports =
       .on 'both', (err) ->
         callback err, serviced
   ###
+
   `upload(options, callback)`
   ---------------------------
   
@@ -952,6 +1001,7 @@ mecano = module.exports =
       .on 'both', (err) ->
         callback err, uploaded
   ###
+
   `write(options, callback)`
   --------------------------
 
@@ -1041,8 +1091,6 @@ mecano = module.exports =
           # from = if options.from then content.indexOf(options.from) + options.from.length else 0
           # to = if options.to then content.indexOf(options.to) else content.length
           fullContent = content
-          # console.log content, from, to
-          # content = content.substring from, to
           content = options.replace
           readDestination()
         readDestination = ->

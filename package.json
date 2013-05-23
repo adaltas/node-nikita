@@ -18,7 +18,8 @@
         "eco": "latest",
         "each": "latest",
         "ftp": "latest",
-        "open-uri": "latest",
+        "jsftp": "latest",
+        "request": "latest",
         "rimraf": "latest",
         "superexec": "latest"
     },
