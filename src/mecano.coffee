@@ -1074,6 +1074,7 @@ mecano = module.exports =
         destinationHash = null
         content = fullContent = null
         from = to = null
+        append = options.append
         readSource = ->
           if options.content?
             content = options.content
@@ -1119,9 +1120,14 @@ mecano = module.exports =
             if options.match instanceof RegExp
               # content is options.replace, may be a string or an array
               content = fullContent.replace options.match, content
-              if content is fullContent and options.append and typeof options.replace is 'string'
-                content = if content.length is 0 or content.substr(content.length - 1) is '\n' then '' else '\n'
-                content += options.replace
+              if append and typeof options.replace is 'string'
+                # If we find a match, we dont append so we disable the append flag
+                if options.match.test fullContent
+                  append = false
+                # If we dont find a match, we append so we key the append flag and set the new content
+                else
+                  content = if content.length is 0 or content.substr(content.length - 1) is '\n' then '' else '\n'
+                  content += options.replace
             else
               from = fullContent.indexOf(options.match)
               to = from + options.match.length
@@ -1138,7 +1144,7 @@ mecano = module.exports =
             options.destination content
             next()
           else
-            options.flags ?= 'a' if options.append
+            options.flags ?= 'a' if append
             misc.file.writeFile options.ssh, options.destination, content, options, (err) ->
               return next err if err
               written++
