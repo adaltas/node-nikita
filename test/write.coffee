@@ -325,8 +325,9 @@ describe 'write', ->
           destination: "#{scratch}/file"
           replace: 'Add this line'
           append: true
-        , (err) ->
+        , (err, written) ->
           return next err if err
+          written.should.eql 1
           # Check file content
           misc.file.readFile null, "#{scratch}/file", (err, content) ->
             return next err if err
