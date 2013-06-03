@@ -52,14 +52,6 @@ describe 'render', ->
         rendered.should.eql 0
         next()
   
-  it 'complain if source doesnt exist', (next) -> 
-    mecano.render
-      source: "oups"
-      destination: "#{scratch}/render.eco"
-    , (err, rendered) ->
-      err.message.should.eql 'Invalid source, got "oups"'
-      next()
-  
   it 'accept destination as a callback', (next) ->
     content = null
     mecano.render
@@ -70,6 +62,25 @@ describe 'render', ->
     , (err, rendered) ->
       content.should.eql 'Hello you'
       next()
+
+  describe 'error', ->
+  
+    it 'when source doesnt exist', (next) -> 
+      mecano.render
+        source: "oups"
+        destination: "#{scratch}/render.eco"
+      , (err, rendered) ->
+        err.message.should.eql 'Invalid source, got "oups"'
+        next()
+  
+    it.only 'when syntax is incorrect', (next) -> 
+      mecano.render
+        content: '<%- @host ->'
+        destination: "#{scratch}/render.eco"
+        context: toto: 'lulu'
+      , (err, rendered) ->
+        err.should.eql 'Parse error on line 1: unexpected end of template'
+        next()
 
 
 
