@@ -24,6 +24,16 @@ misc = module.exports =
         algorithm = 'md5'
       crypto.createHash(algorithm).update(data).digest('hex')
   file:
+    chmod: (ssh, path, mode, callback) ->
+      return finish() unless mode
+      unless ssh
+        fs.chmod path, mode, (err) ->
+          callback err
+      else
+        ssh.sftp (err, sftp) ->
+          sftp.chmod path, mode, (err) ->
+            sftp.end()
+            callback err
     stat: (ssh, path, callback) ->
       # Not yet test, no way to know if file is a direct or a link
       unless ssh
@@ -42,6 +52,7 @@ misc = module.exports =
             if err and err.type is 'NO_SUCH_FILE'
               err.code = 'ENOENT'
               return callback err
+            # attr.mode = attr.permissions
             callback err, attr
     ###
     `readFile(ssh, path, [options], callback)`
@@ -439,7 +450,7 @@ misc = module.exports =
   ###
   `options(options, callback)`
   ----------------------------
-  Normalize options. An ssh connection if needed if the key "ssh" 
+  Normalize options. An ssh connection is needed if the key "ssh" 
   hold a configuration object. The 'uid' and 'gid' fields will 
   be converted to integer if they match a username or a group.
   ###

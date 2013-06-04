@@ -6,6 +6,13 @@ misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '..
 test = require './test'
 connect = require 'superexec/lib/connect'
 
+they = (msg, callback) ->
+  it "#{msg} (local)", (next) ->
+    callback null, next
+  it "#{msg} (remote)", (next) ->
+    connect host: 'localhost', (err, ssh) ->
+      callback ssh, next
+
 describe 'misc', ->
 
   scratch = test.scratch @
@@ -20,9 +27,19 @@ describe 'misc', ->
 
   describe 'file', ->
 
-    describe 'append', ->
+    describe 'chmod', ->
 
-      append = (ssh, next) ->
+      they 'change permission', (ssh, next) ->
+        misc.file.writeFile ssh, "#{scratch}/a_file", "hello", (err, exists) ->
+          misc.file.chmod ssh, "#{scratch}/a_file", '546', (err) ->
+            return next err if err
+            misc.file.stat ssh, "#{scratch}/a_file", (err, stat) ->
+              "0o0#{(stat.mode & 0o0777).toString 8}".should.eql '0o0546'
+              next err
+
+    describe 'write', ->
+
+      they 'append', (ssh, next) ->
         misc.file.writeFile ssh, "#{scratch}/a_file", "hello", flags: 'a', (err, exists) ->
           return next err if err
           misc.file.writeFile ssh, "#{scratch}/a_file", "world", flags: 'a', (err, exists) ->
@@ -30,13 +47,6 @@ describe 'misc', ->
             misc.file.readFile ssh, "#{scratch}/a_file", (err, content) ->
               content.should.eql "helloworld"
               next()
-
-      it 'locally', (next) ->
-        append null, next
-
-      it 'remotely', (next) ->
-        connect host: 'localhost', (err, ssh) ->
-          append ssh, next
 
     describe 'exists', ->
 
