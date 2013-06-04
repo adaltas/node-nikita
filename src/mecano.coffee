@@ -133,14 +133,14 @@ mecano = module.exports =
 
   Download files using various protocols.
 
-  When executed locally: the `http` scheme is handled 
-  with the "request" module; the `ftp` scheme is handled 
-  with the "jsftp"; the `file` scheme is handle with the navite 
+  When executed locally: the `http` protocol is handled 
+  with the "request" module; the `ftp` protocol is handled 
+  with the "jsftp"; the `file` protocol is handle with the navite 
   `fs` module.
 
   `options`         Command options include:   
 
-  *   `source`      File, HTTP URL, FTP, GIT repository. File is the default protocol if source is provided without a scheme.   
+  *   `source`      File, HTTP URL, FTP, GIT repository. File is the default protocol if source is provided without any.   
   *   `destination` Path where the file is downloaded.   
   *   `force`       Overwrite destination file if it exists.   
 
@@ -204,11 +204,12 @@ mecano = module.exports =
             else download()
         download = () ->
           u = url.parse options.source
-          scheme = 'file' # For now, we temporary disable ftp and others schemes
           if options.ssh
+            cmd = "curl #{options.source} -o #{options.destination}"
+            cmd += " -x #{options.proxy}" if options.proxy
             mecano.execute
               ssh: options.ssh
-              cmd: "curl #{options.source} -o #{options.destination}"
+              cmd: cmd
             , (err, executed) ->
               next err
           else
@@ -1010,6 +1011,7 @@ mecano = module.exports =
   `options`            Command options include:   
   
   *   `from`           Replace from after this marker, a string or a regular expression.   
+  *   `local_source`   Treat the source as local instead of remote, only apply with "ssh" option.   
   *   `to`             Replace to before this marker, a string or a regular expression.   
   *   `match`          Replace this marker, a string or a regular expression.   
   *   `replace`        The content to be inserted, used conjointly with the from, to or match options.   
