@@ -73,13 +73,13 @@ describe 'render', ->
         err.message.should.eql 'Invalid source, got "oups"'
         next()
   
-    it.only 'when syntax is incorrect', (next) -> 
+    it 'when syntax is incorrect', (next) -> 
       mecano.render
         content: '<%- @host ->'
         destination: "#{scratch}/render.eco"
         context: toto: 'lulu'
       , (err, rendered) ->
-        err.should.eql 'Parse error on line 1: unexpected end of template'
+        err.message.should.eql 'Parse error on line 1: unexpected end of template'
         next()
 
 

@@ -1126,7 +1126,9 @@ mecano = module.exports =
           return replacePartial() unless options.context?
           try
             content = eco.render content.toString(), options.context
-          catch err then return next err
+          catch err
+            err = new Error err if typeof err is 'string'
+            return next err
           replacePartial()
         replacePartial = ->
           return writeContent() unless fullContent?
