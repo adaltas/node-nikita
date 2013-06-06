@@ -37,18 +37,18 @@ mecano = module.exports =
   Unix utility. Copying a file over an existing file will 
   overwrite it.
 
-  `options`             Command options include:   
+  `options`           Command options include:   
 
-  *   `source`          The file or directory to copy.
-  *   `destination`     Where the file or directory is copied.
-  *   `not_if_exists`   Equals destination if true.
-  *   `chmod`           Permissions of the file or the parent directory
-  *   `ssh`             Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+  *   `source`        The file or directory to copy.
+  *   `destination`   Where the file or directory is copied.
+  *   `not_if_exists` Equals destination if true.
+  *   `chmod`         Permissions of the file or the parent directory
+  *   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
  
-  `callback`            Received parameters are:   
+  `callback`          Received parameters are:   
 
-  *   `err`             Error object if any.   
-  *   `copied`          Number of files or parent directories copied.
+  *   `err`           Error object if any.   
+  *   `copied`        Number of files or parent directories copied.
 
   todo:
   *   preserve permissions if `chmod` is `true`
@@ -138,16 +138,18 @@ mecano = module.exports =
   with the "jsftp"; the `file` protocol is handle with the navite 
   `fs` module.
 
-  `options`         Command options include:   
+  `options`           Command options include:   
 
-  *   `source`      File, HTTP URL, FTP, GIT repository. File is the default protocol if source is provided without any.   
-  *   `destination` Path where the file is downloaded.   
-  *   `force`       Overwrite destination file if it exists.   
+  *   `source`        File, HTTP URL, FTP, GIT repository. File is the default protocol if source is provided without any.   
+  *   `destination`   Path where the file is downloaded.   
+  *   `force`         Overwrite destination file if it exists.   
+  *   `stdout`        Writable Stream in which commands output will be piped.   
+  *   `stderr`        Writable Stream in which commands error will be piped.   
 
-  `callback`        Received parameters are:   
+  `callback`          Received parameters are:   
 
-  *   `err`         Error object if any.   
-  *   `downloaded`  Number of downloaded files
+  *   `err`           Error object if any.   
+  *   `downloaded`    Number of downloaded files
 
   File example
 
@@ -211,6 +213,8 @@ mecano = module.exports =
               mecano.execute
                 ssh: options.ssh
                 cmd: cmd
+                stdout: options.stdout
+                stderr: options.stderr
               , (err, executed) ->
                 downloaded++ if executed
                 next err
@@ -263,7 +267,7 @@ mecano = module.exports =
   optional and is used in case where options is defined as an array of 
   multiple commands. Note, `opts` inherites all the properties of `goptions`.
 
-  `goptions`        Global options includes:
+  `goptions`            Global options includes:
 
   *   `parallel`    Wether the command are run in sequential, parallel 
   or limited concurrent mode. See the `node-each` documentation for more 
@@ -278,16 +282,16 @@ mecano = module.exports =
   *   `gid`           Unix group id.   
   *   `code`          Expected code(s) returned by the command, int or array of int, default to 0.  
   *   `code_skipped`  Expected code(s) returned by the command if it has no effect, executed will not be incremented, int or array of int.   
-  *   `stdout`        Writable EventEmitter in which command output will be piped.   
-  *   `stderr`        Writable EventEmitter in which command error will be piped.   
+  *   `stdout`        Writable Stream in which commands output will be piped.   
+  *   `stderr`        Writable Stream in which commands error will be piped.   
   *   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
 
-  `callback`        Received parameters are:   
+  `callback`          Received parameters are:   
 
-  *   `err`         Error if any.   
-  *   `executed`    Number of executed commandes.   
-  *   `stdout`      Stdout value(s) unless `stdout` option is provided.   
-  *   `stderr`      Stderr value(s) unless `stderr` option is provided.   
+  *   `err`           Error if any.   
+  *   `executed`      Number of executed commandes.   
+  *   `stdout`        Stdout value(s) unless `stdout` option is provided.   
+  *   `stderr`        Stderr value(s) unless `stderr` option is provided.   
 
   ###
   execute: (options, callback) ->
@@ -360,19 +364,19 @@ mecano = module.exports =
   specified as an option, format is derived from the source extension. At the 
   moment, supported extensions are '.tgz', '.tar.gz' and '.zip'.   
 
-  `options`             Command options include:   
+  `options`           Command options include:   
 
-  *   `source`          Archive to decompress.   
-  *   `destination`     Default to the source parent directory.   
-  *   `format`          One of 'tgz' or 'zip'.   
-  *   `creates`         Ensure the given file is created or an error is send in the callback.   
-  *   `not_if_exists`   Cancel extraction if file exists.   
-  *   `ssh`             Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+  *   `source`        Archive to decompress.   
+  *   `destination`   Default to the source parent directory.   
+  *   `format`        One of 'tgz' or 'zip'.   
+  *   `creates`       Ensure the given file is created or an error is send in the callback.   
+  *   `not_if_exists` Cancel extraction if file exists.   
+  *   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
 
-  `callback`            Received parameters are:   
+  `callback`          Received parameters are:   
 
-  *   `err`             Error object if any.   
-  *   `extracted`       Number of extracted archives.   
+  *   `err`           Error object if any.   
+  *   `extracted`     Number of extracted archives.   
 
   ###
   extract: (options, callback) ->
@@ -426,14 +430,14 @@ mecano = module.exports =
   `git`
   -----
 
-  `options`             Command options include:   
+  `options`           Command options include:   
 
-  *   `source`          Git source repository address.   
-  *   `destination`     Directory where to clone the repository.   
-  *   `revision`        Git revision, branch or tag.   
-  *   `ssh`             Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
-  *   `stdout`          Writable EventEmitter in which command output will be piped.   
-  *   `stderr`          Writable EventEmitter in which command error will be piped.   
+  *   `source`        Git source repository address.   
+  *   `destination`   Directory where to clone the repository.   
+  *   `revision`      Git revision, branch or tag.   
+  *   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+  *   `stdout`        Writable EventEmitter in which command output will be piped.   
+  *   `stderr`        Writable EventEmitter in which command error will be piped.   
   
   ###
   git: (options, callback) ->
@@ -476,6 +480,8 @@ mecano = module.exports =
               ssh: options.ssh
               cmd: "git rev-list --max-count=1 #{options.revision}"
               cwd: options.destination
+              stdout: options.stdout
+              stderr: options.stderr
             , (err, executed, stdout, stderr) ->
               return next err if err
               if stdout.trim() isnt current
@@ -503,17 +509,17 @@ mecano = module.exports =
   Create a symbolic link and it's parent directories if they don't yet
   exist.
 
-  `options`             Command options include:   
+  `options`           Command options include:   
 
-  *   `source`          Referenced file to be linked.   
-  *   `destination`     Symbolic link to be created.   
-  *   `exec`            Create an executable file with an `exec` command.   
-  *   `chmod`           Default to 0755.   
+  *   `source`        Referenced file to be linked.   
+  *   `destination`   Symbolic link to be created.   
+  *   `exec`          Create an executable file with an `exec` command.   
+  *   `chmod`         Default to 0755.   
 
-  `callback`            Received parameters are:   
+  `callback`          Received parameters are:   
 
-  *   `err`             Error object if any.   
-  *   `linked`          Number of created links.   
+  *   `err`           Error object if any.   
+  *   `linked`        Number of created links.   
 
   ###
   link: (options, callback) ->
@@ -663,15 +669,15 @@ mecano = module.exports =
 
   More files and directories.
 
-  `options`         Command options include:   
-
-  *   `source`      File or directory to move.  
-  *   `destination` Final name of the moved resource.    
-
-  `callback`        Received parameters are:   
-
-  *   `err`         Error object if any.   
-  *   `moved`        Number of moved resources.
+  `options`           Command options include:   
+  
+  *   `source`        File or directory to move.  
+  *   `destination`   Final name of the moved resource.    
+  
+  `callback`          Received parameters are:   
+  
+  *   `err`           Error object if any.   
+  *   `moved`         Number of moved resources.
 
   Example
 
@@ -705,15 +711,15 @@ mecano = module.exports =
   Recursively remove files, directories and links. Internally, the function 
   use the [rimraf](https://github.com/isaacs/rimraf) library.
 
-  `options`         Command options include:   
-
-  *   `source`      File, directory or pattern.  
-  *   `destination` Alias for "source". 
-
-  `callback`        Received parameters are:   
-
-  *   `err`         Error object if any.   
-  *   `removed`     Number of removed sources.   
+  `options`           Command options include:   
+  
+  *   `source`        File, directory or pattern.  
+  *   `destination`   Alias for "source". 
+  
+  `callback`          Received parameters are:   
+  
+  *   `err`           Error object if any.   
+  *   `removed`       Number of removed sources.   
 
   Example
 
@@ -826,22 +832,24 @@ mecano = module.exports =
   `service(options, callback)`
   ----------------------------
 
-  Install a service. For now, only yum over SSH.
+  Install a service. For now, only yum over SSH.   
   
-  `options`             Command options include:   
+  `options`           Command options include:   
 
-  *    name             Package name.
-  *    startup          Run service daemon on startup.
-  *    yum_name         Name used by the yum utility, default to "name".
-  *    chk_name         Name used by the chkconfig utility, default to "srv_name" and "name".
-  *    srv_name         Name used by the service utility, default to "name".
-  *    start            Ensure the service is started, a boolean.
-  *    stop             Ensure the service is stopped, a boolean.
+  *    name           Package name.   
+  *    startup        Run service daemon on startup.   
+  *    yum_name       Name used by the yum utility, default to "name".   
+  *    chk_name       Name used by the chkconfig utility, default to "srv_name" and "name".   
+  *    srv_name       Name used by the service utility, default to "name".   
+  *    start          Ensure the service is started, a boolean.   
+  *    stop           Ensure the service is stopped, a boolean.   
+  *   `stdout`        Writable Stream in which commands output will be piped.   
+  *   `stderr`        Writable Stream in which commands error will be piped.   
   
-  `callback`            Received parameters are:   
+  `callback`          Received parameters are:   
   
-  *   `err`             Error object if any.   
-  *   `modified`        Number of action taken (installed, updated, started or stoped). 
+  *   `err`           Error object if any.   
+  *   `modified`      Number of action taken (installed, updated, started or stoped).   
 
   ###
   service: (options, callback) ->
@@ -859,18 +867,18 @@ mecano = module.exports =
         if options.startup? and typeof options.startup isnt 'string'
             options.startup = if options.startup then '2345' else ''
         modified = false
-        stderr = new EventEmitter()
-        stderr.writable = true
-        stderr.write = (data) ->
-          # if /Existing lock/.test data.toString()
-          # quit current process, thow an exception
+        # stderr = new EventEmitter()
+        # stderr.writable = true
+        # stderr.write = (data) ->
+        #   # if /Existing lock/.test data.toString()
+        #   # quit current process, thow an exception
         installed = ->
           mecano.execute
             ssh: options.ssh
             cmd: "yum list installed | grep ^#{pkgname}\\\\."
             code_skipped: 1
-            # stdout: stdout
-            stderr: stderr
+            stdout: options.stdout
+            stderr: options.stderr
           , (err, installed) ->
             return next err if err
             if installed then updates() else install()
@@ -879,6 +887,8 @@ mecano = module.exports =
             ssh: options.ssh
             cmd: "yum list updates | grep ^#{pkgname}\\\\."
             code_skipped: 1
+            stdout: options.stdout
+            stderr: options.stderr
           , (err, outdated) ->
             return next err if err
             if outdated then install() else startuped()
@@ -887,6 +897,8 @@ mecano = module.exports =
             ssh: options.ssh
             cmd: "yum install -y #{pkgname}"
             code_skipped: 1
+            stdout: options.stdout
+            stderr: options.stderr
           , (err, succeed) ->
             return next err if err
             return next new Error "No package #{pkgname} available." unless succeed
@@ -898,6 +910,8 @@ mecano = module.exports =
             ssh: options.ssh
             cmd: "chkconfig --list #{chkname}"
             code_skipped: 1
+            stdout: options.stdout
+            stderr: options.stderr
           , (err, registered, stdout, stderr) ->
             return next err if err
             # Invalid service name return code is 0 and message in stderr start by error
@@ -924,6 +938,8 @@ mecano = module.exports =
           mecano.execute
             ssh: options.ssh
             cmd: cmd
+            stdout: options.stdout
+            stderr: options.stderr
           , (err, stream) ->
             return next err if err
             started()
@@ -931,6 +947,8 @@ mecano = module.exports =
           mecano.execute
             ssh: options.ssh
             cmd: "chkconfig --del #{chkname}"
+            stdout: options.stdout
+            stderr: options.stderr
           , (err, stream) ->
             return next err if err
             started()
@@ -940,6 +958,8 @@ mecano = module.exports =
             ssh: options.ssh
             cmd: "service #{srvname} status"
             code_skipped: 3
+            stdout: options.stdout
+            stderr: options.stderr
           , (err, started) ->
             return next err if err
             if started
@@ -955,6 +975,8 @@ mecano = module.exports =
           mecano.execute
             ssh: options.ssh
             cmd: "service #{srvname} #{options.action}"
+            stdout: options.stdout
+            stderr: options.stderr
           , (err, executed) ->
             return next err if err
             finish()
@@ -1019,25 +1041,25 @@ mecano = module.exports =
   --------------------------
 
   Write a file or a portion of an existing file.
-  
-  `options`            Command options include:   
-  
-  *   `from`           Replace from after this marker, a string or a regular expression.   
-  *   `local_source`   Treat the source as local instead of remote, only apply with "ssh" option.   
-  *   `to`             Replace to before this marker, a string or a regular expression.   
-  *   `match`          Replace this marker, a string or a regular expression.   
-  *   `replace`        The content to be inserted, used conjointly with the from, to or match options.   
-  *   `content`        Text to be written, an alternative to source which reference a file.   
-  *   `source`         File path from where to extract the content, do not use conjointly with content.   
-  *   `destination`    File path where to write content to.   
-  *   `backup`         Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
-  *   `append`         Append the content to the destination file. If destination does not exist, the file will be created. When used with the `match` and `replace` options, it will append the `replace` value at the end of the file if no match if found and if the value is a string.   
-  *   `ssh`            Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
-  
-  `callback`           Received parameters are:   
-  
-  *   `err`            Error object if any.   
-  *   `rendered`       Number of rendered files.   
+
+  `options`             Command options include:   
+
+  *   `from`            Replace from after this marker, a string or a regular expression.   
+  *   `local_source`    Treat the source as local instead of remote, only apply with "ssh" option.   
+  *   `to`              Replace to before this marker, a string or a regular expression.   
+  *   `match`           Replace this marker, a string or a regular expression.   
+  *   `replace`         The content to be inserted, used conjointly with the from, to or match options.   
+  *   `content`         Text to be written, an alternative to source which reference a file.   
+  *   `source`          File path from where to extract the content, do not use conjointly with content.   
+  *   `destination`     File path where to write content to.   
+  *   `backup`          Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
+  *   `append`          Append the content to the destination file. If destination does not exist, the file will be created. When used with the `match` and `replace` options, it will append the `replace` value at the end of the file if no match if found and if the value is a string.   
+  *   `ssh`             Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+
+  `callback`            Received parameters are:   
+
+  *   `err`             Error object if any.   
+  *   `rendered`        Number of rendered files.   
   
   Example replacing part of a file using from and to markers
 
