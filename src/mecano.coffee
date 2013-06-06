@@ -205,13 +205,25 @@ mecano = module.exports =
         download = () ->
           u = url.parse options.source
           if options.ssh
-            cmd = "curl #{options.source} -o #{options.destination}"
-            cmd += " -x #{options.proxy}" if options.proxy
-            mecano.execute
-              ssh: options.ssh
-              cmd: cmd
-            , (err, executed) ->
-              next err
+            if u.protocol is 'http:'
+              cmd = "curl #{options.source} -o #{options.destination}"
+              cmd += " -x #{options.proxy}" if options.proxy
+              mecano.execute
+                ssh: options.ssh
+                cmd: cmd
+              , (err, executed) ->
+                downloaded++ if executed
+                next err
+            else if u.protocol is 'ftp:'
+              return next new Error 'FTP download not supported over SSH'
+            else
+              options.ssh.sftp (err, sftp) ->
+                source = sftp.createReadStream u.pathname
+                destination = source.pipe fs.createWriteStream options.destination
+                destination.on 'close', ->
+                  downloaded++ unless err
+                  next()
+                destination.on 'error', next
           else
             destination = fs.createWriteStream(options.destination)
             if u.protocol is 'http:'
@@ -526,7 +538,7 @@ mecano = module.exports =
       exec_exists = (options, callback) ->
         misc.file.exists options.ssh, options.destination, (err, exists) ->
           return callback null, false unless exists
-          misc.file.readFile options.ssh, options.destination, (err, content) ->
+          misc.file.readFile options.ssh, options.destination, 'utf8', (err, content) ->
             return callback err if err
             exec_cmd = /exec (.*) \$@/.exec(content)[1]
             callback null, exec_cmd and exec_cmd is options.source
@@ -797,7 +809,7 @@ mecano = module.exports =
           ssh = if options.local_source then null else options.ssh
           misc.file.exists ssh, options.source, (err, exists) ->
             return next new Error "Invalid source, got #{JSON.stringify(options.source)}" unless exists
-            misc.file.readFile ssh, options.source, (err, content) ->
+            misc.file.readFile ssh, options.source, 'utf8', (err, content) ->
               return next err if err
               options.content = content
               writeContent()
@@ -1090,7 +1102,7 @@ mecano = module.exports =
             unless exists
               content = ''
               return extractPartial()
-            misc.file.readFile ssh, options.source, (err, src) ->
+            misc.file.readFile ssh, options.source, 'utf8', (err, src) ->
               return next err if err
               content = src
               extractPartial()
@@ -1106,7 +1118,7 @@ mecano = module.exports =
           return render() if typeof options.destination is 'function'
           misc.file.exists options.ssh, options.destination, (err, exists) ->
             return render() unless exists
-            misc.file.readFile options.ssh, options.destination, (err, dest) ->
+            misc.file.readFile options.ssh, options.destination, 'utf8', (err, dest) ->
               return next err if err
               destinationHash = misc.string.hash dest
               render()

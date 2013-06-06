@@ -4,14 +4,8 @@ should = require 'should'
 mecano = require '../lib/mecano'
 misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '../lib/misc'
 test = require './test'
+they = require './they'
 connect = require 'superexec/lib/connect'
-
-they = (msg, callback) ->
-  it "#{msg} (local)", (next) ->
-    callback null, next
-  it "#{msg} (remote)", (next) ->
-    connect host: 'localhost', (err, ssh) ->
-      callback ssh, next
 
 describe 'misc', ->
 
@@ -44,7 +38,7 @@ describe 'misc', ->
           return next err if err
           misc.file.writeFile ssh, "#{scratch}/a_file", "world", flags: 'a', (err, exists) ->
             return next err if err
-            misc.file.readFile ssh, "#{scratch}/a_file", (err, content) ->
+            misc.file.readFile ssh, "#{scratch}/a_file", 'utf8', (err, content) ->
               content.should.eql "helloworld"
               next()
 

@@ -24,8 +24,15 @@ misc = module.exports =
         algorithm = 'md5'
       crypto.createHash(algorithm).update(data).digest('hex')
   file:
+    copy: (ssh, source, destination, callback) ->
+      unless ssh
+        source = fs.createReadStream(u.pathname)
+        source.pipe destination
+        destination.on 'close', callback
+        destination.on 'error', callback
+      else
+        # todo: use cp to copy over ssh
     chmod: (ssh, path, mode, callback) ->
-      return finish() unless mode
       unless ssh
         fs.chmod path, mode, (err) ->
           callback err
@@ -62,7 +69,8 @@ misc = module.exports =
       if arguments.length is 3
         callback = options
         options = {}
-      options.encoding ?= 'utf8'
+      else
+        options = encoding: 'utf8' if typeof options is 'string'
       return callback new Error "Invalid path '#{path}'" unless path
       unless ssh
         fs.readFile path, options.encoding, (err, content) ->
@@ -329,7 +337,7 @@ misc = module.exports =
       # Grab passwd from the cache
       return callback null, ssh.passwd if ssh.passwd
       # Alternative is to use the id command, eg `id -u ubuntu`
-      misc.file.readFile ssh, '/etc/passwd', (err, lines) ->
+      misc.file.readFile ssh, '/etc/passwd', 'ascii', (err, lines) ->
         return callback err if err
         passwd = []
         for line in lines.split '\n'
@@ -368,7 +376,7 @@ misc = module.exports =
       # Grab group from the cache
       return callback null, ssh.group if ssh.group
       # Alternative is to use the id command, eg `id -g admin`
-      misc.file.readFile ssh, '/etc/group', (err, lines) ->
+      misc.file.readFile ssh, '/etc/group', 'ascii', (err, lines) ->
         return callback err if err
         group = []
         for line in lines.split '\n'
