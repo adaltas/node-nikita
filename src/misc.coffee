@@ -83,12 +83,16 @@ misc = module.exports =
           s.on 'data', (d) ->
             data.push d.toString()
           s.on 'error', (err) ->
+            err = new Error "ENOENT, open '#{path}'"
+            err.errno = 34
+            err.code = 'ENOENT'
+            err.path = path
             finish err
           s.on 'close', ->
             finish null, data.join ''
           finish = (err, data) ->
             sftp.end()
-            callback null, data
+            callback err, data
     ###
     `writeFile(ssh, path, content, [options], callback)`
     -----------------------------------------
