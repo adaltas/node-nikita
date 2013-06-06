@@ -13,8 +13,9 @@ they.only = (mode, msg, callback) ->
       it.only "#{msg} (local)", (next) ->
         callback.call @, null, next
     when 'remote'
-      it.only "#{msg} (local)", (next) ->
-        callback.call @, null, next
+      it.only "#{msg} (remote)", (next) ->
+        connect host: 'localhost', (err, ssh) =>
+          callback.call @, ssh, next
     else throw new Error "Invalid test mode #{mode}"
 
 module.exports = they
