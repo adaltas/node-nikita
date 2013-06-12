@@ -390,6 +390,44 @@ misc = module.exports =
         ssh.group = group
         callback null, group
   ###
+  `pidfileStatus(ssh, pidfile, [options], callback)`
+  ---------------------------------------
+
+  Return a status code after reading a status file.
+
+  The callback is called with an error and a status code. Values 
+  expected as status code are:
+  *   0 if pidfile math a running process
+  *   1 if pidfile does not exists
+  *   2 if pidfile exists but match no process
+  ###
+  pidfileStatus: (ssh, pidfile, options, callback) ->
+    if arguments.length is 3
+      callback = options
+      options = {}
+    misc.file.readFile ssh, pidfile, 'ascii', (err, pid) ->
+      # pidfile does not exists
+      return callback null, 1 if err and err.code is 'ENOENT'
+      return callback err if err
+      stdout = []
+      run = exec
+        cmd: "ps aux | grep #{pid} | grep -v grep | awk '{print $2}'"
+        ssh: ssh
+      run.stdout.on 'data', (data) ->
+        stdout.push data
+      if options.stdout
+        run.stdout.pipe options.stdout
+      if options.stderr
+        run.stderr.pipe options.stderr
+      run.on "exit", (code) ->
+        stdout = stdout.join('')
+        # pidfile math a running process
+        return callback null, 0 unless stdout is ''
+        misc.file.remove ssh, pidfile, (err, removed) ->
+          return callback err if err
+          # pidfile exists but match no process
+          callback null, 2
+  ###
   `isPortOpen(port, host, callback)`: Check if a port is already open
 
   ###

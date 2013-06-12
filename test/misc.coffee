@@ -24,7 +24,7 @@ describe 'misc', ->
     describe 'chmod', ->
 
       they 'change permission', (ssh, next) ->
-        misc.file.writeFile ssh, "#{scratch}/a_file", "hello", (err, exists) ->
+        misc.file.writeFile ssh, "#{scratch}/a_file", "hello", (err) ->
           misc.file.chmod ssh, "#{scratch}/a_file", '546', (err) ->
             return next err if err
             misc.file.stat ssh, "#{scratch}/a_file", (err, stat) ->
@@ -34,9 +34,9 @@ describe 'misc', ->
     describe 'write', ->
 
       they 'append', (ssh, next) ->
-        misc.file.writeFile ssh, "#{scratch}/a_file", "hello", flags: 'a', (err, exists) ->
+        misc.file.writeFile ssh, "#{scratch}/a_file", "hello", flags: 'a', (err) ->
           return next err if err
-          misc.file.writeFile ssh, "#{scratch}/a_file", "world", flags: 'a', (err, exists) ->
+          misc.file.writeFile ssh, "#{scratch}/a_file", "world", flags: 'a', (err) ->
             return next err if err
             misc.file.readFile ssh, "#{scratch}/a_file", 'utf8', (err, content) ->
               content.should.eql "helloworld"
@@ -188,4 +188,28 @@ describe 'misc', ->
               return next err if err
               exists.should.not.be.ok
               next()
+
+  describe 'pidfileStatus', ->
+
+    it 'give 0 if pidfile math a running process', (next) ->
+      misc.file.writeFile null, "#{scratch}/pid", "#{process.pid}", (err) ->
+        misc.pidfileStatus null, "#{scratch}/pid", (err, status) ->
+          status.should.eql 0
+          next()
+
+    it 'give 1 if pidfile does not exists', (next) ->
+      misc.pidfileStatus null, "#{scratch}/pid", (err, status) ->
+        status.should.eql 1
+        next()
+
+    it 'give 2 if pidfile exists but match no process', (next) ->
+      misc.file.writeFile null, "#{scratch}/pid", "666666666", (err) ->
+        misc.pidfileStatus null, "#{scratch}/pid", (err, status) ->
+          status.should.eql 2
+          next()
+
+
+
+
+
 
