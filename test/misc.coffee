@@ -191,20 +191,20 @@ describe 'misc', ->
 
   describe 'pidfileStatus', ->
 
-    it 'give 0 if pidfile math a running process', (next) ->
-      misc.file.writeFile null, "#{scratch}/pid", "#{process.pid}", (err) ->
-        misc.pidfileStatus null, "#{scratch}/pid", (err, status) ->
+    they 'give 0 if pidfile math a running process', (ssh, next) ->
+      misc.file.writeFile ssh, "#{scratch}/pid", "#{process.pid}", (err) ->
+        misc.pidfileStatus ssh, "#{scratch}/pid", (err, status) ->
           status.should.eql 0
           next()
 
-    it 'give 1 if pidfile does not exists', (next) ->
-      misc.pidfileStatus null, "#{scratch}/pid", (err, status) ->
+    they 'give 1 if pidfile does not exists', (ssh, next) ->
+      misc.pidfileStatus ssh, "#{scratch}/pid", (err, status) ->
         status.should.eql 1
         next()
 
-    it 'give 2 if pidfile exists but match no process', (next) ->
-      misc.file.writeFile null, "#{scratch}/pid", "666666666", (err) ->
-        misc.pidfileStatus null, "#{scratch}/pid", (err, status) ->
+    they 'give 2 if pidfile exists but match no process', (ssh, next) ->
+      misc.file.writeFile ssh, "#{scratch}/pid", "666666666", (err) ->
+        misc.pidfileStatus ssh, "#{scratch}/pid", (err, status) ->
           status.should.eql 2
           next()
 

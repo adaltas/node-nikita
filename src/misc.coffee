@@ -393,10 +393,12 @@ misc = module.exports =
   `pidfileStatus(ssh, pidfile, [options], callback)`
   ---------------------------------------
 
-  Return a status code after reading a status file.
+  Return a status code after reading a status file. Any existing 
+  pidfile referencing a dead process will be removed.
 
   The callback is called with an error and a status code. Values 
   expected as status code are:
+
   *   0 if pidfile math a running process
   *   1 if pidfile does not exists
   *   2 if pidfile exists but match no process
@@ -411,7 +413,7 @@ misc = module.exports =
       return callback err if err
       stdout = []
       run = exec
-        cmd: "ps aux | grep #{pid} | grep -v grep | awk '{print $2}'"
+        cmd: "ps aux | grep #{pid.trim()} | grep -v grep | awk '{print $2}'"
         ssh: ssh
       run.stdout.on 'data', (data) ->
         stdout.push data
