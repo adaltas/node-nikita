@@ -698,9 +698,8 @@ mecano = module.exports =
       moved = 0
       each( options )
       .on 'item', (options, next) ->
-        return next new Error 'SSH not yet supported' if options.ssh
         move = ->
-          fs.rename options.source, options.destination, (err) ->
+          misc.file.rename options.ssh, options.source, options.destination, (err) ->
             return next err if err
             moved++
             next()
