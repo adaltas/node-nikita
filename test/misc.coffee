@@ -4,7 +4,7 @@ should = require 'should'
 mecano = require '../lib/mecano'
 misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '../lib/misc'
 test = require './test'
-they = require './they'
+they = require 'superexec/lib/they'
 connect = require 'superexec/lib/connect'
 
 describe 'misc', ->

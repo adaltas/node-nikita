@@ -326,12 +326,12 @@ mecano = module.exports =
           run = exec options
           stdout = stderr = []
           if options.stdout
-            run.stdout.pipe options.stdout
+            run.stdout.pipe options.stdout, end: false
           if stds
             run.stdout.on 'data', (data) ->
               stdout.push data
           if options.stderr
-            run.stderr.pipe options.stderr
+            run.stderr.pipe options.stderr, end: false
           if stds
             run.stderr.on 'data', (data) ->
               stderr.push data
@@ -342,6 +342,10 @@ mecano = module.exports =
             setTimeout ->
               stdouts.push if stds then stdout.join('') else undefined
               stderrs.push if stds then stderr.join('') else undefined
+              if options.stdout
+                run.stdout.unpipe options.stdout
+              if options.stderr
+                run.stderr.unpipe options.stderr
               if options.code.indexOf(code) is -1 and options.code_skipped.indexOf(code) is -1 
                 err = new Error "Invalid exec code #{code}"
                 err.code = code
