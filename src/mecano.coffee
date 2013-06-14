@@ -187,28 +187,36 @@ mecano = module.exports =
       downloaded = 0
       each( options )
       .on 'item', (options, next) ->
-        return next new Error "Missing source: #{options.source}" unless options.source
-        return next new Error "Missing destination: #{options.destination}" unless options.destination
+        {destination, source, md5sum} = options
+        return next new Error "Missing source: #{source}" unless source
+        return next new Error "Missing destination: #{destination}" unless destination
         options.force ?= false
+        stageDestination = "#{destination}.#{Date.now()}#{Math.round(Math.random()*1000)}"
+        # stageDestination = destination
         prepare = () ->
-          misc.file.exists options.ssh, options.destination, (err, exists) ->
+          misc.file.exists options.ssh, destination, (err, exists) ->
             # Use previous download
             if exists and not options.force
-              next()
+              return next() unless md5sum
+              misc.file.hash destination, 'md5', (err, hash) ->
+                return next() if hash is md5sum
+                misc.file.unlink options.ssh, destination, (err) ->
+                  return next err if err
+                  download()
             # Remove previous dowload and download again
             else if exists
               mecano.remove
                 ssh: options.ssh
-                destination: options.destination
+                destination: destination
               , (err) ->
                 return next err if err
                 download()
             else download()
         download = () ->
-          u = url.parse options.source
+          u = url.parse source
           if options.ssh
             if u.protocol is 'http:'
-              cmd = "curl #{options.source} -o #{options.destination}"
+              cmd = "curl #{source} -o #{stageDestination}"
               cmd += " -x #{options.proxy}" if options.proxy
               mecano.execute
                 ssh: options.ssh
@@ -216,23 +224,24 @@ mecano = module.exports =
                 stdout: options.stdout
                 stderr: options.stderr
               , (err, executed) ->
-                downloaded++ if executed
-                next err
+                # downloaded++ if executed
+                checksum err
             else if u.protocol is 'ftp:'
               return next new Error 'FTP download not supported over SSH'
             else
               options.ssh.sftp (err, sftp) ->
-                source = sftp.createReadStream u.pathname
-                destination = source.pipe fs.createWriteStream options.destination
-                destination.on 'close', ->
-                  downloaded++ unless err
-                  next()
-                destination.on 'error', next
+                return next err if err
+                rs = sftp.createReadStream u.pathname
+                ws = rs.pipe fs.createWriteStream stageDestination
+                ws.on 'close', ->
+                  # downloaded++ #unless err
+                  checksum()
+                ws.on 'error', next
           else
-            destination = fs.createWriteStream(options.destination)
+            ws = fs.createWriteStream(stageDestination)
             if u.protocol is 'http:'
-              options.url = options.source
-              request(options).pipe(destination)
+              options.url = source
+              request(options).pipe(ws)
             else if u.protocol is 'ftp:'
               options.host ?= u.hostname
               options.port ?= u.port
@@ -241,21 +250,33 @@ mecano = module.exports =
               options.user ?= user
               options.pass ?= pass
               ftp = new Ftp options
-              ftp.getGetSocket u.pathname, (err, source) ->
+              ftp.getGetSocket u.pathname, (err, rs) ->
                 return next err if err
-                source.pipe destination
-                source.resume()
+                rs.pipe ws
+                rs.resume()
             else
-              source = fs.createReadStream(u.pathname)
-              source.pipe destination
-            destination.on 'close', () ->
-              downloaded++
-              next()
-            destination.on 'error', (err) ->
+              rs = fs.createReadStream(u.pathname)
+              rs.pipe ws
+            ws.on 'close', () ->
+              checksum()
+            ws.on 'error', (err) ->
               # No test agains this but error in case 
               # of connection issue leave an empty file
-              mecano.remove destination, (err) ->
+              mecano.remove ws, (err) ->
                 next err
+        checksum = ->
+          return unstage() unless md5sum
+          misc.file.hash stageDestination, 'md5', (err, hash) ->
+            # console.log hash, md5sum
+            return unstage() if hash is md5sum
+            # Download is invalid, cleaning up
+            misc.file.remove options.ssh, stageDestination, (err) ->
+              return next err if err
+              next new Error "Invalid checksum, found \"#{hash}\" instead of \"#{md5sum}\""
+        unstage = ->
+          misc.file.rename options.ssh, stageDestination, destination, (err) ->
+            downloaded++
+            next err
         prepare()
       .on 'both', (err) ->
         finish err, downloaded

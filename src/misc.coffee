@@ -24,6 +24,15 @@ misc = module.exports =
         algorithm = 'md5'
       crypto.createHash(algorithm).update(data).digest('hex')
   file:
+    unlink: (ssh, source, callback) ->
+      unless ssh
+        fs.unlink source, (err) ->
+          callback err
+      else
+        ssh.sftp (err, sftp) ->
+          sftp.unlink source, (err) ->
+            sftp.end()
+            callback err
     copy: (ssh, source, destination, callback) ->
       unless ssh
         source = fs.createReadStream(u.pathname)
@@ -244,7 +253,7 @@ misc = module.exports =
     ###
     `files.hash(file, [algorithm], callback)`
     -----------------------------------------
-    Output the hash of a supplied file in hexadecimal 
+    Retrieve the hash of a supplied file in hexadecimal 
     form. If the provided file is a directory, the returned hash 
     is the sum of all the hashs of the files it recursively 
     contains. The default algorithm to compute the hash is md5.
