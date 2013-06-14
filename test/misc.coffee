@@ -42,6 +42,18 @@ describe 'misc', ->
               content.should.eql "helloworld"
               next()
 
+    describe 'rename', ->
+
+      they 'work', (ssh, next) ->
+        misc.file.writeFile ssh, "#{scratch}/a_file", "helloworld", flags: 'a', (err) ->
+          return next err if err
+          misc.file.rename ssh, "#{scratch}/a_file", "#{scratch}/a_renamed_file", (err) ->
+            return next err if err
+            misc.file.readFile ssh, "#{scratch}/a_renamed_file", 'utf8', (err, content) ->
+              return next err if err
+              content.should.eql "helloworld"
+              next()
+
     describe 'readFile', ->
 
       they 'throw error if not exists', (ssh, next) ->

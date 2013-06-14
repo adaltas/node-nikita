@@ -32,6 +32,16 @@ misc = module.exports =
         destination.on 'error', callback
       else
         # todo: use cp to copy over ssh
+        callback new Error 'Copy over SSH not yet implemented'
+    rename: (ssh, source, destination, callback) ->
+      unless ssh
+        fs.rename source, destination, (err) ->
+          callback err
+      else
+        ssh.sftp (err, sftp) ->
+          sftp.rename source, destination, (err) ->
+            sftp.end()
+            callback err
     chmod: (ssh, path, mode, callback) ->
       unless ssh
         fs.chmod path, mode, (err) ->
