@@ -1,7 +1,9 @@
 
 should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
+misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '../lib/misc'
 test = require './test'
+they = require 'superexec/lib/they'
 
 describe 'git', ->
 
@@ -13,66 +15,56 @@ describe 'git', ->
       destination: "#{scratch}"
     , next
 
-  # it 'should init new repo over existing directory', (next) ->
-  #   mecano.git
-  #     source: "#{__dirname}/../resources/repo.git"
-  #     destination: "#{scratch}"
-  #   , (err, updated) ->
-  #     updated.should.eql 1
-  #     mecano.git
-  #       source: "#{__dirname}/../resources/repo.git"
-  #       destination: "#{scratch}"
-  #     , (err, updated) ->
-  #       updated.should.eql 0
-  #       next()
-
-  it 'should clone repo into new dir', (next) ->
+  they 'clones repo into new dir', (ssh, next) ->
     mecano.git
+      ssh: ssh
       source: "#{scratch}/repo.git"
       destination: "#{scratch}/my_repo"
     , (err, updated) ->
       return next err if err
       updated.should.eql 1
       mecano.git
+        ssh: ssh
         source: "#{scratch}/repo.git"
         destination: "#{scratch}/my_repo"
       , (err, updated) ->
         updated.should.eql 0
         next()
 
-  it 'should clone accross ssh', (next) ->
+  they 'honores revision', (ssh, next) ->
     mecano.git
-      ssh: host: 'localhost'
-      source: "#{scratch}/repo.git"
-      destination: "#{scratch}/my_repo"
-    , (err, updated) ->
-      return next err if err
-      updated.should.eql 1
-      mecano.git
-        ssh: host: 'localhost'
-        source: "#{scratch}/repo.git"
-        destination: "#{scratch}/my_repo"
-      , (err, updated) ->
-        updated.should.eql 0
-        next()
-
-  it 'should honore revision', (next) ->
-    mecano.git
+      ssh: ssh
       source: "#{scratch}/repo.git"
       destination: "#{scratch}/my_repo"
     , (err, updated) ->
       return next err if err
       mecano.git
+        ssh: ssh
         source: "#{scratch}/repo.git"
         destination: "#{scratch}/my_repo"
         revision: 'v0.0.1'
       , (err, updated) ->
         updated.should.eql 1
         mecano.git
+          ssh: ssh
           source: "#{scratch}/repo.git"
           destination: "#{scratch}/my_repo"
           revision: 'v0.0.1'
         , (err, updated) ->
           updated.should.eql 0
           next()
+
+  they 'preserves existing directory', (ssh, next) ->
+    misc.file.mkdir null, "#{scratch}/my_repo", (err) ->
+      return next err if err
+      mecano.git
+        ssh: ssh
+        source: "#{scratch}/repo.git"
+        destination: "#{scratch}/my_repo"
+      , (err, updated) ->
+        err.message.should.eql 'Not a git repository'
+        next()
+
+
+
 
