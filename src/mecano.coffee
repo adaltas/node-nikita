@@ -60,11 +60,13 @@ mecano = module.exports =
       copied = 0
       each( options )
       .on 'item', (options, next) ->
+        # Validate parameters
         return next new Error 'Missing source' unless options.source
         return next new Error 'Missing destination' unless options.destination
         return next new Error 'SSH not yet supported' if options.ssh
         # Cancel action if destination exists ? really ? no md5 comparaison, strange
         options.not_if_exists = options.destination if options.not_if_exists is true
+        # Start real work
         search = ->
           srcStat = null
           dstStat = null
@@ -187,12 +189,13 @@ mecano = module.exports =
       downloaded = 0
       each( options )
       .on 'item', (options, next) ->
+        # Validate parameters
         {destination, source, md5sum} = options
         return next new Error "Missing source: #{source}" unless source
         return next new Error "Missing destination: #{destination}" unless destination
         options.force ?= false
         stageDestination = "#{destination}.#{Date.now()}#{Math.round(Math.random()*1000)}"
-        # stageDestination = destination
+        # Start real work
         prepare = () ->
           misc.file.exists options.ssh, destination, (err, exists) ->
             # Use previous download
@@ -337,12 +340,14 @@ mecano = module.exports =
       each( options )
       .parallel( true )
       .on 'item', (options, i, next) ->
+        # Validate parameters
         options = { cmd: options } if typeof options is 'string'
         return next new Error "Missing cmd: #{options.cmd}" unless options.cmd?
         options.code ?= [0]
         options.code = [options.code] unless Array.isArray options.code
         options.code_skipped ?= []
         options.code_skipped = [options.code_skipped] unless Array.isArray options.code_skipped
+        # Start real work
         cmd = () ->
           run = exec options
           stdout = stderr = []
@@ -410,6 +415,7 @@ mecano = module.exports =
       extracted = 0
       each( options )
       .on 'item', (options, next) ->
+        # Validate parameters
         return next new Error "Missing source: #{options.source}" unless options.source
         destination = options.destination ? path.dirname options.source
         # Deal with format option
@@ -423,7 +429,7 @@ mecano = module.exports =
           else
             ext = path.extname options.source
             return next new Error "Unsupported extension, got #{JSON.stringify(ext)}"
-        # Working step
+        # Start real work
         extract = () ->
           cmd = null
           switch format
@@ -471,15 +477,18 @@ mecano = module.exports =
       updated = 0
       each( options )
       .on 'item', (options, next) ->
+        # Sanitize parameters
         options.revision ?= 'HEAD'
         rev = null
+        # Start real work
         prepare = ->
           misc.file.exists options.ssh, options.destination, (err, exists) ->
+            return next err if err
             return clone() unless exists
             # return next new Error "Destination not a directory, got #{options.destination}" unless stat.isDirectory()
             gitDir = "#{options.destination}/.git"
             misc.file.exists options.ssh, gitDir, (err, exists) ->
-              return next "Not a git repository" unless exists
+              return next new Error "Not a git repository" unless exists
               log()
         clone = ->
           mecano.exec
@@ -644,12 +653,14 @@ mecano = module.exports =
       created = 0
       each( options )
       .on 'item', (options, next) ->
+        # Validate parameters
         options = { source: options } if typeof options is 'string'
         options.source ?= options.directory
         options.source ?= options.destination
         return next new Error 'Missing source option' unless options.source?
         cwd = options.cwd ? process.cwd()
         options.source = path.resolve cwd, options.source
+        # Start real work
         check = () ->
           misc.file.stat options.ssh, options.source, (err, stat) ->
             return create() if err and err.code is 'ENOENT'
@@ -719,6 +730,7 @@ mecano = module.exports =
       moved = 0
       each( options )
       .on 'item', (options, next) ->
+        # Start real work
         move = ->
           misc.file.rename options.ssh, options.source, options.destination, (err) ->
             return next err if err
@@ -777,9 +789,11 @@ mecano = module.exports =
       removed = 0
       each( options )
       .on 'item', (options, next) ->
+        # Validate parameters
         options = source: options if typeof options is 'string'
         options.source ?= options.destination
         return next new Error "Missing source" unless options.source?
+        # Start real work
         remove = ->
           if options.ssh
             misc.file.exists options.ssh, options.source, (err, exists) ->
@@ -832,8 +846,10 @@ mecano = module.exports =
       rendered = 0
       each( options )
       .on 'item', (options, next) ->
+        # Validate parameters
         return next new Error 'Missing source or content' unless options.source or options.content
         return next new Error 'Missing destination' unless options.destination
+        # Start real work
         readSource = ->
           return writeContent() unless options.source
           ssh = if options.local_source then null else options.ssh
@@ -882,6 +898,7 @@ mecano = module.exports =
       serviced = 0
       each( options )
       .on 'item', (options, next) ->
+        # Validate parameters
         return next new Error 'Missing service name' unless options.name
         return next new Error 'Restricted to Yum over SSH' unless options.ssh
         return next new Error 'Invalid configuration, start conflict with stop' if options.start? and options.start is options.stop
@@ -891,11 +908,7 @@ mecano = module.exports =
         if options.startup? and typeof options.startup isnt 'string'
             options.startup = if options.startup then '2345' else ''
         modified = false
-        # stderr = new EventEmitter()
-        # stderr.writable = true
-        # stderr.write = (data) ->
-        #   # if /Existing lock/.test data.toString()
-        #   # quit current process, thow an exception
+        # Start real work
         installed = ->
           mecano.execute
             ssh: options.ssh
@@ -1043,6 +1056,7 @@ mecano = module.exports =
       uploaded = 0
       each( options )
       .on 'item', (options, next) ->
+        # Start real work
         if options.binary
           return options.ssh.sftp (err, sftp) ->
             from = fs.createReadStream options.source
@@ -1127,6 +1141,7 @@ mecano = module.exports =
       written = 0
       each( options )
       .on 'item', (options, next) ->
+        # Validate parameters
         return next new Error 'Missing source or content' unless (options.source or options.content?) or options.replace
         return next new Error 'Define either source or content' if options.source and options.content
         return next new Error 'Missing destination' unless options.destination
@@ -1135,6 +1150,7 @@ mecano = module.exports =
         content = fullContent = null
         from = to = null
         append = options.append
+        # Start real work
         readSource = ->
           if options.content?
             content = options.content
