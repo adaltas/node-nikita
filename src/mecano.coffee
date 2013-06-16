@@ -7,6 +7,7 @@ each = require 'each'
 eco = require 'eco'
 exec = require 'superexec'
 request = require 'request'
+ini = require 'ini'
 Ftp = require 'jsftp'
 {EventEmitter} = require 'events'
 
@@ -535,6 +536,53 @@ mecano = module.exports =
         conditions.all options, next, prepare
       .on 'both', (err) ->
         callback err, updated
+  ###
+
+  `ini(options, callback`
+  -----------------------
+  Write an object as .ini file. Note, we are internally using the
+  [ini](https://github.com/isaacs/ini) module. However, there is 
+  a subtile difference. Any key provided with value of `undefined` 
+  or `null` will be disregarded. Within a `merge`, it get event
+  more tricky: the original value will be kept if `undefined` is provided 
+  while the value will be removed if `null` is provided.
+
+  `options`
+  *   `merge`         Read the destination if it exists and merge its content.   
+  *   `destination`   File path where to write content to or a callback.   
+  *   `context`       Map of key values to inject into the template.  
+  ###
+  ini: (options, callback) ->
+    result = child mecano
+    finish = (err, written) ->
+      callback err, written if callback
+      result.end err, written
+    misc.options options, (err, options) ->
+      return finish err if err
+      written = 0
+      each( options )
+      .on 'item', (options, next) ->
+        {merge, destination, content, ssh} = options
+        # Validate parameters
+        return next new Error 'Missing content' unless content
+        return next new Error 'Missing destination' unless destination
+        # Start real work
+        get = ->
+          return write() unless merge
+          misc.file.readFile ssh, destination, 'ascii', (err, c) ->
+            return next err if err and err.code isnt 'ENOENT'
+            content = misc.merge ini.parse(c), content
+            write()
+        write = ->
+          options.content = ini.stringify content
+          mecano.write options, (err, w) ->
+            written += w
+            next err
+        get()
+      .on 'both', (err) ->
+        finish err, written
+    result
+
 
   ###
 

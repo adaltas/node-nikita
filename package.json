@@ -18,6 +18,7 @@
         "eco": "latest",
         "each": "latest",
         "ftp": "latest",
+        "ini": "latest",
         "jsftp": "latest",
         "request": "latest",
         "rimraf": "latest",
