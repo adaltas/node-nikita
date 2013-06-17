@@ -11,6 +11,7 @@ describe 'ini', ->
 
   they 'stringify an object', (ssh, next) ->
     mecano.ini
+      ssh: ssh
       content: user: preference: color: 'rouge'
       destination: "#{scratch}/user.ini"
     , (err, written) ->
@@ -26,6 +27,7 @@ describe 'ini', ->
     misc.file.writeFile ssh, "#{scratch}/user.ini", content, (err) ->
       return next err if err
       mecano.ini
+        ssh: ssh
         content: user: preference: color: 'violet'
         destination: "#{scratch}/user.ini"
         merge: true
@@ -36,3 +38,48 @@ describe 'ini', ->
           return next err if err
           data.should.eql '[user.preference]\nlanguage = node\ncolor = violet\n'
           next()
+
+  they 'discard undefined and null', (ssh, next) ->
+    mecano.ini
+      ssh: ssh
+      content: user: preference: color: 'violet', age: undefined, gender: null
+      destination: "#{scratch}/user.ini"
+      merge: true
+    , (err, written) ->
+      return next err if err
+      written.should.eql 1
+      misc.file.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
+        return next err if err
+        data.should.eql '[user.preference]\ncolor = violet\n'
+        next()
+
+  they 'remove null within merge', (ssh, next) ->
+    content = '[user.preference]\nlanguage = node\ncolor = rouge\n'
+    misc.file.writeFile ssh, "#{scratch}/user.ini", content, (err) ->
+      return next err if err
+      mecano.ini
+        ssh: ssh
+        content: user: preference: color: null
+        destination: "#{scratch}/user.ini"
+        merge: true
+      , (err, written) ->
+        return next err if err
+        written.should.eql 1
+        misc.file.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
+          return next err if err
+          data.should.eql '[user.preference]\nlanguage = node\n'
+          next()
+
+  they 'disregard undefined within merge', (ssh, next) ->
+    content = '[user.preference]\nlanguage = node\ncolor = rouge\n'
+    misc.file.writeFile ssh, "#{scratch}/user.ini", content, (err) ->
+      return next err if err
+      mecano.ini
+        ssh: ssh
+        content: user: preference: color: undefined
+        destination: "#{scratch}/user.ini"
+        merge: true
+      , (err, written) ->
+        return next err if err
+        written.should.eql 0
+        next()

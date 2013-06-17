@@ -543,8 +543,8 @@ mecano = module.exports =
   Write an object as .ini file. Note, we are internally using the
   [ini](https://github.com/isaacs/ini) module. However, there is 
   a subtile difference. Any key provided with value of `undefined` 
-  or `null` will be disregarded. Within a `merge`, it get event
-  more tricky: the original value will be kept if `undefined` is provided 
+  or `null` will be disregarded. Within a `merge`, it get more prowerfull
+  and tricky: the original value will be kept if `undefined` is provided 
   while the value will be removed if `null` is provided.
 
   `options`
@@ -553,6 +553,14 @@ mecano = module.exports =
   *   `context`       Map of key values to inject into the template.  
   ###
   ini: (options, callback) ->
+    clean = (content, undefinedOnly) ->
+      for k, v of content
+        if v and typeof v is 'object'
+          content[k] = clean v, undefinedOnly
+          continue
+        delete content[k] if typeof v is 'undefined'
+        delete content[k] if not undefinedOnly and v is null
+      content
     result = child mecano
     finish = (err, written) ->
       callback err, written if callback
@@ -569,11 +577,16 @@ mecano = module.exports =
         # Start real work
         get = ->
           return write() unless merge
-          misc.file.readFile ssh, destination, 'ascii', (err, c) ->
-            return next err if err and err.code isnt 'ENOENT'
-            content = misc.merge ini.parse(c), content
-            write()
+          misc.file.exists ssh, destination, (err, exists) ->
+            return next err if err
+            return write() unless exists
+            misc.file.readFile ssh, destination, 'ascii', (err, c) ->
+              return next err if err and err.code isnt 'ENOENT'
+              content = clean content, true
+              content = misc.merge ini.parse(c), content
+              write()
         write = ->
+          clean content
           options.content = ini.stringify content
           mecano.write options, (err, w) ->
             written += w
