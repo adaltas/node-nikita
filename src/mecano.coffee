@@ -547,10 +547,25 @@ mecano = module.exports =
   and tricky: the original value will be kept if `undefined` is provided 
   while the value will be removed if `null` is provided.
 
+  The `ini` function rely on the `write` function and accept all of its 
+  options. It introduces the `merge` option which instruct to read the
+  destination file if it exists and merge its parsed object with the one
+  provided in the `content` option.
+
   `options`
-  *   `merge`         Read the destination if it exists and merge its content.   
-  *   `destination`   File path where to write content to or a callback.   
-  *   `context`       Map of key values to inject into the template.  
+  *   `append`          Append the content to the destination file. If destination does not exist, the file will be created. When used with the `match` and `replace` options, it will append the `replace` value at the end of the file if no match if found and if the value is a string.   
+  *   `backup`          Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
+  *   `content`         Object to stringify.   
+  *   `destination`     File path where to write content to or a callback.   
+  *   `from`            Replace from after this marker, a string or a regular expression.   
+  *   `local_source`    Treat the source as local instead of remote, only apply with "ssh" option.   
+  *   `match`           Replace this marker, a string or a regular expression.   
+  *   `merge`           Read the destination if it exists and merge its content.   
+  *   `replace`         The content to be inserted, used conjointly with the from, to or match options.   
+  *   `source`          File path from where to extract the content, do not use conjointly with content.   
+  *   `ssh`             Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+  *   `to`              Replace to before this marker, a string or a regular expression.   
+  
   ###
   ini: (options, callback) ->
     clean = (content, undefinedOnly) ->
