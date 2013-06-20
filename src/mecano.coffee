@@ -1080,10 +1080,6 @@ mecano = module.exports =
             else
               return action() unless options.action is 'stop'
             finish() 
-            # action = if options.start? then 'start' else 'stop'
-            # if not started and action is start then start 'start'
-            # if started and action isnt start then start 'stop'
-            # else finish()
         action = ->
           mecano.execute
             ssh: options.ssh
@@ -1167,7 +1163,7 @@ mecano = module.exports =
   *   `source`          File path from where to extract the content, do not use conjointly with content.   
   *   `destination`     File path where to write content to.   
   *   `backup`          Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
-  *   `append`          Append the content to the destination file. If destination does not exist, the file will be created. When used with the `match` and `replace` options, it will append the `replace` value at the end of the file if no match if found and if the value is a string.   
+  *   `append`          Append the content to the destination file. If destination does not exist, the file will be created.   
   *   `ssh`             Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
 
   `callback`            Received parameters are:   
@@ -1175,6 +1171,16 @@ mecano = module.exports =
   *   `err`             Error object if any.   
   *   `rendered`        Number of rendered files.   
   
+  The option "append" allows some advance usages. If "append" is 
+  null, it will add the `replace` value at the end of the file 
+  if no match if found and if the value is a string. When used 
+  conjointly with the `match` and `replace` options, it gets even 
+  more interesting. If append is a string or a regular expression, 
+  it will place the "replace" string just after the match. An 
+  append string will be converted to a regular expression such as 
+  "test" will end up converted as the string "test" is similar to the 
+  RegExp /^.*test.*$/gm.
+
   Example replacing part of a file using from and to markers
 
       mecano.write
@@ -1185,6 +1191,16 @@ mecano = module.exports =
         destination: "#{scratch}/a_file"
       , (err, written) ->
         # here we are\n# from\nmy friend\n# to\nyou coquin
+  
+  Example replacing a matched line by a string with
+
+      mecano.write
+        content: 'email=david(at)adaltas(dot)com\nusername=root'
+        match: /(username)=(.*)/
+        replace: '$1=david (was $2)'
+        destination: "#{scratch}/a_file"
+      , (err, written) ->
+        # email=david(at)adaltas(dot)com\nusername=david (was root)
   
   Example replacing part of a file using a regular expression
 
@@ -1205,6 +1221,16 @@ mecano = module.exports =
         destination: "#{scratch}/replace"
       , (err, written) ->
         '#A config file\n#property=30\nproperty=50\n#End of Config'
+
+  Example appending a line after each line containing "property"
+
+      mecano.write
+        content: '#A config file\n#property=30\nproperty=10\n#End of Config'
+        match: /^.*comment.*$/mg
+        replace: '# comment'
+        destination: "#{scratch}/replace"
+      , (err, written) ->
+        '#A config file\n#property=30\n# comment\nproperty=50\n# comment\n#End of Config'
 
   ###
   write: (options, callback) ->
@@ -1272,13 +1298,24 @@ mecano = module.exports =
           return writeContent() unless fullContent?
           if options.match
             if options.match instanceof RegExp
-              # content is options.replace, may be a string or an array
+              # content is options.replace in partial, may be a string or an array
               content = fullContent.replace options.match, content
               if append and typeof options.replace is 'string'
+                if typeof append is "string"
+                  append = new RegExp "^.*#{append}.*$", 'gm'
                 # If we find a match, we dont append so we disable the append flag
                 if options.match.test fullContent
                   append = false
                 # If we dont find a match, we append so we key the append flag and set the new content
+                else if append instanceof RegExp
+                  # return next new Error 'RegExp in option "append" without the global flag' unless append.global
+                  posoffset = 0
+                  while (res = append.exec fullContent) isnt null
+                    pos = posoffset + res.index + res[0].length
+                    content = content.slice(0,pos) + '\n'+options.replace + content.slice(pos)
+                    posoffset += options.replace.length + 1
+                    break unless append.global
+                  append = false
                 else
                   content = if content.length is 0 or content.substr(content.length - 1) is '\n' then '' else '\n'
                   content += options.replace

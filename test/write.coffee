@@ -145,16 +145,16 @@ describe 'write', ->
   they 'with match as a regular expression', (ssh, next) ->
     mecano.write
       ssh: ssh
-      match: /(.*try.*)/
-      content: 'here we are\nlets try to replace that one\nyou coquin'
-      replace: 'my friend'
+      content: 'email=david(at)adaltas(dot)com\nusername=root'
+      match: /(username)=(.*)/
+      replace: '$1=david (was $2)'
       destination: "#{scratch}/replace"
     , (err, written) ->
       return next err if err
       written.should.eql 1
       misc.file.readFile ssh, "#{scratch}/replace", 'utf8', (err, content) ->
         return next err if err
-        content.should.eql 'here we are\nmy friend\nyou coquin'
+        content.should.eql 'email=david(at)adaltas(dot)com\nusername=david (was root)'
         next()
   
   they 'with match as a regular expression and multiple content', (ssh, next) ->
@@ -172,11 +172,11 @@ describe 'write', ->
         content.should.eql 'here we are\nmy friend, lets try\nyou coquin'
         next()
   
-  they 'with match with global and multiles', (ssh, next) ->
+  they.only 'with match with global and multilines', (ssh, next) ->
     mecano.write
       ssh: ssh
       match: /^property=.*$/mg
-      content: '#A config file\n#property=30\nproperty=10\n#End of Config'
+      content: '#A config file\n#property=30\nproperty=10\nproperty=20\n#End of Config'
       replace: 'property=50'
       destination: "#{scratch}/replace"
     , (err, written) ->
@@ -184,7 +184,7 @@ describe 'write', ->
       written.should.eql 1
       misc.file.readFile ssh, "#{scratch}/replace", 'utf8', (err, content) ->
         return next err if err
-        content.should.eql '#A config file\n#property=30\nproperty=50\n#End of Config'
+        content.should.eql '#A config file\n#property=30\nproperty=50\nproperty=50\n#End of Config'
         next()
   
   they 'will replace destination if source or content does not exists', (ssh, next) ->
@@ -225,30 +225,30 @@ describe 'write', ->
       err.message.should.eql 'Define either source or content'
       next()
 
-  they 'append content to existing file', (ssh, next) ->
-    # File does not exists, it create one
-    mecano.write
-      ssh: ssh
-      content: 'hello'
-      destination: "#{scratch}/file"
-      append: true
-    , (err) ->
-      return next err if err
-      # File exists, it append to it
+  describe 'append', ->
+
+    they 'append content to existing file', (ssh, next) ->
+      # File does not exists, it create one
       mecano.write
         ssh: ssh
-        content: 'world'
+        content: 'hello'
         destination: "#{scratch}/file"
         append: true
       , (err) ->
         return next err if err
-        # Check file content
-        misc.file.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
+        # File exists, it append to it
+        mecano.write
+          ssh: ssh
+          content: 'world'
+          destination: "#{scratch}/file"
+          append: true
+        , (err) ->
           return next err if err
-          content.should.eql 'helloworld'
-          next()
-
-  describe 'append', ->
+          # Check file content
+          misc.file.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
+            return next err if err
+            content.should.eql 'helloworld'
+            next()
 
     they 'append content to missing file', (ssh, next) ->
       # File does not exist, it create it with the content
@@ -273,7 +273,6 @@ describe 'write', ->
         ssh: ssh
         content: 'here we are\nyou coquin\n'
         destination: "#{scratch}/file"
-        append: true
       , (err) ->
         # File does not exist, it create it with the content
         mecano.write
@@ -310,7 +309,6 @@ describe 'write', ->
         ssh: ssh
         content: 'here we are\nyou coquin\n'
         destination: "#{scratch}/file"
-        append: true
       , (err) ->
         # File does not exist, it create it with the content
         mecano.write
@@ -328,13 +326,82 @@ describe 'write', ->
             content.should.eql 'here we are\nyou coquin\nAdd this line'
             next()
 
+    they 'append after a match if append is a regexp', (ssh, next) ->
+      # Prepare by creating a file with content
+      mecano.write
+        ssh: ssh
+        content: 'here we are\nyou coquin\nshould we\nhave fun'
+        destination: "#{scratch}/file"
+      , (err) ->
+        # File does not exist, it create it with the content
+        mecano.write
+          ssh: ssh
+          match: /will never work/
+          destination: "#{scratch}/file"
+          replace: 'Add this line'
+          append: /^.*we.*$/m
+        , (err, written) ->
+          return next err if err
+          written.should.eql 1
+          # Check file content
+          misc.file.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
+            return next err if err
+            content.should.eql 'here we are\nAdd this line\nyou coquin\nshould we\nhave fun'
+            next()
+
+    they 'append multiple times after match if append is regexp with global flag', (ssh, next) ->
+      # Prepare by creating a file with content
+      mecano.write
+        ssh: ssh
+        content: 'here we are\nyou coquin\nshould we\nhave fun'
+        destination: "#{scratch}/file"
+      , (err) ->
+        # File does not exist, it create it with the content
+        mecano.write
+          ssh: ssh
+          match: /will never work/
+          destination: "#{scratch}/file"
+          replace: 'Add this line'
+          append: /^.*we.*$/gm
+        , (err, written) ->
+          return next err if err
+          written.should.eql 1
+          # Check file content
+          misc.file.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
+            return next err if err
+            content.should.eql 'here we are\nAdd this line\nyou coquin\nshould we\nAdd this line\nhave fun'
+            next()
+
+
+    they 'will append after a match if append is a string', (ssh, next) ->
+      # Prepare by creating a file with content
+      mecano.write
+        ssh: ssh
+        content: 'here we are\nyou coquin\nshould we\nhave fun'
+        destination: "#{scratch}/file"
+      , (err) ->
+        # File does not exist, it create it with the content
+        mecano.write
+          ssh: ssh
+          match: /will never work/
+          destination: "#{scratch}/file"
+          replace: 'Add this line'
+          append: 'we'
+        , (err, written) ->
+          return next err if err
+          written.should.eql 1
+          # Check file content
+          misc.file.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
+            return next err if err
+            content.should.eql 'here we are\nAdd this line\nyou coquin\nshould we\nAdd this line\nhave fun'
+            next()
+
     they 'will detect new line if no match', (ssh, next) ->
       # Create file for the test
       mecano.write
         ssh: ssh
         content: 'here we are\nyou coquin'
         destination: "#{scratch}/file"
-        append: true
       , (err) ->
         # File exist, append replace string to it and detect missing line break
         mecano.write
