@@ -783,8 +783,9 @@ mecano = module.exports =
 
   `options`           Command options include:   
   
-  *   `source`        File or directory to move.  
-  *   `destination`   Final name of the moved resource.    
+  *   `destination`   Final name of the moved resource.   
+  *   `force`         Overwrite the destination if it exists.   
+  *   `source`        File or directory to move.   
   
   `callback`          Received parameters are:   
   
@@ -807,12 +808,25 @@ mecano = module.exports =
       each( options )
       .on 'item', (options, next) ->
         # Start real work
+        exists = ->
+          misc.file.stat options.ssh, options.destination, (err, stat) ->
+            return move() if err?.code is 'ENOENT'
+            return next err if err
+            return next new Error 'Destination already exists, use the force option' unless options.force
+            remove()
+        remove = ->
+          mecano.remove
+            ssh: options.ssh
+            destination: options.destination
+          , (err, removed) ->
+            return next err if err
+            move()
         move = ->
           misc.file.rename options.ssh, options.source, options.destination, (err) ->
             return next err if err
             moved++
             next()
-        conditions.all options, next, move
+        conditions.all options, next, exists
       .on 'both', (err) ->
         callback err, moved
   ###
