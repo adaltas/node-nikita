@@ -351,9 +351,9 @@ misc = module.exports =
         # Group may be null, stop here
         return callback null, null unless username
         return misc.ssh.passwd ssh, (err, users) ->
-          return err if err
+          return callback err if err
           user = users[username]
-          return new Error "User #{username} does not exists" unless user
+          return callback new Error "User #{username} does not exists" unless user
           callback null, user
       callback = username
       username = null
@@ -542,6 +542,7 @@ misc = module.exports =
         return gid() unless options.uid
         return gid() if typeof options.uid is 'number' or /\d+/.test options.uid
         misc.ssh.passwd options.ssh, options.uid, (err, user) ->
+          return next err if err
           options.uid = user.uid
           options.gid ?= user.gid
           gid()
@@ -549,6 +550,7 @@ misc = module.exports =
         return next() unless options.gid
         return next() if typeof options.gid is 'number' or /\d+/.test options.gid
         misc.ssh.group options.ssh, options.gid, (err, group) ->
+          return next err if err
           options.gid = group.gid if group
           next()
       connection()
