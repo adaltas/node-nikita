@@ -76,14 +76,14 @@ describe 'mkdir', ->
       mecano.mkdir
         ssh: ssh
         directory: "#{scratch}/ssh_dir_string"
-        chmod: '744'
+        mode: '744'
       , (err, created) ->
         return next err if err
         connect host: 'localhost', (err, ssh) ->
           mecano.mkdir
             ssh: ssh
             directory: "#{scratch}/ssh_dir_octal"
-            chmod: 0o744
+            mode: 0o744
           , (err, created) ->
             return next err if err
             ssh.sftp (err, sftp) ->

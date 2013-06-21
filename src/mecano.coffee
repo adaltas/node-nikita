@@ -43,7 +43,7 @@ mecano = module.exports =
   *   `source`        The file or directory to copy.
   *   `destination`   Where the file or directory is copied.
   *   `not_if_exists` Equals destination if true.
-  *   `chmod`         Permissions of the file or the parent directory
+  *   `mode`         Permissions of the file or the parent directory
   *   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
  
   `callback`          Received parameters are:   
@@ -52,7 +52,7 @@ mecano = module.exports =
   *   `copied`        Number of files or parent directories copied.
 
   todo:
-  *   preserve permissions if `chmod` is `true`
+  *   preserve permissions if `mode` is `true`
 
   ###
   copy: (options, callback) ->
@@ -119,8 +119,8 @@ mecano = module.exports =
                 return next err if err
                 chmod source, next
           chmod = (file, next) ->
-            return finish next if not options.chmod or options.chmod is dstStat.mode
-            fs.chmod options.destination, options.chmod, (err) ->
+            return finish next if not options.mode or options.mode is dstStat.mode
+            fs.chmod options.destination, options.mode, (err) ->
               return next err if err
               finish next
           finish = (next) ->
@@ -623,7 +623,7 @@ mecano = module.exports =
   *   `source`        Referenced file to be linked.   
   *   `destination`   Symbolic link to be created.   
   *   `exec`          Create an executable file with an `exec` command.   
-  *   `chmod`         Default to 0755.   
+  *   `mode`         Default to 0755.   
 
   `callback`          Received parameters are:   
 
@@ -664,7 +664,7 @@ mecano = module.exports =
         """
         misc.file.writeFile options.ssh, options.destination, content, (err) ->
           return callback err if err
-          fs.chmod options.destination, options.chmod, (err) ->
+          fs.chmod options.destination, options.mode, (err) ->
             return callback err if err
             linked++
             callback()
@@ -676,7 +676,7 @@ mecano = module.exports =
         .on 'item', (options, next) ->
           return next new Error "Missing source, got #{JSON.stringify(options.source)}" unless options.source
           return next new Error "Missing destination, got #{JSON.stringify(options.destination)}" unless options.destination
-          options.chmod ?= 0o0755
+          options.mode ?= 0o0755
           dispatch = ->
             if options.exec
               exec_exists options, (err, exists) ->
@@ -706,7 +706,7 @@ mecano = module.exports =
   *   `directory`     Alias for `source`
   *   `destination`   Alias for `source`
   *   `exclude`       Regular expression.   
-  *   `chmod`         Default to 0755.  
+  *   `mode`         Default to 0755.  
   *   `cwd`           Current working directory for relative paths.   
 
   `callback`          Received parameters are:   
@@ -747,7 +747,7 @@ mecano = module.exports =
             # error if exists and isn't a dir
             next err 'Invalid source, got #{JSON.encode(options.source)}'
         create = () ->
-          options.chmod ?= 0o0755
+          options.mode ?= 0o0755
           current = ''
           dirCreated = false
           dirs = options.source.split '/'

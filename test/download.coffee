@@ -57,7 +57,7 @@ describe 'download', ->
       ssh: ssh
       source: source
       destination: destination
-      chmod: '0770'
+      mode: '0770'
     , (err, downloaded) ->
       return next err if err
       downloaded.should.eql 1
