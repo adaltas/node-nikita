@@ -1066,7 +1066,7 @@ mecano = module.exports =
             return next err if err
             started()
         started = ->
-          return finish() unless options.action
+          return finish() if options.action isnt 'start' or options.actions isnt 'stop'
           mecano.execute
             ssh: options.ssh
             cmd: "service #{srvname} status"
@@ -1081,6 +1081,7 @@ mecano = module.exports =
               return action() unless options.action is 'stop'
             finish() 
         action = ->
+          return finish() unless options.action
           mecano.execute
             ssh: options.ssh
             cmd: "service #{srvname} #{options.action}"
