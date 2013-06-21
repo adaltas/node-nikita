@@ -271,7 +271,6 @@ mecano = module.exports =
         checksum = ->
           return unstage() unless md5sum
           misc.file.hash stageDestination, 'md5', (err, hash) ->
-            # console.log hash, md5sum
             return unstage() if hash is md5sum
             # Download is invalid, cleaning up
             misc.file.remove options.ssh, stageDestination, (err) ->
@@ -750,7 +749,6 @@ mecano = module.exports =
           current = ''
           dirCreated = false
           dirs = options.source.split '/'
-
           each( dirs )
           .on 'item', (dir, next) ->
             # Directory name contains variables
@@ -1280,12 +1278,26 @@ mecano = module.exports =
         readDestination = ->
           # no need to test changes if destination is a callback
           return render() if typeof options.destination is 'function'
-          misc.file.exists options.ssh, options.destination, (err, exists) ->
-            return render() unless exists
+          exists = ->
+            misc.file.exists options.ssh, options.destination, (err, exists) ->
+              return next err if err
+              if exists then read() else mkdir()
+          mkdir = ->
+            mecano.mkdir 
+              ssh: options.ssh
+              destination: path.dirname(options.destination)
+              uid: options.uid
+              gid: options.gid
+              mode: options.mode
+            , (err, created) ->
+              return next err if err
+              render()
+          read = ->
             misc.file.readFile options.ssh, options.destination, 'utf8', (err, dest) ->
               return next err if err
               destinationHash = misc.string.hash dest
               render()
+          exists()
         render = ->
           return replacePartial() unless options.context?
           try

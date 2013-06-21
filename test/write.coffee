@@ -81,6 +81,19 @@ describe 'write', ->
         content.should.eql ''
         next()
   
+  they 'create parent directory', (ssh, next) ->
+    mecano.write
+      ssh: ssh
+      content: 'hello'
+      destination: "#{scratch}/a/missing/dir/a_file"
+    , (err, written) ->
+      return next err if err
+      written.should.eql 1
+      misc.file.readFile ssh, "#{scratch}/a/missing/dir/a_file", 'utf8', (err, content) ->
+        return next err if err
+        content.should.eql 'hello'
+        next()
+  
   they 'with from and with to', (ssh, next) ->
     mecano.write
       ssh: ssh
@@ -172,7 +185,7 @@ describe 'write', ->
         content.should.eql 'here we are\nmy friend, lets try\nyou coquin'
         next()
   
-  they.only 'with match with global and multilines', (ssh, next) ->
+  they 'with match with global and multilines', (ssh, next) ->
     mecano.write
       ssh: ssh
       match: /^property=.*$/mg
