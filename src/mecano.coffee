@@ -1165,6 +1165,7 @@ mecano = module.exports =
   *   `destination`     File path where to write content to.   
   *   `backup`          Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
   *   `append`          Append the content to the destination file. If destination does not exist, the file will be created.   
+  *   `write`           An array containing multiple transformation where a transformation is an object accepting the options `from`, `to`, `match` and `replace`
   *   `ssh`             Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
 
   `callback`            Received parameters are:   
@@ -1180,7 +1181,7 @@ mecano = module.exports =
   it will place the "replace" string just after the match. An 
   append string will be converted to a regular expression such as 
   "test" will end up converted as the string "test" is similar to the 
-  RegExp /^.*test.*$/gm.
+  RegExp /^.*test.*$/mg.
 
   Example replacing part of a file using from and to markers
 
@@ -1221,7 +1222,7 @@ mecano = module.exports =
         replace: 'property=50'
         destination: "#{scratch}/replace"
       , (err, written) ->
-        '#A config file\n#property=30\nproperty=50\n#End of Config'
+        '# A config file\n#property=30\nproperty=50\n#End of Config'
 
   Example appending a line after each line containing "property"
 
@@ -1231,7 +1232,25 @@ mecano = module.exports =
         replace: '# comment'
         destination: "#{scratch}/replace"
       , (err, written) ->
-        '#A config file\n#property=30\n# comment\nproperty=50\n# comment\n#End of Config'
+        '# A config file\n#property=30\n# comment\nproperty=50\n# comment\n#End of Config'
+
+  Example with multiple transformations
+
+      mecano.write
+        content: 'username: me\nemail: my@email\nfriends: you'
+        write: [
+          match: /^(username).*$/mg
+          replace: "$1: you"
+        ,
+          match: /^email.*$/mg
+          replace: ""
+        ,
+          match: /^(friends).*$/mg
+          replace: "$1: me"
+        ]
+        destination: "#{scratch}/file"
+      , (err, written) ->
+        # username: you\n\nfriends: me
 
   ###
   write: (options, callback) ->
@@ -1245,19 +1264,28 @@ mecano = module.exports =
       each( options )
       .on 'item', (options, next) ->
         # Validate parameters
-        return next new Error 'Missing source or content' unless (options.source or options.content?) or options.replace
+        return next new Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?.length
         return next new Error 'Define either source or content' if options.source and options.content
         return next new Error 'Missing destination' unless options.destination
         destination  = null
         destinationHash = null
-        content = fullContent = null
-        from = to = null
+        content = null
+        #fullContent = null
+        from = to = between = null
         append = options.append
+        write = options.write
+        write ?= []
+        if options.from? or options.to? or options.match?
+          write.push
+            from: options.from
+            to: options.to
+            match: options.match
+            replace: options.replace
         # Start real work
         readSource = ->
           if options.content?
             content = options.content
-            return extractPartial()
+            return readDestination()
           # Option "local_source" force to bypass the ssh 
           # connection, use by the upload function
           options.source ?= options.destination
@@ -1266,18 +1294,11 @@ mecano = module.exports =
             return next err if err
             unless exists
               content = ''
-              return extractPartial()
+              return readDestination()
             misc.file.readFile ssh, options.source, 'utf8', (err, src) ->
               return next err if err
               content = src
-              extractPartial()
-        extractPartial = ->
-          return readDestination() unless options.from? or options.to? or options.match?
-          # from = if options.from then content.indexOf(options.from) + options.from.length else 0
-          # to = if options.to then content.indexOf(options.to) else content.length
-          fullContent = content
-          content = options.replace
-          readDestination()
+              readDestination()
         readDestination = ->
           # no need to test changes if destination is a callback
           return render() if typeof options.destination is 'function'
@@ -1310,39 +1331,43 @@ mecano = module.exports =
             return next err
           replacePartial()
         replacePartial = ->
-          return writeContent() unless fullContent?
-          if options.match
-            if options.match instanceof RegExp
-              # content is options.replace in partial, may be a string or an array
-              content = fullContent.replace options.match, content
-              if append and typeof options.replace is 'string'
-                if typeof append is "string"
-                  append = new RegExp "^.*#{append}.*$", 'gm'
-                # If we find a match, we dont append so we disable the append flag
-                if options.match.test fullContent
-                  append = false
-                # If we dont find a match, we append so we key the append flag and set the new content
-                else if append instanceof RegExp
-                  # return next new Error 'RegExp in option "append" without the global flag' unless append.global
-                  posoffset = 0
-                  while (res = append.exec fullContent) isnt null
-                    pos = posoffset + res.index + res[0].length
-                    content = content.slice(0,pos) + '\n'+options.replace + content.slice(pos)
-                    posoffset += options.replace.length + 1
-                    break unless append.global
-                  append = false
-                else
-                  content = if content.length is 0 or content.substr(content.length - 1) is '\n' then '' else '\n'
-                  content += options.replace
+          # return writeContent() unless fullContent?
+          return writeContent() unless write.length
+          for opts in write
+            if opts.match
+              if opts.match instanceof RegExp
+                content = content.replace opts.match, opts.replace
+                if append and typeof opts.replace is 'string'
+                  if typeof append is "string"
+                    append = new RegExp "^.*#{append}.*$", 'mg'
+                  # If we find a match, we dont append so we disable the append flag
+                  if opts.match.test content
+                    append = false
+                  # If we dont find a match, we append so we key the append flag and set the new content
+                  else if append instanceof RegExp
+                    # return next new Error 'RegExp in option "append" without the global flag' unless append.global
+                    posoffset = 0
+                    orgContent = content
+                    while (res = append.exec orgContent) isnt null
+                      pos = posoffset + res.index + res[0].length
+                      content = content.slice(0,pos) + '\n'+opts.replace + content.slice(pos)
+                      posoffset += opts.replace.length + 1
+                      break unless append.global
+                    append = false
+                  else
+                    content = if content.length is 0 or content.substr(content.length - 1) is '\n' then '' else '\n'
+                    content += opts.replace
+              else
+                from = content.indexOf(opts.match)
+                to = from + opts.match.length
+                content = content.substr(0, from) + opts.replace + content.substr(to)
             else
-              from = fullContent.indexOf(options.match)
-              to = from + options.match.length
-              content = fullContent.substr(0, from) + content + fullContent.substr(to)
-          else
-            from = if options.from then fullContent.indexOf(options.from) + options.from.length else 0
-            to = if options.to then fullContent.indexOf(options.to) else fullContent.length
-            content = fullContent.substr(0, from) + content + fullContent.substr(to)
-          fullContent = null
+              from = if opts.from then content.indexOf(opts.from) + opts.from.length else 0
+              to = if opts.to then content.indexOf(opts.to) else content.length
+              # content = fullContent.substr(0, from) + content + fullContent.substr(to)
+              content = content.substr(0, from) + opts.replace + content.substr(to)
+          #   fullContent = content
+          # fullContent = null
           writeContent()
         writeContent = ->
           return next() if destinationHash is misc.string.hash content

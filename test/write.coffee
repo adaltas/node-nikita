@@ -482,4 +482,36 @@ describe 'write', ->
                 content.should.eql 'Hello Node'
                 next()
 
+  describe 'write', ->
+  
+    they 'do multiple replace', (ssh, next) ->
+      # First we create a file
+      mecano.write
+        ssh: ssh
+        content: 'username: me\nemail: my@email\nfriends: you'
+        destination: "#{scratch}/file"
+        # First we create a file
+      , (err, written) ->
+        return next err if err
+        mecano.write
+          ssh: ssh
+          write: [
+            match: /^(username).*$/m
+            replace: "$1: you"
+          ,
+            match: /^email.*$/m
+            replace: ""
+          ,
+            match: /^(friends).*$/m
+            replace: "$1: me"
+          ]
+          destination: "#{scratch}/file"
+        , (err, written) ->
+            return next err if err
+            written.should.eql 1
+            misc.file.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
+              return next err if err
+              content.should.eql 'username: you\n\nfriends: me'
+              next()
+
 
