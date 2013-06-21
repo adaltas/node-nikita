@@ -1295,6 +1295,8 @@ mecano = module.exports =
             to: options.to
             match: options.match
             replace: options.replace
+            append: options.append
+          # append = false
         # Start real work
         readSource = ->
           if options.content?
@@ -1350,27 +1352,28 @@ mecano = module.exports =
           for opts in write
             if opts.match
               if opts.match instanceof RegExp
-                content = content.replace opts.match, opts.replace
-                if append and typeof opts.replace is 'string'
-                  if typeof append is "string"
-                    append = new RegExp "^.*#{append}.*$", 'mg'
-                  # If we find a match, we dont append so we disable the append flag
-                  if opts.match.test content
-                    append = false
-                  # If we dont find a match, we append so we key the append flag and set the new content
-                  else if append instanceof RegExp
+                if opts.match.test content
+                  content = content.replace opts.match, opts.replace
+                  append = false
+                else if opts.append and typeof opts.replace is 'string'
+                  if typeof opts.append is "string"
+                    opts.append = new RegExp "^.*#{opts.append}.*$", 'mg'
+                  if opts.append instanceof RegExp
                     # return next new Error 'RegExp in option "append" without the global flag' unless append.global
                     posoffset = 0
                     orgContent = content
-                    while (res = append.exec orgContent) isnt null
+                    while (res = opts.append.exec orgContent) isnt null
                       pos = posoffset + res.index + res[0].length
                       content = content.slice(0,pos) + '\n'+opts.replace + content.slice(pos)
                       posoffset += opts.replace.length + 1
-                      break unless append.global
+                      break unless opts.append.global
                     append = false
                   else
-                    content = if content.length is 0 or content.substr(content.length - 1) is '\n' then '' else '\n'
-                    content += opts.replace
+                    linebreak = if content.length is 0 or content.substr(content.length - 1) is '\n' then '' else '\n'
+                    content = content + linebreak + opts.replace
+                    append = false
+                else
+                  return next()
               else
                 from = content.indexOf(opts.match)
                 to = from + opts.match.length
@@ -1378,10 +1381,7 @@ mecano = module.exports =
             else
               from = if opts.from then content.indexOf(opts.from) + opts.from.length else 0
               to = if opts.to then content.indexOf(opts.to) else content.length
-              # content = fullContent.substr(0, from) + content + fullContent.substr(to)
               content = content.substr(0, from) + opts.replace + content.substr(to)
-          #   fullContent = content
-          # fullContent = null
           writeContent()
         writeContent = ->
           return next() if destinationHash is misc.string.hash content
