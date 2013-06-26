@@ -1080,7 +1080,7 @@ mecano = module.exports =
             return next err if err
             started()
         started = ->
-          return finish() if options.action isnt 'start' or options.actions isnt 'stop'
+          return action() if options.action isnt 'start' or options.actions isnt 'stop'
           mecano.execute
             ssh: options.ssh
             cmd: "service #{srvname} status"
@@ -1103,6 +1103,7 @@ mecano = module.exports =
             stderr: options.stderr
           , (err, executed) ->
             return next err if err
+            modified = true
             finish()
         finish = ->
           serviced++ if modified
@@ -1245,6 +1246,7 @@ mecano = module.exports =
         match: /^.*comment.*$/mg
         replace: '# comment'
         destination: "#{scratch}/replace"
+        append: 'property'
       , (err, written) ->
         '# A config file\n#property=30\n# comment\nproperty=50\n# comment\n#End of Config'
 
@@ -1359,7 +1361,6 @@ mecano = module.exports =
                   if typeof opts.append is "string"
                     opts.append = new RegExp "^.*#{opts.append}.*$", 'mg'
                   if opts.append instanceof RegExp
-                    # return next new Error 'RegExp in option "append" without the global flag' unless append.global
                     posoffset = 0
                     orgContent = content
                     while (res = opts.append.exec orgContent) isnt null
@@ -1373,7 +1374,8 @@ mecano = module.exports =
                     content = content + linebreak + opts.replace
                     append = false
                 else
-                  return next()
+                  # Did not match, try next one
+                  continue
               else
                 from = content.indexOf(opts.match)
                 to = from + opts.match.length

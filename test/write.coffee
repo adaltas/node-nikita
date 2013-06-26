@@ -544,5 +544,36 @@ describe 'write', ->
               return next err if err
               content.should.eql 'username: you\nemail: your@email\nfriends: me'
               next()
+  
+    they 'handle partial match', (ssh, next) ->
+      # First we create a file
+      mecano.write
+        ssh: ssh
+        content: 'username: me\nfriends: none'
+        destination: "#{scratch}/file"
+        # First we create a file
+      , (err, written) ->
+        return next err if err
+        mecano.write
+          ssh: ssh
+          write: [
+            match: /^will never match$/m
+            replace: "useless"
+          ,
+            match: /^email.*$/m
+            replace: "email: my@email"
+            append: 'username'
+          ,
+            match: /^(friends).*$/m
+            replace: "$1: you"
+          ]
+          destination: "#{scratch}/file"
+        , (err, written) ->
+            return next err if err
+            written.should.eql 1
+            misc.file.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
+              return next err if err
+              content.should.eql 'username: me\nemail: my@email\nfriends: you'
+              next()
 
 
