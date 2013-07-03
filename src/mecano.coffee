@@ -43,7 +43,7 @@ mecano = module.exports =
   *   `source`        The file or directory to copy.
   *   `destination`   Where the file or directory is copied.
   *   `not_if_exists` Equals destination if true.
-  *   `mode`         Permissions of the file or the parent directory
+  *   `mode`          Permissions of the file or the parent directory
   *   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
  
   `callback`          Received parameters are:   
@@ -1306,14 +1306,15 @@ mecano = module.exports =
             return readDestination()
           # Option "local_source" force to bypass the ssh 
           # connection, use by the upload function
-          options.source ?= options.destination
+          source = options.source or options.destination
           ssh = if options.local_source then null else options.ssh
-          misc.file.exists ssh, options.source, (err, exists) ->
+          misc.file.exists ssh, source, (err, exists) ->
             return next err if err
             unless exists
+              return next new Error "Source does not exist: \"#{options.source}\"" if options.source
               content = ''
               return readDestination()
-            misc.file.readFile ssh, options.source, 'utf8', (err, src) ->
+            misc.file.readFile ssh, source, 'utf8', (err, src) ->
               return next err if err
               content = src
               readDestination()

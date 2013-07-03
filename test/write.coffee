@@ -490,7 +490,6 @@ describe 'write', ->
         ssh: ssh
         content: 'username: me\nemail: my@email\nfriends: you'
         destination: "#{scratch}/file"
-        # First we create a file
       , (err, written) ->
         return next err if err
         mecano.write
@@ -520,7 +519,6 @@ describe 'write', ->
         ssh: ssh
         content: 'username: me\nfriends: you'
         destination: "#{scratch}/file"
-        # First we create a file
       , (err, written) ->
         return next err if err
         mecano.write
@@ -551,9 +549,9 @@ describe 'write', ->
         ssh: ssh
         content: 'username: me\nfriends: none'
         destination: "#{scratch}/file"
-        # First we create a file
       , (err, written) ->
         return next err if err
+        # First write will not find a match
         mecano.write
           ssh: ssh
           write: [
@@ -576,4 +574,24 @@ describe 'write', ->
               content.should.eql 'username: me\nemail: my@email\nfriends: you'
               next()
 
+  describe 'error', ->
+
+    they 'if source doesn\'t exists', (ssh, next) ->
+      mecano.write
+        ssh: ssh
+        source: "#{scratch}/does/not/exists"
+        destination: "#{scratch}/file"
+      , (err, written) ->
+        err.message.should.eql "Source does not exist: \"#{scratch}/does/not/exists\""
+        next()
+
+    they 'if local source doesn\'t exists', (ssh, next) ->
+      mecano.write
+        ssh: ssh
+        source: "#{scratch}/does/not/exists"
+        local_source: true
+        destination: "#{scratch}/file"
+      , (err, written) ->
+        err.message.should.eql "Source does not exist: \"#{scratch}/does/not/exists\""
+        next()
 
