@@ -20,7 +20,7 @@ module.exports = (mecano) ->
         child.emit 'both', err, modified
       return
     c = mecano[todo[0]].apply null, todo[1]
-    c.id = "chidle #{count++}"
+    c.id = "child #{count++}"
     c.on 'error', (err) ->
       child.end err, 0
     c.on 'end', (modified) ->
