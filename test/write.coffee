@@ -139,82 +139,86 @@ describe 'write', ->
         return next err if err
         content.should.eql 'my friend\n# to\nyou coquin'
         next()
+
+  describe 'match & replace', ->
   
-  they 'with match as a string', (ssh, next) ->
-    mecano.write
-      ssh: ssh
-      match: 'lets try to replace that one'
-      content: 'here we are\nlets try to replace that one\nyou coquin'
-      replace: 'my friend'
-      destination: "#{scratch}/fromto.md"
-    , (err, written) ->
-      return next err if err
-      written.should.eql 1
-      misc.file.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
-        return next err if err
-        content.should.eql 'here we are\nmy friend\nyou coquin'
-        next()
-  
-  they 'with match as a regular expression', (ssh, next) ->
-    mecano.write
-      ssh: ssh
-      content: 'email=david(at)adaltas(dot)com\nusername=root'
-      match: /(username)=(.*)/
-      replace: '$1=david (was $2)'
-      destination: "#{scratch}/replace"
-    , (err, written) ->
-      return next err if err
-      written.should.eql 1
-      misc.file.readFile ssh, "#{scratch}/replace", 'utf8', (err, content) ->
-        return next err if err
-        content.should.eql 'email=david(at)adaltas(dot)com\nusername=david (was root)'
-        next()
-  
-  they 'with match as a regular expression and multiple content', (ssh, next) ->
-    mecano.write
-      ssh: ssh
-      match: /(.*try) (.*)/
-      content: 'here we are\nlets try to replace that one\nyou coquin'
-      replace: ['my friend, $1']
-      destination: "#{scratch}/replace"
-    , (err, written) ->
-      return next err if err
-      written.should.eql 1
-      misc.file.readFile ssh, "#{scratch}/replace", 'utf8', (err, content) ->
-        return next err if err
-        content.should.eql 'here we are\nmy friend, lets try\nyou coquin'
-        next()
-  
-  they 'with match with global and multilines', (ssh, next) ->
-    mecano.write
-      ssh: ssh
-      match: /^property=.*$/mg
-      content: '#A config file\n#property=30\nproperty=10\nproperty=20\n#End of Config'
-      replace: 'property=50'
-      destination: "#{scratch}/replace"
-    , (err, written) ->
-      return next err if err
-      written.should.eql 1
-      misc.file.readFile ssh, "#{scratch}/replace", 'utf8', (err, content) ->
-        return next err if err
-        content.should.eql '#A config file\n#property=30\nproperty=50\nproperty=50\n#End of Config'
-        next()
-  
-  they 'will replace destination if source or content does not exists', (ssh, next) ->
-    mecano.write
-      ssh: ssh
-      content: 'This is\nsome content\nfor testing'
-      destination: "#{scratch}/a_file"
-    , (err, written) ->
-      return next err if err
+    they 'with match as a string', (ssh, next) ->
       mecano.write
         ssh: ssh
-        match: /(.*content)/
-        replace: 'a text'
-        destination: "#{scratch}/a_file"
+        match: 'lets try to replace that one'
+        content: 'here we are\nlets try to replace that one\nyou coquin'
+        replace: 'my friend'
+        destination: "#{scratch}/fromto.md"
       , (err, written) ->
         return next err if err
         written.should.eql 1
+        misc.file.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
+          return next err if err
+          content.should.eql 'here we are\nmy friend\nyou coquin'
+          next()
+  
+    they 'with match as a regular expression', (ssh, next) ->
+      # With a match
+      mecano.write
+        ssh: ssh
+        content: 'email=david(at)adaltas(dot)com\nusername=root'
+        match: /(username)=(.*)/
+        replace: '$1=david (was $2)'
+        destination: "#{scratch}/replace"
+      , (err, written) ->
+        return next err if err
+        written.should.eql 1
+        # Without a match
+        mecano.write
+          ssh: ssh
+          match: /this wont work/
+          replace: '$1=david (was $2)'
+          destination: "#{scratch}/replace"
+        , (err, written) ->
+          return next err if err
+          written.should.eql 0
+          misc.file.readFile ssh, "#{scratch}/replace", 'utf8', (err, content) ->
+            return next err if err
+            content.should.eql 'email=david(at)adaltas(dot)com\nusername=david (was root)'
+            next()
+    
+    they 'with match as a regular expression and multiple content', (ssh, next) ->
+      mecano.write
+        ssh: ssh
+        match: /(.*try) (.*)/
+        content: 'here we are\nlets try to replace that one\nyou coquin'
+        replace: ['my friend, $1']
+        destination: "#{scratch}/replace"
+      , (err, written) ->
+        return next err if err
+        written.should.eql 1
+        misc.file.readFile ssh, "#{scratch}/replace", 'utf8', (err, content) ->
+          return next err if err
+          content.should.eql 'here we are\nmy friend, lets try\nyou coquin'
+          next()
+    
+    they 'with match with global and multilines', (ssh, next) ->
+      mecano.write
+        ssh: ssh
+        match: /^property=.*$/mg
+        content: '#A config file\n#property=30\nproperty=10\nproperty=20\n#End of Config'
+        replace: 'property=50'
+        destination: "#{scratch}/replace"
+      , (err, written) ->
+        return next err if err
+        written.should.eql 1
+        misc.file.readFile ssh, "#{scratch}/replace", 'utf8', (err, content) ->
+          return next err if err
+          content.should.eql '#A config file\n#property=30\nproperty=50\nproperty=50\n#End of Config'
+          next()
+    
+    they 'will replace destination if source or content does not exists', (ssh, next) ->
+      mecano.write
+        ssh: ssh
+        content: 'This is\nsome content\nfor testing'
+        destination: "#{scratch}/a_file"
+      , (err, written) ->
+        return next err if err
         mecano.write
           ssh: ssh
           match: /(.*content)/
@@ -222,21 +226,19 @@ describe 'write', ->
           destination: "#{scratch}/a_file"
         , (err, written) ->
           return next err if err
-          written.should.eql 0
-          misc.file.readFile ssh, "#{scratch}/a_file", 'utf8', (err, content) ->
+          written.should.eql 1
+          mecano.write
+            ssh: ssh
+            match: /(.*content)/
+            replace: 'a text'
+            destination: "#{scratch}/a_file"
+          , (err, written) ->
             return next err if err
-            content.should.eql 'This is\na text\nfor testing'
-            next()
-
-  they 'can not defined source and content', (ssh, next) ->
-    mecano.write
-      ssh: ssh
-      source: 'abc'
-      content: 'abc'
-      destination: 'abc'
-    , (err) ->
-      err.message.should.eql 'Define either source or content'
-      next()
+            written.should.eql 0
+            misc.file.readFile ssh, "#{scratch}/a_file", 'utf8', (err, content) ->
+              return next err if err
+              content.should.eql 'This is\na text\nfor testing'
+              next()
 
   describe 'append', ->
 
@@ -575,6 +577,16 @@ describe 'write', ->
               next()
 
   describe 'error', ->
+
+    they 'can not defined source and content', (ssh, next) ->
+      mecano.write
+        ssh: ssh
+        source: 'abc'
+        content: 'abc'
+        destination: 'abc'
+      , (err) ->
+        err.message.should.eql 'Define either source or content'
+        next()
 
     they 'if source doesn\'t exists', (ssh, next) ->
       mecano.write
