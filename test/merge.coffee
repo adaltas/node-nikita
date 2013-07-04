@@ -36,3 +36,9 @@ describe 'merge', ->
     misc.merge true, obj1, obj2
     obj1.a_key.b_key.should.eql 'b value'
 
+  it 'should overwrite regexp value', ->
+    obj1 = { reg_key: /.*/mg, a_key: { regkey_key : /.*/ } }
+    obj2 = { a_key: { regkey_key : /^.*$/ } }
+    res = misc.merge {}, obj1, obj2
+    res.should.eql { reg_key: /.*/mg, a_key: { regkey_key : /^.*$/ } }
+

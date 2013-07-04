@@ -509,7 +509,7 @@ misc = module.exports =
           # Prevent never-ending loop
           continue if target is copy
           # Recurse if we're merging plain objects
-          if copy? and typeof copy is 'object' and not Array.isArray(copy)
+          if copy? and typeof copy is 'object' and not Array.isArray(copy) and copy not instanceof RegExp
             clone = src and ( if src and typeof src is 'object' then src else {} )
             # Never move original objects, clone them
             target[ name ] = misc.merge false, clone, copy
