@@ -2,7 +2,7 @@
 language: en
 layout: page
 title: "Node Mecano: Common functions for system deployment"
-date: 2013-06-21T09:31:04.318Z
+date: 2013-07-04T21:58:51.384Z
 comments: false
 sharing: false
 footer: false
@@ -29,7 +29,7 @@ overwrite it.
 *   `source`        The file or directory to copy.
 *   `destination`   Where the file or directory is copied.
 *   `not_if_exists` Equals destination if true.
-*   `mode`         Permissions of the file or the parent directory
+*   `mode`          Permissions of the file or the parent directory
 *   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
 
 `callback`          Received parameters are:   
@@ -237,8 +237,9 @@ More files and directories.
 
 `options`           Command options include:   
 
-*   `source`        File or directory to move.  
-*   `destination`   Final name of the moved resource.    
+*   `destination`   Final name of the moved resource.   
+*   `force`         Overwrite the destination if it exists.   
+*   `source`        File or directory to move.   
 
 `callback`          Received parameters are:   
 
@@ -379,6 +380,7 @@ Write a file or a portion of an existing file.
 *   `destination`     File path where to write content to.   
 *   `backup`          Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
 *   `append`          Append the content to the destination file. If destination does not exist, the file will be created.   
+*   `write`           An array containing multiple transformation where a transformation is an object accepting the options `from`, `to`, `match` and `replace`
 *   `ssh`             Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
 
 `callback`            Received parameters are:   
@@ -394,7 +396,7 @@ more interesting. If append is a string or a regular expression,
 it will place the "replace" string just after the match. An 
 append string will be converted to a regular expression such as 
 "test" will end up converted as the string "test" is similar to the 
-RegExp /^.*test.*$/gm.
+RegExp /^.*test.*$/mg.
 
 Example replacing part of a file using from and to markers
 ```coffeescript
@@ -439,7 +441,7 @@ mecano.write
   replace: 'property=50'
   destination: "#{scratch}/replace"
 , (err, written) ->
-  '#A config file\n#property=30\nproperty=50\n#End of Config'
+  '# A config file\n#property=30\nproperty=50\n#End of Config'
 
 ```Example appending a line after each line containing "property"
 ```coffeescript
@@ -449,6 +451,26 @@ mecano.write
   match: /^.*comment.*$/mg
   replace: '# comment'
   destination: "#{scratch}/replace"
+  append: 'property'
 , (err, written) ->
-  '#A config file\n#property=30\n# comment\nproperty=50\n# comment\n#End of Config'
+  '# A config file\n#property=30\n# comment\nproperty=50\n# comment\n#End of Config'
+
+```Example with multiple transformations
+```coffeescript
+
+mecano.write
+  content: 'username: me\nemail: my@email\nfriends: you'
+  write: [
+    match: /^(username).*$/mg
+    replace: "$1: you"
+  ,
+    match: /^email.*$/mg
+    replace: ""
+  ,
+    match: /^(friends).*$/mg
+    replace: "$1: me"
+  ]
+  destination: "#{scratch}/file"
+, (err, written) ->
+  # username: you\n\nfriends: me
 ```

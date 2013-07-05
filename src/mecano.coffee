@@ -555,6 +555,7 @@ mecano = module.exports =
   *   `append`          Append the content to the destination file. If destination does not exist, the file will be created. When used with the `match` and `replace` options, it will append the `replace` value at the end of the file if no match if found and if the value is a string.   
   *   `backup`          Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
   *   `content`         Object to stringify.   
+  *   `stringify`       User defined function to stringify to ini format, default to `require('ini').stringify`.   
   *   `destination`     File path where to write content to or a callback.   
   *   `from`            Replace from after this marker, a string or a regular expression.   
   *   `local_source`    Treat the source as local instead of remote, only apply with "ssh" option.   
@@ -601,7 +602,8 @@ mecano = module.exports =
               write()
         write = ->
           clean content
-          options.content = ini.stringify content
+          stringify = options.stringify or ini.stringify
+          options.content = stringify content
           mecano.write options, (err, w) ->
             written += w
             next err

@@ -578,7 +578,7 @@ describe 'write', ->
 
   describe 'error', ->
 
-    they 'can not defined source and content', (ssh, next) ->
+    they 'can not define source and content', (ssh, next) ->
       mecano.write
         ssh: ssh
         source: 'abc'

@@ -348,8 +348,13 @@ misc = module.exports =
     ###
     passwd: (ssh, username, callback) ->
       if arguments.length is 3
-        # Group may be null, stop here
+        # Username may be null, stop here
         return callback null, null unless username
+        # Is user present in cache
+        if ssh.passwd and ssh.passwd[username]
+          return callback null, ssh.passwd[username]
+        # Relaod the cache and check if user is here
+        ssh.passwd = null
         return misc.ssh.passwd ssh, (err, users) ->
           return callback err if err
           user = users[username]
@@ -518,6 +523,36 @@ misc = module.exports =
             target[ name ] = copy unless inverse and typeof target[ name ] isnt 'undefined'
     # Return the modified object
     target
+  ini:
+    stringify_square_then_curly: (content, depth=0) ->
+      out = ''
+      indent = ' '
+      prefix = ''
+      for i in [0...depth]
+        prefix += indent
+      for k, v of content
+        isUndefined = typeof v is 'undefined'
+        isBoolean = typeof v is 'boolean'
+        isNull = v is null
+        isObj = typeof v is 'object' and not isNull
+        if isObj
+          if depth is 0
+            out += "#{prefix}[#{k}]\n"
+            out += misc.ini.stringify_square_then_curly v, ++depth
+            out += "\n"
+          else
+            out += "#{prefix}#{k} = {\n"
+            out += misc.ini.stringify_square_then_curly v, ++depth
+            out += "#{prefix}}\n"
+        else 
+          if isNull
+            out += "#{prefix}#{k} = null"
+          else if isBoolean
+            out += "#{prefix}#{k} = #{if v then 'true' else 'false'}"
+          else
+            out += "#{prefix}#{k} = #{v}"
+          out += '\n'
+      out
   ###
   `options(options, callback)`
   ----------------------------

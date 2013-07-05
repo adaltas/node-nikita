@@ -83,3 +83,18 @@ describe 'ini', ->
         return next err if err
         written.should.eql 0
         next()
+
+  they 'call stringify udf', (ssh, next) ->
+    mecano.ini
+      ssh: ssh
+      content: user: preference: color: true
+      stringify: misc.ini.stringify_square_then_curly
+      destination: "#{scratch}/user.ini"
+      merge: true
+    , (err, written) ->
+      return next err if err
+      written.should.eql 1
+      misc.file.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
+        return next err if err
+        data.should.eql '[user]\n preference = {\n  color = true\n }\n\n'
+        next()
