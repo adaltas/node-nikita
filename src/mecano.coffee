@@ -288,17 +288,9 @@ mecano = module.exports =
 
   `exec` `execute([goptions], options, callback)`
   -----------------------------------------------
-  Run a command locally or with ssh if the `host` is provided. Global options is
-  optional and is used in case where options is defined as an array of 
-  multiple commands. Note, `opts` inherites all the properties of `goptions`.
+  Run a command locally or with ssh if `host` or `ssh` is provided.
 
-  `goptions`            Global options includes:
-
-  *   `parallel`    Wether the command are run in sequential, parallel 
-  or limited concurrent mode. See the `node-each` documentation for more 
-  details. Default to sequential (false).
-        
-  `options`           Include all conditions as well as:  
+  `options`           Command options include:   
 
   *   `cmd`           String, Object or array; Command to execute.   
   *   `env`           Environment variables, default to `process.env`.   
@@ -552,20 +544,21 @@ mecano = module.exports =
   destination file if it exists and merge its parsed object with the one
   provided in the `content` option.
 
-  `options`
-  *   `append`          Append the content to the destination file. If destination does not exist, the file will be created. When used with the `match` and `replace` options, it will append the `replace` value at the end of the file if no match if found and if the value is a string.   
-  *   `backup`          Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
-  *   `content`         Object to stringify.   
-  *   `stringify`       User defined function to stringify to ini format, default to `require('ini').stringify`.   
-  *   `destination`     File path where to write content to or a callback.   
-  *   `from`            Replace from after this marker, a string or a regular expression.   
-  *   `local_source`    Treat the source as local instead of remote, only apply with "ssh" option.   
-  *   `match`           Replace this marker, a string or a regular expression.   
-  *   `merge`           Read the destination if it exists and merge its content.   
-  *   `replace`         The content to be inserted, used conjointly with the from, to or match options.   
-  *   `source`          File path from where to extract the content, do not use conjointly with content.   
-  *   `ssh`             Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
-  *   `to`              Replace to before this marker, a string or a regular expression.   
+  `options`           Command options include:   
+
+  *   `append`        Append the content to the destination file. If destination does not exist, the file will be created. When used with the `match` and `replace` options, it will append the `replace` value at the end of the file if no match if found and if the value is a string.   
+  *   `backup`        Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
+  *   `content`       Object to stringify.   
+  *   `stringify`     User defined function to stringify to ini format, default to `require('ini').stringify`.   
+  *   `destination`   File path where to write content to or a callback.   
+  *   `from`          Replace from after this marker, a string or a regular expression.   
+  *   `local_source`  Treat the source as local instead of remote, only apply with "ssh" option.   
+  *   `match`         Replace this marker, a string or a regular expression.   
+  *   `merge`         Read the destination if it exists and merge its content.   
+  *   `replace`       The content to be inserted, used conjointly with the from, to or match options.   
+  *   `source`        File path from where to extract the content, do not use conjointly with content.   
+  *   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+  *   `to`            Replace to before this marker, a string or a regular expression.   
   
   ###
   ini: (options, callback) ->
@@ -856,7 +849,7 @@ mecano = module.exports =
   *   `source`        Referenced file to be linked.   
   *   `destination`   Symbolic link to be created.   
   *   `exec`          Create an executable file with an `exec` command.   
-  *   `mode`         Default to 0755.   
+  *   `mode`          Default to 0755.   
 
   `callback`          Received parameters are:   
 
@@ -939,7 +932,7 @@ mecano = module.exports =
   *   `directory`     Alias for `source`
   *   `destination`   Alias for `source`
   *   `exclude`       Regular expression.   
-  *   `mode`         Default to 0755.  
+  *   `mode`          Default to 0755.  
   *   `cwd`           Current working directory for relative paths.   
 
   `callback`          Received parameters are:   
@@ -1012,7 +1005,7 @@ mecano = module.exports =
   `mv` `move(options, callback)`
   --------------------------------
 
-  More files and directories.
+  Move files and directories.   
 
   `options`           Command options include:   
   
@@ -1401,25 +1394,25 @@ mecano = module.exports =
 
   Write a file or a portion of an existing file.
 
-  `options`             Command options include:   
+  `options`           Command options include:   
 
-  *   `from`            Replace from after this marker, a string or a regular expression.   
-  *   `local_source`    Treat the source as local instead of remote, only apply with "ssh" option.   
-  *   `to`              Replace to before this marker, a string or a regular expression.   
-  *   `match`           Replace this marker, a string or a regular expression.   
-  *   `replace`         The content to be inserted, used conjointly with the from, to or match options.   
-  *   `content`         Text to be written, an alternative to source which reference a file.   
-  *   `source`          File path from where to extract the content, do not use conjointly with content.   
-  *   `destination`     File path where to write content to.   
-  *   `backup`          Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
-  *   `append`          Append the content to the destination file. If destination does not exist, the file will be created.   
-  *   `write`           An array containing multiple transformation where a transformation is an object accepting the options `from`, `to`, `match` and `replace`
-  *   `ssh`             Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+  *   `from`          Replace from after this marker, a string or a regular expression.   
+  *   `local_source`  Treat the source as local instead of remote, only apply with "ssh" option.   
+  *   `to`            Replace to before this marker, a string or a regular expression.   
+  *   `match`         Replace this marker, a string or a regular expression.   
+  *   `replace`       The content to be inserted, used conjointly with the from, to or match options.   
+  *   `content`       Text to be written, an alternative to source which reference a file.   
+  *   `source`        File path from where to extract the content, do not use conjointly with content.   
+  *   `destination`   File path where to write content to.   
+  *   `backup`        Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
+  *   `append`        Append the content to the destination file. If destination does not exist, the file will be created.   
+  *   `write`         An array containing multiple transformation where a transformation is an object accepting the options `from`, `to`, `match` and `replace`
+  *   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
 
-  `callback`            Received parameters are:   
+  `callback`          Received parameters are:   
 
-  *   `err`             Error object if any.   
-  *   `rendered`        Number of rendered files.   
+  *   `err`           Error object if any.   
+  *   `rendered`      Number of rendered files.   
   
   The option "append" allows some advance usages. If "append" is 
   null, it will add the `replace` value at the end of the file 
