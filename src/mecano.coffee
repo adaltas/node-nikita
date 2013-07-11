@@ -9,12 +9,13 @@ exec = require 'superexec'
 request = require 'request'
 ini = require 'ini'
 Ftp = require 'jsftp'
+ldap = require 'ldapjs'
+ldap_client = require 'ldapjs/lib/client/client'
 {EventEmitter} = require 'events'
 
 conditions = require './conditions'
 misc = require './misc'
 child = require './child'
-
 
 ###
 
@@ -610,6 +611,236 @@ mecano = module.exports =
         get()
       .on 'both', (err) ->
         finish err, written
+    result
+
+  ###
+  
+  `ldap_acl(options, callback`
+  ----------------------------
+
+  `options`           Command options include:   
+
+  *   `to`            What to control access to as a string.   
+  *   `by`            Who to grant access to and the access to grant as an array (eg: `{..., by:["ssf=64 anonymous auth"]}`)   
+  *   `url`           Specify URI referring to the ldap server, alternative to providing an [ldapjs client] instance.  
+  *   `binddn`        Distinguished Name to bind to the LDAP directory, alternative to providing an [ldapjs client] instance.  
+  *   `passwd`        Password for simple authentication, alternative to providing an [ldapjs client] instance.   
+  *   `ldap`          Instance of an pldapjs client][ldapclt], alternative to providing the `url`, `binddn` and `passwd` connection properties.   
+  *   `unbind`        Close the ldap connection, default to false if connection is an [ldapjs client][ldapclt] instance.   
+  *   `name`          Distinguish name storing the "olcAccess" property, using the database adress (eg: "olcDatabase={2}bdb,cn=config").   
+  *   `overwrite`     Overwrite existing "olcAccess", default is to merge.   
+
+  Resources:
+  http://www.openldap.org/doc/admin24/access-control.html
+
+  [ldapclt]: http://ldapjs.org/client.html
+  ###
+  ldap_acl: (options, callback) ->
+    result = child mecano
+    finish = (err, modified) ->
+      callback err, modified if callback
+      result.end err, modified
+    misc.options options, (err, options) ->
+      return finish err if err
+      modified = 0
+      each( options )
+      .on 'item', (options, next) ->
+        client = null
+        updated = false
+        options.to = options.to.trim()
+        for b, i in options.by
+          options.by[i] = b.trim()
+        connect = ->
+          if options.ldap instanceof ldap_client
+            client = options.ldap
+            return search()
+          # Open and bind connection
+          client = ldap.createClient url: options.url
+          client.bind options.binddn, options.passwd, (err) ->
+            return end err if err
+            search()
+        search = ->
+            # ctx.log 'Search attribute olcAccess'
+            client.search options.name,
+              scope: 'base'
+              attributes: ['olcAccess']
+            , (err, search) ->
+              return unbind err if err
+              olcAccess = null
+              search.on 'searchEntry', (entry) ->
+                # ctx.log "Found #{JSON.stringify entry.object}"
+                # typeof olcAccess may be undefined, array or string
+                olcAccess = entry.object.olcAccess or []
+                olcAccess = [olcAccess] unless Array.isArray olcAccess
+              search.on 'end', ->
+                # ctx.log "Attribute olcAccess was #{JSON.stringify olcAccess}"
+                parse olcAccess
+        parse = (_olcAccess) ->
+          olcAccess = []
+          for access, i in _olcAccess
+            to = ''
+            bys = []
+            buftype = 0 # 0: start, 1: to, 2:by
+            buf = ''
+            for c, i in access
+              buf += c
+              if buftype is 0
+                if /to$/.test buf
+                  buf = ''
+                  buftype = 1
+              if buftype is 1
+                if matches = /^(.*)by$/.exec buf
+                  to = matches[1].trim()
+                  buf = ''
+                  buftype = 2
+              if buftype is 2
+                if matches = /^(.*)by$/.exec buf
+                  bys.push matches[1].trim()
+                  buf = ''
+                else if i+1 is access.length
+                  bys.push buf.trim()
+            olcAccess.push
+              to: to
+              by: bys
+          diff olcAccess
+        diff = (olcAccess) ->
+          toAlreadyExist = false
+          for access, i in olcAccess
+            continue unless options.to is access.to
+            toAlreadyExist = true
+            fby = unless options.overwrite then access.by else []
+            for oby in options.by
+              found = false
+              for aby in access.by
+                if oby is aby
+                  found = true
+                  break
+              unless found
+                updated = true
+                fby.push oby 
+            olcAccess[i].by = fby
+          unless toAlreadyExist
+            updated = true
+            olcAccess.push to: options.to, by: options.by
+          if updated then stringify(olcAccess) else unbind()
+        stringify = (olcAccess) ->
+          for access, i in olcAccess
+            value = "{#{i}}to #{access.to}"
+            for bie in access.by
+              value += " by #{bie}"
+            olcAccess[i] = value
+          save olcAccess
+        save = (olcAccess) ->
+          change = new ldap.Change 
+            operation: 'replace'
+            modification: olcAccess: olcAccess
+          client.modify options.name, change, (err) ->
+            unbind err
+        unbind = (err) ->
+          # ctx.log 'Unbind connection'
+          # return end err unless options.unbind and options.ldap instanceof ldap_client
+          return end err if options.ldap instanceof ldap_client and not options.unbind
+          client.unbind (e) ->
+            return next e if e
+            end err
+        end = (err) ->
+          modified += 1 if updated and not err
+          next err
+        conditions.all options, next, connect
+      .on 'both', (err) ->
+        finish err, modified
+    result
+  ###
+
+  `ldap_index(options, callback`
+  ------------------------------
+
+  `options`           Command options include:   
+
+  *   `indexes`       Object with keys mapping to indexed attributes and values mapping to indices ("pres", "approx", "eq", "sub" and 'special').   
+  *   `url`           Specify URI referring to the ldap server, alternative to providing an [ldapjs client] instance.  
+  *   `binddn`        Distinguished Name to bind to the LDAP directory, alternative to providing an [ldapjs client] instance.  
+  *   `passwd`        Password for simple authentication, alternative to providing an [ldapjs client] instance.   
+  *   `ldap`          Instance of an pldapjs client][ldapclt], alternative to providing the `url`, `binddn` and `passwd` connection properties.   
+  *   `unbind`        Close the ldap connection, default to false if connection is an [ldapjs client][ldapclt] instance.   
+  *   `name`          Distinguish name storing the "olcAccess" property, using the database adress (eg: "olcDatabase={2}bdb,cn=config").   
+  *   `overwrite`     Overwrite existing "olcAccess", default is to merge.   
+  
+  Resources
+  http://www.zytrax.com/books/ldap/apa/indeces.html
+  ###
+  ldap_index: (options, callback) ->
+    result = child mecano
+    finish = (err, created) ->
+      callback err, created if callback
+      result.end err, created
+    misc.options options, (err, options) ->
+      return finish err if err
+      modified = 0
+      each( options )
+      .on 'item', (options, next) ->
+        client = null
+        updated = false
+        connect = ->
+          if options.ldap instanceof ldap_client
+            client = options.ldap
+            return get()
+          # Open and bind connection
+          client = ldap.createClient url: options.url
+          client.bind options.binddn, options.passwd, (err) ->
+            return end err if err
+            get()
+        get = ->
+          client.search 'olcDatabase={2}bdb,cn=config', 
+              scope: 'base'
+              attributes: ['olcDbIndex']
+          , (err, search) ->
+            olcDbIndex = null
+            search.on 'searchEntry', (entry) ->
+              olcDbIndex = entry.object.olcDbIndex
+            search.on 'end', ->
+              parse olcDbIndex
+        parse = (arIndex) ->
+          indexes = {}
+          for index in arIndex
+            [k,v] = index.split ' '
+            indexes[k] = v
+          diff indexes
+        diff = (orgp) ->
+          unless options.overwrite
+            newp = misc.merge {}, orgp, options.indexes
+          else
+            newp = options.indexes
+          okl = Object.keys(orgp).sort()
+          nkl = Object.keys(newp).sort()
+          for i in [0...Math.min(okl.length, nkl.length)]
+            if i is okl.length or i is nkl.length or okl[i] isnt nkl[i] or orgp[okl[i]] isnt newp[nkl[i]]
+              updated = true
+              break
+          if updated then stringifiy newp else unbind()
+        stringifiy = (perms) ->
+          indexes = []
+          for k, v of perms
+            indexes.push "#{k} #{v}"
+          replace indexes
+        replace = (indexes) ->
+          change = new ldap.Change
+            operation: 'replace'
+            modification: 
+              olcDbIndex: indexes
+          client.modify options.name, change, (err) ->
+            unbind err
+        unbind = (err) ->
+          return end err if options.ldap instanceof ldap_client and not options.unbind
+          client.unbind (e) ->
+            return next e if e
+            end err
+        end = (err) ->
+          modified += 1 if updated and not err
+          next err
+        conditions.all options, next, connect
+      .on 'both', (err) ->
+        finish err, modified
     result
 
 
