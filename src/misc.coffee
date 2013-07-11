@@ -538,11 +538,11 @@ misc = module.exports =
         if isObj
           if depth is 0
             out += "#{prefix}[#{k}]\n"
-            out += misc.ini.stringify_square_then_curly v, ++depth
+            out += misc.ini.stringify_square_then_curly v, depth + 1
             out += "\n"
           else
             out += "#{prefix}#{k} = {\n"
-            out += misc.ini.stringify_square_then_curly v, ++depth
+            out += misc.ini.stringify_square_then_curly v, depth + 1
             out += "#{prefix}}\n"
         else 
           if isNull

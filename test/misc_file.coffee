@@ -45,7 +45,7 @@ describe 'misc.file', ->
 
   describe 'readFile', ->
 
-    they 'throw error if not exists', (ssh, next) ->
+    they 'pass error to callback if not exists', (ssh, next) ->
       misc.file.readFile ssh, "#{__dirname}/doesnotexist", 'utf8', (err, exists) ->
         err.message.should.eql "ENOENT, open '#{__dirname}/doesnotexist'"
         err.errno.should.eql 34

@@ -19,8 +19,11 @@ describe 'misc', ->
   describe 'ini', ->
 
     it 'parse in square brackets and curly brackets', ->
-      res = misc.ini.stringify_square_then_curly user: preference: color: true
-      res.should.eql '[user]\n preference = {\n  color = true\n }\n\n'
+      res = misc.ini.stringify_square_then_curly 
+        user: preference: color: true
+        group:
+          name: 'us'
+      res.should.eql '[user]\n preference = {\n  color = true\n }\n\n[group]\n name = us\n\n'
 
   describe 'pidfileStatus', ->
 
