@@ -72,7 +72,9 @@ module.exports =
   ----------------------------------------
 
   Work on the property `if_exists` in `options`. The value may 
-  be a file path or an array of file paths.
+  be a file path or an array of file paths. You could also set the
+  value to `true`, in which case it will be set with the `destination`
+  option.
 
   The callback `succeed` is called if all the provided paths 
   exists otherwise the callback `skip` is called.
@@ -91,7 +93,9 @@ module.exports =
   ---------------------------------------------
 
   Work on the property `not_if_exists` in `options`. The value may 
-  be a file path or an array of file paths.
+  be a file path or an array of file paths. You could also set the
+  value to `true`, in which case it will be set with the `destination`
+  option.
 
   The callback `succeed` is called if none of the provided paths 
   exists otherwise the callback `skip` is called.
