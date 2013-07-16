@@ -24,6 +24,47 @@ misc = module.exports =
         algorithm = 'md5'
       crypto.createHash(algorithm).update(data).digest('hex')
   file:
+    readdir: (ssh, path, callback) ->
+      unless ssh
+        fs.readdir path, callback
+      else
+        ssh.sftp (err, sftp) ->
+          return callback err if err
+          sftp.readdir path, callback
+    ###
+    `createReadStream(ssh, path, [options], callback)`
+    ###
+    createReadStream: (ssh, source, options, callback) ->
+      if arguments.length is 3
+        callback = options
+        options = {}
+      unless ssh
+        callback null, fs.createReadStream source, options
+      else
+        ssh.sftp (err, sftp) ->
+          return callback err if err
+          s = sftp.createReadStream source, options
+          s.emit = ( (emit) ->
+            (key, val) ->
+              if key is 'error' and val is undefined
+                val = new Error "EISDIR, read"
+                val.errno = 28
+                val.code = 'EISDIR'
+                return emit.call @, 'error', val
+              if key is 'error' and val.message is 'No such file'
+                val = new Error "ENOENT, open '#{source}'"
+                val.errno = 34
+                val.code = 'ENOENT'
+                val.path = source
+                return emit.call @, 'error', val
+              emit.apply @, arguments
+          )(s.emit)
+          s.on 'close', ->
+            sftp.end()
+          callback null, s
+    ###
+    `unlink(ssh, source, callback)`
+    ###
     unlink: (ssh, source, callback) ->
       unless ssh
         fs.unlink source, (err) ->

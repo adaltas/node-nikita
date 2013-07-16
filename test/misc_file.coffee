@@ -10,6 +10,25 @@ describe 'misc.file', ->
 
   scratch = test.scratch @
 
+  describe 'createReadStream', ->
+
+    they 'pass error if file does not exists', (ssh, next) ->
+      misc.file.createReadStream ssh, "#{scratch}/not_here", (err, stream) ->
+        stream.on 'error', (err) ->
+          err.message.should.eql "ENOENT, open '#{scratch}/not_here'"
+          err.errno.should.eql 34
+          err.code.should.eql 'ENOENT'
+          err.path.should.eql '/tmp/mecano-test/not_here'
+          next()
+
+    they 'pass error if file is a directory', (ssh, next) ->
+      misc.file.createReadStream ssh, __dirname, (err, stream) ->
+        stream.on 'error', (err) ->
+          err.message.should.eql "EISDIR, read"
+          err.errno.should.eql 28
+          err.code.should.eql 'EISDIR'
+          next()
+
   describe 'chmod', ->
 
     they 'change permission', (ssh, next) ->
