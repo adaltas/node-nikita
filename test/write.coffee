@@ -80,6 +80,36 @@ describe 'write', ->
         return next err if err
         content.should.eql ''
         next()
+
+  they 'touch file', (ssh, next) ->
+    mecano.write
+      ssh: ssh
+      content: ''
+      destination: "#{scratch}/empty_file"
+      not_if_exists: true
+    , (err, written) ->
+      return next err if err
+      written.should.eql 1
+      misc.file.readFile ssh, "#{scratch}/empty_file", 'utf8', (err, content) ->
+        return next err if err
+        content.should.eql ''
+        mecano.write
+          ssh: ssh
+          content: 'toto'
+          destination: "#{scratch}/empty_file"
+        , (err, written) ->
+          mecano.write
+            ssh: ssh
+            content: ''
+            destination: "#{scratch}/empty_file"
+            not_if_exists: true
+          , (err, written) ->
+            return next err if err
+            written.should.eql 0
+            misc.file.readFile ssh, "#{scratch}/empty_file", 'utf8', (err, content) ->
+              return next err if err
+              content.should.eql 'toto'
+              next()
   
   they 'create parent directory', (ssh, next) ->
     mecano.write
@@ -470,7 +500,7 @@ describe 'write', ->
         , (err, written) ->
           return next err if err
           written.should.eql 0
-          misc.file.exists null, "#{scratch}/file.bck", (err, exists) ->
+          misc.file.exists ssh, "#{scratch}/file.bck", (err, exists) ->
             exists.should.be.false
             # If content is different, check the backup
             mecano.write

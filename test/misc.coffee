@@ -44,6 +44,18 @@ describe 'misc', ->
           status.should.eql 2
           next()
 
+  describe 'options', ->
+
+    they 'default not_if_exists to destination if false', (ssh, next) ->
+      misc.options
+        ssh: ssh
+        not_if_exists: true
+        destination: __dirname
+      , (err, options) ->
+        return next err if err
+        options[0].not_if_exists[0].should.eql __dirname
+        next()
+
 
 
 

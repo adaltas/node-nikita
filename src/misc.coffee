@@ -125,28 +125,28 @@ misc = module.exports =
     `readFile(ssh, path, [options], callback)`
     -----------------------------------------
     ###
-    readFile: (ssh, path, options, callback) ->
+    readFile: (ssh, source, options, callback) ->
       if arguments.length is 3
         callback = options
         options = {}
       else
         options = encoding: 'utf8' if typeof options is 'string'
-      return callback new Error "Invalid path '#{path}'" unless path
+      return callback new Error "Invalid path '#{source}'" unless source
       unless ssh
-        fs.readFile path, options.encoding, (err, content) ->
+        fs.readFile source, options.encoding, (err, content) ->
           callback err, content
       else
         ssh.sftp (err, sftp) ->
           return callback err if err
-          s = sftp.createReadStream path, options
+          s = sftp.createReadStream source, options
           data = []
           s.on 'data', (d) ->
             data.push d.toString()
           s.on 'error', (err) ->
-            err = new Error "ENOENT, open '#{path}'"
+            err = new Error "ENOENT, open '#{source}'"
             err.errno = 34
             err.code = 'ENOENT'
-            err.path = path
+            err.path = source
             finish err
           s.on 'close', ->
             finish null, data.join ''
@@ -157,15 +157,15 @@ misc = module.exports =
     `writeFile(ssh, path, content, [options], callback)`
     -----------------------------------------
     ###
-    writeFile: (ssh, path, content, options, callback) ->
+    writeFile: (ssh, source, content, options, callback) ->
       if arguments.length is 4
         callback = options
         options = {}
       unless ssh
-        # fs.writeFile path, content, options, (err, content) ->
+        # fs.writeFile source, content, options, (err, content) ->
         #   callback err, content
         write = ->
-          stream = fs.createWriteStream path, options
+          stream = fs.createWriteStream source, options
           if typeof content is 'string' or buffer.Buffer.isBuffer content
             stream.write content if content
             stream.end()
@@ -179,12 +179,12 @@ misc = module.exports =
             chown()
         chown = ->
           return chmod() unless options.uid or options.gid
-          fs.chown path, options.uid, options.gid, (err) ->
+          fs.chown source, options.uid, options.gid, (err) ->
             return callback err if err
             chmod()
         chmod = ->
           return finish() unless options.mode
-          fs.chmod path, options.mode, (err) ->
+          fs.chmod source, options.mode, (err) ->
             finish err
         finish = (err) ->
           callback err
@@ -193,7 +193,7 @@ misc = module.exports =
         ssh.sftp (err, sftp) ->
           return callback err if err
           write = ->
-            s = sftp.createWriteStream path, options
+            s = sftp.createWriteStream source, options
             if typeof content is 'string' or buffer.Buffer.isBuffer content
               s.write content if content
               s.end()
@@ -207,12 +207,12 @@ misc = module.exports =
               chown()
           chown = ->
             return chmod() unless options.uid or options.gid
-            sftp.chown path, options.uid, options.gid, (err) ->
+            sftp.chown source, options.uid, options.gid, (err) ->
               return finish err if err
               chmod()
           chmod = ->
             return finish() unless options.mode
-            sftp.chmod path, options.mode, (err) ->
+            sftp.chmod source, options.mode, (err) ->
               finish err
           finish = (err) ->
             sftp.end()
@@ -251,6 +251,11 @@ misc = module.exports =
           #   console.log k, v if k isnt 'ssh'
           mkdir = ->
             sftp.mkdir path, options, (err, attr) ->
+              if err?.message is 'Failure'
+                err = new Error "EEXIST, mkdir '#{path}'"
+                err.errno = 47
+                err.code = 'EEXIST'
+                err.path = path
               return finish err if err
               chown()
           chown = ->
@@ -300,13 +305,17 @@ misc = module.exports =
     contains. The default algorithm to compute the hash is md5.
 
     Throw an error if file does not exist unless it is a directory.
+
+        misc.file.hash ssh, '/path/to/file', (err, md5) ->
+          md5.should.eql '287621a8df3c3f6c99c7b7645bd09ffd'
+
     ###
-    hash: (file, algorithm, callback) ->
-      if arguments.length is 2
+    hash: (ssh, file, algorithm, callback) ->
+      if arguments.length is 3
         callback = algorithm
         algorithm = 'md5'
       hashs = []
-      fs.stat file, (err, stat) ->
+      misc.file.stat ssh, file, (err, stat) ->
         return callback new Error "Does not exist: #{file}" if err?.code is 'ENOENT'
         return callback err if err
         file += '/**' if stat.isDirectory()
@@ -314,15 +323,17 @@ misc = module.exports =
         .files(file)
         .on 'item', (item, next) ->
           shasum = crypto.createHash algorithm
-          fs.ReadStream(item)
-          .on 'data', (data) ->
-            shasum.update data
-          .on 'error', (err) ->
-            return next() if err.code is 'EISDIR'
-            next err
-          .on 'end', ->
-            hashs.push shasum.digest 'hex'
-            next()
+          misc.file.createReadStream ssh, item, (err, stream) ->
+            return callback err if err
+            stream
+            .on 'data', (data) ->
+              shasum.update data
+            .on 'error', (err) ->
+              return next() if err.code is 'EISDIR'
+              next err
+            .on 'end', ->
+              hashs.push shasum.digest 'hex'
+              next()
         .on 'error', (err) ->
           callback err
         .on 'end', ->
@@ -342,13 +353,13 @@ misc = module.exports =
     Compare the hash of multiple file. Return the file md5 
     if the file are the same or false otherwise.
     ###
-    compare: (files, callback) ->
+    compare: (ssh, files, callback) ->
       return callback new Error 'Minimum of 2 files' if files.length < 2
       result = null
       each(files)
       .parallel(true)
       .on 'item', (file, next) ->
-        misc.file.hash file, (err, md5) ->
+        misc.file.hash ssh, file, (err, md5) ->
           return next err if err
           if result is null
             result = md5 
@@ -595,18 +606,27 @@ misc = module.exports =
           out += '\n'
       out
   ###
+
   `options(options, callback)`
   ----------------------------
   Normalize options. An ssh connection is needed if the key "ssh" 
   hold a configuration object. The 'uid' and 'gid' fields will 
-  be converted to integer if they match a username or a group.
+  be converted to integer if they match a username or a group.   
+
+  `callback`          Received parameters are:   
+
+  *   `err`           Error object if any.   
+  *   `options`       Sanitized options.   
+
   ###
   options: (options, callback) ->
     options = [options] unless Array.isArray options
     each(options)
     .on 'item', (options, next) ->
       options.if = [options.if] if options.if? and not Array.isArray options.if
+      options.if_exists = options.destination if options.if_exists is true and options.destination
       options.if_exists = [options.if_exists] if options.if_exists? and not Array.isArray options.if_exists
+      options.not_if_exists = options.destination if options.not_if_exists is true and options.destination
       options.not_if_exists = [options.not_if_exists] if options.not_if_exists? and not Array.isArray options.not_if_exists
       connection = ->
         return next() unless options.ssh

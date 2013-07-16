@@ -65,18 +65,19 @@ mecano = module.exports =
         # Validate parameters
         return next new Error 'Missing source' unless options.source
         return next new Error 'Missing destination' unless options.destination
-        return next new Error 'SSH not yet supported' if options.ssh
+        # return next new Error 'SSH not yet supported' if options.ssh
         # Cancel action if destination exists ? really ? no md5 comparaison, strange
         options.not_if_exists = options.destination if options.not_if_exists is true
         # Start real work
         search = ->
           srcStat = null
           dstStat = null
-          fs.stat options.source, (err, stat) ->
+          misc.file.stat options.ssh, options.source, (err, stat) ->
             # Source must exists
             return next err if err
             srcStat = stat
-            fs.stat options.destination, (err, stat) ->
+            misc.file.stat options.ssh, options.destination, (err, stat) ->
+              return next err if err and err.code isnt 'ENOENT'
               dstStat = stat
               sourceEndWithSlash = options.source.lastIndexOf('/') is options.source.length - 1
               if srcStat.isDirectory() and dstStat and not sourceEndWithSlash
@@ -96,7 +97,8 @@ mecano = module.exports =
               destination = path.resolve options.destination, path.basename source
             else
               destination = options.destination
-            fs.stat source, (err, stat) ->
+            misc.file.stat options.ssh, source, (err, stat) ->
+              return next err if err
               if stat.isDirectory()
               then copyDir source, destination, next
               else copyFile source, destination, next
@@ -109,7 +111,7 @@ mecano = module.exports =
               finish next
           # Copy a file
           copyFile = (source, destination, next) ->
-            misc.file.compare [source, destination], (err, md5) ->
+            misc.file.compare options.ssh, [source, destination], (err, md5) ->
               return next err if err and err.message.indexOf('Does not exist') isnt 0
               # File are the same, we can skip copying
               return next() if md5
@@ -121,7 +123,7 @@ mecano = module.exports =
                 chmod source, next
           chmod = (file, next) ->
             return finish next if not options.mode or options.mode is dstStat.mode
-            fs.chmod options.destination, options.mode, (err) ->
+            misc.file.chmod options.ssh, options.destination, options.mode, (err) ->
               return next err if err
               finish next
           finish = (next) ->
@@ -203,7 +205,7 @@ mecano = module.exports =
             # Use previous download
             if exists and not options.force
               return next() unless md5sum
-              misc.file.hash destination, 'md5', (err, hash) ->
+              misc.file.hash options.ssh, destination, 'md5', (err, hash) ->
                 return next() if hash is md5sum
                 misc.file.unlink options.ssh, destination, (err) ->
                   return next err if err
@@ -271,7 +273,7 @@ mecano = module.exports =
                 next err
         checksum = ->
           return unstage() unless md5sum
-          misc.file.hash stageDestination, 'md5', (err, hash) ->
+          misc.file.hash options.ssh, stageDestination, 'md5', (err, hash) ->
             return unstage() if hash is md5sum
             # Download is invalid, cleaning up
             misc.file.remove options.ssh, stageDestination, (err) ->

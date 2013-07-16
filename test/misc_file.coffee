@@ -84,6 +84,21 @@ describe 'misc.file', ->
         exists.should.not.be.ok
         next()
 
+  describe 'mkdir', ->
+
+    they 'create a new directory', (ssh, next) ->
+      misc.file.mkdir ssh, "#{scratch}/new_dir", (err) ->
+        next err
+
+    they 'pass error if dir exists', (ssh, next) ->
+      misc.file.mkdir ssh, "#{scratch}/new_dir", (err) ->
+        misc.file.mkdir ssh, "#{scratch}/new_dir", (err) ->
+          err.message.should.eql "EEXIST, mkdir '#{scratch}/new_dir'"
+          err.path.should.eql "#{scratch}/new_dir"
+          err.errno.should.eql 47
+          err.code.should.eql 'EEXIST'
+          next()
+
   describe 'stat', ->
 
     they 'on file', (ssh, next) ->
@@ -105,44 +120,44 @@ describe 'misc.file', ->
 
   describe 'hash', ->
 
-    it 'returns the file md5', (next) ->
-      misc.file.hash "#{__dirname}/../resources/render.eco", (err, md5) ->
+    they 'returns the file md5', (ssh, next) ->
+      misc.file.hash ssh, "#{__dirname}/../resources/render.eco", (err, md5) ->
         return next err if err
         md5.should.eql '287621a8df3c3f6c99c7b7645bd09ffd'
         next()
 
-    it 'throws error if file does not exist', (next) ->
-      misc.file.hash "#{__dirname}/does/not/exist", (err, md5) ->
+    they 'throws error if file does not exist', (ssh, next) ->
+      misc.file.hash ssh, "#{__dirname}/does/not/exist", (err, md5) ->
         err.message.should.eql "Does not exist: #{__dirname}/does/not/exist"
         should.not.exist md5
         next()
 
-    it 'returns the directory md5', (next) ->
-      misc.file.hash "#{__dirname}/../resources", (err, md5) ->
+    they 'returns the directory md5', (ssh, next) ->
+      misc.file.hash ssh, "#{__dirname}/../resources", (err, md5) ->
         return next err if err
         md5.should.eql 'e667d74986ef3f22b7b6b7fc66d5ea59'
         next()
 
-    it 'returns the directory md5 when empty', (next) ->
+    they 'returns the directory md5 when empty', (ssh, next) ->
       mecano.mkdir "#{scratch}/a_dir", (err, created) ->
         return next err if err
-        misc.file.hash "#{scratch}/a_dir", (err, md5) ->
+        misc.file.hash ssh, "#{scratch}/a_dir", (err, md5) ->
           return next err if err
           md5.should.eql crypto.createHash('md5').update('').digest('hex')
           next()
 
   describe 'compare', ->
 
-    it '2 differents files', (next) ->
+    they '2 differents files', (ssh, next) ->
       file = "#{__dirname}/../resources/render.eco"
-      misc.file.compare [file, file], (err, md5) ->
+      misc.file.compare ssh, [file, file], (err, md5) ->
         return next err if err
         md5.should.eql '287621a8df3c3f6c99c7b7645bd09ffd'
         next()
 
-    # it 'throw error if there is a directory', (next) ->
+    # they 'throw error if there is a directory', (ssh, next) ->
     #   file = "#{__dirname}/../resources/render.eco"
-    #   misc.file.compare [file, __dirname], (err, md5) ->
+    #   misc.file.compare ssh, [file, __dirname], (err, md5) ->
     #     err.message.should.eql "Is a directory: #{__dirname}"
     #     should.not.exist md5
     #     next()
