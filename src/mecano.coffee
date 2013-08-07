@@ -947,6 +947,15 @@ mecano = module.exports =
       mecano.mkdir './some/dir', (err, created) ->
         console.log err?.message ? created
 
+  Advance usage:
+
+      mecano.mkdir 
+        ssh: options.ssh
+        destination: './some/dir'
+        uid: 'me'
+        gid: 'my_group'
+        mode: 0o0777 or '777'
+
   ###
   mkdir: (options, callback) ->
     result = child mecano
