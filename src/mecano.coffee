@@ -1376,28 +1376,35 @@ mecano = module.exports =
 
   ###
   upload: (options, callback) ->
+    result = child mecano
+    finish = (err, uploaded) ->
+      callback err, uploaded if callback
+      result.end err, uploaded
     misc.options options, (err, options) ->
-      return callback err if err
+      return finish err if err
       uploaded = 0
       each( options )
       .on 'item', (options, next) ->
-        # Start real work
-        if options.binary
-          return options.ssh.sftp (err, sftp) ->
-            from = fs.createReadStream options.source
-            to = sftp.createWriteStream options.destination
-            from.pipe to
-            from.on 'error', (err) ->
-              next err
-            from.on 'end', ->
-              uploaded++
-              next()
-        options = misc.merge options, local_source: true
-        mecano.write options, (err, written) ->
-          uploaded++ if written is 1
-          next err
+        conditions.all options, next, ->
+          # Start real work
+          if options.binary
+            return options.ssh.sftp (err, sftp) ->
+              from = fs.createReadStream options.source#, encoding: 'binary'
+              to = sftp.createWriteStream options.destination#, encoding: 'binary'
+              l = 0
+              from.pipe to
+              from.on 'error', (err) ->
+                next err
+              from.on 'end', ->
+                uploaded++
+                next()
+          options = misc.merge options, local_source: true
+          mecano.write options, (err, written) ->
+            uploaded++ if written is 1
+            next err
       .on 'both', (err) ->
-        callback err, uploaded
+        finish err, uploaded
+    result
   ###
 
   `write(options, callback)`
