@@ -1670,7 +1670,7 @@ mecano = module.exports =
   `callback`          Received parameters are:   
 
   *   `err`           Error object if any.   
-  *   `rendered`      Number of rendered files.   
+  *   `written`      Number of written files.   
   
   The option "append" allows some advance usages. If "append" is 
   null, it will add the `replace` value at the end of the file 
@@ -1812,7 +1812,7 @@ mecano = module.exports =
           mkdir = ->
             mecano.mkdir 
               ssh: options.ssh
-              destination: path.dirname(options.destination)
+              destination: path.dirname options.destination
               uid: options.uid
               gid: options.gid
               mode: options.mode
