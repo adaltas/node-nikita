@@ -314,26 +314,42 @@ misc = module.exports =
       if arguments.length is 3
         callback = algorithm
         algorithm = 'md5'
+      hasher = (ssh, path, callback) ->
+        shasum = crypto.createHash algorithm
+        misc.file.createReadStream ssh, path, (err, stream) ->
+          return callback err if err
+          stream
+          .on 'data', (data) ->
+            shasum.update data
+          .on 'error', (err) ->
+            return callback() if err.code is 'EISDIR'
+            callback err
+          .on 'end', ->
+            callback err, shasum.digest 'hex'
       hashs = []
       misc.file.stat ssh, file, (err, stat) ->
         return callback new Error "Does not exist: #{file}" if err?.code is 'ENOENT'
         return callback err if err
         file += '/**' if stat.isDirectory()
+        # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        # This is not working over ssh, we
+        # need to implement the "glob" module
+        # over ssh
+        # |||||||||||||||||||||||||||||||||
+        # Temp fix, we support file md5 over
+        # ssh, but not directory:
+        if ssh and stat.isFile()
+          return hasher ssh, file, callback
         each()
         .files(file)
         .on 'item', (item, next) ->
-          shasum = crypto.createHash algorithm
-          misc.file.createReadStream ssh, item, (err, stream) ->
-            return callback err if err
-            stream
-            .on 'data', (data) ->
-              shasum.update data
-            .on 'error', (err) ->
-              return next() if err.code is 'EISDIR'
-              next err
-            .on 'end', ->
-              hashs.push shasum.digest 'hex'
-              next()
+          hasher ssh, item, (err, h) ->
+            return next err if err
+            hashs.push h
+            next()
         .on 'error', (err) ->
           callback err
         .on 'end', ->
