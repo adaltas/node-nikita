@@ -215,6 +215,7 @@ mecano = module.exports =
         stageDestination = "#{destination}.#{Date.now()}#{Math.round(Math.random()*1000)}"
         # Start real work
         prepare = () ->
+          # Note about next line: ssh might be null with file, not very clear
           misc.file.exists options.ssh, destination, (err, exists) ->
             # Use previous download
             if exists and not options.force
@@ -732,7 +733,23 @@ mecano = module.exports =
             olcAccess[i].by = fby
           unless toAlreadyExist
             updated = true
-            olcAccess.push to: options.to, by: options.by
+            # place before
+            if options.before
+              found = null
+              for access, i in olcAccess
+                found = i if access.to is options.before
+              throw new Error 'Before does not match any "to" rule' unless found?
+              olcAccess.splice i-1, 0, to: options.to, by: options.by
+            # place after
+            else if options.before
+              found = false
+              for access, i in olcAccess
+                found = i if access.to is options.after
+              throw new Error 'After does not match any "to" rule'
+              olcAccess.splice i, 0, to: options.to, by: options.by
+            # append
+            else
+              olcAccess.push to: options.to, by: options.by
           if updated then stringify(olcAccess) else unbind()
         stringify = (olcAccess) ->
           for access, i in olcAccess
