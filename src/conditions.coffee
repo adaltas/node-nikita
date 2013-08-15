@@ -25,7 +25,7 @@ module.exports =
   all: (options, skip, succeed) ->
     each([@if, @if_exists, @not_if_exists, @should_exist])
     .on 'item', (condition, next) ->
-      condition(options, skip, next)
+      condition options, skip, next
     .on('error', skip)
     .on('end', succeed)
   ###
