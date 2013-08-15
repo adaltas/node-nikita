@@ -853,6 +853,153 @@ mecano = module.exports =
         finish err, modified
     result
 
+  ###
+  Register a new ldap schema
+  --------------------------
+
+  `options`           Command options include:   
+
+  *   `url`           Specify URI referring to the ldap server, alternative to providing an [ldapjs client] instance.  
+  *   `binddn`        Distinguished Name to bind to the LDAP directory, alternative to providing an [ldapjs client] instance.  
+  *   `passwd`        Password for simple authentication, alternative to providing an [ldapjs client] instance.   
+  *   `name`          Common name of the schema.   
+  *   `schema`        Path to the schema definition.   
+  *   `overwrite`     Overwrite existing "olcAccess", default is to merge.   
+  *   `log`           Output channel to print mecano specific log information.   
+  ###
+  ldap_schema: (options, callback) ->
+    result = child mecano
+    finish = (err, created) ->
+      callback err, created if callback
+      result.end err, created
+    misc.options options, (err, options) ->
+      return finish err if err
+      modified = 0
+      each( options )
+      .on 'item', (options, next) ->
+        return next new Error "Missing name" unless options.name
+        return next new Error "Missing schema" unless options.schema
+        options.schema = options.schema.trim()
+        tempdir = options.tempdir or "/tmp/mecano_ldap_schema_#{Date.now()}"
+        schema = "#{tempdir}/#{options.name}.schema"
+        conf = "#{tempdir}/schema.conf"
+        ldif = "#{tempdir}/ldif"
+        registered = ->
+          options.log 'Check if schema is registered'
+          mecano.execute
+            cmd: "ldapsearch  -D #{options.binddn} -w #{options.passwd} -b \"cn=schema,cn=config\" | grep -E cn=\\{[0-9]+\\}#{options.name},cn=schema,cn=config"
+            code: 0
+            code_skipped: 1
+            ssh: options.ssh
+            stdout: options.stdout
+            stderr: options.stderr
+          , (err, registered, stdout) ->
+            return next err if err
+            return next() if registered
+            dir()
+        dir = ->
+          options.log 'Create ldif directory'
+          mecano.mkdir
+            destination: ldif
+            ssh: options.ssh
+          , (err, executed) ->
+            return next err if err
+            write()
+        write = ->
+          options.log 'Copy schema'
+          mecano.copy
+            source: options.schema
+            destination: schema
+            ssh: options.ssh
+          , (err, copied) ->
+            return next err if err
+            options.log 'Prepare configuration'
+            mecano.write
+              content: "include         #{options.schema}"
+              destination: conf
+              ssh: options.ssh
+            , (err) ->
+              return next err if err
+              generate()
+        generate = ->
+          options.log 'Generate configuration'
+          mecano.execute
+            cmd: "slaptest -f #{conf} -F #{ldif}"
+            ssh: options.ssh
+            stdout: options.stdout
+            stderr: options.stderr
+          , (err, executed) ->
+            return next err if err
+            rename()
+        rename = ->
+          options.log 'Rename configuration'
+          mecano.move
+            source: "#{ldif}/cn=config/cn=schema/cn={0}#{options.name}.ldif"
+            destination: "#{ldif}/cn=config/cn=schema/cn=#{options.name}.ldif"
+            force: true
+            ssh: options.ssh
+          , (err, moved) ->
+            return next err if err
+            return new Error 'No generated schema' unless moved
+            configure()
+        configure = ->
+          options.log 'Prepare ldif'
+          mecano.write
+            destination: "#{ldif}/cn=config/cn=schema/cn=#{options.name}.ldif"
+            write: [
+              match: /^dn: cn.*$/mg
+              replace: "dn: cn=#{options.name},cn=schema,cn=config"
+            ,
+              match: /^cn: {\d+}(.*)$/mg
+              replace: 'cn: $1'
+            ,
+              match: /^structuralObjectClass.*/mg
+              replace: ''
+            ,
+              match: /^entryUUID.*/mg
+              replace: ''
+            ,
+              match: /^creatorsName.*/mg
+              replace: ''
+            ,
+              match: /^createTimestamp.*/mg
+              replace: ''
+            ,
+              match: /^entryCSN.*/mg
+              replace: ''
+            ,
+              match: /^modifiersName.*/mg
+              replace: ''
+            ,
+              match: /^modifyTimestamp.*/mg
+              replace: ''
+            ]
+            ssh: options.ssh
+          , (err, written) ->
+            return next err if err
+            register()
+        register = ->
+          options.log 'Add schema'
+          mecano.execute
+            cmd: "ldapadd -f #{ldif}/cn=config/cn=schema/cn=#{options.name}.ldif -D cn=admin,cn=config -w test"
+            ssh: options.ssh
+            stdout: options.stdout
+            stderr: options.stderr
+          , (err, executed) ->
+            return next err if err
+            modified++
+            clean()
+        clean = ->
+          options.log 'Clean up'
+          mecano.remove
+            destination: tempdir
+            ssh: options.ssh
+          , (err, removed) ->
+            next err
+        conditions.all options, next, registered
+      .on 'both', (err) ->
+        finish err, modified
+    result
 
   ###
 
