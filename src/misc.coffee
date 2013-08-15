@@ -154,7 +154,7 @@ misc = module.exports =
         callback = options
         options = {}
       else
-        options = encoding: 'utf8' if typeof options is 'string'
+        options = encoding: options if typeof options is 'string'
       return callback new Error "Invalid path '#{source}'" unless source
       unless ssh
         fs.readFile source, options.encoding, (err, content) ->
@@ -185,6 +185,8 @@ misc = module.exports =
       if arguments.length is 4
         callback = options
         options = {}
+      else
+        options = encoding: options if typeof options is 'string'
       unless ssh
         # fs.writeFile source, content, options, (err, content) ->
         #   callback err, content
