@@ -33,6 +33,10 @@ misc = module.exports =
           sftp.readdir path, callback
     ###
     `createReadStream(ssh, path, [options], callback)`
+    --------------------------------------------------
+
+        misc.file.createReadStream sshOrNull, 'test.out', (err, stream) ->
+          stream.pipe fs.createWriteStream 'test.in'
     ###
     createReadStream: (ssh, source, options, callback) ->
       if arguments.length is 3
@@ -62,6 +66,26 @@ misc = module.exports =
           s.on 'close', ->
             sftp.end()
           callback null, s
+    ###
+    createWriteStream(ssh, path, [options], callback)
+    -------------------------------------------------
+
+        misc.file.createWriteStream sshOrNull, 'test.out', (err, stream) ->
+          fs.createReadStream('test.in').pipe stream
+    ###
+    createWriteStream: (ssh, path, options, callback) ->
+      if arguments.length is 3
+        callback = options
+        options = {}
+      unless ssh
+        callback null, fs.createWriteStream(path, options)
+      else
+        ssh.sftp (err, sftp) ->
+          return callback err if err
+          ws = sftp.createWriteStream(path, options)
+          ws.on 'close', ->
+            sftp.end()
+          callback null, ws
     ###
     `unlink(ssh, source, callback)`
     ###
