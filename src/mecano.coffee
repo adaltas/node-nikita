@@ -16,6 +16,7 @@ ldap_client = require 'ldapjs/lib/client/client'
 conditions = require './conditions'
 misc = require './misc'
 child = require './child'
+curl = require './curl'
 
 ###
 
