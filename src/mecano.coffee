@@ -112,15 +112,28 @@ mecano = module.exports =
           # Copy a file
           copyFile = (source, destination, next) ->
             misc.file.compare options.ssh, [source, destination], (err, md5) ->
+              # Destination may not exists
               return next err if err and err.message.indexOf('Does not exist') isnt 0
               # File are the same, we can skip copying
               return next() if md5
+              # # Copy
+              # input = fs.createReadStream source
+              # output = fs.createWriteStream destination
+              # input.pipe(output).on 'close', (err) ->
+              #   return next err if err
+              #   chmod source, next
               # Copy
-              input = fs.createReadStream source
-              output = fs.createWriteStream destination
-              input.pipe(output).on 'close', (err) ->
-                return next err if err
-                chmod source, next
+              s = (ssh, callback) ->
+                unless ssh
+                then callback null, fs
+                else options.ssh.sftp callback
+              s options.ssh, (err, fs) ->
+                  rs = fs.createReadStream source
+                  ws = rs.pipe fs.createWriteStream destination
+                  ws.on 'close', ->
+                    fs.end() if fs.end
+                    chmod source, next
+                  ws.on 'error', next
           chmod = (file, next) ->
             return finish next if not options.mode or options.mode is dstStat.mode
             misc.file.chmod options.ssh, options.destination, options.mode, (err) ->
@@ -230,9 +243,9 @@ mecano = module.exports =
                 cmd: cmd
                 stdout: options.stdout
                 stderr: options.stderr
-              , (err, executed) ->
-                # downloaded++ if executed
-                checksum err
+              , (err, executed, stdout, stderr) ->
+                return next curl.error err if err
+                checksum()
             else if u.protocol is 'ftp:'
               return next new Error 'FTP download not supported over SSH'
             else
@@ -280,9 +293,11 @@ mecano = module.exports =
               return next err if err
               next new Error "Invalid checksum, found \"#{hash}\" instead of \"#{md5sum}\""
         unstage = ->
+          # Note about next line: ssh might be null with file, not very clear
           misc.file.rename options.ssh, stageDestination, destination, (err) ->
+            return next err if err
             downloaded++
-            next err
+            next()
         prepare()
       .on 'both', (err) ->
         finish err, downloaded

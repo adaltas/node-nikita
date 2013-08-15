@@ -30,7 +30,8 @@ describe 'copy', ->
 
   describe 'file', ->
 
-    they 'should copy inside a directory', (ssh, next) ->
+    they 'with a filename inside a existing directory', (ssh, next) ->
+      # @timeout 1000000
       source = "#{__dirname}/../resources/a_dir/a_file"
       destination = "#{scratch}/a_new_file"
       mecano.copy
@@ -52,7 +53,7 @@ describe 'copy', ->
             copied.should.eql 0
             next()
 
-    they 'should copy a into an existing directory', (ssh, next) ->
+    they 'into an existing directory', (ssh, next) ->
       source = "#{__dirname}/../resources/a_dir/a_file"
       destination = "#{scratch}/"
       # Copy non existing file
@@ -75,10 +76,10 @@ describe 'copy', ->
             copied.should.eql 0
             next()
 
-    they 'should copy a over an existing file', (ssh, next) ->
+    they 'over an existing file', (ssh, next) ->
       source = "#{__dirname}/../resources/a_dir/a_file"
       destination = "#{scratch}/test_this_file"
-      mecano.render
+      mecano.write
         ssh: ssh
         content: 'Hello you'
         destination: destination
