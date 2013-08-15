@@ -1108,14 +1108,14 @@ mecano = module.exports =
 
   `options`           Command options include:   
 
-  *   `source`        Path or array of paths.   
+  *   `cwd`           Current working directory for relative paths.   
   *   `uid`           Unix user id.   
   *   `gid`           Unix group id.  
-  *   `directory`     Alias for `source`
-  *   `destination`   Alias for `source`
-  *   `exclude`       Regular expression.   
   *   `mode`          Default to 0755.  
-  *   `cwd`           Current working directory for relative paths.   
+  *   `directory`     Path or array of paths.
+  *   `destination`   Alias for `directory`.
+  *   `exclude`       Regular expression.   
+  *   `source`        Alias for `directory`.   
 
   `callback`          Received parameters are:   
 
@@ -1148,46 +1148,52 @@ mecano = module.exports =
       each( options )
       .on 'item', (options, next) ->
         # Validate parameters
-        options = { source: options } if typeof options is 'string'
-        options.source ?= options.directory
-        options.source ?= options.destination
-        return next new Error 'Missing source option' unless options.source?
+        options = { directory: options } if typeof options is 'string'
+        options.directory ?= options.source
+        options.directory ?= options.destination
+        return next new Error 'Missing directory option' unless options.directory?
         cwd = options.cwd ? process.cwd()
-        options.source = path.resolve cwd, options.source
-        # Start real work
-        check = () ->
-          misc.file.stat options.ssh, options.source, (err, stat) ->
-            return create() if err and err.code is 'ENOENT'
-            return next err if err
-            # nothing to do if exist and is a dir
-            return next() if stat.isDirectory()
-            # error if exists and isn't a dir
-            next err 'Invalid source, got #{JSON.encode(options.source)}'
-        create = () ->
-          options.mode ?= 0o0755
-          current = ''
-          dirCreated = false
-          dirs = options.source.split '/'
-          each( dirs )
-          .on 'item', (dir, next) ->
-            # Directory name contains variables
-            # eg /\${/ on './var/cache/${user}' creates './var/cache/'
-            if options.exclude? and options.exclude instanceof RegExp
-              return next() if options.exclude.test dir
-            # Empty Dir caused by split
-            # ..commented because `resolve` should clean the path
-            # return next() if dir is ''
-            current += "/#{dir}"
-            misc.file.exists options.ssh, current, (err, exists) ->
-              return next() if exists
-              misc.file.mkdir options.ssh, current, options, (err) ->
+        options.directory = [options.directory] unless Array.isArray options.directory
+        conditions.all options, next, ->
+          each(options.directory)
+          .on 'item', (directory, next) ->
+            directory = path.resolve cwd, directory
+            # Start real work
+            check = () ->
+              misc.file.stat options.ssh, directory, (err, stat) ->
+                return create() if err and err.code is 'ENOENT'
                 return next err if err
-                dirCreated = true
-                next()
+                # nothing to do if exist and is a dir
+                return next() if stat.isDirectory()
+                # error if exists and isn't a dir
+                next err 'Invalid directory, got #{JSON.encode(directory)}'
+            create = () ->
+              options.mode ?= 0o0755
+              current = ''
+              dirCreated = false
+              dirs = directory.split '/'
+              each( dirs )
+              .on 'item', (dir, next) ->
+                # Directory name contains variables
+                # eg /\${/ on './var/cache/${user}' creates './var/cache/'
+                if options.exclude? and options.exclude instanceof RegExp
+                  return next() if options.exclude.test dir
+                # Empty Dir caused by split
+                # ..commented because `resolve` should clean the path
+                # return next() if dir is ''
+                current += "/#{dir}"
+                misc.file.exists options.ssh, current, (err, exists) ->
+                  return next() if exists
+                  misc.file.mkdir options.ssh, current, options, (err) ->
+                    return next err if err
+                    dirCreated = true
+                    next()
+              .on 'both', (err) ->
+                created++ if dirCreated
+                next err
+            check()
           .on 'both', (err) ->
-            created++ if dirCreated
             next err
-        conditions.all options, next, check
       .on 'both', (err) ->
         finish err, created
     result

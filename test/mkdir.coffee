@@ -49,6 +49,18 @@ describe 'mkdir', ->
       created.should.eql 1
       next()
   
+  they 'should create multiple directories', (ssh, next) ->
+    mecano.mkdir
+      ssh: ssh
+      destination: [
+        "#{scratch}/a_parent_dir/a_dir_1"
+        "#{scratch}/a_parent_dir/a_dir_2"
+      ]
+    , (err, created) ->
+      return next err if err
+      created.should.eql 2
+      next()
+  
   they 'should stop when `exclude` match', (ssh, next) ->
     source = "#{scratch}/a_parent_dir/a_dir/do_not_create_this"
     mecano.mkdir
