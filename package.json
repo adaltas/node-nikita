@@ -14,17 +14,18 @@
         "url": "http://github.com/wdavidw/node-mecano/issues"
     },
     "dependencies": {
-        "coffee-script": "latest",
         "eco": "latest",
         "each": "latest",
         "ftp": "latest",
         "ini": "latest",
         "jsftp": "latest",
+        "ldapjs": "latest",
         "request": "latest",
         "rimraf": "latest",
         "superexec": "latest"
     },
     "devDependencies": {
+        "coffee-script": "latest",
         "jsDAV": "latest",
         "mocha": "latest",
         "should": "latest"
