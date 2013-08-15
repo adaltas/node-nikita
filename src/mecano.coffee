@@ -1383,23 +1383,29 @@ mecano = module.exports =
   
   `options`           Command options include:   
 
-  *    name           Package name.   
-  *    startup        Run service daemon on startup.   
-  *    yum_name       Name used by the yum utility, default to "name".   
-  *    chk_name       Name used by the chkconfig utility, default to "srv_name" and "name".   
-  *    srv_name       Name used by the service utility, default to "name".   
-  *    start          Ensure the service is started, a boolean.   
-  *    stop           Ensure the service is stopped, a boolean.   
+  *   `name`          Package name.   
+  *   `startup`       Run service daemon on startup. If true, startup will be set to '2345', use an empty string to not define any run level.   
+  *   `yum_name`      Name used by the yum utility, default to "name".   
+  *   `chk_name`      Name used by the chkconfig utility, default to "srv_name" and "name".   
+  *   `srv_name`      Name used by the service utility, default to "name".   
+  #   `start`         Ensure the service is started, a boolean.   
+  #   `stop`          Ensure the service is stopped, a boolean.   
+  *   `action`        Execute the service with the provided action argument.
   *   `stdout`        Writable Stream in which commands output will be piped.   
   *   `stderr`        Writable Stream in which commands error will be piped.   
+  *   `installed`     Cache a list of installed services. If an object, the service will be installed if a key of the same name exists; if anything else (default), no caching will take place.   
+  *   `updates`       Cache a list of outdated services. If an object, the service will be updated if a key of the same name exists; If true, the option will be converted to an object with all the outdated service names as keys; if anything else (default), no caching will take place.   
   
   `callback`          Received parameters are:   
   
   *   `err`           Error object if any.   
   *   `modified`      Number of action taken (installed, updated, started or stoped).   
+  *   `installed`     List of installed services.   
+  *   `updates`       List of services to update.   
 
   ###
   service: (options, callback) ->
+    installed = updates = null
     misc.options options, (err, options) ->
       return callback err if err
       serviced = 0
@@ -1408,34 +1414,76 @@ mecano = module.exports =
         # Validate parameters
         return next new Error 'Missing service name' unless options.name
         return next new Error 'Restricted to Yum over SSH' unless options.ssh
-        return next new Error 'Invalid configuration, start conflict with stop' if options.start? and options.start is options.stop
+        # return next new Error 'Invalid configuration, start conflict with stop' if options.start? and options.start is options.stop
         pkgname = options.yum_name or options.name
         chkname = options.chk_name or options.srv_name or options.name
         srvname = options.srv_name or options.name
         if options.startup? and typeof options.startup isnt 'string'
             options.startup = if options.startup then '2345' else ''
         modified = false
+        installed ?= options.installed
+        updates ?= options.updates
         # Start real work
-        installed = ->
-          mecano.execute
-            ssh: options.ssh
-            cmd: "yum list installed | grep ^#{pkgname}\\\\."
-            code_skipped: 1
-            stdout: options.stdout
-            stderr: options.stderr
-          , (err, installed) ->
-            return next err if err
-            if installed then updates() else install()
-        updates = ->
-          mecano.execute
-            ssh: options.ssh
-            cmd: "yum list updates | grep ^#{pkgname}\\\\."
-            code_skipped: 1
-            stdout: options.stdout
-            stderr: options.stderr
-          , (err, outdated) ->
-            return next err if err
-            if outdated then install() else startuped()
+        chkinstalled = ->
+          cache = ->
+            mecano.execute
+              ssh: options.ssh
+              cmd: "yum list installed"
+              code_skipped: 1
+              stdout: options.stdout
+              stderr: options.stderr
+            , (err, executed, stdout) ->
+              return next err if err
+              stdout = stdout.split '\n'
+              start = false
+              installed = []
+              for pkg in stdout
+                start = true if pkg.trim() is 'Installed Packages'
+                continue unless start
+                installed.push pkg[1] if pkg = /^([^\. ]+?)\./.exec pkg
+              decide()
+          decide = ->
+            if installed.indexOf(pkgname) isnt -1 then chkupdates() else install()
+          if installed then decide() else cache()
+          # mecano.execute
+          #   ssh: options.ssh
+          #   cmd: "yum list installed | grep ^#{pkgname}\\\\."
+          #   code_skipped: 1
+          #   stdout: options.stdout
+          #   stderr: options.stderr
+          # , (err, installed) ->
+          #   return next err if err
+          #   if installed then updates() else install()
+        chkupdates = ->
+          cache = ->
+            mecano.execute
+              ssh: options.ssh
+              cmd: "yum list updates"
+              code_skipped: 1
+              stdout: options.stdout
+              stderr: options.stderr
+            , (err, executed, stdout) ->
+              return next err if err
+              stdout = stdout.split '\n'
+              start = false
+              updates = []
+              for pkg in stdout
+                start = true if pkg.trim() is 'Updated Packages'
+                continue unless start
+                updates.push pkg[1] if pkg = /^([^\. ]+?)\./.exec pkg
+              decide()
+          decide = ->
+            if updates.indexOf(pkgname) isnt -1 then install() else startuped()
+          if updates then decide() else cache()
+          # mecano.execute
+          #   ssh: options.ssh
+          #   cmd: "yum list updates | grep ^#{pkgname}\\\\."
+          #   code_skipped: 1
+          #   stdout: options.stdout
+          #   stderr: options.stderr
+          # , (err, outdated) ->
+          #   return next err if err
+          #   if outdated then install() else startuped()
         install = ->
           mecano.execute
             ssh: options.ssh
@@ -1445,6 +1493,12 @@ mecano = module.exports =
             stderr: options.stderr
           , (err, succeed) ->
             return next err if err
+            installedIndex = installed.indexOf pkgname
+            installed.push pkgname if installedIndex is -1
+            if updates
+              updatesIndex = updates.indexOf pkgname
+              updates.splice updatesIndex, 1 unless updatesIndex is -1
+            # Those 2 lines seems all wrong
             return next new Error "No package #{pkgname} available." unless succeed
             modified = true if installed
             startuped()
@@ -1467,7 +1521,7 @@ mecano = module.exports =
                 current_startup += level if status is 'on'
             return started() if options.startup is current_startup
             modified = true
-            if options.startup
+            if options.startup?
             then startup_add()
             else startup_del()
         startup_add = ->
@@ -1497,7 +1551,7 @@ mecano = module.exports =
             return next err if err
             started()
         started = ->
-          return action() if options.action isnt 'start' or options.actions isnt 'stop'
+          return action() if options.action isnt 'start' and options.action isnt 'stop'
           mecano.execute
             ssh: options.ssh
             cmd: "service #{srvname} status"
@@ -1525,9 +1579,9 @@ mecano = module.exports =
         finish = ->
           serviced++ if modified
           next()
-        conditions.all options, next, installed
+        conditions.all options, next, chkinstalled
       .on 'both', (err) ->
-        callback err, serviced
+        callback err, serviced, installed, updates
   ###
 
   `upload(options, callback)`
