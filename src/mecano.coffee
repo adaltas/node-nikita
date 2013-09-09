@@ -641,6 +641,7 @@ mecano = module.exports =
   *   `unbind`        Close the ldap connection, default to false if connection is an [ldapjs client][ldapclt] instance.   
   *   `name`          Distinguish name storing the "olcAccess" property, using the database adress (eg: "olcDatabase={2}bdb,cn=config").   
   *   `overwrite`     Overwrite existing "olcAccess", default is to merge.   
+  *   `log`           Function called with a log related messages.   
 
   Resources:
   http://www.openldap.org/doc/admin24/access-control.html
@@ -666,13 +667,13 @@ mecano = module.exports =
           if options.ldap instanceof ldap_client
             client = options.ldap
             return search()
-          # Open and bind connection
+          options.log? 'Open and bind connection'
           client = ldap.createClient url: options.url
           client.bind options.binddn, options.passwd, (err) ->
             return end err if err
             search()
         search = ->
-            # ctx.log 'Search attribute olcAccess'
+            options.log? 'Search attribute olcAccess'
             client.search options.name,
               scope: 'base'
               attributes: ['olcAccess']
@@ -680,12 +681,12 @@ mecano = module.exports =
               return unbind err if err
               olcAccess = null
               search.on 'searchEntry', (entry) ->
-                # ctx.log "Found #{JSON.stringify entry.object}"
+                options.log? "Found #{JSON.stringify entry.object}"
                 # typeof olcAccess may be undefined, array or string
                 olcAccess = entry.object.olcAccess or []
                 olcAccess = [olcAccess] unless Array.isArray olcAccess
               search.on 'end', ->
-                # ctx.log "Attribute olcAccess was #{JSON.stringify olcAccess}"
+                options.log? "Attribute olcAccess was #{JSON.stringify olcAccess}"
                 parse olcAccess
         parse = (_olcAccess) ->
           olcAccess = []
@@ -765,7 +766,7 @@ mecano = module.exports =
           client.modify options.name, change, (err) ->
             unbind err
         unbind = (err) ->
-          # ctx.log 'Unbind connection'
+          options.log? 'Unbind connection'
           # return end err unless options.unbind and options.ldap instanceof ldap_client
           return end err if options.ldap instanceof ldap_client and not options.unbind
           client.unbind (e) ->
@@ -883,7 +884,7 @@ mecano = module.exports =
   *   `name`          Common name of the schema.   
   *   `schema`        Path to the schema definition.   
   *   `overwrite`     Overwrite existing "olcAccess", default is to merge.   
-  *   `log`           Output channel to print mecano specific log information.   
+  *   `log`           Function called with a log related messages.   
   ###
   ldap_schema: (options, callback) ->
     result = child mecano
@@ -903,9 +904,12 @@ mecano = module.exports =
         conf = "#{tempdir}/schema.conf"
         ldif = "#{tempdir}/ldif"
         registered = ->
-          options.log 'Check if schema is registered'
+          binddn = if options.binddn then "-D #{options.binddn}" else ''
+          passwd = if options.passwd then "-w #{options.passwd}" else ''
+          cmd = "ldapsearch #{binddn} #{passwd} -b \"cn=schema,cn=config\" | grep -E cn=\\{[0-9]+\\}#{options.name},cn=schema,cn=config"
+          options.log? "Check if schema is registered: #{cmd}"
           mecano.execute
-            cmd: "ldapsearch  -D #{options.binddn} -w #{options.passwd} -b \"cn=schema,cn=config\" | grep -E cn=\\{[0-9]+\\}#{options.name},cn=schema,cn=config"
+            cmd: cmd
             code: 0
             code_skipped: 1
             ssh: options.ssh
@@ -916,7 +920,7 @@ mecano = module.exports =
             return next() if registered
             dir()
         dir = ->
-          options.log 'Create ldif directory'
+          options.log? 'Create ldif directory'
           mecano.mkdir
             destination: ldif
             ssh: options.ssh
@@ -924,23 +928,23 @@ mecano = module.exports =
             return next err if err
             write()
         write = ->
-          options.log 'Copy schema'
+          options.log? 'Copy schema'
           mecano.copy
             source: options.schema
             destination: schema
             ssh: options.ssh
           , (err, copied) ->
             return next err if err
-            options.log 'Prepare configuration'
+            options.log? 'Prepare configuration'
             mecano.write
-              content: "include         #{options.schema}"
+              content: "include #{schema}"
               destination: conf
               ssh: options.ssh
             , (err) ->
               return next err if err
               generate()
         generate = ->
-          options.log 'Generate configuration'
+          options.log? 'Generate configuration'
           mecano.execute
             cmd: "slaptest -f #{conf} -F #{ldif}"
             ssh: options.ssh
@@ -950,7 +954,7 @@ mecano = module.exports =
             return next err if err
             rename()
         rename = ->
-          options.log 'Rename configuration'
+          options.log? 'Rename configuration'
           mecano.move
             source: "#{ldif}/cn=config/cn=schema/cn={0}#{options.name}.ldif"
             destination: "#{ldif}/cn=config/cn=schema/cn=#{options.name}.ldif"
@@ -961,7 +965,7 @@ mecano = module.exports =
             return new Error 'No generated schema' unless moved
             configure()
         configure = ->
-          options.log 'Prepare ldif'
+          options.log? 'Prepare ldif'
           mecano.write
             destination: "#{ldif}/cn=config/cn=schema/cn=#{options.name}.ldif"
             write: [
@@ -997,9 +1001,13 @@ mecano = module.exports =
             return next err if err
             register()
         register = ->
-          options.log 'Add schema'
+          uri = if options.uri then"-L #{options.uri}" else ''
+          binddn = if options.binddn then "-D #{options.binddn}" else ''
+          passwd = if options.passwd then "-w #{options.passwd}" else ''
+          cmd = "ldapadd #{uri} #{binddn} #{passwd} -f #{ldif}/cn=config/cn=schema/cn=#{options.name}.ldif"
+          options.log? "Add schema: #{cmd}"
           mecano.execute
-            cmd: "ldapadd -f #{ldif}/cn=config/cn=schema/cn=#{options.name}.ldif -D cn=admin,cn=config -w test"
+            cmd: cmd
             ssh: options.ssh
             stdout: options.stdout
             stderr: options.stderr
@@ -1008,7 +1016,7 @@ mecano = module.exports =
             modified++
             clean()
         clean = ->
-          options.log 'Clean up'
+          options.log? 'Clean up'
           mecano.remove
             destination: tempdir
             ssh: options.ssh

@@ -1,6 +1,4 @@
 
-require('coffee-script');
-
 var mecano = require('./lib/mecano');
 var misc = require('./lib/misc');
 // for(var k in misc){
