@@ -89,7 +89,8 @@ describe 'mkdir', ->
         created.should.be.ok
         next()
 
-  they 'should work over ssh', (ssh, next) ->
+  they 'change mode as string', (ssh, next) ->
+    # 40744: 4 for directory, 744 for permissions
     @timeout 10000
     mecano.mkdir
       ssh: ssh
@@ -97,18 +98,48 @@ describe 'mkdir', ->
       mode: '744'
     , (err, created) ->
       return next err if err
-      connect host: 'localhost', (err, ssh) ->
+      misc.file.stat ssh, "#{scratch}/ssh_dir_string", (err, stat) ->
+        return next err if err
+        stat.mode.toString(8).should.eql '40744'
+        next()
+
+  they 'change mode as string', (ssh, next) ->
+    # 40744: 4 for directory, 744 for permissions
+    @timeout 10000
+    mecano.mkdir
+      ssh: ssh
+      directory: "#{scratch}/ssh_dir_string"
+      mode: 0o744
+    , (err, created) ->
+      return next err if err
+      misc.file.stat ssh, "#{scratch}/ssh_dir_string", (err, stat) ->
+        return next err if err
+        stat.mode.toString(8).should.eql '40744'
+        next()
+
+  they 'detect a permission change', (ssh, next) ->
+    # 40744: 4 for directory, 744 for permissions
+    @timeout 10000
+    mecano.mkdir
+      ssh: ssh
+      directory: "#{scratch}/ssh_dir_string"
+      mode: 0o744
+    , (err, created) ->
+      return next err if err
+      mecano.mkdir
+        ssh: ssh
+        directory: "#{scratch}/ssh_dir_string"
+        mode: 0o755
+      , (err, created) ->
+        return next err if err
+        created.should.be.ok
         mecano.mkdir
           ssh: ssh
-          directory: "#{scratch}/ssh_dir_octal"
-          mode: 0o744
+          directory: "#{scratch}/ssh_dir_string"
+          mode: 0o755
         , (err, created) ->
           return next err if err
-          ssh.sftp (err, sftp) ->
-            sftp.stat "#{scratch}/ssh_dir_string", (err, attr_string) ->
-              return next err if err
-              sftp.stat "#{scratch}/ssh_dir_octal", (err, attr_octal) ->
-                return next err if err
-                attr_string.permissions.should.eql attr_octal.permissions
-                next()
+          created.should.not.be.ok
+          next()
+
 

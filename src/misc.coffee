@@ -32,6 +32,35 @@ misc = module.exports =
           return callback err if err
           sftp.readdir path, callback
     ###
+    `chown(ssh, path, options, callback)`
+    -------------------------------------
+    ###
+    chown: (ssh, path, uid, gid, callback) ->
+      return callback new Error 'Either option "uid" or "gid" is required' unless uid or gid
+      unless ssh
+        fs.chown path, uid, gid, (err) ->
+          callback err
+      else
+        ssh.sftp (err, sftp) ->
+          return callback err if err
+          sftp.chown path, uid, gid, (err) ->
+            sftp.end()
+            callback err
+    ###
+    `chmod(ssh, path, options, callback)`
+    -------------------------------------
+    ###
+    chmod: (ssh, path, mode, callback) ->
+      unless ssh
+        fs.chmod path, mode, (err) ->
+          callback err
+      else
+        ssh.sftp (err, sftp) ->
+          return callback err if err
+          sftp.chmod path, mode, (err) ->
+            sftp.end()
+            callback err
+    ###
     `createReadStream(ssh, path, [options], callback)`
     --------------------------------------------------
 
@@ -114,15 +143,6 @@ misc = module.exports =
       else
         ssh.sftp (err, sftp) ->
           sftp.rename source, destination, (err) ->
-            sftp.end()
-            callback err
-    chmod: (ssh, path, mode, callback) ->
-      unless ssh
-        fs.chmod path, mode, (err) ->
-          callback err
-      else
-        ssh.sftp (err, sftp) ->
-          sftp.chmod path, mode, (err) ->
             sftp.end()
             callback err
     stat: (ssh, path, callback) ->
@@ -675,7 +695,10 @@ misc = module.exports =
         connect options.ssh, (err, ssh) ->
           return next err if err
           options.ssh = ssh
-          uid()
+          mode()
+      mode = ->
+        # todo, normalize mode
+        uid()
       uid = ->
         return gid() unless options.uid
         return gid() if typeof options.uid is 'number' or /\d+/.test options.uid

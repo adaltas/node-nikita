@@ -1163,43 +1163,67 @@ mecano = module.exports =
         cwd = options.cwd ? process.cwd()
         options.directory = [options.directory] unless Array.isArray options.directory
         conditions.all options, next, ->
+          mode = options.mode or 0o0755
+          mode = parseInt(mode, 8) if typeof mode is 'string'
           each(options.directory)
           .on 'item', (directory, next) ->
-            directory = path.resolve cwd, directory
-            # Start real work
-            check = () ->
-              misc.file.stat options.ssh, directory, (err, stat) ->
-                return create() if err and err.code is 'ENOENT'
+            # first, we need to find which directory need to be created
+            do_stats = ->
+              end = false
+              dirs = []
+              directory = path.resolve cwd, directory # path.resolve also normalize
+              # Create directory and its parent directories
+              directories = directory.split('/')
+              directories.shift() # first element is empty with absolute path
+              directories = for i in [0...directories.length]
+                '/' + directories.slice(0, directories.length - i).join '/'
+              each(directories)
+              .on 'item', (directory, i, next) ->
+                return next() if end
+                misc.file.stat options.ssh, directory, (err, stat) ->
+                  if err?.code is 'ENOENT' # if the directory is not yet created
+                    directory.stat = stat
+                    dirs.push directory
+                    return next()
+                  if stat?.isDirectory()
+                    end = true
+                    return  if i is 0 then do_update(stat) else do_create(dirs)
+                  if err
+                    return next err
+                  else # a file or symlink exists at this location
+                    return next new Error 'Not a directory: #{JSON.encode(directory)}'
+              .on 'both', (err) ->
                 return next err if err
-                # nothing to do if exist and is a dir
-                return next() if stat.isDirectory()
-                # error if exists and isn't a dir
-                next err 'Invalid directory, got #{JSON.encode(directory)}'
-            create = () ->
-              options.mode ?= 0o0755
-              current = ''
-              dirCreated = false
-              dirs = directory.split '/'
-              each( dirs )
-              .on 'item', (dir, next) ->
+            do_create = (directories) ->
+              each(directories.reverse())
+              .on 'item', (directory, next) ->
                 # Directory name contains variables
                 # eg /\${/ on './var/cache/${user}' creates './var/cache/'
                 if options.exclude? and options.exclude instanceof RegExp
-                  return next() if options.exclude.test dir
-                # Empty Dir caused by split
-                # ..commented because `resolve` should clean the path
-                # return next() if dir is ''
-                current += "/#{dir}"
-                misc.file.exists options.ssh, current, (err, exists) ->
-                  return next() if exists
-                  misc.file.mkdir options.ssh, current, options, (err) ->
-                    return next err if err
-                    dirCreated = true
-                    next()
+                  return next() if options.exclude.test path.basename directory
+                misc.file.mkdir options.ssh, directory, options, (err) ->
+                  return next err if err
+                  modified = true
+                  next()
               .on 'both', (err) ->
-                created++ if dirCreated
+                created++
                 next err
-            check()
+            do_update = (stat) ->
+              modified = false
+              do_chown = ->
+                # todo, change ownership
+                do_chmod()
+              do_chmod = ->
+                return do_end() unless mode
+                return do_end() if stat.mode.toString(8).substr(-3) is mode.toString(8).substr(-3)
+                misc.file.chmod options.ssh, directory, mode, (err) ->
+                  modified = true
+                  do_end()
+              do_end = ->
+                created++ if modified
+                next()
+              do_chown()
+            do_stats()
           .on 'both', (err) ->
             next err
       .on 'both', (err) ->
@@ -1552,7 +1576,7 @@ mecano = module.exports =
             cmd: cmd
             stdout: options.stdout
             stderr: options.stderr
-          , (err, stream) ->
+          , (err) ->
             return next err if err
             started()
         startup_del = ->
@@ -1561,7 +1585,7 @@ mecano = module.exports =
             cmd: "chkconfig --del #{chkname}"
             stdout: options.stdout
             stderr: options.stderr
-          , (err, stream) ->
+          , (err) ->
             return next err if err
             started()
         started = ->
