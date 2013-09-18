@@ -1048,21 +1048,24 @@ mecano = module.exports =
 
   ###
   link: (options, callback) ->
+    result = child mecano
+    finish = (err, created) ->
+      callback err, created if callback
+      result.end err, created
     misc.options options, (err, options) ->
-      return callback err if err
-      return next new Error 'SSH not yet supported' if options.ssh
+      return finish err if err
       linked = 0
       sym_exists = (options, callback) ->
         misc.file.exists options.ssh, options.destination, (err, exists) ->
           return callback null, false unless exists
-          fs.readlink options.destination, (err, resolvedPath) ->
+          misc.file.readlink options.ssh, options.destination, (err, resolvedPath) ->
             return callback err if err
             return callback null, true if resolvedPath is options.source
-            fs.unlink options.destination, (err) ->
+            misc.file.unlink options.ssh, options.destination, (err) ->
               return callback err if err
               callback null, false
       sym_create = (options, callback) ->
-        fs.symlink options.source, options.destination, (err) ->
+        misc.file.symlink options.ssh, options.source, options.destination, (err) ->
           return callback err if err
           linked++
           callback()
@@ -1080,31 +1083,39 @@ mecano = module.exports =
         """
         misc.file.writeFile options.ssh, options.destination, content, (err) ->
           return callback err if err
-          fs.chmod options.destination, options.mode, (err) ->
+          misc.file.chmod options.ssh, options.destination, options.mode, (err) ->
             return callback err if err
             linked++
             callback()
-      parents = for option in options then path.normalize path.dirname option.destination
-      mecano.mkdir parents, (err, created) ->
-        return callback err if err
-        each( options )
-        .parallel( true )
-        .on 'item', (options, next) ->
-          return next new Error "Missing source, got #{JSON.stringify(options.source)}" unless options.source
-          return next new Error "Missing destination, got #{JSON.stringify(options.destination)}" unless options.destination
-          options.mode ?= 0o0755
-          dispatch = ->
-            if options.exec
-              exec_exists options, (err, exists) ->
-                return next() if exists
-                exec_create options, next
-            else
-              sym_exists options, (err, exists) ->
-                return next() if exists
-                sym_create options, next
-          dispatch()
-        .on 'both', (err) ->
-          callback err, linked
+      each( options )
+      .parallel( true )
+      .on 'item', (options, next) ->
+        # return next new Error 'SSH not yet supported' if options.ssh
+        return next new Error "Missing source, got #{JSON.stringify(options.source)}" unless options.source
+        return next new Error "Missing destination, got #{JSON.stringify(options.destination)}" unless options.destination
+        options.mode ?= 0o0755
+        do_mkdir = ->
+          mecano.mkdir
+            ssh: options.ssh
+            destination: path.dirname options.destination
+          , (err, created) ->
+            # It is possible to have collision if to symlink
+            # have the same parent directory
+            return callback err if err and err.code isnt 'EEXIST'
+            do_dispatch()
+        do_dispatch = ->
+          if options.exec
+            exec_exists options, (err, exists) ->
+              return next() if exists
+              exec_create options, next
+          else
+            sym_exists options, (err, exists) ->
+              return next() if exists
+              sym_create options, next
+        do_mkdir()
+      .on 'both', (err) ->
+        callback err, linked
+    result
   ###
 
   `mkdir(options, callback)`
@@ -1164,7 +1175,7 @@ mecano = module.exports =
         options.directory = [options.directory] unless Array.isArray options.directory
         conditions.all options, next, ->
           mode = options.mode or 0o0755
-          mode = parseInt(mode, 8) if typeof mode is 'string'
+          # mode = parseInt(mode, 8) if typeof mode is 'string'
           each(options.directory)
           .on 'item', (directory, next) ->
             # first, we need to find which directory need to be created

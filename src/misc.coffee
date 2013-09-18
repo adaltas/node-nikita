@@ -145,6 +145,49 @@ misc = module.exports =
           sftp.rename source, destination, (err) ->
             sftp.end()
             callback err
+    readlink: (ssh, path, callback) ->
+      unless ssh
+        fs.readlink path, (err, target) ->
+          callback err, target
+      else
+        ssh.sftp (err, sftp) ->
+          return callback err if err
+          sftp.readlink path, (err, target) ->
+            sftp.end()
+            callback err, target
+    unlink: (ssh, path, callback) ->
+      unless ssh
+        fs.unlink path, (err) ->
+          callback err
+      else
+        ssh.sftp (err, sftp) ->
+          return callback err if err
+          sftp.unlink path, (err) ->
+            sftp.end()
+            callback err
+    symlink: (ssh, targetPath, linkPath, callback) ->
+      unless ssh
+        fs.symlink targetPath, linkPath, (err) ->
+          callback err
+      else
+        ssh.sftp (err, sftp) ->
+          return callback err if err
+          sftp.symlink targetPath, linkPath, (err) ->
+            sftp.end()
+            callback err
+    lstat: (ssh, path, callback) ->
+      unless ssh
+        fs.lstat path, (err, stat) ->
+          callback err, stat
+      else
+        ssh.sftp (err, sftp) ->
+          return callback err if err
+          sftp.lstat path, (err, attr) ->
+            sftp.end()
+            if err and err.type is 'NO_SUCH_FILE'
+              err.code = 'ENOENT'
+              return callback err
+            callback err, attr
     stat: (ssh, path, callback) ->
       # Not yet test, no way to know if file is a direct or a link
       unless ssh
@@ -697,7 +740,7 @@ misc = module.exports =
           options.ssh = ssh
           mode()
       mode = ->
-        # todo, normalize mode
+        options.mode = parseInt(options.mode, 8) if typeof options.mode is 'string'
         uid()
       uid = ->
         return gid() unless options.uid
