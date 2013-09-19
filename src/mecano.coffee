@@ -361,6 +361,7 @@ mecano = module.exports =
         options.code_skipped = [options.code_skipped] unless Array.isArray options.code_skipped
         # Start real work
         cmd = () ->
+          options.log? "Execute: #{options.cmd}"
           run = exec options
           stdout = stderr = []
           if options.stdout
@@ -1830,6 +1831,7 @@ mecano = module.exports =
         readSource = ->
           if options.content?
             content = options.content
+            content = "#{content}" if typeof content is 'number'
             return readDestination()
           # Option "local_source" force to bypass the ssh 
           # connection, use by the upload function

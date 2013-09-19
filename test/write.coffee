@@ -110,6 +110,19 @@ describe 'write', ->
               return next err if err
               content.should.eql 'toto'
               next()
+
+  they 'convert integer type', (ssh, next) ->
+    mecano.write
+      ssh: ssh
+      content: 123
+      destination: "#{scratch}/a_file"
+    , (err, written) ->
+      return next err if err
+      written.should.eql 1
+      misc.file.readFile ssh, "#{scratch}/a_file", (err, content) ->
+        return next err if err
+        content.should.eql '123'
+        next()
   
   they 'create parent directory', (ssh, next) ->
     mecano.write
