@@ -327,17 +327,6 @@ misc = module.exports =
       else
         ssh.sftp (err, sftp) ->
           return callback err if err
-          # size - < integer > - Resource size in bytes.
-          # uid - < integer > - User ID of the resource.
-          # gid - < integer > - Group ID of the resource.
-          # permissions - < integer > - Permissions for the resource.
-          # atime - < integer > - UNIX timestamp of the access time of the resource.
-          # mtime - < integer > - UNIX timestamp of the modified time of the resource.
-          # console.log '??', options
-          # options = misc.merge {}, options
-          # options.permissions = options.mode if options.mode
-          # for k, v of options
-          #   console.log k, v if k isnt 'ssh'
           mkdir = ->
             sftp.mkdir path, options, (err, attr) ->
               if err?.message is 'Failure'
@@ -737,6 +726,7 @@ misc = module.exports =
         options.if_exists[i] = options.destination if el is true and options.destination
       if options.not_if_exists then for v, i in options.not_if_exists
         options.not_if_exists[i] = options.destination if v is true and options.destination
+      options.mode ?= options.chmod if options.chmod
       connection = ->
         return next() unless options.ssh
         connect options.ssh, (err, ssh) ->

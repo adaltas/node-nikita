@@ -13,7 +13,7 @@ describe 'download', ->
   scratch = test.scratch @
 
   they 'should deal with http protocol', (ssh, next) ->
-    @timeout 10000
+    @timeout 100000
     # create server
     server = http.createServer (req, res) ->
       res.writeHead 200, {'Content-Type': 'text/plain'}
@@ -21,7 +21,7 @@ describe 'download', ->
     server.listen 12345
     # Download a non existing file
     source = 'http://127.0.0.1:12345'
-    destination = "#{scratch}/download_#{if ssh then 'remote' else 'local'}"
+    destination = "#{scratch}/download"
     mecano.download
       ssh: ssh
       source: source
@@ -74,7 +74,7 @@ describe 'download', ->
           server.close()
           server.on 'close', next
   
-  it.skip 'should deal with ftp protocol', (next) ->
+  it 'should deal with ftp protocol', (next) ->
     @timeout 10000
     source = 'ftp://ftp.gnu.org/gnu/glibc/README.glibc'
     destination = "#{scratch}/download_test"

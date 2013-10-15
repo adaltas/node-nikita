@@ -1196,7 +1196,9 @@ mecano = module.exports =
                   if err?.code is 'ENOENT' # if the directory is not yet created
                     directory.stat = stat
                     dirs.push directory
-                    return next()
+                    if i is directories.length - 1
+                    then return do_create(dirs)
+                    else return next()
                   if stat?.isDirectory()
                     end = true
                     return  if i is 0 then do_update(stat) else do_create(dirs)
@@ -1387,6 +1389,9 @@ mecano = module.exports =
   *   `destination`   File path where to write content to or a callback.   
   *   `context`       Map of key values to inject into the template.   
   *   `local_source`  Treat the source as local instead of remote, only apply with "ssh" option.   
+  *   `uid`           File user name or user id
+  *   `gid`           File group name or group id
+  *   `mode`          File mode (permission and sticky bits), default to `0666`, in the for of `{mode: 0o744}` or `{mode: "744"}`
 
   `callback`          Received parameters are:   
   
@@ -1568,7 +1573,7 @@ mecano = module.exports =
             if registered
               for c in stdout.split(' ').pop().trim().split '\t'
                 [level, status] = c.split ':'
-                current_startup += level if status is 'on'
+                current_startup += level if ['on', 'marche'].indexOf(status) > -1
             return started() if options.startup is current_startup
             modified = true
             if options.startup?
@@ -1741,6 +1746,9 @@ mecano = module.exports =
   *   `append`        Append the content to the destination file. If destination does not exist, the file will be created.   
   *   `write`         An array containing multiple transformation where a transformation is an object accepting the options `from`, `to`, `match` and `replace`
   *   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+  *   `uid`           File user name or user id
+  *   `gid`           File group name or group id
+  *   `mode`          File mode (permission and sticky bits), default to `0666`, in the for of `{mode: 0o744}` or `{mode: "744"}`
 
   `callback`          Received parameters are:   
 
