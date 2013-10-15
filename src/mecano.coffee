@@ -1652,6 +1652,8 @@ mecano = module.exports =
   *   `source`        File path from where to extract the content, do not use conjointly with content.   
   *   `destination`   File path where to write content to.   
   *   `backup`        Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
+  *   `md5`           Validate uploaded file with md5 checksum (only for binary upload for now).
+  *   `sha1`          Validate uploaded file with sha1 checksum (only for binary upload for now).
 
   `callback`          Received parameters are:   
   
@@ -1672,16 +1674,45 @@ mecano = module.exports =
         conditions.all options, next, ->
           # Start real work
           if options.binary
-            return options.ssh.sftp (err, sftp) ->
-              from = fs.createReadStream options.source#, encoding: 'binary'
-              to = sftp.createWriteStream options.destination#, encoding: 'binary'
-              l = 0
-              from.pipe to
-              from.on 'error', (err) ->
-                next err
-              from.on 'end', ->
-                uploaded++
-                next()
+            do_upload = ->
+              options.ssh.sftp (err, sftp) ->
+                from = fs.createReadStream options.source#, encoding: 'binary'
+                to = sftp.createWriteStream options.destination#, encoding: 'binary'
+                l = 0
+                from.pipe to
+                from.on 'error', (err) ->
+                  console.log 'ok'
+                  next err
+                from.on 'end', ->
+                  uploaded++
+                  do_md5()
+            do_md5 = ->
+              return do_sha1() unless options.md5
+              mecano.execute
+                ssh: options.ssh
+                cmd: "openssl md5 #{options.destination}"
+                stdout: options.stdout
+                stderr: options.stderr
+              , (err, executed, stdout) ->
+                return next err if err
+                md5 = /[ ](.*)$/.exec(stdout.trim())[1]
+                return next new Error "Invalid md5 checksum" if md5 isnt options.md5
+                do_sha1()
+            do_sha1 = ->
+              return do_end() unless options.sha1
+              mecano.execute
+                ssh: options.ssh
+                cmd: "openssl sha1 #{options.destination}"
+                stdout: options.stdout
+                stderr: options.stderr
+              , (err, executed, stdout) ->
+                return next err if err
+                sha1 = /[ ](.*)$/.exec(stdout.trim())[1]
+                return next new Error "Invalid sha1 checksum" if sha1 isnt options.sha1
+                do_end()
+            do_end = ->
+              next()
+            return do_upload()
           options = misc.merge options, local_source: true
           mecano.write options, (err, written) ->
             uploaded++ if written is 1
