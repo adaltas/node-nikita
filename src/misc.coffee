@@ -61,6 +61,19 @@ misc = module.exports =
             sftp.end()
             callback err
     ###
+    Compare modes
+    -------------
+    ###
+    cmpmod: (modes...) ->
+      ref = modes[0]
+      ref = ref.toString(8) if typeof ref is 'number'
+      for i in [1...modes.length]
+        mode = modes[i]
+        mode = mode.toString(8) if typeof mode is 'number'
+        l = Math.min ref.length, mode.length
+        return false if mode.substr(-l) isnt ref.substr(-l)
+      true
+    ###
     `createReadStream(ssh, path, [options], callback)`
     --------------------------------------------------
 
@@ -426,7 +439,7 @@ misc = module.exports =
         .on 'item', (item, next) ->
           hasher ssh, item, (err, h) ->
             return next err if err
-            hashs.push h
+            hashs.push h if h?
             next()
         .on 'error', (err) ->
           callback err
