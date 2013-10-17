@@ -33,6 +33,88 @@ Functions include "copy", "download", "exec", "extract", "git", "link", "mkdir",
 mecano = module.exports = 
   ###
 
+  `chmod(options, callback)`
+  --------------------------
+
+  Change the file permissions of a file.
+
+  `options`           Command options include:   
+
+  *   `destination`   Where the file or directory is copied.
+  *   `mode`          Permissions of the file or the parent directory
+  *   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+ 
+  `callback`          Received parameters are:   
+
+  *   `err`           Error object if any.   
+  *   `modified`      Number of files with modified permissions.
+
+  ###
+  chmod: (options, callback) ->
+    result = child mecano
+    finish = (err, modified) ->
+      callback err, modified if callback
+      result.end err, modified
+    misc.options options, (err, options) ->
+      return finish err if err
+      modified = 0
+      each( options )
+      .on 'item', (options, next) ->
+        # Validate parameters
+        {ssh, destination, mode} = options
+        return next new Error "Missing destination: #{destination}" unless destination
+        misc.file.stat ssh, destination, (err, stat) ->
+          return next err if err
+          return next() if misc.file.cmpmod stat.mode, mode
+          misc.file.chmod ssh, destination, mode, (err) ->
+            return next err if err
+            modified++
+            next()
+      .on 'both', (err) ->
+        finish err, modified
+  ###
+
+  `chmod(options, callback)`
+  --------------------------
+
+  Change the file permissions of a file.
+
+  `options`           Command options include:   
+
+  *   `destination`   Where the file or directory is copied.
+  *   `mode`          Permissions of the file or the parent directory
+  *   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+ 
+  `callback`          Received parameters are:   
+
+  *   `err`           Error object if any.   
+  *   `modified`      Number of files with modified permissions.
+
+  ###
+  chown: (options, callback) ->
+    result = child mecano
+    finish = (err, modified) ->
+      callback err, modified if callback
+      result.end err, modified
+    misc.options options, (err, options) ->
+      return finish err if err
+      modified = 0
+      each( options )
+      .on 'item', (options, next) ->
+        # Validate parameters
+        {ssh, destination, uid, gid} = options
+        return next new Error "Missing destination: #{destination}" unless destination
+        misc.file.stat ssh, destination, (err, stat) ->
+          return next err if err
+          return next() if stat.uid is options.uid and stat.gid is options.gid
+          misc.file.chown ssh, destination, uid, gid, (err) ->
+            return next() err if err
+            modified++
+            next()
+      .on 'both', (err) ->
+        finish err, modified
+  ###
+
   `cp` `copy(options, callback)`
   ------------------------------
 
@@ -1178,7 +1260,6 @@ mecano = module.exports =
         options.directory = [options.directory] unless Array.isArray options.directory
         conditions.all options, next, ->
           mode = options.mode or 0o0755
-          # mode = parseInt(mode, 8) if typeof mode is 'string'
           each(options.directory)
           .on 'item', (directory, next) ->
             # first, we need to find which directory need to be created
@@ -1231,7 +1312,9 @@ mecano = module.exports =
                 do_chmod()
               do_chmod = ->
                 return do_end() unless mode
-                return do_end() if stat.mode.toString(8).substr(-3) is mode.toString(8).substr(-3)
+                # todo: fix this one
+                # return do_end() if stat.mode.toString(8).substr(-3) is mode.toString(8).substr(-3)
+                return do_end() if misc.file.cmpmod stat.mode, mode
                 misc.file.chmod options.ssh, directory, mode, (err) ->
                   modified = true
                   do_end()
