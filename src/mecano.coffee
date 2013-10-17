@@ -578,6 +578,8 @@ mecano = module.exports =
   *   `replace`       The content to be inserted, used conjointly with the from, to or match options.   
   *   `source`        File path from where to extract the content, do not use conjointly with content.   
   *   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+  *   `stringify`     Provide your own user-defined function to stringify the content, see 'misc.ini.stringify_square_then_curly'.   
+  *   `separator`     Default separator between keys and values, default to " : ".   
   *   `to`            Replace to before this marker, a string or a regular expression.   
   
   ###
@@ -616,8 +618,8 @@ mecano = module.exports =
               write()
         write = ->
           clean content
-          stringify = options.stringify or ini.stringify
-          options.content = stringify content
+          stringify = options.stringify or misc.ini.stringify
+          options.content = stringify content, options
           mecano.write options, (err, w) ->
             written += w
             next err
@@ -1680,19 +1682,20 @@ mecano = module.exports =
           # Start real work
           if options.binary
             do_upload = ->
+              options.log? "Upload #{options.source}"
               options.ssh.sftp (err, sftp) ->
                 from = fs.createReadStream options.source#, encoding: 'binary'
                 to = sftp.createWriteStream options.destination#, encoding: 'binary'
                 l = 0
                 from.pipe to
-                from.on 'error', (err) ->
-                  console.log 'ok'
-                  next err
-                from.on 'end', ->
+                from.on 'error', next
+                to.on 'error', next
+                to.on 'close', ->
                   uploaded++
                   do_md5()
             do_md5 = ->
               return do_sha1() unless options.md5
+              options.log? "Check md5 for '#{options.destination}'"
               mecano.execute
                 ssh: options.ssh
                 cmd: "openssl md5 #{options.destination}"
@@ -1705,6 +1708,7 @@ mecano = module.exports =
                 do_sha1()
             do_sha1 = ->
               return do_end() unless options.sha1
+              options.log? "Check sha1 for '#{options.destination}'"
               mecano.execute
                 ssh: options.ssh
                 cmd: "openssl sha1 #{options.destination}"
@@ -1716,6 +1720,7 @@ mecano = module.exports =
                 return next new Error "Invalid sha1 checksum" if sha1 isnt options.sha1
                 do_end()
             do_end = ->
+              options.log? "Upload succeed in #{options.destination}"
               next()
             return do_upload()
           options = misc.merge options, local_source: true

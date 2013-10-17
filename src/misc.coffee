@@ -670,7 +670,52 @@ misc = module.exports =
     # Return the modified object
     target
   ini:
-    stringify_square_then_curly: (content, depth=0) ->
+    safe: (val) ->
+      if ( typeof val isnt "string" or val.match(/[\r\n]/) or val.match(/^\[/) or (val.length > 1 and val.charAt(0) is "\"" and val.slice(-1) is "\"") or val isnt val.trim() )
+      then JSON.stringify(val)
+      else val.replace(/;/g, '\\;')
+
+    dotSplit: `function (str) {
+      return str.replace(/\1/g, '\2LITERAL\\1LITERAL\2')
+             .replace(/\\\./g, '\1')
+             .split(/\./).map(function (part) {
+               return part.replace(/\1/g, '\\.')
+                      .replace(/\2LITERAL\\1LITERAL\2/g, '\1')
+             })
+    }`
+    stringify: (obj, section, options) ->
+      if arguments.length is 2
+        options = section
+        section = undefined
+      options.separator ?= ' = '
+      eol = if process.platform is "win32" then "\r\n" else "\n"
+      safe = misc.ini.safe
+      dotSplit = misc.ini.dotSplit
+      children = []
+      out = ""
+      Object.keys(obj).forEach (k, _, __) ->
+        val = obj[k]
+        if val and Array.isArray val
+            val.forEach (item) ->
+                out += safe("#{k}[]") + options.separator + safe(item) + "\n"
+        else if val and typeof val is "object"
+          children.push k
+        else
+          out += safe(k) + options.separator + safe(val) + eol
+      if section and out.length
+        out = "[" + safe(section) + "]" + eol + out
+      children.forEach (k, _, __) ->
+        nk = dotSplit(k).join '\\.'
+        child = misc.ini.stringify(obj[k], (if section then section + "." else "") + nk, options)
+        if out.length and child.length
+          out += eol
+        out += child
+      out
+    stringify_square_then_curly: (content, depth=0, options) ->
+      if arguments.length is 2
+        options = depth
+        depth = 0
+      options.separator ?= ' = '
       out = ''
       indent = ' '
       prefix = ''
@@ -684,19 +729,19 @@ misc = module.exports =
         if isObj
           if depth is 0
             out += "#{prefix}[#{k}]\n"
-            out += misc.ini.stringify_square_then_curly v, depth + 1
+            out += misc.ini.stringify_square_then_curly v, depth + 1, options
             out += "\n"
           else
-            out += "#{prefix}#{k} = {\n"
-            out += misc.ini.stringify_square_then_curly v, depth + 1
+            out += "#{prefix}#{k}#{options.separator}{\n"
+            out += misc.ini.stringify_square_then_curly v, depth + 1, options
             out += "#{prefix}}\n"
         else 
           if isNull
-            out += "#{prefix}#{k} = null"
+            out += "#{prefix}#{k}#{options.separator}null"
           else if isBoolean
-            out += "#{prefix}#{k} = #{if v then 'true' else 'false'}"
+            out += "#{prefix}#{k}#{options.separator}#{if v then 'true' else 'false'}"
           else
-            out += "#{prefix}#{k} = #{v}"
+            out += "#{prefix}#{k}#{options.separator}#{v}"
           out += '\n'
       out
   ###

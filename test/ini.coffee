@@ -22,6 +22,20 @@ describe 'ini', ->
         data.should.eql '[user.preference]\ncolor = rouge\n'
         next()
 
+  they 'stringify an object and with custom separator', (ssh, next) ->
+    mecano.ini
+      ssh: ssh
+      content: user: preference: color: 'rouge'
+      destination: "#{scratch}/user.ini"
+      separator: ':'
+    , (err, written) ->
+      return next err if err
+      written.should.eql 1
+      misc.file.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
+        return next err if err
+        data.should.eql '[user.preference]\ncolor:rouge\n'
+        next()
+
   they 'merge an object', (ssh, next) ->
     content = '[user.preference]\nlanguage = node\ncolor = rouge\n'
     misc.file.writeFile ssh, "#{scratch}/user.ini", content, (err) ->
