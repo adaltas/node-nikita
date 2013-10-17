@@ -1641,6 +1641,39 @@ mecano = module.exports =
         callback err, serviced, installed, updates
   ###
 
+  `touch(options, callback)`
+  --------------------------
+  
+  Create a empty file if it does not yet exists.
+
+  ###
+  touch: (options, callback) ->
+    result = child mecano
+    finish = (err, modified) ->
+      callback err, modified if callback
+      result.end err, modified
+    misc.options options, (err, options) ->
+      return finish err if err
+      modified = 0
+      each( options )
+      .on 'item', (options, next) ->
+        # Validate parameters
+        {ssh, destination, mode} = options
+        return next new Error "Missing destination: #{destination}" unless destination
+        misc.file.exists ssh, destination, (err, exists) ->
+          return next err if err
+          return next if exists
+          options.source = null
+          options.content = ''
+          mecano.write options, (err, written) ->
+            return next err if err
+            modified++
+            next()
+      .on 'both', (err) ->
+        finish err, modified
+
+  ###
+
   `upload(options, callback)`
   ---------------------------
   
