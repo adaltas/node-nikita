@@ -111,7 +111,23 @@ describe 'write', ->
               content.should.eql 'toto'
               next()
 
-  they 'convert integer type', (ssh, next) ->
+  they 'set permission', (ssh, next) ->
+    mecano.write
+      ssh: ssh
+      content: 'ok'
+      destination: "#{scratch}/a_file"
+      mode: 0o0700
+    , (err, written) ->
+      return next err if err
+      misc.file.stat ssh, "#{scratch}/a_file", (err, stat) ->
+        return next err if err
+        misc.file.cmpmod(stat.mode, 0o0700).should.be.ok
+        misc.file.stat ssh, "#{scratch}", (err, stat) ->
+          return next err if err
+          misc.file.cmpmod(stat.mode, 0o0700).should.not.be.ok
+          next()
+
+  they 'handle integer type', (ssh, next) ->
     mecano.write
       ssh: ssh
       content: 123
@@ -119,7 +135,7 @@ describe 'write', ->
     , (err, written) ->
       return next err if err
       written.should.eql 1
-      misc.file.readFile ssh, "#{scratch}/a_file", (err, content) ->
+      misc.file.readFile ssh, "#{scratch}/a_file", 'ascii', (err, content) ->
         return next err if err
         content.should.eql '123'
         next()

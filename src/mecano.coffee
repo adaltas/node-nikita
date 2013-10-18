@@ -1313,7 +1313,6 @@ mecano = module.exports =
               do_chmod = ->
                 return do_end() unless mode
                 # todo: fix this one
-                # return do_end() if stat.mode.toString(8).substr(-3) is mode.toString(8).substr(-3)
                 return do_end() if misc.file.cmpmod stat.mode, mode
                 misc.file.chmod options.ssh, directory, mode, (err) ->
                   modified = true
@@ -2021,6 +2020,8 @@ mecano = module.exports =
               uid: options.uid
               gid: options.gid
               mode: options.mode
+              # We only apply uid and gid if the dir does not yet exists
+              not_if_exists: path.dirname options.destination
             , (err, created) ->
               return next err if err
               render()
