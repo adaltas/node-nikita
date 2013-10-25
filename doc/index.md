@@ -2,7 +2,7 @@
 language: en
 layout: page
 title: "Node Mecano: Common functions for system deployment"
-date: 2013-07-04T21:58:51.384Z
+date: 2013-10-25T17:18:12.878Z
 comments: false
 sharing: false
 footer: false
@@ -17,8 +17,42 @@ Functions include "copy", "download", "exec", "extract", "git", "link", "mkdir",
 *   Common API with options and callback arguments and calling the callback with an error and the number of affected actions.   
 *   Run one or multiple actions depending on option argument being an object or an array of objects.   
 
-`cp` `copy(options, callback)`
-------------------------------
+`chmod([goptions], options, callback)`
+--------------------------------------
+
+Change the file permissions of a file.
+
+`options`           Command options include:   
+
+*   `destination`   Where the file or directory is copied.
+*   `mode`          Permissions of the file or the parent directory
+*   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+*   `log`           Function called with a log related messages.   
+
+`callback`          Received parameters are:   
+
+*   `err`           Error object if any.   
+*   `modified`      Number of files with modified permissions.
+
+`chmod([goptions], options, callback)`
+--------------------------------------
+
+Change the file permissions of a file.
+
+`options`           Command options include:   
+
+*   `destination`   Where the file or directory is copied.
+*   `mode`          Permissions of the file or the parent directory
+*   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+*   `log`           Function called with a log related messages.   
+
+`callback`          Received parameters are:   
+
+*   `err`           Error object if any.   
+*   `modified`      Number of files with modified permissions.
+
+`cp` `copy([goptions], options, callback)`
+------------------------------------------
 
 Copy a file. The behavior is similar to the one of the `cp` 
 Unix utility. Copying a file over an existing file will 
@@ -40,8 +74,8 @@ overwrite it.
 todo:
 *   preserve permissions if `mode` is `true`
 
-`download(options, callback)`
------------------------------
+`download([goptions], options, callback)`
+-----------------------------------------
 
 Download files using various protocols.
 
@@ -93,17 +127,9 @@ mecano.download
 
 `exec` `execute([goptions], options, callback)`
 -----------------------------------------------
-Run a command locally or with ssh if the `host` is provided. Global options is
-optional and is used in case where options is defined as an array of 
-multiple commands. Note, `opts` inherites all the properties of `goptions`.
+Run a command locally or with ssh if `host` or `ssh` is provided.
 
-`goptions`            Global options includes:
-
-*   `parallel`    Wether the command are run in sequential, parallel 
-or limited concurrent mode. See the `node-each` documentation for more 
-details. Default to sequential (false).
-      
-`options`           Include all conditions as well as:  
+`options`           Command options include:   
 
 *   `cmd`           String, Object or array; Command to execute.   
 *   `env`           Environment variables, default to `process.env`.   
@@ -123,8 +149,8 @@ details. Default to sequential (false).
 *   `stdout`        Stdout value(s) unless `stdout` option is provided.   
 *   `stderr`        Stderr value(s) unless `stderr` option is provided.   
 
-`extract(options, callback)` 
-----------------------------
+`extract([goptions], options, callback)` 
+----------------------------------------
 
 Extract an archive. Multiple compression types are supported. Unless 
 specified as an option, format is derived from the source extension. At the 
@@ -144,8 +170,8 @@ moment, supported extensions are '.tgz', '.tar.gz' and '.zip'.
 *   `err`           Error object if any.   
 *   `extracted`     Number of extracted archives.   
 
-`git`
------
+`git([goptions], options, callback`
+-----------------------------------
 
 `options`           Command options include:   
 
@@ -156,8 +182,9 @@ moment, supported extensions are '.tgz', '.tar.gz' and '.zip'.
 *   `stdout`        Writable EventEmitter in which command output will be piped.   
 *   `stderr`        Writable EventEmitter in which command error will be piped.   
 
-`ini(options, callback`
------------------------
+`ini([goptions], options, callback`
+-----------------------------------
+
 Write an object as .ini file. Note, we are internally using the
 [ini](https://github.com/isaacs/ini) module. However, there is 
 a subtile difference. Any key provided with value of `undefined` 
@@ -170,22 +197,131 @@ options. It introduces the `merge` option which instruct to read the
 destination file if it exists and merge its parsed object with the one
 provided in the `content` option.
 
-`options`
-*   `append`          Append the content to the destination file. If destination does not exist, the file will be created. When used with the `match` and `replace` options, it will append the `replace` value at the end of the file if no match if found and if the value is a string.   
-*   `backup`          Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
-*   `content`         Object to stringify.   
-*   `destination`     File path where to write content to or a callback.   
-*   `from`            Replace from after this marker, a string or a regular expression.   
-*   `local_source`    Treat the source as local instead of remote, only apply with "ssh" option.   
-*   `match`           Replace this marker, a string or a regular expression.   
-*   `merge`           Read the destination if it exists and merge its content.   
-*   `replace`         The content to be inserted, used conjointly with the from, to or match options.   
-*   `source`          File path from where to extract the content, do not use conjointly with content.   
-*   `ssh`             Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
-*   `to`              Replace to before this marker, a string or a regular expression.   
+`options`           Command options include:   
 
-`ln` `link(options, callback)`
-------------------------------
+*   `append`        Append the content to the destination file. If destination does not exist, the file will be created. When used with the `match` and `replace` options, it will append the `replace` value at the end of the file if no match if found and if the value is a string.   
+*   `backup`        Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
+*   `content`       Object to stringify.   
+*   `stringify`     User defined function to stringify to ini format, default to `require('ini').stringify`.   
+*   `destination`   File path where to write content to or a callback.   
+*   `from`          Replace from after this marker, a string or a regular expression.   
+*   `local_source`  Treat the source as local instead of remote, only apply with "ssh" option.   
+*   `match`         Replace this marker, a string or a regular expression.   
+*   `merge`         Read the destination if it exists and merge its content.   
+*   `replace`       The content to be inserted, used conjointly with the from, to or match options.   
+*   `source`        File path from where to extract the content, do not use conjointly with content.   
+*   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+*   `stringify`     Provide your own user-defined function to stringify the content, see 'misc.ini.stringify_square_then_curly'.   
+*   `separator`     Default separator between keys and values, default to " : ".   
+*   `to`            Replace to before this marker, a string or a regular expression.   
+
+`krb5_ktadd([goptions], options, callback`
+----------------------------------------------
+
+Create a new Kerberos principal and an optionnal keytab.
+
+`options`           Command options include:   
+
+*   `kadmin_server` Address of the kadmin server; optional, use "kadmin.local" if missing.   
+*   `kadmin_principal`  KAdmin principal name unless `kadmin.local` is used.   
+*   `kadmin_password`   Password associated to the KAdmin principal.   
+*   `principal`     Principal to be created.   
+*   `password`      Password associated to this principal; required if no randkey is provided. 
+*   `randkey`       Generate a random key; required if no password is provided.   
+*   `keytab`        Path to the file storing key entries.   
+*   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+*   `log`           Function called with a log related messages.  
+*   `stdout`        Writable Stream in which commands output will be piped.   
+*   `stderr`        Writable Stream in which commands error will be piped.   
+
+`krb5_principal([goptions], options, callback`
+----------------------------------------------
+
+Create a new Kerberos principal and an optionnal keytab.
+
+`options`           Command options include:   
+
+*   `kadmin_server` Address of the kadmin server; optional, use "kadmin.local" if missing.   
+*   `kadmin_principal`  KAdmin principal name unless `kadmin.local` is used.   
+*   `kadmin_password`   Password associated to the KAdmin principal.   
+*   `principal`     Principal to be created.   
+*   `password`      Password associated to this principal; required if no randkey is provided. 
+*   `randkey`       Generate a random key; required if no password is provided.   
+*   `keytab`        Path to the file storing key entries.   
+*   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+*   `log`           Function called with a log related messages.  
+*   `stdout`        Writable Stream in which commands output will be piped.   
+*   `stderr`        Writable Stream in which commands error will be piped.   
+
+`krb5_delprinc([goptions], options, callback`
+----------------------------------------------
+
+Create a new Kerberos principal and an optionnal keytab.
+
+`options`           Command options include:   
+
+*   `principal`     Principal to be created.   
+*   `kadmin_server` Address of the kadmin server; optional, use "kadmin.local" if missing.   
+*   `kadmin_principal`  KAdmin principal name unless `kadmin.local` is used.   
+*   `kadmin_password`   Password associated to the KAdmin principal.   
+*   `keytab`        Path to the file storing key entries.   
+*   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+*   `log`           Function called with a log related messages.  
+*   `stdout`        Writable Stream in which commands output will be piped.   
+*   `stderr`        Writable Stream in which commands error will be piped.   
+
+`ldap_acl([goptions], options, callback`
+----------------------------------------
+
+`options`           Command options include:   
+
+*   `to`            What to control access to as a string.   
+*   `by`            Who to grant access to and the access to grant as an array (eg: `{..., by:["ssf=64 anonymous auth"]}`)   
+*   `url`           Specify URI referring to the ldap server, alternative to providing an [ldapjs client] instance.  
+*   `binddn`        Distinguished Name to bind to the LDAP directory, alternative to providing an [ldapjs client] instance.  
+*   `passwd`        Password for simple authentication, alternative to providing an [ldapjs client] instance.   
+*   `ldap`          Instance of an pldapjs client][ldapclt], alternative to providing the `url`, `binddn` and `passwd` connection properties.   
+*   `unbind`        Close the ldap connection, default to false if connection is an [ldapjs client][ldapclt] instance.   
+*   `name`          Distinguish name storing the "olcAccess" property, using the database adress (eg: "olcDatabase={2}bdb,cn=config").   
+*   `overwrite`     Overwrite existing "olcAccess", default is to merge.   
+*   `log`           Function called with a log related messages.   
+
+Resources:
+http://www.openldap.org/doc/admin24/access-control.html
+
+[ldapclt]: http://ldapjs.org/client.html
+`ldap_index([goptions], options, callback`
+------------------------------------------
+
+`options`           Command options include:   
+
+*   `indexes`       Object with keys mapping to indexed attributes and values mapping to indices ("pres", "approx", "eq", "sub" and 'special').   
+*   `url`           Specify URI referring to the ldap server, alternative to providing an [ldapjs client] instance.  
+*   `binddn`        Distinguished Name to bind to the LDAP directory, alternative to providing an [ldapjs client] instance.  
+*   `passwd`        Password for simple authentication, alternative to providing an [ldapjs client] instance.   
+*   `ldap`          Instance of an pldapjs client][ldapclt], alternative to providing the `url`, `binddn` and `passwd` connection properties.   
+*   `unbind`        Close the ldap connection, default to false if connection is an [ldapjs client][ldapclt] instance.   
+*   `name`          Distinguish name storing the "olcAccess" property, using the database adress (eg: "olcDatabase={2}bdb,cn=config").   
+*   `overwrite`     Overwrite existing "olcAccess", default is to merge.   
+
+Resources
+http://www.zytrax.com/books/ldap/apa/indeces.html`ldap_schema([goptions], options, callback)`
+--------------------------------------------
+
+Register a new ldap schema.
+
+`options`           Command options include:   
+
+*   `url`           Specify URI referring to the ldap server, alternative to providing an [ldapjs client] instance.  
+*   `binddn`        Distinguished Name to bind to the LDAP directory, alternative to providing an [ldapjs client] instance.  
+*   `passwd`        Password for simple authentication, alternative to providing an [ldapjs client] instance.   
+*   `name`          Common name of the schema.   
+*   `schema`        Path to the schema definition.   
+*   `overwrite`     Overwrite existing "olcAccess", default is to merge.   
+*   `log`           Function called with a log related messages.   
+`ln` `link([goptions], options, callback)`
+------------------------------------------
+
 Create a symbolic link and it's parent directories if they don't yet
 exist.
 
@@ -194,15 +330,15 @@ exist.
 *   `source`        Referenced file to be linked.   
 *   `destination`   Symbolic link to be created.   
 *   `exec`          Create an executable file with an `exec` command.   
-*   `mode`         Default to 0755.   
+*   `mode`          Default to 0755.   
 
 `callback`          Received parameters are:   
 
 *   `err`           Error object if any.   
 *   `linked`        Number of created links.   
 
-`mkdir(options, callback)`
---------------------------
+`mkdir([goptions], options, callback)`
+--------------------------------------
 
 Recursively create a directory. The behavior is similar to the Unix command `mkdir -p`. 
 It supports an alternative syntax where options is simply the path of the directory
@@ -210,14 +346,14 @@ to create.
 
 `options`           Command options include:   
 
-*   `source`        Path or array of paths.   
+*   `cwd`           Current working directory for relative paths.   
 *   `uid`           Unix user id.   
 *   `gid`           Unix group id.  
-*   `directory`     Alias for `source`
-*   `destination`   Alias for `source`
+*   `mode`          Default to 0755.  
+*   `directory`     Path or array of paths.
+*   `destination`   Alias for `directory`.
 *   `exclude`       Regular expression.   
-*   `mode`         Default to 0755.  
-*   `cwd`           Current working directory for relative paths.   
+*   `source`        Alias for `directory`.   
 
 `callback`          Received parameters are:   
 
@@ -228,12 +364,22 @@ Simple usage:
 ```coffeescript
 
 mecano.mkdir './some/dir', (err, created) ->
-  console.log err?.message ? created
-```
-`mv` `move(options, callback)`
---------------------------------
+  console.info err?.message ? created
 
-More files and directories.
+```Advance usage:
+```coffeescript
+
+mecano.mkdir 
+  ssh: options.ssh
+  destination: './some/dir'
+  uid: 'me'
+  gid: 'my_group'
+  mode: 0o0777 or '777'
+```
+`mv` `move([goptions], options, callback)`
+------------------------------------------
+
+Move files and directories.   
 
 `options`           Command options include:   
 
@@ -253,10 +399,10 @@ Example
 source: __dirname
 desination: '/temp/my_dir'
 (err, moved) ->
-console.log "#{moved} dir moved"
+console.info "#{moved} dir moved"
 ```
-`rm` `remove(options, callback)`
---------------------------------
+`rm` `remove([goptions], options, callback)`
+--------------------------------------------
 
 Recursively remove files, directories and links. Internally, the function 
 use the [rimraf](https://github.com/isaacs/rimraf) library.
@@ -275,7 +421,7 @@ Example
 ```coffeescript
 
 mecano.rm './some/dir', (err, removed) ->
-  console.log "#{removed} dir removed"
+  console.info "#{removed} dir removed"
 
 ```Removing a directory unless a given file exists
 ```coffeescript
@@ -284,7 +430,7 @@ mecano.rm
   source: './some/dir'
   not_if_exists: './some/file'
 , (err, removed) ->
-  console.log "#{removed} dir removed"
+  console.info "#{removed} dir removed"
 
 ```Removing multiple files and directories
 ```coffeescript
@@ -293,10 +439,10 @@ mecano.rm [
   { source: './some/dir', not_if_exists: './some/file' }
   './some/file'
 ], (err, removed) ->
-  console.log "#{removed} dirs removed"
+  console.info "#{removed} dirs removed"
 ```
-`render(options, callback)`
----------------------------
+`render([goptions], options, callback)`
+---------------------------------------
 
 Render a template file At the moment, only the 
 [ECO](http://github.com/sstephenson/eco) templating engine is integrated.   
@@ -309,6 +455,9 @@ Render a template file At the moment, only the
 *   `destination`   File path where to write content to or a callback.   
 *   `context`       Map of key values to inject into the template.   
 *   `local_source`  Treat the source as local instead of remote, only apply with "ssh" option.   
+*   `uid`           File user name or user id
+*   `gid`           File group name or group id
+*   `mode`          File mode (permission and sticky bits), default to `0666`, in the for of `{mode: 0o744}` or `{mode: "744"}`
 
 `callback`          Received parameters are:   
 
@@ -317,30 +466,41 @@ Render a template file At the moment, only the
 
 If destination is a callback, it will be called multiple times with the   
 generated content as its first argument.
-`service(options, callback)`
-----------------------------
+
+`service([goptions], options, callback)`
+----------------------------------------
 
 Install a service. For now, only yum over SSH.   
 
 `options`           Command options include:   
 
-*    name           Package name.   
-*    startup        Run service daemon on startup.   
-*    yum_name       Name used by the yum utility, default to "name".   
-*    chk_name       Name used by the chkconfig utility, default to "srv_name" and "name".   
-*    srv_name       Name used by the service utility, default to "name".   
-*    start          Ensure the service is started, a boolean.   
-*    stop           Ensure the service is stopped, a boolean.   
+*   `name`          Package name.   
+*   `startup`       Run service daemon on startup. If true, startup will be set to '2345', use an empty string to not define any run level.   
+*   `yum_name`      Name used by the yum utility, default to "name".   
+*   `chk_name`      Name used by the chkconfig utility, default to "srv_name" and "name".   
+*   `srv_name`      Name used by the service utility, default to "name".   
+#   `start`         Ensure the service is started, a boolean.   
+#   `stop`          Ensure the service is stopped, a boolean.   
+*   `action`        Execute the service with the provided action argument.
 *   `stdout`        Writable Stream in which commands output will be piped.   
 *   `stderr`        Writable Stream in which commands error will be piped.   
+*   `installed`     Cache a list of installed services. If an object, the service will be installed if a key of the same name exists; if anything else (default), no caching will take place.   
+*   `updates`       Cache a list of outdated services. If an object, the service will be updated if a key of the same name exists; If true, the option will be converted to an object with all the outdated service names as keys; if anything else (default), no caching will take place.   
 
 `callback`          Received parameters are:   
 
 *   `err`           Error object if any.   
 *   `modified`      Number of action taken (installed, updated, started or stoped).   
+*   `installed`     List of installed services.   
+*   `updates`       List of services to update.   
 
-`upload(options, callback)`
----------------------------
+`touch([goptions], options, callback)`
+--------------------------------------
+
+Create a empty file if it does not yet exists.
+
+`upload([goptions], options, callback)`
+---------------------------------------
 
 Upload a file to a remote location. Options are 
 identical to the "write" function with the addition of 
@@ -357,36 +517,41 @@ the "binary" option.
 *   `source`        File path from where to extract the content, do not use conjointly with content.   
 *   `destination`   File path where to write content to.   
 *   `backup`        Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
+*   `md5`           Validate uploaded file with md5 checksum (only for binary upload for now).
+*   `sha1`          Validate uploaded file with sha1 checksum (only for binary upload for now).
 
 `callback`          Received parameters are:   
 
 *   `err`           Error object if any.   
 *   `rendered`      Number of rendered files. 
 
-`write(options, callback)`
---------------------------
+`write([goptions], options, callback)`
+--------------------------------------
 
 Write a file or a portion of an existing file.
 
-`options`             Command options include:   
+`options`           Command options include:   
 
-*   `from`            Replace from after this marker, a string or a regular expression.   
-*   `local_source`    Treat the source as local instead of remote, only apply with "ssh" option.   
-*   `to`              Replace to before this marker, a string or a regular expression.   
-*   `match`           Replace this marker, a string or a regular expression.   
-*   `replace`         The content to be inserted, used conjointly with the from, to or match options.   
-*   `content`         Text to be written, an alternative to source which reference a file.   
-*   `source`          File path from where to extract the content, do not use conjointly with content.   
-*   `destination`     File path where to write content to.   
-*   `backup`          Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
-*   `append`          Append the content to the destination file. If destination does not exist, the file will be created.   
-*   `write`           An array containing multiple transformation where a transformation is an object accepting the options `from`, `to`, `match` and `replace`
-*   `ssh`             Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+*   `from`          Replace from after this marker, a string or a regular expression.   
+*   `local_source`  Treat the source as local instead of remote, only apply with "ssh" option.   
+*   `to`            Replace to before this marker, a string or a regular expression.   
+*   `match`         Replace this marker, a string or a regular expression.   
+*   `replace`       The content to be inserted, used conjointly with the from, to or match options.   
+*   `content`       Text to be written, an alternative to source which reference a file.   
+*   `source`        File path from where to extract the content, do not use conjointly with content.   
+*   `destination`   File path where to write content to.   
+*   `backup`        Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
+*   `append`        Append the content to the destination file. If destination does not exist, the file will be created.   
+*   `write`         An array containing multiple transformation where a transformation is an object accepting the options `from`, `to`, `match` and `replace`
+*   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+*   `uid`           File user name or user id
+*   `gid`           File group name or group id
+*   `mode`          File mode (permission and sticky bits), default to `0666`, in the for of `{mode: 0o744}` or `{mode: "744"}`
 
-`callback`            Received parameters are:   
+`callback`          Received parameters are:   
 
-*   `err`             Error object if any.   
-*   `rendered`        Number of rendered files.   
+*   `err`           Error object if any.   
+*   `written`      Number of written files.   
 
 The option "append" allows some advance usages. If "append" is 
 null, it will add the `replace` value at the end of the file 
