@@ -757,11 +757,238 @@ mecano = module.exports =
       .on 'both', (err) ->
         finish err, written
     result
+  ###
+
+  `krb5_ktadd([goptions], options, callback`
+  ----------------------------------------------
+
+  Create a new Kerberos principal and an optionnal keytab.
+
+  `options`           Command options include:   
+  
+  *   `kadmin_server` Address of the kadmin server; optional, use "kadmin.local" if missing.   
+  *   `kadmin_principal`  KAdmin principal name unless `kadmin.local` is used.   
+  *   `kadmin_password`   Password associated to the KAdmin principal.   
+  *   `principal`     Principal to be created.   
+  *   `password`      Password associated to this principal; required if no randkey is provided. 
+  *   `randkey`       Generate a random key; required if no password is provided.   
+  *   `keytab`        Path to the file storing key entries.   
+  *   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+  *   `log`           Function called with a log related messages.  
+  *   `stdout`        Writable Stream in which commands output will be piped.   
+  *   `stderr`        Writable Stream in which commands error will be piped.   
 
   ###
+  krb5_ktadd: (goptions, options, callback) ->
+    if arguments.length is 2
+      callback = options
+      options = goptions
+      goptions = parallel: true
+    misc.options options, (err, options) ->
+      return callback err if err
+      executed = 0
+      each(options)
+      .parallel( goptions.parallel )
+      .on 'item', (options, next) ->
+        modified = false;
+        do_get = ->
+          return do_end() unless options.keytab
+          mecano.execute
+            cmd: "klist -k #{options.keytab}"
+            ssh: options.ssh
+            log: options.log
+            stdout: options.stdout
+            stderr: options.stderr
+            code_skipped: 1
+          , (err, exists, stdout, stderr) ->
+            return next err if err
+            return do_ktadd() unless exists
+            keytab = {}
+            for line in stdout.split '\n'
+              if match = /^\s*(\d+)\s*(.*)\s*$/.exec line
+                [_, kvno, principal] = match
+                keytab[principal] = kvno
+            # Principal is not listed inside the keytab
+            return do_ktadd() unless keytab[options.principal]?
+            mecano.execute
+              cmd: misc.kadmin options, "getprinc #{options.principal}"
+              ssh: options.ssh
+              log: options.log
+              stdout: options.stdout
+              stderr: options.stderr
+            , (err, exists, stdout, stderr) ->
+              return err if err
+              return do_ktadd() unless -1 is stdout.indexOf 'does not exist'
+              vno = null
+              for line in stdout.split '\n'
+                if match = /Key: vno (\d+)/.exec line
+                  [_, vno] = match
+                  break
+              return do_chown() if keytab[principal] is vno
+              do_ktadd()
+        do_ktadd = ->
+          mecano.execute
+            cmd: misc.kadmin options, "ktadd -k #{options.keytab} #{options.principal}"
+            ssh: options.ssh
+            log: options.log
+            stdout: options.stdout
+            stderr: options.stderr
+          , (err, ktadded) ->
+            return next err if err
+            modified = true
+            do_chown()
+        do_chown = () ->
+          return do_chmod() if not options.keytab or (not options.uid and not options.gid)
+          mecano.chown
+            ssh: options.ssh
+            log: options.log
+            destination: options.keytab
+            uid: options.uid
+            gid: options.gid
+          , (err, chowned) ->
+            return next err if err
+            modified = chowned if chowned
+            do_chmod()
+        do_chmod = () ->
+          return do_end() if not options.keytab or not options.mode
+          mecano.chmod
+            ssh: options.ssh
+            log: options.log
+            destination: options.keytab
+            mode: options.mode
+          , (err, chmoded) ->
+            return next err if err
+            modified = chmoded if chmoded
+            do_end()
+        do_end = ->
+          executed++ if modified
+          next()
+        conditions.all options, next, do_get
+      .on 'both', (err) ->
+        callback err, executed
+  ###
+
+  `krb5_principal([goptions], options, callback`
+  ----------------------------------------------
+
+  Create a new Kerberos principal and an optionnal keytab.
+
+  `options`           Command options include:   
   
-  `ldap_acl(options, callback`
-  ----------------------------
+  *   `kadmin_server` Address of the kadmin server; optional, use "kadmin.local" if missing.   
+  *   `kadmin_principal`  KAdmin principal name unless `kadmin.local` is used.   
+  *   `kadmin_password`   Password associated to the KAdmin principal.   
+  *   `principal`     Principal to be created.   
+  *   `password`      Password associated to this principal; required if no randkey is provided. 
+  *   `randkey`       Generate a random key; required if no password is provided.   
+  *   `keytab`        Path to the file storing key entries.   
+  *   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+  *   `log`           Function called with a log related messages.  
+  *   `stdout`        Writable Stream in which commands output will be piped.   
+  *   `stderr`        Writable Stream in which commands error will be piped.   
+
+  ###
+  krb5_addprinc: (goptions, options, callback) ->
+    if arguments.length is 2
+      callback = options
+      options = goptions
+      goptions = parallel: true
+    misc.options options, (err, options) ->
+      return callback err if err
+      executed = 0
+      each(options)
+      .parallel( goptions.parallel )
+      .on 'item', (options, next) ->
+        return next new Error 'Property principal is required' unless options.principal
+        return next new Error 'Password or randkey missing' if not options.password and not options.randkey
+        modified = false
+        do_kadmin = ->
+          cmd = misc.kadmin options, if options.password
+          then "addprinc -pw #{options.password} #{options.principal}"
+          else "addprinc -randkey #{options.principal}"
+          mecano.execute
+            cmd: cmd
+            ssh: options.ssh
+            log: options.log
+            stdout: options.stdout
+            stderr: options.stderr
+          , (err, _, stdout) ->
+            return next err if err
+            modified = true if -1 is stdout.indexOf 'already exists'
+            do_keytab()
+        do_keytab = ->
+          mecano.krb5_ktadd options, (err, ktadded) ->
+            modified = true if ktadded
+            do_end()
+        do_end = ->
+          executed++ if modified
+          next()
+        conditions.all options, next, do_kadmin
+      .on 'both', (err) ->
+        callback err, executed
+  ###
+
+  `krb5_delprinc([goptions], options, callback`
+  ----------------------------------------------
+
+  Create a new Kerberos principal and an optionnal keytab.
+
+  `options`           Command options include:   
+
+  *   `principal`     Principal to be created.   
+  *   `kadmin_server` Address of the kadmin server; optional, use "kadmin.local" if missing.   
+  *   `kadmin_principal`  KAdmin principal name unless `kadmin.local` is used.   
+  *   `kadmin_password`   Password associated to the KAdmin principal.   
+  *   `keytab`        Path to the file storing key entries.   
+  *   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+  *   `log`           Function called with a log related messages.  
+  *   `stdout`        Writable Stream in which commands output will be piped.   
+  *   `stderr`        Writable Stream in which commands error will be piped.   
+
+  ###
+  krb5_delprinc: (goptions, options, callback) ->
+    if arguments.length is 2
+      callback = options
+      options = goptions
+      goptions = parallel: true
+    misc.options options, (err, options) ->
+      return callback err if err
+      executed = 0
+      each(options)
+      .parallel( goptions.parallel )
+      .on 'item', (options, next) ->
+        return next new Error 'Property principal is required' unless options.principal
+        modified = true
+        do_delprinc = ->
+          mecano.execute
+            cmd: misc.kadmin options, "delprinc -force #{options.principal}"
+            ssh: options.ssh
+            log: options.log
+            stdout: options.stdout
+            stderr: options.stderr
+          , (err, _, stdout) ->
+            return next err if err
+            modified = true if -1 is stdout.indexOf 'does not exist'
+            do_keytab()
+        do_keytab = ->
+          return do_end() unless options.keytab
+          mecano.remove
+            ssh: options.ssh
+            destination: options.keytab
+          , (err, removed) ->
+            return next err if err
+            modified++ if removed
+            do_end()
+        do_end = ->
+          executed++ if modified
+          next()
+        conditions.all options, next, do_delprinc
+      .on 'both', (err) ->
+        callback err, executed
+  ###
+  
+  `ldap_acl([goptions], options, callback`
+  ----------------------------------------
 
   `options`           Command options include:   
 
@@ -1299,7 +1526,7 @@ mecano = module.exports =
   Simple usage:
 
       mecano.mkdir './some/dir', (err, created) ->
-        console.log err?.message ? created
+        console.info err?.message ? created
 
   Advance usage:
 
@@ -1426,7 +1653,7 @@ mecano = module.exports =
       source: __dirname
       desination: '/temp/my_dir'
     , (err, moved) ->
-      console.log "#{moved} dir moved"
+      console.info "#{moved} dir moved"
 
   ###
   move: (goptions, options, callback) ->
@@ -1483,7 +1710,7 @@ mecano = module.exports =
   Example
 
       mecano.rm './some/dir', (err, removed) ->
-        console.log "#{removed} dir removed"
+        console.info "#{removed} dir removed"
   
   Removing a directory unless a given file exists
 
@@ -1491,7 +1718,7 @@ mecano = module.exports =
         source: './some/dir'
         not_if_exists: './some/file'
       , (err, removed) ->
-        console.log "#{removed} dir removed"
+        console.info "#{removed} dir removed"
   
   Removing multiple files and directories
 
@@ -1499,7 +1726,7 @@ mecano = module.exports =
         { source: './some/dir', not_if_exists: './some/file' }
         './some/file'
       ], (err, removed) ->
-        console.log "#{removed} dirs removed"
+        console.info "#{removed} dirs removed"
 
   ###
   remove: (goptions, options, callback) ->
