@@ -5,18 +5,18 @@ Node Mecano
 
 Mecano gather a set of functions usually used during system deployment.
 
-Functions include "copy", "download", "exec", "extract", "git", "link", "mkdir", "move", "remove", "render", "service", "write". They all share common usages and philosophies:   
+Functions include "chmod", "chown", "copy", "download", "execute", "extract", "git", "ini", "krb5_ktadd", "krb5_addprinc", "krb5_delprinc", "ldap_acl", "ldap_index", "ldap_schema", "link", "mkdir", "move", "remove", "render", "service", "touch", "upload" and "write". They all share common usages and philosophies:   
 
-*   Run actions both locally and remotely over SSH.   
-*   Ability to see if an action had an effect 
-through the second argument provided in the callback.   
+*   Run seamlessly both locally and remotely over SSH.   
+*   Each action report if it had an effect.   
 *   Common behavior and API between actions: same
 action signature with options followed by callback; similar 
 options properties; same callback signature with an 
 error followed the number of affected actions.   
 *   Run one or multiple actions depending on option 
 argument being an object or an array of objects.   
-*   Favorise ease of use and checking over performance.   
+*   Optmized for ease of use and checking over performance.
+*   Full test coverage.   
 
 Documentation is available on the [project website](http://www.adaltas.com/projects/node-mecano/).
 
