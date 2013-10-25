@@ -11,7 +11,7 @@ describe 'exec', ->
   scratch = test.scratch @
 
   they 'run a command', (ssh, next) ->
-    mecano.exec
+    mecano.execute
       ssh: ssh
       cmd: 'text=yes; echo $text'
       toto: true
@@ -35,12 +35,12 @@ describe 'exec', ->
       unpiped++
     out.on 'finish', ->
       false.should.be.ok
-    mecano.exec
+    mecano.execute
       ssh: ssh
       cmd: "cat #{__filename} | grep #{search1}"
       stdout: out
     , (err, executed, stdout, stderr) ->
-      mecano.exec
+      mecano.execute
         ssh: ssh
         cmd: "cat #{__filename} | grep #{search2}"
         stdout: out
@@ -52,13 +52,13 @@ describe 'exec', ->
   
   they 'validate exit code', (ssh, next) ->
     # code undefined
-    mecano.exec
+    mecano.execute
       ssh: ssh
       cmd: "chown"
     , (err, executed, stdout, stderr) ->
       err.message.should.eql 'Invalid exec code 1'
       # code defined in array
-      mecano.exec
+      mecano.execute
         ssh: ssh
         cmd: "chown"
         code: [0, 1]
@@ -68,7 +68,7 @@ describe 'exec', ->
   
   they 'should honor code skipped', (ssh, next) ->
     # code undefined
-    mecano.exec
+    mecano.execute
       ssh: ssh
       cmd: "mkdir #{scratch}/my_dir"
       code: 0
@@ -76,7 +76,7 @@ describe 'exec', ->
     , (err, executed, stdout, stderr) ->
       return next err if err
       executed.should.eql 1
-      mecano.exec
+      mecano.execute
         ssh: ssh
         cmd: "mkdir #{scratch}/my_dir"
         code: 0
@@ -87,14 +87,14 @@ describe 'exec', ->
         next()
   
   they 'should honor conditions', (ssh, next) ->
-    mecano.exec
+    mecano.execute
       ssh: ssh
       cmd: 'text=yes; echo $text'
       if_exists: __dirname
     , (err, executed, stdout, stderr) ->
       executed.should.eql 1
       stdout.should.eql 'yes\n'
-      mecano.exec
+      mecano.execute
         ssh: ssh
         cmd: 'text=yes; echo $text'
         if_exists: "__dirname/toto"
@@ -104,7 +104,7 @@ describe 'exec', ->
         next()
 
   they 'honor not_if_exists', (ssh, next) ->
-    mecano.exec
+    mecano.execute
       ssh: ssh
       cmd: "ls -l #{__dirname}"
       not_if_exists: __dirname
