@@ -33,8 +33,8 @@ Functions include "copy", "download", "exec", "extract", "git", "link", "mkdir",
 mecano = module.exports = 
   ###
 
-  `chmod(options, callback)`
-  --------------------------
+  `chmod([goptions], options, callback)`
+  --------------------------------------
 
   Change the file permissions of a file.
 
@@ -43,6 +43,7 @@ mecano = module.exports =
   *   `destination`   Where the file or directory is copied.
   *   `mode`          Permissions of the file or the parent directory
   *   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+  *   `log`           Function called with a log related messages.   
  
   `callback`          Received parameters are:   
 
@@ -50,7 +51,11 @@ mecano = module.exports =
   *   `modified`      Number of files with modified permissions.
 
   ###
-  chmod: (options, callback) ->
+  chmod: (goptions, options, callback) ->
+    if arguments.length is 2
+      callback = options
+      options = goptions
+      goptions = parallel: true
     result = child mecano
     finish = (err, modified) ->
       callback err, modified if callback
@@ -59,13 +64,16 @@ mecano = module.exports =
       return finish err if err
       modified = 0
       each( options )
+      .parallel(goptions.parallel)
       .on 'item', (options, next) ->
         # Validate parameters
         {ssh, destination, mode} = options
         return next new Error "Missing destination: #{destination}" unless destination
+        options.log? "Stat #{destination}"
         misc.file.stat ssh, destination, (err, stat) ->
           return next err if err
           return next() if misc.file.cmpmod stat.mode, mode
+          options.log? "Change mode to #{mode}"
           misc.file.chmod ssh, destination, mode, (err) ->
             return next err if err
             modified++
@@ -74,8 +82,8 @@ mecano = module.exports =
         finish err, modified
   ###
 
-  `chmod(options, callback)`
-  --------------------------
+  `chmod([goptions], options, callback)`
+  --------------------------------------
 
   Change the file permissions of a file.
 
@@ -84,6 +92,7 @@ mecano = module.exports =
   *   `destination`   Where the file or directory is copied.
   *   `mode`          Permissions of the file or the parent directory
   *   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+  *   `log`           Function called with a log related messages.   
  
   `callback`          Received parameters are:   
 
@@ -91,7 +100,11 @@ mecano = module.exports =
   *   `modified`      Number of files with modified permissions.
 
   ###
-  chown: (options, callback) ->
+  chown: (goptions, options, callback) ->
+    if arguments.length is 2
+      callback = options
+      options = goptions
+      goptions = parallel: true
     result = child mecano
     finish = (err, modified) ->
       callback err, modified if callback
@@ -100,13 +113,18 @@ mecano = module.exports =
       return finish err if err
       modified = 0
       each( options )
+      .parallel(goptions.parallel)
       .on 'item', (options, next) ->
         # Validate parameters
         {ssh, destination, uid, gid} = options
         return next new Error "Missing destination: #{destination}" unless destination
+        return next() unless uid and gid
+        options.log? "Stat #{destination}"
         misc.file.stat ssh, destination, (err, stat) ->
           return next err if err
-          return next() if stat.uid is options.uid and stat.gid is options.gid
+          return next() if stat.uid is uid and stat.gid is gid
+          options.log? "Change uid from #{stat.uid} to #{uid}" if stat.uid isnt uid
+          options.log? "Change gid from #{stat.gid} to #{gid}" if stat.gid isnt gid
           misc.file.chown ssh, destination, uid, gid, (err) ->
             return next() err if err
             modified++
@@ -115,8 +133,8 @@ mecano = module.exports =
         finish err, modified
   ###
 
-  `cp` `copy(options, callback)`
-  ------------------------------
+  `cp` `copy([goptions], options, callback)`
+  ------------------------------------------
 
   Copy a file. The behavior is similar to the one of the `cp` 
   Unix utility. Copying a file over an existing file will 
@@ -139,11 +157,16 @@ mecano = module.exports =
   *   preserve permissions if `mode` is `true`
 
   ###
-  copy: (options, callback) ->
+  copy: (goptions, options, callback) ->
+    if arguments.length is 2
+      callback = options
+      options = goptions
+      goptions = parallel: true
     misc.options options, (err, options) ->
       return callback err if err
       copied = 0
       each( options )
+      .parallel(goptions.parallel)
       .on 'item', (options, next) ->
         # Validate parameters
         return next new Error 'Missing source' unless options.source
@@ -230,8 +253,8 @@ mecano = module.exports =
         callback err, copied
   ###
 
-  `download(options, callback)`
-  -----------------------------
+  `download([goptions], options, callback)`
+  -----------------------------------------
 
   Download files using various protocols.
 
@@ -279,7 +302,11 @@ mecano = module.exports =
   File example
   
   ###
-  download: (options, callback) ->
+  download: (goptions, options, callback) ->
+    if arguments.length is 2
+      callback = options
+      options = goptions
+      goptions = parallel: true
     result = child mecano
     finish = (err, downloaded) ->
       callback err, downloaded if callback
@@ -288,6 +315,7 @@ mecano = module.exports =
       return finish err if err
       downloaded = 0
       each( options )
+      .parallel(goptions.parallel)
       .on 'item', (options, next) ->
         # Validate parameters
         {destination, source, md5sum} = options
@@ -412,7 +440,11 @@ mecano = module.exports =
   *   `stderr`        Stderr value(s) unless `stderr` option is provided.   
 
   ###
-  execute: (options, callback) ->
+  execute: (goptions, options, callback) ->
+    if arguments.length is 2
+      callback = options
+      options = goptions
+      goptions = parallel: true
     result = child mecano
     finish = (err, created, stdout, stderr) ->
       callback err, created, stdout, stderr if callback
@@ -432,7 +464,7 @@ mecano = module.exports =
         esccmd
       stds = if callback then callback.length > 2 else false
       each( options )
-      .parallel( true )
+      .parallel(goptions.parallel)
       .on 'item', (options, i, next) ->
         # Validate parameters
         options = { cmd: options } if typeof options is 'string'
@@ -482,8 +514,8 @@ mecano = module.exports =
     result
   ###
 
-  `extract(options, callback)` 
-  ----------------------------
+  `extract([goptions], options, callback)` 
+  ----------------------------------------
 
   Extract an archive. Multiple compression types are supported. Unless 
   specified as an option, format is derived from the source extension. At the 
@@ -504,11 +536,16 @@ mecano = module.exports =
   *   `extracted`     Number of extracted archives.   
 
   ###
-  extract: (options, callback) ->
+  extract: (goptions, options, callback) ->
+    if arguments.length is 2
+      callback = options
+      options = goptions
+      goptions = parallel: true
     misc.options options, (err, options) ->
       return callback err if err
       extracted = 0
       each( options )
+      .parallel(goptions.parallel)
       .on 'item', (options, next) ->
         # Validate parameters
         return next new Error "Missing source: #{options.source}" unless options.source
@@ -553,8 +590,8 @@ mecano = module.exports =
         callback err, extracted
   ###
   
-  `git`
-  -----
+  `git([goptions], options, callback`
+  -----------------------------------
 
   `options`           Command options include:   
 
@@ -566,11 +603,16 @@ mecano = module.exports =
   *   `stderr`        Writable EventEmitter in which command error will be piped.   
   
   ###
-  git: (options, callback) ->
+  git: (goptions, options, callback) ->
+    if arguments.length is 2
+      callback = options
+      options = goptions
+      goptions = parallel: true
     misc.options options, (err, options) ->
       return callback err if err
       updated = 0
       each( options )
+      .parallel(goptions.parallel)
       .on 'item', (options, next) ->
         # Sanitize parameters
         options.revision ?= 'HEAD'
@@ -632,8 +674,9 @@ mecano = module.exports =
         callback err, updated
   ###
 
-  `ini(options, callback`
-  -----------------------
+  `ini([goptions], options, callback`
+  -----------------------------------
+
   Write an object as .ini file. Note, we are internally using the
   [ini](https://github.com/isaacs/ini) module. However, there is 
   a subtile difference. Any key provided with value of `undefined` 
@@ -665,7 +708,11 @@ mecano = module.exports =
   *   `to`            Replace to before this marker, a string or a regular expression.   
   
   ###
-  ini: (options, callback) ->
+  ini: (goptions, options, callback) ->
+    if arguments.length is 2
+      callback = options
+      options = goptions
+      goptions = parallel: true
     clean = (content, undefinedOnly) ->
       for k, v of content
         if v and typeof v is 'object'
@@ -682,6 +729,7 @@ mecano = module.exports =
       return finish err if err
       written = 0
       each( options )
+      .parallel(goptions.parallel)
       .on 'item', (options, next) ->
         {merge, destination, content, ssh} = options
         # Validate parameters
@@ -733,7 +781,11 @@ mecano = module.exports =
 
   [ldapclt]: http://ldapjs.org/client.html
   ###
-  ldap_acl: (options, callback) ->
+  ldap_acl: (goptions, options, callback) ->
+    if arguments.length is 2
+      callback = options
+      options = goptions
+      goptions = parallel: true
     result = child mecano
     finish = (err, modified) ->
       callback err, modified if callback
@@ -742,6 +794,7 @@ mecano = module.exports =
       return finish err if err
       modified = 0
       each( options )
+      .parallel(goptions.parallel)
       .on 'item', (options, next) ->
         client = null
         updated = false
@@ -866,8 +919,8 @@ mecano = module.exports =
     result
   ###
 
-  `ldap_index(options, callback`
-  ------------------------------
+  `ldap_index([goptions], options, callback`
+  ------------------------------------------
 
   `options`           Command options include:   
 
@@ -883,7 +936,11 @@ mecano = module.exports =
   Resources
   http://www.zytrax.com/books/ldap/apa/indeces.html
   ###
-  ldap_index: (options, callback) ->
+  ldap_index: (goptions, options, callback) ->
+    if arguments.length is 2
+      callback = options
+      options = goptions
+      goptions = parallel: true
     result = child mecano
     finish = (err, created) ->
       callback err, created if callback
@@ -892,6 +949,7 @@ mecano = module.exports =
       return finish err if err
       modified = 0
       each( options )
+      .parallel(goptions.parallel)
       .on 'item', (options, next) ->
         client = null
         updated = false
@@ -958,8 +1016,10 @@ mecano = module.exports =
     result
 
   ###
-  Register a new ldap schema
-  --------------------------
+  `ldap_schema([goptions], options, callback)`
+  --------------------------------------------
+
+  Register a new ldap schema.
 
   `options`           Command options include:   
 
@@ -971,7 +1031,11 @@ mecano = module.exports =
   *   `overwrite`     Overwrite existing "olcAccess", default is to merge.   
   *   `log`           Function called with a log related messages.   
   ###
-  ldap_schema: (options, callback) ->
+  ldap_schema: (goptions, options, callback) ->
+    if arguments.length is 2
+      callback = options
+      options = goptions
+      goptions = parallel: true
     result = child mecano
     finish = (err, created) ->
       callback err, created if callback
@@ -980,6 +1044,7 @@ mecano = module.exports =
       return finish err if err
       modified = 0
       each( options )
+      .parallel(goptions.parallel)
       .on 'item', (options, next) ->
         return next new Error "Missing name" unless options.name
         return next new Error "Missing schema" unless options.schema
@@ -1114,8 +1179,9 @@ mecano = module.exports =
 
   ###
 
-  `ln` `link(options, callback)`
-  ------------------------------
+  `ln` `link([goptions], options, callback)`
+  ------------------------------------------
+
   Create a symbolic link and it's parent directories if they don't yet
   exist.
 
@@ -1132,7 +1198,11 @@ mecano = module.exports =
   *   `linked`        Number of created links.   
 
   ###
-  link: (options, callback) ->
+  link: (goptions, options, callback) ->
+    if arguments.length is 2
+      callback = options
+      options = goptions
+      goptions = parallel: true
     result = child mecano
     finish = (err, created) ->
       callback err, created if callback
@@ -1173,7 +1243,7 @@ mecano = module.exports =
             linked++
             callback()
       each( options )
-      .parallel( true )
+      .parallel(goptions.parallel)
       .on 'item', (options, next) ->
         # return next new Error 'SSH not yet supported' if options.ssh
         return next new Error "Missing source, got #{JSON.stringify(options.source)}" unless options.source
@@ -1203,8 +1273,8 @@ mecano = module.exports =
     result
   ###
 
-  `mkdir(options, callback)`
-  --------------------------
+  `mkdir([goptions], options, callback)`
+  --------------------------------------
 
   Recursively create a directory. The behavior is similar to the Unix command `mkdir -p`. 
   It supports an alternative syntax where options is simply the path of the directory
@@ -1241,7 +1311,11 @@ mecano = module.exports =
         mode: 0o0777 or '777'
 
   ###
-  mkdir: (options, callback) ->
+  mkdir: (goptions, options, callback) ->
+    if arguments.length is 2
+      callback = options
+      options = goptions
+      goptions = parallel: true
     result = child mecano
     finish = (err, created) ->
       callback err, created if callback
@@ -1250,6 +1324,7 @@ mecano = module.exports =
       return finish err if err
       created = 0
       each( options )
+      .parallel(goptions.parallel)
       .on 'item', (options, next) ->
         # Validate parameters
         options = { directory: options } if typeof options is 'string'
@@ -1329,8 +1404,8 @@ mecano = module.exports =
     result
   ###
 
-  `mv` `move(options, callback)`
-  --------------------------------
+  `mv` `move([goptions], options, callback)`
+  ------------------------------------------
 
   Move files and directories.   
 
@@ -1354,11 +1429,16 @@ mecano = module.exports =
       console.log "#{moved} dir moved"
 
   ###
-  move: (options, callback) ->
+  move: (goptions, options, callback) ->
+    if arguments.length is 2
+      callback = options
+      options = goptions
+      goptions = parallel: true
     misc.options options, (err, options) ->
       return callback err if err
       moved = 0
       each( options )
+      .parallel(goptions.parallel)
       .on 'item', (options, next) ->
         # Start real work
         exists = ->
@@ -1384,8 +1464,8 @@ mecano = module.exports =
         callback err, moved
   ###
 
-  `rm` `remove(options, callback)`
-  --------------------------------
+  `rm` `remove([goptions], options, callback)`
+  --------------------------------------------
 
   Recursively remove files, directories and links. Internally, the function 
   use the [rimraf](https://github.com/isaacs/rimraf) library.
@@ -1422,7 +1502,11 @@ mecano = module.exports =
         console.log "#{removed} dirs removed"
 
   ###
-  remove: (options, callback) ->
+  remove: (goptions, options, callback) ->
+    if arguments.length is 2
+      callback = options
+      options = goptions
+      goptions = parallel: true
     result = child mecano
     finish = (err, removed) ->
       callback err, removed if callback
@@ -1431,6 +1515,7 @@ mecano = module.exports =
       return finish err if err
       removed = 0
       each( options )
+      .parallel(goptions.parallel)
       .on 'item', (options, next) ->
         # Validate parameters
         options = source: options if typeof options is 'string'
@@ -1459,8 +1544,8 @@ mecano = module.exports =
     result
   ###
 
-  `render(options, callback)`
-  ---------------------------
+  `render([goptions], options, callback)`
+  ---------------------------------------
   
   Render a template file At the moment, only the 
   [ECO](http://github.com/sstephenson/eco) templating engine is integrated.   
@@ -1486,11 +1571,16 @@ mecano = module.exports =
   generated content as its first argument.
   
   ###
-  render: (options, callback) ->
+  render: (goptions, options, callback) ->
+    if arguments.length is 2
+      callback = options
+      options = goptions
+      goptions = parallel: true
     misc.options options, (err, options) ->
       return callback err if err
       rendered = 0
       each( options )
+      .parallel(goptions.parallel)
       .on 'item', (options, next) ->
         # Validate parameters
         return next new Error 'Missing source or content' unless options.source or options.content
@@ -1515,8 +1605,9 @@ mecano = module.exports =
       .on 'both', (err) ->
         callback err, rendered
   ###
-  `service(options, callback)`
-  ----------------------------
+
+  `service([goptions], options, callback)`
+  ----------------------------------------
 
   Install a service. For now, only yum over SSH.   
   
@@ -1543,12 +1634,17 @@ mecano = module.exports =
   *   `updates`       List of services to update.   
 
   ###
-  service: (options, callback) ->
+  service: (goptions, options, callback) ->
+    if arguments.length is 2
+      callback = options
+      options = goptions
+      goptions = parallel: true
     installed = updates = null
     misc.options options, (err, options) ->
       return callback err if err
       serviced = 0
       each( options )
+      .parallel(goptions.parallel)
       .on 'item', (options, next) ->
         # Validate parameters
         return next new Error 'Missing service name' unless options.name
@@ -1723,13 +1819,17 @@ mecano = module.exports =
         callback err, serviced, installed, updates
   ###
 
-  `touch(options, callback)`
-  --------------------------
+  `touch([goptions], options, callback)`
+  --------------------------------------
   
   Create a empty file if it does not yet exists.
 
   ###
-  touch: (options, callback) ->
+  touch: (goptions, options, callback) ->
+    if arguments.length is 2
+      callback = options
+      options = goptions
+      goptions = parallel: true
     result = child mecano
     finish = (err, modified) ->
       callback err, modified if callback
@@ -1756,8 +1856,8 @@ mecano = module.exports =
 
   ###
 
-  `upload(options, callback)`
-  ---------------------------
+  `upload([goptions], options, callback)`
+  ---------------------------------------
   
   Upload a file to a remote location. Options are 
   identical to the "write" function with the addition of 
@@ -1783,7 +1883,11 @@ mecano = module.exports =
   *   `rendered`      Number of rendered files. 
 
   ###
-  upload: (options, callback) ->
+  upload: (goptions, options, callback) ->
+    if arguments.length is 2
+      callback = options
+      options = goptions
+      goptions = parallel: true
     result = child mecano
     finish = (err, uploaded) ->
       callback err, uploaded if callback
@@ -1792,6 +1896,7 @@ mecano = module.exports =
       return finish err if err
       uploaded = 0
       each( options )
+      .parallel(goptions.parallel)
       .on 'item', (options, next) ->
         conditions.all options, next, ->
           # Start real work
@@ -1847,8 +1952,8 @@ mecano = module.exports =
     result
   ###
 
-  `write(options, callback)`
-  --------------------------
+  `write([goptions], options, callback)`
+  --------------------------------------
 
   Write a file or a portion of an existing file.
 
@@ -1956,7 +2061,11 @@ mecano = module.exports =
         # username: you\n\nfriends: me
 
   ###
-  write: (options, callback) ->
+  write: (goptions, options, callback) ->
+    if arguments.length is 2
+      callback = options
+      options = goptions
+      goptions = parallel: true
     result = child mecano
     finish = (err, written) ->
       callback err, written if callback
@@ -1965,6 +2074,7 @@ mecano = module.exports =
       return finish err if err
       written = 0
       each( options )
+      .parallel(goptions.parallel)
       .on 'item', (options, next) ->
         # Validate parameters
         return next new Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?.length
