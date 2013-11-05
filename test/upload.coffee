@@ -65,14 +65,72 @@ describe 'upload', ->
             sha1: srcsum
           , (err, uploaded) ->
             return next err if err
+            uploaded.should.eql 1
             mecano.upload
               ssh: ssh
               binary: true
               source: "#{scratch}/source.tar.gz"
               destination: "#{scratch}/destination.tar.gz"
-              sha1: 'thisisinvalid'
+              sha1: srcsum
             , (err, uploaded) ->
-              err.message.should.eql 'Invalid sha1 checksum'
+              return next err if err
+              uploaded.should.eql 0
+              next()
+
+  it 'check invalid file digest', (next) ->
+    @timeout 0
+    mecano.execute
+      cmd: "tar czf #{scratch}/source.tar.gz -C #{__dirname}/../ ."
+    , (err, executed) ->
+      return next err if err
+      mecano.execute
+        cmd: "openssl md5 #{scratch}/source.tar.gz"
+      , (err, executed, srcsum) ->
+        return next err if err
+        srcsum = /[ ](.*)$/.exec(srcsum.trim())[1]
+        connect host: 'localhost', (err, ssh) ->
+          return next err if err
+          # Destination does not yet exist
+          mecano.upload
+            ssh: ssh
+            binary: true
+            source: "#{scratch}/source.tar.gz"
+            destination: "#{scratch}/destination.tar.gz"
+            md5: 'thisisinvalid'
+          , (err, uploaded) ->
+            err.message.should.eql 'Invalid md5 checksum'
+            next()
+
+  it 'check digest over an invalid existing file', (next) ->
+    @timeout 0
+    mecano.execute
+      cmd: "tar czf #{scratch}/source.tar.gz -C #{__dirname}/../ ."
+    , (err, executed) ->
+      return next err if err
+      mecano.execute
+        cmd: "openssl md5 #{scratch}/source.tar.gz"
+      , (err, executed, srcsum) ->
+        return next err if err
+        srcsum = /[ ](.*)$/.exec(srcsum.trim())[1]
+        connect host: 'localhost', (err, ssh) ->
+          return next err if err
+          # Upload invalid file
+          mecano.upload
+            ssh: ssh
+            binary: true
+            source: "#{__filename}"
+            destination: "#{scratch}/destination.tar.gz"
+          , (err, uploaded) ->
+            return next err if err
+            mecano.upload
+              ssh: ssh
+              binary: true
+              source: "#{scratch}/source.tar.gz"
+              destination: "#{scratch}/destination.tar.gz"
+              md5: srcsum
+            , (err, uploaded) ->
+              return next err if err
+              uploaded.should.eql 1
               next()
 
   it 'upload binary file', (next) ->
