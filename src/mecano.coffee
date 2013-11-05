@@ -2142,6 +2142,7 @@ mecano = module.exports =
               misc.file.exists options.ssh, options.destination, (err, exists) ->
                 return next err if err
                 return do_upload() unless exists
+                return do_upload() unless options.md5 or options.sha1
                 options.log? "Make sure destination checksum is valid"
                 switch
                   when options.md5? then get_checksum options.destination, 'md5', (err, md5) ->
