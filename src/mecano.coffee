@@ -349,6 +349,7 @@ mecano = module.exports =
           if options.ssh
             if u.protocol is 'http:'
               cmd = "curl #{source} -o #{stageDestination}"
+              cmd += " -s" # silent
               cmd += " -x #{options.proxy}" if options.proxy
               mecano.execute
                 ssh: options.ssh
@@ -1002,6 +1003,7 @@ mecano = module.exports =
   *   `name`          Distinguish name storing the "olcAccess" property, using the database adress (eg: "olcDatabase={2}bdb,cn=config").   
   *   `overwrite`     Overwrite existing "olcAccess", default is to merge.   
   *   `log`           Function called with a log related messages.   
+  *   `acl`           In case of multiple acls, regroup "before", "to" and "by" as an array
 
   Resources:
   http://www.openldap.org/doc/admin24/access-control.html
@@ -1023,124 +1025,134 @@ mecano = module.exports =
       each( options )
       .parallel(goptions.parallel)
       .on 'item', (options, next) ->
-        client = null
-        updated = false
-        options.to = options.to.trim()
-        for b, i in options.by
-          options.by[i] = b.trim()
-        connect = ->
-          if options.ldap instanceof ldap_client
-            client = options.ldap
-            return search()
-          options.log? 'Open and bind connection'
-          client = ldap.createClient url: options.url
-          client.bind options.binddn, options.passwd, (err) ->
-            return end err if err
-            search()
-        search = ->
-            options.log? 'Search attribute olcAccess'
-            client.search options.name,
-              scope: 'base'
-              attributes: ['olcAccess']
-            , (err, search) ->
-              return unbind err if err
-              olcAccess = null
-              search.on 'searchEntry', (entry) ->
-                options.log? "Found #{JSON.stringify entry.object}"
-                # typeof olcAccess may be undefined, array or string
-                olcAccess = entry.object.olcAccess or []
-                olcAccess = [olcAccess] unless Array.isArray olcAccess
-              search.on 'end', ->
-                options.log? "Attribute olcAccess was #{JSON.stringify olcAccess}"
-                parse olcAccess
-        parse = (_olcAccess) ->
-          olcAccess = []
-          for access, i in _olcAccess
-            to = ''
-            bys = []
-            buftype = 0 # 0: start, 1: to, 2:by
-            buf = ''
-            for c, i in access
-              buf += c
-              if buftype is 0
-                if /to$/.test buf
-                  buf = ''
-                  buftype = 1
-              if buftype is 1
-                if matches = /^(.*)by$/.exec buf
-                  to = matches[1].trim()
-                  buf = ''
-                  buftype = 2
-              if buftype is 2
-                if matches = /^(.*)by$/.exec buf
-                  bys.push matches[1].trim()
-                  buf = ''
-                else if i+1 is access.length
-                  bys.push buf.trim()
-            olcAccess.push
-              to: to
-              by: bys
-          diff olcAccess
-        diff = (olcAccess) ->
-          toAlreadyExist = false
-          for access, i in olcAccess
-            continue unless options.to is access.to
-            toAlreadyExist = true
-            fby = unless options.overwrite then access.by else []
-            for oby in options.by
-              found = false
-              for aby in access.by
-                if oby is aby
-                  found = true
-                  break
-              unless found
+        options.acls ?= [{}]
+        conditions.all options, next, ->
+          updated = false
+          each(options.acls)
+          .parallel(false)
+          .on 'item', (acl, next) ->
+            acl.before ?= options.before
+            acl.to ?= options.to
+            acl.by ?= options.by
+            client = null
+            acl.to = acl.to.trim()
+            for b, i in acl.by
+              acl.by[i] = b.trim()
+            connect = ->
+              if options.ldap instanceof ldap_client
+                client = options.ldap
+                return search()
+              options.log? 'Open and bind connection'
+              client = ldap.createClient url: options.url
+              client.bind options.binddn, options.passwd, (err) ->
+                return end err if err
+                search()
+            search = ->
+                options.log? 'Search attribute olcAccess'
+                client.search options.name,
+                  scope: 'base'
+                  attributes: ['olcAccess']
+                , (err, search) ->
+                  return unbind err if err
+                  olcAccess = null
+                  search.on 'searchEntry', (entry) ->
+                    options.log? "Found #{JSON.stringify entry.object}"
+                    # typeof olcAccess may be undefined, array or string
+                    olcAccess = entry.object.olcAccess or []
+                    olcAccess = [olcAccess] unless Array.isArray olcAccess
+                  search.on 'end', ->
+                    options.log? "Attribute olcAccess was #{JSON.stringify olcAccess}"
+                    parse olcAccess
+            parse = (_olcAccess) ->
+              olcAccess = []
+              for access, i in _olcAccess
+                to = ''
+                bys = []
+                buftype = 0 # 0: start, 1: to, 2:by
+                buf = ''
+                for c, i in access
+                  buf += c
+                  if buftype is 0
+                    if /to$/.test buf
+                      buf = ''
+                      buftype = 1
+                  if buftype is 1
+                    if matches = /^(.*)by$/.exec buf
+                      to = matches[1].trim()
+                      buf = ''
+                      buftype = 2
+                  if buftype is 2
+                    if matches = /^(.*)by$/.exec buf
+                      bys.push matches[1].trim()
+                      buf = ''
+                    else if i+1 is access.length
+                      bys.push buf.trim()
+                olcAccess.push
+                  to: to
+                  by: bys
+              diff olcAccess
+            diff = (olcAccess) ->
+              toAlreadyExist = false
+              for access, i in olcAccess
+                continue unless acl.to is access.to
+                toAlreadyExist = true
+                fby = unless options.overwrite then access.by else []
+                for oby in acl.by
+                  found = false
+                  for aby in access.by
+                    if oby is aby
+                      found = true
+                      break
+                  unless found
+                    updated = true
+                    fby.push oby 
+                olcAccess[i].by = fby
+              unless toAlreadyExist
                 updated = true
-                fby.push oby 
-            olcAccess[i].by = fby
-          unless toAlreadyExist
-            updated = true
-            # place before
-            if options.before
-              found = null
+                # place before
+                if acl.before
+                  found = null
+                  for access, i in olcAccess
+                    found = i if access.to is acl.before
+                  # throw new Error 'Before does not match any "to" rule' unless found?
+                  olcAccess.splice found-1, 0, to: acl.to, by: acl.by
+                # place after
+                else if acl.after
+                  found = false
+                  for access, i in olcAccess
+                    found = i if access.to is options.after
+                  # throw new Error 'After does not match any "to" rule'
+                  olcAccess.splice found, 0, to: acl.to, by: acl.by
+                # append
+                else
+                  olcAccess.push to: acl.to, by: acl.by
+              if updated then stringify(olcAccess) else unbind()
+            stringify = (olcAccess) ->
               for access, i in olcAccess
-                found = i if access.to is options.before
-              throw new Error 'Before does not match any "to" rule' unless found?
-              olcAccess.splice i-1, 0, to: options.to, by: options.by
-            # place after
-            else if options.before
-              found = false
-              for access, i in olcAccess
-                found = i if access.to is options.after
-              throw new Error 'After does not match any "to" rule'
-              olcAccess.splice i, 0, to: options.to, by: options.by
-            # append
-            else
-              olcAccess.push to: options.to, by: options.by
-          if updated then stringify(olcAccess) else unbind()
-        stringify = (olcAccess) ->
-          for access, i in olcAccess
-            value = "{#{i}}to #{access.to}"
-            for bie in access.by
-              value += " by #{bie}"
-            olcAccess[i] = value
-          save olcAccess
-        save = (olcAccess) ->
-          change = new ldap.Change 
-            operation: 'replace'
-            modification: olcAccess: olcAccess
-          client.modify options.name, change, (err) ->
-            unbind err
-        unbind = (err) ->
-          options.log? 'Unbind connection'
-          # return end err unless options.unbind and options.ldap instanceof ldap_client
-          return end err if options.ldap instanceof ldap_client and not options.unbind
-          client.unbind (e) ->
-            return next e if e
-            end err
-        end = (err) ->
-          modified += 1 if updated and not err
-          next err
-        conditions.all options, next, connect
+                value = "{#{i}}to #{access.to}"
+                for bie in access.by
+                  value += " by #{bie}"
+                olcAccess[i] = value
+              save olcAccess
+            save = (olcAccess) ->
+              change = new ldap.Change 
+                operation: 'replace'
+                modification: olcAccess: olcAccess
+              client.modify options.name, change, (err) ->
+                unbind err
+            unbind = (err) ->
+              options.log? 'Unbind connection'
+              # return end err unless options.unbind and options.ldap instanceof ldap_client
+              return end err if options.ldap instanceof ldap_client and not options.unbind
+              client.unbind (e) ->
+                return next e if e
+                end err
+            end = (err) ->
+              next err
+            connect()
+          .on 'both', (err) ->
+            modified += 1 if updated and not err
+            finish err, modified
       .on 'both', (err) ->
         finish err, modified
     result
@@ -2316,6 +2328,7 @@ mecano = module.exports =
       each( options )
       .parallel(goptions.parallel)
       .on 'item', (options, next) ->
+        modified = false
         # Validate parameters
         return next new Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?.length
         return next new Error 'Define either source or content' if options.source and options.content
@@ -2427,24 +2440,54 @@ mecano = module.exports =
               content = content.substr(0, from) + opts.replace + content.substr(to)
           writeContent()
         writeContent = ->
-          return next() if destinationHash is misc.string.hash content
+          return do_changeOwnership() if destinationHash is misc.string.hash content
           if typeof options.destination is 'function'
             options.destination content
-            next()
+            do_end()
           else
             options.flags ?= 'a' if append
             misc.file.writeFile options.ssh, options.destination, content, options, (err) ->
               return next err if err
-              written++
+              modified = true
               backup()
         backup = ->
-          return next() unless options.backup
+          return do_end() unless options.backup
           backup = options.backup
           backup = ".#{Date.now()}" if backup is true
           backup = "#{options.destination}#{backup}"
           misc.file.writeFile options.ssh, backup, content, (err) ->
             return next err if err
-            next()
+            do_end()
+        do_changeOwnership = ->
+          return do_changePermissions() unless options.uid? and options.gid?
+          mecano.chown
+            ssh: options.ssh
+            destination: options.destination
+            uid: options.uid
+            gid: options.gid
+            log: options.log
+            stdout: options.stdout
+            stderr: options.stderr
+          , (err, chowned) ->
+            return next err if err
+            modified = true if chowned
+            do_changePermissions()
+        do_changePermissions = ->
+          return do_end() unless options.mode?
+          mecano.chmod
+            ssh: options.ssh
+            destination: options.destination
+            mode: options.mode
+            log: options.log
+            stdout: options.stdout
+            stderr: options.stderr
+          , (err, chmoded) ->
+            return next err if err
+            modified = true if chmoded
+            do_end()
+        do_end = ->
+          written++ if modified
+          next()
         conditions.all options, next, readSource
       .on 'both', (err) ->
         finish err, written

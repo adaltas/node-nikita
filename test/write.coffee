@@ -9,195 +9,227 @@ misc = require '../lib/misc'
 describe 'write', ->
 
   scratch = test.scratch @
+
+  describe 'content', ->
   
-  they 'should write a file', (ssh, next) ->
-    # Write the content
-    mecano.write
-      ssh: ssh
-      content: 'Hello'
-      destination: "#{scratch}/file"
-    , (err, written) ->
-      return next err if err
-      # File has been created
-      written.should.eql 1
-      # Write the same content
+    they 'write a file', (ssh, next) ->
+      # Write the content
       mecano.write
         ssh: ssh
         content: 'Hello'
         destination: "#{scratch}/file"
       , (err, written) ->
         return next err if err
-        # Content has change
-        written.should.eql 0
-        misc.file.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
-          content.should.eql 'Hello'
-          next()
-  
-  they 'doesnt increment if destination is same than generated content', (ssh, next) ->
-    mecano.write
-      ssh: ssh
-      content: 'Hello'
-      destination: "#{scratch}/file"
-    , (err, written) ->
-      return next err if err
-      written.should.eql 1
+        # File has been created
+        written.should.eql 1
+        # Write the same content
+        mecano.write
+          ssh: ssh
+          content: 'Hello'
+          destination: "#{scratch}/file"
+        , (err, written) ->
+          return next err if err
+          # Content has change
+          written.should.eql 0
+          misc.file.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
+            content.should.eql 'Hello'
+            next()
+    
+    they 'doesnt increment if destination is same than generated content', (ssh, next) ->
       mecano.write
         ssh: ssh
         content: 'Hello'
         destination: "#{scratch}/file"
-      , (err, written) ->
-        return next err if err
-        written.should.eql 0
-        next()
-  
-  they 'doesnt increment if destination is same than generated content', (ssh, next) ->
-    mecano.write
-      ssh: ssh
-      content: 'Hello'
-      destination: "#{scratch}/file"
-    , (err, written) ->
-      return next err if err
-      mecano.write
-        ssh: ssh
-        source: "#{scratch}/file"
-        destination: "#{scratch}/file_copy"
       , (err, written) ->
         return next err if err
         written.should.eql 1
-        misc.file.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
-          content.should.eql 'Hello'
-          next()
-  
-  they 'empty file', (ssh, next) ->
-    mecano.write
-      ssh: ssh
-      content: ''
-      destination: "#{scratch}/empty_file"
-    , (err, written) ->
-      return next err if err
-      written.should.eql 1
-      misc.file.readFile ssh, "#{scratch}/empty_file", 'utf8', (err, content) ->
-        return next err if err
-        content.should.eql ''
-        next()
-
-  they 'touch file', (ssh, next) ->
-    mecano.write
-      ssh: ssh
-      content: ''
-      destination: "#{scratch}/empty_file"
-      not_if_exists: true
-    , (err, written) ->
-      return next err if err
-      written.should.eql 1
-      misc.file.readFile ssh, "#{scratch}/empty_file", 'utf8', (err, content) ->
-        return next err if err
-        content.should.eql ''
         mecano.write
           ssh: ssh
-          content: 'toto'
-          destination: "#{scratch}/empty_file"
+          content: 'Hello'
+          destination: "#{scratch}/file"
         , (err, written) ->
-          mecano.write
-            ssh: ssh
-            content: ''
-            destination: "#{scratch}/empty_file"
-            not_if_exists: true
-          , (err, written) ->
-            return next err if err
-            written.should.eql 0
-            misc.file.readFile ssh, "#{scratch}/empty_file", 'utf8', (err, content) ->
-              return next err if err
-              content.should.eql 'toto'
-              next()
-
-  they 'set permission', (ssh, next) ->
-    mecano.write
-      ssh: ssh
-      content: 'ok'
-      destination: "#{scratch}/a_file"
-      mode: 0o0700
-    , (err, written) ->
-      return next err if err
-      misc.file.stat ssh, "#{scratch}/a_file", (err, stat) ->
-        return next err if err
-        misc.file.cmpmod(stat.mode, 0o0700).should.be.ok
-        misc.file.stat ssh, "#{scratch}", (err, stat) ->
           return next err if err
-          misc.file.cmpmod(stat.mode, 0o0700).should.not.be.ok
+          written.should.eql 0
+          next()
+    
+    they 'doesnt increment if destination is same than generated content', (ssh, next) ->
+      mecano.write
+        ssh: ssh
+        content: 'Hello'
+        destination: "#{scratch}/file"
+      , (err, written) ->
+        return next err if err
+        mecano.write
+          ssh: ssh
+          source: "#{scratch}/file"
+          destination: "#{scratch}/file_copy"
+        , (err, written) ->
+          return next err if err
+          written.should.eql 1
+          misc.file.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
+            content.should.eql 'Hello'
+            next()
+    
+    they 'empty file', (ssh, next) ->
+      mecano.write
+        ssh: ssh
+        content: ''
+        destination: "#{scratch}/empty_file"
+      , (err, written) ->
+        return next err if err
+        written.should.eql 1
+        misc.file.readFile ssh, "#{scratch}/empty_file", 'utf8', (err, content) ->
+          return next err if err
+          content.should.eql ''
           next()
 
-  they 'handle integer type', (ssh, next) ->
-    mecano.write
-      ssh: ssh
-      content: 123
-      destination: "#{scratch}/a_file"
-    , (err, written) ->
-      return next err if err
-      written.should.eql 1
-      misc.file.readFile ssh, "#{scratch}/a_file", 'ascii', (err, content) ->
+    they 'touch file', (ssh, next) ->
+      mecano.write
+        ssh: ssh
+        content: ''
+        destination: "#{scratch}/empty_file"
+        not_if_exists: true
+      , (err, written) ->
         return next err if err
-        content.should.eql '123'
-        next()
+        written.should.eql 1
+        misc.file.readFile ssh, "#{scratch}/empty_file", 'utf8', (err, content) ->
+          return next err if err
+          content.should.eql ''
+          mecano.write
+            ssh: ssh
+            content: 'toto'
+            destination: "#{scratch}/empty_file"
+          , (err, written) ->
+            mecano.write
+              ssh: ssh
+              content: ''
+              destination: "#{scratch}/empty_file"
+              not_if_exists: true
+            , (err, written) ->
+              return next err if err
+              written.should.eql 0
+              misc.file.readFile ssh, "#{scratch}/empty_file", 'utf8', (err, content) ->
+                return next err if err
+                content.should.eql 'toto'
+                next()
+
+    they 'handle integer type', (ssh, next) ->
+      mecano.write
+        ssh: ssh
+        content: 123
+        destination: "#{scratch}/a_file"
+      , (err, written) ->
+        return next err if err
+        written.should.eql 1
+        misc.file.readFile ssh, "#{scratch}/a_file", 'ascii', (err, content) ->
+          return next err if err
+          content.should.eql '123'
+          next()
+    
+    they 'create parent directory', (ssh, next) ->
+      mecano.write
+        ssh: ssh
+        content: 'hello'
+        destination: "#{scratch}/a/missing/dir/a_file"
+      , (err, written) ->
+        return next err if err
+        written.should.eql 1
+        misc.file.readFile ssh, "#{scratch}/a/missing/dir/a_file", 'utf8', (err, content) ->
+          return next err if err
+          content.should.eql 'hello'
+          next()
+
+  describe 'ownerships and permissions', ->
+
+    they 'set permission', (ssh, next) ->
+      mecano.write
+        ssh: ssh
+        content: 'ok'
+        destination: "#{scratch}/a_file"
+        mode: 0o0700
+      , (err, written) ->
+        return next err if err
+        misc.file.stat ssh, "#{scratch}/a_file", (err, stat) ->
+          return next err if err
+          misc.file.cmpmod(stat.mode, 0o0700).should.be.ok
+          misc.file.stat ssh, "#{scratch}", (err, stat) ->
+            return next err if err
+            misc.file.cmpmod(stat.mode, 0o0700).should.not.be.ok
+            next()
+
+    they 'change permission', (ssh, next) ->
+      mecano.write
+        ssh: ssh
+        content: 'ok'
+        destination: "#{scratch}/a_file"
+        mode: 0o0700
+      , (err, written) ->
+        return next err if err
+        mecano.write
+          ssh: ssh
+          content: 'ok'
+          destination: "#{scratch}/a_file"
+          mode: 0o0755
+        , (err, written) ->
+          return next err if err
+          written.should.be.ok
+          mecano.write
+            ssh: ssh
+            content: 'ok'
+            destination: "#{scratch}/a_file"
+            mode: 0o0755
+          , (err, written) ->
+            return next err if err
+            written.should.not.be.ok
+            next()
+
+  describe 'from and to', ->
   
-  they 'create parent directory', (ssh, next) ->
-    mecano.write
-      ssh: ssh
-      content: 'hello'
-      destination: "#{scratch}/a/missing/dir/a_file"
-    , (err, written) ->
-      return next err if err
-      written.should.eql 1
-      misc.file.readFile ssh, "#{scratch}/a/missing/dir/a_file", 'utf8', (err, content) ->
+    they 'with from and with to', (ssh, next) ->
+      mecano.write
+        ssh: ssh
+        from: '# from\n'
+        to: '# to'
+        content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
+        replace: 'my friend\n'
+        destination: "#{scratch}/fromto.md"
+      , (err, written) ->
         return next err if err
-        content.should.eql 'hello'
-        next()
-  
-  they 'with from and with to', (ssh, next) ->
-    mecano.write
-      ssh: ssh
-      from: '# from\n'
-      to: '# to'
-      content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
-      replace: 'my friend\n'
-      destination: "#{scratch}/fromto.md"
-    , (err, written) ->
-      return next err if err
-      written.should.eql 1
-      misc.file.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
+        written.should.eql 1
+        misc.file.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
+          return next err if err
+          content.should.eql 'here we are\n# from\nmy friend\n# to\nyou coquin'
+          next()
+    
+    they 'with from and without to', (ssh, next) ->
+      mecano.write
+        ssh: ssh
+        from: '# from\n'
+        content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
+        replace: 'my friend\n'
+        destination: "#{scratch}/fromto.md"
+      , (err, written) ->
         return next err if err
-        content.should.eql 'here we are\n# from\nmy friend\n# to\nyou coquin'
-        next()
-  
-  they 'with from and without to', (ssh, next) ->
-    mecano.write
-      ssh: ssh
-      from: '# from\n'
-      content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
-      replace: 'my friend\n'
-      destination: "#{scratch}/fromto.md"
-    , (err, written) ->
-      return next err if err
-      written.should.eql 1
-      misc.file.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
+        written.should.eql 1
+        misc.file.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
+          return next err if err
+          content.should.eql 'here we are\n# from\nmy friend\n'
+          next()
+    
+    they 'without from and with to', (ssh, next) ->
+      mecano.write
+        ssh: ssh
+        to: '# to'
+        content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
+        replace: 'my friend\n'
+        destination: "#{scratch}/fromto.md"
+      , (err, written) ->
         return next err if err
-        content.should.eql 'here we are\n# from\nmy friend\n'
-        next()
-  
-  they 'without from and with to', (ssh, next) ->
-    mecano.write
-      ssh: ssh
-      to: '# to'
-      content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
-      replace: 'my friend\n'
-      destination: "#{scratch}/fromto.md"
-    , (err, written) ->
-      return next err if err
-      written.should.eql 1
-      misc.file.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
-        return next err if err
-        content.should.eql 'my friend\n# to\nyou coquin'
-        next()
+        written.should.eql 1
+        misc.file.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
+          return next err if err
+          content.should.eql 'my friend\n# to\nyou coquin'
+          next()
 
   describe 'match & replace', ->
   
