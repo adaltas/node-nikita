@@ -1172,8 +1172,9 @@ mecano = module.exports =
   *   `name`          Distinguish name storing the "olcAccess" property, using the database adress (eg: "olcDatabase={2}bdb,cn=config").   
   *   `overwrite`     Overwrite existing "olcAccess", default is to merge.   
   
-  Resources
-  http://www.zytrax.com/books/ldap/apa/indeces.html
+  Resources:   
+  -   http://www.zytrax.com/books/ldap/apa/indeces.html
+
   ###
   ldap_index: (goptions, options, callback) ->
     if arguments.length is 2
@@ -1253,8 +1254,8 @@ mecano = module.exports =
       .on 'both', (err) ->
         finish err, modified
     result
-
   ###
+
   `ldap_schema([goptions], options, callback)`
   --------------------------------------------
 
@@ -1269,6 +1270,7 @@ mecano = module.exports =
   *   `schema`        Path to the schema definition.   
   *   `overwrite`     Overwrite existing "olcAccess", default is to merge.   
   *   `log`           Function called with a log related messages.   
+
   ###
   ldap_schema: (goptions, options, callback) ->
     if arguments.length is 2
@@ -1415,7 +1417,6 @@ mecano = module.exports =
       .on 'both', (err) ->
         finish err, modified
     result
-
   ###
 
   `ln` `link([goptions], options, callback)`
