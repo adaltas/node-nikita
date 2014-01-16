@@ -50,32 +50,56 @@ describe 'move', ->
     mecano.write [
       ssh: ssh
       content: "hello"
-      destination: "#{scratch}/src.txt"
+      destination: "#{scratch}/src1.txt"
     ,
       ssh: ssh
-      content: "overwrite"
+      content: "hello"
+      destination: "#{scratch}/src2.txt"
+    ,
+      ssh: ssh
+      content: "overwritten"
       destination: "#{scratch}/dest.txt"
     ], (err, copied) ->
       return next err if err
-      # Throw exception wihtout force
       mecano.move
         ssh: ssh
-        source: "#{scratch}/src.txt"
+        source: "#{scratch}/src1.txt"
         destination: "#{scratch}/dest.txt"
       , (err, moved) ->
-        err.message.should.eql 'Destination already exists, use the force option'
+        return next err if err
+        moved.should.eql 1
         mecano.move
           ssh: ssh
-          source: "#{scratch}/src.txt"
+          source: "#{scratch}/src2.txt"
           destination: "#{scratch}/dest.txt"
-          force: true
         , (err, moved) ->
           return next err if err
-          moved.should.eql 1
+          moved.should.eql 0
           misc.file.readFile ssh, "#{scratch}/dest.txt", 'utf8', (err, content) ->
             return next err if err
             content.should.eql 'hello'
             next()
+
+  they 'force bypass checksum comparison', (ssh, next) ->
+    mecano.write [
+      ssh: ssh
+      content: "hello"
+      destination: "#{scratch}/src.txt"
+    ,
+      ssh: ssh
+      content: "hello"
+      destination: "#{scratch}/dest.txt"
+    ], (err, copied) ->
+      return next err if err
+      mecano.move
+        ssh: ssh
+        source: "#{scratch}/src.txt"
+        destination: "#{scratch}/dest.txt"
+        force: 1
+      , (err, moved) ->
+        return next err if err
+        moved.should.eql 1
+        next()
 
 
 

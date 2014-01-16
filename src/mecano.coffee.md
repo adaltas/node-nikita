@@ -1600,14 +1600,16 @@ mecano.mkdir
 
 Move files and directories.   
 
-`options`           Command options include:   
-*   `destination`   Final name of the moved resource.   
-*   `force`         Overwrite the destination if it exists.   
-*   `source`        File or directory to move.   
+`options`               Command options include:   
+*   `destination`       Final name of the moved resource.   
+*   `force`             Force the replacement of the file without checksum verification, speed up the action and disable the `moved` indicator in the callback.   
+*   `source`            File or directory to move.   
+*   `destination_md5`   Destination md5 checkum if known, otherwise computed if destination exists
+*   `source_md5`        Source md5 checkum if known, otherwise computed
 
-`callback`          Received parameters are:   
-*   `err`           Error object if any.   
-*   `moved`         Number of moved resources.
+`callback`              Received parameters are:   
+*   `err`               Error object if any.   
+*   `moved`             Number of moved resources.
 
 Example
 ```coffee
@@ -1634,8 +1636,24 @@ mecano.mv
             misc.file.stat options.ssh, options.destination, (err, stat) ->
               return move() if err?.code is 'ENOENT'
               return next err if err
-              return next new Error 'Destination already exists, use the force option' unless options.force
-              remove()
+              if options.force
+              then remove()
+              else srchash()
+          srchash = ->
+            return dsthash() if options.source_md5
+            misc.file.hash options.ssh, options.source, 'md5', (err, hash) ->
+              return next err if err
+              options.source_md5 = hash
+              dsthash()
+          dsthash = ->
+            return chkhash() if options.destination_md5
+            misc.file.hash options.ssh, options.destination, 'md5', (err, hash) ->
+              return next err if err
+              options.destination_md5 = hash
+              chkhash()
+          chkhash = ->
+            return next() if options.source_md5 is options.destination_md5
+            remove()
           remove = ->
             mecano.remove
               ssh: options.ssh
