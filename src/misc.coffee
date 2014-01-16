@@ -728,7 +728,7 @@ misc = module.exports =
           out += eol
         out += child
       out
-    stringify_square_then_curly: (content, depth=0, options) ->
+    stringify_square_then_curly: (content, depth=0, options={}) ->
       if arguments.length is 2
         options = depth
         depth = 0
