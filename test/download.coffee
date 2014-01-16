@@ -12,7 +12,7 @@ describe 'download', ->
 
   scratch = test.scratch @
 
-  they 'should deal with http protocol', (ssh, next) ->
+  they 'http', (ssh, next) ->
     @timeout 100000
     # create server
     server = http.createServer (req, res) ->
@@ -40,6 +40,39 @@ describe 'download', ->
         , (err, downloaded) ->
           return next err if err
           downloaded.should.eql 0
+          server.close()
+          server.on 'close', next
+
+  they 'http detect change', (ssh, next) ->
+    ssh = null
+    @timeout 100000
+    # create server
+    count = 0
+    server = http.createServer (req, res) ->
+      res.writeHead 200, {'Content-Type': 'text/plain'}
+      res.end "okay #{count++}"
+    server.listen 12345
+    # Download a non existing file
+    source = 'http://127.0.0.1:12345'
+    destination = "#{scratch}/download"
+    mecano.download
+      ssh: ssh
+      source: source
+      destination: destination
+    , (err, downloaded) ->
+      return next err if err
+      downloaded.should.eql 1
+      misc.file.readFile ssh, destination, 'ascii', (err, content) ->
+        return next err if err
+        content.toString().should.include 'okay 0'
+        # Download on an existing file
+        mecano.download
+          ssh: ssh
+          source: source
+          destination: destination
+        , (err, downloaded) ->
+          return next err if err
+          downloaded.should.eql 1
           server.close()
           server.on 'close', next
 
@@ -74,27 +107,27 @@ describe 'download', ->
           server.close()
           server.on 'close', next
   
-  it 'should deal with ftp protocol', (next) ->
-    @timeout 10000
-    source = 'ftp://ftp.gnu.org/gnu/glibc/README.glibc'
-    destination = "#{scratch}/download_test"
-    # Download a non existing file
-    mecano.download
-      source: source
-      destination: destination
-    , (err, downloaded) ->
-      return next err if err
-      downloaded.should.eql 1
-      fs.readFile destination, 'ascii', (err, content) ->
-        content.should.include 'GNU'
-        # Download on an existing file
-        mecano.download
-          source: source
-          destination: destination
-        , (err, downloaded) ->
-          return next err if err
-          downloaded.should.eql 0
-          next()
+  # it 'should deal with ftp protocol', (next) ->
+  #   @timeout 10000
+  #   source = 'ftp://ftp.gnu.org/gnu/glibc/README.glibc'
+  #   destination = "#{scratch}/download_test"
+  #   # Download a non existing file
+  #   mecano.download
+  #     source: source
+  #     destination: destination
+  #   , (err, downloaded) ->
+  #     return next err if err
+  #     downloaded.should.eql 1
+  #     fs.readFile destination, 'ascii', (err, content) ->
+  #       content.should.include 'GNU'
+  #       # Download on an existing file
+  #       mecano.download
+  #         source: source
+  #         destination: destination
+  #       , (err, downloaded) ->
+  #         return next err if err
+  #         downloaded.should.eql 0
+  #         next()
   
   they 'should deal with file protocol', (ssh, next) ->
     source = "file://#{__filename}"

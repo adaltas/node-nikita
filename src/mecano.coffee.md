@@ -301,6 +301,7 @@ mecano.download
         .on 'item', (options, next) ->
           # Validate parameters
           {destination, source, md5sum} = options
+          # md5sum is used to validate the download
           return next new Error "Missing source: #{source}" unless source
           return next new Error "Missing destination: #{destination}" unless destination
           options.force ?= false
@@ -309,22 +310,22 @@ mecano.download
           prepare = () ->
             # Note about next line: ssh might be null with file, not very clear
             misc.file.exists options.ssh, destination, (err, exists) ->
-              # Use previous download
-              if exists and not options.force
-                return next() unless md5sum
+              # If we are forcing
+              if options.force
+                download()
+              # If the file exists and we have a checksum to compare and we are not forcing
+              else if exists and md5sum
+                # then we compute the checksum of the file
                 misc.file.hash options.ssh, destination, 'md5', (err, hash) ->
+                  return next err if err
+                  # And compare with the checksum provided by the user
                   return next() if hash is md5sum
                   misc.file.unlink options.ssh, destination, (err) ->
                     return next err if err
                     download()
-              # Remove previous dowload and download again
+              # Get the checksum of the current file
               else if exists
-                mecano.remove
-                  ssh: options.ssh
-                  destination: destination
-                , (err) ->
-                  return next err if err
-                  download()
+                download()
               else download()
           download = () ->
             u = url.parse source
@@ -389,9 +390,18 @@ mecano.download
                 next new Error "Invalid checksum, found \"#{hash}\" instead of \"#{md5sum}\""
           unstage = ->
             # Note about next line: ssh might be null with file, not very clear
-            misc.file.rename options.ssh, stageDestination, destination, (err) ->
+            # misc.file.rename options.ssh, stageDestination, destination, (err) ->
+            #   return next err if err
+            #   downloaded++
+            #   next()
+            mecano.move
+              ssh: options.ssh
+              source: stageDestination
+              destination: destination
+              source_md5: md5sum
+            , (err, moved) ->
               return next err if err
-              downloaded++
+              downloaded++ if moved
               next()
           prepare()
         .on 'both', (err) ->
