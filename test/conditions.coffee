@@ -136,7 +136,7 @@ describe 'conditions', ->
         ssh: ssh
         should_exist: './oh_no'
         (err) ->
-          err.should.be.a 'object'
+          err.should.be.an.Object
           next()
         () -> should.be.ok false
 
@@ -145,7 +145,7 @@ describe 'conditions', ->
         ssh: ssh
         should_exist: ['./oh_no', __filename]
         (err) ->
-          err.should.be.a 'object'
+          err.should.be.an.Object
           next()
         () -> should.be.ok false
 
@@ -162,7 +162,7 @@ describe 'conditions', ->
         ssh: ssh
         should_not_exist: __filename
         (err) ->
-          err.should.be.a 'object'
+          err.should.be.an.Object
           next()
         () -> should.be.ok false
 
@@ -171,7 +171,7 @@ describe 'conditions', ->
         ssh: ssh
         should_not_exist: ['./oh_no', __filename]
         (err) ->
-          err.should.be.a 'object'
+          err.should.be.an.Object
           next()
         () -> should.be.ok false
 
