@@ -308,10 +308,14 @@ mecano.download
           stageDestination = "#{destination}.#{Date.now()}#{Math.round(Math.random()*1000)}"
           # Start real work
           prepare = () ->
+            options.log? "Check if destination exists"
             # Note about next line: ssh might be null with file, not very clear
             misc.file.exists options.ssh, destination, (err, exists) ->
               # If we are forcing
               if options.force
+                # Note, we should be able to move this before the "exists" check just above
+                # because we don't seem to use. Maybe it still here because we were
+                # expecting to remove the existing destination before downloading.
                 download()
               # If the file exists and we have a checksum to compare and we are not forcing
               else if exists and md5sum
@@ -328,6 +332,7 @@ mecano.download
                 download()
               else download()
           download = () ->
+            options.log? "Download the source"
             u = url.parse source
             if options.ssh
               if u.protocol is 'http:'
@@ -383,6 +388,7 @@ mecano.download
                   next err
           checksum = ->
             return unstage() unless md5sum
+            options.log? "Compare the downloaded file with the user-provided checksum"
             misc.file.hash options.ssh, stageDestination, 'md5', (err, hash) ->
               return unstage() if hash is md5sum
               # Download is invalid, cleaning up
@@ -395,6 +401,7 @@ mecano.download
             #   return next err if err
             #   downloaded++
             #   next()
+            options.log? "Move the downloaded file"
             mecano.move
               ssh: options.ssh
               source: stageDestination
