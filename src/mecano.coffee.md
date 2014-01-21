@@ -1979,7 +1979,7 @@ Install a service. For now, only yum over SSH.
                 updates.splice updatesIndex, 1 unless updatesIndex is -1
               # Those 2 lines seems all wrong
               return next new Error "No package #{pkgname} available." unless succeed
-              modified = true if installed
+              modified = true if installedIndex isnt -1
               startuped()
           startuped = ->
             return started() unless options.startup?
