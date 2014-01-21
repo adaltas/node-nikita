@@ -1399,7 +1399,7 @@ Register a new ldap schema.
 ------------------------------------------
 
 Create a symbolic link and it's parent directories if they don't yet
-exist.
+exist.   
 
 `options`           Command options include:   
 *   `source`        Referenced file to be linked.   
@@ -1410,6 +1410,15 @@ exist.
 `callback`          Received parameters are:   
 *   `err`           Error object if any.   
 *   `linked`        Number of created links.   
+
+Simple usage:   
+```coffee
+mecano.link
+  source: __dirname
+  destination: destination
+, (err, linked) ->
+  console.info linked
+```
 
     link: (goptions, options, callback) ->
       if arguments.length is 2
