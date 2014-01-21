@@ -25,9 +25,13 @@ describe 'move', ->
       , (err, moved) ->
         return next err if err
         moved.should.eql 1
+        # The destination file should exists
         misc.file.exists ssh, "#{scratch}/moved.eco", (err, exists) ->
           exists.should.be.true
-          next()
+          # The source file should no longer exists
+          misc.file.exists ssh, "#{scratch}/render.eco", (err, exists) ->
+            exists.should.be.false
+            next()
 
   they 'rename a directory', (ssh, next) ->
     mecano.copy
@@ -42,9 +46,13 @@ describe 'move', ->
       , (err, moved) ->
         return next err if err
         moved.should.eql 1
+        # The destination directory should exists
         misc.file.exists ssh, "#{scratch}/moved", (err, exists) ->
           exists.should.be.true
-          next()
+          # The source directory should no longer exists
+          misc.file.exists ssh, "#{scratch}/a_dir", (err, exists) ->
+            exists.should.be.false
+            next()
 
   they 'overwrite a file', (ssh, next) ->
     mecano.write [
@@ -68,6 +76,7 @@ describe 'move', ->
       , (err, moved) ->
         return next err if err
         moved.should.eql 1
+        # Move a file with the same content
         mecano.move
           ssh: ssh
           source: "#{scratch}/src2.txt"
@@ -78,7 +87,10 @@ describe 'move', ->
           misc.file.readFile ssh, "#{scratch}/dest.txt", 'utf8', (err, content) ->
             return next err if err
             content.should.eql 'hello'
-            next()
+            # The original file should no longer exists
+            misc.file.exists ssh, "#{scratch}/src2.txt", (err, exists) ->
+              exists.should.be.false
+              next()
 
   they 'force bypass checksum comparison', (ssh, next) ->
     mecano.write [

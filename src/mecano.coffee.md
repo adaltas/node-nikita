@@ -1617,7 +1617,8 @@ mecano.mkdir
 `mv` `move([goptions], options, callback)`
 ------------------------------------------
 
-Move files and directories.   
+Move files and directories. It is ok to overwrite the destination file if it exists, 
+in which case the source file will no longer exists.    
 
 `options`               Command options include:   
 *   `destination`       Final name of the moved resource.   
@@ -1656,7 +1657,7 @@ mecano.mv
               return move() if err?.code is 'ENOENT'
               return next err if err
               if options.force
-              then remove()
+              then remove_dest()
               else srchash()
           srchash = ->
             return dsthash() if options.source_md5
@@ -1671,9 +1672,10 @@ mecano.mv
               options.destination_md5 = hash
               chkhash()
           chkhash = ->
-            return next() if options.source_md5 is options.destination_md5
-            remove()
-          remove = ->
+            if options.source_md5 is options.destination_md5
+            then remove_src()
+            else remove_dest()
+          remove_dest = ->
             mecano.remove
               ssh: options.ssh
               destination: options.destination
@@ -1685,6 +1687,12 @@ mecano.mv
               return next err if err
               moved++
               next()
+          remove_src = ->
+            mecano.remove
+              ssh: options.ssh
+              destination: options.source
+            , (err, removed) ->
+              next err
           conditions.all options, next, exists
         .on 'both', (err) ->
           callback err, moved
