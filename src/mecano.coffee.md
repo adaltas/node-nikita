@@ -337,6 +337,7 @@ mecano.download
                 mecano.execute
                   ssh: options.ssh
                   cmd: cmd
+                  log: options.log
                   stdout: options.stdout
                   stderr: options.stderr
                 , (err, executed, stdout, stderr) ->
@@ -413,15 +414,16 @@ Run a command locally or with ssh if `host` or `ssh` is provided.
 
 `options`           Command options include:   
 *   `cmd`           String, Object or array; Command to execute.   
-*   `env`           Environment variables, default to `process.env`.   
-*   `cwd`           Current working directory.   
-*   `uid`           Unix user id.   
-*   `gid`           Unix group id.   
 *   `code`          Expected code(s) returned by the command, int or array of int, default to 0.  
 *   `code_skipped`  Expected code(s) returned by the command if it has no effect, executed will not be incremented, int or array of int.   
+*   `cwd`           Current working directory.   
+*   `env`           Environment variables, default to `process.env`.   
+*   `gid`           Unix group id.   
+*   `log`           Function called with a log related messages.   
+*   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
 *   `stdout`        Writable Stream in which commands output will be piped.   
 *   `stderr`        Writable Stream in which commands error will be piped.   
-*   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
+*   `uid`           Unix user id.   
 
 `callback`          Received parameters are:   
 *   `err`           Error if any.   
@@ -614,6 +616,7 @@ moment, supported extensions are '.tgz', '.tar.gz' and '.zip'.
               ssh: options.ssh
               cmd: "git clone #{options.source} #{options.destination}"
               cwd: path.dirname options.destination
+              log: options.log
               stdout: options.stdout
               stderr: options.stderr
             , (err, executed, stdout, stderr) ->
@@ -624,6 +627,7 @@ moment, supported extensions are '.tgz', '.tar.gz' and '.zip'.
               ssh: options.ssh
               cmd: "git log --pretty=format:'%H' -n 1"
               cwd: options.destination
+              log: options.log
               stdout: options.stdout
               stderr: options.stderr
             , (err, executed, stdout, stderr) ->
@@ -633,6 +637,7 @@ moment, supported extensions are '.tgz', '.tar.gz' and '.zip'.
                 ssh: options.ssh
                 cmd: "git rev-list --max-count=1 #{options.revision}"
                 cwd: options.destination
+                log: options.log
                 stdout: options.stdout
                 stderr: options.stderr
               , (err, executed, stdout, stderr) ->
@@ -645,6 +650,7 @@ moment, supported extensions are '.tgz', '.tar.gz' and '.zip'.
               ssh: options.ssh
               cmd: "git checkout #{options.revision}"
               cwd: options.destination
+              log: options.log
               stdout: options.stdout
               stderr: options.stderr
             , (err) ->
@@ -1265,6 +1271,7 @@ Register a new ldap schema.
               code: 0
               code_skipped: 1
               ssh: options.ssh
+              log: options.log
               stdout: options.stdout
               stderr: options.stderr
             , (err, registered, stdout) ->
@@ -1300,6 +1307,7 @@ Register a new ldap schema.
             mecano.execute
               cmd: "slaptest -f #{conf} -F #{ldif}"
               ssh: options.ssh
+              log: options.log
               stdout: options.stdout
               stderr: options.stderr
             , (err, executed) ->
@@ -1361,6 +1369,7 @@ Register a new ldap schema.
             mecano.execute
               cmd: cmd
               ssh: options.ssh
+              log: options.log
               stdout: options.stdout
               stderr: options.stderr
             , (err, executed) ->
@@ -1873,6 +1882,7 @@ Install a service. For now, only yum over SSH.
                 ssh: options.ssh
                 cmd: "yum list installed"
                 code_skipped: 1
+                log: options.log
                 stdout: options.stdout
                 stderr: options.stderr
               , (err, executed, stdout) ->
@@ -1903,6 +1913,7 @@ Install a service. For now, only yum over SSH.
                 ssh: options.ssh
                 cmd: "yum list updates"
                 code_skipped: 1
+                log: options.log
                 stdout: options.stdout
                 stderr: options.stderr
               , (err, executed, stdout) ->
@@ -1932,6 +1943,7 @@ Install a service. For now, only yum over SSH.
               ssh: options.ssh
               cmd: "yum install -y #{pkgname}"
               code_skipped: 1
+              log: options.log
               stdout: options.stdout
               stderr: options.stderr
             , (err, succeed) ->
@@ -1951,6 +1963,7 @@ Install a service. For now, only yum over SSH.
               ssh: options.ssh
               cmd: "chkconfig --list #{chkname}"
               code_skipped: 1
+              log: options.log
               stdout: options.stdout
               stderr: options.stderr
             , (err, registered, stdout, stderr) ->
@@ -1979,6 +1992,7 @@ Install a service. For now, only yum over SSH.
             mecano.execute
               ssh: options.ssh
               cmd: cmd
+              log: options.log
               stdout: options.stdout
               stderr: options.stderr
             , (err) ->
@@ -1988,6 +2002,7 @@ Install a service. For now, only yum over SSH.
             mecano.execute
               ssh: options.ssh
               cmd: "chkconfig --del #{chkname}"
+              log: options.log
               stdout: options.stdout
               stderr: options.stderr
             , (err) ->
@@ -1999,6 +2014,7 @@ Install a service. For now, only yum over SSH.
               ssh: options.ssh
               cmd: "service #{srvname} status"
               code_skipped: 3
+              log: options.log
               stdout: options.stdout
               stderr: options.stderr
             , (err, started) ->
@@ -2013,6 +2029,7 @@ Install a service. For now, only yum over SSH.
             mecano.execute
               ssh: options.ssh
               cmd: "service #{srvname} #{options.action}"
+              log: options.log
               stdout: options.stdout
               stderr: options.stderr
             , (err, executed) ->
@@ -2106,6 +2123,7 @@ the "binary" option.
                 mecano.execute
                   ssh: options.ssh
                   cmd: "openssl #{digest} #{path}"
+                  log: options.log
                   stdout: options.stdout
                   stderr: options.stderr
                 , (err, executed, stdout, stderr) ->
