@@ -1880,7 +1880,7 @@ Install a service. For now, only yum over SSH.
       if arguments.length is 2
         callback = options
         options = goptions
-        goptions = parallel: true
+        goptions = parallel: 1
       installed = updates = null
       misc.options options, (err, options) ->
         return callback err if err
