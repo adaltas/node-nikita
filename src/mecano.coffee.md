@@ -1861,6 +1861,7 @@ Install a service. For now, only yum over SSH.
 *   `yum_name`      Name used by the yum utility, default to "name".   
 *   `chk_name`      Name used by the chkconfig utility, default to "srv_name" and "name".   
 *   `srv_name`      Name used by the service utility, default to "name".   
+*   `cache`         Run entirely from system cache, run install and update checks offline.   
 #   `start`         Ensure the service is started, a boolean.   
 #   `stop`          Ensure the service is stopped, a boolean.   
 *   `action`        Execute the service with the provided action argument.
@@ -1902,9 +1903,12 @@ Install a service. For now, only yum over SSH.
           # Start real work
           chkinstalled = ->
             cache = ->
+              c = if options.cache then '-C' else ''
               mecano.execute
                 ssh: options.ssh
-                cmd: "yum list installed"
+                # cmd: "yum #{c} list installed"
+                cmd: "yum -C list installed"
+                # cmd: "rpm -qa"
                 code_skipped: 1
                 log: options.log
                 stdout: options.stdout
@@ -1933,9 +1937,10 @@ Install a service. For now, only yum over SSH.
             #   if installed then updates() else install()
           chkupdates = ->
             cache = ->
+              c = if options.cache then '-C' else ''
               mecano.execute
                 ssh: options.ssh
-                cmd: "yum list updates"
+                cmd: "yum #{c} list updates"
                 code_skipped: 1
                 log: options.log
                 stdout: options.stdout
