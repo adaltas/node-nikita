@@ -20,8 +20,8 @@ describe 'mecano', ->
       content: 'world'
       destination: "#{scratch}/chain/file"
       append: true
-    .on 'error', ->
-      false.should.be.ok
+    .on 'error', (err) ->
+      next err
     .on 'end', ->
       misc.file.readFile null, "#{scratch}/chain/file", 'utf8', (err, content) ->
         return next err if err
@@ -40,7 +40,8 @@ describe 'mecano', ->
       content: 'world'
       destination: "#{scratch}/chain/file"
       append: true
-    .on 'both', ->
+    .on 'both', (err) ->
+      return next err if err
       misc.file.readFile null, "#{scratch}/chain/file", 'utf8', (err, content) ->
         return next err if err
         content.should.eql 'helloworld'

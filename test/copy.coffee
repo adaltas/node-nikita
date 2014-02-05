@@ -104,6 +104,38 @@ describe 'copy', ->
               copied.should.eql 0
               next()
 
+    they 'change permissions', (ssh, next) ->
+      source = "#{__dirname}/../resources/a_dir/a_file"
+      destination = "#{scratch}/test_this_file"
+      mecano.write
+        ssh: ssh
+        content: 'Hello you'
+        destination: destination
+      , (err, rendered) ->
+        # Copy non existing file
+        mecano.copy
+          ssh: ssh
+          source: source
+          destination: destination
+          mode: 0o750
+        , (err, copied) ->
+          return next err if err
+          copied.should.eql 1
+          misc.file.stat ssh, destination, (err, stat) ->
+            misc.file.cmpmod(stat.mode, 0o750).should.be.ok
+            # Copy existing file
+            mecano.copy
+              ssh: ssh
+              source: source
+              destination: destination
+              mode: 0o755
+            , (err, copied) ->
+              return next err if err
+              misc.file.stat ssh, destination, (err, stat) ->
+                misc.file.cmpmod(stat.mode, 0o755).should.be.ok
+                next()
+          
+
   describe 'directory', ->
 
     they 'should copy without slash at the end', (ssh, next) ->

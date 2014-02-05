@@ -112,3 +112,8 @@ describe 'ini', ->
         return next err if err
         data.should.eql '[user]\n preference = {\n  color = true\n }\n\n'
         next()
+
+
+
+
+

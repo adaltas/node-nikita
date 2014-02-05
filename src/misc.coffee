@@ -10,6 +10,7 @@ exec = require 'superexec'
 connect = require 'superexec/lib/connect'
 buffer = require 'buffer'
 rimraf = require 'rimraf'
+ini = require 'ini'
 
 misc = module.exports = 
   string:
@@ -700,6 +701,8 @@ misc = module.exports =
                       .replace(/\2LITERAL\\1LITERAL\2/g, '\1')
              })
     }`
+    parse: (content) ->
+      ini.parse content
     stringify: (obj, section, options) ->
       if arguments.length is 2
         options = section

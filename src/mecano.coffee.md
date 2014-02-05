@@ -7,7 +7,6 @@
     eco = require 'eco'
     exec = require 'superexec'
     request = require 'request'
-    ini = require 'ini'
     Ftp = require 'jsftp'
     ldap = require 'ldapjs'
     ldap_client = require 'ldapjs/lib/client/client'
@@ -160,28 +159,32 @@ Todo:
           # Cancel action if destination exists ? really ? no md5 comparaison, strange
           options.not_if_exists = options.destination if options.not_if_exists is true
           # Start real work
-          search = ->
+          conditions.all options, next, ->
+            modified = false
             srcStat = null
             dstStat = null
+            options.log? "Stat source file"
             misc.file.stat options.ssh, options.source, (err, stat) ->
               # Source must exists
               return next err if err
               srcStat = stat
+              options.log? "Stat destination file"
               misc.file.stat options.ssh, options.destination, (err, stat) ->
                 return next err if err and err.code isnt 'ENOENT'
                 dstStat = stat
                 sourceEndWithSlash = options.source.lastIndexOf('/') is options.source.length - 1
                 if srcStat.isDirectory() and dstStat and not sourceEndWithSlash
                   options.destination = path.resolve options.destination, path.basename options.source
-                if srcStat.isDirectory() then directory options.source else copy options.source, next
+                if srcStat.isDirectory() then directory(options.source, next) else copy(options.source, next)
             # Copy a directory
-            directory = (dir) ->
+            directory = (dir, callback) ->
+              options.log? "Source is a directory"
               each()
               .files("#{dir}/**")
               .on 'item', (file, next) ->
                 copy file, next
-              .on 'both', next
-            copy = (source, next) ->
+              .on 'both', callback
+            copy = (source, callback) ->
               if srcStat.isDirectory()
                 destination = path.resolve options.destination, path.relative options.source, source
               else if not srcStat.isDirectory() and dstStat?.isDirectory()
@@ -189,51 +192,66 @@ Todo:
               else
                 destination = options.destination
               misc.file.stat options.ssh, source, (err, stat) ->
-                return next err if err
+                return callback err if err
                 if stat.isDirectory()
-                then copyDir source, destination, next
-                else copyFile source, destination, next
-            copyDir = (source, destination, next) ->
-              return next() if source is options.source
-              # todo, add permission
-              misc.file.mkdir options.ssh, destination, (err) ->
-                return next() if err?.code is 'EEXIST'
-                return next err if err
-                finish next
-            # Copy a file
-            copyFile = (source, destination, next) ->
-              misc.file.compare options.ssh, [source, destination], (err, md5) ->
-                # Destination may not exists
-                return next err if err and err.message.indexOf('Does not exist') isnt 0
-                # File are the same, we can skip copying
-                return next() if md5
-                # # Copy
-                # input = fs.createReadStream source
-                # output = fs.createWriteStream destination
-                # input.pipe(output).on 'close', (err) ->
-                #   return next err if err
-                #   chmod source, next
-                # Copy
-                s = (ssh, callback) ->
-                  unless ssh
-                  then callback null, fs
-                  else options.ssh.sftp callback
-                s options.ssh, (err, fs) ->
-                    rs = fs.createReadStream source
-                    ws = rs.pipe fs.createWriteStream destination
-                    ws.on 'close', ->
-                      fs.end() if fs.end
-                      chmod source, next
-                    ws.on 'error', next
-            chmod = (file, next) ->
-              return finish next if not options.mode or options.mode is dstStat.mode
-              misc.file.chmod options.ssh, options.destination, options.mode, (err) ->
-                return next err if err
-                finish next
-            finish = (next) ->
-              copied++
-              next()
-          conditions.all options, next, search
+                then do_copy_dir source, destination
+                else do_copy_file source, destination
+              do_copy_dir = (source, destination) ->
+                return callback() if source is options.source
+                options.log? "Create directory #{destination}"
+                # todo, add permission
+                misc.file.mkdir options.ssh, destination, (err) ->
+                  return callback() if err?.code is 'EEXIST'
+                  return callback err if err
+                  modified = true
+                  do_end()
+              # Copy a file
+              do_copy_file = (source, destination) ->
+                misc.file.compare options.ssh, [source, destination], (err, md5) ->
+                  # Destination may not exists
+                  return callback err if err and err.message.indexOf('Does not exist') isnt 0
+                  # File are the same, we can skip copying
+                  return do_chown destination if md5
+                  # Copy
+                  s = (ssh, callback) ->
+                    unless ssh
+                    then callback null, fs
+                    else options.ssh.sftp callback
+                  s options.ssh, (err, fs) ->
+                      options.log? "Copy file from #{source} into #{destination}"
+                      rs = fs.createReadStream source
+                      ws = rs.pipe fs.createWriteStream destination
+                      ws.on 'close', ->
+                        fs.end() if fs.end
+                        modified = true
+                        do_chown destination
+                      ws.on 'error', callback
+              do_chown = (destination) ->
+                return do_chmod() if not options.uid and not options.gid
+                mecano.chown
+                  ssh: options.ssh
+                  log: options.log
+                  destination: destination
+                  uid: options.uid
+                  gid: options.gid
+                , (err, chowned) ->
+                  return callback err if err
+                  modified = chowned if chowned
+                  do_chmod()
+              do_chmod = (destination) ->
+                return do_end() if not options.mode
+                mecano.chmod
+                  ssh: options.ssh
+                  log: options.log
+                  destination: options.destination
+                  mode: options.mode
+                , (err, chmoded) ->
+                  return callback err if err
+                  modified = chmoded if chmoded
+                  do_end()
+              do_end = ->
+                copied++ if modified
+                callback()
         .on 'both', (err) ->
           callback err, copied
 
@@ -686,8 +704,7 @@ provided in the `content` option.
 `options`           Command options include:   
 *   `append`        Append the content to the destination file. If destination does not exist, the file will be created. When used with the `match` and `replace` options, it will append the `replace` value at the end of the file if no match if found and if the value is a string.   
 *   `backup`        Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
-*   `content`       Object to stringify.   
-*   `stringify`     User defined function to stringify to ini format, default to `require('ini').stringify`.   
+*   `content`       Object to stringify.     
 *   `destination`   File path where to write content to or a callback.   
 *   `from`          Replace from after this marker, a string or a regular expression.   
 *   `local_source`  Treat the source as local instead of remote, only apply with "ssh" option.   
@@ -695,8 +712,9 @@ provided in the `content` option.
 *   `merge`         Read the destination if it exists and merge its content.   
 *   `replace`       The content to be inserted, used conjointly with the from, to or match options.   
 *   `source`        File path from where to extract the content, do not use conjointly with content.   
-*   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
-*   `stringify`     Provide your own user-defined function to stringify the content, see 'misc.ini.stringify_square_then_curly'.   
+*   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.  
+*   `parse`         User-defined function to parse the content from ini format, default to `require('ini').parse`.   
+*   `stringify`     User-defined function to stringify the content to ini format, default to `require('ini').stringify`, see 'misc.ini.stringify_square_then_curly' for an example.   
 *   `separator`     Default separator between keys and values, default to " : ".   
 *   `to`            Replace to before this marker, a string or a regular expression.   
 
@@ -736,7 +754,8 @@ provided in the `content` option.
               misc.file.readFile ssh, destination, 'ascii', (err, c) ->
                 return next err if err and err.code isnt 'ENOENT'
                 content = clean content, true
-                content = misc.merge ini.parse(c), content
+                parse = options.parse or misc.ini.parse
+                content = misc.merge parse(c), content
                 write()
           write = ->
             clean content
@@ -1551,6 +1570,7 @@ mecano.mkdir
           options.directory ?= options.source
           options.directory ?= options.destination
           return next new Error 'Missing directory option' unless options.directory?
+          options.log? "Create directory #{options.directory}"
           cwd = options.cwd ? process.cwd()
           options.directory = [options.directory] unless Array.isArray options.directory
           conditions.all options, next, ->
@@ -1903,6 +1923,7 @@ Install a service. For now, only yum over SSH.
           # Start real work
           chkinstalled = ->
             cache = ->
+              options.log? "List installed packages"
               c = if options.cache then '-C' else ''
               mecano.execute
                 ssh: options.ssh
@@ -1937,6 +1958,7 @@ Install a service. For now, only yum over SSH.
             #   if installed then updates() else install()
           chkupdates = ->
             cache = ->
+              options.log? "List available updates"
               c = if options.cache then '-C' else ''
               mecano.execute
                 ssh: options.ssh
@@ -1958,16 +1980,8 @@ Install a service. For now, only yum over SSH.
             decide = ->
               if updates.indexOf(pkgname) isnt -1 then install() else startuped()
             if updates then decide() else cache()
-            # mecano.execute
-            #   ssh: options.ssh
-            #   cmd: "yum list updates | grep ^#{pkgname}\\\\."
-            #   code_skipped: 1
-            #   stdout: options.stdout
-            #   stderr: options.stderr
-            # , (err, outdated) ->
-            #   return next err if err
-            #   if outdated then install() else startuped()
           install = ->
+            options.log? "Install the package #{pkgname}"
             mecano.execute
               ssh: options.ssh
               cmd: "yum install -y #{pkgname}"
@@ -1988,6 +2002,7 @@ Install a service. For now, only yum over SSH.
               startuped()
           startuped = ->
             return started() unless options.startup?
+            options.log? "List startup services"
             mecano.execute
               ssh: options.ssh
               cmd: "chkconfig --list #{chkname}"
@@ -2010,6 +2025,7 @@ Install a service. For now, only yum over SSH.
               then startup_add()
               else startup_del()
           startup_add = ->
+            options.log? "Add startup service"
             startup_on = startup_off = ''
             for i in [0...6]
               if options.startup.indexOf(i) isnt -1
@@ -2028,6 +2044,7 @@ Install a service. For now, only yum over SSH.
               return next err if err
               started()
           startup_del = ->
+            options.log? "Remove startup service"
             mecano.execute
               ssh: options.ssh
               cmd: "chkconfig --del #{chkname}"
@@ -2039,6 +2056,7 @@ Install a service. For now, only yum over SSH.
               started()
           started = ->
             return action() if options.action isnt 'start' and options.action isnt 'stop'
+            options.log? "Check if service is started"
             mecano.execute
               ssh: options.ssh
               cmd: "service #{srvname} status"
@@ -2055,6 +2073,7 @@ Install a service. For now, only yum over SSH.
               finish() 
           action = ->
             return finish() unless options.action
+            options.log? "Start/stop the service"
             mecano.execute
               ssh: options.ssh
               cmd: "service #{srvname} #{options.action}"

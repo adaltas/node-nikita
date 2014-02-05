@@ -7,14 +7,18 @@ module.exports = (mecano) ->
   for k, v of mecano
     do (k) ->
       child[k] = (options, callback) ->
+        # console.log 'call', k, arguments
         child.todos.push [k, arguments]
         child
   child.end = (err, modified) ->
+    # console.log '==========================',  err, child.todos.length
     todo = child.todos.shift()
+    # console.log '--------------------------',  err, todo
     if err or not todo
       if child.listeners('error').length
         if err
-        then child.emit 'error', new Error 'What the hell'
+        # then child.emit 'error', new Error 'What the hell'
+        then child.emit 'error', err
         else child.emit 'end', modified
       else
         child.emit 'both', err, modified
