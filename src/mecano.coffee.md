@@ -713,10 +713,11 @@ provided in the `content` option.
 *   `replace`       The content to be inserted, used conjointly with the from, to or match options.   
 *   `source`        File path from where to extract the content, do not use conjointly with content.   
 *   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.  
-*   `parse`         User-defined function to parse the content from ini format, default to `require('ini').parse`.   
+*   `parse`         User-defined function to parse the content from ini format, default to `require('ini').parse`, see 'misc.ini.parse_multi_brackets'.   
 *   `stringify`     User-defined function to stringify the content to ini format, default to `require('ini').stringify`, see 'misc.ini.stringify_square_then_curly' for an example.   
 *   `separator`     Default separator between keys and values, default to " : ".   
 *   `to`            Replace to before this marker, a string or a regular expression.   
+*   `clean`         Remove all the lines whithout a key and a value   
 
     ini: (goptions, options, callback) ->
       if arguments.length is 2
@@ -755,10 +756,10 @@ provided in the `content` option.
                 return next err if err and err.code isnt 'ENOENT'
                 content = clean content, true
                 parse = options.parse or misc.ini.parse
-                content = misc.merge parse(c), content
+                content = misc.merge parse(c, options), content
                 write()
           write = ->
-            clean content
+            clean content if options.clean
             stringify = options.stringify or misc.ini.stringify
             options.content = stringify content, options
             mecano.write options, (err, w) ->

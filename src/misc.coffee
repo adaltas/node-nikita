@@ -24,6 +24,8 @@ misc = module.exports =
       if arguments.length is 1
         algorithm = 'md5'
       crypto.createHash(algorithm).update(data).digest('hex')
+    repeat: (str, l) ->
+      Array(l+1).join str
   file:
     readdir: (ssh, path, callback) ->
       unless ssh
@@ -701,8 +703,51 @@ misc = module.exports =
                       .replace(/\2LITERAL\\1LITERAL\2/g, '\1')
              })
     }`
-    parse: (content) ->
+    parse: (content, options) ->
       ini.parse content
+    ###
+    
+    Each category is surrounded by one or several square brackets. The number of brackets indicates
+    the depth of the category.
+    Options are   
+
+    *   `comment`   Default to ";"
+
+    ###
+    parse_multi_brackets: (str, options={}) ->
+      lines = str.split /[\r\n]+/g
+      current = data = {}
+      stack = [current]
+      comment = options.comment or ';'
+      lines.forEach (line, _, __) ->
+        return if not line or line.match(/^\s*$/)
+        # Category
+        if match = line.match /^\s*(\[+)(.+?)(\]+)\s*$/
+          depth = match[1].length
+          # Add a child
+          if depth is stack.length
+            parent = stack[depth - 1]
+            parent[match[2]] = current = {}
+            stack.push current
+          # Invaild child hierarchy
+          if depth > stack.length
+            throw new Error "Invalid child #{match[2]}"
+          # Move up or at the same level
+          if depth < stack.length
+            stack.splice depth, stack.length - depth
+            parent = stack[depth - 1]
+            parent[match[2]] = current = {}
+            stack.push current
+        # comment
+        else if comment and match = line.match ///^\s*(#{comment}.*)$///
+          current[match[1]] = null
+        # key value
+        else if match = line.match /^\s*(.+?)\s*=\s*(.+)\s*$/
+          current[match[1]] = match[2]
+        # else
+        else if match = line.match /^\s*(.+?)\s*$/
+          current[match[1]] = null
+      data
     stringify: (obj, section, options) ->
       if arguments.length is 2
         options = section
@@ -758,6 +803,37 @@ misc = module.exports =
         else 
           if isNull
             out += "#{prefix}#{k}#{options.separator}null"
+          else if isBoolean
+            out += "#{prefix}#{k}#{options.separator}#{if v then 'true' else 'false'}"
+          else
+            out += "#{prefix}#{k}#{options.separator}#{v}"
+          out += '\n'
+      out
+    ###
+    Each category is surrounded by one or several square brackets. The number of brackets indicates
+    the depth of the category.
+    ###
+    stringify_multi_brackets: (content, depth=0, options={}) ->
+      if arguments.length is 2
+        options = depth
+        depth = 0
+      options.separator ?= ' = '
+      out = ''
+      indent = '  '
+      prefix = ''
+      for i in [0...depth]
+        prefix += indent
+      for k, v of content
+        isUndefined = typeof v is 'undefined'
+        isBoolean = typeof v is 'boolean'
+        isNull = v is null
+        isObj = typeof v is 'object' and not isNull
+        if isObj
+            out += "#{prefix}#{misc.string.repeat '[', depth+1}#{k}#{misc.string.repeat ']', depth+1}\n"
+            out += misc.ini.stringify_multi_brackets v, depth + 1, options
+        else 
+          if isNull
+            out += "#{prefix}#{k}"
           else if isBoolean
             out += "#{prefix}#{k}#{options.separator}#{if v then 'true' else 'false'}"
           else
