@@ -1,6 +1,7 @@
 
 each = require 'each'
 misc = require './misc'
+exec = require 'superexec'
 
 ###
 Conditionnal properties
@@ -29,7 +30,7 @@ module.exports =
     .on('error', skip)
     .on('end', succeed)
   ###
-  `if` Run action for a user defined condition
+  `if` Run an action for a user defined condition
   --------------------------------------------
 
   Work on the property `if` in `options`. When `if` 
@@ -68,7 +69,7 @@ module.exports =
       succeed()
   ###
   
-  `if_exists` Run action if a file exists
+  `if_exists` Run an action if a file exists
   ----------------------------------------
 
   Work on the property `if_exists` in `options`. The value may 
@@ -89,8 +90,8 @@ module.exports =
     .on 'end', succeed
   ###
 
-  `not_if_exists` Skip action if a file exists
-  ---------------------------------------------
+  `not_if_exists` Skip an action if a file exists
+  -----------------------------------------------
 
   Work on the property `not_if_exists` in `options`. The value may 
   be a file path or an array of file paths. You could also set the
@@ -107,6 +108,62 @@ module.exports =
     .on 'item', (not_if_exists, next) ->
       misc.file.exists options.ssh, not_if_exists, (err, exists) ->
         if exists
+        then next new Error
+        else next()
+    .on 'error', ->
+      skip()
+    .on 'end', succeed
+  ###
+  
+  `if_exec` Run an action if a command is successfully executed
+  -------------------------------------------------------------
+
+  Work on the property `if_exec` in `options`. The value may 
+  be a single shell command or an array of commands.   
+
+  The callback `succeed` is called if all the provided command 
+  were executed successfully otherwise the callback `skip` is called.
+
+  ###
+  if_exec: (options, skip, succeed) ->
+    return succeed() unless options.if_exec?
+    each(options.if_exec)
+    .on 'item', (cmd, next) ->
+      options.log? "Execute condition: #{cmd}"
+      options = { cmd: cmd, ssh: options.ssh }
+      run = exec options
+      if options.stdout
+        run.stdout.pipe options.stdout, end: false
+      if options.stderr
+        run.stderr.pipe options.stderr, end: false
+      run.on "exit", (code) ->
+        if code is 0 then next() else skip()
+    .on 'end', succeed
+  ###
+  
+  `not_if_exec` Run an action unless a command is successfully executed
+  ---------------------------------------------------------------------
+
+  Work on the property `not_if_exec` in `options`. The value may 
+  be a single shell command or an array of commands.   
+
+  The callback `succeed` is called if all the provided command 
+  were executed with failure otherwise the callback `skip` is called.
+
+  ###
+  not_if_exec: (options, skip, succeed) ->
+    return succeed() unless options.not_if_exec?
+    each(options.not_if_exec)
+    .on 'item', (cmd, next) ->
+      options.log? "Execute condition: #{cmd}"
+      options = { cmd: cmd, ssh: options.ssh }
+      run = exec options
+      if options.stdout
+        run.stdout.pipe options.stdout, end: false
+      if options.stderr
+        run.stderr.pipe options.stderr, end: false
+      run.on "exit", (code) ->
+        if code is 0
         then next new Error
         else next()
     .on 'error', ->
