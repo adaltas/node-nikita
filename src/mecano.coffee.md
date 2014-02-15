@@ -759,7 +759,7 @@ provided in the `content` option.
                 content = misc.merge parse(c, options), content
                 write()
           write = ->
-            clean content if options.clean
+            clean content #if options.clean
             stringify = options.stringify or misc.ini.stringify
             options.content = stringify content, options
             mecano.write options, (err, w) ->
@@ -1713,6 +1713,7 @@ mecano.mv
             then remove_src()
             else remove_dest()
           remove_dest = ->
+            options.log? "Remove #{options.destination}"
             mecano.remove
               ssh: options.ssh
               destination: options.destination
@@ -1720,11 +1721,13 @@ mecano.mv
               return next err if err
               move()
           move = ->
+            options.log? "Rename #{options.source} to #{options.destination}"
             misc.file.rename options.ssh, options.source, options.destination, (err) ->
               return next err if err
               moved++
               next()
           remove_src = ->
+            options.log? "Remove #{options.source}"
             mecano.remove
               ssh: options.ssh
               destination: options.source
