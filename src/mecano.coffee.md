@@ -1794,6 +1794,7 @@ mecano.rm [
           # Start real work
           remove = ->
             if options.ssh
+              options.log? "Remove #{options.source}"
               misc.file.exists options.ssh, options.source, (err, exists) ->
                 return next err if err
                 removed++ if exists
@@ -1803,6 +1804,7 @@ mecano.rm [
               .files(options.source)
               .on 'item', (file, next) ->
                 removed++
+                options.log? "Remove #{file}"
                 misc.file.remove options.ssh, file, next
               .on 'error', (err) ->
                 next err
