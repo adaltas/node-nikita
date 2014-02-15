@@ -1152,7 +1152,8 @@ http://www.openldap.org/doc/admin24/access-control.html
               connect()
             .on 'both', (err) ->
               modified += 1 if updated and not err
-              finish err, modified
+              # finish err, modified
+              next err
         .on 'both', (err) ->
           finish err, modified
       result
