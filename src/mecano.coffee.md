@@ -44,10 +44,7 @@ Change the file permissions of a file.
 *   `modified`      Number of files with modified permissions.
 
     chmod: (goptions, options, callback) ->
-      if arguments.length is 2
-        callback = options
-        options = goptions
-        goptions = parallel: true
+      [goptions, options, callback] = misc.args arguments
       result = child mecano
       finish = (err, modified) ->
         callback err, modified if callback
@@ -89,10 +86,7 @@ Change the file permissions of a file.
 *   `modified`      Number of files with modified permissions.
 
     chown: (goptions, options, callback) ->
-      if arguments.length is 2
-        callback = options
-        options = goptions
-        goptions = parallel: true
+      [goptions, options, callback] = misc.args arguments
       result = child mecano
       finish = (err, modified) ->
         callback err, modified if callback
@@ -142,10 +136,7 @@ Todo:
 *   preserve permissions if `mode` is `true`
 
     copy: (goptions, options, callback) ->
-      if arguments.length is 2
-        callback = options
-        options = goptions
-        goptions = parallel: true
+      [goptions, options, callback] = misc.args arguments
       misc.options options, (err, options) ->
         return callback err if err
         copied = 0
@@ -303,10 +294,7 @@ mecano.download
 ```
 
     download: (goptions, options, callback) ->
-      if arguments.length is 2
-        callback = options
-        options = goptions
-        goptions = parallel: true
+      [goptions, options, callback] = misc.args arguments
       result = child mecano
       finish = (err, downloaded) ->
         callback err, downloaded if callback
@@ -457,10 +445,7 @@ Run a command locally or with ssh if `host` or `ssh` is provided.
 *   `stderr`        Stderr value(s) unless `stderr` option is provided.   
 
     execute: (goptions, options, callback) ->
-      if arguments.length is 2
-        callback = options
-        options = goptions
-        goptions = parallel: true
+      [goptions, options, callback] = misc.args arguments
       result = child mecano
       finish = (err, created, stdout, stderr) ->
         callback err, created, stdout, stderr if callback
@@ -549,10 +534,7 @@ moment, supported extensions are '.tgz', '.tar.gz' and '.zip'.
 *   `extracted`     Number of extracted archives.   
 
     extract: (goptions, options, callback) ->
-      if arguments.length is 2
-        callback = options
-        options = goptions
-        goptions = parallel: true
+      [goptions, options, callback] = misc.args arguments
       misc.options options, (err, options) ->
         return callback err if err
         extracted = 0
@@ -613,10 +595,7 @@ moment, supported extensions are '.tgz', '.tar.gz' and '.zip'.
 *   `stderr`        Writable EventEmitter in which command error will be piped.   
 
     git: (goptions, options, callback) ->
-      if arguments.length is 2
-        callback = options
-        options = goptions
-        goptions = parallel: true
+      [goptions, options, callback] = misc.args arguments
       misc.options options, (err, options) ->
         return callback err if err
         updated = 0
@@ -720,10 +699,7 @@ provided in the `content` option.
 *   `clean`         Remove all the lines whithout a key and a value   
 
     ini: (goptions, options, callback) ->
-      if arguments.length is 2
-        callback = options
-        options = goptions
-        goptions = parallel: true
+      [goptions, options, callback] = misc.args arguments
       clean = (content, undefinedOnly) ->
         for k, v of content
           if v and typeof v is 'object'
@@ -789,10 +765,7 @@ Create a new Kerberos principal and an optionnal keytab.
 *   `stderr`        Writable Stream in which commands error will be piped.   
 
     krb5_ktadd: (goptions, options, callback) ->
-      if arguments.length is 2
-        callback = options
-        options = goptions
-        goptions = parallel: true
+      [goptions, options, callback] = misc.args arguments
       misc.options options, (err, options) ->
         return callback err if err
         executed = 0
@@ -895,10 +868,7 @@ Create a new Kerberos principal and an optionnal keytab.
 *   `stderr`        Writable Stream in which commands error will be piped.   
 
     krb5_addprinc: (goptions, options, callback) ->
-      if arguments.length is 2
-        callback = options
-        options = goptions
-        goptions = parallel: true
+      [goptions, options, callback] = misc.args arguments
       misc.options options, (err, options) ->
         return callback err if err
         executed = 0
@@ -950,10 +920,7 @@ Create a new Kerberos principal and an optionnal keytab.
 *   `stderr`        Writable Stream in which commands error will be piped.   
 
     krb5_delprinc: (goptions, options, callback) ->
-      if arguments.length is 2
-        callback = options
-        options = goptions
-        goptions = parallel: true
+      [goptions, options, callback] = misc.args arguments
       misc.options options, (err, options) ->
         return callback err if err
         executed = 0
@@ -1011,10 +978,7 @@ http://www.openldap.org/doc/admin24/access-control.html
 [ldapclt]: http://ldapjs.org/client.html
 
     ldap_acl: (goptions, options, callback) ->
-      if arguments.length is 2
-        callback = options
-        options = goptions
-        goptions = parallel: true
+      [goptions, options, callback] = misc.args arguments
       result = child mecano
       finish = (err, modified) ->
         callback err, modified if callback
@@ -1175,10 +1139,7 @@ Resources:
 -   http://www.zytrax.com/books/ldap/apa/indeces.html
 
     ldap_index: (goptions, options, callback) ->
-      if arguments.length is 2
-        callback = options
-        options = goptions
-        goptions = parallel: true
+      [goptions, options, callback] = misc.args arguments
       result = child mecano
       finish = (err, created) ->
         callback err, created if callback
@@ -1268,10 +1229,7 @@ Register a new ldap schema.
 *   `log`           Function called with a log related messages.   
 
     ldap_schema: (goptions, options, callback) ->
-      if arguments.length is 2
-        callback = options
-        options = goptions
-        goptions = parallel: true
+      [goptions, options, callback] = misc.args arguments
       result = child mecano
       finish = (err, created) ->
         callback err, created if callback
@@ -1442,10 +1400,7 @@ mecano.link
 ```
 
     link: (goptions, options, callback) ->
-      if arguments.length is 2
-        callback = options
-        options = goptions
-        goptions = parallel: true
+      [goptions, options, callback] = misc.args arguments
       result = child mecano
       finish = (err, created) ->
         callback err, created if callback
@@ -1553,10 +1508,7 @@ mecano.mkdir
 ```
 
     mkdir: (goptions, options, callback) ->
-      if arguments.length is 2
-        callback = options
-        options = goptions
-        goptions = parallel: true
+      [goptions, options, callback] = misc.args arguments
       result = child mecano
       finish = (err, created) ->
         callback err, created if callback
@@ -1679,10 +1631,7 @@ mecano.mv
 ```
 
     move: (goptions, options, callback) ->
-      if arguments.length is 2
-        callback = options
-        options = goptions
-        goptions = parallel: true
+      [goptions, options, callback] = misc.args arguments
       misc.options options, (err, options) ->
         return callback err if err
         moved = 0
@@ -1777,10 +1726,7 @@ mecano.rm [
 ```
 
     remove: (goptions, options, callback) ->
-      if arguments.length is 2
-        callback = options
-        options = goptions
-        goptions = parallel: true
+      [goptions, options, callback] = misc.args arguments
       result = child mecano
       finish = (err, removed) ->
         callback err, removed if callback
@@ -1844,10 +1790,7 @@ If destination is a callback, it will be called multiple times with the
 generated content as its first argument.
 
     render: (goptions, options, callback) ->
-      if arguments.length is 2
-        callback = options
-        options = goptions
-        goptions = parallel: true
+      [goptions, options, callback] = misc.args arguments
       misc.options options, (err, options) ->
         return callback err if err
         rendered = 0
@@ -1904,10 +1847,7 @@ Install a service. For now, only yum over SSH.
 *   `updates`       List of services to update.   
 
     service: (goptions, options, callback) ->
-      if arguments.length is 2
-        callback = options
-        options = goptions
-        goptions = parallel: 1
+      [goptions, options, callback] = misc.args arguments, parallel: 1
       installed = updates = null
       misc.options options, (err, options) ->
         return callback err if err
@@ -2104,10 +2044,7 @@ Install a service. For now, only yum over SSH.
 Create a empty file if it does not yet exists.
 
     touch: (goptions, options, callback) ->
-      if arguments.length is 2
-        callback = options
-        options = goptions
-        goptions = parallel: true
+      [goptions, options, callback] = misc.args arguments
       result = child mecano
       finish = (err, modified) ->
         callback err, modified if callback
@@ -2157,10 +2094,7 @@ the "binary" option.
 *   `rendered`      Number of rendered files. 
 
     upload: (goptions, options, callback) ->
-      if arguments.length is 2
-        callback = options
-        options = goptions
-        goptions = parallel: true
+      [goptions, options, callback] = misc.args arguments
       result = child mecano
       finish = (err, uploaded) ->
         callback err, uploaded if callback
@@ -2351,10 +2285,7 @@ mecano.write
 ```
 
     write: (goptions, options, callback) ->
-      if arguments.length is 2
-        callback = options
-        options = goptions
-        goptions = parallel: true
+      [goptions, options, callback] = misc.args arguments
       result = child mecano
       finish = (err, written) ->
         callback err, written if callback

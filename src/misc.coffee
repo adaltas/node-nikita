@@ -840,6 +840,17 @@ misc = module.exports =
             out += "#{prefix}#{k}#{options.separator}#{v}"
           out += '\n'
       out
+  args: (args, default_goptions={}) ->
+    # [goptions, options, callback] = args
+    if args.length is 2 and typeof args[1] is 'function'
+      args[2] = args[1]
+      args[1] = args[0]
+      args[0] = null
+    else if args.length is 1
+      args[1] = args[0]
+      args[0] = null
+    args[0] ?= misc.merge default_goptions, parallel: true
+    args
   ###
 
   `options(options, callback)`
