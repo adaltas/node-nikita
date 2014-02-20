@@ -59,11 +59,14 @@ module.exports =
     each(options.if)
     .on 'item', (si, next) ->
       return next() unless ok
-      if typeof si is 'boolean'
+      type = typeof si
+      if type is 'boolean' or type is 'number'
         ok = false unless si
         next()
-      else if typeof si is 'function'
+      else if type is 'function'
         si options, ( -> ok = false; next arguments...), next
+      else
+        next new Error "Invalid condition type"
     .on 'both', (err) ->
       return skip err if err or not ok
       succeed()

@@ -22,11 +22,27 @@ describe 'conditions', ->
         () -> false.should.be.ok
         next
 
+    they 'should succeed if `1`', (ssh, next) ->
+      conditions.if
+        ssh: ssh
+        if: 1
+        () -> false.should.be.ok
+        next
+
     they 'should fail if `false`', (ssh, next) ->
       conditions.if
         ssh: ssh
         if: false
         next
+        () -> false.should.be.ok
+
+    they 'should fail with error if string', (ssh, next) ->
+      conditions.if
+        ssh: ssh
+        if: 'abc'
+        (err) ->
+          err.message.should.eql "Invalid condition type"
+          next()
         () -> false.should.be.ok
 
     they 'should succeed on `succeed` callback', (ssh, next) ->
