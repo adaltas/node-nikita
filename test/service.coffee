@@ -203,7 +203,7 @@ describe 'service', ->
         , (err, started) ->
           return next err if err
           started.should.eql 0
-          # Detect already stoped
+          # Detect already stopped
           mecano.service
             ssh: ssh
             name: 'ntp'
