@@ -1524,7 +1524,6 @@ mecano.mkdir
           options.directory ?= options.source
           options.directory ?= options.destination
           return next new Error 'Missing directory option' unless options.directory?
-          options.log? "Create directory #{options.directory}"
           cwd = options.cwd ? process.cwd()
           options.directory = [options.directory] unless Array.isArray options.directory
           conditions.all options, next, ->
@@ -1567,6 +1566,7 @@ mecano.mkdir
                   # eg /\${/ on './var/cache/${user}' creates './var/cache/'
                   if options.exclude? and options.exclude instanceof RegExp
                     return next() if options.exclude.test path.basename directory
+                  options.log? "Create directory #{directory}"
                   misc.file.mkdir options.ssh, directory, options, (err) ->
                     return next err if err
                     modified = true
@@ -1577,7 +1577,6 @@ mecano.mkdir
               do_update = (stat) ->
                 modified = false
                 do_chown = ->
-                  # todo, change ownership
                   mecano.chown
                     ssh: options.ssh
                     destination: directory
@@ -1842,7 +1841,7 @@ Install a service. For now, only yum over SSH.
 
 `callback`          Received parameters are:   
 *   `err`           Error object if any.   
-*   `modified`      Number of action taken (installed, updated, started or stoped).   
+*   `modified`      Number of action taken (installed, updated, started or stopped).   
 *   `installed`     List of installed services.   
 *   `updates`       List of services to update.   
 
@@ -2007,7 +2006,7 @@ Install a service. For now, only yum over SSH.
             mecano.execute
               ssh: options.ssh
               cmd: "service #{srvname} status"
-              code_skipped: 3
+              code_skipped: [3, 1] # ntpd return 1 if pidfile exists without a matching process
               log: options.log
               stdout: options.stdout
               stderr: options.stderr
@@ -2057,11 +2056,13 @@ Create a empty file if it does not yet exists.
           # Validate parameters
           {ssh, destination, mode} = options
           return next new Error "Missing destination: #{destination}" unless destination
+          options.log? "Check if exists: #{destination}"
           misc.file.exists ssh, destination, (err, exists) ->
             return next err if err
             return next if exists
             options.source = null
             options.content = ''
+            options.log? "Create a new empty file"
             mecano.write options, (err, written) ->
               return next err if err
               modified++
