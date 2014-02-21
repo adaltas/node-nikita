@@ -1528,6 +1528,7 @@ mecano.mkdir
           options.directory = [options.directory] unless Array.isArray options.directory
           conditions.all options, next, ->
             mode = options.mode or 0o0755
+            options.log? "Make directory #{options.directory}"
             each(options.directory)
             .on 'item', (directory, next) ->
               # first, we need to find which directory need to be created
@@ -1543,6 +1544,7 @@ mecano.mkdir
                 each(directories)
                 .on 'item', (directory, i, next) ->
                   return next() if end
+                  options.log? "Stat directory #{directory}"
                   misc.file.stat options.ssh, directory, (err, stat) ->
                     if err?.code is 'ENOENT' # if the directory is not yet created
                       directory.stat = stat
@@ -1566,7 +1568,7 @@ mecano.mkdir
                   # eg /\${/ on './var/cache/${user}' creates './var/cache/'
                   if options.exclude? and options.exclude instanceof RegExp
                     return next() if options.exclude.test path.basename directory
-                  options.log? "Create directory #{directory}"
+                  options.log? "Create directory #{directory}" unless directory is options.directory
                   misc.file.mkdir options.ssh, directory, options, (err) ->
                     return next err if err
                     modified = true
