@@ -33,7 +33,15 @@ misc = module.exports =
       else
         ssh.sftp (err, sftp) ->
           return callback err if err
-          sftp.readdir path, callback
+          sftp.opendir path, (err, handle) ->
+            return callback err if err
+            sftp.readdir handle, (err, files) ->
+              sftp.close handle, (err) ->
+                return callback err if err
+                sftp.end()
+                files = for file in files then file.filename
+                callback err, files
+
     ###
     `chown(ssh, path, options, callback)`
     -------------------------------------

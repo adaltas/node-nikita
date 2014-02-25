@@ -1,5 +1,6 @@
 
-crypto=require 'crypto'
+path = require 'path'
+crypto = require 'crypto'
 should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
 misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '../lib/misc'
@@ -82,6 +83,14 @@ describe 'misc.file', ->
             return next err if err
             content.should.eql "helloworld"
             next()
+
+  describe 'readdir', ->
+    they 'list', (ssh, next) ->
+      misc.file.readdir ssh, "#{__dirname}", (err, files) ->
+        return next err if err
+        files.length.should.be.above 10
+        files.indexOf(path.basename __filename).should.not.equal -1
+        next()
 
   describe 'readFile', ->
 
