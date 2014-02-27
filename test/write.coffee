@@ -742,6 +742,37 @@ describe 'write', ->
           data.should.eql ['2 + new text1\n', '2 - original text1\n', '3 - original text2\n']
           next()
 
+    they 'empty source on empty file', (ssh, next) ->
+      data = []
+      mecano.write
+        ssh: ssh
+        content: ''
+        destination: "#{scratch}/file"
+        stdout: write: (d) -> data.push d
+      , (err) ->
+        return next err if err
+        data.should.eql []
+        mecano.write
+          ssh: ssh
+          content: ''
+          destination: "#{scratch}/file"
+          stdout: write: (d) -> data.push d
+        , (err) ->
+          data.should.eql []
+          next err
+
+    they 'content on empty file', (ssh, next) ->
+      data = []
+      mecano.write
+        ssh: ssh
+        content: 'some content'
+        destination: "#{scratch}/file"
+        stdout: write: (d) -> data.push d
+      , (err) ->
+        return next err if err
+        data.should.eql [ '1 + some content\n' ]
+        next err
+
 
 
 

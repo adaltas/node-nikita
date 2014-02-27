@@ -2382,8 +2382,7 @@ mecano.write
               return next err
             replacePartial()
           replacePartial = ->
-            # return writeContent() unless fullContent?
-            return writeContent() unless write.length
+            return writeDiff() unless write.length
             for opts in write
               if opts.match
                 if opts.match instanceof RegExp
@@ -2417,8 +2416,8 @@ mecano.write
                 from = if opts.from then content.indexOf(opts.from) + opts.from.length else 0
                 to = if opts.to then content.indexOf(opts.to) else content.length
                 content = content.substr(0, from) + opts.replace + content.substr(to)
-            writeContent()
-          writeContent = ->
+            writeDiff()
+          writeDiff = ->
             return do_changeOwnership() if destinationHash is misc.string.hash content
             options.log? "File content has changed"
             if options.diff
@@ -2429,6 +2428,7 @@ mecano.write
                 count_added = count_removed = 0
                 padsize = Math.ceil(lines.length/10)
                 for line in lines
+                  continue if line.value is null
                   if not line.added and not line.removed
                     count_added++; count_removed++; continue
                   ls = line.value.split(/\r\n|[\n\r\u0085\u2028\u2029]/g)
@@ -2440,6 +2440,8 @@ mecano.write
                     for line in ls
                       count_removed++
                       options.stdout.write "#{pad padsize, ''+(count_removed)} - #{line}\n"
+            writeContent()
+          writeContent = ->
             if typeof options.destination is 'function'
               options.destination content
               do_end()
