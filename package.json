@@ -14,7 +14,9 @@
         "url": "http://github.com/wdavidw/node-mecano/issues"
     },
     "dependencies": {
+        "diff": "latest",
         "eco": "latest",
+        "pad": "latest",
         "each": "latest",
         "ftp": "latest",
         "ini": "latest",

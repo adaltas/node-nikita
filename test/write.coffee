@@ -698,3 +698,54 @@ describe 'write', ->
         err.message.should.eql "Source does not exist: \"#{scratch}/does/not/exists\""
         next()
 
+  describe 'diff', ->
+
+    they 'call function and stdout', (ssh, next) ->
+      # Prepare by creating a file with content
+      data = []
+      diffcalled = false
+      mecano.write
+        ssh: ssh
+        content: 'Testing diff\noriginal text'
+        destination: "#{scratch}/file"
+      , (err) ->
+        mecano.write
+          ssh: ssh
+          content: 'Testing diff\nnew text'
+          destination: "#{scratch}/file"
+          diff: (diff) ->
+            diffcalled = true
+            diff.should.eql [
+              { value: 'Testing diff\n', added: undefined, removed: undefined }
+              { value: 'new text', added: true, removed: undefined }
+              { value: 'original text', added: undefined, removed: true }
+            ]
+          stdout: write: (d) -> data.push d
+        , (err) ->
+          diffcalled.should.be.ok
+          data.should.eql ['2 + new text\n', '2 - original text\n']
+          next()
+
+    they 'call stdout', (ssh, next) ->
+      data = []
+      mecano.write
+        ssh: ssh
+        content: 'Testing diff\noriginal text1\noriginal text2'
+        destination: "#{scratch}/file"
+      , (err) ->
+        mecano.write
+          ssh: ssh
+          content: 'Testing diff\nnew text1'
+          destination: "#{scratch}/file"
+          stdout: write: (d) -> data.push d
+        , (err) ->
+          data.should.eql ['2 + new text1\n', '2 - original text1\n', '3 - original text2\n']
+          next()
+
+
+
+
+
+
+
+

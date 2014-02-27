@@ -10,6 +10,8 @@
     Ftp = require 'jsftp'
     ldap = require 'ldapjs'
     ldap_client = require 'ldapjs/lib/client/client'
+    pad = require 'pad'
+    diff = require 'diff'
     {EventEmitter} = require 'events'
 
     conditions = require './conditions'
@@ -56,14 +58,14 @@ Change the file permissions of a file.
         .parallel(goptions.parallel)
         .on 'item', (options, next) ->
           # Validate parameters
-          {ssh, destination, mode} = options
-          return next new Error "Missing destination: #{destination}" unless destination
-          options.log? "Stat #{destination}"
-          misc.file.stat ssh, destination, (err, stat) ->
+          {ssh, mode} = options
+          return next new Error "Missing destination: #{destination}" unless options.destination
+          options.log? "Stat #{options.destination}"
+          misc.file.stat ssh, options.destination, (err, stat) ->
             return next err if err
             return next() if misc.file.cmpmod stat.mode, mode
             options.log? "Change mode to #{mode}"
-            misc.file.chmod ssh, destination, mode, (err) ->
+            misc.file.chmod ssh, options.destination, mode, (err) ->
               return next err if err
               modified++
               next()
@@ -98,16 +100,16 @@ Change the file permissions of a file.
         .parallel(goptions.parallel)
         .on 'item', (options, next) ->
           # Validate parameters
-          {ssh, destination, uid, gid} = options
-          return next new Error "Missing destination: #{destination}" unless destination
+          {ssh, uid, gid} = options
+          return next new Error "Missing destination: #{options.destination}" unless options.destination
           return next() unless uid and gid
-          options.log? "Stat #{destination}"
-          misc.file.stat ssh, destination, (err, stat) ->
+          options.log? "Stat #{options.destination}"
+          misc.file.stat ssh, options.destination, (err, stat) ->
             return next err if err
             return next() if stat.uid is uid and stat.gid is gid
             options.log? "Change uid from #{stat.uid} to #{uid}" if stat.uid isnt uid
             options.log? "Change gid from #{stat.gid} to #{gid}" if stat.gid isnt gid
-            misc.file.chown ssh, destination, uid, gid, (err) ->
+            misc.file.chown ssh, options.destination, uid, gid, (err) ->
               return next() err if err
               modified++
               next()
@@ -2178,24 +2180,26 @@ the "binary" option.
 `write([goptions], options, callback)`
 --------------------------------------
 
-Write a file or a portion of an existing file.
+Write a file or a portion of an existing file.   
 
 `options`           Command options include:   
-*   `from`          Replace from after this marker, a string or a regular expression.   
-*   `local_source`  Treat the source as local instead of remote, only apply with "ssh" option.   
-*   `to`            Replace to before this marker, a string or a regular expression.   
-*   `match`         Replace this marker, a string or a regular expression.   
-*   `replace`       The content to be inserted, used conjointly with the from, to or match options.   
-*   `content`       Text to be written, an alternative to source which reference a file.   
-*   `source`        File path from where to extract the content, do not use conjointly with content.   
-*   `destination`   File path where to write content to.   
-*   `backup`        Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
 *   `append`        Append the content to the destination file. If destination does not exist, the file will be created.   
-*   `write`         An array containing multiple transformation where a transformation is an object accepting the options `from`, `to`, `match` and `replace`
+*   `backup`        Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.   
+*   `content`       Text to be written, an alternative to source which reference a file.   
+*   `destination`   File path where to write content to.   
+*   `diff`          Print diff information, pass the result of [jsdiff.diffLines][diffLines] as argument if a function, default to true.   
+*   `from`          Replace from after this marker, a string or a regular expression.   
+*   `gid`           File group name or group id.   
+*   `local_source`  Treat the source as local instead of remote, only apply with "ssh" option.   
+*   `match`         Replace this marker, a string or a regular expression.   
+*   `mode`          File mode (permission and sticky bits), default to `0666`, in the for of `{mode: 0o744}` or `{mode: "744"}`.   
+*   `replace`       The content to be inserted, used conjointly with the from, to or match options.   
+*   `source`        File path from where to extract the content, do not use conjointly with content.   
 *   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
-*   `uid`           File user name or user id
-*   `gid`           File group name or group id
-*   `mode`          File mode (permission and sticky bits), default to `0666`, in the for of `{mode: 0o744}` or `{mode: "744"}`
+*   `stdout`        Writable Stream in which diff information are written.   
+*   `to`            Replace to before this marker, a string or a regular expression.   
+*   `uid`           File user name or user id.   
+*   `write`         An array containing multiple transformation where a transformation is an object accepting the options `from`, `to`, `match` and `replace`.   
 
 `callback`          Received parameters are:   
 *   `err`           Error object if any.   
@@ -2209,9 +2213,11 @@ more interesting. If append is a string or a regular expression,
 it will place the "replace" string just after the match. An 
 append string will be converted to a regular expression such as 
 "test" will end up converted as the string "test" is similar to the 
-RegExp /^.*test.*$/mg.
+RegExp /^.*test.*$/mg.   
 
-Example replacing part of a file using from and to markers
+[diffLines]: https://github.com/kpdecker/jsdiff
+
+Example replacing part of a file using from and to markers:   
 ```coffee
 mecano.write
   content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
@@ -2223,7 +2229,7 @@ mecano.write
   # here we are\n# from\nmy friend\n# to\nyou coquin
 ```
 
-Example replacing a matched line by a string with
+Example replacing a matched line by a string with:   
 ```coffee
 mecano.write
   content: 'email=david(at)adaltas(dot)com\nusername=root'
@@ -2234,7 +2240,7 @@ mecano.write
   # email=david(at)adaltas(dot)com\nusername=david (was root)
 ```
 
-Example replacing part of a file using a regular expression
+Example replacing part of a file using a regular expression:   
 ```coffee
 mecano.write
   content: 'here we are\nlets try to replace that one\nyou coquin'
@@ -2245,7 +2251,7 @@ mecano.write
   # here we are\nmy friend, lets try\nyou coquin
 ```
 
-Example replacing with the global and multiple lines options
+Example replacing with the global and multiple lines options:   
 ```coffee
 mecano.write
   content: '#A config file\n#property=30\nproperty=10\n#End of Config'
@@ -2256,7 +2262,7 @@ mecano.write
   '# A config file\n#property=30\nproperty=50\n#End of Config'
 ```
 
-Example appending a line after each line containing "property"
+Example appending a line after each line containing "property":   
 ```coffee
 mecano.write
   content: '#A config file\n#property=30\nproperty=10\n#End of Config'
@@ -2268,7 +2274,7 @@ mecano.write
   '# A config file\n#property=30\n# comment\nproperty=50\n# comment\n#End of Config'
 ```
 
-Example with multiple transformations
+Example with multiple transformations:   
 ```coffee
 mecano.write
   content: 'username: me\nemail: my@email\nfriends: you'
@@ -2304,10 +2310,10 @@ mecano.write
           return next new Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?.length
           return next new Error 'Define either source or content' if options.source and options.content
           return next new Error 'Missing destination' unless options.destination
+          options.diff ?= options.diff or !!options.stdout
           destination  = null
           destinationHash = null
           content = null
-          #fullContent = null
           from = to = between = null
           append = options.append
           write = options.write
@@ -2319,8 +2325,7 @@ mecano.write
               match: options.match
               replace: options.replace
               append: options.append
-            # append = false
-          # Start real work
+          # Start work
           readSource = ->
             if options.content?
               content = options.content
@@ -2329,6 +2334,7 @@ mecano.write
             # Option "local_source" force to bypass the ssh 
             # connection, use by the upload function
             source = options.source or options.destination
+            options.log? "Read source: #{source}#{if options.local_source then ' (local)'}"
             ssh = if options.local_source then null else options.ssh
             misc.file.exists ssh, source, (err, exists) ->
               return next err if err
@@ -2343,6 +2349,7 @@ mecano.write
           readDestination = ->
             # no need to test changes if destination is a callback
             return render() if typeof options.destination is 'function'
+            options.log? "Read destination: #{options.destination}"
             exists = ->
               misc.file.exists options.ssh, options.destination, (err, exists) ->
                 return next err if err
@@ -2362,6 +2369,7 @@ mecano.write
             read = ->
               misc.file.readFile options.ssh, options.destination, 'utf8', (err, dest) ->
                 return next err if err
+                destination = dest if options.diff # destination content only use by diff
                 destinationHash = misc.string.hash dest
                 render()
             exists()
@@ -2412,6 +2420,26 @@ mecano.write
             writeContent()
           writeContent = ->
             return do_changeOwnership() if destinationHash is misc.string.hash content
+            options.log? "File content has changed"
+            if options.diff
+              lines = diff.diffLines destination, content
+              # console.log lines
+              options.diff lines if typeof options.diff is 'function'
+              if options.stdout
+                count_added = count_removed = 0
+                padsize = Math.ceil(lines.length/10)
+                for line in lines
+                  if not line.added and not line.removed
+                    count_added++; count_removed++; continue
+                  ls = line.value.split(/\r\n|[\n\r\u0085\u2028\u2029]/g)
+                  if line.added
+                    for line in ls
+                      count_added++
+                      options.stdout.write "#{pad padsize, ''+(count_added)} + #{line}\n"
+                  else
+                    for line in ls
+                      count_removed++
+                      options.stdout.write "#{pad padsize, ''+(count_removed)} - #{line}\n"
             if typeof options.destination is 'function'
               options.destination content
               do_end()
