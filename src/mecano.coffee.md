@@ -1056,8 +1056,8 @@ http://www.openldap.org/doc/admin24/access-control.html
                   olcAccess.push
                     to: to
                     by: bys
-                diff olcAccess
-              diff = (olcAccess) ->
+                do_diff olcAccess
+              do_diff = (olcAccess) ->
                 toAlreadyExist = false
                 for access, i in olcAccess
                   continue unless acl.to is access.to
@@ -1108,7 +1108,6 @@ http://www.openldap.org/doc/admin24/access-control.html
                   unbind err
               unbind = (err) ->
                 options.log? 'Unbind connection'
-                # return end err unless options.unbind and options.ldap instanceof ldap_client
                 return end err if options.ldap instanceof ldap_client and not options.unbind
                 client.unbind (e) ->
                   return next e if e
@@ -1178,8 +1177,8 @@ Resources:
             for index in arIndex
               [k,v] = index.split ' '
               indexes[k] = v
-            diff indexes
-          diff = (orgp) ->
+            do_diff indexes
+          do_diff = (orgp) ->
             unless options.overwrite
               newp = misc.merge {}, orgp, options.indexes
             else
@@ -1804,22 +1803,22 @@ generated content as its first argument.
           return next new Error 'Missing source or content' unless options.source or options.content
           return next new Error 'Missing destination' unless options.destination
           # Start real work
-          readSource = ->
-            return writeContent() unless options.source
+          do_read_source = ->
+            return do_write() unless options.source
             ssh = if options.local_source then null else options.ssh
             misc.file.exists ssh, options.source, (err, exists) ->
               return next new Error "Invalid source, got #{JSON.stringify(options.source)}" unless exists
               misc.file.readFile ssh, options.source, 'utf8', (err, content) ->
                 return next err if err
                 options.content = content
-                writeContent()
-          writeContent = ->
+                do_write()
+          do_write = ->
             options.source = null
             mecano.write options, (err, written) ->
               return next err if err
               rendered++ if written
               next()
-          conditions.all options, next, readSource
+          conditions.all options, next, do_read_source
         .on 'both', (err) ->
           callback err, rendered
 
@@ -1870,6 +1869,7 @@ Install a service. For now, only yum over SSH.
           modified = false
           installed ?= options.installed
           updates ?= options.updates
+          options.log? "Package installation: #{pkgname}"
           # Start real work
           chkinstalled = ->
             cache = ->
@@ -1928,10 +1928,12 @@ Install a service. For now, only yum over SSH.
                   updates.push pkg[1] if pkg = /^([^\. ]+?)\./.exec pkg
                 decide()
             decide = ->
-              if updates.indexOf(pkgname) isnt -1 then install() else startuped()
+              if updates.indexOf(pkgname) isnt -1 then install() else
+                options.log? "No available update"
+                startuped()
             if updates then decide() else cache()
           install = ->
-            options.log? "Install the package #{pkgname}"
+            options.log? "Installation"
             mecano.execute
               ssh: options.ssh
               cmd: "yum install -y #{pkgname}"
@@ -2326,11 +2328,11 @@ mecano.write
               replace: options.replace
               append: options.append
           # Start work
-          readSource = ->
+          do_read_source = ->
             if options.content?
               content = options.content
               content = "#{content}" if typeof content is 'number'
-              return readDestination()
+              return do_read_destination()
             # Option "local_source" force to bypass the ssh 
             # connection, use by the upload function
             source = options.source or options.destination
@@ -2341,14 +2343,14 @@ mecano.write
               unless exists
                 return next new Error "Source does not exist: \"#{options.source}\"" if options.source
                 content = ''
-                return readDestination()
+                return do_read_destination()
               misc.file.readFile ssh, source, 'utf8', (err, src) ->
                 return next err if err
                 content = src
-                readDestination()
-          readDestination = ->
+                do_read_destination()
+          do_read_destination = ->
             # no need to test changes if destination is a callback
-            return render() if typeof options.destination is 'function'
+            return do_render() if typeof options.destination is 'function'
             options.log? "Read destination: #{options.destination}"
             exists = ->
               misc.file.exists options.ssh, options.destination, (err, exists) ->
@@ -2365,24 +2367,24 @@ mecano.write
                 not_if_exists: path.dirname options.destination
               , (err, created) ->
                 return next err if err
-                render()
+                do_render()
             read = ->
               misc.file.readFile options.ssh, options.destination, 'utf8', (err, dest) ->
                 return next err if err
                 destination = dest if options.diff # destination content only use by diff
                 destinationHash = misc.string.hash dest
-                render()
+                do_render()
             exists()
-          render = ->
-            return replacePartial() unless options.context?
+          do_render = ->
+            return do_replace_partial() unless options.context?
             try
               content = eco.render content.toString(), options.context
             catch err
               err = new Error err if typeof err is 'string'
               return next err
-            replacePartial()
-          replacePartial = ->
-            return writeDiff() unless write.length
+            do_replace_partial()
+          do_replace_partial = ->
+            return do_diff() unless write.length
             for opts in write
               if opts.match
                 if opts.match instanceof RegExp
@@ -2416,9 +2418,9 @@ mecano.write
                 from = if opts.from then content.indexOf(opts.from) + opts.from.length else 0
                 to = if opts.to then content.indexOf(opts.to) else content.length
                 content = content.substr(0, from) + opts.replace + content.substr(to)
-            writeDiff()
-          writeDiff = ->
-            return do_changeOwnership() if destinationHash is misc.string.hash content
+            do_diff()
+          do_diff = ->
+            return do_ownership() if destinationHash is misc.string.hash content
             options.log? "File content has changed"
             if options.diff
               lines = diff.diffLines destination, content
@@ -2440,8 +2442,8 @@ mecano.write
                     for line in ls
                       count_removed++
                       options.stdout.write "#{pad padsize, ''+(count_removed)} - #{line}\n"
-            writeContent()
-          writeContent = ->
+            do_write()
+          do_write = ->
             if typeof options.destination is 'function'
               options.destination content
               do_end()
@@ -2450,8 +2452,8 @@ mecano.write
               misc.file.writeFile options.ssh, options.destination, content, options, (err) ->
                 return next err if err
                 modified = true
-                backup()
-          backup = ->
+                do_backup()
+          do_backup = ->
             return do_end() unless options.backup
             backup = options.backup
             backup = ".#{Date.now()}" if backup is true
@@ -2459,8 +2461,8 @@ mecano.write
             misc.file.writeFile options.ssh, backup, content, (err) ->
               return next err if err
               do_end()
-          do_changeOwnership = ->
-            return do_changePermissions() unless options.uid? and options.gid?
+          do_ownership = ->
+            return do_permissions() unless options.uid? and options.gid?
             mecano.chown
               ssh: options.ssh
               destination: options.destination
@@ -2472,8 +2474,8 @@ mecano.write
             , (err, chowned) ->
               return next err if err
               modified = true if chowned
-              do_changePermissions()
-          do_changePermissions = ->
+              do_permissions()
+          do_permissions = ->
             return do_end() unless options.mode?
             mecano.chmod
               ssh: options.ssh
@@ -2489,7 +2491,7 @@ mecano.write
           do_end = ->
             written++ if modified
             next()
-          conditions.all options, next, readSource
+          conditions.all options, next, do_read_source
         .on 'both', (err) ->
           finish err, written
       result
