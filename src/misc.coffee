@@ -523,7 +523,7 @@ misc = module.exports =
         # Is user present in cache
         if ssh.passwd and ssh.passwd[username]
           return callback null, ssh.passwd[username]
-        # Relaod the cache and check if user is here
+        # Reload the cache and check if user is here
         ssh.passwd = null
         return misc.ssh.passwd ssh, (err, users) ->
           return callback err if err
@@ -564,15 +564,20 @@ misc = module.exports =
       if arguments.length is 3
         # Group may be null, stop here
         return callback null, null unless group
+        # Is group present in cache
+        if ssh.cache_group and ssh.cache_group[group]
+          return callback null, ssh.cache_group[group]
+        # Reload the cache and check if user is here
+        ssh.cache_group = null
         return misc.ssh.group ssh, (err, groups) ->
           return err if err
-          group = groups[group]
-          return new Error "Group #{group} does not exists" unless group
-          callback null, group
+          gid = groups[group]
+          return callback new Error "Group does not exists: #{group}" unless gid
+          callback null, gid
       callback = group
       group = null
       # Grab group from the cache
-      return callback null, ssh.group if ssh.group
+      return callback null, ssh.cache_group if ssh.cache_group
       # Alternative is to use the id command, eg `id -g admin`
       misc.file.readFile ssh, '/etc/group', 'ascii', (err, lines) ->
         return callback err if err
@@ -581,7 +586,7 @@ misc = module.exports =
           info = /(.*)\:(.*)\:(.*)\:(.*)/.exec line
           continue unless info
           group[info[1]] = password: info[2], gid: parseInt(info[3]), user_list: if info[4] then info[4].split ',' else []
-        ssh.group = group
+        ssh.cache_group = group
         callback null, group
   ###
   `pidfileStatus(ssh, pidfile, [options], callback)`
