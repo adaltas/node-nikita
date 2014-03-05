@@ -1,5 +1,6 @@
 
 fs = require 'fs'
+path = require 'path'
 should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
 test = require './test'
@@ -133,33 +134,69 @@ describe 'upload', ->
               uploaded.should.eql 1
               next()
 
-  it 'upload binary file', (next) ->
-    @timeout 0
-    mecano.execute
-      cmd: "tar czf #{scratch}/source.tar.gz -C #{__dirname}/../ ."
-    , (err, executed) ->
+  it 'into a directory', (next) ->
+    connect host: 'localhost', (err, ssh) ->
       return next err if err
-      mecano.execute
-        cmd: "openssl sha1 #{scratch}/source.tar.gz"
-      , (err, executed, srcsum) ->
+      mecano.upload
+        ssh: ssh
+        source: "#{__filename}"
+        destination: "#{scratch}"
+      , (err, uploaded) ->
         return next err if err
-        connect host: 'localhost', (err, ssh) ->
+        misc.file.exists ssh, "#{scratch}/#{path.basename __filename}", (err, exist) ->
           return next err if err
-          mecano.upload
-            ssh: ssh
-            binary: true
-            source: "#{scratch}/source.tar.gz"
-            destination: "#{scratch}/destination.tar.gz"
-          , (err, uploaded) ->
+          exist.should.be.ok
+          next()
+
+  describe 'binary', ->
+
+    it 'a binary file', (next) ->
+      @timeout 0
+      mecano.execute
+        cmd: "tar czf #{scratch}/source.tar.gz -C #{__dirname}/../ ."
+      , (err, executed) ->
+        return next err if err
+        mecano.execute
+          cmd: "openssl sha1 #{scratch}/source.tar.gz"
+        , (err, executed, srcsum) ->
+          return next err if err
+          connect host: 'localhost', (err, ssh) ->
             return next err if err
-            mecano.execute
+            mecano.upload
               ssh: ssh
-              cmd: "openssl sha1 #{scratch}/destination.tar.gz"
-            , (err, executed, dstsum) ->
+              binary: true
+              source: "#{scratch}/source.tar.gz"
+              destination: "#{scratch}/destination.tar.gz"
+            , (err, uploaded) ->
               return next err if err
-              srcsum = /[\w\d]+$/.exec(srcsum.trim())[0]
-              dstsum = /[\w\d]+$/.exec(dstsum.trim())[0]
-              srcsum.should.eql dstsum
-              next()
+              mecano.execute
+                ssh: ssh
+                cmd: "openssl sha1 #{scratch}/destination.tar.gz"
+              , (err, executed, dstsum) ->
+                return next err if err
+                srcsum = /[\w\d]+$/.exec(srcsum.trim())[0]
+                dstsum = /[\w\d]+$/.exec(dstsum.trim())[0]
+                srcsum.should.eql dstsum
+                next()
+
+    it 'binary into a directory', (next) ->
+      connect host: 'localhost', (err, ssh) ->
+        return next err if err
+        mecano.upload
+          ssh: ssh
+          binary: true
+          source: "#{__filename}"
+          destination: "#{scratch}"
+        , (err, uploaded) ->
+          return next err if err
+          misc.file.exists ssh, "#{scratch}/#{path.basename __filename}", (err, exist) ->
+            return next err if err
+            exist.should.be.ok
+            next()
+
+
+
+
+
 
 

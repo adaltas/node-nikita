@@ -2125,11 +2125,15 @@ the "binary" option.
                 , (err, executed, stdout, stderr) ->
                   return callback err if err
                   callback null, /[ ](.*)$/.exec(stdout.trim())[1]
-              do_exists = ->
+              do_stat = ->
                 options.log? "Check if #{options.destination} exists remotely"
-                misc.file.exists options.ssh, options.destination, (err, exists) ->
+                misc.file.stat options.ssh, options.destination, (err, stat) ->
+                  return do_upload() if err?.code is 'ENOENT'
                   return next err if err
-                  return do_upload() unless exists
+                  # return do_upload() unless exists
+                  options.destination = "#{options.destination}/#{path.basename options.source}" if stat.isDirectory()
+                  do_checksum()
+              do_checksum = ->
                   return do_upload() unless options.md5 or options.sha1
                   options.log? "Make sure destination checksum is valid"
                   switch
@@ -2170,7 +2174,7 @@ the "binary" option.
               do_end = ->
                 options.log? "Upload succeed in #{options.destination}"
                 next()
-              return do_exists()
+              return do_stat()
             options = misc.merge options, local_source: true
             mecano.write options, (err, written) ->
               uploaded++ if written is 1
@@ -2353,9 +2357,14 @@ mecano.write
             return do_render() if typeof options.destination is 'function'
             options.log? "Read destination: #{options.destination}"
             exists = ->
-              misc.file.exists options.ssh, options.destination, (err, exists) ->
+              misc.file.stat options.ssh, options.destination, (err, stat) ->
+                return mkdir() if err?.code is 'ENOENT'
                 return next err if err
-                if exists then read() else mkdir()
+                if stat.isDirectory()
+                  options.destination = "#{options.destination}/#{path.basename options.source}"
+                  do_render()
+                else
+                  read()
             mkdir = ->
               mecano.mkdir 
                 ssh: options.ssh
