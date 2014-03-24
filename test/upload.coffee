@@ -143,14 +143,22 @@ describe 'upload', ->
         destination: "#{scratch}"
       , (err, uploaded) ->
         return next err if err
+        uploaded.should.eql 1
         misc.file.exists ssh, "#{scratch}/#{path.basename __filename}", (err, exist) ->
           return next err if err
           exist.should.be.ok
-          next()
+          mecano.upload
+            ssh: ssh
+            source: "#{__filename}"
+            destination: "#{scratch}"
+          , (err, uploaded) ->
+            return next err if err
+            uploaded.should.eql 0
+            next()
 
   describe 'binary', ->
 
-    it 'a binary file', (next) ->
+    it 'with a file', (next) ->
       @timeout 0
       mecano.execute
         cmd: "tar czf #{scratch}/source.tar.gz -C #{__dirname}/../ ."
@@ -179,7 +187,7 @@ describe 'upload', ->
                 srcsum.should.eql dstsum
                 next()
 
-    it 'binary into a directory', (next) ->
+    it 'into a directory', (next) ->
       connect host: 'localhost', (err, ssh) ->
         return next err if err
         mecano.upload
@@ -189,10 +197,21 @@ describe 'upload', ->
           destination: "#{scratch}"
         , (err, uploaded) ->
           return next err if err
+          uploaded.should.eql 1
           misc.file.exists ssh, "#{scratch}/#{path.basename __filename}", (err, exist) ->
             return next err if err
             exist.should.be.ok
             next()
+            # TODO: for now, uploading binary doesnt check if the file has been changed
+            # mecano.upload
+            #   ssh: ssh
+            #   binary: true
+            #   source: "#{__filename}"
+            #   destination: "#{scratch}"
+            # , (err, uploaded) ->
+            #   return next err if err
+            #   uploaded.should.eql 0
+            #   next()
 
 
 

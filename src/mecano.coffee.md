@@ -2101,7 +2101,7 @@ the "binary" option.
 *   `rendered`      Number of rendered files. 
 
     upload: (goptions, options, callback) ->
-      [goptions, options, callback] = misc.args arguments
+      [goptions, options, callback] = misc.args arguments, parallel: 1
       result = child mecano
       finish = (err, uploaded) ->
         callback err, uploaded if callback
@@ -2363,7 +2363,13 @@ mecano.write
                 return next err if err
                 if stat.isDirectory()
                   options.destination = "#{options.destination}/#{path.basename options.source}"
-                  do_render()
+                  # Destination is the parent directory, let's see if the file exist inside
+                  misc.file.stat options.ssh, options.destination, (err, stat) ->
+                    # File doesnt exist
+                    return do_render() if err?.code is 'ENOENT'
+                    return next err if err
+                    return next new Error "Destination is not a file: #{options.destination}" unless stat.isFile()
+                    read()
                 else
                   read()
             mkdir = ->
