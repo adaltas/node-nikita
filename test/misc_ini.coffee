@@ -113,6 +113,26 @@ describe 'ini', ->
 
       """
 
+    it 'stringify simple values before complex values', ->
+      res = misc.ini.stringify_multi_brackets 
+        group1:
+          key1: 'value1'
+          group1b:
+            key1b1: 'value1b1'
+          key2: 'value2'
+        group2:
+          key1: 'value1b'
+      res.should.eql """
+        [group1]
+          key1 = value1
+          key2 = value2
+          [[group1b]]
+            key1b1 = value1b1
+        [group2]
+          key1 = value1b
+
+        """
+
   describe 'square and curly brackets', ->
 
     it 'stringify', ->

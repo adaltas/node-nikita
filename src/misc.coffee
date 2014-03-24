@@ -742,7 +742,7 @@ misc = module.exports =
             parent = stack[depth - 1]
             parent[match[2]] = current = {}
             stack.push current
-          # Invaild child hierarchy
+          # Invalid child hierarchy
           if depth > stack.length
             throw new Error "Invalid child #{match[2]}"
           # Move up or at the same level
@@ -841,19 +841,22 @@ misc = module.exports =
         isBoolean = typeof v is 'boolean'
         isNull = v is null
         isObj = typeof v is 'object' and not isNull
-        if isObj
-            out += "#{prefix}#{misc.string.repeat '[', depth+1}#{k}#{misc.string.repeat ']', depth+1}\n"
-            out += misc.ini.stringify_multi_brackets v, depth + 1, options
-        else 
-          if isNull
-            out += "#{prefix}#{k}"
-          else if isBoolean
-            out += "#{prefix}#{k}#{options.separator}#{if v then 'true' else 'false'}"
-          else
-            out += "#{prefix}#{k}#{options.separator}#{v}"
-          out += '\n'
+        continue if isObj
+        if isNull
+          out += "#{prefix}#{k}"
+        else if isBoolean
+          out += "#{prefix}#{k}#{options.separator}#{if v then 'true' else 'false'}"
+        else
+          out += "#{prefix}#{k}#{options.separator}#{v}"
+        out += '\n'
+      for k, v of content
+        isNull = v is null
+        isObj = typeof v is 'object' and not isNull
+        continue unless isObj
+        out += "#{prefix}#{misc.string.repeat '[', depth+1}#{k}#{misc.string.repeat ']', depth+1}\n"
+        out += misc.ini.stringify_multi_brackets v, depth + 1, options
       out
-  args: (args, default_goptions={}) ->
+  args: (args, overwrite_goptions={}) ->
     # [goptions, options, callback] = args
     if args.length is 2 and typeof args[1] is 'function'
       args[2] = args[1]
