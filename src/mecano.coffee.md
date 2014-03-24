@@ -749,7 +749,7 @@ provided in the `content` option.
       result
 
 `krb5_ktadd([goptions], options, callback`
-----------------------------------------------
+------------------------------------------
 
 Create a new Kerberos principal and an optionnal keytab.
 
@@ -1224,6 +1224,7 @@ Register a new ldap schema.
 *   `url`           Specify URI referring to the ldap server, alternative to providing an [ldapjs client] instance.  
 *   `binddn`        Distinguished Name to bind to the LDAP directory, alternative to providing an [ldapjs client] instance.  
 *   `passwd`        Password for simple authentication, alternative to providing an [ldapjs client] instance.   
+*   `uri`           LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to false in which case it will use your openldap client environment configuraiton.   
 *   `name`          Common name of the schema.   
 *   `schema`        Path to the schema definition.   
 *   `overwrite`     Overwrite existing "olcAccess", default is to merge.   
@@ -1248,10 +1249,12 @@ Register a new ldap schema.
           schema = "#{tempdir}/#{options.name}.schema"
           conf = "#{tempdir}/schema.conf"
           ldif = "#{tempdir}/ldif"
+          binddn = if options.binddn then "-D #{options.binddn}" else ''
+          passwd = if options.passwd then "-w #{options.passwd}" else ''
+          options.uri = 'ldapi:///' if options.uri is true
+          uri = if options.uri then "-H #{options.uri}" else '' # URI is obtained from local openldap conf unless provided
           registered = ->
-            binddn = if options.binddn then "-D #{options.binddn}" else ''
-            passwd = if options.passwd then "-w #{options.passwd}" else ''
-            cmd = "ldapsearch #{binddn} #{passwd} -b \"cn=schema,cn=config\" | grep -E cn=\\{[0-9]+\\}#{options.name},cn=schema,cn=config"
+            cmd = "ldapsearch #{binddn} #{passwd} #{uri} -b \"cn=schema,cn=config\" | grep -E cn=\\{[0-9]+\\}#{options.name},cn=schema,cn=config"
             options.log? "Check if schema is registered: #{cmd}"
             mecano.execute
               cmd: cmd
@@ -1348,9 +1351,9 @@ Register a new ldap schema.
               return next err if err
               register()
           register = ->
-            uri = if options.uri then"-L #{options.uri}" else ''
-            binddn = if options.binddn then "-D #{options.binddn}" else ''
-            passwd = if options.passwd then "-w #{options.passwd}" else ''
+            # uri = if options.uri then"-L #{options.uri}" else ''
+            # binddn = if options.binddn then "-D #{options.binddn}" else ''
+            # passwd = if options.passwd then "-w #{options.passwd}" else ''
             cmd = "ldapadd #{uri} #{binddn} #{passwd} -f #{ldif}/cn=config/cn=schema/cn=#{options.name}.ldif"
             options.log? "Add schema: #{cmd}"
             mecano.execute
@@ -1834,9 +1837,7 @@ Install a service. For now, only yum over SSH.
 *   `chk_name`      Name used by the chkconfig utility, default to "srv_name" and "name".   
 *   `srv_name`      Name used by the service utility, default to "name".   
 *   `cache`         Run entirely from system cache, run install and update checks offline.   
-#   `start`         Ensure the service is started, a boolean.   
-#   `stop`          Ensure the service is stopped, a boolean.   
-*   `action`        Execute the service with the provided action argument.
+*   `action`        Execute the service with the provided action argument.   
 *   `stdout`        Writable Stream in which commands output will be piped.   
 *   `stderr`        Writable Stream in which commands error will be piped.   
 *   `installed`     Cache a list of installed services. If an object, the service will be installed if a key of the same name exists; if anything else (default), no caching will take place.   
@@ -2007,7 +2008,7 @@ Install a service. For now, only yum over SSH.
               return next err if err
               started()
           started = ->
-            return action() if options.action isnt 'start' and options.action isnt 'stop'
+            return action() if ['start', 'stop', 'restart'].indexOf(options.action) is -1
             options.log? "Check if service is started"
             mecano.execute
               ssh: options.ssh
