@@ -13,6 +13,9 @@ rimraf = require 'rimraf'
 ini = require 'ini'
 
 misc = module.exports = 
+  regexp:
+    escape: (str) ->
+      str.replace /[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"
   string:
     ###
     `string.hash(file, [algorithm], callback)`
