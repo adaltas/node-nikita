@@ -2235,7 +2235,7 @@ mecano.write
   # here we are\n# from\nmy friend\n# to\nyou coquin
 ```
 
-Example replacing a matched line by a string with:   
+Example replacing a matched line by a string:   
 ```coffee
 mecano.write
   content: 'email=david(at)adaltas(dot)com\nusername=root'
@@ -2300,7 +2300,7 @@ mecano.write
 ```
 
     write: (goptions, options, callback) ->
-      [goptions, options, callback] = misc.args arguments
+      [goptions, options, callback] = misc.args arguments, parallel: 1
       result = child mecano
       finish = (err, written) ->
         callback err, written if callback
@@ -2316,6 +2316,7 @@ mecano.write
           return next new Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?.length
           return next new Error 'Define either source or content' if options.source and options.content
           return next new Error 'Missing destination' unless options.destination
+          options.content = options.content.toString() if options.content and Buffer.isBuffer options.content
           options.diff ?= options.diff or !!options.stdout
           destination  = null
           destinationHash = null
@@ -2340,7 +2341,7 @@ mecano.write
             # Option "local_source" force to bypass the ssh 
             # connection, use by the upload function
             source = options.source or options.destination
-            options.log? "Read source: #{source}#{if options.local_source then ' (local)'}"
+            options.log? "Read source: #{source}#{if options.local_source then ' (local)' else ''}"
             ssh = if options.local_source then null else options.ssh
             misc.file.exists ssh, source, (err, exists) ->
               return next err if err
@@ -2433,7 +2434,6 @@ mecano.write
             options.log? "File content has changed"
             if options.diff
               lines = diff.diffLines destination, content
-              # console.log lines
               options.diff lines if typeof options.diff is 'function'
               if options.stdout
                 count_added = count_removed = 0

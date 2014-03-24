@@ -12,7 +12,7 @@ describe 'write', ->
 
   describe 'content', ->
   
-    they 'write a file', (ssh, next) ->
+    they 'write a string', (ssh, next) ->
       # Write the content
       mecano.write
         ssh: ssh
@@ -725,6 +725,18 @@ describe 'write', ->
           diffcalled.should.be.ok
           data.should.eql ['2 + new text\n', '2 - original text\n']
           next()
+  
+    they 'write a buffer', (ssh, next) ->
+      # Write the content
+      mecano.write
+        ssh: ssh
+        content: new Buffer 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDMKgZ7/2BG9T0vCJT8qlaH1KJNLSqEiJDHZMirPdzVsbI8x1AiT0EO5D47aROAKXTimVY3YsFr2ETXbLxjFFDP64WqqJ0b+3s2leReNq7ld70pVn1m8npyAZKvUc4/uo7WVLm0A1/U1f+iW9eqpYPKN/BY/+Ta2fp6ui0KUtha3B0xMICD66OLwrnmoFmxElEohL4OLZe7rnOW2G9M6Gej+LO5SeJip0YfiG+ImKQ1ngmGxpuopUOvcT1La/1TGki2gEV4AEm4QHW0fZ4Bjz0tdMVPGexUHQW/si9RWF8tJPsoykUcvS6slpbmil2ls9e7tcT6F4KZUCJv9nn6lWSf hdfs@hadoop'
+        destination: "#{scratch}/file"
+        stdout: write: (d) ->
+          # We used to have an error "#{content} has no method 'split'",
+          # make sure this is fixed for ever
+      , (err, written) ->
+        next err
 
     they 'call stdout', (ssh, next) ->
       data = []
