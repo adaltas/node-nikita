@@ -2,11 +2,11 @@
 fs = require 'fs'
 http = require 'http'
 should = require 'should'
-connect = require 'superexec/lib/connect'
+connect = require 'ssh2-exec/lib/connect'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
 misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '../lib/misc'
 test = require './test'
-they = require 'superexec/lib/they'
+they = require 'ssh2-exec/lib/they'
 
 describe 'download', ->
 

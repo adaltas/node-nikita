@@ -6,7 +6,7 @@ should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
 misc = require '../lib/misc'
 test = require './test'
-they = require 'superexec/lib/they'
+they = require 'ssh2-exec/lib/they'
 
 describe 'move', ->
 

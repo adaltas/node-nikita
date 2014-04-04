@@ -3,7 +3,7 @@ fs = require 'fs'
 should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
 test = require './test'
-they = require 'superexec/lib/they'
+they = require 'ssh2-exec/lib/they'
 misc = require '../lib/misc'
 
 describe 'write', ->

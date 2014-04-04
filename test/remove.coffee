@@ -4,7 +4,7 @@ path = require 'path'
 should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
 test = require './test'
-connect = require 'superexec/lib/connect'
+connect = require 'ssh2-exec/lib/connect'
 
 describe 'remove', ->
   

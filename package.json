@@ -24,7 +24,7 @@
         "ldapjs": "latest",
         "request": "latest",
         "rimraf": "latest",
-        "superexec": "latest"
+        "ssh2-exec": "latest"
     },
     "devDependencies": {
         "coffee-script": "latest",

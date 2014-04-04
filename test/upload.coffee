@@ -4,9 +4,9 @@ path = require 'path'
 should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
 test = require './test'
-they = require 'superexec/lib/they'
+they = require 'ssh2-exec/lib/they'
 misc = require '../lib/misc'
-connect = require 'superexec/lib/connect'
+connect = require 'ssh2-exec/lib/connect'
 
 describe 'upload', ->
 

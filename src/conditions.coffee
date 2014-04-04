@@ -1,7 +1,7 @@
 
 each = require 'each'
 misc = require './misc'
-exec = require 'superexec'
+exec = require 'ssh2-exec'
 
 ###
 Conditionnal properties

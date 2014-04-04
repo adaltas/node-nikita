@@ -5,7 +5,7 @@
     util = require 'util'
     each = require 'each'
     eco = require 'eco'
-    exec = require 'superexec'
+    exec = require 'ssh2-exec'
     request = require 'request'
     Ftp = require 'jsftp'
     ldap = require 'ldapjs'

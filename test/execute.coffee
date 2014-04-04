@@ -4,7 +4,7 @@ should = require 'should'
 stream = require 'stream'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
 test = require './test'
-they = require 'superexec/lib/they'
+they = require 'ssh2-exec/lib/they'
 
 describe 'exec', ->
 
