@@ -702,9 +702,10 @@ misc = module.exports =
     # Return the modified object
     target
   kadmin: (options, cmd) ->
+    realm = if options.realm then "-r #{options.realm}" else ''
     if options.kadmin_principal
-    then "kadmin -p #{options.kadmin_principal} -s #{options.kadmin_server} -w #{options.kadmin_password} -q '#{cmd}'"
-    else "kadmin.local -q '#{cmd}'"
+    then "kadmin #{realm} -p #{options.kadmin_principal} -s #{options.kadmin_server} -w #{options.kadmin_password} -q '#{cmd}'"
+    else "kadmin.local #{realm} -q '#{cmd}'"
   ini:
     safe: (val) ->
       if ( typeof val isnt "string" or val.match(/[\r\n]/) or val.match(/^\[/) or (val.length > 1 and val.charAt(0) is "\"" and val.slice(-1) is "\"") or val isnt val.trim() )

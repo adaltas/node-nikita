@@ -774,7 +774,10 @@ Create a new Kerberos principal and an optionnal keytab.
         each(options)
         .parallel( goptions.parallel )
         .on 'item', (options, next) ->
-          modified = false;
+          return next new Error 'Property principal is required' unless options.principal
+          return next new Error 'Property keytab is required' unless options.keytab
+          options.realm ?= options.principal.split('@')[1]
+          modified = false
           do_get = ->
             return do_end() unless options.keytab
             mecano.execute
@@ -881,6 +884,7 @@ Create a new Kerberos principal and an optionnal keytab.
           return next new Error 'Password or randkey missing' if not options.password and not options.randkey
           modified = false
           do_kadmin = ->
+            options.realm ?= options.principal.split('@')[1]
             cmd = misc.kadmin options, if options.password
             then "addprinc -pw #{options.password} #{options.principal}"
             else "addprinc -randkey #{options.principal}"
