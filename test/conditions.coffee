@@ -66,6 +66,65 @@ describe 'conditions', ->
         (err) -> err.message is 'cool' and next()
         () -> false.should.be.ok
 
+  describe 'not_if', ->
+
+    they 'should bypass if not present', (ssh, next) ->
+      conditions.not_if
+        ssh: ssh
+        () -> false.should.be.ok
+        next
+
+    they 'should succeed if `true`', (ssh, next) ->
+      conditions.not_if
+        ssh: ssh
+        not_if: true
+        next
+        () -> false.should.be.ok
+
+    they 'should succeed if `1`', (ssh, next) ->
+      conditions.not_if
+        ssh: ssh
+        not_if: 1
+        next
+        () -> false.should.be.ok
+
+    they 'should fail if `false`', (ssh, next) ->
+      conditions.not_if
+        ssh: ssh
+        not_if: false
+        () -> false.should.be.ok
+        next
+
+    they 'should fail with error if string', (ssh, next) ->
+      conditions.not_if
+        ssh: ssh
+        not_if: 'abc'
+        (err) ->
+          err.message.should.eql "Invalid condition type"
+          next()
+        () -> false.should.be.ok
+
+    they 'should succeed on `succeed` callback', (ssh, next) ->
+      conditions.not_if
+        ssh: ssh
+        not_if: (options, failed, succeed) -> succeed()
+        next
+        () -> false.should.be.ok
+
+    they 'should fail on `failed` callback', (ssh, next) ->
+      conditions.not_if
+        ssh: ssh
+        not_if: (options, failed, succeed) -> failed()
+        () -> false.should.be.ok
+        next
+
+    they 'should pass error object on `failed` callback', (ssh, next) ->
+      conditions.not_if
+        ssh: ssh
+        not_if: (options, failed, succeed) -> failed new Error 'cool'
+        (err) -> err.message is 'cool' and next()
+        () -> false.should.be.ok
+
   describe 'if_exists', ->
 
     they 'should pass if not present', (ssh, next) ->

@@ -31,10 +31,10 @@ module.exports =
     .on('end', succeed)
   ###
   `if` Run an action for a user defined condition
-  --------------------------------------------
+  -----------------------------------------------
 
   Work on the property `if` in `options`. When `if` 
-  is a boolean, its value determine to the output. If it's 
+  is a boolean, its value determine the output. If it's 
   a callback, the function is called with the `options`, 
   `skip` and `succeed` arguments. If it'a an array, all its element
   must positively resolve for the condition to pass.
@@ -65,6 +65,33 @@ module.exports =
         next()
       else if type is 'function'
         si options, ( -> ok = false; next arguments...), next
+      else
+        next new Error "Invalid condition type"
+    .on 'both', (err) ->
+      return skip err if err or not ok
+      succeed
+  ###
+  `not_if` Run an action if false
+  -------------------------------
+
+  Work on the property `if` in `options`. When `if` 
+  is a boolean, its value determine the output. If it's 
+  a callback, the function is called with the `options`, 
+  `skip` and `succeed` arguments. If it'a an array, all its element
+  must positively resolve for the condition to pass.
+  ###
+  not_if: (options, skip, succeed) ->
+    return succeed() unless options.not_if?
+    ok = true
+    each(options.not_if)
+    .on 'item', (not_if, next) ->
+      return next() unless ok
+      type = typeof not_if
+      if type is 'boolean' or type is 'number'
+        ok = false if not_if
+        next()
+      else if type is 'function'
+        not_if options, next, ( -> ok = false; next arguments...)
       else
         next new Error "Invalid condition type"
     .on 'both', (err) ->
