@@ -24,7 +24,7 @@ module.exports =
 
   ###
   all: (options, skip, succeed) ->
-    each([@if, @if_exists, @not_if_exists, @should_exist])
+    each([@if, @not_if, @if_exists, @not_if_exists, @should_exist])
     .on 'item', (condition, next) ->
       condition options, skip, next
     .on('error', skip)
@@ -69,7 +69,7 @@ module.exports =
         next new Error "Invalid condition type"
     .on 'both', (err) ->
       return skip err if err or not ok
-      succeed
+      succeed()
   ###
   `not_if` Run an action if false
   -------------------------------
