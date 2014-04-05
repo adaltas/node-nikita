@@ -11,6 +11,7 @@ connect = require 'ssh2-exec/lib/connect'
 buffer = require 'buffer'
 rimraf = require 'rimraf'
 ini = require 'ini'
+tilde = require 'tilde-expansion'
 
 misc = module.exports = 
   regexp:
@@ -29,6 +30,19 @@ misc = module.exports =
       crypto.createHash(algorithm).update(data).digest('hex')
     repeat: (str, l) ->
       Array(l+1).join str
+  path:
+    normalize: (location, callback) ->
+      tilde location, (location) ->
+        callback path.normalize location
+    resolve: (locations..., callback) ->
+      normalized = []
+      each(locations)
+      .on 'item', (location, next) ->
+        misc.path.normalize location, (location) ->
+          normalized.push location
+          next()
+      .on 'end', ->
+        callback path.resolve normalized...
   file:
     readdir: (ssh, path, callback) ->
       unless ssh
