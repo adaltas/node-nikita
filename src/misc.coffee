@@ -904,6 +904,18 @@ misc = module.exports =
         connect options.ssh, (err, ssh) ->
           return next err if err
           options.ssh = ssh
+          source()
+      source = ->
+        return destination() unless options.source?
+        return destination() if /^\w+:/.test options.source # skip url
+        tilde options.source, (source) ->
+          options.source = source
+          destination()
+      destination = ->
+        return mode() unless options.destination?
+        return mode() if /^\w+:/.test options.source # skip url
+        tilde options.destination, (destination) ->
+          options.destination = destination
           mode()
       mode = ->
         options.mode = parseInt(options.mode, 8) if typeof options.mode is 'string'

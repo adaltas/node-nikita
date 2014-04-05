@@ -24,7 +24,8 @@
         "ldapjs": "latest",
         "request": "latest",
         "rimraf": "latest",
-        "ssh2-exec": "latest"
+        "ssh2-exec": "latest",
+        "tilde-expansion": "latest"
     },
     "devDependencies": {
         "coffee-script": "latest",
