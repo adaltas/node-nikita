@@ -1009,7 +1009,8 @@ http://www.openldap.org/doc/admin24/access-control.html
               for b, i in acl.by
                 acl.by[i] = b.trim()
               connect = ->
-                if options.ldap instanceof ldap_client
+                # if options.ldap instanceof ldap_client
+                if options.ldap?.url?.protocol?.indexOf('ldap') is 0
                   client = options.ldap
                   return search()
                 options.log? 'Open and bind connection'
@@ -1112,7 +1113,8 @@ http://www.openldap.org/doc/admin24/access-control.html
                   unbind err
               unbind = (err) ->
                 options.log? 'Unbind connection'
-                return end err if options.ldap instanceof ldap_client and not options.unbind
+                # return end err if options.ldap instanceof ldap_client and not options.unbind
+                return end err if options.ldap?.url?.protocol?.indexOf('ldap') is 0 and not options.unbind
                 client.unbind (e) ->
                   return next e if e
                   end err
@@ -1158,7 +1160,8 @@ Resources:
           client = null
           updated = false
           connect = ->
-            if options.ldap instanceof ldap_client
+            # if options.ldap instanceof ldap_client
+            if options.ldap?.url?.protocol?.indexOf('ldap') is 0
               client = options.ldap
               return get()
             # Open and bind connection
@@ -1207,7 +1210,8 @@ Resources:
             client.modify options.name, change, (err) ->
               unbind err
           unbind = (err) ->
-            return end err if options.ldap instanceof ldap_client and not options.unbind
+            # return end err if options.ldap instanceof ldap_client and not options.unbind
+            return end err if options.ldap?.url?.protocol?.indexOf('ldap') is 0 and not options.unbind
             client.unbind (e) ->
               return next e if e
               end err
