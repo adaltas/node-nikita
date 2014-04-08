@@ -1835,7 +1835,7 @@ generated content as its first argument.
 Install a service. For now, only yum over SSH.   
 
 `options`           Command options include:   
-*   `name`          Package name.   
+*   `name`          Package name, optional.   
 *   `startup`       Run service daemon on startup. If true, startup will be set to '2345', use an empty string to not define any run level.   
 *   `yum_name`      Name used by the yum utility, default to "name".   
 *   `chk_name`      Name used by the chkconfig utility, default to "srv_name" and "name".   
@@ -1863,7 +1863,7 @@ Install a service. For now, only yum over SSH.
         .parallel(goptions.parallel)
         .on 'item', (options, next) ->
           # Validate parameters
-          return next new Error 'Missing service name' unless options.name
+          # return next new Error 'Missing service name' unless options.name
           return next new Error 'Restricted to Yum over SSH' unless options.ssh
           # return next new Error 'Invalid configuration, start conflict with stop' if options.start? and options.start is options.stop
           pkgname = options.yum_name or options.name
@@ -1874,9 +1874,10 @@ Install a service. For now, only yum over SSH.
           modified = false
           installed ?= options.installed
           updates ?= options.updates
-          options.log? "Package installation: #{pkgname}"
           # Start real work
           chkinstalled = ->
+            # option name and yum_name are optional, skill installation if not present
+            return startuped() unless pkgname
             cache = ->
               options.log? "List installed packages"
               c = if options.cache then '-C' else ''
@@ -1938,7 +1939,7 @@ Install a service. For now, only yum over SSH.
                 startuped()
             if updates then decide() else cache()
           install = ->
-            options.log? "Installation"
+            options.log? "Package installation: #{pkgname}"
             mecano.execute
               ssh: options.ssh
               cmd: "yum install -y #{pkgname}"
@@ -2013,7 +2014,7 @@ Install a service. For now, only yum over SSH.
               started()
           started = ->
             return action() if ['start', 'stop', 'restart'].indexOf(options.action) is -1
-            options.log? "Check if service is started"
+            options.log? "Check if service #{srvname} is started"
             mecano.execute
               ssh: options.ssh
               cmd: "service #{srvname} status"
