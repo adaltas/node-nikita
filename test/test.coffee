@@ -7,7 +7,6 @@ scratch = "/tmp/mecano-test"
 
 module.exports = 
   scratch: (context) ->
-    context.timeout 10000
     context.beforeEach (next) ->
       mecano.rm scratch, ->
         mecano.mkdir scratch, next

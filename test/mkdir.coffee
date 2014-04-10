@@ -8,6 +8,7 @@ misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '..
 test = require './test'
 they = require 'ssh2-exec/lib/they'
 connect = require 'ssh2-exec/lib/connect'
+fs = require 'ssh2-fs'
 
 describe 'mkdir', ->
 
@@ -70,10 +71,10 @@ describe 'mkdir', ->
     , (err, created) ->
       return next err if err
       created.should.eql 1
-      misc.file.exists ssh, source, (err, created) ->
+      fs.exists ssh, source, (err, created) ->
         created.should.not.be.ok
         source = path.dirname source
-        misc.file.exists ssh, source, (err, created) ->
+        fs.exists ssh, source, (err, created) ->
           created.should.be.ok 
           next()
 
@@ -85,7 +86,7 @@ describe 'mkdir', ->
     , (err, created) ->
       return next err if err
       created.should.eql 1
-      misc.file.exists ssh, "#{scratch}/a_dir", (err, created) ->
+      fs.exists ssh, "#{scratch}/a_dir", (err, created) ->
         created.should.be.ok
         next()
 
@@ -98,7 +99,7 @@ describe 'mkdir', ->
       mode: '744'
     , (err, created) ->
       return next err if err
-      misc.file.stat ssh, "#{scratch}/ssh_dir_string", (err, stat) ->
+      fs.stat ssh, "#{scratch}/ssh_dir_string", (err, stat) ->
         return next err if err
         stat.mode.toString(8).should.eql '40744'
         next()
@@ -112,7 +113,7 @@ describe 'mkdir', ->
       mode: 0o744
     , (err, created) ->
       return next err if err
-      misc.file.stat ssh, "#{scratch}/ssh_dir_string", (err, stat) ->
+      fs.stat ssh, "#{scratch}/ssh_dir_string", (err, stat) ->
         return next err if err
         stat.mode.toString(8).should.eql '40744'
         next()

@@ -1,5 +1,5 @@
 
-    fs = require 'fs'
+    fs = require 'ssh2-fs'
     path = require 'path'
     url = require 'url'
     util = require 'util'
@@ -61,11 +61,11 @@ Change the file permissions of a file.
           {ssh, mode} = options
           return next new Error "Missing destination: #{destination}" unless options.destination
           options.log? "Stat #{options.destination}"
-          misc.file.stat ssh, options.destination, (err, stat) ->
+          fs.stat ssh, options.destination, (err, stat) ->
             return next err if err
             return next() if misc.file.cmpmod stat.mode, mode
             options.log? "Change mode to #{mode}"
-            misc.file.chmod ssh, options.destination, mode, (err) ->
+            fs.chmod ssh, options.destination, mode, (err) ->
               return next err if err
               modified++
               next()
@@ -104,12 +104,12 @@ Change the file permissions of a file.
           return next new Error "Missing destination: #{options.destination}" unless options.destination
           return next() unless uid and gid
           options.log? "Stat #{options.destination}"
-          misc.file.stat ssh, options.destination, (err, stat) ->
+          fs.stat ssh, options.destination, (err, stat) ->
             return next err if err
             return next() if stat.uid is uid and stat.gid is gid
             options.log? "Change uid from #{stat.uid} to #{uid}" if stat.uid isnt uid
             options.log? "Change gid from #{stat.gid} to #{gid}" if stat.gid isnt gid
-            misc.file.chown ssh, options.destination, uid, gid, (err) ->
+            fs.chown ssh, options.destination, uid, gid, (err) ->
               return next() err if err
               modified++
               next()
@@ -157,12 +157,12 @@ Todo:
             srcStat = null
             dstStat = null
             options.log? "Stat source file"
-            misc.file.stat options.ssh, options.source, (err, stat) ->
+            fs.stat options.ssh, options.source, (err, stat) ->
               # Source must exists
               return next err if err
               srcStat = stat
               options.log? "Stat destination file"
-              misc.file.stat options.ssh, options.destination, (err, stat) ->
+              fs.stat options.ssh, options.destination, (err, stat) ->
                 return next err if err and err.code isnt 'ENOENT'
                 dstStat = stat
                 sourceEndWithSlash = options.source.lastIndexOf('/') is options.source.length - 1
@@ -184,7 +184,7 @@ Todo:
                 destination = path.resolve options.destination, path.basename source
               else
                 destination = options.destination
-              misc.file.stat options.ssh, source, (err, stat) ->
+              fs.stat options.ssh, source, (err, stat) ->
                 return callback err if err
                 if stat.isDirectory()
                 then do_copy_dir source, destination
@@ -193,7 +193,7 @@ Todo:
                 return callback() if source is options.source
                 options.log? "Create directory #{destination}"
                 # todo, add permission
-                misc.file.mkdir options.ssh, destination, (err) ->
+                fs.mkdir options.ssh, destination, (err) ->
                   return callback() if err?.code is 'EEXIST'
                   return callback err if err
                   modified = true
@@ -205,20 +205,22 @@ Todo:
                   return callback err if err and err.message.indexOf('Does not exist') isnt 0
                   # File are the same, we can skip copying
                   return do_chown destination if md5
-                  # Copy
-                  s = (ssh, callback) ->
-                    unless ssh
-                    then callback null, fs
-                    else options.ssh.sftp callback
-                  s options.ssh, (err, fs) ->
-                      options.log? "Copy file from #{source} into #{destination}"
-                      rs = fs.createReadStream source
-                      ws = rs.pipe fs.createWriteStream destination
-                      ws.on 'close', ->
-                        fs.end() if fs.end
-                        modified = true
-                        do_chown destination
-                      ws.on 'error', callback
+                  options.log? "Copy file from #{source} into #{destination}"
+                  misc.file.copyFile options.ssh, source, destination, (err) ->
+                    return callback err if err
+                    modified = true
+                    do_chown destination
+                  # fs.createReadStream options.ssh, source, (err, rs) ->
+                  #   return next err if err
+                  #   fs.createWriteStream options.ssh, destination, (err, ws) ->
+                  #     console.log '2'
+                  #     return next err if err
+                  #     rs.pipe(ws)
+                  #     .on 'close', ->
+                  #       console.log '3'
+                  #       modified = true
+                  #       do_chown destination
+                  #     .on 'error', callback
               do_chown = (destination) ->
                 return do_chmod() if not options.uid and not options.gid
                 mecano.chown
@@ -318,7 +320,7 @@ mecano.download
           prepare = () ->
             options.log? "Check if destination exists"
             # Note about next line: ssh might be null with file, not very clear
-            misc.file.exists options.ssh, destination, (err, exists) ->
+            fs.exists options.ssh, destination, (err, exists) ->
               # If we are forcing
               if options.force
                 # Note, we should be able to move this before the "exists" check just above
@@ -332,7 +334,7 @@ mecano.download
                   return next err if err
                   # And compare with the checksum provided by the user
                   return next() if hash is md5sum
-                  misc.file.unlink options.ssh, destination, (err) ->
+                  fs.unlink options.ssh, destination, (err) ->
                     return next err if err
                     download()
               # Get the checksum of the current file
@@ -359,41 +361,49 @@ mecano.download
               else if u.protocol is 'ftp:'
                 return next new Error 'FTP download not supported over SSH'
               else
-                options.ssh.sftp (err, sftp) ->
+                fs.createReadStream options.ssh, u.pathname, (err, rs) ->
                   return next err if err
-                  rs = sftp.createReadStream u.pathname
-                  ws = rs.pipe fs.createWriteStream stageDestination
-                  ws.on 'close', ->
-                    # downloaded++ #unless err
-                    checksum()
-                  ws.on 'error', next
+                  fs.createWriteStream null, stageDestination, (err, ws) ->
+                    return next err if err
+                    rs.pipe(ws)
+                    .on 'close', ->
+                      checksum()
+                    .on 'error', next
+                # options.ssh.sftp (err, sftp) ->
+                #   return next err if err
+                #   rs = sftp.createReadStream u.pathname
+                #   ws = rs.pipe fs.createWriteStream stageDestination
+                #   ws.on 'close', ->
+                #     checksum()
+                #   ws.on 'error', next
             else
-              ws = fs.createWriteStream(stageDestination)
-              if u.protocol is 'http:'
-                options.url = source
-                request(options).pipe(ws)
-              else if u.protocol is 'ftp:'
-                options.host ?= u.hostname
-                options.port ?= u.port
-                if u.auth
-                  {user, pass} = u.auth.split ':'
-                options.user ?= user
-                options.pass ?= pass
-                ftp = new Ftp options
-                ftp.getGetSocket u.pathname, (err, rs) ->
-                  return next err if err
-                  rs.pipe ws
-                  rs.resume()
-              else
-                rs = fs.createReadStream(u.pathname)
-                rs.pipe ws
-              ws.on 'close', () ->
-                checksum()
-              ws.on 'error', (err) ->
-                # No test agains this but error in case 
-                # of connection issue leave an empty file
-                mecano.remove ws, (err) ->
-                  next err
+              fs.createWriteStream null, stageDestination, (err, ws) ->
+                return next err if err
+                if u.protocol is 'http:'
+                  options.url = source
+                  request(options).pipe(ws)
+                else if u.protocol is 'ftp:'
+                  options.host ?= u.hostname
+                  options.port ?= u.port
+                  if u.auth
+                    {user, pass} = u.auth.split ':'
+                  options.user ?= user
+                  options.pass ?= pass
+                  ftp = new Ftp options
+                  ftp.getGetSocket u.pathname, (err, rs) ->
+                    return next err if err
+                    rs.pipe ws
+                    rs.resume()
+                else
+                  fs.createReadStream null, u.pathname, (err, rs) ->
+                    rs.pipe ws
+                ws.on 'close', () ->
+                  checksum()
+                ws.on 'error', (err) ->
+                  # No test agains this but error in case 
+                  # of connection issue leave an empty file
+                  mecano.remove ws, (err) ->
+                    next err
           checksum = ->
             return unstage() unless md5sum
             options.log? "Compare the downloaded file with the user-provided checksum"
@@ -405,7 +415,7 @@ mecano.download
                 next new Error "Invalid checksum, found \"#{hash}\" instead of \"#{md5sum}\""
           unstage = ->
             # Note about next line: ssh might be null with file, not very clear
-            # misc.file.rename options.ssh, stageDestination, destination, (err) ->
+            # fs.rename options.ssh, stageDestination, destination, (err) ->
             #   return next err if err
             #   downloaded++
             #   next()
@@ -571,7 +581,7 @@ moment, supported extensions are '.tgz', '.tar.gz' and '.zip'.
           # Step for `creates`
           creates = () ->
             return success() unless options.creates?
-            misc.file.exists options.ssh, options.creates, (err, exists) ->
+            fs.exists options.ssh, options.creates, (err, exists) ->
               return next new Error "Failed to create '#{path.basename options.creates}'" unless exists
               success()
           # Final step
@@ -609,12 +619,12 @@ moment, supported extensions are '.tgz', '.tar.gz' and '.zip'.
           rev = null
           # Start real work
           prepare = ->
-            misc.file.exists options.ssh, options.destination, (err, exists) ->
+            fs.exists options.ssh, options.destination, (err, exists) ->
               return next err if err
               return clone() unless exists
               # return next new Error "Destination not a directory, got #{options.destination}" unless stat.isDirectory()
               gitDir = "#{options.destination}/.git"
-              misc.file.exists options.ssh, gitDir, (err, exists) ->
+              fs.exists options.ssh, gitDir, (err, exists) ->
                 return next new Error "Not a git repository" unless exists
                 log()
           clone = ->
@@ -727,10 +737,10 @@ provided in the `content` option.
           # Start real work
           get = ->
             return write() unless merge
-            misc.file.exists ssh, destination, (err, exists) ->
+            fs.exists ssh, destination, (err, exists) ->
               return next err if err
               return write() unless exists
-              misc.file.readFile ssh, destination, 'ascii', (err, c) ->
+              fs.readFile ssh, destination, 'ascii', (err, c) ->
                 return next err if err and err.code isnt 'ENOENT'
                 content = clean content, true
                 parse = options.parse or misc.ini.parse
@@ -1421,23 +1431,23 @@ mecano.link
         return finish err if err
         linked = 0
         sym_exists = (options, callback) ->
-          misc.file.exists options.ssh, options.destination, (err, exists) ->
+          fs.exists options.ssh, options.destination, (err, exists) ->
             return callback null, false unless exists
-            misc.file.readlink options.ssh, options.destination, (err, resolvedPath) ->
+            fs.readlink options.ssh, options.destination, (err, resolvedPath) ->
               return callback err if err
               return callback null, true if resolvedPath is options.source
-              misc.file.unlink options.ssh, options.destination, (err) ->
+              fs.unlink options.ssh, options.destination, (err) ->
                 return callback err if err
                 callback null, false
         sym_create = (options, callback) ->
-          misc.file.symlink options.ssh, options.source, options.destination, (err) ->
+          fs.symlink options.ssh, options.source, options.destination, (err) ->
             return callback err if err
             linked++
             callback()
         exec_exists = (options, callback) ->
-          misc.file.exists options.ssh, options.destination, (err, exists) ->
+          fs.exists options.ssh, options.destination, (err, exists) ->
             return callback null, false unless exists
-            misc.file.readFile options.ssh, options.destination, 'utf8', (err, content) ->
+            fs.readFile options.ssh, options.destination, 'utf8', (err, content) ->
               return callback err if err
               exec_cmd = /exec (.*) \$@/.exec(content)[1]
               callback null, exec_cmd and exec_cmd is options.source
@@ -1446,9 +1456,9 @@ mecano.link
           #!/bin/bash
           exec #{options.source} $@
           """
-          misc.file.writeFile options.ssh, options.destination, content, (err) ->
+          fs.writeFile options.ssh, options.destination, content, (err) ->
             return callback err if err
-            misc.file.chmod options.ssh, options.destination, options.mode, (err) ->
+            fs.chmod options.ssh, options.destination, options.mode, (err) ->
               return callback err if err
               linked++
               callback()
@@ -1557,7 +1567,7 @@ mecano.mkdir
                 .on 'item', (directory, i, next) ->
                   return next() if end
                   options.log? "Stat directory #{directory}"
-                  misc.file.stat options.ssh, directory, (err, stat) ->
+                  fs.stat options.ssh, directory, (err, stat) ->
                     if err?.code is 'ENOENT' # if the directory is not yet created
                       directory.stat = stat
                       dirs.push directory
@@ -1581,7 +1591,7 @@ mecano.mkdir
                   if options.exclude? and options.exclude instanceof RegExp
                     return next() if options.exclude.test path.basename directory
                   options.log? "Create directory #{directory}" unless directory is options.directory
-                  misc.file.mkdir options.ssh, directory, options, (err) ->
+                  fs.mkdir options.ssh, directory, options, (err) ->
                     return next err if err
                     modified = true
                     next()
@@ -1603,7 +1613,7 @@ mecano.mkdir
                   return do_end() unless mode
                   # todo: fix this one
                   return do_end() if misc.file.cmpmod stat.mode, mode
-                  misc.file.chmod options.ssh, directory, mode, (err) ->
+                  fs.chmod options.ssh, directory, mode, (err) ->
                     modified = true
                     do_end()
                 do_end = ->
@@ -1653,7 +1663,7 @@ mecano.mv
         .on 'item', (options, next) ->
           # Start real work
           exists = ->
-            misc.file.stat options.ssh, options.destination, (err, stat) ->
+            fs.stat options.ssh, options.destination, (err, stat) ->
               return move() if err?.code is 'ENOENT'
               return next err if err
               if options.force
@@ -1685,7 +1695,7 @@ mecano.mv
               move()
           move = ->
             options.log? "Rename #{options.source} to #{options.destination}"
-            misc.file.rename options.ssh, options.source, options.destination, (err) ->
+            fs.rename options.ssh, options.source, options.destination, (err) ->
               return next err if err
               moved++
               next()
@@ -1758,7 +1768,7 @@ mecano.rm [
           remove = ->
             if options.ssh
               options.log? "Remove #{options.source}"
-              misc.file.exists options.ssh, options.source, (err, exists) ->
+              fs.exists options.ssh, options.source, (err, exists) ->
                 return next err if err
                 removed++ if exists
                 misc.file.remove options.ssh, options.source, next
@@ -1817,9 +1827,9 @@ generated content as its first argument.
           do_read_source = ->
             return do_write() unless options.source
             ssh = if options.local_source then null else options.ssh
-            misc.file.exists ssh, options.source, (err, exists) ->
+            fs.exists ssh, options.source, (err, exists) ->
               return next new Error "Invalid source, got #{JSON.stringify(options.source)}" unless exists
-              misc.file.readFile ssh, options.source, 'utf8', (err, content) ->
+              fs.readFile ssh, options.source, 'utf8', (err, content) ->
                 return next err if err
                 options.content = content
                 do_write()
@@ -2073,7 +2083,7 @@ Create a empty file if it does not yet exists.
           {ssh, destination, mode} = options
           return next new Error "Missing destination: #{destination}" unless destination
           options.log? "Check if exists: #{destination}"
-          misc.file.exists ssh, destination, (err, exists) ->
+          fs.exists ssh, destination, (err, exists) ->
             return next err if err
             return next if exists
             options.source = null
@@ -2137,7 +2147,7 @@ the "binary" option.
                   callback null, /[ ](.*)$/.exec(stdout.trim())[1]
               do_stat = ->
                 options.log? "Check if #{options.destination} exists remotely"
-                misc.file.stat options.ssh, options.destination, (err, stat) ->
+                fs.stat options.ssh, options.destination, (err, stat) ->
                   return do_upload() if err?.code is 'ENOENT'
                   return next err if err
                   # return do_upload() unless exists
@@ -2159,16 +2169,25 @@ the "binary" option.
                       else do_upload()
               do_upload = ->
                 options.log? "Upload #{options.source}"
-                options.ssh.sftp (err, sftp) ->
-                  from = fs.createReadStream options.source#, encoding: 'binary'
-                  to = sftp.createWriteStream options.destination#, encoding: 'binary'
-                  l = 0
-                  from.pipe to
-                  from.on 'error', next
-                  to.on 'error', next
-                  to.on 'close', ->
-                    uploaded++
-                    do_md5()
+                fs.createWriteStream options.ssh, options.destination, (err, ws) ->
+                  return next err if err
+                  fs.createReadStream null, options.source, (err, rs) ->
+                    return next err if err
+                    rs.pipe(ws)
+                    .on 'close', ->
+                      uploaded++
+                      do_md5()
+                    .on 'error', next
+                # options.ssh.sftp (err, sftp) ->
+                #   from = fs.createReadStream options.source#, encoding: 'binary'
+                #   to = sftp.createWriteStream options.destination#, encoding: 'binary'
+                #   l = 0
+                #   from.pipe to
+                #   from.on 'error', next
+                #   to.on 'error', next
+                #   to.on 'close', ->
+                #     uploaded++
+                #     do_md5()
               do_md5 = ->
                 return do_sha1() unless options.md5
                 options.log? "Check md5 for '#{options.destination}'"
@@ -2353,13 +2372,13 @@ mecano.write
             source = options.source or options.destination
             options.log? "Read source: #{source}#{if options.local_source then ' (local)' else ''}"
             ssh = if options.local_source then null else options.ssh
-            misc.file.exists ssh, source, (err, exists) ->
+            fs.exists ssh, source, (err, exists) ->
               return next err if err
               unless exists
                 return next new Error "Source does not exist: \"#{options.source}\"" if options.source
                 content = ''
                 return do_read_destination()
-              misc.file.readFile ssh, source, 'utf8', (err, src) ->
+              fs.readFile ssh, source, 'utf8', (err, src) ->
                 return next err if err
                 content = src
                 do_read_destination()
@@ -2368,13 +2387,13 @@ mecano.write
             return do_render() if typeof options.destination is 'function'
             options.log? "Read destination: #{options.destination}"
             exists = ->
-              misc.file.stat options.ssh, options.destination, (err, stat) ->
+              fs.stat options.ssh, options.destination, (err, stat) ->
                 return mkdir() if err?.code is 'ENOENT'
                 return next err if err
                 if stat.isDirectory()
                   options.destination = "#{options.destination}/#{path.basename options.source}"
                   # Destination is the parent directory, let's see if the file exist inside
-                  misc.file.stat options.ssh, options.destination, (err, stat) ->
+                  fs.stat options.ssh, options.destination, (err, stat) ->
                     # File doesnt exist
                     return do_render() if err?.code is 'ENOENT'
                     return next err if err
@@ -2395,7 +2414,7 @@ mecano.write
                 return next err if err
                 do_render()
             read = ->
-              misc.file.readFile options.ssh, options.destination, 'utf8', (err, dest) ->
+              fs.readFile options.ssh, options.destination, 'utf8', (err, dest) ->
                 return next err if err
                 destination = dest if options.diff # destination content only use by diff
                 destinationHash = misc.string.hash dest
@@ -2474,7 +2493,7 @@ mecano.write
               do_end()
             else
               options.flags ?= 'a' if append
-              misc.file.writeFile options.ssh, options.destination, content, options, (err) ->
+              fs.writeFile options.ssh, options.destination, content, options, (err) ->
                 return next err if err
                 modified = true
                 do_backup()
@@ -2483,7 +2502,7 @@ mecano.write
             backup = options.backup
             backup = ".#{Date.now()}" if backup is true
             backup = "#{options.destination}#{backup}"
-            misc.file.writeFile options.ssh, backup, content, (err) ->
+            fs.writeFile options.ssh, backup, content, (err) ->
               return next err if err
               do_end()
           do_ownership = ->

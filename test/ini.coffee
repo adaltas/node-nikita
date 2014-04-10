@@ -4,6 +4,7 @@ mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require
 misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '../lib/misc'
 test = require './test'
 they = require 'ssh2-exec/lib/they'
+fs = require 'ssh2-fs'
 
 describe 'ini', ->
 
@@ -17,7 +18,7 @@ describe 'ini', ->
     , (err, written) ->
       return next err if err
       written.should.eql 1
-      misc.file.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
+      fs.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
         return next err if err
         data.should.eql '[user.preference]\ncolor = rouge\n'
         next()
@@ -31,14 +32,14 @@ describe 'ini', ->
     , (err, written) ->
       return next err if err
       written.should.eql 1
-      misc.file.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
+      fs.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
         return next err if err
         data.should.eql '[user.preference]\ncolor:rouge\n'
         next()
 
   they 'merge an object', (ssh, next) ->
     content = '[user.preference]\nlanguage = node\ncolor = rouge\n'
-    misc.file.writeFile ssh, "#{scratch}/user.ini", content, (err) ->
+    fs.writeFile ssh, "#{scratch}/user.ini", content, (err) ->
       return next err if err
       mecano.ini
         ssh: ssh
@@ -48,7 +49,7 @@ describe 'ini', ->
       , (err, written) ->
         return next err if err
         written.should.eql 1
-        misc.file.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
+        fs.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
           return next err if err
           data.should.eql '[user.preference]\nlanguage = node\ncolor = violet\n'
           next()
@@ -62,14 +63,14 @@ describe 'ini', ->
     , (err, written) ->
       return next err if err
       written.should.eql 1
-      misc.file.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
+      fs.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
         return next err if err
         data.should.eql '[user.preference]\ncolor = violet\n'
         next()
 
   they 'remove null within merge', (ssh, next) ->
     content = '[user.preference]\nlanguage = node\ncolor = rouge\n'
-    misc.file.writeFile ssh, "#{scratch}/user.ini", content, (err) ->
+    fs.writeFile ssh, "#{scratch}/user.ini", content, (err) ->
       return next err if err
       mecano.ini
         ssh: ssh
@@ -79,14 +80,14 @@ describe 'ini', ->
       , (err, written) ->
         return next err if err
         written.should.eql 1
-        misc.file.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
+        fs.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
           return next err if err
           data.should.eql '[user.preference]\nlanguage = node\n'
           next()
 
   they 'disregard undefined within merge', (ssh, next) ->
     content = '[user.preference]\nlanguage = node\ncolor = rouge\n'
-    misc.file.writeFile ssh, "#{scratch}/user.ini", content, (err) ->
+    fs.writeFile ssh, "#{scratch}/user.ini", content, (err) ->
       return next err if err
       mecano.ini
         ssh: ssh
@@ -108,7 +109,7 @@ describe 'ini', ->
     , (err, written) ->
       return next err if err
       written.should.eql 1
-      misc.file.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
+      fs.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
         return next err if err
         data.should.eql '[user]\n preference = {\n  color = true\n }\n\n'
         next()

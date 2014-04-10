@@ -1,21 +1,20 @@
 
-fs = require 'fs'
 path = require 'path'
-fs.exists ?= path.exists
 should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
 misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '../lib/misc'
 test = require './test'
 they = require 'ssh2-exec/lib/they'
+fs = require 'ssh2-fs'
 
 checkDir = (ssh, dir, callback) ->
-  fs.readdir "#{__dirname}/../resources", (err, files) ->
+  fs.readdir ssh, "#{__dirname}/../resources", (err, files) ->
     return callback err if err
     scratchFiles = []
     for f in files
       continue if f.substr(0, 1) is '.'
       scratchFiles.push f
-    fs.readdir dir, (err, files) ->
+    fs.readdir ssh, dir, (err, files) ->
       return callback err if err
       dirFiles = []
       for f in files
@@ -64,7 +63,7 @@ describe 'copy', ->
       , (err, copied) ->
         return next err if err
         copied.should.eql 1
-        misc.file.exists ssh, "#{destination}/a_file", (err, exists) ->
+        fs.exists ssh, "#{destination}/a_file", (err, exists) ->
           exists.should.be.true
           # Copy over existing file
           mecano.copy
@@ -121,7 +120,7 @@ describe 'copy', ->
         , (err, copied) ->
           return next err if err
           copied.should.eql 1
-          misc.file.stat ssh, destination, (err, stat) ->
+          fs.stat ssh, destination, (err, stat) ->
             misc.file.cmpmod(stat.mode, 0o750).should.be.ok
             # Copy existing file
             mecano.copy
@@ -131,7 +130,7 @@ describe 'copy', ->
               mode: 0o755
             , (err, copied) ->
               return next err if err
-              misc.file.stat ssh, destination, (err, stat) ->
+              fs.stat ssh, destination, (err, stat) ->
                 misc.file.cmpmod(stat.mode, 0o755).should.be.ok
                 next()
           

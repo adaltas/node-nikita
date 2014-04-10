@@ -1,24 +1,22 @@
 
-fs = require 'fs'
 http = require 'http'
 should = require 'should'
-connect = require 'ssh2-exec/lib/connect'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
-misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '../lib/misc'
 test = require './test'
 they = require 'ssh2-exec/lib/they'
+fs = require 'ssh2-fs'
+
 
 describe 'download', ->
 
   scratch = test.scratch @
-
   they 'http', (ssh, next) ->
     @timeout 100000
     # create server
     server = http.createServer (req, res) ->
       res.writeHead 200, {'Content-Type': 'text/plain'}
       res.end 'okay'
-    server.listen 12345
+    server.listen 12345, '127.0.0.1'
     # Download a non existing file
     source = 'http://127.0.0.1:12345'
     destination = "#{scratch}/download"
@@ -29,7 +27,7 @@ describe 'download', ->
     , (err, downloaded) ->
       return next err if err
       downloaded.should.eql 1
-      misc.file.readFile ssh, destination, 'ascii', (err, content) ->
+      fs.readFile ssh, destination, 'ascii', (err, content) ->
         return next err if err
         content.toString().should.include 'okay'
         # Download on an existing file
@@ -62,7 +60,7 @@ describe 'download', ->
     , (err, downloaded) ->
       return next err if err
       downloaded.should.eql 1
-      misc.file.readFile ssh, destination, 'ascii', (err, content) ->
+      fs.readFile ssh, destination, 'ascii', (err, content) ->
         return next err if err
         content.toString().should.include 'okay 0'
         # Download on an existing file
@@ -94,7 +92,7 @@ describe 'download', ->
     , (err, downloaded) ->
       return next err if err
       downloaded.should.eql 1
-      misc.file.readFile ssh, destination, 'ascii', (err, content) ->
+      fs.readFile ssh, destination, 'ascii', (err, content) ->
         content.should.include 'okay'
         # Download on an existing file
         mecano.download
@@ -140,7 +138,7 @@ describe 'download', ->
     , (err, downloaded) ->
       return next err if err
       downloaded.should.eql 1
-      misc.file.readFile ssh, destination, 'ascii', (err, content) ->
+      fs.readFile ssh, destination, 'ascii', (err, content) ->
         content.should.include 'yeah'
         # Download on an existing file
         mecano.download
@@ -163,7 +161,7 @@ describe 'download', ->
     , (err, downloaded) ->
       return next err if err
       downloaded.should.eql 1
-      misc.file.readFile ssh, destination, 'ascii', (err, content) ->
+      fs.readFile ssh, destination, 'ascii', (err, content) ->
         content.should.include 'yeah'
         # Download on an existing file
         mecano.download

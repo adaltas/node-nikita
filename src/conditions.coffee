@@ -2,6 +2,7 @@
 each = require 'each'
 misc = require './misc'
 exec = require 'ssh2-exec'
+fs = require 'ssh2-fs'
 
 ###
 Conditionnal properties
@@ -115,7 +116,7 @@ module.exports =
     return succeed() unless options.if_exists?
     each(options.if_exists)
     .on 'item', (if_exists, next) ->
-      misc.file.exists options.ssh, if_exists, (err, exists) ->
+      fs.exists options.ssh, if_exists, (err, exists) ->
         if exists then next() else skip()
     .on 'end', succeed
   ###
@@ -136,7 +137,7 @@ module.exports =
     return succeed() unless options.not_if_exists?
     each(options.not_if_exists)
     .on 'item', (not_if_exists, next) ->
-      misc.file.exists options.ssh, not_if_exists, (err, exists) ->
+      fs.exists options.ssh, not_if_exists, (err, exists) ->
         if exists
         then next new Error
         else next()
@@ -216,7 +217,7 @@ module.exports =
     return succeed() unless options.should_exist?
     each(options.should_exist)
     .on 'item', (should_exist, next) ->
-      misc.file.exists options.ssh, should_exist, (err, exists) ->
+      fs.exists options.ssh, should_exist, (err, exists) ->
         if exists
         then next()
         else next new Error "File does not exist: #{should_exist}"
@@ -240,7 +241,7 @@ module.exports =
     return succeed() unless options.should_not_exist?
     each(options.should_not_exist)
     .on 'item', (should_not_exist, next) ->
-      misc.file.exists options.ssh, should_not_exist, (err, exists) ->
+      fs.exists options.ssh, should_not_exist, (err, exists) ->
         if exists
         then next new Error "File does not exist: #{should_not_exist}"
         else next()

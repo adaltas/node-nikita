@@ -1,12 +1,9 @@
 
-fs = require 'fs'
-path = require 'path'
-fs.exists ?= path.exists
 should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
-misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '../lib/misc'
 test = require './test'
 they = require 'ssh2-exec/lib/they'
+fs = require 'ssh2-fs'
 
 describe 'touch', ->
 
@@ -18,7 +15,7 @@ describe 'touch', ->
       destination: "#{scratch}/a_file"
     , (err) ->
       return next err if err
-      misc.file.readFile ssh, "#{scratch}/a_file", 'ascii', (err, content) ->
+      fs.readFile ssh, "#{scratch}/a_file", 'ascii', (err, content) ->
         return next err if err
         content.should.eql ''
         next()

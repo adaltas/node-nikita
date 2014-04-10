@@ -3,6 +3,7 @@ should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
 misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '../lib/misc'
 test = require './test'
+fs = require 'ssh2-fs'
 
 describe 'mecano', ->
 
@@ -23,7 +24,7 @@ describe 'mecano', ->
     .on 'error', (err) ->
       next err
     .on 'end', ->
-      misc.file.readFile null, "#{scratch}/chain/file", 'utf8', (err, content) ->
+      fs.readFile null, "#{scratch}/chain/file", 'utf8', (err, content) ->
         return next err if err
         content.should.eql 'helloworld'
         next()
@@ -42,7 +43,7 @@ describe 'mecano', ->
       append: true
     .on 'both', (err) ->
       return next err if err
-      misc.file.readFile null, "#{scratch}/chain/file", 'utf8', (err, content) ->
+      fs.readFile null, "#{scratch}/chain/file", 'utf8', (err, content) ->
         return next err if err
         content.should.eql 'helloworld'
         next()

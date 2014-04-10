@@ -3,6 +3,7 @@ should = require 'should'
 misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '../lib/misc'
 test = require './test'
 they = require 'ssh2-exec/lib/they'
+fs = require 'ssh2-fs'
 
 describe 'misc', ->
 
@@ -19,7 +20,7 @@ describe 'misc', ->
   describe 'pidfileStatus', ->
 
     they 'give 0 if pidfile math a running process', (ssh, next) ->
-      misc.file.writeFile ssh, "#{scratch}/pid", "#{process.pid}", (err) ->
+      fs.writeFile ssh, "#{scratch}/pid", "#{process.pid}", (err) ->
         misc.pidfileStatus ssh, "#{scratch}/pid", (err, status) ->
           status.should.eql 0
           next()
@@ -30,7 +31,7 @@ describe 'misc', ->
         next()
 
     they 'give 2 if pidfile exists but match no process', (ssh, next) ->
-      misc.file.writeFile ssh, "#{scratch}/pid", "666666666", (err) ->
+      fs.writeFile ssh, "#{scratch}/pid", "666666666", (err) ->
         misc.pidfileStatus ssh, "#{scratch}/pid", (err, status) ->
           status.should.eql 2
           next()

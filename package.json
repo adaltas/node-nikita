@@ -25,6 +25,7 @@
         "request": "latest",
         "rimraf": "latest",
         "ssh2-exec": "latest",
+        "ssh2-fs": "latest",
         "tilde-expansion": "latest"
     },
     "devDependencies": {

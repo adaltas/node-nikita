@@ -1,12 +1,11 @@
 
-fs = require 'fs'
 path = require 'path'
 should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
 test = require './test'
 they = require 'ssh2-exec/lib/they'
-misc = require '../lib/misc'
 connect = require 'ssh2-exec/lib/connect'
+fs = require 'ssh2-fs'
 
 describe 'upload', ->
 
@@ -144,7 +143,7 @@ describe 'upload', ->
       , (err, uploaded) ->
         return next err if err
         uploaded.should.eql 1
-        misc.file.exists ssh, "#{scratch}/#{path.basename __filename}", (err, exist) ->
+        fs.exists ssh, "#{scratch}/#{path.basename __filename}", (err, exist) ->
           return next err if err
           exist.should.be.ok
           mecano.upload
@@ -198,7 +197,7 @@ describe 'upload', ->
         , (err, uploaded) ->
           return next err if err
           uploaded.should.eql 1
-          misc.file.exists ssh, "#{scratch}/#{path.basename __filename}", (err, exist) ->
+          fs.exists ssh, "#{scratch}/#{path.basename __filename}", (err, exist) ->
             return next err if err
             exist.should.be.ok
             next()

@@ -6,39 +6,11 @@ mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require
 misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '../lib/misc'
 test = require './test'
 they = require 'ssh2-exec/lib/they'
+fs = require 'ssh2-fs'
 
 describe 'misc.file', ->
 
   scratch = test.scratch @
-
-  describe 'createReadStream', ->
-
-    they 'pass error if file does not exists', (ssh, next) ->
-      misc.file.createReadStream ssh, "#{scratch}/not_here", (err, stream) ->
-        stream.on 'error', (err) ->
-          err.message.should.eql "ENOENT, open '#{scratch}/not_here'"
-          err.errno.should.eql 34
-          err.code.should.eql 'ENOENT'
-          err.path.should.eql '/tmp/mecano-test/not_here'
-          next()
-
-    they 'pass error if file is a directory', (ssh, next) ->
-      misc.file.createReadStream ssh, __dirname, (err, stream) ->
-        stream.on 'error', (err) ->
-          err.message.should.eql "EISDIR, read"
-          err.errno.should.eql 28
-          err.code.should.eql 'EISDIR'
-          next()
-
-  describe 'chmod', ->
-
-    they 'change permission', (ssh, next) ->
-      misc.file.writeFile ssh, "#{scratch}/a_file", "hello", (err) ->
-        misc.file.chmod ssh, "#{scratch}/a_file", '546', (err) ->
-          return next err if err
-          misc.file.stat ssh, "#{scratch}/a_file", (err, stat) ->
-            "0o0#{(stat.mode & 0o0777).toString 8}".should.eql '0o0546'
-            next err
 
   describe 'cmpmod', ->
 
@@ -59,94 +31,6 @@ describe 'misc.file', ->
     it 'compare int with string', ->
       misc.file.cmpmod('744', 0o0744).should.be.ok
       misc.file.cmpmod('0744', 0o0744).should.be.ok
-
-
-  describe 'write', ->
-
-    they 'append', (ssh, next) ->
-      misc.file.writeFile ssh, "#{scratch}/a_file", "hello", flags: 'a', (err) ->
-        return next err if err
-        misc.file.writeFile ssh, "#{scratch}/a_file", "world", flags: 'a', (err) ->
-          return next err if err
-          misc.file.readFile ssh, "#{scratch}/a_file", 'utf8', (err, content) ->
-            content.should.eql "helloworld"
-            next()
-
-  describe 'rename', ->
-
-    they 'work', (ssh, next) ->
-      misc.file.writeFile ssh, "#{scratch}/a_file", "helloworld", flags: 'a', (err) ->
-        return next err if err
-        misc.file.rename ssh, "#{scratch}/a_file", "#{scratch}/a_renamed_file", (err) ->
-          return next err if err
-          misc.file.readFile ssh, "#{scratch}/a_renamed_file", 'utf8', (err, content) ->
-            return next err if err
-            content.should.eql "helloworld"
-            next()
-
-  describe 'readdir', ->
-    they 'list', (ssh, next) ->
-      misc.file.readdir ssh, "#{__dirname}", (err, files) ->
-        return next err if err
-        files.length.should.be.above 10
-        files.indexOf(path.basename __filename).should.not.equal -1
-        next()
-
-  describe 'readFile', ->
-
-    they 'pass error to callback if not exists', (ssh, next) ->
-      misc.file.readFile ssh, "#{__dirname}/doesnotexist", 'utf8', (err, exists) ->
-        err.message.should.eql "ENOENT, open '#{__dirname}/doesnotexist'"
-        err.errno.should.eql 34
-        err.code.should.eql 'ENOENT'
-        err.path.should.eql "#{__dirname}/doesnotexist"
-        next()
-
-  describe 'exists', ->
-
-    they 'on file', (ssh, next) ->
-      misc.file.exists ssh, "#{__filename}", (err, exists) ->
-        exists.should.be.ok
-        next()
-
-    they 'does not exist', (ssh, next) ->
-      misc.file.exists ssh, "#{__filename}/nothere", (err, exists) ->
-        exists.should.not.be.ok
-        next()
-
-  describe 'mkdir', ->
-
-    they 'create a new directory', (ssh, next) ->
-      misc.file.mkdir ssh, "#{scratch}/new_dir", (err) ->
-        next err
-
-    they 'pass error if dir exists', (ssh, next) ->
-      misc.file.mkdir ssh, "#{scratch}/new_dir", (err) ->
-        misc.file.mkdir ssh, "#{scratch}/new_dir", (err) ->
-          err.message.should.eql "EEXIST, mkdir '#{scratch}/new_dir'"
-          err.path.should.eql "#{scratch}/new_dir"
-          err.errno.should.eql 47
-          err.code.should.eql 'EEXIST'
-          next()
-
-  describe 'stat', ->
-
-    they 'on file', (ssh, next) ->
-      misc.file.stat ssh, __filename, (err, stat) ->
-        return next err if err
-        stat.isFile().should.be.ok
-        next()
-
-    they 'on directory', (ssh, next) ->
-      misc.file.stat ssh, __dirname, (err, stat) ->
-        return next err if err
-        stat.isDirectory().should.be.ok
-        next()
-
-    they 'check does not exist', (ssh, next) ->
-      misc.file.stat ssh, "#{__dirname}/noone", (err, stat) ->
-        err.code.should.eql 'ENOENT'
-        next()
 
   describe 'hash', ->
 
@@ -202,14 +86,14 @@ describe 'misc.file', ->
         return next err if err
         misc.file.remove ssh, "#{scratch}/remove_dir", (err) ->
           return next err if err
-          misc.file.exists ssh, "#{scratch}/remove_dir", (err, exists) ->
+          fs.exists ssh, "#{scratch}/remove_dir", (err, exists) ->
             return next err if err
             exists.should.not.be.ok
             next()
 
     they 'handle a missing remote dir', (ssh, next) ->
       misc.file.remove ssh, "#{scratch}/remove_missing_dir", (err) ->
-        misc.file.exists ssh, "#{scratch}/remove_missing_dir", (err, exists) ->
+        fs.exists ssh, "#{scratch}/remove_missing_dir", (err, exists) ->
           return next err if err
           exists.should.not.be.ok
           next()

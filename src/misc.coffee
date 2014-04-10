@@ -2,7 +2,6 @@
 crypto = require 'crypto'
 fs = require 'fs'
 path = require 'path'
-fs.exists ?= path.exists
 each = require 'each'
 util = require 'util'
 Stream = require 'stream'
@@ -12,6 +11,7 @@ buffer = require 'buffer'
 rimraf = require 'rimraf'
 ini = require 'ini'
 tilde = require 'tilde-expansion'
+ssh2fs = require 'ssh2-fs'
 
 misc = module.exports = 
   regexp:
@@ -44,50 +44,19 @@ misc = module.exports =
       .on 'end', ->
         callback path.resolve normalized...
   file:
-    readdir: (ssh, path, callback) ->
-      unless ssh
-        fs.readdir path, callback
-      else
-        ssh.sftp (err, sftp) ->
-          return callback err if err
-          sftp.opendir path, (err, handle) ->
-            return callback err if err
-            sftp.readdir handle, (err, files) ->
-              sftp.close handle, (err) ->
-                return callback err if err
-                sftp.end()
-                files = for file in files then file.filename
-                callback err, files
-
-    ###
-    `chown(ssh, path, options, callback)`
-    -------------------------------------
-    ###
-    chown: (ssh, path, uid, gid, callback) ->
-      return callback new Error 'Either option "uid" or "gid" is required' unless uid or gid
-      unless ssh
-        fs.chown path, uid, gid, (err) ->
-          callback err
-      else
-        ssh.sftp (err, sftp) ->
-          return callback err if err
-          sftp.chown path, uid, gid, (err) ->
-            sftp.end()
-            callback err
-    ###
-    `chmod(ssh, path, options, callback)`
-    -------------------------------------
-    ###
-    chmod: (ssh, path, mode, callback) ->
-      unless ssh
-        fs.chmod path, mode, (err) ->
-          callback err
-      else
-        ssh.sftp (err, sftp) ->
-          return callback err if err
-          sftp.chmod path, mode, (err) ->
-            sftp.end()
-            callback err
+    copyFile: (ssh, source, destination, callback) ->
+      s = (ssh, callback) ->
+        unless ssh
+        then callback null, fs
+        else ssh.sftp callback
+      s ssh, (err, fs) ->
+        rs = fs.createReadStream source
+        ws = rs.pipe fs.createWriteStream destination
+        ws.on 'close', ->
+          fs.end() if fs.end
+          modified = true
+          callback()
+        ws.on 'error', callback
     ###
     Compare modes
     -------------
@@ -101,73 +70,6 @@ misc = module.exports =
         l = Math.min ref.length, mode.length
         return false if mode.substr(-l) isnt ref.substr(-l)
       true
-    ###
-    `createReadStream(ssh, path, [options], callback)`
-    --------------------------------------------------
-
-        misc.file.createReadStream sshOrNull, 'test.out', (err, stream) ->
-          stream.pipe fs.createWriteStream 'test.in'
-    ###
-    createReadStream: (ssh, source, options, callback) ->
-      if arguments.length is 3
-        callback = options
-        options = {}
-      unless ssh
-        callback null, fs.createReadStream source, options
-      else
-        ssh.sftp (err, sftp) ->
-          return callback err if err
-          s = sftp.createReadStream source, options
-          s.emit = ( (emit) ->
-            (key, val) ->
-              if key is 'error' and val is undefined
-                val = new Error "EISDIR, read"
-                val.errno = 28
-                val.code = 'EISDIR'
-                return emit.call @, 'error', val
-              if key is 'error' and val.message is 'No such file'
-                val = new Error "ENOENT, open '#{source}'"
-                val.errno = 34
-                val.code = 'ENOENT'
-                val.path = source
-                return emit.call @, 'error', val
-              emit.apply @, arguments
-          )(s.emit)
-          s.on 'close', ->
-            sftp.end()
-          callback null, s
-    ###
-    createWriteStream(ssh, path, [options], callback)
-    -------------------------------------------------
-
-        misc.file.createWriteStream sshOrNull, 'test.out', (err, stream) ->
-          fs.createReadStream('test.in').pipe stream
-    ###
-    createWriteStream: (ssh, path, options, callback) ->
-      if arguments.length is 3
-        callback = options
-        options = {}
-      unless ssh
-        callback null, fs.createWriteStream(path, options)
-      else
-        ssh.sftp (err, sftp) ->
-          return callback err if err
-          ws = sftp.createWriteStream(path, options)
-          ws.on 'close', ->
-            sftp.end()
-          callback null, ws
-    ###
-    `unlink(ssh, source, callback)`
-    ###
-    unlink: (ssh, source, callback) ->
-      unless ssh
-        fs.unlink source, (err) ->
-          callback err
-      else
-        ssh.sftp (err, sftp) ->
-          sftp.unlink source, (err) ->
-            sftp.end()
-            callback err
     copy: (ssh, source, destination, callback) ->
       unless ssh
         source = fs.createReadStream(u.pathname)
@@ -177,244 +79,6 @@ misc = module.exports =
       else
         # todo: use cp to copy over ssh
         callback new Error 'Copy over SSH not yet implemented'
-    rename: (ssh, source, destination, callback) ->
-      unless ssh
-        fs.rename source, destination, (err) ->
-          callback err
-      else
-        ssh.sftp (err, sftp) ->
-          sftp.rename source, destination, (err) ->
-            sftp.end()
-            callback err
-    readlink: (ssh, path, callback) ->
-      unless ssh
-        fs.readlink path, (err, target) ->
-          callback err, target
-      else
-        ssh.sftp (err, sftp) ->
-          return callback err if err
-          sftp.readlink path, (err, target) ->
-            sftp.end()
-            callback err, target
-    unlink: (ssh, path, callback) ->
-      unless ssh
-        fs.unlink path, (err) ->
-          callback err
-      else
-        ssh.sftp (err, sftp) ->
-          return callback err if err
-          sftp.unlink path, (err) ->
-            sftp.end()
-            callback err
-    symlink: (ssh, targetPath, linkPath, callback) ->
-      unless ssh
-        fs.symlink targetPath, linkPath, (err) ->
-          callback err
-      else
-        ssh.sftp (err, sftp) ->
-          return callback err if err
-          sftp.symlink targetPath, linkPath, (err) ->
-            sftp.end()
-            callback err
-    lstat: (ssh, path, callback) ->
-      unless ssh
-        fs.lstat path, (err, stat) ->
-          callback err, stat
-      else
-        ssh.sftp (err, sftp) ->
-          return callback err if err
-          sftp.lstat path, (err, attr) ->
-            sftp.end()
-            if err and err.type is 'NO_SUCH_FILE'
-              err.code = 'ENOENT'
-              return callback err
-            callback err, attr
-    stat: (ssh, path, callback) ->
-      # Not yet test, no way to know if file is a direct or a link
-      unless ssh
-        # { dev: 16777218, mode: 16877, nlink: 19, uid: 501, gid: 20,
-        # rdev: 0, blksize: 4096, ino: 1736226, size: 646, blocks: 0,
-        # atime: Wed Feb 27 2013 23:25:07 GMT+0100 (CET), mtime: Tue Jan 29 2013 23:29:28 GMT+0100 (CET), ctime: Tue Jan 29 2013 23:29:28 GMT+0100 (CET) }
-        fs.stat path, (err, stat) ->
-          callback err, stat
-      else
-        # { size: 646, uid: 501, gid: 20, permissions: 16877, 
-        # atime: 1362003965, mtime: 1359498568 }
-        ssh.sftp (err, sftp) ->
-          return callback err if err
-          sftp.stat path, (err, attr) ->
-            sftp.end()
-            if err and err.type is 'NO_SUCH_FILE'
-              err.code = 'ENOENT'
-              return callback err
-            # attr.mode = attr.permissions
-            callback err, attr
-    ###
-    `readFile(ssh, path, [options], callback)`
-    -----------------------------------------
-    ###
-    readFile: (ssh, source, options, callback) ->
-      if arguments.length is 3
-        callback = options
-        options = {}
-      else
-        options = encoding: options if typeof options is 'string'
-      return callback new Error "Invalid path '#{source}'" unless source
-      unless ssh
-        fs.readFile source, options.encoding, (err, content) ->
-          callback err, content
-      else
-        ssh.sftp (err, sftp) ->
-          return callback err if err
-          s = sftp.createReadStream source, options
-          data = []
-          s.on 'data', (d) ->
-            data.push d.toString()
-          s.on 'error', (err) ->
-            err = new Error "ENOENT, open '#{source}'"
-            err.errno = 34
-            err.code = 'ENOENT'
-            err.path = source
-            finish err
-          s.on 'close', ->
-            finish null, data.join ''
-          finish = (err, data) ->
-            sftp.end()
-            callback err, data
-    ###
-    `writeFile(ssh, path, content, [options], callback)`
-    -----------------------------------------
-    ###
-    writeFile: (ssh, source, content, options, callback) ->
-      if arguments.length is 4
-        callback = options
-        options = {}
-      else
-        options = encoding: options if typeof options is 'string'
-      unless ssh
-        # fs.writeFile source, content, options, (err, content) ->
-        #   callback err, content
-        write = ->
-          stream = fs.createWriteStream source, options
-          if typeof content is 'string' or buffer.Buffer.isBuffer content
-            stream.write content if content
-            stream.end()
-          else
-            content.pipe stream
-          stream.on 'error', (err) ->
-            callback err
-          stream.on 'end', ->
-            s.destroy()
-          stream.on 'close', ->
-            chown()
-        chown = ->
-          return chmod() unless options.uid or options.gid
-          fs.chown source, options.uid, options.gid, (err) ->
-            return callback err if err
-            chmod()
-        chmod = ->
-          return finish() unless options.mode
-          fs.chmod source, options.mode, (err) ->
-            finish err
-        finish = (err) ->
-          callback err
-        write()
-      else
-        ssh.sftp (err, sftp) ->
-          return callback err if err
-          write = ->
-            s = sftp.createWriteStream source, options
-            if typeof content is 'string' or buffer.Buffer.isBuffer content
-              s.write content if content
-              s.end()
-            else
-              content.pipe s
-            s.on 'error', (err) ->
-              finish err
-            s.on 'end', ->
-              s.destroy()
-            s.on 'close', ->
-              chown()
-          chown = ->
-            return chmod() unless options.uid or options.gid
-            sftp.chown source, options.uid, options.gid, (err) ->
-              return finish err if err
-              chmod()
-          chmod = ->
-            return finish() unless options.mode
-            sftp.chmod source, options.mode, (err) ->
-              finish err
-          finish = (err) ->
-            sftp.end()
-            callback err
-          write()
-    ###
-    `mkdir(ssh, path, [options], callback)`
-    -------------------------------------
-    Note, if option is not a string, it is considered to be the permission mode.
-    ###
-    mkdir: (ssh, path, options, callback) ->
-      if arguments.length is 3
-        callback = options
-        options = 0o0755
-      if typeof options isnt 'object'
-        options = mode: options
-      if options.permissions
-        process.stderr.write 'Deprecated, use mode instead of permissions'
-        options.mode = options.permissions
-      unless ssh
-        fs.mkdir path, options.mode, (err) ->
-          callback err
-      else
-        ssh.sftp (err, sftp) ->
-          return callback err if err
-          mkdir = ->
-            sftp.mkdir path, options, (err, attr) ->
-              if err?.message is 'Failure'
-                err = new Error "EEXIST, mkdir '#{path}'"
-                err.errno = 47
-                err.code = 'EEXIST'
-                err.path = path
-              return finish err if err
-              chown()
-          chown = ->
-            return chmod() unless options.uid or options.gid
-            sftp.chown path, options.uid, options.gid, (err) ->
-              return finish err if err
-              chmod()
-          chmod = ->
-            return finish() unless options.mode
-            sftp.chmod path, options.mode, (err) ->
-              finish err
-          finish = (err) ->
-            sftp.end()
-            callback err
-          mkdir()
-    ###
-    `exists(ssh, path, callback)`
-    -----------------------------
-
-    `options`         Command options include:   
-
-    *   `ssh`         SSH connection in case of a remote file path.  
-    *   `path`        Path to test.   
-    *   `callback`    Callback to return the result.   
-
-    `callback`        Received parameters are:   
-
-    *   `err`         Error object if any.   
-    *   `exists`      True if the file exists.   
-    ###
-    exists: (ssh, path, callback) ->
-      unless ssh
-        fs.exists path, (exists) ->
-          callback null, exists
-      else
-        ssh.sftp (err, sftp) ->
-          return callback err if err
-          sftp.stat path, (err, attr) ->
-            sftp.end()
-            callback null, if err then false else true
     ###
     `files.hash(file, [algorithm], callback)`
     -----------------------------------------
@@ -435,7 +99,7 @@ misc = module.exports =
         algorithm = 'md5'
       hasher = (ssh, path, callback) ->
         shasum = crypto.createHash algorithm
-        misc.file.createReadStream ssh, path, (err, stream) ->
+        ssh2fs.createReadStream ssh, path, (err, stream) ->
           return callback err if err
           stream
           .on 'data', (data) ->
@@ -446,7 +110,7 @@ misc = module.exports =
           .on 'end', ->
             callback err, shasum.digest 'hex'
       hashs = []
-      misc.file.stat ssh, file, (err, stat) ->
+      ssh2fs.stat ssh, file, (err, stat) ->
         return callback new Error "Does not exist: #{file}" if err?.code is 'ENOENT'
         return callback err if err
         file += '/**' if stat.isDirectory()
@@ -552,7 +216,7 @@ misc = module.exports =
       # Grab passwd from the cache
       return callback null, ssh.passwd if ssh.passwd
       # Alternative is to use the id command, eg `id -u ubuntu`
-      misc.file.readFile ssh, '/etc/passwd', 'ascii', (err, lines) ->
+      ssh2fs.readFile ssh, '/etc/passwd', 'ascii', (err, lines) ->
         return callback err if err
         passwd = []
         for line in lines.split '\n'
@@ -596,7 +260,7 @@ misc = module.exports =
       # Grab group from the cache
       return callback null, ssh.cache_group if ssh.cache_group
       # Alternative is to use the id command, eg `id -g admin`
-      misc.file.readFile ssh, '/etc/group', 'ascii', (err, lines) ->
+      ssh2fs.readFile ssh, '/etc/group', 'ascii', (err, lines) ->
         return callback err if err
         group = []
         for line in lines.split '\n'
@@ -623,7 +287,7 @@ misc = module.exports =
     if arguments.length is 3
       callback = options
       options = {}
-    misc.file.readFile ssh, pidfile, 'ascii', (err, pid) ->
+    ssh2fs.readFile ssh, pidfile, 'ascii', (err, pid) ->
       # pidfile does not exists
       return callback null, 1 if err and err.code is 'ENOENT'
       return callback err if err

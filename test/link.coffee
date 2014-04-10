@@ -5,6 +5,7 @@ mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require
 misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '../lib/misc'
 test = require './test'
 they = require 'ssh2-exec/lib/they'
+fs = require 'ssh2-fs'
 
 describe 'link', ->
 
@@ -28,7 +29,7 @@ describe 'link', ->
       , (err, linked) ->
         return next err if err
         linked.should.eql 0
-        misc.file.lstat ssh, destination, (err, stat) ->
+        fs.lstat ssh, destination, (err, stat) ->
           stat.isSymbolicLink().should.be.ok
           next()
   
@@ -50,7 +51,7 @@ describe 'link', ->
       , (err, linked) ->
         return next err if err
         linked.should.eql 0
-        misc.file.lstat ssh, destination, (err, stat) ->
+        fs.lstat ssh, destination, (err, stat) ->
           stat.isSymbolicLink().should.be.ok
           next()
   
@@ -64,7 +65,7 @@ describe 'link', ->
     , (err, linked) ->
       return next err if err
       linked.should.eql 1
-      misc.file.lstat ssh, destination, (err, stat) ->
+      fs.lstat ssh, destination, (err, stat) ->
         stat.isSymbolicLink().should.be.ok
         # Test creating two identical parent dirs
         destination = "#{scratch}/test/dir2"

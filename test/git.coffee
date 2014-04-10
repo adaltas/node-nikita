@@ -4,6 +4,7 @@ mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require
 misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '../lib/misc'
 test = require './test'
 they = require 'ssh2-exec/lib/they'
+fs = require 'ssh2-fs'
 
 describe 'git', ->
 
@@ -55,7 +56,7 @@ describe 'git', ->
           next()
 
   they 'preserves existing directory', (ssh, next) ->
-    misc.file.mkdir null, "#{scratch}/my_repo", (err) ->
+    fs.mkdir null, "#{scratch}/my_repo", (err) ->
       return next err if err
       mecano.git
         ssh: ssh
