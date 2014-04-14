@@ -2,8 +2,7 @@
 should = require 'should'
 misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '../lib/misc'
 test = require './test'
-they = require 'ssh2-exec/lib/they'
-
+they = require 'ssh2-they'
 
 describe 'ini', ->
 

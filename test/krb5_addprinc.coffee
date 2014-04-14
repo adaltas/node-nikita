@@ -2,7 +2,7 @@
 should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
 test = require './test'
-they = require 'ssh2-exec/lib/they'
+they = require 'ssh2-they'
 ldap = require 'ldapjs'
 
 describe 'krb5_addprinc', ->

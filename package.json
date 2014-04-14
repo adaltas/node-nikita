@@ -1,45 +1,47 @@
 {
-    "name": "mecano",
-    "description": "Common functions for system deployment.",
-    "keywords": ["deploy", "build", "ssh", "system", "install", "fs", "task", "cli"],
-    "version": "0.2.8",
-    "homepage": "http://www.adaltas.com/projects/node-mecano/",
-    "author": "David Worms <david@adaltas.com>",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/wdavidw/node-mecano"
-    },
-    "bugs": {
-        "email": "open@adaltas.com",
-        "url": "http://github.com/wdavidw/node-mecano/issues"
-    },
-    "dependencies": {
-        "diff": "latest",
-        "eco": "latest",
-        "pad": "latest",
-        "each": "latest",
-        "ftp": "latest",
-        "ini": "latest",
-        "jsftp": "latest",
-        "ldapjs": "latest",
-        "request": "latest",
-        "rimraf": "latest",
-        "ssh2-exec": "latest",
-        "ssh2-fs": "latest",
-        "tilde-expansion": "latest"
-    },
-    "devDependencies": {
-        "coffee-script": "latest",
-        "jsDAV": "latest",
-        "mocha": "latest",
-        "should": "latest"
-    },
-    "contributors": [ 
-        { "name": "David Worms", "email": "david@adaltas.com" }
-    ],
-    "main": "index",
-    "engines": { "node": ">= 0.6.0" },
-    "scripts": {
-        "test": "make test"
-    }
+  "name": "mecano",
+  "description": "Common functions for system deployment.",
+  "keywords": ["deploy", "build", "ssh", "system", "install", "fs", "task", "cli"],
+  "version": "0.2.8",
+  "homepage": "http://www.adaltas.com/projects/node-mecano/",
+  "author": "David Worms <david@adaltas.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wdavidw/node-mecano"
+  },
+  "bugs": {
+    "email": "open@adaltas.com",
+    "url": "http://github.com/wdavidw/node-mecano/issues"
+  },
+  "dependencies": {
+    "diff": "latest",
+    "eco": "latest",
+    "pad": "latest",
+    "each": "latest",
+    "ftp": "latest",
+    "ini": "latest",
+    "jsftp": "latest",
+    "ldapjs": "latest",
+    "request": "latest",
+    "rimraf": "latest",
+    "ssh2-connect": "latest",
+    "ssh2-exec": "latest",
+    "ssh2-fs": "latest",
+    "tilde-expansion": "latest"
+  },
+  "devDependencies": {
+    "coffee-script": "latest",
+    "jsDAV": "latest",
+    "mocha": "latest",
+    "should": "latest",
+    "ssh2-they": "latest"
+  },
+  "contributors": [ 
+    { "name": "David Worms", "email": "david@adaltas.com" }
+  ],
+  "main": "index",
+  "engines": { "node": ">= 0.6.0" },
+  "scripts": {
+    "test": "make test"
+  }
 }

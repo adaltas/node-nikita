@@ -6,7 +6,7 @@ each = require 'each'
 util = require 'util'
 Stream = require 'stream'
 exec = require 'ssh2-exec'
-connect = require 'ssh2-exec/lib/connect'
+connect = require 'ssh2-connect'
 buffer = require 'buffer'
 rimraf = require 'rimraf'
 ini = require 'ini'
@@ -179,7 +179,7 @@ misc = module.exports =
         rimraf path, callback
       else
         # Not very pretty but fast and no time to try make a version of rimraf over ssh
-        child = exec "rm -rdf #{path}", ssh: ssh
+        child = exec ssh, "rm -rdf #{path}"
         child.on 'exit', (code) ->
           callback null, code
   ssh:
@@ -579,6 +579,7 @@ misc = module.exports =
       options.mode ?= options.chmod if options.chmod
       connection = ->
         return next() unless options.ssh
+        return next() if options.ssh._host
         connect options.ssh, (err, ssh) ->
           return next err if err
           options.ssh = ssh

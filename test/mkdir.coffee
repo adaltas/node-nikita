@@ -6,8 +6,7 @@ should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
 misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '../lib/misc'
 test = require './test'
-they = require 'ssh2-exec/lib/they'
-connect = require 'ssh2-exec/lib/connect'
+they = require 'ssh2-they'
 fs = require 'ssh2-fs'
 
 describe 'mkdir', ->

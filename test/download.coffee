@@ -3,22 +3,23 @@ http = require 'http'
 should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
 test = require './test'
-they = require 'ssh2-exec/lib/they'
+they = require 'ssh2-they'
 fs = require 'ssh2-fs'
 
 
 describe 'download', ->
 
   scratch = test.scratch @
+
   they 'http', (ssh, next) ->
     @timeout 100000
     # create server
     server = http.createServer (req, res) ->
       res.writeHead 200, {'Content-Type': 'text/plain'}
       res.end 'okay'
-    server.listen 12345, '127.0.0.1'
+    server.listen 12345
     # Download a non existing file
-    source = 'http://127.0.0.1:12345'
+    source = 'http://localhost:12345'
     destination = "#{scratch}/download"
     mecano.download
       ssh: ssh
@@ -51,7 +52,7 @@ describe 'download', ->
       res.end "okay #{count++}"
     server.listen 12345
     # Download a non existing file
-    source = 'http://127.0.0.1:12345'
+    source = 'http://localhost:12345'
     destination = "#{scratch}/download"
     mecano.download
       ssh: ssh
@@ -82,17 +83,18 @@ describe 'download', ->
       res.end 'okay'
     server.listen 12345
     # Download a non existing file
-    source = 'http://127.0.0.1:12345'
+    source = 'http://localhost:12345'
     destination = "#{scratch}/download_test"
     mecano.download
       ssh: ssh
       source: source
       destination: destination
-      mode: '0770'
+      mode: 0o770
     , (err, downloaded) ->
       return next err if err
       downloaded.should.eql 1
       fs.readFile ssh, destination, 'ascii', (err, content) ->
+        return next err if err
         content.should.include 'okay'
         # Download on an existing file
         mecano.download
@@ -182,7 +184,7 @@ describe 'download', ->
         res.end 'okay'
       server.listen 12345
       # Download with invalid checksum
-      source = 'http://127.0.0.1:12345'
+      source = 'http://localhost:12345'
       destination = "#{scratch}/check_md5"
       mecano.download
         ssh: ssh
@@ -201,7 +203,7 @@ describe 'download', ->
         res.end 'okay'
       server.listen 12345
       # Download with invalid checksum
-      source = 'http://127.0.0.1:12345'
+      source = 'http://localhost:12345'
       destination = "#{scratch}/check_md5"
       mecano.download
         ssh: ssh
@@ -221,7 +223,7 @@ describe 'download', ->
         res.end 'okay'
       server.listen 12345
       # Download with invalid checksum
-      source = 'http://127.0.0.1:12345'
+      source = 'http://localhost:12345'
       destination = "#{scratch}/check_md5"
       mecano.download
         ssh: ssh

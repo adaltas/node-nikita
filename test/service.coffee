@@ -1,32 +1,17 @@
 
 should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
-connect = require 'ssh2-exec/lib/connect'
 test = require './test'
+they = require 'ssh2-they'
 
 describe 'service', ->
   
   @timeout 20000
-  ssh = null
   config = test.config()
-  # return if config
-  beforeEach (next) ->
-    return next() unless config.yum_over_ssh
-    connect config.yum_over_ssh, (err, con) ->
-      return next err if err
-      ssh = con
-      mecano.execute
-        ssh: ssh
-        cmd: 'yum remove -y ntp'
-      , (err, executed, stdout, stderr) ->
-        next err
-  afterEach (next) ->
-    ssh?.end()
-    next()
   
   describe 'install', ->
 
-    it 'validate installation', (next) ->
+    they 'validate installation', (ssh, next) ->
       return next() unless config.yum_over_ssh
       mecano.service
         ssh: ssh
@@ -42,7 +27,7 @@ describe 'service', ->
           executed.should.eql 1
           next()
     
-    it 'skip if already installed', (next) ->
+    they 'skip if already installed', (ssh, next) ->
       return next() unless config.yum_over_ssh
       mecano.service
         ssh: ssh
@@ -60,7 +45,7 @@ describe 'service', ->
 
   describe 'startup', ->
 
-    it 'declare on startup with boolean', (next) ->
+    they 'declare on startup with boolean', (ssh, next) ->
       return next() unless config.yum_over_ssh
       mecano.service
         ssh: ssh
@@ -79,7 +64,7 @@ describe 'service', ->
           startuped.should.eql 1
           next()
 
-    it 'skip if already declared', (next) ->
+    they 'skip if already declared', (ssh, next) ->
       return next() unless config.yum_over_ssh
       mecano.service
         ssh: ssh
@@ -99,7 +84,7 @@ describe 'service', ->
           serviced.should.eql 0
           next()
 
-    it 'notice a change in startup level', (next) ->
+    they 'notice a change in startup level', (ssh, next) ->
       return next() unless config.yum_over_ssh
       mecano.service
         ssh: ssh
@@ -127,7 +112,7 @@ describe 'service', ->
             serviced.should.eql 0
             next()
 
-    it 'remove after being defined', (next) ->
+    they 'remove after being defined', (ssh, next) ->
       return next() unless config.yum_over_ssh
       # Register service
       mecano.service
@@ -158,7 +143,7 @@ describe 'service', ->
 
   describe 'action', ->
 
-    it 'should start', (next) ->
+    they 'should start', (ssh, next) ->
       return next() unless config.yum_over_ssh
       mecano.service
         ssh: ssh
@@ -186,7 +171,7 @@ describe 'service', ->
             serviced.should.eql 0
             next()
 
-    it 'should stop', (next) ->
+    they 'should stop', (ssh, next) ->
       return next() unless config.yum_over_ssh
       mecano.service
         ssh: ssh

@@ -1,74 +1,78 @@
 
-fs = require 'fs'
+fs = require 'ssh2-fs'
 path = require 'path'
 should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
 test = require './test'
-connect = require 'ssh2-exec/lib/connect'
+they = require 'ssh2-they'
 
 describe 'remove', ->
   
   scratch = test.scratch @
   
-  it 'should delete a file', (next) ->
+  they 'a file', (ssh, next) ->
     mecano.copy
+      ssh: ssh
       source: "#{__dirname}/../resources/a_dir/a_file"
       destination: "#{scratch}/a_file"
     , (err, copied) ->
       mecano.remove
+        ssh: ssh
         source: "#{scratch}/a_file"
       , (err, removed) ->
         return next err if err
         removed.should.eql 1
         next()
 
-  it 'should delete a link', (next) ->
-    fs.symlink __filename, "#{scratch}/test", (err) ->
+  they 'a link', (ssh, next) ->
+    fs.symlink ssh, __filename, "#{scratch}/test", (err) ->
       mecano.remove
+        ssh: ssh
         source: "#{scratch}/test"
       , (err, removed) ->
         return next err if err
         removed.should.eql 1
-        fs.lstat "#{scratch}/test", (err, stat) ->
+        fs.lstat ssh, "#{scratch}/test", (err, stat) ->
           err.code.should.eql 'ENOENT'
           next()
 
-  it 'should delete a pattern', (next) ->
+  it 'use a pattern', (next) ->
+    # todo, not working yet over ssh
     mecano.copy
+      # ssh: ssh
       source: "#{__dirname}/../resources/"
       destination: "#{scratch}/"
     , (err, copied) ->
       mecano.remove
+        # ssh: ssh
         source: "#{scratch}/*gz"
       , (err, removed) ->
         return next err if err
         removed.should.eql 2
-        fs.readdir "#{scratch}", (err, files) ->
+        fs.readdir null, "#{scratch}", (err, files) ->
           files.should.not.include 'a_dir.tar.gz'
           files.should.not.include 'a_dir.tgz'
           files.should.include 'a_dir.zip'
           next()
 
-  it 'work over ssh', (next) ->
+  they 'a dir', (ssh, next) ->
     @timeout 10000
-    connect host: 'localhost', (err, ssh) ->
-      mecano.mkdir
+    mecano.mkdir
+      ssh: ssh
+      destination: "#{scratch}/remove_dir"
+    , (err, created) ->
+      return next err if err
+      mecano.remove
         ssh: ssh
         destination: "#{scratch}/remove_dir"
-      , (err, created) ->
+      , (err, removed) ->
         return next err if err
+        removed.should.eql 1
         mecano.remove
           ssh: ssh
           destination: "#{scratch}/remove_dir"
         , (err, removed) ->
           return next err if err
-          removed.should.eql 1
-          connect host: 'localhost', (err, ssh) ->
-            mecano.remove
-              ssh: ssh
-              destination: "#{scratch}/remove_dir"
-            , (err, removed) ->
-              return next err if err
-              removed.should.eql 0
-              next()
+          removed.should.eql 0
+          next()
 
