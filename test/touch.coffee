@@ -20,3 +20,19 @@ describe 'touch', ->
         content.should.eql ''
         next()
 
+  they 'an existing file', (ssh, next) ->
+    mecano.touch
+      ssh: ssh
+      destination: "#{scratch}/a_file"
+    , (err, touched) ->
+      return next err if err
+      touched.should.eql 1
+      mecano.touch
+        ssh: ssh
+        destination: "#{scratch}/a_file"
+      , (err, touched) ->
+        return next err if err
+        touched.should.eql 0
+        next()
+      
+

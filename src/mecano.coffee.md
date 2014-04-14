@@ -2085,7 +2085,7 @@ Create a empty file if it does not yet exists.
           options.log? "Check if exists: #{destination}"
           fs.exists ssh, destination, (err, exists) ->
             return next err if err
-            return next if exists
+            return next() if exists
             options.source = null
             options.content = ''
             options.log? "Create a new empty file"
