@@ -2223,6 +2223,7 @@ Write a file or a portion of an existing file.
 *   `content`       Text to be written, an alternative to source which reference a file.   
 *   `destination`   File path where to write content to.   
 *   `diff`          Print diff information, pass the result of [jsdiff.diffLines][diffLines] as argument if a function, default to true.   
+*   `eof`           Ensure the file ends with this charactere sequence, special values are 'windows', 'mac', 'unix' and 'unicode' (respectively "\r\n", "\r", "\n", "\u2028"), will be auto-detected if "true", default to false or "\n" if "true" and not detected.   
 *   `from`          Replace from after this marker, a string or a regular expression.   
 *   `gid`           File group name or group id.   
 *   `local_source`  Treat the source as local instead of remote, only apply with "ssh" option.   
@@ -2347,6 +2348,15 @@ mecano.write
           return next new Error 'Missing destination' unless options.destination
           options.content = options.content.toString() if options.content and Buffer.isBuffer options.content
           options.diff ?= options.diff or !!options.stdout
+          switch options.eof
+            when 'unix'
+              options.eof = "\n"
+            when 'mac'
+              options.eof = "\r"
+            when 'windows'
+              options.eof = "\r\n"
+            when 'unicode'
+              options.eof = "\u2028"
           destination  = null
           destinationHash = null
           content = null
@@ -2429,7 +2439,7 @@ mecano.write
               return next err
             do_replace_partial()
           do_replace_partial = ->
-            return do_diff() unless write.length
+            return do_eof() unless write.length
             for opts in write
               if opts.match
                 if opts.match instanceof RegExp
@@ -2463,6 +2473,19 @@ mecano.write
                 from = if opts.from then content.indexOf(opts.from) + opts.from.length else 0
                 to = if opts.to then content.indexOf(opts.to) else content.length
                 content = content.substr(0, from) + opts.replace + content.substr(to)
+            do_eof()
+          do_eof = ->
+            return do_diff() unless options.eof?
+            if options.eof is true
+              for char, i in content
+                if char is '\r'
+                  options.eof = if content[i+1] is '\n' then '\r\n' else char
+                  break
+                if char is '\n' or char is '\u2028'
+                  options.eof = char
+                  break;
+              options.eof = '\n' if options.eof is true
+            content += options.eof unless misc.string.endsWith content, options.eof
             do_diff()
           do_diff = ->
             return do_ownership() if destinationHash is misc.string.hash content

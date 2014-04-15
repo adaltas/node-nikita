@@ -1,5 +1,4 @@
 
-fs = require 'fs'
 should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
 test = require './test'
@@ -785,6 +784,31 @@ describe 'write', ->
         return next err if err
         data.should.eql [ '1 + some content\n' ]
         next err
+
+  describe 'eof', ->
+
+    they 'auto-detected', (ssh, next) ->
+      mecano.write
+        content: 'this is\r\nsome content'
+        destination: "#{scratch}/file"
+        eof: true
+      , (err) ->
+        return next err if err
+        fs.readFile ssh, "#{scratch}/file", (err, content) ->
+          content.toString().should.eql 'this is\r\nsome content\r\n'
+          next()
+
+    they 'not detected', (ssh, next) ->
+      mecano.write
+        content: 'this is some content'
+        destination: "#{scratch}/file"
+        eof: true
+      , (err) ->
+        return next err if err
+        fs.readFile ssh, "#{scratch}/file", (err, content) ->
+          content.toString().should.eql 'this is some content\n'
+          next()
+
 
 
 
