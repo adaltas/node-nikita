@@ -591,8 +591,8 @@ misc = module.exports =
         options.not_if_exists[i] = options.destination if v is true and options.destination
       options.mode ?= options.chmod if options.chmod
       connection = ->
-        return next() unless options.ssh
-        return next() if options.ssh._host
+        return source() unless options.ssh
+        return source() if options.ssh._host
         connect options.ssh, (err, ssh) ->
           return next err if err
           options.ssh = ssh
@@ -605,6 +605,7 @@ misc = module.exports =
           destination()
       destination = ->
         return mode() unless options.destination?
+        return mode() unless typeof options.destination is 'string' # destination is a function
         return mode() if /^\w+:/.test options.source # skip url
         tilde options.destination, (destination) ->
           options.destination = destination
