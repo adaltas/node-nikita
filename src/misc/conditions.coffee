@@ -1,6 +1,6 @@
 
 each = require 'each'
-misc = require './misc'
+misc = require './index'
 exec = require 'ssh2-exec'
 fs = require 'ssh2-fs'
 

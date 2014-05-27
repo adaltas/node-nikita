@@ -17,10 +17,10 @@ common API with flexible options.
     pad = require 'pad'
     diff = require 'diff'
     {EventEmitter} = require 'events'
-    conditions = require './conditions'
     misc = require './misc'
-    child = require './child'
-    curl = require './curl'
+    conditions = require './misc/conditions'
+    child = require './misc/child'
+    curl = require './misc/curl'
 
 Functions include "copy", "download", "exec", "extract", "git", "link", "mkdir", "move", "remove", "render", "service", "write". They all share common usages and philosophies:
 
