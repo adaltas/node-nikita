@@ -2261,7 +2261,7 @@ the "binary" option.
             cmd += " -M" unless options.home
             cmd += " -d #{options.home}" if options.home
             cmd += " -s #{options.shell}" if options.shell
-            cmd += " -c #{options.comment}" if options.comment
+            cmd += " -c #{JSON.stringify options.comment}" if options.comment
             cmd += " -u #{options.uid}" if options.uid
             cmd += " -g #{options.gid}" if options.gid
             cmd += " #{options.username}"
