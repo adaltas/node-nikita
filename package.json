@@ -20,6 +20,7 @@
     "each": "latest",
     "ftp": "latest",
     "ini": "latest",
+    "jsesc": "latest",
     "jsftp": "latest",
     "ldapjs": "latest",
     "request": "latest",

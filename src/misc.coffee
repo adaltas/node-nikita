@@ -12,37 +12,34 @@ rimraf = require 'rimraf'
 ini = require 'ini'
 tilde = require 'tilde-expansion'
 ssh2fs = require 'ssh2-fs'
+jsesc = require 'jsesc'
 
 misc = module.exports = 
+  array:
+    intersect: (array) ->
+      return [] if array is null
+      result = []
+      for item, i in array
+        continue if result.indexOf(item) isnt -1
+        for argument, j in arguments
+          break if argument.indexOf(item) is -1
+        result.push item if j is arguments.length
+      result
   regexp:
     escape: (str) ->
       str.replace /[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"
-  string:
-    ###
-    `string.hash(file, [algorithm], callback)`
-    ------------------------------------------
-    Output the hash of a supplied string in hexadecimal 
-    form. The default algorithm to compute the hash is md5.
-    ###
-    hash: (data, algorithm) ->
-      if arguments.length is 1
-        algorithm = 'md5'
-      crypto.createHash(algorithm).update(data).digest('hex')
-    repeat: (str, l) ->
-      Array(l+1).join str
-    ###
-    `string.endsWith(search, [position])`
-    -------------------------------------
-    Determines whether a string ends with the characters of another string, 
-    returning true or false as appropriate.   
-    This method has been added to the ECMAScript 6 specification and its code 
-    was borrowed from [Mozilla](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith)
-    ###
-    endsWith: (str, search, position) ->
-      position = position or str.length
-      position = position - search.length
-      lastIndex = str.lastIndexOf search
-      return lastIndex isnt -1 and lastIndex is position
+  object:
+    equals: (obj1, obj2, keys) ->
+      keys1 = Object.keys obj1
+      keys2 = Object.keys obj2
+      if keys
+        keys1 = keys1.filter (k) -> keys.indexOf(k) isnt -1
+        keys2 = keys2.filter (k) -> keys.indexOf(k) isnt -1
+      else keys = keys1
+      return false if keys1.length isnt keys2.length
+      for k in keys
+        return false if obj1[k] isnt obj2[k]
+      return true
   path:
     normalize: (location, callback) ->
       tilde location, (location) ->
@@ -56,6 +53,166 @@ misc = module.exports =
           next()
       .on 'end', ->
         callback path.resolve normalized...
+  iptables:
+    # add_properties: ['target', 'protocol', 'dport', 'in-interface', 'out-interface', 'source', 'destination']
+    add_properties: ['-p', '-s', '-d', '-j', '-g', '-i', '-o', '-f']
+    # modify_properties: ['state', 'comment']
+    modify_properties: [
+      '-c', 'state|--state', 'comment|--comment'
+      'tcp|--source-port', 'tcp|--sport', 'tcp|--destination-port', 'tcp|--dport', 'tcp|--tcp-flags', 'tcp|--syn', 'tcp|--tcp-option'
+      'udp|--source-port', 'udp|--sport', 'udp|--destination-port', 'udp|--dport']
+    commands: # Used to compute rulenum
+      '-A': ['chain']
+      '-D': ['chain']
+      '-I': ['chain']
+      '-R': ['chain']
+      '-P': ['chain', 'target']
+      '-L': true, '-S': true, '-F': true, '-Z': true, '-N': true, '-X': true, '-E': true
+    parameters: ['-p', '-s', '-d', '-j', '-g', '-i', '-o', '-f', '-c']
+    parameters_inverted:
+      '--protocol': '-p', '--source': '-s', '--destination': '-d', '--jump': '-j'
+      '--goto': '-g', '--in-interface': '-i', '--out-interface': '-o', 
+      '--fragment': '-f', '--set-counters': '-c'
+    protocols:
+      tcp: ['--source-port', '--sport', '--destination-port', '--dport', '--tcp-flags', '--syn', '--tcp-option']
+      udp: ['--source-port', '--sport', '--destination-port', '--dport']
+      udplite: []
+      icmp: []
+      esp: []
+      ah: []
+      sctp: []
+      all: []
+    modules:
+      state: ['--state']
+      comment: ['--comment']
+    cmd_args: (cmd, rule) ->
+      for k, v of rule
+        continue if ['chain', 'rulenum'].indexOf(k) isnt -1
+        if match = /^([\w]+)\|([-\w]+)$/.exec k
+          module = match[1]
+          arg = match[2]
+          cmd += " -m #{module}"
+          cmd += " #{arg} #{v}"
+        else
+          cmd += " #{k} #{v}"
+      cmd
+    cmd_modify: (rule) ->
+      rule.rulenum ?= 1
+      misc.iptables.cmd_args "iptables -R #{rule.chain} #{rule.rulenum}", rule
+    cmd_add: (rule) ->
+      rule.rulenum ?= 1
+      misc.iptables.cmd_args "iptables -I #{rule.chain} #{rule.rulenum}", rule
+    cmd: (newrules, oldrules) ->
+      cmds = []
+      for newrule in newrules
+        create = true
+        add_properties = misc.array.intersect misc.iptables.add_properties, Object.keys newrule
+        for oldrule in oldrules
+          if misc.object.equals newrule, oldrule, add_properties
+            create = false
+            if not misc.object.equals newrule, oldrule, misc.iptables.modify_properties
+              cmds.push misc.iptables.cmd_modify newrule
+        if create
+          cmds.push misc.iptables.cmd_add newrule
+      cmds
+    normalize: (rules) ->
+      nrules = []
+      for rule in rules
+        nrule = {}
+        # nrule.rulenum = rule.rulenum or 1
+        # Search for commands and parameters
+        for k, v of rule
+          v = rule[k] = "#{v}" if typeof v is 'number'
+          if k is 'chain' or k is 'rulenum'
+            v = misc.iptables.normalize v if nk is 'rulenum' and typeof v is 'object'
+            nk = k
+          else if k[0..1] is '--'
+            nk = misc.iptables.parameters_inverted[nk]
+          else if k[0] isnt '-'
+            nk = misc.iptables.parameters_inverted["--#{k}"]
+          else if misc.iptables.parameters.indexOf(k) isnt -1
+            nk = k
+          if nk
+            nrule[nk] = v
+            rule[k] = null
+        if protocol = nrule['-p']
+          for k in misc.iptables.protocols[protocol]
+            if rule[k]
+              nrule["#{protocol}|k"] = rule[k]
+              rule[k] = null
+            else if rule[k[2..]]
+              nrule["#{protocol}|#{k}"] = rule[k[2..]]
+              rule[k[2..]] = null
+        for k, v of rule
+          continue unless v
+          k = "--#{k}" unless k[0..2] is '--'
+          for mk, mvs of misc.iptables.modules
+            for mv in mvs
+              if k is mv
+                nrule["#{mk}|#{k}"] = v
+                rule[k] = null
+        for k, v of nrule
+          nrule[k] = jsesc v, quotes: 'double', wrap: true unless /^[A-Za-z0-9_\/-]+$/.test v
+        nrules.push nrule
+      nrules
+
+    ###
+    Parse the result of `iptables -S`
+    ###
+    parse: (stdout) ->
+      rules = []
+      command = null
+      command_index = 1
+      for line in stdout.split /\r\n|[\n\r\u0085\u2028\u2029]/g
+        command_index++
+        rule = {}
+        i = 0
+        key = ''
+        value = ''
+        module = null
+        while i <= line.length
+          char = line[i]
+          forceflush = i is line.length
+          newarg = (i is 0 and char is '-') or line[(i-1)..i] is ' -'
+          if newarg or forceflush
+            if value
+              value = value.trim()
+              if key is '-m'
+                module = value
+              else
+                key = "#{module}|#{key}" if module
+                rule[key] = value
+              # First key is a command
+              if misc.iptables.commands[key]
+                if key isnt command
+                  command = key
+                  command_index = 1
+                # Determine rule number
+                rule.rulenum = command_index
+                if Array.isArray misc.iptables.commands[key]
+                  for v, j in value.split ' '
+                    rule[misc.iptables.commands[key][j]] = v
+              key = ''
+              value = ''
+              break if forceflush
+            key += char
+            while (char = line[++i]) isnt ' '
+              key += char
+            if misc.iptables.parameters.indexOf(key) isnt -1
+              module = null
+            continue
+          if char is '"'
+            while (char = line[++i]) isnt '"'
+              value += char
+            i++
+            continue
+          while (char = line[++i]) isnt '-' and i < line.length
+            process.exit() unless char
+            value += char
+          # value += char
+          # i++
+        rules.push rule
+      rules
   file:
     copyFile: (ssh, source, destination, callback) ->
       s = (ssh, callback) ->
@@ -195,9 +352,35 @@ misc = module.exports =
         child = exec ssh, "rm -rdf #{path}"
         child.on 'exit', (code) ->
           callback null, code
+  string:
+    ###
+    `string.hash(file, [algorithm], callback)`
+    ------------------------------------------
+    Output the hash of a supplied string in hexadecimal 
+    form. The default algorithm to compute the hash is md5.
+    ###
+    hash: (data, algorithm) ->
+      if arguments.length is 1
+        algorithm = 'md5'
+      crypto.createHash(algorithm).update(data).digest('hex')
+    repeat: (str, l) ->
+      Array(l+1).join str
+    ###
+    `string.endsWith(search, [position])`
+    -------------------------------------
+    Determines whether a string ends with the characters of another string, 
+    returning true or false as appropriate.   
+    This method has been added to the ECMAScript 6 specification and its code 
+    was borrowed from [Mozilla](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith)
+    ###
+    endsWith: (str, search, position) ->
+      position = position or str.length
+      position = position - search.length
+      lastIndex = str.lastIndexOf search
+      return lastIndex isnt -1 and lastIndex is position
   ssh:
     ###
-    passwd(sftp, [user], callback)
+    passwd(ssh, [user], callback)
     ----------------------
     Return information present in '/etc/passwd' and cache the 
     result in the provided ssh instance as "passwd".
@@ -239,7 +422,7 @@ misc = module.exports =
         ssh.passwd = passwd
         callback null, passwd
     ###
-    group(sftp, [group], callback)
+    group(ssh, [group], callback)
     ----------------------
     Return information present in '/etc/group' and cache the 
     result in the provided ssh instance as "group".
@@ -498,7 +681,8 @@ misc = module.exports =
         isUndefined = typeof v is 'undefined'
         isBoolean = typeof v is 'boolean'
         isNull = v is null
-        isObj = typeof v is 'object' and not isNull
+        isArray = Array.isArray v
+        isObj = typeof v is 'object' and not isNull and not isArray
         if isObj
           if depth is 0
             out += "#{prefix}[#{k}]\n"
@@ -509,7 +693,12 @@ misc = module.exports =
             out += misc.ini.stringify_square_then_curly v, depth + 1, options
             out += "#{prefix}}\n"
         else 
-          if isNull
+          if isArray
+            out = []
+            for element in v
+              out.push "#{prefix}#{k}#{options.separator}#{element}"
+            out = out.join '\n'
+          else if isNull
             out += "#{prefix}#{k}#{options.separator}null"
           else if isBoolean
             out += "#{prefix}#{k}#{options.separator}#{if v then 'true' else 'false'}"
