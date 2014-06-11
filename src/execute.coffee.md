@@ -9,7 +9,8 @@ Run a command locally or with ssh if `host` or `ssh` is provided.
     conditions = require './misc/conditions'
     child = require './misc/child'
 
-`options`           Command options include:
+## Options
+
 *   `cmd`           String, Object or array; Command to execute.
 *   `code`          Expected code(s) returned by the command, int or array of int, default to 0.
 *   `code_skipped`  Expected code(s) returned by the command if it has no effect, executed will not be incremented, int or array of int.
@@ -23,13 +24,20 @@ Run a command locally or with ssh if `host` or `ssh` is provided.
 *   `stderr`        Writable Stream in which commands error will be piped.
 *   `uid`           Unix user id.
 
-`callback`          Received parameters are:
+## Callback parameters
+
 *   `err`           Error if any enriched with the "code" property.
 *   `executed`      Number of executed commandes.
 *   `stdout`        Stdout value(s) unless `stdout` option is provided.
 *   `stderr`        Stderr value(s) unless `stderr` option is provided.
 
 ## Create a user over SSH:
+
+This example create a user on a remote server with the `useradd` command. It
+print the error message if the command failed or an information message.
+
+The "code_skipped" option indicates that the command is considered successfull
+but without any impact if it exits with a status equal to "9".
 
 ```javascript
 mecano.execute({
@@ -46,6 +54,8 @@ mecano.execute({
   }
 })
 ```
+
+## Implementation
 
     module.exports = (goptions, options, callback) ->
       [goptions, options, callback] = misc.args arguments
