@@ -1,6 +1,5 @@
 
-`exec` `execute([goptions], options, callback)`
------------------------------------------------
+# `exec` `execute([goptions], options, callback)`
 
 Run a command locally or with ssh if `host` or `ssh` is provided.
 
@@ -29,6 +28,24 @@ Run a command locally or with ssh if `host` or `ssh` is provided.
 *   `executed`      Number of executed commandes.
 *   `stdout`        Stdout value(s) unless `stdout` option is provided.
 *   `stderr`        Stderr value(s) unless `stderr` option is provided.
+
+## Create a user over SSH:
+
+```javascript
+mecano.execute({
+  ssh: ssh
+  cmd: "useradd myfriend"
+  code_skipped: 9
+}, function(err, created, stdout, stderr){
+  if(err){
+    console.log(err.message);
+  }else if(created){
+    console.log("User created");
+  }else{
+    console.log("User already exists");
+  }
+})
+```
 
     module.exports = (goptions, options, callback) ->
       [goptions, options, callback] = misc.args arguments
