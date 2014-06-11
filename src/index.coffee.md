@@ -20,7 +20,6 @@ Here's the list of available functions:
       execute: require './execute'
       extract: require './extract'
       git: require './git'
-      group: require './group'
       ini: require './ini'
       iptables: require './iptables'
       krb5_ktadd: require './krb5_ktadd'

@@ -18,6 +18,9 @@ describe 'misc', ->
 
   describe 'string', ->
 
+    it 'escapeshellarg', ->
+      misc.string.escapeshellarg("try to 'parse this").should.eql "'try to \\'parse this'"
+
     it 'hash', ->
       md5 = misc.string.hash "hello"
       md5.should.eql '5d41402abc4b2a76b9719d911017c592'

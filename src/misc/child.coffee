@@ -1,13 +1,14 @@
 
 {EventEmitter} = require 'events'
+
 count = 0
-module.exports = (mecano) ->
+module.exports = () ->
   child = new EventEmitter
   child.todos = []
+  mecano = require '../index'
   for k, v of mecano
     do (k) ->
       child[k] = (options, callback) ->
-        # console.log 'call', k, arguments
         child.todos.push [k, arguments]
         child
   child.end = (err, modified) ->

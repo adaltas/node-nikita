@@ -353,6 +353,10 @@ misc = module.exports =
         child.on 'exit', (code) ->
           callback null, code
   string:
+    escapeshellarg: (arg) ->
+      result = arg.replace /[^\\]'/g, (match) ->
+        match.slice(0, 1) + '\\\''
+      "'#{result}'"
     ###
     `string.hash(file, [algorithm], callback)`
     ------------------------------------------
@@ -405,7 +409,8 @@ misc = module.exports =
         return misc.ssh.passwd ssh, (err, users) ->
           return callback err if err
           user = users[username]
-          return callback new Error "User #{username} does not exists" unless user
+          # Dont throw exception, just return undefined
+          # return callback new Error "User #{username} does not exists" unless user
           callback null, user
       callback = username
       username = null
@@ -449,7 +454,8 @@ misc = module.exports =
         return misc.ssh.group ssh, (err, groups) ->
           return err if err
           gid = groups[group]
-          return callback new Error "Group does not exists: #{group}" unless gid
+          # Dont throw exception, just return undefined
+          # return callback new Error "Group does not exists: #{group}" unless gid
           callback null, gid
       callback = group
       group = null
@@ -808,8 +814,9 @@ misc = module.exports =
         return gid() if typeof options.uid is 'number' or /\d+/.test options.uid
         misc.ssh.passwd options.ssh, options.uid, (err, user) ->
           return next err if err
-          options.uid = user.uid
-          options.gid ?= user.gid
+          if user
+            options.uid = user.uid
+            options.gid ?= user.gid
           gid()
       gid = ->
         # gid=`getent group $GROUP | cut -d: -f3`
