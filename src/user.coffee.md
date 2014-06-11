@@ -65,7 +65,7 @@ an output similar to "uid=490(hive) gid=10(wheel) groups=10(wheel)".
         .parallel(goptions.parallel)
         .on 'item', (options, next) ->
           return next new Error "Option 'name' is required" unless options.name
-          options.comment ?= ""
+          # options.comment ?= ""
           # options.home ?= "/home/#{options.name}"
           # options.shell ?= "/sbin/nologin"
           options.shell = "/sbin/nologin" if options.shell is false
@@ -135,7 +135,7 @@ an output similar to "uid=490(hive) gid=10(wheel) groups=10(wheel)".
             cmd = 'usermod'
             cmd += " -d #{options.home}" if options.home
             cmd += " -s #{options.shell}" if options.shell
-            cmd += " -c #{misc.string.escapeshellarg options.comment}" if options.comment
+            cmd += " -c #{misc.string.escapeshellarg options.comment}" if options.comment?
             cmd += " -g #{options.gid}" if options.gid
             cmd += " -G #{options.groups.join ','}" if options.groups
             cmd += " -u #{options.uid}" if options.uid
