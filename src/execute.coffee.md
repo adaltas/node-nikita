@@ -14,6 +14,7 @@ Run a command locally or with ssh if `host` or `ssh` is provided.
 *   `cmd`           String, Object or array; Command to execute.
 *   `code`          Expected code(s) returned by the command, int or array of int, default to 0.
 *   `code_skipped`  Expected code(s) returned by the command if it has no effect, executed will not be incremented, int or array of int.
+*   `trap_on_error` Exit immediately  if a commands exits with a non-zero status.   
 *   `cwd`           Current working directory.
 *   `env`           Environment variables, default to `process.env`.
 *   `gid`           Unix group id.
@@ -59,6 +60,8 @@ Run a command locally or with ssh if `host` or `ssh` is provided.
           options.code = [options.code] unless Array.isArray options.code
           options.code_skipped ?= []
           options.code_skipped = [options.code_skipped] unless Array.isArray options.code_skipped
+          if options.trap_on_error
+            options.cmd = "set -e\n#{options.cmd}"
           # Start real work
           cmd = () ->
             options.log? "Execute: #{options.cmd}"

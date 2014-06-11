@@ -6,7 +6,7 @@ mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require
 test = require './test'
 they = require 'ssh2-they'
 
-describe 'exec', ->
+describe 'execute', ->
 
   scratch = test.scratch @
 
@@ -112,4 +112,26 @@ describe 'exec', ->
       return next err if err
       executed.should.eql 0
       next()
+
+  they 'trap on error', (ssh, next) ->
+    mecano.execute
+      ssh: ssh
+      cmd: """
+      ls -l /does/not/exist
+      echo 'ok'
+      """
+    , (err) ->
+      should.not.exists err
+      mecano.execute
+        ssh: ssh
+        cmd: """
+        ls -l /does/not/exist
+        echo 'ok'
+        """
+        trap_on_error: true
+      , (err) ->
+        should.exists err
+        err.code.should.eql 1
+        next()
+
 
