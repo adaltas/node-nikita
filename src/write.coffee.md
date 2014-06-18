@@ -1,6 +1,5 @@
 
-`write([goptions], options, callback)`
---------------------------------------
+# `write([goptions], options, callback)`
 
 Write a file or a portion of an existing file.
 
@@ -17,7 +16,8 @@ Write a file or a portion of an existing file.
     chown = require './chown'
     chmod = require './chmod'
 
-`options`           Command options include:
+## Options
+
 *   `append`        Append the content to the destination file. If destination does not exist, the file will be created.
 *   `backup`        Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.
 *   `content`       Text to be written, an alternative to source which reference a file.
@@ -37,23 +37,25 @@ Write a file or a portion of an existing file.
 *   `uid`           File user name or user id.
 *   `write`         An array containing multiple transformation where a transformation is an object accepting the options `from`, `to`, `match` and `replace`.
 
-`callback`          Received parameters are:
+## Callback parameters
+
 *   `err`           Error object if any.
 *   `written`      Number of written files.
 
-The option "append" allows some advance usages. If "append" is
-null, it will add the `replace` value at the end of the file
-if no match if found and if the value is a string. When used
-conjointly with the `match` and `replace` options, it gets even
-more interesting. If append is a string or a regular expression,
-it will place the "replace" string just after the match. An
-append string will be converted to a regular expression such as
-"test" will end up converted as the string "test" is similar to the
-RegExp /^.*test.*$/mg.
+## More about the `append` option
 
-[diffLines]: https://github.com/kpdecker/jsdiff
+The `append` option allows more advance usages. If `append` is "null", it will
+add the value of the "replace" option at the end of the file when no match
+is found and when the value is a string.
 
-Example replacing part of a file using from and to markers:
+Using the `append` option conjointly with the `match` and `replace` options gets
+even more interesting. If append is a string or a regular expression, it will
+place the value of the "replace" option just after the match. Internally, a
+string value will be converted to a regular expression. For example the string
+"test" will end up converted to the regular expression `/^.*test.*$/mg`.
+
+## Replacing part of a file using from and to markers
+
 ```coffee
 mecano.write
   content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
@@ -65,7 +67,8 @@ mecano.write
   # here we are\n# from\nmy friend\n# to\nyou coquin
 ```
 
-Example replacing a matched line by a string:
+## Replacing a matched line by a string
+
 ```coffee
 mecano.write
   content: 'email=david(at)adaltas(dot)com\nusername=root'
@@ -76,7 +79,8 @@ mecano.write
   # email=david(at)adaltas(dot)com\nusername=david (was root)
 ```
 
-Example replacing part of a file using a regular expression:
+## Replacing part of a file using a regular expression
+
 ```coffee
 mecano.write
   content: 'here we are\nlets try to replace that one\nyou coquin'
@@ -87,7 +91,8 @@ mecano.write
   # here we are\nmy friend, lets try\nyou coquin
 ```
 
-Example replacing with the global and multiple lines options:
+## Replacing with the global and multiple lines options
+
 ```coffee
 mecano.write
   content: '#A config file\n#property=30\nproperty=10\n#End of Config'
@@ -98,7 +103,8 @@ mecano.write
   '# A config file\n#property=30\nproperty=50\n#End of Config'
 ```
 
-Example appending a line after each line containing "property":
+## Appending a line after each line containing "property"
+
 ```coffee
 mecano.write
   content: '#A config file\n#property=30\nproperty=10\n#End of Config'
@@ -110,7 +116,8 @@ mecano.write
   '# A config file\n#property=30\n# comment\nproperty=50\n# comment\n#End of Config'
 ```
 
-Example with multiple transformations:
+## Multiple transformations
+
 ```coffee
 mecano.write
   content: 'username: me\nemail: my@email\nfriends: you'
@@ -362,3 +369,7 @@ mecano.write
         .on 'both', (err) ->
           finish err, written
       result
+
+[diffLines]: https://github.com/kpdecker/jsdiff
+
+
