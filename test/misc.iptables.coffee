@@ -22,18 +22,38 @@ describe 'iptables', ->
     ], [
       { chain: 'INPUT', '-j': 'ACCEPT', '-i': 'eth1', 'comment|--comment': '"krb5kdc daemon"' }
     ]).should.eql [
-      "iptables -R INPUT 1 -j ACCEPT -i eth1 -m comment --comment \"krb5kdc daemon\""
+      "iptables -R INPUT 5 -i eth1 -m comment --comment \"krb5kdc daemon\" -j ACCEPT"
     ]
 
-  it 'normalize', ->
-    iptables.normalize([
-      # Use shortcut for protocol
+  it 'normalize with shortcut for protocol', ->
+    iptables.normalize([ # Nothing to do 
       { chain: 'INPUT', jump: 'ACCEPT', dport: 22, '-p': 'tcp' }
-      # Use module arguments
-      { chain: 'INPUT', jump: 'ACCEPT', dport: 88, protocol: 'udp', state: 'NEW', comment: 'krb5kdc daemon' }
     ]).should.eql [
       { chain: 'INPUT', '-j': 'ACCEPT', '-p': 'tcp', 'tcp|--dport': '22' }
+    ]
+  it 'normalize with full name for protocol', ->
+    iptables.normalize([
+      { chain: 'INPUT', jump: 'ACCEPT', dport: 22, protocol: 'tcp' }
+    ]).should.eql [
+      { chain: 'INPUT', '-j': 'ACCEPT', '-p': 'tcp', 'tcp|--dport': '22' }
+    ]
+  it 'normalize with full option for protocol', ->
+    iptables.normalize([
+      { chain: 'INPUT', jump: 'ACCEPT', dport: 22, '--protocol': 'tcp' }
+    ]).should.eql [
+      { chain: 'INPUT', '-j': 'ACCEPT', '-p': 'tcp', 'tcp|--dport': '22' }
+    ]
+  it 'normalize with full name without its module prefix (see state and comment)', ->
+    iptables.normalize([
+      { chain: 'INPUT', jump: 'ACCEPT', dport: 88, '-p': 'udp', state: 'NEW', comment: 'krb5kdc daemon' }
+    ]).should.eql [
       { chain: 'INPUT', '-j': 'ACCEPT', '-p': 'udp', 'udp|--dport': '88', 'state|--state': 'NEW', 'comment|--comment': '"krb5kdc daemon"' }
+    ]
+  it 'normalize with full option without its module prefix (comment)', ->
+    iptables.normalize([
+      { chain: 'INPUT', jump: 'ACCEPT', dport: 88, '-p': 'tcp', '--comment': 'My comment' }
+    ]).should.eql [
+      { chain: 'INPUT', '-j': 'ACCEPT', '-p': 'tcp', 'tcp|--dport': '88', 'comment|--comment': '"My comment"' }
     ]
 
   it 'parse', ->
@@ -62,4 +82,28 @@ describe 'iptables', ->
       { rulenum: 7, '-A': 'INPUT', chain: 'INPUT', '-j': 'REJECT', '--reject-with': 'icmphostprohibited' }
       { rulenum: 8, '-A': 'FORWARD', chain: 'FORWARD', '-j': 'REJECT', '--reject-with': 'icmphostprohibited' }
     ]
+
+  it 'parse empty lines', ->
+    iptables.parse('\n-P INPUT ACCEPT\n').should.eql [ { rulenum: 1, '-P': 'INPUT ACCEPT', chain: 'INPUT', target: 'ACCEPT' } ]
+
+  it 'parse and detect a change', ->
+    oldrules = iptables.parse """
+    -P INPUT ACCEPT
+    -P FORWARD ACCEPT
+    -P OUTPUT ACCEPT
+    -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT 
+    -A INPUT -p icmp -j ACCEPT 
+    -A INPUT -i lo -j ACCEPT 
+    -A INPUT -p tcp -m tcp --dport 88 -m state --state NEW -m comment --comment "krb5kdc daemon" -j ACCEPT 
+    -A INPUT -p udp -m udp --dport 88 -m state --state NEW -m comment --comment "krb5kdc daemon" -j ACCEPT 
+    -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT 
+    -A INPUT -j REJECT --reject-with icmp-host-prohibited 
+    -A FORWARD -j REJECT --reject-with icmp-host-prohibited
+    """
+    iptables.cmd(oldrules, iptables.normalize [
+      { chain: 'INPUT', jump: 'ACCEPT', dport: 88, '-p': 'tcp', '--comment': 'krb5kdc daemon' }
+    ]).should.eql [ 'iptables -R INPUT 4 -p tcp -m tcp --dport 88 -m state --state NEW -m comment --comment "krb5kdc daemon" -j ACCEPT' ]
+
+
+
 
