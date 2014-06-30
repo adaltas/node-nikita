@@ -25,6 +25,7 @@
     "ldapjs": "latest",
     "request": "latest",
     "rimraf": "latest",
+    "regexp-quote": "latest",
     "ssh2-connect": "latest",
     "ssh2-exec": "latest",
     "ssh2-fs": "latest",

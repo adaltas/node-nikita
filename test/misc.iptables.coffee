@@ -101,8 +101,29 @@ describe 'iptables', ->
     -A FORWARD -j REJECT --reject-with icmp-host-prohibited
     """
     iptables.cmd(oldrules, iptables.normalize [
-      { chain: 'INPUT', jump: 'ACCEPT', dport: 88, '-p': 'tcp', '--comment': 'krb5kdc daemon' }
+      chain: 'INPUT', jump: 'ACCEPT', dport: 88, '-p': 'tcp', '--comment': 'krb5kdc daemon'
     ]).should.eql [ 'iptables -R INPUT 4 -p tcp -m tcp --dport 88 -m state --state NEW -m comment --comment "krb5kdc daemon" -j ACCEPT' ]
+
+
+  it 'compare minus sign (IPTable silently remove minus sign)', ->
+    oldrules = iptables.parse """
+    -A INPUT -p tcp -m tcp --dport 389 -m state --state NEW -m comment --comment "LDAP (non-secured)" -j ACCEPT 
+    -A INPUT -p tcp -m tcp --dport 636 -m state --state NEW -m comment --comment "LDAP (secured)" -j ACCEPT
+    """
+    iptables.cmd(oldrules, iptables.normalize [
+      { chain: 'INPUT', jump: 'ACCEPT', dport: 389, protocol: 'tcp', state: 'NEW', comment: "LDAP (non-secured)" }
+      { chain: 'INPUT', jump: 'ACCEPT', dport: 636, protocol: 'tcp', state: 'NEW', comment: "LDAP (secured)" }
+    ]).should.eql []
+
+  it 'compare comment without any special char', ->
+    oldrules = iptables.parse """
+    -A INPUT -p udp -m udp --dport 53 -m state --state NEW -m comment --comment "Named" -j ACCEPT 
+    -A INPUT -p tcp -m tcp --dport 53 -m state --state NEW -m comment --comment "Named" -j ACCEPT 
+    """
+    iptables.cmd(oldrules, iptables.normalize [
+      { chain: 'INPUT', jump: 'ACCEPT', dport: 53, protocol: 'tcp', state: 'NEW', comment: "Named" }
+      { chain: 'INPUT', jump: 'ACCEPT', dport: 53, protocol: 'udp', state: 'NEW', comment: "Named" }
+    ]).should.eql []
 
 
 

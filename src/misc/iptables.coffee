@@ -4,7 +4,9 @@ jsesc = require 'jsesc'
 
 module.exports = iptables = 
   # add_properties: ['target', 'protocol', 'dport', 'in-interface', 'out-interface', 'source', 'destination']
-  add_properties: ['-p', '-s', '-d', '-g', '-i', '-o', '-f', 'tcp|--dport'] # , '-j'
+  add_properties: [
+    '-p', '-s', '-d', '-g', '-i', '-o', '-f',
+    'tcp|--dport', 'udp|--dport'] # , '-j'
   # modify_properties: ['state', 'comment']
   modify_properties: [
     '-c', 'state|--state', 'comment|--comment'
@@ -114,7 +116,10 @@ module.exports = iptables =
               newrule["#{mk}|#{k}"] = v
               rule[k] = null
       for k, v of newrule
-        newrule[k] = jsesc v, quotes: 'double', wrap: true unless /^[A-Za-z0-9_\/-]+$/.test v
+        # IPTables silently remove minus signs
+        v = v.replace '-', '' if /\-/.test v
+        v = jsesc v, quotes: 'double', wrap: true if k is 'comment|--comment' #  unless /^[A-Za-z0-9_\/-]+$/.test v
+        newrule[k] = v
       newrules.push newrule
     newrules
 

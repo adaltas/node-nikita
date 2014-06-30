@@ -233,7 +233,7 @@ describe 'write', ->
 
   describe 'match & replace', ->
   
-    they 'with match as a string', (ssh, next) ->
+    they 'with match a line as a string', (ssh, next) ->
       mecano.write
         ssh: ssh
         match: 'lets try to replace that one'
@@ -246,6 +246,21 @@ describe 'write', ->
         fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
           return next err if err
           content.should.eql 'here we are\nmy friend\nyou coquin'
+          next()
+  
+    they 'with match a word as a string', (ssh, next) ->
+      mecano.write
+        ssh: ssh
+        match: 'replace'
+        content: 'replace that one\nand\nreplace this one\nand not this one'
+        replace: 'switch'
+        destination: "#{scratch}/fromto.md"
+      , (err, written) ->
+        return next err if err
+        written.should.eql 1
+        fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
+          return next err if err
+          content.should.eql 'switch that one\nand\nswitch this one\nand not this one'
           next()
   
     they 'with match as a regular expression', (ssh, next) ->

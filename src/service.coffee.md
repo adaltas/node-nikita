@@ -31,13 +31,18 @@ Install a service. For now, only yum over SSH.
 
     module.exports = (goptions, options, callback) ->
       [goptions, options, callback] = misc.args arguments, parallel: 1
-      installed = updates = null
+      result = child()
+      finish = (err, gmodified, installed, updates) ->
+        callback err, gmodified, installed, updates if callback
+        result.end err, gmodified, installed, updates
       misc.options options, (err, options) ->
         return callback err if err
         serviced = 0
+        installed = updates = null
         each( options )
         .parallel(goptions.parallel)
         .on 'item', (options, next) ->
+          options.log? "Mecano `service`"
           # Validate parameters
           # return next new Error 'Missing service name' unless options.name
           return next new Error 'Restricted to Yum over SSH' unless options.ssh
@@ -51,17 +56,15 @@ Install a service. For now, only yum over SSH.
           installed ?= options.installed
           updates ?= options.updates
           # Start real work
-          chkinstalled = ->
+          do_chkinstalled = ->
             # option name and yum_name are optional, skill installation if not present
-            return startuped() unless pkgname
+            return do_startuped() unless pkgname
             cache = ->
-              options.log? "List installed packages"
+              options.log? "Mecano `service: list installed"
               c = if options.cache then '-C' else ''
               execute
                 ssh: options.ssh
-                # cmd: "yum #{c} list installed"
                 cmd: "yum -C list installed"
-                # cmd: "rpm -qa"
                 code_skipped: 1
                 log: options.log
                 stdout: options.stdout
@@ -77,20 +80,11 @@ Install a service. For now, only yum over SSH.
                   installed.push pkg[1] if pkg = /^([^\. ]+?)\./.exec pkg
                 decide()
             decide = ->
-              if installed.indexOf(pkgname) isnt -1 then chkupdates() else install()
+              if installed.indexOf(pkgname) isnt -1 then do_chkupdates() else do_install()
             if installed then decide() else cache()
-            # execute
-            #   ssh: options.ssh
-            #   cmd: "yum list installed | grep ^#{pkgname}\\\\."
-            #   code_skipped: 1
-            #   stdout: options.stdout
-            #   stderr: options.stderr
-            # , (err, installed) ->
-            #   return next err if err
-            #   if installed then updates() else install()
-          chkupdates = ->
+          do_chkupdates = ->
             cache = ->
-              options.log? "List available updates"
+              options.log? "Mecano `service`: list available updates"
               c = if options.cache then '-C' else ''
               execute
                 ssh: options.ssh
@@ -110,12 +104,12 @@ Install a service. For now, only yum over SSH.
                   updates.push pkg[1] if pkg = /^([^\. ]+?)\./.exec pkg
                 decide()
             decide = ->
-              if updates.indexOf(pkgname) isnt -1 then install() else
-                options.log? "No available update"
-                startuped()
+              if updates.indexOf(pkgname) isnt -1 then do_install() else
+                options.log? "Mecano `service`: No available update"
+                do_startuped()
             if updates then decide() else cache()
-          install = ->
-            options.log? "Package installation: #{pkgname}"
+          do_install = ->
+            options.log? "Mecano `service`: install \"#{pkgname}\""
             execute
               ssh: options.ssh
               cmd: "yum install -y #{pkgname}"
@@ -133,10 +127,10 @@ Install a service. For now, only yum over SSH.
               # Those 2 lines seems all wrong
               return next new Error "No package #{pkgname} available." unless succeed
               modified = true if installedIndex isnt -1
-              startuped()
-          startuped = ->
-            return started() unless options.startup?
-            options.log? "List startup services"
+              do_startuped()
+          do_startuped = ->
+            return do_started() unless options.startup?
+            options.log? "Mecano `service`: list startup services"
             execute
               ssh: options.ssh
               cmd: "chkconfig --list #{chkname}"
@@ -149,17 +143,19 @@ Install a service. For now, only yum over SSH.
               # Invalid service name return code is 0 and message in stderr start by error
               return next new Error "Invalid chkconfig name #{chkname}" if /^error/.test stderr
               current_startup = ''
+              # current_startup = []
               if registered
                 for c in stdout.split(' ').pop().trim().split '\t'
                   [level, status] = c.split ':'
                   current_startup += level if ['on', 'marche'].indexOf(status) > -1
-              return started() if options.startup is current_startup
+                  # current_startup.push level if ['on', 'marche'].indexOf(status) > -1
+              return do_started() if options.startup is current_startup#.join ','
               modified = true
               if options.startup?
               then startup_add()
               else startup_del()
           startup_add = ->
-            options.log? "Add startup service"
+            options.log? "Mecano `service`: add startup service"
             startup_on = startup_off = ''
             for i in [0...6]
               if options.startup.indexOf(i) isnt -1
@@ -176,9 +172,9 @@ Install a service. For now, only yum over SSH.
               stderr: options.stderr
             , (err) ->
               return next err if err
-              started()
+              do_started()
           startup_del = ->
-            options.log? "Remove startup service"
+            options.log? "Mecano `service`: delete startup service"
             execute
               ssh: options.ssh
               cmd: "chkconfig --del #{chkname}"
@@ -187,10 +183,11 @@ Install a service. For now, only yum over SSH.
               stderr: options.stderr
             , (err) ->
               return next err if err
-              started()
-          started = ->
-            return action() if ['start', 'stop', 'restart'].indexOf(options.action) is -1
-            options.log? "Check if service #{srvname} is started"
+              do_started()
+          do_started = ->
+            return action() if ['start', 'stop'].indexOf(options.action) is -1
+            return action() if ['restart'].indexOf(options.action) isnt -1
+            options.log? "Mecano `service`: check if started"
             execute
               ssh: options.ssh
               cmd: "service #{srvname} status"
@@ -204,10 +201,10 @@ Install a service. For now, only yum over SSH.
                 return action() unless options.action is 'start'
               else
                 return action() unless options.action is 'stop'
-              finish()
+              do_finish()
           action = ->
-            return finish() unless options.action
-            options.log? "Start/stop the service"
+            return do_finish() unless options.action
+            options.log? "Mecano `service`: #{options.action} service"
             execute
               ssh: options.ssh
               cmd: "service #{srvname} #{options.action}"
@@ -217,10 +214,11 @@ Install a service. For now, only yum over SSH.
             , (err, executed) ->
               return next err if err
               modified = true
-              finish()
-          finish = ->
+              do_finish()
+          do_finish = ->
             serviced++ if modified
             next()
-          conditions.all options, next, chkinstalled
+          conditions.all options, next, do_chkinstalled
         .on 'both', (err) ->
-          callback err, serviced, installed, updates
+          finish err, serviced, installed, updates
+      result

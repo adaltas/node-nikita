@@ -44,6 +44,7 @@ the "binary" option.
         each( options )
         .parallel(goptions.parallel)
         .on 'item', (options, next) ->
+          options.log? "Mecano `upload`"
           conditions.all options, next, ->
             # Start real work
             if options.binary

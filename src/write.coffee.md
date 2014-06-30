@@ -9,6 +9,7 @@ Write a file or a portion of an existing file.
     eco = require 'eco'
     pad = require 'pad'
     diff = require 'diff'
+    quote = require 'regexp-quote'
     misc = require './misc'
     conditions = require './misc/conditions'
     child = require './misc/child'
@@ -52,7 +53,7 @@ Using the `append` option conjointly with the `match` and `replace` options gets
 even more interesting. If append is a string or a regular expression, it will
 place the value of the "replace" option just after the match. Internally, a
 string value will be converted to a regular expression. For example the string
-"test" will end up converted to the regular expression `/^.*test.*$/mg`.
+"test" will end up converted to the regular expression `/test/mg`.
 
 ## Replacing part of a file using from and to markers
 
@@ -148,6 +149,7 @@ mecano.write
         each( options )
         .parallel(goptions.parallel)
         .on 'item', (options, next) ->
+          options.log? "Mecano `write`"
           modified = false
           # Validate parameters
           return next new Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?.length
@@ -241,6 +243,8 @@ mecano.write
             return do_replace_partial() unless options.context?
             try
               content = eco.render content.toString(), options.context
+              if options.skip_empty_lines?
+                content = content.replace(/(\r\n|[\n\r\u0085\u2028\u2029])\s*(\r\n|[\n\r\u0085\u2028\u2029])/g, "$1")
             catch err
               err = new Error err if typeof err is 'string'
               return next err
@@ -249,6 +253,8 @@ mecano.write
             return do_eof() unless write.length
             for opts in write
               if opts.match
+                if typeof opts.match is 'string'
+                  opts.match = RegExp quote(opts.match), 'mg'
                 if opts.match instanceof RegExp
                   if opts.match.test content
                     content = content.replace opts.match, opts.replace
@@ -273,9 +279,10 @@ mecano.write
                     # Did not match, try next one
                     continue
                 else
-                  from = content.indexOf(opts.match)
-                  to = from + opts.match.length
-                  content = content.substr(0, from) + opts.replace + content.substr(to)
+                  return next new Error "Invalid match option"
+                  # from = content.indexOf(opts.match)
+                  # to = from + opts.match.length
+                  # content = content.substr(0, from) + opts.replace + content.substr(to)
               else
                 from = if opts.from then content.indexOf(opts.from) + opts.from.length else 0
                 to = if opts.to then content.indexOf(opts.to) else content.length

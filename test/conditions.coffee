@@ -3,7 +3,7 @@ fs = require 'fs'
 http = require 'http'
 should = require 'should'
 they = require 'ssh2-they'
-conditions = if process.env.MECANO_COV then require '../lib-cov/conditions' else require '../lib/conditions'
+conditions = if process.env.MECANO_COV then require '../lib-cov/conditions' else require '../lib/misc/conditions'
 
 describe 'conditions', ->
 
@@ -48,21 +48,28 @@ describe 'conditions', ->
     they 'should succeed on `succeed` callback', (ssh, next) ->
       conditions.if
         ssh: ssh
-        if: (options, failed, succeed) -> succeed()
+        if: (options, calback) -> calback null, true
         () -> false.should.be.ok
         next
 
     they 'should fail on `failed` callback', (ssh, next) ->
       conditions.if
         ssh: ssh
-        if: (options, failed, succeed) -> failed()
+        if: (options, callback) -> callback null, false
         next
         () -> false.should.be.ok
 
     they 'should pass error object on `failed` callback', (ssh, next) ->
       conditions.if
         ssh: ssh
-        if: (options, failed, succeed) -> failed new Error 'cool'
+        if: (options, callback) -> callback new Error 'cool'
+        (err) -> err.message is 'cool' and next()
+        () -> false.should.be.ok
+
+    they 'call callback with single argument', (ssh, next) ->
+      conditions.if
+        ssh: ssh
+        if: (options, callback) -> callback new Error 'cool'
         (err) -> err.message is 'cool' and next()
         () -> false.should.be.ok
 
@@ -107,21 +114,21 @@ describe 'conditions', ->
     they 'should succeed on `succeed` callback', (ssh, next) ->
       conditions.not_if
         ssh: ssh
-        not_if: (options, failed, succeed) -> succeed()
+        not_if: (options, callback) -> callback null, true
         next
         () -> false.should.be.ok
 
     they 'should fail on `failed` callback', (ssh, next) ->
       conditions.not_if
         ssh: ssh
-        not_if: (options, failed, succeed) -> failed()
+        not_if: (options, callback) -> callback null, false
         () -> false.should.be.ok
         next
 
     they 'should pass error object on `failed` callback', (ssh, next) ->
       conditions.not_if
         ssh: ssh
-        not_if: (options, failed, succeed) -> failed new Error 'cool'
+        not_if: (options, callback) -> callback new Error 'cool'
         (err) -> err.message is 'cool' and next()
         () -> false.should.be.ok
 

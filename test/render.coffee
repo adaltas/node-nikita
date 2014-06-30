@@ -34,6 +34,20 @@ describe 'render', ->
         content.should.eql 'Hello you'
         next()
   
+  it 'skip empty lines', (next) ->
+    destination = "#{scratch}/render.eco"
+    mecano.render
+      content: "Hello\n\n\n<%- @who %>"
+      destination: destination
+      context: who: 'you'
+      skip_empty_lines: true
+    , (err, rendered) ->
+      return next err if err
+      rendered.should.eql 1
+      fs.readFile destination, 'ascii', (err, content) ->
+        content.should.eql 'Hello\nyou'
+        next()
+  
   it 'doesnt increment if destination is same than generated content', (next) ->
     destination = "#{scratch}/render.eco"
     mecano.render

@@ -56,7 +56,7 @@ describe 'execute', ->
       ssh: ssh
       cmd: "chown"
     , (err, executed, stdout, stderr) ->
-      err.message.should.eql 'Invalid exec code 1'
+      err.message.should.eql 'Invalid Exit Code: 1'
       # code defined in array
       mecano.execute
         ssh: ssh

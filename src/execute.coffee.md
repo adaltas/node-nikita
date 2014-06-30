@@ -80,6 +80,7 @@ mecano.execute({
         each( options )
         .parallel(goptions.parallel)
         .on 'item', (options, i, next) ->
+          options.log? "Mecano `execute`"
           # Validate parameters
           options = { cmd: options } if typeof options is 'string'
           return next new Error "Missing cmd: #{options.cmd}" unless options.cmd?
@@ -90,8 +91,8 @@ mecano.execute({
           if options.trap_on_error
             options.cmd = "set -e\n#{options.cmd}"
           # Start real work
-          cmd = () ->
-            options.log? "Execute: #{options.cmd}"
+          conditions.all options, next, ->
+            options.log? "Mecano `execute`: #{options.cmd}"
             run = exec options
             stdout = stderr = []
             if options.stdout
@@ -116,13 +117,16 @@ mecano.execute({
                 if options.stderr
                   run.stderr.unpipe options.stderr
                 if options.code.indexOf(code) is -1 and options.code_skipped.indexOf(code) is -1
-                  err = new Error "Invalid exec code #{code}"
+                  options.log? "Mecano `execute`: invalid exit code \"#{code}\""
+                  err = new Error "Invalid Exit Code: #{code}"
                   err.code = code
                   return next err
-                executed++ if options.code_skipped.indexOf(code) is -1
+                if options.code_skipped.indexOf(code) is -1
+                  executed++ 
+                else
+                  options.log? "Mecano `execute`: skip exit code \"#{code}\""
                 next()
               , 1
-          conditions.all options, next, cmd
         .on 'both', (err) ->
           stdouts = stdouts[0] unless isArray
           stderrs = stderrs[0] unless isArray

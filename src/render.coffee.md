@@ -12,20 +12,21 @@ Render a template file At the moment, only the
     child = require './misc/child'
     write = require './write'
 
-`options`           Command options include:
-*   `engine`        Template engine to use, default to "eco"
-*   `content`       Templated content, bypassed if source is provided.
-*   `source`        File path where to extract content from.
-*   `destination`   File path where to write content to or a callback.
-*   `context`       Map of key values to inject into the template.
-*   `local_source`  Treat the source as local instead of remote, only apply with "ssh" option.
-*   `uid`           File user name or user id
-*   `gid`           File group name or group id
-*   `mode`          File mode (permission and sticky bits), default to `0666`, in the for of `{mode: 0o744}` or `{mode: "744"}`
+`options`               Command options include:
+*   `engine`            Template engine to use, default to "eco".   
+*   `content`           Templated content, bypassed if source is provided.   
+*   `source`            File path where to extract content from.   
+*   `destination`       File path where to write content to or a callback.   
+*   `context`           Map of key values to inject into the template.   
+*   `local_source`      Treat the source as local instead of remote, only apply with "ssh" option.   
+*   `skip_empty_lines`  Remove empty lines.   
+*   `uid`               File user name or user id.   
+*   `gid`               File group name or group id.   
+*   `mode`              File mode (permission and sticky bits), default to `0666`, in the for of `{mode: 0o744}` or `{mode: "744"}`.   
 
 `callback`          Received parameters are:
-*   `err`           Error object if any.
-*   `rendered`      Number of rendered files.
+*   `err`           Error object if any.   
+*   `rendered`      Number of rendered files.   
 
 If destination is a callback, it will be called multiple times with the
 generated content as its first argument.
@@ -60,3 +61,9 @@ generated content as its first argument.
           conditions.all options, next, do_read_source
         .on 'both', (err) ->
           callback err, rendered
+
+
+
+
+
+

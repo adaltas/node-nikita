@@ -66,7 +66,9 @@ mecano.iptables
         each( options )
         .parallel(goptions.parallel)
         .on 'item', (options, next) ->
+          options.log? "Mecano `iptables`"
           conditions.all options, next, ->
+            options.log? "Mecano `iptables`: list existing rules"
             execute
               cmd: "iptables -S"
               ssh: options.ssh
@@ -78,9 +80,10 @@ mecano.iptables
               oldrules = iptables.parse stdout
               newrules = iptables.normalize options.rules
               cmd = iptables.cmd oldrules, newrules
-              return next unless cmd.length
+              return next() unless cmd.length
+              options.log? "Mecano `iptables`: modify rules"
               execute
-                cmd: cmd.join '\n'
+                cmd: "#{cmd.join '\n'}; service iptables save"
                 ssh: options.ssh
                 log: options.log
                 stdout: options.stdout

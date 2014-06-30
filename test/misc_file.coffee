@@ -12,26 +12,6 @@ describe 'misc.file', ->
 
   scratch = test.scratch @
 
-  describe 'cmpmod', ->
-
-    it 'compare strings of same size', ->
-      misc.file.cmpmod('544', '544').should.be.ok
-      misc.file.cmpmod('544', '322').should.not.be.ok
-
-    it 'compare strings of different sizes', ->
-      misc.file.cmpmod('544', '4544').should.be.ok
-      misc.file.cmpmod('544', '4543').should.not.be.ok
-      misc.file.cmpmod('0322', '322').should.be.ok
-      misc.file.cmpmod('0544', '322').should.not.be.ok
-
-    it 'compare int with string', ->
-      misc.file.cmpmod(0o0744, '744').should.be.ok
-      misc.file.cmpmod(0o0744, '0744').should.be.ok
-
-    it 'compare int with string', ->
-      misc.file.cmpmod('744', 0o0744).should.be.ok
-      misc.file.cmpmod('0744', 0o0744).should.be.ok
-
   describe 'hash', ->
 
     they 'returns the file md5', (ssh, next) ->

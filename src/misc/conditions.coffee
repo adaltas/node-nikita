@@ -34,24 +34,20 @@ module.exports =
   `if` Run an action for a user defined condition
   -----------------------------------------------
 
-  Work on the property `if` in `options`. When `if` 
-  is a boolean, its value determine the output. If it's 
-  a callback, the function is called with the `options`, 
-  `skip` and `succeed` arguments. If it'a an array, all its element
-  must positively resolve for the condition to pass.
+  Work on the property `if` in `options`. When `if` is a boolean, its value
+  determine the output. If it's a function, the arguments vary depending on the
+  callback signature. With 1 argument, the argument is a callback. With 2
+  arguments, the arguments are the options and a callback. If it'a an array, all
+  its element must positively resolve for the condition to pass.
 
   Updating the content of a file if we are the owner
 
       mecano.render
         source:'./file'
-        if: (options, skip, succeed) ->
+        if: (options, callback) ->
           fs.stat options.source, (err, stat) ->
-            # File does not exists
-            return skip err if err
-            # Skip if we dont own the file
-            return  skip() unless stat.uid is process.getuid()
-            # Succeed if we own the file
-            succeed()
+            # Render the file if we own it
+            callback err, stat.uid is process.getuid()
 
   ###
   if: (options, skip, succeed) ->
@@ -65,7 +61,20 @@ module.exports =
         ok = false unless si
         next()
       else if type is 'function'
-        si options, ( -> ok = false; next arguments...), next
+        if options.if.length is 1
+          si (err, is_ok) ->
+            return next err if err
+            ok = false unless is_ok
+            next()
+        else if options.if.length is 2
+          si options, (err, is_ok) ->
+            return next err if err
+            ok = false unless is_ok
+            next()
+        else if options.if.length is 3
+          # Deprecated? should we continue to support this?
+          si options, ( -> ok = false; next arguments...), next
+        else next new Error "Invalid callback"
       else
         next new Error "Invalid condition type"
     .on 'both', (err) ->
@@ -75,11 +84,11 @@ module.exports =
   `not_if` Run an action if false
   -------------------------------
 
-  Work on the property `if` in `options`. When `if` 
-  is a boolean, its value determine the output. If it's 
-  a callback, the function is called with the `options`, 
-  `skip` and `succeed` arguments. If it'a an array, all its element
-  must positively resolve for the condition to pass.
+  Work on the property `not_if` in `options`. When `not_if` is a boolean, its
+  value determine the output. If it's a function, the arguments vary depending
+  on the callback signature. With 1 argument, the argument is a callback. With 2
+  arguments, the arguments are the options and a callback. If it'a an array, all
+  its element must positively resolve for the condition to pass.
   ###
   not_if: (options, skip, succeed) ->
     return succeed() unless options.not_if?
@@ -92,7 +101,21 @@ module.exports =
         ok = false if not_if
         next()
       else if type is 'function'
-        not_if options, next, ( -> ok = false; next arguments...)
+        # not_if options, next, ( -> ok = false; next arguments...)
+        if options.not_if.length is 1
+          not_if (err, is_ok) ->
+            return next err if err
+            ok = false if is_ok
+            next()
+        else if options.not_if.length is 2
+          not_if options, (err, is_ok) ->
+            return next err if err
+            ok = false if is_ok
+            next()
+        else if options.not_if.length is 3
+          # Deprecated? should we continue to support this?
+          not_if options, next, ( -> ok = false; next arguments...)
+        else next new Error "Invalid callback"
       else
         next new Error "Invalid condition type"
     .on 'both', (err) ->
