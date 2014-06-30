@@ -127,7 +127,7 @@ mecano.mkdir
                 do_chmod = ->
                   return do_end() unless mode
                   # todo: fix this one
-                  return do_end() if misc.file.cmpmod stat.mode, mode
+                  return do_end() if misc.mode.compare stat.mode, mode
                   fs.chmod options.ssh, directory, mode, (err) ->
                     modified = true
                     do_end()

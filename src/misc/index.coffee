@@ -52,6 +52,20 @@ misc = module.exports =
           next()
       .on 'end', ->
         callback path.resolve normalized...
+  mode:
+    stringify: (mode) ->
+      if typeof mode is 'number' then mode.toString(8) else mode
+    compare: (modes...) ->
+      # ref = modes[0]
+      # ref = ref.toString(8) if typeof ref is 'number'
+      ref = misc.mode.stringify modes[0]
+      for i in [1...modes.length]
+        mode = misc.mode.stringify modes[i]
+        # mode = modes[i]
+        # mode = mode.toString(8) if typeof mode is 'number'
+        l = Math.min ref.length, mode.length
+        return false if mode.substr(-l) isnt ref.substr(-l)
+      true
   file:
     copyFile: (ssh, source, destination, callback) ->
       s = (ssh, callback) ->
@@ -71,14 +85,8 @@ misc = module.exports =
     -------------
     ###
     cmpmod: (modes...) ->
-      ref = modes[0]
-      ref = ref.toString(8) if typeof ref is 'number'
-      for i in [1...modes.length]
-        mode = modes[i]
-        mode = mode.toString(8) if typeof mode is 'number'
-        l = Math.min ref.length, mode.length
-        return false if mode.substr(-l) isnt ref.substr(-l)
-      true
+      console.log 'Deprecated'
+      misc.mode.compare.call @, modes...
     copy: (ssh, source, destination, callback) ->
       unless ssh
         source = fs.createReadStream(u.pathname)

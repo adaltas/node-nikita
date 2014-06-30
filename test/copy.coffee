@@ -121,7 +121,7 @@ describe 'copy', ->
           return next err if err
           copied.should.eql 1
           fs.stat ssh, destination, (err, stat) ->
-            misc.file.cmpmod(stat.mode, 0o750).should.be.ok
+            misc.mode.compare(stat.mode, 0o750).should.be.ok
             # Copy existing file
             mecano.copy
               ssh: ssh
@@ -131,7 +131,7 @@ describe 'copy', ->
             , (err, copied) ->
               return next err if err
               fs.stat ssh, destination, (err, stat) ->
-                misc.file.cmpmod(stat.mode, 0o755).should.be.ok
+                misc.mode.compare(stat.mode, 0o755).should.be.ok
                 next()
           
 
