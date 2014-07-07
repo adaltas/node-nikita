@@ -14,6 +14,7 @@ the "binary" option.
     child = require './misc/child'
     execute = require './execute'
     write = require './write'
+    mkdir = require './mkdir'
 
 `options`           Command options include:
 *   `binary`        Fast upload implementation, discard all the other option and use its own stream based implementation.
@@ -46,8 +47,13 @@ the "binary" option.
         .on 'item', (options, next) ->
           options.log? "Mecano `upload`"
           conditions.all options, next, ->
+            return next Error "Required \"source\" option" unless options.source
+            return next Error "Required \"destination\" option" unless options.destination
+            options.log? "Mecano `upload`: source is \"options.source\""
+            options.log? "Mecano `upload`: destination is \"options.destination\""
             # Start real work
             if options.binary
+              options.log? "Mecano `upload`: enter binary mode"
               get_checksum = (path, digest, callback) ->
                 execute
                   ssh: options.ssh
@@ -59,16 +65,15 @@ the "binary" option.
                   return callback err if err
                   callback null, /[ ](.*)$/.exec(stdout.trim())[1]
               do_stat = ->
-                options.log? "Check if #{options.destination} exists remotely"
+                options.log? "Mecano `upload`: check if remote destination exists"
                 fs.stat options.ssh, options.destination, (err, stat) ->
                   return do_upload() if err?.code is 'ENOENT'
                   return next err if err
-                  # return do_upload() unless exists
                   options.destination = "#{options.destination}/#{path.basename options.source}" if stat.isDirectory()
-                  do_checksum()
-              do_checksum = ->
+                  do_dest_checksum()
+              do_dest_checksum = ->
                   return do_upload() unless options.md5 or options.sha1
-                  options.log? "Make sure destination checksum is valid"
+                  options.log? "Mecano `upload`: validate destination checksum, otherwise re-upload"
                   switch
                     when options.md5? then get_checksum options.destination, 'md5', (err, md5) ->
                       return next err if err
@@ -81,40 +86,35 @@ the "binary" option.
                       then next()
                       else do_upload()
               do_upload = ->
-                options.log? "Upload #{options.source}"
-                fs.createWriteStream options.ssh, options.destination, (err, ws) ->
-                  return next err if err
-                  fs.createReadStream null, options.source, (err, rs) ->
+                options.log? "Mecano `upload`: write source"
+                mkdir
+                  destination: "#{path.dirname options.destination}"
+                  ssh: options.ssh
+                  log: options.log
+                , (err) ->
+                  fs.createWriteStream options.ssh, options.destination, (err, ws) ->
                     return next err if err
-                    rs.pipe(ws)
-                    .on 'close', ->
-                      uploaded++
-                      do_md5()
-                    .on 'error', next
-                # options.ssh.sftp (err, sftp) ->
-                #   from = fs.createReadStream options.source#, encoding: 'binary'
-                #   to = sftp.createWriteStream options.destination#, encoding: 'binary'
-                #   l = 0
-                #   from.pipe to
-                #   from.on 'error', next
-                #   to.on 'error', next
-                #   to.on 'close', ->
-                #     uploaded++
-                #     do_md5()
+                    fs.createReadStream null, options.source, (err, rs) ->
+                      return next err if err
+                      rs.pipe(ws)
+                      .on 'close', ->
+                        uploaded++
+                        do_md5()
+                      .on 'error', next
               do_md5 = ->
                 return do_sha1() unless options.md5
-                options.log? "Check md5 for '#{options.destination}'"
+                options.log? "Mecano `upload`: check destination md5"
                 get_checksum options.destination, 'md5', (err, md5) ->
                   return next new Error "Invalid md5 checksum" if md5 isnt options.md5
                   do_sha1()
               do_sha1 = ->
                 return do_end() unless options.sha1
-                options.log? "Check sha1 for '#{options.destination}'"
+                options.log? "Mecano `upload`: check destination sha1"
                 get_checksum options.destination, 'sha1', (err, sha1) ->
                   return next new Error "Invalid sha1 checksum" if sha1 isnt options.sha1
                   do_end()
               do_end = ->
-                options.log? "Upload succeed in #{options.destination}"
+                options.log? "Mecano `upload`: upload succeed"
                 next()
               return do_stat()
             options = misc.merge options, local_source: true
