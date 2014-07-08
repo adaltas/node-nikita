@@ -85,7 +85,7 @@ misc = module.exports =
     -------------
     ###
     cmpmod: (modes...) ->
-      console.log 'Deprecated'
+      console.log 'Deprecated, use `misc.mode.compare`'
       misc.mode.compare.call @, modes...
     copy: (ssh, source, destination, callback) ->
       unless ssh

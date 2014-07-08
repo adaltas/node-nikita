@@ -151,10 +151,10 @@ describe 'write', ->
         return next err if err
         fs.stat ssh, "#{scratch}/a_file", (err, stat) ->
           return next err if err
-          misc.file.cmpmod(stat.mode, 0o0700).should.be.ok
+          misc.mode.compare(stat.mode, 0o0700).should.be.ok
           fs.stat ssh, "#{scratch}", (err, stat) ->
             return next err if err
-            misc.file.cmpmod(stat.mode, 0o0700).should.not.be.ok
+            misc.mode.compare(stat.mode, 0o0700).should.not.be.ok
             next()
 
     they 'change permission', (ssh, next) ->
@@ -556,6 +556,34 @@ describe 'write', ->
           return next err if err
           content.should.eql 'Add this line'
           next()
+    
+    they 'match is optional', (ssh, next) ->
+      mecano.write
+        ssh: ssh
+        content: 'Here we are\nyou coquin'
+        destination: "#{scratch}/a_file"
+      , (err, written) ->
+        return next err if err
+        mecano.write
+          ssh: ssh
+          replace: 'Add this line'
+          destination: "#{scratch}/a_file"
+          append: true
+        , (err, written) ->
+          return next err if err
+          written.should.eql 1
+          mecano.write
+            ssh: ssh
+            replace: 'Add this line'
+            destination: "#{scratch}/a_file"
+            append: true
+          , (err, written) ->
+            return next err if err
+            written.should.eql 0
+            fs.readFile ssh, "#{scratch}/a_file", 'utf8', (err, content) ->
+              return next err if err
+              content.should.eql 'Here we are\nyou coquin\nAdd this line'
+              next()
 
   describe 'backup', ->
   

@@ -28,7 +28,7 @@ Write a file or a portion of an existing file.
 *   `from`          Replace from after this marker, a string or a regular expression.
 *   `gid`           File group name or group id.
 *   `local_source`  Treat the source as local instead of remote, only apply with "ssh" option.
-*   `match`         Replace this marker, a string or a regular expression.
+*   `match`         Replace this marker, a string or a regular expression, default to the replaced string if missing.
 *   `mode`          File mode (permission and sticky bits), default to `0666`, in the for of `{mode: 0o744}` or `{mode: "744"}`.
 *   `replace`       The content to be inserted, used conjointly with the from, to or match options.
 *   `source`        File path from where to extract the content, do not use conjointly with content.
@@ -173,13 +173,16 @@ mecano.write
           append = options.append
           write = options.write
           write ?= []
-          if options.from? or options.to? or options.match?
+          if options.from? or options.to? or options.match? or options.replace?
             write.push
               from: options.from
               to: options.to
               match: options.match
               replace: options.replace
               append: options.append
+          for w in write
+            if not options.from? and not options.to? and not options.match? and options.replace?
+              w.match = w.replace
           # Start work
           do_read_source = ->
             if options.content?
@@ -195,7 +198,7 @@ mecano.write
             fs.exists ssh, source, (err, exists) ->
               return next err if err
               unless exists
-                return next new Error "Mecano `write`: source does not exist" if options.source
+                return next new Error "Source does not exist: #{JSON.stringify options.source}" if options.source
                 content = ''
                 return do_read_destination()
               options.log? "Mecano `write`: read source"
