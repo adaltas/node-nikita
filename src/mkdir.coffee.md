@@ -64,7 +64,6 @@ mecano.mkdir
           cwd = options.cwd ? process.cwd()
           options.directory = [options.directory] unless Array.isArray options.directory
           conditions.all options, next, ->
-            mode = options.mode or 0o0755
             options.log? "Make directory #{options.directory}"
             each(options.directory)
             .on 'item', (directory, next) ->
@@ -125,10 +124,9 @@ mecano.mkdir
                     modified = true if owned
                     do_chmod()
                 do_chmod = ->
-                  return do_end() unless mode
-                  # todo: fix this one
-                  return do_end() if misc.mode.compare stat.mode, mode
-                  fs.chmod options.ssh, directory, mode, (err) ->
+                  return do_end() unless options.mode
+                  return do_end() if misc.mode.compare stat.mode, options.mode
+                  fs.chmod options.ssh, directory, options.mode, (err) ->
                     modified = true
                     do_end()
                 do_end = ->
