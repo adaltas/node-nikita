@@ -181,7 +181,7 @@ mecano.write
               replace: options.replace
               append: options.append
           for w in write
-            if not options.from? and not options.to? and not options.match? and options.replace?
+            if not w.from? and not w.to? and not w.match? and w.replace?
               w.match = w.replace
           # Start work
           do_read_source = ->
