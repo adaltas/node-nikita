@@ -132,9 +132,6 @@ misc = module.exports =
         return callback err if err
         file += '/**' if stat.isDirectory()
         # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         # This is not working over ssh, we
         # need to implement the "glob" module
         # over ssh
@@ -531,7 +528,7 @@ misc = module.exports =
       for i in [0...depth]
         prefix += indent
       for k, v of content
-        isUndefined = typeof v is 'undefined'
+        # isUndefined = typeof v is 'undefined'
         isBoolean = typeof v is 'boolean'
         isNull = v is null
         isArray = Array.isArray v
@@ -547,10 +544,10 @@ misc = module.exports =
             out += "#{prefix}}\n"
         else 
           if isArray
-            out = []
+            outa = []
             for element in v
-              out.push "#{prefix}#{k}#{options.separator}#{element}"
-            out = out.join '\n'
+              outa.push "#{prefix}#{k}#{options.separator}#{element}"
+            out += outa.join '\n'
           else if isNull
             out += "#{prefix}#{k}#{options.separator}null"
           else if isBoolean
@@ -574,7 +571,7 @@ misc = module.exports =
       for i in [0...depth]
         prefix += indent
       for k, v of content
-        isUndefined = typeof v is 'undefined'
+        # isUndefined = typeof v is 'undefined'
         isBoolean = typeof v is 'boolean'
         isNull = v is null
         isObj = typeof v is 'object' and not isNull

@@ -132,6 +132,7 @@ describe 'ini', ->
 
         """
 
+
   describe 'square and curly brackets', ->
 
     it 'stringify', ->
@@ -140,4 +141,33 @@ describe 'ini', ->
         group:
           name: 'us'
       res.should.eql '[user]\n preference = {\n  color = true\n }\n\n[group]\n name = us\n\n'
+
+
+    it 'stringify simple values before array values', ->
+      res = misc.ini.stringify_square_then_curly 
+        group1:
+          key1: 'value1'
+          group1b:
+            key1b1: 'value1b1'
+            key1b2: ['value1b2a', 'value1b2b']
+          key2: 'value2'
+        group2:
+          key1: 'value1b'
+      res.should.eql """
+        [group1]
+         key1 = value1
+         group1b = {
+          key1b1 = value1b1
+          key1b2 = value1b2a
+          key1b2 = value1b2b
+         }
+         key2 = value2
+
+        [group2]
+         key1 = value1b
+
+
+        """
+
+
 
