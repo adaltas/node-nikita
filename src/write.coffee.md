@@ -189,14 +189,16 @@ mecano.write
             # Option "local_source" force to bypass the ssh
             # connection, use by the upload function
             source = options.source or options.destination
-            options.log? "Read source: #{source}#{if options.local_source then ' (local)' else ''}"
+            options.log? "Mecano `write`: force local source is \"#{unless options.local_source then 'not'} active\""
+            options.log? "Mecano `write`: source is \"#{options.source}\""
             ssh = if options.local_source then null else options.ssh
             fs.exists ssh, source, (err, exists) ->
               return next err if err
               unless exists
-                return next new Error "Source does not exist: \"#{options.source}\"" if options.source
+                return next new Error "Mecano `write`: source does not exist" if options.source
                 content = ''
                 return do_read_destination()
+              options.log? "Mecano `write`: read source"
               fs.readFile ssh, source, 'utf8', (err, src) ->
                 return next err if err
                 content = src
@@ -204,8 +206,9 @@ mecano.write
           do_read_destination = ->
             # no need to test changes if destination is a callback
             return do_render() if typeof options.destination is 'function'
-            options.log? "Read destination: #{options.destination}"
+            options.log? "Mecano `write`: destination is \"#{options.destination}\""
             exists = ->
+              options.log? "Mecano `write`: stat destination"
               fs.stat options.ssh, options.destination, (err, stat) ->
                 return do_mkdir() if err?.code is 'ENOENT'
                 return next err if err
@@ -221,6 +224,7 @@ mecano.write
                 else
                   do_read()
             do_mkdir = ->
+              options.log? "Mecano `write`: mkdir"
               mkdir
                 ssh: options.ssh
                 destination: path.dirname options.destination
@@ -233,6 +237,7 @@ mecano.write
                 return next err if err
                 do_render()
             do_read = ->
+              options.log? "Mecano `write`: read destination"
               fs.readFile options.ssh, options.destination, 'utf8', (err, dest) ->
                 return next err if err
                 destination = dest if options.diff # destination content only use by diff
@@ -241,6 +246,7 @@ mecano.write
             exists()
           do_render = ->
             return do_replace_partial() unless options.context?
+            options.log? "Mecano `write`: rendering with eco"
             try
               content = eco.render content.toString(), options.context
               if options.skip_empty_lines?
@@ -251,6 +257,7 @@ mecano.write
             do_replace_partial()
           do_replace_partial = ->
             return do_eof() unless write.length
+            options.log? "Mecano `write`: replace"
             for opts in write
               if opts.match
                 if typeof opts.match is 'string'
@@ -290,6 +297,7 @@ mecano.write
             do_eof()
           do_eof = ->
             return do_diff() unless options.eof?
+            options.log? "Mecano `write`: add eof"
             if options.eof is true
               for char, i in content
                 if char is '\r'
@@ -303,7 +311,7 @@ mecano.write
             do_diff()
           do_diff = ->
             return do_ownership() if destinationHash is misc.string.hash content
-            options.log? "File content has changed"
+            options.log? "Mecano `write`: file content has changed"
             if options.diff
               lines = diff.diffLines destination, content
               options.diff lines if typeof options.diff is 'function'
@@ -326,9 +334,11 @@ mecano.write
             do_write()
           do_write = ->
             if typeof options.destination is 'function'
+              options.log? "Mecano `write`: write destination with user function"
               options.destination content
               do_end()
             else
+              options.log? "Mecano `write`: write destination"
               options.flags ?= 'a' if append
               fs.writeFile options.ssh, options.destination, content, options, (err) ->
                 return next err if err
@@ -336,6 +346,7 @@ mecano.write
                 do_backup()
           do_backup = ->
             return do_end() unless options.backup
+            options.log? "Mecano `write`: create backup"
             backup = options.backup
             backup = ".#{Date.now()}" if backup is true
             backup = "#{options.destination}#{backup}"
@@ -344,6 +355,7 @@ mecano.write
               do_end()
           do_ownership = ->
             return do_permissions() unless options.uid? and options.gid?
+            options.log? "Mecano `write`: change ownership"
             chown
               ssh: options.ssh
               destination: options.destination
@@ -358,6 +370,7 @@ mecano.write
               do_permissions()
           do_permissions = ->
             return do_end() unless options.mode?
+            options.log? "Mecano `write`: change permissions"
             chmod
               ssh: options.ssh
               destination: options.destination

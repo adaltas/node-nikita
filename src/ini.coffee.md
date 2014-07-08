@@ -59,6 +59,7 @@ provided in the `content` option.
         each( options )
         .parallel(goptions.parallel)
         .on 'item', (options, next) ->
+          options.log? "Mecano `ini`"
           {merge, destination, content, ssh} = options
           # Validate parameters
           return next new Error 'Missing content' unless content
@@ -66,6 +67,7 @@ provided in the `content` option.
           # Start real work
           do_get = ->
             return do_write() unless merge
+            options.log? "Mecano `ini`: get content for merge"
             fs.exists ssh, destination, (err, exists) ->
               return next err if err
               return do_write() unless exists
@@ -76,6 +78,7 @@ provided in the `content` option.
                 content = misc.merge parse(c, options), content
                 do_write()
           do_write = ->
+            options.log? "Mecano `ini`: write"
             clean content #if options.clean
             stringify = options.stringify or misc.ini.stringify
             options.content = stringify content, options
