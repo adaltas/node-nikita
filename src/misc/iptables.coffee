@@ -77,6 +77,7 @@ module.exports = iptables =
   normalize: (rules) ->
     newrules = []
     for rule in rules
+      rule = misc.merge {}, rule
       newrule = {}
       # newrule.rulenum = rule.rulenum or 1
       # Search for commands and parameters

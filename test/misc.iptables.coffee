@@ -39,6 +39,9 @@ describe 'iptables', ->
       ]).should.eql [
         { chain: 'INPUT', '-j': 'ACCEPT', '-p': 'tcp', 'tcp|--dport': '88', 'comment|--comment': '"My comment"' }
       ]
+    it 'preserve input', ->
+      rules = [{ chain: 'INPUT', jump: 'ACCEPT', source: "10.10.10.0/24", comment: 'Local Network' }]
+      JSON.stringify(iptables.normalize rules).should.eql JSON.stringify(iptables.normalize rules)
 
   describe 'parse', ->
 
