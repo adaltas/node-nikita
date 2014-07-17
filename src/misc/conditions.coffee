@@ -8,7 +8,7 @@ fs = require 'ssh2-fs'
 Conditionnal properties
 =======================
 ###
-module.exports = 
+conditions = module.exports = 
   ###
 
   `all(options, skip, succeed)` Run all conditions
@@ -25,9 +25,18 @@ module.exports =
 
   ###
   all: (options, skip, succeed) ->
-    each([@if, @not_if, @if_exists, @not_if_exists, @should_exist])
+    # each([@if, @not_if, @if_exec, @not_if_exec, @if_exists, @not_if_exists, @should_exist])
+    each(['if', 'not_if', 'if_exec', 'not_if_exec', 'if_exists', 'not_if_exists', 'should_exist'])
     .on 'item', (condition, next) ->
-      condition options, skip, next
+      return next() unless options[condition]?
+      options.log? "Mecano #{condition}"
+      conditions[condition] options, (->
+        options.log? "Mecano `#{condition}`: skip"
+        skip()
+      ), (->
+        options.log? "Mecano `#{condition}`: next"
+        next()
+      )
     .on('error', skip)
     .on('end', succeed)
   ###
@@ -123,6 +132,64 @@ module.exports =
       succeed()
   ###
   
+  `if_exec` Run an action if a command is successfully executed
+  -------------------------------------------------------------
+
+  Work on the property `if_exec` in `options`. The value may 
+  be a single shell command or an array of commands.   
+
+  The callback `succeed` is called if all the provided command 
+  were executed successfully otherwise the callback `skip` is called.
+
+  ###
+  if_exec: (options, skip, succeed) ->
+    return succeed() unless options.if_exec?
+    each(options.if_exec)
+    .on 'item', (cmd, next) ->
+      options.log? "Mecano `if_exec`: #{cmd}"
+      options = { cmd: cmd, ssh: options.ssh }
+      run = exec options
+      if options.stdout
+        run.stdout.pipe options.stdout, end: false
+      if options.stderr
+        run.stderr.pipe options.stderr, end: false
+      run.on "exit", (code) ->
+        options.log? "Mecano `if_exec`: code is \"#{code}\""
+        if code is 0 then next() else skip()
+    .on 'end', succeed
+  ###
+  
+  `not_if_exec` Run an action unless a command is successfully executed
+  ---------------------------------------------------------------------
+
+  Work on the property `not_if_exec` in `options`. The value may 
+  be a single shell command or an array of commands.   
+
+  The callback `succeed` is called if all the provided command 
+  were executed with failure otherwise the callback `skip` is called.
+
+  ###
+  not_if_exec: (options, skip, succeed) ->
+    return succeed() unless options.not_if_exec?
+    each(options.not_if_exec)
+    .on 'item', (cmd, next) ->
+      options.log? "Mecano `not_if_exec`: #{cmd}"
+      options = { cmd: cmd, ssh: options.ssh }
+      run = exec options
+      if options.stdout
+        run.stdout.pipe options.stdout, end: false
+      if options.stderr
+        run.stderr.pipe options.stderr, end: false
+      run.on "exit", (code) ->
+        options.log? "Mecano `not_if_exec`: code is \"#{code}\""
+        if code is 0
+        then next new Error
+        else next()
+    .on 'error', ->
+      skip()
+    .on 'end', succeed
+  ###
+  
   `if_exists` Run an action if a file exists
   ----------------------------------------
 
@@ -162,62 +229,6 @@ module.exports =
     .on 'item', (not_if_exists, next) ->
       fs.exists options.ssh, not_if_exists, (err, exists) ->
         if exists
-        then next new Error
-        else next()
-    .on 'error', ->
-      skip()
-    .on 'end', succeed
-  ###
-  
-  `if_exec` Run an action if a command is successfully executed
-  -------------------------------------------------------------
-
-  Work on the property `if_exec` in `options`. The value may 
-  be a single shell command or an array of commands.   
-
-  The callback `succeed` is called if all the provided command 
-  were executed successfully otherwise the callback `skip` is called.
-
-  ###
-  if_exec: (options, skip, succeed) ->
-    return succeed() unless options.if_exec?
-    each(options.if_exec)
-    .on 'item', (cmd, next) ->
-      options.log? "Execute condition: #{cmd}"
-      options = { cmd: cmd, ssh: options.ssh }
-      run = exec options
-      if options.stdout
-        run.stdout.pipe options.stdout, end: false
-      if options.stderr
-        run.stderr.pipe options.stderr, end: false
-      run.on "exit", (code) ->
-        if code is 0 then next() else skip()
-    .on 'end', succeed
-  ###
-  
-  `not_if_exec` Run an action unless a command is successfully executed
-  ---------------------------------------------------------------------
-
-  Work on the property `not_if_exec` in `options`. The value may 
-  be a single shell command or an array of commands.   
-
-  The callback `succeed` is called if all the provided command 
-  were executed with failure otherwise the callback `skip` is called.
-
-  ###
-  not_if_exec: (options, skip, succeed) ->
-    return succeed() unless options.not_if_exec?
-    each(options.not_if_exec)
-    .on 'item', (cmd, next) ->
-      options.log? "Execute condition: #{cmd}"
-      options = { cmd: cmd, ssh: options.ssh }
-      run = exec options
-      if options.stdout
-        run.stdout.pipe options.stdout, end: false
-      if options.stderr
-        run.stderr.pipe options.stderr, end: false
-      run.on "exit", (code) ->
-        if code is 0
         then next new Error
         else next()
     .on 'error', ->
