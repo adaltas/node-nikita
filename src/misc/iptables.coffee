@@ -57,6 +57,25 @@ module.exports = iptables =
   cmd: (oldrules, newrules) ->
     cmds = []
     for newrule in newrules
+      break if newrule.rulenum?
+      if newrule.after
+        rulenum = 0
+        for oldrule, i in oldrules
+          continue unless oldrule['-A'] is newrule.chain
+          rulenum++
+          if misc.object.equals newrule.after, oldrule, Object.keys newrule.after
+            newrule.rulenum = rulenum + 1
+            break
+        delete newrule.after
+      if newrule.before
+        rulenum = 0
+        for oldrule, i in oldrules
+          continue unless oldrule['-A'] is newrule.chain
+          rulenum++
+          if misc.object.equals newrule.before, oldrule, Object.keys newrule.before
+            newrule.rulenum = rulenum
+            break
+        delete newrule.before
       create = true
       # Get add properties present in new rule
       add_properties = misc.array.intersect iptables.add_properties, Object.keys newrule
@@ -75,8 +94,9 @@ module.exports = iptables =
         cmds.push iptables.cmd_add newrule
     cmds
   normalize: (rules) ->
+    oldrules = if Array.isArray rules then rules else [rules]
     newrules = []
-    for rule in rules
+    for rule in oldrules
       rule = misc.merge {}, rule
       newrule = {}
       # newrule.rulenum = rule.rulenum or 1
@@ -86,7 +106,6 @@ module.exports = iptables =
         v = rule[k] = "#{v}" if typeof v is 'number'
         # Normalize key as shortname (eg "-k")
         if k is 'chain' or k is 'rulenum'
-          # v = iptables.normalize v if nk is 'rulenum' and typeof v is 'object'
           # Final name, mark key as done
           nk = k
         else if k[0..1] is '--'
@@ -110,6 +129,9 @@ module.exports = iptables =
             rule[k[2..]] = null
       for k, v of rule
         continue unless v
+        if k is 'after' or k is 'before'
+          newrule[k] = iptables.normalize v
+          continue
         k = "--#{k}" unless k[0..1] is '--'
         for mk, mvs of iptables.modules
           for mv in mvs
@@ -122,7 +144,7 @@ module.exports = iptables =
         v = jsesc v, quotes: 'double', wrap: true if k is 'comment|--comment' #  unless /^[A-Za-z0-9_\/-]+$/.test v
         newrule[k] = v
       newrules.push newrule
-    newrules
+    if Array.isArray rules then newrules else newrules[0]
 
   ###
   Parse the result of `iptables -S`

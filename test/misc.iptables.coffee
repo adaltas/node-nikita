@@ -21,6 +21,12 @@ describe 'iptables', ->
       ]).should.eql [
         { chain: 'INPUT', '-j': 'ACCEPT', '-p': 'tcp', 'tcp|--dport': '22' }
       ]
+    it 'normalize with full name for in-interface', ->
+      iptables.normalize([
+        { chain: 'INPUT', jump: 'ACCEPT', 'in-interface': 'lo' }
+      ]).should.eql [
+        { chain: 'INPUT', '-j': 'ACCEPT', '-i': 'lo' }
+      ]
     it 'normalize with full option for protocol', ->
       iptables.normalize([
         { chain: 'INPUT', jump: 'ACCEPT', dport: 22, '--protocol': 'tcp' }
@@ -132,6 +138,42 @@ describe 'iptables', ->
         { chain: 'INPUT', jump: 'ACCEPT', dport: 53, protocol: 'tcp', state: 'NEW', comment: "Named" }
         { chain: 'INPUT', jump: 'ACCEPT', dport: 53, protocol: 'udp', state: 'NEW', comment: "Named" }
       ]).should.eql []
+
+  describe 'position', ->
+
+    it 'insert rule after match', ->
+      oldrules = iptables.parse """
+      -P INPUT ACCEPT
+      -P FORWARD ACCEPT
+      -P OUTPUT ACCEPT
+      -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT 
+      -A INPUT -p icmp -j ACCEPT 
+      -A INPUT -i lo -j ACCEPT 
+      -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT 
+      -A INPUT -j REJECT --reject-with icmp-host-prohibited 
+      -A FORWARD -j REJECT --reject-with icmp-host-prohibited 
+      """
+      iptables.cmd(oldrules, iptables.normalize [
+        { chain: 'INPUT', jump: 'ACCEPT', source: "10.10.10.0/24", comment: 'Local Network', after: {'in-interface': 'lo', jump: 'ACCEPT' } }
+      ]).should.eql ['iptables -I INPUT 4 -j ACCEPT -s 10.10.10.0/24 -m comment --comment "Local Network"']
+      # console.log iptables.cmd(oldrules, rules)
+
+    it 'insert rule before match', ->
+      oldrules = iptables.parse """
+      -P INPUT ACCEPT
+      -P FORWARD ACCEPT
+      -P OUTPUT ACCEPT
+      -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT 
+      -A INPUT -p icmp -j ACCEPT 
+      -A INPUT -i lo -j ACCEPT 
+      -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT 
+      -A INPUT -j REJECT --reject-with icmp-host-prohibited 
+      -A FORWARD -j REJECT --reject-with icmp-host-prohibited 
+      """
+      iptables.cmd(oldrules, iptables.normalize [
+        { chain: 'INPUT', jump: 'ACCEPT', source: "10.10.10.0/24", comment: 'Local Network', before: {'in-interface': 'lo', jump: 'ACCEPT' } }
+      ]).should.eql ['iptables -I INPUT 3 -j ACCEPT -s 10.10.10.0/24 -m comment --comment "Local Network"']
+      # console.log iptables.cmd(oldrules, rules)
 
 
 
