@@ -6,12 +6,12 @@ module.exports = iptables =
   # add_properties: ['target', 'protocol', 'dport', 'in-interface', 'out-interface', 'source', 'destination']
   add_properties: [
     '-p', '-s', '-d', '-g', '-i', '-o', '-f',
-    'tcp|--dport', 'udp|--dport'] # , '-j'
+    'tcp|--dport', 'udp|--dport', '-j'] # 
   # modify_properties: ['state', 'comment']
   modify_properties: [
     '-c', 'state|--state', 'comment|--comment'
     'tcp|--source-port', 'tcp|--sport', 'tcp|--destination-port', 'tcp|--dport', 'tcp|--tcp-flags', 'tcp|--syn', 'tcp|--tcp-option'
-    'udp|--source-port', 'udp|--sport', 'udp|--destination-port', 'udp|--dport']
+    'udp|--source-port', 'udp|--sport', 'udp|--destination-port', 'udp|--dport', 'limit|--limit']
   commands_arguments: # Used to compute rulenum
     '-A': ['chain']
     '-D': ['chain']
@@ -34,7 +34,7 @@ module.exports = iptables =
     '--flush': '-F'
     '--zero': '-Z'
     '--rename-chain': '-E'
-  parameters: ['-p', '-s', '-d', '-j', '-g', '-i', '-o', '-f', '-c']
+  parameters: ['-p', '-s', '-d', '-j', '-g', '-i', '-o', '-f', '-c'] # , '--log-prefix'
   parameters_inverted:
     '--protocol': '-p', '--source': '-s', '--destination': '-d', '--jump': '-j'
     '--goto': '-g', '--in-interface': '-i', '--out-interface': '-o', 
@@ -51,9 +51,10 @@ module.exports = iptables =
   modules:
     state: ['--state']
     comment: ['--comment']
+    limit: ['--limit']
   cmd_args: (cmd, rule) ->
     for k, v of rule
-      continue if ['chain', 'rulenum'].indexOf(k) isnt -1
+      continue if ['chain', 'rulenum', 'command'].indexOf(k) isnt -1
       continue unless v?
       if match = /^([\w]+)\|([-\w]+)$/.exec k
         module = match[1]
@@ -69,10 +70,22 @@ module.exports = iptables =
   cmd_insert: (rule) ->
     rule.rulenum ?= 1
     iptables.cmd_args "iptables -I #{rule.chain} #{rule.rulenum}", rule
+  cmd_append: (rule) ->
+    rule.rulenum ?= 1
+    iptables.cmd_args "iptables -A #{rule.chain}", rule
   cmd: (oldrules, newrules) ->
     cmds = []
+    new_chains = []
+    old_chains = oldrules
+    .map (oldrule) -> oldrule.chain
+    .filter (chain, i, chains) -> ['INPUT', 'FORWARD', 'OUTPUT'].indexOf(chain) < 0 and chains.indexOf(chain) >= i
+    # Create new chains
     for newrule in newrules
-      break if newrule.rulenum?
+      if ['INPUT', 'FORWARD', 'OUTPUT'].indexOf(newrule.chain) < 0 and new_chains.indexOf(newrule.chain) < 0 and old_chains.indexOf(newrule.chain) < 0
+        new_chains.push newrule.chain
+        cmds.push "iptables -N #{newrule.chain}"
+    for newrule in newrules
+      break if newrule.rulenum? #or newrule.command is '-A'
       if newrule.after
         rulenum = 0
         for oldrule, i in oldrules
@@ -94,6 +107,7 @@ module.exports = iptables =
       create = true
       # Get add properties present in new rule
       add_properties = misc.array.intersect iptables.add_properties, Object.keys newrule
+      # console.log newrule
       for oldrule in oldrules
         # Add properties are the same
         if misc.object.equals newrule, oldrule, add_properties
@@ -107,7 +121,8 @@ module.exports = iptables =
             cmds.push iptables.cmd_replace misc.merge oldrule, newrule
         # Add properties are different
       if create
-        cmds.push iptables.cmd_insert newrule
+        # console.log newrule
+        cmds.push if newrule.command is '-A' then iptables.cmd_append newrule else iptables.cmd_insert newrule
     cmds
   normalize: (rules, position = true) ->
     oldrules = if Array.isArray rules then rules else [rules]
@@ -121,7 +136,7 @@ module.exports = iptables =
         # Normalize value as string
         v = rule[k] = "#{v}" if typeof v is 'number'
         # Normalize key as shortname (eg "-k")
-        if k is 'chain' or k is 'rulenum'
+        if k is 'chain' or k is 'rulenum' or k is 'command'
           # Final name, mark key as done
           nk = k
         else if k[0..1] is '--'
@@ -155,12 +170,13 @@ module.exports = iptables =
               newrule["#{mk}|#{k}"] = v
               rule[k] = null
       for k, v of newrule
+        continue if k is 'command'
         # IPTables silently remove minus signs
         v = v.replace '-', '' if /\-/.test v
         v = jsesc v, quotes: 'double', wrap: true if k is 'comment|--comment' #  unless /^[A-Za-z0-9_\/-]+$/.test v
         newrule[k] = v
       newrules.push newrule
-    if position then for newrule in newrules
+    if position and newrule.command isnt '-A' then for newrule in newrules
       newrule.before = '-A': 'INPUT', chain: 'INPUT', '-j': 'REJECT', '--reject-with': 'icmp-host-prohibited' unless newrule.after? or newrule.before?
     if Array.isArray rules then newrules else newrules[0]
 

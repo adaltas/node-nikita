@@ -48,6 +48,12 @@ describe 'iptables', ->
     it 'preserve input', ->
       rules = [{ chain: 'INPUT', jump: 'ACCEPT', source: "10.10.10.0/24", comment: 'Local Network' }]
       JSON.stringify(iptables.normalize rules).should.eql JSON.stringify(iptables.normalize rules)
+    it 'preserve command', ->
+      iptables.normalize([
+        { chain: 'INPUT', command: '-A', jump: 'LOGGING' }
+      ]).should.eql [
+        { chain: 'INPUT', command: '-A', '-j': 'LOGGING' }
+      ]
 
   describe 'parse', ->
 
