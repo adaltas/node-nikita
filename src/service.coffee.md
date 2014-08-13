@@ -50,8 +50,8 @@ Install a service. For now, only yum over SSH.
           pkgname = options.yum_name or options.name
           chkname = options.chk_name or options.srv_name or options.name
           srvname = options.srv_name or options.name
-          if options.startup? and typeof options.startup isnt 'string'
-              options.startup = if options.startup then '2345' else ''
+          # if options.startup? and typeof options.startup isnt 'string'
+          #     options.startup = if options.startup then '2345' else ''
           modified = false
           installed ?= options.installed
           updates ?= options.updates
@@ -143,27 +143,28 @@ Install a service. For now, only yum over SSH.
               # Invalid service name return code is 0 and message in stderr start by error
               return next new Error "Invalid chkconfig name #{chkname}" if /^error/.test stderr
               current_startup = ''
-              # current_startup = []
               if registered
                 for c in stdout.split(' ').pop().trim().split '\t'
                   [level, status] = c.split ':'
                   current_startup += level if ['on', 'marche'].indexOf(status) > -1
-                  # current_startup.push level if ['on', 'marche'].indexOf(status) > -1
-              return do_started() if options.startup is current_startup#.join ','
+              return do_started() if (options.startup is true and current_startup.length) or (options.startup is current_startup)
               modified = true
               if options.startup?
               then startup_add()
               else startup_del()
           startup_add = ->
             options.log? "Mecano `service`: add startup service"
-            startup_on = startup_off = ''
-            for i in [0...6]
-              if options.startup.indexOf(i) isnt -1
-              then startup_on += i
-              else startup_off += i
             cmd = "chkconfig --add #{chkname};"
-            cmd += "chkconfig --level #{startup_on} #{chkname} on;" if startup_on
-            cmd += "chkconfig --level #{startup_off} #{chkname} off;" if startup_off
+            if typeof options.startup is 'string'
+              startup_on = startup_off = ''
+              for i in [0...6]
+                if options.startup.indexOf(i) isnt -1
+                then startup_on += i
+                else startup_off += i
+              cmd += "chkconfig --level #{startup_on} #{chkname} on;" if startup_on
+              cmd += "chkconfig --level #{startup_off} #{chkname} off;" if startup_off
+            else
+              cmd += "chkconfig #{chkname} on;"
             execute
               ssh: options.ssh
               cmd: cmd
@@ -175,6 +176,8 @@ Install a service. For now, only yum over SSH.
               do_started()
           startup_del = ->
             options.log? "Mecano `service`: delete startup service"
+            # Note, we are deleting the service but instead we could
+            # make sure it's added but in "off" state.
             execute
               ssh: options.ssh
               cmd: "chkconfig --del #{chkname}"
