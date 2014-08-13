@@ -70,22 +70,25 @@ mecano.iptables
           conditions.all options, next, ->
             options.log? "Mecano `iptables`: list existing rules"
             execute
-              cmd: "iptables -S"
+              cmd: "service iptables status && iptables -S"
               ssh: options.ssh
               log: options.log
               stdout: options.stdout
               stderr: options.stderr
+              code_skipped: 3
             , (err, executed, stdout) ->
               return next err if err
+              return next Error "Service iptables not started" unless executed
               oldrules = iptables.parse stdout
               newrules = iptables.normalize options.rules
               cmd = iptables.cmd oldrules, newrules
               return next() unless cmd.length
               options.log? "Mecano `iptables`: modify rules"
               execute
-                cmd: "#{cmd.join '\n'}; service iptables save"
+                cmd: "#{cmd.join '; '}; service iptables save"
                 ssh: options.ssh
                 log: options.log
+                trap_on_error: true
                 stdout: options.stdout
                 stderr: options.stderr
               , (err, executed) ->
