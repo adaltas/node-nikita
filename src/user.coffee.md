@@ -20,11 +20,11 @@ Create or modify a Unix user.
 *   `system`        Create a system account, such user are not created with a home by default, set the "home" option if we it to be created.   
 *   `uid`           Numerical value of the user´s ID, must not exist.   
 *   `gid`           Group name or number of the user´s initial login group.   
+*   `groups`        List of supplementary groups which the user is also a member of.   
 *   `comment`       Short description of the login.   
 *   `password`      User password
 *   `expiredate`    
 *   `inactive`      
-*   `groups`        
 *   `skel`          
 *   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
 *   `log`           Function called with a log related messages.   
