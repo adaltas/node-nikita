@@ -39,6 +39,21 @@ misc = module.exports =
       for k in keys
         return false if obj1[k] isnt obj2[k]
       return true
+    diff: (obj1, obj2, keys) ->
+      # keys1 = Object.keys obj1
+      # keys2 = Object.keys obj2
+      diff = {}
+      for k, v of obj1
+        continue unless keys.indexOf(k) >= 0
+        continue if obj2[k] is v
+        diff[k] = []
+        diff[k][0] = v 
+      for k, v of obj2
+        continue unless keys.indexOf(k) >= 0
+        continue if obj1[k] is v
+        diff[k] ?= []
+        diff[k][1] = v
+      diff
   path:
     normalize: (location, callback) ->
       tilde location, (location) ->
