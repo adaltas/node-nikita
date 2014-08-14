@@ -5,11 +5,14 @@ jsesc = require 'jsesc'
 module.exports = iptables = 
   # add_properties: ['target', 'protocol', 'dport', 'in-interface', 'out-interface', 'source', 'destination']
   add_properties: [
-    '-p', '-s', '-d', '-g', '-i', '-o', '-f',
-    'tcp|--dport', 'udp|--dport', '-j'] # 
+    '--protocol', '--source', '---destination', '--jump', '--goto', '--in-interface', '--out-interface', '--fragment',
+    'tcp|--dport', 'udp|--dport'] # 
   # modify_properties: ['state', 'comment']
   modify_properties: [
-    '-c', 'state|--state', 'comment|--comment'
+    '--set-counters', 
+    '--log-level', '--log-prefix', '--log-tcp-sequence', '--log-tcp-options', # LOG
+    '--log-ip-options', '--log-uid', # LOG
+    'state|--state', 'comment|--comment'
     'tcp|--source-port', 'tcp|--sport', 'tcp|--destination-port', 'tcp|--dport', 'tcp|--tcp-flags', 'tcp|--syn', 'tcp|--tcp-option'
     'udp|--source-port', 'udp|--sport', 'udp|--destination-port', 'udp|--dport', 'limit|--limit']
   commands_arguments: # Used to compute rulenum
@@ -34,11 +37,20 @@ module.exports = iptables =
     '--flush': '-F'
     '--zero': '-Z'
     '--rename-chain': '-E'
-  parameters: ['-p', '-s', '-d', '-j', '-g', '-i', '-o', '-f', '-c'] # , '--log-prefix'
+  # parameters: ['-p', '-s', '-d', '-j', '-g', '-i', '-o', '-f', '-c'] # , '--log-prefix'
+  # parameters_inverted:
+  #   '--protocol': '-p', '--source': '-s', '--destination': '-d', '--jump': '-j'
+  #   '--goto': '-g', '--in-interface': '-i', '--out-interface': '-o', 
+  #   '--fragment': '-f', '--set-counters': '-c'
+  parameters: ['--protocol', '--source', '--destination', '--jump', '--goto', 
+    '--in-interface', '--out-interface', '--fragment', '--set-counters', 
+    '--log-level', '--log-prefix', '--log-tcp-sequence', '--log-tcp-options', # LOG
+    '--log-ip-options', '--log-uid' # LOG
+  ]
   parameters_inverted:
-    '--protocol': '-p', '--source': '-s', '--destination': '-d', '--jump': '-j'
-    '--goto': '-g', '--in-interface': '-i', '--out-interface': '-o', 
-    '--fragment': '-f', '--set-counters': '-c'
+    '-p': '--protocol', '-s': '--source', '-d': '--destination', '-j': '--jump'
+    '-g': '--goto', '-i': '--in-interface', '-o': '--out-interface', 
+    '-f': '--fragment', '-c': '--set-counters'
   protocols:
     tcp: ['--source-port', '--sport', '--destination-port', '--dport', '--tcp-flags', '--syn', '--tcp-option']
     udp: ['--source-port', '--sport', '--destination-port', '--dport']
@@ -85,8 +97,8 @@ module.exports = iptables =
         new_chains.push newrule.chain
         cmds.push "iptables -N #{newrule.chain}"
     for newrule in newrules
-      break if newrule.rulenum? #or newrule.command is '-A'
-      if newrule.after
+      # break if newrule.rulenum? #or newrule.command is '-A'
+      if newrule.after and not newrule.rulenum
         rulenum = 0
         for oldrule, i in oldrules
           continue unless oldrule.command is '-A' and oldrule.chain is newrule.chain
@@ -95,7 +107,7 @@ module.exports = iptables =
             newrule.rulenum = rulenum + 1
             break
         delete newrule.after
-      if newrule.before
+      if newrule.before and not newrule.rulenum
         rulenum = 0
         for oldrule, i in oldrules
           continue unless oldrule.command is '-A' and oldrule.chain is newrule.chain
@@ -107,8 +119,8 @@ module.exports = iptables =
       create = true
       # Get add properties present in new rule
       add_properties = misc.array.intersect iptables.add_properties, Object.keys newrule
-      # console.log newrule
       for oldrule in oldrules
+        continue if oldrule.chain isnt newrule.chain
         # Add properties are the same
         if misc.object.equals newrule, oldrule, add_properties
           create = false
@@ -121,7 +133,6 @@ module.exports = iptables =
             cmds.push iptables.cmd_replace misc.merge oldrule, newrule
         # Add properties are different
       if create
-        # console.log newrule
         cmds.push if newrule.command is '-A' then iptables.cmd_append newrule else iptables.cmd_insert newrule
     cmds
   normalize: (rules, position = true) ->
@@ -130,27 +141,31 @@ module.exports = iptables =
     for rule in oldrules
       rule = misc.merge {}, rule
       newrule = {}
-      # newrule.rulenum = rule.rulenum or 1
       # Search for commands and parameters
       for k, v of rule
+        nk = null
         # Normalize value as string
         v = rule[k] = "#{v}" if typeof v is 'number'
         # Normalize key as shortname (eg "-k")
         if k is 'chain' or k is 'rulenum' or k is 'command'
           # Final name, mark key as done
           nk = k
-        else if k[0..1] is '--'
-          nk = iptables.parameters_inverted[k]
-        else if k[0] isnt '-'
-          nk = iptables.parameters_inverted["--#{k}"]
-        else if iptables.parameters.indexOf(k) isnt -1
+        else if k[0..1] is '--' and iptables.parameters.indexOf(k) >= 0
+          # nk = iptables.parameters_inverted[k]
           nk = k
+        else if k[0] isnt '-' and iptables.parameters.indexOf("--#{k}") >= 0
+          # nk = iptables.parameters_inverted["--#{k}"]
+          nk = "--#{k}"
+        # else if iptables.parameters.indexOf(k) isnt -1
+        else if iptables.parameters_inverted[k]
+          nk = iptables.parameters_inverted[k]
+          # nk = k
         # Key has changed, replace it
         if nk
           newrule[nk] = v
           rule[k] = null
       # Add prototol specific options
-      if protocol = newrule['-p']
+      if protocol = newrule['--protocol']
         for k in iptables.protocols[protocol]
           if rule[k]
             newrule["#{protocol}|#{k}"] = rule[k]
@@ -171,13 +186,18 @@ module.exports = iptables =
               rule[k] = null
       for k, v of newrule
         continue if k is 'command'
+        # Discard default log level value
+        if k is '--log-level' and v is '4'
+          delete newrule[k]
+          continue
         # IPTables silently remove minus signs
-        v = v.replace '-', '' if /\-/.test v
-        v = jsesc v, quotes: 'double', wrap: true if k is 'comment|--comment' #  unless /^[A-Za-z0-9_\/-]+$/.test v
+        # v = v.replace '-', '' if /\-/.test v
+        v = v.replace '-', '' if k is 'comment|--comment'
+        v = jsesc v, quotes: 'double', wrap: true if ['--log-prefix', 'comment|--comment'].indexOf(k) isnt -1
         newrule[k] = v
       newrules.push newrule
     if position and newrule.command isnt '-A' then for newrule in newrules
-      newrule.before = '-A': 'INPUT', chain: 'INPUT', '-j': 'REJECT', '--reject-with': 'icmp-host-prohibited' unless newrule.after? or newrule.before?
+      newrule.before = '-A': 'INPUT', chain: 'INPUT', '--jump': 'REJECT', '--reject-with': 'icmp-host-prohibited' unless newrule.after? or newrule.before?
     if Array.isArray rules then newrules else newrules[0]
 
   ###
@@ -185,11 +205,9 @@ module.exports = iptables =
   ###
   parse: (stdout) ->
     rules = []
-    command = null
-    command_index = 1
+    command_index = {}
     for line in stdout.split /\r\n|[\n\r\u0085\u2028\u2029]/g
       continue if line.length is 0
-      command_index++
       rule = {}
       i = 0
       key = ''
@@ -206,25 +224,25 @@ module.exports = iptables =
               module = value
             else
               key = "#{module}|#{key}" if module
+              key = iptables.parameters_inverted[key] if iptables.parameters_inverted[key]
               rule[key] = value
             # First key is a command
             if iptables.commands_arguments[key]
-              if key isnt command
-                command = key
-                command_index = 1
               # Determine rule number
-              rule.rulenum = command_index
               if Array.isArray iptables.commands_arguments[key]
                 rule.command = key
                 for v, j in value.split ' '
                   rule[iptables.commands_arguments[key][j]] = v
+                command_index[rule.chain] ?= 0
+                rule.rulenum = ++command_index[rule.chain] if ['-P', '-N'].indexOf(key) is -1
             key = ''
             value = ''
             break if forceflush
           key += char
           while (char = line[++i]) isnt ' ' # and line[i]?
             key += char
-          if iptables.parameters.indexOf(key) isnt -1
+          # if iptables.parameters.indexOf(key) isnt -1
+          if iptables.parameters_inverted[key]
             module = null
           continue
         if char is '"'

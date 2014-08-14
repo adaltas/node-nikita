@@ -70,7 +70,7 @@ mecano.iptables
           conditions.all options, next, ->
             options.log? "Mecano `iptables`: list existing rules"
             execute
-              cmd: "service iptables status && iptables -S"
+              cmd: "service iptables status &>/dev/null && iptables -S"
               ssh: options.ssh
               log: options.log
               stdout: options.stdout
