@@ -13,37 +13,37 @@ describe 'iptables', ->
       iptables.normalize([ # Nothing to do 
         { chain: 'INPUT', jump: 'ACCEPT', dport: 22, '-p': 'tcp' }
       ]).should.eql [
-        { chain: 'INPUT', '--jump': 'ACCEPT', '--protocol': 'tcp', 'tcp|--dport': '22', 'before': {'--reject-with': 'icmp-host-prohibited', '-A': 'INPUT', '--jump': 'REJECT', 'chain': 'INPUT'} }
+        { chain: 'INPUT', '--jump': 'ACCEPT', '--protocol': 'tcp', 'tcp|--dport': '22', 'after': {'-A': 'INPUT', '--jump': 'ACCEPT', 'chain': 'INPUT'} }
       ]
     it 'normalize with full name for protocol', ->
       iptables.normalize([
         { chain: 'INPUT', jump: 'ACCEPT', dport: 22, protocol: 'tcp' }
       ]).should.eql [
-        { chain: 'INPUT', '--jump': 'ACCEPT', '--protocol': 'tcp', 'tcp|--dport': '22', 'before': {'--reject-with': 'icmp-host-prohibited', '-A': 'INPUT', '--jump': 'REJECT', 'chain': 'INPUT'} }
+        { chain: 'INPUT', '--jump': 'ACCEPT', '--protocol': 'tcp', 'tcp|--dport': '22', 'after': {'-A': 'INPUT', '--jump': 'ACCEPT', 'chain': 'INPUT'} }
       ]
     it 'normalize with full name for in-interface', ->
       iptables.normalize([
         { chain: 'INPUT', jump: 'ACCEPT', 'in-interface': 'lo' }
       ]).should.eql [
-        { chain: 'INPUT', '--jump': 'ACCEPT', '--in-interface': 'lo', 'before': {'--reject-with': 'icmp-host-prohibited', '-A': 'INPUT', '--jump': 'REJECT', 'chain': 'INPUT'} }
+        { chain: 'INPUT', '--jump': 'ACCEPT', '--in-interface': 'lo', 'after': {'-A': 'INPUT', '--jump': 'ACCEPT', 'chain': 'INPUT'} }
       ]
     it 'normalize with full option for protocol', ->
       iptables.normalize([
         { chain: 'INPUT', jump: 'ACCEPT', dport: 22, '--protocol': 'tcp' }
       ]).should.eql [
-        { chain: 'INPUT', '--jump': 'ACCEPT', '--protocol': 'tcp', 'tcp|--dport': '22', 'before': {'--reject-with': 'icmp-host-prohibited', '-A': 'INPUT', '--jump': 'REJECT', 'chain': 'INPUT'} }
+        { chain: 'INPUT', '--jump': 'ACCEPT', '--protocol': 'tcp', 'tcp|--dport': '22', 'after': {'-A': 'INPUT', '--jump': 'ACCEPT', 'chain': 'INPUT'} }
       ]
     it 'normalize with full name without its module prefix (see state and comment)', ->
       iptables.normalize([
         { chain: 'INPUT', jump: 'ACCEPT', dport: 88, '-p': 'udp', state: 'NEW', comment: 'krb5kdc daemon' }
       ]).should.eql [
-        { chain: 'INPUT', '--jump': 'ACCEPT', '--protocol': 'udp', 'udp|--dport': '88', 'state|--state': 'NEW', 'comment|--comment': '"krb5kdc daemon"', 'before': {'--reject-with': 'icmp-host-prohibited', '-A': 'INPUT', '--jump': 'REJECT', 'chain': 'INPUT'} }
+        { chain: 'INPUT', '--jump': 'ACCEPT', '--protocol': 'udp', 'udp|--dport': '88', 'state|--state': 'NEW', 'comment|--comment': '"krb5kdc daemon"', 'after': {'-A': 'INPUT', '--jump': 'ACCEPT', 'chain': 'INPUT'} }
       ]
     it 'normalize with full option without its module prefix (comment)', ->
       iptables.normalize([
         { chain: 'INPUT', jump: 'ACCEPT', dport: 88, '-p': 'tcp', '--comment': 'My comment' }
       ]).should.eql [
-        { chain: 'INPUT', '--jump': 'ACCEPT', '--protocol': 'tcp', 'tcp|--dport': '88', 'comment|--comment': '"My comment"', 'before': {'--reject-with': 'icmp-host-prohibited', '-A': 'INPUT', '--jump': 'REJECT', 'chain': 'INPUT'} }
+        { chain: 'INPUT', '--jump': 'ACCEPT', '--protocol': 'tcp', 'tcp|--dport': '88', 'comment|--comment': '"My comment"', 'after': {'-A': 'INPUT', '--jump': 'ACCEPT', 'chain': 'INPUT'} }
       ]
     it 'preserve input', ->
       rules = [{ chain: 'INPUT', jump: 'ACCEPT', source: "10.10.10.0/24", comment: 'Local Network' }]
@@ -225,7 +225,7 @@ describe 'iptables', ->
 
   describe 'position', ->
 
-    it 'default before reject icmp-host-prohibited', ->
+    it 'default after "-i lo -j ACCEPT"', ->
       oldrules = iptables.parse """
       -P INPUT ACCEPT
       -P FORWARD ACCEPT

@@ -105,7 +105,7 @@ module.exports = iptables =
           rulenum++
           if misc.object.equals newrule.after, oldrule, Object.keys newrule.after
             newrule.rulenum = rulenum + 1
-            break
+            # break
         delete newrule.after
       if newrule.before and not newrule.rulenum
         rulenum = 0
@@ -197,7 +197,8 @@ module.exports = iptables =
         newrule[k] = v
       newrules.push newrule
     if position and newrule.command isnt '-A' then for newrule in newrules
-      newrule.before = '-A': 'INPUT', chain: 'INPUT', '--jump': 'REJECT', '--reject-with': 'icmp-host-prohibited' unless newrule.after? or newrule.before?
+      # newrule.before = '-A': 'INPUT', chain: 'INPUT', '--jump': 'REJECT', '--reject-with': 'icmp-host-prohibited' unless newrule.after? or newrule.before?
+      newrule.after = '-A': 'INPUT', chain: 'INPUT', '--jump': 'ACCEPT' unless newrule.after? or newrule.before?
     if Array.isArray rules then newrules else newrules[0]
 
   ###

@@ -85,7 +85,7 @@ mecano.iptables
               return next() unless cmd.length
               options.log? "Mecano `iptables`: modify rules"
               execute
-                cmd: "#{cmd.join '; '}; service iptables save"
+                cmd: "#{cmd.join '; '}; "
                 ssh: options.ssh
                 log: options.log
                 trap_on_error: true
