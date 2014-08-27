@@ -149,11 +149,11 @@ Install a service. For now, only yum over SSH.
                   current_startup += level if ['on', 'marche'].indexOf(status) > -1
               return do_started() if (options.startup is true and current_startup.length) or (options.startup is current_startup)
               modified = true
-              if options.startup?
+              if options.startup
               then startup_add()
               else startup_del()
           startup_add = ->
-            options.log? "Mecano `service`: add startup service"
+            options.log? "Mecano `service`: startup on"
             cmd = "chkconfig --add #{chkname};"
             if typeof options.startup is 'string'
               startup_on = startup_off = ''
@@ -175,12 +175,13 @@ Install a service. For now, only yum over SSH.
               return next err if err
               do_started()
           startup_del = ->
-            options.log? "Mecano `service`: delete startup service"
+            options.log? "Mecano `service`: startup off"
             # Note, we are deleting the service but instead we could
             # make sure it's added but in "off" state.
             execute
               ssh: options.ssh
-              cmd: "chkconfig --del #{chkname}"
+              # cmd: "chkconfig --del #{chkname}"
+              cmd: "chkconfig #{chkname} off"
               log: options.log
               stdout: options.stdout
               stderr: options.stderr
