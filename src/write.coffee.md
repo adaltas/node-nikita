@@ -192,7 +192,7 @@ mecano.write
             # Option "local_source" force to bypass the ssh
             # connection, use by the upload function
             source = options.source or options.destination
-            options.log? "Mecano `write`: force local source is \"#{unless options.local_source then 'not'} active\""
+            options.log? "Mecano `write`: force local source is \"#{if options.local_source then 'true' else 'false'}\""
             options.log? "Mecano `write`: source is \"#{options.source}\""
             ssh = if options.local_source then null else options.ssh
             fs.exists ssh, source, (err, exists) ->
