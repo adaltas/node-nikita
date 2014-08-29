@@ -61,6 +61,7 @@ provided in the `content` option.
         .on 'item', (options, next) ->
           options.log? "Mecano `ini`"
           {merge, destination, content, ssh} = options
+          options.clean ?= true
           # Validate parameters
           return next new Error 'Missing content' unless content
           return next new Error 'Missing destination' unless destination
@@ -79,7 +80,7 @@ provided in the `content` option.
                 do_write()
           do_write = ->
             options.log? "Mecano `ini`: write"
-            clean content #if options.clean
+            clean content if options.clean
             stringify = options.stringify or misc.ini.stringify
             options.content = stringify content, options
             write options, (err, w) ->
