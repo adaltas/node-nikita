@@ -41,7 +41,7 @@
   "contributors": [ 
     { "name": "David Worms", "email": "david@adaltas.com" }
   ],
-  "main": "index",
+  "main": "./lib/index",
   "engines": { "node": ">= 0.6.0" },
   "scripts": {
     "test": "make test"
