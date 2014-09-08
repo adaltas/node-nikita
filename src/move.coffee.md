@@ -5,13 +5,6 @@
 Move files and directories. It is ok to overwrite the destination file if it exists,
 in which case the source file will no longer exists.
 
-    fs = require 'ssh2-fs'
-    each = require 'each'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
-    remove = require './remove'
-
 `options`               Command options include:
 *   `destination`       Final name of the moved resource.
 *   `force`             Force the replacement of the file without checksum verification, speed up the action and disable the `moved` indicator in the callback.
@@ -88,3 +81,18 @@ mecano.mv
           conditions.all options, next, do_exists
         .on 'both', (err) ->
           callback err, moved
+
+## Dependencies
+
+    fs = require 'ssh2-fs'
+    each = require 'each'
+    misc = require './misc'
+    conditions = require './misc/conditions'
+    child = require './misc/child'
+    remove = require './remove'
+
+
+
+
+
+

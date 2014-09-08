@@ -6,14 +6,6 @@ Recursively create a directory. The behavior is similar to the Unix command `mkd
 It supports an alternative syntax where options is simply the path of the directory
 to create.
 
-    fs = require 'ssh2-fs'
-    path = require 'path'
-    each = require 'each'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
-    chown = require './chown'
-
 `options`           Command options include:
 *   `cwd`           Current working directory for relative paths.
 *   `uid`           Unix user id.
@@ -139,3 +131,18 @@ mecano.mkdir
         .on 'both', (err) ->
           finish err, created
       result
+
+## Dependencies
+
+    fs = require 'ssh2-fs'
+    path = require 'path'
+    each = require 'each'
+    misc = require './misc'
+    conditions = require './misc/conditions'
+    child = require './misc/child'
+    chown = require './chown'
+
+
+
+
+

@@ -4,12 +4,6 @@
 
 Install a service. For now, only yum over SSH.
 
-    each = require 'each'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
-    execute = require './execute'
-
 `options`           Command options include:
 *   `name`          Package name, optional.
 *   `startup`       Run service daemon on startup. If true, startup will be set to '2345', use an empty string to not define any run level.
@@ -113,7 +107,7 @@ Install a service. For now, only yum over SSH.
             execute
               ssh: options.ssh
               cmd: "yum install -y #{pkgname}"
-              code_skipped: 1
+              # code_skipped: 1
               log: options.log
               stdout: options.stdout
               stderr: options.stderr
@@ -226,3 +220,17 @@ Install a service. For now, only yum over SSH.
         .on 'both', (err) ->
           finish err, serviced, installed, updates
       result
+
+## Dependencies
+
+    each = require 'each'
+    misc = require './misc'
+    conditions = require './misc/conditions'
+    child = require './misc/child'
+    execute = require './execute'
+
+
+
+
+
+

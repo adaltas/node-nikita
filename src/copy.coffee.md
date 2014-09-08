@@ -1,33 +1,52 @@
 
-`cp` `copy([goptions], options, callback)`
-------------------------------------------
+# `copy([goptions], options, callback)`
 
 Copy a file. The behavior is similar to the one of the `cp`
 Unix utility. Copying a file over an existing file will
 overwrite it.
 
-    fs = require 'ssh2-fs'
-    path = require 'path'
-    each = require 'each'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
-    chmod = require './chmod'
-    chown = require './chown'
+## Options
 
-`options`           Command options include:
-*   `source`        The file or directory to copy.
-*   `destination`   Where the file or directory is copied.
-*   `not_if_exists` Equals destination if true.
-*   `mode`          Permissions of the file or the parent directory
-*   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.
+*   `source`   
+    The file or directory to copy.   
+*   `destination`   
+    Where the file or directory is copied.   
+*   `gid`   
+    Group name or id who owns the file.   
+*   `not_if_exists`   
+    Equals destination if true.   
+*   `mode`   
+    Permissions of the file or the parent directory.   
+*   `uid`   
+    User name or id who owns the file.   
+*   `ssh`   
+    Run the action on a remote server using SSH, an ssh2 instance or an
+    configuration object used to initialize the SSH connection.   
 
-`callback`          Received parameters are:
-*   `err`           Error object if any.
-*   `copied`        Number of files or parent directories copied.
+## Callback parameters
 
-Todo:
-*   preserve permissions if `mode` is `true`
+*   `err`   
+    Error object if any.   
+*   `copied`   
+    Number of files or parent directories copied.
+
+## Todo
+
+*   Preserve permissions if `mode` is `true`
+
+## Example
+
+```js
+require('mecano').copy({
+  source: "/etc/passwd",
+  destination: "/etc/passwd.bck",
+  uid: 'my_user'
+  gid: 'my_group'
+  mode: '0755'
+}, function(err, copied){
+  console.log(err ? err.message : 'File was copied: ' + copied);
+});
+```
 
     module.exports = (goptions, options, callback) ->
       [goptions, options, callback] = misc.args arguments
@@ -139,3 +158,22 @@ Todo:
                 callback()
         .on 'both', (err) ->
           callback err, copied
+
+## Dependencies
+
+    fs = require 'ssh2-fs'
+    path = require 'path'
+    each = require 'each'
+    misc = require './misc'
+    conditions = require './misc/conditions'
+    child = require './misc/child'
+    chmod = require './chmod'
+    chown = require './chown'
+
+
+
+
+
+
+
+

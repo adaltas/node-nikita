@@ -5,53 +5,78 @@
 Iptables  is  used to set up, maintain, and inspect the tables of IPv4 packet 
 filter rules in the Linux kernel.
 
-    each = require 'each'
-    misc = require './misc'
-    iptables = require './misc/iptables'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
-    execute = require './execute'
+Iptables rules are only inserted if the service is started on the target system.
 
-### Example
+## Options
+
+*   `log` (function)    
+    Function called with a log related messages.   
+*   `rules` (object | array)   
+    One or more objects containing iptables rule definitions.   
+*   `ssh` (object | ssh connection)   
+    Run the action on a remote server using SSH, an ssh2 instance or an
+    configuration object used to initialize the SSH connection.   
+*   `stdout` (stream writer)   
+    Stream writer to pipe the standart output stream of the executed commands.   
+*   `stderr` (stream writer)   
+    Stream writer to pipe the standart error stream of the executed commands.   
+
+## Usage
 
 Rule objects may contains the following keys:
 
 *   `rulenum`
 *   `protocol`
 *   `jump`
-*   `in-interface`  Name of an interface via which a packet was received.
-*   `out-interface` Name  of an interface via which a packet is going to be sent.
-*   `source`        Source  specification.  Address  can  be  either  a network
-                    name, a hostname, a network IP address (with /mask), or a
-                    plain IP address.
-*   `destination`   Destination specification.  See the description of the -s
-                    (source) flag for a detailed description of the syntax.   
+*   `in-interface`   
+    Name of an interface via which a packet was received.
+*   `out-interface`
+    Name of an interface via which a packet is going to be sent.
+*   `source`   
+    Source specification. Address can be either a network name, a hostname, a
+    network IP address (with /mask), or a plain IP address.
+*   `destination`   
+    Destination specification. See the description of the -s (source) flag for
+    a detailed description of the syntax.   
 *   `comment`
 *   `state`
-*   `dport`         Destination port or port range specification, see the "tcp"
-                    and "udp" modules.
-*   `sport`         Source  port  or port range specification, see the "tcp" and
-                    "udp" modules.
+*   `dport`   
+    Destination port or port range specification, see the "tcp" and "udp"
+    modules.
+*   `sport`   
+    Source port or port range specification, see the "tcp" and "udp" modules.
 
-Iptables comes with module functionnalities which must be specifically 
-integrated to the code. For this reason, we could only integrate a limited
-set of modules and more are added based on usages. Supported modules are:
+Iptables comes with many modules. Each of them which must be specifically 
+integrated to the parser part of this code. For this reason, we could only
+integrate a limited set of modules and more are added based on usages. Supported
+modules are:
 
-*   `state`   This module, when combined with connection tracking, allows access
-              to the connection tracking state for this packet.
-*   `comment` Allows you to add comments (up to 256 characters) to any rule.
-*   `tcp`     Used if protocol is set to "tcp", the supported properties are
-              "dport" and "sport".
-*   `udp`     Used if protocol is set to "udp", the supported properties are
-              "dport" and "sport".
+*   `state`   
+    This module, when combined with connection tracking, allows access to the
+    connection tracking state for this packet.
+*   `comment`   
+    Allows you to add comments (up to 256 characters) to any rule.
+*   `limit`   
+    Matches at a limited rate using a token bucket filter.
+*   `tcp`   
+    Used if protocol is set to "tcp", the supported properties are "dport" and
+    "sport".
+*   `udp`
+    Used if protocol is set to "udp", the supported properties are "dport" and
+    "sport".
+
+## Example
 
 ```coffee
-rulenum = chain: 'INPUT', jump: 'ACCEPT', 'in-interface': 'lo'
-mecano.iptables
-  ssh: ssh
+var after = {chain: 'INPUT', jump: 'ACCEPT', 'in-interface': 'lo'}
+require('mecano').iptables({
+  ssh: ssh,
   rules: [
-    chain: 'INPUT', rulenum: rulenum, jump: 'ACCEPT', dport: 22, protocol: 'tcp'
+    chain: 'INPUT', after: after, jump: 'ACCEPT', dport: 22, protocol: 'tcp'
   ]
+}, function(err, updated){
+  console.log(err ? err.message : "Iptables was updated: " + !!written);
+});
 ```
 
     module.exports = (goptions, options, callback) ->
@@ -97,6 +122,15 @@ mecano.iptables
         .on 'both', (err) ->
           finish err, modified
       result
+
+## Dependencies
+
+    each = require 'each'
+    misc = require './misc'
+    iptables = require './misc/iptables'
+    conditions = require './misc/conditions'
+    child = require './misc/child'
+    execute = require './execute'
 
 ## IPTables References
 

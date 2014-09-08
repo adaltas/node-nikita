@@ -4,27 +4,15 @@
 
 Register a new ldap schema.
 
-    each = require 'each'
-    ldap = require 'ldapjs'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
-    execute = require './execute'
-    copy = require './copy'
-    write = require './write'
-    move = require './move'
-    remove = require './remove'
-    mkdir = require './mkdir'
-
-`options`           Command options include:
-*   `url`           Specify URI referring to the ldap server, alternative to providing an [ldapjs client] instance.
-*   `binddn`        Distinguished Name to bind to the LDAP directory, alternative to providing an [ldapjs client] instance.
-*   `passwd`        Password for simple authentication, alternative to providing an [ldapjs client] instance.
-*   `uri`           LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to false in which case it will use your openldap client environment configuraiton.
-*   `name`          Common name of the schema.
-*   `schema`        Path to the schema definition.
-*   `overwrite`     Overwrite existing "olcAccess", default is to merge.
-*   `log`           Function called with a log related messages.
+`options`           Command options include:   
+*   `url`           Specify URI referring to the ldap server, alternative to providing an [ldapjs client] instance.   
+*   `binddn`        Distinguished Name to bind to the LDAP directory, alternative to providing an [ldapjs client] instance.   
+*   `passwd`        Password for simple authentication, alternative to providing an [ldapjs client] instance.   
+*   `uri`           LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to false in which case it will use your openldap client environment configuraiton.   
+*   `name`          Common name of the schema.   
+*   `schema`        Path to the schema definition.   
+*   `overwrite`     Overwrite existing "olcAccess", default is to merge.   
+*   `log`           Function called with a log related messages.   
 
     module.exports = (goptions, options, callback) ->
       [goptions, options, callback] = misc.args arguments
@@ -173,3 +161,21 @@ Register a new ldap schema.
         .on 'both', (err) ->
           finish err, modified
       result
+
+## Dependencies
+
+    each = require 'each'
+    ldap = require 'ldapjs'
+    misc = require './misc'
+    conditions = require './misc/conditions'
+    child = require './misc/child'
+    execute = require './execute'
+    copy = require './copy'
+    write = require './write'
+    move = require './move'
+    remove = require './remove'
+    mkdir = require './mkdir'
+
+
+
+

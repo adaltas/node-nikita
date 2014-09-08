@@ -3,45 +3,63 @@
 
 Write a file or a portion of an existing file.
 
-    fs = require 'ssh2-fs'
-    path = require 'path'
-    each = require 'each'
-    eco = require 'eco'
-    pad = require 'pad'
-    diff = require 'diff'
-    quote = require 'regexp-quote'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
-    mkdir = require './mkdir'
-    chown = require './chown'
-    chmod = require './chmod'
-
 ## Options
 
-*   `append`        Append the content to the destination file. If destination does not exist, the file will be created.
-*   `backup`        Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.
-*   `content`       Text to be written, an alternative to source which reference a file.
-*   `destination`   File path where to write content to.
-*   `diff`          Print diff information, pass the result of [jsdiff.diffLines][diffLines] as argument if a function, default to true.
-*   `eof`           Ensure the file ends with this charactere sequence, special values are 'windows', 'mac', 'unix' and 'unicode' (respectively "\r\n", "\r", "\n", "\u2028"), will be auto-detected if "true", default to false or "\n" if "true" and not detected.
-*   `from`          Replace from after this marker, a string or a regular expression.
-*   `gid`           File group name or group id.
-*   `local_source`  Treat the source as local instead of remote, only apply with "ssh" option.
-*   `match`         Replace this marker, a string or a regular expression, default to the replaced string if missing.
-*   `mode`          File mode (permission and sticky bits), default to `0666`, in the for of `{mode: 0o744}` or `{mode: "744"}`.
-*   `replace`       The content to be inserted, used conjointly with the from, to or match options.
-*   `source`        File path from where to extract the content, do not use conjointly with content.
-*   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.
-*   `stdout`        Writable Stream in which diff information are written.
-*   `to`            Replace to before this marker, a string or a regular expression.
-*   `uid`           File user name or user id.
-*   `write`         An array containing multiple transformation where a transformation is an object accepting the options `from`, `to`, `match` and `replace`.
+*   `append`   
+    Append the content to the destination file. If destination does not exist,
+    the file will be created.
+*   `backup`   
+    Create a backup, append a provided string to the filename extension or a
+    timestamp if value is not a string.
+*   `content`   
+    Text to be written, an alternative to source which reference a file.
+*   `destination`   
+    File path where to write content to.
+*   `diff`   
+    Print diff information, pass the result of [jsdiff.diffLines][diffLines] as
+    argument if a function, default to true.
+*   `eof`   
+    Ensure the file ends with this charactere sequence, special values are
+    'windows', 'mac', 'unix' and 'unicode' (respectively "\r\n", "\r", "\n",
+    "\u2028"), will be auto-detected if "true", default to false or "\n" if
+    "true" and not detected.
+*   `from`   
+    Replace from after this marker, a string or a regular expression.
+*   `gid`   
+    File group name or group id.
+*   `local_source`   
+    Treat the source as local instead of remote, only apply with "ssh" option.
+*   `match`   
+    Replace this marker, a string or a regular expression, default to the
+    replaced string if missing.
+*   `mode`   
+    File mode (permission and sticky bits), default to `0666`, in the form of
+    `{mode: 0o0744}` or `{mode: "0744"}`.
+*   `replace`   
+    The content to be inserted, used conjointly with the from, to or match
+    options.
+*   `source`   
+    File path from where to extract the content, do not use conjointly with
+    content.
+*   `ssh`   
+    Run the action on a remote server using SSH, an ssh2 instance or an
+    configuration object used to initialize the SSH connection.
+*   `stdout`   
+    Writable Stream in which diff information are written.
+*   `to`   
+    Replace to before this marker, a string or a regular expression.
+*   `uid`   
+    File user name or user id.
+*   `write`   
+    An array containing multiple transformation where a transformation is an
+    object accepting the options `from`, `to`, `match` and `replace`.
 
 ## Callback parameters
 
-*   `err`           Error object if any.
-*   `written`      Number of written files.
+*   `err`   
+    Error object if any.
+*   `written`   
+    Number of written files.
 
 ## More about the `append` option
 
@@ -392,6 +410,26 @@ mecano.write
         .on 'both', (err) ->
           finish err, written
       result
+
+## Dependencies
+
+    fs = require 'ssh2-fs'
+    path = require 'path'
+    each = require 'each'
+    eco = require 'eco'
+    pad = require 'pad'
+    diff = require 'diff'
+    quote = require 'regexp-quote'
+    misc = require './misc'
+    conditions = require './misc/conditions'
+    child = require './misc/child'
+    mkdir = require './mkdir'
+    chown = require './chown'
+    chmod = require './chmod'
+
+
+
+
 
 [diffLines]: https://github.com/kpdecker/jsdiff
 

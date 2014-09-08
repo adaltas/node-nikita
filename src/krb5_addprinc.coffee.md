@@ -1,28 +1,50 @@
 
-`krb5_principal([goptions], options, callback`
-----------------------------------------------
+# `krb5_principal([goptions], options, callback`
 
-Create a new Kerberos principal and an optionnal keytab.
+Create a new Kerberos principal with a password or an optional keytab.   
 
-    each = require 'each'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
-    execute = require './execute'
-    krb5_ktadd = require './krb5_ktadd'
+## Options
 
-`options`           Command options include:
-*   `kadmin_server` Address of the kadmin server; optional, use "kadmin.local" if missing.
-*   `kadmin_principal`  KAdmin principal name unless `kadmin.local` is used.
-*   `kadmin_password`   Password associated to the KAdmin principal.
-*   `principal`     Principal to be created.
-*   `password`      Password associated to this principal; required if no randkey is provided.
-*   `randkey`       Generate a random key; required if no password is provided.
-*   `keytab`        Path to the file storing key entries.
-*   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.
-*   `log`           Function called with a log related messages.
-*   `stdout`        Writable Stream in which commands output will be piped.
-*   `stderr`        Writable Stream in which commands error will be piped.
+*   `kadmin_server`   
+    Address of the kadmin server; optional, use "kadmin.local" if missing.
+*   `kadmin_principal`   
+    KAdmin principal name unless `kadmin.local` is used.
+*   `kadmin_password`   
+    Password associated to the KAdmin principal.
+*   `principal`   
+    Principal to be created.
+*   `password`   
+    Password associated to this principal; required if no randkey is provided.
+*   `randkey`   
+    Generate a random key; required if no password is provided.
+*   `keytab`   
+    Path to the file storing key entries.
+*   `ssh`   
+    Run the action on a remote server using SSH, an ssh2 instance or an
+    configuration object used to initialize the SSH connection.
+*   `log`   
+    Function called with a log related messages.
+*   `stdout`   
+    Writable Stream in which commands output will be piped.
+*   `stderr`   
+    Writable Stream in which commands error will be piped.
+
+## Keytab example
+
+```js
+require('mecano').krb5_addprinc({
+  principal: 'myservice/my.fqdn@MY.REALM',
+  randkey: true,
+  keytab: '/etc/security/keytabs/my.service.keytab',
+  uid: 'myservice',
+  gid: 'myservice',
+  kadmin_principal: 'me/admin@MY_REALM',
+  kadmin_password: 'pass',
+  kadmin_server: 'localhost'
+}, function(err, modified){
+  console.log(err ? err.message : "Principal created or modified: " + !!modified);
+});
+```
 
     module.exports = (goptions, options, callback) ->
       [goptions, options, callback] = misc.args arguments
@@ -61,3 +83,13 @@ Create a new Kerberos principal and an optionnal keytab.
           conditions.all options, next, do_kadmin
         .on 'both', (err) ->
           callback err, executed
+
+## Dependencies
+
+    each = require 'each'
+    misc = require './misc'
+    conditions = require './misc/conditions'
+    child = require './misc/child'
+    execute = require './execute'
+    krb5_ktadd = require './krb5_ktadd'
+

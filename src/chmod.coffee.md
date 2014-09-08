@@ -1,16 +1,9 @@
 
-`chmod([goptions], options, callback)`
---------------------------------------
+# `chmod([goptions], options, callback)`
 
 Change the permissions of a file or directory.
 
-    fs = require 'ssh2-fs'
-    each = require 'each'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
-
-`options`           Command options include:
+## Options
 
 *   `destination`   Where the file or directory is copied.   
 *   `mode`          Permissions of the file or the parent directory.   
@@ -22,13 +15,15 @@ Change the permissions of a file or directory.
 *   `err`           Error object if any.
 *   `modified`      Number of files with modified permissions.
 
-Example:
+# Example
 
-```coffee
-mecano.chmod
-    destination: "~/my/project"
-    mode: 0o755
-, (err, modified) -> ...
+```js
+require('mecano').chmod({
+  destination: "~/my/project",
+  mode: 0o755
+}, function(err, modified){
+  console.log(err ? err.message : 'File was modified: ' + modified);
+});
 ```
 
     module.exports = (goptions, options, callback) ->
@@ -58,3 +53,17 @@ mecano.chmod
               next()
         .on 'both', (err) ->
           finish err, modified
+
+## Dependencies
+
+    fs = require 'ssh2-fs'
+    each = require 'each'
+    misc = require './misc'
+    conditions = require './misc/conditions'
+    child = require './misc/child'
+
+
+
+
+
+

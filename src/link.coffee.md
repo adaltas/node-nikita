@@ -5,14 +5,6 @@
 Create a symbolic link and it's parent directories if they don't yet
 exist.
 
-    fs = require 'ssh2-fs'
-    path = require 'path'
-    each = require 'each'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
-    mkdir = require './mkdir'
-
 `options`           Command options include:
 *   `source`        Referenced file to be linked.
 *   `destination`   Symbolic link to be created.
@@ -102,3 +94,17 @@ mecano.link
         .on 'both', (err) ->
           callback err, linked
       result
+
+## Dependencies
+
+    fs = require 'ssh2-fs'
+    path = require 'path'
+    each = require 'each'
+    misc = require './misc'
+    conditions = require './misc/conditions'
+    child = require './misc/child'
+    mkdir = require './mkdir'
+
+
+
+

@@ -5,12 +5,6 @@
 Recursively remove files, directories and links. Internally, the function
 use the [rimraf](https://github.com/isaacs/rimraf) library.
 
-    fs = require 'ssh2-fs'
-    each = require 'each'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
-
 `options`           Command options include:
 *   `source`        File, directory or pattern.
 *   `destination`   Alias for "source".
@@ -82,3 +76,14 @@ mecano.rm [
         .on 'both', (err) ->
           finish err, removed
       result
+
+## Dependencies
+
+    fs = require 'ssh2-fs'
+    each = require 'each'
+    misc = require './misc'
+    conditions = require './misc/conditions'
+    child = require './misc/child'
+
+
+

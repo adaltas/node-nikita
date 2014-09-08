@@ -1,14 +1,15 @@
 # Mecano
 
-Mecano gather a set of functions usually used during system deployment. All the functions share a
-common API with flexible options.
-
-    {EventEmitter} = require 'events'
+Mecano gather a set of functions usually used during system deployment. All the
+functions share a common API with flexible options.
 
 *   Run actions both locally and remotely over SSH.
-*   Ability to see if an action had an effect through the second argument provided in the callback.
-*   Common API with options and callback arguments and calling the callback with an error and the number of affected actions.
-*   Run one or multiple actions depending on option argument being an object or an array of objects.
+*   Ability to see if an action had an effect through the second argument
+    provided in the callback.
+*   Common API with options and callback arguments and calling the callback with
+    an error and the number of affected actions.
+*   Run one or multiple actions depending on option argument being an object or
+    an array of objects.
 
 Here's the list of available functions:
 
@@ -20,6 +21,7 @@ Here's the list of available functions:
       execute: require './execute'
       extract: require './extract'
       git: require './git'
+      group: require './group'
       ini: require './ini'
       iptables: require './iptables'
       krb5_ktadd: require './krb5_ktadd'

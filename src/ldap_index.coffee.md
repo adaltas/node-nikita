@@ -4,12 +4,6 @@
 
 Create new index for the OpenLDAP server.
 
-    each = require 'each'
-    ldap = require 'ldapjs'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
-
 `options`           Command options include:
 *   `indexes`       Object with keys mapping to indexed attributes and values mapping to indices ("pres", "approx", "eq", "sub" and 'special').
 *   `url`           Specify URI referring to the ldap server, alternative to providing an [ldapjs client] instance.
@@ -100,3 +94,15 @@ Resources:
         .on 'both', (err) ->
           finish err, modified
       result
+
+## Dependencies
+
+    each = require 'each'
+    ldap = require 'ldapjs'
+    misc = require './misc'
+    conditions = require './misc/conditions'
+    child = require './misc/child'
+
+
+
+

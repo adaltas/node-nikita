@@ -6,25 +6,39 @@ Extract an archive. Multiple compression types are supported. Unless
 specified as an option, format is derived from the source extension. At the
 moment, supported extensions are '.tgz', '.tar.gz' and '.zip'.
 
-    fs = require 'ssh2-fs'
-    path = require 'path'
-    each = require 'each'
-    execute = require './execute'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
+## Options
 
-`options`           Command options include:
-*   `source`        Archive to decompress.
-*   `destination`   Default to the source parent directory.
-*   `format`        One of 'tgz', 'tar' or 'zip'.
-*   `creates`       Ensure the given file is created or an error is send in the callback.
-*   `not_if_exists` Cancel extraction if file exists.
-*   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.
+*   `source`   
+    Archive to decompress.   
+*   `destination`   
+    Default to the source parent directory.   
+*   `format`   
+    One of 'tgz', 'tar' or 'zip'.
+*   `creates`   
+    Ensure the given file is created or an error is send in the callback.   
+*   `not_if_exists`   
+    Cancel extraction if file exists.   
+*   `ssh`   
+    Run the action on a remote server using SSH, an ssh2 instance or an
+    configuration object used to initialize the SSH connection.   
 
-`callback`          Received parameters are:
-*   `err`           Error object if any.
-*   `extracted`     Number of extracted archives.
+## Parameters
+
+*   `err`   
+    Error object if any.   
+*   `extracted`   
+    Number of extracted archives.   
+
+## Example
+
+```javascript
+require('mecano').extract({
+  source: '/path/to/file.tgz'
+  destation: '/tmp'
+}, function(err, extracted){
+  console.log(err ? err.message : 'File was extracted: ' + extracted);
+});
+```
 
     module.exports = (goptions, options, callback) ->
       [goptions, options, callback] = misc.args arguments
@@ -88,3 +102,21 @@ moment, supported extensions are '.tgz', '.tar.gz' and '.zip'.
           conditions.all options, next, extract
         .on 'both', (err) ->
           callback err, extracted
+
+## Dependencies
+
+    fs = require 'ssh2-fs'
+    path = require 'path'
+    each = require 'each'
+    execute = require './execute'
+    misc = require './misc'
+    conditions = require './misc/conditions'
+    child = require './misc/child'
+
+
+
+
+
+
+
+

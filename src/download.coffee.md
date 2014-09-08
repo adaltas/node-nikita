@@ -4,55 +4,56 @@
 
 Download files using various protocols.
 
-When executed locally: the `http` protocol is handled
-with the "request" module; the `ftp` protocol is handled
-with the "jsftp"; the `file` protocol is handle with the navite
-`fs` module.
+In local mode (with an SSH connection), the `http` protocol is handled with the
+"request" module when executed locally, the `ftp` protocol is handled with the
+"jsftp" and the `file` protocol is handle with the native `fs` module.
 
-    fs = require 'ssh2-fs'
-    url = require 'url'
-    Ftp = require 'jsftp'
-    each = require 'each'
-    request = require 'request'
-    curl = require './misc/curl'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
-    execute = require './execute'
-    remove = require './remove'
-    move = require './move'
+## Options
 
-`options`           Command options include:
-*   `source`        File, HTTP URL, FTP, GIT repository. File is the default protocol if source is provided without any.
-*   `destination`   Path where the file is downloaded.
-*   `force`         Overwrite destination file if it exists.
-*   `stdout`        Writable Stream in which commands output will be piped.
-*   `stderr`        Writable Stream in which commands error will be piped.
+*   `source`   
+    File, HTTP URL, FTP, GIT repository. File is the default protocol if source
+    is provided without any.   
+*   `destination`   
+    Path where the file is downloaded.   
+*   `force`   
+    Overwrite destination file if it exists.   
+*   `stdout`   
+    Writable Stream in which commands output will be piped.   
+*   `stderr`   
+    Writable Stream in which commands error will be piped.   
 
-`callback`          Received parameters are:
-*   `err`           Error object if any.
-*   `downloaded`    Number of downloaded files
+## Callback parameters
 
-File example
+*   `err`   
+    Error object if any.   
+*   `downloaded`   
+    Number of downloaded files.   
+
+## File example
+
+```js
+requir('mecano').download({
+  source: 'file://path/to/something',
+  destination: 'node-sigar.tgz'
+}, function(err, downloaded){
+  console.log(err ? err.message : 'File was downloaded: ' + downloaded);
+});
+```
+
+## HTTP example
+
 ```coffee
 mecano.download
-  source: 'file://path/to/something'
+  source: 'https://github.com/wdavidw/node-mecano/tarball/v0.0.1'
   destination: 'node-sigar.tgz'
 , (err, downloaded) -> ...
 ```
 
-HTTP example
-```coffee
-mecano.download
-  source: 'https://github.com/wdavidw/node-sigar/tarball/v0.0.1'
-  destination: 'node-sigar.tgz'
-, (err, downloaded) -> ...
-```
+## FTP example
 
-FTP example
 ```coffee
 mecano.download
-  source: 'ftp://myhost.com:3334/wdavidw/node-sigar/tarball/v0.0.1'
+  source: 'ftp://myhost.com:3334/wdavidw/node-mecano/tarball/v0.0.1'
   destination: 'node-sigar.tgz'
   user: "johndoe",
   pass: "12345"
@@ -131,13 +132,6 @@ mecano.download
                     .on 'close', ->
                       checksum()
                     .on 'error', next
-                # options.ssh.sftp (err, sftp) ->
-                #   return next err if err
-                #   rs = sftp.createReadStream u.pathname
-                #   ws = rs.pipe fs.createWriteStream stageDestination
-                #   ws.on 'close', ->
-                #     checksum()
-                #   ws.on 'error', next
             else
               fs.createWriteStream null, stageDestination, (err, ws) ->
                 return next err if err
@@ -162,10 +156,11 @@ mecano.download
                 ws.on 'close', () ->
                   checksum()
                 ws.on 'error', (err) ->
-                  # No test agains this but error in case
+                  # No test against this but error in case
                   # of connection issue leave an empty file
-                  remove ws, (err) ->
-                    next err
+                  remove
+                    destination: stageDestination
+                  , next
           checksum = ->
             return unstage() unless md5sum
             options.log? "Compare the downloaded file with the user-provided checksum"
@@ -194,3 +189,22 @@ mecano.download
           prepare()
         .on 'both', (err) ->
           finish err, downloaded
+
+## Dependencies
+
+    fs = require 'ssh2-fs'
+    url = require 'url'
+    Ftp = require 'jsftp'
+    each = require 'each'
+    request = require 'request'
+    curl = require './misc/curl'
+    misc = require './misc'
+    child = require './misc/child'
+    execute = require './execute'
+    remove = require './remove'
+    move = require './move'
+
+
+
+
+

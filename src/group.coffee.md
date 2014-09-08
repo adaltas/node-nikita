@@ -1,36 +1,40 @@
 
-`group([goptions], options, callback)`
---------------------------------------
+# `group([goptions], options, callback)`
 
 Create or modify a Unix group.
 
-    each = require 'each'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
-    execute = require './execute'
+## Options
 
-`options`           Command options include:
+*   `name`   
+    Login name of the group.   
+*   `system`   
+    Create a system account, such user are not created with ahome by default,
+    set the "home" option if we it to be created.   
+*   `gid`   
+    Group name or number of the user´s initial login group.   
+*   `ssh`   
+    Run the action on a remote server using SSH, an ssh2 instance or an
+    configuration object used to initialize the SSH connection.   
+*   `log`   
+    Function called with a log related messages.   
 
-*   `name`          Login name of the group.   
-*   `system`        Create a system account, such user are not created with a home by default, set the "home" option if we it to be created.   
-*   `gid`           Group name or number of the user´s initial login group.   
-*   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
-*   `log`           Function called with a log related messages.   
+## Callback Parameters
 
-`callback`          Received parameters are:
+*   `err`   
+    Error object if any.   
+*   `modified`   
+    Number of created or modified groups.   
 
-*   `err`           Error object if any.
-*   `modified`      Number of created or modified groups.
+## Example
 
-Example:
-
-```coffee
-mecano.group
+```js
+require('mecano').group({
   name: "myself"
   system: true
   gid: 490
-, (err, modified) -> ...
+}, function(err, modified){
+  console.log(err ? err.message : 'Group was created/modified: ' + modified);
+});
 ```
 
 The result of the above action can be viewed with the command
@@ -101,3 +105,19 @@ The result of the above action can be viewed with the command
         .on 'both', (err) ->
           finish err, gmodified
       result
+
+## Dependencies
+
+    each = require 'each'
+    misc = require './misc'
+    conditions = require './misc/conditions'
+    child = require './misc/child'
+    execute = require './execute'
+
+
+
+
+
+
+
+

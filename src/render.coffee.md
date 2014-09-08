@@ -5,13 +5,6 @@
 Render a template file At the moment, only the
 [ECO](http://github.com/sstephenson/eco) templating engine is integrated.
 
-    fs = require 'ssh2-fs'
-    each = require 'each'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
-    write = require './write'
-
 `options`               Command options include:
 *   `engine`            Template engine to use, default to "eco".   
 *   `content`           Templated content, bypassed if source is provided.   
@@ -61,6 +54,15 @@ generated content as its first argument.
           conditions.all options, next, do_read_source
         .on 'both', (err) ->
           callback err, rendered
+
+## Dependencies
+
+    fs = require 'ssh2-fs'
+    each = require 'each'
+    misc = require './misc'
+    conditions = require './misc/conditions'
+    child = require './misc/child'
+    write = require './write'
 
 
 

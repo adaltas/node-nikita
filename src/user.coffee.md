@@ -4,12 +4,6 @@
 
 Create or modify a Unix user.
 
-    each = require 'each'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
-    execute = require './execute'
-
 `options`           Command options include:
 
 *   `name`          Login name of the user.   
@@ -165,3 +159,18 @@ an output similar to "uid=490(hive) gid=10(wheel) groups=10(wheel)".
         .on 'both', (err) ->
           finish err, gmodified
       result
+
+## Dependencies
+
+    each = require 'each'
+    misc = require './misc'
+    conditions = require './misc/conditions'
+    child = require './misc/child'
+    execute = require './execute'
+
+
+
+
+
+
+

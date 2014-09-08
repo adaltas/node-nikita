@@ -4,12 +4,6 @@
 
 Create new ACLs for the OpenLDAP server.
 
-    each = require 'each'
-    ldap = require 'ldapjs'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
-
 `options`           Command options include:
 *   `to`            What to control access to as a string.
 *   `by`            Who to grant access to and the access to grant as an array (eg: `{..., by:["ssf=64 anonymous auth"]}`)
@@ -173,3 +167,14 @@ http://www.openldap.org/doc/admin24/access-control.html
         .on 'both', (err) ->
           finish err, modified
       result
+
+## Dependencies
+
+    each = require 'each'
+    ldap = require 'ldapjs'
+    misc = require './misc'
+    conditions = require './misc/conditions'
+    child = require './misc/child'
+
+
+

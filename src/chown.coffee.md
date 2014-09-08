@@ -4,21 +4,40 @@
 
 Change the ownership of a file or a directory.
 
-    fs = require 'ssh2-fs'
-    each = require 'each'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
+## Options
 
-`options`           Command options include:
-*   `destination`   Where the file or directory is copied.
-*   `mode`          Permissions of the file or the parent directory
-*   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.
-*   `log`           Function called with a log related messages.
+*   `destination`   
+    Where the file or directory is copied.   
+*   `gid`   
+    Group name or id who owns the file.   
+*   `log`   
+    Function called with a log related messages.   
+*   `mode`   
+    Permissions of the file or the parent directory.   
+*   `ssh`   
+    Run the action on a remote server using SSH, an ssh2 instance or an
+    configuration object used to initialize the SSH connection.   
+*   `uid`   
+    User name or id who owns the file.   
 
-`callback`          Received parameters are:
-*   `err`           Error object if any.
-*   `modified`      Number of files with modified permissions.
+## Callback parameters
+
+*   `err`   
+    Error object if any.   
+*   `modified`   
+    Number of files with modified permissions.   
+
+# Example
+
+```js
+require('mecano').chown({
+  destination: "~/my/project",
+  uid: 'my_user'
+  gid: 'my_group'
+}, function(err, modified){
+  console.log(err ? err.message : 'File was modified: ' + modified);
+});
+```
 
     module.exports = (goptions, options, callback) ->
       [goptions, options, callback] = misc.args arguments
@@ -48,3 +67,19 @@ Change the ownership of a file or a directory.
               next()
         .on 'both', (err) ->
           finish err, modified
+
+## Dependencies
+
+    fs = require 'ssh2-fs'
+    each = require 'each'
+    misc = require './misc'
+    conditions = require './misc/conditions'
+    child = require './misc/child'
+
+
+
+
+
+
+
+

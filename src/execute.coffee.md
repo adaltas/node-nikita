@@ -3,12 +3,6 @@
 
 Run a command locally or with ssh if `host` or `ssh` is provided.
 
-    each = require 'each'
-    exec = require 'ssh2-exec'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
-
 ## Options
 
 *   `cmd`           String, Object or array; Command to execute.
@@ -48,9 +42,9 @@ mecano.execute({
   if(err){
     console.log(err.message);
   }else if(created){
-    console.log("User created");
+    console.log('User created');
   }else{
-    console.log("User already exists");
+    console.log('User already exists');
   }
 })
 ```
@@ -132,3 +126,18 @@ mecano.execute({
           stderrs = stderrs[0] unless isArray
           finish err, executed, stdouts, stderrs
       result
+
+## Dependencies
+
+    each = require 'each'
+    exec = require 'ssh2-exec'
+    misc = require './misc'
+    conditions = require './misc/conditions'
+    child = require './misc/child'
+
+
+
+
+
+
+

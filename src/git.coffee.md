@@ -4,14 +4,6 @@
 
 Create and synchronize a git repository.
 
-    fs = require 'ssh2-fs'
-    path = require 'path'
-    each = require 'each'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
-    execute = require './execute'
-
 `options`           Command options include:   
 *   `source`        Git source repository address.   
 *   `destination`   Directory where to clone the repository.   
@@ -91,3 +83,21 @@ Create and synchronize a git repository.
           conditions.all options, next, prepare
         .on 'both', (err) ->
           callback err, updated
+
+## Dependencies
+
+    fs = require 'ssh2-fs'
+    path = require 'path'
+    each = require 'each'
+    misc = require './misc'
+    conditions = require './misc/conditions'
+    child = require './misc/child'
+    execute = require './execute'
+
+
+
+
+
+
+
+

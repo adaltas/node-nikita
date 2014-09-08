@@ -4,13 +4,6 @@
 
 Create a empty file if it does not yet exists.
 
-    fs = require 'ssh2-fs'
-    each = require 'each'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
-    write = require './write'
-
     module.exports = (goptions, options, callback) ->
       [goptions, options, callback] = misc.args arguments
       result = child()
@@ -38,3 +31,18 @@ Create a empty file if it does not yet exists.
               next()
         .on 'both', (err) ->
           finish err, modified
+
+## Dependencies
+
+    fs = require 'ssh2-fs'
+    each = require 'each'
+    misc = require './misc'
+    conditions = require './misc/conditions'
+    child = require './misc/child'
+    write = require './write'
+
+
+
+
+
+

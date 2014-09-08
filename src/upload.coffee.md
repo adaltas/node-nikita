@@ -6,16 +6,6 @@ Upload a file to a remote location. Options are
 identical to the "write" function with the addition of
 the "binary" option.
 
-    fs = require 'ssh2-fs'
-    path = require 'path'
-    each = require 'each'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
-    execute = require './execute'
-    write = require './write'
-    mkdir = require './mkdir'
-
 `options`           Command options include:
 *   `binary`        Fast upload implementation, discard all the other option and use its own stream based implementation.
 *   `from`          Replace from after this marker, a string or a regular expression.
@@ -136,3 +126,22 @@ the "binary" option.
         .on 'both', (err) ->
           finish err, uploaded
       result
+
+## Dependencies
+
+    fs = require 'ssh2-fs'
+    path = require 'path'
+    each = require 'each'
+    misc = require './misc'
+    conditions = require './misc/conditions'
+    child = require './misc/child'
+    execute = require './execute'
+    write = require './write'
+    mkdir = require './mkdir'
+
+
+
+
+
+
+
