@@ -1,6 +1,6 @@
 
 should = require 'should'
-mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
+mecano = if process.env.MECANO_COV then require '../lib-cov/' else require '../lib/'
 misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '../lib/misc'
 test = require './test'
 fs = require 'ssh2-fs'

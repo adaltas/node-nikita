@@ -1,7 +1,7 @@
 
 path = require 'path'
 should = require 'should'
-mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
+mecano = if process.env.MECANO_COV then require '../lib-cov/' else require '../lib/'
 misc = require '../lib/misc'
 test = require './test'
 they = require 'ssh2-they'

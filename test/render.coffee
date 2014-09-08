@@ -1,7 +1,7 @@
 
 fs = require 'fs'
 should = require 'should'
-mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
+mecano = if process.env.MECANO_COV then require '../lib-cov/' else require '../lib/'
 test = require './test'
 
 describe 'render', ->

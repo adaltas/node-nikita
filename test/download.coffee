@@ -1,7 +1,7 @@
 
 http = require 'http'
 should = require 'should'
-mecano = if process.env.MECANO_COV then require '../lib-cov/mecano' else require '../lib/mecano'
+mecano = if process.env.MECANO_COV then require '../lib-cov/' else require '../lib/'
 test = require './test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
