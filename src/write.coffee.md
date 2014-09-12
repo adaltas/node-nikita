@@ -191,13 +191,14 @@ mecano.write
           append = options.append
           write = options.write
           write ?= []
-          if options.from? or options.to? or options.match? or options.replace?
+          if options.from? or options.to? or options.match? or options.replace? or options.before?
             write.push
               from: options.from
               to: options.to
               match: options.match
               replace: options.replace
               append: options.append
+              before: options.before
           for w in write
             if not w.from? and not w.to? and not w.match? and w.replace?
               w.match = w.replace
@@ -269,7 +270,9 @@ mecano.write
             return do_replace_partial() unless options.context?
             options.log? "Mecano `write`: rendering with eco"
             try
-              content = eco.render content.toString(), options.context
+              switch options.engine
+                when 'nunjunks' then content = nunjucks.renderString content.toString(), options.context
+                else content = eco.render content.toString(), options.context
               if options.skip_empty_lines?
                 content = content.replace(/(\r\n|[\n\r\u0085\u2028\u2029])\s*(\r\n|[\n\r\u0085\u2028\u2029])/g, "$1")
             catch err
@@ -281,12 +284,27 @@ mecano.write
             options.log? "Mecano `write`: replace"
             for opts in write
               if opts.match
-                if typeof opts.match is 'string'
-                  opts.match = RegExp quote(opts.match), 'mg'
+                opts.match = RegExp quote(opts.match), 'mg' if typeof opts.match is 'string'
                 if opts.match instanceof RegExp
                   if opts.match.test content
                     content = content.replace opts.match, opts.replace
                     append = false
+                  else if opts.before and typeof opts.replace is 'string'
+                    if typeof opts.before is "string"
+                      opts.before = new RegExp "^.*#{opts.before}.*$", 'mg'
+                    if opts.before instanceof RegExp
+                      posoffset = 0
+                      orgContent = content
+                      while (res = opts.before.exec orgContent) isnt null
+                        pos = posoffset + res.index #+ res[0].length
+                        content = content.slice(0,pos) + opts.replace + '\n' + content.slice(pos)
+                        posoffset += opts.replace.length + 1
+                        break unless opts.before.global
+                      before = false
+                    else# if content
+                      linebreak = if content.length is 0 or content.substr(content.length - 1) is '\n' then '' else '\n'
+                      content = opts.replace + linebreak + content
+                      append = false
                   else if opts.append and typeof opts.replace is 'string'
                     if typeof opts.append is "string"
                       opts.append = new RegExp "^.*#{opts.append}.*$", 'mg'
@@ -295,7 +313,7 @@ mecano.write
                       orgContent = content
                       while (res = opts.append.exec orgContent) isnt null
                         pos = posoffset + res.index + res[0].length
-                        content = content.slice(0,pos) + '\n'+opts.replace + content.slice(pos)
+                        content = content.slice(0,pos) + '\n' + opts.replace + content.slice(pos)
                         posoffset += opts.replace.length + 1
                         break unless opts.append.global
                       append = false
@@ -311,6 +329,8 @@ mecano.write
                   # from = content.indexOf(opts.match)
                   # to = from + opts.match.length
                   # content = content.substr(0, from) + opts.replace + content.substr(to)
+              else if opts.before is true
+                
               else
                 from = if opts.from then content.indexOf(opts.from) + opts.from.length else 0
                 to = if opts.to then content.indexOf(opts.to) else content.length
@@ -417,6 +437,7 @@ mecano.write
     path = require 'path'
     each = require 'each'
     eco = require 'eco'
+    nunjucks = require 'nunjucks'
     pad = require 'pad'
     diff = require 'diff'
     quote = require 'regexp-quote'

@@ -23,6 +23,7 @@
     "jsesc": "latest",
     "jsftp": "latest",
     "ldapjs": "latest",
+    "nunjucks": "latest",
     "request": "latest",
     "rimraf": "latest",
     "regexp-quote": "latest",

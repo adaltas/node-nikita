@@ -2,8 +2,11 @@
 `render([goptions], options, callback)`
 ---------------------------------------
 
-Render a template file At the moment, only the
-[ECO](http://github.com/sstephenson/eco) templating engine is integrated.
+Render a template file At the moment, the following templating engines are
+integrated.
+
+*   [ECO](http://github.com/sstephenson/eco) (default)   
+*   [Nunjucks](http://mozilla.github.io/nunjucks/) ("*.j2")   
 
 `options`               Command options include:
 *   `engine`            Template engine to use, default to "eco".   
@@ -46,6 +49,9 @@ generated content as its first argument.
                 options.content = content
                 do_write()
           do_write = ->
+            if not options.engine and options.source
+              extension = path.extname options.source
+              options.engine = 'nunjunks' if extension is '.j2'
             options.source = null
             write options, (err, written) ->
               return next err if err
@@ -58,6 +64,7 @@ generated content as its first argument.
 ## Dependencies
 
     fs = require 'ssh2-fs'
+    path = require 'path'
     each = require 'each'
     misc = require './misc'
     conditions = require './misc/conditions'
