@@ -203,10 +203,13 @@ conditions = module.exports =
 
   ###
   if_exists: (options, skip, succeed) ->
-    return succeed() unless options.if_exists?
-    each(options.if_exists)
+    {ssh, if_exists, destination} = options
+    if typeof not_if_exists is 'boolean' and destination
+      if_exists = if if_exists then [destination] else null
+    return succeed() unless if_exists?
+    each(if_exists)
     .on 'item', (if_exists, next) ->
-      fs.exists options.ssh, if_exists, (err, exists) ->
+      fs.exists ssh, if_exists, (err, exists) ->
         if exists then next() else skip()
     .on 'end', succeed
   ###
@@ -224,10 +227,13 @@ conditions = module.exports =
 
   ###
   not_if_exists: (options, skip, succeed) ->
-    return succeed() unless options.not_if_exists?
-    each(options.not_if_exists)
+    {ssh, not_if_exists, destination} = options
+    if typeof not_if_exists is 'boolean' and destination
+      not_if_exists = if not_if_exists then [destination] else null
+    return succeed() unless not_if_exists?
+    each(not_if_exists)
     .on 'item', (not_if_exists, next) ->
-      fs.exists options.ssh, not_if_exists, (err, exists) ->
+      fs.exists ssh, not_if_exists, (err, exists) ->
         if exists
         then next new Error
         else next()
