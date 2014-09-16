@@ -175,6 +175,7 @@ mecano.write
           return next new Error 'Missing destination' unless options.destination
           options.content = options.content.toString() if options.content and Buffer.isBuffer options.content
           options.diff ?= options.diff or !!options.stdout
+          options.engine ?= 'eco'
           switch options.eof
             when 'unix'
               options.eof = "\n"
@@ -268,11 +269,12 @@ mecano.write
             exists()
           do_render = ->
             return do_replace_partial() unless options.context?
-            options.log? "Mecano `write`: rendering with eco"
+            options.log? "Mecano `write`: rendering with #{options.engine}"
             try
               switch options.engine
                 when 'nunjunks' then content = nunjucks.renderString content.toString(), options.context
-                else content = eco.render content.toString(), options.context
+                when 'eco' then content = eco.render content.toString(), options.context
+                else return next Error "Invalid engine: #{options.engine}"
               if options.skip_empty_lines?
                 content = content.replace(/(\r\n|[\n\r\u0085\u2028\u2029])\s*(\r\n|[\n\r\u0085\u2028\u2029])/g, "$1")
             catch err
