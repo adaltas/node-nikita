@@ -51,16 +51,17 @@ require('mecano').chown({
         each( options )
         .parallel(goptions.parallel)
         .on 'item', (options, next) ->
+          options.log? "Mecano `chown`"
           # Validate parameters
           {ssh, uid, gid} = options
           return next new Error "Missing destination: #{options.destination}" unless options.destination
           return next() unless uid? and gid?
-          options.log? "Stat #{options.destination}"
+          options.log? "Mecano `chown`: stat #{options.destination}"
           fs.stat ssh, options.destination, (err, stat) ->
             return next err if err
             return next() if stat.uid is uid and stat.gid is gid
-            options.log? "Change uid from #{stat.uid} to #{uid}" if stat.uid isnt uid
-            options.log? "Change gid from #{stat.gid} to #{gid}" if stat.gid isnt gid
+            options.log? "Mecano `chown`: change uid from #{stat.uid} to #{uid}" if stat.uid isnt uid
+            options.log? "Mecano `chown`: change gid from #{stat.gid} to #{gid}" if stat.gid isnt gid
             fs.chown ssh, options.destination, uid, gid, (err) ->
               return next() err if err
               modified++
