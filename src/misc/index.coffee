@@ -670,7 +670,8 @@ misc = module.exports =
       uid = ->
         # uid=`id -u $USER`,
         return gid() unless options.uid
-        return gid() if typeof options.uid is 'number' or /\d+/.test options.uid
+        options.uid = parseInt options.uid, 10 if typeof options.uid is 'string' and /\d+/.test options.uid
+        return gid() if typeof options.uid is 'number'
         misc.ssh.passwd options.ssh, options.uid, (err, user) ->
           return next err if err
           if user
@@ -680,7 +681,8 @@ misc = module.exports =
       gid = ->
         # gid=`getent group $GROUP | cut -d: -f3`
         return next() unless options.gid
-        return next() if typeof options.gid is 'number' or /\d+/.test options.gid
+        options.gid = parseInt options.gid, 10 if typeof options.gid is 'string' and /\d+/.test options.gid
+        return next() if typeof options.gid is 'number'
         misc.ssh.group options.ssh, options.gid, (err, group) ->
           return next err if err
           options.gid = group.gid if group
