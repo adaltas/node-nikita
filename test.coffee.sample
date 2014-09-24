@@ -1,14 +1,19 @@
 
 module.exports = 
-  ldap: false
+  test_krb5: false
+  test_ldap: false
+  test_service: false
+  krb5:
+    realm: 'DOMAIN.COM'
+    kadmin_server: 'domain.com'
+    kadmin_principal: 'mecano/admin@DOMAIN.COM'
+    kadmin_password: 'test'
+  ldap: 
+    url: 'ldap://openldap.hadoop'
+    binddn: 'cn=admin,cn=config'
+    passwd: 'test'
   ssh:
     host: '127.0.0.1'
     username: process.env.USER
     # no password, will use private key
     # if found in "~/.ssh/id_rsa"
-  # Uncomment following lines if you wish
-  # to test the service function with yum
-  # yum_over_ssh:
-  #   host: '172.16.134.11'
-  #   username: 'root'
-  #   password: 'passepartout'
