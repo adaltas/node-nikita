@@ -114,7 +114,7 @@ describe 'render', ->
           content.should.eql 'Hello you'
           next()
 
-    it.only 'should use `content`', (next) ->
+    it 'should use `content`', (next) ->
       source = "#{scratch}/render.j2"
       destination = "#{scratch}/render.txt"
       fs.writeFile source, 'Hello {{ who }}', (err, content) ->
