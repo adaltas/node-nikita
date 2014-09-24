@@ -8,7 +8,7 @@ describe 'ldap_acl', ->
 
   scratch = test.scratch @
   config = test.config()
-  return unless config.ldap
+  return unless config.test_ldap
   client = olcAccess = null
   beforeEach (next) ->
     client = ldap.createClient url: config.ldap.url
