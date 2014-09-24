@@ -12,7 +12,7 @@ describe 'service', ->
   describe 'install', ->
 
     they 'validate installation', (ssh, next) ->
-      return next() unless config.yum_over_ssh
+      return next() unless config.test_service
       mecano.service
         ssh: ssh
         name: 'ntp'
@@ -28,7 +28,7 @@ describe 'service', ->
           next()
     
     they 'skip if already installed', (ssh, next) ->
-      return next() unless config.yum_over_ssh
+      return next() unless config.test_service
       mecano.service
         ssh: ssh
         name: 'ntp'
@@ -46,7 +46,7 @@ describe 'service', ->
   describe 'startup', ->
 
     they 'declare on startup with boolean', (ssh, next) ->
-      return next() unless config.yum_over_ssh
+      return next() unless config.test_service
       mecano.service
         ssh: ssh
         name: 'ntp'
@@ -65,7 +65,7 @@ describe 'service', ->
           next()
 
     they 'skip if already declared', (ssh, next) ->
-      return next() unless config.yum_over_ssh
+      return next() unless config.test_service
       mecano.service
         ssh: ssh
         name: 'ntp'
@@ -85,7 +85,7 @@ describe 'service', ->
           next()
 
     they 'notice a change in startup level', (ssh, next) ->
-      return next() unless config.yum_over_ssh
+      return next() unless config.test_service
       mecano.service
         ssh: ssh
         name: 'ntp'
@@ -113,7 +113,7 @@ describe 'service', ->
             next()
 
     they 'remove after being defined', (ssh, next) ->
-      return next() unless config.yum_over_ssh
+      return next() unless config.test_service
       # Register service
       mecano.service
         ssh: ssh
@@ -144,7 +144,7 @@ describe 'service', ->
   describe 'action', ->
 
     they 'should start', (ssh, next) ->
-      return next() unless config.yum_over_ssh
+      return next() unless config.test_service
       mecano.service
         ssh: ssh
         name: 'ntp'
@@ -172,7 +172,7 @@ describe 'service', ->
             next()
 
     they 'should stop', (ssh, next) ->
-      return next() unless config.yum_over_ssh
+      return next() unless config.test_service
       mecano.service
         ssh: ssh
         name: 'ntp'
