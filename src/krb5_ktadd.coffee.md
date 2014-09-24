@@ -56,7 +56,7 @@ require('mecano').krb5_delrinc({
           do_get = ->
             return do_end() unless options.keytab
             execute
-              cmd: "klist -k #{options.keytab}"
+              cmd: "klist -kt #{options.keytab}"
               ssh: options.ssh
               log: options.log
               stdout: options.stdout
@@ -67,27 +67,44 @@ require('mecano').krb5_delrinc({
               return do_ktadd() unless exists
               keytab = {}
               for line in stdout.split '\n'
-                if match = /^\s*(\d+)\s*(.*)\s*$/.exec line
-                  [_, kvno, principal] = match
-                  keytab[principal] = kvno
+                if match = /^\s*(\d+)\s+([\d\/:]+\s+[\d\/:]+)\s+(.*)\s*$/.exec line
+                  [_, kvno, mdate, principal] = match
+                  kvno = parseInt kvno, 10
+                  mdate = Date.parse "#{mdate} GMT"
+                  # keytab[principal] ?= {kvno: null, mdate: null}
+                  if not keytab[principal] or keytab[principal].kvno < kvno
+                    keytab[principal] = kvno: kvno, mdate: mdate
               # Principal is not listed inside the keytab
               return do_ktadd() unless keytab[options.principal]?
               execute
-                cmd: misc.kadmin options, "getprinc #{options.principal}"
+                cmd: misc.kadmin options, "getprinc -terse #{options.principal}"
                 ssh: options.ssh
                 log: options.log
                 stdout: options.stdout
                 stderr: options.stderr
               , (err, exists, stdout, stderr) ->
                 return err if err
-                return do_ktadd() unless -1 is stdout.indexOf 'does not exist'
-                vno = null
-                for line in stdout.split '\n'
-                  if match = /Key: vno (\d+)/.exec line
-                    [_, vno] = match
-                    break
-                return do_chown() if keytab[principal] is vno
-                do_ktadd()
+                # return do_ktadd() unless -1 is stdout.indexOf 'does not exist'
+                values = stdout.split('\n')[1]
+                # Check if a ticket exists for this
+                return next Error "Principal does not exist: '#{options.principal}'" unless values
+                values = values.split '\t'
+                mdate = parseInt(values[2], 10) * 1000
+                kvno = parseInt values[8], 10
+                options.log? "Mecano `krb5_ktadd`: keytab kvno '#{keytab[principal]?.kvno}', principal kvno '#{kvno}'"
+                options.log? "Mecano `krb5_ktadd`: keytab mdate '#{new Date keytab[principal]?.mdate}', principal mdate '#{new Date mdate}'"
+                return do_chown() if keytab[principal]?.kvno is kvno and keytab[principal].mdate is mdate
+                do_ktremove()
+          do_ktremove = ->
+            execute
+              cmd: misc.kadmin options, "ktremove -k #{options.keytab} #{options.principal}"
+              ssh: options.ssh
+              log: options.log
+              stdout: options.stdout
+              stderr: options.stderr
+            , (err, exists, stdout, stderr) ->
+              return next err if err
+              do_ktadd()
           do_ktadd = ->
             execute
               cmd: misc.kadmin options, "ktadd -k #{options.keytab} #{options.principal}"
@@ -128,6 +145,29 @@ require('mecano').krb5_delrinc({
           conditions.all options, next, do_get
         .on 'both', (err) ->
           callback err, executed
+
+## Fields in 'getprinc -terse' output
+
+princ-canonical-name
+princ-exp-time
+last-pw-change
+pw-exp-time
+princ-max-life
+modifying-princ-canonical-name
+princ-mod-date
+princ-attributes <=== This is the field you want
+princ-kvno
+princ-mkvno
+princ-policy (or 'None')
+princ-max-renewable-life
+princ-last-success
+princ-last-failed
+princ-fail-auth-count
+princ-n-key-data
+ver
+kvno
+data-type[0]
+data-type[1]
 
 ## Dependencies
 
