@@ -1,11 +1,10 @@
 
-`ldap_schema([goptions], options, callback)`
---------------------------------------------
+# `ldap_schema([goptions], options, callback)`
 
 Register a new ldap schema.
 
-`options`           Command options include:   
-*   `url`           Specify URI referring to the ldap server, alternative to providing an [ldapjs client] instance.   
+## Options
+
 *   `binddn`        Distinguished Name to bind to the LDAP directory, alternative to providing an [ldapjs client] instance.   
 *   `passwd`        Password for simple authentication, alternative to providing an [ldapjs client] instance.   
 *   `uri`           LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to false in which case it will use your openldap client environment configuraiton.   
@@ -13,6 +12,19 @@ Register a new ldap schema.
 *   `schema`        Path to the schema definition.   
 *   `overwrite`     Overwrite existing "olcAccess", default is to merge.   
 *   `log`           Function called with a log related messages.   
+
+## Example
+
+```js
+require('mecano').ldap_schema({
+  binddn: 'cn=admin,cn=config',
+  passwd: 'password',
+  name: 'kerberos',
+  schema: '/usr/share/doc/krb5-server-ldap-1.10.3/kerberos.schema'
+}, function(err, modified){
+  console.log(err ? err.message : "Index modified: " + !!modified);
+});
+```
 
     module.exports = (goptions, options, callback) ->
       [goptions, options, callback] = misc.args arguments

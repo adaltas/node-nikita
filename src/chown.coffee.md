@@ -1,6 +1,5 @@
 
-`chmod([goptions], options, callback)`
---------------------------------------
+# `chmod([goptions], options, callback)`
 
 Change the ownership of a file or a directory.
 

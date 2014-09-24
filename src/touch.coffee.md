@@ -1,8 +1,27 @@
 
-`touch([goptions], options, callback)`
---------------------------------------
+# `touch([goptions], options, callback)`
 
 Create a empty file if it does not yet exists.
+
+Internally, it delegates most of the work to the `mecano.write` module. It isnt
+yet a real `touch` implementation since it doesnt change the file time if it
+exists.
+
+## Options
+
+*   `destination`   
+    File path where to write content to.   
+
+## Example
+
+```js
+require('mecano').touch({
+  ssh: ssh,
+  destination: '/tmp/a_file'
+}, function(err, touched){
+  console.log(err ? err.message : "File touched: " + !!touched);
+});
+```
 
     module.exports = (goptions, options, callback) ->
       [goptions, options, callback] = misc.args arguments

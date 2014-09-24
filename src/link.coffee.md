@@ -1,27 +1,36 @@
 
-`ln` `link([goptions], options, callback)`
-------------------------------------------
+# `ln` `link([goptions], options, callback)`
 
 Create a symbolic link and it's parent directories if they don't yet
 exist.
 
-`options`           Command options include:
-*   `source`        Referenced file to be linked.
-*   `destination`   Symbolic link to be created.
-*   `exec`          Create an executable file with an `exec` command.
-*   `mode`          Default to 0755.
+## Options
 
-`callback`          Received parameters are:
-*   `err`           Error object if any.
-*   `linked`        Number of created links.
+*   `source`   
+    Referenced file to be linked.   
+*   `destination`   
+    Symbolic link to be created.   
+*   `exec`   
+    Create an executable file with an `exec` command.   
+*   `mode`   
+    Default to `0o0755`.   
 
-Simple usage:
-```coffee
-mecano.link
-  source: __dirname
-  destination: destination
-, (err, linked) ->
-  console.info linked
+## Callback parameters
+
+*   `err`   
+    Error object if any.   
+*   `linked`   
+    Number of created links.   
+
+## Example
+
+```js
+require('mecano').link({
+  source: __dirname,
+  destination: '/tmp/a_link'
+}, function(err, linked){
+  console.log(err ? err.message : "Link created: " + !!linked);
+});
 ```
 
     module.exports = (goptions, options, callback) ->

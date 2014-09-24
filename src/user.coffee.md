@@ -1,50 +1,72 @@
 
-`user([goptions], options, callback)`
---------------------------------------
+# `user([goptions], options, callback)`
 
 Create or modify a Unix user.
 
-`options`           Command options include:
+## Options
 
-*   `name`          Login name of the user.   
-*   `home`          Value for the user´s login directory, default to the login name appended to "BASE_DIR".   
-*   `shell`         Path to the user shell, set to "/sbin/nologin" if "false,
-                    "/bin/bash" if true or default to the system shell value in
-                    "/etc/default/useradd", by default "/bin/bash".   
-*   `system`        Create a system account, such user are not created with a home by default, set the "home" option if we it to be created.   
-*   `uid`           Numerical value of the user´s ID, must not exist.   
-*   `gid`           Group name or number of the user´s initial login group.   
-*   `groups`        List of supplementary groups which the user is also a member of.   
-*   `comment`       Short description of the login.   
-*   `password`      User password
-*   `expiredate`    
-*   `inactive`      
-*   `skel`          
-*   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
-*   `log`           Function called with a log related messages.   
+*   `name`   
+    Login name of the user.   
+*   `home`   
+    Value for the user´s login directory, default to the login name appended to "BASE_DIR".   
+*   `shell`   
+    Path to the user shell, set to "/sbin/nologin" if "false, "/bin/bash" if
+    true or default to the system shell value in "/etc/default/useradd", by
+    default "/bin/bash".   
+*   `system`   
+    Create a system account, such user are not created with a home by default,
+    set the "home" option if we it to be created.   
+*   `uid`   
+    Numerical value of the user´s ID, must not exist.   
+*   `gid`   
+    Group name or number of the user´s initial login group.   
+*   `groups`   
+    List of supplementary groups which the user is also a member of.   
+*   `comment`   
+    Short description of the login.   
+*   `password`   
+    The unencrypted password.  
+*   `expiredate`  
+    The date on which the user account is disabled.     
+*   `inactive`   
+    The number of days after a password has expired before the account will be
+    disabled.   
+*   `skel`   
+    The skeleton directory, which contains files and directories to be copied in
+    the user´s home directory, when the home directory is created by useradd.   
+*   `ssh`   
+    Run the action on a remote server using SSH, an ssh2 instance or an
+    configuration object used to initialize the SSH connection.   
+*   `log`   
+    Function called with a log related messages.   
 
-`callback`          Received parameters are:
+## Callback parameters
 
-*   `err`           Error object if any.
-*   `modified`      Number of created or modified users.
+*   `err`   
+    Error object if any.   
+*   `modified`   
+    Number of created or modified users.   
 
-Example:
+## Example
 
 ```coffee
-mecano.user
-  name: "myself"
-  system: true
-  uid: 490
-  gid: 10
-  comment: 'This is myself'
-, (err, modified) -> ...
+require('mecano').user({
+  name: "a_user",
+  system: true,
+  uid: 490,
+  gid: 10,
+  comment: 'A System User'
+}, function(err, created){
+  console.log(err ? err.message : "User created: " + !!created);
+})
 ```
 
 The result of the above action can be viewed with the command
 `cat /etc/passwd | grep myself` producing an output similar to
-"myself:x:490:10:Hive:/home/myself:/bin/bash". You can also check you are a
-member of the "wheel" group (gid of "10") with the command `id hive` producing
-an output similar to "uid=490(hive) gid=10(wheel) groups=10(wheel)".
+"a\_user:x:490:490:A System User:/home/a\_user:/bin/bash". You can also check
+you are a member of the "wheel" group (gid of "10") with the command
+`id a\_user` producing an output similar to 
+"uid=490(hive) gid=10(wheel) groups=10(wheel)".
 
     module.exports = (goptions, options, callback) ->
       [goptions, options, callback] = misc.args arguments, parallel: true
@@ -59,9 +81,6 @@ an output similar to "uid=490(hive) gid=10(wheel) groups=10(wheel)".
         .parallel(goptions.parallel)
         .on 'item', (options, next) ->
           return next new Error "Option 'name' is required" unless options.name
-          # options.comment ?= ""
-          # options.home ?= "/home/#{options.name}"
-          # options.shell ?= "/sbin/nologin"
           options.shell = "/sbin/nologin" if options.shell is false
           options.shell = "/bin/bash" if options.shell is true
           options.system ?= false
@@ -87,7 +106,6 @@ an output similar to "uid=490(hive) gid=10(wheel) groups=10(wheel)".
                 return next err if err
                 groups_info = groups
                 do_compare()
-              # if info then do_compare() else do_create()
           do_create = ->
             cmd = 'useradd'
             cmd += " -r" if options.system

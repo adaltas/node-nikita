@@ -1,39 +1,56 @@
 
-`mkdir([goptions], options, callback)`
---------------------------------------
+# `mkdir([goptions], options, callback)`
 
-Recursively create a directory. The behavior is similar to the Unix command `mkdir -p`.
-It supports an alternative syntax where options is simply the path of the directory
-to create.
+Recursively create a directory. The behavior is similar to the Unix command
+`mkdir -p`. It supports an alternative syntax where options is simply the path
+of the directory to create.
 
-`options`           Command options include:
-*   `cwd`           Current working directory for relative paths.
-*   `uid`           Unix user id.
-*   `gid`           Unix group id.
-*   `mode`          Default to 0755.
-*   `directory`     Path or array of paths.
-*   `destination`   Alias for `directory`.
-*   `exclude`       Regular expression.
-*   `source`        Alias for `directory`.
+## Options
 
-`callback`          Received parameters are:
-*   `err`           Error object if any.
-*   `created`       Number of created directories
+*   `cwd`   
+    Current working directory for relative paths.   
+*   `uid`   
+    Unix user id.   
+*   `gid`   
+    Unix group id.   
+*   `mode`   
+    Default to "0755".   
+*   `directory`   
+    Path or array of paths.   
+*   `destination`   
+    Alias for `directory`.   
+*   `exclude`   
+    Regular expression.   
+*   `source`   
+    Alias for `directory`.   
 
-Simple usage:
-```coffee
-mecano.mkdir './some/dir', (err, created) ->
-  console.info err?.message ? created
+## Callback parameters
+
+*   `err`   
+    Error object if any.   
+*   `created`   
+    Number of created directories.   
+
+## Simple usage
+
+```js
+require('mecano').mkdir('./some/dir', function(err, created){
+  console.log(err ? err.message : "Directory created: " + !!created);
+});
 ```
 
-Advance usage:
-```coffee
-mecano.mkdir
-  ssh: options.ssh
-  destination: './some/dir'
-  uid: 'me'
-  gid: 'my_group'
-  mode: 0o0777 or '777'
+## Advance usage
+
+```js
+require('mecano').mkdir({
+  ssh: ssh,
+  destination: './some/dir',
+  uid: 'a_user',
+  gid: 'a_group'
+  mode: 0o0777 // or '777'
+}, function(err, created){
+  console.log(err ? err.message : "Directory created: " + !!created);
+});
 ```
 
     module.exports = (goptions, options, callback) ->

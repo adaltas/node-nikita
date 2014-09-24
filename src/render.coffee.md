@@ -1,31 +1,60 @@
 
-`render([goptions], options, callback)`
----------------------------------------
+# `render([goptions], options, callback)`
 
-Render a template file At the moment, the following templating engines are
-integrated.
+Render a template file. The following templating engines are
+integrated. More are added on demand.      
 
 *   [ECO](http://github.com/sstephenson/eco) (default)   
 *   [Nunjucks](http://mozilla.github.io/nunjucks/) ("*.j2")   
 
-`options`               Command options include:
-*   `engine`            Template engine to use, default to "eco".   
-*   `content`           Templated content, bypassed if source is provided.   
-*   `source`            File path where to extract content from.   
-*   `destination`       File path where to write content to or a callback.   
-*   `context`           Map of key values to inject into the template.   
-*   `local_source`      Treat the source as local instead of remote, only apply with "ssh" option.   
-*   `skip_empty_lines`  Remove empty lines.   
-*   `uid`               File user name or user id.   
-*   `gid`               File group name or group id.   
-*   `mode`              File mode (permission and sticky bits), default to `0666`, in the for of `{mode: 0o744}` or `{mode: "744"}`.   
+## Options
 
-`callback`          Received parameters are:
-*   `err`           Error object if any.   
-*   `rendered`      Number of rendered files.   
+*   `engine`   
+    Template engine to use, default to "eco".   
+*   `content`   
+    Templated content, bypassed if source is provided.   
+*   `source`   
+    File path where to extract content from.   
+*   `destination`   
+    File path where to write content to or a callback.   
+*   `context`   
+    Map of key values to inject into the template.   
+*   `local_source`   
+    Treat the source as local instead of remote, only apply with "ssh"
+    option.   
+*   `skip_empty_lines`   
+    Remove empty lines.   
+*   `uid`   
+    File user name or user id.   
+*   `gid`   
+    File group name or group id.   
+*   `mode`   
+    File mode (permission and sticky bits), default to `0666`, in the for of
+    `{mode: 0o744}` or `{mode: "744"}`.   
 
-If destination is a callback, it will be called multiple times with the
-generated content as its first argument.
+If destination is a callback, it will be called with the generated content as
+its first argument.   
+
+## Callback parameters
+
+*   `err`   
+    Error object if any.   
+*   `rendered`   
+    Number of rendered files.   
+
+## Rendering with Nunjucks
+
+```js
+require('mecano').render({
+  source: './some/a_template.j2',
+  destination: '/tmp/a_file',
+  context: {
+    username: 'a_user'
+  }
+}, function(err, rendered){
+  console.log(err ? err.message : "File rendered: " + !!rendered);
+});
+```
 
     module.exports = (goptions, options, callback) ->
       [goptions, options, callback] = misc.args arguments

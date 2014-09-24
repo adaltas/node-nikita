@@ -1,21 +1,49 @@
 
-`ldap_index([goptions], options, callback`
-------------------------------------------
+# `ldap_index([goptions], options, callback`
 
-Create new index for the OpenLDAP server.
+Create new [index](index) for the OpenLDAP server.   
 
-`options`           Command options include:
-*   `indexes`       Object with keys mapping to indexed attributes and values mapping to indices ("pres", "approx", "eq", "sub" and 'special').
-*   `url`           Specify URI referring to the ldap server, alternative to providing an [ldapjs client] instance.
-*   `binddn`        Distinguished Name to bind to the LDAP directory, alternative to providing an [ldapjs client] instance.
-*   `passwd`        Password for simple authentication, alternative to providing an [ldapjs client] instance.
-*   `ldap`          Instance of an pldapjs client][ldapclt], alternative to providing the `url`, `binddn` and `passwd` connection properties.
-*   `unbind`        Close the ldap connection, default to false if connection is an [ldapjs client][ldapclt] instance.
-*   `name`          Distinguish name storing the "olcAccess" property, using the database adress (eg: "olcDatabase={2}bdb,cn=config").
-*   `overwrite`     Overwrite existing "olcAccess", default is to merge.
+## Options
 
-Resources:
--   http://www.zytrax.com/books/ldap/apa/indeces.html
+*   `indexes`   
+    Object with keys mapping to indexed attributes and values mapping to indices
+    ("pres", "approx", "eq", "sub" and 'special').   
+*   `url`   
+    Specify URI referring to the ldap server, alternative to providing an
+    [ldapjs client] instance.   
+*   `binddn`   
+    Distinguished Name to bind to the LDAP directory, alternative to providing
+    an [ldapjs client] instance.   
+*   `passwd`   
+    Password for simple authentication, alternative to providing an
+    [ldapjs client] instance.   
+*   `ldap`   
+    Instance of an pldapjs client][ldapclt], alternative to providing the `url`,
+    `binddn` and `passwd` connection properties.   
+*   `unbind`   
+    Close the ldap connection, default to false if connection is an
+    [ldapjs client][ldapclt] instance.   
+*   `name`   
+    Distinguish name storing the "olcAccess" property, using the database adress
+    (eg: "olcDatabase={2}bdb,cn=config").   
+*   `overwrite`   
+    Overwrite existing "olcAccess", default is to merge.   
+
+## Example
+
+```js
+require('mecano').ldap_index({
+  url: 'ldap://openldap.server/',
+  binddn: 'cn=admin,cn=config',
+  passwd: 'password',
+  name: 'olcDatabase={2}bdb,cn=config',
+  indexes: {
+    krbPrincipalName: 'sub,eq'
+  }
+}, function(err, modified){
+  console.log(err ? err.message : "Index modified: " + !!modified);
+});
+```
 
     module.exports = (goptions, options, callback) ->
       [goptions, options, callback] = misc.args arguments
@@ -103,6 +131,6 @@ Resources:
     conditions = require './misc/conditions'
     child = require './misc/child'
 
-
+[index]: http://www.zytrax.com/books/ldap/apa/indeces.html
 
 

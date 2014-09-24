@@ -1,28 +1,40 @@
 
-`mv` `move([goptions], options, callback)`
-------------------------------------------
+# `move([goptions], options, callback)`
 
-Move files and directories. It is ok to overwrite the destination file if it exists,
-in which case the source file will no longer exists.
+Move files and directories. It is ok to overwrite the destination file if it
+exists, in which case the source file will no longer exists.
 
-`options`               Command options include:
-*   `destination`       Final name of the moved resource.
-*   `force`             Force the replacement of the file without checksum verification, speed up the action and disable the `moved` indicator in the callback.
-*   `source`            File or directory to move.
-*   `destination_md5`   Destination md5 checkum if known, otherwise computed if destination exists
-*   `source_md5`        Source md5 checkum if known, otherwise computed
+## Options
 
-`callback`              Received parameters are:
-*   `err`               Error object if any.
-*   `moved`             Number of moved resources.
+*   `destination`   
+    Final name of the moved resource.   
+*   `force`   
+    Force the replacement of the file without checksum verification, speed up
+    the action and disable the `moved` indicator in the callback.   
+*   `source`   
+    File or directory to move.   
+*   `destination_md5`   
+    Destination md5 checkum if known, otherwise computed if destination
+    exists.   
+*   `source_md5`   
+    Source md5 checkum if known, otherwise computed.   
 
-Example
-```coffee
-mecano.mv
-  source: __dirname
-  desination: '/temp/my_dir'
-, (err, moved) ->
-  console.info "#{moved} dir moved"
+## Callback parameters
+
+*   `err`   
+    Error object if any.   
+*   `moved`   
+    Number of moved resources.   
+
+## Example
+
+```js
+require('mecano').move({
+  source: __dirname,
+  desination: '/tmp/my_dir'
+}, function(err, moved){
+  console.log(err ? err.message : "File moved: " + !!moved);
+});
 ```
 
     module.exports = (goptions, options, callback) ->

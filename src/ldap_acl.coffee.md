@@ -1,26 +1,66 @@
 
-`ldap_acl([goptions], options, callback`
-----------------------------------------
+# `ldap_acl([goptions], options, callback`
 
-Create new ACLs for the OpenLDAP server.
+Create new [ACLs](acls) for the OpenLDAP server.   
 
-`options`           Command options include:
-*   `to`            What to control access to as a string.
-*   `by`            Who to grant access to and the access to grant as an array (eg: `{..., by:["ssf=64 anonymous auth"]}`)
-*   `url`           Specify URI referring to the ldap server, alternative to providing an [ldapjs client] instance.
-*   `binddn`        Distinguished Name to bind to the LDAP directory, alternative to providing an [ldapjs client] instance.
-*   `passwd`        Password for simple authentication, alternative to providing an [ldapjs client] instance.
-*   `ldap`          Instance of an pldapjs client][ldapclt], alternative to providing the `url`, `binddn` and `passwd` connection properties.
-*   `unbind`        Close the ldap connection, default to false if connection is an [ldapjs client][ldapclt] instance.
-*   `name`          Distinguish name storing the "olcAccess" property, using the database adress (eg: "olcDatabase={2}bdb,cn=config").
-*   `overwrite`     Overwrite existing "olcAccess", default is to merge.
-*   `log`           Function called with a log related messages.
-*   `acl`           In case of multiple acls, regroup "before", "to" and "by" as an array
+## Options
 
-Resources:
-http://www.openldap.org/doc/admin24/access-control.html
+*   `to`   
+    What to control access to as a string.   
+*   `by`   
+    Who to grant access to and the access to grant as an array
+    (eg: `{..., by:["ssf=64 anonymous auth"]}`).   
+*   `url`   
+    Specify URI referring to the ldap server, alternative to providing an
+    [ldapjs client] instance.   
+*   `binddn`   
+    Distinguished Name to bind to the LDAP directory, alternative to providing
+    an [ldapjs client] instance.   
+*   `passwd`   
+    Password for simple authentication, alternative to providing an
+    [ldapjs client] instance.   
+*   `ldap`   
+    Instance of an [ldapjs client][ldapclt], alternative to providing the `url`,
+    `binddn` and `passwd` connection properties.   
+*   `unbind`   
+    Close the ldap connection, default to false if connection is an
+    [ldapjs client][ldapclt] instance.   
+*   `name`   
+    Distinguish name storing the "olcAccess" property, using the database adress
+    (eg: "olcDatabase={2}bdb,cn=config").   
+*   `overwrite`   
+    Overwrite existing "olcAccess", default is to merge.   
+*   `log`   
+    Function called with a log related messages.   
+*   `acl`   
+    In case of multiple acls, regroup "before", "to" and "by" as an array.   
 
-[ldapclt]: http://ldapjs.org/client.html
+## Example
+
+```js
+require('mecano').ldap_acl({
+  url: 'ldap://openldap.server/',
+  binddn: 'cn=admin,cn=config',
+  passwd: 'password',
+  name: 'olcDatabase={2}bdb,cn=config',
+  acls: [{
+    before: 'dn.subtree="dc=domain,dc=com"',
+    to: 'dn.subtree="ou=users,dc=domain,dc=com"',
+    by: [
+      'dn.exact="ou=users,dc=domain,dc=com" write',
+      "dn.base='gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth' read",
+      "* none"
+    ]
+  },{
+    to: 'dn.subtree="dc=domain,dc=com"',
+    by: [
+      'dn.exact="ou=kerberos,dc=domain,dc=com" write'
+    ]
+  }]
+}, function(err, modified){
+  console.log(err ? err.message : "ACL modified: " + !!modified);
+});
+```
 
     module.exports = (goptions, options, callback) ->
       [goptions, options, callback] = misc.args arguments
@@ -176,5 +216,7 @@ http://www.openldap.org/doc/admin24/access-control.html
     conditions = require './misc/conditions'
     child = require './misc/child'
 
+[acls]: http://www.openldap.org/doc/admin24/access-control.html
+[ldapclt]: http://ldapjs.org/client.html
 
 

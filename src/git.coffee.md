@@ -1,6 +1,5 @@
 
-`git([goptions], options, callback`
------------------------------------
+# `git([goptions], options, callback`
 
 Create and synchronize a git repository.
 

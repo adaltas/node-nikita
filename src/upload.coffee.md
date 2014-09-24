@@ -1,27 +1,58 @@
 
-`upload([goptions], options, callback)`
----------------------------------------
+# `upload([goptions], options, callback)`
 
-Upload a file to a remote location. Options are
-identical to the "write" function with the addition of
-the "binary" option.
+Upload a file to a remote location. Options are identical to the "write"
+function with the addition of the "binary" option.
 
-`options`           Command options include:
-*   `binary`        Fast upload implementation, discard all the other option and use its own stream based implementation.
-*   `from`          Replace from after this marker, a string or a regular expression.
-*   `to`            Replace to before this marker, a string or a regular expression.
-*   `match`         Replace this marker, a string or a regular expression.
-*   `replace`       The content to be inserted, used conjointly with the from, to or match options.
-*   `content`       Text to be written.
-*   `source`        File path from where to extract the content, do not use conjointly with content.
-*   `destination`   File path where to write content to.
-*   `backup`        Create a backup, append a provided string to the filename extension or a timestamp if value is not a string.
-*   `md5`           Validate uploaded file with md5 checksum (only for binary upload for now), may be the string checksum or will be deduced from source if "true".
-*   `sha1`          Validate uploaded file with sha1 checksum (only for binary upload for now), may be the string checksum or will be deduced from source if "true".
+## Options
 
-`callback`          Received parameters are:
-*   `err`           Error object if any.
-*   `rendered`      Number of rendered files.
+*   `binary`   
+    Fast upload implementation, discard all the other option and use its own
+    stream based implementation.   
+*   `from`   
+    Replace from after this marker, a string or a regular expression.   
+*   `to`   
+    Replace to before this marker, a string or a regular expression.   
+*   `match`   
+    Replace this marker, a string or a regular expression.   
+*   `replace`   
+    The content to be inserted, used conjointly with the from, to or match
+    options.   
+*   `content`   
+    Text to be written.   
+*   `source`   
+    File path from where to extract the content, do not use conjointly with
+    content.   
+*   `destination`   
+    File path where to write content to.   
+*   `backup`   
+    Create a backup, append a provided string to the filename extension or a
+    timestamp if value is not a string.   
+*   `md5`   
+    Validate uploaded file with md5 checksum (only for binary upload for now),
+    may be the string checksum or will be deduced from source if "true".   
+*   `sha1`   
+    Validate uploaded file with sha1 checksum (only for binary upload for now),
+    may be the string checksum or will be deduced from source if "true".   
+
+## Callback parameters
+
+*   `err`   
+    Error object if any.   
+*   `uploaded`   
+    Number of uploaded files.   
+
+## Example
+
+```js
+require('mecano').render({
+  source: '/tmp/local_file',
+  destination: '/tmp/remote_file'
+  binary: true
+}, function(err, uploaded){
+  console.log(err ? err.message : "File uploaded: " + !!uploaded);
+});
+```
 
     module.exports = (goptions, options, callback) ->
       [goptions, options, callback] = misc.args arguments, parallel: 1

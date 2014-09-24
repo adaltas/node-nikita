@@ -1,58 +1,59 @@
 
 # `write([goptions], options, callback)`
 
-Write a file or a portion of an existing file.
+Write a file or a portion of an existing file.   
 
 ## Options
 
 *   `append`   
     Append the content to the destination file. If destination does not exist,
-    the file will be created.
+    the file will be created.   
 *   `backup`   
     Create a backup, append a provided string to the filename extension or a
-    timestamp if value is not a string.
+    timestamp if value is not a string.   
 *   `content`   
-    Text to be written, an alternative to source which reference a file.
+    Text to be written, an alternative to source which reference a file.   
 *   `destination`   
-    File path where to write content to.
+    File path where to write content to.   
 *   `diff`   
     Print diff information, pass the result of [jsdiff.diffLines][diffLines] as
-    argument if a function, default to true.
+    argument if a function, default to true.   
 *   `eof`   
     Ensure the file ends with this charactere sequence, special values are
     'windows', 'mac', 'unix' and 'unicode' (respectively "\r\n", "\r", "\n",
     "\u2028"), will be auto-detected if "true", default to false or "\n" if
-    "true" and not detected.
+    "true" and not detected.   
 *   `from`   
-    Replace from after this marker, a string or a regular expression.
+    Replace from after this marker, a string or a regular expression.   
 *   `gid`   
-    File group name or group id.
+    File group name or group id.   
 *   `local_source`   
-    Treat the source as local instead of remote, only apply with "ssh" option.
+    Treat the source as local instead of remote, only apply with "ssh"
+    option.   
 *   `match`   
     Replace this marker, a string or a regular expression, default to the
-    replaced string if missing.
+    replaced string if missing.   
 *   `mode`   
     File mode (permission and sticky bits), default to `0666`, in the form of
-    `{mode: 0o0744}` or `{mode: "0744"}`.
+    `{mode: 0o0744}` or `{mode: "0744"}`.   
 *   `replace`   
     The content to be inserted, used conjointly with the from, to or match
-    options.
+    options.   
 *   `source`   
     File path from where to extract the content, do not use conjointly with
-    content.
+    content.   
 *   `ssh`   
     Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.
+    configuration object used to initialize the SSH connection.   
 *   `stdout`   
-    Writable Stream in which diff information are written.
+    Writable Stream in which diff information are written.   
 *   `to`   
-    Replace to before this marker, a string or a regular expression.
+    Replace to before this marker, a string or a regular expression.   
 *   `uid`   
-    File user name or user id.
+    File user name or user id.   
 *   `write`   
     An array containing multiple transformation where a transformation is an
-    object accepting the options `from`, `to`, `match` and `replace`.
+    object accepting the options `from`, `to`, `match` and `replace`.   
 
 ## Callback parameters
 
@@ -65,94 +66,95 @@ Write a file or a portion of an existing file.
 
 The `append` option allows more advance usages. If `append` is "null", it will
 add the value of the "replace" option at the end of the file when no match
-is found and when the value is a string.
+is found and when the value is a string.   
 
 Using the `append` option conjointly with the `match` and `replace` options gets
 even more interesting. If append is a string or a regular expression, it will
 place the value of the "replace" option just after the match. Internally, a
 string value will be converted to a regular expression. For example the string
-"test" will end up converted to the regular expression `/test/mg`.
+"test" will end up converted to the regular expression `/test/mg`.   
 
 ## Replacing part of a file using from and to markers
 
-```coffee
-mecano.write
-  content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
-  from: '# from\n'
-  to: '# to'
-  replace: 'my friend\n'
+```js
+require('mecano').write({
+  content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin',
+  from: '# from\n',
+  to: '# to',
+  replace: 'my friend\n',
   destination: "#{scratch}/a_file"
-, (err, written) ->
-  # here we are\n# from\nmy friend\n# to\nyou coquin
+}, function(err, written){
+  // '# here we are\n# from\nmy friend\n# to\nyou coquin'
+})
 ```
 
 ## Replacing a matched line by a string
 
-```coffee
-mecano.write
-  content: 'email=david(at)adaltas(dot)com\nusername=root'
-  match: /(username)=(.*)/
-  replace: '$1=david (was $2)'
+```js
+require('mecano').write({
+  content: 'email=david(at)adaltas(dot)com\nusername=root',
+  match: /(username)=(.*)/,
+  replace: '$1=david (was $2)',
   destination: "#{scratch}/a_file"
-, (err, written) ->
-  # email=david(at)adaltas(dot)com\nusername=david (was root)
+}, function(err, written){
+  // '# email=david(at)adaltas(dot)com\nusername=david (was root)'
+})
 ```
 
 ## Replacing part of a file using a regular expression
 
-```coffee
-mecano.write
-  content: 'here we are\nlets try to replace that one\nyou coquin'
-  match: /(.*try) (.*)/
-  replace: ['my friend, $1']
+```js
+require('mecano').write({
+  content: 'here we are\nlets try to replace that one\nyou coquin',
+  match: /(.*try) (.*)/,
+  replace: ['my friend, $1'],
   destination: "#{scratch}/a_file"
-, (err, written) ->
-  # here we are\nmy friend, lets try\nyou coquin
+}, function(err, written){
+  // '# here we are\nmy friend, lets try\nyou coquin'
+})
 ```
 
 ## Replacing with the global and multiple lines options
 
-```coffee
-mecano.write
-  content: '#A config file\n#property=30\nproperty=10\n#End of Config'
-  match: /^property=.*$/mg
-  replace: 'property=50'
+```js
+require('mecano').write({
+  content: '#A config file\n#property=30\nproperty=10\n#End of Config',
+  match: /^property=.*$/mg,
+  replace: 'property=50',
   destination: "#{scratch}/replace"
-, (err, written) ->
-  '# A config file\n#property=30\nproperty=50\n#End of Config'
+}, function(err, written){
+  // '# A config file\n#property=30\nproperty=50\n#End of Config'
+})
 ```
 
 ## Appending a line after each line containing "property"
 
-```coffee
-mecano.write
-  content: '#A config file\n#property=30\nproperty=10\n#End of Config'
-  match: /^.*comment.*$/mg
-  replace: '# comment'
-  destination: "#{scratch}/replace"
+```js
+require('mecano').write({
+  content: '#A config file\n#property=30\nproperty=10\n#End of Config',
+  match: /^.*comment.*$/mg,
+  replace: '# comment',
+  destination: "#{scratch}/replace",
   append: 'property'
-, (err, written) ->
-  '# A config file\n#property=30\n# comment\nproperty=50\n# comment\n#End of Config'
+}, function(err, written){
+  // '# A config file\n#property=30\n# comment\nproperty=50\n# comment\n#End of Config'
+})
 ```
 
 ## Multiple transformations
 
-```coffee
-mecano.write
-  content: 'username: me\nemail: my@email\nfriends: you'
+```js
+require('mecano').write({
+  content: 'username: me\nemail: my@email\nfriends: you',
   write: [
-    match: /^(username).*$/mg
-    replace: "$1: you"
-  ,
-    match: /^email.*$/mg
-    replace: ""
-  ,
-    match: /^(friends).*$/mg
-    replace: "$1: me"
-  ]
+    {match: /^(username).*$/mg, replace: "$1: you"},
+    {match: /^email.*$/mg, replace: ""},  
+    {match: /^(friends).*$/mg, replace: "$1: me"}
+  ],
   destination: "#{scratch}/file"
-, (err, written) ->
-  # username: you\n\nfriends: me
+}, function(err, written){
+  // 'username: you\n\nfriends: me'
+})
 ```
 
     module.exports = (goptions, options, callback) ->
@@ -449,10 +451,6 @@ mecano.write
     mkdir = require './mkdir'
     chown = require './chown'
     chmod = require './chmod'
-
-
-
-
 
 [diffLines]: https://github.com/kpdecker/jsdiff
 

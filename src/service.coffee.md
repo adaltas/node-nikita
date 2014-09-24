@@ -1,27 +1,66 @@
 
-`service([goptions], options, callback)`
-----------------------------------------
+# `service([goptions], options, callback)` 
 
 Install a service. For now, only yum over SSH.
 
-`options`           Command options include:
-*   `name`          Package name, optional.
-*   `startup`       Run service daemon on startup. If true, startup will be set to '2345', use an empty string to not define any run level.
-*   `yum_name`      Name used by the yum utility, default to "name".
-*   `chk_name`      Name used by the chkconfig utility, default to "srv_name" and "name".
-*   `srv_name`      Name used by the service utility, default to "name".
-*   `cache`         Run entirely from system cache, run install and update checks offline.
-*   `action`        Execute the service with the provided action argument.
-*   `stdout`        Writable Stream in which commands output will be piped.
-*   `stderr`        Writable Stream in which commands error will be piped.
-*   `installed`     Cache a list of installed services. If an object, the service will be installed if a key of the same name exists; if anything else (default), no caching will take place.
-*   `updates`       Cache a list of outdated services. If an object, the service will be updated if a key of the same name exists; If true, the option will be converted to an object with all the outdated service names as keys; if anything else (default), no caching will take place.
+## Options
 
-`callback`          Received parameters are:
-*   `err`           Error object if any.
-*   `modified`      Number of action taken (installed, updated, started or stopped).
-*   `installed`     List of installed services.
-*   `updates`       List of services to update.
+*   `name`   
+    Package name, optional.   
+*   `startup`   
+    Run service daemon on startup. If true, startup will be set to '2345', use
+    an empty string to not define any run level.   
+*   `yum_name`   
+    Name used by the yum utility, default to "name".   
+*   `chk_name`   
+    Name used by the chkconfig utility, default to "srv_name" and "name".   
+*   `srv_name`   
+    Name used by the service utility, default to "name".   
+*   `cache`   
+    Run entirely from system cache, run install and update checks offline.   
+*   `action`   
+    Execute the service with the provided action argument.   
+*   `stdout`   
+    Writable Stream in which commands output will be piped.   
+*   `stderr`   
+    Writable Stream in which commands error will be piped.   
+*   `installed`   
+    Cache a list of installed services. If an object, the service will be
+    installed if a key of the same name exists; if anything else (default), no
+    caching will take place.   
+*   `updates`   
+    Cache a list of outdated services. If an object, the service will be updated
+    if a key of the same name exists; If true, the option will be converted to
+    an object with all the outdated service names as keys; if anything else
+    (default), no caching will take place.   
+
+## Callback parameters
+
+*   `err`   
+    Error object if any.   
+*   `modified`   
+    Number of action taken (installed, updated, started or stopped).   
+*   `installed`   
+    List of installed services.   
+*   `updates`   
+    List of services to update.   
+
+## Example
+
+```js
+require('mecano').service([{
+  ssh: ssh,
+  name: 'ganglia-gmetad-3.5.0-99',
+  srv_name: 'gmetad',
+  action: 'stop',
+  startup: false
+},{
+  ssh: ssh,
+  name: 'ganglia-web-3.5.7-99'
+}], function(err, installed){
+  console.log(err ? err.message : "Service installed: " + !!installed);
+});
+```
 
     module.exports = (goptions, options, callback) ->
       [goptions, options, callback] = misc.args arguments, parallel: 1

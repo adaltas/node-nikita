@@ -1,40 +1,51 @@
 
-`rm` `remove([goptions], options, callback)`
---------------------------------------------
+# `remove([goptions], options, callback)`
 
 Recursively remove files, directories and links. Internally, the function
-use the [rimraf](https://github.com/isaacs/rimraf) library.
+use the [rimraf](https://github.com/isaacs/rimraf) library.   
 
-`options`           Command options include:
-*   `source`        File, directory or pattern.
-*   `destination`   Alias for "source".
+## Options
 
-`callback`          Received parameters are:
-*   `err`           Error object if any.
-*   `removed`       Number of removed sources.
+*   `source`   
+    File, directory or pattern.   
+*   `destination`      
+    Alias for "source".   
 
-Basic example
-```coffee
-mecano.rm './some/dir', (err, removed) ->
-  console.info "#{removed} dir removed"
+## Callback parameters
+
+*   `err`   
+    Error object if any.   
+*   `removed`   
+    Number of removed sources.   
+
+## Simple example
+
+```js
+require('mecano').remove('./some/dir', function(err, removed){
+  console.log(err ? err.message : "File removed: " + !!removed);
+});
 ```
 
-Removing a directory unless a given file exists
-```coffee
-mecano.rm
-  source: './some/dir'
+## Removing a directory unless a given file exists
+
+```js
+require('mecano').remove({
+  source: './some/dir',
   not_if_exists: './some/file'
-, (err, removed) ->
-  console.info "#{removed} dir removed"
+}, function(err, removed){
+  console.log(err ? err.message : "File removed: " + !!removed);
+});
 ```
 
-Removing multiple files and directories
-```coffee
-mecano.rm [
-  { source: './some/dir', not_if_exists: './some/file' }
+## Removing multiple files and directories
+
+```js
+require('mecano').remove([
+  { source: './some/dir', not_if_exists: './some/file' },
   './some/file'
-], (err, removed) ->
-  console.info "#{removed} dirs removed"
+], function(err, removed){
+  console.log(err ? err.message : "File removed: " + !!removed);
+});
 ```
 
     module.exports = (goptions, options, callback) ->

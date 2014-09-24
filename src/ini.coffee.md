@@ -132,8 +132,4 @@ require('mecano').ini({
     child = require './misc/child'
     write = require './write'
 
-
-
-
-
 [ini]: https://github.com/isaacs/ini
