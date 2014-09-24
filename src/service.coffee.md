@@ -100,8 +100,8 @@ require('mecano').service([{
                 cmd: "yum -C list installed"
                 code_skipped: 1
                 log: options.log
-                stdout: options.stdout
-                stderr: options.stderr
+                # stdout: options.stdout
+                # stderr: options.stderr
               , (err, executed, stdout) ->
                 return next err if err
                 stdout = stdout.split '\n'
