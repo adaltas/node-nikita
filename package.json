@@ -19,6 +19,7 @@
     "pad": "latest",
     "each": "latest",
     "ftp": "latest",
+    "glob": "latest",
     "ini": "latest",
     "jsesc": "latest",
     "jsftp": "latest",
