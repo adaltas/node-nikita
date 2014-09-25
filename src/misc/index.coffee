@@ -2,6 +2,7 @@
 crypto = require 'crypto'
 fs = require 'fs'
 path = require 'path'
+glob = require 'glob'
 each = require 'each'
 util = require 'util'
 Stream = require 'stream'
@@ -145,36 +146,42 @@ misc = module.exports =
       ssh2fs.stat ssh, file, (err, stat) ->
         return callback new Error "Does not exist: #{file}" if err?.code is 'ENOENT'
         return callback err if err
-        file += '/**' if stat.isDirectory()
-        # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        # This is not working over ssh, we
-        # need to implement the "glob" module
-        # over ssh
-        # |||||||||||||||||||||||||||||||||
-        # Temp fix, we support file md5 over
-        # ssh, but not directory:
-        if ssh and stat.isFile()
+        if stat.isFile()
           return hasher ssh, file, callback
-        each()
-        .files(file)
-        .on 'item', (item, next) ->
-          hasher ssh, item, (err, h) ->
-            return next err if err
-            hashs.push h if h?
-            next()
-        .on 'error', (err) ->
-          callback err
-        .on 'end', ->
-          switch hashs.length
-            when 0
-              if stat.isFile() 
-              then callback new Error "Does not exist: #{file}"
-              else callback null, crypto.createHash(algorithm).update('').digest('hex')
-            when 1
-              return callback null, hashs[0]
-            else
-              hashs = crypto.createHash(algorithm).update(hashs.join('')).digest('hex')
-              return callback null, hashs
+        else if stat.isDirectory()
+          compute = (files) ->
+            files.sort()
+            each(files)
+            .on 'item', (item, next) ->
+              hasher ssh, item, (err, h) ->
+                return next err if err
+                hashs.push h if h?
+                next()
+            .on 'error', (err) ->
+              callback err
+            .on 'end', ->
+              switch hashs.length
+                when 0
+                  if stat.isFile() 
+                  then callback new Error "Does not exist: #{file}"
+                  else callback null, crypto.createHash(algorithm).update('').digest('hex')
+                when 1
+                  return callback null, hashs[0]
+                else
+                  hashs = crypto.createHash(algorithm).update(hashs.join('')).digest('hex')
+                  return callback null, hashs
+          if ssh
+            exec ssh, "find #{file} -name '**'", (err, stdout) ->
+              return callback err if err
+              files = stdout.trim().split /\r\n|[\n\r\u0085\u2028\u2029]/g
+              files = files.filter (file) -> path.basename(file).substr(0, 1) isnt '.'
+              compute files
+          else
+            glob "#{file}/**", (err, files) ->
+              return callback err if err
+              compute files
+        else
+          callback Error "File type not supported"
     ###
     `files.compare(files, callback)`
     --------------------------------
