@@ -49,52 +49,36 @@ require('mecano').remove([
 ```
 
     module.exports = (goptions, options, callback) ->
-      [goptions, options, callback] = misc.args arguments
-      result = child()
-      finish = (err, removed) ->
-        callback err, removed if callback
-        result.end err, removed
-      misc.options options, (err, options) ->
-        return finish err if err
-        removed = 0
-        each( options )
-        .parallel(goptions.parallel)
-        .on 'item', (options, next) ->
-          # Validate parameters
-          options = source: options if typeof options is 'string'
-          options.source ?= options.destination
-          return next new Error "Missing source" unless options.source?
-          # Start real work
-          remove = ->
-            if options.ssh
-              options.log? "Remove #{options.source}"
-              fs.exists options.ssh, options.source, (err, exists) ->
-                return next err if err
-                removed++ if exists
-                misc.file.remove options.ssh, options.source, next
-            else
-              each()
-              .files(options.source)
-              .on 'item', (file, next) ->
-                removed++
-                options.log? "Remove #{file}"
-                misc.file.remove options.ssh, file, next
-              .on 'error', (err) ->
-                next err
-              .on 'end', ->
-                next()
-          conditions.all options, next, remove
-        .on 'both', (err) ->
-          finish err, removed
-      result
+      wrap arguments, (options, next) ->
+        # Validate parameters
+        options = source: options if typeof options is 'string'
+        options.source ?= options.destination
+        return next new Error "Missing source" unless options.source?
+        # Start real work
+        modified = false
+        if options.ssh
+          options.log? "Remove #{options.source}"
+          fs.exists options.ssh, options.source, (err, exists) ->
+            return next err if err
+            modified = true if exists
+            misc.file.remove options.ssh, options.source, (err) ->
+              next err, modified
+        else
+          each()
+          .files(options.source)
+          .on 'item', (file, next) ->
+            modified = true
+            options.log? "Remove #{file}"
+            misc.file.remove options.ssh, file, next
+          .on 'both', (err) ->
+            next err, modified
 
 ## Dependencies
 
     fs = require 'ssh2-fs'
     each = require 'each'
     misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
+    wrap = require './misc/wrap'
 
 
 

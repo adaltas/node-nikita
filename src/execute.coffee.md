@@ -52,86 +52,64 @@ mecano.execute({
 ## Implementation
 
     module.exports = (goptions, options, callback) ->
-      [goptions, options, callback] = misc.args arguments
-      result = child()
-      finish = (err, created, stdout, stderr) ->
-        callback err, created, stdout, stderr if callback
-        result.end err, created
-      isArray = Array.isArray options
-      misc.options options, (err, options) ->
-        return finish err if err
-        executed = 0
-        stdouts = []
-        stderrs = []
-        escape = (cmd) ->
-          esccmd = ''
-          for char in cmd
-            if char is '$'
-              esccmd += '\\'
-            esccmd += char
-          esccmd
-        stds = if callback then callback.length > 2 else false
-        each( options )
-        .parallel(goptions.parallel)
-        .on 'item', (options, i, next) ->
-          options.log? "Mecano `execute`"
-          # Validate parameters
-          options = { cmd: options } if typeof options is 'string'
-          return next new Error "Missing cmd: #{options.cmd}" unless options.cmd?
-          options.code ?= [0]
-          options.code = [options.code] unless Array.isArray options.code
-          options.code_skipped ?= []
-          options.code_skipped = [options.code_skipped] unless Array.isArray options.code_skipped
-          if options.trap_on_error
-            options.cmd = "set -e\n#{options.cmd}"
-          # Start real work
-          conditions.all options, next, ->
-            options.log? "Mecano `execute`: #{options.cmd}"
-            run = exec options
-            stdout = stderr = []
-            if options.stdout
-              run.stdout.pipe options.stdout, end: false
-            if stds
-              run.stdout.on 'data', (data) ->
-                stdout.push data
-            if options.stderr
-              run.stderr.pipe options.stderr, end: false
-            if stds
-              run.stderr.on 'data', (data) ->
-                stderr.push data
-            run.on "exit", (code) ->
-              # Givent some time because the "exit" event is sometimes
-              # called before the "stdout" "data" event when runing
-              # `make test`
-              setTimeout ->
-                stdouts.push if stds then stdout.join('') else undefined
-                stderrs.push if stds then stderr.join('') else undefined
-                if options.stdout
-                  run.stdout.unpipe options.stdout
-                if options.stderr
-                  run.stderr.unpipe options.stderr
-                if options.code.indexOf(code) is -1 and options.code_skipped.indexOf(code) is -1
-                  options.log? "Mecano `execute`: invalid exit code \"#{code}\""
-                  err = new Error "Invalid Exit Code: #{code}"
-                  err.code = code
-                  return next err
-                if options.code_skipped.indexOf(code) is -1
-                  executed++ 
-                else
-                  options.log? "Mecano `execute`: skip exit code \"#{code}\""
-                next()
-              , 1
-        .on 'both', (err) ->
-          stdouts = stdouts[0] unless isArray
-          stderrs = stderrs[0] unless isArray
-          finish err, executed, stdouts, stderrs
-      result
+      callback = arguments[arguments.length-1]
+      callback = null unless typeof callback is 'function'
+      stds = if callback then callback.length > 2 else false
+      wrap arguments, (options, next) ->
+        options.log? "Mecano `execute`"
+        # Validate parameters
+        options = { cmd: options } if typeof options is 'string'
+        return next new Error "Missing cmd: #{options.cmd}" unless options.cmd?
+        options.code ?= [0]
+        options.code = [options.code] unless Array.isArray options.code
+        options.code_skipped ?= []
+        options.code_skipped = [options.code_skipped] unless Array.isArray options.code_skipped
+        if options.trap_on_error
+          options.cmd = "set -e\n#{options.cmd}"
+        # Start real work
+        conditions.all options, next, ->
+          options.log? "Mecano `execute`: #{options.cmd}"
+          run = exec options
+          stdout = stderr = []
+          if options.stdout
+            run.stdout.pipe options.stdout, end: false
+          if stds
+            run.stdout.on 'data', (data) ->
+              stdout.push data
+          if options.stderr
+            run.stderr.pipe options.stderr, end: false
+          if stds
+            run.stderr.on 'data', (data) ->
+              stderr.push data
+          run.on "exit", (code) ->
+            # Givent some time because the "exit" event is sometimes
+            # called before the "stdout" "data" event when runing
+            # `make test`
+            setTimeout ->
+              stdout = if stds then stdout.join('') else undefined
+              stderr = if stds then stderr.join('') else undefined
+              if options.stdout
+                run.stdout.unpipe options.stdout
+              if options.stderr
+                run.stderr.unpipe options.stderr
+              if options.code.indexOf(code) is -1 and options.code_skipped.indexOf(code) is -1
+                options.log? "Mecano `execute`: invalid exit code \"#{code}\""
+                err = new Error "Invalid Exit Code: #{code}"
+                err.code = code
+                return next err
+              if options.code_skipped.indexOf(code) is -1
+                executed = true
+              else
+                options.log? "Mecano `execute`: skip exit code \"#{code}\""
+              next null, executed, stdout, stderr
+            , 1
 
 ## Dependencies
 
     each = require 'each'
     exec = require 'ssh2-exec'
     misc = require './misc'
+    wrap = require './misc/wrap'
     conditions = require './misc/conditions'
     child = require './misc/child'
 

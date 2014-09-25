@@ -34,13 +34,7 @@ require('mecano').link({
 ```
 
     module.exports = (goptions, options, callback) ->
-      [goptions, options, callback] = misc.args arguments
-      result = child()
-      finish = (err, created) ->
-        callback err, created if callback
-        result.end err, created
-      misc.options options, (err, options) ->
-        return finish err if err
+      wrap arguments, (options, next) ->
         linked = 0
         sym_exists = (options, callback) ->
           fs.exists options.ssh, options.destination, (err, exists) ->
@@ -74,44 +68,36 @@ require('mecano').link({
               return callback err if err
               linked++
               callback()
-        each( options )
-        .parallel(goptions.parallel)
-        .on 'item', (options, next) ->
-          # return next new Error 'SSH not yet supported' if options.ssh
-          return next new Error "Missing source, got #{JSON.stringify(options.source)}" unless options.source
-          return next new Error "Missing destination, got #{JSON.stringify(options.destination)}" unless options.destination
-          options.mode ?= 0o0755
-          do_mkdir = ->
-            mkdir
-              ssh: options.ssh
-              destination: path.dirname options.destination
-            , (err, created) ->
-              # It is possible to have collision if to symlink
-              # have the same parent directory
-              return callback err if err and err.code isnt 'EEXIST'
-              do_dispatch()
-          do_dispatch = ->
-            if options.exec
-              exec_exists options, (err, exists) ->
-                return next() if exists
-                exec_create options, next
-            else
-              sym_exists options, (err, exists) ->
-                return next() if exists
-                sym_create options, next
-          do_mkdir()
-        .on 'both', (err) ->
-          callback err, linked
-      result
+        return next new Error "Missing source, got #{JSON.stringify(options.source)}" unless options.source
+        return next new Error "Missing destination, got #{JSON.stringify(options.destination)}" unless options.destination
+        options.mode ?= 0o0755
+        do_mkdir = ->
+          mkdir
+            ssh: options.ssh
+            destination: path.dirname options.destination
+          , (err, created) ->
+            # It is possible to have collision if to symlink
+            # have the same parent directory
+            return next err if err and err.code isnt 'EEXIST'
+            do_dispatch()
+        do_dispatch = ->
+          if options.exec
+            exec_exists options, (err, exists) ->
+              return do_end() if exists
+              exec_create options, do_end
+          else
+            sym_exists options, (err, exists) ->
+              return do_end() if exists
+              sym_create options, do_end
+        do_end = ->
+          next null, linked
+        do_mkdir()
 
 ## Dependencies
 
     fs = require 'ssh2-fs'
     path = require 'path'
-    each = require 'each'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
+    wrap = require './misc/wrap'
     mkdir = require './mkdir'
 
 

@@ -38,70 +38,58 @@ require('mecano').move({
 ```
 
     module.exports = (goptions, options, callback) ->
-      [goptions, options, callback] = misc.args arguments
-      misc.options options, (err, options) ->
-        return callback err if err
-        moved = 0
-        each( options )
-        .parallel(goptions.parallel)
-        .on 'item', (options, next) ->
-          # Start real work
-          do_exists = ->
-            fs.stat options.ssh, options.destination, (err, stat) ->
-              return do_move() if err?.code is 'ENOENT'
-              return next err if err
-              if options.force
-              then do_remove_dest()
-              else do_srchash()
-          do_srchash = ->
-            return do_dsthash() if options.source_md5
-            misc.file.hash options.ssh, options.source, 'md5', (err, hash) ->
-              return next err if err
-              options.source_md5 = hash
-              do_dsthash()
-          do_dsthash = ->
-            return do_chkhash() if options.destination_md5
-            misc.file.hash options.ssh, options.destination, 'md5', (err, hash) ->
-              return next err if err
-              options.destination_md5 = hash
-              do_chkhash()
-          do_chkhash = ->
-            if options.source_md5 is options.destination_md5
-            then do_remove_src()
-            else do_remove_dest()
-          do_remove_dest = ->
-            options.log? "Remove #{options.destination}"
-            remove
-              ssh: options.ssh
-              destination: options.destination
-            , (err, removed) ->
-              return next err if err
-              do_move()
-          do_move = ->
-            options.log? "Rename #{options.source} to #{options.destination}"
-            fs.rename options.ssh, options.source, options.destination, (err) ->
-              return next err if err
-              moved++
-              next()
-          do_remove_src = ->
-            options.log? "Remove #{options.source}"
-            remove
-              ssh: options.ssh
-              destination: options.source
-            , (err, removed) ->
-              next err
-          conditions.all options, next, do_exists
-        .on 'both', (err) ->
-          callback err, moved
+      wrap arguments, (options, next) ->
+        do_exists = ->
+          fs.stat options.ssh, options.destination, (err, stat) ->
+            return do_move() if err?.code is 'ENOENT'
+            return next err if err
+            if options.force
+            then do_remove_dest()
+            else do_srchash()
+        do_srchash = ->
+          return do_dsthash() if options.source_md5
+          misc.file.hash options.ssh, options.source, 'md5', (err, hash) ->
+            return next err if err
+            options.source_md5 = hash
+            do_dsthash()
+        do_dsthash = ->
+          return do_chkhash() if options.destination_md5
+          misc.file.hash options.ssh, options.destination, 'md5', (err, hash) ->
+            return next err if err
+            options.destination_md5 = hash
+            do_chkhash()
+        do_chkhash = ->
+          if options.source_md5 is options.destination_md5
+          then do_remove_src()
+          else do_remove_dest()
+        do_remove_dest = ->
+          options.log? "Remove #{options.destination}"
+          remove
+            ssh: options.ssh
+            destination: options.destination
+          , (err, removed) ->
+            return next err if err
+            do_move()
+        do_move = ->
+          options.log? "Rename #{options.source} to #{options.destination}"
+          fs.rename options.ssh, options.source, options.destination, (err) ->
+            return next err if err
+            next null, true
+        do_remove_src = ->
+          options.log? "Remove #{options.source}"
+          remove
+            ssh: options.ssh
+            destination: options.source
+          , (err, removed) ->
+            next err
+        do_exists()
 
 ## Dependencies
 
     fs = require 'ssh2-fs'
-    each = require 'each'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
     remove = require './remove'
+    misc = require './misc'
+    wrap = require './misc/wrap'
 
 
 

@@ -40,77 +40,62 @@ require('mecano').extract({
 ```
 
     module.exports = (goptions, options, callback) ->
-      [goptions, options, callback] = misc.args arguments
-      misc.options options, (err, options) ->
-        return callback err if err
-        extracted = 0
-        each( options )
-        .parallel(goptions.parallel)
-        .on 'item', (options, next) ->
-          options.log? "Mecano `extract`"
-          # Validate parameters
-          return next new Error "Missing source: #{options.source}" unless options.source
-          destination = options.destination ? path.dirname options.source
-          # Deal with format option
-          if options.format?
-            format = options.format
+      wrap arguments, (options, next) ->
+        options.log? "Mecano `extract`"
+        # Validate parameters
+        return next new Error "Missing source: #{options.source}" unless options.source
+        destination = options.destination ? path.dirname options.source
+        # Deal with format option
+        if options.format?
+          format = options.format
+        else
+          if /\.(tar\.gz|tgz)$/.test options.source
+            format = 'tgz'
+          else if /\.tar$/.test options.source
+            format = 'tar'
+          else if /\.zip$/.test options.source
+            format = 'zip'
           else
-            if /\.(tar\.gz|tgz)$/.test options.source
-              format = 'tgz'
-            else if /\.tar$/.test options.source
-              format = 'tar'
-            else if /\.zip$/.test options.source
-              format = 'zip'
-            else
-              ext = path.extname options.source
-              return next Error "Unsupported extension, got #{JSON.stringify(ext)}"
-          # Start real work
-          extract = () ->
-            cmd = null
-            switch format
-              when 'tgz' then cmd = "tar xzf #{options.source} -C #{destination}"
-              when 'tar' then cmd = "tar xf #{options.source} -C #{destination}"
-              when 'zip' then cmd = "unzip -u #{options.source} -d #{destination}"
-            # exec cmd, (err, stdout, stderr) ->
-            # options.cmd = cmd
-            # exec options, (err, stdout, stderr) ->
-            #   return next err if err
-            #   creates()
-            execute
-              ssh: options.ssh
-              cmd: cmd
-              log: options.log
-              stdout: options.stdout
-              stderr: options.stderr
-            , (err, created) ->
-              return next err if err
-              creates()
-          # Step for `creates`
-          creates = () ->
-            return success() unless options.creates?
-            fs.exists options.ssh, options.creates, (err, exists) ->
-              return next new Error "Failed to create '#{path.basename options.creates}'" unless exists
-              success()
-          # Final step
-          success = () ->
-            extracted++
-            next()
-          # Run conditions
-          if typeof options.should_exist is 'undefined'
-            options.should_exist = options.source
-          conditions.all options, next, extract
-        .on 'both', (err) ->
-          callback err, extracted
+            ext = path.extname options.source
+            return next Error "Unsupported extension, got #{JSON.stringify(ext)}"
+        # Start real work
+        stat = () ->
+          fs.stat null, options.source, (err, stat) ->
+            return next Error "File does not exist: #{options.source}" if err
+            return next Error "Not a File: #{options.source}" unless stat.isFile()
+            extract()
+        extract = () ->
+          cmd = null
+          switch format
+            when 'tgz' then cmd = "tar xzf #{options.source} -C #{destination}"
+            when 'tar' then cmd = "tar xf #{options.source} -C #{destination}"
+            when 'zip' then cmd = "unzip -u #{options.source} -d #{destination}"
+          execute
+            ssh: options.ssh
+            cmd: cmd
+            log: options.log
+            stdout: options.stdout
+            stderr: options.stderr
+          , (err, created) ->
+            return next err if err
+            creates()
+        # Step for `creates`
+        creates = () ->
+          return success() unless options.creates?
+          fs.exists options.ssh, options.creates, (err, exists) ->
+            return next new Error "Failed to create '#{path.basename options.creates}'" unless exists
+            success()
+        # Final step
+        success = () ->
+          next null, true
+        stat()
 
 ## Dependencies
 
     fs = require 'ssh2-fs'
     path = require 'path'
-    each = require 'each'
     execute = require './execute'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
+    wrap = require './misc/wrap'
 
 
 

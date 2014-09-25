@@ -39,42 +39,25 @@ require('mecano').chown({
 ```
 
     module.exports = (goptions, options, callback) ->
-      [goptions, options, callback] = misc.args arguments
-      result = child()
-      finish = (err, modified) ->
-        callback err, modified if callback
-        result.end err, modified
-      misc.options options, (err, options) ->
-        return finish err if err
-        modified = 0
-        each( options )
-        .parallel(goptions.parallel)
-        .on 'item', (options, next) ->
-          options.log? "Mecano `chown`"
-          # Validate parameters
-          {ssh, uid, gid} = options
-          return next new Error "Missing destination: #{options.destination}" unless options.destination
-          return next() unless uid? and gid?
-          options.log? "Mecano `chown`: stat #{options.destination}"
-          fs.stat ssh, options.destination, (err, stat) ->
-            return next err if err
-            return next() if stat.uid is uid and stat.gid is gid
-            options.log? "Mecano `chown`: change uid from #{stat.uid} to #{uid}" if stat.uid isnt uid
-            options.log? "Mecano `chown`: change gid from #{stat.gid} to #{gid}" if stat.gid isnt gid
-            fs.chown ssh, options.destination, uid, gid, (err) ->
-              return next() err if err
-              modified++
-              next()
-        .on 'both', (err) ->
-          finish err, modified
+      wrap arguments, (options, next) ->
+        options.log? "Mecano `chown`"
+        # Validate parameters
+        {ssh, uid, gid} = options
+        return next new Error "Missing destination: #{options.destination}" unless options.destination
+        return next() unless uid? and gid?
+        options.log? "Mecano `chown`: stat #{options.destination}"
+        fs.stat ssh, options.destination, (err, stat) ->
+          return next err if err
+          return next() if stat.uid is uid and stat.gid is gid
+          options.log? "Mecano `chown`: change uid from #{stat.uid} to #{uid}" if stat.uid isnt uid
+          options.log? "Mecano `chown`: change gid from #{stat.gid} to #{gid}" if stat.gid isnt gid
+          fs.chown ssh, options.destination, uid, gid, (err) ->
+            next err, true
 
 ## Dependencies
 
     fs = require 'ssh2-fs'
-    each = require 'each'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
+    wrap = require './misc/wrap'
 
 
 

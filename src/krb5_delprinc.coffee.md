@@ -40,48 +40,37 @@ require('mecano').krb5_delrinc({
 ```
 
     module.exports = (goptions, options, callback) ->
-      [goptions, options, callback] = misc.args arguments
-      misc.options options, (err, options) ->
-        return callback err if err
-        executed = 0
-        each(options)
-        .parallel( goptions.parallel )
-        .on 'item', (options, next) ->
-          return next new Error 'Property principal is required' unless options.principal
-          modified = true
-          do_delprinc = ->
-            execute
-              cmd: misc.kadmin options, "delprinc -force #{options.principal}"
-              ssh: options.ssh
-              log: options.log
-              stdout: options.stdout
-              stderr: options.stderr
-            , (err, _, stdout) ->
-              return next err if err
-              modified = true if -1 is stdout.indexOf 'does not exist'
-              do_keytab()
-          do_keytab = ->
-            return do_end() unless options.keytab
-            remove
-              ssh: options.ssh
-              destination: options.keytab
-            , (err, removed) ->
-              return next err if err
-              modified++ if removed
-              do_end()
-          do_end = ->
-            executed++ if modified
-            next()
-          conditions.all options, next, do_delprinc
-        .on 'both', (err) ->
-          callback err, executed
+      wrap arguments, (options, next) ->
+        return next new Error 'Property principal is required' unless options.principal
+        modified = false
+        do_delprinc = ->
+          execute
+            cmd: misc.kadmin options, "delprinc -force #{options.principal}"
+            ssh: options.ssh
+            log: options.log
+            stdout: options.stdout
+            stderr: options.stderr
+          , (err, _, stdout) ->
+            return next err if err
+            modified = true if -1 is stdout.indexOf 'does not exist'
+            do_keytab()
+        do_keytab = ->
+          return do_end() unless options.keytab
+          remove
+            ssh: options.ssh
+            destination: options.keytab
+          , (err, removed) ->
+            return next err if err
+            modified++ if removed
+            do_end()
+        do_end = ->
+          next null, modified
+        do_delprinc()
 
 ## Dependencies
 
-    each = require 'each'
     misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
+    wrap = require './misc/wrap'
     execute = require './execute'
     remove = require './remove'
 

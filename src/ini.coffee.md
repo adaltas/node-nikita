@@ -72,64 +72,40 @@ require('mecano').ini({
 ```
 
     module.exports = (goptions, options, callback) ->
-      [goptions, options, callback] = misc.args arguments
-      clean = (content, undefinedOnly) ->
-        for k, v of content
-          if v and typeof v is 'object'
-            content[k] = clean v, undefinedOnly
-            continue
-          delete content[k] if typeof v is 'undefined'
-          delete content[k] if not undefinedOnly and v is null
-        content
-      result = child()
-      finish = (err, written) ->
-        callback err, written if callback
-        result.end err, written
-      misc.options options, (err, options) ->
-        return finish err if err
-        written = 0
-        each( options )
-        .parallel(goptions.parallel)
-        .on 'item', (options, next) ->
-          options.log? "Mecano `ini`"
-          {merge, destination, content, ssh} = options
-          options.clean ?= true
-          # Validate parameters
-          return next new Error 'Missing content' unless content
-          return next new Error 'Missing destination' unless destination
-          # Start real work
-          do_get = ->
-            return do_write() unless merge
-            options.log? "Mecano `ini`: get content for merge"
-            fs.exists ssh, destination, (err, exists) ->
-              return next err if err
-              return do_write() unless exists
-              fs.readFile ssh, destination, 'ascii', (err, c) ->
-                return next err if err and err.code isnt 'ENOENT'
-                content = clean content, true
-                parse = options.parse or misc.ini.parse
-                content = misc.merge parse(c, options), content
-                do_write()
-          do_write = ->
-            options.log? "Mecano `ini`: write"
-            clean content if options.clean
-            stringify = options.stringify or misc.ini.stringify
-            options.content = stringify content, options
-            write options, (err, w) ->
-              written += w
-              next err
-          do_get()
-        .on 'both', (err) ->
-          finish err, written
-      result
+      wrap arguments, (options, next) ->
+        options.log? "Mecano `ini`"
+        {merge, destination, content, ssh} = options
+        options.clean ?= true
+        # Validate parameters
+        return next new Error 'Missing content' unless content
+        return next new Error 'Missing destination' unless destination
+        # Start real work
+        do_get = ->
+          return do_write() unless merge
+          options.log? "Mecano `ini`: get content for merge"
+          fs.exists ssh, destination, (err, exists) ->
+            return next err if err
+            return do_write() unless exists
+            fs.readFile ssh, destination, 'ascii', (err, c) ->
+              return next err if err and err.code isnt 'ENOENT'
+              content = misc.ini.clean content, true
+              parse = options.parse or misc.ini.parse
+              content = misc.merge parse(c, options), content
+              do_write()
+        do_write = ->
+          options.log? "Mecano `ini`: write"
+          misc.ini.clean content if options.clean
+          stringify = options.stringify or misc.ini.stringify
+          options.content = stringify content, options
+          write options, (err, written) ->
+            next err, written
+        do_get()
 
 ## Dependencies
 
     fs = require 'ssh2-fs'
-    each = require 'each'
     misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
+    wrap = require './misc/wrap'
     write = require './write'
 
 [ini]: https://github.com/isaacs/ini

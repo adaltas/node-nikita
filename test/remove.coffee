@@ -47,7 +47,7 @@ describe 'remove', ->
         source: "#{scratch}/*gz"
       , (err, removed) ->
         return next err if err
-        removed.should.eql 2
+        removed.should.eql 1
         fs.readdir null, "#{scratch}", (err, files) ->
           files.should.not.containEql 'a_dir.tar.gz'
           files.should.not.containEql 'a_dir.tgz'

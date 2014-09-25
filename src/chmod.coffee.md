@@ -27,40 +27,24 @@ require('mecano').chmod({
 ```
 
     module.exports = (goptions, options, callback) ->
-      [goptions, options, callback] = misc.args arguments
-      result = child()
-      finish = (err, modified) ->
-        callback err, modified if callback
-        result.end err, modified
-      misc.options options, (err, options) ->
-        return finish err if err
-        modified = 0
-        each( options )
-        .parallel(goptions.parallel)
-        .on 'item', (options, next) ->
-          options.log? "Mecano `chmod`"
-          # Validate parameters
-          {ssh, mode} = options
-          return next new Error "Missing destination: #{destination}" unless options.destination
-          options.log? "Mecano `chmod`: stat \"#{options.destination}\""
-          fs.stat ssh, options.destination, (err, stat) ->
-            return next err if err
-            return next() if misc.mode.compare stat.mode, mode
-            options.log? "Mecano `chmod`: change mode form #{stat.mode} to #{mode}"
-            fs.chmod ssh, options.destination, mode, (err) ->
-              return next err if err
-              modified++
-              next()
-        .on 'both', (err) ->
-          finish err, modified
+      wrap arguments, (options, next) ->
+        options.log? "Mecano `chmod`"
+        # Validate parameters
+        {ssh, mode} = options
+        return next new Error "Missing destination: #{options.destination}" unless options.destination
+        options.log? "Mecano `chmod`: stat \"#{options.destination}\""
+        fs.stat ssh, options.destination, (err, stat) ->
+          return next err if err
+          return next() if misc.mode.compare stat.mode, mode
+          options.log? "Mecano `chmod`: change mode form #{stat.mode} to #{mode}"
+          fs.chmod ssh, options.destination, mode, (err) ->
+            next err, true
 
 ## Dependencies
 
     fs = require 'ssh2-fs'
-    each = require 'each'
     misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
+    wrap = require './misc/wrap'
 
 
 

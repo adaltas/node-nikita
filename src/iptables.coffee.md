@@ -79,56 +79,38 @@ require('mecano').iptables({
 ```
 
     module.exports = (goptions, options, callback) ->
-      [goptions, options, callback] = misc.args arguments
-      result = child()
-      finish = (err, written) ->
-        callback err, written if callback
-        result.end err, written
-      misc.options options, (err, options) ->
-        return callback err if err
-        modified = 0
-        each( options )
-        .parallel(goptions.parallel)
-        .on 'item', (options, next) ->
-          options.log? "Mecano `iptables`"
-          conditions.all options, next, ->
-            options.log? "Mecano `iptables`: list existing rules"
-            execute
-              cmd: "service iptables status &>/dev/null && iptables -S"
-              ssh: options.ssh
-              log: options.log
-              stdout: options.stdout
-              stderr: options.stderr
-              code_skipped: 3
-            , (err, executed, stdout) ->
-              return next err if err
-              return next Error "Service iptables not started" unless executed
-              oldrules = iptables.parse stdout
-              newrules = iptables.normalize options.rules
-              cmd = iptables.cmd oldrules, newrules
-              return next() unless cmd.length
-              options.log? "Mecano `iptables`: modify rules"
-              execute
-                cmd: "#{cmd.join '; '}; "
-                ssh: options.ssh
-                log: options.log
-                trap_on_error: true
-                stdout: options.stdout
-                stderr: options.stderr
-              , (err, executed) ->
-                modified++
-                next err
-        .on 'both', (err) ->
-          finish err, modified
-      result
+      wrap arguments, (options, next) ->
+        options.log? "Mecano `iptables`"
+        options.log? "Mecano `iptables`: list existing rules"
+        execute
+          cmd: "service iptables status &>/dev/null && iptables -S"
+          ssh: options.ssh
+          log: options.log
+          stdout: options.stdout
+          stderr: options.stderr
+          code_skipped: 3
+        , (err, executed, stdout) ->
+          return next err if err
+          return next Error "Service iptables not started" unless executed
+          oldrules = iptables.parse stdout
+          newrules = iptables.normalize options.rules
+          cmd = iptables.cmd oldrules, newrules
+          return next() unless cmd.length
+          options.log? "Mecano `iptables`: modify rules"
+          execute
+            cmd: "#{cmd.join '; '}; "
+            ssh: options.ssh
+            log: options.log
+            trap_on_error: true
+            stdout: options.stdout
+            stderr: options.stderr
+          , (err, executed) ->
+            next err, true
 
 ## Dependencies
 
-    each = require 'each'
-    misc = require './misc'
+    wrap = require './misc/wrap'
     iptables = require './misc/iptables'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
     execute = require './execute'
 
 ## IPTables References

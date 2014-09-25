@@ -57,7 +57,7 @@ describe 'mkdir', ->
       ]
     , (err, created) ->
       return next err if err
-      created.should.eql 2
+      created.should.eql 1
       next()
 
   describe 'exclude', ->

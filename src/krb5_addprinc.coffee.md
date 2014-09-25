@@ -47,49 +47,38 @@ require('mecano').krb5_addprinc({
 ```
 
     module.exports = (goptions, options, callback) ->
-      [goptions, options, callback] = misc.args arguments
-      misc.options options, (err, options) ->
-        return callback err if err
-        executed = 0
-        each(options)
-        .parallel( goptions.parallel )
-        .on 'item', (options, next) ->
-          return next new Error 'Property principal is required' unless options.principal
-          return next new Error 'Password or randkey missing' if not options.password and not options.randkey
-          modified = false
-          do_kadmin = ->
-            # options.realm ?= options.principal.split('@')[1] # Break cross-realm principals
-            options.realm ?= options.kadmin_principal.split('@')[1] if /.*@.*/.test options.kadmin_principal
-            cmd = misc.kadmin options, if options.password
-            then "addprinc -pw #{options.password} #{options.principal}"
-            else "addprinc -randkey #{options.principal}"
-            execute
-              cmd: cmd
-              ssh: options.ssh
-              log: options.log
-              stdout: options.stdout
-              stderr: options.stderr
-            , (err, _, stdout) ->
-              return next err if err
-              modified = true if -1 is stdout.indexOf 'already exists'
-              do_keytab()
-          do_keytab = ->
-            krb5_ktadd options, (err, ktadded) ->
-              modified = true if ktadded
-              do_end()
-          do_end = ->
-            executed++ if modified
-            next()
-          conditions.all options, next, do_kadmin
-        .on 'both', (err) ->
-          callback err, executed
+      wrap arguments, (options, next) ->
+        return next new Error 'Property principal is required' unless options.principal
+        return next new Error 'Password or randkey missing' if not options.password and not options.randkey
+        modified = false
+        do_kadmin = ->
+          # options.realm ?= options.principal.split('@')[1] # Break cross-realm principals
+          options.realm ?= options.kadmin_principal.split('@')[1] if /.*@.*/.test options.kadmin_principal
+          cmd = misc.kadmin options, if options.password
+          then "addprinc -pw #{options.password} #{options.principal}"
+          else "addprinc -randkey #{options.principal}"
+          execute
+            cmd: cmd
+            ssh: options.ssh
+            log: options.log
+            stdout: options.stdout
+            stderr: options.stderr
+          , (err, _, stdout) ->
+            return next err if err
+            modified = true if -1 is stdout.indexOf 'already exists'
+            do_keytab()
+        do_keytab = ->
+          krb5_ktadd options, (err, ktadded) ->
+            modified = true if ktadded
+            do_end()
+        do_end = ->
+          next null, modified
+        do_kadmin()
 
 ## Dependencies
 
-    each = require 'each'
     misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
+    wrap = require './misc/wrap'
     execute = require './execute'
     krb5_ktadd = require './krb5_ktadd'
 

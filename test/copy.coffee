@@ -144,7 +144,7 @@ describe 'copy', ->
         destination: "#{scratch}/toto"
       , (err, copied) ->
         return next err if err
-        copied.should.eql 8
+        copied.should.eql 1
         checkDir ssh, "#{scratch}/toto", (err) ->
           return next err if err
           # if the destination exists, then copy the folder inside destination
@@ -154,7 +154,7 @@ describe 'copy', ->
             destination: "#{scratch}/toto"
           , (err, copied) ->
             return next err if err
-            copied.should.eql 8
+            copied.should.eql 1
             checkDir ssh, "#{scratch}/toto/resources", (err) ->
               next err
 
@@ -166,7 +166,7 @@ describe 'copy', ->
         destination: "#{scratch}/lulu"
       , (err, copied) ->
         return next err if err
-        copied.should.eql 8
+        copied.should.eql 1
         checkDir ssh, "#{scratch}/lulu", (err) ->
           return next err if err
           # if the destination exists, then copy the files inside destination

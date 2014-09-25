@@ -57,47 +57,33 @@ require('mecano').render({
 ```
 
     module.exports = (goptions, options, callback) ->
-      [goptions, options, callback] = misc.args arguments
-      misc.options options, (err, options) ->
-        return callback err if err
-        rendered = 0
-        each( options )
-        .parallel(goptions.parallel)
-        .on 'item', (options, next) ->
-          # Validate parameters
-          return next new Error 'Missing source or content' unless options.source or options.content
-          return next new Error 'Missing destination' unless options.destination
-          # Start real work
-          do_read_source = ->
-            return do_write() unless options.source
-            ssh = if options.local_source then null else options.ssh
-            fs.exists ssh, options.source, (err, exists) ->
-              return next new Error "Invalid source, got #{JSON.stringify(options.source)}" unless exists
-              fs.readFile ssh, options.source, 'utf8', (err, content) ->
-                return next err if err
-                options.content = content
-                do_write()
-          do_write = ->
-            if not options.engine and options.source
-              extension = path.extname options.source
-              options.engine = 'nunjunks' if extension is '.j2'
-            options.source = null
-            write options, (err, written) ->
+      wrap arguments, (options, next) ->
+        # Validate parameters
+        return next new Error 'Missing source or content' unless options.source or options.content
+        return next new Error 'Missing destination' unless options.destination
+        # Start real work
+        do_read_source = ->
+          return do_write() unless options.source
+          ssh = if options.local_source then null else options.ssh
+          fs.exists ssh, options.source, (err, exists) ->
+            return next new Error "Invalid source, got #{JSON.stringify(options.source)}" unless exists
+            fs.readFile ssh, options.source, 'utf8', (err, content) ->
               return next err if err
-              rendered++ if written
-              next()
-          conditions.all options, next, do_read_source
-        .on 'both', (err) ->
-          callback err, rendered
-
+              options.content = content
+              do_write()
+        do_write = ->
+          if not options.engine and options.source
+            extension = path.extname options.source
+            options.engine = 'nunjunks' if extension is '.j2'
+          options.source = null
+          write options, (err, written) ->
+            next err, written
+        do_read_source()
 ## Dependencies
 
     fs = require 'ssh2-fs'
     path = require 'path'
-    each = require 'each'
-    misc = require './misc'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
+    wrap = require './misc/wrap'
     write = require './write'
 
 
