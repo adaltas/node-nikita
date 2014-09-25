@@ -54,36 +54,6 @@ describe 'misc', ->
           status.should.eql 2
           next()
 
-  describe 'args', ->
-
-    it 'accept 2 arguments', ->
-      [goptions, options, callback] = misc.args [
-        option_a: 'a', option_b: 'b'
-        -> #do sth
-      ]
-      goptions.should.eql parallel: true
-      options.should.eql option_a: 'a', option_b: 'b'
-      callback.should.be.a.Function
-
-    it 'accept 3 arguments', ->
-      [goptions, options, callback] = misc.args [
-        {parallel: 1}
-        option_a: 'a', option_b: 'b'
-        -> #do sth
-      ]
-      goptions.should.eql parallel: 1
-      options.should.eql option_a: 'a', option_b: 'b'
-      callback.should.be.a.Function
-
-    it 'overwrite default global options', ->
-      [goptions, options, callback] = misc.args [
-        option_a: 'a', option_b: 'b'
-        -> #do sth
-      ], parallel: 1
-      goptions.parallel.should.equal 1
-      options.should.eql option_a: 'a', option_b: 'b'
-      callback.should.be.a.Function
-
 
 
 
