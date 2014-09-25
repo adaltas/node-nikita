@@ -2,7 +2,6 @@
 fs = require 'fs'
 path = require 'path'
 fs.exists ?= path.exists
-should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov' else require '../lib'
 misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '../lib/misc'
 test = require './test'

@@ -1,6 +1,5 @@
 
 path = require 'path'
-should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/' else require '../lib/'
 misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '../lib/misc'
 test = require './test'
@@ -144,21 +143,20 @@ describe 'copy', ->
         source: "#{__dirname}/../resources"
         destination: "#{scratch}/toto"
       , (err, copied) ->
-        should.not.exists err
+        return next err if err
         copied.should.eql 8
         checkDir ssh, "#{scratch}/toto", (err) ->
-          should.not.exists err
+          return next err if err
           # if the destination exists, then copy the folder inside destination
           mecano.copy
             ssh: ssh
             source: "#{__dirname}/../resources"
             destination: "#{scratch}/toto"
           , (err, copied) ->
-            should.not.exists err
+            return next err if err
             copied.should.eql 8
             checkDir ssh, "#{scratch}/toto/resources", (err) ->
-              should.not.exists err
-              next()
+              next err
 
     they 'should copy the files when dir end with slash', (ssh, next) ->
       # if the destination doesn't exists, then copy as destination
@@ -167,21 +165,20 @@ describe 'copy', ->
         source: "#{__dirname}/../resources/"
         destination: "#{scratch}/lulu"
       , (err, copied) ->
-        should.not.exists err
+        return next err if err
         copied.should.eql 8
         checkDir ssh, "#{scratch}/lulu", (err) ->
-          should.not.exists err
+          return next err if err
           # if the destination exists, then copy the files inside destination
           mecano.copy
             ssh: ssh
             source: "#{__dirname}/../resources/"
             destination: "#{scratch}/lulu"
           , (err, copied) ->
-            should.not.exists err
+            return next err if err
             copied.should.eql 0
             checkDir ssh, "#{scratch}/lulu", (err) ->
-              should.not.exists err
-              next()
+              next err
 
 
 

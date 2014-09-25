@@ -1,7 +1,7 @@
 
 {EventEmitter} = require 'events'
-should = require 'should'
 stream = require 'stream'
+should = require 'should'
 mecano = if process.env.MECANO_COV then require '../lib-cov/' else require '../lib/'
 test = require './test'
 they = require 'ssh2-they'
@@ -121,7 +121,7 @@ describe 'execute', ->
       echo 'ok'
       """
     , (err) ->
-      should.not.exists err
+      return next err if err
       mecano.execute
         ssh: ssh
         cmd: """
@@ -130,7 +130,7 @@ describe 'execute', ->
         """
         trap_on_error: true
       , (err) ->
-        should.exists err
+        err.should.be.an.Error
         err.code.should.eql 1
         next()
 

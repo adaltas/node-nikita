@@ -1,5 +1,4 @@
 
-should = require 'should'
 iptables = if process.env.MECANO_COV then require '../lib-cov/misc/iptables' else require '../lib/misc/iptables'
 test = require './test'
 they = require 'ssh2-they'
