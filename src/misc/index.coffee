@@ -621,7 +621,7 @@ misc = module.exports =
     else if args.length is 1
       args[1] = args[0]
       args[0] = null
-    args[0] ?= misc.merge parallel: true, overwrite_goptions
+    args[0] ?= misc.merge parallel: 1, overwrite_goptions
     args
   ###
 
