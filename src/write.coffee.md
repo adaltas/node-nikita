@@ -367,7 +367,7 @@ require('mecano').write({
                   continue if line.value is null
                   if not line.added and not line.removed
                     count_added++; count_removed++; continue
-                  ls = line.value.split(/\r\n|[\n\r\u0085\u2028\u2029]/g)
+                  ls = line.value.split /\r\n|[\n\r\u0085\u2028\u2029]/g
                   if line.added
                     for line in ls
                       count_added++

@@ -63,7 +63,7 @@ require('mecano').extract({
               format = 'zip'
             else
               ext = path.extname options.source
-              return next new Error "Unsupported extension, got #{JSON.stringify(ext)}"
+              return next Error "Unsupported extension, got #{JSON.stringify(ext)}"
           # Start real work
           extract = () ->
             cmd = null
