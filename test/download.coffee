@@ -30,7 +30,7 @@ describe 'download', ->
       downloaded.should.eql 1
       fs.readFile ssh, destination, 'ascii', (err, content) ->
         return next err if err
-        content.toString().should.include 'okay'
+        content.should.equal 'okay'
         # Download on an existing file
         mecano.download
           ssh: ssh
@@ -63,7 +63,7 @@ describe 'download', ->
       downloaded.should.eql 1
       fs.readFile ssh, destination, 'ascii', (err, content) ->
         return next err if err
-        content.toString().should.include 'okay 0'
+        content.should.equal 'okay 0'
         # Download on an existing file
         mecano.download
           ssh: ssh
@@ -95,7 +95,7 @@ describe 'download', ->
       downloaded.should.eql 1
       fs.readFile ssh, destination, 'ascii', (err, content) ->
         return next err if err
-        content.should.include 'okay'
+        content.should.equal 'okay'
         # Download on an existing file
         mecano.download
           ssh: ssh
@@ -119,7 +119,7 @@ describe 'download', ->
   #     return next err if err
   #     downloaded.should.eql 1
   #     fs.readFile destination, 'ascii', (err, content) ->
-  #       content.should.include 'GNU'
+  #       content.should.equal 'GNU'
   #       # Download on an existing file
   #       mecano.download
   #         source: source
@@ -141,7 +141,7 @@ describe 'download', ->
       return next err if err
       downloaded.should.eql 1
       fs.readFile ssh, destination, 'ascii', (err, content) ->
-        content.should.include 'yeah'
+        content.should.containEql 'yeah'
         # Download on an existing file
         mecano.download
           ssh: ssh
@@ -164,7 +164,7 @@ describe 'download', ->
       return next err if err
       downloaded.should.eql 1
       fs.readFile ssh, destination, 'ascii', (err, content) ->
-        content.should.include 'yeah'
+        content.should.containEql 'yeah'
         # Download on an existing file
         mecano.download
           ssh: ssh

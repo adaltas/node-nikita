@@ -50,9 +50,9 @@ describe 'remove', ->
         return next err if err
         removed.should.eql 2
         fs.readdir null, "#{scratch}", (err, files) ->
-          files.should.not.include 'a_dir.tar.gz'
-          files.should.not.include 'a_dir.tgz'
-          files.should.include 'a_dir.zip'
+          files.should.not.containEql 'a_dir.tar.gz'
+          files.should.not.containEql 'a_dir.tgz'
+          files.should.containEql 'a_dir.zip'
           next()
 
   they 'a dir', (ssh, next) ->

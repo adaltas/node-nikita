@@ -46,8 +46,8 @@ describe 'execute', ->
         stdout: out
       , (err, executed, stdout, stderr) ->
         unpiped.should.eql 2
-        data.should.include search1
-        data.should.include search2
+        data.should.containEql search1
+        data.should.containEql search2
         next()
   
   they 'validate exit code', (ssh, next) ->
