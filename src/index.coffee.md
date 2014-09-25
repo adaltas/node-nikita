@@ -40,9 +40,3 @@ Here's the list of available functions:
       upload: require './upload'
       user: require './user'
       write: require './write'
-    # Alias definitions
-    mecano.cp   = mecano.copy
-    mecano.exec = mecano.execute
-    mecano.ln   = mecano.link
-    mecano.mv   = mecano.move
-    mecano.rm   = mecano.remove

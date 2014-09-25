@@ -8,7 +8,7 @@ scratch = "/tmp/mecano-test"
 module.exports = 
   scratch: (context) ->
     context.beforeEach (next) ->
-      mecano.rm scratch, ->
+      mecano.remove scratch, ->
         mecano.mkdir scratch, next
     scratch
   config: ->
