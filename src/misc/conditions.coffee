@@ -30,9 +30,9 @@ conditions = module.exports =
     .on 'item', (condition, next) ->
       return next() unless options[condition]?
       options.log? "Mecano #{condition}"
-      conditions[condition] options, (->
+      conditions[condition] options, ( (err) ->
         options.log? "Mecano `#{condition}`: skip"
-        skip()
+        skip err
       ), (->
         options.log? "Mecano `#{condition}`: next"
         next()
@@ -260,7 +260,7 @@ conditions = module.exports =
       fs.exists options.ssh, should_exist, (err, exists) ->
         if exists
         then next()
-        else next new Error "File does not exist: #{should_exist}"
+        else next Error "File does not exist: #{should_exist}"
     .on 'error', (err) ->
       skip err
     .on 'end', succeed
