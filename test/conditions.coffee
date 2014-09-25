@@ -198,6 +198,14 @@ describe 'conditions', ->
         () -> false.should.be.ok
         -> next()
 
+    they 'default to destination if true', (ssh, next) ->
+      conditions.not_if_exists
+        ssh: ssh
+        destination: __dirname
+        not_if_exists: true
+        -> next()
+        () -> false.should.be.ok
+
     they 'skip if at least one file exists', (ssh, next) ->
       conditions.not_if_exists
         ssh: ssh
