@@ -1,11 +1,9 @@
-REPORTER = dot
 
 build:
 	@./node_modules/.bin/coffee -b -o lib src
 
 test: build
-	@NODE_ENV=test ./node_modules/.bin/mocha --compilers coffee:coffee-script/register \
-		--reporter $(REPORTER)
+	@NODE_ENV=test ./node_modules/.bin/mocha
 
 doc: build
 	@./node_modules/.bin/coffee src/doc.coffee $(MECANO_DOC)
