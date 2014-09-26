@@ -113,25 +113,40 @@ describe 'execute', ->
       executed.should.eql 0
       next()
 
-  they 'trap on error', (ssh, next) ->
-    mecano.execute
-      ssh: ssh
-      cmd: """
-      ls -l /does/not/exist
-      echo 'ok'
-      """
-    , (err) ->
-      return next err if err
+  describe 'error', ->
+
+    they 'provide stdout and stderr', (ssh, next) ->
+      mecano.execute
+        ssh: ssh
+        cmd: """
+        ls -l /does/not/exist
+        """
+      , (err, _, stdout, stderr) ->
+        err.message.should.eql 'Invalid Exit Code: 1'
+        stdout.should.eql ''
+        stderr.should.eql 'ls: /does/not/exist: No such file or directory\n'
+        next()
+
+
+    they 'trap on error', (ssh, next) ->
       mecano.execute
         ssh: ssh
         cmd: """
         ls -l /does/not/exist
         echo 'ok'
         """
-        trap_on_error: true
       , (err) ->
-        err.should.be.an.Error
-        err.code.should.eql 1
-        next()
+        return next err if err
+        mecano.execute
+          ssh: ssh
+          cmd: """
+          ls -l /does/not/exist
+          echo 'ok'
+          """
+          trap_on_error: true
+        , (err) ->
+          err.should.be.an.Error
+          err.code.should.eql 1
+          next()
 
 

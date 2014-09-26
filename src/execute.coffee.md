@@ -70,17 +70,21 @@ mecano.execute({
         conditions.all options, next, ->
           options.log? "Mecano `execute`: #{options.cmd}"
           run = exec options
-          stdout = stderr = []
+          stdout = []; stderr = []
           if options.stdout
             run.stdout.pipe options.stdout, end: false
           if stds
             run.stdout.on 'data', (data) ->
-              stdout.push data
+              if Array.isArray stdout # A string on exit
+                stdout.push data
+              else console.log 'stdout coming'
           if options.stderr
             run.stderr.pipe options.stderr, end: false
           if stds
             run.stderr.on 'data', (data) ->
-              stderr.push data
+              if Array.isArray stderr # A string on exit
+                stderr.push data
+              else console.log 'stderr coming'
           run.on "exit", (code) ->
             # Givent some time because the "exit" event is sometimes
             # called before the "stdout" "data" event when runing
@@ -96,7 +100,7 @@ mecano.execute({
                 options.log? "Mecano `execute`: invalid exit code \"#{code}\""
                 err = new Error "Invalid Exit Code: #{code}"
                 err.code = code
-                return next err
+                return next err, null, stdout, stderr
               if options.code_skipped.indexOf(code) is -1
                 executed = true
               else
