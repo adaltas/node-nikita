@@ -21,7 +21,7 @@ Responsibilities:
 
 module.exports = (args, handler) ->
   # Retrieve arguments
-  [goptions, options, callback] = module.exports.args args
+  [options, goptions, callback] = module.exports.args args
   isArray = Array.isArray options
   # Pass user arguments
   user_args = []
@@ -43,27 +43,24 @@ module.exports = (args, handler) ->
       # Handle conditions
       conditions.all options, next, ->
         handler options, (err, modif, args...) ->
-          return next err if err
-          modified++ if modif
+          modified++ if not err and modif
           for arg, i in args
             user_args[i] ?= []
             user_args[i].push arg
-          next()
+          next err
     .on 'both', (err) ->
       finish err
   # Return a Mecano Child instance
   result
 
 module.exports.args = (args, overwrite_goptions={}) ->
-  # [goptions, options, callback] = args
   if args.length is 2 and typeof args[1] is 'function'
     args[2] = args[1]
-    args[1] = args[0]
-    args[0] = null
+    args[1] = {}
   else if args.length is 1
-    args[1] = args[0]
-    args[0] = null
-  args[0] ?= misc.merge parallel: 1, overwrite_goptions
+    args[1] = {}
+    args[2] = null
+  args[1] = misc.merge args[1], parallel: 1, overwrite_goptions
   args
 
 
