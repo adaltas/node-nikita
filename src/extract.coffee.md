@@ -60,7 +60,7 @@ require('mecano').extract({
             return next Error "Unsupported extension, got #{JSON.stringify(ext)}"
         # Start real work
         stat = () ->
-          fs.stat null, options.source, (err, stat) ->
+          fs.stat options.ssh, options.source, (err, stat) ->
             return next Error "File does not exist: #{options.source}" if err
             return next Error "Not a File: #{options.source}" unless stat.isFile()
             extract()
