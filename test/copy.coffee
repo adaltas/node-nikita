@@ -19,7 +19,7 @@ checkDir = (ssh, dir, callback) ->
       for f in files
         continue if f.substr(0, 1) is '.'
         dirFiles.push f
-      scratchFiles.should.eql dirFiles
+      scratchFiles.sort().should.eql dirFiles.sort()
       callback()
 
 describe 'copy', ->
