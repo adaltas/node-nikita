@@ -1,5 +1,6 @@
 
-mecano = if process.env.MECANO_COV then require '../lib-cov/' else require '../lib/'
+lib = if process.env.MECANO_COV then 'lib-cov' else 'lib'
+mecano = require "../#{lib}"
 test = require './test'
 ldap = require 'ldapjs'
 

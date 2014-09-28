@@ -1,8 +1,9 @@
 
-mecano = if process.env.MECANO_COV then require '../lib-cov/' else require '../lib/'
+lib = if process.env.MECANO_COV then 'lib-cov' else 'lib'
+mecano = require "../#{lib}"
+misc = require "../#{lib}/misc"
 test = require './test'
 they = require 'ssh2-they'
-misc = require '../lib/misc'
 fs = require 'ssh2-fs'
 
 describe 'write', ->

@@ -1,7 +1,8 @@
 
+lib = if process.env.MECANO_COV then 'lib-cov' else 'lib'
+misc = require "../#{lib}/misc"
 path = require 'path'
 crypto = require 'crypto'
-misc = if process.env.MECANO_COV then require '../lib-cov/misc' else require '../lib/misc'
 
 describe 'misc.path', ->
 
