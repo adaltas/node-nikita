@@ -25,6 +25,7 @@
     "jsftp": "latest",
     "ldapjs": "latest",
     "nunjucks": "latest",
+    "minimatch": "latest",
     "request": "latest",
     "rimraf": "latest",
     "regexp-quote": "latest",
