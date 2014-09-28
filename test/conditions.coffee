@@ -6,6 +6,24 @@ conditions = if process.env.MECANO_COV then require '../lib-cov/conditions' else
 
 describe 'conditions', ->
 
+  describe 'all', ->
+
+    they 'handle multiple conditions (1st failed)', (ssh, next) ->
+      conditions.all
+        ssh: ssh
+        if: false
+        not_if: false
+        next
+        () -> false.should.be.ok
+
+    they 'handle multiple conditions (2nd failed)', (ssh, next) ->
+      conditions.all
+        ssh: ssh
+        if: true
+        not_if: true
+        next
+        () -> false.should.be.ok
+
   describe 'if', ->
 
     they 'should bypass if not present', (ssh, next) ->
