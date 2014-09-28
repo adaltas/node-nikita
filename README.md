@@ -1,9 +1,9 @@
 [![Build Status](https://secure.travis-ci.org/wdavidw/node-mecano.png)](http://travis-ci.org/wdavidw/node-mecano)
 
-Node Mecano
-===========
+# Node.js Mecano
 
 Mecano gather a set of functions usually used during system deployment.
+Documentation is available on the [project website][mecano].
 
 Functions include "chmod", "chown", "copy", "download", "execute", "extract", "git", "ini", "krb5_ktadd", "krb5_addprinc", "krb5_delprinc", "ldap_acl", "ldap_index", "ldap_schema", "link", "mkdir", "move", "remove", "render", "service", "touch", "upload" and "write". They all share common usages and philosophies:   
 
@@ -18,17 +18,13 @@ argument being an object or an array of objects.
 *   Optmized for ease of use and checking over performance.
 *   Full test coverage.   
 
-Documentation is available on the [project website](http://www.adaltas.com/projects/node-mecano/).
-
-Installation
-------------
+## Installation
 
 ```bash
 npm install mecano
 ```
 
-Test
-----
+## Test
 
 For the tests to execute successfully, you must:   
 
@@ -38,3 +34,6 @@ For the tests to execute successfully, you must:
 ```bash
 npm test
 ```
+
+[mecano]: http://www.adaltas.com/projects/node-mecano/
+
