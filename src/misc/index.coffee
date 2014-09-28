@@ -2,7 +2,6 @@
 crypto = require 'crypto'
 fs = require 'fs'
 path = require 'path'
-glob = require 'glob'
 each = require 'each'
 util = require 'util'
 Stream = require 'stream'
@@ -11,6 +10,7 @@ rimraf = require 'rimraf'
 ini = require 'ini'
 tilde = require 'tilde-expansion'
 ssh2fs = require 'ssh2-fs'
+glob = require './glob'
 
 misc = module.exports = 
   array:
@@ -168,16 +168,19 @@ misc = module.exports =
                 else
                   hashs = crypto.createHash(algorithm).update(hashs.join('')).digest('hex')
                   return callback null, hashs
-          if ssh
-            exec ssh, "find #{file} -name '**'", (err, stdout) ->
-              return callback err if err
-              files = stdout.trim().split /\r\n|[\n\r\u0085\u2028\u2029]/g
-              files = files.filter (file) -> path.basename(file).substr(0, 1) isnt '.'
-              compute files
-          else
-            glob "#{file}/**", (err, files) ->
-              return callback err if err
-              compute files
+          # if ssh
+          #   exec ssh, "find #{file} -name '**'", (err, stdout) ->
+          #     return callback err if err
+          #     files = stdout.trim().split /\r\n|[\n\r\u0085\u2028\u2029]/g
+          #     files = files.filter (file) -> path.basename(file).substr(0, 1) isnt '.'
+          #     compute files
+          # else
+          #   glob "#{file}/**", (err, files) ->
+          #     return callback err if err
+          #     compute files
+          glob ssh, "#{file}/**", (err, files) ->
+            return callback err if err
+            compute files
         else
           callback Error "File type not supported"
     ###
