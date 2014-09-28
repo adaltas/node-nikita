@@ -84,11 +84,12 @@ require('mecano').copy({
         # Copy a directory
         do_directory = (dir, callback) ->
           options.log? "Source is a directory"
-          each()
-          .files("#{dir}/**")
-          .on 'item', (file, next) ->
-            do_copy file, next
-          .on 'both', callback
+          glob options.ssh, "#{dir}/**", (err, files) ->
+            return next err if err
+            each(files)
+            .on 'item', (file, next) ->
+              do_copy file, next
+            .on 'both', callback
         do_copy = (source, callback) ->
           if srcStat.isDirectory()
             destination = path.resolve options.destination, path.relative options.source, source
@@ -154,6 +155,7 @@ require('mecano').copy({
     path = require 'path'
     each = require 'each'
     misc = require './misc'
+    glob = require './misc/glob'
     wrap = require './misc/wrap'
     chmod = require './chmod'
     chown = require './chown'
