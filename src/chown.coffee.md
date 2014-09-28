@@ -13,7 +13,7 @@ Change the ownership of a file or a directory.
     Function called with a log related messages.   
 *   `mode`   
     Permissions of the file or the parent directory.   
-*   `ssh`   
+*   `ssh` (object|ssh2)   
     Run the action on a remote server using SSH, an ssh2 instance or an
     configuration object used to initialize the SSH connection.   
 *   `uid`   
@@ -24,7 +24,7 @@ Change the ownership of a file or a directory.
 *   `err`   
     Error object if any.   
 *   `modified`   
-    Number of files with modified permissions.   
+    Number of ownerships with modifications.   
 
 # Example
 

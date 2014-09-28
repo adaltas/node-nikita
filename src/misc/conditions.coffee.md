@@ -10,42 +10,7 @@
 Conditions are a set of properties you may add to the options of the Mecano
 functions. They apply to all functions and control their execution.
 
-## `all(options, skip, succeed)` Run all conditions
-
-*   `opts`
-    Command options
-*   `skip`
-    Skip callback, called when a condition is not fulfill. May also be called with on error on failure
-*   `succeed`
-    Succeed callback, only called if all the condition succeed
-
-Example:
-
-```js
-conditions.all({
-  if: true
-}, function(err){
-  console.log('Conditins failed or pass an error')
-}, function(){
-  console.log('Conditions succeed')
-})
-```
-
-      all: (options, failed, succeed) ->
-        # each([@if, @not_if, @if_exec, @not_if_exec, @if_exists, @not_if_exists, @should_exist])
-        each(['if', 'not_if', 'if_exec', 'not_if_exec', 'if_exists', 'not_if_exists', 'should_exist'])
-        .on 'item', (condition, next) ->
-          return next() unless options[condition]?
-          options.log? "Mecano #{condition}"
-          module.exports[condition] options, ( (err) ->
-            options.log? "Mecano `#{condition}`: failed"
-            failed err
-          ), (->
-            options.log? "Mecano `#{condition}`: succeed"
-            next()
-          )
-        .on('error', failed)
-        .on('end', succeed)
+For an action to be executed, all conditions must pass.
 
 ## `if` Run an action for a user defined condition
 
@@ -280,6 +245,46 @@ exists otherwise the callback `skip` is called with an error.
           skip err
         .on 'end', ->
           succeed()
+
+## `all(options, skip, succeed)` Run all conditions
+
+This is the function run internally to execute all the conditions.
+
+*   `opts`
+    Command options
+*   `skip`
+    Skip callback, called when a condition is not fulfill. May also be called with on error on failure
+*   `succeed`
+    Succeed callback, only called if all the condition succeed
+
+Example:
+
+```js
+conditions.all({
+  if: true
+}, function(err){
+  console.log('Conditins failed or pass an error')
+}, function(){
+  console.log('Conditions succeed')
+})
+```
+
+      all: (options, failed, succeed) ->
+        conditions = [
+          'if', 'not_if', 'if_exec', 'not_if_exec', 'if_exists', 
+          'not_if_exists', 'should_exist']
+        i = 0
+        next = ->
+          condition = conditions[i++]
+          return succeed() unless condition
+          module.exports[condition] options, ( (err) ->
+            options.log? "Mecano `#{condition}`: failed"
+            failed err
+          ), (->
+            options.log? "Mecano `#{condition}`: succeed"
+            next()
+          )
+        next()
 
 
 

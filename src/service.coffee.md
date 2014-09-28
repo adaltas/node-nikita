@@ -20,10 +20,6 @@ Install a service. For now, only yum over SSH.
     Run entirely from system cache, run install and update checks offline.   
 *   `action`   
     Execute the service with the provided action argument.   
-*   `stdout`   
-    Writable Stream in which commands output will be piped.   
-*   `stderr`   
-    Writable Stream in which commands error will be piped.   
 *   `installed`   
     Cache a list of installed services. If an object, the service will be
     installed if a key of the same name exists; if anything else (default), no
@@ -33,6 +29,15 @@ Install a service. For now, only yum over SSH.
     if a key of the same name exists; If true, the option will be converted to
     an object with all the outdated service names as keys; if anything else
     (default), no caching will take place.   
+*   `ssh` (object|ssh2)   
+    Run the action on a remote server using SSH, an ssh2 instance or an
+    configuration object used to initialize the SSH connection.   
+*   `stdout` (stream.Writable)   
+    Writable EventEmitter in which the standard output of executed commands will
+    be piped.   
+*   `stderr` (stream.Writable)   
+    Writable EventEmitter in which the standard error output of executed command
+    will be piped.   
 
 ## Callback parameters
 

@@ -3,7 +3,9 @@
 
 Create a empty file if it does not yet exists.
 
-Internally, it delegates most of the work to the `mecano.write` module. It isnt
+## Implementation details
+
+Internally, it delegates most of the work to the `mecano.write` module. It isn't
 yet a real `touch` implementation since it doesnt change the file time if it
 exists.
 
@@ -11,6 +13,15 @@ exists.
 
 *   `destination`   
     File path where to write content to.   
+*   `ssh` (object|ssh2)   
+    Run the action on a remote server using SSH, an ssh2 instance or an
+    configuration object used to initialize the SSH connection.   
+*   `stdout` (stream.Writable)   
+    Writable EventEmitter in which the standard output of executed commands will
+    be piped.   
+*   `stderr` (stream.Writable)   
+    Writable EventEmitter in which the standard error output of executed command
+    will be piped.   
 
 ## Example
 

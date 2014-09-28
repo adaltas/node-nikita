@@ -17,16 +17,22 @@ moment, supported extensions are '.tgz', '.tar.gz' and '.zip'.
     Ensure the given file is created or an error is send in the callback.   
 *   `not_if_exists`   
     Cancel extraction if file exists.   
-*   `ssh`   
+*   `ssh` (object|ssh2)   
     Run the action on a remote server using SSH, an ssh2 instance or an
     configuration object used to initialize the SSH connection.   
+*   `stdout` (stream.Writable)   
+    Writable EventEmitter in which the standard output of executed commands will
+    be piped.   
+*   `stderr` (stream.Writable)   
+    Writable EventEmitter in which the standard error output of executed command
+    will be piped.   
 
-## Parameters
+## Callback parameters
 
 *   `err`   
     Error object if any.   
 *   `extracted`   
-    Number of extracted archives.   
+    Number of extracted actions with modifications.   
 
 ## Example
 

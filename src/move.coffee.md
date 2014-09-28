@@ -18,6 +18,9 @@ exists, in which case the source file will no longer exists.
     exists.   
 *   `source_md5`   
     Source md5 checkum if known, otherwise computed.   
+*   `ssh` (object|ssh2)   
+    Run the action on a remote server using SSH, an ssh2 instance or an
+    configuration object used to initialize the SSH connection.   
 
 ## Callback parameters
 

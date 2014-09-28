@@ -10,6 +10,9 @@ use the [rimraf](https://github.com/isaacs/rimraf) library.
     File, directory or pattern.   
 *   `destination`      
     Alias for "source".   
+*   `ssh` (object|ssh2)   
+    Run the action on a remote server using SSH, an ssh2 instance or an
+    configuration object used to initialize the SSH connection.  
 
 ## Callback parameters
 
@@ -17,6 +20,10 @@ use the [rimraf](https://github.com/isaacs/rimraf) library.
     Error object if any.   
 *   `removed`   
     Number of removed sources.   
+
+## Implementation details
+
+
 
 ## Simple example
 

@@ -17,18 +17,24 @@ overwrite it.
     Equals destination if true.   
 *   `mode`   
     Permissions of the file or the parent directory.   
-*   `uid`   
-    User name or id who owns the file.   
-*   `ssh`   
+*   `ssh` (object|ssh2)   
     Run the action on a remote server using SSH, an ssh2 instance or an
     configuration object used to initialize the SSH connection.   
+*   `stdout` (stream.Writable)   
+    Writable EventEmitter in which the standard output of executed commands will
+    be piped.   
+*   `stderr` (stream.Writable)   
+    Writable EventEmitter in which the standard error output of executed command
+    will be piped.   
+*   `uid`   
+    User name or id who owns the file.   
 
 ## Callback parameters
 
 *   `err`   
     Error object if any.   
 *   `copied`   
-    Number of files or parent directories copied.
+    Number of copy actions with modifications.   
 
 ## Todo
 
@@ -78,6 +84,7 @@ require('mecano').copy({
         # Copy a directory
         do_directory = (dir, callback) ->
           options.log? "Source is a directory"
+          console.log 'directory', !!options.ssh
           each()
           .files("#{dir}/**")
           .on 'item', (file, next) ->

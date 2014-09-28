@@ -41,9 +41,6 @@ provided in the `content` option.
 *   `source`   
     File path from where to extract the content, do not use conjointly with
     content.   
-*   `ssh`   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
 *   `parse`   
     User-defined function to parse the content from ini format, default to
     `require('ini').parse`, see 'misc.ini.parse_multi_brackets'.   
@@ -57,6 +54,22 @@ provided in the `content` option.
     Replace to before this marker, a string or a regular expression.   
 *   `clean`   
     Remove all the lines whithout a key and a value, default to "true".   
+*   `ssh` (object|ssh2)   
+    Run the action on a remote server using SSH, an ssh2 instance or an
+    configuration object used to initialize the SSH connection.   
+*   `stdout` (stream.Writable)   
+    Writable EventEmitter in which the standard output of executed commands will
+    be piped.   
+*   `stderr` (stream.Writable)   
+    Writable EventEmitter in which the standard error output of executed command
+    will be piped.   
+
+## Callback parameters
+
+*   `err`   
+    Error object if any.   
+*   `written`   
+    Number of written actions with modifications.   
 
 ## Example
 

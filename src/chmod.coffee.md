@@ -5,15 +5,22 @@ Change the permissions of a file or directory.
 
 ## Options
 
-*   `destination`   Where the file or directory is copied.   
-*   `mode`          Permissions of the file or the parent directory.   
-*   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
-*   `log`           Function called with a log related messages.   
+*   `destination`   
+    Where the file or directory is copied.   
+*   `mode`   
+    Permissions of the file or the parent directory.   
+*   `log`   
+    Function called with a log related messages.   
+*   `ssh` (object|ssh2)   
+    Run the action on a remote server using SSH, an ssh2 instance or an
+    configuration object used to initialize the SSH connection.   
 
-`callback`          Received parameters are:
+## Callback parameters
 
-*   `err`           Error object if any.
-*   `modified`      Number of files with modified permissions.
+*   `err`   
+    Error object if any.   
+*   `modified`   
+    Number of permissions with modifications.   
 
 # Example
 

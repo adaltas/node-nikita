@@ -12,13 +12,19 @@ Iptables rules are only inserted if the service is started on the target system.
     Function called with a log related messages.   
 *   `rules` (object | array)   
     One or more objects containing iptables rule definitions.   
-*   `ssh` (object | ssh connection)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
 *   `stdout` (stream writer)   
     Stream writer to pipe the standart output stream of the executed commands.   
 *   `stderr` (stream writer)   
     Stream writer to pipe the standart error stream of the executed commands.   
+*   `ssh` (object|ssh2)   
+    Run the action on a remote server using SSH, an ssh2 instance or an
+    configuration object used to initialize the SSH connection.   
+*   `stdout` (stream.Writable)   
+    Writable EventEmitter in which the standard output of executed commands will
+    be piped.   
+*   `stderr` (stream.Writable)   
+    Writable EventEmitter in which the standard error output of executed command
+    will be piped.   
 
 ## Usage
 

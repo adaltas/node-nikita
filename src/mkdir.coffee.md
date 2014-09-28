@@ -23,6 +23,9 @@ of the directory to create.
     Regular expression.   
 *   `source`   
     Alias for `directory`.   
+*   `ssh` (object|ssh2)   
+    Run the action on a remote server using SSH, an ssh2 instance or an
+    configuration object used to initialize the SSH connection.   
 
 ## Callback parameters
 

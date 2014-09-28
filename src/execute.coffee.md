@@ -1,37 +1,68 @@
 
 # `exec` `execute([goptions], options, callback)`
 
-Run a command locally or with ssh if `host` or `ssh` is provided.
+Run a command locally or with ssh if `host` or `ssh` is provided.   
+
+## Exit codes
+
+The properties "code" and "code_skipped" are important to determine whether an
+action failed or succeed with or without modifications. An action is expected to
+execute successfully with modifications if the exit code match one of the value
+in "code", by default "0". Otherwise, it is considered to have failed and an
+error is passed to the user callback. The "code_skipped" option is used to
+define one or more exit codes that are considered successfull but without
+creating any modifications.
 
 ## Options
 
-*   `cmd`           String, Object or array; Command to execute.
-*   `code`          Expected code(s) returned by the command, int or array of int, default to 0.
-*   `code_skipped`  Expected code(s) returned by the command if it has no effect, executed will not be incremented, int or array of int.
-*   `trap_on_error` Exit immediately  if a commands exits with a non-zero status.   
-*   `cwd`           Current working directory.
-*   `env`           Environment variables, default to `process.env`.
-*   `gid`           Unix group id.
-*   `log`           Function called with a log related messages.
-*   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.
-*   `stdout`        Writable Stream in which commands output will be piped.
-*   `stderr`        Writable Stream in which commands error will be piped.
-*   `uid`           Unix user id.
+*   `cmd`   
+    String, Object or array; Command to execute.   
+*   `code`   (string|array)
+    Expected code(s) returned by the command, int or array of int, default to 0.
+*   `code_skipped`   
+    Expected code(s) returned by the command if it has no effect, executed will
+    not be incremented, int or array of int.   
+*   `trap_on_error`   
+    Exit immediately  if a commands exits with a non-zero status.      
+*   `cwd`   
+    Current working directory.   
+*   `env`   
+    Environment variables, default to `process.env`.   
+*   `gid`   
+    Unix group id.   
+*   `log`   
+    Function called with a log related messages.   
+*   `ssh` (object|ssh2)   
+    Run the action on a remote server using SSH, an ssh2 instance or an
+    configuration object used to initialize the SSH connection.   
+*   `stdout` (stream.Writable)   
+    Writable EventEmitter in which the standard output of executed commands will
+    be piped.   
+*   `stderr` (stream.Writable)   
+    Writable EventEmitter in which the standard error output of executed command
+    will be piped.   
+*   `uid`   
+    Unix user id.   
 
 ## Callback parameters
 
-*   `err`           Error if any enriched with the "code" property.
-*   `executed`      Number of executed commandes.
-*   `stdout`        Stdout value(s) unless `stdout` option is provided.
-*   `stderr`        Stderr value(s) unless `stderr` option is provided.
+*   `err`   
+    Error object if any.   
+*   `executed`   
+    Number of executed commands with modifications.   
+*   `stdout`   
+    Stdout value(s) unless `stdout` option is provided.
+*   `stderr`
+    Stderr value(s) unless `stderr` option is provided.
 
 ## Create a user over SSH:
 
 This example create a user on a remote server with the `useradd` command. It
-print the error message if the command failed or an information message.
+print the error message if the command failed or an information message if it
+succeed.
 
-The "code_skipped" option indicates that the command is considered successfull
-but without any impact if it exits with a status equal to "9".
+An exit code equal to "9" defined by the "code_skipped" option indicates that
+the command is considered successfull but without any impact.
 
 ```javascript
 mecano.execute({

@@ -15,7 +15,7 @@ Write a file or a portion of an existing file.
     Text to be written, an alternative to source which reference a file.   
 *   `destination`   
     File path where to write content to.   
-*   `diff`   
+*   `diff` (boolean | function)   
     Print diff information, pass the result of [jsdiff.diffLines][diffLines] as
     argument if a function, default to true.   
 *   `eof`   
@@ -42,11 +42,6 @@ Write a file or a portion of an existing file.
 *   `source`   
     File path from where to extract the content, do not use conjointly with
     content.   
-*   `ssh`   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-*   `stdout`   
-    Writable Stream in which diff information are written.   
 *   `to`   
     Replace to before this marker, a string or a regular expression.   
 *   `uid`   
@@ -54,13 +49,33 @@ Write a file or a portion of an existing file.
 *   `write`   
     An array containing multiple transformation where a transformation is an
     object accepting the options `from`, `to`, `match` and `replace`.   
+*   `ssh` (object|ssh2)   
+    Run the action on a remote server using SSH, an ssh2 instance or an
+    configuration object used to initialize the SSH connection.   
+*   `stdout` (stream.Writable)   
+    Writable EventEmitter in which the standard output of executed commands will
+    be piped.   
 
 ## Callback parameters
 
 *   `err`   
-    Error object if any.
-*   `written`   
-    Number of written files.
+    Error object if any.   
+*   `modified`   
+    Number of written actions with modifications.   
+
+## Implementation details
+
+Internally, this function uses the "chmod" and "chown" function and, thus,
+honor all their options including "mode", "uid" and "gid".
+
+## Diff Lines
+
+Diff can be obtained when the options "diff" is set to true or a function. The
+information is provided in two ways:   
+
+*   a formated string written to the "stdout" option.
+*   when the "diff" option is a function, the array returned by the function
+    `diff.diffLines`, see the [diffLines] package for additionnal information.
 
 ## More about the `append` option
 
@@ -397,8 +412,6 @@ require('mecano').write({
             uid: options.uid
             gid: options.gid
             log: options.log
-            stdout: options.stdout
-            stderr: options.stderr
           , (err, chowned) ->
             return next err if err
             modified = true if chowned
@@ -411,8 +424,6 @@ require('mecano').write({
             destination: options.destination
             mode: options.mode
             log: options.log
-            stdout: options.stdout
-            stderr: options.stderr
           , (err, chmoded) ->
             return next err if err
             modified = true if chmoded

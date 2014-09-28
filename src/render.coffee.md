@@ -31,6 +31,15 @@ integrated. More are added on demand.
 *   `mode`   
     File mode (permission and sticky bits), default to `0666`, in the for of
     `{mode: 0o744}` or `{mode: "744"}`.   
+*   `ssh` (object|ssh2)   
+    Run the action on a remote server using SSH, an ssh2 instance or an
+    configuration object used to initialize the SSH connection.   
+*   `stdout` (stream.Writable)   
+    Writable EventEmitter in which the standard output of executed commands will
+    be piped.   
+*   `stderr` (stream.Writable)   
+    Writable EventEmitter in which the standard error output of executed command
+    will be piped.   
 
 If destination is a callback, it will be called with the generated content as
 its first argument.   

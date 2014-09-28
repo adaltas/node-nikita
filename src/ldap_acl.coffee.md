@@ -3,6 +3,10 @@
 
 Create new [ACLs](acls) for the OpenLDAP server.   
 
+This implementation currently doesn't execute remote SSH commands. Instead, it
+connects directly to the LDAP database and thus requires a specific port to be
+accessible.   
+
 ## Options
 
 *   `to`   

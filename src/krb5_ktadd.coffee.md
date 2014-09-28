@@ -16,15 +16,17 @@ called by the `krb5_addprinc` function.
     Principal to be created.   
 *   `keytab`   
     Path to the file storing key entries.   
-*   `ssh`   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
 *   `log`   
     Function called with a log related messages.   
-*   `stdout`   
-    Writable Stream in which commands output will be piped.   
-*   `stderr`   
-    Writable Stream in which commands error will be piped.   
+*   `ssh` (object|ssh2)   
+    Run the action on a remote server using SSH, an ssh2 instance or an
+    configuration object used to initialize the SSH connection.   
+*   `stdout` (stream.Writable)   
+    Writable EventEmitter in which the standard output of executed commands will
+    be piped.   
+*   `stderr` (stream.Writable)   
+    Writable EventEmitter in which the standard error output of executed command
+    will be piped.   
 
 ## Example
 

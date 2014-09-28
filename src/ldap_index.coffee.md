@@ -3,6 +3,10 @@
 
 Create new [index](index) for the OpenLDAP server.   
 
+This implementation currently doesn't execute remote SSH commands. Instead, it
+connects directly to the LDAP database and thus requires a specific port to be
+accessible.   
+
 ## Options
 
 *   `indexes`   
@@ -115,8 +119,6 @@ require('mecano').ldap_index({
     ldap = require 'ldapjs'
     misc = require './misc'
     wrap = require './misc/wrap'
-    conditions = require './misc/conditions'
-    child = require './misc/child'
 
 [index]: http://www.zytrax.com/books/ldap/apa/indeces.html
 

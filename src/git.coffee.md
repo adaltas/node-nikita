@@ -3,13 +3,44 @@
 
 Create and synchronize a git repository.
 
-`options`           Command options include:   
-*   `source`        Git source repository address.   
-*   `destination`   Directory where to clone the repository.   
-*   `revision`      Git revision, branch or tag.   
-*   `ssh`           Run the action on a remote server using SSH, an ssh2 instance or an configuration object used to initialize the SSH connection.   
-*   `stdout`        Writable EventEmitter in which command output will be piped.   
-*   `stderr`        Writable EventEmitter in which command error will be piped.   
+## Options
+
+*   `source`   
+    Git source repository address.   
+*   `destination`   
+    Directory where to clone the repository.   
+*   `revision`   
+    Git revision, branch or tag.   
+*   `ssh` (object|ssh2)   
+    Run the action on a remote server using SSH, an ssh2 instance or an
+    configuration object used to initialize the SSH connection.   
+*   `stdout` (stream.Writable)   
+    Writable EventEmitter in which the standard output of executed commands will
+    be piped.   
+*   `stderr` (stream.Writable)   
+    Writable EventEmitter in which the standard error output of executed command
+    will be piped.   
+
+## Callback parameters
+
+*   `err`   
+    Error object if any.   
+*   `synchronized`   
+    Number of git actions with modifications.   
+
+## Example
+
+The following action make sure the git repository is synchronized to the latest
+HEAD revision.
+
+```javascript
+require('mecano').extract({
+  source: 'https://github.com/wdavidw/node-mecano.git'
+  destation: '/tmp/mecano'
+}, function(err, synchronized){
+  console.log(err ? err.message : 'Repo was synchronized: ' + synchronized);
+});
+```
 
 
     module.exports = (goptions, options, callback) ->
