@@ -84,7 +84,6 @@ require('mecano').copy({
         # Copy a directory
         do_directory = (dir, callback) ->
           options.log? "Source is a directory"
-          console.log 'directory', !!options.ssh
           each()
           .files("#{dir}/**")
           .on 'item', (file, next) ->
