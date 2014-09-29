@@ -1,5 +1,5 @@
 
-# `group([goptions], options, callback)`
+# `group(options, [goptions], callback)`
 
 Create or modify a Unix group.
 

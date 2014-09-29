@@ -1,5 +1,5 @@
 
-# `upload([goptions], options, callback)`
+# `upload(options, [goptions], callback)`
 
 Upload a file to a remote location. Options are identical to the "write"
 function with the addition of the "binary" option.

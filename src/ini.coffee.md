@@ -1,5 +1,5 @@
 
-# `ini([goptions], options, callback`
+# `ini(options, [goptions], callback`
 
 Write an object as .ini file. Note, we are internally using the [ini] module.
 However, there is a subtile difference. Any key provided with value of 

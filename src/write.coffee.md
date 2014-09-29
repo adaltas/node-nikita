@@ -1,5 +1,5 @@
 
-# `write([goptions], options, callback)`
+# `write(options, [goptions], callback)`
 
 Write a file or a portion of an existing file.   
 

@@ -1,5 +1,5 @@
 
-# `exec` `execute([goptions], options, callback)`
+# `execute(options, [goptions], callback)`
 
 Run a command locally or with ssh if `host` or `ssh` is provided.   
 

@@ -1,5 +1,5 @@
 
-# `mkdir([goptions], options, callback)`
+# `mkdir(options, [goptions], callback)`
 
 Recursively create a directory. The behavior is similar to the Unix command
 `mkdir -p`. It supports an alternative syntax where options is simply the path

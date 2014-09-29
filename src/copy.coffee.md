@@ -1,5 +1,5 @@
 
-# `copy([goptions], options, callback)`
+# `copy(options, [goptions], callback)`
 
 Copy a file. The behavior is similar to the one of the `cp`
 Unix utility. Copying a file over an existing file will

@@ -1,5 +1,5 @@
 
-# `render([goptions], options, callback)`
+# `render(options, [goptions], callback)`
 
 Render a template file. The following templating engines are
 integrated. More are added on demand.      

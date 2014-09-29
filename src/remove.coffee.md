@@ -1,5 +1,5 @@
 
-# `remove([goptions], options, callback)`
+# `remove(options, [goptions], callback)`
 
 Recursively remove files, directories and links. Internally, the function
 use the [rimraf](https://github.com/isaacs/rimraf) library.   

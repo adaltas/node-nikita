@@ -1,5 +1,5 @@
 
-# `service([goptions], options, callback)` 
+# `service(options, [goptions], callback)` 
 
 Install a service. For now, only yum over SSH.
 

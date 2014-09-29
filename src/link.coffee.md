@@ -1,5 +1,5 @@
 
-# `ln` `link([goptions], options, callback)`
+# `link(options, [goptions], callback)`
 
 Create a symbolic link and it's parent directories if they don't yet
 exist.

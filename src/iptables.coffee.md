@@ -1,5 +1,5 @@
 
-# `iptables([goptions], options, callback`
+# `iptables(options, [goptions], callback`
 
 Iptables  is  used to set up, maintain, and inspect the tables of IPv4 packet 
 filter rules in the Linux kernel.
