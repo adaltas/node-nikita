@@ -63,19 +63,11 @@ require('mecano').remove([
         return next new Error "Missing source" unless options.source?
         # Start real work
         modified = false
-        if options.ssh
-          options.log? "Remove #{options.source}"
-          fs.exists options.ssh, options.source, (err, exists) ->
-            return next err if err
-            modified = true if exists
-            misc.file.remove options.ssh, options.source, (err) ->
-              next err, modified
-        else
-          each()
-          .files(options.source)
+        glob options.ssh, options.source, (err, files) ->
+          return next err if err
+          each(files)
           .on 'item', (file, next) ->
             modified = true
-            options.log? "Remove #{file}"
             misc.file.remove options.ssh, file, next
           .on 'both', (err) ->
             next err, modified
@@ -86,6 +78,7 @@ require('mecano').remove([
     each = require 'each'
     misc = require './misc'
     wrap = require './misc/wrap'
+    glob = require './misc/glob'
 
 
 

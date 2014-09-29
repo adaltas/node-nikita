@@ -168,16 +168,6 @@ misc = module.exports =
                 else
                   hashs = crypto.createHash(algorithm).update(hashs.join('')).digest('hex')
                   return callback null, hashs
-          # if ssh
-          #   exec ssh, "find #{file} -name '**'", (err, stdout) ->
-          #     return callback err if err
-          #     files = stdout.trim().split /\r\n|[\n\r\u0085\u2028\u2029]/g
-          #     files = files.filter (file) -> path.basename(file).substr(0, 1) isnt '.'
-          #     compute files
-          # else
-          #   glob "#{file}/**", (err, files) ->
-          #     return callback err if err
-          #     compute files
           glob ssh, "#{file}/**", (err, files) ->
             return callback err if err
             compute files

@@ -38,6 +38,9 @@ overwrite it.
 
 ## Todo
 
+*   Apply permissions to directories
+*   Handle symlinks
+*   Handle globing
 *   Preserve permissions if `mode` is `true`
 
 ## Example
@@ -84,7 +87,7 @@ require('mecano').copy({
         # Copy a directory
         do_directory = (dir, callback) ->
           options.log? "Source is a directory"
-          glob options.ssh, "#{dir}/**", (err, files) ->
+          glob options.ssh, "#{dir}/**", dot: true, (err, files) ->
             return next err if err
             each(files)
             .on 'item', (file, next) ->
@@ -103,7 +106,6 @@ require('mecano').copy({
             then do_copy_dir source, destination
             else do_copy_file source, destination
           do_copy_dir = (source, destination) ->
-            return callback() if source is options.source
             options.log? "Create directory #{destination}"
             # todo, add permission
             fs.mkdir options.ssh, destination, (err) ->

@@ -47,7 +47,7 @@ require('mecano').move({
             return do_move() if err?.code is 'ENOENT'
             return next err if err
             if options.force
-            then do_remove_dest()
+            then do_replace_dest()
             else do_srchash()
         do_srchash = ->
           return do_dsthash() if options.source_md5
@@ -64,8 +64,8 @@ require('mecano').move({
         do_chkhash = ->
           if options.source_md5 is options.destination_md5
           then do_remove_src()
-          else do_remove_dest()
-        do_remove_dest = ->
+          else do_replace_dest()
+        do_replace_dest = ->
           options.log? "Remove #{options.destination}"
           remove
             ssh: options.ssh
