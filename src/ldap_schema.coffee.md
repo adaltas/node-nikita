@@ -58,6 +58,7 @@ require('mecano').ldap_schema({
         passwd = if options.passwd then "-w #{options.passwd}" else ''
         options.uri = 'ldapi:///' if options.uri is true
         uri = if options.uri then "-H #{options.uri}" else '' # URI is obtained from local openldap conf unless provided
+        modified = false
         do_registered = ->
           cmd = "ldapsearch #{binddn} #{passwd} #{uri} -b \"cn=schema,cn=config\" | grep -E cn=\\{[0-9]+\\}#{options.name},cn=schema,cn=config"
           options.log? "Check if schema is registered: #{cmd}"
@@ -169,7 +170,7 @@ require('mecano').ldap_schema({
             stderr: options.stderr
           , (err, executed) ->
             return next err if err
-            modified++
+            modified = true
             do_clean()
         do_clean = ->
           options.log? 'Clean up'
