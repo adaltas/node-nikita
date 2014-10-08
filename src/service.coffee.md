@@ -77,12 +77,13 @@ require('mecano').service([{
         # return next new Error 'Invalid configuration, start conflict with stop' if options.start? and options.start is options.stop
         pkgname = options.yum_name or options.name
         chkname = options.chk_name or options.srv_name or options.name
-        srvname = options.srv_name or options.name
+        srvname = options.srv_name or options.chk_name or options.name
         # if options.startup? and typeof options.startup isnt 'string'
         #     options.startup = if options.startup then '2345' else ''
         modified = false
         installed ?= options.installed
         updates ?= options.updates
+        options.action = options.action.split(',') if typeof options.action is 'string'
         # Start real work
         do_chkinstalled = ->
           # option name and yum_name are optional, skill installation if not present
@@ -217,8 +218,9 @@ require('mecano').service([{
             return next err if err
             do_started()
         do_started = ->
-          return action() if ['start', 'stop'].indexOf(options.action) is -1
-          return action() if ['restart'].indexOf(options.action) isnt -1
+          return do_finish() unless options.action
+          # return do_action() if ['start', 'stop'].indexOf(options.action) is -1
+          # return do_action() if ['restart'].indexOf(options.action) isnt -1
           options.log? "Mecano `service`: check if started"
           execute
             ssh: options.ssh
@@ -230,11 +232,13 @@ require('mecano').service([{
           , (err, started) ->
             return next err if err
             if started
-              return action() unless options.action is 'start'
+              # return do_action() unless options.action is 'start'
+              return do_action() if 'stop' in options.action or 'restart' in options.action
             else
-              return action() unless options.action is 'stop'
+              # return do_action() unless options.action is 'stop'
+              return do_action() if 'start' in options.action
             do_finish()
-        action = ->
+        do_action = ->
           return do_finish() unless options.action
           options.log? "Mecano `service`: #{options.action} service"
           execute
