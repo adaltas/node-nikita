@@ -62,7 +62,7 @@ require('mecano').krb5_delrinc({
             return next err if err
             return do_ktadd() unless exists
             keytab = {}
-            for line in stdout.split '\n'
+            for line in string.lines stdout
               if match = /^\s*(\d+)\s+([\d\/:]+\s+[\d\/:]+)\s+(.*)\s*$/.exec line
                 [_, kvno, mdate, principal] = match
                 kvno = parseInt kvno, 10
@@ -81,7 +81,7 @@ require('mecano').krb5_delrinc({
             , (err, exists, stdout, stderr) ->
               return err if err
               # return do_ktadd() unless -1 is stdout.indexOf 'does not exist'
-              values = stdout.split('\n')[1]
+              values = string.lines(stdout)[1]
               # Check if a ticket exists for this
               return next Error "Principal does not exist: '#{options.principal}'" unless values
               values = values.split '\t'
@@ -165,6 +165,7 @@ data-type[1]
 ## Dependencies
 
     misc = require './misc'
+    string = require './misc/string'
     wrap = require './misc/wrap'
     execute = require './execute'
     chmod = require './chmod'

@@ -5,7 +5,7 @@ test = require './test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
 
-describe 'iptables', ->
+describe 'misc mode', ->
 
   describe 'stringify', ->
     misc.mode.stringify('544').should.eql '544'

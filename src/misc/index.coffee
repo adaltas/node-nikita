@@ -11,6 +11,7 @@ ini = require 'ini'
 tilde = require 'tilde-expansion'
 ssh2fs = require 'ssh2-fs'
 glob = require './glob'
+string = require './string'
 
 misc = module.exports = 
   array:
@@ -209,36 +210,6 @@ misc = module.exports =
         child = exec ssh, "rm -rdf #{path}"
         child.on 'exit', (code) ->
           callback null, code
-  string:
-    escapeshellarg: (arg) ->
-      result = arg.replace /[^\\]'/g, (match) ->
-        match.slice(0, 1) + '\\\''
-      "'#{result}'"
-    ###
-    `string.hash(file, [algorithm], callback)`
-    ------------------------------------------
-    Output the hash of a supplied string in hexadecimal 
-    form. The default algorithm to compute the hash is md5.
-    ###
-    hash: (data, algorithm) ->
-      if arguments.length is 1
-        algorithm = 'md5'
-      crypto.createHash(algorithm).update(data).digest('hex')
-    repeat: (str, l) ->
-      Array(l+1).join str
-    ###
-    `string.endsWith(search, [position])`
-    -------------------------------------
-    Determines whether a string ends with the characters of another string, 
-    returning true or false as appropriate.   
-    This method has been added to the ECMAScript 6 specification and its code 
-    was borrowed from [Mozilla](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith)
-    ###
-    endsWith: (str, search, position) ->
-      position = position or str.length
-      position = position - search.length
-      lastIndex = str.lastIndexOf search
-      return lastIndex isnt -1 and lastIndex is position
   ssh:
     ###
     passwd(ssh, [user], callback)
@@ -277,7 +248,7 @@ misc = module.exports =
       ssh2fs.readFile ssh, '/etc/passwd', 'ascii', (err, lines) ->
         return callback err if err
         passwd = []
-        for line in lines.split '\n'
+        for line in string.lines lines
           info = /(.*)\:\w\:(.*)\:(.*)\:(.*)\:(.*)\:(.*)/.exec line
           continue unless info
           passwd[info[1]] = uid: parseInt(info[2]), gid: parseInt(info[3]), comment: info[4], home: info[5], shell: info[6]
@@ -322,7 +293,7 @@ misc = module.exports =
       ssh2fs.readFile ssh, '/etc/group', 'ascii', (err, lines) ->
         return callback err if err
         group = []
-        for line in lines.split '\n'
+        for line in string.lines lines
           info = /(.*)\:(.*)\:(.*)\:(.*)/.exec line
           continue unless info
           group[info[1]] = password: info[2], gid: parseInt(info[3]), user_list: if info[4] then info[4].split ',' else []
@@ -477,7 +448,7 @@ misc = module.exports =
 
     ###
     parse_multi_brackets: (str, options={}) ->
-      lines = str.split /[\r\n]+/g
+      lines = string.lines str
       current = data = {}
       stack = [current]
       comment = options.comment or ';'
@@ -608,7 +579,7 @@ misc = module.exports =
         isNull = v is null
         isObj = typeof v is 'object' and not isNull
         continue unless isObj
-        out += "#{prefix}#{misc.string.repeat '[', depth+1}#{k}#{misc.string.repeat ']', depth+1}\n"
+        out += "#{prefix}#{string.repeat '[', depth+1}#{k}#{string.repeat ']', depth+1}\n"
         out += misc.ini.stringify_multi_brackets v, depth + 1, options
       out
 

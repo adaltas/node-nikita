@@ -108,7 +108,7 @@ you are a member of the "wheel" group (gid of "10") with the command
           cmd += " -M" unless options.home
           cmd += " -d #{options.home}" if options.home
           cmd += " -s #{options.shell}" if options.shell
-          cmd += " -c #{misc.string.escapeshellarg options.comment}" if options.comment
+          cmd += " -c #{string.escapeshellarg options.comment}" if options.comment
           cmd += " -u #{options.uid}" if options.uid
           cmd += " -g #{options.gid}" if options.gid
           cmd += " -e #{options.expiredate}" if options.expiredate
@@ -143,7 +143,7 @@ you are a member of the "wheel" group (gid of "10") with the command
           cmd = 'usermod'
           cmd += " -d #{options.home}" if options.home
           cmd += " -s #{options.shell}" if options.shell
-          cmd += " -c #{misc.string.escapeshellarg options.comment}" if options.comment?
+          cmd += " -c #{string.escapeshellarg options.comment}" if options.comment?
           cmd += " -g #{options.gid}" if options.gid
           cmd += " -G #{options.groups.join ','}" if options.groups
           cmd += " -u #{options.uid}" if options.uid
@@ -175,6 +175,7 @@ you are a member of the "wheel" group (gid of "10") with the command
 
     each = require 'each'
     misc = require './misc'
+    string = require './misc/string'
     wrap = require './misc/wrap'
     execute = require './execute'
 

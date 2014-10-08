@@ -5,7 +5,7 @@ test = require './test'
 they = require 'ssh2-they'
 path = require 'path'
 
-describe 'glob', ->
+describe 'misc glob', ->
 
   they 'should traverse a directory', (ssh, next) ->
     glob ssh, "#{__dirname}/../lib/*", (err, files) ->

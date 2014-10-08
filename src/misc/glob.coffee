@@ -3,6 +3,7 @@ path = require 'path'
 glob = require 'glob'
 {Minimatch} = require 'minimatch'
 exec = require 'ssh2-exec'
+string = require './string'
 
 getprefix = (pattern) ->
   prefix = null
@@ -55,7 +56,7 @@ module.exports = (ssh, pattern, options, callback) ->
       cmd += " -f #{prefix}"
     exec ssh, cmd, (err, stdout) ->
       return callback null, [] if err
-      files = stdout.trim().split /\r\n|[\n\r\u0085\u2028\u2029]/g
+      files = string.lines stdout.trim()
       files = files.filter (file) -> minimatch.match file
       for s in minimatch.set
         n = 0

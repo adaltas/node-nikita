@@ -1,5 +1,6 @@
 
 misc = require './index'
+string = require './string'
 jsesc = require 'jsesc'
 
 module.exports = iptables = 
@@ -207,7 +208,7 @@ module.exports = iptables =
   parse: (stdout) ->
     rules = []
     command_index = {}
-    for line in stdout.split /\r\n|[\n\r\u0085\u2028\u2029]/g
+    for line in string.lines stdout
       continue if line.length is 0
       rule = {}
       i = 0

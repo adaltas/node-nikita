@@ -100,7 +100,7 @@ require('mecano').service([{
               # stderr: options.stderr
             , (err, executed, stdout) ->
               return next err if err
-              stdout = stdout.split '\n'
+              stdout = string.lines stdout
               start = false
               installed = []
               for pkg in stdout
@@ -124,7 +124,7 @@ require('mecano').service([{
               stderr: options.stderr
             , (err, executed, stdout) ->
               return next err if err
-              stdout = stdout.split '\n'
+              stdout = string.lines stdout
               start = false
               updates = []
               for pkg in stdout
@@ -260,6 +260,7 @@ require('mecano').service([{
     each = require 'each'
     execute = require './execute'
     misc = require './misc'
+    string = require './misc/string'
     wrap = require './misc/wrap'
 
 

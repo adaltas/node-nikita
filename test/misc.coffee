@@ -16,15 +16,6 @@ describe 'misc', ->
       misc.array.intersect(['a', 'c', 'd'], []).should.eql []
       misc.array.intersect([], ['e', 'd', 'c']).should.eql []
 
-  describe 'string', ->
-
-    it 'escapeshellarg', ->
-      misc.string.escapeshellarg("try to 'parse this").should.eql "'try to \\'parse this'"
-
-    it 'hash', ->
-      md5 = misc.string.hash "hello"
-      md5.should.eql '5d41402abc4b2a76b9719d911017c592'
-
   describe 'object', ->
 
     describe 'equals', ->

@@ -271,7 +271,7 @@ require('mecano').write({
             fs.readFile options.ssh, options.destination, 'utf8', (err, dest) ->
               return next err if err
               destination = dest if options.diff # destination content only use by diff
-              destinationHash = misc.string.hash dest
+              destinationHash = string.hash dest
               do_render()
           exists()
         do_render = ->
@@ -357,10 +357,10 @@ require('mecano').write({
                 options.eof = char
                 break;
             options.eof = '\n' if options.eof is true
-          content += options.eof unless misc.string.endsWith content, options.eof
+          content += options.eof unless string.endsWith content, options.eof
           do_diff()
         do_diff = ->
-          return do_ownership() if destinationHash is misc.string.hash content
+          return do_ownership() if destinationHash is string.hash content
           options.log? "Mecano `write`: file content has changed"
           if options.diff
             lines = diff.diffLines destination, content
@@ -372,7 +372,7 @@ require('mecano').write({
                 continue if line.value is null
                 if not line.added and not line.removed
                   count_added++; count_removed++; continue
-                ls = line.value.split /\r\n|[\n\r\u0085\u2028\u2029]/g
+                ls = string.lines line.value
                 if line.added
                   for line in ls
                     count_added++
@@ -443,6 +443,7 @@ require('mecano').write({
     diff = require 'diff'
     quote = require 'regexp-quote'
     misc = require './misc'
+    string = require './misc/string'
     wrap = require './misc/wrap'
     mkdir = require './mkdir'
     chown = require './chown'
