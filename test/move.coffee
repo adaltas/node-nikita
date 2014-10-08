@@ -21,7 +21,7 @@ describe 'move', ->
         destination: "#{scratch}/moved.eco"
       , (err, moved) ->
         return next err if err
-        moved.should.eql 1
+        moved.should.be.ok
         # The destination file should exists
         fs.exists ssh, "#{scratch}/moved.eco", (err, exists) ->
           exists.should.be.true
@@ -42,7 +42,7 @@ describe 'move', ->
         destination: "#{scratch}/moved"
       , (err, moved) ->
         return next err if err
-        moved.should.eql 1
+        moved.should.be.ok
         # The destination directory should exists
         fs.exists ssh, "#{scratch}/moved", (err, exists) ->
           exists.should.be.true
@@ -72,7 +72,7 @@ describe 'move', ->
         destination: "#{scratch}/dest.txt"
       , (err, moved) ->
         return next err if err
-        moved.should.eql 1
+        moved.should.be.ok
         # Move a file with the same content
         mecano.move
           ssh: ssh
@@ -80,7 +80,7 @@ describe 'move', ->
           destination: "#{scratch}/dest.txt"
         , (err, moved) ->
           return next err if err
-          moved.should.eql 0
+          moved.should.not.be.ok
           fs.readFile ssh, "#{scratch}/dest.txt", 'utf8', (err, content) ->
             return next err if err
             content.should.eql 'hello'
@@ -107,7 +107,7 @@ describe 'move', ->
         force: 1
       , (err, moved) ->
         return next err if err
-        moved.should.eql 1
+        moved.should.be.ok
         next()
 
 

@@ -17,7 +17,7 @@ describe 'execute', ->
       cmd: 'text=yes; echo $text'
       toto: true
     , (err, executed, stdout, stderr) ->
-      executed.should.equal 1
+      executed.should.be.ok
       stdout.should.eql 'yes\n'
       next()
   
@@ -76,7 +76,7 @@ describe 'execute', ->
       code_skipped: 1
     , (err, executed, stdout, stderr) ->
       return next err if err
-      executed.should.eql 1
+      executed.should.be.ok
       mecano.execute
         ssh: ssh
         cmd: "mkdir #{scratch}/my_dir"
@@ -84,7 +84,7 @@ describe 'execute', ->
         code_skipped: 1
       , (err, executed, stdout, stderr) ->
         return next err if err
-        executed.should.eql 0
+        executed.should.not.be.ok
         next()
   
   they 'should honor conditions', (ssh, next) ->
@@ -93,14 +93,14 @@ describe 'execute', ->
       cmd: 'text=yes; echo $text'
       if_exists: __dirname
     , (err, executed, stdout, stderr) ->
-      executed.should.eql 1
+      executed.should.be.ok
       stdout.should.eql 'yes\n'
       mecano.execute
         ssh: ssh
         cmd: 'text=yes; echo $text'
         if_exists: "__dirname/toto"
       , (err, executed, stdout, stderr) ->
-        executed.should.eql 0
+        executed.should.not.be.ok
         should.not.exist stdout
         next()
 
@@ -111,7 +111,7 @@ describe 'execute', ->
       not_if_exists: __dirname
     , (err, executed, stdout, stderr) ->
       return next err if err
-      executed.should.eql 0
+      executed.should.not.be.ok
       next()
 
   describe 'error', ->

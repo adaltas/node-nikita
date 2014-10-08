@@ -21,7 +21,7 @@ describe 'write', ->
       , (err, written) ->
         return next err if err
         # File has been created
-        written.should.eql 1
+        written.should.be.ok
         # Write the same content
         mecano.write
           ssh: ssh
@@ -30,7 +30,7 @@ describe 'write', ->
         , (err, written) ->
           return next err if err
           # Content has change
-          written.should.eql 0
+          written.should.not.be.ok
           fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
             content.should.eql 'Hello'
             next()
@@ -42,14 +42,14 @@ describe 'write', ->
         content: 'Hello'
       , (err, written) ->
         return next err if err
-        written.should.eql 1
+        written.should.be.ok
         mecano.write
           ssh: ssh
           destination: "#{scratch}/file"
           content: 'Hello'
         , (err, written) ->
           return next err if err
-          written.should.eql 0
+          written.should.not.be.ok
           next()
     
     they 'doesnt increment if destination is same than generated content', (ssh, next) ->
@@ -65,7 +65,7 @@ describe 'write', ->
           source: "#{scratch}/file"
         , (err, written) ->
           return next err if err
-          written.should.eql 1
+          written.should.be.ok
           fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
             content.should.eql 'Hello'
             next()
@@ -77,7 +77,7 @@ describe 'write', ->
         content: ''
       , (err, written) ->
         return next err if err
-        written.should.eql 1
+        written.should.be.ok
         fs.readFile ssh, "#{scratch}/empty_file", 'utf8', (err, content) ->
           return next err if err
           content.should.eql ''
@@ -91,7 +91,7 @@ describe 'write', ->
         not_if_exists: true
       , (err, written) ->
         return next err if err
-        written.should.eql 1
+        written.should.be.ok
         fs.readFile ssh, "#{scratch}/empty_file", 'utf8', (err, content) ->
           return next err if err
           content.should.eql ''
@@ -107,7 +107,7 @@ describe 'write', ->
               not_if_exists: true
             , (err, written) ->
               return next err if err
-              written.should.eql 0
+              written.should.not.be.ok
               fs.readFile ssh, "#{scratch}/empty_file", 'utf8', (err, content) ->
                 return next err if err
                 content.should.eql 'toto'
@@ -120,7 +120,7 @@ describe 'write', ->
         content: 123
       , (err, written) ->
         return next err if err
-        written.should.eql 1
+        written.should.be.ok
         fs.readFile ssh, "#{scratch}/a_file", 'ascii', (err, content) ->
           return next err if err
           content.should.eql '123'
@@ -133,7 +133,7 @@ describe 'write', ->
         content: 'hello'
       , (err, written) ->
         return next err if err
-        written.should.eql 1
+        written.should.be.ok
         fs.readFile ssh, "#{scratch}/a/missing/dir/a_file", 'utf8', (err, content) ->
           return next err if err
           content.should.eql 'hello'
@@ -195,7 +195,7 @@ describe 'write', ->
         replace: 'my friend\n'
       , (err, written) ->
         return next err if err
-        written.should.eql 1
+        written.should.be.ok
         fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
           return next err if err
           content.should.eql 'here we are\n# from\nmy friend\n# to\nyou coquin'
@@ -210,7 +210,7 @@ describe 'write', ->
         replace: 'my friend\n'
       , (err, written) ->
         return next err if err
-        written.should.eql 1
+        written.should.be.ok
         fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
           return next err if err
           content.should.eql 'here we are\n# from\nmy friend\n'
@@ -225,7 +225,7 @@ describe 'write', ->
         replace: 'my friend\n'
       , (err, written) ->
         return next err if err
-        written.should.eql 1
+        written.should.be.ok
         fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
           return next err if err
           content.should.eql 'my friend\n# to\nyou coquin'
@@ -242,7 +242,7 @@ describe 'write', ->
         replace: 'my friend'
       , (err, written) ->
         return next err if err
-        written.should.eql 1
+        written.should.be.ok
         fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
           return next err if err
           content.should.eql 'here we are\nmy friend\nyou coquin'
@@ -257,7 +257,7 @@ describe 'write', ->
         replace: 'switch'
       , (err, written) ->
         return next err if err
-        written.should.eql 1
+        written.should.be.ok
         fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
           return next err if err
           content.should.eql 'switch that one\nand\nswitch this one\nand not this one'
@@ -273,7 +273,7 @@ describe 'write', ->
         replace: '$1=david (was $2)'
       , (err, written) ->
         return next err if err
-        written.should.eql 1
+        written.should.be.ok
         # Without a match
         mecano.write
           ssh: ssh
@@ -282,7 +282,7 @@ describe 'write', ->
           replace: '$1=david (was $2)'
         , (err, written) ->
           return next err if err
-          written.should.eql 0
+          written.should.not.be.ok
           fs.readFile ssh, "#{scratch}/replace", 'utf8', (err, content) ->
             return next err if err
             content.should.eql 'email=david(at)adaltas(dot)com\nusername=david (was root)'
@@ -297,7 +297,7 @@ describe 'write', ->
         destination: "#{scratch}/replace"
       , (err, written) ->
         return next err if err
-        written.should.eql 1
+        written.should.be.ok
         fs.readFile ssh, "#{scratch}/replace", 'utf8', (err, content) ->
           return next err if err
           content.should.eql 'here we are\nmy friend, lets try\nyou coquin'
@@ -312,7 +312,7 @@ describe 'write', ->
         replace: 'property=50'
       , (err, written) ->
         return next err if err
-        written.should.eql 1
+        written.should.be.ok
         fs.readFile ssh, "#{scratch}/replace", 'utf8', (err, content) ->
           return next err if err
           content.should.eql '#A config file\n#property=30\nproperty=50\nproperty=50\n#End of Config'
@@ -332,7 +332,7 @@ describe 'write', ->
           replace: 'a text'
         , (err, written) ->
           return next err if err
-          written.should.eql 1
+          written.should.be.ok
           mecano.write
             ssh: ssh
             destination: "#{scratch}/a_file"
@@ -340,7 +340,7 @@ describe 'write', ->
             replace: 'a text'
           , (err, written) ->
             return next err if err
-            written.should.eql 0
+            written.should.not.be.ok
             fs.readFile ssh, "#{scratch}/a_file", 'utf8', (err, content) ->
               return next err if err
               content.should.eql 'This is\na text\nfor testing'
@@ -446,7 +446,7 @@ describe 'write', ->
             before: true
           , (err, written) ->
             return next err if err
-            written.should.eql 1
+            written.should.be.ok
             fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
               return next err if err
               content.should.eql 'new coquin\nhere we are\n'
@@ -459,7 +459,7 @@ describe 'write', ->
                 before: true
               , (err, written) ->
                 return next err if err
-                written.should.eql 0
+                written.should.not.be.ok
                 # Check file content
                 fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
                   return next err if err
@@ -482,7 +482,7 @@ describe 'write', ->
             append: true
           , (err, written) ->
             return next err if err
-            written.should.eql 1
+            written.should.be.ok
             fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
               return next err if err
               content.should.eql 'here we are\nnew coquin\n'
@@ -495,7 +495,7 @@ describe 'write', ->
                 append: true
               , (err, written) ->
                 return next err if err
-                written.should.eql 0
+                written.should.not.be.ok
                 # Check file content
                 fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
                   return next err if err
@@ -518,7 +518,7 @@ describe 'write', ->
           append: true
         , (err, written) ->
           return next err if err
-          written.should.eql 1
+          written.should.be.ok
           # Check file content
           fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
             return next err if err
@@ -543,7 +543,7 @@ describe 'write', ->
             before: /^.*we.*$/m
           , (err, written) ->
             return next err if err
-            written.should.eql 1
+            written.should.be.ok
             # Check file content
             fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
               return next err if err
@@ -566,7 +566,7 @@ describe 'write', ->
             append: /^.*we.*$/m
           , (err, written) ->
             return next err if err
-            written.should.eql 1
+            written.should.be.ok
             # Check file content
             fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
               return next err if err
@@ -591,7 +591,7 @@ describe 'write', ->
             before: /^.*we.*$/gm
           , (err, written) ->
             return next err if err
-            written.should.eql 1
+            written.should.be.ok
             # Check file content
             fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
               return next err if err
@@ -614,7 +614,7 @@ describe 'write', ->
             append: /^.*we.*$/gm
           , (err, written) ->
             return next err if err
-            written.should.eql 1
+            written.should.be.ok
             # Check file content
             fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
               return next err if err
@@ -638,7 +638,7 @@ describe 'write', ->
           append: 'we'
         , (err, written) ->
           return next err if err
-          written.should.eql 1
+          written.should.be.ok
           # Check file content
           fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
             return next err if err
@@ -663,7 +663,7 @@ describe 'write', ->
             before: true
           , (err, written) ->
             return next err if err
-            written.should.eql 1
+            written.should.be.ok
             # Check file content
             fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
               return next err if err
@@ -686,7 +686,7 @@ describe 'write', ->
             append: true
           , (err, written) ->
             return next err if err
-            written.should.eql 1
+            written.should.be.ok
             # Check file content
             fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
               return next err if err
@@ -705,7 +705,7 @@ describe 'write', ->
           before: true
         , (err, written) ->
           return next err if err
-          written.should.eql 1
+          written.should.be.ok
           # Check file content
           fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
             return next err if err
@@ -722,7 +722,7 @@ describe 'write', ->
           append: true
         , (err, written) ->
           return next err if err
-          written.should.eql 1
+          written.should.be.ok
           # Check file content
           fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
             return next err if err
@@ -743,7 +743,7 @@ describe 'write', ->
           append: true
         , (err, written) ->
           return next err if err
-          written.should.eql 1
+          written.should.be.ok
           mecano.write
             ssh: ssh
             destination: "#{scratch}/a_file"
@@ -751,7 +751,7 @@ describe 'write', ->
             append: true
           , (err, written) ->
             return next err if err
-            written.should.eql 0
+            written.should.not.be.ok
             mecano.write
               ssh: ssh
               destination: "#{scratch}/a_file"
@@ -761,7 +761,7 @@ describe 'write', ->
               ]
             , (err, written) ->
               return next err if err
-              written.should.eql 0
+              written.should.not.be.ok
               fs.readFile ssh, "#{scratch}/a_file", 'utf8', (err, content) ->
                 return next err if err
                 content.should.eql 'Here we are\nyou coquin\nAdd this line'
@@ -785,7 +785,7 @@ describe 'write', ->
           backup: '.bck'
         , (err, written) ->
           return next err if err
-          written.should.eql 0
+          written.should.not.be.ok
           fs.exists ssh, "#{scratch}/file.bck", (err, exists) ->
             exists.should.be.false
             # If content is different, check the backup
@@ -825,7 +825,7 @@ describe 'write', ->
           ]
         , (err, written) ->
             return next err if err
-            written.should.eql 1
+            written.should.be.ok
             fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
               return next err if err
               content.should.eql 'username: you\n\nfriends: me'
@@ -855,7 +855,7 @@ describe 'write', ->
           ]
         , (err, written) ->
             return next err if err
-            written.should.eql 1
+            written.should.be.ok
             fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
               return next err if err
               content.should.eql 'username: you\nemail: your@email\nfriends: me'
@@ -886,7 +886,7 @@ describe 'write', ->
           ]
         , (err, written) ->
             return next err if err
-            written.should.eql 1
+            written.should.be.ok
             fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
               return next err if err
               content.should.eql 'username: me\nemail: my@email\nfriends: you'

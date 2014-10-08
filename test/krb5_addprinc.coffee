@@ -20,7 +20,7 @@ describe 'krb5_addprinc', ->
       kadmin_password: config.krb5.kadmin_password
     , (err, created) ->
       return next err if err
-      created.should.eql 1
+      created.should.be.ok
       mecano.krb5_addprinc
         ssh: ssh
         principal: "mecano@#{config.krb5.realm}"
@@ -30,7 +30,7 @@ describe 'krb5_addprinc', ->
         kadmin_password: config.krb5.kadmin_password
       , (err, created) ->
         return next err if err
-        created.should.eql 0
+        created.should.not.be.ok
         mecano.krb5_delprinc
           ssh: ssh
           principal: "mecano@#{config.krb5.realm}"
@@ -50,7 +50,7 @@ describe 'krb5_addprinc', ->
       kadmin_password: config.krb5.kadmin_password
     , (err, created) ->
       return next err if err
-      created.should.eql 1
+      created.should.be.ok
       mecano.krb5_addprinc
         ssh: ssh
         principal: "mecano@#{config.krb5.realm}"
@@ -60,7 +60,7 @@ describe 'krb5_addprinc', ->
         kadmin_password: config.krb5.kadmin_password
       , (err, created) ->
         return next err if err
-        created.should.eql 0
+        created.should.not.be.ok
         mecano.krb5_delprinc
           ssh: ssh
           principal: "mecano@#{config.krb5.realm}"

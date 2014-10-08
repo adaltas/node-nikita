@@ -27,7 +27,7 @@ describe 'download', ->
       destination: destination
     , (err, downloaded) ->
       return next err if err
-      downloaded.should.eql 1
+      downloaded.should.be.ok
       fs.readFile ssh, destination, 'ascii', (err, content) ->
         return next err if err
         content.should.equal 'okay'
@@ -38,7 +38,7 @@ describe 'download', ->
           destination: destination
         , (err, downloaded) ->
           return next err if err
-          downloaded.should.eql 0
+          downloaded.should.not.be.ok
           server.close()
           server.on 'close', next
 
@@ -60,7 +60,7 @@ describe 'download', ->
       destination: destination
     , (err, downloaded) ->
       return next err if err
-      downloaded.should.eql 1
+      downloaded.should.be.ok
       fs.readFile ssh, destination, 'ascii', (err, content) ->
         return next err if err
         content.should.equal 'okay 0'
@@ -71,7 +71,7 @@ describe 'download', ->
           destination: destination
         , (err, downloaded) ->
           return next err if err
-          downloaded.should.eql 1
+          downloaded.should.be.ok
           server.close()
           server.on 'close', next
 
@@ -92,7 +92,7 @@ describe 'download', ->
       mode: 0o770
     , (err, downloaded) ->
       return next err if err
-      downloaded.should.eql 1
+      downloaded.should.be.ok
       fs.readFile ssh, destination, 'ascii', (err, content) ->
         return next err if err
         content.should.equal 'okay'
@@ -103,7 +103,7 @@ describe 'download', ->
           destination: destination
         , (err, downloaded) ->
           return next err if err
-          downloaded.should.eql 0
+          downloaded.should.not.be.ok
           server.close()
           server.on 'close', next
   
@@ -139,7 +139,7 @@ describe 'download', ->
       destination: destination
     , (err, downloaded) ->
       return next err if err
-      downloaded.should.eql 1
+      downloaded.should.be.ok
       fs.readFile ssh, destination, 'ascii', (err, content) ->
         content.should.containEql 'yeah'
         # Download on an existing file
@@ -149,7 +149,7 @@ describe 'download', ->
           destination: destination
         , (err, downloaded) ->
           return next err if err
-          downloaded.should.eql 0
+          downloaded.should.not.be.ok
           next()
   
   they 'should default to file without protocol', (ssh, next) ->
@@ -162,7 +162,7 @@ describe 'download', ->
       destination: destination
     , (err, downloaded) ->
       return next err if err
-      downloaded.should.eql 1
+      downloaded.should.be.ok
       fs.readFile ssh, destination, 'ascii', (err, content) ->
         content.should.containEql 'yeah'
         # Download on an existing file
@@ -172,7 +172,7 @@ describe 'download', ->
           destination: destination
         , (err, downloaded) ->
           return next err if err
-          downloaded.should.eql 0
+          downloaded.should.not.be.ok
           next()
 
   describe 'md5', ->
@@ -212,7 +212,7 @@ describe 'download', ->
         md5sum: 'df8fede7ff71608e24a5576326e41c75'
       , (err, downloaded) ->
         return next err if err
-        downloaded.should.eql 1
+        downloaded.should.be.ok
         server.close()
         server.on 'close', next
 
@@ -231,7 +231,7 @@ describe 'download', ->
         destination: destination
       , (err, downloaded) ->
         return next err if err
-        downloaded.should.eql 1
+        downloaded.should.be.ok
         mecano.download
           ssh: ssh
           source: source
@@ -239,7 +239,7 @@ describe 'download', ->
           md5sum: 'df8fede7ff71608e24a5576326e41c75'
         , (err, downloaded) ->
           return next err if err
-          downloaded.should.eql 0
+          downloaded.should.not.be.ok
           server.close()
           server.on 'close', next
 

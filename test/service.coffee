@@ -18,13 +18,13 @@ describe 'service', ->
         name: 'ntp'
       , (err, serviced) ->
         return next err if err
-        serviced.should.eql 1
+        serviced.should.be.ok
         mecano.execute
           ssh: ssh
           cmd: 'yum list installed | grep ntp'
         , (err, executed) ->
           return next err if err
-          executed.should.eql 1
+          executed.should.be.ok
           next()
     
     they 'skip if already installed', (ssh, next) ->
@@ -34,13 +34,13 @@ describe 'service', ->
         name: 'ntp'
       , (err, serviced) ->
         return next err if err
-        serviced.should.eql 1
+        serviced.should.be.ok
         mecano.service
           ssh: ssh
           name: 'ntp'
         , (err, serviced) ->
           return next err if err
-          serviced.should.eql 0
+          serviced.should.not.be.ok
           next()
 
   describe 'startup', ->
@@ -54,14 +54,14 @@ describe 'service', ->
         startup: true
       , (err, serviced) ->
         return next err if err
-        serviced.should.eql 1
+        serviced.should.be.ok
         mecano.execute
           ssh: ssh
           cmd: 'chkconfig --list ntpd'
           code_skipped: 1
         , (err, startuped) ->
           return next err if err
-          startuped.should.eql 1
+          startuped.should.be.ok
           next()
 
     they 'skip if already declared', (ssh, next) ->
@@ -73,7 +73,7 @@ describe 'service', ->
         startup: true
       , (err, serviced) ->
         return next err if err
-        serviced.should.eql 1
+        serviced.should.be.ok
         mecano.service
           ssh: ssh
           name: 'ntp'
@@ -81,7 +81,7 @@ describe 'service', ->
           startup: true
         , (err, serviced) ->
           return next err if err
-          serviced.should.eql 0
+          serviced.should.not.be.ok
           next()
 
     they 'notice a change in startup level', (ssh, next) ->
@@ -93,7 +93,7 @@ describe 'service', ->
         startup: '235'
       , (err, serviced) ->
         return next err if err
-        serviced.should.eql 1
+        serviced.should.be.ok
         mecano.service
           ssh: ssh
           name: 'ntp'
@@ -101,7 +101,7 @@ describe 'service', ->
           startup: '2345'
         , (err, serviced) ->
           return next err if err
-          serviced.should.eql 1
+          serviced.should.be.ok
           mecano.service
             ssh: ssh
             name: 'ntp'
@@ -109,7 +109,7 @@ describe 'service', ->
             startup: '2345'
           , (err, serviced) ->
             return next err if err
-            serviced.should.eql 0
+            serviced.should.not.be.ok
             next()
 
     they 'remove after being defined', (ssh, next) ->
@@ -130,7 +130,7 @@ describe 'service', ->
           startup: false
         , (err, serviced) ->
           return next err if err
-          serviced.should.eql 1
+          serviced.should.be.ok
           # Validate service not registered
           mecano.execute
             ssh: ssh
@@ -138,7 +138,7 @@ describe 'service', ->
             code_skipped: 1
           , (err, startuped) ->
             return next err if err
-            startuped.should.eql 0
+            startuped.should.not.be.ok
             next()
 
   describe 'action', ->
@@ -152,14 +152,14 @@ describe 'service', ->
         action: 'start'
       , (err, serviced) ->
         return next err if err
-        serviced.should.eql 1
+        serviced.should.be.ok
         mecano.execute
           ssh: ssh
           cmd: 'service ntpd status'
           code_skipped: 3
         , (err, started) ->
           return next err if err
-          started.should.eql 1
+          started.should.be.ok
           # Detect already started
           mecano.service
             ssh: ssh
@@ -168,7 +168,7 @@ describe 'service', ->
             action: 'start'
           , (err, serviced) ->
             return next err if err
-            serviced.should.eql 0
+            serviced.should.not.be.ok
             next()
 
     they 'should stop', (ssh, next) ->
@@ -180,14 +180,14 @@ describe 'service', ->
         action: 'stop'
       , (err, serviced) ->
         return next err if err
-        serviced.should.eql 1
+        serviced.should.be.ok
         mecano.execute
           ssh: ssh
           cmd: 'service ntpd status'
           code_skipped: 3
         , (err, started) ->
           return next err if err
-          started.should.eql 0
+          started.should.not.be.ok
           # Detect already stopped
           mecano.service
             ssh: ssh
@@ -196,7 +196,7 @@ describe 'service', ->
             action: 'stop'
           , (err, serviced) ->
             return next err if err
-            serviced.should.eql 0
+            serviced.should.not.be.ok
             next()
 
 

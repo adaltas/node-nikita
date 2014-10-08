@@ -40,7 +40,7 @@ describe 'ldap_acl', ->
       ]
     , (err, modified) ->
       return next err if err
-      modified.should.eql 1
+      modified.should.be.ok
       mecano.ldap_acl
         ldap: client
         name: 'olcDatabase={2}bdb,cn=config'
@@ -50,7 +50,7 @@ describe 'ldap_acl', ->
         ]
       , (err, modified) ->
         return next err if err
-        modified.should.eql 0
+        modified.should.not.be.ok
         next()
 
   it 'respect order in creation', (next) ->

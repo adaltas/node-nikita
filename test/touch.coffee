@@ -26,13 +26,13 @@ describe 'touch', ->
       destination: "#{scratch}/a_file"
     , (err, touched) ->
       return next err if err
-      touched.should.eql 1
+      touched.should.be.ok
       mecano.touch
         ssh: ssh
         destination: "#{scratch}/a_file"
       , (err, touched) ->
         return next err if err
-        touched.should.eql 0
+        touched.should.not.be.ok
         next()
       
 

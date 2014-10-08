@@ -38,7 +38,7 @@ describe 'ldap_index', ->
         aliasedEntryName: 'eq'
     , (err, modified) ->
       return next err if err
-      modified.should.eql 1
+      modified.should.be.ok
       mecano.ldap_index
         ldap: client
         name: 'olcDatabase={2}bdb,cn=config'
@@ -46,7 +46,7 @@ describe 'ldap_index', ->
           aliasedEntryName: 'eq'
       , (err, modified) ->
         return next err if err
-        modified.should.eql 0
+        modified.should.not.be.ok
         next()
 
   it 'update an existing index', (next) ->
@@ -57,7 +57,7 @@ describe 'ldap_index', ->
         aliasedEntryName: 'eq'
     , (err, modified) ->
       return next err if err
-      modified.should.eql 1
+      modified.should.be.ok
       mecano.ldap_index
         ldap: client
         name: 'olcDatabase={2}bdb,cn=config'
@@ -65,7 +65,7 @@ describe 'ldap_index', ->
           aliasedEntryName: 'pres,eq'
       , (err, modified) ->
         return next err if err
-        modified.should.eql 1
+        modified.should.not.be.ok
         mecano.ldap_index
           ldap: client
           name: 'olcDatabase={2}bdb,cn=config'
@@ -73,6 +73,6 @@ describe 'ldap_index', ->
             aliasedEntryName: 'pres,eq'
         , (err, modified) ->
           return next err if err
-          modified.should.eql 0
+          modified.should.be.ok
           next()
 

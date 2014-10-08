@@ -24,13 +24,13 @@ describe 'chmod', ->
         mode: 0o744
       , (err, modified) ->
         return next err if err
-        modified.should.eql 1
+        modified.should.be.ok
         mecano.chmod
           ssh: ssh
           destination: "#{scratch}/a_file"
           mode: 0o744
         , (err, modified) ->
           return next err if err
-          modified.should.eql 0
+          modified.should.not.be.ok
           next()
 

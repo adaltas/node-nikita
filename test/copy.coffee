@@ -40,7 +40,7 @@ describe 'copy', ->
         destination: destination
       , (err, copied) ->
         return next err if err
-        copied.should.eql 1
+        copied.should.be.ok
         misc.file.compare ssh, [source, destination], (err, md5) ->
           return next err if err
           md5.should.eql '3fb7c40c70b0ed19da713bd69ee12014'
@@ -50,7 +50,7 @@ describe 'copy', ->
             destination: destination
           , (err, copied) ->
             return next err if err
-            copied.should.eql 0
+            copied.should.not.be.ok
             next()
 
     they 'into an existing directory', (ssh, next) ->
@@ -63,7 +63,7 @@ describe 'copy', ->
         destination: destination
       , (err, copied) ->
         return next err if err
-        copied.should.eql 1
+        copied.should.be.ok
         fs.exists ssh, "#{destination}/a_file", (err, exists) ->
           exists.should.be.true
           # Copy over existing file
@@ -73,7 +73,7 @@ describe 'copy', ->
             destination: destination
           , (err, copied) ->
             return next err if err
-            copied.should.eql 0
+            copied.should.not.be.ok
             next()
 
     they 'over an existing file', (ssh, next) ->
@@ -89,7 +89,7 @@ describe 'copy', ->
         destination: destination
       , (err, copied) ->
         return next err if err
-        copied.should.eql 1
+        copied.should.be.ok
         misc.file.compare ssh, [source, destination], (err, md5) ->
           return next err if err
           md5.should.eql '3fb7c40c70b0ed19da713bd69ee12014'
@@ -99,7 +99,7 @@ describe 'copy', ->
             destination: destination
           , (err, copied) ->
             return next err if err
-            copied.should.eql 0
+            copied.should.not.be.ok
             next()
 
     they 'change permissions', (ssh, next) ->
@@ -116,7 +116,7 @@ describe 'copy', ->
         mode: 0o750
       , (err, copied) ->
         return next err if err
-        copied.should.eql 1
+        copied.should.be.ok
         fs.stat ssh, destination, (err, stat) ->
           misc.mode.compare(stat.mode, 0o750).should.be.ok
           # Copy existing file
@@ -158,7 +158,7 @@ describe 'copy', ->
         destination: "#{scratch}/toto"
       , (err, copied) ->
         return next err if err
-        copied.should.eql 1
+        copied.should.be.ok
         checkDir ssh, "#{scratch}/toto", (err) ->
           return next err if err
           # if the destination exists, then copy the folder inside destination
@@ -168,7 +168,7 @@ describe 'copy', ->
             destination: "#{scratch}/toto"
           , (err, copied) ->
             return next err if err
-            copied.should.eql 1
+            copied.should.be.ok
             checkDir ssh, "#{scratch}/toto/resources", (err) ->
               next err
 
@@ -180,7 +180,7 @@ describe 'copy', ->
         destination: "#{scratch}/lulu"
       , (err, copied) ->
         return next err if err
-        copied.should.eql 1
+        copied.should.be.ok
         checkDir ssh, "#{scratch}/lulu", (err) ->
           return next err if err
           # if the destination exists, then copy the files inside destination
@@ -190,7 +190,7 @@ describe 'copy', ->
             destination: "#{scratch}/lulu"
           , (err, copied) ->
             return next err if err
-            copied.should.eql 0
+            copied.should.not.be.ok
             checkDir ssh, "#{scratch}/lulu", (err) ->
               next err
 
@@ -229,7 +229,7 @@ describe 'copy', ->
         destination: "#{scratch}"
       , (err, copied) ->
         return next err if err
-        copied.should.eql 1
+        copied.should.be.ok
         glob ssh, "#{scratch}/**", dot: true, (err, files) ->
           return next err if err
           console.log files

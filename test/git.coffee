@@ -22,13 +22,13 @@ describe 'git', ->
       destination: "#{scratch}/my_repo"
     , (err, updated) ->
       return next err if err
-      updated.should.eql 1
+      updated.should.be.ok
       mecano.git
         ssh: ssh
         source: "#{scratch}/repo.git"
         destination: "#{scratch}/my_repo"
       , (err, updated) ->
-        updated.should.eql 0
+        updated.should.not.be.ok
         next()
 
   they 'honores revision', (ssh, next) ->
@@ -44,14 +44,14 @@ describe 'git', ->
         destination: "#{scratch}/my_repo"
         revision: 'v0.0.1'
       , (err, updated) ->
-        updated.should.eql 1
+        updated.should.be.ok
         mecano.git
           ssh: ssh
           source: "#{scratch}/repo.git"
           destination: "#{scratch}/my_repo"
           revision: 'v0.0.1'
         , (err, updated) ->
-          updated.should.eql 0
+          updated.should.not.be.ok
           next()
 
   they 'preserves existing directory', (ssh, next) ->

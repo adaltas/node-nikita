@@ -22,7 +22,7 @@ describe 'remove', ->
         source: "#{scratch}/a_file"
       , (err, removed) ->
         return next err if err
-        removed.should.eql 1
+        removed.should.be.ok
         next()
 
   they 'a link', (ssh, next) ->
@@ -32,7 +32,7 @@ describe 'remove', ->
         source: "#{scratch}/test"
       , (err, removed) ->
         return next err if err
-        removed.should.eql 1
+        removed.should.be.ok
         fs.lstat ssh, "#{scratch}/test", (err, stat) ->
           err.code.should.eql 'ENOENT'
           next()
@@ -49,7 +49,7 @@ describe 'remove', ->
         source: "#{scratch}/*gz"
       , (err, removed) ->
         return next err if err
-        removed.should.eql 1
+        removed.should.be.ok
         fs.readdir null, "#{scratch}", (err, files) ->
           files.should.not.containEql 'a_dir.tar.gz'
           files.should.not.containEql 'a_dir.tgz'
@@ -68,12 +68,12 @@ describe 'remove', ->
         destination: "#{scratch}/remove_dir"
       , (err, removed) ->
         return next err if err
-        removed.should.eql 1
+        removed.should.be.ok
         mecano.remove
           ssh: ssh
           destination: "#{scratch}/remove_dir"
         , (err, removed) ->
           return next err if err
-          removed.should.eql 0
+          removed.should.not.be.ok
           next()
 

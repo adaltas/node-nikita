@@ -20,23 +20,23 @@ describe 'mkdir', ->
       directory: source
     , (err, created) ->
       return next err if err
-      created.should.eql 1
+      created.should.be.ok
       mecano.mkdir
         ssh: ssh
         directory: source
       , (err, created) ->
         return next err if err
-        created.should.eql 0
+        created.should.not.be.ok
         next()
 
   it 'should take source if first argument is a string', (next) ->
     source = "#{scratch}/a_dir"
     mecano.mkdir source, (err, created) ->
       return next err if err
-      created.should.eql 1
+      created.should.be.ok
       mecano.mkdir source, (err, created) ->
         return next err if err
-        created.should.eql 0
+        created.should.not.be.ok
         next()
   
   they 'should create dir recursively', (ssh, next) ->
@@ -46,7 +46,7 @@ describe 'mkdir', ->
       directory: source
     , (err, created) ->
       return next err if err
-      created.should.eql 1
+      created.should.be.ok
       next()
   
   they 'should create multiple directories', (ssh, next) ->
@@ -58,7 +58,7 @@ describe 'mkdir', ->
       ]
     , (err, created) ->
       return next err if err
-      created.should.eql 1
+      created.should.be.ok
       next()
 
   describe 'exclude', ->
@@ -71,7 +71,7 @@ describe 'mkdir', ->
         exclude: /^do/
       , (err, created) ->
         return next err if err
-        created.should.eql 1
+        created.should.be.ok
         fs.exists ssh, source, (err, created) ->
           created.should.not.be.ok
           source = path.dirname source
@@ -88,7 +88,7 @@ describe 'mkdir', ->
         cwd: scratch
       , (err, created) ->
         return next err if err
-        created.should.eql 1
+        created.should.be.ok
         fs.exists ssh, "#{scratch}/a_dir", (err, created) ->
           created.should.be.ok
           next()

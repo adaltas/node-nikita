@@ -19,7 +19,7 @@ describe 'upload', ->
         destination: "#{scratch}"
       , (err, uploaded) ->
         return next err if err
-        uploaded.should.eql 1
+        uploaded.should.be.ok
         fs.exists ssh, "#{scratch}/#{path.basename __filename}", (err, exist) ->
           return next err if err
           exist.should.be.ok
@@ -29,7 +29,7 @@ describe 'upload', ->
             destination: "#{scratch}"
           , (err, uploaded) ->
             return next err if err
-            uploaded.should.eql 0
+            uploaded.should.not.be.ok
             next()
 
   describe 'binary', ->
@@ -56,7 +56,7 @@ describe 'upload', ->
           , (err, uploaded) ->
             return next err if err
             dstsum.should.eql srcsum
-            uploaded.should.eql 1
+            uploaded.should.be.ok
             mecano.upload
               ssh: ssh
               binary: true
@@ -65,7 +65,7 @@ describe 'upload', ->
               md5: true
             , (err, uploaded) ->
               return next err if err
-              uploaded.should.eql 0
+              uploaded.should.not.be.ok
               next()
 
     they 'with md5 string', (ssh, next) ->
@@ -120,7 +120,7 @@ describe 'upload', ->
             sha1: srcsum
           , (err, uploaded) ->
             return next err if err
-            uploaded.should.eql 1
+            uploaded.should.be.ok
             mecano.upload
               ssh: ssh
               binary: true
@@ -129,7 +129,7 @@ describe 'upload', ->
               sha1: srcsum
             , (err, uploaded) ->
               return next err if err
-              uploaded.should.eql 0
+              uploaded.should.not.be.ok
               next()
 
     they 'with invalid md5 string', (ssh, next) ->
@@ -183,7 +183,7 @@ describe 'upload', ->
               md5: srcsum
             , (err, uploaded) ->
               return next err if err
-              uploaded.should.eql 1
+              uploaded.should.be.ok
               next()
 
     they 'with a file', (ssh, next) ->
@@ -223,7 +223,7 @@ describe 'upload', ->
         destination: "#{scratch}"
       , (err, uploaded) ->
         return next err if err
-        uploaded.should.eql 1
+        uploaded.should.be.ok
         fs.exists ssh, "#{scratch}/#{path.basename __filename}", (err, exist) ->
           return next err if err
           exist.should.be.ok
@@ -236,7 +236,7 @@ describe 'upload', ->
           #   destination: "#{scratch}"
           # , (err, uploaded) ->
           #   return next err if err
-          #   uploaded.should.eql 0
+          #   uploaded.should.not.be.ok
           #   next()
 
 

@@ -31,6 +31,7 @@ module.exports = (args, handler) ->
   finish = (err) ->
     unless isArray then user_args = for arg, i in user_args
       user_args[i] = arg[0]
+    modified = !!modified #if goptions.boolmod
     callback err, modified, user_args... if callback
     result.end err, modified, user_args...
   # Normalize options

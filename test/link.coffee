@@ -19,7 +19,7 @@ describe 'link', ->
       destination: destination
     , (err, linked) ->
       return next err if err
-      linked.should.eql 1
+      linked.should.be.ok
       # Create on an existing link
       mecano.link
         ssh: ssh
@@ -27,7 +27,7 @@ describe 'link', ->
         destination: destination
       , (err, linked) ->
         return next err if err
-        linked.should.eql 0
+        linked.should.not.be.ok
         fs.lstat ssh, destination, (err, stat) ->
           stat.isSymbolicLink().should.be.ok
           next()
@@ -41,7 +41,7 @@ describe 'link', ->
       destination: destination
     , (err, linked) ->
       return next err if err
-      linked.should.eql 1
+      linked.should.be.ok
       # Create on an existing link
       mecano.link
         ssh: ssh
@@ -49,7 +49,7 @@ describe 'link', ->
         destination: destination
       , (err, linked) ->
         return next err if err
-        linked.should.eql 0
+        linked.should.not.be.ok
         fs.lstat ssh, destination, (err, stat) ->
           stat.isSymbolicLink().should.be.ok
           next()
@@ -63,7 +63,7 @@ describe 'link', ->
       destination: destination
     , (err, linked) ->
       return next err if err
-      linked.should.eql 1
+      linked.should.be.ok
       fs.lstat ssh, destination, (err, stat) ->
         stat.isSymbolicLink().should.be.ok
         # Test creating two identical parent dirs
@@ -78,7 +78,7 @@ describe 'link', ->
           destination: "#{destination}/mkdir.coffee"
         ], (err, linked) ->
           return next err if err
-          linked.should.eql 2
+          linked.should.be.ok
           next()
   
   they 'should validate arguments', (ssh, next) ->
