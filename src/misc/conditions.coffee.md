@@ -40,6 +40,7 @@ mecano.render({
         each(options.if)
         .on 'item', (si, next) ->
           return next() unless ok
+          options.log? "Mecano `if`"
           type = typeof si
           if type is 'boolean' or type is 'number'
             ok = false unless si
@@ -79,6 +80,7 @@ its element must positively resolve for the condition to pass.
         each(options.not_if)
         .on 'item', (not_if, next) ->
           return next() unless ok
+          options.log? "Mecano `not_if`"
           type = typeof not_if
           if type is 'boolean' or type is 'number'
             ok = false if not_if
@@ -174,6 +176,7 @@ exists otherwise the callback `skip` is called.
         return succeed() unless if_exists?
         each(if_exists)
         .on 'item', (if_exists, next) ->
+          options.log? "Mecano `if_exists`"
           fs.exists ssh, if_exists, (err, exists) ->
             if exists then next() else skip()
         .on 'end', succeed
@@ -195,6 +198,7 @@ exists otherwise the callback `skip` is called.
         return succeed() unless not_if_exists?
         each(not_if_exists)
         .on 'item', (not_if_exists, next) ->
+          options.log? "Mecano `not_if_exists`"
           fs.exists ssh, not_if_exists, (err, exists) ->
             if exists
             then next new Error
@@ -216,6 +220,7 @@ exists otherwise the callback `skip` is called with an error.
         return succeed() unless options.should_exist?
         each(options.should_exist)
         .on 'item', (should_exist, next) ->
+          options.log? "Mecano `should_exist`"
           fs.exists options.ssh, should_exist, (err, exists) ->
             if exists
             then next()
@@ -237,6 +242,7 @@ exists otherwise the callback `skip` is called with an error.
         return succeed() unless options.should_not_exist?
         each(options.should_not_exist)
         .on 'item', (should_not_exist, next) ->
+          options.log? "Mecano `should_not_exist`"
           fs.exists options.ssh, should_not_exist, (err, exists) ->
             if exists
             then next new Error "File does not exist: #{should_not_exist}"
@@ -281,7 +287,6 @@ conditions.all({
             options.log? "Mecano `#{condition}`: failed"
             failed err
           ), (->
-            options.log? "Mecano `#{condition}`: succeed"
             next()
           )
         next()
