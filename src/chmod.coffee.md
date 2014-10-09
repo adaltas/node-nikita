@@ -35,7 +35,6 @@ require('mecano').chmod({
 
     module.exports = (goptions, options, callback) ->
       wrap arguments, (options, next) ->
-        options.log? "Mecano `chmod`"
         # Validate parameters
         {ssh, mode} = options
         return next new Error "Missing destination: #{options.destination}" unless options.destination

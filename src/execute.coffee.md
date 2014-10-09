@@ -87,7 +87,6 @@ mecano.execute({
       callback = null unless typeof callback is 'function'
       stds = if callback then callback.length > 2 else false
       wrap arguments, (options, next) ->
-        options.log? "Mecano `execute`"
         # Validate parameters
         options = { cmd: options } if typeof options is 'string'
         return next new Error "Missing cmd: #{options.cmd}" unless options.cmd?

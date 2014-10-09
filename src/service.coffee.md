@@ -70,7 +70,6 @@ require('mecano').service([{
     module.exports = (goptions, options, callback) ->
       wrap arguments, (options, next) ->
         installed = updates = null
-        options.log? "Mecano `service`"
         # Validate parameters
         # return next new Error 'Missing service name' unless options.name
         return next new Error 'Restricted to Yum over SSH' unless options.ssh

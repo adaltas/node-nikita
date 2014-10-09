@@ -40,7 +40,6 @@ require('mecano').chown({
 
     module.exports = (goptions, options, callback) ->
       wrap arguments, (options, next) ->
-        options.log? "Mecano `chown`"
         # Validate parameters
         {ssh, uid, gid} = options
         return next new Error "Missing destination: #{options.destination}" unless options.destination

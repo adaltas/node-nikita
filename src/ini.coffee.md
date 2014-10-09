@@ -86,7 +86,6 @@ require('mecano').ini({
 
     module.exports = (goptions, options, callback) ->
       wrap arguments, (options, next) ->
-        options.log? "Mecano `ini`"
         {merge, destination, content, ssh} = options
         options.clean ?= true
         # Validate parameters
