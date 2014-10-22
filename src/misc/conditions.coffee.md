@@ -284,7 +284,7 @@ conditions.all({
           condition = conditions[i++]
           return succeed() unless condition
           module.exports[condition] options, ( (err) ->
-            options.log? "Mecano `#{condition}`: failed"
+            options.log? "Mecano `#{condition}`: skip action"
             failed err
           ), (->
             next()
