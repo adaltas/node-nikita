@@ -66,9 +66,9 @@ require('mecano').krb5_addprinc({
             log: options.log
             stdout: options.stdout
             stderr: options.stderr
-          , (err, _, stdout) ->
+          , (err, _, stdout, stderr) ->
             return next err if err
-            modified = true if -1 is stdout.indexOf 'already exists'
+            modified = true if -1 is stderr.indexOf 'already exists'
             do_keytab()
         do_keytab = ->
           krb5_ktadd options, (err, ktadded) ->
