@@ -52,7 +52,7 @@ require('mecano').krb5_delrinc({
         do_get = ->
           return do_end() unless options.keytab
           execute
-            cmd: "klist -kt #{options.keytab}"
+            cmd: "export TZ=GMT; klist -kt #{options.keytab}"
             ssh: options.ssh
             log: options.log
             stdout: options.stdout
