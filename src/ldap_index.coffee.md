@@ -52,72 +52,97 @@ require('mecano').ldap_index({
     module.exports = (goptions, options, callback) ->
       wrap arguments, (options, next) ->
         client = null
-        updated = false
-        connect = ->
-          # if options.ldap instanceof ldap_client
-          if options.ldap?.url?.protocol?.indexOf('ldap') is 0
-            client = options.ldap
-            return get()
-          # Open and bind connection
-          client = ldap.createClient url: options.url
-          client.bind options.binddn, options.passwd, (err) ->
-            return end err if err
-            get()
-        get = ->
-          client.search 'olcDatabase={2}bdb,cn=config',
-              scope: 'base'
-              attributes: ['olcDbIndex']
-          , (err, search) ->
-            olcDbIndex = null
-            search.on 'searchEntry', (entry) ->
-              olcDbIndex = entry.object.olcDbIndex
-            search.on 'end', ->
-              parse olcDbIndex
-        parse = (arIndex) ->
-          indexes = {}
-          for index in arIndex
-            [k,v] = index.split ' '
-            indexes[k] = v
-          do_diff indexes
+        modified = false
+        do_getdn = ->
+          return do_get_indexes() if options.hdb_dn
+          options.log? "mecano `ldap_index`: get DN of the HDB to modify"
+          execute
+            cmd: """
+            ldapsearch -Y EXTERNAL -H ldapi:/// \
+              -b cn=config \
+              "(olcSuffix= #{options.suffix})" dn \
+              2>/dev/null \
+              | egrep '^dn' \
+              | sed -e 's/^dn:\\s*olcDatabase=\\(.*\\)$/\\1/g'
+            """
+            ssh: options.ssh
+            log: options.log
+            stdout: options.stdout
+            stderr: options.stderr
+          , (err, _, hdb_dn) ->
+            return next err if err
+            options.hdb_dn = hdb_dn.trim()
+            do_get_indexes()
+        do_get_indexes = ->
+          options.log? "mecano `ldap_index`: list all indexes of the directory"
+          execute
+            cmd: """
+            ldapsearch -Y EXTERNAL -H ldapi:/// \
+              -b olcDatabase=#{options.hdb_dn} \
+              "(olcDbIndex=*)" olcDbIndex
+            """
+            ssh: options.ssh
+            log: options.log
+            stdout: options.stdout
+            stderr: options.stderr
+          , (err, _, stdout) ->
+            return next err if err
+            indexes = {}
+            for line in string.lines stdout
+              continue unless match = /^olcDbIndex:\s+(.*)\s+(.*)/.exec line
+              [_, attrlist, indices] = match
+              indexes[attrlist] = indices
+            do_diff indexes
         do_diff = (orgp) ->
-          unless options.overwrite
-            newp = misc.merge {}, orgp, options.indexes
-          else
-            newp = options.indexes
-          okl = Object.keys(orgp).sort()
-          nkl = Object.keys(newp).sort()
-          for i in [0...Math.min(okl.length, nkl.length)]
-            if i is okl.length or i is nkl.length or okl[i] isnt nkl[i] or orgp[okl[i]] isnt newp[nkl[i]]
-              updated = true
-              break
-          if updated then stringifiy newp else unbind()
-        stringifiy = (perms) ->
-          indexes = []
-          for k, v of perms
-            indexes.push "#{k} #{v}"
-          replace indexes
-        replace = (indexes) ->
-          change = new ldap.Change
-            operation: 'replace'
-            modification:
-              olcDbIndex: indexes
-          client.modify options.name, change, (err) ->
-            unbind err
-        unbind = (err) ->
-          # return end err if options.ldap instanceof ldap_client and not options.unbind
-          return end err if options.ldap?.url?.protocol?.indexOf('ldap') is 0 and not options.unbind
-          client.unbind (e) ->
-            return next e if e
-            end err
-        end = (err) ->
-          next err, updated
-        connect()
+          add = {}
+          modify = {}
+          for k, v of options.indexes
+            if not orgp[k]?
+              add[k] = v
+            else if v != orgp[k]
+              modify[k] = [v, orgp[k]]
+          if Object.keys(add).length or Object.keys(modify).length then do_save(add, modify) else do_end()
+        do_save = (add, modify) ->
+          cmd = []
+          for k, v of add
+            cmd.push """
+            add: olcDbIndex
+            olcDbIndex: #{k} #{v}
+            """
+          for k, v of modify
+            cmd.push """
+            delete: olcDbIndex
+            olcDbIndex: #{k} #{v[1]}
+            -
+            add: olcDbIndex
+            olcDbIndex: #{k} #{v[0]}
+            """
+          execute
+            cmd: """
+            ldapmodify -Y EXTERNAL -H ldapi:/// <<-EOF
+            dn: olcDatabase=#{options.hdb_dn}
+            changetype: modify
+            #{cmd.join '\n-\n'}
+            """
+            ssh: options.ssh
+            log: options.log
+            stdout: options.stdout
+            stderr: options.stderr
+          , (err, _, stdout) ->
+            return next err if err
+            modified = true
+            do_end()
+        do_end = (err) ->
+          next err, modified
+        do_getdn()
 
 ## Dependencies
 
     each = require 'each'
     ldap = require 'ldapjs'
+    execute = require './execute'
     misc = require './misc'
+    string = require './misc/string'
     wrap = require './misc/wrap'
 
 [index]: http://www.zytrax.com/books/ldap/apa/indeces.html
