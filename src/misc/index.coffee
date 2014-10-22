@@ -24,6 +24,16 @@ misc = module.exports =
           break if argument.indexOf(item) is -1
         result.push item if j is arguments.length
       result
+    unique: (array) ->
+      o = {}
+      for el in array then o[el] = true
+      Object.keys o
+    merge: (arrays...) ->
+      r = []
+      for array in arrays
+        for el in array
+          r.push el
+      r
   regexp:
     escape: (str) ->
       str.replace /[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"
@@ -40,8 +50,11 @@ misc = module.exports =
         return false if obj1[k] isnt obj2[k]
       return true
     diff: (obj1, obj2, keys) ->
-      # keys1 = Object.keys obj1
-      # keys2 = Object.keys obj2
+      unless keys
+        keys1 = Object.keys obj1
+        keys2 = Object.keys obj2
+        keys = misc.array.merge keys1, keys2, misc.array.unique keys1
+
       diff = {}
       for k, v of obj1
         continue unless keys.indexOf(k) >= 0
@@ -54,6 +67,8 @@ misc = module.exports =
         diff[k] ?= []
         diff[k][1] = v
       diff
+    clone: (obj) ->
+      misc.merge {}, obj
   path:
     normalize: (location, callback) ->
       tilde location, (location) ->
