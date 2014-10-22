@@ -43,6 +43,7 @@ require('mecano').move({
     module.exports = (goptions, options, callback) ->
       wrap arguments, (options, next) ->
         do_exists = ->
+          options.log? "Mecano `move`: Stat destination"
           fs.stat options.ssh, options.destination, (err, stat) ->
             return do_move() if err?.code is 'ENOENT'
             return next err if err
@@ -51,12 +52,14 @@ require('mecano').move({
             else do_srchash()
         do_srchash = ->
           return do_dsthash() if options.source_md5
+          options.log? "Mecano `move`: Get source md5"
           misc.file.hash options.ssh, options.source, 'md5', (err, hash) ->
             return next err if err
             options.source_md5 = hash
             do_dsthash()
         do_dsthash = ->
           return do_chkhash() if options.destination_md5
+          options.log? "Mecano `move`: Get destination md5"
           misc.file.hash options.ssh, options.destination, 'md5', (err, hash) ->
             return next err if err
             options.destination_md5 = hash
@@ -66,7 +69,7 @@ require('mecano').move({
           then do_remove_src()
           else do_replace_dest()
         do_replace_dest = ->
-          options.log? "Remove #{options.destination}"
+          options.log? "Mecano `move`: Remove #{options.destination}"
           remove
             ssh: options.ssh
             destination: options.destination
@@ -74,12 +77,12 @@ require('mecano').move({
             return next err if err
             do_move()
         do_move = ->
-          options.log? "Rename #{options.source} to #{options.destination}"
+          options.log? "Mecano `move`: Rename #{options.source} to #{options.destination}"
           fs.rename options.ssh, options.source, options.destination, (err) ->
             return next err if err
             next null, true
         do_remove_src = ->
-          options.log? "Remove #{options.source}"
+          options.log? "Mecano `move`: Remove #{options.source}"
           remove
             ssh: options.ssh
             destination: options.source
