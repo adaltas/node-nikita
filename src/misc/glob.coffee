@@ -53,7 +53,8 @@ module.exports = (ssh, pattern, options, callback) ->
     cmd = "find"
     for s in minimatch.set
       prefix = getprefix s
-      cmd += " -f #{prefix}"
+      cmd += " #{prefix}"
+      # cmd += " -f #{prefix}"
     exec ssh, cmd, (err, stdout) ->
       return callback null, [] if err
       files = string.lines stdout.trim()
