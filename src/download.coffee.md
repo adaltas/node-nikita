@@ -75,7 +75,7 @@ mecano.download
         stageDestination = "#{destination}.#{Date.now()}#{Math.round(Math.random()*1000)}"
         # Start real work
         prepare = () ->
-          options.log? "Check if destination exists"
+          options.log? "Mecano `download`: Check if destination exists"
           # Note about next line: ssh might be null with file, not very clear
           fs.exists options.ssh, destination, (err, exists) ->
             # If we are forcing
@@ -99,12 +99,11 @@ mecano.download
               download()
             else download()
         download = () ->
-          options.log? "Download the source"
+          options.log? "Mecano `download`: Download the source"
           u = url.parse source
           if options.ssh
             if u.protocol is 'http:'
-              cmd = "curl #{source} -o #{stageDestination}"
-              cmd += " -s" # silent
+              cmd = "curl -s #{source} -o #{stageDestination}"
               cmd += " -x #{options.proxy}" if options.proxy
               execute
                 ssh: options.ssh
@@ -157,7 +156,7 @@ mecano.download
                 , next
         checksum = ->
           return unstage() unless md5sum
-          options.log? "Compare the downloaded file with the user-provided checksum"
+          options.log? "Mecano `download`: Compare the downloaded file with the user-provided checksum"
           misc.file.hash options.ssh, stageDestination, 'md5', (err, hash) ->
             return unstage() if hash is md5sum
             # Download is invalid, cleaning up
@@ -170,12 +169,13 @@ mecano.download
           #   return next err if err
           #   downloaded++
           #   next()
-          options.log? "Move the downloaded file"
+          options.log? "Mecano `download`: Move the downloaded file"
           move
             ssh: options.ssh
             source: stageDestination
             destination: destination
             source_md5: md5sum
+            log: options.log
           , (err, moved) ->
             return next err if err
             next null, moved
