@@ -380,7 +380,19 @@ require('mecano').write({
                   for line in ls
                     count_removed++
                     options.stdout.write "#{pad padsize, ''+(count_removed)} - #{line}\n"
-          do_write()
+          do_backup()
+        do_backup = ->
+          return do_write() unless options.backup
+          options.log? "Mecano `write`: create backup"
+          backup = options.backup
+          backup = ".#{Date.now()}" if backup is true
+          backup = "#{options.destination}#{backup}"
+          # fs.writeFile options.ssh, backup, content, (err) ->
+          #   return next err if err
+          #   do_write()
+          fs.rename options.ssh, options.destination, backup, (err) ->
+            return next err if err
+            do_write()
         do_write = ->
           if typeof options.destination is 'function'
             options.log? "Mecano `write`: write destination with user function"
@@ -392,16 +404,7 @@ require('mecano').write({
             fs.writeFile options.ssh, options.destination, content, options, (err) ->
               return next err if err
               modified = true
-              do_backup()
-        do_backup = ->
-          return do_end() unless options.backup
-          options.log? "Mecano `write`: create backup"
-          backup = options.backup
-          backup = ".#{Date.now()}" if backup is true
-          backup = "#{options.destination}#{backup}"
-          fs.writeFile options.ssh, backup, content, (err) ->
-            return next err if err
-            do_end()
+              do_end()
         do_ownership = ->
           return do_permissions() unless options.uid? and options.gid?
           options.log? "Mecano `write`: change ownership"

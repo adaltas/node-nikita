@@ -785,7 +785,7 @@ describe 'write', ->
           backup: '.bck'
         , (err, written) ->
           return next err if err
-          written.should.not.be.ok
+          written.should.be.false
           fs.exists ssh, "#{scratch}/file.bck", (err, exists) ->
             exists.should.be.false
             # If content is different, check the backup
@@ -796,8 +796,9 @@ describe 'write', ->
               backup: '.bck'
             , (err, written) ->
               return next err if err
+              written.should.be.true
               fs.readFile ssh, "#{scratch}/file.bck", 'utf8', (err, content) ->
-                content.should.eql 'Hello Node'
+                content.should.eql 'Hello'
                 next()
 
   describe 'write', ->
