@@ -183,6 +183,25 @@ describe 'write', ->
             written.should.not.be.ok
             next()
 
+    they 'change permission after modification', (ssh, next) ->
+      mecano
+      .write
+        ssh: ssh
+        destination: "#{scratch}/a_file"
+        content: 'Hello'
+        mode: 0o0700
+      .write
+        ssh: ssh
+        destination: "#{scratch}/a_file"
+        content: 'World'
+        mode: 0o0755
+      , (err, written) ->
+        return next err if err
+        fs.stat ssh, "#{scratch}/a_file", (err, stat) ->
+          return next err if err
+          misc.mode.compare(stat.mode, 0o0755).should.be.true
+          next()
+
   describe 'from and to', ->
   
     they 'with from and with to', (ssh, next) ->

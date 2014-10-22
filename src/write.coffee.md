@@ -401,6 +401,7 @@ require('mecano').write({
           else
             options.log? "Mecano `write`: write destination"
             options.flags ?= 'a' if append
+            # Ownership and permission are also handled
             fs.writeFile options.ssh, options.destination, content, options, (err) ->
               return next err if err
               modified = true
