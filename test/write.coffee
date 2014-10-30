@@ -819,6 +819,17 @@ describe 'write', ->
               fs.readFile ssh, "#{scratch}/file.bck", 'utf8', (err, content) ->
                 content.should.eql 'Hello'
                 next()
+  
+    they 'a non-existing file', (ssh, next) ->
+      mecano.write
+        ssh: ssh
+        destination: "#{scratch}/new_file"
+        content: 'Hello'
+        backup: true
+      , (err, written) ->
+        written.should.be.true unless err
+        next err
+
 
   describe 'write', ->
   

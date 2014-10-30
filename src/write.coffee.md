@@ -260,7 +260,7 @@ require('mecano').write({
               uid: options.uid
               gid: options.gid
               mode: options.mode
-              # We only apply uid and gid if the dir does not yet exists
+              # Modify uid and gid if the dir does not yet exists
               not_if_exists: path.dirname options.destination
             , (err, created) ->
               return next err if err
@@ -382,7 +382,7 @@ require('mecano').write({
                     options.stdout.write "#{pad padsize, ''+(count_removed)} - #{line}\n"
           do_backup()
         do_backup = ->
-          return do_write() unless options.backup
+          return do_write() if not options.backup or not destinationHash
           options.log? "Mecano `write`: create backup"
           backup = options.backup
           backup = ".#{Date.now()}" if backup is true
