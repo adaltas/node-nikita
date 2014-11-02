@@ -6,11 +6,9 @@ Register a new ldap schema.
 ## Options
 
 *   `binddn`   
-    Distinguished Name to bind to the LDAP directory, alternative to providing
-    an [ldapjs client] instance.   
+    Distinguished Name to bind to the LDAP directory.   
 *   `passwd`   
-    Password for simple authentication, alternative to providing an
-    [ldapjs client] instance.   
+    Password for simple authentication.   
 *   `uri`   
     LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to false
     in which case it will use your openldap client environment configuraiton.   
