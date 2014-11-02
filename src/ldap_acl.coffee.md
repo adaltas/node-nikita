@@ -3,10 +3,6 @@
 
 Create new [ACLs](acls) for the OpenLDAP server.   
 
-This implementation currently doesn't execute remote SSH commands. Instead, it
-connects directly to the LDAP database and thus requires a specific port to be
-accessible.   
-
 ## Options
 
 *   `to`   
@@ -15,20 +11,11 @@ accessible.
     Who to grant access to and the access to grant as an array
     (eg: `{..., by:["ssf=64 anonymous auth"]}`).   
 *   `url`   
-    Specify URI referring to the ldap server, alternative to providing an
-    [ldapjs client] instance.   
+    Specify URI referring to the ldap server.   
 *   `binddn`   
-    Distinguished Name to bind to the LDAP directory, alternative to providing
-    an [ldapjs client] instance.   
+    Distinguished Name to bind to the LDAP directory.   
 *   `passwd`   
-    Password for simple authentication, alternative to providing an
-    [ldapjs client] instance.   
-*   `ldap`   
-    Instance of an [ldapjs client][ldapclt], alternative to providing the `url`,
-    `binddn` and `passwd` connection properties.   
-*   `unbind`   
-    Close the ldap connection, default to false if connection is an
-    [ldapjs client][ldapclt] instance.   
+    Password for simple authentication.   
 *   `name`   
     Distinguish name storing the "olcAccess" property, using the database adress
     (eg: "olcDatabase={2}bdb,cn=config").   
@@ -212,7 +199,6 @@ require('mecano').ldap_acl({
     execute = require './execute'
 
 [acls]: http://www.openldap.org/doc/admin24/access-control.html
-[ldapclt]: http://ldapjs.org/client.html
 [tuto]: https://documentation.fusiondirectory.org/fr/documentation/convert_acl
 
 
