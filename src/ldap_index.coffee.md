@@ -3,30 +3,17 @@
 
 Create new [index](index) for the OpenLDAP server.   
 
-This implementation currently doesn't execute remote SSH commands. Instead, it
-connects directly to the LDAP database and thus requires a specific port to be
-accessible.   
-
 ## Options
 
 *   `indexes`   
     Object with keys mapping to indexed attributes and values mapping to indices
     ("pres", "approx", "eq", "sub" and 'special').   
 *   `url`   
-    Specify URI referring to the ldap server, alternative to providing an
-    [ldapjs client] instance.   
+    Specify URI referring to the ldap server.   
 *   `binddn`   
-    Distinguished Name to bind to the LDAP directory, alternative to providing
-    an [ldapjs client] instance.   
+    Distinguished Name to bind to the LDAP directory.   
 *   `passwd`   
-    Password for simple authentication, alternative to providing an
-    [ldapjs client] instance.   
-*   `ldap`   
-    Instance of an pldapjs client][ldapclt], alternative to providing the `url`,
-    `binddn` and `passwd` connection properties.   
-*   `unbind`   
-    Close the ldap connection, default to false if connection is an
-    [ldapjs client][ldapclt] instance.   
+    Password for simple authentication.   
 *   `name`   
     Distinguish name storing the "olcAccess" property, using the database adress
     (eg: "olcDatabase={2}bdb,cn=config").   
@@ -51,7 +38,6 @@ require('mecano').ldap_index({
 
     module.exports = (goptions, options, callback) ->
       wrap arguments, (options, next) ->
-        client = null
         modified = false
         do_getdn = ->
           return do_get_indexes() if options.hdb_dn
@@ -123,6 +109,7 @@ require('mecano').ldap_index({
             dn: olcDatabase=#{options.hdb_dn}
             changetype: modify
             #{cmd.join '\n-\n'}
+            EOF
             """
             ssh: options.ssh
             log: options.log
