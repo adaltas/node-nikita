@@ -146,16 +146,28 @@ misc = module.exports =
         algorithm = 'md5'
       hasher = (ssh, path, callback) ->
         shasum = crypto.createHash algorithm
-        ssh2fs.createReadStream ssh, path, (err, stream) ->
-          return callback err if err
-          stream
-          .on 'data', (data) ->
-            shasum.update data
-          .on 'error', (err) ->
-            return callback() if err.code is 'EISDIR'
-            callback err
-          .on 'end', ->
-            callback err, shasum.digest 'hex'
+        if not ssh
+          ssh2fs.createReadStream ssh, path, (err, stream) ->
+            return callback err if err
+            stream
+            .on 'data', (data) ->
+              shasum.update data
+            .on 'error', (err) ->
+              return callback() if err.code is 'EISDIR'
+              callback err
+            .on 'end', ->
+              callback err, shasum.digest 'hex'
+        else
+          ssh2fs.stat ssh, path, (err, stat) ->
+            return callback err if err
+            return callback() if stat.isDirectory()
+            # return callback null, crypto.createHash(algorithm).update('').digest('hex') if stat.isDirectory()
+            exec
+              cmd: "openssl #{algorithm} #{path}"
+              ssh: ssh
+            , (err, stdout) ->
+              callback err if err
+              callback err, /.*\s([\w\d]+)$/.exec(stdout.trim())[1]
       hashs = []
       ssh2fs.stat ssh, file, (err, stat) ->
         return callback new Error "Does not exist: #{file}" if err?.code is 'ENOENT'
