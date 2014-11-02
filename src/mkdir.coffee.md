@@ -66,10 +66,10 @@ require('mecano').mkdir({
         return next new Error 'Missing directory option' unless options.directory?
         cwd = options.cwd ? process.cwd()
         options.directory = [options.directory] unless Array.isArray options.directory
-        options.log? "Make directory #{options.directory}"
         each(options.directory)
         .on 'item', (directory, next) ->
           # first, we need to find which directory need to be created
+          options.log? "Mecano `mkdir`: #{directory}"
           do_stats = ->
             end = false
             dirs = []
@@ -82,7 +82,6 @@ require('mecano').mkdir({
             each(directories)
             .on 'item', (directory, i, next) ->
               return next() if end
-              options.log? "Stat directory #{directory}"
               fs.stat options.ssh, directory, (err, stat) ->
                 if err?.code is 'ENOENT' # if the directory is not yet created
                   directory.stat = stat
@@ -106,7 +105,7 @@ require('mecano').mkdir({
               # eg /\${/ on './var/cache/${user}' creates './var/cache/'
               if options.exclude? and options.exclude instanceof RegExp
                 return next() if options.exclude.test path.basename directory
-              options.log? "Create directory #{directory}" unless directory is options.directory
+              options.log? "Mecano `mkdir`: new directory #{directory}" unless directory is options.directory
               fs.mkdir options.ssh, directory, options, (err) ->
                 return next err if err
                 modified = true
@@ -115,6 +114,7 @@ require('mecano').mkdir({
               return next err if err
               next()
           do_update = (stat) ->
+            options.log? "Mecano `mkdir`: directory exist"
             do_chown = ->
               chown
                 ssh: options.ssh
