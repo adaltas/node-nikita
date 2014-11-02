@@ -69,12 +69,12 @@ require('mecano').copy({
         modified = false
         srcStat = null
         dstStat = null
-        options.log? "Stat source file"
+        options.log? "Mecano `copy`: stat source file"
         fs.stat options.ssh, options.source, (err, stat) ->
           # Source must exists
           return next err if err
           srcStat = stat
-          options.log? "Stat destination file"
+          options.log? "Mecano `copy`: stat destination file"
           fs.stat options.ssh, options.destination, (err, stat) ->
             return next err if err and err.code isnt 'ENOENT'
             dstStat = stat
@@ -106,7 +106,7 @@ require('mecano').copy({
             then do_copy_dir source, destination
             else do_copy_file source, destination
           do_copy_dir = (source, destination) ->
-            options.log? "Create directory #{destination}"
+            options.log? "Mecano `copy`: create directory #{destination}"
             # todo, add permission
             fs.mkdir options.ssh, destination, (err) ->
               return callback() if err?.code is 'EEXIST'
@@ -149,6 +149,7 @@ require('mecano').copy({
               modified = true if chmoded
               do_end()
           do_end = ->
+            options.log? "Mecano `copy`: copy file #{source}" if modified
             callback null, modified
 
 ## Dependencies
