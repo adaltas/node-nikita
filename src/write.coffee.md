@@ -390,7 +390,11 @@ require('mecano').write({
           # fs.writeFile options.ssh, backup, content, (err) ->
           #   return next err if err
           #   do_write()
-          fs.rename options.ssh, options.destination, backup, (err) ->
+          copy
+            ssh: options.ssh
+            source: options.destination
+            destination: backup
+          , (err) ->
             return next err if err
             do_write()
         do_write = ->
@@ -448,9 +452,10 @@ require('mecano').write({
     misc = require './misc'
     string = require './misc/string'
     wrap = require './misc/wrap'
-    mkdir = require './mkdir'
     chown = require './chown'
     chmod = require './chmod'
+    copy = require './copy'
+    mkdir = require './mkdir'
 
 [diffLines]: https://github.com/kpdecker/jsdiff
 
