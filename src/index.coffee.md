@@ -28,6 +28,7 @@ Here's the list of available functions:
       krb5_addprinc: require './krb5_addprinc'
       krb5_delprinc: require './krb5_delprinc'
       ldap_acl: require './ldap_acl'
+      ldap_add: require './ldap_add'
       ldap_index: require './ldap_index'
       ldap_schema: require './ldap_schema'
       link: require './link'
