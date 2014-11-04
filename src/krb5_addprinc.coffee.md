@@ -57,6 +57,7 @@ require('mecano').krb5_addprinc({
         do_kadmin = ->
           # options.realm ?= options.principal.split('@')[1] # Break cross-realm principals
           options.realm ?= options.kadmin_principal.split('@')[1] if /.*@.*/.test options.kadmin_principal
+          options.principal = options.principal.split('@')[0] if options.principal.indexOf(options.realm) isnt -1
           cmd = misc.kadmin options, if options.password
           then "addprinc -pw #{options.password} #{options.principal}"
           else "addprinc -randkey #{options.principal}"
