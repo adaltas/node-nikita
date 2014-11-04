@@ -31,6 +31,7 @@ Here's the list of available functions:
       ldap_add: require './ldap_add'
       ldap_index: require './ldap_index'
       ldap_schema: require './ldap_schema'
+      ldap_user: require './ldap_user'
       link: require './link'
       mkdir: require './mkdir'
       move: require './move'
