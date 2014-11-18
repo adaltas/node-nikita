@@ -55,6 +55,11 @@ require('mecano').ldap_index({
             v = [v] unless Array.isArray v
             for vv in v
               ldif += "#{k}: #{vv}\n"
+        # We keep -c for now because we accept multiple entries. In the future, 
+        # we shall detect modification and be more strict.
+        # -c  Continuous operation mode.  Errors are reported, but ldapmodify will
+        # continue with modifications.  The default is to exit after reporting an
+        # error.
         execute
           cmd: """
           ldapadd -c -H #{options.url} \
