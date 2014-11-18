@@ -46,8 +46,11 @@ require('mecano').krb5_delrinc({
       wrap arguments, (options, next) ->
         return next new Error 'Property principal is required' unless options.principal
         return next new Error 'Property keytab is required' unless options.keytab
-        # options.realm ?= options.principal.split('@')[1] # Break cross-realm principals
-        options.realm ?= options.kadmin_principal.split('@')[1] if /.*@.*/.test options.kadmin_principal
+        if /^\S+@\S+$/.test options.kadmin_principal
+          options.realm ?= options.kadmin_principal.split('@')[1]
+        else
+          throw Error 'Property "realm" is required unless present in principal' unless options.realm
+          options.principal = "#{options.principal}@#{options.realm}"
         modified = false
         do_get = ->
           return do_end() unless options.keytab
@@ -60,7 +63,9 @@ require('mecano').krb5_delrinc({
             code_skipped: 1
           , (err, exists, stdout, stderr) ->
             return next err if err
-            return do_ktadd() unless exists
+            unless exists
+              options.log? 'Mecano `krb5_ktadd`: keytab does not yet exists'
+              return do_ktadd() 
             keytab = {}
             for line in string.lines stdout
               if match = /^\s*(\d+)\s+([\d\/:]+\s+[\d\/:]+)\s+(.*)\s*$/.exec line
@@ -70,8 +75,9 @@ require('mecano').krb5_delrinc({
                 # keytab[principal] ?= {kvno: null, mdate: null}
                 if not keytab[principal] or keytab[principal].kvno < kvno
                   keytab[principal] = kvno: kvno, mdate: mdate
-            # Principal is not listed inside the keytab
-            return do_ktadd() unless keytab[options.principal]?
+            unless keytab[options.principal]?
+              options.log? 'Mecano `krb5_ktadd`: Principal is not listed inside the keytab'
+              return do_ktadd() 
             execute
               cmd: misc.kadmin options, "getprinc -terse #{options.principal}"
               ssh: options.ssh
@@ -89,7 +95,9 @@ require('mecano').krb5_delrinc({
               kvno = parseInt values[8], 10
               options.log? "Mecano `krb5_ktadd`: keytab kvno '#{keytab[principal]?.kvno}', principal kvno '#{kvno}'"
               options.log? "Mecano `krb5_ktadd`: keytab mdate '#{new Date keytab[principal]?.mdate}', principal mdate '#{new Date mdate}'"
-              return do_chown() if keytab[principal]?.kvno is kvno and keytab[principal].mdate is mdate
+              if keytab[principal]?.kvno is kvno and keytab[principal].mdate is mdate
+                options.log? 'Mecano `krb5_ktadd`: kvno and mdate are ok, continue with changing the keytab'
+                return do_chown()
               do_ktremove()
         do_ktremove = ->
           execute
