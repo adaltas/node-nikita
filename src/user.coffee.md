@@ -57,13 +57,13 @@ Create or modify a Unix user.
 
 ```coffee
 require('mecano').user({
-  name: "a_user",
+  name: 'a_user',
   system: true,
   uid: 490,
   gid: 10,
   comment: 'A System User'
 }, function(err, created){
-  console.log(err ? err.message : "User created: " + !!created);
+  console.log(err ? err.message : 'User created: ' + !!created);
 })
 ```
 
@@ -74,22 +74,24 @@ you are a member of the "wheel" group (gid of "10") with the command
 `id a\_user` producing an output similar to 
 "uid=490(hive) gid=10(wheel) groups=10(wheel)".
 
+## Source Code
+
     module.exports = (goptions, options, callback) ->
-      wrap arguments, (options, next) ->
-        return next new Error "Option 'name' is required" unless options.name
+      wrap arguments, (options, callback) ->
+        return callback new Error "Option 'name' is required" unless options.name
         options.shell = "/sbin/nologin" if options.shell is false
         options.shell = "/bin/bash" if options.shell is true
         options.system ?= false
         options.gid ?= null
         options.groups = options.groups.split ',' if typeof options.groups is 'string'
-        return next new Error "Invalid option 'shell': #{JSON.strinfigy options.shell}" if options.shell? typeof options.shell isnt 'string'
+        return callback new Error "Invalid option 'shell': #{JSON.strinfigy options.shell}" if options.shell? typeof options.shell isnt 'string'
         modified = false
         user_info = groups_info = null
         do_info = ->
           options.log? "Get user information for #{options.name}"
           options.ssh?.passwd = null # Clear cache if any 
           misc.ssh.passwd options.ssh, (err, users) ->
-            return next err if err
+            return callback err if err
             options.log? "Got #{JSON.stringify users[options.name]}"
             user_info = users[options.name]
             # Create user if it does not exist
@@ -99,7 +101,7 @@ you are a member of the "wheel" group (gid of "10") with the command
             # Renew group cache
             options.ssh?.cache_group = null # Clear cache if any
             misc.ssh.group options.ssh, (err, groups) ->
-              return next err if err
+              return callback err if err
               groups_info = groups
               do_compare()
         do_create = ->
@@ -124,18 +126,18 @@ you are a member of the "wheel" group (gid of "10") with the command
             stderr: options.stderr
             code_skipped: 9
           , (err, created) ->
-            return next err if err
+            return callback err if err
             if created
               modified = true
               do_password()
             else
               options.log? "User defined elsewhere than '/etc/passwd', exit code is 9"
-              next null, modified
+              callback null, modified
         do_compare = ->
           for k in ['uid', 'home', 'shell', 'comment', 'gid']
             modified = true if options[k]? and user_info[k] isnt options[k]
           if options.groups then for group in options.groups
-            return next err "Group does not exist: #{group}" unless groups_info[group]
+            return callback err "Group does not exist: #{group}" unless groups_info[group]
             modified = true if groups_info[group].user_list.indexOf(options.name) is -1
           options.log? "Did user information changed: #{modified}"
           if modified then do_modify() else do_password()
@@ -155,11 +157,11 @@ you are a member of the "wheel" group (gid of "10") with the command
             stdout: options.stdout
             stderr: options.stderr
           , (err, _, __, stderr) ->
-            return next new Error "User #{options.name} is logged in" if err?.code is 8
-            return next err if err
+            return callback new Error "User #{options.name} is logged in" if err?.code is 8
+            return callback err if err
             do_password()
         do_password = ->
-          return next null, modified unless options.password
+          return callback null, modified unless options.password
           # TODO, detect changes in password
           execute
             ssh: options.ssh
@@ -168,7 +170,7 @@ you are a member of the "wheel" group (gid of "10") with the command
             stdout: options.stdout
             stderr: options.stderr
           , (err) ->
-            next err, modified
+            callback err, modified
         do_info()
 
 ## Dependencies

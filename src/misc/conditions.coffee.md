@@ -1,10 +1,4 @@
 
-    each = require 'each'
-    misc = require './index'
-    exec = require 'ssh2-exec'
-    fs = require 'ssh2-fs'
-    module.exports = 
-
 # Conditions
 
 Conditions are a set of properties you may add to the options of the Mecano
@@ -12,7 +6,9 @@ functions. They apply to all functions and control their execution.
 
 For an action to be executed, all conditions must pass.
 
-## `if` Run an action for a user defined condition
+    module.exports = 
+
+## Run an action for a user defined condition: `if`
 
 Work on the property `if` in `options`. When `if` is a boolean, its value
 determine the output. If it's a function, the arguments vary depending on the
@@ -66,7 +62,7 @@ mecano.render({
           return skip err if err or not ok
           succeed()
 
-## `not_if` Run an action if false
+## Run an action if false: `not_if`
 
 Work on the property `not_if` in `options`. When `not_if` is a boolean, its
 value determine the output. If it's a function, the arguments vary depending
@@ -107,7 +103,7 @@ its element must positively resolve for the condition to pass.
           return skip err if err or not ok
           succeed()
   
-## `if_exec` Run an action if a command is successfully executed
+## Run an action if a command succeed: `if_exec`
 
 Work on the property `if_exec` in `options`. The value may 
 be a single shell command or an array of commands.   
@@ -131,7 +127,7 @@ were executed successfully otherwise the callback `skip` is called.
             if code is 0 then next() else skip()
         .on 'end', succeed
   
-## `not_if_exec` Run an action unless a command is successfully executed
+## Run an action unless a command succeed: `not_if_exec`
 
 Work on the property `not_if_exec` in `options`. The value may 
 be a single shell command or an array of commands.   
@@ -159,7 +155,7 @@ were executed with failure otherwise the callback `skip` is called.
           skip()
         .on 'end', succeed
   
-## `if_exists` Run an action if a file exists
+## Run an action if a file exists: `if_exists`
 
 Work on the property `if_exists` in `options`. The value may 
 be a file path or an array of file paths. You could also set the
@@ -181,7 +177,7 @@ exists otherwise the callback `skip` is called.
             if exists then next() else skip()
         .on 'end', succeed
 
-## `not_if_exists` Skip an action if a file exists
+## Skip an action if a file exists: `not_if_exists`
 
 Work on the property `not_if_exists` in `options`. The value may 
 be a file path or an array of file paths. You could also set the
@@ -207,7 +203,7 @@ exists otherwise the callback `skip` is called.
           skip()
         .on 'end', succeed
 
-## `should_exist` Ensure a file exist
+## Ensure a file exist: `should_exist`
 
 Ensure that an action run if all the files present in the 
 option "should_exist" exist. The value may 
@@ -229,7 +225,7 @@ exists otherwise the callback `skip` is called with an error.
           skip err
         .on 'end', succeed
 
-## `should_not_exist` Ensure a file already exist
+## Ensure a file already exist: `should_not_exist`
 
 Ensure that an action run if none of the files present in the 
 option "should_exist" exist. The value may 
@@ -252,7 +248,7 @@ exists otherwise the callback `skip` is called with an error.
         .on 'end', ->
           succeed()
 
-## `all(options, skip, succeed)` Run all conditions
+## Run all conditions: `all(options, skip, succeed)`
 
 This is the function run internally to execute all the conditions.
 
@@ -290,6 +286,13 @@ conditions.all({
             next()
           )
         next()
+
+## Dependencies
+
+    each = require 'each'
+    misc = require './index'
+    exec = require 'ssh2-exec'
+    fs = require 'ssh2-fs'
 
 
 

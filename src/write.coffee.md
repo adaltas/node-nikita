@@ -73,9 +73,9 @@ honor all their options including "mode", "uid" and "gid".
 Diff can be obtained when the options "diff" is set to true or a function. The
 information is provided in two ways:   
 
-*   a formated string written to the "stdout" option.
-*   when the "diff" option is a function, the array returned by the function
-    `diff.diffLines`, see the [diffLines] package for additionnal information.
+*   when `true`, a formated string written to the "stdout" option.
+*   when a function, the array returned by the function `diff.diffLines`, see
+    the [diffLines] package for additionnal information.
 
 ## More about the `append` option
 
@@ -97,7 +97,7 @@ require('mecano').write({
   from: '# from\n',
   to: '# to',
   replace: 'my friend\n',
-  destination: "#{scratch}/a_file"
+  destination: scratch+'/a_file'
 }, function(err, written){
   // '# here we are\n# from\nmy friend\n# to\nyou coquin'
 })
@@ -110,7 +110,7 @@ require('mecano').write({
   content: 'email=david(at)adaltas(dot)com\nusername=root',
   match: /(username)=(.*)/,
   replace: '$1=david (was $2)',
-  destination: "#{scratch}/a_file"
+  destination: scratch+'/a_file'
 }, function(err, written){
   // '# email=david(at)adaltas(dot)com\nusername=david (was root)'
 })
@@ -123,7 +123,7 @@ require('mecano').write({
   content: 'here we are\nlets try to replace that one\nyou coquin',
   match: /(.*try) (.*)/,
   replace: ['my friend, $1'],
-  destination: "#{scratch}/a_file"
+  destination: scratch+'/a_file'
 }, function(err, written){
   // '# here we are\nmy friend, lets try\nyou coquin'
 })
@@ -136,7 +136,7 @@ require('mecano').write({
   content: '#A config file\n#property=30\nproperty=10\n#End of Config',
   match: /^property=.*$/mg,
   replace: 'property=50',
-  destination: "#{scratch}/replace"
+  destination: scratch+'/a_file'
 }, function(err, written){
   // '# A config file\n#property=30\nproperty=50\n#End of Config'
 })
@@ -149,7 +149,7 @@ require('mecano').write({
   content: '#A config file\n#property=30\nproperty=10\n#End of Config',
   match: /^.*comment.*$/mg,
   replace: '# comment',
-  destination: "#{scratch}/replace",
+  destination: scratch+'/a_file',
   append: 'property'
 }, function(err, written){
   // '# A config file\n#property=30\n# comment\nproperty=50\n# comment\n#End of Config'
@@ -162,23 +162,25 @@ require('mecano').write({
 require('mecano').write({
   content: 'username: me\nemail: my@email\nfriends: you',
   write: [
-    {match: /^(username).*$/mg, replace: "$1: you"},
-    {match: /^email.*$/mg, replace: ""},  
-    {match: /^(friends).*$/mg, replace: "$1: me"}
+    {match: /^(username).*$/mg, replace: '$1: you'},
+    {match: /^email.*$/mg, replace: ''},  
+    {match: /^(friends).*$/mg, replace: '$1: me'}
   ],
-  destination: "#{scratch}/file"
+  destination: scratch+'/a_file'
 }, function(err, written){
   // 'username: you\n\nfriends: me'
 })
 ```
 
+## Source Code
+
     module.exports = (goptions, options, callback) ->
-      wrap arguments, (options, next) ->
+      wrap arguments, (options, callback) ->
         modified = false
         # Validate parameters
-        return next new Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?.length
-        return next new Error 'Define either source or content' if options.source and options.content
-        return next new Error 'Missing destination' unless options.destination
+        return callback new Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?.length
+        return callback new Error 'Define either source or content' if options.source and options.content
+        return callback new Error 'Missing destination' unless options.destination
         options.content = options.content.toString() if options.content and Buffer.isBuffer options.content
         options.diff ?= options.diff or !!options.stdout
         options.engine ?= 'eco'
@@ -222,14 +224,14 @@ require('mecano').write({
           options.log? "Mecano `write`: source is \"#{options.source}\""
           ssh = if options.local_source then null else options.ssh
           fs.exists ssh, source, (err, exists) ->
-            return next err if err
+            return callback err if err
             unless exists
-              return next new Error "Source does not exist: #{JSON.stringify options.source}" if options.source
+              return callback new Error "Source does not exist: #{JSON.stringify options.source}" if options.source
               content = ''
               return do_read_destination()
             options.log? "Mecano `write`: read source"
             fs.readFile ssh, source, 'utf8', (err, src) ->
-              return next err if err
+              return callback err if err
               content = src
               do_read_destination()
         do_read_destination = ->
@@ -240,15 +242,15 @@ require('mecano').write({
             options.log? "Mecano `write`: stat destination"
             fs.stat options.ssh, options.destination, (err, stat) ->
               return do_mkdir() if err?.code is 'ENOENT'
-              return next err if err
+              return callback err if err
               if stat.isDirectory()
                 options.destination = "#{options.destination}/#{path.basename options.source}"
                 # Destination is the parent directory, let's see if the file exist inside
                 fs.stat options.ssh, options.destination, (err, stat) ->
                   # File doesnt exist
                   return do_render() if err?.code is 'ENOENT'
-                  return next err if err
-                  return next new Error "Destination is not a file: #{options.destination}" unless stat.isFile()
+                  return callback err if err
+                  return callback new Error "Destination is not a file: #{options.destination}" unless stat.isFile()
                   do_read()
               else
                 do_read()
@@ -263,12 +265,12 @@ require('mecano').write({
               # Modify uid and gid if the dir does not yet exists
               not_if_exists: path.dirname options.destination
             , (err, created) ->
-              return next err if err
+              return callback err if err
               do_render()
           do_read = ->
             options.log? "Mecano `write`: read destination"
             fs.readFile options.ssh, options.destination, 'utf8', (err, dest) ->
-              return next err if err
+              return callback err if err
               destination = dest if options.diff # destination content only use by diff
               destinationHash = string.hash dest
               do_render()
@@ -280,12 +282,12 @@ require('mecano').write({
             switch options.engine
               when 'nunjunks' then content = nunjucks.renderString content.toString(), options.context
               when 'eco' then content = eco.render content.toString(), options.context
-              else return next Error "Invalid engine: #{options.engine}"
+              else return callback Error "Invalid engine: #{options.engine}"
             if options.skip_empty_lines?
               content = content.replace(/(\r\n|[\n\r\u0085\u2028\u2029])\s*(\r\n|[\n\r\u0085\u2028\u2029])/g, "$1")
           catch err
             err = new Error err if typeof err is 'string'
-            return next err
+            return callback err
           do_replace_partial()
         do_replace_partial = ->
           return do_eof() unless write.length
@@ -330,13 +332,9 @@ require('mecano').write({
                     content = content + linebreak + opts.replace
                     append = false
                 else
-                  # Did not match, try next one
-                  continue
+                  continue # Did not match, try callback
               else
-                return next new Error "Invalid match option"
-                # from = content.indexOf(opts.match)
-                # to = from + opts.match.length
-                # content = content.substr(0, from) + opts.replace + content.substr(to)
+                return callback new Error "Invalid match option"
             else if opts.before is true
               
             else
@@ -388,14 +386,14 @@ require('mecano').write({
           backup = ".#{Date.now()}" if backup is true
           backup = "#{options.destination}#{backup}"
           # fs.writeFile options.ssh, backup, content, (err) ->
-          #   return next err if err
+          #   return callback err if err
           #   do_write()
           copy
             ssh: options.ssh
             source: options.destination
             destination: backup
           , (err) ->
-            return next err if err
+            return callback err if err
             do_write()
         do_write = ->
           if typeof options.destination is 'function'
@@ -407,7 +405,7 @@ require('mecano').write({
             options.flags ?= 'a' if append
             # Ownership and permission are also handled
             fs.writeFile options.ssh, options.destination, content, options, (err) ->
-              return next err if err
+              return callback err if err
               modified = true
               do_end()
         do_ownership = ->
@@ -420,7 +418,7 @@ require('mecano').write({
             gid: options.gid
             log: options.log
           , (err, chowned) ->
-            return next err if err
+            return callback err if err
             modified = true if chowned
             do_permissions()
         do_permissions = ->
@@ -432,11 +430,11 @@ require('mecano').write({
             mode: options.mode
             log: options.log
           , (err, chmoded) ->
-            return next err if err
+            return callback err if err
             modified = true if chmoded
             do_end()
         do_end = ->
-          next null, modified
+          callback null, modified
         do_read_source()
 
 ## Dependencies

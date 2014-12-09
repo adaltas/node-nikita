@@ -1,5 +1,5 @@
 
-# `ldap_user(options, [goptions], callback`
+# `ldap_user(options, [goptions], callback)`
 
 Create and modify a user store inside an OpenLDAP server.   
 
@@ -29,17 +29,19 @@ require('mecano').ldap_user({
   user: {
   }
 }, function(err, modified){
-  console.log(err ? err.message : "Index modified: " + !!modified);
+  console.log(err ? err.message : 'Index modified: ' + !!modified);
 });
 ```
 
+## Source Code
+
     module.exports = (goptions, options, callback) ->
-      wrap arguments, (options, next) ->
+      wrap arguments, (options, callback) ->
         modified = false
-        return next Error "Mecano `ldap_user`: required property 'user'" unless options.user
+        return callback Error "Mecano `ldap_user`: required property 'user'" unless options.user
         options.user = [options.user] unless Array.isArray options.user
         each(options.user)
-        .on 'item', (user, next) ->
+        .on 'item', (user, callback) ->
           do_user = ->
             entry = {}
             for k, v of user
@@ -55,7 +57,7 @@ require('mecano').ldap_user({
               stdout: options.stdout
               stderr: options.stderr
             , (err, modified, added) ->
-              return next err if err
+              return callback err if err
               modified = true if modified or added
               if added
               then do_ldappass()
@@ -87,14 +89,14 @@ require('mecano').ldap_user({
               stdout: options.stdout
               stderr: options.stderr
             , (err) ->
-              return next err if err
+              return callback err if err
               modified = true
               do_end()
           do_end = ->
-            next()
+            callback()
           do_user()
         .on 'both', (err) ->
-          next err, modified
+          callback err, modified
 
 ## Dependencies
 

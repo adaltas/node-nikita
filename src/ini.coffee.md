@@ -1,5 +1,5 @@
 
-# `ini(options, [goptions], callback`
+# `ini(options, [goptions], callback)`
 
 Write an object as .ini file. Note, we are internally using the [ini] module.
 However, there is a subtile difference. Any key provided with value of 
@@ -76,30 +76,32 @@ provided in the `content` option.
 ```js
 require('mecano').ini({
   content: {
-    "my_key": "my value"
+    'my_key': 'my value'
   },
-  destination: "/tmp/my_file"
+  destination: '/tmp/my_file'
 }, function(err, written){
-  console.log(err ? err.message : "Content was updated: " + !!written);
+  console.log(err ? err.message : 'Content was updated: ' + !!written);
 });
 ```
 
+## Source Code
+
     module.exports = (goptions, options, callback) ->
-      wrap arguments, (options, next) ->
+      wrap arguments, (options, callback) ->
         {merge, destination, content, ssh} = options
         options.clean ?= true
         # Validate parameters
-        return next new Error 'Missing content' unless content
-        return next new Error 'Missing destination' unless destination
+        return callback new Error 'Missing content' unless content
+        return callback new Error 'Missing destination' unless destination
         # Start real work
         do_get = ->
           return do_write() unless merge
           options.log? "Mecano `ini`: get content for merge"
           fs.exists ssh, destination, (err, exists) ->
-            return next err if err
+            return callback err if err
             return do_write() unless exists
             fs.readFile ssh, destination, 'ascii', (err, c) ->
-              return next err if err and err.code isnt 'ENOENT'
+              return callback err if err and err.code isnt 'ENOENT'
               content = misc.ini.clean content, true
               parse = options.parse or misc.ini.parse
               content = misc.merge parse(c, options), content
@@ -110,7 +112,7 @@ require('mecano').ini({
           stringify = options.stringify or misc.ini.stringify
           options.content = stringify content, options
           write options, (err, written) ->
-            next err, written
+            callback err, written
         do_get()
 
 ## Dependencies

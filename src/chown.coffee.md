@@ -26,11 +26,11 @@ Change the ownership of a file or a directory.
 *   `modified`   
     Number of ownerships with modifications.   
 
-# Example
+## Example
 
 ```js
 require('mecano').chown({
-  destination: "~/my/project",
+  destination: '~/my/project',
   uid: 'my_user'
   gid: 'my_group'
 }, function(err, modified){
@@ -38,20 +38,22 @@ require('mecano').chown({
 });
 ```
 
+## Source Code
+
     module.exports = (goptions, options, callback) ->
-      wrap arguments, (options, next) ->
+      wrap arguments, (options, callback) ->
         # Validate parameters
         {ssh, uid, gid} = options
-        return next new Error "Missing destination: #{options.destination}" unless options.destination
-        return next() unless uid? and gid?
+        return callback new Error "Missing destination: #{options.destination}" unless options.destination
+        return callback() unless uid? and gid?
         options.log? "Mecano `chown`: stat #{options.destination}"
         fs.stat ssh, options.destination, (err, stat) ->
-          return next err if err
-          return next() if stat.uid is uid and stat.gid is gid
+          return callback err if err
+          return callback() if stat.uid is uid and stat.gid is gid
           options.log? "Mecano `chown`: change uid from #{stat.uid} to #{uid}" if stat.uid isnt uid
           options.log? "Mecano `chown`: change gid from #{stat.gid} to #{gid}" if stat.gid isnt gid
           fs.chown ssh, options.destination, uid, gid, (err) ->
-            next err, true
+            callback err, true
 
 ## Dependencies
 

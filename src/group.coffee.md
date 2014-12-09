@@ -35,7 +35,7 @@ Create or modify a Unix group.
 
 ```js
 require('mecano').group({
-  name: "myself"
+  name: 'myself'
   system: true
   gid: 490
 }, function(err, modified){
@@ -47,9 +47,11 @@ The result of the above action can be viewed with the command
 `cat /etc/group | grep myself` producing an output similar to
 "myself:x:490:".
 
+## Source Code
+
     module.exports = (goptions, options, callback) ->
-      wrap arguments, (options, next) ->
-        return next new Error "Option 'name' is required" unless options.name
+      wrap arguments, (options, callback) ->
+        return callback new Error "Option 'name' is required" unless options.name
         options.system ?= false
         options.gid ?= null
         modified = false
@@ -58,7 +60,7 @@ The result of the above action can be viewed with the command
           options.log? "Get group information for #{options.name}"
           options.ssh?.cache_group = null # Clear cache if any 
           misc.ssh.group options.ssh, (err, groups) ->
-            return next err if err
+            return callback err if err
             options.log? "Got #{JSON.stringify groups[options.name]}"
             info = groups[options.name]
             if info then do_compare() else do_create()
@@ -75,16 +77,16 @@ The result of the above action can be viewed with the command
             stderr: options.stderr
             code_skipped: 9
           , (err, created) ->
-            return next err if err
+            return callback err if err
             if created
             then modified = true
             else options.log? "Group defined elsewhere than '/etc/group', exit code is 9"
-            next null, modified
+            callback null, modified
         do_compare = ->
           for k in ['gid']
             modified = true if options[k]? and info[k] isnt options[k]
           options.log? "Did group information changed: #{modified}"
-          if modified then do_modify() else next()
+          if modified then do_modify() else callback()
         do_modify = ->
           cmd = 'groupmod'
           cmd += " -g #{options.gid}" if options.gid
@@ -96,7 +98,7 @@ The result of the above action can be viewed with the command
             stdout: options.stdout
             stderr: options.stderr
           , (err) ->
-            return next err, modified
+            return callback err, modified
         do_info()
 
 ## Dependencies

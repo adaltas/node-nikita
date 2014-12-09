@@ -1,5 +1,5 @@
 
-# `ldap_add(options, [goptions], callback`
+# `ldap_add(options, [goptions], callback)`
 
 Insert or modify an entry inside an OpenLDAP server.   
 
@@ -34,18 +34,20 @@ require('mecano').ldap_index({
     gidNumber: 9601
   }
 }, function(err, modified){
-  console.log(err ? err.message : "Entry modified: " + !!modified);
+  console.log(err ? err.message : 'Entry modified: ' + !!modified);
 });
 ```
 
+## Source Code
+
     module.exports = ->
-      wrap arguments, (options, next) ->
+      wrap arguments, (options, callback) ->
         modified = false
-        return next Error "Mecano `ldap_add`: required property 'entry'" unless options.entry
+        return callback Error "Mecano `ldap_add`: required property 'entry'" unless options.entry
         options.entry = [options.entry] unless Array.isArray options.entry
         ldif = ''
         for entry in options.entry
-          return next Error "Mecano `ldap_add`: required property 'dn'" unless entry.dn
+          return callback Error "Mecano `ldap_add`: required property 'dn'" unless entry.dn
           ldif += '\n'
           ldif += "dn: #{entry.dn}\n"
           [_, k, v] = /^(.*?)=(.+?),.*$/.exec entry.dn
@@ -72,10 +74,10 @@ require('mecano').ldap_index({
           stdout: options.stdout
           stderr: options.stderr
         , (err, executed, stdout, stderr) ->
-          return next err if err
+          return callback err if err
           modified = stderr.match(/Already exists/g)?.length isnt stdout.match(/adding new entry/g).length
           added = modified # For now, we dont modify
-          next err, modified, added
+          callback err, modified, added
 
 ## Dependencies
 

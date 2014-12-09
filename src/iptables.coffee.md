@@ -1,5 +1,5 @@
 
-# `iptables(options, [goptions], callback`
+# `iptables(options, [goptions], callback)`
 
 Iptables  is  used to set up, maintain, and inspect the tables of IPv4 packet 
 filter rules in the Linux kernel.
@@ -80,12 +80,14 @@ require('mecano').iptables({
     chain: 'INPUT', after: after, jump: 'ACCEPT', dport: 22, protocol: 'tcp'
   ]
 }, function(err, updated){
-  console.log(err ? err.message : "Iptables was updated: " + !!written);
+  console.log(err ? err.message : 'Iptables was updated: ' + !!written);
 });
 ```
 
+## Source Code
+
     module.exports = (goptions, options, callback) ->
-      wrap arguments, (options, next) ->
+      wrap arguments, (options, callback) ->
         options.log? "Mecano `iptables`: list existing rules"
         execute
           cmd: "service iptables status &>/dev/null && iptables -S"
@@ -95,12 +97,12 @@ require('mecano').iptables({
           stderr: options.stderr
           code_skipped: 3
         , (err, executed, stdout) ->
-          return next err if err
-          return next Error "Service iptables not started" unless executed
+          return callback err if err
+          return callback Error "Service iptables not started" unless executed
           oldrules = iptables.parse stdout
           newrules = iptables.normalize options.rules
           cmd = iptables.cmd oldrules, newrules
-          return next() unless cmd.length
+          return callback() unless cmd.length
           options.log? "Mecano `iptables`: modify rules"
           execute
             cmd: "#{cmd.join '; '}; "
@@ -110,7 +112,7 @@ require('mecano').iptables({
             stdout: options.stdout
             stderr: options.stderr
           , (err, executed) ->
-            next err, true
+            callback err, true
 
 ## Dependencies
 

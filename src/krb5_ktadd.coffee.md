@@ -1,5 +1,5 @@
 
-# `krb5_ktadd(options, [goptions], callback`
+# `krb5_ktadd(options, [goptions], callback)`
 
 Create and manage a keytab. This function is usually not used directly but instead
 called by the `krb5_addprinc` function.   
@@ -38,14 +38,16 @@ require('mecano').krb5_delrinc({
   kadmin_password: 'pass',
   kadmin_server: 'localhost'
 }, function(err, removed){
-  console.log(err ? err.message : "Principal removed: " + !!removed);
+  console.log(err ? err.message : 'Principal removed: ' + !!removed);
 });
 ```
 
+## Source Code
+
     module.exports = (goptions, options, callback) ->
-      wrap arguments, (options, next) ->
-        return next new Error 'Property principal is required' unless options.principal
-        return next new Error 'Property keytab is required' unless options.keytab
+      wrap arguments, (options, callback) ->
+        return callback new Error 'Property principal is required' unless options.principal
+        return callback new Error 'Property keytab is required' unless options.keytab
         if /^\S+@\S+$/.test options.kadmin_principal
           options.realm ?= options.kadmin_principal.split('@')[1]
         else
@@ -62,7 +64,7 @@ require('mecano').krb5_delrinc({
             stderr: options.stderr
             code_skipped: 1
           , (err, exists, stdout, stderr) ->
-            return next err if err
+            return callback err if err
             unless exists
               options.log? 'Mecano `krb5_ktadd`: keytab does not yet exists'
               return do_ktadd() 
@@ -89,7 +91,7 @@ require('mecano').krb5_delrinc({
               # return do_ktadd() unless -1 is stdout.indexOf 'does not exist'
               values = string.lines(stdout)[1]
               # Check if a ticket exists for this
-              return next Error "Principal does not exist: '#{options.principal}'" unless values
+              return callback Error "Principal does not exist: '#{options.principal}'" unless values
               values = values.split '\t'
               mdate = parseInt(values[2], 10) * 1000
               kvno = parseInt values[8], 10
@@ -107,7 +109,7 @@ require('mecano').krb5_delrinc({
             stdout: options.stdout
             stderr: options.stderr
           , (err, exists, stdout, stderr) ->
-            return next err if err
+            return callback err if err
             do_ktadd()
         do_ktadd = ->
           execute
@@ -117,7 +119,7 @@ require('mecano').krb5_delrinc({
             stdout: options.stdout
             stderr: options.stderr
           , (err, ktadded) ->
-            return next err if err
+            return callback err if err
             modified = true
             do_chown()
         do_chown = () ->
@@ -129,7 +131,7 @@ require('mecano').krb5_delrinc({
             uid: options.uid
             gid: options.gid
           , (err, chowned) ->
-            return next err if err
+            return callback err if err
             modified = chowned if chowned
             do_chmod()
         do_chmod = () ->
@@ -140,11 +142,11 @@ require('mecano').krb5_delrinc({
             destination: options.keytab
             mode: options.mode
           , (err, chmoded) ->
-            return next err if err
+            return callback err if err
             modified = chmoded if chmoded
             do_end()
         do_end = ->
-          next null, modified
+          callback null, modified
         do_get()
 
 ## Fields in 'getprinc -terse' output

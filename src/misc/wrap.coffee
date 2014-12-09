@@ -61,7 +61,7 @@ module.exports.args = (args, overwrite_goptions={}) ->
   else if args.length is 1
     args[1] = {}
     args[2] = null
-  args[1] = misc.merge args[1], parallel: 1, overwrite_goptions
+  args[1] = misc.merge parallel: 1, args[1], overwrite_goptions
   args
 
 

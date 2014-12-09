@@ -39,14 +39,16 @@ require('mecano').ldap_schema({
   name: 'kerberos',
   schema: '/usr/share/doc/krb5-server-ldap-1.10.3/kerberos.schema'
 }, function(err, modified){
-  console.log(err ? err.message : "Index modified: " + !!modified);
+  console.log(err ? err.message : 'Index modified: ' + !!modified);
 });
 ```
 
+## Source Code
+
     module.exports = (goptions, options, callback) ->
-      wrap arguments, (options, next) ->
-        return next new Error "Missing name" unless options.name
-        return next new Error "Missing schema" unless options.schema
+      wrap arguments, (options, callback) ->
+        return callback new Error "Missing name" unless options.name
+        return callback new Error "Missing schema" unless options.schema
         options.schema = options.schema.trim()
         tempdir = options.tempdir or "/tmp/mecano_ldap_schema_#{Date.now()}"
         schema = "#{tempdir}/#{options.name}.schema"
@@ -69,8 +71,8 @@ require('mecano').ldap_schema({
             stdout: options.stdout
             stderr: options.stderr
           , (err, registered, stdout) ->
-            return next err if err
-            return next() if registered
+            return callback err if err
+            return callback() if registered
             do_dir()
         do_dir = ->
           options.log? 'Create ldif directory'
@@ -78,7 +80,7 @@ require('mecano').ldap_schema({
             destination: ldif
             ssh: options.ssh
           , (err, executed) ->
-            return next err if err
+            return callback err if err
             do_write()
         do_write = ->
           options.log? 'Copy schema'
@@ -87,14 +89,14 @@ require('mecano').ldap_schema({
             destination: schema
             ssh: options.ssh
           , (err, copied) ->
-            return next err if err
+            return callback err if err
             options.log? 'Prepare configuration'
             write
               content: "include #{schema}"
               destination: conf
               ssh: options.ssh
             , (err) ->
-              return next err if err
+              return callback err if err
               do_generate()
         do_generate = ->
           options.log? 'Generate configuration'
@@ -105,7 +107,7 @@ require('mecano').ldap_schema({
             stdout: options.stdout
             stderr: options.stderr
           , (err, executed) ->
-            return next err if err
+            return callback err if err
             do_rename()
         do_rename = ->
           options.log? 'Rename configuration'
@@ -115,7 +117,7 @@ require('mecano').ldap_schema({
             force: true
             ssh: options.ssh
           , (err, moved) ->
-            return next err if err
+            return callback err if err
             return new Error 'No generated schema' unless moved
             do_configure()
         do_configure = ->
@@ -152,7 +154,7 @@ require('mecano').ldap_schema({
             ]
             ssh: options.ssh
           , (err, written) ->
-            return next err if err
+            return callback err if err
             do_register()
         do_register = ->
           # uri = if options.uri then"-L #{options.uri}" else ''
@@ -167,7 +169,7 @@ require('mecano').ldap_schema({
             stdout: options.stdout
             stderr: options.stderr
           , (err, executed) ->
-            return next err if err
+            return callback err if err
             modified = true
             do_clean()
         do_clean = ->
@@ -176,7 +178,7 @@ require('mecano').ldap_schema({
             destination: tempdir
             ssh: options.ssh
           , (err, removed) ->
-            next err, modified
+            callback err, modified
         do_registered()
 
 ## Dependencies

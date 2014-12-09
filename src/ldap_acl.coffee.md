@@ -1,5 +1,5 @@
 
-# `ldap_acl(options, [goptions], callback`
+# `ldap_acl(options, [goptions], callback)`
 
 Create new [ACLs](acls) for the OpenLDAP server.   
 
@@ -39,8 +39,8 @@ require('mecano').ldap_acl({
     to: 'dn.subtree="ou=users,dc=domain,dc=com"',
     by: [
       'dn.exact="ou=users,dc=domain,dc=com" write',
-      "dn.base='gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth' read",
-      "* none"
+      'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" read',
+      '* none'
     ]
   },{
     to: 'dn.subtree="dc=domain,dc=com"',
@@ -49,17 +49,19 @@ require('mecano').ldap_acl({
     ]
   }]
 }, function(err, modified){
-  console.log(err ? err.message : "ACL modified: " + !!modified);
+  console.log(err ? err.message : 'ACL modified: ' + !!modified);
 });
 ```
 
+## Source Code
+
     module.exports = (goptions, options, callback) ->
-      wrap arguments, (options, next) ->
+      wrap arguments, (options, callback) ->
         options.acls ?= [{}]
         modified = false
         each(options.acls)
         .parallel(false)
-        .on 'item', (acl, next) ->
+        .on 'item', (acl, callback) ->
           do_getdn = ->
             return do_getacls() if options.hdb_dn
             options.log? "mecano `ldap_acl`: get DN of the HDB to modify"
@@ -77,7 +79,7 @@ require('mecano').ldap_acl({
               stdout: options.stdout
               stderr: options.stderr
             , (err, _, hdb_dn) ->
-              return next err if err
+              return callback err if err
               options.hdb_dn = hdb_dn.trim()
               do_getacls()
           do_getacls = ->
@@ -93,7 +95,7 @@ require('mecano').ldap_acl({
               stdout: options.stdout
               stderr: options.stderr
             , (err, _, stdout) ->
-              return next err if err
+              return callback err if err
               current = null
               olcAccesses = []
               for line in string.lines stdout
@@ -180,14 +182,14 @@ require('mecano').ldap_acl({
               stdout: options.stdout
               stderr: options.stderr
             , (err, _, hdb_dn) ->
-              return next err if err
+              return callback err if err
               modified = true
               do_end()
           do_end = ->
-            next()
+            callback()
           do_getdn()
         .on 'both', (err) ->
-          next err, modified
+          callback err, modified
 
 ## Dependencies
 

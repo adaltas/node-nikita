@@ -52,22 +52,24 @@ require('mecano').mkdir({
   gid: 'a_group'
   mode: 0o0777 // or '777'
 }, function(err, created){
-  console.log(err ? err.message : "Directory created: " + !!created);
+  console.log(err ? err.message : 'Directory created: ' + !!created);
 });
 ```
 
+## Source Code
+
     module.exports = (goptions, options, callback) ->
-      wrap arguments, (options, next) ->
+      wrap arguments, (options, callback) ->
         modified = false
         # Validate parameters
         options = { directory: options } if typeof options is 'string'
         options.directory ?= options.source
         options.directory ?= options.destination
-        return next new Error 'Missing directory option' unless options.directory?
+        return callback new Error 'Missing directory option' unless options.directory?
         cwd = options.cwd ? process.cwd()
         options.directory = [options.directory] unless Array.isArray options.directory
         each(options.directory)
-        .on 'item', (directory, next) ->
+        .on 'item', (directory, callback) ->
           # first, we need to find which directory need to be created
           options.log? "Mecano `mkdir`: #{directory}"
           do_stats = ->
@@ -80,39 +82,39 @@ require('mecano').mkdir({
             directories = for i in [0...directories.length]
               '/' + directories.slice(0, directories.length - i).join '/'
             each(directories)
-            .on 'item', (directory, i, next) ->
-              return next() if end
+            .on 'item', (directory, i, callback) ->
+              return callback() if end
               fs.stat options.ssh, directory, (err, stat) ->
                 if err?.code is 'ENOENT' # if the directory is not yet created
                   directory.stat = stat
                   dirs.push directory
                   if i is directories.length - 1
                   then return do_create(dirs)
-                  else return next()
+                  else return callback()
                 if stat?.isDirectory()
                   end = true
                   return  if i is 0 then do_update(stat) else do_create(dirs)
                 if err
-                  return next err
+                  return callback err
                 else # a file or symlink exists at this location
-                  return next new Error 'Not a directory: #{JSON.encode(directory)}'
+                  return callback new Error "Not a directory: #{JSON.encode(directory)}"
             .on 'both', (err) ->
-              return next err if err
+              return callback err if err
           do_create = (directories) ->
             each(directories.reverse())
-            .on 'item', (directory, next) ->
+            .on 'item', (directory, callback) ->
               # Directory name contains variables
               # eg /\${/ on './var/cache/${user}' creates './var/cache/'
               if options.exclude? and options.exclude instanceof RegExp
-                return next() if options.exclude.test path.basename directory
+                return callback() if options.exclude.test path.basename directory
               options.log? "Mecano `mkdir`: new directory #{directory}" unless directory is options.directory
               fs.mkdir options.ssh, directory, options, (err) ->
-                return next err if err
+                return callback err if err
                 modified = true
-                next()
+                callback()
             .on 'both', (err) ->
-              return next err if err
-              next()
+              return callback err if err
+              callback()
           do_update = (stat) ->
             options.log? "Mecano `mkdir`: directory exist"
             do_chown = ->
@@ -125,15 +127,15 @@ require('mecano').mkdir({
                 modified = true if owned
                 do_chmod()
             do_chmod = ->
-              return next() unless options.mode
-              return next() if misc.mode.compare stat.mode, options.mode
+              return callback() unless options.mode
+              return callback() if misc.mode.compare stat.mode, options.mode
               fs.chmod options.ssh, directory, options.mode, (err) ->
                 modified = true
-                next()
+                callback()
             do_chown()
           do_stats()
         .on 'both', (err) ->
-          next err, modified
+          callback err, modified
 
 ## Dependencies
 

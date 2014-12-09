@@ -47,8 +47,8 @@ overwrite it.
 
 ```js
 require('mecano').copy({
-  source: "/etc/passwd",
-  destination: "/etc/passwd.bck",
+  source: '/etc/passwd',
+  destination: '/etc/passwd.bck',
   uid: 'my_user'
   gid: 'my_group'
   mode: '0755'
@@ -57,12 +57,14 @@ require('mecano').copy({
 });
 ```
 
+## Source Code
+
     module.exports = (goptions, options, callback) ->
-      wrap arguments, (options, next) ->
+      wrap arguments, (options, callback) ->
         # Validate parameters
-        return next new Error 'Missing source' unless options.source
-        return next new Error 'Missing destination' unless options.destination
-        # return next new Error 'SSH not yet supported' if options.ssh
+        return callback new Error 'Missing source' unless options.source
+        return callback new Error 'Missing destination' unless options.destination
+        # return callback new Error 'SSH not yet supported' if options.ssh
         # Cancel action if destination exists ? really ? no md5 comparaison, strange
         # options.not_if_exists = options.destination if options.not_if_exists is true
         # Start real work
@@ -72,26 +74,26 @@ require('mecano').copy({
         options.log? "Mecano `copy`: stat source file"
         fs.stat options.ssh, options.source, (err, stat) ->
           # Source must exists
-          return next err if err
+          return callback err if err
           srcStat = stat
           options.log? "Mecano `copy`: stat destination file"
           fs.stat options.ssh, options.destination, (err, stat) ->
-            return next err if err and err.code isnt 'ENOENT'
+            return callback err if err and err.code isnt 'ENOENT'
             dstStat = stat
             sourceEndWithSlash = options.source.lastIndexOf('/') is options.source.length - 1
             if srcStat.isDirectory() and dstStat and not sourceEndWithSlash
               options.destination = path.resolve options.destination, path.basename options.source
             if srcStat.isDirectory()
-            then do_directory options.source, (err) -> next err, modified
-            else do_copy options.source, (err) -> next err, modified
+            then do_directory options.source, (err) -> callback err, modified
+            else do_copy options.source, (err) -> callback err, modified
         # Copy a directory
         do_directory = (dir, callback) ->
           options.log? "Source is a directory"
           glob options.ssh, "#{dir}/**", dot: true, (err, files) ->
-            return next err if err
+            return callback err if err
             each(files)
-            .on 'item', (file, next) ->
-              do_copy file, next
+            .on 'item', (file, callback) ->
+              do_copy file, callback
             .on 'both', callback
         do_copy = (source, callback) ->
           if srcStat.isDirectory()

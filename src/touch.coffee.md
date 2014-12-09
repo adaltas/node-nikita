@@ -30,24 +30,26 @@ require('mecano').touch({
   ssh: ssh,
   destination: '/tmp/a_file'
 }, function(err, touched){
-  console.log(err ? err.message : "File touched: " + !!touched);
+  console.log(err ? err.message : 'File touched: ' + !!touched);
 });
 ```
 
+## Source Code
+
     module.exports = (goptions, options, callback) ->
-      wrap arguments, (options, next) ->
+      wrap arguments, (options, callback) ->
         # Validate parameters
         {ssh, destination, mode} = options
-        return next new Error "Missing destination: #{destination}" unless destination
+        return callback new Error "Missing destination: #{destination}" unless destination
         options.log? "Check if exists: #{destination}"
         fs.exists ssh, destination, (err, exists) ->
-          return next err if err
-          return next() if exists
+          return callback err if err
+          return callback() if exists
           options.source = null
           options.content = ''
           options.log? "Create a new empty file"
           write options, (err, written) ->
-            next err, written
+            callback err, written
 
 ## Dependencies
 

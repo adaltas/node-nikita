@@ -1,5 +1,5 @@
 
-# `ldap_index(options, [goptions], callback`
+# `ldap_index(options, [goptions], callback)`
 
 Create new [index](index) for the OpenLDAP server.   
 

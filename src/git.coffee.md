@@ -1,5 +1,5 @@
 
-# `git(options, [goptions], callback`
+# `git(options, [goptions], callback)`
 
 Create and synchronize a git repository.
 
@@ -42,21 +42,22 @@ require('mecano').extract({
 });
 ```
 
+## Source Code
 
     module.exports = (goptions, options, callback) ->
-      wrap arguments, (options, next) ->
+      wrap arguments, (options, callback) ->
         # Sanitize parameters
         options.revision ?= 'HEAD'
         rev = null
         # Start real work
         prepare = ->
           fs.exists options.ssh, options.destination, (err, exists) ->
-            return next err if err
+            return callback err if err
             return clone() unless exists
-            # return next new Error "Destination not a directory, got #{options.destination}" unless stat.isDirectory()
+            # return callback new Error "Destination not a directory, got #{options.destination}" unless stat.isDirectory()
             gitDir = "#{options.destination}/.git"
             fs.exists options.ssh, gitDir, (err, exists) ->
-              return next new Error "Not a git repository" unless exists
+              return callback new Error "Not a git repository" unless exists
               log()
         clone = ->
           execute
@@ -67,7 +68,7 @@ require('mecano').extract({
             stdout: options.stdout
             stderr: options.stderr
           , (err, executed, stdout, stderr) ->
-            return next err if err
+            return callback err if err
             checkout()
         log = ->
           execute
@@ -78,7 +79,7 @@ require('mecano').extract({
             stdout: options.stdout
             stderr: options.stderr
           , (err, executed, stdout, stderr) ->
-            return next err if err
+            return callback err if err
             current = stdout.trim()
             execute
               ssh: options.ssh
@@ -88,10 +89,10 @@ require('mecano').extract({
               stdout: options.stdout
               stderr: options.stderr
             , (err, executed, stdout, stderr) ->
-              return next err if err
+              return callback err if err
               if stdout.trim() isnt current
               then checkout()
-              else next()
+              else callback()
         checkout = ->
           execute
             ssh: options.ssh
@@ -101,8 +102,8 @@ require('mecano').extract({
             stdout: options.stdout
             stderr: options.stderr
           , (err) ->
-            return next err if err
-            next null, true
+            return callback err if err
+            callback null, true
         prepare()
 
 ## Dependencies
@@ -112,7 +113,6 @@ require('mecano').extract({
     each = require 'each'
     misc = require './misc'
     wrap = require './misc/wrap'
-    conditions = require './misc/conditions'
     child = require './misc/child'
     execute = require './execute'
 

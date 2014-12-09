@@ -63,17 +63,19 @@ require('mecano').service([{
   ssh: ssh,
   name: 'ganglia-web-3.5.7-99'
 }], function(err, installed){
-  console.log(err ? err.message : "Service installed: " + !!installed);
+  console.log(err ? err.message : 'Service installed: ' + !!installed);
 });
 ```
 
+## Source Code
+
     module.exports = (goptions, options, callback) ->
-      wrap arguments, (options, next) ->
+      wrap arguments, (options, callback) ->
         installed = updates = null
         # Validate parameters
-        # return next new Error 'Missing service name' unless options.name
-        return next new Error 'Restricted to Yum over SSH' unless options.ssh
-        # return next new Error 'Invalid configuration, start conflict with stop' if options.start? and options.start is options.stop
+        # return callback new Error 'Missing service name' unless options.name
+        return callback new Error 'Restricted to Yum over SSH' unless options.ssh
+        # return callback new Error 'Invalid configuration, start conflict with stop' if options.start? and options.start is options.stop
         pkgname = options.yum_name or options.name
         chkname = options.chk_name or options.srv_name or options.name
         srvname = options.srv_name or options.chk_name or options.name
@@ -98,7 +100,7 @@ require('mecano').service([{
               # stdout: options.stdout
               # stderr: options.stderr
             , (err, executed, stdout) ->
-              return next err if err
+              return callback err if err
               stdout = string.lines stdout
               start = false
               installed = []
@@ -122,7 +124,7 @@ require('mecano').service([{
               stdout: options.stdout
               stderr: options.stderr
             , (err, executed, stdout) ->
-              return next err if err
+              return callback err if err
               stdout = string.lines stdout
               start = false
               updates = []
@@ -146,14 +148,14 @@ require('mecano').service([{
             stdout: options.stdout
             stderr: options.stderr
           , (err, succeed) ->
-            return next err if err
+            return callback err if err
             installedIndex = installed.indexOf pkgname
             installed.push pkgname if installedIndex is -1
             if updates
               updatesIndex = updates.indexOf pkgname
               updates.splice updatesIndex, 1 unless updatesIndex is -1
             # Those 2 lines seems all wrong
-            return next new Error "No package #{pkgname} available." unless succeed
+            return callback new Error "No package #{pkgname} available." unless succeed
             modified = true if installedIndex isnt -1
             do_startuped()
         do_startuped = ->
@@ -167,9 +169,9 @@ require('mecano').service([{
             stdout: options.stdout
             stderr: options.stderr
           , (err, registered, stdout, stderr) ->
-            return next err if err
+            return callback err if err
             # Invalid service name return code is 0 and message in stderr start by error
-            return next new Error "Invalid chkconfig name #{chkname}" if /^error/.test stderr
+            return callback new Error "Invalid chkconfig name #{chkname}" if /^error/.test stderr
             current_startup = ''
             if registered
               for c in stdout.split(' ').pop().trim().split '\t'
@@ -200,7 +202,7 @@ require('mecano').service([{
             stdout: options.stdout
             stderr: options.stderr
           , (err) ->
-            return next err if err
+            return callback err if err
             do_started()
         startup_del = ->
           options.log? "Mecano `service`: startup off"
@@ -214,7 +216,7 @@ require('mecano').service([{
             stdout: options.stdout
             stderr: options.stderr
           , (err) ->
-            return next err if err
+            return callback err if err
             do_started()
         do_started = ->
           return do_finish() unless options.action
@@ -229,7 +231,7 @@ require('mecano').service([{
             stdout: options.stdout
             stderr: options.stderr
           , (err, started) ->
-            return next err if err
+            return callback err if err
             if started
               # return do_action() unless options.action is 'start'
               return do_action() if 'stop' in options.action or 'restart' in options.action
@@ -247,11 +249,11 @@ require('mecano').service([{
             stdout: options.stdout
             stderr: options.stderr
           , (err, executed) ->
-            return next err if err
+            return callback err if err
             modified = true
             do_finish()
         do_finish = ->
-          next null, modified
+          callback null, modified
         do_chkinstalled()
 
 ## Dependencies

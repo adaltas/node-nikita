@@ -59,18 +59,20 @@ mecano.download
 mecano.download
   source: 'ftp://myhost.com:3334/wdavidw/node-mecano/tarball/v0.0.1'
   destination: 'node-sigar.tgz'
-  user: "johndoe",
-  pass: "12345"
+  user: 'johndoe',
+  pass: '12345'
 , (err, downloaded) -> ...
 ```
 
+## Source Code
+
     module.exports = (goptions, options, callback) ->
-      wrap arguments, (options, next) ->
+      wrap arguments, (options, callback) ->
         # Validate parameters
         {destination, source, md5sum} = options
         # md5sum is used to validate the download
-        return next new Error "Missing source: #{source}" unless source
-        return next new Error "Missing destination: #{destination}" unless destination
+        return callback new Error "Missing source: #{source}" unless source
+        return callback new Error "Missing destination: #{destination}" unless destination
         options.force ?= false
         stageDestination = "#{destination}.#{Date.now()}#{Math.round(Math.random()*1000)}"
         # Start real work
@@ -88,11 +90,11 @@ mecano.download
             else if exists and md5sum
               # then we compute the checksum of the file
               misc.file.hash options.ssh, destination, 'md5', (err, hash) ->
-                return next err if err
+                return callback err if err
                 # And compare with the checksum provided by the user
-                return next() if hash is md5sum
+                return callback() if hash is md5sum
                 fs.unlink options.ssh, destination, (err) ->
-                  return next err if err
+                  return callback err if err
                   download()
             # Get the checksum of the current file
             else if exists
@@ -112,22 +114,22 @@ mecano.download
                 stdout: options.stdout
                 stderr: options.stderr
               , (err, executed, stdout, stderr) ->
-                return next curl.error err if err
+                return callback curl.error err if err
                 checksum()
             else if u.protocol is 'ftp:'
-              return next new Error 'FTP download not supported over SSH'
+              return callback new Error 'FTP download not supported over SSH'
             else
               fs.createReadStream options.ssh, u.pathname, (err, rs) ->
-                return next err if err
+                return callback err if err
                 fs.createWriteStream null, stageDestination, (err, ws) ->
-                  return next err if err
+                  return callback err if err
                   rs.pipe(ws)
                   .on 'close', ->
                     checksum()
-                  .on 'error', next
+                  .on 'error', callback
           else
             fs.createWriteStream null, stageDestination, (err, ws) ->
-              return next err if err
+              return callback err if err
               if u.protocol is 'http:'
                 options.url = source
                 request(options).pipe(ws)
@@ -140,7 +142,7 @@ mecano.download
                 options.pass ?= pass
                 ftp = new Ftp options
                 ftp.getGetSocket u.pathname, (err, rs) ->
-                  return next err if err
+                  return callback err if err
                   rs.pipe ws
                   rs.resume()
               else
@@ -153,7 +155,7 @@ mecano.download
                 # of connection issue leave an empty file
                 remove
                   destination: stageDestination
-                , next
+                , callback
         checksum = ->
           return unstage() unless md5sum
           options.log? "Mecano `download`: Compare the downloaded file with the user-provided checksum"
@@ -161,14 +163,14 @@ mecano.download
             return unstage() if hash is md5sum
             # Download is invalid, cleaning up
             misc.file.remove options.ssh, stageDestination, (err) ->
-              return next err if err
-              next new Error "Invalid checksum, found \"#{hash}\" instead of \"#{md5sum}\""
+              return callback err if err
+              callback new Error "Invalid checksum, found \"#{hash}\" instead of \"#{md5sum}\""
         unstage = ->
           # Note about next line: ssh might be null with file, not very clear
           # fs.rename options.ssh, stageDestination, destination, (err) ->
-          #   return next err if err
+          #   return callback err if err
           #   downloaded++
-          #   next()
+          #   callback()
           options.log? "Mecano `download`: Move the downloaded file"
           move
             ssh: options.ssh
@@ -177,8 +179,8 @@ mecano.download
             source_md5: md5sum
             log: options.log
           , (err, moved) ->
-            return next err if err
-            next null, moved
+            return callback err if err
+            callback null, moved
         prepare()
 
 ## Dependencies

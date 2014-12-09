@@ -1,13 +1,12 @@
 
 # `remove(options, [goptions], callback)`
 
-Recursively remove files, directories and links. Internally, the function
-use the [rimraf](https://github.com/isaacs/rimraf) library.   
+Recursively remove files, directories and links.
 
 ## Options
 
 *   `source`   
-    File, directory or pattern.   
+    File, directory or glob (pattern matching based on wildcard characters).   
 *   `destination`      
     Alias for "source".   
 *   `ssh` (object|ssh2)   
@@ -23,7 +22,9 @@ use the [rimraf](https://github.com/isaacs/rimraf) library.
 
 ## Implementation details
 
-
+Files are removed localling using the [rimraf] package. The Unix "rm" utility
+is used over an SSH remote connection. Porting the [rimraf] strategy over
+SSH would be too slow.
 
 ## Simple example
 
@@ -51,26 +52,28 @@ require('mecano').remove([
   { source: './some/dir', not_if_exists: './some/file' },
   './some/file'
 ], function(err, removed){
-  console.log(err ? err.message : "File removed: " + !!removed);
+  console.log(err ? err.message : 'File removed: ' + !!removed);
 });
 ```
 
+## Source Code
+
     module.exports = (goptions, options, callback) ->
-      wrap arguments, (options, next) ->
+      wrap arguments, (options, callback) ->
         # Validate parameters
         options = source: options if typeof options is 'string'
         options.source ?= options.destination
-        return next new Error "Missing source" unless options.source?
+        return callback new Error "Missing source" unless options.source?
         # Start real work
         modified = false
         glob options.ssh, options.source, (err, files) ->
-          return next err if err
+          return callback err if err
           each(files)
-          .on 'item', (file, next) ->
+          .on 'item', (file, callback) ->
             modified = true
-            misc.file.remove options.ssh, file, next
+            misc.file.remove options.ssh, file, callback
           .on 'both', (err) ->
-            next err, modified
+            callback err, modified
 
 ## Dependencies
 
@@ -80,5 +83,5 @@ require('mecano').remove([
     wrap = require './misc/wrap'
     glob = require './misc/glob'
 
-
+[rimraf]: https://github.com/isaacs/rimraf
 

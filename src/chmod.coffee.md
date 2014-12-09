@@ -22,29 +22,31 @@ Change the permissions of a file or directory.
 *   `modified`   
     Number of permissions with modifications.   
 
-# Example
+## Example
 
 ```js
 require('mecano').chmod({
-  destination: "~/my/project",
+  destination: '~/my/project',
   mode: 0o755
 }, function(err, modified){
   console.log(err ? err.message : 'File was modified: ' + modified);
 });
 ```
 
+## Source Code
+
     module.exports = (goptions, options, callback) ->
-      wrap arguments, (options, next) ->
+      wrap arguments, (options, callback) ->
         # Validate parameters
         {ssh, mode} = options
-        return next new Error "Missing destination: #{options.destination}" unless options.destination
+        return callback new Error "Missing destination: #{options.destination}" unless options.destination
         options.log? "Mecano `chmod`: stat \"#{options.destination}\""
         fs.stat ssh, options.destination, (err, stat) ->
-          return next err if err
-          return next() if misc.mode.compare stat.mode, mode
+          return callback err if err
+          return callback() if misc.mode.compare stat.mode, mode
           options.log? "Mecano `chmod`: change mode form #{stat.mode} to #{mode}"
           fs.chmod ssh, options.destination, mode, (err) ->
-            next err, true
+            callback err, true
 
 ## Dependencies
 

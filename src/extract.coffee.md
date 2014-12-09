@@ -45,10 +45,12 @@ require('mecano').extract({
 });
 ```
 
+## Source Code
+
     module.exports = (goptions, options, callback) ->
-      wrap arguments, (options, next) ->
+      wrap arguments, (options, callback) ->
         # Validate parameters
-        return next new Error "Missing source: #{options.source}" unless options.source
+        return callback new Error "Missing source: #{options.source}" unless options.source
         destination = options.destination ? path.dirname options.source
         # Deal with format option
         if options.format?
@@ -62,12 +64,12 @@ require('mecano').extract({
             format = 'zip'
           else
             ext = path.extname options.source
-            return next Error "Unsupported extension, got #{JSON.stringify(ext)}"
+            return callback Error "Unsupported extension, got #{JSON.stringify(ext)}"
         # Start real work
         stat = () ->
           fs.stat options.ssh, options.source, (err, stat) ->
-            return next Error "File does not exist: #{options.source}" if err
-            return next Error "Not a File: #{options.source}" unless stat.isFile()
+            return callback Error "File does not exist: #{options.source}" if err
+            return callback Error "Not a File: #{options.source}" unless stat.isFile()
             extract()
         extract = () ->
           cmd = null
@@ -82,17 +84,17 @@ require('mecano').extract({
             stdout: options.stdout
             stderr: options.stderr
           , (err, created) ->
-            return next err if err
+            return callback err if err
             creates()
         # Step for `creates`
         creates = () ->
           return success() unless options.creates?
           fs.exists options.ssh, options.creates, (err, exists) ->
-            return next new Error "Failed to create '#{path.basename options.creates}'" unless exists
+            return callback new Error "Failed to create '#{path.basename options.creates}'" unless exists
             success()
         # Final step
         success = () ->
-          next null, true
+          callback null, true
         stat()
 
 ## Dependencies

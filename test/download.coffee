@@ -9,171 +9,170 @@ fs = require 'ssh2-fs'
 
 describe 'download', ->
 
-  scratch = test.scratch @
+  describe 'http', ->
 
-  they 'http', (ssh, next) ->
-    @timeout 100000
-    # create server
-    server = http.createServer (req, res) ->
-      res.writeHead 200, {'Content-Type': 'text/plain'}
-      res.end 'okay'
-    server.listen 12345
-    # Download a non existing file
-    source = 'http://localhost:12345'
-    destination = "#{scratch}/download"
-    mecano.download
-      ssh: ssh
-      source: source
-      destination: destination
-    , (err, downloaded) ->
-      return next err if err
-      downloaded.should.be.ok
-      fs.readFile ssh, destination, 'ascii', (err, content) ->
-        return next err if err
-        content.should.equal 'okay'
-        # Download on an existing file
-        mecano.download
-          ssh: ssh
-          source: source
-          destination: destination
-        , (err, downloaded) ->
-          return next err if err
-          downloaded.should.not.be.ok
-          server.close()
-          server.on 'close', next
+    scratch = test.scratch @
+    server = null
 
-  they 'http detect change', (ssh, next) ->
-    ssh = null
-    @timeout 100000
-    # create server
-    count = 0
-    server = http.createServer (req, res) ->
-      res.writeHead 200, {'Content-Type': 'text/plain'}
-      res.end "okay #{count++}"
-    server.listen 12345
-    # Download a non existing file
-    source = 'http://localhost:12345'
-    destination = "#{scratch}/download"
-    mecano.download
-      ssh: ssh
-      source: source
-      destination: destination
-    , (err, downloaded) ->
-      return next err if err
-      downloaded.should.be.ok
-      fs.readFile ssh, destination, 'ascii', (err, content) ->
-        return next err if err
-        content.should.equal 'okay 0'
-        # Download on an existing file
-        mecano.download
-          ssh: ssh
-          source: source
-          destination: destination
-        , (err, downloaded) ->
-          return next err if err
-          downloaded.should.be.ok
-          server.close()
-          server.on 'close', next
+    before (next) ->
+      server = http.createServer (req, res) ->
+        res.writeHead 200, {'Content-Type': 'text/plain'}
+        res.end 'okay'
+      server.listen 12345, next
 
-  they 'should chmod', (ssh, next) ->
-    @timeout 10000
-    # create server
-    server = http.createServer (req, res) ->
-      res.writeHead 200, {'Content-Type': 'text/plain'}
-      res.end 'okay'
-    server.listen 12345
-    # Download a non existing file
-    source = 'http://localhost:12345'
-    destination = "#{scratch}/download_test"
-    mecano.download
-      ssh: ssh
-      source: source
-      destination: destination
-      mode: 0o770
-    , (err, downloaded) ->
-      return next err if err
-      downloaded.should.be.ok
-      fs.readFile ssh, destination, 'ascii', (err, content) ->
+    after (next) ->
+      server.close()
+      server.on 'close', next
+
+    they 'http', (ssh, next) ->
+      @timeout 100000
+      # Download a non existing file
+      source = 'http://localhost:12345'
+      destination = "#{scratch}/download"
+      mecano.download
+        ssh: ssh
+        source: source
+        destination: destination
+      , (err, downloaded) ->
         return next err if err
-        content.should.equal 'okay'
-        # Download on an existing file
-        mecano.download
-          ssh: ssh
-          source: source
-          destination: destination
-        , (err, downloaded) ->
+        downloaded.should.be.ok
+        fs.readFile ssh, destination, 'ascii', (err, content) ->
           return next err if err
-          downloaded.should.not.be.ok
-          server.close()
-          server.on 'close', next
-  
-  # it 'should deal with ftp protocol', (next) ->
-  #   @timeout 10000
-  #   source = 'ftp://ftp.gnu.org/gnu/glibc/README.glibc'
-  #   destination = "#{scratch}/download_test"
-  #   # Download a non existing file
-  #   mecano.download
-  #     source: source
-  #     destination: destination
-  #   , (err, downloaded) ->
-  #     return next err if err
-  #     downloaded.should.eql 1
-  #     fs.readFile destination, 'ascii', (err, content) ->
-  #       content.should.equal 'GNU'
-  #       # Download on an existing file
-  #       mecano.download
-  #         source: source
-  #         destination: destination
-  #       , (err, downloaded) ->
-  #         return next err if err
-  #         downloaded.should.eql 0
-  #         next()
-  
-  they 'should deal with file protocol', (ssh, next) ->
-    source = "file://#{__filename}"
-    destination = "#{scratch}/download_test"
-    # Download a non existing file
-    mecano.download
-      ssh: ssh
-      source: source
-      destination: destination
-    , (err, downloaded) ->
-      return next err if err
-      downloaded.should.be.ok
-      fs.readFile ssh, destination, 'ascii', (err, content) ->
-        content.should.containEql 'yeah'
-        # Download on an existing file
-        mecano.download
-          ssh: ssh
-          source: source
-          destination: destination
-        , (err, downloaded) ->
+          content.should.equal 'okay'
+          # Download on an existing file
+          mecano.download
+            ssh: ssh
+            source: source
+            destination: destination
+          , (err, downloaded) ->
+            return next err if err
+            downloaded.should.not.be.ok
+            next()
+
+    they 'http detect change', (ssh, next) ->
+      ssh = null
+      @timeout 100000
+      count = 0
+      # Download a non existing file
+      source = 'http://localhost:12345'
+      destination = "#{scratch}/download"
+      mecano.download
+        ssh: ssh
+        source: source
+        destination: destination
+      , (err, downloaded) ->
+        return next err if err
+        downloaded.should.be.ok
+        fs.readFile ssh, destination, 'ascii', (err, content) ->
           return next err if err
-          downloaded.should.not.be.ok
-          next()
-  
-  they 'should default to file without protocol', (ssh, next) ->
-    source = "/#{__filename}"
-    destination = "#{scratch}/download_test"
-    # Download a non existing file
-    mecano.download
-      ssh: ssh
-      source: source
-      destination: destination
-    , (err, downloaded) ->
-      return next err if err
-      downloaded.should.be.ok
-      fs.readFile ssh, destination, 'ascii', (err, content) ->
-        content.should.containEql 'yeah'
-        # Download on an existing file
-        mecano.download
-          ssh: ssh
-          source: source
-          destination: destination
-        , (err, downloaded) ->
+          content.should.equal 'okay 0'
+          # Download on an existing file
+          mecano.download
+            ssh: ssh
+            source: source
+            destination: destination
+          , (err, downloaded) ->
+            return next err if err
+            downloaded.should.be.ok
+            next()
+
+    they 'should chmod', (ssh, next) ->
+      @timeout 10000
+      # Download a non existing file
+      source = 'http://localhost:12345'
+      destination = "#{scratch}/download_test"
+      mecano.download
+        ssh: ssh
+        source: source
+        destination: destination
+        mode: 0o770
+      , (err, downloaded) ->
+        return next err if err
+        downloaded.should.be.ok
+        fs.readFile ssh, destination, 'ascii', (err, content) ->
           return next err if err
-          downloaded.should.not.be.ok
-          next()
+          content.should.equal 'okay'
+          # Download on an existing file
+          mecano.download
+            ssh: ssh
+            source: source
+            destination: destination
+          , (err, downloaded) ->
+            return next err if err
+            downloaded.should.not.be.ok
+            next()
+  
+  # describe 'ftp', ->
+    
+  #   it 'should deal with ftp protocol', (next) ->
+  #     @timeout 10000
+  #     source = 'ftp://ftp.gnu.org/gnu/glibc/README.glibc'
+  #     destination = "#{scratch}/download_test"
+  #     # Download a non existing file
+  #     mecano.download
+  #       source: source
+  #       destination: destination
+  #     , (err, downloaded) ->
+  #       return next err if err
+  #       downloaded.should.eql 1
+  #       fs.readFile destination, 'ascii', (err, content) ->
+  #         content.should.equal 'GNU'
+  #         # Download on an existing file
+  #         mecano.download
+  #           source: source
+  #           destination: destination
+  #         , (err, downloaded) ->
+  #           return next err if err
+  #           downloaded.should.eql 0
+  #           next()
+  
+  describe 'file', ->
+
+    they 'should deal with file protocol', (ssh, next) ->
+      source = "file://#{__filename}"
+      destination = "#{scratch}/download_test"
+      # Download a non existing file
+      mecano.download
+        ssh: ssh
+        source: source
+        destination: destination
+      , (err, downloaded) ->
+        return next err if err
+        downloaded.should.be.ok
+        fs.readFile ssh, destination, 'ascii', (err, content) ->
+          content.should.containEql 'yeah'
+          # Download on an existing file
+          mecano.download
+            ssh: ssh
+            source: source
+            destination: destination
+          , (err, downloaded) ->
+            return next err if err
+            downloaded.should.not.be.ok
+            next()
+    
+    they 'should default to file without protocol', (ssh, next) ->
+      source = "/#{__filename}"
+      destination = "#{scratch}/download_test"
+      # Download a non existing file
+      mecano.download
+        ssh: ssh
+        source: source
+        destination: destination
+      , (err, downloaded) ->
+        return next err if err
+        downloaded.should.be.ok
+        fs.readFile ssh, destination, 'ascii', (err, content) ->
+          content.should.containEql 'yeah'
+          # Download on an existing file
+          mecano.download
+            ssh: ssh
+            source: source
+            destination: destination
+          , (err, downloaded) ->
+            return next err if err
+            downloaded.should.not.be.ok
+            next()
 
   describe 'md5', ->
 

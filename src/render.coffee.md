@@ -61,23 +61,25 @@ require('mecano').render({
     username: 'a_user'
   }
 }, function(err, rendered){
-  console.log(err ? err.message : "File rendered: " + !!rendered);
+  console.log(err ? err.message : 'File rendered: ' + !!rendered);
 });
 ```
 
+## Source Code
+
     module.exports = (goptions, options, callback) ->
-      wrap arguments, (options, next) ->
+      wrap arguments, (options, callback) ->
         # Validate parameters
-        return next new Error 'Missing source or content' unless options.source or options.content
-        return next new Error 'Missing destination' unless options.destination
+        return callback new Error 'Missing source or content' unless options.source or options.content
+        return callback new Error 'Missing destination' unless options.destination
         # Start real work
         do_read_source = ->
           return do_write() unless options.source
           ssh = if options.local_source then null else options.ssh
           fs.exists ssh, options.source, (err, exists) ->
-            return next new Error "Invalid source, got #{JSON.stringify(options.source)}" unless exists
+            return callback new Error "Invalid source, got #{JSON.stringify(options.source)}" unless exists
             fs.readFile ssh, options.source, 'utf8', (err, content) ->
-              return next err if err
+              return callback err if err
               options.content = content
               do_write()
         do_write = ->
@@ -86,7 +88,7 @@ require('mecano').render({
             options.engine = 'nunjunks' if extension is '.j2'
           options.source = null
           write options, (err, written) ->
-            next err, written
+            callback err, written
         do_read_source()
 ## Dependencies
 

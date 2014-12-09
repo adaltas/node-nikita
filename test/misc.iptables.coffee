@@ -100,6 +100,7 @@ describe 'misc iptables', ->
       """).should.eql [
         { '-N': 'LOGGING', command: '-N', chain: 'LOGGING' }
       ]
+    
     it 'parse logs', -> #  --log-tcp-sequence --log-tcp-options --log-ip-options --log-uid
       iptables.parse("""
       -A LOGGING -j LOG --log-level 5 --log-prefix "IPTables-Dropped: "
@@ -164,8 +165,9 @@ describe 'misc iptables', ->
       -A FORWARD -j REJECT --reject-with icmp-host-prohibited
       """
       iptables.cmd(oldrules, iptables.normalize [
+        # Removing state
         chain: 'INPUT', jump: 'ACCEPT', dport: 88, '-p': 'tcp', '--comment': 'krb5kdc daemon'
-      ]).should.eql [ 'iptables -R INPUT 7 --protocol tcp -m tcp --dport 88 -m state --state NEW -m comment --comment "krb5kdc daemon" --jump ACCEPT' ]
+      ]).should.eql [ 'iptables -R INPUT 4 --protocol tcp -m tcp --dport 88 -m state --state NEW -m comment --comment "krb5kdc daemon" --jump ACCEPT' ]
 
     it 'compare minus sign (IPTable silently remove minus sign)', ->
       oldrules = iptables.parse """
@@ -273,6 +275,27 @@ describe 'misc iptables', ->
       iptables.cmd(oldrules, iptables.normalize [
         { chain: 'INPUT', jump: 'ACCEPT', source: "10.10.10.0/24", comment: 'Local Network', after: {'in-interface': 'lo', jump: 'ACCEPT' } }
       ]).should.eql []
+
+    it 'after insert and modify', ->
+      oldrules = iptables.parse """
+      -P INPUT ACCEPT
+      -P FORWARD ACCEPT
+      -P OUTPUT ACCEPT
+      -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT 
+      -A INPUT -p icmp -j ACCEPT 
+      -A INPUT -i lo -j ACCEPT
+      -A INPUT -p tcp -m tcp --dport 22 -j ACCEPT 
+      -A INPUT -j REJECT --reject-with icmp-host-prohibited 
+      -A FORWARD -j REJECT --reject-with icmp-host-prohibited
+      """
+      iptables.cmd(oldrules, iptables.normalize [
+        # Removing state
+        {chain: 'INPUT', jump: 'ACCEPT', dport: '22', '-p': 'tcp', '--comment': 'SSH'}
+        {chain: 'INPUT', jump: 'ACCEPT', dport: '88', '-p': 'tcp', '--comment': 'krb5kdc daemon'}
+      ]).should.eql [
+        'iptables -R INPUT 4 --protocol tcp -m tcp --dport 22 --jump ACCEPT -m comment --comment "SSH"'
+        'iptables -I INPUT 5 --jump ACCEPT --protocol tcp -m tcp --dport 88 -m comment --comment "krb5kdc daemon"'
+      ]
 
     it 'before insert new rule', ->
       oldrules = iptables.parse """

@@ -1,5 +1,5 @@
 
-# `krb5_delprinc(options, [goptions], callback`
+# `krb5_delprinc(options, [goptions], callback)`
 
 Remove a Kerberos principal and optionally its keytab.   
 
@@ -37,13 +37,15 @@ require('mecano').krb5_delrinc({
   kadmin_password: 'pass',
   kadmin_server: 'localhost'
 }, function(err, removed){
-  console.log(err ? err.message : "Principal removed: " + !!removed);
+  console.log(err ? err.message : 'Principal removed: ' + !!removed);
 });
 ```
 
+## Source Code
+
     module.exports = (goptions, options, callback) ->
-      wrap arguments, (options, next) ->
-        return next new Error 'Property principal is required' unless options.principal
+      wrap arguments, (options, callback) ->
+        return callback new Error 'Property principal is required' unless options.principal
         modified = false
         do_delprinc = ->
           execute
@@ -53,7 +55,7 @@ require('mecano').krb5_delrinc({
             stdout: options.stdout
             stderr: options.stderr
           , (err, _, stdout) ->
-            return next err if err
+            return callback err if err
             modified = true if -1 is stdout.indexOf 'does not exist'
             do_keytab()
         do_keytab = ->
@@ -62,11 +64,11 @@ require('mecano').krb5_delrinc({
             ssh: options.ssh
             destination: options.keytab
           , (err, removed) ->
-            return next err if err
+            return callback err if err
             modified++ if removed
             do_end()
         do_end = ->
-          next null, modified
+          callback null, modified
         do_delprinc()
 
 ## Dependencies

@@ -6,16 +6,18 @@ jsesc = require 'jsesc'
 module.exports = iptables = 
   # add_properties: ['target', 'protocol', 'dport', 'in-interface', 'out-interface', 'source', 'destination']
   add_properties: [
-    '--protocol', '--source', '---destination', '--jump', '--goto', '--in-interface', '--out-interface', '--fragment',
-    'tcp|--dport', 'udp|--dport'] # 
+    '--protocol', '--source', '---destination', '--jump', '--goto'
+    '--in-interface', '--out-interface', '--fragment'
+    'tcp|--source-port', 'tcp|--sport', 'tcp|--destination-port', 'tcp|--dport', 'tcp|--tcp-flags', 'tcp|--syn', 'tcp|--tcp-option'
+    'udp|--source-port', 'udp|--sport', 'udp|--destination-port', 'udp|--dport'
+  ] # 
   # modify_properties: ['state', 'comment']
   modify_properties: [
     '--set-counters', 
     '--log-level', '--log-prefix', '--log-tcp-sequence', '--log-tcp-options', # LOG
     '--log-ip-options', '--log-uid', # LOG
     'state|--state', 'comment|--comment'
-    'tcp|--source-port', 'tcp|--sport', 'tcp|--destination-port', 'tcp|--dport', 'tcp|--tcp-flags', 'tcp|--syn', 'tcp|--tcp-option'
-    'udp|--source-port', 'udp|--sport', 'udp|--destination-port', 'udp|--dport', 'limit|--limit']
+    'limit|--limit']
   commands_arguments: # Used to compute rulenum
     '-A': ['chain']
     '-D': ['chain']
@@ -105,7 +107,8 @@ module.exports = iptables =
           continue unless oldrule.command is '-A' and oldrule.chain is newrule.chain
           rulenum++
           if misc.object.equals newrule.after, oldrule, Object.keys newrule.after
-            newrule.rulenum = rulenum + 1
+            # newrule.rulenum = rulenum + 1
+            newrule.rulenum = oldrule.rulenum + 1
             # break
         delete newrule.after
       if newrule.before and not newrule.rulenum
@@ -114,7 +117,8 @@ module.exports = iptables =
           continue unless oldrule.command is '-A' and oldrule.chain is newrule.chain
           rulenum++
           if misc.object.equals newrule.before, oldrule, Object.keys newrule.before
-            newrule.rulenum = rulenum
+            # newrule.rulenum = rulenum
+            newrule.rulenum = oldrule.rulenum
             break
         delete newrule.before
       create = true
@@ -128,10 +132,12 @@ module.exports = iptables =
           # Check if we need to update
           if not misc.object.equals newrule, oldrule, iptables.modify_properties
             # Remove the command
-            for k, v of oldrule
-              oldrule[k] = null if iptables.commands_arguments[k]
-              oldrule.command = null
-            cmds.push iptables.cmd_replace misc.merge oldrule, newrule
+            baserule = misc.merge {}, oldrule
+            for k, v of baserule
+              baserule[k] = undefined if iptables.commands_arguments[k]
+              baserule.command = undefined
+              newrule.rulenum = undefined
+            cmds.push iptables.cmd_replace misc.merge baserule, newrule
         # Add properties are different
       if create
         cmds.push if newrule.command is '-A' then iptables.cmd_append newrule else iptables.cmd_insert newrule

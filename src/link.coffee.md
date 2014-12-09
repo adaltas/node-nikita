@@ -38,12 +38,14 @@ require('mecano').link({
   source: __dirname,
   destination: '/tmp/a_link'
 }, function(err, linked){
-  console.log(err ? err.message : "Link created: " + !!linked);
+  console.log(err ? err.message : 'Link created: ' + !!linked);
 });
 ```
 
+## Source Code
+
     module.exports = (goptions, options, callback) ->
-      wrap arguments, (options, next) ->
+      wrap arguments, (options, callback) ->
         linked = 0
         sym_exists = (options, callback) ->
           fs.exists options.ssh, options.destination, (err, exists) ->
@@ -77,8 +79,8 @@ require('mecano').link({
               return callback err if err
               linked++
               callback()
-        return next new Error "Missing source, got #{JSON.stringify(options.source)}" unless options.source
-        return next new Error "Missing destination, got #{JSON.stringify(options.destination)}" unless options.destination
+        return callback new Error "Missing source, got #{JSON.stringify(options.source)}" unless options.source
+        return callback new Error "Missing destination, got #{JSON.stringify(options.destination)}" unless options.destination
         options.mode ?= 0o0755
         do_mkdir = ->
           mkdir
@@ -87,7 +89,7 @@ require('mecano').link({
           , (err, created) ->
             # It is possible to have collision if to symlink
             # have the same parent directory
-            return next err if err and err.code isnt 'EEXIST'
+            return callback err if err and err.code isnt 'EEXIST'
             do_dispatch()
         do_dispatch = ->
           if options.exec
@@ -99,7 +101,7 @@ require('mecano').link({
               return do_end() if exists
               sym_create options, do_end
         do_end = ->
-          next null, linked
+          callback null, linked
         do_mkdir()
 
 ## Dependencies

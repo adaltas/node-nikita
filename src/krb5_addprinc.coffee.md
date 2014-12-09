@@ -1,5 +1,5 @@
 
-# `krb5_principal(options, [goptions], callback`
+# `krb5_principal(options, [goptions], callback)`
 
 Create a new Kerberos principal with a password or an optional keytab.   
 
@@ -45,14 +45,16 @@ require('mecano').krb5_addprinc({
   kadmin_password: 'pass',
   kadmin_server: 'localhost'
 }, function(err, modified){
-  console.log(err ? err.message : "Principal created or modified: " + !!modified);
+  console.log(err ? err.message : 'Principal created or modified: ' + !!modified);
 });
 ```
 
+## Source Code
+
     module.exports = (goptions, options, callback) ->
-      wrap arguments, (options, next) ->
-        return next new Error 'Property principal is required' unless options.principal
-        return next new Error 'Password or randkey missing' if not options.password and not options.randkey
+      wrap arguments, (options, callback) ->
+        return callback new Error 'Property principal is required' unless options.principal
+        return callback new Error 'Password or randkey missing' if not options.password and not options.randkey
         modified = false
         do_kadmin = ->
           # options.realm ?= options.principal.split('@')[1] # Break cross-realm principals
@@ -84,7 +86,7 @@ require('mecano').krb5_addprinc({
             stdout: options.stdout
             stderr: options.stderr
           , (err, _, stdout, stderr) ->
-            return next err if err
+            return callback err if err
             modified = true if -1 is stderr.indexOf 'already exists'
             do_keytab()
         do_keytab = ->
@@ -92,7 +94,7 @@ require('mecano').krb5_addprinc({
             modified = true if ktadded
             do_end()
         do_end = ->
-          next null, modified
+          callback null, modified
         do_kadmin()
 
 ## Dependencies

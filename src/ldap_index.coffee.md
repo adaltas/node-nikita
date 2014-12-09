@@ -1,5 +1,5 @@
 
-# `ldap_index(options, [goptions], callback`
+# `ldap_index(options, [goptions], callback)`
 
 Create new [index](index) for the OpenLDAP server.   
 
@@ -32,12 +32,14 @@ require('mecano').ldap_index({
     krbPrincipalName: 'sub,eq'
   }
 }, function(err, modified){
-  console.log(err ? err.message : "Index modified: " + !!modified);
+  console.log(err ? err.message : 'Index modified: ' + !!modified);
 });
 ```
 
+## Source Code
+
     module.exports = (goptions, options, callback) ->
-      wrap arguments, (options, next) ->
+      wrap arguments, (options, callback) ->
         modified = false
         do_getdn = ->
           return do_get_indexes() if options.hdb_dn
@@ -56,7 +58,7 @@ require('mecano').ldap_index({
             stdout: options.stdout
             stderr: options.stderr
           , (err, _, hdb_dn) ->
-            return next err if err
+            return callback err if err
             options.hdb_dn = hdb_dn.trim()
             do_get_indexes()
         do_get_indexes = ->
@@ -72,7 +74,7 @@ require('mecano').ldap_index({
             stdout: options.stdout
             stderr: options.stderr
           , (err, _, stdout) ->
-            return next err if err
+            return callback err if err
             indexes = {}
             for line in string.lines stdout
               continue unless match = /^olcDbIndex:\s+(.*)\s+(.*)/.exec line
@@ -116,11 +118,11 @@ require('mecano').ldap_index({
             stdout: options.stdout
             stderr: options.stderr
           , (err, _, stdout) ->
-            return next err if err
+            return callback err if err
             modified = true
             do_end()
         do_end = (err) ->
-          next err, modified
+          callback err, modified
         do_getdn()
 
 ## Dependencies
