@@ -33,3 +33,6 @@ describe 'wrap', ->
       goptions.parallel.should.equal 1
       options.should.eql option_a: 'a', option_b: 'b'
       callback.should.be.a.Function
+
+  describe 'callback context', ->
+    
