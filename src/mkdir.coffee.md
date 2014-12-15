@@ -42,7 +42,7 @@ require('mecano').mkdir('./some/dir', function(err, created){
 });
 ```
 
-## Advance usage
+## Advanced usage
 
 ```js
 require('mecano').mkdir({
