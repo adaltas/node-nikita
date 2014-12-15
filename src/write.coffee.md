@@ -79,7 +79,7 @@ information is provided in two ways:
 
 ## More about the `append` option
 
-The `append` option allows more advance usages. If `append` is "null", it will
+The `append` option allows more advanced usages. If `append` is "null", it will
 add the value of the "replace" option at the end of the file when no match
 is found and when the value is a string.   
 
