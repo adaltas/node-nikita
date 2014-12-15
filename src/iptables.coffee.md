@@ -105,7 +105,7 @@ require('mecano').iptables({
           return callback() unless cmd.length
           options.log? "Mecano `iptables`: modify rules"
           execute
-            cmd: "#{cmd.join '; '}; "
+            cmd: "#{cmd.join '; '}; service iptables save;"
             ssh: options.ssh
             log: options.log
             trap_on_error: true
