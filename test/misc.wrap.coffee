@@ -11,17 +11,17 @@ describe 'wrap', ->
         option_a: 'a', option_b: 'b'
         -> #do sth
       ]
-      goptions.should.eql parallel: true
+      goptions.should.eql parallel: 1
       options.should.eql option_a: 'a', option_b: 'b'
       callback.should.be.a.Function
 
     it 'accept 3 arguments', ->
       [options, goptions, callback] = wrap.args [
         {option_a: 'a', option_b: 'b'}
-        {parallel: 1}
+        {parallel: 2}
         -> #do sth
       ]
-      goptions.should.eql parallel: 1
+      goptions.should.eql parallel: 2
       options.should.eql option_a: 'a', option_b: 'b'
       callback.should.be.a.Function
 
@@ -29,8 +29,8 @@ describe 'wrap', ->
       [options, goptions, callback] = wrap.args [
         option_a: 'a', option_b: 'b'
         -> #do sth
-      ], parallel: 1
-      goptions.parallel.should.equal 1
+      ], parallel: 2
+      goptions.parallel.should.equal 2
       options.should.eql option_a: 'a', option_b: 'b'
       callback.should.be.a.Function
 
