@@ -99,20 +99,17 @@ mecano.execute({
         options.log? "Mecano `execute`: #{options.cmd}"
         child = exec options
         stdout = []; stderr = []
-        if options.stdout
-          child.stdout.pipe options.stdout, end: false
+        child.stdout.pipe options.stdout, end: false if options.stdout
+        child.stderr.pipe options.stderr, end: false if options.stderr
         if stds
           child.stdout.on 'data', (data) ->
             if Array.isArray stdout # A string on exit
               stdout.push data
-            else console.log 'stdout coming'
-        if options.stderr
-          child.stderr.pipe options.stderr, end: false
-        if stds
+            else console.log 'stdout coming after child exit'
           child.stderr.on 'data', (data) ->
             if Array.isArray stderr # A string on exit
               stderr.push data
-            else console.log 'stderr coming'
+            else console.log 'stderr coming after child exit'
         child.on "exit", (code) ->
           # Givent some time because the "exit" event is sometimes
           # called before the "stdout" "data" event when runing
