@@ -120,12 +120,12 @@ describe 'execute', ->
       mecano.execute
         ssh: ssh
         cmd: """
-        ls -l /does/not/exist
+        sh -c '>&2 echo "Some Error"; exit 2'
         """
       , (err, _, stdout, stderr) ->
-        err.message.should.eql 'Invalid Exit Code: 1'
+        err.message.should.eql 'Invalid Exit Code: 2'
         stdout.should.eql ''
-        stderr.should.eql 'ls: /does/not/exist: No such file or directory\n'
+        stderr.should.eql 'Some Error\n'
         next()
 
 
@@ -133,7 +133,7 @@ describe 'execute', ->
       mecano.execute
         ssh: ssh
         cmd: """
-        ls -l /does/not/exist
+        sh -c '>&2 echo "exit 2'
         echo 'ok'
         """
       , (err) ->
@@ -141,13 +141,13 @@ describe 'execute', ->
         mecano.execute
           ssh: ssh
           cmd: """
-          ls -l /does/not/exist
+          sh -c '>&2 echo "exit 2'
           echo 'ok'
           """
           trap_on_error: true
         , (err) ->
           err.should.be.an.Error
-          err.code.should.eql 1
+          err.code.should.eql 2
           next()
 
 
