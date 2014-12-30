@@ -31,7 +31,7 @@ ldap.acl
           olcAccesses = for olcAccess, i in olcAccesses
             match = /^\{(\d+)\}to\s+(.*?)(\s*by\s+|$)(.*)$/.exec olcAccess
             throw Error 'Invalid olcAccess entry' unless match
-            index: match[1]
+            index: parseInt match[1], 10
             to: match[2]
             by: match[4].split /\s+by\s+/
           if isArray then olcAccesses else olcAccesses[0]

@@ -4,7 +4,7 @@ ldap = require "../#{lib}/misc/ldap"
 test = require './test'
 path = require 'path'
 
-describe 'misc acl', ->
+describe 'misc ldap acl', ->
 
   it 'parse', ->
     ldap.acl
