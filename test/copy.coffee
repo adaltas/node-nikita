@@ -213,7 +213,7 @@ describe 'copy', ->
         return next err if err
         glob ssh, "#{scratch}/a_copy/**", dot: true, (err, files) ->
           return next err if err
-          files.should.eql [
+          files.sort().should.eql [
             '/tmp/mecano-test/a_copy',
             '/tmp/mecano-test/a_copy/.a_hidden_file',
             '/tmp/mecano-test/a_copy/a_file'
