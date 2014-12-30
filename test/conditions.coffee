@@ -129,21 +129,21 @@ describe 'conditions', ->
           next()
         () -> false.should.be.ok
 
-    they 'should succeed on `succeed` callback', (ssh, next) ->
+    they 'function succeed on `succeed` callback', (ssh, next) ->
       conditions.not_if
         ssh: ssh
         not_if: (options, callback) -> callback null, true
         next
         () -> false.should.be.ok
 
-    they 'should fail on `failed` callback', (ssh, next) ->
+    they 'function fail on `failed` callback', (ssh, next) ->
       conditions.not_if
         ssh: ssh
         not_if: (options, callback) -> callback null, false
         () -> false.should.be.ok
         next
 
-    they 'should pass error object on `failed` callback', (ssh, next) ->
+    they 'function pass error object on `failed` callback', (ssh, next) ->
       conditions.not_if
         ssh: ssh
         not_if: (options, callback) -> callback new Error 'cool'
