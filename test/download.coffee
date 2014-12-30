@@ -9,9 +9,10 @@ fs = require 'ssh2-fs'
 
 describe 'download', ->
 
+  scratch = test.scratch @
+
   describe 'http', ->
 
-    scratch = test.scratch @
     server = null
 
     before (next) ->
@@ -65,15 +66,15 @@ describe 'download', ->
         downloaded.should.be.ok
         fs.readFile ssh, destination, 'ascii', (err, content) ->
           return next err if err
-          content.should.equal 'okay 0'
-          # Download on an existing file
+          content.should.equal 'okay'
+          # Download on an existing file with same content
           mecano.download
             ssh: ssh
             source: source
             destination: destination
           , (err, downloaded) ->
             return next err if err
-            downloaded.should.be.ok
+            downloaded.should.be.False
             next()
 
     they 'should chmod', (ssh, next) ->
