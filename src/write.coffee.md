@@ -276,18 +276,19 @@ require('mecano').write({
               do_render()
           exists()
         do_render = ->
-          return do_replace_partial() unless options.context?
+          return do_skip_empty_lines() unless options.context?
           options.log? "Mecano `write`: rendering with #{options.engine}"
           try
             switch options.engine
               when 'nunjunks' then content = nunjucks.renderString content.toString(), options.context
               when 'eco' then content = eco.render content.toString(), options.context
               else return callback Error "Invalid engine: #{options.engine}"
-            if options.skip_empty_lines?
-              content = content.replace(/(\r\n|[\n\r\u0085\u2028\u2029])\s*(\r\n|[\n\r\u0085\u2028\u2029])/g, "$1")
           catch err
-            err = new Error err if typeof err is 'string'
-            return callback err
+            return callback if typeof err is 'string' then Error(err) else err
+          do_skip_empty_lines()
+        do_skip_empty_lines = ->
+          return do_replace_partial() unless options.skip_empty_lines?
+          content = content.replace /(\r\n|[\n\r\u0085\u2028\u2029])\s*(\r\n|[\n\r\u0085\u2028\u2029])/g, "$1"
           do_replace_partial()
         do_replace_partial = ->
           return do_eof() unless write.length
