@@ -280,7 +280,7 @@ require('mecano').write({
           options.log? "Mecano `write`: rendering with #{options.engine}"
           try
             switch options.engine
-              when 'nunjunks' then content = nunjucks.renderString content.toString(), options.context
+              when 'nunjunks' then content = (new nunjucks.Environment()).renderString content.toString(), options.context
               when 'eco' then content = eco.render content.toString(), options.context
               else return callback Error "Invalid engine: #{options.engine}"
           catch err
@@ -444,7 +444,7 @@ require('mecano').write({
     path = require 'path'
     each = require 'each'
     eco = require 'eco'
-    nunjucks = require 'nunjucks'
+    nunjucks = require 'nunjucks/src/environment'
     pad = require 'pad'
     diff = require 'diff'
     quote = require 'regexp-quote'
