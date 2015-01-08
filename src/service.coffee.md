@@ -220,8 +220,6 @@ require('mecano').service([{
             do_started()
         do_started = ->
           return do_finish() unless options.action
-          # return do_action() if ['start', 'stop'].indexOf(options.action) is -1
-          # return do_action() if ['restart'].indexOf(options.action) isnt -1
           options.log? "Mecano `service`: check if started"
           execute
             ssh: options.ssh
@@ -233,18 +231,17 @@ require('mecano').service([{
           , (err, started) ->
             return callback err if err
             if started
-              # return do_action() unless options.action is 'start'
-              return do_action() if 'stop' in options.action or 'restart' in options.action
+              return do_action 'stop' if 'stop' in options.action
+              return do_action 'restart' if 'restart' in options.action
             else
-              # return do_action() unless options.action is 'stop'
-              return do_action() if 'start' in options.action
+              return do_action 'start' if 'start' in options.action
             do_finish()
-        do_action = ->
+        do_action = (action) ->
           return do_finish() unless options.action
-          options.log? "Mecano `service`: #{options.action} service"
+          options.log? "Mecano `service`: #{action} service"
           execute
             ssh: options.ssh
-            cmd: "service #{srvname} #{options.action}"
+            cmd: "service #{srvname} #{action}"
             log: options.log
             stdout: options.stdout
             stderr: options.stderr
