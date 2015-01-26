@@ -508,7 +508,7 @@ misc = module.exports =
         else if match = line.match /^\s*(.+?)\s*$/
           current[match[1]] = null
       data
-    stringify: (obj, section, options) ->
+    stringify: (obj, section, options={}) ->
       if arguments.length is 2
         options = section
         section = undefined
