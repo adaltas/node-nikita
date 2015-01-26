@@ -97,7 +97,7 @@ require('mecano').mkdir({
                 if err
                   return callback err
                 else # a file or symlink exists at this location
-                  return callback new Error "Not a directory: #{JSON.encode(directory)}"
+                  return callback new Error "Not a directory: #{JSON.stringify(directory)}"
             .on 'both', (err) ->
               return callback err if err
           do_create = (directories) ->
