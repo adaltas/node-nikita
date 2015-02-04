@@ -11,11 +11,12 @@ Change the ownership of a file or a directory.
     Group name or id who owns the file.   
 *   `log`   
     Function called with a log related messages.   
-*   `mode`   
-    Permissions of the file or the parent directory.   
 *   `ssh` (object|ssh2)   
     Run the action on a remote server using SSH, an ssh2 instance or an
     configuration object used to initialize the SSH connection.   
+*   `stat` (Stat instance, optional)   
+    Pass the Stat object relative to the destination file or directory, to be
+    used as an optimization.   
 *   `uid`   
     User name or id who owns the file.   
 
@@ -43,17 +44,23 @@ require('mecano').chown({
     module.exports = (options, callback) ->
       wrap arguments, (options, callback) ->
         # Validate parameters
-        {ssh, uid, gid} = options
-        return callback new Error "Missing destination: #{options.destination}" unless options.destination
-        return callback() unless uid? and gid?
-        options.log? "Mecano `chown`: stat #{options.destination}"
-        fs.stat ssh, options.destination, (err, stat) ->
-          return callback err if err
-          return callback() if stat.uid is uid and stat.gid is gid
-          options.log? "Mecano `chown`: change uid from #{stat.uid} to #{uid}" if stat.uid isnt uid
-          options.log? "Mecano `chown`: change gid from #{stat.gid} to #{gid}" if stat.gid isnt gid
-          fs.chown ssh, options.destination, uid, gid, (err) ->
+        return callback Error "Missing destination option" unless options.destination?
+        return callback Error "Missing one of uid or gid option" unless options.uid? and options.gid?
+        do_stat = ->
+          return do_compare options.stat if options.stat
+          options.log? "Mecano `chown`: stat #{options.destination}"
+          fs.stat options.ssh, options.destination, (err, stat) ->
+            return callback err if err
+            do_compare stat
+        do_compare = (stat) ->
+            return callback() if stat.uid is options.uid and stat.gid is options.gid
+            options.log? "Mecano `chown`: change uid from #{stat.uid} to #{options.uid}" if stat.uid isnt options.uid
+            options.log? "Mecano `chown`: change gid from #{stat.gid} to #{options.gid}" if stat.gid isnt options.gid
+            do_chown()
+        do_chown = ->
+          fs.chown options.ssh, options.destination, options.uid, options.gid, (err) ->
             callback err, true
+        do_stat()
 
 ## Dependencies
 
