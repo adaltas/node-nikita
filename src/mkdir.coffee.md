@@ -97,7 +97,7 @@ require('mecano').mkdir({
                 if err
                   return callback err
                 else # a file or symlink exists at this location
-                  return callback new Error "Not a directory: #{JSON.stringify(directory)}"
+                  return callback new Error "Not a directory: #{JSON.stringify directory}"
             .on 'both', (err) ->
               return callback err if err
           do_create = (directories) ->
@@ -107,7 +107,7 @@ require('mecano').mkdir({
               # eg /\${/ on './var/cache/${user}' creates './var/cache/'
               if options.exclude? and options.exclude instanceof RegExp
                 return callback() if options.exclude.test path.basename directory
-              options.log? "Mecano `mkdir`: new directory #{directory}" unless directory is options.directory
+              options.log? "Mecano `mkdir`: #{JSON.stringify directory} created" unless directory is options.directory
               fs.mkdir options.ssh, directory, options, (err) ->
                 return callback err if err
                 modified = true
@@ -116,21 +116,27 @@ require('mecano').mkdir({
               return callback err if err
               callback()
           do_update = (stat) ->
-            options.log? "Mecano `mkdir`: directory exist"
+            options.log? "Mecano `mkdir`: #{JSON.stringify directory} exists"
             do_chown = ->
               chown
                 ssh: options.ssh
                 destination: directory
                 uid: options.uid
                 gid: options.gid
+                log: options.log
               , (err, owned) ->
                 modified = true if owned
                 do_chmod()
             do_chmod = ->
               return callback() unless options.mode
               return callback() if misc.mode.compare stat.mode, options.mode
-              fs.chmod options.ssh, directory, options.mode, (err) ->
-                modified = true
+              chmod
+                ssh: options.ssh
+                destination: directory
+                mode: options.mode
+                log: options.log
+              , (err, moded) ->
+                modified = true if moded
                 callback()
             do_chown()
           do_stats()
@@ -143,6 +149,7 @@ require('mecano').mkdir({
     path = require 'path'
     each = require 'each'
     chown = require './chown'
+    chmod = require './chmod'
     misc = require './misc'
     wrap = require './misc/wrap'
 
