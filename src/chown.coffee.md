@@ -1,5 +1,5 @@
 
-# `chmod(options, [goptions], callback)`
+# `chown(options, [goptions], callback)`
 
 Change the ownership of a file or a directory.
 
