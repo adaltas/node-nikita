@@ -47,7 +47,7 @@ require('mecano').extract({
 
 ## Source Code
 
-    module.exports = (goptions, options, callback) ->
+    module.exports = (options, callback) ->
       wrap arguments, (options, callback) ->
         # Validate parameters
         return callback new Error "Missing source: #{options.source}" unless options.source

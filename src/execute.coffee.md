@@ -82,7 +82,7 @@ mecano.execute({
 
 ## Source Code
 
-    module.exports = (goptions, options, callback) ->
+    module.exports = (options, callback) ->
       callback = arguments[arguments.length-1]
       callback = null unless typeof callback is 'function'
       stds = if callback then callback.length > 2 else false

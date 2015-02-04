@@ -69,7 +69,7 @@ require('mecano').service([{
 
 ## Source Code
 
-    module.exports = (goptions, options, callback) ->
+    module.exports = (options, callback) ->
       wrap arguments, (options, callback) ->
         installed = updates = null
         # Validate parameters

@@ -86,7 +86,7 @@ require('mecano').iptables({
 
 ## Source Code
 
-    module.exports = (goptions, options, callback) ->
+    module.exports = (options, callback) ->
       wrap arguments, (options, callback) ->
         options.log? "Mecano `iptables`: list existing rules"
         execute

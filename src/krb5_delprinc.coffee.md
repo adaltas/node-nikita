@@ -43,7 +43,7 @@ require('mecano').krb5_delrinc({
 
 ## Source Code
 
-    module.exports = (goptions, options, callback) ->
+    module.exports = (options, callback) ->
       wrap arguments, (options, callback) ->
         return callback new Error 'Property principal is required' unless options.principal
         modified = false

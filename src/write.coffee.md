@@ -174,7 +174,7 @@ require('mecano').write({
 
 ## Source Code
 
-    module.exports = (goptions, options, callback) ->
+    module.exports = (options, callback) ->
       wrap arguments, (options, callback) ->
         modified = false
         # Validate parameters
@@ -234,6 +234,7 @@ require('mecano').write({
               return callback err if err
               content = src
               do_read_destination()
+        destinationStat = null
         do_read_destination = ->
           # no need to test changes if destination is a callback
           return do_render() if typeof options.destination is 'function'
@@ -243,6 +244,7 @@ require('mecano').write({
             fs.stat options.ssh, options.destination, (err, stat) ->
               return do_mkdir() if err?.code is 'ENOENT'
               return callback err if err
+              destinationStat = stat
               if stat.isDirectory()
                 options.destination = "#{options.destination}/#{path.basename options.source}"
                 # Destination is the parent directory, let's see if the file exist inside
@@ -251,6 +253,7 @@ require('mecano').write({
                   return do_render() if err?.code is 'ENOENT'
                   return callback err if err
                   return callback new Error "Destination is not a file: #{options.destination}" unless stat.isFile()
+                  destinationStat = stat
                   do_read()
               else
                 do_read()
@@ -386,9 +389,6 @@ require('mecano').write({
           backup = options.backup
           backup = ".#{Date.now()}" if backup is true
           backup = "#{options.destination}#{backup}"
-          # fs.writeFile options.ssh, backup, content, (err) ->
-          #   return callback err if err
-          #   do_write()
           copy
             ssh: options.ssh
             source: options.destination
@@ -415,6 +415,7 @@ require('mecano').write({
           chown
             ssh: options.ssh
             destination: options.destination
+            stat: destinationStat
             uid: options.uid
             gid: options.gid
             log: options.log
@@ -428,6 +429,7 @@ require('mecano').write({
           chmod
             ssh: options.ssh
             destination: options.destination
+            stat: destinationStat
             mode: options.mode
             log: options.log
           , (err, chmoded) ->

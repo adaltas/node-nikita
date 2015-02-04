@@ -44,7 +44,7 @@ require('mecano').link({
 
 ## Source Code
 
-    module.exports = (goptions, options, callback) ->
+    module.exports = (options, callback) ->
       wrap arguments, (options, callback) ->
         linked = 0
         sym_exists = (options, callback) ->

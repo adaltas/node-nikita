@@ -44,7 +44,7 @@ require('mecano').extract({
 
 ## Source Code
 
-    module.exports = (goptions, options, callback) ->
+    module.exports = (options, callback) ->
       wrap arguments, (options, callback) ->
         # Sanitize parameters
         options.revision ?= 'HEAD'

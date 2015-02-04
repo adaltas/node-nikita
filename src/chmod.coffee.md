@@ -35,7 +35,7 @@ require('mecano').chmod({
 
 ## Source Code
 
-    module.exports = (goptions, options, callback) ->
+    module.exports = (options, callback) ->
       wrap arguments, (options, callback) ->
         # Validate parameters
         {ssh, mode} = options

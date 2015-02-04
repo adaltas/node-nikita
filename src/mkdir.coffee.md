@@ -58,7 +58,7 @@ require('mecano').mkdir({
 
 ## Source Code
 
-    module.exports = (goptions, options, callback) ->
+    module.exports = (options, callback) ->
       wrap arguments, (options, callback) ->
         modified = false
         # Validate parameters
@@ -121,6 +121,7 @@ require('mecano').mkdir({
               chown
                 ssh: options.ssh
                 destination: directory
+                stat: stat
                 uid: options.uid
                 gid: options.gid
                 log: options.log
@@ -129,10 +130,10 @@ require('mecano').mkdir({
                 do_chmod()
             do_chmod = ->
               return callback() unless options.mode
-              return callback() if misc.mode.compare stat.mode, options.mode
               chmod
                 ssh: options.ssh
                 destination: directory
+                stat: stat
                 mode: options.mode
                 log: options.log
               , (err, moded) ->

@@ -38,7 +38,7 @@ require('mecano').ldap_index({
 
 ## Source Code
 
-    module.exports = (goptions, options, callback) ->
+    module.exports = (options, callback) ->
       wrap arguments, (options, callback) ->
         modified = false
         do_getdn = ->

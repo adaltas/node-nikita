@@ -66,7 +66,7 @@ mecano.download
 
 ## Source Code
 
-    module.exports = (goptions, options, callback) ->
+    module.exports = (options, callback) ->
       wrap arguments, (options, callback) ->
         # Validate parameters
         {destination, source, md5sum} = options

@@ -49,7 +49,7 @@ The result of the above action can be viewed with the command
 
 ## Source Code
 
-    module.exports = (goptions, options, callback) ->
+    module.exports = (options, callback) ->
       wrap arguments, (options, callback) ->
         return callback new Error "Option 'name' is required" unless options.name
         options.system ?= false

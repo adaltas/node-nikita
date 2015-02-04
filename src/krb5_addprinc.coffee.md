@@ -51,7 +51,7 @@ require('mecano').krb5_addprinc({
 
 ## Source Code
 
-    module.exports = (goptions, options, callback) ->
+    module.exports = (options, callback) ->
       wrap arguments, (options, callback) ->
         return callback new Error 'Property principal is required' unless options.principal
         return callback new Error 'Password or randkey missing' if not options.password and not options.randkey

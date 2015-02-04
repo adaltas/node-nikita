@@ -65,7 +65,7 @@ require('mecano').render({
 
 ## Source Code
 
-    module.exports = (goptions, options, callback) ->
+    module.exports = (options, callback) ->
       wrap arguments, (options, callback) ->
         return callback Error "Required \"source\" option" unless options.source
         return callback Error "Required \"destination\" option" unless options.destination
