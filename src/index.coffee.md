@@ -14,6 +14,7 @@ functions share a common API with flexible options.
 Here's the list of available functions:
 
     mecano = module.exports =
+      backup: require './backup'
       chown: require './chown'
       chmod: require './chmod'
       copy: require './copy'
