@@ -43,15 +43,16 @@ require('mecano').chmod({
         # Validate parameters
         return callback Error "Missing destination: #{options.destination}" unless options.destination
         return callback Error "Missing mode: #{options.mode}" unless options.mode
+        # options.log? "Mecano `chmod` [DEBUG]"
         do_stat = ->
           return do_compare options.stat if options.stat
-          options.log? "Mecano `chmod`: stat \"#{options.destination}\""
+          options.log? "Mecano `chmod`: stat \"#{options.destination}\" [DEBUG]"
           fs.stat options.ssh, options.destination, (err, stat) ->
             return callback err if err
             do_compare stat
         do_compare = (stat) ->
           return callback() if misc.mode.compare stat.mode, options.mode
-          options.log? "Mecano `chmod`: change mode form #{stat.mode} to #{options.mode}"
+          options.log? "Mecano `chmod`: change mode from #{stat.mode} to #{options.mode} [INFO]"
           do_chmod()
         do_chmod = ->
           fs.chmod options.ssh, options.destination, options.mode, (err) ->
