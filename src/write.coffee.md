@@ -348,7 +348,6 @@ require('mecano').write({
           do_eof()
         do_eof = ->
           return do_diff() unless options.eof?
-          options.log? "Mecano `write`: add eof"
           if options.eof is true
             for char, i in content
               if char is '\r'
@@ -358,11 +357,13 @@ require('mecano').write({
                 options.eof = char
                 break;
             options.eof = '\n' if options.eof is true
-          content += options.eof unless string.endsWith content, options.eof
+          unless string.endsWith content, options.eof
+            options.log? "Mecano `write`: add eof [INFO]"
+            content += options.eof
           do_diff()
         do_diff = ->
           return do_ownership() if destinationHash is string.hash content
-          options.log? "Mecano `write`: file content has changed"
+          options.log? "Mecano `write`: file content has changed [INFO]"
           if options.diff
             lines = diff.diffLines destination, content
             options.diff lines if typeof options.diff is 'function'
@@ -385,7 +386,7 @@ require('mecano').write({
           do_backup()
         do_backup = ->
           return do_write() if not options.backup or not destinationHash
-          options.log? "Mecano `write`: create backup"
+          options.log? "Mecano `write`: create backup [INFO]"
           backup = options.backup
           backup = ".#{Date.now()}" if backup is true
           backup = "#{options.destination}#{backup}"
@@ -398,11 +399,11 @@ require('mecano').write({
             do_write()
         do_write = ->
           if typeof options.destination is 'function'
-            options.log? "Mecano `write`: write destination with user function"
+            options.log? "Mecano `write`: write destination with user function [INFO]"
             options.destination content
             do_end()
           else
-            options.log? "Mecano `write`: write destination"
+            options.log? "Mecano `write`: write destination [INFO]"
             options.flags ?= 'a' if append
             # Ownership and permission are also handled
             fs.writeFile options.ssh, options.destination, content, options, (err) ->
@@ -411,7 +412,7 @@ require('mecano').write({
               do_end()
         do_ownership = ->
           return do_permissions() unless options.uid? and options.gid?
-          options.log? "Mecano `write`: change ownership"
+          options.log? "Mecano `write`: change ownership [DEBUG]"
           chown
             ssh: options.ssh
             destination: options.destination
@@ -425,7 +426,7 @@ require('mecano').write({
             do_permissions()
         do_permissions = ->
           return do_end() unless options.mode?
-          options.log? "Mecano `write`: change permissions"
+          options.log? "Mecano `write`: change permissions [DEBUG]"
           chmod
             ssh: options.ssh
             destination: options.destination
