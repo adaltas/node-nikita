@@ -14,6 +14,7 @@
     "url": "http://github.com/wdavidw/node-mecano/issues"
   },
   "dependencies": {
+    "backmeup": ">=0.0.1",
     "diff": ">=1.2.1",
     "each": ">=0.4.9",
     "eco": ">=1.1.0-rc-3",
