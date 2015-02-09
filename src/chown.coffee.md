@@ -46,16 +46,17 @@ require('mecano').chown({
         # Validate parameters
         return callback Error "Missing destination option" unless options.destination?
         return callback Error "Missing one of uid or gid option" unless options.uid? and options.gid?
+        # options.log? "Mecano `chown` [DEBUG]"
         do_stat = ->
           return do_compare options.stat if options.stat
-          options.log? "Mecano `chown`: stat #{options.destination}"
+          options.log? "Mecano `chown`: stat #{options.destination} [DEBUG]"
           fs.stat options.ssh, options.destination, (err, stat) ->
             return callback err if err
             do_compare stat
         do_compare = (stat) ->
             return callback() if stat.uid is options.uid and stat.gid is options.gid
-            options.log? "Mecano `chown`: change uid from #{stat.uid} to #{options.uid}" if stat.uid isnt options.uid
-            options.log? "Mecano `chown`: change gid from #{stat.gid} to #{options.gid}" if stat.gid isnt options.gid
+            options.log? "Mecano `chown`: change uid from #{stat.uid} to #{options.uid} [INFO]" if stat.uid isnt options.uid
+            options.log? "Mecano `chown`: change gid from #{stat.gid} to #{options.gid} [INFO]" if stat.gid isnt options.gid
             do_chown()
         do_chown = ->
           fs.chown options.ssh, options.destination, options.uid, options.gid, (err) ->
