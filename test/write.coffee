@@ -972,9 +972,9 @@ describe 'write', ->
           diff: (diff) ->
             diffcalled = true
             diff.should.eql [
-              { value: 'Testing diff\n', added: undefined, removed: undefined }
-              { value: 'new text', added: true, removed: undefined }
-              { value: 'original text', added: undefined, removed: true }
+              { value: 'Testing diff\n', count: 1 }
+              { value: 'new text', count: 1, added: true, removed: undefined }
+              { value: 'original text', count: 1, added: undefined, removed: true }
             ]
           stdout: write: (d) -> data.push d
         , (err) ->
