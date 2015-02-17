@@ -83,10 +83,11 @@ mecano.execute({
 ## Source Code
 
     module.exports = (options, callback) ->
-      callback = arguments[arguments.length-1]
-      callback = null unless typeof callback is 'function'
-      stds = if callback then callback.length > 2 else false
-      wrap arguments, (options, callback) ->
+      # callback = arguments[arguments.length-1]
+      # callback = null unless typeof callback is 'function'
+      # stds = if callback then callback.length > 2 else false
+      stds = callback.length > 2 or options.user_args
+      wrap @, arguments, (options, callback) ->
         # Validate parameters
         options = { cmd: options } if typeof options is 'string'
         return callback new Error "Missing cmd: #{options.cmd}" unless options.cmd?
@@ -111,9 +112,9 @@ mecano.execute({
               stderr.push data
             else console.log 'stderr coming after child exit'
         child.on "exit", (code) ->
-          # Givent some time because the "exit" event is sometimes
+          # Give it some time because the "exit" event is sometimes
           # called before the "stdout" "data" event when runing
-          # `make test`
+          # `npm test`
           setTimeout ->
             stdout = if stds then stdout.join('') else undefined
             stderr = if stds then stderr.join('') else undefined

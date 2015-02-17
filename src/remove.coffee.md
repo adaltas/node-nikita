@@ -59,7 +59,7 @@ require('mecano').remove([
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap arguments, (options, callback) ->
+      wrap @, arguments, (options, callback) ->
         # Validate parameters
         options = source: options if typeof options is 'string'
         options.source ?= options.destination

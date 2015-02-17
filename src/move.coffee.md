@@ -43,7 +43,7 @@ require('mecano').move({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap arguments, (options, callback) ->
+      wrap @, arguments, (options, callback) ->
         do_exists = ->
           options.log? "Mecano `move`: Stat destination"
           fs.stat options.ssh, options.destination, (err, stat) ->

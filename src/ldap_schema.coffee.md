@@ -46,7 +46,7 @@ require('mecano').ldap_schema({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap arguments, (options, callback) ->
+      wrap @, arguments, (options, callback) ->
         return callback new Error "Missing name" unless options.name
         return callback new Error "Missing schema" unless options.schema
         options.schema = options.schema.trim()

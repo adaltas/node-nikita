@@ -42,7 +42,7 @@ require('mecano').chown({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap arguments, (options, callback) ->
+      wrap @, arguments, (options, callback) ->
         # Validate parameters
         return callback Error "Missing destination option" unless options.destination?
         return callback Error "Missing one of uid or gid option" unless options.uid? and options.gid?

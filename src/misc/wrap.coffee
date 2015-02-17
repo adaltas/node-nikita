@@ -5,7 +5,6 @@ tilde = require 'tilde-expansion'
 connect = require 'ssh2-connect'
 misc = require './index'
 conditions = require './conditions'
-child = require './child'
 
 ###
 Responsibilities:
@@ -19,13 +18,12 @@ Responsibilities:
 *   Pass user arguments
 ###
 
-exports = module.exports = (args, handler) ->
+exports = module.exports = (context, args, handler) ->
   # Retrieve arguments
   [options, goptions, callback] = exports.args args
   isArray = Array.isArray options
   # Pass user arguments
   user_args = []
-  result = child()
   # Handling modification count
   modified = 0
   finish = (err) ->
@@ -33,7 +31,6 @@ exports = module.exports = (args, handler) ->
       user_args[i] = arg[0]
     modified = !!modified #if goptions.boolmod
     callback err, modified, user_args... if callback
-    result.end err, modified, user_args...
   # Normalize options
   exports.options options, (err, options) ->
     return finish err if err
@@ -52,7 +49,8 @@ exports = module.exports = (args, handler) ->
     .on 'both', (err) ->
       finish err
   # Return a Mecano Child instance
-  result
+  # args.callee
+  context
 
 exports.args = (args, overwrite_goptions={}) ->
   if args.length is 2 and typeof args[1] is 'function'
@@ -61,9 +59,7 @@ exports.args = (args, overwrite_goptions={}) ->
   else if args.length is 1
     args[1] = {}
     args[2] = null
-  # Object.keys args[1]
   args[1].parallel ?= 1
-  # args[1] = misc.merge parallel: 1, args[1], overwrite_goptions
   args
 
 

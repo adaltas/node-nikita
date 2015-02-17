@@ -175,7 +175,7 @@ require('mecano').write({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap arguments, (options, callback) ->
+      wrap @, arguments, (options, callback) ->
         modified = false
         # Validate parameters
         return callback new Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?.length

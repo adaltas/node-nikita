@@ -67,7 +67,7 @@ mecano.download
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap arguments, (options, callback) ->
+      wrap @, arguments, (options, callback) ->
         # Validate parameters
         {destination, source, md5sum} = options
         # md5sum is used to validate the download

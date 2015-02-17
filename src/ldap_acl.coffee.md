@@ -56,7 +56,7 @@ require('mecano').ldap_acl({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap arguments, (options, callback) ->
+      wrap @, arguments, (options, callback) ->
         options.acls ?= [{}]
         modified = false
         each(options.acls)

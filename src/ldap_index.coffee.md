@@ -39,7 +39,7 @@ require('mecano').ldap_index({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap arguments, (options, callback) ->
+      wrap @, arguments, (options, callback) ->
         modified = false
         do_getdn = ->
           return do_get_indexes() if options.hdb_dn

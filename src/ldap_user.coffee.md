@@ -36,7 +36,7 @@ require('mecano').ldap_user({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap arguments, (options, callback) ->
+      wrap @, arguments, (options, callback) ->
         modified = false
         return callback Error "Mecano `ldap_user`: required property 'user'" unless options.user
         options.user = [options.user] unless Array.isArray options.user

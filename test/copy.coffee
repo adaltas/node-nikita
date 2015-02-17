@@ -79,7 +79,8 @@ describe 'copy', ->
     they 'over an existing file', (ssh, next) ->
       source = "#{__dirname}/../resources/a_dir/a_file"
       destination = "#{scratch}/test_this_file"
-      mecano.write
+      mecano
+      .write
         ssh: ssh
         content: 'Hello you'
         destination: destination

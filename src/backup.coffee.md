@@ -84,7 +84,7 @@ backmeup({
 ## Source code
 
     module.exports = (options, callback) ->
-      wrap arguments, (options, callback) ->
+      wrap @, arguments, (options, callback) ->
         backmeup options, callback
 
 ## Dependencies

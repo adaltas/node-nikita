@@ -15,7 +15,6 @@ describe 'execute', ->
     mecano.execute
       ssh: ssh
       cmd: 'text=yes; echo $text'
-      toto: true
     , (err, executed, stdout, stderr) ->
       executed.should.be.ok
       stdout.should.eql 'yes\n'

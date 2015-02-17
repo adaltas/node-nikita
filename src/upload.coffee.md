@@ -66,7 +66,7 @@ require('mecano').render({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap arguments, (options, callback) ->
+      wrap @, arguments, (options, callback) ->
         return callback Error "Required \"source\" option" unless options.source
         return callback Error "Required \"destination\" option" unless options.destination
         options.log? "Mecano `upload`: source is \"#{options.source}\""

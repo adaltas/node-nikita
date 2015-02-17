@@ -45,7 +45,7 @@ require('mecano').link({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap arguments, (options, callback) ->
+      wrap @, arguments, (options, callback) ->
         linked = 0
         sym_exists = (options, callback) ->
           fs.exists options.ssh, options.destination, (err, exists) ->

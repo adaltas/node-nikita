@@ -70,7 +70,7 @@ require('mecano').service([{
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap arguments, (options, callback) ->
+      wrap @, arguments, (options, callback) ->
         installed = updates = null
         # Validate parameters
         # return callback new Error 'Missing service name' unless options.name

@@ -87,7 +87,7 @@ require('mecano').iptables({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap arguments, (options, callback) ->
+      wrap @, arguments, (options, callback) ->
         options.log? "Mecano `iptables`: list existing rules"
         execute
           cmd: "service iptables status &>/dev/null && iptables -S"

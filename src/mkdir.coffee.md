@@ -62,7 +62,7 @@ require('mecano').mkdir({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap arguments, (options, callback) ->
+      wrap @, arguments, (options, callback) ->
         modified = false
         # Validate parameters
         options = { directory: options } if typeof options is 'string'

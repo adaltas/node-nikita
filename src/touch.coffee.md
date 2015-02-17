@@ -37,7 +37,7 @@ require('mecano').touch({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap arguments, (options, callback) ->
+      wrap @, arguments, (options, callback) ->
         # Validate parameters
         {ssh, destination, mode} = options
         return callback new Error "Missing destination: #{destination}" unless destination

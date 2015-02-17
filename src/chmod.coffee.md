@@ -39,7 +39,7 @@ require('mecano').chmod({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap arguments, (options, callback) ->
+      wrap @, arguments, (options, callback) ->
         # Validate parameters
         return callback Error "Missing destination: #{options.destination}" unless options.destination
         return callback Error "Missing mode: #{options.mode}" unless options.mode
