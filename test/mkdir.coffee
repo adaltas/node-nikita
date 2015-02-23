@@ -2,9 +2,7 @@
 lib = if process.env.MECANO_COV then 'lib-cov' else 'lib'
 mecano = require "../#{lib}"
 misc = require "../#{lib}/misc"
-fs = require 'fs'
 path = require 'path'
-fs.exists ?= path.exists
 test = require './test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
@@ -60,6 +58,43 @@ describe 'mkdir', ->
       return next err if err
       created.should.be.ok
       next()
+
+  describe 'parent', ->
+
+    they 'true set default permissions', (ssh, next) ->
+      mecano.mkdir
+        ssh: ssh
+        destination: [
+          "#{scratch}/a_parent_dir/a_dir_1"
+          "#{scratch}/a_parent_dir/a_dir_2"
+        ]
+        parent: true
+        mode: 0o717
+      , (err, created) ->
+        return next err if err
+        fs.stat ssh, "#{scratch}/a_parent_dir", (err, stat) ->
+          return next err if err
+          stat.mode.toString(8).should.not.eql '40717'
+          next()
+
+    they 'object set custom permissions', (ssh, next) ->
+      mecano.mkdir
+        ssh: ssh
+        destination: [
+          "#{scratch}/a_parent_dir/a_dir_1"
+          "#{scratch}/a_parent_dir/a_dir_2"
+        ]
+        parent: mode: 0o741
+        mode: 0o715
+      , (err, created) ->
+        return next err if err
+        fs.stat ssh, "#{scratch}/a_parent_dir", (err, stat) ->
+          return next err if err
+          stat.mode.toString(8).should.eql '40741'
+          fs.stat ssh, "#{scratch}/a_parent_dir/a_dir_1", (err, stat) ->
+            return next err if err
+            stat.mode.toString(8).should.eql '40715'
+            next()
 
   describe 'exclude', ->
   

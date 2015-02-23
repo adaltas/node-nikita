@@ -19,9 +19,9 @@ Responsibilities:
 *   Pass user arguments
 ###
 
-module.exports = (args, handler) ->
+exports = module.exports = (args, handler) ->
   # Retrieve arguments
-  [options, goptions, callback] = module.exports.args args
+  [options, goptions, callback] = exports.args args
   isArray = Array.isArray options
   # Pass user arguments
   user_args = []
@@ -35,7 +35,7 @@ module.exports = (args, handler) ->
     callback err, modified, user_args... if callback
     result.end err, modified, user_args...
   # Normalize options
-  module.exports.options options, (err, options) ->
+  exports.options options, (err, options) ->
     return finish err if err
     # Run multiple actions sequentially or concurrently
     each( options )
@@ -54,7 +54,7 @@ module.exports = (args, handler) ->
   # Return a Mecano Child instance
   result
 
-module.exports.args = (args, overwrite_goptions={}) ->
+exports.args = (args, overwrite_goptions={}) ->
   if args.length is 2 and typeof args[1] is 'function'
     args[2] = args[1]
     args[1] = {}
@@ -79,7 +79,7 @@ be converted to integer if they match a username or a group.
 *   `options`       Sanitized options.   
 
 ###
-module.exports.options = (options, callback) ->
+exports.options = (options, callback) ->
   options = [options] unless Array.isArray options
   each(options)
   .on 'item', (options, next) ->
@@ -115,27 +115,33 @@ module.exports.options = (options, callback) ->
         mode()
     mode = ->
       options.mode = parseInt(options.mode, 8) if typeof options.mode is 'string'
-      uid()
-    uid = ->
-      # uid=`id -u $USER`,
-      return gid() unless options.uid
-      options.uid = parseInt options.uid, 10 if typeof options.uid is 'string' and /\d+/.test options.uid
-      return gid() if typeof options.uid is 'number'
-      misc.ssh.passwd options.ssh, options.uid, (err, user) ->
-        return next err if err
-        if user
-          options.uid = user.uid
-          options.gid ?= user.gid
-        gid()
-    gid = ->
-      # gid=`getent group $GROUP | cut -d: -f3`
-      return next() unless options.gid
-      options.gid = parseInt options.gid, 10 if typeof options.gid is 'string' and /\d+/.test options.gid
-      return next() if typeof options.gid is 'number'
-      misc.ssh.group options.ssh, options.gid, (err, group) ->
-        return next err if err
-        options.gid = group.gid if group
-        next()
+      uid_gid()
+    uid_gid = ->
+      exports.uid_gid options, next
     connection()
   .on 'both', (err) ->
     callback err, options
+
+exports.uid_gid = (options, callback) ->
+  do_uid = ->
+    # uid=`id -u $USER`,
+    return do_gid() unless options.uid
+    options.uid = parseInt options.uid, 10 if typeof options.uid is 'string' and /\d+/.test options.uid
+    return do_gid() if typeof options.uid is 'number'
+    misc.ssh.passwd options.ssh, options.uid, (err, user) ->
+      return do_gid err if err
+      if user
+        options.uid = user.uid
+        options.gid ?= user.gid
+      do_gid()
+  do_gid = ->
+    return callback() unless options.gid
+    options.gid = parseInt options.gid, 10 if typeof options.gid is 'string' and /\d+/.test options.gid
+    return callback() if typeof options.gid is 'number'
+    misc.ssh.group options.ssh, options.gid, (err, group) ->
+      return callback err if err
+      options.gid = group.gid if group
+      callback()
+  do_uid()
+
+

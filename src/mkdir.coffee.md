@@ -21,6 +21,9 @@ of the directory to create.
     Alias for `directory`.   
 *   `exclude`   
     Regular expression.   
+*   `parent` (boolean|object)   
+    Create parent directory with provided options if an object or default 
+    system options if "true".   
 *   `source`   
     Alias for `directory`.   
 *   `ssh` (object|ssh2)   
@@ -68,6 +71,7 @@ require('mecano').mkdir({
         return callback new Error 'Missing directory option' unless options.directory?
         cwd = options.cwd ? process.cwd()
         options.directory = [options.directory] unless Array.isArray options.directory
+        options.parent = {} if options.parent is true
         each(options.directory)
         .on 'item', (directory, callback) ->
           # first, we need to find which directory need to be created
@@ -89,29 +93,40 @@ require('mecano').mkdir({
                   directory.stat = stat
                   dirs.push directory
                   if i is directories.length - 1
-                  then return do_create(dirs)
+                  then return do_create_parent(dirs)
                   else return callback()
                 if stat?.isDirectory()
                   end = true
-                  return  if i is 0 then do_update(stat) else do_create(dirs)
+                  return  if i is 0 then do_update(stat) else do_create_parent(dirs)
                 if err
                   return callback err
                 else # a file or symlink exists at this location
                   return callback new Error "Not a directory: #{JSON.stringify directory}"
             .on 'both', (err) ->
               return callback err if err
+          do_create_parent = (directories) ->
+            return do_create directories unless options.uid or options.guid
+            wrap.uid_gid options, (err) ->
+              return next err if err
+              do_create directories
           do_create = (directories) ->
             each(directories.reverse())
-            .on 'item', (directory, callback) ->
+            .on 'item', (directory, i, callback) ->
               # Directory name contains variables
               # eg /\${/ on './var/cache/${user}' creates './var/cache/'
               if options.exclude? and options.exclude instanceof RegExp
                 return callback() if options.exclude.test path.basename directory
               options.log? "Mecano `mkdir`: #{JSON.stringify directory} created" unless directory is options.directory
-              fs.mkdir options.ssh, directory, options, (err) ->
+              attrs = ['mode', 'uid', 'gid', 'size', 'atime', 'mtime']
+              opts = {}
+              for attr in attrs
+                val = if i is directories.length - 1 then options[attr] else options.parent?[attr]
+                opts[attr] = val if val?
+              fs.mkdir options.ssh, directory, opts, (err) ->
                 return callback err if err
                 modified = true
                 callback()
+              , 1000
             .on 'both', (err) ->
               return callback err if err
               callback()
@@ -153,7 +168,6 @@ require('mecano').mkdir({
     chmod = require './chmod'
     misc = require './misc'
     wrap = require './misc/wrap'
-
 
 
 
