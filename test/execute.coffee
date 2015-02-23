@@ -51,6 +51,15 @@ describe 'execute', ->
         data.should.containEql search2
         next()
   
+  they 'stdout and stderr return empty', (ssh, next) -> #.skip 'remote',
+    mecano.execute
+      ssh: ssh
+      cmd: "echo 'some text' | grep nothing"
+    , (err, executed, stdout, stderr) ->
+      stdout.should.eql ''
+      stderr.should.eql ''
+      next()
+  
   they 'validate exit code', (ssh, next) ->
     # code undefined
     mecano.execute
