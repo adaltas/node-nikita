@@ -341,10 +341,33 @@ require('mecano').write({
                 return callback new Error "Invalid match option"
             else if opts.before is true
               
-            else
-              from = if opts.from then content.indexOf(opts.from) + opts.from.length else 0
-              to = if opts.to then content.indexOf(opts.to) else content.length
-              content = content.substr(0, from) + opts.replace + content.substr(to)
+            else if opts.from or opts.to
+              if opts.from and opts.to
+                from = ///(^#{quote opts.from}$)///m.exec(content)
+                to = ///(^#{quote opts.to}$)///m.exec(content)
+                if from? and not to?
+                  options.log? "Mecano `write`: found 'from' but missing 'to', skip writing [WARN]"
+                else if not from? and to?
+                  options.log? "Mecano `write`: missing 'from' but found 'to', skip writing [WARN]"
+                else if not from? and not to? and opts.append
+                  options.log? "Mecano `write`: append content [INFO]"
+                  content += '\n' + opts.from + '\n' + opts.replace+ '\n' + opts.to
+                else
+                  content = content.substr(0, from.index + from[1].length + 1) + opts.replace + '\n' + content.substr(to.index)
+                  append = false
+              else if opts.from and not opts.to
+                from = ///(^#{quote opts.from}$)///m.exec(content)
+                if from?
+                  content = content.substr(0, from.index + from[1].length) + '\n' + opts.replace
+                else # TODO: honors append
+                  options.log? "Mecano `write`: missing 'from', skip writing [WARN]"
+              else if not opts.from and opts.to
+                from_index = 0
+                to = ///(^#{quote opts.to}$)///m.exec(content)
+                if to?
+                  content = opts.replace + '\n' + content.substr(to.index)
+                else # TODO: honors append
+                  options.log? "Mecano `write`: missing 'to', skip writing [WARN]"
           do_eof()
         do_eof = ->
           return do_diff() unless options.eof?
