@@ -221,35 +221,36 @@ describe 'write', ->
           next()
   
     they 'with from and with to append', (ssh, next) ->
-      mecano.write
-        ssh: ssh
-        destination: "#{scratch}/fromto.md"
-        from: '# from'
-        to: '# to'
-        append: true
-        content: 'here we are\nyou coquin'
-        replace: 'my friend'
-      , (err, written) ->
+      fs.writeFile ssh, "#{scratch}/fromto.md", 'here we are\nyou coquin', (err) ->
         return next err if err
-        written.should.be.ok
-        fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
+        mecano.write
+          ssh: ssh
+          destination: "#{scratch}/fromto.md"
+          from: '# from'
+          to: '# to'
+          append: true
+          replace: 'my friend'
+        , (err, written) ->
           return next err if err
-          content.should.eql 'here we are\nyou coquin\n# from\nmy friend\n# to'
-          mecano.write
-            ssh: ssh
-            destination: "#{scratch}/fromto.md"
-            from: '# from'
-            to: '# to'
-            append: true
-            replace: 'my best friend'
-            eof: true
-          , (err, written) ->
+          written.should.be.ok
+          fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
             return next err if err
-            written.should.be.ok
-            fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
+            content.should.eql 'here we are\nyou coquin\n# from\nmy friend\n# to'
+            mecano.write
+              ssh: ssh
+              destination: "#{scratch}/fromto.md"
+              from: '# from'
+              to: '# to'
+              append: true
+              replace: 'my best friend'
+              eof: true
+            , (err, written) ->
               return next err if err
-              content.should.eql 'here we are\nyou coquin\n# from\nmy best friend\n# to\n'
-              next()
+              written.should.be.ok
+              fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
+                return next err if err
+                content.should.eql 'here we are\nyou coquin\n# from\nmy best friend\n# to\n'
+                next()
     
     they 'with from and without to', (ssh, next) ->
       mecano.write

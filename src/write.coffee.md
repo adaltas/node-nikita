@@ -349,9 +349,12 @@ require('mecano').write({
                   options.log? "Mecano `write`: found 'from' but missing 'to', skip writing [WARN]"
                 else if not from? and to?
                   options.log? "Mecano `write`: missing 'from' but found 'to', skip writing [WARN]"
-                else if not from? and not to? and opts.append
-                  options.log? "Mecano `write`: append content [INFO]"
-                  content += '\n' + opts.from + '\n' + opts.replace+ '\n' + opts.to
+                else if not from? and not to?
+                  if opts.append
+                    content += '\n' + opts.from + '\n' + opts.replace+ '\n' + opts.to
+                    append = false
+                  else
+                    options.log? "Mecano `write`: missing 'from' and 'to' without append, skip writing [WARN]"
                 else
                   content = content.substr(0, from.index + from[1].length + 1) + opts.replace + '\n' + content.substr(to.index)
                   append = false
