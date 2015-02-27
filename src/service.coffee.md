@@ -178,6 +178,7 @@ require('mecano').service([{
                 [level, status] = c.split ':'
                 current_startup += level if ['on', 'marche'].indexOf(status) > -1
             return do_started() if (options.startup is true and current_startup.length) or (options.startup is current_startup)
+            return do_started() if registered and options.startup is false and current_startup is ''
             modified = true
             if options.startup
             then startup_add()
