@@ -282,6 +282,23 @@ describe 'write', ->
           content.should.eql 'my friend\n# to\nyou coquin'
           next()
 
+
+  describe 'replace', ->
+  
+    they 'without match', (ssh, next) ->
+      mecano.write
+        ssh: ssh
+        destination: "#{scratch}/fromto.md"
+        content: 'here we are\nyou coquin'
+        replace: 'my friend'
+        before: 'you coquin'
+      , (err, written) ->
+        return next err if err
+        fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
+          return next err if err
+          content.should.eql 'here we are\nmy friend\nyou coquin'
+          next()
+
   describe 'match & replace', ->
   
     they 'with match a line as a string', (ssh, next) ->
