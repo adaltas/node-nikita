@@ -148,6 +148,56 @@ describe 'copy', ->
           content.should.eql 'hello'
           next()
           
+  describe 'link', ->
+
+    they 'file into file', (ssh, next) ->
+      mecano.write
+        ssh: ssh
+        content: 'hello'
+        destination: "#{scratch}/org_file"
+      , (err) ->
+        return next err if err
+        mecano.link
+          ssh: ssh
+          source: "#{scratch}/org_file"
+          destination: "#{scratch}/ln_file"
+        , (err) ->
+          return next err if err
+          mecano.copy
+            ssh: ssh
+            source: "#{scratch}/ln_file"
+            destination: "#{scratch}/dst_file"
+          , (err, copied) ->
+            return next err if err
+            fs.readFile ssh, "#{scratch}/dst_file", 'ascii', (err, content) ->
+              return next err if err
+              content.should.eql 'hello'
+              next()
+
+    they 'file parent dir', (ssh, next) ->
+      mecano.write
+        ssh: ssh
+        content: 'hello'
+        destination: "#{scratch}/source/org_file"
+      , (err) ->
+        return next err if err
+        mecano.link
+          ssh: ssh
+          source: "#{scratch}/source/org_file"
+          destination: "#{scratch}/source/ln_file"
+        , (err) ->
+          return next err if err
+          mecano.copy
+            ssh: ssh
+            source: "#{scratch}/source/ln_file"
+            destination: "#{scratch}"
+          , (err, copied) ->
+            return next err if err
+            fs.readFile ssh, "#{scratch}/ln_file", 'ascii', (err, content) ->
+              return next err if err
+              content.should.eql 'hello'
+              next()
+          
   describe 'directory', ->
 
     they 'should copy without slash at the end', (ssh, next) ->
