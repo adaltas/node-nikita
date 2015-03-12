@@ -122,7 +122,7 @@ require('mecano').copy({
               return callback err if err and err.message.indexOf('Does not exist') isnt 0
               # File are the same, we can skip copying
               return do_chown destination if md5
-              options.log? "Copy file from #{source} into #{destination}"
+              options.log? "Mecano `copy`: Copy file from #{source} into #{destination}"
               misc.file.copyFile options.ssh, source, destination, (err) ->
                 return callback err if err
                 modified = true
