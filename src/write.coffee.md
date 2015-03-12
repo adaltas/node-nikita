@@ -321,7 +321,7 @@ require('mecano').write({
                     append = false
                 else if opts.append and typeof opts.replace is 'string'
                   if typeof opts.append is "string"
-                    opts.append = new RegExp "^.*#{opts.append}.*$", 'mg'
+                    opts.append = new RegExp "^.*#{quote opts.append}.*$", 'mg'
                   if opts.append instanceof RegExp
                     posoffset = 0
                     orgContent = content
