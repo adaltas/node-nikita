@@ -103,6 +103,7 @@ misc = module.exports =
         then callback null, fs
         else ssh.sftp callback
       s ssh, (err, fs) ->
+        return callback err if err
         rs = fs.createReadStream source
         ws = rs.pipe fs.createWriteStream destination
         ws.on 'close', ->
