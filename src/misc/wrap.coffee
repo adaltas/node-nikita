@@ -97,7 +97,7 @@ exports.options = (options, callback) ->
     options.mode ?= options.chmod if options.chmod
     connection = ->
       return source() unless options.ssh
-      return source() if options.ssh._host
+      return source() if options.ssh.config?.host
       connect options.ssh, (err, ssh) ->
         return next err if err
         options.ssh = ssh
