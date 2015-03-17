@@ -161,7 +161,7 @@ mecano.download
           options.log? "Mecano `download`: Compare the downloaded file with the user-provided checksum"
           misc.file.hash options.ssh, stageDestination, 'md5', (err, hash) ->
             return unstage() if hash is md5sum
-            # Download is invalid, cleaning up
+            # Download is invalid, cleanup
             misc.file.remove options.ssh, stageDestination, (err) ->
               return callback err if err
               callback new Error "Invalid checksum, found \"#{hash}\" instead of \"#{md5sum}\""
