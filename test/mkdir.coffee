@@ -27,7 +27,7 @@ describe 'mkdir', ->
         created.should.not.be.ok
         next()
 
-  it 'should take source if first argument is a string', (next) ->
+  they 'should take source if first argument is a string', (ssh, next) ->
     source = "#{scratch}/a_dir"
     mecano.mkdir source, (err, created) ->
       return next err if err
