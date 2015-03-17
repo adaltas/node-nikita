@@ -90,7 +90,7 @@ require('mecano').service([{
           # option name and yum_name are optional, skill installation if not present
           return do_startuped() unless pkgname
           cache = ->
-            options.log? "Mecano `service: list installed"
+            options.log? "Mecano `service: list installed [DEBUG]"
             c = if options.cache then '-C' else ''
             execute
               ssh: options.ssh
@@ -114,7 +114,7 @@ require('mecano').service([{
           if installed then decide() else cache()
         do_chkupdates = ->
           cache = ->
-            options.log? "Mecano `service`: list available updates"
+            options.log? "Mecano `service`: list available updates [DEBUG]"
             c = if options.cache then '-C' else ''
             execute
               ssh: options.ssh
@@ -135,11 +135,11 @@ require('mecano').service([{
               decide()
           decide = ->
             if updates.indexOf(pkgname) isnt -1 then do_install() else
-              options.log? "Mecano `service`: No available update"
+              options.log? "Mecano `service`: No available update for '#{pkgname}' [INFO]"
               do_startuped()
           if updates then decide() else cache()
         do_install = ->
-          options.log? "Mecano `service`: install \"#{pkgname}\""
+          options.log? "Mecano `service`: install '#{pkgname}' [INFO]"
           execute
             ssh: options.ssh
             cmd: "yum install -y #{pkgname}"
@@ -155,12 +155,14 @@ require('mecano').service([{
               updatesIndex = updates.indexOf pkgname
               updates.splice updatesIndex, 1 unless updatesIndex is -1
             # Those 2 lines seems all wrong
-            return callback new Error "No package #{pkgname} available." unless succeed
+            unless succeed
+              options.log? "Mecano `service`: No package available for '#{pkgname}' [ERROR]"
+              return callback new Error "No package available for '#{pkgname}'."
             modified = true if installedIndex isnt -1
             do_startuped()
         do_startuped = ->
           return do_started() unless options.startup?
-          options.log? "Mecano `service`: list startup services"
+          options.log? "Mecano `service`: list startup services [DEBUG]"
           execute
             ssh: options.ssh
             cmd: "chkconfig --list #{chkname}"
@@ -171,7 +173,9 @@ require('mecano').service([{
           , (err, registered, stdout, stderr) ->
             return callback err if err
             # Invalid service name return code is 0 and message in stderr start by error
-            return callback new Error "Invalid chkconfig name #{chkname}" if /^error/.test stderr
+            if /^error/.test stderr
+              options.log? "Mecano `service`: Invalid chkconfig name for `#{chkname}` [ERROR]"
+              return callback new Error "Invalid chkconfig name for `#{chkname}`"
             current_startup = ''
             if registered
               for c in stdout.split(' ').pop().trim().split '\t'
