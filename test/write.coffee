@@ -285,13 +285,27 @@ describe 'write', ->
 
   describe 'replace', ->
   
-    they 'without match', (ssh, next) ->
+    they 'without match and before a string', (ssh, next) ->
       mecano.write
         ssh: ssh
         destination: "#{scratch}/fromto.md"
         content: 'here we are\nyou coquin'
         replace: 'my friend'
         before: 'you coquin'
+      , (err, written) ->
+        return next err if err
+        fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
+          return next err if err
+          content.should.eql 'here we are\nmy friend\nyou coquin'
+          next()
+  
+    they 'without match and before a regexp', (ssh, next) ->
+      mecano.write
+        ssh: ssh
+        destination: "#{scratch}/fromto.md"
+        content: 'here we are\nyou coquin'
+        replace: 'my friend'
+        before: /^you coquin$/m
       , (err, written) ->
         return next err if err
         fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->

@@ -298,47 +298,46 @@ require('mecano').write({
           options.log? "Mecano `write`: replace"
           for opts in write
             if opts.match
+              opts.match ?= opts.replace
               opts.match = RegExp quote(opts.match), 'mg' if typeof opts.match is 'string'
-              if opts.match instanceof RegExp
-                if opts.match.test content
-                  content = content.replace opts.match, opts.replace
+              return Error "Invalid match option" unless opts.match instanceof RegExp
+              if opts.match.test content
+                content = content.replace opts.match, opts.replace
+                append = false
+              else if opts.before and typeof opts.replace is 'string'
+                if typeof opts.before is "string"
+                  opts.before = new RegExp "^.*#{opts.before}.*$", 'mg'
+                if opts.before instanceof RegExp
+                  posoffset = 0
+                  orgContent = content
+                  while (res = opts.before.exec orgContent) isnt null
+                    pos = posoffset + res.index #+ res[0].length
+                    content = content.slice(0,pos) + opts.replace + '\n' + content.slice(pos)
+                    posoffset += opts.replace.length + 1
+                    break unless opts.before.global
+                  before = false
+                else# if content
+                  linebreak = if content.length is 0 or content.substr(content.length - 1) is '\n' then '' else '\n'
+                  content = opts.replace + linebreak + content
                   append = false
-                else if opts.before and typeof opts.replace is 'string'
-                  if typeof opts.before is "string"
-                    opts.before = new RegExp "^.*#{opts.before}.*$", 'mg'
-                  if opts.before instanceof RegExp
-                    posoffset = 0
-                    orgContent = content
-                    while (res = opts.before.exec orgContent) isnt null
-                      pos = posoffset + res.index #+ res[0].length
-                      content = content.slice(0,pos) + opts.replace + '\n' + content.slice(pos)
-                      posoffset += opts.replace.length + 1
-                      break unless opts.before.global
-                    before = false
-                  else# if content
-                    linebreak = if content.length is 0 or content.substr(content.length - 1) is '\n' then '' else '\n'
-                    content = opts.replace + linebreak + content
-                    append = false
-                else if opts.append and typeof opts.replace is 'string'
-                  if typeof opts.append is "string"
-                    opts.append = new RegExp "^.*#{quote opts.append}.*$", 'mg'
-                  if opts.append instanceof RegExp
-                    posoffset = 0
-                    orgContent = content
-                    while (res = opts.append.exec orgContent) isnt null
-                      pos = posoffset + res.index + res[0].length
-                      content = content.slice(0,pos) + '\n' + opts.replace + content.slice(pos)
-                      posoffset += opts.replace.length + 1
-                      break unless opts.append.global
-                    append = false
-                  else
-                    linebreak = if content.length is 0 or content.substr(content.length - 1) is '\n' then '' else '\n'
-                    content = content + linebreak + opts.replace
-                    append = false
+              else if opts.append and typeof opts.replace is 'string'
+                if typeof opts.append is "string"
+                  opts.append = new RegExp "^.*#{quote opts.append}.*$", 'mg'
+                if opts.append instanceof RegExp
+                  posoffset = 0
+                  orgContent = content
+                  while (res = opts.append.exec orgContent) isnt null
+                    pos = posoffset + res.index + res[0].length
+                    content = content.slice(0,pos) + '\n' + opts.replace + content.slice(pos)
+                    posoffset += opts.replace.length + 1
+                    break unless opts.append.global
+                  append = false
                 else
-                  continue # Did not match, try callback
+                  linebreak = if content.length is 0 or content.substr(content.length - 1) is '\n' then '' else '\n'
+                  content = content + linebreak + opts.replace
+                  append = false
               else
-                return callback new Error "Invalid match option"
+                continue # Did not match, try callback
             else if opts.before is true
               
             else if opts.from or opts.to
