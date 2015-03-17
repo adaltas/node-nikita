@@ -25,14 +25,14 @@ describe 'wrap', ->
       options.should.eql option_a: 'a', option_b: 'b'
       callback.should.be.a.Function
 
-    it 'overwrite default global options', ->
-      [options, goptions, callback] = wrap.args [
-        option_a: 'a', option_b: 'b'
-        -> #do sth
-      ], parallel: 2
-      goptions.parallel.should.equal 2
-      options.should.eql option_a: 'a', option_b: 'b'
-      callback.should.be.a.Function
+    # it 'overwrite default global options', ->
+    #   [options, goptions, callback] = wrap.args [
+    #     option_a: 'a', option_b: 'b'
+    #     -> #do sth
+    #   ], parallel: 2
+    #   goptions.parallel.should.equal 2
+    #   options.should.eql option_a: 'a', option_b: 'b'
+    #   callback.should.be.a.Function
 
   describe 'callback context', ->
     
