@@ -235,7 +235,7 @@ misc = module.exports =
         rimraf path, callback
       else
         # Not very pretty but fast and no time to try make a version of rimraf over ssh
-        child = exec ssh, "rm -rdf #{path}"
+        child = exec ssh, "rm -rf #{path}"
         child.on 'exit', (code) ->
           callback null, code
   ssh:
