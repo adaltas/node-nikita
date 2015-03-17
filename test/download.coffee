@@ -15,13 +15,13 @@ describe 'download', ->
 
     server = null
 
-    before (next) ->
+    beforeEach (next) ->
       server = http.createServer (req, res) ->
         res.writeHead 200, {'Content-Type': 'text/plain'}
         res.end 'okay'
       server.listen 12345, next
 
-    after (next) ->
+    afterEach (next) ->
       server.close()
       server.on 'close', next
 
@@ -192,9 +192,10 @@ describe 'download', ->
         destination: destination
         md5sum: '2f74dbbee4142b7366c93b115f914fff'
       , (err, downloaded) ->
-        err.message.should.eql 'Invalid checksum, found "df8fede7ff71608e24a5576326e41c75" instead of "2f74dbbee4142b7366c93b115f914fff"'
         server.close()
-        server.on 'close', next
+        server.on 'close', ->
+          err.message.should.eql 'Invalid checksum, found "df8fede7ff71608e24a5576326e41c75" instead of "2f74dbbee4142b7366c93b115f914fff"'
+          next()
 
     they 'count 1 if new file has correct checksum', (ssh, next) ->
       # create server
@@ -211,10 +212,11 @@ describe 'download', ->
         destination: destination
         md5sum: 'df8fede7ff71608e24a5576326e41c75'
       , (err, downloaded) ->
-        return next err if err
-        downloaded.should.be.ok
         server.close()
-        server.on 'close', next
+        server.on 'close', ->
+          return next err if err
+          downloaded.should.be.ok
+          next()
 
     they 'count 0 if a file exist with same checksum', (ssh, next) ->
       # create server
@@ -238,8 +240,9 @@ describe 'download', ->
           destination: destination
           md5sum: 'df8fede7ff71608e24a5576326e41c75'
         , (err, downloaded) ->
-          return next err if err
-          downloaded.should.not.be.ok
           server.close()
-          server.on 'close', next
+          server.on 'close', ->
+            return next err if err
+            downloaded.should.not.be.ok
+            next()
 
