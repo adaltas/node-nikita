@@ -86,22 +86,22 @@ require('mecano').mkdir({
             directories = for i in [0...directories.length]
               '/' + directories.slice(0, directories.length - i).join '/'
             each(directories)
-            .on 'item', (directory, i, callback) ->
-              return callback() if end
+            .on 'item', (directory, i, next) ->
+              return next() if end
               fs.stat options.ssh, directory, (err, stat) ->
                 if err?.code is 'ENOENT' # if the directory is not yet created
                   directory.stat = stat
                   dirs.push directory
                   if i is directories.length - 1
                   then return do_create_parent(dirs)
-                  else return callback()
+                  else return next()
                 if stat?.isDirectory()
                   end = true
                   return  if i is 0 then do_update(stat) else do_create_parent(dirs)
                 if err
-                  return callback err
+                  return next err
                 else # a file or symlink exists at this location
-                  return callback new Error "Not a directory: #{JSON.stringify directory}"
+                  return next new Error "Not a directory: #{JSON.stringify directory}"
             .on 'both', (err) ->
               return callback err if err
           do_create_parent = (directories) ->
@@ -133,6 +133,7 @@ require('mecano').mkdir({
           do_update = (stat) ->
             options.log? "Mecano `mkdir`: #{JSON.stringify directory} exists"
             do_chown = ->
+              return do_chmod() unless options.uid? and options.gid?
               chown
                 ssh: options.ssh
                 destination: directory
@@ -141,6 +142,7 @@ require('mecano').mkdir({
                 gid: options.gid
                 log: options.log
               , (err, owned) ->
+                return callback err if err
                 modified = true if owned
                 do_chmod()
             do_chmod = ->
@@ -152,6 +154,7 @@ require('mecano').mkdir({
                 mode: options.mode
                 log: options.log
               , (err, moded) ->
+                return callback err if err
                 modified = true if moded
                 callback()
             do_chown()
