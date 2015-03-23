@@ -35,9 +35,28 @@ functions share a common API with flexible options.
           return todo[1][0].call obj, status.err, status.changed, (err, changed) ->
             status.err = null
             status.changed = false
+            status.throw_if_error = true
             if err then status.err = err
             else if changed then status.changed = true
             run()
+        if todo[0] is 'run'
+          if todo[1][0].length # Async style
+            try
+              return todo[1][0].call obj, (err, changed) ->
+                if err then status.err = err
+                else if changed then status.changed = true
+                run()
+            catch err
+              status.err = err
+            run()
+          else # Sync style
+            try
+              changed = todo[1][0].call obj
+            catch err
+            if err then status.err = err
+            else if changed then status.changed = true
+            run()
+          return
         # Convert options to array
         # if typeof todo[1][0] is 'object' and not Array.isArray todo[1][0]
         #   todo[1][0] = [todo[1][0]]
@@ -52,18 +71,20 @@ functions share a common API with flexible options.
             t[k] = obj.options[k] if typeof t[k] is 'undefined'
 
         # Call the action
-        # console.log '!!', callback.length, todo[1][1].length
         todo[1][0].user_args = todo[1][1]?.length > 2
         registry[todo[0]].call obj, todo[1][0], (err, changed, to) ->
           # Call the user callback synchronously
+          result = false
           try
-            todo[1][1]?.apply null, arguments
-            status.throw_if_error = false
+            result = todo[1][1]?.apply null, arguments
+            status.throw_if_error = false if err
+            err = null if result is true
           catch e then err = e unless err
           if err then status.err = err
           else if changed then status.changed = true
           run()
       build = (name) ->
+        process.nextTick run if todos.length is 0 # Activate the pump
         builder = ->
           todos.push [name, arguments]
           obj
@@ -73,19 +94,26 @@ functions share a common API with flexible options.
         builder
       properties.then = get: ->
         build 'then'
+      properties.run = get: ->
+        build 'run'
       Object.keys(registry).forEach (name) ->
         properties[name] = get: ->
-          process.nextTick run if todos.length is 0 # Activate the pump
+          # process.nextTick run if todos.length is 0 # Activate the pump
           build name
       proto = Object.defineProperties obj, properties
       obj
 
+    properties = {}
+
     registry = require './misc/registry'
 
-    properties = {}
     Object.keys(registry).forEach (name) ->
       properties[name] = get: ->
         module.exports()[name]
+
+    properties.run = get: ->
+      module.exports().run
+
     Object.defineProperties module.exports, properties
 
 
