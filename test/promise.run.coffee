@@ -102,7 +102,7 @@ describe 'promise run', ->
         err.message.should.eql 'Catchme'
         next()
 
-    it.only 'throw error when then not defined', (next) ->
+    it 'throw error when then not defined', (next) ->
       d = domain.create()
       d.run ->
         mecano
