@@ -42,7 +42,7 @@ require('mecano').chmod({
       wrap @, arguments, (options, callback) ->
         # Validate parameters
         return callback Error "Missing destination: #{options.destination}" unless options.destination
-        return callback Error "Missing mode: #{options.mode}" unless options.mode
+        return callback Error "Missing option 'mode'" unless options.mode
         # options.log? "Mecano `chmod` [DEBUG]"
         do_stat = ->
           return do_compare options.stat if options.stat
