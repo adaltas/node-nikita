@@ -15,17 +15,6 @@ getprefix = (pattern) ->
     # if not, then this is rather simple
     when pattern.length
       prefix = pattern.join '/'
-      # fs.stat ssh, prefix, (err, stat) ->
-      #   # either it's there, or it isn't.
-      #   # nothing more to do, either way.
-      #   if exists
-      #     if prefix and isAbsolute(prefix) and !@nomount
-      #       if prefix.charAt(0) is "/"
-      #         prefix = path.join @root, prefix
-      #       else
-      #         prefix = path.resolve @root, prefix
-      #     if process.platform is "win32"
-      #       prefix = prefix.replace(/\\/g, "/")
       return prefix
     when 0
       # pattern *starts* with some non-trivial item.
@@ -54,7 +43,6 @@ module.exports = (ssh, pattern, options, callback) ->
     for s in minimatch.set
       prefix = getprefix s
       cmd += " #{prefix}"
-      # cmd += " -f #{prefix}"
     exec ssh, cmd, (err, stdout) ->
       return callback null, [] if err
       files = string.lines stdout.trim()
