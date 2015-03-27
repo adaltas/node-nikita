@@ -77,6 +77,26 @@ describe 'download', ->
             downloaded.should.be.False
             next()
 
+    they 'http with local_cache', (ssh, next) ->
+      ssh = null
+      @timeout 100000
+      count = 0
+      # Download a non existing file
+      source = 'http://localhost:12345'
+      destination = "#{scratch}/download"
+      cache = "#{scratch}/cache"
+      mecano.download
+        ssh: ssh
+        source: source
+        destination: destination
+        local_cache: cache
+      , (err, downloaded) ->
+        return next err if err
+        downloaded.should.be.ok
+        fs.readFile null, cache, 'ascii', (err, content) ->
+          return next err if err
+          content.should.equal 'okay'
+
     they 'should chmod', (ssh, next) ->
       @timeout 10000
       # Download a non existing file
