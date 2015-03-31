@@ -4,7 +4,7 @@ test = require './test'
 fs = require 'fs'
 domain = require 'domain'
 
-describe 'promise run', ->
+describe 'promise call', ->
 
   scratch = test.scratch @
 
@@ -18,7 +18,7 @@ describe 'promise run', ->
         destination: "#{scratch}/a_file"
       , (err) ->
         touched++
-      .run ->
+      .call ->
         called++
       .touch
         destination: "#{scratch}/a_file"
@@ -31,7 +31,7 @@ describe 'promise run', ->
 
     it 'set changed to true', (next) ->
       mecano
-      .run ->
+      .call ->
         return true
       .then (err, changed) ->
         changed.should.be.True
@@ -39,7 +39,7 @@ describe 'promise run', ->
 
     it 'set changed to false', (next) ->
       mecano
-      .run ->
+      .call ->
         return false
       .then (err, changed) ->
         changed.should.be.False
@@ -47,7 +47,7 @@ describe 'promise run', ->
 
     it 'catch error', (next) ->
       mecano
-      .run ->
+      .call ->
         throw Error 'Catchme'
       .then (err, changed) ->
         err.message.should.eql 'Catchme'
@@ -63,7 +63,7 @@ describe 'promise run', ->
         destination: "#{scratch}/a_file"
       , (err) ->
         touched++
-      .run (next) ->
+      .call (next) ->
         process.nextTick ->
           called++
           next()
@@ -78,7 +78,7 @@ describe 'promise run', ->
 
     it 'set changed to true', (next) ->
       mecano
-      .run (next) ->
+      .call (next) ->
         process.nextTick ->
           next null, true
       .then (err, changed) ->
@@ -87,7 +87,7 @@ describe 'promise run', ->
 
     it 'set changed to false', (next) ->
       mecano
-      .run (next) ->
+      .call (next) ->
         process.nextTick ->
           next null, false
       .then (err, changed) ->
@@ -96,7 +96,7 @@ describe 'promise run', ->
 
     it 'catch error', (next) ->
       mecano
-      .run (next) ->
+      .call (next) ->
         throw Error 'Catchme'
       .then (err, changed) ->
         err.message.should.eql 'Catchme'
@@ -110,9 +110,9 @@ describe 'promise run', ->
           destination: "#{scratch}/a_file"
         , (err) ->
           false
-        .run (next) ->
+        .call (next) ->
           next.property.does.not.exist
-        .run ->
+        .call ->
           next Error 'Shouldnt be called'
         , (err) ->
           console.log 'ok', err
@@ -122,7 +122,7 @@ describe 'promise run', ->
 
     it 'catch error in next tick', (next) ->
       mecano
-      .run (next) ->
+      .call (next) ->
         process.nextTick ->
           next Error 'Catchme'
       .then (err, changed) ->

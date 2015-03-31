@@ -80,22 +80,22 @@ describe 'promise', ->
         err.message.should.eql 'Catchme'
         next()
 
-    it 'continue if callback return true', (next) ->
-      called = false
-      mecano
-      .chmod
-        destination: "#{scratch}/doesnt_exist"
-      , (err) ->
-        err.message.should.eql "Missing option 'mode'"
-        true
-      .write
-        content: 'hello'
-        destination: "#{scratch}/exist"
-      , (err, written) ->
-        called = true if written
-      .then (err, changed) ->
-        called.should.be.True
-        next err
+    # it 'continue if callback return true', (next) ->
+    #   called = false
+    #   mecano
+    #   .chmod
+    #     destination: "#{scratch}/doesnt_exist"
+    #   , (err) ->
+    #     err.message.should.eql "Missing option 'mode'"
+    #     true
+    #   .write
+    #     content: 'hello'
+    #     destination: "#{scratch}/exist"
+    #   , (err, written) ->
+    #     called = true if written
+    #   .then (err, changed) ->
+    #     called.should.be.True
+    #     next err
         
 
 

@@ -13,49 +13,61 @@ functions share a common API with flexible options.
 
 ## Source Code
 
-    instance = (options={}) ->
-      obj = {}
-      obj.options = options
-      obj
-
     module.exports = ->
-      obj = instance arguments...
+      # obj = instance arguments...
+      if arguments.length is 2
+        obj = arguments[0]
+        obj.options = arguments[1]
+      else if arguments.length is 1
+        obj = {}
+        obj.options = arguments[0]
+      else
+        obj = {}
+        obj.options = {}
       properties = {}
       todos = []
-      status = err: null, changed: false, throw_if_error: true
-      run = ->
+      status = err: null, changed: false, throw_if_error: true, running: false, id: 0
+      run = (force) ->
+        status.running = false if force
+        return if status.running
         todo = todos.shift()
         # Nothing more to do
         unless todo
           throw status.err if status.err and status.throw_if_error
           return
         # There is an error so we search for the next then item
-        return run() if status.err and todo[0] isnt 'then'
+        return run(true) if status.err and todo[0] isnt 'then'
         if todo[0] is 'then'
-          return todo[1][0].call obj, status.err, status.changed, (err, changed) ->
-            status.err = null
-            status.changed = false
-            status.throw_if_error = true
-            if err then status.err = err
-            else if changed then status.changed = true
-            run()
-        if todo[0] is 'run'
+          # return todo[1][0].call obj, status.err, status.changed, (err, changed) ->
+          #   status.err = null
+          #   status.changed = false
+          #   status.throw_if_error = true
+          #   if err then status.err = err
+          #   else if changed then status.changed = true
+          #   run()
+          {err, changed} = status
+          status.err = null
+          status.changed = false
+          status.throw_if_error = true
+          return todo[1][0].call obj, err, changed
+        if todo[0] is 'call'
           if todo[1][0].length # Async style
             try
+              status.running = true
               return todo[1][0].call obj, (err, changed) ->
                 if err then status.err = err
                 else if changed then status.changed = true
-                run()
+                run(true)
             catch err
               status.err = err
-            run()
+            run(true)
           else # Sync style
             try
               changed = todo[1][0].call obj
             catch err
             if err then status.err = err
             else if changed then status.changed = true
-            run()
+            run(true)
           return
         # Convert options to array
         # if typeof todo[1][0] is 'object' and not Array.isArray todo[1][0]
@@ -69,9 +81,9 @@ functions share a common API with flexible options.
           t = todo[1][0]
           for k, v of obj.options
             t[k] = obj.options[k] if typeof t[k] is 'undefined'
-
         # Call the action
         todo[1][0].user_args = todo[1][1]?.length > 2
+        status.running = true
         registry[todo[0]].call obj, todo[1][0], (err, changed, to) ->
           # Call the user callback synchronously
           result = false
@@ -82,24 +94,29 @@ functions share a common API with flexible options.
           catch e then err = e unless err
           if err then status.err = err
           else if changed then status.changed = true
-          run()
-      build = (name) ->
-        process.nextTick run if todos.length is 0 # Activate the pump
-        builder = ->
-          todos.push [name, arguments]
-          obj
-        # __proto__ is used because we must return a function, but there is
-        # no way to create a function with a different prototype.
-        # builder.__proto__ = proto
-        builder
+          run(true)
       properties.then = get: ->
-        build 'then'
-      properties.run = get: ->
-        build 'run'
+        ->
+          id = status.id++
+          todos.push ['then', arguments, id]
+          process.nextTick run if todos.length is 1 # Activate the pump
+          obj
+      properties.call = get: ->
+        ->
+          id = status.id++
+          todos.push ['call', arguments, id]
+          process.nextTick ->
+            # run() if todos.length is 1 # Activate the pump
+          process.nextTick run if todos.length is 1 # Activate the pump
+          obj
       Object.keys(registry).forEach (name) ->
         properties[name] = get: ->
-          # process.nextTick run if todos.length is 0 # Activate the pump
-          build name
+          ->
+            id = status.id++
+            dest = arguments[0]?.destination
+            todos.push [name, arguments, id]
+            process.nextTick run if todos.length is 1 # Activate the pump
+            obj
       proto = Object.defineProperties obj, properties
       obj
 
@@ -111,8 +128,8 @@ functions share a common API with flexible options.
       properties[name] = get: ->
         module.exports()[name]
 
-    properties.run = get: ->
-      module.exports().run
+    properties.call = get: ->
+      module.exports().call
 
     Object.defineProperties module.exports, properties
 
