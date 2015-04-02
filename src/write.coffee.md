@@ -220,8 +220,8 @@ require('mecano').write({
           # Option "local_source" force to bypass the ssh
           # connection, use by the upload function
           source = options.source or options.destination
-          options.log? "Mecano `write`: force local source is \"#{if options.local_source then 'true' else 'false'}\""
-          options.log? "Mecano `write`: source is \"#{options.source}\""
+          options.log? "Mecano `write`: force local source is \"#{if options.local_source then 'true' else 'false'}\" [DEBUG]"
+          options.log? "Mecano `write`: source is \"#{options.source}\" [DEBUG]"
           ssh = if options.local_source then null else options.ssh
           fs.exists ssh, source, (err, exists) ->
             return callback err if err
@@ -229,7 +229,7 @@ require('mecano').write({
               return callback new Error "Source does not exist: #{JSON.stringify options.source}" if options.source
               content = ''
               return do_read_destination()
-            options.log? "Mecano `write`: read source"
+            options.log? "Mecano `write`: read source [DEBUG]"
             fs.readFile ssh, source, 'utf8', (err, src) ->
               return callback err if err
               content = src
@@ -238,9 +238,9 @@ require('mecano').write({
         do_read_destination = ->
           # no need to test changes if destination is a callback
           return do_render() if typeof options.destination is 'function'
-          options.log? "Mecano `write`: destination is \"#{options.destination}\""
+          options.log? "Mecano `write`: destination is \"#{options.destination}\" [DEBUG]"
           exists = ->
-            options.log? "Mecano `write`: stat destination"
+            options.log? "Mecano `write`: stat destination [DEBUG]"
             fs.stat options.ssh, options.destination, (err, stat) ->
               return do_mkdir() if err?.code is 'ENOENT'
               return callback err if err
@@ -258,7 +258,6 @@ require('mecano').write({
               else
                 do_read()
           do_mkdir = ->
-            options.log? "Mecano `write`: mkdir"
             mkdir
               ssh: options.ssh
               destination: path.dirname options.destination
@@ -271,7 +270,7 @@ require('mecano').write({
               return callback err if err
               do_render()
           do_read = ->
-            options.log? "Mecano `write`: read destination"
+            options.log? "Mecano `write`: read destination [DEBUG]"
             fs.readFile options.ssh, options.destination, 'utf8', (err, dest) ->
               return callback err if err
               destination = dest if options.diff # destination content only use by diff
@@ -280,7 +279,7 @@ require('mecano').write({
           exists()
         do_render = ->
           return do_skip_empty_lines() unless options.context?
-          options.log? "Mecano `write`: rendering with #{options.engine}"
+          options.log? "Mecano `write`: rendering with #{options.engine} [DEBUG]"
           try
             switch options.engine
               when 'nunjunks' then content = (new nunjucks.Environment()).renderString content.toString(), options.context
@@ -295,7 +294,7 @@ require('mecano').write({
           do_replace_partial()
         do_replace_partial = ->
           return do_eof() unless write.length
-          options.log? "Mecano `write`: replace"
+          options.log? "Mecano `write`: replace [DEBUG]"
           for opts in write
             if opts.match
               opts.match ?= opts.replace
@@ -433,11 +432,11 @@ require('mecano').write({
             # Ownership and permission are also handled
             fs.writeFile options.ssh, options.destination, content, options, (err) ->
               return callback err if err
+              options.log? "Mecano `write`: content has changed [INFO]"
               modified = true
               do_end()
         do_ownership = ->
           return do_permissions() unless options.uid? and options.gid?
-          options.log? "Mecano `write`: change ownership [DEBUG]"
           chown
             ssh: options.ssh
             destination: options.destination
@@ -451,7 +450,6 @@ require('mecano').write({
             do_permissions()
         do_permissions = ->
           return do_end() unless options.mode?
-          options.log? "Mecano `write`: change permissions [DEBUG]"
           chmod
             ssh: options.ssh
             destination: options.destination
