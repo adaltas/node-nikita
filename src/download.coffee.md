@@ -36,7 +36,7 @@ In local mode (with an SSH connection), the `http` protocol is handled with the
 ## File example
 
 ```js
-requir('mecano').download({
+require('mecano').download({
   source: 'file://path/to/something',
   destination: 'node-sigar.tgz'
 }, function(err, downloaded){
