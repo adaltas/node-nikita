@@ -64,21 +64,6 @@ require('mecano').krb5_addprinc({
           cmd = misc.kadmin options, if options.password
           then "addprinc -pw #{options.password} #{options.principal}"
           else "addprinc -randkey #{options.principal}"
-          # if options.password
-          #   addprinc = misc.kadmin options, "addprinc -pw #{options.password} #{options.principal}"
-          #   cmd = """
-          #   ! echo #{options.kadmin_password} | kinit #{options.kadmin_principal} >/dev/null; && {
-          #     #{addprinc}
-          #   }
-          #   """
-          # else
-          #   listprincs = misc.kadmin options, "listprincs"
-          #   addprinc = misc.kadmin options, "addprinc -randkey #{options.principal}"
-          #   cmd = """
-          #   ! #{listprincs} | grep #{options.principal}; && {
-          #     #{addprinc}
-          #   }
-          #   """
           execute
             cmd: cmd
             ssh: options.ssh
