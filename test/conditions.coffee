@@ -54,6 +54,13 @@ describe 'conditions', ->
         next
         () -> false.should.be.ok
 
+    they 'should fail if `null`', (ssh, next) ->
+      conditions.if
+        ssh: ssh
+        if: null
+        next
+        () -> false.should.be.ok
+
     they 'should fail with error if string', (ssh, next) ->
       conditions.if
         ssh: ssh
@@ -64,11 +71,14 @@ describe 'conditions', ->
         () -> false.should.be.ok
 
     they 'should succeed on `succeed` callback', (ssh, next) ->
+      called = true
       conditions.if
         ssh: ssh
         if: (options, calback) -> calback null, true
-        () -> false.should.be.ok
-        next
+        (err) -> false.should.be.ok
+        ->
+          called.should.be.True
+          next()
 
     they 'should fail on `failed` callback', (ssh, next) ->
       conditions.if
@@ -117,6 +127,13 @@ describe 'conditions', ->
       conditions.not_if
         ssh: ssh
         not_if: false
+        () -> false.should.be.ok
+        next
+
+    they 'should fail if `null`', (ssh, next) ->
+      conditions.not_if
+        ssh: ssh
+        not_if: null
         () -> false.should.be.ok
         next
 

@@ -81,7 +81,7 @@ exports.options = (options, callback) ->
   options = [options] unless Array.isArray options
   each(options)
   .on 'item', (options, next) ->
-    options.if = [options.if] if options.if? and not Array.isArray options.if
+    # options.if = [options.if] if options.if? and not Array.isArray options.if
     # options.if_exists = options.destination if options.if_exists is true and options.destination
     options.if_exists = [options.if_exists] if typeof options.if_exists is 'string'
     # options.not_if_exists = options.destination if options.not_if_exists is true and options.destination

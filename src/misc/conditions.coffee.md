@@ -10,11 +10,12 @@ For an action to be executed, all conditions must pass.
 
 ## Run an action for a user defined condition: `if`
 
-Work on the property `if` in `options`. When `if` is a boolean, its value
-determine the output. If it's a function, the arguments vary depending on the
-callback signature. With 1 argument, the argument is a callback. With 2
-arguments, the arguments are the options and a callback. If it'a an array, all
-its element must positively resolve for the condition to pass.
+Work on the property `if` in `options`. When `if` is a boolean, a number or
+null, its value determine the output. If it's a function, the arguments vary
+depending on the callback signature. With 1 argument, the argument is a
+callback. With 2 arguments, the arguments are the options and a callback. If
+it'a an array, all its element must positively resolve for the condition to
+pass.
 
 Updating the content of a file if we are the owner
 
@@ -31,28 +32,32 @@ mecano.render({
 ```
 
       if: (options, skip, succeed) ->
-        return succeed() unless options.if?
+        return succeed() if typeof options.if is 'undefined'
+        options.if = [options.if] unless Array.isArray options.if
         ok = true
         each(options.if)
         .on 'item', (si, next) ->
           return next() unless ok
           options.log? "Mecano `if`"
           type = typeof si
-          if type is 'boolean' or type is 'number'
+          if si is null
+            ok = false
+            next()
+          else if type is 'boolean' or type is 'number'
             ok = false unless si
             next()
           else if type is 'function'
-            if options.if.length is 1
+            if si.length is 1
               si (err, is_ok) ->
                 return next err if err
                 ok = false unless is_ok
                 next()
-            else if options.if.length is 2
+            else if si.length is 2
               si options, (err, is_ok) ->
                 return next err if err
                 ok = false unless is_ok
                 next()
-            else if options.if.length is 3
+            else if si.length is 3
               # Deprecated? should we continue to support this?
               si options, ( -> ok = false; next arguments...), next
             else next new Error "Invalid callback"
@@ -71,29 +76,33 @@ arguments, the arguments are the options and a callback. If it'a an array, all
 its element must positively resolve for the condition to pass.
 
       not_if: (options, skip, succeed) ->
-        return succeed() unless options.not_if?
+        return succeed() if typeof options.not_if is 'undefined'
+        options.not_if = [options.not_if] unless Array.isArray options.not_if
         ok = true
         each(options.not_if)
         .on 'item', (not_if, next) ->
           return next() unless ok
           options.log? "Mecano `not_if`"
           type = typeof not_if
-          if type is 'boolean' or type is 'number'
+          if not_if is null
+            ok = true
+            next()
+          else if type is 'boolean' or type is 'number'
             ok = false if not_if
             next()
           else if type is 'function'
             # not_if options, next, ( -> ok = false; next arguments...)
-            if options.not_if.length is 1
+            if not_if.length is 1
               not_if (err, is_ok) ->
                 return next err if err
                 ok = false if is_ok
                 next()
-            else if options.not_if.length is 2
+            else if not_if.length is 2
               not_if options, (err, is_ok) ->
                 return next err if err
                 ok = false if is_ok
                 next()
-            else if options.not_if.length is 3
+            else if not_if.length is 3
               # Deprecated? should we continue to support this?
               not_if options, next, ( -> ok = false; next arguments...)
             else next new Error "Invalid callback"
