@@ -17,7 +17,7 @@ Install a service. For now, only yum over SSH.
 *   `srv_name`   
     Name used by the service utility, default to "name".   
 *   `cache`   
-    Run entirely from system cache, run install and update checks offline.   
+    Run entirely from system cache to list installed and outdated packages.   
 *   `action`   
     Execute the service with the provided action argument.   
 *   `installed`   
@@ -82,11 +82,13 @@ require('mecano').service([{
         # if options.startup? and typeof options.startup isnt 'string'
         #     options.startup = if options.startup then '2345' else ''
         modified = false
-        installed ?= options.installed
-        updates ?= options.updates
+        if options.cache
+          options.db ?= {}
+          installed = options.db['mecano:execute:installed']
+          updates = options.db['mecano:execute:updates']
         options.action = options.action.split(',') if typeof options.action is 'string'
         # Start real work
-        do_chkinstalled = ->
+        do_installed = ->
           # option name and yum_name are optional, skill installation if not present
           return do_startuped() unless pkgname
           cache = ->
@@ -94,7 +96,7 @@ require('mecano').service([{
             c = if options.cache then '-C' else ''
             execute
               ssh: options.ssh
-              cmd: "yum -C list installed"
+              cmd: "yum #{c} list installed"
               code_skipped: 1
               log: options.log
               # stdout: options.stdout
@@ -110,9 +112,9 @@ require('mecano').service([{
                 installed.push pkg[1] if pkg = /^([^\. ]+?)\./.exec pkg
               decide()
           decide = ->
-            if installed.indexOf(pkgname) isnt -1 then do_chkupdates() else do_install()
+            if installed.indexOf(pkgname) isnt -1 then do_updates() else do_install()
           if installed then decide() else cache()
-        do_chkupdates = ->
+        do_updates = ->
           cache = ->
             options.log? "Mecano `service`: list available updates [DEBUG]"
             c = if options.cache then '-C' else ''
@@ -255,8 +257,11 @@ require('mecano').service([{
             modified = true
             do_finish()
         do_finish = ->
+          if options.cache
+            options.db['mecano:execute:installed'] = installed
+            options.db['mecano:execute:updates'] = updates
           callback null, modified
-        do_chkinstalled()
+        do_installed()
 
 ## Dependencies
 
