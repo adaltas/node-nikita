@@ -4,6 +4,8 @@
 Create a symbolic link and it's parent directories if they don't yet
 exist.
 
+Note, it is valid for the "source" file to not exist.
+
 ## Options
 
 *   `source`   
