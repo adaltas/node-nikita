@@ -57,29 +57,6 @@ describe 'promise', ->
         logs.length.should.be.above 1
         next()
 
-  describe 'error', ->
-
-    it 'catch err', (next) ->
-      mecano
-      .chmod
-        destination: "#{scratch}/doesnt_exist"
-      # todo: add another action to make sure it isnt called
-      .then (err, changed) ->
-        err.message.should.eql "Missing option 'mode'"
-        next()
-
-    it 'catch err in callback', (next) ->
-      mecano
-      .write
-        content: 'hello'
-        destination: "#{scratch}/a_file"
-      , (err, written) ->
-        return next err if err
-        throw Error 'Catchme'
-      .then (err, changed) ->
-        err.message.should.eql 'Catchme'
-        next()
-
     # it 'continue if callback return true', (next) ->
     #   called = false
     #   mecano

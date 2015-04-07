@@ -27,7 +27,38 @@ functions share a common API with flexible options.
       properties = {}
       todos = []
       status = err: null, changed: false, throw_if_error: true, running: false, id: 0
-      run = (force) ->
+      call = (fn, args, callback) ->
+        status.running = true
+        # On error, what shall we do:
+        # - if a then is registered, jump to then and skip all actions
+        # - if no then and a callback, let the callback deal with it
+        # Call the user callback synchronously
+        try
+          fn.call obj, args..., (err, changed) ->
+            if err
+              has_then = false
+              for todo in todos then has_then = true if todo[0] is 'then'
+              while todos[0] and todos[0][0] isnt 'then' then todos.shift()
+            result = false
+            try
+              result = callback?.apply null, arguments
+              status.throw_if_error = false if err
+              err = null if result is true
+            catch e then err = e unless err
+            if err then status.err = err
+            else if changed then status.changed = true
+            return run null, true
+        catch err
+          has_then = false
+          for todo in todos then has_then = true if todo[0] is 'then'
+          while todos[0] and todos[0][0] isnt 'then' then todos.shift()
+          status.err = err
+          return run null, true
+      run = (err, force) ->
+        if err
+          has_then = false
+          for todo in todos then has_then = true if todo[0] is 'then'
+          while todos[0] and todos[0][0] isnt 'then' then todos.shift()
         status.running = false if force
         return if status.running
         todo = todos.shift()
@@ -35,43 +66,28 @@ functions share a common API with flexible options.
         unless todo
           throw status.err if status.err and status.throw_if_error
           return
-        # There is an error so we search for the next then item
-        return run(true) if status.err and todo[0] isnt 'then'
         if todo[0] is 'then'
-          # return todo[1][0].call obj, status.err, status.changed, (err, changed) ->
-          #   status.err = null
-          #   status.changed = false
-          #   status.throw_if_error = true
-          #   if err then status.err = err
-          #   else if changed then status.changed = true
-          #   run()
           {err, changed} = status
           status.err = null
           status.changed = false
           status.throw_if_error = true
-          return todo[1][0].call obj, err, changed
+          todo[1][0].call obj, err, changed
+          run null, true
+          return
         if todo[0] is 'call'
           if todo[1][0].length # Async style
-            try
-              status.running = true
-              return todo[1][0].call obj, (err, changed) ->
-                if err then status.err = err
-                else if changed then status.changed = true
-                run(true)
-            catch err
-              status.err = err
-            run(true)
+            return call todo[1][0], [], null
           else # Sync style
             try
               changed = todo[1][0].call obj
             catch err
+            if err
+              has_then = false
+              for todo in todos then has_then = true if todo[0] is 'then'
+              while todos[0] and todos[0][0] isnt 'then' then todos.shift()
             if err then status.err = err
             else if changed then status.changed = true
-            run(true)
-          return
-        # Convert options to array
-        # if typeof todo[1][0] is 'object' and not Array.isArray todo[1][0]
-        #   todo[1][0] = [todo[1][0]]
+            return run null, true
         # Enrich with default options
         if Array.isArray todo[1][0]
           for t in todo[1][0]
@@ -83,18 +99,7 @@ functions share a common API with flexible options.
             t[k] = obj.options[k] if typeof t[k] is 'undefined'
         # Call the action
         todo[1][0].user_args = todo[1][1]?.length > 2
-        status.running = true
-        registry[todo[0]].call obj, todo[1][0], (err, changed, to) ->
-          # Call the user callback synchronously
-          result = false
-          try
-            result = todo[1][1]?.apply null, arguments
-            status.throw_if_error = false if err
-            err = null if result is true
-          catch e then err = e unless err
-          if err then status.err = err
-          else if changed then status.changed = true
-          run(true)
+        call registry[todo[0]], [todo[1][0]], todo[1][1]
       properties.then = get: ->
         ->
           id = status.id++
