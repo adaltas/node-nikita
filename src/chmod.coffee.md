@@ -41,7 +41,7 @@ require('mecano').chmod({
     module.exports = (options, callback) ->
       wrap @, arguments, (options, callback) ->
         # Validate parameters
-        return callback Error "Missing destination: #{options.destination}" unless options.destination
+        return callback Error "Missing destination: #{JSON.stringify options.destination}" unless options.destination
         return callback Error "Missing option 'mode'" unless options.mode
         # options.log? "Mecano `chmod` [DEBUG]"
         do_stat = ->
