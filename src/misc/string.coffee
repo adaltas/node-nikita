@@ -33,3 +33,5 @@ module.exports =
       return lastIndex isnt -1 and lastIndex is position
     lines: (str) ->
       str.split /\r\n|[\n\r\u0085\u2028\u2029]/g
+    underscore: (str) ->
+      trim(str).replace(/([a-z\d])([A-Z]+)/g, '$1_$2').replace(/[-\s]+/g, '_').toLowerCase()
