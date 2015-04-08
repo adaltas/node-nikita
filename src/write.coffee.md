@@ -290,6 +290,7 @@ require('mecano').write({
           do_skip_empty_lines()
         do_skip_empty_lines = ->
           return do_replace_partial() unless options.skip_empty_lines?
+          options.log? "Mecano `write`: skip empty lines [DEBUG]"
           content = content.replace /(\r\n|[\n\r\u0085\u2028\u2029])\s*(\r\n|[\n\r\u0085\u2028\u2029])/g, "$1"
           do_replace_partial()
         do_replace_partial = ->
@@ -372,6 +373,7 @@ require('mecano').write({
           do_eof()
         do_eof = ->
           return do_diff() unless options.eof?
+          options.log? "Mecano `write`: eof [DEBUG]"
           if options.eof is true
             for char, i in content
               if char is '\r'
@@ -387,7 +389,7 @@ require('mecano').write({
           do_diff()
         do_diff = ->
           return do_ownership() if destinationHash is string.hash content
-          options.log? "Mecano `write`: file content has changed [INFO]"
+          options.log? "Mecano `write`: file content has changed [WARN]"
           if options.diff
             lines = diff.diffLines destination, content
             options.diff lines if typeof options.diff is 'function'
@@ -410,7 +412,7 @@ require('mecano').write({
           do_backup()
         do_backup = ->
           return do_write() if not options.backup or not destinationHash
-          options.log? "Mecano `write`: create backup [INFO]"
+          options.log? "Mecano `write`: create backup [WARN]"
           backup = options.backup
           backup = ".#{Date.now()}" if backup is true
           backup = "#{options.destination}#{backup}"
