@@ -74,6 +74,13 @@ you are a member of the "wheel" group (gid of "10") with the command
 `id a\_user` producing an output similar to 
 "uid=490(hive) gid=10(wheel) groups=10(wheel)".
 
+To list all files owner by a user or a uid, run:
+
+```bash
+find /var/tmp -user `whoami`
+find /var/tmp -uid 1000
+```
+
 ## Source Code
 
     module.exports = (options, callback) ->
