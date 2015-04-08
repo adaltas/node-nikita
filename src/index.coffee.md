@@ -93,7 +93,7 @@ functions share a common API with flexible options.
           for t in todo[1][0]
             for k, v of obj.options
               t[k] = obj.options[k] if typeof t[k] is 'undefined'
-        else
+        else if typeof todo[1][0] is 'object'
           t = todo[1][0]
           for k, v of obj.options
             t[k] = obj.options[k] if typeof t[k] is 'undefined'
