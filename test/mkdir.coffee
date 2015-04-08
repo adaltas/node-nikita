@@ -13,29 +13,27 @@ describe 'mkdir', ->
 
   they 'should create dir', (ssh, next) ->
     source = "#{scratch}/a_dir"
-    mecano.mkdir
+    mecano
       ssh: ssh
+    .mkdir
       directory: source
     , (err, created) ->
-      return next err if err
       created.should.be.ok
-      mecano.mkdir
-        ssh: ssh
-        directory: source
-      , (err, created) ->
-        return next err if err
-        created.should.not.be.ok
-        next()
+    .mkdir
+      directory: source
+    , (err, created) ->
+      created.should.not.be.ok
+    .then next
 
   they 'should take source if first argument is a string', (ssh, next) ->
     source = "#{scratch}/a_dir"
-    mecano.mkdir source, (err, created) ->
-      return next err if err
+    mecano
+      ssh: ssh
+    .mkdir source, (err, created) ->
       created.should.be.ok
-      mecano.mkdir source, (err, created) ->
-        return next err if err
-        created.should.not.be.ok
-        next()
+    .mkdir source, (err, created) ->
+      created.should.not.be.ok
+    .then next
   
   they 'should create dir recursively', (ssh, next) ->
     source = "#{scratch}/a_parent_dir/a_dir"
@@ -161,45 +159,39 @@ describe 'mkdir', ->
     they 'detect a permission change', (ssh, next) ->
       # 40744: 4 for directory, 744 for permissions
       @timeout 10000
-      mecano.mkdir
+      mecano
         ssh: ssh
+      .mkdir
         directory: "#{scratch}/ssh_dir_string"
         mode: 0o744
+      .mkdir
+        directory: "#{scratch}/ssh_dir_string"
+        mode: 0o755
       , (err, created) ->
-        return next err if err
-        mecano.mkdir
-          ssh: ssh
-          directory: "#{scratch}/ssh_dir_string"
-          mode: 0o755
-        , (err, created) ->
-          return next err if err
-          created.should.be.ok
-          mecano.mkdir
-            ssh: ssh
-            directory: "#{scratch}/ssh_dir_string"
-            mode: 0o755
-          , (err, created) ->
-            return next err if err
-            created.should.not.be.ok
-            next()
+        created.should.be.ok
+      .mkdir
+        directory: "#{scratch}/ssh_dir_string"
+        mode: 0o755
+      , (err, created) ->
+        created.should.not.be.ok
+      .then next
 
     they 'dont ovewrite permission', (ssh, next) ->
       @timeout 10000
-      mecano.mkdir
+      mecano
         ssh: ssh
+      .mkdir
         directory: "#{scratch}/a_dir"
         mode: 0o744
+      .mkdir
+        directory: "#{scratch}/a_dir"
       , (err, created) ->
+        created.should.not.be.ok
+      .then (err) ->
         return next err if err
-        mecano.mkdir
-          ssh: ssh
-          directory: "#{scratch}/a_dir"
-        , (err, created) ->
+        fs.stat ssh, "#{scratch}/a_dir", (err, stat) ->
           return next err if err
-          created.should.not.be.ok
-          fs.stat ssh, "#{scratch}/a_dir", (err, stat) ->
-            return next err if err
-            misc.mode.stringify(stat.mode).should.eql '40744'
-            next()
+          misc.mode.stringify(stat.mode).should.eql '40744'
+          next()
 
 

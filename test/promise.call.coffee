@@ -94,10 +94,21 @@ describe 'promise call', ->
         changed.should.be.False
         next()
 
-    it 'catch error', (next) ->
+  describe 'async err', ->
+
+    it 'thrown', (next) ->
       mecano
       .call (next) ->
         throw Error 'Catchme'
+      .then (err, changed) ->
+        err.message.should.eql 'Catchme'
+        next()
+
+    it 'pass to next', (next) ->
+      mecano
+      .call (next) ->
+        process.nextTick ->
+          next Error 'Catchme'
       .then (err, changed) ->
         err.message.should.eql 'Catchme'
         next()

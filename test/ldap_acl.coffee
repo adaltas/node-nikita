@@ -31,7 +31,8 @@ describe 'ldap_acl', ->
         next err
 
   it 'create a new permission', (next) ->
-    mecano.ldap_acl
+    mecano
+    .ldap_acl
       ldap: client
       name: 'olcDatabase={2}bdb,cn=config'
       to: 'dn.base="dc=test,dc=com"'
@@ -39,19 +40,17 @@ describe 'ldap_acl', ->
         'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage'
       ]
     , (err, modified) ->
-      return next err if err
       modified.should.be.ok
-      mecano.ldap_acl
-        ldap: client
-        name: 'olcDatabase={2}bdb,cn=config'
-        to: 'dn.base="dc=test,dc=com"'
-        by: [
-          'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage'
-        ]
-      , (err, modified) ->
-        return next err if err
-        modified.should.not.be.ok
-        next()
+    .ldap_acl
+      ldap: client
+      name: 'olcDatabase={2}bdb,cn=config'
+      to: 'dn.base="dc=test,dc=com"'
+      by: [
+        'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage'
+      ]
+    , (err, modified) ->
+      modified.should.not.be.ok
+    .then next
 
   it 'respect order in creation', (next) ->
     mecano.ldap_acl [

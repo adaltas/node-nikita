@@ -12,25 +12,22 @@ describe 'chmod', ->
   scratch = test.scratch @
 
   they 'change a permission of a file', (ssh, next) ->
-    mecano.touch
+    mecano
       ssh: ssh
+    .touch
       destination: "#{scratch}/a_file"
       mode: 0o754
-    , (err) ->
+    .chmod
+      destination: "#{scratch}/a_file"
+      mode: 0o744
+    , (err, modified) ->
       return next err if err
-      mecano.chmod
-        ssh: ssh
-        destination: "#{scratch}/a_file"
-        mode: 0o744
-      , (err, modified) ->
-        return next err if err
-        modified.should.be.ok
-        mecano.chmod
-          ssh: ssh
-          destination: "#{scratch}/a_file"
-          mode: 0o744
-        , (err, modified) ->
-          return next err if err
-          modified.should.not.be.ok
-          next()
+      modified.should.be.True
+    .chmod
+      destination: "#{scratch}/a_file"
+      mode: 0o744
+    , (err, modified) ->
+      return next err if err
+      modified.should.not.be.True
+    .then next
 

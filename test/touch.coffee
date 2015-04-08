@@ -21,18 +21,16 @@ describe 'touch', ->
         next()
 
   they 'an existing file', (ssh, next) ->
-    mecano.touch
+    mecano
       ssh: ssh
+    .touch
       destination: "#{scratch}/a_file"
     , (err, touched) ->
-      return next err if err
       touched.should.be.ok
-      mecano.touch
-        ssh: ssh
-        destination: "#{scratch}/a_file"
-      , (err, touched) ->
-        return next err if err
-        touched.should.not.be.ok
-        next()
+    .touch
+      destination: "#{scratch}/a_file"
+    , (err, touched) ->
+      touched.should.not.be.ok
+    .then next
       
 

@@ -13,191 +13,165 @@ describe 'service', ->
 
     they 'validate installation', (ssh, next) ->
       return next() unless config.test_service
-      mecano.service
+      mecano
         ssh: ssh
+      .service
         name: 'ntp'
       , (err, serviced) ->
-        return next err if err
         serviced.should.be.ok
-        mecano.execute
-          ssh: ssh
-          cmd: 'yum list installed | grep ntp'
-        , (err, executed) ->
-          return next err if err
-          executed.should.be.ok
-          next()
+      .execute
+        cmd: 'yum list installed | grep ntp'
+      , (err, executed) ->
+        executed.should.be.ok
+      .then next
     
     they 'skip if already installed', (ssh, next) ->
       return next() unless config.test_service
-      mecano.service
+      mecano
         ssh: ssh
+      .service
         name: 'ntp'
       , (err, serviced) ->
-        return next err if err
         serviced.should.be.ok
-        mecano.service
-          ssh: ssh
-          name: 'ntp'
-        , (err, serviced) ->
-          return next err if err
-          serviced.should.not.be.ok
-          next()
+      .service
+        name: 'ntp'
+      , (err, serviced) ->
+        serviced.should.not.be.ok
+      .then next
 
   describe 'startup', ->
 
     they 'declare on startup with boolean', (ssh, next) ->
       return next() unless config.test_service
-      mecano.service
+      mecano
         ssh: ssh
+      .service
         name: 'ntp'
         srv_name: 'ntpd'
         startup: true
       , (err, serviced) ->
-        return next err if err
         serviced.should.be.ok
-        mecano.execute
-          ssh: ssh
-          cmd: 'chkconfig --list ntpd'
-          code_skipped: 1
-        , (err, startuped) ->
-          return next err if err
-          startuped.should.be.ok
-          next()
+      .execute
+        cmd: 'chkconfig --list ntpd'
+        code_skipped: 1
+      , (err, startuped) ->
+        startuped.should.be.ok
+      .then next
 
     they 'skip if already declared', (ssh, next) ->
       return next() unless config.test_service
-      mecano.service
+      mecano
         ssh: ssh
+      .service
         name: 'ntp'
         srv_name: 'ntpd'
         startup: true
       , (err, serviced) ->
-        return next err if err
         serviced.should.be.ok
-        mecano.service
-          ssh: ssh
-          name: 'ntp'
-          srv_name: 'ntpd'
-          startup: true
-        , (err, serviced) ->
-          return next err if err
-          serviced.should.not.be.ok
-          next()
+      .service
+        name: 'ntp'
+        srv_name: 'ntpd'
+        startup: true
+      , (err, serviced) ->
+        serviced.should.not.be.ok
+      .then next
 
     they 'notice a change in startup level', (ssh, next) ->
       return next() unless config.test_service
-      mecano.service
+      mecano
         ssh: ssh
+      .service
         name: 'ntp'
         srv_name: 'ntpd'
         startup: '235'
       , (err, serviced) ->
-        return next err if err
         serviced.should.be.ok
-        mecano.service
-          ssh: ssh
-          name: 'ntp'
-          srv_name: 'ntpd'
-          startup: '2345'
-        , (err, serviced) ->
-          return next err if err
-          serviced.should.be.ok
-          mecano.service
-            ssh: ssh
-            name: 'ntp'
-            srv_name: 'ntpd'
-            startup: '2345'
-          , (err, serviced) ->
-            return next err if err
-            serviced.should.not.be.ok
-            next()
+      .service
+        name: 'ntp'
+        srv_name: 'ntpd'
+        startup: '2345'
+      , (err, serviced) ->
+        serviced.should.be.ok
+      .service
+        name: 'ntp'
+        srv_name: 'ntpd'
+        startup: '2345'
+      , (err, serviced) ->
+        serviced.should.not.be.ok
+      .then next
 
     they 'remove after being defined', (ssh, next) ->
       return next() unless config.test_service
-      # Register service
-      mecano.service
+      mecano
         ssh: ssh
+      .service # Register service
         name: 'ntp'
         srv_name: 'ntpd'
         startup: true
       , (err, serviced) ->
         return next err if err
-        # Unregister service
-        mecano.service
-          ssh: ssh
-          name: 'ntp'
-          srv_name: 'ntpd'
-          startup: false
-        , (err, serviced) ->
-          return next err if err
-          serviced.should.be.ok
-          # Validate service not registered
-          mecano.execute
-            ssh: ssh
-            cmd: 'chkconfig --list ntpd'
-            code_skipped: 1
-          , (err, startuped) ->
-            return next err if err
-            startuped.should.not.be.ok
-            next()
+      .service # Unregister service
+        name: 'ntp'
+        srv_name: 'ntpd'
+        startup: false
+      , (err, serviced) ->
+        return next err if err
+        serviced.should.be.ok
+      .execute # Validate service not registered
+        cmd: 'chkconfig --list ntpd'
+        code_skipped: 1
+      , (err, startuped) ->
+        return next err if err
+        startuped.should.not.be.ok
+      .then next
 
   describe 'action', ->
 
     they 'should start', (ssh, next) ->
       return next() unless config.test_service
-      mecano.service
+      mecano
         ssh: ssh
+      .service
         name: 'ntp'
         srv_name: 'ntpd'
         action: 'start'
       , (err, serviced) ->
-        return next err if err
         serviced.should.be.ok
-        mecano.execute
-          ssh: ssh
-          cmd: 'service ntpd status'
-          code_skipped: 3
-        , (err, started) ->
-          return next err if err
-          started.should.be.ok
-          # Detect already started
-          mecano.service
-            ssh: ssh
-            name: 'ntp'
-            srv_name: 'ntpd'
-            action: 'start'
-          , (err, serviced) ->
-            return next err if err
-            serviced.should.not.be.ok
-            next()
+      .execute
+        cmd: 'service ntpd status'
+        code_skipped: 3
+      , (err, started) ->
+        started.should.be.ok
+      .service # Detect already started
+        name: 'ntp'
+        srv_name: 'ntpd'
+        action: 'start'
+      , (err, serviced) ->
+        serviced.should.not.be.ok
+      .then next
 
     they 'should stop', (ssh, next) ->
       return next() unless config.test_service
-      mecano.service
+      mecano
         ssh: ssh
+      .service
         name: 'ntp'
         srv_name: 'ntpd'
         action: 'stop'
       , (err, serviced) ->
-        return next err if err
         serviced.should.be.ok
-        mecano.execute
-          ssh: ssh
-          cmd: 'service ntpd status'
-          code_skipped: 3
-        , (err, started) ->
-          return next err if err
-          started.should.not.be.ok
-          # Detect already stopped
-          mecano.service
-            ssh: ssh
-            name: 'ntp'
-            srv_name: 'ntpd'
-            action: 'stop'
-          , (err, serviced) ->
-            return next err if err
-            serviced.should.not.be.ok
-            next()
+      .execute
+        cmd: 'service ntpd status'
+        code_skipped: 3
+      , (err, started) ->
+        started.should.not.be.ok
+      .service # Detect already stopped
+        name: 'ntp'
+        srv_name: 'ntpd'
+        action: 'stop'
+      , (err, serviced) ->
+        serviced.should.not.be.ok
+      .then next
 
 
 

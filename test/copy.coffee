@@ -34,47 +34,50 @@ describe 'copy', ->
       # @timeout 1000000
       source = "#{__dirname}/../resources/a_dir/a_file"
       destination = "#{scratch}/a_new_file"
-      mecano.copy
+      mecano
         ssh: ssh
+      .copy
         source: source
         destination: destination
       , (err, copied) ->
         return next err if err
         copied.should.be.ok
-        misc.file.compare ssh, [source, destination], (err, md5) ->
+      .call (next) ->
+        misc.file.compare @options.ssh, [source, destination], (err, md5) ->
           return next err if err
           md5.should.eql '3fb7c40c70b0ed19da713bd69ee12014'
-          mecano.copy
-            ssh: ssh
-            source: source
-            destination: destination
-          , (err, copied) ->
-            return next err if err
-            copied.should.not.be.ok
-            next()
+          next()
+      .copy
+        ssh: ssh
+        source: source
+        destination: destination
+      , (err, copied) ->
+        return next err if err
+        copied.should.not.be.ok
+        next()
 
     they 'into an existing directory', (ssh, next) ->
       source = "#{__dirname}/../resources/a_dir/a_file"
       destination = "#{scratch}/"
-      # Copy non existing file
-      mecano.copy
+      mecano
         ssh: ssh
+      .copy # Copy non existing file
         source: source
         destination: destination
       , (err, copied) ->
         return next err if err
         copied.should.be.ok
-        fs.exists ssh, "#{destination}/a_file", (err, exists) ->
+      .call (next) ->
+        fs.exists @options.ssh, "#{destination}/a_file", (err, exists) ->
           exists.should.be.true
-          # Copy over existing file
-          mecano.copy
-            ssh: ssh
-            source: source
-            destination: destination
-          , (err, copied) ->
-            return next err if err
-            copied.should.not.be.ok
-            next()
+          next()
+      .copy # Copy over existing file
+        source: source
+        destination: destination
+      , (err, copied) ->
+        return next err if err
+        copied.should.not.be.ok
+        next()
 
     they 'over an existing file', (ssh, next) ->
       source = "#{__dirname}/../resources/a_dir/a_file"
@@ -152,52 +155,46 @@ describe 'copy', ->
   describe 'link', ->
 
     they 'file into file', (ssh, next) ->
-      mecano.write
+      mecano
         ssh: ssh
+      .write
         content: 'hello'
         destination: "#{scratch}/org_file"
-      , (err) ->
+      .link
+        source: "#{scratch}/org_file"
+        destination: "#{scratch}/ln_file"
+      .copy
+        source: "#{scratch}/ln_file"
+        destination: "#{scratch}/dst_file"
+      , (err, copied) ->
         return next err if err
-        mecano.link
-          ssh: ssh
-          source: "#{scratch}/org_file"
-          destination: "#{scratch}/ln_file"
-        , (err) ->
+        fs.readFile ssh, "#{scratch}/dst_file", 'ascii', (err, content) ->
           return next err if err
-          mecano.copy
-            ssh: ssh
-            source: "#{scratch}/ln_file"
-            destination: "#{scratch}/dst_file"
-          , (err, copied) ->
-            return next err if err
-            fs.readFile ssh, "#{scratch}/dst_file", 'ascii', (err, content) ->
-              return next err if err
-              content.should.eql 'hello'
-              next()
+          content.should.eql 'hello'
+          next()
 
     they 'file parent dir', (ssh, next) ->
-      mecano.write
+      mecano
         ssh: ssh
+      .write
         content: 'hello'
         destination: "#{scratch}/source/org_file"
       , (err) ->
         return next err if err
-        mecano.link
-          ssh: ssh
-          source: "#{scratch}/source/org_file"
-          destination: "#{scratch}/source/ln_file"
-        , (err) ->
+      .link
+        source: "#{scratch}/source/org_file"
+        destination: "#{scratch}/source/ln_file"
+      , (err) ->
+        return next err if err
+      .copy
+        source: "#{scratch}/source/ln_file"
+        destination: "#{scratch}"
+      , (err, copied) ->
+        return next err if err
+        fs.readFile ssh, "#{scratch}/ln_file", 'ascii', (err, content) ->
           return next err if err
-          mecano.copy
-            ssh: ssh
-            source: "#{scratch}/source/ln_file"
-            destination: "#{scratch}"
-          , (err, copied) ->
-            return next err if err
-            fs.readFile ssh, "#{scratch}/ln_file", 'ascii', (err, content) ->
-              return next err if err
-              content.should.eql 'hello'
-              next()
+          content.should.eql 'hello'
+          next()
           
   describe 'directory', ->
 
@@ -247,17 +244,14 @@ describe 'copy', ->
 
     they 'should copy hidden files', (ssh, next) ->
       mecano
-      .mkdir
         ssh: ssh
+      .mkdir
         destination: "#{scratch}/a_dir"
       .touch
-        ssh: ssh
         destination: "#{scratch}/a_dir/a_file"
       .touch
-        ssh: ssh
         destination: "#{scratch}/a_dir/.a_hidden_file"
       .copy
-        ssh: ssh
         source: "#{scratch}/a_dir"
         destination: "#{scratch}/a_copy"
       , (err, copied) ->

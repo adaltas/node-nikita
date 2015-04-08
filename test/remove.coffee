@@ -12,18 +12,17 @@ describe 'remove', ->
   scratch = test.scratch @
   
   they 'a file', (ssh, next) ->
-    mecano.copy
+    mecano
       ssh: ssh
+    .copy
       source: "#{__dirname}/../resources/a_dir/a_file"
       destination: "#{scratch}/a_file"
-    , (err, copied) ->
-      mecano.remove
-        ssh: ssh
-        source: "#{scratch}/a_file"
-      , (err, removed) ->
-        return next err if err
-        removed.should.be.ok
-        next()
+    .remove
+      source: "#{scratch}/a_file"
+    , (err, removed) ->
+      return next err if err
+      removed.should.be.ok
+    .then next
 
   they 'a link', (ssh, next) ->
     fs.symlink ssh, __filename, "#{scratch}/test", (err) ->
@@ -37,43 +36,37 @@ describe 'remove', ->
           err.code.should.eql 'ENOENT'
           next()
 
-  it 'use a pattern', (next) ->
+  they 'use a pattern', (ssh, next) ->
     # todo, not working yet over ssh
-    mecano.copy
-      # ssh: ssh
+    mecano
+      ssh: ssh
+    .copy
       source: "#{__dirname}/../resources/"
       destination: "#{scratch}/"
-    , (err, copied) ->
-      mecano.remove
-        # ssh: ssh
-        source: "#{scratch}/*gz"
-      , (err, removed) ->
-        return next err if err
-        removed.should.be.ok
-        fs.readdir null, "#{scratch}", (err, files) ->
-          files.should.not.containEql 'a_dir.tar.gz'
-          files.should.not.containEql 'a_dir.tgz'
-          files.should.containEql 'a_dir.zip'
-          next()
+    .remove
+      source: "#{scratch}/*gz"
+    , (err, removed) ->
+      return next err if err
+      removed.should.be.ok
+      fs.readdir null, "#{scratch}", (err, files) ->
+        files.should.not.containEql 'a_dir.tar.gz'
+        files.should.not.containEql 'a_dir.tgz'
+        files.should.containEql 'a_dir.zip'
+        next()
 
   they 'a dir', (ssh, next) ->
     @timeout 10000
-    mecano.mkdir
+    mecano
       ssh: ssh
+    .mkdir
       destination: "#{scratch}/remove_dir"
-    , (err, created) ->
-      return next err if err
-      mecano.remove
-        ssh: ssh
-        destination: "#{scratch}/remove_dir"
-      , (err, removed) ->
-        return next err if err
-        removed.should.be.ok
-        mecano.remove
-          ssh: ssh
-          destination: "#{scratch}/remove_dir"
-        , (err, removed) ->
-          return next err if err
-          removed.should.not.be.ok
-          next()
+    .remove
+      destination: "#{scratch}/remove_dir"
+    , (err, removed) ->
+      removed.should.be.ok
+    .remove
+      destination: "#{scratch}/remove_dir"
+    , (err, removed) ->
+      removed.should.not.be.ok
+    .then next
 

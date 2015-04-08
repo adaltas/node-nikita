@@ -13,46 +13,45 @@ describe 'link', ->
   they 'should link file', (ssh, next) ->
     # Create a non existing link
     destination = "#{scratch}/link_test"
-    mecano.link
+    mecano
       ssh: ssh
+    .link # Link does not exist
       source: __filename
       destination: destination
     , (err, linked) ->
-      return next err if err
       linked.should.be.ok
-      # Create on an existing link
-      mecano.link
-        ssh: ssh
-        source: __filename
-        destination: destination
-      , (err, linked) ->
-        return next err if err
-        linked.should.not.be.ok
-        fs.lstat ssh, destination, (err, stat) ->
-          stat.isSymbolicLink().should.be.ok
-          next()
+    .link # Link already exists
+      source: __filename
+      destination: destination
+    , (err, linked) ->
+      linked.should.not.be.ok
+    .then (err) ->
+      return next err if err
+      fs.lstat ssh, destination, (err, stat) ->
+        stat.isSymbolicLink().should.be.ok
+        next()
   
   they 'should link dir', (ssh, next) ->
     # Create a non existing link
     destination = "#{scratch}/link_test"
-    mecano.link
+    mecano
+      ssh: ssh
+    .link # Link does not exist
+      source: __dirname
+      destination: destination
+    , (err, linked) ->
+      linked.should.be.ok
+    .link # Link already exists
       ssh: ssh
       source: __dirname
       destination: destination
     , (err, linked) ->
+      linked.should.not.be.ok
+    .then (err) ->
       return next err if err
-      linked.should.be.ok
-      # Create on an existing link
-      mecano.link
-        ssh: ssh
-        source: __dirname
-        destination: destination
-      , (err, linked) ->
-        return next err if err
-        linked.should.not.be.ok
-        fs.lstat ssh, destination, (err, stat) ->
-          stat.isSymbolicLink().should.be.ok
-          next()
+      fs.lstat ssh, destination, (err, stat) ->
+        stat.isSymbolicLink().should.be.ok
+        next()
   
   they 'should create parent directories', (ssh, next) ->
     # Create a non existing link
@@ -80,21 +79,22 @@ describe 'link', ->
           return next err if err
           linked.should.be.ok
           next()
+
+  describe 'error', ->
   
-  they 'should validate arguments', (ssh, next) ->
-    # Test missing source
-    mecano.link
-      ssh: ssh
-      destination: __filename
-    , (err, linked) ->
-      err.message.should.eql "Missing source, got undefined"
-      # Test missing destination
-      mecano.link
+    they 'for invalid arguments', (ssh, next) ->
+      # Test missing source
+      mecano
         ssh: ssh
+      .link
+        destination: __filename
+      .then (err, changed) ->
+        err.message.should.eql "Missing source, got undefined"
+      .link # Test missing destination
         source: __filename
-      , (err, linked) ->
+      .then (err, linked) ->
         err.message.should.eql "Missing destination, got undefined"
-        next()
+      .then next
 
 
 

@@ -30,25 +30,26 @@ describe 'download', ->
       # Download a non existing file
       source = 'http://localhost:12345'
       destination = "#{scratch}/download"
-      mecano.download
+      mecano
         ssh: ssh
+      .download
         source: source
         destination: destination
       , (err, downloaded) ->
         return next err if err
         downloaded.should.be.ok
-        fs.readFile ssh, destination, 'ascii', (err, content) ->
+      .call (next) ->
+        fs.readFile @options.ssh, destination, 'ascii', (err, content) ->
           return next err if err
           content.should.equal 'okay'
-          # Download on an existing file
-          mecano.download
-            ssh: ssh
-            source: source
-            destination: destination
-          , (err, downloaded) ->
-            return next err if err
-            downloaded.should.not.be.ok
-            next()
+          next()
+      .download # Download on an existing file
+        source: source
+        destination: destination
+      , (err, downloaded) ->
+        return next err if err
+        downloaded.should.not.be.ok
+        next()
 
     they 'http detect change', (ssh, next) ->
       ssh = null
@@ -57,51 +58,103 @@ describe 'download', ->
       # Download a non existing file
       source = 'http://localhost:12345'
       destination = "#{scratch}/download"
-      mecano.download
+      mecano
         ssh: ssh
+      .download
         source: source
         destination: destination
       , (err, downloaded) ->
         return next err if err
         downloaded.should.be.ok
-        fs.readFile ssh, destination, 'ascii', (err, content) ->
+      .call (next) ->
+        fs.readFile @options.ssh, destination, 'ascii', (err, content) ->
           return next err if err
           content.should.equal 'okay'
-          # Download on an existing file with same content
-          mecano.download
-            ssh: ssh
-            source: source
-            destination: destination
-          , (err, downloaded) ->
-            return next err if err
-            downloaded.should.be.False
-            next()
+          next()
+      .download # Download on an existing file with same content
+        source: source
+        destination: destination
+      , (err, downloaded) ->
+        return next err if err
+        downloaded.should.be.False
+        next()
 
     they 'should chmod', (ssh, next) ->
       @timeout 10000
       # Download a non existing file
       source = 'http://localhost:12345'
       destination = "#{scratch}/download_test"
-      mecano.download
+      mecano
         ssh: ssh
+      .download
         source: source
         destination: destination
         mode: 0o770
       , (err, downloaded) ->
         return next err if err
         downloaded.should.be.ok
-        fs.readFile ssh, destination, 'ascii', (err, content) ->
+      .call (next) ->
+        fs.readFile @options.ssh, destination, 'ascii', (err, content) ->
           return next err if err
           content.should.equal 'okay'
-          # Download on an existing file
-          mecano.download
-            ssh: ssh
-            source: source
-            destination: destination
-          , (err, downloaded) ->
-            return next err if err
-            downloaded.should.not.be.ok
-            next()
+          next()
+      .download # Download on an existing file
+        source: source
+        destination: destination
+      , (err, downloaded) ->
+        return next err if err
+        downloaded.should.not.be.ok
+        next()
+
+    describe 'md5', ->
+
+      they 'throw error if checksum doesnt match', (ssh, next) ->
+        # Download with invalid checksum
+        source = 'http://localhost:12345'
+        destination = "#{scratch}/check_md5"
+        mecano.download
+          ssh: ssh
+          source: source
+          destination: destination
+          md5sum: '2f74dbbee4142b7366c93b115f914fff'
+        , (err, downloaded) ->
+          err.message.should.eql 'Invalid checksum, found "df8fede7ff71608e24a5576326e41c75" instead of "2f74dbbee4142b7366c93b115f914fff"'
+          next()
+
+      they 'count 1 if new file has correct checksum', (ssh, next) ->
+        # Download with invalid checksum
+        source = 'http://localhost:12345'
+        destination = "#{scratch}/check_md5"
+        mecano.download
+          ssh: ssh
+          source: source
+          destination: destination
+          md5sum: 'df8fede7ff71608e24a5576326e41c75'
+        , (err, downloaded) ->
+          return next err if err
+          downloaded.should.be.ok
+          next()
+
+      they 'count 0 if a file exist with same checksum', (ssh, next) ->
+        # Download with invalid checksum
+        source = 'http://localhost:12345'
+        destination = "#{scratch}/check_md5"
+        mecano
+          ssh: ssh
+        .download
+          source: source
+          destination: destination
+        , (err, downloaded) ->
+          return next err if err
+          downloaded.should.be.ok
+        .download
+          source: source
+          destination: destination
+          md5sum: 'df8fede7ff71608e24a5576326e41c75'
+        , (err, downloaded) ->
+          return next err if err
+          downloaded.should.not.be.ok
+          next()
   
   # describe 'ftp', ->
     
@@ -132,117 +185,48 @@ describe 'download', ->
     they 'should deal with file protocol', (ssh, next) ->
       source = "file://#{__filename}"
       destination = "#{scratch}/download_test"
-      # Download a non existing file
-      mecano.download
+      mecano
         ssh: ssh
+      .download
         source: source
-        destination: destination
+        destination: destination # Download a non existing file
       , (err, downloaded) ->
         return next err if err
         downloaded.should.be.ok
-        fs.readFile ssh, destination, 'ascii', (err, content) ->
+      .call (next) ->
+        fs.readFile @options.ssh, destination, 'ascii', (err, content) ->
+          return next err if err
           content.should.containEql 'yeah'
-          # Download on an existing file
-          mecano.download
-            ssh: ssh
-            source: source
-            destination: destination
-          , (err, downloaded) ->
-            return next err if err
-            downloaded.should.not.be.ok
-            next()
+          next()
+      .download
+        source: source
+        destination: destination # Download on an existing file
+      , (err, downloaded) ->
+        return next err if err
+        downloaded.should.not.be.ok
+        next()
     
     they 'should default to file without protocol', (ssh, next) ->
       source = "/#{__filename}"
       destination = "#{scratch}/download_test"
       # Download a non existing file
-      mecano.download
+      mecano
         ssh: ssh
+      .download
         source: source
         destination: destination
       , (err, downloaded) ->
         return next err if err
         downloaded.should.be.ok
-        fs.readFile ssh, destination, 'ascii', (err, content) ->
+      .call (next) ->
+        fs.readFile @options.ssh, destination, 'ascii', (err, content) ->
           content.should.containEql 'yeah'
-          # Download on an existing file
-          mecano.download
-            ssh: ssh
-            source: source
-            destination: destination
-          , (err, downloaded) ->
-            return next err if err
-            downloaded.should.not.be.ok
-            next()
-
-  describe 'md5', ->
-
-    they 'throw error if checksum doesnt match', (ssh, next) ->
-      # create server
-      server = http.createServer (req, res) ->
-        res.writeHead 200, {'Content-Type': 'text/plain'}
-        res.end 'okay'
-      server.listen 12345
-      # Download with invalid checksum
-      source = 'http://localhost:12345'
-      destination = "#{scratch}/check_md5"
-      mecano.download
-        ssh: ssh
-        source: source
-        destination: destination
-        md5sum: '2f74dbbee4142b7366c93b115f914fff'
-      , (err, downloaded) ->
-        server.close()
-        server.on 'close', ->
-          err.message.should.eql 'Invalid checksum, found "df8fede7ff71608e24a5576326e41c75" instead of "2f74dbbee4142b7366c93b115f914fff"'
           next()
-
-    they 'count 1 if new file has correct checksum', (ssh, next) ->
-      # create server
-      server = http.createServer (req, res) ->
-        res.writeHead 200, {'Content-Type': 'text/plain'}
-        res.end 'okay'
-      server.listen 12345
-      # Download with invalid checksum
-      source = 'http://localhost:12345'
-      destination = "#{scratch}/check_md5"
-      mecano.download
-        ssh: ssh
-        source: source
-        destination: destination
-        md5sum: 'df8fede7ff71608e24a5576326e41c75'
-      , (err, downloaded) ->
-        server.close()
-        server.on 'close', ->
-          return next err if err
-          downloaded.should.be.ok
-          next()
-
-    they 'count 0 if a file exist with same checksum', (ssh, next) ->
-      # create server
-      server = http.createServer (req, res) ->
-        res.writeHead 200, {'Content-Type': 'text/plain'}
-        res.end 'okay'
-      server.listen 12345
-      # Download with invalid checksum
-      source = 'http://localhost:12345'
-      destination = "#{scratch}/check_md5"
-      mecano.download
-        ssh: ssh
+      .download # Download on an existing file
         source: source
         destination: destination
       , (err, downloaded) ->
         return next err if err
-        downloaded.should.be.ok
-        mecano.download
-          ssh: ssh
-          source: source
-          destination: destination
-          md5sum: 'df8fede7ff71608e24a5576326e41c75'
-        , (err, downloaded) ->
-          server.close()
-          server.on 'close', ->
-            return next err if err
-            downloaded.should.not.be.ok
-            next()
+        downloaded.should.not.be.ok
+        next()
 

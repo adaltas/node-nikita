@@ -31,48 +31,44 @@ describe 'ldap_index', ->
         next err
 
   it 'create a new index', (next) ->
-    mecano.ldap_index
+    mecano
       ldap: client
+    .ldap_index
       name: 'olcDatabase={2}bdb,cn=config'
       indexes:
         aliasedEntryName: 'eq'
     , (err, modified) ->
-      return next err if err
       modified.should.be.ok
-      mecano.ldap_index
-        ldap: client
-        name: 'olcDatabase={2}bdb,cn=config'
-        indexes:
-          aliasedEntryName: 'eq'
-      , (err, modified) ->
-        return next err if err
-        modified.should.not.be.ok
-        next()
+    .ldap_index
+      name: 'olcDatabase={2}bdb,cn=config'
+      indexes:
+        aliasedEntryName: 'eq'
+    , (err, modified) ->
+      modified.should.not.be.ok
+    .then next
 
   it 'update an existing index', (next) ->
-    mecano.ldap_index
+    mecano
       ldap: client
+    .ldap_index
       name: 'olcDatabase={2}bdb,cn=config'
       indexes:
         aliasedEntryName: 'eq'
     , (err, modified) ->
-      return next err if err
       modified.should.be.ok
-      mecano.ldap_index
-        ldap: client
-        name: 'olcDatabase={2}bdb,cn=config'
-        indexes:
-          aliasedEntryName: 'pres,eq'
-      , (err, modified) ->
-        return next err if err
-        modified.should.not.be.ok
-        mecano.ldap_index
-          ldap: client
-          name: 'olcDatabase={2}bdb,cn=config'
-          indexes:
-            aliasedEntryName: 'pres,eq'
-        , (err, modified) ->
-          return next err if err
-          modified.should.be.ok
-          next()
+    .ldap_index
+      ldap: client
+      name: 'olcDatabase={2}bdb,cn=config'
+      indexes:
+        aliasedEntryName: 'pres,eq'
+    , (err, modified) ->
+      modified.should.not.be.ok
+    .ldap_index
+      ldap: client
+      name: 'olcDatabase={2}bdb,cn=config'
+      indexes:
+        aliasedEntryName: 'pres,eq'
+    , (err, modified) ->
+      modified.should.be.ok
+    .then next
 

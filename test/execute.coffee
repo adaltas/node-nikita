@@ -35,20 +35,19 @@ describe 'execute', ->
       unpiped++
     out.on 'finish', ->
       false.should.be.ok
-    mecano.execute
+    mecano
       ssh: ssh
+    .execute
       cmd: "cat #{__filename} | grep #{search1}"
       stdout: out
+    .execute
+      cmd: "cat #{__filename} | grep #{search2}"
+      stdout: out
     , (err, executed, stdout, stderr) ->
-      mecano.execute
-        ssh: ssh
-        cmd: "cat #{__filename} | grep #{search2}"
-        stdout: out
-      , (err, executed, stdout, stderr) ->
-        unpiped.should.eql 2
-        data.should.containEql search1
-        data.should.containEql search2
-        next()
+      unpiped.should.eql 2
+      data.should.containEql search1
+      data.should.containEql search2
+      next()
   
   they 'stdout and stderr return empty', (ssh, next) -> #.skip 'remote',
     mecano.execute
@@ -61,56 +60,54 @@ describe 'execute', ->
   
   they 'validate exit code', (ssh, next) ->
     # code undefined
-    mecano.execute
+    mecano
       ssh: ssh
+    .execute
       cmd: "chown"
-    , (err, executed, stdout, stderr) ->
+    .then (err, executed) ->
       err.message.should.eql 'Invalid Exit Code: 1'
-      # code defined in array
-      mecano.execute
-        ssh: ssh
-        cmd: "chown"
-        code: [0, 1]
-      , (err, executed, stdout, stderr) ->
-        return next err if err
-        next()
-  
+    .execute
+      cmd: "chown"
+      code: [0, 1]
+    .then (err, executed) ->
+      next err
+
   they 'should honor code skipped', (ssh, next) ->
     # code undefined
-    mecano.execute
+    mecano
       ssh: ssh
+    .execute
       cmd: "mkdir #{scratch}/my_dir"
       code: 0
       code_skipped: 1
     , (err, executed, stdout, stderr) ->
       return next err if err
       executed.should.be.ok
-      mecano.execute
-        ssh: ssh
-        cmd: "mkdir #{scratch}/my_dir"
-        code: 0
-        code_skipped: 1
-      , (err, executed, stdout, stderr) ->
-        return next err if err
-        executed.should.not.be.ok
-        next()
+    .execute
+      cmd: "mkdir #{scratch}/my_dir"
+      code: 0
+      code_skipped: 1
+    , (err, executed, stdout, stderr) ->
+      return next err if err
+      executed.should.not.be.ok
+      next()
   
   they 'should honor conditions', (ssh, next) ->
-    mecano.execute
+    mecano
       ssh: ssh
+    .execute
       cmd: 'text=yes; echo $text'
       if_exists: __dirname
     , (err, executed, stdout, stderr) ->
       executed.should.be.ok
       stdout.should.eql 'yes\n'
-      mecano.execute
-        ssh: ssh
-        cmd: 'text=yes; echo $text'
-        if_exists: "__dirname/toto"
-      , (err, executed, stdout, stderr) ->
-        executed.should.not.be.ok
-        should.not.exist stdout
-        next()
+    .execute
+      cmd: 'text=yes; echo $text'
+      if_exists: "__dirname/toto"
+    , (err, executed, stdout, stderr) ->
+      executed.should.not.be.ok
+      should.not.exist stdout
+      next()
 
   they 'honor not_if_exists', (ssh, next) ->
     mecano.execute
@@ -138,24 +135,24 @@ describe 'execute', ->
 
 
     they 'trap on error', (ssh, next) ->
-      mecano.execute
+      mecano
         ssh: ssh
+      .execute
         cmd: """
         sh -c '>&2 echo "exit 2'
         echo 'ok'
         """
       , (err) ->
         return next err if err
-        mecano.execute
-          ssh: ssh
-          cmd: """
-          sh -c '>&2 echo "exit 2'
-          echo 'ok'
-          """
-          trap_on_error: true
-        , (err) ->
-          err.should.be.an.Error
-          err.code.should.eql 2
-          next()
+      .execute
+        cmd: """
+        sh -c '>&2 echo "exit 2'
+        echo 'ok'
+        """
+        trap_on_error: true
+      , (err) ->
+        err.should.be.an.Error
+        err.code.should.eql 2
+        next()
 
 

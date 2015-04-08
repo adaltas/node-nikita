@@ -2,6 +2,7 @@
 lib = if process.env.MECANO_COV then 'lib-cov' else 'lib'
 mecano = require "../#{lib}"
 fs = require 'fs'
+they = require 'ssh2-they'
 test = require './test'
 
 describe 'render', ->
@@ -50,23 +51,23 @@ describe 'render', ->
           content.should.eql 'Hello\nyou'
           next()
     
-    it 'doesnt increment if destination is same than generated content', (next) ->
+    they 'doesnt increment if destination is same than generated content', (ssh, next) ->
       destination = "#{scratch}/render.eco"
-      mecano.render
+      mecano
+        ssh: ssh
+      .render
         source: "#{__dirname}/../resources/render.eco"
         destination: destination
         context: who: 'you'
       , (err, rendered) ->
-        return next err if err
         rendered.should.be.ok
-        mecano.render
-          source: "#{__dirname}/../resources/render.eco"
-          destination: destination
-          context: who: 'you'
-        , (err, rendered) ->
-          return next err if err
-          rendered.should.not.be.ok
-          next()
+      .render
+        source: "#{__dirname}/../resources/render.eco"
+        destination: destination
+        context: who: 'you'
+      , (err, rendered) ->
+        rendered.should.not.be.ok
+      .then next
     
     it 'accept destination as a callback', (next) ->
       content = null
