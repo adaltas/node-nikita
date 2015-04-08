@@ -95,6 +95,7 @@ require('mecano').ldap_schema({
               content: "include #{schema}"
               destination: conf
               ssh: options.ssh
+              log: options.log
             , (err) ->
               return callback err if err
               do_generate()
@@ -116,6 +117,7 @@ require('mecano').ldap_schema({
             destination: "#{ldif}/cn=config/cn=schema/cn=#{options.name}.ldif"
             force: true
             ssh: options.ssh
+            log: options.log
           , (err, moved) ->
             return callback err if err
             return new Error 'No generated schema' unless moved
@@ -153,6 +155,7 @@ require('mecano').ldap_schema({
               replace: ''
             ]
             ssh: options.ssh
+            log: options.log
           , (err, written) ->
             return callback err if err
             do_register()
