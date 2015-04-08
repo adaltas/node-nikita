@@ -1,5 +1,5 @@
 
-# `remove(options, [goptions], callback)`
+# `remove(options, callback)`
 
 Recursively remove files, directories and links.
 

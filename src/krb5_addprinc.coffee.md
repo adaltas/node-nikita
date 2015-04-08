@@ -1,5 +1,5 @@
 
-# `krb5_principal(options, [goptions], callback)`
+# `krb5_principal(options, callback)`
 
 Create a new Kerberos principal with a password or an optional keytab.   
 

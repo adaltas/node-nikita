@@ -1,5 +1,5 @@
 
-# `move(options, [goptions], callback)`
+# `move(options, callback)`
 
 Move files and directories. It is ok to overwrite the destination file if it
 exists, in which case the source file will no longer exists.

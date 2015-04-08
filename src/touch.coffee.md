@@ -1,5 +1,5 @@
 
-# `touch(options, [goptions], callback)`
+# `touch(options, callback)`
 
 Create a empty file if it does not yet exists.
 

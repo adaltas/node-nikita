@@ -1,5 +1,5 @@
 
-# `ldap_add(options, [goptions], callback)`
+# `ldap_add(options, callback)`
 
 Insert or modify an entry inside an OpenLDAP server.   
 

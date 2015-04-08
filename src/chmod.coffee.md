@@ -1,5 +1,5 @@
 
-# `chmod(options, [goptions], callback)`
+# `chmod(options, callback)`
 
 Change the permissions of a file or directory.
 

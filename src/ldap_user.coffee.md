@@ -1,5 +1,5 @@
 
-# `ldap_user(options, [goptions], callback)`
+# `ldap_user(options, callback)`
 
 Create and modify a user store inside an OpenLDAP server.   
 

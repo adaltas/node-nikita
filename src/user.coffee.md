@@ -1,5 +1,5 @@
 
-# `user(options, [goptions], callback)`
+# `user(options, callback)`
 
 Create or modify a Unix user.
 

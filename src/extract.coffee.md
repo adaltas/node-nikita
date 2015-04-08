@@ -1,5 +1,5 @@
 
-# `extract(options, [goptions], callback)`
+# `extract(options, callback)`
 
 Extract an archive. Multiple compression types are supported. Unless
 specified as an option, format is derived from the source extension. At the

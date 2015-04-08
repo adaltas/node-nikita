@@ -1,5 +1,5 @@
 
-# `chown(options, [goptions], callback)`
+# `chown(options, callback)`
 
 Change the ownership of a file or a directory.
 

@@ -1,5 +1,5 @@
 
-# `ldap_schema(options, [goptions], callback)`
+# `ldap_schema(options, callback)`
 
 Register a new ldap schema.
 

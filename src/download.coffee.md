@@ -1,5 +1,5 @@
 
-# `download(options, [goptions], callback)`
+# `download(options, callback)`
 
 Download files using various protocols.
 

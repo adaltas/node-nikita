@@ -1,5 +1,5 @@
 
-# `krb5_ktadd(options, [goptions], callback)`
+# `krb5_ktadd(options, callback)`
 
 Create and manage a keytab. This function is usually not used directly but instead
 called by the `krb5_addprinc` function.   
