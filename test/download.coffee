@@ -80,7 +80,6 @@ describe 'download', ->
         next()
 
     they 'http with local_cache', (ssh, next) ->
-      ssh = null
       @timeout 100000
       count = 0
       # Download a non existing file
@@ -98,6 +97,7 @@ describe 'download', ->
         fs.readFile null, cache, 'ascii', (err, content) ->
           return next err if err
           content.should.equal 'okay'
+          next()
 
     they 'should chmod', (ssh, next) ->
       @timeout 10000
@@ -136,7 +136,7 @@ describe 'download', ->
           ssh: ssh
           source: source
           destination: destination
-          md5sum: '2f74dbbee4142b7366c93b115f914fff'
+          md5: '2f74dbbee4142b7366c93b115f914fff'
         , (err, downloaded) ->
           err.message.should.eql 'Invalid checksum, found "df8fede7ff71608e24a5576326e41c75" instead of "2f74dbbee4142b7366c93b115f914fff"'
           next()
@@ -149,7 +149,7 @@ describe 'download', ->
           ssh: ssh
           source: source
           destination: destination
-          md5sum: 'df8fede7ff71608e24a5576326e41c75'
+          md5: 'df8fede7ff71608e24a5576326e41c75'
         , (err, downloaded) ->
           return next err if err
           downloaded.should.be.ok
@@ -170,7 +170,7 @@ describe 'download', ->
         .download
           source: source
           destination: destination
-          md5sum: 'df8fede7ff71608e24a5576326e41c75'
+          md5: 'df8fede7ff71608e24a5576326e41c75'
         , (err, downloaded) ->
           return next err if err
           downloaded.should.not.be.ok
