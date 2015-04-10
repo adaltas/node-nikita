@@ -31,9 +31,8 @@ is remote.
     Writable EventEmitter in which the standard error output of executed command
     will be piped.
 *   `no_check` (boolean)
-    if set to true, hash check is ignored, download will be skipped if destination exists. If
-    using cache, the check is ignored on the cache but integrity between cache and destination
-    is maintained
+    if set to true, hash check is ignored, download will be skipped if destination exists. The check is ignored 
+    on the cache by default but integrity between cache and destination is maintained
 *   `local_cache` (path | boolean)
     Cache the file on the executing machine, equivalent to cache unless an ssh connection is
     provided. If a sting is provided, it will be the cache path.
@@ -115,6 +114,8 @@ mecano.download
             else path.basename options.source
             cache = path.join cache_dir, cache_file
           options.log? "Mecano `download`: cache file is #{cache} [INFO]"
+          no_chck = options.no_check
+          no_chck ?= true
           download
             ssh: null
             source: options.source
@@ -122,7 +123,7 @@ mecano.download
             md5: options.md5
             sha1: options.sha1
             force: options.force_cache
-            no_check: options.no_check
+            no_check: no_chck
             log: options.log
             stdout: options.stdout
             stderr: options.stderr
