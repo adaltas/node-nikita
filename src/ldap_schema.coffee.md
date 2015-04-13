@@ -11,7 +11,7 @@ Register a new ldap schema.
     Password for simple authentication.   
 *   `uri`   
     LDAP Uniform Resource Identifier(s), "ldapi:///" if true, default to false
-    in which case it will use your openldap client environment configuraiton.   
+    in which case it will use your openldap client environment configuration.   
 *   `name`   
     Common name of the schema.   
 *   `schema`   
