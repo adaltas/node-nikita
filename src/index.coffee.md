@@ -111,6 +111,9 @@ functions share a common API with flexible options.
         # Call the action
         todo[1][0].user_args = todo[1][1]?.length > 2
         call registry[todo[0]], [todo[1][0]], todo[1][1]
+      properties.child = get: ->
+        ->
+          module.exports(obj.options)
       properties.then = get: ->
         ->
           id = status.id++
