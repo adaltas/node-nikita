@@ -173,7 +173,6 @@ describe 'download', ->
         destination = "#{scratch}/check_md5"
         mecano.download
           ssh: ssh
-          cache_file: false
           source: source
           destination: destination
           md5: '2f74dbbee4142b7366c93b115f914fff'
@@ -187,7 +186,6 @@ describe 'download', ->
         destination = "#{scratch}/check_md5"
         mecano.download
           ssh: ssh
-          cache_file: false
           source: source
           destination: destination
           md5: 'df8fede7ff71608e24a5576326e41c75'
@@ -202,7 +200,6 @@ describe 'download', ->
         destination = "#{scratch}/check_md5"
         mecano
           ssh: ssh
-          cache_dir: false
         .download
           source: source
           destination: destination
@@ -249,7 +246,6 @@ describe 'download', ->
       destination = "#{scratch}/download_test"
       mecano
         ssh: ssh
-        cache_dir: false
       .download
         source: source
         destination: destination # Download a non existing file
@@ -275,7 +271,6 @@ describe 'download', ->
       # Download a non existing file
       mecano
         ssh: ssh
-        cache_dir: false
       .download
         source: source
         destination: destination
