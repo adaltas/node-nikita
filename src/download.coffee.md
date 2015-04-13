@@ -9,34 +9,33 @@ In local mode (with an SSH connection), the `http` protocol is handled with the
 
 The behavior of download may be confusing wether you are running over SSH or
 not. It's philosophy mostly rely on the destination point of view. When download
-run, the destination is local, compared to the upload function which destination
+run, the destination is local, compared to the upload function where destination
 is remote.
 
 ## Options
 
 *   `source` (path)
     File, HTTP URL, FTP, GIT repository. File is the default protocol if source
-    is provided without any. 
-*   `destination` (path)  
-    Path where the file is downloaded.   
+    is provided without any.
+*   `destination` (path)
+    Path where the file is downloaded.
 *   `force` (boolean)
-    Overwrite destination file if it exists.   
-*   `ssh` (object|ssh2)  
+    Overwrite destination file if it exists.
+*   `ssh` (object|ssh2)
     Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-*   `stdout` (stream.Writable)   
+    configuration object used to initialize the SSH connection.
+*   `stdout` (stream.Writable)
     Writable EventEmitter in which the standard output of executed commands will
     be piped.
-*   `stderr` (stream.Writable)   
+*   `stderr` (stream.Writable)
     Writable EventEmitter in which the standard error output of executed command
     will be piped.
 *   `no_check` (boolean)
-    if set to true, hash check is ignored, download will be skipped if destination exists. If
-    using cache, the check is ignored on the cache but integrity between cache and destination
-    is maintained
+    if set to true, hash check is ignored, download will be skipped if destination exists. The check is ignored 
+    on the cache by default but integrity between cache and destination is maintained
 *   `local_cache` (path | boolean)
     Cache the file on the executing machine, equivalent to cache unless an ssh connection is
-    provided. If a sting is provided, it will be the cache path. 
+    provided. If a sting is provided, it will be the cache path.
 *   `sha1` (SHA-1 Hash)
     Hash of the file using SHA-1. Used to check integrity
 *   `md5` (MD5 Hash)
@@ -44,7 +43,7 @@ is remote.
 *   `force_cache` (boolean)
     Force cache overwrite if it exists
 *   `cache_dir` (path)
-    If local_cache is not a string, the cache file path is resolved from cache_dir and cache file.
+    If local_cache is not a string, the cache file path is resolved from cache dir and cache file.
     By default: './'
 *   `cache_file` (string)
     See above. Ignored if local_cache is a string
@@ -52,10 +51,10 @@ is remote.
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `downloaded`   
-    Number of download actions with modifications.   
+*   `err`
+    Error object if any.
+*   `downloaded`
+    Number of download actions with modifications.
 
 ## File example
 
@@ -92,8 +91,6 @@ mecano.download
 
     module.exports = download = (options, callback) ->
       wrap @, arguments, (options, callback) ->
-
-
         {destination, source} = options
         return callback new Error "Missing source: #{source}" unless source
         return callback new Error "Missing destination: #{destination}" unless destination
@@ -108,7 +105,7 @@ mecano.download
           hash = false
         do_cache = ->
           return do_prepare() unless options.local_cache
-          options.log? "Mecano `download`: using cache [INFO]"
+          options.log? "Mecano `download`: using cache [DEBUG]"
           if typeof options.local_cache is 'string'
             cache = options.local_cache
           else
@@ -117,23 +114,25 @@ mecano.download
             else path.basename options.source
             cache = path.join cache_dir, cache_file
           options.log? "Mecano `download`: cache file is #{cache} [INFO]"
+          no_chck = options.no_check
+          no_chck ?= true
           download
             ssh: null
             source: options.source
             destination: cache
-            stdout: options.stdout
-            stderr: options.stderr
             md5: options.md5
             sha1: options.sha1
             force: options.force_cache
-            no_check: options.no_check
+            no_check: no_chck
             log: options.log
+            stdout: options.stdout
+            stderr: options.stderr
           , (err, cached) ->
             return callback err if err
-            options.log? if cached then "Mecano `download`: cache updated [INFO]"
-            else "Mecano `download`: cache not modified [INFO]" 
-            options.log? "Mecano `download`: uploading cache to destination [INFO]"
-            upload
+            options.log? if cached then "Mecano `download`: cache updated [WARN]"
+            else "Mecano `download`: cache not modified [INFO]"
+            options.log? "Mecano `download`: sending cache to destination [DEBUG]"
+            download
               ssh: options.ssh
               source: cache
               destination: options.destination
@@ -159,7 +158,7 @@ mecano.download
                 options.log? "Mecano `download`: destination exists, check disabled, skipping [DEBUG]"
                 return callback null, false
               if options.force
-                options.log? "Mecano `download`: Force download [WARN]"
+                options.log? "Mecano `download`: Force download [DEBUG]"
                 return do_download()
               else if hash
                 # then we compute the checksum of the file
@@ -184,7 +183,7 @@ mecano.download
                 destination: (path.join destination, '..')
               , (err, created) ->
                 return callback err if err
-                options.log? "Mecano `download`: Parent directory created [DEBUG]" if created
+                options.log? "Mecano `download`: Parent directory created [WARN]" if created
                 do_download()
         do_download = () ->
           options.log? "Mecano `download`: Download the source [DEBUG]"
@@ -218,7 +217,7 @@ mecano.download
           else
             fs.createWriteStream null, stageDestination, (err, ws) ->
               return callback err if err
-              if u.protocol is 'http:'
+              if u.protocol in ['http:', 'https:']
                 options.url = source
                 request(options).pipe(ws)
               else if u.protocol is 'ftp:'
@@ -246,7 +245,7 @@ mecano.download
                 , callback
         do_checksum = ->
           return unstage() unless hash
-          options.log? "Mecano `download`: Compare the downloaded file with the user-provided checksum [INFO]"
+          options.log? "Mecano `download`: Compare the downloaded file with the user-provided checksum [DEBUG]"
           misc.file.hash options.ssh, stageDestination, algo, (err, calc_hash) ->
             if hash is calc_hash
               "Mecano `download`: download is valid [INFO]"
@@ -261,7 +260,7 @@ mecano.download
           #   return callback err if err
           #   downloaded++
           #   callback()
-          options.log? "Mecano `download`: Move the downloaded file [INFO]"
+          options.log? "Mecano `download`: Move the downloaded file [DEBUG]"
           move
             ssh: options.ssh
             source: stageDestination
@@ -269,7 +268,7 @@ mecano.download
             source_md5: options.md5
             log: options.log
           , callback
-        do_cache()    
+        do_cache()
 
 ## Module Dependencies
 
@@ -283,7 +282,6 @@ mecano.download
     path = require 'path'
     remove = require './remove'
     request = require 'request'
-    upload = require './upload'
     url = require 'url'
     wrap = require './misc/wrap'
 
