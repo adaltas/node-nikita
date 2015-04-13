@@ -126,7 +126,6 @@ describe 'promise call', ->
         .call ->
           next Error 'Shouldnt be called'
         , (err) ->
-          console.log 'ok', err
       d.on 'error', (err) ->
         err.name.should.eql 'TypeError'
         next()
@@ -138,6 +137,43 @@ describe 'promise call', ->
           next Error 'Catchme'
       .then (err, changed) ->
         err.message.should.eql 'Catchme'
+        next()
+
+  describe 'async nested', ->
+
+    it 'in a user callback', (next) ->
+      m = mecano
+      .call (next) ->
+        @write
+          content: 'ok'
+          destination: "#{scratch}/a_file"
+        , next
+      .then (err, changed) ->
+        fs.readFile "#{scratch}/a_file", 'ascii', (err, content) ->
+          next()
+
+    it 'in then with changes', (next) ->
+      m = mecano
+      .call (next) ->
+        @write
+          content: 'ok'
+          destination: "#{scratch}/a_file"
+        .then next
+      .then (err, changed) ->
+        changed.should.be.True
+        fs.readFile "#{scratch}/a_file", 'ascii', (err, content) ->
+          next()
+
+    it 'in then without changes', (next) ->
+      m = mecano
+      .call (next) ->
+        @write
+          content: 'ok'
+          destination: "#{scratch}/a_file"
+          if_exists: "#{scratch}/a_file"
+        .then next
+      .then (err, changed) ->
+        changed.should.be.False
         next()
 
         
