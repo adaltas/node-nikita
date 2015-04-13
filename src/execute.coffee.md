@@ -97,7 +97,7 @@ mecano.execute({
         options.code_skipped = [options.code_skipped] unless Array.isArray options.code_skipped
         if options.trap_on_error
           options.cmd = "set -e\n#{options.cmd}"
-        options.log? "Mecano `execute`: #{options.cmd} [DEBUG]"
+        options.log? "Mecano `execute`: #{options.cmd} [INFO]"
         child = exec options
         stdout = []; stderr = []
         child.stdout.pipe options.stdout, end: false if options.stdout
