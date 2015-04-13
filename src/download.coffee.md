@@ -15,15 +15,18 @@ is remote.
 A checksum may provided with the option "sha1" or "md5" to validate the uploaded
 file signature.
 
-Caching is active unless one of "cache_dir" or "cache_file" is set to "null" or
-"false".
+Caching is active if "cache_dir" or "cache_file" are defined to anything but false.
+If cache_dir is not a string, default value is './'
+If cache_file is not a string, default is source basename.
+
+Mecano resolve the path from "cache_dir" to "cache_file", so if cache_file is an
+absolute path, "cache_dir" will be ignored
 
 If no cache is used, signature validation is only active if a checksum is
 provided.
 
-If cache is used, signature validation is only active between the source and the
-cache if a checksum is provided while signature validation is always active
-between the cache and the destination if the destination is created or modified.
+If cache is used, signature validation is always active, and md5sum is automatically
+calculated if neither md5 nor sha1 is provided
 
 ## Options
 
@@ -43,12 +46,6 @@ between the cache and the destination if the destination is created or modified.
 *   `stderr` (stream.Writable)
     Writable EventEmitter in which the standard error output of executed command
     will be piped.
-*   `no_check` (boolean)
-    if set to true, hash check is ignored, download will be skipped if destination exists. The check is ignored 
-    on the cache by default but integrity between cache and destination is maintained
-*   `local_cache` (path | boolean)
-    Cache the file on the executing machine, equivalent to cache unless an ssh connection is
-    provided. If a sting is provided, it will be the cache path.
 *   `sha1` (SHA-1 Hash)
     Hash of the file using SHA-1. Used to check integrity
 *   `md5` (MD5 Hash)
@@ -58,8 +55,9 @@ between the cache and the destination if the destination is created or modified.
 *   `cache_dir` (path)
     If local_cache is not a string, the cache file path is resolved from cache dir and cache file.
     By default: './'
-*   `cache_file` (string)
-    See above. Ignored if local_cache is a string
+*   `cache_file` (string | boolean)
+    Cache the file on the executing machine, equivalent to cache unless an ssh connection is
+    provided. If a string is provided, it will be the cache path.
     By default: basename of source
 
 ## Callback parameters
@@ -108,35 +106,33 @@ mecano.download
         return callback new Error "Missing source: #{source}" unless source
         return callback new Error "Missing destination: #{destination}" unless destination
         stageDestination = "#{destination}.#{Date.now()}#{Math.round(Math.random()*1000)}"
-        if options.md5
+        if options.md5?
+          return callback new Error "Invalid MD5 Hash:#{options.md5}" unless typeof options.md5 is 'string'
           algo = 'md5'
           hash = options.md5
-        else if options.sha1
+        else if options.sha1?
+          return callback new Error "Invalid SHA-1 Hash:#{options.sha1}" unless typeof options.sha1 is 'string'
           algo = 'sha1'
           hash = options.sha1
         else
+          algo = 'md5'
           hash = false
         do_cache = ->
-          return do_prepare() unless options.local_cache
+          return do_prepare() unless options.cache_dir? or options.cache_file?
+          return do_prepare() if options.cache_dir is false or options.cache_file is false
           options.log? "Mecano `download`: using cache [DEBUG]"
-          if typeof options.local_cache is 'string'
-            cache = options.local_cache
-          else
-            cache_dir = if options.cache_dir? then options.cache_dir else './'
-            cache_file = if options.cache_file? then options.cache_file
-            else path.basename options.source
-            cache = path.join cache_dir, cache_file
-          options.log? "Mecano `download`: cache file is #{cache} [INFO]"
-          no_chck = options.no_check
-          no_chck ?= true
+          cache_path = if typeof options.cache_dir is 'string' then options.cache_dir else './'
+          cache_file = if typeof options.cache_file is 'string' then options.cache_file
+          else path.basename options.source
+          cache_path = path.resolve cache_path, cache_file
+          options.log? "Mecano `download`: cache path is '#{cache_path}' [INFO]"
           download
             ssh: null
             source: options.source
-            destination: cache
+            destination: cache_path
             md5: options.md5
             sha1: options.sha1
             force: options.force_cache
-            no_check: no_chck
             log: options.log
             stdout: options.stdout
             stderr: options.stderr
@@ -145,41 +141,41 @@ mecano.download
             options.log? if cached then "Mecano `download`: cache updated [WARN]"
             else "Mecano `download`: cache not modified [INFO]"
             options.log? "Mecano `download`: sending cache to destination [DEBUG]"
-            download
+            push_file_opt =
               ssh: options.ssh
-              source: cache
+              source: cache_path
               destination: options.destination
               mode: options.mode
-              binary: true
               md5: options.md5
               sha1: options.sha1
+              force: options.force
               uid: options.uid
               gid: options.gid
               log: options.log
               stdout: options.stdout
               stderr: options.stderr
-            , callback
-        do_prepare = () ->
+            if hash then download push_file_opt, callback
+            else misc.file.hash null, cache_path, algo, (err, calc_hash) ->
+              push_file_opt[algo] = calc_hash
+              download push_file_opt, callback
+        do_prepare = ->
           options.log? "Mecano `download`: Check if destination (#{destination}) exists [DEBUG]"
           # Note about next line: ssh might be null with file, not very clear
           fs.exists options.ssh, destination, (err, exists) ->
             return callback err if err
             if exists
               options.log? "Mecano `download`: destination exists [INFO]"
-              # If no_check, we ignore MD5 check
-              if options.no_check
-                options.log? "Mecano `download`: destination exists, check disabled, skipping [DEBUG]"
-                return callback null, false
+              # If no checksum , we ignore MD5 check
               if options.force
                 options.log? "Mecano `download`: Force download [DEBUG]"
                 return do_download()
               else if hash
                 # then we compute the checksum of the file
                 options.log? "Mecano `download`: comparing #{algo} hash [DEBUG]"
-                misc.file.hash options.ssh, destination, algo, (err, calc_hash) ->
+                misc.file.hash options.ssh, destination, algo, (err, c_hash) ->
                   return callback err if err
                   # And compare with the checksum provided by the user
-                  if hash is calc_hash
+                  if hash is c_hash
                     options.log? "Mecano `download`: Hashes match, skipping [DEBUG]"
                     return callback()
                   options.log? "Mecano `download`: Hashes don't match, delete then re-download [WARN]"
@@ -187,8 +183,8 @@ mecano.download
                     return callback err if err
                     do_download()
               else
-                options.log? "Mecano `download`: Check enabled but no hash found, force download [DEBUG]"
-                do_download()
+                options.log? "Mecano `download`: destination exists, check disabled, skipping [DEBUG]"
+                return callback null, false
             else
               options.log? "Mecano `download`: destination doesn't exists, cheking parent directories (#{path.join destination, '..'}) [DEBUG]"
               mkdir
@@ -198,7 +194,7 @@ mecano.download
                 return callback err if err
                 options.log? "Mecano `download`: Parent directory created [WARN]" if created
                 do_download()
-        do_download = () ->
+        do_download = ->
           options.log? "Mecano `download`: Download the source [DEBUG]"
           u = url.parse source
           if options.ssh
@@ -258,7 +254,7 @@ mecano.download
                 , callback
         do_checksum = ->
           return unstage() unless hash
-          options.log? "Mecano `download`: Compare the downloaded file with the user-provided checksum [DEBUG]"
+          options.log? "Mecano `download`: Compare the downloaded file with the provided checksum [DEBUG]"
           misc.file.hash options.ssh, stageDestination, algo, (err, calc_hash) ->
             if hash is calc_hash
               "Mecano `download`: download is valid [INFO]"
@@ -297,5 +293,3 @@ mecano.download
     request = require 'request'
     url = require 'url'
     wrap = require './misc/wrap'
-
-
