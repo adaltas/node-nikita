@@ -12,6 +12,19 @@ not. It's philosophy mostly rely on the destination point of view. When download
 run, the destination is local, compared to the upload function where destination
 is remote.
 
+A checksum may provided with the option "sha1" or "md5" to validate the uploaded
+file signature.
+
+Caching is active unless one of "cache_dir" or "cache_file" is set to "null" or
+"false".
+
+If no cache is used, signature validation is only active if a checksum is
+provided.
+
+If cache is used, signature validation is only active between the source and the
+cache if a checksum is provided while signature validation is always active
+between the cache and the destination if the destination is created or modified.
+
 ## Options
 
 *   `source` (path)
