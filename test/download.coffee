@@ -51,7 +51,7 @@ describe 'download', ->
         downloaded.should.not.be.ok
         next()
 
-    they 'http detect change', (ssh, next) ->
+    they 'detect change', (ssh, next) ->
       ssh = null
       @timeout 100000
       count = 0
@@ -79,24 +79,63 @@ describe 'download', ->
         downloaded.should.be.False
         next()
 
-    they 'http with local_cache', (ssh, next) ->
+    they 'with specified cache file', (ssh, next) ->
       @timeout 100000
       count = 0
       # Download a non existing file
       source = 'http://localhost:12345'
       destination = "#{scratch}/download"
-      cache = "#{scratch}/cache"
+      cache = "#{scratch}/cache_file"
       mecano.download
         ssh: ssh
         source: source
         destination: destination
-        local_cache: cache
+        cache_file: cache
       , (err, downloaded) ->
         return next err if err
         downloaded.should.be.ok
         fs.readFile null, cache, 'ascii', (err, content) ->
           return next err if err
           content.should.equal 'okay'
+          next()
+
+    they 'with specified cache dir', (ssh, next) ->
+      @timeout 100000
+      count = 0
+      # Download a non existing file
+      source = 'http://localhost:12345'
+      destination = "#{scratch}/download"
+      mecano.download
+        ssh: ssh
+        source: source
+        destination: destination
+        cache_dir: "#{scratch}/cache_dir"
+      , (err, downloaded) ->
+        return next err if err
+        downloaded.should.be.ok
+        fs.exists null, "#{scratch}/cache_dir/localhost:12345", (err, exists) ->
+          return next err if err
+          exists.should.be.ok
+          next()
+
+    they 'with specified cache file but disabled', (ssh, next) ->
+      @timeout 100000
+      count = 0
+      # Download a non existing file
+      source = 'http://localhost:12345'
+      destination = "#{scratch}/download"
+      mecano.download
+        ssh: ssh
+        source: source
+        destination: destination
+        cache_file: "#{scratch}/cache_dir/not_exists"
+        cache_dir: false
+      , (err, downloaded) ->
+        return next err if err
+        downloaded.should.be.ok
+        fs.exists null, "#{scratch}/cache_dir/not_exists", (err, exists) ->
+          return next err if err
+          exists.should.not.be.ok
           next()
 
     they 'should chmod', (ssh, next) ->
@@ -175,9 +214,9 @@ describe 'download', ->
           return next err if err
           downloaded.should.not.be.ok
           next()
-  
+
   # describe 'ftp', ->
-    
+
   #   it 'should deal with ftp protocol', (next) ->
   #     @timeout 10000
   #     source = 'ftp://ftp.gnu.org/gnu/glibc/README.glibc'
@@ -199,7 +238,7 @@ describe 'download', ->
   #           return next err if err
   #           downloaded.should.eql 0
   #           next()
-  
+
   describe 'file', ->
 
     they 'should deal with file protocol', (ssh, next) ->
@@ -225,7 +264,7 @@ describe 'download', ->
         return next err if err
         downloaded.should.not.be.ok
         next()
-    
+
     they 'should default to file without protocol', (ssh, next) ->
       source = "/#{__filename}"
       destination = "#{scratch}/download_test"
@@ -249,4 +288,3 @@ describe 'download', ->
         return next err if err
         downloaded.should.not.be.ok
         next()
-
