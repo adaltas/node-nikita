@@ -1,7 +1,9 @@
 
 module.exports = 
   test_krb5: false
-  test_ldap: false
+  disable_ldap_acl: true
+  disable_ldap_index: true
+  disable_ldap_user: true
   test_service: false
   krb5:
     realm: 'DOMAIN.COM'
@@ -9,9 +11,10 @@ module.exports =
     kadmin_principal: 'mecano/admin@DOMAIN.COM'
     kadmin_password: 'test'
   ldap: 
-    url: 'ldap://openldap.hadoop'
-    binddn: 'cn=admin,cn=config'
+    url: 'ldap://openldap.domain'
+    binddn: 'cn=manager,cn=config'
     passwd: 'test'
+    suffix_dn: 'ou=users,dc=domain,dc=com' # used by ldap_user
   ssh:
     host: '127.0.0.1'
     username: process.env.USER

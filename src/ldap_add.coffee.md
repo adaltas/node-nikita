@@ -7,7 +7,7 @@ Insert or modify an entry inside an OpenLDAP server.
 
 *   `entry` (object | array)   
     Object to be inserted or modified.   
-*   `url`   
+*   `uri`   
     Specify URI referring to the ldap server.   
 *   `binddn`   
     Distinguished Name to bind to the LDAP directory.   
@@ -42,7 +42,15 @@ require('mecano').ldap_index({
 
     module.exports = (options, callback) ->
       wrap @, arguments, (options, callback) ->
-        modified = false
+        # Auth related options
+        binddn = if options.binddn then "-D #{options.binddn}" else ''
+        passwd = if options.passwd then "-w #{options.passwd}" else ''
+        if options.url
+          console.log "Mecano: option 'options.url' is deprecated, use 'options.uri'"
+          options.uri ?= options.url
+        options.uri = 'ldapi:///' if options.uri is true
+        uri = if options.uri then "-H #{options.uri}" else '' # URI is obtained from local openldap conf unless provided
+        # Add related options
         return callback Error "Mecano `ldap_add`: required property 'entry'" unless options.entry
         options.entry = [options.entry] unless Array.isArray options.entry
         ldif = ''
@@ -57,6 +65,7 @@ require('mecano').ldap_index({
             v = [v] unless Array.isArray v
             for vv in v
               ldif += "#{k}: #{vv}\n"
+        modified = false
         # We keep -c for now because we accept multiple entries. In the future, 
         # we shall detect modification and be more strict.
         # -c  Continuous operation mode.  Errors are reported, but ldapmodify will
@@ -64,9 +73,10 @@ require('mecano').ldap_index({
         # error.
         execute
           cmd: """
-          ldapadd -c -H #{options.url} \
-            -D #{options.binddn} -w #{options.passwd} \
-            <<-EOF\n#{ldif}\nEOF
+          ldapadd -c #{binddn} #{passwd} #{uri} \
+          <<-EOF
+          #{ldif}
+          EOF
           """
           code_skipped: 68
           ssh: options.ssh

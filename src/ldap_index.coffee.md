@@ -46,7 +46,7 @@ require('mecano').ldap_index({
           options.log? "mecano `ldap_index`: get DN of the HDB to modify"
           execute
             cmd: """
-            ldapsearch -Y EXTERNAL -H ldapi:/// \
+            ldapsearch -LLL -Y EXTERNAL -H ldapi:/// \
               -b cn=config \
               "(olcSuffix= #{options.suffix})" dn \
               2>/dev/null \
@@ -65,7 +65,7 @@ require('mecano').ldap_index({
           options.log? "mecano `ldap_index`: list all indexes of the directory"
           execute
             cmd: """
-            ldapsearch -Y EXTERNAL -H ldapi:/// \
+            ldapsearch -LLL -Y EXTERNAL -H ldapi:/// \
               -b olcDatabase=#{options.hdb_dn} \
               "(olcDbIndex=*)" olcDbIndex
             """

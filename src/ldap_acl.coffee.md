@@ -57,6 +57,12 @@ require('mecano').ldap_acl({
 
     module.exports = (options, callback) ->
       wrap @, arguments, (options, callback) ->
+        # # Auth related options
+        # binddn = if options.binddn then "-D #{options.binddn}" else ''
+        # passwd = if options.passwd then "-w #{options.passwd}" else ''
+        # options.uri = 'ldapi:///' if options.uri is true
+        # uri = if options.uri then "-H #{options.uri}" else '' # URI is obtained from local openldap conf unless provided
+        # Acl related options
         options.acls ?= [{}]
         modified = false
         each(options.acls)
@@ -67,7 +73,7 @@ require('mecano').ldap_acl({
             options.log? "mecano `ldap_acl`: get DN of the HDB to modify"
             execute
               cmd: """
-              ldapsearch -Y EXTERNAL -H ldapi:/// \
+              ldapsearch -LLL -Y EXTERNAL -H ldapi:/// \
                 -b cn=config \
                 "(olcSuffix= #{options.suffix})" dn \
                 2>/dev/null \
@@ -86,7 +92,7 @@ require('mecano').ldap_acl({
             options.log? "mecano `ldap_acl`: list all ACL of the directory"
             execute
               cmd: """
-              ldapsearch -Y EXTERNAL -H ldapi:/// \
+              ldapsearch -LLL -Y EXTERNAL -H ldapi:/// \
                 -b olcDatabase=#{options.hdb_dn} \
                 "(olcAccess=*)" olcAccess
               """

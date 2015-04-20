@@ -18,6 +18,7 @@
       krb5_delprinc: require '../krb5_delprinc'
       ldap_acl: require '../ldap_acl'
       ldap_add: require '../ldap_add'
+      ldap_delete: require '../ldap_delete'
       ldap_index: require '../ldap_index'
       ldap_schema: require '../ldap_schema'
       ldap_user: require '../ldap_user'

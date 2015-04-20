@@ -14,7 +14,7 @@ Create and modify a user store inside an OpenLDAP server.
     (eg: "olcDatabase={2}bdb,cn=config").   
 *   `overwrite`   
     Overwrite existing "olcAccess", default is to merge.   
-*   `url`   
+*   `uri`   
     Specify URI referring to the ldap server.   
 *   `user`   
     User object.   
@@ -37,9 +37,18 @@ require('mecano').ldap_user({
 
     module.exports = (options, callback) ->
       wrap @, arguments, (options, callback) ->
-        modified = false
+        # Auth related options
+        binddn = if options.binddn then "-D #{options.binddn}" else ''
+        passwd = if options.passwd then "-w #{options.passwd}" else ''
+        if options.url
+          console.log "Mecano: option 'options.url' is deprecated, use 'options.uri'"
+          options.uri ?= options.url
+        options.uri = 'ldapi:///' if options.uri is true
+        uri = if options.uri then "-H #{options.uri}" else '' # URI is obtained from local openldap conf unless provided
+        # User related options
         return callback Error "Mecano `ldap_user`: required property 'user'" unless options.user
         options.user = [options.user] unless Array.isArray options.user
+        modified = false
         each(options.user)
         .on 'item', (user, callback) ->
           do_user = ->
@@ -49,7 +58,7 @@ require('mecano').ldap_user({
               entry[k] = v
             ldap_add
               entry: entry
-              url: options.url
+              uri: options.uri
               binddn: options.binddn
               passwd: options.passwd
               ssh: options.ssh
@@ -58,31 +67,32 @@ require('mecano').ldap_user({
               stderr: options.stderr
             , (err, modified, added) ->
               return callback err if err
+              options.log? 'Mecano `ldap_user`: user modified [WARN]' if modified
+              options.log? 'Mecano `ldap_user`: user added [WARN]' if added
               modified = true if modified or added
               if added
               then do_ldappass()
               else do_checkpass()
           do_checkpass = ->
             execute
+              # See https://onemoretech.wordpress.com/2011/09/22/verifying-ldap-passwords/
               cmd: """
-                ldapsearch -H ldapi:/// \
-                  -D #{user.dn} -w #{user.userPassword} \
-                  -b '#{user.dn}'
+              ldapsearch -D #{user.dn} -w #{user.userPassword} #{uri} -b "" -s base "objectclass=*"
               """
-              code_skipped: 1
+              code_skipped: 49
               ssh: options.ssh
               log: options.log
               stdout: options.stdout
               stderr: options.stderr
-            , (err, exists, stdout) ->
-              if err then do_ldappass() else do_end()
+            , (err, identical, stdout) ->
+              return callback err if err
+              if identical then do_end() else do_ldappass()
           do_ldappass = ->
             execute
               cmd: """
-              ldappasswd -H #{options.url} \
-                -D #{options.binddn} -w #{options.passwd} \
-                '#{user.dn}' \
-                -s #{user.userPassword}
+              ldappasswd #{binddn} #{passwd} #{uri} \
+                -s #{user.userPassword} \
+                '#{user.dn}'
               """
               ssh: options.ssh
               log: options.log
@@ -90,6 +100,7 @@ require('mecano').ldap_user({
               stderr: options.stderr
             , (err) ->
               return callback err if err
+              options.log? 'Mecano `ldap_user`: password modified [WARN]'
               modified = true
               do_end()
           do_end = ->
@@ -97,6 +108,17 @@ require('mecano').ldap_user({
           do_user()
         .on 'both', (err) ->
           callback err, modified
+
+## Note
+
+A user can modify it's own password with the "ldappasswd" command if ACL allows
+it. Here's an example:
+
+```bash
+ldappasswd -D cn=myself,ou=users,dc=ryba -w oldpassword \
+  -H ldaps://master3.ryba:636 \
+  -s newpassword 'cn=myself,ou=users,dc=ryba'
+```
 
 ## Dependencies
 

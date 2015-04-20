@@ -8,7 +8,7 @@ describe 'ldap_acl', ->
 
   scratch = test.scratch @
   config = test.config()
-  return unless config.test_ldap
+  return if config.disable_ldap_acl
   client = olcAccess = null
   beforeEach (next) ->
     client = ldap.createClient url: config.ldap.url
@@ -33,7 +33,10 @@ describe 'ldap_acl', ->
   it 'create a new permission', (next) ->
     mecano
     .ldap_acl
-      ldap: client
+      # ldap: client
+      url: config.ldap.url
+      binddn: config.ldap.binddn
+      passwd: config.ldap.passwd
       name: 'olcDatabase={2}bdb,cn=config'
       to: 'dn.base="dc=test,dc=com"'
       by: [

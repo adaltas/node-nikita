@@ -47,6 +47,15 @@ require('mecano').ldap_schema({
 
     module.exports = (options, callback) ->
       wrap @, arguments, (options, callback) ->
+        # Auth related options
+        binddn = if options.binddn then "-D #{options.binddn}" else ''
+        passwd = if options.passwd then "-w #{options.passwd}" else ''
+        if options.url
+          console.log "Mecano: option 'options.url' is deprecated, use 'options.uri'"
+          options.uri ?= options.url
+        options.uri = 'ldapi:///' if options.uri is true
+        uri = if options.uri then "-H #{options.uri}" else '' # URI is obtained from local openldap conf unless provided
+        # Schema related options
         return callback new Error "Missing name" unless options.name
         return callback new Error "Missing schema" unless options.schema
         options.schema = options.schema.trim()
@@ -54,13 +63,9 @@ require('mecano').ldap_schema({
         schema = "#{tempdir}/#{options.name}.schema"
         conf = "#{tempdir}/schema.conf"
         ldif = "#{tempdir}/ldif"
-        binddn = if options.binddn then "-D #{options.binddn}" else ''
-        passwd = if options.passwd then "-w #{options.passwd}" else ''
-        options.uri = 'ldapi:///' if options.uri is true
-        uri = if options.uri then "-H #{options.uri}" else '' # URI is obtained from local openldap conf unless provided
         modified = false
         do_registered = ->
-          cmd = "ldapsearch #{binddn} #{passwd} #{uri} -b \"cn=schema,cn=config\" | grep -E cn=\\{[0-9]+\\}#{options.name},cn=schema,cn=config"
+          cmd = "ldapsearch -LLL #{binddn} #{passwd} #{uri} -b \"cn=schema,cn=config\" | grep -E cn=\\{[0-9]+\\}#{options.name},cn=schema,cn=config"
           options.log? "Check if schema is registered: #{cmd}"
           execute
             cmd: cmd

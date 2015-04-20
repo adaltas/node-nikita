@@ -8,7 +8,7 @@ describe 'ldap_index', ->
 
   scratch = test.scratch @
   config = test.config()
-  return unless config.test_ldap
+  return if config.disable_ldap_index
   client = olcDbIndex = null
   beforeEach (next) ->
     client = ldap.createClient url: config.ldap.url
