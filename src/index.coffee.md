@@ -137,21 +137,59 @@ functions share a common API with flexible options.
             process.nextTick run if todos.length is 1 # Activate the pump
             obj
       proto = Object.defineProperties obj, properties
+      # Register function
+      Object.defineProperty obj, 'register', get: ->
+        (name, handler) ->
+          is_registered_locally = obj.registered name, true
+          if handler is null or handler is false
+            if is_registered_locally
+              delete obj[name] 
+            else if module.exports.registered name
+              throw Error 'Unregister a global function from local context'
+            return obj
+          throw Error "Function already defined '#{name}'" if is_registered_locally
+          Object.defineProperty obj, name, configurable: true, get: ->
+            ->
+              id = status.id++
+              dest = arguments[0]?.destination
+              todos.push [name, arguments, id]
+              process.nextTick run if todos.length is 1 # Activate the pump
+              obj
+      Object.defineProperty obj, 'registered', get: ->
+        (name, local_only=false) ->
+          global = Object.prototype.hasOwnProperty.call module.exports, name
+          local = Object.prototype.hasOwnProperty.call obj, name
+          if local_only then local else global or local
       obj
 
-    properties = {}
+## Register functions
+
+Register a new function available when requiring mecano and inside any mecano
+instance. 
+
+You can also un-register a existing function by passing "null" or "false" as
+the second argument. It will return "true" if the function is un-registered or
+"false" if there was nothing to do because the function wasn't already
+registered.
+
+    register = module.exports.register = (name, handler) ->
+      if handler is null or handler is false
+        delete module.exports[name] if registered name
+        return module.exports
+      throw Error "Function already defined '#{name}'" if registered name
+      Object.defineProperty module.exports, name, get: (-> handler), configurable: true
+
+    registered = module.exports.registered = (name) ->
+      Object.prototype.hasOwnProperty.call module.exports, name
+
+Pre-register mecano internal functions
 
     registry = require './misc/registry'
 
     Object.keys(registry).forEach (name) ->
-      properties[name] = get: ->
-        module.exports()[name]
-
-    properties.call = get: ->
-      module.exports().call
-
-    Object.defineProperties module.exports, properties
-
-
+      register name, module.exports()[name]
+      # Object.defineProperty module.exports, name, get: (-> module.exports()[name]), configurable: true
+    register 'call', module.exports().call
+    # Object.defineProperty module.exports, 'call', get: (-> module.exports().call), configurable: true
 
 
