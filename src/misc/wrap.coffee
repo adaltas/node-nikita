@@ -40,7 +40,7 @@ exports = module.exports = (context, args, handler) ->
     .on 'item', (options, next) ->
       # Handle conditions
       conditions.all options, next, ->
-        handler options, (err, modif, args...) ->
+        handler.call context, options, (err, modif, args...) ->
           modified++ if not err and modif
           for arg, i in args
             user_args[i] ?= []
