@@ -62,7 +62,7 @@ functions share a common API with flexible options.
               err = null if result is true
             catch e then err = e unless err
             if err then status.err = err
-            else if changed then status.changed = true
+            else if changed then status.changed = true unless args[0]?.shy
             todos = stack.shift() if todos.length is 0
             return run()
         catch err
