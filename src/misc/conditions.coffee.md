@@ -10,11 +10,17 @@ For an action to be executed, all conditions must pass.
 
 ## Run an action for a user defined condition: `if`
 
-Work on the property `if` in `options`. When `if` is a boolean, a number or
-null, its value determine the output. If it's a function, the arguments vary
-depending on the callback signature. With 1 argument, the argument is a
-callback. With 2 arguments, the arguments are the options and a callback. If
-it'a an array, all its element must positively resolve for the condition to
+Work on the property `if` in `options`.
+
+When `if` is a boolean, a string, a number or null, its value determine the
+output.
+
+If it's a function, the arguments vary depending on the callback signature. With
+1 argument, the argument is an options object and the handler is run
+synchronously. With 2 arguments, the arguments are an options object plus a
+callback and the handler is run asynchronously.
+
+If it's an array, all its element must positively resolve for the condition to
 pass.
 
 Updating the content of a file if we are the owner
@@ -48,10 +54,14 @@ mecano.render({
             next()
           else if type is 'function'
             if si.length is 1
-              si (err, is_ok) ->
-                return next err if err
-                ok = false unless is_ok
+              try
+                ok = false unless si options
                 next()
+              catch err then next err
+              # si (err, is_ok) ->
+              #   return next err if err
+              #   ok = false unless is_ok
+              #   next()
             else if si.length is 2
               si options, (err, is_ok) ->
                 return next err if err
@@ -73,11 +83,18 @@ mecano.render({
 
 ## Run an action if false: `not_if`
 
-Work on the property `not_if` in `options`. When `not_if` is a boolean, its
-value determine the output. If it's a function, the arguments vary depending
-on the callback signature. With 1 argument, the argument is a callback. With 2
-arguments, the arguments are the options and a callback. If it'a an array, all
-its element must positively resolve for the condition to pass.
+Work on the property `not_if` in `options`.
+
+When `if` is a boolean, a string, a number or null, its value determine the
+output.
+
+If it's a function, the arguments vary depending on the callback signature. With
+1 argument, the argument is an options object and the handler is run
+synchronously. With 2 arguments, the arguments are an options object plus a
+callback and the handler is run asynchronously.
+
+If it's an array, all its element must negatively resolve for the condition to
+pass.
 
       not_if: (options, skip, succeed) ->
         return succeed() if typeof options.not_if is 'undefined'
@@ -97,10 +114,14 @@ its element must positively resolve for the condition to pass.
           else if type is 'function'
             # not_if options, next, ( -> ok = false; next arguments...)
             if not_if.length is 1
-              not_if (err, is_ok) ->
-                return next err if err
-                ok = false if is_ok
+              try
+                ok = false if not_if options
                 next()
+              catch err then next err
+              # not_if (err, is_ok) ->
+              #   return next err if err
+              #   ok = false if is_ok
+              #   next()
             else if not_if.length is 2
               not_if options, (err, is_ok) ->
                 return next err if err

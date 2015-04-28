@@ -91,7 +91,24 @@ describe 'conditions', ->
         next
         () -> false.should.be.ok
 
-    they 'should succeed on `succeed` callback', (ssh, next) ->
+    they 'should succeed on `succeed` sync callback', (ssh, next) ->
+      called = true
+      conditions.if
+        ssh: ssh
+        if: (options) -> true
+        (err) -> false.should.be.ok
+        ->
+          called.should.be.True
+          next()
+
+    they 'should fail on `failed` sync callback', (ssh, next) ->
+      conditions.if
+        ssh: ssh
+        if: (options) -> false
+        next
+        () -> false.should.be.ok
+
+    they 'should succeed on `succeed` async callback', (ssh, next) ->
       called = true
       conditions.if
         ssh: ssh
@@ -136,6 +153,27 @@ describe 'conditions', ->
         not_if: true
         next
         () -> false.should.be.ok
+
+    they 'should skip if all true', (ssh, next) ->
+      conditions.not_if
+        ssh: ssh
+        not_if: [true, true, true]
+        next
+        () -> false.should.be.ok
+
+    they 'should skip if at least one is true', (ssh, next) ->
+      conditions.not_if
+        ssh: ssh
+        not_if: [false, true, false]
+        next
+        () -> false.should.be.ok
+
+    they 'should run if all false', (ssh, next) ->
+      conditions.not_if
+        ssh: ssh
+        not_if: [false, false, false]
+        () -> false.should.be.ok
+        next
 
     they 'should succeed if `1`', (ssh, next) ->
       conditions.not_if
