@@ -61,13 +61,34 @@ describe 'conditions', ->
         next
         () -> false.should.be.ok
 
-    they 'should fail with error if string', (ssh, next) ->
+    they 'should succeed if string not empty', (ssh, next) ->
       conditions.if
         ssh: ssh
         if: 'abc'
-        (err) ->
-          err.message.should.eql "Invalid condition type"
-          next()
+        () -> false.should.be.ok
+        next
+
+    they 'should succeed if template string not empty', (ssh, next) ->
+      conditions.if
+        ssh: ssh
+        if: '{{db.test}}'
+        db: test: 'abc'
+        () -> false.should.be.ok
+        next
+
+    they 'should fail if string empty', (ssh, next) ->
+      conditions.if
+        ssh: ssh
+        if: ''
+        next
+        () -> false.should.be.ok
+
+    they 'should fail if template string empty', (ssh, next) ->
+      conditions.if
+        ssh: ssh
+        if: '{{db.test}}'
+        db: test: ''
+        next
         () -> false.should.be.ok
 
     they 'should succeed on `succeed` callback', (ssh, next) ->
@@ -137,14 +158,19 @@ describe 'conditions', ->
         () -> false.should.be.ok
         next
 
-    they 'should fail with error if string', (ssh, next) ->
+    they 'should fail if string not empty', (ssh, next) ->
       conditions.not_if
         ssh: ssh
         not_if: 'abc'
-        (err) ->
-          err.message.should.eql "Invalid condition type"
-          next()
+        next
         () -> false.should.be.ok
+
+    they 'should fail if string not empty', (ssh, next) ->
+      conditions.not_if
+        ssh: ssh
+        not_if: ''
+        () -> false.should.be.ok
+        next
 
     they 'function succeed on `succeed` callback', (ssh, next) ->
       conditions.not_if
@@ -332,6 +358,11 @@ describe 'conditions', ->
           err.should.be.an.Object
           next()
         () -> false.should.be.ok
+
+  # describe: 'template', ->
+
+  #   they 'inject context', (ssh, next) ->
+
 
 
 

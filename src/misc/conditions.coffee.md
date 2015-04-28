@@ -61,6 +61,10 @@ mecano.render({
               # Deprecated? should we continue to support this?
               si options, ( -> ok = false; next arguments...), next
             else next new Error "Invalid callback"
+          else if type is 'string'
+            si = template si, options
+            ok = false if si.length is 0
+            next()
           else
             next new Error "Invalid condition type"
         .on 'both', (err) ->
@@ -106,6 +110,10 @@ its element must positively resolve for the condition to pass.
               # Deprecated? should we continue to support this?
               not_if options, next, ( -> ok = false; next arguments...)
             else next new Error "Invalid callback"
+          else if type is 'string'
+            not_if = template not_if, options
+            ok = false if not_if.length isnt 0
+            next()
           else
             next new Error "Invalid condition type"
         .on 'both', (err) ->
@@ -302,6 +310,7 @@ conditions.all({
     misc = require './index'
     exec = require 'ssh2-exec'
     fs = require 'ssh2-fs'
+    template = require './template'
 
 
 
