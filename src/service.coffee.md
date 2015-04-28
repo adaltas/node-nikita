@@ -5,16 +5,16 @@ Install a service. For now, only yum over SSH.
 
 ## Options
 
-*   `name`   
+*   `name` (string)   
     Package name, optional.   
 *   `startup`   
     Run service daemon on startup. If true, startup will be set to '2345', use
     an empty string to not define any run level.   
-*   `yum_name`   
+*   `yum_name` (string)   
     Name used by the yum utility, default to "name".   
-*   `chk_name`   
+*   `chk_name` (string)   
     Name used by the chkconfig utility, default to "srv_name" and "name".   
-*   `srv_name`   
+*   `srv_name` (string)   
     Name used by the service utility, default to "name".   
 *   `cache`   
     Run entirely from system cache to list installed and outdated packages.   
@@ -74,13 +74,11 @@ require('mecano').service([{
         installed = updates = null
         # Validate parameters
         # return callback new Error 'Missing service name' unless options.name
-        return callback new Error 'Restricted to Yum over SSH' unless options.ssh
+        # return callback new Error 'Restricted to Yum over SSH' unless options.ssh
         # return callback new Error 'Invalid configuration, start conflict with stop' if options.start? and options.start is options.stop
         pkgname = options.yum_name or options.name
         chkname = options.chk_name or options.srv_name or options.name
         srvname = options.srv_name or options.chk_name or options.name
-        # if options.startup? and typeof options.startup isnt 'string'
-        #     options.startup = if options.startup then '2345' else ''
         modified = false
         if options.cache
           options.db ?= {}
@@ -164,66 +162,17 @@ require('mecano').service([{
             do_startuped()
         do_startuped = ->
           return do_started() unless options.startup?
-          options.log? "Mecano `service`: list startup services [DEBUG]"
-          execute
+          service_startup
             ssh: options.ssh
-            cmd: "chkconfig --list #{chkname}"
-            code_skipped: 1
+            name: chkname
+            startup: options.startup
             log: options.log
             stdout: options.stdout
             stderr: options.stderr
-          , (err, registered, stdout, stderr) ->
+            if: options.startup?
+          , (err, startuped) ->
             return callback err if err
-            # Invalid service name return code is 0 and message in stderr start by error
-            if /^error/.test stderr
-              options.log? "Mecano `service`: Invalid chkconfig name for `#{chkname}` [ERROR]"
-              return callback new Error "Invalid chkconfig name for `#{chkname}`"
-            current_startup = ''
-            if registered
-              for c in stdout.split(' ').pop().trim().split '\t'
-                [level, status] = c.split ':'
-                current_startup += level if ['on', 'marche'].indexOf(status) > -1
-            return do_started() if (options.startup is true and current_startup.length) or (options.startup is current_startup)
-            return do_started() if registered and options.startup is false and current_startup is ''
-            modified = true
-            if options.startup
-            then startup_add()
-            else startup_del()
-        startup_add = ->
-          options.log? "Mecano `service`: startup on"
-          cmd = "chkconfig --add #{chkname};"
-          if typeof options.startup is 'string'
-            startup_on = startup_off = ''
-            for i in [0...6]
-              if options.startup.indexOf(i) isnt -1
-              then startup_on += i
-              else startup_off += i
-            cmd += "chkconfig --level #{startup_on} #{chkname} on;" if startup_on
-            cmd += "chkconfig --level #{startup_off} #{chkname} off;" if startup_off
-          else
-            cmd += "chkconfig #{chkname} on;"
-          execute
-            ssh: options.ssh
-            cmd: cmd
-            log: options.log
-            stdout: options.stdout
-            stderr: options.stderr
-          , (err) ->
-            return callback err if err
-            do_started()
-        startup_del = ->
-          options.log? "Mecano `service`: startup off"
-          # Note, we are deleting the service but instead we could
-          # make sure it's added but in "off" state.
-          execute
-            ssh: options.ssh
-            # cmd: "chkconfig --del #{chkname}"
-            cmd: "chkconfig #{chkname} off"
-            log: options.log
-            stdout: options.stdout
-            stderr: options.stderr
-          , (err) ->
-            return callback err if err
+            modified = startuped
             do_started()
         do_started = ->
           return do_finish() unless options.action
@@ -265,9 +214,8 @@ require('mecano').service([{
 
 ## Dependencies
 
-    each = require 'each'
     execute = require './execute'
-    misc = require './misc'
+    service_startup = require './service_startup'
     string = require './misc/string'
     wrap = require './misc/wrap'
 

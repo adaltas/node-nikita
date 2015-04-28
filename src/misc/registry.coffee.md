@@ -28,6 +28,7 @@
       remove: require '../remove'
       render: require '../render'
       service: require '../service'
+      service_startup: require '../service_startup'
       touch: require '../touch'
       upload: require '../upload'
       user: require '../user'
