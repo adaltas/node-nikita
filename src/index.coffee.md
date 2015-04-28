@@ -24,6 +24,7 @@ functions share a common API with flexible options.
       else
         obj = {}
         obj.options = {}
+      obj.registry ?= {}
       properties = {}
       stack = []
       todos = []
@@ -110,7 +111,8 @@ functions share a common API with flexible options.
             t[k] = obj.options[k] if typeof t[k] is 'undefined'
         # Call the action
         todo[1][0].user_args = todo[1][1]?.length > 2
-        call registry[todo[0]], [todo[1][0]], todo[1][1]
+        fn = obj.registry[todo[0]] or registry[todo[0]]
+        call fn, [todo[1][0]], todo[1][1]
       properties.child = get: ->
         ->
           module.exports(obj.options)
@@ -128,14 +130,6 @@ functions share a common API with flexible options.
             # run() if todos.length is 1 # Activate the pump
           process.nextTick run if todos.length is 1 # Activate the pump
           obj
-      Object.keys(registry).forEach (name) ->
-        properties[name] = get: ->
-          ->
-            id = status.id++
-            dest = arguments[0]?.destination
-            todos.push [name, arguments, id]
-            process.nextTick run if todos.length is 1 # Activate the pump
-            obj
       proto = Object.defineProperties obj, properties
       # Register function
       Object.defineProperty obj, 'register', get: ->
@@ -143,11 +137,13 @@ functions share a common API with flexible options.
           is_registered_locally = obj.registered name, true
           if handler is null or handler is false
             if is_registered_locally
+              delete obj.registry[name]
               delete obj[name] 
             else if module.exports.registered name
               throw Error 'Unregister a global function from local context'
             return obj
           throw Error "Function already defined '#{name}'" if is_registered_locally
+          obj.registry[name] = handler
           Object.defineProperty obj, name, configurable: true, get: ->
             ->
               id = status.id++
@@ -160,6 +156,7 @@ functions share a common API with flexible options.
           global = Object.prototype.hasOwnProperty.call module.exports, name
           local = Object.prototype.hasOwnProperty.call obj, name
           if local_only then local else global or local
+      obj.register name, handler for name, handler of registry
       obj
 
 ## Register functions
@@ -174,10 +171,14 @@ registered.
 
     register = module.exports.register = (name, handler) ->
       if handler is null or handler is false
+        delete registry[name] if registered name
         delete module.exports[name] if registered name
         return module.exports
       throw Error "Function already defined '#{name}'" if registered name
-      Object.defineProperty module.exports, name, get: (-> handler), configurable: true
+      registry[name] = handler unless name is 'call'
+      Object.defineProperty module.exports, name, 
+        configurable: true
+        get: -> module.exports()[name]
 
     registered = module.exports.registered = (name) ->
       Object.prototype.hasOwnProperty.call module.exports, name
@@ -185,11 +186,7 @@ registered.
 Pre-register mecano internal functions
 
     registry = require './misc/registry'
-
-    Object.keys(registry).forEach (name) ->
-      register name, module.exports()[name]
-      # Object.defineProperty module.exports, name, get: (-> module.exports()[name]), configurable: true
+    register name, handler for name, handler of registry
     register 'call', module.exports().call
-    # Object.defineProperty module.exports, 'call', get: (-> module.exports().call), configurable: true
-
+    
 
