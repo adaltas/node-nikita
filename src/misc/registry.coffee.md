@@ -29,6 +29,7 @@
       render: require '../render'
       service: require '../service'
       service_startup: require '../service_startup'
+      service_start: require '../service_start'
       touch: require '../touch'
       upload: require '../upload'
       user: require '../user'
