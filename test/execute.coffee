@@ -63,11 +63,11 @@ describe 'execute', ->
     mecano
       ssh: ssh
     .execute
-      cmd: "chown"
+      cmd: "ls -l #{scratch}/doesnt_exist"
     .then (err, executed) ->
       err.message.should.eql 'Invalid Exit Code: 1'
     .execute
-      cmd: "chown"
+      cmd: "ls -l #{scratch}/doesnt_exist"
       code: [0, 1]
     .then (err, executed) ->
       next err
