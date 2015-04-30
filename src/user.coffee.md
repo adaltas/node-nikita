@@ -164,6 +164,7 @@ you are a member of the "wheel" group (gid of "10") with the command
             destination: options.home
             uid: options.uid
             gid: options.gid
+            if: options.home
             if_exists: options.home
             not_if: options.no_home_ownership
           .then (err, changed, __, stderr) ->
