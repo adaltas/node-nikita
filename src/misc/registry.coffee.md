@@ -13,6 +13,7 @@
       group: require '../group'
       ini: require '../ini'
       iptables: require '../iptables'
+      java_keystore_add: require '../java_keystore_add'
       krb5_ktadd: require '../krb5_ktadd'
       krb5_addprinc: require '../krb5_addprinc'
       krb5_delprinc: require '../krb5_delprinc'
