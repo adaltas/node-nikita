@@ -45,6 +45,9 @@ Create or modify a Unix user.
 *   `stderr` (stream.Writable)   
     Writable EventEmitter in which the standard error output of executed command
     will be piped.   
+*   `no_home_ownership` (boolean)   
+    Disable ownership on home directory which default to the "uid" and "gid"
+    options, default is "false".   
 
 ## Callback parameters
 
@@ -74,13 +77,6 @@ you are a member of the "wheel" group (gid of "10") with the command
 `id a\_user` producing an output similar to 
 "uid=490(hive) gid=10(wheel) groups=10(wheel)".
 
-To list all files owner by a user or a uid, run:
-
-```bash
-find /var/tmp -user `whoami`
-find /var/tmp -uid 1000
-```
-
 ## Source Code
 
     module.exports = (options, callback) ->
@@ -95,23 +91,23 @@ find /var/tmp -uid 1000
         modified = false
         user_info = groups_info = null
         do_info = ->
-          options.log? "Get user information for #{options.name}"
+          options.log? "Mecano `user`: Get user information for #{options.name} [DEBUG]"
           options.ssh?.passwd = null # Clear cache if any 
           misc.ssh.passwd options.ssh, (err, users) ->
             return callback err if err
-            options.log? "Got #{JSON.stringify users[options.name]}"
+            options.log? "Mecano `user`: got #{JSON.stringify users[options.name]} [INFO]"
             user_info = users[options.name]
             # Create user if it does not exist
             return do_create() unless user_info
             # Compare user attributes unless we need to compare groups membership
-            return do_compare() unless options.groups
+            return do_update() unless options.groups
             # Renew group cache
             options.ssh?.cache_group = null # Clear cache if any
             misc.ssh.group options.ssh, (err, groups) ->
               return callback err if err
               groups_info = groups
-              do_compare()
-        do_create = ->
+              do_update()
+        do_create = =>
           cmd = 'useradd'
           cmd += " -r" if options.system
           cmd += " -M" unless options.home
@@ -125,30 +121,33 @@ find /var/tmp -uid 1000
           cmd += " -G #{options.groups.join ','}" if options.groups
           cmd += " -k #{options.skel}" if options.skel
           cmd += " #{options.name}"
-          execute
-            ssh: options.ssh
+          @child()
+          .execute
             cmd: cmd
-            log: options.log
-            stdout: options.stdout
-            stderr: options.stderr
             code_skipped: 9
-          , (err, created) ->
+          .chown
+            destination: options.home
+            uid: options.uid
+            gid: options.gid
+            if_exists: options.home
+            not_if: options.no_home_ownership
+          .then (err, created) ->
             return callback err if err
             if created
               modified = true
               do_password()
             else
-              options.log? "User defined elsewhere than '/etc/passwd', exit code is 9"
+              options.log? "Mecano `user`: user defined elsewhere than '/etc/passwd', exit code is 9 [WARN]"
               callback null, modified
-        do_compare = ->
+        do_update = =>
+          changed = false
           for k in ['uid', 'home', 'shell', 'comment', 'gid']
-            modified = true if options[k]? and user_info[k] isnt options[k]
+            changed = true if options[k]? and user_info[k] isnt options[k]
           if options.groups then for group in options.groups
             return callback err "Group does not exist: #{group}" unless groups_info[group]
-            modified = true if groups_info[group].user_list.indexOf(options.name) is -1
-          options.log? "Did user information changed: #{modified}"
-          if modified then do_modify() else do_password()
-        do_modify = ->
+            changed = true if groups_info[group].user_list.indexOf(options.name) is -1
+          options.log? "Mecano `user`: user #{options.name} not modified [DEBUG]" unless changed
+          options.log? "Mecano `user`: user #{options.name} modified [WARN]" if changed
           cmd = 'usermod'
           cmd += " -d #{options.home}" if options.home
           cmd += " -s #{options.shell}" if options.shell
@@ -157,18 +156,23 @@ find /var/tmp -uid 1000
           cmd += " -G #{options.groups.join ','}" if options.groups
           cmd += " -u #{options.uid}" if options.uid
           cmd += " #{options.name}"
-          execute
-            ssh: options.ssh
+          @child()
+          .execute
             cmd: cmd
-            log: options.log
-            stdout: options.stdout
-            stderr: options.stderr
-          , (err, _, __, stderr) ->
+            if: changed
+          .chown
+            destination: options.home
+            uid: options.uid
+            gid: options.gid
+            if_exists: options.home
+            not_if: options.no_home_ownership
+          .then (err, changed, __, stderr) ->
             return callback new Error "User #{options.name} is logged in" if err?.code is 8
             return callback err if err
+            modified = true if changed
             do_password()
         do_password = ->
-          return callback null, modified unless options.password
+          return do_end() unless options.password
           # TODO, detect changes in password
           execute
             ssh: options.ssh
@@ -176,8 +180,12 @@ find /var/tmp -uid 1000
             log: options.log
             stdout: options.stdout
             stderr: options.stderr
-          , (err) ->
-            callback err, modified
+          , (err, modified) ->
+            return callback err if err
+            # modified = true if modified
+            do_end()
+        do_end = ->
+          return callback null, modified
         do_info()
 
 ## Dependencies
