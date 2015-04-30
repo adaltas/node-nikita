@@ -39,27 +39,33 @@ require('mecano').chown({
 });
 ```
 
+## Note
+
+To list all files owner by a user or a uid, run:
+
+```bash
+find /var/tmp -user `whoami`
+find /var/tmp -uid 1000
+```
+
 ## Source Code
 
     module.exports = (options, callback) ->
       wrap @, arguments, (options, callback) ->
         # Validate parameters
         return callback Error "Missing destination option" unless options.destination?
-        return callback Error "Missing one of uid or gid option" unless options.uid? and options.gid?
-        # options.log? "Mecano `chown` [DEBUG]"
+        return callback Error "Missing one of uid or gid option" unless options.uid? or options.gid?
         do_stat = ->
-          return do_compare options.stat if options.stat
+          return do_chown options.stat if options.stat
           options.log? "Mecano `chown`: stat #{options.destination} [DEBUG]"
           fs.stat options.ssh, options.destination, (err, stat) ->
             return callback err if err
-            do_compare stat
-        do_compare = (stat) ->
-            return callback() if stat.uid is options.uid and stat.gid is options.gid
-            options.log? "Mecano `chown`: change uid from #{stat.uid} to #{options.uid} [INFO]" if stat.uid isnt options.uid
-            options.log? "Mecano `chown`: change gid from #{stat.gid} to #{options.gid} [INFO]" if stat.gid isnt options.gid
-            do_chown()
-        do_chown = ->
+            do_chown stat
+        do_chown = (stat) ->
+          return callback() if stat.uid is options.uid and stat.gid is options.gid
           fs.chown options.ssh, options.destination, options.uid, options.gid, (err) ->
+            options.log? "Mecano `chown`: change uid from #{stat.uid} to #{options.uid} [WARN]" if options.uid and stat.uid isnt options.uid
+            options.log? "Mecano `chown`: change gid from #{stat.gid} to #{options.gid} [WARN]" if options.gid and stat.gid isnt options.gid
             callback err, true
         do_stat()
 
