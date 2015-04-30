@@ -7,31 +7,63 @@ conditions = require "../#{lib}/misc/conditions"
 
 describe 'conditions', ->
 
-  describe 'all', ->
+  describe 'mix', ->
 
-    they 'handle multiple conditions (1st failed)', (ssh, next) ->
+    it 'bypass if not present', (next) ->
+      conditions.all {},
+        () -> false.should.be.ok
+        next
+
+    it 'handle multiple conditions (1st failed)', (next) ->
       conditions.all
-        ssh: ssh
         if: false
         not_if: false
         next
         () -> false.should.be.ok
 
-    they 'handle multiple conditions (2nd failed)', (ssh, next) ->
+    it 'handle multiple conditions (all ok with undefined)', (next) ->
       conditions.all
-        ssh: ssh
+        if: true
+        not_if: undefined
+        () -> false.should.be.ok
+        next
+
+    it 'handle multiple conditions (2nd failed)', (next) ->
+      conditions.all
         if: true
         not_if: true
         next
         () -> false.should.be.ok
 
-  describe 'if', ->
-
-    they 'should bypass if not present', (ssh, next) ->
-      conditions.if
-        ssh: ssh
+    it 'handle multiple conditions (all ok)', (next) ->
+      conditions.all
+        if: true
+        not_if: [false, false]
         () -> false.should.be.ok
         next
+
+    it 'handle multiple conditions (one not fail)', (next) ->
+      conditions.all
+        if: undefined
+        if_exists: undefined
+        not_if: undefined
+        next
+        () -> false.should.be.ok
+
+    it 'handle multiple conditions (one not fail)', (next) ->
+      conditions.all
+        if: true
+        not_if: [false, true, false]
+        next
+        () -> false.should.be.ok
+
+  describe 'if', ->
+
+    # they 'should bypass if not present', (ssh, next) ->
+    #   conditions.if
+    #     ssh: ssh
+    #     () -> false.should.be.ok
+    #     next
 
     they 'should succeed if `true`', (ssh, next) ->
       conditions.if
@@ -58,6 +90,13 @@ describe 'conditions', ->
       conditions.if
         ssh: ssh
         if: null
+        next
+        () -> false.should.be.ok
+
+    they 'should fail if `undefined`', (ssh, next) ->
+      conditions.if
+        ssh: ssh
+        if: undefined
         next
         () -> false.should.be.ok
 
@@ -141,11 +180,11 @@ describe 'conditions', ->
 
   describe 'not_if', ->
 
-    they 'should bypass if not present', (ssh, next) ->
-      conditions.not_if
-        ssh: ssh
-        () -> false.should.be.ok
-        next
+    # they 'should bypass if not present', (ssh, next) ->
+    #   conditions.not_if
+    #     ssh: ssh
+    #     () -> false.should.be.ok
+    #     next
 
     they 'should succeed if `true`', (ssh, next) ->
       conditions.not_if
@@ -372,6 +411,7 @@ describe 'conditions', ->
         () -> false.should.be.ok
 
   describe 'should_not_exist', ->
+
     they 'should succeed if file doesnt exist', (ssh, next) ->
       conditions.should_not_exist
         ssh: ssh

@@ -38,15 +38,15 @@ mecano.render({
 ```
 
       if: (options, skip, succeed) ->
-        return succeed() if typeof options.if is 'undefined'
+        # return succeed() if typeof options.if is 'undefined'
         options.if = [options.if] unless Array.isArray options.if
         ok = true
         each(options.if)
         .on 'item', (si, next) ->
           return next() unless ok
-          options.log? "Mecano `if`"
+          # options.log? "Mecano `if`"
           type = typeof si
-          if si is null
+          if si is null or type is 'undefined'
             ok = false
             next()
           else if type is 'boolean' or type is 'number'
@@ -97,15 +97,15 @@ If it's an array, all its element must negatively resolve for the condition to
 pass.
 
       not_if: (options, skip, succeed) ->
-        return succeed() if typeof options.not_if is 'undefined'
+        # return succeed() if typeof options.not_if is 'undefined'
         options.not_if = [options.not_if] unless Array.isArray options.not_if
         ok = true
         each(options.not_if)
         .on 'item', (not_if, next) ->
           return next() unless ok
-          options.log? "Mecano `not_if`"
+          # options.log? "Mecano `not_if`"
           type = typeof not_if
-          if not_if is null
+          if not_if is null or type is 'undefined'
             ok = true
             next()
           else if type is 'boolean' or type is 'number'
@@ -150,10 +150,10 @@ The callback `succeed` is called if all the provided command
 were executed successfully otherwise the callback `skip` is called.
 
       if_exec: (options, skip, succeed) ->
-        return succeed() unless options.if_exec?
+        # return succeed() unless options.if_exec?
         each(options.if_exec)
         .on 'item', (cmd, next) ->
-          options.log? "Mecano `if_exec`: #{cmd}"
+          # options.log? "Mecano `if_exec`: #{cmd}"
           options = { cmd: cmd, ssh: options.ssh }
           run = exec options
           if options.stdout
@@ -174,10 +174,10 @@ The callback `succeed` is called if all the provided command
 were executed with failure otherwise the callback `skip` is called.
 
       not_if_exec: (options, skip, succeed) ->
-        return succeed() unless options.not_if_exec?
+        # return succeed() unless options.not_if_exec?
         each(options.not_if_exec)
         .on 'item', (cmd, next) ->
-          options.log? "Mecano `not_if_exec`: #{cmd}"
+          # options.log? "Mecano `not_if_exec`: #{cmd}"
           options = { cmd: cmd, ssh: options.ssh }
           run = exec options
           if options.stdout
@@ -207,10 +207,10 @@ exists otherwise the callback `skip` is called.
         {ssh, if_exists, destination} = options
         if typeof not_if_exists is 'boolean' and destination
           if_exists = if if_exists then [destination] else null
-        return succeed() unless if_exists?
+        # return succeed() unless if_exists?
         each(if_exists)
         .on 'item', (if_exists, next) ->
-          options.log? "Mecano `if_exists`"
+          # options.log? "Mecano `if_exists`"
           fs.exists ssh, if_exists, (err, exists) ->
             if exists then next() else skip()
         .on 'end', succeed
@@ -229,10 +229,10 @@ exists otherwise the callback `skip` is called.
         {ssh, not_if_exists, destination} = options
         if typeof not_if_exists is 'boolean' and destination
           not_if_exists = if not_if_exists then [destination] else null
-        return succeed() unless not_if_exists?
+        # return succeed() unless not_if_exists?
         each(not_if_exists)
         .on 'item', (not_if_exists, next) ->
-          options.log? "Mecano `not_if_exists`"
+          # options.log? "Mecano `not_if_exists`"
           fs.exists ssh, not_if_exists, (err, exists) ->
             if exists
             then next new Error
@@ -251,10 +251,10 @@ The callback `succeed` is called if all of the provided paths
 exists otherwise the callback `skip` is called with an error.
 
       should_exist: (options, skip, succeed) ->
-        return succeed() unless options.should_exist?
+        # return succeed() unless options.should_exist?
         each(options.should_exist)
         .on 'item', (should_exist, next) ->
-          options.log? "Mecano `should_exist`"
+          # options.log? "Mecano `should_exist`"
           fs.exists options.ssh, should_exist, (err, exists) ->
             if exists
             then next()
@@ -273,10 +273,10 @@ The callback `succeed` is called if none of the provided paths
 exists otherwise the callback `skip` is called with an error.
 
       should_not_exist: (options, skip, succeed) ->
-        return succeed() unless options.should_not_exist?
+        # return succeed() unless options.should_not_exist?
         each(options.should_not_exist)
         .on 'item', (should_not_exist, next) ->
-          options.log? "Mecano `should_not_exist`"
+          # options.log? "Mecano `should_not_exist`"
           fs.exists options.ssh, should_not_exist, (err, exists) ->
             if exists
             then next new Error "File does not exist: #{should_not_exist}"
@@ -310,20 +310,19 @@ conditions.all({
 ```
 
       all: (options, failed, succeed) ->
-        conditions = [
-          'if', 'not_if', 'if_exec', 'not_if_exec', 'if_exists', 
-          'not_if_exists', 'should_exist']
+        return succeed() unless options? and (typeof options is 'object' and not Array.isArray options)
+        keys = Object.keys options
         i = 0
         next = ->
-          condition = conditions[i++]
-          return succeed() unless condition
-          module.exports[condition] options, ( (err) ->
-            options.log? "Mecano `#{condition}`: skip action"
+          key = keys[i++]
+          return succeed() unless key?
+          return next() unless module.exports[key]?
+          module.exports[key] options, (err) ->
+            options.log? "Mecano `#{key}`: skipping action"
             failed err
-          ), (->
-            next()
-          )
+          , next
         next()
+
 
 ## Dependencies
 
