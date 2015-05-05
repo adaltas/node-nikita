@@ -131,7 +131,8 @@ require('mecano').render({
           , (err) ->
             fs.createWriteStream options.ssh, options.destination, (err, ws) ->
               return callback err if err
-              fs.createReadStream null, options.source, (err, rs) ->
+              options.ssh ?= null
+              fs.createReadStream  options.ssh, options.source, (err, rs) ->
                 return callback err if err
                 rs.pipe(ws)
                 .on 'close', ->
