@@ -240,6 +240,33 @@ describe 'upload', ->
           #   next()
 
 
+    they 'into a directory with md5 string', (ssh, next) ->
+      return next() unless ssh
+      mecano.execute
+          cmd: "openssl sha1 #{__filename}"
+        , (err, executed, srcsum) ->
+          return next err if err
+          mecano.upload
+            ssh: ssh
+            binary: true
+            source: "#{__filename}"
+            destination: "#{scratch}"
+          , (err, uploaded) ->
+            return next err if err
+            mecano.execute
+              ssh: ssh
+              cmd: "openssl sha1 #{scratch}/#{path.basename __filename}"
+            , (err, executed, dstsum) ->
+              return next err if err
+              srcsum = /[\w\d]+$/.exec(srcsum.trim())[0]
+              dstsum = /[\w\d]+$/.exec(dstsum.trim())[0]
+              srcsum.should.be.eql.dstsum
+              next()
+
+
+           
+
+
 
 
 
