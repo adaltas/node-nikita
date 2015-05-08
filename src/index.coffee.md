@@ -71,8 +71,8 @@ functions share a common API with flexible options.
           for todo in todos then has_then = true if todo[0] is 'then'
           while todos[0] and todos[0][0] isnt 'then' then todos.shift()
           status.err = err
-          return run true
-      run = (force) ->
+          return run()
+      run = ->
         todo = todos.shift()
         # Nothing more to do
         unless todo
@@ -84,7 +84,7 @@ functions share a common API with flexible options.
           status.changed = false
           status.throw_if_error = true
           todo[1][0].call obj, err, changed
-          run true
+          run()
           return
         if todo[0] is 'call'
           if todo[1][0].length # Async style
@@ -99,7 +99,7 @@ functions share a common API with flexible options.
               while todos[0] and todos[0][0] isnt 'then' then todos.shift()
             if err then status.err = err
             else if changed then status.changed = true
-            return run true
+            return run()
         # Enrich with default options
         if Array.isArray todo[1][0]
           for t in todo[1][0]
@@ -127,7 +127,6 @@ functions share a common API with flexible options.
           id = status.id++
           todos.push ['call', arguments, id]
           process.nextTick ->
-            # run() if todos.length is 1 # Activate the pump
           process.nextTick run if todos.length is 1 # Activate the pump
           obj
       proto = Object.defineProperties obj, properties
