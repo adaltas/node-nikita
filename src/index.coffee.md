@@ -38,7 +38,8 @@ functions share a common API with flexible options.
           result = fn.apply obj, args
         catch err
           todos = stack.shift()
-          return jump_to_error err
+          jump_to_error err
+          return run()
         mtodos = todos
         todos = stack.shift()
         todos.unshift mtodos... if mtodos.length
@@ -53,21 +54,20 @@ functions share a common API with flexible options.
           stack.unshift todos
           todos = []
           fn.call obj, args..., (err, changed) ->
-            status.throw_if_error = false if err and callback
             todos = stack.shift() if todos.length is 0
-            if err
-              while todos[0] and todos[0][0] isnt 'then' then todos.shift()
-              status.err = err
+            status.throw_if_error = false if err and callback
+            jump_to_error err if err
             call_sync callback, arguments if callback
             if changed and not err and not args[0]?.shy then status.changed = true 
             return run()
         catch err
           todos = stack.shift()
           jump_to_error err
+          run()
       jump_to_error = (err) ->
         while todos[0] and todos[0][0] isnt 'then' then todos.shift()
         status.err = err
-        return run()
+        # return run()
       run = ->
         todo = todos.shift()
         # Nothing more to do
