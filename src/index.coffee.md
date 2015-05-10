@@ -36,11 +36,13 @@ functions share a common API with flexible options.
         todos = []
         try
           result = fn.apply obj, args
-        finally
-          mtodos = todos
+        catch err
           todos = stack.shift()
-          todos.unshift mtodos... if mtodos.length
-          result
+          return jump_to_error err
+        mtodos = todos
+        todos = stack.shift()
+        todos.unshift mtodos... if mtodos.length
+        result
       call = (fn, args, callback) ->
         ++callid
         # On error, what shall we do:
@@ -51,31 +53,31 @@ functions share a common API with flexible options.
           stack.unshift todos
           todos = []
           fn.call obj, args..., (err, changed) ->
-            if err
-              has_then = false
-              for todo in todos then has_then = true if todo[0] is 'then'
-              while todos[0] and todos[0][0] isnt 'then' then todos.shift()
-            result = false
-            try
-              call_sync callback, arguments if callback
-              status.throw_if_error = false if err
-              err = null if result is true
-            catch e then err = e unless err
-            if err then status.err = err
-            else if changed then status.changed = true unless args[0]?.shy
+            status.throw_if_error = false if err and callback
             todos = stack.shift() if todos.length is 0
+            if err
+              while todos[0] and todos[0][0] isnt 'then' then todos.shift()
+              status.err = err
+            call_sync callback, arguments if callback
+            if changed and not err and not args[0]?.shy then status.changed = true 
             return run()
         catch err
           todos = stack.shift()
-          has_then = false
-          for todo in todos then has_then = true if todo[0] is 'then'
-          while todos[0] and todos[0][0] isnt 'then' then todos.shift()
-          status.err = err
-          return run()
+          jump_to_error err
+      jump_to_error = (err) ->
+        while todos[0] and todos[0][0] isnt 'then' then todos.shift()
+        status.err = err
+        return run()
       run = ->
         todo = todos.shift()
         # Nothing more to do
         unless todo
+        #   if stack.length > 1 and not status.err
+        #     todos = stack.shift()
+        #     return run()
+        #   else
+        #     throw status.err if status.err and status.throw_if_error
+        #     return
           throw status.err if status.err and status.throw_if_error
           return
         if todo[0] is 'then'
@@ -90,15 +92,8 @@ functions share a common API with flexible options.
           if todo[1][0].length # Async style
             return call todo[1][0], [], null
           else # Sync style
-            try
-              changed = todo[1][0].call obj
-            catch err
-            if err
-              has_then = false
-              for todo in todos then has_then = true if todo[0] is 'then'
-              while todos[0] and todos[0][0] isnt 'then' then todos.shift()
-            if err then status.err = err
-            else if changed then status.changed = true
+            changed = call_sync todo[1][0], []
+            if changed then status.changed = true
             return run()
         # Enrich with default options
         if Array.isArray todo[1][0]

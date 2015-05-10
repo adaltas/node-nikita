@@ -1,6 +1,7 @@
 
 mecano = require '../src'
 test = require './test'
+fs = require 'fs'
 
 describe 'promise stack', ->
 

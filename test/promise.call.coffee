@@ -53,6 +53,14 @@ describe 'promise call', ->
         err.message.should.eql 'Catchme'
         next()
 
+    # it 'register new actions', (next) ->
+    #   mecano
+    #   .call ->
+    #     return false
+    #   .then (err, changed) ->
+    #     changed.should.be.False
+    #     next()
+
   describe 'async', ->
 
     it 'execute a callback', (next) ->
