@@ -1004,13 +1004,13 @@ describe 'write', ->
             diffcalled = true
             diff.should.eql [
               { value: 'Testing diff\n', count: 1 }
-              { value: 'new text', count: 1, added: true, removed: undefined }
               { value: 'original text', count: 1, added: undefined, removed: true }
+              { value: 'new text', count: 1, added: true, removed: undefined }
             ]
           stdout: write: (d) -> data.push d
         , (err) ->
           diffcalled.should.be.ok
-          data.should.eql ['2 + new text\n', '2 - original text\n']
+          data.should.eql ['2 - original text\n', '2 + new text\n']
           next()
   
     they 'write a buffer', (ssh, next) ->
@@ -1037,7 +1037,7 @@ describe 'write', ->
         content: 'Testing diff\nnew text1'
         stdout: write: (d) -> data.push d
       , (err) ->
-        data.should.eql ['2 + new text1\n', '2 - original text1\n', '3 - original text2\n']
+        data.should.eql ['2 - original text1\n', '3 - original text2\n', '2 + new text1\n']
         next()
 
     they 'empty source on empty file', (ssh, next) ->
