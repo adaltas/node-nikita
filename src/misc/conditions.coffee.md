@@ -53,23 +53,16 @@ mecano.render({
             ok = false unless si
             next()
           else if type is 'function'
-            if si.length is 1
+            if si.length < 2
               try
                 ok = false unless si options
                 next()
               catch err then next err
-              # si (err, is_ok) ->
-              #   return next err if err
-              #   ok = false unless is_ok
-              #   next()
-            else if si.length is 2
+            if si.length is 2
               si options, (err, is_ok) ->
                 return next err if err
                 ok = false unless is_ok
                 next()
-            else if si.length is 3
-              # Deprecated? should we continue to support this?
-              si options, ( -> ok = false; next arguments...), next
             else next new Error "Invalid callback"
           else if type is 'string'
             si = template si, options
@@ -113,23 +106,16 @@ pass.
             next()
           else if type is 'function'
             # not_if options, next, ( -> ok = false; next arguments...)
-            if not_if.length is 1
+            if not_if.length < 2
               try
                 ok = false if not_if options
                 next()
               catch err then next err
-              # not_if (err, is_ok) ->
-              #   return next err if err
-              #   ok = false if is_ok
-              #   next()
-            else if not_if.length is 2
+            if not_if.length is 2
               not_if options, (err, is_ok) ->
                 return next err if err
                 ok = false if is_ok
                 next()
-            else if not_if.length is 3
-              # Deprecated? should we continue to support this?
-              not_if options, next, ( -> ok = false; next arguments...)
             else next new Error "Invalid callback"
           else if type is 'string'
             not_if = template not_if, options

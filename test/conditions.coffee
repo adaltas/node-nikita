@@ -130,7 +130,17 @@ describe 'conditions', ->
         next
         () -> false.should.be.ok
 
-    they 'should succeed on `succeed` sync callback', (ssh, next) ->
+    they 'should succeed on `succeed` sync callback 0 arguments', (ssh, next) ->
+      called = true
+      conditions.if
+        ssh: ssh
+        if: -> true
+        (err) -> false.should.be.ok
+        ->
+          called.should.be.True
+          next()
+
+    they 'should succeed on `succeed` sync callback 1 arguments', (ssh, next) ->
       called = true
       conditions.if
         ssh: ssh
