@@ -6,6 +6,8 @@
       chown: require '../chown'
       chmod: require '../chmod'
       copy: require '../copy'
+      cron_add: require '../cron_add'
+      cron_delete: require '../cron_delete'
       download: require '../download'
       execute: require '../execute'
       extract: require '../extract'
