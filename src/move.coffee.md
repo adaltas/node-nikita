@@ -43,61 +43,59 @@ require('mecano').move({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap @, arguments, (options, callback) ->
-        do_exists = ->
-          options.log? "Mecano `move`: Stat destination"
-          fs.stat options.ssh, options.destination, (err, stat) ->
-            return do_move() if err?.code is 'ENOENT'
-            return callback err if err
-            if options.force
-            then do_replace_dest()
-            else do_srchash()
-        do_srchash = ->
-          return do_dsthash() if options.source_md5
-          options.log? "Mecano `move`: Get source md5"
-          misc.file.hash options.ssh, options.source, 'md5', (err, hash) ->
-            return callback err if err
-            options.source_md5 = hash
-            do_dsthash()
-        do_dsthash = ->
-          return do_chkhash() if options.destination_md5
-          options.log? "Mecano `move`: Get destination md5"
-          misc.file.hash options.ssh, options.destination, 'md5', (err, hash) ->
-            return callback err if err
-            options.destination_md5 = hash
-            do_chkhash()
-        do_chkhash = ->
-          if options.source_md5 is options.destination_md5
-          then do_remove_src()
-          else do_replace_dest()
-        do_replace_dest = ->
-          options.log? "Mecano `move`: Remove #{options.destination}"
-          remove
-            ssh: options.ssh
-            destination: options.destination
-          , (err, removed) ->
-            return callback err if err
-            do_move()
-        do_move = ->
-          options.log? "Mecano `move`: Rename #{options.source} to #{options.destination}"
-          fs.rename options.ssh, options.source, options.destination, (err) ->
-            return callback err if err
-            callback null, true
-        do_remove_src = ->
-          options.log? "Mecano `move`: Remove #{options.source}"
-          remove
-            ssh: options.ssh
-            destination: options.source
-          , (err, removed) ->
-            callback err
-        do_exists()
+      do_exists = ->
+        options.log? "Mecano `move`: Stat destination"
+        fs.stat options.ssh, options.destination, (err, stat) ->
+          return do_move() if err?.code is 'ENOENT'
+          return callback err if err
+          if options.force
+          then do_replace_dest()
+          else do_srchash()
+      do_srchash = ->
+        return do_dsthash() if options.source_md5
+        options.log? "Mecano `move`: Get source md5"
+        misc.file.hash options.ssh, options.source, 'md5', (err, hash) ->
+          return callback err if err
+          options.source_md5 = hash
+          do_dsthash()
+      do_dsthash = ->
+        return do_chkhash() if options.destination_md5
+        options.log? "Mecano `move`: Get destination md5"
+        misc.file.hash options.ssh, options.destination, 'md5', (err, hash) ->
+          return callback err if err
+          options.destination_md5 = hash
+          do_chkhash()
+      do_chkhash = ->
+        if options.source_md5 is options.destination_md5
+        then do_remove_src()
+        else do_replace_dest()
+      do_replace_dest = ->
+        options.log? "Mecano `move`: Remove #{options.destination}"
+        remove
+          ssh: options.ssh
+          destination: options.destination
+        , (err, removed) ->
+          return callback err if err
+          do_move()
+      do_move = ->
+        options.log? "Mecano `move`: Rename #{options.source} to #{options.destination}"
+        fs.rename options.ssh, options.source, options.destination, (err) ->
+          return callback err if err
+          callback null, true
+      do_remove_src = ->
+        options.log? "Mecano `move`: Remove #{options.source}"
+        remove
+          ssh: options.ssh
+          destination: options.source
+        , (err, removed) ->
+          callback err
+      do_exists()
 
 ## Dependencies
 
     fs = require 'ssh2-fs'
     remove = require './remove'
     misc = require './misc'
-    wrap = require './misc/wrap'
 
 
 

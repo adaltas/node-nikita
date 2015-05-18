@@ -144,10 +144,10 @@ describe 'write', ->
         return next err if err
         fs.stat ssh, "#{scratch}/a_file", (err, stat) ->
           return next err if err
-          misc.mode.compare(stat.mode, 0o0700).should.be.ok
+          misc.mode.compare(stat.mode, 0o0700).should.True
           fs.stat ssh, "#{scratch}", (err, stat) ->
             return next err if err
-            misc.mode.compare(stat.mode, 0o0700).should.not.be.ok
+            misc.mode.compare(stat.mode, 0o0700).should.be.False
             next()
 
     they 'change permission', (ssh, next) ->

@@ -175,296 +175,286 @@ require('mecano').write({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap @, arguments, (options, callback) ->
-        modified = false
-        # Validate parameters
-        return callback new Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?.length
-        return callback new Error 'Define either source or content' if options.source and options.content
-        return callback new Error 'Missing destination' unless options.destination
-        options.content = options.content.toString() if options.content and Buffer.isBuffer options.content
-        options.diff ?= options.diff or !!options.stdout
-        options.engine ?= 'eco'
-        switch options.eof
-          when 'unix'
-            options.eof = "\n"
-          when 'mac'
-            options.eof = "\r"
-          when 'windows'
-            options.eof = "\r\n"
-          when 'unicode'
-            options.eof = "\u2028"
-        destination  = null
-        destinationHash = null
-        content = null
-        from = to = between = null
-        append = options.append
-        write = options.write
-        write ?= []
-        if options.from? or options.to? or options.match? or options.replace? or options.before?
-          write.push
-            from: options.from
-            to: options.to
-            match: options.match
-            replace: options.replace
-            append: options.append
-            before: options.before
-        for w in write
-          if not w.from? and not w.to? and not w.match? and w.replace?
-            w.match = w.replace
-        # Start work
-        do_read_source = ->
-          if options.content?
-            content = options.content
-            content = "#{content}" if typeof content is 'number'
+      modified = false
+      # Validate parameters
+      return callback new Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?.length
+      return callback new Error 'Define either source or content' if options.source and options.content
+      return callback new Error 'Missing destination' unless options.destination
+      options.content = options.content.toString() if options.content and Buffer.isBuffer options.content
+      options.diff ?= options.diff or !!options.stdout
+      options.engine ?= 'eco'
+      switch options.eof
+        when 'unix'
+          options.eof = "\n"
+        when 'mac'
+          options.eof = "\r"
+        when 'windows'
+          options.eof = "\r\n"
+        when 'unicode'
+          options.eof = "\u2028"
+      destination  = null
+      destinationHash = null
+      content = null
+      from = to = between = null
+      append = options.append
+      write = options.write
+      write ?= []
+      if options.from? or options.to? or options.match? or options.replace? or options.before?
+        write.push
+          from: options.from
+          to: options.to
+          match: options.match
+          replace: options.replace
+          append: options.append
+          before: options.before
+      for w in write
+        if not w.from? and not w.to? and not w.match? and w.replace?
+          w.match = w.replace
+      # Start work
+      do_read_source = ->
+        if options.content?
+          content = options.content
+          content = "#{content}" if typeof content is 'number'
+          return do_read_destination()
+        # Option "local_source" force to bypass the ssh
+        # connection, use by the upload function
+        source = options.source or options.destination
+        options.log? "Mecano `write`: force local source is \"#{if options.local_source then 'true' else 'false'}\" [DEBUG]"
+        options.log? "Mecano `write`: source is \"#{options.source}\" [DEBUG]"
+        ssh = if options.local_source then null else options.ssh
+        fs.exists ssh, source, (err, exists) ->
+          return callback err if err
+          unless exists
+            return callback new Error "Source does not exist: #{JSON.stringify options.source}" if options.source
+            content = ''
             return do_read_destination()
-          # Option "local_source" force to bypass the ssh
-          # connection, use by the upload function
-          source = options.source or options.destination
-          options.log? "Mecano `write`: force local source is \"#{if options.local_source then 'true' else 'false'}\" [DEBUG]"
-          options.log? "Mecano `write`: source is \"#{options.source}\" [DEBUG]"
-          ssh = if options.local_source then null else options.ssh
-          fs.exists ssh, source, (err, exists) ->
+          options.log? "Mecano `write`: read source [DEBUG]"
+          fs.readFile ssh, source, 'utf8', (err, src) ->
             return callback err if err
-            unless exists
-              return callback new Error "Source does not exist: #{JSON.stringify options.source}" if options.source
-              content = ''
-              return do_read_destination()
-            options.log? "Mecano `write`: read source [DEBUG]"
-            fs.readFile ssh, source, 'utf8', (err, src) ->
-              return callback err if err
-              content = src
-              do_read_destination()
-        destinationStat = null
-        do_read_destination = ->
-          # no need to test changes if destination is a callback
-          return do_render() if typeof options.destination is 'function'
-          options.log? "Mecano `write`: destination is \"#{options.destination}\" [DEBUG]"
-          exists = ->
-            options.log? "Mecano `write`: stat destination [DEBUG]"
-            fs.stat options.ssh, options.destination, (err, stat) ->
-              return do_mkdir() if err?.code is 'ENOENT'
-              return callback err if err
-              destinationStat = stat
-              if stat.isDirectory()
-                options.destination = "#{options.destination}/#{path.basename options.source}"
-                # Destination is the parent directory, let's see if the file exist inside
-                fs.stat options.ssh, options.destination, (err, stat) ->
-                  # File doesnt exist
-                  return do_render() if err?.code is 'ENOENT'
-                  return callback err if err
-                  return callback new Error "Destination is not a file: #{options.destination}" unless stat.isFile()
-                  destinationStat = stat
-                  do_read()
-              else
+            content = src
+            do_read_destination()
+      destinationStat = null
+      do_read_destination = =>
+        # no need to test changes if destination is a callback
+        return do_render() if typeof options.destination is 'function'
+        options.log? "Mecano `write`: destination is \"#{options.destination}\" [DEBUG]"
+        exists = ->
+          options.log? "Mecano `write`: stat destination [DEBUG]"
+          fs.stat options.ssh, options.destination, (err, stat) ->
+            return do_mkdir() if err?.code is 'ENOENT'
+            return callback err if err
+            destinationStat = stat
+            if stat.isDirectory()
+              options.destination = "#{options.destination}/#{path.basename options.source}"
+              # Destination is the parent directory, let's see if the file exist inside
+              fs.stat options.ssh, options.destination, (err, stat) ->
+                # File doesnt exist
+                return do_render() if err?.code is 'ENOENT'
+                return callback err if err
+                return callback new Error "Destination is not a file: #{options.destination}" unless stat.isFile()
+                destinationStat = stat
                 do_read()
-          do_mkdir = ->
-            mkdir
-              ssh: options.ssh
-              destination: path.dirname options.destination
-              uid: options.uid
-              gid: options.gid
-              mode: options.mode
-              # Modify uid and gid if the dir does not yet exists
-              not_if_exists: path.dirname options.destination
-            , (err, created) ->
-              return callback err if err
-              do_render()
-          do_read = ->
-            options.log? "Mecano `write`: read destination [DEBUG]"
-            fs.readFile options.ssh, options.destination, 'utf8', (err, dest) ->
-              return callback err if err
-              destination = dest if options.diff # destination content only use by diff
-              destinationHash = string.hash dest
-              do_render()
-          exists()
-        do_render = ->
-          return do_skip_empty_lines() unless options.context?
-          options.log? "Mecano `write`: rendering with #{options.engine} [DEBUG]"
-          try
-            switch options.engine
-              when 'nunjunks' then content = (new nunjucks.Environment()).renderString content.toString(), options.context
-              when 'eco' then content = eco.render content.toString(), options.context
-              else return callback Error "Invalid engine: #{options.engine}"
-          catch err
-            return callback if typeof err is 'string' then Error(err) else err
-          do_skip_empty_lines()
-        do_skip_empty_lines = ->
-          return do_replace_partial() unless options.skip_empty_lines?
-          options.log? "Mecano `write`: skip empty lines [DEBUG]"
-          content = content.replace /(\r\n|[\n\r\u0085\u2028\u2029])\s*(\r\n|[\n\r\u0085\u2028\u2029])/g, "$1"
-          do_replace_partial()
-        do_replace_partial = ->
-          return do_eof() unless write.length
-          options.log? "Mecano `write`: replace [DEBUG]"
-          for opts in write
-            if opts.match
-              opts.match ?= opts.replace
-              opts.match = RegExp quote(opts.match), 'mg' if typeof opts.match is 'string'
-              return Error "Invalid match option" unless opts.match instanceof RegExp
-              if opts.match.test content
-                content = content.replace opts.match, opts.replace
-                append = false
-              else if opts.before and typeof opts.replace is 'string'
-                if typeof opts.before is "string"
-                  opts.before = new RegExp "^.*#{opts.before}.*$", 'mg'
-                if opts.before instanceof RegExp
-                  posoffset = 0
-                  orgContent = content
-                  while (res = opts.before.exec orgContent) isnt null
-                    pos = posoffset + res.index #+ res[0].length
-                    content = content.slice(0,pos) + opts.replace + '\n' + content.slice(pos)
-                    posoffset += opts.replace.length + 1
-                    break unless opts.before.global
-                  before = false
-                else# if content
-                  linebreak = if content.length is 0 or content.substr(content.length - 1) is '\n' then '' else '\n'
-                  content = opts.replace + linebreak + content
-                  append = false
-              else if opts.append and typeof opts.replace is 'string'
-                if typeof opts.append is "string"
-                  opts.append = new RegExp "^.*#{quote opts.append}.*$", 'mg'
-                if opts.append instanceof RegExp
-                  posoffset = 0
-                  orgContent = content
-                  while (res = opts.append.exec orgContent) isnt null
-                    pos = posoffset + res.index + res[0].length
-                    content = content.slice(0,pos) + '\n' + opts.replace + content.slice(pos)
-                    posoffset += opts.replace.length + 1
-                    break unless opts.append.global
-                  append = false
-                else
-                  linebreak = if content.length is 0 or content.substr(content.length - 1) is '\n' then '' else '\n'
-                  content = content + linebreak + opts.replace
-                  append = false
-              else
-                continue # Did not match, try callback
-            else if opts.before is true
-              
-            else if opts.from or opts.to
-              if opts.from and opts.to
-                from = ///(^#{quote opts.from}$)///m.exec(content)
-                to = ///(^#{quote opts.to}$)///m.exec(content)
-                if from? and not to?
-                  options.log? "Mecano `write`: found 'from' but missing 'to', skip writing [WARN]"
-                else if not from? and to?
-                  options.log? "Mecano `write`: missing 'from' but found 'to', skip writing [WARN]"
-                else if not from? and not to?
-                  if opts.append
-                    content += '\n' + opts.from + '\n' + opts.replace+ '\n' + opts.to
-                    append = false
-                  else
-                    options.log? "Mecano `write`: missing 'from' and 'to' without append, skip writing [WARN]"
-                else
-                  content = content.substr(0, from.index + from[1].length + 1) + opts.replace + '\n' + content.substr(to.index)
-                  append = false
-              else if opts.from and not opts.to
-                from = ///(^#{quote opts.from}$)///m.exec(content)
-                if from?
-                  content = content.substr(0, from.index + from[1].length) + '\n' + opts.replace
-                else # TODO: honors append
-                  options.log? "Mecano `write`: missing 'from', skip writing [WARN]"
-              else if not opts.from and opts.to
-                from_index = 0
-                to = ///(^#{quote opts.to}$)///m.exec(content)
-                if to?
-                  content = opts.replace + '\n' + content.substr(to.index)
-                else # TODO: honors append
-                  options.log? "Mecano `write`: missing 'to', skip writing [WARN]"
-          do_eof()
-        do_eof = ->
-          return do_diff() unless options.eof?
-          options.log? "Mecano `write`: eof [DEBUG]"
-          if options.eof is true
-            for char, i in content
-              if char is '\r'
-                options.eof = if content[i+1] is '\n' then '\r\n' else char
-                break
-              if char is '\n' or char is '\u2028'
-                options.eof = char
-                break;
-            options.eof = '\n' if options.eof is true
-          unless string.endsWith content, options.eof
-            options.log? "Mecano `write`: add eof [INFO]"
-            content += options.eof
-          do_diff()
-        do_diff = ->
-          return do_ownership() if destinationHash is string.hash content
-          options.log? "Mecano `write`: file content has changed [WARN]"
-          if options.diff
-            lines = diff.diffLines destination, content
-            options.diff lines if typeof options.diff is 'function'
-            if options.stdout
-              count_added = count_removed = 0
-              padsize = Math.ceil(lines.length/10)
-              for line in lines
-                continue if line.value is null
-                if not line.added and not line.removed
-                  count_added++; count_removed++; continue
-                ls = string.lines line.value
-                if line.added
-                  for line in ls
-                    count_added++
-                    options.stdout.write "#{pad padsize, ''+(count_added)} + #{line}\n"
-                else
-                  for line in ls
-                    count_removed++
-                    options.stdout.write "#{pad padsize, ''+(count_removed)} - #{line}\n"
-          do_backup()
-        do_backup = ->
-          return do_write() if not options.backup or not destinationHash
-          options.log? "Mecano `write`: create backup [WARN]"
-          backup = options.backup
-          backup = ".#{Date.now()}" if backup is true
-          backup = "#{options.destination}#{backup}"
-          copy
-            ssh: options.ssh
-            source: options.destination
-            destination: backup
-          , (err) ->
-            return callback err if err
-            do_write()
-        do_write = ->
-          if typeof options.destination is 'function'
-            options.log? "Mecano `write`: write destination with user function [INFO]"
-            options.destination content
-            do_end()
-          else
-            options.log? "Mecano `write`: write destination [INFO]"
-            options.flags ?= 'a' if append
-            # Ownership and permission are also handled
-            fs.writeFile options.ssh, options.destination, content, options, (err) ->
-              return callback err if err
-              options.log? "Mecano `write`: content has changed [INFO]"
-              modified = true
-              do_end()
-        do_ownership = ->
-          return do_permissions() unless options.uid? and options.gid?
-          chown
-            ssh: options.ssh
-            destination: options.destination
-            stat: destinationStat
+            else
+              do_read()
+        do_mkdir = =>
+          @mkdir
+            destination: path.dirname options.destination
             uid: options.uid
             gid: options.gid
-            log: options.log
-          , (err, chowned) ->
-            return callback err if err
-            modified = true if chowned
-            do_permissions()
-        do_permissions = ->
-          return do_end() unless options.mode?
-          chmod
-            ssh: options.ssh
-            destination: options.destination
-            stat: destinationStat
             mode: options.mode
-            log: options.log
-          , (err, chmoded) ->
+            # Modify uid and gid if the dir does not yet exists
+            not_if_exists: path.dirname options.destination
+          , (err, created) ->
             return callback err if err
-            modified = true if chmoded
+            do_render()
+        do_read = ->
+          options.log? "Mecano `write`: read destination [DEBUG]"
+          fs.readFile options.ssh, options.destination, 'utf8', (err, dest) ->
+            return callback err if err
+            destination = dest if options.diff # destination content only use by diff
+            destinationHash = string.hash dest
+            do_render()
+        exists()
+      do_render = ->
+        return do_skip_empty_lines() unless options.context?
+        options.log? "Mecano `write`: rendering with #{options.engine} [DEBUG]"
+        try
+          switch options.engine
+            when 'nunjunks' then content = (new nunjucks.Environment()).renderString content.toString(), options.context
+            when 'eco' then content = eco.render content.toString(), options.context
+            else return callback Error "Invalid engine: #{options.engine}"
+        catch err
+          return callback if typeof err is 'string' then Error(err) else err
+        do_skip_empty_lines()
+      do_skip_empty_lines = ->
+        return do_replace_partial() unless options.skip_empty_lines?
+        options.log? "Mecano `write`: skip empty lines [DEBUG]"
+        content = content.replace /(\r\n|[\n\r\u0085\u2028\u2029])\s*(\r\n|[\n\r\u0085\u2028\u2029])/g, "$1"
+        do_replace_partial()
+      do_replace_partial = ->
+        return do_eof() unless write.length
+        options.log? "Mecano `write`: replace [DEBUG]"
+        for opts in write
+          if opts.match
+            opts.match ?= opts.replace
+            opts.match = RegExp quote(opts.match), 'mg' if typeof opts.match is 'string'
+            return Error "Invalid match option" unless opts.match instanceof RegExp
+            if opts.match.test content
+              content = content.replace opts.match, opts.replace
+              append = false
+            else if opts.before and typeof opts.replace is 'string'
+              if typeof opts.before is "string"
+                opts.before = new RegExp "^.*#{opts.before}.*$", 'mg'
+              if opts.before instanceof RegExp
+                posoffset = 0
+                orgContent = content
+                while (res = opts.before.exec orgContent) isnt null
+                  pos = posoffset + res.index #+ res[0].length
+                  content = content.slice(0,pos) + opts.replace + '\n' + content.slice(pos)
+                  posoffset += opts.replace.length + 1
+                  break unless opts.before.global
+                before = false
+              else# if content
+                linebreak = if content.length is 0 or content.substr(content.length - 1) is '\n' then '' else '\n'
+                content = opts.replace + linebreak + content
+                append = false
+            else if opts.append and typeof opts.replace is 'string'
+              if typeof opts.append is "string"
+                opts.append = new RegExp "^.*#{quote opts.append}.*$", 'mg'
+              if opts.append instanceof RegExp
+                posoffset = 0
+                orgContent = content
+                while (res = opts.append.exec orgContent) isnt null
+                  pos = posoffset + res.index + res[0].length
+                  content = content.slice(0,pos) + '\n' + opts.replace + content.slice(pos)
+                  posoffset += opts.replace.length + 1
+                  break unless opts.append.global
+                append = false
+              else
+                linebreak = if content.length is 0 or content.substr(content.length - 1) is '\n' then '' else '\n'
+                content = content + linebreak + opts.replace
+                append = false
+            else
+              continue # Did not match, try callback
+          else if opts.before is true
+            
+          else if opts.from or opts.to
+            if opts.from and opts.to
+              from = ///(^#{quote opts.from}$)///m.exec(content)
+              to = ///(^#{quote opts.to}$)///m.exec(content)
+              if from? and not to?
+                options.log? "Mecano `write`: found 'from' but missing 'to', skip writing [WARN]"
+              else if not from? and to?
+                options.log? "Mecano `write`: missing 'from' but found 'to', skip writing [WARN]"
+              else if not from? and not to?
+                if opts.append
+                  content += '\n' + opts.from + '\n' + opts.replace+ '\n' + opts.to
+                  append = false
+                else
+                  options.log? "Mecano `write`: missing 'from' and 'to' without append, skip writing [WARN]"
+              else
+                content = content.substr(0, from.index + from[1].length + 1) + opts.replace + '\n' + content.substr(to.index)
+                append = false
+            else if opts.from and not opts.to
+              from = ///(^#{quote opts.from}$)///m.exec(content)
+              if from?
+                content = content.substr(0, from.index + from[1].length) + '\n' + opts.replace
+              else # TODO: honors append
+                options.log? "Mecano `write`: missing 'from', skip writing [WARN]"
+            else if not opts.from and opts.to
+              from_index = 0
+              to = ///(^#{quote opts.to}$)///m.exec(content)
+              if to?
+                content = opts.replace + '\n' + content.substr(to.index)
+              else # TODO: honors append
+                options.log? "Mecano `write`: missing 'to', skip writing [WARN]"
+        do_eof()
+      do_eof = ->
+        return do_diff() unless options.eof?
+        options.log? "Mecano `write`: eof [DEBUG]"
+        if options.eof is true
+          for char, i in content
+            if char is '\r'
+              options.eof = if content[i+1] is '\n' then '\r\n' else char
+              break
+            if char is '\n' or char is '\u2028'
+              options.eof = char
+              break;
+          options.eof = '\n' if options.eof is true
+        unless string.endsWith content, options.eof
+          options.log? "Mecano `write`: add eof [INFO]"
+          content += options.eof
+        do_diff()
+      do_diff = ->
+        return do_chown_chmod() if destinationHash is string.hash content
+        options.log? "Mecano `write`: file content has changed [WARN]"
+        if options.diff
+          lines = diff.diffLines destination, content
+          options.diff lines if typeof options.diff is 'function'
+          if options.stdout
+            count_added = count_removed = 0
+            padsize = Math.ceil(lines.length/10)
+            for line in lines
+              continue if line.value is null
+              if not line.added and not line.removed
+                count_added++; count_removed++; continue
+              ls = string.lines line.value
+              if line.added
+                for line in ls
+                  count_added++
+                  options.stdout.write "#{pad padsize, ''+(count_added)} + #{line}\n"
+              else
+                for line in ls
+                  count_removed++
+                  options.stdout.write "#{pad padsize, ''+(count_removed)} - #{line}\n"
+        do_backup()
+      do_backup = =>
+        return do_write() if not options.backup or not destinationHash
+        options.log? "Mecano `write`: create backup [WARN]"
+        backup = options.backup
+        backup = ".#{Date.now()}" if backup is true
+        backup = "#{options.destination}#{backup}"
+        @copy
+          ssh: options.ssh
+          source: options.destination
+          destination: backup
+        , (err) ->
+          return callback err if err
+          do_write()
+      do_write = ->
+        if typeof options.destination is 'function'
+          options.log? "Mecano `write`: write destination with user function [INFO]"
+          options.destination content
+          do_end()
+        else
+          options.log? "Mecano `write`: write destination [INFO]"
+          options.flags ?= 'a' if append
+          # Ownership and permission are also handled
+          fs.writeFile options.ssh, options.destination, content, options, (err) ->
+            return callback err if err
+            options.log? "Mecano `write`: content has changed [INFO]"
+            modified = true
             do_end()
-        do_end = ->
-          callback null, modified
-        do_read_source()
+      do_chown_chmod = =>
+        @
+        .chown
+          destination: options.destination
+          stat: destinationStat
+          uid: options.uid
+          gid: options.gid
+          if: options.uid? or options.gid?
+        .chmod
+          destination: options.destination
+          stat: destinationStat
+          mode: options.mode
+          if: options.mode?
+        .then (err, status) ->
+          return callback err if err
+          modified = true if status
+          do_end()
+      do_end = ->
+        callback null, modified
+      do_read_source()
 
 ## Dependencies
 
@@ -478,11 +468,6 @@ require('mecano').write({
     quote = require 'regexp-quote'
     misc = require './misc'
     string = require './misc/string'
-    wrap = require './misc/wrap'
-    chown = require './chown'
-    chmod = require './chmod'
-    copy = require './copy'
-    mkdir = require './mkdir'
 
 [diffLines]: https://github.com/kpdecker/jsdiff
 

@@ -40,59 +40,50 @@ require('mecano').cron_add({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap @, arguments, (options, callback) ->
-        return callback new Error 'valid when is required' unless options.when?.length > 0
-        return callback new Error 'valid cmd is required' unless options.cmd?.length > 0
-        if options.user?
-          options.log? "Using user #{options.user} [DEBUG]"
-          crontab = "crontab -u #{options.user}"
-        else
-          options.log? 'Using default user [DEBUG]'
-          crontab = "crontab"
-        jobs=null
-        do_list = ->
-          execute
-            cmd: "#{crontab} -l"
-            ssh: options.ssh
-            log: options.log
-          , (err, _, stdout, stderr) ->
-            return callback err if err and not /^no crontab for/.test stderr
-            myjob = "#{options.when} #{options.cmd}"
-            jobs = stdout.split '\n'
-            # remove useless last element
-            jobs.pop()
-            regex = new RegExp ".* #{options.cmd}"
-            for job in jobs
-              if myjob is job
-                options.log? "Job is found in crontab, skipping [INFO]"
-                return callback null, false
-              if regex.test job
-                options.log? "Job is found in crontab, but frequency does'nt match. Updating [WARN]"
-                job = myjob
-                return do_write()
-            options.log? "Job not found in crontab. Adding [WARN]"
-            jobs.push myjob
-            return do_write()
-        do_write = () ->
-          cron =
-            cmd: "echo -e '#{jobs.join '\\n'}' | #{crontab} -"
-            ssh: options.ssh
-            log: options.log
-            stdout: options.stdout
-            stderr: options.stderr
-          if options.exec
-            to_exec = []
-            to_exec.push cron
-
-            to_exec.push
-              cmd: if options.user? then "su -l #{options.user} -c '#{options.cmd}'" else options.cmd
-              ssh: options.ssh
-              log: options.log
-              stdout: options.stdout
-              stderr: options.stderr
-            return execute to_exec, callback
-          else execute cron, callback
-        do_list()
+      return callback new Error 'valid when is required' unless options.when?.length > 0
+      return callback new Error 'valid cmd is required' unless options.cmd?.length > 0
+      if options.user?
+        options.log? "Using user #{options.user} [DEBUG]"
+        crontab = "crontab -u #{options.user}"
+      else
+        options.log? 'Using default user [DEBUG]'
+        crontab = "crontab"
+      jobs = null
+      @
+      .execute
+        cmd: "#{crontab} -l"
+        code: [0, 1]
+      , (err, _, stdout, stderr) ->
+        throw err if err
+        throw Error 'User crontab not found' if /^no crontab for/.test stderr
+        myjob = "#{options.when} #{options.cmd}"
+        jobs = stdout.trim().split '\n'
+        # remove useless last element
+        regex = new RegExp ".* #{options.cmd}"
+        for job in jobs
+          if myjob is job
+            options.log? "Job is found in crontab, skipping [INFO]"
+            return jobs = null
+          if regex.test job
+            options.log? "Job is found in crontab, but frequency doesn't match. Updating [WARN]"
+            job = myjob
+            return
+        options.log? "Job not found in crontab. Adding [WARN]"
+        jobs.push myjob
+      .then (err) ->
+        return callback err if err
+        return callback() unless jobs
+        @
+        .execute
+          cmd: """
+          #{crontab} - <<EOF
+          #{jobs.join '\n'}
+          EOF
+          """
+        .execute
+          cmd: if options.user? then "su -l #{options.user} -c '#{options.cmd}'" else options.cmd
+          if: options.exec
+        .then callback
 
 ## Dependencies
 

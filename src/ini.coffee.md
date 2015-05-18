@@ -87,39 +87,36 @@ require('mecano').ini({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap @, arguments, (options, callback) ->
-        {merge, destination, content, ssh} = options
-        options.clean ?= true
-        # Validate parameters
-        return callback new Error 'Missing content' unless content
-        return callback new Error 'Missing destination' unless destination
-        # Start real work
-        do_get = ->
-          return do_write() unless merge
-          options.log? "Mecano `ini`: get content for merge"
-          fs.exists ssh, destination, (err, exists) ->
-            return callback err if err
-            return do_write() unless exists
-            fs.readFile ssh, destination, 'ascii', (err, c) ->
-              return callback err if err and err.code isnt 'ENOENT'
-              content = misc.ini.clean content, true
-              parse = options.parse or misc.ini.parse
-              content = misc.merge parse(c, options), content
-              do_write()
-        do_write = ->
-          options.log? "Mecano `ini`: write"
-          misc.ini.clean content if options.clean
-          stringify = options.stringify or misc.ini.stringify
-          options.content = stringify content, options
-          write options, (err, written) ->
-            callback err, written
-        do_get()
+      {merge, destination, content, ssh} = options
+      options.clean ?= true
+      # Validate parameters
+      return callback new Error 'Missing content' unless content
+      return callback new Error 'Missing destination' unless destination
+      # Start real work
+      do_get = ->
+        return do_write() unless merge
+        options.log? "Mecano `ini`: get content for merge"
+        fs.exists ssh, destination, (err, exists) ->
+          return callback err if err
+          return do_write() unless exists
+          fs.readFile ssh, destination, 'ascii', (err, c) ->
+            return callback err if err and err.code isnt 'ENOENT'
+            content = misc.ini.clean content, true
+            parse = options.parse or misc.ini.parse
+            content = misc.merge parse(c, options), content
+            do_write()
+      do_write = =>
+        options.log? "Mecano `ini`: write"
+        misc.ini.clean content if options.clean
+        stringify = options.stringify or misc.ini.stringify
+        options.content = stringify content, options
+        @write options, (err, written) ->
+          callback err, written
+      do_get()
 
 ## Dependencies
 
     fs = require 'ssh2-fs'
     misc = require './misc'
-    wrap = require './misc/wrap'
-    write = require './write'
 
 [ini]: https://github.com/isaacs/ini

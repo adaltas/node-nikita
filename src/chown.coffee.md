@@ -51,28 +51,26 @@ find /var/tmp -uid 1000
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap @, arguments, (options, callback) ->
-        # Validate parameters
-        return callback Error "Missing destination option" unless options.destination?
-        return callback Error "Missing one of uid or gid option" unless options.uid? or options.gid?
-        do_stat = ->
-          return do_chown options.stat if options.stat
-          options.log? "Mecano `chown`: stat #{options.destination} [DEBUG]"
-          fs.stat options.ssh, options.destination, (err, stat) ->
-            return callback err if err
-            do_chown stat
-        do_chown = (stat) ->
-          return callback() if stat.uid is options.uid and stat.gid is options.gid
-          fs.chown options.ssh, options.destination, options.uid, options.gid, (err) ->
-            options.log? "Mecano `chown`: change uid from #{stat.uid} to #{options.uid} [WARN]" if options.uid and stat.uid isnt options.uid
-            options.log? "Mecano `chown`: change gid from #{stat.gid} to #{options.gid} [WARN]" if options.gid and stat.gid isnt options.gid
-            callback err, true
-        do_stat()
+      # Validate parameters
+      return callback Error "Missing destination option" unless options.destination?
+      return callback Error "Missing one of uid or gid option" unless options.uid? or options.gid?
+      do_stat = ->
+        return do_chown options.stat if options.stat
+        options.log? "Mecano `chown`: stat #{options.destination} [DEBUG]"
+        fs.stat options.ssh, options.destination, (err, stat) ->
+          return callback err if err
+          do_chown stat
+      do_chown = (stat) ->
+        return callback() if stat.uid is options.uid and stat.gid is options.gid
+        fs.chown options.ssh, options.destination, options.uid, options.gid, (err) ->
+          options.log? "Mecano `chown`: change uid from #{stat.uid} to #{options.uid} [WARN]" if options.uid and stat.uid isnt options.uid
+          options.log? "Mecano `chown`: change gid from #{stat.gid} to #{options.gid} [WARN]" if options.gid and stat.gid isnt options.gid
+          callback err, true
+      do_stat()
 
 ## Dependencies
 
     fs = require 'ssh2-fs'
-    wrap = require './misc/wrap'
 
 
 

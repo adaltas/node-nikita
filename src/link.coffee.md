@@ -47,71 +47,68 @@ require('mecano').link({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap @, arguments, (options, callback) ->
-        linked = 0
-        sym_exists = (options, callback) ->
-          fs.exists options.ssh, options.destination, (err, exists) ->
-            return callback null, false unless exists
-            fs.readlink options.ssh, options.destination, (err, resolvedPath) ->
+      linked = 0
+      sym_exists = (options, callback) ->
+        fs.exists options.ssh, options.destination, (err, exists) ->
+          return callback null, false unless exists
+          fs.readlink options.ssh, options.destination, (err, resolvedPath) ->
+            return callback err if err
+            return callback null, true if resolvedPath is options.source
+            fs.unlink options.ssh, options.destination, (err) ->
               return callback err if err
-              return callback null, true if resolvedPath is options.source
-              fs.unlink options.ssh, options.destination, (err) ->
-                return callback err if err
-                callback null, false
-        sym_create = (options, callback) ->
-          fs.symlink options.ssh, options.source, options.destination, (err) ->
+              callback null, false
+      sym_create = (options, callback) ->
+        fs.symlink options.ssh, options.source, options.destination, (err) ->
+          return callback err if err
+          linked++
+          callback()
+      exec_exists = (options, callback) ->
+        fs.exists options.ssh, options.destination, (err, exists) ->
+          return callback null, false unless exists
+          fs.readFile options.ssh, options.destination, 'utf8', (err, content) ->
+            return callback err if err
+            exec_cmd = /exec (.*) \$@/.exec(content)[1]
+            callback null, exec_cmd and exec_cmd is options.source
+      exec_create = (options, callback) ->
+        content = """
+        #!/bin/bash
+        exec #{options.source} $@
+        """
+        fs.writeFile options.ssh, options.destination, content, (err) ->
+          return callback err if err
+          fs.chmod options.ssh, options.destination, options.mode, (err) ->
             return callback err if err
             linked++
             callback()
-        exec_exists = (options, callback) ->
-          fs.exists options.ssh, options.destination, (err, exists) ->
-            return callback null, false unless exists
-            fs.readFile options.ssh, options.destination, 'utf8', (err, content) ->
-              return callback err if err
-              exec_cmd = /exec (.*) \$@/.exec(content)[1]
-              callback null, exec_cmd and exec_cmd is options.source
-        exec_create = (options, callback) ->
-          content = """
-          #!/bin/bash
-          exec #{options.source} $@
-          """
-          fs.writeFile options.ssh, options.destination, content, (err) ->
-            return callback err if err
-            fs.chmod options.ssh, options.destination, options.mode, (err) ->
-              return callback err if err
-              linked++
-              callback()
-        return callback new Error "Missing source, got #{JSON.stringify(options.source)}" unless options.source
-        return callback new Error "Missing destination, got #{JSON.stringify(options.destination)}" unless options.destination
-        options.mode ?= 0o0755
-        do_mkdir = ->
-          mkdir
-            ssh: options.ssh
-            destination: path.dirname options.destination
-          , (err, created) ->
-            # It is possible to have collision if to symlink
-            # have the same parent directory
-            return callback err if err and err.code isnt 'EEXIST'
-            do_dispatch()
-        do_dispatch = ->
-          if options.exec
-            exec_exists options, (err, exists) ->
-              return do_end() if exists
-              exec_create options, do_end
-          else
-            sym_exists options, (err, exists) ->
-              return do_end() if exists
-              sym_create options, do_end
-        do_end = ->
-          callback null, linked
-        do_mkdir()
+      return callback new Error "Missing source, got #{JSON.stringify(options.source)}" unless options.source
+      return callback new Error "Missing destination, got #{JSON.stringify(options.destination)}" unless options.destination
+      options.mode ?= 0o0755
+      do_mkdir = =>
+        @mkdir
+          ssh: options.ssh
+          destination: path.dirname options.destination
+        , (err, created) ->
+          # It is possible to have collision if to symlink
+          # have the same parent directory
+          return callback err if err and err.code isnt 'EEXIST'
+          do_dispatch()
+      do_dispatch = ->
+        if options.exec
+          exec_exists options, (err, exists) ->
+            return do_end() if exists
+            exec_create options, do_end
+        else
+          sym_exists options, (err, exists) ->
+            return do_end() if exists
+            sym_create options, do_end
+      do_end = ->
+        callback null, linked
+      do_mkdir()
 
 ## Dependencies
 
     fs = require 'ssh2-fs'
     path = require 'path'
-    wrap = require './misc/wrap'
-    mkdir = require './mkdir'
 
 
 

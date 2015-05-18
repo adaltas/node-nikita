@@ -44,39 +44,25 @@ require('mecano').krb5_delrinc({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap @, arguments, (options, callback) ->
-        return callback new Error 'Property principal is required' unless options.principal
-        modified = false
-        do_delprinc = ->
-          execute
-            cmd: misc.kadmin options, "delprinc -force #{options.principal}"
-            ssh: options.ssh
-            log: options.log
-            stdout: options.stdout
-            stderr: options.stderr
-          , (err, _, stdout) ->
-            return callback err if err
-            modified = true if -1 is stdout.indexOf 'does not exist'
-            do_keytab()
-        do_keytab = ->
-          return do_end() unless options.keytab
-          remove
-            ssh: options.ssh
-            destination: options.keytab
-          , (err, removed) ->
-            return callback err if err
-            modified++ if removed
-            do_end()
-        do_end = ->
-          callback null, modified
-        do_delprinc()
+      return callback new Error 'Property principal is required' unless options.principal
+      # Normalize realm and principal for later usage of options
+      options.realm ?= options.kadmin_principal.split('@')[1] if /.*@.*/.test options.kadmin_principal
+      options.principal = "#{options.principal}@#{options.realm}" unless /^\S+@\S+$/.test options.principal
+      # Prepare commands
+      cmd_getprinc = misc.kadmin options, "getprinc #{options.principal}"
+      cmd_delprinc = misc.kadmin options, "delprinc -force #{options.principal}"
+      @
+      .execute
+        cmd: cmd_delprinc
+        if_exec: "#{cmd_getprinc} | grep '#{options.principal}'"
+      .remove
+        destination: options.keytab
+        if: options.keytab
+      .then callback
 
 ## Dependencies
 
     misc = require './misc'
-    wrap = require './misc/wrap'
-    execute = require './execute'
-    remove = require './remove'
 
 
 

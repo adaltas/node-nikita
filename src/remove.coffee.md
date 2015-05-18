@@ -59,28 +59,26 @@ require('mecano').remove([
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap @, arguments, (options, callback) ->
-        # Validate parameters
-        options = source: options if typeof options is 'string'
-        options.source ?= options.destination
-        return callback new Error "Missing source" unless options.source?
-        # Start real work
-        modified = false
-        glob options.ssh, options.source, (err, files) ->
-          return callback err if err
-          each(files)
-          .on 'item', (file, callback) ->
-            modified = true
-            misc.file.remove options.ssh, file, callback
-          .on 'both', (err) ->
-            callback err, modified
+      # Validate parameters
+      options = source: options if typeof options is 'string'
+      options.source ?= options.destination
+      return callback new Error "Missing source" unless options.source?
+      # Start real work
+      modified = false
+      glob options.ssh, options.source, (err, files) ->
+        return callback err if err
+        each(files)
+        .on 'item', (file, callback) ->
+          modified = true
+          misc.file.remove options.ssh, file, callback
+        .on 'both', (err) ->
+          callback err, modified
 
 ## Dependencies
 
     fs = require 'ssh2-fs'
     each = require 'each'
     misc = require './misc'
-    wrap = require './misc/wrap'
     glob = require './misc/glob'
 
 [rimraf]: https://github.com/isaacs/rimraf

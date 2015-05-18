@@ -39,31 +39,29 @@ require('mecano').chmod({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap @, arguments, (options, callback) ->
-        # Validate parameters
-        return callback Error "Missing destination: #{JSON.stringify options.destination}" unless options.destination
-        return callback Error "Missing option 'mode'" unless options.mode
-        # options.log? "Mecano `chmod` [DEBUG]"
-        do_stat = ->
-          return do_compare options.stat if options.stat
-          options.log? "Mecano `chmod`: stat \"#{options.destination}\" [DEBUG]"
-          fs.stat options.ssh, options.destination, (err, stat) ->
-            return callback err if err
-            do_compare stat
-        do_compare = (stat) ->
-          return callback() if misc.mode.compare stat.mode, options.mode
-          options.log? "Mecano `chmod`: change mode from #{stat.mode} to #{options.mode} [INFO]"
-          do_chmod()
-        do_chmod = ->
-          fs.chmod options.ssh, options.destination, options.mode, (err) ->
-            callback err, true
-        do_stat()
+      # Validate parameters
+      return callback Error "Missing destination: #{JSON.stringify options.destination}" unless options.destination
+      return callback Error "Missing option 'mode'" unless options.mode
+      # options.log? "Mecano `chmod` [DEBUG]"
+      do_stat = ->
+        return do_compare options.stat if options.stat
+        options.log? "Mecano `chmod`: stat \"#{options.destination}\" [DEBUG]"
+        fs.stat options.ssh, options.destination, (err, stat) ->
+          return callback err if err
+          do_compare stat
+      do_compare = (stat) ->
+        return callback() if misc.mode.compare stat.mode, options.mode
+        options.log? "Mecano `chmod`: change mode from #{stat.mode} to #{options.mode} [INFO]"
+        do_chmod()
+      do_chmod = ->
+        fs.chmod options.ssh, options.destination, options.mode, (err) ->
+          callback err, true
+      do_stat()
 
 ## Dependencies
 
     fs = require 'ssh2-fs'
     misc = require './misc'
-    wrap = require './misc/wrap'
 
 
 

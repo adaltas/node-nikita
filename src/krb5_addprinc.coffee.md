@@ -52,40 +52,29 @@ require('mecano').krb5_addprinc({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap @, arguments, (options, callback) ->
-        return callback new Error 'Property principal is required' unless options.principal
-        return callback new Error 'Password or randkey missing' if not options.password and not options.randkey
-        modified = false
-        do_kadmin = ->
-          # options.realm ?= options.principal.split('@')[1] # Break cross-realm principals
-          options.realm ?= options.kadmin_principal.split('@')[1] if /.*@.*/.test options.kadmin_principal
-          # options.principal = options.principal.split('@')[0] if options.principal.indexOf(options.realm) isnt -1
-          options.principal = "#{options.principal}@#{options.realm}" unless /^\S+@\S+$/.test options.principal
-          cmd = misc.kadmin options, if options.password
-          then "addprinc -pw #{options.password} #{options.principal}"
-          else "addprinc -randkey #{options.principal}"
-          execute
-            cmd: cmd
-            ssh: options.ssh
-            log: options.log
-            stdout: options.stdout
-            stderr: options.stderr
-          , (err, _, stdout, stderr) ->
-            return callback err if err
-            modified = true if -1 is stderr.indexOf 'already exists'
-            do_keytab()
-        do_keytab = ->
-          krb5_ktadd options, (err, ktadded) ->
-            modified = true if ktadded
-            do_end()
-        do_end = ->
-          callback null, modified
-        do_kadmin()
+      return callback new Error 'Property principal is required' unless options.principal
+      return callback new Error 'Password or randkey missing' if not options.password and not options.randkey
+      # Normalize realm and principal for later usage of options
+      options.realm ?= options.kadmin_principal.split('@')[1] if /.*@.*/.test options.kadmin_principal
+      options.principal = "#{options.principal}@#{options.realm}" unless /^\S+@\S+$/.test options.principal
+      # Prepare commands
+      cmd_getprinc = misc.kadmin options, "getprinc #{options.principal}"
+      cmd_addprinc = misc.kadmin options, if options.password
+      then "addprinc -pw #{options.password} #{options.principal}"
+      else "addprinc -randkey #{options.principal}"
+      # todo, could be removed once actions acception multiple options arguments
+      # such ash `.krb5_ktadd options, if: options.keytab
+      ktadd_options = {}
+      for k, v of options then ktadd_options[k] = v
+      ktadd_options.if = options.keytab
+      @
+      .execute
+        cmd: cmd_addprinc
+        not_if_exec: "#{cmd_getprinc} | grep '#{options.principal}'"
+      .krb5_ktadd ktadd_options
+      .then callback
 
 ## Dependencies
 
     misc = require './misc'
-    wrap = require './misc/wrap'
-    execute = require './execute'
-    krb5_ktadd = require './krb5_ktadd'
 

@@ -35,38 +35,29 @@ require('mecano').ldap_delete({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap @, arguments, (options, callback) ->
-        # Auth related options
-        binddn = if options.binddn then "-D #{options.binddn}" else ''
-        passwd = if options.passwd then "-w #{options.passwd}" else ''
-        if options.url
-          console.log "Mecano: option 'options.url' is deprecated, use 'options.uri'"
-          options.uri ?= options.url
-        options.uri = 'ldapi:///' if options.uri is true
-        uri = if options.uri then "-H #{options.uri}" else '' # URI is obtained from local openldap conf unless provided
-        # Add related options
-        return callback Error "Mecano `ldap_delete`: required property 'dn'" unless options.dn
-        options.dn = [options.dn] unless Array.isArray options.dn
-        dn = options.dn.map( (dn) -> "'#{dn}'").join(' ')
-        # ldapdelete -D cn=Manager,dc=ryba -w test -H ldaps://master3.ryba:636 'cn=mecano,ou=users,dc=ryba' 
-        execute
-          cmd: "ldapdelete #{binddn} #{passwd} #{uri} #{dn}"
-          # code_skipped: 68
-          ssh: options.ssh
-          log: options.log
-          stdout: options.stdout
-          stderr: options.stderr
-        , (err, executed, stdout, stderr) ->
-          return callback err if err
-          callback err, executed
-          # modified = stderr.match(/Already exists/g)?.length isnt stdout.match(/adding new entry/g).length
-          # added = modified # For now, we dont modify
-          # callback err, modified, added
+      # Auth related options
+      binddn = if options.binddn then "-D #{options.binddn}" else ''
+      passwd = if options.passwd then "-w #{options.passwd}" else ''
+      if options.url
+        console.log "Mecano: option 'options.url' is deprecated, use 'options.uri'"
+        options.uri ?= options.url
+      options.uri = 'ldapi:///' if options.uri is true
+      uri = if options.uri then "-H #{options.uri}" else '' # URI is obtained from local openldap conf unless provided
+      # Add related options
+      return callback Error "Mecano `ldap_delete`: required property 'dn'" unless options.dn
+      options.dn = [options.dn] unless Array.isArray options.dn
+      dn = options.dn.map( (dn) -> "'#{dn}'").join(' ')
+      # ldapdelete -D cn=Manager,dc=ryba -w test -H ldaps://master3.ryba:636 'cn=mecano,ou=users,dc=ryba' 
+      @execute
+        cmd: "ldapdelete #{binddn} #{passwd} #{uri} #{dn}"
+        # code_skipped: 68
+      , (err, executed, stdout, stderr) ->
+        return callback err if err
+        callback err, executed
+        # modified = stderr.match(/Already exists/g)?.length isnt stdout.match(/adding new entry/g).length
+        # added = modified # For now, we dont modify
+        # callback err, modified, added
 
-## Dependencies
-
-    execute = require './execute'
-    wrap = require './misc/wrap'
 
 
 

@@ -50,62 +50,55 @@ The result of the above action can be viewed with the command
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap @, arguments, (options, callback) ->
-        return callback new Error "Option 'name' is required" unless options.name
-        options.system ?= false
-        options.gid ?= null
-        modified = false
-        info = null
-        do_info = ->
-          options.log? "Get group information for #{options.name}"
-          options.ssh?.cache_group = null # Clear cache if any 
-          misc.ssh.group options.ssh, (err, groups) ->
-            return callback err if err
-            options.log? "Got #{JSON.stringify groups[options.name]}"
-            info = groups[options.name]
-            if info then do_compare() else do_create()
-        do_create = ->
-          cmd = 'groupadd'
-          cmd += " -r" if options.system
-          cmd += " -g #{options.gid}" if options.gid
-          cmd += " #{options.name}"
-          execute
-            ssh: options.ssh
-            cmd: cmd
-            log: options.log
-            stdout: options.stdout
-            stderr: options.stderr
-            code_skipped: 9
-          , (err, created) ->
-            return callback err if err
-            if created
-            then modified = true
-            else options.log? "Group defined elsewhere than '/etc/group', exit code is 9"
-            callback null, modified
-        do_compare = ->
-          for k in ['gid']
-            modified = true if options[k]? and info[k] isnt options[k]
-          options.log? "Did group information changed: #{modified}"
-          if modified then do_modify() else callback()
-        do_modify = ->
-          cmd = 'groupmod'
-          cmd += " -g #{options.gid}" if options.gid
-          cmd += " #{options.name}"
-          execute
-            ssh: options.ssh
-            cmd: cmd
-            log: options.log
-            stdout: options.stdout
-            stderr: options.stderr
-          , (err) ->
-            return callback err, modified
-        do_info()
+      return callback new Error "Option 'name' is required" unless options.name
+      options.system ?= false
+      options.gid ?= null
+      modified = false
+      info = null
+      do_info = ->
+        options.log? "Get group information for #{options.name}"
+        options.ssh?.cache_group = null # Clear cache if any 
+        misc.ssh.group options.ssh, (err, groups) ->
+          return callback err if err
+          options.log? "Got #{JSON.stringify groups[options.name]}"
+          info = groups[options.name]
+          if info then do_compare() else do_create()
+      do_create = =>
+        cmd = 'groupadd'
+        cmd += " -r" if options.system
+        cmd += " -g #{options.gid}" if options.gid
+        cmd += " #{options.name}"
+        @execute
+          cmd: cmd
+          code_skipped: 9
+        , (err, created) ->
+          return callback err if err
+          if created
+          then modified = true
+          else options.log? "Group defined elsewhere than '/etc/group', exit code is 9"
+          callback null, modified
+      do_compare = ->
+        for k in ['gid']
+          modified = true if options[k]? and info[k] isnt options[k]
+        options.log? "Did group information changed: #{modified}"
+        if modified then do_modify() else callback()
+      do_modify = =>
+        cmd = 'groupmod'
+        cmd += " -g #{options.gid}" if options.gid
+        cmd += " #{options.name}"
+        @execute
+          ssh: options.ssh
+          cmd: cmd
+          log: options.log
+          stdout: options.stdout
+          stderr: options.stderr
+        , (err) ->
+          return callback err, modified
+      do_info()
 
 ## Dependencies
 
     misc = require './misc'
-    wrap = require './misc/wrap'
-    execute = require './execute'
 
 
 

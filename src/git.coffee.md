@@ -45,66 +45,49 @@ require('mecano').extract({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap @, arguments, (options, callback) ->
-        # Sanitize parameters
-        options.revision ?= 'HEAD'
-        rev = null
-        # Start real work
-        prepare = ->
-          fs.exists options.ssh, options.destination, (err, exists) ->
-            return callback err if err
-            return clone() unless exists
-            # return callback new Error "Destination not a directory, got #{options.destination}" unless stat.isDirectory()
-            gitDir = "#{options.destination}/.git"
-            fs.exists options.ssh, gitDir, (err, exists) ->
-              return callback new Error "Not a git repository" unless exists
-              log()
-        clone = ->
-          execute
-            ssh: options.ssh
-            cmd: "git clone #{options.source} #{options.destination}"
-            cwd: path.dirname options.destination
-            log: options.log
-            stdout: options.stdout
-            stderr: options.stderr
-          , (err, executed, stdout, stderr) ->
-            return callback err if err
-            checkout()
-        log = ->
-          execute
-            ssh: options.ssh
-            cmd: "git log --pretty=format:'%H' -n 1"
-            cwd: options.destination
-            log: options.log
-            stdout: options.stdout
-            stderr: options.stderr
-          , (err, executed, stdout, stderr) ->
-            return callback err if err
-            current = stdout.trim()
-            execute
-              ssh: options.ssh
-              cmd: "git rev-list --max-count=1 #{options.revision}"
-              cwd: options.destination
-              log: options.log
-              stdout: options.stdout
-              stderr: options.stderr
-            , (err, executed, stdout, stderr) ->
-              return callback err if err
-              if stdout.trim() isnt current
-              then checkout()
-              else callback()
-        checkout = ->
-          execute
-            ssh: options.ssh
-            cmd: "git checkout #{options.revision}"
-            cwd: options.destination
-            log: options.log
-            stdout: options.stdout
-            stderr: options.stderr
-          , (err) ->
-            return callback err if err
-            callback null, true
-        prepare()
+      # Sanitize parameters
+      options.revision ?= 'HEAD'
+      # Start real work
+      repo_exists = false
+      repo_uptodate = false
+      @
+      .call (_, callback) ->
+        fs.exists options.ssh, options.destination, (err, exists) ->
+          return callback err if err
+          repo_exists = exists
+          return callback() unless exists # todo, isolate inside call when they receive conditions
+          # return callback new Error "Destination not a directory, got #{options.destination}" unless stat.isDirectory()
+          gitDir = "#{options.destination}/.git"
+          fs.exists options.ssh, gitDir, (err, exists) ->
+            return callback Error "Not a git repository" unless exists
+            callback()
+      .execute
+        cmd: "git clone #{options.source} #{options.destination}"
+        cwd: path.dirname options.destination
+        not_if: -> repo_exists
+      .execute
+        cmd: """
+        current=`git log --pretty=format:'%H' -n 1`
+        target=`git rev-list --max-count=1 #{options.revision}`
+        echo "current revision: $current"
+        echo "expected revision: $target"
+        if [ $current != $target ]; then exit 3; fi
+        """
+        # stdout: process.stdout
+        cwd: options.destination
+        trap_on_error: true
+        code_skipped: 3
+        if: -> repo_exists
+        shy: true
+      , (err, uptodate) ->
+        throw err if err
+        repo_uptodate = uptodate
+      .execute
+        cmd: "git checkout #{options.revision}"
+        cwd: options.destination
+        not_if: -> repo_uptodate
+      .then (err, status) ->
+        callback err, status
 
 ## Dependencies
 
@@ -112,8 +95,6 @@ require('mecano').extract({
     path = require 'path'
     each = require 'each'
     misc = require './misc'
-    wrap = require './misc/wrap'
-    execute = require './execute'
 
 
 

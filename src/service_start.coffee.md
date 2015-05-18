@@ -36,39 +36,37 @@ require('mecano').service_start([{
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap @, arguments, (options, callback) ->
-        return callback new Error "Missing required option 'name'" unless options.name
-        @child()
-        .execute
-          ssh: options.ssh
-          cmd: "service #{options.name} status"
-          code_skipped: [3, 1] # ntpd return 1 if pidfile exists without a matching process
-          log: options.log
-          stdout: options.stdout
-          stderr: options.stderr
-          shy: true
-        , (err, started) ->
-          return callback err if err
-          options.db["mecano.service.start.#{options.name}.status"] = if started
-          then 'started'
-          else 'stopped'
-        .execute
-          ssh: options.ssh
-          cmd: "service #{options.name} start"
-          log: options.log
-          stdout: options.stdout
-          stderr: options.stderr
-          not_if: (options) ->
-            options.db["mecano.service.start.#{options.name}.status"] is 'started'
-        , (err, executed) ->
-          return callback err if err
+      return callback new Error "Missing required option 'name'" unless options.name
+      @child()
+      .execute
+        ssh: options.ssh
+        cmd: "service #{options.name} status"
+        code_skipped: [3, 1] # ntpd return 1 if pidfile exists without a matching process
+        log: options.log
+        stdout: options.stdout
+        stderr: options.stderr
+        shy: true
+      , (err, started) ->
+        return callback err if err
+        options.db["mecano.service.start.#{options.name}.status"] = if started
+        then 'started'
+        else 'stopped'
+      .execute
+        ssh: options.ssh
+        cmd: "service #{options.name} start"
+        log: options.log
+        stdout: options.stdout
+        stderr: options.stderr
+        not_if: (options) ->
           options.db["mecano.service.start.#{options.name}.status"] is 'started'
-        .then callback
+      , (err, executed) ->
+        return callback err if err
+        options.db["mecano.service.start.#{options.name}.status"] is 'started'
+      .then callback
 
 ## Dependencies
 
     execute = require './execute'
-    wrap = require './misc/wrap'
 
 
 

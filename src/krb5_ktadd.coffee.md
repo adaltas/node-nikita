@@ -45,109 +45,84 @@ require('mecano').krb5_delrinc({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap @, arguments, (options, callback) ->
-        return callback new Error 'Property principal is required' unless options.principal
-        return callback new Error 'Property keytab is required' unless options.keytab
-        if /^\S+@\S+$/.test options.kadmin_principal
-          options.realm ?= options.kadmin_principal.split('@')[1]
-        else
-          throw Error 'Property "realm" is required unless present in principal' unless options.realm
-          options.principal = "#{options.principal}@#{options.realm}"
-        modified = false
-        do_get = ->
-          return do_end() unless options.keytab
-          execute
-            cmd: "export TZ=GMT; klist -kt #{options.keytab}"
-            ssh: options.ssh
-            log: options.log
-            stdout: options.stdout
-            stderr: options.stderr
-            code_skipped: 1
+      return callback new Error 'Property principal is required' unless options.principal
+      return callback new Error 'Property keytab is required' unless options.keytab
+      if /^\S+@\S+$/.test options.kadmin_principal
+        options.realm ?= options.kadmin_principal.split('@')[1]
+      else
+        throw Error 'Property "realm" is required unless present in principal' unless options.realm
+        options.principal = "#{options.principal}@#{options.realm}"
+      status = false
+      do_get = =>
+        return do_end() unless options.keytab
+        @execute
+          cmd: "export TZ=GMT; klist -kt #{options.keytab}"
+          code_skipped: 1
+        , (err, exists, stdout, stderr) ->
+          return callback err if err
+          unless exists
+            options.log? 'Mecano `krb5_ktadd`: keytab does not yet exists'
+            return do_ktadd() 
+          keytab = {}
+          for line in string.lines stdout
+            if match = /^\s*(\d+)\s+([\d\/:]+\s+[\d\/:]+)\s+(.*)\s*$/.exec line
+              [_, kvno, mdate, principal] = match
+              kvno = parseInt kvno, 10
+              mdate = Date.parse "#{mdate} GMT"
+              # keytab[principal] ?= {kvno: null, mdate: null}
+              if not keytab[principal] or keytab[principal].kvno < kvno
+                keytab[principal] = kvno: kvno, mdate: mdate
+          unless keytab[options.principal]?
+            options.log? 'Mecano `krb5_ktadd`: Principal is not listed inside the keytab'
+            return do_ktadd() 
+          @execute
+            cmd: misc.kadmin options, "getprinc -terse #{options.principal}"
           , (err, exists, stdout, stderr) ->
-            return callback err if err
-            unless exists
-              options.log? 'Mecano `krb5_ktadd`: keytab does not yet exists'
-              return do_ktadd() 
-            keytab = {}
-            for line in string.lines stdout
-              if match = /^\s*(\d+)\s+([\d\/:]+\s+[\d\/:]+)\s+(.*)\s*$/.exec line
-                [_, kvno, mdate, principal] = match
-                kvno = parseInt kvno, 10
-                mdate = Date.parse "#{mdate} GMT"
-                # keytab[principal] ?= {kvno: null, mdate: null}
-                if not keytab[principal] or keytab[principal].kvno < kvno
-                  keytab[principal] = kvno: kvno, mdate: mdate
-            unless keytab[options.principal]?
-              options.log? 'Mecano `krb5_ktadd`: Principal is not listed inside the keytab'
-              return do_ktadd() 
-            execute
-              cmd: misc.kadmin options, "getprinc -terse #{options.principal}"
-              ssh: options.ssh
-              log: options.log
-              stdout: options.stdout
-              stderr: options.stderr
-            , (err, exists, stdout, stderr) ->
-              return err if err
-              # return do_ktadd() unless -1 is stdout.indexOf 'does not exist'
-              values = string.lines(stdout)[1]
-              # Check if a ticket exists for this
-              return callback Error "Principal does not exist: '#{options.principal}'" unless values
-              values = values.split '\t'
-              mdate = parseInt(values[2], 10) * 1000
-              kvno = parseInt values[8], 10
-              options.log? "Mecano `krb5_ktadd`: keytab kvno '#{keytab[principal]?.kvno}', principal kvno '#{kvno}'"
-              options.log? "Mecano `krb5_ktadd`: keytab mdate '#{new Date keytab[principal]?.mdate}', principal mdate '#{new Date mdate}'"
-              if keytab[principal]?.kvno is kvno and keytab[principal].mdate is mdate
-                options.log? 'Mecano `krb5_ktadd`: kvno and mdate are ok, continue with changing the keytab'
-                return do_chown()
-              do_ktremove()
-        do_ktremove = ->
-          execute
-            cmd: misc.kadmin options, "ktremove -k #{options.keytab} #{options.principal}"
-            ssh: options.ssh
-            log: options.log
-            stdout: options.stdout
-            stderr: options.stderr
-          , (err, exists, stdout, stderr) ->
-            return callback err if err
-            do_ktadd()
-        do_ktadd = ->
-          execute
-            cmd: misc.kadmin options, "ktadd -k #{options.keytab} #{options.principal}"
-            ssh: options.ssh
-            log: options.log
-            stdout: options.stdout
-            stderr: options.stderr
-          , (err, ktadded) ->
-            return callback err if err
-            modified = true
-            do_chown()
-        do_chown = () ->
-          return do_chmod() if not options.keytab or (not options.uid and not options.gid)
-          chown
-            ssh: options.ssh
-            log: options.log
-            destination: options.keytab
-            uid: options.uid
-            gid: options.gid
-          , (err, chowned) ->
-            return callback err if err
-            modified = chowned if chowned
-            do_chmod()
-        do_chmod = () ->
-          return do_end() if not options.keytab or not options.mode
-          chmod
-            ssh: options.ssh
-            log: options.log
-            destination: options.keytab
-            mode: options.mode
-          , (err, chmoded) ->
-            return callback err if err
-            modified = chmoded if chmoded
-            do_end()
-        do_end = ->
-          callback null, modified
-        do_get()
+            return err if err
+            # return do_ktadd() unless -1 is stdout.indexOf 'does not exist'
+            values = string.lines(stdout)[1]
+            # Check if a ticket exists for this
+            return callback Error "Principal does not exist: '#{options.principal}'" unless values
+            values = values.split '\t'
+            mdate = parseInt(values[2], 10) * 1000
+            kvno = parseInt values[8], 10
+            options.log? "Mecano `krb5_ktadd`: keytab kvno '#{keytab[principal]?.kvno}', principal kvno '#{kvno}'"
+            options.log? "Mecano `krb5_ktadd`: keytab mdate '#{new Date keytab[principal]?.mdate}', principal mdate '#{new Date mdate}'"
+            if keytab[principal]?.kvno is kvno and keytab[principal].mdate is mdate
+              options.log? 'Mecano `krb5_ktadd`: kvno and mdate are ok, continue with changing the keytab'
+              return do_chown()
+            do_ktremove()
+      do_ktremove = =>
+        @execute
+          cmd: misc.kadmin options, "ktremove -k #{options.keytab} #{options.principal}"
+        , (err, exists, stdout, stderr) ->
+          return callback err if err
+          do_ktadd()
+      do_ktadd = =>
+        @execute
+          cmd: misc.kadmin options, "ktadd -k #{options.keytab} #{options.principal}"
+        , (err, ktadded) ->
+          return callback err if err
+          status = true
+          do_chown()
+      do_chown = =>
+        @child()
+        .chown
+          destination: options.keytab
+          uid: options.uid
+          gid: options.gid
+          if:  options.uid? or options.gid?
+        .chmod
+          destination: options.keytab
+          mode: options.mode
+          if: options.mode?
+        .then (err, changed) ->
+          return callback err if err
+          status = changed if changed
+          do_end()
+      do_end = =>
+        callback null, status
+      do_get()
 
 ## Fields in 'getprinc -terse' output
 
@@ -176,9 +151,5 @@ data-type[1]
 
     misc = require './misc'
     string = require './misc/string'
-    wrap = require './misc/wrap'
-    execute = require './execute'
-    chmod = require './chmod'
-    chown = require './chown'
 
 

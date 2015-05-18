@@ -84,12 +84,10 @@ backmeup({
 ## Source code
 
     module.exports = (options, callback) ->
-      wrap @, arguments, (options, callback) ->
-        backmeup options, callback
+      backmeup options, callback
 
 ## Dependencies
 
-    wrap = require './misc/wrap'
     backmeup = require 'backmeup'
 
 [backmeup]: https://github.com/adaltas/node-backmeup

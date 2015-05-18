@@ -87,38 +87,35 @@ require('mecano').iptables({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap @, arguments, (options, callback) ->
-        options.log? "Mecano `iptables`: list existing rules"
-        execute
-          cmd: "service iptables status &>/dev/null && iptables -S"
+      options.log? "Mecano `iptables`: list existing rules"
+      @execute
+        cmd: "service iptables status &>/dev/null && iptables -S"
+        ssh: options.ssh
+        log: options.log
+        stdout: options.stdout
+        stderr: options.stderr
+        code_skipped: 3
+      , (err, executed, stdout) =>
+        return callback err if err
+        return callback Error "Service iptables not started" unless executed
+        oldrules = iptables.parse stdout
+        newrules = iptables.normalize options.rules
+        cmd = iptables.cmd oldrules, newrules
+        return callback() unless cmd.length
+        options.log? "Mecano `iptables`: modify rules"
+        @execute
+          cmd: "#{cmd.join '; '}; service iptables save;"
           ssh: options.ssh
           log: options.log
+          trap_on_error: true
           stdout: options.stdout
           stderr: options.stderr
-          code_skipped: 3
-        , (err, executed, stdout) ->
-          return callback err if err
-          return callback Error "Service iptables not started" unless executed
-          oldrules = iptables.parse stdout
-          newrules = iptables.normalize options.rules
-          cmd = iptables.cmd oldrules, newrules
-          return callback() unless cmd.length
-          options.log? "Mecano `iptables`: modify rules"
-          execute
-            cmd: "#{cmd.join '; '}; service iptables save;"
-            ssh: options.ssh
-            log: options.log
-            trap_on_error: true
-            stdout: options.stdout
-            stderr: options.stderr
-          , (err, executed) ->
-            callback err, true
+        , (err, executed) ->
+          callback err, true
 
 ## Dependencies
 
-    wrap = require './misc/wrap'
     iptables = require './misc/iptables'
-    execute = require './execute'
 
 ## IPTables References
 

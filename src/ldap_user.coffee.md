@@ -36,78 +36,65 @@ require('mecano').ldap_user({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap @, arguments, (options, callback) ->
-        # Auth related options
-        binddn = if options.binddn then "-D #{options.binddn}" else ''
-        passwd = if options.passwd then "-w #{options.passwd}" else ''
-        if options.url
-          console.log "Mecano: option 'options.url' is deprecated, use 'options.uri'"
-          options.uri ?= options.url
-        options.uri = 'ldapi:///' if options.uri is true
-        uri = if options.uri then "-H #{options.uri}" else '' # URI is obtained from local openldap conf unless provided
-        # User related options
-        return callback Error "Mecano `ldap_user`: required property 'user'" unless options.user
-        options.user = [options.user] unless Array.isArray options.user
-        modified = false
-        each(options.user)
-        .on 'item', (user, callback) ->
-          do_user = ->
-            entry = {}
-            for k, v of user
-              continue if k is 'userPassword'
-              entry[k] = v
-            ldap_add
-              entry: entry
-              uri: options.uri
-              binddn: options.binddn
-              passwd: options.passwd
-              ssh: options.ssh
-              log: options.log
-              stdout: options.stdout
-              stderr: options.stderr
-            , (err, modified, added) ->
-              return callback err if err
-              options.log? 'Mecano `ldap_user`: user modified [WARN]' if modified
-              options.log? 'Mecano `ldap_user`: user added [WARN]' if added
-              modified = true if modified or added
-              if added
-              then do_ldappass()
-              else do_checkpass()
-          do_checkpass = ->
-            execute
-              # See https://onemoretech.wordpress.com/2011/09/22/verifying-ldap-passwords/
-              cmd: """
-              ldapsearch -D #{user.dn} -w #{user.userPassword} #{uri} -b "" -s base "objectclass=*"
-              """
-              code_skipped: 49
-              ssh: options.ssh
-              log: options.log
-              stdout: options.stdout
-              stderr: options.stderr
-            , (err, identical, stdout) ->
-              return callback err if err
-              if identical then do_end() else do_ldappass()
-          do_ldappass = ->
-            execute
-              cmd: """
-              ldappasswd #{binddn} #{passwd} #{uri} \
-                -s #{user.userPassword} \
-                '#{user.dn}'
-              """
-              ssh: options.ssh
-              log: options.log
-              stdout: options.stdout
-              stderr: options.stderr
-            , (err) ->
-              return callback err if err
-              options.log? 'Mecano `ldap_user`: password modified [WARN]'
-              modified = true
-              do_end()
-          do_end = ->
-            callback()
-          do_user()
-        .on 'both', (err) ->
-          callback err, modified
+      # Auth related options
+      binddn = if options.binddn then "-D #{options.binddn}" else ''
+      passwd = if options.passwd then "-w #{options.passwd}" else ''
+      if options.url
+        console.log "Mecano: option 'options.url' is deprecated, use 'options.uri'"
+        options.uri ?= options.url
+      options.uri = 'ldapi:///' if options.uri is true
+      uri = if options.uri then "-H #{options.uri}" else '' # URI is obtained from local openldap conf unless provided
+      # User related options
+      return callback Error "Mecano `ldap_user`: required property 'user'" unless options.user
+      options.user = [options.user] unless Array.isArray options.user
+      modified = false
+      each(options.user)
+      .on 'item', (user, callback) =>
+        do_user = =>
+          entry = {}
+          for k, v of user
+            continue if k is 'userPassword'
+            entry[k] = v
+          @ldap_add
+            entry: entry
+            uri: options.uri
+            binddn: options.binddn
+            passwd: options.passwd
+          , (err, modified, added) ->
+            return callback err if err
+            options.log? 'Mecano `ldap_user`: user modified [WARN]' if modified
+            options.log? 'Mecano `ldap_user`: user added [WARN]' if added
+            modified = true if modified or added
+            if added
+            then do_ldappass()
+            else do_checkpass()
+        do_checkpass = =>
+          @execute
+            # See https://onemoretech.wordpress.com/2011/09/22/verifying-ldap-passwords/
+            cmd: """
+            ldapsearch -D #{user.dn} -w #{user.userPassword} #{uri} -b "" -s base "objectclass=*"
+            """
+            code_skipped: 49
+          , (err, identical, stdout) ->
+            return callback err if err
+            if identical then do_end() else do_ldappass()
+        do_ldappass = =>
+          @execute
+            cmd: """
+            ldappasswd #{binddn} #{passwd} #{uri} \
+              -s #{user.userPassword} \
+              '#{user.dn}'
+            """
+          , (err) ->
+            return callback err if err
+            options.log? 'Mecano `ldap_user`: password modified [WARN]'
+            modified = true
+            do_end()
+        do_end = ->
+          callback()
+        do_user()
+      .on 'both', (err) ->
+        callback err, modified
 
 ## Note
 
@@ -123,9 +110,6 @@ ldappasswd -D cn=myself,ou=users,dc=ryba -w oldpassword \
 ## Dependencies
 
     each = require 'each'
-    execute = require './execute'
-    ldap_add = require './ldap_add'
-    wrap = require './misc/wrap'
 
 [index]: http://www.zytrax.com/books/ldap/apa/indeces.html
 

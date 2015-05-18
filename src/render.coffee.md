@@ -68,34 +68,32 @@ require('mecano').render({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap @, arguments, (options, callback) ->
-        # Validate parameters
-        return callback new Error 'Missing source or content' unless options.source or options.content
-        return callback new Error 'Missing destination' unless options.destination
-        # Start real work
-        do_read_source = ->
-          return do_write() unless options.source
-          ssh = if options.local_source then null else options.ssh
-          fs.exists ssh, options.source, (err, exists) ->
-            return callback new Error "Invalid source, got #{JSON.stringify(options.source)}" unless exists
-            fs.readFile ssh, options.source, 'utf8', (err, content) ->
-              return callback err if err
-              options.content = content
-              do_write()
-        do_write = ->
-          if not options.engine and options.source
-            extension = path.extname options.source
-            options.engine = 'nunjunks' if extension is '.j2'
-          options.source = null
-          write options, (err, written) ->
-            callback err, written
-        do_read_source()
+      # Validate parameters
+      return callback new Error 'Missing source or content' unless options.source or options.content
+      return callback new Error 'Missing destination' unless options.destination
+      # Start real work
+      do_read_source = ->
+        return do_write() unless options.source
+        ssh = if options.local_source then null else options.ssh
+        fs.exists ssh, options.source, (err, exists) ->
+          return callback new Error "Invalid source, got #{JSON.stringify(options.source)}" unless exists
+          fs.readFile ssh, options.source, 'utf8', (err, content) ->
+            return callback err if err
+            options.content = content
+            do_write()
+      do_write = =>
+        if not options.engine and options.source
+          extension = path.extname options.source
+          options.engine = 'nunjunks' if extension is '.j2'
+        options.source = null
+        @write options, (err, written) ->
+          callback err, written
+      do_read_source()
+
 ## Dependencies
 
     fs = require 'ssh2-fs'
     path = require 'path'
-    wrap = require './misc/wrap'
-    write = require './write'
 
 
 

@@ -37,25 +37,22 @@ require('mecano').touch({
 ## Source Code
 
     module.exports = (options, callback) ->
-      wrap @, arguments, (options, callback) ->
-        # Validate parameters
-        {ssh, destination, mode} = options
-        return callback new Error "Missing destination: #{destination}" unless destination
-        options.log? "Check if exists: #{destination}"
-        fs.exists ssh, destination, (err, exists) ->
-          return callback err if err
-          return callback() if exists
-          options.source = null
-          options.content = ''
-          options.log? "Create a new empty file"
-          write options, (err, written) ->
-            callback err, written
+      # Validate parameters
+      {ssh, destination, mode} = options
+      return callback new Error "Missing destination: #{destination}" unless destination
+      options.log? "Check if exists: #{destination}"
+      fs.exists ssh, destination, (err, exists) =>
+        return callback err if err
+        return callback() if exists
+        options.source = null
+        options.content = ''
+        options.log? "Create a new empty file"
+        @write options, (err, written) ->
+          callback err, written
 
 ## Dependencies
 
     fs = require 'ssh2-fs'
-    wrap = require './misc/wrap'
-    write = require './write'
 
 
 

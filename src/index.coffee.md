@@ -28,12 +28,18 @@ functions share a common API with flexible options.
       properties = {}
       stack = []
       todos = []
-      status = err: null, changed: false, throw_if_error: true, running: false, id: 0
+      todos.err = null
+      todos.changed = false
+      todos.throw_if_error = true
       callid = 0
-      call_sync = (fn, args) ->
+      call_callback = (fn, args) ->
+        # console.log 'call_sync', args.length
         ++callid
         stack.unshift todos
         todos = []
+        todos.err = null
+        todos.changed = false
+        todos.throw_if_error = true
         try
           result = fn.apply obj, args
         catch err
@@ -44,83 +50,120 @@ functions share a common API with flexible options.
         todos = stack.shift()
         todos.unshift mtodos... if mtodos.length
         result
-      call = (fn, args, callback) ->
+      call_sync = (fn, args) ->
+        # console.log 'call_sync', args.length
+        ++callid
+        stack.unshift todos
+        todos = []
+        todos.err = null
+        todos.changed = false
+        todos.throw_if_error = true
+        try
+          result = fn.apply obj, args
+        catch err
+          todos = stack.shift()
+          jump_to_error err
+          return run()
+        mtodos = todos
+        todos = stack.shift()
+        todos.unshift mtodos... if mtodos.length
+        result
+      call_async = (fn, options={}, callback) ->
+        # args = if args? then [args] else []
+        # console.log 'call_async', args.length
         ++callid
         # On error, what shall we do:
         # - if a then is registered, jump to then and skip all actions
         # - if no then and a callback, let the callback deal with it
         # Call the user callback synchronously
+
+        if Array.isArray options
+          for t in options
+            for k, v of obj.options
+              t[k] = obj.options[k] if typeof t[k] is 'undefined'
+        else if typeof options is 'object'
+          t = options
+          for k, v of obj.options
+            t[k] = obj.options[k] if typeof t[k] is 'undefined'
         try
           stack.unshift todos
           todos = []
-          fn.call obj, args..., (err, changed) ->
+          todos.err = null
+          todos.changed = false
+          todos.throw_if_error = true
+          finish = (err, changed) ->
+            arguments[0] ?= null
+            arguments[1] = !!arguments[1] unless err
+            arguments.length = 2 if arguments.length is 0
             todos = stack.shift() if todos.length is 0
-            status.throw_if_error = false if err and callback
+            todos.throw_if_error = false if err and callback
             jump_to_error err if err
-            call_sync callback, arguments if callback
-            if changed and not err and not args[0]?.shy then status.changed = true 
+            # console.log '???' if changed and not err and not options?.shy
+            call_callback callback, arguments if callback
+            # console.log 'changed', changed
+            if changed and not err and not options?.shy then todos.changed = true 
             return run()
+          # console.log options.source if options.source
+          wrap obj, [options, finish], (options, callback) ->
+            # console.log 'wrap pass'
+            fn.call obj, options, callback
         catch err
           todos = stack.shift()
           jump_to_error err
           run()
       jump_to_error = (err) ->
         while todos[0] and todos[0][0] isnt 'then' then todos.shift()
-        status.err = err
+        todos.err = err
         # return run()
       run = ->
         todo = todos.shift()
-        # Nothing more to do
-        unless todo
-        #   if stack.length > 1 and not status.err
-        #     todos = stack.shift()
-        #     return run()
-        #   else
-        #     throw status.err if status.err and status.throw_if_error
-        #     return
-          throw status.err if status.err and status.throw_if_error
+        unless todo # Nothing more to do in current queue
+          throw todos.err if todos.err and todos.throw_if_error
           return
         if todo[0] is 'then'
-          {err, changed} = status
-          status.err = null
-          status.changed = false
-          status.throw_if_error = true
+          {err, changed} = todos
+          todos.err = null
+          todos.changed = false
+          todos.throw_if_error = true
           todo[1][0].call obj, err, changed
           run()
           return
         if todo[0] is 'call'
-          if todo[1][0].length # Async style
-            return call todo[1][0], [], null
+          # console.log 'length is ', todo[1][0].length
+          if todo[1][0].length is 2 # Async style
+            return call_async todo[1][0], null, null
           else # Sync style
             changed = call_sync todo[1][0], []
-            if changed then status.changed = true
+            # console.log '2status changed', changed
+            if changed then todos.changed = true
             return run()
         # Enrich with default options
-        if Array.isArray todo[1][0]
-          for t in todo[1][0]
-            for k, v of obj.options
-              t[k] = obj.options[k] if typeof t[k] is 'undefined'
-        else if typeof todo[1][0] is 'object'
-          t = todo[1][0]
-          for k, v of obj.options
-            t[k] = obj.options[k] if typeof t[k] is 'undefined'
+        # if Array.isArray todo[1][0]
+        #   for t in todo[1][0]
+        #     for k, v of obj.options
+        #       t[k] = obj.options[k] if typeof t[k] is 'undefined'
+        # else if typeof todo[1][0] is 'object'
+        #   t = todo[1][0]
+        #   for k, v of obj.options
+        #     t[k] = obj.options[k] if typeof t[k] is 'undefined'
         # Call the action
+        # console.log todo[0]
         todo[1][0].user_args = todo[1][1]?.length > 2
         fn = obj.registry[todo[0]] or registry[todo[0]]
-        call fn, [todo[1][0]], todo[1][1]
+        call_async fn, todo[1][0], todo[1][1]
       properties.child = get: ->
         ->
           module.exports(obj.options)
       properties.then = get: ->
         ->
-          id = status.id++
-          todos.push ['then', arguments, id]
+          # id = status.id++
+          todos.push ['then', arguments]
           process.nextTick run if todos.length is 1 # Activate the pump
           obj
       properties.call = get: ->
         ->
-          id = status.id++
-          todos.push ['call', arguments, id]
+          # id = status.id++
+          todos.push ['call', arguments]
           process.nextTick ->
           process.nextTick run if todos.length is 1 # Activate the pump
           obj
@@ -140,9 +183,9 @@ functions share a common API with flexible options.
           obj.registry[name] = handler
           Object.defineProperty obj, name, configurable: true, get: ->
             ->
-              id = status.id++
+              # id = status.id++
               dest = arguments[0]?.destination
-              todos.push [name, arguments, id]
+              todos.push [name, arguments]
               process.nextTick run if todos.length is 1 # Activate the pump
               obj
       Object.defineProperty obj, 'registered', get: ->
@@ -184,3 +227,4 @@ Pre-register mecano internal functions
     register 'call', module.exports().call
     
 
+    wrap = require './misc/wrap'

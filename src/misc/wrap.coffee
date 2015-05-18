@@ -39,7 +39,9 @@ exports = module.exports = (context, args, handler) ->
     .parallel(goptions.parallel)
     .on 'item', (options, next) ->
       # Handle conditions
+      # console.log [options]
       conditions.all options, next, ->
+        # console.log 'condition pass'
         handler.call context, options, (err, modif, args...) ->
           modified++ if not err and modif
           for arg, i in args
@@ -53,6 +55,9 @@ exports = module.exports = (context, args, handler) ->
   context
 
 exports.args = (args, overwrite_goptions={}) ->
+  # console.log typeof args, Array.isArray(args), args.length, typeof args[1] is 'function'
+  # console.log args unless typeof args[1] is 'function'
+  # console.log args unless Array.isArray args
   if args.length is 2 and typeof args[1] is 'function'
     args[2] = args[1]
     args[1] = {}
