@@ -25,7 +25,7 @@ describe 'download', ->
       server.close()
       server.on 'close', next
 
-    they.only 'http', (ssh, next) ->
+    they 'http', (ssh, next) ->
       @timeout 100000
       # Download a non existing file
       source = 'http://localhost:12345'

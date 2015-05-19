@@ -40,7 +40,7 @@ describe 'system_limits', ->
           """ unless err
           next err
 
-  they.only 'detect changes', (ssh, next) ->
+  they 'detect changes', (ssh, next) ->
       mecano
         ssh: ssh
       .system_limits

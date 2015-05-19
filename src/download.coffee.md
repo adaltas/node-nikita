@@ -134,10 +134,7 @@ mecano.download
           md5: options.md5
           sha1: options.sha1
           force: options.force_cache
-          log: options.log
-          stdout: options.stdout
-          stderr: options.stderr
-        , (err, cached) ->
+        , (err, cached) =>
           return callback err if err
           options.log? if cached then "Mecano `download`: cache updated [WARN]"
           else "Mecano `download`: cache not modified [INFO]"
@@ -155,8 +152,8 @@ mecano.download
             log: options.log
             stdout: options.stdout
             stderr: options.stderr
-          if hash then download push_file_opt, callback
-          else misc.file.hash null, cache_path, algo, (err, calc_hash) ->
+          if hash then @download push_file_opt, callback
+          else misc.file.hash null, cache_path, algo, (err, calc_hash) =>
             push_file_opt[algo] = calc_hash
             download push_file_opt, callback
       do_local_md5 = ->
@@ -196,9 +193,8 @@ mecano.download
               options.log? "Mecano `download`: destination exists, check disabled, skipping [DEBUG]"
               return callback null, false
           else
-            options.log? "Mecano `download`: destination doesn't exists, cheking parent directories (#{path.join destination, '..'}) [INFO]"
-            mkdir
-              ssh: options.ssh
+            options.log? "Mecano `download`: destination doesn't exists, cheking parent directories (#{path.join destination, '..'}) [DEBUG]"
+            @mkdir
               destination: (path.join destination, '..')
             , (err, created) ->
               return callback err if err
