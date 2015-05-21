@@ -1,6 +1,5 @@
 
-lib = if process.env.MECANO_COV then 'lib-cov' else 'lib'
-mecano = require "../#{lib}"
+mecano = require "../src"
 fs = require 'fs'
 
 scratch = "/tmp/mecano-test"

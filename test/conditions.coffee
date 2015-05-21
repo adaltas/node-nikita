@@ -2,8 +2,7 @@
 fs = require 'fs'
 http = require 'http'
 they = require 'ssh2-they'
-lib = if process.env.MECANO_COV then 'lib-cov' else 'lib'
-conditions = require "../#{lib}/misc/conditions"
+conditions = require "../src/misc/conditions"
 
 describe 'conditions', ->
 

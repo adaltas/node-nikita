@@ -2,8 +2,7 @@
 {EventEmitter} = require 'events'
 stream = require 'stream'
 should = require 'should'
-lib = if process.env.MECANO_COV then 'lib-cov' else 'lib'
-mecano = require "../#{lib}"
+mecano = require "../src"
 test = require './test'
 they = require 'ssh2-they'
 

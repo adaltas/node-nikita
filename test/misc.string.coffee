@@ -1,6 +1,5 @@
 
-lib = if process.env.MECANO_COV then 'lib-cov' else 'lib'
-string = require "../#{lib}/misc/string"
+string = require "../src/misc/string"
 test = require './test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'

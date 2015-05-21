@@ -1,6 +1,5 @@
 
-lib = if process.env.MECANO_COV then 'lib-cov' else 'lib'
-ldap = require "../#{lib}/misc/ldap"
+ldap = require "../src/misc/ldap"
 test = require './test'
 path = require 'path'
 

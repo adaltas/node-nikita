@@ -1,7 +1,6 @@
 
-lib = if process.env.MECANO_COV then 'lib-cov' else 'lib'
-mecano = require "../#{lib}"
-misc = require "../#{lib}/misc"
+mecano = require "../src"
+misc = require "../src/misc"
 should = require 'should'
 crypto = require 'crypto'
 test = require './test'

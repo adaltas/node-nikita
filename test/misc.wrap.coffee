@@ -1,6 +1,5 @@
 
-lib = if process.env.MECANO_COV then 'lib-cov' else 'lib'
-wrap = require "../#{lib}/misc/wrap"
+wrap = require "../src/misc/wrap"
 
 describe 'wrap', ->
 

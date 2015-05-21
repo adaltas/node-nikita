@@ -1,6 +1,5 @@
 
-lib = if process.env.MECANO_COV then 'lib-cov' else 'lib'
-iptables = require "../#{lib}/misc/iptables"
+iptables = require "../src/misc/iptables"
 test = require './test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'

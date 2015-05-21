@@ -1,9 +1,8 @@
 
 path = require 'path'
-lib = if process.env.MECANO_COV then 'lib-cov' else 'lib'
-mecano = require "../#{lib}"
-misc = require "../#{lib}/misc"
-glob = require "../#{lib}/misc/glob"
+mecano = require "../src"
+misc = require "../src/misc"
+glob = require "../src/misc/glob"
 test = require './test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'

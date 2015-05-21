@@ -1,5 +1,5 @@
 
-mecano = require "../lib"
+mecano = require "../src"
 they = require 'ssh2-they'
 test = require './test'
 
