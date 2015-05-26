@@ -107,19 +107,21 @@ mecano.download
         return callback new Error "Missing destination: #{destination}" unless destination
         stageDestination = "#{destination}.#{Date.now()}#{Math.round(Math.random()*1000)}"
         if options.md5?
-          return callback new Error "Invalid MD5 Hash:#{options.md5}" unless typeof options.md5 is 'string'
+          return callback new Error "Invalid MD5 Hash:#{options.md5}" unless typeof options.md5 in ['string', 'boolean']
           algo = 'md5'
           hash = options.md5
         else if options.sha1?
-          return callback new Error "Invalid SHA-1 Hash:#{options.sha1}" unless typeof options.sha1 is 'string'
+          return callback new Error "Invalid SHA-1 Hash:#{options.sha1}" unless typeof options.sha1 in ['string', 'boolean']
           algo = 'sha1'
           hash = options.sha1
         else
           algo = 'md5'
           hash = false
-        do_cache = ->
-          return do_prepare() unless options.cache_dir? or options.cache_file?
-          return do_prepare() if options.cache_dir is false or options.cache_file is false
+        protocols_http = ['http:', 'https:']
+        protocols_ftp = ['ftp:', 'ftps:']
+        do_cache = -> # Download the file and place it inside host cache
+          return do_local_md5() unless options.cache_dir? or options.cache_file?
+          return do_local_md5() if options.cache_dir is false or options.cache_file is false
           options.log? "Mecano `download`: using cache [DEBUG]"
           cache_path = if typeof options.cache_dir is 'string' then options.cache_dir else './'
           cache_file = if typeof options.cache_file is 'string' then options.cache_file
@@ -158,6 +160,15 @@ mecano.download
             else misc.file.hash null, cache_path, algo, (err, calc_hash) ->
               push_file_opt[algo] = calc_hash
               download push_file_opt, callback
+        do_local_md5 = ->
+          return do_prepare() unless hash is true
+          return callback Error "Unsupported hash 'true' in non-ssh mode" unless options.ssh
+          {protocol} = url.parse options.source
+          return callback Error "Unsupported hash 'true' with non-file protocols" if protocol in [protocols_http..., protocols_ftp...]
+          misc.file.hash null, options.source, algo, (err, l_hash) ->
+            return callback err if err
+            hash = l_hash
+            do_prepare()
         do_prepare = ->
           options.log? "Mecano `download`: Check if destination (#{destination}) exists [DEBUG]"
           # Note about next line: ssh might be null with file, not very clear
@@ -186,7 +197,7 @@ mecano.download
                 options.log? "Mecano `download`: destination exists, check disabled, skipping [DEBUG]"
                 return callback null, false
             else
-              options.log? "Mecano `download`: destination doesn't exists, cheking parent directories (#{path.join destination, '..'}) [DEBUG]"
+              options.log? "Mecano `download`: destination doesn't exists, cheking parent directories (#{path.join destination, '..'}) [INFO]"
               mkdir
                 ssh: options.ssh
                 destination: (path.join destination, '..')
@@ -198,7 +209,7 @@ mecano.download
           options.log? "Mecano `download`: Download the source [DEBUG]"
           u = url.parse source
           if options.ssh
-            if u.protocol in ['http:', 'https:']
+            if u.protocol in protocols_http
               k = if u.protocol is 'https:' then '-k' else ''
               cmd = "curl #{k} -s #{source} -o #{stageDestination}"
               cmd += " -x #{options.proxy}" if options.proxy
@@ -211,7 +222,7 @@ mecano.download
               , (err, executed, stdout, stderr) ->
                 return callback curl.error err if err
                 do_checksum()
-            else if u.protocol is 'ftp:'
+            else if u.protocol in protocols_ftp
               return callback new Error 'FTP download not supported over SSH'
             else
               fs.createReadStream null, u.pathname, (err, rs) ->
@@ -226,10 +237,10 @@ mecano.download
           else
             fs.createWriteStream null, stageDestination, (err, ws) ->
               return callback err if err
-              if u.protocol in ['http:', 'https:']
+              if u.protocol in protocols_http
                 options.url = source
                 request(options).pipe(ws)
-              else if u.protocol is 'ftp:'
+              else if u.protocol in protocols_ftp
                 options.host ?= u.hostname
                 options.port ?= u.port
                 if u.auth
@@ -256,6 +267,7 @@ mecano.download
           return unstage() unless hash
           options.log? "Mecano `download`: Compare the downloaded file with the provided checksum [DEBUG]"
           misc.file.hash options.ssh, stageDestination, algo, (err, calc_hash) ->
+            return callback err if err
             if hash is calc_hash
               "Mecano `download`: download is valid [INFO]"
               return unstage()

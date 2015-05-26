@@ -205,7 +205,7 @@ describe 'download', ->
           destination: destination
         , (err, downloaded) ->
           return next err if err
-          downloaded.should.be.ok
+          downloaded.should.be.true
         .download
           source: source
           destination: destination
@@ -214,6 +214,28 @@ describe 'download', ->
           return next err if err
           downloaded.should.not.be.ok
           next()
+
+      they 'is computed if true', (ssh, next) ->
+        return next() unless ssh
+        # Download with invalid checksum
+        source = "#{__filename}"
+        destination = "#{scratch}/check_md5"
+        mecano
+          ssh: ssh
+        .download
+          source: source
+          destination: destination
+          md5: true
+        , (err, downloaded) ->
+          downloaded.should.be.true unless err
+        .download
+          source: source
+          destination: destination
+          md5: true
+        , (err, downloaded) ->
+          downloaded.should.be.false unless err
+        .then next
+
 
   # describe 'ftp', ->
 
