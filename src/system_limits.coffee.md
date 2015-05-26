@@ -19,38 +19,20 @@ Control system limits for a user.
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `modified`   
-    Indicates if the startup behavior has changed.   
+Count the number of sub-process for a process:
 
-## Example
+```bash
+ls /proc/14986/task | wc
+ps -L p $pid --no-headers | wc -l
+```
 
-```js
-require('mecano').service_start([{
-  ssh: ssh,
-  name: 'gmetad'
-}, function(err, modified){ /* do sth */ });
+Count the number of sub-process for a user:
+
+```bash
+ps -L -u $user --no-headers | wc -l
 ```
 
 ## Source Code
-
-
-      # ctx.execute cmd: 'ulimit -Hn', (err, _, stdout) ->
-      #   return next err if err
-      #   max_nofile = stdout.trim()
-      #   ctx.write [
-      #     destination: '/etc/security/limits.d/hdfs.conf'
-      #     write: [
-      #       match: /^hdfs.+nofile.+$/mg
-      #       replace: "hdfs    -    nofile   #{max_nofile}"
-      #       append: true
-      #     ,
-      #       match: /^hdfs.+nproc.+$/mg
-      #       replace: "hdfs    -    nproc    65536"
-      #       append: true
-      #     ]
-      #     backup: true
 
     module.exports = (options, callback) ->
       return callback new Error "Missing required option 'user'" unless options.user
@@ -61,25 +43,26 @@ require('mecano').service_start([{
       options.destination ?= "/etc/security/limits.d/#{options.user}.conf"
       write = []
       @
-      # .execute
-      #   cmd: "ulimit -Hn"
-      #   shy: true
-      #   if: options.nofile? and not options.nofile > 0
-      # , (err, status, stdout) ->
-      #   return callback err if err
-      #   return unless status
-      #   options.nofile = stdout.trim()
-      # .call ->
-      #   return unless options.nofile?
-      #   write.push 
-      #     match: /^#{options.user}.+nofile.+$/m
-      #     replace: "#{options.user}    -    nofile   #{options.nofile}"
-      #     append: true
-      #   false
+      .execute
+        cmd: "ulimit -Hn"
+        shy: true
+        if: options.nofile is true
+      , (err, status, stdout) ->
+        # console.log err, status, stdout
+        return callback err if err
+        return unless status
+        options.nofile = stdout.trim()
+      .call ->
+        return unless options.nofile?
+        write.push 
+          match: ///^#{options.user}.+nofile.+$///m
+          replace: "#{options.user}    -    nofile   #{options.nofile}"
+          append: true
+        false
       .call ->
         return unless options.nproc?
-        write.push 
-          match: /^hdfs.+nproc.+$/m
+        write.push
+          match: ///^#{options.user}.+nproc.+$///m
           replace: "#{options.user}    -    nproc   #{options.nproc}"
           append: true
         false
