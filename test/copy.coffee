@@ -41,7 +41,7 @@ describe 'copy', ->
       , (err, copied) ->
         return next err if err
         copied.should.be.ok
-      .call (next) ->
+      .call (options, next) ->
         misc.file.compare @options.ssh, [source, destination], (err, md5) ->
           return next err if err
           md5.should.eql '3fb7c40c70b0ed19da713bd69ee12014'
@@ -66,7 +66,7 @@ describe 'copy', ->
       , (err, copied) ->
         return next err if err
         copied.should.be.ok
-      .call (next) ->
+      .call (options, next) ->
         fs.exists @options.ssh, "#{destination}/a_file", (err, exists) ->
           exists.should.be.true
           next()

@@ -18,7 +18,7 @@ describe 'promise call', ->
         destination: "#{scratch}/a_file"
       , (err) ->
         touched++
-      .call ->
+      .call (options) ->
         called++
       .touch
         destination: "#{scratch}/a_file"
@@ -31,7 +31,7 @@ describe 'promise call', ->
 
     it 'set changed to true', (next) ->
       mecano
-      .call ->
+      .call (options) ->
         return true
       .then (err, changed) ->
         changed.should.be.True
@@ -39,7 +39,7 @@ describe 'promise call', ->
 
     it 'set changed to false', (next) ->
       mecano
-      .call ->
+      .call (options) ->
         return false
       .then (err, changed) ->
         changed.should.be.False
@@ -47,7 +47,7 @@ describe 'promise call', ->
 
     it 'catch error', (next) ->
       mecano
-      .call ->
+      .call (options) ->
         throw Error 'Catchme'
       .then (err, changed) ->
         err.message.should.eql 'Catchme'
@@ -71,7 +71,7 @@ describe 'promise call', ->
         destination: "#{scratch}/a_file"
       , (err) ->
         touched++
-      .call (next) ->
+      .call (options, next) ->
         process.nextTick ->
           called++
           next()
@@ -86,7 +86,7 @@ describe 'promise call', ->
 
     it 'set changed to true', (next) ->
       mecano
-      .call (next) ->
+      .call (options, next) ->
         process.nextTick ->
           next null, true
       .then (err, changed) ->
@@ -95,7 +95,7 @@ describe 'promise call', ->
 
     it 'set changed to false', (next) ->
       mecano
-      .call (next) ->
+      .call (options, next) ->
         process.nextTick ->
           next null, false
       .then (err, changed) ->
@@ -106,7 +106,7 @@ describe 'promise call', ->
 
     it 'thrown', (next) ->
       mecano
-      .call (next) ->
+      .call (options, next) ->
         throw Error 'Catchme'
       .then (err, changed) ->
         err.message.should.eql 'Catchme'
@@ -114,7 +114,7 @@ describe 'promise call', ->
 
     it 'pass to next', (next) ->
       mecano
-      .call (next) ->
+      .call (options, next) ->
         process.nextTick ->
           next Error 'Catchme'
       .then (err, changed) ->
@@ -129,9 +129,9 @@ describe 'promise call', ->
           destination: "#{scratch}/a_file"
         , (err) ->
           false
-        .call (next) ->
+        .call (options, next) ->
           next.property.does.not.exist
-        .call ->
+        .call (options) ->
           next Error 'Shouldnt be called'
         , (err) ->
       d.on 'error', (err) ->
@@ -140,7 +140,7 @@ describe 'promise call', ->
 
     it 'catch error in next tick', (next) ->
       mecano
-      .call (next) ->
+      .call (options, next) ->
         process.nextTick ->
           next Error 'Catchme'
       .then (err, changed) ->
@@ -151,7 +151,7 @@ describe 'promise call', ->
 
     it 'in a user callback', (next) ->
       m = mecano
-      .call (next) ->
+      .call (options, next) ->
         @write
           content: 'ok'
           destination: "#{scratch}/a_file"
@@ -162,7 +162,7 @@ describe 'promise call', ->
 
     it 'in then with changes', (next) ->
       m = mecano
-      .call (next) ->
+      .call (options, next) ->
         @write
           content: 'ok'
           destination: "#{scratch}/a_file"
@@ -174,7 +174,7 @@ describe 'promise call', ->
 
     it 'in then without changes', (next) ->
       m = mecano
-      .call (next) ->
+      .call (options, next) ->
         @write
           content: 'ok'
           destination: "#{scratch}/a_file"

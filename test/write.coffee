@@ -84,7 +84,7 @@ describe 'write', ->
         not_if_exists: true
       , (err, written) ->
         written.should.be.ok
-      .call (next) ->
+      .call (options, next) ->
         fs.readFile ssh, "#{scratch}/empty_file", 'utf8', (err, content) ->
           return next err if err
           content.should.eql ''
@@ -98,7 +98,7 @@ describe 'write', ->
         not_if_exists: true
       , (err, written) ->
         written.should.not.be.ok
-      .call (next) ->
+      .call (options, next) ->
         fs.readFile ssh, "#{scratch}/empty_file", 'utf8', (err, content) ->
           return next err if err
           content.should.eql 'toto'
@@ -159,13 +159,13 @@ describe 'write', ->
       .write
         destination: "#{scratch}/a_file"
         content: 'ok'
-        mode: 0o0755
+        mode: 0o0705
       , (err, written) ->
         written.should.be.ok
       .write
         destination: "#{scratch}/a_file"
         content: 'ok'
-        mode: 0o0755
+        mode: 0o0705
       , (err, written) ->
         written.should.not.be.ok
       .then next
@@ -220,7 +220,7 @@ describe 'write', ->
           replace: 'my friend'
         , (err, written) ->
           written.should.be.ok
-        .call (next) ->
+        .call (options, next) ->
           fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
             content.should.eql 'here we are\nyou coquin\n# from\nmy friend\n# to'
             next()
@@ -233,7 +233,7 @@ describe 'write', ->
           eof: true
         , (err, written) ->
           written.should.be.ok
-        .call (next) ->
+        .call (options, next) ->
           fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
             content.should.eql 'here we are\nyou coquin\n# from\nmy best friend\n# to\n'
             next()
@@ -810,7 +810,7 @@ describe 'write', ->
         ]
       , (err, written) ->
         written.should.not.be.ok
-      .call (next) ->
+      .call (options, next) ->
         fs.readFile ssh, "#{scratch}/a_file", 'utf8', (err, content) ->
           content.should.eql 'Here we are\nyou coquin\nAdd this line'
           next()

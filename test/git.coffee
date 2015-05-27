@@ -21,20 +21,12 @@ describe 'git', ->
       source: "#{scratch}/repo.git"
       destination: "#{scratch}/my_repo"
     , (err, updated) ->
-<<<<<<< HEAD
-      updated.should.be.ok
-=======
       updated.should.be.True
->>>>>>> promise: use promise inside actions
     .git
       source: "#{scratch}/repo.git"
       destination: "#{scratch}/my_repo"
     , (err, updated) ->
-<<<<<<< HEAD
-      updated.should.not.be.ok
-=======
       updated.should.be.False
->>>>>>> promise: use promise inside actions
     .then next
 
   they 'honores revision', (ssh, next) ->
