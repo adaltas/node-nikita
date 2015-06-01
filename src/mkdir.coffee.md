@@ -161,6 +161,7 @@ require('mecano').mkdir({
     path = require 'path'
     each = require 'each'
     misc = require './misc'
+    wrap = require './misc/wrap'
 
 
 
