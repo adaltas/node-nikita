@@ -54,8 +54,8 @@ require('mecano').cron_add({
         cmd: "#{crontab} -l"
         code: [0, 1]
       , (err, _, stdout, stderr) ->
-        throw err if err
-        throw Error 'User crontab not found' if /^no crontab for/.test stderr
+        throw err if err and not /^no crontab for/.test stderr
+        # throw Error 'User crontab not found' if /^no crontab for/.test stderr
         myjob = "#{options.when} #{options.cmd}"
         jobs = stdout.trim().split '\n'
         # remove useless last element
