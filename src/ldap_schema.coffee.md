@@ -65,7 +65,7 @@ require('mecano').ldap_schema({
       modified = false
       do_registered = =>
         cmd = "ldapsearch -LLL #{binddn} #{passwd} #{uri} -b \"cn=schema,cn=config\" | grep -E cn=\\{[0-9]+\\}#{options.name},cn=schema,cn=config"
-        options.log? "Check if schema is registered: #{cmd}"
+        options.log? "Check if schema is registered:"
         @execute
           cmd: cmd
           code: 0
@@ -76,29 +76,29 @@ require('mecano').ldap_schema({
           do_write()
       do_write = =>
         @
-        .call (options) ->
+        .call ->
           options.log? 'Create ldif directory'
         .mkdir
           destination: ldif
           ssh: options.ssh
-        .call (options) ->
+        .call ->
           options.log? 'Copy schema'
         .copy
           source: options.schema
           destination: schema
           ssh: options.ssh
-        .call (options) ->
+        .call ->
           options.log? 'Prepare configuration'
         .write
           content: "include #{schema}"
           destination: conf
           ssh: options.ssh
           log: options.log
-        .call (options) ->
+        .call ->
           options.log? 'Generate configuration'
         .execute
           cmd: "slaptest -f #{conf} -F #{ldif}"
-        .call (options) ->
+        .call ->
           options.log? 'Rename configuration'
         .then (err) ->
           return callback err if err
