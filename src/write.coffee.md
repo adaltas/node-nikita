@@ -1,67 +1,67 @@
 
 # `write(options, callback)`
 
-Write a file or a portion of an existing file.   
+Write a file or a portion of an existing file.
 
 ## Options
 
-*   `append`   
+*   `append`
     Append the content to the destination file. If destination does not exist,
-    the file will be created.   
-*   `backup`   
+    the file will be created.
+*   `backup`
     Create a backup, append a provided string to the filename extension or a
-    timestamp if value is not a string.   
-*   `content`   
-    Text to be written, an alternative to source which reference a file.   
-*   `destination`   
-    File path where to write content to.   
-*   `diff` (boolean | function)   
+    timestamp if value is not a string.
+*   `content`
+    Text to be written, an alternative to source which reference a file.
+*   `destination`
+    File path where to write content to.
+*   `diff` (boolean | function)
     Print diff information, pass the result of [jsdiff.diffLines][diffLines] as
-    argument if a function, default to true.   
-*   `eof`   
+    argument if a function, default to true.
+*   `eof`
     Ensure the file ends with this charactere sequence, special values are
     'windows', 'mac', 'unix' and 'unicode' (respectively "\r\n", "\r", "\n",
     "\u2028"), will be auto-detected if "true", default to false or "\n" if
-    "true" and not detected.   
-*   `from`   
-    Replace from after this marker, a string or a regular expression.   
-*   `gid`   
-    File group name or group id.   
-*   `local_source`   
+    "true" and not detected.
+*   `from`
+    Replace from after this marker, a string or a regular expression.
+*   `gid`
+    File group name or group id.
+*   `local_source`
     Treat the source as local instead of remote, only apply with "ssh"
-    option.   
-*   `match`   
+    option.
+*   `match`
     Replace this marker, a string or a regular expression, default to the
-    replaced string if missing.   
-*   `mode`   
+    replaced string if missing.
+*   `mode`
     File mode (permission and sticky bits), default to `0666`, in the form of
-    `{mode: 0o0744}` or `{mode: "0744"}`.   
-*   `replace`   
+    `{mode: 0o0744}` or `{mode: "0744"}`.
+*   `replace`
     The content to be inserted, used conjointly with the from, to or match
-    options.   
-*   `source`   
+    options.
+*   `source`
     File path from where to extract the content, do not use conjointly with
-    content.   
-*   `to`   
-    Replace to before this marker, a string or a regular expression.   
-*   `uid`   
-    File user name or user id.   
-*   `write`   
+    content.
+*   `to`
+    Replace to before this marker, a string or a regular expression.
+*   `uid`
+    File user name or user id.
+*   `write`
     An array containing multiple transformation where a transformation is an
-    object accepting the options `from`, `to`, `match` and `replace`.   
-*   `ssh` (object|ssh2)   
+    object accepting the options `from`, `to`, `match` and `replace`.
+*   `ssh` (object|ssh2)
     Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-*   `stdout` (stream.Writable)   
+    configuration object used to initialize the SSH connection.
+*   `stdout` (stream.Writable)
     Writable EventEmitter in which the standard output of executed commands will
-    be piped.   
+    be piped.
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `modified`   
-    Number of written actions with modifications.   
+*   `err`
+    Error object if any.
+*   `modified`
+    Number of written actions with modifications.
 
 ## Implementation details
 
@@ -71,7 +71,7 @@ honor all their options including "mode", "uid" and "gid".
 ## Diff Lines
 
 Diff can be obtained when the options "diff" is set to true or a function. The
-information is provided in two ways:   
+information is provided in two ways:
 
 *   when `true`, a formated string written to the "stdout" option.
 *   when a function, the array returned by the function `diff.diffLines`, see
@@ -81,13 +81,13 @@ information is provided in two ways:
 
 The `append` option allows more advanced usages. If `append` is "null", it will
 add the value of the "replace" option at the end of the file when no match
-is found and when the value is a string.   
+is found and when the value is a string.
 
 Using the `append` option conjointly with the `match` and `replace` options gets
 even more interesting. If append is a string or a regular expression, it will
 place the value of the "replace" option just after the match. Internally, a
 string value will be converted to a regular expression. For example the string
-"test" will end up converted to the regular expression `/test/mg`.   
+"test" will end up converted to the regular expression `/test/mg`.
 
 ## Replacing part of a file using from and to markers
 
@@ -163,7 +163,7 @@ require('mecano').write({
   content: 'username: me\nemail: my@email\nfriends: you',
   write: [
     {match: /^(username).*$/mg, replace: '$1: you'},
-    {match: /^email.*$/mg, replace: ''},  
+    {match: /^email.*$/mg, replace: ''},
     {match: /^(friends).*$/mg, replace: '$1: me'}
   ],
   destination: scratch+'/a_file'
@@ -337,7 +337,7 @@ require('mecano').write({
             else
               continue # Did not match, try callback
           else if opts.before is true
-            
+
           else if opts.from or opts.to
             if opts.from and opts.to
               from = ///(^#{quote opts.from}$)///m.exec(content)
@@ -409,15 +409,12 @@ require('mecano').write({
                   options.stdout.write "#{pad padsize, ''+(count_removed)} - #{line}\n"
         do_backup()
       do_backup = =>
-        return do_write() if not options.backup or not destinationHash
+        return do_write() unless options.backup and destinationHash
         options.log? "Mecano `write`: create backup [WARN]"
-        backup = options.backup
-        backup = ".#{Date.now()}" if backup is true
-        backup = "#{options.destination}#{backup}"
         @copy
           ssh: options.ssh
           source: options.destination
-          destination: backup
+          destination: "#{options.destination}.#{Date.now()}"
         , (err) ->
           return callback err if err
           do_write()
@@ -470,5 +467,3 @@ require('mecano').write({
     string = require './misc/string'
 
 [diffLines]: https://github.com/kpdecker/jsdiff
-
-
