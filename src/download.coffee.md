@@ -118,7 +118,7 @@ mecano.download
         hash = false
       protocols_http = ['http:', 'https:']
       protocols_ftp = ['ftp:', 'ftps:']
-      do_cache = -> # Download the file and place it inside host cache
+      do_cache = => # Download the file and place it inside host cache
         return do_local_md5() unless options.cache_dir? or options.cache_file?
         return do_local_md5() if options.cache_dir is false or options.cache_file is false
         options.log? "Mecano `download`: using cache [DEBUG]"
