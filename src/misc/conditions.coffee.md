@@ -139,7 +139,7 @@ were executed successfully otherwise the callback `skip` is called.
         # return succeed() unless options.if_exec?
         each(options.if_exec)
         .on 'item', (cmd, next) ->
-          # options.log? "Mecano `if_exec`: #{cmd}"
+          options.log? "Mecano `not_if_exec`: #{cmd}"
           options = { cmd: cmd, ssh: options.ssh }
           run = exec options
           if options.stdout
@@ -163,7 +163,7 @@ were executed with failure otherwise the callback `skip` is called.
         # return succeed() unless options.not_if_exec?
         each(options.not_if_exec)
         .on 'item', (cmd, next) ->
-          # options.log? "Mecano `not_if_exec`: #{cmd}"
+          options.log? "Mecano `not_if_exec`: #{cmd}"
           options = { cmd: cmd, ssh: options.ssh }
           run = exec options
           if options.stdout
