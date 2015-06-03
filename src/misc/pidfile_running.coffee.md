@@ -10,10 +10,10 @@ running.
     module.exports = (ssh, pidfile, callback) ->
       throw Error 'Argument "options" removed' if arguments.length is 4
       child = exec ssh, """
-      if [ ! -f '#{pidfile}' ]; then exit 2; fi
-      if ! kill -s 0 `cat '#{pidfile}'`;
+      if [ ! -f '#{pidfile}' ]; then exit 1; fi
+      if ! kill -s 0 `cat '#{pidfile}'`; then
         rm '#{pidfile}';
-        then exit 2;
+        exit 2;
       fi
       """
       child.on 'error', callback

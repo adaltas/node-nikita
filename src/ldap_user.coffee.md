@@ -60,15 +60,16 @@ require('mecano').ldap_user({
             uri: options.uri
             binddn: options.binddn
             passwd: options.passwd
-          , (err, modified, added) ->
+          , (err, updated, added) ->
             return callback err if err
-            options.log? 'Mecano `ldap_user`: user modified [WARN]' if modified
-            options.log? 'Mecano `ldap_user`: user added [WARN]' if added
-            modified = true if modified or added
+            if added then options.log? 'Mecano `ldap_user`: user added [WARN]' 
+            else if updated then options.log? 'Mecano `ldap_user`: user updated [WARN]'
+            modified = true if updated or added
             if added
             then do_ldappass()
             else do_checkpass()
         do_checkpass = =>
+          return do_end() unless user.userPassword
           @execute
             # See https://onemoretech.wordpress.com/2011/09/22/verifying-ldap-passwords/
             cmd: """
@@ -79,6 +80,7 @@ require('mecano').ldap_user({
             return callback err if err
             if identical then do_end() else do_ldappass()
         do_ldappass = =>
+          return do_end() unless user.userPassword
           @execute
             cmd: """
             ldappasswd #{binddn} #{passwd} #{uri} \

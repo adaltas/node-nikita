@@ -25,12 +25,13 @@ exports = module.exports = (context, args, handler) ->
   # Pass user arguments
   user_args = []
   # Handling modification count
-  modified = 0
+  # modified = 0
+  modifs = []
   finish = (err) ->
     unless isArray then user_args = for arg, i in user_args
       user_args[i] = arg[0]
-    modified = !!modified #if goptions.boolmod
-    callback err, modified, user_args... if callback
+    # modified = !!modified #if goptions.boolmod
+    callback err, modifs, user_args... if callback
   # Normalize options
   exports.options options, (err, options) ->
     return finish err if err
@@ -41,9 +42,8 @@ exports = module.exports = (context, args, handler) ->
       # Handle conditions
       # console.log [options]
       conditions.all options, next, ->
-        # console.log 'condition pass'
         handler.call context, options, (err, modif, args...) ->
-          modified++ if not err and modif
+          modifs.push modif
           for arg, i in args
             user_args[i] ?= []
             user_args[i].push arg

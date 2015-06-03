@@ -21,12 +21,12 @@ describe 'git', ->
       source: "#{scratch}/repo.git"
       destination: "#{scratch}/my_repo"
     , (err, updated) ->
-      updated.should.be.True
+      updated.should.be.true
     .git
       source: "#{scratch}/repo.git"
       destination: "#{scratch}/my_repo"
     , (err, updated) ->
-      updated.should.be.False
+      updated.should.be.false
     .then next
 
   they 'honores revision', (ssh, next) ->

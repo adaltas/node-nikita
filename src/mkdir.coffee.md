@@ -64,9 +64,10 @@ require('mecano').mkdir({
     module.exports = (options, callback) ->
       modified = false
       # Validate parameters
-      options = { directory: options } if typeof options is 'string'
-      options.directory ?= options.source
+      # options = { directory: options } if typeof options is 'string'
+      options.destination = options.argument if options.argument?
       options.directory ?= options.destination
+      options.directory ?= options.source
       return callback new Error 'Missing directory option' unless options.directory?
       cwd = options.cwd ? process.cwd()
       options.directory = [options.directory] unless Array.isArray options.directory

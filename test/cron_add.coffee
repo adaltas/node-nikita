@@ -26,12 +26,12 @@ describe 'cron', ->
       cmd: "/bin/true #{rand}"
       when: '0 * * * *'
     , (err, executed) ->
-      executed.should.be.true
+      executed.should.be.true unless err
     .cron_add
       cmd: "/bin/true #{rand}"
       when: '0 * * * *'
     , (err, executed) ->
-      executed.should.be.false
+      executed.should.be.false unless err
     .cron_remove
       cmd: "/bin/true #{rand}"
       when: '0 * * * *'

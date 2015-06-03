@@ -35,10 +35,23 @@ describe 'promise actions', ->
           content.should.eql 'abcdefhij'
           next()
 
-    it 'handler errors', (next) ->
-      msgs = []
-      m = mecano log: (msg) -> msgs.push msg if /\/file_\d/.test msg
+    it 'handler errors in handler', (next) ->
+      m = mecano()
+      m.register 'anaction', (options, callback) ->
+        throw Error 'Catchme'
       m
+      .anaction
+        key: "value"
+      , (err, written) ->
+        err.message.should.eql 'Catchme'
+      .then (err, changed) ->
+        err.message.should.eql 'Catchme'
+        next()
+
+    it 'handler errors in callback', (next) ->
+      # msgs = []
+      # m = mecano log: (msg) -> msgs.push msg if /\/file_\d/.test msg
+      mecano()
       .write
         destination: "#{scratch}/a_file"
         content: 'abc'

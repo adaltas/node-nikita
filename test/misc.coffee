@@ -43,24 +43,6 @@ describe 'misc', ->
         misc.object.diff({a: '1', b: '2', c: '3'}, {a: '1', b: '2', c: '3'}).should.eql {}
         misc.object.diff({a: '11', b: '2', c: '3'}, {a: '12', b: '2', c: '3'}).should.eql {'a': ['11', '12']}
 
-  describe 'pidfileStatus', ->
-
-    they 'give 0 if pidfile math a running process', (ssh, next) ->
-      fs.writeFile ssh, "#{scratch}/pid", "#{process.pid}", (err) ->
-        misc.pidfileStatus ssh, "#{scratch}/pid", (err, status) ->
-          status.should.eql 0
-          next()
-
-    they 'give 1 if pidfile does not exists', (ssh, next) ->
-      misc.pidfileStatus ssh, "#{scratch}/pid", (err, status) ->
-        status.should.eql 1
-        next()
-
-    they 'give 2 if pidfile exists but match no process', (ssh, next) ->
-      fs.writeFile ssh, "#{scratch}/pid", "666666666", (err) ->
-        misc.pidfileStatus ssh, "#{scratch}/pid", (err, status) ->
-          status.should.eql 2
-          next()
 
 
 

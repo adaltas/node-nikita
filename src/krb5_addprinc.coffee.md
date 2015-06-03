@@ -57,6 +57,7 @@ require('mecano').krb5_addprinc({
       # Normalize realm and principal for later usage of options
       options.realm ?= options.kadmin_principal.split('@')[1] if /.*@.*/.test options.kadmin_principal
       options.principal = "#{options.principal}@#{options.realm}" unless /^\S+@\S+$/.test options.principal
+      options.password_sync ?= false
       # Prepare commands
       cmd_getprinc = misc.kadmin options, "getprinc #{options.principal}"
       cmd_addprinc = misc.kadmin options, if options.password
@@ -71,6 +72,11 @@ require('mecano').krb5_addprinc({
       .execute
         cmd: cmd_addprinc
         not_if_exec: "#{cmd_getprinc} | grep '#{options.principal}'"
+      .execute
+        # cmd: "! echo #{options.password} | kinit '#{options.principal}' && cpw"
+        cmd: misc.kadmin options, "cpw -pw #{options.password} #{options.principal}"
+        if: options.password and options.password_sync
+        not_if_exec: "echo #{options.password} | kinit '#{options.principal}';"
       .krb5_ktadd ktadd_options
       .then callback
 

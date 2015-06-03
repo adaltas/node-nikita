@@ -25,16 +25,15 @@ functions share a common API with flexible options.
         obj = {}
         obj.options = {}
       obj.registry ?= {}
+      obj.propagated_options ?= []
+      for option in module.exports.propagated_options then obj.propagated_options.push option
       properties = {}
       stack = []
       todos = []
       todos.err = null
       todos.changed = false
       todos.throw_if_error = true
-      callid = 0
       call_callback = (fn, args) ->
-        # console.log 'call_sync', args.length
-        ++callid
         stack.unshift todos
         todos = []
         todos.err = null
@@ -51,8 +50,6 @@ functions share a common API with flexible options.
         todos.unshift mtodos... if mtodos.length
         result
       call_sync = (fn, args) ->
-        # console.log 'call_sync', args.length
-        ++callid
         stack.unshift todos
         todos = []
         todos.err = null
@@ -68,23 +65,21 @@ functions share a common API with flexible options.
         todos = stack.shift()
         todos.unshift mtodos... if mtodos.length
         result
-      call_async = (fn, options={}, callback) ->
-        # args = if args? then [args] else []
-        # console.log 'call_async', args.length
-        ++callid
-        # On error, what shall we do:
-        # - if a then is registered, jump to then and skip all actions
-        # - if no then and a callback, let the callback deal with it
-        # Call the user callback synchronously
-
-        if Array.isArray options
-          for t in options
-            for k, v of obj.options
-              t[k] = obj.options[k] if typeof t[k] is 'undefined'
-        else if typeof options is 'object'
-          t = options
-          for k, v of obj.options
-            t[k] = obj.options[k] if typeof t[k] is 'undefined'
+      call_async = (fn, local_options={}, callback) ->
+        global_options = obj.options
+        parent_options = todos.options
+        local_options_array = Array.isArray local_options
+        local_options = [local_options] unless local_options_array
+        options = []
+        for local_opts in local_options
+          local_opts = argument: local_opts if local_opts? and typeof local_opts isnt 'object'
+          opts = {}
+          for k, v of local_opts then opts[k] = local_opts[k]
+          options.push opts
+        for k, v of parent_options
+          for opts in options then opts[k] = v if opts[k] is undefined and k in obj.propagated_options
+        for k, v of global_options
+          for opts in options then opts[k] = v if opts[k] is undefined
         try
           stack.unshift todos
           todos = []
@@ -92,21 +87,26 @@ functions share a common API with flexible options.
           todos.changed = false
           todos.throw_if_error = true
           finish = (err, changed) ->
+            toto = for k in changed then k
             arguments[0] ?= null
-            arguments[1] = !!arguments[1] unless err
+            arguments[1] = !!changed.some (status) -> status unless err
+            toto = toto[0] unless local_options_array
             arguments.length = 2 if arguments.length is 0
             todos = stack.shift() if todos.length is 0
             todos.throw_if_error = false if err and callback
             jump_to_error err if err
-            # console.log '???' if changed and not err and not options?.shy
             call_callback callback, arguments if callback
-            # console.log 'changed', changed
-            if changed and not err and not options?.shy then todos.changed = true 
+            if Array.isArray options
+            then for opts, i in options then status = true if toto[i] and not err and not opts.shy
+            else status = true if toto and not err and not options.shy
+            todos.changed = status if status
             return run()
-          # console.log options.source if options.source
+          options = options[0] unless local_options_array
           wrap obj, [options, finish], (options, callback) ->
-            # console.log 'wrap pass'
-            fn.call obj, options, callback
+            todos.options = options
+            fn.call obj, options, (err, status, args...) ->
+              # status = if options.shy then false else status
+              callback err, status, args...
         catch err
           todos = stack.shift()
           jump_to_error err
@@ -129,12 +129,10 @@ functions share a common API with flexible options.
           run()
           return
         if todo[0] is 'call'
-          # console.log 'length is ', todo[1][0].length
           if todo[1][0].length is 2 # Async style
             return call_async todo[1][0], null, null
           else # Sync style
             changed = call_sync todo[1][0], []
-            # console.log '2status changed', changed
             if changed then todos.changed = true
             return run()
         # Enrich with default options
@@ -147,7 +145,6 @@ functions share a common API with flexible options.
         #   for k, v of obj.options
         #     t[k] = obj.options[k] if typeof t[k] is 'undefined'
         # Call the action
-        # console.log todo[0]
         todo[1][0].user_args = todo[1][1]?.length > 2
         fn = obj.registry[todo[0]] or registry[todo[0]]
         call_async fn, todo[1][0], todo[1][1]
@@ -195,6 +192,8 @@ functions share a common API with flexible options.
           if local_only then local else global or local
       obj.register name, handler for name, handler of registry
       obj
+
+    module.exports.propagated_options = ['ssh', 'log', 'stdout', 'stderr']
 
 ## Register functions
 

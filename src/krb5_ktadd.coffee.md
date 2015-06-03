@@ -99,7 +99,10 @@ require('mecano').krb5_delrinc({
           return callback err if err
           do_ktadd()
       do_ktadd = =>
-        @execute
+        @
+        # .execute
+        #   cmd: 'echo `hostname`'
+        .execute
           cmd: misc.kadmin options, "ktadd -k #{options.keytab} #{options.principal}"
         , (err, ktadded) ->
           return callback err if err

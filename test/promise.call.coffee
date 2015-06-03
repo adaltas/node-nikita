@@ -132,10 +132,12 @@ describe 'promise call', ->
         .call (options, next) ->
           next.property.does.not.exist
         .call (options) ->
+          console.log 'Shouldnt be called'
           next Error 'Shouldnt be called'
         , (err) ->
       d.on 'error', (err) ->
         err.name.should.eql 'TypeError'
+        d.exit()
         next()
 
     it 'catch error in next tick', (next) ->
@@ -146,6 +148,7 @@ describe 'promise call', ->
       .then (err, changed) ->
         err.message.should.eql 'Catchme'
         next()
+        # setTimeout next, 100000
 
   describe 'async nested', ->
 

@@ -276,7 +276,6 @@ describe 'copy', ->
         copied.should.be.ok
         glob ssh, "#{scratch}/**", dot: true, (err, files) ->
           return next err if err
-          console.log files
           next()
 
 

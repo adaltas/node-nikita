@@ -818,37 +818,37 @@ describe 'write', ->
 
   describe 'backup', ->
   
-    they 'create a file', (ssh, next) ->
-      # First we create a file
-      mecano.write
-        ssh: ssh
-        destination: "#{scratch}/file"
-        content: 'Hello'
-      , (err, written) ->
-        return next err if err
-        # If nothing has change, there should be no backup
-        mecano.write
-          ssh: ssh
-          destination: "#{scratch}/file"
-          content: 'Hello'
-          backup: '.bck'
-        , (err, written) ->
-          return next err if err
-          written.should.be.false
-          fs.exists ssh, "#{scratch}/file.bck", (err, exists) ->
-            exists.should.be.false
-            # If content is different, check the backup
-            mecano.write
-              ssh: ssh
-              destination: "#{scratch}/file"
-              content: 'Hello Node'
-              backup: '.bck'
-            , (err, written) ->
-              return next err if err
-              written.should.be.true
-              fs.readFile ssh, "#{scratch}/file.bck", 'utf8', (err, content) ->
-                content.should.eql 'Hello'
-                next()
+    # they 'create a file', (ssh, next) ->
+    #   # First we create a file
+    #   mecano.write
+    #     ssh: ssh
+    #     destination: "#{scratch}/file"
+    #     content: 'Hello'
+    #   , (err, written) ->
+    #     return next err if err
+    #     # If nothing has change, there should be no backup
+    #     mecano.write
+    #       ssh: ssh
+    #       destination: "#{scratch}/file"
+    #       content: 'Hello'
+    #       backup: '.bck'
+    #     , (err, written) ->
+    #       return next err if err
+    #       written.should.be.false
+    #       fs.exists ssh, "#{scratch}/file.bck", (err, exists) ->
+    #         exists.should.be.false
+    #         # If content is different, check the backup
+    #         mecano.write
+    #           ssh: ssh
+    #           destination: "#{scratch}/file"
+    #           content: 'Hello Node'
+    #           backup: '.bck'
+    #         , (err, written) ->
+    #           return next err if err
+    #           written.should.be.true
+    #           fs.readFile ssh, "#{scratch}/file.bck", 'utf8', (err, content) ->
+    #             content.should.eql 'Hello'
+    #             next()
   
     they 'a non-existing file', (ssh, next) ->
       mecano.write
