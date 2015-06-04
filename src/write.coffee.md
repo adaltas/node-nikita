@@ -411,10 +411,11 @@ require('mecano').write({
       do_backup = =>
         return do_write() unless options.backup and destinationHash
         options.log? "Mecano `write`: create backup [WARN]"
+        backup = if typeof options.backup is 'string' then options.backup else ".#{Date.now()}"
         @copy
           ssh: options.ssh
           source: options.destination
-          destination: "#{options.destination}.#{Date.now()}"
+          destination: "#{options.destination}#{backup}"
         , (err) ->
           return callback err if err
           do_write()
