@@ -76,11 +76,11 @@ misc = module.exports =
     resolve: (locations..., callback) ->
       normalized = []
       each(locations)
-      .on 'item', (location, next) ->
+      .run (location, next) ->
         misc.path.normalize location, (location) ->
           normalized.push location
           next()
-      .on 'end', ->
+      .then ->
         callback path.resolve normalized...
   mode:
     stringify: (mode) ->
@@ -178,15 +178,14 @@ misc = module.exports =
         else if stat.isDirectory()
           compute = (files) ->
             files.sort()
-            each(files)
-            .on 'item', (item, next) ->
+            each files
+            .run (item, next) ->
               hasher ssh, item, (err, h) ->
                 return next err if err
                 hashs.push h if h?
                 next()
-            .on 'error', (err) ->
-              callback err
-            .on 'end', ->
+            .then (err) ->
+              return callback err if err
               switch hashs.length
                 when 0
                   if stat.isFile() 
@@ -211,9 +210,8 @@ misc = module.exports =
     compare: (ssh, files, callback) ->
       return callback new Error 'Minimum of 2 files' if files.length < 2
       result = null
-      each(files)
-      .parallel(true)
-      .on 'item', (file, next) ->
+      each files
+      .run (file, next) ->
         misc.file.hash ssh, file, (err, md5) ->
           return next err if err
           if result is null
@@ -221,9 +219,8 @@ misc = module.exports =
           else if result isnt md5
             result = false 
           next()
-      .on 'error', (err) ->
-        callback err
-      .on 'end', ->
+      .then (err) ->
+        return callback err if err
         callback null, result
     ###
     remove(ssh, path, callback)

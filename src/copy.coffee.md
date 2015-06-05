@@ -90,10 +90,10 @@ require('mecano').copy({
         options.log? "Source is a directory"
         glob options.ssh, "#{dir}/**", dot: true, (err, files) ->
           return callback err if err
-          each(files)
-          .on 'item', (file, callback) ->
+          each files
+          .run (file, callback) ->
             do_copy file, callback
-          .on 'both', callback
+          .then callback
       do_copy = (source, callback) =>
         if srcStat.isDirectory()
           destination = path.resolve options.destination, path.relative options.source, source

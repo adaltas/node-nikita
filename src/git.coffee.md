@@ -93,7 +93,6 @@ require('mecano').extract({
 
     fs = require 'ssh2-fs'
     path = require 'path'
-    each = require 'each'
     misc = require './misc'
 
 

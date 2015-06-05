@@ -115,7 +115,6 @@ require('mecano/alt/ldap_index')({
 
 ## Dependencies
 
-    each = require 'each'
     ldap = require 'ldapjs'
     misc = require '../misc'
     wrap = require '../misc/wrap'

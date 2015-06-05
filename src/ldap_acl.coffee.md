@@ -65,8 +65,7 @@ require('mecano').ldap_acl({
       options.acls ?= [{}]
       modified = false
       each(options.acls)
-      .parallel(false)
-      .on 'item', (acl, callback) =>
+      .run (acl, callback) =>
         do_getdn = =>
           return do_getacls() if options.hdb_dn
           options.log? "mecano `ldap_acl`: get DN of the HDB to modify"
@@ -181,7 +180,7 @@ require('mecano').ldap_acl({
         do_end = ->
           callback()
         do_getdn()
-      .on 'both', (err) ->
+      .then (err) ->
         callback err, modified
 
 ## Dependencies

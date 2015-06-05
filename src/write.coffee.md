@@ -458,7 +458,6 @@ require('mecano').write({
 
     fs = require 'ssh2-fs'
     path = require 'path'
-    each = require 'each'
     eco = require 'eco'
     nunjucks = require 'nunjucks/src/environment'
     pad = require 'pad'

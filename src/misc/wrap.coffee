@@ -35,10 +35,8 @@ exports = module.exports = (context, args, handler) ->
   # Normalize options
   exports.options options, (err, options) ->
     return finish err if err
-    # Run multiple actions sequentially or concurrently
-    each( options )
-    .parallel(goptions.parallel)
-    .on 'item', (options, next) ->
+    each options
+    .run (options, next) ->
       # Handle conditions
       conditions.all options, next, ->
         handler.call context, options, (err, modif, args...) ->
@@ -47,8 +45,7 @@ exports = module.exports = (context, args, handler) ->
             user_args[i] ?= []
             user_args[i].push arg
           next err
-    .on 'both', (err) ->
-      finish err
+    .then finish
   # Return a Mecano Child instance
   # args.callee
   context
@@ -83,8 +80,8 @@ be converted to integer if they match a username or a group.
 ###
 exports.options = (options, callback) ->
   options = [options] unless Array.isArray options
-  each(options)
-  .on 'item', (options, next) ->
+  each options
+  .run (options, next) ->
     # options.if = [options.if] if options.if? and not Array.isArray options.if
     # options.if_exists = options.destination if options.if_exists is true and options.destination
     options.if_exists = [options.if_exists] if typeof options.if_exists is 'string'
@@ -119,7 +116,7 @@ exports.options = (options, callback) ->
       options.mode = parseInt(options.mode, 8) if typeof options.mode is 'string'
       next()
     connection()
-  .on 'both', (err) ->
+  .then (err) ->
     callback err, options
 
 

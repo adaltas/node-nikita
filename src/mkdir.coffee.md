@@ -72,8 +72,8 @@ require('mecano').mkdir({
       cwd = options.cwd ? process.cwd()
       options.directory = [options.directory] unless Array.isArray options.directory
       options.parent = {} if options.parent is true
-      each(options.directory)
-      .on 'item', (directory, callback) =>
+      each options.directory
+      .run (directory, callback) =>
         # first, we need to find which directory need to be created
         options.log? "Mecano `mkdir`: #{directory}"
         do_stats = ->
@@ -86,7 +86,7 @@ require('mecano').mkdir({
           directories = for i in [0...directories.length]
             '/' + directories.slice(0, directories.length - i).join '/'
           each(directories)
-          .on 'item', (directory, i, next) ->
+          .run (directory, i, next) ->
             return next() if end
             fs.stat options.ssh, directory, (err, stat) ->
               if err?.code is 'ENOENT' # if the directory is not yet created
@@ -102,7 +102,7 @@ require('mecano').mkdir({
                 return next err
               else # a file or symlink exists at this location
                 return next new Error "Not a directory: #{JSON.stringify directory}"
-          .on 'both', (err) ->
+          .then (err) ->
             return callback err if err
         do_create_parent = (directories) ->
           return do_create directories unless options.uid or options.guid
@@ -111,7 +111,7 @@ require('mecano').mkdir({
             do_create directories
         do_create = (directories) ->
           each(directories.reverse())
-          .on 'item', (directory, i, callback) ->
+          .run (directory, i, callback) ->
             # Directory name contains variables
             # eg /\${/ on './var/cache/${user}' creates './var/cache/'
             if options.exclude? and options.exclude instanceof RegExp
@@ -127,7 +127,7 @@ require('mecano').mkdir({
               modified = true
               callback()
             , 1000
-          .on 'both', (err) ->
+          .then (err) ->
             return callback err if err
             callback()
         do_update = (stat) =>
@@ -153,7 +153,7 @@ require('mecano').mkdir({
             modified = true if moded
             callback()
         do_stats()
-      .on 'both', (err) ->
+      .then (err) ->
         callback err, modified
 
 ## Dependencies

@@ -42,7 +42,7 @@ mecano.render({
         options.if = [options.if] unless Array.isArray options.if
         ok = true
         each(options.if)
-        .on 'item', (si, next) ->
+        .run (si, next) ->
           return next() unless ok
           # options.log? "Mecano `if`"
           type = typeof si
@@ -70,7 +70,7 @@ mecano.render({
             next()
           else
             next new Error "Invalid condition type"
-        .on 'both', (err) ->
+        .then (err) ->
           return skip err if err or not ok
           succeed()
 
@@ -94,7 +94,7 @@ pass.
         options.not_if = [options.not_if] unless Array.isArray options.not_if
         ok = true
         each(options.not_if)
-        .on 'item', (not_if, next) ->
+        .run (not_if, next) ->
           return next() unless ok
           # options.log? "Mecano `not_if`"
           type = typeof not_if
@@ -123,7 +123,7 @@ pass.
             next()
           else
             next new Error "Invalid condition type"
-        .on 'both', (err) ->
+        .then (err) ->
           return skip err if err or not ok
           succeed()
   
@@ -138,7 +138,7 @@ were executed successfully otherwise the callback `skip` is called.
       if_exec: (options, skip, succeed) ->
         # return succeed() unless options.if_exec?
         each(options.if_exec)
-        .on 'item', (cmd, next) ->
+        .run (cmd, next) ->
           options.log? "Mecano `not_if_exec`: #{cmd}"
           options = { cmd: cmd, ssh: options.ssh }
           run = exec options
@@ -162,7 +162,7 @@ were executed with failure otherwise the callback `skip` is called.
       not_if_exec: (options, skip, succeed) ->
         # return succeed() unless options.not_if_exec?
         each(options.not_if_exec)
-        .on 'item', (cmd, next) ->
+        .run (cmd, next) ->
           options.log? "Mecano `not_if_exec`: #{cmd}"
           options = { cmd: cmd, ssh: options.ssh }
           run = exec options
@@ -195,7 +195,7 @@ exists otherwise the callback `skip` is called.
           if_exists = if if_exists then [destination] else null
         # return succeed() unless if_exists?
         each(if_exists)
-        .on 'item', (if_exists, next) ->
+        .run (if_exists, next) ->
           # options.log? "Mecano `if_exists`"
           fs.exists ssh, if_exists, (err, exists) ->
             if exists then next() else skip()
@@ -217,7 +217,7 @@ exists otherwise the callback `skip` is called.
           not_if_exists = if not_if_exists then [destination] else null
         # return succeed() unless not_if_exists?
         each(not_if_exists)
-        .on 'item', (not_if_exists, next) ->
+        .run (not_if_exists, next) ->
           # options.log? "Mecano `not_if_exists`"
           fs.exists ssh, not_if_exists, (err, exists) ->
             if exists
@@ -239,12 +239,13 @@ exists otherwise the callback `skip` is called with an error.
       should_exist: (options, skip, succeed) ->
         # return succeed() unless options.should_exist?
         each(options.should_exist)
-        .on 'item', (should_exist, next) ->
+        .run (should_exist, next) ->
           # options.log? "Mecano `should_exist`"
           fs.exists options.ssh, should_exist, (err, exists) ->
             if exists
             then next()
             else next Error "File does not exist: #{should_exist}"
+        # .then (err) -> if err then skip(err) else succeed()
         .on 'error', (err) ->
           skip err
         .on 'end', succeed
@@ -261,7 +262,7 @@ exists otherwise the callback `skip` is called with an error.
       should_not_exist: (options, skip, succeed) ->
         # return succeed() unless options.should_not_exist?
         each(options.should_not_exist)
-        .on 'item', (should_not_exist, next) ->
+        .run (should_not_exist, next) ->
           # options.log? "Mecano `should_not_exist`"
           fs.exists options.ssh, should_not_exist, (err, exists) ->
             if exists

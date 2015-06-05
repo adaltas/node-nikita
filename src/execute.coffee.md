@@ -135,7 +135,6 @@ mecano.execute({
 
 ## Dependencies
 
-    each = require 'each'
     exec = require 'ssh2-exec'
     misc = require './misc'
 

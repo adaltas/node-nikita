@@ -67,11 +67,11 @@ require('mecano').remove([
       modified = false
       glob options.ssh, options.source, (err, files) ->
         return callback err if err
-        each(files)
-        .on 'item', (file, callback) ->
+        each files
+        .run (file, callback) ->
           modified = true
           misc.file.remove options.ssh, file, callback
-        .on 'both', (err) ->
+        .then (err) ->
           callback err, modified
 
 ## Dependencies
