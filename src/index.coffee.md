@@ -64,9 +64,14 @@ functions share a common API with flexible options.
         todos = stack.shift()
         todos.unshift mtodos... if mtodos.length
         status
-      call_async = (fn, local_options={}, callback, name) ->
+      # call_async = (fn, local_options={}, callback, name) ->
+      # Options are: type, args, handler
+      call_async = (action) ->
         global_options = obj.options
         parent_options = todos.options
+        local_options = action.args[0]
+        callback = action.args[1]
+        local_options ?= {}
         local_options_array = Array.isArray local_options
         local_options = [local_options] unless local_options_array
         options = []
@@ -82,7 +87,6 @@ functions share a common API with flexible options.
         try
           stack.unshift todos
           todos = []
-          todos.parent = name
           todos.err = null
           todos.changed = false
           todos.throw_if_error = true
@@ -104,7 +108,7 @@ functions share a common API with flexible options.
           options = options[0] unless local_options_array
           wrap obj, [options, finish], (options, callback) ->
             todos.options = options
-            fn.call obj, options, (err, status, args...) ->
+            action.handler.call obj, options, (err, status, args...) ->
               callback err, status, args...
         catch err
           todos = stack.shift()
@@ -129,7 +133,11 @@ functions share a common API with flexible options.
           return
         if todo.type is 'call'
           if todo.args[0].length is 2 # Async style
-            return call_async todo.args[0], null, null, 'call'
+            # return call_async todo.args[0], null, null, 'call'
+            return call_async
+              type: todo.type
+              args: []
+              handler: todo.args[0]
           else # Sync style
             changed = call_sync todo.args[0], []
             if changed then todos.changed = true
@@ -137,7 +145,10 @@ functions share a common API with flexible options.
         # Call the action
         todo.args[0].user_args = todo.args[1]?.length > 2
         fn = obj.registry[todo.type] or registry[todo.type]
-        call_async fn, todo.args[0], todo.args[1], todo.type
+        call_async
+          type: todo.type
+          args: todo.args
+          handler: obj.registry[todo.type] or registry[todo.type]
       properties.child = get: ->
         ->
           # global_options = obj.options
