@@ -40,7 +40,6 @@ exports = module.exports = (context, args, handler) ->
     .parallel(goptions.parallel)
     .on 'item', (options, next) ->
       # Handle conditions
-      # console.log [options]
       conditions.all options, next, ->
         handler.call context, options, (err, modif, args...) ->
           modifs.push modif
@@ -118,33 +117,10 @@ exports.options = (options, callback) ->
         mode()
     mode = ->
       options.mode = parseInt(options.mode, 8) if typeof options.mode is 'string'
-      uid_gid()
-    uid_gid = ->
-      exports.uid_gid options, next
+      next()
     connection()
   .on 'both', (err) ->
     callback err, options
 
-exports.uid_gid = (options, callback) ->
-  do_uid = ->
-    # uid=`id -u $USER`,
-    return do_gid() unless options.uid
-    options.uid = parseInt options.uid, 10 if typeof options.uid is 'string' and /\d+/.test options.uid
-    return do_gid() if typeof options.uid is 'number'
-    misc.ssh.passwd options.ssh, options.uid, (err, user) ->
-      return do_gid err if err
-      if user
-        options.uid = user.uid
-        options.gid ?= user.gid
-      do_gid()
-  do_gid = ->
-    return callback() unless options.gid
-    options.gid = parseInt options.gid, 10 if typeof options.gid is 'string' and /\d+/.test options.gid
-    return callback() if typeof options.gid is 'number'
-    misc.ssh.group options.ssh, options.gid, (err, group) ->
-      return callback err if err
-      options.gid = group.gid if group
-      callback()
-  do_uid()
 
 

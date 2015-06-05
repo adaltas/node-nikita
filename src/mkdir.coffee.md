@@ -106,7 +106,7 @@ require('mecano').mkdir({
             return callback err if err
         do_create_parent = (directories) ->
           return do_create directories unless options.uid or options.guid
-          wrap.uid_gid options, (err) ->
+          uid_gid options, (err) ->
             return next err if err
             do_create directories
         do_create = (directories) ->
@@ -163,6 +163,7 @@ require('mecano').mkdir({
     each = require 'each'
     misc = require './misc'
     wrap = require './misc/wrap'
+    uid_gid = require './misc/uid_gid'
 
 
 

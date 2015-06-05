@@ -54,6 +54,10 @@ find /var/tmp -uid 1000
       # Validate parameters
       return callback Error "Missing destination option" unless options.destination?
       return callback Error "Missing one of uid or gid option" unless options.uid? or options.gid?
+      do_uid_gid = ->
+        uid_gid options, (err) ->
+          return callback err if err
+          do_stat()
       do_stat = ->
         return do_chown options.stat if options.stat
         options.log? "Mecano `chown`: stat #{options.destination} [DEBUG]"
@@ -66,11 +70,12 @@ find /var/tmp -uid 1000
           options.log? "Mecano `chown`: change uid from #{stat.uid} to #{options.uid} [WARN]" if options.uid and stat.uid isnt options.uid
           options.log? "Mecano `chown`: change gid from #{stat.gid} to #{options.gid} [WARN]" if options.gid and stat.gid isnt options.gid
           callback err, true
-      do_stat()
+      do_uid_gid()
 
 ## Dependencies
 
     fs = require 'ssh2-fs'
+    uid_gid = require './misc/uid_gid'
 
 
 

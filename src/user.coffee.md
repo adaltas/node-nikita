@@ -89,6 +89,10 @@ you are a member of the "wheel" group (gid of "10") with the command
       return callback new Error "Invalid option 'shell': #{JSON.strinfigy options.shell}" if options.shell? typeof options.shell isnt 'string'
       modified = false
       user_info = groups_info = null
+      do_uid_gid = ->
+        uid_gid options, (err) ->
+          return callback err if err
+          do_info()
       do_info = ->
         options.log? "Mecano `user`: Get user information for #{options.name} [DEBUG]"
         options.ssh?.passwd = null # Clear cache if any 
@@ -182,13 +186,14 @@ you are a member of the "wheel" group (gid of "10") with the command
           do_end()
       do_end = ->
         return callback null, modified
-      do_info()
+      do_uid_gid()
 
 ## Dependencies
 
     each = require 'each'
     misc = require './misc'
     string = require './misc/string'
+    uid_gid = require './misc/uid_gid'
 
 
 
