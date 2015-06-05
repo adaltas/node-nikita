@@ -111,7 +111,7 @@ functions share a common API with flexible options.
           jump_to_error err
           run()
       jump_to_error = (err) ->
-        while todos[0] and todos[0][0] isnt 'then' then todos.shift()
+        while todos[0] and todos[0].type isnt 'then' then todos.shift()
         todos.err = err
         # return run()
       run = ->
@@ -119,25 +119,25 @@ functions share a common API with flexible options.
         unless todo # Nothing more to do in current queue
           throw todos.err if todos.err and todos.throw_if_error
           return
-        if todo[0] is 'then'
+        if todo.type is 'then'
           {err, changed} = todos
           todos.err = null
           todos.changed = false
           todos.throw_if_error = true
-          todo[1][0].call obj, err, changed
+          todo.args[0].call obj, err, changed
           run()
           return
-        if todo[0] is 'call'
-          if todo[1][0].length is 2 # Async style
-            return call_async todo[1][0], null, null, 'call'
+        if todo.type is 'call'
+          if todo.args[0].length is 2 # Async style
+            return call_async todo.args[0], null, null, 'call'
           else # Sync style
-            changed = call_sync todo[1][0], []
+            changed = call_sync todo.args[0], []
             if changed then todos.changed = true
             return run()
         # Call the action
-        todo[1][0].user_args = todo[1][1]?.length > 2
-        fn = obj.registry[todo[0]] or registry[todo[0]]
-        call_async fn, todo[1][0], todo[1][1], todo[0]
+        todo.args[0].user_args = todo.args[1]?.length > 2
+        fn = obj.registry[todo.type] or registry[todo.type]
+        call_async fn, todo.args[0], todo.args[1], todo.type
       properties.child = get: ->
         ->
           # global_options = obj.options
@@ -151,12 +151,12 @@ functions share a common API with flexible options.
           module.exports(obj.options)
       properties.then = get: ->
         ->
-          todos.push ['then', arguments]
+          todos.push type: 'then', args: arguments
           process.nextTick run if todos.length is 1 # Activate the pump
           obj
       properties.call = get: ->
         ->
-          todos.push ['call', arguments]
+          todos.push type: 'call', args: arguments
           process.nextTick ->
           process.nextTick run if todos.length is 1 # Activate the pump
           obj
@@ -178,7 +178,7 @@ functions share a common API with flexible options.
             ->
               # id = status.id++
               dest = arguments[0]?.destination
-              todos.push [name, arguments]
+              todos.push type: name, args: arguments
               process.nextTick run if todos.length is 1 # Activate the pump
               obj
       Object.defineProperty obj, 'registered', get: ->
