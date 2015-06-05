@@ -47,8 +47,8 @@ require('mecano').touch({
         options.source = null
         options.content = ''
         options.log? "Create a new empty file"
-        @write options, (err, written) ->
-          callback err, written
+        @write options
+        .then callback
 
 ## Dependencies
 
