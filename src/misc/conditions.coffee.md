@@ -71,8 +71,9 @@ mecano.render({
           else
             next new Error "Invalid condition type"
         .then (err) ->
-          return skip err if err or not ok
-          succeed()
+          # return skip err if err or not ok
+          # succeed()
+          if err or not ok then skip(err) else succeed()
 
 ## Run an action if false: `not_if`
 
@@ -105,7 +106,6 @@ pass.
             ok = false if not_if
             next()
           else if type is 'function'
-            # not_if options, next, ( -> ok = false; next arguments...)
             if not_if.length < 2
               try
                 ok = false if not_if options
@@ -124,8 +124,9 @@ pass.
           else
             next new Error "Invalid condition type"
         .then (err) ->
-          return skip err if err or not ok
-          succeed()
+          # return skip err if err or not ok
+          # succeed()
+          if err or not ok then skip(err) else succeed()
   
 ## Run an action if a command succeed: `if_exec`
 
