@@ -40,7 +40,7 @@ functions share a common API with flexible options.
         todos.changed = false
         todos.throw_if_error = true
         try
-          result = fn.apply obj, args
+          fn.apply obj, args
         catch err
           todos = stack.shift()
           jump_to_error err
@@ -48,7 +48,6 @@ functions share a common API with flexible options.
         mtodos = todos
         todos = stack.shift()
         todos.unshift mtodos... if mtodos.length
-        result
       call_sync = (fn, args) ->
         stack.unshift todos
         todos = []
@@ -56,7 +55,7 @@ functions share a common API with flexible options.
         todos.changed = false
         todos.throw_if_error = true
         try
-          result = fn.apply obj, args
+          status = fn.apply obj, args
         catch err
           todos = stack.shift()
           jump_to_error err
@@ -64,8 +63,8 @@ functions share a common API with flexible options.
         mtodos = todos
         todos = stack.shift()
         todos.unshift mtodos... if mtodos.length
-        result
-      call_async = (fn, local_options={}, callback) ->
+        status
+      call_async = (fn, local_options={}, callback, name) ->
         global_options = obj.options
         parent_options = todos.options
         local_options_array = Array.isArray local_options
@@ -83,6 +82,7 @@ functions share a common API with flexible options.
         try
           stack.unshift todos
           todos = []
+          todos.parent = name
           todos.err = null
           todos.changed = false
           todos.throw_if_error = true
@@ -95,17 +95,16 @@ functions share a common API with flexible options.
             todos = stack.shift() if todos.length is 0
             todos.throw_if_error = false if err and callback
             jump_to_error err if err
-            call_callback callback, arguments if callback
             if Array.isArray options
             then for opts, i in options then status = true if toto[i] and not err and not opts.shy
             else status = true if toto and not err and not options.shy
             todos.changed = status if status
+            call_callback callback, arguments if callback
             return run()
           options = options[0] unless local_options_array
           wrap obj, [options, finish], (options, callback) ->
             todos.options = options
             fn.call obj, options, (err, status, args...) ->
-              # status = if options.shy then false else status
               callback err, status, args...
         catch err
           todos = stack.shift()
@@ -130,36 +129,33 @@ functions share a common API with flexible options.
           return
         if todo[0] is 'call'
           if todo[1][0].length is 2 # Async style
-            return call_async todo[1][0], null, null
+            return call_async todo[1][0], null, null, 'call'
           else # Sync style
             changed = call_sync todo[1][0], []
             if changed then todos.changed = true
             return run()
-        # Enrich with default options
-        # if Array.isArray todo[1][0]
-        #   for t in todo[1][0]
-        #     for k, v of obj.options
-        #       t[k] = obj.options[k] if typeof t[k] is 'undefined'
-        # else if typeof todo[1][0] is 'object'
-        #   t = todo[1][0]
-        #   for k, v of obj.options
-        #     t[k] = obj.options[k] if typeof t[k] is 'undefined'
         # Call the action
         todo[1][0].user_args = todo[1][1]?.length > 2
         fn = obj.registry[todo[0]] or registry[todo[0]]
-        call_async fn, todo[1][0], todo[1][1]
+        call_async fn, todo[1][0], todo[1][1], todo[0]
       properties.child = get: ->
         ->
+          # global_options = obj.options
+          # parent_options = todos.options
+          # options = []
+          # for k, v of parent_options
+          #   for opts in options then opts[k] = v if opts[k] is undefined and k in obj.propagated_options
+          # for k, v of global_options
+          #   for opts in options then opts[k] = v if opts[k] is undefined
+          # module.exports(options)
           module.exports(obj.options)
       properties.then = get: ->
         ->
-          # id = status.id++
           todos.push ['then', arguments]
           process.nextTick run if todos.length is 1 # Activate the pump
           obj
       properties.call = get: ->
         ->
-          # id = status.id++
           todos.push ['call', arguments]
           process.nextTick ->
           process.nextTick run if todos.length is 1 # Activate the pump

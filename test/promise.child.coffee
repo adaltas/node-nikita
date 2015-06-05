@@ -20,10 +20,10 @@ describe 'promise child', ->
           destination: "#{scratch}/a_file"
         .then (err, changed) ->
           touched++
-          changed.should.be.True
+          changed.should.be.true
           next err
       .then (err, changed) ->
-        changed.should.be.False
+        changed.should.be.false
         touched.should.eql 1
         next()
 

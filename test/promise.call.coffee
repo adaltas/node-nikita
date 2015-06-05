@@ -24,32 +24,32 @@ describe 'promise call', ->
         destination: "#{scratch}/a_file"
       , (err) ->
         touched++
-      .then (err, changed) ->
+      .then (err, status) ->
         called.should.eql 1
         touched.should.eql 2
         next()
 
-    it 'set changed to true', (next) ->
+    it 'set status to true', (next) ->
       mecano
       .call (options) ->
         return true
-      .then (err, changed) ->
-        changed.should.be.True
+      .then (err, status) ->
+        status.should.be.True
         next()
 
-    it 'set changed to false', (next) ->
+    it 'set status to false', (next) ->
       mecano
       .call (options) ->
         return false
-      .then (err, changed) ->
-        changed.should.be.False
+      .then (err, status) ->
+        status.should.be.False
         next()
 
     it 'catch error', (next) ->
       mecano
       .call (options) ->
         throw Error 'Catchme'
-      .then (err, changed) ->
+      .then (err, status) ->
         err.message.should.eql 'Catchme'
         next()
 
@@ -57,8 +57,8 @@ describe 'promise call', ->
     #   mecano
     #   .call ->
     #     return false
-    #   .then (err, changed) ->
-    #     changed.should.be.False
+    #   .then (err, status) ->
+    #     status.should.be.False
     #     next()
 
   describe 'async', ->
@@ -79,27 +79,52 @@ describe 'promise call', ->
         destination: "#{scratch}/a_file"
       , (err) ->
         touched++
-      .then (err, changed) ->
+      .then (err, status) ->
         called.should.eql 1
         touched.should.eql 2
         next()
 
-    it 'set changed to true', (next) ->
+    it 'set status to true', (next) ->
       mecano
       .call (options, next) ->
         process.nextTick ->
           next null, true
-      .then (err, changed) ->
-        changed.should.be.True
+      .then (err, status) ->
+        status.should.be.True
         next()
 
-    it 'set changed to false', (next) ->
+    it 'set status to false', (next) ->
       mecano
       .call (options, next) ->
         process.nextTick ->
           next null, false
-      .then (err, changed) ->
-        changed.should.be.False
+      .then (err, status) ->
+        status.should.be.false
+        next()
+
+    it 'set status to false while child module is true', (next) ->
+      m = mecano()
+      .call (options, callback) ->
+        m.execute
+          cmd: 'ls -l'
+        , (err, executed, stdout, stderr) ->
+          executed.should.be.true unless err
+          callback err, false
+      .then (err, status) ->
+        status.should.be.false
+        next()
+
+    it.skip 'set status to true while module sending is false', (next) ->
+      m = mecano()
+      .call (options, callback) ->
+        m.execute
+          cmd: 'ls -l'
+          if: false
+        , (err, executed, stdout, stderr) ->
+          executed.should.be.false unless err
+          callback err, true
+      .then (err, status) ->
+        status.should.be.true
         next()
 
   describe 'async err', ->
@@ -108,7 +133,7 @@ describe 'promise call', ->
       mecano
       .call (options, next) ->
         throw Error 'Catchme'
-      .then (err, changed) ->
+      .then (err, status) ->
         err.message.should.eql 'Catchme'
         next()
 
@@ -117,7 +142,7 @@ describe 'promise call', ->
       .call (options, next) ->
         process.nextTick ->
           next Error 'Catchme'
-      .then (err, changed) ->
+      .then (err, status) ->
         err.message.should.eql 'Catchme'
         next()
 
@@ -145,7 +170,7 @@ describe 'promise call', ->
       .call (options, next) ->
         process.nextTick ->
           next Error 'Catchme'
-      .then (err, changed) ->
+      .then (err, status) ->
         err.message.should.eql 'Catchme'
         next()
         # setTimeout next, 100000
@@ -159,7 +184,7 @@ describe 'promise call', ->
           content: 'ok'
           destination: "#{scratch}/a_file"
         , next
-      .then (err, changed) ->
+      .then (err, status) ->
         fs.readFile "#{scratch}/a_file", 'ascii', (err, content) ->
           next()
 
@@ -170,8 +195,8 @@ describe 'promise call', ->
           content: 'ok'
           destination: "#{scratch}/a_file"
         .then next
-      .then (err, changed) ->
-        changed.should.be.True
+      .then (err, status) ->
+        status.should.be.True
         fs.readFile "#{scratch}/a_file", 'ascii', (err, content) ->
           next()
 
@@ -183,8 +208,8 @@ describe 'promise call', ->
           destination: "#{scratch}/a_file"
           if_exists: "#{scratch}/a_file"
         .then next
-      .then (err, changed) ->
-        changed.should.be.False
+      .then (err, status) ->
+        status.should.be.False
         next()
 
         
