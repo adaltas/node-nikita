@@ -150,7 +150,7 @@ were executed successfully otherwise the callback `skip` is called.
           run.on "exit", (code) ->
             options.log? "Mecano `if_exec`: code is \"#{code}\""
             if code is 0 then next() else skip()
-        .on 'end', succeed
+        .then succeed
   
 ## Run an action unless a command succeed: `not_if_exec`
 
@@ -173,12 +173,8 @@ were executed with failure otherwise the callback `skip` is called.
             run.stderr.pipe options.stderr, end: false
           run.on "exit", (code) ->
             options.log? "Mecano `not_if_exec`: code is \"#{code}\""
-            if code is 0
-            then next new Error
-            else next()
-        .on 'error', ->
-          skip()
-        .on 'end', succeed
+            if code is 0 then skip() else next()
+        .then succeed
   
 ## Run an action if a file exists: `if_exists`
 
@@ -200,7 +196,7 @@ exists otherwise the callback `skip` is called.
           # options.log? "Mecano `if_exists`"
           fs.exists ssh, if_exists, (err, exists) ->
             if exists then next() else skip()
-        .on 'end', succeed
+        .then succeed
 
 ## Skip an action if a file exists: `not_if_exists`
 
@@ -221,12 +217,8 @@ exists otherwise the callback `skip` is called.
         .run (not_if_exists, next) ->
           # options.log? "Mecano `not_if_exists`"
           fs.exists ssh, not_if_exists, (err, exists) ->
-            if exists
-            then next new Error
-            else next()
-        .on 'error', ->
-          skip()
-        .on 'end', succeed
+            if exists then skip() else next()
+        .then succeed
 
 ## Ensure a file exist: `should_exist`
 

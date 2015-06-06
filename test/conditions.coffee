@@ -301,19 +301,23 @@ describe 'conditions', ->
         next
         () -> false.should.be.ok
 
-    they 'should succeed if all files exists', (ssh, next) ->
+    they 'should fail if at least one file is missing', (ssh, next) ->
       conditions.if_exists
         ssh: ssh
-        if_exists: [__dirname, __filename]
-        () -> false.should.be.ok
-        -> next()
-
-    they 'should skip if at least one file exists', (ssh, next) ->
-      conditions.if_exists
-        ssh: ssh
-        if_exists: [__dirname, './oh_no']
+        if_exists: [
+          __filename
+          './oh_no'
+          __filename
+        ]
         next
-        () -> false.should.be.ok
+        -> false.should.be.true
+
+    they 'should succeed if all files exist', (ssh, next) ->
+      conditions.if_exists
+        ssh: ssh
+        if_exists: [__filename, __filename, __filename]
+        (err) -> false.should.be.ok
+        -> next()
 
 
   describe 'not_if_exists', ->
@@ -360,36 +364,94 @@ describe 'conditions', ->
         next
         () -> false.should.be.ok
 
+    they 'should fail if at least one file exists', (ssh, next) ->
+      conditions.not_if_exists
+        ssh: ssh
+        not_if_exists: ['./oh_no', __filename, './oh_no']
+        next
+        -> false.should.be.true
+
+    they 'should succeed if all files are missing', (ssh, next) ->
+      conditions.not_if_exists
+        ssh: ssh
+        not_if_exists: ['./oh_no', './oh_no', './oh_no']
+        (err) -> false.should.be.ok
+        -> next()
+
   describe 'if_exec', ->
 
     they 'should succeed if command succeed', (ssh, next) ->
       conditions.if_exec
         ssh: ssh
-        if_exec: "if [ ! -d '/tmp' ]; then exit 1; fi"
+        if_exec: "exit 0"
         (err) -> false.should.be.ok
         -> next()
 
     they 'should fail if command succeed', (ssh, next) ->
       conditions.if_exec
         ssh: ssh
-        if_exec: "if [ -d '/tmp' ]; then exit 1; fi"
+        if_exec: "exit 1"
         () -> next()
         -> false.should.be.ok
+
+    they 'should fail if at least one command fail', (ssh, next) ->
+      conditions.if_exec
+        ssh: ssh
+        if_exec: [
+          "exit 0"
+          "exit 1"
+          "exit 0"
+        ]
+        next
+        -> false.should.be.true
+
+    they 'should succeed if all commands succeeed', (ssh, next) ->
+      conditions.if_exec
+        ssh: ssh
+        if_exec: [
+          "exit 0"
+          "exit 0"
+          "exit 0"
+        ]
+        (err) -> false.should.be.ok
+        -> next()
 
   describe 'not_if_exec', ->
 
     they 'should succeed if command fail', (ssh, next) ->
       conditions.not_if_exec
         ssh: ssh
-        not_if_exec: "if [ ! -d '/tmp' ]; then exit 1; fi" # ok
-        (err) -> next()
+        not_if_exec: "exit 0"
+        next
         -> false.should.be.ok
 
     they 'should fail if command fail', (ssh, next) ->
       conditions.not_if_exec
         ssh: ssh
-        not_if_exec: "if [ -d '/tmp' ]; then exit 1; fi"
+        not_if_exec: "exit 1"
         () -> false.should.be.ok
+        -> next()
+
+    they 'should fail if at least one command succeeed', (ssh, next) ->
+      conditions.not_if_exec
+        ssh: ssh
+        not_if_exec: [
+          "exit 1"
+          "exit 0"
+          "exit 1"
+        ]
+        next
+        -> false.should.be.true
+
+    they 'should succeed if all commands fail', (ssh, next) ->
+      conditions.not_if_exec
+        ssh: ssh
+        not_if_exec: [
+          "exit 1"
+          "exit 1"
+          "exit 1"
+        ]
+        (err) -> false.should.be.ok
         -> next()
 
   describe 'should_exist', ->
