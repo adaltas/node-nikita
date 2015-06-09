@@ -44,17 +44,20 @@ require('mecano').chmod({
       return callback Error "Missing option 'mode'" unless options.mode
       # options.log? "Mecano `chmod` [DEBUG]"
       do_stat = ->
-        return do_compare options.stat if options.stat
+        # Option 'stat' short-circuit
+        return do_chmod options.stat if options.stat
         options.log? "Mecano `chmod`: stat \"#{options.destination}\" [DEBUG]"
         fs.stat options.ssh, options.destination, (err, stat) ->
           return callback err if err
-          do_compare stat
-      do_compare = (stat) ->
-        return callback() if misc.mode.compare stat.mode, options.mode
-        options.log? "Mecano `chmod`: change mode from #{stat.mode} to #{options.mode} [INFO]"
-        do_chmod()
-      do_chmod = ->
+          do_chmod stat
+      do_chmod = (stat) ->
+        # Detect changes
+        if misc.mode.compare stat.mode, options.mode
+          options.log? "Mecano `chmod`: identical permissions on '#{options.destination}' [INFO]"
+          return callback()
+        # Apply changes
         fs.chmod options.ssh, options.destination, options.mode, (err) ->
+          options.log? "Mecano `chmod`: change permissions from '#{stat.mode}' to '#{options.mode}' on '#{options.destination}' [WARN]" unless err
           callback err, true
       do_stat()
 
