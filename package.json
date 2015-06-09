@@ -5,6 +5,7 @@
   "version": "0.4.1",
   "homepage": "http://www.adaltas.com/projects/node-mecano/",
   "author": "David Worms <david@adaltas.com>",
+  "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
     "url": "https://github.com/wdavidw/node-mecano"
