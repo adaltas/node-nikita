@@ -46,7 +46,7 @@ describe 'cron', ->
         cmd: '/remove/me'
       , (err, executed) ->
         err.message.should.eql 'valid when is required'
-        next()
+      .then next
 
     they 'invalid job: invalid time', (ssh, next) ->
       mecano
@@ -56,7 +56,7 @@ describe 'cron', ->
         when: true
       , (err, executed) ->
         err.message.should.eql 'valid when is required'
-        next()
+      .then next
 
     they 'invalid job: no cmd', (ssh, next) ->
       mecano
@@ -65,7 +65,7 @@ describe 'cron', ->
         when: '1 2 3 4 5'
       , (err, executed) ->
         err.message.should.eql 'valid cmd is required'
-        next()
+      .then next
 
     they 'invalid job: invalid cmd', (ssh, next) ->
       mecano
@@ -75,4 +75,15 @@ describe 'cron', ->
         when: '1 2 3 4 5'
       , (err, executed) ->
         err.message.should.eql 'valid cmd is required'
+      .then next
+
+    they 'invalid job: invalid cmd to exec', (ssh, next) ->
+      mecano
+        ssh: ssh
+      .cron_add
+        cmd: 'azertyytreza'
+        when: '1 2 3 4 5'
+        exec: true
+      , (err, added) ->
+        err.code.should.eql 127
         next()

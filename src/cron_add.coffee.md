@@ -75,14 +75,14 @@ require('mecano').cron_add({
         return callback() unless jobs
         @
         .execute
+          cmd: if options.user? then "su -l #{options.user} -c '#{options.cmd}'" else options.cmd
+          if: options.exec
+        .execute
           cmd: """
           #{crontab} - <<EOF
           #{jobs.join '\n'}
           EOF
           """
-        .execute
-          cmd: if options.user? then "su -l #{options.user} -c '#{options.cmd}'" else options.cmd
-          if: options.exec
         .then callback
 
 ## Dependencies
