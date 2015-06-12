@@ -428,11 +428,13 @@ require('mecano').write({
           options.log? "Mecano `write`: write destination [INFO]"
           options.flags ?= 'a' if append
           # Ownership and permission are also handled
-          fs.writeFile options.ssh, options.destination, content, options, (err) ->
+          uid_gid options, (err) ->
             return callback err if err
-            options.log? "Mecano `write`: content has changed [INFO]"
-            modified = true
-            do_end()
+            fs.writeFile options.ssh, options.destination, content, options, (err) ->
+              return callback err if err
+              options.log? "Mecano `write`: content has changed [INFO]"
+              modified = true
+              do_end()
       do_chown_chmod = =>
         @
         .chown
@@ -465,5 +467,6 @@ require('mecano').write({
     quote = require 'regexp-quote'
     misc = require './misc'
     string = require './misc/string'
+    uid_gid = require './misc/uid_gid'
 
 [diffLines]: https://github.com/kpdecker/jsdiff
