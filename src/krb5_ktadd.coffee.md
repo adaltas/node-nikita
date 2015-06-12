@@ -109,7 +109,7 @@ require('mecano').krb5_delrinc({
           status = true
           do_chown()
       do_chown = =>
-        @child()
+        @
         .chown
           destination: options.keytab
           uid: options.uid
