@@ -99,7 +99,7 @@ functions share a common API with flexible options.
             jump_to_error err if err
             status_callback = status_callback.some (status) -> !! status
             status_action = status_action.some (status) -> !! status
-            callback_args = [err, status_callback, [].slice.call(arguments)[1...]]
+            callback_args = [err, status_callback, [].slice.call(arguments)[1...]...]
             todos.changed = true if status_action and not options.shy
             call_callback callback, callback_args if callback
             return run()
@@ -135,7 +135,7 @@ functions share a common API with flexible options.
           if todo.args[0].length is 2 # Async style
             return call_async
               type: todo.type
-              args: []
+              args: todo.args
               handler: todo.args[0]
           else # Sync style
             changed = call_sync todo.args[0], []

@@ -212,6 +212,21 @@ describe 'promise call', ->
         status.should.be.False
         next()
 
+    it 'pass user arguments', (next) ->
+      callback_called = false
+      m = mecano
+      .call (options, next) ->
+        setImmediate ->
+          next null, true, 'argument'
+      , (err, status, argument) ->
+        callback_called = true
+        status.should.be.true
+        argument.should.equal 'argument'
+      .then (err, status) ->
+        callback_called.should.be.true unless err
+        status.should.be.true unless err
+        next err
+
         
 
 
