@@ -25,7 +25,9 @@ Create or modify a Unix user.
 *   `comment`   
     Short description of the login.   
 *   `password`   
-    The unencrypted password.  
+    The unencrypted password.   
+*   `password_sync`   
+    Synchronize password, default is "true".   
 *   `expiredate`  
     The date on which the user account is disabled.     
 *   `inactive`   
@@ -85,6 +87,7 @@ you are a member of the "wheel" group (gid of "10") with the command
       options.shell = "/bin/bash" if options.shell is true
       options.system ?= false
       options.gid ?= null
+      options.password_sync ?= true
       options.groups = options.groups.split ',' if typeof options.groups is 'string'
       return callback new Error "Invalid option 'shell': #{JSON.strinfigy options.shell}" if options.shell? typeof options.shell isnt 'string'
       modified = false
@@ -176,12 +179,13 @@ you are a member of the "wheel" group (gid of "10") with the command
           modified = true if changed
           do_password()
       do_password = =>
-        return do_end() unless options.password
         # TODO, detect changes in password
         @execute
-          cmd: "echo #{user.password} | passwd --stdin #{user.username}"
+          cmd: "echo #{options.password} | passwd --stdin #{options.name}"
+          if: options.password_sync and options.password
         , (err, modified) ->
           return callback err if err
+          options.log? 'Mecano `ldap_user`: password modified [WARN]' if modified
           # modified = true if modified
           do_end()
       do_end = ->
