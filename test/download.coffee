@@ -77,7 +77,7 @@ describe 'download', ->
         downloaded.should.be.False
         next()
 
-    they 'with specified cache file', (ssh, next) ->
+    they 'cache file', (ssh, next) ->
       @timeout 100000
       count = 0
       # Download a non existing file
@@ -97,7 +97,26 @@ describe 'download', ->
           content.should.equal 'okay'
           next()
 
-    they 'with specified cache dir', (ssh, next) ->
+    they 'cache file defined globally', (ssh, next) ->
+      @timeout 100000
+      count = 0
+      # Download a non existing file
+      source = 'http://localhost:12345'
+      destination = "#{scratch}/download"
+      cache = "#{scratch}/cache_file"
+      mecano(cache_file: cache).download
+        ssh: ssh
+        source: source
+        destination: destination
+      , (err, downloaded) ->
+        return next err if err
+        downloaded.should.be.ok
+        fs.readFile null, cache, 'ascii', (err, content) ->
+          return next err if err
+          content.should.equal 'okay'
+          next()
+
+    they 'cache dir', (ssh, next) ->
       @timeout 100000
       count = 0
       # Download a non existing file
@@ -106,7 +125,6 @@ describe 'download', ->
       mecano.download
         ssh: ssh
         source: source
-        log: console.log
         destination: destination
         cache_dir: "#{scratch}/cache_dir"
       , (err, downloaded) ->

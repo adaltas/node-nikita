@@ -131,6 +131,8 @@ mecano.download
           ssh: null
           source: options.source
           destination: cache_path
+          cache_dir: false
+          cache_file: false
           md5: options.md5
           sha1: options.sha1
           force: options.force_cache
@@ -143,6 +145,8 @@ mecano.download
             ssh: options.ssh
             source: cache_path
             destination: options.destination
+            cache_dir: false
+            cache_file: false
             mode: options.mode
             md5: options.md5
             sha1: options.sha1
