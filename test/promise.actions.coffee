@@ -7,7 +7,7 @@ describe 'promise actions', ->
 
   scratch = test.scratch @
 
-  describe 'sync', ->
+  describe 'handler', ->
 
     it 'register actions in callback', (next) ->
       msgs = []
@@ -35,7 +35,24 @@ describe 'promise actions', ->
           content.should.eql 'abcdefhij'
           next()
 
-    it 'handler errors in handler', (next) ->
+    it 'can throw error', (next) ->
+      # msgs = []
+      # m = mecano log: (msg) -> msgs.push msg if /\/file_\d/.test msg
+      mecano()
+      .write
+        destination: "#{scratch}/a_file"
+        content: 'abc'
+      , (err, written) ->
+        throw Error 'Catchme'
+      .write
+        invalid: true
+      .then (err, changed) ->
+        err.message.should.eql 'Catchme'
+        next()
+
+  describe 'error', ->
+
+    it 'throw in sync action', (next) ->
       m = mecano()
       m.register 'anaction', (options, callback) ->
         throw Error 'Catchme'
@@ -48,17 +65,15 @@ describe 'promise actions', ->
         err.message.should.eql 'Catchme'
         next()
 
-    it 'handler errors in callback', (next) ->
-      # msgs = []
-      # m = mecano log: (msg) -> msgs.push msg if /\/file_\d/.test msg
-      mecano()
-      .write
-        destination: "#{scratch}/a_file"
-        content: 'abc'
+    it 'throw in async action', (next) ->
+      m = mecano()
+      m.register 'anaction', (options, callback) ->
+        setImmediate -> callback Error 'Catchme'
+      m
+      .anaction
+        key: "value"
       , (err, written) ->
-        throw Error 'Catchme'
-      .write
-        invalid: true
+        err.message.should.eql 'Catchme'
       .then (err, changed) ->
         err.message.should.eql 'Catchme'
         next()
