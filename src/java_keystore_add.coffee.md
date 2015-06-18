@@ -31,7 +31,14 @@ and trustores.
 *   `javax.net.ssl.trustStorePassword`   
 *   `javax.net.ssl.keyStore`   
 *   `javax.net.ssl.keyStoreType`   
-*   `javax.net.ssl.keyStorePassword`   
+*   `javax.net.ssl.keyStorePassword`  
+
+## Relevant commands
+
+*   View the content of a Java KeyStore (JKS) and Java TrustStore:   
+   `keytool -list -v -keystore $keystore -alias $caname -storepass $storepass`
+*   View the content of a ".pem" certificate:   
+    `openssl x509 -in cert.pem -text`
 
 ## Uploading public and private keys into a keystore
 
