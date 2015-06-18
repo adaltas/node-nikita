@@ -58,6 +58,7 @@ require('mecano').krb5_delrinc({
         @execute
           cmd: "export TZ=GMT; klist -kt #{options.keytab}"
           code_skipped: 1
+          shy: true
         , (err, exists, stdout, stderr) ->
           return callback err if err
           unless exists
@@ -77,6 +78,7 @@ require('mecano').krb5_delrinc({
             return do_ktadd() 
           @execute
             cmd: misc.kadmin options, "getprinc -terse #{options.principal}"
+            shy: true
           , (err, exists, stdout, stderr) ->
             return err if err
             # return do_ktadd() unless -1 is stdout.indexOf 'does not exist'
@@ -109,7 +111,7 @@ require('mecano').krb5_delrinc({
           status = true
           do_chown()
       do_chown = =>
-        @child()
+        @
         .chown
           destination: options.keytab
           uid: options.uid

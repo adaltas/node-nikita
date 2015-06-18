@@ -1,7 +1,8 @@
 
-# `service_start(options, callback)` 
+# `java_keystore_add(options, callback)` 
 
-Start a service.
+Add certificates, private keys and certificate authorities to java keystores
+and trustores.
 
 ## Options
 
@@ -75,9 +76,6 @@ require('mecano').java_keystore_add([{
       ###
       tmp_location = "/tmp/mecano_java_keystore_#{Date.now()}"
       @execute
-        # log: console.log
-        # stdout: process.stdout
-        # stderr: process.stderr
         cmd: """
         cleanup () { rm -rf tmp_location; }
         mkdir -p -m 700 #{tmp_location}

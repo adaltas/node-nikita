@@ -90,25 +90,25 @@ functions share a common API with flexible options.
           todos.err = null
           todos.changed = false
           todos.throw_if_error = true
-          finish = (err, changed) ->
-            toto = for k in changed then k
-            arguments[0] ?= null
-            arguments[1] = !!changed.some (status) -> status unless err
-            toto = toto[0] unless local_options_array
+          status_callback = []
+          status_action = []
+          finish = (err) ->
             arguments.length = 2 if arguments.length is 0
             todos = stack.shift() if todos.length is 0
             todos.throw_if_error = false if err and callback
             jump_to_error err if err
-            if Array.isArray options
-            then for opts, i in options then status = true if toto[i] and not err and not opts.shy
-            else status = true if toto and not err and not options.shy
-            todos.changed = status if status
-            call_callback callback, arguments if callback
+            status_callback = status_callback.some (status) -> !! status
+            status_action = status_action.some (status) -> !! status
+            callback_args = [err, status_callback, [].slice.call(arguments)[1...]...]
+            todos.changed = true if status_action and not options.shy
+            call_callback callback, callback_args if callback
             return run()
           options = options[0] unless local_options_array
           wrap obj, [options, finish], (options, callback) ->
             todos.options = options
             action.handler.call obj, options, (err, status, args...) ->
+              status_callback.push status
+              status_action.push status unless options.shy
               callback err, status, args...
         catch err
           todos = stack.shift()
@@ -133,10 +133,9 @@ functions share a common API with flexible options.
           return
         if todo.type is 'call'
           if todo.args[0].length is 2 # Async style
-            # return call_async todo.args[0], null, null, 'call'
             return call_async
               type: todo.type
-              args: []
+              args: todo.args
               handler: todo.args[0]
           else # Sync style
             changed = call_sync todo.args[0], []
@@ -151,14 +150,6 @@ functions share a common API with flexible options.
           handler: obj.registry[todo.type] or registry[todo.type]
       properties.child = get: ->
         ->
-          # global_options = obj.options
-          # parent_options = todos.options
-          # options = []
-          # for k, v of parent_options
-          #   for opts in options then opts[k] = v if opts[k] is undefined and k in obj.propagated_options
-          # for k, v of global_options
-          #   for opts in options then opts[k] = v if opts[k] is undefined
-          # module.exports(options)
           module.exports(obj.options)
       properties.then = get: ->
         ->

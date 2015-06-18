@@ -23,12 +23,12 @@ describe 'krb5_ktadd', ->
       principal: "mecano@#{config.krb5.realm}"
       keytab: "#{scratch}/mecano.keytab"
     , (err, status) ->
-      status.should.be.True
+      status.should.be.true
     .krb5_ktadd
       principal: "mecano@#{config.krb5.realm}"
       keytab: "#{scratch}/mecano.keytab"
     , (err, status) ->
-      status.should.be.False
+      status.should.be.false
     .then next
 
   they 'change permission', (ssh, next) ->
@@ -48,7 +48,7 @@ describe 'krb5_ktadd', ->
       keytab: "#{scratch}/mecano.keytab"
       mode: 0o0707
     , (err, status) ->
-      status.should.be.True
+      status.should.be.true
     .then next
 
 

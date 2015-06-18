@@ -5,6 +5,7 @@
   "version": "0.4.1",
   "homepage": "http://www.adaltas.com/projects/node-mecano/",
   "author": "David Worms <david@adaltas.com>",
+  "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
     "url": "https://github.com/wdavidw/node-mecano"
@@ -49,6 +50,6 @@
   "scripts": {
     "coffee": "./node_modules/.bin/coffee -b -o lib src",
     "pretest": "./node_modules/.bin/coffee -b -o lib src",
-    "test": "NODE_ENV=test ./node_modules/.bin/mocha --compilers coffee:coffee-script/register --reporter dot"
+    "test": "NODE_ENV=test ./node_modules/.bin/mocha"
   }
 }
