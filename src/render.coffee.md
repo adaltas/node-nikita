@@ -86,8 +86,7 @@ require('mecano').render({
           extension = path.extname options.source
           options.engine = 'nunjunks' if extension is '.j2'
         options.source = null
-        @write options, (err, written) ->
-          callback err, written
+        @write(options).then callback
       do_read_source()
 
 ## Dependencies
