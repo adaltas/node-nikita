@@ -1,5 +1,6 @@
 
 http = require 'http'
+path = require 'path'
 mecano = require "../src"
 test = require './test'
 they = require 'ssh2-they'
@@ -52,7 +53,6 @@ describe 'download', ->
     they 'detect change', (ssh, next) ->
       ssh = null
       @timeout 100000
-      count = 0
       # Download a non existing file
       source = 'http://localhost:12345'
       destination = "#{scratch}/download"
@@ -79,7 +79,6 @@ describe 'download', ->
 
     they 'cache file', (ssh, next) ->
       @timeout 100000
-      count = 0
       # Download a non existing file
       source = 'http://localhost:12345'
       destination = "#{scratch}/download"
@@ -99,7 +98,6 @@ describe 'download', ->
 
     they 'cache file defined globally', (ssh, next) ->
       @timeout 100000
-      count = 0
       # Download a non existing file
       source = 'http://localhost:12345'
       destination = "#{scratch}/download"
@@ -118,7 +116,6 @@ describe 'download', ->
 
     they 'cache dir', (ssh, next) ->
       @timeout 100000
-      count = 0
       # Download a non existing file
       source = 'http://localhost:12345'
       destination = "#{scratch}/download"
@@ -137,7 +134,6 @@ describe 'download', ->
 
     they 'with specified cache file but disabled', (ssh, next) ->
       @timeout 100000
-      count = 0
       # Download a non existing file
       source = 'http://localhost:12345'
       destination = "#{scratch}/download"
@@ -278,52 +274,68 @@ describe 'download', ->
   #           downloaded.should.eql 0
   #           next()
 
-  # describe 'file', ->
+  describe 'file', ->
 
-  #   they 'should deal with file protocol', (ssh, next) ->
-  #     source = "file://#{__filename}"
-  #     destination = "#{scratch}/download_test"
-  #     mecano
-  #       ssh: ssh
-  #     .download
-  #       source: source
-  #       destination: destination # Download a non existing file
-  #     , (err, downloaded) ->
-  #       return next err if err
-  #       downloaded.should.be.ok
-  #     .call (next) ->
-  #       fs.readFile @options.ssh, destination, 'ascii', (err, content) ->
-  #         return next err if err
-  #         content.should.containEql 'yeah'
-  #         next()
-  #     .download
-  #       source: source
-  #       destination: destination # Download on an existing file
-  #     , (err, downloaded) ->
-  #       return next err if err
-  #       downloaded.should.not.be.ok
-  #       next()
+    they 'should deal with file protocol', (ssh, next) ->
+      source = "file://#{__filename}"
+      destination = "#{scratch}/download_test"
+      mecano
+        ssh: ssh
+      .download
+        source: source
+        destination: destination # Download a non existing file
+      , (err, downloaded) ->
+        return next err if err
+        downloaded.should.be.ok
+      .call ({}, callback) ->
+        fs.readFile @options.ssh, destination, 'ascii', (err, content) ->
+          content.should.containEql 'yeah' unless err
+          callback err
+      .download
+        source: source
+        destination: destination # Download on an existing file
+      , (err, downloaded) ->
+        return next err if err
+        downloaded.should.be.false
+        next()
 
-  #   they 'should default to file without protocol', (ssh, next) ->
-  #     source = "/#{__filename}"
-  #     destination = "#{scratch}/download_test"
-  #     # Download a non existing file
-  #     mecano
-  #       ssh: ssh
-  #     .download
-  #       source: source
-  #       destination: destination
-  #     , (err, downloaded) ->
-  #       return next err if err
-  #       downloaded.should.be.ok
-  #     .call (next) ->
-  #       fs.readFile @options.ssh, destination, 'ascii', (err, content) ->
-  #         content.should.containEql 'yeah'
-  #         next()
-  #     .download # Download on an existing file
-  #       source: source
-  #       destination: destination
-  #     , (err, downloaded) ->
-  #       return next err if err
-  #       downloaded.should.not.be.ok
-  #       next()
+    they 'should default to file without protocol', (ssh, next) ->
+      source = "#{__filename}"
+      destination = "#{scratch}/download_test"
+      # Download a non existing file
+      mecano
+        ssh: ssh
+      .download
+        source: source
+        destination: destination
+      , (err, downloaded) ->
+        return next err if err
+        downloaded.should.be.ok
+      .call ({}, callback) ->
+        fs.readFile @options.ssh, destination, 'ascii', (err, content) ->
+          content.should.containEql 'yeah' unless err
+          callback err
+      .download # Download on an existing file
+        source: source
+        destination: destination
+      , (err, downloaded) ->
+        return next err if err
+        downloaded.should.be.false
+        next()
+
+    they 'cache dir', (ssh, next) ->
+      # Download a non existing file
+      source = 'http://localhost:12345'
+      destination = "#{scratch}/download"
+      mecano.download
+        ssh: ssh
+        source: "#{__filename}"
+        destination: "#{scratch}/download_test"
+        cache_dir: "#{scratch}/cache_dir"
+      , (err, downloaded) ->
+        return next err if err
+        downloaded.should.be.true
+        fs.exists null, "#{scratch}/cache_dir/#{path.basename __filename}", (err, exists) ->
+          return next err if err
+          exists.should.be.true
+          next()
