@@ -220,9 +220,9 @@ mecano.download
           else if u.protocol in protocols_ftp
             return callback new Error 'FTP download not supported over SSH'
           else
-            fs.createReadStream null, u.pathname, (err, rs) ->
+            fs.createWriteStream options.ssh, stageDestination, (err, ws) ->
               return callback err if err
-              fs.createWriteStream options.ssh, stageDestination, (err, ws) ->
+              fs.createReadStream null, u.pathname, (err, rs) ->
                 return callback err if err
                 rs.on 'error', callback
                 rs.pipe(ws)
@@ -249,6 +249,7 @@ mecano.download
                 rs.resume()
             else
               fs.createReadStream null, u.pathname, (err, rs) ->
+                return callback err if err
                 rs.pipe ws
             ws.on 'close', () ->
               do_checksum()
