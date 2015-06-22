@@ -122,12 +122,12 @@ require('mecano').render({
         @mkdir
           destination: "#{path.dirname options.destination}"
         , (err) ->
+          return next err if err
           fs.createWriteStream options.ssh, options.destination, (err, ws) ->
             return callback err if err
-            options.ssh ?= null
-            fs.createReadStream  options.ssh, options.source, (err, rs) ->
+            fs.createReadStream null, options.source, (err, rs) ->
               return callback err if err
-              rs.pipe(ws)
+              rs.pipe ws
               .on 'close', ->
                 uploaded = true
                 do_md5()
