@@ -100,8 +100,8 @@ functions share a common API with flexible options.
             status_callback = status_callback.some (status) -> !! status
             status_action = status_action.some (status) -> !! status
             callback_args = [err, status_callback, [].slice.call(arguments)[1...]...]
-            todos.changed = true if status_action and not options.shy
             call_callback callback, callback_args if callback
+            todos.changed = true if status_action and not options.shy
             return run()
           options = options[0] unless local_options_array
           wrap obj, [options, finish], (options, callback) ->
@@ -109,7 +109,8 @@ functions share a common API with flexible options.
             action.handler.call obj, options, (err, status, args...) ->
               status_callback.push status
               status_action.push status unless options.shy
-              callback err, status, args...
+              setImmediate ->
+                callback err, status, args...
         catch err
           todos = stack.shift()
           jump_to_error err

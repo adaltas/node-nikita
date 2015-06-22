@@ -114,7 +114,7 @@ describe 'promise call', ->
         status.should.be.false
         next()
 
-    it.skip 'set status to true while module sending is false', (next) ->
+    it 'set status to true while module sending is false', (next) ->
       m = mecano()
       .call (options, callback) ->
         m.execute
