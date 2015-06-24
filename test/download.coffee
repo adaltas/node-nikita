@@ -339,3 +339,28 @@ describe 'download', ->
           return next err if err
           exists.should.be.true
           next()
+
+    they 'cache dir with md5 string', (ssh, next) ->
+      # Download a non existing file
+      source = 'http://localhost:12345'
+      destination = "#{scratch}/download"
+      mecano
+        ssh: ssh
+      .write
+        destination: "#{scratch}/a_file"
+        content: 'okay'
+      .download
+        source: "#{scratch}/a_file"
+        destination: "#{scratch}/download_test"
+        cache_dir: "#{scratch}/cache_dir"
+        md5: 'df8fede7ff71608e24a5576326e41c75'
+      , (err, downloaded) ->
+        return next err if err
+        downloaded.should.be.true
+        fs.readFile ssh, "#{scratch}/cache_dir/a_file", 'ascii', (err, data) ->
+          return next err if err
+          data.should.eql 'okay'
+          fs.readFile ssh, "#{scratch}/download_test", 'ascii', (err, data) ->
+            return next err if err
+            data.should.eql 'okay'
+            next()
