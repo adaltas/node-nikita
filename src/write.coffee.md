@@ -388,25 +388,26 @@ require('mecano').write({
       do_diff = ->
         return do_chown_chmod() if destinationHash is string.hash content
         options.log? "Mecano `write`: file content has changed [WARN]"
-        if options.diff
-          lines = diff.diffLines destination, content
-          options.diff lines if typeof options.diff is 'function'
-          if options.stdout
-            count_added = count_removed = 0
-            padsize = Math.ceil(lines.length/10)
-            for line in lines
-              continue if line.value is null
-              if not line.added and not line.removed
-                count_added++; count_removed++; continue
-              ls = string.lines line.value
-              if line.added
-                for line in ls
-                  count_added++
-                  options.stdout.write "#{pad padsize, ''+(count_added)} + #{line}\n"
-              else
-                for line in ls
-                  count_removed++
-                  options.stdout.write "#{pad padsize, ''+(count_removed)} - #{line}\n"
+        diff content, destination, options
+        # if options.diff
+        #   lines = diff.diffLines destination, content
+        #   options.diff lines if typeof options.diff is 'function'
+        #   if options.stdout
+        #     count_added = count_removed = 0
+        #     padsize = Math.ceil(lines.length/10)
+        #     for line in lines
+        #       continue if line.value is null
+        #       if not line.added and not line.removed
+        #         count_added++; count_removed++; continue
+        #       ls = string.lines line.value
+        #       if line.added
+        #         for line in ls
+        #           count_added++
+        #           options.stdout.write "#{pad padsize, ''+(count_added)} + #{line}\n"
+        #       else
+        #         for line in ls
+        #           count_removed++
+        #           options.stdout.write "#{pad padsize, ''+(count_removed)} - #{line}\n"
         do_backup()
       do_backup = =>
         return do_write() unless options.backup and destinationHash
@@ -462,10 +463,9 @@ require('mecano').write({
     path = require 'path'
     eco = require 'eco'
     nunjucks = require 'nunjucks/src/environment'
-    pad = require 'pad'
-    diff = require 'diff'
     quote = require 'regexp-quote'
     misc = require './misc'
+    diff = require './misc/diff'
     string = require './misc/string'
     uid_gid = require './misc/uid_gid'
 
