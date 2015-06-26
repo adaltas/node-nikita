@@ -33,7 +33,7 @@
     "rimraf": ">=2.4.0",
     "ssh2-connect": ">=0.0.7",
     "ssh2-exec": ">=0.3.1",
-    "ssh2-fs": ">=0.1.2",
+    "ssh2-fs": ">=0.1.3",
     "tilde-expansion": ">=0.0.0"
   },
   "devDependencies": {
