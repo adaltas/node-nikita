@@ -7,6 +7,9 @@ Create a new Kerberos principal with a password or an optional keytab.
 
 *   `user` (name | uid)
     the user of the crontab. the SSH user by default
+*   `match` (null | string | regexp).   
+    The cron entry to match, a string will be converted to a regexp and an
+    undefined or null value will match the exact command.   
 *   `when` (string)
     cron-styled time string. Defines the frequency of the cron job
 *   `cmd`
@@ -40,8 +43,8 @@ require('mecano').cron_add({
 ## Source Code
 
     module.exports = (options, callback) ->
-      return callback new Error 'valid when is required' unless options.when?.length > 0
-      return callback new Error 'valid cmd is required' unless options.cmd?.length > 0
+      return callback new Error 'valid when is required' unless options.when
+      return callback new Error 'valid cmd is required' unless options.cmd
       if options.user?
         options.log? "Using user #{options.user} [DEBUG]"
         crontab = "crontab -u #{options.user}"
@@ -56,20 +59,28 @@ require('mecano').cron_add({
       , (err, _, stdout, stderr) ->
         throw err if err and not /^no crontab for/.test stderr
         # throw Error 'User crontab not found' if /^no crontab for/.test stderr
-        myjob = "#{options.when} #{options.cmd}"
-        jobs = stdout.trim().split '\n'
+        new_job = "#{options.when} #{options.cmd}"
         # remove useless last element
-        regex = new RegExp ".* #{options.cmd}"
-        for job in jobs
-          if myjob is job
-            options.log? "Job is found in crontab, skipping [INFO]"
-            return jobs = null
+        regex =
+          unless options.match then new RegExp ".* #{options.cmd}"
+          else if typeof options.match is 'string' then new RegExp options.match
+          else if util.isRegExp options.match then options.match
+          else throw Error "Invalid option 'match'"
+        added = true
+        jobs = for job, i in string.lines stdout.trim()
+          # console.log job, regex.test job
           if regex.test job
-            options.log? "Job is found in crontab, but frequency doesn't match. Updating [WARN]"
-            job = myjob
-            return
-        options.log? "Job not found in crontab. Adding [WARN]"
-        jobs.push myjob
+            added = false
+            break if job is new_job # Found job, stop here
+            options.log? "`mecano chron_add`: entry has changed [WARN]"
+            diff job, new_job, options
+            job = new_job
+            modified = true
+          job
+        if added
+          jobs.push new_job
+          options.log? "Job not found in crontab. Adding [WARN]"
+        jobs = null unless added or modified
       .then (err) ->
         return callback err if err
         return callback() unless jobs
@@ -83,9 +94,13 @@ require('mecano').cron_add({
           #{jobs.join '\n'}
           EOF
           """
+          # if: -> jobs
         .then callback
 
 ## Dependencies
 
-    wrap = require './misc/wrap'
+    util = require 'util'
     execute = require './execute'
+    diff = require './misc/diff'
+    string = require './misc/string'
+    wrap = require './misc/wrap'
