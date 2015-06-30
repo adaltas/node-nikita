@@ -33,6 +33,7 @@
       service: require '../service'
       service_startup: require '../service_startup'
       service_start: require '../service_start'
+      service_stop: require '../service_stop'
       system_limits: require '../system_limits'
       touch: require '../touch'
       upload: require '../upload'
