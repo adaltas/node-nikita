@@ -36,7 +36,7 @@ describe 'download', ->
         destination: destination
       , (err, downloaded) ->
         return next err if err
-        downloaded.should.be.ok
+        downloaded.should.be.true()
       .call (_, next) ->
         fs.readFile @options.ssh, destination, 'ascii', (err, content) ->
           return next err if err
@@ -47,7 +47,7 @@ describe 'download', ->
         destination: destination
       , (err, downloaded) ->
         return next err if err
-        downloaded.should.not.be.ok
+        downloaded.should.be.false()
         next()
 
     they 'detect change', (ssh, next) ->
@@ -63,7 +63,7 @@ describe 'download', ->
         destination: destination
       , (err, downloaded) ->
         return next err if err
-        downloaded.should.be.ok
+        downloaded.should.be.true()
       .call (_, next) ->
         fs.readFile @options.ssh, destination, 'ascii', (err, content) ->
           return next err if err
@@ -74,7 +74,7 @@ describe 'download', ->
         destination: destination
       , (err, downloaded) ->
         return next err if err
-        downloaded.should.be.False
+        downloaded.should.be.false()
         next()
 
     they 'cache file', (ssh, next) ->
@@ -90,7 +90,7 @@ describe 'download', ->
         cache_file: cache
       , (err, downloaded) ->
         return next err if err
-        downloaded.should.be.ok
+        downloaded.should.be.true()
         fs.readFile null, cache, 'ascii', (err, content) ->
           return next err if err
           content.should.equal 'okay'
@@ -108,7 +108,7 @@ describe 'download', ->
         destination: destination
       , (err, downloaded) ->
         return next err if err
-        downloaded.should.be.ok
+        downloaded.should.be.true()
         fs.readFile null, cache, 'ascii', (err, content) ->
           return next err if err
           content.should.equal 'okay'
@@ -126,10 +126,10 @@ describe 'download', ->
         cache_dir: "#{scratch}/cache_dir"
       , (err, downloaded) ->
         return next err if err
-        downloaded.should.be.ok
+        downloaded.should.be.true()
         fs.exists null, "#{scratch}/cache_dir/localhost:12345", (err, exists) ->
           return next err if err
-          exists.should.be.ok
+          exists.should.be.true()
           next()
 
     they 'with specified cache file but disabled', (ssh, next) ->
@@ -145,10 +145,10 @@ describe 'download', ->
         cache_dir: false
       , (err, downloaded) ->
         return next err if err
-        downloaded.should.be.ok
+        downloaded.should.be.true()
         fs.exists null, "#{scratch}/cache_dir/not_exists", (err, exists) ->
           return next err if err
-          exists.should.not.be.ok
+          exists.should.be.false()
           next()
 
     they 'should chmod', (ssh, next) ->
@@ -164,7 +164,7 @@ describe 'download', ->
         mode: 0o770
       , (err, downloaded) ->
         return next err if err
-        downloaded.should.be.ok
+        downloaded.should.be.true()
       .call (_, next) ->
         fs.readFile @options.ssh, destination, 'ascii', (err, content) ->
           return next err if err
@@ -175,7 +175,7 @@ describe 'download', ->
         destination: destination
       , (err, downloaded) ->
         return next err if err
-        downloaded.should.not.be.ok
+        downloaded.should.be.false()
         next()
 
     describe 'md5', ->
@@ -204,7 +204,7 @@ describe 'download', ->
           md5: 'df8fede7ff71608e24a5576326e41c75'
         , (err, downloaded) ->
           return next err if err
-          downloaded.should.be.ok
+          downloaded.should.be.true()
           next()
 
       they 'count 0 if a file exist with same checksum', (ssh, next) ->
@@ -218,14 +218,14 @@ describe 'download', ->
           destination: destination
         , (err, downloaded) ->
           return next err if err
-          downloaded.should.be.true
+          downloaded.should.be.true()
         .download
           source: source
           destination: destination
           md5: 'df8fede7ff71608e24a5576326e41c75'
         , (err, downloaded) ->
           return next err if err
-          downloaded.should.not.be.ok
+          downloaded.should.be.false()
           next()
 
       they 'is computed if true', (ssh, next) ->
@@ -240,13 +240,13 @@ describe 'download', ->
           destination: destination
           md5: true
         , (err, downloaded) ->
-          downloaded.should.be.true unless err
+          downloaded.should.be.true() unless err
         .download
           source: source
           destination: destination
           md5: true
         , (err, downloaded) ->
-          downloaded.should.be.false unless err
+          downloaded.should.be.false() unless err
         .then next
 
   # describe 'ftp', ->
@@ -285,7 +285,7 @@ describe 'download', ->
         destination: destination # Download a non existing file
       , (err, downloaded) ->
         return next err if err
-        downloaded.should.be.ok
+        downloaded.should.be.true()
       .call ({}, callback) ->
         fs.readFile @options.ssh, destination, 'ascii', (err, content) ->
           content.should.containEql 'yeah' unless err
@@ -295,7 +295,7 @@ describe 'download', ->
         destination: destination # Download on an existing file
       , (err, downloaded) ->
         return next err if err
-        downloaded.should.be.false
+        downloaded.should.be.false()
         next()
 
     they 'should default to file without protocol', (ssh, next) ->
@@ -309,7 +309,7 @@ describe 'download', ->
         destination: destination
       , (err, downloaded) ->
         return next err if err
-        downloaded.should.be.ok
+        downloaded.should.be.true()
       .call ({}, callback) ->
         fs.readFile @options.ssh, destination, 'ascii', (err, content) ->
           content.should.containEql 'yeah' unless err
@@ -319,7 +319,7 @@ describe 'download', ->
         destination: destination
       , (err, downloaded) ->
         return next err if err
-        downloaded.should.be.false
+        downloaded.should.be.false()
         next()
 
     they 'cache,md5 with binary file', (ssh, next) ->
@@ -333,10 +333,10 @@ describe 'download', ->
         md5: '3f104676a5f72de08b811dbb725244ff'
       , (err, downloaded) ->
         return next err if err
-        downloaded.should.be.true
-        fs.exists null, "#{scratch}/cache_dir/#{path.basename __filename}", (err, exists) ->
+        downloaded.should.be.true()
+        fs.exists null, "#{scratch}/cache_dir/#{path.basename source}", (err, exists) ->
           return next err if err
-          exists.should.be.true
+          exists.should.be.true()
           next()
 
     they 'cache dir', (ssh, next) ->
@@ -350,10 +350,10 @@ describe 'download', ->
         cache_dir: "#{scratch}/cache_dir"
       , (err, downloaded) ->
         return next err if err
-        downloaded.should.be.true
+        downloaded.should.be.true()
         fs.exists null, "#{scratch}/cache_dir/#{path.basename __filename}", (err, exists) ->
           return next err if err
-          exists.should.be.true
+          exists.should.be.true()
           next()
 
     they 'cache dir with md5 string', (ssh, next) ->
@@ -372,7 +372,7 @@ describe 'download', ->
         md5: 'df8fede7ff71608e24a5576326e41c75'
       , (err, downloaded) ->
         return next err if err
-        downloaded.should.be.true
+        downloaded.should.be.true()
         fs.readFile ssh, "#{scratch}/cache_dir/a_file", 'ascii', (err, data) ->
           return next err if err
           data.should.eql 'okay'
