@@ -9,6 +9,7 @@
       cron_add: require '../cron_add'
       cron_remove: require '../cron_remove'
       download: require '../download'
+      docker: require '../docker_run'
       execute: require '../execute'
       extract: require '../extract'
       git: require '../git'

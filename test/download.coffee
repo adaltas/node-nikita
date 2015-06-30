@@ -322,6 +322,23 @@ describe 'download', ->
         downloaded.should.be.false
         next()
 
+    they 'cache,md5 with binary file', (ssh, next) ->
+      source = "#{__dirname}/download.zip"
+      destination = "#{scratch}/download"
+      mecano.download
+        ssh: ssh
+        source: source
+        destination: "#{scratch}/download_test"
+        cache_dir: "#{scratch}/cache_dir"
+        md5: '3f104676a5f72de08b811dbb725244ff'
+      , (err, downloaded) ->
+        return next err if err
+        downloaded.should.be.true
+        fs.exists null, "#{scratch}/cache_dir/#{path.basename __filename}", (err, exists) ->
+          return next err if err
+          exists.should.be.true
+          next()
+
     they 'cache dir', (ssh, next) ->
       # Download a non existing file
       source = 'http://localhost:12345'
