@@ -249,7 +249,6 @@ describe 'download', ->
           downloaded.should.be.false unless err
         .then next
 
-
   # describe 'ftp', ->
 
   #   it 'should deal with ftp protocol', (next) ->

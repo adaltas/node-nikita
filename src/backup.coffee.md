@@ -60,7 +60,6 @@ Commons backup functions provided by backmeup. For additional information, pleas
 ```js
 var backmeup = require('backmeup');
 
-
 backmeup({
   name: 'my_backup'
   ssh: ssh_connect
