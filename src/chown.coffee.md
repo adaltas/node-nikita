@@ -46,6 +46,7 @@ To list all files owner by a user or a uid, run:
 ```bash
 find /var/tmp -user `whoami`
 find /var/tmp -uid 1000
+find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
 ```
 
 ## Source Code
