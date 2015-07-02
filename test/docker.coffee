@@ -10,6 +10,13 @@ describe 'docker', ->
 
   scratch = test.scratch @
 
+  they 'prepare docker env', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .execute
+      cmd:'if command -v docker-machine >/dev/null; then docker-machine start >/dev/null && eval "$(docker-machine env dev)"; fi'
+    .then next
+
   they 'run a command', (ssh, next) ->
     mecano
       ssh: ssh
