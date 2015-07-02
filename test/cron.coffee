@@ -39,7 +39,7 @@ describe 'cron', ->
 
   describe 'match', ->
 
-    they.only 'regexp', (ssh, next) ->
+    they 'regexp', (ssh, next) ->
       mecano
         ssh: ssh
       .cron_add
