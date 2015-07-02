@@ -34,9 +34,9 @@ The following action make sure the git repository is synchronized to the latest
 HEAD revision.
 
 ```javascript
-require('mecano').extract({
+require('mecano').git({
   source: 'https://github.com/wdavidw/node-mecano.git'
-  destation: '/tmp/mecano'
+  destination: '/tmp/mecano'
 }, function(err, synchronized){
   console.log(err ? err.message : 'Repo was synchronized: ' + synchronized);
 });
