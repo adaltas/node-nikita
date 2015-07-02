@@ -276,14 +276,14 @@ describe 'write', ->
       mecano.write
         ssh: ssh
         destination: "#{scratch}/fromto.md"
-        content: 'here we are\nyou coquin'
+        content: 'here we are\nyou+coquin'
         replace: 'my friend'
-        before: 'you coquin'
+        before: 'you+coquin' # Regexp must escape the plus sign
       , (err, written) ->
         return next err if err
         fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
           return next err if err
-          content.should.eql 'here we are\nmy friend\nyou coquin'
+          content.should.eql 'here we are\nmy friend\nyou+coquin'
           next()
   
     they 'without match and before a regexp', (ssh, next) ->
@@ -489,7 +489,7 @@ describe 'write', ->
 
     describe 'will not prepend/append if match', ->
 
-      they 'before', (ssh, next) ->
+      they 'before true, replace a string, match a regexp', (ssh, next) ->
         # Prepare by creating a file with content
         mecano.write
           ssh: ssh
@@ -514,6 +514,42 @@ describe 'write', ->
                 ssh: ssh
                 destination: "#{scratch}/file"
                 match: /.*coquin/
+                replace: 'new coquin'
+                before: true
+              , (err, written) ->
+                return next err if err
+                written.should.be.false()
+                # Check file content
+                fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
+                  return next err if err
+                  content.should.eql 'new coquin\nhere we are\n'
+                  next()
+
+      they 'before true, replace a string, match a string', (ssh, next) ->
+        # Prepare by creating a file with content
+        mecano.write
+          ssh: ssh
+          destination: "#{scratch}/file"
+          content: 'you coquin\nhere we are\n'
+        , (err) ->
+          # File does not exist, it create it with the content
+          mecano.write
+            ssh: ssh
+            destination: "#{scratch}/file"
+            match: "you coquin"
+            replace: 'new coquin'
+            before: true
+          , (err, written) ->
+            return next err if err
+            written.should.be.true()
+            fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
+              return next err if err
+              content.should.eql 'new coquin\nhere we are\n'
+              # Write a second time with same match
+              mecano.write
+                ssh: ssh
+                destination: "#{scratch}/file"
+                match: "new coquin"
                 replace: 'new coquin'
                 before: true
               , (err, written) ->

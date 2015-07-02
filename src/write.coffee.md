@@ -177,7 +177,7 @@ require('mecano').write({
     module.exports = (options, callback) ->
       modified = false
       # Validate parameters
-      return callback new Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?.length
+      return callback new Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?
       return callback new Error 'Define either source or content' if options.source and options.content
       return callback new Error 'Missing destination' unless options.destination
       options.content = options.content.toString() if options.content and Buffer.isBuffer options.content
@@ -297,14 +297,14 @@ require('mecano').write({
         for opts in write
           if opts.match
             opts.match ?= opts.replace
-            opts.match = RegExp quote(opts.match), 'mg' if typeof opts.match is 'string'
-            return Error "Invalid match option" unless opts.match instanceof RegExp
+            opts.match = ///#{quote opts.match}///mg if typeof opts.match is 'string'
+            return next Error "Invalid match option" unless opts.match instanceof RegExp
             if opts.match.test content
               content = content.replace opts.match, opts.replace
               append = false
             else if opts.before and typeof opts.replace is 'string'
               if typeof opts.before is "string"
-                opts.before = new RegExp "^.*#{opts.before}.*$", 'mg'
+                opts.before = new RegExp ///^.*#{quote opts.before}.*$///mg
               if opts.before instanceof RegExp
                 posoffset = 0
                 orgContent = content
@@ -368,6 +368,7 @@ require('mecano').write({
                 content = opts.replace + '\n' + content.substr(to.index)
               else # TODO: honors append
                 options.log? "Mecano `write`: missing 'to', skip writing [WARN]"
+        console.log 'replace finished'
         do_eof()
       do_eof = ->
         return do_diff() unless options.eof?
@@ -389,25 +390,6 @@ require('mecano').write({
         return do_chown_chmod() if destinationHash is string.hash content
         options.log? "Mecano `write`: file content has changed [WARN]"
         diff content, destination, options
-        # if options.diff
-        #   lines = diff.diffLines destination, content
-        #   options.diff lines if typeof options.diff is 'function'
-        #   if options.stdout
-        #     count_added = count_removed = 0
-        #     padsize = Math.ceil(lines.length/10)
-        #     for line in lines
-        #       continue if line.value is null
-        #       if not line.added and not line.removed
-        #         count_added++; count_removed++; continue
-        #       ls = string.lines line.value
-        #       if line.added
-        #         for line in ls
-        #           count_added++
-        #           options.stdout.write "#{pad padsize, ''+(count_added)} + #{line}\n"
-        #       else
-        #         for line in ls
-        #           count_removed++
-        #           options.stdout.write "#{pad padsize, ''+(count_removed)} - #{line}\n"
         do_backup()
       do_backup = =>
         return do_write() unless options.backup and destinationHash
