@@ -12,16 +12,16 @@ describe 'promise options', ->
       global_param: true
     m.propagated_options.push 'parent_param_propagated'
     m.register 'achild', (options, callback) ->
-      options.local_param.should.be.true
-      options.parent_param_propagated.should.be.true
-      (options.parent_param_unpropagated is undefined).should.be.true
-      options.global_param.should.be.true
+      options.local_param.should.be.true()
+      options.parent_param_propagated.should.be.true()
+      (options.parent_param_unpropagated is undefined).should.be.true()
+      options.global_param.should.be.true()
       callback null, true
 
     m.register 'aparent', (options, callback) ->
-      options.global_param.should.be.true
-      options.parent_param_propagated.should.be.true
-      options.parent_param_unpropagated.should.be.true
+      options.global_param.should.be.true()
+      options.parent_param_propagated.should.be.true()
+      options.parent_param_unpropagated.should.be.true()
       @achild
         local_param: true
       .then (err, status) -> callback err, true

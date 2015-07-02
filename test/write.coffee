@@ -19,14 +19,14 @@ describe 'write', ->
         destination: "#{scratch}/file"
         content: 'Hello'
       , (err, written) ->
-        written.should.be.ok
+        written.should.be.true()
       .write # Write the same content
         destination: "#{scratch}/file"
         content: 'Hello'
       , (err, written) ->
         return next err if err
         # Content has change
-        written.should.not.be.ok
+        written.should.be.false()
         fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
           content.should.eql 'Hello'
           next()
@@ -38,12 +38,12 @@ describe 'write', ->
         destination: "#{scratch}/file"
         content: 'Hello'
       , (err, written) ->
-        written.should.be.ok
+        written.should.be.true()
       .write
         destination: "#{scratch}/file"
         content: 'Hello'
       , (err, written) ->
-        written.should.not.be.ok
+        written.should.be.false()
       .then next
     
     they 'doesnt increment if destination is same than generated content', (ssh, next) ->
@@ -57,7 +57,7 @@ describe 'write', ->
         source: "#{scratch}/file"
       , (err, written) ->
         return next err if err
-        written.should.be.ok
+        written.should.be.true()
         fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
           content.should.eql 'Hello'
           next()
@@ -69,7 +69,7 @@ describe 'write', ->
         content: ''
       , (err, written) ->
         return next err if err
-        written.should.be.ok
+        written.should.be.true()
         fs.readFile ssh, "#{scratch}/empty_file", 'utf8', (err, content) ->
           return next err if err
           content.should.eql ''
@@ -83,7 +83,7 @@ describe 'write', ->
         content: ''
         not_if_exists: true
       , (err, written) ->
-        written.should.be.ok
+        written.should.be.true()
       .call (options, next) ->
         fs.readFile ssh, "#{scratch}/empty_file", 'utf8', (err, content) ->
           return next err if err
@@ -97,7 +97,7 @@ describe 'write', ->
         content: ''
         not_if_exists: true
       , (err, written) ->
-        written.should.not.be.ok
+        written.should.be.false()
       .call (options, next) ->
         fs.readFile ssh, "#{scratch}/empty_file", 'utf8', (err, content) ->
           return next err if err
@@ -112,7 +112,7 @@ describe 'write', ->
         content: 123
       , (err, written) ->
         return next err if err
-        written.should.be.ok
+        written.should.be.true()
         fs.readFile ssh, "#{scratch}/a_file", 'ascii', (err, content) ->
           return next err if err
           content.should.eql '123'
@@ -125,7 +125,7 @@ describe 'write', ->
         content: 'hello'
       , (err, written) ->
         return next err if err
-        written.should.be.ok
+        written.should.be.true()
         fs.readFile ssh, "#{scratch}/a/missing/dir/a_file", 'utf8', (err, content) ->
           return next err if err
           content.should.eql 'hello'
@@ -146,7 +146,7 @@ describe 'write', ->
           misc.mode.compare(stat.mode, 0o0700).should.True
           fs.stat ssh, "#{scratch}", (err, stat) ->
             return next err if err
-            misc.mode.compare(stat.mode, 0o0700).should.be.False
+            misc.mode.compare(stat.mode, 0o0700).should.be.false()
             next()
 
     they 'change permission', (ssh, next) ->
@@ -161,13 +161,13 @@ describe 'write', ->
         content: 'ok'
         mode: 0o0705
       , (err, written) ->
-        written.should.be.ok
+        written.should.be.true()
       .write
         destination: "#{scratch}/a_file"
         content: 'ok'
         mode: 0o0705
       , (err, written) ->
-        written.should.not.be.ok
+        written.should.be.false()
       .then next
 
     they 'change permission after modification', (ssh, next) ->
@@ -186,7 +186,7 @@ describe 'write', ->
         return next err if err
         fs.stat ssh, "#{scratch}/a_file", (err, stat) ->
           return next err if err
-          misc.mode.compare(stat.mode, 0o0755).should.be.true
+          misc.mode.compare(stat.mode, 0o0755).should.be.true()
           next()
 
   describe 'from and to', ->
@@ -201,7 +201,7 @@ describe 'write', ->
         replace: 'my friend'
       , (err, written) ->
         return next err if err
-        written.should.be.ok
+        written.should.be.true()
         fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
           return next err if err
           content.should.eql 'here we are\n# from\nmy friend\n# to\nyou coquin'
@@ -219,7 +219,7 @@ describe 'write', ->
           append: true
           replace: 'my friend'
         , (err, written) ->
-          written.should.be.ok
+          written.should.be.true()
         .call (options, next) ->
           fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
             content.should.eql 'here we are\nyou coquin\n# from\nmy friend\n# to'
@@ -232,7 +232,7 @@ describe 'write', ->
           replace: 'my best friend'
           eof: true
         , (err, written) ->
-          written.should.be.ok
+          written.should.be.true()
         .call (options, next) ->
           fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
             content.should.eql 'here we are\nyou coquin\n# from\nmy best friend\n# to\n'
@@ -248,7 +248,7 @@ describe 'write', ->
         replace: 'my friend'
       , (err, written) ->
         return next err if err
-        written.should.be.ok
+        written.should.be.true()
         fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
           return next err if err
           content.should.eql 'here we are\n# from\nmy friend'
@@ -263,7 +263,7 @@ describe 'write', ->
         replace: 'my friend'
       , (err, written) ->
         return next err if err
-        written.should.be.ok
+        written.should.be.true()
         fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
           return next err if err
           content.should.eql 'my friend\n# to\nyou coquin'
@@ -311,7 +311,7 @@ describe 'write', ->
         replace: 'my friend'
       , (err, written) ->
         return next err if err
-        written.should.be.ok
+        written.should.be.true()
         fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
           return next err if err
           content.should.eql 'here we are\nmy friend\nyou coquin'
@@ -326,7 +326,7 @@ describe 'write', ->
         replace: 'switch'
       , (err, written) ->
         return next err if err
-        written.should.be.ok
+        written.should.be.true()
         fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
           return next err if err
           content.should.eql 'switch that one\nand\nswitch this one\nand not this one'
@@ -343,14 +343,14 @@ describe 'write', ->
         replace: '$1=david (was $2)'
       , (err, written) ->
         return next err if err
-        written.should.be.ok
+        written.should.be.true()
       .write # Without a match
         destination: "#{scratch}/replace"
         match: /this wont work/
         replace: '$1=david (was $2)'
       , (err, written) ->
         return next err if err
-        written.should.not.be.ok
+        written.should.be.false()
         fs.readFile ssh, "#{scratch}/replace", 'utf8', (err, content) ->
           return next err if err
           content.should.eql 'email=david(at)adaltas(dot)com\nusername=david (was root)'
@@ -365,7 +365,7 @@ describe 'write', ->
         destination: "#{scratch}/replace"
       , (err, written) ->
         return next err if err
-        written.should.be.ok
+        written.should.be.true()
         fs.readFile ssh, "#{scratch}/replace", 'utf8', (err, content) ->
           return next err if err
           content.should.eql 'here we are\nmy friend, lets try\nyou coquin'
@@ -380,7 +380,7 @@ describe 'write', ->
         replace: 'property=50'
       , (err, written) ->
         return next err if err
-        written.should.be.ok
+        written.should.be.true()
         fs.readFile ssh, "#{scratch}/replace", 'utf8', (err, content) ->
           return next err if err
           content.should.eql '#A config file\n#property=30\nproperty=50\nproperty=50\n#End of Config'
@@ -397,13 +397,13 @@ describe 'write', ->
         match: /(.*content)/
         replace: 'a text'
       , (err, written) ->
-        written.should.be.ok
+        written.should.be.true()
       .write
         destination: "#{scratch}/a_file"
         match: /(.*content)/
         replace: 'a text'
       , (err, written) ->
-        written.should.not.be.ok
+        written.should.be.false()
       .then (err) ->
         return next err if err
         fs.readFile ssh, "#{scratch}/a_file", 'utf8', (err, content) ->
@@ -505,7 +505,7 @@ describe 'write', ->
             before: true
           , (err, written) ->
             return next err if err
-            written.should.be.ok
+            written.should.be.true()
             fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
               return next err if err
               content.should.eql 'new coquin\nhere we are\n'
@@ -518,7 +518,7 @@ describe 'write', ->
                 before: true
               , (err, written) ->
                 return next err if err
-                written.should.not.be.ok
+                written.should.be.false()
                 # Check file content
                 fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
                   return next err if err
@@ -541,7 +541,7 @@ describe 'write', ->
             append: true
           , (err, written) ->
             return next err if err
-            written.should.be.ok
+            written.should.be.true()
             fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
               return next err if err
               content.should.eql 'here we are\nnew coquin\n'
@@ -554,7 +554,7 @@ describe 'write', ->
                 append: true
               , (err, written) ->
                 return next err if err
-                written.should.not.be.ok
+                written.should.be.false()
                 # Check file content
                 fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
                   return next err if err
@@ -575,7 +575,7 @@ describe 'write', ->
         append: true
       , (err, written) ->
         return next err if err
-        written.should.be.ok
+        written.should.be.true()
         # Check file content
         fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
           return next err if err
@@ -598,7 +598,7 @@ describe 'write', ->
           before: /^.*we.*$/m
         , (err, written) ->
           return next err if err
-          written.should.be.ok
+          written.should.be.true()
           # Check file content
           fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
             return next err if err
@@ -621,7 +621,7 @@ describe 'write', ->
             append: /^.*we.*$/m
           , (err, written) ->
             return next err if err
-            written.should.be.ok
+            written.should.be.true()
             # Check file content
             fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
               return next err if err
@@ -646,7 +646,7 @@ describe 'write', ->
             before: /^.*we.*$/gm
           , (err, written) ->
             return next err if err
-            written.should.be.ok
+            written.should.be.true()
             # Check file content
             fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
               return next err if err
@@ -669,7 +669,7 @@ describe 'write', ->
             append: /^.*we.*$/gm
           , (err, written) ->
             return next err if err
-            written.should.be.ok
+            written.should.be.true()
             # Check file content
             fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
               return next err if err
@@ -693,7 +693,7 @@ describe 'write', ->
           append: 'we'
         , (err, written) ->
           return next err if err
-          written.should.be.ok
+          written.should.be.true()
           # Check file content
           fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
             return next err if err
@@ -718,7 +718,7 @@ describe 'write', ->
             before: true
           , (err, written) ->
             return next err if err
-            written.should.be.ok
+            written.should.be.true()
             # Check file content
             fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
               return next err if err
@@ -741,7 +741,7 @@ describe 'write', ->
             append: true
           , (err, written) ->
             return next err if err
-            written.should.be.ok
+            written.should.be.true()
             # Check file content
             fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
               return next err if err
@@ -760,7 +760,7 @@ describe 'write', ->
           before: true
         , (err, written) ->
           return next err if err
-          written.should.be.ok
+          written.should.be.true()
           # Check file content
           fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
             return next err if err
@@ -777,7 +777,7 @@ describe 'write', ->
           append: true
         , (err, written) ->
           return next err if err
-          written.should.be.ok
+          written.should.be.true()
           # Check file content
           fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
             return next err if err
@@ -795,13 +795,13 @@ describe 'write', ->
         replace: 'Add this line'
         append: true
       , (err, written) ->
-        written.should.be.ok
+        written.should.be.true()
       .write
         destination: "#{scratch}/a_file"
         replace: 'Add this line'
         append: true
       , (err, written) ->
-        written.should.not.be.ok
+        written.should.be.false()
       .write
         destination: "#{scratch}/a_file"
         write: [
@@ -809,7 +809,7 @@ describe 'write', ->
           append: true
         ]
       , (err, written) ->
-        written.should.not.be.ok
+        written.should.be.false()
       .call (options, next) ->
         fs.readFile ssh, "#{scratch}/a_file", 'utf8', (err, content) ->
           content.should.eql 'Here we are\nyou coquin\nAdd this line'
@@ -834,9 +834,9 @@ describe 'write', ->
           backup: '.bck'
         , (err, written) ->
           return next err if err
-          written.should.be.false
+          written.should.be.false()
           fs.exists ssh, "#{scratch}/file.bck", (err, exists) ->
-            exists.should.be.false
+            exists.should.be.false()
             # If content is different, check the backup
             mecano.write
               ssh: ssh
@@ -845,7 +845,7 @@ describe 'write', ->
               backup: '.bck'
             , (err, written) ->
               return next err if err
-              written.should.be.true
+              written.should.be.true()
               fs.readFile ssh, "#{scratch}/file.bck", 'utf8', (err, content) ->
                 content.should.eql 'Hello'
                 next()
@@ -857,7 +857,7 @@ describe 'write', ->
         content: 'Hello'
         backup: true
       , (err, written) ->
-        written.should.be.true unless err
+        written.should.be.true() unless err
         next err
 
 
@@ -886,7 +886,7 @@ describe 'write', ->
           ]
         , (err, written) ->
             return next err if err
-            written.should.be.ok
+            written.should.be.true()
             fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
               return next err if err
               content.should.eql 'username: you\n\nfriends: me'
@@ -916,7 +916,7 @@ describe 'write', ->
           ]
         , (err, written) ->
             return next err if err
-            written.should.be.ok
+            written.should.be.true()
             fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
               return next err if err
               content.should.eql 'username: you\nemail: your@email\nfriends: me'
@@ -947,7 +947,7 @@ describe 'write', ->
           ]
         , (err, written) ->
             return next err if err
-            written.should.be.ok
+            written.should.be.true()
             fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
               return next err if err
               content.should.eql 'username: me\nemail: my@email\nfriends: you'
@@ -1008,7 +1008,7 @@ describe 'write', ->
             ]
           stdout: write: (d) -> data.push d
         , (err) ->
-          diffcalled.should.be.ok
+          diffcalled.should.be.true()
           data.should.eql ['2 - original text\n', '2 + new text\n']
           next()
   

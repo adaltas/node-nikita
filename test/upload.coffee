@@ -18,17 +18,17 @@ describe 'upload', ->
         destination: "#{scratch}"
       , (err, uploaded) ->
         return next err if err
-        uploaded.should.be.ok
+        uploaded.should.be.true()
         fs.exists ssh, "#{scratch}/#{path.basename __filename}", (err, exist) ->
           return next err if err
-          exist.should.be.ok
+          exist.should.be.true()
           mecano.upload
             ssh: ssh
             source: "#{__filename}"
             destination: "#{scratch}"
           , (err, uploaded) ->
             return next err if err
-            uploaded.should.not.be.ok
+            uploaded.should.be.false()
             next()
 
   describe 'binary', ->
@@ -55,7 +55,7 @@ describe 'upload', ->
           , (err, uploaded) ->
             return next err if err
             dstsum.should.eql srcsum
-            uploaded.should.be.ok
+            uploaded.should.be.true()
             mecano.upload
               ssh: ssh
               binary: true
@@ -64,7 +64,7 @@ describe 'upload', ->
               md5: true
             , (err, uploaded) ->
               return next err if err
-              uploaded.should.not.be.ok
+              uploaded.should.be.false()
               next()
 
     they 'with md5 string', (ssh, next) ->
@@ -119,7 +119,7 @@ describe 'upload', ->
             sha1: srcsum
           , (err, uploaded) ->
             return next err if err
-            uploaded.should.be.ok
+            uploaded.should.be.true()
             mecano.upload
               ssh: ssh
               binary: true
@@ -128,7 +128,7 @@ describe 'upload', ->
               sha1: srcsum
             , (err, uploaded) ->
               return next err if err
-              uploaded.should.not.be.ok
+              uploaded.should.be.false()
               next()
 
     they 'with invalid md5 string', (ssh, next) ->
@@ -182,7 +182,7 @@ describe 'upload', ->
               md5: srcsum
             , (err, uploaded) ->
               return next err if err
-              uploaded.should.be.ok
+              uploaded.should.be.true()
               next()
 
     they 'with a file', (ssh, next) ->
@@ -222,10 +222,10 @@ describe 'upload', ->
         destination: "#{scratch}"
       , (err, uploaded) ->
         return next err if err
-        uploaded.should.be.ok
+        uploaded.should.be.true()
         fs.exists ssh, "#{scratch}/#{path.basename __filename}", (err, exist) ->
           return next err if err
-          exist.should.be.ok
+          exist.should.be.true()
           next()
           # TODO: for now, uploading binary doesnt check if the file has been changed
           # mecano.upload
@@ -235,7 +235,7 @@ describe 'upload', ->
           #   destination: "#{scratch}"
           # , (err, uploaded) ->
           #   return next err if err
-          #   uploaded.should.not.be.ok
+          #   uploaded.should.be.false()
           #   next()
 
 

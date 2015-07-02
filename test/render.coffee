@@ -18,7 +18,7 @@ describe 'render', ->
         context: who: 'you'
       , (err, rendered) ->
         return next err if err
-        rendered.should.be.ok
+        rendered.should.be.true()
         fs.readFile destination, 'ascii', (err, content) ->
           content.should.eql 'Hello you'
           next()
@@ -31,7 +31,7 @@ describe 'render', ->
         context: who: 'you'
       , (err, rendered) ->
         return next err if err
-        rendered.should.be.ok
+        rendered.should.be.true()
         fs.readFile destination, 'ascii', (err, content) ->
           content.should.eql 'Hello you'
           next()
@@ -45,7 +45,7 @@ describe 'render', ->
         skip_empty_lines: true
       , (err, rendered) ->
         return next err if err
-        rendered.should.be.ok
+        rendered.should.be.true()
         fs.readFile destination, 'ascii', (err, content) ->
           content.should.eql 'Hello\nyou'
           next()
@@ -59,13 +59,13 @@ describe 'render', ->
         destination: destination
         context: who: 'you'
       , (err, rendered) ->
-        rendered.should.be.ok
+        rendered.should.be.true()
       .render
         source: "#{__dirname}/../resources/render.eco"
         destination: destination
         context: who: 'you'
       , (err, rendered) ->
-        rendered.should.not.be.ok
+        rendered.should.be.false()
       .then next
     
     it 'accept destination as a callback', (next) ->
@@ -109,7 +109,7 @@ describe 'render', ->
         engine: 'nunjunks'
       , (err, rendered) ->
         return next err if err
-        rendered.should.be.ok
+        rendered.should.be.true()
         fs.readFile destination, 'ascii', (err, content) ->
           content.should.eql 'Hello you'
           next()
@@ -125,7 +125,7 @@ describe 'render', ->
           context: who: 'you'
         , (err, rendered) ->
           return next err if err
-          rendered.should.be.ok
+          rendered.should.be.true()
           fs.readFile destination, 'ascii', (err, content) ->
             content.should.eql 'Hello you'
             next()

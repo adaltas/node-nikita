@@ -71,7 +71,7 @@ describe 'promise', ->
     #   , (err, written) ->
     #     called = true if written
     #   .then (err, changed) ->
-    #     called.should.be.True
+    #     called.should.be.true()
     #     next err
         
 

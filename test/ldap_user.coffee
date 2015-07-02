@@ -31,7 +31,7 @@ describe 'ldap_user', ->
         homeDirectory: '/home/mecano'
     .then (err, modified) ->
       throw err if err
-      modified.should.be.True
+      modified.should.be.true()
     .ldap_delete
       dn: "cn=mecano,#{config.ldap.suffix_dn}"
     .then next
@@ -63,7 +63,7 @@ describe 'ldap_user', ->
       user: user
     .then (err, modified) ->
       throw err if err
-      modified.should.be.False
+      modified.should.be.false()
     .ldap_delete
       dn: "cn=mecano,#{config.ldap.suffix_dn}"
     .then next

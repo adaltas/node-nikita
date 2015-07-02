@@ -37,13 +37,13 @@ describe 'ldap_index', ->
       indexes:
         aliasedEntryName: 'eq'
     , (err, modified) ->
-      modified.should.be.ok
+      modified.should.be.true()
     .ldap_index
       name: 'olcDatabase={2}bdb,cn=config'
       indexes:
         aliasedEntryName: 'eq'
     , (err, modified) ->
-      modified.should.not.be.ok
+      modified.should.be.false()
     .then next
 
   it 'update an existing index', (next) ->
@@ -54,20 +54,20 @@ describe 'ldap_index', ->
       indexes:
         aliasedEntryName: 'eq'
     , (err, modified) ->
-      modified.should.be.ok
+      modified.should.be.true()
     .ldap_index
       ldap: client
       name: 'olcDatabase={2}bdb,cn=config'
       indexes:
         aliasedEntryName: 'pres,eq'
     , (err, modified) ->
-      modified.should.not.be.ok
+      modified.should.be.false()
     .ldap_index
       ldap: client
       name: 'olcDatabase={2}bdb,cn=config'
       indexes:
         aliasedEntryName: 'pres,eq'
     , (err, modified) ->
-      modified.should.be.ok
+      modified.should.be.true()
     .then next
 

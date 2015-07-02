@@ -17,11 +17,11 @@ describe 'mkdir', ->
     .mkdir
       directory: source
     , (err, created) ->
-      created.should.be.ok
+      created.should.be.true()
     .mkdir
       directory: source
     , (err, created) ->
-      created.should.not.be.ok
+      created.should.be.false()
     .then next
 
   they 'should take source if first argument is a string', (ssh, next) ->
@@ -29,9 +29,9 @@ describe 'mkdir', ->
     mecano
       ssh: ssh
     .mkdir source, (err, created) ->
-      created.should.be.ok
+      created.should.be.true()
     .mkdir source, (err, created) ->
-      created.should.not.be.ok
+      created.should.be.false()
     .then next
   
   they 'should create dir recursively', (ssh, next) ->
@@ -41,7 +41,7 @@ describe 'mkdir', ->
       directory: source
     , (err, created) ->
       return next err if err
-      created.should.be.ok
+      created.should.be.true()
       next()
   
   they 'should create multiple directories', (ssh, next) ->
@@ -53,7 +53,7 @@ describe 'mkdir', ->
       ]
     , (err, created) ->
       return next err if err
-      created.should.be.ok
+      created.should.be.true()
       next()
 
   describe 'parent', ->
@@ -103,12 +103,12 @@ describe 'mkdir', ->
         exclude: /^do/
       , (err, created) ->
         return next err if err
-        created.should.be.ok
+        created.should.be.true()
         fs.exists ssh, source, (err, created) ->
-          created.should.not.be.ok
+          created.should.be.false()
           source = path.dirname source
           fs.exists ssh, source, (err, created) ->
-            created.should.be.ok 
+            created.should.be.true() 
             next()
 
   describe 'cwd', ->
@@ -120,9 +120,9 @@ describe 'mkdir', ->
         cwd: scratch
       , (err, created) ->
         return next err if err
-        created.should.be.ok
+        created.should.be.true()
         fs.exists ssh, "#{scratch}/a_dir", (err, created) ->
-          created.should.be.ok
+          created.should.be.true()
           next()
 
   describe 'mode', ->
@@ -167,12 +167,12 @@ describe 'mkdir', ->
         directory: "#{scratch}/ssh_dir_string"
         mode: 0o755
       , (err, created) ->
-        created.should.be.ok
+        created.should.be.true()
       .mkdir
         directory: "#{scratch}/ssh_dir_string"
         mode: 0o755
       , (err, created) ->
-        created.should.not.be.ok
+        created.should.be.false()
       .then next
 
     they 'dont ovewrite permission', (ssh, next) ->
@@ -185,7 +185,7 @@ describe 'mkdir', ->
       .mkdir
         directory: "#{scratch}/a_dir"
       , (err, created) ->
-        created.should.not.be.ok
+        created.should.be.false()
       .then (err) ->
         return next err if err
         fs.stat ssh, "#{scratch}/a_dir", (err, stat) ->

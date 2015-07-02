@@ -21,12 +21,12 @@ describe 'krb5_addprinc', ->
       principal: "mecano@#{config.krb5.realm}"
       randkey: true
     , (err, created) ->
-      created.should.be.true
+      created.should.be.true()
     .krb5_addprinc
       principal: "mecano@#{config.krb5.realm}"
       randkey: true
     , (err, created) ->
-      created.should.be.false
+      created.should.be.false()
     .then next
 
   they 'create a new principal with a password', (ssh, next) ->
@@ -41,19 +41,19 @@ describe 'krb5_addprinc', ->
       principal: "mecano@#{config.krb5.realm}"
       password: 'password1'
     , (err, created) ->
-      created.should.be.true
+      created.should.be.true()
     .krb5_addprinc
       principal: "mecano@#{config.krb5.realm}"
       password: 'password2'
       password_sync: true
     , (err, created) ->
-      created.should.be.true
+      created.should.be.true()
     .krb5_addprinc
       principal: "mecano@#{config.krb5.realm}"
       password: 'password2'
       password_sync: true
     , (err, created) ->
-      created.should.be.false
+      created.should.be.false()
     .execute
       cmd: "echo password2 | kinit mecano@#{config.krb5.realm}"
     .then next
@@ -70,13 +70,13 @@ describe 'krb5_addprinc', ->
       principal: "mecano@#{config.krb5.realm}"
       password: 'password1'
     , (err, created) ->
-      created.should.be.true
+      created.should.be.true()
     .krb5_addprinc
       principal: "mecano@#{config.krb5.realm}"
       password: 'password2'
       password_sync: false # Default
     , (err, created) ->
-      created.should.be.false
+      created.should.be.false()
     .execute
       cmd: "echo password1 | kinit mecano@#{config.krb5.realm}"
     .then next
