@@ -20,7 +20,7 @@ describe 'remove', ->
       source: "#{scratch}/a_file"
     , (err, removed) ->
       return next err if err
-      removed.should.be.ok
+      removed.should.be.true()
     .then next
 
   they 'a link', (ssh, next) ->
@@ -30,7 +30,7 @@ describe 'remove', ->
         source: "#{scratch}/test"
       , (err, removed) ->
         return next err if err
-        removed.should.be.ok
+        removed.should.be.true()
         fs.lstat ssh, "#{scratch}/test", (err, stat) ->
           err.code.should.eql 'ENOENT'
           next()
@@ -46,7 +46,7 @@ describe 'remove', ->
       source: "#{scratch}/*gz"
     , (err, removed) ->
       return next err if err
-      removed.should.be.ok
+      removed.should.be.true()
       fs.readdir null, "#{scratch}", (err, files) ->
         files.should.not.containEql 'a_dir.tar.gz'
         files.should.not.containEql 'a_dir.tgz'
@@ -62,10 +62,10 @@ describe 'remove', ->
     .remove
       destination: "#{scratch}/remove_dir"
     , (err, removed) ->
-      removed.should.be.ok
+      removed.should.be.true()
     .remove
       destination: "#{scratch}/remove_dir"
     , (err, removed) ->
-      removed.should.not.be.ok
+      removed.should.be.false()
     .then next
 

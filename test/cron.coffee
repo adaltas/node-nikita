@@ -26,12 +26,12 @@ describe 'cron', ->
       cmd: "/bin/true #{rand}"
       when: '0 * * * *'
     , (err, executed) ->
-      executed.should.be.true() unless err
+      executed.should.be.true()() unless err
     .cron_add
       cmd: "/bin/true #{rand}"
       when: '0 * * * *'
     , (err, executed) ->
-      executed.should.be.false() unless err
+      executed.should.be.false()() unless err
     .cron_remove
       cmd: "/bin/true #{rand}"
       when: '0 * * * *'
@@ -39,7 +39,7 @@ describe 'cron', ->
 
   describe 'match', ->
 
-    they.only 'regexp', (ssh, next) ->
+    they 'regexp', (ssh, next) ->
       mecano
         ssh: ssh
       .cron_add
@@ -47,7 +47,7 @@ describe 'cron', ->
         when: '0 * * * *'
         match: '.*bin.*'
       , (err, executed) ->
-        executed.should.be.true() unless err
+        executed.should.be.true()() unless err
       .cron_add
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
@@ -58,13 +58,13 @@ describe 'cron', ->
             { count: 1, added: true, removed: undefined, value: "0 * * * * /bin/true #{rand}" }
           ]
       , (err, executed) ->
-        executed.should.be.true() unless err
+        executed.should.be.true()() unless err
       .cron_add
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
         match: /.*bin.*/
       , (err, executed) ->
-        executed.should.be.false() unless err
+        executed.should.be.false()() unless err
       .cron_remove
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
@@ -78,7 +78,7 @@ describe 'cron', ->
         when: '0 * * * *'
         match: '.*bin.*'
       , (err, executed) ->
-        executed.should.be.true() unless err
+        executed.should.be.true()() unless err
       .cron_add
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
@@ -89,13 +89,13 @@ describe 'cron', ->
             { count: 1, added: true, removed: undefined, value: "0 * * * * /bin/true #{rand}" }
           ]
       , (err, executed) ->
-        executed.should.be.true() unless err
+        executed.should.be.true()() unless err
       .cron_add
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
         match: '.*bin.*'
       , (err, executed) ->
-        executed.should.be.false() unless err
+        executed.should.be.false()() unless err
       .cron_remove
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'

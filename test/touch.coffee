@@ -25,11 +25,11 @@ describe 'touch', ->
     .touch
       destination: "#{scratch}/a_file"
     , (err, touched) ->
-      touched.should.be.ok
+      touched.should.be.true()
     .touch
       destination: "#{scratch}/a_file"
     , (err, touched) ->
-      touched.should.not.be.ok
+      touched.should.be.false()
     .then next
       
 

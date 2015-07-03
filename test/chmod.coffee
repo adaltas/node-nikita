@@ -21,7 +21,7 @@ describe 'chmod', ->
       mode: 0o744
     , (err, modified) ->
       return next err if err
-      modified.should.be.True
+      modified.should.be.true()
     .chmod
       destination: "#{scratch}/a_file"
       mode: 0o744

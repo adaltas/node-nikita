@@ -7,6 +7,12 @@ file referencing a dead process will be removed.
 The callback is called with an error and a boolean indicating if the process is
 running.
 
+```js
+pidfile_running ssh, pidfile, function(err, running){
+  console.log(err ? err.message : 'Running: '+running);
+}
+```
+
     module.exports = (ssh, pidfile, callback) ->
       throw Error 'Argument "options" removed' if arguments.length is 4
       child = exec ssh, """

@@ -16,9 +16,9 @@ describe 'system_limits', ->
         user: 'me'
       , (err, status) ->
         return callback err if err
-        status.should.be.false
+        status.should.be.false()
         fs.exists ssh, "#{scratch}/me.conf", (err, exists) ->
-          exists.should.be.false unless err
+          exists.should.be.false() unless err
           next err
 
   they 'nofile and noprocs accept int', (ssh, next) ->
@@ -31,7 +31,7 @@ describe 'system_limits', ->
         nproc: 2048
       , (err, status) ->
         return callback err if err
-        status.should.be.true
+        status.should.be.true()
         fs.readFile ssh, "#{scratch}/me.conf", 'ascii', (err, content) ->
           content.should.eql """
           me    -    nofile   2048
@@ -55,7 +55,7 @@ describe 'system_limits', ->
         nofile: 2048
         nproc: 2048
       .then (err, status) ->
-        status.should.be.false unless err
+        status.should.be.false() unless err
         next err
 
 

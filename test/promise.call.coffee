@@ -34,7 +34,7 @@ describe 'promise call', ->
       .call (options) ->
         return true
       .then (err, status) ->
-        status.should.be.True
+        status.should.be.true()
         next()
 
     it 'set status to false', (next) ->
@@ -42,7 +42,7 @@ describe 'promise call', ->
       .call (options) ->
         return false
       .then (err, status) ->
-        status.should.be.False
+        status.should.be.false()
         next()
 
     it 'catch error', (next) ->
@@ -58,7 +58,7 @@ describe 'promise call', ->
     #   .call ->
     #     return false
     #   .then (err, status) ->
-    #     status.should.be.False
+    #     status.should.be.false()
     #     next()
 
   describe 'async', ->
@@ -90,7 +90,7 @@ describe 'promise call', ->
         process.nextTick ->
           next null, true
       .then (err, status) ->
-        status.should.be.True
+        status.should.be.true()
         next()
 
     it 'set status to false', (next) ->
@@ -99,7 +99,7 @@ describe 'promise call', ->
         process.nextTick ->
           next null, false
       .then (err, status) ->
-        status.should.be.false
+        status.should.be.false()
         next()
 
     it 'set status to false while child module is true', (next) ->
@@ -108,10 +108,10 @@ describe 'promise call', ->
         m.execute
           cmd: 'ls -l'
         , (err, executed, stdout, stderr) ->
-          executed.should.be.true unless err
+          executed.should.be.true() unless err
           callback err, false
       .then (err, status) ->
-        status.should.be.false
+        status.should.be.false()
         next()
 
     it 'set status to true while module sending is false', (next) ->
@@ -121,10 +121,10 @@ describe 'promise call', ->
           cmd: 'ls -l'
           if: false
         , (err, executed, stdout, stderr) ->
-          executed.should.be.false unless err
+          executed.should.be.false() unless err
           callback err, true
       .then (err, status) ->
-        status.should.be.true
+        status.should.be.true()
         next()
 
   describe 'async err', ->
@@ -196,7 +196,7 @@ describe 'promise call', ->
           destination: "#{scratch}/a_file"
         .then next
       .then (err, status) ->
-        status.should.be.True
+        status.should.be.true()
         fs.readFile "#{scratch}/a_file", 'ascii', (err, content) ->
           next()
 
@@ -209,7 +209,7 @@ describe 'promise call', ->
           if_exists: "#{scratch}/a_file"
         .then next
       .then (err, status) ->
-        status.should.be.False
+        status.should.be.false()
         next()
 
     it 'pass user arguments', (next) ->
@@ -220,11 +220,11 @@ describe 'promise call', ->
           next null, true, 'argument'
       , (err, status, argument) ->
         callback_called = true
-        status.should.be.true
+        status.should.be.true()
         argument.should.equal 'argument'
       .then (err, status) ->
-        callback_called.should.be.true unless err
-        status.should.be.true unless err
+        callback_called.should.be.true() unless err
+        status.should.be.true() unless err
         next err
 
         

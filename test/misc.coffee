@@ -26,11 +26,11 @@ describe 'misc', ->
     describe 'equals', ->
 
       it 'two objects', ->
-        misc.object.equals({a: '1', b: '2'}, {a: '1', b: '2'}).should.be.true
-        misc.object.equals({a: '1', b: '1'}, {a: '2', b: '2'}).should.be.false
-        misc.object.equals({a: '1', b: '2', c: '3'}, {a: '1', b: '2', c: '3'}, ['a', 'c']).should.be.true
-        misc.object.equals({a: '1', b: '-', c: '3'}, {a: '1', b: '+', c: '3'}, ['a', 'c']).should.be.true
-        misc.object.equals({a: '1', b: '-', c: '3'}, {a: '1', b: '+', c: '3'}, ['a', 'b']).should.be.false
+        misc.object.equals({a: '1', b: '2'}, {a: '1', b: '2'}).should.be.true()
+        misc.object.equals({a: '1', b: '1'}, {a: '2', b: '2'}).should.be.false()
+        misc.object.equals({a: '1', b: '2', c: '3'}, {a: '1', b: '2', c: '3'}, ['a', 'c']).should.be.true()
+        misc.object.equals({a: '1', b: '-', c: '3'}, {a: '1', b: '+', c: '3'}, ['a', 'c']).should.be.true()
+        misc.object.equals({a: '1', b: '-', c: '3'}, {a: '1', b: '+', c: '3'}, ['a', 'b']).should.be.false()
 
     describe 'diff', ->
 

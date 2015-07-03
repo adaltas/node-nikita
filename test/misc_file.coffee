@@ -67,12 +67,12 @@ describe 'misc.file', ->
           return next err if err
           fs.exists ssh, "#{scratch}/remove_dir", (err, exists) ->
             return next err if err
-            exists.should.not.be.ok
+            exists.should.be.false()
             next()
 
     they 'handle a missing remote dir', (ssh, next) ->
       misc.file.remove ssh, "#{scratch}/remove_missing_dir", (err) ->
         fs.exists ssh, "#{scratch}/remove_missing_dir", (err, exists) ->
           return next err if err
-          exists.should.not.be.ok
+          exists.should.be.false()
           next()

@@ -21,12 +21,12 @@ describe 'git', ->
       source: "#{scratch}/repo.git"
       destination: "#{scratch}/my_repo"
     , (err, updated) ->
-      updated.should.be.true
+      updated.should.be.true()
     .git
       source: "#{scratch}/repo.git"
       destination: "#{scratch}/my_repo"
     , (err, updated) ->
-      updated.should.be.false
+      updated.should.be.false()
     .then next
 
   they 'honores revision', (ssh, next) ->
@@ -40,13 +40,13 @@ describe 'git', ->
       destination: "#{scratch}/my_repo"
       revision: 'v0.0.1'
     , (err, updated) ->
-      updated.should.be.ok
+      updated.should.be.true()
     .git
       source: "#{scratch}/repo.git"
       destination: "#{scratch}/my_repo"
       revision: 'v0.0.1'
     , (err, updated) ->
-      updated.should.not.be.ok
+      updated.should.be.false()
     .then next
 
   they 'preserves existing directory', (ssh, next) ->

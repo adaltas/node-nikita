@@ -17,11 +17,11 @@ describe 'service', ->
       .service
         name: 'ntp'
       , (err, serviced) ->
-        serviced.should.be.ok
+        serviced.should.be.true()
       .execute
         cmd: 'yum list installed | grep ntp'
       , (err, executed) ->
-        executed.should.be.ok
+        executed.should.be.true()
       .then next
     
     they 'skip if already installed', (ssh, next) ->
@@ -31,11 +31,11 @@ describe 'service', ->
       .service
         name: 'ntp'
       , (err, serviced) ->
-        serviced.should.be.ok
+        serviced.should.be.true()
       .service
         name: 'ntp'
       , (err, serviced) ->
-        serviced.should.not.be.ok
+        serviced.should.be.false()
       .then next
 
   describe 'startup', ->
@@ -49,12 +49,12 @@ describe 'service', ->
         srv_name: 'ntpd'
         startup: true
       , (err, serviced) ->
-        serviced.should.be.ok
+        serviced.should.be.true()
       .execute
         cmd: 'chkconfig --list ntpd'
         code_skipped: 1
       , (err, startuped) ->
-        startuped.should.be.ok
+        startuped.should.be.true()
       .then next
 
     they 'skip if already declared', (ssh, next) ->
@@ -66,13 +66,13 @@ describe 'service', ->
         srv_name: 'ntpd'
         startup: true
       , (err, serviced) ->
-        serviced.should.be.ok
+        serviced.should.be.true()
       .service
         name: 'ntp'
         srv_name: 'ntpd'
         startup: true
       , (err, serviced) ->
-        serviced.should.not.be.ok
+        serviced.should.be.false()
       .then next
 
     they 'notice a change in startup level', (ssh, next) ->
@@ -84,19 +84,19 @@ describe 'service', ->
         srv_name: 'ntpd'
         startup: '235'
       , (err, serviced) ->
-        serviced.should.be.ok
+        serviced.should.be.true()
       .service
         name: 'ntp'
         srv_name: 'ntpd'
         startup: '2345'
       , (err, serviced) ->
-        serviced.should.be.ok
+        serviced.should.be.true()
       .service
         name: 'ntp'
         srv_name: 'ntpd'
         startup: '2345'
       , (err, serviced) ->
-        serviced.should.not.be.ok
+        serviced.should.be.false()
       .then next
 
     they 'remove after being defined', (ssh, next) ->
@@ -115,13 +115,13 @@ describe 'service', ->
         startup: false
       , (err, serviced) ->
         return next err if err
-        serviced.should.be.ok
+        serviced.should.be.true()
       .execute # Validate service not registered
         cmd: 'chkconfig --list ntpd'
         code_skipped: 1
       , (err, startuped) ->
         return next err if err
-        startuped.should.not.be.ok
+        startuped.should.be.false()
       .then next
 
   describe 'action', ->
@@ -135,18 +135,18 @@ describe 'service', ->
         srv_name: 'ntpd'
         action: 'start'
       , (err, serviced) ->
-        serviced.should.be.ok
+        serviced.should.be.true()
       .execute
         cmd: 'service ntpd status'
         code_skipped: 3
       , (err, started) ->
-        started.should.be.ok
+        started.should.be.true()
       .service # Detect already started
         name: 'ntp'
         srv_name: 'ntpd'
         action: 'start'
       , (err, serviced) ->
-        serviced.should.not.be.ok
+        serviced.should.be.false()
       .then next
 
     they 'should stop', (ssh, next) ->
@@ -158,18 +158,18 @@ describe 'service', ->
         srv_name: 'ntpd'
         action: 'stop'
       , (err, serviced) ->
-        serviced.should.be.ok
+        serviced.should.be.true()
       .execute
         cmd: 'service ntpd status'
         code_skipped: 3
       , (err, started) ->
-        started.should.not.be.ok
+        started.should.be.false()
       .service # Detect already stopped
         name: 'ntp'
         srv_name: 'ntpd'
         action: 'stop'
       , (err, serviced) ->
-        serviced.should.not.be.ok
+        serviced.should.be.false()
       .then next
 
 

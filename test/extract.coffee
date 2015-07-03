@@ -15,7 +15,7 @@ describe 'extract', ->
       destination: scratch
     , (err, extracted) ->
       return next err if err
-      extracted.should.be.ok
+      extracted.should.be.true()
       # Test an existing extracted dir
       # Note, there is no way for us to know which directory
       # it is in advance
@@ -25,7 +25,7 @@ describe 'extract', ->
         destination: scratch
       , (err, extracted) ->
         return next err if err
-        extracted.should.be.ok
+        extracted.should.be.true()
         next()
   
   they 'should see extension .zip', (ssh, next) ->
@@ -36,7 +36,7 @@ describe 'extract', ->
       destination: scratch
     , (err, extracted) ->
       return next err if err
-      extracted.should.be.ok
+      extracted.should.be.true()
       # Test an existing extracted dir
       # Note, there is no way for us to know which directory
       # it is in advance
@@ -46,7 +46,7 @@ describe 'extract', ->
         destination: scratch
       , (err, extracted) ->
         return next err if err
-        extracted.should.be.ok
+        extracted.should.be.true()
         next()
   
   they 'should validate a created file', (ssh, next) ->
@@ -66,7 +66,7 @@ describe 'extract', ->
         creates: "#{scratch}/a_dir"
       , (err, extracted) ->
         return next err if err
-        extracted.should.be.ok
+        extracted.should.be.true()
         next()
   
   they 'should # option # not_if_exists', (ssh, next) ->
@@ -78,7 +78,7 @@ describe 'extract', ->
       not_if_exists: __dirname
     , (err, extracted) ->
       return next err if err
-      extracted.should.not.be.ok
+      extracted.should.be.false()
       next()
 
   they 'should pass error for invalid extension', (ssh, next) ->

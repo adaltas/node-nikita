@@ -18,16 +18,16 @@ describe 'link', ->
       source: __filename
       destination: destination
     , (err, linked) ->
-      linked.should.be.ok
+      linked.should.be.true()
     .link # Link already exists
       source: __filename
       destination: destination
     , (err, linked) ->
-      linked.should.not.be.ok
+      linked.should.be.false()
     .then (err) ->
       return next err if err
       fs.lstat ssh, destination, (err, stat) ->
-        stat.isSymbolicLink().should.be.ok
+        stat.isSymbolicLink().should.be.true()
         next()
   
   they 'should link dir', (ssh, next) ->
@@ -39,17 +39,17 @@ describe 'link', ->
       source: __dirname
       destination: destination
     , (err, linked) ->
-      linked.should.be.ok
+      linked.should.be.true()
     .link # Link already exists
       ssh: ssh
       source: __dirname
       destination: destination
     , (err, linked) ->
-      linked.should.not.be.ok
+      linked.should.be.false()
     .then (err) ->
       return next err if err
       fs.lstat ssh, destination, (err, stat) ->
-        stat.isSymbolicLink().should.be.ok
+        stat.isSymbolicLink().should.be.true()
         next()
   
   they 'should create parent directories', (ssh, next) ->
@@ -61,9 +61,9 @@ describe 'link', ->
       destination: destination
     , (err, linked) ->
       return next err if err
-      linked.should.be.ok
+      linked.should.be.true()
       fs.lstat ssh, destination, (err, stat) ->
-        stat.isSymbolicLink().should.be.ok
+        stat.isSymbolicLink().should.be.true()
         # Test creating two identical parent dirs
         destination = "#{scratch}/test/dir2"
         mecano.link [
@@ -76,7 +76,7 @@ describe 'link', ->
           destination: "#{destination}/mkdir.coffee"
         ], (err, linked) ->
           return next err if err
-          linked.should.be.ok
+          linked.should.be.true()
           next()
 
   describe 'error', ->

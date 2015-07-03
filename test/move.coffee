@@ -20,13 +20,13 @@ describe 'move', ->
       destination: "#{scratch}/moved.eco"
     , (err, moved) ->
       return next err if err
-      moved.should.be.ok
+      moved.should.be.true()
       # The destination file should exists
       fs.exists ssh, "#{scratch}/moved.eco", (err, exists) ->
-        exists.should.be.true
+        exists.should.be.true()
         # The source file should no longer exists
         fs.exists ssh, "#{scratch}/render.eco", (err, exists) ->
-          exists.should.be.false
+          exists.should.be.false()
           next()
 
   they 'rename a directory', (ssh, next) ->
@@ -41,13 +41,13 @@ describe 'move', ->
       destination: "#{scratch}/moved"
     , (err, moved) ->
       return next err if err
-      moved.should.be.ok
+      moved.should.be.true()
       # The destination directory should exists
       fs.exists ssh, "#{scratch}/moved", (err, exists) ->
-        exists.should.be.true
+        exists.should.be.true()
         # The source directory should no longer exists
         fs.exists ssh, "#{scratch}/a_dir", (err, exists) ->
-          exists.should.be.false
+          exists.should.be.false()
           next()
 
   they 'overwrite a file', (ssh, next) ->
@@ -67,19 +67,19 @@ describe 'move', ->
       source: "#{scratch}/src1.txt"
       destination: "#{scratch}/dest.txt"
     , (err, moved) ->
-      moved.should.be.ok
+      moved.should.be.true()
     .move # Move a file with the same content
       source: "#{scratch}/src2.txt"
       destination: "#{scratch}/dest.txt"
     , (err, moved) ->
       return next err if err
-      moved.should.not.be.ok
+      moved.should.be.false()
       fs.readFile ssh, "#{scratch}/dest.txt", 'utf8', (err, content) ->
         return next err if err
         content.should.eql 'hello'
         # The original file should no longer exists
         fs.exists ssh, "#{scratch}/src2.txt", (err, exists) ->
-          exists.should.be.false
+          exists.should.be.false()
           next()
 
   they 'force bypass checksum comparison', (ssh, next) ->
@@ -97,7 +97,7 @@ describe 'move', ->
       destination: "#{scratch}/dest.txt"
       force: 1
     , (err, moved) ->
-      moved.should.be.ok
+      moved.should.be.true()
     .then next
 
 

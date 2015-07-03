@@ -40,7 +40,7 @@ describe 'copy', ->
         destination: destination
       , (err, copied) ->
         return next err if err
-        copied.should.be.ok
+        copied.should.be.true()
       .call (options, next) ->
         misc.file.compare @options.ssh, [source, destination], (err, md5) ->
           return next err if err
@@ -52,7 +52,7 @@ describe 'copy', ->
         destination: destination
       , (err, copied) ->
         return next err if err
-        copied.should.not.be.ok
+        copied.should.be.false()
         next()
 
     they 'into an existing directory', (ssh, next) ->
@@ -65,17 +65,17 @@ describe 'copy', ->
         destination: destination
       , (err, copied) ->
         return next err if err
-        copied.should.be.ok
+        copied.should.be.true()
       .call (options, next) ->
         fs.exists @options.ssh, "#{destination}/a_file", (err, exists) ->
-          exists.should.be.true
+          exists.should.be.true()
           next()
       .copy # Copy over existing file
         source: source
         destination: destination
       , (err, copied) ->
         return next err if err
-        copied.should.not.be.ok
+        copied.should.be.false()
         next()
 
     they 'over an existing file', (ssh, next) ->
@@ -92,7 +92,7 @@ describe 'copy', ->
         destination: destination
       , (err, copied) ->
         return next err if err
-        copied.should.be.ok
+        copied.should.be.true()
         misc.file.compare ssh, [source, destination], (err, md5) ->
           return next err if err
           md5.should.eql '3fb7c40c70b0ed19da713bd69ee12014'
@@ -102,7 +102,7 @@ describe 'copy', ->
             destination: destination
           , (err, copied) ->
             return next err if err
-            copied.should.not.be.ok
+            copied.should.be.false()
             next()
 
     they 'change permissions', (ssh, next) ->
@@ -119,9 +119,9 @@ describe 'copy', ->
         mode: 0o750
       , (err, copied) ->
         return next err if err
-        copied.should.be.ok
+        copied.should.be.true()
         fs.stat ssh, destination, (err, stat) ->
-          misc.mode.compare(stat.mode, 0o750).should.be.ok
+          misc.mode.compare(stat.mode, 0o750).should.be.true()
           # Copy existing file
           mecano.copy
             ssh: ssh
@@ -131,7 +131,7 @@ describe 'copy', ->
           , (err, copied) ->
             return next err if err
             fs.stat ssh, destination, (err, stat) ->
-              misc.mode.compare(stat.mode, 0o755).should.be.ok
+              misc.mode.compare(stat.mode, 0o755).should.be.true()
               next()
 
     they 'handle hidden files', (ssh, next) ->
@@ -205,7 +205,7 @@ describe 'copy', ->
         destination: "#{scratch}/toto"
       , (err, copied) ->
         return next err if err
-        copied.should.be.ok
+        copied.should.be.true()
         checkDir ssh, "#{scratch}/toto", (err) ->
           return next err if err
           # if the destination exists, then copy the folder inside destination
@@ -215,7 +215,7 @@ describe 'copy', ->
             destination: "#{scratch}/toto"
           , (err, copied) ->
             return next err if err
-            copied.should.be.ok
+            copied.should.be.true()
             checkDir ssh, "#{scratch}/toto/resources", (err) ->
               next err
 
@@ -227,7 +227,7 @@ describe 'copy', ->
         destination: "#{scratch}/lulu"
       , (err, copied) ->
         return next err if err
-        copied.should.be.ok
+        copied.should.be.true()
         checkDir ssh, "#{scratch}/lulu", (err) ->
           return next err if err
           # if the destination exists, then copy the files inside destination
@@ -237,7 +237,7 @@ describe 'copy', ->
             destination: "#{scratch}/lulu"
           , (err, copied) ->
             return next err if err
-            copied.should.not.be.ok
+            copied.should.be.false()
             checkDir ssh, "#{scratch}/lulu", (err) ->
               next err
 
@@ -273,7 +273,7 @@ describe 'copy', ->
         destination: "#{scratch}"
       , (err, copied) ->
         return next err if err
-        copied.should.be.ok
+        copied.should.be.true()
         glob ssh, "#{scratch}/**", dot: true, (err, files) ->
           return next err if err
           next()

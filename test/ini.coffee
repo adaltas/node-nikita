@@ -16,7 +16,7 @@ describe 'ini', ->
       destination: "#{scratch}/user.ini"
     , (err, written) ->
       return next err if err
-      written.should.be.ok
+      written.should.be.true()
       fs.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
         return next err if err
         data.should.eql '[user.preference]\ncolor = rouge\n'
@@ -30,7 +30,7 @@ describe 'ini', ->
       separator: ':'
     , (err, written) ->
       return next err if err
-      written.should.be.ok
+      written.should.be.true()
       fs.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
         return next err if err
         data.should.eql '[user.preference]\ncolor:rouge\n'
@@ -47,7 +47,7 @@ describe 'ini', ->
         merge: true
       , (err, written) ->
         return next err if err
-        written.should.be.ok
+        written.should.be.true()
         fs.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
           return next err if err
           data.should.eql '[user.preference]\nlanguage = node\ncolor = violet\n'
@@ -61,7 +61,7 @@ describe 'ini', ->
       merge: true
     , (err, written) ->
       return next err if err
-      written.should.be.ok
+      written.should.be.true()
       fs.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
         return next err if err
         data.should.eql '[user.preference]\ncolor = violet\n'
@@ -78,7 +78,7 @@ describe 'ini', ->
         merge: true
       , (err, written) ->
         return next err if err
-        written.should.be.ok
+        written.should.be.true()
         fs.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
           return next err if err
           data.should.eql '[user.preference]\nlanguage = node\n'
@@ -95,7 +95,7 @@ describe 'ini', ->
         merge: true
       , (err, written) ->
         return next err if err
-        written.should.not.be.ok
+        written.should.be.false()
         next()
 
   they 'call stringify udf', (ssh, next) ->
@@ -107,7 +107,7 @@ describe 'ini', ->
       merge: true
     , (err, written) ->
       return next err if err
-      written.should.be.ok
+      written.should.be.true()
       fs.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
         return next err if err
         data.should.eql '[user]\n preference = {\n  color = true\n }\n\n'

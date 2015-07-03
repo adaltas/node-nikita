@@ -15,7 +15,7 @@ describe 'execute', ->
       ssh: ssh
       cmd: 'text=yes; echo $text'
     , (err, executed, stdout, stderr) ->
-      executed.should.be.ok
+      executed.should.be.true()
       stdout.should.eql 'yes\n'
       next()
   
@@ -33,7 +33,7 @@ describe 'execute', ->
     out.on 'unpipe', ->
       unpiped++
     out.on 'finish', ->
-      false.should.be.ok
+      false.should.be.true()
     mecano
       ssh: ssh
     .execute
@@ -81,14 +81,14 @@ describe 'execute', ->
       code_skipped: 1
     , (err, executed, stdout, stderr) ->
       return next err if err
-      executed.should.be.ok
+      executed.should.be.true()
     .execute
       cmd: "mkdir #{scratch}/my_dir"
       code: 0
       code_skipped: 1
     , (err, executed, stdout, stderr) ->
       return next err if err
-      executed.should.not.be.ok
+      executed.should.be.false()
       next()
   
   they 'should honor conditions', (ssh, next) ->
@@ -98,13 +98,13 @@ describe 'execute', ->
       cmd: 'text=yes; echo $text'
       if_exists: __dirname
     , (err, executed, stdout, stderr) ->
-      executed.should.be.ok
+      executed.should.be.true()
       stdout.should.eql 'yes\n'
     .execute
       cmd: 'text=yes; echo $text'
       if_exists: "__dirname/toto"
     , (err, executed, stdout, stderr) ->
-      executed.should.not.be.ok
+      executed.should.be.false()
       should.not.exist stdout
       next()
 
@@ -115,7 +115,7 @@ describe 'execute', ->
       not_if_exists: __dirname
     , (err, executed, stdout, stderr) ->
       return next err if err
-      executed.should.not.be.ok
+      executed.should.be.false()
       next()
 
   describe 'error', ->

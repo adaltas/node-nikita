@@ -18,7 +18,7 @@ describe 'java_keystore_add', ->
         caname: "my_alias"
         cacert: "#{__dirname}/java_keystore/certs1/cacert.pem"
       .then (err, status) ->
-        status.should.be.True unless err
+        status.should.be.true() unless err
         next err
 
     they 'detect existing cacert signature', (ssh, next) ->
@@ -36,7 +36,7 @@ describe 'java_keystore_add', ->
         caname: "my_alias"
         cacert: "#{__dirname}/java_keystore/certs1/cacert.pem"
       .then (err, status) ->
-        status.should.be.False unless err
+        status.should.be.false() unless err
         next err
 
     they 'update a new cacert with same alias', (ssh, next) ->
@@ -54,7 +54,7 @@ describe 'java_keystore_add', ->
         caname: "my_alias"
         cacert: "#{__dirname}/java_keystore/certs2/cacert.pem"
       .then (err, status) ->
-        status.should.be.True unless err
+        status.should.be.true() unless err
         next err
 
   describe 'cert', ->
@@ -72,7 +72,7 @@ describe 'java_keystore_add', ->
         keypass: 'mypassword'
         name: 'node_1'
       .then (err, status) ->
-        status.should.be.True unless err
+        status.should.be.true() unless err
         next err
 
     they 'detect existing cacert signature', (ssh, next) ->
@@ -98,7 +98,7 @@ describe 'java_keystore_add', ->
         keypass: 'mypassword'
         name: 'node_1'
       .then (err, status) ->
-        status.should.be.False unless err
+        status.should.be.false() unless err
         next err
 
     they 'update a new cacert with same alias', (ssh, next) ->
@@ -124,7 +124,7 @@ describe 'java_keystore_add', ->
         keypass: 'mypassword'
         name: 'node_1'
       .then (err, status) ->
-        status.should.be.True unless err
+        status.should.be.true() unless err
         next err
 
   describe 'keystore', ->
@@ -144,5 +144,5 @@ describe 'java_keystore_add', ->
         caname: "my_alias"
         cacert: "#{__dirname}/java_keystore/certs1/cacert.pem"
       .then (err, status) ->
-        status.should.be.True unless err
+        status.should.be.true() unless err
         next err
