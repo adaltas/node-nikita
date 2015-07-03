@@ -368,7 +368,6 @@ require('mecano').write({
                 content = opts.replace + '\n' + content.substr(to.index)
               else # TODO: honors append
                 options.log? "Mecano `write`: missing 'to', skip writing [WARN]"
-        console.log 'replace finished'
         do_eof()
       do_eof = ->
         return do_diff() unless options.eof?
