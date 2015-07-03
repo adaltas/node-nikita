@@ -129,7 +129,8 @@ mecano.docker({
       return callback Error 'Invalid parameter, rm cannot be true if service is true' if options.service and options.rm
       options.log? '[WARN] should specify a name if rm is false!' unless options.name? or options.rm
       # Construct exec command
-      cmd = 'docker run'
+      cmd = 'if command -v docker-machine >/dev/null; then docker-machine start >/dev/null && eval "$(docker-machine env dev)"; fi\n'
+      cmd += 'docker run'
       # Classic options
       for opt, flag of { name: '--name', hostname: '-h', cpu_shares: '-c',
       cgroup_parent: '--cgroup-parent', cid_file: '--cidfile', blkio_weight: '--blkio-weight',
