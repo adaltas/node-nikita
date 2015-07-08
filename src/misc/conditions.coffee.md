@@ -4,7 +4,8 @@
 Conditions are a set of properties you may add to the options of the Mecano
 functions. They apply to all functions and control their execution.
 
-For an action to be executed, all conditions must pass.
+A Mecano action will be executed if all the positive conditions are "true" and
+none of the negative conditions are "true".
 
     module.exports = 
 
