@@ -27,10 +27,14 @@ ps -L p $pid --no-headers | wc -l
 ```
 
 Count the number of sub-process for a user:
+The option "-L" show threads, possibly with LWP and NLWP columns.
 
 ```bash
 ps -L -u $user --no-headers | wc -l
 ```
+
+Maximum number of open files: `ulimit -Hn`
+Maximum number of process: `ulimit -u`
 
 ## Source Code
 
