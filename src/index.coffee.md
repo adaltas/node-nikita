@@ -155,13 +155,13 @@ functions share a common API with flexible options.
       properties.then = get: ->
         ->
           todos.push type: 'then', args: arguments
-          process.nextTick run if todos.length is 1 # Activate the pump
+          setImmediate run if todos.length is 1 # Activate the pump
           obj
       properties.call = get: ->
         ->
           todos.push type: 'call', args: arguments
-          process.nextTick ->
-          process.nextTick run if todos.length is 1 # Activate the pump
+          # process.nextTick ->
+          setImmediate run if todos.length is 1 # Activate the pump
           obj
       proto = Object.defineProperties obj, properties
       # Register function
@@ -182,7 +182,7 @@ functions share a common API with flexible options.
               # id = status.id++
               dest = arguments[0]?.destination
               todos.push type: name, args: arguments
-              process.nextTick run if todos.length is 1 # Activate the pump
+              setImmediate run if todos.length is 1 # Activate the pump
               obj
       Object.defineProperty obj, 'registered', get: ->
         (name, local_only=false) ->
