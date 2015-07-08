@@ -177,9 +177,9 @@ require('mecano').write({
     module.exports = (options, callback) ->
       modified = false
       # Validate parameters
-      return callback new Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?
-      return callback new Error 'Define either source or content' if options.source and options.content
-      return callback new Error 'Missing destination' unless options.destination
+      return callback Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?
+      return callback Error 'Define either source or content' if options.source and options.content
+      return callback Error 'Missing destination' unless options.destination
       options.content = options.content.toString() if options.content and Buffer.isBuffer options.content
       options.diff ?= options.diff or !!options.stdout
       options.engine ?= 'eco'
@@ -298,7 +298,7 @@ require('mecano').write({
           if opts.match
             opts.match ?= opts.replace
             opts.match = ///#{quote opts.match}///mg if typeof opts.match is 'string'
-            return next Error "Invalid match option" unless opts.match instanceof RegExp
+            return callback Error "Invalid match option" unless opts.match instanceof RegExp
             if opts.match.test content
               content = content.replace opts.match, opts.replace
               append = false
