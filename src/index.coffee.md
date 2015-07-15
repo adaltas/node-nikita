@@ -189,6 +189,10 @@ functions share a common API with flexible options.
           global = Object.prototype.hasOwnProperty.call module.exports, name
           local = Object.prototype.hasOwnProperty.call obj, name
           if local_only then local else global or local
+      Object.defineProperty obj, 'status', get: ->
+        (index) ->
+          if arguments.length is 0
+            return stack[0].status
       obj.register name, handler for name, handler of registry
       obj
 
