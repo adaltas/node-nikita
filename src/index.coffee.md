@@ -31,13 +31,13 @@ functions share a common API with flexible options.
       stack = []
       todos = []
       todos.err = null
-      todos.changed = false
+      todos.status = false
       todos.throw_if_error = true
       call_callback = (fn, args) ->
         stack.unshift todos
         todos = []
         todos.err = null
-        todos.changed = false
+        todos.status = false
         todos.throw_if_error = true
         try
           fn.apply obj, args
@@ -52,7 +52,7 @@ functions share a common API with flexible options.
         stack.unshift todos
         todos = []
         todos.err = null
-        todos.changed = false
+        todos.status = false
         todos.throw_if_error = true
         try
           status = fn.apply obj, args
@@ -88,7 +88,7 @@ functions share a common API with flexible options.
           stack.unshift todos
           todos = []
           todos.err = null
-          todos.changed = false
+          todos.status = false
           todos.throw_if_error = true
           status_callback = []
           status_action = []
@@ -101,7 +101,7 @@ functions share a common API with flexible options.
             status_action = status_action.some (status) -> !! status
             callback_args = [err, status_callback, [].slice.call(arguments)[1...]...]
             call_callback callback, callback_args if callback
-            todos.changed = true if status_action and not options.shy
+            todos.status = true if status_action and not options.shy
             return run()
           options = options[0] unless local_options_array
           wrap obj, [options, finish], (options, callback) ->
@@ -125,11 +125,11 @@ functions share a common API with flexible options.
           throw todos.err if todos.err and todos.throw_if_error
           return
         if todo.type is 'then'
-          {err, changed} = todos
+          {err, status} = todos
           todos.err = null
-          todos.changed = false
+          todos.status = false
           todos.throw_if_error = true
-          todo.args[0].call obj, err, changed
+          todo.args[0].call obj, err, status
           run()
           return
         if todo.type is 'call'
@@ -139,8 +139,8 @@ functions share a common API with flexible options.
               args: todo.args
               handler: todo.args[0]
           else # Sync style
-            changed = call_sync todo.args[0], []
-            if changed then todos.changed = true
+            status = call_sync todo.args[0], []
+            if status then todos.status = true
             return run()
         # Call the action
         todo.args[0].user_args = todo.args[1]?.length > 2
