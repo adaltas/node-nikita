@@ -179,7 +179,6 @@ functions share a common API with flexible options.
           obj.registry[name] = handler
           Object.defineProperty obj, name, configurable: true, get: ->
             ->
-              # id = status.id++
               dest = arguments[0]?.destination
               todos.push type: name, args: arguments
               setImmediate run if todos.length is 1 # Activate the pump
