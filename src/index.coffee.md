@@ -31,13 +31,13 @@ functions share a common API with flexible options.
       stack = []
       todos = []
       todos.err = null
-      todos.status = false
+      todos.status = []
       todos.throw_if_error = true
       call_callback = (fn, args) ->
         stack.unshift todos
         todos = []
         todos.err = null
-        todos.status = false
+        todos.status = []
         todos.throw_if_error = true
         try
           fn.apply obj, args
@@ -49,10 +49,11 @@ functions share a common API with flexible options.
         todos = stack.shift()
         todos.unshift mtodos... if mtodos.length
       call_sync = (fn, args) ->
+        todos.status.unshift undefined
         stack.unshift todos
         todos = []
         todos.err = null
-        todos.status = false
+        todos.status = []
         todos.throw_if_error = true
         try
           status = fn.apply obj, args
@@ -63,7 +64,7 @@ functions share a common API with flexible options.
         mtodos = todos
         todos = stack.shift()
         todos.unshift mtodos... if mtodos.length
-        status
+        todos.status.unshift status
       # call_async = (fn, local_options={}, callback, name) ->
       # Options are: type, args, handler
       call_async = (action) ->
@@ -85,10 +86,11 @@ functions share a common API with flexible options.
         for k, v of global_options
           for opts in options then opts[k] = v if opts[k] is undefined
         try
+          todos.status.unshift undefined
           stack.unshift todos
           todos = []
           todos.err = null
-          todos.status = false
+          todos.status = []
           todos.throw_if_error = true
           status_callback = []
           status_action = []
@@ -100,8 +102,8 @@ functions share a common API with flexible options.
             status_callback = status_callback.some (status) -> !! status
             status_action = status_action.some (status) -> !! status
             callback_args = [err, status_callback, [].slice.call(arguments)[1...]...]
+            todos.status[0] = status_action and not options.shy
             call_callback callback, callback_args if callback
-            todos.status = true if status_action and not options.shy
             return run()
           options = options[0] unless local_options_array
           wrap obj, [options, finish], (options, callback) ->
@@ -126,8 +128,9 @@ functions share a common API with flexible options.
           return
         if todo.type is 'then'
           {err, status} = todos
+          status = status.some (status) -> !! status
           todos.err = null
-          todos.status = false
+          todos.status = []
           todos.throw_if_error = true
           todo.args[0].call obj, err, status
           run()
@@ -139,8 +142,7 @@ functions share a common API with flexible options.
               args: todo.args
               handler: todo.args[0]
           else # Sync style
-            status = call_sync todo.args[0], []
-            if status then todos.status = true
+            call_sync todo.args[0], []
             return run()
         # Call the action
         todo.args[0].user_args = todo.args[1]?.length > 2
@@ -191,7 +193,9 @@ functions share a common API with flexible options.
       Object.defineProperty obj, 'status', get: ->
         (index) ->
           if arguments.length is 0
-            return stack[0].status
+            return stack[0].status.some (status) -> !! status
+          else
+            stack[0].status[Math.abs index]
       obj.register name, handler for name, handler of registry
       obj
 
