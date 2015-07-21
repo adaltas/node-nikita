@@ -1,11 +1,10 @@
 
 {EventEmitter} = require 'events'
 should = require 'should'
-mecano = require "../src"
-test = require './test'
+mecano = require '../../src'
+test = require '../test'
 they = require 'ssh2-they'
-expect = require 'expect'
-docker = require "../src/misc/docker"
+docker = require "../../src/misc/docker"
 
 #needs Internet connection for performing test
 describe 'docker_build', ->
