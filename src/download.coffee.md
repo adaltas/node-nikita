@@ -59,6 +59,10 @@ calculated if neither md5 nor sha1 is provided
     Cache the file on the executing machine, equivalent to cache unless an ssh connection is
     provided. If a string is provided, it will be the cache path.
     By default: basename of source
+*   `uid` (string | int)
+    UID of the destination. If specified, mecano will chown after download
+*   `mode` (octal mode)
+    Permissions of the destination. If specified, mecano will chmod after download
 
 ## Callback parameters
 
@@ -282,6 +286,19 @@ mecano.download
           source: stageDestination
           destination: destination
           source_md5: options.md5
+        , do_chmod
+      do_chmod = ->
+        @chmod
+          destination: destination
+          mode: options.mode
+          if: options.mode?
+        , do_chown
+      do_chown = ->
+        @chown
+          destination: destination
+          uid: options.uid
+          gid: options.gid
+          if: options.uid? or options.gid?
         , callback
       do_cache()
 
