@@ -16,21 +16,12 @@ describe 'docker_build', ->
     mecano
       ssh: ssh
     .docker_build
-      dockerfile_source: 'Dockerfile'
+      false_source: 'Dockerfile'
     , (err, executed, stdout, stderr) ->
       err.message.should.match /^Missing build name.*/
     .then (err) -> next null
 
-  they 'Test missing dockerfile_* parameters', (ssh, next) ->
-    mecano
-      ssh: ssh
-    .docker_build
-      name: 'mecano/test'
-    , (err, executed, stdout, stderr) ->
-      err.message.should.match /^dockerfile_source and dockerfile_write not specified.*/
-    .then (err) -> next null
-
-  they 'Test exclusive parameters ', (ssh, next) ->
+  they 'Test exclusive parameters', (ssh, next) ->
     mecano
       ssh: ssh
     .docker_build
@@ -63,6 +54,3 @@ describe 'docker_build', ->
     , (err, executed, stdout, stderr) ->
       executed.should.be.true()() unless err
     .then (err) -> next null
-
-
-
