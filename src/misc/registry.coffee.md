@@ -42,4 +42,5 @@
       touch: require '../touch'
       upload: require '../upload'
       user: require '../user'
+      wait_execute: require '../wait_execute'
       write: require '../write'
