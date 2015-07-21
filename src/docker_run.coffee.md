@@ -149,9 +149,9 @@ mecano.docker({
       dns: '--dns', dns_search: '--dns-search', volumes_from: '--volumes-from',
       cap_add: '--cap-add', cap_drop: '--cap-drop', ulimit: '--ulimit', add_host: '--add-host' }
         if options[opt]?
-          if typeof options[opt] is 'string' or 'number'
+          if typeof options[opt] is 'string' or typeof options[opt] is 'number'
             cmd += " #{flag} #{options[opt]}"
-          else if Array.isArray options.port
+          else if Array.isArray options[opt]
             cmd += " #{flag} #{p}" for p in options[opt]
           else callback Error "Invalid parameter, typeof #{opt} should be string or string array"
       cmd += " #{options.image}"
