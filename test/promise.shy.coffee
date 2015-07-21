@@ -55,10 +55,10 @@ describe 'promise shy', ->
       content: 'abc'
       shy: true
     ], (err, status) ->
-      status.should.be.true()
+      status.should.be.true() unless err
     .then (err, status) ->
-      status.should.be.true()
-      next()
+      status.should.be.true() unless err
+      next err
         
 
 
