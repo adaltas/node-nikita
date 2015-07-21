@@ -29,6 +29,7 @@ describe 'promise call', ->
         touched.should.eql 2
         next()
 
+  describe 'sync status', ->
     it 'set status to true', (next) ->
       mecano
       .call (options) ->
@@ -83,6 +84,7 @@ describe 'promise call', ->
         called.should.eql 1
         touched.should.eql 2
         next()
+  describe 'async status', ->
 
     it 'set status to true', (next) ->
       mecano
@@ -90,8 +92,8 @@ describe 'promise call', ->
         process.nextTick ->
           next null, true
       .then (err, status) ->
-        status.should.be.true()
-        next()
+        status.should.be.true() unless err
+        next err
 
     it 'set status to false', (next) ->
       mecano
