@@ -14,7 +14,6 @@ functions share a common API with flexible options.
 ## Source Code
 
     module.exports = ->
-      # obj = instance arguments...
       if arguments.length is 2
         obj = arguments[0]
         obj.options = arguments[1]
@@ -48,9 +47,12 @@ functions share a common API with flexible options.
             for kv, i in arg
               local_options[i] ?= {}
               local_options[i][k] = v for k, v of kv
-          else
+          else if typeof arg is 'object'
             local_options[0] ?= {}
-            local_options[0][k] = v for k, v of arg        
+            local_options[0][k] = v for k, v of arg 
+          else  
+            local_options[0] ?= {}
+            local_options[0].argument = arg    
         options = []
         for local_opts in local_options
           local_opts = argument: local_opts if local_opts? and typeof local_opts isnt 'object'
