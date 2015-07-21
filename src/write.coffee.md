@@ -280,8 +280,19 @@ require('mecano').write({
         options.log? "Mecano `write`: rendering with #{options.engine} [DEBUG]"
         try
           switch options.engine
-            when 'nunjunks' then content = (new nunjucks.Environment()).renderString content.toString(), options.context
-            when 'eco' then content = eco.render content.toString(), options.context
+            when 'nunjunks'
+              engine = new nunjucks.Environment()
+              options.filters ?= {}
+              options.filters.isString ?= (obj) -> typeof obj is 'string'
+              options.filters.isArray ?= (obj) -> Array.isArray obj
+              for filter, func of options.filters
+                if typeof func is 'function'
+                  engine.addFilter filter, func
+                else
+                  options.log? "Incorrect filter '#{filter}': not a function. Ignoring [WARN]"
+              content = engine.renderString content.toString(), options.context
+            when 'eco'
+              content = eco.render content.toString(), options.context
             else return callback Error "Invalid engine: #{options.engine}"
         catch err
           return callback if typeof err is 'string' then Error(err) else err
