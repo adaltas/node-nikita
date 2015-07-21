@@ -55,7 +55,7 @@ describe 'promise status', ->
       callback null, false
     .then next
 
-  it 'get previous n status', (next) ->
+  it 'get previous n', (next) ->
     mecano
     .call (options, callback) ->
       callback null, false
