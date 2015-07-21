@@ -136,7 +136,7 @@ functions share a common API with flexible options.
           run()
           return
         if todo.type is 'call'
-          if todo.args[0].length > 1 # Async style
+          if todo.args[0].length is 2 # Async style
             return call_async
               type: todo.type
               args: todo.args
