@@ -30,6 +30,7 @@ describe 'promise call', ->
         next()
 
   describe 'sync status', ->
+
     it 'set status to true', (next) ->
       mecano
       .call (options) ->
@@ -81,9 +82,25 @@ describe 'promise call', ->
       , (err) ->
         touched++
       .then (err, status) ->
-        called.should.eql 1
-        touched.should.eql 2
+        called.should.eql 1 unless err
+        touched.should.eql 2 unless err
+        next err
+
+    it 'pass options', (next) ->
+      mecano
+      .call test: true, (options, next) ->
+        options.test.should.be.true()
         next()
+      .then next
+
+    it 'pass multiple options', (next) ->
+      mecano
+      .call {test1: true}, {test2: true}, (options, next) ->
+        options.test1.should.be.true()
+        options.test2.should.be.true()
+        next()
+      .then next
+
   describe 'async status', ->
 
     it 'set status to true', (next) ->
