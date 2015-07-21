@@ -33,42 +33,7 @@ functions share a common API with flexible options.
       todos.err = null
       todos.status = []
       todos.throw_if_error = true
-      call_callback = (fn, args) ->
-        stack.unshift todos
-        todos = []
-        todos.err = null
-        todos.status = []
-        todos.throw_if_error = true
-        try
-          fn.apply obj, args
-        catch err
-          todos = stack.shift()
-          jump_to_error err
-          return run()
-        mtodos = todos
-        todos = stack.shift()
-        todos.unshift mtodos... if mtodos.length
-      # parse_action = (action) ->
-      call_sync = (action) ->
-        todos.status.unshift undefined
-        stack.unshift todos
-        todos = []
-        todos.err = null
-        todos.status = []
-        todos.throw_if_error = true
-        try
-          status = action.handler.apply obj, action.args
-        catch err
-          todos = stack.shift()
-          jump_to_error err
-          return run()
-        mtodos = todos
-        todos = stack.shift()
-        todos.unshift mtodos... if mtodos.length
-        todos.status.unshift status
-      # call_async = (fn, local_options={}, callback, name) ->
-      # Options are: type, args, handler
-      call_async = (action) ->
+      read_options = (action) ->
         global_options = obj.options
         parent_options = todos.options
         local_options = [{}]
@@ -97,6 +62,43 @@ functions share a common API with flexible options.
         for k, v of global_options
           for opts in options then opts[k] = v if opts[k] is undefined
         options = options[0] unless local_options_array
+        [options, callback]
+      call_callback = (fn, args) ->
+        stack.unshift todos
+        todos = []
+        todos.err = null
+        todos.status = []
+        todos.throw_if_error = true
+        try
+          fn.apply obj, args
+        catch err
+          todos = stack.shift()
+          jump_to_error err
+          return run()
+        mtodos = todos
+        todos = stack.shift()
+        todos.unshift mtodos... if mtodos.length
+      # parse_action = (action) ->
+      call_sync = (action) ->
+        [options, callback] = read_options action
+        todos.status.unshift undefined
+        stack.unshift todos
+        todos = []
+        todos.err = null
+        todos.status = []
+        todos.throw_if_error = true
+        try
+          status = action.handler.apply obj, [options]
+        catch err
+          todos = stack.shift()
+          jump_to_error err
+          return run()
+        mtodos = todos
+        todos = stack.shift()
+        todos.unshift mtodos... if mtodos.length
+        todos.status.unshift status
+      call_async = (action) ->
+        [options, callback] = read_options action
         try
           todos.status.unshift undefined
           stack.unshift todos

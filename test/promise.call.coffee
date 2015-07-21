@@ -29,6 +29,19 @@ describe 'promise call', ->
         touched.should.eql 2
         next()
 
+    it 'pass options', (next) ->
+      mecano
+      .call test: true, (options) ->
+        options.test.should.be.true()
+      .then next
+
+    it 'pass multiple options', (next) ->
+      mecano
+      .call {test1: true}, {test2: true}, (options) ->
+        options.test1.should.be.true()
+        options.test2.should.be.true()
+      .then next
+
   describe 'sync status', ->
 
     it 'set status to true', (next) ->
