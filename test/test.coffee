@@ -1,5 +1,5 @@
 
-mecano = require "../src"
+mecano = require '../src'
 fs = require 'fs'
 
 scratch = "/tmp/mecano-test"

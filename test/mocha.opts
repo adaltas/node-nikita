@@ -2,3 +2,4 @@
 --timeout 20000
 --compilers coffee:coffee-script/register
 --reporter spec
+--recursive
