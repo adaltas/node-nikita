@@ -4,11 +4,9 @@ should = require 'should'
 mecano = require "../src"
 test = require './test'
 they = require 'ssh2-they'
-expect = require 'expect'
-docker = require "../src/misc/docker"
 
 #needs Internet connection for performing test
-describe 'docker_build', ->
+describe 'docker build', ->
 
   scratch = test.scratch @
 
@@ -41,7 +39,7 @@ describe 'docker_build', ->
   #     write: "FROM scratch"
   #     machine: 'ryba'
   #   , (err, executed, stdout, stderr) ->
-  #     executed.should.be.true()() unless err
+  #     executed.should.be.true() unless err
   #   .then (err) -> next null
 
   they 'Test build from source', (ssh, next) ->

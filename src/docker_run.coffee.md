@@ -62,7 +62,7 @@ Run Docker Containers (in service mode)
     Read in a file of environment variables
 *   `rm` (boolean)
     delete the container when it ends. By Default: true in cmd mode, false in service mode
-*   `work_dir` (path)
+*   `cwd` (path)
     working directory of container
 *   `net` (string)
     Set the Network mode for the container
@@ -136,7 +136,7 @@ mecano.docker({
       cgroup_parent: '--cgroup-parent', cid_file: '--cidfile', blkio_weight: '--blkio-weight',
       cpuset_cpus: '--cpuset-cpus', entrypoint: '--entrypoint', ipc: '--ipc',
       log_driver: '--log-driver', memory: '-m', mac_address: '--mac-address',
-      memory_swap: '--memory-swap', net: '--net', pid: '--pid', work_dir: '-w'}
+      memory_swap: '--memory-swap', net: '--net', pid: '--pid', cwd: '-w'}
         cmd += " #{flag} #{options[opt]}" if options[opt]?
       # Specific options: autodiscovery or transformation
       cmd += if options.service then ' -d' else ' -t'
