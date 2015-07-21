@@ -29,5 +29,12 @@ describe 'promise options', ->
       parent_param_unpropagated: true
     .then next
 
+  it 'accept empty array', (next) ->
+    mecano
+    .call [], (options, callback) ->
+      callback null, true
+    .write []
+    .then next
+
 
 

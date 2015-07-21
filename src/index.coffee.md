@@ -36,7 +36,7 @@ functions share a common API with flexible options.
       read_options = (action) ->
         global_options = obj.options
         parent_options = todos.options
-        local_options = [{}]
+        local_options = []
         callback = null
         local_options_array = false
         for arg in action.args
@@ -62,6 +62,7 @@ functions share a common API with flexible options.
         for k, v of global_options
           for opts in options then opts[k] = v if opts[k] is undefined
         options = options[0] unless local_options_array
+        options ?= {}
         [options, callback]
       call_callback = (fn, args) ->
         stack.unshift todos
@@ -155,6 +156,7 @@ functions share a common API with flexible options.
               handler = arg
               continue
             arg
+          args[0] = {} unless args.length
           if handler.length is 2
           # if todo.args[0].length is 2 # Async style
             return call_async
