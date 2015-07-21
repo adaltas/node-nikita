@@ -3,9 +3,9 @@ mecano = require '../src'
 test = require './test'
 fs = require 'fs'
 
-describe 'promise status', ->
+describe 'status', ->
 
-  it 'get status', (next) ->
+  it 'get without arguments', (next) ->
     mecano
     .call (options, callback) ->
       @status().should.be.false()
@@ -23,7 +23,7 @@ describe 'promise status', ->
       callback null, false
     .then next
 
-  it 'get current status', (next) ->
+  it 'get current', (next) ->
     mecano
     .call (options, callback) ->
       (@status(0) is undefined).should.be.true()
@@ -37,7 +37,7 @@ describe 'promise status', ->
       @status(0).should.be.true()
     .then next
 
-  it 'get previous status', (next) ->
+  it 'get previous', (next) ->
     mecano
     .call (options, callback) ->
       (@status(-1) is undefined).should.be.true()
@@ -78,3 +78,25 @@ describe 'promise status', ->
       @status(-2).should.be.false()
       callback null, false
     .then next
+
+  it 'honors conditions', (next) ->
+    mecano
+    .call
+      if: -> true
+    ,(options, callback) ->
+      callback null, true
+    .then (err, status) ->
+      return next err if err
+      status.should.be.true()
+    .call
+      if: -> false
+    ,(options, callback) ->
+      callback null, true
+    .then (err, status) ->
+      return next err if err
+      status.should.be.false()
+      next()
+
+
+
+
