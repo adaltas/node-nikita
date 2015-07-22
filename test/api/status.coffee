@@ -79,22 +79,36 @@ describe 'status', ->
       callback null, false
     .then next
 
-  it 'honors conditions', (next) ->
+  it 'report conditions', (next) ->
     mecano
     .call
       if: -> true
-    ,(options, callback) ->
+    , (options, callback) ->
       callback null, true
     .then (err, status) ->
       return next err if err
       status.should.be.true()
     .call
       if: -> false
-    ,(options, callback) ->
+    , (options, callback) ->
       callback null, true
     .then (err, status) ->
       return next err if err
       status.should.be.false()
+      next()
+
+  it 'retrieve inside conditions', (next) ->
+    mecano
+    .call
+      if: -> @status()
+    , (options, callback) -> 
+      callback Error 'Shouldnt be called' 
+    .call (options, callback) ->
+      callback null, true
+    .call
+      if: -> @status()
+    , (options, callback) ->
+      # Must be called
       next()
 
 
