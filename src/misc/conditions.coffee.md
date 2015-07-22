@@ -43,7 +43,7 @@ mecano.render({
         options.if = [options.if] unless Array.isArray options.if
         ok = true
         each(options.if)
-        .run (si, next) ->
+        .run (si, next) =>
           return next() unless ok
           # options.log? "Mecano `if`"
           type = typeof si
@@ -56,11 +56,11 @@ mecano.render({
           else if type is 'function'
             if si.length < 2
               try
-                ok = false unless si options
+                ok = false unless si.call @, options
                 next()
               catch err then next err
             if si.length is 2
-              si options, (err, is_ok) ->
+              si.call @, options, (err, is_ok) ->
                 return next err if err
                 ok = false unless is_ok
                 next()
@@ -96,7 +96,7 @@ pass.
         options.not_if = [options.not_if] unless Array.isArray options.not_if
         ok = true
         each(options.not_if)
-        .run (not_if, next) ->
+        .run (not_if, next) =>
           return next() unless ok
           # options.log? "Mecano `not_if`"
           type = typeof not_if
@@ -109,11 +109,11 @@ pass.
           else if type is 'function'
             if not_if.length < 2
               try
-                ok = false if not_if options
+                ok = false if not_if.call @, options
                 next()
               catch err then next err
             if not_if.length is 2
-              not_if options, (err, is_ok) ->
+              not_if.call @, options, (err, is_ok) ->
                 return next err if err
                 ok = false if is_ok
                 next()
@@ -290,7 +290,7 @@ conditions.all({
 })
 ```
 
-      all: (options, failed, succeed) ->
+      all: (context, options, failed, succeed) ->
         return succeed() unless options? and (typeof options is 'object' and not Array.isArray options)
         keys = Object.keys options
         i = 0
@@ -298,7 +298,7 @@ conditions.all({
           key = keys[i++]
           return succeed() unless key?
           return next() unless module.exports[key]?
-          module.exports[key] options, (err) ->
+          module.exports[key].call context, options, (err) ->
             options.log? "Mecano `#{key}`: skipping action"
             failed err
           , next

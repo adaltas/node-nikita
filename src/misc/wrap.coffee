@@ -36,15 +36,13 @@ exports = module.exports = (context, args, handler) ->
     each options
     .run (options, next) ->
       # Handle conditions
-      conditions.all options, next, ->
+      conditions.all context, options, next, ->
         handler.call context, options, (err, modif, args...) ->
           for arg, i in args
             user_args[i] ?= []
             user_args[i].push arg
           next err
     .then finish
-  # Return a Mecano Child instance
-  # args.callee
   context
 
 exports.args = (args, overwrite_goptions={}) ->
