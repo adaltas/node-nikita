@@ -1,17 +1,19 @@
 
-# `docker(options, callback)`
+# `docker_run(options, callback)`
 
-Run Docker Containers (in service mode)
+Run Docker Containers
 
 ## Options
 
+*   `container` (string)
+    Name of the docker container to run.
 *   `image` (string)
-    Name or ID of base image. MANDATORY
+    Name/ID of base image. MANDATORY
+*   `machine` (string)
+    Name of the docker-machine. MANDATORY if using docker-machine
 *   `cmd` (string)
     Overwrite the default ENTRYPOINT of the image
     Equivalent to --entrypoint docker parameter
-*   `name` (string)
-    Name of the docker container to run.
 *   `hostname` (string)
     Hostname in the docker container
 *   `port` ( 'int:int' | [] )
@@ -103,7 +105,7 @@ Run Docker Containers (in service mode)
 ```javascript
 mecano.docker({
   ssh: ssh
-  name: 'myContainer'
+  container: 'myContainer'
   image: 'test-image'
   env: ["FOO=bar",]
   entrypoint: '/bin/true'
@@ -127,38 +129,45 @@ mecano.docker({
       options.service ?= true
       options.rm ?= !options.service
       return callback Error 'Invalid parameter, rm cannot be true if service is true' if options.service and options.rm
-      options.log? '[WARN] should specify a name if rm is false!' unless options.name? or options.rm
+      options.log? '[WARN] should specify a container name if rm is false!' unless options.container? or options.rm
       # Construct exec command
-      cmd = 'if command -v docker-machine >/dev/null; then docker-machine start >/dev/null && eval "$(docker-machine env dev)"; fi\n'
-      cmd += 'docker run'
-      # Classic options
-      for opt, flag of { name: '--name', hostname: '-h', cpu_shares: '-c',
-      cgroup_parent: '--cgroup-parent', cid_file: '--cidfile', blkio_weight: '--blkio-weight',
-      cpuset_cpus: '--cpuset-cpus', entrypoint: '--entrypoint', ipc: '--ipc',
-      log_driver: '--log-driver', memory: '-m', mac_address: '--mac-address',
-      memory_swap: '--memory-swap', net: '--net', pid: '--pid', cwd: '-w'}
-        cmd += " #{flag} #{options[opt]}" if options[opt]?
-      # Specific options: autodiscovery or transformation
-      cmd += if options.service then ' -d' else ' -t'
-      # Flag options
-      for opt, flag of { rm: '--rm', publish_all: '-P', privileged: '--privileged', read_only: '--read-only' }
-        cmd += " #{flag}" if options[opt]
-      # Arrays Options
-      for opt, flag of { port:'-p', volume: '-v', device: '--device', label: '-l',
-      label_file: '--label-file', expose: '--expose', env: '-e', env_file: '--env-file',
-      dns: '--dns', dns_search: '--dns-search', volumes_from: '--volumes-from',
-      cap_add: '--cap-add', cap_drop: '--cap-drop', ulimit: '--ulimit', add_host: '--add-host' }
-        if options[opt]?
-          if typeof options[opt] is 'string' or typeof options[opt] is 'number'
-            cmd += " #{flag} #{options[opt]}"
-          else if Array.isArray options[opt]
-            cmd += " #{flag} #{p}" for p in options[opt]
-          else callback Error "Invalid parameter, typeof #{opt} should be string or string array"
-      cmd += " #{options.image}"
-      cmd += " #{options.cmd}" if options.cmd
-      # Construct other exec parameter
-      exec_opts =
-        cmd: cmd
-      for k in ['ssh','log', 'stdout','stderr','cwd','code','code_skipped']
-        exec_opts[k] = options[k] if options[k]?
-      @execute exec_opts, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
+      docker.get_provider options, (err,  provider) =>
+        return callback err if err
+        options.provider = provider
+        cmd = docker.prepare_cmd provider, options.machine
+        cmd += 'docker run'
+        # Classic options
+        for opt, flag of { container: '--name', hostname: '-h', cpu_shares: '-c',
+        cgroup_parent: '--cgroup-parent', cid_file: '--cidfile', blkio_weight: '--blkio-weight',
+        cpuset_cpus: '--cpuset-cpus', entrypoint: '--entrypoint', ipc: '--ipc',
+        log_driver: '--log-driver', memory: '-m', mac_address: '--mac-address',
+        memory_swap: '--memory-swap', net: '--net', pid: '--pid', cwd: '-w'}
+          cmd += " #{flag} #{options[opt]}" if options[opt]?
+        # Specific options: autodiscovery or transformation
+        cmd += if options.service then ' -d' else ' -t'
+        # Flag options
+        for opt, flag of { rm: '--rm', publish_all: '-P', privileged: '--privileged', read_only: '--read-only' }
+          cmd += " #{flag}" if options[opt]
+        # Arrays Options
+        for opt, flag of { port:'-p', volume: '-v', device: '--device', label: '-l',
+        label_file: '--label-file', expose: '--expose', env: '-e', env_file: '--env-file',
+        dns: '--dns', dns_search: '--dns-search', volumes_from: '--volumes-from',
+        cap_add: '--cap-add', cap_drop: '--cap-drop', ulimit: '--ulimit', add_host: '--add-host' }
+          if options[opt]?
+            if typeof options[opt] is 'string' or typeof options[opt] is 'number'
+              cmd += " #{flag} #{options[opt]}"
+            else if Array.isArray options[opt]
+              cmd += " #{flag} #{p}" for p in options[opt]
+            else callback Error "Invalid parameter, typeof #{opt} should be string or string array"
+        cmd += " #{options.image}"
+        cmd += " #{options.cmd}" if options.cmd
+        # Construct other exec parameter
+        exec_opts =
+          cmd: cmd
+        for k in ['ssh','log', 'stdout','stderr','cwd','code','code_skipped']
+          exec_opts[k] = options[k] if options[k]?
+        @execute exec_opts, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
+
+## Modules Dependencies
+
+    docker = require './misc/docker'
