@@ -29,7 +29,7 @@ Start stopped containers
 
 ```javascript
 mecano.docker_start({
-  name: 'toto',
+  container: 'toto',
   attach: true
 }, function(err, is_true, stdout, stderr){
   if(err){
