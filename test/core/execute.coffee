@@ -15,9 +15,9 @@ describe 'execute', ->
       ssh: ssh
       cmd: 'text=yes; echo $text'
     , (err, executed, stdout, stderr) ->
-      executed.should.be.true()
-      stdout.should.eql 'yes\n'
-      next()
+      executed.should.be.true() unless err
+      stdout.should.eql 'yes\n' unless err
+      next err
   
   they 'stream stdout and unpipe', (ssh, next) -> #.skip 'remote',
     @timeout 10000000
