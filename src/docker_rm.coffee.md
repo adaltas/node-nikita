@@ -6,8 +6,8 @@ force options is set.
 
 ## Options
 
-*   `name` (string)
-    Name of the container. MANDATORY
+*   `container` (string)
+    Name/ID of the container. MANDATORY
 *   `machine` (string)
     Name of the docker-machine. MANDATORY if docker-machine installed
 *   `link` (boolean)
@@ -23,7 +23,7 @@ force options is set.
 
     module.exports = (options, callback) ->
       # Validate parameters and madatory conditions
-      return callback  Error 'Missing name parameter' unless options.name?
+      return callback  Error 'Missing container parameter' unless options.container?
       docker.get_provider options, (err,  provider) =>
         return callback err if err
         options.provider = provider
@@ -31,9 +31,13 @@ force options is set.
         cmd += 'docker rm '
         for opt in ['link', 'volumes', 'force']
           cmd += "--#{opt}=#{options[opt]} " if options[opt]?
-        cmd += options.name
+        cmd += options.container
         exec_opts =
           cmd: cmd
         for k in ['ssh','log', 'stdout','stderr','cwd','code','code_skipped']
           exec_opts[k] = options[k] if options[k]?
         @execute exec_opts, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
+
+## Modules Dependencies
+
+    docker = require './misc/docker'
