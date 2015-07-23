@@ -194,6 +194,12 @@ functions share a common API with flexible options.
           todos.push normalize_arguments args
           setImmediate run if todos.length is 1 # Activate the pump
           obj
+      properties.status = get: ->
+        (index) ->
+          if arguments.length is 0
+            return stack[0].status.some (status) -> !! status
+          else
+            stack[0].status[Math.abs index]
       proto = Object.defineProperties obj, properties
       # Register function
       Object.defineProperty obj, 'register', get: ->
@@ -226,12 +232,6 @@ functions share a common API with flexible options.
           global = Object.prototype.hasOwnProperty.call module.exports, name
           local = Object.prototype.hasOwnProperty.call obj, name
           if local_only then local else global or local
-      Object.defineProperty obj, 'status', get: ->
-        (index) ->
-          if arguments.length is 0
-            return stack[0].status.some (status) -> !! status
-          else
-            stack[0].status[Math.abs index]
       obj.register name, handler for name, handler of registry
       obj
 
