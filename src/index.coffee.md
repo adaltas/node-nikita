@@ -14,7 +14,6 @@ functions share a common API with flexible options.
 ## Source Code
 
     module.exports = ->
-      # obj = instance arguments...
       if arguments.length is 2
         obj = arguments[0]
         obj.options = arguments[1]
@@ -33,6 +32,40 @@ functions share a common API with flexible options.
       todos.err = null
       todos.status = []
       todos.throw_if_error = true
+      read_options = (action) ->
+        global_options = obj.options
+        parent_options = todos.options
+        local_options = []
+        callback = null
+        local_options_array = false
+        for arg in action.args
+          if typeof arg is 'function'
+            throw Error 'Invalid arguments' if callback
+            callback = arg
+          else if Array.isArray arg
+            local_options_array = true
+            for kv, i in arg
+              local_options[i] ?= {}
+              local_options[i][k] = v for k, v of kv
+          else if typeof arg is 'object'
+            local_options[0] ?= {}
+            local_options[0][k] = v for k, v of arg 
+          else  
+            local_options[0] ?= {}
+            local_options[0].argument = arg    
+        options = []
+        for local_opts in local_options
+          local_opts = argument: local_opts if local_opts? and typeof local_opts isnt 'object'
+          opts = {}
+          for k, v of local_opts then opts[k] = local_opts[k]
+          options.push opts
+        for k, v of parent_options
+          for opts in options then opts[k] = v if opts[k] is undefined and k in obj.propagated_options
+        for k, v of global_options
+          for opts in options then opts[k] = v if opts[k] is undefined
+        options = options[0] unless local_options_array
+        options ?= {}
+        [options, callback]
       call_callback = (fn, args) ->
         stack.unshift todos
         todos = []
@@ -48,7 +81,9 @@ functions share a common API with flexible options.
         mtodos = todos
         todos = stack.shift()
         todos.unshift mtodos... if mtodos.length
-      call_sync = (fn, args) ->
+      # parse_action = (action) ->
+      call_sync = (action) ->
+        [options, callback] = read_options action
         todos.status.unshift undefined
         stack.unshift todos
         todos = []
@@ -56,7 +91,7 @@ functions share a common API with flexible options.
         todos.status = []
         todos.throw_if_error = true
         try
-          status = fn.apply obj, args
+          status = action.handler.apply obj, [options]
         catch err
           todos = stack.shift()
           jump_to_error err
@@ -65,26 +100,8 @@ functions share a common API with flexible options.
         todos = stack.shift()
         todos.unshift mtodos... if mtodos.length
         todos.status.unshift status
-      # call_async = (fn, local_options={}, callback, name) ->
-      # Options are: type, args, handler
       call_async = (action) ->
-        global_options = obj.options
-        parent_options = todos.options
-        local_options = action.args[0]
-        callback = action.args[1]
-        local_options ?= {}
-        local_options_array = Array.isArray local_options
-        local_options = [local_options] unless local_options_array
-        options = []
-        for local_opts in local_options
-          local_opts = argument: local_opts if local_opts? and typeof local_opts isnt 'object'
-          opts = {}
-          for k, v of local_opts then opts[k] = local_opts[k]
-          options.push opts
-        for k, v of parent_options
-          for opts in options then opts[k] = v if opts[k] is undefined and k in obj.propagated_options
-        for k, v of global_options
-          for opts in options then opts[k] = v if opts[k] is undefined
+        [options, callback] = read_options action
         try
           todos.status.unshift undefined
           stack.unshift todos
@@ -105,7 +122,6 @@ functions share a common API with flexible options.
             todos.status[0] = status_action and not options.shy
             call_callback callback, callback_args if callback
             return run()
-          options = options[0] unless local_options_array
           wrap obj, [options, finish], (options, callback) ->
             todos.options = options
             action.handler.call obj, options, (err, status, args...) ->
@@ -136,13 +152,24 @@ functions share a common API with flexible options.
           run()
           return
         if todo.type is 'call'
-          if todo.args[0].length is 2 # Async style
+          handler = null
+          args = for arg in todo.args
+            if not handler and typeof arg is 'function'
+              handler = arg
+              continue
+            arg
+          args[0] = {} unless args.length
+          if handler.length is 2
+          # if todo.args[0].length is 2 # Async style
             return call_async
               type: todo.type
-              args: todo.args
-              handler: todo.args[0]
+              args: args
+              handler: handler
           else # Sync style
-            call_sync todo.args[0], []
+            call_sync
+              type: todo.type
+              args: args
+              handler: handler
             return run()
         # Call the action
         todo.args[0].user_args = todo.args[1]?.length > 2
