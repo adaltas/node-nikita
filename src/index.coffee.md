@@ -63,6 +63,9 @@ functions share a common API with flexible options.
           else
             for option in options
               options.argument = arg
+        # User arguments
+        if callback?.length > 2
+          option.user_args = true for option in options
         options = options[0] unless is_array
         type: type, options: options, handler: handler, callback: callback
       enrich_options = (user_options) ->
@@ -172,7 +175,6 @@ functions share a common API with flexible options.
           run()
           return
         # Call the action
-        todo.options.user_args = todo.options.callback?.length > 2
         if todo.handler.length is 2 # Async style
           return call_async todo
         else # Sync style
