@@ -28,10 +28,12 @@ force options is set.
         return callback err if err
         options.provider = provider
         cmd = docker.prepare_cmd provider, options.machine
-        cmd += 'docker rm'
+        cmd += 'docker rm '
         for opt in ['link', 'volumes', 'force']
-          cmd += " --#{opt}=#{options[opt]}" if options[opt]?
-        cmd += " #{options.name}"
-        @execute
+          cmd += "--#{opt}=#{options[opt]} " if options[opt]?
+        cmd += options.name
+        exec_opts =
           cmd: cmd
-        .then callback
+        for k in ['ssh','log', 'stdout','stderr','cwd','code','code_skipped']
+          exec_opts[k] = options[k] if options[k]?
+        @execute exec_opts, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
