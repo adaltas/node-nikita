@@ -12,10 +12,10 @@ from STDIN does not support a context.
 
 ## Options
 
-*   `name` (string)
+*   `image` (string)
     Name of the image. MANDATORY
 *   `machine` (string)
-    Name of the docker-machine. MANDATORY if docker-machine installed
+    Name of the docker-machine. MANDATORY if using docker-machine
 *   `source`
     Dockerfile absolute path http or local. MANDATORY if the write option is specified
 *   `dockerfile` (string)
@@ -175,32 +175,33 @@ mecano.docker_build({
         , (err,executed) ->
           return callback err if err
           do_provider()
-      do_provider = => docker.get_provider options, do_construct_command
-      do_construct_command = (err,  provider) =>
-        return callback err if err
-        options.provider = provider
-        cmd += docker.prepare_cmd provider, options.machine
-        # custom command for write option
-        cmd = if options.write? then "echo #{options.write}  | " else ''
-        # mandatory name option
-        cmd += "docker build -t \"#{options.name}\""
-        # not mandatory options
-        for opt in ['force_rm', 'rm', 'quiet', 'no_cache']
-          cmd += " --#{opt.replace '_', '-'}=#{options[opt]}" if options[opt]?
-        # custom command for write option
-        cmd += " #{options.destination}" if options.source?
-        cmd += ' -' if options.write?
-        # Construct other exec parameter
-        exec_opts =
-          cmd: cmd
-        for k in ['ssh','log', 'stdout','stderr','cwd','code','code_skipped']
-          exec_opts[k] = options[k] if options[k]?
-        @execute exec_opts, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
-        # .execute exec_opts
-        # .then (err, executed) ->
-        #   return callback err if err
-        #   callback null, executed
+      do_provider = =>
+        docker.get_provider options, (err,  provider) =>
+          return callback err if err
+          options.provider = provider
+          cmd += docker.prepare_cmd provider, options.machine
+          # custom command for write option
+          cmd = if options.write? then "echo #{options.write}  | " else ''
+          # mandatory name option
+          cmd += "docker build -t \"#{options.name}\""
+          # not mandatory options
+          for opt in ['force_rm', 'rm', 'quiet', 'no_cache']
+            cmd += " --#{opt.replace '_', '-'}=#{options[opt]}" if options[opt]?
+          # custom command for write option
+          cmd += " #{options.destination}" if options.source?
+          cmd += ' -' if options.write?
+          # Construct other exec parameter
+          exec_opts =
+            cmd: cmd
+          for k in ['ssh','log', 'stdout','stderr','cwd','code','code_skipped']
+            exec_opts[k] = options[k] if options[k]?
+          @execute exec_opts, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
+          # .execute exec_opts
+          # .then (err, executed) ->
+          #   return callback err if err
+          #   callback null, executed
       if options.source? then do_download_resources() else do_provider()
 
-    path = require 'path'
+## Modules Dependencies
+
     docker = require './misc/docker'
