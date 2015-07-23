@@ -32,27 +32,45 @@ functions share a common API with flexible options.
       todos.err = null
       todos.status = []
       todos.throw_if_error = true
-      read_options = (action) ->
+      afters = []
+      normalize_arguments = (_arguments, type='call') ->
+        is_array = false
+        handler = null
+        callback = null
+        if typeof _arguments[0] is 'function'
+          options = [{}]
+        else if Array.isArray _arguments[0]
+          is_array = true
+          options = _arguments[0]
+        else if _arguments[0] and typeof _arguments[0] is 'object'
+          options = [_arguments[0]]
+        else
+          options = [argument: _arguments[0]]
+        for option in options
+          option.type = type
+        for arg, i in _arguments
+          continue if i is 0 and typeof arg isnt 'function'
+          if typeof arg is 'function'
+            if handler
+              callback = arg
+            else
+              handler = arg
+          else if Array.isArray arg
+            console.log 'NOT SUPPORTED'
+          else if typeof arg is 'object'
+            for option in options
+              option[k] = v for k, v of arg
+          else
+            for option in options
+              options.argument = arg
+        options = options[0] unless is_array
+        type: type, options: options, handler: handler, callback: callback
+      enrich_options = (user_options) ->
         global_options = obj.options
         parent_options = todos.options
-        local_options = []
-        callback = null
-        local_options_array = false
-        for arg in action.args
-          if typeof arg is 'function'
-            throw Error 'Invalid arguments' if callback
-            callback = arg
-          else if Array.isArray arg
-            local_options_array = true
-            for kv, i in arg
-              local_options[i] ?= {}
-              local_options[i][k] = v for k, v of kv
-          else if typeof arg is 'object'
-            local_options[0] ?= {}
-            local_options[0][k] = v for k, v of arg 
-          else  
-            local_options[0] ?= {}
-            local_options[0].argument = arg    
+        local_options_array = Array.isArray user_options
+        local_options = user_options
+        local_options = [local_options] unless local_options_array 
         options = []
         for local_opts in local_options
           local_opts = argument: local_opts if local_opts? and typeof local_opts isnt 'object'
@@ -65,7 +83,7 @@ functions share a common API with flexible options.
           for opts in options then opts[k] = v if opts[k] is undefined
         options = options[0] unless local_options_array
         options ?= {}
-        [options, callback]
+        options
       call_callback = (fn, args) ->
         stack.unshift todos
         todos = []
@@ -83,7 +101,7 @@ functions share a common API with flexible options.
         todos.unshift mtodos... if mtodos.length
       # parse_action = (action) ->
       call_sync = (action) ->
-        [options, callback] = read_options action
+        options = enrich_options action.options
         todos.status.unshift undefined
         stack.unshift todos
         todos = []
@@ -101,7 +119,8 @@ functions share a common API with flexible options.
         todos.unshift mtodos... if mtodos.length
         todos.status.unshift status
       call_async = (action) ->
-        [options, callback] = read_options action
+        options = enrich_options action.options
+        callback = action.callback
         try
           todos.status.unshift undefined
           stack.unshift todos
@@ -122,6 +141,7 @@ functions share a common API with flexible options.
             todos.status[0] = status_action and not options.shy
             call_callback callback, callback_args if callback
             return run()
+            # if callback then callback(err) else run()
           wrap obj, [options, finish], (options, callback) ->
             todos.options = options
             action.handler.call obj, options, (err, status, args...) ->
@@ -148,48 +168,28 @@ functions share a common API with flexible options.
           todos.err = null
           todos.status = []
           todos.throw_if_error = true
-          todo.args[0].call obj, err, status
+          todo.handler.call obj, err, status
           run()
           return
-        if todo.type is 'call'
-          handler = null
-          args = for arg in todo.args
-            if not handler and typeof arg is 'function'
-              handler = arg
-              continue
-            arg
-          args[0] = {} unless args.length
-          if handler.length is 2
-          # if todo.args[0].length is 2 # Async style
-            return call_async
-              type: todo.type
-              args: args
-              handler: handler
-          else # Sync style
-            call_sync
-              type: todo.type
-              args: args
-              handler: handler
-            return run()
         # Call the action
-        todo.args[0].user_args = todo.args[1]?.length > 2
-        fn = obj.registry[todo.type] or registry[todo.type]
-        call_async
-          type: todo.type
-          args: todo.args
-          handler: obj.registry[todo.type] or registry[todo.type]
+        todo.options.user_args = todo.options.callback?.length > 2
+        if todo.handler.length is 2 # Async style
+          return call_async todo
+        else # Sync style
+          call_sync todo
+          return run()
       properties.child = get: ->
         ->
           module.exports(obj.options)
       properties.then = get: ->
         ->
-          todos.push type: 'then', args: arguments
+          todos.push type: 'then', handler: arguments[0]
           setImmediate run if todos.length is 1 # Activate the pump
           obj
       properties.call = get: ->
         ->
-          todos.push type: 'call', args: arguments
-          # process.nextTick ->
+          args = [].slice.call(arguments)
+          todos.push normalize_arguments args
           setImmediate run if todos.length is 1 # Activate the pump
           obj
       proto = Object.defineProperties obj, properties
@@ -208,8 +208,15 @@ functions share a common API with flexible options.
           obj.registry[name] = handler
           Object.defineProperty obj, name, configurable: true, get: ->
             ->
-              dest = arguments[0]?.destination
-              todos.push type: name, args: arguments
+              # Insert handler before callback or at the end of arguments
+              args = [].slice.call(arguments)
+              for arg, i in args
+                if typeof arg is 'function'
+                  args.splice i, 0, obj.registry[name] or registry[name]
+                  break
+                if i + 1 is args.length
+                  args.push obj.registry[name] or registry[name]
+              todos.push normalize_arguments args
               setImmediate run if todos.length is 1 # Activate the pump
               obj
       Object.defineProperty obj, 'registered', get: ->

@@ -34,7 +34,9 @@ describe 'promise options', ->
     .call [], (options, callback) ->
       callback null, true
     .write []
-    .then next
+    .then (err, status) ->
+      status.should.be.false() unless err
+      next err
 
 
 

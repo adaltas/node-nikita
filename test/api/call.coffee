@@ -10,7 +10,7 @@ describe 'promise call', ->
 
   describe 'sync', ->
 
-    it 'execute a callback', (next) ->
+    it 'execute a handler', (next) ->
       called = 0
       touched = 0
       mecano
@@ -20,6 +20,25 @@ describe 'promise call', ->
         touched++
       .call (options) ->
         called++
+      .touch
+        destination: "#{scratch}/a_file"
+      , (err) ->
+        touched++
+      .then (err, status) ->
+        called.should.eql 1
+        touched.should.eql 2
+        next()
+
+    it.skip 'execute a callback', (next) ->
+      called = 0
+      touched = 0
+      mecano
+      .touch
+        destination: "#{scratch}/a_file"
+      , (err) ->
+        touched++
+      .call ((options) ->), (err, status) ->
+        called++ unless err
       .touch
         destination: "#{scratch}/a_file"
       , (err) ->
@@ -78,7 +97,7 @@ describe 'promise call', ->
 
   describe 'async', ->
 
-    it 'execute a callback', (next) ->
+    it 'execute a handler', (next) ->
       called = 0
       touched = 0
       mecano
@@ -90,6 +109,28 @@ describe 'promise call', ->
         process.nextTick ->
           called++
           next()
+      .touch
+        destination: "#{scratch}/a_file"
+      , (err) ->
+        touched++
+      .then (err, status) ->
+        called.should.eql 1 unless err
+        touched.should.eql 2 unless err
+        next err
+
+    it 'execute a callback', (next) ->
+      called = 0
+      touched = 0
+      mecano
+      .touch
+        destination: "#{scratch}/a_file"
+      , (err) ->
+        touched++
+      .call (options, next) ->
+        process.nextTick ->
+          next()
+      , (err, status) ->
+        called++ unless err
       .touch
         destination: "#{scratch}/a_file"
       , (err) ->
