@@ -23,18 +23,18 @@ describe 'docker build', ->
       ssh: ssh
     .docker_build
       image: 'mecano/should_not_exists_1'
-      source: "#{__dirname}/Dockerfile"
-      write: "FROM scratch \ CMD ['echo \"hello world\"']"
+      dockerfile: "#{__dirname}/Dockerfile"
+      content: "FROM scratch \ CMD ['echo \"hello world\"']"
     , (err, executed, stdout, stderr) ->
-      err.message.should.match /^Can not build from source and write.*/
+      err.should.match /^Can not build from source and write.*/
     .then (err) -> next()
 
-  they 'from write', (ssh, next) ->
+  they 'from text', (ssh, next) ->
     mecano
       ssh: ssh
     .docker_build
       image: 'mecano/should_not_exists_2'
-      write: "FROM scratch\nCMD ['echo \"hello build write\"']"
+      content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
       machine: 'ryba'
     , (err, executed, stdout, stderr) ->
       executed.should.be.true() unless err
@@ -42,15 +42,38 @@ describe 'docker build', ->
       image: 'mecano/should_not_exists_2'
     .then next
 
-  they 'from source', (ssh, next) ->
+  they 'from cwd', (ssh, next) ->
     mecano
       ssh: ssh
+    .write
+      content: "FROM scratch\nCMD ['echo \"hello build from cwd\"']"
+      destination: "#{scratch}/Dockerfile"
     .docker_build
       image: 'mecano/should_not_exists_3'
       machine: 'ryba'
-      source: "#{__dirname}/Dockerfile"
+      cwd: scratch
     , (err, executed, stdout, stderr) ->
       executed.should.be.true()
     .docker_rmi
       image: 'mecano/should_not_exists_3'
+    .remove
+      destination: "#{scratch}/Dockerfile"
+    .then next
+
+  they 'from Dockerfile', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .write
+      content: "FROM scratch\nCMD ['echo \"hello build from Dockerfile\"']"
+      destination: "#{scratch}/mecano_Dockerfile"
+    .docker_build
+      image: 'mecano/should_not_exists_4'
+      dockerfile: "#{scratch}/mecano_Dockerfile"
+      machine: 'ryba'
+    , (err, executed, stdout, stderr) ->
+      executed.should.be.true()
+    .docker_rmi
+      image: 'mecano/should_not_exists_4'
+    .remove
+      destination: "#{scratch}/mecano_Dockerfile"
     .then next
