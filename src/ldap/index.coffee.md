@@ -1,24 +1,24 @@
 
 # `ldap_index(options, callback)`
 
-Create new [index](index) for the OpenLDAP server.   
+Create new [index](index) for the OpenLDAP server.
 
 ## Options
 
-*   `indexes`   
+*   `indexes`
     Object with keys mapping to indexed attributes and values mapping to indices
-    ("pres", "approx", "eq", "sub" and 'special').   
-*   `url`   
-    Specify URI referring to the ldap server.   
-*   `binddn`   
-    Distinguished Name to bind to the LDAP directory.   
-*   `passwd`   
-    Password for simple authentication.   
-*   `name`   
+    ("pres", "approx", "eq", "sub" and 'special').
+*   `url`
+    Specify URI referring to the ldap server.
+*   `binddn`
+    Distinguished Name to bind to the LDAP directory.
+*   `passwd`
+    Password for simple authentication.
+*   `name`
     Distinguish name storing the "olcAccess" property, using the database adress
-    (eg: "olcDatabase={2}bdb,cn=config").   
-*   `overwrite`   
-    Overwrite existing "olcAccess", default is to merge.   
+    (eg: "olcDatabase={2}bdb,cn=config").
+*   `overwrite`
+    Overwrite existing "olcAccess", default is to merge.
 
 ## Example
 
@@ -115,9 +115,7 @@ require('mecano').ldap_index({
 ## Dependencies
 
     ldap = require 'ldapjs'
-    misc = require './misc'
-    string = require './misc/string'
+    misc = require '../misc'
+    string = require '../misc/string'
 
 [index]: http://www.zytrax.com/books/ldap/apa/indeces.html
-
-

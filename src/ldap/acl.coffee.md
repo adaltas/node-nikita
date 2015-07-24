@@ -1,30 +1,30 @@
 
 # `ldap_acl(options, callback)`
 
-Create new [ACLs](acls) for the OpenLDAP server.   
+Create new [ACLs](acls) for the OpenLDAP server.
 
 ## Options
 
-*   `to`   
-    What to control access to as a string.   
-*   `by`   
+*   `to`
+    What to control access to as a string.
+*   `by`
     Who to grant access to and the access to grant as an array
-    (eg: `{..., by:["ssf=64 anonymous auth"]}`).   
-*   `url`   
-    Specify URI referring to the ldap server.   
-*   `binddn`   
-    Distinguished Name to bind to the LDAP directory.   
-*   `passwd`   
-    Password for simple authentication.   
-*   `name`   
+    (eg: `{..., by:["ssf=64 anonymous auth"]}`).
+*   `url`
+    Specify URI referring to the ldap server.
+*   `binddn`
+    Distinguished Name to bind to the LDAP directory.
+*   `passwd`
+    Password for simple authentication.
+*   `name`
     Distinguish name storing the "olcAccess" property, using the database adress
-    (eg: "olcDatabase={2}bdb,cn=config").   
-*   `overwrite`   
-    Overwrite existing "olcAccess", default is to merge.   
-*   `log`   
-    Function called with a log related messages.   
-*   `acl`   
-    In case of multiple acls, regroup "before", "to" and "by" as an array.   
+    (eg: "olcDatabase={2}bdb,cn=config").
+*   `overwrite`
+    Overwrite existing "olcAccess", default is to merge.
+*   `log`
+    Function called with a log related messages.
+*   `acl`
+    In case of multiple acls, regroup "before", "to" and "by" as an array.
 
 ## Example
 
@@ -117,7 +117,7 @@ require('mecano').ldap_acl({
             is_perfect_match = true
             not_found_acl = []
             if acl.by.length isnt olcAccess.by.length
-              is_perfect_match = false 
+              is_perfect_match = false
             else
               for acl_by, i in acl.by
                 is_perfect_match = false if acl_by isnt olcAccess.by[i]
@@ -186,11 +186,9 @@ require('mecano').ldap_acl({
 ## Dependencies
 
     each = require 'each'
-    misc = require './misc'
-    ldap = require './misc/ldap'
-    string = require './misc/string'
+    misc = require '../misc'
+    ldap = require '../misc/ldap'
+    string = require '../misc/string'
 
 [acls]: http://www.openldap.org/doc/admin24/access-control.html
 [tuto]: https://documentation.fusiondirectory.org/fr/documentation/convert_acl
-
-
