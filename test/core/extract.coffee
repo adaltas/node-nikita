@@ -14,20 +14,12 @@ describe 'extract', ->
       source: "#{__dirname}/../resources/a_dir.tgz"
       destination: scratch
     , (err, extracted) ->
-      return next err if err
       extracted.should.be.true()
       # Test an existing extracted dir
       # Note, there is no way for us to know which directory
       # it is in advance
-      mecano.extract
-        ssh: ssh
-        source: "#{__dirname}/../resources/a_dir.tgz"
-        destination: scratch
-      , (err, extracted) ->
-        return next err if err
-        extracted.should.be.true()
-        next()
-  
+    .then next
+
   they 'should see extension .zip', (ssh, next) ->
     # Test a non existing extracted dir
     mecano.extract
@@ -35,20 +27,29 @@ describe 'extract', ->
       source: "#{__dirname}/../resources/a_dir.zip"
       destination: scratch
     , (err, extracted) ->
-      return next err if err
       extracted.should.be.true()
-      # Test an existing extracted dir
-      # Note, there is no way for us to know which directory
-      # it is in advance
-      mecano.extract
-        ssh: ssh
-        source: "#{__dirname}/../resources/a_dir.zip"
-        destination: scratch
-      , (err, extracted) ->
-        return next err if err
-        extracted.should.be.true()
-        next()
-  
+    .then next
+
+  they 'should see extension .tar.bz2', (ssh, next) ->
+    # Test a non existing extracted dir
+    mecano.extract
+      ssh: ssh
+      source: "#{__dirname}/../resources/a_dir.tar.bz2"
+      destination: scratch
+    , (err, extracted) ->
+      extracted.should.be.true()
+    .then next
+
+  they 'should see extension .tar.xz', (ssh, next) ->
+    # Test a non existing extracted dir
+    mecano.extract
+      ssh: ssh
+      source: "#{__dirname}/../resources/a_dir.tar.xz"
+      destination: scratch
+    , (err, extracted) ->
+      extracted.should.be.true()
+    .then next
+
   they 'should validate a created file', (ssh, next) ->
     # Test with invalid creates option
     mecano.extract
@@ -68,7 +69,7 @@ describe 'extract', ->
         return next err if err
         extracted.should.be.true()
         next()
-  
+
   they 'should # option # not_if_exists', (ssh, next) ->
     # Test with invalid creates option
     mecano.extract
@@ -96,5 +97,3 @@ describe 'extract', ->
     , (err, extracted) ->
       err.message.should.eql 'File does not exist: /does/not/exist.tgz'
       next()
-
-

@@ -7,32 +7,32 @@ moment, supported extensions are '.tgz', '.tar.gz' and '.zip'.
 
 ## Options
 
-*   `source`   
-    Archive to decompress.   
-*   `destination`   
-    Default to the source parent directory.   
-*   `format`   
-    One of 'tgz', 'tar' or 'zip'.
-*   `creates`   
-    Ensure the given file is created or an error is send in the callback.   
-*   `not_if_exists`   
-    Cancel extraction if file exists.   
-*   `ssh` (object|ssh2)   
+*   `source`
+    Archive to decompress.
+*   `destination`
+    Default to the source parent directory.
+*   `format`
+    One of 'tgz', 'tar', 'xz', 'bz2' or 'zip'.
+*   `creates`
+    Ensure the given file is created or an error is send in the callback.
+*   `not_if_exists`
+    Cancel extraction if file exists.
+*   `ssh` (object|ssh2)
     Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-*   `stdout` (stream.Writable)   
+    configuration object used to initialize the SSH connection.
+*   `stdout` (stream.Writable)
     Writable EventEmitter in which the standard output of executed commands will
-    be piped.   
-*   `stderr` (stream.Writable)   
+    be piped.
+*   `stderr` (stream.Writable)
     Writable EventEmitter in which the standard error output of executed command
-    will be piped.   
+    will be piped.
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `extracted`   
-    Number of extracted actions with modifications.   
+*   `err`
+    Error object if any.
+*   `extracted`
+    Number of extracted actions with modifications.
 
 ## Example
 
@@ -61,6 +61,10 @@ require('mecano').extract({
           format = 'tar'
         else if /\.zip$/.test options.source
           format = 'zip'
+        else if /\.bz2$/.test options.source
+          format = 'bz2'
+        else if /\.xz$/.test options.source
+          format = 'xz'
         else
           ext = path.extname options.source
           return callback Error "Unsupported extension, got #{JSON.stringify(ext)}"
@@ -72,9 +76,12 @@ require('mecano').extract({
           extract()
       extract = () =>
         cmd = null
+        options.log? "Mecano `extract`: format is #{format} [DEBUG]"
         switch format
           when 'tgz' then cmd = "tar xzf #{options.source} -C #{destination}"
           when 'tar' then cmd = "tar xf #{options.source} -C #{destination}"
+          when 'bz2' then cmd = "tar xjf #{options.source} -C #{destination}"
+          when 'xz'  then cmd = "tar xJf #{options.source} -C #{destination}"
           when 'zip' then cmd = "unzip -u #{options.source} -d #{destination}"
         @execute
           cmd: cmd
@@ -96,11 +103,3 @@ require('mecano').extract({
 
     fs = require 'ssh2-fs'
     path = require 'path'
-
-
-
-
-
-
-
-
