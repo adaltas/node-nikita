@@ -48,7 +48,7 @@ describe 'docker', ->
       service: false
       rm: false
     , (err, executed, stdout, stderr) ->
-      stdout.should.match /^test.*/ unless err
+      stdout.should.match /^test.*/
     .execute
       cmd: """
       if command -v docker-machine >/dev/null; then docker-machine start >/dev/null && eval "$(docker-machine env dev)"; fi
