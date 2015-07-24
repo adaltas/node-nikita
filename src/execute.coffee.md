@@ -1,7 +1,7 @@
 
 # `execute(options, callback)`
 
-Run a command locally or with ssh if `host` or `ssh` is provided.   
+Run a command locally or with ssh if `host` or `ssh` is provided.
 
 ## Exit codes
 
@@ -15,42 +15,42 @@ creating any modifications.
 
 ## Options
 
-*   `cmd`   
-    String, Object or array; Command to execute.   
+*   `cmd`
+    String, Object or array; Command to execute.
 *   `code`   (string|array)
     Expected code(s) returned by the command, int or array of int, default to 0.
-*   `code_skipped`   
+*   `code_skipped`
     Expected code(s) returned by the command if it has no effect, executed will
-    not be incremented, int or array of int.   
-*   `trap_on_error`   
-    Exit immediately  if a commands exits with a non-zero status.      
-*   `cwd`   
-    Current working directory.   
-*   `env`   
-    Environment variables, default to `process.env`.   
-*   `gid`   
-    Unix group id.   
-*   `log`   
-    Function called with a log related messages.   
-*   `ssh` (object|ssh2)   
+    not be incremented, int or array of int.
+*   `trap_on_error`
+    Exit immediately  if a commands exits with a non-zero status.
+*   `cwd`
+    Current working directory.
+*   `env`
+    Environment variables, default to `process.env`.
+*   `gid`
+    Unix group id.
+*   `log`
+    Function called with a log related messages.
+*   `ssh` (object|ssh2)
     Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-*   `stdout` (stream.Writable)   
+    configuration object used to initialize the SSH connection.
+*   `stdout` (stream.Writable)
     Writable EventEmitter in which the standard output of executed commands will
-    be piped.   
-*   `stderr` (stream.Writable)   
+    be piped.
+*   `stderr` (stream.Writable)
     Writable EventEmitter in which the standard error output of executed command
-    will be piped.   
-*   `uid`   
-    Unix user id.   
+    will be piped.
+*   `uid`
+    Unix user id.
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `executed`   
-    Number of executed commands with modifications.   
-*   `stdout`   
+*   `err`
+    Error object if any.
+*   `executed`
+    Number of executed commands with modifications.
+*   `stdout`
     Stdout value(s) unless `stdout` option is provided.
 *   `stderr`
     Stderr value(s) unless `stderr` option is provided.
@@ -137,10 +137,3 @@ mecano.execute({
 
     exec = require 'ssh2-exec'
     misc = require './misc'
-
-
-
-
-
-
-

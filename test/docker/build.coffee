@@ -1,13 +1,11 @@
 
-{EventEmitter} = require 'events'
 should = require 'should'
 mecano = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
-docker = require "../../src/misc/docker"
 
 #needs Internet connection for performing test
-describe 'docker_build', ->
+describe 'docker build', ->
 
   scratch = test.scratch @
 
@@ -15,53 +13,67 @@ describe 'docker_build', ->
     mecano
       ssh: ssh
     .docker_build
-      dockerfile_source: 'Dockerfile'
+      false_source: 'Dockerfile'
     , (err, executed, stdout, stderr) ->
-      err.message.should.match /^Missing build name.*/
-    .then (err) -> next null
+      err.should.match /^Missing image parameter.*/
+    .then (err) -> next()
 
-  they 'Test missing dockerfile_* parameters', (ssh, next) ->
+  they 'Test exclusive parameters', (ssh, next) ->
     mecano
       ssh: ssh
     .docker_build
-      name: 'mecano/test'
+      image: 'mecano/should_not_exists_1'
+      dockerfile: "#{__dirname}/Dockerfile"
+      content: "FROM scratch \ CMD ['echo \"hello world\"']"
     , (err, executed, stdout, stderr) ->
-      err.message.should.match /^dockerfile_source and dockerfile_write not specified.*/
-    .then (err) -> next null
+      err.should.match /^Can not build from source and write.*/
+    .then (err) -> next()
 
-  they 'Test exclusive parameters ', (ssh, next) ->
+  they 'from text', (ssh, next) ->
     mecano
       ssh: ssh
     .docker_build
-      name: 'mecano/test'
-      source: "#{__dirname}/Dockerfile"
-      write: "FROM scratch \ CMD ['echo \"hello world\"']"
-    , (err, executed, stdout, stderr) ->
-      err.message.should.match /^can not build from source and write.*/
-    .then (err) -> next null
-
-  # they 'Test build from write', (ssh, next) ->
-  #   @timeout 100000
-  #   mecano
-  #     ssh: ssh
-  #   .docker_build
-  #     name: 'mecano/test'
-  #     write: "FROM scratch"
-  #     machine: 'ryba'
-  #   , (err, executed, stdout, stderr) ->
-  #     executed.should.be.true()() unless err
-  #   .then (err) -> next null
-
-  they 'Test build from source', (ssh, next) ->
-    mecano
-      ssh: ssh
-    .docker_build
-      name: 'mecano/test'
+      image: 'mecano/should_not_exists_2'
+      content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
       machine: 'ryba'
-      source: "#{__dirname}/Dockerfile"
     , (err, executed, stdout, stderr) ->
-      executed.should.be.true()() unless err
-    .then (err) -> next null
+      executed.should.be.true() unless err
+    .docker_rmi
+      image: 'mecano/should_not_exists_2'
+    .then next
 
+  they 'from cwd', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .write
+      content: "FROM scratch\nCMD ['echo \"hello build from cwd\"']"
+      destination: "#{scratch}/Dockerfile"
+    .docker_build
+      image: 'mecano/should_not_exists_3'
+      machine: 'ryba'
+      cwd: scratch
+    , (err, executed, stdout, stderr) ->
+      executed.should.be.true()
+    .docker_rmi
+      image: 'mecano/should_not_exists_3'
+    .remove
+      destination: "#{scratch}/Dockerfile"
+    .then next
 
-
+  they 'from Dockerfile', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .write
+      content: "FROM scratch\nCMD ['echo \"hello build from Dockerfile\"']"
+      destination: "#{scratch}/mecano_Dockerfile"
+    .docker_build
+      image: 'mecano/should_not_exists_4'
+      dockerfile: "#{scratch}/mecano_Dockerfile"
+      machine: 'ryba'
+    , (err, executed, stdout, stderr) ->
+      executed.should.be.true()
+    .docker_rmi
+      image: 'mecano/should_not_exists_4'
+    .remove
+      destination: "#{scratch}/mecano_Dockerfile"
+    .then next

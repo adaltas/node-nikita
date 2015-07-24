@@ -3,33 +3,37 @@
     mecano = require '..'
 
     module.exports =
-      check_docker_daemon_provider: (options, callback) ->
+      get_provider: (options, callback) ->
         mecano
         .execute
           ssh: options.ssh
           cmd: 'docker-machine -v'
-          code_skipped: 127         
+          code_skipped: 127
         , (err, executed) ->
           return callback err, null if err
-          return callback null,'docker-machine' if executed
+          if executed
+            options.log? "provider is: docker-machine [DEBUG]"
+            return callback null,'docker-machine'
           mecano
-          . execute
+          .execute
             ssh: options.ssh
             cmd: 'boot2docker -v'
-            code_skipped: 127   
+            code_skipped: 127
           , (err, executed) ->
             return callback err,  null  if err
-            return callback null,'boot2docker' if executed
-            return callback null,'docker'
-      get_env_expr: (provider, machine) ->
-        return  Error 'missing docker provider ' unless provider?
+            provider = if executed then 'boot2docker' else 'docker'
+            options.log? "provider is: #{provider} [DEBUG]"
+            return callback null, provider
+      prepare_cmd: (provider, machine) ->
+        return  Error 'Missing provider parameter' unless provider?
+        return '' if provider is 'docker'
         return  Error 'Missing `machine` option name. Need the name of the docker-machine' unless machine?
         if provider is 'docker-machine'
           return "eval \"$(docker-machine env #{machine})\" && "
         else if provider is 'boot2docker'
-          return "$(boot2docker shellinit) && "
+          return '$(boot2docker shellinit) && '
         else
-          return callback Error 'Unkown docker provider'
+          return callback Error "Unknown docker provider: #{provider}"
       # start_docker_daemon: (options, callback) ->
         # return callback Error 'missing docker provider ' unless options.provider?
         # switch options.provider
@@ -37,23 +41,17 @@
             # mecano
               # .execute
                 # ssh: options.ssh
-                # cmd: 'docker-machine start'       
+                # cmd: 'docker-machine start'
               # .then callback null
           # when 'docker-machine'
             # mecano
               # .execute
                 # ssh: options.ssh
-                # cmd: 'boot2docker start'       
+                # cmd: 'boot2docker start'
               # .then callback null
-          # else 
+          # else
             # mecano
               # .execute
                 # ssh: options.ssh
-                # cmd: 'service docker start'       
+                # cmd: 'service docker start'
               # .then callback null
-
-        
-
-
-  
-    

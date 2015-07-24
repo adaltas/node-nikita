@@ -1,2 +1,2 @@
 FROM scratch
-CMD ["echo "hello world"]
+CMD ['echo "hello world"']

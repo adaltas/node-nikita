@@ -1,5 +1,4 @@
 
-{EventEmitter} = require 'events'
 stream = require 'stream'
 should = require 'should'
 mecano = require '../../src'

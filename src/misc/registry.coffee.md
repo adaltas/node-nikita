@@ -3,14 +3,16 @@
 
     module.exports =
       backup: require '../backup'
-      chown: require '../chown'
       chmod: require '../chmod'
+      chown: require '../chown'
       copy: require '../copy'
       cron_add: require '../cron_add'
       cron_remove: require '../cron_remove'
       download: require '../download'
-      docker_run: require '../docker_run'
       docker_build: require '../docker_build'
+      docker_rm: require '../docker_rm'
+      docker_rmi: require '../docker_rmi'
+      docker_run: require '../docker_run'
       # docker_save: require '../docker_save'
       # docker_stop: require '../docker_stop'
       execute: require '../execute'
