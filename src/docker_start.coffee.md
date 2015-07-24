@@ -54,8 +54,8 @@ mecano.docker_start({
         cmd = docker.prepare_cmd provider, options.machine
         cmd += 'docker start '
         cmd += '-a ' if options.attach
-        exec_opts =
         cmd += options.container
+        exec_opts =
           cmd: cmd
         for k in ['ssh','log', 'stdout','stderr','cwd','code','code_skipped']
           exec_opts[k] = options[k] if options[k]?
