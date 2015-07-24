@@ -7,9 +7,9 @@ Create a new Kerberos principal with a password or an optional keytab.
 
 *   `user` (name | uid)
     the user of the crontab. the SSH user by default
-*   `match` (null | string | regexp).   
+*   `match` (null | string | regexp).
     The cron entry to match, a string will be converted to a regexp and an
-    undefined or null value will match the exact command.   
+    undefined or null value will match the exact command.
 *   `when` (string)
     cron-styled time string. Defines the frequency of the cron job
 *   `cmd`
@@ -100,7 +100,7 @@ require('mecano').cron_add({
 ## Dependencies
 
     util = require 'util'
-    execute = require './execute'
-    diff = require './misc/diff'
-    string = require './misc/string'
-    wrap = require './misc/wrap'
+    execute = require '../execute'
+    diff = require '../misc/diff'
+    string = require '../misc/string'
+    wrap = require '../misc/wrap'
