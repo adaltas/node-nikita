@@ -1,16 +1,18 @@
 
-# `docker_rmi(options, callback)`
+# `docker_rm(options, callback)`
 
-Remove images. All container using image should be stopped to delete it unless
+Remove one or more containers. Containers need to be stopped to be deleted unless
 force options is set.
 
 ## Options
 
-*   `image` (string)
-    Name of the image. MANDATORY
+*   `container` (string)
+    Name/ID of the container. MANDATORY
 *   `machine` (string)
     Name of the docker-machine. MANDATORY if docker-machine installed
-*   `no_prune` (boolean)
+*   `link` (boolean)
+    Remove the specified link
+*   `volumes` (boolean)
     Remove the volumes associated with the container
 *   `force` (boolean)
     Force the removal of a running container (uses SIGKILL)
@@ -21,15 +23,16 @@ force options is set.
 
     module.exports = (options, callback) ->
       # Validate parameters and madatory conditions
-      return callback  Error 'Missing image parameter' unless options.image?
+      return callback  Error 'Missing container parameter' unless options.container?
       docker.get_provider options, (err,  provider) =>
         return callback err if err
         options.provider = provider
         cmd = docker.prepare_cmd provider, options.machine
-        cmd += 'docker rmi '
-        for opt in ['force', 'no_prune']
-          cmd += "--#{opt.replace '_', '-'} " if options[opt]?
-        cmd += options.image
+        return callback cmd if util.isError cmd
+        cmd += 'docker rm '
+        for opt in ['link', 'volumes', 'force']
+          cmd += "--#{opt}=#{options[opt]} " if options[opt]?
+        cmd += options.container
         exec_opts =
           cmd: cmd
         for k in ['ssh','log', 'stdout','stderr','cwd','code','code_skipped']
@@ -38,4 +41,5 @@ force options is set.
 
 ## Modules Dependencies
 
-    docker = require './misc/docker'
+    docker = require './commons'
+    util = require 'util'

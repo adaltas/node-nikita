@@ -1,7 +1,7 @@
 
-# `docker_stop(options, callback)`
+# `docker_kill(options, callback)`
 
-Stop started containers
+Send signal to containers using SIGKILL or a specified signal
 
 ## Options
 
@@ -9,8 +9,24 @@ Stop started containers
     Name/ID of the container. MANDATORY
 *   `machine` (string)
     Name of the docker-machine. MANDATORY if using docker-machine
-*   `timeout` (int)
-    Seconds to wait for stop before killing it
+*   `signal` (int|string)
+    Use a specified signal. SIGKILL by default
+*   `code` (int|array)
+    Expected code(s) returned by the command, int or array of int, default to 0.
+*   `code_skipped`
+    Expected code(s) returned by the command if it has no effect, executed will
+    not be incremented, int or array of int.
+*   `log`
+    Function called with a log related messages.
+*   `ssh` (object|ssh2)
+    Run the action on a remote server using SSH, an ssh2 instance or an
+    configuration object used to initialize the SSH connection.
+*   `stdout` (stream.Writable)
+    Writable EventEmitter in which the standard output of executed commands will
+    be piped.
+*   `stderr` (stream.Writable)
+    Writable EventEmitter in which the standard error output of executed command
+    will be piped.
 
 ## Callback parameters
 
@@ -22,8 +38,9 @@ Stop started containers
 ## Example
 
 ```javascript
-mecano.docker_stop({
+mecano.docker_kill({
   container: 'toto'
+  signal: 9
 }, function(err, is_true){
   if(err){
     console.log(err.message);
@@ -45,8 +62,9 @@ mecano.docker_stop({
         return callback err if err
         options.provider = provider
         cmd = docker.prepare_cmd provider, options.machine
-        cmd += 'docker stop '
-        cmd += "-t #{options.timeout} " if options.timeout?
+        return callback cmd if util.isError cmd
+        cmd += 'docker kill '
+        cmd += "-s #{options.signal} " if options.signal?
         cmd += options.container
         exec_opts =
           cmd: cmd
@@ -56,4 +74,5 @@ mecano.docker_stop({
 
 ## Modules Dependencies
 
-    docker = require './misc/docker'
+    docker = require './commons'
+    util = require 'util'

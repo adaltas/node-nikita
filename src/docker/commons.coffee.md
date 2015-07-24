@@ -27,31 +27,10 @@
       prepare_cmd: (provider, machine) ->
         return  Error 'Missing provider parameter' unless provider?
         return '' if provider is 'docker'
-        return  Error 'Missing `machine` option name. Need the name of the docker-machine' unless machine?
-        if provider is 'docker-machine'
-          return "eval \"$(docker-machine env #{machine})\" && "
-        else if provider is 'boot2docker'
+        if provider is 'boot2docker'
           return '$(boot2docker shellinit) && '
+        else if provider is 'docker-machine'
+          return  Error 'Missing `machine` option name. Need the name of the docker-machine' unless machine?
+          return "eval \"$(docker-machine env #{machine})\" && "
         else
-          return callback Error "Unknown docker provider: #{provider}"
-      # start_docker_daemon: (options, callback) ->
-        # return callback Error 'missing docker provider ' unless options.provider?
-        # switch options.provider
-          # when 'docker-machine'
-            # mecano
-              # .execute
-                # ssh: options.ssh
-                # cmd: 'docker-machine start'
-              # .then callback null
-          # when 'docker-machine'
-            # mecano
-              # .execute
-                # ssh: options.ssh
-                # cmd: 'boot2docker start'
-              # .then callback null
-          # else
-            # mecano
-              # .execute
-                # ssh: options.ssh
-                # cmd: 'service docker start'
-              # .then callback null
+          return Error "Unknown docker provider: #{provider}"

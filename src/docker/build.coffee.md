@@ -137,6 +137,7 @@ mecano.docker_build({
         return callback err if err
         options.provider = provider
         cmd = docker.prepare_cmd provider, options.machine
+        return callback cmd if util.isError cmd
         # custom command for content option
         cmd += 'docker build'
         # not mandatory options
@@ -167,5 +168,6 @@ mecano.docker_build({
 
 ## Modules Dependencies
 
-    docker = require './misc/docker'
+    docker = require './commons'
     path = require 'path'
+    util = require 'util'

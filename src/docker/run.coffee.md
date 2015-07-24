@@ -129,7 +129,7 @@ mecano.docker({
       options.service ?= true
       options.rm ?= !options.service
       return callback Error 'Invalid parameter, rm cannot be true if service is true' if options.service and options.rm
-      options.log? '[WARN] should specify a container name if rm is false!' unless options.container? or options.rm
+      options.log? 'Should specify a container name if rm is false [WARN]' unless options.container? or options.rm
       # Construct exec command
       docker.get_provider options, (err,  provider) =>
         return callback err if err
@@ -170,4 +170,5 @@ mecano.docker({
 
 ## Modules Dependencies
 
-    docker = require './misc/docker'
+    docker = require './commons'
+    util = require 'util'
