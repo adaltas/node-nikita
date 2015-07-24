@@ -2,31 +2,31 @@
 # `krb5_ktadd(options, callback)`
 
 Create and manage a keytab. This function is usually not used directly but instead
-called by the `krb5_addprinc` function.   
+called by the `krb5_addprinc` function.
 
 ## Options
 
-*   `kadmin_server`   
-    Address of the kadmin server; optional, use "kadmin.local" if missing.   
-*   `kadmin_principal`   
-    KAdmin principal name unless `kadmin.local` is used.   
-*   `kadmin_password`   
-    Password associated to the KAdmin principal.   
-*   `principal`   
-    Principal to be created.   
-*   `keytab`   
-    Path to the file storing key entries.   
-*   `log`   
-    Function called with a log related messages.   
-*   `ssh` (object|ssh2)   
+*   `kadmin_server`
+    Address of the kadmin server; optional, use "kadmin.local" if missing.
+*   `kadmin_principal`
+    KAdmin principal name unless `kadmin.local` is used.
+*   `kadmin_password`
+    Password associated to the KAdmin principal.
+*   `principal`
+    Principal to be created.
+*   `keytab`
+    Path to the file storing key entries.
+*   `log`
+    Function called with a log related messages.
+*   `ssh` (object|ssh2)
     Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-*   `stdout` (stream.Writable)   
+    configuration object used to initialize the SSH connection.
+*   `stdout` (stream.Writable)
     Writable EventEmitter in which the standard output of executed commands will
-    be piped.   
-*   `stderr` (stream.Writable)   
+    be piped.
+*   `stderr` (stream.Writable)
     Writable EventEmitter in which the standard error output of executed command
-    will be piped.   
+    will be piped.
 
 ## Example
 
@@ -63,7 +63,7 @@ require('mecano').krb5_delrinc({
           return callback err if err
           unless exists
             options.log? 'Mecano `krb5_ktadd`: keytab does not yet exists'
-            return do_ktadd() 
+            return do_ktadd()
           keytab = {}
           for line in string.lines stdout
             if match = /^\s*(\d+)\s+([\d\/:]+\s+[\d\/:]+)\s+(.*)\s*$/.exec line
@@ -75,7 +75,7 @@ require('mecano').krb5_delrinc({
                 keytab[principal] = kvno: kvno, mdate: mdate
           unless keytab[options.principal]?
             options.log? 'Mecano `krb5_ktadd`: Principal is not listed inside the keytab'
-            return do_ktadd() 
+            return do_ktadd()
           @execute
             cmd: misc.kadmin options, "getprinc -terse #{options.principal}"
             shy: true
@@ -154,7 +154,5 @@ data-type[1]
 
 ## Dependencies
 
-    misc = require './misc'
-    string = require './misc/string'
-
-
+    misc = require '../misc'
+    string = require '../misc/string'
