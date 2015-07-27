@@ -4,19 +4,22 @@ mecano = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
-#needs Internet connection for performing test
 describe 'docker build', ->
 
   scratch = test.scratch @
 
-  they 'Test missing name parameter', (ssh, next) ->
+  they 'Test missing image parameter', (ssh, next) ->
     mecano
       ssh: ssh
     .docker_build
       false_source: 'Dockerfile'
-    , (err, executed, stdout, stderr) ->
-      err.should.match /^Missing image parameter.*/
-    .then (err) -> next()
+    .then (err) ->
+      return next Error 'Expect error' unless err
+      try
+        err.message.should.eql 'Missing image parameter'
+        next null
+      catch e
+        return next e
 
   they 'Test exclusive parameters', (ssh, next) ->
     mecano
@@ -25,9 +28,13 @@ describe 'docker build', ->
       image: 'mecano/should_not_exists_1'
       dockerfile: "#{__dirname}/Dockerfile"
       content: "FROM scratch \ CMD ['echo \"hello world\"']"
-    , (err, executed, stdout, stderr) ->
-      err.should.match /^Can not build from source and write.*/
-    .then (err) -> next()
+    .then (err) ->
+      return next Error 'Expect error' unless err
+      try
+        err.message.should.eql 'Can not build from Dockerfile and content'
+        next null
+      catch e
+        return next e
 
   they 'from text', (ssh, next) ->
     mecano
@@ -37,7 +44,7 @@ describe 'docker build', ->
       content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
       machine: 'ryba'
     , (err, executed, stdout, stderr) ->
-      executed.should.be.true() unless err
+      executed.should.be.true()
     .docker_rmi
       image: 'mecano/should_not_exists_2'
     .then next
