@@ -162,12 +162,10 @@ mecano.docker({
         cmd += " #{options.image}"
         cmd += " #{options.cmd}" if options.cmd
         # Construct other exec parameter
-        exec_opts =
-          cmd: cmd
-        for k in ['ssh','log', 'stdout','stderr','cwd','code','code_skipped']
-          exec_opts[k] = options[k] if options[k]?
-        @execute exec_opts, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
-
+        # Construct other exec parameter
+        opts = docker.get_options cmd, options
+        @execute opts, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
+        
 ## Modules Dependencies
 
     docker = require './commons'

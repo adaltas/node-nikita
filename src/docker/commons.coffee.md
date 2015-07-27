@@ -34,3 +34,9 @@
           return "eval \"$(docker-machine env #{machine})\" && "
         else
           return Error "Unknown docker provider: #{provider}"
+      get_options: (cmd, options) ->
+        exec_opts =
+          cmd: cmd
+        for k in ['ssh','log', 'stdout','stderr','cwd','code','code_skipped']
+          exec_opts[k] = options[k] if options[k]?
+        return exec_opts

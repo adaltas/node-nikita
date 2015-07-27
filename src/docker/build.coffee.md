@@ -156,15 +156,8 @@ mecano.docker_build({
           options.log? "Building from CWD [INFO]"
           cmd += ' .'
         # Construct other exec parameter
-        exec_opts =
-          cmd: cmd
-        for k in ['ssh','log', 'stdout','stderr','cwd','code','code_skipped']
-          exec_opts[k] = options[k] if options[k]?
-        @execute exec_opts, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
-        # .execute exec_opts
-        # .then (err, executed) ->
-        #   return callback err if err
-        #   callback null, executed
+        opts = docker.get_options cmd, options
+        @execute opts, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
 
 ## Modules Dependencies
 

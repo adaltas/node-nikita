@@ -62,12 +62,10 @@ mecano.docker_pause({
         return callback cmd if util.isError cmd
         cmd += 'docker unpause '
         cmd += options.container
-        exec_opts =
-          cmd: cmd
-        for k in ['ssh','log', 'stdout','stderr','cwd','code','code_skipped']
-          exec_opts[k] = options[k] if options[k]?
-        @execute exec_opts, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
-
+        # Construct other exec parameter
+        opts = docker.get_options cmd, options
+        @execute opts, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
+        
 ## Modules Dependencies
 
     docker = require './commons'
