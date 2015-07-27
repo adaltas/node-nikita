@@ -31,7 +31,7 @@ force options is set.
         return callback cmd if util.isError cmd
         cmd += 'docker rm '
         for opt in ['link', 'volumes', 'force']
-          cmd += "--#{opt}=#{options[opt]} " if options[opt]?
+          cmd += "-#{opt.charAt 0} " if options[opt]
         cmd += options.container
         exec_opts =
           cmd: cmd
