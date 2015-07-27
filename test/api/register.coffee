@@ -2,7 +2,7 @@
 mecano = require '../../src'
 test = require '../test'
 
-describe 'promise register', ->
+describe 'api register', ->
 
   scratch = test.scratch @
 

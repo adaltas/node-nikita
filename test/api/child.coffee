@@ -4,7 +4,7 @@ test = require '../test'
 fs = require 'fs'
 domain = require 'domain'
 
-describe 'promise child', ->
+describe 'api child', ->
 
   scratch = test.scratch @
 

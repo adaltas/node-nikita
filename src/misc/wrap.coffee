@@ -6,58 +6,6 @@ connect = require 'ssh2-connect'
 misc = require './index'
 conditions = require './conditions'
 
-###
-Responsibilities:
-
-*   Retrieve arguments
-*   Normalize options
-*   Handle conditions
-*   Run multiple actions sequentially or concurrently
-*   Handling modification count
-*   Return a Mecano Child instance
-*   Pass user arguments
-###
-
-exports = module.exports = (context, args, handler) ->
-  # Retrieve arguments
-  [options, goptions, callback] = exports.args args
-  isArray = Array.isArray options
-  # Pass user arguments
-  user_args = []
-  # Handling modification count
-  finish = (err) ->
-    unless isArray then user_args = for arg, i in user_args
-      user_args[i] = arg[0]
-    # modified = !!modified #if goptions.boolmod
-    callback err, user_args... if callback
-  # Normalize options
-  exports.options options, (err, options) ->
-    return finish err if err
-    each options
-    .run (options, next) ->
-      # Handle conditions
-      conditions.all context, options, next, ->
-        handler.call context, options, (err, modif, args...) ->
-          for arg, i in args
-            user_args[i] ?= []
-            user_args[i].push arg
-          next err
-    .then finish
-  context
-
-exports.args = (args, overwrite_goptions={}) ->
-  # console.log typeof args, Array.isArray(args), args.length, typeof args[1] is 'function'
-  # console.log args unless typeof args[1] is 'function'
-  # console.log args unless Array.isArray args
-  if args.length is 2 and typeof args[1] is 'function'
-    args[2] = args[1]
-    args[1] = {}
-  else if args.length is 1
-    args[1] = {}
-    args[2] = null
-  args[1].parallel ?= 1
-  args
-
 
 ###
 
@@ -73,8 +21,8 @@ be converted to integer if they match a username or a group.
 *   `options`       Sanitized options.   
 
 ###
-exports.options = (options, callback) ->
-  options = [options] unless Array.isArray options
+module.exports.options = (options, callback) ->
+  # options = [options] unless Array.isArray options
   each options
   .run (options, next) ->
     # options.if = [options.if] if options.if? and not Array.isArray options.if

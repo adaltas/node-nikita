@@ -3,7 +3,7 @@ mecano = require '../../src'
 test = require '../test'
 fs = require 'fs'
 
-describe 'promise shy', ->
+describe 'api shy', ->
 
   scratch = test.scratch @
 
@@ -17,8 +17,8 @@ describe 'promise shy', ->
       destination: "#{scratch}/file_1"
       content: 'abc'
     .then (err, status) ->
-      status.should.be.false()
-      next()
+      status.should.be.false() unless err
+      next err
 
   it 'callback receive status', (next) ->
     mecano

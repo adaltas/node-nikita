@@ -32,22 +32,23 @@ functions share a common API with flexible options.
       todos.err = null
       todos.status = []
       todos.throw_if_error = true
+      befores = []
       afters = []
       normalize_arguments = (_arguments, type='call') ->
-        is_array = false
+        multiple = false
         handler = null
         callback = null
         if typeof _arguments[0] is 'function'
           options = [{}]
         else if Array.isArray _arguments[0]
-          is_array = true
+          multiple = true
           options = _arguments[0]
         else if _arguments[0] and typeof _arguments[0] is 'object'
           options = [_arguments[0]]
         else
           options = [argument: _arguments[0]]
-        for option in options
-          option.type = type
+        # for option in options
+        #   option.type = type
         for arg, i in _arguments
           continue if i is 0 and typeof arg isnt 'function'
           if typeof arg is 'function'
@@ -66,14 +67,13 @@ functions share a common API with flexible options.
         # User arguments
         if callback?.length > 2
           option.user_args = true for option in options
-        options = options[0] unless is_array
-        type: type, options: options, handler: handler, callback: callback
+        type: type, options: options, multiple: multiple, handler: handler, callback: callback
       enrich_options = (user_options) ->
         global_options = obj.options
         parent_options = todos.options
-        local_options_array = Array.isArray user_options
+        # local_options_array = Array.isArray user_options
         local_options = user_options
-        local_options = [local_options] unless local_options_array 
+        # local_options = [local_options] unless local_options_array 
         options = []
         for local_opts in local_options
           local_opts = argument: local_opts if local_opts? and typeof local_opts isnt 'object'
@@ -84,8 +84,8 @@ functions share a common API with flexible options.
           for opts in options then opts[k] = v if opts[k] is undefined and k in obj.propagated_options
         for k, v of global_options
           for opts in options then opts[k] = v if opts[k] is undefined
-        options = options[0] unless local_options_array
-        options ?= {}
+        # options = options[0] unless local_options_array
+        # options ?= {}
         options
       call_callback = (fn, args) ->
         stack.unshift todos
@@ -102,28 +102,24 @@ functions share a common API with flexible options.
         mtodos = todos
         todos = stack.shift()
         todos.unshift mtodos... if mtodos.length
-      # parse_action = (action) ->
-      call_sync = (action) ->
-        options = enrich_options action.options
-        todos.status.unshift undefined
-        stack.unshift todos
-        todos = []
-        todos.err = null
-        todos.status = []
-        todos.throw_if_error = true
-        try
-          status = action.handler.apply obj, [options]
-        catch err
-          todos = stack.shift()
-          jump_to_error err
+      call_ = (action) ->
+        action.options = enrich_options action.options
+        callback = (err, statuses, user_args) ->
+          user_args.length = 2 if user_args.length is 0
+          todos = stack.shift() if todos.length is 0
+          jump_to_error err if err
+          todos.throw_if_error = false if err and action.callback
+          status_callback = statuses.some (status) -> !! status
+          statuses = statuses.some (status, i) ->
+            return false if action.options[i].shy
+            !! status
+          user_args = user_args[0] unless action.multiple
+          callback_args = [err, status_callback, user_args...]
+          todos.status[0] = statuses and not action.options.shy
+          call_callback action.callback, callback_args if action.callback
           return run()
-        mtodos = todos
-        todos = stack.shift()
-        todos.unshift mtodos... if mtodos.length
-        todos.status.unshift status
-      call_async = (action) ->
-        options = enrich_options action.options
-        callback = action.callback
+
+        # throw err if err # not tested, not the right way to do this
         try
           todos.status.unshift undefined
           stack.unshift todos
@@ -131,31 +127,49 @@ functions share a common API with flexible options.
           todos.err = null
           todos.status = []
           todos.throw_if_error = true
-          status_callback = []
-          status_action = []
-          finish = (err) ->
-            arguments.length = 2 if arguments.length is 0
-            todos = stack.shift() if todos.length is 0
-            todos.throw_if_error = false if err and callback
-            jump_to_error err if err
-            status_callback = status_callback.some (status) -> !! status
-            status_action = status_action.some (status) -> !! status
-            callback_args = [err, status_callback, [].slice.call(arguments)[1...]...]
-            todos.status[0] = status_action and not options.shy
-            call_callback callback, callback_args if callback
-            return run()
-            # if callback then callback(err) else run()
-          wrap obj, [options, finish], (options, callback) ->
-            todos.options = options
-            action.handler.call obj, options, (err, status, args...) ->
-              status_callback.push status
-              status_action.push status unless options.shy
-              setImmediate ->
-                callback err, status, args...
+          if action.handler.length is 2 # Async style
+            call_async action, callback
+          else # Sync style
+            call_sync action, callback
         catch err
           todos = stack.shift()
           jump_to_error err
           run()
+      before = (action, callback) ->
+        # call_async
+      call_sync = (action, callback) ->
+        options = action.options
+        options = options[0] unless action.multiple
+        status = !!action.handler.apply obj, [options]
+        # mtodos = todos
+        stack[0].unshift todos if todos.length
+        # todos = stack.shift()
+        # todos.unshift mtodos... if mtodos.length
+        # todos.status.unshift status
+        callback null, [status], [[]]
+      call_async = (action, callback) ->
+        wrap.options action.options, (err) ->
+          status_callback = []
+          status_action = []
+          statuses = []
+          user_args = for options in action.options then []
+          each action.options
+          .run (options, index, next) ->
+            conditions.all obj, options
+            , (err) ->
+              statuses.push false
+              next err
+            , ->
+              todos.options = options
+              action.handler.call obj, options, (err, status, args...) ->
+                statuses.push status
+                # status_callback.push status
+                # status_action.push status unless options.shy
+                for arg, i in args
+                  user_args[index].push arg
+                setImmediate -> next err
+          .then (err) ->
+            callback err, statuses, user_args
       jump_to_error = (err) ->
         while todos[0] and todos[0].type isnt 'then' then todos.shift()
         todos.err = err
@@ -175,11 +189,7 @@ functions share a common API with flexible options.
           run()
           return
         # Call the action
-        if todo.handler.length is 2 # Async style
-          return call_async todo
-        else # Sync style
-          call_sync todo
-          return run()
+        call_ todo
       properties.child = get: ->
         ->
           module.exports(obj.options)
@@ -190,9 +200,18 @@ functions share a common API with flexible options.
           obj
       properties.call = get: ->
         ->
+          # throw Error "Context is sealed by err" if stack[0]?.err
           args = [].slice.call(arguments)
           todos.push normalize_arguments args
           setImmediate run if todos.length is 1 # Activate the pump
+          obj
+      properties.before = get: ->
+        ->
+          befores.push type: 'before', target: arguments[0], handler: arguments[1]
+          obj
+      properties.after = get: ->
+        ->
+          afters.push type: 'after', options: arguments
           obj
       properties.status = get: ->
         (index) ->
@@ -216,6 +235,7 @@ functions share a common API with flexible options.
           obj.registry[name] = handler
           Object.defineProperty obj, name, configurable: true, get: ->
             ->
+              # throw Error "Context is sealed by err" if stack[0]?.err
               # Insert handler before callback or at the end of arguments
               args = [].slice.call(arguments)
               for arg, i in args
@@ -224,7 +244,7 @@ functions share a common API with flexible options.
                   break
                 if i + 1 is args.length
                   args.push obj.registry[name] or registry[name]
-              todos.push normalize_arguments args
+              todos.push normalize_arguments args, name
               setImmediate run if todos.length is 1 # Activate the pump
               obj
       Object.defineProperty obj, 'registered', get: ->
@@ -247,25 +267,27 @@ the second argument. It will return "true" if the function is un-registered or
 "false" if there was nothing to do because the function wasn't already
 registered.
 
-    register = module.exports.register = (name, handler) ->
-      if handler is null or handler is false
-        delete registry[name] if registered name
-        delete module.exports[name] if registered name
-        return module.exports
-      throw Error "Function already defined '#{name}'" if registered name
-      registry[name] = handler unless name is 'call'
-      Object.defineProperty module.exports, name, 
-        configurable: true
-        get: -> module.exports()[name]
-
-    registered = module.exports.registered = (name) ->
-      Object.prototype.hasOwnProperty.call module.exports, name
-
-Pre-register mecano internal functions
-
     registry = require './misc/registry'
-    register name, handler for name, handler of registry
-    register 'call', module.exports().call
-    
+    do ->
+      register = module.exports.register = (name, handler, api) ->
+        if handler is null or handler is false
+          delete registry[name] if registered name
+          delete module.exports[name] if registered name
+          return module.exports
+        throw Error "Function already defined '#{name}'" if registered name
+        registry[name] = handler unless api
+        Object.defineProperty module.exports, name, 
+          configurable: true
+          get: -> module.exports()[name]
 
+      registered = module.exports.registered = (name) ->
+        Object.prototype.hasOwnProperty.call module.exports, name
+
+      # Pre-register mecano internal functions
+      register name, handler for name, handler of registry
+      register 'before', module.exports().before, true
+      register 'call', module.exports().call, true
+
+    conditions = require './misc/conditions'
     wrap = require './misc/wrap'
+    each = require 'each'

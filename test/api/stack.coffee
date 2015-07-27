@@ -3,7 +3,7 @@ mecano = require '../../src'
 test = require '../test'
 fs = require 'fs'
 
-describe 'promise stack', ->
+describe 'api stack', ->
 
   scratch = test.scratch @
 
@@ -69,11 +69,18 @@ describe 'promise stack', ->
         destination: "#{scratch}/doesnt_exist"
       , (err, changed) ->
         err.message.should.eql "Missing option 'mode'"
+        # There are multiple possibilities
         m.chmod
           mode: 0o0644
         .then (err, changed) ->
           err.message.should.eql "Missing destination: undefined"
         .then next
+        # err.message.should.eql "Missing option 'mode'"
+        # try
+        #   m.touch destination: "#{scratch}/doesnt_exist"
+        # catch e
+        #   console.log e.message.should.eql 'Context is sealed by err'
+        #   next()
 
     it 'catch err thrown callback', (next) ->
       mecano

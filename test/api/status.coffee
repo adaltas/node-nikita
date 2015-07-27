@@ -3,7 +3,7 @@ mecano = require '../../src'
 test = require '../test'
 fs = require 'fs'
 
-describe 'status', ->
+describe 'api status', ->
 
   it 'get without arguments', (next) ->
     mecano

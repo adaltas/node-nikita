@@ -4,7 +4,7 @@ test = require '../test'
 fs = require 'fs'
 domain = require 'domain'
 
-describe 'promise call', ->
+describe 'api call', ->
 
   scratch = test.scratch @
 
@@ -25,9 +25,9 @@ describe 'promise call', ->
       , (err) ->
         touched++
       .then (err, status) ->
-        called.should.eql 1
-        touched.should.eql 2
-        next()
+        called.should.eql 1 unless err
+        touched.should.eql 2 unless err
+        next err
 
     it.skip 'execute a callback', (next) ->
       called = 0
