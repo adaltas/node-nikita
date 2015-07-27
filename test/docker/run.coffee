@@ -5,11 +5,11 @@ mecano = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
-describe 'docker', ->
+describe 'docker run', ->
 
   scratch = test.scratch @
 
-  they 'run a command', (ssh, next) ->
+  they 'test simple command', (ssh, next) ->
     mecano
       ssh: ssh
     .docker_run
@@ -29,13 +29,13 @@ describe 'docker', ->
       service: true
       rm: true
     , (err, executed) ->
-      err.message.should.match /^Invalid parameter.*/ unless err
+      err.message.should.match /^Invalid parameter.*/
     .docker_run
       image: 'httpd'
       service: true
       rm: false
     , (err, executed) ->
-      err.message.should.match /^Invalid parameter.*/ unless err
+      err.message.should.match /^Invalid parameter.*/
     .then (err) -> next null
 
   they 'test --rm (flag option)', (ssh, next) ->
