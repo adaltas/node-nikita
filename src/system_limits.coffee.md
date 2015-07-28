@@ -1,21 +1,67 @@
 
-# `system_limits(options, callback)` 
+# `system_limits(options, callback)`
 
 Control system limits for a user.
 
+## Kernel Limits
+
+User limits cannot exceed kernel limits, so you need to configure kernel limits
+before user limits.
+
+### Processes
+
+```bash
+sysctl kernel.pid\_max         # print kernel.pid\_max = VALUE
+cat /proc/sys/kernel/pid\_max  # print VALUE
+```
+
+1. Temporary change
+
+```bash
+echo 4194303 > /proc/sys/kernel/pid_max
+```
+
+2. Permanent change
+
+Edit /etc/sysctl.conf:
+```bash
+kernel.pid_max = 4194303
+```
+
+### Open Files
+
+```bash
+sysctl fs.file-max         # print fs.file-max = VALUE
+cat /proc/sys/fs/file-max  # print VALUE
+```
+
+1. Temporary change
+
+```bash
+echo 1631017 > /proc/sys/fs/file-max
+```
+
+2. Permanent change
+
+Edit /etc/sysctl.conf:
+```bash
+fs.file-max = 1631017
+```
+
+
 ## Options
 
-*   `destination` (string)   
-    Where to write the file, default to "/etc/security/limits.d/#{options.user}.conf".   
-*   `ssh` (object|ssh2)   
+*   `destination` (string)
+    Where to write the file, default to "/etc/security/limits.d/#{options.user}.conf".
+*   `ssh` (object|ssh2)
     Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-*   `stdout` (stream.Writable)   
+    configuration object used to initialize the SSH connection.
+*   `stdout` (stream.Writable)
     Writable EventEmitter in which the standard output of executed commands will
-    be piped.   
-*   `stderr` (stream.Writable)   
+    be piped.
+*   `stderr` (stream.Writable)
     Writable EventEmitter in which the standard error output of executed command
-    will be piped.   
+    will be piped.
 
 ## Callback parameters
 
@@ -58,7 +104,7 @@ Maximum number of process: `ulimit -u`
         options.nofile = stdout.trim()
       .call ->
         return unless options.nofile?
-        write.push 
+        write.push
           match: ///^#{options.user}.+nofile.+$///m
           replace: "#{options.user}    -    nofile   #{options.nofile}"
           append: true
@@ -82,6 +128,3 @@ Maximum number of process: `ulimit -u`
 ## Dependencies
 
     execute = require './execute'
-
-
-
