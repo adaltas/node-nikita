@@ -18,7 +18,7 @@ describe 'execute', ->
       executed.should.be.true() unless err
       stdout.should.eql 'yes\n' unless err
       next err
-  
+
   they 'stream stdout and unpipe', (ssh, next) -> #.skip 'remote',
     @timeout 10000000
     writer_done = callback_done = null
@@ -47,7 +47,7 @@ describe 'execute', ->
       data.should.containEql search1
       data.should.containEql search2
       next()
-  
+
   they 'stdout and stderr return empty', (ssh, next) -> #.skip 'remote',
     mecano.execute
       ssh: ssh
@@ -56,18 +56,18 @@ describe 'execute', ->
       stdout.should.eql ''
       stderr.should.eql ''
       next()
-  
+
   they 'validate exit code', (ssh, next) ->
     # code undefined
     mecano
       ssh: ssh
     .execute
-      cmd: "ls -l #{scratch}/doesnt_exist"
+      cmd: "exit 42"
     .then (err, executed) ->
-      err.message.should.eql 'Invalid Exit Code: 1'
+      err.message.should.eql 'Invalid Exit Code: 42'
     .execute
-      cmd: "ls -l #{scratch}/doesnt_exist"
-      code: [0, 1]
+      cmd: "exit 42"
+      code: [0, 42]
     .then (err, executed) ->
       next err
 
@@ -90,7 +90,7 @@ describe 'execute', ->
       return next err if err
       executed.should.be.false()
       next()
-  
+
   they 'should honor conditions', (ssh, next) ->
     mecano
       ssh: ssh
@@ -153,5 +153,3 @@ describe 'execute', ->
         err.should.be.an.Error
         err.code.should.eql 2
         next()
-
-
