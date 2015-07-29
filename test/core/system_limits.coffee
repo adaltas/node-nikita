@@ -21,7 +21,7 @@ describe 'system_limits', ->
           exists.should.be.false() unless err
           next err
 
-  they 'nofile and noprocs accept int', (ssh, next) ->
+  they 'nofile and noproc accept int', (ssh, next) ->
       mecano
         ssh: ssh
       .system_limits
@@ -40,7 +40,26 @@ describe 'system_limits', ->
           """ unless err
           next err
 
+
   they 'detect changes', (ssh, next) ->
+      mecano
+        ssh: ssh
+      .system_limits
+        destination: "#{scratch}/me.conf"
+        user: 'me'
+        nofile: 2048
+        nproc: 2048
+        shy: true
+      .system_limits
+        destination: "#{scratch}/me.conf"
+        user: 'me'
+        nofile: 2047
+        nproc: 2047
+      .then (err, status) ->
+        status.should.be.true() unless err
+        next err
+
+  they 'detect no change', (ssh, next) ->
       mecano
         ssh: ssh
       .system_limits
@@ -58,7 +77,33 @@ describe 'system_limits', ->
         status.should.be.false() unless err
         next err
 
+    they 'calculate nproc & nofile', (ssh, next) ->
+      nproc = null
+      nofile = null
+      mecano
+        ssh: ssh
+      .execute
+        cmd: 'cat /proc/sys/fs/file-max'
+      , (err, status, stdout) ->
+        return callback err if err
+        nofile = stdout.trim()
+      .execute
+        cmd: 'cat /proc/sys/kernel/pid_max'
+      , (err, status, stdout) ->
+        return callback err if err
+        nproc = stdout.trim()
+      .system_limits
+        destination: "#{scratch}/me.conf"
+        user: 'me'
+        nofile: true
+        nproc: true
+      , (err, status) ->
+        return callback err if err
+        status.should.be.true()
+        fs.readFile ssh, "#{scratch}/me.conf", 'ascii', (err, content) ->
+          content.should.eql """
+          me    -    nofile   #{nofile}
+          me    -    nproc   #{nproc}
 
-
-
-
+          """ unless err
+          next err

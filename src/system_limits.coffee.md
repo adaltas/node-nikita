@@ -23,8 +23,8 @@ In general, the limits applied to a user override those applied to a group.
 Pass the "S" option to "ulimit" will impact the effective limit ("soft" limit)
 and the "H" the "hard" limit (maximum value that can be defined by the user).
 
-                       |   soft     |   hard     |  unit   |
------------------------|------------|------------|---------|
+| resource             |   soft     |   hard     |  unit   |
+|----------------------|------------|------------|---------|
 | core file size       | ulimit -Sc | ulimit -Hc | blocks  |
 | data seg size        | ulimit -Sd | ulimit -Hd | kbytes  |
 | scheduling priority  | ulimit -Se | ulimit -He |         |
@@ -56,13 +56,13 @@ sysctl kernel.pid_max         # print kernel.pid_max = VALUE
 cat /proc/sys/kernel/pid_max  # print VALUE
 ```
 
-1. Temporary change
+_Temporary change_:
 
 ```bash
 echo 4194303 > /proc/sys/kernel/pid_max
 ```
 
-2. Permanent change
+_Permanent change_:
 
 Edit /etc/sysctl.conf:
 ```bash
@@ -76,13 +76,13 @@ sysctl fs.file-max         # print fs.file-max = VALUE
 cat /proc/sys/fs/file-max  # print VALUE
 ```
 
-1. Temporary change
+_Temporary change_:
 
 ```bash
 echo 1631017 > /proc/sys/fs/file-max
 ```
 
-2. Permanent change
+_Permanent change_:
 
 Edit /etc/sysctl.conf:
 ```bash
@@ -96,45 +96,70 @@ fs.file-max = 1631017
 *   `ssh` (object|ssh2)
     Run the action on a remote server using SSH, an ssh2 instance or an
     configuration object used to initialize the SSH connection.
-*   `stdout` (stream.Writable)
-    Writable EventEmitter in which the standard output of executed commands will
-    be piped.
-*   `stderr` (stream.Writable)
-    Writable EventEmitter in which the standard error output of executed command
-    will be piped.
+*   `as` (int)
+    Address space limit (KB)
+*   `core` (int)
+    Limits the core file size (KB)
+*   `cpu`  (int)
+    CPU time limit (in seconds).
+    When the process reaches the soft limit, it receives a SIGXCPU every second.
+    When it reaches the hard limit, it receives SIGKILL.
+*   `data` (int)
+    Max data size (KB)
+*   `fsize` (int)
+    Maximum filesize (KB)
+*   `locks` (int)
+    Max number of file locks the user can hold
+*   `maxlogins` (int)
+    Max number of logins for this user
+*   `maxsyslogins` (int)
+    Max number of logins on the system
+*   `memlock` (int)
+    Max locked-in-memory address space (KB)
+*   `msgqueue` (int)
+    Max memory used by POSIX message queues (bytes)
+*   `nice` (int: [-20, 19])
+    Max nice priority allowed to raise to values
+*   `nofile` (int)
+    Max number of open file descriptors
+*   `nproc` (int)
+    Max number of processes
+*   `priority` (int)
+    Priority to run user process with
+*   `rss` (int)
+    Max resident set size (KB)
+*   `sigpending` (int)
+    Max number of pending signals
+*   `stack` (int)
+    Max stack size (KB)
+*   `rtprio` (int)
+    Max realtime priority
 
 ## Callback parameters
 
-Count the number of sub-process for a process:
-
-```bash
-ls /proc/14986/task | wc
-ps -L p $pid --no-headers | wc -l
-```
-
-Count the number of sub-process for a user:
-The option "-L" show threads, possibly with LWP and NLWP columns.
-
-```bash
-ps -L -u $user --no-headers | wc -l
-```
-
-Maximum number of open files: `ulimit -Hn`
-Maximum number of process: `ulimit -u`
+*   `err`
+    Error object if any.
+*   `modifed`
+    True if limits configuration file has been modified.
 
 ## Source Code
 
     module.exports = (options, callback) ->
-      return callback new Error "Missing required option 'user'" unless options.user
-      options.nofile if options.nofile is true
-      options.nproc = 65536 if options.nproc is true
-      throw Error 'Invalid option "nofile"' if options.nofile? and typeof options.nofile not in ['number', 'boolean']
-      throw Error 'Invalid option "nproc"' if options.nproc? and typeof options.nproc not in ['number', 'boolean']
+      return callback Error "Missing required option 'user'" unless options.user
+      # Parameters where value can be guessed
+      for opt in ['nofile', 'nproc']
+        return callback Error "Invalid option '#{opt}'" if options[opt]? and typeof options[opt] not in ['boolean','number']
+      # Parameters where value cannot be guessed
+      for opt in ['as', 'core', 'cpu', 'data', 'fsize', 'locks', 'maxlogins',
+      'maxsyslogins', 'memlock', 'msgqueue', 'nice', 'priority', 'rss',
+      'sigpending', 'stack', 'rtprio']
+        return callback Error "Invalid option '#{opt}'" if options[opt]? and typeof options[opt] isnt 'number'
       options.destination ?= "/etc/security/limits.d/#{options.user}.conf"
       write = []
       @
+      # Calculate nofile from kernel limit
       .execute
-        cmd: "ulimit -Hn"
+        cmd: "cat /proc/sys/fs/file-max"
         shy: true
         if: options.nofile is true
       , (err, status, stdout) ->
@@ -142,20 +167,26 @@ Maximum number of process: `ulimit -u`
         return callback err if err
         return unless status
         options.nofile = stdout.trim()
+      # Calculate nproc from kernel limit
+      .execute
+        cmd: "cat /proc/sys/kernel/pid_max"
+        shy: true
+        if: options.nproc is true
+      , (err, status, stdout) ->
+        # console.log err, status, stdout
+        return callback err if err
+        return unless status
+        options.nproc = stdout.trim()
       .call ->
-        return unless options.nofile?
-        write.push
-          match: ///^#{options.user}.+nofile.+$///m
-          replace: "#{options.user}    -    nofile   #{options.nofile}"
-          append: true
-        false
-      .call ->
-        return unless options.nproc?
-        write.push
-          match: ///^#{options.user}.+nproc.+$///m
-          replace: "#{options.user}    -    nproc   #{options.nproc}"
-          append: true
-        false
+        for opt in ['as', 'core', 'cpu', 'data', 'fsize', 'locks', 'maxlogins',
+        'maxsyslogins', 'memlock', 'msgqueue', 'nice', 'nofile', 'nproc',
+        'priority', 'rss', 'sigpending', 'stack', 'rtprio']
+          if options[opt]?
+            write.push
+              match: RegExp "^#{options.user}.+#{opt}.+$", 'm'
+              replace: "#{options.user}    -    #{opt}   #{options[opt]}"
+              append: true
+        return false
       .write
         destination: options.destination
         write: write
@@ -167,4 +198,4 @@ Maximum number of process: `ulimit -u`
 
 ## Dependencies
 
-    execute = require './execute'
+No dependency
