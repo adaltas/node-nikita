@@ -6,28 +6,28 @@ exists, in which case the source file will no longer exists.
 
 ## Options
 
-*   `destination`   
-    Final name of the moved resource.   
-*   `force`   
+*   `destination`
+    Final name of the moved resource.
+*   `force`
     Force the replacement of the file without checksum verification, speed up
-    the action and disable the `moved` indicator in the callback.   
-*   `source`   
-    File or directory to move.   
-*   `destination_md5`   
+    the action and disable the `moved` indicator in the callback.
+*   `source`
+    File or directory to move.
+*   `destination_md5`
     Destination md5 checkum if known, otherwise computed if destination
-    exists.   
-*   `source_md5`   
-    Source md5 checkum if known, otherwise computed.   
-*   `ssh` (object|ssh2)   
+    exists.
+*   `source_md5`
+    Source md5 checkum if known, otherwise computed.
+*   `ssh` (object|ssh2)
     Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
+    configuration object used to initialize the SSH connection.
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `moved`   
-    Number of moved resources.   
+*   `err`
+    Error object if any.
+*   `moved`
+    Number of moved resources.
 
 ## Example
 
@@ -94,11 +94,4 @@ require('mecano').move({
 ## Dependencies
 
     fs = require 'ssh2-fs'
-    remove = require './remove'
     misc = require './misc'
-
-
-
-
-
-
