@@ -15,11 +15,8 @@ describe 'docker build', ->
       false_source: 'Dockerfile'
     .then (err) ->
       return next Error 'Expect error' unless err
-      try
-        err.message.should.eql 'Missing image parameter'
-        next null
-      catch e
-        return next e
+      err.message.should.eql 'Missing image parameter'
+    .then next
 
   they 'Test exclusive parameters', (ssh, next) ->
     mecano
@@ -30,11 +27,8 @@ describe 'docker build', ->
       content: "FROM scratch \ CMD ['echo \"hello world\"']"
     .then (err) ->
       return next Error 'Expect error' unless err
-      try
-        err.message.should.eql 'Can not build from Dockerfile and content'
-        next null
-      catch e
-        return next e
+      err.message.should.eql 'Can not build from Dockerfile and content'
+    .then next
 
   they 'from text', (ssh, next) ->
     mecano
