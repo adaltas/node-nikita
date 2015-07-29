@@ -5,6 +5,7 @@
       backup: require '../backup'
       chmod: require '../chmod'
       chown: require '../chown'
+      compress: require '../compress'
       copy: require '../copy'
       cron_add: require '../cron/add'
       cron_remove: require '../cron/remove'
