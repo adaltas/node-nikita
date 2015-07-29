@@ -79,4 +79,3 @@ require('mecano').cron_remove({
 ## Dependencies
 
     wrap = require '../misc/wrap'
-    execute = require '../execute'
