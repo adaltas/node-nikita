@@ -95,3 +95,4 @@ require('mecano').move({
 
     fs = require 'ssh2-fs'
     misc = require './misc'
+    remove = require './remove'
