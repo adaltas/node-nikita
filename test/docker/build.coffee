@@ -41,7 +41,7 @@ describe 'docker build', ->
       content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
       machine: 'ryba'
     , (err, executed, stdout, stderr) ->
-      executed.should.be.true
+      executed.should.be.true() unless err
     .docker_rmi
       image: 'mecano/should_not_exists_2'
       machine: machine
@@ -62,7 +62,7 @@ describe 'docker build', ->
       machine: 'ryba'
       cwd: scratch
     , (err, executed, stdout, stderr) ->
-      executed.should.be.true
+      executed.should.be.true() unless err
     .docker_rmi
       image: 'mecano/should_not_exists_3'
       machine: machine
@@ -81,7 +81,7 @@ describe 'docker build', ->
       dockerfile: "#{scratch}/mecano_Dockerfile"
       machine: 'ryba'
     , (err, executed, stdout, stderr) ->
-      executed.should.be.true
+      executed.should.be.true() unless err
     .docker_rmi
       image: 'mecano/should_not_exists_4'
       machine: machine
