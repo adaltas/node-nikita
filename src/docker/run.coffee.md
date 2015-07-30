@@ -157,15 +157,18 @@ mecano.docker({
             if typeof options[opt] is 'string' or typeof options[opt] is 'number'
               cmd += " #{flag} #{options[opt]}"
             else if Array.isArray options[opt]
-              cmd += " #{flag} #{p}" for p in options[opt]
-            else callback Error "Invalid parameter, typeof #{opt} should be string or string array"
+              for p in options[opt]
+                if typeof p in ['string', 'number']
+                  cmd += " #{flag} #{p}" for p in options[opt]
+                else callback Error "Invalid parameter, '#{opt}' array should only contains string or number"
+            else callback Error "Invalid parameter, '#{opt}' should be string, number or array"
         cmd += " #{options.image}"
         cmd += " #{options.cmd}" if options.cmd
         # Construct other exec parameter
         # Construct other exec parameter
         opts = docker.get_options cmd, options
         @execute opts, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
-        
+
 ## Modules Dependencies
 
     docker = require './commons'
