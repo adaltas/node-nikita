@@ -131,6 +131,30 @@ describe 'write', ->
           content.should.eql 'hello'
           next()
 
+  describe 'link', ->
+
+    they 'dont follow link by default', (ssh, next) ->
+      mecano
+        ssh: ssh
+      .write
+        content: 'ko'
+        destination: "#{scratch}/target"
+      .link
+        source: "#{scratch}/link"
+        destination: "#{scratch}/target"
+      .write
+        content: 'ok'
+        destination: "#{scratch}/link"
+      .call (_, callback) ->
+        fs.readFile ssh, "#{scratch}/link", 'ascii', (err, data) ->
+          data.should.eql 'ok'
+          fs.readFile ssh, "#{scratch}/target", 'ascii', (err, data) ->
+            data.should.eql 'ko'
+            callback()
+      .then next
+
+
+
   describe 'ownerships and permissions', ->
 
     they 'set permission', (ssh, next) ->
