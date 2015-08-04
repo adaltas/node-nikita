@@ -1,3 +1,4 @@
+#Be aware to specify the machine if docker mahcine is used
 
 should = require 'should'
 mecano = require '../../src'
@@ -7,6 +8,8 @@ they = require 'ssh2-they'
 describe 'docker build', ->
 
   scratch = test.scratch @
+
+  machine = 'ryba'
 
   they 'Test missing image parameter', (ssh, next) ->
     mecano
@@ -38,9 +41,10 @@ describe 'docker build', ->
       content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
       machine: 'ryba'
     , (err, executed, stdout, stderr) ->
-      executed.should.be.true()
+      executed.should.be.true
     .docker_rmi
       image: 'mecano/should_not_exists_2'
+      machine: machine
     .then next
 
   they 'from cwd', (ssh, next) ->
@@ -49,14 +53,19 @@ describe 'docker build', ->
     .write
       content: "FROM scratch\nCMD ['echo \"hello build from cwd\"']"
       destination: "#{scratch}/Dockerfile"
+    .execute
+      cmd: "echo $PATH"
+    .execute
+      cmd: 'echo $SHELL'
     .docker_build
       image: 'mecano/should_not_exists_3'
       machine: 'ryba'
       cwd: scratch
     , (err, executed, stdout, stderr) ->
-      executed.should.be.true()
+      executed.should.be.true
     .docker_rmi
       image: 'mecano/should_not_exists_3'
+      machine: machine
     .remove
       destination: "#{scratch}/Dockerfile"
     .then next
@@ -72,9 +81,10 @@ describe 'docker build', ->
       dockerfile: "#{scratch}/mecano_Dockerfile"
       machine: 'ryba'
     , (err, executed, stdout, stderr) ->
-      executed.should.be.true()
+      executed.should.be.true
     .docker_rmi
       image: 'mecano/should_not_exists_4'
+      machine: machine
     .remove
       destination: "#{scratch}/mecano_Dockerfile"
     .then next
