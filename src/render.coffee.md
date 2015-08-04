@@ -84,7 +84,9 @@ require('mecano').render({
       do_write = =>
         if not options.engine and options.source
           extension = path.extname options.source
-          options.engine = 'nunjunks' if extension is '.j2'
+          switch extension
+            when '.js2' then options.engine = 'nunjunks'
+            when '.eco' then options.engine = 'eco'
         options.source = null
         @write(options).then callback
       do_read_source()
