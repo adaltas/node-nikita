@@ -54,5 +54,5 @@
       touch: require '../touch'
       upload: require '../upload'
       user: require '../user'
-      wait_execute: require '../wait_execute'
+      wait_execute: require '../wait/execute'
       write: require '../write'
