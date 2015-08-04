@@ -5,8 +5,6 @@ Load Docker images
 
 ## Options
 
-*   `image` (string)
-    Name/ID of base image. MANDATORY
 *   `machine` (string)
     Name of the docker-machine. MANDATORY if using docker-machine
 *   `source` (string)
@@ -63,15 +61,14 @@ mecano.docker({
 
     module.exports = (options, callback) ->
       # Validate parameters
-      return callback Error 'Missing image parameter' unless options.image?
-      return callback Error 'Missing destination parameter' unless options.destination?
+      return callback Error 'Missing source parameter' unless options.source?
       # Construct exec command
       docker.get_provider options, (err,  provider) =>
         return callback err if err
         options.provider = provider
         cmd = docker.prepare_cmd provider, options.machine
         return callback cmd if util.isError cmd
-        cmd += "docker load -i #{options.source} #{options.image}"
+        cmd += "docker load -i #{options.source}"
         # Construct other exec parameter
         opts = docker.get_options cmd, options
         @execute opts, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
