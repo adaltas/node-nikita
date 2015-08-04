@@ -1,43 +1,43 @@
 
-# `java_keystore_add(options, callback)` 
+# `java_keystore_add(options, callback)`
 
 Add certificates, private keys and certificate authorities to java keystores
 and trustores.
 
 ## Options
 
-*   `name` (string)   
-    Service name.   
-*   `ssh` (object|ssh2)   
+*   `name` (string)
+    Service name.
+*   `ssh` (object|ssh2)
     Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-*   `stdout` (stream.Writable)   
+    configuration object used to initialize the SSH connection.
+*   `stdout` (stream.Writable)
     Writable EventEmitter in which the standard output of executed commands will
-    be piped.   
-*   `stderr` (stream.Writable)   
+    be piped.
+*   `stderr` (stream.Writable)
     Writable EventEmitter in which the standard error output of executed command
-    will be piped.   
+    will be piped.
 
 ## Callback parameters
 
-*   `err` (object|null)   
-    Error object if any.   
-*   `status` (boolean)   
-    Indicates if the certificated was inserted.   
+*   `err` (object|null)
+    Error object if any.
+*   `status` (boolean)
+    Indicates if the certificated was inserted.
 
 ## Relevant Java properties
 
-*   `javax.net.ssl.trustStore`   
-*   `javax.net.ssl.trustStorePassword`   
-*   `javax.net.ssl.keyStore`   
-*   `javax.net.ssl.keyStoreType`   
-*   `javax.net.ssl.keyStorePassword`  
+*   `javax.net.ssl.trustStore`
+*   `javax.net.ssl.trustStorePassword`
+*   `javax.net.ssl.keyStore`
+*   `javax.net.ssl.keyStoreType`
+*   `javax.net.ssl.keyStorePassword`
 
 ## Relevant commands
 
-*   View the content of a Java KeyStore (JKS) and Java TrustStore:   
+*   View the content of a Java KeyStore (JKS) and Java TrustStore:
    `keytool -list -v -keystore $keystore -alias $caname -storepass $storepass`
-*   View the content of a ".pem" certificate:   
+*   View the content of a ".pem" certificate:
     `openssl x509 -in cert.pem -text`
 
 ## Uploading public and private keys into a keystore
@@ -144,7 +144,4 @@ require('mecano').java_keystore_add([{
 
 ## Dependencies
 
-    execute = require './execute'
-
-
-
+No dependency

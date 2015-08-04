@@ -3,7 +3,7 @@
 
 Extract an archive. Multiple compression types are supported. Unless
 specified as an option, format is derived from the source extension. At the
-moment, supported extensions are '.tgz', '.tar.gz' and '.zip'.
+moment, supported extensions are '.tgz', '.tar.gz', tar.bz2, 'tar.xz' and '.zip'.
 
 ## Options
 
@@ -61,9 +61,9 @@ require('mecano').extract({
           format = 'tar'
         else if /\.zip$/.test options.source
           format = 'zip'
-        else if /\.bz2$/.test options.source
+        else if /\.tar\.bz2$/.test options.source
           format = 'bz2'
-        else if /\.xz$/.test options.source
+        else if /\.tar\.xz$/.test options.source
           format = 'xz'
         else
           ext = path.extname options.source
