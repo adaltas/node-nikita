@@ -69,10 +69,9 @@ require('mecano').move({
         if options.source_md5 is options.destination_md5
         then do_remove_src()
         else do_replace_dest()
-      do_replace_dest = ->
+      do_replace_dest = =>
         options.log? "Mecano `move`: Remove #{options.destination}"
-        remove
-          ssh: options.ssh
+        @remove
           destination: options.destination
         , (err, removed) ->
           return callback err if err
@@ -82,10 +81,9 @@ require('mecano').move({
         fs.rename options.ssh, options.source, options.destination, (err) ->
           return callback err if err
           callback null, true
-      do_remove_src = ->
+      do_remove_src = =>
         options.log? "Mecano `move`: Remove #{options.source}"
-        remove
-          ssh: options.ssh
+        @remove
           destination: options.source
         , (err, removed) ->
           callback err
@@ -95,4 +93,4 @@ require('mecano').move({
 
     fs = require 'ssh2-fs'
     misc = require './misc'
-    remove = require './remove'
+
