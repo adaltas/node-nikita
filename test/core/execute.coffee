@@ -151,5 +151,4 @@ describe 'execute', ->
         trap_on_error: true
       , (err) ->
         err.should.be.an.Error
-        err.code.should.eql 2
         next()
