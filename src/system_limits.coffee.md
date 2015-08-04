@@ -6,9 +6,9 @@ Control system limits for a user.
 ## Ulimit
 
 Linux allows to limit the resources allocated to users or user groups via
-"/etc/security/limits.conf" and "/etc/security/limits.d/*.conf" file loaded by
-WFP (Plugable Authentication Module) at each logon.
-The user can then adapt the resources available to its needs via "ulimit".
+"/etc/security/limits.conf" and "/etc/security/limits.d/*.conf" files loaded by
+WFP (Plugable Authentication Module) at each logon. The user can then adapt the
+resources available to its needs via "ulimit".
 
 It is possible to define, for a number of resources (number of open files, file size,
 number of instantiated process, CPU time, etc.), a "soft" limit which can be
@@ -42,7 +42,7 @@ and the "H" the "hard" limit (maximum value that can be defined by the user).
 | virtual memory       | ulimit -Sv | ulimit -Hv | kbytes  |
 | file locks           | ulimit -Sx | ulimit -Hx |         |
 
-Pass the option in flag-mode to get, and follows it with a value to set
+Pass the option in flag-mode to get, and follows it with a value to set.
 
 ## Kernel Limits
 
@@ -56,18 +56,9 @@ sysctl kernel.pid_max         # print kernel.pid_max = VALUE
 cat /proc/sys/kernel/pid_max  # print VALUE
 ```
 
-_Temporary change_:
+_Temporary change_: `echo 4194303 > /proc/sys/kernel/pid_max`
 
-```bash
-echo 4194303 > /proc/sys/kernel/pid_max
-```
-
-_Permanent change_:
-
-Edit /etc/sysctl.conf:
-```bash
-kernel.pid_max = 4194303
-```
+_Permanent change_: `vi /etc/sysctl.conf # kernel.pid_max = 4194303`
 
 ### Open Files
 
@@ -76,18 +67,10 @@ sysctl fs.file-max         # print fs.file-max = VALUE
 cat /proc/sys/fs/file-max  # print VALUE
 ```
 
-_Temporary change_:
+_Temporary change_: `echo 1631017 > /proc/sys/fs/file-max`
 
-```bash
-echo 1631017 > /proc/sys/fs/file-max
-```
+_Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
 
-_Permanent change_:
-
-Edit /etc/sysctl.conf:
-```bash
-fs.file-max = 1631017
-```
 
 ## Options
 
