@@ -4,7 +4,7 @@ test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
 
-describe 'wait_execute', ->
+describe 'wait execute', ->
 
   scratch = test.scratch @
 
