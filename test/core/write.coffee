@@ -133,18 +133,54 @@ describe 'write', ->
 
   describe 'link', ->
 
-    they 'dont follow link by default', (ssh, next) ->
+    they 'follow link by default', (ssh, next) ->
       mecano
         ssh: ssh
       .write
         content: 'ko'
         destination: "#{scratch}/target"
       .link
-        source: "#{scratch}/link"
-        destination: "#{scratch}/target"
+        source: "#{scratch}/target"
+        destination: "#{scratch}/link"
       .write
         content: 'ok'
         destination: "#{scratch}/link"
+      .call (_, callback) ->
+        fs.readFile ssh, "#{scratch}/link", 'ascii', (err, data) ->
+          data.should.eql 'ok'
+          fs.readFile ssh, "#{scratch}/target", 'ascii', (err, data) ->
+            data.should.eql 'ok'
+            callback()
+      .then next
+
+    they 'throw error if link is a directory', (ssh, next) ->
+      mecano
+        ssh: ssh
+      .mkdir
+        destination: "#{scratch}/target"
+      .link
+        source: "#{scratch}/target"
+        destination: "#{scratch}/link"
+      .write
+        content: 'ok'
+        destination: "#{scratch}/link"
+      , (err) ->
+        err.code.should.eql 'EISDIR'
+        next()
+
+    they 'dont follow link if option "unlink"', (ssh, next) ->
+      mecano
+        ssh: ssh
+      .write
+        content: 'ko'
+        destination: "#{scratch}/target"
+      .link
+        source: "#{scratch}/target"
+        destination: "#{scratch}/link"
+      .write
+        content: 'ok'
+        destination: "#{scratch}/link"
+        unlink: true
       .call (_, callback) ->
         fs.readFile ssh, "#{scratch}/link", 'ascii', (err, data) ->
           data.should.eql 'ok'
@@ -153,7 +189,25 @@ describe 'write', ->
             callback()
       .then next
 
-
+    they 'dont follow link if option "unlink" and link is directory', (ssh, next) ->
+      mecano
+        ssh: ssh
+      .mkdir
+        destination: "#{scratch}/target"
+      .link
+        source: "#{scratch}/target"
+        destination: "#{scratch}/link"
+      .write
+        content: 'ok'
+        destination: "#{scratch}/link"
+        unlink: true
+      .call (_, callback) ->
+        fs.readFile ssh, "#{scratch}/link", 'ascii', (err, data) ->
+          data.should.eql 'ok'
+          fs.stat ssh, "#{scratch}/target",  (err, stat) ->
+            stat.isDirectory().should.be.true()
+            callback()
+      .then next
 
   describe 'ownerships and permissions', ->
 

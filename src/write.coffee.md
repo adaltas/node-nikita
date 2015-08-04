@@ -46,6 +46,8 @@ Write a file or a portion of an existing file.
     Replace to before this marker, a string or a regular expression.
 *   `uid`
     File user name or user id.
+*   `unlink` (boolean)   
+    Replace the existing link, leaving the refered file untouched.   
 *   `write`
     An array containing multiple transformation where a transformation is an
     object accepting the options `from`, `to`, `match` and `replace`.
@@ -183,6 +185,7 @@ require('mecano').write({
       options.content = options.content.toString() if options.content and Buffer.isBuffer options.content
       options.diff ?= options.diff or !!options.stdout
       options.engine ?= 'nunjunks'
+      options.unlink ?= false
       switch options.eof
         when 'unix'
           options.eof = "\n"
@@ -240,7 +243,7 @@ require('mecano').write({
         options.log? "Mecano `write`: destination is \"#{options.destination}\" [DEBUG]"
         exists = ->
           options.log? "Mecano `write`: stat destination [DEBUG]"
-          fs.stat options.ssh, options.destination, (err, stat) ->
+          fs.lstat options.ssh, options.destination, (err, stat) ->
             return do_mkdir() if err?.code is 'ENOENT'
             return callback err if err
             destinationStat = stat
@@ -254,8 +257,15 @@ require('mecano').write({
                 return callback new Error "Destination is not a file: #{options.destination}" unless stat.isFile()
                 destinationStat = stat
                 do_read()
-            else
+            else if stat.isSymbolicLink()
+              return do_read() unless options.unlink
+              fs.unlink options.ssh, options.destination, (err, stat) ->
+                return callback err if err
+                do_render() # Dont go to mkdir since parent dir exists
+            else if stat.isFile()
               do_read()
+            else
+              callback Error "Invalid File Type"
         do_mkdir = =>
           @mkdir
             destination: path.dirname options.destination
