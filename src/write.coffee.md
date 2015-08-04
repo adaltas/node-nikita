@@ -182,7 +182,7 @@ require('mecano').write({
       return callback Error 'Missing destination' unless options.destination
       options.content = options.content.toString() if options.content and Buffer.isBuffer options.content
       options.diff ?= options.diff or !!options.stdout
-      options.engine ?= 'eco'
+      options.engine ?= 'nunjunks'
       switch options.eof
         when 'unix'
           options.eof = "\n"
