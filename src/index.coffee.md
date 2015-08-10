@@ -171,6 +171,7 @@ functions share a common API with flexible options.
           .then (err) ->
             callback err, statuses, user_args
       jump_to_error = (err) ->
+        throw err unless todos?
         while todos[0] and todos[0].type isnt 'then' then todos.shift()
         todos.err = err
         # return run()
