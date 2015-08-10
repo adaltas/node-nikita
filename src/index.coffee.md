@@ -287,6 +287,7 @@ registered.
       register name, handler for name, handler of registry
       register 'before', module.exports().before, true
       register 'call', module.exports().call, true
+      register 'then', module.exports().then, true
 
     conditions = require './misc/conditions'
     wrap = require './misc/wrap'
