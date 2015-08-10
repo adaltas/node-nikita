@@ -7,7 +7,7 @@ change had occured. Otherwise it will be set to "true".
 
 ## Options  
 
-*   `quorum`    
+*   `quorum` (number|boolean)    
     Number of minimal successful connection, 50%+1 if "true".   
 *   `cmd` (string|array)   
     The commands to be executed.    

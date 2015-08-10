@@ -55,4 +55,5 @@
       upload: require '../upload'
       user: require '../user'
       wait_execute: require '../wait/execute'
+      wait_connect: require '../wait/connect'
       write: require '../write'
