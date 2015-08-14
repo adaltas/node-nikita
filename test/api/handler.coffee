@@ -3,7 +3,7 @@ mecano = require '../../src'
 test = require '../test'
 fs = require 'fs'
 
-describe 'api actions', ->
+describe 'api handler', ->
 
   scratch = test.scratch @
 

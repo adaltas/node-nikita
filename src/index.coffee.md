@@ -84,8 +84,6 @@ functions share a common API with flexible options.
           for opts in options then opts[k] = v if opts[k] is undefined and k in obj.propagated_options
         for k, v of global_options
           for opts in options then opts[k] = v if opts[k] is undefined
-        # options = options[0] unless local_options_array
-        # options ?= {}
         options
       call_callback = (fn, args) ->
         stack.unshift todos
@@ -118,63 +116,50 @@ functions share a common API with flexible options.
           todos.status[0] = statuses and not action.options.shy
           call_callback action.callback, callback_args if action.callback
           return run()
-
-        # throw err if err # not tested, not the right way to do this
-        try
-          todos.status.unshift undefined
-          stack.unshift todos
-          todos = []
-          todos.err = null
-          todos.status = []
-          todos.throw_if_error = true
-          if action.handler.length is 2 # Async style
-            call_async action, callback
-          else # Sync style
-            call_sync action, callback
-        catch err
-          todos = stack.shift()
-          jump_to_error err
-          run()
-      before = (action, callback) ->
-        # call_async
-      call_sync = (action, callback) ->
-        options = action.options
-        options = options[0] unless action.multiple
-        status = !!action.handler.apply obj, [options]
-        # mtodos = todos
-        stack[0].unshift todos if todos.length
-        # todos = stack.shift()
-        # todos.unshift mtodos... if mtodos.length
-        # todos.status.unshift status
-        callback null, [status], [[]]
-      call_async = (action, callback) ->
+        todos.status.unshift undefined
+        stack.unshift todos
+        todos = []
+        todos.err = null
+        todos.status = []
+        todos.throw_if_error = true
         wrap.options action.options, (err) ->
-          status_callback = []
-          status_action = []
           statuses = []
           user_args = for options in action.options then []
-          each action.options
-          .run (options, index, next) ->
-            conditions.all obj, options
-            , (err) ->
-              statuses.push false
-              next err
-            , ->
-              todos.options = options
-              action.handler.call obj, options, (err, status, args...) ->
-                statuses.push status
-                # status_callback.push status
-                # status_action.push status unless options.shy
-                for arg, i in args
-                  user_args[index].push arg
-                setImmediate -> next err
-          .then (err) ->
-            callback err, statuses, user_args
+          call_before action, (err) ->
+            return next err if err
+            each action.options
+            .run (options, index, next) ->
+              conditions.all obj, options
+              , (err) ->
+                statuses.push false
+                next err
+              , ->
+                todos.options = options
+                if action.handler.length is 2 # Async style
+                  action.handler.call obj, options, (err, status, args...) ->
+                    statuses.push status
+                    for arg, i in args
+                      user_args[index].push arg
+                    setImmediate -> next err
+                else # Sync style
+                  try
+                    statuses.push action.handler.call obj, options
+                    stack[0].unshift todos if todos.length
+                    next()
+                  catch e then next e
+            .then (err) ->
+              callback err, statuses, user_args
+      call_before = (action, callback) ->
+        each befores
+        .run (before, next) ->
+          before.target = type: before.target if typeof before.target is 'string'
+          return next() unless action.type is before.target.type
+          before.handler.call obj, action.options, next
+        .then callback
       jump_to_error = (err) ->
         throw err unless todos?
         while todos[0] and todos[0].type isnt 'then' then todos.shift()
         todos.err = err
-        # return run()
       run = ->
         todo = todos.shift()
         unless todo # Nothing more to do in current queue
@@ -201,7 +186,6 @@ functions share a common API with flexible options.
           obj
       properties.call = get: ->
         ->
-          # throw Error "Context is sealed by err" if stack[0]?.err
           args = [].slice.call(arguments)
           todos.push normalize_arguments args
           setImmediate run if todos.length is 1 # Activate the pump
@@ -236,7 +220,6 @@ functions share a common API with flexible options.
           obj.registry[name] = handler
           Object.defineProperty obj, name, configurable: true, get: ->
             ->
-              # throw Error "Context is sealed by err" if stack[0]?.err
               # Insert handler before callback or at the end of arguments
               args = [].slice.call(arguments)
               for arg, i in args

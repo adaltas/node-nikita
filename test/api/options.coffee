@@ -29,7 +29,7 @@ describe 'api options', ->
       parent_param_unpropagated: true
     .then next
 
-  it 'accept empty array', (next) ->
+  it 'accept empty array [async]', (next) ->
     mecano
     .call [], (options, callback) ->
       callback null, true
@@ -37,6 +37,24 @@ describe 'api options', ->
     .then (err, status) ->
       status.should.be.false() unless err
       next err
+
+  it 'accept empty array [sync]', (next) ->
+    mecano
+    .call [], (options) ->
+      return true
+    .write []
+    .then (err, status) ->
+      status.should.be.false() unless err
+      next err
+
+
+
+
+
+
+
+
+
 
 
 
