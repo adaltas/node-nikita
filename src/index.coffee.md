@@ -154,7 +154,11 @@ functions share a common API with flexible options.
         .run (before, next) ->
           before.target = type: before.target if typeof before.target is 'string'
           return next() unless action.type is before.target.type
-          before.handler.call obj, action.options, next
+          if before.handler.length is 2
+            before.handler.call obj, action.options, next
+          else
+            before.handler.call obj, action.options
+            next()
         .then callback
       jump_to_error = (err) ->
         throw err unless todos?
