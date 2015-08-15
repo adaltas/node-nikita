@@ -22,13 +22,9 @@ be converted to integer if they match a username or a group.
 
 ###
 module.exports.options = (options, callback) ->
-  # options = [options] unless Array.isArray options
   each options
   .run (options, next) ->
-    # options.if = [options.if] if options.if? and not Array.isArray options.if
-    # options.if_exists = options.destination if options.if_exists is true and options.destination
     options.if_exists = [options.if_exists] if typeof options.if_exists is 'string'
-    # options.not_if_exists = options.destination if options.not_if_exists is true and options.destination
     options.not_if_exists = [options.not_if_exists] if typeof options.not_if_exists is 'string'
     if options.if_exists then for el, i in options.if_exists
       options.if_exists[i] = options.destination if el is true and options.destination

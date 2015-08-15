@@ -85,21 +85,6 @@ functions share a common API with flexible options.
         for k, v of global_options
           for opts in options then opts[k] = v if opts[k] is undefined
         options
-      call_callback = (fn, args) ->
-        stack.unshift todos
-        todos = []
-        todos.err = null
-        todos.status = []
-        todos.throw_if_error = true
-        try
-          fn.apply obj, args
-        catch err
-          todos = stack.shift()
-          jump_to_error err
-          return run()
-        mtodos = todos
-        todos = stack.shift()
-        todos.unshift mtodos... if mtodos.length
       call_ = (action) ->
         action.options = enrich_options action.options
         callback = (err, statuses, user_args) ->
@@ -160,6 +145,21 @@ functions share a common API with flexible options.
             before.handler.call obj, action.options
             next()
         .then callback
+      call_callback = (fn, args) ->
+        stack.unshift todos
+        todos = []
+        todos.err = null
+        todos.status = []
+        todos.throw_if_error = true
+        try
+          fn.apply obj, args
+        catch err
+          todos = stack.shift()
+          jump_to_error err
+          return run()
+        mtodos = todos
+        todos = stack.shift()
+        todos.unshift mtodos... if mtodos.length
       jump_to_error = (err) ->
         throw err unless todos?
         while todos[0] and todos[0].type isnt 'then' then todos.shift()
