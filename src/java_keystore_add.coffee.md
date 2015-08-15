@@ -6,17 +6,23 @@ and trustores.
 
 ## Options
 
-*   `name` (string)
-    Service name.
-*   `ssh` (object|ssh2)
+*   `name` (string)   
+    Name of the certificate, required if a certificate is provided.   
+*   `caname` (string)   
+    Name of the certificate authority (CA), required.   
+*   `cacert` (string)   
+    Path to the certificate authority (CA), required.   
+*   `storepass` (string)   
+    Password to manage the keystore.   
+*   `ssh` (object|ssh2)   
     Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.
-*   `stdout` (stream.Writable)
+    configuration object used to initialize the SSH connection.   
+*   `stdout` (stream.Writable)   
     Writable EventEmitter in which the standard output of executed commands will
-    be piped.
-*   `stderr` (stream.Writable)
+    be piped.   
+*   `stderr` (stream.Writable)   
     Writable EventEmitter in which the standard error output of executed command
-    will be piped.
+    will be piped.   
 
 ## Callback parameters
 
@@ -36,7 +42,8 @@ and trustores.
 ## Relevant commands
 
 *   View the content of a Java KeyStore (JKS) and Java TrustStore:
-   `keytool -list -v -keystore $keystore -alias $caname -storepass $storepass`
+   `keytool -list -v -keystore $keystore -storepass $storepass` -alias $caname
+    Note, alias is optional and may reference a CA or a certificate
 *   View the content of a ".pem" certificate:
     `openssl x509 -in cert.pem -text`
 *   Change the password of a keystore:   
@@ -59,7 +66,7 @@ require('mecano').java_keystore_add([{
 }, function(err, status){ /* do sth */ });
 ```
 
-## Uploading a Certificate Authority
+## Uploading a certificate authority
 
 ```js
 require('mecano').java_keystore_add([{
@@ -73,14 +80,15 @@ require('mecano').java_keystore_add([{
 ## Source Code
 
     module.exports = (options, callback) ->
+      return callback new Error "Required option 'keystore'" unless options.keystore
+      return callback new Error "Required option 'storepass'" unless options.storepass
       return callback new Error "Required option 'key' for certificate" if options.cert and not options.key
       return callback new Error "Required option 'keypass' for certificate" if options.cert and not options.keypass
       return callback new Error "Required option 'name' for certificate" if options.cert and not options.name
-      return callback new Error "Required option 'keystore'" unless options.keystore
-      return callback new Error "Required option 'storepass'" unless options.storepass
-      return callback new Error "Required option 'caname'" unless options.caname
+      return callback new Error "Required option 'caname'" unless options.cacert
+      return callback new Error "Required option 'cacert'" unless options.caname
       tmp_location = "/tmp/mecano_java_keystore_#{Date.now()}"
-      @execute
+      @execute # Deal with key and certificate
         cmd: """
         cleanup () { rm -rf tmp_location; }
         mkdir -p -m 700 #{tmp_location}
@@ -107,7 +115,7 @@ require('mecano').java_keystore_add([{
         # trap_on_error: true
         if: !!options.cert
         code_skipped: 3
-      .execute
+      .execute # Deal with CACert
         cmd: """
         # Check password
         if [ -f #{options.keystore} ] && ! keytool -list -keystore #{options.keystore} -storepass #{options.storepass} >/dev/null; then
@@ -140,6 +148,3 @@ require('mecano').java_keystore_add([{
         code_skipped: 3
       .then callback
 
-## Dependencies
-
-No dependency

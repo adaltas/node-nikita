@@ -57,7 +57,7 @@ describe 'java_keystore_add', ->
         status.should.be.true() unless err
         next err
 
-  describe 'cert', ->
+  describe 'key', ->
 
     they 'create new cacerts file', (ssh, next) ->
       mecano

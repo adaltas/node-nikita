@@ -32,6 +32,7 @@
       ini: require '../ini'
       iptables: require '../iptables'
       java_keystore_add: require '../java_keystore_add'
+      java_keystore_remove: require '../java_keystore_remove'
       krb5_addprinc: require '../krb5/addprinc'
       krb5_delprinc: require '../krb5/delprinc'
       krb5_ktadd: require '../krb5/ktadd'
