@@ -39,6 +39,10 @@ and trustores.
    `keytool -list -v -keystore $keystore -alias $caname -storepass $storepass`
 *   View the content of a ".pem" certificate:
     `openssl x509 -in cert.pem -text`
+*   Change the password of a keystore:   
+    `keytool -storepasswd -keystore my.keystore`
+*   Change the key's password:   
+    `keytool -keypasswd  -alias <key_name> -keystore my.keystore`
 
 ## Uploading public and private keys into a keystore
 
@@ -75,12 +79,6 @@ require('mecano').java_keystore_add([{
       return callback new Error "Required option 'keystore'" unless options.keystore
       return callback new Error "Required option 'storepass'" unless options.storepass
       return callback new Error "Required option 'caname'" unless options.caname
-      ###
-      Keystore only has one password. You can change it using keytool:
-      keytool -storepasswd -keystore my.keystore
-      To change the key's password:
-      keytool -keypasswd  -alias <key_name> -keystore my.keystore
-      ###
       tmp_location = "/tmp/mecano_java_keystore_#{Date.now()}"
       @execute
         cmd: """
