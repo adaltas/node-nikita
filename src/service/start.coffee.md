@@ -44,13 +44,13 @@ require('mecano').service_start([{
         shy: true
       , (err, started) ->
         return callback err if err
-        options.db["mecano.service.#{options.name}.status"] = if started
+        options.store["mecano.service.#{options.name}.status"] = if started
         then 'started'
         else 'stopped'
       .execute
         cmd: "service #{options.name} start"
         not_if: ->
-          options.db["mecano.service.#{options.name}.status"] is 'started'
+          options.store["mecano.service.#{options.name}.status"] is 'started'
       .then callback
 
 ## Dependencies

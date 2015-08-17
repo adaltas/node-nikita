@@ -26,6 +26,7 @@ functions share a common API with flexible options.
       obj.registry ?= {}
       obj.propagated_options ?= []
       for option in module.exports.propagated_options then obj.propagated_options.push option
+      store = {}
       properties = {}
       stack = []
       todos = []
@@ -66,7 +67,8 @@ functions share a common API with flexible options.
               options.argument = arg
         # User arguments
         if callback?.length > 2
-          option.user_args = true for option in options
+          opts.user_args = true for opts in options
+        opts.store ?= store for opts in options
         type: type, options: options, multiple: multiple, handler: handler, callback: callback
       enrich_options = (user_options) ->
         global_options = obj.options

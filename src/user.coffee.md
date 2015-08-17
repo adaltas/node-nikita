@@ -98,8 +98,8 @@ you are a member of the "wheel" group (gid of "10") with the command
           do_info()
       do_info = ->
         options.log? "Mecano `user`: Get user information for #{options.name} [DEBUG]"
-        options.ssh?.passwd = null # Clear cache if any 
-        misc.ssh.passwd options.ssh, (err, users) ->
+        options.store.cache_passwd = null # Clear cache if any 
+        uid_gid.passwd options.ssh, options.store, (err, users) ->
           return callback err if err
           options.log? "Mecano `user`: got #{JSON.stringify users[options.name]} [INFO]"
           user_info = users[options.name]
@@ -108,8 +108,8 @@ you are a member of the "wheel" group (gid of "10") with the command
           # Compare user attributes unless we need to compare groups membership
           return do_update() unless options.groups
           # Renew group cache
-          options.ssh?.cache_group = null # Clear cache if any
-          misc.ssh.group options.ssh, (err, groups) ->
+          options.store.cache_group = null # Clear cache if any
+          uid_gid.group options.ssh, options.store, (err, groups) ->
             return callback err if err
             groups_info = groups
             do_update()
@@ -127,7 +127,7 @@ you are a member of the "wheel" group (gid of "10") with the command
         cmd += " -G #{options.groups.join ','}" if options.groups
         cmd += " -k #{options.skel}" if options.skel
         cmd += " #{options.name}"
-        @child()
+        @
         .execute
           cmd: cmd
           code_skipped: 9
@@ -162,7 +162,7 @@ you are a member of the "wheel" group (gid of "10") with the command
         cmd += " -G #{options.groups.join ','}" if options.groups
         cmd += " -u #{options.uid}" if options.uid
         cmd += " #{options.name}"
-        @child()
+        @
         .execute
           cmd: cmd
           if: changed

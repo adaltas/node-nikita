@@ -57,8 +57,8 @@ The result of the above action can be viewed with the command
       info = null
       do_info = ->
         options.log? "Get group information for #{options.name}"
-        options.ssh?.cache_group = null # Clear cache if any 
-        misc.ssh.group options.ssh, (err, groups) ->
+        options.store.cache_group = null # Clear cache if any
+        uid_gid.group options.ssh, options.store, (err, groups) ->
           return callback err if err
           options.log? "Got #{JSON.stringify groups[options.name]}"
           info = groups[options.name]
@@ -98,7 +98,7 @@ The result of the above action can be viewed with the command
 
 ## Dependencies
 
-    misc = require './misc'
+    uid_gid = require './misc/uid_gid'
 
 
 

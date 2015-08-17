@@ -80,9 +80,8 @@ require('mecano').service([{
       srvname = options.srv_name or options.chk_name or options.name
       modified = false
       if options.cache
-        options.db ?= {}
-        installed = options.db['mecano:execute:installed']
-        updates = options.db['mecano:execute:updates']
+        installed = options.store['mecano:execute:installed']
+        updates = options.store['mecano:execute:updates']
       options.action = options.action.split(',') if typeof options.action is 'string'
       # Start real work
       do_installed = =>
@@ -185,8 +184,8 @@ require('mecano').service([{
           do_finish()
       do_finish = ->
         if options.cache
-          options.db['mecano:execute:installed'] = installed
-          options.db['mecano:execute:updates'] = updates
+          options.store['mecano:execute:installed'] = installed
+          options.store['mecano:execute:updates'] = updates
         callback null, modified
       do_installed()
 
