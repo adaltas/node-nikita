@@ -10,7 +10,7 @@ describe 'misc glob', ->
     glob ssh, "#{__dirname}/../../lib/*", (err, files) ->
       return next err if err
       files.should.not.containEql path.normalize "#{__dirname}/../../lib"
-      files.should.containEql path.normalize "#{__dirname}/../../lib/copy.js"
+      files.should.containEql path.normalize "#{__dirname}/../../lib/index.js"
       files.should.containEql path.normalize "#{__dirname}/../../lib/misc"
       files.should.not.containEql path.normalize "#{__dirname}/../../lib/misc/glob.js"
       next()
@@ -19,7 +19,7 @@ describe 'misc glob', ->
     glob ssh, "#{__dirname}/../../lib/**", (err, files) ->
       return next err if err
       files.should.containEql path.normalize "#{__dirname}/../../lib"
-      files.should.containEql path.normalize "#{__dirname}/../../lib/copy.js"
+      files.should.containEql path.normalize "#{__dirname}/../../lib/index.js"
       files.should.containEql path.normalize "#{__dirname}/../../lib/misc"
       files.should.containEql path.normalize "#{__dirname}/../../lib/misc/glob.js"
       next()
@@ -28,7 +28,7 @@ describe 'misc glob', ->
     glob ssh, "#{__dirname}/../../lib/*.js", (err, files) ->
       return next err if err
       files.should.not.containEql path.normalize "#{__dirname}/../../lib"
-      files.should.containEql path.normalize "#{__dirname}/../../lib/copy.js"
+      files.should.containEql path.normalize "#{__dirname}/../../lib/index.js"
       files.should.not.containEql path.normalize "#{__dirname}/../../lib/misc"
       files.should.not.containEql path.normalize "#{__dirname}/../../lib/misc/glob.js"
       next()
@@ -37,7 +37,7 @@ describe 'misc glob', ->
     glob ssh, "#{__dirname}/../../**/*.js", (err, files) ->
       return next err if err
       files.should.not.containEql path.normalize "#{__dirname}/../../lib"
-      files.should.containEql path.normalize "#{__dirname}/../../lib/copy.js"
+      files.should.containEql path.normalize "#{__dirname}/../../lib/index.js"
       files.should.not.containEql path.normalize "#{__dirname}/../../lib/misc"
       files.should.containEql path.normalize "#{__dirname}/../../lib/misc/glob.js"
       next()

@@ -100,7 +100,6 @@ require('mecano').cron_add({
 ## Dependencies
 
     util = require 'util'
-    execute = require '../execute'
     diff = require '../misc/diff'
     string = require '../misc/string'
     wrap = require '../misc/wrap'

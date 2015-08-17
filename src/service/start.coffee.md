@@ -52,7 +52,3 @@ require('mecano').service_start([{
         not_if: ->
           options.store["mecano.service.#{options.name}.status"] is 'started'
       .then callback
-
-## Dependencies
-
-    execute = require '../execute'

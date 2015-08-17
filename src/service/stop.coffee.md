@@ -53,6 +53,3 @@ require('mecano').service_stop([{
           options.store["mecano.service.#{options.name}.status"] is 'stopped'
       .then callback
 
-## Dependencies
-
-    execute = require '../execute'

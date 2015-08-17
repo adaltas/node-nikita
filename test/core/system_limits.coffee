@@ -80,6 +80,7 @@ describe 'system_limits', ->
     they 'calculate nproc & nofile', (ssh, next) ->
       nproc = null
       nofile = null
+      return next() unless fs.existsSync '/proc/sys/fs/file-max' # Not linux
       mecano
         ssh: ssh
       .execute
