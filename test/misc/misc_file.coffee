@@ -28,7 +28,7 @@ describe 'misc.file', ->
     they 'returns the directory md5', (ssh, next) ->
       misc.file.hash ssh, "#{__dirname}/../resources", (err, md5) ->
         return next err if err
-        md5.should.eql 'e667d74986ef3f22b7b6b7fc66d5ea59'
+        md5.should.eql '2d8f95f7e759a5f99ab4f37ff0a891e8'
         next()
 
     they 'returns the directory md5 when empty', (ssh, next) ->
