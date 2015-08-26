@@ -58,16 +58,23 @@ require 'mecano'
 
     inc = 0
     module.exports = (options, callback) ->
-      for k in ['host', 'hosts']
-        options[k] ?= []
-        throw error "Invalid option '#{options[k]}'" if typeof options[k] not in ['string', 'object']
-        options[k] = [options[k]] unless Array.isArray options[k]
-      hosts = [options.host..., options.hosts...]
-      for k in ['port', 'ports']
-        options[k] ?= []
-        throw error "Invalid option '#{options[k]}'" if typeof options[k] not in ['string', 'number', 'object']
-        options[k] = [options[k]] unless Array.isArray options[k]
-      ports = [options.port..., options.ports...]
+      extract_servers = (options) ->
+        for k in ['host', 'hosts']
+          options[k] ?= []
+          throw error "Invalid option '#{options[k]}'" if typeof options[k] not in ['string', 'object']
+          options[k] = [options[k]] unless Array.isArray options[k]
+        hosts = [options.host..., options.hosts...]
+        for k in ['port', 'ports']
+          options[k] ?= []
+          throw error "Invalid option '#{options[k]}'" if typeof options[k] not in ['string', 'number', 'object']
+          options[k] = [options[k]] unless Array.isArray options[k]
+        ports = [options.port..., options.ports...]
+        servers = []
+        for host in hosts
+          for port in ports
+            servers.push host: host, port: port
+        servers
+      servers = extract_servers options
       for k in ['server', 'servers']
         options[k] ?= []
         throw error "Invalid option '#{options[k]}'" if typeof options[k] not in ['string', 'object']
@@ -75,13 +82,8 @@ require 'mecano'
           [host, port] = options[k].split ':'
           options[k] = host: host, port: port
         options[k] = [options[k]] unless Array.isArray options[k]
-      # Flatten
-      servers = []
-      for host in hosts
-        for port in ports
-          servers.push host: host, port: port
-      servers.push options.server..., options.servers...
-      # No work to do
+        for server in options[k]
+          servers.push extract_servers(server)...
       return callback() unless servers.length
       options.randdir ?= '/tmp'
       options.interval ?= 2000
