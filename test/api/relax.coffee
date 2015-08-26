@@ -11,6 +11,8 @@ describe 'api relax', ->
     mecano
     .call relax: true, ->
       throw Error 'Dont worry, be happy'
+    , (err) ->
+      err.message.should.eql 'Dont worry, be happy'
     .call ({}, callback) ->
       callback null, true
     .then (err, status) ->
@@ -22,6 +24,8 @@ describe 'api relax', ->
     .call relax: true, ({}, callback) ->
       setImmediate ->
         callback Error 'Dont worry, be happy'
+    , (err) ->
+      err.message.should.eql 'Dont worry, be happy'
     .call ({}, callback) ->
       callback null, true
     .then (err, status) ->

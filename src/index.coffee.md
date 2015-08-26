@@ -133,10 +133,10 @@ functions share a common API with flexible options.
           return
         # Call the action
         action.options = enrich_options action.options
-        callback = (err, statuses, user_args) ->
+        callback = (err, throw_error, statuses, user_args) ->
           user_args.length = 2 if user_args.length is 0
           todos = stack.shift() if todos.length is 0
-          jump_to_error err if err
+          jump_to_error err if err and throw_error
           todos.throw_if_error = false if err and action.callback
           status_callback = statuses.some (status) -> !! status
           statuses = statuses.some (status, i) ->
@@ -158,30 +158,32 @@ functions share a common API with flexible options.
           user_args = for options in action.options then []
           call_before action, (err) ->
             return next err if err
+            throw_error = undefined
             each action.options
             .run (options, index, next) ->
               relax = (e) ->
-                next if options.relax then undefined else e
+                throw_error = true if e and not options.relax
+                next e
               conditions.all obj, options
               , (err) ->
                 statuses.push false
                 relax err
               , ->
                 todos.options = options
-                if action.handler.length is 2 # Async style
-                  action.handler.call obj, options, (err, status, args...) ->
-                    statuses.push status
-                    for arg, i in args
-                      user_args[index].push arg
-                    setImmediate -> relax err
-                else # Sync style
-                  try
+                try
+                  if action.handler.length is 2 # Async style
+                    action.handler.call obj, options, (err, status, args...) ->
+                      statuses.push status
+                      for arg, i in args
+                        user_args[index].push arg
+                      setImmediate -> relax err
+                  else # Sync style
                     statuses.push action.handler.call obj, options
                     stack[0].unshift todos if todos.length
                     next()
-                  catch e then relax e
+                catch e then relax e
             .then (err) ->
-              callback err, statuses, user_args
+              callback err, throw_error, statuses, user_args
       properties.child = get: ->
         ->
           module.exports(obj.options)
