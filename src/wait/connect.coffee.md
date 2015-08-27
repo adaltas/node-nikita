@@ -82,6 +82,7 @@ require 'mecano'
           [host, port] = options[k].split ':'
           options[k] = host: host, port: port
         options[k] = [options[k]] unless Array.isArray options[k]
+        options[k] = misc.array.flatten options[k]
         for server in options[k]
           servers.push extract_servers(server)...
       return callback() unless servers.length
@@ -147,5 +148,6 @@ require 'mecano'
 ## Dependencies
 
     each = require 'each'
+    misc = require '../misc'
 
 

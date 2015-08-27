@@ -40,10 +40,8 @@ describe 'wait connect', ->
         ssh: ssh
         server1: server 12345
         server2: server 12346
-      .call ->
-        setTimeout @options.server1.listen, 100
-      .call ->
-        setTimeout @options.server2.listen, 100
+      .call -> setTimeout @options.server1.listen, 100
+      .call -> setTimeout @options.server2.listen, 100
       .wait_connect
         server: host: 'localhost', port: 12345
       , (err, status) ->
@@ -52,10 +50,19 @@ describe 'wait connect', ->
         server: host: 'localhost', port: [12345, 12346]
       , (err, status) ->
         status.should.be.false()
-      .call  (_, callback) ->
-        @options.server1.close callback
-      .call  (_, callback) ->
-        @options.server2.close callback
+      .call  (_, callback) -> @options.server1.close callback
+      .call  (_, callback) -> @options.server2.close callback
+      .call -> setTimeout @options.server1.listen, 100
+      .call -> setTimeout @options.server2.listen, 100
+      .wait_connect
+        server: [
+          [{host: 'localhost', port: 12345}]
+          [{host: 'localhost', port: 12346}]
+        ]
+      , (err, status) ->
+        status.should.be.true()
+      .call  (_, callback) -> @options.server1.close callback
+      .call  (_, callback) -> @options.server2.close callback
       .then next
 
     they 'server string', (ssh, next) ->
