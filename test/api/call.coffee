@@ -29,23 +29,13 @@ describe 'api call', ->
         touched.should.eql 2 unless err
         next err
 
-    it.skip 'execute a callback', (next) ->
+    it 'execute a callback', (next) ->
       called = 0
-      touched = 0
       mecano
-      .touch
-        destination: "#{scratch}/a_file"
-      , (err) ->
-        touched++
       .call ((options) ->), (err, status) ->
         called++ unless err
-      .touch
-        destination: "#{scratch}/a_file"
-      , (err) ->
-        touched++
       .then (err, status) ->
         called.should.eql 1
-        touched.should.eql 2
         next()
 
     it 'pass options', (next) ->
