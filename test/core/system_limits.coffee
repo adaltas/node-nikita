@@ -40,7 +40,6 @@ describe 'system_limits', ->
           """ unless err
           next err
 
-
   they 'detect changes', (ssh, next) ->
       mecano
         ssh: ssh
@@ -80,31 +79,32 @@ describe 'system_limits', ->
     they 'calculate nproc & nofile', (ssh, next) ->
       nproc = null
       nofile = null
-      return next() unless fs.existsSync '/proc/sys/fs/file-max' # Not linux
-      mecano
-        ssh: ssh
-      .execute
-        cmd: 'cat /proc/sys/fs/file-max'
-      , (err, status, stdout) ->
-        return callback err if err
-        nofile = stdout.trim()
-      .execute
-        cmd: 'cat /proc/sys/kernel/pid_max'
-      , (err, status, stdout) ->
-        return callback err if err
-        nproc = stdout.trim()
-      .system_limits
-        destination: "#{scratch}/me.conf"
-        user: 'me'
-        nofile: true
-        nproc: true
-      , (err, status) ->
-        return callback err if err
-        status.should.be.true()
-        fs.readFile ssh, "#{scratch}/me.conf", 'ascii', (err, content) ->
-          content.should.eql """
-          me    -    nofile   #{nofile}
-          me    -    nproc   #{nproc}
+      fs.exists ssh, '/proc/sys/fs/file-max', (err, exists) ->
+        return next() unless exists # Not linux
+        mecano
+          ssh: ssh
+        .execute
+          cmd: 'cat /proc/sys/fs/file-max'
+        , (err, status, stdout) ->
+          return callback err if err
+          nofile = stdout.trim()
+        .execute
+          cmd: 'cat /proc/sys/kernel/pid_max'
+        , (err, status, stdout) ->
+          return callback err if err
+          nproc = stdout.trim()
+        .system_limits
+          destination: "#{scratch}/me.conf"
+          user: 'me'
+          nofile: true
+          nproc: true
+        , (err, status) ->
+          return callback err if err
+          status.should.be.true()
+          fs.readFile ssh, "#{scratch}/me.conf", 'ascii', (err, content) ->
+            content.should.eql """
+            me    -    nofile   #{nofile}
+            me    -    nproc   #{nproc}
 
-          """ unless err
-          next err
+            """ unless err
+            next err
