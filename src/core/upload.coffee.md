@@ -73,6 +73,7 @@ require('mecano').render({
       # Text file, delegate to `write`
       unless options.binary
         options = misc.merge options, local_source: true
+        options.handler = undefined
         return @write options, (err, written) ->
           callback err, written
       # Binary file

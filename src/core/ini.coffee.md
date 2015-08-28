@@ -110,6 +110,7 @@ require('mecano').ini({
         misc.ini.clean content if options.clean
         stringify = options.stringify or misc.ini.stringify
         options.content = stringify content, options
+        options.handler = undefined
         @write options, (err, written) ->
           callback err, written
       do_get()

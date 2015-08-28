@@ -69,6 +69,8 @@ functions share a common API with flexible options.
         if callback?.length > 2
           opts.user_args = true for opts in options
         opts.store ?= store for opts in options
+        # options = [handler: handler] if options.length is 0 and handler
+        opts.handler ?= handler for opts in options
         type: type, options: options, multiple: multiple, handler: handler, callback: callback
       enrich_options = (user_options) ->
         global_options = obj.options
@@ -126,7 +128,7 @@ functions share a common API with flexible options.
           todos.err = null
           todos.status = []
           todos.throw_if_error = true
-          action.handler?.call obj, err, status
+          action.handler?.call obj, err, status # shall be normalized and be `option.handler?.call... for option in action.options`
           run()
           return
         # Call the action
@@ -169,16 +171,16 @@ functions share a common API with flexible options.
               , ->
                 todos.options = options
                 try
-                  if action.handler.length is 2 # Async style
-                    action.handler.call obj, options, (err, status, args...) ->
+                  if options.handler.length is 2 # Async style
+                    options.handler.call obj, options, (err, status, args...) ->
                       statuses.push status
                       for arg, i in args
                         user_args[index].push arg
                       setImmediate -> relax err
                   else # Sync style
-                    statuses.push action.handler.call obj, options
+                    statuses.push options.handler.call obj, options
                     stack[0].unshift todos if todos.length
-                    next()
+                    relax()
                 catch e then relax e
             .then (err) ->
               callback err, throw_error, statuses, user_args

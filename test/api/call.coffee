@@ -15,13 +15,13 @@ describe 'api call', ->
       touched = 0
       mecano
       .touch
-        destination: "#{scratch}/a_file"
+        destination: "#{scratch}/file_a"
       , (err) ->
         touched++
       .call (options) ->
         called++
       .touch
-        destination: "#{scratch}/a_file"
+        destination: "#{scratch}/file_b"
       , (err) ->
         touched++
       .then (err, status) ->

@@ -1,11 +1,22 @@
 
 mecano = require '../../src'
-test = require '../test'
 fs = require 'fs'
 
 describe 'api handler', ->
 
-  scratch = test.scratch @
+  it 'is an option', (next) ->
+    history = []
+    mecano
+    .call
+      handler: ->
+        history.push 'a'
+    .call
+      handler: (_, callback) ->
+        history.push 'b'
+        callback()
+    .call ->
+      history.should.eql ['a', 'b']
+    .then next
 
   describe 'error', ->
 

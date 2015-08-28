@@ -88,6 +88,7 @@ require('mecano').render({
             when '.js2' then options.engine = 'nunjunks'
             when '.eco' then options.engine = 'eco'
         options.source = null
+        options.handler = undefined
         @write(options).then callback
       do_read_source()
 
