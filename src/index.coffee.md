@@ -73,9 +73,7 @@ functions share a common API with flexible options.
       enrich_options = (user_options) ->
         global_options = obj.options
         parent_options = todos.options
-        # local_options_array = Array.isArray user_options
         local_options = user_options
-        # local_options = [local_options] unless local_options_array 
         options = []
         for local_opts in local_options
           local_opts = argument: local_opts if local_opts? and typeof local_opts isnt 'object'
@@ -128,7 +126,7 @@ functions share a common API with flexible options.
           todos.err = null
           todos.status = []
           todos.throw_if_error = true
-          action.handler.call obj, err, status
+          action.handler?.call obj, err, status
           run()
           return
         # Call the action
