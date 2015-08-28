@@ -61,40 +61,6 @@ describe 'api call', ->
         options.test2.should.be.true()
       .then next
 
-  describe 'sync status', ->
-
-    it 'set status to true', (next) ->
-      mecano
-      .call (options) ->
-        return true
-      .then (err, status) ->
-        status.should.be.true()
-        next()
-
-    it 'set status to false', (next) ->
-      mecano
-      .call (options) ->
-        return false
-      .then (err, status) ->
-        status.should.be.false()
-        next()
-
-    it 'catch error', (next) ->
-      mecano
-      .call (options) ->
-        throw Error 'Catchme'
-      .then (err, status) ->
-        err.message.should.eql 'Catchme'
-        next()
-
-    # it 'register new actions', (next) ->
-    #   mecano
-    #   .call ->
-    #     return false
-    #   .then (err, status) ->
-    #     status.should.be.false()
-    #     next()
-
   describe 'async', ->
 
     it 'execute a handler', (next) ->
@@ -154,51 +120,6 @@ describe 'api call', ->
         options.test2.should.be.true()
         next()
       .then next
-
-  describe 'async status', ->
-
-    it 'set status to true', (next) ->
-      mecano
-      .call (options, next) ->
-        process.nextTick ->
-          next null, true
-      .then (err, status) ->
-        status.should.be.true() unless err
-        next err
-
-    it 'set status to false', (next) ->
-      mecano
-      .call (options, next) ->
-        process.nextTick ->
-          next null, false
-      .then (err, status) ->
-        status.should.be.false()
-        next()
-
-    it 'set status to false while child module is true', (next) ->
-      m = mecano()
-      .call (options, callback) ->
-        m.execute
-          cmd: 'ls -l'
-        , (err, executed, stdout, stderr) ->
-          executed.should.be.true() unless err
-          callback err, false
-      .then (err, status) ->
-        status.should.be.false()
-        next()
-
-    it 'set status to true while module sending is false', (next) ->
-      m = mecano()
-      .call (options, callback) ->
-        m.execute
-          cmd: 'ls -l'
-          if: false
-        , (err, executed, stdout, stderr) ->
-          executed.should.be.false() unless err
-          callback err, true
-      .then (err, status) ->
-        status.should.be.true()
-        next()
 
   describe 'async err', ->
 
