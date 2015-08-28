@@ -4,19 +4,21 @@ fs = require 'fs'
 
 describe 'api handler', ->
 
-  it 'is an option', (next) ->
-    history = []
-    mecano
-    .call
-      handler: ->
-        history.push 'a'
-    .call
-      handler: (_, callback) ->
-        history.push 'b'
-        callback()
-    .call ->
-      history.should.eql ['a', 'b']
-    .then next
+  describe 'usage', ->
+
+    it 'is an option', (next) ->
+      history = []
+      mecano
+      .call
+        handler: ->
+          history.push 'a'
+      .call
+        handler: (_, callback) ->
+          history.push 'b'
+          callback()
+      .call ->
+        history.should.eql ['a', 'b']
+      .then next
 
   describe 'error', ->
 
