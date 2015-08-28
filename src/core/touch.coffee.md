@@ -13,15 +13,14 @@ exists.
 
 *   `destination`   
     File path where to write content to.   
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-*   `stdout` (stream.Writable)   
-    Writable EventEmitter in which the standard output of executed commands will
-    be piped.   
-*   `stderr` (stream.Writable)   
-    Writable EventEmitter in which the standard error output of executed command
-    will be piped.   
+*   `gid`   
+    File group name or group id.   
+*   `uid`   
+    File user name or user id.   
+*   `mode`   
+    File mode (permission and sticky bits), default to `0666`, in the form of
+    `{mode: 0o0744}` or `{mode: "0744"}`.   
+
 
 ## Example
 
