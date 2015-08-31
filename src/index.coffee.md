@@ -117,10 +117,13 @@ functions share a common API with flexible options.
         throw err unless todos?
         while todos[0] and todos[0].type isnt 'then' then todos.shift()
         todos.err = err
-      run = ->
+      run = (callback) ->
         action = todos.shift()
         unless action # Nothing more to do in current queue
           throw todos.err if todos.err and todos.throw_if_error
+          # if stack.length
+          #   stack.shift()
+          #   run()
           return
         if action.type is 'then'
           {err, status} = todos
@@ -133,7 +136,7 @@ functions share a common API with flexible options.
           return
         # Call the action
         action.options = enrich_options action.options
-        callback = (err, throw_error, statuses, user_args) ->
+        run_callback = (err, throw_error, statuses, user_args) ->
           user_args.length = 2 if user_args.length is 0
           todos = stack.shift() if todos.length is 0
           jump_to_error err if err and throw_error
@@ -146,6 +149,7 @@ functions share a common API with flexible options.
           callback_args = [err, status_callback, user_args...]
           todos.status[0] = statuses and not action.options.shy
           call_callback action.callback, callback_args if action.callback
+          callback() if callback
           return run()
         todos.status.unshift undefined
         stack.unshift todos
@@ -179,11 +183,17 @@ functions share a common API with flexible options.
                       setImmediate -> relax err
                   else # Sync style
                     statuses.push options.handler.call obj, options
-                    stack[0].unshift todos if todos.length
-                    relax()
+                    wait_children = ->
+                      return setImmediate relax unless todos.length
+                      run wait_children
+                        
+                    wait_children()
+                    # stack[0].unshift todos... if todos.length
+                    # todos = []
+                    # setImmediate relax
                 catch e then relax e
             .then (err) ->
-              callback err, throw_error, statuses, user_args
+              run_callback err, throw_error, statuses, user_args
       properties.child = get: ->
         ->
           module.exports(obj.options)

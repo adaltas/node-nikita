@@ -7,6 +7,60 @@ describe 'api stack', ->
 
   scratch = test.scratch @
 
+  it 'sync handler register actions', (next) ->
+    msgs = []
+    m = mecano log: msgs.push.bind msgs
+    m.call (options) ->
+      options.log 'a1'
+      m.call (options) ->
+        options.log 'c'
+        m.call (options) ->
+          options.log 'd'
+      m.call (options) ->
+        options.log 'e'
+      options.log 'b'
+    , (err, status) ->
+      msgs.push 'a2'
+    m.then (err) ->
+      console.log msgs
+      msgs.should.eql ['a1', 'b', 'c', 'd', 'e', 'a2']
+      next err
+
+  it 'async handler register actions and callback async', (next) ->
+    msgs = []
+    m = mecano log: msgs.push.bind msgs
+    m.call (options, next) ->
+      options.log 'a'
+      m.call (options, next) ->
+        options.log 'c'
+        setImmediate next
+      m.call (options, next) ->
+        options.log 'd'
+        setImmediate next
+      setImmediate next
+      options.log 'b'
+    m.then ->
+      msgs.should.eql ['a', 'b', 'c', 'd']
+      next()
+
+  it 'async handler register actions and callback sync', (next) ->
+    msgs = []
+    m = mecano log: msgs.push.bind msgs
+    m.call (options, next) ->
+      options.log 'a'
+      m.call (options, next) ->
+        options.log 'c'
+        next()
+      m.call (options, next) ->
+        options.log 'd'
+        next()
+      next()
+      options.log 'b'
+    m.then ->
+      msgs.should.eql ['a', 'b', 'c', 'd']
+      next()
+
+
   it 'clean stack with then', (next) ->
     msgs = []
     m = mecano log: (msg) -> msgs.push msg if /\/file_\d/.test msg
@@ -75,12 +129,6 @@ describe 'api stack', ->
         .then (err, changed) ->
           err.message.should.eql "Missing destination: undefined"
         .then next
-        # err.message.should.eql "Missing option 'mode'"
-        # try
-        #   m.touch destination: "#{scratch}/doesnt_exist"
-        # catch e
-        #   console.log e.message.should.eql 'Context is sealed by err'
-        #   next()
 
     it 'catch err thrown callback', (next) ->
       mecano
