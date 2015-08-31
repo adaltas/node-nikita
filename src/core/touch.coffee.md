@@ -46,7 +46,6 @@ require('mecano').touch({
         options.source = null
         options.content = ''
         options.log? "Create a new empty file"
-        options.handler = undefined
         @write options
         .then callback
 

@@ -165,6 +165,8 @@ functions share a common API with flexible options.
             throw_error = undefined
             each action.options
             .run (options, index, next) ->
+              handler = options.handler
+              options.handler = undefined
               relax = (e) ->
                 throw_error = true if e and not options.relax
                 next e
@@ -175,14 +177,14 @@ functions share a common API with flexible options.
               , ->
                 todos.options = options
                 try
-                  if options.handler.length is 2 # Async style
-                    options.handler.call obj, options, (err, status, args...) ->
+                  if handler.length is 2 # Async style
+                    handler.call obj, options, (err, status, args...) ->
                       statuses.push status
                       for arg, i in args
                         user_args[index].push arg
                       setImmediate -> relax err
                   else # Sync style
-                    statuses.push options.handler.call obj, options
+                    statuses.push handler.call obj, options
                     wait_children = ->
                       return setImmediate relax unless todos.length
                       run wait_children
