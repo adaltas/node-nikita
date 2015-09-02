@@ -97,8 +97,8 @@ you are a member of the "wheel" group (gid of "10") with the command
           return callback err if err
           do_info()
       do_info = ->
-        options.log? "Mecano `user`: Get user information for #{options.name} [DEBUG]"
-        options.store.cache_passwd = null # Clear cache if any 
+        options.log? "Mecano `user`: get user information for #{options.name} [DEBUG]"
+        options.store.cache_passwd = undefined # Clear cache if any 
         uid_gid.passwd options.ssh, options.store, (err, users) ->
           return callback err if err
           options.log? "Mecano `user`: got #{JSON.stringify users[options.name]} [INFO]"

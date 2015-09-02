@@ -56,11 +56,11 @@ The result of the above action can be viewed with the command
       modified = false
       info = null
       do_info = ->
-        options.log? "Get group information for #{options.name}"
-        options.store.cache_group = null # Clear cache if any
+        options.log? "Mecano `group`: get group information for '#{options.name}' [DEBUG]"
+        options.store.cache_group = undefined # Clear cache if any
         uid_gid.group options.ssh, options.store, (err, groups) ->
           return callback err if err
-          options.log? "Got #{JSON.stringify groups[options.name]}"
+          options.log? "Mecano `group`: got #{JSON.stringify groups[options.name]} [INFO]"
           info = groups[options.name]
           if info then do_compare() else do_create()
       do_create = =>
@@ -75,12 +75,12 @@ The result of the above action can be viewed with the command
           return callback err if err
           if created
           then modified = true
-          else options.log? "Group defined elsewhere than '/etc/group', exit code is 9"
+          else options.log? "Mecano `group`: Group defined elsewhere than '/etc/group', exit code is 9"
           callback null, modified
       do_compare = ->
         for k in ['gid']
           modified = true if options[k]? and info[k] isnt options[k]
-        options.log? "Did group information changed: #{modified}"
+        options.log? "Mecano `group`: Did group information changed: #{modified}"
         if modified then do_modify() else callback()
       do_modify = =>
         cmd = 'groupmod'

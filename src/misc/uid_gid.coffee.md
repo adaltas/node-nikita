@@ -2,7 +2,7 @@
 # `uid_gid(options, callback)`
 
 Read the "uid" and "gid" options. A username defined by the "uid" option will
-be converted to a Unix user ID and a group dedfined by the "gid" option will
+be converted to a Unix user ID and a group defined by the "gid" option will
 be converted to a Unix group ID.    
 
 At the moment, this only work with Unix username because it only read the
