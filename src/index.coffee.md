@@ -71,6 +71,7 @@ functions share a common API with flexible options.
         if callback?.length > 2
           opts.user_args = true for opts in options
         opts.store ?= store for opts in options
+        opts.type ?= type for opts in options
         # options = [handler: handler] if options.length is 0 and handler
         opts.handler ?= handler for opts in options if handler
         type: type, options: options, multiple: multiple, handler: handler, callback: callback
@@ -89,16 +90,27 @@ functions share a common API with flexible options.
         for k, v of global_options
           for opts in options then opts[k] = v if opts[k] is undefined
         options
-      call_before = (action, callback) ->
+      intercept_before = (options, callback) ->
+        return callback() if options.intercept_before
         each befores
         .run (before, next) ->
-          before.target = type: before.target if typeof before.target is 'string'
-          return next() unless action.type is before.target.type
-          if before.handler.length is 2
-            before.handler.call obj, action.options, next
-          else
-            before.handler.call obj, action.options
-            next()
+          # before.target = type: before.target if typeof before.target is 'string'
+          # for k, v in before
+          #   return next() unless before[k] isnt options[k]
+          # return next() unless options.type is before.target.type
+          for k, v of before.event
+            return next() unless v is options[k]
+          # return next() unless options.type is before.event.type
+          action = {}
+          for k, v of before
+            action[k] = v
+          action.options = [{intercept_before: true}]
+          for k, v of options
+            if k is 'handler'
+              action.options[0][k] = before.options[0][k]
+            else
+              action.options[0][k] = v
+          run action, next
         .then callback
       call_callback = (fn, args) ->
         stack.unshift todos
@@ -119,8 +131,8 @@ functions share a common API with flexible options.
         throw err unless todos?
         while todos[0] and todos[0].type isnt 'then' then todos.shift()
         todos.err = err
-      run = (callback) ->
-        action = todos.shift()
+      run = (action, callback) ->
+        action = todos.shift() unless action
         unless action # Nothing more to do in current queue
           throw todos.err if todos.err and todos.throw_if_error
           # if stack.length
@@ -162,16 +174,22 @@ functions share a common API with flexible options.
         wrap.options action.options, (err) ->
           statuses = []
           user_args = for options in action.options then []
-          call_before action, (err) ->
-            return next err if err
-            throw_error = undefined
-            each action.options
-            .run (options, index, next) ->
-              handler = options.handler
-              options.handler = undefined
+          throw_error = undefined
+          each action.options
+          .run (options, index, next) ->
+            # Clone options
+            copy = {}
+            for k, v of options
+              copy[k] = v
+            options = copy
+            # Before interception
+            intercept_before options, (err) ->
               relax = (e) ->
                 throw_error = true if e and not options.relax
                 next e
+              return relax err if err
+              handler = options.handler
+              options.handler = undefined
               conditions.all obj, options
               , (err) ->
                 statuses.push false
@@ -189,15 +207,14 @@ functions share a common API with flexible options.
                     statuses.push handler.call obj, options
                     wait_children = ->
                       return setImmediate relax unless todos.length
-                      run wait_children
-                        
+                      run todos.shift(), wait_children
                     wait_children()
                     # stack[0].unshift todos... if todos.length
                     # todos = []
                     # setImmediate relax
                 catch e then relax e
-            .then (err) ->
-              run_callback err, throw_error, statuses, user_args
+          .then (err) ->
+            run_callback err, throw_error, statuses, user_args
       properties.child = get: ->
         ->
           module.exports(obj.options)
@@ -214,7 +231,13 @@ functions share a common API with flexible options.
           obj
       properties.before = get: ->
         ->
-          befores.push type: 'before', target: arguments[0], handler: arguments[1]
+
+          event = arguments[0]
+          if typeof event is 'string'
+            event = type: event
+          action = normalize_arguments [arguments[1]], 'before'
+          action.event = event
+          befores.push action
           obj
       properties.after = get: ->
         ->
