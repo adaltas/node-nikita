@@ -32,10 +32,16 @@ describe 'api call', ->
     it 'execute a callback', (next) ->
       called = 0
       mecano
-      .call ((options) ->), (err, status) ->
+      # 1st arg options with handler, 2nd arg a callback
+      .call handler: (->), (err, status) ->
+        status.should.be.false() unless err
+        called++ unless err
+      # 1st arg handler, 2nd arg a callback
+      .call (->), (err, status) ->
+        status.should.be.false() unless err
         called++ unless err
       .then (err, status) ->
-        called.should.eql 1
+        called.should.eql 2
         next()
 
     it 'pass options', (next) ->

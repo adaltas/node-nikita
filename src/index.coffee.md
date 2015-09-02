@@ -48,12 +48,14 @@ functions share a common API with flexible options.
           options = [_arguments[0]]
         else
           options = [argument: _arguments[0]]
-        # for option in options
-        #   option.type = type
+        # found_handler is true if options array is not empty and if at least one options has an handler 
+        found_handler = options.length
+        for opts in options
+          found_handler = false unless opts.handler
         for arg, i in _arguments
           continue if i is 0 and typeof arg isnt 'function'
           if typeof arg is 'function'
-            if handler
+            if handler or found_handler
               callback = arg
             else
               handler = arg
@@ -70,7 +72,7 @@ functions share a common API with flexible options.
           opts.user_args = true for opts in options
         opts.store ?= store for opts in options
         # options = [handler: handler] if options.length is 0 and handler
-        opts.handler ?= handler for opts in options
+        opts.handler ?= handler for opts in options if handler
         type: type, options: options, multiple: multiple, handler: handler, callback: callback
       enrich_options = (user_options) ->
         global_options = obj.options
