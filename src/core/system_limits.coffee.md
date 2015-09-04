@@ -20,8 +20,8 @@ In general, the limits applied to a user override those applied to a group.
 
 ## Ulimit commands
 
-Pass the "S" option to "ulimit" will impact the effective limit ("soft" limit)
-and the "H" the "hard" limit (maximum value that can be defined by the user).
+The "S" option to "ulimit" impact the effective limit ("soft" limit) and the "H"
+impact the "hard" limit (maximum value that can be defined by the user).
 
 | resource             |   soft     |   hard     |  unit   |
 |----------------------|------------|------------|---------|
@@ -43,6 +43,24 @@ and the "H" the "hard" limit (maximum value that can be defined by the user).
 | file locks           | ulimit -Sx | ulimit -Hx |         |
 
 Pass the option in flag-mode to get, and follows it with a value to set.
+
+## Retrieve current information
+
+Number of sub-process for a process:
+
+```bash
+pid=14986
+ls /proc/$pid/task | wc
+ps -L p $pid --no-headers | wc -l
+```
+
+Number of sub-process for a user:
+The option "-L" show threads, possibly with LWP and NLWP columns.
+
+```bash
+user=`whoami`
+ps -L -u $user --no-headers | wc -l
+```
 
 ## Kernel Limits
 
