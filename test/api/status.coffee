@@ -7,10 +7,19 @@ describe 'api status', ->
 
   describe 'sync', ->
 
-    it 'set status to true', (next) ->
+    it 'default to false', (next) ->
       mecano
       .call (options) ->
         return true
+      .then (err, status) ->
+        status.should.be.false()
+        next()
+
+    it 'set status to true', (next) ->
+      mecano
+      .call (options) ->
+        @call (_, callback) ->
+          callback null, true
       .then (err, status) ->
         status.should.be.true()
         next()
@@ -18,7 +27,8 @@ describe 'api status', ->
     it 'set status to false', (next) ->
       mecano
       .call (options) ->
-        return false
+        @call (_, callback) ->
+          callback null, false
       .then (err, status) ->
         status.should.be.false()
         next()
@@ -183,7 +193,3 @@ describe 'api status', ->
       , (options, callback) ->
         # Must be called
         next()
-
-
-
-

@@ -22,7 +22,6 @@ describe 'api stack', ->
     , (err, status) ->
       msgs.push 'a2'
     m.then (err) ->
-      console.log msgs
       msgs.should.eql ['a1', 'b', 'c', 'd', 'e', 'a2']
       next err
 
@@ -141,9 +140,3 @@ describe 'api stack', ->
       .then (err, changed) ->
         err.message.should.eql 'Catchme'
         next()
-
-
-
-
-
-

@@ -168,7 +168,7 @@ functions share a common API with flexible options.
           callback_args = [err, status_callback, user_args...]
           todos.status[0] = statuses and not action.options.shy
           call_callback action.callback, callback_args if action.callback
-          callback() if callback
+          callback err, statuses if callback
           return run()
         todos.status.unshift undefined
         stack.unshift todos
@@ -209,10 +209,17 @@ functions share a common API with flexible options.
                         user_args[index].push arg
                       setImmediate -> relax err
                   else # Sync style
-                    statuses.push handler.call obj, options
+                    # statuses.push handler.call obj, options
+                    handler.call obj, options
+                    status_sync = false
                     wait_children = ->
-                      return setImmediate relax unless todos.length
-                      run todos.shift(), wait_children
+                      unless todos.length
+                        statuses.push status_sync
+                        return setImmediate relax
+                      run todos.shift(), (err, status) ->
+                        return relax err if err
+                        status_sync = true if status
+                        wait_children()
                     wait_children()
                     # stack[0].unshift todos... if todos.length
                     # todos = []
