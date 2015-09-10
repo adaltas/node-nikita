@@ -174,7 +174,6 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
         shy: true
         if: options.nproc is true
       , (err, status, stdout) ->
-        # console.log err, status, stdout
         return callback err if err
         return unless status
         options.nproc = stdout.trim()

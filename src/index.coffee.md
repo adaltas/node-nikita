@@ -200,6 +200,9 @@ functions share a common API with flexible options.
                 statuses.push false
                 relax err
               , ->
+                # Remove conditions from options
+                for k, v of options
+                  delete options[k] if /^if.*/.test(k) or /^not_if.*/.test(k)
                 todos.options = options
                 try
                   if handler.length is 2 # Async style
