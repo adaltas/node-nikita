@@ -162,18 +162,17 @@ you are a member of the "wheel" group (gid of "10") with the command
         cmd += " -G #{options.groups.join ','}" if options.groups
         cmd += " -u #{options.uid}" if options.uid
         cmd += " #{options.name}"
-        @
-        .execute
+        @execute
           cmd: cmd
           if: changed
-        .chown
+        @chown
           destination: options.home
           uid: options.uid
           gid: options.gid
-          if: options.home
+          if: options.home and (options.uid or options.gid)
           if_exists: options.home
           not_if: options.no_home_ownership
-        .then (err, changed, __, stderr) ->
+        @then (err, changed, __, stderr) ->
           return callback new Error "User #{options.name} is logged in" if err?.code is 8
           return callback err if err
           modified = true if changed
@@ -197,10 +196,3 @@ you are a member of the "wheel" group (gid of "10") with the command
     misc = require '../misc'
     string = require '../misc/string'
     uid_gid = require '../misc/uid_gid'
-
-
-
-
-
-
-
