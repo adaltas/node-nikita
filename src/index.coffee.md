@@ -168,6 +168,7 @@ functions share a common API with flexible options.
           callback_args = [err, status_callback, user_args...]
           todos.status[0] = statuses and not action.options.shy
           call_callback action.callback, callback_args if action.callback
+          err = null if action.options[0]?.relax
           callback err, statuses if callback
           return run()
         todos.status.unshift undefined
