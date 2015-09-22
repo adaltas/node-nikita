@@ -6,14 +6,14 @@ force options is set.
 
 ## Options
 
-*   `image` (string)
-    Name of the image. MANDATORY
-*   `machine` (string)
-    Name of the docker-machine. MANDATORY if docker-machine installed
-*   `no_prune` (boolean)
-    Remove the volumes associated with the container
-*   `force` (boolean)
-    Force the removal of a running container (uses SIGKILL)
+*   `image` (string)   
+    Name of the image. MANDATORY   
+*   `machine` (string)   
+    Name of the docker-machine. MANDATORY if docker-machine installed   
+*   `no_prune` (boolean)   
+    Remove the volumes associated with the container   
+*   `force` (boolean)   
+    Force the removal of a running container (uses SIGKILL)   
 
 ## Example
 

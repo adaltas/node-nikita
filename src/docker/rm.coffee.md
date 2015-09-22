@@ -6,16 +6,16 @@ force options is set.
 
 ## Options
 
-*   `container` (string)
-    Name/ID of the container. MANDATORY
-*   `machine` (string)
-    Name of the docker-machine. MANDATORY if docker-machine installed
-*   `link` (boolean)
-    Remove the specified link
-*   `volumes` (boolean)
-    Remove the volumes associated with the container
-*   `force` (boolean)
-    Force the removal of a running container (uses SIGKILL)
+*   `container` (string)   
+    Name/ID of the container. MANDATORY   
+*   `machine` (string)   
+    Name of the docker-machine. MANDATORY if docker-machine installed   
+*   `link` (boolean)   
+    Remove the specified link   
+*   `volumes` (boolean)   
+    Remove the volumes associated with the container   
+*   `force` (boolean)   
+    Force the removal of a running container (uses SIGKILL)   
 
 ## Example
 
