@@ -12,12 +12,13 @@ change had occured. Otherwise it will be set to "true".
 *   `cmd` (string|array)   
     The commands to be executed.    
 *   `interval`   
-    Time interval between which we should wait before re-executing the command, default to 2s.   
+    Time interval between which we should wait before re-executing the command,
+    default to 2s.   
 *   `code`   
     Expected exit code to recieve to exit and call the user callback, default to "0".   
 *   `code_skipped`   
-    Expected code to be returned when the command failed and should be 
-    scheduled for later execution, default to "1".   
+    Expected code to be returned when the command failed and should be scheduled
+    for later execution, default to "1".   
 
 Example:
 
@@ -72,7 +73,3 @@ require 'mecano'
 ## Dependencies
 
     each = require 'each'
-
-
-
-

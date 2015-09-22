@@ -30,26 +30,26 @@ Iptables rules are only inserted if the service is started on the target system.
 
 Rule objects may contains the following keys:
 
-*   `rulenum`
-*   `protocol`
-*   `jump`
+*   `rulenum`   
+*   `protocol`   
+*   `jump`   
 *   `in-interface`   
-    Name of an interface via which a packet was received.
-*   `out-interface`
-    Name of an interface via which a packet is going to be sent.
+    Name of an interface via which a packet was received.   
+*   `out-interface`   
+    Name of an interface via which a packet is going to be sent.   
 *   `source`   
     Source specification. Address can be either a network name, a hostname, a
-    network IP address (with /mask), or a plain IP address.
+    network IP address (with /mask), or a plain IP address.   
 *   `destination`   
     Destination specification. See the description of the -s (source) flag for
     a detailed description of the syntax.   
-*   `comment`
-*   `state`
+*   `comment`   
+*   `state`   
 *   `dport`   
     Destination port or port range specification, see the "tcp" and "udp"
-    modules.
+    modules.   
 *   `sport`   
-    Source port or port range specification, see the "tcp" and "udp" modules.
+    Source port or port range specification, see the "tcp" and "udp" modules.   
 
 Iptables comes with many modules. Each of them which must be specifically 
 integrated to the parser part of this code. For this reason, we could only
@@ -58,17 +58,17 @@ modules are:
 
 *   `state`   
     This module, when combined with connection tracking, allows access to the
-    connection tracking state for this packet.
+    connection tracking state for this packet.   
 *   `comment`   
-    Allows you to add comments (up to 256 characters) to any rule.
+    Allows you to add comments (up to 256 characters) to any rule.   
 *   `limit`   
-    Matches at a limited rate using a token bucket filter.
+    Matches at a limited rate using a token bucket filter.   
 *   `tcp`   
     Used if protocol is set to "tcp", the supported properties are "dport" and
-    "sport".
-*   `udp`
+    "sport".   
+*   `udp`   
     Used if protocol is set to "udp", the supported properties are "dport" and
-    "sport".
+    "sport".   
 
 ## Example
 
@@ -121,5 +121,3 @@ require('mecano').iptables({
 
 List rules in readable format: `iptables -L --line-numbers -nv`
 List rules in save format: `iptables -S -v`
-
-

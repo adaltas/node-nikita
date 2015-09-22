@@ -114,5 +114,3 @@ ldappasswd -D cn=myself,ou=users,dc=ryba -w oldpassword \
     each = require 'each'
 
 [index]: http://www.zytrax.com/books/ldap/apa/indeces.html
-
-

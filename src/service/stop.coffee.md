@@ -5,24 +5,24 @@ Start a service.
 
 ## Options
 
-*   `name` (string)
-    Service name.
-*   `ssh` (object|ssh2)
+*   `name` (string)   
+    Service name.   
+*   `ssh` (object|ssh2)   
     Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.
-*   `stdout` (stream.Writable)
+    configuration object used to initialize the SSH connection.   
+*   `stdout` (stream.Writable)   
     Writable EventEmitter in which the standard output of executed commands will
-    be piped.
-*   `stderr` (stream.Writable)
+    be piped.   
+*   `stderr` (stream.Writable)   
     Writable EventEmitter in which the standard error output of executed command
-    will be piped.
+    will be piped.   
 
 ## Callback parameters
 
-*   `err`
-    Error object if any.
-*   `modified`
-    Indicates if the startup behavior has changed.
+*   `err`   
+    Error object if any.   
+*   `modified`   
+    Indicates if the startup behavior has changed.   
 
 ## Example
 
@@ -52,4 +52,3 @@ require('mecano').service_stop([{
         not_if: ->
           options.store["mecano.service.#{options.name}.status"] is 'stopped'
       .then callback
-

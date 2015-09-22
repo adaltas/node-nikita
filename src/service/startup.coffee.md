@@ -5,28 +5,28 @@ Activate or desactivate a service on startup.
 
 ## Options
 
-*   `name` (string)
-    Service name, required.
+*   `name` (string)   
+    Service name, required.   
 *   `startup` (boolean|string)
     Run service daemon on startup, required. A string represent a list of activated
-    levels, for example '2345'.
-    an empty string to not define any run level.
-*   `ssh` (object|ssh2)
+    levels, for example '2345'.   
+    An empty string to not define any run level.   
+*   `ssh` (object|ssh2)   
     Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.
-*   `stdout` (stream.Writable)
+    configuration object used to initialize the SSH connection.   
+*   `stdout` (stream.Writable)   
     Writable EventEmitter in which the standard output of executed commands will
-    be piped.
-*   `stderr` (stream.Writable)
+    be piped.   
+*   `stderr` (stream.Writable)   
     Writable EventEmitter in which the standard error output of executed command
-    will be piped.
+    will be piped.   
 
 ## Callback parameters
 
-*   `err`
-    Error object if any.
-*   `modified`
-    Indicates if the startup behavior has changed.
+*   `err`   
+    Error object if any.   
+*   `modified`   
+    Indicates if the startup behavior has changed.   
 
 ## Example
 

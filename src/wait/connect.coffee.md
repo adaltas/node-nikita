@@ -17,7 +17,7 @@ Otherwise it will be set to "true".
     timeout, default to "/tmp".   
 *   `port`, `ports` (array|string)    
     One or multiple ports, used to build or enrich the 'servers' option.   
-*   `randdir`
+*   `randdir`   
     Directory where to write temporary file used internally to triger a 
 *   `server`, `servers` (array|object|string)    
     One or multiple servers, string must be in the form of "{host}:{port}",
@@ -149,5 +149,3 @@ require 'mecano'
 
     each = require 'each'
     misc = require '../misc'
-
-

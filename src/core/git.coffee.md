@@ -94,11 +94,3 @@ require('mecano').git({
     fs = require 'ssh2-fs'
     path = require 'path'
     misc = require '../misc'
-
-
-
-
-
-
-
-

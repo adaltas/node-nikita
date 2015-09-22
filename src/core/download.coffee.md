@@ -30,39 +30,39 @@ calculated if neither md5 nor sha1 is provided
 
 ## Options
 
-*   `source` (path)
+*   `source` (path)   
     File, HTTP URL, FTP, GIT repository. File is the default protocol if source
-    is provided without any.
-*   `destination` (path)
-    Path where the file is downloaded.
-*   `force` (boolean)
-    Overwrite destination file if it exists.
-*   `ssh` (object|ssh2)
+    is provided without any.   
+*   `destination` (path)   
+    Path where the file is downloaded.   
+*   `force` (boolean)   
+    Overwrite destination file if it exists.   
+*   `ssh` (object|ssh2)   
     Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.
-*   `stdout` (stream.Writable)
+    configuration object used to initialize the SSH connection.   
+*   `stdout` (stream.Writable)   
     Writable EventEmitter in which the standard output of executed commands will
-    be piped.
-*   `stderr` (stream.Writable)
+    be piped.   
+*   `stderr` (stream.Writable)   
     Writable EventEmitter in which the standard error output of executed command
-    will be piped.
-*   `sha1` (SHA-1 Hash)
-    Hash of the file using SHA-1. Used to check integrity
-*   `md5` (MD5 Hash)
+    will be piped.   
+*   `sha1` (SHA-1 Hash)   
+    Hash of the file using SHA-1. Used to check integrity   
+*   `md5` (MD5 Hash)   
     Hash of the file using MD5. Used to check integrity
-*   `force_cache` (boolean)
-    Force cache overwrite if it exists
-*   `cache_dir` (path)
+*   `force_cache` (boolean)   
+    Force cache overwrite if it exists   
+*   `cache_dir` (path)   
     If local_cache is not a string, the cache file path is resolved from cache dir and cache file.
-    By default: './'
-*   `cache_file` (string | boolean)
+    By default: './'   
+*   `cache_file` (string | boolean)   
     Cache the file on the executing machine, equivalent to cache unless an ssh connection is
-    provided. If a string is provided, it will be the cache path.
-    By default: basename of source
-*   `uid` (string | int)
-    UID of the destination. If specified, mecano will chown after download
-*   `mode` (octal mode)
-    Permissions of the destination. If specified, mecano will chmod after download
+    provided. If a string is provided, it will be the cache path.   
+    By default: basename of source   
+*   `uid` (string | int)   
+    UID of the destination. If specified, mecano will chown after download   
+*   `mode` (octal mode)   
+    Permissions of the destination. If specified, mecano will chmod after download   
 
 ## Callback parameters
 

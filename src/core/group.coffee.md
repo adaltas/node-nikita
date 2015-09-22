@@ -99,11 +99,3 @@ The result of the above action can be viewed with the command
 ## Dependencies
 
     uid_gid = require '../misc/uid_gid'
-
-
-
-
-
-
-
-

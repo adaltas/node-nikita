@@ -7,23 +7,23 @@ moment, supported extensions are '.tgz', '.tar.gz', 'tar.xz', 'tar.bz2' and '.zi
 
 ## Options
 
-*   `source`
-    Archive to compress.
-*   `destination`
-    Default to the source parent directory.
-*   `format`
-    One of 'tgz', 'tar', 'xz', 'bz2' or 'zip'.
-*   `creates`
-    Ensure the given file is created or an error is send in the callback.
-*   `ssh` (object|ssh2)
+*   `source`   
+    Archive to compress.   
+*   `destination`   
+    Default to the source parent directory.   
+*   `format`   
+    One of 'tgz', 'tar', 'xz', 'bz2' or 'zip'.   
+*   `creates`   
+    Ensure the given file is created or an error is send in the callback.   
+*   `ssh` (object|ssh2)   
     Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.
-*   `stdout` (stream.Writable)
+    configuration object used to initialize the SSH connection.   
+*   `stdout` (stream.Writable)   
     Writable EventEmitter in which the standard output of executed commands will
-    be piped.
-*   `stderr` (stream.Writable)
+    be piped.   
+*   `stderr` (stream.Writable)   
     Writable EventEmitter in which the standard error output of executed command
-    will be piped.
+    will be piped.   
 
 ## Callback parameters
 
