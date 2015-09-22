@@ -14,7 +14,6 @@ keystores and trustores.
     Path to the keystore (doesn't need to exists).   
 *   `storepass` (string)   
     Password to manage the keystore.   
-## Removing public and private keys from a keystore
 
 ## Removing a key and its certificate
 
@@ -62,9 +61,3 @@ require('mecano').java_keystore_add([{
         """
         code_skipped: 3
       .then callback
-
-
-
-
-
-

@@ -5,26 +5,29 @@ Create new [ACLs](acls) for the OpenLDAP server.
 
 ## Options
 
-*   `to`
-    What to control access to as a string.
-*   `by`
+*   `to`   
+    What to control access to as a string.   
+*   `before`   
+    Place before another rule defined by "to".   
+*   `by`   
     Who to grant access to and the access to grant as an array
-    (eg: `{..., by:["ssf=64 anonymous auth"]}`).
-*   `url`
-    Specify URI referring to the ldap server.
-*   `binddn`
-    Distinguished Name to bind to the LDAP directory.
-*   `passwd`
-    Password for simple authentication.
-*   `name`
+    (eg: `{..., by:["ssf=64 anonymous auth"]}`).   
+*   `first`   
+*   `url`   
+    Specify URI referring to the ldap server.   
+*   `binddn`   
+    Distinguished Name to bind to the LDAP directory.   
+*   `passwd`   
+    Password for simple authentication.   
+*   `name`   
     Distinguish name storing the "olcAccess" property, using the database adress
-    (eg: "olcDatabase={2}bdb,cn=config").
-*   `overwrite`
-    Overwrite existing "olcAccess", default is to merge.
-*   `log`
-    Function called with a log related messages.
-*   `acl`
-    In case of multiple acls, regroup "before", "to" and "by" as an array.
+    (eg: "olcDatabase={2}bdb,cn=config").   
+*   `overwrite`   
+    Overwrite existing "olcAccess", default is to merge.   
+*   `log`   
+    Function called with a log related messages.   
+*   `acl`   
+    In case of multiple acls, regroup "before", "to" and "by" as an array.   
 
 ## Example
 
@@ -139,6 +142,8 @@ require('mecano').ldap_acl({
           else
             options.log? 'mecano `ldap_acl`: insert a new access'
             index = olcAccesses.length
+            if acl.first # not tested
+              index = 0
             if acl.before
               for access, i in olcAccesses
                 index = i if access.to is acl.before
