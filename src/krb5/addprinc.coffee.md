@@ -16,6 +16,9 @@ Create a new Kerberos principal with a password or an optional keytab.
 *   `password`
     Password associated to this principal; required if no randkey is
     provided.
+*   `password_sync`   
+    Wether the password should be created if the principal already exists,
+    default to "false".   
 *   `randkey`
     Generate a random key; required if no password is provided.
 *   `keytab`
