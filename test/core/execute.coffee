@@ -10,14 +10,18 @@ describe 'execute', ->
 
   scratch = test.scratch @
 
-  they 'run a command', (ssh, next) ->
-    mecano.execute
+  they 'in option cmd or as a string', (ssh, next) ->
+    mecano
       ssh: ssh
+    .execute
       cmd: 'text=yes; echo $text'
     , (err, executed, stdout, stderr) ->
       executed.should.be.true() unless err
       stdout.should.eql 'yes\n' unless err
-      next err
+    .execute 'text=yes; echo $text', (err, executed, stdout, stderr) ->
+      executed.should.be.true() unless err
+      stdout.should.eql 'yes\n' unless err
+    .then next
 
   they 'stream stdout and unpipe', (ssh, next) -> #.skip 'remote',
     @timeout 10000000

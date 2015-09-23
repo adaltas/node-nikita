@@ -88,7 +88,7 @@ mecano.execute({
       # stds = if callback then callback.length > 2 else false
       stds = options.user_args
       # Validate parameters
-      options = { cmd: options } if typeof options is 'string'
+      options.cmd = options.argument if typeof options.argument is 'string'
       return callback new Error "Missing cmd: #{options.cmd}" unless options.cmd?
       options.code ?= [0]
       options.code = [options.code] unless Array.isArray options.code
