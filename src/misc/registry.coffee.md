@@ -4,6 +4,7 @@
     module.exports =
       # Core
       backup: require '../core/backup'
+      cache: require '../core/cache'
       chmod: require '../core/chmod'
       chown: require '../core/chown'
       compress: require '../core/compress'
