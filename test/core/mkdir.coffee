@@ -10,17 +10,16 @@ describe 'mkdir', ->
 
   scratch = test.scratch @
 
-  they 'should create dir', (ssh, next) ->
-    source = "#{scratch}/a_dir"
+  they 'as a directory option or as a string', (ssh, next) ->
     mecano
       ssh: ssh
-    .mkdir
-      directory: source
-    , (err, created) ->
+    .mkdir directory: "#{scratch}/a_dir", (err, created) ->
       created.should.be.true()
-    .mkdir
-      directory: source
-    , (err, created) ->
+    .mkdir directory: "#{scratch}/a_dir", (err, created) ->
+      created.should.be.false()
+    .mkdir "#{scratch}/b_dir", (err, created) ->
+      created.should.be.true()
+    .mkdir "#{scratch}/b_dir", (err, created) ->
       created.should.be.false()
     .then next
 
@@ -192,5 +191,3 @@ describe 'mkdir', ->
           return next err if err
           misc.mode.stringify(stat.mode).should.eql '40744'
           next()
-
-
