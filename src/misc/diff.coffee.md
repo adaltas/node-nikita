@@ -5,6 +5,8 @@ Report the difference between 2 strings.
 
     module.exports = (source, target, options) ->
       return unless options.diff
+      source ?= ''
+      target ?= ''
       lines = diff.diffLines target, source
       options.diff lines if typeof options.diff is 'function'
       if options.stdout
@@ -29,5 +31,3 @@ Report the difference between 2 strings.
     pad = require 'pad'
     diff = require 'diff'
     string = require './string'
-
-
