@@ -385,6 +385,58 @@ misc = module.exports =
         else if match = line.match /^\s*(.+?)\s*$/
           current[match[1]] = null
       data
+    ###
+    
+    Same as the parse_multi_brackets instead it takes in count values which are defined on several lines
+    As an example the ambari-agent .ini configuration file
+
+    *   `comment`   Default to ";"
+
+    ###
+    parse_multi_brackets_multi_lines: (str, options={}) ->
+      lines = string.lines str
+      current = data = {}
+      stack = [current]
+      comment = options.comment or ';'
+      writing = false
+      previous = {}
+
+      lines.forEach (line, _, __) ->
+        return if not line or line.match(/^\s*$/)
+        # Category
+        if match = line.match /^\s*(\[+)(.+?)(\]+)\s*$/
+          depth = match[1].length
+          # Add a child
+          if depth is stack.length
+            parent = stack[depth - 1]
+            parent[match[2]] = current = {}
+            stack.push current
+          # Invalid child hierarchy
+          if depth > stack.length
+            throw new Error "Invalid child #{match[2]}"
+          # Move up or at the same level
+          if depth < stack.length
+            stack.splice depth, stack.length - depth
+            parent = stack[depth - 1]
+            parent[match[2]] = current = {}
+            stack.push current
+        # comment
+        else if comment and match = line.match ///^\s*(#{comment}.*)$///
+          writing = false
+          current[match[1]] = null
+        # key value
+        else if match = line.match /^\s*(.+?)\s*=\s*(.+)\s*$/
+          writing = false
+          current[match[1]] = match[2]
+          previous = match[1]
+          writing = true
+        # else
+        else if match = line.match /^\s*(.+?)\s*$/ 
+          if writing
+            current[previous] += match[1]
+          else
+            current[match[1]] = null
+      data
     stringify: (obj, section, options={}) ->
       if arguments.length is 2
         options = section
@@ -455,6 +507,7 @@ misc = module.exports =
     ###
     Each category is surrounded by one or several square brackets. The number of brackets indicates
     the depth of the category.
+    Taking now indent option into consideration: some file are indent aware ambari-agent .ini file
     ###
     stringify_multi_brackets: (content, depth=0, options={}) ->
       if arguments.length is 2
@@ -462,7 +515,7 @@ misc = module.exports =
         depth = 0
       options.separator ?= ' = '
       out = ''
-      indent = '  '
+      indent = if options.indent? then options.indent else '  ' 
       prefix = ''
       for i in [0...depth]
         prefix += indent
