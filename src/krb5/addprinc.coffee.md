@@ -78,7 +78,10 @@ require('mecano').krb5_addprinc({
       .execute
         cmd: misc.kadmin options, "cpw -pw #{options.password} #{options.principal}"
         if: options.password and options.password_sync
-        not_if_exec: "echo #{options.password} | kinit '#{options.principal}'; kestroy"
+        # not_if_exec: "echo #{options.password} | kinit '#{options.principal}'"
+        not_if_exec: """
+                      if ! echo #{options.password} | kinit '#{options.principal}' ; then exit 1; else kdestroy; fi
+                      """
       .krb5_ktadd ktadd_options
       .then callback
 
