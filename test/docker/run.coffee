@@ -95,7 +95,7 @@ describe 'docker run', ->
         port: '499:80'
         machine: machine
         container: 'mecano_test_unique'
-      .execute
+      .wait_execute
         cmd: "/bin/bash -c \"echo > /dev/tcp/#{ipadress}/499\""
       .docker_rm
         container: 'mecano_test_unique'
@@ -113,7 +113,7 @@ describe 'docker run', ->
         port: [ '498:80', '499:81' ]
         machine: machine
         container: 'mecano_test_array'
-      .execute
+      .wait_execute
         cmd: "/bin/bash -c \"echo > /dev/tcp/#{ipadress}/498\""
       .docker_rm
         container: 'mecano_test_array'
