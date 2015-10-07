@@ -282,21 +282,20 @@ mecano.download
         #   downloaded++
         #   callback()
         options.log? "Mecano `download`: Move the downloaded file [DEBUG]"
-        @
-        .move
+        @move
           source: stageDestination
           destination: destination
           source_md5: options.md5
-        .chmod
+        @chmod
           destination: destination
           mode: options.mode
           if: options.mode?
-        .chown
+        @chown
           destination: destination
           uid: options.uid
           gid: options.gid
           if: options.uid? or options.gid?
-        .then callback
+        @then callback
       do_cache()
 
 ## Module Dependencies
