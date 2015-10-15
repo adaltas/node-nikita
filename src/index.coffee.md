@@ -79,6 +79,11 @@ functions share a common API with flexible options.
         opts.type ?= type for opts in options
         # options = [handler: handler] if options.length is 0 and handler
         opts.handler ?= handler for opts in options if handler
+        for opts in options
+          if opts.debug
+            opts.log ?= (msg) -> process.stdout.write "#{msg}\n"
+            opts.stdout ?= process.stdout
+            opts.stderr ?= process.stderr
         type: type, options: options, multiple: multiple, callback: callback
       enrich_options = (user_options) ->
         global_options = obj.options
