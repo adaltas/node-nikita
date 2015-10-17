@@ -159,7 +159,6 @@ functions share a common API with flexible options.
           run()
           return
         # Call the action
-        action.options = enrich_options action.options
         run_callback = (err, throw_error, statuses, user_args) ->
           user_args.length = 2 if user_args.length is 0
           todos = stack.shift() if todos.length is 0
@@ -176,6 +175,16 @@ functions share a common API with flexible options.
           err = null if action.options[0]?.relax
           callback err, statuses if callback
           return run()
+        action.options = enrich_options action.options
+        if action.type is 'end'
+          return conditions.all obj, action.options[0]
+          , (err) ->
+            callback err if callback
+            return run()
+          , ->
+            while todos[0] and todos[0].type isnt 'then' then todos.shift()
+            callback err if callback
+            return run()
         todos.status.unshift undefined
         stack.unshift todos
         todos = []
@@ -242,6 +251,12 @@ functions share a common API with flexible options.
       properties.then = get: ->
         ->
           todos.push type: 'then', handler: arguments[0]
+          setImmediate run if todos.length is 1 # Activate the pump
+          obj
+      properties.end = get: ->
+        ->
+          args = [].slice.call(arguments)
+          todos.push normalize_arguments args, 'end'
           setImmediate run if todos.length is 1 # Activate the pump
           obj
       properties.call = get: ->
@@ -335,8 +350,10 @@ registered.
 
       # Pre-register mecano internal functions
       register name, handler for name, handler of registry
-      register 'before', module.exports().before, true
+      register 'end', module.exports().end, true
       register 'call', module.exports().call, true
+      register 'before', module.exports().before, true
+      register 'after', module.exports().before, true
       register 'then', module.exports().then, true
 
     conditions = require './misc/conditions'
