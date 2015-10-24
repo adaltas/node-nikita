@@ -13,8 +13,6 @@ overwrite it.
     Where the file or directory is copied.   
 *   `gid`   
     Group name or id who owns the file.   
-*   `not_if_exists`   
-    Equals destination if true.   
 *   `mode`   
     Permissions of the file or the parent directory.   
 *   `ssh` (object|ssh2)   
@@ -127,19 +125,18 @@ require('mecano').copy({
               modified = true
               do_chown_chmod destination
         do_chown_chmod = (destination) =>
-          @
-          .chown
+          @chown
             destination: destination
             # stat: destinationStat
             uid: options.uid
             gid: options.gid
             if: options.uid? or options.gid?
-          .chmod
+          @chmod
             destination: destination
             # stat: destinationStat
             mode: options.mode
             if: options.mode?
-          .then (err, status) ->
+          @then (err, status) ->
             return callback err if err
             modified = true if status
             do_end()
@@ -154,11 +151,3 @@ require('mecano').copy({
     each = require 'each'
     misc = require '../misc'
     glob = require '../misc/glob'
-
-
-
-
-
-
-
-

@@ -38,9 +38,9 @@ describe 'copy', ->
       .copy
         source: source
         destination: destination
-      , (err, copied) ->
+      , (err, status) ->
         return next err if err
-        copied.should.be.true()
+        status.should.be.true()
       .call (options, next) ->
         misc.file.compare @options.ssh, [source, destination], (err, md5) ->
           return next err if err
@@ -50,33 +50,27 @@ describe 'copy', ->
         ssh: ssh
         source: source
         destination: destination
-      , (err, copied) ->
+      , (err, status) ->
         return next err if err
-        copied.should.be.false()
+        status.should.be.false()
         next()
 
-    they 'into an existing directory', (ssh, next) ->
+    they 'into a directory', (ssh, next) ->
       source = "#{__dirname}/../resources/a_dir/a_file"
-      destination = "#{scratch}/"
       mecano
         ssh: ssh
+      .mkdir
+        destination: "#{scratch}/existing_dir"
       .copy # Copy non existing file
         source: source
-        destination: destination
-      , (err, copied) ->
-        return next err if err
-        copied.should.be.true()
-      .call (options, next) ->
-        fs.exists @options.ssh, "#{destination}/a_file", (err, exists) ->
+        destination: "#{scratch}/existing_dir"
+      , (err, status) ->
+        status.should.be.true() unless err
+      .call (options, callback) ->
+        fs.exists @options.ssh, "#{scratch}/existing_dir/a_file", (err, exists) ->
           exists.should.be.true()
-          next()
-      .copy # Copy over existing file
-        source: source
-        destination: destination
-      , (err, copied) ->
-        return next err if err
-        copied.should.be.false()
-        next()
+          callback()
+      .then next
 
     they 'over an existing file', (ssh, next) ->
       source = "#{__dirname}/../resources/a_dir/a_file"
@@ -277,6 +271,3 @@ describe 'copy', ->
         glob ssh, "#{scratch}/**", dot: true, (err, files) ->
           return next err if err
           next()
-
-
-
