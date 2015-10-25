@@ -1,10 +1,10 @@
 
 http = require 'http'
-# path = require 'path'
 mecano = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
+path = require 'path'
 
 describe 'cache', ->
 
@@ -65,5 +65,28 @@ describe 'cache', ->
         relax: true
       , (err, status) ->
         err.message.should.eql 'Invalid Exit Code: 22'
+      .then next
+
+  describe 'file', ->
+
+    they 'into local cache_dir', (ssh, next) ->
+      mecano
+        ssh: ssh
+      .cache
+        source: "#{__filename}"
+        cache_dir: "#{scratch}/my_cache_dir"
+      , (err, status, file) ->
+        status.should.be.true() unless err
+        file.should.eql "#{scratch}/my_cache_dir/#{path.basename __filename}"
+      .cache
+        source: "#{__filename}"
+        cache_dir: "#{scratch}/my_cache_dir"
+      , (err, status, file) ->
+        status.should.be.false() unless err
+        file.should.eql "#{scratch}/my_cache_dir/#{path.basename __filename}"
+      .call (_, callback) ->
+        fs.exists null, "#{scratch}/my_cache_dir/#{path.basename __filename}", (err, exists) ->
+          exists.should.be.true()
+          callback err
       .then next
         

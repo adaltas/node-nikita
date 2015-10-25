@@ -54,6 +54,14 @@ mecano.download
           not_if_exists: options.cache_file
         @then (err, status) ->
           callback err, status, options.cache_file
+      else
+        @mkdir # todo: copy shall handle this
+          destination: "#{path.dirname options.cache_file}"
+        @copy
+          source: "#{options.source}"
+          destination: "#{options.cache_file}"
+        @then (err, status) ->
+          callback err, status, options.cache_file
       
     module.exports.protocols_http = protocols_http = ['http:', 'https:']
     module.exports.protocols_ftp = protocols_ftp = ['ftp:', 'ftps:']
