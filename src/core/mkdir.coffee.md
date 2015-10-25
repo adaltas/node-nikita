@@ -40,7 +40,8 @@ of the directory to create.
 ## Simple usage
 
 ```js
-require('mecano').mkdir('./some/dir', function(err, created){
+require('mecano')
+.mkdir('./some/dir', function(err, created){
   console.log(err ? err.message : "Directory created: " + !!created);
 });
 ```
@@ -48,7 +49,8 @@ require('mecano').mkdir('./some/dir', function(err, created){
 ## Advanced usage
 
 ```js
-require('mecano').mkdir({
+require('mecano')
+.mkdir({
   ssh: ssh,
   destination: './some/dir',
   uid: 'a_user',
@@ -164,7 +166,3 @@ require('mecano').mkdir({
     misc = require '../misc'
     wrap = require '../misc/wrap'
     uid_gid = require '../misc/uid_gid'
-
-
-
-
