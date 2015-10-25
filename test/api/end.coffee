@@ -27,4 +27,14 @@ describe 'api end', ->
     .then (err, status) ->
       return next err
 
+  # Doest work yet, need to spec clarification
+  # it 'inside call', (next) ->
+  #   mecano
+  #   .call (_, handler) ->
+  #     @end()
+  #     # handler null, true # Set status to true
+  #   .call ({}, callback) -> next Error "Should never get here"
+  #   .then (err, status) ->
+  #     return next err
+
       
