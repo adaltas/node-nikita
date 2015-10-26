@@ -323,21 +323,28 @@ describe 'download', ->
 
       they 'is computed if true', (ssh, next) ->
         return next() unless ssh
+        logs = []
         # Download with invalid checksum
-        source = "#{__filename}"
         destination = "#{scratch}/check_md5"
         mecano
           ssh: ssh
+        .write
+          destination: "#{scratch}/source"
+          content: "okay"
         .download
-          source: source
+          source: "#{scratch}/source"
           destination: destination
           md5: true
         , (err, downloaded) ->
           downloaded.should.be.true() unless err
         .download
-          source: source
+          source: "#{scratch}/source"
           destination: destination
           md5: true
+          debug: true
+          log: (msg) -> logs.push msg
         , (err, downloaded) ->
           downloaded.should.be.false() unless err
+          ("Mecano `download`: computed hash value is 'df8fede7ff71608e24a5576326e41c75' [INFO]" in logs).should.be.true()
+          ("Mecano `download`: Hashes match, skipping [DEBUG]" in logs).should.be.true()
         .then next

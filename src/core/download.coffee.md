@@ -30,9 +30,6 @@ calculated if neither md5 nor sha1 is provided
 
 ## Options
 
-*   `source` (path)   
-    File, HTTP URL, FTP, GIT repository. File is the default protocol if source
-    is provided without any.   
 *   `destination` (path)   
     Path where the file is downloaded.   
 *   `force` (boolean)   
@@ -63,6 +60,12 @@ calculated if neither md5 nor sha1 is provided
     UID of the destination. If specified, mecano will chown after download   
 *   `mode` (octal mode)   
     Permissions of the destination. If specified, mecano will chmod after download   
+*   `proxy` (string)   
+     Use the specified HTTP proxy. If the port number is not specified, it is
+     assumed at port 1080. See curl(1) man page.   
+ *   `source` (path)   
+     File, HTTP URL, FTP, GIT repository. File is the default protocol if source
+     is provided without any.   
 
 ## Callback parameters
 
@@ -108,7 +111,7 @@ mecano.download
       {destination, source} = options
       return callback new Error "Missing source: #{source}" unless source
       return callback new Error "Missing destination: #{destination}" unless destination
-      options.source = source = source.substr 6 if /^file:\//.test source
+      options.source = source = options.source.substr 7 if /^file:\/\//.test options.source
       stageDestination = "#{destination}.#{Date.now()}#{Math.round(Math.random()*1000)}"
       if options.md5?
         return callback new Error "Invalid MD5 Hash:#{options.md5}" unless typeof options.md5 in ['string', 'boolean']
@@ -130,50 +133,64 @@ mecano.download
       # - option force is provided
       # - hash isnt true and doesnt match
       @call
+        handler: (_, callback) ->
+          u = url.parse source
+          unless u.protocol is null
+            options.log? "Mecano `download`: bypass source hash computation for non-file protocols [WARN]"
+            return callback()
+          return callback() if hash isnt true
+          misc.file.hash options.ssh, source, algo, (err, value) ->
+            return callback err if err
+            options.log? "Mecano `download`: computed hash value is '#{value}' [INFO]"
+            hash = value
+            callback()
+      @call
         shy: true
-        handler: (_, handler) -> # Set status to "true" if 
+        handler: (_, callback) ->
           options.log? "Mecano `download`: Check if destination (#{destination}) exists [DEBUG]"
           # Note about next line: ssh might be null with file, not very clear
           ssh2fs.exists options.ssh, destination, (err, exists) =>
-            return handler err if err
+            return callback err if err
             if exists
               options.log? "Mecano `download`: destination exists [INFO]"
               # If no checksum , we ignore MD5 check
               if options.force
                 options.log? "Mecano `download`: Force download [DEBUG]"
-                return handler null, true
+                return callback null, true
               else if hash and typeof hash is 'string'
                 # then we compute the checksum of the file
                 options.log? "Mecano `download`: comparing #{algo} hash [DEBUG]"
                 misc.file.hash options.ssh, destination, algo, (err, c_hash) ->
-                  return handler err if err
+                  return callback err if err
                   # And compare with the checksum provided by the user
                   if hash is c_hash
                     options.log? "Mecano `download`: Hashes match, skipping [DEBUG]"
-                    return handler null, false
+                    return callback null, false
                   options.log? "Mecano `download`: Hashes don't match, delete then re-download [WARN]"
                   ssh2fs.unlink options.ssh, destination, (err) ->
-                    return handler err if err
-                    handler null, true
+                    return callback err if err
+                    callback null, true
               else
                 options.log? "Mecano `download`: destination exists, check disabled, skipping [DEBUG]"
-                handler null, false
+                callback null, false
             else
-              handler null, true
+              callback null, true
       , (err, status) ->
         @end() unless status
       @cache # Download the file and place it inside local cache
-        source: options.source
         if: use_cache
         ssh: null
+        source: options.source
         cache_dir: options.cache_dir
         cache_file: options.cache_file
+        md5: options.md5
+        proxy: options.proxy
       , (err, cached, file) ->
         throw err if err
         source = file if use_cache
       @call (_, callback) -> # File Download
         u = url.parse source
-        return callback() unless u.protocol is null or u.protocol is 'file:'
+        return callback() unless u.protocol is null
         if not use_cache
           hash_info = ssh: options.ssh, source: options.source if hash is true
           @mkdir path.dirname stageDestination
