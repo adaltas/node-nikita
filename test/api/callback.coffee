@@ -8,6 +8,22 @@ describe 'api callback', ->
 
   scratch = test.scratch @
 
+  it 'call callback multiple times for array of options', (next) ->
+    callbacks = []
+    mecano
+    .call [
+      handler: -> # do sth
+    ,
+      handler: (_, callback) -> callback null, true
+    ], (err, status) ->
+      callbacks.push [err, status]
+    .then (err) ->
+      callbacks.should.eql [
+        [undefined, false]
+        [null, true]
+      ]
+      next err
+
   it 'register actions in callback', (next) ->
     msgs = []
     m = mecano log: (msg) -> msgs.push msg if /\/file_\d/.test msg
@@ -48,6 +64,3 @@ describe 'api callback', ->
     .then (err, changed) ->
       err.message.should.eql 'Catchme'
       next()
-
-
-

@@ -147,4 +147,3 @@ describe 'api before', ->
           'call 3'
         ]
         next()
-

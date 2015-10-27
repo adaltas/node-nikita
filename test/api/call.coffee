@@ -147,7 +147,6 @@ describe 'api call', ->
         .call (options, next) ->
           next.property.does.not.exist
         .call (options) ->
-          console.log 'Shouldnt be called'
           next Error 'Shouldnt be called'
         , (err) ->
       d.on 'error', (err) ->
@@ -218,9 +217,3 @@ describe 'api call', ->
         next err
 
         
-
-
-
-
-
-

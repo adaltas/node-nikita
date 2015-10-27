@@ -15,18 +15,15 @@ describe 'chmod', ->
       ssh: ssh
     .touch
       destination: "#{scratch}/a_file"
-      mode: 0o754
+      mode: 0o0754
     .chmod
       destination: "#{scratch}/a_file"
-      mode: 0o744
-    , (err, modified) ->
-      return next err if err
-      modified.should.be.true()
+      mode: 0o0744
+    , (err, status) ->
+      status.should.be.true() unless err
     .chmod
       destination: "#{scratch}/a_file"
-      mode: 0o744
-    , (err, modified) ->
-      return next err if err
-      modified.should.not.be.True
+      mode: 0o0744
+    , (err, status) ->
+      status.should.be.false() unless err
     .then next
-

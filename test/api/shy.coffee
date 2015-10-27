@@ -33,6 +33,7 @@ describe 'api shy', ->
       next()
 
   it 'array options', (next) ->
+    count = 0
     mecano
     .write [
       destination: "#{scratch}/file_1"
@@ -43,7 +44,10 @@ describe 'api shy', ->
       content: 'abc'
       shy: false
     ], (err, status) ->
-      status.should.be.true()
+      if count is 0
+      then status.should.be.true()
+      else status.should.be.false()
+      count++
     .then (err, status) ->
       status.should.be.false()
     .write [
@@ -55,14 +59,11 @@ describe 'api shy', ->
       content: 'abc'
       shy: true
     ], (err, status) ->
-      status.should.be.true() unless err
+      if count is 2
+      then status.should.be.true()
+      else status.should.be.false()
+      count++
     .then (err, status) ->
       status.should.be.true() unless err
       next err
         
-
-
-
-
-
-

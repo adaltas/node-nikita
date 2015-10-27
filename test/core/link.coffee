@@ -54,15 +54,14 @@ describe 'link', ->
   
   they 'should create parent directories', (ssh, next) ->
     # Create a non existing link
-    destination = "#{scratch}/test/dir/link_test"
     mecano.link
       ssh: ssh
       source: __dirname
-      destination: destination
+      destination: "#{scratch}/test/dir/link_test"
     , (err, linked) ->
       return next err if err
       linked.should.be.true()
-      fs.lstat ssh, destination, (err, stat) ->
+      fs.lstat ssh, "#{scratch}/test/dir/link_test", (err, stat) ->
         stat.isSymbolicLink().should.be.true()
         # Test creating two identical parent dirs
         destination = "#{scratch}/test/dir2"
@@ -77,7 +76,7 @@ describe 'link', ->
         ], (err, linked) ->
           return next err if err
           linked.should.be.true()
-          next()
+        .then next
 
   describe 'error', ->
   
@@ -94,9 +93,3 @@ describe 'link', ->
       .then (err, linked) ->
         err.message.should.eql "Missing destination, got undefined"
       .then next
-
-
-
-
-
-

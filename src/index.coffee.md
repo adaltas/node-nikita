@@ -35,92 +35,78 @@ functions share a common API with flexible options.
       todos.throw_if_error = true
       befores = []
       afters = []
-      normalize_arguments = (_arguments, type='call') ->
-        multiple = false
+      normalize_options = (_arguments, type, enrich=true) ->
+        empty = false
         handler = null
         callback = null
-        if typeof _arguments[0] is 'function'
-          options = [{}]
-        else if Array.isArray _arguments[0]
-          multiple = true
-          options = _arguments[0]
-          options = for opts in _arguments[0]
-            copy = {}
-            for k, v of opts
-              copy[k] = v
-            copy
-        else if _arguments[0] and typeof _arguments[0] is 'object'
-          arg = _arguments[0]
-          options = {}
-          options[k] = v for k, v of arg
-          options = [options]
-        else
-          options = [argument: _arguments[0]]
-        found_handler = options.every (opts) -> !!opts.handler
-        for arg, i in _arguments
-          continue if i is 0 and typeof arg isnt 'function'
+        options = []
+        for arg in _arguments
           if typeof arg is 'function'
-            if handler or (found_handler and options.length isnt 0)
-              callback = arg
-            else
-              handler = arg
+            unless handler then handler = arg
+            else unless callback then callback = arg
+            else throw Error "Invalid third function argument"
           else if Array.isArray arg
-            console.log 'NOT SUPPORTED'
-          else if typeof arg is 'object'
-            for option in options
-              option[k] = v for k, v of arg
-          else
-            for option in options
-              options.argument = arg
-        # User arguments
-        if callback?.length > 2
-          opts.user_args = true for opts in options
-        opts.store ?= store for opts in options
-        opts.type ?= type for opts in options
-        # options = [handler: handler] if options.length is 0 and handler
-        opts.handler ?= handler for opts in options if handler
-        for opts in options
+            empty = true if arg.length is 0
+            for a in arg then options.push a
+          else #if typeof arg is 'object'
+            arg = argument: arg if typeof arg isnt 'object' and arg isnt null
+            if options.length is 0
+              options.push arg
+            else for opts in options
+              for k, v of arg then opts[k] = v
+          # else
+          #   options.push argument: arg
+        return options if options.length is 0 and empty
+        options.push {} if options.length is 0
+        if options.length and options.filter( (opts) -> not opts.handler ).length is 0
+          callback = handler
+          handler = null
+        # for opts, i in options
+        #   continue if typeof arg is 'function'
+        #   continue if Array.isArray arg
+        #   continue if typeof arg is 'object' and arg isnt null
+        #   options[i] = argument: opts
+        for opts, i in options
+          # Clone
+          options[i] = {}
+          options[i][k] = v for k, v of opts
+          opts = options[i]
+          # Enrich
+          opts.type = type if type
+          opts.handler ?= handler if handler
+          opts.callback ?= callback if callback
+          opts.user_args = true if enrich and opts.callback?.length > 2
+          opts.store ?= store if enrich and store
           if opts.debug
             opts.log ?= (msg) -> process.stdout.write "#{msg}\n"
             opts.stdout ?= process.stdout
             opts.stderr ?= process.stderr
-        type: type, options: options, multiple: multiple, callback: callback
+        options
       enrich_options = (user_options) ->
         global_options = obj.options
         parent_options = todos.options
         local_options = user_options
-        options = []
-        for local_opts in local_options
-          local_opts = argument: local_opts if local_opts? and typeof local_opts isnt 'object'
-          opts = {}
-          for k, v of local_opts then opts[k] = local_opts[k]
-          options.push opts
+        options = {}
+        for k, v of local_options then options[k] = local_options[k]
         for k, v of parent_options
-          for opts in options then opts[k] = v if opts[k] is undefined and k in obj.propagated_options
+          options[k] = v if options[k] is undefined and k in obj.propagated_options
         for k, v of global_options
-          for opts in options then opts[k] = v if opts[k] is undefined
+          options[k] = v if options[k] is undefined
         options
-      intercept_before = (options, callback) ->
-        return callback() if options.intercept_before
+      intercept_before = (target_options, callback) ->
+        return callback() if target_options.intercept_before
         each befores
         .run (before, next) ->
-          # before.target = type: before.target if typeof before.target is 'string'
-          # for k, v in before
-          #   return next() unless before[k] isnt options[k]
-          # return next() unless options.type is before.target.type
-          for k, v of before.event
-            return next() unless v is options[k]
-          # return next() unless options.type is before.event.type
-          action = {}
           for k, v of before
-            action[k] = v
-          action.options = [{intercept_before: true}]
-          for k, v of options
-            if k is 'handler'
-              action.options[0][k] = before.options[0][k]
-            else
-              action.options[0][k] = v
-          run action, next
+            continue if k is 'handler'
+            return next() unless v is target_options[k]
+          options = intercept_before: true
+          for k, v of before
+            options[k] = v
+          for k, v of target_options
+            continue if k in ['handler', 'callback']
+            options[k] ?= v
+          run options, next
         .then callback
       call_callback = (fn, args) ->
         stack.unshift todos
@@ -141,43 +127,26 @@ functions share a common API with flexible options.
         throw err unless todos?
         while todos[0] and todos[0].type isnt 'then' then todos.shift()
         todos.err = err
-      run = (action, callback) ->
-        action = todos.shift() unless action
-        unless action # Nothing more to do in current queue
+      run = (options, callback) ->
+        options = todos.shift() unless options
+        unless options # Nothing more to do in current queue
           throw todos.err if todos.err and todos.throw_if_error
           # if stack.length
           #   stack.shift()
           #   run()
           return
-        if action.type is 'then'
+        if options.type is 'then'
           {err, status} = todos
           status = status.some (status) -> !! status
           todos.err = null
           todos.status = []
           todos.throw_if_error = true
-          action.handler?.call obj, err, status # shall be normalized and be `option.handler?.call... for option in action.options`
+          options.handler?.call obj, err, status
           run()
           return
-        # Call the action
-        run_callback = (err, throw_error, statuses, user_args) ->
-          user_args.length = 2 if user_args.length is 0
-          todos = stack.shift() if todos.length is 0
-          jump_to_error err if err and throw_error
-          todos.throw_if_error = false if err and action.callback
-          status_callback = statuses.some (status) -> !! status
-          statuses = statuses.some (status, i) ->
-            return false if action.options[i].shy
-            !! status
-          user_args = user_args[0] unless action.multiple
-          callback_args = [err, status_callback, user_args...]
-          todos.status[0] = statuses and not action.options.shy
-          call_callback action.callback, callback_args if action.callback
-          err = null if action.options[0]?.relax
-          callback err, statuses if callback
-          return run()
-        action.options = enrich_options action.options
-        if action.type is 'end'
-          return conditions.all obj, action.options[0]
+        options = enrich_options options
+        if options.type is 'end'
+          return conditions.all obj, options
           , (err) ->
             callback err if callback
             return run()
@@ -191,60 +160,60 @@ functions share a common API with flexible options.
         todos.err = null
         todos.status = []
         todos.throw_if_error = true
-        wrap.options action.options, (err) ->
-          statuses = []
-          user_args = for options in action.options then []
+        wrap.options options, (err) ->
+          status = false
+          user_args = []
           throw_error = undefined
-          each action.options
-          .run (options, index, next) ->
-            # Clone options
-            copy = {}
-            for k, v of options
-              copy[k] = v
-            options = copy
-            # Before interception
-            intercept_before options, (err) ->
-              relax = (e) ->
-                throw_error = true if e and not options.relax
-                next e
-              return relax err if err
-              handler = options.handler
-              options.handler = undefined
-              conditions.all obj, options
-              , (err) ->
-                statuses.push false
-                relax err
-              , ->
-                # Remove conditions from options
-                for k, v of options
-                  delete options[k] if /^if.*/.test(k) or /^not_if.*/.test(k)
-                todos.options = options
-                try
-                  if handler.length is 2 # Async style
-                    handler.call obj, options, (err, status, args...) ->
-                      statuses.push status
-                      for arg, i in args
-                        user_args[index].push arg
-                      setImmediate -> relax err
-                  else # Sync style
-                    # statuses.push handler.call obj, options
-                    handler.call obj, options
-                    status_sync = false
-                    wait_children = ->
-                      unless todos.length
-                        statuses.push status_sync
-                        return setImmediate relax
-                      run todos.shift(), (err, status) ->
-                        return relax err if err
-                        status_sync = true if status
-                        wait_children()
-                    wait_children()
-                    # stack[0].unshift todos... if todos.length
-                    # todos = []
-                    # setImmediate relax
-                catch e then relax e
-          .then (err) ->
-            run_callback err, throw_error, statuses, user_args
+          copy = {}
+          for k, v of options
+            copy[k] = v
+          options = copy
+          # Before interception
+          intercept_before options, (err) ->
+            exec_callback = (err) ->
+              user_args.length = 2 if user_args.length is 0
+              todos = stack.shift() if todos.length is 0
+              jump_to_error err if err and not options.relax
+              todos.throw_if_error = false if err and options_callback
+              callback_args = [err, status, user_args...]
+              todos.status[0] = status and not options.shy
+              call_callback options_callback, callback_args if options_callback
+              err = null if options.relax
+              callback err, status if callback
+              return run()
+            return exec_callback err if err
+            options_handler = options.handler
+            options.handler = undefined
+            options_callback = options.callback
+            options.callback = undefined
+            conditions.all obj, options
+            , (err) ->
+              exec_callback err
+            , ->
+              # Remove conditions from options
+              for k, v of options
+                delete options[k] if /^if.*/.test(k) or /^not_if.*/.test(k)
+              todos.options = options
+              try
+                if options_handler.length is 2 # Async style
+                  options_handler.call obj, options, (err, _status, args...) ->
+                    status = true if _status
+                    for arg, i in args
+                      user_args.push arg
+                    setImmediate -> exec_callback err
+                else # Sync style
+                  options_handler.call obj, options
+                  status_sync = false
+                  wait_children = ->
+                    unless todos.length
+                      status = status_sync
+                      return setImmediate exec_callback
+                    run todos.shift(), (err, status) ->
+                      return exec_callback err if err
+                      status_sync = true if status
+                      wait_children()
+                  wait_children()
+              catch e then exec_callback e
       properties.child = get: ->
         ->
           module.exports(obj.options)
@@ -256,27 +225,33 @@ functions share a common API with flexible options.
       properties.end = get: ->
         ->
           args = [].slice.call(arguments)
-          todos.push normalize_arguments args, 'end'
-          setImmediate run if todos.length is 1 # Activate the pump
+          options = normalize_options args, 'end'
+          todos.push opts for opts in options
+          setImmediate run if todos.length is options.length # Activate the pump
           obj
       properties.call = get: ->
         ->
           args = [].slice.call(arguments)
-          todos.push normalize_arguments args
-          setImmediate run if todos.length is 1 # Activate the pump
+          options = normalize_options args, 'call'
+          todos.push opts for opts in options
+          setImmediate run if todos.length is options.length # Activate the pump
           obj
       properties.before = get: ->
         ->
-
-          event = arguments[0]
-          if typeof event is 'string'
-            event = type: event
-          action = normalize_arguments [arguments[1]], 'before'
-          action.event = event
-          befores.push action
+          arguments[0] = type: arguments[0] if typeof arguments[0] is 'string'
+          options = normalize_options arguments, null, false
+          befores.push opts for opts in options
           obj
+          # event = arguments[0]
+          # if typeof event is 'string'
+          #   event = type: event
+          # options = normalize_options [arguments[1]], 'before'
+          # opts.event = event for opts in options
+          # befores.push opts for opts in options
+          # obj
       properties.after = get: ->
         ->
+          throw Error "look at before, doesnt seem ready yet"
           afters.push type: 'after', options: arguments
           obj
       properties.status = get: ->
@@ -303,14 +278,10 @@ functions share a common API with flexible options.
             ->
               # Insert handler before callback or at the end of arguments
               args = [].slice.call(arguments)
-              for arg, i in args
-                if typeof arg is 'function'
-                  args.splice i, 0, obj.registry[name] or registry[name]
-                  break
-                if i + 1 is args.length
-                  args.push obj.registry[name] or registry[name]
-              todos.push normalize_arguments args, name
-              setImmediate run if todos.length is 1 # Activate the pump
+              args.unshift obj.registry[name]
+              options = normalize_options args, name
+              todos.push opts for opts in options
+              setImmediate run if todos.length is options.length # Activate the pump
               obj
       Object.defineProperty obj, 'registered', get: ->
         (name, local_only=false) ->
