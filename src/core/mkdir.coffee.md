@@ -118,7 +118,7 @@ require('mecano')
             # eg /\${/ on './var/cache/${user}' creates './var/cache/'
             if options.exclude? and options.exclude instanceof RegExp
               return callback() if options.exclude.test path.basename directory
-            options.log? "Mecano `mkdir`: #{JSON.stringify directory} created" unless directory is options.directory
+            options.log? "Mecano `mkdir`: #{JSON.stringify directory} created [INFO]" unless directory is options.directory
             attrs = ['mode', 'uid', 'gid', 'size', 'atime', 'mtime']
             opts = {}
             for attr in attrs
@@ -133,9 +133,8 @@ require('mecano')
             return callback err if err
             callback()
         do_update = (stat) =>
-          options.log? "Mecano `mkdir`: #{JSON.stringify directory} exists"
-          @
-          .chown
+          options.log? "Mecano `mkdir`: #{JSON.stringify directory} alread exists [WARN]"
+          @chown
             ssh: options.ssh
             destination: directory
             stat: stat
@@ -143,14 +142,14 @@ require('mecano')
             gid: options.gid
             log: options.log
             if: options.uid? or options.gid?
-          .chmod
+          @chmod
             ssh: options.ssh
             destination: directory
             stat: stat
             mode: options.mode
             log: options.log
             if: options.mode?
-          .then (err, moded) ->
+          @then (err, moded) ->
             return callback err if err
             modified = true if moded
             callback()
