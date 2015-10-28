@@ -5,10 +5,10 @@ Recursively remove files, directories and links.
 
 ## Options
 
-*   `source`   
+*   `destination` (string|[string])      
     File, directory or glob (pattern matching based on wildcard characters).   
-*   `destination`      
-    Alias for "source".   
+*   `source` (alias)   
+    Alias for "destination".   
 *   `ssh` (object|ssh2)   
     Run the action on a remote server using SSH, an ssh2 instance or an
     configuration object used to initialize the SSH connection.  
@@ -18,7 +18,7 @@ Recursively remove files, directories and links.
 *   `err`   
     Error object if any.   
 *   `removed`   
-    Number of removed sources.   
+    Number of removed files.   
 
 ## Implementation details
 
@@ -29,7 +29,8 @@ SSH would be too slow.
 ## Simple example
 
 ```js
-require('mecano').remove('./some/dir', function(err, removed){
+require('mecano')
+.remove('./some/dir', function(err, removed){
   console.log(err ? err.message : "File removed: " + !!removed);
 });
 ```
@@ -37,8 +38,9 @@ require('mecano').remove('./some/dir', function(err, removed){
 ## Removing a directory unless a given file exists
 
 ```js
-require('mecano').remove({
-  source: './some/dir',
+require('mecano')
+.remove({
+  destination: './some/dir',
   not_if_exists: './some/file'
 }, function(err, removed){
   console.log(err ? err.message : "File removed: " + !!removed);
@@ -48,8 +50,9 @@ require('mecano').remove({
 ## Removing multiple files and directories
 
 ```js
-require('mecano').remove([
-  { source: './some/dir', not_if_exists: './some/file' },
+require('mecano')
+.remove([
+  { destination: './some/dir', not_if_exists: './some/file' },
   './some/file'
 ], function(err, removed){
   console.log(err ? err.message : 'File removed: ' + !!removed);
@@ -60,12 +63,12 @@ require('mecano').remove([
 
     module.exports = (options, callback) ->
       # Validate parameters
-      options = source: options if typeof options is 'string'
-      options.source ?= options.destination
-      return callback new Error "Missing source" unless options.source?
+      options.destination = options.argument if options.argument?
+      options.destination ?= options.source
+      return callback Error "Missing option: \"destination\"" unless options.destination?
       # Start real work
       modified = false
-      glob options.ssh, options.source, (err, files) ->
+      glob options.ssh, options.destination, (err, files) ->
         return callback err if err
         each files
         .run (file, callback) ->
@@ -82,4 +85,3 @@ require('mecano').remove([
     glob = require '../misc/glob'
 
 [rimraf]: https://github.com/isaacs/rimraf
-

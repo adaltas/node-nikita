@@ -10,6 +10,43 @@ describe 'remove', ->
   
   scratch = test.scratch @
   
+  they 'accept an option', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .touch "#{scratch}/a_file"
+    .remove
+      source: "#{scratch}/a_file"
+    , (err, status) ->
+      status.should.be.true() unless err
+    .then next
+    
+  they 'accept a string', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .touch "#{scratch}/a_file"
+    .remove "#{scratch}/a_file", (err, status) ->
+      status.should.be.true() unless err
+    .then next
+    
+  they 'accept an array of strings', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .touch "#{scratch}/file_1"
+    .touch "#{scratch}/file_2"
+    .remove [
+      "#{scratch}/file_1"
+      "#{scratch}/file_2"
+    ], (err, status) ->
+      status.should.be.true() unless err
+    .then next
+    
+  they 'accept an empty array', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .remove [], (err, status) ->
+      status.should.be.false() unless err
+    .then next
+    
   they 'a file', (ssh, next) ->
     mecano
       ssh: ssh
@@ -68,4 +105,3 @@ describe 'remove', ->
     , (err, removed) ->
       removed.should.be.false()
     .then next
-
