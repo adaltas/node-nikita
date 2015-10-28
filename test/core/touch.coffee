@@ -7,12 +7,20 @@ fs = require 'ssh2-fs'
 describe 'touch', ->
 
   scratch = test.scratch @
-
-  they 'an empty file', (ssh, next) ->
+  
+  they 'as a destination option', (ssh, next) ->
     mecano.touch
       ssh: ssh
       destination: "#{scratch}/a_file"
     , (err) ->
+      return next err if err
+      fs.readFile ssh, "#{scratch}/a_file", 'ascii', (err, content) ->
+        return next err if err
+        content.should.eql ''
+        next()
+      
+  they 'as a string', (ssh, next) ->
+    mecano.touch destination: "#{scratch}/a_file" , (err) ->
       return next err if err
       fs.readFile ssh, "#{scratch}/a_file", 'ascii', (err, content) ->
         return next err if err
@@ -32,4 +40,3 @@ describe 'touch', ->
       touched.should.be.false()
     .then next
       
-
