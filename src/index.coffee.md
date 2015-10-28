@@ -47,7 +47,9 @@ functions share a common API with flexible options.
             else throw Error "Invalid third function argument"
           else if Array.isArray arg
             empty = true if arg.length is 0
-            for a in arg then options.push a
+            for a in arg
+              a = argument: a unless typeof a is 'object' and not Array.isArray(a) and a isnt null
+              options.push a
           else #if typeof arg is 'object'
             arg = argument: arg if typeof arg isnt 'object' and arg isnt null
             if options.length is 0
