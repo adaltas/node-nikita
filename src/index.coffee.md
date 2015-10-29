@@ -50,24 +50,17 @@ functions share a common API with flexible options.
             for a in arg
               a = argument: a unless typeof a is 'object' and not Array.isArray(a) and a isnt null
               options.push a
-          else #if typeof arg is 'object'
+          else
             arg = argument: arg if typeof arg isnt 'object' and arg isnt null
             if options.length is 0
               options.push arg
             else for opts in options
               for k, v of arg then opts[k] = v
-          # else
-          #   options.push argument: arg
         return options if options.length is 0 and empty
         options.push {} if options.length is 0
         if options.length and options.filter( (opts) -> not opts.handler ).length is 0
           callback = handler
           handler = null
-        # for opts, i in options
-        #   continue if typeof arg is 'function'
-        #   continue if Array.isArray arg
-        #   continue if typeof arg is 'object' and arg isnt null
-        #   options[i] = argument: opts
         for opts, i in options
           # Clone
           options[i] = {}
@@ -133,9 +126,6 @@ functions share a common API with flexible options.
         options = todos.shift() unless options
         unless options # Nothing more to do in current queue
           throw todos.err if todos.err and todos.throw_if_error
-          # if stack.length
-          #   stack.shift()
-          #   run()
           return
         if options.type is 'then'
           {err, status} = todos
@@ -173,8 +163,9 @@ functions share a common API with flexible options.
           # Before interception
           intercept_before options, (err) ->
             exec_callback = (err) ->
+              throw Error 'Invalid state' unless todos.length is 0
               user_args.length = 2 if user_args.length is 0
-              todos = stack.shift() if todos.length is 0
+              todos = stack.shift()
               jump_to_error err if err and not options.relax
               todos.throw_if_error = false if err and options_callback
               callback_args = [err, status, user_args...]
@@ -244,13 +235,6 @@ functions share a common API with flexible options.
           options = normalize_options arguments, null, false
           befores.push opts for opts in options
           obj
-          # event = arguments[0]
-          # if typeof event is 'string'
-          #   event = type: event
-          # options = normalize_options [arguments[1]], 'before'
-          # opts.event = event for opts in options
-          # befores.push opts for opts in options
-          # obj
       properties.after = get: ->
         ->
           throw Error "look at before, doesnt seem ready yet"
