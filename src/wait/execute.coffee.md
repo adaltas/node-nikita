@@ -43,7 +43,7 @@ require 'mecano'
         options.quorum = options.cmd.length
       options.interval ?= 2000
       options.code_skipped ?= 1
-      options.log? "Start wait for execution"
+      options.log message: "Start wait for execution", level: 'DEBUG', module: 'mecano/wait/execute'
       quorum_current = 0
       modified = false
       each options.cmd
@@ -52,7 +52,7 @@ require 'mecano'
         return next() if quorum_current >= options.quorum
         run = =>
           count++
-          options.log? "mecano `wait_execute`: attempt ##{count} [INFO]"
+          options.log message: "Attempt ##{count}", level: 'INFO', module: 'mecano/wait/execute'
           @execute
             cmd: cmd
             code: options.code or 0
@@ -62,7 +62,7 @@ require 'mecano'
               setTimeout run, options.interval
               return
             return next err if err
-            options.log? "Finish wait for execution"
+            options.log message: "Finish wait for execution", level: 'INFO', module: 'mecano/wait/execute'
             quorum_current++
             modified = true if count > 1
             next()

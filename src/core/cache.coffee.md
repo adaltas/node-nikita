@@ -66,12 +66,12 @@ mecano.download
       @call
         handler: (_, callback) ->
           unless u.protocol is null
-            options.log? "Mecano `cache`: bypass source hash computation for non-file protocols [WARN]"
+            options.log message: "Bypass source hash computation for non-file protocols", level: 'WARN', module: 'mecano/src/cache'
             return callback()
           return callback() if hash isnt true
           misc.file.hash options.ssh, options.source, algo, (err, value) ->
             return callback err if err
-            options.log? "Mecano `cache`: computed hash value is '#{value}' [INFO]"
+            options.log message: "Computed hash value is '#{value}'", level: 'INFO', module: 'mecano/src/cache'
             hash = value
             callback()
       # Download the file if
@@ -81,33 +81,33 @@ mecano.download
       @call
         shy: true
         handler: (_, callback) ->
-          options.log? "Mecano `cache`: Check if destination (#{options.destination}) exists [DEBUG]"
+          options.log message: "Check if destination (#{options.destination}) exists", level: 'DEBUG', module: 'mecano/src/cache'
           ssh2fs.exists options.ssh, options.destination, (err, exists) =>
             return callback err if err
             if exists
-              options.log? "Mecano `cache`: destination exists [INFO]"
+              options.log message: "Destination exists", level: 'INFO', module: 'mecano/src/cache'
               # If no checksum , we ignore MD5 check
               if options.force
-                options.log? "Mecano `cache`: Force mode, cache will be overwritten [DEBUG]"
+                options.log message: "Force mode, cache will be overwritten", level: 'DEBUG', module: 'mecano/src/cache'
                 return callback null, true
               else if hash and typeof hash is 'string'
                 # then we compute the checksum of the file
-                options.log? "Mecano `cache`: comparing #{algo} hash [DEBUG]"
+                options.log message: "Comparing #{algo} hash", level: 'DEBUG', module: 'mecano/src/cache'
                 misc.file.hash options.ssh, options.destination, algo, (err, c_hash) ->
                   return callback err if err
                   # And compare with the checksum provided by the user
                   if hash is c_hash
-                    options.log? "Mecano `cache`: Hashes match, skipping [DEBUG]"
+                    options.log message: "Hashes match, skipping", level: 'DEBUG', module: 'mecano/src/cache'
                     return callback null, false
-                  options.log? "Mecano `cache`: Hashes don't match, delete then re-download [WARN]"
+                  options.log message: "Hashes don't match, delete then re-download", level: 'WARN', module: 'mecano/src/cache'
                   ssh2fs.unlink options.ssh, options.destination, (err) ->
                     return callback err if err
                     callback null, true
               else
-                options.log? "Mecano `cache`: destination exists, check disabled, skipping [DEBUG]"
+                options.log message: "Destination exists, check disabled, skipping", level: 'DEBUG', module: 'mecano/src/cache'
                 callback null, false
             else
-              options.log? "Mecano `cache`: destination does not exists [INFO]"
+              options.log message: "Destination does not exists", level: 'INFO', module: 'mecano/src/cache'
               callback null, true
       , (err, status) ->
         @end() unless status

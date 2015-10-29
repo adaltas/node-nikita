@@ -49,8 +49,8 @@ describe 'upload', ->
             binary: true
             source: "#{scratch}/source.tar.gz"
             destination: "#{scratch}/destination.tar.gz"
-            log: (msg) ->
-              dstsum = match[1] if match = /checksum is "(.*)"$/.exec msg
+            log: (log) ->
+              dstsum = match[1] if match = /checksum is "(.*)"$/.exec log.message
             md5: true
           , (err, uploaded) ->
             return next err if err
@@ -264,10 +264,3 @@ describe 'upload', ->
 
 
            
-
-
-
-
-
-
-

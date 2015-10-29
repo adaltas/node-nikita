@@ -62,7 +62,7 @@ require('mecano').krb5_delrinc({
         , (err, exists, stdout, stderr) ->
           return callback err if err
           unless exists
-            options.log? 'Mecano `krb5_ktadd`: keytab does not yet exists'
+            options.log message: "Keytab does not yet exists", level: 'INFO', module: 'mecano/krb5/ktadd'
             return do_ktadd()
           keytab = {}
           for line in string.lines stdout
@@ -74,7 +74,7 @@ require('mecano').krb5_delrinc({
               if not keytab[principal] or keytab[principal].kvno < kvno
                 keytab[principal] = kvno: kvno, mdate: mdate
           unless keytab[options.principal]?
-            options.log? 'Mecano `krb5_ktadd`: Principal is not listed inside the keytab'
+            options.log message: "Principal is not listed inside the keytab", level: 'INFO', module: 'mecano/krb5/ktadd'
             return do_ktadd()
           @execute
             cmd: misc.kadmin options, "getprinc -terse #{options.principal}"
@@ -88,10 +88,10 @@ require('mecano').krb5_delrinc({
             values = values.split '\t'
             mdate = parseInt(values[2], 10) * 1000
             kvno = parseInt values[8], 10
-            options.log? "Mecano `krb5_ktadd`: keytab kvno '#{keytab[principal]?.kvno}', principal kvno '#{kvno}'"
-            options.log? "Mecano `krb5_ktadd`: keytab mdate '#{new Date keytab[principal]?.mdate}', principal mdate '#{new Date mdate}'"
+            options.log message: "Keytab kvno '#{keytab[principal]?.kvno}', principal kvno '#{kvno}'", level: 'INFO', module: 'mecano/krb5/ktadd'
+            options.log message: "Keytab mdate '#{new Date keytab[principal]?.mdate}', principal mdate '#{new Date mdate}'", level: 'INFO', module: 'mecano/krb5/ktadd'
             if keytab[principal]?.kvno is kvno and keytab[principal].mdate is mdate
-              options.log? 'Mecano `krb5_ktadd`: kvno and mdate are ok, continue with changing the keytab'
+              options.log message: "Value kvno and mdate are ok, continue with changing the keytab", level: 'DEBUG', module: 'mecano/krb5/ktadd'
               return do_chown()
             do_ktremove()
       do_ktremove = =>

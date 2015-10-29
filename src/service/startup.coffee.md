@@ -52,7 +52,7 @@ require('mecano').service_startup([{
           return callback err if err
           # Invalid service name return code is 0 and message in stderr start by error
           if /^error/.test stderr
-            options.log? "Mecano `service_startup`: Invalid chkconfig name for `#{options.name}` [ERROR]"
+            options.log message: "Invalid chkconfig name for \"#{options.name}\"", level: 'ERROR', module: 'mecano/service/startup'
             return callback new Error "Invalid chkconfig name for `#{options.name}`"
           current_startup = ''
           if registered
@@ -82,18 +82,19 @@ require('mecano').service_startup([{
           cmd: cmd
         , (err) ->
           return callback err if err
-          options.log? "Mecano `service_startup`: #{options.name} on [INFO]"
+          options.log message: "Startup rules modified", level: 'INFO', module: 'mecano/service/startup'
           do_end()
       startup_del = =>
-        options.log? "Mecano `service_startup`: startup off"
+        options.log message: "Desactivating startup rules", level: 'DEBUG', module: 'mecano/service/startup'
+        options.log? "Mecano `service_startup`: s"
         # Setting the level to off. An alternative is to delete it: `chkconfig --del #{options.name}`
         @execute
           cmd: "chkconfig #{options.name} off"
         , (err) ->
           return callback err if err
-          options.log? "Mecano `service_startup`: #{options.name} off [INFO]"
+          options.log message: "Startup rules desactivating", level: 'INFO', module: 'mecano/service/startup'
           do_end()
       do_end = ->
-        options.log? "Mecano `service_startup`: #{options.name} not modified [DEBUG]" unless modified
+        options.log message: "Startup rules unmodfied", level: 'DEBUG', module: 'mecano/service/startup'
         callback null, modified
       do_startuped()

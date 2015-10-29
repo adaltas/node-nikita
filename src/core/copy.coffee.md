@@ -59,8 +59,8 @@ require('mecano').copy({
 
     module.exports = (options, callback) ->
       # Validate parameters
-      return callback new Error 'Missing source' unless options.source
-      return callback new Error 'Missing destination' unless options.destination
+      return callback Error 'Missing source' unless options.source
+      return callback Error 'Missing destination' unless options.destination
       # return callback new Error 'SSH not yet supported' if options.ssh
       # Cancel action if destination exists ? really ? no md5 comparaison, strange
       # options.not_if_exists = options.destination if options.not_if_exists is true
@@ -68,12 +68,12 @@ require('mecano').copy({
       modified = false
       srcStat = null
       dstStat = null
-      options.log? "Mecano `copy`: stat source file"
+      options.log message: "Stat source file", level: 'DEBUG', module: 'mecano/src/copy'
       fs.stat options.ssh, options.source, (err, stat) ->
         # Source must exists
         return callback err if err
         srcStat = stat
-        options.log? "Mecano `copy`: stat destination file"
+        options.log message: "Stat destination file", level: 'DEBUG', module: 'mecano/src/copy'
         fs.stat options.ssh, options.destination, (err, stat) ->
           return callback err if err and err.code isnt 'ENOENT'
           dstStat = stat
@@ -85,7 +85,7 @@ require('mecano').copy({
           else do_copy options.source, (err) -> callback err, modified
       # Copy a directory
       do_directory = (dir, callback) ->
-        options.log? "Source is a directory"
+        options.log message: "Source is a directory", level: 'INFO', module: 'mecano/src/copy'
         glob options.ssh, "#{dir}/**", dot: true, (err, files) ->
           return callback err if err
           each files
@@ -105,7 +105,7 @@ require('mecano').copy({
           then do_copy_dir source, destination
           else do_copy_file source, destination
         do_copy_dir = (source, destination) ->
-          options.log? "Mecano `copy`: create directory #{destination}"
+          options.log message: "Create directory #{destination}", level: 'WARN', module: 'mecano/src/copy'
           # todo, add permission
           fs.mkdir options.ssh, destination, (err) ->
             return callback() if err?.code is 'EEXIST'
@@ -119,7 +119,7 @@ require('mecano').copy({
             return callback err if err and err.message.indexOf('Does not exist') isnt 0
             # Files are the same, we can skip copying
             return do_chown_chmod destination if md5
-            options.log? "Mecano `copy`: Copy file from #{source} into #{destination}"
+            options.log message: "Copy file from #{source} into #{destination}", level: 'WARN', module: 'mecano/src/copy'
             misc.file.copyFile options.ssh, source, destination, (err) ->
               return callback err if err
               modified = true
@@ -127,13 +127,11 @@ require('mecano').copy({
         do_chown_chmod = (destination) =>
           @chown
             destination: destination
-            # stat: destinationStat
             uid: options.uid
             gid: options.gid
             if: options.uid? or options.gid?
           @chmod
             destination: destination
-            # stat: destinationStat
             mode: options.mode
             if: options.mode?
           @then (err, status) ->
@@ -141,7 +139,7 @@ require('mecano').copy({
             modified = true if status
             do_end()
         do_end = ->
-          options.log? "Mecano `copy`: copy file #{source}" if modified
+          options.log message: "File #{source} copied", level: 'DEBUG', module: 'mecano/src/copy'
           callback null, modified
 
 ## Dependencies

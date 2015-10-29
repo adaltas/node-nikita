@@ -43,10 +43,10 @@ require('mecano').cron_remove({
     module.exports = (options, callback) ->
       return callback new Error 'valid cmd is required' unless options.cmd?.length > 0
       if options.user?
-        options.log? "Using user #{options.user} [INFO]"
+        options.log message: "Using user #{options.user}", level: 'INFO', module: 'mecano/cron/remove'
         crontab = "crontab -u #{options.user}"
       else
-        options.log? 'Using default user [INFO]'
+        options.log message: "Using default user", level: 'INFO', module: 'mecano/cron/remove'
         crontab = "crontab"
       status = false
       jobs = []
@@ -63,10 +63,10 @@ require('mecano').cron_remove({
         jobs = stdout.trim().split '\n'
         for job, i in jobs
           continue unless regex.test job
-          options.log? "Job '#{job}' matches. Removing from list [WARN]"
+          options.log message: "Job '#{job}' matches. Removing from list", level: 'WARN', module: 'mecano/cron/remove'
           status = true
           jobs.splice i, 1
-        options.log? 'No Job matches. Skipping [INFO]' unless status
+        options.log message: "No Job matches. Skipping", level: 'INFO', module: 'mecano/cron/remove'
       .execute
         cmd: """
         #{crontab} - <<EOF

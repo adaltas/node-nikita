@@ -73,6 +73,7 @@ describe 'cache', ->
         logs = []
         mecano
           ssh: ssh
+          log_serializer: (log) -> "[#{log.level}] #{log.message}"
         .write
           destination: "#{scratch}/source"
           content: "okay"
@@ -88,7 +89,7 @@ describe 'cache', ->
           log: (msg) -> logs.push msg
         , (err, status, file) ->
           status.should.be.false() unless err # because destination exists
-          ("Mecano `cache`: bypass source hash computation for non-file protocols [WARN]" in logs).should.be.true()
+          ("[WARN] Bypass source hash computation for non-file protocols" in logs).should.be.true() unless err
           logs = []
         .cache
           source: 'http://localhost:12345/my_file'
@@ -97,7 +98,7 @@ describe 'cache', ->
           log: (msg) -> logs.push msg
         , (err, status, file) ->
           status.should.be.false() unless err
-          ('Mecano `cache`: Hashes match, skipping [DEBUG]' in logs).should.be.true() unless err
+          ("[DEBUG] Hashes match, skipping" in logs).should.be.true() unless err
           logs = []
         .cache
           source: 'http://localhost:12345/my_file'
@@ -106,7 +107,7 @@ describe 'cache', ->
           log: (msg) -> logs.push msg
         , (err, status, file) ->
           status.should.be.true() unless err
-          ('Mecano `cache`: Hashes don\'t match, delete then re-download [WARN]' in logs).should.be.true() unless err
+          ("[WARN] Hashes don\'t match, delete then re-download" in logs).should.be.true() unless err
         .then next
 
   describe 'file', ->
@@ -138,6 +139,7 @@ describe 'cache', ->
         logs = []
         mecano
           ssh: ssh
+          log_serializer: (log) -> "[#{log.level}] #{log.message}"
         .write
           destination: "#{scratch}/source"
           content: "okay"
@@ -152,7 +154,7 @@ describe 'cache', ->
           log: (msg) -> logs.push msg
         , (err, status, file) ->
           status.should.be.false() unless err
-          ('Mecano `cache`: Hashes match, skipping [DEBUG]' in logs).should.be.true() unless err
+          ('[DEBUG] Hashes match, skipping' in logs).should.be.true() unless err
           logs = []
         .cache
           source: "#{scratch}/source"
@@ -161,7 +163,7 @@ describe 'cache', ->
           log: (msg) -> logs.push msg
         , (err, status, file) ->
           status.should.be.false() unless err
-          ('Mecano `cache`: Hashes match, skipping [DEBUG]' in logs).should.be.true() unless err
+          ('[DEBUG] Hashes match, skipping' in logs).should.be.true() unless err
           logs = []
         .cache
           source: "#{scratch}/source"
@@ -170,6 +172,6 @@ describe 'cache', ->
           log: (msg) -> logs.push msg
         , (err, status, file) ->
           status.should.be.true() unless err
-          ('Mecano `cache`: Hashes don\'t match, delete then re-download [WARN]' in logs).should.be.true() unless err
+          ("[WARN] Hashes don't match, delete then re-download" in logs).should.be.true() unless err
         .then next
           

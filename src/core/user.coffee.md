@@ -97,11 +97,11 @@ you are a member of the "wheel" group (gid of "10") with the command
           return callback err if err
           do_info()
       do_info = ->
-        options.log? "Mecano `user`: get user information for #{options.name} [DEBUG]"
+        options.log message: "Get user information for #{options.name}", level: 'DEBUG', module: 'mecano/src/user'
         options.store.cache_passwd = undefined # Clear cache if any 
         uid_gid.passwd options.ssh, options.store, (err, users) ->
           return callback err if err
-          options.log? "Mecano `user`: got #{JSON.stringify users[options.name]} [INFO]"
+          options.log message: "Got #{JSON.stringify users[options.name]}", level: 'INFO', module: 'mecano/src/user'
           user_info = users[options.name]
           # Create user if it does not exist
           return do_create() unless user_info
@@ -143,7 +143,7 @@ you are a member of the "wheel" group (gid of "10") with the command
             modified = true
             do_password()
           else
-            options.log? "Mecano `user`: user defined elsewhere than '/etc/passwd', exit code is 9 [WARN]"
+            options.log message: "User defined elsewhere than '/etc/passwd', exit code is 9", level: 'WARN', module: 'mecano/src/user'
             callback null, modified
       do_update = =>
         changed = false
@@ -152,8 +152,8 @@ you are a member of the "wheel" group (gid of "10") with the command
         if options.groups then for group in options.groups
           return callback err "Group does not exist: #{group}" unless groups_info[group]
           changed = true if groups_info[group].user_list.indexOf(options.name) is -1
-        options.log? "Mecano `user`: user #{options.name} not modified [DEBUG]" unless changed
-        options.log? "Mecano `user`: user #{options.name} modified [WARN]" if changed
+        options.log message: "User #{options.name} not modified", level: 'DEBUG', module: 'mecano/src/user' unless changed
+        options.log message: "User #{options.name} modified", level: 'WARN', module: 'mecano/src/user' if changed
         cmd = 'usermod'
         cmd += " -d #{options.home}" if options.home
         cmd += " -s #{options.shell}" if options.shell
@@ -184,7 +184,7 @@ you are a member of the "wheel" group (gid of "10") with the command
           if: options.password_sync and options.password
         , (err, modified) ->
           return callback err if err
-          options.log? 'Mecano `ldap_user`: password modified [WARN]' if modified
+          options.log message: "Password modified", level: 'WARN', module: 'mecano/src/user' if modified
           # modified = true if modified
           do_end()
       do_end = ->

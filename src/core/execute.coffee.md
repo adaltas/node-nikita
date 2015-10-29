@@ -96,7 +96,7 @@ mecano.execute({
       options.code_skipped = [options.code_skipped] unless Array.isArray options.code_skipped
       if options.trap_on_error
         options.cmd = "set -e\n#{options.cmd}"
-      options.log? "Mecano `execute`: #{options.cmd} [INFO]"
+      options.log message: "Command is: `#{options.cmd}`", level: 'INFO', module: 'mecano/src/execute'
       child = exec options
       stdout = []; stderr = []
       child.stdout.pipe options.stdout, end: false if options.stdout
@@ -122,14 +122,13 @@ mecano.execute({
           if options.stderr
             child.stderr.unpipe options.stderr
           if options.code.indexOf(code) is -1 and options.code_skipped.indexOf(code) is -1
-            options.log? "Mecano `execute`: invalid exit code \"#{code}\""
             err = new Error "Invalid Exit Code: #{code}"
             err.code = code
             return callback err, null, stdout, stderr
           if options.code_skipped.indexOf(code) is -1
             executed = true
           else
-            options.log? "Mecano `execute`: skip exit code \"#{code}\""
+            options.log message: "Skip exit code \"#{code}\"", level: 'INFO', module: 'mecano/src/execute'
           callback null, executed, stdout, stderr
         , 1
 

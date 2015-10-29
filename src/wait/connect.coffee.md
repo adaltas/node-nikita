@@ -109,7 +109,7 @@ require 'mecano'
             timedout = true
             @child().remove destination: randfile
           , options.timeout
-        options.log? "Start wait for #{server.host}:#{server.port}"
+        options.log message: "Start wait for #{server.host}:#{server.port}", level: 'DEBUG', module: 'mecano/wait/connect'
         options.wait?.call @, server
         # dont exit loop until rand file is removed or connection succeed
         child = @child()
@@ -133,7 +133,7 @@ require 'mecano'
           err = new Error "Reached timeout #{options.timeout}" if not err and timedout
           options.ready?.call @, server, executed unless err
           modified = true if executed
-          options.log? "Finish wait for #{server.host} #{server.port}"
+          options.log message: "Finish wait for #{server.host} #{server.port}", level: 'INFO', module: 'mecano/wait/connect'
           quorum_current++ unless err
           cmd = for randfile in randfiles then "rm #{randfile};"
           child.execute

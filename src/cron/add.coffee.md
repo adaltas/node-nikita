@@ -46,10 +46,10 @@ require('mecano').cron_add({
       return callback new Error 'valid when is required' unless options.when
       return callback new Error 'valid cmd is required' unless options.cmd
       if options.user?
-        options.log? "Using user #{options.user} [DEBUG]"
+        options.log message: "Using user #{options.user}", level: 'DEBUG', module: 'mecano/cron/add'
         crontab = "crontab -u #{options.user}"
       else
-        options.log? 'Using default user [DEBUG]'
+        options.log message: "Using default user", level: 'DEBUG', module: 'mecano/cron/add'
         crontab = "crontab"
       jobs = null
       @
@@ -72,14 +72,14 @@ require('mecano').cron_add({
           if regex.test job
             added = false
             break if job is new_job # Found job, stop here
-            options.log? "`mecano chron_add`: entry has changed [WARN]"
+            options.log message: "Entry has changed", level: 'WARN', module: 'mecano/cron/add'
             diff job, new_job, options
             job = new_job
             modified = true
           job
         if added
           jobs.push new_job
-          options.log? "Job not found in crontab. Adding [WARN]"
+          options.log message: "Job not found in crontab, adding", level: 'WARN', module: 'mecano/cron/add'
         jobs = null unless added or modified
       .then (err) ->
         return callback err if err

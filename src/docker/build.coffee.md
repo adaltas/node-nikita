@@ -147,13 +147,13 @@ mecano.docker_build({
         cmd += " -t \"#{options.image}\""
         # custom command for content option
         if options.dockerfile?
-          options.log? "Building from Dockerfile: '#{options.dockerfile}' [INFO]"
+          options.log message: "Building from Dockerfile: \"#{options.dockerfile}\"", level: 'INFO', module: 'mecano/docker/build'
           cmd += " -f #{options.dockerfile} #{path.dirname options.dockerfile}"
         else if options.content?
-          options.log? "Building from text: Docker won't have a context. ADD/COPY not working [WARN]"
+          options.log message: "Building from text: Docker won't have a context. ADD/COPY not working", level: 'WARN', module: 'mecano/docker/build'
           cmd += " - <<DOCKERFILE\n#{options.content}\nDOCKERFILE" if options.content?
         else
-          options.log? "Building from CWD [INFO]"
+          options.log message: "Building from CWD", level: 'INFO', module: 'mecano/docker/build'
           cmd += ' .'
         # Construct other exec parameter
         opts = docker.get_options cmd, options

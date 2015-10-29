@@ -57,6 +57,7 @@ describe 'wait execute', ->
       logs = []
       mecano
         ssh: ssh
+        log_serializer: (log) -> "[#{log.level}] #{log.message}"
       .call ->
         setTimeout ->
           fs.mkdir ssh, "#{scratch}/a_file", -> # ok
@@ -64,13 +65,13 @@ describe 'wait execute', ->
       .wait_execute
         cmd: "test -d #{scratch}/a_file"
         interval: 60
-        log: (msg) -> logs.push msg if /attempt/.test msg
+        log: (msg) -> logs.push msg if /Attempt/.test msg
       .then (err) ->
         return next err if err
         logs.should.eql [
-          'mecano `wait_execute`: attempt #1 [INFO]'
-          'mecano `wait_execute`: attempt #2 [INFO]'
-          'mecano `wait_execute`: attempt #3 [INFO]'
+          '[INFO] Attempt #1'
+          '[INFO] Attempt #2'
+          '[INFO] Attempt #3'
         ]
         next()
 
@@ -162,10 +163,3 @@ describe 'wait execute', ->
         fs.readFile ssh, "#{scratch}/result", 'ascii', (err, data) ->
           data.should.eql '1\n2\n' unless err
           next err
-
-
-
-
-
-
-

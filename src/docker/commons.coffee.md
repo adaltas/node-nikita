@@ -12,7 +12,7 @@
         , (err, executed) ->
           return callback err, null if err
           if executed
-            options.log? "provider is: docker-machine [DEBUG]"
+            options.log message: "Provider is: docker-machine", level: 'DEBUG', module: 'mecano/docker/commons'
             return callback null,'docker-machine'
           mecano
           .execute
@@ -22,7 +22,7 @@
           , (err, executed) ->
             return callback err,  null  if err
             provider = if executed then 'boot2docker' else 'docker'
-            options.log? "provider is: #{provider} [DEBUG]"
+            options.log message: "Provider is: #{provider}", level: 'DEBUG', module: 'mecano/docker/commons'
             return callback null, provider
       prepare_cmd: (provider, machine) ->
         return  Error 'Missing provider parameter' unless provider?

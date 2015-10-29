@@ -95,7 +95,7 @@ require('mecano').ini({
       # Start real work
       do_get = ->
         return do_write() unless merge
-        options.log? "Mecano `ini`: get content for merge"
+        options.log message: "Get content for merge", level: 'DEBUG', module: 'mecano/src/ini'
         fs.exists ssh, destination, (err, exists) ->
           return callback err if err
           return do_write() unless exists
@@ -106,8 +106,10 @@ require('mecano').ini({
             content = misc.merge parse(c, options), content
             do_write()
       do_write = =>
-        options.log? "Mecano `ini`: write"
-        misc.ini.clean content if options.clean
+        if options.clean
+          options.log message: "Clean content", level: 'INFO', module: 'mecano/src/ini'
+          misc.ini.clean content
+        options.log message: "Serialize content", level: 'DEBUG', module: 'mecano/src/ini'
         stringify = options.stringify or misc.ini.stringify
         options.content = stringify content, options
         @write options, (err, written) ->

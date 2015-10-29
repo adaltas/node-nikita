@@ -78,14 +78,8 @@ require('mecano').ldap_index({
         EOF
         """
         code_skipped: 68
-        log: options.log
       , (err, executed, stdout, stderr) ->
         return callback err if err
         modified = stderr.match(/Already exists/g)?.length isnt stdout.match(/adding new entry/g).length
         added = modified # For now, we dont modify
         callback err, modified, added
-
-
-
-
-

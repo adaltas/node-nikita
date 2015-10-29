@@ -56,12 +56,12 @@ The result of the above action can be viewed with the command
       modified = false
       info = null
       do_info = ->
-        options.log? "Mecano `group`: get group information for '#{options.name}' [DEBUG]"
+        options.log message: "Get group information for '#{options.name}'", level: 'DEBUG', module: 'mecano/src/group'
         options.store.cache_group = undefined # Clear cache if any
         uid_gid.group options.ssh, options.store, (err, groups) ->
           return callback err if err
-          options.log? "Mecano `group`: got #{JSON.stringify groups[options.name]} [INFO]"
           info = groups[options.name]
+          options.log message: "Got #{JSON.stringify info}", level: 'INFO', module: 'mecano/src/group'
           if info then do_compare() else do_create()
       do_create = =>
         cmd = 'groupadd'
@@ -75,23 +75,21 @@ The result of the above action can be viewed with the command
           return callback err if err
           if created
           then modified = true
-          else options.log? "Mecano `group`: Group defined elsewhere than '/etc/group', exit code is 9"
+          else options.log message: "Group defined elsewhere than '/etc/group', exit code is 9", level: 'WARN', module: 'mecano/src/group'
           callback null, modified
       do_compare = ->
         for k in ['gid']
           modified = true if options[k]? and info[k] isnt options[k]
-        options.log? "Mecano `group`: Did group information changed: #{modified}"
+        if modified
+        then options.log message: "Group information modified", level: 'WARN', module: 'mecano/src/group'
+        else options.log message: "Group information unchanged", level: 'DEBUG', module: 'mecano/src/group'
         if modified then do_modify() else callback()
       do_modify = =>
         cmd = 'groupmod'
         cmd += " -g #{options.gid}" if options.gid
         cmd += " #{options.name}"
         @execute
-          ssh: options.ssh
           cmd: cmd
-          log: options.log
-          stdout: options.stdout
-          stderr: options.stderr
         , (err) ->
           return callback err, modified
       do_info()

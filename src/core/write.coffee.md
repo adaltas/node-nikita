@@ -182,6 +182,8 @@ require('mecano').write({
       return callback Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?
       return callback Error 'Define either source or content' if options.source and options.content
       return callback Error 'Missing destination' unless options.destination
+      options.log message: "Source is \"#{options.source}\"", level: 'DEBUG', module: 'mecano/src/write'
+      options.log message: "Destination is \"#{options.destination}\"", level: 'DEBUG', module: 'mecano/src/write'
       options.content = options.content.toString() if options.content and Buffer.isBuffer options.content
       options.diff ?= options.diff or !!options.stdout
       options.engine ?= 'nunjunks'
@@ -222,8 +224,7 @@ require('mecano').write({
         # Option "local_source" force to bypass the ssh
         # connection, use by the upload function
         source = options.source or options.destination
-        options.log? "Mecano `write`: force local source is \"#{if options.local_source then 'true' else 'false'}\" [DEBUG]"
-        options.log? "Mecano `write`: source is \"#{options.source}\" [DEBUG]"
+        options.log message: "Force local source is \"#{if options.local_source then 'true' else 'false'}\"", level: 'DEBUG', module: 'mecano/src/write'
         ssh = if options.local_source then null else options.ssh
         fs.exists ssh, source, (err, exists) ->
           return callback err if err
@@ -231,7 +232,7 @@ require('mecano').write({
             return callback new Error "Source does not exist: #{JSON.stringify options.source}" if options.source
             content = ''
             return do_read_destination()
-          options.log? "Mecano `write`: read source [DEBUG]"
+          options.log message: "Reading source", level: 'DEBUG', module: 'mecano/src/write'
           fs.readFile ssh, source, 'utf8', (err, src) ->
             return callback err if err
             content = src
@@ -240,32 +241,36 @@ require('mecano').write({
       do_read_destination = =>
         # no need to test changes if destination is a callback
         return do_render() if typeof options.destination is 'function'
-        options.log? "Mecano `write`: destination is \"#{options.destination}\" [DEBUG]"
         exists = ->
-          options.log? "Mecano `write`: stat destination [DEBUG]"
+          options.log message: "Stat destination", level: 'DEBUG', module: 'mecano/src/write'
           fs.lstat options.ssh, options.destination, (err, stat) ->
             return do_mkdir() if err?.code is 'ENOENT'
             return callback err if err
             destinationStat = stat
             if stat.isDirectory()
               options.destination = "#{options.destination}/#{path.basename options.source}"
+              options.log message: "Destination is a directory and is now \"options.destination\"", level: 'INFO', module: 'mecano/src/write'
               # Destination is the parent directory, let's see if the file exist inside
               fs.stat options.ssh, options.destination, (err, stat) ->
-                # File doesnt exist
-                return do_render() if err?.code is 'ENOENT'
+                if err?.code is 'ENOENT'
+                  options.log message: "New destination does not exist", level: 'INFO', module: 'mecano/src/write'
+                  return do_render()
                 return callback err if err
                 return callback new Error "Destination is not a file: #{options.destination}" unless stat.isFile()
+                options.log message: "New destination exist", level: 'INFO', module: 'mecano/src/write'
                 destinationStat = stat
                 do_read()
             else if stat.isSymbolicLink()
+              options.log message: "Destination is a symlink", level: 'INFO', module: 'mecano/src/write'
               return do_read() unless options.unlink
               fs.unlink options.ssh, options.destination, (err, stat) ->
                 return callback err if err
                 do_render() # Dont go to mkdir since parent dir exists
             else if stat.isFile()
+              options.log message: "Destination is a file", level: 'INFO', module: 'mecano/src/write'
               do_read()
             else
-              callback Error "Invalid File Type"
+              callback Error "Invalid File Type Destination"
         do_mkdir = =>
           @mkdir
             destination: path.dirname options.destination
@@ -278,7 +283,7 @@ require('mecano').write({
             return callback err if err
             do_render()
         do_read = ->
-          options.log? "Mecano `write`: read destination [DEBUG]"
+          options.log message: "Reading destination", level: 'DEBUG', module: 'mecano/src/write'
           fs.readFile options.ssh, options.destination, 'utf8', (err, dest) ->
             return callback err if err
             destination = dest if options.diff # destination content only use by diff
@@ -287,7 +292,7 @@ require('mecano').write({
         exists()
       do_render = ->
         return do_skip_empty_lines() unless options.context?
-        options.log? "Mecano `write`: rendering with #{options.engine} [DEBUG]"
+        options.log message: "Rendering with #{options.engine}", level: 'DEBUG', module: 'mecano/src/write'
         try
           switch options.engine
             when 'nunjunks'
@@ -299,7 +304,7 @@ require('mecano').write({
                 if typeof func is 'function'
                   engine.addFilter filter, func
                 else
-                  options.log? "Incorrect filter '#{filter}': not a function. Ignoring [WARN]"
+                  options.log message: "Option filter not a function and ignored", level: 'WARN', module: 'mecano/src/write'
               content = engine.renderString content.toString(), options.context
             when 'eco'
               content = eco.render content.toString(), options.context
@@ -309,12 +314,12 @@ require('mecano').write({
         do_skip_empty_lines()
       do_skip_empty_lines = ->
         return do_replace_partial() unless options.skip_empty_lines?
-        options.log? "Mecano `write`: skip empty lines [DEBUG]"
+        options.log message: "Skip empty lines", level: 'DEBUG', module: 'mecano/src/write'
         content = content.replace /(\r\n|[\n\r\u0085\u2028\u2029])\s*(\r\n|[\n\r\u0085\u2028\u2029])/g, "$1"
         do_replace_partial()
       do_replace_partial = ->
         return do_eof() unless write.length
-        options.log? "Mecano `write`: replace [DEBUG]"
+        options.log message: "Replacing sections of the file", level: 'DEBUG', module: 'mecano/src/write'
         for opts in write
           if opts.match
             opts.match ?= opts.replace
@@ -364,15 +369,15 @@ require('mecano').write({
               from = ///(^#{quote opts.from}$)///m.exec(content)
               to = ///(^#{quote opts.to}$)///m.exec(content)
               if from? and not to?
-                options.log? "Mecano `write`: found 'from' but missing 'to', skip writing [WARN]"
+                options.log message: "Found 'from' but missing 'to', skip writing", level: 'WARN', module: 'mecano/src/write'
               else if not from? and to?
-                options.log? "Mecano `write`: missing 'from' but found 'to', skip writing [WARN]"
+                options.log message: "Missing 'from' but found 'to', skip writing", level: 'WARN', module: 'mecano/src/write'
               else if not from? and not to?
                 if opts.append
                   content += '\n' + opts.from + '\n' + opts.replace+ '\n' + opts.to
                   append = false
                 else
-                  options.log? "Mecano `write`: missing 'from' and 'to' without append, skip writing [WARN]"
+                  options.log message: "Missing 'from' and 'to' without append, skip writing", level: 'WARN', module: 'mecano/src/write'
               else
                 content = content.substr(0, from.index + from[1].length + 1) + opts.replace + '\n' + content.substr(to.index)
                 append = false
@@ -381,18 +386,18 @@ require('mecano').write({
               if from?
                 content = content.substr(0, from.index + from[1].length) + '\n' + opts.replace
               else # TODO: honors append
-                options.log? "Mecano `write`: missing 'from', skip writing [WARN]"
+                options.log message: "Missing 'from', skip writing", level: 'WARN', module: 'mecano/src/write'
             else if not opts.from and opts.to
               from_index = 0
               to = ///(^#{quote opts.to}$)///m.exec(content)
               if to?
                 content = opts.replace + '\n' + content.substr(to.index)
               else # TODO: honors append
-                options.log? "Mecano `write`: missing 'to', skip writing [WARN]"
+                options.log message: "Missing 'to', skip writing", level: 'WARN', module: 'mecano/src/write'
         do_eof()
       do_eof = ->
         return do_diff() unless options.eof?
-        options.log? "Mecano `write`: eof [DEBUG]"
+        options.log message: "Checking option eof", level: 'DEBUG', module: 'mecano/src/write'
         if options.eof is true
           for char, i in content
             if char is '\r'
@@ -402,18 +407,19 @@ require('mecano').write({
               options.eof = char
               break;
           options.eof = '\n' if options.eof is true
+          options.log message: "Option eof is true, gessing as #{JSON.stringify options.eof}", level: 'INFO', module: 'mecano/src/write'
         unless string.endsWith content, options.eof
-          options.log? "Mecano `write`: add eof [INFO]"
+          options.log message: "Add eof", level: 'WARN', module: 'mecano/src/write'
           content += options.eof
         do_diff()
       do_diff = ->
         return do_chown_chmod() if destinationHash is string.hash content
-        options.log? "Mecano `write`: file content has changed [WARN]"
+        options.log message: "File content has changed", level: 'WARN', module: 'mecano/src/write'
         diff content, destination, options
         do_backup()
       do_backup = =>
         return do_write() unless options.backup and destinationHash
-        options.log? "Mecano `write`: create backup [WARN]"
+        options.log message: "Create backup", level: 'INFO', module: 'mecano/src/write'
         backup = if typeof options.backup is 'string' then options.backup else ".#{Date.now()}"
         @copy
           ssh: options.ssh
@@ -424,34 +430,33 @@ require('mecano').write({
           do_write()
       do_write = ->
         if typeof options.destination is 'function'
-          options.log? "Mecano `write`: write destination with user function [INFO]"
+          options.log message: "Write destination with user function", level: 'INFO', module: 'mecano/src/write'
           options.destination content
           do_end()
         else
-          options.log? "Mecano `write`: write destination [INFO]"
+          options.log message: "Write destination", level: 'INFO', module: 'mecano/src/write'
           options.flags ?= 'a' if append
           # Ownership and permission are also handled
           uid_gid options, (err) ->
             return callback err if err
             fs.writeFile options.ssh, options.destination, content, options, (err) ->
               return callback err if err
-              options.log? "Mecano `write`: content has changed [INFO]"
+              options.log message: "File written", level: 'INFO', module: 'mecano/src/write'
               modified = true
               do_end()
       do_chown_chmod = =>
-        @
-        .chown
+        @chown
           destination: options.destination
           stat: destinationStat
           uid: options.uid
           gid: options.gid
           if: options.uid? or options.gid?
-        .chmod
+        @chmod
           destination: options.destination
           stat: destinationStat
           mode: options.mode
           if: options.mode?
-        .then (err, status) ->
+        @then (err, status) ->
           return callback err if err
           modified = true if status
           do_end()

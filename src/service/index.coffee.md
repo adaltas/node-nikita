@@ -88,7 +88,7 @@ require('mecano').service([{
         # option name and yum_name are optional, skill installation if not present
         return do_startuped() unless pkgname
         cache = =>
-          options.log? "Mecano `service: list installed [DEBUG]"
+          options.log message: "List installed", level: 'DEBUG', module: 'mecano/service/index'
           c = if options.cache then '-C' else ''
           @execute
             ssh: options.ssh
@@ -111,7 +111,7 @@ require('mecano').service([{
         if installed then decide() else cache()
       do_updates = =>
         cache = =>
-          options.log? "Mecano `service`: list available updates [DEBUG]"
+          options.log message: "List available updates", level: 'DEBUG', module: 'mecano/service/index'
           c = if options.cache then '-C' else ''
           @execute
             cmd: "yum #{c} list updates"
@@ -128,11 +128,11 @@ require('mecano').service([{
             decide()
         decide = ->
           if updates.indexOf(pkgname) isnt -1 then do_install() else
-            options.log? "Mecano `service`: No available update for '#{pkgname}' [INFO]"
+            options.log message: "No available update for \"#{pkgname}\"", level: 'INFO', module: 'mecano/service/index'
             do_startuped()
         if updates then decide() else cache()
       do_install = =>
-        options.log? "Mecano `service`: install '#{pkgname}' [INFO]"
+        options.log message: "Install \"#{pkgname}\"", level: 'INFO', module: 'mecano/service/index'
         @execute
           ssh: options.ssh
           cmd: "yum install -y #{pkgname}"
@@ -145,7 +145,7 @@ require('mecano').service([{
             updates.splice updatesIndex, 1 unless updatesIndex is -1
           # Those 2 lines seems all wrong
           unless succeed
-            options.log? "Mecano `service`: No package available for '#{pkgname}' [ERROR]"
+            options.log message: "No package available for \"#{pkgname}\"", level: 'ERROR', module: 'mecano/service/index'
             return callback new Error "No package available for '#{pkgname}'."
           modified = true if installedIndex isnt -1
           do_startuped()
@@ -161,7 +161,7 @@ require('mecano').service([{
           do_started()
       do_started = =>
         return do_finish() unless options.action
-        options.log? "Mecano `service`: check if started"
+        options.log message: "Check if started", level: 'DEBUG', module: 'mecano/service/index'
         @execute
           cmd: "service #{srvname} status"
           code_skipped: [3, 1] # ntpd return 1 if pidfile exists without a matching process
@@ -175,7 +175,7 @@ require('mecano').service([{
           do_finish()
       do_action = (action) =>
         return do_finish() unless options.action
-        options.log? "Mecano `service`: #{action} service"
+        options.log message: "Running #{action} on service", level: 'INFO', module: 'mecano/service/index'
         @execute
           cmd: "service #{srvname} #{action}"
         , (err, executed) ->
@@ -184,7 +184,9 @@ require('mecano').service([{
           do_finish()
       do_finish = ->
         if options.cache
+          options.log message: "Caching installed on \"mecano:execute:installed\"", level: 'INFO', module: 'mecano/service/index'
           options.store['mecano:execute:installed'] = installed
+          options.log message: "Caching updates on \"mecano:execute:updates\"", level: 'INFO', module: 'mecano/service/index'
           options.store['mecano:execute:updates'] = updates
         callback null, modified
       do_installed()

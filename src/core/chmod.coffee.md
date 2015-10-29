@@ -42,22 +42,21 @@ require('mecano').chmod({
       # Validate parameters
       return callback Error "Missing destination: #{JSON.stringify options.destination}" unless options.destination
       return callback Error "Missing option 'mode'" unless options.mode
-      # options.log? "Mecano `chmod` [DEBUG]"
       do_stat = ->
         # Option 'stat' short-circuit
         return do_chmod options.stat if options.stat
-        options.log? "Mecano `chmod`: stat \"#{options.destination}\" [DEBUG]"
+        options.log message: "Stat \"#{options.destination}\"", level: 'DEBUG', module: 'mecano/src/chmod'
         fs.stat options.ssh, options.destination, (err, stat) ->
           return callback err if err
           do_chmod stat
       do_chmod = (stat) ->
         # Detect changes
         if misc.mode.compare stat.mode, options.mode
-          options.log? "Mecano `chmod`: identical permissions on '#{options.destination}' [INFO]"
+          options.log message: "Identical permissions on \"#{options.destination}\"", level: 'INFO', module: 'mecano/src/chmod'
           return callback()
         # Apply changes
         fs.chmod options.ssh, options.destination, options.mode, (err) ->
-          options.log? "Mecano `chmod`: change permissions from '#{stat.mode}' to '#{options.mode}' on '#{options.destination}' [WARN]" unless err
+          options.log message: "Change permissions from \"#{stat.mode}\" to \"#{options.mode}\" on \"#{options.destination}\"", level: 'WARN', module: 'mecano/src/chmod'
           callback err, true
       do_stat()
 
@@ -65,9 +64,3 @@ require('mecano').chmod({
 
     fs = require 'ssh2-fs'
     misc = require '../misc'
-
-
-
-
-
-

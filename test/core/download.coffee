@@ -328,6 +328,7 @@ describe 'download', ->
         destination = "#{scratch}/check_md5"
         mecano
           ssh: ssh
+          log_serializer: (log) -> "[#{log.level}] #{log.message}"
         .write
           destination: "#{scratch}/source"
           content: "okay"
@@ -345,6 +346,6 @@ describe 'download', ->
           log: (msg) -> logs.push msg
         , (err, downloaded) ->
           downloaded.should.be.false() unless err
-          ("Mecano `download`: computed hash value is 'df8fede7ff71608e24a5576326e41c75' [INFO]" in logs).should.be.true()
-          ("Mecano `download`: Hashes match, skipping [DEBUG]" in logs).should.be.true()
+          ("[INFO] Computed hash value is 'df8fede7ff71608e24a5576326e41c75'" in logs).should.be.true()
+          ("[DEBUG] Hashes match, skipping" in logs).should.be.true()
         .then next

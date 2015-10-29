@@ -71,7 +71,7 @@ require('mecano').ldap_acl({
       .run (acl, callback) =>
         do_getdn = =>
           return do_getacls() if options.hdb_dn
-          options.log? "mecano `ldap_acl`: get DN of the HDB to modify"
+          options.log message: "Get DN of the HDB to modify", level: 'DEBUG', module: 'mecano/ldap/acl'
           @execute
             cmd: """
             ldapsearch -LLL -Y EXTERNAL -H ldapi:/// \
@@ -86,7 +86,7 @@ require('mecano').ldap_acl({
             options.hdb_dn = hdb_dn.trim()
             do_getacls()
         do_getacls = =>
-          options.log? "mecano `ldap_acl`: list all ACL of the directory"
+          options.log message: "List all ACL of the directory", level: 'DEBUG', module: 'mecano/ldap/acl'
           @execute
             cmd: """
             ldapsearch -LLL -Y EXTERNAL -H ldapi:/// \
@@ -129,18 +129,19 @@ require('mecano').ldap_acl({
                   found = false if acl_by isnt access_by
                 not_found_acl.push acl_by unless found
             if is_perfect_match
-              options.log? 'mecano `ldap_acl`: no modification to apply'
+              options.log message: "No modification to apply", level: 'INFO', module: 'mecano/ldap/acl'
               return do_end()
             if not_found_acl.length
-              options.log? 'mecano `ldap_acl`: modify access after undefined acl'
+              options.log message: "Modify access after undefined acl", level: 'INFO', module: 'mecano/ldap/acl'
               for access_by in olcAccess.by
                 not_found_acl.push access_by
               olcAccess.by = not_found_acl
             else
-              options.log? 'mecano `ldap_acl`: modify access after reorder'
+              options.log message: "Modify access after reorder", level: 'INFO', module: 'mecano/ldap/acl'
+              options.log? 'mecano `ldap_acl`: m'
               olcAccess.by = acl.by
           else
-            options.log? 'mecano `ldap_acl`: insert a new access'
+            options.log message: "Insert a new access", level: 'INFO', module: 'mecano/ldap/acl'
             index = olcAccesses.length
             if acl.first # not tested
               index = 0

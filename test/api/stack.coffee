@@ -9,7 +9,7 @@ describe 'api stack', ->
 
   it 'sync handler register actions', (next) ->
     msgs = []
-    m = mecano log: msgs.push.bind msgs
+    m = mecano log: (log) -> msgs.push log.message
     m.call (options) ->
       options.log 'a1'
       m.call (options) ->
@@ -27,7 +27,7 @@ describe 'api stack', ->
 
   it 'async handler register actions and callback async', (next) ->
     msgs = []
-    m = mecano log: msgs.push.bind msgs
+    m = mecano log: (log) -> msgs.push log.message
     m.call (options, next) ->
       options.log 'a'
       m.call (options, next) ->
@@ -44,7 +44,7 @@ describe 'api stack', ->
 
   it 'async handler register actions and callback sync', (next) ->
     msgs = []
-    m = mecano log: msgs.push.bind msgs
+    m = mecano log: (log) -> msgs.push log.message
     m.call (options, next) ->
       options.log 'a'
       m.call (options, next) ->
@@ -62,7 +62,7 @@ describe 'api stack', ->
 
   it 'clean stack with then', (next) ->
     msgs = []
-    m = mecano log: (msg) -> msgs.push msg if /\/file_\d/.test msg
+    m = mecano log: (log) -> msgs.push log.message if /\/file_\d/.test log.message
     m
     .write
       destination: "#{scratch}/file_1"
@@ -83,7 +83,7 @@ describe 'api stack', ->
 
   it 'clean stack with callback', (next) ->
     msgs = []
-    m = mecano log: (msg) -> msgs.push msg if /\/file_\d/.test msg
+    m = mecano log: (log) -> msgs.push log.message if /\/file_\d/.test log.message
     m
     .write
       destination: "#{scratch}/file_1"

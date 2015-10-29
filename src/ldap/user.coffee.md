@@ -62,8 +62,8 @@ require('mecano').ldap_user({
             passwd: options.passwd
           , (err, updated, added) ->
             return callback err if err
-            if added then options.log? 'Mecano `ldap_user`: user added [WARN]' 
-            else if updated then options.log? 'Mecano `ldap_user`: user updated [WARN]'
+            if added then options.log message: "User added", level: 'WARN', module: 'mecano/ldap/user'
+            else if updated then options.log message: "User updated", level: 'WARN', module: 'mecano/ldap/user'
             modified = true if updated or added
             if added
             then do_ldappass()
@@ -89,7 +89,7 @@ require('mecano').ldap_user({
             """
           , (err) ->
             return callback err if err
-            options.log? 'Mecano `ldap_user`: password modified [WARN]'
+            options.log message: "Password modified", level: 'WARN', module: 'mecano/ldap/user'
             modified = true
             do_end()
         do_end = ->

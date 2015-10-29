@@ -42,7 +42,7 @@ require('mecano').ldap_index({
       modified = false
       do_getdn = =>
         return do_get_indexes() if options.hdb_dn
-        options.log? "mecano `ldap_index`: get DN of the HDB to modify"
+        options.log message: "Get DN of the HDB to modify", level: 'DEBUG', module: 'mecano/ldap/index'
         @execute
           cmd: """
           ldapsearch -LLL -Y EXTERNAL -H ldapi:/// \
@@ -57,7 +57,7 @@ require('mecano').ldap_index({
           options.hdb_dn = hdb_dn.trim()
           do_get_indexes()
       do_get_indexes = =>
-        options.log? "mecano `ldap_index`: list all indexes of the directory"
+        options.log message: "List all indexes of the directory", level: 'DEBUG', module: 'mecano/ldap/index'
         @execute
           cmd: """
           ldapsearch -LLL -Y EXTERNAL -H ldapi:/// \

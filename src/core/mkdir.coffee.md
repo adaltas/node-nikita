@@ -77,7 +77,7 @@ require('mecano')
       each options.directory
       .run (directory, callback) =>
         # first, we need to find which directory need to be created
-        options.log? "Mecano `mkdir`: #{directory}"
+        options.log message: "Directory option #{directory}", level: 'DEBUG', module: 'mecano/src/mkdir'
         do_stats = ->
           end = false
           dirs = []
@@ -118,7 +118,7 @@ require('mecano')
             # eg /\${/ on './var/cache/${user}' creates './var/cache/'
             if options.exclude? and options.exclude instanceof RegExp
               return callback() if options.exclude.test path.basename directory
-            options.log? "Mecano `mkdir`: #{JSON.stringify directory} created [INFO]" unless directory is options.directory
+            options.log message: "Create directory \"#{directory}\"", level: 'DEBUG', module: 'mecano/src/mkdir' # unless directory is options.directory
             attrs = ['mode', 'uid', 'gid', 'size', 'atime', 'mtime']
             opts = {}
             for attr in attrs
@@ -126,6 +126,7 @@ require('mecano')
               opts[attr] = val if val?
             fs.mkdir options.ssh, directory, opts, (err) ->
               return callback err if err
+              options.log message: "Directory \"#{directory}\" created ", level: '', module: 'mecano/src/mkdir'
               modified = true
               callback()
             , 1000
@@ -133,21 +134,17 @@ require('mecano')
             return callback err if err
             callback()
         do_update = (stat) =>
-          options.log? "Mecano `mkdir`: #{JSON.stringify directory} alread exists [WARN]"
+          options.log message: "Directory already exists", level: 'INFO', module: 'mecano/src/mkdir'
           @chown
-            ssh: options.ssh
             destination: directory
             stat: stat
             uid: options.uid
             gid: options.gid
-            log: options.log
             if: options.uid? or options.gid?
           @chmod
-            ssh: options.ssh
             destination: directory
             stat: stat
             mode: options.mode
-            log: options.log
             if: options.mode?
           @then (err, moded) ->
             return callback err if err

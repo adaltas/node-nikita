@@ -62,19 +62,19 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
       do_stat = ->
         # Option 'stat' short-circuit
         return do_chown options.stat if options.stat
-        options.log? "Mecano `chown`: stat #{options.destination} [DEBUG]"
+        options.log message: "Stat #{options.destination}", level: 'DEBUG', module: 'mecano/src/chown'
         fs.stat options.ssh, options.destination, (err, stat) ->
           return callback err if err
           do_chown stat
       do_chown = (stat) ->
         # Detect changes
         if stat.uid is options.uid and stat.gid is options.gid
-          options.log? "Mecano `chmod`: identical ownerships on '#{options.destination}' [INFO]"
+          options.log message: "Matching ownerships on '#{options.destination}'", level: 'INFO', module: 'mecano/src/chown'
           return callback()
         # Apply changes
         fs.chown options.ssh, options.destination, options.uid, options.gid, (err) ->
-          options.log? "Mecano `chown`: change uid from #{stat.uid} to #{options.uid} [WARN]" if options.uid and stat.uid isnt options.uid
-          options.log? "Mecano `chown`: change gid from #{stat.gid} to #{options.gid} [WARN]" if options.gid and stat.gid isnt options.gid
+          options.log message: "change uid from #{stat.uid} to #{options.uid}", level: 'WARN', module: 'mecano/src/chown'
+          options.log message: "change gid from #{stat.gid} to #{options.gid}", level: 'WARN', module: 'mecano/src/chown'
           callback err, true
       do_uid_gid()
 
@@ -82,11 +82,3 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
 
     fs = require 'ssh2-fs'
     uid_gid = require '../misc/uid_gid'
-
-
-
-
-
-
-
-
