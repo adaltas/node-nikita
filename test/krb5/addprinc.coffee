@@ -7,7 +7,7 @@ ldap = require 'ldapjs'
 describe 'krb5_addprinc', ->
 
   config = test.config()
-  return unless config.krb5
+  return if config.disable_krb5_addprinc
 
   they 'create a new principal without a randkey', (ssh, next) ->
     mecano
@@ -80,4 +80,3 @@ describe 'krb5_addprinc', ->
     .execute
       cmd: "echo password1 | kinit mecano@#{config.krb5.realm}"
     .then next
-

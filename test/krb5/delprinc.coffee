@@ -7,7 +7,7 @@ ldap = require 'ldapjs'
 describe 'krb5_delprinc', ->
 
   config = test.config()
-  return unless config.krb5
+  return if config.disable_krb5_delprinc
 
   they 'a principal which exists', (ssh, next) ->
     mecano
@@ -37,4 +37,3 @@ describe 'krb5_delprinc', ->
     , (err, status) ->
       status.should.be.false()
     .then next
-

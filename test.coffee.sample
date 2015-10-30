@@ -1,6 +1,8 @@
 
-module.exports = 
-  test_krb5: false
+module.exports =
+  disable_krb5_addprinc: true
+  disable_krb5_delprinc: true
+  disable_krb5_ktadd: true
   disable_ldap_acl: true
   disable_ldap_index: true
   disable_ldap_user: true

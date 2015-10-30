@@ -8,7 +8,7 @@ describe 'krb5_ktadd', ->
 
   scratch = test.scratch @
   config = test.config()
-  return unless config.krb5
+  return if config.disable_krb5_ktadd
 
   they 'create a new keytab', (ssh, next) ->
     mecano
@@ -50,5 +50,3 @@ describe 'krb5_ktadd', ->
     , (err, status) ->
       status.should.be.true()
     .then next
-
-
