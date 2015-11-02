@@ -96,11 +96,20 @@ mecano.execute({
       options.code_skipped = [options.code_skipped] unless Array.isArray options.code_skipped
       if options.trap_on_error
         options.cmd = "set -e\n#{options.cmd}"
-      options.log message: "Command is: `#{options.cmd}`", level: 'INFO', module: 'mecano/src/execute'
+      # options.log message: "Command is: `#{options.cmd}`", level: 'INFO', module: 'mecano/src/execute'
+      options.log message: options.cmd, type: 'stdin'
       child = exec options
       stdout = []; stderr = []
       child.stdout.pipe options.stdout, end: false if options.stdout
       child.stderr.pipe options.stderr, end: false if options.stderr
+      child.stdout.on 'data', (data) ->
+        options.log message: data, type: 'stdout'
+      child.stdout.on 'end', (data) ->
+        options.log message: null, type: 'stdout'
+      child.stderr.on 'data', (data) ->
+        options.log message: data, type: 'stderr'
+      child.stderr.on 'end', (data) ->
+        options.log message: null, type: 'stderr'
       if stds
         child.stdout.on 'data', (data) ->
           if Array.isArray stdout # A string on exit

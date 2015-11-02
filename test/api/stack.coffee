@@ -9,7 +9,8 @@ describe 'api stack', ->
 
   it 'sync handler register actions', (next) ->
     msgs = []
-    m = mecano log: (log) -> msgs.push log.message
+    m = mecano()
+    m.on 'text', (log) -> msgs.push log.message
     m.call (options) ->
       options.log 'a1'
       m.call (options) ->
@@ -27,7 +28,8 @@ describe 'api stack', ->
 
   it 'async handler register actions and callback async', (next) ->
     msgs = []
-    m = mecano log: (log) -> msgs.push log.message
+    m = mecano()
+    m.on 'text', (log) -> msgs.push log.message
     m.call (options, next) ->
       options.log 'a'
       m.call (options, next) ->
@@ -44,7 +46,8 @@ describe 'api stack', ->
 
   it 'async handler register actions and callback sync', (next) ->
     msgs = []
-    m = mecano log: (log) -> msgs.push log.message
+    m = mecano()
+    m.on 'text', (log) -> msgs.push log.message
     m.call (options, next) ->
       options.log 'a'
       m.call (options, next) ->
@@ -62,7 +65,8 @@ describe 'api stack', ->
 
   it 'clean stack with then', (next) ->
     msgs = []
-    m = mecano log: (log) -> msgs.push log.message if /\/file_\d/.test log.message
+    m = mecano()
+    m.on 'text', (log) -> msgs.push log.message if /\/file_\d/.test log.message
     m
     .write
       destination: "#{scratch}/file_1"
@@ -83,21 +87,20 @@ describe 'api stack', ->
 
   it 'clean stack with callback', (next) ->
     msgs = []
-    m = mecano log: (log) -> msgs.push log.message if /\/file_\d/.test log.message
-    m
-    .write
+    m = mecano()
+    m.on 'text', (log) -> msgs.push log.message if /\/file_\d/.test log.message
+    m.write
       destination: "#{scratch}/file_1"
       content: 'abc'
-    .write
+    m.write
       destination: "#{scratch}/file_2"
       content: 'def'
     , (err, changed) ->
       return next err if err
-      m
-      .write
+      m.write
         destination: "#{scratch}/file_3"
         content: 'hij'
-      .then (err, changed) ->
+      m.then (err, changed) ->
         return next err if err
         msgs.length.should.eql 3
         next()

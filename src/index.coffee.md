@@ -12,22 +12,23 @@ functions share a common API with flexible options.
     an array of objects.
 
 ## Source Code
-
+    
     module.exports = ->
       if arguments.length is 2
         obj = arguments[0]
         obj.options = arguments[1]
       else if arguments.length is 1
-        obj = {}
+        obj = new EventEmitter
         obj.options = arguments[0]
       else
-        obj = {}
+        obj = new EventEmitter
         obj.options = {}
       obj.registry ?= {}
       obj.propagated_options ?= []
       for option in module.exports.propagated_options then obj.propagated_options.push option
       store = {}
       properties = {}
+      listeners = {}
       stack = []
       todos = []
       todos.err = null
@@ -35,7 +36,7 @@ functions share a common API with flexible options.
       todos.throw_if_error = true
       befores = []
       afters = []
-      level: 0
+      depth = 0
       normalize_options = (_arguments, type, enrich=true) ->
         empty = false
         handler = null
@@ -88,24 +89,46 @@ functions share a common API with flexible options.
           options[k] = v if options[k] is undefined and k in obj.propagated_options
         for k, v of global_options
           options[k] = v if options[k] is undefined
-        log_handler = options.log
+        # log_handler = options.log
+        emit = (log) ->
+          listener.call null, log for listener in listeners[log.type]?
         options.log = (log) ->
-          return unless log_handler
           log = message: log if typeof log is 'string'
           log.level ?= 'INFO'
           log.time ?= Date.now()
           log.module ?= undefined
-          log.depth ?= stack.length
-          if options.log_serializer is true
-            serialized_log = "[#{log.level} #{log.time}]"
-            serialized_log += " #{log.module} - " if log.module
-            serialized_log += " #{log.message}"
-            log = serialized_log
-          else if typeof options.log_serializer is 'function'
-            log = options.log_serializer.call obj, log
-          else if options.log_serializer
-            throw Error "Invalid option \"options.log_serializer\""
-          log_handler log
+          log.header_depth ?= depth
+          log.total_depth ?= stack.length
+          log.type ?= 'text'
+          args = if 1 <= arguments.length then [].slice.call(arguments, 0) else []
+          stackTrace = require 'stack-trace'
+          path = require 'path'
+          frame = stackTrace.get()[1]
+          file = path.basename(frame.getFileName())
+          line = frame.getLineNumber()
+          method = frame.getFunctionName()
+          log.file = file
+          log.line = line
+          args.unshift("" + file + ":" + line + " in " + method + "()");
+          # if options.log_serializer is true
+          #   switch log.type
+          #     when 'text'
+          #       throw Error 'Missing log.message' unless log.message
+          #       serialized_log = "[#{log.level} #{log.time}]"
+          #       serialized_log += " #{log.module} - " if log.module
+          #       serialized_log = "#{log.message}"
+          #     when 'header'
+          #       throw Error 'Missing log.message' unless log.message
+          #       serialized_log = "#{'#'.repeat log.header_depth} #{log.message}"
+          #     else
+          #       throw Error 'Invalid log.type'
+          #   log = serialized_log
+          # else if typeof options.log_serializer is 'function'
+          #   log = options.log_serializer.call obj, log
+          # else if options.log_serializer
+          #   throw Error "Invalid option \"options.log_serializer\""
+          obj.emit? log.type, log
+          # log_handler log
         options
       intercept_before = (target_options, callback) ->
         return callback() if target_options.intercept_before
@@ -156,6 +179,8 @@ functions share a common API with flexible options.
           run()
           return
         options = enrich_options options
+        depth++ if options.header
+        options.log message: options.header, type: 'header', depth: depth if options.header
         if options.type is 'end'
           return conditions.all obj, options
           , (err) ->
@@ -182,18 +207,21 @@ functions share a common API with flexible options.
           # Before interception
           intercept_before options, (err) ->
             exec_callback = (err) ->
-              throw Error 'Invalid state' unless todos.length is 0
+              # throw Error 'Invalid state' unless todos.length is 0
               user_args.length = 2 if user_args.length is 0
-              todos = stack.shift()
+              todos = stack.shift() if todos.length is 0
               jump_to_error err if err and not options.relax
               todos.throw_if_error = false if err and options_callback
               callback_args = [err, status, user_args...]
               todos.status[0] = status and not options.shy
               call_callback options_callback, callback_args if options_callback
               err = null if options.relax
+              depth-- if options.header
               callback err, status if callback
-              return run()
+              run()
             return exec_callback err if err
+            # options_header = options.header
+            # options.header = undefined
             options_handler = options.handler
             options.handler = undefined
             options_callback = options.callback
@@ -252,13 +280,20 @@ functions share a common API with flexible options.
         ->
           arguments[0] = type: arguments[0] if typeof arguments[0] is 'string'
           options = normalize_options arguments, null, false
-          befores.push opts for opts in options
+          for opts in options
+            throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
+            befores.push opts
           obj
       properties.after = get: ->
         ->
           throw Error "look at before, doesnt seem ready yet"
           afters.push type: 'after', options: arguments
           obj
+      # properties.on = get: ->
+      #   ->
+      #     listeners[arguments[0]] ?= []
+      #     listeners[arguments[0]].push arguments[1]
+      #     obj
       properties.status = get: ->
         (index) ->
           if arguments.length is 0
@@ -308,6 +343,7 @@ the second argument. It will return "true" if the function is un-registered or
 "false" if there was nothing to do because the function wasn't already
 registered.
 
+    {EventEmitter} = require 'events'
     registry = require './misc/registry'
     do ->
       register = module.exports.register = (name, handler, api) ->
@@ -331,7 +367,11 @@ registered.
       register 'before', module.exports().before, true
       register 'after', module.exports().before, true
       register 'then', module.exports().then, true
+      # register 'on', module.exports().on, true
+      module.exports.on = ->
+        obj = module.exports()
+        o = obj.on.apply obj, arguments
 
+    each = require 'each'
     conditions = require './misc/conditions'
     wrap = require './misc/wrap'
-    each = require 'each'

@@ -44,13 +44,14 @@ describe 'upload', ->
         misc.file.hash null, "#{scratch}/source.tar.gz", 'md5', (err, srcsum) ->
           return next err if err
           dstsum = null
-          mecano.upload
+          mecano
+          .on 'text', (log) ->
+            dstsum = match[1] if match = /checksum is "(.*)"$/.exec log.message
+          .upload
             ssh: ssh
             binary: true
             source: "#{scratch}/source.tar.gz"
             destination: "#{scratch}/destination.tar.gz"
-            log: (log) ->
-              dstsum = match[1] if match = /checksum is "(.*)"$/.exec log.message
             md5: true
           , (err, uploaded) ->
             return next err if err

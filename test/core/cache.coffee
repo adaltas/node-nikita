@@ -73,7 +73,7 @@ describe 'cache', ->
         logs = []
         mecano
           ssh: ssh
-          log_serializer: (log) -> "[#{log.level}] #{log.message}"
+        .on 'text', (log) -> logs.push "[#{log.level}] #{log.message}"
         .write
           destination: "#{scratch}/source"
           content: "okay"
@@ -139,7 +139,7 @@ describe 'cache', ->
         logs = []
         mecano
           ssh: ssh
-          log_serializer: (log) -> "[#{log.level}] #{log.message}"
+        .on 'text', (log) -> logs.push "[#{log.level}] #{log.message}"
         .write
           destination: "#{scratch}/source"
           content: "okay"

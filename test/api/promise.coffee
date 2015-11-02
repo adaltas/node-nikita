@@ -43,8 +43,8 @@ describe 'api promise', ->
 
     it 'pass global options', (next) ->
       logs = []
-      log = (msg) -> logs.push msg
-      mecano log: log
+      mecano
+      .on 'text', (log) -> logs.push log
       .write
         destination: "#{scratch}/file_1"
         content: 'abc'
@@ -58,9 +58,3 @@ describe 'api promise', ->
         next()
 
         
-
-
-
-
-
-
