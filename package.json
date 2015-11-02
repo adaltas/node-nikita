@@ -1,8 +1,18 @@
 {
   "name": "mecano",
   "description": "Common functions for system deployment.",
-  "keywords": ["deploy", "masson", "build", "ssh", "system", "install", "fs", "task", "cli"],
-  "version": "0.5.0",
+  "keywords": [
+    "deploy",
+    "masson",
+    "build",
+    "ssh",
+    "system",
+    "install",
+    "fs",
+    "task",
+    "cli"
+  ],
+  "version": "0.5.1",
   "homepage": "http://www.adaltas.com/projects/node-mecano/",
   "author": "David Worms <david@adaltas.com>",
   "license": "BSD-3-Clause",
@@ -34,6 +44,7 @@
     "ssh2-connect": ">=0.0.7",
     "ssh2-exec": ">=0.3.1",
     "ssh2-fs": ">=0.1.4",
+    "stack-trace": "0.0.9",
     "tilde-expansion": ">=0.0.0"
   },
   "devDependencies": {
@@ -42,11 +53,16 @@
     "should": ">=7.1.0",
     "ssh2-they": ">=0.0.7"
   },
-  "contributors": [ 
-    { "name": "David Worms", "email": "david@adaltas.com" }
+  "contributors": [
+    {
+      "name": "David Worms",
+      "email": "david@adaltas.com"
+    }
   ],
   "main": "./lib/index",
-  "engines": { "node": ">= 0.6.0" },
+  "engines": {
+    "node": ">= 0.6.0"
+  },
   "scripts": {
     "coffee": "./node_modules/.bin/coffee -b -o lib src",
     "pretest": "./node_modules/.bin/coffee -b -o lib src",
