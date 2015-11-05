@@ -42,6 +42,63 @@ describe 'if_exists', ->
       (err) -> false.should.be.true()
       -> next()
 
+describe 'unless_exists', ->
+
+  they 'succeed if not present', (ssh, next) ->
+    conditions.unless_exists
+      ssh: ssh        
+      () -> false.should.be.true()
+      next
+
+  they 'skip if dir exists', (ssh, next) ->
+    conditions.unless_exists
+      ssh: ssh
+      unless_exists: __dirname
+      next
+      () -> false.should.be.true()
+
+  they 'succeed if dir does not exists', (ssh, next) ->
+    conditions.unless_exists
+      ssh: ssh
+      unless_exists: './oh_no'
+      () -> false.should.be.true()
+      -> next()
+
+  they 'succeed if no file exists', (ssh, next) ->
+    conditions.unless_exists
+      ssh: ssh
+      unless_exists: ['./oh_no', './eh_no']
+      () -> false.should.be.true()
+      -> next()
+
+  they 'default to destination if true', (ssh, next) ->
+    conditions.unless_exists
+      ssh: ssh
+      destination: __dirname
+      unless_exists: true
+      -> next()
+      () -> false.should.be.true()
+
+  they 'skip if at least one file exists', (ssh, next) ->
+    conditions.unless_exists
+      ssh: ssh
+      unless_exists: ['./oh_no', __filename]
+      next
+      () -> false.should.be.true()
+
+  they 'should fail if at least one file exists', (ssh, next) ->
+    conditions.unless_exists
+      ssh: ssh
+      unless_exists: ['./oh_no', __filename, './oh_no']
+      next
+      -> false.should.be.true()
+
+  they 'should succeed if all files are missing', (ssh, next) ->
+    conditions.unless_exists
+      ssh: ssh
+      unless_exists: ['./oh_no', './oh_no', './oh_no']
+      (err) -> false.should.be.true()
+      -> next()
 
 describe 'not_if_exists', ->
 

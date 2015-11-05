@@ -133,6 +133,98 @@ describe 'if', ->
       (err) -> err.message is 'cool' and next()
       () -> false.should.be.true()
 
+describe 'unless', ->
+
+  # they 'should bypass if not present', (ssh, next) ->
+  #   conditions.unless
+  #     ssh: ssh
+  #     () -> false.should.be.true()
+  #     next
+
+  they 'should succeed if `true`', (ssh, next) ->
+    conditions.unless
+      ssh: ssh
+      unless: true
+      next
+      () -> false.should.be.true()
+
+  they 'should skip if all true', (ssh, next) ->
+    conditions.unless
+      ssh: ssh
+      unless: [true, true, true]
+      next
+      () -> false.should.be.true()
+
+  they 'should skip if at least one is true', (ssh, next) ->
+    conditions.unless
+      ssh: ssh
+      unless: [false, true, false]
+      next
+      () -> false.should.be.true()
+
+  they 'should run if all false', (ssh, next) ->
+    conditions.unless
+      ssh: ssh
+      unless: [false, false, false]
+      () -> false.should.be.true()
+      next
+
+  they 'should succeed if `1`', (ssh, next) ->
+    conditions.unless
+      ssh: ssh
+      unless: 1
+      next
+      () -> false.should.be.true()
+
+  they 'should fail if `false`', (ssh, next) ->
+    conditions.unless
+      ssh: ssh
+      unless: false
+      () -> false.should.be.true()
+      next
+
+  they 'should fail if `null`', (ssh, next) ->
+    conditions.unless
+      ssh: ssh
+      unless: null
+      () -> false.should.be.true()
+      next
+
+  they 'should fail if string not empty', (ssh, next) ->
+    conditions.unless
+      ssh: ssh
+      unless: 'abc'
+      next
+      () -> false.should.be.true()
+
+  they 'should fail if string not empty', (ssh, next) ->
+    conditions.unless
+      ssh: ssh
+      unless: ''
+      () -> false.should.be.true()
+      next
+
+  they 'function succeed on `succeed` callback', (ssh, next) ->
+    conditions.unless
+      ssh: ssh
+      unless: (options, callback) -> callback null, true
+      next
+      () -> false.should.be.true()
+
+  they 'function fail on `failed` callback', (ssh, next) ->
+    conditions.unless
+      ssh: ssh
+      unless: (options, callback) -> callback null, false
+      () -> false.should.be.true()
+      next
+
+  they 'function pass error object on `failed` callback', (ssh, next) ->
+    conditions.unless
+      ssh: ssh
+      unless: (options, callback) -> callback new Error 'cool'
+      (err) -> err.message is 'cool' and next()
+      () -> false.should.be.true()
+
 describe 'not_if', ->
 
   # they 'should bypass if not present', (ssh, next) ->

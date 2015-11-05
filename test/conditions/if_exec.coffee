@@ -29,13 +29,51 @@ describe 'if_exec', ->
       next
       -> false.should.be.true()
 
-  they 'should succeed if all commands succeeed', (ssh, next) ->
+  they 'should succeed if all commands succeed', (ssh, next) ->
     conditions.if_exec
       ssh: ssh
       if_exec: [
         "exit 0"
         "exit 0"
         "exit 0"
+      ]
+      (err) -> false.should.be.true()
+      -> next()
+
+describe 'unless_exec', ->
+
+  they 'should succeed if command fail', (ssh, next) ->
+    conditions.unless_exec
+      ssh: ssh
+      unless_exec: "exit 0"
+      next
+      -> false.should.be.true()
+
+  they 'should fail if command fail', (ssh, next) ->
+    conditions.unless_exec
+      ssh: ssh
+      unless_exec: "exit 1"
+      () -> false.should.be.true()
+      -> next()
+
+  they 'should fail if at least one command succeed', (ssh, next) ->
+    conditions.unless_exec
+      ssh: ssh
+      unless_exec: [
+        "exit 1"
+        "exit 0"
+        "exit 1"
+      ]
+      next
+      -> false.should.be.true()
+
+  they 'should succeed if all commands fail', (ssh, next) ->
+    conditions.unless_exec
+      ssh: ssh
+      unless_exec: [
+        "exit 1"
+        "exit 1"
+        "exit 1"
       ]
       (err) -> false.should.be.true()
       -> next()
@@ -56,7 +94,7 @@ describe 'not_if_exec', ->
       () -> false.should.be.true()
       -> next()
 
-  they 'should fail if at least one command succeeed', (ssh, next) ->
+  they 'should fail if at least one command succeed', (ssh, next) ->
     conditions.not_if_exec
       ssh: ssh
       not_if_exec: [
@@ -77,8 +115,3 @@ describe 'not_if_exec', ->
       ]
       (err) -> false.should.be.true()
       -> next()
-
-
-
-
-
