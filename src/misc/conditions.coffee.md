@@ -45,7 +45,6 @@ mecano.render({
         each(options.if)
         .run (si, next) =>
           return next() unless ok
-          # options.log? "Mecano `if`"
           type = typeof si
           if si is null or type is 'undefined'
             ok = false
@@ -312,7 +311,3 @@ conditions.all({
     exec = require 'ssh2-exec'
     fs = require 'ssh2-fs'
     template = require './template'
-
-
-
-
