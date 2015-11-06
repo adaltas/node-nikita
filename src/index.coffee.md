@@ -89,7 +89,6 @@ functions share a common API with flexible options.
           options[k] = v if options[k] is undefined and k in obj.propagated_options
         for k, v of global_options
           options[k] = v if options[k] is undefined
-        # log_handler = options.log
         emit = (log) ->
           listener.call null, log for listener in listeners[log.type]?
         options.log = (log) ->
@@ -110,25 +109,7 @@ functions share a common API with flexible options.
           log.file = file
           log.line = line
           args.unshift("" + file + ":" + line + " in " + method + "()");
-          # if options.log_serializer is true
-          #   switch log.type
-          #     when 'text'
-          #       throw Error 'Missing log.message' unless log.message
-          #       serialized_log = "[#{log.level} #{log.time}]"
-          #       serialized_log += " #{log.module} - " if log.module
-          #       serialized_log = "#{log.message}"
-          #     when 'header'
-          #       throw Error 'Missing log.message' unless log.message
-          #       serialized_log = "#{'#'.repeat log.header_depth} #{log.message}"
-          #     else
-          #       throw Error 'Invalid log.type'
-          #   log = serialized_log
-          # else if typeof options.log_serializer is 'function'
-          #   log = options.log_serializer.call obj, log
-          # else if options.log_serializer
-          #   throw Error "Invalid option \"options.log_serializer\""
           obj.emit? log.type, log
-          # log_handler log
         options
       intercept_before = (target_options, callback) ->
         return callback() if target_options.intercept_before
