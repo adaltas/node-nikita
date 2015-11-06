@@ -10,6 +10,9 @@ Download a file a place it on a local or remote folder for later usage.
     By default: './'   
 *   `cache_file` (string | boolean)   
     Alias for "destination".   
+*   `cache_local` (boolean)   
+    Apply to SSH mode, treat the cache file and directories as local from where
+    the command is used instead of over SSH.   
 *   `destination` (string | boolean)   
     Cache the file on the executing machine, equivalent to cache unless an ssh connection is
     provided. If a string is provided, it will be the cache path.   
@@ -19,6 +22,12 @@ Download a file a place it on a local or remote folder for later usage.
     option of the same name.   
 *   `force` (boolean)   
     Overwrite destination file if it exists, bypass md5 verification.   
+*   `headers` (array)   
+    Extra  header  to include in the request when sending HTTP to a server.   
+*   `location` (boolean)
+     If  the  server reports that the requested page has moved to a different
+     location (indicated with a Location: header and a 3XX response code), this
+     option will make curl redo the request on the new place.
 *   `proxy` (string)   
      Use the specified HTTP proxy. If the port number is not specified, it is
      assumed at port 1080. See curl(1) man page.   
@@ -51,6 +60,7 @@ mecano.download
       options.destination ?= path.basename options.source
       options.destination = path.resolve options.cache_dir, options.destination
       options.source = options.source.substr 7 if /^file:\/\//.test options.source
+      options.headers ?= []
       if options.md5?
         return callback new Error "Invalid MD5 Hash:#{options.md5}" unless typeof options.md5 in ['string', 'boolean']
         algo = 'md5'
@@ -116,10 +126,16 @@ mecano.download
         fail = if options.fail then "--fail" else ''
         k = if u.protocol is 'https:' then '-k' else ''
         cmd = "curl #{fail} #{k} -s #{options.source} -o #{options.destination}"
+        cmd += " --location" if options.location
+        cmd += " --header \"#{header}\"" for header in options.headers
         cmd += " -x #{options.proxy}" if options.proxy
-        @mkdir path.dirname options.destination
+        console.log cmd
+        @mkdir
+          ssh: if options.cache_local then null else options.ssh
+          destination: path.dirname options.destination
         @execute
           cmd: cmd
+          ssh: if options.cache_local then null else options.ssh
           not_if_exists: options.destination
       else
         @mkdir # todo: copy shall handle this

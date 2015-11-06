@@ -30,6 +30,13 @@ calculated if neither md5 nor sha1 is provided
 
 ## Options
 
+*   `cache_dir` (path)   
+    If local_cache is not a string, the cache file path is resolved from cache dir and cache file.
+    By default: './'   
+*   `cache_file` (string | boolean)   
+    Cache the file on the executing machine, equivalent to cache unless an ssh connection is
+    provided. If a string is provided, it will be the cache path.   
+    By default: basename of source   
 *   `destination` (path)   
     Path where the file is downloaded.   
 *   `force` (boolean)   
@@ -49,23 +56,18 @@ calculated if neither md5 nor sha1 is provided
     Hash of the file using MD5. Used to check integrity
 *   `force_cache` (boolean)   
     Force cache overwrite if it exists   
-*   `cache_dir` (path)   
-    If local_cache is not a string, the cache file path is resolved from cache dir and cache file.
-    By default: './'   
-*   `cache_file` (string | boolean)   
-    Cache the file on the executing machine, equivalent to cache unless an ssh connection is
-    provided. If a string is provided, it will be the cache path.   
-    By default: basename of source   
+*   `headers` (array)   
+    Extra  header  to include in the request when sending HTTP to a server.   
 *   `uid` (string | int)   
     UID of the destination. If specified, mecano will chown after download   
 *   `mode` (octal mode)   
     Permissions of the destination. If specified, mecano will chmod after download   
 *   `proxy` (string)   
-     Use the specified HTTP proxy. If the port number is not specified, it is
-     assumed at port 1080. See curl(1) man page.   
- *   `source` (path)   
-     File, HTTP URL, FTP, GIT repository. File is the default protocol if source
-     is provided without any.   
+    Use the specified HTTP proxy. If the port number is not specified, it is
+    assumed at port 1080. See curl(1) man page.   
+*   `source` (path)   
+    File, HTTP URL, FTP, GIT repository. File is the default protocol if source
+    is provided without any.   
 
 ## Callback parameters
 
@@ -183,6 +185,7 @@ mecano.download
         source: options.source
         cache_dir: options.cache_dir
         cache_file: options.cache_file
+        headers: options.headers
         md5: options.md5
         proxy: options.proxy
       , (err, cached, file) ->
