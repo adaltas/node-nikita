@@ -44,9 +44,9 @@ require('mecano').touch({
         return callback err if err
         return callback() if exists
         options.log message: "Destination does not exists", level: 'INFO', module: 'mecano/src/touch'
-        options.source = null
-        options.content = ''
-        @write options
+        @write
+          content: ''
+          destination: options.destination
         @then callback
 
 ## Dependencies
