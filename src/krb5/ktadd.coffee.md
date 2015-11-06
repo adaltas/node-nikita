@@ -101,6 +101,8 @@ require('mecano').krb5_delrinc({
           return callback err if err
           do_ktadd()
       do_ktadd = =>
+        @mkdir
+          destination: "#{path.dirname options.keytab}"
         @execute
           cmd: misc.kadmin options, "ktadd -k #{options.keytab} #{options.principal}"
         , (err, ktadded) ->
@@ -151,5 +153,6 @@ data-type[1]
 
 ## Dependencies
 
+    path= require 'path'
     misc = require '../misc'
     string = require '../misc/string'
