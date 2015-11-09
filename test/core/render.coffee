@@ -87,6 +87,25 @@ describe 'render', ->
             content.should.eql 'Hello you 42'
             next()
 
+    it 'check autoescaping (disabled)', (next) ->
+      source = "#{scratch}/render.j2"
+      destination = "#{scratch}/render.txt"
+      fs.writeFile source, 'Hello "{{ who }}" \'{{ anInt }}\'', (err, content) ->
+        return next err if err
+        mecano.render
+          source: source
+          destination: destination
+          context:
+            who: 'you'
+            anInt: 42
+          filters: isNum: (obj) -> return typeof obj is 'number'
+        , (err, rendered) ->
+          return next err if err
+          rendered.should.be.true()
+          fs.readFile destination, 'ascii', (err, content) ->
+            content.should.eql 'Hello "you" \'42\''
+            next()
+
   describe 'eco', ->
 
     it 'should use `content`', (next) ->

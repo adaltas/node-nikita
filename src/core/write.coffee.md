@@ -291,7 +291,7 @@ require('mecano').write({
         try
           switch options.engine
             when 'nunjunks'
-              engine = new nunjucks.Environment()
+              engine = new nunjucks.Environment null, autoescape: false
               options.filters ?= {}
               options.filters.isString ?= (obj) -> typeof obj is 'string'
               options.filters.isArray ?= (obj) -> Array.isArray obj
