@@ -228,17 +228,72 @@ exists otherwise the callback `skip` is called.
         console.log 'not_if is deprecated, use unless'
         options.unless = options.not_if
         delete options.not_if
-        module.exports.unless options, skip, succeed
+        options.unless = [options.unless] unless Array.isArray options.unless
+        ok = true
+        each(options.unless)
+        .run (not_if, next) =>
+          return next() unless ok
+          # options.log? "Mecano `not_if`"
+          type = typeof not_if
+          if not_if is null or type is 'undefined'
+            ok = true
+            next()
+          else if type is 'boolean' or type is 'number'
+            ok = false if not_if
+            next()
+          else if type is 'function'
+            if not_if.length < 2
+              try
+                ok = false if not_if.call @, options
+                next()
+              catch err then next err
+            if not_if.length is 2
+              not_if.call @, options, (err, is_ok) ->
+                return next err if err
+                ok = false if is_ok
+                next()
+            else next new Error "Invalid callback"
+          else if type is 'string'
+            not_if = template not_if, options
+            ok = false if not_if.length isnt 0
+            next()
+          else
+            next new Error "Invalid condition type"
+        .then (err) ->
+          # return skip err if err or not ok
+          # succeed()
+          if err or not ok then skip(err) else succeed()
       not_if_exec: (options, skip, succeed) ->
         console.log 'not_if_exec is deprecated, use unless_exec'
         options.unless_exec = options.not_if_exec
-        delete options.not_if_exec
-        module.exports.unless_exec options, skip, succeed
+        delete options.not_if_exec# return succeed() unless options.not_if_exec?
+        each(options.unless_exec)
+        .run (cmd, next) ->
+          options.log? "Mecano `unless_exec`: #{cmd}"
+          options = { cmd: cmd, ssh: options.ssh }
+          run = exec options
+          if options.stdout
+            run.stdout.pipe options.stdout, end: false
+          if options.stderr
+            run.stderr.pipe options.stderr, end: false
+          run.on "exit", (code) ->
+            options.log? "Mecano `unless_exec`: code is \"#{code}\""
+            if code is 0 then skip() else next()
+        .then succeed
       not_if_exists: (options, skip, succeed) ->
         console.log 'not_if_exists is deprecated, use unless_exists'
         options.unless_exists = options.not_if_exists
         delete options.not_if_exists
-        module.exports.unless_exists options, skip, succeed
+        {ssh, unless_exists, destination} = options
+        if typeof unless_exists is 'boolean' and destination
+          unless_exists = if unless_exists then [destination] else null
+        # return succeed() unless not_if_exists?
+        each(unless_exists)
+        .run (unless_exists, next) ->
+          # options.log? "Mecano `not_if_exists`"
+          fs.exists ssh, unless_exists, (err, exists) ->
+            if exists then skip() else next()
+        .then succeed
 
 
 ## Ensure a file exist: `should_exist`
