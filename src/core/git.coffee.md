@@ -64,7 +64,7 @@ require('mecano').git({
       .execute
         cmd: "git clone #{options.source} #{options.destination}"
         cwd: path.dirname options.destination
-        not_if: -> repo_exists
+        unless: -> repo_exists
       .execute
         cmd: """
         current=`git log --pretty=format:'%H' -n 1`
@@ -85,7 +85,7 @@ require('mecano').git({
       .execute
         cmd: "git checkout #{options.revision}"
         cwd: options.destination
-        not_if: -> repo_uptodate
+        unless: -> repo_uptodate
       .then (err, status) ->
         callback err, status
 

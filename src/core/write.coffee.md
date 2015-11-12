@@ -273,7 +273,7 @@ require('mecano').write({
             gid: options.gid
             mode: options.mode
             # Modify uid and gid if the dir does not yet exists
-            not_if_exists: path.dirname options.destination
+            unless_exists: path.dirname options.destination
           , (err, created) ->
             return callback err if err
             do_render()

@@ -39,7 +39,7 @@ require('mecano').remove('./some/dir', function(err, removed){
 ```js
 require('mecano').remove({
   source: './some/dir',
-  not_if_exists: './some/file'
+  unless_exists: './some/file'
 }, function(err, removed){
   console.log(err ? err.message : "File removed: " + !!removed);
 });
@@ -49,7 +49,7 @@ require('mecano').remove({
 
 ```js
 require('mecano').remove([
-  { source: './some/dir', not_if_exists: './some/file' },
+  { source: './some/dir', unless_exists: './some/file' },
   './some/file'
 ], function(err, removed){
   console.log(err ? err.message : 'File removed: ' + !!removed);

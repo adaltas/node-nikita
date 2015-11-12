@@ -15,7 +15,7 @@ moment, supported extensions are '.tgz', '.tar.gz', tar.bz2, 'tar.xz' and '.zip'
     One of 'tgz', 'tar', 'xz', 'bz2' or 'zip'.   
 *   `creates`   
     Ensure the given file is created or an error is send in the callback.   
-*   `not_if_exists`   
+*   `unless_exists`   
     Cancel extraction if file exists.   
 *   `ssh` (object|ssh2)   
     Run the action on a remote server using SSH, an ssh2 instance or an
