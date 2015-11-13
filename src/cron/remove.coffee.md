@@ -38,8 +38,6 @@ require('mecano').cron_remove({
 
 ## Source Code
 
-    escape = (str) -> str.replace /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"
-
     module.exports = (options, callback) ->
       return callback new Error 'valid cmd is required' unless options.cmd?.length > 0
       if options.user?
@@ -50,15 +48,14 @@ require('mecano').cron_remove({
         crontab = "crontab"
       status = false
       jobs = []
-      @
-      .execute
+      @execute
         cmd: "#{crontab} -l"
         shy: true
       , (err, _, stdout, stderr) ->
         throw err if err
         throw Error 'User crontab not found' if /^no crontab for/.test stderr
-        myjob = if options.when then escape options.when else '.*'
-        myjob += escape " #{options.cmd}"
+        myjob = if options.when then regexp.escape options.when else '.*'
+        myjob += regexp.escape " #{options.cmd}"
         regex = new RegExp myjob
         jobs = stdout.trim().split '\n'
         for job, i in jobs
@@ -67,15 +64,16 @@ require('mecano').cron_remove({
           status = true
           jobs.splice i, 1
         options.log? 'No Job matches. Skipping [INFO]' unless status
-      .execute
-        cmd: """
-        #{crontab} - <<EOF
-        #{jobs.join '\n'}
-        EOF
-        """
-        if: -> status
-      .then callback
+        @execute
+          cmd: """
+          #{crontab} - <<EOF
+          #{jobs.join '\n'}
+          EOF
+          """
+          if: status
+        .then callback
 
 ## Dependencies
 
+    {regexp} = require '../misc'
     wrap = require '../misc/wrap'
