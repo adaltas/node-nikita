@@ -71,7 +71,7 @@ require('mecano')
       options.directory ?= options.destination
       options.directory ?= options.source
       return callback new Error 'Missing directory option' unless options.directory?
-      cwd = options.cwd ? process.cwd()
+      options.cwd = process.cwd() if not options.ssh and (options.cwd is true or not options.cwd)
       options.directory = [options.directory] unless Array.isArray options.directory
       options.parent = {} if options.parent is true
       each options.directory
@@ -81,7 +81,7 @@ require('mecano')
         do_stats = ->
           end = false
           dirs = []
-          directory = path.resolve cwd, directory # path.resolve also normalize
+          directory = path.resolve options.cwd, directory if options.cwd # path.resolve also normalize
           # Create directory and its parent directories
           directories = directory.split('/')
           directories.shift() # first element is empty with absolute path
@@ -104,8 +104,7 @@ require('mecano')
                 return next err
               else # a file or symlink exists at this location
                 return next new Error "Not a directory: #{JSON.stringify directory}"
-          .then (err) ->
-            return callback err if err
+          .then callback
         do_create_parent = (directories) ->
           return do_create directories unless options.uid or options.guid
           uid_gid options, (err) ->
