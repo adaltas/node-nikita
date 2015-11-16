@@ -102,14 +102,15 @@ mecano.execute({
       stdout = []; stderr = []
       child.stdout.pipe options.stdout, end: false if options.stdout
       child.stderr.pipe options.stderr, end: false if options.stderr
-      child.stdout.on 'data', (data) ->
-        options.log message: data, type: 'stdout'
-      child.stdout.on 'end', (data) ->
-        options.log message: null, type: 'stdout'
-      child.stderr.on 'data', (data) ->
-        options.log message: data, type: 'stderr'
-      child.stderr.on 'end', (data) ->
-        options.log message: null, type: 'stderr'
+      if child.stdout or child.stdout is undefined
+        child.stdout.on 'data', (data) ->
+          options.log message: data, type: 'stdout'
+        child.stdout.on 'end', (data) ->
+          options.log message: null, type: 'stdout'
+        child.stderr.on 'data', (data) ->
+          options.log message: data, type: 'stderr'
+        child.stderr.on 'end', (data) ->
+          options.log message: null, type: 'stderr'
       if stds
         child.stdout.on 'data', (data) ->
           if Array.isArray stdout # A string on exit
