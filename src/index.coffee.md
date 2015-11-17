@@ -126,6 +126,22 @@ functions share a common API with flexible options.
             options[k] ?= v
           run options, next
         .then callback
+      intercept_after = (target_options, args, callback) ->
+        return callback() if target_options.intercept_after
+        each afters
+        .run (after, next) ->
+          for k, v of after
+            continue if k is 'handler'
+            return next() unless v is target_options[k]
+          options = intercept_after: true
+          for k, v of after
+            options[k] = v
+          for k, v of target_options
+            continue if k in ['handler', 'callback']
+            options[k] ?= v
+          options.callback_arguments = args
+          run options, next
+        .then callback
       call_callback = (fn, args) ->
         stack.unshift todos
         todos = []
@@ -187,20 +203,22 @@ functions share a common API with flexible options.
           # Before interception
           intercept_before options, (err) ->
             exec_callback = (args) ->
-              args[0] = undefined unless args[0]
-              args[1] = !!args[1]
-              # intercept_after options, err, (err) ->
-              # throw Error 'Invalid state' unless todos.length is 0
-              # user_args.length = 2 if user_args.length is 0
-              todos = stack.shift() if todos.length is 0
-              jump_to_error args[0] if args[0] and not options.relax
-              todos.throw_if_error = false if args[0] and options_callback
-              todos.status[0] = args[1] and not options.shy
-              call_callback options_callback, args if options_callback
-              args[0] = null if options.relax
-              depth-- if options.header
-              callback args[0], args[1] if callback
-              run()
+              intercept_after options, args, (err) ->
+                return exec_callback [err] if err
+                args[0] = undefined unless args[0]
+                args[1] = !!args[1]
+                # intercept_after options, err, (err) ->
+                # throw Error 'Invalid state' unless todos.length is 0
+                # user_args.length = 2 if user_args.length is 0
+                todos = stack.shift() if todos.length is 0
+                jump_to_error args[0] if args[0] and not options.relax
+                todos.throw_if_error = false if args[0] and options_callback
+                todos.status[0] = args[1] and not options.shy
+                call_callback options_callback, args if options_callback
+                args[0] = null if options.relax
+                depth-- if options.header
+                callback args[0], args[1] if callback
+                run()
             return exec_callback [err] if err
             # options_header = options.header
             # options.header = undefined
@@ -266,8 +284,11 @@ functions share a common API with flexible options.
           obj
       properties.after = get: ->
         ->
-          throw Error "look at before, doesnt seem ready yet"
-          afters.push type: 'after', options: arguments
+          arguments[0] = type: arguments[0] if typeof arguments[0] is 'string'
+          options = normalize_options arguments, null, false
+          for opts in options
+            throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
+            afters.push opts
           obj
       # properties.on = get: ->
       #   ->
@@ -345,7 +366,7 @@ registered.
       register 'end', module.exports().end, true
       register 'call', module.exports().call, true
       register 'before', module.exports().before, true
-      register 'after', module.exports().before, true
+      register 'after', module.exports().after, true
       register 'then', module.exports().then, true
       # register 'on', module.exports().on, true
       module.exports.on = ->
