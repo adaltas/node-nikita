@@ -1,4 +1,5 @@
 
+
 # `remove(options, callback)`
 
 Recursively remove files, directories and links.
@@ -41,7 +42,7 @@ require('mecano')
 require('mecano')
 .remove({
   destination: './some/dir',
-  not_if_exists: './some/file'
+  unless_exists: './some/file'
 }, function(err, removed){
   console.log(err ? err.message : "File removed: " + !!removed);
 });
@@ -52,7 +53,7 @@ require('mecano')
 ```js
 require('mecano')
 .remove([
-  { destination: './some/dir', not_if_exists: './some/file' },
+  { destination: './some/dir', unless_exists: './some/file' },
   './some/file'
 ], function(err, removed){
   console.log(err ? err.message : 'File removed: ' + !!removed);

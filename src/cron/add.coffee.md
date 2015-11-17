@@ -52,8 +52,7 @@ require('mecano').cron_add({
         options.log message: "Using default user", level: 'DEBUG', module: 'mecano/cron/add'
         crontab = "crontab"
       jobs = null
-      @
-      .execute
+      @execute
         cmd: "#{crontab} -l"
         code: [0, 1]
       , (err, _, stdout, stderr) ->
@@ -62,7 +61,7 @@ require('mecano').cron_add({
         new_job = "#{options.when} #{options.cmd}"
         # remove useless last element
         regex =
-          unless options.match then new RegExp ".* #{options.cmd}"
+          unless options.match then new RegExp ".* #{regexp.escape options.cmd}"
           else if typeof options.match is 'string' then new RegExp options.match
           else if util.isRegExp options.match then options.match
           else throw Error "Invalid option 'match'"
@@ -84,8 +83,7 @@ require('mecano').cron_add({
       .then (err) ->
         return callback err if err
         return callback() unless jobs
-        @
-        .execute
+        @execute
           cmd: if options.user? then "su -l #{options.user} -c '#{options.cmd}'" else options.cmd
           if: options.exec
         .execute
@@ -100,6 +98,7 @@ require('mecano').cron_add({
 ## Dependencies
 
     util = require 'util'
+    {regexp} = require '../misc'
     diff = require '../misc/diff'
     string = require '../misc/string'
     wrap = require '../misc/wrap'

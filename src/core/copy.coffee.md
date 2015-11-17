@@ -13,6 +13,8 @@ overwrite it.
     Where the file or directory is copied.   
 *   `gid`   
     Group name or id who owns the file.   
+*   `unless_exists`   
+    Equals destination if true.   
 *   `mode`   
     Permissions of the file or the parent directory.   
 *   `ssh` (object|ssh2)   
@@ -63,7 +65,7 @@ require('mecano').copy({
       return callback Error 'Missing destination' unless options.destination
       # return callback new Error 'SSH not yet supported' if options.ssh
       # Cancel action if destination exists ? really ? no md5 comparaison, strange
-      # options.not_if_exists = options.destination if options.not_if_exists is true
+      # options.unless_exists = options.destination if options.unless_exists is true
       # Start real work
       modified = false
       srcStat = null

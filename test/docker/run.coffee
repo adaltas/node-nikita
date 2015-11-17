@@ -7,6 +7,26 @@ test = require '../test'
 they = require 'ssh2-they'
 docker = require '../../src/docker/commons'
 
+ip = (ssh, machine, callback) ->
+  docker
+  .get_provider 
+    ssh:  ssh
+    log: ->
+  , (err, provider) ->
+    return callback err if err
+    cmd = ''
+    cmd += "docker-machine ip #{machine}" if provider ==  'docker-machine'
+    cmd += "boot2docker ip" if provider ==  'boot2docker'
+    cmd += "echo '127.0.0.1'" if provider ==  'docker'
+    mecano
+      ssh: ssh
+    .execute
+      cmd: cmd
+    , (err, executed, stdout, __) ->
+      return callback err if err
+      ipadress = stdout.trim()
+      return callback null, ipadress
+
 describe 'docker run', ->
 
   scratch = test.scratch @
@@ -56,37 +76,15 @@ describe 'docker run', ->
       rm: false
       machine: machine
     , (err, executed, stdout, stderr) ->
-      stdout.should.match /^test.*/
+      stdout.should.match /^test.*/ unless err
     .docker_rm
       container: 'mecano_test_rm'
       force: true
       machine: machine
-    .then next
-
-  ip = (ssh,  callback) ->
-    docker
-      .get_provider 
-        ssh:  ssh
-      , (err, provider) ->
-        do_ip(provider) unless err
-        return callback err if err
-    do_ip = (provider) ->
-      #cmd = '/bin/bash -c "echo > /dev/tcp/'
-      cmd = ''
-      cmd += "docker-machine ip #{machine}" if provider ==  'docker-machine'
-      cmd += "boot2docker ip" if provider ==  'boot2docker'
-      cmd += "echo '127.0.0.1'" if provider ==  'docker'
-      mecano
-        ssh: ssh
-      .execute
-        cmd: cmd
-      , (err, executed, stdout, __) ->
-        return callback err if err
-        ipadress = stdout.trim()
-        return callback null, ipadress 
+    .then next 
 
   they 'test unique option from array option', (ssh, next) ->
-    ip ssh, (err, ipadress) =>
+    ip ssh, machine, (err, ipadress) =>
       return next err if  err
       mecano
         ssh: ssh
@@ -95,7 +93,7 @@ describe 'docker run', ->
         port: '499:80'
         machine: machine
         container: 'mecano_test_unique'
-      .execute
+      .wait_execute
         cmd: "/bin/bash -c \"echo > /dev/tcp/#{ipadress}/499\""
       .docker_rm
         container: 'mecano_test_unique'
@@ -104,7 +102,7 @@ describe 'docker run', ->
       .then next
       
   they 'test array options', (ssh, next) ->
-    ip ssh, (err, ipadress) =>
+    p ssh, machine, (err, ipadress) =>
       return next err if  err
       mecano
         ssh: ssh
@@ -113,7 +111,7 @@ describe 'docker run', ->
         port: [ '498:80', '499:81' ]
         machine: machine
         container: 'mecano_test_array'
-      .execute
+      .wait_execute
         cmd: "/bin/bash -c \"echo > /dev/tcp/#{ipadress}/498\""
       .docker_rm
         container: 'mecano_test_array'

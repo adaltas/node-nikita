@@ -159,7 +159,7 @@ mecano.docker({
             else if Array.isArray options[opt]
               for p in options[opt]
                 if typeof p in ['string', 'number']
-                  cmd += " #{flag} #{p}" for p in options[opt]
+                  cmd += " #{flag} #{p}"
                 else callback Error "Invalid parameter, '#{opt}' array should only contains string or number"
             else callback Error "Invalid parameter, '#{opt}' should be string, number or array"
         cmd += " #{options.image}"

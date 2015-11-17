@@ -86,7 +86,6 @@ describe 'cache', ->
           cache_file: "#{scratch}/destination"
           md5: true
           debug: true
-          log: (msg) -> logs.push msg
         , (err, status, file) ->
           status.should.be.false() unless err # because destination exists
           ("[WARN] Bypass source hash computation for non-file protocols" in logs).should.be.true() unless err
@@ -95,7 +94,6 @@ describe 'cache', ->
           source: 'http://localhost:12345/my_file'
           cache_file: "#{scratch}/destination"
           md5: 'df8fede7ff71608e24a5576326e41c75'
-          log: (msg) -> logs.push msg
         , (err, status, file) ->
           status.should.be.false() unless err
           ("[DEBUG] Hashes match, skipping" in logs).should.be.true() unless err
@@ -104,7 +102,6 @@ describe 'cache', ->
           source: 'http://localhost:12345/my_file'
           cache_file: "#{scratch}/destination"
           md5: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-          log: (msg) -> logs.push msg
         , (err, status, file) ->
           status.should.be.true() unless err
           ("[WARN] Hashes don\'t match, delete then re-download" in logs).should.be.true() unless err
@@ -151,7 +148,6 @@ describe 'cache', ->
           source: "#{scratch}/source"
           cache_file: "#{scratch}/destination"
           md5: true
-          log: (msg) -> logs.push msg
         , (err, status, file) ->
           status.should.be.false() unless err
           ('[DEBUG] Hashes match, skipping' in logs).should.be.true() unless err
@@ -160,7 +156,6 @@ describe 'cache', ->
           source: "#{scratch}/source"
           cache_file: "#{scratch}/destination"
           md5: 'df8fede7ff71608e24a5576326e41c75'
-          log: (msg) -> logs.push msg
         , (err, status, file) ->
           status.should.be.false() unless err
           ('[DEBUG] Hashes match, skipping' in logs).should.be.true() unless err
@@ -169,7 +164,6 @@ describe 'cache', ->
           source: "#{scratch}/source"
           cache_file: "#{scratch}/destination"
           md5: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-          log: (msg) -> logs.push msg
         , (err, status, file) ->
           status.should.be.true() unless err
           ("[WARN] Hashes don't match, delete then re-download" in logs).should.be.true() unless err

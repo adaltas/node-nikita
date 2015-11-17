@@ -131,8 +131,8 @@ mecano.docker_build({
 
     module.exports = (options, callback) ->
       # Validate parameters and madatory conditions
-      return callback  Error 'Missing image parameter' unless options.image?
-      return callback  Error 'Can not build from Dockerfile and content' if options.content? and options.dockerfile?
+      return callback Error 'Missing image parameter' unless options.image?
+      return callback Error 'Can not build from Dockerfile and content' if options.content? and options.dockerfile?
       docker.get_provider options, (err,  provider) =>
         return callback err if err
         options.provider = provider

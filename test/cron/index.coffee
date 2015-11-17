@@ -5,12 +5,11 @@ test = require '../test'
 they = require 'ssh2-they'
 
 ###
-Note on OSX, by default i got the message "crontab: no crontab for {user} - using an empty one"
+Note on OSX, by default, I got the message "crontab: no crontab for {user} - using an empty one"
 
 ```
 crontab -e
 30 * * * * /usr/bin/curl --silent --compressed http://www.adaltas.com
-:wq
 crontab -l
 ```
 ###
@@ -23,19 +22,26 @@ describe 'cron', ->
     mecano
       ssh: ssh
     .cron_add
-      cmd: "/bin/true #{rand}"
+      cmd: "/bin/true #{rand}/toto - *.mp3"
       when: '0 * * * *'
     , (err, executed) ->
-      executed.should.be.true() unless err
+      executed.should.be.true()
     .cron_add
-      cmd: "/bin/true #{rand}"
+      cmd: "/bin/true #{rand}/toto - *.mp3"
       when: '0 * * * *'
     , (err, executed) ->
-      executed.should.be.false() unless err
+      executed.should.be.false()
     .cron_remove
-      cmd: "/bin/true #{rand}"
+      cmd: "/bin/true #{rand}/toto - *.mp3"
       when: '0 * * * *'
-    .then next
+    , (err, executed) ->
+      executed.should.be.true()
+    .cron_remove
+      cmd: "/bin/true #{rand}/toto - *.mp3"
+      when: '0 * * * *'
+    , (err, executed) ->
+      executed.should.be.false()
+    .then next  
 
   describe 'match', ->
 
@@ -47,7 +53,7 @@ describe 'cron', ->
         when: '0 * * * *'
         match: '.*bin.*'
       , (err, executed) ->
-        executed.should.be.true() unless err
+        executed.should.be.true()
       .cron_add
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'

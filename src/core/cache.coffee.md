@@ -23,17 +23,17 @@ Download a file a place it on a local or remote folder for later usage.
 *   `force` (boolean)   
     Overwrite destination file if it exists, bypass md5 verification.   
 *   `headers` (array)   
-    Extra  header  to include in the request when sending HTTP to a server.   
+    Extra header  to include in the request when sending HTTP to a server.   
 *   `location` (boolean)
-     If  the  server reports that the requested page has moved to a different
-     location (indicated with a Location: header and a 3XX response code), this
-     option will make curl redo the request on the new place.
+    If the server reports that the requested page has moved to a different
+    location (indicated with a Location: header and a 3XX response code), this
+    option will make curl redo the request on the new place.
 *   `proxy` (string)   
-     Use the specified HTTP proxy. If the port number is not specified, it is
-     assumed at port 1080. See curl(1) man page.   
- *   `source` (path)   
-     File, HTTP URL, FTP, GIT repository. File is the default protocol if source
-     is provided without any.   
+    Use the specified HTTP proxy. If the port number is not specified, it is
+    assumed at port 1080. See curl(1) man page.   
+*   `source` (path)   
+    File, HTTP URL, FTP, GIT repository. File is the default protocol if source
+    is provided without any.   
 
 ## Callback parameters
 
@@ -136,7 +136,7 @@ mecano.download
         @execute
           cmd: cmd
           ssh: if options.cache_local then null else options.ssh
-          not_if_exists: options.destination
+          unless_exists: options.destination
       else
         @mkdir # todo: copy shall handle this
           destination: "#{path.dirname options.destination}"

@@ -57,7 +57,8 @@ describe 'wait execute', ->
       logs = []
       mecano
         ssh: ssh
-        log_serializer: (log) -> "[#{log.level}] #{log.message}"
+      .on 'text', (log) ->
+        logs.push "[#{log.level}] #{log.message}" if /Attempt/.test log.message
       .call ->
         setTimeout ->
           fs.mkdir ssh, "#{scratch}/a_file", -> # ok
@@ -65,7 +66,7 @@ describe 'wait execute', ->
       .wait_execute
         cmd: "test -d #{scratch}/a_file"
         interval: 60
-        log: (msg) -> logs.push msg if /Attempt/.test msg
+        # log: (msg) -> logs.push msg if /Attempt/.test msg
       .then (err) ->
         return next err if err
         logs.should.eql [

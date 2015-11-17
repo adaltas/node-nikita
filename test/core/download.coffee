@@ -343,7 +343,6 @@ describe 'download', ->
           destination: destination
           md5: true
           debug: true
-          log: (msg) -> logs.push msg
         , (err, downloaded) ->
           downloaded.should.be.false() unless err
           ("[INFO] Computed hash value is 'df8fede7ff71608e24a5576326e41c75'" in logs).should.be.true()

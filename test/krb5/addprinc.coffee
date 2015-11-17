@@ -55,7 +55,10 @@ describe 'krb5_addprinc', ->
     , (err, created) ->
       created.should.be.false()
     .execute
-      cmd: "echo password2 | kinit mecano@#{config.krb5.realm}"
+      cmd: "klist"
+      code_skipped: 1
+    , (err, executed, stdout, stderr) ->
+      stderr.should.match /^(.*)No credentials cache found(.*)/
     .then next
 
   they 'dont overwrite password', (ssh, next) ->

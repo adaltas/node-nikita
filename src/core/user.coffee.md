@@ -136,7 +136,7 @@ you are a member of the "wheel" group (gid of "10") with the command
           uid: options.uid
           gid: options.gid
           if_exists: options.home
-          not_if: options.no_home_ownership
+          unless: options.no_home_ownership
         .then (err, created) ->
           return callback err if err
           if created
@@ -171,7 +171,7 @@ you are a member of the "wheel" group (gid of "10") with the command
           gid: options.gid
           if: options.home and (options.uid or options.gid)
           if_exists: options.home
-          not_if: options.no_home_ownership
+          unless: options.no_home_ownership
         @then (err, changed, __, stderr) ->
           return callback new Error "User #{options.name} is logged in" if err?.code is 8
           return callback err if err
