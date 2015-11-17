@@ -20,7 +20,7 @@ describe 'api callback', ->
     .then (err) ->
       callbacks.should.eql [
         [undefined, false]
-        [null, true]
+        [undefined, true]
       ]
       next err
 

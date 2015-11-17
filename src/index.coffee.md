@@ -178,7 +178,6 @@ functions share a common API with flexible options.
         todos.status = []
         todos.throw_if_error = true
         wrap.options options, (err) ->
-          status = false
           user_args = []
           throw_error = undefined
           copy = {}
@@ -187,20 +186,22 @@ functions share a common API with flexible options.
           options = copy
           # Before interception
           intercept_before options, (err) ->
-            exec_callback = (err) ->
+            exec_callback = (args) ->
+              args[0] = undefined unless args[0]
+              args[1] = !!args[1]
+              # intercept_after options, err, (err) ->
               # throw Error 'Invalid state' unless todos.length is 0
-              user_args.length = 2 if user_args.length is 0
+              # user_args.length = 2 if user_args.length is 0
               todos = stack.shift() if todos.length is 0
-              jump_to_error err if err and not options.relax
-              todos.throw_if_error = false if err and options_callback
-              callback_args = [err, status, user_args...]
-              todos.status[0] = status and not options.shy
-              call_callback options_callback, callback_args if options_callback
-              err = null if options.relax
+              jump_to_error args[0] if args[0] and not options.relax
+              todos.throw_if_error = false if args[0] and options_callback
+              todos.status[0] = args[1] and not options.shy
+              call_callback options_callback, args if options_callback
+              args[0] = null if options.relax
               depth-- if options.header
-              callback err, status if callback
+              callback args[0], args[1] if callback
               run()
-            return exec_callback err if err
+            return exec_callback [err] if err
             # options_header = options.header
             # options.header = undefined
             options_handler = options.handler
@@ -209,7 +210,7 @@ functions share a common API with flexible options.
             options.callback = undefined
             conditions.all obj, options
             , (err) ->
-              exec_callback err
+              exec_callback [err]
             , ->
               # Remove conditions from options
               for k, v of options
@@ -217,24 +218,22 @@ functions share a common API with flexible options.
               todos.options = options
               try
                 if options_handler.length is 2 # Async style
-                  options_handler.call obj, options, (err, _status, args...) ->
-                    status = true if _status
-                    for arg, i in args
-                      user_args.push arg
-                    setImmediate -> exec_callback err
+                  options_handler.call obj, options, ->
+                    args = [].slice.call(arguments, 0)
+                    setImmediate -> exec_callback args
                 else # Sync style
                   options_handler.call obj, options
                   status_sync = false
                   wait_children = ->
                     unless todos.length
-                      status = status_sync
-                      return setImmediate exec_callback
+                      return setImmediate ->
+                        exec_callback [null, status_sync]
                     run todos.shift(), (err, status) ->
-                      return exec_callback err if err
+                      return exec_callback [err] if err
                       status_sync = true if status
                       wait_children()
                   wait_children()
-              catch e then exec_callback e
+              catch err then exec_callback [err]
       properties.child = get: ->
         ->
           module.exports(obj.options)
