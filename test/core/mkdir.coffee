@@ -34,14 +34,17 @@ describe 'mkdir', ->
     .then next
   
   they 'should create dir recursively', (ssh, next) ->
-    source = "#{scratch}/a_parent_dir/a_dir"
-    mecano.mkdir
+    mecano
       ssh: ssh
-      directory: source
+    .mkdir
+      directory: "#{scratch}/a_parent_dir_1/a_dir"
     , (err, created) ->
-      return next err if err
-      created.should.be.true()
-      next()
+      created.should.be.true() unless err
+    .mkdir
+      directory: "#{scratch}/a_parent_dir_2/a_dir/"
+    , (err, created) ->
+      created.should.be.true() unless err
+    .then next
   
   they 'should create multiple directories', (ssh, next) ->
     mecano.mkdir

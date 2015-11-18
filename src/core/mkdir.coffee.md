@@ -85,6 +85,7 @@ require('mecano')
           # Create directory and its parent directories
           directories = directory.split('/')
           directories.shift() # first element is empty with absolute path
+          directories.pop() if directories[directories.length-1] is ''
           directories = for i in [0...directories.length]
             '/' + directories.slice(0, directories.length - i).join '/'
           each(directories)
@@ -125,7 +126,7 @@ require('mecano')
               opts[attr] = val if val?
             fs.mkdir options.ssh, directory, opts, (err) ->
               return callback err if err
-              options.log message: "Directory \"#{directory}\" created ", level: '', module: 'mecano/src/mkdir'
+              options.log message: "Directory \"#{directory}\" created ", level: 'INFO', module: 'mecano/src/mkdir'
               modified = true
               callback()
             , 1000
