@@ -143,3 +143,12 @@ describe 'api stack', ->
       .then (err, changed) ->
         err.message.should.eql 'Catchme'
         next()
+
+    it 'catch err in child', (next) ->
+      mecano
+      .call ->
+        @call ->
+          throw Error 'Catchme'
+      .then (err) ->
+        err.message.should.eql "Catchme"
+        next()

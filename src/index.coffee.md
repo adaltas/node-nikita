@@ -164,7 +164,10 @@ functions share a common API with flexible options.
       run = (options, callback) ->
         options = todos.shift() unless options
         unless options # Nothing more to do in current queue
-          throw todos.err if todos.err and todos.throw_if_error
+          if callback
+            callback todos.err
+          else
+            throw todos.err if stack.length is 0 and todos.err and todos.throw_if_error
           return
         if options.type is 'then'
           {err, status} = todos
