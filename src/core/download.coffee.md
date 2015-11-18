@@ -229,7 +229,7 @@ mecano.download
           @mkdir path.dirname stageDestination
           @execute
             cmd: cmd
-            # not_if_exists: options.cache_file
+            # unless_exists: options.cache_file
           @then callback
         else if not options.ssh and use_cache
           hash_info = ssh: null, source: source if hash is true

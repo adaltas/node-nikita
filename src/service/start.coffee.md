@@ -49,6 +49,6 @@ require('mecano').service_start([{
         else 'stopped'
       .execute
         cmd: "service #{options.name} start"
-        not_if: ->
+        unless: ->
           options.store["mecano.service.#{options.name}.status"] is 'started'
       .then callback
