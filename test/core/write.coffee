@@ -81,7 +81,7 @@ describe 'write', ->
       .write
         destination: "#{scratch}/empty_file"
         content: ''
-        not_if_exists: true
+        unless_exists: true
       , (err, written) ->
         written.should.be.true()
       .call (options, next) ->
@@ -95,7 +95,7 @@ describe 'write', ->
       .write
         destination: "#{scratch}/empty_file"
         content: ''
-        not_if_exists: true
+        unless_exists: true
       , (err, written) ->
         written.should.be.false()
       .call (options, next) ->

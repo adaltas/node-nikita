@@ -67,14 +67,14 @@ describe 'extract', ->
       extracted.should.be.true()
     .then next
 
-  they 'should # option # not_if_exists', (ssh, next) ->
+  they 'should # option # unless_exists', (ssh, next) ->
     # Test with invalid creates option
     mecano
       ssh: ssh
     .extract
       source: "#{__dirname}/../resources/a_dir.tgz"
       destination: scratch
-      not_if_exists: __dirname
+      unless_exists: __dirname
     , (err, extracted) ->
       return next err if err
       extracted.should.be.false()

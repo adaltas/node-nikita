@@ -55,14 +55,14 @@ describe 'compress', ->
       destination: "#{scratch}/a_dir.tar.xz"
     .then next
 
-  they 'should # option # not_if_exists', (ssh, next) ->
+  they 'should # option # unless_exists', (ssh, next) ->
     # Test with invalid creates option
     mecano
       ssh: ssh
     .compress
       source: "#{__dirname}/../resources/a_dir"
       destination: "#{scratch}/should_never_exists.tgz"
-      not_if_exists: __dirname
+      unless_exists: __dirname
     , (err, compressed) ->
       return next err if err
       compressed.should.be.false()

@@ -112,11 +112,11 @@ describe 'execute', ->
       should.not.exist stdout
       next()
 
-  they 'honor not_if_exists', (ssh, next) ->
+  they 'honor unless_exists', (ssh, next) ->
     mecano.execute
       ssh: ssh
       cmd: "ls -l #{__dirname}"
-      not_if_exists: __dirname
+      unless_exists: __dirname
     , (err, executed, stdout, stderr) ->
       return next err if err
       executed.should.be.false()

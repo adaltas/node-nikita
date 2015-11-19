@@ -7,8 +7,8 @@ describe 'api conditions', ->
     mecano
     .call
       if: -> true
-      not_if: -> false
+      unless: -> false
       handler: (options) ->
         (options.if is undefined).should.be.true()
-        (options.not_if is undefined).should.be.true()
+        (options.unless is undefined).should.be.true()
     .then next

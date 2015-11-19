@@ -25,12 +25,9 @@ module.exports.options = (options, callback) ->
   each options
   .run (options, next) ->
     options.if_exists = [options.if_exists] if typeof options.if_exists is 'string'
-    options.not_if_exists = [options.not_if_exists] if typeof options.not_if_exists is 'string'
     options.unless_exists = [options.unless_exists] if typeof options.unless_exists is 'string'
     if options.if_exists then for el, i in options.if_exists
       options.if_exists[i] = options.destination if el is true and options.destination
-    if options.not_if_exists then for v, i in options.not_if_exists
-      options.not_if_exists[i] = options.destination if v is true and options.destination
     if options.unless_exists then for v, i in options.unless_exists
       options.unless_exists[i] = options.destination if v is true and options.destination
     options.mode ?= options.chmod if options.chmod

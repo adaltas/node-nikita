@@ -235,7 +235,7 @@ functions share a common API with flexible options.
             , ->
               # Remove conditions from options
               for k, v of options
-                delete options[k] if /^if.*/.test(k) or /^not_if.*/.test(k) or /^unless.*/.test(k)
+                delete options[k] if /^if.*/.test(k) or /^unless.*/.test(k)
               todos.options = options
               try
                 if options_handler.length is 2 # Async style
