@@ -6,14 +6,14 @@ force options is set.
 
 ## Options
 
-*   `image` (string)   
-    Name of the image. MANDATORY   
-*   `machine` (string)   
-    Name of the docker-machine. MANDATORY if docker-machine installed   
-*   `no_prune` (boolean)   
-    Remove the volumes associated with the container   
-*   `force` (boolean)   
-    Force the removal of a running container (uses SIGKILL)   
+*   `image` (string)
+    Name of the image. MANDATORY
+*   `machine` (string)
+    Name of the docker-machine. MANDATORY if docker-machine installed
+*   `no_prune` (boolean)
+    Remove the volumes associated with the container
+*   `force` (boolean)
+    Force the removal of a running container (uses SIGKILL)
 
 ## Example
 
@@ -22,20 +22,22 @@ force options is set.
     module.exports = (options, callback) ->
       # Validate parameters and madatory conditions
       return callback  Error 'Missing image parameter' unless options.image?
-      docker.get_provider options, (err,  provider) =>
-        return callback err if err
-        options.provider = provider
-        cmd = docker.prepare_cmd provider, options.machine
-        return callback cmd if util.isError cmd
-        cmd += 'docker rmi '
-        for opt in ['force', 'no_prune']
-          cmd += "--#{opt.replace '_', '-'} " if options[opt]?
-        cmd += options.image
-        # Construct other exec parameter
-        opts = docker.get_options cmd, options
-        @execute opts, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
-        
+      cmd = ' rmi '
+      for opt in ['force', 'no_prune']
+        cmd += "--#{opt.replace '_', '-'} " if options[opt]?
+      cmd += options.image
+      parts = options.image.split(':')
+      repository = parts[0] ?= ''
+      tag = parts[1] ?= ''
+      docker.exec " images | grep '#{repository}' | grep '#{tag}'", options, true, (err, exists,  stdout, stderr) ->
+        return callback err, exists if (err or !exists)
+        docker.exec cmd, options, null
+          , (err, executed, stdout, stderr) ->
+            callback err, executed, stdout, stderr
+
+
+
 ## Modules Dependencies
 
-    docker = require './commons'
+    docker = require '../misc/docker'
     util = require 'util'

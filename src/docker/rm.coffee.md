@@ -6,16 +6,16 @@ force options is set.
 
 ## Options
 
-*   `container` (string)   
-    Name/ID of the container. MANDATORY   
-*   `machine` (string)   
-    Name of the docker-machine. MANDATORY if docker-machine installed   
-*   `link` (boolean)   
-    Remove the specified link   
-*   `volumes` (boolean)   
-    Remove the volumes associated with the container   
-*   `force` (boolean)   
-    Force the removal of a running container (uses SIGKILL)   
+*   `container` (string)
+    Name/ID of the container. MANDATORY
+*   `machine` (string)
+    Name of the docker-machine. MANDATORY if docker-machine installed
+*   `link` (boolean)
+    Remove the specified link
+*   `volumes` (boolean)
+    Remove the volumes associated with the container
+*   `force` (boolean)
+    Force the removal of a running container (uses SIGKILL)
 
 ## Example
 
@@ -24,20 +24,30 @@ force options is set.
     module.exports = (options, callback) ->
       # Validate parameters and madatory conditions
       return callback  Error 'Missing container parameter' unless options.container?
-      docker.get_provider options, (err,  provider) =>
-        return callback err if err
-        options.provider = provider
-        cmd = docker.prepare_cmd provider, options.machine
-        return callback cmd if util.isError cmd
-        cmd += 'docker rm '
-        for opt in ['link', 'volumes', 'force']
-          cmd += "-#{opt.charAt 0} " if options[opt]
-        cmd += options.container
-        # Construct other exec parameter
-        opts = docker.get_options cmd, options
-        @execute opts, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
-        
+      cmd = ' rm '
+      for opt in ['link', 'volumes', 'force']
+        cmd += "-#{opt.charAt 0} " if options[opt]
+      cmd += options.container
+      docker.exec " ps | grep '#{options.container}' ", options, true, (err, executed, stdout, stderr) ->
+        return callback err, executed, stdout, stderr if err
+        if executed
+          if options.force
+            docker.exec cmd, options, false, (err, executed, stdout, stderr) ->
+              callback err, executed, stdout, stderr
+          else
+            return callback Error 'Container must be stopped to be removed without force'
+        else
+          docker.exec " ps -a | grep '#{options.container}' ", options, true, (err, executed, stdout, stderr) ->
+            return callback err, executed, stdout, stderr if err or !executed
+            if executed
+              docker.exec cmd, options, true, (err, executed, stdout, stderr) ->
+                callback err, executed, stdout, stderr
+
+
+
+
+
 ## Modules Dependencies
 
-    docker = require './commons'
+    docker = require '../misc/docker'
     util = require 'util'

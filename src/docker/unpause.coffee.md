@@ -68,5 +68,5 @@ mecano.docker_pause({
         
 ## Modules Dependencies
 
-    docker = require './commons'
+    docker = require '../misc/docker'
     util = require 'util'

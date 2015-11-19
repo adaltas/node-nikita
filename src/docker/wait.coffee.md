@@ -67,5 +67,5 @@ mecano.docker_wait({
 
 ## Modules Dependencies
 
-    docker = require './commons'
+    docker = require '../misc/docker'
     util = require 'util'
