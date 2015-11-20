@@ -11,11 +11,11 @@
         bin_boot2docker=$(command -v boot2docker)
         bin_docker=$(command -v docker)
         bin_machine=$(command -v docker-machine)
-        if [ -f $bin_machine ];
-          if [ \"#{machine}\" = \"--\" ];then exit 5;fi
+        if [ $bin_machine ];
           then
+            if [ \"#{machine}\" = \"--\" ];then exit 5;fi
             eval $(${bin_machine} env #{machine}) && $bin_docker #{comand}
-        elif [ -f $bin_boot2docker ];
+        elif [  $bin_boot2docker ];
           then
             eval $(${bin_boot2docker} shellinit) && $bin_docker #{comand}
         else
@@ -25,7 +25,6 @@
       opts = @get_options cmd, options
       mecano
       .execute opts,  (err, executed, stdout, stderr) ->
-        # console.log cmd, err, executed, stdout, stderr if cmd.indexOf('rm') > -1
         if err
           return callback Error('Missing machine name as options') if err.code == 5
         return callback err, executed, stdout, stderr
