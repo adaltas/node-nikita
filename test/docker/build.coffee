@@ -6,30 +6,11 @@ should = require 'should'
 mecano = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
+docker = require '../../src/misc/docker'
 
 clean = (ssh, machine, image, callback) ->
-  mecano
-  .execute
-    cmd: """
-      export SHELL=/bin/bash
-      export PATH=/opt/local/bin/:/opt/local/sbin/:/usr/local/bin/:/usr/local/sbin/:$PATH
-      bin_boot2docker=$(command -v boot2docker)
-      bin_docker=$(command -v docker)
-      bin_machine=$(command -v docker-machine)
-      if [ -f $bin_machine ];
-        if [ \"#{machine}\" = \"--\" ];then exit 5;fi
-        then
-          eval $(${bin_machine} env #{machine}) && $bin_docker  rmi -f #{image}
-      elif [ -f $bin_boot2docker ];
-        then
-          eval $(${bin_boot2docker} shellinit) && $bin_docker rmi -f #{image}
-      else
-        $bin_docker rmi -f #{image}
-      fi
-      """
-    code_skipped: 1
-    , (err, executed, stdout, stderr) ->
-      return callback err, executed, stdout, stderr
+  docker.exec " rmi -f #{image} || true" , {  ssh: ssh, machine: machine }, null
+  , (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
 
 describe 'docker build', ->
 
@@ -113,6 +94,18 @@ describe 'docker build', ->
             .remove
               destination: "#{scratch}/mecano_Dockerfile"
             .then next()
+
+  they 'from Dockerfile (not exist)', (ssh, next) ->
+    clean ssh, machine, 'mecano/should_not_exists_4', (err) ->
+      mecano
+        ssh: ssh
+      .docker_build
+        image: 'mecano/should_not_exists_4'
+        dockerfile: 'unexisting/file'
+        machine: machine
+      , (err, executed, stdout, stderr) ->
+        executed.should.be.false()
+        next()
 
   they 'status not modified (from stdin text)', (ssh, next) ->
     clean ssh, machine, 'mecano/should_not_exists_4', (err) ->
