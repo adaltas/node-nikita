@@ -68,41 +68,46 @@ mecano.docker({
       # Saves image to local tmp path, than copy it
       # Uses copy (it is idempotent)
       # Construct exec command
-      cache = "/tmp/mecano_docker"
+      temp_dir = "/tmp/mecano_docker_save"
       name = "#{options.destination.split('/').pop().toString()}.#{Date.now()}"
-      cache_path = "#{cache}/#{name}"
-
-      cmd = " save -o #{cache_path} #{options.image}"
+      temp_dir_path = "#{temp_dir}/#{name}"
+      cmd = " save -o #{temp_dir_path} #{options.image}"
       @mkdir
-        destination: cache
-      , (err, executed) ->
+        destination: temp_dir
+      , (err, executed) =>
         return callback err if err
+        options.log message: "Extracting to temp_dir :#{temp_dir_path}", level: 'INFO', module: 'mecano/src/docker/save'
         docker.exec cmd, options, null, (err, executed, stdout, stderr) =>
           return callback err, executed, stdout, stderr if err
           ssh2fs.exists options.ssh, options.destination, (err, exists) =>
             return callback err if err
             if exists
-              file.hash options.ssh, cache_path, 'md5', (err, value_cache) =>
+              options.log message: "Target saved image already exist :#{options.destination}", level: 'INFO', module: 'mecano/src/docker/save'
+              file.hash options.ssh, temp_dir_path, 'md5', (err, value_temp_dir) =>
                 return callback err if err
                 file.hash options.ssh, options.destination, 'md5', (err, value_dest) =>
                   return callback err, null if err
-                  if value_cache is value_dest
+                  if value_temp_dir is value_dest
+                    options.log message: "Indetical image (not overwritten):#{options.destination}", level: 'INFO', module: 'mecano/src/docker/save'
                     @remove
-                      destination: cache
+                      destination: temp_dir
                     , (err, executed, stdout, stderr) ->
                       return callback err, null, stdout, stderr
                   else
+                    options.log message: "Not identical image (overwriting):#{options.destination}", level: 'INFO', module: 'mecano/src/docker/save'
                     @copy
-                      source: cache_path
+                      source: temp_dir_path
                       destination: options.destination
                     @remove
-                      destination: cache, (err, executed, stdout, stderr) ->  return callback err, executed, stdout, stderr
+                      destination: temp_dir, (err, executed, stdout, stderr) ->  return callback err, executed, stdout, stderr
             else
+              options.log message: "Target saved image does not exist :#{options.destination}", level: 'INFO', module: 'mecano/src/docker/save'
               @copy
-                source: cache_path
+                source: temp_dir_path
                 destination: options.destination
               @remove
-                destination: cache, (err, executed, stdout, stderr) =>  return callback err, executed, stdout, stderr
+                destination: temp_dir, (err, executed, stdout, stderr) =>  return callback err, executed, stdout, stderr
+                force: true
 
 ## Modules Dependencies
 
