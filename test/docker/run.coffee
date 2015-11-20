@@ -37,28 +37,8 @@ ip = (ssh, machine, callback) ->
       return callback null, ipadress
 
 clean = (ssh, machine, container, callback) ->
-  mecano
-  .execute
-    cmd: """
-      export SHELL=/bin/bash
-      export PATH=/opt/local/bin/:/opt/local/sbin/:/usr/local/bin/:/usr/local/sbin/:$PATH
-      bin_boot2docker=$(command -v boot2docker)
-      bin_docker=$(command -v docker)
-      bin_machine=$(command -v docker-machine)
-      if [ -f $bin_machine ];
-        if [ \"#{machine}\" = \"--\" ];then exit 5;fi
-        then
-          eval $(${bin_machine} env #{machine}) && $bin_docker  rm -f #{container} || true
-      elif [ -f $bin_boot2docker ];
-        then
-          eval $(${bin_boot2docker} shellinit) && $bin_docker rm -f #{container} || true
-      else
-        $bin_docker rm -f #{container} || true
-      fi
-      """
-    code_skipped: 1
-    , (err, executed, stdout, stderr) ->
-      return callback err, executed, stdout, stderr
+  docker.exec " rm -f #{container} || true" , {  ssh: ssh, machine: machine }, null
+  , (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
 
 describe 'docker run', ->
 

@@ -164,18 +164,16 @@ mecano.docker({
           else callback Error "Invalid parameter, '#{opt}' should be string, number or array"
       cmd += " #{options.image}"
       cmd += " #{options.cmd}" if options.cmd
-      # Construct other exec parameter
-      # Construct other exec parameter
-      # options = docker.get_options options
-      # do_exec = (cmd, options, ignore_code, callback) ->
-      #   docker.exec cmd, options, ignore_code, (err, executed, stdout, stderr) =>
-      #     return callback(err, executed, stdout, stderr) if err
+      # need to delete the cmd options or it will be used in docker.exec
       delete options.cmd
+      # Construct other exec parameter
       if options.container?
+        options.log message: "Checking if container already runned", level: 'INFO', module: 'mecano/docker/run'
         docker.exec " ps -a | grep '#{options.container}'", options, true, (err, executed, stdout, stderr) =>
           return callback(err, executed, stdout, stderr) if err
           if executed
             if options.force
+              options.log message: "Use force to remove live container #{options.container}", level: 'INFO', module: 'mecano/docker/run'
               docker.exec " rm -f #{options.container} || true", options, null, (err) ->
                 return callback err if err
                 docker.exec cmd, options, null, (err, executed, stdout, stderr) ->
@@ -188,6 +186,7 @@ mecano.docker({
               return callback null, null
 
           else
+            options.log message: "Running container #{options.container}", level: 'INFO', module: 'mecano/docker/run'
             docker.exec cmd, options, null, (err, executed, stdout, stderr) ->
               return callback err, executed, stdout, stderr
       else
