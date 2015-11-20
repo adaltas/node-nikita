@@ -60,14 +60,14 @@ mecano.docker_stop({
       cmd = ' stop '
       cmd += "-t #{options.timeout} " if options.timeout?
       cmd += options.container
-      @docker_status
-        container: options.container
-        machine: options.machine
-      , (err, is_running) ->
+      docker_status options, (err, is_running) ->
+        options.log message: "Container already stopped #{options.container} (Skipping)", level: 'INFO', module: 'mecano/src/docker/start' if !is_running
         return callback err, is_running if err or !is_running
+        options.log message: "Stopping container #{options.container}", level: 'INFO', module: 'mecano/src/docker/stop'
         docker.exec cmd, options, false, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
 
 ## Modules Dependencies
 
+    docker_status = require './status'
     docker = require '../misc/docker'
     util = require 'util'
