@@ -54,10 +54,9 @@ mecano.docker_pause({
     module.exports = (options, callback) ->
       # Validate parameters
       return callback Error 'Missing container parameter' unless options.container?
-      # rm is false by default only if options.service is true
       cmd = ' pause '
       cmd += options.container
-      docker.exec cmd, options, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
+      docker.exec cmd, options, true, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
 
 ## Modules Dependencies
 
