@@ -15,7 +15,7 @@ describe 'docker cp', ->
   machine = 'dev'
 
 
-  they 'copy simple file', (ssh, next) ->
+  they 'copy simple file (with temp_dir)', (ssh, next) ->
     mecano
       ssh: ssh
     .docker_rm
@@ -41,7 +41,61 @@ describe 'docker cp', ->
             machine: machine
           .then (err, executed, stdout) => next(err)
 
-  they 'copy unless file exists', (ssh, next) ->
+  they 'copy simple file (no temp_dir)', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .docker_rm
+      container: 'mecano_extract'
+      machine: machine
+    .docker_run
+      container: 'mecano_extract'
+      image: 'alpine'
+      machine: machine
+      cmd: "ls -l  #{source}"
+    .docker_cp
+      container: 'mecano_extract'
+      machine: machine
+      source: source
+      destination: destination
+    .then (err, executed, stdout) =>
+        executed.should.be.true() unless err
+        fs.stat ssh, "#{destination}/default.script", (err, stat) ->
+          next(err) if err
+          should.exist(stat)
+          mecano.docker_rm
+            container: 'mecano_extract'
+            machine: machine
+          .then (err, executed, stdout) => next(err)
+
+  they 'target not exist', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .docker_cp
+      container: 'mecano_extract'
+      machine: machine
+      source: source
+      destination: 'not_existing_target'
+    , (err, executed, stdout) =>
+        executed.should.be.false()
+        should.exist(err)
+        next()
+
+  they 'target not a directory', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .write
+      content: 'I am a line in a file'
+      destination: "#{scratch}/a_file"
+    .docker_cp
+      container: 'mecano_extract'
+      machine: machine
+      source: source
+      destination: "#{scratch}/a_file"
+    , (err, executed, stdout) =>
+        executed.should.be.false()
+        next(err)
+
+  they 'copy unless file exists (with temp_dir)', (ssh, next) ->
     mecano
       ssh: ssh
     .docker_rm
@@ -64,4 +118,30 @@ describe 'docker cp', ->
       container: 'mecano_extract'
     , (err, executed, stdout, stderr) ->
       executed.should.be.false() unless err
+      next(err)
+
+  they 'copy unless file exists (no temp_dir)', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .docker_rm
+      container: 'mecano_extract'
+      machine: machine
+    .docker_run
+      container: 'mecano_extract'
+      image: 'alpine'
+      machine: machine
+      cmd: "ls -l  #{source}"
+    .docker_cp
+      source: source
+      destination: destination
+      machine: machine
+      container: 'mecano_extract'
+    .docker_cp
+      source: source
+      destination: destination
+      machine: machine
+      container: 'mecano_extract'
+      temp_dir: false
+    , (err, executed, stdout, stderr) ->
+      executed.should.be.true() unless err
       next(err)

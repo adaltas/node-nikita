@@ -10,6 +10,9 @@ Copy files/folders from a PATH on the container to a HOSTDIR on the host
     Name of the docker-machine. MANDATORY if using docker-machine
 *   `source` (string)
     path inside the container
+*   `temp_dir` (boolean)
+    rather use or not a temp_dir. If set to false the target file will be overwritten
+    automatically by docker.(true by default)
 *   `destination`
     path to destination on the host machine
 *   `code` (int|array)
@@ -68,28 +71,47 @@ mecano.docker({
       return callback Error 'Missing destination parameter' unless options.destination?
       return callback Error 'Missing container parameter' unless options.container?
       # Construct exec command
-      cache = "/tmp/mecano_docker_cp_#{Date.now()}"
+
+      options.temp_dir ?= 'true'
+      temp_dir = "/tmp/mecano_docker_cp_#{Date.now()}"
+      destination = if options.temp_dir then temp_dir else  options.destination
       destination_path = "#{options.destination}/#{options.source.split('/').pop().toString()}"
-      cache_path = "#{cache}/#{options.source.split('/').pop().toString()}"
-      cmd = " cp #{options.container}:#{options.source} #{cache}"
-      docker.exec cmd, options, null, (err, copied, stdout, stderr) =>
-        return callback err, copied, stdout, stderr if err
-        ssh2fs.exists options.ssh, destination_path, (err, exists) =>
-          return callback err if err
-          if exists
-            file.hash options.ssh, cache_path, 'md5', (err, value_cache) =>
-              return callback err if err
-              file.hash options.ssh, destination_path, 'md5', (err, value_dest) =>
-                return callback err, null if err or (value_cache is value_dest)
-                @copy
-                  source: cache_path
-                  destination: options.destination, (err, executed, stdout, stderr) =>
-                    return callback err, executed, stdout, stderr
-          else
-            @copy
-              source: cache_path
-              destination: options.destination, (err, executed, stdout, stderr) ->
-                return callback err, executed, stdout, stderr
+      temp_dir_path = "#{destination}/#{options.source.split('/').pop().toString()}"
+      cmd = " cp #{options.container}:#{options.source} #{temp_dir}"
+      ssh2fs.stat options.ssh, options.destination, (err, stats) =>
+        if err
+          if err.code == 'ENOENT'
+            options.log message: "Target directory does not exist :#{options.destination}", level: 'INFO', module: 'mecano/src/docker/cp'
+            return callback err
+        else
+          options.log message: "Target is not a directory :#{options.destination}", level: 'ERROR', module: 'mecano/src/docker/cp' unless stats.isDirectory()
+          return callback err, false unless stats.isDirectory()
+          options.log message: "Extracting :#{options.source} from #{options.container} to destination:#{destination}", level: 'DEBUG', module: 'mecano/src/docker/cp' unless options.temp_dir?
+          options.log message: "Extracting :#{options.source} from #{options.container} to temp_dir:#{temp_dir}", level: 'DEBUG', module: 'mecano/src/docker/cp'
+          docker.exec cmd, options, null, (err, copied, stdout, stderr) =>
+            return callback err, copied, stdout, stderr if err or !options.temp_dir
+            ssh2fs.stat options.ssh, destination_path, (err, stats) =>
+              if err
+                if err.code == 'ENOENT'
+                  options.log message: "Target does not exist :#{destination_path}", level: 'INFO', module: 'mecano/src/docker/cp'
+                  @copy
+                    source: temp_dir_path
+                    destination: options.destination, (err, executed, stdout, stderr) ->
+                      return callback err, executed, stdout, stderr
+                else
+                  return callback err, false
+              else
+                if stats
+                  options.log message: "Target already exist #{destination_path}", level: 'INFO', module: 'mecano/src/docker/cp'
+                  file.hash options.ssh, temp_dir_path, 'md5', (err, value_temp_dir) =>
+                    return callback err if err
+                    file.hash options.ssh, destination_path, 'md5', (err, value_dest) =>
+                      options.log message: "Identical hash for extracted file/directory", level: 'INFO', module: 'mecano/src/docker/cp' if (value_temp_dir is value_dest)
+                      return callback err, null if err or (value_temp_dir is value_dest)
+                      @copy
+                        source: temp_dir_path
+                        destination: options.destination, (err, executed, stdout, stderr) =>
+                          return callback err, executed, stdout, stderr
 
 ## Modules Dependencies
 
