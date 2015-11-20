@@ -55,15 +55,9 @@ mecano.docker_wait({
       # Validate parameters
       return callback Error 'Missing container parameter' unless options.container?
       # rm is false by default only if options.service is true
-      docker.get_provider options, (err,  provider) =>
-        return callback err if err
-        options.provider = provider
-        cmd = docker.prepare_cmd provider, options.machine
-        return callback cmd if util.isError cmd
-        cmd += "docker wait #{options.container} | read r; return $r"
-        # Construct other exec parameter
-        opts = docker.get_options cmd, options
-        @execute opts, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
+      cmd = " wait #{options.container} | read r; return $r"
+      # Construct other exec parameter
+      @docker.exec cmd, options, true, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
 
 ## Modules Dependencies
 
