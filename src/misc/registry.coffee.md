@@ -45,6 +45,7 @@
       docker_stop: require '../docker/stop'
       docker_unpause: require '../docker/unpause'
       docker_wait: require '../docker/wait'
+      docker_checksum: require '../docker/checksum'
       # Java
       java_keystore_add: require '../java/keystore_add'
       java_keystore_remove: require '../java/keystore_remove'
