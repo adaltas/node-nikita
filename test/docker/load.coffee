@@ -35,15 +35,48 @@ describe 'docker load', ->
       image: 'mecano/load_test:latest'
       machine: machine
       source: "#{source}/mecano_load.tar"
-    , (err, loaded) ->
+    , (err, loaded, stdout, stderr) ->
       loaded.should.be.true()
-    .then next
+      mecano
+        ssh: ssh
+      .docker_rmi
+        machine: machine
+        image: 'mecano/load_test:latest'
+      .then next
+
+  they 'not loading if checksum', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .remove
+      destination: "#{source}/mecano_load.tar"
+    .docker_build
+      image: 'mecano/load_test:latest'
+      content: "FROM scratch\nCMD ['echo \"docker_build #{Date.now()}\"']"
+      machine: machine
+    , (err, execute, stdout, stderr, checksum) ->
+      mecano
+        ssh: ssh
+      .docker_save
+        image: 'mecano/load_test:latest'
+        destination: "#{source}/mecano_load.tar"
+        machine: machine
+      .docker_load
+        image: 'mecano/load_test:latest'
+        machine: machine
+        source: "#{source}/mecano_load.tar"
+        checksum: checksum
+      , (err, loaded) ->
+        loaded.should.be.false()
+        next(err)
 
   they 'status not modified if same image', (ssh, next) ->
     mecano
       ssh: ssh
     .remove
       destination: "#{source}/mecano_load.tar"
+    .docker_rmi
+      machine: machine
+      image: 'mecano/load_test:latest'
     .docker_build
       image: 'mecano/load_test:latest'
       content: "FROM scratch\nCMD ['echo \"docker_build #{Date.now()}\"']"
