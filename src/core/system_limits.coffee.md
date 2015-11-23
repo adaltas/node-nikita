@@ -3,6 +3,29 @@
 
 Control system limits for a user.
 
+## Implemented strategy
+
+### nproc and nofile
+
+there is two cases, depending on the specified value
+
+1. int value
+
+If an int value is specified, then mecano checks that the value is lesser than 
+the kernel limit. Please be aware that it is necessary but not sufficient to 
+guarantee that the user would be able to open session.
+
+2. true value
+
+If a true value is specified, then mecano set it to 75% of the kernel limit.
+This value is neither optimal nor able to guarantee that the user would be
+able to open session, but that is the best mecano can automatically do.
+
+### Other values
+
+Other values are not assessed by default.
+They must be int typed, and no specific check is implemented.
+
 ## Ulimit
 
 Linux allows to limit the resources allocated to users or user groups via
@@ -145,10 +168,6 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
 
 ## Source Code
     
-    ceil_limit = (strInt) -> 
-      if typeof strInt is 'string' then strInt = parseInt strInt
-      Math.round strInt*0.75
-
     module.exports = (options, callback) ->
       return callback Error "Missing required option 'user'" unless options.user
       # Parameters where value can be guessed
@@ -166,21 +185,25 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
       .execute
         cmd: "cat /proc/sys/fs/file-max"
         shy: true
-        if: options.nofile is true
+        if: options.nofile
       , (err, status, stdout) ->
         # console.log err, status, stdout
-        return callback err if err
+        throw err if err
         return unless status
-        options.nofile = ceil_limit stdout.trim()
+        kern_limit = parseInt stdout.trim()
+        if options.nofile is true then options.nofile = Math.round kern_limit*0.75
+        else throw Error "Invalid nofile options. Please set int value lesser than kernel limit: #{kern_limit}" if options.nofile >= kern_limit
       # Calculate nproc from kernel limit
       .execute
         cmd: "cat /proc/sys/kernel/pid_max"
         shy: true
-        if: options.nproc is true
+        if: options.nproc
       , (err, status, stdout) ->
-        return callback err if err
+        throw err if err
         return unless status
-        options.nproc = ceil_limit stdout.trim()
+        kern_limit = parseInt stdout.trim()
+        if options.nproc is true then options.nproc = Math.round kern_limit*0.75
+        else throw Error "Invalid nproc options. Please set int value lesser than kernel limit: #{kern_limit}" if options.nproc >= kern_limit
       .call ->
         for opt in ['as', 'core', 'cpu', 'data', 'fsize', 'locks', 'maxlogins',
         'maxsyslogins', 'memlock', 'msgqueue', 'nice', 'nofile', 'nproc',

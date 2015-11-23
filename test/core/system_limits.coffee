@@ -110,3 +110,25 @@ describe 'system_limits', ->
 
             """ unless err
             next err
+
+  they 'raise an error if nofile is too high', (ssh, next) ->
+      mecano
+        ssh: ssh
+      .system_limits
+        destination: "#{scratch}/me.conf"
+        user: 'me'
+        nofile: 1000000000
+      , (err, status) ->
+        err.message.should.match /^Invalid nofile options.*$/
+        next()
+        
+  they 'raise an error if nproc is too high', (ssh, next) ->
+      mecano
+        ssh: ssh
+      .system_limits
+        destination: "#{scratch}/me.conf"
+        user: 'me'
+        nproc: 1000000000
+      , (err, status) ->
+        err.message.should.match /^Invalid nproc options.*$/
+        next()
