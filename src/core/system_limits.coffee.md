@@ -144,6 +144,10 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
     True if limits configuration file has been modified.
 
 ## Source Code
+    
+    ceil_limit = (strInt) -> 
+      if typeof strInt is 'string' then strInt = parseInt strInt
+      Math.round strInt*0.75
 
     module.exports = (options, callback) ->
       return callback Error "Missing required option 'user'" unless options.user
@@ -167,7 +171,7 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
         # console.log err, status, stdout
         return callback err if err
         return unless status
-        options.nofile = stdout.trim()
+        options.nofile = ceil_limit stdout.trim()
       # Calculate nproc from kernel limit
       .execute
         cmd: "cat /proc/sys/kernel/pid_max"
@@ -176,7 +180,7 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
       , (err, status, stdout) ->
         return callback err if err
         return unless status
-        options.nproc = stdout.trim()
+        options.nproc = ceil_limit stdout.trim()
       .call ->
         for opt in ['as', 'core', 'cpu', 'data', 'fsize', 'locks', 'maxlogins',
         'maxsyslogins', 'memlock', 'msgqueue', 'nice', 'nofile', 'nproc',

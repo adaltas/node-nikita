@@ -15,7 +15,7 @@ describe 'system_limits', ->
         destination: "#{scratch}/me.conf"
         user: 'me'
       , (err, status) ->
-        return callback err if err
+        return next err if err
         status.should.be.false()
         fs.exists ssh, "#{scratch}/me.conf", (err, exists) ->
           exists.should.be.false() unless err
@@ -30,7 +30,7 @@ describe 'system_limits', ->
         nofile: 2048
         nproc: 2048
       , (err, status) ->
-        return callback err if err
+        return next err if err
         status.should.be.true()
         fs.readFile ssh, "#{scratch}/me.conf", 'ascii', (err, content) ->
           content.should.eql """
@@ -76,7 +76,7 @@ describe 'system_limits', ->
         status.should.be.false() unless err
         next err
 
-    they 'calculate nproc & nofile', (ssh, next) ->
+    they 'nofile and noproc default to 75% of kernel limits', (ssh, next) ->
       nproc = null
       nofile = null
       fs.exists ssh, '/proc/sys/fs/file-max', (err, exists) ->
@@ -86,20 +86,22 @@ describe 'system_limits', ->
         .execute
           cmd: 'cat /proc/sys/fs/file-max'
         , (err, status, stdout) ->
-          return callback err if err
+          return next err if err
           nofile = stdout.trim()
+          nofile = Math.round parseInt(nofile)*0.75
         .execute
           cmd: 'cat /proc/sys/kernel/pid_max'
         , (err, status, stdout) ->
-          return callback err if err
+          return next err if err
           nproc = stdout.trim()
+          nproc = Math.round parseInt(nproc)*0.75
         .system_limits
           destination: "#{scratch}/me.conf"
           user: 'me'
           nofile: true
           nproc: true
         , (err, status) ->
-          return callback err if err
+          return next err if err
           status.should.be.true()
           fs.readFile ssh, "#{scratch}/me.conf", 'ascii', (err, content) ->
             content.should.eql """
