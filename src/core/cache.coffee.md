@@ -129,7 +129,6 @@ mecano.download
         cmd += " --location" if options.location
         cmd += " --header \"#{header}\"" for header in options.headers
         cmd += " -x #{options.proxy}" if options.proxy
-        console.log cmd
         @mkdir
           ssh: if options.cache_local then null else options.ssh
           destination: path.dirname options.destination
