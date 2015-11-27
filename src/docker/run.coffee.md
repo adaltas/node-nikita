@@ -129,7 +129,7 @@ mecano.docker({
       return callback Error 'Missing image' unless options.image?
 
       # rm is false by default only if options.service is true
-      options.service ?= true
+      options.service ?= false
       options.rm ?= !options.service
       return callback Error 'Invalid parameter, rm cannot be true if service is true' if options.service and options.rm
       return callback Error 'Need container name when forcing docker run' if options.force and not options.container
