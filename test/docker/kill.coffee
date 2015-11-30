@@ -25,18 +25,16 @@ describe 'docker kill', ->
       image: 'httpd'
       port: '499:80'
       machine: machine
-      container: 'mecano_test_kill'
+      name: 'mecano_test_kill'
     .docker_kill
       container: 'mecano_test_kill'
       machine: machine
     , (err, killed, stdout, stderr) ->
       killed.should.be.true()
-    .docker_rm
-      container: 'mecano_test_kill'
-      machine: machine
-    .then next
+      next(err)
 
   they 'status not modified killed previous', (ssh, next) ->
+    @timeout 120000
     mecano
       ssh: ssh
     .docker_rm
@@ -46,7 +44,7 @@ describe 'docker kill', ->
       image: 'httpd'
       port: '499:80'
       machine: machine
-      container: 'mecano_test_kill'
+      name: 'mecano_test_kill'
     .docker_kill
       container: 'mecano_test_kill'
       machine: machine
@@ -55,10 +53,7 @@ describe 'docker kill', ->
       machine: machine
     , (err, killed) ->
       killed.should.be.false()
-    .docker_rm
-      container: 'mecano_test_kill'
-      machine: machine
-    .then next
+      next(err)
 
   they 'status not modified not living', (ssh, next) ->
     mecano
@@ -70,7 +65,7 @@ describe 'docker kill', ->
       cmd: "/bin/echo 'test'"
       image: 'alpine'
       service: false
-      container: 'mecano_test_kill'
+      name: 'mecano_test_kill'
       machine: machine
     .docker_kill
       container: 'mecano_test_kill'

@@ -17,14 +17,15 @@ describe 'docker rm', ->
 
 
   they 'remove stopped container', (ssh, next) ->
-    clean ssh, machine, (err, executed, stdout, stderr) ->
+    clean ssh, machine, (err, executed, stdout, stderr) =>
+      @timeout 30000
       mecano
         ssh: ssh
       .docker_run
         cmd: "/bin/echo 'test'"
         image: 'alpine'
         machine: machine
-        container: 'mecano_rm'
+        name: 'mecano_rm'
       .docker_rm
         container: 'mecano_rm'
         machine: machine
@@ -32,15 +33,16 @@ describe 'docker rm', ->
         removed.should.be.true()
       .then next
 
-  they 'remove running container (no force)', (ssh, next) ->
-    clean ssh, machine, (err, executed, stdout, stderr) ->
+  they 'remove live container (no force)', (ssh, next) ->
+    clean ssh, machine, (err, executed, stdout, stderr) =>
+      @timeout 30000
       mecano
         ssh: ssh
       .docker_run
         image: 'httpd'
         port: '499:80'
         machine: machine
-        container: 'mecano_rm'
+        name: 'mecano_rm'
       .docker_rm
         container: 'mecano_rm'
         machine: machine
@@ -48,15 +50,16 @@ describe 'docker rm', ->
         err.message.should.eql 'Container must be stopped to be removed without force'
         next()
 
-  they 'remove running container (with force)', (ssh, next) ->
-    clean ssh, machine, (err, executed, stdout, stderr) ->
+  they 'remove live container (with force)', (ssh, next) ->
+    clean ssh, machine, (err, executed, stdout, stderr) =>
+      @timeout 30000
       mecano
         ssh: ssh
       .docker_run
         image: 'httpd'
         port: '499:80'
         machine: machine
-        container: 'mecano_rm'
+        name: 'mecano_rm'
       .docker_rm
         container: 'mecano_rm'
         machine: machine

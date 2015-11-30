@@ -16,7 +16,7 @@ describe 'docker stop', ->
       ssh: ssh
     .docker_run
       image: 'httpd'
-      container: 'mecano_test_stop'
+      name: 'mecano_test_stop'
       service: true
       machine: machine
     .docker_stop
@@ -37,7 +37,7 @@ describe 'docker stop', ->
       ssh: ssh
     .docker_run
       image: 'httpd'
-      container: 'mecano_test_stop'
+      name: 'mecano_test_stop'
       service: true
       machine: machine
     .docker_stop

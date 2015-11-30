@@ -29,7 +29,7 @@ describe 'docker status', ->
         image: 'alpine'
         rm: false
         machine: machine
-        container: 'mecano_status'
+        name: 'mecano_status'
       .docker_status
         container: 'mecano_status'
         machine: machine
@@ -45,7 +45,7 @@ describe 'docker status', ->
         image: 'httpd'
         port: [ '500:80' ]
         machine: machine
-        container: 'mecano_status'
+        name: 'mecano_status'
       .docker_status
         container: 'mecano_status'
         machine: machine

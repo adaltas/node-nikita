@@ -2,6 +2,8 @@
     mecano = require '..'
 
     module.exports.exec = (comand, options, ignore_code, callback) ->
+
+      options.log message: "Docker exec: docker #{comand}", level: 'DEBUG', module: 'mecano/src/misc/docker' if options.log
       machine = options.machine ?= '--'
       options.code_skipped = [options.code_skipped] unless Array.isArray options.code_skipped
       options.code_skipped.push(1) if ignore_code

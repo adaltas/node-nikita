@@ -17,12 +17,12 @@ describe 'docker checksum', ->
   scratch = test.scratch @
   machine = 'dev'
 
-  they 'checksum on existing image', (ssh, next) ->
+  they 'checksum on existing repository', (ssh, next) ->
     clean ssh, machine, 'mecano/checksum', (err) ->
       mecano
         ssh: ssh
       .docker_build
-        image: 'mecano/checksum'
+        tag: 'mecano/checksum:latest'
         content: "FROM scratch\nCMD ['echo \"hello build from text #{Date.now()}\"']"
         machine: machine
       , (err, executed, stdout, stderr, checksum) ->
@@ -30,18 +30,20 @@ describe 'docker checksum', ->
         mecano
           ssh: ssh
         .docker_checksum
-          image: 'mecano/checksum'
+          repository: 'mecano/checksum'
+          tag: 'latest'
           machine: machine
         , (err, executed, stdout, stderr, checksum_valid) ->
           return err if err
           checksum_valid.should.eql(checksum)
           clean ssh, machine, 'mecano/checksum', (err) -> next(err)
 
-  they 'checksum on not existing image', (ssh, next) ->
+  they 'checksum on not existing repository', (ssh, next) ->
     mecano
       ssh: ssh
     .docker_checksum
-      image: 'mecano/checksum'
+      repository: 'mecano/checksum'
+      tag: 'latest'
       machine: machine
     , (err, executed, stdout, stderr, checksum) ->
       checksum.should.be.false()
