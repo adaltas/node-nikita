@@ -16,9 +16,18 @@ describe 'write', ->
     .write_properties
       destination: "#{scratch}/file.properties"
       content: a_key: 'a value'
+    , (err, status) ->
+      status.should.be.true() unless err
     .write_properties
       destination: "#{scratch}/file.properties"
       content: another_key: 'another value'
+    , (err, status) ->
+      status.should.be.true() unless err
+    .write_properties
+      destination: "#{scratch}/file.properties"
+      content: another_key: 'another value'
+    , (err, status) ->
+      status.should.be.false() unless err
     .call (_, callback)->
       fs.readFile ssh, "#{scratch}/file.properties", 'ascii', (err, data) ->
         return callback err if err
@@ -33,10 +42,20 @@ describe 'write', ->
     .write_properties
       destination: "#{scratch}/file.properties"
       content: a_key: 'a value'
+    , (err, status) ->
+      status.should.be.true() unless err
     .write_properties
       destination: "#{scratch}/file.properties"
       content: another_key: 'another value'
       merge: true
+    , (err, status) ->
+      status.should.be.true() unless err
+    .write_properties
+      destination: "#{scratch}/file.properties"
+      content: another_key: 'another value'
+      merge: true
+    , (err, status) ->
+      status.should.be.false() unless err
     .call (_, callback)->
       fs.readFile ssh, "#{scratch}/file.properties", 'ascii', (err, data) ->
         return callback err if err
