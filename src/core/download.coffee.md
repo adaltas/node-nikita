@@ -138,42 +138,42 @@ mecano.download
         handler: (_, callback) ->
           u = url.parse source
           unless u.protocol is null
-            options.log message: "Bypass source hash computation for non-file protocols", level: 'INFO', module: 'mecano/src/download'
+            options.log message: "Bypass source hash computation for non-file protocols", level: 'INFO', module: 'mecano/lib/download'
             return callback()
           return callback() if hash isnt true
           misc.file.hash options.ssh, source, algo, (err, value) ->
             return callback err if err
-            options.log message: "Computed hash value is '#{value}'", level: 'INFO', module: 'mecano/src/download'
+            options.log message: "Computed hash value is '#{value}'", level: 'INFO', module: 'mecano/lib/download'
             hash = value
             callback()
       @call
         shy: true
         handler: (_, callback) ->
-          options.log message: "Check if destination (#{destination}) exists", level: 'DEBUG', module: 'mecano/src/download'
+          options.log message: "Check if destination (#{destination}) exists", level: 'DEBUG', module: 'mecano/lib/download'
           # Note about next line: ssh might be null with file, not very clear
           ssh2fs.exists options.ssh, destination, (err, exists) =>
             return callback err if err
             if exists
-              options.log message: "Destination exists", level: 'INFO', module: 'mecano/src/download'
+              options.log message: "Destination exists", level: 'INFO', module: 'mecano/lib/download'
               # If no checksum , we ignore MD5 check
               if options.force
-                options.log message: "Force download", level: 'INFO', module: 'mecano/src/download'
+                options.log message: "Force download", level: 'INFO', module: 'mecano/lib/download'
                 return callback null, true
               else if hash and typeof hash is 'string'
                 # then we compute the checksum of the file
-                options.log message: "Comparing #{algo} hash", level: 'DEBUG', module: 'mecano/src/download'
+                options.log message: "Comparing #{algo} hash", level: 'DEBUG', module: 'mecano/lib/download'
                 misc.file.hash options.ssh, destination, algo, (err, c_hash) ->
                   return callback err if err
                   # And compare with the checksum provided by the user
                   if hash is c_hash
-                    options.log message: "Hashes match, skipping", level: 'DEBUG', module: 'mecano/src/download'
+                    options.log message: "Hashes match, skipping", level: 'DEBUG', module: 'mecano/lib/download'
                     return callback null, false
-                  options.log message: "Hashes don't match, delete then re-download", level: 'WARN', module: 'mecano/src/download'
+                  options.log message: "Hashes don't match, delete then re-download", level: 'WARN', module: 'mecano/lib/download'
                   ssh2fs.unlink options.ssh, destination, (err) ->
                     return callback err if err
                     callback null, true
               else
-                options.log message: "Destination exists, check disabled, skipping", level: 'DEBUG', module: 'mecano/src/download'
+                options.log message: "Destination exists, check disabled, skipping", level: 'DEBUG', module: 'mecano/lib/download'
                 callback null, false
             else
               callback null, true
@@ -225,7 +225,7 @@ mecano.download
           k = if u.protocol is 'https:' then '-k' else ''
           cmd = "curl #{fail} #{k} -s #{options.source} -o #{stageDestination}"
           cmd += " -x #{options.proxy}" if options.proxy
-          options.log message: "Download file from url using curl", level: 'INFO', module: 'mecano/src/download'
+          options.log message: "Download file from url using curl", level: 'INFO', module: 'mecano/lib/download'
           @mkdir path.dirname stageDestination
           @execute
             cmd: cmd
@@ -252,11 +252,11 @@ mecano.download
           callback err
       @call (_, callback) -> # Hash Validation
         return callback() unless hash
-        options.log message: "Compare the downloaded file with the provided checksum", level: 'DEBUG', module: 'mecano/src/download'
+        options.log message: "Compare the downloaded file with the provided checksum", level: 'DEBUG', module: 'mecano/lib/download'
         misc.file.hash options.ssh, stageDestination, algo, (err, calc_hash) ->
           return callback err if err
           if hash is calc_hash
-            options.log message: "Mecano `download`: Hash match with staged uploaded file", level: 'DEBUG', module: 'mecano/src/download'
+            options.log message: "Mecano `download`: Hash match with staged uploaded file", level: 'DEBUG', module: 'mecano/lib/download'
             return callback()
           # Download is invalid, cleaning up
           misc.file.remove options.ssh, stageDestination, (err) ->
@@ -268,7 +268,7 @@ mecano.download
         #   return callback err if err
         #   downloaded++
         #   callback()
-        options.log message: "Unstage downloaded file", level: 'DEBUG', module: 'mecano/src/download'
+        options.log message: "Unstage downloaded file", level: 'DEBUG', module: 'mecano/lib/download'
         @move
           source: stageDestination
           destination: destination

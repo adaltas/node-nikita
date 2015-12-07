@@ -93,7 +93,7 @@ mecano.execute({
       options.code_skipped = [options.code_skipped] unless Array.isArray options.code_skipped
       if options.trap_on_error
         options.cmd = "set -e\n#{options.cmd}"
-      # options.log message: "Command is: `#{options.cmd}`", level: 'INFO', module: 'mecano/src/execute'
+      # options.log message: "Command is: `#{options.cmd}`", level: 'INFO', module: 'mecano/lib/execute'
       options.log message: options.cmd, type: 'stdin'
       child = exec options
       stdout = []; stderr = []
@@ -135,7 +135,7 @@ mecano.execute({
           if options.code_skipped.indexOf(code) is -1
             executed = true
           else
-            options.log message: "Skip exit code \"#{code}\"", level: 'INFO', module: 'mecano/src/execute'
+            options.log message: "Skip exit code \"#{code}\"", level: 'INFO', module: 'mecano/lib/execute'
           callback null, executed, stdout, stderr
         , 1
 

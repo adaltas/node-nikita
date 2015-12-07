@@ -87,7 +87,7 @@ require('mecano').iptables({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "List existing rules", level: 'DEBUG', module: 'mecano/src/iptables'
+      options.log message: "List existing rules", level: 'DEBUG', module: 'mecano/lib/iptables'
       @execute
         cmd: "service iptables status &>/dev/null && iptables -S"
         code_skipped: 3
@@ -98,7 +98,7 @@ require('mecano').iptables({
         newrules = iptables.normalize options.rules
         cmd = iptables.cmd oldrules, newrules
         return callback() unless cmd.length
-        options.log message: "#{cmd.length} modified rules", level: 'WARN', module: 'mecano/src/iptables'
+        options.log message: "#{cmd.length} modified rules", level: 'WARN', module: 'mecano/lib/iptables'
         @execute
           cmd: "#{cmd.join '; '}; service iptables save;"
           trap_on_error: true

@@ -70,12 +70,12 @@ require('mecano').copy({
       modified = false
       srcStat = null
       dstStat = null
-      options.log message: "Stat source file", level: 'DEBUG', module: 'mecano/src/copy'
+      options.log message: "Stat source file", level: 'DEBUG', module: 'mecano/lib/copy'
       fs.stat options.ssh, options.source, (err, stat) ->
         # Source must exists
         return callback err if err
         srcStat = stat
-        options.log message: "Stat destination file", level: 'DEBUG', module: 'mecano/src/copy'
+        options.log message: "Stat destination file", level: 'DEBUG', module: 'mecano/lib/copy'
         fs.stat options.ssh, options.destination, (err, stat) ->
           return callback err if err and err.code isnt 'ENOENT'
           dstStat = stat
@@ -87,7 +87,7 @@ require('mecano').copy({
           else do_copy options.source, (err) -> callback err, modified
       # Copy a directory
       do_directory = (dir, callback) ->
-        options.log message: "Source is a directory", level: 'INFO', module: 'mecano/src/copy'
+        options.log message: "Source is a directory", level: 'INFO', module: 'mecano/lib/copy'
         glob options.ssh, "#{dir}/**", dot: true, (err, files) ->
           return callback err if err
           each files
@@ -107,7 +107,7 @@ require('mecano').copy({
           then do_copy_dir source, destination
           else do_copy_file source, destination
         do_copy_dir = (source, destination) ->
-          options.log message: "Create directory #{destination}", level: 'WARN', module: 'mecano/src/copy'
+          options.log message: "Create directory #{destination}", level: 'WARN', module: 'mecano/lib/copy'
           # todo, add permission
           fs.mkdir options.ssh, destination, (err) ->
             return callback() if err?.code is 'EEXIST'
@@ -121,7 +121,7 @@ require('mecano').copy({
             return callback err if err and err.message.indexOf('Does not exist') isnt 0
             # Files are the same, we can skip copying
             return do_chown_chmod destination if md5
-            options.log message: "Copy file from #{source} into #{destination}", level: 'WARN', module: 'mecano/src/copy'
+            options.log message: "Copy file from #{source} into #{destination}", level: 'WARN', module: 'mecano/lib/copy'
             misc.file.copyFile options.ssh, source, destination, (err) ->
               return callback err if err
               modified = true
@@ -141,7 +141,7 @@ require('mecano').copy({
             modified = true if status
             do_end()
         do_end = ->
-          options.log message: "File #{source} copied", level: 'DEBUG', module: 'mecano/src/copy'
+          options.log message: "File #{source} copied", level: 'DEBUG', module: 'mecano/lib/copy'
           callback null, modified
 
 ## Dependencies

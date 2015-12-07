@@ -68,8 +68,8 @@ require('mecano').render({
     module.exports = (options, callback) ->
       return callback Error "Required \"source\" option" unless options.source
       return callback Error "Required \"destination\" option" unless options.destination
-      options.log message: "Source is \"#{options.source}\"", level: 'DEBUG', module: 'mecano/src/upload'
-      options.log message: "Destination is \"#{options.destination}\"", level: 'DEBUG', module: 'mecano/src/upload'
+      options.log message: "Source is \"#{options.source}\"", level: 'DEBUG', module: 'mecano/lib/upload'
+      options.log message: "Destination is \"#{options.destination}\"", level: 'DEBUG', module: 'mecano/lib/upload'
       # Text file, delegate to `write`
       unless options.binary
         options = misc.merge options, local_source: true
@@ -77,7 +77,7 @@ require('mecano').render({
           callback err, written
       # Binary file
       uploaded = false
-      options.log message: "Enter binary mode", level: 'DEBUG', module: 'mecano/src/upload'
+      options.log message: "Enter binary mode", level: 'DEBUG', module: 'mecano/lib/upload'
       get_checksum = (ssh, path, algorithm, callback) =>
         if ssh
           @execute
@@ -90,23 +90,23 @@ require('mecano').render({
       do_src_checksum = ->
         return do_stat() unless options.md5 is true or options.sha1 is true
         algorithm = if options.md5 then 'md5' else 'sha1'
-        options.log message: "Get source #{algorithm} checksum", level: 'DEBUG', module: 'mecano/src/upload'
+        options.log message: "Get source #{algorithm} checksum", level: 'DEBUG', module: 'mecano/lib/upload'
         get_checksum null, options.source, algorithm, (err, checksum) ->
           return callback err if err
           options[algorithm] = checksum
-          options.log message: "#{algorithm} checksum is \"#{checksum}\"", level: 'INFO', module: 'mecano/src/upload'
+          options.log message: "#{algorithm} checksum is \"#{checksum}\"", level: 'INFO', module: 'mecano/lib/upload'
           do_stat()
       do_stat = ->
-        options.log message: "Check if remote destination exists", level: 'DEBUG', module: 'mecano/src/upload'
+        options.log message: "Check if remote destination exists", level: 'DEBUG', module: 'mecano/lib/upload'
         fs.stat options.ssh, options.destination, (err, stat) ->
           return do_upload() if err?.code is 'ENOENT'
           return callback err if err
-          options.log message: "Destination exists", level: 'INFO', module: 'mecano/src/upload'
+          options.log message: "Destination exists", level: 'INFO', module: 'mecano/lib/upload'
           options.destination = "#{options.destination}/#{path.basename options.source}" if stat.isDirectory()
           do_dest_checksum()
       do_dest_checksum = ->
           return do_upload() unless options.md5 or options.sha1
-          options.log message: "Validate destination checksum, otherwise re-upload", level: 'INFO', module: 'mecano/src/upload'
+          options.log message: "Validate destination checksum, otherwise re-upload", level: 'INFO', module: 'mecano/lib/upload'
           switch
             when options.md5? then get_checksum options.ssh, options.destination, 'md5', (err, md5) ->
               return callback err if err
@@ -119,7 +119,7 @@ require('mecano').render({
               then callback()
               else do_upload()
       do_upload = =>
-        options.log message: "Write source", level: 'DEBUG', module: 'mecano/src/upload'
+        options.log message: "Write source", level: 'DEBUG', module: 'mecano/lib/upload'
         @mkdir
           destination: "#{path.dirname options.destination}"
         , (err) ->
@@ -135,20 +135,20 @@ require('mecano').render({
               .on 'error', callback
       do_md5 = ->
         return do_sha1() unless options.md5
-        options.log message: "Check destination md5", level: 'DEBUG', module: 'mecano/src/upload'
+        options.log message: "Check destination md5", level: 'DEBUG', module: 'mecano/lib/upload'
         get_checksum options.ssh, options.destination, 'md5', (err, md5) ->
           return callback new Error "Invalid md5 checksum" if md5 isnt options.md5
-          options.log message: "Destination md5 is valid", level: 'INFO', module: 'mecano/src/upload'
+          options.log message: "Destination md5 is valid", level: 'INFO', module: 'mecano/lib/upload'
           do_sha1()
       do_sha1 = ->
         return do_chown_chmod() unless options.sha1
-        options.log message: "Check destination sha1", level: 'DEBUG', module: 'mecano/src/upload'
+        options.log message: "Check destination sha1", level: 'DEBUG', module: 'mecano/lib/upload'
         get_checksum options.ssh, options.destination, 'sha1', (err, sha1) ->
           return callback new Error "Invalid sha1 checksum" if sha1 isnt options.sha1
-          options.log message: "Destination sha1 is valid", level: 'INFO', module: 'mecano/src/upload'
+          options.log message: "Destination sha1 is valid", level: 'INFO', module: 'mecano/lib/upload'
           do_chown_chmod()
       do_chown_chmod = =>
-        options.log message: "Check ownerships and permissions", level: 'DEBUG', module: 'mecano/src/upload'
+        options.log message: "Check ownerships and permissions", level: 'DEBUG', module: 'mecano/lib/upload'
         @chown
           ssh: options.ssh
           destination: options.destination
@@ -165,7 +165,7 @@ require('mecano').render({
           modified = true if status
           do_end()
       do_end = ->
-        options.log message: "Upload succeed", level: 'INFO', module: 'mecano/src/upload'
+        options.log message: "Upload succeed", level: 'INFO', module: 'mecano/lib/upload'
         callback null, true
       do_src_checksum()
 
