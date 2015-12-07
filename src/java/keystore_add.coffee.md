@@ -147,4 +147,3 @@ require('mecano').java_keystore_add([{
         # trap_on_error: true
         code_skipped: 3
       .then callback
-

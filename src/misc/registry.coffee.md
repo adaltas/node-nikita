@@ -26,6 +26,7 @@
       upload: require '../core/upload'
       user: require '../core/user'
       write: require '../core/write'
+      write_properties: require '../core/write_properties'
       # Cron
       cron_add: require '../cron/add'
       cron_remove: require '../cron/remove'

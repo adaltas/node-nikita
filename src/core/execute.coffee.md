@@ -83,9 +83,6 @@ mecano.execute({
 ## Source Code
 
     module.exports = (options, callback) ->
-      # callback = arguments[arguments.length-1]
-      # callback = null unless typeof callback is 'function'
-      # stds = if callback then callback.length > 2 else false
       stds = options.user_args
       # Validate parameters
       options.cmd = options.argument if typeof options.argument is 'string'
