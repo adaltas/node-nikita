@@ -44,7 +44,7 @@ require('mecano').move({
 
     module.exports = (options, callback) ->
       do_exists = ->
-        options.log message: "Stat destination", level: 'DEBUG', module: 'mecano/src/move'
+        options.log message: "Stat destination", level: 'DEBUG', module: 'mecano/lib/move'
         fs.stat options.ssh, options.destination, (err, stat) ->
           return do_move() if err?.code is 'ENOENT'
           return callback err if err
@@ -53,18 +53,18 @@ require('mecano').move({
           else do_srchash()
       do_srchash = ->
         return do_dsthash() if options.source_md5
-        options.log message: "Get source md5", level: 'DEBUG', module: 'mecano/src/move'
+        options.log message: "Get source md5", level: 'DEBUG', module: 'mecano/lib/move'
         misc.file.hash options.ssh, options.source, 'md5', (err, hash) ->
           return callback err if err
-          options.log message: "Source md5 is \"hash\"", level: 'INFO', module: 'mecano/src/move'
+          options.log message: "Source md5 is \"hash\"", level: 'INFO', module: 'mecano/lib/move'
           options.source_md5 = hash
           do_dsthash()
       do_dsthash = ->
         return do_chkhash() if options.destination_md5
-        options.log message: "Get destination md5", level: 'DEBUG', module: 'mecano/src/move'
+        options.log message: "Get destination md5", level: 'DEBUG', module: 'mecano/lib/move'
         misc.file.hash options.ssh, options.destination, 'md5', (err, hash) ->
           return callback err if err
-          options.log message: "Destination md5 is \"hash\"", level: 'INFO', module: 'mecano/src/move'
+          options.log message: "Destination md5 is \"hash\"", level: 'INFO', module: 'mecano/lib/move'
           options.destination_md5 = hash
           do_chkhash()
       do_chkhash = ->
@@ -72,19 +72,19 @@ require('mecano').move({
         then do_remove_src()
         else do_replace_dest()
       do_replace_dest = =>
-        options.log message: "Remove #{options.destination}", level: 'WARN', module: 'mecano/src/move'
+        options.log message: "Remove #{options.destination}", level: 'WARN', module: 'mecano/lib/move'
         @remove
           destination: options.destination
         , (err, removed) ->
           return callback err if err
           do_move()
       do_move = ->
-        options.log message: "Rename #{options.source} to #{options.destination}", level: 'WARN', module: 'mecano/src/move'
+        options.log message: "Rename #{options.source} to #{options.destination}", level: 'WARN', module: 'mecano/lib/move'
         fs.rename options.ssh, options.source, options.destination, (err) ->
           return callback err if err
           callback null, true
       do_remove_src = =>
-        options.log message: "Remove #{options.source}", level: 'WARN', module: 'mecano/src/move'
+        options.log message: "Remove #{options.source}", level: 'WARN', module: 'mecano/lib/move'
         @remove
           destination: options.source
         , (err, removed) ->

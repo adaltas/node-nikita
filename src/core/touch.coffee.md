@@ -39,11 +39,11 @@ require('mecano').touch({
       # Validate parameters
       options.destination = options.argument if options.argument?
       return callback new Error "Missing destination: #{options.destination}" unless options.destination
-      options.log message: "Check if destination exists \"#{options.destination}\"", level: 'DEBUG', module: 'mecano/src/touch'
+      options.log message: "Check if destination exists \"#{options.destination}\"", level: 'DEBUG', module: 'mecano/lib/touch'
       fs.exists options.ssh, options.destination, (err, exists) =>
         return callback err if err
         return callback() if exists
-        options.log message: "Destination does not exists", level: 'INFO', module: 'mecano/src/touch'
+        options.log message: "Destination does not exists", level: 'INFO', module: 'mecano/lib/touch'
         @write
           content: ''
           destination: options.destination

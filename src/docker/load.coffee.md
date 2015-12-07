@@ -70,9 +70,9 @@ mecano.docker_load({
       images = {}
 
       delete options.cmd
-      options.log message: 'Storing previous state of image', level: 'INFO', module: 'mecano/src/docker/load'
-      options.log message: 'No checksum provided', level: 'INFO', module: 'mecano/src/docker/load' if !options.checksum?
-      options.log message: "Checksum provided :#{options.checksum}", level: 'INFO', module: 'mecano/src/docker/load' if options.checksum
+      options.log message: 'Storing previous state of image', level: 'INFO', module: 'mecano/lib/docker/load'
+      options.log message: 'No checksum provided', level: 'INFO', module: 'mecano/lib/docker/load' if !options.checksum?
+      options.log message: "Checksum provided :#{options.checksum}", level: 'INFO', module: 'mecano/lib/docker/load' if options.checksum
       options.checksum ?= ''
       docker.exec " images | grep -v '<none>' | awk '{ print $1\":\"$2\":\"$3 }'", options, false, (err, executed, stdout, stderr) ->
         return callback err if err
@@ -84,18 +84,18 @@ mecano.docker_load({
             if image != ''
               infos = image.split(':')
               # if image is here we skip
-              options.log message: "Image already exist checksum :#{options.checksum}, repo:tag #{"#{infos[0]}:#{infos[1]}"}", level: 'INFO', module: 'mecano/src/docker/load' if infos[2] == options.checksum
+              options.log message: "Image already exist checksum :#{options.checksum}, repo:tag #{"#{infos[0]}:#{infos[1]}"}", level: 'INFO', module: 'mecano/lib/docker/load' if infos[2] == options.checksum
               return callback null, false if infos[2] == options.checksum
               images["#{infos[0]}:#{infos[1]}"] = "#{infos[2]}"
-        options.log message: "Start Loading #{options.input} ", level: 'INFO', module: 'mecano/src/docker/load'
+        options.log message: "Start Loading #{options.input} ", level: 'INFO', module: 'mecano/lib/docker/load'
         docker.exec cmd, options, false, (err) ->
-          options.log message: 'Loading finished', level: 'INFO', module: 'mecano/src/docker/load'
+          options.log message: 'Loading finished', level: 'INFO', module: 'mecano/lib/docker/load'
           return callback err if err
           docker.exec ' images | grep -v \'<none>\' | awk \'{ print $1":"$2":"$3 }\'', options, false, (err, executed, out, stderr) ->
             return callback err, executed, out, stderr if err
             new_images = {}
             diff = false
-            options.log message: 'Comparing new images', level: 'INFO', module: 'mecano/src/docker/load'
+            options.log message: 'Comparing new images', level: 'INFO', module: 'mecano/lib/docker/load'
             if string.lines(stdout).length > 1
               for image in string.lines out.toString()
                 if image != ''
@@ -109,7 +109,7 @@ mecano.docker_load({
                 for k, image of images
                   if image != new_image && new_k == k
                     diff = true
-                    options.log message: 'Identical images', level: 'INFO', module: 'mecano/src/docker/load'
+                    options.log message: 'Identical images', level: 'INFO', module: 'mecano/lib/docker/load'
                     break;
             return callback err, diff, stdout, stderr
 

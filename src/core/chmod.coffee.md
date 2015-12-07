@@ -45,18 +45,18 @@ require('mecano').chmod({
       do_stat = ->
         # Option 'stat' short-circuit
         return do_chmod options.stat if options.stat
-        options.log message: "Stat \"#{options.destination}\"", level: 'DEBUG', module: 'mecano/src/chmod'
+        options.log message: "Stat \"#{options.destination}\"", level: 'DEBUG', module: 'mecano/lib/chmod'
         fs.stat options.ssh, options.destination, (err, stat) ->
           return callback err if err
           do_chmod stat
       do_chmod = (stat) ->
         # Detect changes
         if misc.mode.compare stat.mode, options.mode
-          options.log message: "Identical permissions on \"#{options.destination}\"", level: 'INFO', module: 'mecano/src/chmod'
+          options.log message: "Identical permissions on \"#{options.destination}\"", level: 'INFO', module: 'mecano/lib/chmod'
           return callback()
         # Apply changes
         fs.chmod options.ssh, options.destination, options.mode, (err) ->
-          options.log message: "Change permissions from \"#{stat.mode}\" to \"#{options.mode}\" on \"#{options.destination}\"", level: 'WARN', module: 'mecano/src/chmod'
+          options.log message: "Change permissions from \"#{stat.mode}\" to \"#{options.mode}\" on \"#{options.destination}\"", level: 'WARN', module: 'mecano/lib/chmod'
           callback err, true
       do_stat()
 

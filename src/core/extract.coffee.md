@@ -76,7 +76,7 @@ require('mecano').extract({
           extract()
       extract = () =>
         cmd = null
-        options.log message: "Format is #{format}", level: 'DEBUG', module: 'mecano/src/extract'
+        options.log message: "Format is #{format}", level: 'DEBUG', module: 'mecano/lib/extract'
         switch format
           when 'tgz' then cmd = "tar xzf #{options.source} -C #{destination}"
           when 'tar' then cmd = "tar xf #{options.source} -C #{destination}"

@@ -162,12 +162,12 @@ mecano.docker_build({
         dockerfile_path = '/tmp/ryba/build/Dockerfile' if options.content?
         dockerfile_path = options.path if options.path?
         dockerfile_path = "#{path.resolve options.cwd, 'Dockerfile'}" if (not options.content? and not options.path?)
-        options.log message: "Writing Dockerfile to :#{dockerfile_path}", level: 'INFO', module: 'mecano/src/build' if options.content?
-        options.log message: "Reading Dockerfile from :#{dockerfile_path}", level: 'INFO', module: 'mecano/src/build' if options.cwd? or options.path?
+        options.log message: "Writing Dockerfile to :#{dockerfile_path}", level: 'INFO', module: 'mecano/lib/build' if options.content?
+        options.log message: "Reading Dockerfile from :#{dockerfile_path}", level: 'INFO', module: 'mecano/lib/build' if options.cwd? or options.path?
         fs.readFile options.ssh, dockerfile_path, (err, result) =>
           if err
             if err.code == 'ENOENT'
-              options.log message: "Dockerfile :#{dockerfile_path} does not exist", level: 'ERROR', module: 'mecano/src/docker/build'
+              options.log message: "Dockerfile :#{dockerfile_path} does not exist", level: 'ERROR', module: 'mecano/lib/docker/build'
             return callback(err, false)
           else
             lines = string.lines(result.toString())
@@ -181,7 +181,7 @@ mecano.docker_build({
               if: options.content
             , (err) ->
               return callback err if err
-              options.log message: "Building docker repository:#{options.tag}", level: 'INFO', module: 'mecano/src/docker/build'
+              options.log message: "Building docker repository:#{options.tag}", level: 'INFO', module: 'mecano/lib/docker/build'
               docker.exec cmd, options, null, (err, executed, stdout, stderr) =>
                 return callback err, executed, stdout, stderr, container_id_hash if err
                 container_id_hash = null
@@ -194,8 +194,8 @@ mecano.docker_build({
                     if (line.indexOf('Successfully built') isnt  -1 )
                       container_id_hash = line.split(' ').pop().toString()
                 executed = null if number_of_step == number_of_cache
-                options.log message: "new repository is identical to previous #{options.tag}", level: 'INFO', module: 'mecano/src/docker/build' if executed == null
-                options.log message: "new repository hash  #{container_id_hash}", level: 'INFO', module: 'mecano/src/docker/build' if executed
+                options.log message: "new repository is identical to previous #{options.tag}", level: 'INFO', module: 'mecano/lib/docker/build' if executed == null
+                options.log message: "new repository hash  #{container_id_hash}", level: 'INFO', module: 'mecano/lib/docker/build' if executed
                 callback err, executed, stdout, stderr, container_id_hash
 
 ## Modules Dependencies

@@ -52,11 +52,11 @@ Return the checksum of repository:tag, if it exists. Function not native to dock
       return callback Error 'Missing repository parameter' unless options.repository?
       options.tag ?= 'latest'
       cmd = " images | grep '#{options.repository}' | grep '#{options.tag}' | awk ' { print $3 }'"
-      options.log message: "Getting repository cheksum :#{options.repository}", level: 'INFO', module: 'mecano/src/docker/checksum'
+      options.log message: "Getting repository cheksum :#{options.repository}", level: 'INFO', module: 'mecano/lib/docker/checksum'
       docker.exec cmd, options, true, (err, executed, stdout, stderr, cheksum) =>
-        options.log message: "Image does not exist :#{options.repository}", level: 'INFO', module: 'mecano/src/docker/checksum' unless executed
+        options.log message: "Image does not exist :#{options.repository}", level: 'INFO', module: 'mecano/lib/docker/checksum' unless executed
         checksum = if stdout == '' then false else stdout.toString().trim()
-        options.log message: "Image found : #{options.repository} with checksum: #{checksum}", level: 'INFO', module: 'mecano/src/docker/checksum' if executed
+        options.log message: "Image found : #{options.repository} with checksum: #{checksum}", level: 'INFO', module: 'mecano/lib/docker/checksum' if executed
         return callback err, executed, stdout, stderr, checksum
 
 
