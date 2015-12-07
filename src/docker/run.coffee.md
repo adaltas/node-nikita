@@ -5,8 +5,8 @@ Run Docker Containers
 
 ## Options
 
-*   `container` (string)
-    Name of the docker container to run.
+*   `name` (string)
+     Assign a name to the container to run.
 *   `image` (string)
     Name/ID of base image. MANDATORY
 *   `machine` (string)
@@ -107,7 +107,7 @@ Run Docker Containers
 ```javascript
 mecano.docker({
   ssh: ssh
-  container: 'myContainer'
+  name: 'myContainer'
   image: 'test-image'
   env: ["FOO=bar",]
   entrypoint: '/bin/true'
@@ -132,12 +132,12 @@ mecano.docker({
       options.service ?= false
       options.rm ?= !options.service
       return callback Error 'Invalid parameter, rm cannot be true if service is true' if options.service and options.rm
-      return callback Error 'Need container name when forcing docker run' if options.force and not options.container
-      options.log message: "Should specify a container name if rm is false", level: 'WARN', module: 'mecano/docker/run' unless options.container? or options.rm
+      return callback Error 'Need container name when forcing docker run' if options.force and not options.name
+      options.log message: "Should specify a container name if rm is false", level: 'WARN', module: 'mecano/docker/run' unless options.name? or options.rm
       # Construct exec command
       cmd = ' run'
       # Classic options
-      for opt, flag of { container: '--name', hostname: '-h', cpu_shares: '-c',
+      for opt, flag of { name: '--name', hostname: '-h', cpu_shares: '-c',
       cgroup_parent: '--cgroup-parent', cid_file: '--cidfile', blkio_weight: '--blkio-weight',
       cpuset_cpus: '--cpuset-cpus', entrypoint: '--entrypoint', ipc: '--ipc',
       log_driver: '--log-driver', memory: '-m', mac_address: '--mac-address',
@@ -167,14 +167,14 @@ mecano.docker({
       # need to delete the cmd options or it will be used in docker.exec
       delete options.cmd
       # Construct other exec parameter
-      if options.container?
+      if options.name?
         options.log message: "Checking if container already runned", level: 'INFO', module: 'mecano/docker/run'
-        docker.exec " ps -a | grep '#{options.container}'", options, true, (err, executed, stdout, stderr) =>
+        docker.exec " ps -a | grep '#{options.name}'", options, true, (err, executed, stdout, stderr) =>
           return callback(err, executed, stdout, stderr) if err
           if executed
             if options.force
-              options.log message: "Use force to remove live container #{options.container}", level: 'INFO', module: 'mecano/docker/run'
-              docker.exec " rm -f #{options.container} || true", options, null, (err) ->
+              options.log message: "Use force to remove live container #{options.name}", level: 'INFO', module: 'mecano/docker/run'
+              docker.exec " rm -f #{options.name} || true", options, null, (err) ->
                 return callback err if err
                 docker.exec cmd, options, null, (err, executed, stdout, stderr) ->
                   return callback err, executed, stdout, stderr
@@ -186,7 +186,7 @@ mecano.docker({
               return callback null, null
 
           else
-            options.log message: "Running container #{options.container}", level: 'INFO', module: 'mecano/docker/run'
+            options.log message: "Running container #{options.name}", level: 'INFO', module: 'mecano/docker/run'
             docker.exec cmd, options, null, (err, executed, stdout, stderr) ->
               return callback err, executed, stdout, stderr
       else

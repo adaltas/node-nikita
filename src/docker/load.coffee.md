@@ -7,10 +7,11 @@ Load Docker images
 
 *   `machine` (string)
     Name of the docker-machine. MANDATORY if using docker-machine
-*   `source` (string)
-    TAR archive source path
+*   `input` (string)
+    TAR archive file to read from
 *   `checksum` (string)
-    If provided, will check if image attached to checksum already exist
+    If provided, will check if attached input archive to checksum already exist.
+    Not native to docker. But implemented to get better performance.
 *   `code` (int|array)
     Expected code(s) returned by the command, int or array of int, default to 0.
 *   `code_skipped`
@@ -42,13 +43,11 @@ Load Docker images
 ## Example
 
 ```javascript
-mecano.docker({
-  ssh: ssh
-  destination: 'test-image.tar'
-  image: 'test-image'
-  compression: 'gzip'
-  entrypoint: '/bin/true'
-}, function(err, is_true, stdout, stderr){
+mecano.docker_load({
+  image: 'mecano/load_test:latest',
+  machine: machine,
+  source: source + "/mecano_load.tar"
+}, function(err, loaded, stdout, stderr) {
   if(err){
     console.log(err.message);
   }else if(is_true){
@@ -63,8 +62,8 @@ mecano.docker({
 
     module.exports = (options, callback) ->
       # Validate parameters
-      return callback Error 'Missing source parameter' unless options.source?
-      cmd = " load -i #{options.source}"
+      return callback Error 'Missing input parameter' unless options.input?
+      cmd = " load -i #{options.input}"
       # need to records the list of image to see if status is modified or not after load
       # for this we print the existing images as REPOSITORY:TAG:IMAGE
       # parse the result to record images as an array of   {'REPOSITORY:TAG:'= 'IMAGE'}
@@ -88,12 +87,12 @@ mecano.docker({
               options.log message: "Image already exist checksum :#{options.checksum}, repo:tag #{"#{infos[0]}:#{infos[1]}"}", level: 'INFO', module: 'mecano/src/docker/load' if infos[2] == options.checksum
               return callback null, false if infos[2] == options.checksum
               images["#{infos[0]}:#{infos[1]}"] = "#{infos[2]}"
-        options.log message: "Start Loading #{options.source} ", level: 'INFO', module: 'mecano/src/docker/load'
+        options.log message: "Start Loading #{options.input} ", level: 'INFO', module: 'mecano/src/docker/load'
         docker.exec cmd, options, false, (err) ->
           options.log message: 'Loading finished', level: 'INFO', module: 'mecano/src/docker/load'
           return callback err if err
           docker.exec ' images | grep -v \'<none>\' | awk \'{ print $1":"$2":"$3 }\'', options, false, (err, executed, out, stderr) ->
-            return allback err, executed, out, stderr if err
+            return callback err, executed, out, stderr if err
             new_images = {}
             diff = false
             options.log message: 'Comparing new images', level: 'INFO', module: 'mecano/src/docker/load'

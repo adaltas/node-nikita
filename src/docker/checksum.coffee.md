@@ -1,12 +1,12 @@
 
 # `docker_build(options, callback)`
 
-Return the checksum of an image, if it exists.
+Return the checksum of repository:tag, if it exists. Function not native to docker.
 
 ## Options
 
-*   `image` (string)
-    Name of the image. MANDATORY
+*   `repository` (string)
+    Name of the repository. MANDATORY
 *   `machine` (string)
     Name of the docker-machine. MANDATORY if using docker-machine
 *   `code`   (int|array)
@@ -22,7 +22,7 @@ Return the checksum of an image, if it exists.
     Run the action on a remote server using SSH, an ssh2 instance or an
     configuration object used to initialize the SSH connection.
 *   `tag` (string)
-    Tag of the image. Default to latest
+    Tag of the repository. Default to latest
 *   `stdout` (stream.Writable)
     Writable EventEmitter in which the standard output of executed commands will
     be piped.
@@ -41,7 +41,7 @@ Return the checksum of an image, if it exists.
 *   `stderr`
     Stderr value(s) unless `stderr` option is provided.
 *   `checksum`
-    The image's cheskum if it exists or null if it doesn't
+    The repository's cheskum if it exists or null if it doesn't
 
 
 
@@ -49,14 +49,14 @@ Return the checksum of an image, if it exists.
 
     module.exports = (options, callback) ->
       # Validate parameters and madatory conditions
-      return callback Error 'Missing image parameter' unless options.image?
+      return callback Error 'Missing repository parameter' unless options.repository?
       options.tag ?= 'latest'
-      cmd = " images | grep '#{options.image}' | grep '#{options.tag}' | awk ' { print $3 }'"
-      options.log message: "Getting image cheksum :#{options.image}", level: 'INFO', module: 'mecano/src/docker/checksum'
+      cmd = " images | grep '#{options.repository}' | grep '#{options.tag}' | awk ' { print $3 }'"
+      options.log message: "Getting repository cheksum :#{options.repository}", level: 'INFO', module: 'mecano/src/docker/checksum'
       docker.exec cmd, options, true, (err, executed, stdout, stderr, cheksum) =>
-        options.log message: "Image does not exist :#{options.image}", level: 'INFO', module: 'mecano/src/docker/checksum' unless executed
+        options.log message: "Image does not exist :#{options.repository}", level: 'INFO', module: 'mecano/src/docker/checksum' unless executed
         checksum = if stdout == '' then false else stdout.toString().trim()
-        options.log message: "Image found : #{options.image} with checksum: #{checksum}", level: 'INFO', module: 'mecano/src/docker/checksum' if executed
+        options.log message: "Image found : #{options.repository} with checksum: #{checksum}", level: 'INFO', module: 'mecano/src/docker/checksum' if executed
         return callback err, executed, stdout, stderr, checksum
 
 

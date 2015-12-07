@@ -21,7 +21,7 @@ describe 'docker rmi', ->
       mecano
         ssh: ssh
       .docker_build
-        image: 'mecano/rmi_test:latest'
+        tag: 'mecano/rmi_test:latest'
         content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
         machine: machine
       .docker_rmi

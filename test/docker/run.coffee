@@ -36,8 +36,8 @@ ip = (ssh, machine, callback) ->
       ipadress = stdout.trim()
       return callback null, ipadress
 
-clean = (ssh, machine, container, callback) ->
-  docker.exec " rm -f #{container} || true" , {  ssh: ssh, machine: machine }, null
+clean = (ssh, machine, name, callback) ->
+  docker.exec " rm -f #{name} || true" , {  ssh: ssh, machine: machine }, null
   , (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
 
 describe 'docker run', ->
@@ -49,6 +49,7 @@ describe 'docker run', ->
   they 'test simple command', (ssh, next) ->
     mecano
       ssh: ssh
+      timeout: -1
     .docker_run
       cmd: "/bin/echo 'test'"
       image: 'alpine'
@@ -63,7 +64,7 @@ describe 'docker run', ->
       ssh: ssh
     .docker_run
       image: 'alpine'
-      container: 'mecano_test'
+      name: 'mecano_test'
       service: true
       rm: true
       machine: machine
@@ -84,10 +85,11 @@ describe 'docker run', ->
       return next err if  err
       mecano
         ssh: ssh
+        timeout: -1
       .docker_run
         cmd: "/bin/echo 'test'"
         image: 'alpine'
-        container: 'mecano_test_rm'
+        name: 'mecano_test_rm'
         service: false
         rm: false
         machine: machine
@@ -100,13 +102,14 @@ describe 'docker run', ->
       return next err if  err
       ip ssh, machine, (err, ipadress) =>
         return next err if  err
+        @timeout 60000
         mecano
           ssh: ssh
         .docker_run
           image: 'httpd'
           port: '499:80'
           machine: machine
-          container: 'mecano_test_unique'
+          name: 'mecano_test_unique'
         .wait_connect
           port: 499
           host: ipadress
@@ -118,13 +121,14 @@ describe 'docker run', ->
       return next err if  err
       ip ssh, machine, (err, ipadress) =>
         return next err if  err
+        @timeout 60000
         mecano
           ssh: ssh
         .docker_run
           image: 'httpd'
           port: [ '500:80', '501:81' ]
           machine: machine
-          container: 'mecano_test_array'
+          name: 'mecano_test_array'
         .wait_connect
           host: ipadress
           port: 500
@@ -134,17 +138,18 @@ describe 'docker run', ->
   they 'test status not modified', (ssh, next) ->
     clean ssh, machine, 'mecano_test', (err) =>
       return next err if  err
+      @timeout 30000
       mecano
         ssh: ssh
       .docker_run
         cmd: 'echo test'
         image: 'alpine'
-        container: 'mecano_test'
+        name: 'mecano_test'
         machine: machine
       .docker_run
         cmd: "echo test"
         image: 'alpine'
-        container: 'mecano_test'
+        name: 'mecano_test'
         machine: machine
       , (err, executed, out, serr) ->
         executed.should.be.false()
@@ -152,19 +157,20 @@ describe 'docker run', ->
           next(err)
 
   they 'test force running ', (ssh, next) ->
-    clean ssh, machine, 'mecano_test', (err, executed, stdout, stderr) ->
+    clean ssh, machine, 'mecano_test', (err, executed, stdout, stderr) =>
       return next err if  err
+      @timeout 30000
       mecano
         ssh: ssh
       .docker_run
         image: 'alpine'
-        container: 'mecano_test'
+        name: 'mecano_test'
         cmd: "/bin/echo 'test'"
         machine: machine
       .docker_run
         cmd: "/bin/echo 'test'"
         image: 'alpine'
-        container: 'mecano_test'
+        name: 'mecano_test'
         machine: machine
         force: true
       , (err, executed, stdout, stderr) ->

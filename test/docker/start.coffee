@@ -16,7 +16,7 @@ describe 'docker start', ->
       ssh: ssh
     .docker_run
       image: 'httpd'
-      container: 'mecano_test_start'
+      name: 'mecano_test_start'
       service: true
       machine: machine
     .docker_stop

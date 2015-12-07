@@ -18,12 +18,12 @@ describe 'docker save', ->
     .remove
       destination:"#{source}/mecano_saved.tar"
     .docker_build
-      image: 'mecano/load_test:latest'
+      tag: 'mecano/load_test:latest'
       content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
       machine: machine
     .docker_save
       image: 'mecano/load_test:latest'
-      destination: "#{source}/mecano_saved.tar"
+      output: "#{source}/mecano_saved.tar"
       machine: machine
     , (err, saved) ->
       saved.should.be.true()
@@ -37,16 +37,16 @@ describe 'docker save', ->
     .remove
       destination:"#{source}/mecano_saved.tar"
     .docker_build
-      image: 'mecano/load_test:latest'
+      tag: 'mecano/load_test:latest'
       content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
       machine: machine
     .docker_save
       image: 'mecano/load_test:latest'
-      destination: "#{source}/mecano_saved.tar"
+      output: "#{source}/mecano_saved.tar"
       machine: machine
     .docker_save
       image: 'mecano/load_test:latest'
-      destination: "#{source}/mecano_saved.tar"
+      output: "#{source}/mecano_saved.tar"
       machine: machine
     , (err, saved) ->
       saved.should.be.false()

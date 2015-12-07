@@ -1,6 +1,6 @@
 # `docker_status(options, callback)`
 
-Return true if container is running
+Return true if container is running. This function is not native to docker. 
 
 ## Options
 
