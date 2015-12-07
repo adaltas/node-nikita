@@ -57,7 +57,7 @@ describe 'cache', ->
         source: 'http://localhost:12345/missing'
         cache_dir: "#{scratch}/cache_dir_1"
       , (err, status) ->
-        (err is null).should.be.true()
+        (err is undefined).should.be.true()
       .cache
         source: 'http://localhost:12345/missing'
         cache_dir: "#{scratch}/cache_dir_2"
