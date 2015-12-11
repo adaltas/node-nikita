@@ -17,6 +17,8 @@ describe 'java_keystore_add', ->
         storepass: "changeit"
         caname: "my_alias"
         cacert: "#{__dirname}/keystore/certs1/cacert.pem"
+      , (err, status) ->
+        status.should.be.true() unless err
       .then (err, status) ->
         status.should.be.true() unless err
         next err

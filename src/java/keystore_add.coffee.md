@@ -88,15 +88,46 @@ require('mecano').java_keystore_add([{
       return callback new Error "Required option 'caname'" unless options.cacert
       return callback new Error "Required option 'cacert'" unless options.caname
       tmp_location = "/tmp/mecano_java_keystore_#{Date.now()}"
+      # files =
+      #   cert: if options.local_source then  "#{tmp_location}/#{path.basename options.cert}" else options.cert
+      #   cacert: if options.local_source then  "#{tmp_location}/#{path.basename options.cacert}" else options.cacert
+      #   key: if options.local_source then  "#{tmp_location}/#{path.basename options.key}" else options.key
+      @mkdir
+        destination: "#{tmp_location}"
+        mode: 0o0600
+        shy: true
+      @upload
+        if: options.local_source and options.cacert
+        source: options.cacert
+        destination: "#{options.cacert}"
+        mode: 0o0600
+        shy: true
+      , (err) ->
+        options.cacert = "#{tmp_location}/#{path.basename options.cacert}" unless err
+      @upload
+        if: options.local_source and options.cert
+        source: options.cert
+        destination: "#{options.cert}"
+        mode: 0o0600
+        shy: true
+      , (err) ->
+        options.cacert = "#{tmp_location}/#{path.basename options.cert}" unless err
+      @upload
+        if: options.local_source and options.key
+        source: options.key
+        destination: "#{options.key}"
+        mode: 0o0600
+        shy: true
+      , (err) ->
+        options.cacert = "#{tmp_location}/#{path.basename options.key}" unless err
       @execute # Deal with key and certificate
         cmd: """
-        cleanup () { rm -rf tmp_location; }
         mkdir -p -m 700 #{tmp_location}
         user=`openssl x509  -noout -in "#{options.cert}" -md5 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/' | cat`
         keystore=`keytool -list -v -keystore #{options.keystore} -alias #{options.name} -storepass #{options.storepass} | grep MD5: | sed -E 's/.+MD5: +(.*)/\\1/'`
         echo "User Certificate: $user"
         echo "Keystore Certificate: $keystore"
-        if [[ "$user" == "$keystore" ]]; then cleanup; exit 3; fi
+        if [[ "$user" == "$keystore" ]]; then exit 3; fi
         # Create a PKCS12 file that contains key and certificate
         openssl pkcs12 -export \
           -in "#{options.cert}" -inkey "#{options.key}" \
@@ -110,18 +141,18 @@ require('mecano').java_keystore_add([{
           -destkeypass #{options.keypass} \
           -srckeystore "#{tmp_location}/pkcs12" -srcstoretype PKCS12 -srcstorepass #{options.keypass} \
           -alias #{options.name}
-        cleanup
         """
         # trap_on_error: true
         if: !!options.cert
         code_skipped: 3
       .execute # Deal with CACert
         cmd: """
+        cleanup () { rm -rf #{tmp_location}; }
         # Check password
         if [ -f #{options.keystore} ] && ! keytool -list -keystore #{options.keystore} -storepass #{options.storepass} >/dev/null; then
           # Keystore password is invalid, change it manually with:
           # keytool -storepasswd -keystore #{options.keystore} -storepass #{options.storepass}
-          exit 2
+          cleanup; exit 2
         fi
         # Read user CACert signature
         user=`openssl x509  -noout -in "#{options.cacert}" -md5 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/'`
@@ -146,4 +177,11 @@ require('mecano').java_keystore_add([{
         """
         # trap_on_error: true
         code_skipped: 3
+      .remove
+        destination: "#{tmp_location}"
+        shy: true
       .then callback
+
+## Dependencies
+
+    path = require 'path'
