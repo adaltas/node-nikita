@@ -197,8 +197,6 @@ functions share a common API with flexible options.
         todos.status = []
         todos.throw_if_error = true
         wrap.options options, (err) ->
-          user_args = []
-          throw_error = undefined
           copy = {}
           for k, v of options
             copy[k] = v
@@ -212,7 +210,6 @@ functions share a common API with flexible options.
                 args[1] = !!args[1]
                 # intercept_after options, err, (err) ->
                 # throw Error 'Invalid state' unless todos.length is 0
-                # user_args.length = 2 if user_args.length is 0
                 todos = stack.shift() if todos.length is 0
                 jump_to_error args[0] if args[0] and not options.relax
                 todos.throw_if_error = false if args[0] and options_callback
