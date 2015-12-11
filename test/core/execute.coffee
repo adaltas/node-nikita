@@ -122,6 +122,23 @@ describe 'execute', ->
       executed.should.be.false()
       next()
 
+  describe 'log', ->
+
+    they 'stdin, stdout, stderr', (ssh, next) ->
+      stdin = stdout = stderr = ''
+      mecano
+        ssh: ssh
+      .on 'stdin', (log) -> stdin = log
+      .on 'stdout', (log) -> stdout = log
+      .on 'stderr', (log) -> stderr = log
+      .execute
+        cmd: "echo 'to stderr' >&2; echo 'to stdout';"
+      , (err, status) ->
+        stdin.message.should.match /echo/
+        stdout.message.should.match /to\sstdout/
+        stderr.message.should.match /to\sstderr/
+      .then next
+
   describe 'error', ->
 
     they 'provide stdout and stderr', (ssh, next) ->
@@ -135,7 +152,6 @@ describe 'execute', ->
         stdout.should.eql ''
         stderr.should.eql 'Some Error\n'
         next()
-
 
     they 'trap on error', (ssh, next) ->
       mecano

@@ -99,31 +99,33 @@ mecano.execute({
       stdout = []; stderr = []
       child.stdout.pipe options.stdout, end: false if options.stdout
       child.stderr.pipe options.stderr, end: false if options.stderr
-      if child.stdout or child.stdout is undefined
-        child.stdout.on 'data', (data) ->
-          options.log message: data, type: 'stdout'
-        child.stdout.on 'end', (data) ->
-          options.log message: null, type: 'stdout'
-        child.stderr.on 'data', (data) ->
-          options.log message: data, type: 'stderr'
-        child.stderr.on 'end', (data) ->
-          options.log message: null, type: 'stderr'
-      if stds
-        child.stdout.on 'data', (data) ->
-          if Array.isArray stdout # A string on exit
-            stdout.push data
-          else console.log 'stdout coming after child exit'
-        child.stderr.on 'data', (data) ->
-          if Array.isArray stderr # A string on exit
-            stderr.push data
-          else console.log 'stderr coming after child exit'
+      # if child.stdout or child.stdout is undefined
+      #   stdout
+      #   child.stdout.on 'data', (data) ->
+      #     options.log message: data, type: 'stdout'
+      #   child.stdout.on 'end', (data) ->
+      #     options.log message: null, type: 'stdout'
+      #   child.stderr.on 'data', (data) ->
+      #     options.log message: data, type: 'stderr'
+      #   child.stderr.on 'end', (data) ->
+      #     options.log message: null, type: 'stderr'
+      child.stdout.on 'data', (data) ->
+        if Array.isArray stdout # A string on exit
+          stdout.push data
+        else console.log 'stdout coming after child exit'
+      child.stderr.on 'data', (data) ->
+        if Array.isArray stderr # A string on exit
+          stderr.push data
+        else console.log 'stderr coming after child exit'
       child.on "exit", (code) ->
         # Give it some time because the "exit" event is sometimes
         # called before the "stdout" "data" event when runing
         # `npm test`
         setTimeout ->
-          stdout = if stds then stdout.join('') else undefined
-          stderr = if stds then stderr.join('') else undefined
+          stdout = stdout.map((d) -> d.toString()).join('')
+          stderr = stderr.map((d) -> d.toString()).join('')
+          options.log message: stdout, type: 'stdout' if stdout and stdout isnt ''
+          options.log message: stderr, type: 'stderr' if stderr and stderr isnt ''
           if options.stdout
             child.stdout.unpipe options.stdout
           if options.stderr
