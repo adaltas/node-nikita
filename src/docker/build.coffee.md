@@ -131,7 +131,7 @@ mecano.docker_build({
 
     module.exports = (options, callback) ->
       # Validate parameters and madatory conditions
-      return callback Error 'Missing tag parameter' unless options.tag?
+      return callback Error 'Required option "tag"' unless options.tag?
       return callback Error 'Can not build from Dockerfile and content' if options.content? and options.path?
       cmd = ' build '
       # not mandatory options
@@ -140,6 +140,7 @@ mecano.docker_build({
       cmd += ' --rm=false' if options.rm? and not options.rm
       cmd += " -t \"#{options.tag}\""
       # custom command for content option
+      options.path ?= path.resolve options.cwd, 'Dockerfile' if options.cwd
       if options.path?
         options.log message: "Building from Dockerfile: \"#{options.path}\"", level: 'INFO', module: 'mecano/docker/build'
         cmd += " -f #{options.path} #{path.dirname options.path}"
@@ -153,50 +154,45 @@ mecano.docker_build({
       dockerfile_cmds = ['CMD','LABEL','EXPOSE','ENV','ADD','COPY','ENTRYPOINT',
        'VOLUME','USER','WORKDIR','ARG','ONBUILD','RUN','STOPSIGNAL','MAINTAINER']
       number_of_step = 0
+      userargs = []
       @write
-         destination: '/tmp/ryba/build/Dockerfile'
-         content: options.content
-         if: options.content
-      , (err) ->
-        return callback err if err
-        dockerfile_path = '/tmp/ryba/build/Dockerfile' if options.content?
-        dockerfile_path = options.path if options.path?
-        dockerfile_path = "#{path.resolve options.cwd, 'Dockerfile'}" if (not options.content? and not options.path?)
-        options.log message: "Writing Dockerfile to :#{dockerfile_path}", level: 'INFO', module: 'mecano/lib/build' if options.content?
-        options.log message: "Reading Dockerfile from :#{dockerfile_path}", level: 'INFO', module: 'mecano/lib/build' if options.cwd? or options.path?
-        fs.readFile options.ssh, dockerfile_path, (err, result) =>
-          if err
-            if err.code == 'ENOENT'
-              options.log message: "Dockerfile :#{dockerfile_path} does not exist", level: 'ERROR', module: 'mecano/lib/docker/build'
-            return callback(err, false)
-          else
-            lines = string.lines(result.toString())
-            for l in lines
-              line =  l.replace(/ /g,'')
-              for dockerfile_cmd in dockerfile_cmds
-                if (line.indexOf(dockerfile_cmd) is 0)
-                  number_of_step = number_of_step + 1
-            @remove
-              destination: '/tmp/ryba/build/Dockerfile'
-              if: options.content
-            , (err) ->
-              return callback err if err
-              options.log message: "Building docker repository:#{options.tag}", level: 'INFO', module: 'mecano/lib/docker/build'
-              docker.exec cmd, options, null, (err, executed, stdout, stderr) =>
-                return callback err, executed, stdout, stderr, container_id_hash if err
-                container_id_hash = null
-                if executed
-                  lines = string.lines(stdout)
-                  number_of_cache = 0
-                  for k,  line of lines
-                    if (line.indexOf('Using cache') isnt  -1 )
-                      number_of_cache = number_of_cache + 1
-                    if (line.indexOf('Successfully built') isnt  -1 )
-                      container_id_hash = line.split(' ').pop().toString()
-                executed = null if number_of_step == number_of_cache
-                options.log message: "new repository is identical to previous #{options.tag}", level: 'INFO', module: 'mecano/lib/docker/build' if executed == null
-                options.log message: "new repository hash  #{container_id_hash}", level: 'INFO', module: 'mecano/lib/docker/build' if executed
-                callback err, executed, stdout, stderr, container_id_hash
+        destination: '/tmp/ryba/build/Dockerfile'
+        content: options.content
+        if: options.content
+      @call
+        unless: options.content
+        handler: (_, callback) ->
+          options.log message: "Reading Dockerfile from : #{options.path}", level: 'INFO', module: 'mecano/lib/build'
+          fs.readFile options.ssh, options.path, 'utf8', (err, content) ->
+            return callback err if err
+            options.content = content
+            callback()
+      @call ->
+        for line in string.lines options.content
+          number_of_step++ if /^(.*?)\s/.exec(line)?[1] in dockerfile_cmds
+      @remove
+        destination: '/tmp/ryba/build/Dockerfile'
+        if: options.content
+      @execute
+        cmd: docker.wrap options, cmd
+        cwd: path.dirname options.path
+      , (err, executed, stdout, stderr) =>
+        return callback err, executed, stdout, stderr, container_id_hash if err
+        container_id_hash = null
+        lines = string.lines stderr
+        lines = string.lines stdout
+        number_of_cache = 0
+        for k,  line of lines
+          if (line.indexOf('Using cache') isnt  -1 )
+            number_of_cache = number_of_cache + 1
+          if (line.indexOf('Successfully built') isnt  -1 )
+            container_id_hash = line.split(' ').pop().toString()
+        userargs = [number_of_step isnt number_of_cache, container_id_hash, stdout, stderr]
+      .then (err, status) ->
+        options.log if not err and userargs[0]
+        then message: "New image id #{userargs[1]}", level: 'INFO', module: 'mecano/lib/docker/build' 
+        else message: "Identical image id #{userargs[1]}", level: 'INFO', module: 'mecano/lib/docker/build'
+        callback err, userargs...
 
 ## Modules Dependencies
 
