@@ -7,18 +7,36 @@ describe 'api log', ->
 
   scratch = test.scratch @
   
-  it 'pass objects', (next) ->
-    log = null
-    mecano
-    .on 'text', (l) -> log = l
-    .call (options) -> options.log 'handler'
-    .then (err) ->
-      log.level.should.eql 'INFO'
-      log.message.should.eql 'handler'
-      (log.module is undefined).should.be.true()
-      log.time.should.match /\d+/
-      log.total_depth.should.eql 1
-      next err
+  describe 'local via log option', ->
+  
+    it 'convert string to objects', (next) ->
+      log = null
+      mecano
+      .call 
+        log: (l) -> log = l
+        handler: (options) -> options.log 'handler'
+      .then (err) ->
+        log.level.should.eql 'INFO'
+        log.message.should.eql 'handler'
+        (log.module is undefined).should.be.true()
+        log.time.should.match /\d+/
+        log.total_depth.should.eql 1
+        next err
+  
+  describe 'global via on', ->
+  
+    it 'convert string to objects', (next) ->
+      log = null
+      mecano
+      .on 'text', (l) -> log = l
+      .call (options) -> options.log 'handler'
+      .then (err) ->
+        log.level.should.eql 'INFO'
+        log.message.should.eql 'handler'
+        (log.module is undefined).should.be.true()
+        log.time.should.match /\d+/
+        log.total_depth.should.eql 1
+        next err
       
   it.skip 'serialize into string with default serializer', (next) ->
     # log_serializer isnt yet activated

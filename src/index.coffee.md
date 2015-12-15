@@ -91,6 +91,7 @@ functions share a common API with flexible options.
           options[k] = v if options[k] is undefined
         emit = (log) ->
           listener.call null, log for listener in listeners[log.type]?
+        _log = options.log or (->)
         options.log = (log) ->
           log = message: log if typeof log is 'string'
           log.level ?= 'INFO'
@@ -109,6 +110,7 @@ functions share a common API with flexible options.
           log.file = file
           log.line = line
           args.unshift("" + file + ":" + line + " in " + method + "()");
+          _log log
           obj.emit? log.type, log
         options
       intercept_before = (target_options, callback) ->
