@@ -130,7 +130,7 @@ mecano.docker({
 
       # rm is false by default only if options.service is true
       options.service ?= false
-      options.rm ?= !options.service
+      # options.rm ?= !options.service
       return callback Error 'Invalid parameter, rm cannot be true if service is true' if options.service and options.rm
       return callback Error 'Need container name when forcing docker run' if options.force and not options.name
       options.log message: "Should specify a container name if rm is false", level: 'WARN', module: 'mecano/docker/run' unless options.name? or options.rm
