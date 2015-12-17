@@ -1,4 +1,3 @@
-#Be aware to specify the machine if docker mahcine is used
 
 should = require 'should'
 mecano = require '../../src'
@@ -9,144 +8,101 @@ fs = require 'ssh2-fs'
 
 describe 'docker cp', ->
 
+  config = test.config()
   scratch = test.scratch @
-  destination = "#{scratch}"
-  source = '/usr/share/udhcpc/default.script'
-  machine = 'dev'
-
-
-  they 'copy simple file (with temp_dir)', (ssh, next) ->
-    @timeout 20000
+  @timeout 20000
+  
+  they 'a remote file to a local file', (ssh, next) ->
     mecano
       ssh: ssh
+      machine: config.docker.machine
     .docker_rm
       container: 'mecano_extract'
-      machine: machine
     .docker_run
       name: 'mecano_extract'
       image: 'alpine'
-      machine: machine
-      cmd: "ls -l  #{source}"
+      cmd: "whoami"
     .docker_cp
-      container: 'mecano_extract'
-      machine: machine
-      path: source
-      host_dir: destination
-    .then (err, executed, stdout) =>
-        executed.should.be.true() unless err
-        fs.stat ssh, "#{destination}/default.script", (err, stat) ->
-          next(err) if err
-          should.exist(stat)
-          mecano.docker_rm
-            container: 'mecano_extract'
-            machine: machine
-          .then (err, executed, stdout) => next(err)
-
-  they 'copy simple file (no temp_dir)', (ssh, next) ->
-    @timeout 20000
-    mecano
-      ssh: ssh
-    .docker_rm
-      container: 'mecano_extract'
-      machine: machine
-    .docker_run
-      name: 'mecano_extract'
-      image: 'alpine'
-      machine: machine
-      cmd: "ls -l  #{source}"
-    .docker_cp
-      container: 'mecano_extract'
-      machine: machine
-      path: source
-      host_dir: destination
-    .then (err, executed, stdout) =>
-        executed.should.be.true() unless err
-        fs.stat ssh, "#{destination}/default.script", (err, stat) ->
-          next(err) if err
-          should.exist(stat)
-          mecano.docker_rm
-            container: 'mecano_extract'
-            machine: machine
-          .then (err, executed, stdout) => next(err)
-
-  they 'target not exist', (ssh, next) ->
-    @timeout 20000
-    mecano
-      ssh: ssh
-    .docker_cp
-      container: 'mecano_extract'
-      machine: machine
-      path: source
-      host_dir: 'not_existing_target'
-    , (err, executed, stdout) =>
-        executed.should.be.false()
-        should.exist(err)
-        next()
-
-  they 'target not a directory', (ssh, next) ->
-    mecano
-      ssh: ssh
-    .write
-      content: 'I am a line in a file'
+      source: 'mecano_extract:/usr/share/udhcpc/default.script'
       destination: "#{scratch}/a_file"
-    .docker_cp
-      container: 'mecano_extract'
-      machine: machine
-      path: source
-      host_dir: "#{scratch}/a_file"
-    , (err, executed, stdout) =>
-        executed.should.be.false()
-        next(err)
-
-  they 'copy unless file exists (with temp_dir)', (ssh, next) ->
-    @timeout 20000
-    mecano
-      ssh: ssh
+    , (err, status) ->
+      status.should.be.true() unless err
+    .call ->
+      fs.exists ssh, "#{scratch}/a_file", (err, exists) ->
+        exists.should.be.true() unless err
     .docker_rm
       container: 'mecano_extract'
-      machine: machine
+    .then next
+    
+  they 'a remote file to a local directory', (ssh, next) ->
+    mecano
+      ssh: ssh
+      machine: config.docker.machine
+    .docker_rm container: 'mecano_extract'
     .docker_run
       name: 'mecano_extract'
       image: 'alpine'
-      machine: machine
-      cmd: "ls -l  #{source}"
+      cmd: "whoami"
     .docker_cp
-      path: source
-      host_dir: destination
-      machine: machine
-      container: 'mecano_extract'
-    .docker_cp
-      path: source
-      host_dir: destination
-      machine: machine
-      container: 'mecano_extract'
-    , (err, executed, stdout, stderr) ->
-      executed.should.be.false() unless err
-      next(err)
-
-  they 'copy unless file exists (no temp_dir)', (ssh, next) ->
-    @timeout 20000
+      source: 'mecano_extract:/usr/share/udhcpc/default.script'
+      destination: "#{scratch}"
+    , (err, status) ->
+      status.should.be.true() unless err
+    .call (_, callback) ->
+      fs.exists ssh, "#{scratch}/default.script", (err, exists) ->
+        exists.should.be.true() unless err
+        callback()
+    .docker_rm container: 'mecano_extract'
+    .then next
+    
+  they 'a local file to a remote file', (ssh, next) ->
     mecano
       ssh: ssh
-    .docker_rm
-      container: 'mecano_extract'
-      machine: machine
+      machine: config.docker.machine
+    .docker_rm container: 'mecano_extract'
     .docker_run
       name: 'mecano_extract'
       image: 'alpine'
-      machine: machine
-      cmd: "ls -l  #{source}"
+      volume: "#{scratch}:/root"
+      cmd: "whoami"
+      service: true
     .docker_cp
-      path: source
-      host_dir: destination
-      machine: machine
-      container: 'mecano_extract'
+      source: "#{__filename}"
+      destination: "mecano_extract:/root/a_file"
+    , (err, status) ->
+      status.should.be.true() unless err
     .docker_cp
-      path: source
-      host_dir: destination
-      machine: machine
-      container: 'mecano_extract'
-      temp_dir: false
-    , (err, executed, stdout, stderr) ->
-      executed.should.be.true() unless err
-      next(err)
+      source: 'mecano_extract:/root/a_file'
+      destination: "#{scratch}"
+    .call (_, callback) ->
+      fs.exists ssh, "#{scratch}/a_file", (err, exists) ->
+        exists.should.be.true() unless err
+        callback()
+    .docker_rm container: 'mecano_extract'
+    .then next
+    
+  they 'a local file to a remote directory', (ssh, next) ->
+    mecano
+      ssh: ssh
+      machine: config.docker.machine
+    .docker_rm container: 'mecano_extract'
+    .docker_run
+      name: 'mecano_extract'
+      image: 'alpine'
+      volume: "#{scratch}:/root"
+      cmd: "whoami"
+      service: true
+    .docker_cp
+      source: "#{__filename}"
+      destination: "mecano_extract:/root"
+    , (err, status) ->
+      status.should.be.true() unless err
+    .docker_cp
+      source: 'mecano_extract:/root/a_file'
+      destination: "#{scratch}"
+    .call (_, callback) ->
+      fs.exists ssh, "#{scratch}/a_file", (err, exists) ->
+        exists.should.be.true() unless err
+        callback()
+    .docker_rm container: 'mecano_extract'
+    .then next

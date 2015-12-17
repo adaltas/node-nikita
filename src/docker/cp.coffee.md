@@ -1,121 +1,91 @@
 # `docker_cp(options, callback)`
 
-Copy files/folders from a PATH on the container to a HOSTDIR on the host
+Copy files/folders between a container and the local filesystem.
+
+Reflecting the original docker ps command usage, source and destination may take
+the following forms:
+
+*   CONTAINER:PATH 
+*   LOCALPATH
+*   process.readableStream as the source or process.writableStream as the
+    destination (equivalent of "-")
+
+Note, stream are not yet supported.
 
 ## Options
 
 *   `container` (string)
-    Name/ID of base image. MANDATORY
+    Name/ID of base image, optional
 *   `machine` (string)
-    Name of the docker-machine. MANDATORY if using docker-machine
-*   `path` (string)
-    path inside the container
-*   `temp_dir` (boolean)
-    rather use or not a temp_dir. If set to false the target file will be overwritten
-    automatically by docker.(true by default)
-*   `host_dir`
-    path to destination directory on the host machine
-*   `code` (int|array)
-    Expected code(s) returned by the command, int or array of int, default to 0.
-*   `code_skipped`
-    Expected code(s) returned by the command if it has no effect, executed will
-    not be incremented, int or array of int.
-*   `log`
-    Function called with a log related messages.
-*   `ssh` (object|ssh2)
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.
-*   `stdout` (stream.Writable)
-    Writable EventEmitter in which the standard output of executed commands will
-    be piped.
-*   `stderr` (stream.Writable)
-    Writable EventEmitter in which the standard error output of executed command
-    will be piped.
+    Name of the docker-machine, optional if using docker-machine or boot2docker.
+*   `source` (string)
+    The path to upload or the container followed by the path to download.   
+*   `destination` (string)
+    The path to download or the container followed by the path to upload.   
 
-## Callback parameters
-
-*   `err`
-    Error object if any.
-*   `executed`
-    if command was executed
-*   `stdout`
-    Stdout value(s) unless `stdout` option is provided.
-*   `stderr`
-    Stderr value(s) unless `stderr` option is provided.
-
-## Example
+## Uploading a file
 
 ```javascript
 mecano.docker({
-  ssh: ssh
-  host_dir: '/etc/'
-  image: 'test-image'
-  compression: 'gzip'
-  entrypoint: '/bin/true'
-}, function(err, is_true, stdout, stderr){
-  if(err){
-    console.log(err.message);
-  }else if(is_true){
-    console.log('OK!');
-  }else{
-    console.log('Ooops!');
-  }
-})
+  source: readable_stream or '/path/to/source'
+  destination: 'my_container:/path/to/destination'
+}, function(err, status){})
+```
+
+## Downloading a file
+
+```javascript
+mecano.docker({
+  source: 'my_container:/path/to/source'
+  destination: writable_stream or '/path/to/destination'
+}, function(err, status){})
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       # Validate parameters
-      return callback Error 'Missing path parameter' unless options.path?
-      return callback Error 'Missing host_dir parameter' unless options.host_dir?
-      return callback Error 'Missing container parameter' unless options.container?
-      # Construct exec command
-
-      options.temp_dir ?= 'true'
-      temp_dir = "/tmp/mecano_docker_cp_#{Date.now()}"
-      destination = if options.temp_dir then temp_dir else  options.host_dir
-      destination_path = "#{options.host_dir}/#{options.path.split('/').pop().toString()}"
-      temp_dir_path = "#{destination}/#{options.path.split('/').pop().toString()}"
-      cmd = " cp #{options.container}:#{options.path} #{temp_dir}"
-      ssh2fs.stat options.ssh, options.host_dir, (err, stats) =>
-        if err
-          if err.code == 'ENOENT'
-            options.log message: "Target directory does not exist :#{options.host_dir}", level: 'INFO', module: 'mecano/lib/docker/cp'
-            return callback err
-        else
-          options.log message: "Target is not a directory :#{options.host_dir}", level: 'ERROR', module: 'mecano/lib/docker/cp' unless stats.isDirectory()
-          return callback err, false unless stats.isDirectory()
-          options.log message: "Extracting :#{options.path} from #{options.container} to destination:#{destination}", level: 'DEBUG', module: 'mecano/lib/docker/cp' unless options.temp_dir?
-          options.log message: "Extracting :#{options.path} from #{options.container} to temp_dir:#{temp_dir}", level: 'DEBUG', module: 'mecano/lib/docker/cp'
-          docker.exec cmd, options, null, (err, copied, stdout, stderr) =>
-            return callback err, copied, stdout, stderr if err or !options.temp_dir
-            ssh2fs.stat options.ssh, destination_path, (err, stats) =>
-              if err
-                if err.code == 'ENOENT'
-                  options.log message: "Target does not exist :#{destination_path}", level: 'INFO', module: 'mecano/lib/docker/cp'
-                  @copy
-                    source: temp_dir_path
-                    destination: options.host_dir, (err, executed, stdout, stderr) ->
-                      return callback err, executed, stdout, stderr
-                else
-                  return callback err, false
-              else
-                if stats
-                  options.log message: "Target already exist #{destination_path}", level: 'INFO', module: 'mecano/lib/docker/cp'
-                  file.hash options.ssh, temp_dir_path, 'md5', (err, value_temp_dir) =>
-                    return callback err if err
-                    file.hash options.ssh, destination_path, 'md5', (err, value_dest) =>
-                      options.log message: "Identical hash for extracted file/directory", level: 'INFO', module: 'mecano/lib/docker/cp' if (value_temp_dir is value_dest)
-                      return callback err, null if err or (value_temp_dir is value_dest)
-                      @copy
-                        source: temp_dir_path
-                        destination: options.host_dir, (err, executed, stdout, stderr) =>
-                          return callback err, executed, stdout, stderr
+      throw Error 'Missing option "source"' unless options.source
+      throw Error 'Missing option "destination"' unless options.destination
+      [_, source_container, source_path] = /(.*:)?(.*)/.exec options.source
+      [_, destination_container, destination_path] = /(.*:)?(.*)/.exec options.destination
+      throw Error 'Incompatible source and destination options' if source_container and destination_container
+      throw Error 'Incompatible source and destination options' if not source_container and not destination_container
+      source_mkdir = false
+      destination_mkdir = false
+      @call (_, callback) ->
+        return callback() if source_container
+        if /\/$/.test source_path
+          source_path = "#{source_path}/#{path.basename destination_path}"
+          return callback()
+        ssh2fs.stat options.ssh, source_path, (err, stat) ->
+          return callback err if err and err.code isnt 'ENOENT'
+          return destination_mkdir = true and callback() if err?.code is 'ENOENT'
+          source_path = "#{source_path}/#{path.basename destination_path}" if stat.isDirectory()
+          callback()
+      @mkdir
+        destination: source_path
+        if: -> source_mkdir
+      @call (_, callback)  ->
+        return callback() if destination_container
+        if /\/$/.test destination_path
+          destination_path = "#{destination_path}/#{path.basename destination_path}"
+          return callback()
+        ssh2fs.stat options.ssh, destination_path, (err, stat) ->
+          return callback err if err and err.code isnt 'ENOENT'
+          return destination_mkdir = true and callback() if err?.code is 'ENOENT'
+          destination_path = "#{destination_path}/#{path.basename destination_path}" if stat.isDirectory()
+          callback()
+      @mkdir
+        destination: destination_path
+        if: -> destination_mkdir
+      @call ->
+        @execute
+          cmd: docker.wrap options, "cp #{options.source} #{options.destination}"
 
 ## Modules Dependencies
 
-    file = require('../misc').file
-    util = require 'util'
+    # file = require('../misc').file
+    path = require 'path'
     ssh2fs = require 'ssh2-fs'
-    docker = require('../misc/docker')
+    docker = require '../misc/docker'

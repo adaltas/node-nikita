@@ -363,7 +363,7 @@ require('mecano').write({
             else
               continue # Did not match, try callback
           else if opts.before is true
-
+            # Do nothing
           else if opts.from or opts.to
             if opts.from and opts.to
               from = ///(^#{quote opts.from}$)///m.exec(content)
