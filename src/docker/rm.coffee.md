@@ -28,24 +28,18 @@ force options is set.
       for opt in ['link', 'volumes', 'force']
         cmd += "-#{opt.charAt 0} " if options[opt]
       cmd += options.container
-      docker.exec " ps | grep '#{options.container}' ", options, true, (err, executed, stdout, stderr) ->
-        return callback err, executed, stdout, stderr if err
-        if executed
-          if options.force
-            docker.exec cmd, options, false, (err, executed, stdout, stderr) ->
-              callback err, executed, stdout, stderr
-          else
-            return callback Error 'Container must be stopped to be removed without force'
-        else
-          docker.exec " ps -a | grep '#{options.container}' ", options, true, (err, executed, stdout, stderr) ->
-            return callback err, executed, stdout, stderr if err or !executed
-            if executed
-              docker.exec cmd, options, true, (err, executed, stdout, stderr) ->
-                callback err, executed, stdout, stderr
-
-
-
-
+      @execute
+        cmd: docker.wrap options, " ps | grep '#{options.container}' "
+        code_skipped:1
+      , (err, executed, stdout, stderr) =>
+        return callback Error 'Container must be stopped to be removed without force', null if executed and !options.force
+        @execute
+          cmd: docker.wrap options, " ps -a | grep '#{options.container}' "
+          code_skipped: 1
+        @execute
+          cmd: docker.wrap options, cmd
+          if: ->  @status -1
+        , (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
 
 ## Modules Dependencies
 

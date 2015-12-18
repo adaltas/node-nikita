@@ -12,10 +12,7 @@ force options is set.
     Name of the docker-machine. MANDATORY if docker-machine installed
 *   `no_prune` (boolean)
     Remove the volumes associated with the container
-*   `force` (boolean)
-    Force the removal of a running container (uses SIGKILL)
 
-## Example
 
 ## Source Code
 
@@ -27,13 +24,19 @@ force options is set.
         cmd += "--#{opt.replace '_', '-'} " if options[opt]?
       cmd += options.image
       parts = options.image.split(':')
-      repository = parts[0] ?= ''
+      repository = parts[0]
       tag = parts[1] ?= ''
-      docker.exec " images | grep '#{repository}' | grep '#{tag}'", options, true, (err, exists,  stdout, stderr) ->
-        return callback err, exists if (err or !exists)
-        docker.exec cmd, options, null
-          , (err, executed, stdout, stderr) ->
-            callback err, executed, stdout, stderr
+      list_images = " images "
+      list_images += "| grep '#{repository}' " if repository.length
+      list_images += "| grep '#{tag}' " if tag.length
+      @execute
+        cmd: docker.wrap options, list_images
+        code_skipped: 1
+      @execute
+        cmd: docker.wrap options, cmd
+        if: -> @status -1
+      .then callback
+
 
 
 
