@@ -199,9 +199,6 @@ require('mecano').write({
           options.eof = "\u2028"
       destination  = null
       destinationHash = null
-      content = null
-      from = to = between = null
-      # append = options.append
       options.write ?= []
       if options.from? or options.to? or options.match? or options.replace? or options.before?
         options.write.push
