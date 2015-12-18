@@ -216,7 +216,7 @@ require('mecano').write({
         if not w.from? and not w.to? and not w.match? and w.replace?
           w.match = w.replace
       # Start work
-      @call shy: true, (_, callback) -> # read source
+      @call (_, callback) -> # read source
         if options.content?
           options.content = "#{options.content}" if typeof options.content is 'number'
           return callback()
@@ -237,7 +237,7 @@ require('mecano').write({
             options.content = src
             callback()
       destinationStat = null
-      @call shy: true, (_, callback) -> # read destination
+      @call (_, callback) -> # read destination
         # no need to test changes if destination is a callback
         return callback() if typeof options.destination is 'function'
         exists = ->
@@ -289,17 +289,15 @@ require('mecano').write({
             destinationHash = string.hash dest
             callback()
         exists()
-      @call shy: true, -> # render
-        return unless options.context?
-        string.render options
-      @call shy: true, -> # skip_empty_lines
+      @call  -> # render
+        string.render options if options.context?
+      @call -> # skip_empty_lines
         return unless options.skip_empty_lines?
         options.log message: "Skip empty lines", level: 'DEBUG', module: 'mecano/lib/write'
         options.content = options.content.replace /(\r\n|[\n\r\u0085\u2028\u2029])\s*(\r\n|[\n\r\u0085\u2028\u2029])/g, "$1"
-      @call shy: true, -> # replace_partial
-        return unless options.write.length
-        string.replace_partial options
-      @call shy: true, -> # eof
+      @call -> # replace_partial
+        string.replace_partial options if options.write.length
+      @call -> # eof
         return unless options.eof?
         options.log message: "Checking option eof", level: 'DEBUG', module: 'mecano/lib/write'
         if options.eof is true
