@@ -63,11 +63,13 @@ mecano.docker_kill({
       cmd = ' kill '
       cmd += "-s #{options.signal} " if options.signal?
       cmd += options.container
-      docker.exec " ps | grep '#{options.container}' | grep 'Up'", options, true, (err, executed, out, er) ->
-        return callback err if err
-        return callback null, null if executed == false
-        docker.exec cmd,  options, false, (err, executed, stdout, stderr) ->
-          callback err, executed, stdout, stderr
+      @execute
+        cmd: docker.wrap options, " ps | grep '#{options.container}' | grep 'Up'"
+        code_skipped: 1
+      @execute
+        if: -> @status -1
+        cmd: docker.wrap options, cmd
+      , (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
 
 ## Modules Dependencies
 
