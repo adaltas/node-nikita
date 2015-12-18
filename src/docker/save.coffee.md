@@ -9,7 +9,7 @@ Save Docker images
     Name/ID of base image. MANDATORY
 *   `machine` (string)
     Name of the docker-machine. MANDATORY if using docker-machine
-*   `output` (string)
+*   `output` (string). MANDATORY
     TAR archive output path
 *   `code` (int | array)
     Expected code(s) returned by the command, int or array of int, default to 0.
@@ -66,52 +66,13 @@ mecano.docker({
       return callback Error 'Missing image parameter' unless options.image?
       return callback Error 'Missing output parameter' unless options.output?
       # Saves image to local tmp path, than copy it
-      # Uses copy (it is idempotent)
-      # Construct exec command
-      temp_dir = "/tmp/mecano_docker_save"
-      name = "#{options.output.split('/').pop().toString()}.#{Date.now()}"
-      temp_dir_path = "#{temp_dir}/#{name}"
-      cmd = " save -o #{temp_dir_path} #{options.image}"
-      @mkdir
-        destination: temp_dir
-      , (err, executed) =>
-        return callback err if err
-        options.log message: "Extracting to temp_dir :#{temp_dir_path}", level: 'INFO', module: 'mecano/lib/docker/save'
-        docker.exec cmd, options, null, (err, executed, stdout, stderr) =>
-          return callback err, executed, stdout, stderr if err
-          ssh2fs.exists options.ssh, options.output, (err, exists) =>
-            return callback err if err
-            if exists
-              options.log message: "Target saved image already exist :#{options.output}", level: 'INFO', module: 'mecano/lib/docker/save'
-              file.hash options.ssh, temp_dir_path, 'md5', (err, value_temp_dir) =>
-                return callback err if err
-                file.hash options.ssh, options.output, 'md5', (err, value_dest) =>
-                  return callback err, null if err
-                  if value_temp_dir is value_dest
-                    options.log message: "Indetical image (not overwritten):#{options.output}", level: 'INFO', module: 'mecano/lib/docker/save'
-                    @remove
-                      destination: temp_dir
-                    , (err, executed, stdout, stderr) ->
-                      return callback err, null, stdout, stderr
-                  else
-                    options.log message: "Not identical image (overwriting):#{options.output}", level: 'INFO', module: 'mecano/lib/docker/save'
-                    @copy
-                      source: temp_dir_path
-                      destination: options.output
-                    @remove
-                      destination: temp_dir, (err, executed, stdout, stderr) ->  return callback err, executed, stdout, stderr
-            else
-              options.log message: "Target saved image does not exist :#{options.output}", level: 'INFO', module: 'mecano/lib/docker/save'
-              @copy
-                source: temp_dir_path
-                destination: options.output
-              @remove
-                destination: temp_dir, (err, executed, stdout, stderr) =>  return callback err, executed, stdout, stderr
-                force: true
+      cmd = " save -o #{options.output}  #{options.image}"
+      options.log message: "Extracting image #{options.output} to file:#{options.image}", level: 'INFO', module: 'mecano/lib/docker/save'
+      @execute
+        cmd: docker.wrap options, cmd
+      , (err, done, stdout, stderr) -> callback err, done, stdout, stderr
 
 ## Modules Dependencies
 
-    file = require('../misc').file
-    util = require 'util'
-    ssh2fs = require 'ssh2-fs'
+    util = require 'util'  
     docker = require('../misc/docker')

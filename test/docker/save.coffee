@@ -9,7 +9,7 @@ describe 'docker save', ->
 
   scratch = test.scratch @
   source = "#{scratch}"
-  machine = 'dev'
+  config = test.config()
 
 
   they 'saves a simple image', (ssh, next) ->
@@ -20,36 +20,41 @@ describe 'docker save', ->
     .docker_build
       tag: 'mecano/load_test:latest'
       content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
-      machine: machine
+      machine: config.docker.machine
     .docker_save
       image: 'mecano/load_test:latest'
       output: "#{source}/mecano_saved.tar"
-      machine: machine
+      machine: config.docker.machine
     , (err, saved) ->
+      return err if err
       saved.should.be.true()
-    .remove
-      destination:"#{source}/mecano_saved.tar"
-    .then next
+      mecano
+        ssh: ssh
+      .remove
+        destination:"#{source}/mecano_saved.tar"
+      , (err) -> next(err)
 
-  they 'status not modified', (ssh, next) ->
-    mecano
-      ssh: ssh
-    .remove
-      destination:"#{source}/mecano_saved.tar"
-    .docker_build
-      tag: 'mecano/load_test:latest'
-      content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
-      machine: machine
-    .docker_save
-      image: 'mecano/load_test:latest'
-      output: "#{source}/mecano_saved.tar"
-      machine: machine
-    .docker_save
-      image: 'mecano/load_test:latest'
-      output: "#{source}/mecano_saved.tar"
-      machine: machine
-    , (err, saved) ->
-      saved.should.be.false()
-    .remove
-      destination:"#{source}/mecano_saved.tar"
-    .then next
+  # they 'status not modified', (ssh, next) ->
+  #   mecano
+  #     ssh: ssh
+  #   .remove
+  #     destination:"#{source}/mecano_saved.tar"
+  #   .docker_build
+  #     tag: 'mecano/load_test:latest'
+  #     content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
+  #     machine: config.docker.machine
+  #   .docker_save
+  #     image: 'mecano/load_test:latest'
+  #     output: "#{source}/mecano_saved.tar"
+  #     machine: config.docker.machine
+  #   .docker_save
+  #     image: 'mecano/load_test:latest'
+  #     output: "#{source}/mecano_saved.tar"
+  #     machine: config.docker.machine
+  #   , (err, saved) ->
+  #     saved.should.be.false()
+  #     mecano
+  #       ssh: ssh
+  #     .remove
+  #       destination:"#{source}/mecano_saved.tar"
+  #     .then next
