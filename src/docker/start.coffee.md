@@ -67,11 +67,13 @@ mecano.docker_start({
       cmd = ' start '
       cmd += '-a ' if options.attach
       cmd += options.container
-      docker_status options, (err, is_running) ->
+      @docker_status options, (err, is_running) =>
         options.log message: "Container already started #{options.container} (Skipping)", level: 'INFO', module: 'mecano/lib/docker/start' if is_running
         return callback err, false if err or is_running
         options.log message: "Starting container #{options.container}", level: 'INFO', module: 'mecano/lib/docker/start'
-        docker.exec cmd, options, false, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
+        @execute
+          cmd: docker.wrap options, cmd
+        , (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
 
 ## Modules Dependencies
 

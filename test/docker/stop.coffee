@@ -10,6 +10,9 @@ machine = 'ryba'
 describe 'docker stop', ->
 
   scratch = test.scratch @
+  config = test.config()
+  return if config.docker.disable
+
 
   they 'on running container', (ssh, next) ->
     mecano
@@ -18,10 +21,10 @@ describe 'docker stop', ->
       image: 'httpd'
       name: 'mecano_test_stop'
       service: true
-      machine: machine
+      machine: config.docker.machine
     .docker_stop
       container: 'mecano_test_stop'
-      machine: machine
+      machine: config.docker.machine
     , (err, stopped) ->
       stopped.should.be.true()
       mecano
@@ -29,7 +32,7 @@ describe 'docker stop', ->
       .docker_rm
         container: 'mecano_test_stop'
         force: true
-        machine: machine
+        machine: config.docker.machine
       .then next
 
   they 'on stopped container', (ssh, next) ->
@@ -39,13 +42,13 @@ describe 'docker stop', ->
       image: 'httpd'
       name: 'mecano_test_stop'
       service: true
-      machine: machine
+      machine: config.docker.machine
     .docker_stop
       container: 'mecano_test_stop'
-      machine: machine
+      machine: config.docker.machine
     .docker_stop
       container: 'mecano_test_stop'
-      machine: machine
+      machine: config.docker.machine
     , (err, stopped) ->
       stopped.should.be.false()
       mecano
@@ -53,5 +56,5 @@ describe 'docker stop', ->
       .docker_rm
         container: 'mecano_test_stop'
         force: true
-        machine: machine
+        machine: config.docker.machine
       .then next

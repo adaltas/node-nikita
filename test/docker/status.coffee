@@ -10,45 +10,61 @@ test = require '../test'
 they = require 'ssh2-they'
 docker = require '../../src/misc/docker'
 
-clean = (ssh, machine, container, callback) ->
-  docker.exec " rm -f #{container} || true" , {  ssh: ssh, machine: machine }, null
-  , (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
 
 describe 'docker status', ->
 
   scratch = test.scratch @
-
-  machine = 'dev'
+  config = test.config()
+  return if config.docker.disable
 
   they 'on stopped  container', (ssh, next) ->
-    clean ssh, machine, 'mecano_status', (err) =>
+    mecano
+      ssh: ssh
+    .docker_rm
+      container: 'mecano_status'
+      machine: config.docker.machine
+      force: true
+    .docker_run
+      cmd: "/bin/echo 'test'"
+      image: 'alpine'
+      rm: false
+      machine: config.docker.machine
+      name: 'mecano_status'
+    .docker_status
+      container: 'mecano_status'
+      machine: config.docker.machine
+    , (err, running, stdout, stderr) ->
+      running.should.be.false()
       mecano
         ssh: ssh
-      .docker_run
-        cmd: "/bin/echo 'test'"
-        image: 'alpine'
-        rm: false
-        machine: machine
-        name: 'mecano_status'
-      .docker_status
+      .docker_rm
         container: 'mecano_status'
-        machine: machine
-      , (err, running, stdout, stderr) ->
-        running.should.be.false()
-        clean ssh, machine, 'mecano_status', (err) -> next()
+        machine: config.docker.machine
+        force: true
+      .then next
 
   they 'on running container', (ssh, next) ->
-    clean ssh, machine, 'mecano_status', (err) =>
+    mecano
+      ssh: ssh
+    .docker_rm
+      container: 'mecano_status'
+      machine: config.docker.machine
+      force: true
+    .docker_run
+      image: 'httpd'
+      port: [ '500:80' ]
+      machine: config.docker.machine
+      name: 'mecano_status'
+      service: true
+    .docker_status
+      container: 'mecano_status'
+      machine: config.docker.machine
+    , (err, running, stdout, stderr) ->
+      running.should.be.true()
       mecano
         ssh: ssh
-      .docker_run
-        image: 'httpd'
-        port: [ '500:80' ]
-        machine: machine
-        name: 'mecano_status'
-      .docker_status
+      .docker_rm
         container: 'mecano_status'
-        machine: machine
-      , (err, running, stdout, stderr) ->
-        running.should.be.true()
-        clean ssh, machine, 'mecano_status', (err) -> next()
+        machine: config.docker.machine
+        force: true
+      .then next

@@ -67,7 +67,10 @@ mecano.docker({
       return callback  Error 'Missing container parameter' unless options.container?
       # Construct exec command
       cmd = " ps --filter status=running | grep '#{options.container}' "
-      docker.exec cmd, options, true, (err, running, stdout, stderr) -> callback err, running, stdout, stderr
+      @execute
+        cmd: docker.wrap options, cmd
+        code_skipped: 1
+      , (err, running, stdout, stderr) -> callback err, running, stdout, stderr
 
 
 ## Modules Dependencies
