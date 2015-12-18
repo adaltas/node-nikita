@@ -7,9 +7,11 @@ fs = require 'ssh2-fs'
 
 describe 'docker load', ->
 
+  machine= 'dev'
+  config = test.config()
+  return if config.docker.disable
   scratch = test.scratch @
   source = "#{scratch}"
-  machine = 'dev'
 
 # timestamp ensures that hash of the built image will be unique and
 # image checksum is also unique
@@ -23,26 +25,27 @@ describe 'docker load', ->
     .docker_build
       tag: 'mecano/load_test:latest'
       content: "FROM scratch\nCMD ['echo \"docker_build #{Date.now()}\"']"
-      machine: machine
+      machine: config.docker.machine
     .docker_save
       image: 'mecano/load_test:latest'
       output: "#{source}/mecano_load.tar"
-      machine: machine
+      machine: config.docker.machine
     .docker_rmi
-      machine: machine
+      machine: config.docker.machine
       image: 'mecano/load_test:latest'
     .docker_load
       image: 'mecano/load_test:latest'
-      machine: machine
+      machine: config.docker.machine
       input: "#{source}/mecano_load.tar"
     , (err, loaded, stdout, stderr) ->
+      return err if err
       loaded.should.be.true()
       mecano
         ssh: ssh
       .docker_rmi
-        machine: machine
+        machine: config.docker.machine
         image: 'mecano/load_test:latest'
-      .then next
+      .then (err) -> next(err)
 
   they 'not loading if checksum', (ssh, next) ->
     mecano
@@ -52,17 +55,18 @@ describe 'docker load', ->
     .docker_build
       tag: 'mecano/load_test:latest'
       content: "FROM scratch\nCMD ['echo \"docker_build #{Date.now()}\"']"
-      machine: machine
+      machine: config.docker.machine
     , (err, execute, stdout, stderr, checksum) ->
+      return err if err
       mecano
         ssh: ssh
       .docker_save
         image: 'mecano/load_test:latest'
         output: "#{source}/mecano_load.tar"
-        machine: machine
+        machine: config.docker.machine
       .docker_load
         image: 'mecano/load_test:latest'
-        machine: machine
+        machine: config.docker.machine
         input: "#{source}/mecano_load.tar"
         checksum: checksum
       , (err, loaded) ->
@@ -76,24 +80,24 @@ describe 'docker load', ->
     .remove
       destination: "#{source}/mecano_load.tar"
     .docker_rmi
-      machine: machine
+      machine: config.docker.machine
       image: 'mecano/load_test:latest'
     .docker_build
       tag: 'mecano/load_test:latest'
       content: "FROM scratch\nCMD ['echo \"docker_build #{Date.now()}\"']"
-      machine: machine
+      machine: config.docker.machine
     .docker_save
       image: 'mecano/load_test:latest'
       output: "#{source}/load.tar"
-      machine: machine
+      machine: config.docker.machine
     .docker_load
       image: 'mecano/mecano_load:latest'
-      machine: machine
+      machine: config.docker.machine
       input: "#{source}/load.tar"
     .docker_load
       image: 'mecano/mecano_load:latest'
-      machine: machine
+      machine: config.docker.machine
       input: "#{source}/load.tar"
     , (err, loaded) ->
       loaded.should.be.false()
-    .then next
+      next(err)

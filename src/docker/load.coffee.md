@@ -68,13 +68,14 @@ mecano.docker_load({
       # for this we print the existing images as REPOSITORY:TAG:IMAGE
       # parse the result to record images as an array of   {'REPOSITORY:TAG:'= 'IMAGE'}
       images = {}
-
       delete options.cmd
       options.log message: 'Storing previous state of image', level: 'INFO', module: 'mecano/lib/docker/load'
       options.log message: 'No checksum provided', level: 'INFO', module: 'mecano/lib/docker/load' if !options.checksum?
       options.log message: "Checksum provided :#{options.checksum}", level: 'INFO', module: 'mecano/lib/docker/load' if options.checksum
       options.checksum ?= ''
-      docker.exec " images | grep -v '<none>' | awk '{ print $1\":\"$2\":\"$3 }'", options, false, (err, executed, stdout, stderr) ->
+      @execute
+        cmd: docker.wrap options, " images | grep -v '<none>' | awk '{ print $1\":\"$2\":\"$3 }'"
+      , (err, executed, stdout, stderr) =>
         return callback err if err
         # skip header line, wi skip it here instead of in the grep  to have
         # an array with at least one not empty line
@@ -88,30 +89,33 @@ mecano.docker_load({
               return callback null, false if infos[2] == options.checksum
               images["#{infos[0]}:#{infos[1]}"] = "#{infos[2]}"
         options.log message: "Start Loading #{options.input} ", level: 'INFO', module: 'mecano/lib/docker/load'
-        docker.exec cmd, options, false, (err) ->
+        @execute
+          cmd: docker.wrap options, cmd
+        @call ->
           options.log message: 'Loading finished', level: 'INFO', module: 'mecano/lib/docker/load'
-          return callback err if err
-          docker.exec ' images | grep -v \'<none>\' | awk \'{ print $1":"$2":"$3 }\'', options, false, (err, executed, out, stderr) ->
-            return callback err, executed, out, stderr if err
-            new_images = {}
-            diff = false
-            options.log message: 'Comparing new images', level: 'INFO', module: 'mecano/lib/docker/load'
-            if string.lines(stdout).length > 1
-              for image in string.lines out.toString()
-                if image != ''
-                  infos = image.split(':')
-                  new_images["#{infos[0]}:#{infos[1]}"] = "#{infos[2]}"
-            for new_k, new_image of new_images
-              if !images[new_k]?
-                diff = true
-                break;
-              else
-                for k, image of images
-                  if image != new_image && new_k == k
-                    diff = true
-                    options.log message: 'Identical images', level: 'INFO', module: 'mecano/lib/docker/load'
-                    break;
-            return callback err, diff, stdout, stderr
+        @execute
+          cmd: docker.wrap options, ' images | grep -v \'<none>\' | awk \'{ print $1":"$2":"$3 }\''
+        , (err, executed, out, stderr) ->
+          return callback err, executed, out, stderr if err
+          new_images = {}
+          diff = false
+          options.log message: 'Comparing new images', level: 'INFO', module: 'mecano/lib/docker/load'
+          if string.lines(stdout).length > 1
+            for image in string.lines out.toString()
+              if image != ''
+                infos = image.split(':')
+                new_images["#{infos[0]}:#{infos[1]}"] = "#{infos[2]}"
+          for new_k, new_image of new_images
+            if !images[new_k]?
+              diff = true
+              break;
+            else
+              for k, image of images
+                if image != new_image && new_k == k
+                  diff = true
+                  options.log message: 'Identical images', level: 'INFO', module: 'mecano/lib/docker/load'
+                  break;
+          return callback err, diff, stdout, stderr
 
 
 ## Modules Dependencies
