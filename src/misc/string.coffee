@@ -35,3 +35,104 @@ module.exports =
       str.split /\r\n|[\n\r\u0085\u2028\u2029]/g
     underscore: (str) ->
       trim(str).replace(/([a-z\d])([A-Z]+)/g, '$1_$2').replace(/[-\s]+/g, '_').toLowerCase()
+    render: (options) ->
+      options.log message: "Rendering with #{options.engine}", level: 'DEBUG', module: 'mecano/lib/write'
+      try
+        switch options.engine
+          when 'nunjunks'
+            engine = new nunjucks.Environment null, autoescape: false
+            options.filters ?= {}
+            options.filters.isString ?= (obj) -> typeof obj is 'string'
+            options.filters.isArray ?= (obj) -> Array.isArray obj
+            for filter, func of options.filters
+              if typeof func is 'function'
+                engine.addFilter filter, func
+              else
+                options.log message: "Option filter not a function and ignored", level: 'WARN', module: 'mecano/lib/write'
+            options.content = engine.renderString options.content.toString(), options.context
+          when 'eco'
+            options.content = eco.render options.content.toString(), options.context
+          else throw Error "Invalid engine: #{options.engine}"
+      catch err
+        throw (if typeof err is 'string' then Error(err) else err)
+    replace_partial: (options) ->
+      return unless options.write.length
+      options.log message: "Replacing sections of the file", level: 'DEBUG', module: 'mecano/lib/write'
+      for opts in options.write
+        if opts.match
+          opts.match ?= opts.replace
+          opts.match = ///#{quote opts.match}///mg if typeof opts.match is 'string'
+          throw Error "Invalid match option" unless opts.match instanceof RegExp
+          if opts.match.test options.content
+            options.content = options.content.replace opts.match, opts.replace
+            append = false
+          else if opts.before and typeof opts.replace is 'string'
+            if typeof opts.before is "string"
+              opts.before = new RegExp ///^.*#{quote opts.before}.*$///mg
+            if opts.before instanceof RegExp
+              posoffset = 0
+              orgContent = options.content
+              while (res = opts.before.exec orgContent) isnt null
+                pos = posoffset + res.index #+ res[0].length
+                options.content = options.content.slice(0,pos) + opts.replace + '\n' + options.content.slice(pos)
+                posoffset += opts.replace.length + 1
+                break unless opts.before.global
+              before = false
+            else# if content
+              linebreak = if options.content.length is 0 or options.content.substr(options.content.length - 1) is '\n' then '' else '\n'
+              options.content = opts.replace + linebreak + options.content
+              append = false
+          else if opts.append and typeof opts.replace is 'string'
+            if typeof opts.append is "string"
+              opts.append = new RegExp "^.*#{quote opts.append}.*$", 'mg'
+            if opts.append instanceof RegExp
+              posoffset = 0
+              orgContent = options.content
+              while (res = opts.append.exec orgContent) isnt null
+                pos = posoffset + res.index + res[0].length
+                options.content = options.content.slice(0,pos) + '\n' + opts.replace + options.content.slice(pos)
+                posoffset += opts.replace.length + 1
+                break unless opts.append.global
+              append = false
+            else
+              linebreak = if options.content.length is 0 or options.content.substr(options.content.length - 1) is '\n' then '' else '\n'
+              options.content = options.content + linebreak + opts.replace
+              append = false
+          else
+            continue # Did not match, try callback
+        else if opts.before is true
+          # Do nothing
+        else if opts.from or opts.to
+          if opts.from and opts.to
+            from = ///(^#{quote opts.from}$)///m.exec(options.content)
+            to = ///(^#{quote opts.to}$)///m.exec(options.content)
+            if from? and not to?
+              options.log message: "Found 'from' but missing 'to', skip writing", level: 'WARN', module: 'mecano/lib/write'
+            else if not from? and to?
+              options.log message: "Missing 'from' but found 'to', skip writing", level: 'WARN', module: 'mecano/lib/write'
+            else if not from? and not to?
+              if opts.append
+                options.content += '\n' + opts.from + '\n' + opts.replace+ '\n' + opts.to
+                append = false
+              else
+                options.log message: "Missing 'from' and 'to' without append, skip writing", level: 'WARN', module: 'mecano/lib/write'
+            else
+              options.content = options.content.substr(0, from.index + from[1].length + 1) + opts.replace + '\n' + options.content.substr(to.index)
+              append = false
+          else if opts.from and not opts.to
+            from = ///(^#{quote opts.from}$)///m.exec(options.content)
+            if from?
+              options.content = options.content.substr(0, from.index + from[1].length) + '\n' + opts.replace
+            else # TODO: honors append
+              options.log message: "Missing 'from', skip writing", level: 'WARN', module: 'mecano/lib/write'
+          else if not opts.from and opts.to
+            from_index = 0
+            to = ///(^#{quote opts.to}$)///m.exec(options.content)
+            if to?
+              options.content = opts.replace + '\n' + options.content.substr(to.index)
+            else # TODO: honors append
+              options.log message: "Missing 'to', skip writing", level: 'WARN', module: 'mecano/lib/write'
+
+eco = require 'eco'
+nunjucks = require 'nunjucks/src/environment'
+quote = require 'regexp-quote'
