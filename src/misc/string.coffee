@@ -56,7 +56,7 @@ module.exports =
       catch err
         throw (if typeof err is 'string' then Error(err) else err)
     replace_partial: (options) ->
-      return unless options.write.length
+      return unless options.write?.length
       options.log message: "Replacing sections of the file", level: 'DEBUG', module: 'mecano/lib/write'
       for opts in options.write
         if opts.match

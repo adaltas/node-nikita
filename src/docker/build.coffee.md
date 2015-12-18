@@ -116,15 +116,7 @@ mecano.docker_build({
   ssh: ssh
   tag: 'ryba/target-build'
   content: "FROM ubuntu\nRUN echo 'helloworld'"
-}, function(err, is_built, stdout, stderr){
-  if(err){
-    console.log(err.message);
-  }else if(is_built){
-    console.log('OK!');
-  }else{
-    console.log('Ooops!');
-  }
-})
+}, function(err, is_built, stdout, stderr){})
 ``
 
 ## Source Code
@@ -134,10 +126,13 @@ mecano.docker_build({
       return callback Error 'Required option "tag"' unless options.tag?
       return callback Error 'Can not build from Dockerfile and content' if options.content? and options.path?
       cmd = ' build '
+      # Apply search and replace to content
+      string.render options if options.context?
+      string.replace_partial options
       # not mandatory options
       for opt in ['force_rm', 'quiet', 'no_cache']
         cmd += " --#{opt.replace '_', '-'}" if options[opt]
-      cmd += ' --rm=false' if options.rm? and not options.rm
+      cmd += " --rm=#{if options.rm then 'true' else 'false'}"
       cmd += " -t \"#{options.tag}\""
       # custom command for content option
       options.path ?= path.resolve options.cwd, 'Dockerfile' if options.cwd
@@ -155,10 +150,7 @@ mecano.docker_build({
        'VOLUME','USER','WORKDIR','ARG','ONBUILD','RUN','STOPSIGNAL','MAINTAINER']
       number_of_step = 0
       userargs = []
-      @write
-        destination: '/tmp/ryba/build/Dockerfile'
-        content: options.content
-        if: options.content
+      temp_dir = "/tmp/ryba-#{Date.now()}-#{Math.floor Math.random()*1000}"
       @call
         unless: options.content
         handler: (_, callback) ->
@@ -170,9 +162,6 @@ mecano.docker_build({
       @call ->
         for line in string.lines options.content
           number_of_step++ if /^(.*?)\s/.exec(line)?[1] in dockerfile_cmds
-      @remove
-        destination: '/tmp/ryba/build/Dockerfile'
-        if: options.content
       @execute
         cmd: docker.wrap options, cmd
         cwd: path.dirname options.path
@@ -195,7 +184,6 @@ mecano.docker_build({
         callback err, userargs...
 
 ## Modules Dependencies
-
 
     docker = require '../misc/docker'
     string = require '../misc/string'

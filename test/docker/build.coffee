@@ -40,7 +40,7 @@ describe 'docker build', ->
       err.message.should.eql 'Can not build from Dockerfile and content'
     .then next
 
-  they 'from text', (ssh, next) ->
+  they 'from text with search and replace', (ssh, next) ->
     mecano
       ssh: ssh
       machine: config.docker.machine
@@ -52,8 +52,13 @@ describe 'docker build', ->
       FROM scratch
       CMD echo hello
       """
+      write: [
+        match: /^(.* echo) .*$/m
+        replace: '$1 world'
+      ]
     , (err, executed, stdout, stderr) ->
       executed.should.be.true() unless err
+      stderr.should.containEql 'Step 2 : CMD echo world'
     .docker_rmi
       image: 'mecano/should_exists_2'
     .then next
