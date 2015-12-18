@@ -167,31 +167,26 @@ mecano.docker({
       # need to delete the cmd options or it will be used in docker.exec
       delete options.cmd
       # Construct other exec parameter
-      if options.name?
-        options.log message: "Checking if container already runned", level: 'INFO', module: 'mecano/docker/run'
-        docker.exec " ps -a | grep '#{options.name}'", options, true, (err, executed, stdout, stderr) =>
-          return callback(err, executed, stdout, stderr) if err
-          if executed
-            if options.force
-              options.log message: "Use force to remove live container #{options.name}", level: 'INFO', module: 'mecano/docker/run'
-              docker.exec " rm -f #{options.name} || true", options, null, (err) ->
-                return callback err if err
-                docker.exec cmd, options, null, (err, executed, stdout, stderr) ->
-                  return callback err, executed, stdout, stderr
-            else
-              options.log
-                message: "Use force option if you want to get a new running instance",
-                level: 'WARN'
-                module: 'mecano/docker/run'
-              return callback null, null
-
-          else
-            options.log message: "Running container #{options.name}", level: 'INFO', module: 'mecano/docker/run'
-            docker.exec cmd, options, null, (err, executed, stdout, stderr) ->
-              return callback err, executed, stdout, stderr
-      else
-        docker.exec cmd, options, null, (err, executed, stdout, stderr) ->
-          return callback(err, executed, stdout, stderr)
+      options.log message: "Checking if container already runned", level: 'INFO', module: 'mecano/docker/run' if options.name?
+      @execute
+        if: options.name
+        cmd: docker.wrap options, " ps -a | grep '#{options.name}' "
+        code_skipped: 1
+      # return modified if already runned and force option
+      @call
+        if: -> @status -1
+        handler: =>
+          return callback Error 'Use force option if you want to get a new running instance' unless options.force
+          @execute
+            if: options.force
+            cmd: docker.wrap options, " rm -f #{options.name} || true"
+      @call ->
+        options.log message: "Running container #{options.name}", level: 'INFO', module: 'mecano/docker/run'
+      # docker run only if container not existing  or (existing and forceoption)
+      @execute
+        if: -> (@status(-3) and @status(-2)) or !@status(-3)
+        cmd: docker.wrap options, cmd
+      , (err, executed, stdout, stderr) ->  callback err, executed, stdout, stderr
 
 ## Modules Dependencies
 

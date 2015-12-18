@@ -10,7 +10,6 @@ test = require '../test'
 they = require 'ssh2-they'
 docker = require '../../src/misc/docker'
 
-
 ip = (ssh, machine, callback) ->
   mecano
   .execute
@@ -36,38 +35,33 @@ ip = (ssh, machine, callback) ->
       ipadress = stdout.trim()
       return callback null, ipadress
 
-clean = (ssh, machine, name, callback) ->
-  docker.exec " rm -f #{name} || true" , {  ssh: ssh, machine: machine }, null
-  , (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
-
 describe 'docker run', ->
 
+  config = test.config()
+  return if config.docker.disable
   scratch = test.scratch @
 
-  machine = 'dev'
-
-  they 'test simple command', (ssh, next) ->
+  they 'simple command', (ssh, next) ->
     mecano
       ssh: ssh
-      timeout: -1
     .docker_run
       cmd: "/bin/echo 'test'"
       image: 'alpine'
       service: false
-      machine: machine
+      machine: config.docker.machine
     , (err, executed, stdout, stderr) ->
       stdout.should.match /^test.*/ unless err
     .then next
 
-  they 'test invalid parameter', (ssh, next) ->
+  they 'invalid parameter', (ssh, next) ->
     mecano
       ssh: ssh
     .docker_run
+      machine: config.docker.machine
       image: 'alpine'
       name: 'mecano_test'
       service: true
       rm: true
-      machine: machine
     , (err, executed) ->
       err.message.should.match /^Invalid parameter.*/
     .docker_run
@@ -75,104 +69,171 @@ describe 'docker run', ->
       image: 'alpine'
       service: true
       rm: false
-      machine: machine
+      machine: config.docker.machine
     , (err, executed) ->
       err.message.should.match /^Invalid parameter.*/
     .then (err) -> next null
 
-  they 'test --rm (flag option)', (ssh, next) ->
-    clean ssh, machine, 'mecano_test_rm', (err) =>
-      return next err if  err
-      mecano
-        ssh: ssh
-        timeout: -1
-      .docker_run
-        cmd: "/bin/echo 'test'"
-        image: 'alpine'
-        name: 'mecano_test_rm'
-        service: false
-        rm: false
-        machine: machine
+  they '--rm (flag option)', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .docker_rm
+      machine: config.docker.machine
+      force: true
+      container: 'mecano_test_rm'
+    .docker_run
+      machine: config.docker.machine
+      cmd: "/bin/echo 'test'"
+      image: 'alpine'
+      name: 'mecano_test_rm'
+      service: false
+      rm: false
       , (err, executed, stdout, stderr) ->
+        return err if err
         stdout.should.match /^test.*/ unless err
-        clean ssh, machine, 'mecano_test_rm', (err) -> next(err)
-
-  they 'test unique option from array option', (ssh, next) ->
-    clean ssh, machine, 'mecano_test_unique', (err) =>
-      return next err if  err
-      ip ssh, machine, (err, ipadress) =>
-        return next err if  err
-        @timeout 60000
         mecano
           ssh: ssh
-        .docker_run
-          image: 'httpd'
-          port: '499:80'
-          machine: machine
-          name: 'mecano_test_unique'
-        .wait_connect
-          port: 499
-          host: ipadress
-        , (err) ->
-          clean ssh, machine, 'mecano_test_unique', (err) -> next(err)
+        .docker_rm
+          machine: config.docker.machine
+          force: true
+          container: 'mecano_test_rm'
+        .then next
 
-  they 'test array options', (ssh, next) ->
-    clean ssh, machine, 'mecano_test_array', (err) =>
+  they 'unique option from array option', (ssh, next) ->
+    ip ssh, config.docker.machine, (err, ipadress) =>
       return next err if  err
-      ip ssh, machine, (err, ipadress) =>
-        return next err if  err
-        @timeout 60000
-        mecano
-          ssh: ssh
-        .docker_run
-          image: 'httpd'
-          port: [ '500:80', '501:81' ]
-          machine: machine
-          name: 'mecano_test_array'
-        .wait_connect
-          host: ipadress
-          port: 500
-        , (err) ->
-          clean ssh, machine, 'mecano_test_array', (err) => next(err)
-
-  they 'test status not modified', (ssh, next) ->
-    clean ssh, machine, 'mecano_test', (err) =>
-      return next err if  err
-      @timeout 30000
+      @timeout 60000
       mecano
         ssh: ssh
-      .docker_run
-        cmd: 'echo test'
-        image: 'alpine'
-        name: 'mecano_test'
-        machine: machine
-      .docker_run
-        cmd: "echo test"
-        image: 'alpine'
-        name: 'mecano_test'
-        machine: machine
-      , (err, executed, out, serr) ->
-        executed.should.be.false()
-        clean ssh, machine, 'mecano_test', (err) =>
-          next(err)
-
-  they 'test force running ', (ssh, next) ->
-    clean ssh, machine, 'mecano_test', (err, executed, stdout, stderr) =>
-      return next err if  err
-      @timeout 30000
-      mecano
-        ssh: ssh
-      .docker_run
-        image: 'alpine'
-        name: 'mecano_test'
-        cmd: "/bin/echo 'test'"
-        machine: machine
-      .docker_run
-        cmd: "/bin/echo 'test'"
-        image: 'alpine'
-        name: 'mecano_test'
-        machine: machine
+      .docker_rm
+        machine: config.docker.machine
+        container: 'mecano_test_unique'
         force: true
-      , (err, executed, stdout, stderr) ->
-        executed.should.be.true()
-        clean ssh, machine, 'mecano_test', (err) => next(err)
+      .docker_run
+        machine: config.docker.machine
+        image: 'httpd'
+        port: '499:80'
+        machine: config.docker.machine
+        name: 'mecano_test_unique'
+        service: true
+        rm: false
+      .wait_connect
+        port: 499
+        host: ipadress
+      .docker_rm
+        force: true
+        machine: config.docker.machine
+        container: 'mecano_test_unique'
+      .then next
+
+  they 'array options', (ssh, next) ->
+    ip ssh, config.docker.machine, (err, ipadress) =>
+      return next err if  err
+      @timeout 60000
+      mecano
+        ssh: ssh
+      .docker_rm
+        force: true
+        machine: config.docker.machine
+        container: 'mecano_test_array'
+      .docker_run
+        image: 'httpd'
+        port: [ '500:80', '501:81' ]
+        machine: config.docker.machine
+        name: 'mecano_test_array'
+        service: true
+        rm: false
+      .wait_connect
+        host: ipadress
+        port: 500
+      .docker_rm
+        force: true
+        container: 'mecano_test_array'
+        machine: config.docker.machine
+      .then next
+
+  they 'existing container', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .docker_rm
+      machine: config.docker.machine
+      force: true
+      container: 'mecano_test'
+    .docker_run
+      cmd: 'echo test'
+      image: 'alpine'
+      name: 'mecano_test'
+      machine: config.docker.machine
+      rm: false
+    .docker_run
+      cmd: "echo test"
+      image: 'alpine'
+      name: 'mecano_test'
+      machine: config.docker.machine
+      rm: false
+    , (err, executed, out, serr) ->
+      err.message.should.match /^Use force option if you want to get a new running instance.*/ unless err
+      mecano
+        ssh: ssh
+      .docker_rm
+        machine: config.docker.machine
+        force: true
+        container: 'mecano_test'
+      .then next
+
+  # they 'status not modified', (ssh, next) ->
+  #   @timeout 30000
+  #   mecano
+  #     ssh: ssh
+  #   .docker_rm
+  #     machine: config.docker.machine
+  #     force: true
+  #     container: 'mecano_test'
+  #   .docker_run
+  #     cmd: 'echo test'
+  #     image: 'alpine'
+  #     name: 'mecano_test'
+  #     machine: config.docker.machine
+  #     rm: false
+  #   .docker_run
+  #     cmd: "echo test"
+  #     image: 'alpine'
+  #     name: 'mecano_test'
+  #     machine: config.docker.machine
+  #     rm: false
+  #   , (err, executed, out, serr) ->
+  #     executed.should.be.false()
+  #     mecano
+  #       ssh: ssh
+  #     .docker_rm
+  #       machine: config.docker.machine
+  #       force: true
+  #       container: 'mecano_test'
+  #     .then next
+
+  they 'force running ', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .docker_rm
+      container: 'mecano_test'
+      machine: config.docker.machine
+    .docker_run
+      image: 'alpine'
+      name: 'mecano_test'
+      cmd: "/bin/echo 'test'"
+      machine: config.docker.machine
+    .docker_run
+      cmd: "/bin/echo 'test'"
+      image: 'alpine'
+      name: 'mecano_test'
+      machine: config.docker.machine
+      force: true
+    , (err, executed, stdout, stderr) ->
+      return err if err
+      executed.should.be.true()
+      mecano
+        ssh: ssh
+      .docker_rm
+        container: 'mecano_test'
+        machine: config.docker.machine
+      , (err) -> next(err)
