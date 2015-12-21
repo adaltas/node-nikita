@@ -85,13 +85,13 @@ require('mecano').java_keystore_add([{
       return callback new Error "Required option 'key' for certificate" if options.cert and not options.key
       return callback new Error "Required option 'keypass' for certificate" if options.cert and not options.keypass
       return callback new Error "Required option 'name' for certificate" if options.cert and not options.name
-      return callback new Error "Required option 'caname'" unless options.cacert
-      return callback new Error "Required option 'cacert'" unless options.caname
+      return callback new Error "Required option 'caname'" unless options.caname
+      return callback new Error "Required option 'cacert'" unless options.cacert
       tmp_location = "/tmp/mecano_java_keystore_#{Date.now()}"
-      # files =
-      #   cert: if options.local_source then  "#{tmp_location}/#{path.basename options.cert}" else options.cert
-      #   cacert: if options.local_source then  "#{tmp_location}/#{path.basename options.cacert}" else options.cacert
-      #   key: if options.local_source then  "#{tmp_location}/#{path.basename options.key}" else options.key
+      files =
+        cert: if options.local_source then  "#{tmp_location}/#{path.basename options.cert}" else options.cert
+        cacert: if options.local_source then  "#{tmp_location}/#{path.basename options.cacert}" else options.cacert
+        key: if options.local_source then  "#{tmp_location}/#{path.basename options.key}" else options.key
       @mkdir
         destination: "#{tmp_location}"
         mode: 0o0600
@@ -99,38 +99,32 @@ require('mecano').java_keystore_add([{
       @upload
         if: options.local_source and options.cacert
         source: options.cacert
-        destination: "#{options.cacert}"
+        destination: files.cacert
         mode: 0o0600
         shy: true
-      , (err) ->
-        options.cacert = "#{tmp_location}/#{path.basename options.cacert}" unless err
       @upload
         if: options.local_source and options.cert
         source: options.cert
-        destination: "#{options.cert}"
+        destination: files.cert
         mode: 0o0600
         shy: true
-      , (err) ->
-        options.cacert = "#{tmp_location}/#{path.basename options.cert}" unless err
       @upload
         if: options.local_source and options.key
         source: options.key
-        destination: "#{options.key}"
+        destination: files.key
         mode: 0o0600
         shy: true
-      , (err) ->
-        options.cacert = "#{tmp_location}/#{path.basename options.key}" unless err
       @execute # Deal with key and certificate
         cmd: """
         mkdir -p -m 700 #{tmp_location}
-        user=`openssl x509  -noout -in "#{options.cert}" -md5 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/' | cat`
+        user=`openssl x509  -noout -in "#{files.cert}" -md5 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/' | cat`
         keystore=`keytool -list -v -keystore #{options.keystore} -alias #{options.name} -storepass #{options.storepass} | grep MD5: | sed -E 's/.+MD5: +(.*)/\\1/'`
         echo "User Certificate: $user"
         echo "Keystore Certificate: $keystore"
         if [[ "$user" == "$keystore" ]]; then exit 3; fi
         # Create a PKCS12 file that contains key and certificate
         openssl pkcs12 -export \
-          -in "#{options.cert}" -inkey "#{options.key}" \
+          -in "#{files.cert}" -inkey "#{files.key}" \
           -out "#{tmp_location}/pkcs12" -name #{options.name} \
           -CAfile "#{tmp_location}/cacert" -caname #{options.caname} \
           -password pass:#{options.keypass}
@@ -155,7 +149,7 @@ require('mecano').java_keystore_add([{
           cleanup; exit 2
         fi
         # Read user CACert signature
-        user=`openssl x509  -noout -in "#{options.cacert}" -md5 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/'`
+        user=`openssl x509  -noout -in "#{files.cacert}" -md5 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/'`
         # Read registered CACert signature
         keystore=`keytool -list -v -keystore #{options.keystore} -alias #{options.caname} -storepass #{options.storepass} | grep MD5: | sed -E 's/.+MD5: +(.*)/\\1/'`
         echo "User CACert: $user"
@@ -173,7 +167,7 @@ require('mecano').java_keystore_add([{
           -keystore #{options.keystore} \
           -storepass #{options.storepass} \
           -alias #{options.caname} \
-          -file #{options.cacert}
+          -file #{files.cacert}
         """
         # trap_on_error: true
         code_skipped: 3
