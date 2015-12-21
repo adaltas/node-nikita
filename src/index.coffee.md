@@ -80,6 +80,7 @@ functions share a common API with flexible options.
             opts.stderr ?= process.stderr
         options
       enrich_options = (user_options) ->
+        user_options.enriched = true
         global_options = obj.options
         parent_options = todos.options
         local_options = user_options
@@ -91,7 +92,7 @@ functions share a common API with flexible options.
           options[k] = v if options[k] is undefined
         emit = (log) ->
           listener.call null, log for listener in listeners[log.type]?
-        _log = options.log or (->)
+        _log = options.log unless options.log?.dont
         options.log = (log) ->
           log = message: log if typeof log is 'string'
           log.level ?= 'INFO'
@@ -110,8 +111,10 @@ functions share a common API with flexible options.
           log.file = file
           log.line = line
           args.unshift("" + file + ":" + line + " in " + method + "()");
-          _log log
+          # console.log _log.toString()
+          _log? log
           obj.emit? log.type, log
+        options.log.dont = true
         options
       intercept_before = (target_options, callback) ->
         return callback() if target_options.intercept_before
