@@ -16,8 +16,8 @@ describe 'service', ->
         ssh: ssh
       .service
         name: 'ntp'
-      , (err, serviced) ->
-        serviced.should.be.true()
+      , (err, installed) ->
+        installed.should.be.true()
       .execute
         cmd: 'yum list installed | grep ntp'
       , (err, executed) ->
@@ -30,12 +30,12 @@ describe 'service', ->
         ssh: ssh
       .service
         name: 'ntp'
-      , (err, serviced) ->
-        serviced.should.be.true()
+      , (err, installed) ->
+        installed.should.be.true()
       .service
         name: 'ntp'
-      , (err, serviced) ->
-        serviced.should.be.false()
+      , (err, installed) ->
+        installed.should.be.false()
       .then next
 
   describe 'startup', ->
@@ -136,9 +136,8 @@ describe 'service', ->
         action: 'start'
       , (err, serviced) ->
         serviced.should.be.true()
-      .execute
-        cmd: 'service ntpd status'
-        code_skipped: 3
+      .service_status
+        name: 'ntpd'
       , (err, started) ->
         started.should.be.true()
       .service # Detect already started
@@ -159,9 +158,8 @@ describe 'service', ->
         action: 'stop'
       , (err, serviced) ->
         serviced.should.be.true()
-      .execute
-        cmd: 'service ntpd status'
-        code_skipped: 3
+      .service_status
+        name: 'ntpd'
       , (err, started) ->
         started.should.be.false()
       .service # Detect already stopped

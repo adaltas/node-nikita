@@ -1,7 +1,7 @@
 
 # `service_start(options, callback)`
 
-Start a service.
+Status of a service.
 
 ## Options
 
@@ -11,10 +11,10 @@ Start a service.
     Run the action on a remote server using SSH, an ssh2 instance or an
     configuration object used to initialize the SSH connection.   
 *   `code_started` (int|string|array)   
-    Expected code(s) returned by service status for STARTED, int or array of
+    Expected code(s) returned by the command for STARTED status, int or array of
     int, default to 0.   
 *   `code_stopped` (int|string|array)   
-    Expected code(s) returned by service status for STOPPED, int or array of 
+    Expected code(s) returned by the command for STOPPED status, int or array of 
     int, default to 3   
 *   `stdout` (stream.Writable)   
     Writable EventEmitter in which the standard output of executed commands will
@@ -43,16 +43,15 @@ require('mecano').service_start([{
 
     module.exports = (options, callback) ->
       return callback new Error "Missing required option 'name'" unless options.name
-      @
-      .service_status
-        name: options.name
-        code_started: options.code_started
-        code_stopped: options.code_stopped
-        shy: true
-      .execute
-        cmd: "service #{options.name} start"
-        unless: -> options.store["mecano.service.#{options.name}.status"] is 'started'
+      options.code_started ?= 0
+      options.code_stopped ?= 3
+      @execute
+        cmd: "service #{options.name} status"
+        code: options.code_started
+        code_skipped: options.code_stopped
       , (err, started) ->
-        throw err if err
-        options.store["mecano.service.#{options.name}.status"] = 'started' if started
-      .then callback
+        return callback err if err
+        options.store["mecano.service.#{options.name}.status"] = if started
+        then 'started'
+        else 'stopped'
+        callback null, started

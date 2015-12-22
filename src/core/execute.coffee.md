@@ -17,9 +17,9 @@ creating any modifications.
 
 *   `cmd`   
     String, Object or array; Command to execute.   
-*   `code`   (string|array)   
+*   `code` (int|string|array)   
     Expected code(s) returned by the command, int or array of int, default to 0.   
-*   `code_skipped`   
+*   `code_skipped` (int|string|array)   
     Expected code(s) returned by the command if it has no effect, executed will
     not be incremented, int or array of int.   
 *   `trap_on_error`   
