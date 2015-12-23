@@ -177,10 +177,13 @@ require('mecano').service([{
       do_action = (action) =>
         return do_finish() unless options.action
         options.log message: "Running #{action} on service", level: 'INFO', module: 'mecano/service/index'
-        @["service_#{action}"]
-          name: srvname
-          code_started: options.code_started
-          code_stopped: options.code_stopped
+        # @["service_#{action}"] <-- ELEGANT BUT creating very strange side effects
+        #   name: srvname
+        #   code_started: options.code_started
+        #   code_stopped: options.code_stopped
+        # , (err, executed) ->
+        @execute
+          cmd: "service #{srvname} #{action}"
         , (err, executed) ->
           return callback err if err
           modified = true
