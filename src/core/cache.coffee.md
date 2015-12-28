@@ -1,7 +1,7 @@
 
 # `cache(options, callback)`
 
-Download a file a place it on a local or remote folder for later usage.
+Download a file and place it on a local or remote folder for later usage.
 
 ## Options
 
