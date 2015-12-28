@@ -172,7 +172,6 @@ mecano.docker_build({
       @call ->
         for line in string.lines options.content
           number_of_step++ if /^(.*?)\s/.exec(line)?[1] in dockerfile_cmds
-      console.log cmd
       @execute
         cmd: docker.wrap options, cmd
         cwd: path.dirname options.path
