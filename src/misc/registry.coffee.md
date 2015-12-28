@@ -63,8 +63,10 @@
       ldap_user: require '../ldap/user'
       # Service
       service: require '../service'
+      service_restart: require '../service/restart'
       service_start: require '../service/start'
       service_startup: require '../service/startup'
+      service_status: require '../service/status'
       service_stop: require '../service/stop'
       # Wait
       wait_execute: require '../wait/execute'

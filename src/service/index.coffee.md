@@ -162,9 +162,10 @@ require('mecano').service([{
       do_started = =>
         return do_finish() unless options.action
         options.log message: "Check if started", level: 'DEBUG', module: 'mecano/service/index'
-        @execute
-          cmd: "service #{srvname} status"
-          code_skipped: [3, 1] # ntpd return 1 if pidfile exists without a matching process
+        @service_status
+          name: srvname
+          code_started: options.code_started
+          code_stopped: options.code_stopped
         , (err, started) ->
           return callback err if err
           if started
@@ -176,6 +177,11 @@ require('mecano').service([{
       do_action = (action) =>
         return do_finish() unless options.action
         options.log message: "Running #{action} on service", level: 'INFO', module: 'mecano/service/index'
+        # @["service_#{action}"] <-- ELEGANT BUT creating very strange side effects
+        #   name: srvname
+        #   code_started: options.code_started
+        #   code_stopped: options.code_stopped
+        # , (err, executed) ->
         @execute
           cmd: "service #{srvname} #{action}"
         , (err, executed) ->
