@@ -127,6 +127,16 @@ mecano.docker_build({
       return callback Error 'Can not build from Dockerfile and content' if options.content? and options.path?
       cmd = ' build '
       # Apply search and replace to content
+      options.write ?= []
+      if options.from? or options.to? or options.match? or options.replace? or options.before?
+        options.write.push
+          from: options.from
+          to: options.to
+          match: options.match
+          replace: options.replace
+          append: options.append
+          before: options.before
+        options.append = false
       string.render options if options.context?
       string.replace_partial options
       # not mandatory options
@@ -162,6 +172,7 @@ mecano.docker_build({
       @call ->
         for line in string.lines options.content
           number_of_step++ if /^(.*?)\s/.exec(line)?[1] in dockerfile_cmds
+      console.log cmd
       @execute
         cmd: docker.wrap options, cmd
         cwd: path.dirname options.path
