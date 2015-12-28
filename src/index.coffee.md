@@ -37,12 +37,13 @@ functions share a common API with flexible options.
       befores = []
       afters = []
       depth = 0
+      killed = false
       obj.options.domain =  domain.create() if obj.options.domain is true
-      obj.options.domain?.on 'error', (err) ->
+      domain_on_error = (err) ->
         # return if killed
         err.message = "Invalid State Error [#{err.message}]"
         handle_multiple_call err
-      killed = false
+      obj.options.domain?.on 'error', domain_on_error
       normalize_options = (_arguments, type, enrich=true) ->
         empty = false
         handler = null
@@ -183,6 +184,9 @@ functions share a common API with flexible options.
       run = (options, callback) ->
         options = todos.shift() unless options
         unless options # Nothing more to do in current queue
+          if stack.length is 0
+            killed = true
+            obj.options.domain?.removeListener 'error', domain_on_error
           if callback
             callback todos.err
           else
