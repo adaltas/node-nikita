@@ -109,23 +109,29 @@ mecano.execute({
       #     options.log message: data, type: 'stderr'
       #   child.stderr.on 'end', (data) ->
       #     options.log message: null, type: 'stderr'
-      child.stdout.on 'data', (data) ->
-        if Array.isArray stdout # A string on exit
-          stdout.push data
-        else console.log 'stdout coming after child exit'
-      child.stderr.on 'data', (data) ->
-        if Array.isArray stderr # A string on exit
-          stderr.push data
-        else console.log 'stderr coming after child exit'
+      unless options.stdout is false or options.stdout is null
+        child.stdout.on 'data', (data) ->
+          options.log message: data, type: 'stdout_stream'
+          if Array.isArray stdout # A string on exit
+            stdout.push data
+          else console.log 'stdout coming after child exit'
+      unless options.stderr is false or options.stderr is null
+        child.stderr.on 'data', (data) ->
+          options.log message: data, type: 'stderr_stream'
+          if Array.isArray stderr # A string on exit
+            stderr.push data
+          else console.log 'stderr coming after child exit'
       child.on "exit", (code) ->
         # Give it some time because the "exit" event is sometimes
         # called before the "stdout" "data" event when runing
         # `npm test`
         setTimeout ->
+          options.log message: null, type: 'stdout_stream' unless options.stdout is false or options.stdout is null
+          options.log message: null, type: 'stderr_stream' unless options.stderr is false or options.stderr is null
           stdout = stdout.map((d) -> d.toString()).join('')
           stderr = stderr.map((d) -> d.toString()).join('')
-          options.log message: stdout, type: 'stdout' if stdout and stdout isnt ''
-          options.log message: stderr, type: 'stderr' if stderr and stderr isnt ''
+          options.log message: stdout, type: 'stdout' if stdout and stdout isnt '' unless options.stdout is false or options.stdout is null
+          options.log message: stderr, type: 'stderr' if stderr and stderr isnt '' unless options.stderr is false or options.stderr is null
           if options.stdout
             child.stdout.unpipe options.stdout
           if options.stderr
