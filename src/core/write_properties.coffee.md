@@ -39,6 +39,8 @@ Write a file in the Java properties format.
         @write
           destination: "#{options.destination}"
           content: data
+          backup: options.backup
+          eof: true
 
 ## Dependencies
 
