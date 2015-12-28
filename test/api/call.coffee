@@ -2,7 +2,6 @@
 mecano = require '../../src'
 test = require '../test'
 fs = require 'fs'
-domain = require 'domain'
 
 describe 'api call', ->
 
@@ -116,53 +115,6 @@ describe 'api call', ->
         options.test2.should.be.true()
         next()
       .then next
-
-  describe 'async err', ->
-
-    it 'thrown', (next) ->
-      mecano
-      .call (options, next) ->
-        throw Error 'Catchme'
-      .then (err, status) ->
-        err.message.should.eql 'Catchme'
-        next()
-
-    it 'pass to next', (next) ->
-      mecano
-      .call (options, next) ->
-        process.nextTick ->
-          next Error 'Catchme'
-      .then (err, status) ->
-        err.message.should.eql 'Catchme'
-        next()
-
-    it 'throw error when then not defined', (next) ->
-      d = domain.create()
-      d.run ->
-        mecano
-        .touch
-          destination: "#{scratch}/a_file"
-        , (err) ->
-          false
-        .call (options, next) ->
-          next.property.does.not.exist
-        .call (options) ->
-          next Error 'Shouldnt be called'
-        , (err) ->
-      d.on 'error', (err) ->
-        err.name.should.eql 'TypeError'
-        d.exit()
-        next()
-
-    it 'catch error in next tick', (next) ->
-      mecano
-      .call (options, next) ->
-        process.nextTick ->
-          next Error 'Catchme'
-      .then (err, status) ->
-        err.message.should.eql 'Catchme'
-        next()
-        # setTimeout next, 100000
 
   describe 'async nested', ->
 

@@ -85,7 +85,6 @@ describe 'cache', ->
           source: 'http://localhost:12345/my_file'
           cache_file: "#{scratch}/destination"
           md5: true
-          debug: true
         , (err, status, file) ->
           status.should.be.false() unless err # because destination exists
           ("[WARN] Bypass source hash computation for non-file protocols" in logs).should.be.true() unless err

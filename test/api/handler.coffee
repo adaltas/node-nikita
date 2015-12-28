@@ -4,14 +4,13 @@ fs = require 'fs'
 
 describe 'api handler', ->
 
-  describe 'usage', ->
+  describe 'sync', ->
 
     it 'is an option', (next) ->
       history = []
       mecano
       .call
-        handler: ->
-          history.push 'a'
+        handler: ->  history.push 'a'
       .call
         handler: (_, callback) ->
           history.push 'b'
@@ -20,7 +19,7 @@ describe 'api handler', ->
         history.should.eql ['a', 'b']
       .then next
 
-  describe 'error', ->
+  describe 'error sync', ->
 
     it 'throw in sync action', (next) ->
       m = mecano()
@@ -35,10 +34,12 @@ describe 'api handler', ->
         err.message.should.eql 'Catchme'
         next()
 
-    it 'throw in async action', (next) ->
+  describe 'error async', ->
+
+    it 'passed as argument in same tick', (next) ->
       m = mecano()
       m.register 'anaction', (options, callback) ->
-        setImmediate -> callback Error 'Catchme'
+        callback Error 'Catchme'
       m
       .anaction
         key: "value"
@@ -46,4 +47,39 @@ describe 'api handler', ->
         err.message.should.eql 'Catchme'
       .then (err, changed) ->
         err.message.should.eql 'Catchme'
+        next()
+
+    it 'passed as argument', (next) ->
+      m = mecano()
+      m.register 'anaction', (options, callback) ->
+        process.nextTick -> callback Error 'Catchme'
+      m
+      .anaction
+        key: "value"
+      , (err, written) ->
+        err.message.should.eql 'Catchme'
+      .then (err, changed) ->
+        err.message.should.eql 'Catchme'
+        next()
+
+    it 'thrown', (next) ->
+      mecano
+      .call (options, next) ->
+        throw Error 'Catchme'
+      .then (err, status) ->
+        err.message.should.eql 'Catchme'
+        next()
+
+    it 'handler called multiple times', (next) ->
+      mecano
+      .call
+        handler: (_, callback) ->
+          callback()
+          setImmediate -> 
+            callback()
+      .call ->
+        setImmediate ->
+          next Error 'Shouldnt be called'
+      .then (err, status) ->
+        err.message.should.eql 'Multiple call detected'
         next()

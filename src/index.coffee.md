@@ -37,6 +37,12 @@ functions share a common API with flexible options.
       befores = []
       afters = []
       depth = 0
+      obj.options.domain =  domain.create() if obj.options.domain is true
+      obj.options.domain?.on 'error', (err) ->
+        # return if killed
+        err.message = "Invalid State Error [#{err.message}]"
+        handle_multiple_call err
+      killed = false
       normalize_options = (_arguments, type, enrich=true) ->
         empty = false
         handler = null
@@ -111,7 +117,6 @@ functions share a common API with flexible options.
           log.file = file
           log.line = line
           args.unshift("" + file + ":" + line + " in " + method + "()");
-          # console.log _log.toString()
           _log? log
           obj.emit? log.type, log
         options.log.dont = true
@@ -162,10 +167,19 @@ functions share a common API with flexible options.
         mtodos = todos
         todos = stack.shift()
         todos.unshift mtodos... if mtodos.length
+      handle_multiple_call = (err) ->
+        killed = true
+        todos = stack.shift() while stack.length
+        jump_to_error err
+        run()
       jump_to_error = (err) ->
         throw err unless todos?
         while todos[0] and todos[0].type isnt 'then' then todos.shift()
         todos.err = err
+      _run_ = ->
+        if obj.options.domain
+        then obj.options.domain.run run
+        else run()
       run = (options, callback) ->
         options = todos.shift() unless options
         unless options # Nothing more to do in current queue
@@ -183,6 +197,7 @@ functions share a common API with flexible options.
           options.handler?.call obj, err, status
           run()
           return
+        return if killed
         options = enrich_options options
         depth++ if options.header
         options.log message: options.header, type: 'header', depth: depth if options.header
@@ -190,11 +205,11 @@ functions share a common API with flexible options.
           return conditions.all obj, options
           , (err) ->
             callback err if callback
-            return run()
+            run()
           , ->
             while todos[0] and todos[0].type isnt 'then' then todos.shift()
             callback err if callback
-            return run()
+            run()
         todos.status.unshift undefined
         stack.unshift todos
         todos = []
@@ -210,11 +225,10 @@ functions share a common API with flexible options.
           intercept_before options, (err) ->
             exec_callback = (args) ->
               intercept_after options, args, (err) ->
+                return if killed
                 return exec_callback [err] if err
                 args[0] = undefined unless args[0]
                 args[1] = !!args[1]
-                # intercept_after options, err, (err) ->
-                # throw Error 'Invalid state' unless todos.length is 0
                 todos = stack.shift() if todos.length is 0
                 jump_to_error args[0] if args[0] and not options.relax
                 todos.throw_if_error = false if args[0] and options_callback
@@ -225,8 +239,6 @@ functions share a common API with flexible options.
                 callback args[0], args[1] if callback
                 run()
             return exec_callback [err] if err
-            # options_header = options.header
-            # options.header = undefined
             options_handler = options.handler
             options.handler = undefined
             options_callback = options.callback
@@ -239,13 +251,20 @@ functions share a common API with flexible options.
               for k, v of options
                 delete options[k] if /^if.*/.test(k) or /^unless.*/.test(k)
               todos.options = options
+              called = false
               try
                 if options_handler.length is 2 # Async style
                   options_handler.call obj, options, ->
+                    return if killed
+                    return handle_multiple_call Error 'Multiple call detected' if called
+                    called = true
                     args = [].slice.call(arguments, 0)
                     setImmediate -> exec_callback args
                 else # Sync style
                   options_handler.call obj, options
+                  return if killed
+                  return handle_multiple_call Error 'Multiple call detected' if called
+                  called = true
                   status_sync = false
                   wait_children = ->
                     unless todos.length
@@ -256,28 +275,29 @@ functions share a common API with flexible options.
                       status_sync = true if status
                       wait_children()
                   wait_children()
-              catch err then exec_callback [err]
+              catch err
+                exec_callback [err]
       properties.child = get: ->
         ->
           module.exports(obj.options)
       properties.then = get: ->
         ->
           todos.push type: 'then', handler: arguments[0]
-          setImmediate run if todos.length is 1 # Activate the pump
+          setImmediate _run_ if todos.length is 1 # Activate the pump
           obj
       properties.end = get: ->
         ->
           args = [].slice.call(arguments)
           options = normalize_options args, 'end'
           todos.push opts for opts in options
-          setImmediate run if todos.length is options.length # Activate the pump
+          setImmediate _run_ if todos.length is options.length # Activate the pump
           obj
       properties.call = get: ->
         ->
           args = [].slice.call(arguments)
           options = normalize_options args, 'call'
           todos.push opts for opts in options
-          setImmediate run if todos.length is options.length # Activate the pump
+          setImmediate _run_ if todos.length is options.length # Activate the pump
           obj
       properties.before = get: ->
         ->
@@ -295,11 +315,6 @@ functions share a common API with flexible options.
             throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
             afters.push opts
           obj
-      # properties.on = get: ->
-      #   ->
-      #     listeners[arguments[0]] ?= []
-      #     listeners[arguments[0]].push arguments[1]
-      #     obj
       properties.status = get: ->
         (index) ->
           if arguments.length is 0
@@ -327,7 +342,7 @@ functions share a common API with flexible options.
               args.unshift obj.registry[name]
               options = normalize_options args, name
               todos.push opts for opts in options
-              setImmediate run if todos.length is options.length # Activate the pump
+              setImmediate _run_ if todos.length is options.length # Activate the pump
               obj
       Object.defineProperty obj, 'registered', get: ->
         (name, local_only=false) ->
@@ -349,6 +364,7 @@ the second argument. It will return "true" if the function is un-registered or
 "false" if there was nothing to do because the function wasn't already
 registered.
 
+    domain = require 'domain'
     {EventEmitter} = require 'events'
     registry = require './misc/registry'
     do ->

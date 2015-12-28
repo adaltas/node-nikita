@@ -114,7 +114,6 @@ require('mecano').ldap_index({
 
 ## Dependencies
 
-    ldap = require 'ldapjs'
     misc = require '../misc'
     string = require '../misc/string'
 

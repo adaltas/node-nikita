@@ -2,7 +2,6 @@
 mecano = require '../../src'
 test = require '../test'
 fs = require 'fs'
-domain = require 'domain'
 
 describe 'api child', ->
 
@@ -41,7 +40,3 @@ describe 'api child', ->
   #     changed.should.be.false()
   #     touched.should.eql 1
   #     next()
-
-
-
-

@@ -2,7 +2,6 @@
 mecano = require '../../src'
 test = require '../test'
 fs = require 'fs'
-domain = require 'domain'
 
 describe 'api callback', ->
 

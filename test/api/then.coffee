@@ -1,13 +1,15 @@
 
-mecano = require '../../src'
 domain = require 'domain'
+test = require '../test'
+mecano = require '../../src'
 
 describe 'api then', ->
 
+  scratch = test.scratch @
+  
   it 'throw error if no more element', (next) ->
     d = domain.create()
     d.run ->
-      history = []
       mecano.then ->
         throw Error 'Catchme'
     d.on 'error', (err) ->
@@ -25,5 +27,20 @@ describe 'api then', ->
       history.should.eql ['a', 'b']
       next err
 
-
-
+  it 'throw error when then not defined', (next) ->
+    d = domain.create()
+    d.run ->
+      mecano
+      .touch
+        destination: "#{scratch}/a_file"
+      , (err) ->
+        false
+      .call (options, next) ->
+        next.property.does.not.exist
+      .call (options) ->
+        next Error 'Shouldnt be called'
+      , (err) ->
+    d.on 'error', (err) ->
+      err.name.should.eql 'TypeError'
+      d.exit()
+      next()

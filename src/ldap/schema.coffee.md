@@ -167,11 +167,3 @@ require('mecano').ldap_schema({
         , (err, removed) ->
           callback err, modified
       do_registered()
-
-## Dependencies
-
-    ldap = require 'ldapjs'
-
-
-
-

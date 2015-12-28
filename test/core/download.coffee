@@ -342,7 +342,6 @@ describe 'download', ->
           source: "#{scratch}/source"
           destination: destination
           md5: true
-          debug: true
         , (err, downloaded) ->
           downloaded.should.be.false() unless err
           ("[INFO] Computed hash value is 'df8fede7ff71608e24a5576326e41c75'" in logs).should.be.true()
