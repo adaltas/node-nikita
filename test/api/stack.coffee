@@ -104,6 +104,18 @@ describe 'api stack', ->
         return next err if err
         msgs.length.should.eql 3
         next()
+  
+
+  it 'can finish and resume', (next) ->
+    m = mecano
+    .call(->)
+    .then (err, status) ->
+      process.nextTick =>
+        # At this point internal stack is empty
+        # let's fill it again
+        @call ->
+        @then next
+      , 1000
 
   describe 'error', ->
 

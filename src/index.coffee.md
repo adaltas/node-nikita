@@ -185,7 +185,6 @@ functions share a common API with flexible options.
         options = todos.shift() unless options
         unless options # Nothing more to do in current queue
           if stack.length is 0
-            killed = true
             obj.options.domain?.removeListener 'error', domain_on_error
           if callback
             callback todos.err
@@ -231,8 +230,8 @@ functions share a common API with flexible options.
               intercept_after options, args, (err) ->
                 return if killed
                 return exec_callback [err] if err
-                args[0] = undefined unless args[0]
-                args[1] = !!args[1]
+                args[0] = undefined unless args[0] # Error is undefined and not null or false
+                args[1] = !!args[1] # Status is a boolean, error or not
                 todos = stack.shift() if todos.length is 0
                 jump_to_error args[0] if args[0] and not options.relax
                 todos.throw_if_error = false if args[0] and options_callback
