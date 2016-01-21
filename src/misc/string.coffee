@@ -44,6 +44,12 @@ module.exports =
             options.filters ?= {}
             options.filters.isString ?= (obj) -> typeof obj is 'string'
             options.filters.isArray ?= (obj) -> Array.isArray obj
+            options.filters.isObject ?= (obj) -> typeof obj is 'object' and not Array.isArray obj
+            options.filters.isEmpty ?= (obj) ->
+              return true if !obj? or obj is ''
+              return true if Array.isArray obj and obj.length is 0
+              return true if typeof obj is 'object' and Object.keys(obj).length is 0
+              return false
             for filter, func of options.filters
               if typeof func is 'function'
                 engine.addFilter filter, func

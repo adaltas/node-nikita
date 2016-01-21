@@ -19,6 +19,8 @@ integrated. More are added on demand.
     File path where to write content to or a callback.   
 *   `context`   
     Map of key values to inject into the template.   
+*   `filters` (function)   
+    Filter function to extend the nunjucks engine.   
 *   `local_source`   
     Treat the source as local instead of remote, only apply with "ssh"
     option.   
@@ -43,6 +45,21 @@ integrated. More are added on demand.
 
 If destination is a callback, it will be called with the generated content as
 its first argument.   
+
+## Custom Filters
+
+Nunjucks allow to add custom filters. Mecano provides some custom filters listed below.
+These filters are implemented misc/string. They can be overriden through the filters
+parameters   
+
+*   `isString`   
+    return true if the variable is a string   
+*   `isArray`   
+    return true if the variable is an array   
+*   `isObject`   
+    return true if the variable is an object. Return false if the variable is an array.   
+*   `isEmpty`   
+    return true if the variable is `null`, `undefined`, `''`, `[]`, or `{}`   
 
 ## Callback parameters
 
