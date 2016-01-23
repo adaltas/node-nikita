@@ -9,6 +9,8 @@ Load Docker images
     Name of the docker-machine. MANDATORY if using docker-machine
 *   `input` (string)
     TAR archive file to read from
+*   `source` (string)   
+    Alias for the "input" option.   
 *   `checksum` (string)
     If provided, will check if attached input archive to checksum already exist.
     Not native to docker. But implemented to get better performance.
@@ -62,6 +64,7 @@ mecano.docker_load({
 
     module.exports = (options, callback) ->
       # Validate parameters
+      options.input ?= options.source
       return callback Error 'Missing input parameter' unless options.input?
       cmd = " load -i #{options.input}"
       # need to records the list of image to see if status is modified or not after load
