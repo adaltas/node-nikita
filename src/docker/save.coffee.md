@@ -11,6 +11,8 @@ Save Docker images
     Name of the docker-machine. MANDATORY if using docker-machine
 *   `output` (string). MANDATORY
     TAR archive output path
+*   `destination` (string). MANDATORY
+    Shortcut for "output" option.   
 *   `code` (int | array)
     Expected code(s) returned by the command, int or array of int, default to 0.
 *   `code_skipped`
@@ -64,6 +66,7 @@ mecano.docker({
     module.exports = (options, callback) ->
       # Validate parameters
       return callback Error 'Missing image parameter' unless options.image?
+      options.output ?= options.destination
       return callback Error 'Missing output parameter' unless options.output?
       # Saves image to local tmp path, than copy it
       cmd = " save -o #{options.output}  #{options.image}"
