@@ -94,8 +94,6 @@ mecano.docker_load({
         options.log message: "Start Loading #{options.input} ", level: 'INFO', module: 'mecano/lib/docker/load'
         @execute
           cmd: docker.wrap options, cmd
-        @call ->
-          options.log message: 'Loading finished', level: 'INFO', module: 'mecano/lib/docker/load'
         @execute
           cmd: docker.wrap options, ' images | grep -v \'<none>\' | awk \'{ print $1":"$2":"$3 }\''
         , (err, executed, out, stderr) ->
