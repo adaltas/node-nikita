@@ -19,19 +19,17 @@ describe 'docker kill', ->
   they 'running container', (ssh, next) ->
     mecano
       ssh: ssh
+      machine: config.docker.machine
     .docker_rm
       container: 'mecano_test_kill'
-      machine: config.docker.machine
       force: true
     .docker_run
       image: 'httpd'
       port: '499:80'
-      machine: config.docker.machine
       name: 'mecano_test_kill'
       service: true
     .docker_kill
       container: 'mecano_test_kill'
-      machine: config.docker.machine
     , (err, killed, stdout, stderr) ->
       killed.should.be.true()
       next(err)
@@ -40,22 +38,19 @@ describe 'docker kill', ->
     @timeout 120000
     mecano
       ssh: ssh
+      machine: config.docker.machine
     .docker_rm
       container: 'mecano_test_kill'
-      machine: config.docker.machine
       force: true
     .docker_run
       image: 'httpd'
       port: '499:80'
-      machine: config.docker.machine
       name: 'mecano_test_kill'
       service: true
     .docker_kill
       container: 'mecano_test_kill'
-      machine: config.docker.machine
     .docker_kill
       container: 'mecano_test_kill'
-      machine: config.docker.machine
     , (err, killed) ->
       killed.should.be.false()
       next(err)
@@ -63,21 +58,18 @@ describe 'docker kill', ->
   they 'status not modified (not living)', (ssh, next) ->
     mecano
       ssh: ssh
+      machine: config.docker.machine
     .docker_rm
       container: 'mecano_test_kill'
-      machine: config.docker.machine
     .docker_run
       cmd: "/bin/echo 'test'"
       image: 'alpine'
       service: false
       name: 'mecano_test_kill'
-      machine: config.docker.machine
     .docker_kill
       container: 'mecano_test_kill'
-      machine: config.docker.machine
     , (err, killed) ->
       killed.should.be.false()
     .docker_rm
       container: 'mecano_test_kill'
-      machine: config.docker.machine
     .then next

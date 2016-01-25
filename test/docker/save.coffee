@@ -15,24 +15,20 @@ describe 'docker save', ->
   they 'saves a simple image', (ssh, next) ->
     mecano
       ssh: ssh
+      machine: config.docker.machine
     .remove
       destination:"#{source}/mecano_saved.tar"
     .docker_build
       tag: 'mecano/load_test:latest'
       content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
-      machine: config.docker.machine
     .docker_save
       image: 'mecano/load_test:latest'
       output: "#{source}/mecano_saved.tar"
-      machine: config.docker.machine
     , (err, saved) ->
-      return err if err
-      saved.should.be.true()
-      mecano
-        ssh: ssh
-      .remove
-        destination:"#{source}/mecano_saved.tar"
-      , (err) -> next(err)
+      saved.should.be.true() unless err
+    .remove
+      destination:"#{source}/mecano_saved.tar"
+    .then next
 
   # they 'status not modified', (ssh, next) ->
   #   mecano

@@ -14,13 +14,12 @@ describe 'docker rmi', ->
   they 'remove image', (ssh, next) ->
     mecano
       ssh: ssh
+      machine: config.docker.machine
     .docker_build
       tag: 'mecano/rmi_test:latest'
       content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
-      machine: config.docker.machine
     .docker_rmi
       image: 'mecano/rmi_test:latest'
-      machine: config.docker.machine
     , (err, removed, stdout, stderr) ->
       return err if err
       removed.should.be.true()
@@ -29,16 +28,14 @@ describe 'docker rmi', ->
   they 'status unmodifed', (ssh, next) ->
     mecano
       ssh: ssh
+      machine: config.docker.machine
     .docker_build
       tag: 'mecano/rmi_test:latest'
       content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
-      machine: config.docker.machine
     .docker_rmi
       image: 'mecano/rmi_test:latest'
-      machine: config.docker.machine
     .docker_rmi
       image: 'mecano/rmi_test:latest'
-      machine: config.docker.machine
     , (err, removed) ->
       removed.should.be.false()
     .then next

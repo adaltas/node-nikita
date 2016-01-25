@@ -20,51 +20,41 @@ describe 'docker status', ->
   they 'on stopped  container', (ssh, next) ->
     mecano
       ssh: ssh
+      machine: config.docker.machine
     .docker_rm
       container: 'mecano_status'
-      machine: config.docker.machine
       force: true
     .docker_run
       cmd: "/bin/echo 'test'"
       image: 'alpine'
       rm: false
-      machine: config.docker.machine
       name: 'mecano_status'
     .docker_status
       container: 'mecano_status'
-      machine: config.docker.machine
     , (err, running, stdout, stderr) ->
-      running.should.be.false()
-      mecano
-        ssh: ssh
-      .docker_rm
-        container: 'mecano_status'
-        machine: config.docker.machine
-        force: true
-      .then next
+      running.should.be.false() unless err
+    .docker_rm
+      container: 'mecano_status'
+      force: true
+    .then next
 
   they 'on running container', (ssh, next) ->
     mecano
       ssh: ssh
+      machine: config.docker.machine
     .docker_rm
       container: 'mecano_status'
-      machine: config.docker.machine
       force: true
     .docker_run
       image: 'httpd'
       port: [ '500:80' ]
-      machine: config.docker.machine
       name: 'mecano_status'
       service: true
     .docker_status
       container: 'mecano_status'
-      machine: config.docker.machine
     , (err, running, stdout, stderr) ->
       running.should.be.true()
-      mecano
-        ssh: ssh
-      .docker_rm
-        container: 'mecano_status'
-        machine: config.docker.machine
-        force: true
-      .then next
+    .docker_rm
+      container: 'mecano_status'
+      force: true
+    .then next
