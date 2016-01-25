@@ -34,7 +34,7 @@ describe 'docker build', ->
       ssh: ssh
     .docker_build
       tag: 'mecano/should_not_exists_1'
-      path: "#{__dirname}/Dockerfile"
+      file: "#{__dirname}/Dockerfile"
       content: "FROM scratch \ CMD ['echo \"hello world\"']"
     .then (err) ->
       err.message.should.eql 'Can not build from Dockerfile and content'
@@ -58,7 +58,7 @@ describe 'docker build', ->
       ]
     , (err, executed, stdout, stderr) ->
       executed.should.be.true() unless err
-      stderr.should.containEql 'Step 2 : CMD echo world'
+      stderr.should.containEql 'Step 2 : CMD echo world' unless err
     .docker_rmi
       image: 'mecano/should_exists_2'
     .then next
@@ -95,7 +95,7 @@ describe 'docker build', ->
       destination: "#{scratch}/mecano_Dockerfile"
     .docker_build
       tag: 'mecano/should_exists_4'
-      path: "#{scratch}/mecano_Dockerfile"
+      file: "#{scratch}/mecano_Dockerfile"
     , (err, executed) ->
       executed.should.be.true() unless err
     .docker_rmi
@@ -108,7 +108,7 @@ describe 'docker build', ->
       machine: config.docker.machine
     .docker_build
       tag: 'mecano/should_not_exists_4'
-      path: 'unexisting/file'
+      file: 'unexisting/file'
       relax: true
     , (err, executed, stdout, stderr) ->
       err.code.should.eql 'ENOENT'
@@ -129,13 +129,13 @@ describe 'docker build', ->
       """
     .docker_build
       tag: 'mecano/should_exists_5'
-      path: "#{scratch}/mecano_Dockerfile"
+      file: "#{scratch}/mecano_Dockerfile"
       log: (msg) -> status_true = msg
     , (err, executed) ->
       executed.should.be.true()
     .docker_build
       tag: 'mecano/should_exists_5'
-      path: "#{scratch}/mecano_Dockerfile"
+      file: "#{scratch}/mecano_Dockerfile"
       log: (msg) -> status_false = msg
     , (err, executed) ->
       executed.should.be.false()

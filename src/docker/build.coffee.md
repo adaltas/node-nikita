@@ -51,8 +51,10 @@ Status unmodified if the repository is identical to a previous one
 
 *   `err`
     Error object if any.
-*   `executed`
-    if command was executed
+*   `status`
+    True if image was successfully built.
+*   `checksum`
+    Image cheksum if built.
 *   `stdout`
     Stdout value(s) unless `stdout` option is provided.
 *   `stderr`
@@ -124,74 +126,93 @@ mecano.docker_build({
     module.exports = (options, callback) ->
       # Validate parameters and madatory conditions
       return callback Error 'Required option "tag"' unless options.tag?
-      return callback Error 'Can not build from Dockerfile and content' if options.content? and options.path?
+      return callback Error 'Can not build from Dockerfile and content' if options.content? and options.file?
       cmd = ' build '
-      # Apply search and replace to content
-      options.write ?= []
-      if options.from? or options.to? or options.match? or options.replace? or options.before?
-        options.write.push
-          from: options.from
-          to: options.to
-          match: options.match
-          replace: options.replace
-          append: options.append
-          before: options.before
-        options.append = false
-      string.render options if options.context?
-      string.replace_partial options
-      # not mandatory options
-      for opt in ['force_rm', 'quiet', 'no_cache']
-        cmd += " --#{opt.replace '_', '-'}" if options[opt]
-      cmd += " --rm=#{if options.rm then 'true' else 'false'}"
-      cmd += " -t \"#{options.tag}\""
-      # custom command for content option
-      options.path ?= path.resolve options.cwd, 'Dockerfile' if options.cwd
-      if options.path?
-        options.log message: "Building from Dockerfile: \"#{options.path}\"", level: 'INFO', module: 'mecano/docker/build'
-        cmd += " -f #{options.path} #{path.dirname options.path}"
-      else if options.content?
-        options.log message: "Building from text: Docker won't have a context. ADD/COPY not working", level: 'WARN', module: 'mecano/docker/build'
-        cmd += " - <<DOCKERFILE\n#{options.content}\nDOCKERFILE" if options.content?
-      else
-        options.log message: "Building from CWD", level: 'INFO', module: 'mecano/docker/build'
-        cmd += ' .'
+      number_of_step = 0
+      userargs = []
       # status unmodified if final tag already exists
       dockerfile_cmds = ['CMD','LABEL','EXPOSE','ENV','ADD','COPY','ENTRYPOINT',
        'VOLUME','USER','WORKDIR','ARG','ONBUILD','RUN','STOPSIGNAL','MAINTAINER']
-      number_of_step = 0
-      userargs = []
-      temp_dir = "/tmp/ryba-#{Date.now()}-#{Math.floor Math.random()*1000}"
-      @call
+      source = null
+      if options.file
+        source = options.file
+      else if options.cwd
+        source = "#{options.cwd}/Dockerfile"
+      options.cwd ?= path.dirname options.file if options.file
+      # Apply search and replace to content
+      # options.write ?= []
+      # if options.from? or options.to? or options.match? or options.replace? or options.before?
+      #   options.write.push
+      #     from: options.from
+      #     to: options.to
+      #     match: options.match
+      #     replace: options.replace
+      #     append: options.append
+      #     before: options.before
+      #   options.append = false
+      @write
+        if: options.content
+        content: options.content
+        source: source
+        destination: (content) ->
+          # console.log content
+          options.content = content
+        from: options.from
+        to: options.to
+        match: options.match
+        replace: options.replace
+        append: options.append
+        before: options.before
+        write: options.write
+      @call -> # Build cmd
+        for opt in ['force_rm', 'quiet', 'no_cache']
+          cmd += " --#{opt.replace '_', '-'}" if options[opt]
+        cmd += " --rm=#{if options.rm then 'true' else 'false'}"
+        cmd += " -t \"#{options.tag}\""
+        # custom command for content option
+        options.file ?= path.resolve options.cwd, 'Dockerfile' if options.cwd
+        if options.content?
+          options.log message: "Building from text: Docker won't have a context. ADD/COPY not working", level: 'WARN', module: 'mecano/docker/build'
+          cmd += " - <<DOCKERFILE\n#{options.content}\nDOCKERFILE" if options.content?
+        else if options.file?
+          options.log message: "Building from Dockerfile: \"#{options.file}\"", level: 'INFO', module: 'mecano/docker/build'
+          cmd += " -f #{options.file} #{options.cwd}"
+        else
+          options.log message: "Building from CWD", level: 'INFO', module: 'mecano/docker/build'
+          cmd += ' .'
+      @call # Read Dockerfile if necessary to count steps
         unless: options.content
         handler: (_, callback) ->
-          options.log message: "Reading Dockerfile from : #{options.path}", level: 'INFO', module: 'mecano/lib/build'
-          fs.readFile options.ssh, options.path, 'utf8', (err, content) ->
+          options.log message: "Reading Dockerfile from : #{options.file}", level: 'INFO', module: 'mecano/lib/build'
+          fs.readFile options.ssh, options.file, 'utf8', (err, content) ->
             return callback err if err
             options.content = content
             callback()
-      @call ->
+      @call -> # Count steps
         for line in string.lines options.content
           number_of_step++ if /^(.*?)\s/.exec(line)?[1] in dockerfile_cmds
-      @execute
-        cmd: docker.wrap options, cmd
-        cwd: path.dirname options.path
-      , (err, executed, stdout, stderr) =>
-        return callback err, executed, stdout, stderr, container_id_hash if err
-        container_id_hash = null
-        lines = string.lines stderr
-        lines = string.lines stdout
-        number_of_cache = 0
-        for k,  line of lines
-          if (line.indexOf('Using cache') isnt  -1 )
-            number_of_cache = number_of_cache + 1
-          if (line.indexOf('Successfully built') isnt  -1 )
-            container_id_hash = line.split(' ').pop().toString()
-        userargs = [number_of_step isnt number_of_cache, container_id_hash, stdout, stderr]
+      @call ->
+        @execute
+          cmd: docker.wrap options, cmd
+          cwd: options.cwd
+        , (err, executed, stdout, stderr) ->
+          throw err if err
+          container_id_hash = null
+          lines = string.lines stderr
+          lines = string.lines stdout
+          number_of_cache = 0
+          for k,  line of lines
+            if (line.indexOf('Using cache') isnt  -1 )
+              number_of_cache = number_of_cache + 1
+            if (line.indexOf('Successfully built') isnt  -1 )
+              container_id_hash = line.split(' ').pop().toString()
+          userargs = [number_of_step isnt number_of_cache, container_id_hash, stdout, stderr]
       .then (err, status) ->
-        options.log if not err and userargs[0]
+        return callback err if err
+        options.log if userargs[0]
         then message: "New image id #{userargs[1]}", level: 'INFO', module: 'mecano/lib/docker/build' 
         else message: "Identical image id #{userargs[1]}", level: 'INFO', module: 'mecano/lib/docker/build'
-        callback err, userargs...
+        callback null, userargs...
 
 ## Modules Dependencies
 
