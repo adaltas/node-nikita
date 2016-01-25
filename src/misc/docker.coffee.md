@@ -8,12 +8,14 @@
       bin_boot2docker=$(command -v boot2docker)
       bin_docker=$(command -v docker)
       bin_machine=$(command -v docker-machine)
+      docker=''
       if [ $bin_machine ]; then
-          if [ \"#{options.machine or '--'}\" = \"--\" ];then exit 5; fi
-          eval $(${bin_machine} env #{options.machine}) && $bin_docker #{cmd}
+          if [ "#{options.machine or '--'}" = "--" ];then exit 5; fi
+          docker="eval \\$(\\${bin_machine} env #{options.machine}) && $bin_docker"
       elif [  $bin_boot2docker ]; then
-          eval $(${bin_boot2docker} shellinit) && $bin_docker #{cmd}
+          docker="eval \\$(\\${bin_boot2docker} shellinit) && $bin_docker"
       else
-        $bin_docker #{cmd}
+        docker="$bin_docker"
       fi
+      eval $docker #{cmd}
       """
