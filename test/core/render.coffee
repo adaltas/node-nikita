@@ -50,22 +50,56 @@ describe 'render', ->
             content.should.eql 'Hello you'
             next()
 
-    it 'test mecano filter', (next) ->
+    it 'test mecano type filters', (next) ->
       source = "#{scratch}/render.j2"
       destination = "#{scratch}/render.txt"
-      fs.writeFile source, 'Hello {% if who | isString %}{{ who }}{% endif %}{% if anInt | isString %} {{ anInt }}{% endif %}', (err, content) ->
+      fs.writeFile source,"""
+      {% if randArray | isArray and randObject | isObject and not randArray | isObject %}
+      Hello{% endif %}
+      {% if who | isString and not anInt | isString %}{{ who }}{% endif %}
+      """
+      , (err, content) ->
         return next err if err
         mecano.render
           source: source
           destination: destination
           context:
-            who: 'you'
+            randArray: [1, 2]
+            randObject: toto: 0 
+            who: 'world'
             anInt: 42
         , (err, rendered) ->
           return next err if err
           rendered.should.be.true()
           fs.readFile destination, 'ascii', (err, content) ->
-            content.should.eql 'Hello you'
+            content.trim().should.eql 'Hello\nworld'
+            next()
+
+    it 'test mecano isEmpty filter', (next) ->
+      source = "#{scratch}/render.j2"
+      destination = "#{scratch}/render.txt"
+      fs.writeFile source,"""
+      {% if fake | isEmpty and emptyArray | isEmpty and not fullArray | isEmpty
+      and emptyObject | isEmpty and not fullObject | isEmpty and emptyString | isEmpty and not fullString | isEmpty %}
+      {{ fullString }}
+      {% endif %}
+      """, (err, content) ->
+        return next err if err
+        mecano.render
+          source: source
+          destination: destination
+          context:
+            emptyArray: []
+            fullArray: [0]
+            emptyObject: {}
+            fullObject: toto: 0 
+            emptyString: ''
+            fullString: 'succeed'
+        , (err, rendered) ->
+          return next err if err
+          rendered.should.be.true()
+          fs.readFile destination, 'ascii', (err, content) ->
+            content.trim().should.eql 'succeed'
             next()
 
     it 'test personal filter', (next) ->
