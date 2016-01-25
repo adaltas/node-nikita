@@ -8,43 +8,40 @@ test = require '../test'
 they = require 'ssh2-they'
 docker = require '../../src/misc/docker'
 
-clean = (ssh, machine, image, callback) ->
-  docker.exec " rmi -f #{image} || true" , {  ssh: ssh, machine: machine }, null
-  , (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
-
 describe 'docker checksum', ->
 
+  config = test.config()
   scratch = test.scratch @
   machine = 'dev'
 
   they 'checksum on existing repository', (ssh, next) ->
-    clean ssh, machine, 'mecano/checksum', (err) ->
-      mecano
-        ssh: ssh
-      .docker_build
-        tag: 'mecano/checksum:latest'
-        content: "FROM scratch\nCMD ['echo \"hello build from text #{Date.now()}\"']"
-        machine: machine
-      , (err, executed, stdout, stderr, checksum) ->
-        return err if err
-        mecano
-          ssh: ssh
-        .docker_checksum
-          repository: 'mecano/checksum'
-          tag: 'latest'
-          machine: machine
-        , (err, executed, stdout, stderr, checksum_valid) ->
-          return err if err
-          checksum_valid.should.eql(checksum)
-          clean ssh, machine, 'mecano/checksum', (err) -> next(err)
+    checksum = null
+    mecano
+      ssh: ssh
+      machine: config.docker.machine
+    .docker_rmi
+      image: 'mecano/checksum'
+    .docker_build
+      tag: 'mecano/checksum:latest'
+      content: "FROM scratch\nCMD ['echo \"hello build from text #{Date.now()}\"']"
+    , (err, executed, _checksum, stdout, stderr) ->
+      checksum = _checksum.trim() unless err
+    .docker_checksum
+      repository: 'mecano/checksum'
+      tag: 'latest'
+    , (err, executed, checksum_valid) ->
+      checksum_valid.should.eql checksum unless err
+    .docker_rmi
+      image: 'mecano/checksum'
+    .then next
 
   they 'checksum on not existing repository', (ssh, next) ->
     mecano
       ssh: ssh
+      machine: config.docker.machine
     .docker_checksum
       repository: 'mecano/checksum'
       tag: 'latest'
-      machine: machine
-    , (err, executed, stdout, stderr, checksum) ->
+    , (err, executed, checksum) ->
       checksum.should.be.false()
       next()

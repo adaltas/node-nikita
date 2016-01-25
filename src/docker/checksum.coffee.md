@@ -34,16 +34,10 @@ Return the checksum of repository:tag, if it exists. Function not native to dock
 
 *   `err`
     Error object if any.
-*   `executed`
-    if command was executed
-*   `stdout`
-    Stdout value(s) unless `stdout` option is provided.
-*   `stderr`
-    Stderr value(s) unless `stderr` option is provided.
+*   `status`
+    True if command was executed.
 *   `checksum`
-    The repository's cheskum if it exists or null if it doesn't
-
-
+    Image cheksum if it exist, false otherwise.
 
 ## Source Code
 
@@ -53,11 +47,12 @@ Return the checksum of repository:tag, if it exists. Function not native to dock
       options.tag ?= 'latest'
       cmd = " images | grep '#{options.repository}' | grep '#{options.tag}' | awk ' { print $3 }'"
       options.log message: "Getting repository cheksum :#{options.repository}", level: 'INFO', module: 'mecano/lib/docker/checksum'
-      docker.exec cmd, options, true, (err, executed, stdout, stderr, cheksum) =>
-        options.log message: "Image does not exist :#{options.repository}", level: 'INFO', module: 'mecano/lib/docker/checksum' unless executed
-        checksum = if stdout == '' then false else stdout.toString().trim()
-        options.log message: "Image found : #{options.repository} with checksum: #{checksum}", level: 'INFO', module: 'mecano/lib/docker/checksum' if executed
-        return callback err, executed, stdout, stderr, checksum
+      @execute
+        cmd: docker.wrap options, cmd
+      , (err, executed, stdout, stderr) ->
+        checksum = if stdout is '' then false else stdout.toString().trim()
+        options.log message: "Image checksum for #{options.repository}: #{checksum}", level: 'INFO', module: 'mecano/lib/docker/checksum' if executed
+        return callback err, executed, checksum
 
 
 ## Modules Dependencies
