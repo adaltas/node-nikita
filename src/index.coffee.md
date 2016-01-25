@@ -82,7 +82,7 @@ functions share a common API with flexible options.
           opts.user_args = true if enrich and opts.callback?.length > 2
           opts.store ?= store if enrich and store
           if opts.debug
-            opts.log ?= (msg) -> process.stdout.write "#{msg}\n"
+            opts.log ?= (log) -> process.stdout.write "[#{log.level} #{log.time}] #{log.message}\n"
             opts.stdout ?= process.stdout
             opts.stderr ?= process.stderr
         options
