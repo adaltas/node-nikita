@@ -40,6 +40,17 @@ describe 'docker run', ->
   config = test.config()
   return if config.docker.disable
   scratch = test.scratch @
+  
+  before (next) ->
+    mecano
+    .execute
+      cmd: """
+      if ! docker-machine status #{config.docker.machine} | grep Running ; then
+        docker-machine start #{config.docker.machine}
+      fi
+      """
+      if: config.docker.machine
+    .then next
 
   they 'simple command', (ssh, next) ->
     mecano

@@ -167,7 +167,7 @@ mecano.docker({
       # need to delete the cmd options or it will be used in docker.exec
       delete options.cmd
       # Construct other exec parameter
-      options.log message: "Checking if container already runned", level: 'INFO', module: 'mecano/docker/run' if options.name?
+      options.log message: "Checking if container already running", level: 'INFO', module: 'mecano/docker/run' if options.name?
       @execute
         if: options.name
         cmd: docker.wrap options, " ps -a | grep '#{options.name}' "
@@ -176,17 +176,19 @@ mecano.docker({
       @call
         if: -> @status -1
         handler: =>
-          return callback Error 'Use force option if you want to get a new running instance' unless options.force
+          throw Error 'Use force option if you want to get a new running instance' unless options.force
           @execute
             if: options.force
             cmd: docker.wrap options, " rm -f #{options.name} || true"
       @call ->
         options.log message: "Running container #{options.name}", level: 'INFO', module: 'mecano/docker/run'
       # docker run only if container not existing  or (existing and forceoption)
+      args = []
       @execute
         if: -> (@status(-3) and @status(-2)) or !@status(-3)
         cmd: docker.wrap options, cmd
-      , (err, executed, stdout, stderr) ->  callback err, executed, stdout, stderr
+      , -> args = [].slice.call arguments, 1
+      @then (err) -> callback err, args...
 
 ## Modules Dependencies
 
