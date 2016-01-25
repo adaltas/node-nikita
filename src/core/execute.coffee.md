@@ -99,16 +99,6 @@ mecano.execute({
       stdout = []; stderr = []
       child.stdout.pipe options.stdout, end: false if options.stdout
       child.stderr.pipe options.stderr, end: false if options.stderr
-      # if child.stdout or child.stdout is undefined
-      #   stdout
-      #   child.stdout.on 'data', (data) ->
-      #     options.log message: data, type: 'stdout'
-      #   child.stdout.on 'end', (data) ->
-      #     options.log message: null, type: 'stdout'
-      #   child.stderr.on 'data', (data) ->
-      #     options.log message: data, type: 'stderr'
-      #   child.stderr.on 'end', (data) ->
-      #     options.log message: null, type: 'stderr'
       unless options.stdout is false or options.stdout is null
         child.stdout.on 'data', (data) ->
           options.log message: data, type: 'stdout_stream'
