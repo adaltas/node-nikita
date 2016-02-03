@@ -37,7 +37,6 @@ functions share a common API with flexible options.
       killed = false
       obj.options.domain =  domain.create() if obj.options.domain is true
       domain_on_error = (err) ->
-        # return if killed
         err.message = "Invalid State Error [#{err.message}]"
         handle_multiple_call err
       obj.options.domain?.on 'error', domain_on_error
@@ -216,20 +215,18 @@ functions share a common API with flexible options.
           # Before interception
           intercept_before options, (err) ->
             exec_callback = (args) ->
-              intercept_after options, args, (err) ->
-                return if killed
-                return exec_callback [err] if err
-                args[0] = undefined unless args[0] # Error is undefined and not null or false
-                args[1] = !!args[1] # Status is a boolean, error or not
-                todos = stack.shift() if todos.length is 0
-                jump_to_error args[0] if args[0] and not options.relax
-                todos.throw_if_error = false if args[0] and options_callback
-                todos.status[0] = args[1] and not options.shy
-                call_callback options_callback, args if options_callback
-                args[0] = null if options.relax
-                depth-- if options.header
-                callback args[0], args[1] if callback
-                run()
+              return if killed
+              args[0] = undefined unless args[0] # Error is undefined and not null or false
+              args[1] = !!args[1] # Status is a boolean, error or not
+              todos = stack.shift() if todos.length is 0
+              jump_to_error args[0] if args[0] and not options.relax
+              todos.throw_if_error = false if args[0] and options_callback
+              todos.status[0] = args[1] and not options.shy
+              call_callback options_callback, args if options_callback
+              args[0] = null if options.relax
+              depth-- if options.header
+              callback args[0], args[1] if callback
+              run()
             return exec_callback [err] if err
             options_handler = options.handler
             options.handler = undefined
@@ -251,7 +248,9 @@ functions share a common API with flexible options.
                     return handle_multiple_call Error 'Multiple call detected' if called
                     called = true
                     args = [].slice.call(arguments, 0)
-                    setImmediate -> exec_callback args
+                    setImmediate -> 
+                      intercept_after options, args, (err) ->
+                        exec_callback if err then [err] else args
                 else # Sync style
                   options_handler.call obj, options
                   return if killed
@@ -261,7 +260,9 @@ functions share a common API with flexible options.
                   wait_children = ->
                     unless todos.length
                       return setImmediate ->
-                        exec_callback [null, status_sync]
+                        args = [null, status_sync]
+                        intercept_after options, args, (err) ->
+                          exec_callback if err then [err] else args
                     options = todos.shift()
                     run options, (err, status) ->
                       return exec_callback [err] if err

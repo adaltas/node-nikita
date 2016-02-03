@@ -72,4 +72,28 @@ describe 'api after', ->
           'call 3'
         ]
         next()
+
+  describe 'error', ->
+    
+    it 'register sync function and throw error', (next) ->
+      mecano()
+      .register 'afunction', ((_) -> )
+      .after 'afunction', (_) ->
+        throw Error 'CatchMe'
+      .afunction (err, status) ->
+        err.message.should.eql 'CatchMe'
+      .then (err) ->
+        err.message.should.eql 'CatchMe'
+        next()
+          
+    it 'register sync function and throw error', (next) ->
+      mecano()
+      .register 'afunction', ((_) -> )
+      .after 'afunction', (_, callback) ->
+        setImmediate -> callback Error 'CatchMe'
+      .afunction (err, status) ->
+        err.message.should.eql 'CatchMe'
+      .then (err) ->
+        err.message.should.eql 'CatchMe'
+        next()
         
