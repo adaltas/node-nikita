@@ -262,7 +262,7 @@ describe 'download', ->
 
     describe 'cache', ->
 
-      they 'cache,md5 with binary file', (ssh, next) ->
+      they 'cache and md5 with binary file', (ssh, next) ->
         source = "#{__dirname}/download.zip"
         destination = "#{scratch}/download"
         mecano.download

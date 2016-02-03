@@ -30,12 +30,16 @@ calculated if neither md5 nor sha1 is provided
 
 ## Options
 
+*   `cache` (boolean)
+    Activate the cache, default to true if either "cache_dir" or "cache_file" is
+    activated.   
 *   `cache_dir` (path)   
-    If local_cache is not a string, the cache file path is resolved from cache dir and cache file.
+    If local_cache is not a string, the cache file path is resolved from cache
+    dir and cache file.
     By default: './'   
 *   `cache_file` (string | boolean)   
-    Cache the file on the executing machine, equivalent to cache unless an ssh connection is
-    provided. If a string is provided, it will be the cache path.   
+    Cache the file on the executing machine, equivalent to cache unless an ssh
+    connection is provided. If a string is provided, it will be the cache path.   
     By default: basename of source   
 *   `destination` (path)   
     Path where the file is downloaded.   
@@ -128,7 +132,7 @@ mecano.download
         hash = false
       protocols_http = ['http:', 'https:']
       protocols_ftp = ['ftp:', 'ftps:']
-      use_cache = !! (options.cache_dir or options.cache_file)
+      options.cache ?= !!(options.cache_dir or options.cache_file)
       hash_info = null
       # Download the file if
       # - file doesnt exist
@@ -180,7 +184,7 @@ mecano.download
       , (err, status) ->
         @end() unless status
       @cache # Download the file and place it inside local cache
-        if: use_cache
+        if: options.cache
         ssh: null
         source: options.source
         cache_dir: options.cache_dir
@@ -190,25 +194,25 @@ mecano.download
         proxy: options.proxy
       , (err, cached, file) ->
         throw err if err
-        source = file if use_cache
+        source = file if options.cache
       @call (_, callback) -> # File Download
         u = url.parse source
         return callback() unless u.protocol is null
-        if not use_cache
+        if not options.cache
           hash_info = ssh: options.ssh, source: options.source if hash is true
           @mkdir path.dirname stageDestination
           @copy
             source: options.source
             destination: stageDestination
           @then callback
-        else if not options.ssh and use_cache
+        else if not options.ssh and options.cache
           hash_info = ssh: null, source: source if hash is true
           rs = fs.createReadStream source
           ws = fs.createWriteStream stageDestination
           rs.pipe(ws)
           .on 'close', callback
           .on 'error', callback
-        else if options.ssh and use_cache
+        else if options.ssh and options.cache
           hash_info = ssh: null, source: source if hash is true
           rs = fs.createReadStream source
           ssh2fs.writeFile options.ssh, stageDestination, rs, (err) ->
@@ -219,7 +223,7 @@ mecano.download
         u = url.parse source
         return callback() unless u.protocol in protocols_http
         # is_http = u.protocol in protocols_http
-        if not use_cache
+        if not options.cache
           hash_info = ssh: options.ssh, source: options.source if hash is true
           fail = if options.fail then "--fail" else ''
           k = if u.protocol is 'https:' then '-k' else ''
@@ -231,14 +235,14 @@ mecano.download
             cmd: cmd
             # unless_exists: options.cache_file
           @then callback
-        else if not options.ssh and use_cache
+        else if not options.ssh and options.cache
           hash_info = ssh: null, source: source if hash is true
           rs = fs.createReadStream source
           ws = fs.createWriteStream stageDestination
           rs.pipe(ws)
           .on 'close', callback
           .on 'error', callback
-        else if options.ssh and use_cache
+        else if options.ssh and options.cache
           hash_info = ssh: null, source: source if hash is true
           rs = fs.createReadStream source
           ssh2fs.writeFile options.ssh, stageDestination, rs, (err) ->
