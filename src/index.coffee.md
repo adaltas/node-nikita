@@ -30,10 +30,7 @@ functions share a common API with flexible options.
       properties = {}
       listeners = {}
       stack = []
-      todos = []
-      todos.err = null
-      todos.status = []
-      todos.throw_if_error = true
+      todos = todos_create()
       befores = []
       afters = []
       depth = 0
@@ -155,10 +152,7 @@ functions share a common API with flexible options.
         .then callback
       call_callback = (fn, args) ->
         stack.unshift todos
-        todos = []
-        todos.err = null
-        todos.status = []
-        todos.throw_if_error = true
+        todos = todos_create()
         try
           fn.apply obj, args
         catch err
@@ -194,9 +188,7 @@ functions share a common API with flexible options.
         if options.type is 'then'
           {err, status} = todos
           status = status.some (status) -> !! status
-          todos.err = null
-          todos.status = []
-          todos.throw_if_error = true
+          todos_reset todos
           options.handler?.call obj, err, status
           run()
           return
@@ -215,10 +207,7 @@ functions share a common API with flexible options.
             run()
         todos.status.unshift undefined
         stack.unshift todos
-        todos = []
-        todos.err = null
-        todos.status = []
-        todos.throw_if_error = true
+        todos = todos_create()
         wrap.options options, (err) ->
           copy = {}
           for k, v of options
@@ -273,9 +262,11 @@ functions share a common API with flexible options.
                     unless todos.length
                       return setImmediate ->
                         exec_callback [null, status_sync]
-                    run todos.shift(), (err, status) ->
+                    options = todos.shift()
+                    run options, (err, status) ->
                       return exec_callback [err] if err
-                      status_sync = true if status
+                      # Discover status of all unshy children
+                      status_sync = true if status and not options.shy
                       wait_children()
                   wait_children()
               catch err
@@ -357,6 +348,17 @@ functions share a common API with flexible options.
 
     module.exports.propagated_options = ['ssh', 'log', 'stdout', 'stderr']
 
+## Helper functions
+
+    todos_create = ->
+      todos = []
+      todos_reset todos
+      todos
+    todos_reset = (todos) ->
+      todos.err = null
+      todos.status = []
+      todos.throw_if_error = true
+
 ## Register functions
 
 Register a new function available when requiring mecano and inside any mecano
@@ -396,7 +398,7 @@ registered.
       module.exports.on = ->
         obj = module.exports()
         o = obj.on.apply obj, arguments
-
+    
     each = require 'each'
     conditions = require './misc/conditions'
     wrap = require './misc/wrap'

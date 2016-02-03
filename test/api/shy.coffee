@@ -32,6 +32,17 @@ describe 'api shy', ->
       status.should.be.false()
       next()
 
+  it 'dont alter status', (next) ->
+    mecano
+    .call ->
+      @write
+        destination: "#{scratch}/file_1"
+        content: 'abc'
+        shy: true
+    .then (err, status) ->
+      status.should.be.false() unless err
+      next err
+
   it 'array options', (next) ->
     count = 0
     mecano
