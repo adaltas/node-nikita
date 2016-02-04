@@ -23,20 +23,23 @@ describe 'docker load', ->
     .remove
       destination: "#{scratch}/mecano_load.tar"
     .docker_build
-      tag: 'mecano/load_test:latest'
+      image: 'mecano/load_test'
+      tag: 'latest'
       content: "FROM scratch\nCMD ['echo \"docker_build #{Date.now()}\"']"
     .docker_save
-      image: 'mecano/load_test:latest'
+      image: 'mecano/load_test'
+      tag: 'latest'
       output: "#{scratch}/mecano_load.tar"
     .docker_rmi
-      image: 'mecano/load_test:latest'
+      image: 'mecano/load_test'
     .docker_load
-      image: 'mecano/load_test:latest'
+      image: 'mecano/load_test'
+      tag: 'latest'
       input: "#{scratch}/mecano_load.tar"
     , (err, loaded, stdout, stderr) ->
       loaded.should.be.true() unless err
     .docker_rmi
-      image: 'mecano/load_test:latest'
+      image: 'mecano/load_test'
     .then next
 
   they 'not loading if checksum', (ssh, next) ->
@@ -47,16 +50,17 @@ describe 'docker load', ->
     .remove
       destination: "#{scratch}/mecano_load.tar"
     .docker_build
-      tag: 'mecano/load_test:latest'
+      image: 'mecano/load_test'
+      tag: 'latest'
       content: "FROM scratch\nCMD ['echo \"docker_build #{Date.now()}\"']"
     , (err, execute, _checksum) ->
       checksum = _checksum
     .docker_save
-      image: 'mecano/load_test:latest'
+      image: 'mecano/load_test'
+      tag: 'latest'
       output: "#{scratch}/mecano_load.tar"
     .call ->
       @docker_load
-        image: 'mecano/load_test:latest'
         input: "#{scratch}/mecano_load.tar"
         checksum: checksum
       , (err, loaded) ->
@@ -73,7 +77,8 @@ describe 'docker load', ->
     .docker_rmi
       image: 'mecano/load_test:latest'
     .docker_build
-      tag: 'mecano/load_test:latest'
+      image: 'mecano/load_test'
+      tag: 'latest'
       content: "FROM scratch\nCMD ['echo \"docker_build #{Date.now()}\"']"
     .docker_save
       image: 'mecano/load_test:latest'

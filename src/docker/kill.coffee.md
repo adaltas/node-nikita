@@ -33,10 +33,10 @@ SIGNAL is not sent.
 
 ## Callback parameters
 
-*   `err`
-    Error object if any.
-*   `executed`
-    if command was executed
+*   `err`   
+    Error object if any.   
+*   `executed`   
+    if command was executed   
 
 ## Example
 
@@ -60,11 +60,11 @@ mecano.docker_kill({
     module.exports = (options, callback) ->
       # Validate parameters
       return callback Error 'Missing container parameter' unless options.container?
-      cmd = ' kill '
-      cmd += "-s #{options.signal} " if options.signal?
-      cmd += options.container
+      cmd = 'kill'
+      cmd += " -s #{options.signal}" if options.signal?
+      cmd += " #{options.container}"
       @execute
-        cmd: docker.wrap options, " ps | grep '#{options.container}' | grep 'Up'"
+        cmd: docker.wrap options, "ps | grep '#{options.container}' | grep 'Up'"
         code_skipped: 1
       @execute
         if: -> @status -1

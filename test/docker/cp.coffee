@@ -1,9 +1,10 @@
 
-should = require 'should'
+fs = require 'ssh2-fs'
 mecano = require '../../src'
+path = require 'path'
+should = require 'should'
 test = require '../test'
 they = require 'ssh2-they'
-fs = require 'ssh2-fs'
 
 
 describe 'docker cp', ->
@@ -22,8 +23,9 @@ describe 'docker cp', ->
       name: 'mecano_extract'
       image: 'alpine'
       cmd: "whoami"
+      rm: false
     .docker_cp
-      source: 'mecano_extract:/usr/share/udhcpc/default.script'
+      source: 'mecano_extract:/etc/apk/repositories'
       destination: "#{scratch}/a_file"
     , (err, status) ->
       status.should.be.true() unless err
@@ -43,13 +45,14 @@ describe 'docker cp', ->
       name: 'mecano_extract'
       image: 'alpine'
       cmd: "whoami"
+      rm: false
     .docker_cp
-      source: 'mecano_extract:/usr/share/udhcpc/default.script'
+      source: 'mecano_extract:/etc/apk/repositories'
       destination: "#{scratch}"
     , (err, status) ->
       status.should.be.true() unless err
     .call (_, callback) ->
-      fs.exists ssh, "#{scratch}/default.script", (err, exists) ->
+      fs.exists ssh, "#{scratch}/repositories", (err, exists) ->
         exists.should.be.true() unless err
         callback()
     .docker_rm container: 'mecano_extract'
@@ -65,7 +68,7 @@ describe 'docker cp', ->
       image: 'alpine'
       volume: "#{scratch}:/root"
       cmd: "whoami"
-      service: true
+      rm: false
     .docker_cp
       source: "#{__filename}"
       destination: "mecano_extract:/root/a_file"
@@ -91,17 +94,17 @@ describe 'docker cp', ->
       image: 'alpine'
       volume: "#{scratch}:/root"
       cmd: "whoami"
-      service: true
+      rm: false
     .docker_cp
       source: "#{__filename}"
       destination: "mecano_extract:/root"
     , (err, status) ->
       status.should.be.true() unless err
     .docker_cp
-      source: 'mecano_extract:/root/a_file'
+      source: "mecano_extract:/root/#{path.basename __filename}"
       destination: "#{scratch}"
     .call (_, callback) ->
-      fs.exists ssh, "#{scratch}/a_file", (err, exists) ->
+      fs.exists ssh, "#{scratch}/#{path.basename __filename}", (err, exists) ->
         exists.should.be.true() unless err
         callback()
     .docker_rm container: 'mecano_extract'

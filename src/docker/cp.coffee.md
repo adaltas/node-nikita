@@ -14,10 +14,8 @@ Note, stream are not yet supported.
 
 ## Options
 
-*   `container` (string)
-    Name/ID of base image, optional
 *   `machine` (string)
-    Name of the docker-machine, optional if using docker-machine or boot2docker.
+    Name of the docker-machine, MANDATORY if using docker-machine or boot2docker.
 *   `source` (string)
     The path to upload or the container followed by the path to download.   
 *   `destination` (string)

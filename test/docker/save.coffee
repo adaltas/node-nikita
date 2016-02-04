@@ -19,7 +19,7 @@ describe 'docker save', ->
     .remove
       destination:"#{source}/mecano_saved.tar"
     .docker_build
-      tag: 'mecano/load_test:latest'
+      image: 'mecano/load_test'
       content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
     .docker_save
       image: 'mecano/load_test:latest'
@@ -36,7 +36,7 @@ describe 'docker save', ->
   #   .remove
   #     destination:"#{source}/mecano_saved.tar"
   #   .docker_build
-  #     tag: 'mecano/load_test:latest'
+  #     image: 'mecano/load_test'
   #     content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
   #     machine: config.docker.machine
   #   .docker_save

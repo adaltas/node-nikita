@@ -6,29 +6,26 @@ force options is set.
 
 ## Options
 
-*   `image` (string)
-    Name of the image. MANDATORY
-*   `machine` (string)
-    Name of the docker-machine. MANDATORY if docker-machine installed
-*   `no_prune` (boolean)
-    Remove the volumes associated with the container
-
+*   `image` (string)   
+    Name of the image. MANDATORY   
+*   `machine` (string)   
+    Name of the docker-machine. MANDATORY if docker-machine installed   
+*   `no_prune` (boolean)   
+    Do not delete untagged parents   
 
 ## Source Code
 
     module.exports = (options, callback) ->
       # Validate parameters and madatory conditions
       return callback  Error 'Missing image parameter' unless options.image?
-      cmd = ' rmi '
+      cmd = 'rmi'
       for opt in ['force', 'no_prune']
-        cmd += "--#{opt.replace '_', '-'} " if options[opt]?
-      cmd += options.image
-      parts = options.image.split(':')
-      repository = parts[0]
-      tag = parts[1] ?= ''
-      list_images = " images "
-      list_images += "| grep '#{repository}' " if repository.length
-      list_images += "| grep '#{tag}' " if tag.length
+        cmd += " --#{opt.replace '_', '-'}" if options[opt]?
+      cmd += " #{options.image}"
+      cmd += ":#{options.tag}" if options.tag?
+      list_images = 'images'
+      list_images += " | grep '#{options.image} '"
+      list_images += " | grep ' #{options.tag} '" if options.tag?
       @execute
         cmd: docker.wrap options, list_images
         code_skipped: 1
@@ -36,9 +33,6 @@ force options is set.
         cmd: docker.wrap options, cmd
         if: -> @status -1
       .then callback
-
-
-
 
 ## Modules Dependencies
 

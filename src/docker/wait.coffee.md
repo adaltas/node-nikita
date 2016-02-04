@@ -28,10 +28,10 @@ Block until a container stops
 
 ## Callback parameters
 
-*   `err`
-    Error object if any.
-*   `executed`
-    if command was executed
+*   `err`   
+    Error object if any.   
+*   `executed`   
+    if command was executed   
 
 ## Example
 
@@ -55,7 +55,7 @@ mecano.docker_wait({
       # Validate parameters
       return callback Error 'Missing container parameter' unless options.container?
       # rm is false by default only if options.service is true
-      cmd = " wait #{options.container} | read r; return $r"
+      cmd = "wait #{options.container} | read r; return $r"
       # Construct other exec parameter
       @docker.exec cmd, options, true, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
 

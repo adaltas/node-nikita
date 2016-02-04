@@ -45,11 +45,10 @@ describe 'docker status', ->
     .docker_rm
       container: 'mecano_status'
       force: true
-    .docker_run
+    .docker_service
       image: 'httpd'
       port: [ '500:80' ]
       name: 'mecano_status'
-      service: true
     .docker_status
       container: 'mecano_status'
     , (err, running, stdout, stderr) ->

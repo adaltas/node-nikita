@@ -23,11 +23,10 @@ describe 'docker kill', ->
     .docker_rm
       container: 'mecano_test_kill'
       force: true
-    .docker_run
+    .docker_service
       image: 'httpd'
       port: '499:80'
       name: 'mecano_test_kill'
-      service: true
     .docker_kill
       container: 'mecano_test_kill'
     , (err, killed, stdout, stderr) ->
@@ -42,11 +41,10 @@ describe 'docker kill', ->
     .docker_rm
       container: 'mecano_test_kill'
       force: true
-    .docker_run
+    .docker_service
       image: 'httpd'
       port: '499:80'
       name: 'mecano_test_kill'
-      service: true
     .docker_kill
       container: 'mecano_test_kill'
     .docker_kill
@@ -64,7 +62,7 @@ describe 'docker kill', ->
     .docker_run
       cmd: "/bin/echo 'test'"
       image: 'alpine'
-      service: false
+      rm: false
       name: 'mecano_test_kill'
     .docker_kill
       container: 'mecano_test_kill'

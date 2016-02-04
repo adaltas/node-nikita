@@ -24,7 +24,6 @@ describe 'docker rm', ->
       cmd: "/bin/echo 'test'"
       image: 'alpine'
       name: 'mecano_rm'
-      service: false
       rm: false
     .docker_rm
       container: 'mecano_rm'
@@ -40,17 +39,19 @@ describe 'docker rm', ->
     .docker_rm
       container: 'mecano_rm'
       force: true
-    .docker_run
+    .docker_service
       image: 'httpd'
       port: '499:80'
       name: 'mecano_rm'
-      service: true
-      rm: false
     .docker_rm
       container: 'mecano_rm'
       relax: true
     , (err, removed, stdout, stderr) ->
       err.message.should.eql 'Container must be stopped to be removed without force'
+    .docker_stop
+      container: 'mecano_rm'
+    .docker_rm
+      container: 'mecano_rm'
     .then next
 
   they 'remove live container (with force)', (ssh, next) ->
@@ -61,12 +62,10 @@ describe 'docker rm', ->
     .docker_rm
       container: 'mecano_rm'
       force: true
-    .docker_run
+    .docker_service
       image: 'httpd'
       port: '499:80'
       name: 'mecano_rm'
-      service: true
-      rm: false
     .docker_rm
       container: 'mecano_rm'
       force: true
