@@ -95,7 +95,7 @@ mecano.docker_load({
         @execute
           cmd: docker.wrap options, cmd
         @execute
-          cmd: docker.wrap options, ' images | grep -v \'<none>\' | awk \'{ print $1":"$2":"$3 }\''
+          cmd: docker.wrap options, 'images | grep -v \'<none>\' | awk \'{ print $1":"$2":"$3 }\''
         , (err, executed, out, stderr) ->
           return callback err, executed, out, stderr if err
           new_images = {}

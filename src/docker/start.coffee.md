@@ -73,10 +73,9 @@ mecano.docker_start({
         options.log message: "Starting container #{options.container}", level: 'INFO', module: 'mecano/lib/docker/start'
         @execute
           cmd: docker.wrap options, cmd
-        , (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
+        , -> docker.callback callback, arguments...
 
 ## Modules Dependencies
 
-    docker_status = require './status'
     docker = require '../misc/docker'
     util = require 'util'

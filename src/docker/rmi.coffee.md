@@ -32,7 +32,7 @@ force options is set.
       @execute
         cmd: docker.wrap options, cmd
         if: -> @status -1
-      .then callback
+      .then -> docker.callback callback, arguments...
 
 ## Modules Dependencies
 

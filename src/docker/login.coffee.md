@@ -51,20 +51,13 @@ Register or log in to a Docker registry server.
       # Validate parameters and madatory conditions
       return callback  Error 'Missing image parameter' unless options.image?
       return callback  Error 'Can not build from Dockerfile and content' if options.content? and options.dockerfile?
-      docker.get_provider options, (err,  provider) =>
-        return callback err if err
-        options.provider = provider
-        cmd = docker.prepare_cmd provider, options.machine
-        return callback cmd if util.isError cmd
-        # custom command for content option
-        cmd += 'docker login'
-        # not mandatory options
-        for opt in ['email', 'user', 'password']
-          cmd += " -#{opt.charAt 0} #{options[opt]}" if options[opt]?
-        cmd += " \"#{options.registry}\"" if options.registry?
-        # Construct other exec parameter
-        opts = docker.get_options cmd, options
-        @execute opts, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
+      cmd = 'login'
+      for opt in ['email', 'user', 'password']
+        cmd += " -#{opt.charAt 0} #{options[opt]}" if options[opt]?
+      cmd += " \"#{options.registry}\"" if options.registry?
+      @execute
+        cmd: docker.wrap options, cmd
+      , -> docker.callback callback, arguments...
 
 ## Modules Dependencies
 

@@ -164,11 +164,9 @@ mecano.docker({
       # Construct other exec parameter
       do_run = =>
         options.log message: "Running container #{options.name}", level: 'INFO', module: 'mecano/docker/run'
-        args = []
         @execute
           cmd: docker.wrap options, cmd
-        , -> args = [].slice.call arguments, 1
-        @then (err) -> callback err, args...
+        , -> docker.callback callback, arguments...
       if options.name?
         options.log message: "Checking if container already runned", level: 'INFO', module: 'mecano/docker/run'
         @execute

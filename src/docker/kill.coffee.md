@@ -69,7 +69,7 @@ mecano.docker_kill({
       @execute
         if: -> @status -1
         cmd: docker.wrap options, cmd
-      , (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
+      , -> docker.callback callback, arguments...
 
 ## Modules Dependencies
 

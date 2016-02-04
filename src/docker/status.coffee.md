@@ -66,7 +66,7 @@ mecano.docker({
       @execute
         cmd: docker.wrap options, cmd
         code_skipped: 1
-      , (err, running, stdout, stderr) -> callback err, running, stdout, stderr
+      , -> docker.callback callback, arguments...
 
 ## Modules Dependencies
 

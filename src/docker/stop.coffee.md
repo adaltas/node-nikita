@@ -66,7 +66,7 @@ mecano.docker_stop({
         options.log message: "Stopping container #{options.container}", level: 'INFO', module: 'mecano/lib/docker/stop'
         @execute
           cmd: docker.wrap options, cmd
-        , (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
+        , -> docker.callback callback, arguments...
 
 ## Modules Dependencies
 

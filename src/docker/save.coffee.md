@@ -76,7 +76,7 @@ mecano.docker({
       options.log message: "Extracting image #{options.output} to file:#{options.image}", level: 'INFO', module: 'mecano/lib/docker/save'
       @execute
         cmd: docker.wrap options, cmd
-      , (err, done, stdout, stderr) -> callback err, done, stdout, stderr
+      , -> docker.callback callback, arguments...
 
 ## Modules Dependencies
 

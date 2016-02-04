@@ -46,8 +46,7 @@ force options is set.
         @execute
           cmd: docker.wrap options, cmd
           if: -> @status -1
-        , (err, executed, stdout, stderr) -> 
-          callback err, executed, stdout, stderr
+        , -> docker.callback callback, arguments...
 
 ## Modules Dependencies
 
