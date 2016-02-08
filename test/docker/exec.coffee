@@ -55,5 +55,5 @@ describe 'docker exec', ->
       cmd: 'echo toto'
       relax: true
     , (err, executed, stdout, stderr) ->
-      err.message.should.eql 'no such id: mecano_fake_container'
+      err.message.should.eql 'No such container: mecano_fake_container'
     .then next

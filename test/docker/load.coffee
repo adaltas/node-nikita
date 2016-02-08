@@ -25,7 +25,7 @@ describe 'docker load', ->
     .docker_build
       image: 'mecano/load_test'
       tag: 'latest'
-      content: "FROM scratch\nCMD ['echo \"docker_build #{Date.now()}\"']"
+      content: "FROM alpine\nCMD ['echo \"docker_build #{Date.now()}\"']"
     .docker_save
       image: 'mecano/load_test'
       tag: 'latest'
@@ -52,7 +52,7 @@ describe 'docker load', ->
     .docker_build
       image: 'mecano/load_test'
       tag: 'latest'
-      content: "FROM scratch\nCMD ['echo \"docker_build #{Date.now()}\"']"
+      content: "FROM alpine\nCMD ['echo \"docker_build #{Date.now()}\"']"
     , (err, execute, _checksum) ->
       checksum = _checksum
     .docker_save
@@ -79,7 +79,7 @@ describe 'docker load', ->
     .docker_build
       image: 'mecano/load_test'
       tag: 'latest'
-      content: "FROM scratch\nCMD ['echo \"docker_build #{Date.now()}\"']"
+      content: "FROM alpine\nCMD ['echo \"docker_build #{Date.now()}\"']"
     .docker_save
       image: 'mecano/load_test:latest'
       output: "#{scratch}/load.tar"

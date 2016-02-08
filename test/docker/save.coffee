@@ -20,7 +20,7 @@ describe 'docker save', ->
       destination:"#{source}/mecano_saved.tar"
     .docker_build
       image: 'mecano/load_test'
-      content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
+      content: "FROM alpine\nCMD ['echo \"hello build from text\"']"
     .docker_save
       image: 'mecano/load_test:latest'
       output: "#{source}/mecano_saved.tar"
