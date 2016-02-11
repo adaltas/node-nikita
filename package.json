@@ -26,7 +26,8 @@
   },
   "dependencies": {
     "backmeup": ">=0.0.1",
-    "diff": "1.4.0",
+    "coffee-errors": "^0.8.6",
+    "diff": "2.2.1",
     "each": ">=0.5.2",
     "eco": ">=1.1.0-rc-3",
     "ftp": ">=0.3.10",
