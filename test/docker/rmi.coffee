@@ -16,10 +16,10 @@ describe 'docker rmi', ->
       ssh: ssh
       machine: config.docker.machine
     .docker_build
-      tag: 'mecano/rmi_test:latest'
+      image: 'mecano/rmi_test'
       content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
     .docker_rmi
-      image: 'mecano/rmi_test:latest'
+      image: 'mecano/rmi_test'
     , (err, removed, stdout, stderr) ->
       return err if err
       removed.should.be.true()
@@ -30,12 +30,12 @@ describe 'docker rmi', ->
       ssh: ssh
       machine: config.docker.machine
     .docker_build
-      tag: 'mecano/rmi_test:latest'
+      image: 'mecano/rmi_test:latest'
       content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
     .docker_rmi
-      image: 'mecano/rmi_test:latest'
+      image: 'mecano/rmi_test'
     .docker_rmi
-      image: 'mecano/rmi_test:latest'
+      image: 'mecano/rmi_test'
     , (err, removed) ->
       removed.should.be.false()
     .then next

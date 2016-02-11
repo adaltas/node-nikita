@@ -1,4 +1,4 @@
-# `docker_cp(options, callback)`
+# `docker_cp(options, next)`
 
 Copy files/folders between a container and the local filesystem.
 
@@ -14,10 +14,8 @@ Note, stream are not yet supported.
 
 ## Options
 
-*   `container` (string)
-    Name/ID of base image, optional
 *   `machine` (string)
-    Name of the docker-machine, optional if using docker-machine or boot2docker.
+    Name of the docker-machine, MANDATORY if using docker-machine or boot2docker.
 *   `source` (string)
     The path to upload or the container followed by the path to download.   
 *   `destination` (string)
@@ -43,7 +41,7 @@ mecano.docker({
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = (options, callback) ->
       # Validate parameters
       throw Error 'Missing option "source"' unless options.source
       throw Error 'Missing option "destination"' unless options.destination
@@ -53,35 +51,35 @@ mecano.docker({
       throw Error 'Incompatible source and destination options' if not source_container and not destination_container
       source_mkdir = false
       destination_mkdir = false
-      @call (_, callback) ->
-        return callback() if source_container
+      @call (_, next) ->
+        return next() if source_container
         if /\/$/.test source_path
           source_path = "#{source_path}/#{path.basename destination_path}"
-          return callback()
+          return next()
         ssh2fs.stat options.ssh, source_path, (err, stat) ->
-          return callback err if err and err.code isnt 'ENOENT'
-          return destination_mkdir = true and callback() if err?.code is 'ENOENT'
+          return next err if err and err.code isnt 'ENOENT'
+          return destination_mkdir = true and next() if err?.code is 'ENOENT'
           source_path = "#{source_path}/#{path.basename destination_path}" if stat.isDirectory()
-          callback()
+          next()
       @mkdir
         destination: source_path
         if: -> source_mkdir
-      @call (_, callback)  ->
-        return callback() if destination_container
+      @call (_, next)  ->
+        return next() if destination_container
         if /\/$/.test destination_path
           destination_path = "#{destination_path}/#{path.basename destination_path}"
-          return callback()
+          return next()
         ssh2fs.stat options.ssh, destination_path, (err, stat) ->
-          return callback err if err and err.code isnt 'ENOENT'
-          return destination_mkdir = true and callback() if err?.code is 'ENOENT'
+          return next err if err and err.code isnt 'ENOENT'
+          return destination_mkdir = true and next() if err?.code is 'ENOENT'
           destination_path = "#{destination_path}/#{path.basename destination_path}" if stat.isDirectory()
-          callback()
+          next()
       @mkdir
         destination: destination_path
         if: -> destination_mkdir
-      @call ->
-        @execute
-          cmd: docker.wrap options, "cp #{options.source} #{options.destination}"
+      @execute
+        cmd: docker.wrap options, "cp #{options.source} #{options.destination}"
+      , -> docker.callback callback, arguments...
 
 ## Modules Dependencies
 

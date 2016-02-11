@@ -13,15 +13,13 @@ describe 'docker stop', ->
   config = test.config()
   return if config.docker.disable
 
-
   they 'on running container', (ssh, next) ->
     mecano
       ssh: ssh
       machine: config.docker.machine
-    .docker_run
+    .docker_service
       image: 'httpd'
       name: 'mecano_test_stop'
-      service: true
     .docker_stop
       container: 'mecano_test_stop'
     , (err, stopped) ->
@@ -35,10 +33,9 @@ describe 'docker stop', ->
     mecano
       ssh: ssh
       machine: config.docker.machine
-    .docker_run
+    .docker_service
       image: 'httpd'
       name: 'mecano_test_stop'
-      service: true
     .docker_stop
       container: 'mecano_test_stop'
     .docker_stop

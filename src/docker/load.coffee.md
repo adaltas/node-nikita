@@ -5,42 +5,42 @@ Load Docker images
 
 ## Options
 
-*   `machine` (string)
-    Name of the docker-machine. MANDATORY if using docker-machine
-*   `input` (string)
-    TAR archive file to read from
+*   `machine` (string)   
+    Name of the docker-machine. MANDATORY if using docker-machine   
+*   `input` (string)   
+    TAR archive file to read from   
 *   `source` (string)   
     Alias for the "input" option.   
-*   `checksum` (string)
-    If provided, will check if attached input archive to checksum already exist.
-    Not native to docker. But implemented to get better performance.
-*   `code` (int|array)
-    Expected code(s) returned by the command, int or array of int, default to 0.
-*   `code_skipped`
+*   `checksum` (string)   
+    If provided, will check if attached input archive to checksum already exist.   
+    Not native to docker. But implemented to get better performance.   
+*   `code` (int|array)   
+    Expected code(s) returned by the command, int or array of int, default to 0.   
+*   `code_skipped`   
     Expected code(s) returned by the command if it has no effect, executed will
-    not be incremented, int or array of int.
-*   `log`
-    Function called with a log related messages.
-*   `ssh` (object|ssh2)
+    not be incremented, int or array of int.   
+*   `log`   
+    Function called with a log related messages.   
+*   `ssh` (object|ssh2)   
     Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.
-*   `stdout` (stream.Writable)
+    configuration object used to initialize the SSH connection.   
+*   `stdout` (stream.Writable)   
     Writable EventEmitter in which the standard output of executed commands will
-    be piped.
-*   `stderr` (stream.Writable)
+    be piped.   
+*   `stderr` (stream.Writable)   
     Writable EventEmitter in which the standard error output of executed command
-    will be piped.
+    will be piped.   
 
 ## Callback parameters
 
-*   `err`
-    Error object if any.
-*   `executed`
-    if command was executed
-*   `stdout`
-    Stdout value(s) unless `stdout` option is provided.
-*   `stderr`
-    Stderr value(s) unless `stderr` option is provided.
+*   `err`   
+    Error object if any.   
+*   `executed`   
+    if command was executed   
+*   `stdout`   
+    Stdout value(s) unless `stdout` option is provided.   
+*   `stderr`   
+    Stderr value(s) unless `stderr` option is provided.   
 
 ## Example
 
@@ -66,7 +66,7 @@ mecano.docker_load({
       # Validate parameters
       options.input ?= options.source
       return callback Error 'Missing input parameter' unless options.input?
-      cmd = " load -i #{options.input}"
+      cmd = "load -i #{options.input}"
       # need to records the list of image to see if status is modified or not after load
       # for this we print the existing images as REPOSITORY:TAG:IMAGE
       # parse the result to record images as an array of   {'REPOSITORY:TAG:'= 'IMAGE'}
@@ -95,7 +95,7 @@ mecano.docker_load({
         @execute
           cmd: docker.wrap options, cmd
         @execute
-          cmd: docker.wrap options, ' images | grep -v \'<none>\' | awk \'{ print $1":"$2":"$3 }\''
+          cmd: docker.wrap options, 'images | grep -v \'<none>\' | awk \'{ print $1":"$2":"$3 }\''
         , (err, executed, out, stderr) ->
           return callback err, executed, out, stderr if err
           new_images = {}

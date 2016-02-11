@@ -31,7 +31,7 @@ describe 'write', ->
     .call (_, callback)->
       fs.readFile ssh, "#{scratch}/file.properties", 'ascii', (err, data) ->
         return callback err if err
-        data.should.eql "another_key=another value"
+        data.should.eql "another_key=another value\n"
         callback()
     .then next
     
@@ -59,7 +59,7 @@ describe 'write', ->
     .call (_, callback)->
       fs.readFile ssh, "#{scratch}/file.properties", 'ascii', (err, data) ->
         return callback err if err
-        data.should.eql "a_key=a value\nanother_key=another value"
+        data.should.eql "a_key=a value\nanother_key=another value\n"
         callback()
     .then next
     
@@ -79,9 +79,6 @@ describe 'write', ->
     .call (_, callback)->
       fs.readFile ssh, "#{scratch}/file.properties", 'ascii', (err, data) ->
         return callback err if err
-        data.should.eql "a_key a value\nanother_key another value"
+        data.should.eql "a_key a value\nanother_key another value\n"
         callback()
     .then next
-    
-  
-  

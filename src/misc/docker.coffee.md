@@ -19,3 +19,6 @@
       fi
       eval $docker #{cmd}
       """
+    module.exports.callback = (callback, err, executed, stdout, stderr) ->
+      return callback Error stderr.trim().replace 'Error response from daemon: ', '' if err
+      return callback err, executed, stdout, stderr

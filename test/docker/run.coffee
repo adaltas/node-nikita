@@ -3,7 +3,6 @@
 # as a conseauence docker_run should not docker an other command from docker family
 # For this purpos ip, and clean are used
 
-stream = require 'stream'
 should = require 'should'
 mecano = require '../../src'
 test = require '../test'
@@ -14,22 +13,21 @@ ip = (ssh, machine, callback) ->
   mecano
   .execute
     cmd: """
-      export SHELL=/bin/bash
-      export PATH=/opt/local/bin/:/opt/local/sbin/:/usr/local/bin/:/usr/local/sbin/:$PATH
-      bin_boot2docker=$(command -v boot2docker)
-      bin_docker=$(command -v docker)
-      bin_machine=$(command -v docker-machine)
-      if [ -f $bin_machine ];
+    export SHELL=/bin/bash
+    export PATH=/opt/local/bin/:/opt/local/sbin/:/usr/local/bin/:/usr/local/sbin/:$PATH
+    bin_boot2docker=$(command -v boot2docker)
+    bin_machine=$(command -v docker-machine)
+    if [ $bin_machine ];
+      then
         if [ \"#{machine}\" = \"--\" ];then exit 5;fi
-        then
-          eval $(${bin_machine} env #{machine}) && $bin_machine  ip #{machine}
-      elif [ -f $bin_boot2docker ];
-        then
-          eval $(${bin_boot2docker} shellinit) && $bin_boot2docker ip
-      else
-        echo '127.0.0.1'
-      fi
-      """
+        eval $(${bin_machine} env #{machine}) && $bin_machine  ip #{machine}
+    elif [ $bin_boot2docker ];
+      then
+        eval $(${bin_boot2docker} shellinit) && $bin_boot2docker ip
+    else
+      echo '127.0.0.1'
+    fi
+    """
     , (err, executed, stdout, stderr) ->
       return callback err if err
       ipadress = stdout.trim()
@@ -55,35 +53,15 @@ describe 'docker run', ->
   they 'simple command', (ssh, next) ->
     mecano
       ssh: ssh
+      machine: config.docker.machine
     .docker_run
       cmd: "/bin/echo 'test'"
       image: 'alpine'
-      service: false
       machine: config.docker.machine
     , (err, executed, stdout, stderr) ->
       stdout.should.match /^test.*/ unless err
     .then next
-
-  they 'invalid parameter', (ssh, next) ->
-    mecano
-      ssh: ssh
-      machine: config.docker.machine
-    .docker_run
-      image: 'alpine'
-      name: 'mecano_test'
-      service: true
-      rm: true
-    , (err, executed) ->
-      err.message.should.match /^Invalid parameter.*/
-    .docker_run
-      cmd: "/bin/echo 'test'"
-      image: 'alpine'
-      service: true
-      rm: false
-    , (err, executed) ->
-      err.message.should.match /^Invalid parameter.*/
-    .then (err) -> next null
-
+  
   they '--rm (flag option)', (ssh, next) ->
     mecano
       ssh: ssh
@@ -95,7 +73,6 @@ describe 'docker run', ->
       cmd: "/bin/echo 'test'"
       image: 'alpine'
       name: 'mecano_test_rm'
-      service: false
       rm: false
       , (err, executed, stdout, stderr) ->
         return err if err
@@ -123,7 +100,7 @@ describe 'docker run', ->
         port: '499:80'
         machine: config.docker.machine
         name: 'mecano_test_unique'
-        service: true
+        detach: true
         rm: false
       .wait_connect
         port: 499
@@ -147,7 +124,7 @@ describe 'docker run', ->
         image: 'httpd'
         port: [ '500:80', '501:81' ]
         name: 'mecano_test_array'
-        service: true
+        detach: true
         rm: false
       .wait_connect
         host: ipadress
@@ -169,72 +146,47 @@ describe 'docker run', ->
       image: 'alpine'
       name: 'mecano_test'
       rm: false
+    , (err, runned) ->
+      runned.should.be.true()
     .docker_run
       cmd: "echo test"
       image: 'alpine'
       name: 'mecano_test'
       rm: false
-    .then (err) ->
-      err.message.should.match /^Use force option if you want to get a new running instance.*/
+    , (err, runned) ->
+      runned.should.be.false()
     .docker_rm
       machine: config.docker.machine
       force: true
       container: 'mecano_test'
     .then next
 
-  # they 'status not modified', (ssh, next) ->
-  #   @timeout 30000
-  #   mecano
-  #     ssh: ssh
-  #   .docker_rm
-  #     machine: config.docker.machine
-  #     force: true
-  #     container: 'mecano_test'
-  #   .docker_run
-  #     cmd: 'echo test'
-  #     image: 'alpine'
-  #     name: 'mecano_test'
-  #     machine: config.docker.machine
-  #     rm: false
-  #   .docker_run
-  #     cmd: "echo test"
-  #     image: 'alpine'
-  #     name: 'mecano_test'
-  #     machine: config.docker.machine
-  #     rm: false
-  #   , (err, executed, out, serr) ->
-  #     executed.should.be.false()
-  #     mecano
-  #       ssh: ssh
-  #     .docker_rm
-  #       machine: config.docker.machine
-  #       force: true
-  #       container: 'mecano_test'
-  #     .then next
-
-  they 'force running ', (ssh, next) ->
+  they 'status not modified', (ssh, next) ->
+    @timeout 30000
     mecano
       ssh: ssh
+      machine: config.docker.machine
     .docker_rm
-      container: 'mecano_test'
-      machine: config.docker.machine
-    .docker_run
-      image: 'alpine'
-      name: 'mecano_test'
-      cmd: "/bin/echo 'test'"
-      machine: config.docker.machine
-    .docker_run
-      cmd: "/bin/echo 'test'"
-      image: 'alpine'
-      name: 'mecano_test'
-      machine: config.docker.machine
       force: true
-    , (err, executed, stdout, stderr) ->
-      return err if err
-      executed.should.be.true()
+      container: 'mecano_test'
+    .docker_run
+      cmd: 'echo test'
+      image: 'alpine'
+      name: 'mecano_test'
+      machine: config.docker.machine
+      rm: false
+    .docker_run
+      cmd: 'echo test'
+      image: 'alpine'
+      name: 'mecano_test'
+      machine: config.docker.machine
+      rm: false
+    , (err, executed, out, serr) ->
+      executed.should.be.false()
       mecano
         ssh: ssh
-      .docker_rm
-        container: 'mecano_test'
         machine: config.docker.machine
-      , (err) -> next(err)
+      .docker_rm
+        force: true
+        container: 'mecano_test'
+      .then next

@@ -1,10 +1,7 @@
 
-# `docker_kill(options, callback)`
+# `docker_exec(options, callback)`
 
-Send signal to containers using SIGKILL or a specified signal.
-Note if container is not running , SIGKILL is not executed and
-return status is UNMODIFIED. If container does not exist nor is running
-SIGNAL is not sent.
+Run a command in a running container
 
 ## Options
 
@@ -12,8 +9,12 @@ SIGNAL is not sent.
     Name/ID of the container. MANDATORY
 *   `machine` (string)
     Name of the docker-machine. MANDATORY if using docker-machine
-*   `signal` (int|string)
-    Use a specified signal. SIGKILL by default
+*   `service` (boolean)
+    if true, run container as a service. Else run as a command. true by default
+*   `uid` (name | uid)
+    Username or uid
+*   `gid` (name | gid)
+    Groupname or gid
 *   `code` (int|array)
     Expected code(s) returned by the command, int or array of int, default to 0.
 *   `code_skipped`
@@ -31,20 +32,26 @@ SIGNAL is not sent.
     Writable EventEmitter in which the standard error output of executed command
     will be piped.
 
+
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `executed`   
-    if command was executed   
+*   `err`
+    Error object if any.
+*   `executed`
+    if command was executed
+*   `stdout`
+    Stdout value(s) unless `stdout` option is provided.
+*   `stderr`
+    Stderr value(s) unless `stderr` option is provided.
 
 ## Example
 
 ```javascript
-mecano.docker_kill({
-  container: 'toto'
-  signal: 9
-}, function(err, is_true){
+mecano.docker({
+  ssh: ssh
+  container: 'myContainer'
+  cmd: '/bin/bash -c "echo toto"'
+}, function(err, is_true, stdout, stderr){
   if(err){
     console.log(err.message);
   }else if(is_true){
@@ -59,19 +66,22 @@ mecano.docker_kill({
 
     module.exports = (options, callback) ->
       # Validate parameters
-      return callback Error 'Missing container parameter' unless options.container?
-      cmd = 'kill'
-      cmd += " -s #{options.signal}" if options.signal?
-      cmd += " #{options.container}"
+      return callback Error 'Missing container' unless options.container?
+      return callback Error 'Missing cmd' unless options.cmd?
+      options.service ?= false
+      # Construct exec command
+      cmd = 'exec'
+      if options.uid?
+        cmd += " -u #{options.uid}"
+        cmd += ":#{options.gid}" if options.gid?
+      else if options.gid?
+        options.log message: 'options.gid ignored unless options.uid is provided', level: 'WARN', module: 'mecano/lib/docker/exec'
+      cmd += " #{options.container} #{options.cmd}"
+      delete options.cmd
       @execute
-        cmd: docker.wrap options, "ps | grep '#{options.container}' | grep 'Up'"
-        code_skipped: 1
-      @execute
-        if: -> @status -1
         cmd: docker.wrap options, cmd
       , -> docker.callback callback, arguments...
 
 ## Modules Dependencies
 
     docker = require '../misc/docker'
-    util = require 'util'

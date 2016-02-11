@@ -22,43 +22,41 @@ describe 'docker build', ->
   they 'Test missing image parameter', (ssh, next) ->
     mecano
       ssh: ssh
+      machine: config.docker.machine
     .docker_build
       false_source: 'Dockerfile'
     .then (err) ->
       return next Error 'Expect error' unless err
-      err.message.should.eql 'Required option "tag"'
+      err.message.should.eql 'Required option "image"'
     .then next
 
   they 'Test exclusive parameters', (ssh, next) ->
     mecano
       ssh: ssh
+      machine: config.docker.machine
     .docker_build
-      tag: 'mecano/should_not_exists_1'
+      image: 'mecano/should_not_exists_1'
       file: "#{__dirname}/Dockerfile"
       content: "FROM scratch \ CMD ['echo \"hello world\"']"
     .then (err) ->
       err.message.should.eql 'Can not build from Dockerfile and content'
     .then next
 
-  they 'from text with search and replace', (ssh, next) ->
+  they 'from text', (ssh, next) ->
     mecano
       ssh: ssh
       machine: config.docker.machine
     .docker_rmi
       image: 'mecano/should_exists_2'
     .docker_build
-      tag: 'mecano/should_exists_2'
+      image: 'mecano/should_exists_2'
       content: """
       FROM scratch
       CMD echo hello
       """
-      write: [
-        match: /^(.* echo) .*$/m
-        replace: '$1 world'
-      ]
     , (err, executed, stdout, stderr) ->
       executed.should.be.true() unless err
-      stderr.should.containEql 'Step 2 : CMD echo world' unless err
+      stderr.should.containEql 'Step 2 : CMD echo hello' unless err
     .docker_rmi
       image: 'mecano/should_exists_2'
     .then next
@@ -76,7 +74,7 @@ describe 'docker build', ->
       CMD echo hello
       """
     .docker_build
-      tag: 'mecano/should_exists_3'
+      image: 'mecano/should_exists_3'
       cwd: scratch
     , (err, executed, stdout, stderr) ->
       executed.should.be.true() unless err
@@ -94,7 +92,7 @@ describe 'docker build', ->
       content: "FROM scratch\nCMD ['echo \"hello build from Dockerfile #{Date.now()}\"']"
       destination: "#{scratch}/mecano_Dockerfile"
     .docker_build
-      tag: 'mecano/should_exists_4'
+      image: 'mecano/should_exists_4'
       file: "#{scratch}/mecano_Dockerfile"
     , (err, executed) ->
       executed.should.be.true() unless err
@@ -107,7 +105,7 @@ describe 'docker build', ->
       ssh: ssh
       machine: config.docker.machine
     .docker_build
-      tag: 'mecano/should_not_exists_4'
+      image: 'mecano/should_not_exists_4'
       file: 'unexisting/file'
       relax: true
     , (err, executed, stdout, stderr) ->
@@ -128,13 +126,13 @@ describe 'docker build', ->
       CMD echo hello
       """
     .docker_build
-      tag: 'mecano/should_exists_5'
+      image: 'mecano/should_exists_5'
       file: "#{scratch}/mecano_Dockerfile"
       log: (msg) -> status_true = msg
     , (err, executed) ->
       executed.should.be.true()
     .docker_build
-      tag: 'mecano/should_exists_5'
+      image: 'mecano/should_exists_5'
       file: "#{scratch}/mecano_Dockerfile"
       log: (msg) -> status_false = msg
     , (err, executed) ->

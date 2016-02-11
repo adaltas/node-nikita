@@ -17,10 +17,9 @@ describe 'docker start', ->
     .docker_rm
       container: 'mecano_test_start'
       force: true
-    .docker_run
+    .docker_service
       image: 'httpd'
       name: 'mecano_test_start'
-      service: true
     .docker_stop
       container: 'mecano_test_start'
     .docker_start
@@ -39,10 +38,9 @@ describe 'docker start', ->
     .docker_rm
       container: 'mecano_test_start'
       force: true
-    .docker_run
+    .docker_service
       image: 'httpd'
       name: 'mecano_test_start'
-      service: true
     .docker_stop
       container: 'mecano_test_start'
     .docker_start

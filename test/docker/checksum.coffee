@@ -22,12 +22,12 @@ describe 'docker checksum', ->
     .docker_rmi
       image: 'mecano/checksum'
     .docker_build
-      tag: 'mecano/checksum:latest'
+      image: 'mecano/checksum'
       content: "FROM scratch\nCMD ['echo \"hello build from text #{Date.now()}\"']"
     , (err, executed, _checksum, stdout, stderr) ->
       checksum = _checksum.trim() unless err
     .docker_checksum
-      repository: 'mecano/checksum'
+      image: 'mecano/checksum'
       tag: 'latest'
     , (err, executed, checksum_valid) ->
       checksum_valid.should.eql checksum unless err
@@ -40,7 +40,7 @@ describe 'docker checksum', ->
       ssh: ssh
       machine: config.docker.machine
     .docker_checksum
-      repository: 'mecano/checksum'
+      image: 'mecano/checksum'
       tag: 'latest'
     , (err, executed, checksum) ->
       checksum.should.be.false()

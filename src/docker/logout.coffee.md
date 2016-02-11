@@ -6,33 +6,33 @@ specified  is the default.
 
 ## Options
 
-*   `registry` (string)
-    Address of the registry server. "https://index.docker.io/v1/" by default
-*   `machine` (string)
-    Name of the docker-machine. MANDATORY if using docker-machine
-*   `code` (int|array)
-    Expected code(s) returned by the command, int or array of int, default to 0.
-*   `code_skipped`
+*   `registry` (string)   
+    Address of the registry server. "https://index.docker.io/v1/" by default   
+*   `machine` (string)   
+    Name of the docker-machine. MANDATORY if using docker-machine   
+*   `code` (int|array)   
+    Expected code(s) returned by the command, int or array of int, default to 0.   
+*   `code_skipped`   
     Expected code(s) returned by the command if it has no effect, executed will
-    not be incremented, int or array of int.
-*   `log`
-    Function called with a log related messages.
-*   `ssh` (object|ssh2)
+    not be incremented, int or array of int.   
+*   `log`   
+    Function called with a log related messages.   
+*   `ssh` (object|ssh2)   
     Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.
-*   `stdout` (stream.Writable)
+    configuration object used to initialize the SSH connection.   
+*   `stdout` (stream.Writable)   
     Writable EventEmitter in which the standard output of executed commands will
-    be piped.
-*   `stderr` (stream.Writable)
+    be piped.   
+*   `stderr` (stream.Writable)   
     Writable EventEmitter in which the standard error output of executed command
-    will be piped.
+    will be piped.   
 
 ## Callback parameters
 
-*   `err`
-    Error object if any.
-*   `executed`
-    if command was executed
+*   `err`   
+    Error object if any.   
+*   `executed`   
+    if command was executed   
 
 ## Example
 
@@ -56,16 +56,11 @@ mecano.docker_pause({
       # Validate parameters
       return callback Error 'Missing container parameter' unless options.container?
       # rm is false by default only if options.service is true
-      docker.get_provider options, (err,  provider) =>
-        return callback err if err
-        options.provider = provider
-        cmd = docker.prepare_cmd provider, options.machine
-        return callback cmd if util.isError cmd
-        cmd += 'docker logout'
-        cmd += " \"#{options.registry}\"" if options.registry?
-        # Construct other exec parameter
-        opts = docker.get_options cmd, options
-        @execute opts, (err, executed, stdout, stderr) -> callback err, executed, stdout, stderr
+      cmd = 'logout'
+      cmd += " \"#{options.registry}\"" if options.registry?
+      @execute
+        cmd: docker.wrap options, cmd
+      , -> docker.callback callback, arguments...
 
 ## Modules Dependencies
 

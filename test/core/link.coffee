@@ -78,8 +78,31 @@ describe 'link', ->
           linked.should.be.true()
         .then next
 
+  they 'should override invalid link', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .write
+      destination: "#{scratch}/test/invalid_file"
+      content: 'error'
+    .write
+      destination: "#{scratch}/test/valid_file"
+      content: 'ok'
+    .link
+      source: "#{scratch}/test/invalid_file"
+      destination: "#{scratch}/test/file_link"
+    , (err, linked) ->
+      linked.should.be.true()
+    .remove
+      destination: "#{scratch}/test/invalid_file"
+    .link
+      source: "#{scratch}/test/valid_file"
+      destination: "#{scratch}/test/file_link"
+    , (err, linked) ->
+      linked.should.be.true()
+    .then next
+
   describe 'error', ->
-  
+
     they 'for invalid arguments', (ssh, next) ->
       # Test missing source
       mecano
