@@ -193,3 +193,25 @@ describe 'api status', ->
       , (options, callback) ->
         # Must be called
         next()
+
+    it.only 'set status to false', (next) ->
+      mecano
+      .call (options, callback) ->
+        callback null, true
+      .call ->
+        status = @status false
+        status.should.be.true()
+      .call ->
+        @status().should.be.false()
+      .then next
+
+    it.only 'set status to true', (next) ->
+      mecano
+      .call (options, callback) ->
+        callback null, false
+      .call ->
+        status = @status true
+        status.should.be.false()
+      .call ->
+        @status().should.be.true()
+      .then next

@@ -314,6 +314,14 @@ functions share a common API with flexible options.
         (index) ->
           if arguments.length is 0
             return stack[0].status.some (status) -> !! status
+          else if index is false
+            value = stack[0].status.some (status) -> !! status
+            stack[0].status = stack[0].status.map -> false
+            return value
+          else if index is true
+            value = stack[0].status.some (status) -> !! status
+            stack[0].status = stack[0].status.map -> true
+            return value
           else
             stack[0].status[Math.abs index]
       proto = Object.defineProperties obj, properties
