@@ -39,7 +39,6 @@ mecano.render({
 ```
 
       if: (options, skip, succeed) ->
-        # return succeed() if typeof options.if is 'undefined'
         options.if = [options.if] unless Array.isArray options.if
         ok = true
         each(options.if)
@@ -71,8 +70,6 @@ mecano.render({
           else
             next new Error "Invalid condition type"
         .then (err) ->
-          # return skip err if err or not ok
-          # succeed()
           if err or not ok then skip(err) else succeed()
 
 ## Run an action if false: `unless`
@@ -91,13 +88,11 @@ If it's an array, all its element must negatively resolve for the condition to
 pass.
 
       unless: (options, skip, succeed) ->
-        # return succeed() if typeof options.unless is 'undefined'
         options.unless = [options.unless] unless Array.isArray options.unless
         ok = true
         each(options.unless)
         .run (not_if, next) =>
           return next() unless ok
-          # options.log? "Mecano `unless`"
           type = typeof not_if
           if not_if is null or type is 'undefined'
             ok = true
@@ -124,8 +119,6 @@ pass.
           else
             next new Error "Invalid condition type"
         .then (err) ->
-          # return skip err if err or not ok
-          # succeed()
           if err or not ok then skip(err) else succeed()
 
 ## Run an action if a command succeed: `if_exec`
@@ -137,7 +130,6 @@ The callback `succeed` is called if all the provided command
 were executed successfully otherwise the callback `skip` is called.
 
       if_exec: (options, skip, succeed) ->
-        # return succeed() unless options.if_exec?
         each(options.if_exec)
         .run (cmd, next) ->
           options.log? "Mecano `if_exec`: #{cmd}"
@@ -161,7 +153,6 @@ The callback `succeed` is called if all the provided command
 were executed with failure otherwise the callback `skip` is called.
 
       unless_exec: (options, skip, succeed) ->
-        # return succeed() unless options.unless_exec?
         each(options.unless_exec)
         .run (cmd, next) ->
           options.log? "Mecano `unless_exec`: #{cmd}"
@@ -190,10 +181,8 @@ exists otherwise the callback `skip` is called.
         {ssh, if_exists, destination} = options
         if typeof if_exists is 'boolean' and destination
           if_exists = if if_exists then [destination] else null
-        # return succeed() unless if_exists?
         each(if_exists)
         .run (if_exists, next) ->
-          # options.log? "Mecano `if_exists`"
           fs.exists ssh, if_exists, (err, exists) ->
             if exists then next() else skip()
         .then succeed
@@ -212,10 +201,8 @@ exists otherwise the callback `skip` is called.
         {ssh, unless_exists, destination} = options
         if typeof unless_exists is 'boolean' and destination
           unless_exists = if unless_exists then [destination] else null
-        # return succeed() unless unless_exists?
         each(unless_exists)
         .run (unless_exists, next) ->
-          # options.log? "Mecano `unless_exists`"
           fs.exists ssh, unless_exists, (err, exists) ->
             if exists then skip() else next()
         .then succeed
@@ -233,14 +220,11 @@ exists otherwise the callback `skip` is called with an error.
         # return succeed() unless options.should_exist?
         each(options.should_exist)
         .run (should_exist, next) ->
-          # options.log? "Mecano `should_exist`"
           fs.exists options.ssh, should_exist, (err, exists) ->
             if exists
             then next()
             else next Error "File does not exist: #{should_exist}"
-        # .then (err) -> if err then skip(err) else succeed()
-        .on 'error', (err) ->
-          skip err
+        .on 'error', (err) -> skip err
         .on 'end', succeed
 
 ## Ensure a file already exist: `should_not_exist`
@@ -256,7 +240,6 @@ exists otherwise the callback `skip` is called with an error.
         # return succeed() unless options.should_not_exist?
         each(options.should_not_exist)
         .run (should_not_exist, next) ->
-          # options.log? "Mecano `should_not_exist`"
           fs.exists options.ssh, should_not_exist, (err, exists) ->
             if exists
             then next new Error "File does not exist: #{should_not_exist}"
@@ -298,7 +281,7 @@ conditions.all({
           return succeed() unless key?
           return next() unless module.exports[key]?
           module.exports[key].call context, options, (err) ->
-            options.log? "Mecano `#{key}`: skipping action"
+            # options.log? "Mecano `#{key}`: skipping action"
             failed err
           , next
         next()
