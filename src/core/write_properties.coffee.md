@@ -6,6 +6,7 @@ Write a file in the Java properties format.
 ## Source Code
 
     module.exports = (options) ->
+      options.log message: "Calling write_properties", level: 'WARN', module: 'mecano/lib/write_properties'
       throw Error "Missing argument options.destination" unless options.destination
       options.separator ?= '='
       options.content ?= {}

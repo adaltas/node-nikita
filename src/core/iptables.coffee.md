@@ -87,6 +87,7 @@ require('mecano').iptables({
 ## Source Code
 
     module.exports = (options, callback) ->
+      options.log message: "Calling iptables", level: 'WARN', module: 'mecano/lib/iptables'
       options.log message: "List existing rules", level: 'DEBUG', module: 'mecano/lib/iptables'
       @execute
         cmd: "service iptables status &>/dev/null && iptables -S"

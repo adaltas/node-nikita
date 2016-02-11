@@ -60,6 +60,7 @@ require('mecano').copy({
 ## Source Code
 
     module.exports = (options, callback) ->
+      options.log message: "Calling copy", level: 'WARN', module: 'mecano/lib/copy'
       # Validate parameters
       return callback Error 'Missing source' unless options.source
       return callback Error 'Missing destination' unless options.destination

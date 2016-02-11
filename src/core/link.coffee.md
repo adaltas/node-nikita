@@ -47,6 +47,7 @@ require('mecano').link({
 ## Source Code
 
     module.exports = (options, callback) ->
+      options.log message: "Calling link", level: 'WARN', module: 'mecano/lib/link'
       linked = 0
       sym_exists = (options, callback) ->
         fs.exists options.ssh, options.destination, (err, exists) ->
@@ -109,7 +110,3 @@ require('mecano').link({
 
     fs = require 'ssh2-fs'
     path = require 'path'
-
-
-
-

@@ -83,6 +83,7 @@ mecano.execute({
 ## Source Code
 
     module.exports = (options, callback) ->
+      options.log message: "Calling execute", level: 'WARN', module: 'mecano/lib/execute'
       stds = options.user_args
       # Validate parameters
       options.cmd = options.argument if typeof options.argument is 'string'

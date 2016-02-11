@@ -39,6 +39,7 @@ require('mecano').chmod({
 ## Source Code
 
     module.exports = (options, callback) ->
+      options.log message: "Calling chmod", level: 'WARN', module: 'mecano/lib/chmod'
       # Validate parameters
       return callback Error "Missing destination: #{JSON.stringify options.destination}" unless options.destination
       return callback Error "Missing option 'mode'" unless options.mode

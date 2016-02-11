@@ -64,6 +64,7 @@ require('mecano')
 ## Source Code
 
     module.exports = (options, callback) ->
+      options.log message: "Calling mkdir", level: 'WARN', module: 'mecano/lib/mkdir'
       modified = false
       # Validate parameters
       # options = { directory: options } if typeof options is 'string'

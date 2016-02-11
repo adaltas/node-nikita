@@ -85,6 +85,7 @@ require('mecano').render({
 ## Source Code
 
     module.exports = (options, callback) ->
+      options.log message: "Calling render", level: 'WARN', module: 'mecano/lib/render'
       # Validate parameters
       return callback new Error 'Missing source or content' unless options.source or options.content
       return callback new Error 'Missing destination' unless options.destination
@@ -112,9 +113,3 @@ require('mecano').render({
 
     fs = require 'ssh2-fs'
     path = require 'path'
-
-
-
-
-
-

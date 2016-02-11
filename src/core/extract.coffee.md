@@ -48,6 +48,7 @@ require('mecano').extract({
 ## Source Code
 
     module.exports = (options, callback) ->
+      options.log message: "Calling extract", level: 'WARN', module: 'mecano/lib/extract'
       # Validate parameters
       return callback new Error "Missing source: #{options.source}" unless options.source
       destination = options.destination ? path.dirname options.source

@@ -63,6 +63,7 @@ require('mecano')
 ## Source Code
 
     module.exports = (options, callback) ->
+      options.log message: "Calling remove", level: 'WARN', module: 'mecano/lib/remove'
       # Validate parameters
       options.destination = options.argument if options.argument?
       options.destination ?= options.source

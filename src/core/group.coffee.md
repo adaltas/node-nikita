@@ -50,6 +50,7 @@ The result of the above action can be viewed with the command
 ## Source Code
 
     module.exports = (options, callback) ->
+      options.log message: "Calling group", level: 'WARN', module: 'mecano/lib/group'
       return callback new Error "Option 'name' is required" unless options.name
       options.system ?= false
       options.gid ?= null

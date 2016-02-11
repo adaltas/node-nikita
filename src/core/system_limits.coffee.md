@@ -169,6 +169,7 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
 ## Source Code
     
     module.exports = (options, callback) ->
+      options.log message: "Calling system_limits", level: 'WARN', module: 'mecano/lib/system_limits'
       return callback Error "Missing required option 'user'" unless options.user
       # Parameters where value can be guessed
       for opt in ['nofile', 'nproc']
