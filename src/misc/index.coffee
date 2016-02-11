@@ -179,7 +179,10 @@ misc = module.exports =
               callback err, /.*\s([\w\d]+)$/.exec(stdout.trim())[1]
       hashs = []
       ssh2fs.stat ssh, file, (err, stat) ->
-        return callback new Error "Does not exist: #{file}" if err?.code is 'ENOENT'
+        if err?.code is 'ENOENT'
+          err = Error "Does not exist: #{file}"
+          err.code = 'ENOENT'
+          return callback err
         return callback err if err
         if stat.isFile()
           return hasher ssh, file, callback
@@ -539,8 +542,3 @@ misc = module.exports =
         out += "#{prefix}#{string.repeat '[', depth+1}#{k}#{string.repeat ']', depth+1}\n"
         out += misc.ini.stringify_multi_brackets v, depth + 1, options
       out
-
-
-
-
-

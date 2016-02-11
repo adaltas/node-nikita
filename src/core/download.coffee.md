@@ -114,75 +114,41 @@ mecano.download
 ## Source Code
 
     module.exports = (options) ->
+      options.log message: "Calling download", level: 'WARN', module: 'mecano/lib/download'
       {destination, source} = options
       return callback new Error "Missing source: #{source}" unless source
       return callback new Error "Missing destination: #{destination}" unless destination
-      options.source = source = options.source.substr 7 if /^file:\/\//.test options.source
+      options.source = options.source.substr 7 if /^file:\/\//.test options.source
       stageDestination = "#{destination}.#{Date.now()}#{Math.round(Math.random()*1000)}"
       if options.md5?
         return callback new Error "Invalid MD5 Hash:#{options.md5}" unless typeof options.md5 in ['string', 'boolean']
         algo = 'md5'
-        hash = options.md5
+        source_hash = options.md5
       else if options.sha1?
         return callback new Error "Invalid SHA-1 Hash:#{options.sha1}" unless typeof options.sha1 in ['string', 'boolean']
         algo = 'sha1'
-        hash = options.sha1
+        source_hash = options.sha1
       else
         algo = 'md5'
-        hash = false
+        # source_hash = false
       protocols_http = ['http:', 'https:']
       protocols_ftp = ['ftp:', 'ftps:']
       options.cache ?= !!(options.cache_dir or options.cache_file)
-      hash_info = null
-      # Download the file if
-      # - file doesnt exist
-      # - option force is provided
-      # - hash isnt true and doesnt match
-      @call
-        handler: (_, callback) ->
-          u = url.parse source
-          unless u.protocol is null
-            options.log message: "Bypass source hash computation for non-file protocols", level: 'INFO', module: 'mecano/lib/download'
-            return callback()
-          return callback() if hash isnt true
-          misc.file.hash options.ssh, source, algo, (err, value) ->
-            return callback err if err
-            options.log message: "Computed hash value is '#{value}'", level: 'INFO', module: 'mecano/lib/download'
-            hash = value
-            callback()
-      @call
+      # hash_info = null
+      options.log message: "Using force: #{JSON.stringify options.force}", level: 'DEBUG', module: 'mecano/lib/download'
+      source_url = url.parse source
+      @call # Accelarator in case we know the destination signature
+        if: typeof source_hash is 'string'
         shy: true
         handler: (_, callback) ->
-          options.log message: "Check if destination (#{destination}) exists", level: 'DEBUG', module: 'mecano/lib/download'
-          # Note about next line: ssh might be null with file, not very clear
-          ssh2fs.exists options.ssh, destination, (err, exists) =>
-            return callback err if err
-            if exists
-              options.log message: "Destination exists", level: 'INFO', module: 'mecano/lib/download'
-              # If no checksum , we ignore MD5 check
-              if options.force
-                options.log message: "Force download", level: 'INFO', module: 'mecano/lib/download'
-                return callback null, true
-              else if hash and typeof hash is 'string'
-                # then we compute the checksum of the file
-                options.log message: "Comparing #{algo} hash", level: 'DEBUG', module: 'mecano/lib/download'
-                misc.file.hash options.ssh, destination, algo, (err, c_hash) ->
-                  return callback err if err
-                  # And compare with the checksum provided by the user
-                  if hash is c_hash
-                    options.log message: "Hashes match, skipping", level: 'DEBUG', module: 'mecano/lib/download'
-                    return callback null, false
-                  options.log message: "Hashes don't match, delete then re-download", level: 'WARN', module: 'mecano/lib/download'
-                  ssh2fs.unlink options.ssh, destination, (err) ->
-                    return callback err if err
-                    callback null, true
-              else
-                options.log message: "Destination exists, check disabled, skipping", level: 'DEBUG', module: 'mecano/lib/download'
-                callback null, false
-            else
-              callback null, true
-      , (err, status) ->
-        @end() unless status
+          options.log message: "Shortcircuit check if provided hash match destination", level: 'WARN', module: 'mecano/lib/download'
+          misc.file.hash options.ssh, options.destination, algo, (err, hash) =>
+            err = null if err?.code is 'ENOENT'
+            callback err, source_hash is hash
+        , (err, end) ->
+          return unless end
+          options.log message: "Destination with valid signature, download aborted", level: 'INFO', module: 'mecano/lib/download'
+          @end()
       @cache # Download the file and place it inside local cache
         if: options.cache
         ssh: null
@@ -194,98 +160,129 @@ mecano.download
         proxy: options.proxy
       , (err, cached, file) ->
         throw err if err
-        source = file if options.cache
-      @call (_, callback) -> # File Download
-        u = url.parse source
-        return callback() unless u.protocol is null
-        if not options.cache
-          hash_info = ssh: options.ssh, source: options.source if hash is true
-          @mkdir path.dirname stageDestination
-          @copy
-            source: options.source
-            destination: stageDestination
-          @then callback
-        else if not options.ssh and options.cache
-          hash_info = ssh: null, source: source if hash is true
-          rs = fs.createReadStream source
-          ws = fs.createWriteStream stageDestination
-          rs.pipe(ws)
-          .on 'close', callback
-          .on 'error', callback
-        else if options.ssh and options.cache
-          hash_info = ssh: null, source: source if hash is true
-          rs = fs.createReadStream source
-          ssh2fs.writeFile options.ssh, stageDestination, rs, (err) ->
-            callback err
-        else
-          callback Error "Unsupported API"
-      @call (_, callback) -> # HTTP Download
-        u = url.parse source
-        return callback() unless u.protocol in protocols_http
-        # is_http = u.protocol in protocols_http
-        if not options.cache
-          hash_info = ssh: options.ssh, source: options.source if hash is true
+        options.source = file if options.cache
+        source_url = url.parse options.source
+      @call # HTTP Download
+        if: -> source_url.protocol in protocols_http
+        handler: (_, callback) ->
           fail = if options.fail then "--fail" else ''
-          k = if u.protocol is 'https:' then '-k' else ''
+          k = if source_url.protocol is 'https:' then '-k' else ''
           cmd = "curl #{fail} #{k} -s #{options.source} -o #{stageDestination}"
           cmd += " -x #{options.proxy}" if options.proxy
           options.log message: "Download file from url using curl", level: 'INFO', module: 'mecano/lib/download'
-          @mkdir path.dirname stageDestination
+          @mkdir
+            shy: true
+            destination: path.dirname stageDestination
           @execute
             cmd: cmd
-            # unless_exists: options.cache_file
+            shy: true
+          @call
+            if: typeof source_hash is 'string'
+            handler: (_, callback) ->
+              misc.file.hash options.ssh, stageDestination, algo, (err, hash) =>
+                return callback Error "Invalid downloaded checksum, found '#{hash}' instead of '#{source_hash}'" if source_hash isnt hash
+                callback()
+          @call (_, callback) ->
+            compare_hash null, stageDestination, options.ssh, options.destination, algo, (err, match, hash1, hash2) ->
+              options.log message: "Downloaded hash is '#{hash1}'", level: 'INFO', module: 'mecano/lib/download'
+              options.log message: "Destination hash is '#{hash2}'", level: 'INFO', module: 'mecano/lib/download'
+              callback err, not match
+          @remove
+            unless: -> @status -1
+            shy: true
+            destination: stageDestination
           @then callback
-        else if not options.ssh and options.cache
-          hash_info = ssh: null, source: source if hash is true
-          rs = fs.createReadStream source
-          ws = fs.createWriteStream stageDestination
-          rs.pipe(ws)
-          .on 'close', callback
-          .on 'error', callback
-        else if options.ssh and options.cache
-          hash_info = ssh: null, source: source if hash is true
-          rs = fs.createReadStream source
-          ssh2fs.writeFile options.ssh, stageDestination, rs, (err) ->
-            callback err
-        else
-          callback Error "Unsupported API"
-      @call (_, callback) -> # Convert boolean hash
-        return callback() unless hash_info
-        misc.file.hash hash_info.ssh, hash_info.source, algo, (err, calc_hash) ->
-          hash = calc_hash
-          callback err
-      @call (_, callback) -> # Hash Validation
-        return callback() unless hash
-        options.log message: "Compare the downloaded file with the provided checksum", level: 'DEBUG', module: 'mecano/lib/download'
-        misc.file.hash options.ssh, stageDestination, algo, (err, calc_hash) ->
-          return callback err if err
-          if hash is calc_hash
-            options.log message: "Mecano `download`: Hash match with staged uploaded file", level: 'DEBUG', module: 'mecano/lib/download'
-            return callback()
-          # Download is invalid, cleaning up
-          misc.file.remove options.ssh, stageDestination, (err) ->
-            return callback err if err
-            callback Error "Invalid checksum, found \"#{calc_hash}\" instead of \"#{hash}\""
+      @call # File Download without cache
+        if: -> source_url.protocol is null and not options.cache
+        handler: (_, callback) ->
+          options.log  message: "No cache, rely on copy", level: 'DEBUG', module: 'mecano/lib/download'
+          @call (_, callback) ->
+            compare_hash options.ssh, options.source, options.ssh, options.destination, algo, (err, match, hash1, hash2) ->
+              options.log message: "Hash dont match, source is '#{hash1}' and destination is '#{hash2}'", level: 'WARN', module: 'mecano/lib/download' unless match
+              options.log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'mecano/lib/download' if match
+              callback err, not match
+          @mkdir
+            if: -> @status -1
+            shy: true
+            destination: path.dirname stageDestination
+          @call
+            if: -> @status -2
+            handler: (_, callback) ->
+              rs = fs.createReadStream options.source
+              rs.on 'error', (err) ->
+                options.log  message: "No such source file: #{options.source} (ssh is #{JSON.stringify !!options.ssh})", level: 'ERROR', module: 'mecano/lib/download'
+                err.message = 'No such source file'
+                callback err
+              ws = fs.createWriteStream stageDestination
+              rs.pipe(ws)
+              .on 'close', callback
+              .on 'error', callback
+          @then callback
+      @call # File Download with cache and no ssh
+        if: -> source_url.protocol is null and options.cache and not options.ssh
+        handler: (_, callback) ->
+          options.log  message: "With cache and without SSH, ", level: 'DEBUG', module: 'mecano/lib/download'
+          @call (_, callback) ->
+            compare_hash null, options.source, options.ssh, options.destination, algo, (err, match) ->
+              callback err, not match
+          @mkdir
+            if: -> @status -1
+            shy: true
+            destination: path.dirname stageDestination
+          @call
+            if: -> @status -2
+            handler: (_, callback) ->
+              rs = fs.createReadStream options.source
+              rs.on 'error', (err) ->
+                console.log 'rs on error', err
+              ws = fs.createWriteStream stageDestination
+              rs.pipe(ws)
+              .on 'close', callback
+              .on 'error', callback
+          @then callback
+      @call # File Download with cache and ssh
+        if: -> source_url.protocol is null and options.cache and options.ssh
+        handler: (_, callback) ->
+          @call (_, callback) ->
+            compare_hash null, options.source, options.ssh, options.destination, algo, (err, match, hash1, hash2) ->
+              callback err, not match
+          @mkdir
+            if: -> @status -1
+            shy: true
+            destination: path.dirname stageDestination
+          @call
+            if: -> @status -2
+            handler: (_, callback) ->
+              rs = fs.createReadStream options.source
+              rs.on 'error', (err) ->
+                console.log 'rs on error', err
+              ssh2fs.writeFile options.ssh, stageDestination, rs, (err) ->
+                options.log "Upload failed from local to remote" if err
+                callback err
+          @then callback
       @call ->
-        # Note about next line: ssh might be null with file, not very clear
-        # fs.rename options.ssh, stageDestination, destination, (err) ->
-        #   return callback err if err
-        #   downloaded++
-        #   callback()
         options.log message: "Unstage downloaded file", level: 'DEBUG', module: 'mecano/lib/download'
         @move
+          if: @status()
           source: stageDestination
-          destination: destination
-          source_md5: options.md5
+          destination: options.destination
         @chmod
-          destination: destination
+          destination: options.destination
           mode: options.mode
           if: options.mode?
         @chown
-          destination: destination
+          destination: options.destination
           uid: options.uid
           gid: options.gid
           if: options.uid? or options.gid?
+
+    compare_hash = (ssh1, file1, ssh2, file2, algo, callback) ->
+      misc.file.hash ssh1, file1, algo, (err, hash1) ->
+        return callback err if err
+        misc.file.hash ssh2, file2, algo, (err, hash2) ->
+          err = null if err?.code is 'ENOENT'
+          return callback err if err
+          callback null, hash1 is hash2, hash1, hash2
 
 ## Module Dependencies
 
