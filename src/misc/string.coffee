@@ -45,6 +45,7 @@ module.exports =
             options.filters.isString ?= (obj) -> typeof obj is 'string'
             options.filters.isArray ?= (obj) -> Array.isArray obj
             options.filters.isObject ?= (obj) -> typeof obj is 'object' and not Array.isArray obj
+            options.filters.contains ?= (arr, obj) -> if Array.isArray arr then obj in arr else false
             options.filters.isEmpty ?= (obj) ->
               return true if !obj? or obj is ''
               return true if Array.isArray obj and obj.length is 0
