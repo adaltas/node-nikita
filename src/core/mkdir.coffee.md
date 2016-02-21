@@ -76,7 +76,7 @@ require('mecano')
       options.directory = [options.directory] unless Array.isArray options.directory
       options.parent = {} if options.parent is true
       each options.directory
-      .run (directory, callback) =>
+      .call (directory, callback) =>
         # first, we need to find which directory need to be created
         options.log message: "Directory option #{directory}", level: 'DEBUG', module: 'mecano/lib/mkdir'
         do_stats = ->
@@ -90,7 +90,7 @@ require('mecano')
           directories = for i in [0...directories.length]
             '/' + directories.slice(0, directories.length - i).join '/'
           each(directories)
-          .run (directory, i, next) ->
+          .call (directory, i, next) ->
             return next() if end
             fs.stat options.ssh, directory, (err, stat) ->
               if err?.code is 'ENOENT' # if the directory is not yet created
@@ -114,7 +114,7 @@ require('mecano')
             do_create directories
         do_create = (directories) ->
           each(directories.reverse())
-          .run (directory, i, callback) ->
+          .call (directory, i, callback) ->
             # Directory name contains variables
             # eg /\${/ on './var/cache/${user}' creates './var/cache/'
             if options.exclude? and options.exclude instanceof RegExp

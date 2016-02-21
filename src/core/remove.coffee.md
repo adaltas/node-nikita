@@ -73,7 +73,7 @@ require('mecano')
       glob options.ssh, options.destination, (err, files) ->
         return callback err if err
         each files
-        .run (file, callback) ->
+        .call (file, callback) ->
           modified = true
           misc.file.remove options.ssh, file, callback
         .then (err) ->

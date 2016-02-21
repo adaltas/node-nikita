@@ -92,7 +92,7 @@ require('mecano').copy({
         glob options.ssh, "#{dir}/**", dot: true, (err, files) ->
           return callback err if err
           each files
-          .run (file, callback) ->
+          .call (file, callback) ->
             do_copy file, callback
           .then callback
       do_copy = (source, callback) =>

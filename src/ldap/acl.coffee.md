@@ -68,7 +68,7 @@ require('mecano').ldap_acl({
       options.acls ?= [{}]
       modified = false
       each(options.acls)
-      .run (acl, callback) =>
+      .call (acl, callback) =>
         do_getdn = =>
           return do_getacls() if options.hdb_dn
           options.log message: "Get DN of the HDB to modify", level: 'DEBUG', module: 'mecano/ldap/acl'

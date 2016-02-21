@@ -70,7 +70,7 @@ require('mecano/alt/ldap_acl')({
       options.acls ?= [{}]
       updated = false
       each(options.acls)
-      .run (acl, next) ->
+      .call (acl, next) ->
         acl.before ?= options.before
         acl.to ?= options.to
         acl.by ?= options.by
@@ -202,5 +202,3 @@ require('mecano/alt/ldap_acl')({
 
 [acls]: http://www.openldap.org/doc/admin24/access-control.html
 [ldapclt]: http://ldapjs.org/client.html
-
-

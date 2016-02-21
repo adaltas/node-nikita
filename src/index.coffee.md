@@ -121,7 +121,7 @@ functions share a common API with flexible options.
       intercept_before = (target_options, callback) ->
         return callback() if target_options.intercept_before
         each befores
-        .run (before, next) ->
+        .call (before, next) ->
           for k, v of before
             continue if k is 'handler'
             return next() unless v is target_options[k]
@@ -136,7 +136,7 @@ functions share a common API with flexible options.
       intercept_after = (target_options, args, callback) ->
         return callback() if target_options.intercept_after
         each afters
-        .run (after, next) ->
+        .call (after, next) ->
           for k, v of after
             continue if k is 'handler'
             return next() unless v is target_options[k]

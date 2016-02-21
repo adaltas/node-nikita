@@ -84,7 +84,7 @@ misc = module.exports =
     resolve: (locations..., callback) ->
       normalized = []
       each(locations)
-      .run (location, next) ->
+      .call (location, next) ->
         misc.path.normalize location, (location) ->
           normalized.push location
           next()
@@ -190,7 +190,7 @@ misc = module.exports =
           compute = (files) ->
             files.sort()
             each files
-            .run (item, next) ->
+            .call (item, next) ->
               hasher ssh, item, (err, h) ->
                 return next err if err
                 hashs.push h if h?
@@ -222,7 +222,7 @@ misc = module.exports =
       return callback new Error 'Minimum of 2 files' if files.length < 2
       result = null
       each files
-      .run (file, next) ->
+      .call (file, next) ->
         misc.file.hash ssh, file, (err, md5) ->
           return next err if err
           if result is null
@@ -403,7 +403,6 @@ misc = module.exports =
       comment = options.comment or ';'
       writing = false
       previous = {}
-
       lines.forEach (line, _, __) ->
         return if not line or line.match(/^\s*$/)
         # Category

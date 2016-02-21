@@ -47,7 +47,7 @@ require 'mecano'
       quorum_current = 0
       modified = false
       each options.cmd
-      .run (cmd, next) =>
+      .call (cmd, next) =>
         count = 0
         return next() if quorum_current >= options.quorum
         run = =>

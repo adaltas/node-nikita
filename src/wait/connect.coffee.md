@@ -99,7 +99,7 @@ require 'mecano'
       modified = false
       each servers
       .parallel true # Make sure we dont hit max listeners limit
-      .run (server, next) =>
+      .call (server, next) =>
         count = 0
         rand = Date.now() + inc++
         randfiles.push randfile = "#{options.randdir}/#{rand}"

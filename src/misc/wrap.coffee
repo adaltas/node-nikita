@@ -23,7 +23,7 @@ be converted to integer if they match a username or a group.
 ###
 module.exports.options = (options, callback) ->
   each options
-  .run (options, next) ->
+  .call (options, next) ->
     options.if_exists = [options.if_exists] if typeof options.if_exists is 'string'
     options.unless_exists = [options.unless_exists] if typeof options.unless_exists is 'string'
     if options.if_exists then for el, i in options.if_exists
@@ -57,6 +57,3 @@ module.exports.options = (options, callback) ->
     connection()
   .then (err) ->
     callback err, options
-
-
-

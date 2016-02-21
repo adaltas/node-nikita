@@ -42,7 +42,7 @@ mecano.render({
         options.if = [options.if] unless Array.isArray options.if
         ok = true
         each(options.if)
-        .run (si, next) =>
+        .call (si, next) =>
           return next() unless ok
           type = typeof si
           if si is null or type is 'undefined'
@@ -91,7 +91,7 @@ pass.
         options.unless = [options.unless] unless Array.isArray options.unless
         ok = true
         each(options.unless)
-        .run (not_if, next) =>
+        .call (not_if, next) =>
           return next() unless ok
           type = typeof not_if
           if not_if is null or type is 'undefined'
@@ -131,7 +131,7 @@ were executed successfully otherwise the callback `skip` is called.
 
       if_exec: (options, skip, succeed) ->
         each(options.if_exec)
-        .run (cmd, next) ->
+        .call (cmd, next) ->
           options.log? "Mecano `if_exec`: #{cmd}"
           options = { cmd: cmd, ssh: options.ssh }
           run = exec options
@@ -154,7 +154,7 @@ were executed with failure otherwise the callback `skip` is called.
 
       unless_exec: (options, skip, succeed) ->
         each(options.unless_exec)
-        .run (cmd, next) ->
+        .call (cmd, next) ->
           options.log? "Mecano `unless_exec`: #{cmd}"
           options = { cmd: cmd, ssh: options.ssh }
           run = exec options
@@ -182,7 +182,7 @@ exists otherwise the callback `skip` is called.
         if typeof if_exists is 'boolean' and destination
           if_exists = if if_exists then [destination] else null
         each(if_exists)
-        .run (if_exists, next) ->
+        .call (if_exists, next) ->
           fs.exists ssh, if_exists, (err, exists) ->
             if exists then next() else skip()
         .then succeed
@@ -202,7 +202,7 @@ exists otherwise the callback `skip` is called.
         if typeof unless_exists is 'boolean' and destination
           unless_exists = if unless_exists then [destination] else null
         each(unless_exists)
-        .run (unless_exists, next) ->
+        .call (unless_exists, next) ->
           fs.exists ssh, unless_exists, (err, exists) ->
             if exists then skip() else next()
         .then succeed
@@ -219,7 +219,7 @@ exists otherwise the callback `skip` is called with an error.
       should_exist: (options, skip, succeed) ->
         # return succeed() unless options.should_exist?
         each(options.should_exist)
-        .run (should_exist, next) ->
+        .call (should_exist, next) ->
           fs.exists options.ssh, should_exist, (err, exists) ->
             if exists
             then next()
@@ -239,7 +239,7 @@ exists otherwise the callback `skip` is called with an error.
       should_not_exist: (options, skip, succeed) ->
         # return succeed() unless options.should_not_exist?
         each(options.should_not_exist)
-        .run (should_not_exist, next) ->
+        .call (should_not_exist, next) ->
           fs.exists options.ssh, should_not_exist, (err, exists) ->
             if exists
             then next new Error "File does not exist: #{should_not_exist}"

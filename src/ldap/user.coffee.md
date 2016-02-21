@@ -49,7 +49,7 @@ require('mecano').ldap_user({
       options.user = [options.user] unless Array.isArray options.user
       modified = false
       each(options.user)
-      .run (user, callback) =>
+      .call (user, callback) =>
         do_user = =>
           entry = {}
           for k, v of user
