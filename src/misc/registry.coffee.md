@@ -70,6 +70,8 @@
       service_startup: require '../service/startup'
       service_status: require '../service/status'
       service_stop: require '../service/stop'
+      # yaml
+      yaml: require '../core/yaml'
       # Wait
       wait_execute: require '../wait/execute'
       wait_connect: require '../wait/connect'
