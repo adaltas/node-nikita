@@ -291,6 +291,9 @@ functions share a common API with flexible options.
         ->
           args = [].slice.call(arguments)
           options = normalize_options args, 'call'
+          for opts in options
+            throw Error 'Missing handler option' unless opts.handler
+            throw Error "Handler not a function, got '#{opts.handler}'" unless typeof opts.handler is 'function'
           todos.push opts for opts in options
           setImmediate _run_ if todos.length is options.length # Activate the pump
           obj
