@@ -57,12 +57,12 @@ mecano.render({
                 ok = false unless si.call @, options
                 next()
               catch err then next err
-            if si.length is 2
+            else if si.length is 2
               si.call @, options, (err, is_ok) ->
                 return next err if err
                 ok = false unless is_ok
                 next()
-            else next new Error "Invalid callback"
+            else next new Error "Invalid argument length, expecting 2 or less, got #{si.length}"
           else if type is 'string'
             si = template si, options
             ok = false if si.length is 0
@@ -106,7 +106,7 @@ pass.
                 ok = false if not_if.call @, options
                 next()
               catch err then next err
-            if not_if.length is 2
+            else if not_if.length is 2
               not_if.call @, options, (err, is_ok) ->
                 return next err if err
                 ok = false if is_ok
