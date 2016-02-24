@@ -43,7 +43,7 @@ require('mecano').move({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Calling move", level: 'WARN', module: 'mecano/lib/move'
+      options.log message: "Calling move", level: 'DEBUG', module: 'mecano/lib/move'
       do_exists = ->
         options.log message: "Stat destination", level: 'DEBUG', module: 'mecano/lib/move'
         fs.stat options.ssh, options.destination, (err, stat) ->

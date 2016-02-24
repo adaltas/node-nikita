@@ -36,7 +36,7 @@ require('mecano').touch({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Calling touch", level: 'WARN', module: 'mecano/lib/touch'
+      options.log message: "Calling touch", level: 'DEBUG', module: 'mecano/lib/touch'
       # Validate parameters
       options.destination = options.argument if options.argument?
       return callback new Error "Missing destination: #{options.destination}" unless options.destination

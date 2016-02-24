@@ -87,7 +87,7 @@ require('mecano').ini({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Calling ini", level: 'WARN', module: 'mecano/lib/ini'
+      options.log message: "Calling ini", level: 'DEBUG', module: 'mecano/lib/ini'
       {merge, destination, content, ssh} = options
       options.clean ?= true
       # Validate parameters

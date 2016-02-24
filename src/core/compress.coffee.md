@@ -46,7 +46,7 @@ require('mecano').extract({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Calling compress", level: 'WARN', module: 'mecano/lib/compress'
+      options.log message: "Calling compress", level: 'DEBUG', module: 'mecano/lib/compress'
       # Validate parameters
       return callback new Error "Missing source: #{options.source}" unless options.source
       return callback new Error "Missing destination: #{options.destination}" unless options.destination

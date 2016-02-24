@@ -54,7 +54,7 @@ mecano.download
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Calling cache", level: 'WARN', module: 'mecano/lib/cache'
+      options.log message: "Calling cache", level: 'DEBUG', module: 'mecano/lib/cache'
       return callback Error "Missing source: '#{options.source}'" unless options.source
       return callback Error "Missing one of 'destination', 'cache_file' or 'cache_dir' option" unless options.cache_file or options.destination or options.cache_dir
       options.destination ?= options.cache_file
