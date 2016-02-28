@@ -45,8 +45,8 @@
     "ssh2-connect": "~0.0.7",
     "ssh2-exec": "~0.3.1",
     "ssh2-fs": "~0.1.7",
-    "tilde-expansion": "~0.0.0",
-    "stack-trace": "~0.0.9"
+    "stack-trace": "~0.0.9",
+    "tilde-expansion": "~0.0.0"
   },
   "devDependencies": {
     "coffee-script": ">=1.10.0",

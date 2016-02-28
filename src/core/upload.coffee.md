@@ -99,16 +99,16 @@ require('mecano').render({
           return @write options, (err, written) -> callback err, written
         else
           options.log message: "Enter binary mode", level: 'DEBUG', module: 'mecano/lib/upload'
-          return do_src_checksum()
-      do_src_checksum = ->
-        return do_dest_checksum() unless options.md5 is true or options.sha1 is true
+          return do_src_checksum do_dest_checksum
+      do_src_checksum = (next) ->
+        return next() unless options.md5 is true or options.sha1 is true
         algorithm = if options.md5 then 'md5' else 'sha1'
         options.log message: "Get source #{algorithm} checksum", level: 'DEBUG', module: 'mecano/lib/upload'
         get_checksum null, options.source, algorithm, (err, checksum) ->
           return callback err if err
           options[algorithm] = checksum
           options.log message: "#{algorithm} checksum is \"#{checksum}\"", level: 'INFO', module: 'mecano/lib/upload'
-          do_dest_checksum()
+          next()
       do_dest_checksum = ->
         return do_upload() unless options.md5 or options.sha1
         options.log message: "Validate destination checksum, otherwise re-upload", level: 'INFO', module: 'mecano/lib/upload'
@@ -136,7 +136,7 @@ require('mecano').render({
               rs.pipe ws
               .on 'close', ->
                 uploaded = true
-                do_md5()
+                do_src_checksum do_md5
               .on 'error', callback
       do_md5 = ->
         return do_sha1() unless options.md5

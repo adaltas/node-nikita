@@ -105,7 +105,7 @@ describe 'render', ->
     it 'test personal filter', (next) ->
       source = "#{scratch}/render.j2"
       destination = "#{scratch}/render.txt"
-      fs.writeFile source, 'Hello {% if who | isString %}{{ who }}{% endif %}{% if anInt | isNum %} {{ anInt }}{% endif %}', (err, content) ->
+      fs.writeFile source, 'Hello {% if who | isString %}{{ who }} {% endif %}{% if anInt | isNum %}{{ anInt }} {% endif %}{% if arr | contains("toto") %}ok{% endif %}', (err, content) ->
         return next err if err
         mecano.render
           source: source
@@ -113,12 +113,13 @@ describe 'render', ->
           context:
             who: 'you'
             anInt: 42
+            arr: ['titi', 'toto']
           filters: isNum: (obj) -> return typeof obj is 'number'
         , (err, rendered) ->
           return next err if err
           rendered.should.be.true()
           fs.readFile destination, 'ascii', (err, content) ->
-            content.should.eql 'Hello you 42'
+            content.should.eql 'Hello you 42 ok'
             next()
 
     it 'check autoescaping (disabled)', (next) ->

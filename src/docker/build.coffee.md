@@ -30,6 +30,8 @@ Status unmodified if the repository is identical to a previous one
     Always remove intermediate containers during build. Default to false   
 *   `no_cache` (boolean)   
     Do not use cache when building the repository. Default to false   
+*   `build_arg` ("k=v" | [])   
+    Send arguments to the build (Must match an ARG command).   
 *   `code`   (int|array)   
     Expected code(s) returned by the command, int or array of int, default to 0.   
 *   `code_skipped`   
@@ -126,7 +128,7 @@ mecano.docker_build({
 ## Source Code
 
     module.exports = (options, callback) ->
-      # Validate parameters and madatory conditions
+      # Validate parameters and mandatory conditions
       return callback Error 'Required option "image"' unless options.image?
       return callback Error 'Can not build from Dockerfile and content' if options.content? and options.file?
       options.rm ?= true
@@ -170,6 +172,11 @@ mecano.docker_build({
       @call -> # Build cmd
         for opt in ['force_rm', 'quiet', 'no_cache']
           cmd += " --#{opt.replace '_', '-'}" if options[opt]
+        for opt in ['build_arg'] then if options[opt]?
+          if Array.isArray options[opt]
+            cmd += " --#{opt.replace '_', '-'} #{k}" for k in options[opt]
+          else
+            cmd += " --#{opt.replace '_', '-'} #{options[opt]}"
         cmd += " --rm=#{if options.rm then 'true' else 'false'}"
         cmd += " -t \"#{options.image}#{if options.tag then ":#{options.tag}" else ''}\""
         # custom command for content option0

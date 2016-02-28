@@ -321,12 +321,30 @@ misc = module.exports =
     if options.kadmin_principal
     then "kadmin #{realm} -p #{options.kadmin_principal} -s #{options.kadmin_server} -w #{options.kadmin_password} -q '#{cmd}'"
     else "kadmin.local #{realm} -q '#{cmd}'"
+  yaml:
+    merge: (original, new_obj, undefinedOnly) ->
+      for k, v of original
+        if typeof v is 'object'
+          new_obj[k] = misc.yaml.merge v, new_obj[k], undefinedOnly
+          continue
+        new_obj[k] = v if typeof new_obj[k] is 'undefined'
+      new_obj
+    clean: (original, new_obj, undefinedOnly) ->
+      for k, v of original
+        if v and typeof v is 'object'
+          original[k] = misc.yaml.clean v, new_obj[k], undefinedOnly
+          continue
+        # console.log k,v
+        delete original[k] if new_obj[k]  is null
+      original
+
   ini:
     clean: (content, undefinedOnly) ->
       for k, v of content
         if v and typeof v is 'object'
           content[k] = misc.ini.clean v, undefinedOnly
           continue
+        # console.log k,v
         delete content[k] if typeof v is 'undefined'
         delete content[k] if not undefinedOnly and v is null
       content
