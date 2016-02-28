@@ -272,89 +272,80 @@ functions share a common API with flexible options.
                   wait_children()
               catch err
                 exec_callback [err]
-      properties.child = get: ->
-        ->
-          module.exports(obj.options)
-      properties.then = get: ->
-        ->
-          todos.push type: 'then', handler: arguments[0]
-          setImmediate _run_ if todos.length is 1 # Activate the pump
-          obj
-      properties.end = get: ->
-        ->
-          args = [].slice.call(arguments)
-          options = normalize_options args, 'end'
-          todos.push opts for opts in options
-          setImmediate _run_ if todos.length is options.length # Activate the pump
-          obj
-      properties.call = get: ->
-        ->
-          args = [].slice.call(arguments)
-          options = normalize_options args, 'call'
-          for opts in options
-            throw Error 'Missing handler option' unless opts.handler
-            throw Error "Handler not a function, got '#{opts.handler}'" unless typeof opts.handler is 'function'
-          todos.push opts for opts in options
-          setImmediate _run_ if todos.length is options.length # Activate the pump
-          obj
-      properties.before = get: ->
-        ->
-          arguments[0] = type: arguments[0] if typeof arguments[0] is 'string'
-          options = normalize_options arguments, null, false
-          for opts in options
-            throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
-            befores.push opts
-          obj
-      properties.after = get: ->
-        ->
-          arguments[0] = type: arguments[0] if typeof arguments[0] is 'string'
-          options = normalize_options arguments, null, false
-          for opts in options
-            throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
-            afters.push opts
-          obj
-      properties.status = get: ->
-        (index) ->
-          if arguments.length is 0
-            return stack[0].status.some (status) -> !! status
-          else if index is false
-            value = stack[0].status.some (status) -> !! status
-            stack[0].status = stack[0].status.map -> false
-            return value
-          else if index is true
-            value = stack[0].status.some (status) -> !! status
-            stack[0].status = stack[0].status.map -> true
-            return value
-          else
-            stack[0].status[Math.abs index]
+      properties.child = get: -> ->
+        module.exports(obj.options)
+      properties.then = get: -> ->
+        todos.push type: 'then', handler: arguments[0]
+        setImmediate _run_ if todos.length is 1 # Activate the pump
+        obj
+      properties.end = get: -> ->
+        args = [].slice.call(arguments)
+        options = normalize_options args, 'end'
+        todos.push opts for opts in options
+        setImmediate _run_ if todos.length is options.length # Activate the pump
+        obj
+      properties.call = get: -> ->
+        args = [].slice.call(arguments)
+        options = normalize_options args, 'call'
+        for opts in options
+          throw Error 'Missing handler option' unless opts.handler
+          throw Error "Handler not a function, got '#{opts.handler}'" unless typeof opts.handler is 'function'
+        todos.push opts for opts in options
+        setImmediate _run_ if todos.length is options.length # Activate the pump
+        obj
+      properties.before = get: -> ->
+        arguments[0] = type: arguments[0] if typeof arguments[0] is 'string'
+        options = normalize_options arguments, null, false
+        for opts in options
+          throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
+          befores.push opts
+        obj
+      properties.after = get: -> ->
+        arguments[0] = type: arguments[0] if typeof arguments[0] is 'string'
+        options = normalize_options arguments, null, false
+        for opts in options
+          throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
+          afters.push opts
+        obj
+      properties.status = get: -> (index) ->
+        if arguments.length is 0
+          return stack[0].status.some (status) -> !! status
+        else if index is false
+          value = stack[0].status.some (status) -> !! status
+          stack[0].status = stack[0].status.map -> false
+          return value
+        else if index is true
+          value = stack[0].status.some (status) -> !! status
+          stack[0].status = stack[0].status.map -> true
+          return value
+        else
+          stack[0].status[Math.abs index]
       proto = Object.defineProperties obj, properties
       # Register function
-      Object.defineProperty obj, 'register', get: ->
-        (name, handler) ->
-          is_registered_locally = obj.registered name, true
-          if handler is null or handler is false
-            if is_registered_locally
-              delete obj.registry[name]
-              delete obj[name] 
-            else if module.exports.registered name
-              throw Error 'Unregister a global function from local context'
-            return obj
-          throw Error "Function already defined '#{name}'" if is_registered_locally
-          obj.registry[name] = handler
-          Object.defineProperty obj, name, configurable: true, get: ->
-            ->
-              # Insert handler before callback or at the end of arguments
-              args = [].slice.call(arguments)
-              args.unshift obj.registry[name]
-              options = normalize_options args, name
-              todos.push opts for opts in options
-              setImmediate _run_ if todos.length is options.length # Activate the pump
-              obj
-      Object.defineProperty obj, 'registered', get: ->
-        (name, local_only=false) ->
-          global = Object.prototype.hasOwnProperty.call module.exports, name
-          local = Object.prototype.hasOwnProperty.call obj, name
-          if local_only then local else global or local
+      Object.defineProperty obj, 'register', get: -> (name, handler) ->
+        is_registered_locally = obj.registered name, true
+        if handler is null or handler is false
+          if is_registered_locally
+            delete obj.registry[name]
+            delete obj[name] 
+          else if module.exports.registered name
+            throw Error 'Unregister a global function from local context'
+          return obj
+        throw Error "Function already defined '#{name}'" if is_registered_locally
+        obj.registry[name] = handler
+        Object.defineProperty obj, name, configurable: true, get: ->
+          ->
+            # Insert handler before callback or at the end of arguments
+            args = [].slice.call(arguments)
+            args.unshift obj.registry[name]
+            options = normalize_options args, name
+            todos.push opts for opts in options
+            setImmediate _run_ if todos.length is options.length # Activate the pump
+            obj
+      Object.defineProperty obj, 'registered', get: -> (name, local_only=false) ->
+        global = Object.prototype.hasOwnProperty.call module.exports, name
+        local = Object.prototype.hasOwnProperty.call obj, name
+        if local_only then local else global or local
       obj.register name, handler for name, handler of registry
       obj
 
