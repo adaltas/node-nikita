@@ -103,9 +103,9 @@ require 'mecano'
         count = 0
         rand = Date.now() + inc++
         randfiles.push randfile = "#{options.randdir}/#{rand}"
-        if options.timeout
+        if options.timeout and options.timeout > 0
           timedout = false
-          clear = setTimeout ->
+          clear = setTimeout =>
             timedout = true
             @child().remove destination: randfile
           , options.timeout
