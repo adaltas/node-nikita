@@ -118,37 +118,6 @@ functions share a common API with flexible options.
           obj.emit? log.type, log
         options.log.dont = true
         options
-      intercept_before = (target_options, callback) ->
-        return callback() if target_options.intercept_before
-        each befores
-        .call (before, next) ->
-          for k, v of before
-            continue if k is 'handler'
-            return next() unless v is target_options[k]
-          options = intercept_before: true
-          for k, v of before
-            options[k] = v
-          for k, v of target_options
-            continue if k in ['handler', 'callback']
-            options[k] ?= v
-          run options, next
-        .then callback
-      intercept_after = (target_options, args, callback) ->
-        return callback() if target_options.intercept_after
-        each afters
-        .call (after, next) ->
-          for k, v of after
-            continue if k is 'handler'
-            return next() unless v is target_options[k]
-          options = intercept_after: true
-          for k, v of after
-            options[k] = v
-          for k, v of target_options
-            continue if k in ['handler', 'callback']
-            options[k] ?= v
-          options.callback_arguments = args
-          run options, next
-        .then callback
       call_callback = (fn, args) ->
         stack.unshift todos
         todos = todos_create()
@@ -184,6 +153,7 @@ functions share a common API with flexible options.
           else
             throw todos.err if stack.length is 0 and todos.err and todos.throw_if_error
           return
+        options = enrich_options options
         if options.type is 'then'
           {err, status} = todos
           status = status.some (status) -> !! status
@@ -192,9 +162,6 @@ functions share a common API with flexible options.
           run()
           return
         return if killed
-        options = enrich_options options
-        depth++ if options.header
-        options.log message: options.header, type: 'header', depth: depth if options.header
         if options.type is 'end'
           return conditions.all obj, options
           , (err) ->
@@ -204,6 +171,8 @@ functions share a common API with flexible options.
             while todos[0] and todos[0].type isnt 'then' then todos.shift()
             callback err if callback
             run()
+        depth++ if options.header
+        options.log message: options.header, type: 'header', depth: depth if options.header
         todos.status.unshift undefined
         stack.unshift todos
         todos = todos_create()
@@ -212,66 +181,97 @@ functions share a common API with flexible options.
           for k, v of options
             copy[k] = v
           options = copy
-          # Before interception
-          intercept_before options, (err) ->
-            exec_callback = (args) ->
-              return if killed
-              args[0] = undefined unless args[0] # Error is undefined and not null or false
-              args[1] = !!args[1] # Status is a boolean, error or not
-              todos = stack.shift() if todos.length is 0
-              jump_to_error args[0] if args[0] and not options.relax
-              todos.throw_if_error = false if args[0] and options_callback
-              todos.status[0] = args[1] and not options.shy
-              call_callback options_callback, args if options_callback
-              args[0] = null if options.relax
-              depth-- if options.header
-              callback args[0], args[1] if callback
-              run()
-            return exec_callback [err] if err
-            options_handler = options.handler
-            options.handler = undefined
-            options_callback = options.callback
-            options.callback = undefined
+          options_handler = options.handler
+          options.handler = undefined
+          options_callback = options.callback
+          options.callback = undefined
+          do_intercept_before = ->
+            return do_conditions() if options.intercept_before
+            each befores
+            .call (before, next) ->
+              for k, v of before
+                continue if k is 'handler'
+                return next() unless v is options[k]
+              opts = intercept_before: true
+              for k, v of before
+                opts[k] = v
+              for k, v of options
+                continue if k in ['handler', 'callback']
+                opts[k] ?= v
+              run opts, next
+            .error (err) -> do_callback [err]
+            .then do_conditions
+          do_intercept_after = (args, callback) ->
+            return do_callback args if options.intercept_after
+            each afters
+            .call (after, next) ->
+              for k, v of after
+                continue if k is 'handler'
+                return next() unless v is options[k]
+              opts = intercept_after: true
+              for k, v of after
+                opts[k] = v
+              for k, v of options
+                continue if k in ['handler', 'callback']
+                opts[k] ?= v
+              opts.callback_arguments = args
+              run opts, next
+            .error (err) -> do_callback [err]
+            .then -> do_callback args
+          do_conditions = ->
             conditions.all obj, options
             , (err) ->
-              exec_callback [err]
+              do_callback [err]
             , ->
-              # Remove conditions from options
-              for k, v of options
+              for k, v of options # Remove conditions from options
                 delete options[k] if /^if.*/.test(k) or /^unless.*/.test(k)
               todos.options = options
-              called = false
-              try
-                if options_handler.length is 2 # Async style
-                  options_handler.call obj, options, ->
-                    return if killed
-                    return handle_multiple_call Error 'Multiple call detected' if called
-                    called = true
-                    args = [].slice.call(arguments, 0)
-                    setImmediate -> 
-                      intercept_after options, args, (err) ->
-                        exec_callback if err then [err] else args
-                else # Sync style
-                  options_handler.call obj, options
+              do_handler()
+          do_callback = (args) ->
+            return if killed
+            args[0] = undefined unless args[0] # Error is undefined and not null or false
+            args[1] = !!args[1] # Status is a boolean, error or not
+            todos = stack.shift() if todos.length is 0
+            jump_to_error args[0] if args[0] and not options.relax
+            todos.throw_if_error = false if args[0] and options_callback
+            todos.status[0] = args[1] and not options.shy
+            call_callback options_callback, args if options_callback
+            args[0] = null if options.relax
+            depth-- if options.header
+            callback args[0], args[1] if callback
+            run()
+          do_handler = ->
+            called = false
+            try
+              if options_handler.length is 2 # Async style
+                options_handler.call obj, options, ->
                   return if killed
                   return handle_multiple_call Error 'Multiple call detected' if called
                   called = true
-                  status_sync = false
-                  wait_children = ->
-                    unless todos.length
-                      return setImmediate ->
-                        args = [null, status_sync]
-                        intercept_after options, args, (err) ->
-                          exec_callback if err then [err] else args
-                    options = todos.shift()
-                    run options, (err, status) ->
-                      return exec_callback [err] if err
-                      # Discover status of all unshy children
-                      status_sync = true if status and not options.shy
-                      wait_children()
-                  wait_children()
-              catch err
-                exec_callback [err]
+                  args = [].slice.call(arguments, 0)
+                  setImmediate -> 
+                    do_intercept_after args
+              else # Sync style
+                options_handler.call obj, options
+                return if killed
+                return handle_multiple_call Error 'Multiple call detected' if called
+                called = true
+                status_sync = false
+                wait_children = ->
+                  unless todos.length
+                    return setImmediate ->
+                      args = [null, status_sync]
+                      do_intercept_after args
+                  options = todos.shift()
+                  run options, (err, status) ->
+                    return do_callback [err] if err
+                    # Discover status of all unshy children
+                    status_sync = true if status and not options.shy
+                    wait_children()
+                wait_children()
+            catch err
+              do_callback [err]
+          do_intercept_before()
       properties.child = get: -> ->
         module.exports(obj.options)
       properties.then = get: -> ->
@@ -333,15 +333,14 @@ functions share a common API with flexible options.
           return obj
         throw Error "Function already defined '#{name}'" if is_registered_locally
         obj.registry[name] = handler
-        Object.defineProperty obj, name, configurable: true, get: ->
-          ->
-            # Insert handler before callback or at the end of arguments
-            args = [].slice.call(arguments)
-            args.unshift obj.registry[name]
-            options = normalize_options args, name
-            todos.push opts for opts in options
-            setImmediate _run_ if todos.length is options.length # Activate the pump
-            obj
+        Object.defineProperty obj, name, configurable: true, get: -> ->
+          # Insert handler before callback or at the end of arguments
+          args = [].slice.call(arguments)
+          args.unshift obj.registry[name]
+          options = normalize_options args, name
+          todos.push opts for opts in options
+          setImmediate _run_ if todos.length is options.length # Activate the pump
+          obj
       Object.defineProperty obj, 'registered', get: -> (name, local_only=false) ->
         global = Object.prototype.hasOwnProperty.call module.exports, name
         local = Object.prototype.hasOwnProperty.call obj, name
