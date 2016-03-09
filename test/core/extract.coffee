@@ -2,6 +2,7 @@
 mecano = require '../../src'
 they = require 'ssh2-they'
 test = require '../test'
+fs = require 'ssh2-fs'
 
 describe 'extract', ->
 
@@ -95,3 +96,34 @@ describe 'extract', ->
     , (err, extracted) ->
       err.message.should.eql 'File does not exist: /does/not/exist.tgz'
       next()
+
+  they 'should strip component level 1', (ssh, done) ->
+    # Test a non existing extracted dir
+    mecano
+      ssh: ssh
+    .extract
+      source: "#{__dirname}/../resources/a_dir.tgz"
+      destination: scratch
+      strip: 1
+    , (err, extracted) ->
+      extracted.should.be.true()
+      fs.exists ssh, "#{scratch}/a_file", (err, exists) ->
+        return done err if err
+        exists.should.be.true()
+        done()
+    
+  they 'should strip component level 2', (ssh, done) ->
+    # Test a non existing extracted dir
+    mecano
+      ssh: ssh
+    .extract
+      source: "#{__dirname}/../resources/a_dir.tgz"
+      destination: scratch
+      strip: 2
+    , (err, extracted) ->
+      extracted.should.be.true()
+      fs.exists ssh, "#{scratch}/a_file", (err, exists) ->
+        return done err if err
+        exists.should.be.false()
+        done()
+  

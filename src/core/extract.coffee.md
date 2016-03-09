@@ -18,7 +18,9 @@ moment, supported extensions are '.tgz', '.tar.gz', tar.bz2, 'tar.xz' and '.zip'
 *   `preserve_permissions`   
     Preserve permissions when extracting. True by default if runned as root, else false.   
 *   `creates`   
-    Ensure the given file is created or an error is send in the callback.   
+    Ensure the given file is created or an error is send in the callback.  
+*   `strip`   
+    Remove the specified number of leading path elements. Apply only to tar(s) formats.   
 *   `unless_exists`   
     Cancel extraction if file exists.   
 *   `ssh` (object|ssh2)   
@@ -66,6 +68,8 @@ require('mecano').extract({
         tar_opts.push '-p'
       else if options.preserve_permissions is false
         tar_opts.push '--no-same-permissions'
+      if typeof options.strip is 'number'
+        tar_opts.push "--strip-components #{options.strip}"
       # Deal with format option
       if options.format?
         format = options.format
