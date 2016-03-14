@@ -91,3 +91,21 @@ describe 'yaml', ->
           return next err if err
           data.should.eql 'user:\n  preference:\n    language: node\n'
           next()
+
+  they 'disregard undefined within merge', (ssh, next) ->
+    content = 'user:\n  preference:\n    language: node\n  name: toto\ngroup: hadoop_user\n'
+    fs.writeFile ssh, "#{scratch}/user.yml", content, (err) ->
+      return next err if err
+      mecano.yaml
+        ssh: ssh
+        content:
+          group: null
+        destination: "#{scratch}/user.yml"
+        merge: true
+      , (err, written) ->
+        return next err if err
+        written.should.be.true()
+        fs.readFile ssh, "#{scratch}/user.yml", 'utf8', (err, data) ->
+          return next err if err
+          data.should.eql 'user:\n  preference:\n    language: node\n  name: toto\n'
+          next()
