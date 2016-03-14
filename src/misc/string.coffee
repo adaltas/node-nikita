@@ -40,7 +40,7 @@ module.exports =
       try
         switch options.engine
           when 'nunjunks'
-            engine = new nunjucks.Environment null, autoescape: false
+            env = new nunjucks.Environment null, autoescape: false
             options.filters ?= {}
             options.filters.isString ?= (obj) -> typeof obj is 'string'
             options.filters.isArray ?= (obj) -> Array.isArray obj
@@ -53,10 +53,11 @@ module.exports =
               return false
             for filter, func of options.filters
               if typeof func is 'function'
-                engine.addFilter filter, func
+                env.addFilter filter, func
               else
                 options.log message: "Option filter not a function and ignored", level: 'WARN', module: 'mecano/lib/write'
-            options.content = engine.renderString options.content.toString(), options.context
+            console.log options.context.ssh
+            options.content = env.renderString options.content.toString(), options.context
           when 'eco'
             options.content = eco.render options.content.toString(), options.context
           else throw Error "Invalid engine: #{options.engine}"
