@@ -224,8 +224,8 @@ exists otherwise the callback `skip` is called with an error.
             if exists
             then next()
             else next Error "File does not exist: #{should_exist}"
-        .on 'error', (err) -> skip err
-        .on 'end', succeed
+        .error skip
+        .then succeed
 
 ## Ensure a file already exist: `should_not_exist`
 
@@ -244,10 +244,8 @@ exists otherwise the callback `skip` is called with an error.
             if exists
             then next new Error "File does not exist: #{should_not_exist}"
             else next()
-        .on 'error', (err) ->
-          skip err
-        .on 'end', ->
-          succeed()
+        .error skip
+        .then -> succeed()
 
 ## Run all conditions: `all(options, skip, succeed)`
 
@@ -289,7 +287,6 @@ conditions.all({
 ## Dependencies
 
     each = require 'each'
-    misc = require './index'
     exec = require 'ssh2-exec'
     fs = require 'ssh2-fs'
     template = require './template'
