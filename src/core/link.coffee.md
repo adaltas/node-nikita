@@ -50,14 +50,15 @@ require('mecano').link({
       options.log message: "Calling link", level: 'DEBUG', module: 'mecano/lib/link'
       linked = 0
       sym_exists = (options, callback) ->
-        fs.exists options.ssh, options.destination, (err, exists) ->
-          return callback null, false unless exists
-          fs.readlink options.ssh, options.destination, (err, resolvedPath) ->
+        # fs.exists options.ssh, options.destination, (err, exists) ->
+        #   console.log 'link exists', options.destination, exists
+        #   return callback null, false unless exists
+        fs.readlink options.ssh, options.destination, (err, resolvedPath) ->
+          return callback null, false if err
+          return callback null, true if resolvedPath is options.source
+          fs.unlink options.ssh, options.destination, (err) ->
             return callback err if err
-            return callback null, true if resolvedPath is options.source
-            fs.unlink options.ssh, options.destination, (err) ->
-              return callback err if err
-              callback null, false
+            callback null, false
       sym_create = (options, callback) ->
         fs.symlink options.ssh, options.source, options.destination, (err) ->
           return callback err if err

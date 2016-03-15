@@ -91,14 +91,14 @@ describe 'link', ->
       source: "#{scratch}/test/invalid_file"
       destination: "#{scratch}/test/file_link"
     , (err, linked) ->
-      linked.should.be.true()
+      linked.should.be.true() unless err
     .remove
       destination: "#{scratch}/test/invalid_file"
     .link
       source: "#{scratch}/test/valid_file"
       destination: "#{scratch}/test/file_link"
     , (err, linked) ->
-      linked.should.be.true()
+      linked.should.be.true() unless err
     .then next
 
   describe 'error', ->
