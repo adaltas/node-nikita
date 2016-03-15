@@ -71,19 +71,18 @@ require('mecano').krb5_addprinc({
       ktadd_options = {}
       for k, v of options then ktadd_options[k] = v
       ktadd_options.if = options.keytab
-      @
-      .execute
+      @execute
         cmd: cmd_addprinc
         unless_exec: "#{cmd_getprinc} | grep '#{options.principal}'"
-      .execute
+      @execute
         cmd: misc.kadmin options, "cpw -pw #{options.password} #{options.principal}"
         if: options.password and options.password_sync
         # unless_exec: "echo #{options.password} | kinit '#{options.principal}'"
         unless_exec: """
-                      if ! echo #{options.password} | kinit '#{options.principal}' ; then exit 1; else kdestroy; fi
-                      """
-      .krb5_ktadd ktadd_options
-      .then callback
+        if ! echo #{options.password} | kinit '#{options.principal}' ; then exit 1; else kdestroy; fi
+        """
+      @krb5_ktadd ktadd_options
+      @then callback
 
 ## Dependencies
 

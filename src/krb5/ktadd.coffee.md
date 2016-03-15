@@ -44,89 +44,76 @@ require('mecano').krb5_delrinc({
 
 ## Source Code
 
-    module.exports = (options, callback) ->
-      return callback new Error 'Property principal is required' unless options.principal
-      return callback new Error 'Property keytab is required' unless options.keytab
+    module.exports = (options) ->
+      throw Error 'Property principal is required' unless options.principal
+      throw Error 'Property keytab is required' unless options.keytab
       if /^\S+@\S+$/.test options.kadmin_principal
         options.realm ?= options.kadmin_principal.split('@')[1]
       else
         throw Error 'Property "realm" is required unless present in principal' unless options.realm
         options.principal = "#{options.principal}@#{options.realm}"
-      status = false
-      do_get = =>
-        return do_end() unless options.keytab
-        @execute
-          cmd: "export TZ=GMT; klist -kt #{options.keytab}"
-          code_skipped: 1
-          shy: true
-        , (err, exists, stdout, stderr) ->
-          return callback err if err
-          unless exists
-            options.log message: "Keytab does not yet exists", level: 'INFO', module: 'mecano/krb5/ktadd'
-            return do_ktadd()
-          keytab = {}
-          for line in string.lines stdout
-            if match = /^\s*(\d+)\s+([\d\/:]+\s+[\d\/:]+)\s+(.*)\s*$/.exec line
-              [_, kvno, mdate, principal] = match
-              kvno = parseInt kvno, 10
-              mdate = Date.parse "#{mdate} GMT"
-              # keytab[principal] ?= {kvno: null, mdate: null}
-              if not keytab[principal] or keytab[principal].kvno < kvno
-                keytab[principal] = kvno: kvno, mdate: mdate
-          unless keytab[options.principal]?
-            options.log message: "Principal is not listed inside the keytab", level: 'INFO', module: 'mecano/krb5/ktadd'
-            return do_ktadd()
-          @execute
-            cmd: misc.kadmin options, "getprinc -terse #{options.principal}"
-            shy: true
-          , (err, exists, stdout, stderr) ->
-            return err if err
-            # return do_ktadd() unless -1 is stdout.indexOf 'does not exist'
-            values = string.lines(stdout)[1]
-            # Check if a ticket exists for this
-            return callback Error "Principal does not exist: '#{options.principal}'" unless values
-            values = values.split '\t'
-            mdate = parseInt(values[2], 10) * 1000
-            kvno = parseInt values[8], 10
-            options.log message: "Keytab kvno '#{keytab[principal]?.kvno}', principal kvno '#{kvno}'", level: 'INFO', module: 'mecano/krb5/ktadd'
-            options.log message: "Keytab mdate '#{new Date keytab[principal]?.mdate}', principal mdate '#{new Date mdate}'", level: 'INFO', module: 'mecano/krb5/ktadd'
-            if keytab[principal]?.kvno is kvno and keytab[principal].mdate is mdate
-              options.log message: "Value kvno and mdate are ok, continue with changing the keytab", level: 'DEBUG', module: 'mecano/krb5/ktadd'
-              return do_chown()
-            do_ktremove()
-      do_ktremove = =>
-        @execute
-          cmd: misc.kadmin options, "ktremove -k #{options.keytab} #{options.principal}"
-        , (err, exists, stdout, stderr) ->
-          return callback err if err
-          do_ktadd()
-      do_ktadd = =>
-        @mkdir
-          destination: "#{path.dirname options.keytab}"
-        @execute
-          cmd: misc.kadmin options, "ktadd -k #{options.keytab} #{options.principal}"
-        , (err, ktadded) ->
-          return callback err if err
-          status = true
-          do_chown()
-      do_chown = =>
-        @
-        .chown
-          destination: options.keytab
-          uid: options.uid
-          gid: options.gid
-          if:  options.uid? or options.gid?
-        .chmod
-          destination: options.keytab
-          mode: options.mode
-          if: options.mode?
-        .then (err, changed) ->
-          return callback err if err
-          status = changed if changed
-          do_end()
-      do_end = =>
-        callback null, status
-      do_get()
+      keytab = {} # keytab[principal] ?= {kvno: null, mdate: null}
+      princ = {} # {kvno: null, mdate: null}
+      # Get keytab information
+      @execute
+        cmd: "export TZ=GMT; klist -kt #{options.keytab}"
+        code_skipped: 1
+        shy: true
+      , (err, exists, stdout, stderr) ->
+        throw err if err
+        # unless exists
+        #   options.log message: "Keytab does not yet exists", level: 'INFO', module: 'mecano/krb5/ktadd'
+        #   return do_ktadd()
+        return unless exists
+        options.log message: "Keytab exists, check kvno validity", level: 'DEBUG', module: 'mecano/krb5/ktadd'
+        for line in string.lines stdout
+          continue unless match = /^\s*(\d+)\s+([\d\/:]+\s+[\d\/:]+)\s+(.*)\s*$/.exec line
+          [_, kvno, mdate, principal] = match
+          kvno = parseInt kvno, 10
+          mdate = Date.parse "#{mdate} GMT"
+          # keytab[principal] ?= {kvno: null, mdate: null}
+          if not keytab[principal] or keytab[principal].kvno < kvno
+            keytab[principal] = kvno: kvno, mdate: mdate
+      # Get principal information
+      @execute
+        cmd: misc.kadmin options, "getprinc -terse #{options.principal}"
+        shy: true
+        if: -> keytab[options.principal]?
+      , (err, executed, stdout, stderr) ->
+        return err if err
+        return unless executed
+        # return do_ktadd() unless -1 is stdout.indexOf 'does not exist'
+        values = string.lines(stdout)[1]
+        # Check if a ticket exists for this
+        throw Error "Principal does not exist: '#{options.principal}'" unless values
+        values = values.split '\t'
+        mdate = parseInt(values[2], 10) * 1000
+        kvno = parseInt values[8], 10
+        princ = mdate: mdate, kvno: kvno
+        options.log message: "Keytab kvno '#{keytab[options.principal]?.kvno}', principal kvno '#{princ.kvno}'", level: 'INFO', module: 'mecano/krb5/ktadd'
+        options.log message: "Keytab mdate '#{new Date keytab[options.principal]?.mdate}', principal mdate '#{new Date princ.mdate}'", level: 'INFO', module: 'mecano/krb5/ktadd'
+      # Remove principal from keytab
+      @execute
+        cmd: misc.kadmin options, "ktremove -k #{options.keytab} #{options.principal}"
+        if: ->
+          keytab[options.principal]? and (keytab[options.principal]?.kvno isnt princ.kvno or keytab[options.principal].mdate isnt princ.mdate)
+      # Create keytab and add principal
+      @mkdir
+        destination: "#{path.dirname options.keytab}"
+        if: -> not keytab[options.principal]? or (keytab[options.principal]?.kvno isnt princ.kvno or keytab[options.principal].mdate isnt princ.mdate)
+      @execute
+        cmd: misc.kadmin options, "ktadd -k #{options.keytab} #{options.principal}"
+        if: -> not keytab[options.principal]? or (keytab[options.principal]?.kvno isnt princ.kvno or keytab[options.principal].mdate isnt princ.mdate)
+      # Keytab ownership and permissions
+      @chown
+        destination: options.keytab
+        uid: options.uid
+        gid: options.gid
+        if:  options.uid? or options.gid?
+      @chmod
+        destination: options.keytab
+        mode: options.mode
+        if: options.mode?
 
 ## Fields in 'getprinc -terse' output
 

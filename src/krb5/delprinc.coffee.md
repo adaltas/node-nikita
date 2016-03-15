@@ -51,14 +51,13 @@ require('mecano').krb5_delrinc({
       # Prepare commands
       cmd_getprinc = misc.kadmin options, "getprinc #{options.principal}"
       cmd_delprinc = misc.kadmin options, "delprinc -force #{options.principal}"
-      @
-      .execute
+      @execute
         cmd: cmd_delprinc
         if_exec: "#{cmd_getprinc} | grep '#{options.principal}'"
-      .remove
+      @remove
         destination: options.keytab
         if: options.keytab
-      .then callback
+      @then callback
 
 ## Dependencies
 

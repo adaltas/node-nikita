@@ -21,12 +21,12 @@ describe 'krb5_addprinc', ->
       principal: "mecano@#{config.krb5.realm}"
       randkey: true
     , (err, created) ->
-      created.should.be.true()
+      created.should.be.true() unless err
     .krb5_addprinc
       principal: "mecano@#{config.krb5.realm}"
       randkey: true
     , (err, created) ->
-      created.should.be.false()
+      created.should.be.false() unless err
     .then next
 
   they 'create a new principal with a password', (ssh, next) ->

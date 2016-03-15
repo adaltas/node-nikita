@@ -21,7 +21,7 @@ describe 'krb5_delprinc', ->
     .krb5_delprinc
       principal: "mecano@#{config.krb5.realm}"
     , (err, status) ->
-      status.should.be.true()
+      status.should.be.true() unless err
     .then next
 
   they 'a principal which does not exist', (ssh, next) ->
