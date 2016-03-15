@@ -56,7 +56,6 @@ module.exports =
                 env.addFilter filter, func
               else
                 options.log message: "Option filter not a function and ignored", level: 'WARN', module: 'mecano/lib/write'
-            console.log options.context.ssh
             options.content = env.renderString options.content.toString(), options.context
           when 'eco'
             options.content = eco.render options.content.toString(), options.context
