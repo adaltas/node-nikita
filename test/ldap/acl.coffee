@@ -1,7 +1,6 @@
 
 mecano = require '../../src'
 test = require '../test'
-ldap = require 'ldapjs'
 
 describe 'ldap_acl', ->
 
@@ -94,4 +93,3 @@ describe 'ldap_acl', ->
                 break
           search.on 'end', ->
             next()
-

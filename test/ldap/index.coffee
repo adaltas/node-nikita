@@ -1,7 +1,6 @@
 
 mecano = require '../../src'
 test = require '../test'
-ldap = require 'ldapjs'
 
 describe 'ldap_index', ->
 
@@ -70,4 +69,3 @@ describe 'ldap_index', ->
     , (err, modified) ->
       modified.should.be.true()
     .then next
-

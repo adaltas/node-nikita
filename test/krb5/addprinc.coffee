@@ -2,7 +2,6 @@
 mecano = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
-ldap = require 'ldapjs'
 
 describe 'krb5_addprinc', ->
 

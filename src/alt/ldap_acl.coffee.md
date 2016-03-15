@@ -197,7 +197,6 @@ require('mecano/alt/ldap_acl')({
 ## Dependencies
 
     each = require 'each'
-    ldap = require 'ldapjs'
     wrap = require '../misc/wrap'
 
 [acls]: http://www.openldap.org/doc/admin24/access-control.html

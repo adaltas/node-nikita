@@ -1,7 +1,6 @@
 
 mecano = require '../../src'
 test = require '../test'
-ldap = require 'ldapjs'
 
 describe 'ldap_user', ->
 
@@ -67,5 +66,3 @@ describe 'ldap_user', ->
     .ldap_delete
       dn: "cn=mecano,#{config.ldap.suffix_dn}"
     .then next
-
-
