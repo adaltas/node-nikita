@@ -14,7 +14,7 @@ module.exports =
     scratch
   config: ->
     try
-      config = require '../test.coffee'
+      config = require process.env['MECANO_TEST'] or '../test.coffee'
     catch err
       throw err unless err.code is 'MODULE_NOT_FOUND'
       fs.renameSync "#{__dirname}/../test.coffee.sample", "#{__dirname}/../test.coffee"
