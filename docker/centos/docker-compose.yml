@@ -1,0 +1,23 @@
+
+# docker-compose up --abort-on-container-exit
+
+version: '2'
+services:
+  nodejs:
+    build: .
+    image: mecano_centos_nodejs
+    volumes:
+      - ../..:/mecano
+    depends_on:
+      - krb5
+    environment:
+      MECANO_TEST: /mecano/docker/centos/test.coffee
+      # TEST_FILES: test/krb5/ktadd.coffee
+      TEST_FILES: test
+      DEBUG: 0
+  krb5:
+    image: sequenceiq/kerberos
+    volumes:
+      - /dev/urandom:/dev/random
+    environment:
+      BOOTSTRAP: 1

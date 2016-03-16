@@ -35,5 +35,8 @@ For the tests to execute successfully, you must:
 npm test
 ```
 
-[mecano]: http://www.adaltas.com/projects/node-mecano/
+Docker is used to run tests on centos: `docker-compose up --abort-on-container-exit`
 
+Other used command includes `docker-compose stop; docker-compose rm -f; docker-compose build`
+
+[mecano]: http://www.adaltas.com/projects/node-mecano/
