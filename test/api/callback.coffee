@@ -48,18 +48,38 @@ describe 'api callback', ->
         return next err if err
         content.should.eql 'abcdefhij'
         next()
+        
+  describe 'error', ->
 
-  it 'catch error', (next) ->
-    # msgs = []
-    # m = mecano log: (msg) -> msgs.push msg if /\/file_\d/.test msg
-    mecano()
-    .write
-      destination: "#{scratch}/a_file"
-      content: 'abc'
-    , (err, written) ->
-      throw Error 'Catchme'
-    .write
-      invalid: true
-    .then (err, changed) ->
-      err.message.should.eql 'Catchme'
-      next()
+    it 'without parent', (next) ->
+      mecano()
+      .write
+        destination: "#{scratch}/a_file"
+        content: 'abc'
+      , (err, written) ->
+        throw Error 'Catchme'
+      .write
+        invalid: true
+      .then (err, changed) ->
+        err.message.should.eql 'Catchme'
+        next()
+
+    it 'inside sync call', (next) ->
+      mecano
+      .call () ->
+        @call (->), ->
+          throw Error 'Catchme'
+      .then (err, changed) ->
+        err.message.should.eql 'Catchme'
+        next()
+
+    it 'inside async call', (next) ->
+      mecano
+      .call (_, callback) ->
+        @call (->), ->
+          throw Error 'Catchme'
+        @then callback
+      .then (err, changed) ->
+        err.message.should.eql 'Catchme'
+        next()
+      

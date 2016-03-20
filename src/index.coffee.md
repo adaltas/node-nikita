@@ -34,6 +34,7 @@ functions share a common API with flexible options.
       befores = []
       afters = []
       depth = 0
+      count = 0
       killed = false
       obj.options.domain =  domain.create() if obj.options.domain is true
       domain_on_error = (err) ->
@@ -126,6 +127,7 @@ functions share a common API with flexible options.
         catch err
           todos = stack.shift()
           jump_to_error err
+          args[0] = err
           return run()
         mtodos = todos
         todos = stack.shift()
@@ -144,6 +146,7 @@ functions share a common API with flexible options.
         then obj.options.domain.run run
         else run()
       run = (options, callback) ->
+        count++
         options = todos.shift() unless options
         unless options # Nothing more to do in current queue
           if stack.length is 0
@@ -201,23 +204,6 @@ functions share a common API with flexible options.
               run opts, next
             .error (err) -> do_callback [err]
             .then do_conditions
-          do_intercept_after = (args, callback) ->
-            return do_callback args if options.intercept_after
-            each afters
-            .call (after, next) ->
-              for k, v of after
-                continue if k is 'handler'
-                return next() unless v is options[k]
-              opts = intercept_after: true
-              for k, v of after
-                opts[k] = v
-              for k, v of options
-                continue if k in ['handler', 'callback']
-                opts[k] ?= v
-              opts.callback_arguments = args
-              run opts, next
-            .error (err) -> do_callback [err]
-            .then -> do_callback args
           do_conditions = ->
             conditions.all obj, options
             , (err) ->
@@ -227,19 +213,6 @@ functions share a common API with flexible options.
                 delete options[k] if /^if.*/.test(k) or /^unless.*/.test(k)
               todos.options = options
               do_handler()
-          do_callback = (args) ->
-            return if killed
-            args[0] = undefined unless args[0] # Error is undefined and not null or false
-            args[1] = !!args[1] # Status is a boolean, error or not
-            todos = stack.shift() if todos.length is 0
-            jump_to_error args[0] if args[0] and not options.relax
-            todos.throw_if_error = false if args[0] and options_callback
-            todos.status[0] = args[1] and not options.shy
-            call_callback options_callback, args if options_callback
-            args[0] = null if options.relax
-            depth-- if options.header
-            callback args[0], args[1] if callback
-            run()
           do_handler = ->
             called = false
             try
@@ -260,17 +233,46 @@ functions share a common API with flexible options.
                 wait_children = ->
                   unless todos.length
                     return setImmediate ->
-                      args = [null, status_sync]
-                      do_intercept_after args
+                      do_intercept_after [null, status_sync]
                   options = todos.shift()
                   run options, (err, status) ->
-                    return do_callback [err] if err
+                    return do_intercept_after [err] if err
                     # Discover status of all unshy children
                     status_sync = true if status and not options.shy
                     wait_children()
                 wait_children()
             catch err
-              do_callback [err]
+              do_intercept_after [err]
+          do_intercept_after = (args, callback) ->
+            return do_callback args if options.intercept_after
+            each afters
+            .call (after, next) ->
+              for k, v of after
+                continue if k is 'handler'
+                return next() unless v is options[k]
+              opts = intercept_after: true
+              for k, v of after
+                opts[k] = v
+              for k, v of options
+                continue if k in ['handler', 'callback']
+                opts[k] ?= v
+              opts.callback_arguments = args
+              run opts, next
+            .error (err) -> do_callback [err]
+            .then -> do_callback args
+          do_callback = (args) ->
+            return if killed
+            args[0] = undefined unless args[0] # Error is undefined and not null or false
+            args[1] = !!args[1] # Status is a boolean, error or not
+            todos = stack.shift() if todos.length is 0
+            jump_to_error args[0] if args[0] and not options.relax
+            todos.throw_if_error = false if args[0] and options_callback
+            todos.status[0] = args[1] and not options.shy
+            call_callback options_callback, args if options_callback
+            args[0] = null if options.relax
+            depth-- if options.header
+            callback args[0], args[1] if callback
+            run()
           do_intercept_before()
       properties.child = get: -> ->
         module.exports(obj.options)
