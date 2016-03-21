@@ -10,11 +10,16 @@ services:
       - ../..:/mecano
     depends_on:
       - krb5
+      - dind
     environment:
       MECANO_TEST: /mecano/docker/centos/test.coffee
-      # TEST_FILES: test/krb5/ktadd.coffee
-      TEST_FILES: test
-      DEBUG: 0
+      TEST_FILES: test # Filter with test/docker or test/docker/build.coffee
+      # DEBUG: 1
+      DOCKER_HOST: 'tcp://dind:2375' 
+  dind:
+    image: docker:dind
+    privileged: true
+    # detach: true
   krb5:
     image: sequenceiq/kerberos
     volumes:
