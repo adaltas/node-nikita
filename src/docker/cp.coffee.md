@@ -41,8 +41,10 @@ mecano.docker({
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       # Validate parameters
+      options.docker ?= {}
+      options[k] ?= v for k, v of options.docker
       throw Error 'Missing option "source"' unless options.source
       throw Error 'Missing option "destination"' unless options.destination
       [_, source_container, source_path] = /(.*:)?(.*)/.exec options.source
@@ -79,7 +81,7 @@ mecano.docker({
         if: -> destination_mkdir
       @execute
         cmd: docker.wrap options, "cp #{options.source} #{options.destination}"
-      , -> docker.callback callback, arguments...
+      , docker.callback
 
 ## Modules Dependencies
 

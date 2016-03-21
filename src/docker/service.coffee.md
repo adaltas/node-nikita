@@ -13,6 +13,8 @@ See `docker_run` for list of options.
 ## Source Code
 
     module.exports = (options, callback) ->
+      options.docker ?= {}
+      options[k] ?= v for k, v of options.docker
       options.detach ?= true
       options.rm ?= false
       return callback Error 'Missing container name' unless options.name? or options.container?

@@ -1,5 +1,6 @@
 
 module.exports =
+  disable_docker: true
   disable_krb5_addprinc: true
   disable_krb5_delprinc: true
   disable_krb5_ktadd: true
@@ -8,7 +9,6 @@ module.exports =
   disable_ldap_user: true
   test_service: false
   docker: # eg `docker-machine create --driver virtualbox mecano`
-    disable: true
     machine: 'mecano'
   krb5:
     realm: 'DOMAIN.COM'

@@ -9,7 +9,7 @@ describe 'docker load', ->
 
   machine= 'dev'
   config = test.config()
-  return if config.docker.disable
+  return if config.disable_docker
   scratch = test.scratch @
 
 # timestamp ensures that hash of the built image will be unique and
@@ -19,7 +19,7 @@ describe 'docker load', ->
     @timeout 30000
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .remove
       destination: "#{scratch}/mecano_load.tar"
     .docker_build
@@ -46,7 +46,7 @@ describe 'docker load', ->
     checksum = null
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .remove
       destination: "#{scratch}/mecano_load.tar"
     .docker_build
@@ -71,7 +71,7 @@ describe 'docker load', ->
     @timeout 30000
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .remove
       destination: "#{scratch}/mecano_load.tar"
     .docker_rmi

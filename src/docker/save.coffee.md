@@ -65,8 +65,10 @@ mecano.docker({
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       # Validate parameters
+      options.docker ?= {}
+      options[k] ?= v for k, v of options.docker
       return callback Error 'Missing image parameter' unless options.image?
       options.output ?= options.destination
       return callback Error 'Missing output parameter' unless options.output?
@@ -76,7 +78,7 @@ mecano.docker({
       options.log message: "Extracting image #{options.output} to file:#{options.image}", level: 'INFO', module: 'mecano/lib/docker/save'
       @execute
         cmd: docker.wrap options, cmd
-      , -> docker.callback callback, arguments...
+      , docker.callback
 
 ## Modules Dependencies
 

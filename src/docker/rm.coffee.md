@@ -30,25 +30,27 @@ force options is set.
 
     module.exports = (options, callback) ->
       # Validate parameters and madatory conditions
-      return callback  Error 'Missing container parameter' unless options.container?
-      cmd = 'rm'
-      for opt in ['link', 'volumes', 'force']
-        cmd += " -#{opt.charAt 0}" if options[opt]
-      cmd += " #{options.container}"
+      options.docker ?= {}
+      options[k] ?= v for k, v of options.docker
+      return callback Error 'Missing container parameter' unless options.container?
+      cmd = for opt in ['link', 'volumes', 'force']
+        "-#{opt.charAt 0}" if options[opt]
+      cmd = "rm #{cmd.join ' '} #{options.container}"
       @execute
         cmd: docker.wrap options, "ps | grep '#{options.container}'"
         code_skipped: 1
       , (err, executed, stdout, stderr) =>
-        return callback Error 'Container must be stopped to be removed without force', null if executed and !options.force
-        @execute
-          cmd: docker.wrap options, "ps -a | grep '#{options.container}'"
-          code_skipped: 1
-        @execute
-          cmd: docker.wrap options, cmd
-          if: -> @status -1
-        , -> docker.callback callback, arguments...
+        throw Error 'Container must be stopped to be removed without force', null if executed and not options.force
+      @execute
+        cmd: docker.wrap options, "ps -a | grep '#{options.container}'"
+        code_skipped: 1
+      , docker.callback
+      @execute
+        cmd: docker.wrap options, cmd
+        if: -> @status -1
+      , docker.callback
+      @then callback
 
 ## Modules Dependencies
 
     docker = require '../misc/docker'
-    util = require 'util'

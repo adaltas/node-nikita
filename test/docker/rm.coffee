@@ -9,14 +9,14 @@ docker = require '../../src/misc/docker'
 describe 'docker rm', ->
 
   scratch = test.scratch @
-  source = "#{scratch}"
   config = test.config()
+  return if config.disable_docker
 
   they 'remove stopped container', (ssh, next) ->
     @timeout 30000
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_rm
       force: true
       container: 'mecano_rm'
@@ -35,7 +35,7 @@ describe 'docker rm', ->
     @timeout 30000
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_rm
       container: 'mecano_rm'
       force: true
@@ -58,7 +58,7 @@ describe 'docker rm', ->
     @timeout 30000
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_rm
       container: 'mecano_rm'
       force: true

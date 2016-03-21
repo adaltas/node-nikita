@@ -15,14 +15,14 @@ docker = require '../../src/misc/docker'
 describe 'docker build', ->
 
   config = test.config()
-  return if config.docker.disable
+  return if config.disable_docker
   scratch = test.scratch @
   @timeout 60000
 
-  they 'Test missing image parameter', (ssh, next) ->
+  they 'fail with missing image parameter', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_build
       false_source: 'Dockerfile'
     .then (err) ->
@@ -30,10 +30,10 @@ describe 'docker build', ->
       err.message.should.eql 'Required option "image"'
     .then next
 
-  they 'Test exclusive parameters', (ssh, next) ->
+  they 'fail with exclusive parameters', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_build
       image: 'mecano/should_not_exists_1'
       file: "#{__dirname}/Dockerfile"
@@ -45,7 +45,7 @@ describe 'docker build', ->
   they 'from text', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_rmi
       image: 'mecano/should_exists_2'
     .docker_build
@@ -64,7 +64,7 @@ describe 'docker build', ->
   they 'from cwd',  (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_rmi
       image: 'mecano/should_exists_3'
     .write
@@ -85,7 +85,7 @@ describe 'docker build', ->
   they 'from Dockerfile (exist)', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_rmi
       image: 'mecano/should_exists_3'
     .write
@@ -103,7 +103,7 @@ describe 'docker build', ->
   they 'from Dockerfile (not exist)', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_build
       image: 'mecano/should_not_exists_4'
       file: 'unexisting/file'
@@ -116,7 +116,7 @@ describe 'docker build', ->
     status_true = status_false = null
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_rmi
       image: 'mecano/should_exists_5'
     .write

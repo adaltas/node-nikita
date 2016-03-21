@@ -53,6 +53,8 @@ mecano.docker_pause({
 
     module.exports = (options, callback) ->
       # Validate parameters
+      options.docker ?= {}
+      options[k] ?= v for k, v of options.docker
       return callback Error 'Missing container parameter' unless options.container?
       cmd = "unpause #{options.container}"
       @execute

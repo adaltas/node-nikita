@@ -129,6 +129,8 @@ mecano.docker_build({
 
     module.exports = (options, callback) ->
       # Validate parameters and mandatory conditions
+      options.docker ?= {}
+      options[k] ?= v for k, v of options.docker
       return callback Error 'Required option "image"' unless options.image?
       return callback Error 'Can not build from Dockerfile and content' if options.content? and options.file?
       options.rm ?= true
@@ -160,7 +162,6 @@ mecano.docker_build({
         content: options.content
         source: source
         destination: (content) ->
-          # console.log content
           options.content = content
         from: options.from
         to: options.to
@@ -231,3 +232,4 @@ mecano.docker_build({
     path = require 'path'
     util = require 'util'
     fs = require 'ssh2-fs'
+    {merge} = require '../misc'

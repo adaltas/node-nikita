@@ -36,19 +36,8 @@ ip = (ssh, machine, callback) ->
 describe 'docker service', ->
 
   config = test.config()
-  return if config.docker.disable
+  return if config.disable_docker
   scratch = test.scratch @
-  
-  before (next) ->
-    mecano
-    .execute
-      cmd: """
-      if ! docker-machine status #{config.docker.machine} | grep Running ; then
-        docker-machine start #{config.docker.machine}
-      fi
-      """
-      if: config.docker.machine
-    .then next
 
   they 'simple service', (ssh, next) ->
     ip ssh, config.docker.machine, (err, ipadress) =>
@@ -56,7 +45,7 @@ describe 'docker service', ->
       @timeout 60000
       mecano
         ssh: ssh
-        machine: config.docker.machine
+        docker: config.docker
       .docker_rm
         force: true
         container: 'mecano_test_unique'
@@ -78,7 +67,7 @@ describe 'docker service', ->
       @timeout 60000
       mecano
         ssh: ssh
-        machine: config.docker.machine
+        docker: config.docker
       .docker_rm
         container: 'mecano_test'
         force: true
@@ -100,7 +89,7 @@ describe 'docker service', ->
   they 'status not modified', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_rm
       force: true
       container: 'mecano_test'

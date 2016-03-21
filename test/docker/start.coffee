@@ -7,13 +7,13 @@ they = require 'ssh2-they'
 describe 'docker start', ->
 
   config = test.config()
-  return if config.docker.disable
+  return if config.disable_docker
   scratch = test.scratch @
 
   they 'on stopped container', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_rm
       container: 'mecano_test_start'
       force: true
@@ -34,7 +34,7 @@ describe 'docker start', ->
   they 'on started container', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_rm
       container: 'mecano_test_start'
       force: true

@@ -126,6 +126,8 @@ mecano.docker({
 
     module.exports = (options, callback) ->
       # Validate parameters
+      options.docker ?= {}
+      options[k] ?= v for k, v of options.docker
       return callback Error 'Missing image' unless options.image?
       options.rm ?= true
       options.name ?= options.container
@@ -161,24 +163,22 @@ mecano.docker({
       cmd += " #{options.cmd}" if options.cmd
       # need to delete the cmd options or it will be used in docker.exec
       delete options.cmd
-      # Construct other exec parameter
-      do_run = =>
-        options.log message: "Running container #{options.name}", level: 'INFO', module: 'mecano/docker/run'
-        @execute
-          cmd: docker.wrap options, cmd
-        , -> docker.callback callback, arguments...
-      if options.name?
-        options.log message: "Checking if container already runned", level: 'INFO', module: 'mecano/docker/run'
-        @execute
-          cmd: docker.wrap options, "ps -a | grep '#{options.name}'"
-          code_skipped: 1
-        , (err, exists) ->
-          return callback err if err
-          if exists
-            options.log message: "Container already runned. Skipping", level: 'DEBUG', module: 'mecano/docker/run'
-            callback()
-          else do_run()
-      else do_run()
+      @execute
+        if: options.name?
+        cmd: docker.wrap options, "ps -a | grep '#{options.name}'"
+        code_skipped: 1
+        shy: true
+      , (err, running) ->
+        docker.callback arguments...
+        options.log message: "Container already running. Skipping", level: 'INFO', module: 'mecano/docker/run' if running
+      @execute
+        cmd: docker.wrap options, cmd
+        if: ->
+          not options.name? or @status(-1) is false
+      , (err, running) ->
+        docker.callback arguments...
+        options.log message: "Container now running", level: 'WARN', module: 'mecano/docker/run' if running
+        callback arguments...
 
 ## Modules Dependencies
 

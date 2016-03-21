@@ -49,6 +49,8 @@ Register or log in to a Docker registry server.
 
     module.exports = (options, callback) ->
       # Validate parameters and madatory conditions
+      options.docker ?= {}
+      options[k] ?= v for k, v of options.docker
       return callback  Error 'Missing image parameter' unless options.image?
       return callback  Error 'Can not build from Dockerfile and content' if options.content? and options.dockerfile?
       cmd = 'login'
@@ -57,7 +59,7 @@ Register or log in to a Docker registry server.
       cmd += " \"#{options.registry}\"" if options.registry?
       @execute
         cmd: docker.wrap options, cmd
-      , -> docker.callback callback, arguments...
+      , docker.callback
 
 ## Modules Dependencies
 

@@ -11,12 +11,12 @@ describe 'docker stop', ->
 
   scratch = test.scratch @
   config = test.config()
-  return if config.docker.disable
+  return if config.disable_docker
 
   they 'on running container', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_service
       image: 'httpd'
       name: 'mecano_test_stop'
@@ -32,7 +32,7 @@ describe 'docker stop', ->
   they 'on stopped container', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_service
       image: 'httpd'
       name: 'mecano_test_stop'

@@ -10,13 +10,14 @@ they = require 'ssh2-they'
 describe 'docker cp', ->
 
   config = test.config()
+  return if config.disable_docker
   scratch = test.scratch @
   @timeout 20000
   
   they 'a remote file to a local file', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_rm
       container: 'mecano_extract'
     .docker_run
@@ -29,9 +30,10 @@ describe 'docker cp', ->
       destination: "#{scratch}/a_file"
     , (err, status) ->
       status.should.be.true() unless err
-    .call ->
+    .call (_, callback) ->
       fs.exists ssh, "#{scratch}/a_file", (err, exists) ->
         exists.should.be.true() unless err
+        callback err
     .docker_rm
       container: 'mecano_extract'
     .then next
@@ -39,7 +41,7 @@ describe 'docker cp', ->
   they 'a remote file to a local directory', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_rm container: 'mecano_extract'
     .docker_run
       name: 'mecano_extract'
@@ -61,7 +63,7 @@ describe 'docker cp', ->
   they 'a local file to a remote file', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_rm container: 'mecano_extract'
     .docker_run
       name: 'mecano_extract'
@@ -87,7 +89,7 @@ describe 'docker cp', ->
   they 'a local file to a remote directory', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_rm container: 'mecano_extract'
     .docker_run
       name: 'mecano_extract'

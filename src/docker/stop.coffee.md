@@ -53,20 +53,24 @@ mecano.docker_stop({
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       # Validate parameters
-      return callback Error 'Missing container parameter' unless options.container?
+      options.docker ?= {}
+      options[k] ?= v for k, v of options.docker
+      throw Error 'Missing container parameter' unless options.container?
       # rm is false by default only if options.service is true
       cmd = 'stop'
       cmd += " -t #{options.timeout}" if options.timeout?
       cmd += " #{options.container}"
-      @docker_status options, (err, is_running) ->
-        options.log message: "Container already stopped #{options.container} (Skipping)", level: 'INFO', module: 'mecano/lib/docker/start' if !is_running
-        return callback err, is_running if err or !is_running
-        options.log message: "Stopping container #{options.container}", level: 'INFO', module: 'mecano/lib/docker/stop'
-        @execute
-          cmd: docker.wrap options, cmd
-        , -> docker.callback callback, arguments...
+      @docker_status shy: true, options, (err, is_running) ->
+        throw err if err
+        if is_running
+        then options.log message: "Stopping container #{options.container}", level: 'INFO', module: 'mecano/lib/docker/stop'
+        else options.log message: "Container already stopped #{options.container} (Skipping)", level: 'INFO', module: 'mecano/lib/docker/stop'
+        @end() unless is_running
+      @execute
+        cmd: docker.wrap options, cmd
+      , docker.callback
 
 ## Modules Dependencies
 

@@ -66,8 +66,10 @@ mecano.docker({
 
     module.exports = (options, callback) ->
       # Validate parameters
-      return callback Error 'Missing container' unless options.container?
-      return callback Error 'Missing cmd' unless options.cmd?
+      options.docker ?= {}
+      options[k] ?= v for k, v of options.docker
+      throw Error 'Missing container' unless options.container?
+      throw Error 'Missing cmd' unless options.cmd?
       options.service ?= false
       # Construct exec command
       cmd = 'exec'
@@ -80,7 +82,13 @@ mecano.docker({
       delete options.cmd
       @execute
         cmd: docker.wrap options, cmd
-      , -> docker.callback callback, arguments...
+      # Note: There is no way to pass additionnal arguments in sync mode without
+      # a callback, or we would have ', docker.callback' as next line
+      , ->
+        try
+          docker.callback.call null, arguments...
+        catch e then arguments[0] = e
+        callback arguments...
 
 ## Modules Dependencies
 

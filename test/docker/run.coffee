@@ -36,36 +36,25 @@ ip = (ssh, machine, callback) ->
 describe 'docker run', ->
 
   config = test.config()
-  return if config.docker.disable
+  return if config.disable_docker
   scratch = test.scratch @
-  
-  before (next) ->
-    mecano
-    .execute
-      cmd: """
-      if ! docker-machine status #{config.docker.machine} | grep Running ; then
-        docker-machine start #{config.docker.machine}
-      fi
-      """
-      if: config.docker.machine
-    .then next
 
   they 'simple command', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_run
       cmd: "/bin/echo 'test'"
       image: 'alpine'
-      machine: config.docker.machine
-    , (err, executed, stdout, stderr) ->
+    , (err, status, stdout, stderr) ->
+      status.should.be.true()
       stdout.should.match /^test.*/ unless err
     .then next
   
   they '--rm (flag option)', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_rm
       force: true
       container: 'mecano_test_rm'
@@ -137,7 +126,7 @@ describe 'docker run', ->
   they 'existing container', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_rm
       force: true
       container: 'mecano_test'
@@ -146,8 +135,6 @@ describe 'docker run', ->
       image: 'alpine'
       name: 'mecano_test'
       rm: false
-    , (err, runned) ->
-      runned.should.be.true()
     .docker_run
       cmd: "echo test"
       image: 'alpine'
@@ -156,7 +143,6 @@ describe 'docker run', ->
     , (err, runned) ->
       runned.should.be.false()
     .docker_rm
-      machine: config.docker.machine
       force: true
       container: 'mecano_test'
     .then next
@@ -165,7 +151,7 @@ describe 'docker run', ->
     @timeout 30000
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_rm
       force: true
       container: 'mecano_test'
@@ -173,13 +159,11 @@ describe 'docker run', ->
       cmd: 'echo test'
       image: 'alpine'
       name: 'mecano_test'
-      machine: config.docker.machine
       rm: false
     .docker_run
       cmd: 'echo test'
       image: 'alpine'
       name: 'mecano_test'
-      machine: config.docker.machine
       rm: false
     , (err, executed, out, serr) ->
       executed.should.be.false()

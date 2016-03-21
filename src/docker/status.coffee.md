@@ -58,15 +58,17 @@ mecano.docker({
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       # Validate parameters
-      return callback  Error 'Missing container parameter' unless options.container?
+      options.docker ?= {}
+      options[k] ?= v for k, v of options.docker
+      throw Error 'Missing container parameter' unless options.container?
       # Construct exec command
       cmd = "ps | grep '#{options.container}'"
       @execute
         cmd: docker.wrap options, cmd
         code_skipped: 1
-      , -> docker.callback callback, arguments...
+      , docker.callback
 
 ## Modules Dependencies
 

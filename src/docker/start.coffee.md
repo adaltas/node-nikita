@@ -60,20 +60,24 @@ mecano.docker_start({
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       # Validate parameters
-      return callback Error 'Missing container parameter' unless options.container?
+      options.docker ?= {}
+      options[k] ?= v for k, v of options.docker
+      throw Error 'Missing container parameter' unless options.container?
       # rm is false by default only if options.service is true
       cmd = 'start'
       cmd += ' -a' if options.attach
       cmd += " #{options.container}"
-      @docker_status options, (err, is_running) =>
-        options.log message: "Container already started #{options.container} (Skipping)", level: 'INFO', module: 'mecano/lib/docker/start' if is_running
-        return callback err, false if err or is_running
-        options.log message: "Starting container #{options.container}", level: 'INFO', module: 'mecano/lib/docker/start'
-        @execute
-          cmd: docker.wrap options, cmd
-        , -> docker.callback callback, arguments...
+      @docker_status shy: true, options, (err, is_running) ->
+        throw err if err
+        if is_running
+        then options.log message: "Container already started #{options.container} (Skipping)", level: 'INFO', module: 'mecano/lib/docker/start'
+        else options.log message: "Starting container #{options.container}", level: 'INFO', module: 'mecano/lib/docker/start'
+        @end() if is_running
+      @execute
+        cmd: docker.wrap options, cmd
+      , docker.callback
 
 ## Modules Dependencies
 

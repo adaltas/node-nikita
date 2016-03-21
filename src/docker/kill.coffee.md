@@ -57,8 +57,10 @@ mecano.docker_kill({
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       # Validate parameters
+      options.docker ?= {}
+      options[k] ?= v for k, v of options.docker
       return callback Error 'Missing container parameter' unless options.container?
       cmd = 'kill'
       cmd += " -s #{options.signal}" if options.signal?
@@ -66,10 +68,11 @@ mecano.docker_kill({
       @execute
         cmd: docker.wrap options, "ps | grep '#{options.container}' | grep 'Up'"
         code_skipped: 1
+      , docker.callback
       @execute
         if: -> @status -1
         cmd: docker.wrap options, cmd
-      , -> docker.callback callback, arguments...
+      , docker.callback
 
 ## Modules Dependencies
 

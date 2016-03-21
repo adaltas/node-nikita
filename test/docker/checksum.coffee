@@ -11,14 +11,14 @@ docker = require '../../src/misc/docker'
 describe 'docker checksum', ->
 
   config = test.config()
+  return if config.disable_docker
   scratch = test.scratch @
-  machine = 'dev'
 
   they 'checksum on existing repository', (ssh, next) ->
     checksum = null
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_rmi
       image: 'mecano/checksum'
     .docker_build
@@ -30,7 +30,7 @@ describe 'docker checksum', ->
       image: 'mecano/checksum'
       tag: 'latest'
     , (err, executed, checksum_valid) ->
-      checksum_valid.should.eql checksum unless err
+      checksum_valid.should.startWith "sha256:#{checksum}" unless err
     .docker_rmi
       image: 'mecano/checksum'
     .then next
@@ -38,7 +38,7 @@ describe 'docker checksum', ->
   they 'checksum on not existing repository', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_checksum
       image: 'mecano/checksum'
       tag: 'latest'

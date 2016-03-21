@@ -15,12 +15,12 @@ describe 'docker status', ->
 
   scratch = test.scratch @
   config = test.config()
-  return if config.docker.disable
+  return if config.disable_docker
 
   they 'on stopped  container', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_rm
       container: 'mecano_status'
       force: true
@@ -41,7 +41,7 @@ describe 'docker status', ->
   they 'on running container', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_rm
       container: 'mecano_status'
       force: true

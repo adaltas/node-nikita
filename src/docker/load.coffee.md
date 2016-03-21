@@ -64,6 +64,8 @@ mecano.docker_load({
 
     module.exports = (options, callback) ->
       # Validate parameters
+      options.docker ?= {}
+      options[k] ?= v for k, v of options.docker
       options.input ?= options.source
       return callback Error 'Missing input parameter' unless options.input?
       cmd = "load -i #{options.input}"
@@ -116,7 +118,7 @@ mecano.docker_load({
                   diff = true
                   options.log message: 'Identical images', level: 'INFO', module: 'mecano/lib/docker/load'
                   break;
-          return callback err, diff, stdout, stderr
+          callback err, diff, stdout, stderr
 
 
 ## Modules Dependencies

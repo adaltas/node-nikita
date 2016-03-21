@@ -54,13 +54,15 @@ mecano.docker_pause({
 
     module.exports = (options, callback) ->
       # Validate parameters
+      options.docker ?= {}
+      options[k] ?= v for k, v of options.docker
       return callback Error 'Missing container parameter' unless options.container?
       # rm is false by default only if options.service is true
       cmd = 'logout'
       cmd += " \"#{options.registry}\"" if options.registry?
       @execute
         cmd: docker.wrap options, cmd
-      , -> docker.callback callback, arguments...
+      , docker.callback
 
 ## Modules Dependencies
 

@@ -13,13 +13,13 @@ describe 'docker kill', ->
   destination = "#{scratch}/default.script"
   source = '/usr/share/udhcpc/default.script'
   config = test.config()
-  return if config.docker.disable
+  return if config.disable_docker
 
 
   they 'running container', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_rm
       container: 'mecano_test_kill'
       force: true
@@ -31,13 +31,13 @@ describe 'docker kill', ->
       container: 'mecano_test_kill'
     , (err, killed, stdout, stderr) ->
       killed.should.be.true()
-      next(err)
+    .then next
 
   they 'status not modified (previously killed)', (ssh, next) ->
     @timeout 120000
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_rm
       container: 'mecano_test_kill'
       force: true
@@ -51,12 +51,12 @@ describe 'docker kill', ->
       container: 'mecano_test_kill'
     , (err, killed) ->
       killed.should.be.false()
-      next(err)
+    .then next
 
   they 'status not modified (not living)', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_rm
       container: 'mecano_test_kill'
     .docker_run

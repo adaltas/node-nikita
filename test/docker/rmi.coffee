@@ -8,13 +8,13 @@ docker = require '../../src/misc/docker'
 describe 'docker rmi', ->
 
   scratch = test.scratch @
-  source = "#{scratch}"
   config = test.config()
+  return if config.disable_docker
 
   they 'remove image', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_build
       image: 'mecano/rmi_test'
       content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
@@ -28,7 +28,7 @@ describe 'docker rmi', ->
   they 'status unmodifed', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_build
       image: 'mecano/rmi_test:latest'
       content: "FROM scratch\nCMD ['echo \"hello build from text\"']"

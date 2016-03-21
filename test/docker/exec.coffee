@@ -7,13 +7,16 @@ they = require 'ssh2-they'
 describe 'docker exec', ->
 
   config = test.config()
-  return if config.docker.disable
+  return if config.disable_docker
   scratch = test.scratch @
 
   they 'simple command', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
+    .docker_rm
+      container: 'mecano_test_exec'
+      force: true
     .docker_service
       image: 'httpd'
       container: 'mecano_test_exec'
@@ -21,8 +24,8 @@ describe 'docker exec', ->
       container: 'mecano_test_exec'
       cmd: 'echo toto'
     , (err, executed, stdout, stderr) ->
-      executed.should.be.true()
-      stdout.trim().should.eql 'toto'
+      executed.should.be.true() unless err
+      stdout.trim().should.eql 'toto' unless err
     .docker_rm
       container: 'mecano_test_exec'
       force: true
@@ -31,11 +34,15 @@ describe 'docker exec', ->
   they 'on stopped container', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
+    .docker_rm
+      container: 'mecano_test_exec'
+      force: true
     .docker_service
       image: 'httpd'
       container: 'mecano_test_exec'
-    .docker_stop container: 'mecano_test_exec'
+    .docker_stop
+      container: 'mecano_test_exec'
     .docker_exec
       container: 'mecano_test_exec'
       cmd: 'echo toto'
@@ -44,12 +51,13 @@ describe 'docker exec', ->
       err.message.should.eql 'Container mecano_test_exec is not running'
     .docker_rm
       container: 'mecano_test_exec'
+      force: true
     .then next
 
   they 'on non existing container', (ssh, next) ->
     mecano
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker_exec
       container: 'mecano_fake_container'
       cmd: 'echo toto'

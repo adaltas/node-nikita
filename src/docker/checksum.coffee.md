@@ -45,10 +45,12 @@ Return the checksum of repository:tag, if it exists. Function not native to dock
 
     module.exports = (options, callback) ->
       # Validate parameters and mandatory conditions
+      options.docker ?= {}
+      options[k] ?= v for k, v of options.docker
       options.image ?= options.repository
       return callback Error 'Missing repository parameter' unless options.image?
       options.tag ?= 'latest'
-      cmd = "images | grep '#{options.image}' | grep '#{options.tag}' | awk '{ print $3 }'"
+      cmd = "images --no-trunc | grep '#{options.image}' | grep '#{options.tag}' | awk '{ print $3 }'"
       options.log message: "Getting image checksum :#{options.image}", level: 'INFO', module: 'mecano/lib/docker/checksum'
       @execute
         cmd: docker.wrap options, cmd

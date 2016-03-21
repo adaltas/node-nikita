@@ -15,24 +15,27 @@ force options is set.
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       # Validate parameters and madatory conditions
-      return callback  Error 'Missing image parameter' unless options.image?
-      cmd = 'rmi'
+      options.docker ?= {}
+      options[k] ?= v for k, v of options.docker
+      throw Error 'Missing image parameter' unless options.image?
+      cmd_images = 'images'
+      cmd_images += " | grep '#{options.image} '"
+      cmd_images += " | grep ' #{options.tag} '" if options.tag?
+      cmd_rmi = 'rmi'
       for opt in ['force', 'no_prune']
-        cmd += " --#{opt.replace '_', '-'}" if options[opt]?
-      cmd += " #{options.image}"
-      cmd += ":#{options.tag}" if options.tag?
-      list_images = 'images'
-      list_images += " | grep '#{options.image} '"
-      list_images += " | grep ' #{options.tag} '" if options.tag?
+        cmd_rmi += " --#{opt.replace '_', '-'}" if options[opt]?
+      cmd_rmi += " #{options.image}"
+      cmd_rmi += ":#{options.tag}" if options.tag?
       @execute
-        cmd: docker.wrap options, list_images
+        cmd: docker.wrap options, cmd_images
         code_skipped: 1
+      , docker.callback
       @execute
-        cmd: docker.wrap options, cmd
+        cmd: docker.wrap options, cmd_rmi
         if: -> @status -1
-      .then -> docker.callback callback, arguments...
+      , docker.callback
 
 ## Modules Dependencies
 
