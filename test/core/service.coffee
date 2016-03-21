@@ -146,12 +146,6 @@ describe 'service', ->
         action: 'start'
       , (err, serviced) ->
         serviced.should.be.false()
-      .service
-        name: 'ntp'
-        srv_name: 'ntpd'
-        action: 'restart'
-      , (err, serviced) ->
-        serviced.should.be.true()
       .then next
 
     they 'should stop', (ssh, next) ->
@@ -176,28 +170,38 @@ describe 'service', ->
         serviced.should.be.false()
       .then next
 
+    they 'should restart', (ssh, next) ->
+      return next() unless config.test_service
+      mecano
+        ssh: ssh
+      .service
+        name: 'ntp'
+        srv_name: 'ntpd'
+        action: 'restart'
+      , (err, restarted) ->
+        restarted.should.be.true()
+      .then next
+
   describe 'service_action', ->
 
     they 'should start', (ssh, next) ->
       return next() unless config.test_service
       mecano
         ssh: ssh
+      .service_stop
+        name: 'ntpd'
       .service_start
         name: 'ntpd'
-      , (err, serviced) ->
-        serviced.should.be.true()
+      , (err, started) ->
+        started.should.be.true()
       .service_status
         name: 'ntpd'
       , (err, started) ->
         started.should.be.true()
       .service_start # Detect already started
         name: 'ntpd'
-      , (err, serviced) ->
-        serviced.should.be.false()
-      .service_restart
-        name: 'ntpd'
-      , (err, serviced) ->
-        serviced.should.be.true()
+      , (err, started) ->
+        started.should.be.false()
       .then next
 
     they 'should stop', (ssh, next) ->
@@ -206,16 +210,26 @@ describe 'service', ->
         ssh: ssh
       .service_stop
         name: 'ntpd'
-      , (err, serviced) ->
-        serviced.should.be.true()
+      , (err, stopped) ->
+        stopped.should.be.true()
       .service_status
         name: 'ntpd'
       , (err, started) ->
         started.should.be.false()
       .service_stop # Detect already stopped
         name: 'ntpd'
-      , (err, serviced) ->
-        serviced.should.be.false()
+      , (err, stopped) ->
+        stopped.should.be.false()
+      .then next
+
+    they 'should restart', (ssh, next) ->
+      return next() unless config.test_service
+      mecano
+        ssh: ssh
+      .service_restart
+        name: 'ntpd'
+      , (err, restarted) ->
+        restarted.should.be.true()
       .then next
 
 

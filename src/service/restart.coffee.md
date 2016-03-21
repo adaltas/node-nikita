@@ -40,7 +40,6 @@ require('mecano').service_start([{
       @execute
         cmd: "service #{options.name} restart"
       , (err, restarted) ->
-        return callback err if err
+        throw err if err
         options.store["mecano.service.#{options.name}.status"] = 'started' if restarted
-        callback null, restarted
       .then callback
