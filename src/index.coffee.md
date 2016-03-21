@@ -234,11 +234,11 @@ functions share a common API with flexible options.
                   unless todos.length
                     return setImmediate ->
                       do_intercept_after [null, status_sync]
-                  options = todos.shift()
-                  run options, (err, status) ->
+                  loptions = todos.shift()
+                  run loptions, (err, status) ->
                     return do_intercept_after [err] if err
                     # Discover status of all unshy children
-                    status_sync = true if status and not options.shy
+                    status_sync = true if status and not loptions.shy
                     wait_children()
                 wait_children()
             catch err
