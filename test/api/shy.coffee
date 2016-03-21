@@ -77,4 +77,16 @@ describe 'api shy', ->
     .then (err, status) ->
       status.should.be.true() unless err
       next err
+  
+  it 'dont interferce with previous status', (next) ->
+    mecano
+    .call shy: true, (err, callback)->
+      callback null, true
+    .call ->
+      @status(-1).should.be.true()
+    .then (err, status) ->
+      # @status(-2).should.be.true() # TODO, not ready yet, stack is empty before then
+      status.should.be.false() unless err
+      next err
+    
         

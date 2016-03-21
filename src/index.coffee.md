@@ -34,7 +34,6 @@ functions share a common API with flexible options.
       befores = []
       afters = []
       depth = 0
-      count = 0
       killed = false
       obj.options.domain =  domain.create() if obj.options.domain is true
       domain_on_error = (err) ->
@@ -146,7 +145,6 @@ functions share a common API with flexible options.
         then obj.options.domain.run run
         else run()
       run = (options, callback) ->
-        count++
         options = todos.shift() unless options
         unless options # Nothing more to do in current queue
           if stack.length is 0
@@ -159,7 +157,7 @@ functions share a common API with flexible options.
         options = enrich_options options
         if options.type is 'then'
           {err, status} = todos
-          status = status.some (status) -> !! status
+          status = status.some (status) -> not status.shy and !!status.value
           todos_reset todos
           options.handler?.call obj, err, status
           run()
@@ -176,7 +174,7 @@ functions share a common API with flexible options.
             run()
         depth++ if options.header
         options.log message: options.header, type: 'header', depth: depth if options.header
-        todos.status.unshift undefined
+        todos.status.unshift shy: options.shy, value: undefined
         stack.unshift todos
         todos = todos_create()
         wrap.options options, (err) ->
@@ -267,7 +265,7 @@ functions share a common API with flexible options.
             todos = stack.shift() if todos.length is 0
             jump_to_error args[0] if args[0] and not options.relax
             todos.throw_if_error = false if args[0] and options_callback
-            todos.status[0] = args[1] and not options.shy
+            todos.status[0].value = args[1]
             call_callback options_callback, args if options_callback
             args[0] = null if options.relax
             depth-- if options.header
@@ -311,17 +309,17 @@ functions share a common API with flexible options.
         obj
       properties.status = get: -> (index) ->
         if arguments.length is 0
-          return stack[0].status.some (status) -> !! status
+          return stack[0].status.some (status) -> not status.shy and !!status.value
         else if index is false
-          value = stack[0].status.some (status) -> !! status
-          stack[0].status = stack[0].status.map -> false
+          value = stack[0].status.some (status) -> not status.shy and !!status.value
+          status.value = false for status in stack[0].status
           return value
         else if index is true
-          value = stack[0].status.some (status) -> !! status
-          stack[0].status = stack[0].status.map -> true
+          value = stack[0].status.some (status) -> not status.shy and !!status.value
+          status.value = true for status in stack[0].status
           return value
         else
-          stack[0].status[Math.abs index]
+          stack[0].status[Math.abs index]?.value
       proto = Object.defineProperties obj, properties
       # Register function
       Object.defineProperty obj, 'register', get: -> (name, handler) ->
