@@ -14,7 +14,6 @@
       extract: require '../core/extract'
       git: require '../core/git'
       group: require '../core/group'
-      ini: require '../core/ini'
       iptables: require '../core/iptables'
       link: require '../core/link'
       mkdir: require '../core/mkdir'
@@ -26,6 +25,7 @@
       upload: require '../core/upload'
       user: require '../core/user'
       write: require '../core/write'
+      write_ini: require '../core/write_ini'
       write_properties: require '../core/write_properties'
       write_yaml: require '../core/write_yaml'
       # Cron

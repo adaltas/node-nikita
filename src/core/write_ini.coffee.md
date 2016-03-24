@@ -1,5 +1,5 @@
 
-# `ini(options, callback)`
+# `write_ini(options, callback)`
 
 Write an object as .ini file. Note, we are internally using the [ini] module.
 However, there is a subtile difference. Any key provided with value of 
@@ -7,7 +7,7 @@ However, there is a subtile difference. Any key provided with value of
 prowerfull and tricky: the original value will be kept if `undefined` is
 provided while the value will be removed if `null` is provided.
 
-The `ini` function rely on the `write` function and accept all of its
+The `write_ini` function rely on the `write` function and accept all of its
 options. It introduces the `merge` option which instruct to read the
 destination file if it exists and merge its parsed object with the one
 provided in the `content` option.
@@ -87,7 +87,7 @@ require('mecano').ini({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Calling ini", level: 'DEBUG', module: 'mecano/lib/ini'
+      options.log message: "Calling ini", level: 'DEBUG', module: 'mecano/lib/write_ini'
       {merge, destination, content, ssh} = options
       options.clean ?= true
       # Validate parameters
@@ -96,7 +96,7 @@ require('mecano').ini({
       # Start real work
       do_get = ->
         return do_write() unless merge
-        options.log message: "Get content for merge", level: 'DEBUG', module: 'mecano/lib/ini'
+        options.log message: "Get content for merge", level: 'DEBUG', module: 'mecano/lib/write_ini'
         fs.exists ssh, destination, (err, exists) ->
           return callback err if err
           return do_write() unless exists
@@ -108,9 +108,9 @@ require('mecano').ini({
             do_write()
       do_write = =>
         if options.clean
-          options.log message: "Clean content", level: 'INFO', module: 'mecano/lib/ini'
+          options.log message: "Clean content", level: 'INFO', module: 'mecano/lib/write_ini'
           misc.ini.clean content
-        options.log message: "Serialize content", level: 'DEBUG', module: 'mecano/lib/ini'
+        options.log message: "Serialize content", level: 'DEBUG', module: 'mecano/lib/write_ini'
         stringify = options.stringify or misc.ini.stringify
         options.content = stringify content, options
         @write options, (err, written) ->
