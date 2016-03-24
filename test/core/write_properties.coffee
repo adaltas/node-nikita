@@ -5,10 +5,10 @@ test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
 
-describe 'write', ->
+describe 'write_properties', ->
 
   scratch = test.scratch @
-  
+
   they 'overwrite by default', (ssh, next) ->
     # Write the content
     mecano
