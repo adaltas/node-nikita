@@ -76,7 +76,7 @@ require('mecano').git({
         """
         # stdout: process.stdout
         cwd: options.destination
-        trap_on_error: true
+        trap: true
         code_skipped: 3
         if: -> repo_exists
         shy: true

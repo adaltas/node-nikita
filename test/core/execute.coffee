@@ -168,7 +168,7 @@ describe 'execute', ->
         sh -c '>&2 echo "exit 2'
         echo 'ok'
         """
-        trap_on_error: true
+        trap: true
       , (err) ->
         err.should.be.an.Error
         next()

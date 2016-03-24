@@ -22,7 +22,7 @@ creating any modifications.
 *   `code_skipped` (int|string|array)   
     Expected code(s) returned by the command if it has no effect, executed will
     not be incremented, int or array of int.   
-*   `trap_on_error`   
+*   `trap`   
     Exit immediately  if a commands exits with a non-zero status.   
 *   `cwd`   
     Current working directory.   
@@ -92,7 +92,7 @@ mecano.execute({
       options.code = [options.code] unless Array.isArray options.code
       options.code_skipped ?= []
       options.code_skipped = [options.code_skipped] unless Array.isArray options.code_skipped
-      if options.trap_on_error
+      if options.trap
         options.cmd = "set -e\n#{options.cmd}"
       # options.log message: "Command is: `#{options.cmd}`", level: 'INFO', module: 'mecano/lib/execute'
       options.log message: options.cmd, type: 'stdin'

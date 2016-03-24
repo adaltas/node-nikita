@@ -102,7 +102,7 @@ require('mecano').iptables({
         options.log message: "#{cmd.length} modified rules", level: 'WARN', module: 'mecano/lib/iptables'
         @execute
           cmd: "#{cmd.join '; '}; service iptables save;"
-          trap_on_error: true
+          trap: true
         , (err, executed) ->
           callback err, true
 

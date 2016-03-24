@@ -136,7 +136,7 @@ require('mecano').java_keystore_add([{
           -srckeystore "#{tmp_location}/pkcs12" -srcstoretype PKCS12 -srcstorepass #{options.keypass} \
           -alias #{options.name}
         """
-        # trap_on_error: true
+        # trap: true
         if: !!options.cert
         code_skipped: 3
       .execute # Deal with CACert
@@ -169,7 +169,7 @@ require('mecano').java_keystore_add([{
           -alias #{options.caname} \
           -file #{files.cacert}
         """
-        # trap_on_error: true
+        # trap: true
         code_skipped: 3
       .remove
         destination: "#{tmp_location}"
