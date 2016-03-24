@@ -27,6 +27,7 @@
       user: require '../core/user'
       write: require '../core/write'
       write_properties: require '../core/write_properties'
+      write_yaml: require '../core/write_yaml'
       # Cron
       cron_add: require '../cron/add'
       cron_remove: require '../cron/remove'
@@ -70,8 +71,6 @@
       service_startup: require '../service/startup'
       service_status: require '../service/status'
       service_stop: require '../service/stop'
-      # yaml
-      yaml: require '../core/yaml'
       # Wait
       wait_execute: require '../wait/execute'
       wait_connect: require '../wait/connect'

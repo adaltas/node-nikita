@@ -5,12 +5,12 @@ test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
 
-describe 'yaml', ->
+describe 'write_yaml', ->
 
   scratch = test.scratch @
 
   they 'stringify an object', (ssh, next) ->
-    mecano.yaml
+    mecano.write_yaml
       ssh: ssh
       content: user: preference: color: 'rouge'
       destination: "#{scratch}/user.yml"
@@ -27,7 +27,7 @@ describe 'yaml', ->
     content = 'user:\n  preference:\n    language: english\n'
     fs.writeFile ssh, "#{scratch}/user.yml", content, (err) ->
       return next err if err
-      mecano.yaml
+      mecano.write_yaml
         ssh: ssh
         content: user: preference: language: 'french'
         destination: "#{scratch}/user.yml"
@@ -41,7 +41,7 @@ describe 'yaml', ->
           next()
 
   they 'discard undefined and null', (ssh, next) ->
-    mecano.yaml
+    mecano.write_yaml
       ssh: ssh
       content: user: preference: color: 'violet', age: undefined, gender: null
       destination: "#{scratch}/user.yml"
@@ -58,7 +58,7 @@ describe 'yaml', ->
     content = 'user:\n  preference:\n    language: lovelynode\n    color: rouge\n'
     fs.writeFile ssh, "#{scratch}/user.yml", content, (err) ->
       return next err if err
-      mecano.yaml
+      mecano.write_yaml
         ssh: ssh
         content: user: preference:
           color: 'rouge'
@@ -77,7 +77,7 @@ describe 'yaml', ->
     content = 'user:\n  preference:\n    language: node\n    name:    toto\n'
     fs.writeFile ssh, "#{scratch}/user.yml", content, (err) ->
       return next err if err
-      mecano.yaml
+      mecano.write_yaml
         ssh: ssh
         content: user: preference:
           language: 'node'
@@ -96,7 +96,7 @@ describe 'yaml', ->
     content = 'user:\n  preference:\n    language: node\n  name: toto\ngroup: hadoop_user\n'
     fs.writeFile ssh, "#{scratch}/user.yml", content, (err) ->
       return next err if err
-      mecano.yaml
+      mecano.write_yaml
         ssh: ssh
         content:
           group: null
