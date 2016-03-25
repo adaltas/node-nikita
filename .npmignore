@@ -1,0 +1,7 @@
+/docker
+/src
+/test
+/test.coffee
+/test.coffee.sample
+/Makefile
+.travis.yml
