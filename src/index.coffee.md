@@ -136,8 +136,8 @@ functions share a common API with flexible options.
         todos = stack.shift() while stack.length
         jump_to_error err
         run()
-      jump_to_error = (err) ->
-        throw err unless todos?
+      jump_to_error = (err) ->        
+        # throw err unless todos?
         while todos[0] and todos[0].type isnt 'then' then todos.shift()
         todos.err = err
       _run_ = ->
@@ -240,6 +240,7 @@ functions share a common API with flexible options.
                     wait_children()
                 wait_children()
             catch err
+              todos = []
               do_intercept_after [err]
           do_intercept_after = (args, callback) ->
             return do_callback args if options.intercept_after
@@ -289,7 +290,7 @@ functions share a common API with flexible options.
         options = normalize_options args, 'call'
         for opts in options
           throw Error 'Missing handler option' unless opts.handler
-          throw Error "Handler not a function, got '#{opts.handler}'" unless typeof opts.handler is 'function'
+          throw Error "Handler not a function, got '#{opts.handler}'" unless typeof opts.handler is 'function'        
         todos.push opts for opts in options
         setImmediate _run_ if todos.length is options.length # Activate the pump
         obj
@@ -348,7 +349,7 @@ functions share a common API with flexible options.
       obj.register name, handler for name, handler of registry
       obj
 
-    module.exports.propagated_options = ['ssh', 'log', 'stdout', 'stderr']
+    module.exports.propagated_options = ['ssh', 'log', 'stdout', 'stderr', 'debug']
 
 ## Helper functions
 

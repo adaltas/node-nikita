@@ -34,6 +34,17 @@ describe 'api handler', ->
         err.message.should.eql 'Catchme'
         next()
 
+    it 'throw after registered function', (next) ->
+      mecano()
+      .call ->
+        @call fuck: 'yeah', ->
+        throw Error 'Catchme'
+      , (err, written) ->
+        err.message.should.eql 'Catchme'
+      .then (err, changed) ->
+        err.message.should.eql 'Catchme'
+        next()
+
   describe 'error async', ->
 
     it 'passed as argument in same tick', (next) ->
@@ -67,6 +78,17 @@ describe 'api handler', ->
       .call (options, next) ->
         throw Error 'Catchme'
       .then (err, status) ->
+        err.message.should.eql 'Catchme'
+        next()
+
+    it 'throw after registered function', (next) ->
+      mecano()
+      .call (_, callback) ->
+        @call fuck: 'yeah', ->
+        throw Error 'Catchme'
+      , (err, written) ->
+        err.message.should.eql 'Catchme'
+      .then (err, changed) ->
         err.message.should.eql 'Catchme'
         next()
 
