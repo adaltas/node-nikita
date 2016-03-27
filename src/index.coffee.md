@@ -28,7 +28,7 @@ functions share a common API with flexible options.
       for option in module.exports.propagated_options then obj.propagated_options.push option
       store = {}
       properties = {}
-      listeners = {}
+      # listeners = {}
       stack = []
       todos = todos_create()
       befores = []
@@ -93,8 +93,6 @@ functions share a common API with flexible options.
           options[k] = v if options[k] is undefined and k in obj.propagated_options
         for k, v of global_options
           options[k] = v if options[k] is undefined
-        emit = (log) ->
-          listener.call null, log for listener in listeners[log.type]?
         _log = options.log unless options.log?.dont
         options.log = (log) ->
           log = message: log if typeof log is 'string'
