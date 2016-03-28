@@ -77,10 +77,6 @@ functions share a common API with flexible options.
           opts.callback ?= callback if callback
           opts.user_args = true if enrich and opts.callback?.length > 2
           opts.store ?= store if enrich and store
-          if opts.debug
-            opts.log ?= (log) -> process.stdout.write "[#{log.level} #{log.time}] #{log.message}\n"
-            opts.stdout ?= process.stdout
-            opts.stderr ?= process.stderr
         options
       enrich_options = (user_options) ->
         user_options.enriched = true
@@ -93,7 +89,23 @@ functions share a common API with flexible options.
           options[k] = v if options[k] is undefined and k in obj.propagated_options
         for k, v of global_options
           options[k] = v if options[k] is undefined
-        _log = options.log unless options.log?.dont
+        unless options.log?.dont
+          if options.log and not Array.isArray options.log
+            _logs = [options.log]
+          else if not options.log
+            _logs = []
+        options.log ?= []
+        options.log = [options.log] unless Array.isArray options.log
+        _logs = options.log
+        if options.debug
+          _logs.push (log) ->
+            return if log.type in ['stdout', 'stderr']
+            msg = "[#{log.level} #{log.time}] #{log.message}"
+            msg = switch log.type
+              when 'stdout_stream' then "\x1b[36m#{msg}\x1b[39m"
+              when 'stderr_stream' then "\x1b[35m#{msg}\x1b[39m"
+              else "\x1b[32m#{msg}\x1b[39m"
+            process.stdout.write "#{msg}\n"
         options.log = (log) ->
           log = message: log if typeof log is 'string'
           log.level ?= 'INFO'
@@ -112,9 +124,10 @@ functions share a common API with flexible options.
           log.file = file
           log.line = line
           args.unshift("" + file + ":" + line + " in " + method + "()");
-          _log? log
+          _log log for _log in _logs
+          # _logs? log
           obj.emit? log.type, log
-        options.log.dont = true
+          # options.log.dont = true
         options
       call_callback = (fn, args) ->
         stack.unshift todos
@@ -152,6 +165,7 @@ functions share a common API with flexible options.
           else
             throw todos.err if stack.length is 0 and todos.err and todos.throw_if_error
           return
+        org_options = options
         options = enrich_options options
         if options.type is 'then'
           {err, status} = todos
@@ -175,6 +189,7 @@ functions share a common API with flexible options.
         todos.status.unshift shy: options.shy, value: undefined
         stack.unshift todos
         todos = todos_create()
+        todos.options = org_options
         wrap.options options, (err) ->
           copy = {}
           for k, v of options
@@ -207,7 +222,6 @@ functions share a common API with flexible options.
             , ->
               for k, v of options # Remove conditions from options
                 delete options[k] if /^if.*/.test(k) or /^unless.*/.test(k)
-              todos.options = options
               do_handler()
           do_handler = ->
             called = false

@@ -23,6 +23,44 @@ describe 'api log', ->
         logs[0].time.should.match /\d+/
         logs[0].total_depth.should.eql 1
         next err
+        
+    it 'work recursively', (next) ->
+      logs = []
+      mecano
+      .call
+        log: (l) -> logs.push l
+        handler: ->
+          @call (options) ->
+              options.log 'handler'
+      .then (err) ->
+        logs.length.should.eql 1
+        logs[0].level.should.eql 'INFO'
+        logs[0].message.should.eql 'handler'
+        (logs[0].module is undefined).should.be.true()
+        logs[0].time.should.match /\d+/
+        logs[0].total_depth.should.eql 2
+        next err
+        
+    it 'is overwritteable', (next) ->
+      logs_parent = []
+      logs_child = []
+      mecano
+      .call 
+        log: (l) -> logs_parent.push l
+        handler: ->
+          @call
+            log: (l) -> logs_child.push l
+            handler: (options) ->
+              options.log 'handler'
+      .then (err) ->
+        logs_parent.length.should.eql 0
+        logs_child.length.should.eql 1
+        logs_child[0].level.should.eql 'INFO'
+        logs_child[0].message.should.eql 'handler'
+        (logs_child[0].module is undefined).should.be.true()
+        logs_child[0].time.should.match /\d+/
+        logs_child[0].total_depth.should.eql 2
+        next err
   
   describe 'global via on', ->
   
