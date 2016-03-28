@@ -125,9 +125,7 @@ functions share a common API with flexible options.
           log.line = line
           args.unshift("" + file + ":" + line + " in " + method + "()");
           _log log for _log in _logs
-          # _logs? log
           obj.emit? log.type, log
-          # options.log.dont = true
         options
       call_callback = (fn, args) ->
         stack.unshift todos
@@ -301,8 +299,9 @@ functions share a common API with flexible options.
         args = [].slice.call(arguments)
         options = normalize_options args, 'call'
         for opts in options
+          opts.handler = require.main.require opts.argument if not opts.handler and typeof opts.argument is 'string'
           throw Error 'Missing handler option' unless opts.handler
-          throw Error "Handler not a function, got '#{opts.handler}'" unless typeof opts.handler is 'function'        
+          throw Error "Handler not a function, got '#{opts.handler}'" unless typeof opts.handler is 'function'
         todos.push opts for opts in options
         setImmediate _run_ if todos.length is options.length # Activate the pump
         obj
