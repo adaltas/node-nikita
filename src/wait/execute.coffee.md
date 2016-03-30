@@ -20,7 +20,7 @@ change had occured. Otherwise it will be set to "true".
     Expected code to be returned when the command failed and should be scheduled
     for later execution, default to "1".   
 
-Example:
+## Example
 
 ```coffee
 require 'mecano'
