@@ -33,7 +33,7 @@ require 'mecano'
     module.exports = (options, callback) ->
       modified = false
       # Validate parameters
-      options = { cmd: options } if typeof options is 'string'
+      options.cmd ?= options.argument if typeof options.argument?
       return callback new Error "Missing cmd: #{options.cmd}" unless options.cmd?
       options.cmd = [options.cmd] unless Array.isArray options.cmd
       options.quorum = options.quorum
