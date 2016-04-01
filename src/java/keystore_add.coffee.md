@@ -96,19 +96,19 @@ require('mecano').java_keystore_add([{
         destination: "#{tmp_location}"
         mode: 0o0600
         shy: true
-      @upload
+      @download
         if: options.local_source and options.cacert
         source: options.cacert
         destination: files.cacert
         mode: 0o0600
         shy: true
-      @upload
+      @download
         if: options.local_source and options.cert
         source: options.cert
         destination: files.cert
         mode: 0o0600
         shy: true
-      @upload
+      @download
         if: options.local_source and options.key
         source: options.key
         destination: files.key
