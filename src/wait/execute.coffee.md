@@ -34,7 +34,7 @@ require 'mecano'
       modified = false
       # Validate parameters
       options = { cmd: options } if typeof options is 'string'
-      return callback new Error "Missing cmd: #{options.cmd}" unless options.cmd?
+      return callback Error "Missing cmd: #{options.cmd}" unless options.cmd?
       options.cmd = [options.cmd] unless Array.isArray options.cmd
       options.quorum = options.quorum
       if options.quorum and options.quorum is true  

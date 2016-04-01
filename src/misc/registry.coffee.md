@@ -72,5 +72,6 @@
       service_status: require '../service/status'
       service_stop: require '../service/stop'
       # Wait
-      wait_execute: require '../wait/execute'
       wait_connect: require '../wait/connect'
+      wait_execute: require '../wait/execute'
+      wait_exist: require '../wait/exist'
