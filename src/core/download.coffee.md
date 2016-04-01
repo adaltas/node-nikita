@@ -114,7 +114,7 @@ mecano.download
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Calling download", level: 'DEBUG', module: 'mecano/lib/download'
+      options.log message: "Entering download", level: 'DEBUG', module: 'mecano/lib/download'
       {destination, source} = options
       return callback new Error "Missing source: #{source}" unless source
       return callback new Error "Missing destination: #{destination}" unless destination

@@ -177,7 +177,7 @@ require('mecano').write({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Calling write", level: 'DEBUG', module: 'mecano/lib/write'
+      options.log message: "Entering write", level: 'DEBUG', module: 'mecano/lib/write'
       modified = false
       # Validate parameters
       return callback Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?

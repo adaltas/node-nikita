@@ -77,11 +77,12 @@ require('mecano').write_yaml({
 ## Source Code
 
     module.exports = (options, callback) ->
+      options.log message: "Entering write_yaml", level: 'DEBUG', module: 'mecano/lib/write'
       {merge, destination, content, ssh} = options
       options.clean ?= true
       # Validate parameters
-      return callback new Error 'Missing content' unless content
-      return callback new Error 'Missing destination' unless destination
+      return callback Error 'Missing content' unless content
+      return callback Error 'Missing destination' unless destination
       # Start real work
       do_get = ->
         return do_write() unless merge

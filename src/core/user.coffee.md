@@ -82,7 +82,7 @@ you are a member of the "wheel" group (gid of "10") with the command
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Calling user", level: 'DEBUG', module: 'mecano/lib/user'
+      options.log message: "Entering user", level: 'DEBUG', module: 'mecano/lib/user'
       return callback new Error "Option 'name' is required" unless options.name
       options.shell = "/sbin/nologin" if options.shell is false
       options.shell = "/bin/bash" if options.shell is true

@@ -45,7 +45,7 @@ require('mecano').git({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Calling git", level: 'DEBUG', module: 'mecano/lib/git'
+      options.log message: "Entering git", level: 'DEBUG', module: 'mecano/lib/git'
       # Sanitize parameters
       options.revision ?= 'HEAD'
       # Start real work

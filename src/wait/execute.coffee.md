@@ -43,7 +43,7 @@ require 'mecano'
         options.quorum = options.cmd.length
       options.interval ?= 2000
       options.code_skipped ?= 1
-      options.log message: "Start wait for execution", level: 'DEBUG', module: 'mecano/wait/execute'
+      options.log message: "Entering wait for execution", level: 'DEBUG', module: 'mecano/wait/execute'
       quorum_current = 0
       modified = false
       each options.cmd

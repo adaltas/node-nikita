@@ -52,7 +52,7 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Calling chown", level: 'DEBUG', module: 'mecano/lib/chown'
+      options.log message: "Entering chown", level: 'DEBUG', module: 'mecano/lib/chown'
       # Validate parameters
       return callback Error "Missing destination option" unless options.destination?
       return callback Error "Missing one of uid or gid option" unless options.uid? or options.gid?

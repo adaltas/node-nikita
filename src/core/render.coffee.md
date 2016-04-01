@@ -85,7 +85,7 @@ require('mecano').render({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Calling render", level: 'DEBUG', module: 'mecano/lib/render'
+      options.log message: "Entering render", level: 'DEBUG', module: 'mecano/lib/render'
       # Validate parameters
       return callback new Error 'Missing source or content' unless options.source or options.content
       return callback new Error 'Missing destination' unless options.destination

@@ -97,6 +97,7 @@ require 'mecano'
       quorum_current = 0
       randfiles = []
       modified = false
+      options.log message: "Entering wait for connection", level: 'DEBUG', module: 'mecano/wait/connect'
       each servers
       .parallel true # Make sure we dont hit max listeners limit
       .call (server, next) =>

@@ -29,7 +29,7 @@ require 'mecano'
       return callback Error "Missing destination: #{options.destination}" unless options.destination?
       options.destination = [options.destination] unless Array.isArray options.destination
       options.interval ?= 2000
-      options.log message: "Start wait for file", level: 'DEBUG', module: 'mecano/wait/exist'
+      options.log message: "Entering wait for file", level: 'DEBUG', module: 'mecano/wait/exist'
       modified = false
       each options.destination
       .call (destination, next) =>

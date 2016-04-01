@@ -82,7 +82,7 @@ backmeup({
 ## Source code
 
     module.exports = (options, callback) ->
-      options.log message: "Calling backup", level: 'DEBUG', module: 'mecano/lib/backup'
+      options.log message: "Entering backup", level: 'DEBUG', module: 'mecano/lib/backup'
       backmeup options, callback
 
 ## Dependencies

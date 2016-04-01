@@ -47,7 +47,7 @@ require('mecano').link({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Calling link", level: 'DEBUG', module: 'mecano/lib/link'
+      options.log message: "Entering link", level: 'DEBUG', module: 'mecano/lib/link'
       linked = 0
       sym_exists = (options, callback) ->
         # fs.exists options.ssh, options.destination, (err, exists) ->
