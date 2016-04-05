@@ -31,7 +31,7 @@
       docker=''
       if [ $bin_machine ]; then
           if [ "#{options.machine or '--'}" = "--" ];then exit 5; fi
-          if docker-machine status #{options.machine} | grep Stopped; then
+          if docker-machine status #{options.machine} | egrep 'Stopped|Saved'; then
             docker-machine start #{options.machine};
           fi
           docker="eval \\$(\\${bin_machine} env #{options.machine}) && $bin_docker"
