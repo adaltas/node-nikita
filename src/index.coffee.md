@@ -82,9 +82,8 @@ functions share a common API with flexible options.
         user_options.enriched = true
         global_options = obj.options
         parent_options = todos.options
-        local_options = user_options
         options = {}
-        for k, v of local_options then options[k] = local_options[k]
+        for k, v of user_options then options[k] = user_options[k]
         for k, v of parent_options
           options[k] = v if options[k] is undefined and k in obj.propagated_options
         for k, v of global_options

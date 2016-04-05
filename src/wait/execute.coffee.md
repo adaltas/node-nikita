@@ -20,7 +20,7 @@ change had occured. Otherwise it will be set to "true".
     Expected code to be returned when the command failed and should be scheduled
     for later execution, default to "1".   
 
-Example:
+## Example
 
 ```coffee
 require 'mecano'
@@ -33,8 +33,8 @@ require 'mecano'
     module.exports = (options, callback) ->
       modified = false
       # Validate parameters
-      options = { cmd: options } if typeof options is 'string'
-      return callback Error "Missing cmd: #{options.cmd}" unless options.cmd?
+      options.cmd ?= options.argument if typeof options.argument?
+      return callback new Error "Missing cmd: #{options.cmd}" unless options.cmd?
       options.cmd = [options.cmd] unless Array.isArray options.cmd
       options.quorum = options.quorum
       if options.quorum and options.quorum is true  
