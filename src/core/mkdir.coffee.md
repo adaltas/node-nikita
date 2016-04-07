@@ -78,7 +78,7 @@ require('mecano')
       each options.directory
       .call (directory, callback) =>
         # first, we need to find which directory need to be created
-        options.log message: "Directory option #{directory}", level: 'DEBUG', module: 'mecano/lib/mkdir'
+        options.log message: "Creating directory '#{directory}'", level: 'DEBUG', module: 'mecano/lib/mkdir'
         do_stats = ->
           end = false
           dirs = []
@@ -92,6 +92,7 @@ require('mecano')
           each(directories)
           .call (directory, i, next) ->
             return next() if end
+            options.log message: "Stat '#{directory}'", level: 'DEBUG', module: 'mecano/lib/mkdir'
             fs.stat options.ssh, directory, (err, stat) ->
               if err?.code is 'ENOENT' # if the directory is not yet created
                 directory.stat = stat

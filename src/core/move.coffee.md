@@ -55,7 +55,7 @@ require('mecano').move({
       do_srchash = ->
         return do_dsthash() if options.source_md5
         options.log message: "Get source md5", level: 'DEBUG', module: 'mecano/lib/move'
-        misc.file.hash options.ssh, options.source, 'md5', (err, hash) ->
+        file.hash options.ssh, options.source, 'md5', (err, hash) ->
           return callback err if err
           options.log message: "Source md5 is \"hash\"", level: 'INFO', module: 'mecano/lib/move'
           options.source_md5 = hash
@@ -63,7 +63,7 @@ require('mecano').move({
       do_dsthash = ->
         return do_chkhash() if options.destination_md5
         options.log message: "Get destination md5", level: 'DEBUG', module: 'mecano/lib/move'
-        misc.file.hash options.ssh, options.destination, 'md5', (err, hash) ->
+        file.hash options.ssh, options.destination, 'md5', (err, hash) ->
           return callback err if err
           options.log message: "Destination md5 is \"hash\"", level: 'INFO', module: 'mecano/lib/move'
           options.destination_md5 = hash
@@ -95,4 +95,4 @@ require('mecano').move({
 ## Dependencies
 
     fs = require 'ssh2-fs'
-    misc = require '../misc'
+    file = require '../misc/file'

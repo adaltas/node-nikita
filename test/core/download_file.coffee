@@ -63,12 +63,28 @@ describe 'download file', ->
       .download
         source: source
         destination: destination
-        shy: true
+        # shy: true
       , (err, status) ->
         err.message.should.eql 'No such source file'
         err.code.should.eql 'ENOENT'
       .then (err) ->
         next()
+
+    they 'into an existing directory', (ssh, next) ->
+      source = "#{__filename}"
+      destination = "#{scratch}/download_test"
+      mecano
+        ssh: ssh
+      .mkdir
+        destination: destination
+      .download
+        source: source
+        destination: destination
+      .call (_, callback) ->
+        fs.stat ssh, "#{destination}/#{path.basename source}", (err, stat) ->
+          stat.isFile().should.be.true() unless err
+          callback err
+      .then next
 
   describe 'cache', ->
 
@@ -79,6 +95,7 @@ describe 'download file', ->
         ssh: ssh
         source: source
         destination: "#{scratch}/download_test"
+        cache: true
         cache_dir: "#{scratch}/cache_dir"
         md5: '3f104676a5f72de08b811dbb725244ff'
       , (err, status) ->
@@ -95,6 +112,7 @@ describe 'download file', ->
         ssh: ssh
         source: "#{__filename}"
         destination: "#{scratch}/download_test"
+        cache: true
         cache_dir: "#{scratch}/cache_dir"
       , (err, status) ->
         return next err if err
@@ -110,10 +128,12 @@ describe 'download file', ->
       .download
         source: "#{__filename}"
         destination: "#{scratch}/download_test"
+        cache: true
         cache_dir: "#{scratch}/cache_dir"
       .download
         source: "#{__filename}"
         destination: "#{scratch}/download_test"
+        cache: true
         cache_dir: "#{scratch}/cache_dir"
       , (err, status) ->
         status.should.be.false() unless err
@@ -123,6 +143,7 @@ describe 'download file', ->
       .download
         source: "#{__filename}"
         destination: "#{scratch}/download_test"
+        cache: true
         cache_dir: "#{scratch}/cache_dir"
       , (err, status) ->
         status.should.be.true() unless err
@@ -141,6 +162,7 @@ describe 'download file', ->
       .download
         source: "#{scratch}/a_file"
         destination: "#{scratch}/download_test"
+        cache: true
         cache_dir: "#{scratch}/cache_dir"
         md5: 'df8fede7ff71608e24a5576326e41c75'
       , (err, status) ->

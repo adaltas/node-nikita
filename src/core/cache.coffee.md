@@ -80,7 +80,7 @@ mecano.download
             options.log message: "Bypass source hash computation for non-file protocols", level: 'WARN', module: 'mecano/lib/cache'
             return callback()
           return callback() if hash isnt true
-          misc.file.hash options.ssh, options.source, algo, (err, value) ->
+          file.hash options.ssh, options.source, algo, (err, value) ->
             return callback err if err
             options.log message: "Computed hash value is '#{value}'", level: 'INFO', module: 'mecano/lib/cache'
             hash = value
@@ -104,7 +104,7 @@ mecano.download
               else if hash and typeof hash is 'string'
                 # then we compute the checksum of the file
                 options.log message: "Comparing #{algo} hash", level: 'DEBUG', module: 'mecano/lib/cache'
-                misc.file.hash options.ssh, options.destination, algo, (err, c_hash) ->
+                file.hash options.ssh, options.destination, algo, (err, c_hash) ->
                   return callback err if err
                   # And compare with the checksum provided by the user
                   if hash is c_hash
@@ -154,5 +154,5 @@ mecano.download
     path = require 'path'
     url = require 'url'
     ssh2fs = require 'ssh2-fs'
-    misc = require '../misc'
     curl = require '../misc/curl'
+    file = require '../misc/file'
