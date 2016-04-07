@@ -48,134 +48,103 @@ function with the addition of the "binary" option.
 
 *   `err`   
     Error object if any.   
-*   `uploaded`   
-    Number of uploaded files.   
+*   `status`   
+    Whether the file was uploaded or already there.   
 
 ## Example
 
 ```js
-require('mecano').render({
+require('mecano').upload({
+  ssh: ssh
   source: '/tmp/local_file',
   destination: '/tmp/remote_file'
-  binary: true
-}, function(err, uploaded){
-  console.log(err ? err.message : 'File uploaded: ' + !!uploaded);
+}, function(err, status){
+  console.log(err ? err.message : 'File uploaded: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       options.log message: "Entering upload", level: 'DEBUG', module: 'mecano/lib/upload'
-      return callback Error "Required \"source\" option" unless options.source
-      return callback Error "Required \"destination\" option" unless options.destination
+      throw Error "Required \"source\" option" unless options.source
+      throw Error "Required \"destination\" option" unless options.destination
       options.log message: "Source is \"#{options.source}\"", level: 'DEBUG', module: 'mecano/lib/upload'
       options.log message: "Destination is \"#{options.destination}\"", level: 'DEBUG', module: 'mecano/lib/upload'
-      uploaded = false
-      get_checksum = (ssh, path, algorithm, callback) =>
-        if ssh
-          @execute
-            cmd: "openssl #{algorithm} #{path}"
-          , (err, executed, stdout, stderr) ->
-            return callback err if err
-            callback null, /[ ](.*)$/.exec(stdout.trim())[1]
-        else
-          misc.file.hash null, path, algorithm, callback
-      do_stat = ->
-        options.log message: "Check if remote destination exists", level: 'DEBUG', module: 'mecano/lib/upload'
-        fs.stat options.ssh, options.destination, (err, stat) ->
-          return do_upload() if err?.code is 'ENOENT'
+      status = false
+      source_stat = null
+      destination_stat = null
+      stage_destination = "#{options.destination}.#{Date.now()}#{Math.round(Math.random()*1000)}"
+      if options.md5?
+        return callback new Error "Invalid MD5 Hash:#{options.md5}" unless typeof options.md5 in ['string', 'boolean']
+        algo = 'md5'
+        # source_hash = options.md5
+      else if options.sha1?
+        return callback new Error "Invalid SHA-1 Hash:#{options.sha1}" unless typeof options.sha1 in ['string', 'boolean']
+        algo = 'sha1'
+        # source_hash = options.sha1
+      else
+        algo = 'md5'
+      @call (_, callback) ->
+        ssh2fs.stat options.ssh, options.source, (err, stat) ->
+          callback err if err and err.code isnt 'ENOENT'
+          source_stat = stat
+          callback()
+      @call (_, callback) ->
+        ssh2fs.stat null, options.destination, (err, stat) ->
+          return callback() if err and err.code is 'ENOENT'
           return callback err if err
-          options.log message: "Destination exists", level: 'INFO', module: 'mecano/lib/upload'
-          if stat.isDirectory()
-            options.log message: "Destination is a directory. Destination is now #{options.destination}/#{path.basename options.source}", level: 'INFO', module: 'mecano/lib/upload'
-            options.destination = "#{options.destination}/#{path.basename options.source}" if stat.isDirectory()
-          # Text file, delegate to `write`
-          do_write()
-      do_write = =>
-        unless options.binary
-          options = misc.merge options, local_source: true
-          options.log message: "Not in binary mode. Calling mecano/lib/write", level: 'DEBUG', module: 'mecano/lib/upload'
-          return @write options, (err, written) -> callback err, written
-        else
-          options.log message: "Enter binary mode", level: 'DEBUG', module: 'mecano/lib/upload'
-          return do_src_checksum do_dest_checksum
-      do_src_checksum = (next) ->
-        return next() unless options.md5 is true or options.sha1 is true
-        algorithm = if options.md5 then 'md5' else 'sha1'
-        options.log message: "Get source #{algorithm} checksum", level: 'DEBUG', module: 'mecano/lib/upload'
-        get_checksum null, options.source, algorithm, (err, checksum) ->
-          return callback err if err
-          options[algorithm] = checksum
-          options.log message: "#{algorithm} checksum is \"#{checksum}\"", level: 'INFO', module: 'mecano/lib/upload'
-          next()
-      do_dest_checksum = ->
-        return do_upload() unless options.md5 or options.sha1
-        options.log message: "Validate destination checksum, otherwise re-upload", level: 'INFO', module: 'mecano/lib/upload'
-        switch
-          when options.md5? then get_checksum options.ssh, options.destination, 'md5', (err, md5) ->
+          destination_stat = stat if stat.isFile()
+          return callback() unless stat.isDirectory()
+          options.destination = path.resolve options.destination, path.basename options.source
+          ssh2fs.stat null, options.destination, (err, stat) ->
+            return callback() if err and err.code is 'ENOENT'
             return callback err if err
-            if md5 is options.md5
-            then callback()
-            else do_upload()
-          when options.sha1? then get_checksum options.ssh, options.destination, 'sha1', (err, sha1) ->
+            destination_stat = stat if stat.isFile()
+            return callback() if stat.isFile()
+            callback Error "Invalid destination: #{options.destination}"
+      @call
+        handler: (_, callback) ->
+          return callback null, true unless destination_stat
+          file.compare_hash options.ssh, options.source, null, options.destination, algo, (err, match) =>
+            callback err, not match
+      @mkdir
+        if: -> @status -1
+        ssh: null
+        destination: path.dirname stage_destination
+      @call
+        if: -> @status -2
+        handler: (_, callback) ->
+          ssh2fs.createReadStream options.ssh, options.source, (err, rs) =>
             return callback err if err
-            if sha1 is options.sha1
-            then callback()
-            else do_upload()
-      do_upload = =>
-        options.log message: "Write source", level: 'DEBUG', module: 'mecano/lib/upload'
-        @mkdir
-          destination: "#{path.dirname options.destination}"
-        , (err) ->
-          return next err if err
-          fs.createWriteStream options.ssh, options.destination, (err, ws) ->
-            return callback err if err
-            fs.createReadStream null, options.source, (err, rs) ->
-              return callback err if err
-              rs.pipe ws
-              .on 'close', ->
-                uploaded = true
-                do_src_checksum do_md5
-              .on 'error', callback
-      do_md5 = ->
-        return do_sha1() unless options.md5
-        options.log message: "Check destination md5", level: 'DEBUG', module: 'mecano/lib/upload'
-        get_checksum options.ssh, options.destination, 'md5', (err, md5) ->
-          return callback new Error "Invalid md5 checksum" if md5 isnt options.md5
-          options.log message: "Destination md5 is valid", level: 'INFO', module: 'mecano/lib/upload'
-          do_sha1()
-      do_sha1 = ->
-        return do_chown_chmod() unless options.sha1
-        options.log message: "Check destination sha1", level: 'DEBUG', module: 'mecano/lib/upload'
-        get_checksum options.ssh, options.destination, 'sha1', (err, sha1) ->
-          return callback new Error "Invalid sha1 checksum" if sha1 isnt options.sha1
-          options.log message: "Destination sha1 is valid", level: 'INFO', module: 'mecano/lib/upload'
-          do_chown_chmod()
-      do_chown_chmod = =>
-        options.log message: "Check ownerships and permissions", level: 'DEBUG', module: 'mecano/lib/upload'
+            ws = fs.createWriteStream stage_destination
+            rs.pipe(ws)
+            .on 'close', callback
+            .on 'error', callback
+      @call ->
+        @move
+          ssh: null
+          if: @status()
+          source: stage_destination
+          destination: options.destination
+        , (err, status) ->
+          options.log message: "Unstaged uploaded file", level: 'INFO', module: 'mecano/lib/upload' if status
+        @chmod
+          ssh: null
+          destination: options.destination
+          mode: options.mode
+          if: options.mode?
         @chown
-          ssh: options.ssh
+          ssh: null
           destination: options.destination
           uid: options.uid
           gid: options.gid
           if: options.uid? or options.gid?
-        @chmod
-          ssh: options.ssh
-          destination: options.destination
-          mode: options.mode
-          if: options.mode?
-        @then (err, status) ->
-          return callback err if err
-          modified = true if status
-          do_end()
-      do_end = ->
-        options.log message: "Upload succeed", level: 'INFO', module: 'mecano/lib/upload'
-        callback null, true
-      do_stat()
 
 ## Dependencies
 
-    fs = require 'ssh2-fs'
+    fs = require 'fs'
+    ssh2fs = require 'ssh2-fs'
     path = require 'path'
     misc = require '../misc'
+    file = require '../misc/file'
