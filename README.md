@@ -32,11 +32,34 @@ For the tests to execute successfully, you must:
 *   be able to ssh yourself (eg `ssh $(whoami)@localhost`) without a password   
 
 ```bash
+# run all tests
 npm test
+# or a subset
+npm run coffee && mocha test/api
 ```
 
-Docker is used to run tests on centos: `docker-compose up --abort-on-container-exit`
+Some of the tests require a specific environment. You are encouraged to customer
+which tests you wish to run and to use docker container.
 
-Other used command includes `docker-compose stop; docker-compose rm -f; docker-compose build`
+To filter and configure your tests, you can either create a "test.coffee" at the
+root of this project or point the "MECANO_TEST" environment to such a file. You
+can use the file "test.coffee.sample" as a starting point.
+
+There are tests prepared to run on CentOS and Ubuntu using docker. Goto to one
+of the docker directory and run docker-compose, here's an example to run tests
+on CentOS:
+
+```
+cd docker/centos
+docker-compose up --abort-on-container-exit
+```
+
+Other useful commands include:
+
+```
+docker-compose stop
+docker-compose rm -f
+docker-compose build
+```
 
 [mecano]: http://www.adaltas.com/projects/node-mecano/
