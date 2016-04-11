@@ -99,7 +99,7 @@ functions share a common API with flexible options.
         if options.debug
           _logs.push (log) ->
             return if log.type in ['stdout', 'stderr']
-            msg = "[#{log.level} #{log.time}] #{log.message}"
+            msg = "[#{log.total_depth}.#{log.level} #{log.time}] #{log.message}"
             msg = switch log.type
               when 'stdout_stream' then "\x1b[36m#{msg}\x1b[39m"
               when 'stderr_stream' then "\x1b[35m#{msg}\x1b[39m"
