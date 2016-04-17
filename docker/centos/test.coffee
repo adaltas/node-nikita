@@ -7,7 +7,7 @@ module.exports =
   disable_ldap_acl: true # can be activated
   disable_ldap_index: true # can be activated
   disable_ldap_user: true # can be activated
-  test_service: false # cant be activated
+  disable_service: false # cant be activated
   docker: # eg `docker-machine create --driver virtualbox mecano || docker-machine start mecano`
     host: 'dind:2375'
     # machine: 'mecano'

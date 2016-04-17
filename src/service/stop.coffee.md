@@ -41,19 +41,18 @@ require('mecano').service_stop([{
 
 ## Source Code
 
-    module.exports = (options, callback) ->
-      return callback new Error "Missing required option 'name'" unless options.name
-      @
-      .service_status
+    module.exports = (options) ->
+      options.log message: "Entering service_stop", level: 'DEBUG', module: 'mecano/lib/service/stop'
+      throw Error "Missing required option 'name'" unless options.name
+      @service_status
         name: options.name
         code_started: options.code_started
         code_stopped: options.code_stopped
         shy: true
-      .execute
+      @execute
         cmd: "service #{options.name} stop"
-        unless: ->
-          options.store["mecano.service.#{options.name}.status"] is 'stopped'
+        if: -> @status -1
+        # unless: -> options.cache and options.store["mecano.service.#{options.name}.status"] is 'stopped'
       , (err, stopped) ->
         throw err if err
-        options.store["mecano.service.#{options.name}.status"] = 'stopped' if stopped
-      .then callback
+        options.store["mecano.service.#{options.name}.status"] = 'stopped' if not err and options.cache

@@ -38,9 +38,17 @@ creating any modifications.
 *   `stdout` (stream.Writable)   
     Writable EventEmitter in which the standard output of executed commands will
     be piped.   
+*   `stdout_callback` (boolean)
+    pass stdout output to the callback as fourth argument, default is "true".   
+*   `stdout_log` (boolean)
+    pass stdout output to the logs of type "stdout_stream", default is "true".   
 *   `stderr` (stream.Writable)   
     Writable EventEmitter in which the standard error output of executed command
     will be piped.   
+*   `stderr_callback` (boolean)
+    pass stderr output to the callback as fourth argument, default is "true".   
+*   `stderr_log` (boolean)
+    pass stdout output to the logs of type "stdout_stream", default is "true".   
 *   `uid`   
     Unix user id.   
 
@@ -92,37 +100,43 @@ mecano.execute({
       options.code = [options.code] unless Array.isArray options.code
       options.code_skipped ?= []
       options.code_skipped = [options.code_skipped] unless Array.isArray options.code_skipped
+      options.stdout_callback = true if options.stdout_callback is undefined
+      options.stderr_callback = true if options.stderr_callback is undefined
+      options.stdout_log ?= false
+      options.stderr_log ?= false
       if options.trap
         options.cmd = "set -e\n#{options.cmd}"
       # options.log message: "Command is: `#{options.cmd}`", level: 'INFO', module: 'mecano/lib/execute'
-      options.log message: options.cmd, type: 'stdin'
+      options.log message: options.cmd, type: 'stdin', module: 'mecano/lib/execute'
       child = exec options
       stdout = []; stderr = []
       child.stdout.pipe options.stdout, end: false if options.stdout
       child.stderr.pipe options.stderr, end: false if options.stderr
-      unless options.stdout is false or options.stdout is null
+      if options.stdout_callback or options.stdout_log
         child.stdout.on 'data', (data) ->
-          options.log message: data, type: 'stdout_stream'
-          if Array.isArray stdout # A string on exit
-            stdout.push data
-          else console.log 'stdout coming after child exit'
-      unless options.stderr is false or options.stderr is null
+          options.log message: data, type: 'stdout_stream', module: 'mecano/lib/execute' if options.stdout_log
+          if options.stdout_callback
+            if Array.isArray stdout # A string on exit
+              stdout.push data
+            else console.log 'stdout coming after child exit'
+      if options.stderr_callback or stderr_log
         child.stderr.on 'data', (data) ->
-          options.log message: data, type: 'stderr_stream'
-          if Array.isArray stderr # A string on exit
-            stderr.push data
-          else console.log 'stderr coming after child exit'
+          options.log message: data, type: 'stderr_stream', module: 'mecano/lib/execute' if options.stderr_log
+          if options.stderr_callback
+            if Array.isArray stderr # A string on exit
+              stderr.push data
+            else console.log 'stderr coming after child exit'
       child.on "exit", (code) ->
         # Give it some time because the "exit" event is sometimes
         # called before the "stdout" "data" event when runing
         # `npm test`
         setTimeout ->
-          options.log message: null, type: 'stdout_stream' unless options.stdout is false or options.stdout is null
-          options.log message: null, type: 'stderr_stream' unless options.stderr is false or options.stderr is null
+          options.log message: null, type: 'stdout_stream', module: 'mecano/lib/execute' unless options.stdout is false or options.stdout is null
+          options.log message: null, type: 'stderr_stream', module: 'mecano/lib/execute' unless options.stderr is false or options.stderr is null
           stdout = stdout.map((d) -> d.toString()).join('')
           stderr = stderr.map((d) -> d.toString()).join('')
-          options.log message: stdout, type: 'stdout' if stdout and stdout isnt '' unless options.stdout is false or options.stdout is null
-          options.log message: stderr, type: 'stderr' if stderr and stderr isnt '' unless options.stderr is false or options.stderr is null
+          options.log message: stdout, type: 'stdout', module: 'mecano/lib/execute' if stdout and stdout isnt '' unless options.stdout is false or options.stdout is null
+          options.log message: stderr, type: 'stderr', module: 'mecano/lib/execute' if stderr and stderr isnt '' unless options.stderr is false or options.stderr is null
           if options.stdout
             child.stdout.unpipe options.stdout
           if options.stderr

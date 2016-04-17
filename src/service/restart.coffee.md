@@ -35,11 +35,11 @@ require('mecano').service_start([{
 
 ## Source Code
 
-    module.exports = (options, callback) ->
-      return callback new Error "Missing required option 'name'" unless options.name
+    module.exports = (options) ->
+      options.log message: "Entering service_restart", level: 'DEBUG', module: 'mecano/lib/service/restart'
+      throw Error "Missing required option 'name'" unless options.name
       @execute
         cmd: "service #{options.name} restart"
       , (err, restarted) ->
         throw err if err
         options.store["mecano.service.#{options.name}.status"] = 'started' if restarted
-      .then callback

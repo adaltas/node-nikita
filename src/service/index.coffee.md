@@ -5,6 +5,8 @@ Install a service. For now, only yum over SSH.
 
 ## Options
 
+*   `cacheonly` (boolean)   
+    Run the yum command entirely from system cache, don't update cache.   
 *   `name` (string)   
     Package name, optional.   
 *   `startup`   
@@ -43,8 +45,9 @@ Install a service. For now, only yum over SSH.
 
 *   `err`   
     Error object if any.   
-*   `modified`   
-    Number of action taken (installed, updated, started or stopped).   
+*   `status`   
+    Indicate a change in service such as a change in installation, update, 
+    start/stop or startup registration.   
 *   `installed`   
     List of installed services.   
 *   `updates`   
@@ -69,135 +72,34 @@ require('mecano').service([{
 
 ## Source Code
 
-    module.exports = (options, callback) ->
-      installed = updates = null
-      # Validate parameters
-      # return callback new Error 'Missing service name' unless options.name
-      # return callback new Error 'Restricted to Yum over SSH' unless options.ssh
-      # return callback new Error 'Invalid configuration, start conflict with stop' if options.start? and options.start is options.stop
+    module.exports = (options) ->
+      options.log message: "Entering service", level: 'DEBUG', module: 'mecano/lib/service'
       pkgname = options.yum_name or options.name
       chkname = options.chk_name or options.srv_name or options.name
       srvname = options.srv_name or options.chk_name or options.name
-      modified = false
-      if options.cache
-        installed = options.store['mecano:execute:installed']
-        updates = options.store['mecano:execute:updates']
       options.action = options.action.split(',') if typeof options.action is 'string'
-      # Start real work
-      do_installed = =>
-        # option name and yum_name are optional, skill installation if not present
-        return do_startuped() unless pkgname
-        cache = =>
-          options.log message: "List installed", level: 'DEBUG', module: 'mecano/service/index'
-          c = if options.cache then '-C' else ''
-          @execute
-            ssh: options.ssh
-            cmd: "yum #{c} list installed"
-            code_skipped: 1
-            stdout: null
-            stderr: null
-          , (err, executed, stdout) ->
-            return callback err if err
-            stdout = string.lines stdout
-            start = false
-            installed = []
-            for pkg in stdout
-              start = true if pkg.trim() is 'Installed Packages'
-              continue unless start
-              installed.push pkg[1] if pkg = /^([^\. ]+?)\./.exec pkg
-            decide()
-        decide = ->
-          if installed.indexOf(pkgname) isnt -1 then do_updates() else do_install()
-        if installed then decide() else cache()
-      do_updates = =>
-        cache = =>
-          options.log message: "List available updates", level: 'DEBUG', module: 'mecano/service/index'
-          c = if options.cache then '-C' else ''
-          @execute
-            cmd: "yum #{c} list updates"
-            code_skipped: 1
-          , (err, executed, stdout) ->
-            return callback err if err
-            stdout = string.lines stdout
-            start = false
-            updates = []
-            for pkg in stdout
-              start = true if pkg.trim() is 'Updated Packages'
-              continue unless start
-              updates.push pkg[1] if pkg = /^([^\. ]+?)\./.exec pkg
-            decide()
-        decide = ->
-          if updates.indexOf(pkgname) isnt -1 then do_install() else
-            options.log message: "No available update for \"#{pkgname}\"", level: 'INFO', module: 'mecano/service/index'
-            do_startuped()
-        if updates then decide() else cache()
-      do_install = =>
-        options.log message: "Install \"#{pkgname}\"", level: 'INFO', module: 'mecano/service/index'
-        @execute
-          ssh: options.ssh
-          cmd: "yum install -y #{pkgname}"
-        , (err, succeed) ->
-          return callback err if err
-          installedIndex = installed.indexOf pkgname
-          installed.push pkgname if installedIndex is -1
-          if updates
-            updatesIndex = updates.indexOf pkgname
-            updates.splice updatesIndex, 1 unless updatesIndex is -1
-          # Those 2 lines seems all wrong
-          unless succeed
-            options.log message: "No package available for \"#{pkgname}\"", level: 'ERROR', module: 'mecano/service/index'
-            return callback new Error "No package available for '#{pkgname}'."
-          modified = true if installedIndex isnt -1
-          do_startuped()
-      do_startuped = =>
-        return do_started() unless options.startup?
-        @service_startup
-          name: chkname
-          startup: options.startup
-          if: options.startup?
-        , (err, startuped) ->
-          return callback err if err
-          modified = startuped
-          do_started()
-      do_started = =>
-        return do_finish() unless options.action
-        options.log message: "Check if started", level: 'DEBUG', module: 'mecano/service/index'
+      @service_install
+        name: pkgname
+        cache: options.cache
+        cacheonly: options.cacheonly
+        if: pkgname # option name and yum_name are optional, skill installation if not present
+      @service_startup
+        name: chkname
+        startup: options.startup
+        if: options.startup?
+      @call ->
+        return unless options.action
         @service_status
           name: srvname
           code_started: options.code_started
           code_stopped: options.code_stopped
-        , (err, started) ->
-          return callback err if err
-          if started
-            return do_action 'stop' if 'stop' in options.action
-            return do_action 'restart' if 'restart' in options.action
-          else
-            return do_action 'start' if 'start' in options.action
-          do_finish()
-      do_action = (action) =>
-        return do_finish() unless options.action
-        options.log message: "Running #{action} on service", level: 'INFO', module: 'mecano/service/index'
-        # @["service_#{action}"] <-- ELEGANT BUT creating very strange side effects
-        #   name: srvname
-        #   code_started: options.code_started
-        #   code_stopped: options.code_stopped
-        # , (err, executed) ->
-        @execute
-          cmd: "service #{srvname} #{action}"
-        , (err, executed) ->
-          return callback err if err
-          modified = true
-          do_finish()
-      do_finish = ->
-        if options.cache
-          options.log message: "Caching installed on \"mecano:execute:installed\"", level: 'INFO', module: 'mecano/service/index'
-          options.store['mecano:execute:installed'] = installed
-          options.log message: "Caching updates on \"mecano:execute:updates\"", level: 'INFO', module: 'mecano/service/index'
-          options.store['mecano:execute:updates'] = updates
-        callback null, modified
-      do_installed()
-
-## Dependencies
-
-    service_startup = require './startup'
-    string = require '../misc/string'
+          shy: true
+        @service_start
+          name: srvname
+          if: -> not @status(-1) and 'start' in options.action
+        @service_stop
+          name: srvname
+          if: -> @status(-2) and 'stop' in options.action
+        @service_restart
+          name: srvname
+          if: -> @status(-3) and 'restart' in options.action

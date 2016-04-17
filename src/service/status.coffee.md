@@ -41,17 +41,22 @@ require('mecano').service_start([{
 
 ## Source Code
 
-    module.exports = (options, callback) ->
-      return callback new Error "Missing required option 'name'" unless options.name
+    module.exports = (options) ->
+      options.log message: "Entering service_status", level: 'DEBUG', module: 'mecano/lib/service/status'
+      throw Error "Missing required option 'name'" unless options.name
       options.code_started ?= 0
       options.code_stopped ?= 3
+      options.log message: "Get status for #{options.name}", level: 'DEBUG', module: 'mecano/lib/service/status'
       @execute
-        cmd: "service #{options.name} status"
+        cmd: """
+        if ! chkconfig --list #{options.name}; then exit 1; fi;
+        service #{options.name} status || exit 3
+        """
         code: options.code_started
         code_skipped: options.code_stopped
       , (err, started) ->
-        return callback err if err
-        options.store["mecano.service.#{options.name}.status"] = if started
-        then 'started'
-        else 'stopped'
-        callback null, started
+        throw Error "Invalid Service Name: #{options.name}" if err
+        status = if started then 'started' else 'stopped'
+        options.log message: "Status for #{options.name} is #{status}", level: 'INFO', module: 'mecano/lib/service/status'
+        # throw err if err
+        options.store["mecano.service.#{options.name}.status"] = "#{status}" if options.cache

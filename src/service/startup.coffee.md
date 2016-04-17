@@ -41,6 +41,7 @@ require('mecano').service_startup([{
 ## Source Code
 
     module.exports = (options, callback) ->
+      options.log message: "Entering service_startup", level: 'DEBUG', module: 'mecano/lib/service/startup'
       return callback new Error "Missing required option 'name'" unless options.name
       return callback new Error "Missing required option 'startup'" unless options.startup?
       modified = false
