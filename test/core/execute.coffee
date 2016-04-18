@@ -15,12 +15,28 @@ describe 'execute', ->
       ssh: ssh
     .execute
       cmd: 'text=yes; echo $text'
-    , (err, executed, stdout, stderr) ->
-      executed.should.be.true() unless err
+    , (err, status, stdout, stderr) ->
+      status.should.be.true() unless err
       stdout.should.eql 'yes\n' unless err
-    .execute 'text=yes; echo $text', (err, executed, stdout, stderr) ->
-      executed.should.be.true() unless err
+    .execute 'text=yes; echo $text', (err, status, stdout, stderr) ->
+      status.should.be.true() unless err
       stdout.should.eql 'yes\n' unless err
+    .then next
+
+  they 'cmd as a function', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .call (options) ->
+      @test_context = 'test context'
+      options.store.test_options = 'test options'
+    .execute
+      cmd: -> "text='#{@test_context}'; echo $text"
+    , (err, status, stdout, stderr) ->
+      stdout.should.eql 'test context\n' unless err
+    .execute
+      cmd: (options) -> "text='#{options.store.test_options}'; echo $text"
+    , (err, status, stdout, stderr) ->
+      stdout.should.eql 'test options\n' unless err
     .then next
 
   they 'stream stdout and unpipe', (ssh, next) -> #.skip 'remote',

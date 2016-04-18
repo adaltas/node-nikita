@@ -104,6 +104,7 @@ mecano.execute({
       options.stderr_callback = true if options.stderr_callback is undefined
       options.stdout_log ?= false
       options.stderr_log ?= false
+      options.cmd = options.cmd.call @, options if typeof options.cmd is 'function'
       if options.trap
         options.cmd = "set -e\n#{options.cmd}"
       # options.log message: "Command is: `#{options.cmd}`", level: 'INFO', module: 'mecano/lib/execute'
