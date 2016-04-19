@@ -12,7 +12,7 @@ do
 done
 
 if [ $DEBUG -eq '1' ]; then
-  sleep 10000
+  /bin/bash
 else
   node_modules/.bin/mocha $TEST_FILES
 fi
