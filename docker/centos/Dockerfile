@@ -13,14 +13,18 @@ RUN yum install -y openssh-server openssh-clients \
   && ssh-keygen -t rsa -f ~/.ssh/id_rsa -N '' \
   && cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 
+# Install epel (requirement for service nginx)
+yum install -y epel-release
+
 # Install Krb5 client
 RUN yum install -y krb5-workstation
 ADD ./krb5.conf /etc/krb5.conf
 
+# Install Misc dependencies
+RUN apt-get install -y zip git
+
 # Install docker
-RUN rpm -iUvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm \
-    && yum update -y \
-    && yum install -y docker-io
+RUN curl -fsSL https://get.docker.com/ | sh
 
 ADD ./run.sh /run.sh
 RUN mkdir -p /mecano
