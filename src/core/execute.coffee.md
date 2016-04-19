@@ -95,7 +95,6 @@ mecano.execute({
       stds = options.user_args
       # Validate parameters
       options.cmd = options.argument if typeof options.argument is 'string'
-      return callback new Error "Missing cmd: #{options.cmd}" unless options.cmd?
       options.code ?= [0]
       options.code = [options.code] unless Array.isArray options.code
       options.code_skipped ?= []
@@ -105,6 +104,7 @@ mecano.execute({
       options.stdout_log ?= false
       options.stderr_log ?= false
       options.cmd = options.cmd.call @, options if typeof options.cmd is 'function'
+      throw Error "Missing cmd: #{options.cmd}" unless options.cmd?
       if options.trap
         options.cmd = "set -e\n#{options.cmd}"
       # options.log message: "Command is: `#{options.cmd}`", level: 'INFO', module: 'mecano/lib/execute'
@@ -150,7 +150,7 @@ mecano.execute({
             executed = true
           else
             options.log message: "Skip exit code \"#{code}\"", level: 'INFO', module: 'mecano/lib/execute'
-          callback null, executed, stdout, stderr
+          callback null, executed, stdout, stderr, code
         , 1
 
 ## Dependencies
