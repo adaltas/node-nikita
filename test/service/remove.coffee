@@ -13,13 +13,13 @@ describe 'service remove', ->
     mecano
       ssh: ssh
     .service_install
-      name: 'cronie'
+      name: config.service.name
     .service_remove
-      name: 'cronie'
+      name: config.service.name
     , (err, status) ->
       status.should.be.true() unless err
     .service_remove
-      name: 'cronie'
+      name: config.service.name
     , (err, status) ->
       status.should.be.false() unless err
     .then next

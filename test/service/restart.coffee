@@ -13,7 +13,7 @@ describe 'service restart', ->
     mecano
       ssh: ssh
     .service
-      name: 'cronie'
+      name: config.service.name
     .service_start
       name: 'crond'
     .service_restart

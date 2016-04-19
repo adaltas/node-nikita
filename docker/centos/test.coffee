@@ -32,3 +32,7 @@ module.exports =
   ssh:
     host: 'localhost'
     username: 'root'
+  service:
+    name: 'cronie'
+    srv_name: 'crond'
+    chk_name: 'crond'

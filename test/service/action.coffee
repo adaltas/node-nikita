@@ -13,19 +13,19 @@ describe 'service action', ->
     mecano
       ssh: ssh
     .service_remove
-      name: 'cronie'
+      name: config.service.name
     .service
-      name: 'cronie'
-      srv_name: 'crond'
+      name: config.service.name
+      srv_name: config.service.srv_name
       action: 'start'
     , (err, status) ->
       status.should.be.true()
     .service_status
-      name: 'crond'
+      name: config.service.srv_name
     , (err, status) ->
       status.should.be.true()
     .service # Detect already started
-      srv_name: 'crond'
+      srv_name: config.service.srv_name
       action: 'start'
     , (err, status) ->
       status.should.be.false()
@@ -35,19 +35,19 @@ describe 'service action', ->
     mecano
       ssh: ssh
     .service_remove
-      name: 'cronie'
+      name: config.service.name
     .service
-      name: 'cronie'
-      srv_name: 'crond'
+      name: config.service.name
+      srv_name: config.service.srv_name
       action: 'stop'
     , (err, status) ->
       status.should.be.true()
     .service_status
-      name: 'crond'
+      name: config.service.srv_name
     , (err, status) ->
       status.should.be.false()
     .service # Detect already stopped
-      srv_name: 'crond'
+      srv_name: config.service.srv_name
       action: 'stop'
     , (err, status) ->
       status.should.be.false()
@@ -57,20 +57,20 @@ describe 'service action', ->
     mecano
       ssh: ssh
     .service_remove
-      name: 'cronie'
+      name: config.service.name
     .service
-      name: 'cronie'
-      srv_name: 'crond'
+      name: config.service.name
+      srv_name: config.service.srv_name
       action: 'start'
     .service
-      srv_name: 'crond'
+      srv_name: config.service.srv_name
       action: 'restart'
     , (err, status) ->
       status.should.be.true()
     .service_stop
-      name: 'crond'
+      name: config.service.srv_name
     .service
-      srv_name: 'crond'
+      srv_name: config.service.srv_name
       action: 'restart'
     , (err, status) ->
       status.should.be.false()

@@ -15,17 +15,17 @@ describe 'service start', ->
     .service
       name: 'cronie'
     .service_stop
-      name: 'crond'
+      name: config.service.srv_name
     .service_start
-      name: 'crond'
+      name: config.service.srv_name
     , (err, status) ->
       status.should.be.true() unless err
     .service_status
-      name: 'crond'
+      name: config.service.srv_name
     , (err, started) ->
       started.should.be.true() unless err
     .service_start # Detect already started
-      name: 'crond'
+      name: config.service.srv_name
     , (err, status) ->
       status.should.be.false() unless err
     .then next
@@ -45,12 +45,12 @@ describe 'service start', ->
       ssh: ssh
     .service
       name: 'cronie'
-      srv_name: 'crond'
+      srv_name: config.service.srv_name
       action: 'stop'
     .call (options) ->
       (options.store["mecano.service.crond.status"] is undefined).should.be.true()
     .service_start # Detect already started
-      name: 'crond'
+      name: config.service.srv_name
       cache: true
     .call (options) ->
       options.store["mecano.service.crond.status"].should.eql 'started'

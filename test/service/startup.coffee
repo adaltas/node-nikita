@@ -13,28 +13,28 @@ describe 'service startup', ->
     mecano
       ssh: ssh
     .service_remove
-      name: 'cronie'
+      name: config.service.name
     .service
-      name: 'cronie'
-      srv_name: 'crond'
+      name: config.service.name
+      chk_name: config.service.chk_name
       startup: true
     , (err, status) ->
       status.should.be.true() unless err
     .service
-      name: 'cronie'
-      srv_name: 'crond'
+      name: config.service.name
+      chk_name: config.service.chk_name
       startup: true
     , (err, status) ->
       status.should.be.false() unless err
     .service
-      name: 'cronie'
-      srv_name: 'crond'
+      name: config.service.name
+      chk_name: config.service.chk_name
       startup: false
     , (err, status) ->
       status.should.be.true() unless err
     .service
-      name: 'cronie'
-      srv_name: 'crond'
+      name: config.service.name
+      chk_name: config.service.chk_name
       startup: false
     , (err, status) ->
       status.should.be.false() unless err
@@ -44,20 +44,18 @@ describe 'service startup', ->
     mecano
       ssh: ssh
     .service
-      # name: 'cronie'
-      srv_name: 'crond'
+      name: config.service.name
+      chk_name: config.service.chk_name
       startup: '235'
     , (err, status) ->
       status.should.be.true() unless err
     .service
-      # name: 'cronie'
-      srv_name: 'crond'
+      chk_name: config.service.chk_name
       startup: '2345'
     , (err, status) ->
       status.should.be.true() unless err
     .service
-      # name: 'cronie'
-      srv_name: 'crond'
+      chk_name: config.service.chk_name
       startup: '2345'
     , (err, status) ->
       status.should.be.false() unless err

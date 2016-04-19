@@ -22,12 +22,13 @@ require('mecano').service_install([{
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering service", level: 'DEBUG', module: 'mecano/lib/service/install'
+      options.log message: "Entering service_install", level: 'DEBUG', module: 'mecano/lib/service/install'
       installed = updates = null
       modified = false
       if options.cache
         installed = options.store['mecano:execute:installed']
         updates = options.store['mecano:execute:updates']
+      options.manager ?= options.store['mecano:service:manager']
       # Start real work
       # Note for legaciy
       # c = if options.cache then '-C' else ''
@@ -38,39 +39,70 @@ require('mecano').service_install([{
       #   installed.push pkg[1] if pkg = /^([^\. ]+?)\./.exec pkg
       cacheonly = if options.cacheonly then '-C' else ''
       @execute
-        cmd: 'rpm -qa --qf "%{NAME}\n"'
+        cmd: """
+        if which yum >/dev/null; then exit 1; fi
+        if which apt-get >/dev/null; then exit 2; fi
+        """
+        code: [1, 2]
+        unless: options.manager
+        relax: true
+        shy: true
+      , (err, status, stdout, stderr, signal) ->
+        throw err if err
+        options.manager = switch signal
+          when 1 then 'yum'
+          when 2 then 'apt'
+        options.store['mecano:service:manager'] = options.manager if options.cache
+      @execute
+        cmd: -> switch options.manager
+          when 'yum' then 'rpm -qa --qf "%{NAME}\n"'
+          when 'apt' then 'dpkg -l | grep \'^ii\' | awk \'{print $2}\''
+          else throw Error "Invalid Manager #{options.manager}"
         code_skipped: 1
         stdout_log: false
         shy: true
-        if: -> not options.cache or not installed
+        unless: installed?
+        # if: -> not options.cache or not installed
       , (err, executed, stdout) ->
         throw err if err
         return unless executed
         options.log message: "Installed packages retrieved", level: 'INFO', module: 'mecano/service/install'
         installed = for pkg in string.lines(stdout) then pkg
       @execute
-        cmd: "yum #{cacheonly} list updates"
+        cmd: ->
+          switch options.manager
+            when 'yum' then "yum #{cacheonly} list updates"
+            when 'apt', 'apt-get' then "apt-get -u upgrade --assume-no | grep '^\\s' | sed 's/\\s/\\n/g'"
+            else throw Error "Invalid Manager #{options.manager}"
         code_skipped: 1
-        unless: updates
         stdout_log: false
         shy: true
+        unless: updates?
         if: -> installed.indexOf(options.name) is -1 
       , (err, executed, stdout) ->
         throw err if err
-        return unless executed
+        return updates = [] unless executed
         options.log message: "Available updates retrieved", level: 'INFO', module: 'mecano/service/install'
         start = false
-        updates = for pkg in string.lines(stdout)
-          start = true if pkg.trim() is 'Updated Packages'
-          continue unless start
-          continue unless pkg = /^([^\. ]+?)\./.exec pkg
-          pkg[1]
+        # if options.manager is 'yum' then updates = for pkg in string.lines(stdout)
+        #   start = true if pkg.trim() is 'Updated Packages'
+        #   continue unless start
+        #   continue unless pkg = /^([^\. ]+?)\./.exec pkg
+        #   pkg[1]
+        updates = switch options.manager
+          when 'yum' then for pkg in string.lines stdout
+            start = true if pkg.trim() is 'Updated Packages'
+            continue unless start
+            continue unless pkg = /^([^\. ]+?)\./.exec pkg
+            pkg[1]
+          when 'apt' then string.lines stdout.trim()
       @execute
-        cmd: "yum install -y #{cacheonly} #{options.name}"
-        if: [
-          -> installed.indexOf(options.name) is -1
-          -> updates.indexOf(options.name) is -1
-        ]
+        cmd: -> switch options.manager
+          when 'yum' then "yum install -y #{cacheonly} #{options.name}"
+          when 'apt' then "apt-get install -y #{options.name}"
+          else throw Error "Invalid Manager #{options.manager}"
+        if: ->
+          installed.indexOf(options.name) is -1 or updates.indexOf(options.name) isnt -1
       , (err, succeed) ->
         throw err if err
         options.log if succeed

@@ -13,46 +13,46 @@ describe 'service install', ->
     mecano
       ssh: ssh
     .service_remove
-      name: 'cronie'
+      name: config.service.name
     .service
-      name: 'cronie'
+      name: config.service.name
     , (err, status) ->
       status.should.be.true() unless err
-    .execute
-      cmd: 'yum list installed | grep cronie'
-    , (err, status) ->
-      status.should.be.true() unless err
-    .then next
-
-  they 'cache', (ssh, next) ->
-    mecano
-      ssh: ssh
-    .service_remove
-      name: 'cronie'
-    .call (options) ->
-      (options.store['mecano:execute:installed'] is undefined).should.be.true()
-    .service
-      name: 'cronie'
-      cache: true
-    , (err, status) ->
-      status.should.be.true() unless err
-    .call (options) ->
-      options.store['mecano:execute:installed'].should.containEql 'cronie'
-    .execute
-      cmd: 'yum list installed | grep cronie'
-    , (err, status) ->
-      status.should.be.true() unless err
+    # .execute
+    #   cmd: 'yum list installed | grep cronie'
+    # , (err, status) ->
+    #   status.should.be.true() unless err
     .then next
 
   they 'already installed packages', (ssh, next) ->
     mecano
       ssh: ssh
     .service_remove
-      name: 'cronie'
+      name: config.service.name
     .service
-      name: 'cronie'
+      name: config.service.name
     .service
-      name: 'cronie'
+      name: config.service.name
     , (err, status) ->
       status.should.be.false() unless err
+    .then next
+
+  they 'cache', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .service_remove
+      name: config.service.name
+    .call (options) ->
+      (options.store['mecano:execute:installed'] is undefined).should.be.true()
+    .service
+      name: config.service.name
+      cache: true
+    , (err, status) ->
+      status.should.be.true() unless err
+    .call (options) ->
+      options.store['mecano:execute:installed'].should.containEql config.service.name
+    # .execute
+    #   cmd: 'yum list installed | grep cronie'
+    # , (err, status) ->
+    #   status.should.be.true() unless err
     .then next
