@@ -34,6 +34,7 @@ functions share a common API with flexible options.
       befores = []
       afters = []
       depth = 0
+      once = {}
       killed = false
       obj.options.domain =  domain.create() if obj.options.domain is true
       domain_on_error = (err) ->
@@ -77,6 +78,9 @@ functions share a common API with flexible options.
           opts.callback ?= callback if callback
           opts.user_args = true if enrich and opts.callback?.length > 2
           opts.store ?= store if enrich and store
+          opts.once = ['handler'] if opts.once is true
+          delete opts.once if opts.once is false
+          opts.once = opts.once.sort() if Array.isArray opts.once
         options
       enrich_options = (user_options) ->
         user_options.enriched = true
@@ -192,10 +196,34 @@ functions share a common API with flexible options.
           for k, v of options
             copy[k] = v
           options = copy
-          options_handler = options.handler
-          options.handler = undefined
-          options_callback = options.callback
-          options.callback = undefined
+          do_once = ->
+            hashize = (value) ->
+              if typeof value is 'string'
+                value = "string:#{string.hash value}"
+              else if typeof value is 'boolean'
+                value = "boolean:#{value}"
+              else if typeof value is 'boolean'
+                value = "boolean:#{value}"
+              else if typeof value is 'function'
+                value = "function:#{string.hash value.toString()}"
+              else if value is undefined or value is null
+                value = 'null'
+              else if Array.isArray value
+                value = 'array:' + value.sort().map((value) -> hashize value).join ':'
+              else if typeof value is 'object'
+                value = 'object'
+              else throw Error "Invalid data type: #{JSON.stringify value}"
+              value
+            if options.once
+              if typeof options.once is 'string'
+                hash = string.hash options.once
+              else if Array.isArray options.once
+                hash = string.hash options.once.map((k) -> hashize options[k]).join '|'
+              else
+                throw Error "Invalid Type Option Once: #{JSON.stringify options.once}"
+              return do_callback [] if once[hash]
+              once[hash] = true
+            do_intercept_before()
           do_intercept_before = ->
             return do_conditions() if options.intercept_before
             each befores
@@ -221,6 +249,14 @@ functions share a common API with flexible options.
                 delete options[k] if /^if.*/.test(k) or /^unless.*/.test(k)
               do_handler()
           do_handler = ->
+            do_next = ->
+              options.handler = options_handler
+              options.callback = options_callback
+              do_intercept_after arguments...
+            options_handler = options.handler
+            options.handler = undefined
+            options_callback = options.callback
+            options.callback = undefined
             called = false
             try
               if options_handler.length is 2 # Async style
@@ -230,7 +266,7 @@ functions share a common API with flexible options.
                   called = true
                   args = [].slice.call(arguments, 0)
                   setImmediate -> 
-                    do_intercept_after args
+                    do_next args
               else # Sync style
                 options_handler.call obj, options
                 return if killed
@@ -240,17 +276,17 @@ functions share a common API with flexible options.
                 wait_children = ->
                   unless todos.length
                     return setImmediate ->
-                      do_intercept_after [null, status_sync]
+                      do_next [null, status_sync]
                   loptions = todos.shift()
                   run loptions, (err, status) ->
-                    return do_intercept_after [err] if err
+                    return do_next [err] if err
                     # Discover status of all unshy children
                     status_sync = true if status and not loptions.shy
                     wait_children()
                 wait_children()
             catch err
               todos = []
-              do_intercept_after [err]
+              do_next [err]
           do_intercept_after = (args, callback) ->
             return do_callback args if options.intercept_after
             each afters
@@ -274,14 +310,14 @@ functions share a common API with flexible options.
             args[1] = !!args[1] # Status is a boolean, error or not
             todos = stack.shift() if todos.length is 0
             jump_to_error args[0] if args[0] and not options.relax
-            todos.throw_if_error = false if args[0] and options_callback
+            todos.throw_if_error = false if args[0] and options.callback
             todos.status[0].value = args[1]
-            call_callback options_callback, args if options_callback
+            call_callback options.callback, args if options.callback
             args[0] = null if options.relax
             depth-- if options.header
             callback args[0], args[1] if callback
             run()
-          do_intercept_before()
+          do_once()
       properties.child = get: -> ->
         module.exports(obj.options)
       properties.then = get: -> ->
@@ -415,3 +451,4 @@ registered.
     each = require 'each'
     conditions = require './misc/conditions'
     wrap = require './misc/wrap'
+    string = require './misc/string'
