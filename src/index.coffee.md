@@ -54,7 +54,10 @@ functions share a common API with flexible options.
           else if Array.isArray arg
             empty = true if arg.length is 0
             for a in arg
-              a = argument: a unless typeof a is 'object' and not Array.isArray(a) and a isnt null
+              if type is 'call'
+                a = handler: a unless typeof a is 'object' and not Array.isArray(a) and a isnt null
+              else 
+                a = argument: a unless typeof a is 'object' and not Array.isArray(a) and a isnt null
               options.push a
           else
             arg = argument: arg if typeof arg isnt 'object' and arg isnt null

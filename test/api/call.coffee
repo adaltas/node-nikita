@@ -6,6 +6,22 @@ fs = require 'fs'
 describe 'api call', ->
 
   scratch = test.scratch @
+  
+  describe 'api', ->
+    
+    it 'accept an array of handlers and a callback', (next) ->
+      logs = []
+      mecano
+      .call [
+        (options) -> logs.push 'a'
+      ,
+        (options, callback) -> logs.push('b'); callback()
+      ], (err, status) ->
+        logs.push 'c'
+        status.should.be.false() unless err
+      .call ->
+        logs.should.eql ['a', 'c', 'b', 'c']
+      .then next
 
   describe 'sync', ->
 
