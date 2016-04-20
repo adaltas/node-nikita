@@ -50,6 +50,7 @@ require('mecano').service_install([{
       , (err, status, stdout, stderr, signal) ->
         throw Error "Undetected Package Manager" if err?.code is 3
         throw err if err
+        return unless status
         options.manager = switch signal
           when 1 then 'yum'
           when 2 then 'apt'
@@ -58,7 +59,7 @@ require('mecano').service_install([{
         cmd: -> switch options.manager
           when 'yum' then 'rpm -qa --qf "%{NAME}\n"'
           when 'apt' then 'dpkg -l | grep \'^ii\' | awk \'{print $2}\''
-          else throw Error "Invalid Manager #{options.manager}"
+          else throw Error "Invalid Manager: #{options.manager}"
         code_skipped: 1
         stdout_log: false
         shy: true
@@ -73,7 +74,7 @@ require('mecano').service_install([{
         cmd: -> switch options.manager
           when 'yum' then "yum #{cacheonly} list updates"
           when 'apt', 'apt-get' then "apt-get -u upgrade --assume-no | grep '^\\s' | sed 's/\\s/\\n/g'"
-          else throw Error "Invalid Manager #{options.manager}"
+          else throw Error "Invalid Manager: #{options.manager}"
         code_skipped: 1
         stdout_log: false
         shy: true
@@ -100,7 +101,7 @@ require('mecano').service_install([{
         cmd: -> switch options.manager
           when 'yum' then "yum install -y #{cacheonly} #{options.name}"
           when 'apt' then "apt-get install -y #{options.name}"
-          else throw Error "Invalid Manager #{options.manager}"
+          else throw Error "Invalid Manager: #{options.manager}"
         if: ->
           installed.indexOf(options.name) is -1 or updates.indexOf(options.name) isnt -1
       , (err, succeed) ->
