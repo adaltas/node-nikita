@@ -49,7 +49,7 @@ require('mecano').service_start([{
       options.log message: "Get status for #{options.name}", level: 'DEBUG', module: 'mecano/lib/service/status'
       @execute
         cmd: """
-        if ! chkconfig --list #{options.name}; then exit 1; fi;
+        if [ ! -f /etc/init.d/#{options.name} ]; then exit 1; fi;
         service #{options.name} status || exit 3
         """
         code: options.code_started
