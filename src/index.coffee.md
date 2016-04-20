@@ -60,7 +60,10 @@ functions share a common API with flexible options.
                 a = argument: a unless typeof a is 'object' and not Array.isArray(a) and a isnt null
               options.push a
           else
-            arg = argument: arg if typeof arg isnt 'object' and arg isnt null
+            if typeof arg isnt 'object' and arg isnt null
+              if type is 'call'
+              then arg = handler: arg
+              else arg = argument: arg
             if options.length is 0
               options.push arg
             else for opts in options
@@ -200,7 +203,7 @@ functions share a common API with flexible options.
             copy[k] = v
           options = copy
           do_once = ->
-            hashize = (value) ->
+            hashme = (value) ->
               if typeof value is 'string'
                 value = "string:#{string.hash value}"
               else if typeof value is 'boolean'
@@ -212,7 +215,7 @@ functions share a common API with flexible options.
               else if value is undefined or value is null
                 value = 'null'
               else if Array.isArray value
-                value = 'array:' + value.sort().map((value) -> hashize value).join ':'
+                value = 'array:' + value.sort().map((value) -> hashme value).join ':'
               else if typeof value is 'object'
                 value = 'object'
               else throw Error "Invalid data type: #{JSON.stringify value}"
@@ -221,7 +224,7 @@ functions share a common API with flexible options.
               if typeof options.once is 'string'
                 hash = string.hash options.once
               else if Array.isArray options.once
-                hash = string.hash options.once.map((k) -> hashize options[k]).join '|'
+                hash = string.hash options.once.map((k) -> hashme options[k]).join '|'
               else
                 throw Error "Invalid Type Option Once: #{JSON.stringify options.once}"
               return do_callback [] if once[hash]
@@ -337,7 +340,15 @@ functions share a common API with flexible options.
         args = [].slice.call(arguments)
         options = normalize_options args, 'call'
         for opts in options
-          opts.handler = require.main.require opts.argument if not opts.handler and typeof opts.argument is 'string'
+          if typeof opts.handler is 'string'
+            mod = require.main.require opts.handler
+            throw Error 'Array modules not yet supported' if Array.isArray mod
+            mod = normalize_options [mod], 'call'
+            opts.handler = mod.handler
+            opts[k] ?= v for k, v of mod[0]
+          # if not opts.handler and typeof opts.argument is 'string'
+          #   opts.handler = require.main.require opts.argument 
+          # opts.handler = normalize_options opts.handler
           throw Error 'Missing handler option' unless opts.handler
           throw Error "Handler not a function, got '#{opts.handler}'" unless typeof opts.handler is 'function'
         todos.push opts for opts in options

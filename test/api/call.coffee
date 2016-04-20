@@ -22,6 +22,25 @@ describe 'api call', ->
       .call ->
         logs.should.eql ['a', 'c', 'b', 'c']
       .then next
+    
+    it 'string requires a module', (next) ->
+      logs = []
+      mecano
+      .on 'text', (l) -> logs.push l.message
+      .call who: 'sync', 'test/resources/module_sync'
+      .call who: 'async', 'test/resources/module_async'
+      .then (err) ->
+        logs.should.eql ['Hello sync', 'Hello async'] unless err
+        next err
+      
+    it 'string requires a module which export an object', (next) ->
+      logs = []
+      mecano
+      .on 'text', (l) -> logs.push l.message
+      .call who: 'us', 'test/resources/module_async_object'
+      .then (err) ->
+        logs[0].should.eql 'Hello us' unless err
+        next err
 
   describe 'sync', ->
 
@@ -71,15 +90,6 @@ describe 'api call', ->
         options.test1.should.be.true()
         options.test2.should.be.true()
       .then next
-    
-    it 'string requires a module', (next) ->
-      logs = []
-      mecano
-      .on 'text', (l) -> logs.push l
-      .call who: 'us', 'test/resources/module_sync'
-      .then (err) ->
-        logs[0].message.should.eql 'Hello us' unless err
-        next err
 
   describe 'async', ->
 
@@ -140,15 +150,6 @@ describe 'api call', ->
         options.test2.should.be.true()
         next()
       .then next
-    
-    it 'string requires a module', (next) ->
-      logs = []
-      mecano
-      .on 'text', (l) -> logs.push l
-      .call who: 'us', 'test/resources/module_async'
-      .then (err) ->
-        logs[0].message.should.eql 'Hello us' unless err
-        next err
 
   describe 'async nested', ->
 
