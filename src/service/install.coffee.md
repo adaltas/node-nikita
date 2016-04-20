@@ -42,12 +42,13 @@ require('mecano').service_install([{
         cmd: """
         if which yum >/dev/null; then exit 1; fi
         if which apt-get >/dev/null; then exit 2; fi
+        exit 3
         """
         code: [1, 2]
         unless: options.manager
-        relax: true
         shy: true
       , (err, status, stdout, stderr, signal) ->
+        throw Error "Undetected Package Manager" if err?.code is 3
         throw err if err
         options.manager = switch signal
           when 1 then 'yum'
@@ -69,11 +70,10 @@ require('mecano').service_install([{
         options.log message: "Installed packages retrieved", level: 'INFO', module: 'mecano/service/install'
         installed = for pkg in string.lines(stdout) then pkg
       @execute
-        cmd: ->
-          switch options.manager
-            when 'yum' then "yum #{cacheonly} list updates"
-            when 'apt', 'apt-get' then "apt-get -u upgrade --assume-no | grep '^\\s' | sed 's/\\s/\\n/g'"
-            else throw Error "Invalid Manager #{options.manager}"
+        cmd: -> switch options.manager
+          when 'yum' then "yum #{cacheonly} list updates"
+          when 'apt', 'apt-get' then "apt-get -u upgrade --assume-no | grep '^\\s' | sed 's/\\s/\\n/g'"
+          else throw Error "Invalid Manager #{options.manager}"
         code_skipped: 1
         stdout_log: false
         shy: true
