@@ -66,46 +66,43 @@ describe 'api stack', ->
   it 'clean stack with then', (next) ->
     msgs = []
     m = mecano()
-    m.on 'text', (log) -> msgs.push log.message if /\/file_\d/.test log.message
+    m.on 'text', (log) -> msgs.push log.message
     m
-    .write
-      destination: "#{scratch}/file_1"
-      content: 'abc'
-    .write
-      destination: "#{scratch}/file_2"
-      content: 'def'
+    .call (options, callback) ->
+      options.log 'a'
+      callback()
+    .call (options, callback) ->
+      options.log 'b'
+      callback()
     .then (err, changed) ->
       return next err if err
       m
-      .write
-        destination: "#{scratch}/file_3"
-        content: 'hij'
+      .call (options, callback) ->
+        options.log 'c'
+        callback()
       .then (err, changed) ->
-        return next err if err
-        msgs.length.should.eql 3
-        next()
+        msgs.should.eql ['a', 'b', 'c'] unless err
+        next err
 
   it 'clean stack with callback', (next) ->
     msgs = []
     m = mecano()
-    m.on 'text', (log) -> msgs.push log.message if /\/file_\d/.test log.message
-    m.write
-      destination: "#{scratch}/file_1"
-      content: 'abc'
-    m.write
-      destination: "#{scratch}/file_2"
-      content: 'def'
+    m.on 'text', (log) -> msgs.push log.message
+    m.call (options, callback) ->
+      options.log 'a'
+      callback()
+    m.call (options, callback) ->
+      options.log 'b'
+      callback()
     , (err, changed) ->
       return next err if err
-      m.write
-        destination: "#{scratch}/file_3"
-        content: 'hij'
+      m.call (options, callback) ->
+        options.log 'c'
+        callback()
       m.then (err, changed) ->
-        return next err if err
-        msgs.length.should.eql 3
-        next()
+        msgs.should.eql ['a', 'b', 'c'] unless err
+        next err
   
-
   it 'can finish and resume', (next) ->
     m = mecano
     .call(->)
