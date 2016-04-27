@@ -385,6 +385,7 @@ functions share a common API with flexible options.
       # Register function
       Object.defineProperty obj, 'register', get: -> (name, handler) ->
         is_registered_locally = obj.registered name, true
+        # Unregister
         if handler is null or handler is false
           if is_registered_locally
             delete obj.registry[name]
@@ -392,7 +393,9 @@ functions share a common API with flexible options.
           else if module.exports.registered name
             throw Error 'Unregister a global function from local context'
           return obj
-        throw Error "Function already defined '#{name}'" if is_registered_locally
+        # Register
+        # throw Error "Function already defined '#{name}'" if is_registered_locally
+        handler = require.main.require handler if typeof handler is 'string'
         obj.registry[name] = handler
         Object.defineProperty obj, name, configurable: true, get: -> ->
           # Insert handler before callback or at the end of arguments
@@ -437,11 +440,13 @@ registered.
     registry = require './misc/registry'
     do ->
       register = module.exports.register = (name, handler, api) ->
+        # Unregister
         if handler is null or handler is false
           delete registry[name] if registered name
           delete module.exports[name] if registered name
           return module.exports
         throw Error "Function already defined '#{name}'" if registered name
+        # Register
         registry[name] = handler unless api
         Object.defineProperty module.exports, name, 
           configurable: true

@@ -84,7 +84,21 @@ describe 'api register', ->
         modified.should.be.true()
         m.registered('my_function').should.be.true()
         next err
-      
+    
+    it 'register module name', (next) ->
+      logs = []
+      m = mecano()
+      .on 'text', (l) -> logs.push l.message
+      .register 'module_sync', 'test/resources/module_sync'
+      .register 'module_async', 'test/resources/module_async'
+      .module_sync who: 'sync'
+      .module_async who: 'async'
+      .then (err, modified) ->
+        m.registered('module_sync').should.be.true() unless err
+        m.registered('module_async').should.be.true() unless err
+        logs.should.eql ['Hello sync', 'Hello async'] unless err
+        next err
+    
     it.skip 'support lazy validation for late registration', (next) ->
       # This test could only be supported with dynamic method call, probably
       # once we introduce a proxy implementation. At the moment, the call
