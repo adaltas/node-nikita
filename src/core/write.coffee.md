@@ -313,7 +313,7 @@ require('mecano').write({
           options.content += options.eof
       @call (_, callback) -> # diff
         return callback() if destinationHash is string.hash options.content
-        options.log message: "File content has changed", level: 'WARN', module: 'mecano/lib/write'
+        options.log message: "File content has changed: #{options.destination}", level: 'WARN', module: 'mecano/lib/write'
         diff options.content, destination, options
         callback null, true
       @call -> # backup
