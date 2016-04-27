@@ -84,4 +84,17 @@ describe 'api register', ->
         modified.should.be.true()
         m.registered('my_function').should.be.true()
         next err
-
+      
+    it.skip 'support lazy validation for late registration', (next) ->
+      # This test could only be supported with dynamic method call, probably
+      # once we introduce a proxy implementation. At the moment, the call
+      # to "my_function" throw a TypeError complaining that the function does
+      # not exists.
+      name = null
+      mecano
+      .call ->
+        @register 'my_function', (options) -> name = options.name
+      .my_function name: 'callme'
+      .then (err) ->
+        name.should.eql 'callme' unless err
+        next err
