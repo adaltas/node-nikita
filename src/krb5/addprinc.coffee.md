@@ -5,7 +5,7 @@ Create a new Kerberos principal with a password or an optional keytab.
 
 ## Options
 
-*   `kadmin_server`
+*   `kadmin_server`, `admin_server`
     Address of the kadmin server; optional, use "kadmin.local" if missing.
 *   `kadmin_principal`
     KAdmin principal name unless `kadmin.local` is used.
@@ -61,6 +61,7 @@ require('mecano').krb5_addprinc({
       options.realm ?= options.kadmin_principal.split('@')[1] if /.*@.*/.test options.kadmin_principal
       options.principal = "#{options.principal}@#{options.realm}" unless /^\S+@\S+$/.test options.principal
       options.password_sync ?= false
+      options.kadmin_server ?= options.admin_server # Might deprecated kadmin_server in favor of admin_server
       # Prepare commands
       cmd_getprinc = misc.kadmin options, "getprinc #{options.principal}"
       cmd_addprinc = misc.kadmin options, if options.password
