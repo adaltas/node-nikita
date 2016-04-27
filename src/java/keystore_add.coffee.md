@@ -79,14 +79,14 @@ require('mecano').java_keystore_add([{
 
 ## Source Code
 
-    module.exports = (options, callback) ->
-      return callback new Error "Required option 'keystore'" unless options.keystore
-      return callback new Error "Required option 'storepass'" unless options.storepass
-      return callback new Error "Required option 'key' for certificate" if options.cert and not options.key
-      return callback new Error "Required option 'keypass' for certificate" if options.cert and not options.keypass
-      return callback new Error "Required option 'name' for certificate" if options.cert and not options.name
-      return callback new Error "Required option 'caname'" unless options.caname
-      return callback new Error "Required option 'cacert'" unless options.cacert
+    module.exports = (options) ->
+      throw Error "Required option 'keystore'" unless options.keystore
+      throw Error "Required option 'storepass'" unless options.storepass
+      throw Error "Required option 'key' for certificate" if options.cert and not options.key
+      throw Error "Required option 'keypass' for certificate" if options.cert and not options.keypass
+      throw Error "Required option 'name' for certificate" if options.cert and not options.name
+      throw Error "Required option 'caname'" unless options.caname
+      throw Error "Required option 'cacert'" unless options.cacert
       tmp_location = "/tmp/mecano_java_keystore_#{Date.now()}"
       files =
         cert: if options.local_source then  "#{tmp_location}/#{path.basename options.cert}" else options.cert
@@ -174,7 +174,6 @@ require('mecano').java_keystore_add([{
       .remove
         destination: "#{tmp_location}"
         shy: true
-      .then callback
 
 ## Dependencies
 
