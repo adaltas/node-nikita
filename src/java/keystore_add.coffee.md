@@ -89,9 +89,9 @@ require('mecano').java_keystore_add([{
       throw Error "Required option 'cacert'" unless options.cacert
       tmp_location = "/tmp/mecano_java_keystore_#{Date.now()}"
       files =
-        cert: if options.local_source then  "#{tmp_location}/#{path.basename options.cert}" else options.cert
+        cert: if options.cert? and options.local_source then  "#{tmp_location}/#{path.basename options.cert}" else options.cert
         cacert: if options.local_source then  "#{tmp_location}/#{path.basename options.cacert}" else options.cacert
-        key: if options.local_source then  "#{tmp_location}/#{path.basename options.key}" else options.key
+        key: if options.key? and options.local_source then  "#{tmp_location}/#{path.basename options.key}" else options.key
       @mkdir
         destination: "#{tmp_location}"
         mode: 0o0600
