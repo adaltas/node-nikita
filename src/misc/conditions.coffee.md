@@ -184,7 +184,12 @@ exists otherwise the callback `skip` is called.
         each(if_exists)
         .call (if_exists, next) ->
           fs.exists ssh, if_exists, (err, exists) ->
-            if exists then next() else skip()
+            if exists
+              options.log? message: "File exists #{if_exists}, continuing", level: 'DEBUG', module: 'mecano/misc/conditions'
+              next()
+            else
+              options.log? message: "File doesnt exists #{if_exists}, skipping", level: 'INFO', module: 'mecano/misc/conditions'
+              skip()
         .then succeed
 
 ## Skip an action if a file exists: `unless_exists`
@@ -204,7 +209,12 @@ exists otherwise the callback `skip` is called.
         each(unless_exists)
         .call (unless_exists, next) ->
           fs.exists ssh, unless_exists, (err, exists) ->
-            if exists then skip() else next()
+            if exists
+              options.log? message: "File exists #{unless_exists}, skipping", level: 'INFO', module: 'mecano/misc/conditions'
+              skip()
+            else
+              options.log? message: "File doesnt exists #{unless_exists}, continuing", level: 'DEBUG', module: 'mecano/misc/conditions'
+              next()
         .then succeed
 
 ## Ensure a file exist: `should_exist`

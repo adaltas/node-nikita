@@ -1,6 +1,7 @@
 
 they = require 'ssh2-they'
 conditions = require '../../src/misc/conditions'
+mecano = require '../../src'
 
 describe 'if_exists', ->
 
@@ -41,6 +42,24 @@ describe 'if_exists', ->
       if_exists: [__filename, __filename, __filename]
       (err) -> false.should.be.true()
       -> next()
+  
+  they 'print log', (ssh, next) ->
+    logs = []
+    mecano
+    .on 'text', (log) -> logs.push log.message
+    .call
+      if_exists: __filename
+      handler: -> logs.push 'handler called'
+    .call
+      if_exists: __filename + '/does/not/exists'
+      handler: -> logs.push 'handler not called'
+    .then (err) ->
+      logs.should.eql [
+        "File exists #{__filename}, continuing"
+        'handler called'
+        "File doesnt exists #{__filename}/does/not/exists, skipping"
+      ] unless err
+      next err
 
 describe 'unless_exists', ->
 
@@ -99,3 +118,21 @@ describe 'unless_exists', ->
       unless_exists: ['./oh_no', './oh_no', './oh_no']
       (err) -> false.should.be.true()
       -> next()
+  
+  they 'print log', (ssh, next) ->
+    logs = []
+    mecano
+    .on 'text', (log) -> logs.push log.message
+    .call
+      unless_exists: __filename
+      handler: -> logs.push 'handler not called'
+    .call
+      unless_exists: __filename + '/does/not/exists'
+      handler: -> logs.push 'handler called'
+    .then (err) ->
+      logs.should.eql [
+        "File exists #{__filename}, skipping"
+        "File doesnt exists #{__filename}/does/not/exists, continuing"
+        'handler called'
+      ] unless err
+      next err
