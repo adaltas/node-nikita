@@ -44,16 +44,17 @@ require('mecano').service_start([{
     module.exports = (options) ->
       options.log message: "Entering service_status", level: 'DEBUG', module: 'mecano/lib/service/status'
       throw Error "Missing required option 'name'" unless options.name
-      options.code_started ?= 0
-      options.code_stopped ?= 3
+      # options.code_started ?= 0
+      # options.code_stopped ?= 3
       options.log message: "Get status for #{options.name}", level: 'DEBUG', module: 'mecano/lib/service/status'
+      options.log message: "Option code_stopped is #{options.code_stopped}", level: 'DEBUG', module: 'mecano/lib/service/status' unless options.code_stopped is 3
       @execute
         cmd: """
         if [ ! -f /etc/init.d/#{options.name} ]; then exit 1; fi;
         service #{options.name} status || exit 3
         """
-        code: options.code_started
-        code_skipped: options.code_stopped
+        code: 0
+        code_skipped: 3
       , (err, started) ->
         throw Error "Invalid Service Name: #{options.name}" if err
         status = if started then 'started' else 'stopped'
