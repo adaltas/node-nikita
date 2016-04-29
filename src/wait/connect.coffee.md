@@ -59,6 +59,8 @@ require 'mecano'
     inc = 0
     module.exports = (options, callback) ->
       extract_servers = (options) ->
+        throw Error "Invalid host: #{server.host}" if (options.port or options.ports) and not options.host
+        throw Error "Invalid port: #{server.port}" if (options.host or options.hosts) and not options.port
         for k in ['host', 'hosts']
           options[k] ?= []
           throw error "Invalid option '#{options[k]}'" if typeof options[k] not in ['string', 'object']
@@ -86,6 +88,7 @@ require 'mecano'
         for server in options[k]
           servers.push extract_servers(server)...
       return callback() unless servers.length
+      # Validate servers
       options.randdir ?= '/tmp'
       options.interval ?= 2000
       options.interval = Math.round options.interval / 1000

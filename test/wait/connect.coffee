@@ -156,4 +156,30 @@ describe 'wait connect', ->
       .call  (_, callback) ->
         @options.server2.close callback
       .then next
+
+  describe 'options', ->
     
+    they 'validate host', (ssh, next) ->
+      mecano
+        ssh: ssh
+      .wait_connect
+        servers: [
+          { host: undefined, port: 12345 }
+        ]
+        relax: true
+      , (err, status) ->
+        err.message.should.eql 'Invalid host: undefined'
+      .then next
+        
+    they 'validate port', (ssh, next) ->
+      mecano
+        ssh: ssh
+      .wait_connect
+        servers: [
+          { host: 'localhost', port: undefined }
+        ]
+        relax: true
+      , (err, status) ->
+        err.message.should.eql 'Invalid port: undefined'
+      .then next
+  
