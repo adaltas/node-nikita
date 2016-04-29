@@ -65,7 +65,9 @@ functions share a common API with flexible options.
               then arg = handler: arg
               else arg = argument: arg
             if options.length is 0
-              options.push arg
+              cloned_arg = {}
+              for k, v of arg then cloned_arg[k] = v
+              options.push cloned_arg
             else for opts in options
               for k, v of arg then opts[k] = v
         return options if options.length is 0 and empty

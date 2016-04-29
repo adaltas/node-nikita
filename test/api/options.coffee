@@ -46,15 +46,22 @@ describe 'api options', ->
     .then (err, status) ->
       status.should.be.false() unless err
       next err
+  
+  describe 'merging', ->
 
+    it 'accept multiple options', (next) ->
+      mecano
+      .call {a: 1, b: 0}, {b: 2, c: 3}, (options) ->
+        options.should.containEql a: 1, b: 2, c: 3
+      .then next
 
-
-
-
-
-
-
-
-
-
-
+    it 'is immutable', (next) ->
+      opts1 = {a: 1, b: 0}
+      opts2 = {b: 2, c: 3}
+      mecano
+      .call opts1, opts2, (options) ->
+        options.should.containEql a: 1, b: 2, c: 3
+      , ->
+        opts1.should.eql {a: 1, b: 0}
+        opts2.should.eql {b: 2, c: 3}
+      .then next
