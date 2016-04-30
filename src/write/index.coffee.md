@@ -16,8 +16,8 @@ Write a file or a portion of an existing file.
 *   `destination`   
     File path where to write content to.   
 *   `diff` (boolean | function)   
-    Print diff information, pass the result of [jsdiff.diffLines][diffLines] as
-    argument if a function, default to true.   
+    Print diff information, pass a readable diff and the result of [jsdiff.diffLines][diffLines] as
+    arguments if a function, default to true.   
 *   `eof`   
     Ensure the file ends with this charactere sequence, special values are
     'windows', 'mac', 'unix' and 'unicode' (respectively "\r\n", "\r", "\n",
@@ -53,10 +53,7 @@ Write a file or a portion of an existing file.
     object accepting the options `from`, `to`, `match` and `replace`.   
 *   `ssh` (object|ssh2)   
     Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-*   `stdout` (stream.Writable)   
-    Writable EventEmitter where diff information is written if option "diff" is
-    "true".   
+    configuration object used to initialize the SSH connection.    
 
 ## Callback parameters
 
@@ -76,8 +73,8 @@ Diff can be obtained when the options "diff" is set to true or a function. The
 information is provided in two ways:
 
 *   when `true`, a formated string written to the "stdout" option.   
-*   when a function, the array returned by the function `diff.diffLines`, see
-    the [diffLines] package for additionnal information.   
+*   when a function, a readable diff and the array returned by the function 
+    `diff.diffLines`, see the [diffLines] package for additionnal information.   
 
 ## More about the `append` option
 
@@ -283,7 +280,7 @@ require('mecano').write({
           options.log message: "Reading destination", level: 'DEBUG', module: 'mecano/lib/write'
           fs.readFile options.ssh, options.destination, 'utf8', (err, dest) ->
             return callback err if err
-            destination = dest if options.diff # destination content only use by diff
+            destination = dest # only used by diff
             destinationHash = string.hash dest
             callback()
         exists()
@@ -314,7 +311,9 @@ require('mecano').write({
       @call (_, callback) -> # diff
         return callback() if destinationHash is string.hash options.content
         options.log message: "File content has changed: #{options.destination}", level: 'WARN', module: 'mecano/lib/write'
-        diff options.content, destination, options
+        {raw, text} = diff destination, options.content, options
+        options.diff text, raw if typeof options.diff is 'function'
+        options.log message: text, type: 'diff', level: 'INFO', module: 'mecano/lib/write'
         callback null, true
       @call -> # backup
         return unless @status()
