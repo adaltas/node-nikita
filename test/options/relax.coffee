@@ -3,7 +3,7 @@ mecano = require '../../src'
 test = require '../test'
 fs = require 'fs'
 
-describe 'api relax', ->
+describe 'options relax', ->
 
   scratch = test.scratch @
 

@@ -2,7 +2,7 @@
 mecano = require '../../src'
 fs = require 'fs'
 
-describe 'api handler', ->
+describe 'options handler', ->
 
   describe 'sync', ->
 
