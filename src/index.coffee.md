@@ -256,10 +256,14 @@ functions share a common API with flexible options.
               for k, v of options # Remove conditions from options
                 delete options[k] if /^if.*/.test(k) or /^unless.*/.test(k)
               do_handler()
+          options.attempt = -1
           do_handler = ->
-            do_next = ->
+            options.attempt++
+            do_next = ([err]) ->
               options.handler = options_handler
               options.callback = options_callback
+              if err and options.attempt < options.retry - 1
+                return do_handler()
               do_intercept_after arguments...
             options_handler = options.handler
             options.handler = undefined
