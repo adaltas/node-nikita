@@ -24,10 +24,6 @@
       touch: require '../core/touch'
       upload: require '../core/upload'
       user: require '../core/user'
-      write: require '../core/write'
-      write_ini: require '../core/write_ini'
-      write_properties: require '../core/write_properties'
-      write_yaml: require '../core/write_yaml'
       # Cron
       cron_add: require '../cron/add'
       cron_remove: require '../cron/remove'
@@ -78,3 +74,8 @@
       wait_connect: require '../wait/connect'
       wait_execute: require '../wait/execute'
       wait_exist: require '../wait/exist'
+      # Write
+      write: require '../write'
+      write_ini: require '../write/ini'
+      write_properties: require '../write/properties'
+      write_yaml: require '../write/yaml'
