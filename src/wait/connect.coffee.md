@@ -114,7 +114,7 @@ require 'mecano'
             @child().remove destination: randfile
           , options.timeout
         options.log message: "Start wait for #{server.host}:#{server.port}", level: 'DEBUG', module: 'mecano/wait/connect'
-        options.wait?.call @, server
+        # options.wait?.call @, server
         # dont exit loop until rand file is removed or connection succeed
         child = @child()
         child.execute
