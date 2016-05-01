@@ -265,6 +265,7 @@ functions share a common API with flexible options.
             do_next = ([err]) ->
               options.handler = options_handler
               options.callback = options_callback
+              options.log message: err.message, level: 'ERROR', module: 'mecano' if err
               if err and options.attempt < options.retry - 1
                 return setTimeout do_handler, options.wait
               do_intercept_after arguments...
