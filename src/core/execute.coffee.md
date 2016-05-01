@@ -113,16 +113,19 @@ mecano.execute({
       stdout = []; stderr = []
       child.stdout.pipe options.stdout, end: false if options.stdout
       child.stderr.pipe options.stderr, end: false if options.stderr
+      stdout_stream_open = stderr_stream_open = false
       if options.stdout_callback or options.stdout_log
         child.stdout.on 'data', (data) ->
-          options.log message: data, type: 'stdout_stream', module: 'mecano/lib/execute' if options.stdout_log
+          stdout_stream_open = true unless options.stdout is false or options.stdout is null
+          options.log message: data, type: 'stdout_stream', module: 'mecano/lib/execute' unless options.stdout is false or options.stdout is null
           if options.stdout_callback
             if Array.isArray stdout # A string on exit
               stdout.push data
             else console.log 'stdout coming after child exit'
       if options.stderr_callback or stderr_log
         child.stderr.on 'data', (data) ->
-          options.log message: data, type: 'stderr_stream', module: 'mecano/lib/execute' if options.stderr_log
+          stderr_stream_open = true unless options.stdout is false or options.stdout is null
+          options.log message: data, type: 'stderr_stream', module: 'mecano/lib/execute' unless options.stderr is false or options.stderr is null
           if options.stderr_callback
             if Array.isArray stderr # A string on exit
               stderr.push data
@@ -132,8 +135,8 @@ mecano.execute({
         # called before the "stdout" "data" event when runing
         # `npm test`
         setTimeout ->
-          options.log message: null, type: 'stdout_stream', module: 'mecano/lib/execute' unless options.stdout is false or options.stdout is null
-          options.log message: null, type: 'stderr_stream', module: 'mecano/lib/execute' unless options.stderr is false or options.stderr is null
+          options.log message: null, type: 'stdout_stream', module: 'mecano/lib/execute' if stdout_stream_open and not (options.stdout is false or options.stdout is null)
+          options.log message: null, type: 'stderr_stream', module: 'mecano/lib/execute' unless  stderr_stream_open and not (options.stderr is false or options.stderr is null)
           stdout = stdout.map((d) -> d.toString()).join('')
           stderr = stderr.map((d) -> d.toString()).join('')
           options.log message: stdout, type: 'stdout', module: 'mecano/lib/execute' if stdout and stdout isnt '' unless options.stdout is false or options.stdout is null
