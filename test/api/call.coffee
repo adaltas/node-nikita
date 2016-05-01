@@ -26,7 +26,7 @@ describe 'api call', ->
     it 'string requires a module', (next) ->
       logs = []
       mecano
-      .on 'text', (l) -> logs.push l.message
+      .on 'text', (log) -> logs.push log.message
       .call who: 'sync', 'test/resources/module_sync'
       .call who: 'async', 'test/resources/module_async'
       .then (err) ->
