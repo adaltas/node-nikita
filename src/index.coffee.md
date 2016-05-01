@@ -89,6 +89,9 @@ functions share a common API with flexible options.
           opts.once = ['handler'] if opts.once is true
           delete opts.once if opts.once is false
           opts.once = opts.once.sort() if Array.isArray opts.once
+          opts.wait ?= 3000 # Wait 3s between retry
+          # Validation
+          jump_to_error Error "Invalid options wait, got #{JSON.stringify opts.wait}" unless typeof opts.wait is 'number' and opts.wait >= 0
         options
       enrich_options = (user_options) ->
         user_options.enriched = true
@@ -263,7 +266,7 @@ functions share a common API with flexible options.
               options.handler = options_handler
               options.callback = options_callback
               if err and options.attempt < options.retry - 1
-                return do_handler()
+                return setTimeout do_handler, options.wait
               do_intercept_after arguments...
             options_handler = options.handler
             options.handler = undefined
