@@ -267,6 +267,7 @@ functions share a common API with flexible options.
               options.callback = options_callback
               options.log message: err.message, level: 'ERROR', module: 'mecano' if err
               if err and options.attempt < options.retry - 1
+                options.log message: "Retry on error, attempt #{options.attempt+1}", level: 'WARN', module: 'mecano'
                 return setTimeout do_handler, options.wait
               do_intercept_after arguments...
             options_handler = options.handler
