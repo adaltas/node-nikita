@@ -29,6 +29,7 @@ RUN curl -fsSL https://get.docker.com/ | sh
 ADD ./run.sh /run.sh
 RUN mkdir -p /mecano
 WORKDIR /mecano
+ENV TERM xterm
 
 #CMD ["node_modules/.bin/mocha", "test/api/"]
 # CMD []
