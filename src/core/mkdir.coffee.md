@@ -82,7 +82,8 @@ require('mecano')
         do_stats = ->
           end = false
           dirs = []
-          directory = if options.cwd then path.resolve options.cwd, directory else path.normalize directory # path.resolve also normalize
+          p = if options.ssh then path.posix else path
+          directory = if options.cwd then p.resolve options.cwd, directory else p.normalize directory # path.resolve also normalize
           # Create directory and its parent directories
           directories = directory.split('/')
           directories.shift() # first element is empty with absolute path
