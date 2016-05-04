@@ -118,6 +118,7 @@ you are a member of the "wheel" group (gid of "10") with the command
         cmd = 'useradd'
         cmd += " -r" if options.system
         cmd += " -M" unless options.home
+        cmd += " -m" if options.home
         cmd += " -d #{options.home}" if options.home
         cmd += " -s #{options.shell}" if options.shell
         cmd += " -c #{string.escapeshellarg options.comment}" if options.comment
