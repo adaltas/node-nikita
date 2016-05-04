@@ -166,6 +166,7 @@ mecano.download
         ssh2fs.stat @options.ssh, options.destination, (err, stat) ->
           return callback err if err and err.code isnt 'ENOENT'
           if stat?.isDirectory()
+            options.log message: "Destination is a directory", level: 'DEBUG', module: 'mecano/lib/download'
             options.destination = path.join options.destination, path.basename options.source
           stageDestination = "#{options.destination}.#{Date.now()}#{Math.round(Math.random()*1000)}"
           callback()
@@ -200,7 +201,7 @@ mecano.download
             shy: true
             destination: stageDestination
       @call
-        if: -> source_url.protocol is null and not options.ssh
+        if: -> source_url.protocol not in protocols_http and not options.ssh
         handler: ->
           options.log message: "File Download without ssh (with or without cache)", level: 'DEBUG', module: 'mecano/lib/download'
           @call (_, callback) ->
@@ -225,7 +226,7 @@ mecano.download
               .on 'close', callback
               .on 'error', callback
       @call
-        if: -> source_url.protocol is null and options.ssh
+        if: -> source_url.protocol not in protocols_http and options.ssh
         handler: ->
           options.log message: "File Download with ssh (with or without cache)", level: 'DEBUG', module: 'mecano/lib/download'
           @call (_, callback) ->
