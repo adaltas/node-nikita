@@ -141,7 +141,7 @@ describe 'execute', ->
   describe 'log', ->
 
     they 'stdin, stdout, stderr', (ssh, next) ->
-      stdin = stdout = stderr = ''
+      stdin = stdout = stderr = undefined
       mecano
         ssh: ssh
       .on 'stdin', (log) -> stdin = log
@@ -150,9 +150,51 @@ describe 'execute', ->
       .execute
         cmd: "echo 'to stderr' >&2; echo 'to stdout';"
       , (err, status) ->
-        stdin.message.should.match /echo/
-        stdout.message.should.match /to\sstdout/
-        stderr.message.should.match /to\sstderr/
+        stdin.message.should.match /^echo.*;$/
+        stdout.message.should.eql 'to stdout\n'
+        stderr.message.should.eql 'to stderr\n'
+      .then next
+
+    they 'disable logging', (ssh, next) ->
+      stdin = stdout = stderr = undefined
+      stdout_stream = stderr_stream = []
+      mecano
+        ssh: ssh
+      .on 'stdin', (log) -> stdin = log
+      .on 'stdout', (log) -> stdout = log
+      .on 'stdout_stream', (log) -> stdout_stream.push log
+      .on 'stderr', (log) -> stderr = log
+      .on 'stderr_stream', (log) -> stderr_stream.push log
+      .execute
+        cmd: "echo 'to stderr' >&2; echo 'to stdout';"
+        stdout_log: undefined
+        stderr_log: undefined
+      , (err, status) ->
+        stdin.message.should.match /^echo.*;$/
+        (stdout is undefined).should.be.true()
+        stdout_stream.length.should.eql 0
+        (stderr is undefined).should.be.true()
+        stderr_stream.length.should.eql 0
+      .execute
+        cmd: "echo 'to stderr' >&2; echo 'to stdout';"
+        stdout_log: null
+        stderr_log: null
+      , (err, status) ->
+        stdin.message.should.match /^echo.*;$/
+        (stdout is undefined).should.be.true()
+        stdout_stream.length.should.eql 0
+        (stderr is undefined).should.be.true()
+        stderr_stream.length.should.eql 0
+      .execute
+        cmd: "echo 'to stderr' >&2; echo 'to stdout';"
+        stdout_log: false
+        stderr_log: false
+      , (err, status) ->
+        stdin.message.should.match /^echo.*;$/
+        (stdout is undefined).should.be.true()
+        stdout_stream.length.should.eql 0
+        (stderr is undefined).should.be.true()
+        stderr_stream.length.should.eql 0
       .then next
 
   describe 'error', ->
