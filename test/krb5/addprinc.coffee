@@ -82,3 +82,56 @@ describe 'krb5_addprinc', ->
     .execute
       cmd: "echo password1 | kinit mecano@#{config.krb5.realm}"
     .then next
+
+  they 'call function with new style baby', (ssh, next) ->
+    krb5 =    
+      etc_krb5_conf:
+        libdefaults: 
+          default_realm: 'NODE.DC1.CONSUL'
+        realms: 
+          'NODE.DC1.CONSUL':
+            kadmin_server: 'krb5'
+            kadmin_principal: 'admin/admin@NODE.DC1.CONSUL'
+            kadmin_password: 'admin'
+        domain_realm: 
+          ryba: 'NODE.DC1.CONSUL'
+      kdc_conf: 
+        realms: 
+          'NODE.DC1.CONSUL':
+            kadmin_server: 'krb5'
+            kadmin_principal: 'admin/admin@NODE.DC1.CONSUL'
+            kadmin_password: 'admin'
+    user =
+      password: 'hdfs123'
+      password_sync: true
+      principal: 'hdfs@NODE.DC1.CONSUL'
+    mecano
+      ssh: ssh
+      # stdout: process.stdout
+      # stderr: process.stdout
+      kadmin_server: config.krb5.kadmin_server
+      kadmin_principal: config.krb5.kadmin_principal
+      kadmin_password: config.krb5.kadmin_password
+    .execute 
+      cmd: 'rm -f /etc/security/keytabs/zookeeper.service.keytab || true ; exit 0;'
+    .krb5_delprinc
+      principal: user.principal
+    .krb5_delprinc
+      principal: "zookeeper/krb5@NODE.DC1.CONSUL"
+    .krb5_addprinc krb5, 
+      principal: "zookeeper/krb5@NODE.DC1.CONSUL"
+      randkey: true
+      keytab: '/etc/security/keytabs/zookeeper.service.keytab'
+    .krb5_addprinc krb5, user
+    , (err, created) ->
+      return next err if err  
+      created.should.be.true()
+      mecano
+        ssh: ssh
+      .execute
+        cmd: """
+          echo hdfs123 | kinit hdfs@NODE.DC1.CONSUL" { echo 'coucou' } """
+      , (err, executed, stdout) ->
+        return next err if err
+        execute.should.be.true()
+        next()

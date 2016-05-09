@@ -152,7 +152,7 @@ you are a member of the "wheel" group (gid of "10") with the command
         for k in ['uid', 'home', 'shell', 'comment', 'gid']
           changed = true if options[k]? and user_info[k] isnt options[k]
         if options.groups then for group in options.groups
-          return callback err "Group does not exist: #{group}" unless groups_info[group]
+          return callback Error "Group does not exist: #{group}" unless groups_info[group]
           changed = true if groups_info[group].user_list.indexOf(options.name) is -1
         options.log message: "User #{options.name} not modified", level: 'DEBUG', module: 'mecano/lib/user' unless changed
         options.log message: "User #{options.name} modified", level: 'WARN', module: 'mecano/lib/user' if changed

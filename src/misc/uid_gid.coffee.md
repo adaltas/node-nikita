@@ -111,7 +111,7 @@ uid_gid options, (err) ->
         # Reload the cache and check if user is here
         store.cache_group = null
         return module.exports.group ssh, store, (err, groups) ->
-          return err if err
+          return callback err if err
           gid = groups[group]
           # Dont throw exception, just return undefined
           # return callback new Error "Group does not exists: #{group}" unless gid
