@@ -32,5 +32,5 @@ WORKDIR /mecano
 ENV TERM xterm
 
 #CMD ["node_modules/.bin/mocha", "test/api/"]
-# CMD []
 ENTRYPOINT ["/run.sh"]
+CMD []

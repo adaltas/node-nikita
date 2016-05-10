@@ -38,12 +38,12 @@ npm test
 npm run coffee && mocha test/api
 ```
 
-Some of the tests require a specific environment. You are encouraged to customer
-which tests you wish to run and to use docker container.
+Some of the tests require a specific environment. You are encouraged to 
+customize which tests you wish to run and to use docker container.
 
 To filter and configure your tests, you can either create a "test.coffee" at the
-root of this project or point the "MECANO_TEST" environment to such a file. You
-can use the file "test.coffee.sample" as a starting point.
+root of this project or point the "MECANO_TEST" environment variable to such a
+file. You can use the file "test.coffee.sample" as a starting point.
 
 There are tests prepared to run on CentOS and Ubuntu using docker. Goto to one
 of the docker directory and run docker-compose, here's an example to run tests
@@ -57,9 +57,10 @@ docker-compose up --abort-on-container-exit
 Other useful commands include:
 
 ```
-docker-compose stop
-docker-compose rm -f
-docker-compose build
+# Enter bash console
+docker-compose run --rm --entrypoint /bin/bash nodejs
+# Run a subset of the tests:
+docker-compose run --rm nodejs test/service
 ```
 
 [mecano]: http://www.adaltas.com/projects/node-mecano/

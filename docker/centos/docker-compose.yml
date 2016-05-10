@@ -1,5 +1,7 @@
 
-# docker-compose up --abort-on-container-exit
+# Run all tests: `docker-compose up --abort-on-container-exit`
+# Enter console: `docker-compose run --rm --entrypoint /bin/bash nodejs` and `service sshd start`
+# Run a subset of the tests: `docker-compose run --rm nodejs test/service`
 
 # TODO: implement variable substitution once default value is implemented
 # see https://github.com/docker/compose/issues/2441
@@ -16,8 +18,6 @@ services:
       - dind
     environment:
       MECANO_TEST: /mecano/docker/centos/test.coffee
-      TEST_FILES: test # Filter with test/docker or test/docker/build.coffee
-      # DEBUG: 1
       DOCKER_HOST: 'tcp://dind:2375' 
   dind:
     image: docker:dind
