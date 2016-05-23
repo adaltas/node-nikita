@@ -94,7 +94,7 @@ mecano.execute({
       options.log message: "Entering execute", level: 'DEBUG', module: 'mecano/lib/execute'
       stds = options.user_args
       # Note, heres how to get username from uid
-      # awk -v val=#{options.uid} -F ":" '$3==val{print $1}' /etc/passwd`
+      # 
       # Validate parameters
       options.cmd = options.argument if typeof options.argument is 'string'
       options.code ?= [0]
@@ -103,64 +103,94 @@ mecano.execute({
       options.code_skipped = [options.code_skipped] unless Array.isArray options.code_skipped
       options.stdout_callback = true if options.stdout_callback is undefined
       options.stderr_callback = true if options.stderr_callback is undefined
-      # options.stdout_log = if 'stdout_log' in options then options.stdout_log else true
-      # options.stderr_log = if 'stderr_log' in options then options.stderr_log else true
       options.stdout_log = if options.hasOwnProperty('stdout_log') then options.stdout_log else true
       options.stderr_log = if options.hasOwnProperty('stderr_log') then options.stderr_log else true
       options.cmd = options.cmd.call @, options if typeof options.cmd is 'function'
       throw Error "Missing cmd: #{options.cmd}" unless options.cmd?
       if options.trap
         options.cmd = "set -e\n#{options.cmd}"
-      # options.log message: "Command is: `#{options.cmd}`", level: 'INFO', module: 'mecano/lib/execute'
       options.log message: options.cmd, type: 'stdin', module: 'mecano/lib/execute'
-      child = exec options
-      stdout = []; stderr = []
-      child.stdout.pipe options.stdout, end: false if options.stdout
-      child.stderr.pipe options.stderr, end: false if options.stderr
-      stdout_stream_open = stderr_stream_open = false
-      if options.stdout_callback or options.stdout_log
-        child.stdout.on 'data', (data) ->
-          stdout_stream_open = true if options.stdout_log
-          options.log message: data, type: 'stdout_stream', module: 'mecano/lib/execute' if options.stdout_log
-          if options.stdout_callback
-            if Array.isArray stdout # A string on exit
-              stdout.push data
-            else console.log 'stdout coming after child exit'
-      if options.stderr_callback or options.stderr_log
-        child.stderr.on 'data', (data) ->
-          stderr_stream_open = true if options.stderr_log
-          options.log message: data, type: 'stderr_stream', module: 'mecano/lib/execute' if options.stderr_log
-          if options.stderr_callback
-            if Array.isArray stderr # A string on exit
-              stderr.push data
-            else console.log 'stderr coming after child exit'
-      child.on "exit", (code) ->
-        # Give it some time because the "exit" event is sometimes
-        # called before the "stdout" "data" event when runing
-        # `npm test`
-        setTimeout ->
-          options.log message: null, type: 'stdout_stream', module: 'mecano/lib/execute' if stdout_stream_open and options.stdout_log
-          options.log message: null, type: 'stderr_stream', module: 'mecano/lib/execute' if  stderr_stream_open and options.stderr_log
-          stdout = stdout.map((d) -> d.toString()).join('')
-          stderr = stderr.map((d) -> d.toString()).join('')
-          options.log message: stdout, type: 'stdout', module: 'mecano/lib/execute' if stdout and stdout isnt '' and options.stdout_log
-          options.log message: stderr, type: 'stderr', module: 'mecano/lib/execute' if stderr and stderr isnt '' and options.stderr_log
-          if options.stdout
-            child.stdout.unpipe options.stdout
-          if options.stderr
-            child.stderr.unpipe options.stderr
-          if options.code.indexOf(code) is -1 and options.code_skipped.indexOf(code) is -1
-            err = new Error "Invalid Exit Code: #{code}"
-            err.code = code
-            return callback err, null, stdout, stderr
-          if options.code_skipped.indexOf(code) is -1
-            executed = true
-          else
-            options.log message: "Skip exit code \"#{code}\"", level: 'INFO', module: 'mecano/lib/execute'
-          callback null, executed, stdout, stderr, code
-        , 1
+      result = stdout: null, stderr: null, code: null
+      # @call 
+      current_username = 
+        if options.ssh then options.ssh.config.username
+        else if /^win/.test(process.platform) then process.env['USERPROFILE'].split(path.sep)[2]
+        else process.env['USER']
+      # Determines if writing is required and eventually convert uid to username
+      @call shy: true, (_, callback)->
+        return callback null, true if options.destination
+        return callback null, false if current_username is 'root'
+        return callback null, false unless options.uid
+        return callback null, options.uid isnt current_username unless /\d/.test "#{options.uid}"
+        @execute "awk -v val=#{options.uid} -F ":" '$3==val{print $1}' /etc/passwd`", (err, _, stdout) ->
+          options.uid = stdout.trim() unless err
+          callback err, options.uid isnt current_username
+      # Write script
+      @call
+        if: -> @status(-1)
+        handler: () ->
+          options.cmd = "#!/bin/bash\n\n#{options.cmd}"
+          options.destination ?= "/tmp/mecano_#{string.hash options.cmd}"
+          options.log message: 'Writing bash script to #{JSON.stringify options.destination}', level: 'INFO'
+          options.cmd = "su - #{options.uid} -c 'bash /tmp/mecano_#{string.hash options.cmd}'"
+          @write destination: options.destination
+      # Execute
+      @call (_, callback) ->
+        child = exec options
+        result.stdout = []; result.stderr = []
+        child.stdout.pipe options.stdout, end: false if options.stdout
+        child.stderr.pipe options.stderr, end: false if options.stderr
+        stdout_stream_open = stderr_stream_open = false
+        if options.stdout_callback or options.stdout_log
+          child.stdout.on 'data', (data) ->
+            stdout_stream_open = true if options.stdout_log
+            options.log message: data, type: 'stdout_stream', module: 'mecano/lib/execute' if options.stdout_log
+            if options.stdout_callback
+              if Array.isArray result.stdout # A string on exit
+                result.stdout.push data
+              else console.log 'stdout coming after child exit'
+        if options.stderr_callback or options.stderr_log
+          child.stderr.on 'data', (data) ->
+            stderr_stream_open = true if options.stderr_log
+            options.log message: data, type: 'stderr_stream', module: 'mecano/lib/execute' if options.stderr_log
+            if options.stderr_callback
+              if Array.isArray result.stderr # A string on exit
+                result.stderr.push data
+              else console.log 'stderr coming after child exit'
+        child.on "exit", (code) ->
+          result.code = code
+          # Give it some time because the "exit" event is sometimes
+          # called before the "stdout" "data" event when runing
+          # `npm test`
+          setTimeout ->
+            options.log message: null, type: 'stdout_stream', module: 'mecano/lib/execute' if stdout_stream_open and options.stdout_log
+            options.log message: null, type: 'stderr_stream', module: 'mecano/lib/execute' if  stderr_stream_open and options.stderr_log
+            result.stdout = result.stdout.map((d) -> d.toString()).join('')
+            result.stderr = result.stderr.map((d) -> d.toString()).join('')
+            options.log message: result.stdout, type: 'stdout', module: 'mecano/lib/execute' if result.stdout and result.stdout isnt '' and options.stdout_log
+            options.log message: result.stderr, type: 'stderr', module: 'mecano/lib/execute' if result.stderr and result.stderr isnt '' and options.stderr_log
+            if options.stdout
+              child.stdout.unpipe options.stdout
+            if options.stderr
+              child.stderr.unpipe options.stderr
+            if options.code.indexOf(code) is -1 and options.code_skipped.indexOf(code) is -1
+              err = new Error "Invalid Exit Code: #{code}"
+              err.code = code
+              return callback err, null
+            if options.code_skipped.indexOf(code) is -1
+              status = true
+            else
+              options.log message: "Skip exit code \"#{code}\"", level: 'INFO', module: 'mecano/lib/execute'
+            callback null, status
+          , 1
+      # @remove
+      #   if_exists: true
+      #   destination: -> @options.destination
+      @then (err, status) ->
+        callback err, status, result.stdout, result.stderr, result.code
 
 ## Dependencies
 
     exec = require 'ssh2-exec'
     misc = require '../misc'
+    string = require '../misc/string'
