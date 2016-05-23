@@ -28,14 +28,16 @@
       bin_boot2docker=$(command -v boot2docker)
       bin_docker=$(command -v docker)
       bin_machine=$(command -v docker-machine)
+      machine='#{options.machine or ''}'
+      boot2docker='#{if options.boot2docker then '1' else ''}'
       docker=''
-      if [ $bin_machine ]; then
+      if [[ $machine != '' ]] && [ $bin_machine ]; then
           if [ "#{options.machine or '--'}" = "--" ];then exit 5; fi
           if docker-machine status #{options.machine} | egrep 'Stopped|Saved'; then
             docker-machine start #{options.machine};
           fi
           docker="eval \\$(\\${bin_machine} env #{options.machine}) && $bin_docker"
-      elif [  $bin_boot2docker ]; then
+      elif [[ $boot2docker != '1' ]] && [  $bin_boot2docker ]; then
           docker="eval \\$(\\${bin_boot2docker} shellinit) && $bin_docker"
       else
         docker="$bin_docker"

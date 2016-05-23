@@ -5,6 +5,8 @@ Save Docker images
 
 ## Options
 
+*   `boot2docker` (boolean)   
+    Whether to use boot2docker or not, default to false.   
 *   `image` (string)   
     Name/ID of base image. MANDATORY 
 *   `tag` (string)

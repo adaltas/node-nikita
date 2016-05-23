@@ -114,7 +114,8 @@ functions share a common API with flexible options.
         if options.debug
           _logs.push (log) ->
             return if log.type in ['stdout', 'stderr']
-            msg = "[#{log.total_depth}.#{log.level} #{log.module}] #{JSON.stringify log.message}"
+            msg = if log.message?.toString? then log.message.toString() else log.message
+            msg = "[#{log.total_depth}.#{log.level} #{log.module}] #{JSON.stringify msg}"
             msg = switch log.type
               when 'stdout_stream' then "\x1b[36m#{msg}\x1b[39m"
               when 'stderr_stream' then "\x1b[35m#{msg}\x1b[39m"

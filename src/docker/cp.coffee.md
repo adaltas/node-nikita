@@ -14,6 +14,8 @@ Note, stream are not yet supported.
 
 ## Options
 
+*   `boot2docker` (boolean)   
+    Whether to use boot2docker or not, default to false.   
 *   `machine` (string)
     Name of the docker-machine, MANDATORY if using docker-machine or boot2docker.
 *   `source` (string)

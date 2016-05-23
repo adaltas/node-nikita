@@ -4,6 +4,8 @@ Return true if container is running. This function is not native to docker.
 
 ## Options
 
+*   `boot2docker` (boolean)   
+    Whether to use boot2docker or not, default to false.   
 *   `container` (string|array). MANDATORY   
     Name or Id of the container.   
 *   `machine` (string)   

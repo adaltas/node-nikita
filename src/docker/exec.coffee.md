@@ -5,6 +5,8 @@ Run a command in a running container
 
 ## Options
 
+*   `boot2docker` (boolean)   
+    Whether to use boot2docker or not, default to false.   
 *   `container` (string)
     Name/ID of the container. MANDATORY
 *   `machine` (string)

@@ -6,6 +6,8 @@ specified  is the default.
 
 ## Options
 
+*   `boot2docker` (boolean)   
+    Whether to use boot2docker or not, default to false.   
 *   `registry` (string)   
     Address of the registry server. "https://index.docker.io/v1/" by default   
 *   `machine` (string)   

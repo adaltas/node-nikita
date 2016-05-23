@@ -12,6 +12,8 @@ Status unmodified if the repository is identical to a previous one
 
 ## Options
 
+*   `boot2docker` (boolean)   
+    Whether to use boot2docker or not, default to false.   
 *   `image` (string)   
     Name of the image. MANDATORY   
 *   `tag` (string)   

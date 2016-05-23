@@ -5,6 +5,8 @@ Load Docker images
 
 ## Options
 
+*   `boot2docker` (boolean)   
+    Whether to use boot2docker or not, default to false.   
 *   `machine` (string)   
     Name of the docker-machine. MANDATORY if using docker-machine   
 *   `input` (string)   

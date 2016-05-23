@@ -4,7 +4,9 @@
 Run Docker Containers
 
 ## Options
-  
+
+*   `boot2docker` (boolean)   
+    Whether to use boot2docker or not, default to false.   
 *   `container` (string)   
     Alias of name   
 *   `name` (string)   

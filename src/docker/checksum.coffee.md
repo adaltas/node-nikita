@@ -5,6 +5,8 @@ Return the checksum of repository:tag, if it exists. Function not native to dock
 
 ## Options
 
+*   `boot2docker` (boolean)   
+    Whether to use boot2docker or not, default to false.   
 *   `image` (string)   
     Name of the image. MANDATORY
 *   `repository` (string)   
