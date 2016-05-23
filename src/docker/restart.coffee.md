@@ -54,6 +54,7 @@ mecano.docker_restart({
 ## Source Code
 
     module.exports = (options, callback) ->
+      options.log message: "Entering Docker restart", level: 'DEBUG', module: 'mecano/lib/docker/restart'
       # Validate parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

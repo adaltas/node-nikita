@@ -52,6 +52,7 @@ mecano.docker_pause({
 ## Source Code
 
     module.exports = (options, callback) ->
+      options.log message: "Entering Docker unpause", level: 'DEBUG', module: 'mecano/lib/docker/unpause'
       # Validate parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

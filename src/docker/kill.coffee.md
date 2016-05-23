@@ -58,6 +58,7 @@ mecano.docker_kill({
 ## Source Code
 
     module.exports = (options) ->
+      options.log message: "Entering Docker kill", level: 'DEBUG', module: 'mecano/lib/docker/kill'
       # Validate parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

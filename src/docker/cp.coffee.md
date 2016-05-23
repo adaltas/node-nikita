@@ -42,6 +42,7 @@ mecano.docker({
 ## Source Code
 
     module.exports = (options) ->
+      options.log message: "Entering Docker cp", level: 'DEBUG', module: 'mecano/lib/docker/cp'
       # Validate parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
@@ -53,6 +54,7 @@ mecano.docker({
       throw Error 'Incompatible source and destination options' if not source_container and not destination_container
       source_mkdir = false
       destination_mkdir = false
+      # Source is on the host, normalize path
       @call (_, next) ->
         return next() if source_container
         if /\/$/.test source_path
@@ -60,12 +62,14 @@ mecano.docker({
           return next()
         ssh2fs.stat options.ssh, source_path, (err, stat) ->
           return next err if err and err.code isnt 'ENOENT'
+          # TODO wdavidw: seems like a mistake to me, we shall have source_mkdir instead
           return destination_mkdir = true and next() if err?.code is 'ENOENT'
           source_path = "#{source_path}/#{path.basename destination_path}" if stat.isDirectory()
           next()
       @mkdir
         destination: source_path
         if: -> source_mkdir
+      # Destination is on the host
       @call (_, next)  ->
         return next() if destination_container
         if /\/$/.test destination_path

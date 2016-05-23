@@ -125,6 +125,7 @@ mecano.docker({
 ## Source Code
 
     module.exports = (options, callback) ->
+      options.log message: "Entering Docker run", level: 'DEBUG', module: 'mecano/lib/docker/run'
       # Validate parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

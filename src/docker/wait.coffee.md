@@ -52,6 +52,7 @@ mecano.docker_wait({
 ## Source Code
 
     module.exports = (options, callback) ->
+      options.log message: "Entering Docker wait", level: 'DEBUG', module: 'mecano/lib/docker/wait'
       # Validate parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

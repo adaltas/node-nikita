@@ -61,6 +61,7 @@ mecano.docker_start({
 ## Source Code
 
     module.exports = (options) ->
+      options.log message: "Entering Docker start", level: 'DEBUG', module: 'mecano/lib/docker/start'
       # Validate parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

@@ -63,6 +63,7 @@ mecano.docker_load({
 ## Source Code
 
     module.exports = (options, callback) ->
+      options.log message: "Entering Docker load", level: 'DEBUG', module: 'mecano/lib/docker/load'
       # Validate parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

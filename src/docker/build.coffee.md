@@ -128,6 +128,7 @@ mecano.docker_build({
 ## Source Code
 
     module.exports = (options, callback) ->
+      options.log message: "Entering Docker build", level: 'DEBUG', module: 'mecano/lib/docker/build'
       # Validate parameters and mandatory conditions
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

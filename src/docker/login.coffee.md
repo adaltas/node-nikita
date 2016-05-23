@@ -48,6 +48,7 @@ Register or log in to a Docker registry server.
 ## Source Code
 
     module.exports = (options, callback) ->
+      options.log message: "Entering Docker login", level: 'DEBUG', module: 'mecano/lib/docker/login'
       # Validate parameters and madatory conditions
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

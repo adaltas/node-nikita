@@ -66,6 +66,7 @@ mecano.docker({
 ## Source Code
 
     module.exports = (options) ->
+      options.log message: "Entering Docker save", level: 'DEBUG', module: 'mecano/lib/docker/save'
       # Validate parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

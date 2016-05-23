@@ -29,6 +29,7 @@ force options is set.
 ## Source Code
 
     module.exports = (options, callback) ->
+      options.log message: "Entering Docker rm", level: 'DEBUG', module: 'mecano/lib/docker/rm'
       # Validate parameters and madatory conditions
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

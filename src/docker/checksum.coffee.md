@@ -44,6 +44,7 @@ Return the checksum of repository:tag, if it exists. Function not native to dock
 ## Source Code
 
     module.exports = (options, callback) ->
+      options.log message: "Entering Docker checksum", level: 'DEBUG', module: 'mecano/lib/docker/checksum'
       # Validate parameters and mandatory conditions
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

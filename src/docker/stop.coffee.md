@@ -54,6 +54,7 @@ mecano.docker_stop({
 ## Source Code
 
     module.exports = (options) ->
+      options.log message: "Entering Docker stop", level: 'DEBUG', module: 'mecano/lib/docker/stop'
       # Validate parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
