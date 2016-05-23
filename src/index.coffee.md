@@ -34,6 +34,7 @@ functions share a common API with flexible options.
       befores = []
       afters = []
       depth = 0
+      headers = []
       once = {}
       killed = false
       obj.options.domain =  domain.create() if obj.options.domain is true
@@ -127,6 +128,7 @@ functions share a common API with flexible options.
           log.time ?= Date.now()
           log.module ?= undefined
           log.header_depth ?= depth
+          log.headers ?= header for header in headers
           log.total_depth ?= stack.length
           log.type ?= 'text'
           args = if 1 <= arguments.length then [].slice.call(arguments, 0) else []
@@ -198,7 +200,8 @@ functions share a common API with flexible options.
             callback err if callback
             run()
         depth++ if options.header
-        options.log message: options.header, type: 'header', depth: depth if options.header
+        headers.push options.header if options.header
+        options.log message: options.header, type: 'header', depth: depth, headers: (header for header in headers) if options.header
         todos.status.unshift shy: options.shy, value: undefined
         stack.unshift todos
         todos = todos_create()
@@ -333,6 +336,7 @@ functions share a common API with flexible options.
             call_callback options.callback, args if options.callback
             args[0] = null if options.relax
             depth-- if options.header
+            headers.pop() if options.header
             callback args[0], args[1] if callback
             run()
           do_once()
