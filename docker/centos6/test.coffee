@@ -1,6 +1,7 @@
 
 module.exports =
   disable_docker: false
+  disable_docker_volume: true # centos6 ship docker 1.7 which doesnt support volume
   disable_krb5_addprinc: false # not sure if working
   disable_krb5_delprinc: false # not sure if working
   disable_krb5_ktadd: false # not sure if working

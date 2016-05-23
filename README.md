@@ -50,17 +50,13 @@ of the docker directory and run docker-compose, here's an example to run tests
 on CentOS:
 
 ```
-cd docker/centos
+cd docker/centos6
+# Run all tests
 docker-compose up --abort-on-container-exit
-```
-
-Other useful commands include:
-
-```
 # Enter bash console
-docker-compose run --rm --entrypoint /bin/bash nodejs
-# Run a subset of the tests:
-docker-compose run --rm nodejs test/service
+docker-compose run --rm nodejs
+# Run a subset of the tests
+docker-compose run --rm nodejs test/core
 ```
 
 [mecano]: http://www.adaltas.com/projects/node-mecano/
