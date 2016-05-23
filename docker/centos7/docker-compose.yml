@@ -1,0 +1,31 @@
+
+# Run all tests: `docker-compose up --abort-on-container-exit`
+# Enter console: `docker-compose run --rm --entrypoint /bin/bash nodejs` and `service sshd start`
+# Run a subset of the tests: `docker-compose run --rm nodejs test/service`
+
+# TODO: implement variable substitution once default value is implemented
+# see https://github.com/docker/compose/issues/2441
+
+version: '2'
+services:
+  nodejs:
+    build: .
+    image: mecano_centos_nodejs
+    volumes:
+      - ../..:/mecano
+    depends_on:
+      - krb5
+      - dind
+    environment:
+      MECANO_TEST: /mecano/docker/centos7/test.coffee
+      DOCKER_HOST: 'tcp://dind:2375'
+  dind:
+    image: docker:dind
+    privileged: true
+    # detach: true
+  krb5:
+    image: sequenceiq/kerberos
+    volumes:
+      - /dev/urandom:/dev/random
+    environment:
+      BOOTSTRAP: 1
