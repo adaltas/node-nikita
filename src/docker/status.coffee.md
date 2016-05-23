@@ -1,3 +1,4 @@
+
 # `docker_status(options, callback)`
 
 Return true if container is running. This function is not native to docker. 
@@ -10,29 +11,13 @@ Return true if container is running. This function is not native to docker.
     Name or Id of the container.   
 *   `machine` (string)   
     Name of the docker-machine. MANDATORY if using docker-machine   
-*   `code` (int|array)   
-    Expected code(s) returned by the command, int or array of int, default to 0.   
-*   `code_skipped`   
-    Expected code(s) returned by the command if it has no effect, executed will
-    not be incremented, int or array of int.   
-*   `log`   
-    Function called with a log related messages.   
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-*   `stdout` (stream.Writable)   
-    Writable EventEmitter in which the standard output of executed commands will
-    be piped.   
-*   `stderr` (stream.Writable)   
-    Writable EventEmitter in which the standard error output of executed command
-    will be piped.   
 
 ## Callback parameters
 
 *   `err`   
     Error object if any.   
 *   `executed`   
-    if command was executed   
+    Wether the container is running or not.   
 *   `stdout`   
     Stdout value(s) unless `stdout` option is provided.   
 *   `stderr`   
@@ -75,4 +60,3 @@ mecano.docker({
 ## Modules Dependencies
 
     docker = require '../misc/docker'
-    util = require 'util'

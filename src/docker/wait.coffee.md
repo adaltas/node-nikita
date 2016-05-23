@@ -16,17 +16,6 @@ Block until a container stops
 *   `code_skipped`   
     Expected code(s) returned by the command if it has no effect, executed will
     not be incremented, int or array of int.   
-*   `log`   
-    Function called with a log related messages.   
-*   `ssh` (object|ssh2)
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-*   `stdout` (stream.Writable)   
-    Writable EventEmitter in which the standard output of executed commands will
-    be piped.   
-*   `stderr` (stream.Writable)   
-    Writable EventEmitter in which the standard error output of executed command
-    will be piped.   
 
 ## Callback parameters
 
