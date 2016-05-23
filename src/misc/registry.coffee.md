@@ -45,6 +45,8 @@
       docker_status: require '../docker/status'
       docker_stop: require '../docker/stop'
       docker_unpause: require '../docker/unpause'
+      docker_volume_create: require '../docker/volume_create'
+      docker_volume_rm: require '../docker/volume_rm'
       docker_wait: require '../docker/wait'
       # Java
       java_keystore_add: require '../java/keystore_add'
