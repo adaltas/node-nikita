@@ -43,7 +43,10 @@ require('mecano').service_start([{
 
     module.exports = (options) ->
       options.log message: "Entering service_status", level: 'DEBUG', module: 'mecano/lib/service/status'
-      throw Error "Missing required option 'name'" unless options.name
+      # Options
+      options.name ?= options.argument if typeof options.argument is 'string'
+      # Validation
+      throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       # options.code_started ?= 0
       # options.code_stopped ?= 3
       options.log message: "Get status for #{options.name}", level: 'DEBUG', module: 'mecano/lib/service/status'

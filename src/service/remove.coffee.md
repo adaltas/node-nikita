@@ -33,8 +33,11 @@ require('mecano').service_start([{
 
     module.exports = (options) ->
       options.log message: "Entering service_remove", level: 'DEBUG', module: 'mecano/lib/service/remove'
-      throw Error "Missing required option 'name'" unless options.name
+      # Options
+      options.name ?= options.argument if typeof options.argument is 'string'
       options.manager ?= options.store['mecano:service:manager']
+      # Validation
+      throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       cacheonly = if options.cacheonly then '-C' else ''
       @execute
         cmd: """

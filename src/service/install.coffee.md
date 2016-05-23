@@ -23,12 +23,15 @@ require('mecano').service_install([{
 
     module.exports = (options) ->
       options.log message: "Entering service_install", level: 'DEBUG', module: 'mecano/lib/service/install'
+      # Options
+      options.name ?= options.argument if typeof options.argument is 'string'
       installed = updates = null
-      modified = false
       if options.cache
         installed = options.store['mecano:execute:installed']
         updates = options.store['mecano:execute:updates']
       options.manager ?= options.store['mecano:service:manager']
+      # Validation
+      throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       # Start real work
       # Note for legaciy
       # c = if options.cache then '-C' else ''
@@ -79,7 +82,7 @@ require('mecano').service_install([{
         stdout_log: false
         shy: true
         unless: updates?
-        if: -> installed.indexOf(options.name) is -1 
+        if: -> installed.indexOf(options.name) is -1
       , (err, executed, stdout) ->
         throw err if err
         return updates = [] unless executed

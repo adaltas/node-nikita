@@ -18,10 +18,6 @@ describe 'service install', ->
       name: config.service.name
     , (err, status) ->
       status.should.be.true() unless err
-    # .execute
-    #   cmd: 'yum list installed | grep cronie'
-    # , (err, status) ->
-    #   status.should.be.true() unless err
     .then next
 
   they 'already installed packages', (ssh, next) ->
@@ -35,6 +31,15 @@ describe 'service install', ->
       name: config.service.name
     , (err, status) ->
       status.should.be.false() unless err
+    .then next
+
+  they 'name as default argument', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .service_remove
+      name: config.service.name
+    .service config.service.name, (err, status) ->
+      status.should.be.true() unless err
     .then next
 
   they 'cache', (ssh, next) ->

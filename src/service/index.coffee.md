@@ -74,6 +74,8 @@ require('mecano').service([{
 
     module.exports = (options) ->
       options.log message: "Entering service", level: 'DEBUG', module: 'mecano/lib/service'
+      # Options
+      options.name ?= options.argument if typeof options.argument is 'string'
       pkgname = options.yum_name or options.name
       chkname = options.chk_name or options.srv_name or options.name
       srvname = options.srv_name or options.chk_name or options.name

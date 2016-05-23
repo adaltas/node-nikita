@@ -12,10 +12,8 @@ describe 'service stop', ->
   they 'should stop', (ssh, next) ->
     mecano
       ssh: ssh
-    .service
-      name: config.service.name
-      srv_name: config.service.srv_name
-      action: 'start'
+    .service_install config.service.name
+    .service_start config.service.srv_name
     .service_stop
       name: config.service.srv_name
     , (err, status) ->
@@ -25,12 +23,20 @@ describe 'service stop', ->
     , (err, status) ->
       status.should.be.false() unless err
     .then next
+
+  they 'name as default argument', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .service_install config.service.name
+    .service_start config.service.srv_name
+    .service_stop config.service.srv_name, (err, status) ->
+      status.should.be.true() unless err
+    .then next
   
   they 'store status', (ssh, next) ->
     mecano
       ssh: ssh
-    .service
-      name: config.service.name
+    .service_install config.service.name
     .call (options) ->
       (options.store["mecano.service.crond.status"] is undefined).should.be.true()
     .service_stop # Detect already started
