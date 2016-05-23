@@ -18,7 +18,7 @@ services:
       - dind
     environment:
       MECANO_TEST: /mecano/docker/centos/test.coffee
-      DOCKER_HOST: 'tcp://dind:2375' 
+      DOCKER_HOST: 'tcp://dind:2375'
   dind:
     image: docker:dind
     privileged: true
