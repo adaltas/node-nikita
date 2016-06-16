@@ -16,7 +16,6 @@
       for option in module.exports.propagated_options then obj.propagated_options.push option
       store = {}
       properties = {}
-      # listeners = {}
       stack = []
       todos = todos_create()
       befores = []
@@ -150,8 +149,7 @@
         todos = stack.shift() while stack.length
         jump_to_error err
         run()
-      jump_to_error = (err) ->        
-        # throw err unless todos?
+      jump_to_error = (err) ->
         while todos[0] and todos[0].type isnt 'then' then todos.shift()
         todos.err = err
       _run_ = ->
@@ -350,9 +348,6 @@
             mod = normalize_options [mod], 'call'
             opts.handler = mod.handler
             opts[k] ?= v for k, v of mod[0]
-          # if not opts.handler and typeof opts.argument is 'string'
-          #   opts.handler = require.main.require opts.argument 
-          # opts.handler = normalize_options opts.handler
           throw Error 'Missing handler option' unless opts.handler
           throw Error "Handler not a function, got '#{opts.handler}'" unless typeof opts.handler is 'function'
         todos.push opts for opts in options
@@ -394,11 +389,8 @@
           if is_registered_locally
             delete obj.registry[name]
             delete obj[name] 
-          # else if module.exports.registered name
-          #   throw Error 'Unregister a global function from local context'
           return obj
         # Register
-        # throw Error "Function already defined '#{name}'" if is_registered_locally
         handler = require.main.require handler if typeof handler is 'string'
         obj.registry[name] = handler
         Object.defineProperty obj, name, configurable: true, get: -> ->

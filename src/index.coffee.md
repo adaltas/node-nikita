@@ -31,26 +31,26 @@ the second argument. It will return "true" if the function is un-registered or
 registered.
 
     registry = require './misc/registry'
-    do ->
-      module.exports.register = (name, handler) ->
-        if handler is null or handler is false
-          delete module.exports[name] if module.exports[name]
-          registry.register name, handler
-          return module.exports
+    
+    module.exports.register = (name, handler) ->
+      if handler is null or handler is false
+        delete module.exports[name] if module.exports[name]
         registry.register name, handler
-        Object.defineProperty module.exports, name, 
-          configurable: true
-          get: -> context()[name]
-      
-      module.exports.registered = registry.registered
+        return module.exports
+      registry.register name, handler
+      Object.defineProperty module.exports, name, 
+        configurable: true
+        get: -> context()[name]
+    
+    module.exports.registered = registry.registered
 
-      # Pre-register mecano internal functions
-      for name, _ of registry then do (name) ->
-        Object.defineProperty module.exports, name, 
-          configurable: true
-          get: -> context()[name]
-        
-      for name in ['end', 'call', 'before', 'after', 'then', 'on'] then do (name) ->
-        module.exports[name] = ->
-          obj = context()
-          obj[name].apply obj, arguments
+    # Pre-register mecano internal functions
+    for name, _ of registry then do (name) ->
+      Object.defineProperty module.exports, name, 
+        configurable: true
+        get: -> context()[name]
+      
+    for name in ['end', 'call', 'before', 'after', 'then', 'on'] then do (name) ->
+      module.exports[name] = ->
+        obj = context()
+        obj[name].apply obj, arguments
