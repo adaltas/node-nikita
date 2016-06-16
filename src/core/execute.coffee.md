@@ -111,7 +111,7 @@ mecano.execute({
         options.cmd = "set -e\n#{options.cmd}"
       options.log message: options.cmd, type: 'stdin', module: 'mecano/lib/execute'
       result = stdout: null, stderr: null, code: null
-      # @call 
+      # Guess current username
       current_username = 
         if options.ssh then options.ssh.config.username
         else if /^win/.test(process.platform) then process.env['USERPROFILE'].split(path.sep)[2]
@@ -191,6 +191,7 @@ mecano.execute({
 
 ## Dependencies
 
+    path = require 'path'
     exec = require 'ssh2-exec'
     misc = require '../misc'
     string = require '../misc/string'
