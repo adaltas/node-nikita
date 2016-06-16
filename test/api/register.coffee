@@ -8,18 +8,10 @@ describe 'api register', ->
 
   describe 'global', ->
 
-    it 'and un-register', ->
-      mecano
-      .register 'my_function', -> 'my_function'
-      .registered('my_function').should.be.true()
-      # Unregister
-      mecano
-      .unregister 'my_function'
-      .registered('my_function').should.be.false()
-      # Unregister an unregistered
-      mecano
-      .unregister 'my_function'
-      .registered('my_function').should.be.false()
+    it 'set property', ->
+      mecano.register 'my_function', -> 'my_function'
+      mecano.registered('my_function').should.be.true()
+      mecano.unregister 'my_function'
 
     it 'throw error if registering twice', (next) ->
       mecano.register 'my_function', -> 'my_function'
@@ -28,18 +20,6 @@ describe 'api register', ->
       catch e
         mecano.unregister 'my_function'
         e.message.should.eql 'Function already defined \'my_function\''
-        next()
-
-    it.skip 'throw error if unregistering from local', (next) ->
-      # we need to change the logic, it shall be ok to un-register
-      mecano.register 'my_function', -> 'my_function'
-      m = mecano()
-      m.registered('my_function').should.be.true()
-      try
-        m.unregister 'my_function'
-      catch e
-        e.message.should.eql 'Unregister a global function from local context'
-        mecano.unregister 'my_function'
         next()
 
     it 'is available from mecano instance', (next) ->
@@ -58,21 +38,13 @@ describe 'api register', ->
 
   describe 'local', ->
 
-    it 'and un-register', ->
+    it 'set property', ->
       m = mecano()
       m
       .register 'my_function', -> 'my_function'
       .registered('my_function').should.be.true()
-      # Unregister
-      m
-      .unregister 'my_function'
-      .registered('my_function').should.be.false()
-      # Unregister an unregistered
-      m
-      .unregister 'my_function'
-      .registered('my_function').should.be.false()
 
-    it 'call', (next) ->
+    it 'receive options', (next) ->
       m = mecano()
       .register 'my_function', (options, callback) ->
         options.my_option.should.eql 'my value'

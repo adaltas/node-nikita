@@ -33,6 +33,7 @@ registered.
     registry = require './misc/registry'
     
     module.exports.register = (name, handler) ->
+      return module.exports.unregister name unless handler
       registry.register name, handler
       Object.defineProperty module.exports, name, 
         configurable: true

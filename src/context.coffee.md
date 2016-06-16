@@ -389,7 +389,7 @@
         return obj
       # Register function
       Object.defineProperty obj, 'register', get: -> (name, handler) ->
-        # Register
+        return obj.unregister name unless handler
         handler = require.main.require handler if typeof handler is 'string'
         obj.registry[name] = handler
         Object.defineProperty obj, name, configurable: true, get: -> ->

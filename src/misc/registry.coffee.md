@@ -92,6 +92,7 @@
       configurable: true
       enumerable: false
       get: -> (name, handler) ->
+        return module.exports.unregister name unless handler
         throw Error "Function already defined '#{name}'" if module.exports.registered name
         module.exports[name] = handler
             
