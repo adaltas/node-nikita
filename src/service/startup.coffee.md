@@ -44,10 +44,11 @@ require('mecano').service_startup([{
       options.log message: "Entering service_startup", level: 'DEBUG', module: 'mecano/lib/service/startup'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'
+      options.startup ?= true
       # Validation
       return callback Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
-      # return callback Error "Missing required option 'startup'" unless options.startup?
-      options.startup ?= true
+      # Action
+      options.log message: "Startup service #{options.name}", level: 'INFO', module: 'mecano/lib/service/startup'
       modified = false
       do_startuped = =>
         @execute

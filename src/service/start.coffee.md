@@ -47,6 +47,8 @@ require('mecano').service_start([{
       options.name ?= options.argument if typeof options.argument is 'string'
       # Validation
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
+      # Action
+      options.log message: "Start service #{options.name}", level: 'INFO', module: 'mecano/lib/service/start'
       @service_status
         name: options.name
         code_started: options.code_started

@@ -47,6 +47,8 @@ require('mecano').service_stop([{
       options.name ?= options.argument if typeof options.argument is 'string'
       # Validation
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
+      # Action
+      options.log message: "Stop service #{options.name}", level: 'INFO', module: 'mecano/lib/service/stop'
       @service_status
         name: options.name
         code_started: options.code_started

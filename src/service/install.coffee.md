@@ -25,6 +25,8 @@ require('mecano').service_install([{
       options.log message: "Entering service_install", level: 'DEBUG', module: 'mecano/lib/service/install'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'
+      # Action
+      options.log message: "Install service #{options.name}", level: 'INFO', module: 'mecano/lib/service/install'
       installed = updates = null
       if options.cache
         installed = options.store['mecano:execute:installed']

@@ -38,6 +38,8 @@ require('mecano').service_start([{
       options.manager ?= options.store['mecano:service:manager']
       # Validation
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
+      # Action
+      options.log message: "Remove service #{options.name}", level: 'INFO', module: 'mecano/lib/service/remove'
       cacheonly = if options.cacheonly then '-C' else ''
       @execute
         cmd: """
