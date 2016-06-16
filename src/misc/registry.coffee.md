@@ -92,10 +92,12 @@
       configurable: true
       enumerable: false
       get: -> (name, handler) ->
-        args = [].slice.call(arguments)
-        unless handler
-          delete module.exports[name]
-        else
-          throw Error "Function already defined '#{name}'" if module.exports.registered name
-          module.exports[name] = handler
+        throw Error "Function already defined '#{name}'" if module.exports.registered name
+        module.exports[name] = handler
+            
+    Object.defineProperty module.exports, 'unregister', 
+      configurable: true
+      enumerable: false
+      get: -> (name) ->
+        delete module.exports[name]
         

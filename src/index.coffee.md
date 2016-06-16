@@ -33,14 +33,15 @@ registered.
     registry = require './misc/registry'
     
     module.exports.register = (name, handler) ->
-      if handler is null or handler is false
-        delete module.exports[name] if module.exports[name]
-        registry.register name, handler
-        return module.exports
       registry.register name, handler
       Object.defineProperty module.exports, name, 
         configurable: true
         get: -> context()[name]
+        
+    module.exports.unregister = (name, handler) ->
+      registry.unregister name, handler
+      delete module.exports[name]
+      return module.exports
     
     module.exports.registered = registry.registered
 

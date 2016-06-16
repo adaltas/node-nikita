@@ -14,11 +14,11 @@ describe 'api register', ->
       .registered('my_function').should.be.true()
       # Unregister
       mecano
-      .register 'my_function', null
+      .unregister 'my_function'
       .registered('my_function').should.be.false()
       # Unregister an unregistered
       mecano
-      .register 'my_function', null
+      .unregister 'my_function'
       .registered('my_function').should.be.false()
 
     it 'throw error if registering twice', (next) ->
@@ -26,7 +26,7 @@ describe 'api register', ->
       try
         mecano.register 'my_function', -> 'my_function'
       catch e
-        mecano.register 'my_function', null
+        mecano.unregister 'my_function'
         e.message.should.eql 'Function already defined \'my_function\''
         next()
 
@@ -36,10 +36,10 @@ describe 'api register', ->
       m = mecano()
       m.registered('my_function').should.be.true()
       try
-        m.register 'my_function', null
+        m.unregister 'my_function'
       catch e
         e.message.should.eql 'Unregister a global function from local context'
-        mecano.register 'my_function', null
+        mecano.unregister 'my_function'
         next()
 
     it 'is available from mecano instance', (next) ->
@@ -53,7 +53,7 @@ describe 'api register', ->
         my_option: 'my value'
       .then (err, modified) ->
         modified.should.be.true()
-        mecano.register 'my_function', null
+        mecano.unregister 'my_function'
         next err
 
   describe 'local', ->
@@ -65,11 +65,11 @@ describe 'api register', ->
       .registered('my_function').should.be.true()
       # Unregister
       m
-      .register 'my_function', null
+      .unregister 'my_function'
       .registered('my_function').should.be.false()
       # Unregister an unregistered
       m
-      .register 'my_function', null
+      .unregister 'my_function'
       .registered('my_function').should.be.false()
 
     it 'call', (next) ->

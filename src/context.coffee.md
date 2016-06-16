@@ -381,15 +381,14 @@
         else
           stack[0].status[Math.abs index]?.value
       proto = Object.defineProperties obj, properties
+      # Unregister function
+      Object.defineProperty obj, 'unregister', get: -> (name, handler) ->
+        if obj.registered name, true
+          delete obj.registry[name]
+          delete obj[name] 
+        return obj
       # Register function
       Object.defineProperty obj, 'register', get: -> (name, handler) ->
-        is_registered_locally = obj.registered name, true
-        # Unregister
-        if handler is null or handler is false
-          if is_registered_locally
-            delete obj.registry[name]
-            delete obj[name] 
-          return obj
         # Register
         handler = require.main.require handler if typeof handler is 'string'
         obj.registry[name] = handler
