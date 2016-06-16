@@ -81,3 +81,21 @@
       write_ini: require '../write/ini'
       write_properties: require '../write/properties'
       write_yaml: require '../write/yaml'
+
+    Object.defineProperty module.exports, 'registered', 
+      configurable: true
+      enumerable: false
+      get: -> (name) ->
+        !!module.exports[name]
+          
+    Object.defineProperty module.exports, 'register', 
+      configurable: true
+      enumerable: false
+      get: -> (name, handler) ->
+        args = [].slice.call(arguments)
+        unless handler
+          delete module.exports[name]
+        else
+          throw Error "Function already defined '#{name}'" if module.exports.registered name
+          module.exports[name] = handler
+        
