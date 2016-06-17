@@ -12,7 +12,7 @@
     "task",
     "cli"
   ],
-  "version": "0.5.4",
+  "version": "0.5.5",
   "homepage": "http://www.adaltas.com/projects/node-mecano/",
   "author": "David Worms <david@adaltas.com>",
   "license": "BSD-3-Clause",
