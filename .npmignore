@@ -1,4 +1,5 @@
 /docker
+/samples
 /src
 /test
 /test.coffee
