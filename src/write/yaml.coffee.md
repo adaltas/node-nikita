@@ -106,7 +106,7 @@ require('mecano').write_yaml({
           misc.ini.clean content
         options.log message: "Serialize content", level: 'DEBUG', module: 'mecano/lib/write_yaml'
         try
-          options.content = yaml.safeDump options.content
+          options.content = yaml.safeDump options.content, noRefs:true
           @write options, (err, written) ->
             callback err, written
       do_get()
