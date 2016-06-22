@@ -70,8 +70,8 @@ describe 'api register', ->
         m.registered('module_async').should.be.true() unless err
         logs.should.eql ['Hello sync', 'Hello async'] unless err
         next err
-    
-    it.skip 'support lazy validation for late registration', (next) ->
+          
+    it 'support lazy validation for late registration', (next) ->
       # This test could only be supported with dynamic method call, probably
       # once we introduce a proxy implementation. At the moment, the call
       # to "my_function" throw a TypeError complaining that the function does
@@ -83,4 +83,21 @@ describe 'api register', ->
       .my_function name: 'callme'
       .then (err) ->
         name.should.eql 'callme' unless err
+        next err
+
+  describe 'mixed', ->
+    
+    it 'support lazy validation for late registration', (next) ->
+      # This test could only be supported with dynamic method call, probably
+      # once we introduce a proxy implementation. At the moment, the call
+      # to "my_function" throw a TypeError complaining that the function does
+      # not exists.
+      name = null
+      mecano
+      .call ->
+        mecano.register 'my_function', (options) -> name = options.name
+      .my_function name: 'callme'
+      .then (err) ->
+        name.should.eql 'callme' unless err
+        mecano.unregister 'my_function'
         next err

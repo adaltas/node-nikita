@@ -147,7 +147,7 @@ describe 'api stack', ->
         content: 'hello'
         destination: "#{scratch}/a_file"
       , (err, written) ->
-        return next err if err
+        throw err if err
         throw Error 'Catchme'
       .then (err, changed) ->
         err.message.should.eql 'Catchme'

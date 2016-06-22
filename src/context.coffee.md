@@ -29,6 +29,20 @@
         err.message = "Invalid State Error [#{err.message}]"
         handle_multiple_call err
       obj.options.domain?.on 'error', domain_on_error
+      proxy = new Proxy obj,
+        has: (target, name) ->
+          target[name] or registry[name]
+        get: (target, name) ->
+          # console.log 'proxy', name
+          return target[name] if target[name]
+          ->
+            # Insert handler before callback or at the end of arguments
+            args = [].slice.call(arguments)
+            args.unshift target.registry[name] or registry[name]
+            options = normalize_options args, name
+            todos.push opts for opts in options
+            setImmediate _run_ if todos.length is options.length # Activate the pump
+            proxy
       normalize_options = (_arguments, type, enrich=true) ->
         empty = false
         handler = null
@@ -135,7 +149,7 @@
         stack.unshift todos
         todos = todos_create()
         try
-          fn.apply obj, args
+          fn.apply proxy, args
         catch err
           todos = stack.shift()
           jump_to_error err
@@ -172,12 +186,12 @@
           {err, status} = todos
           status = status.some (status) -> not status.shy and !!status.value
           todos_reset todos
-          options.handler?.call obj, err, status
+          options.handler?.call proxy, err, status
           run()
           return
         return if killed
         if options.type is 'end'
-          return conditions.all obj, options
+          return conditions.all proxy, options
           , (err) ->
             callback err if callback
             run()
@@ -260,6 +274,7 @@
                 options.log message: "Retry on error, attempt #{options.attempt+1}", level: 'WARN', module: 'mecano'
                 return setTimeout do_handler, options.wait
               do_intercept_after arguments...
+            options.handler ?= obj.registry[options.type] or registry[options.type]
             options_handler = options.handler
             options.handler = undefined
             options_callback = options.callback
@@ -267,7 +282,7 @@
             called = false
             try
               if options_handler.length is 2 # Async style
-                options_handler.call obj, options, ->
+                options_handler.call proxy, options, ->
                   return if killed
                   return handle_multiple_call Error 'Multiple call detected' if called
                   called = true
@@ -275,7 +290,7 @@
                   setImmediate -> 
                     do_next args
               else # Sync style
-                options_handler.call obj, options
+                options_handler.call proxy, options
                 return if killed
                 return handle_multiple_call Error 'Multiple call detected' if called
                 called = true
@@ -331,13 +346,13 @@
       properties.then = get: -> ->
         todos.push type: 'then', handler: arguments[0]
         setImmediate _run_ if todos.length is 1 # Activate the pump
-        obj
+        proxy
       properties.end = get: -> ->
         args = [].slice.call(arguments)
         options = normalize_options args, 'end'
         todos.push opts for opts in options
         setImmediate _run_ if todos.length is options.length # Activate the pump
-        obj
+        proxy
       properties.call = get: -> ->
         args = [].slice.call(arguments)
         options = normalize_options args, 'call'
@@ -352,21 +367,21 @@
           throw Error "Handler not a function, got '#{opts.handler}'" unless typeof opts.handler is 'function'
         todos.push opts for opts in options
         setImmediate _run_ if todos.length is options.length # Activate the pump
-        obj
+        proxy
       properties.before = get: -> ->
         arguments[0] = type: arguments[0] if typeof arguments[0] is 'string'
         options = normalize_options arguments, null, false
         for opts in options
           throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
           befores.push opts
-        obj
+        proxy
       properties.after = get: -> ->
         arguments[0] = type: arguments[0] if typeof arguments[0] is 'string'
         options = normalize_options arguments, null, false
         for opts in options
           throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
           afters.push opts
-        obj
+        proxy
       properties.status = get: -> (index) ->
         if arguments.length is 0
           return stack[0].status.some (status) -> not status.shy and !!status.value
@@ -383,29 +398,19 @@
       proto = Object.defineProperties obj, properties
       # Unregister function
       Object.defineProperty obj, 'unregister', get: -> (name, handler) ->
-        if obj.registered name, true
-          delete obj.registry[name]
-          delete obj[name] 
-        return obj
+        delete obj.registry[name] if obj.registry[name]
+        return proxy
       # Register function
       Object.defineProperty obj, 'register', get: -> (name, handler) ->
         return obj.unregister name unless handler
         handler = require.main.require handler if typeof handler is 'string'
         obj.registry[name] = handler
-        Object.defineProperty obj, name, configurable: true, get: -> ->
-          # Insert handler before callback or at the end of arguments
-          args = [].slice.call(arguments)
-          args.unshift obj.registry[name]
-          options = normalize_options args, name
-          todos.push opts for opts in options
-          setImmediate _run_ if todos.length is options.length # Activate the pump
-          obj
+        proxy
       Object.defineProperty obj, 'registered', get: -> (name, local_only=false) ->
-        global = Object.prototype.hasOwnProperty.call module.exports, name
-        local = Object.prototype.hasOwnProperty.call obj, name
+        global = Object.prototype.hasOwnProperty.call registry, name
+        local = Object.prototype.hasOwnProperty.call obj.registry, name
         if local_only then local else global or local
-      obj.register name, handler for name, handler of registry
-      obj
+      proxy
 
     module.exports.propagated_options = ['ssh', 'log', 'stdout', 'stderr', 'debug']
 
