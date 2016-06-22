@@ -30,7 +30,7 @@ the second argument. It will return "true" if the function is un-registered or
 "false" if there was nothing to do because the function wasn't already
 registered.
 
-    registry = require './misc/registry'
+    registry = require './registry'
     
     module.exports.register = (name, handler) ->
       return module.exports.unregister name unless handler

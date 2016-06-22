@@ -422,7 +422,7 @@
 
 ## Dependencies
 
-    registry = require './misc/registry'
+    registry = require './registry'
     domain = require 'domain'
     each = require 'each'
     conditions = require './misc/conditions'
