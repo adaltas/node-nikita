@@ -13,46 +13,15 @@ functions share a common API with flexible options.
 
 ## Source Code
     
-    module.exports = ->
-      context arguments...
-  
+    module.exports = new Proxy (-> context arguments...),
+      get: (target, name) ->
+        ctx = context()
+        ->
+          return registry[name].apply registry, arguments if name in ['register', 'registered', 'unregister']
+          ctx[name].apply ctx, arguments
+      
 ## Dependencies
   
     context = require './context'
-
-## Register functions
-
-Register a new function available when requiring mecano and inside any mecano
-instance. 
-
-You can also un-register a existing function by passing "null" or "false" as
-the second argument. It will return "true" if the function is un-registered or
-"false" if there was nothing to do because the function wasn't already
-registered.
-
     registry = require './registry'
     
-    module.exports.register = (name, handler) ->
-      return module.exports.unregister name unless handler
-      registry.register name, handler
-      Object.defineProperty module.exports, name, 
-        configurable: true
-        get: -> context()[name]
-        
-    module.exports.unregister = (name, handler) ->
-      registry.unregister name, handler
-      delete module.exports[name]
-      return module.exports
-    
-    module.exports.registered = registry.registered
-
-    # Pre-register mecano internal functions
-    for name, _ of registry then do (name) ->
-      Object.defineProperty module.exports, name, 
-        configurable: true
-        get: -> context()[name]
-      
-    for name in ['end', 'call', 'before', 'after', 'then', 'on'] then do (name) ->
-      module.exports[name] = ->
-        obj = context()
-        obj[name].apply obj, arguments
