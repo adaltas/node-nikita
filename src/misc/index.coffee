@@ -5,7 +5,6 @@ each = require 'each'
 util = require 'util'
 Stream = require 'stream'
 exec = require 'ssh2-exec'
-rimraf = require 'rimraf'
 ini = require 'ini'
 tilde = require 'tilde-expansion'
 file = require './file'
@@ -102,71 +101,7 @@ misc = module.exports =
         l = Math.min ref.length, mode.length
         return false if mode.substr(-l) isnt ref.substr(-l)
       true
-  file:
-    copyFile: (ssh, source, destination, callback) ->
-      s = (ssh, callback) ->
-        unless ssh
-        then callback null, fs
-        else ssh.sftp callback
-      s ssh, (err, fs) ->
-        return callback err if err
-        rs = fs.createReadStream source
-        ws = rs.pipe fs.createWriteStream destination
-        ws.on 'close', ->
-          fs.end() if fs.end
-          modified = true
-          callback()
-        ws.on 'error', callback
-    ###
-    Compare modes
-    -------------
-    ###
-    cmpmod: (modes...) ->
-      console.log 'Deprecated, use `misc.mode.compare`'
-      misc.mode.compare.call @, modes...
-    copy: (ssh, source, destination, callback) ->
-      unless ssh
-        source = fs.createReadStream(u.pathname)
-        source.pipe destination
-        destination.on 'close', callback
-        destination.on 'error', callback
-      else
-        # todo: use cp to copy over ssh
-        callback new Error 'Copy over SSH not yet implemented'
-    ###
-    `files.compare(files, callback)`
-    --------------------------------
-    Compare the hash of multiple file. Return the file md5 
-    if the file are the same or false otherwise.
-    ###
-    compare: (ssh, files, callback) ->
-      return callback new Error 'Minimum of 2 files' if files.length < 2
-      result = null
-      each files
-      .call (f, next) ->
-        file.hash ssh, f, (err, md5) ->
-          return next err if err
-          if result is null
-            result = md5 
-          else if result isnt md5
-            result = false 
-          next()
-      .then (err) ->
-        return callback err if err
-        callback null, result
-    ###
-    remove(ssh, path, callback)
-    ---------------------------
-    Remove a file or directory
-    ###
-    remove: (ssh, path, callback) ->
-      unless ssh
-        rimraf path, callback
-      else
-        # Not very pretty but fast and no time to try make a version of rimraf over ssh
-        child = exec ssh, "rm -rf #{path}"
-        child.on 'exit', (code) ->
-          callback null, code
+  file: require './file'
   ###
   `isPortOpen(port, host, callback)`: Check if a port is already open
 

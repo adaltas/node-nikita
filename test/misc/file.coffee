@@ -7,7 +7,7 @@ test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
 
-describe 'misc.file', ->
+describe 'file', ->
 
   scratch = test.scratch @
 
@@ -28,7 +28,7 @@ describe 'misc.file', ->
     they 'returns the directory md5', (ssh, next) ->
       misc.file.hash ssh, "#{__dirname}/../resources", (err, md5) ->
         return next err if err
-        md5.should.eql '2d8f95f7e759a5f99ab4f37ff0a891e8'
+        md5.should.eql '97e14a5b2eb1a66263e4c3830628c89f'
         next()
 
     they 'returns the directory md5 when empty', (ssh, next) ->

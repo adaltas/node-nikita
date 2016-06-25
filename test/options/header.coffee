@@ -7,7 +7,7 @@ describe 'options header', ->
 
   scratch = test.scratch @
   
-  it.only 'print value', (next) ->
+  it 'print value', (next) ->
     headers = []
     mecano
     .on 'header', (log) ->

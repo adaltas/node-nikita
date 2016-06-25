@@ -69,8 +69,8 @@ require('mecano')
       options.destination ?= options.source
       return callback Error "Missing option: \"destination\"" unless options.destination?
       # Start real work
-      modified = false
       glob options.ssh, options.destination, (err, files) ->
+        modified = false
         return callback err if err
         each files
         .call (file, callback) ->
