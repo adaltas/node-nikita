@@ -12,7 +12,7 @@ Write a file in the Java properties format.
     List of properties to write.
 *   `target`
     File path where to write content to.
-*   `local_source`
+*   `local`
     Treat the source as local instead of remote, only apply with "ssh"
     option.
 *   `merge`

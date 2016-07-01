@@ -21,7 +21,7 @@ integrated. More are added on demand.
     Map of key values to inject into the template.   
 *   `filters` (function)   
     Filter function to extend the nunjucks engine.   
-*   `local_source`   
+*   `local`   
     Treat the source as local instead of remote, only apply with "ssh"
     option.   
 *   `skip_empty_lines`   
@@ -92,7 +92,7 @@ require('mecano').render({
       # Start real work
       do_read_source = ->
         return do_write() unless options.source
-        ssh = if options.local_source then null else options.ssh
+        ssh = if options.local then null else options.ssh
         fs.exists ssh, options.source, (err, exists) ->
           return callback new Error "Invalid source, got #{JSON.stringify(options.source)}" unless exists
           fs.readFile ssh, options.source, 'utf8', (err, content) ->

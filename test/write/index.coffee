@@ -1093,7 +1093,7 @@ describe 'write', ->
         ssh: ssh
         target: "#{scratch}/file"
         source: "#{scratch}/does/not/exists"
-        local_source: true
+        local: true
       , (err, written) ->
         err.message.should.eql "Source does not exist: \"#{scratch}/does/not/exists\""
         next()

@@ -27,7 +27,7 @@ provided in the `content` option.
     File path where to write content to or a callback.
 *   `from`
     Replace from after this marker, a string or a regular expression.
-*   `local_source`
+*   `local`
     Treat the source as local instead of remote, only apply with "ssh"
     option.
 *   `indent`

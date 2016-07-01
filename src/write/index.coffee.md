@@ -27,7 +27,7 @@ Write a file or a portion of an existing file.
     Replace from after this marker, a string or a regular expression.   
 *   `gid`   
     File group name or group id.   
-*   `local_source`   
+*   `local`   
     Treat the source as local instead of remote, only apply with "ssh"
     option.   
 *   `match`   
@@ -215,11 +215,11 @@ require('mecano').write({
         if options.content?
           options.content = "#{options.content}" if typeof options.content is 'number'
           return callback()
-        # Option "local_source" force to bypass the ssh
+        # Option "local" force to bypass the ssh
         # connection, use by the upload function
         source = options.source or options.target
-        options.log message: "Force local source is \"#{if options.local_source then 'true' else 'false'}\"", level: 'DEBUG', module: 'mecano/lib/write'
-        ssh = if options.local_source then null else options.ssh
+        options.log message: "Force local source is \"#{if options.local then 'true' else 'false'}\"", level: 'DEBUG', module: 'mecano/lib/write'
+        ssh = if options.local then null else options.ssh
         fs.exists ssh, source, (err, exists) ->
           return callback err if err
           unless exists
