@@ -49,7 +49,7 @@ describe 'mkdir', ->
   they 'should create multiple directories', (ssh, next) ->
     mecano.mkdir
       ssh: ssh
-      destination: [
+      target: [
         "#{scratch}/a_parent_dir/a_dir_1"
         "#{scratch}/a_parent_dir/a_dir_2"
       ]
@@ -63,7 +63,7 @@ describe 'mkdir', ->
     they 'true set default permissions', (ssh, next) ->
       mecano.mkdir
         ssh: ssh
-        destination: [
+        target: [
           "#{scratch}/a_parent_dir/a_dir_1"
           "#{scratch}/a_parent_dir/a_dir_2"
         ]
@@ -79,7 +79,7 @@ describe 'mkdir', ->
     they 'object set custom permissions', (ssh, next) ->
       mecano.mkdir
         ssh: ssh
-        destination: [
+        target: [
           "#{scratch}/a_parent_dir/a_dir_1"
           "#{scratch}/a_parent_dir/a_dir_2"
         ]

@@ -1,6 +1,7 @@
 
 # Mecano Context
 
+    called_deprecate_destination = false
     module.exports = ->
       if arguments.length is 2
         obj = arguments[0]
@@ -83,6 +84,10 @@
           options[i][k] = v for k, v of opts
           opts = options[i]
           # Enrich
+          if opts.destination
+            console.log 'Use options target instead of destination' unless called_deprecate_destination
+            called_deprecate_destination = true
+            opts.target ?= opts.destination
           opts.type = type if type
           opts.handler ?= handler if handler
           opts.callback ?= callback if callback

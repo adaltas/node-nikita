@@ -4,12 +4,12 @@ string = require './string'
 jsesc = require 'jsesc'
 
 module.exports = iptables = 
-  # add_properties: ['target', 'protocol', 'dport', 'in-interface', 'out-interface', 'source', 'destination']
+  # add_properties: ['target', 'protocol', 'dport', 'in-interface', 'out-interface', 'source', 'target']
   add_properties: [
-    '--protocol', '--source', '---destination', '--jump', '--goto'
+    '--protocol', '--source', '---target', '--jump', '--goto'
     '--in-interface', '--out-interface', '--fragment'
-    'tcp|--source-port', 'tcp|--sport', 'tcp|--destination-port', 'tcp|--dport', 'tcp|--tcp-flags', 'tcp|--syn', 'tcp|--tcp-option'
-    'udp|--source-port', 'udp|--sport', 'udp|--destination-port', 'udp|--dport'
+    'tcp|--source-port', 'tcp|--sport', 'tcp|--target-port', 'tcp|--dport', 'tcp|--tcp-flags', 'tcp|--syn', 'tcp|--tcp-option'
+    'udp|--source-port', 'udp|--sport', 'udp|--target-port', 'udp|--dport'
   ] # 
   # modify_properties: ['state', 'comment']
   modify_properties: [
@@ -42,21 +42,21 @@ module.exports = iptables =
     '--rename-chain': '-E'
   # parameters: ['-p', '-s', '-d', '-j', '-g', '-i', '-o', '-f', '-c'] # , '--log-prefix'
   # parameters_inverted:
-  #   '--protocol': '-p', '--source': '-s', '--destination': '-d', '--jump': '-j'
+  #   '--protocol': '-p', '--source': '-s', '--target': '-d', '--jump': '-j'
   #   '--goto': '-g', '--in-interface': '-i', '--out-interface': '-o', 
   #   '--fragment': '-f', '--set-counters': '-c'
-  parameters: ['--protocol', '--source', '--destination', '--jump', '--goto', 
+  parameters: ['--protocol', '--source', '--target', '--jump', '--goto', 
     '--in-interface', '--out-interface', '--fragment', '--set-counters', 
     '--log-level', '--log-prefix', '--log-tcp-sequence', '--log-tcp-options', # LOG
     '--log-ip-options', '--log-uid' # LOG
   ]
   parameters_inverted:
-    '-p': '--protocol', '-s': '--source', '-d': '--destination', '-j': '--jump'
+    '-p': '--protocol', '-s': '--source', '-d': '--target', '-j': '--jump'
     '-g': '--goto', '-i': '--in-interface', '-o': '--out-interface', 
     '-f': '--fragment', '-c': '--set-counters'
   protocols:
-    tcp: ['--source-port', '--sport', '--destination-port', '--dport', '--tcp-flags', '--syn', '--tcp-option']
-    udp: ['--source-port', '--sport', '--destination-port', '--dport']
+    tcp: ['--source-port', '--sport', '--target-port', '--dport', '--tcp-flags', '--syn', '--tcp-option']
+    udp: ['--source-port', '--sport', '--target-port', '--dport']
     udplite: []
     icmp: []
     esp: []

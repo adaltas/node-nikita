@@ -5,7 +5,7 @@ Change the permissions of a file or directory.
 
 ## Options
 
-*   `destination`   
+*   `target`   
     Where the file or directory is copied.   
 *   `mode`   
     Permissions of the file or the parent directory.   
@@ -15,7 +15,7 @@ Change the permissions of a file or directory.
     Run the action on a remote server using SSH, an ssh2 instance or an
     configuration object used to initialize the SSH connection.   
 *   `stat` (Stat instance, optional)   
-    Pass the Stat object relative to the destination file or directory, to be
+    Pass the Stat object relative to the target file or directory, to be
     used as an optimization.   
 
 ## Callback parameters
@@ -29,7 +29,7 @@ Change the permissions of a file or directory.
 
 ```js
 require('mecano').chmod({
-  destination: '~/my/project',
+  target: '~/my/project',
   mode: 0o755
 }, function(err, modified){
   console.log(err ? err.message : 'File was modified: ' + modified);
@@ -41,23 +41,23 @@ require('mecano').chmod({
     module.exports = (options, callback) ->
       options.log message: "Entering chmod", level: 'DEBUG', module: 'mecano/lib/chmod'
       # Validate parameters
-      return callback Error "Missing destination: #{JSON.stringify options.destination}" unless options.destination
+      return callback Error "Missing target: #{JSON.stringify options.target}" unless options.target
       return callback Error "Missing option 'mode'" unless options.mode
       do_stat = ->
         # Option 'stat' short-circuit
         return do_chmod options.stat if options.stat
-        options.log message: "Stat \"#{options.destination}\"", level: 'DEBUG', module: 'mecano/lib/chmod'
-        fs.stat options.ssh, options.destination, (err, stat) ->
+        options.log message: "Stat \"#{options.target}\"", level: 'DEBUG', module: 'mecano/lib/chmod'
+        fs.stat options.ssh, options.target, (err, stat) ->
           return callback err if err
           do_chmod stat
       do_chmod = (stat) ->
         # Detect changes
         if misc.mode.compare stat.mode, options.mode
-          options.log message: "Identical permissions on \"#{options.destination}\"", level: 'INFO', module: 'mecano/lib/chmod'
+          options.log message: "Identical permissions on \"#{options.target}\"", level: 'INFO', module: 'mecano/lib/chmod'
           return callback()
         # Apply changes
-        fs.chmod options.ssh, options.destination, options.mode, (err) ->
-          options.log message: "Change permissions from \"#{stat.mode}\" to \"#{options.mode}\" on \"#{options.destination}\"", level: 'WARN', module: 'mecano/lib/chmod'
+        fs.chmod options.ssh, options.target, options.mode, (err) ->
+          options.log message: "Change permissions from \"#{stat.mode}\" to \"#{options.mode}\" on \"#{options.target}\"", level: 'WARN', module: 'mecano/lib/chmod'
           callback err, true
       do_stat()
 

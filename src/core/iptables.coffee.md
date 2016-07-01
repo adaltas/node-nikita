@@ -40,7 +40,7 @@ Rule objects may contains the following keys:
 *   `source`   
     Source specification. Address can be either a network name, a hostname, a
     network IP address (with /mask), or a plain IP address.   
-*   `destination`   
+*   `target`   
     Destination specification. See the description of the -s (source) flag for
     a detailed description of the syntax.   
 *   `comment`   

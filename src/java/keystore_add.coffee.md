@@ -93,25 +93,25 @@ require('mecano').java_keystore_add([{
         cacert: if options.local_source then  "#{tmp_location}/#{path.basename options.cacert}" else options.cacert
         key: if options.key? and options.local_source then  "#{tmp_location}/#{path.basename options.key}" else options.key
       @mkdir
-        destination: "#{tmp_location}"
+        target: "#{tmp_location}"
         mode: 0o0600
         shy: true
       @download
         if: options.local_source and options.cacert
         source: options.cacert
-        destination: files.cacert
+        target: files.cacert
         mode: 0o0600
         shy: true
       @download
         if: options.local_source and options.cert
         source: options.cert
-        destination: files.cert
+        target: files.cert
         mode: 0o0600
         shy: true
       @download
         if: options.local_source and options.key
         source: options.key
-        destination: files.key
+        target: files.key
         mode: 0o0600
         shy: true
       @execute # Deal with key and certificate
@@ -172,7 +172,7 @@ require('mecano').java_keystore_add([{
         # trap: true
         code_skipped: 3
       .remove
-        destination: "#{tmp_location}"
+        target: "#{tmp_location}"
         shy: true
 
 ## Dependencies

@@ -11,7 +11,7 @@ describe 'git', ->
   beforeEach (next) ->
     mecano.extract
       source: "#{__dirname}/../resources/repo.git.zip"
-      destination: "#{scratch}"
+      target: "#{scratch}"
     , next
 
   they 'clones repo into new dir', (ssh, next) ->
@@ -19,12 +19,12 @@ describe 'git', ->
       ssh: ssh
     .git
       source: "#{scratch}/repo.git"
-      destination: "#{scratch}/my_repo"
+      target: "#{scratch}/my_repo"
     , (err, updated) ->
       updated.should.be.true()
     .git
       source: "#{scratch}/repo.git"
-      destination: "#{scratch}/my_repo"
+      target: "#{scratch}/my_repo"
     , (err, updated) ->
       updated.should.be.false()
     .then next
@@ -34,16 +34,16 @@ describe 'git', ->
       ssh: ssh
     .git
       source: "#{scratch}/repo.git"
-      destination: "#{scratch}/my_repo"
+      target: "#{scratch}/my_repo"
     .git
       source: "#{scratch}/repo.git"
-      destination: "#{scratch}/my_repo"
+      target: "#{scratch}/my_repo"
       revision: 'v0.0.1'
     , (err, updated) ->
       updated.should.be.true()
     .git
       source: "#{scratch}/repo.git"
-      destination: "#{scratch}/my_repo"
+      target: "#{scratch}/my_repo"
       revision: 'v0.0.1'
     , (err, updated) ->
       updated.should.be.false()
@@ -55,7 +55,7 @@ describe 'git', ->
       mecano.git
         ssh: ssh
         source: "#{scratch}/repo.git"
-        destination: "#{scratch}/my_repo"
+        target: "#{scratch}/my_repo"
       , (err, updated) ->
         err.message.should.eql 'Not a git repository'
         next()

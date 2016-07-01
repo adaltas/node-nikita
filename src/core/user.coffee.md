@@ -134,7 +134,7 @@ you are a member of the "wheel" group (gid of "10") with the command
           cmd: cmd
           code_skipped: 9
         .chown
-          destination: options.home
+          target: options.home
           uid: options.uid
           gid: options.gid
           if_exists: options.home
@@ -168,7 +168,7 @@ you are a member of the "wheel" group (gid of "10") with the command
           cmd: cmd
           if: changed
         @chown
-          destination: options.home
+          target: options.home
           uid: options.uid
           gid: options.gid
           if: options.home and (options.uid or options.gid)

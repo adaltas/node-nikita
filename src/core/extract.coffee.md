@@ -9,7 +9,7 @@ moment, supported extensions are '.tgz', '.tar.gz', tar.bz2, 'tar.xz' and '.zip'
 
 *   `source`   
     Archive to decompress.   
-*   `destination`   
+*   `target`   
     Default to the source parent directory.   
 *   `format`   
     One of 'tgz', 'tar', 'xz', 'bz2' or 'zip'.   
@@ -57,7 +57,7 @@ require('mecano').extract({
       options.log message: "Entering extract", level: 'DEBUG', module: 'mecano/lib/extract'
       # Validate parameters
       return callback new Error "Missing source: #{options.source}" unless options.source
-      destination = options.destination ? path.dirname options.source
+      target = options.target ? path.dirname options.source
       tar_opts = []
       # If undefined, we do not apply flag. Default behaviour depends on the user
       if options.preserve_owner is true
@@ -97,11 +97,11 @@ require('mecano').extract({
         cmd = null
         options.log message: "Format is #{format}", level: 'DEBUG', module: 'mecano/lib/extract'
         switch format
-          when 'tgz' then cmd = "tar xzf #{options.source} -C #{destination} #{tar_opts.join ' '}"
-          when 'tar' then cmd = "tar xf #{options.source} -C #{destination} #{tar_opts.join ' '}"
-          when 'bz2' then cmd = "tar xjf #{options.source} -C #{destination} #{tar_opts.join ' '}"
-          when 'xz'  then cmd = "tar xJf #{options.source} -C #{destination} #{tar_opts.join ' '}"
-          when 'zip' then cmd = "unzip -u #{options.source} -d #{destination}"
+          when 'tgz' then cmd = "tar xzf #{options.source} -C #{target} #{tar_opts.join ' '}"
+          when 'tar' then cmd = "tar xf #{options.source} -C #{target} #{tar_opts.join ' '}"
+          when 'bz2' then cmd = "tar xjf #{options.source} -C #{target} #{tar_opts.join ' '}"
+          when 'xz'  then cmd = "tar xJf #{options.source} -C #{target} #{tar_opts.join ' '}"
+          when 'zip' then cmd = "unzip -u #{options.source} -d #{target}"
         @execute
           cmd: cmd
         , (err, created) ->

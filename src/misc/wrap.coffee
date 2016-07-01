@@ -27,9 +27,9 @@ module.exports.options = (options, callback) ->
     options.if_exists = [options.if_exists] if typeof options.if_exists is 'string'
     options.unless_exists = [options.unless_exists] if typeof options.unless_exists is 'string'
     if options.if_exists then for el, i in options.if_exists
-      options.if_exists[i] = options.destination if el is true and options.destination
+      options.if_exists[i] = options.target if el is true and options.target
     if options.unless_exists then for v, i in options.unless_exists
-      options.unless_exists[i] = options.destination if v is true and options.destination
+      options.unless_exists[i] = options.target if v is true and options.target
     options.mode ?= options.chmod if options.chmod
     connection = ->
       return source() unless options.ssh
@@ -39,17 +39,17 @@ module.exports.options = (options, callback) ->
         options.ssh = ssh
         source()
     source = ->
-      return destination() unless options.source?
-      return destination() if /^\w+:/.test options.source # skip url
+      return target() unless options.source?
+      return target() if /^\w+:/.test options.source # skip url
       tilde options.source, (source) ->
         options.source = source
-        destination()
-    destination = ->
-      return mode() unless options.destination?
-      return mode() unless typeof options.destination is 'string' # destination is a function
+        target()
+    target = ->
+      return mode() unless options.target?
+      return mode() unless typeof options.target is 'string' # target is a function
       return mode() if /^\w+:/.test options.source # skip url
-      tilde options.destination, (destination) ->
-        options.destination = destination
+      tilde options.target, (target) ->
+        options.target = target
         mode()
     mode = ->
       options.mode = parseInt(options.mode, 8) if typeof options.mode is 'string'

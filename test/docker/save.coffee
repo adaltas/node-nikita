@@ -16,7 +16,7 @@ describe 'docker save', ->
       ssh: ssh
       docker: config.docker
     .remove
-      destination:"#{scratch}/mecano_saved.tar"
+      target:"#{scratch}/mecano_saved.tar"
     .docker_build
       image: 'mecano/load_test'
       content: "FROM alpine\nCMD ['echo \"hello build from text\"']"
@@ -26,14 +26,14 @@ describe 'docker save', ->
     , (err, saved) ->
       saved.should.be.true() unless err
     .remove
-      destination:"#{scratch}/mecano_saved.tar"
+      target:"#{scratch}/mecano_saved.tar"
     .then next
 
   # they 'status not modified', (ssh, next) ->
   #   mecano
   #     ssh: ssh
   #   .remove
-  #     destination:"#{scratch}/mecano_saved.tar"
+  #     target:"#{scratch}/mecano_saved.tar"
   #   .docker_build
   #     image: 'mecano/load_test'
   #     content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
@@ -51,5 +51,5 @@ describe 'docker save', ->
   #     mecano
   #       ssh: ssh
   #     .remove
-  #       destination:"#{scratch}/mecano_saved.tar"
+  #       target:"#{scratch}/mecano_saved.tar"
   #     .then next

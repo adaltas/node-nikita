@@ -28,7 +28,7 @@ Return true if container is running. This function is not native to docker.
 ```javascript
 mecano.docker({
   ssh: ssh
-  destination: 'test-image.tar'
+  target: 'test-image.tar'
   image: 'test-image'
   compression: 'gzip'
   entrypoint: '/bin/true'

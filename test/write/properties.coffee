@@ -14,17 +14,17 @@ describe 'write_properties', ->
     mecano
       ssh: ssh
     .write_properties
-      destination: "#{scratch}/file.properties"
+      target: "#{scratch}/file.properties"
       content: a_key: 'a value'
     , (err, status) ->
       status.should.be.true() unless err
     .write_properties
-      destination: "#{scratch}/file.properties"
+      target: "#{scratch}/file.properties"
       content: another_key: 'another value'
     , (err, status) ->
       status.should.be.true() unless err
     .write_properties
-      destination: "#{scratch}/file.properties"
+      target: "#{scratch}/file.properties"
       content: another_key: 'another value'
     , (err, status) ->
       status.should.be.false() unless err
@@ -40,18 +40,18 @@ describe 'write_properties', ->
     mecano
       ssh: ssh
     .write_properties
-      destination: "#{scratch}/file.properties"
+      target: "#{scratch}/file.properties"
       content: a_key: 'a value'
     , (err, status) ->
       status.should.be.true() unless err
     .write_properties
-      destination: "#{scratch}/file.properties"
+      target: "#{scratch}/file.properties"
       content: another_key: 'another value'
       merge: true
     , (err, status) ->
       status.should.be.true() unless err
     .write_properties
-      destination: "#{scratch}/file.properties"
+      target: "#{scratch}/file.properties"
       content: another_key: 'another value'
       merge: true
     , (err, status) ->
@@ -68,11 +68,11 @@ describe 'write_properties', ->
     mecano
       ssh: ssh
     .write_properties
-      destination: "#{scratch}/file.properties"
+      target: "#{scratch}/file.properties"
       content: a_key: 'a value'
       separator: ' '
     .write_properties
-      destination: "#{scratch}/file.properties"
+      target: "#{scratch}/file.properties"
       content: another_key: 'another value'
       separator: ' '
       merge: true

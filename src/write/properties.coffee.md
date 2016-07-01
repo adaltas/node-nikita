@@ -10,13 +10,13 @@ Write a file in the Java properties format.
     timestamp if value is not a string.
 *   `content`
     List of properties to write.
-*   `destination`
+*   `target`
     File path where to write content to.
 *   `local_source`
     Treat the source as local instead of remote, only apply with "ssh"
     option.
 *   `merge`
-    Merges content properties with destination file. False by default
+    Merges content properties with target file. False by default
 #   `separator`
     The caracter to use for separating property and value. '=' by default.
 *   `ssh` (object|ssh2)
@@ -31,7 +31,7 @@ Write a file in the Java properties format.
 
     module.exports = (options) ->
       options.log message: "Entering write_properties", level: 'DEBUG', module: 'mecano/lib/write_properties'
-      throw Error "Missing argument options.destination" unless options.destination
+      throw Error "Missing argument options.target" unless options.target
       options.separator ?= '='
       options.content ?= {}
       properties = if options.merge then {} else options.content
@@ -39,8 +39,8 @@ Write a file in the Java properties format.
       @call
         if: options.merge
         handler: (_, callback) ->
-          options.log message: "Reading destination \"#{options.destination}\"", level: 'DEBUG', module: 'mecano/lib/write_properties'
-          fs.readFile options.ssh, options.destination, 'utf8', (err, data) ->
+          options.log message: "Reading target \"#{options.target}\"", level: 'DEBUG', module: 'mecano/lib/write_properties'
+          fs.readFile options.ssh, options.target, 'utf8', (err, data) ->
             return callback err if err
             # Extract properties
             lines = string.lines data
@@ -62,7 +62,7 @@ Write a file in the Java properties format.
           "#{k}#{options.separator}#{v}"
         data = data.join '\n'
         @write
-          destination: "#{options.destination}"
+          target: "#{options.target}"
           content: data
           backup: options.backup
           eof: true

@@ -8,8 +8,8 @@ module.exports =
   scratch: (context) ->
     context.beforeEach (next) ->
       mecano.remove
-        destination: scratch
-      .mkdir destination: scratch
+        target: scratch
+      .mkdir target: scratch
       .then next
     scratch
   config: ->

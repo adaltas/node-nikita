@@ -52,7 +52,7 @@ describe 'remove', ->
       ssh: ssh
     .copy
       source: "#{__dirname}/../resources/a_dir/a_file"
-      destination: "#{scratch}/a_file"
+      target: "#{scratch}/a_file"
     .remove
       source: "#{scratch}/a_file"
     , (err, removed) ->
@@ -78,7 +78,7 @@ describe 'remove', ->
       ssh: ssh
     .copy
       source: "#{__dirname}/../resources/"
-      destination: "#{scratch}/"
+      target: "#{scratch}/"
     .remove
       source: "#{scratch}/*gz"
     , (err, removed) ->
@@ -95,13 +95,13 @@ describe 'remove', ->
     mecano
       ssh: ssh
     .mkdir
-      destination: "#{scratch}/remove_dir"
+      target: "#{scratch}/remove_dir"
     .remove
-      destination: "#{scratch}/remove_dir"
+      target: "#{scratch}/remove_dir"
     , (err, removed) ->
       removed.should.be.true()
     .remove
-      destination: "#{scratch}/remove_dir"
+      target: "#{scratch}/remove_dir"
     , (err, removed) ->
       removed.should.be.false()
     .then next

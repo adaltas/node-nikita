@@ -29,7 +29,7 @@ describe 'download url', ->
       ssh: ssh
     .download
       source: 'http://localhost:12345'
-      destination: "#{scratch}/download"
+      target: "#{scratch}/download"
     , (err, status) ->
       status.should.be.true() unless err
     .call (_, callback) ->
@@ -38,7 +38,7 @@ describe 'download url', ->
         callback()
     .download # Download on an existing file
       source: 'http://localhost:12345'
-      destination: "#{scratch}/download"
+      target: "#{scratch}/download"
     , (err, status) ->
       status.should.be.false() unless err
     .then next
@@ -49,7 +49,7 @@ describe 'download url', ->
       ssh: ssh
     .download
       source: 'http://localhost:12345'
-      destination: "#{scratch}/download_test"
+      target: "#{scratch}/download_test"
       mode: 0o0770
     , (err, status) ->
       status.should.be.true() unless err
@@ -68,7 +68,7 @@ describe 'download url', ->
         ssh: ssh
       .download
         source: 'http://localhost:12345'
-        destination: "#{scratch}/destination"
+        target: "#{scratch}/target"
         cache_file: "#{scratch}/cache_file"
       , (err, status) ->
         status.should.be.true() unless err
@@ -77,7 +77,7 @@ describe 'download url', ->
           content.should.equal 'okay' unless err
           callback()
       .call (_, callback) ->
-        fs.readFile @options.ssh, "#{scratch}/destination", 'ascii', (err, content) ->
+        fs.readFile @options.ssh, "#{scratch}/target", 'ascii', (err, content) ->
           content.should.equal 'okay' unless err
           callback()
       .then next
@@ -86,12 +86,12 @@ describe 'download url', ->
       @timeout 100000
       # Download a non existing file
       source = 'http://localhost:12345'
-      destination = "#{scratch}/download"
+      target = "#{scratch}/download"
       cache = "#{scratch}/cache_file"
       mecano(cache_file: cache).download
         ssh: ssh
         source: source
-        destination: destination
+        target: target
       , (err, status) ->
         return next err if err
         status.should.be.true()
@@ -104,11 +104,11 @@ describe 'download url', ->
       @timeout 100000
       # Download a non existing file
       source = 'http://localhost:12345'
-      destination = "#{scratch}/download"
+      target = "#{scratch}/download"
       mecano.download
         ssh: ssh
         source: source
-        destination: destination
+        target: target
         cache_dir: "#{scratch}/cache_dir"
       , (err, status) ->
         return next err if err
@@ -120,17 +120,17 @@ describe 'download url', ->
 
   describe 'md5', ->
 
-    they 'use shortcircuit if destination match md5', (ssh, next) ->
+    they 'use shortcircuit if target match md5', (ssh, next) ->
       logs = []
       mecano
         ssh: ssh
       .on 'text', (log) -> logs.push "[#{log.level}] #{log.message}"
       .write
         content: "okay"
-        destination: "#{scratch}/destination"
+        target: "#{scratch}/target"
       .download
         source: 'http://localhost:12345'
-        destination: "#{scratch}/destination"
+        target: "#{scratch}/target"
         md5: 'df8fede7ff71608e24a5576326e41c75'
       , (err, status) ->
         status.should.be.false() unless err
@@ -138,22 +138,22 @@ describe 'download url', ->
         ("[INFO] Destination with valid signature, download aborted" in logs).should.be.true()
       .then next
 
-    they 'bypass shortcircuit if destination dont match md5', (ssh, next) ->
+    they 'bypass shortcircuit if target dont match md5', (ssh, next) ->
       logs = []
       mecano
         ssh: ssh
       .on 'text', (log) -> logs.push "[#{log.level}] #{log.message}"
       .write
         content: "not okay"
-        destination: "#{scratch}/destination"
+        target: "#{scratch}/target"
       .download
         source: 'http://localhost:12345'
-        destination: "#{scratch}/destination"
+        target: "#{scratch}/target"
         md5: 'df8fede7ff71608e24a5576326e41c75'
       , (err, status) ->
         status.should.be.true() unless err
       .call (_, callback) ->
-        fs.readFile ssh, "#{scratch}/destination", 'ascii', (err, content) ->
+        fs.readFile ssh, "#{scratch}/target", 'ascii', (err, content) ->
           content.should.equal 'okay' unless err
           callback err
       .then next
@@ -164,7 +164,7 @@ describe 'download url', ->
         ssh: ssh
       .download
         source: 'http://localhost:12345'
-        destination: "#{scratch}/destination"
+        target: "#{scratch}/target"
         md5: '2f74dbbee4142b7366c93b115f914fff'
         # relax: true
       , (err, status) ->
@@ -175,11 +175,11 @@ describe 'download url', ->
     they 'count 1 if new file has correct checksum', (ssh, next) ->
       # Download with invalid checksum
       source = 'http://localhost:12345'
-      destination = "#{scratch}/check_md5"
+      target = "#{scratch}/check_md5"
       mecano.download
         ssh: ssh
         source: source
-        destination: destination
+        target: target
         md5: 'df8fede7ff71608e24a5576326e41c75'
       , (err, status) ->
         return next err if err
@@ -189,18 +189,18 @@ describe 'download url', ->
     they 'count 0 if a file exist with same checksum', (ssh, next) ->
       # Download with invalid checksum
       source = 'http://localhost:12345'
-      destination = "#{scratch}/check_md5"
+      target = "#{scratch}/check_md5"
       mecano
         ssh: ssh
       .download
         source: source
-        destination: destination
+        target: target
       , (err, status) ->
         return next err if err
         status.should.be.true()
       .download
         source: source
-        destination: destination
+        target: target
         md5: 'df8fede7ff71608e24a5576326e41c75'
       , (err, status) ->
         return next err if err

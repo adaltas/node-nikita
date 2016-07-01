@@ -5,7 +5,7 @@ Change the ownership of a file or a directory.
 
 ## Options
 
-*   `destination`   
+*   `target`   
     Where the file or directory is copied.   
 *   `gid`   
     Group name or id who owns the file.   
@@ -15,7 +15,7 @@ Change the ownership of a file or a directory.
     Run the action on a remote server using SSH, an ssh2 instance or an
     configuration object used to initialize the SSH connection.   
 *   `stat` (Stat instance, optional)   
-    Pass the Stat object relative to the destination file or directory, to be
+    Pass the Stat object relative to the target file or directory, to be
     used as an optimization.   
 *   `uid`   
     User name or id who owns the file.   
@@ -31,7 +31,7 @@ Change the ownership of a file or a directory.
 
 ```js
 require('mecano').chown({
-  destination: '~/my/project',
+  target: '~/my/project',
   uid: 'my_user'
   gid: 'my_group'
 }, function(err, modified){
@@ -54,7 +54,7 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
     module.exports = (options, callback) ->
       options.log message: "Entering chown", level: 'DEBUG', module: 'mecano/lib/chown'
       # Validate parameters
-      return callback Error "Missing destination option" unless options.destination?
+      return callback Error "Missing target option" unless options.target?
       return callback Error "Missing one of uid or gid option" unless options.uid? or options.gid?
       do_uid_gid = ->
         uid_gid options, (err) ->
@@ -63,17 +63,17 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
       do_stat = ->
         # Option 'stat' short-circuit
         return do_chown options.stat if options.stat
-        options.log message: "Stat #{options.destination}", level: 'DEBUG', module: 'mecano/lib/chown'
-        fs.stat options.ssh, options.destination, (err, stat) ->
+        options.log message: "Stat #{options.target}", level: 'DEBUG', module: 'mecano/lib/chown'
+        fs.stat options.ssh, options.target, (err, stat) ->
           return callback err if err
           do_chown stat
       do_chown = (stat) ->
         # Detect changes
         if stat.uid is options.uid and stat.gid is options.gid
-          options.log message: "Matching ownerships on '#{options.destination}'", level: 'INFO', module: 'mecano/lib/chown'
+          options.log message: "Matching ownerships on '#{options.target}'", level: 'INFO', module: 'mecano/lib/chown'
           return callback()
         # Apply changes
-        fs.chown options.ssh, options.destination, options.uid, options.gid, (err) ->
+        fs.chown options.ssh, options.target, options.uid, options.gid, (err) ->
           options.log message: "change uid from #{stat.uid} to #{options.uid}", level: 'WARN', module: 'mecano/lib/chown'
           options.log message: "change gid from #{stat.gid} to #{options.gid}", level: 'WARN', module: 'mecano/lib/chown'
           callback err, true

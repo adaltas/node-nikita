@@ -10,7 +10,7 @@ fs = require 'ssh2-fs'
 describe 'docker kill', ->
 
   scratch = test.scratch @
-  destination = "#{scratch}/default.script"
+  target = "#{scratch}/default.script"
   source = '/usr/share/udhcpc/default.script'
   config = test.config()
   return if config.disable_docker

@@ -8,10 +8,10 @@ describe 'touch', ->
 
   scratch = test.scratch @
   
-  they 'as a destination option', (ssh, next) ->
+  they 'as a target option', (ssh, next) ->
     mecano.touch
       ssh: ssh
-      destination: "#{scratch}/a_file"
+      target: "#{scratch}/a_file"
     , (err) ->
       return next err if err
       fs.readFile ssh, "#{scratch}/a_file", 'ascii', (err, content) ->
@@ -20,7 +20,7 @@ describe 'touch', ->
         next()
       
   they 'as a string', (ssh, next) ->
-    mecano.touch destination: "#{scratch}/a_file" , (err) ->
+    mecano.touch target: "#{scratch}/a_file" , (err) ->
       return next err if err
       fs.readFile ssh, "#{scratch}/a_file", 'ascii', (err, content) ->
         return next err if err
@@ -31,11 +31,11 @@ describe 'touch', ->
     mecano
       ssh: ssh
     .touch
-      destination: "#{scratch}/a_file"
+      target: "#{scratch}/a_file"
     , (err, touched) ->
       touched.should.be.true()
     .touch
-      destination: "#{scratch}/a_file"
+      target: "#{scratch}/a_file"
     , (err, touched) ->
       touched.should.be.false()
     .then next

@@ -20,10 +20,10 @@ describe 'options header', ->
           handler: (_, callback) -> callback()
         @touch 
           header: 'h2 touch'
-          destination: "#{scratch}/file_h2"
+          target: "#{scratch}/file_h2"
     .touch
       header: 'h1 touch'
-      destination: "#{scratch}/file_h1"
+      target: "#{scratch}/file_h1"
     .then (err) ->
       return next err if err
       headers.should.eql [

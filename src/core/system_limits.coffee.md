@@ -115,7 +115,7 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
 
 ## Options
 
-*   `destination` (string)   
+*   `target` (string)   
     Where to write the file, default to "/etc/security/limits.d/#{options.user}.conf".   
 *   `ssh` (object|ssh2)   
     Run the action on a remote server using SSH, an ssh2 instance or an
@@ -179,7 +179,7 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
       'maxsyslogins', 'memlock', 'msgqueue', 'nice', 'priority', 'rss',
       'sigpending', 'stack', 'rtprio']
         return callback Error "Invalid option '#{opt}'" if options[opt]? and typeof options[opt] isnt 'number'
-      options.destination ?= "/etc/security/limits.d/#{options.user}.conf"
+      options.target ?= "/etc/security/limits.d/#{options.user}.conf"
       write = []
       @
       # Calculate nofile from kernel limit
@@ -216,7 +216,7 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
               append: true
         return false
       .write
-        destination: options.destination
+        target: options.target
         write: write
         eof: true
         uid: options.uid

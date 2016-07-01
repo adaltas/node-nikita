@@ -11,44 +11,44 @@ describe 'link', ->
 
   they 'should link file', (ssh, next) ->
     # Create a non existing link
-    destination = "#{scratch}/link_test"
+    target = "#{scratch}/link_test"
     mecano
       ssh: ssh
     .link # Link does not exist
       source: __filename
-      destination: destination
+      target: target
     , (err, linked) ->
       linked.should.be.true()
     .link # Link already exists
       source: __filename
-      destination: destination
+      target: target
     , (err, linked) ->
       linked.should.be.false()
     .then (err) ->
       return next err if err
-      fs.lstat ssh, destination, (err, stat) ->
+      fs.lstat ssh, target, (err, stat) ->
         stat.isSymbolicLink().should.be.true()
         next()
   
   they 'should link dir', (ssh, next) ->
     # Create a non existing link
-    destination = "#{scratch}/link_test"
+    target = "#{scratch}/link_test"
     mecano
       ssh: ssh
     .link # Link does not exist
       source: __dirname
-      destination: destination
+      target: target
     , (err, linked) ->
       linked.should.be.true()
     .link # Link already exists
       ssh: ssh
       source: __dirname
-      destination: destination
+      target: target
     , (err, linked) ->
       linked.should.be.false()
     .then (err) ->
       return next err if err
-      fs.lstat ssh, destination, (err, stat) ->
+      fs.lstat ssh, target, (err, stat) ->
         stat.isSymbolicLink().should.be.true()
         next()
   
@@ -57,22 +57,22 @@ describe 'link', ->
     mecano.link
       ssh: ssh
       source: __dirname
-      destination: "#{scratch}/test/dir/link_test"
+      target: "#{scratch}/test/dir/link_test"
     , (err, linked) ->
       return next err if err
       linked.should.be.true()
       fs.lstat ssh, "#{scratch}/test/dir/link_test", (err, stat) ->
         stat.isSymbolicLink().should.be.true()
         # Test creating two identical parent dirs
-        destination = "#{scratch}/test/dir2"
+        target = "#{scratch}/test/dir2"
         mecano.link [
           ssh: ssh
           source: "#{__dirname}/merge.coffee"
-          destination: "#{destination}/merge.coffee"
+          target: "#{target}/merge.coffee"
         ,
           ssh: ssh
           source: "#{__dirname}/mkdir.coffee"
-          destination: "#{destination}/mkdir.coffee"
+          target: "#{target}/mkdir.coffee"
         ], (err, linked) ->
           return next err if err
           linked.should.be.true()
@@ -82,21 +82,21 @@ describe 'link', ->
     mecano
       ssh: ssh
     .write
-      destination: "#{scratch}/test/invalid_file"
+      target: "#{scratch}/test/invalid_file"
       content: 'error'
     .write
-      destination: "#{scratch}/test/valid_file"
+      target: "#{scratch}/test/valid_file"
       content: 'ok'
     .link
       source: "#{scratch}/test/invalid_file"
-      destination: "#{scratch}/test/file_link"
+      target: "#{scratch}/test/file_link"
     , (err, linked) ->
       linked.should.be.true() unless err
     .remove
-      destination: "#{scratch}/test/invalid_file"
+      target: "#{scratch}/test/invalid_file"
     .link
       source: "#{scratch}/test/valid_file"
-      destination: "#{scratch}/test/file_link"
+      target: "#{scratch}/test/file_link"
     , (err, linked) ->
       linked.should.be.true() unless err
     .then next
@@ -108,11 +108,11 @@ describe 'link', ->
       mecano
         ssh: ssh
       .link
-        destination: __filename
+        target: __filename
       .then (err, changed) ->
         err.message.should.eql "Missing source, got undefined"
-      .link # Test missing destination
+      .link # Test missing target
         source: __filename
       .then (err, linked) ->
-        err.message.should.eql "Missing destination, got undefined"
+        err.message.should.eql "Missing target, got undefined"
       .then next

@@ -13,56 +13,56 @@ describe 'download file', ->
 
     they 'with file protocol', (ssh, next) ->
       source = "file://#{__filename}"
-      destination = "#{scratch}/download_test"
+      target = "#{scratch}/download_test"
       mecano
         ssh: ssh
       .download
         source: source
-        destination: destination # Download a non existing file
+        target: target # Download a non existing file
       , (err, status) ->
         return next err if err
         status.should.be.true()
       .call ({}, callback) ->
-        fs.readFile @options.ssh, destination, 'ascii', (err, content) ->
+        fs.readFile @options.ssh, target, 'ascii', (err, content) ->
           content.should.containEql 'yeah' unless err
           callback err
       .download
         source: source
-        destination: destination # Download on an existing file
+        target: target # Download on an existing file
       , (err, status) ->
         status.should.be.false() unless err
         next err
 
     they 'without protocol', (ssh, next) ->
       source = "#{__filename}"
-      destination = "#{scratch}/download_test"
+      target = "#{scratch}/download_test"
       # Download a non existing file
       mecano
         ssh: ssh
       .download
         source: source
-        destination: destination
+        target: target
       , (err, status) ->
         status.should.be.true() unless err
       .call ({}, callback) ->
-        fs.readFile @options.ssh, destination, 'ascii', (err, content) ->
+        fs.readFile @options.ssh, target, 'ascii', (err, content) ->
           content.should.containEql 'yeah' unless err
           callback err
       .download # Download on an existing file
         source: source
-        destination: destination
+        target: target
       , (err, status) ->
         status.should.be.false() unless err
       .then next
 
     they 'doesnt exists', (ssh, next) ->
       source = "#{__dirname}/doesnotexists"
-      destination = "#{scratch}/download_test"
+      target = "#{scratch}/download_test"
       mecano
         ssh: ssh
       .download
         source: source
-        destination: destination
+        target: target
         # shy: true
       , (err, status) ->
         err.message.should.eql 'No such source file'
@@ -72,16 +72,16 @@ describe 'download file', ->
 
     they 'into an existing directory', (ssh, next) ->
       source = "#{__filename}"
-      destination = "#{scratch}/download_test"
+      target = "#{scratch}/download_test"
       mecano
         ssh: ssh
       .mkdir
-        destination: destination
+        target: target
       .download
         source: source
-        destination: destination
+        target: target
       .call (_, callback) ->
-        fs.stat ssh, "#{destination}/#{path.basename source}", (err, stat) ->
+        fs.stat ssh, "#{target}/#{path.basename source}", (err, stat) ->
           stat.isFile().should.be.true() unless err
           callback err
       .then next
@@ -90,11 +90,11 @@ describe 'download file', ->
 
     they 'validate md5', (ssh, next) ->
       source = "#{__dirname}/download.zip"
-      destination = "#{scratch}/download"
+      target = "#{scratch}/download"
       mecano.download
         ssh: ssh
         source: source
-        destination: "#{scratch}/download_test"
+        target: "#{scratch}/download_test"
         cache: true
         cache_dir: "#{scratch}/cache_dir"
         md5: '3f104676a5f72de08b811dbb725244ff'
@@ -107,11 +107,11 @@ describe 'download file', ->
 
     they 'cache dir', (ssh, next) ->
       # Download a non existing file
-      destination = "#{scratch}/download"
+      target = "#{scratch}/download"
       mecano.download
         ssh: ssh
         source: "#{__filename}"
-        destination: "#{scratch}/download_test"
+        target: "#{scratch}/download_test"
         cache: true
         cache_dir: "#{scratch}/cache_dir"
       , (err, status) ->
@@ -127,22 +127,22 @@ describe 'download file', ->
         ssh: ssh
       .download
         source: "#{__filename}"
-        destination: "#{scratch}/download_test"
+        target: "#{scratch}/download_test"
         cache: true
         cache_dir: "#{scratch}/cache_dir"
       .download
         source: "#{__filename}"
-        destination: "#{scratch}/download_test"
+        target: "#{scratch}/download_test"
         cache: true
         cache_dir: "#{scratch}/cache_dir"
       , (err, status) ->
         status.should.be.false() unless err
       .write
         content: 'abc'
-        destination: "#{scratch}/download_test"
+        target: "#{scratch}/download_test"
       .download
         source: "#{__filename}"
-        destination: "#{scratch}/download_test"
+        target: "#{scratch}/download_test"
         cache: true
         cache_dir: "#{scratch}/cache_dir"
       , (err, status) ->
@@ -153,15 +153,15 @@ describe 'download file', ->
 
     they 'cache dir with md5 string', (ssh, next) ->
       # Download a non existing file
-      destination = "#{scratch}/download"
+      target = "#{scratch}/download"
       mecano
         ssh: ssh
       .write
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
         content: 'okay'
       .download
         source: "#{scratch}/a_file"
-        destination: "#{scratch}/download_test"
+        target: "#{scratch}/download_test"
         cache: true
         cache_dir: "#{scratch}/cache_dir"
         md5: 'df8fede7ff71608e24a5576326e41c75'
@@ -180,26 +180,26 @@ describe 'download file', ->
       return next() unless ssh
       logs = []
       # Download with invalid checksum
-      destination = "#{scratch}/check_md5"
+      target = "#{scratch}/check_md5"
       mecano
         ssh: ssh
       .on 'text', (log) -> logs.push "[#{log.level}] #{log.message}"
       .write
-        destination: "#{scratch}/source"
+        target: "#{scratch}/source"
         content: "okay"
       .download
         source: "#{scratch}/source"
-        destination: destination
+        target: target
         md5: true
       , (err, status) ->
         status.should.be.true() unless err
       .download
         source: "#{scratch}/source"
-        destination: destination
+        target: target
         md5: true
       , (err, status) ->
         status.should.be.false() unless err
       .call ->
-        ("[WARN] Hash dont match, source is 'df8fede7ff71608e24a5576326e41c75' and destination is 'undefined'" in logs).should.be.true()
+        ("[WARN] Hash dont match, source is 'df8fede7ff71608e24a5576326e41c75' and target is 'undefined'" in logs).should.be.true()
         ("[INFO] Hash matches as 'df8fede7ff71608e24a5576326e41c75'" in logs).should.be.true()
       .then next

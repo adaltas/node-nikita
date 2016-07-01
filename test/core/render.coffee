@@ -13,7 +13,7 @@ describe 'render', ->
     it 'when source doesnt exist', (next) ->
       mecano.render
         source: "oups"
-        destination: "#{scratch}/output"
+        target: "#{scratch}/output"
       , (err, rendered) ->
         err.message.should.eql 'Invalid source, got "oups"'
         next()
@@ -21,38 +21,38 @@ describe 'render', ->
   describe 'nunjunks', ->
 
     it 'should use `content`', (next) ->
-      destination = "#{scratch}/render.txt"
+      target = "#{scratch}/render.txt"
       mecano.render
         engine: 'nunjunks'
         content: 'Hello {{ who }}'
-        destination: destination
+        target: target
         context: who: 'you'
       , (err, rendered) ->
         return next err if err
         rendered.should.be.true()
-        fs.readFile destination, 'ascii', (err, content) ->
+        fs.readFile target, 'ascii', (err, content) ->
           content.should.eql 'Hello you'
           next()
 
     it 'should use `content`', (next) ->
       source = "#{scratch}/render.j2"
-      destination = "#{scratch}/render.txt"
+      target = "#{scratch}/render.txt"
       fs.writeFile source, 'Hello {{ who }}', (err, content) ->
         return next err if err
         mecano.render
           source: source
-          destination: destination
+          target: target
           context: who: 'you'
         , (err, rendered) ->
           return next err if err
           rendered.should.be.true()
-          fs.readFile destination, 'ascii', (err, content) ->
+          fs.readFile target, 'ascii', (err, content) ->
             content.should.eql 'Hello you'
             next()
 
     it 'test mecano type filters', (next) ->
       source = "#{scratch}/render.j2"
-      destination = "#{scratch}/render.txt"
+      target = "#{scratch}/render.txt"
       fs.writeFile source,"""
       {% if randArray | isArray and randObject | isObject and not randArray | isObject %}
       Hello{% endif %}
@@ -62,7 +62,7 @@ describe 'render', ->
         return next err if err
         mecano.render
           source: source
-          destination: destination
+          target: target
           context:
             randArray: [1, 2]
             randObject: toto: 0 
@@ -71,13 +71,13 @@ describe 'render', ->
         , (err, rendered) ->
           return next err if err
           rendered.should.be.true()
-          fs.readFile destination, 'ascii', (err, content) ->
+          fs.readFile target, 'ascii', (err, content) ->
             content.trim().should.eql 'Hello\nworld'
             next()
 
     it 'test mecano isEmpty filter', (next) ->
       source = "#{scratch}/render.j2"
-      destination = "#{scratch}/render.txt"
+      target = "#{scratch}/render.txt"
       fs.writeFile source,"""
       {% if fake | isEmpty and emptyArray | isEmpty and not fullArray | isEmpty
       and emptyObject | isEmpty and not fullObject | isEmpty and emptyString | isEmpty and not fullString | isEmpty %}
@@ -87,7 +87,7 @@ describe 'render', ->
         return next err if err
         mecano.render
           source: source
-          destination: destination
+          target: target
           context:
             emptyArray: []
             fullArray: [0]
@@ -98,18 +98,18 @@ describe 'render', ->
         , (err, rendered) ->
           return next err if err
           rendered.should.be.true()
-          fs.readFile destination, 'ascii', (err, content) ->
+          fs.readFile target, 'ascii', (err, content) ->
             content.trim().should.eql 'succeed'
             next()
 
     it 'test personal filter', (next) ->
       source = "#{scratch}/render.j2"
-      destination = "#{scratch}/render.txt"
+      target = "#{scratch}/render.txt"
       fs.writeFile source, 'Hello {% if who | isString %}{{ who }} {% endif %}{% if anInt | isNum %}{{ anInt }} {% endif %}{% if arr | contains("toto") %}ok{% endif %}', (err, content) ->
         return next err if err
         mecano.render
           source: source
-          destination: destination
+          target: target
           context:
             who: 'you'
             anInt: 42
@@ -118,18 +118,18 @@ describe 'render', ->
         , (err, rendered) ->
           return next err if err
           rendered.should.be.true()
-          fs.readFile destination, 'ascii', (err, content) ->
+          fs.readFile target, 'ascii', (err, content) ->
             content.should.eql 'Hello you 42 ok'
             next()
 
     it 'check autoescaping (disabled)', (next) ->
       source = "#{scratch}/render.j2"
-      destination = "#{scratch}/render.txt"
+      target = "#{scratch}/render.txt"
       fs.writeFile source, 'Hello "{{ who }}" \'{{ anInt }}\'', (err, content) ->
         return next err if err
         mecano.render
           source: source
-          destination: destination
+          target: target
           context:
             who: 'you'
             anInt: 42
@@ -137,36 +137,36 @@ describe 'render', ->
         , (err, rendered) ->
           return next err if err
           rendered.should.be.true()
-          fs.readFile destination, 'ascii', (err, content) ->
+          fs.readFile target, 'ascii', (err, content) ->
             content.should.eql 'Hello "you" \'42\''
             next()
 
   describe 'eco', ->
 
     it 'should use `content`', (next) ->
-      destination = "#{scratch}/render.eco"
+      target = "#{scratch}/render.eco"
       mecano.render
         engine: 'eco'
         content: 'Hello <%- @who %>'
-        destination: destination
+        target: target
         context: who: 'you'
       , (err, rendered) ->
         return next err if err
         rendered.should.be.true()
-        fs.readFile destination, 'ascii', (err, content) ->
+        fs.readFile target, 'ascii', (err, content) ->
           content.should.eql 'Hello you'
           next()
 
     it 'detect `source`', (next) ->
-      destination = "#{scratch}/render.eco"
+      target = "#{scratch}/render.eco"
       mecano.render
         source: "#{__dirname}/../resources/render.eco"
-        destination: destination
+        target: target
         context: who: 'you'
       , (err, rendered) ->
         return next err if err
         rendered.should.be.true()
-        fs.readFile destination, 'ascii', (err, content) ->
+        fs.readFile target, 'ascii', (err, content) ->
           content.should.eql 'Hello you'
           next()
 
@@ -174,7 +174,7 @@ describe 'render', ->
       mecano.render
         engine: 'eco'
         content: "Hello\n\n\n<%- @who %>"
-        destination: "#{scratch}/render.eco"
+        target: "#{scratch}/render.eco"
         context: who: 'you'
         skip_empty_lines: true
       , (err, rendered) ->
@@ -184,28 +184,28 @@ describe 'render', ->
           content.should.eql 'Hello\nyou'
           next()
 
-    they 'doesnt increment if destination is same than generated content', (ssh, next) ->
+    they 'doesnt increment if target is same than generated content', (ssh, next) ->
       mecano
         ssh: ssh
       .render
         source: "#{__dirname}/../resources/render.eco"
-        destination: "#{scratch}/render.eco"
+        target: "#{scratch}/render.eco"
         context: who: 'you'
       , (err, rendered) ->
         rendered.should.be.true()
       .render
         source: "#{__dirname}/../resources/render.eco"
-        destination: "#{scratch}/render.eco"
+        target: "#{scratch}/render.eco"
         context: who: 'you'
       , (err, rendered) ->
         rendered.should.be.false()
       .then next
 
-    it 'detect extention and accept destination as a callback', (next) ->
+    it 'detect extention and accept target as a callback', (next) ->
       content = null
       mecano.render
         source: "#{__dirname}/../resources/render.eco"
-        destination: (c) -> content = c
+        target: (c) -> content = c
         context: who: 'you'
       , (err, rendered) ->
         content.should.eql 'Hello you'
@@ -215,7 +215,7 @@ describe 'render', ->
       mecano.render
         content: '<%- @host ->'
         engine: 'eco'
-        destination: "#{scratch}/render.eco"
+        target: "#{scratch}/render.eco"
         context: toto: 'lulu'
       , (err, rendered) ->
         err.message.should.eql 'Parse error on line 1: unexpected end of template'

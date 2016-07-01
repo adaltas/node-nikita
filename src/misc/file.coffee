@@ -8,7 +8,7 @@ glob = require './glob'
 rimraf = require 'rimraf'
 
 module.exports = file =
-  copyFile: (ssh, source, destination, callback) ->
+  copyFile: (ssh, source, target, callback) ->
     s = (ssh, callback) ->
       unless ssh
       then callback null, fs
@@ -16,7 +16,7 @@ module.exports = file =
     s ssh, (err, fs) ->
       return callback err if err
       rs = fs.createReadStream source
-      ws = rs.pipe fs.createWriteStream destination
+      ws = rs.pipe fs.createWriteStream target
       ws.on 'close', ->
         fs.end() if fs.end
         modified = true
@@ -29,12 +29,12 @@ module.exports = file =
   cmpmod: (modes...) ->
     console.log 'Deprecated, use `misc.mode.compare`'
     misc.mode.compare.call @, modes...
-  copy: (ssh, source, destination, callback) ->
+  copy: (ssh, source, target, callback) ->
     unless ssh
       source = fs.createReadStream(u.pathname)
-      source.pipe destination
-      destination.on 'close', callback
-      destination.on 'error', callback
+      source.pipe target
+      target.on 'close', callback
+      target.on 'error', callback
     else
       # todo: use cp to copy over ssh
       callback new Error 'Copy over SSH not yet implemented'

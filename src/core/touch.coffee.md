@@ -11,7 +11,7 @@ exists.
 
 ## Options
 
-*   `destination`   
+*   `target`   
     File path where to write content to.   
 *   `gid`   
     File group name or group id.   
@@ -27,7 +27,7 @@ exists.
 ```js
 require('mecano').touch({
   ssh: ssh,
-  destination: '/tmp/a_file'
+  target: '/tmp/a_file'
 }, function(err, touched){
   console.log(err ? err.message : 'File touched: ' + !!touched);
 });
@@ -38,16 +38,16 @@ require('mecano').touch({
     module.exports = (options, callback) ->
       options.log message: "Entering touch", level: 'DEBUG', module: 'mecano/lib/touch'
       # Validate parameters
-      options.destination = options.argument if options.argument?
-      return callback new Error "Missing destination: #{options.destination}" unless options.destination
-      options.log message: "Check if destination exists \"#{options.destination}\"", level: 'DEBUG', module: 'mecano/lib/touch'
-      fs.exists options.ssh, options.destination, (err, exists) =>
+      options.target = options.argument if options.argument?
+      return callback new Error "Missing target: #{options.target}" unless options.target
+      options.log message: "Check if target exists \"#{options.target}\"", level: 'DEBUG', module: 'mecano/lib/touch'
+      fs.exists options.ssh, options.target, (err, exists) =>
         return callback err if err
         return callback() if exists
         options.log message: "Destination does not exists", level: 'INFO', module: 'mecano/lib/touch'
         @write
           content: ''
-          destination: options.destination
+          target: options.target
         @then callback
 
 ## Dependencies

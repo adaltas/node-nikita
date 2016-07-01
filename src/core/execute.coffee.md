@@ -118,7 +118,7 @@ mecano.execute({
         else process.env['USER']
       # Determines if writing is required and eventually convert uid to username
       @call shy: true, (_, callback)->
-        return callback null, true if options.destination
+        return callback null, true if options.target
         return callback null, false if current_username is 'root'
         return callback null, false unless options.uid
         return callback null, options.uid isnt current_username unless /\d/.test "#{options.uid}"
@@ -130,10 +130,10 @@ mecano.execute({
         if: -> @status(-1)
         handler: () ->
           options.cmd = "#!/bin/bash\n\n#{options.cmd}"
-          options.destination ?= "/tmp/mecano_#{string.hash options.cmd}"
-          options.log message: 'Writing bash script to #{JSON.stringify options.destination}', level: 'INFO'
+          options.target ?= "/tmp/mecano_#{string.hash options.cmd}"
+          options.log message: 'Writing bash script to #{JSON.stringify options.target}', level: 'INFO'
           options.cmd = "su - #{options.uid} -c 'bash /tmp/mecano_#{string.hash options.cmd}'"
-          @write destination: options.destination
+          @write target: options.target
       # Execute
       @call (_, callback) ->
         child = exec options
@@ -185,7 +185,7 @@ mecano.execute({
           , 1
       # @remove
       #   if_exists: true
-      #   destination: -> @options.destination
+      #   target: -> @options.target
       @then (err, status) ->
         callback err, status, result.stdout, result.stderr, result.code
 

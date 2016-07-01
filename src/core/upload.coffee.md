@@ -23,7 +23,7 @@ function with the addition of the "binary" option.
 *   `source`   
     File path from where to extract the content, do not use conjointly with
     content.   
-*   `destination`   
+*   `target`   
     File path where to write content to.   
 *   `backup`   
     Create a backup, append a provided string to the filename extension or a
@@ -57,7 +57,7 @@ function with the addition of the "binary" option.
 require('mecano').upload({
   ssh: ssh
   source: '/tmp/local_file',
-  destination: '/tmp/remote_file'
+  target: '/tmp/remote_file'
 }, function(err, status){
   console.log(err ? err.message : 'File uploaded: ' + status);
 });
@@ -68,13 +68,13 @@ require('mecano').upload({
     module.exports = (options) ->
       options.log message: "Entering upload", level: 'DEBUG', module: 'mecano/lib/upload'
       throw Error "Required \"source\" option" unless options.source
-      throw Error "Required \"destination\" option" unless options.destination
+      throw Error "Required \"target\" option" unless options.target
       options.log message: "Source is \"#{options.source}\"", level: 'DEBUG', module: 'mecano/lib/upload'
-      options.log message: "Destination is \"#{options.destination}\"", level: 'DEBUG', module: 'mecano/lib/upload'
+      options.log message: "Destination is \"#{options.target}\"", level: 'DEBUG', module: 'mecano/lib/upload'
       status = false
       source_stat = null
-      destination_stat = null
-      stage_destination = "#{options.destination}.#{Date.now()}#{Math.round(Math.random()*1000)}"
+      target_stat = null
+      stage_target = "#{options.target}.#{Date.now()}#{Math.round(Math.random()*1000)}"
       if options.md5?
         return callback new Error "Invalid MD5 Hash:#{options.md5}" unless typeof options.md5 in ['string', 'boolean']
         algo = 'md5'
@@ -91,33 +91,33 @@ require('mecano').upload({
           source_stat = stat
           callback()
       @call (_, callback) ->
-        ssh2fs.stat null, options.destination, (err, stat) ->
+        ssh2fs.stat null, options.target, (err, stat) ->
           return callback() if err and err.code is 'ENOENT'
           return callback err if err
-          destination_stat = stat if stat.isFile()
+          target_stat = stat if stat.isFile()
           return callback() unless stat.isDirectory()
-          options.destination = path.resolve options.destination, path.basename options.source
-          ssh2fs.stat null, options.destination, (err, stat) ->
+          options.target = path.resolve options.target, path.basename options.source
+          ssh2fs.stat null, options.target, (err, stat) ->
             return callback() if err and err.code is 'ENOENT'
             return callback err if err
-            destination_stat = stat if stat.isFile()
+            target_stat = stat if stat.isFile()
             return callback() if stat.isFile()
-            callback Error "Invalid destination: #{options.destination}"
+            callback Error "Invalid target: #{options.target}"
       @call
         handler: (_, callback) ->
-          return callback null, true unless destination_stat
-          file.compare_hash options.ssh, options.source, null, options.destination, algo, (err, match) =>
+          return callback null, true unless target_stat
+          file.compare_hash options.ssh, options.source, null, options.target, algo, (err, match) =>
             callback err, not match
       @mkdir
         if: -> @status -1
         ssh: null
-        destination: path.dirname stage_destination
+        target: path.dirname stage_target
       @call
         if: -> @status -2
         handler: (_, callback) ->
           ssh2fs.createReadStream options.ssh, options.source, (err, rs) =>
             return callback err if err
-            ws = fs.createWriteStream stage_destination
+            ws = fs.createWriteStream stage_target
             rs.pipe(ws)
             .on 'close', callback
             .on 'error', callback
@@ -125,18 +125,18 @@ require('mecano').upload({
         @move
           ssh: null
           if: @status()
-          source: stage_destination
-          destination: options.destination
+          source: stage_target
+          target: options.target
         , (err, status) ->
           options.log message: "Unstaged uploaded file", level: 'INFO', module: 'mecano/lib/upload' if status
         @chmod
           ssh: null
-          destination: options.destination
+          target: options.target
           mode: options.mode
           if: options.mode?
         @chown
           ssh: null
-          destination: options.destination
+          target: options.target
           uid: options.uid
           gid: options.gid
           if: options.uid? or options.gid?

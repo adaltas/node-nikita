@@ -13,7 +13,7 @@ describe 'system_limits', ->
     mecano
       ssh: ssh
     .system_limits
-      destination: "#{scratch}/me.conf"
+      target: "#{scratch}/me.conf"
       user: 'me'
     , (err, status) ->
       return next err if err
@@ -27,7 +27,7 @@ describe 'system_limits', ->
     mecano
       ssh: ssh
     .system_limits
-      destination: "#{scratch}/me.conf"
+      target: "#{scratch}/me.conf"
       user: 'me'
       nofile: 2048
       nproc: 2048
@@ -47,13 +47,13 @@ describe 'system_limits', ->
     mecano
       ssh: ssh
     .system_limits
-      destination: "#{scratch}/me.conf"
+      target: "#{scratch}/me.conf"
       user: 'me'
       nofile: 2048
       nproc: 2048
       shy: true
     .system_limits
-      destination: "#{scratch}/me.conf"
+      target: "#{scratch}/me.conf"
       user: 'me'
       nofile: 2047
       nproc: 2047
@@ -66,13 +66,13 @@ describe 'system_limits', ->
     mecano
       ssh: ssh
     .system_limits
-      destination: "#{scratch}/me.conf"
+      target: "#{scratch}/me.conf"
       user: 'me'
       nofile: 2048
       nproc: 2048
       shy: true
     .system_limits
-      destination: "#{scratch}/me.conf"
+      target: "#{scratch}/me.conf"
       user: 'me'
       nofile: 2048
       nproc: 2048
@@ -101,7 +101,7 @@ describe 'system_limits', ->
         nproc = stdout.trim()
         nproc = Math.round parseInt(nproc)*0.75
       .system_limits
-        destination: "#{scratch}/me.conf"
+        target: "#{scratch}/me.conf"
         user: 'me'
         nofile: true
         nproc: true
@@ -121,7 +121,7 @@ describe 'system_limits', ->
     mecano
       ssh: ssh
     .system_limits
-      destination: "#{scratch}/me.conf"
+      target: "#{scratch}/me.conf"
       user: 'me'
       nofile: 1000000000
     , (err, status) ->
@@ -133,7 +133,7 @@ describe 'system_limits', ->
     mecano
       ssh: ssh
     .system_limits
-      destination: "#{scratch}/me.conf"
+      target: "#{scratch}/me.conf"
       user: 'me'
       nproc: 1000000000
     , (err, status) ->

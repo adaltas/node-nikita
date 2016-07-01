@@ -16,12 +16,12 @@ describe 'write', ->
       mecano
         ssh: ssh
       .write
-        destination: "#{scratch}/file"
+        target: "#{scratch}/file"
         content: 'Hello'
       , (err, written) ->
         written.should.be.true()
       .write # Write the same content
-        destination: "#{scratch}/file"
+        target: "#{scratch}/file"
         content: 'Hello'
       , (err, written) ->
         return next err if err
@@ -31,29 +31,29 @@ describe 'write', ->
           content.should.eql 'Hello'
           next()
     
-    they 'doesnt increment if destination is same than generated content', (ssh, next) ->
+    they 'doesnt increment if target is same than generated content', (ssh, next) ->
       mecano
         ssh: ssh
       .write
-        destination: "#{scratch}/file"
+        target: "#{scratch}/file"
         content: 'Hello'
       , (err, written) ->
         written.should.be.true()
       .write
-        destination: "#{scratch}/file"
+        target: "#{scratch}/file"
         content: 'Hello'
       , (err, written) ->
         written.should.be.false()
       .then next
     
-    they 'doesnt increment if destination is same than generated content', (ssh, next) ->
+    they 'doesnt increment if target is same than generated content', (ssh, next) ->
       mecano
         ssh: ssh
       .write
-        destination: "#{scratch}/file"
+        target: "#{scratch}/file"
         content: 'Hello'
       .write
-        destination: "#{scratch}/file_copy"
+        target: "#{scratch}/file_copy"
         source: "#{scratch}/file"
       , (err, written) ->
         return next err if err
@@ -65,7 +65,7 @@ describe 'write', ->
     they 'empty file', (ssh, next) ->
       mecano.write
         ssh: ssh
-        destination: "#{scratch}/empty_file"
+        target: "#{scratch}/empty_file"
         content: ''
       , (err, written) ->
         return next err if err
@@ -79,7 +79,7 @@ describe 'write', ->
       mecano
         ssh: ssh
       .write
-        destination: "#{scratch}/empty_file"
+        target: "#{scratch}/empty_file"
         content: ''
         unless_exists: true
       , (err, written) ->
@@ -90,10 +90,10 @@ describe 'write', ->
           content.should.eql ''
           next()
       .write
-        destination: "#{scratch}/empty_file"
+        target: "#{scratch}/empty_file"
         content: 'toto'
       .write
-        destination: "#{scratch}/empty_file"
+        target: "#{scratch}/empty_file"
         content: ''
         unless_exists: true
       , (err, written) ->
@@ -108,7 +108,7 @@ describe 'write', ->
     they 'handle integer type', (ssh, next) ->
       mecano.write
         ssh: ssh
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
         content: 123
       , (err, written) ->
         return next err if err
@@ -121,7 +121,7 @@ describe 'write', ->
     they 'create parent directory', (ssh, next) ->
       mecano.write
         ssh: ssh
-        destination: "#{scratch}/a/missing/dir/a_file"
+        target: "#{scratch}/a/missing/dir/a_file"
         content: 'hello'
       , (err, written) ->
         return next err if err
@@ -138,13 +138,13 @@ describe 'write', ->
         ssh: ssh
       .write
         content: 'ko'
-        destination: "#{scratch}/target"
+        target: "#{scratch}/target"
       .link
         source: "#{scratch}/target"
-        destination: "#{scratch}/link"
+        target: "#{scratch}/link"
       .write
         content: 'ok'
-        destination: "#{scratch}/link"
+        target: "#{scratch}/link"
       .call (_, callback) ->
         fs.readFile ssh, "#{scratch}/link", 'ascii', (err, data) ->
           data.should.eql 'ok'
@@ -157,13 +157,13 @@ describe 'write', ->
       mecano
         ssh: ssh
       .mkdir
-        destination: "#{scratch}/target"
+        target: "#{scratch}/target"
       .link
         source: "#{scratch}/target"
-        destination: "#{scratch}/link"
+        target: "#{scratch}/link"
       .write
         content: 'ok'
-        destination: "#{scratch}/link"
+        target: "#{scratch}/link"
       , (err) ->
         err.code.should.eql 'EISDIR'
         next()
@@ -173,13 +173,13 @@ describe 'write', ->
         ssh: ssh
       .write
         content: 'ko'
-        destination: "#{scratch}/target"
+        target: "#{scratch}/target"
       .link
         source: "#{scratch}/target"
-        destination: "#{scratch}/link"
+        target: "#{scratch}/link"
       .write
         content: 'ok'
-        destination: "#{scratch}/link"
+        target: "#{scratch}/link"
         unlink: true
       .call (_, callback) ->
         fs.readFile ssh, "#{scratch}/link", 'ascii', (err, data) ->
@@ -193,13 +193,13 @@ describe 'write', ->
       mecano
         ssh: ssh
       .mkdir
-        destination: "#{scratch}/target"
+        target: "#{scratch}/target"
       .link
         source: "#{scratch}/target"
-        destination: "#{scratch}/link"
+        target: "#{scratch}/link"
       .write
         content: 'ok'
-        destination: "#{scratch}/link"
+        target: "#{scratch}/link"
         unlink: true
       .call (_, callback) ->
         fs.readFile ssh, "#{scratch}/link", 'ascii', (err, data) ->
@@ -214,7 +214,7 @@ describe 'write', ->
     they 'set permission', (ssh, next) ->
       mecano.write
         ssh: ssh
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
         content: 'ok'
         mode: 0o0700
       , (err, written) ->
@@ -231,17 +231,17 @@ describe 'write', ->
       mecano
         ssh: ssh
       .write
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
         content: 'ok'
         mode: 0o0700
       .write
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
         content: 'ok'
         mode: 0o0705
       , (err, written) ->
         written.should.be.true()
       .write
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
         content: 'ok'
         mode: 0o0705
       , (err, written) ->
@@ -252,12 +252,12 @@ describe 'write', ->
       mecano
       .write
         ssh: ssh
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
         content: 'Hello'
         mode: 0o0700
       .write
         ssh: ssh
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
         content: 'World'
         mode: 0o0755
       , (err, written) ->
@@ -272,7 +272,7 @@ describe 'write', ->
     they 'with from and with to', (ssh, next) ->
       mecano.write
         ssh: ssh
-        destination: "#{scratch}/fromto.md"
+        target: "#{scratch}/fromto.md"
         from: '# from'
         to: '# to'
         content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
@@ -291,7 +291,7 @@ describe 'write', ->
         mecano
           ssh: ssh
         .write
-          destination: "#{scratch}/fromto.md"
+          target: "#{scratch}/fromto.md"
           from: '# from'
           to: '# to'
           append: true
@@ -303,7 +303,7 @@ describe 'write', ->
             content.should.eql 'here we are\nyou coquin\n# from\nmy friend\n# to'
             next()
         .write
-          destination: "#{scratch}/fromto.md"
+          target: "#{scratch}/fromto.md"
           from: '# from'
           to: '# to'
           append: true
@@ -320,7 +320,7 @@ describe 'write', ->
     they 'with from and without to', (ssh, next) ->
       mecano.write
         ssh: ssh
-        destination: "#{scratch}/fromto.md"
+        target: "#{scratch}/fromto.md"
         from: '# from'
         content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
         replace: 'my friend'
@@ -335,7 +335,7 @@ describe 'write', ->
     they 'without from and with to', (ssh, next) ->
       mecano.write
         ssh: ssh
-        destination: "#{scratch}/fromto.md"
+        target: "#{scratch}/fromto.md"
         to: '# to'
         content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
         replace: 'my friend'
@@ -353,7 +353,7 @@ describe 'write', ->
     they 'without match and before a string', (ssh, next) ->
       mecano.write
         ssh: ssh
-        destination: "#{scratch}/fromto.md"
+        target: "#{scratch}/fromto.md"
         content: 'here we are\nyou+coquin'
         replace: 'my friend'
         before: 'you+coquin' # Regexp must escape the plus sign
@@ -367,7 +367,7 @@ describe 'write', ->
     they 'without match and before a regexp', (ssh, next) ->
       mecano.write
         ssh: ssh
-        destination: "#{scratch}/fromto.md"
+        target: "#{scratch}/fromto.md"
         content: 'here we are\nyou coquin'
         replace: 'my friend'
         before: /^you coquin$/m
@@ -383,7 +383,7 @@ describe 'write', ->
     they 'with match a line as a string', (ssh, next) ->
       mecano.write
         ssh: ssh
-        destination: "#{scratch}/fromto.md"
+        target: "#{scratch}/fromto.md"
         match: 'lets try to replace that one'
         content: 'here we are\nlets try to replace that one\nyou coquin'
         replace: 'my friend'
@@ -398,7 +398,7 @@ describe 'write', ->
     they 'with match a word as a string', (ssh, next) ->
       mecano.write
         ssh: ssh
-        destination: "#{scratch}/fromto.md"
+        target: "#{scratch}/fromto.md"
         match: 'replace'
         content: 'replace that one\nand\nreplace this one\nand not this one'
         replace: 'switch'
@@ -415,7 +415,7 @@ describe 'write', ->
       mecano
         ssh: ssh
       .write
-        destination: "#{scratch}/replace"
+        target: "#{scratch}/replace"
         content: 'email=david(at)adaltas(dot)com\nusername=root'
         match: /(username)=(.*)/
         replace: '$1=david (was $2)'
@@ -423,7 +423,7 @@ describe 'write', ->
         return next err if err
         written.should.be.true()
       .write # Without a match
-        destination: "#{scratch}/replace"
+        target: "#{scratch}/replace"
         match: /this wont work/
         replace: '$1=david (was $2)'
       , (err, written) ->
@@ -440,7 +440,7 @@ describe 'write', ->
         match: /(.*try) (.*)/
         content: 'here we are\nlets try to replace that one\nyou coquin'
         replace: ['my friend, $1']
-        destination: "#{scratch}/replace"
+        target: "#{scratch}/replace"
       , (err, written) ->
         return next err if err
         written.should.be.true()
@@ -452,7 +452,7 @@ describe 'write', ->
     they 'with match with global and multilines', (ssh, next) ->
       mecano.write
         ssh: ssh
-        destination: "#{scratch}/replace"
+        target: "#{scratch}/replace"
         match: /^property=.*$/mg
         content: '#A config file\n#property=30\nproperty=10\nproperty=20\n#End of Config'
         replace: 'property=50'
@@ -464,20 +464,20 @@ describe 'write', ->
           content.should.eql '#A config file\n#property=30\nproperty=50\nproperty=50\n#End of Config'
           next()
     
-    they 'will replace destination if source or content does not exists', (ssh, next) ->
+    they 'will replace target if source or content does not exists', (ssh, next) ->
       mecano
         ssh: ssh
       .write
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
         content: 'This is\nsome content\nfor testing'
       .write
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
         match: /(.*content)/
         replace: 'a text'
       , (err, written) ->
         written.should.be.true()
       .write
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
         match: /(.*content)/
         replace: 'a text'
       , (err, written) ->
@@ -495,7 +495,7 @@ describe 'write', ->
       # File does not exist, it create it with the content
       mecano.write
         ssh: ssh
-        destination: "#{scratch}/file"
+        target: "#{scratch}/file"
         content: 'hello'
         append: true
       , (err) ->
@@ -511,11 +511,11 @@ describe 'write', ->
       mecano
         ssh: ssh
       .write
-        destination: "#{scratch}/file"
+        target: "#{scratch}/file"
         content: 'world'
         before: true
       .write # File exists, prepends to it
-        destination: "#{scratch}/file"
+        target: "#{scratch}/file"
         replace: 'hello'
         before: true
       .then (err) ->
@@ -532,7 +532,7 @@ describe 'write', ->
       # File does not exist, it create it with the content
       mecano.write
         ssh: ssh
-        destination: "#{scratch}/file"
+        target: "#{scratch}/file"
         content: 'hello'
         append: true
       , (err) ->
@@ -548,11 +548,11 @@ describe 'write', ->
       mecano
         ssh: ssh
       .write
-        destination: "#{scratch}/file"
+        target: "#{scratch}/file"
         content: 'hello'
         append: true
       .write # File exists, it append to it
-        destination: "#{scratch}/file"
+        target: "#{scratch}/file"
         content: 'world'
         append: true
       .then (err) ->
@@ -571,13 +571,13 @@ describe 'write', ->
         # Prepare by creating a file with content
         mecano.write
           ssh: ssh
-          destination: "#{scratch}/file"
+          target: "#{scratch}/file"
           content: 'you coquin\nhere we are\n'
         , (err) ->
           # File does not exist, it create it with the content
           mecano.write
             ssh: ssh
-            destination: "#{scratch}/file"
+            target: "#{scratch}/file"
             match: /.*coquin/
             replace: 'new coquin'
             before: true
@@ -590,7 +590,7 @@ describe 'write', ->
               # Write a second time with same match
               mecano.write
                 ssh: ssh
-                destination: "#{scratch}/file"
+                target: "#{scratch}/file"
                 match: /.*coquin/
                 replace: 'new coquin'
                 before: true
@@ -607,13 +607,13 @@ describe 'write', ->
         # Prepare by creating a file with content
         mecano.write
           ssh: ssh
-          destination: "#{scratch}/file"
+          target: "#{scratch}/file"
           content: 'you coquin\nhere we are\n'
         , (err) ->
           # File does not exist, it create it with the content
           mecano.write
             ssh: ssh
-            destination: "#{scratch}/file"
+            target: "#{scratch}/file"
             match: "you coquin"
             replace: 'new coquin'
             before: true
@@ -626,7 +626,7 @@ describe 'write', ->
               # Write a second time with same match
               mecano.write
                 ssh: ssh
-                destination: "#{scratch}/file"
+                target: "#{scratch}/file"
                 match: "new coquin"
                 replace: 'new coquin'
                 before: true
@@ -643,13 +643,13 @@ describe 'write', ->
         # Prepare by creating a file with content
         mecano.write
           ssh: ssh
-          destination: "#{scratch}/file"
+          target: "#{scratch}/file"
           content: 'here we are\nyou coquin\n'
         , (err) ->
           # File does not exist, it create it with the content
           mecano.write
             ssh: ssh
-            destination: "#{scratch}/file"
+            target: "#{scratch}/file"
             match: /.*coquin/
             replace: 'new coquin'
             append: true
@@ -662,7 +662,7 @@ describe 'write', ->
               # Write a second time with same match
               mecano.write
                 ssh: ssh
-                destination: "#{scratch}/file"
+                target: "#{scratch}/file"
                 match: /.*coquin/
                 replace: 'new coquin'
                 append: true
@@ -680,10 +680,10 @@ describe 'write', ->
       mecano
         ssh: ssh
       .write
-        destination: "#{scratch}/file"
+        target: "#{scratch}/file"
         content: 'here we are\nyou coquin\n'
       .write
-        destination: "#{scratch}/file"
+        target: "#{scratch}/file"
         match: /will never work/
         replace: 'Add this line'
         append: true
@@ -703,10 +703,10 @@ describe 'write', ->
         mecano
           ssh: ssh
         .write
-          destination: "#{scratch}/file"
+          target: "#{scratch}/file"
           content: 'here we are\nyou coquin\nshould we\nhave fun'
         .write
-          destination: "#{scratch}/file"
+          target: "#{scratch}/file"
           match: /will never work/
           replace: 'Add this line'
           before: /^.*we.*$/m
@@ -723,13 +723,13 @@ describe 'write', ->
         # Prepare by creating a file with content
         mecano.write
           ssh: ssh
-          destination: "#{scratch}/file"
+          target: "#{scratch}/file"
           content: 'here we are\nyou coquin\nshould we\nhave fun'
         , (err) ->
           # File does not exist, it creates it with the content
           mecano.write
             ssh: ssh
-            destination: "#{scratch}/file"
+            target: "#{scratch}/file"
             match: /will never work/
             replace: 'Add this line'
             append: /^.*we.*$/m
@@ -748,13 +748,13 @@ describe 'write', ->
         # Prepare by creating a file with content
         mecano.write
           ssh: ssh
-          destination: "#{scratch}/file"
+          target: "#{scratch}/file"
           content: 'here we are\nyou coquin\nshould we\nhave fun'
         , (err) ->
           # File does not exist, it create it with the content
           mecano.write
             ssh: ssh
-            destination: "#{scratch}/file"
+            target: "#{scratch}/file"
             match: /will never work/
             replace: 'Add this line'
             before: /^.*we.*$/gm
@@ -771,13 +771,13 @@ describe 'write', ->
         # Prepare by creating a file with content
         mecano.write
           ssh: ssh
-          destination: "#{scratch}/file"
+          target: "#{scratch}/file"
           content: 'here we are\nyou coquin\nshould we\nhave fun'
         , (err) ->
           # File does not exist, it create it with the content
           mecano.write
             ssh: ssh
-            destination: "#{scratch}/file"
+            target: "#{scratch}/file"
             match: /will never work/
             replace: 'Add this line'
             append: /^.*we.*$/gm
@@ -795,13 +795,13 @@ describe 'write', ->
       # Prepare by creating a file with content
       mecano.write
         ssh: ssh
-        destination: "#{scratch}/file"
+        target: "#{scratch}/file"
         content: 'here we are\nyou coquin\nshould we\nhave fun'
       , (err) ->
         # File does not exist, it create it with the content
         mecano.write
           ssh: ssh
-          destination: "#{scratch}/file"
+          target: "#{scratch}/file"
           match: /will never work/
           replace: 'Add this line'
           append: 'we'
@@ -820,13 +820,13 @@ describe 'write', ->
         # Create file for the test
         mecano.write
           ssh: ssh
-          destination: "#{scratch}/file"
+          target: "#{scratch}/file"
           content: 'here we are\nyou coquin'
         , (err) ->
           # File exist, append replace string to it and detect missing line break
           mecano.write
             ssh: ssh
-            destination: "#{scratch}/file"
+            target: "#{scratch}/file"
             match: /will never be found/
             replace: 'Add this line'
             before: true
@@ -843,13 +843,13 @@ describe 'write', ->
         # Create file for the test
         mecano.write
           ssh: ssh
-          destination: "#{scratch}/file"
+          target: "#{scratch}/file"
           content: 'here we are\nyou coquin'
         , (err) ->
           # File exist, append replace string to it and detect missing line break
           mecano.write
             ssh: ssh
-            destination: "#{scratch}/file"
+            target: "#{scratch}/file"
             match: /will never be found/
             replace: 'Add this line'
             append: true
@@ -868,7 +868,7 @@ describe 'write', ->
         # File does not exist, it create it with the content
         mecano.write
           ssh: ssh
-          destination: "#{scratch}/file"
+          target: "#{scratch}/file"
           match: /will never be found/
           replace: 'Add this line'
           before: true
@@ -885,7 +885,7 @@ describe 'write', ->
         # File does not exist, it create it with the content
         mecano.write
           ssh: ssh
-          destination: "#{scratch}/file"
+          target: "#{scratch}/file"
           match: /will never be found/
           replace: 'Add this line'
           append: true
@@ -902,22 +902,22 @@ describe 'write', ->
       mecano
         ssh: ssh
       .write
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
         content: 'Here we are\nyou coquin'
       .write
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
         replace: 'Add this line'
         append: true
       , (err, written) ->
         written.should.be.true()
       .write
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
         replace: 'Add this line'
         append: true
       , (err, written) ->
         written.should.be.false()
       .write
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
         write: [
           replace: 'Add this line'
           append: true
@@ -936,14 +936,14 @@ describe 'write', ->
       # First we create a file
       mecano.write
         ssh: ssh
-        destination: "#{scratch}/file"
+        target: "#{scratch}/file"
         content: 'Hello'
       , (err, written) ->
         return next err if err
         # If nothing has change, there should be no backup
         mecano.write
           ssh: ssh
-          destination: "#{scratch}/file"
+          target: "#{scratch}/file"
           content: 'Hello'
           backup: '.bck'
         , (err, written) ->
@@ -954,7 +954,7 @@ describe 'write', ->
             # If content is different, check the backup
             mecano.write
               ssh: ssh
-              destination: "#{scratch}/file"
+              target: "#{scratch}/file"
               content: 'Hello Node'
               backup: '.bck'
             , (err, written) ->
@@ -967,7 +967,7 @@ describe 'write', ->
     they 'a non-existing file', (ssh, next) ->
       mecano.write
         ssh: ssh
-        destination: "#{scratch}/new_file"
+        target: "#{scratch}/new_file"
         content: 'Hello'
         backup: true
       , (err, written) ->
@@ -981,13 +981,13 @@ describe 'write', ->
       # First we create a file
       mecano.write
         ssh: ssh
-        destination: "#{scratch}/file"
+        target: "#{scratch}/file"
         content: 'username: me\nemail: my@email\nfriends: you'
       , (err, written) ->
         return next err if err
         mecano.write
           ssh: ssh
-          destination: "#{scratch}/file"
+          target: "#{scratch}/file"
           write: [
             match: /^(username).*$/m
             replace: "$1: you"
@@ -1010,13 +1010,13 @@ describe 'write', ->
       # First we create a file
       mecano.write
         ssh: ssh
-        destination: "#{scratch}/file"
+        target: "#{scratch}/file"
         content: 'username: me\nfriends: you'
       , (err, written) ->
         return next err if err
         mecano.write
           ssh: ssh
-          destination: "#{scratch}/file"
+          target: "#{scratch}/file"
           write: [
             match: /^(username).*$/m
             replace: "$1: you"
@@ -1040,14 +1040,14 @@ describe 'write', ->
       # First we create a file
       mecano.write
         ssh: ssh
-        destination: "#{scratch}/file"
+        target: "#{scratch}/file"
         content: 'username: me\nfriends: none'
       , (err, written) ->
         return next err if err
         # First write will not find a match
         mecano.write
           ssh: ssh
-          destination: "#{scratch}/file"
+          target: "#{scratch}/file"
           write: [
             match: /^will never match$/m
             replace: "useless"
@@ -1072,7 +1072,7 @@ describe 'write', ->
     they 'can not define source and content', (ssh, next) ->
       mecano.write
         ssh: ssh
-        destination: 'abc'
+        target: 'abc'
         source: 'abc'
         content: 'abc'
       , (err) ->
@@ -1082,7 +1082,7 @@ describe 'write', ->
     they 'if source doesn\'t exists', (ssh, next) ->
       mecano.write
         ssh: ssh
-        destination: "#{scratch}/file"
+        target: "#{scratch}/file"
         source: "#{scratch}/does/not/exists"
       , (err, written) ->
         err.message.should.eql "Source does not exist: \"#{scratch}/does/not/exists\""
@@ -1091,7 +1091,7 @@ describe 'write', ->
     they 'if local source doesn\'t exists', (ssh, next) ->
       mecano.write
         ssh: ssh
-        destination: "#{scratch}/file"
+        target: "#{scratch}/file"
         source: "#{scratch}/does/not/exists"
         local_source: true
       , (err, written) ->
@@ -1103,7 +1103,7 @@ describe 'write', ->
     they 'auto-detected', (ssh, next) ->
       mecano.write
         ssh: ssh
-        destination: "#{scratch}/file"
+        target: "#{scratch}/file"
         content: 'this is\r\nsome content'
         eof: true
       , (err) ->
@@ -1115,7 +1115,7 @@ describe 'write', ->
     they 'not detected', (ssh, next) ->
       mecano.write
         ssh: ssh
-        destination: "#{scratch}/file"
+        target: "#{scratch}/file"
         content: 'this is some content'
         eof: true
       , (err) ->

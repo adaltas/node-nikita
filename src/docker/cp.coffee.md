@@ -3,13 +3,13 @@
 
 Copy files/folders between a container and the local filesystem.
 
-Reflecting the original docker ps command usage, source and destination may take
+Reflecting the original docker ps command usage, source and target may take
 the following forms:
 
 *   CONTAINER:PATH 
 *   LOCALPATH
 *   process.readableStream as the source or process.writableStream as the
-    destination (equivalent of "-")
+    target (equivalent of "-")
 
 Note, stream are not yet supported.
 
@@ -21,7 +21,7 @@ Note, stream are not yet supported.
     Name of the docker-machine, MANDATORY if using docker-machine or boot2docker.
 *   `source` (string)
     The path to upload or the container followed by the path to download.   
-*   `destination` (string)
+*   `target` (string)
     The path to download or the container followed by the path to upload.   
 
 ## Uploading a file
@@ -29,7 +29,7 @@ Note, stream are not yet supported.
 ```javascript
 mecano.docker({
   source: readable_stream or '/path/to/source'
-  destination: 'my_container:/path/to/destination'
+  target: 'my_container:/path/to/target'
 }, function(err, status){})
 ```
 
@@ -38,7 +38,7 @@ mecano.docker({
 ```javascript
 mecano.docker({
   source: 'my_container:/path/to/source'
-  destination: writable_stream or '/path/to/destination'
+  target: writable_stream or '/path/to/target'
 }, function(err, status){})
 ```
 
@@ -50,44 +50,44 @@ mecano.docker({
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
       throw Error 'Missing option "source"' unless options.source
-      throw Error 'Missing option "destination"' unless options.destination
+      throw Error 'Missing option "target"' unless options.target
       [_, source_container, source_path] = /(.*:)?(.*)/.exec options.source
-      [_, destination_container, destination_path] = /(.*:)?(.*)/.exec options.destination
-      throw Error 'Incompatible source and destination options' if source_container and destination_container
-      throw Error 'Incompatible source and destination options' if not source_container and not destination_container
+      [_, target_container, target_path] = /(.*:)?(.*)/.exec options.target
+      throw Error 'Incompatible source and target options' if source_container and target_container
+      throw Error 'Incompatible source and target options' if not source_container and not target_container
       source_mkdir = false
-      destination_mkdir = false
+      target_mkdir = false
       # Source is on the host, normalize path
       @call (_, next) ->
         return next() if source_container
         if /\/$/.test source_path
-          source_path = "#{source_path}/#{path.basename destination_path}"
+          source_path = "#{source_path}/#{path.basename target_path}"
           return next()
         ssh2fs.stat options.ssh, source_path, (err, stat) ->
           return next err if err and err.code isnt 'ENOENT'
           # TODO wdavidw: seems like a mistake to me, we shall have source_mkdir instead
-          return destination_mkdir = true and next() if err?.code is 'ENOENT'
-          source_path = "#{source_path}/#{path.basename destination_path}" if stat.isDirectory()
+          return target_mkdir = true and next() if err?.code is 'ENOENT'
+          source_path = "#{source_path}/#{path.basename target_path}" if stat.isDirectory()
           next()
       @mkdir
-        destination: source_path
+        target: source_path
         if: -> source_mkdir
       # Destination is on the host
       @call (_, next)  ->
-        return next() if destination_container
-        if /\/$/.test destination_path
-          destination_path = "#{destination_path}/#{path.basename destination_path}"
+        return next() if target_container
+        if /\/$/.test target_path
+          target_path = "#{target_path}/#{path.basename target_path}"
           return next()
-        ssh2fs.stat options.ssh, destination_path, (err, stat) ->
+        ssh2fs.stat options.ssh, target_path, (err, stat) ->
           return next err if err and err.code isnt 'ENOENT'
-          return destination_mkdir = true and next() if err?.code is 'ENOENT'
-          destination_path = "#{destination_path}/#{path.basename destination_path}" if stat.isDirectory()
+          return target_mkdir = true and next() if err?.code is 'ENOENT'
+          target_path = "#{target_path}/#{path.basename target_path}" if stat.isDirectory()
           next()
       @mkdir
-        destination: destination_path
-        if: -> destination_mkdir
+        target: target_path
+        if: -> target_mkdir
       @execute
-        cmd: docker.wrap options, "cp #{options.source} #{options.destination}"
+        cmd: docker.wrap options, "cp #{options.source} #{options.target}"
       , docker.callback
 
 ## Modules Dependencies

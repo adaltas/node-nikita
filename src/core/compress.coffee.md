@@ -9,7 +9,7 @@ moment, supported extensions are '.tgz', '.tar.gz', 'tar.xz', 'tar.bz2' and '.zi
 
 *   `source`   
     Archive to compress.   
-*   `destination`   
+*   `target`   
     Default to the source parent directory.   
 *   `format`   
     One of 'tgz', 'tar', 'xz', 'bz2' or 'zip'.   
@@ -49,41 +49,41 @@ require('mecano').extract({
       options.log message: "Entering compress", level: 'DEBUG', module: 'mecano/lib/compress'
       # Validate parameters
       return callback new Error "Missing source: #{options.source}" unless options.source
-      return callback new Error "Missing destination: #{options.destination}" unless options.destination
+      return callback new Error "Missing target: #{options.target}" unless options.target
       options.source = path.normalize options.source
-      options.destination = path.normalize options.destination
+      options.target = path.normalize options.target
       dir = path.dirname options.source
       name = path.basename options.source
       # Deal with format option
       if options.format?
         format = options.format
       else
-        if /\.(tar\.gz|tgz)$/.test options.destination
+        if /\.(tar\.gz|tgz)$/.test options.target
           format = 'tgz'
-        else if /\.tar$/.test options.destination
+        else if /\.tar$/.test options.target
           format = 'tar'
-        else if /\.zip$/.test options.destination
+        else if /\.zip$/.test options.target
           format = 'zip'
-        else if /\.bz2$/.test options.destination
+        else if /\.bz2$/.test options.target
           format = 'bz2'
-        else if /\.xz$/.test options.destination
+        else if /\.xz$/.test options.target
           format = 'xz'
         else
           ext = path.extname options.source
           return callback Error "Unsupported extension, got #{JSON.stringify(ext)}"
       cmd = null
       switch format
-        when 'tgz' then cmd = "tar czf #{options.destination} -C #{dir} #{name}"
-        when 'tar' then cmd = "tar cf  #{options.destination} -C #{dir} #{name}"
-        when 'bz2' then cmd = "tar cjf #{options.destination} -C #{dir} #{name}"
-        when 'xz'  then cmd = "tar cJf #{options.destination} -C #{dir} #{name}"
-        when 'zip' then cmd = "(cd #{dir} && zip -r #{options.destination} #{name} && cd -)"
+        when 'tgz' then cmd = "tar czf #{options.target} -C #{dir} #{name}"
+        when 'tar' then cmd = "tar cf  #{options.target} -C #{dir} #{name}"
+        when 'bz2' then cmd = "tar cjf #{options.target} -C #{dir} #{name}"
+        when 'xz'  then cmd = "tar cJf #{options.target} -C #{dir} #{name}"
+        when 'zip' then cmd = "(cd #{dir} && zip -r #{options.target} #{name} && cd -)"
       @execute
         cmd: cmd
       , (err, created) ->
         return callback err if err
-        fs.exists options.ssh, options.destination, (err, exists) ->
-          return callback new Error "Failed to create '#{options.destination}'" unless exists
+        fs.exists options.ssh, options.target, (err, exists) ->
+          return callback new Error "Failed to create '#{options.target}'" unless exists
           callback null, true
 
 ## Dependencies

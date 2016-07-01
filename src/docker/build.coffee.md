@@ -153,7 +153,7 @@ mecano.docker_build({
         if: options.content
         content: options.content
         source: source
-        destination: (content) ->
+        target: (content) ->
           options.content = content
         from: options.from
         to: options.to

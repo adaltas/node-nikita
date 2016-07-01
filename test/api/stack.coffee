@@ -119,33 +119,33 @@ describe 'api stack', ->
     it 'catch err', (next) ->
       mecano
       .chmod
-        destination: "#{scratch}/doesnt_exist"
+        target: "#{scratch}/doesnt_exist"
       .then (err, changed) ->
         err.message.should.eql "Missing option 'mode'"
       .chmod
         mode: 0o0644
       .then (err, changed) ->
-        err.message.should.eql "Missing destination: undefined"
+        err.message.should.eql "Missing target: undefined"
       .then next
 
     it 'catch err without then', (next) ->
       m = mecano()
       m.chmod
-        destination: "#{scratch}/doesnt_exist"
+        target: "#{scratch}/doesnt_exist"
       , (err, changed) ->
         err.message.should.eql "Missing option 'mode'"
         # There are multiple possibilities
         m.chmod
           mode: 0o0644
         .then (err, changed) ->
-          err.message.should.eql "Missing destination: undefined"
+          err.message.should.eql "Missing target: undefined"
         .then next
 
     it 'catch err thrown callback', (next) ->
       mecano
       .write
         content: 'hello'
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
       , (err, written) ->
         throw err if err
         throw Error 'Catchme'

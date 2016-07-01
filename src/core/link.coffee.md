@@ -10,7 +10,7 @@ Note, it is valid for the "source" file to not exist.
 
 *   `source`   
     Referenced file to be linked.   
-*   `destination`   
+*   `target`   
     Symbolic link to be created.   
 *   `exec`   
     Create an executable file with an `exec` command.   
@@ -38,7 +38,7 @@ Note, it is valid for the "source" file to not exist.
 ```js
 require('mecano').link({
   source: __dirname,
-  destination: '/tmp/a_link'
+  target: '/tmp/a_link'
 }, function(err, linked){
   console.log(err ? err.message : 'Link created: ' + !!linked);
 });
@@ -50,24 +50,24 @@ require('mecano').link({
       options.log message: "Entering link", level: 'DEBUG', module: 'mecano/lib/link'
       linked = 0
       sym_exists = (options, callback) ->
-        # fs.exists options.ssh, options.destination, (err, exists) ->
-        #   console.log 'link exists', options.destination, exists
+        # fs.exists options.ssh, options.target, (err, exists) ->
+        #   console.log 'link exists', options.target, exists
         #   return callback null, false unless exists
-        fs.readlink options.ssh, options.destination, (err, resolvedPath) ->
+        fs.readlink options.ssh, options.target, (err, resolvedPath) ->
           return callback null, false if err
           return callback null, true if resolvedPath is options.source
-          fs.unlink options.ssh, options.destination, (err) ->
+          fs.unlink options.ssh, options.target, (err) ->
             return callback err if err
             callback null, false
       sym_create = (options, callback) ->
-        fs.symlink options.ssh, options.source, options.destination, (err) ->
+        fs.symlink options.ssh, options.source, options.target, (err) ->
           return callback err if err
           linked++
           callback()
       exec_exists = (options, callback) ->
-        fs.exists options.ssh, options.destination, (err, exists) ->
+        fs.exists options.ssh, options.target, (err, exists) ->
           return callback null, false unless exists
-          fs.readFile options.ssh, options.destination, 'utf8', (err, content) ->
+          fs.readFile options.ssh, options.target, 'utf8', (err, content) ->
             return callback err if err
             exec_cmd = /exec (.*) \$@/.exec(content)[1]
             callback null, exec_cmd and exec_cmd is options.source
@@ -76,19 +76,19 @@ require('mecano').link({
         #!/bin/bash
         exec #{options.source} $@
         """
-        fs.writeFile options.ssh, options.destination, content, (err) ->
+        fs.writeFile options.ssh, options.target, content, (err) ->
           return callback err if err
-          fs.chmod options.ssh, options.destination, options.mode, (err) ->
+          fs.chmod options.ssh, options.target, options.mode, (err) ->
             return callback err if err
             linked++
             callback()
       return callback new Error "Missing source, got #{JSON.stringify(options.source)}" unless options.source
-      return callback new Error "Missing destination, got #{JSON.stringify(options.destination)}" unless options.destination
+      return callback new Error "Missing target, got #{JSON.stringify(options.target)}" unless options.target
       options.mode ?= 0o0755
       do_mkdir = =>
         @mkdir
           ssh: options.ssh
-          destination: path.dirname options.destination
+          target: path.dirname options.target
         , (err, created) ->
           # It is possible to have collision if to symlink
           # have the same parent directory

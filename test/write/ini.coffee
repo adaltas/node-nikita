@@ -13,7 +13,7 @@ describe 'write_ini', ->
     mecano.write_ini
       ssh: ssh
       content: user: preference: color: 'rouge'
-      destination: "#{scratch}/user.ini"
+      target: "#{scratch}/user.ini"
     , (err, written) ->
       return next err if err
       written.should.be.true()
@@ -26,7 +26,7 @@ describe 'write_ini', ->
     mecano.write_ini
       ssh: ssh
       content: user: preference: color: 'rouge'
-      destination: "#{scratch}/user.ini"
+      target: "#{scratch}/user.ini"
       separator: ':'
     , (err, written) ->
       return next err if err
@@ -43,7 +43,7 @@ describe 'write_ini', ->
       mecano.write_ini
         ssh: ssh
         content: user: preference: color: 'violet'
-        destination: "#{scratch}/user.ini"
+        target: "#{scratch}/user.ini"
         merge: true
       , (err, written) ->
         return next err if err
@@ -57,7 +57,7 @@ describe 'write_ini', ->
     mecano.write_ini
       ssh: ssh
       content: user: preference: color: 'violet', age: undefined, gender: null
-      destination: "#{scratch}/user.ini"
+      target: "#{scratch}/user.ini"
       merge: true
     , (err, written) ->
       return next err if err
@@ -74,7 +74,7 @@ describe 'write_ini', ->
       mecano.write_ini
         ssh: ssh
         content: user: preference: color: null
-        destination: "#{scratch}/user.ini"
+        target: "#{scratch}/user.ini"
         merge: true
       , (err, written) ->
         return next err if err
@@ -91,7 +91,7 @@ describe 'write_ini', ->
       mecano.write_ini
         ssh: ssh
         content: user: preference: color: undefined
-        destination: "#{scratch}/user.ini"
+        target: "#{scratch}/user.ini"
         merge: true
       , (err, written) ->
         return next err if err
@@ -103,7 +103,7 @@ describe 'write_ini', ->
       ssh: ssh
       content: user: preference: color: true
       stringify: misc.ini.stringify_square_then_curly
-      destination: "#{scratch}/user.ini"
+      target: "#{scratch}/user.ini"
       merge: true
     , (err, written) ->
       return next err if err

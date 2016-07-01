@@ -171,16 +171,16 @@ were executed with failure otherwise the callback `skip` is called.
 
 Work on the property `if_exists` in `options`. The value may 
 be a file path or an array of file paths. You could also set the
-value to `true`, in which case it will be set with the `destination`
+value to `true`, in which case it will be set with the `target`
 option.
 
 The callback `succeed` is called if all the provided paths 
 exists otherwise the callback `skip` is called.
 
       if_exists: (options, skip, succeed) ->
-        {ssh, if_exists, destination} = options
-        if typeof if_exists is 'boolean' and destination
-          if_exists = if if_exists then [destination] else null
+        {ssh, if_exists, target} = options
+        if typeof if_exists is 'boolean' and target
+          if_exists = if if_exists then [target] else null
         each(if_exists)
         .call (if_exists, next) ->
           fs.exists ssh, if_exists, (err, exists) ->
@@ -196,16 +196,16 @@ exists otherwise the callback `skip` is called.
 
 Work on the property `unless_exists` in `options`. The value may 
 be a file path or an array of file paths. You could also set the
-value to `true`, in which case it will be set with the `destination`
+value to `true`, in which case it will be set with the `target`
 option.
 
 The callback `succeed` is called if none of the provided paths 
 exists otherwise the callback `skip` is called.
 
       unless_exists: (options, skip, succeed) ->
-        {ssh, unless_exists, destination} = options
-        if typeof unless_exists is 'boolean' and destination
-          unless_exists = if unless_exists then [destination] else null
+        {ssh, unless_exists, target} = options
+        if typeof unless_exists is 'boolean' and target
+          unless_exists = if unless_exists then [target] else null
         each(unless_exists)
         .call (unless_exists, next) ->
           fs.exists ssh, unless_exists, (err, exists) ->

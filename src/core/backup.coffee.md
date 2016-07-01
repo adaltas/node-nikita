@@ -18,7 +18,7 @@ Commons backup functions provided by backmeup. For additional information, pleas
 *   `source` (string)   
     file or directory (path) to copy. Error if source and cmd are both _null_ or _undefined_   
     default value: _undefined_   
-*   `destination` (string)
+*   `target` (string)
     where the file or directory is copied. Error if _null_ or _undefined_   
     default value: _undefined_   
 *   `filter` (string | array)   
@@ -64,7 +64,7 @@ backmeup({
   ssh: ssh_connect
   source: '/etc'     
   filter: 'myfile' | '*.log' | ['file1, 'file2', 'toto/titi'] 
-  destination: '/tmp'
+  target: '/tmp'
   archive: false
   algorithm: 'gzip' | 'bzip2' | 'xz' | 'none'
   extension: 'tgz'

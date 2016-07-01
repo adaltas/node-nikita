@@ -90,10 +90,10 @@ describe 'unless_exists', ->
       () -> false.should.be.true()
       -> next()
 
-  they 'default to destination if true', (ssh, next) ->
+  they 'default to target if true', (ssh, next) ->
     conditions.unless_exists
       ssh: ssh
-      destination: __dirname
+      target: __dirname
       unless_exists: true
       -> next()
       () -> false.should.be.true()

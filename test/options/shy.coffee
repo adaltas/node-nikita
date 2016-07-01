@@ -10,11 +10,11 @@ describe 'options shy', ->
   it 'dont alter status', (next) ->
     mecano
     .write
-      destination: "#{scratch}/file_1"
+      target: "#{scratch}/file_1"
       content: 'abc'
       shy: true
     .write
-      destination: "#{scratch}/file_1"
+      target: "#{scratch}/file_1"
       content: 'abc'
     .then (err, status) ->
       status.should.be.false() unless err
@@ -23,7 +23,7 @@ describe 'options shy', ->
   it 'callback receive status', (next) ->
     mecano
     .write
-      destination: "#{scratch}/file_1"
+      target: "#{scratch}/file_1"
       content: 'abc'
       shy: true
     , (err, status) ->
@@ -36,7 +36,7 @@ describe 'options shy', ->
     mecano
     .call ->
       @write
-        destination: "#{scratch}/file_1"
+        target: "#{scratch}/file_1"
         content: 'abc'
         shy: true
     .then (err, status) ->
@@ -47,11 +47,11 @@ describe 'options shy', ->
     count = 0
     mecano
     .write [
-      destination: "#{scratch}/file_1"
+      target: "#{scratch}/file_1"
       content: 'abc'
       shy: true
     ,
-      destination: "#{scratch}/file_1"
+      target: "#{scratch}/file_1"
       content: 'abc'
       shy: false
     ], (err, status) ->
@@ -62,11 +62,11 @@ describe 'options shy', ->
     .then (err, status) ->
       status.should.be.false()
     .write [
-      destination: "#{scratch}/file_2"
+      target: "#{scratch}/file_2"
       content: 'abc'
       shy: false
     ,
-      destination: "#{scratch}/file_2"
+      target: "#{scratch}/file_2"
       content: 'abc'
       shy: true
     ], (err, status) ->

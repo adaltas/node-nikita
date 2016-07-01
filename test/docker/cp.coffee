@@ -27,7 +27,7 @@ describe 'docker cp', ->
       rm: false
     .docker_cp
       source: 'mecano_extract:/etc/apk/repositories'
-      destination: "#{scratch}/a_file"
+      target: "#{scratch}/a_file"
     , (err, status) ->
       status.should.be.true() unless err
     .call (_, callback) ->
@@ -50,7 +50,7 @@ describe 'docker cp', ->
       rm: false
     .docker_cp
       source: 'mecano_extract:/etc/apk/repositories'
-      destination: "#{scratch}"
+      target: "#{scratch}"
     , (err, status) ->
       status.should.be.true() unless err
     .call (_, callback) ->
@@ -73,12 +73,12 @@ describe 'docker cp', ->
       rm: false
     .docker_cp
       source: "#{__filename}"
-      destination: "mecano_extract:/root/a_file"
+      target: "mecano_extract:/root/a_file"
     , (err, status) ->
       status.should.be.true() unless err
     .docker_cp
       source: 'mecano_extract:/root/a_file'
-      destination: "#{scratch}"
+      target: "#{scratch}"
     .call (_, callback) ->
       fs.exists ssh, "#{scratch}/a_file", (err, exists) ->
         exists.should.be.true() unless err
@@ -99,12 +99,12 @@ describe 'docker cp', ->
       rm: false
     .docker_cp
       source: "#{__filename}"
-      destination: "mecano_extract:/root"
+      target: "mecano_extract:/root"
     , (err, status) ->
       status.should.be.true() unless err
     .docker_cp
       source: "mecano_extract:/root/#{path.basename __filename}"
-      destination: "#{scratch}"
+      target: "#{scratch}"
     .call (_, callback) ->
       fs.exists ssh, "#{scratch}/#{path.basename __filename}", (err, exists) ->
         exists.should.be.true() unless err

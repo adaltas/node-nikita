@@ -8,13 +8,13 @@ provided while the value will be removed if `null` is provided.
 
 The `write_yaml` function rely on the `write` function and accept all of its
 options. It introduces the `merge` option which instruct to read the
-destination file if it exists and merge its parsed object with the one
+target file if it exists and merge its parsed object with the one
 provided in the `content` option.
 
 ## Options
 
 *   `append`
-    Append the content to the destination file. If destination does not exist,
+    Append the content to the target file. If target does not exist,
     the file will be created. When used with the `match` and `replace` options,
     it will append the `replace` value at the end of the file if no match if
     found and if the value is a string.
@@ -23,7 +23,7 @@ provided in the `content` option.
     timestamp if value is not a string.
 *   `content`
     Object to stringify.
-*   `destination`
+*   `target`
     File path where to write content to or a callback.
 *   `from`
     Replace from after this marker, a string or a regular expression.
@@ -35,7 +35,7 @@ provided in the `content` option.
 *   `match`
     Replace this marker, a string or a regular expression.
 *   `merge`
-    Read the destination if it exists and merge its content.
+    Read the target if it exists and merge its content.
 *   `replace`
     The content to be inserted, used conjointly with the from, to or match
     options.
@@ -68,7 +68,7 @@ require('mecano').write_yaml({
   content: {
     'my_key': 'my value'
   },
-  destination: '/tmp/my_file'
+  target: '/tmp/my_file'
 }, function(err, written){
   console.log(err ? err.message : 'Content was updated: ' + !!written);
 });
@@ -78,19 +78,19 @@ require('mecano').write_yaml({
 
     module.exports = (options, callback) ->
       options.log message: "Entering write_yaml", level: 'DEBUG', module: 'mecano/lib/write'
-      {merge, destination, content, ssh} = options
+      {merge, target, content, ssh} = options
       options.clean ?= true
       # Validate parameters
       return callback Error 'Missing content' unless content
-      return callback Error 'Missing destination' unless destination
+      return callback Error 'Missing target' unless target
       # Start real work
       do_get = ->
         return do_write() unless merge
         options.log message: "Get content for merge", level: 'DEBUG', module: 'mecano/lib/write_yaml'
-        fs.exists ssh, destination, (err, exists) ->
+        fs.exists ssh, target, (err, exists) ->
           return callback err if err
           return do_write() unless exists
-          fs.readFile ssh, destination, 'ascii', (err, c) ->
+          fs.readFile ssh, target, 'ascii', (err, c) ->
             return callback err if err and err.code isnt 'ENOENT'
             try
               yaml.safeLoadAll c, (data) ->

@@ -21,7 +21,7 @@ describe 'docker load', ->
       ssh: ssh
       docker: config.docker
     .remove
-      destination: "#{scratch}/mecano_load.tar"
+      target: "#{scratch}/mecano_load.tar"
     .docker_build
       image: 'mecano/load_test'
       tag: 'latest'
@@ -48,7 +48,7 @@ describe 'docker load', ->
       ssh: ssh
       docker: config.docker
     .remove
-      destination: "#{scratch}/mecano_load.tar"
+      target: "#{scratch}/mecano_load.tar"
     .docker_build
       image: 'mecano/load_test'
       tag: 'latest'
@@ -73,7 +73,7 @@ describe 'docker load', ->
       ssh: ssh
       docker: config.docker
     .remove
-      destination: "#{scratch}/mecano_load.tar"
+      target: "#{scratch}/mecano_load.tar"
     .docker_rmi
       image: 'mecano/load_test:latest'
     .docker_build

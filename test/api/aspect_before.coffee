@@ -99,13 +99,13 @@ describe 'api before', ->
       .call ->
         history.push 'call 1'
       .async_fn
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
       , ->
         history.push 'async 1'
       .call ->
         history.push 'call 2'
       .async_fn
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
       , ->
         history.push 'async 2'
       .call ->
@@ -129,13 +129,13 @@ describe 'api before', ->
       .call ->
         history.push 'call 1'
       .async_fn
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
       , ->
         history.push 'async 1'
       .call ->
         history.push 'call 2'
       .async_fn
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
       , ->
         history.push 'async 2'
       .call ->

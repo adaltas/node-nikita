@@ -60,7 +60,7 @@ describe 'file', ->
     they 'a dir', (ssh, next) ->
       mecano.mkdir
         ssh: ssh
-        destination: "#{scratch}/remove_dir"
+        target: "#{scratch}/remove_dir"
       , (err, created) ->
         return next err if err
         misc.file.remove ssh, "#{scratch}/remove_dir", (err) ->

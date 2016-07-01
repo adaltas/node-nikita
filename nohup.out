@@ -1,0 +1,30 @@
+events.js:160
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE 0.0.0.0:8080
+    at Object.exports._errnoException (util.js:896:11)
+    at exports._exceptionWithHostPort (util.js:919:20)
+    at Server._listen2 (net.js:1246:14)
+    at listen (net.js:1282:10)
+    at net.js:1392:9
+    at _combinedTickCallback (internal/process/next_tick.js:77:11)
+    at process._tickCallback (internal/process/next_tick.js:98:9)
+    at Function.Module.runMain (module.js:577:11)
+    at startup (node.js:159:18)
+    at node.js:444:3
+events.js:160
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE 0.0.0.0:8080
+    at Object.exports._errnoException (util.js:896:11)
+    at exports._exceptionWithHostPort (util.js:919:20)
+    at Server._listen2 (net.js:1246:14)
+    at listen (net.js:1282:10)
+    at net.js:1392:9
+    at _combinedTickCallback (internal/process/next_tick.js:77:11)
+    at process._tickCallback (internal/process/next_tick.js:98:9)
+    at Function.Module.runMain (module.js:577:11)
+    at startup (node.js:159:18)
+    at node.js:444:3

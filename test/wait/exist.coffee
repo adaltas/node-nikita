@@ -12,7 +12,7 @@ describe 'wait exist', ->
     mecano
       ssh: ssh
     .wait_exist
-      destination: "#{scratch}"
+      target: "#{scratch}"
     , (err, status) ->
       status.should.be.false()
     .call ->
@@ -20,7 +20,7 @@ describe 'wait exist', ->
         fs.mkdir ssh, "#{scratch}/a_file", -> # ok
       , 100
     .wait_exist
-      destination: "#{scratch}/a_file"
+      target: "#{scratch}/a_file"
       interval: 60
     , (err, status) ->
       status.should.be.true()

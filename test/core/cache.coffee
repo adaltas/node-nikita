@@ -75,23 +75,23 @@ describe 'cache', ->
           ssh: ssh
         .on 'text', (log) -> logs.push "[#{log.level}] #{log.message}"
         .write
-          destination: "#{scratch}/source"
+          target: "#{scratch}/source"
           content: "okay"
         .write
-          destination: "#{scratch}/destination"
+          target: "#{scratch}/target"
           content: "okay"
         # In http mode, md5 value will not be calculated from source
         .cache
           source: 'http://localhost:12345/my_file'
-          cache_file: "#{scratch}/destination"
+          cache_file: "#{scratch}/target"
           md5: true
         , (err, status, file) ->
-          status.should.be.false() unless err # because destination exists
+          status.should.be.false() unless err # because target exists
           ("[WARN] Bypass source hash computation for non-file protocols" in logs).should.be.true() unless err
           logs = []
         .cache
           source: 'http://localhost:12345/my_file'
-          cache_file: "#{scratch}/destination"
+          cache_file: "#{scratch}/target"
           md5: 'df8fede7ff71608e24a5576326e41c75'
         , (err, status, file) ->
           status.should.be.false() unless err
@@ -99,7 +99,7 @@ describe 'cache', ->
           logs = []
         .cache
           source: 'http://localhost:12345/my_file'
-          cache_file: "#{scratch}/destination"
+          cache_file: "#{scratch}/target"
           md5: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
         , (err, status, file) ->
           status.should.be.true() unless err
@@ -137,15 +137,15 @@ describe 'cache', ->
           ssh: ssh
         .on 'text', (log) -> logs.push "[#{log.level}] #{log.message}"
         .write
-          destination: "#{scratch}/source"
+          target: "#{scratch}/source"
           content: "okay"
         .write
-          destination: "#{scratch}/destination"
+          target: "#{scratch}/target"
           content: "okay"
         # In file mode, md5 value will be calculated from source
         .cache
           source: "#{scratch}/source"
-          cache_file: "#{scratch}/destination"
+          cache_file: "#{scratch}/target"
           md5: true
         , (err, status, file) ->
           status.should.be.false() unless err
@@ -153,7 +153,7 @@ describe 'cache', ->
           logs = []
         .cache
           source: "#{scratch}/source"
-          cache_file: "#{scratch}/destination"
+          cache_file: "#{scratch}/target"
           md5: 'df8fede7ff71608e24a5576326e41c75'
         , (err, status, file) ->
           status.should.be.false() unless err
@@ -161,7 +161,7 @@ describe 'cache', ->
           logs = []
         .cache
           source: "#{scratch}/source"
-          cache_file: "#{scratch}/destination"
+          cache_file: "#{scratch}/target"
           md5: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
         , (err, status, file) ->
           status.should.be.true() unless err

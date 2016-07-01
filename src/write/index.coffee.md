@@ -6,14 +6,14 @@ Write a file or a portion of an existing file.
 ## Options
 
 *   `append`   
-    Append the content to the destination file. If destination does not exist,
+    Append the content to the target file. If target does not exist,
     the file will be created.   
 *   `backup`   
     Create a backup, append a provided string to the filename extension or a
     timestamp if value is not a string.   
 *   `content`   
     Text to be written, an alternative to source which reference a file.   
-*   `destination`   
+*   `target`   
     File path where to write content to.   
 *   `diff` (boolean | function)   
     Print diff information, pass a readable diff and the result of [jsdiff.diffLines][diffLines] as
@@ -96,7 +96,7 @@ require('mecano').write({
   from: '# from\n',
   to: '# to',
   replace: 'my friend\n',
-  destination: scratch+'/a_file'
+  target: scratch+'/a_file'
 }, function(err, written){
   // '# here we are\n# from\nmy friend\n# to\nyou coquin'
 })
@@ -109,7 +109,7 @@ require('mecano').write({
   content: 'email=david(at)adaltas(dot)com\nusername=root',
   match: /(username)=(.*)/,
   replace: '$1=david (was $2)',
-  destination: scratch+'/a_file'
+  target: scratch+'/a_file'
 }, function(err, written){
   // '# email=david(at)adaltas(dot)com\nusername=david (was root)'
 })
@@ -122,7 +122,7 @@ require('mecano').write({
   content: 'here we are\nlets try to replace that one\nyou coquin',
   match: /(.*try) (.*)/,
   replace: ['my friend, $1'],
-  destination: scratch+'/a_file'
+  target: scratch+'/a_file'
 }, function(err, written){
   // '# here we are\nmy friend, lets try\nyou coquin'
 })
@@ -135,7 +135,7 @@ require('mecano').write({
   content: '#A config file\n#property=30\nproperty=10\n#End of Config',
   match: /^property=.*$/mg,
   replace: 'property=50',
-  destination: scratch+'/a_file'
+  target: scratch+'/a_file'
 }, function(err, written){
   // '# A config file\n#property=30\nproperty=50\n#End of Config'
 })
@@ -148,7 +148,7 @@ require('mecano').write({
   content: '#A config file\n#property=30\nproperty=10\n#End of Config',
   match: /^.*comment.*$/mg,
   replace: '# comment',
-  destination: scratch+'/a_file',
+  target: scratch+'/a_file',
   append: 'property'
 }, function(err, written){
   // '# A config file\n#property=30\n# comment\nproperty=50\n# comment\n#End of Config'
@@ -165,7 +165,7 @@ require('mecano').write({
     {match: /^email.*$/mg, replace: ''},
     {match: /^(friends).*$/mg, replace: '$1: me'}
   ],
-  destination: scratch+'/a_file'
+  target: scratch+'/a_file'
 }, function(err, written){
   // 'username: you\n\nfriends: me'
 })
@@ -179,9 +179,9 @@ require('mecano').write({
       # Validate parameters
       return callback Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?
       return callback Error 'Define either source or content' if options.source and options.content
-      return callback Error 'Missing destination' unless options.destination
+      return callback Error 'Missing target' unless options.target
       options.log message: "Source is \"#{options.source}\"", level: 'DEBUG', module: 'mecano/lib/write'
-      options.log message: "Destination is \"#{options.destination}\"", level: 'DEBUG', module: 'mecano/lib/write'
+      options.log message: "Destination is \"#{options.target}\"", level: 'DEBUG', module: 'mecano/lib/write'
       options.content = options.content.toString() if options.content and Buffer.isBuffer options.content
       options.diff ?= options.diff or !!options.stdout
       options.engine ?= 'nunjunks'
@@ -195,8 +195,8 @@ require('mecano').write({
           options.eof = "\r\n"
         when 'unicode'
           options.eof = "\u2028"
-      destination  = null
-      destinationHash = null
+      target  = null
+      targetHash = null
       options.write ?= []
       if options.from? or options.to? or options.match? or options.replace? or options.before?
         options.write.push
@@ -217,7 +217,7 @@ require('mecano').write({
           return callback()
         # Option "local_source" force to bypass the ssh
         # connection, use by the upload function
-        source = options.source or options.destination
+        source = options.source or options.target
         options.log message: "Force local source is \"#{if options.local_source then 'true' else 'false'}\"", level: 'DEBUG', module: 'mecano/lib/write'
         ssh = if options.local_source then null else options.ssh
         fs.exists ssh, source, (err, exists) ->
@@ -231,33 +231,33 @@ require('mecano').write({
             return callback err if err
             options.content = src
             callback()
-      destinationStat = null
-      @call (_, callback) -> # read destination
-        # no need to test changes if destination is a callback
-        return callback() if typeof options.destination is 'function'
+      targetStat = null
+      @call (_, callback) -> # read target
+        # no need to test changes if target is a callback
+        return callback() if typeof options.target is 'function'
         exists = ->
-          options.log message: "Stat destination", level: 'DEBUG', module: 'mecano/lib/write'
-          fs.lstat options.ssh, options.destination, (err, stat) ->
+          options.log message: "Stat target", level: 'DEBUG', module: 'mecano/lib/write'
+          fs.lstat options.ssh, options.target, (err, stat) ->
             return do_mkdir() if err?.code is 'ENOENT'
             return callback err if err
-            destinationStat = stat
+            targetStat = stat
             if stat.isDirectory()
-              options.destination = "#{options.destination}/#{path.basename options.source}"
-              options.log message: "Destination is a directory and is now \"options.destination\"", level: 'INFO', module: 'mecano/lib/write'
+              options.target = "#{options.target}/#{path.basename options.source}"
+              options.log message: "Destination is a directory and is now \"options.target\"", level: 'INFO', module: 'mecano/lib/write'
               # Destination is the parent directory, let's see if the file exist inside
-              fs.stat options.ssh, options.destination, (err, stat) ->
+              fs.stat options.ssh, options.target, (err, stat) ->
                 if err?.code is 'ENOENT'
-                  options.log message: "New destination does not exist", level: 'INFO', module: 'mecano/lib/write'
+                  options.log message: "New target does not exist", level: 'INFO', module: 'mecano/lib/write'
                   return callback()
                 return callback err if err
-                return callback new Error "Destination is not a file: #{options.destination}" unless stat.isFile()
-                options.log message: "New destination exist", level: 'INFO', module: 'mecano/lib/write'
-                destinationStat = stat
+                return callback new Error "Destination is not a file: #{options.target}" unless stat.isFile()
+                options.log message: "New target exist", level: 'INFO', module: 'mecano/lib/write'
+                targetStat = stat
                 do_read()
             else if stat.isSymbolicLink()
               options.log message: "Destination is a symlink", level: 'INFO', module: 'mecano/lib/write'
               return do_read() unless options.unlink
-              fs.unlink options.ssh, options.destination, (err, stat) ->
+              fs.unlink options.ssh, options.target, (err, stat) ->
                 return callback err if err
                 callback() # Dont go to mkdir since parent dir exists
             else if stat.isFile()
@@ -267,21 +267,21 @@ require('mecano').write({
               callback Error "Invalid File Type Destination"
         do_mkdir = =>
           @mkdir
-            destination: path.dirname options.destination
+            target: path.dirname options.target
             uid: options.uid
             gid: options.gid
             mode: options.mode
             # Modify uid and gid if the dir does not yet exists
-            unless_exists: path.dirname options.destination
+            unless_exists: path.dirname options.target
           , (err, created) ->
             return callback err if err
             callback()
         do_read = ->
-          options.log message: "Reading destination", level: 'DEBUG', module: 'mecano/lib/write'
-          fs.readFile options.ssh, options.destination, 'utf8', (err, dest) ->
+          options.log message: "Reading target", level: 'DEBUG', module: 'mecano/lib/write'
+          fs.readFile options.ssh, options.target, 'utf8', (err, dest) ->
             return callback err if err
-            destination = dest # only used by diff
-            destinationHash = string.hash dest
+            target = dest # only used by diff
+            targetHash = string.hash dest
             callback()
         exists()
       @call  -> # render
@@ -309,50 +309,50 @@ require('mecano').write({
           options.log message: "Add eof", level: 'WARN', module: 'mecano/lib/write'
           options.content += options.eof
       @call (_, callback) -> # diff
-        return callback() if destinationHash is string.hash options.content
-        options.log message: "File content has changed: #{options.destination}", level: 'WARN', module: 'mecano/lib/write'
-        {raw, text} = diff destination, options.content, options
+        return callback() if targetHash is string.hash options.content
+        options.log message: "File content has changed: #{options.target}", level: 'WARN', module: 'mecano/lib/write'
+        {raw, text} = diff target, options.content, options
         options.diff text, raw if typeof options.diff is 'function'
         options.log message: text, type: 'diff', level: 'INFO', module: 'mecano/lib/write'
         callback null, true
       @call -> # backup
         return unless @status()
-        return unless options.backup and destinationHash
+        return unless options.backup and targetHash
         options.log message: "Create backup", level: 'INFO', module: 'mecano/lib/write'
         backup = if typeof options.backup is 'string' then options.backup else ".#{Date.now()}"
         @copy
           ssh: options.ssh
-          source: options.destination
-          destination: "#{options.destination}#{backup}"
+          source: options.target
+          target: "#{options.target}#{backup}"
       @call (_, callback) -> # write
         return callback() unless @status()
-        if typeof options.destination is 'function'
-          options.log message: "Write destination with user function", level: 'INFO', module: 'mecano/lib/write'
-          options.destination options.content
+        if typeof options.target is 'function'
+          options.log message: "Write target with user function", level: 'INFO', module: 'mecano/lib/write'
+          options.target options.content
           return callback()
-        options.log message: "Write destination", level: 'INFO', module: 'mecano/lib/write'
+        options.log message: "Write target", level: 'INFO', module: 'mecano/lib/write'
         options.flags ?= 'a' if options.append
         # Ownership and permission are also handled
         uid_gid options, (err) ->
           return callback err if err
-          fs.writeFile options.ssh, options.destination, options.content, options, (err) ->
+          fs.writeFile options.ssh, options.target, options.content, options, (err) ->
             return callback err if err
             options.log message: "File written", level: 'INFO', module: 'mecano/lib/write'
             modified = true
             callback()
       @chown
-        destination: options.destination
-        stat: destinationStat
+        target: options.target
+        stat: targetStat
         uid: options.uid
         gid: options.gid
         if: options.uid? or options.gid?
-        unless: options.destination is 'function'
+        unless: options.target is 'function'
       @chmod
-        destination: options.destination
-        stat: destinationStat
+        target: options.target
+        stat: targetStat
         mode: options.mode
         if: options.mode?
-        unless: options.destination is 'function'
+        unless: options.target is 'function'
       @then callback
 
 ## Dependencies

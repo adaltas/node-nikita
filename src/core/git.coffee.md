@@ -7,7 +7,7 @@ Create and synchronize a git repository.
 
 *   `source`   
     Git source repository address.   
-*   `destination`   
+*   `target`   
     Directory where to clone the repository.   
 *   `revision`   
     Git revision, branch or tag.   
@@ -36,7 +36,7 @@ HEAD revision.
 ```javascript
 require('mecano').git({
   source: 'https://github.com/wdavidw/node-mecano.git'
-  destination: '/tmp/mecano'
+  target: '/tmp/mecano'
 }, function(err, synchronized){
   console.log(err ? err.message : 'Repo was synchronized: ' + synchronized);
 });
@@ -53,18 +53,18 @@ require('mecano').git({
       repo_uptodate = false
       @
       .call (_, callback) ->
-        fs.exists options.ssh, options.destination, (err, exists) ->
+        fs.exists options.ssh, options.target, (err, exists) ->
           return callback err if err
           repo_exists = exists
           return callback() unless exists # todo, isolate inside call when they receive conditions
-          # return callback new Error "Destination not a directory, got #{options.destination}" unless stat.isDirectory()
-          gitDir = "#{options.destination}/.git"
+          # return callback new Error "Destination not a directory, got #{options.target}" unless stat.isDirectory()
+          gitDir = "#{options.target}/.git"
           fs.exists options.ssh, gitDir, (err, exists) ->
             return callback Error "Not a git repository" unless exists
             callback()
       .execute
-        cmd: "git clone #{options.source} #{options.destination}"
-        cwd: path.dirname options.destination
+        cmd: "git clone #{options.source} #{options.target}"
+        cwd: path.dirname options.target
         unless: -> repo_exists
       .execute
         cmd: """
@@ -75,7 +75,7 @@ require('mecano').git({
         if [ $current != $target ]; then exit 3; fi
         """
         # stdout: process.stdout
-        cwd: options.destination
+        cwd: options.target
         trap: true
         code_skipped: 3
         if: -> repo_exists
@@ -85,7 +85,7 @@ require('mecano').git({
         repo_uptodate = uptodate
       .execute
         cmd: "git checkout #{options.revision}"
-        cwd: options.destination
+        cwd: options.target
         unless: -> repo_uptodate
       .then (err, status) ->
         callback err, status

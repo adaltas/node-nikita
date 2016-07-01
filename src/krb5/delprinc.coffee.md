@@ -55,7 +55,7 @@ require('mecano').krb5_delrinc({
         cmd: cmd_delprinc
         if_exec: "#{cmd_getprinc} | grep '#{options.principal}'"
       @remove
-        destination: options.keytab
+        target: options.keytab
         if: options.keytab
       @then callback
 

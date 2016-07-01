@@ -14,7 +14,7 @@ describe 'extract', ->
       ssh: ssh
     .extract
       source: "#{__dirname}/../resources/a_dir.tgz"
-      destination: scratch
+      target: scratch
     , (err, extracted) ->
       extracted.should.be.true()
     .then next
@@ -24,7 +24,7 @@ describe 'extract', ->
       ssh: ssh
     .extract
       source: "#{__dirname}/../resources/a_dir.zip"
-      destination: scratch
+      target: scratch
     , (err, extracted) ->
       extracted.should.be.true()
     .then next
@@ -34,7 +34,7 @@ describe 'extract', ->
       ssh: ssh
     .extract
       source: "#{__dirname}/../resources/a_dir.tar.bz2"
-      destination: scratch
+      target: scratch
     , (err, extracted) ->
       extracted.should.be.true()
     .then next
@@ -44,7 +44,7 @@ describe 'extract', ->
       ssh: ssh
     .extract
       source: "#{__dirname}/../resources/a_dir.tar.xz"
-      destination: scratch
+      target: scratch
     , (err, extracted) ->
       extracted.should.be.true()
     .then next
@@ -55,14 +55,14 @@ describe 'extract', ->
       ssh: ssh
     .extract
       source: "#{__dirname}/../resources/a_dir.tgz"
-      destination: scratch
+      target: scratch
       creates: "#{scratch}/oh_no"
     .then (err, extracted) ->
       err.message.should.eql "Failed to create 'oh_no'"
       # Test with valid creates option
     .extract
       source: "#{__dirname}/../resources/a_dir.tgz"
-      destination: scratch
+      target: scratch
       creates: "#{scratch}/a_dir"
     , (err, extracted) ->
       extracted.should.be.true()
@@ -74,7 +74,7 @@ describe 'extract', ->
       ssh: ssh
     .extract
       source: "#{__dirname}/../resources/a_dir.tgz"
-      destination: scratch
+      target: scratch
       unless_exists: __dirname
     , (err, extracted) ->
       return next err if err
@@ -103,7 +103,7 @@ describe 'extract', ->
       ssh: ssh
     .extract
       source: "#{__dirname}/../resources/a_dir.tgz"
-      destination: scratch
+      target: scratch
       strip: 1
     , (err, extracted) ->
       extracted.should.be.true()
@@ -118,7 +118,7 @@ describe 'extract', ->
       ssh: ssh
     .extract
       source: "#{__dirname}/../resources/a_dir.tgz"
-      destination: scratch
+      target: scratch
       strip: 2
     , (err, extracted) ->
       extracted.should.be.true()

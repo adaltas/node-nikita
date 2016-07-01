@@ -17,7 +17,7 @@ of the directory to create.
     Default to "0755".   
 *   `directory`   
     Path or array of paths.   
-*   `destination`   
+*   `target`   
     Alias for `directory`.   
 *   `exclude`   
     Regular expression.   
@@ -52,7 +52,7 @@ require('mecano')
 require('mecano')
 .mkdir({
   ssh: ssh,
-  destination: './some/dir',
+  target: './some/dir',
   uid: 'a_user',
   gid: 'a_group'
   mode: 0o0777 // or '777'
@@ -68,8 +68,8 @@ require('mecano')
       modified = false
       # Validate parameters
       # options = { directory: options } if typeof options is 'string'
-      options.destination = options.argument if options.argument?
-      options.directory ?= options.destination
+      options.target = options.argument if options.argument?
+      options.directory ?= options.target
       options.directory ?= options.source
       return callback new Error 'Missing directory option' unless options.directory?
       options.cwd = process.cwd() if not options.ssh and (options.cwd is true or not options.cwd)
@@ -139,13 +139,13 @@ require('mecano')
         do_update = (stat) =>
           options.log message: "Directory already exists", level: 'INFO', module: 'mecano/lib/mkdir'
           @chown
-            destination: directory
+            target: directory
             stat: stat
             uid: options.uid
             gid: options.gid
             if: options.uid? or options.gid?
           @chmod
-            destination: directory
+            target: directory
             stat: stat
             mode: options.mode
             if: options.mode?

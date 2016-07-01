@@ -13,7 +13,7 @@ describe 'write_yaml', ->
     mecano.write_yaml
       ssh: ssh
       content: user: preference: color: 'rouge'
-      destination: "#{scratch}/user.yml"
+      target: "#{scratch}/user.yml"
     , (err, written) ->
       return next err if err
       written.should.be.true()
@@ -30,7 +30,7 @@ describe 'write_yaml', ->
       mecano.write_yaml
         ssh: ssh
         content: user: preference: language: 'french'
-        destination: "#{scratch}/user.yml"
+        target: "#{scratch}/user.yml"
         merge: true
       , (err, written) ->
         return next err if err
@@ -44,7 +44,7 @@ describe 'write_yaml', ->
     mecano.write_yaml
       ssh: ssh
       content: user: preference: color: 'violet', age: undefined, gender: null
-      destination: "#{scratch}/user.yml"
+      target: "#{scratch}/user.yml"
       merge: true
     , (err, written) ->
       return next err if err
@@ -63,7 +63,7 @@ describe 'write_yaml', ->
         content: user: preference:
           color: 'rouge'
           language: null
-        destination: "#{scratch}/user.yml"
+        target: "#{scratch}/user.yml"
         merge: true
       , (err, written) ->
         return next err if err
@@ -82,7 +82,7 @@ describe 'write_yaml', ->
         content: user: preference:
           language: 'node'
           name: null
-        destination: "#{scratch}/user.yml"
+        target: "#{scratch}/user.yml"
         merge: true
       , (err, written) ->
         return next err if err
@@ -100,7 +100,7 @@ describe 'write_yaml', ->
         ssh: ssh
         content:
           group: null
-        destination: "#{scratch}/user.yml"
+        target: "#{scratch}/user.yml"
         merge: true
       , (err, written) ->
         return next err if err

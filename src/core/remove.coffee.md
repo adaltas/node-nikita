@@ -6,10 +6,10 @@ Recursively remove files, directories and links.
 
 ## Options
 
-*   `destination` (string|[string])      
+*   `target` (string|[string])      
     File, directory or glob (pattern matching based on wildcard characters).   
 *   `source` (alias)   
-    Alias for "destination".   
+    Alias for "target".   
 *   `ssh` (object|ssh2)   
     Run the action on a remote server using SSH, an ssh2 instance or an
     configuration object used to initialize the SSH connection.  
@@ -41,7 +41,7 @@ require('mecano')
 ```js
 require('mecano')
 .remove({
-  destination: './some/dir',
+  target: './some/dir',
   unless_exists: './some/file'
 }, function(err, removed){
   console.log(err ? err.message : "File removed: " + !!removed);
@@ -53,7 +53,7 @@ require('mecano')
 ```js
 require('mecano')
 .remove([
-  { destination: './some/dir', unless_exists: './some/file' },
+  { target: './some/dir', unless_exists: './some/file' },
   './some/file'
 ], function(err, removed){
   console.log(err ? err.message : 'File removed: ' + !!removed);
@@ -65,11 +65,11 @@ require('mecano')
     module.exports = (options, callback) ->
       options.log message: "Entering remove", level: 'DEBUG', module: 'mecano/lib/remove'
       # Validate parameters
-      options.destination = options.argument if options.argument?
-      options.destination ?= options.source
-      return callback Error "Missing option: \"destination\"" unless options.destination?
+      options.target = options.argument if options.argument?
+      options.target ?= options.source
+      return callback Error "Missing option: \"target\"" unless options.target?
       # Start real work
-      glob options.ssh, options.destination, (err, files) ->
+      glob options.ssh, options.target, (err, files) ->
         modified = false
         return callback err if err
         each files

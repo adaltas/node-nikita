@@ -28,18 +28,18 @@ describe 'api callback', ->
     m = mecano log: (msg) -> msgs.push msg if /\/file_\d/.test msg
     m
     .write
-      destination: "#{scratch}/a_file"
+      target: "#{scratch}/a_file"
       content: 'abc'
     , (err, written) ->
       return next err if err
       m.write
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
         content: 'def'
         append: true
       , (err, written) ->
         # ok
     .write
-      destination: "#{scratch}/a_file"
+      target: "#{scratch}/a_file"
       content: 'hij'
       append: true
     .then (err, changed) ->
@@ -54,7 +54,7 @@ describe 'api callback', ->
     it 'without parent', (next) ->
       mecano()
       .write
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
         content: 'abc'
       , (err, written) ->
         throw Error 'Catchme'

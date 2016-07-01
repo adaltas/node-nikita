@@ -99,19 +99,19 @@ require('mecano').krb5_delrinc({
           keytab[options.principal]? and (keytab[options.principal]?.kvno isnt princ.kvno or keytab[options.principal].mdate isnt princ.mdate)
       # Create keytab and add principal
       @mkdir
-        destination: "#{path.dirname options.keytab}"
+        target: "#{path.dirname options.keytab}"
         if: -> not keytab[options.principal]? or (keytab[options.principal]?.kvno isnt princ.kvno or keytab[options.principal].mdate isnt princ.mdate)
       @execute
         cmd: misc.kadmin options, "ktadd -k #{options.keytab} #{options.principal}"
         if: -> not keytab[options.principal]? or (keytab[options.principal]?.kvno isnt princ.kvno or keytab[options.principal].mdate isnt princ.mdate)
       # Keytab ownership and permissions
       @chown
-        destination: options.keytab
+        target: options.keytab
         uid: options.uid
         gid: options.gid
         if:  options.uid? or options.gid?
       @chmod
-        destination: options.keytab
+        target: options.keytab
         mode: options.mode
         if: options.mode?
 

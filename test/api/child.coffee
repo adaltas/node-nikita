@@ -14,7 +14,7 @@ describe 'api child', ->
       m
       .child()
       .touch
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
       .then (err, changed) ->
         touched++
         changed.should.be.true()
@@ -31,7 +31,7 @@ describe 'api child', ->
   #     m
   #     .child()
   #     .touch
-  #       destination: "#{scratch}/a_file"
+  #       target: "#{scratch}/a_file"
   #     .then (err, changed) ->
   #       touched++
   #       changed.should.be.true()

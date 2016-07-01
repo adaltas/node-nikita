@@ -14,14 +14,14 @@ describe 'move', ->
     .copy
       # ssh: ssh # copy not there yet
       source: "#{__dirname}/../resources/"
-      destination: "#{scratch}"
+      target: "#{scratch}"
     .move
       source: "#{scratch}/render.eco"
-      destination: "#{scratch}/moved.eco"
+      target: "#{scratch}/moved.eco"
     , (err, moved) ->
       return next err if err
       moved.should.be.true()
-      # The destination file should exists
+      # The target file should exists
       fs.exists ssh, "#{scratch}/moved.eco", (err, exists) ->
         exists.should.be.true()
         # The source file should no longer exists
@@ -35,14 +35,14 @@ describe 'move', ->
     .copy
       # ssh: ssh # copy not there yet
       source: "#{__dirname}/../resources/"
-      destination: "#{scratch}"
+      target: "#{scratch}"
     .move
       source: "#{scratch}/a_dir"
-      destination: "#{scratch}/moved"
+      target: "#{scratch}/moved"
     , (err, moved) ->
       return next err if err
       moved.should.be.true()
-      # The destination directory should exists
+      # The target directory should exists
       fs.exists ssh, "#{scratch}/moved", (err, exists) ->
         exists.should.be.true()
         # The source directory should no longer exists
@@ -55,22 +55,22 @@ describe 'move', ->
       ssh: ssh
     .write [
       content: "hello"
-      destination: "#{scratch}/src1.txt"
+      target: "#{scratch}/src1.txt"
     ,
       content: "hello"
-      destination: "#{scratch}/src2.txt"
+      target: "#{scratch}/src2.txt"
     ,
       content: "overwritten"
-      destination: "#{scratch}/dest.txt"
+      target: "#{scratch}/dest.txt"
     ]
     .move
       source: "#{scratch}/src1.txt"
-      destination: "#{scratch}/dest.txt"
+      target: "#{scratch}/dest.txt"
     , (err, moved) ->
       moved.should.be.true()
     .move # Move a file with the same content
       source: "#{scratch}/src2.txt"
-      destination: "#{scratch}/dest.txt"
+      target: "#{scratch}/dest.txt"
     , (err, moved) ->
       return next err if err
       moved.should.be.false()
@@ -87,14 +87,14 @@ describe 'move', ->
       ssh: ssh
     .write [
       content: "hello"
-      destination: "#{scratch}/src.txt"
+      target: "#{scratch}/src.txt"
     ,
       content: "hello"
-      destination: "#{scratch}/dest.txt"
+      target: "#{scratch}/dest.txt"
     ]
     .move
       source: "#{scratch}/src.txt"
-      destination: "#{scratch}/dest.txt"
+      target: "#{scratch}/dest.txt"
       force: 1
     , (err, moved) ->
       moved.should.be.true()

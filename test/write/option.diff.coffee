@@ -12,10 +12,10 @@ describe 'write options diff', ->
     mecano
       ssh: ssh
     .write
-      destination: "#{scratch}/file"
+      target: "#{scratch}/file"
       content: 'Testing diff\noriginal text'
     .write
-      destination: "#{scratch}/file"
+      target: "#{scratch}/file"
       content: 'Testing diff\nnew text'
       diff: (text, diff) ->
         diffcalled = true
@@ -35,10 +35,10 @@ describe 'write options diff', ->
       ssh: ssh
     .on 'diff', (log) -> logs.push log.message
     .write
-      destination: "#{scratch}/file"
+      target: "#{scratch}/file"
       content: 'Testing diff\noriginal text'
     .write
-      destination: "#{scratch}/file"
+      target: "#{scratch}/file"
       content: 'Testing diff\nnew text'
     .then (err) ->
       logs.should.eql [
@@ -54,7 +54,7 @@ describe 'write options diff', ->
     mecano
       ssh: ssh
     .write
-      destination: "#{scratch}/file"
+      target: "#{scratch}/file"
       content: new Buffer 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDMKgZ7/2BG9T0vCJT8qlaH1KJNLSqEiJDHZMirPdzVsbI8x1AiT0EO5D47aROAKXTimVY3YsFr2ETXbLxjFFDP64WqqJ0b+3s2leReNq7ld70pVn1m8npyAZKvUc4/uo7WVLm0A1/U1f+iW9eqpYPKN/BY/+Ta2fp6ui0KUtha3B0xMICD66OLwrnmoFmxElEohL4OLZe7rnOW2G9M6Gej+LO5SeJip0YfiG+ImKQ1ngmGxpuopUOvcT1La/1TGki2gEV4AEm4QHW0fZ4Bjz0tdMVPGexUHQW/si9RWF8tJPsoykUcvS6slpbmil2ls9e7tcT6F4KZUCJv9nn6lWSf hdfs@hadoop'
       diff: (diff) -> # we dont need diff argument
     .then next
@@ -65,10 +65,10 @@ describe 'write options diff', ->
       ssh: ssh
     .on 'diff', (log) -> logs.push log.message
     .write
-      destination: "#{scratch}/file"
+      target: "#{scratch}/file"
       content: ''
     .write
-      destination: "#{scratch}/file"
+      target: "#{scratch}/file"
       content: ''
     .then (err) ->
       logs.should.eql [''] unless err
@@ -78,7 +78,7 @@ describe 'write options diff', ->
     diff = null
     mecano.write
       ssh: ssh
-      destination: "#{scratch}/file"
+      target: "#{scratch}/file"
       content: 'some content'
       diff: (text, raw) -> diff = text
     , (err) ->

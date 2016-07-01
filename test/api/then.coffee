@@ -32,7 +32,7 @@ describe 'api then', ->
     d.run ->
       mecano
       .touch
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
       , (err) ->
         false
       .call (options, next) ->

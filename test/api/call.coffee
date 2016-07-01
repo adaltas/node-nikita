@@ -49,13 +49,13 @@ describe 'api call', ->
       touched = 0
       mecano
       .touch
-        destination: "#{scratch}/file_a"
+        target: "#{scratch}/file_a"
       , (err) ->
         touched++
       .call (options) ->
         called++
       .touch
-        destination: "#{scratch}/file_b"
+        target: "#{scratch}/file_b"
       , (err) ->
         touched++
       .then (err, status) ->
@@ -98,7 +98,7 @@ describe 'api call', ->
       touched = 0
       mecano
       .touch
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
       , (err) ->
         touched++
       .call (options, next) ->
@@ -106,7 +106,7 @@ describe 'api call', ->
           called++
           next()
       .touch
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
       , (err) ->
         touched++
       .then (err, status) ->
@@ -119,7 +119,7 @@ describe 'api call', ->
       touched = 0
       mecano
       .touch
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
       , (err) ->
         touched++
       .call (options, next) ->
@@ -128,7 +128,7 @@ describe 'api call', ->
       , (err, status) ->
         called++ unless err
       .touch
-        destination: "#{scratch}/a_file"
+        target: "#{scratch}/a_file"
       , (err) ->
         touched++
       .then (err, status) ->
@@ -158,7 +158,7 @@ describe 'api call', ->
       .call (options, next) ->
         @write
           content: 'ok'
-          destination: "#{scratch}/a_file"
+          target: "#{scratch}/a_file"
         , next
       .then (err, status) ->
         fs.readFile "#{scratch}/a_file", 'ascii', (err, content) ->
@@ -169,7 +169,7 @@ describe 'api call', ->
       .call (options, next) ->
         @write
           content: 'ok'
-          destination: "#{scratch}/a_file"
+          target: "#{scratch}/a_file"
         .then next
       .then (err, status) ->
         status.should.be.true()
@@ -181,7 +181,7 @@ describe 'api call', ->
       .call (options, next) ->
         @write
           content: 'ok'
-          destination: "#{scratch}/a_file"
+          target: "#{scratch}/a_file"
           if_exists: "#{scratch}/a_file"
         .then next
       .then (err, status) ->

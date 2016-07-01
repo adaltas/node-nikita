@@ -5,7 +5,7 @@ mecano = require '..'
 date = -> d = (new Date).toISOString()
 
 source = "#{__dirname}/mecano.coffee"
-destination = "#{__dirname}/../doc/index.md"
+target = "#{__dirname}/../doc/index.md"
 docs = """
 ---
 language: en
@@ -30,14 +30,14 @@ fs.readFile source, 'ascii', (err, content) ->
       code = code.split('\n').map((line)->line.substr(4)).join('\n')
       "\n```coffeescript\n#{code}\n```"
     docs += match[1]
-  fs.writeFile destination, docs, (err) ->
+  fs.writeFile target, docs, (err) ->
     return console.log err.message if err
     console.log 'Documentation generated'
-    destination = process.argv[2]
-    return unless destination
+    target = process.argv[2]
+    return unless target
     mecano.copy
       source: "#{__dirname}/../doc/index.md"
-      destination: destination
+      target: target
       force: true
     , (err, copied) ->
-      console.log "Documentation published: #{destination}"
+      console.log "Documentation published: #{target}"

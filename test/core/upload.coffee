@@ -16,7 +16,7 @@ describe 'upload', ->
         ssh: ssh
       .upload
         source: "#{__filename}"
-        destination: "#{scratch}/#{path.basename __filename}"
+        target: "#{scratch}/#{path.basename __filename}"
       , (err, status) ->
         status.should.be.true() unless err
       .call (_, callback) ->
@@ -25,7 +25,7 @@ describe 'upload', ->
           callback err
       .upload
         source: "#{__filename}"
-        destination: "#{scratch}/#{path.basename __filename}"
+        target: "#{scratch}/#{path.basename __filename}"
       , (err, status) ->
         status.should.be.false() unless err
       .then next
@@ -36,7 +36,7 @@ describe 'upload', ->
           ssh: ssh
         .upload
           source: "#{__filename}"
-          destination: "#{scratch}"
+          target: "#{scratch}"
         , (err, status) ->
           status.should.be.true() unless err
         .call (_, callback) ->
@@ -45,7 +45,7 @@ describe 'upload', ->
             callback err
         .upload
           source: "#{__filename}"
-          destination: "#{scratch}"
+          target: "#{scratch}"
         , (err, status) ->
           status.should.be.false() unless err
         .then next

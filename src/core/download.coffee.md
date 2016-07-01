@@ -8,8 +8,8 @@ In local mode (with an SSH connection), the `http` protocol is handled with the
 "jsftp" and the `file` protocol is handle with the native `fs` module.
 
 The behavior of download may be confusing wether you are running over SSH or
-not. It's philosophy mostly rely on the destination point of view. When download
-run, the destination is local, compared to the upload function where destination
+not. It's philosophy mostly rely on the target point of view. When download
+run, the target is local, compared to the upload function where target
 is remote.
 
 A checksum may provided with the option "sha1" or "md5" to validate the uploaded
@@ -41,10 +41,10 @@ calculated if neither md5 nor sha1 is provided
     Cache the file on the executing machine, equivalent to cache unless an ssh
     connection is provided. If a string is provided, it will be the cache path.   
     By default: basename of source   
-*   `destination` (path)   
+*   `target` (path)   
     Path where the file is downloaded.   
 *   `force` (boolean)   
-    Overwrite destination file if it exists.   
+    Overwrite target file if it exists.   
 *   `ssh` (object|ssh2)   
     Run the action on a remote server using SSH, an ssh2 instance or an
     configuration object used to initialize the SSH connection.   
@@ -63,9 +63,9 @@ calculated if neither md5 nor sha1 is provided
 *   `headers` (array)   
     Extra  header  to include in the request when sending HTTP to a server.   
 *   `uid` (string | int)   
-    UID of the destination. If specified, mecano will chown after download   
+    UID of the target. If specified, mecano will chown after download   
 *   `mode` (octal mode)   
-    Permissions of the destination. If specified, mecano will chmod after download   
+    Permissions of the target. If specified, mecano will chmod after download   
 *   `proxy` (string)   
     Use the specified HTTP proxy. If the port number is not specified, it is
     assumed at port 1080. See curl(1) man page.   
@@ -85,7 +85,7 @@ calculated if neither md5 nor sha1 is provided
 ```js
 require('mecano').download({
   source: 'file://path/to/something',
-  destination: 'node-sigar.tgz'
+  target: 'node-sigar.tgz'
 }, function(err, downloaded){
   console.log(err ? err.message : 'File was downloaded: ' + downloaded);
 });
@@ -96,7 +96,7 @@ require('mecano').download({
 ```coffee
 mecano.download
   source: 'https://github.com/wdavidw/node-mecano/tarball/v0.0.1'
-  destination: 'node-sigar.tgz'
+  target: 'node-sigar.tgz'
 , (err, downloaded) -> ...
 ```
 
@@ -105,7 +105,7 @@ mecano.download
 ```coffee
 mecano.download
   source: 'ftp://myhost.com:3334/wdavidw/node-mecano/tarball/v0.0.1'
-  destination: 'node-sigar.tgz'
+  target: 'node-sigar.tgz'
   user: 'johndoe',
   pass: '12345'
 , (err, downloaded) -> ...
@@ -116,7 +116,7 @@ mecano.download
     module.exports = (options) ->
       options.log message: "Entering download", level: 'DEBUG', module: 'mecano/lib/download'
       return callback new Error "Missing source: #{options.source}" unless options.source
-      return callback new Error "Missing destination: #{options.destination}" unless options.destination
+      return callback new Error "Missing target: #{options.target}" unless options.target
       options.source = options.source.substr 7 if /^file:\/\//.test options.source
       stageDestination = null
       if options.md5?
@@ -137,12 +137,12 @@ mecano.download
       # Disable caching if source is a local file and cache isnt exlicitly set by user
       options.cache = false if not options.cache? and source_url.protocol is null
       options.cache ?= !!(options.cache_dir or options.cache_file)
-      @call # Accelarator in case we know the destination signature
+      @call # Accelarator in case we know the target signature
         if: typeof source_hash is 'string'
         shy: true
         handler: (_, callback) ->
-          options.log message: "Shortcircuit check if provided hash match destination", level: 'WARN', module: 'mecano/lib/download'
-          file.hash options.ssh, options.destination, algo, (err, hash) =>
+          options.log message: "Shortcircuit check if provided hash match target", level: 'WARN', module: 'mecano/lib/download'
+          file.hash options.ssh, options.target, algo, (err, hash) =>
             err = null if err?.code is 'ENOENT'
             callback err, source_hash is hash
         , (err, end) ->
@@ -163,12 +163,12 @@ mecano.download
         options.source = file if options.cache
         source_url = url.parse options.source
       @call (_, callback) ->
-        ssh2fs.stat @options.ssh, options.destination, (err, stat) ->
+        ssh2fs.stat @options.ssh, options.target, (err, stat) ->
           return callback err if err and err.code isnt 'ENOENT'
           if stat?.isDirectory()
             options.log message: "Destination is a directory", level: 'DEBUG', module: 'mecano/lib/download'
-            options.destination = path.join options.destination, path.basename options.source
-          stageDestination = "#{options.destination}.#{Date.now()}#{Math.round(Math.random()*1000)}"
+            options.target = path.join options.target, path.basename options.source
+          stageDestination = "#{options.target}.#{Date.now()}#{Math.round(Math.random()*1000)}"
           callback()
       @call
         if: -> source_url.protocol in protocols_http
@@ -181,7 +181,7 @@ mecano.download
           options.log message: "Download file from url using curl", level: 'INFO', module: 'mecano/lib/download'
           @mkdir
             shy: true
-            destination: path.dirname stageDestination
+            target: path.dirname stageDestination
           @execute
             cmd: cmd
             shy: true
@@ -192,27 +192,27 @@ mecano.download
                 return callback Error "Invalid downloaded checksum, found '#{hash}' instead of '#{source_hash}'" if source_hash isnt hash
                 callback()
           @call (_, callback) ->
-            file.compare_hash null, stageDestination, options.ssh, options.destination, algo, (err, match, hash1, hash2) ->
-              options.log message: "Hash dont match, source is '#{hash1}' and destination is '#{hash2}'", level: 'WARN', module: 'mecano/lib/download' unless match
+            file.compare_hash null, stageDestination, options.ssh, options.target, algo, (err, match, hash1, hash2) ->
+              options.log message: "Hash dont match, source is '#{hash1}' and target is '#{hash2}'", level: 'WARN', module: 'mecano/lib/download' unless match
               options.log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'mecano/lib/download' if match
               callback err, not match
           @remove
             unless: -> @status -1
             shy: true
-            destination: stageDestination
+            target: stageDestination
       @call
         if: -> source_url.protocol not in protocols_http and not options.ssh
         handler: ->
           options.log message: "File Download without ssh (with or without cache)", level: 'DEBUG', module: 'mecano/lib/download'
           @call (_, callback) ->
-            file.compare_hash null, options.source, null, options.destination, algo, (err, match, hash1, hash2) ->
-              options.log message: "Hash dont match, source is '#{hash1}' and destination is '#{hash2}'", level: 'WARN', module: 'mecano/lib/download' unless match
+            file.compare_hash null, options.source, null, options.target, algo, (err, match, hash1, hash2) ->
+              options.log message: "Hash dont match, source is '#{hash1}' and target is '#{hash2}'", level: 'WARN', module: 'mecano/lib/download' unless match
               options.log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'mecano/lib/download' if match
               callback err, not match
           @mkdir
             if: -> @status -1
             shy: true
-            destination: path.dirname stageDestination
+            target: path.dirname stageDestination
           @call
             if: -> @status -2
             handler: (_, callback) ->
@@ -230,19 +230,19 @@ mecano.download
         handler: ->
           options.log message: "File Download with ssh (with or without cache)", level: 'DEBUG', module: 'mecano/lib/download'
           @call (_, callback) ->
-            file.compare_hash null, options.source, options.ssh, options.destination, algo, (err, match, hash1, hash2) ->
-              options.log message: "Hash dont match, source is '#{hash1}' and destination is '#{hash2}'", level: 'WARN', module: 'mecano/lib/download' unless match
+            file.compare_hash null, options.source, options.ssh, options.target, algo, (err, match, hash1, hash2) ->
+              options.log message: "Hash dont match, source is '#{hash1}' and target is '#{hash2}'", level: 'WARN', module: 'mecano/lib/download' unless match
               options.log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'mecano/lib/download' if match
               callback err, not match
           @mkdir
             if: -> @status -1
             shy: true
-            destination: path.dirname stageDestination
+            target: path.dirname stageDestination
           @call
             if: -> @status -2
             handler: (_, callback) ->
               options.log message: "Local source: '#{options.source}'", level: 'INFO', module: 'mecano/lib/download'
-              options.log message: "Remote destination: '#{stageDestination}'", level: 'INFO', module: 'mecano/lib/download'
+              options.log message: "Remote target: '#{stageDestination}'", level: 'INFO', module: 'mecano/lib/download'
               rs = fs.createReadStream options.source
               rs.on 'error', (err) ->
                 console.log 'rs on error', err
@@ -254,13 +254,13 @@ mecano.download
         @move
           if: @status()
           source: stageDestination
-          destination: options.destination
+          target: options.target
         @chmod
-          destination: options.destination
+          target: options.target
           mode: options.mode
           if: options.mode?
         @chown
-          destination: options.destination
+          target: options.target
           uid: options.uid
           gid: options.gid
           if: options.uid? or options.gid?
