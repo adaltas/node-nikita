@@ -32,6 +32,8 @@ provided in the `content` option.
     option.
 *   `indent`
     Number of space used for indentation. Default to 2.
+*   `lineWidth`. Default to 160
+    Number of max character before a new line is written.
 *   `match`
     Replace this marker, a string or a regular expression.
 *   `merge`
@@ -77,6 +79,7 @@ require('mecano').write_yaml({
 ## Source Code
 
     module.exports = (options, callback) ->
+      options.lineWidth ?= 160
       options.log message: "Entering write_yaml", level: 'DEBUG', module: 'mecano/lib/write'
       {merge, target, content, ssh} = options
       options.clean ?= true
@@ -106,7 +109,7 @@ require('mecano').write_yaml({
           misc.ini.clean content
         options.log message: "Serialize content", level: 'DEBUG', module: 'mecano/lib/write_yaml'
         try
-          options.content = yaml.safeDump options.content, noRefs:true
+          options.content = yaml.safeDump options.content, noRefs:true, lineWidth: options.lineWidth
           @write options, (err, written) ->
             callback err, written
       do_get()
