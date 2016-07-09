@@ -44,6 +44,26 @@ describe 'api register', ->
         status.should.be.true()
         mecano.unregister ['this', 'is', 'a', 'function']
         next err
+        
+    it 'namespace accept object', (next) ->
+      value_a = value_b = null
+      mecano.register 
+        namespace:
+          "": (options, callback) ->
+            value_a = options.value
+            callback null, true
+          "child": (options, callback) ->
+            value_b = options.value
+            callback null, true
+      mecano()
+      .namespace value: 'a'
+      .namespace.child value: 'b'
+      .then (err, status) ->
+        status.should.be.true()
+        value_a.should.eql 'a'
+        value_b.should.eql 'b'
+        mecano.unregister "namespace"
+        next err
     
     it 'namespace call function with children', (next) ->
       value_a = value_b = null
@@ -110,7 +130,6 @@ describe 'api register', ->
         @register 'my_function', (options) -> name = options.name
       .my_function name: 'callme'
       .then (err) ->
-        console.log err, name
         name.should.eql 'callme' unless err
         next err
     
@@ -124,6 +143,25 @@ describe 'api register', ->
       .then (err, status) ->
         status.should.be.true()
         mecano.unregister ['this', 'is', 'a', 'function']
+        next err
+    
+    it 'namespace accept object', (next) ->
+      value_a = value_b = null
+      mecano()
+      .register 
+        namespace:
+          "": (options, callback) ->
+            value_a = options.value
+            callback null, true
+          "child": (options, callback) ->
+            value_b = options.value
+            callback null, true
+      .namespace value: 'a'
+      .namespace.child value: 'b'
+      .then (err, status) ->
+        status.should.be.true()
+        value_a.should.eql 'a'
+        value_b.should.eql 'b'
         next err
     
     it 'namespace call function with children', (next) ->

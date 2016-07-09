@@ -98,19 +98,27 @@
       configurable: true
       enumerable: false
       get: -> (name, handler) ->
-        return module.exports.unregister name unless handler
-        # throw Error "Function already defined '#{name}'" if module.exports.registered name
-        names = module.exports
         name = [name] if typeof name is 'string'
-        cnames = names
-        for n in [0...name.length - 1]
-          n = name[n]
-          cnames[n] ?= {}
-          cnames = cnames[n]
-        cnames[name[name.length-1]] ?= {}
-        cnames[name[name.length-1]][''] = handler
-        merge module.exports, names
-
+        if Array.isArray name
+          cnames = names = module.exports
+          for n in [0...name.length - 1]
+            n = name[n]
+            cnames[n] ?= {}
+            cnames = cnames[n]
+          cnames[name[name.length-1]] ?= {}
+          cnames[name[name.length-1]][''] = handler
+          merge module.exports, names
+        else
+          cleanup = (obj) ->
+            for k, v of obj
+              v = require.main.require v if typeof v is 'string'
+              if v and typeof v is 'object' and not Array.isArray v and not v.handler
+                cleanup v
+              else
+                obj[k] = '': v unless k is ''
+          cleanup name
+          merge module.exports, name
+          
     Object.defineProperty module.exports, 'registered', 
       configurable: true
       enumerable: false

@@ -426,27 +426,36 @@
           cnames = cnames[n]
         return null
       Object.defineProperty obj, 'register', get: -> (name, handler) ->
-        return obj.unregister name unless handler
-        handler = require.main.require handler if typeof handler is 'string'
         name = [name] if typeof name is 'string'
-        cnames = obj.registry
-        for n in [0...name.length - 1]
-          n = name[n]
-          cnames[n] ?= {}
-          cnames = cnames[n]
-        cnames[name[name.length-1]] ?= {}
-        cnames[name[name.length-1]][''] = handler
+        if Array.isArray name
+          handler = require.main.require handler if typeof handler is 'string'
+          cnames = names = obj.registry
+          for n in [0...name.length - 1]
+            n = name[n]
+            cnames[n] ?= {}
+            cnames = cnames[n]
+          cnames[name[name.length-1]] ?= {}
+          cnames[name[name.length-1]][''] = handler
+          merge obj.registry, names
+        else
+          cleanup = (obj) ->
+            for k, v of obj
+              v = require.main.require v if typeof v is 'string'
+              if v and typeof v is 'object' and not Array.isArray v and not v.handler
+                cleanup v
+              else
+                obj[k] = '': v unless k is ''
+          cleanup name
+          merge obj.registry, name
         proxy
       Object.defineProperty obj, 'registered', get: -> (name, local_only=false) ->
         return true if registry.registered name
-        names = obj.registry
         name = [name] if typeof name is 'string'
-        cnames = names
+        cnames = obj.registry
         for n, i in name
           return false unless cnames[n]
           return true if cnames[n][''] and i is name.length - 1
           cnames = cnames[n]
-        merge obj.registry, names
       Object.defineProperty obj, 'unregister', get: -> (name, handler) ->
         name = [name] if typeof name is 'string'
         cnames = obj.registry
@@ -478,4 +487,5 @@
     conditions = require './misc/conditions'
     wrap = require './misc/wrap'
     string = require './misc/string'
+    {merge} = require './misc'
     {EventEmitter} = require 'events'
