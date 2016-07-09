@@ -25,6 +25,7 @@
       depth = 0
       headers = []
       once = {}
+      tree = []
       killed = false
       obj.options.domain =  domain.create() if obj.options.domain is true
       domain_on_error = (err) ->
@@ -33,18 +34,28 @@
       obj.options.domain?.on 'error', domain_on_error
       proxy = new Proxy obj,
         has: (target, name) ->
-          target[name] or registry[name]
+          target.registry.registered(tree) or registry.registered(name)
         get: (target, name) ->
-          # console.log 'proxy', name
-          return target[name] if target[name]
-          ->
-            # Insert handler before callback or at the end of arguments
-            args = [].slice.call(arguments)
-            args.unshift target.registry[name] or registry[name]
-            options = normalize_options args, name
-            todos.push opts for opts in options
-            setImmediate _run_ if todos.length is options.length # Activate the pump
-            proxy
+          return target[name] if target[name]?
+          tree.push name
+          get_proxy_builder = ->
+            builder = ->
+              # Insert handler before callback or at the end of arguments
+              handler = target.registry.get(tree) or registry.get(tree)
+              # return proxy unless handler
+              args = [].slice.call(arguments)
+              tree = []
+              args.unshift handler
+              options = normalize_options args, name
+              todos.push opts for opts in options
+              setImmediate _run_ if todos.length is options.length # Activate the pump
+              proxy
+            new Proxy builder,
+              get: (target, name) ->
+                return target[name] if target[name]?
+                tree.push name
+                get_proxy_builder()
+          get_proxy_builder()
       normalize_options = (_arguments, type, enrich=true) ->
         empty = false
         handler = null
@@ -284,7 +295,7 @@
                 options.log message: "Retry on error, attempt #{options.attempt+1}", level: 'WARN', module: 'mecano'
                 return setTimeout do_handler, options.wait
               do_intercept_after arguments...
-            options.handler ?= obj.registry[options.type] or registry[options.type]
+            options.handler ?= obj.registry.get(options.type) or registry.get(options.type)
             options_handler = options.handler
             options.handler = undefined
             options_callback = options.callback
@@ -406,20 +417,44 @@
         else
           stack[0].status[Math.abs index]?.value
       proto = Object.defineProperties obj, properties
-      # Unregister function
-      Object.defineProperty obj, 'unregister', get: -> (name, handler) ->
-        delete obj.registry[name] if obj.registry[name]
-        return proxy
-      # Register function
+      Object.defineProperty obj.registry, 'get', get: -> (name, handler) ->
+        name = [name] if typeof name is 'string'
+        cnames = obj.registry
+        for n, i in name
+          return null unless cnames[n]
+          return cnames[n][''] if cnames[n] and cnames[n][''] and i is name.length - 1
+          cnames = cnames[n]
+        return null
       Object.defineProperty obj, 'register', get: -> (name, handler) ->
         return obj.unregister name unless handler
         handler = require.main.require handler if typeof handler is 'string'
-        obj.registry[name] = handler
+        name = [name] if typeof name is 'string'
+        cnames = obj.registry
+        for n in [0...name.length - 1]
+          n = name[n]
+          cnames[n] ?= {}
+          cnames = cnames[n]
+        cnames[name[name.length-1]] ?= {}
+        cnames[name[name.length-1]][''] = handler
         proxy
       Object.defineProperty obj, 'registered', get: -> (name, local_only=false) ->
-        global = Object.prototype.hasOwnProperty.call registry, name
-        local = Object.prototype.hasOwnProperty.call obj.registry, name
-        if local_only then local else global or local
+        return true if registry.registered name
+        names = obj.registry
+        name = [name] if typeof name is 'string'
+        cnames = names
+        for n, i in name
+          return false unless cnames[n]
+          return true if cnames[n][''] and i is name.length - 1
+          cnames = cnames[n]
+        merge obj.registry, names
+      Object.defineProperty obj, 'unregister', get: -> (name, handler) ->
+        name = [name] if typeof name is 'string'
+        cnames = obj.registry
+        for n, i in name
+          delete cnames[n] if i is name.length - 1
+          cnames = cnames[n]
+          break
+        return proxy
       proxy
 
     module.exports.propagated_options = ['ssh', 'log', 'stdout', 'stderr', 'debug']

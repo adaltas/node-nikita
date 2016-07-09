@@ -18,7 +18,10 @@ functions share a common API with flexible options.
         ctx = context()
         ->
           return registry[name].apply registry, arguments if name in ['register', 'registered', 'unregister']
-          ctx[name].apply ctx, arguments
+          a = ctx[name]
+          if typeof a is 'function'
+          then a.apply ctx, arguments
+          else a
       
 ## Dependencies
   

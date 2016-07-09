@@ -12,15 +12,11 @@ describe 'api register', ->
       mecano.register 'my_function', -> 'my_function'
       mecano.registered('my_function').should.be.true()
       mecano.unregister 'my_function'
+      mecano.registered('my_function').should.be.false()
 
-    it 'throw error if registering twice', (next) ->
+    it 'registering twice', ->
       mecano.register 'my_function', -> 'my_function'
-      try
-        mecano.register 'my_function', -> 'my_function'
-      catch e
-        mecano.unregister 'my_function'
-        e.message.should.eql 'Function already defined \'my_function\''
-        next()
+      mecano.register 'my_function', -> 'my_function'
 
     it 'is available from mecano instance', (next) ->
       mecano.register 'my_function', (options, callback) ->
@@ -31,9 +27,42 @@ describe 'api register', ->
       m.registered('my_function').should.be.true()
       m.my_function
         my_option: 'my value'
-      .then (err, modified) ->
-        modified.should.be.true()
+      .then (err, status) ->
+        status.should.be.true()
         mecano.unregister 'my_function'
+        next err
+    
+    it 'namespace accept array', (next) ->
+      value = null
+      mecano.register ['this', 'is', 'a', 'function'], (options, callback) ->
+        value = options.value
+        callback null, true
+      m = mecano()
+      m.registered(['this', 'is', 'a', 'function']).should.be.true()
+      m.this.is.a.function value: 'yes'
+      m.then (err, status) ->
+        status.should.be.true()
+        mecano.unregister ['this', 'is', 'a', 'function']
+        next err
+    
+    it 'namespace call function with children', (next) ->
+      value_a = value_b = null
+      mecano.register ['a', 'function'], (options, callback) ->
+        value_a = options.value
+        callback null, true
+      mecano.register ['a', 'function', 'with', 'a', 'child'], (options, callback) ->
+        value_b = options.value
+        callback null, true
+      m = mecano()
+      m.registered(['a', 'function']).should.be.true()
+      m.a.function value: 'a'
+      m.a.function.with.a.child value: 'b'
+      m.then (err, status) ->
+        status.should.be.true()
+        value_a.should.eql 'a'
+        value_b.should.eql 'b'
+        mecano.unregister ['a', 'function']
+        mecano.unregister ['a', 'function', 'with', 'a', 'child']
         next err
 
   describe 'local', ->
@@ -43,6 +72,9 @@ describe 'api register', ->
       m
       .register 'my_function', -> 'my_function'
       .registered('my_function').should.be.true()
+      m
+      .unregister 'my_function'
+      .registered('my_function').should.be.false()
 
     it 'receive options', (next) ->
       m = mecano()
@@ -72,26 +104,50 @@ describe 'api register', ->
         next err
           
     it 'support lazy validation for late registration', (next) ->
-      # This test could only be supported with dynamic method call, probably
-      # once we introduce a proxy implementation. At the moment, the call
-      # to "my_function" throw a TypeError complaining that the function does
-      # not exists.
       name = null
       mecano
       .call ->
         @register 'my_function', (options) -> name = options.name
       .my_function name: 'callme'
       .then (err) ->
+        console.log err, name
         name.should.eql 'callme' unless err
+        next err
+    
+    it 'namespace accept array', (next) ->
+      value = null
+      mecano()
+      .register ['this', 'is', 'a', 'function'], (options, callback) ->
+        value = options.value
+        callback null, true
+      .this.is.a.function value: 'yes'
+      .then (err, status) ->
+        status.should.be.true()
+        mecano.unregister ['this', 'is', 'a', 'function']
+        next err
+    
+    it 'namespace call function with children', (next) ->
+      value_a = value_b = null
+      mecano()
+      .register ['a', 'function'], (options, callback) ->
+        value_a = options.value
+        callback null, true
+      .register ['a', 'function', 'with', 'a', 'child'], (options, callback) ->
+        value_b = options.value
+        callback null, true
+      .a.function value: 'a'
+      .a.function.with.a.child value: 'b'
+      .then (err, status) ->
+        status.should.be.true()
+        value_a.should.eql 'a'
+        value_b.should.eql 'b'
+        mecano.unregister ['a', 'function']
+        mecano.unregister ['a', 'function', 'with', 'a', 'child']
         next err
 
   describe 'mixed', ->
     
     it 'support lazy validation for late registration', (next) ->
-      # This test could only be supported with dynamic method call, probably
-      # once we introduce a proxy implementation. At the moment, the call
-      # to "my_function" throw a TypeError complaining that the function does
-      # not exists.
       name = null
       mecano
       .call ->
