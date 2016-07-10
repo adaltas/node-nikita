@@ -19,11 +19,6 @@ describe 'api unregister', ->
       mecano.unregister 'my_function'
       mecano.registered('my_function').should.be.false()
 
-    it 'alias register without an handler', ->
-      mecano.register 'my_function', -> 'my_function'
-      mecano.register 'my_function', null
-      mecano.registered('my_function').should.be.false()
-
   describe 'local', ->
 
     it 'remove property', ->
@@ -38,12 +33,6 @@ describe 'api unregister', ->
       .register 'my_function', -> 'my_function'
       .unregister 'my_function'
       .unregister 'my_function'
-      .registered('my_function').should.be.false()
-
-    it 'alias register without an handler', ->
-      mecano()
-      .register 'my_function', -> 'my_function'
-      .register 'my_function', null
       .registered('my_function').should.be.false()
 
   describe 'mixed', ->
