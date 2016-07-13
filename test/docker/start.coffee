@@ -14,19 +14,19 @@ describe 'docker start', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_rm
+    .docker.rm
       container: 'mecano_test_start'
       force: true
-    .docker_service
+    .docker.service
       image: 'httpd'
       name: 'mecano_test_start'
-    .docker_stop
+    .docker.stop
       container: 'mecano_test_start'
-    .docker_start
+    .docker.start
       container: 'mecano_test_start'
     , (err, started) ->
       started.should.be.true() unless err
-    .docker_rm
+    .docker.rm
       container: 'mecano_test_start'
       force: true
     .then next
@@ -35,21 +35,21 @@ describe 'docker start', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_rm
+    .docker.rm
       container: 'mecano_test_start'
       force: true
-    .docker_service
+    .docker.service
       image: 'httpd'
       name: 'mecano_test_start'
-    .docker_stop
+    .docker.stop
       container: 'mecano_test_start'
-    .docker_start
+    .docker.start
       container: 'mecano_test_start'
-    .docker_start
+    .docker.start
       container: 'mecano_test_start'
     , (err, started) ->
       started.should.be.false() unless err
-    .docker_rm
+    .docker.rm
       container: 'mecano_test_start'
       force: true
     .then next

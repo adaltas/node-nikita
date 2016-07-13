@@ -11,7 +11,7 @@ describe 'wait execute', ->
   they 'take a single cmd', (ssh, next) ->
     mecano
       ssh: ssh
-    .wait_execute
+    .wait.execute
       cmd: "test -d #{scratch}"
     , (err, status) ->
       status.should.be.false()
@@ -19,7 +19,7 @@ describe 'wait execute', ->
       setTimeout ->
         fs.mkdir ssh, "#{scratch}/a_file", -> # ok
       , 100
-    .wait_execute
+    .wait.execute
       cmd: "test -d #{scratch}/a_file"
       interval: 60
     , (err, status) ->
@@ -29,7 +29,7 @@ describe 'wait execute', ->
   they 'take a multiple cmds', (ssh, next) ->
     mecano
       ssh: ssh
-    .wait_execute
+    .wait.execute
       cmd: [
         "test -d #{scratch}"
         "test -d #{scratch}"
@@ -41,7 +41,7 @@ describe 'wait execute', ->
         fs.mkdir ssh, "#{scratch}/file_1", -> # ok
         fs.mkdir ssh, "#{scratch}/file_2", -> # ok
       , 100
-    .wait_execute
+    .wait.execute
       cmd: [
         "test -d #{scratch}/file_1"
         "test -d #{scratch}/file_2"
@@ -63,7 +63,7 @@ describe 'wait execute', ->
         setTimeout ->
           fs.mkdir ssh, "#{scratch}/a_file", -> # ok
         , 100
-      .wait_execute
+      .wait.execute
         cmd: "test -d #{scratch}/a_file"
         interval: 60
         # log: (msg) -> logs.push msg if /Attempt/.test msg
@@ -91,7 +91,7 @@ describe 'wait execute', ->
         setTimeout ->
           fs.mkdir ssh, "#{scratch}/file_3", -> # ok
         , 90
-      .wait_execute
+      .wait.execute
         cmd: [
           "test -d #{scratch}/file_1 && echo 1 >> #{scratch}/result"
           "test -d #{scratch}/file_2 && echo 2 >> #{scratch}/result"
@@ -120,7 +120,7 @@ describe 'wait execute', ->
         setTimeout ->
           fs.mkdir ssh, "#{scratch}/file_3", -> # ok
         , 90
-      .wait_execute
+      .wait.execute
         cmd: [
           "test -d #{scratch}/file_1 && echo 1 >> #{scratch}/result"
           "test -d #{scratch}/file_2 && echo 2 >> #{scratch}/result"
@@ -149,7 +149,7 @@ describe 'wait execute', ->
         setTimeout ->
           fs.mkdir ssh, "#{scratch}/file_3", -> # ok
         , 90
-      .wait_execute
+      .wait.execute
         cmd: [
           "test -d #{scratch}/file_1 && echo 1 >> #{scratch}/result"
           "test -d #{scratch}/file_2 && echo 2 >> #{scratch}/result"

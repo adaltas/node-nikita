@@ -12,13 +12,13 @@ describe 'service remove', ->
   they 'new package', (ssh, next) ->
     mecano
       ssh: ssh
-    .service_install
+    .service.install
       name: config.service.name
-    .service_remove
+    .service.remove
       name: config.service.name
     , (err, status) ->
       status.should.be.true() unless err
-    .service_remove
+    .service.remove
       name: config.service.name
     , (err, status) ->
       status.should.be.false() unless err

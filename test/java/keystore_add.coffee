@@ -3,7 +3,7 @@ mecano = require '../../src'
 they = require 'ssh2-they'
 test = require '../test'
 
-describe 'java_keystore_add', ->
+describe 'java.keystore_add', ->
 
   scratch = test.scratch @
 
@@ -12,7 +12,7 @@ describe 'java_keystore_add', ->
     they 'create new cacerts file', (ssh, next) ->
       mecano
         ssh: ssh
-      .java_keystore_add
+      .java.keystore_add
         keystore: "#{scratch}/cacerts"
         storepass: "changeit"
         caname: "my_alias"
@@ -26,13 +26,13 @@ describe 'java_keystore_add', ->
     they 'detect existing cacert signature', (ssh, next) ->
       mecano
         ssh: ssh
-      .java_keystore_add
+      .java.keystore_add
         keystore: "#{scratch}/cacerts"
         storepass: "changeit"
         caname: "my_alias"
         cacert: "#{__dirname}/keystore/certs1/cacert.pem"
         shy: true
-      .java_keystore_add
+      .java.keystore_add
         keystore: "#{scratch}/cacerts"
         storepass: "changeit"
         caname: "my_alias"
@@ -44,13 +44,13 @@ describe 'java_keystore_add', ->
     they 'update a new cacert with same alias', (ssh, next) ->
       mecano
         ssh: ssh
-      .java_keystore_add
+      .java.keystore_add
         keystore: "#{scratch}/cacerts"
         storepass: "changeit"
         caname: "my_alias"
         cacert: "#{__dirname}/keystore/certs1/cacert.pem"
         shy: true
-      .java_keystore_add
+      .java.keystore_add
         keystore: "#{scratch}/cacerts"
         storepass: "changeit"
         caname: "my_alias"
@@ -64,7 +64,7 @@ describe 'java_keystore_add', ->
     they 'create new cacerts file', (ssh, next) ->
       mecano
         ssh: ssh
-      .java_keystore_add
+      .java.keystore_add
         keystore: "#{scratch}/cacerts"
         storepass: "changeit"
         caname: "my_alias"
@@ -80,7 +80,7 @@ describe 'java_keystore_add', ->
     they 'detect existing cacert signature', (ssh, next) ->
       mecano
         ssh: ssh
-      .java_keystore_add
+      .java.keystore_add
         keystore: "#{scratch}/cacerts"
         storepass: "changeit"
         caname: "my_alias"
@@ -90,7 +90,7 @@ describe 'java_keystore_add', ->
         keypass: 'mypassword'
         name: 'node_1'
         shy: true
-      .java_keystore_add
+      .java.keystore_add
         keystore: "#{scratch}/cacerts"
         storepass: "changeit"
         caname: "my_alias"
@@ -106,7 +106,7 @@ describe 'java_keystore_add', ->
     they 'update a new cacert with same alias', (ssh, next) ->
       mecano
         ssh: ssh
-      .java_keystore_add
+      .java.keystore_add
         keystore: "#{scratch}/cacerts"
         storepass: "changeit"
         caname: "my_alias"
@@ -116,7 +116,7 @@ describe 'java_keystore_add', ->
         keypass: 'mypassword'
         name: 'node_1'
         shy: true
-      .java_keystore_add
+      .java.keystore_add
         keystore: "#{scratch}/cacerts"
         storepass: "changeit"
         caname: "my_alias"
@@ -134,13 +134,13 @@ describe 'java_keystore_add', ->
     they.skip 'change password', (ssh, next) ->
       mecano
         ssh: ssh
-      .java_keystore_add
+      .java.keystore_add
         keystore: "#{scratch}/cacerts"
         storepass: "changeit"
         caname: "my_alias"
         cacert: "#{__dirname}/keystore/certs1/cacert.pem"
         shy: true
-      .java_keystore_add
+      .java.keystore_add
         keystore: "#{scratch}/cacerts"
         storepass: "changednow"
         caname: "my_alias"

@@ -1,5 +1,5 @@
 
-# `cron_remove(options, callback)`
+# `cron.remove(options, callback)`
 
 Remove job(s) on crontab.
 
@@ -27,7 +27,7 @@ Remove job(s) on crontab.
 ## Example
 
 ```js
-require('mecano').cron_remove({
+require('mecano').cron.remove({
   cmd: 'kinit service/my.fqdn@MY.REALM -kt /etc/security/service.keytab',
   when: '0 */9 * * *'
   user: 'service'

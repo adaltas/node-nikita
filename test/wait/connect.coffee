@@ -26,7 +26,7 @@ describe 'wait connect', ->
         server1: server 12345
       .call ->
         setTimeout @options.server1.listen, 100
-      .wait_connect
+      .wait.connect
         host: 'localhost'
         port: 12345
       , (err, status) ->
@@ -42,11 +42,11 @@ describe 'wait connect', ->
         server2: server 12346
       .call -> setTimeout @options.server1.listen, 100
       .call -> setTimeout @options.server2.listen, 100
-      .wait_connect
+      .wait.connect
         server: host: 'localhost', port: 12345
       , (err, status) ->
         status.should.be.true()
-      .wait_connect
+      .wait.connect
         server: host: 'localhost', port: [12345, 12346]
       , (err, status) ->
         status.should.be.false()
@@ -54,7 +54,7 @@ describe 'wait connect', ->
       .call  (_, callback) -> @options.server2.close callback
       .call -> setTimeout @options.server1.listen, 100
       .call -> setTimeout @options.server2.listen, 100
-      .wait_connect
+      .wait.connect
         server: [
           [{host: 'localhost', port: 12345}]
           [{host: 'localhost', port: 12346}]
@@ -71,7 +71,7 @@ describe 'wait connect', ->
         server1: server 12345
       .call ->
         setTimeout @options.server1.listen, 100
-      .wait_connect
+      .wait.connect
         server: "localhost:12345"
       , (err, status) ->
         status.should.be.true()
@@ -88,7 +88,7 @@ describe 'wait connect', ->
       # Status false
       .call (_, callback) ->
         @options.server1.listen callback
-      .wait_connect
+      .wait.connect
         host: 'localhost'
         port: 12345
       , (err, status) ->
@@ -98,7 +98,7 @@ describe 'wait connect', ->
       # Status true
       .call ->
         setTimeout @options.server1.listen, 100
-      .wait_connect
+      .wait.connect
         host: 'localhost'
         port: 12345
       , (err, status) ->
@@ -114,7 +114,7 @@ describe 'wait connect', ->
         server2: server 12346
       .call (_, callback) ->
         @options.server1.listen callback
-      .wait_connect
+      .wait.connect
         servers: [
           { host: 'localhost', port: 12345 }
           { host: 'localhost', port: 12346 }
@@ -139,7 +139,7 @@ describe 'wait connect', ->
         server2: server 12346
       .call (_, callback) ->
         @options.server1.listen callback
-      .wait_connect
+      .wait.connect
         servers: [
           { host: 'localhost', port: 12345 }
           { host: 'localhost', port: 12346 }
@@ -162,7 +162,7 @@ describe 'wait connect', ->
     they 'validate host', (ssh, next) ->
       mecano
         ssh: ssh
-      .wait_connect
+      .wait.connect
         servers: [
           { host: undefined, port: 12345 }
         ]
@@ -174,7 +174,7 @@ describe 'wait connect', ->
     they 'validate port', (ssh, next) ->
       mecano
         ssh: ssh
-      .wait_connect
+      .wait.connect
         servers: [
           { host: 'localhost', port: undefined }
         ]

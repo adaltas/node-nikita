@@ -12,7 +12,7 @@ describe 'service startup', ->
   they 'declare on startup with boolean', (ssh, next) ->
     mecano
       ssh: ssh
-    .service_remove
+    .service.remove
       name: config.service.name
     .service
       name: config.service.name
@@ -43,10 +43,10 @@ describe 'service startup', ->
   they 'declare on startup with boolean', (ssh, next) ->
     mecano
       ssh: ssh
-    .service_remove
+    .service.remove
       name: config.service.name
-    .service_install config.service.name
-    .service_startup config.service.chk_name, (err, status) ->
+    .service.install config.service.name
+    .service.startup config.service.chk_name, (err, status) ->
       status.should.be.true() unless err
     .then next
 

@@ -1,5 +1,5 @@
 
-# `java_keystore_remove(options, callback)`
+# `java.keystore_remove(options, callback)`
 
 Remove certificates, private keys and certificate authorities from java
 keystores and trustores.
@@ -18,7 +18,7 @@ keystores and trustores.
 ## Removing a key and its certificate
 
 ```js
-require('mecano').java_keystore_remove([{
+require('mecano').java.keystore_remove([{
   keystore: java_home + '/lib/security/cacerts',
   storepass: 'changeit',
   caname: 'my_ca_certificate',
@@ -30,7 +30,7 @@ require('mecano').java_keystore_remove([{
 ## Removing a certificate authority
 
 ```js
-require('mecano').java_keystore_add([{
+require('mecano').java.keystore_add([{
   keystore: java_home + '/lib/security/cacerts',
   storepass: 'changeit',
   caname: 'my_ca_certificate'

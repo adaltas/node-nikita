@@ -1,5 +1,5 @@
 
-# `docker_cp(options, next)`
+# `docker.cp(options, next)`
 
 Copy files/folders between a container and the local filesystem.
 

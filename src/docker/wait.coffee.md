@@ -1,5 +1,5 @@
 
-# `docker_wait(options, callback)`
+# `docker.wait(options, callback)`
 
 Block until a container stops
 
@@ -27,7 +27,7 @@ Block until a container stops
 ## Example
 
 ```javascript
-mecano.docker_wait({
+mecano.docker.wait({
   container: 'toto'
 }, function(err, is_true){
   if(err){

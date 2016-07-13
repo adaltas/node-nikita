@@ -17,10 +17,10 @@ describe 'docker save', ->
       docker: config.docker
     .remove
       target:"#{scratch}/mecano_saved.tar"
-    .docker_build
+    .docker.build
       image: 'mecano/load_test'
       content: "FROM alpine\nCMD ['echo \"hello build from text\"']"
-    .docker_save
+    .docker.save
       image: 'mecano/load_test:latest'
       output: "#{scratch}/mecano_saved.tar"
     , (err, saved) ->
@@ -34,15 +34,15 @@ describe 'docker save', ->
   #     ssh: ssh
   #   .remove
   #     target:"#{scratch}/mecano_saved.tar"
-  #   .docker_build
+  #   .docker.build
   #     image: 'mecano/load_test'
   #     content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
   #     machine: config.docker.machine
-  #   .docker_save
+  #   .docker.save
   #     image: 'mecano/load_test:latest'
   #     output: "#{scratch}/mecano_saved.tar"
   #     machine: config.docker.machine
-  #   .docker_save
+  #   .docker.save
   #     image: 'mecano/load_test:latest'
   #     output: "#{scratch}/mecano_saved.tar"
   #     machine: config.docker.machine

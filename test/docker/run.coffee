@@ -1,6 +1,6 @@
 # Be aware to specify the machine if docker mahcine is used
-# Some other docker test uses docker_run
-# as a conseauence docker_run should not docker an other command from docker family
+# Some other docker test uses docker.run
+# as a conseauence docker.run should not docker an other command from docker family
 # For this purpos ip, and clean are used
 
 should = require 'should'
@@ -43,7 +43,7 @@ describe 'docker run', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_run
+    .docker.run
       cmd: "/bin/echo 'test'"
       image: 'alpine'
     , (err, status, stdout, stderr) ->
@@ -55,10 +55,10 @@ describe 'docker run', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_rm
+    .docker.rm
       force: true
       container: 'mecano_test_rm'
-    .docker_run
+    .docker.run
       cmd: "/bin/echo 'test'"
       image: 'alpine'
       name: 'mecano_test_rm'
@@ -68,7 +68,7 @@ describe 'docker run', ->
         stdout.should.match /^test.*/ unless err
         mecano
           ssh: ssh
-        .docker_rm
+        .docker.rm
           machine: config.docker.machine
           force: true
           container: 'mecano_test_rm'
@@ -81,10 +81,10 @@ describe 'docker run', ->
       mecano
         ssh: ssh
         machine: config.docker.machine
-      .docker_rm
+      .docker.rm
         container: 'mecano_test_unique'
         force: true
-      .docker_run
+      .docker.run
         image: 'httpd'
         port: '499:80'
         machine: config.docker.machine
@@ -94,7 +94,7 @@ describe 'docker run', ->
       .wait_connect
         port: 499
         host: ipadress
-      .docker_rm
+      .docker.rm
         force: true
         container: 'mecano_test_unique'
       .then next
@@ -106,10 +106,10 @@ describe 'docker run', ->
       mecano
         ssh: ssh
         machine: config.docker.machine
-      .docker_rm
+      .docker.rm
         force: true
         container: 'mecano_test_array'
-      .docker_run
+      .docker.run
         image: 'httpd'
         port: [ '500:80', '501:81' ]
         name: 'mecano_test_array'
@@ -118,7 +118,7 @@ describe 'docker run', ->
       .wait_connect
         host: ipadress
         port: 500
-      .docker_rm
+      .docker.rm
         force: true
         container: 'mecano_test_array'
       .then next
@@ -127,22 +127,22 @@ describe 'docker run', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_rm
+    .docker.rm
       force: true
       container: 'mecano_test'
-    .docker_run
+    .docker.run
       cmd: 'echo test'
       image: 'alpine'
       name: 'mecano_test'
       rm: false
-    .docker_run
+    .docker.run
       cmd: "echo test"
       image: 'alpine'
       name: 'mecano_test'
       rm: false
     , (err, runned) ->
       runned.should.be.false()
-    .docker_rm
+    .docker.rm
       force: true
       container: 'mecano_test'
     .then next
@@ -152,15 +152,15 @@ describe 'docker run', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_rm
+    .docker.rm
       force: true
       container: 'mecano_test'
-    .docker_run
+    .docker.run
       cmd: 'echo test'
       image: 'alpine'
       name: 'mecano_test'
       rm: false
-    .docker_run
+    .docker.run
       cmd: 'echo test'
       image: 'alpine'
       name: 'mecano_test'
@@ -170,7 +170,7 @@ describe 'docker run', ->
       mecano
         ssh: ssh
         machine: config.docker.machine
-      .docker_rm
+      .docker.rm
         force: true
         container: 'mecano_test'
       .then next

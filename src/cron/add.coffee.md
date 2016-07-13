@@ -31,7 +31,7 @@ Create a new Kerberos principal with a password or an optional keytab.
 ## Example
 
 ```js
-require('mecano').cron_add({
+require('mecano').cron.add({
   cmd: 'kinit service/my.fqdn@MY.REALM -kt /etc/security/service.keytab',
   when: '0 */9 * * *'
   user: 'service'

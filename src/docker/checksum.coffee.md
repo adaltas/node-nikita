@@ -1,5 +1,5 @@
 
-# `docker_build(options, callback)`
+# `docker.build(options, callback)`
 
 Return the checksum of repository:tag, if it exists. Function not native to docker.
 

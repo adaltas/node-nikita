@@ -1,5 +1,5 @@
 
-# `service_start(options, callback)`
+# `service.start(options, callback)`
 
 Start a service.
 
@@ -33,7 +33,7 @@ Start a service.
 ## Example
 
 ```js
-require('mecano').service_start([{
+require('mecano').service.start([{
   ssh: ssh,
   name: 'gmetad'
 }, function(err, status){ /* do sth */ });
@@ -42,14 +42,14 @@ require('mecano').service_start([{
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering service_start", level: 'DEBUG', module: 'mecano/lib/service/start'
+      options.log message: "Entering service.start", level: 'DEBUG', module: 'mecano/lib/service/start'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'
       # Validation
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       # Action
       options.log message: "Start service #{options.name}", level: 'INFO', module: 'mecano/lib/service/start'
-      @service_status
+      @service.status
         name: options.name
         code_started: options.code_started
         code_stopped: options.code_stopped

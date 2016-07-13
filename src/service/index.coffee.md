@@ -80,28 +80,28 @@ require('mecano').service([{
       chkname = options.chk_name or options.srv_name or options.name
       srvname = options.srv_name or options.chk_name or options.name
       options.action = options.action.split(',') if typeof options.action is 'string'
-      @service_install
+      @service.install
         name: pkgname
         cache: options.cache
         cacheonly: options.cacheonly
         if: pkgname # option name and yum_name are optional, skill installation if not present
-      @service_startup
+      @service.startup
         name: chkname
         startup: options.startup
         if: options.startup?
       @call ->
         return unless options.action
-        @service_status
+        @service.status
           name: srvname
           code_started: options.code_started
           code_stopped: options.code_stopped
           shy: true
-        @service_start
+        @service.start
           name: srvname
           if: -> not @status(-1) and 'start' in options.action
-        @service_stop
+        @service.stop
           name: srvname
           if: -> @status(-2) and 'stop' in options.action
-        @service_restart
+        @service.restart
           name: srvname
           if: -> @status(-3) and 'restart' in options.action

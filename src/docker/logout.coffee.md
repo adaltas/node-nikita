@@ -1,5 +1,5 @@
 
-# `docker_logout(options, callback)`
+# `docker.logout(options, callback)`
 
 Log out from a Docker registry, if no server is
 specified  is the default.
@@ -28,7 +28,7 @@ specified  is the default.
 ## Example
 
 ```javascript
-mecano.docker_pause({
+mecano.docker.pause({
   container: 'toto'
 }, function(err, is_true){
   if(err){

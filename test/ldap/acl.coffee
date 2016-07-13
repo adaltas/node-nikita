@@ -2,7 +2,7 @@
 mecano = require '../../src'
 test = require '../test'
 
-describe 'ldap_acl', ->
+describe 'ldap.acl', ->
 
   scratch = test.scratch @
   config = test.config()
@@ -30,7 +30,7 @@ describe 'ldap_acl', ->
 
   it 'create a new permission', (next) ->
     mecano
-    .ldap_acl
+    .ldap.acl
       # ldap: client
       url: config.ldap.url
       binddn: config.ldap.binddn
@@ -42,7 +42,7 @@ describe 'ldap_acl', ->
       ]
     , (err, modified) ->
       modified.should.be.true()
-    .ldap_acl
+    .ldap.acl
       ldap: client
       name: 'olcDatabase={2}bdb,cn=config'
       to: 'dn.base="dc=test,dc=com"'
@@ -54,7 +54,7 @@ describe 'ldap_acl', ->
     .then next
 
   it 'respect order in creation', (next) ->
-    mecano.ldap_acl [
+    mecano.ldap.acl [
       ldap: client
       name: 'olcDatabase={2}bdb,cn=config'
       to: 'dn.base="ou=test1,dc=test,dc=com"'
@@ -70,7 +70,7 @@ describe 'ldap_acl', ->
       ]
     ], (err, modified) ->
       return next err if err
-      mecano.ldap_acl
+      mecano.ldap.acl
         ldap: client
         name: 'olcDatabase={2}bdb,cn=config'
         to: 'dn.base="ou=INSERTED,dc=test,dc=com"'

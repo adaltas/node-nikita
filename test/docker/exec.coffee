@@ -14,19 +14,19 @@ describe 'docker exec', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_rm
+    .docker.rm
       container: 'mecano_test_exec'
       force: true
-    .docker_service
+    .docker.service
       image: 'httpd'
       container: 'mecano_test_exec'
-    .docker_exec
+    .docker.exec
       container: 'mecano_test_exec'
       cmd: 'echo toto'
     , (err, executed, stdout, stderr) ->
       executed.should.be.true() unless err
       stdout.trim().should.eql 'toto' unless err
-    .docker_rm
+    .docker.rm
       container: 'mecano_test_exec'
       force: true
     .then next
@@ -35,21 +35,21 @@ describe 'docker exec', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_rm
+    .docker.rm
       container: 'mecano_test_exec'
       force: true
-    .docker_service
+    .docker.service
       image: 'httpd'
       container: 'mecano_test_exec'
-    .docker_stop
+    .docker.stop
       container: 'mecano_test_exec'
-    .docker_exec
+    .docker.exec
       container: 'mecano_test_exec'
       cmd: 'echo toto'
       relax: true
     , (err, executed, stdout, stderr) ->
       err.message.should.eql 'Container mecano_test_exec is not running'
-    .docker_rm
+    .docker.rm
       container: 'mecano_test_exec'
       force: true
     .then next
@@ -58,7 +58,7 @@ describe 'docker exec', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_exec
+    .docker.exec
       container: 'mecano_fake_container'
       cmd: 'echo toto'
       relax: true

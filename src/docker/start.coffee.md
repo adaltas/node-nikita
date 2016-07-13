@@ -1,5 +1,5 @@
 
-# `docker_restart(options, callback)`
+# `docker.restart(options, callback)`
 
 Restart containers
 
@@ -35,7 +35,7 @@ Restart containers
 1- builds an image from dockerfile without any resourcess
 
 ```javascript
-mecano.docker_start({
+mecano.docker.start({
   container: 'toto',
   attach: true
 }, function(err, is_true, stdout, stderr){
@@ -61,7 +61,7 @@ mecano.docker_start({
       cmd = 'start'
       cmd += ' -a' if options.attach
       cmd += " #{options.container}"
-      @docker_status shy: true, options, (err, is_running) ->
+      @docker.status shy: true, options, (err, is_running) ->
         throw err if err
         if is_running
         then options.log message: "Container already started #{options.container} (Skipping)", level: 'INFO', module: 'mecano/lib/docker/start'

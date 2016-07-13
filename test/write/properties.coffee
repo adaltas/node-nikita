@@ -5,7 +5,7 @@ test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
 
-describe 'write_properties', ->
+describe 'write.properties', ->
 
   scratch = test.scratch @
 
@@ -13,17 +13,17 @@ describe 'write_properties', ->
     # Write the content
     mecano
       ssh: ssh
-    .write_properties
+    .write.properties
       target: "#{scratch}/file.properties"
       content: a_key: 'a value'
     , (err, status) ->
       status.should.be.true() unless err
-    .write_properties
+    .write.properties
       target: "#{scratch}/file.properties"
       content: another_key: 'another value'
     , (err, status) ->
       status.should.be.true() unless err
-    .write_properties
+    .write.properties
       target: "#{scratch}/file.properties"
       content: another_key: 'another value'
     , (err, status) ->
@@ -39,18 +39,18 @@ describe 'write_properties', ->
     # Write the content
     mecano
       ssh: ssh
-    .write_properties
+    .write.properties
       target: "#{scratch}/file.properties"
       content: a_key: 'a value'
     , (err, status) ->
       status.should.be.true() unless err
-    .write_properties
+    .write.properties
       target: "#{scratch}/file.properties"
       content: another_key: 'another value'
       merge: true
     , (err, status) ->
       status.should.be.true() unless err
-    .write_properties
+    .write.properties
       target: "#{scratch}/file.properties"
       content: another_key: 'another value'
       merge: true
@@ -67,11 +67,11 @@ describe 'write_properties', ->
     # Write the content
     mecano
       ssh: ssh
-    .write_properties
+    .write.properties
       target: "#{scratch}/file.properties"
       content: a_key: 'a value'
       separator: ' '
-    .write_properties
+    .write.properties
       target: "#{scratch}/file.properties"
       content: another_key: 'another value'
       separator: ' '

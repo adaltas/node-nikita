@@ -1,5 +1,5 @@
 
-# `ldap_user(options, callback)`
+# `ldap.user(options, callback)`
 
 Create and modify a user store inside an OpenLDAP server.   
 
@@ -22,7 +22,7 @@ Create and modify a user store inside an OpenLDAP server.
 ## Example
 
 ```js
-require('mecano').ldap_user({
+require('mecano').ldap.user({
   url: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
@@ -45,7 +45,7 @@ require('mecano').ldap_user({
       options.uri = 'ldapi:///' if options.uri is true
       uri = if options.uri then "-H #{options.uri}" else '' # URI is obtained from local openldap conf unless provided
       # User related options
-      return callback Error "Mecano `ldap_user`: required property 'user'" unless options.user
+      return callback Error "Mecano `ldap.user`: required property 'user'" unless options.user
       options.user = [options.user] unless Array.isArray options.user
       modified = false
       each(options.user)
@@ -55,7 +55,7 @@ require('mecano').ldap_user({
           for k, v of user
             continue if k is 'userPassword'
             entry[k] = v
-          @ldap_add
+          @ldap.add
             entry: entry
             uri: options.uri
             binddn: options.binddn

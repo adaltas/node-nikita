@@ -1,5 +1,5 @@
 
-# `docker_exec(options, callback)`
+# `docker.exec(options, callback)`
 
 Run a command in a running container
 

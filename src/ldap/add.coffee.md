@@ -1,5 +1,5 @@
 
-# `ldap_add(options, callback)`
+# `ldap.add(options, callback)`
 
 Insert or modify an entry inside an OpenLDAP server.   
 
@@ -22,7 +22,7 @@ Insert or modify an entry inside an OpenLDAP server.
 ## Example
 
 ```js
-require('mecano').ldap_index({
+require('mecano').ldap.index({
   url: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
@@ -50,11 +50,11 @@ require('mecano').ldap_index({
       options.uri = 'ldapi:///' if options.uri is true
       uri = if options.uri then "-H #{options.uri}" else '' # URI is obtained from local openldap conf unless provided
       # Add related options
-      return callback Error "Mecano `ldap_add`: required property 'entry'" unless options.entry
+      return callback Error "Mecano `ldap.add`: required property 'entry'" unless options.entry
       options.entry = [options.entry] unless Array.isArray options.entry
       ldif = ''
       for entry in options.entry
-        return callback Error "Mecano `ldap_add`: required property 'dn'" unless entry.dn
+        return callback Error "Mecano `ldap.add`: required property 'dn'" unless entry.dn
         ldif += '\n'
         ldif += "dn: #{entry.dn}\n"
         [_, k, v] = /^(.*?)=(.+?),.*$/.exec entry.dn

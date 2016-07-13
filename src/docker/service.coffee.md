@@ -1,14 +1,14 @@
 
-# `docker_service(options, callback)`
+# `docker.service(options, callback)`
 
-Run a container in a service mode. This module is just a wrapper for docker_run
+Run a container in a service mode. This module is just a wrapper for docker.run
 with correct options.
 Indeed, in a service mode, the container must be detached and NOT removed by default
 after execution. 
 
 ## Options
 
-See `docker_run` for list of options.
+See `docker.run` for list of options.
 
 ## Source Code
 
@@ -19,4 +19,4 @@ See `docker_run` for list of options.
       options.detach ?= true
       options.rm ?= false
       return callback Error 'Missing container name' unless options.name? or options.container?
-      @docker_run options, callback
+      @docker.run options, callback

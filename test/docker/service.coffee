@@ -1,6 +1,6 @@
 # Be aware to specify the machine if docker mahcine is used
-# Some other docker test uses docker_run
-# as a conseauence docker_run should not docker an other command from docker family
+# Some other docker test uses docker.run
+# as a conseauence docker.run should not docker an other command from docker family
 # For this purpos ip, and clean are used
 
 should = require 'should'
@@ -46,17 +46,17 @@ describe 'docker service', ->
       mecano
         ssh: ssh
         docker: config.docker
-      .docker_rm
+      .docker.rm
         force: true
         container: 'mecano_test_unique'
-      .docker_service
+      .docker.service
         image: 'httpd'
         name: 'mecano_test_unique'
         port: '499:80'
       .wait_connect
         port: 499
         host: ipadress
-      .docker_rm
+      .docker.rm
         force: true
         container: 'mecano_test_unique'
       .then next
@@ -68,20 +68,20 @@ describe 'docker service', ->
       mecano
         ssh: ssh
         docker: config.docker
-      .docker_rm
+      .docker.rm
         container: 'mecano_test'
         force: true
-      .docker_service
+      .docker.service
         image: 'httpd'
         port: '499:80'
       , (err, executed) ->
         err.message.should.eql 'Missing container name'
-      .docker_service
+      .docker.service
         name: 'toto'
         port: '499:80'
       , (err, executed) ->
         err.message.should.eql 'Missing image'
-      .docker_rm
+      .docker.rm
         force: true
         container: 'mecano_test'
       .then (err) -> next()
@@ -90,20 +90,20 @@ describe 'docker service', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_rm
+    .docker.rm
       force: true
       container: 'mecano_test'
-    .docker_service
+    .docker.service
       name: 'mecano_test'
       image: 'httpd'
       port: '499:80'
-    .docker_service
+    .docker.service
       name: 'mecano_test'
       image: 'httpd'
       port: '499:80'
     , (err, executed, out, serr) ->
       executed.should.be.false()
-    .docker_rm
+    .docker.rm
       force: true
       container: 'mecano_test'
     .then next

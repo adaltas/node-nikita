@@ -1,5 +1,5 @@
 
-# `ldap_acl(options, callback)`
+# `ldap.acl(options, callback)`
 
 Create new [ACLs](acls) for the OpenLDAP server.
 
@@ -32,7 +32,7 @@ Create new [ACLs](acls) for the OpenLDAP server.
 ## Example
 
 ```js
-require('mecano').ldap_acl({
+require('mecano').ldap.acl({
   url: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
@@ -138,7 +138,7 @@ require('mecano').ldap_acl({
               olcAccess.by = not_found_acl
             else
               options.log message: "Modify access after reorder", level: 'INFO', module: 'mecano/ldap/acl'
-              options.log? 'mecano `ldap_acl`: m'
+              options.log? 'mecano `ldap.acl`: m'
               olcAccess.by = acl.by
           else
             options.log message: "Insert a new access", level: 'INFO', module: 'mecano/ldap/acl'

@@ -17,15 +17,15 @@ describe 'docker rm', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_rm
+    .docker.rm
       force: true
       container: 'mecano_rm'
-    .docker_run
+    .docker.run
       cmd: "/bin/echo 'test'"
       image: 'alpine'
       name: 'mecano_rm'
       rm: false
-    .docker_rm
+    .docker.rm
       container: 'mecano_rm'
     , (err, removed, stdout, stderr) ->
       removed.should.be.true() unless err
@@ -36,21 +36,21 @@ describe 'docker rm', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_rm
+    .docker.rm
       container: 'mecano_rm'
       force: true
-    .docker_service
+    .docker.service
       image: 'httpd'
       port: '499:80'
       name: 'mecano_rm'
-    .docker_rm
+    .docker.rm
       container: 'mecano_rm'
       relax: true
     , (err, removed, stdout, stderr) ->
       err.message.should.eql 'Container must be stopped to be removed without force'
-    .docker_stop
+    .docker.stop
       container: 'mecano_rm'
-    .docker_rm
+    .docker.rm
       container: 'mecano_rm'
     .then next
 
@@ -59,14 +59,14 @@ describe 'docker rm', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_rm
+    .docker.rm
       container: 'mecano_rm'
       force: true
-    .docker_service
+    .docker.service
       image: 'httpd'
       port: '499:80'
       name: 'mecano_rm'
-    .docker_rm
+    .docker.rm
       container: 'mecano_rm'
       force: true
     , (err, removed, stdout, stderr) ->

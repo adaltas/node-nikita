@@ -1,5 +1,5 @@
 
-# `ldap_index(options, [goptions], callback)`
+# `ldap.index(options, [goptions], callback)`
 
 Create new [index](index) for the OpenLDAP server.   
 
@@ -36,7 +36,7 @@ accessible.
 ## Example
 
 ```js
-require('mecano/alt/ldap_index')({
+require('mecano/alt/ldap.index')({
   url: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
@@ -54,7 +54,7 @@ require('mecano/alt/ldap_index')({
         client = null
         updated = false
         connect = ->
-          # if options.ldap instanceof ldap_client
+          # if options.ldap instanceof ldap.client
           if options.ldap?.url?.protocol?.indexOf('ldap') is 0
             client = options.ldap
             return get()
@@ -104,7 +104,7 @@ require('mecano/alt/ldap_index')({
           client.modify options.name, change, (err) ->
             unbind err
         unbind = (err) ->
-          # return end err if options.ldap instanceof ldap_client and not options.unbind
+          # return end err if options.ldap instanceof ldap.client and not options.unbind
           return end err if options.ldap?.url?.protocol?.indexOf('ldap') is 0 and not options.unbind
           client.unbind (e) ->
             return next e if e

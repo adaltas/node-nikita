@@ -1,5 +1,5 @@
 
-# `docker_run(options, callback)`
+# `docker.run(options, callback)`
 
 Run Docker Containers
 

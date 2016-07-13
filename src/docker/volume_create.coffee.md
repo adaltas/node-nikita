@@ -21,7 +21,7 @@ Create a volume.
 ## Example
 
 ```javascript
-mecano.docker_pause({
+mecano.docker.pause({
   name: 'my_volume'
 }, function(err, created){
   console.log(err or 'Status: '+created);

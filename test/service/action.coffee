@@ -12,7 +12,7 @@ describe 'service action', ->
   they 'should start', (ssh, next) ->
     mecano
       ssh: ssh
-    .service_remove
+    .service.remove
       name: config.service.name
     .service
       name: config.service.name
@@ -20,7 +20,7 @@ describe 'service action', ->
       action: 'start'
     , (err, status) ->
       status.should.be.true()
-    .service_status
+    .service.status
       name: config.service.srv_name
     , (err, status) ->
       status.should.be.true()
@@ -34,7 +34,7 @@ describe 'service action', ->
   they 'should stop', (ssh, next) ->
     mecano
       ssh: ssh
-    .service_remove
+    .service.remove
       name: config.service.name
     .service
       name: config.service.name
@@ -42,7 +42,7 @@ describe 'service action', ->
       action: 'stop'
     , (err, status) ->
       status.should.be.true()
-    .service_status
+    .service.status
       name: config.service.srv_name
     , (err, status) ->
       status.should.be.false()
@@ -56,7 +56,7 @@ describe 'service action', ->
   they 'should restart', (ssh, next) ->
     mecano
       ssh: ssh
-    .service_remove
+    .service.remove
       name: config.service.name
     .service
       name: config.service.name
@@ -67,7 +67,7 @@ describe 'service action', ->
       action: 'restart'
     , (err, status) ->
       status.should.be.true()
-    .service_stop
+    .service.stop
       name: config.service.srv_name
     .service
       srv_name: config.service.srv_name

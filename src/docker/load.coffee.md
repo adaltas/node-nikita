@@ -1,5 +1,5 @@
 
-# `docker_load(options, callback)`
+# `docker.load(options, callback)`
 
 Load Docker images
 
@@ -36,7 +36,7 @@ Load Docker images
 ## Example
 
 ```javascript
-mecano.docker_load({
+mecano.docker.load({
   image: 'mecano/load_test:latest',
   machine: machine,
   source: source + "/mecano_load.tar"

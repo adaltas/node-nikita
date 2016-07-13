@@ -1,6 +1,6 @@
 # Be aware to specify the machine if docker mahcine is used
-# Some other docker test uses docker_run
-# as a conseauence docker_run should not docker an other command from docker family
+# Some other docker test uses docker.run
+# as a conseauence docker.run should not docker an other command from docker family
 # For this purpos ip, and clean are used
 
 should = require 'should'
@@ -20,16 +20,16 @@ describe 'docker volume rm', ->
       ssh: ssh
       docker: config.docker
       debug: true
-    .docker_volume_rm
+    .docker.volume_rm
       name: 'my_volume'
       relax: true
-    .docker_volume_create
+    .docker.volume_create
       name: 'my_volume'
-    .docker_volume_rm
+    .docker.volume_rm
       name: 'my_volume'
     , (err, status) ->
       status.should.be.true() unless err
-    .docker_volume_rm
+    .docker.volume_rm
       name: 'my_volume'
     , (err, status) ->
       status.should.be.false() unless err

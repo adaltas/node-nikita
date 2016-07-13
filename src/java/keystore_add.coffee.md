@@ -1,5 +1,5 @@
 
-# `java_keystore_add(options, callback)`
+# `java.keystore_add(options, callback)`
 
 Add certificates, private keys and certificate authorities to java keystores
 and trustores.
@@ -54,7 +54,7 @@ and trustores.
 ## Uploading public and private keys into a keystore
 
 ```js
-require('mecano').java_keystore_add([{
+require('mecano').java.keystore_add([{
   keystore: java_home + '/lib/security/cacerts',
   storepass: 'changeit',
   caname: 'my_ca_certificate',
@@ -69,7 +69,7 @@ require('mecano').java_keystore_add([{
 ## Uploading a certificate authority
 
 ```js
-require('mecano').java_keystore_add([{
+require('mecano').java.keystore_add([{
   keystore: java_home + '/lib/security/cacerts',
   storepass: 'changeit',
   caname: 'my_ca_certificate',

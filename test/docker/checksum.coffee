@@ -1,5 +1,5 @@
 # Be aware to specify the machine if docker mahcine is used
-# docker_build like, docker_run , docker_rm is used by other docker_command inside
+# docker.build like, docker.run , docker.rm is used by other docker.command inside
 # test amd should not relie on them
 
 should = require 'should'
@@ -19,19 +19,19 @@ describe 'docker checksum', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_rmi
+    .docker.rmi
       image: 'mecano/checksum'
-    .docker_build
+    .docker.build
       image: 'mecano/checksum'
       content: "FROM scratch\nCMD ['echo \"hello build from text #{Date.now()}\"']"
     , (err, executed, _checksum, stdout, stderr) ->
       checksum = _checksum.trim() unless err
-    .docker_checksum
+    .docker.checksum
       image: 'mecano/checksum'
       tag: 'latest'
     , (err, executed, checksum_valid) ->
       checksum_valid.should.startWith "sha256:#{checksum}" unless err
-    .docker_rmi
+    .docker.rmi
       image: 'mecano/checksum'
     .then next
 
@@ -39,7 +39,7 @@ describe 'docker checksum', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_checksum
+    .docker.checksum
       image: 'mecano/checksum'
       tag: 'latest'
     , (err, executed, checksum) ->

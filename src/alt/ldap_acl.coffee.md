@@ -1,5 +1,5 @@
 
-# `ldap_acl(options, [goptions], callback)`
+# `ldap.acl(options, [goptions], callback)`
 
 Create new [ACLs](acls) for the OpenLDAP server.   
 
@@ -42,7 +42,7 @@ accessible.
 ## Example
 
 ```js
-require('mecano/alt/ldap_acl')({
+require('mecano/alt/ldap.acl')({
   url: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
@@ -79,7 +79,7 @@ require('mecano/alt/ldap_acl')({
         for b, i in acl.by
           acl.by[i] = b.trim()
         connect = ->
-          # if options.ldap instanceof ldap_client
+          # if options.ldap instanceof ldap.client
           if options.ldap?.url?.protocol?.indexOf('ldap') is 0
             client = options.ldap
             return search()
@@ -183,7 +183,7 @@ require('mecano/alt/ldap_acl')({
             unbind err
         unbind = (err) ->
           options.log? 'Unbind connection'
-          # return end err if options.ldap instanceof ldap_client and not options.unbind
+          # return end err if options.ldap instanceof ldap.client and not options.unbind
           return end err if options.ldap?.url?.protocol?.indexOf('ldap') is 0 and not options.unbind
           client.unbind (e) ->
             return next e if e

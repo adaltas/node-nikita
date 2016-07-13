@@ -1,5 +1,5 @@
 
-# `service_install(options, callback)`
+# `service.install(options, callback)`
 
 Install a service. For now, only Yum over SSH.
 
@@ -13,7 +13,7 @@ Install a service. For now, only Yum over SSH.
 ## Example
 
 ```js
-require('mecano').service_install([{
+require('mecano').service.install([{
   ssh: ssh,
   name: 'ntp'
 }, function(err, status){ /* do sth */ });
@@ -22,7 +22,7 @@ require('mecano').service_install([{
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering service_install", level: 'DEBUG', module: 'mecano/lib/service/install'
+      options.log message: "Entering service.install", level: 'DEBUG', module: 'mecano/lib/service/install'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'
       # Action

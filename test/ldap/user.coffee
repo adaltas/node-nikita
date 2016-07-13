@@ -2,7 +2,7 @@
 mecano = require '../../src'
 test = require '../test'
 
-describe 'ldap_user', ->
+describe 'ldap.user', ->
 
   scratch = test.scratch @
   config = test.config()
@@ -14,7 +14,7 @@ describe 'ldap_user', ->
       binddn: config.ldap.binddn
       passwd: config.ldap.passwd
       uri: config.ldap.uri
-    .ldap_user
+    .ldap.user
       user:
         dn: "cn=mecano,#{config.ldap.suffix_dn}"
         userPassword: 'test'
@@ -31,7 +31,7 @@ describe 'ldap_user', ->
     .then (err, modified) ->
       throw err if err
       modified.should.be.true()
-    .ldap_delete
+    .ldap.delete
       dn: "cn=mecano,#{config.ldap.suffix_dn}"
     .then next
 
@@ -54,15 +54,15 @@ describe 'ldap_user', ->
       binddn: config.ldap.binddn
       passwd: config.ldap.passwd
       uri: config.ldap.uri
-    .ldap_user
+    .ldap.user
       user: user
     .then ->
       return # reset status
-    .ldap_user
+    .ldap.user
       user: user
     .then (err, modified) ->
       throw err if err
       modified.should.be.false()
-    .ldap_delete
+    .ldap.delete
       dn: "cn=mecano,#{config.ldap.suffix_dn}"
     .then next

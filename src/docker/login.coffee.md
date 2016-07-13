@@ -1,5 +1,5 @@
 
-# `docker_build(options, callback)`
+# `docker.build(options, callback)`
 
 Register or log in to a Docker registry server.
 

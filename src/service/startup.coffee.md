@@ -1,5 +1,5 @@
 
-# `service_startup(options, callback)`
+# `service.startup(options, callback)`
 
 Activate or desactivate a service on startup.
 
@@ -31,7 +31,7 @@ Activate or desactivate a service on startup.
 ## Example
 
 ```js
-require('mecano').service_startup([{
+require('mecano').service.startup([{
   ssh: ssh,
   name: 'gmetad',
   startup: false
@@ -41,7 +41,7 @@ require('mecano').service_startup([{
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering service_startup", level: 'DEBUG', module: 'mecano/lib/service/startup'
+      options.log message: "Entering service.startup", level: 'DEBUG', module: 'mecano/lib/service/startup'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'
       options.startup ?= true
@@ -92,7 +92,7 @@ require('mecano').service_startup([{
           do_end()
       startup_del = =>
         options.log message: "Desactivating startup rules", level: 'DEBUG', module: 'mecano/service/startup'
-        options.log? "Mecano `service_startup`: s"
+        options.log? "Mecano `service.startup`: s"
         # Setting the level to off. An alternative is to delete it: `chkconfig --del #{options.name}`
         @execute
           cmd: "chkconfig #{options.name} off"

@@ -1,5 +1,5 @@
 
-# `ldap_schema(options, callback)`
+# `ldap.schema(options, callback)`
 
 Register a new ldap schema.
 
@@ -33,7 +33,7 @@ Register a new ldap schema.
 ## Example
 
 ```js
-require('mecano').ldap_schema({
+require('mecano').ldap.schema({
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
   name: 'kerberos',
@@ -58,7 +58,7 @@ require('mecano').ldap_schema({
       return callback new Error "Missing name" unless options.name
       return callback new Error "Missing schema" unless options.schema
       options.schema = options.schema.trim()
-      tempdir = options.tempdir or "/tmp/mecano_ldap_schema_#{Date.now()}"
+      tempdir = options.tempdir or "/tmp/mecano_ldap.schema_#{Date.now()}"
       schema = "#{tempdir}/#{options.name}.schema"
       conf = "#{tempdir}/schema.conf"
       ldif = "#{tempdir}/ldif"

@@ -2,7 +2,7 @@
 mecano = require '../../src'
 test = require '../test'
 
-describe 'ldap_index', ->
+describe 'ldap.index', ->
 
   scratch = test.scratch @
   config = test.config()
@@ -31,13 +31,13 @@ describe 'ldap_index', ->
   it 'create a new index', (next) ->
     mecano
       ldap: client
-    .ldap_index
+    .ldap.index
       name: 'olcDatabase={2}bdb,cn=config'
       indexes:
         aliasedEntryName: 'eq'
     , (err, modified) ->
       modified.should.be.true()
-    .ldap_index
+    .ldap.index
       name: 'olcDatabase={2}bdb,cn=config'
       indexes:
         aliasedEntryName: 'eq'
@@ -48,20 +48,20 @@ describe 'ldap_index', ->
   it 'update an existing index', (next) ->
     mecano
       ldap: client
-    .ldap_index
+    .ldap.index
       name: 'olcDatabase={2}bdb,cn=config'
       indexes:
         aliasedEntryName: 'eq'
     , (err, modified) ->
       modified.should.be.true()
-    .ldap_index
+    .ldap.index
       ldap: client
       name: 'olcDatabase={2}bdb,cn=config'
       indexes:
         aliasedEntryName: 'pres,eq'
     , (err, modified) ->
       modified.should.be.false()
-    .ldap_index
+    .ldap.index
       ldap: client
       name: 'olcDatabase={2}bdb,cn=config'
       indexes:

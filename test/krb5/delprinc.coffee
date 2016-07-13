@@ -3,7 +3,7 @@ mecano = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
-describe 'krb5_delprinc', ->
+describe 'krb5.delprinc', ->
 
   config = test.config()
   return if config.disable_krb5_delprinc
@@ -14,10 +14,10 @@ describe 'krb5_delprinc', ->
       kadmin_server: config.krb5.kadmin_server
       kadmin_principal: config.krb5.kadmin_principal
       kadmin_password: config.krb5.kadmin_password
-    .krb5_addprinc
+    .krb5.addprinc
       principal: "mecano@#{config.krb5.realm}"
       randkey: true
-    .krb5_delprinc
+    .krb5.delprinc
       principal: "mecano@#{config.krb5.realm}"
     , (err, status) ->
       status.should.be.true() unless err
@@ -29,9 +29,9 @@ describe 'krb5_delprinc', ->
       kadmin_server: config.krb5.kadmin_server
       kadmin_principal: config.krb5.kadmin_principal
       kadmin_password: config.krb5.kadmin_password
-    .krb5_delprinc
+    .krb5.delprinc
       principal: "mecano@#{config.krb5.realm}"
-    .krb5_delprinc
+    .krb5.delprinc
       principal: "mecano@#{config.krb5.realm}"
     , (err, status) ->
       status.should.be.false()

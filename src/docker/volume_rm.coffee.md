@@ -17,7 +17,7 @@ Remove a volume.
 ## Example
 
 ```javascript
-mecano.docker_volume_rm({
+mecano.docker.volume_rm({
   name: 'my_volume'
 }, function(err, removed){
   console.log(err or 'Status'+removed);

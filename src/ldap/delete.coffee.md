@@ -1,5 +1,5 @@
 
-# `ldap_delete(options, callback)`
+# `ldap.delete(options, callback)`
 
 Insert or modify an entry inside an OpenLDAP server.   
 
@@ -22,7 +22,7 @@ Insert or modify an entry inside an OpenLDAP server.
 ## Example
 
 ```js
-require('mecano').ldap_delete({
+require('mecano').ldap.delete({
   url: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
@@ -44,7 +44,7 @@ require('mecano').ldap_delete({
       options.uri = 'ldapi:///' if options.uri is true
       uri = if options.uri then "-H #{options.uri}" else '' # URI is obtained from local openldap conf unless provided
       # Add related options
-      return callback Error "Mecano `ldap_delete`: required property 'dn'" unless options.dn
+      return callback Error "Mecano `ldap.delete`: required property 'dn'" unless options.dn
       options.dn = [options.dn] unless Array.isArray options.dn
       dn = options.dn.map( (dn) -> "'#{dn}'").join(' ')
       # ldapdelete -D cn=Manager,dc=ryba -w test -H ldaps://master3.ryba:636 'cn=mecano,ou=users,dc=ryba' 

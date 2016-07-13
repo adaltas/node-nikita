@@ -1,5 +1,5 @@
 
-# `ldap_index(options, callback)`
+# `ldap.index(options, callback)`
 
 Create new [index](index) for the OpenLDAP server.
 
@@ -23,7 +23,7 @@ Create new [index](index) for the OpenLDAP server.
 ## Example
 
 ```js
-require('mecano').ldap_index({
+require('mecano').ldap.index({
   url: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',

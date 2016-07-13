@@ -1,5 +1,5 @@
 
-# `wait_execute(options, callback)`
+# `wait.execute(options, callback)`
 
 Run a command periodically and continue once the command succeed. Status will be
 set to "false" if the user command succeed right away, considering that no
@@ -24,7 +24,7 @@ change had occured. Otherwise it will be set to "true".
 
 ```coffee
 require 'mecano'
-.wait_execute
+.wait.execute
   cmd: "test -f /tmp/sth"
 .then (err, status) ->
   # Command succeed, the file "/tmp/sth" now exists

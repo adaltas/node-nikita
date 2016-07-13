@@ -11,7 +11,7 @@ describe 'wait exist', ->
   they 'take a single cmd', (ssh, next) ->
     mecano
       ssh: ssh
-    .wait_exist
+    .wait.exist
       target: "#{scratch}"
     , (err, status) ->
       status.should.be.false()
@@ -19,7 +19,7 @@ describe 'wait exist', ->
       setTimeout ->
         fs.mkdir ssh, "#{scratch}/a_file", -> # ok
       , 100
-    .wait_exist
+    .wait.exist
       target: "#{scratch}/a_file"
       interval: 60
     , (err, status) ->

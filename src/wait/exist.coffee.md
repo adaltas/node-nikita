@@ -1,5 +1,5 @@
 
-# `wait_exist(options, callback)`
+# `wait.exist(options, callback)`
 
 Wait for a file or directory to exists. Status will be
 set to "false" if the file already existed, considering that no
@@ -17,7 +17,7 @@ Example:
 
 ```coffee
 require 'mecano'
-.wait_exist
+.wait.exist
   target: "/path/to/file_or_directory"
 .then (err, status) ->
   # Command succeed, the file now exists

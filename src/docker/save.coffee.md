@@ -1,5 +1,5 @@
 
-# `docker_save(options, callback)`
+# `docker.save(options, callback)`
 
 Save Docker images
 

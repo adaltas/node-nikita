@@ -1,5 +1,5 @@
 
-# `docker_unpause(options, callback)`
+# `docker.unpause(options, callback)`
 
 Unpause all processes within a container
 
@@ -22,7 +22,7 @@ Unpause all processes within a container
 ## Example
 
 ```javascript
-mecano.docker_pause({
+mecano.docker.pause({
   container: 'toto'
 }, function(err, is_true){
   if(err){

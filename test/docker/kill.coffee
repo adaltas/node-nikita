@@ -20,14 +20,14 @@ describe 'docker kill', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_rm
+    .docker.rm
       container: 'mecano_test_kill'
       force: true
-    .docker_service
+    .docker.service
       image: 'httpd'
       port: '499:80'
       name: 'mecano_test_kill'
-    .docker_kill
+    .docker.kill
       container: 'mecano_test_kill'
     , (err, killed, stdout, stderr) ->
       killed.should.be.true()
@@ -38,16 +38,16 @@ describe 'docker kill', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_rm
+    .docker.rm
       container: 'mecano_test_kill'
       force: true
-    .docker_service
+    .docker.service
       image: 'httpd'
       port: '499:80'
       name: 'mecano_test_kill'
-    .docker_kill
+    .docker.kill
       container: 'mecano_test_kill'
-    .docker_kill
+    .docker.kill
       container: 'mecano_test_kill'
     , (err, killed) ->
       killed.should.be.false()
@@ -57,17 +57,17 @@ describe 'docker kill', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_rm
+    .docker.rm
       container: 'mecano_test_kill'
-    .docker_run
+    .docker.run
       cmd: "/bin/echo 'test'"
       image: 'alpine'
       rm: false
       name: 'mecano_test_kill'
-    .docker_kill
+    .docker.kill
       container: 'mecano_test_kill'
     , (err, killed) ->
       killed.should.be.false()
-    .docker_rm
+    .docker.rm
       container: 'mecano_test_kill'
     .then next

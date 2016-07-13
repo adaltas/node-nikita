@@ -3,7 +3,7 @@ mecano = require '../../src'
 they = require 'ssh2-they'
 test = require '../test'
 
-describe 'java_keystore_remove', ->
+describe 'java.keystore_remove', ->
 
   scratch = test.scratch @
 
@@ -12,7 +12,7 @@ describe 'java_keystore_remove', ->
     they 'keystore doesnt need to exists', (ssh, next) ->
       mecano
         ssh: ssh
-      .java_keystore_remove
+      .java.keystore_remove
         keystore: "#{scratch}/does/not/exist"
         storepass: "invalid"
         caname: "invalid"
@@ -23,7 +23,7 @@ describe 'java_keystore_remove', ->
     they 'caname or name must be provided', (ssh, next) ->
       mecano
         ssh: ssh
-      .java_keystore_remove
+      .java.keystore_remove
         keystore: "invalid"
         storepass: "invalid"
         caname: "invalid"
@@ -39,18 +39,18 @@ describe 'java_keystore_remove', ->
       storepass = 'changeit'
       mecano
         ssh: ssh
-      .java_keystore_add
+      .java.keystore_add
         keystore: "#{keystore}"
         storepass: "#{storepass}"
         caname: "#{caname}"
         cacert: "#{__dirname}/keystore/certs1/cacert.pem"
-      .java_keystore_remove
+      .java.keystore_remove
         keystore: "#{keystore}"
         storepass: "#{storepass}"
         caname: "#{caname}"
       , (err, status) ->
         status.should.be.true() unless err
-      .java_keystore_remove
+      .java.keystore_remove
         keystore: "#{keystore}"
         storepass: "#{storepass}"
         caname: "#{caname}"
@@ -73,7 +73,7 @@ describe 'java_keystore_remove', ->
       name = 'node_1'
       mecano
         ssh: ssh
-      .java_keystore_add
+      .java.keystore_add
         keystore: "#{keystore}"
         storepass: "#{storepass}"
         caname: "#{caname}"
@@ -82,14 +82,14 @@ describe 'java_keystore_remove', ->
         cert: "#{__dirname}/keystore/certs1/node_1_cert.pem"
         keypass: 'mypassword'
         name: "#{name}"
-      .java_keystore_remove
+      .java.keystore_remove
         keystore: "#{keystore}"
         storepass: "#{storepass}"
         name: "#{name}"
         keypass: "#{keypass}"
       , (err, status) ->
         status.should.be.true() unless err
-      .java_keystore_remove
+      .java.keystore_remove
         keystore: "#{keystore}"
         storepass: "#{storepass}"
         name: "#{name}"

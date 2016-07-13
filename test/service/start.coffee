@@ -14,17 +14,17 @@ describe 'service start', ->
       ssh: ssh
     .service
       name: 'cronie'
-    .service_stop
+    .service.stop
       name: config.service.srv_name
-    .service_start
+    .service.start
       name: config.service.srv_name
     , (err, status) ->
       status.should.be.true() unless err
-    .service_status
+    .service.status
       name: config.service.srv_name
     , (err, started) ->
       started.should.be.true() unless err
-    .service_start # Detect already started
+    .service.start # Detect already started
       name: config.service.srv_name
     , (err, status) ->
       status.should.be.false() unless err
@@ -33,7 +33,7 @@ describe 'service start', ->
   they 'detect invalid service name', (ssh, next) ->
     mecano
       ssh: ssh
-    .service_start
+    .service.start
       name: 'thisdoenstexit'
       relax: true
     , (err) ->
@@ -49,7 +49,7 @@ describe 'service start', ->
       action: 'stop'
     .call (options) ->
       (options.store["mecano.service.crond.status"] is undefined).should.be.true()
-    .service_start # Detect already started
+    .service.start # Detect already started
       name: config.service.srv_name
       cache: true
     .call (options) ->

@@ -38,7 +38,7 @@ Create a new Kerberos principal with a password or an optional keytab.
 ## Keytab example
 
 ```js
-require('mecano').krb5_addprinc({
+require('mecano').krb5.addprinc({
   principal: 'myservice/my.fqdn@MY.REALM',
   randkey: true,
   keytab: '/etc/security/keytabs/my.service.keytab',
@@ -68,7 +68,7 @@ require('mecano').krb5_addprinc({
       then "addprinc -pw #{options.password} #{options.principal}"
       else "addprinc -randkey #{options.principal}"
       # todo, could be removed once actions acception multiple options arguments
-      # such ash `.krb5_ktadd options, if: options.keytab
+      # such ash `.krb5.ktadd options, if: options.keytab
       ktadd_options = {}
       for k, v of options then ktadd_options[k] = v
       ktadd_options.if = options.keytab
@@ -85,7 +85,7 @@ require('mecano').krb5_addprinc({
         unless_exec: """
         if ! echo #{options.password} | kinit '#{options.principal}' -c '#{cache_name}'; then exit 1; else kdestroy -c '#{cache_name}'; fi
         """
-      @krb5_ktadd ktadd_options
+      @krb5.ktadd ktadd_options
       @then callback
 
 ## Dependencies

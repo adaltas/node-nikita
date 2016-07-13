@@ -1,5 +1,5 @@
 
-# `docker_stop(options, callback)`
+# `docker.stop(options, callback)`
 
 Stop started containers
 
@@ -24,7 +24,7 @@ Stop started containers
 ## Example
 
 ```javascript
-mecano.docker_stop({
+mecano.docker.stop({
   container: 'toto'
 }, function(err, is_true){
   if(err){
@@ -49,7 +49,7 @@ mecano.docker_stop({
       cmd = 'stop'
       cmd += " -t #{options.timeout}" if options.timeout?
       cmd += " #{options.container}"
-      @docker_status shy: true, options, (err, is_running) ->
+      @docker.status shy: true, options, (err, is_running) ->
         throw err if err
         if is_running
         then options.log message: "Stopping container #{options.container}", level: 'INFO', module: 'mecano/lib/docker/stop'
@@ -61,6 +61,5 @@ mecano.docker_stop({
 
 ## Modules Dependencies
 
-    docker_status = require './status'
     docker = require '../misc/docker'
     util = require 'util'

@@ -21,22 +21,22 @@ describe 'cron', ->
   they 'add a job', (ssh, next) ->
     mecano
       ssh: ssh
-    .cron_add
+    .cron.add
       cmd: "/bin/true #{rand}/toto - *.mp3"
       when: '0 * * * *'
     , (err, executed) ->
       executed.should.be.true()
-    .cron_add
+    .cron.add
       cmd: "/bin/true #{rand}/toto - *.mp3"
       when: '0 * * * *'
     , (err, executed) ->
       executed.should.be.false()
-    .cron_remove
+    .cron.remove
       cmd: "/bin/true #{rand}/toto - *.mp3"
       when: '0 * * * *'
     , (err, executed) ->
       executed.should.be.true()
-    .cron_remove
+    .cron.remove
       cmd: "/bin/true #{rand}/toto - *.mp3"
       when: '0 * * * *'
     , (err, executed) ->
@@ -48,13 +48,13 @@ describe 'cron', ->
     they 'regexp', (ssh, next) ->
       mecano
         ssh: ssh
-      .cron_add
+      .cron.add
         cmd: "/bin/true #{rand}"
         when: '0 * * * *'
         match: '.*bin.*'
       , (err, executed) ->
         executed.should.be.true()
-      .cron_add
+      .cron.add
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
         match: /.*bin.*/
@@ -65,13 +65,13 @@ describe 'cron', ->
           ]
       , (err, executed) ->
         executed.should.be.true() unless err
-      .cron_add
+      .cron.add
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
         match: /.*bin.*/
       , (err, executed) ->
         executed.should.be.false() unless err
-      .cron_remove
+      .cron.remove
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
       .then next
@@ -79,13 +79,13 @@ describe 'cron', ->
     they 'string', (ssh, next) ->
       mecano
         ssh: ssh
-      .cron_add
+      .cron.add
         cmd: "/bin/true #{rand}"
         when: '0 * * * *'
         match: '.*bin.*'
       , (err, executed) ->
         executed.should.be.true() unless err
-      .cron_add
+      .cron.add
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
         match: '.*bin.*'
@@ -96,13 +96,13 @@ describe 'cron', ->
           ]
       , (err, executed) ->
         executed.should.be.true() unless err
-      .cron_add
+      .cron.add
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
         match: '.*bin.*'
       , (err, executed) ->
         executed.should.be.false() unless err
-      .cron_remove
+      .cron.remove
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
       .then next
@@ -112,7 +112,7 @@ describe 'cron', ->
     they 'invalid job: no time', (ssh, next) ->
       mecano
         ssh: ssh
-      .cron_add
+      .cron.add
         cmd: '/remove/me'
       , (err, executed) ->
         err.message.should.eql 'valid when is required'
@@ -121,7 +121,7 @@ describe 'cron', ->
     they 'invalid job: invalid time', (ssh, next) ->
       mecano
         ssh: ssh
-      .cron_add
+      .cron.add
         cmd: '/remove/me'
         when: true
       , (err, executed) ->
@@ -131,7 +131,7 @@ describe 'cron', ->
     they 'invalid job: no cmd', (ssh, next) ->
       mecano
         ssh: ssh
-      .cron_add
+      .cron.add
         when: '1 2 3 4 5'
       , (err, executed) ->
         err.message.should.eql 'valid cmd is required'
@@ -140,7 +140,7 @@ describe 'cron', ->
     they 'invalid job: invalid cmd', (ssh, next) ->
       mecano
         ssh: ssh
-      .cron_add
+      .cron.add
         cmd: ''
         when: '1 2 3 4 5'
       , (err, executed) ->
@@ -150,7 +150,7 @@ describe 'cron', ->
     they 'invalid job: invalid cmd to exec', (ssh, next) ->
       mecano
         ssh: ssh
-      .cron_add
+      .cron.add
         cmd: 'azertyytreza'
         when: '1 2 3 4 5'
         exec: true

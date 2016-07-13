@@ -17,14 +17,14 @@ describe 'docker stop', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_service
+    .docker.service
       image: 'httpd'
       name: 'mecano_test_stop'
-    .docker_stop
+    .docker.stop
       container: 'mecano_test_stop'
     , (err, stopped) ->
       stopped.should.be.true()
-    .docker_rm
+    .docker.rm
       container: 'mecano_test_stop'
       force: true
     .then next
@@ -33,16 +33,16 @@ describe 'docker stop', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_service
+    .docker.service
       image: 'httpd'
       name: 'mecano_test_stop'
-    .docker_stop
+    .docker.stop
       container: 'mecano_test_stop'
-    .docker_stop
+    .docker.stop
       container: 'mecano_test_stop'
     , (err, stopped) ->
       stopped.should.be.false() unless err
-    .docker_rm
+    .docker.rm
       container: 'mecano_test_stop'
       force: true
     .then next

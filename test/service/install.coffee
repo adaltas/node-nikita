@@ -12,7 +12,7 @@ describe 'service install', ->
   they 'new package', (ssh, next) ->
     mecano
       ssh: ssh
-    .service_remove
+    .service.remove
       name: config.service.name
     .service
       name: config.service.name
@@ -23,7 +23,7 @@ describe 'service install', ->
   they 'already installed packages', (ssh, next) ->
     mecano
       ssh: ssh
-    .service_remove
+    .service.remove
       name: config.service.name
     .service
       name: config.service.name
@@ -36,7 +36,7 @@ describe 'service install', ->
   they 'name as default argument', (ssh, next) ->
     mecano
       ssh: ssh
-    .service_remove
+    .service.remove
       name: config.service.name
     .service config.service.name, (err, status) ->
       status.should.be.true() unless err
@@ -45,7 +45,7 @@ describe 'service install', ->
   they 'cache', (ssh, next) ->
     mecano
       ssh: ssh
-    .service_remove
+    .service.remove
       name: config.service.name
     .call (options) ->
       (options.store['mecano:execute:installed'] is undefined).should.be.true()

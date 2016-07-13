@@ -22,23 +22,23 @@ describe 'docker load', ->
       docker: config.docker
     .remove
       target: "#{scratch}/mecano_load.tar"
-    .docker_build
+    .docker.build
       image: 'mecano/load_test'
       tag: 'latest'
-      content: "FROM alpine\nCMD ['echo \"docker_build #{Date.now()}\"']"
-    .docker_save
+      content: "FROM alpine\nCMD ['echo \"docker.build #{Date.now()}\"']"
+    .docker.save
       image: 'mecano/load_test'
       tag: 'latest'
       output: "#{scratch}/mecano_load.tar"
-    .docker_rmi
+    .docker.rmi
       image: 'mecano/load_test'
-    .docker_load
+    .docker.load
       image: 'mecano/load_test'
       tag: 'latest'
       input: "#{scratch}/mecano_load.tar"
     , (err, loaded, stdout, stderr) ->
       loaded.should.be.true() unless err
-    .docker_rmi
+    .docker.rmi
       image: 'mecano/load_test'
     .then next
 
@@ -49,18 +49,18 @@ describe 'docker load', ->
       docker: config.docker
     .remove
       target: "#{scratch}/mecano_load.tar"
-    .docker_build
+    .docker.build
       image: 'mecano/load_test'
       tag: 'latest'
-      content: "FROM alpine\nCMD ['echo \"docker_build #{Date.now()}\"']"
+      content: "FROM alpine\nCMD ['echo \"docker.build #{Date.now()}\"']"
     , (err, execute, _checksum) ->
       checksum = _checksum
-    .docker_save
+    .docker.save
       image: 'mecano/load_test'
       tag: 'latest'
       output: "#{scratch}/mecano_load.tar"
     .call ->
-      @docker_load
+      @docker.load
         input: "#{scratch}/mecano_load.tar"
         checksum: checksum
       , (err, loaded) ->
@@ -74,19 +74,19 @@ describe 'docker load', ->
       docker: config.docker
     .remove
       target: "#{scratch}/mecano_load.tar"
-    .docker_rmi
+    .docker.rmi
       image: 'mecano/load_test:latest'
-    .docker_build
+    .docker.build
       image: 'mecano/load_test'
       tag: 'latest'
-      content: "FROM alpine\nCMD ['echo \"docker_build #{Date.now()}\"']"
-    .docker_save
+      content: "FROM alpine\nCMD ['echo \"docker.build #{Date.now()}\"']"
+    .docker.save
       image: 'mecano/load_test:latest'
       output: "#{scratch}/load.tar"
-    .docker_load
+    .docker.load
       image: 'mecano/mecano_load:latest'
       input: "#{scratch}/load.tar"
-    .docker_load
+    .docker.load
       image: 'mecano/mecano_load:latest'
       input: "#{scratch}/load.tar"
     , (err, loaded) ->

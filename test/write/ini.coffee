@@ -5,12 +5,12 @@ test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
 
-describe 'write_ini', ->
+describe 'write.ini', ->
 
   scratch = test.scratch @
 
   they 'stringify an object', (ssh, next) ->
-    mecano.write_ini
+    mecano.write.ini
       ssh: ssh
       content: user: preference: color: 'rouge'
       target: "#{scratch}/user.ini"
@@ -23,7 +23,7 @@ describe 'write_ini', ->
         next()
 
   they 'stringify an object and with custom separator', (ssh, next) ->
-    mecano.write_ini
+    mecano.write.ini
       ssh: ssh
       content: user: preference: color: 'rouge'
       target: "#{scratch}/user.ini"
@@ -40,7 +40,7 @@ describe 'write_ini', ->
     content = '[user.preference]\nlanguage = node\ncolor = rouge\n'
     fs.writeFile ssh, "#{scratch}/user.ini", content, (err) ->
       return next err if err
-      mecano.write_ini
+      mecano.write.ini
         ssh: ssh
         content: user: preference: color: 'violet'
         target: "#{scratch}/user.ini"
@@ -54,7 +54,7 @@ describe 'write_ini', ->
           next()
 
   they 'discard undefined and null', (ssh, next) ->
-    mecano.write_ini
+    mecano.write.ini
       ssh: ssh
       content: user: preference: color: 'violet', age: undefined, gender: null
       target: "#{scratch}/user.ini"
@@ -71,7 +71,7 @@ describe 'write_ini', ->
     content = '[user.preference]\nlanguage = node\ncolor = rouge\n'
     fs.writeFile ssh, "#{scratch}/user.ini", content, (err) ->
       return next err if err
-      mecano.write_ini
+      mecano.write.ini
         ssh: ssh
         content: user: preference: color: null
         target: "#{scratch}/user.ini"
@@ -88,7 +88,7 @@ describe 'write_ini', ->
     content = '[user.preference]\nlanguage = node\ncolor = rouge\n'
     fs.writeFile ssh, "#{scratch}/user.ini", content, (err) ->
       return next err if err
-      mecano.write_ini
+      mecano.write.ini
         ssh: ssh
         content: user: preference: color: undefined
         target: "#{scratch}/user.ini"
@@ -99,7 +99,7 @@ describe 'write_ini', ->
         next()
 
   they 'call stringify udf', (ssh, next) ->
-    mecano.write_ini
+    mecano.write.ini
       ssh: ssh
       content: user: preference: color: true
       stringify: misc.ini.stringify_square_then_curly
@@ -112,8 +112,3 @@ describe 'write_ini', ->
         return next err if err
         data.should.eql '[user]\n preference = {\n  color = true\n }\n\n'
         next()
-
-
-
-
-

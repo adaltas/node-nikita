@@ -1,5 +1,5 @@
 
-# `docker_start(options, callback)`
+# `docker.start(options, callback)`
 
 Start stopped containers. Or stop/starts started container
 
@@ -29,7 +29,7 @@ Start stopped containers. Or stop/starts started container
 ## Example
 
 ```javascript
-mecano.docker_restart({
+mecano.docker.restart({
   container: 'toto'
 }, function(err, is_true){
   if(err){

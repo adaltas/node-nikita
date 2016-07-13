@@ -13,7 +13,7 @@
       'version'
     ]
     module.exports.wrap = (options, cmd) ->
-      docker_opts = for option in module.exports.options
+      docker.opts = for option in module.exports.options
         value = undefined
         if options.docker[option] then value = options.docker[option]
         else if options[option] then value = options.docker[option]
@@ -21,7 +21,7 @@
         value = 'true' if value is true
         value = 'false' if value is false
         "--#{option} #{value}"
-      docker_opts = docker_opts.join ' '
+      docker.opts = docker.opts.join ' '
       """
       export SHELL=/bin/bash
       export PATH=/opt/local/bin/:/opt/local/sbin/:/usr/local/bin/:/usr/local/sbin/:$PATH
@@ -42,7 +42,7 @@
       else
         docker="$bin_docker"
       fi
-      eval $docker #{docker_opts} #{cmd}
+      eval $docker #{docker.opts} #{cmd}
       """
     module.exports.callback = (err, executed, stdout, stderr) ->
       throw Error stderr.trim().replace 'Error response from daemon: ', '' if err and /^Error response from daemon/.test stderr

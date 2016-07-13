@@ -3,7 +3,7 @@ mecano = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
-describe 'krb5_addprinc', ->
+describe 'krb5.addprinc', ->
 
   config = test.config()
   return if config.disable_krb5_addprinc
@@ -14,14 +14,14 @@ describe 'krb5_addprinc', ->
       kadmin_server: config.krb5.kadmin_server
       kadmin_principal: config.krb5.kadmin_principal
       kadmin_password: config.krb5.kadmin_password
-    .krb5_delprinc
+    .krb5.delprinc
       principal: "mecano@#{config.krb5.realm}"
-    .krb5_addprinc
+    .krb5.addprinc
       principal: "mecano@#{config.krb5.realm}"
       randkey: true
     , (err, created) ->
       created.should.be.true() unless err
-    .krb5_addprinc
+    .krb5.addprinc
       principal: "mecano@#{config.krb5.realm}"
       randkey: true
     , (err, created) ->
@@ -34,20 +34,20 @@ describe 'krb5_addprinc', ->
       kadmin_server: config.krb5.kadmin_server
       kadmin_principal: config.krb5.kadmin_principal
       kadmin_password: config.krb5.kadmin_password
-    .krb5_delprinc
+    .krb5.delprinc
       principal: "mecano@#{config.krb5.realm}"
-    .krb5_addprinc
+    .krb5.addprinc
       principal: "mecano@#{config.krb5.realm}"
       password: 'password1'
     , (err, created) ->
       created.should.be.true()
-    .krb5_addprinc
+    .krb5.addprinc
       principal: "mecano@#{config.krb5.realm}"
       password: 'password2'
       password_sync: true
     , (err, created) ->
       created.should.be.true()
-    .krb5_addprinc
+    .krb5.addprinc
       principal: "mecano@#{config.krb5.realm}"
       password: 'password2'
       password_sync: true
@@ -66,14 +66,14 @@ describe 'krb5_addprinc', ->
       kadmin_server: config.krb5.kadmin_server
       kadmin_principal: config.krb5.kadmin_principal
       kadmin_password: config.krb5.kadmin_password
-    .krb5_delprinc
+    .krb5.delprinc
       principal: "mecano@#{config.krb5.realm}"
-    .krb5_addprinc
+    .krb5.addprinc
       principal: "mecano@#{config.krb5.realm}"
       password: 'password1'
     , (err, created) ->
       created.should.be.true()
-    .krb5_addprinc
+    .krb5.addprinc
       principal: "mecano@#{config.krb5.realm}"
       password: 'password2'
       password_sync: false # Default
@@ -112,15 +112,15 @@ describe 'krb5_addprinc', ->
       kadmin_password: config.krb5.kadmin_password
     .execute 
       cmd: 'rm -f /etc/security/keytabs/user1.service.keytab || true ; exit 0;'
-    .krb5_delprinc
+    .krb5.delprinc
       principal: user.principal
-    .krb5_delprinc
+    .krb5.delprinc
       principal: "user1/krb5@NODE.DC1.CONSUL"
-    .krb5_addprinc krb5, 
+    .krb5.addprinc krb5, 
       principal: "user1/krb5@NODE.DC1.CONSUL"
       randkey: true
       keytab: '/etc/security/keytabs/user1.service.keytab'
-    .krb5_addprinc krb5, user
+    .krb5.addprinc krb5, user
     , (err, created) ->
       return next err if err  
       created.should.be.true()

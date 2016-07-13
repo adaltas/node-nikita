@@ -1,6 +1,6 @@
 # Be aware to specify the machine if docker mahcine is used
-# Some other docker test uses docker_status (start, stop)
-# So docker_status should is used by other docker command
+# Some other docker test uses docker.status (start, stop)
+# So docker.status should is used by other docker command
 # For this purpos ip, and clean are used
 
 stream = require 'stream'
@@ -21,19 +21,19 @@ describe 'docker status', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_rm
+    .docker.rm
       container: 'mecano_status'
       force: true
-    .docker_run
+    .docker.run
       cmd: "/bin/echo 'test'"
       image: 'alpine'
       rm: false
       name: 'mecano_status'
-    .docker_status
+    .docker.status
       container: 'mecano_status'
     , (err, running, stdout, stderr) ->
       running.should.be.false() unless err
-    .docker_rm
+    .docker.rm
       container: 'mecano_status'
       force: true
     .then next
@@ -42,18 +42,18 @@ describe 'docker status', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_rm
+    .docker.rm
       container: 'mecano_status'
       force: true
-    .docker_service
+    .docker.service
       image: 'httpd'
       port: [ '500:80' ]
       name: 'mecano_status'
-    .docker_status
+    .docker.status
       container: 'mecano_status'
     , (err, running, stdout, stderr) ->
       running.should.be.true()
-    .docker_rm
+    .docker.rm
       container: 'mecano_status'
       force: true
     .then next

@@ -14,9 +14,9 @@ describe 'service restart', ->
       ssh: ssh
     .service
       name: config.service.name
-    .service_start
+    .service.start
       name: 'crond'
-    .service_restart
+    .service.restart
       name: 'crond'
     , (err, restarted) ->
       restarted.should.be.true()

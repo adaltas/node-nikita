@@ -1,5 +1,5 @@
 
-# `docker_kill(options, callback)`
+# `docker.kill(options, callback)`
 
 Send signal to containers using SIGKILL or a specified signal.
 Note if container is not running , SIGKILL is not executed and
@@ -32,7 +32,7 @@ SIGNAL is not sent.
 ## Example
 
 ```javascript
-mecano.docker_kill({
+mecano.docker.kill({
   container: 'toto'
   signal: 9
 }, function(err, is_true){

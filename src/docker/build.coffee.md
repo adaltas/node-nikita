@@ -1,5 +1,5 @@
 
-# `docker_build(options, callback)`
+# `docker.build(options, callback)`
 
 Build docker repository from Dockerfile, from content or from current working
 directory (exclusive options).
@@ -60,7 +60,7 @@ Status unmodified if the repository is identical to a previous one
 1- builds a repository from dockerfile without any resourcess
 
 ```javascript
-mecano.docker_build({
+mecano.docker.build({
   image: 'ryba/targe-build'
   source: '/home/ryba/Dockerfile'
 }, function(err, is_true, stdout, stderr){
@@ -90,7 +90,7 @@ Build directory tree :
                           │   ├── configuration.sh
 
 ```javascript
-mecano.docker_build({
+mecano.docker.build({
   ssh: ssh
   tag: 'ryba/target-build'
   source: '/home/ryba/Dockerfile'
@@ -109,7 +109,7 @@ mecano.docker_build({
 3- builds an repository from stdin
 
 ```javascript
-mecano.docker_build({
+mecano.docker.build({
   ssh: ssh
   tag: 'ryba/target-build'
   content: "FROM ubuntu\nRUN echo 'helloworld'"

@@ -1,5 +1,5 @@
 
-# `service_start(options, callback)`
+# `service.start(options, callback)`
 
 Status of a service.
 
@@ -33,7 +33,7 @@ Status of a service.
 ## Example
 
 ```js
-require('mecano').service_start([{
+require('mecano').service.start([{
   ssh: ssh,
   name: 'gmetad'
 }, function(err, status){ /* do sth */ });
@@ -42,7 +42,7 @@ require('mecano').service_start([{
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering service_status", level: 'DEBUG', module: 'mecano/lib/service/status'
+      options.log message: "Entering service.status", level: 'DEBUG', module: 'mecano/lib/service/status'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'
       # Validation

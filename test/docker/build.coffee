@@ -1,5 +1,5 @@
 # Be aware to specify the machine if docker mahcine is used
-# docker_build like, docker_run , docker_rm is used by other docker_command inside
+# docker.build like, docker.run , docker.rm is used by other docker.command inside
 # test amd should not relie on them
 
 should = require 'should'
@@ -23,7 +23,7 @@ describe 'docker build', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_build
+    .docker.build
       false_source: 'Dockerfile'
     .then (err) ->
       return next Error 'Expect error' unless err
@@ -34,7 +34,7 @@ describe 'docker build', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_build
+    .docker.build
       image: 'mecano/should_not_exists_1'
       file: "#{__dirname}/Dockerfile"
       content: "FROM scratch \ CMD ['echo \"hello world\"']"
@@ -46,9 +46,9 @@ describe 'docker build', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_rmi
+    .docker.rmi
       image: 'mecano/should_exists_2'
-    .docker_build
+    .docker.build
       image: 'mecano/should_exists_2'
       content: """
       FROM scratch
@@ -57,7 +57,7 @@ describe 'docker build', ->
     , (err, executed, stdout, stderr) ->
       executed.should.be.true() unless err
       stderr.should.containEql 'Step 2 : CMD echo hello' unless err
-    .docker_rmi
+    .docker.rmi
       image: 'mecano/should_exists_2'
     .then next
 
@@ -65,7 +65,7 @@ describe 'docker build', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_rmi
+    .docker.rmi
       image: 'mecano/should_exists_3'
     .write
       target: "#{scratch}/Dockerfile"
@@ -73,12 +73,12 @@ describe 'docker build', ->
       FROM scratch
       CMD echo hello
       """
-    .docker_build
+    .docker.build
       image: 'mecano/should_exists_3'
       cwd: scratch
     , (err, executed, stdout, stderr) ->
       executed.should.be.true() unless err
-    .docker_rmi
+    .docker.rmi
       image: 'mecano/should_exists_3'
     .then next
 
@@ -86,17 +86,17 @@ describe 'docker build', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_rmi
+    .docker.rmi
       image: 'mecano/should_exists_3'
     .write
       content: "FROM scratch\nCMD ['echo \"hello build from Dockerfile #{Date.now()}\"']"
       target: "#{scratch}/mecano_Dockerfile"
-    .docker_build
+    .docker.build
       image: 'mecano/should_exists_4'
       file: "#{scratch}/mecano_Dockerfile"
     , (err, executed) ->
       executed.should.be.true() unless err
-    .docker_rmi
+    .docker.rmi
       image: 'mecano/should_exists_3'
     .then next
 
@@ -104,7 +104,7 @@ describe 'docker build', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_build
+    .docker.build
       image: 'mecano/should_not_exists_4'
       file: 'unexisting/file'
       relax: true
@@ -117,7 +117,7 @@ describe 'docker build', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .docker_rmi
+    .docker.rmi
       image: 'mecano/should_exists_5'
     .write
       target: "#{scratch}/mecano_Dockerfile"
@@ -125,19 +125,19 @@ describe 'docker build', ->
       FROM scratch
       CMD echo hello
       """
-    .docker_build
+    .docker.build
       image: 'mecano/should_exists_5'
       file: "#{scratch}/mecano_Dockerfile"
       log: (msg) -> status_true = msg
     , (err, executed) ->
       executed.should.be.true()
-    .docker_build
+    .docker.build
       image: 'mecano/should_exists_5'
       file: "#{scratch}/mecano_Dockerfile"
       log: (msg) -> status_false = msg
     , (err, executed) ->
       executed.should.be.false()
-    .docker_rmi
+    .docker.rmi
       image: 'mecano/should_exists_5'
     .call ->
       status_true.message.should.match /^New image id/
