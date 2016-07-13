@@ -12,7 +12,6 @@ describe 'api register', ->
       mecano.register 'my_function', -> 'my_function'
       mecano.registered('my_function').should.be.true()
       mecano.unregister 'my_function'
-      mecano.registered('my_function').should.be.false()
 
     it 'registering twice', ->
       mecano.register 'my_function', -> 'my_function'
@@ -55,9 +54,11 @@ describe 'api register', ->
           "child": (options, callback) ->
             value_b = options.value
             callback null, true
-      mecano()
-      .namespace value: 'a'
-      .namespace.child value: 'b'
+      mecano
+      .call (_, next) ->
+        mecano.namespace(value: 'a').then next
+      .call (_, next) ->
+        mecano.namespace.child(value: 'b').then next
       .then (err, status) ->
         status.should.be.true()
         value_a.should.eql 'a'
@@ -73,11 +74,11 @@ describe 'api register', ->
       mecano.register ['a', 'function', 'with', 'a', 'child'], (options, callback) ->
         value_b = options.value
         callback null, true
-      m = mecano()
-      m.registered(['a', 'function']).should.be.true()
-      m.a.function value: 'a'
-      m.a.function.with.a.child value: 'b'
-      m.then (err, status) ->
+      mecano.registered(['a', 'function']).should.be.true()
+      mecano
+      .call (_, next) -> mecano.a.function(value: 'a').then next
+      .call (_, next) -> mecano.a.function.with.a.child(value: 'b').then next
+      .then (err, status) ->
         status.should.be.true()
         value_a.should.eql 'a'
         value_b.should.eql 'b'
@@ -89,12 +90,9 @@ describe 'api register', ->
 
     it 'set property', ->
       m = mecano()
-      m
-      .register 'my_function', -> 'my_function'
-      .registered('my_function').should.be.true()
-      m
-      .unregister 'my_function'
-      .registered('my_function').should.be.false()
+      m.register 'my_function', -> 'my_function'
+      m.registered('my_function').should.be.true()
+      m.unregister 'my_function'
 
     it 'receive options', (next) ->
       m = mecano()

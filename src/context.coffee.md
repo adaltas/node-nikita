@@ -34,7 +34,7 @@
       obj.options.domain?.on 'error', domain_on_error
       proxy = new Proxy obj,
         has: (target, name) ->
-          target.registry.registered(tree) or registry.registered(name)
+          target[name]? or target.registry.registered(tree)? or registry.registered(name)?
         get: (target, name) ->
           return target[name] if target[name]?
           tree.push name
@@ -42,7 +42,6 @@
             builder = ->
               # Insert handler before callback or at the end of arguments
               handler = target.registry.get(tree) or registry.get(tree)
-              # return proxy unless handler
               args = [].slice.call(arguments)
               tree = []
               args.unshift handler

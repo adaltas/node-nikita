@@ -15,14 +15,28 @@ functions share a common API with flexible options.
     
     module.exports = new Proxy (-> context arguments...),
       get: (target, name) ->
+        # return target[name] if target[name]
         ctx = context()
-        ->
+        tree = []
+        tree.push name
+        builder = ->
           return registry[name].apply registry, arguments if name in ['register', 'registered', 'unregister']
-          a = ctx[name]
-          if typeof a is 'function'
-          then a.apply ctx, arguments
-          else a
-      
+          a = ctx[tree.shift()]
+          return a unless typeof a is 'function'
+          while name = tree.shift()
+            a[name]
+          a.apply ctx, arguments
+        proxy = new Proxy builder,
+          get: (target, name) ->
+            # return target[name] if name in target
+            tree.push name
+            # Fallback to standard object behavior unless in registry
+            # cnames = registry
+            # for n, i in tree
+            #   return cnames[n] unless cnames[n]?
+            #   cnames = cnames[n]
+            proxy
+        proxy
 ## Dependencies
   
     context = require './context'
