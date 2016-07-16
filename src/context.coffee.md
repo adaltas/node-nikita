@@ -441,7 +441,7 @@
           cleanup = (obj) ->
             for k, v of obj
               v = require.main.require v if typeof v is 'string'
-              if v and typeof v is 'object' and not Array.isArray v and not v.handler
+              if v and typeof v is 'object' and not Array.isArray(v) and not v.handler
                 cleanup v
               else
                 obj[k] = '': v unless k is ''

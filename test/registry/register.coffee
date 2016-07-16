@@ -13,9 +13,19 @@ describe 'api register', ->
       mecano.registered('my_function').should.be.true()
       mecano.unregister 'my_function'
 
-    it 'registering twice', ->
+    it 'register twice', ->
       mecano.register 'my_function', -> 'my_function'
       mecano.register 'my_function', -> 'my_function'
+
+    it 'register an object', ->
+      mecano.register 'my_function', shy: true, handler: (options) -> "hello #{options.value}"
+      mecano.register
+        'my': 'function': shy: true, handler: (options, callback) ->
+          value = "hello #{options.value}"
+          callback null, true
+      mecano.my_function value: 'world'
+      mecano.my.function value: 'world'
+      mecano.unregister 'my_function'
 
     it 'is available from mecano instance', (next) ->
       mecano.register 'my_function', (options, callback) ->
@@ -100,6 +110,27 @@ describe 'api register', ->
       m.register 'my_function', -> 'my_function'
       m.registered('my_function').should.be.true()
       m.unregister 'my_function'
+
+    it 'register twice', ->
+      mecano()
+      .register 'my_function', -> 'my_function'
+      .register 'my_function', -> 'my_function'
+
+    it 'register an object', (next) ->
+      value_a = value_b = null
+      mecano()
+      .register 'my_function', (options) -> value_a = "hello #{options.value}"
+      .register
+        'my': 'function': shy: true, handler: (options, callback) ->
+          value_b = "hello #{options.value}"
+          callback null, true
+      .my_function value: 'world a'
+      .my.function value: 'world b'
+      .then (err, status) ->
+        status.should.be.false() unless err
+        value_a.should.eql "hello world a" unless err
+        value_b.should.eql "hello world b" unless err
+        next err
 
     it 'receive options', (next) ->
       m = mecano()
