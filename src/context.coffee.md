@@ -295,6 +295,7 @@
                 return setTimeout do_handler, options.wait
               do_intercept_after arguments...
             options.handler ?= obj.registry.get(options.type) or registry.get(options.type)
+            return handle_multiple_call Error "Unregistered Handler: #{options.type}" unless options.handler
             options_handler = options.handler
             options.handler = undefined
             options_callback = options.callback

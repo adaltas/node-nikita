@@ -85,6 +85,13 @@ describe 'api register', ->
         mecano.unregister ['a', 'function']
         mecano.unregister ['a', 'function', 'with', 'a', 'child']
         next err
+          
+    it 'throw error unless registered', (next) ->
+      mecano
+      .invalid()
+      .then (err) ->
+        err.message.should.eql 'Unregistered Handler: invalid'
+        next()
 
   describe 'local', ->
 
@@ -180,6 +187,13 @@ describe 'api register', ->
         mecano.unregister ['a', 'function']
         mecano.unregister ['a', 'function', 'with', 'a', 'child']
         next err
+          
+    it 'throw error unless registered', (next) ->
+      mecano()
+      .invalid()
+      .then (err) ->
+        err.message.should.eql 'Unregistered Handler: invalid'
+        next()
 
   describe 'mixed', ->
     
