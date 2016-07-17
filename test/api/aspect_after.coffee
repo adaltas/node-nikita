@@ -4,8 +4,6 @@ test = require '../test'
 
 describe 'api after', ->
 
-  scratch = test.scratch @
-
   describe 'event', ->
 
     it 'is a string and match a action type', (next) ->

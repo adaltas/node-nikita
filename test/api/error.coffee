@@ -4,8 +4,6 @@ test = require '../test'
 
 describe 'api error', ->
 
-  scratch = test.scratch @
-
   it 'log', (next) ->
     logs = []
     mecano

@@ -4,8 +4,6 @@ test = require '../test'
 
 describe 'api end', ->
 
-  scratch = test.scratch @
-
   it 'honor conditions', (next) ->
     mecano
     .end if: false

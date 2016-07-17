@@ -5,8 +5,6 @@ fs = require 'fs'
 
 describe 'api options', ->
 
-  scratch = test.scratch @
-
   it 'global dont overwrite local options', (next) ->
     m = mecano
       global_param: true
