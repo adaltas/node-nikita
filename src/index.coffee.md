@@ -99,6 +99,8 @@ functions share a common API with flexible options.
         index: require './ldap/index'
         schema: require './ldap/schema'
         user: require './ldap/user'
+      log:
+        md: require './log/md'
       service:
         '': require './service'
         install: require './service/install'

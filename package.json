@@ -35,6 +35,7 @@
     "jsftp": "~1.5.3",
     "js-yaml": "~3.6.0",
     "minimatch": "~3.0.0",
+    "mustache": "~2.2.1",
     "nunjucks": "~2.4.0",
     "pad": "~1.0.0",
     "regexp-quote": "~0.0.0",
