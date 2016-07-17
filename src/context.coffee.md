@@ -195,6 +195,10 @@
         unless options # Nothing more to do in current queue
           if stack.length is 0
             obj.options.domain?.removeListener 'error', domain_on_error
+          if stack.length is 0
+            if todos.err or todos.final_err
+            then obj.emit 'error', todos.err or todos.final_err
+            else obj.emit 'end'
           if callback
             callback todos.err
           else
@@ -205,6 +209,7 @@
         if options.type is 'then'
           {err, status} = todos
           status = status.some (status) -> not status.shy and !!status.value
+          todos.final_err = err
           todos_reset todos
           options.handler?.call proxy, err, status
           run()
