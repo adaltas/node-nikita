@@ -195,10 +195,10 @@
         unless options # Nothing more to do in current queue
           if stack.length is 0
             obj.options.domain?.removeListener 'error', domain_on_error
-          if stack.length is 0
-            if todos.err or todos.final_err
-            then obj.emit 'error', todos.err or todos.final_err
-            else obj.emit 'end'
+          # if stack.length is 0
+          #   if todos.err or todos.final_err
+          #   then obj.emit 'error', todos.err or todos.final_err
+          #   else obj.emit 'end'
           if callback
             callback todos.err
           else
