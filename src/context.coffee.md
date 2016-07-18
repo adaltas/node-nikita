@@ -451,7 +451,7 @@
           cleanup name
           merge obj.registry, name
         proxy
-      Object.defineProperty obj, 'registered', get: -> (name, local_only=false) ->
+      Object.defineProperty obj, 'registered', get: -> (name) ->
         return true if registry.registered name
         name = [name] if typeof name is 'string'
         cnames = obj.registry
