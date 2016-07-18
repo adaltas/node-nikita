@@ -242,8 +242,6 @@
                 value = "string:#{string.hash value}"
               else if typeof value is 'boolean'
                 value = "boolean:#{value}"
-              else if typeof value is 'boolean'
-                value = "boolean:#{value}"
               else if typeof value is 'function'
                 value = "function:#{string.hash value.toString()}"
               else if value is undefined or value is null
