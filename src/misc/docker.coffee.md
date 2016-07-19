@@ -13,6 +13,7 @@
       'version'
     ]
     module.exports.wrap = (options, cmd) ->
+      docker = {}
       docker.opts = for option in module.exports.options
         value = undefined
         if options.docker[option] then value = options.docker[option]
