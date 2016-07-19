@@ -72,6 +72,7 @@ functions share a common API with flexible options.
         kill: require './docker/kill'
         load: require './docker/load'
         pause: require './docker/pause'
+        pull: require './docker/pull'
         restart: require './docker/restart'
         rm: require './docker/rm'
         rmi: require './docker/rmi'

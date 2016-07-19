@@ -1,5 +1,5 @@
 
-# `docker.rmi(options, callback)`
+# `docker_rmi(options, callback)`
 
 Remove images. All container using image should be stopped to delete it unless
 force options is set.
