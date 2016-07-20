@@ -37,6 +37,7 @@
           target[name]? or target.registry.registered(tree)? or registry.registered(name)?
         get: (target, name) ->
           return target[name] if target[name]?
+          return target[name] if name in ['_maxListeners']
           tree.push name
           get_proxy_builder = ->
             builder = ->
