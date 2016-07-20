@@ -8,9 +8,9 @@ Block until a container stops
 *   `boot2docker` (boolean)   
     Whether to use boot2docker or not, default to false.   
 *   `container` (string)   
-    Name/ID of the container. MANDATORY   
+    Name/ID of the container. __Mandatory__   
 *   `machine` (string)   
-    Name of the docker-machine. MANDATORY if using docker-machine   
+    Name of the docker-machine. __Mandatory__ if using docker-machine   
 *   `code` (int|array)   
     Expected code(s) returned by the command, int or array of int, default to 0.   
 *   `code_skipped`   

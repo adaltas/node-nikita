@@ -12,7 +12,7 @@ Create a volume.
 *   `label` (string|array)   
     Set metadata for a volume.   
 *   `machine` (string)   
-    Name of the docker-machine. MANDATORY if using docker-machine   
+    Name of the docker-machine. __Mandatory__ if using docker-machine   
 *   `name` (string)   
     Specify volume name.   
 *   `opt` (string|array)   

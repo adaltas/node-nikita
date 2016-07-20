@@ -9,9 +9,9 @@ force options is set.
 *   `boot2docker` (boolean)   
     Whether to use boot2docker or not, default to false.   
 *   `container` (string)   
-    Name/ID of the container. MANDATORY   
+    Name/ID of the container. __Mandatory__   
 *   `machine` (string)   
-    Name of the docker-machine. MANDATORY if docker-machine installed   
+    Name of the docker-machine. __Mandatory__ if docker-machine installed   
 *   `link` (boolean)   
     Remove the specified link   
 *   `volumes` (boolean)   

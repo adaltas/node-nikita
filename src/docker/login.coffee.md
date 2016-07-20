@@ -10,7 +10,7 @@ Register or log in to a Docker registry server.
 *   `registry` (string)   
     Address of the registry server. "https://index.docker.io/v1/" by default   
 *   `machine` (string)   
-    Name of the docker-machine. MANDATORY if using docker-machine   
+    Name of the docker-machine. __Mandatory__ if using docker-machine   
 *   `email` (string)   
     Email   
 *   `user` (string)   

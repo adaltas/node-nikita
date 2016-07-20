@@ -10,11 +10,11 @@ Run Docker Containers
 *   `container` (string)   
     Alias of name   
 *   `name` (string)   
-     Assign a name to the container to run. 
+     Assign a name to the container to run.   
 *   `image` (string)   
-    Name/ID of base image. MANDATORY   
+    Name/ID of base image. __Mandatory__   
 *   `machine` (string)   
-    Name of the docker-machine. MANDATORY if using docker-machine   
+    Name of the docker-machine. __Mandatory__ if using docker-machine   
 *   `cmd` (string)   
     Overwrite the default ENTRYPOINT of the image   
     Equivalent to --entrypoint docker parameter   
@@ -79,7 +79,7 @@ Run Docker Containers
 *   `code`   (int|array)   
     Expected code(s) returned by the command, int or array of int, default to 0.   
 *   `code_skipped`   
-    Expected code(s) returned by the command if it has no effect, executed will
+    Expected code(s) returned by the command if it has no effect, executed will   
     not be incremented, int or array of int.   
 
 ## Callback parameters

@@ -15,11 +15,11 @@ Status unmodified if the repository is identical to a previous one
 *   `boot2docker` (boolean)   
     Whether to use boot2docker or not, default to false.   
 *   `image` (string)   
-    Name of the image. MANDATORY   
+    Name of the image. __Mandatory__   
 *   `tag` (string)   
     Tag of the image   
 *   `machine` (string)   
-    Name of the docker-machine. MANDATORY if using docker-machine   
+    Name of the docker-machine. __Mandatory__ if using docker-machine   
 *   `file`   
     Dockerfile path   
 *   `content` (string | [string])   
@@ -120,7 +120,7 @@ mecano.docker.build({
 
     module.exports = (options, callback) ->
       options.log message: "Entering Docker build", level: 'DEBUG', module: 'mecano/lib/docker/build'
-      # Validate parameters and mandatory conditions
+      # Validate parameters and __Mandatory__ conditions
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
       return callback Error 'Required option "image"' unless options.image?

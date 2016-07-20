@@ -8,19 +8,19 @@ Save Docker images
 *   `boot2docker` (boolean)   
     Whether to use boot2docker or not, default to false.   
 *   `image` (string)   
-    Name/ID of base image. MANDATORY 
-*   `tag` (string)
-    Tag of the image
+    Name/ID of base image. __Mandatory__   
+*   `tag` (string)   
+    Tag of the image   
 *   `machine` (string)   
-    Name of the docker-machine. MANDATORY if using docker-machine   
-*   `output` (string). MANDATORY   
+    Name of the docker-machine. __Mandatory__ if using docker-machine   
+*   `output` (string). __Mandatory__   
     TAR archive output path   
-*   `target` (string). MANDATORY   
+*   `target` (string). __Mandatory__   
     Shortcut for "output" option.   
 *   `code` (int | array)   
     Expected code(s) returned by the command, int or array of int, default to 0.   
 *   `code_skipped`   
-    Expected code(s) returned by the command if it has no effect, executed will
+    Expected code(s) returned by the command if it has no effect, executed will   
     not be incremented, int or array of int.   
 
 ## Callback parameters

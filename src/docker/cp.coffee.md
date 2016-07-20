@@ -17,11 +17,11 @@ Note, stream are not yet supported.
 
 *   `boot2docker` (boolean)   
     Whether to use boot2docker or not, default to false.   
-*   `machine` (string)
-    Name of the docker-machine, MANDATORY if using docker-machine or boot2docker.
-*   `source` (string)
+*   `machine` (string)   
+    Name of the docker-machine, __Mandatory__ if using docker-machine or boot2docker.   
+*   `source` (string)   
     The path to upload or the container followed by the path to download.   
-*   `target` (string)
+*   `target` (string)   
     The path to download or the container followed by the path to upload.   
 
 ## Uploading a file

@@ -8,9 +8,9 @@ Run a command in a running container
 *   `boot2docker` (boolean)   
     Whether to use boot2docker or not, default to false.   
 *   `container` (string)   
-    Name/ID of the container. MANDATORY   
+    Name/ID of the container. __Mandatory__   
 *   `machine` (string)   
-    Name of the docker-machine. MANDATORY if using docker-machine.   
+    Name of the docker-machine. __Mandatory__ if using docker-machine.   
 *   `service` (boolean)   
     if true, run container as a service, else run as a command, true by default.   
 *   `uid` (name | uid)   

@@ -11,7 +11,7 @@ specified  is the default.
 *   `registry` (string)   
     Address of the registry server. "https://index.docker.io/v1/" by default   
 *   `machine` (string)   
-    Name of the docker-machine. MANDATORY if using docker-machine   
+    Name of the docker-machine. __Mandatory__ if using docker-machine   
 *   `code` (int|array)   
     Expected code(s) returned by the command, int or array of int, default to 0.   
 *   `code_skipped`   

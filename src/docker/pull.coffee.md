@@ -6,11 +6,11 @@ Pull a container
 ## Options
   
 *   `tag` (string)   
-    Name of the tag to pull.  
+    Name of the tag to pull.   
 *   `version` (string)   
-    Version of the tag to control.  Default to `latest`.
+    Version of the tag to control.  Default to `latest`.   
 *   `all` (Boolean)   
-    Download all tagged images in the repository.  Default to false.
+    Download all tagged images in the repository.  Default to false.   
 
 ## Callback parameters
 
