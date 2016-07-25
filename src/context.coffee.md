@@ -131,6 +131,8 @@
             _logs = [options.log]
           else if not options.log
             _logs = []
+        log_disabled = true if options.log is false
+        options.log = [] if log_disabled
         options.log ?= []
         options.log = [options.log] unless Array.isArray options.log
         _logs = options.log
@@ -164,7 +166,9 @@
           log.line = line
           args.unshift("" + file + ":" + line + " in " + method + "()");
           _log log for _log in _logs
-          obj.emit? log.type, log
+          # for _log in _logs
+          #   _log log if _log
+          obj.emit? log.type, log unless log_disabled
         options
       call_callback = (fn, args) ->
         stack.unshift todos

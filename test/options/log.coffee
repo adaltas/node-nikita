@@ -62,6 +62,22 @@ describe 'options log', ->
         logs_child[0].total_depth.should.eql 2
         next err
   
+    it 'disable if set to false', (next) ->
+      log = null
+      mecano
+      .on 'text', ({message}) ->
+        log = message
+      .call
+        handler: (options) ->
+          options.log 'is nikita around'
+      .call
+        log: false
+        handler: (options) ->
+          options.log 'no, dont kill her'
+      .then (err) ->
+        log.should.eql 'is nikita around' unless err
+        next err
+  
   describe 'global via on', ->
   
     it 'convert string to objects', (next) ->
