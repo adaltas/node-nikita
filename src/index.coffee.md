@@ -40,6 +40,7 @@ functions share a common API with flexible options.
 ## Register
 
     registry.register
+      assert: require './core/assert'
       backup: require './core/backup'
       cache: require './core/cache'
       chmod: require './core/chmod'
