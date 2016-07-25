@@ -1,3 +1,4 @@
+
 # `backup(options, callback)`
 
 Commons backup functions provided by backmeup. For additional information, please refer to the [official backmeup webpage][backmeup].
@@ -57,9 +58,7 @@ Commons backup functions provided by backmeup. For additional information, pleas
 ## Example
 
 ```js
-var backmeup = require('backmeup');
-
-backmeup({
+mecano.backmeup({
   name: 'my_backup'
   ssh: ssh_connect
   source: '/etc'     
