@@ -23,6 +23,13 @@ services:
     image: docker:dind
     privileged: true
     # detach: true
+  postgres:
+    image: postgres:9.5
+    environment:
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: root
+    expose:
+      - "5432"
   krb5:
     image: sequenceiq/kerberos
     volumes:

@@ -12,6 +12,10 @@ module.exports =
   docker: # eg `docker-machine create --driver virtualbox mecano || docker-machine start mecano`
     host: 'dind:2375'
     # machine: 'mecano'
+  database:
+    admin_user: 'root'
+    admin_password: 'root'
+    admin_db: 'root'
   krb5:
     realm: 'NODE.DC1.CONSUL'
     kadmin_server: 'krb5'
