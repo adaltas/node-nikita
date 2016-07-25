@@ -126,6 +126,7 @@ functions share a common API with flexible options.
         exist: '': require './wait/exist'
       write:
         '': require './write'
+        assert: require './write/assert'
         ini: require './write/ini'
         properties: require './write/properties'
         yaml: require './write/yaml'
