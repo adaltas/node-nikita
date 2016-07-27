@@ -61,10 +61,10 @@ require('mecano').database.db.add({
       options.engine ?= 'POSTGRES'
       return callback new Error 'Unsupport engine type' unless options.engine in ['MYSQL','POSTGRES']
       options.log 'Missing engine type. Defaulting to PostgreSQL' unless options.engine?
-      options.log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'mecano/database/db/user'
+      options.log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'mecano/database/db/add'
       # Defines port
       options.port ?= 5432 
-      options.log message: "Database port set to #{options.port}", level: 'DEBUG', module: 'mecano/database/db/user'     
+      options.log message: "Database port set to #{options.port}", level: 'DEBUG', module: 'mecano/database/db/add'
       adm_cmd = ''
       switch options.engine
         when 'MYSQL'
@@ -88,7 +88,7 @@ require('mecano').database.db.add({
         .call ( db, i, next) =>
           return unless options.engine is 'POSTGRES'
           # Create database unless exist
-          options.log message: "Check if database #{db} exists", level: 'DEBUG', module: 'mecano/database/db/user'     
+          @call -> options.log message: "Check if database #{db} exists", level: 'DEBUG', module: 'mecano/database/db/add'
           @execute
             cmd: "#{adm_cmd} -tAc \"CREATE DATABASE #{db};\""
             unless_exec: "#{adm_cmd} -d #{db} -tAc '\\dt';"
@@ -102,27 +102,26 @@ require('mecano').database.db.add({
             handler: ->
               for user in options.user
                 @call -> options.log message: "Check if user #{user} has PRIVILEGES on #{db} ", level: 'DEBUG', module: 'mecano/database/db/user'     
-                @database.user.exists {
+                @database.user.exists
                   name: user
                   admin_name: options.admin_name
                   admin_password: options.admin_password
                   port: options.port
                   host: options.host
-                }
                 @call 
                   unless: -> @status -1
-                  handler: -> options.log message: "User does exists #{user}: skipping", level: 'WARNING', module: 'mecano/database/db/user'     
+                  handler: -> options.log message: "User does exists #{user}: skipping", level: 'WARNING', module: 'mecano/database/db/add'
                 @execute
                   if: -> @status -2
                   cmd: "#{adm_cmd} -d #{db} -tAc 'GRANT ALL PRIVILEGES ON DATABASE #{db} TO #{user}';"
                   unless_exec: "#{adm_cmd} -d #{db} -tAc \"SELECT datacl FROM  pg_database WHERE  datname = '#{db}'\" | grep '#{user}='"
                 @call 
-                  if: -> @status -1
+                  if: -> @status -2
                   handler: -> modified_user = true
           @then next  
         .then (err) -> 
-          options.log message: "Modified Status for users", level: 'DEBUG', module: 'mecano/database/db/user' if modified_user
-          options.log message: "Modified Status for databases", level: 'DEBUG', module: 'mecano/database/db/user' if modified_db
+          options.log message: "Modified Status for users", level: 'DEBUG', module: 'mecano/database/db/add' if modified_user
+          options.log message: "Modified Status for databases", level: 'DEBUG', module: 'mecano/database/db/add' if modified_db
           callback err, (modified_user or modified_db)
 
 
