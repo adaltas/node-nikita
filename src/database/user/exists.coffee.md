@@ -88,47 +88,6 @@ require('mecano').krb5.addprinc({
         cmd: "#{adm_cmd} -tAc \"SELECT 1 FROM pg_roles WHERE rolname='#{options.name}'\" | grep 1"
         code_skipped: 1
       , (err, status, stdout, stderr) -> callback err, status, stdout, stderr 
-      #       
-      #     
-      #     
-      #   
-      #   
-      # # Check if user exists
-      # # Check id databases exists
-      # # Check if user can connect to databases
-      # 
-      # return callback new Error 'Password or randkey missing' if not options.password and not options.randkey
-      # # Normalize realm and principal for later usage of options
-      # options.realm ?= options.kadmin_principal.split('@')[1] if /.*@.*/.test options.kadmin_principal
-      # options.principal = "#{options.principal}@#{options.realm}" unless /^\S+@\S+$/.test options.principal
-      # options.password_sync ?= false
-      # options.kadmin_server ?= options.admin_server # Might deprecated kadmin_server in favor of admin_server
-      # # Prepare commands
-      # cmd_getprinc = misc.kadmin options, "getprinc #{options.principal}"
-      # cmd_addprinc = misc.kadmin options, if options.password
-      # then "addprinc -pw #{options.password} #{options.principal}"
-      # else "addprinc -randkey #{options.principal}"
-      # # todo, could be removed once actions acception multiple options arguments
-      # # such ash `.krb5.ktadd options, if: options.keytab
-      # ktadd_options = {}
-      # for k, v of options then ktadd_options[k] = v
-      # ktadd_options.if = options.keytab
-      # # Ticket cache location
-      # cache_name = "/tmp/mecano_#{Math.random()}"
-      # @execute
-      #   retry: 3
-      #   cmd: cmd_addprinc
-      #   unless_exec: "#{cmd_getprinc} | grep '#{options.principal}'"
-      # @execute
-      #   retry: 3
-      #   cmd: misc.kadmin options, "cpw -pw #{options.password} #{options.principal}"
-      #   if: options.password and options.password_sync
-      #   unless_exec: """
-      #   if ! echo #{options.password} | kinit '#{options.principal}' -c '#{cache_name}'; then exit 1; else kdestroy -c '#{cache_name}'; fi
-      #   """
-      # @krb5.ktadd ktadd_options
-      # @then callback
-
 
 
 ## Dependencies
