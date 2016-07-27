@@ -127,8 +127,10 @@ describe 'wait connect', ->
         ssh: ssh
         server1: server 12345
         server2: server 12346
-      .call (_, callback) ->
-        @options.server1.listen callback
+      .call ->
+        setTimeout @options.server1.listen, 100
+      .call ->
+        setTimeout @options.server2.listen, 100
       .wait.connect
         servers: [
           { host: 'localhost', port: 12345 }
@@ -137,8 +139,6 @@ describe 'wait connect', ->
         ]
         quorum: true
         interval: 1000
-        ready: (server) ->
-          @options.server2.listen() if server.port is 12345
       , (err, status) ->
         status.should.be.true()
       .call  (_, callback) ->
@@ -154,6 +154,8 @@ describe 'wait connect', ->
         server2: server 12346
       .call (_, callback) ->
         @options.server1.listen callback
+      .call (_, callback) ->
+        @options.server2.listen callback
       .wait.connect
         servers: [
           { host: 'localhost', port: 12345 }
@@ -162,8 +164,6 @@ describe 'wait connect', ->
         ]
         quorum: 2
         interval: 1000
-        ready: (server) ->
-          @options.server2.listen() if server.port is 12345
       , (err, status) ->
         status.should.be.true()
       .call  (_, callback) ->

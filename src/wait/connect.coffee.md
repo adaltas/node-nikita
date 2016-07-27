@@ -25,6 +25,9 @@ Otherwise it will be set to "true".
 *   `timeout`   
     Maximum time to wait until this function is considered to have failed.   
 
+Status is set to "true" if the first connection attempt was a failure and the 
+connection finaly succeeded.
+
 Example:
 
 ```coffee
@@ -56,8 +59,7 @@ require 'mecano'
   # Servers listening
 ```
 
-    inc = 0
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       extract_servers = (options) ->
         throw Error "Invalid host: #{server.host}" if (options.port or options.ports) and not options.host
         throw Error "Invalid port: #{server.port}" if (options.host or options.hosts) and not options.port
@@ -89,65 +91,97 @@ require 'mecano'
           servers.push extract_servers(server)...
       return callback() unless servers.length
       # Validate servers
-      options.randdir ?= '/tmp'
-      options.interval ?= 2000
+      options.interval ?= 2000 # 2s
       options.interval = Math.round options.interval / 1000
       quorum_target = options.quorum
       if quorum_target and quorum_target is true  
         quorum_target = Math.ceil servers.length / 2
       else unless quorum_target?
         quorum_target = servers.length
-      quorum_current = 0
-      randfiles = []
-      modified = false
       options.log message: "Entering wait for connection", level: 'DEBUG', module: 'mecano/wait/connect'
-      each servers
-      .parallel false # Ensure sequencial usage of ssh client
-      .call (server, next) =>
-        count = 0
-        rand = Date.now() + inc++
-        randfiles.push randfile = "#{options.randdir}/#{rand}"
-        if options.timeout and options.timeout > 0
-          timedout = false
-          clear = setTimeout =>
-            timedout = true
-            @child().remove target: randfile
-          , options.timeout
-        options.log message: "Start wait for #{server.host}:#{server.port}", level: 'DEBUG', module: 'mecano/wait/connect'
-        # options.wait?.call @, server
-        # dont exit loop until rand file is removed or connection succeed
-        child = @child()
-        child.execute
-          cmd: """
-          count=0
-          randfile="#{randfile}"
-          isopen="echo > /dev/tcp/#{server.host}/#{server.port}"
+      @execute
+        cmd: """
+        function compute_md5 {
+          echo $1 | openssl md5
+        }
+        addresses=( #{servers.map((server) -> server.host+':'+server.port).join(' ')} )
+        timeout=#{options.timeout or ''}
+        md5=`compute_md5 ${addresses[@]}`
+        randdir="#{options.randdir or ''}"
+        if [ -z $randir ]; then
+          if [ -w /dev/shm ]; then
+            randdir="/dev/shm/$md5"
+          else
+            randdir="/tmp/$md5"
+          fi
+        fi
+        quorum_target=#{quorum_target}
+        echo "[INFO] randdir is: $randdir"
+        mkdir -p $randdir
+        echo 3 > $randdir/signal
+        echo 0 > $randdir/quorum
+        function remove_randdir {
+          for address in "${addresses[@]}" ; do
+            host="${address%%:*}"
+            port="${address##*:}"
+            rm -f $randdir/`compute_md5 $host:$port`
+          done
+        }
+        function check_quorum {
+          quorum_current=`cat $randdir/quorum`
+          if [ $quorum_current -ge $quorum_target ]; then
+            echo '[INFO] Quorum is reached'
+            remove_randdir
+          fi
+        }
+        function check_timeout {
+          local timeout=$1
+          local randfile=$2
+          wait $timeout
+          rm -f $randfile
+        }
+        function wait_connection {
+          local host=$1
+          local port=$2
+          local randfile=$3
+          local count=0
+          echo "[DEBUG] Start wait for $host:$port"
+          isopen="echo > /dev/tcp/$host/$port"
           touch "$randfile"
-          while [[ -f "$randfile" ]] && ! `bash -c "$isopen"`; do
+          while [[ -f "$randfile" ]] && ! `bash -c "$isopen" 2>/dev/null`; do
             ((count++))
-            echo #{server.host}:#{server.port} attempt $count > /dev/fd/2 
+            echo "[DEBUG] Connection failed to $host:$port on attempt $count" >&2
             sleep #{options.interval}
           done
-          if [[ count -eq 0 ]]; then exit 3; fi
-          """
-          shy: true
-          code_skipped: 3
-        , (err, executed) =>
-          clearTimeout clear if clear
-          err = new Error "Reached timeout #{options.timeout}" if not err and timedout
-          options.ready?.call @, server, executed unless err
-          modified = true if executed
-          options.log message: "Finish wait for #{server.host} #{server.port}", level: 'INFO', module: 'mecano/wait/connect'
-          quorum_current++ unless err
-          cmd = for randfile in randfiles then "rm #{randfile};"
-          child.execute
-            cmd: cmd.join '\n'
-            shy: true
-            if: quorum_current >= quorum_target
-          , ->
-            next err
-      .then (err) ->
-        callback err, modified
+          if [[ -f "$randfile" ]]; then
+            echo "[DEBUG] Connection ready to $host:$port"
+          fi
+          echo $(( $(cat $randdir/quorum) + 1 )) > $randdir/quorum
+          check_quorum
+          if [ "$count" -gt "0" ]; then
+            echo "[WARN] Status is now active, count is $count"
+            echo 0 > $randdir/signal
+          fi
+        }
+        if [ ! -z "$timeout" ]; then
+          host="${address%%:*}"
+          port="${address##*:}"
+          check_timeout $timeout `compute_md5 $host:$port` &
+        fi
+        for address in "${addresses[@]}" ; do
+          host="${address%%:*}"
+          port="${address##*:}"
+          randfile=$randdir/`compute_md5 $host:$port`
+          wait_connection $host $port $randfile &
+        done
+        wait
+        # Clean up
+        signal=`cat $randdir/signal`
+        remove_randdir
+        echo "[INFO] Exit code is $signal"
+        exit $signal
+        """
+        code_skipped: 3
 
 ## Dependencies
 
