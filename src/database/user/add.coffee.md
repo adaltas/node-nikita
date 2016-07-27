@@ -77,7 +77,7 @@ require('mecano').krb5.addprinc({
       options.engine = options.engine.toUpperCase() if options.engine?
       options.engine ?= 'POSTGRES'
       return callback new Error 'Unsupport engine type' unless options.engine in ['MYSQL','POSTGRES']
-      options.log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'mecano/database/db/user'
+      options.log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'mecano/database/user/add'
       # Defines port
       options.port ?= 5432      
       adm_cmd = ''
@@ -114,23 +114,22 @@ require('mecano').krb5.addprinc({
             # Even if the user exists, without database it can not connect.
             # That's why the check is executed in 2 steps.
             @execute
-              unless: -> @status -1
               cmd: "#{adm_cmd} -tAc \"ALTER USER #{user.name} WITH PASSWORD '#{user.password}';\""
-              if_exec: "#{postgres.wrap options} -c '\\dt' 2>&1 >/dev/null | grep -e '^psql:\\sFATAL.*password\\sauthentication\\sfailed\\sfor\\suser.*$'"
+              if_exec: "#{postgres.wrap options} -c \"\\dt\" 2>&1 >/dev/null | grep -e '^psql:\\sFATAL.*password\\sauthentication\\sfailed\\sfor\\suser.*'"
               # This message is an error and is written to stderr, so it is redirected to stdout before being grepped
               #unless_exec: "#{postgres.wrap options} -c '\\dt' | egrep  '^psql:\\sFATAL.*database.*\\sdoes\\snot\\sexist$'"
             @call 
-              if: -> @status 
+              if: -> (@status -1) or (@status -1)
               handler: -> modified = true
             @call 
               if: -> @status -3
-              handler: -> options.log message: "User created: #{user}", level: 'INFO', module: 'mecano/database/db/user'
+              handler: -> options.log message: "User created: #{user.name}", level: 'INFO', module: 'mecano/database/user/add'
             @call 
               unless: -> @status -4
-              handler: -> options.log message: "User already exist (skipped): #{user}", level: 'INFO', module: 'mecano/database/db/user'
+              handler: -> options.log message: "User already exist (skipped): #{user.name}", level: 'INFO', module: 'mecano/database/user/add'
             @call 
               if: -> @status -3
-              handler: -> options.log message: "Modified Password for user: #{user}", level: 'INFO', module: 'mecano/database/db/user'
+              handler: -> options.log message: "Modified Password for user: #{user.name}", level: 'INFO', module: 'mecano/database/user/add'
             @then next
           .then (err) -> callback err, modified
       
