@@ -79,6 +79,21 @@ describe 'wait connect', ->
         @options.server1.close callback
       .then next
 
+    they 'multiple connection', (ssh, next) ->
+      mecano
+        ssh: ssh
+        server1: server 12345
+      .call ->
+        setTimeout @options.server1.listen, 100
+      .wait.connect
+        servers: for i in [0...12]
+          {host: 'localhost', port: 12345}
+      , (err, status) ->
+        status.should.be.true()
+      .call  (_, callback) ->
+        @options.server1.close callback
+      .then next
+
   describe 'options', ->
 
     they 'test status', (ssh, next) ->

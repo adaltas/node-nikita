@@ -102,7 +102,7 @@ require 'mecano'
       modified = false
       options.log message: "Entering wait for connection", level: 'DEBUG', module: 'mecano/wait/connect'
       each servers
-      .parallel true # Make sure we dont hit max listeners limit
+      .parallel false # Ensure sequencial usage of ssh client
       .call (server, next) =>
         count = 0
         rand = Date.now() + inc++
