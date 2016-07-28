@@ -68,6 +68,8 @@ functions share a common API with flexible options.
       database:
         db:
           add: require './database/db/add'
+        schema:
+          add: require './database/schema/add'
         user:
           add: require './database/user/add'
           exists: require './database/user/exists'

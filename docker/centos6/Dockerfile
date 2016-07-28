@@ -31,6 +31,9 @@ ADD ./krb5.conf /etc/krb5.conf
 # Install Misc dependencies
 RUN yum install -y zip git
 
+# Install PostgreSQL client
+RUN yum install -y postgresql
+
 # Install docker
 RUN curl -fsSL https://get.docker.com/ | sh
 
