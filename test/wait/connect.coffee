@@ -84,7 +84,7 @@ describe 'wait connect', ->
         ssh: ssh
         server1: server 12345
       .call ->
-        setTimeout @options.server1.listen, 100
+        setTimeout @options.server1.listen, 200
       .wait.connect
         servers: for i in [0...12]
           {host: 'localhost', port: 12345}
