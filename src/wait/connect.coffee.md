@@ -101,6 +101,7 @@ require 'mecano'
         quorum_target = Math.ceil servers.length / 2
       else unless quorum_target?
         quorum_target = servers.length
+      options.timeout = '' unless options.timeout > 0
       @execute
         cmd: """
         function compute_md5 {
