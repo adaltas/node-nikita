@@ -1,5 +1,5 @@
 
-# `wait_connect(options, callback)`
+# `wait_connect(options)`
 
 Check if one or multiple hosts listen one or multiple ports periodically and
 continue once all the connections succeed. Status will be set to "false" if the
@@ -60,6 +60,7 @@ require 'mecano'
 ```
 
     module.exports = (options) ->
+      options.log message: "Entering wait for connection", level: 'DEBUG', module: 'mecano/wait/connect'
       extract_servers = (options) ->
         throw Error "Invalid host: #{server.host}" if (options.port or options.ports) and not options.host
         throw Error "Invalid port: #{server.port}" if (options.host or options.hosts) and not options.port
@@ -89,7 +90,9 @@ require 'mecano'
         options[k] = misc.array.flatten options[k]
         for server in options[k]
           servers.push extract_servers(server)...
-      return callback() unless servers.length
+      unless servers.length
+        options.log message: "No connection to wait for", level: 'WARN', module: 'mecano/wait/connect'
+        return 
       # Validate servers
       options.interval ?= 2000 # 2s
       options.interval = Math.round options.interval / 1000
@@ -98,7 +101,6 @@ require 'mecano'
         quorum_target = Math.ceil servers.length / 2
       else unless quorum_target?
         quorum_target = servers.length
-      options.log message: "Entering wait for connection", level: 'DEBUG', module: 'mecano/wait/connect'
       @execute
         cmd: """
         function compute_md5 {
