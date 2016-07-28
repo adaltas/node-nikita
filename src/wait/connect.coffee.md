@@ -106,7 +106,7 @@ require 'mecano'
         function compute_md5 {
           echo $1 | openssl md5 -binary | xxd -p
         }
-        addresses=( #{servers.map((server) -> server.host+':'+server.port).join(' ')} )
+        addresses=( #{servers.map((server) -> "'#{server.host}:#{server.port}'").join(' ')} )
         timeout=#{options.timeout or ''}
         md5=`compute_md5 ${addresses[@]}`
         randdir="#{options.randdir or ''}"
