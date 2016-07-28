@@ -102,7 +102,7 @@ require 'mecano'
       @execute
         cmd: """
         function compute_md5 {
-          echo $1 | openssl md5
+          echo $1 | openssl md5 -binary | xxd -p
         }
         addresses=( #{servers.map((server) -> server.host+':'+server.port).join(' ')} )
         timeout=#{options.timeout or ''}
@@ -118,7 +118,7 @@ require 'mecano'
         quorum_target=#{quorum_target}
         echo "[INFO] randdir is: $randdir"
         mkdir -p $randdir
-        echo 3 > $randdir/signal
+        echo '3' > $randdir/signal
         echo 0 > $randdir/quorum
         function remove_randdir {
           for address in "${addresses[@]}" ; do
@@ -160,7 +160,7 @@ require 'mecano'
           check_quorum
           if [ "$count" -gt "0" ]; then
             echo "[WARN] Status is now active, count is $count"
-            echo 0 > $randdir/signal
+            echo '0' > $randdir/signal
           fi
         }
         if [ ! -z "$timeout" ]; then
