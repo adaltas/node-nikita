@@ -149,7 +149,7 @@ require 'mecano'
           local randfile=$3
           local count=0
           echo "[DEBUG] Start wait for $host:$port"
-          isopen="echo > /dev/tcp/$host/$port"
+          isopen="echo > '/dev/tcp/$host/$port'"
           touch "$randfile"
           while [[ -f "$randfile" ]] && ! `bash -c "$isopen" 2>/dev/null`; do
             ((count++))
