@@ -141,9 +141,9 @@ describe 'wait connect', ->
         interval: 1000
       , (err, status) ->
         status.should.be.true()
-      .call  (_, callback) ->
+      .call (_, callback) ->
         @options.server1.close callback
-      .call  (_, callback) ->
+      .call (_, callback) ->
         @options.server2.close callback
       .then next
 

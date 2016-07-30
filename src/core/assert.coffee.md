@@ -8,7 +8,12 @@ A set of assertion tools.
 *   `status` (boolean)   
     Ensure the current status match the provided value.   
 
-## Example status
+## Source Code
+
+    module.exports = (options) ->
+      options.log message: "Entering assert", level: 'DEBUG', module: 'mecano/lib/assert'
+
+## Check current status
 
 ```js
 mecano.assert({
@@ -19,8 +24,29 @@ mecano.assert({
 });
 ```
 
-## Source Code
+      status = @status()
+      @call
+        if: options.status? and status isnt options.status
+        handler: ->
+          message = "Invalid status: expected #{JSON.stringify options.status}, got #{JSON.stringify status}"
+          throw Error message
 
-    module.exports = (options) ->
-      options.log message: "Entering assert", level: 'DEBUG', module: 'mecano/lib/assert'
-      throw Error "Invalid status: expected #{JSON.stringify options.status}, got #{JSON.stringify @status()}" unless @status() is options.status
+## Check server listening
+
+```js
+mecano.assert({
+  ssh: connection   
+  host: 'localhost'
+  port: 80
+}, function(err){
+  console.log(err);
+});
+```
+
+      throw Error "Required option port if host" if options.host and not options.port
+      throw Error "Required option host if port" if options.port and not options.host
+      @execute
+        if: options.host
+        cmd: "bash -c 'echo > /dev/tcp/#{options.host}/#{options.port}'"
+      , (err) ->
+        throw Error "Closed Connection to '#{options.host}:#{options.port}'" if err
