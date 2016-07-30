@@ -21,8 +21,8 @@ require 'mecano'
 ```
 
     module.exports = (options, callback) ->
-      options.time ?= options.argument if options.argument?
-      return callback new Error "Missing time: #{options.time}" unless options.time?
+      options.time ?= options.argument
+      return callback new Error "Missing time: #{JSON.stringify options.time}" unless options.time?
       options.time = parseInt options.time if typeof options.time is 'string'
-      return callback new Error "Invalid time format '#{typeof options.time}'" unless typeof options.time is 'number'
+      return callback new Error "Invalid time format: #{JSON.stringify options.time}" unless typeof options.time is 'number'
       setTimeout callback, options.time
