@@ -101,13 +101,12 @@ module.exports = file =
         ssh2fs.stat ssh, path, (err, stat) ->
           return callback err if err
           return callback() if stat.isDirectory()
-          # return callback null, crypto.createHash(algorithm).update('').digest('hex') if stat.isDirectory()
           exec
-            cmd: "openssl #{algorithm} #{path}"
+            cmd: "openssl #{algorithm} -binary #{path} | xxd -p"
             ssh: ssh
+            trim: true
           , (err, stdout) ->
-            callback err if err
-            callback err, /.*\s([\w\d]+)$/.exec(stdout.trim())[1]
+            callback err, stdout?.trim()
     hashs = []
     ssh2fs.stat ssh, file, (err, stat) ->
       if err?.code is 'ENOENT'
