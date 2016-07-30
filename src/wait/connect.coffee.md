@@ -105,7 +105,7 @@ require 'mecano'
       @execute
         cmd: """
         function compute_md5 {
-          echo $1 | openssl md5 -binary | xxd -p
+          echo $1 | openssl md5 | sed 's/^.\\{9\\}//g'
         }
         addresses=( #{servers.map((server) -> "'#{server.host}:#{server.port}'").join(' ')} )
         timeout=#{options.timeout or ''}

@@ -23,7 +23,7 @@ creating any modifications.
     Expected code(s) returned by the command if it has no effect, executed will
     not be incremented, int or array of int.   
 *   `trap`   
-    Exit immediately  if a commands exits with a non-zero status.   
+    Exit immediately if a commands exits with a non-zero status.   
 *   `cwd`   
     Current working directory.   
 *   `env`   
