@@ -21,7 +21,7 @@ describe 'execute', ->
     .execute 'text=yes; echo $text', (err, status, stdout, stderr) ->
       status.should.be.true() unless err
       stdout.should.eql 'yes\n' unless err
-    .then next
+      next()
 
   they 'cmd as a function', (ssh, next) ->
     mecano
@@ -66,7 +66,7 @@ describe 'execute', ->
       unpiped.should.eql 2
       data.should.containEql search1
       data.should.containEql search2
-      next()
+    .then next
 
   they 'stdout and stderr return empty', (ssh, next) -> #.skip 'remote',
     mecano.execute
@@ -88,8 +88,7 @@ describe 'execute', ->
     .execute
       cmd: "exit 42"
       code: [0, 42]
-    .then (err, executed) ->
-      next err
+    .then next
 
   they 'should honor code skipped', (ssh, next) ->
     # code undefined
@@ -107,9 +106,8 @@ describe 'execute', ->
       code: 0
       code_skipped: 1
     , (err, executed, stdout, stderr) ->
-      return next err if err
-      executed.should.be.false()
-      next()
+      executed.should.be.false() unless err
+    .then next
 
   they 'should honor conditions', (ssh, next) ->
     mecano
@@ -126,7 +124,7 @@ describe 'execute', ->
     , (err, executed, stdout, stderr) ->
       executed.should.be.false()
       should.not.exist stdout
-      next()
+    .then next
 
   they 'honor unless_exists', (ssh, next) ->
     mecano.execute
@@ -134,9 +132,37 @@ describe 'execute', ->
       cmd: "ls -l #{__dirname}"
       unless_exists: __dirname
     , (err, executed, stdout, stderr) ->
-      return next err if err
-      executed.should.be.false()
-      next()
+      executed.should.be.false() unless err
+    .then next
+
+  describe 'trim', ->
+    
+    they 'both stdout and stderr', (ssh, next) ->
+      mecano.execute
+        ssh: ssh
+        cmd: """
+        echo '  bonjour  '
+        echo ' monde  ' >&2
+        """
+        trim: true
+      , (err, executed, stdout, stderr) ->
+        stdout.should.eql 'bonjour' unless err
+        stderr.should.eql 'monde' unless err
+      .then next
+        
+    they 'with trim_stdout and trim_stderr', (ssh, next) ->
+      mecano.execute
+        ssh: ssh
+        cmd: """
+        echo '  bonjour  '
+        echo ' monde  ' >&2
+        """
+        stdout_trim: true
+        stderr_trim: true
+      , (err, executed, stdout, stderr) ->
+        stdout.should.eql 'bonjour' unless err
+        stderr.should.eql 'monde' unless err
+      .then next
 
   describe 'log', ->
 
@@ -209,7 +235,7 @@ describe 'execute', ->
         err.message.should.eql 'Invalid Exit Code: 2'
         stdout.should.eql ''
         stderr.should.eql 'Some Error\n'
-        next()
+      next()
 
     they 'trap on error', (ssh, next) ->
       mecano

@@ -42,6 +42,8 @@ creating any modifications.
     pass stdout output to the callback as fourth argument, default is "true".   
 *   `stdout_log` (boolean)
     pass stdout output to the logs of type "stdout_stream", default is "true".   
+*   `stdout_trim` (boolean)   
+    Trim stdout argument passed in the callback.   
 *   `stderr` (stream.Writable)   
     Writable EventEmitter in which the standard error output of executed command
     will be piped.   
@@ -49,6 +51,8 @@ creating any modifications.
     pass stderr output to the callback as fourth argument, default is "true".   
 *   `stderr_log` (boolean)
     pass stdout output to the logs of type "stdout_stream", default is "true".   
+*   `stderr_trim` (boolean)   
+    Trim stderr argument passed in the callback.   
 *   `uid`   
     Unix user id.   
 
@@ -166,7 +170,9 @@ mecano.execute({
             options.log message: null, type: 'stdout_stream', module: 'mecano/lib/execute' if stdout_stream_open and options.stdout_log
             options.log message: null, type: 'stderr_stream', module: 'mecano/lib/execute' if  stderr_stream_open and options.stderr_log
             result.stdout = result.stdout.map((d) -> d.toString()).join('')
+            result.stdout = result.stdout.trim() if options.trim or options.stdout_trim
             result.stderr = result.stderr.map((d) -> d.toString()).join('')
+            result.stderr = result.stderr.trim() if options.trim or options.stderr_trim
             options.log message: result.stdout, type: 'stdout', module: 'mecano/lib/execute' if result.stdout and result.stdout isnt '' and options.stdout_log
             options.log message: result.stderr, type: 'stderr', module: 'mecano/lib/execute' if result.stderr and result.stderr isnt '' and options.stderr_log
             if options.stdout
