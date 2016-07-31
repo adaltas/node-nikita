@@ -102,7 +102,7 @@ module.exports = file =
           return callback err if err
           return callback() if stat.isDirectory()
           exec
-            cmd: "openssl #{algorithm} #{path} | sed 's/^.\\{9\\}//g'"
+            cmd: "openssl #{algorithm} #{path} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'"
             ssh: ssh
             trim: true
           , (err, stdout) ->
