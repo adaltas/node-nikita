@@ -1,5 +1,5 @@
 
-# `wait_connect(options)`
+# `mecano.wait.connect(options, [callback])`
 
 Check if one or multiple hosts listen one or multiple ports periodically and
 continue once all the connections succeed. Status will be set to "false" if the
@@ -185,6 +185,7 @@ require 'mecano'
         exit $signal
         """
         code_skipped: 3
+        stdin_log: false
 
 ## Dependencies
 

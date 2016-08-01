@@ -1,5 +1,5 @@
 
-# `service.remove(options, callback)`
+# `mecano.service.remove(options, [callback])`
 
 Status of a service.
 

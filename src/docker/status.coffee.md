@@ -1,5 +1,5 @@
 
-# `docker.status(options, callback)`
+# `mecano.docker.status(options, [callback])`
 
 Return true if container is running. This function is not native to docker. 
 

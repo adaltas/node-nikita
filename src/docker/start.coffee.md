@@ -1,5 +1,5 @@
 
-# `docker.restart(options, callback)`
+# `mecano.docker.restart(options, [callback])`
 
 Restart containers
 

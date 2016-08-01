@@ -1,5 +1,5 @@
 
-# `chown(options, callback)`
+# `mecano.chown(options, [callback])`
 
 Change the ownership of a file or a directory.
 

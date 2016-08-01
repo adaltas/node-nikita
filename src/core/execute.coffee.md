@@ -1,5 +1,5 @@
 
-# `execute(options, callback)`
+# `mecano.execute(options, [callback])`
 
 Run a command locally or with ssh if `host` or `ssh` is provided.
 
@@ -35,6 +35,8 @@ creating any modifications.
 *   `ssh` (object|ssh2)   
     Run the action on a remote server using SSH, an ssh2 instance or an
     configuration object used to initialize the SSH connection.   
+*   `stdin_log` (boolean)
+    Log the executed command of type stdin, default is "true".   
 *   `stdout` (stream.Writable)   
     Writable EventEmitter in which the standard output of executed commands will
     be piped.   
@@ -105,6 +107,7 @@ mecano.execute({
       options.code = [options.code] unless Array.isArray options.code
       options.code_skipped ?= []
       options.code_skipped = [options.code_skipped] unless Array.isArray options.code_skipped
+      options.stdin_log ?= true
       options.stdout_callback = true if options.stdout_callback is undefined
       options.stderr_callback = true if options.stderr_callback is undefined
       options.stdout_log = if options.hasOwnProperty('stdout_log') then options.stdout_log else true
@@ -113,7 +116,7 @@ mecano.execute({
       throw Error "Missing cmd: #{options.cmd}" unless options.cmd?
       if options.trap
         options.cmd = "set -e\n#{options.cmd}"
-      options.log message: options.cmd, type: 'stdin', module: 'mecano/lib/execute'
+      options.log message: options.cmd, type: 'stdin', module: 'mecano/lib/execute' if options.stdin_log
       result = stdout: null, stderr: null, code: null
       # Guess current username
       current_username = 

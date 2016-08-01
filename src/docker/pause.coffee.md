@@ -1,5 +1,5 @@
 
-# `docker.pause(options, callback)`
+# `mecano.docker.pause(options, [callback])`
 
 Pause all processes within a container
 

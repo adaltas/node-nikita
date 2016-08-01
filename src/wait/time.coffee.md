@@ -1,5 +1,5 @@
 
-# `wait(options, callback)`
+# `mecano.wait(options, [callback])`
 
 Simple mecano action that calls setTimeout. Thus, time is in millisecond.
 

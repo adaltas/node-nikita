@@ -1,5 +1,5 @@
 
-# `docker.build(options, callback)`
+# `mecano.docker.build(options, [callback])`
 
 Register or log in to a Docker registry server.
 

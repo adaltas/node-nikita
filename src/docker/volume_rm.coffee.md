@@ -1,5 +1,5 @@
 
-# `volume_rm(options, callback)`
+# `mecano.volume_rm(options, [callback])`
 
 Remove a volume. 
 

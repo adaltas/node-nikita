@@ -1,6 +1,5 @@
 
-
-# `remove(options, callback)`
+# `mecano.remove(options, [callback])`
 
 Recursively remove files, directories and links.
 

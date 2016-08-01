@@ -1,5 +1,5 @@
 
-# `ldap.schema(options, callback)`
+# `mecano.ldap.schema(options, [callback])`
 
 Register a new ldap schema.
 

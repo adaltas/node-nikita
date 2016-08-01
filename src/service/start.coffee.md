@@ -1,5 +1,5 @@
 
-# `service.start(options, callback)`
+# `mecano.service.start(options, [callback])`
 
 Start a service.
 

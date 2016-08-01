@@ -1,5 +1,5 @@
 
-# `user(options, callback)`
+# `mecano.user(options, [callback])`
 
 Create or modify a Unix user.
 

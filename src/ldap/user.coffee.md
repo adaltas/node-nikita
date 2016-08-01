@@ -1,5 +1,5 @@
 
-# `ldap.user(options, callback)`
+# `mecano.ldap.user(options, [callback])`
 
 Create and modify a user store inside an OpenLDAP server.   
 

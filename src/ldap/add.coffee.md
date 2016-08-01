@@ -1,5 +1,5 @@
 
-# `ldap.add(options, callback)`
+# `mecano.ldap.add(options, [callback])`
 
 Insert or modify an entry inside an OpenLDAP server.   
 

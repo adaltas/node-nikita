@@ -1,5 +1,5 @@
 
-# `service.install(options, callback)`
+# `mecano.service.install(options, [callback])`
 
 Install a service. For now, only Yum over SSH.
 

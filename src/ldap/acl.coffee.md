@@ -1,5 +1,5 @@
 
-# `ldap.acl(options, callback)`
+# `mecano.ldap.acl(options, [callback])`
 
 Create new [ACLs](acls) for the OpenLDAP server.
 

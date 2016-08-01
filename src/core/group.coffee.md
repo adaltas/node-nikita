@@ -1,5 +1,5 @@
 
-# `group(options, callback)`
+# `mecano.group(options, [callback])`
 
 Create or modify a Unix group.
 

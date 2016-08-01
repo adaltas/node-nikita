@@ -1,5 +1,5 @@
 
-# `docker.cp(options, next)`
+# `mecano.docker.cp(options, [callback])`
 
 Copy files/folders between a container and the local filesystem.
 

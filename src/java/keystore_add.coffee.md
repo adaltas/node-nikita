@@ -1,5 +1,5 @@
 
-# `java.keystore_add(options, callback)`
+# `mecano.java.keystore_add(options, [callback])`
 
 Add certificates, private keys and certificate authorities to java keystores
 and trustores.

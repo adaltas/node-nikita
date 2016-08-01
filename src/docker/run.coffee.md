@@ -1,5 +1,5 @@
 
-# `docker.run(options, callback)`
+# `mecano.docker.run(options, [callback])`
 
 Run Docker Containers
 

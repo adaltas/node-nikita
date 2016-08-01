@@ -1,5 +1,5 @@
 
-# `krb5.delprinc(options, callback)`
+# `mecano.krb5.delprinc(options, [callback])`
 
 Remove a Kerberos principal and optionally its keytab.
 

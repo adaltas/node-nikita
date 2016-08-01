@@ -1,7 +1,7 @@
 
-# Log Markdown
+# `mecano.log.fs(options, [callback])`
 
-Write log to the host filesystem.
+Write log to the host filesystem in a user provided format.
 
 Options include:
 

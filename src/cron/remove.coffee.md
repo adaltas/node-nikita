@@ -1,5 +1,5 @@
 
-# `cron.remove(options, callback)`
+# `mecano.cron.remove(options, [callback])`
 
 Remove job(s) on crontab.
 

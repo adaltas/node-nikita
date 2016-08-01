@@ -1,5 +1,5 @@
 
-# `docker.save(options, callback)`
+# `mecano.docker.save(options, [callback])`
 
 Save Docker images
 

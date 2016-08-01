@@ -1,5 +1,5 @@
 
-# `cache(options, callback)`
+# `mecano.cache(options, [callback])`
 
 Download a file and place it on a local or remote folder for later usage.
 

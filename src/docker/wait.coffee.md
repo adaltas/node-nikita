@@ -1,5 +1,5 @@
 
-# `docker.wait(options, callback)`
+# `mecano.docker.wait(options, [callback])`
 
 Block until a container stops
 

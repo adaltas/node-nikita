@@ -1,5 +1,5 @@
 
-# `wait.exist(options, callback)`
+# `mecano.wait.exist(options, [callback])`
 
 Wait for a file or directory to exists. Status will be
 set to "false" if the file already existed, considering that no

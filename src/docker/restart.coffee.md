@@ -1,5 +1,5 @@
 
-# `docker.start(options, callback)`
+# `mecano.docker.start(options, [callback])`
 
 Start stopped containers. Or stop/starts started container
 

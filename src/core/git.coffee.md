@@ -1,5 +1,5 @@
 
-# `git(options, callback)`
+# `mecano.git(options, [callback])`
 
 Create and synchronize a git repository.
 

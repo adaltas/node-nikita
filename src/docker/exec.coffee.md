@@ -1,5 +1,5 @@
 
-# `docker.exec(options, callback)`
+# `mecano.docker.exec(options, [callback])`
 
 Run a command in a running container
 

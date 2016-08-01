@@ -1,5 +1,5 @@
 
-# `krb5.ktadd(options, callback)`
+# `mecano.krb5.ktadd(options, [callback])`
 
 Create and manage a keytab. This function is usually not used directly but instead
 called by the `krb5.addprinc` function.

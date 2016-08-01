@@ -1,5 +1,5 @@
 
-# `touch(options, callback)`
+# `mecano.touch(options, [callback])`
 
 Create a empty file if it does not yet exists.
 

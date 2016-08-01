@@ -1,7 +1,7 @@
 
-# Log CSV
+# `mecano.log.csv(options, [callback])`
 
-Write log to the host filesystem.
+Write log to the host filesystem in CSV.
 
 Options include:
 

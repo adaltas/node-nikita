@@ -1,5 +1,5 @@
 
-# `docker.kill(options, callback)`
+# `mecano.docker.kill(options, [callback])`
 
 Send signal to containers using SIGKILL or a specified signal.
 Note if container is not running , SIGKILL is not executed and

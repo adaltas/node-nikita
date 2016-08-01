@@ -1,5 +1,5 @@
 
-# `docker_pull(options, callback)`
+# `mecano.docker.pull(options, [callback])`
 
 Pull a container
 

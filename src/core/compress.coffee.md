@@ -1,5 +1,5 @@
 
-# `compress(options, callback)`
+# `mecano.compress(options, [callback])`
 
 Compress an archive. Multiple compression types are supported. Unless
 specified as an option, format is derived from the source extension. At the

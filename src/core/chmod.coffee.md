@@ -1,5 +1,5 @@
 
-# `chmod(options, callback)`
+# `mecano.chmod(options, [callback])`
 
 Change the permissions of a file or directory.
 

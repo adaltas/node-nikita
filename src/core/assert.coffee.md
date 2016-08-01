@@ -1,5 +1,5 @@
 
-# `assert(options)`
+# `mecano.assert(options, [callback])`
 
 A set of assertion tools.
 

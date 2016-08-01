@@ -1,5 +1,5 @@
 
-# `link(options, callback)`
+# `mecano.link(options, [callback])`
 
 Create a symbolic link and it's parent directories if they don't yet
 exist.

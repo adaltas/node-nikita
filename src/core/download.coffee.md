@@ -1,5 +1,5 @@
 
-# `download(options, callback)`
+# `mecano.download(options, [callback])`
 
 Download files using various protocols.
 

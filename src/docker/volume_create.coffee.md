@@ -1,5 +1,5 @@
 
-# `volume_create(options, callback)`
+# `mecano.volume_create(options, [callback])`
 
 Create a volume. 
 

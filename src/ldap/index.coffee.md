@@ -1,5 +1,5 @@
 
-# `ldap.index(options, callback)`
+# `mecano.ldap.index(options, [callback])`
 
 Create new [index](index) for the OpenLDAP server.
 

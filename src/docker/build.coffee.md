@@ -1,5 +1,5 @@
 
-# `docker.build(options, callback)`
+# `mecano.docker.build(options, [callback])`
 
 Build docker repository from Dockerfile, from content or from current working
 directory (exclusive options).

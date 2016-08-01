@@ -1,5 +1,5 @@
 
-# `service(options, callback)`
+# `mecano.service(options, [callback])`
 
 Install a service. For now, only yum over SSH.
 

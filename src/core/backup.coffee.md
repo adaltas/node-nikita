@@ -1,5 +1,5 @@
 
-# `backup(options, callback)`
+# `mecano.backup(options, [callback])`
 
 Commons backup functions provided by backmeup. For additional information, please refer to the [official backmeup webpage][backmeup].
 

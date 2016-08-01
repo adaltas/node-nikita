@@ -1,5 +1,5 @@
 
-# `ldap.delete(options, callback)`
+# `mecano.ldap.delete(options, [callback])`
 
 Insert or modify an entry inside an OpenLDAP server.   
 
@@ -57,13 +57,3 @@ require('mecano').ldap.delete({
         # modified = stderr.match(/Already exists/g)?.length isnt stdout.match(/adding new entry/g).length
         # added = modified # For now, we dont modify
         # callback err, modified, added
-
-
-
-
-
-
-
-
-
-

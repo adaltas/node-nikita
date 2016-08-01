@@ -1,5 +1,5 @@
 
-# `service.startup(options, callback)`
+# `mecano.service.startup(options, [callback])`
 
 Activate or desactivate a service on startup.
 

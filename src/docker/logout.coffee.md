@@ -1,5 +1,5 @@
 
-# `docker.logout(options, callback)`
+# `mecano.docker.logout(options, [callback])`
 
 Log out from a Docker registry, if no server is
 specified  is the default.

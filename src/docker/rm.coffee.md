@@ -1,5 +1,5 @@
 
-# `docker.rm(options, callback)`
+# `mecano.docker.rm(options, [callback])`
 
 Remove one or more containers. Containers need to be stopped to be deleted unless
 force options is set.

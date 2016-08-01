@@ -1,5 +1,5 @@
 
-# `docker.load(options, callback)`
+# `mecano.docker.load(options, [callback])`
 
 Load Docker images
 

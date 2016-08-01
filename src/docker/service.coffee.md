@@ -1,5 +1,5 @@
 
-# `docker.service(options, callback)`
+# `mecano.docker.service(options, [callback])`
 
 Run a container in a service mode. This module is just a wrapper for docker.run
 with correct options.
