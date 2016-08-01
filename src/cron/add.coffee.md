@@ -86,7 +86,7 @@ require('mecano').cron.add({
         @execute
           cmd: if options.user? then "su -l #{options.user} -c '#{options.cmd}'" else options.cmd
           if: options.exec
-        .execute
+        @execute
           cmd: """
           #{crontab} - <<EOF
           #{jobs.join '\n'}
