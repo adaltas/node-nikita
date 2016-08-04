@@ -264,7 +264,7 @@ require('mecano').write({
               options.log message: "Destination is a file", level: 'INFO', module: 'mecano/lib/write'
               do_read()
             else
-              callback Error "Invalid File Type Destination"
+              callback Error "Invalid File Type Destination: #{options.target}"
         do_mkdir = =>
           @mkdir
             target: path.dirname options.target
