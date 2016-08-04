@@ -37,7 +37,7 @@
           target[name]? or target.registry.registered(tree)? or registry.registered(name)?
         get: (target, name) ->
           return target[name] if target[name]?
-          return target[name] if name in ['_maxListeners']
+          return target[name] if name in ['domain', '_events', '_maxListeners']
           tree.push name
           get_proxy_builder = ->
             builder = ->
@@ -189,7 +189,7 @@
         jump_to_error err
         run()
       jump_to_error = (err) ->
-        while todos[0] and todos[0].type isnt 'then' then todos.shift()
+        while todos[0] and todos[0].type not in ['catch', 'then'] then todos.shift()
         todos.err = err
       _run_ = ->
         if obj.options.domain
