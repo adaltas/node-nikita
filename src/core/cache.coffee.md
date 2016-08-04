@@ -17,17 +17,17 @@ Download a file and place it on a local or remote folder for later usage.
     Cache the file on the executing machine, equivalent to cache unless an ssh connection is
     provided. If a string is provided, it will be the cache path.   
     By default: basename of source   
-*   `fail` (boolean)
+*   `fail` (boolean)   
     Send an error if the HTTP response code is invalid. Similar to the curl
     option of the same name.   
 *   `force` (boolean)   
     Overwrite the target file if it exists, bypass md5 verification.   
 *   `headers` (array)   
     Extra header  to include in the request when sending HTTP to a server.   
-*   `location` (boolean)
+*   `location` (boolean)   
     If the server reports that the requested page has moved to a different
     location (indicated with a Location: header and a 3XX response code), this
-    option will make curl redo the request on the new place.
+    option will make curl redo the request on the new place.   
 *   `proxy` (string)   
     Use the specified HTTP proxy. If the port number is not specified, it is
     assumed at port 1080. See curl(1) man page.   

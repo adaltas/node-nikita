@@ -56,6 +56,10 @@ calculated if neither md5 nor sha1 is provided
     will be piped.   
 *   `sha1` (SHA-1 Hash)   
     Hash of the file using SHA-1. Used to check integrity   
+*   `location` (boolean)   
+    If the server reports that the requested page has moved to a different
+    location (indicated with a Location: header and a 3XX response code), this
+    option will make curl redo the request on the new place.   
 *   `md5` (MD5 Hash)   
     Hash of the file using MD5. Used to check integrity
 *   `force_cache` (boolean)   
@@ -158,6 +162,7 @@ mecano.download
         headers: options.headers
         md5: options.md5
         proxy: options.proxy
+        location: options.location
       , (err, cached, file) ->
         throw err if err
         options.source = file if options.cache
