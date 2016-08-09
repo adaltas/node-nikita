@@ -127,6 +127,7 @@ you are a member of the "wheel" group (gid of "10") with the command
           uid: options.uid
           gid: options.gid
           if_exists: options.home
+          if: options.home?
           unless: options.no_home_ownership
         .then (err, created) ->
           return callback err if err
