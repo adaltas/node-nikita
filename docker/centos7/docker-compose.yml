@@ -10,7 +10,7 @@ version: '2'
 services:
   nodejs:
     build: .
-    image: mecano_centos_nodejs
+    image: mecano_centos7_nodejs
     volumes:
       - ../..:/mecano
     depends_on:
