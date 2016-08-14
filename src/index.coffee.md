@@ -68,11 +68,13 @@ functions share a common API with flexible options.
       database:
         db:
           add: require './database/db/add'
+          remove: require './database/db/remove'
         schema:
           add: require './database/schema/add'
         user:
           add: require './database/user/add'
           exists: require './database/user/exists'
+          remove: require './database/user/remove'
       docker:
         build: require './docker/build'
         checksum: require './docker/checksum'

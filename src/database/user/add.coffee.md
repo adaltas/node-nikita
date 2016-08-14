@@ -1,11 +1,11 @@
 
-# `add(options, callback)`
+# `mecano.database.user.add(options, callback)`
 
 Create a user for the destination database.
 
 ## Options
 
-*   `admin_name`   
+*   `admin_username`   
     The login of the database administrator. It should have credentials to create accounts.
 *   `admin_password`   
     The password of the database administrator.
@@ -25,41 +25,16 @@ Create a user for the destination database.
 *   `users` Array   
     Array containing a list of user to create. It will take priority over name/password
     option if provided.
-*   `log`
-    Function called with a log related messages.
-*   `ssh` (object|ssh2)
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.
-*   `stdout` (stream.Writable)
-    Writable EventEmitter in which the standard output of executed commands will
-    be piped.
-*   `stderr` (stream.Writable)
-    Writable EventEmitter in which the standard error output of executed command
-    will be piped.
-
-## Keytab example
-
-```js
-require('mecano').krb5.addprinc({
-  principal: 'myservice/my.fqdn@MY.REALM',
-  randkey: true,
-  keytab: '/etc/security/keytabs/my.service.keytab',
-  uid: 'myservice',
-  gid: 'myservice',
-  kadmin_principal: 'me/admin@MY_REALM',
-  kadmin_password: 'pass',
-  kadmin_server: 'localhost'
-}, function(err, modified){
-  console.log(err ? err.message : 'Principal created or modified: ' + !!modified);
-});
-```
 
 ## Source Code
 
     module.exports = (options, callback) ->
+      # Import options from `options.db`
+      options.db ?= {}
+      options[k] ?= v for k, v of options.db
       # Check main options
       return callback new Error 'Missing hostname' unless options.host?
-      return callback new Error 'Missing admin name' unless options.admin_name?
+      return callback new Error 'Missing admin name' unless options.admin_username?
       return callback new Error 'Missing admin password' unless options.admin_password?
       return callback new Error 'Missing new user name' unless options.name? or options.users?
       return callback new Error 'Missing new user password' unless options.password? or options.users?
@@ -69,10 +44,9 @@ require('mecano').krb5.addprinc({
       options.users ?= []
       return callback new Error 'users  must be an array' unless Array.isArray options.users
       if options.name?
-        options.users.push {
+        options.users.push
           name: "#{options.name}"
           password: "#{options.password}"
-        }
       # Defines and check the engine type 
       options.engine = options.engine.toUpperCase() if options.engine?
       options.engine ?= 'POSTGRES'
@@ -86,14 +60,14 @@ require('mecano').krb5.addprinc({
         when 'MYSQL'
           adm_cmd += 'mysql'
           adm_cmd += " -h #{options.host}"
-          adm_cmd += " -u #{options.admin_name}"
+          adm_cmd += " -u #{options.admin_username}"
           adm_cmd += " -p #{options.admin_password}"
           break;
         when 'POSTGRES'
           #psql does not have any option
           adm_cmd += "PGPASSWORD=#{options.admin_password} psql"
           adm_cmd += " -h #{options.host}"
-          adm_cmd += " -U #{options.admin_name}"
+          adm_cmd += " -U #{options.admin_username}"
           break;
         else
           break;

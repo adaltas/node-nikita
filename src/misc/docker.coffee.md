@@ -45,5 +45,6 @@
       fi
       eval $docker #{docker.opts} #{cmd}
       """
+    # Reformat error message if any
     module.exports.callback = (err, executed, stdout, stderr) ->
       throw Error stderr.trim().replace 'Error response from daemon: ', '' if err and /^Error response from daemon/.test stderr

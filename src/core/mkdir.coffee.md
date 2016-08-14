@@ -78,7 +78,7 @@ require('mecano')
       each options.directory
       .call (directory, callback) =>
         # first, we need to find which directory need to be created
-        options.log message: "Creating directory '#{directory}'", level: 'DEBUG', module: 'mecano/lib/mkdir'
+        # options.log message: "Creating directory '#{directory}'", level: 'DEBUG', module: 'mecano/lib/mkdir'
         do_stats = ->
           end = false
           dirs = []

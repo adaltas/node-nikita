@@ -5,7 +5,7 @@ Create a database for the destination database.
 
 ## Options
 
-*   `admin_name`   
+*   `admin_username`   
     The login of the database administrator. It should have credentials to create accounts.
 *   `admin_password`   
     The password of the database administrator.
@@ -38,7 +38,7 @@ Create a database for the destination database.
 
 ```js
 require('mecano').database.schema.add({
-  admin_name: 'test',
+  admin_username: 'test',
   admin_password: 'test',
   database: 'my_db',
 }, function(err, modified){
@@ -49,9 +49,12 @@ require('mecano').database.schema.add({
 ## Source Code
 
     module.exports = (options, callback) ->
+      # Import options from `options.db`
+      options.db ?= {}
+      options[k] ?= v for k, v of options.db
       # Check main options
       return callback new Error 'Missing hostname' unless options.host?
-      return callback new Error 'Missing admin name' unless options.admin_name?
+      return callback new Error 'Missing admin name' unless options.admin_username?
       return callback new Error 'Missing admin password' unless options.admin_password?
       return callback new Error 'Missing database option ' unless options.database?
       # Defines and check the engine type 
@@ -69,14 +72,14 @@ require('mecano').database.schema.add({
         when 'MYSQL'
           adm_cmd += 'mysql'
           adm_cmd += " -h #{options.host}"
-          adm_cmd += " -u #{options.admin_name}"
+          adm_cmd += " -u #{options.admin_username}"
           adm_cmd += " -p #{options.admin_password}"
           break;
         when 'POSTGRES'
           #psql does not have any option
           adm_cmd += "PGPASSWORD=#{options.admin_password} psql"
           adm_cmd += " -h #{options.host}"
-          adm_cmd += " -U #{options.admin_name}"
+          adm_cmd += " -U #{options.admin_username}"
           break;
         else
           break;

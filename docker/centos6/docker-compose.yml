@@ -14,8 +14,9 @@ services:
     volumes:
       - ../..:/mecano
     depends_on:
-      - krb5
       - dind
+      - krb5
+      - postgres
     environment:
       MECANO_TEST: /mecano/docker/centos6/test.coffee
       DOCKER_HOST: 'tcp://dind:2375'

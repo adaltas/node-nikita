@@ -17,20 +17,20 @@ describe 'database user operation', ->
     .database.user.add
       port: 5432
       engine: 'postgres'
-      admin_name: config.database.admin_user
+      admin_username: config.database.admin_user
       admin_password: config.database.admin_password
-      , (err) ->
-        err.message.should.eql 'Missing hostname'
-        mecano
-          ssh: ssh
-        .database.user.add
-          host: 'postgres'
-          port: 5432
-          engine: 'admin_name'
-          admin_password: config.database.admin_password
-          , (err) ->
-            err.message.should.eql 'Missing admin name'
-            next()
+      relax: true
+    , (err) ->
+      err.message.should.eql 'Missing hostname'
+    .database.user.add
+      host: 'postgres'
+      port: 5432
+      engine: 'postgres'
+      admin_password: config.database.admin_password
+      relax: true
+    , (err) ->
+      err.message.should.eql 'Missing admin name'
+    .then next
   
   they 'add new user (POSTGRES)', (ssh, next) ->
     mecano
@@ -41,7 +41,7 @@ describe 'database user operation', ->
     .database.user.add
       engine: 'postgres'
       host: 'postgres'
-      admin_name: config.database.admin_user
+      admin_username: config.database.admin_user
       admin_password: config.database.admin_password
       port: 5432
       name: 'test_1'
@@ -49,13 +49,12 @@ describe 'database user operation', ->
     .execute 
       cmd: "PGPASSWORD=test_1 psql -h postgres -U test_1 -c '\\h' 1>/dev/null"
       code_skipped: 2
-      , (err, status, stdout, stderr) ->
-        stderr.trim('\n').should.eql 'psql: FATAL:  database "test_1" does not exist'
-        mecano
-          ssh: ssh
-        .execute
-          cmd: "PGPASSWORD=#{config.database.admin_password} psql -h postgres -U #{config.database.admin_user}  -c 'DROP USER IF EXISTS test_1;'"
-          code_skipped: 1
+    , (err, status, stdout, stderr) ->
+      stderr.trim('\n').should.eql 'psql: FATAL:  database "test_1" does not exist'
+    .execute
+      cmd: "PGPASSWORD=#{config.database.admin_password} psql -h postgres -U #{config.database.admin_user}  -c 'DROP USER IF EXISTS test_1;'"
+      code_skipped: 1
+      always: true
     .then next
 
   they 'add already existing user with new password(POSTGRES)', (ssh, next) ->
@@ -67,7 +66,7 @@ describe 'database user operation', ->
     .database.user.add
       engine: 'postgres'
       host: 'postgres'
-      admin_name: config.database.admin_user
+      admin_username: config.database.admin_user
       admin_password: config.database.admin_password
       port: 5432
       name: 'test_2'
@@ -75,7 +74,7 @@ describe 'database user operation', ->
     .database.user.add
       engine: 'postgres'
       host: 'postgres'
-      admin_name: config.database.admin_user
+      admin_username: config.database.admin_user
       admin_password: config.database.admin_password
       port: 5432
       name: 'test_2'
@@ -83,13 +82,12 @@ describe 'database user operation', ->
     .execute 
       cmd: "PGPASSWORD=test_2 psql -h postgres -U test_2 -c '\\h' 1>/dev/null"
       code_skipped: 2
-      , (err, status, stdout, stderr) ->
-        stderr.trim('\n').should.eql 'psql: FATAL:  database "test_2" does not exist'
-        mecano
-          ssh: ssh
-        .execute
-          cmd: "PGPASSWORD=#{config.database.admin_password} psql -h postgres -U #{config.database.admin_user}  -c 'DROP USER IF EXISTS test_2;'"
-          code_skipped: 1
+    , (err, status, stdout, stderr) ->
+      stderr.trim('\n').should.eql 'psql: FATAL:  database "test_2" does not exist'
+    .execute
+      cmd: "PGPASSWORD=#{config.database.admin_password} psql -h postgres -U #{config.database.admin_user}  -c 'DROP USER IF EXISTS test_2;'"
+      code_skipped: 1
+      always: true
     .then next
 
   they 'Check if user exists YES (POSTGRES)', (ssh, next) ->
@@ -101,13 +99,12 @@ describe 'database user operation', ->
     .database.user.exists
       engine: 'postgres'
       host: 'postgres'
-      admin_name: config.database.admin_user
+      admin_username: config.database.admin_user
       admin_password: config.database.admin_password
       port: 5432
       name: 'test_3'
     , (err, status) ->
-      return next err if err
-      status.should.be.false()
+      status.should.be.false() unless err
     .then next
 
   they 'Check if user exists FALSE (POSTGRES)', (ssh, next) ->
@@ -119,7 +116,7 @@ describe 'database user operation', ->
     .database.user.add
       engine: 'postgres'
       host: 'postgres'
-      admin_name: config.database.admin_user
+      admin_username: config.database.admin_user
       admin_password: config.database.admin_password
       port: 5432
       name: 'test_4'
@@ -127,12 +124,11 @@ describe 'database user operation', ->
     .database.user.exists
       engine: 'postgres'
       host: 'postgres'
-      admin_name: config.database.admin_user
+      admin_username: config.database.admin_user
       admin_password: config.database.admin_password
       port: 5432
       name: 'test_4'
       password: 'test_4'
     , (err, status) ->
-      return next err if err
-      status.should.be.true()
+      status.should.be.true() unless err
     .then next

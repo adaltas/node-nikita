@@ -1,0 +1,34 @@
+
+# `mecano.database.user.remove(options, callback)`
+
+Create a user for the destination database.
+
+## Options
+
+*   `admin_username`   
+    The login of the database administrator. It should have credentials to create accounts.
+*   `admin_password`   
+    The password of the database administrator.
+    provided.
+*   `engine`      
+    The engine type, can be MySQL or PostgreSQL. Default to MySQL
+*   `host`   
+    The hostname of the database
+*   `username`   
+    The new user name.
+
+## Source Code
+
+    module.exports = (options) ->
+      # Import options from `options.db`
+      options.db ?= {}
+      options[k] ?= v for k, v of options.db
+      @execute
+        cmd: db.cmd options, "DROP USER IF EXISTS #{options.username};"
+        code_skipped: 1
+        always: true
+
+## Dependencies
+
+    db = require '../../misc/db'
+        
