@@ -1,5 +1,5 @@
 
-# `mecano.database.user.remove(options, callback)`
+# `mecano.database.schema.remove`
 
 Create a user for the destination database.
 
@@ -14,8 +14,8 @@ Create a user for the destination database.
     The engine type, can be MySQL or PostgreSQL, default to MySQL.   
 *   `host`   
     The hostname of the database.   
-*   `username`   
-    The new user name.   
+*   `schema`   
+    New schema name.
 
 ## Source Code
 
@@ -23,9 +23,9 @@ Create a user for the destination database.
       # Import options from `options.db`
       options.db ?= {}
       options[k] ?= v for k, v of options.db
-      options.username ?= options.argument
+      options.schema ?= options.argument
       @execute
-        cmd: db.cmd options, "DROP USER IF EXISTS #{options.username};"
+        cmd: db.cmd options, "DROP SCHEMA IF EXISTS #{options.schema};"
 
 ## Dependencies
 

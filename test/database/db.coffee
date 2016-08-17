@@ -1,15 +1,11 @@
 
-fs = require 'fs'
-path = require 'path'
-fs.exists ?= path.exists
 mecano = require '../../src'
 db = require '../../src/misc/db'
 test = require '../test'
 they = require 'ssh2-they'
 
-describe 'database db operations', ->
+describe 'db.database', ->
 
-  scratch = test.scratch @
   config = test.config()
 
   they 'add new database (POSTGRES)', (ssh, next) ->
@@ -43,7 +39,7 @@ describe 'database db operations', ->
     .database.db.remove 'postgres_db_3'
     .database.user.remove 'postgres_user_3'
     .database.user.add
-      name: 'postgres_user_3'
+      username: 'postgres_user_3'
       password: 'postgres_user_3'
     .database.db.add
       database: 'postgres_db_3'

@@ -16,7 +16,7 @@ Create a user for the destination database.
     The engine type, can be MySQL or PostgreSQL. Default to MySQL
 *   `host`   
     The hostname of the database
-*   `name`   
+*   `username`   
     The new user name.
 *   `password`   
     The new user password.
@@ -36,16 +36,16 @@ Create a user for the destination database.
       return callback new Error 'Missing hostname' unless options.host?
       return callback new Error 'Missing admin name' unless options.admin_username?
       return callback new Error 'Missing admin password' unless options.admin_password?
-      return callback new Error 'Missing new user name' unless options.name? or options.users?
+      return callback new Error 'Missing new user username' unless options.username? or options.users?
       return callback new Error 'Missing new user password' unless options.password? or options.users?
       if options.db
         options.db = [options.db] unless Array.isArray options.db
       # Define and check the work array, definied if not exist, pushing in it the single user if empty
       options.users ?= []
       return callback new Error 'users  must be an array' unless Array.isArray options.users
-      if options.name?
+      if options.username?
         options.users.push
-          name: "#{options.name}"
+          username: "#{options.username}"
           password: "#{options.password}"
       # Defines and check the engine type 
       options.engine = options.engine.toUpperCase() if options.engine?
@@ -71,9 +71,8 @@ Create a user for the destination database.
           break;
         else
           break;
-      
       # Manage modified status
-      modified = false 
+      modified = false
       @call ->
         each options.users 
           .parallel(false)
@@ -82,28 +81,26 @@ Create a user for the destination database.
             user.databases ?= []
             # Create user  unless exist
             @execute
-              cmd: "#{adm_cmd} -tAc \"CREATE USER #{user.name} WITH PASSWORD '#{user.password}';\""
-              unless_exec: "#{adm_cmd} -tAc \"SELECT 1 FROM pg_roles WHERE rolname='#{user.name}'\" | grep 1"
+              cmd: "#{adm_cmd} -tAc \"CREATE USER #{user.username} WITH PASSWORD '#{user.password}';\""
+              unless_exec: "#{adm_cmd} -tAc \"SELECT 1 FROM pg_roles WHERE rolname='#{user.username}'\" | grep 1"
             # Change password if needed
             # Even if the user exists, without database it can not connect.
             # That's why the check is executed in 2 steps.
             @execute
-              cmd: "#{adm_cmd} -tAc \"ALTER USER #{user.name} WITH PASSWORD '#{user.password}';\""
-              if_exec: "#{postgres.wrap options} -c \"\\dt\" 2>&1 >/dev/null | grep -e '^psql:\\sFATAL.*password\\sauthentication\\sfailed\\sfor\\suser.*'"
-              # This message is an error and is written to stderr, so it is redirected to stdout before being grepped
-              #unless_exec: "#{postgres.wrap options} -c '\\dt' | egrep  '^psql:\\sFATAL.*database.*\\sdoes\\snot\\sexist$'"
+              cmd: "#{adm_cmd} -tAc \"ALTER USER #{user.username} WITH PASSWORD '#{user.password}';\""
+              if_exec: db.cmd(options, admin_username: null, admin_password: null, '\\dt') + " 2>&1 >/dev/null | grep -e '^psql:\\sFATAL.*password\\sauthentication\\sfailed\\sfor\\suser.*'"
             @call 
               if: -> (@status -1) or (@status -1)
               handler: -> modified = true
             @call 
               if: -> @status -3
-              handler: -> options.log message: "User created: #{user.name}", level: 'INFO', module: 'mecano/database/user/add'
+              handler: -> options.log message: "User created: #{user.username}", level: 'INFO', module: 'mecano/database/user/add'
             @call 
               unless: -> @status -4
-              handler: -> options.log message: "User already exist (skipped): #{user.name}", level: 'INFO', module: 'mecano/database/user/add'
+              handler: -> options.log message: "User already exist (skipped): #{user.username}", level: 'INFO', module: 'mecano/database/user/add'
             @call 
               if: -> @status -3
-              handler: -> options.log message: "Modified Password for user: #{user.name}", level: 'INFO', module: 'mecano/database/user/add'
+              handler: -> options.log message: "Modified Password for user: #{user.username}", level: 'INFO', module: 'mecano/database/user/add'
             @then next
           .then (err) -> callback err, modified
       
@@ -112,5 +109,5 @@ Create a user for the destination database.
 ## Dependencies
 
     misc = require '../../misc'
-    postgres = require '../../misc/database'
+    db = require '../../misc/db'
     each = require 'each'

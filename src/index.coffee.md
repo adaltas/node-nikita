@@ -71,6 +71,7 @@ functions share a common API with flexible options.
           remove: require './database/db/remove'
         schema:
           add: require './database/schema/add'
+          remove: require './database/schema/remove'
         user:
           add: require './database/user/add'
           exists: require './database/user/exists'

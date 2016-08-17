@@ -55,7 +55,7 @@ require('mecano').krb5.addprinc({
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = shy: true, handler: (options, callback) ->
       # Import options from `options.db`
       options.db ?= {}
       options[k] ?= v for k, v of options.db
@@ -91,10 +91,3 @@ require('mecano').krb5.addprinc({
         cmd: "#{adm_cmd} -tAc \"SELECT 1 FROM pg_roles WHERE rolname='#{options.name}'\" | grep 1"
         code_skipped: 1
       , (err, status, stdout, stderr) -> callback err, status, stdout, stderr 
-
-
-## Dependencies
-
-    misc = require '../../misc'
-    postgres = require '../../misc/database'
-    each = require 'each'

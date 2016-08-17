@@ -24,10 +24,12 @@ Create a user for the destination database.
       options.db ?= {}
       options[k] ?= v for k, v of options.db
       options.database ?= options.argument
+      # Avoid Postgres error "ERROR:  cannot drop the currently open database"
+      database = options.database
+      delete options.database
       @execute
-        cmd: db.cmd options, "DROP DATABASE IF EXISTS #{options.database};"
-        code_skipped: 1
-        always: true
+        cmd: db.cmd options, "DROP DATABASE IF EXISTS #{database};"
+        code_skipped: 2
 
 ## Dependencies
 

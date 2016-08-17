@@ -113,11 +113,3 @@ require('mecano').database.schema.add({
             if: -> @status(-1) or @status(-2)
             handler: -> modified =  true
       @then (err) -> callback err, modified
-      
-
-
-## Dependencies
-
-    misc = require '../../misc'
-    postgres = require '../../misc/database'
-    each = require 'each'
