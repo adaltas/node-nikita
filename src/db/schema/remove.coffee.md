@@ -1,5 +1,5 @@
 
-# `mecano.database.schema.remove`
+# `mecano.db.schema.remove`
 
 Create a user for the destination database.
 

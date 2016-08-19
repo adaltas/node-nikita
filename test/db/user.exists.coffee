@@ -11,8 +11,8 @@ describe 'db.user.exists', ->
     mecano
       ssh: ssh
       db: config.db.postgres
-    .database.user.remove 'test_2', shy: true
-    .database.user.exists
+    .db.user.remove 'test_2', shy: true
+    .db.user.exists
       name: 'test_3'
     , (err, status) ->
       status.should.be.false() unless err
@@ -25,11 +25,11 @@ describe 'db.user.exists', ->
     mecano
       ssh: ssh
       db: config.db.postgres
-    .database.user.remove 'test_2', shy: true
-    .database.user.add
+    .db.user.remove 'test_2', shy: true
+    .db.user.add
       username: 'test_4'
       password: 'test_4'
-    .database.user.exists
+    .db.user.exists
       name: 'test_4'
     , (err, status) ->
       status.should.be.true() unless err

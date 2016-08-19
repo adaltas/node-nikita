@@ -12,46 +12,46 @@ describe 'db.database', ->
     mecano
       ssh: ssh
       db: config.db.postgres
-    .database.db.remove 'postgres_db_0'
-    .database.db.add
+    .db.database.remove 'postgres_db_0'
+    .db.database.add
       database: 'postgres_db_0'
-    .database.db.remove 'postgres_db_0'
+    .db.database.remove 'postgres_db_0'
     .then next
     
   they 'status not modified new database (POSTGRES)', (ssh, next) ->
     mecano
       ssh: ssh
       db: config.db.postgres
-    .database.db.remove 'postgres_db_1'
-    .database.db.add
+    .db.database.remove 'postgres_db_1'
+    .db.database.add
       database: 'postgres_db_1'
-    .database.db.add
+    .db.database.add
       database: 'postgres_db_1'
     , (err, status) ->
       status.should.be.false() unless err
-    .database.db.remove 'postgres_db_1'
+    .db.database.remove 'postgres_db_1'
     .then next
 
   they 'add new database and add existing user to it (POSTGRES)', (ssh, next) ->
     mecano
       ssh: ssh
       db: config.db.postgres
-    .database.db.remove 'postgres_db_3'
-    .database.user.remove 'postgres_user_3'
-    .database.user.add
+    .db.database.remove 'postgres_db_3'
+    .db.user.remove 'postgres_user_3'
+    .db.user.add
       username: 'postgres_user_3'
       password: 'postgres_user_3'
-    .database.db.add
+    .db.database.add
       database: 'postgres_db_3'
       user: 'postgres_user_3'
     .execute
       cmd: db.cmd(config.db.postgres, "SELECT datacl FROM pg_database WHERE  datname = 'postgres_db_3'") + " | grep 'postgres_user_3'"
     , (err, status) ->
       status.should.be.true() unless err
-    .database.db.remove
+    .db.database.remove
       database: 'postgres_db_3'
       always: true
-    .database.user.remove
+    .db.user.remove
       username: "postgres_user_3"
       always: true
     .then next
@@ -60,9 +60,9 @@ describe 'db.database', ->
     mecano
       ssh: ssh
       db: config.db.postgres
-    .database.db.remove 'postgres_db_4'
-    .database.user.remove 'postgres_user_4'
-    .database.db.add
+    .db.database.remove 'postgres_db_4'
+    .db.user.remove 'postgres_user_4'
+    .db.database.add
       database: 'postgres_db_4'
       user: 'postgres_user_4'
     .execute
@@ -70,10 +70,10 @@ describe 'db.database', ->
       code_skipped: 1
     , (err, status) ->
       status.should.be.false() unless err
-    .database.db.remove
+    .db.database.remove
       database: 'postgres_db_4'
       always: true
-    .database.user.remove
+    .db.user.remove
       username: "postgres_user_4"
       always: true
     .then next

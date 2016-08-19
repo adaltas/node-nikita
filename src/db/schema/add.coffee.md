@@ -1,5 +1,5 @@
 
-# `add(options, callback)`
+# `mecano.db.schema.add(options, callback)`
 
 Create a database for the destination database.
 
@@ -62,10 +62,10 @@ require('mecano').database.schema.add({
       options.engine ?= 'POSTGRES'
       return callback new Error 'Unsupport engine type' unless options.engine in ['POSTGRES'] #will be ['MYSQL','POSTGRESQL'] 
       options.log 'Missing engine type. Defaulting to PostgreSQL' unless options.engine?
-      options.log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'mecano/database/db/user'
+      options.log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'mecano/db/database/user'
       # Defines port
       options.port ?= 5432 
-      options.log message: "Database port set to #{options.port}", level: 'DEBUG', module: 'mecano/database/db/user'     
+      options.log message: "Database port set to #{options.port}", level: 'DEBUG', module: 'mecano/db/database/user'     
       adm_cmd = ''
       error = null
       switch options.engine
@@ -87,7 +87,7 @@ require('mecano').database.schema.add({
       @call 
         if:  options.engine is 'POSTGRES'
         handler: ->  # Create Schema unless exist
-          @call -> options.log message: "Check if schema #{options.schema} exists", level: 'DEBUG', module: 'mecano/database/schema/add'     
+          @call -> options.log message: "Check if schema #{options.schema} exists", level: 'DEBUG', module: 'mecano/db/schema/add'     
           @call ->
             @execute
               code_skipped: 2

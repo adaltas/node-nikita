@@ -65,17 +65,17 @@ functions share a common API with flexible options.
       cron:
         add: require './cron/add'
         remove: require './cron/remove'
-      database:
-        db:
-          add: require './database/db/add'
-          remove: require './database/db/remove'
+      db:
+        database:
+          add: require './db/database/add'
+          remove: require './db/database/remove'
         schema:
-          add: require './database/schema/add'
-          remove: require './database/schema/remove'
+          add: require './db/schema/add'
+          remove: require './db/schema/remove'
         user:
-          add: require './database/user/add'
-          exists: require './database/user/exists'
-          remove: require './database/user/remove'
+          add: require './db/user/add'
+          exists: require './db/user/exists'
+          remove: require './db/user/remove'
       docker:
         build: require './docker/build'
         checksum: require './docker/checksum'

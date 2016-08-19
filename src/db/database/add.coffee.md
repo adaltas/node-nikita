@@ -1,5 +1,5 @@
 
-# `add(options, callback)`
+# `mecano.db.database.add(options, callback)`
 
 Create a database for the destination database.
 
@@ -64,10 +64,10 @@ require('mecano').database.db.add({
       options.engine ?= 'POSTGRES'
       return callback new Error 'Unsupport engine type' unless options.engine in ['MYSQL','POSTGRES']
       options.log 'Missing engine type. Defaulting to PostgreSQL' unless options.engine?
-      options.log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'mecano/database/db/add'
+      options.log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'mecano/db/database/add'
       # Defines port
       options.port ?= 5432 
-      options.log message: "Database port set to #{options.port}", level: 'DEBUG', module: 'mecano/database/db/add'
+      options.log message: "Database port set to #{options.port}", level: 'DEBUG', module: 'mecano/db/database/add'
       adm_cmd = ''
       switch options.engine
         when 'MYSQL'
@@ -88,13 +88,13 @@ require('mecano').database.db.add({
       modified_db = false
       each options.database
         .parallel(false)
-        .call ( db, i, next) =>
+        .call ( database, i, next) =>
           return unless options.engine is 'POSTGRES'
           # Create database unless exist
-          @call -> options.log message: "Check if database #{db} exists", level: 'DEBUG', module: 'mecano/database/db/add'
+          @call -> options.log message: "Check if database #{database} exists", level: 'DEBUG', module: 'mecano/db/database/add'
           @execute
-            cmd: "#{adm_cmd} -tAc \"CREATE DATABASE #{db};\""
-            unless_exec: "#{adm_cmd} -d #{db} -tAc '\\dt';"
+            cmd: "#{adm_cmd} -tAc \"CREATE DATABASE #{database};\""
+            unless_exec: "#{adm_cmd} -d #{database} -tAc '\\dt';"
           @call 
             if: -> @status -1
             handler: -> modified_db = true
@@ -104,8 +104,8 @@ require('mecano').database.db.add({
           @call 
             handler: ->
               for user in options.user
-                @call -> options.log message: "Check if user #{user} has PRIVILEGES on #{db} ", level: 'DEBUG', module: 'mecano/database/db/user'     
-                @database.user.exists
+                @call -> options.log message: "Check if user #{user} has PRIVILEGES on #{database} ", level: 'DEBUG', module: 'mecano/db/database/user'     
+                @db.user.exists
                   name: user
                   admin_username: options.admin_username
                   admin_password: options.admin_password
@@ -113,18 +113,18 @@ require('mecano').database.db.add({
                   host: options.host
                 @call 
                   unless: -> @status -1
-                  handler: -> options.log message: "User does exists #{user}: skipping", level: 'WARNING', module: 'mecano/database/db/add'
+                  handler: -> options.log message: "User does exists #{user}: skipping", level: 'WARNING', module: 'mecano/db/database/add'
                 @execute
                   if: -> @status -2
-                  cmd: "#{adm_cmd} -d #{db} -tAc 'GRANT ALL PRIVILEGES ON DATABASE #{db} TO #{user}';"
-                  unless_exec: "#{adm_cmd} -d #{db} -tAc \"SELECT datacl FROM  pg_database WHERE  datname = '#{db}'\" | grep '#{user}='"
+                  cmd: "#{adm_cmd} -d #{database} -tAc 'GRANT ALL PRIVILEGES ON DATABASE #{database} TO #{user}';"
+                  unless_exec: "#{adm_cmd} -d #{database} -tAc \"SELECT datacl FROM  pg_database WHERE  datname = '#{database}'\" | grep '#{user}='"
                 @call 
                   if: -> @status -2
                   handler: -> modified_user = true
           @then next  
         .then (err) -> 
-          options.log message: "Modified Status for users", level: 'DEBUG', module: 'mecano/database/db/add' if modified_user
-          options.log message: "Modified Status for databases", level: 'DEBUG', module: 'mecano/database/db/add' if modified_db
+          options.log message: "Modified Status for users", level: 'DEBUG', module: 'mecano/db/database/add' if modified_user
+          options.log message: "Modified Status for databases", level: 'DEBUG', module: 'mecano/db/database/add' if modified_db
           callback err, (modified_user or modified_db)
 
 

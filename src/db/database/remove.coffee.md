@@ -1,5 +1,5 @@
 
-# `mecano.database.user.remove(options, callback)`
+# `mecano.db.database.remove(options, callback)`
 
 Create a user for the destination database.
 

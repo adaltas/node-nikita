@@ -11,7 +11,7 @@ describe 'db.user', ->
   they 'validate options', (ssh, next) ->
     mecano
       ssh: ssh
-    .database.user.add
+    .db.user.add
       port: 5432
       engine: 'postgres'
       admin_username: config.db.postgres.admin_username
@@ -19,7 +19,7 @@ describe 'db.user', ->
       relax: true
     , (err) ->
       err.message.should.eql 'Missing hostname'
-    .database.user.add
+    .db.user.add
       host: 'postgres'
       port: 5432
       engine: 'postgres'
@@ -33,29 +33,29 @@ describe 'db.user', ->
     mecano
       ssh: ssh
       db: config.db.postgres
-    .database.user.remove 'test_1'
-    .database.user.add
+    .db.user.remove 'test_1'
+    .db.user.add
       username: 'test_1'
       password: 'test_1'
     .execute 
       cmd: db.cmd(config.db.postgres, "\\du") + " | grep 'test_1'"
       code_skipped: 2
-    .database.user.remove 'test_1'
+    .db.user.remove 'test_1'
     .then next
 
   they 'add already existing user with new password(POSTGRES)', (ssh, next) ->
     mecano
       ssh: ssh
       db: config.db.postgres
-    .database.db.remove 'test_db_2'
-    .database.user.remove 'test_2'
-    .database.user.add
+    .db.database.remove 'test_db_2'
+    .db.user.remove 'test_2'
+    .db.user.add
       username: 'test_2'
       password: 'test_1'
-    .database.db.add
+    .db.database.add
       database: 'test_db_2'
       user: 'test_2'
-    .database.user.add
+    .db.user.add
       username: 'test_2'
       password: 'test_2'
     .execute
@@ -67,6 +67,6 @@ describe 'db.user', ->
         username: 'test_2'
         password: 'test_2'
         , '\\l'
-    .database.db.remove 'test_db_2'
-    .database.user.remove 'test_2'
+    .db.database.remove 'test_db_2'
+    .db.user.remove 'test_2'
     .then next

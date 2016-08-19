@@ -1,5 +1,5 @@
 
-# `exists(options, callback)`
+# `mecano.db.user.exists(options, callback)`
 
 Chek is user exists in the database.
 
@@ -68,7 +68,7 @@ require('mecano').krb5.addprinc({
       options.engine = options.engine.toUpperCase() if options.engine?
       options.engine ?= 'POSTGRES'
       return callback new Error 'Unsupported engine type' unless options.engine in ['MYSQL','POSTGRES']
-      options.log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'mecano/database/db/user'
+      options.log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'mecano/db/database/user'
       # Defines port
       options.port ?= 5432      
       adm_cmd = ''

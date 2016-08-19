@@ -1,5 +1,5 @@
 
-# `mecano.database.user.add(options, callback)`
+# `mecano.db.user.add(options, callback)`
 
 Create a user for the destination database.
 
@@ -51,7 +51,7 @@ Create a user for the destination database.
       options.engine = options.engine.toUpperCase() if options.engine?
       options.engine ?= 'POSTGRES'
       return callback new Error 'Unsupport engine type' unless options.engine in ['MYSQL','POSTGRES']
-      options.log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'mecano/database/user/add'
+      options.log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'mecano/db/user/add'
       # Defines port
       options.port ?= 5432      
       adm_cmd = ''
@@ -94,13 +94,13 @@ Create a user for the destination database.
               handler: -> modified = true
             @call 
               if: -> @status -3
-              handler: -> options.log message: "User created: #{user.username}", level: 'INFO', module: 'mecano/database/user/add'
+              handler: -> options.log message: "User created: #{user.username}", level: 'INFO', module: 'mecano/db/user/add'
             @call 
               unless: -> @status -4
-              handler: -> options.log message: "User already exist (skipped): #{user.username}", level: 'INFO', module: 'mecano/database/user/add'
+              handler: -> options.log message: "User already exist (skipped): #{user.username}", level: 'INFO', module: 'mecano/db/user/add'
             @call 
               if: -> @status -3
-              handler: -> options.log message: "Modified Password for user: #{user.username}", level: 'INFO', module: 'mecano/database/user/add'
+              handler: -> options.log message: "Modified Password for user: #{user.username}", level: 'INFO', module: 'mecano/db/user/add'
             @then next
           .then (err) -> callback err, modified
       
