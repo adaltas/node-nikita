@@ -12,9 +12,9 @@ describe 'db.schema', ->
       ssh: ssh
       db: config.db.postgres
     .db.database.remove 'postgres_db_0'
-    .db.database.add
+    .db.database
       database: 'postgres_db_0'
-    .db.schema.add
+    .db.schema
       schema: 'postgres_schema_0'
       database: 'postgres_db_0'
     , (err, status) ->
@@ -27,9 +27,9 @@ describe 'db.schema', ->
       ssh: ssh
       db: config.db.postgres
     .db.database.remove 'postgres_db_1'
-    .db.database.add
+    .db.database
       database: 'postgres_db_1'
-    .db.schema.add
+    .db.schema
       schema: 'postgres_schema_1'
       database: 'postgres_db_1'
       owner: 'Johny'
@@ -46,13 +46,13 @@ describe 'db.schema', ->
     .db.schema.remove 'postgres_schema_2'
     .db.database.remove 'postgres_db_2'
     .db.user.remove 'postgres_user_2'
-    .db.user.add
+    .db.user
       username: 'postgres_user_2'
       password: 'postgres_user_2'
-    .db.database.add
+    .db.database
       database: 'postgres_db_2'
       user: 'postgres_user_2'
-    .db.schema.add
+    .db.schema
       schema: 'postgres_schema_2'
       database: 'postgres_db_2'
       owner: 'postgres_user_2'
@@ -67,7 +67,7 @@ describe 'db.schema', ->
     mecano
       ssh: ssh
       db: config.db.postgres
-    .db.schema.add
+    .db.schema
       schema: 'postgres_schema_4'
       database: 'postgres_db_4'
       relax: true
@@ -83,14 +83,14 @@ describe 'db.schema', ->
     .db.schema.remove 'postgres_db_5'
     .db.database.remove 'postgres_db_5'
     .db.user.remove 'mecano_test_5'
-    .db.user.add
+    .db.user
       username: 'mecano_test_5'
       password: 'test'
       engine: 'postgres'
-    .db.database.add
+    .db.database
       user: 'mecano_test_5'
       database: 'postgres_db_5'
-    .db.schema.add
+    .db.schema
       database: 'postgres_db_5'
       schema: 'postgres_schema_5'
       owner: 'mecano_test_5'

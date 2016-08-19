@@ -13,7 +13,7 @@ describe 'db.database', ->
       ssh: ssh
       db: config.db.postgres
     .db.database.remove 'postgres_db_0'
-    .db.database.add
+    .db.database
       database: 'postgres_db_0'
     .db.database.remove 'postgres_db_0'
     .then next
@@ -23,9 +23,9 @@ describe 'db.database', ->
       ssh: ssh
       db: config.db.postgres
     .db.database.remove 'postgres_db_1'
-    .db.database.add
+    .db.database
       database: 'postgres_db_1'
-    .db.database.add
+    .db.database
       database: 'postgres_db_1'
     , (err, status) ->
       status.should.be.false() unless err
@@ -38,10 +38,10 @@ describe 'db.database', ->
       db: config.db.postgres
     .db.database.remove 'postgres_db_3'
     .db.user.remove 'postgres_user_3'
-    .db.user.add
+    .db.user
       username: 'postgres_user_3'
       password: 'postgres_user_3'
-    .db.database.add
+    .db.database
       database: 'postgres_db_3'
       user: 'postgres_user_3'
     .execute
@@ -62,7 +62,7 @@ describe 'db.database', ->
       db: config.db.postgres
     .db.database.remove 'postgres_db_4'
     .db.user.remove 'postgres_user_4'
-    .db.database.add
+    .db.database
       database: 'postgres_db_4'
       user: 'postgres_user_4'
     .execute

@@ -67,13 +67,13 @@ functions share a common API with flexible options.
         remove: require './cron/remove'
       db:
         database:
-          add: require './db/database/add'
+          '': require './db/database'
           remove: require './db/database/remove'
         schema:
-          add: require './db/schema/add'
+          '': require './db/schema'
           remove: require './db/schema/remove'
         user:
-          add: require './db/user/add'
+          '': require './db/user'
           exists: require './db/user/exists'
           remove: require './db/user/remove'
       docker:

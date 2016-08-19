@@ -11,7 +11,7 @@ describe 'db.user', ->
   they 'validate options', (ssh, next) ->
     mecano
       ssh: ssh
-    .db.user.add
+    .db.user
       port: 5432
       engine: 'postgres'
       admin_username: config.db.postgres.admin_username
@@ -19,7 +19,7 @@ describe 'db.user', ->
       relax: true
     , (err) ->
       err.message.should.eql 'Missing option: "host"'
-    .db.user.add
+    .db.user
       host: 'postgres'
       port: 5432
       engine: 'postgres'
@@ -34,7 +34,7 @@ describe 'db.user', ->
       ssh: ssh
       db: config.db.postgres
     .db.user.remove 'test_1'
-    .db.user.add
+    .db.user
       username: 'test_1'
       password: 'test_1'
     .execute 
@@ -49,13 +49,13 @@ describe 'db.user', ->
       db: config.db.postgres
     .db.database.remove 'test_db_2'
     .db.user.remove 'test_2'
-    .db.user.add
+    .db.user
       username: 'test_2'
       password: 'test_1'
-    .db.database.add
+    .db.database
       database: 'test_db_2'
       user: 'test_2'
-    .db.user.add
+    .db.user
       username: 'test_2'
       password: 'test_2'
     .execute

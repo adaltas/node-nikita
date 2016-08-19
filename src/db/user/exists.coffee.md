@@ -36,23 +36,6 @@ Chek is user exists in the database.
     Writable EventEmitter in which the standard error output of executed command
     will be piped.
 
-## Keytab example
-
-```js
-require('mecano').krb5.addprinc({
-  principal: 'myservice/my.fqdn@MY.REALM',
-  randkey: true,
-  keytab: '/etc/security/keytabs/my.service.keytab',
-  uid: 'myservice',
-  gid: 'myservice',
-  kadmin_principal: 'me/admin@MY_REALM',
-  kadmin_password: 'pass',
-  kadmin_server: 'localhost'
-}, function(err, modified){
-  console.log(err ? err.message : 'Principal created or modified: ' + !!modified);
-});
-```
-
 ## Source Code
 
     module.exports = shy: true, handler: (options, callback) ->

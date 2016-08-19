@@ -1,5 +1,5 @@
 
-# `mecano.db.schema.add(options, callback)`
+# `mecano.db.schema(options, callback)`
 
 Create a database for the destination database.
 
@@ -37,7 +37,7 @@ Create a database for the destination database.
 ## Create Schema example
 
 ```js
-require('mecano').database.schema.add({
+require('mecano').database.schema({
   admin_username: 'test',
   admin_password: 'test',
   database: 'my_db',

@@ -26,7 +26,7 @@ describe 'db.user.exists', ->
       ssh: ssh
       db: config.db.postgres
     .db.user.remove 'test_2', shy: true
-    .db.user.add
+    .db.user
       username: 'test_4'
       password: 'test_4'
     .db.user.exists
