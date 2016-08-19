@@ -1,8 +1,13 @@
 
 # Misc DB
 
-    module.exports.cmd = (options..., cmd) ->
-      options = misc.merge options...
+    module.exports.cmd = (opts..., cmd) ->
+      properties = ['engine', 'admin_username', 'admin_password', 'username', 'password', 'host', 'database']
+      options = {}
+      for opt in opts
+        for k, v of opt
+          continue unless k in properties
+          options[k] = v
       options.engine = options.engine.toLowerCase()
       # console.log options
       switch options.engine
