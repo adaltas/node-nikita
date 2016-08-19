@@ -18,7 +18,7 @@ describe 'db.user', ->
       admin_password: config.db.postgres.admin_password
       relax: true
     , (err) ->
-      err.message.should.eql 'Missing hostname'
+      err.message.should.eql 'Missing option: "host"'
     .db.user.add
       host: 'postgres'
       port: 5432
@@ -26,7 +26,7 @@ describe 'db.user', ->
       admin_password: config.db.postgres.admin_password
       relax: true
     , (err) ->
-      err.message.should.eql 'Missing admin name'
+      err.message.should.eql 'Missing option: "admin_username"'
     .then next
   
   they 'add new user (POSTGRES)', (ssh, next) ->
