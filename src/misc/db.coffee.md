@@ -1,7 +1,7 @@
 
 # Misc DB
 
-    module.exports.cmd = (opts..., cmd) ->
+    module.exports.cmd = (opts..., cmd=null) ->
       properties = ['engine', 'admin_username', 'admin_password', 'username', 'password', 'host', 'database']
       options = {}
       for opt in opts
@@ -17,7 +17,7 @@
             "-h #{options.host}"
             "-u #{options.admin_username or options.username}"
             "-p #{options.admin_password or options.password}"
-            "\"#{cmd}\""
+            "\"#{cmd}\"" if cmd
           ].join ' '
         when 'postgres'
           [
@@ -26,7 +26,7 @@
             "-h #{options.host}"
             "-U #{options.admin_username or options.username}"
             "-d #{options.database}" if options.database
-            "-tAc \"#{cmd}\""
+            "-tAc \"#{cmd}\"" if cmd
           ].join ' '
         else
           throw Error "Unsupported engine: #{JSON.stringify options.engine}"
