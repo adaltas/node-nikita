@@ -37,13 +37,20 @@ describe 'db.user', ->
     .db.user
       username: 'test_1'
       password: 'test_1'
+    , (err, status) ->
+      status.should.be.true() unless err
+    .db.user
+      username: 'test_1'
+      password: 'test_1'
+    , (err, status) ->
+      status.should.be.false() unless err
     .execute 
       cmd: db.cmd(config.db.postgres, "\\du") + " | grep 'test_1'"
       code_skipped: 2
     .db.user.remove 'test_1'
     .then next
 
-  they 'add already existing user with new password(POSTGRES)', (ssh, next) ->
+  they 'change password (POSTGRES)', (ssh, next) ->
     mecano
       ssh: ssh
       db: config.db.postgres
