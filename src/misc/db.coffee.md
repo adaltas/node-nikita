@@ -17,6 +17,7 @@
             "-h #{options.host}"
             "-u #{options.admin_username or options.username}"
             "-p #{options.admin_password or options.password}"
+            "#{options.mysql_options}" if options.mysql_options
             "\"#{cmd}\"" if cmd
           ].join ' '
         when 'postgres'
@@ -26,6 +27,7 @@
             "-h #{options.host}"
             "-U #{options.admin_username or options.username}"
             "-d #{options.database}" if options.database
+            "#{options.postgres_options}" if options.postgres_options
             "-tAc \"#{cmd}\"" if cmd
           ].join ' '
         else
