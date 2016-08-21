@@ -37,7 +37,7 @@ mecano.assert({
       options.log message: "Entering assert", level: 'DEBUG', module: 'mecano/lib/assert'
       options.encoding ?= 'utf8'
       options.source ?= options.target
-      throw Error "Required option 'content'" unless options.content
+      throw Error "Required option 'content'" unless options.content?
       throw Error "Required option 'source'" unless options.source
       if typeof options.content is 'string'
         options.content = Buffer.from options.content, options.encoding
