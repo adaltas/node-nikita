@@ -48,68 +48,39 @@ require('mecano').database.schema({
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       # Import options from `options.db`
       options.db ?= {}
       options[k] ?= v for k, v of options.db
       # Check main options
-      return callback new Error 'Missing hostname' unless options.host?
-      return callback new Error 'Missing admin name' unless options.admin_username?
-      return callback new Error 'Missing admin password' unless options.admin_password?
-      return callback new Error 'Missing database option ' unless options.database?
+      throw Error 'Missing option: "host"' unless options.host
+      throw Error 'Missing option: "admin_username"' unless options.admin_username
+      throw Error 'Missing option: "admin_password"' unless options.admin_password
+      throw Error 'Missing option: "database"' unless options.database
+      throw Error 'Missing option: "engine"' unless options.engine
       # Defines and check the engine type 
-      options.engine = options.engine.toUpperCase() if options.engine?
-      options.engine ?= 'POSTGRES'
-      return callback new Error 'Unsupport engine type' unless options.engine in ['POSTGRES'] #will be ['MYSQL','POSTGRESQL'] 
-      options.log 'Missing engine type. Defaulting to PostgreSQL' unless options.engine?
-      options.log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'mecano/db/database/user'
+      options.engine = options.engine.toLowerCase()
+      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['postgres']
       # Defines port
       options.port ?= 5432 
-      options.log message: "Database port set to #{options.port}", level: 'DEBUG', module: 'mecano/db/database/user'     
-      adm_cmd = ''
-      error = null
-      switch options.engine
-        when 'MYSQL'
-          adm_cmd += 'mysql'
-          adm_cmd += " -h #{options.host}"
-          adm_cmd += " -u #{options.admin_username}"
-          adm_cmd += " -p #{options.admin_password}"
-          break;
-        when 'POSTGRES'
-          #psql does not have any option
-          adm_cmd += "PGPASSWORD=#{options.admin_password} psql"
-          adm_cmd += " -h #{options.host}"
-          adm_cmd += " -U #{options.admin_username}"
-          break;
-        else
-          break;
-      modified = false
-      @call 
-        if:  options.engine is 'POSTGRES'
-        handler: ->  # Create Schema unless exist
-          @call -> options.log message: "Check if schema #{options.schema} exists", level: 'DEBUG', module: 'mecano/db/schema/add'     
-          @call ->
-            @execute
-              code_skipped: 2
-              cmd: "#{adm_cmd} -d #{options.database} -tAc '\\dt';"
-            , (err, status, stdout, stderr) ->
-              throw err if err
-              throw Error "Database does not exist #{options.database}" if !err and !status
-          @execute
-            cmd: "#{adm_cmd} -d #{options.database} -tAc \"CREATE SCHEMA #{options.schema};\""
-            unless_exec: "#{adm_cmd} -d #{options.database} -tAc \"SELECT 1 FROM pg_namespace WHERE nspname = '#{options.schema}';\" | grep 1"
-          # Check if owner is the good one
-          @call 
-            if: -> options.owner?
-            handler: (_, cb) ->
-              @execute 
-                code_skipped: 1
-                cmd: "#{adm_cmd} -d #{options.database} -tAc \"ALTER SCHEMA #{options.schema} OWNER TO #{options.owner};\" "
-                unless_exec: "#{adm_cmd} -d #{options.database} -tAc '\\dn' | grep '#{options.schema}|#{options.owner}'"
-              , (err, status , stdout, stderr) ->
-                return cb Error "Owner #{options.owner} does not exists" if /^ERROR:\s\srole.*does\snot\sexist/.test stderr
-                cb null, status
-          @call
-            if: -> @status(-1) or @status(-2)
-            handler: -> modified =  true
-      @then (err) -> callback err, modified
+      @execute
+        code_skipped: 2
+        cmd: db.cmd options, '\\dt'
+      , (err, status, stdout, stderr) ->
+        throw err if err
+        throw Error "Database does not exist #{options.database}" if !err and !status
+      @execute
+        cmd: db.cmd options, "CREATE SCHEMA #{options.schema};"
+        unless_exec: db.cmd(options, "SELECT 1 FROM pg_namespace WHERE nspname = '#{options.schema}';") + " | grep 1"
+      # Check if owner is the good one
+      @execute 
+        if: -> options.owner?
+        unless_exec: db.cmd(options, '\\dn') + " | grep '#{options.schema}|#{options.owner}'"
+        cmd: db.cmd options, "ALTER SCHEMA #{options.schema} OWNER TO #{options.owner};"
+        code_skipped: 1
+      , (err, status , stdout, stderr) ->
+        throw Error "Owner #{options.owner} does not exists" if /^ERROR:\s\srole.*does\snot\sexist/.test stderr
+
+## Dependencies
+
+    db = require '../../misc/db'

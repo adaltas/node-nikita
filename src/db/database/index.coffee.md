@@ -76,9 +76,11 @@ npm test test/db/database.coffee
       options.port ?= 5432 
       # Create database unless exist
       options.log message: "Check if database #{options.database} exists", level: 'DEBUG', module: 'mecano/db/database/add'
+      cmd_database_create = db.cmd options, database: null, "CREATE DATABASE #{options.database};"
+      cmd_database_exists = db.cmd options, database: options.database, "\\dt"
       @execute
-        cmd: db.cmd options, database: null, "CREATE DATABASE #{options.database};"
-        unless_exec: db.cmd options, database: options.database, "\\dt"
+        cmd: cmd_database_create
+        unless_exec: cmd_database_exists
       , (err, status) ->
         options.log message: "Database created: #{JSON.stringify options.database}", level: 'WARN', module: 'mecano/db/database/add' if status
       # Change password if needed
@@ -104,4 +106,3 @@ npm test test/db/database.coffee
 ## Dependencies
 
     db = require '../../misc/db'
-    each = require 'each'

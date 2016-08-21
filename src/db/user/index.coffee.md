@@ -41,28 +41,34 @@ Create a user for the destination database.
       throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['postgres']
       # Default values
       options.port ?= 5432
-      # Create user unless exist
+      # Commands
+      cmd_user_exists = db.cmd(options, "SELECT 1 FROM pg_roles WHERE rolname='#{options.username}'") + " | grep 1"
+      cmd_user_create = db.cmd options, "CREATE USER #{options.username} WITH PASSWORD '#{options.password}';"
+      cmd_password_is_invalid = db.cmd(options, admin_username: null, admin_password: null, '\\dt') + " 2>&1 >/dev/null | grep -e '^psql:\\sFATAL.*password\\sauthentication\\sfailed\\sfor\\suser.*'"
+      cmd_password_change = db.cmd options, "ALTER USER #{options.username} WITH PASSWORD '#{options.password}';"
       @execute
-        cmd: db.cmd options, "CREATE USER #{options.username} WITH PASSWORD '#{options.password}';"
-        unless_exec: db.cmd(options, "SELECT 1 FROM pg_roles WHERE rolname='#{options.username}'") + " | grep 1"
-      , (err, status) ->
-        return if err
-        if status
-        then options.log message: "User created: #{options.username}", level: 'WARN', module: 'mecano/db/user/add'
-        else options.log message: "User already exists: #{options.username}", level: 'INFO', module: 'mecano/db/user/add'
-      # Change password if needed
-      # Even if the user exists, without database it can not connect.
-      # That's why the check is executed in 2 steps.
-      @execute
-        cmd: db.cmd options, "ALTER USER #{options.username} WITH PASSWORD '#{options.password}';"
-        if_exec: db.cmd(options, admin_username: null, admin_password: null, '\\dt') + " 2>&1 >/dev/null | grep -e '^psql:\\sFATAL.*password\\sauthentication\\sfailed\\sfor\\suser.*'"
-      , (err, status) ->
-        return if err
-        if status
-        then options.log message: "Password modified: user #{JSON.stringify options.username}", level: 'WARN', module: 'mecano/db/user/add'
-        else options.log message: "Password not modified: user #{JSON.stringify options.username}", level: 'INFO', module: 'mecano/db/user/add'
+        cmd: """
+        signal=3
+        if #{cmd_user_exists}; then
+          echo '[INFO] User already exists'
+        else
+          #{cmd_user_create}
+          echo '[WARN] User created exists'
+          signal=0
+        fi
+        if [ $signal -eq 3 ]; then
+          if ! #{cmd_password_is_invalid}; then
+            echo '[INFO] Password not modified'
+          else
+            #{cmd_password_change}
+            echo '[WARN] Password modified'
+            signal=0
+          fi
+        fi
+        exit $signal
+        """
+        code_skipped: 3
 
 ## Dependencies
 
     db = require '../../misc/db'
-    each = require 'each'
