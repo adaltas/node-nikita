@@ -18,9 +18,8 @@ exists.
 *   `uid`   
     File user name or user id.   
 *   `mode`   
-    File mode (permission and sticky bits), default to `0666`, in the form of
+    File mode (permission and sticky bits), default to `0o0666`, in the form of
     `{mode: 0o0744}` or `{mode: "0744"}`.   
-
 
 ## Example
 
@@ -35,20 +34,29 @@ require('mecano').touch({
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       options.log message: "Entering touch", level: 'DEBUG', module: 'mecano/lib/touch'
-      # Validate parameters
+      # Options
       options.target = options.argument if options.argument?
-      return callback Error "Missing target: #{options.target}" unless options.target
-      options.log message: "Check if target exists \"#{options.target}\"", level: 'DEBUG', module: 'mecano/lib/touch'
-      fs.exists options.ssh, options.target, (err, exists) =>
-        return callback err if err
-        return callback() if exists
-        options.log message: "Destination does not exists", level: 'INFO', module: 'mecano/lib/touch'
-        @write
-          content: ''
-          target: options.target
-        @then callback
+      throw Error "Missing target: #{options.target}" unless options.target
+      
+Test if file exists.
+
+      @call shy: true, (_, callback) ->
+        options.log message: "Check if target exists \"#{options.target}\"", level: 'DEBUG', module: 'mecano/lib/touch'
+        fs.exists options.ssh, options.target, (err, exists) ->
+          options.log message: "Destination does not exists", level: 'INFO', module: 'mecano/lib/touch' if not err and not exists
+          return callback err, exists
+
+If not, write a new empty file.
+
+      @write
+        content: ''
+        target: options.target
+        unless: @status()
+        mode: options.mode
+        uid: options.uid
+        gid: options.gid
 
 ## Dependencies
 

@@ -34,7 +34,7 @@ Write a file or a portion of an existing file.
     Replace this marker, a string or a regular expression, default to the
     replaced string if missing.   
 *   `mode`   
-    File mode (permission and sticky bits), default to `0666`, in the form of
+    File mode (permission and sticky bits), default to `0o0666`, in the form of
     `{mode: 0o0744}` or `{mode: "0744"}`.   
 *   `replace`   
     The content to be inserted, used conjointly with the from, to or match   
