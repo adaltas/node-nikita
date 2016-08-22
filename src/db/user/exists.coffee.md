@@ -6,35 +6,24 @@ Chek is user exists in the database.
 ## Options
 
 *   `admin_username`   
-    The login of the database administrator. It should have credentials to create accounts.
+    The login of the database administrator. It should have credentials to 
+    create accounts.   
 *   `admin_password`   
     The password of the database administrator.
-    provided.
 *   `database` (String)
-    The database name to which the user should be added
+    The database name to which the user should be added.   
 *   `engine`      
-    The engine type, can be MySQL or PostgreSQL. Default to MySQL
+    The engine type, can be MySQL or PostgreSQL, default to MySQL.   
 *   `host`   
-    The hostname of the database
+    The hostname of the database.   
 *   `name`   
-    The new user name.
+    The new user name.   
 *   `password`   
-    The new user password.
+    The new user password.   
 *   `port`   
-    Port to the associated database
+    Port to the associated database.   
 *   `user` String   
-    User name.
-*   `log`
-    Function called with a log related messages.
-*   `ssh` (object|ssh2)
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.
-*   `stdout` (stream.Writable)
-    Writable EventEmitter in which the standard output of executed commands will
-    be piped.
-*   `stderr` (stream.Writable)
-    Writable EventEmitter in which the standard error output of executed command
-    will be piped.
+    User name.   
 
 ## Source Code
 

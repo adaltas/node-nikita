@@ -22,17 +22,6 @@ Create a database for the destination database.
     New schema name.
 *   `owner` Array or String   
     The Schema owner. Alter Schema if schema already exists.
-*   `log`   
-    Function called with a log related messages.
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.
-*   `stdout` (stream.Writable)   
-    Writable EventEmitter in which the standard output of executed commands will
-    be piped.
-*   `stderr` (stream.Writable)   
-    Writable EventEmitter in which the standard error output of executed command
-    will be piped.
 
 ## Create Schema example
 

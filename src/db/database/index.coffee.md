@@ -19,17 +19,6 @@ Create a database for the destination database.
     Port to the associated database.   
 *   `user` Array or String   
     Contains  user(s) to add to the database, optional.   
-*   `log`   
-    Function called with a log related messages.   
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-*   `stdout` (stream.Writable)   
-    Writable EventEmitter in which the standard output of executed commands will
-    be piped.   
-*   `stderr` (stream.Writable)   
-    Writable EventEmitter in which the standard error output of executed command
-    will be piped.   
 
 ## Create Database example
 
@@ -38,8 +27,8 @@ require('mecano').database.db({
   admin_username: 'test',
   admin_password: 'test',
   database: 'my_db',
-}, function(err, modified){
-  console.log(err ? err.message : 'Principal created or modified: ' + !!modified);
+}, function(err, status){
+  console.log(err ? err.message : 'Database created or modified: ' + status);
 });
 ```
 
