@@ -36,17 +36,6 @@ Create or modify a Unix user.
 *   `skel`   
     The skeleton directory, which contains files and directories to be copied in
     the user´s home directory, when the home directory is created by useradd.   
-*   `log`   
-    Function called with a log related messages.   
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-*   `stdout` (stream.Writable)   
-    Writable EventEmitter in which the standard output of executed commands will
-    be piped.   
-*   `stderr` (stream.Writable)   
-    Writable EventEmitter in which the standard error output of executed command
-    will be piped.   
 *   `no_home_ownership` (boolean)   
     Disable ownership on home directory which default to the "uid" and "gid"
     options, default is "false".   
@@ -55,8 +44,8 @@ Create or modify a Unix user.
 
 *   `err`   
     Error object if any.   
-*   `modified`   
-    Number of created or modified users.   
+*   `status`   
+    Value is "true" if user was created or modified.   
 
 ## Example
 

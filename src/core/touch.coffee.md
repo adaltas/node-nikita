@@ -21,6 +21,13 @@ exists.
     File mode (permission and sticky bits), default to `0o0666`, in the form of
     `{mode: 0o0744}` or `{mode: "0744"}`.   
 
+## Callback Parameters
+
+*   `err`   
+    Error object if any.   
+*   `status`   
+    Value is "true" if file was created or modified.   
+
 ## Example
 
 ```js

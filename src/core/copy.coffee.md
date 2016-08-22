@@ -7,34 +7,25 @@ overwrite it.
 
 ## Options
 
+*   `gid`   
+    Group name or id who owns the file.   
+*   `mode`   
+    Permissions of the file or the parent directory.   
 *   `source`   
     The file or directory to copy.   
 *   `target`   
     Where the file or directory is copied.   
-*   `gid`   
-    Group name or id who owns the file.   
-*   `unless_exists`   
-    Equals target if true.   
-*   `mode`   
-    Permissions of the file or the parent directory.   
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-*   `stdout` (stream.Writable)   
-    Writable EventEmitter in which the standard output of executed commands will
-    be piped.   
-*   `stderr` (stream.Writable)   
-    Writable EventEmitter in which the standard error output of executed command
-    will be piped.   
 *   `uid`   
     User name or id who owns the file.   
+*   `unless_exists`   
+    Equals target if true.   
 
-## Callback parameters
+## Callback Parameters
 
 *   `err`   
     Error object if any.   
-*   `copied`   
-    Number of copy actions with modifications.   
+*   `status`   
+    Value is "true" if copied file was created or modified.   
 
 ## Todo
 
@@ -52,8 +43,8 @@ require('mecano').copy({
   uid: 'my_user'
   gid: 'my_group'
   mode: '0755'
-}, function(err, copied){
-  console.log(err ? err.message : 'File was copied: ' + copied);
+}, function(err, status){
+  console.log(err ? err.message : 'File was copied: ' + status);
 });
 ```
 

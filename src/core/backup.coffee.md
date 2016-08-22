@@ -8,10 +8,6 @@ Commons backup functions provided by backmeup. For additional information, pleas
 *   `name` (string)   
     backup name (MANDATORY)   
     default value: randomly generated   
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-    If _null_, backup is run locally   
 *   `cmd` (string)      
     execute cmd, the output stream will be backuped. If the cmd cannot be piped to
     the compression algorithm, an error will occur. Ignored if source.   
@@ -49,8 +45,8 @@ Commons backup functions provided by backmeup. For additional information, pleas
 
 *   `err` (Error)   
     Error object if any.   
-*   `done`  (boolean)   
-    If the backup was executed or not.   
+*   `status`  (boolean)   
+    Value is "true" if backup was created.   
 *   `info` (object)   
     backup passes options to a callback. Info contains _options_ properties with default
     and/or generated missing values.   

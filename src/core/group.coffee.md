@@ -12,24 +12,13 @@ Create or modify a Unix group.
     set the "home" option if we it to be created.   
 *   `gid`   
     Group name or number of the user´s initial login group.   
-*   `log`   
-    Function called with a log related messages.   
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-*   `stdout` (stream.Writable)   
-    Writable EventEmitter in which the standard output of executed commands will
-    be piped.   
-*   `stderr` (stream.Writable)   
-    Writable EventEmitter in which the standard error output of executed command
-    will be piped.   
 
 ## Callback Parameters
 
 *   `err`   
     Error object if any.   
-*   `modified`   
-    Number of created or modified groups.   
+*   `status`   
+    Value is "true" if group was created or modified.   
 
 ## Example
 

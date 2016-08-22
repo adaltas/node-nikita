@@ -13,10 +13,6 @@ Download a file and place it on a local or remote folder for later usage.
 *   `cache_local` (boolean)   
     Apply to SSH mode, treat the cache file and directories as local from where
     the command is used instead of over SSH.   
-*   `target` (string | boolean)   
-    Cache the file on the executing machine, equivalent to cache unless an ssh connection is
-    provided. If a string is provided, it will be the cache path.   
-    By default: basename of source   
 *   `fail` (boolean)   
     Send an error if the HTTP response code is invalid. Similar to the curl
     option of the same name.   
@@ -34,21 +30,27 @@ Download a file and place it on a local or remote folder for later usage.
 *   `source` (path)   
     File, HTTP URL, FTP, GIT repository. File is the default protocol if source
     is provided without any.   
+*   `target` (string | boolean)   
+    Cache the file on the executing machine, equivalent to cache unless an ssh 
+    connection is provided. If a string is provided, it will be the cache path.   
+    Default to the basename of source.   
 
-## Callback parameters
+## Callback Parameters
 
-*   `err`
-    Error object if any.
-*   `status`
-    Wether the file was downloaded or not.
+*   `err`   
+    Error object if any.   
+*   `status`   
+    Value is "true" if cache file was created or modified.   
 
 ## HTTP example
 
-```coffee
-mecano.download
-  source: 'https://github.com/wdavidw/node-mecano/tarball/v0.0.1'
+```js
+require('mecano').download({
+  source: 'https://github.com/wdavidw/node-mecano/tarball/v0.0.1',
   cache_dir: '/var/tmp'
-, (err, status) -> ...
+}, function(err, status){
+  console.log(err ? err.message : 'File downloaded: ' + status);
+});
 ```
 
 ## Source Code

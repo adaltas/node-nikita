@@ -26,6 +26,13 @@ Iptables rules are only inserted if the service is started on the target system.
     Writable EventEmitter in which the standard error output of executed command
     will be piped.   
 
+## Callback Parameters
+
+*   `err`   
+    Error object if any.   
+*   `status`   
+    Value is "true" if Iptables rules were created or modified.   
+
 ## Usage
 
 Rule objects may contains the following keys:

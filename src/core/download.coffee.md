@@ -41,48 +41,41 @@ calculated if neither md5 nor sha1 is provided
     Cache the file on the executing machine, equivalent to cache unless an ssh
     connection is provided. If a string is provided, it will be the cache path.   
     By default: basename of source   
-*   `target` (path)   
-    Path where the file is downloaded.   
 *   `force` (boolean)   
     Overwrite target file if it exists.   
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-*   `stdout` (stream.Writable)   
-    Writable EventEmitter in which the standard output of executed commands will
-    be piped.   
-*   `stderr` (stream.Writable)   
-    Writable EventEmitter in which the standard error output of executed command
-    will be piped.   
-*   `sha1` (SHA-1 Hash)   
-    Hash of the file using SHA-1. Used to check integrity   
+*   `force_cache` (boolean)   
+    Force cache overwrite if it exists   
+*   `gid`   
+    Group name or id who owns the target file.   
+*   `headers` (array)   
+    Extra  header  to include in the request when sending HTTP to a server.   
 *   `location` (boolean)   
     If the server reports that the requested page has moved to a different
     location (indicated with a Location: header and a 3XX response code), this
     option will make curl redo the request on the new place.   
 *   `md5` (MD5 Hash)   
     Hash of the file using MD5. Used to check integrity
-*   `force_cache` (boolean)   
-    Force cache overwrite if it exists   
-*   `headers` (array)   
-    Extra  header  to include in the request when sending HTTP to a server.   
-*   `uid` (string | int)   
-    UID of the target. If specified, mecano will chown after download   
 *   `mode` (octal mode)   
     Permissions of the target. If specified, mecano will chmod after download   
 *   `proxy` (string)   
     Use the specified HTTP proxy. If the port number is not specified, it is
     assumed at port 1080. See curl(1) man page.   
+*   `sha1` (SHA-1 Hash)   
+    Hash of the file using SHA-1. Used to check integrity   
 *   `source` (path)   
     File, HTTP URL, FTP, GIT repository. File is the default protocol if source
     is provided without any.   
+*   `target` (path)   
+    Path where the file is downloaded.   
+*   `uid`   
+    User name or id who owns the target file.   
 
 ## Callback parameters
 
 *   `err`
     Error object if any.
 *   `downloaded`
-    Number of download actions with modifications.
+    Value is "true" if file was downloaded.
 
 ## File example
 

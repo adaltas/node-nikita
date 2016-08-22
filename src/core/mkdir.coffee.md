@@ -26,38 +26,33 @@ of the directory to create.
     system options if "true".   
 *   `source`   
     Alias for `directory`.   
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
 
-## Callback parameters
+## Callback Parameters
 
 *   `err`   
     Error object if any.   
-*   `created`   
-    Number of created directories.   
+*   `status`   
+    Value is "true" if directory was created or modified.   
 
 ## Simple usage
 
 ```js
-require('mecano')
-.mkdir('./some/dir', function(err, created){
-  console.log(err ? err.message : "Directory created: " + !!created);
+require('mecano').mkdir('./some/dir', function(err, status){
+  console.log(err ? err.message : "Directory created: " + status);
 });
 ```
 
 ## Advanced usage
 
 ```js
-require('mecano')
-.mkdir({
+require('mecano').mkdir({
   ssh: ssh,
   target: './some/dir',
   uid: 'a_user',
   gid: 'a_group'
   mode: 0o0777 // or '777'
-}, function(err, created){
-  console.log(err ? err.message : 'Directory created: ' + !!created);
+}, function(err, status){
+  console.log(err ? err.message : 'Directory created: ' + status);
 });
 ```
 

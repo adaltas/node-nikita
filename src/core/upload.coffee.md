@@ -49,7 +49,7 @@ function with the addition of the "binary" option.
 *   `err`   
     Error object if any.   
 *   `status`   
-    Whether the file was uploaded or already there.   
+    Value is "true" if file was uploaded.   
 
 ## Example
 

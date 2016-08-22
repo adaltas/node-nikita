@@ -5,27 +5,22 @@ Change the ownership of a file or a directory.
 
 ## Options
 
-*   `target`   
-    Where the file or directory is copied.   
 *   `gid`   
-    Group name or id who owns the file.   
-*   `log`   
-    Function called with a log related messages.   
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
+    Group name or id who owns the target file.   
 *   `stat` (Stat instance, optional)   
     Pass the Stat object relative to the target file or directory, to be
     used as an optimization.   
+*   `target`   
+    Where the file or directory is copied.   
 *   `uid`   
-    User name or id who owns the file.   
+    User name or id who owns the target file.   
 
-## Callback parameters
+## Callback Parameters
 
 *   `err`   
     Error object if any.   
-*   `modified`   
-    Number of ownerships with modifications.   
+*   `status`   
+    Value is "true" if file ownership was created or modified.   
 
 ## Example
 

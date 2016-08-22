@@ -9,22 +9,19 @@ Recursively remove files, directories and links.
     File, directory or glob (pattern matching based on wildcard characters).   
 *   `source` (alias)   
     Alias for "target".   
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.  
 
 ## Callback parameters
 
 *   `err`   
     Error object if any.   
-*   `removed`   
-    Number of removed files.   
+*   `status`   
+    Value is "true" if files were removed.   
 
 ## Implementation details
 
 Files are removed localling using the [rimraf] package. The Unix "rm" utility
-is used over an SSH remote connection. Porting the [rimraf] strategy over
-SSH would be too slow.
+is used over an SSH remote connection. Porting [rimraf] over SSH would be too 
+slow.
 
 ## Simple example
 

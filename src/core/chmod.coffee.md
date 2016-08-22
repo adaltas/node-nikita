@@ -5,25 +5,20 @@ Change the permissions of a file or directory.
 
 ## Options
 
-*   `target`   
-    Where the file or directory is copied.   
 *   `mode`   
     Permissions of the file or the parent directory.   
-*   `log`   
-    Function called with a log related messages.   
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
 *   `stat` (Stat instance, optional)   
     Pass the Stat object relative to the target file or directory, to be
-    used as an optimization.   
+    used as an optimization.     
+*   `target`   
+    Where the file or directory is copied.   
 
-## Callback parameters
+## Callback Parameters
 
 *   `err`   
     Error object if any.   
-*   `modified`   
-    Number of permissions with modifications.   
+*   `status`   
+    Value is "true" if file permissions was created or modified.   
 
 ## Example
 

@@ -8,6 +8,11 @@ A set of assertion tools.
 *   `status` (boolean)   
     Ensure the current status match the provided value.   
 
+## Callback Parameters
+
+*   `err`   
+    Error object if assertion failed.   
+
 ## Source Code
 
     module.exports = (options) ->
@@ -20,7 +25,7 @@ mecano.assert({
   ssh: connection   
   status: true
 }, function(err){
-  console.log(err);
+  console.log(err ? err.message : 'Assertion is ok');
 });
 ```
 

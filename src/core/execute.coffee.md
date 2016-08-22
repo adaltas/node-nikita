@@ -32,9 +32,6 @@ creating any modifications.
     Unix group id.   
 *   `log`   
     Function called with a log related messages.   
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
 *   `stdin_log` (boolean)
     Log the executed command of type stdin, default is "true".   
 *   `stdout` (stream.Writable)   
@@ -63,7 +60,8 @@ creating any modifications.
 *   `err`   
     Error object if any.   
 *   `executed`   
-    Number of executed commands with modifications.   
+    Value is "true" if command exit equals option "code", "0" by default, "false" if 
+    command exit equals option "code_skipped", none by default.   
 *   `stdout`   
     Stdout value(s) unless `stdout` option is provided.   
 *   `stderr`   

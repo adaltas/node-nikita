@@ -16,22 +16,13 @@ Note, it is valid for the "source" file to not exist.
     Create an executable file with an `exec` command.   
 *   `mode`   
     Default to `0o0755`.   
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-*   `stdout` (stream.Writable)   
-    Writable EventEmitter in which the standard output of executed commands will
-    be piped.   
-*   `stderr` (stream.Writable)   
-    Writable EventEmitter in which the standard error output of executed command
-    will be piped.   
 
-## Callback parameters
+## Callback Parameters
 
 *   `err`   
     Error object if any.   
-*   `linked`   
-    Number of created links.   
+*   `status`   
+    Value is "true" if link was created or modified.   
 
 ## Example
 
@@ -39,8 +30,8 @@ Note, it is valid for the "source" file to not exist.
 require('mecano').link({
   source: __dirname,
   target: '/tmp/a_link'
-}, function(err, linked){
-  console.log(err ? err.message : 'Link created: ' + !!linked);
+}, function(err, status){
+  console.log(err ? err.message : 'Link created: ' + status);
 });
 ```
 

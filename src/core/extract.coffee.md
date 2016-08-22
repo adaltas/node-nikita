@@ -7,38 +7,27 @@ moment, supported extensions are '.tgz', '.tar.gz', tar.bz2, 'tar.xz' and '.zip'
 
 ## Options
 
-*   `source`   
-    Archive to decompress.   
-*   `target`   
-    Default to the source parent directory.   
+*   `creates`   
+    Ensure the given file is created or an error is send in the callback.  
 *   `format`   
     One of 'tgz', 'tar', 'xz', 'bz2' or 'zip'.   
 *   `preserve_owner`   
     Preserve ownership when extracting. True by default if runned as root, else false.   
 *   `preserve_permissions`   
     Preserve permissions when extracting. True by default if runned as root, else false.   
-*   `creates`   
-    Ensure the given file is created or an error is send in the callback.  
+*   `source`   
+    Archive to decompress.   
 *   `strip`   
     Remove the specified number of leading path elements. Apply only to tar(s) formats.   
-*   `unless_exists`   
-    Cancel extraction if file exists.   
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-*   `stdout` (stream.Writable)   
-    Writable EventEmitter in which the standard output of executed commands will
-    be piped.   
-*   `stderr` (stream.Writable)   
-    Writable EventEmitter in which the standard error output of executed command
-    will be piped.   
+*   `target`   
+    Default to the source parent directory.   
 
 ## Callback parameters
 
 *   `err`   
     Error object if any.   
 *   `extracted`   
-    Number of extracted actions with modifications.   
+    Value is "true" if archive was extracted.   
 
 ## Example
 

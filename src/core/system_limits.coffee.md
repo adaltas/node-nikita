@@ -117,9 +117,6 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
 
 *   `target` (string)   
     Where to write the file, default to "/etc/security/limits.d/#{options.user}.conf".   
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
 *   `as` (int)   
     Address space limit (KB)   
 *   `core` (int)   
@@ -163,8 +160,8 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
 
 *   `err`
     Error object if any.
-*   `modifed`
-    True if limits configuration file has been modified.
+*   `status`
+    Value is "true" if limits configuration file has been modified.
 
 ## Source Code
     
