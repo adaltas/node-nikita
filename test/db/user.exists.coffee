@@ -15,7 +15,7 @@ for engine, _ of config.db
         db: config.db[engine]
       .db.user.remove 'test_user_exists_1_user', shy: true
       .db.user.exists
-        name: 'test_user_exists_1_user'
+        username: 'test_user_exists_1_user'
       , (err, status) ->
         status.should.be.false() unless err
       .then (err, status) ->
@@ -33,7 +33,7 @@ for engine, _ of config.db
         password: 'test_user_exists_2_password'
         shy: true
       .db.user.exists
-        name: 'test_user_exists_2_user'
+        username: 'test_user_exists_2_user'
       , (err, status) ->
         status.should.be.true() unless err
       .db.user.remove 'test_user_exists_2_user', shy: true

@@ -86,7 +86,7 @@ npm test test/db/database.coffee
       for user in options.user
         options.log message: "Check if user #{user} has PRIVILEGES on #{options.database} ", level: 'DEBUG', module: 'mecano/db/database/user'     
         @db.user.exists
-          name: user
+          username: user
           admin_username: options.admin_username
           admin_password: options.admin_password
           port: options.port

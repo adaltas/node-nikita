@@ -47,7 +47,7 @@ for engine, _ of config.db
       , (err, status) ->
         status.should.be.false() unless err
       .db.user.exists
-        name: 'test_user_1_user'
+        username: 'test_user_1_user'
       , (err, exists) ->
         throw Error 'User not created' if not err and not exists
       .db.user.remove 'test_user_1_user'

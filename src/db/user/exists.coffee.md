@@ -16,7 +16,7 @@ Check if a user exists in the database.
     The engine type, can be MySQL or PostgreSQL, default to MySQL.   
 *   `host`   
     The hostname of the database.   
-*   `name`   
+*   `username`   
     The new user name.   
 *   `password`   
     The new user password.   
@@ -35,7 +35,7 @@ Check if a user exists in the database.
       throw Error 'Missing hostname' unless options.host?
       throw Error 'Missing admin name' unless options.admin_username?
       throw Error 'Missing admin password' unless options.admin_password?
-      throw Error 'Missing name' unless options.name?
+      throw Error 'Missing username' unless options.username?
       # Defines and check the engine type
       options.engine = options.engine.toLowerCase()
       throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mysql', 'postgres']
@@ -43,10 +43,10 @@ Check if a user exists in the database.
       options.port ?= 5432      
       cmd = switch options.engine
         when 'mysql'
-          db.cmd(options, database: 'mysql', "select User from user where User = '#{options.name}'") + " | grep '#{options.name}'"
+          db.cmd(options, database: 'mysql', "select User from user where User = '#{options.username}'") + " | grep '#{options.username}'"
         when 'postgres'
           # Not sure why we're not using du
-          db.cmd(options, "SELECT 1 FROM pg_roles WHERE rolname='#{options.name}'") + " | grep 1"
+          db.cmd(options, "SELECT 1 FROM pg_roles WHERE rolname='#{options.username}'") + " | grep 1"
       @execute
         cmd: cmd
         code_skipped: 1
