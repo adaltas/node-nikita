@@ -26,7 +26,7 @@ for engine, _ of config.db
         ssh: ssh
         db: config.db[engine]
       .db.database.remove 'test_database_exists_1_db', shy: true
-      .db.database database: 'test_database_exists_1_db', shy: true
+      .db.database 'test_database_exists_1_db', shy: true
       .db.database.exists database: 'test_database_exists_1_db', (err, status) ->
         status.should.be.true() unless err
       .db.database.exists 'test_database_exists_1_db', (err, status) ->

@@ -12,8 +12,7 @@ describe 'db.schema postgres', ->
       ssh: ssh
       db: config.db.postgres
     .db.database.remove 'postgres_db_0'
-    .db.database
-      database: 'postgres_db_0'
+    .db.database 'postgres_db_0'
     .db.schema
       schema: 'postgres_schema_0'
       database: 'postgres_db_0'
@@ -27,8 +26,7 @@ describe 'db.schema postgres', ->
       ssh: ssh
       db: config.db.postgres
     .db.database.remove 'postgres_db_1'
-    .db.database
-      database: 'postgres_db_1'
+    .db.database 'postgres_db_1'
     .db.schema
       schema: 'postgres_schema_1'
       database: 'postgres_db_1'

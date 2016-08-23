@@ -14,10 +14,12 @@ for engine, _ of config.db
       mecano
         ssh: ssh
         db: config.db[engine]
-      .db.database.remove 'postgres_db_0'
-      .db.database
-        database: 'postgres_db_0'
-      .db.database.remove 'postgres_db_0'
+      .db.database.remove 'postgres_db_0a'
+      .db.database.remove 'postgres_db_0b'
+      .db.database database: 'postgres_db_0a'
+      .db.database 'postgres_db_0b'
+      .db.database.remove 'postgres_db_0a'
+      .db.database.remove 'postgres_db_0b'
       .then next
       
     they 'status not modified new database', (ssh, next) ->
@@ -25,11 +27,8 @@ for engine, _ of config.db
         ssh: ssh
         db: config.db[engine]
       .db.database.remove 'postgres_db_1'
-      .db.database
-        database: 'postgres_db_1'
-      .db.database
-        database: 'postgres_db_1'
-      , (err, status) ->
+      .db.database 'postgres_db_1'
+      .db.database 'postgres_db_1', (err, status) ->
         status.should.be.false() unless err
       .db.database.remove 'postgres_db_1'
       .then next
