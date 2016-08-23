@@ -27,39 +27,29 @@ Chek is user exists in the database.
 
 ## Source Code
 
-    module.exports = shy: true, handler: (options, callback) ->
+    module.exports = shy: true, handler: (options) ->
       # Import options from `options.db`
       options.db ?= {}
       options[k] ?= v for k, v of options.db
       # Check main options
-      return callback new Error 'Missing hostname' unless options.host?
-      return callback new Error 'Missing admin name' unless options.admin_username?
-      return callback new Error 'Missing admin password' unless options.admin_password?
-      return callback new Error 'Missing name' unless options.name?    
-      # Defines and check the engine type 
-      options.engine = options.engine.toUpperCase() if options.engine?
-      options.engine ?= 'POSTGRES'
-      return callback new Error 'Unsupported engine type' unless options.engine in ['MYSQL','POSTGRES']
-      options.log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'mecano/db/database/user'
+      throw Error 'Missing hostname' unless options.host?
+      throw Error 'Missing admin name' unless options.admin_username?
+      throw Error 'Missing admin password' unless options.admin_password?
+      throw Error 'Missing name' unless options.name?
+      # Defines and check the engine type
+      options.engine = options.engine.toLowerCase()
+      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['postgres']
       # Defines port
       options.port ?= 5432      
-      adm_cmd = ''
-      switch options.engine
-        when 'MYSQL'
-          adm_cmd += 'mysql'
-          adm_cmd += " -h #{options.host}"
-          adm_cmd += " -u #{options.admin_username}"
-          adm_cmd += " -p #{options.admin_password}"
-          break;
-        when 'POSTGRES'
-          #psql does not have any option
-          adm_cmd += "PGPASSWORD=#{options.admin_password} psql"
-          adm_cmd += " -h #{options.host}"
-          adm_cmd += " -U #{options.admin_username}"
-          break;
-        else
-          break;
+      cmd = switch options.engine
+        when 'mysql'
+          db.cmd(options, database: 'mysql', "select User from user where User = '#{options.name}'") + " | grep '#{options.name}'"
+        when 'postgres'
+          db.cmd(options, "SELECT 1 FROM pg_roles WHERE rolname='#{options.name}'") + " | grep 1"
       @execute
-        cmd: "#{adm_cmd} -tAc \"SELECT 1 FROM pg_roles WHERE rolname='#{options.name}'\" | grep 1"
+        cmd: cmd
         code_skipped: 1
-      , (err, status, stdout, stderr) -> callback err, status, stdout, stderr 
+
+## Dependencies
+
+    db = require '../../misc/db'
