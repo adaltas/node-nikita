@@ -3,11 +3,11 @@ mecano = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
-describe 'db.schema', ->
+describe 'db.schema postgres', ->
 
   config = test.config()
 
-  they 'add new schema with no owner (existing db) (POSTGRES)', (ssh, next) ->
+  they 'add new schema with no owner (existing db)', (ssh, next) ->
     mecano
       ssh: ssh
       db: config.db.postgres
@@ -22,7 +22,7 @@ describe 'db.schema', ->
     .db.database.remove 'postgres_db_0'
     .then next
 
-  they 'add new schema with not existing owner (existing db) (POSTGRES)', (ssh, next) ->
+  they 'add new schema with not existing owner (existing db)', (ssh, next) ->
     mecano
       ssh: ssh
       db: config.db.postgres
@@ -39,7 +39,7 @@ describe 'db.schema', ->
     .db.database.remove 'postgres_db_1'
     .then next
 
-  they 'add new schema with existing owner (existing db) (POSTGRES)', (ssh, next) ->
+  they 'add new schema with existing owner (existing db)', (ssh, next) ->
     mecano
       ssh: ssh
       db: config.db.postgres
@@ -63,7 +63,7 @@ describe 'db.schema', ->
     .db.user.remove 'postgres_user_2'
     .then next
   
-  they 'add new schema with no owner (not existing db) (POSTGRES)', (ssh, next) ->
+  they 'add new schema with no owner (not existing db)', (ssh, next) ->
     mecano
       ssh: ssh
       db: config.db.postgres

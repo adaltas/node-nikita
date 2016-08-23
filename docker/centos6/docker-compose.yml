@@ -17,6 +17,7 @@ services:
       - dind
       - krb5
       - postgres
+      - mysql
     environment:
       MECANO_TEST: /mecano/docker/centos6/test.coffee
       DOCKER_HOST: 'tcp://dind:2375'
@@ -27,10 +28,16 @@ services:
   postgres:
     image: postgres:9.5
     environment:
-      POSTGRES_PASSWORD: root
       POSTGRES_USER: root
+      POSTGRES_PASSWORD: rootme
     expose:
       - "5432"
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: rootme
+    expose:
+      - "3306"
   krb5:
     image: sequenceiq/kerberos
     volumes:

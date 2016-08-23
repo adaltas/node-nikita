@@ -34,6 +34,9 @@ RUN yum install -y zip git
 # Install PostgreSQL client
 RUN yum install -y postgresql
 
+## Install Mysql client
+RUN yum install -y mysql
+
 # Install docker
 RUN curl -fsSL https://get.docker.com/ | sh
 

@@ -54,13 +54,12 @@ npm test test/db/database.coffee
       options.engine = options.engine.toLowerCase()
       throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mysql', 'postgres']
       # Command
-      cmd = switch options.engine
-        when 'mysql'
-          db.cmd(options, database: null, "show databases") + " | grep '#{options.database}'"
-        when 'postgres'
-          db.cmd(options, database: null, null) + " -l | cut -d \\| -f 1 | grep -qw '#{options.database}'"
       @wait.execute
-        cmd: cmd
+        cmd: switch options.engine
+          when 'mysql'
+            db.cmd(options, database: null, "show databases") + " | grep '#{options.database}'"
+          when 'postgres'
+            db.cmd(options, database: null, null) + " -l | cut -d \\| -f 1 | grep -qw '#{options.database}'"
 
 ## Dependencies
 

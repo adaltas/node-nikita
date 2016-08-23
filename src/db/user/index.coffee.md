@@ -38,14 +38,21 @@ Create a user for the destination database.
       throw Error 'Missing option: "engine"' unless options.engine
       # Defines and check the engine type 
       options.engine = options.engine.toLowerCase()
-      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['postgres']
+      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mysql', 'postgres']
       # Default values
       options.port ?= 5432
       # Commands
-      cmd_user_exists = db.cmd(options, "SELECT 1 FROM pg_roles WHERE rolname='#{options.username}'") + " | grep 1"
-      cmd_user_create = db.cmd options, "CREATE USER #{options.username} WITH PASSWORD '#{options.password}';"
-      cmd_password_is_invalid = db.cmd(options, admin_username: null, admin_password: null, '\\dt') + " 2>&1 >/dev/null | grep -e '^psql:\\sFATAL.*password\\sauthentication\\sfailed\\sfor\\suser.*'"
-      cmd_password_change = db.cmd options, "ALTER USER #{options.username} WITH PASSWORD '#{options.password}';"
+      switch options.engine
+        when 'mysql'
+          cmd_user_exists = db.cmd(options, "SELECT User FROM mysql.user WHERE User='#{options.username}'") + " | grep #{options.username}"
+          cmd_user_create = db.cmd options, "CREATE USER #{options.username} IDENTIFIED BY '#{options.password}';"
+          cmd_password_is_invalid = db.cmd(options, admin_username: null, admin_password: null, '\\dt') + " 2>&1 >/dev/null | grep -e '^ERROR 1045.*'"
+          cmd_password_change = db.cmd options, "SET PASSWORD FOR #{options.username} = PASSWORD ('#{options.password}');"
+        when 'postgres'
+          cmd_user_exists = db.cmd(options, "SELECT 1 FROM pg_roles WHERE rolname='#{options.username}'") + " | grep 1"
+          cmd_user_create = db.cmd options, "CREATE USER #{options.username} WITH PASSWORD '#{options.password}';"
+          cmd_password_is_invalid = db.cmd(options, admin_username: null, admin_password: null, '\\dt') + " 2>&1 >/dev/null | grep -e '^psql:\\sFATAL.*password\\sauthentication\\sfailed\\sfor\\suser.*'"
+          cmd_password_change = db.cmd options, "ALTER USER #{options.username} WITH PASSWORD '#{options.password}';"
       @execute
         cmd: """
         signal=3
@@ -53,7 +60,7 @@ Create a user for the destination database.
           echo '[INFO] User already exists'
         else
           #{cmd_user_create}
-          echo '[WARN] User created exists'
+          echo '[WARN] User created'
           signal=0
         fi
         if [ $signal -eq 3 ]; then

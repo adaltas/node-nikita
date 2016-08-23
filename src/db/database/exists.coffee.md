@@ -1,7 +1,7 @@
 
-# `mecano.db.user.exists(options, callback)`
+# `mecano.db.database.exists(options, callback)`
 
-Check if a user exists in the database.
+Check if a database exists.
 
 ## Options
 
@@ -11,19 +11,17 @@ Check if a user exists in the database.
 *   `admin_password`   
     The password of the database administrator.
 *   `database` (String)
-    The database name to which the user should be added.   
+    The database name to check for existance.   
 *   `engine`      
     The engine type, can be MySQL or PostgreSQL, default to MySQL.   
 *   `host`   
     The hostname of the database.   
-*   `name`   
-    The new user name.   
-*   `password`   
-    The new user password.   
 *   `port`   
     Port to the associated database.   
-*   `user` String   
-    User name.   
+*   `username`   
+    The username of a user with privileges on the database, used unless admin_username is provided.   
+*   `password`   
+    The password of a user with privileges on the database, used unless admin_password is provided.   
 
 ## Source Code
 
@@ -31,11 +29,12 @@ Check if a user exists in the database.
       # Import options from `options.db`
       options.db ?= {}
       options[k] ?= v for k, v of options.db
+      options.database ?= options.argument
       # Check main options
-      throw Error 'Missing hostname' unless options.host?
-      throw Error 'Missing admin name' unless options.admin_username?
-      throw Error 'Missing admin password' unless options.admin_password?
-      throw Error 'Missing name' unless options.name?
+      throw Error 'Missing hostname' unless options.host
+      throw Error 'Missing username or admin username' if not options.admin_username and not options.username
+      throw Error 'Missing admin password' if options.admin_username and not options.admin_password
+      throw Error 'Missing password' if options.username and not options.password
       # Defines and check the engine type
       options.engine = options.engine.toLowerCase()
       throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mysql', 'postgres']
@@ -43,10 +42,10 @@ Check if a user exists in the database.
       options.port ?= 5432      
       cmd = switch options.engine
         when 'mysql'
-          db.cmd(options, database: 'mysql', "select User from user where User = '#{options.name}'") + " | grep '#{options.name}'"
+          db.cmd(options, database: 'mysql', "SHOW DATABASES") + " | grep -w '#{options.database}'"
         when 'postgres'
-          # Not sure why we're not using du
-          db.cmd(options, "SELECT 1 FROM pg_roles WHERE rolname='#{options.name}'") + " | grep 1"
+          # Not sure why we're not using \l
+          db.cmd(options, "SELECT datname FROM pg_database WHERE datname = '#{options.database}'") + " | grep -w '#{options.database}'"
       @execute
         cmd: cmd
         code_skipped: 1

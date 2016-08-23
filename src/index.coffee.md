@@ -68,6 +68,7 @@ functions share a common API with flexible options.
       db:
         database:
           '': require './db/database'
+          exists: require './db/database/exists'
           remove: require './db/database/remove'
           wait: require './db/database/wait'
         schema:

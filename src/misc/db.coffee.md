@@ -9,6 +9,7 @@
           continue unless k in properties
           options[k] = v
       options.engine = options.engine.toLowerCase()
+      options.admin_password = null unless options.admin_username
       # console.log options
       switch options.engine
         when 'mysql'

@@ -20,6 +20,8 @@ Create a database for the destination database.
 *   `user` Array or String   
     Contains  user(s) to add to the database, optional.   
 
+This user will be granted superuser permissions (see above) for the database specified by the
+
 ## Create Database example
 
 ```js
@@ -59,14 +61,19 @@ npm test test/db/database.coffee
       options.user = [options.user] unless Array.isArray options.user
       # Defines and check the engine type 
       options.engine = options.engine.toLowerCase()
-      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['postgres']
+      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mysql', 'postgres']
       options.log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'mecano/db/database/add'
       # Default values
       options.port ?= 5432 
       # Create database unless exist
       options.log message: "Check if database #{options.database} exists", level: 'DEBUG', module: 'mecano/db/database/add'
-      cmd_database_create = db.cmd options, database: null, "CREATE DATABASE #{options.database};"
-      cmd_database_exists = db.cmd options, database: options.database, "\\dt"
+      switch options.engine
+        when 'mysql'
+          cmd_database_create = db.cmd options, database: null, "CREATE DATABASE #{options.database};"
+          cmd_database_exists = db.cmd options, database: options.database, "USE #{options.database};"
+        when 'postgres'
+          cmd_database_create = db.cmd options, database: null, "CREATE DATABASE #{options.database};"
+          cmd_database_exists = db.cmd options, database: options.database, "\\dt"
       @execute
         cmd: cmd_database_create
         unless_exec: cmd_database_exists
@@ -85,10 +92,24 @@ npm test test/db/database.coffee
           host: options.host
         , (err, exists) ->
           options.log message: "User does exists #{user}: skipping", level: 'WARNING', module: 'mecano/db/database/add' unless exists
+        switch options.engine
+          when 'mysql'
+            cmd_grant_privileges = db.cmd options, database: "#{options.database}", "GRANT ALL PRIVILEGES ON #{options.database} TO '#{user}';" # FLUSH PRIVILEGES;
+            # cmd_has_privileges = db.cmd options, admin_username: null, username: user.username, password: user.password, database: options.database, "SHOW TABLES FROM pg_database"
+            cmd_has_privileges = db.cmd(options, database: 'mysql', "SELECT user FROM db WHERE db='#{options.database}';") + " | grep '#{user}'"
+          when 'postgres'
+            cmd_grant_privileges = db.cmd options, database: options.database, "GRANT ALL PRIVILEGES ON DATABASE #{options.database} TO #{user}"
+            cmd_has_privileges = db.cmd(options, database: options.database, "\l") + " | egrep '^#{user}='"
         @execute
           if: -> @status -1
-          cmd: db.cmd options, database: options.database, "GRANT ALL PRIVILEGES ON DATABASE #{options.database} TO #{user}"
-          unless_exec: db.cmd(options, database: options.database, "SELECT datacl FROM  pg_database WHERE  datname = '#{options.database}'") + " | grep '#{user}='"
+          cmd: """
+          if #{cmd_has_privileges}; then
+            echo '[INFO] User already with privileges'
+          else
+            echo '[WARN] User privileges granted'
+            #{cmd_grant_privileges}
+          fi
+          """
         , (err, status) ->
           options.log message: "Privileges granted: to #{JSON.stringify user} on #{JSON.stringify options.database}", level: 'WARN', module: 'mecano/db/database/add' if status
 
