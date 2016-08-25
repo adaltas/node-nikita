@@ -264,6 +264,3 @@ module.exports = iptables =
           value += char
       rules.push rule
     rules
-
-
-
