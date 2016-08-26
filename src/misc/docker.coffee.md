@@ -12,6 +12,11 @@
       'tls', 'tlscacert', 'tlscert', 'tlskey', 'tlsverify', 'userland-proxy', 
       'version'
     ]
+    ###
+    Build the docker command
+    Accepted options are referenced in "module.exports.options". Also accept 
+    "machine" and "boot2docker".
+    ###
     module.exports.wrap = (options, cmd) ->
       docker = {}
       docker.opts = for option in module.exports.options
@@ -34,10 +39,10 @@
       docker=''
       if [[ $machine != '' ]] && [ $bin_machine ]; then
           if [ "#{options.machine or '--'}" = "--" ];then exit 5; fi
-          if docker-machine status #{options.machine} | egrep 'Stopped|Saved'; then
-            docker-machine start #{options.machine};
+          if docker-machine status "${machine}" | egrep 'Stopped|Saved'; then
+            docker-machine start "${machine}";
           fi
-          docker="eval \\$(\\${bin_machine} env #{options.machine}) && $bin_docker"
+          docker="eval \\$(\\${bin_machine} env ${machine}) && $bin_docker"
       elif [[ $boot2docker != '1' ]] && [  $bin_boot2docker ]; then
           docker="eval \\$(\\${bin_boot2docker} shellinit) && $bin_docker"
       else
