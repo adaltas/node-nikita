@@ -73,9 +73,25 @@ describe 'options log', ->
       .call
         log: false
         handler: (options) ->
-          options.log 'no, dont kill her'
+          options.log 'no, u wont find her'
       .then (err) ->
         log.should.eql 'is nikita around' unless err
+        next err
+  
+    it 'can be safely passed to the options of a child handler', (next) ->
+      # Fix a bug in which the child log "yes, dont kill her was called twice"
+      logs = []
+      mecano
+      .on 'text', ({message}) ->
+        logs.push message
+      .call (options) ->
+        options.log 'is nikita around'
+        @call
+          log: options.log
+          handler: (options) ->
+            options.log 'yes, dont kill her'
+      .then (err) ->
+        logs.should.eql ['is nikita around', 'yes, dont kill her'] unless err
         next err
   
   describe 'global via on', ->

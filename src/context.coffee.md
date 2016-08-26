@@ -133,6 +133,7 @@
             _logs = []
         log_disabled = true if options.log is false
         options.log = [] if log_disabled
+        options.log = [] if options.log?._mecano_ # not clean but no better way to detect user provided option with the one from mecano
         options.log ?= []
         options.log = [options.log] unless Array.isArray options.log
         _logs = options.log
@@ -169,6 +170,7 @@
           # for _log in _logs
           #   _log log if _log
           obj.emit? log.type, log unless log_disabled
+        options.log._mecano_ = true
         options
       call_callback = (fn, args) ->
         stack.unshift todos
