@@ -80,9 +80,6 @@ npm test test/db/database.coffee
         unless_exec: cmd_database_exists
       , (err, status) ->
         options.log message: "Database created: #{JSON.stringify options.database}", level: 'WARN', module: 'mecano/db/database/add' if status
-      # Change password if needed
-      # Even if the user exists, without database it can not connect.
-      # That's why the check is executed in 2 steps.
       for user in options.user
         options.log message: "Check if user #{user} has PRIVILEGES on #{options.database} ", level: 'DEBUG', module: 'mecano/db/database/user'     
         @db.user.exists
