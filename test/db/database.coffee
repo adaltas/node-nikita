@@ -59,7 +59,7 @@ for engine, _ of config.db
         always: true
       .then next
 
-    they 'add new database and add not-existing user to it', (ssh, next) ->
+    they.only 'add new database and add not-existing user to it', (ssh, next) ->
       mecano
         ssh: ssh
         db: config.db[engine]
@@ -68,13 +68,9 @@ for engine, _ of config.db
       .db.database
         database: 'postgres_db_4'
         user: 'postgres_user_4'
-      .execute
-        cmd: switch engine
-          when 'mysql' then db.cmd(config.db[engine], database: 'mysql', "SELECT user FROM db WHERE db='postgres_db_4';") + " | grep 'postgres_user_3'"
-          when 'postgres' then db.cmd(config.db[engine], database: 'postgres_db_4', '\\l') + " | egrep '^postgres_user_4='"
-        code_skipped: 1
+        relax: true
       , (err, status) ->
-        status.should.be.false() unless err
+        err.message.should.eql 'User does exists: postgres_user_4'
       .db.database.remove
         database: 'postgres_db_4'
         always: true

@@ -89,7 +89,7 @@ npm test test/db/database.coffee
           port: options.port
           host: options.host
         , (err, exists) ->
-          options.log message: "User does exists #{user}: skipping", level: 'WARNING', module: 'mecano/db/database/add' unless exists
+          throw Error "User does exists: #{user}" unless exists
         switch options.engine
           when 'mysql'
             cmd_grant_privileges = db.cmd options, database: "#{options.database}", "GRANT ALL PRIVILEGES ON #{options.database} TO '#{user}';" # FLUSH PRIVILEGES;
@@ -97,9 +97,8 @@ npm test test/db/database.coffee
             cmd_has_privileges = db.cmd(options, database: 'mysql', "SELECT user FROM db WHERE db='#{options.database}';") + " | grep '#{user}'"
           when 'postgres'
             cmd_grant_privileges = db.cmd options, database: options.database, "GRANT ALL PRIVILEGES ON DATABASE #{options.database} TO #{user}"
-            cmd_has_privileges = db.cmd(options, database: options.database, "\l") + " | egrep '^#{user}='"
+            cmd_has_privileges = db.cmd(options, database: options.database, "\\l") + " | egrep '^#{user}='"
         @execute
-          if: -> @status -1
           cmd: """
           if #{cmd_has_privileges}; then
             echo '[INFO] User already with privileges'
@@ -108,7 +107,7 @@ npm test test/db/database.coffee
             #{cmd_grant_privileges}
           fi
           """
-        , (err, status) ->
+        , (err, status, stdout, stderr) ->
           options.log message: "Privileges granted: to #{JSON.stringify user} on #{JSON.stringify options.database}", level: 'WARN', module: 'mecano/db/database/add' if status
 
 ## Dependencies

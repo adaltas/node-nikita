@@ -36,7 +36,7 @@ Create a user for the destination database.
       throw Error 'Missing option: "username"' unless options.username
       throw Error 'Missing option: "password"' unless options.password
       throw Error 'Missing option: "engine"' unless options.engine
-      # Defines and check the engine type 
+      # Defines and check the engine type
       options.engine = options.engine.toLowerCase()
       throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mysql', 'postgres']
       # Default values
