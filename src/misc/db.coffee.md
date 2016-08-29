@@ -1,6 +1,8 @@
 
 # Misc DB
 
+## Build a Unix command
+
     module.exports.cmd = (opts..., cmd=null) ->
       properties = ['engine', 'admin_username', 'admin_password', 'username', 'password', 'host', 'database']
       options = {}
@@ -10,9 +12,10 @@
           options[k] = v
       options.engine = options.engine.toLowerCase()
       options.admin_password = null unless options.admin_username
-      # console.log options
+      # escape = (text) -> text.replace(/[\\"]/g, "\\$&")
       switch options.engine
         when 'mysql'
+          options.path ?= 'mysql'
           [
             "mysql"
             "-h#{options.host}"
@@ -27,6 +30,7 @@
             "-e \"#{cmd}\"" if cmd
           ].join ' '
         when 'postgres'
+          options.path ?= 'psql'
           [
             "PGPASSWORD=#{options.admin_password or options.password}"
             "psql"
@@ -42,7 +46,42 @@
           ].join ' '
         else
           throw Error "Unsupported engine: #{JSON.stringify options.engine}"
-      
+
+## Parse JDBC URL
+
+Enrich the result of `url.parse` with the "engine" and "db" properties.
+
+Exemple:
+
+```
+parse 'jdbc:mysql://host1:3306,host2:3306/hive?createDatabaseIfNotExist=true'
+{ engine: 'mysql',
+  addresses: 
+   [ { host: 'host1', port: '3306' },
+     { host: 'host2', port: '3306' } ],
+  database: 'hive' }
+```
+
+    module.exports.jdbc = (jdbc) ->
+      if /^jdbc:mysql:/.test jdbc
+        [_, engine, addresses, database] = /^jdbc:(.*?):\/+(.*?)\/(.*?)(\?(.*)|$)/.exec jdbc
+        addresses = addresses.split(',').map (address) ->
+          [host, port] = address.split ':'
+          host: host, port: port or 3306
+        engine: 'mysql'
+        addresses: addresses
+        database: database
+      else if /^jdbc:postgresql:/.test jdbc
+        [_, engine, addresses, database] = /^jdbc:(.*?):\/+(.*?)\/(.*?)(\?(.*)|$)/.exec jdbc
+        addresses = addresses.split(',').map (address) ->
+          [host, port] = address.split ':'
+          host: host, port: port or 5432
+        engine: 'postgres'
+        addresses: addresses
+        database: database
+      else
+        throw Error 'Invalid JDBC URL'
+    
 ## Dependencies
 
     misc = require '.'
