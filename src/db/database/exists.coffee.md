@@ -31,10 +31,10 @@ Check if a database exists.
       options[k] ?= v for k, v of options.db
       options.database ?= options.argument
       # Check main options
-      throw Error 'Missing hostname' unless options.host
-      throw Error 'Missing username or admin username' if not options.admin_username and not options.username
-      throw Error 'Missing admin password' if options.admin_username and not options.admin_password
-      throw Error 'Missing password' if options.username and not options.password
+      throw Error 'Missing option: "host"' unless options.host
+      throw Error 'Missing option: "username" or "admin_username"' if not options.admin_username and not options.username
+      throw Error 'Missing option: "admin_password"' if options.admin_username and not options.admin_password
+      throw Error 'Missing option: "password"' if options.username and not options.password
       # Defines and check the engine type
       options.engine = options.engine.toLowerCase()
       throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mysql', 'postgres']

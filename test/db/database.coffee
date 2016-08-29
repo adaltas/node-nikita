@@ -59,7 +59,7 @@ for engine, _ of config.db
         always: true
       .then next
 
-    they.only 'add new database and add not-existing user to it', (ssh, next) ->
+    they 'add new database and add not-existing user to it', (ssh, next) ->
       mecano
         ssh: ssh
         db: config.db[engine]
