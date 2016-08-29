@@ -17,10 +17,10 @@ describe 'wait', ->
     .wait 0
     .call ->
       interval = Date.now() - before
-      (interval > 1000 and interval < 1200).should.be.true()
+      (interval > 1000 and interval < 1500).should.be.true()
     .then next
 
-  they 'wait before callback', (ssh, next) ->
+  they 'before callback', (ssh, next) ->
     before = Date.now()
     mecano
       ssh: ssh
@@ -28,7 +28,7 @@ describe 'wait', ->
       time: 1000
     , (err, status) ->
       interval = Date.now() - before
-      (interval > 1000 and interval < 1200).should.be.true()
+      (interval > 1000 and interval < 1500).should.be.true()
     .then next
 
   they 'wait before sync call', (ssh, next) ->
@@ -39,7 +39,7 @@ describe 'wait', ->
       time: 1000
     .call ->
       interval = Date.now() - before
-      (interval > 1000 and interval < 1200).should.be.true()
+      (interval > 1000 and interval < 1500).should.be.true()
     .then next
   
   they  'validate argument', (ssh, next) ->
