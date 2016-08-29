@@ -17,11 +17,6 @@ Register or log in to a Docker registry server.
     Username   
 *   `password` (string)   
     Remove intermediate containers after build. Default to false   
-*   `code`   (int|array)   
-    Expected code(s) returned by the command, int or array of int, default to 0.   
-*   `code_skipped`   
-    Expected code(s) returned by the command if it has no effect, executed will
-    not be incremented, int or array of int.   
 *   `cwd` (string)   
     change the working directory for the build.   
 

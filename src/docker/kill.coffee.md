@@ -16,11 +16,6 @@ SIGNAL is not sent.
     Name of the docker-machine. __Mandatory__ if using docker-machine.   
 *   `signal` (int|string)   
     Use a specified signal. SIGKILL by default   
-*   `code` (int|array)   
-    Expected code(s) returned by the command, int or array of int, default to 0.   
-*   `code_skipped`   
-    Expected code(s) returned by the command if it has no effect, executed will
-    not be incremented, int or array of int.   
 
 ## Callback parameters
 

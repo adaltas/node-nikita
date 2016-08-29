@@ -7,21 +7,16 @@ Return the checksum of repository:tag, if it exists. Function not native to dock
 
 *   `boot2docker` (boolean)   
     Whether to use boot2docker or not, default to false.   
-*   `image` (string)   
-    Name of the image. __Mandatory__   
-*   `repository` (string)   
-    Alias of image   
-*   `machine` (string)   
-    Name of the docker-machine. __Mandatory__ if using docker-machine   
-*   `code`   (int|array)   
-    Expected code(s) returned by the command, int or array of int, default to 0.   
-*   `code_skipped`   
-    Expected code(s) returned by the command if it has no effect, executed will   
-    not be incremented, int or array of int.   
 *   `cwd` (string)   
     change the working directory for the build.   
+*   `image` (string)   
+    Name of the image, required.   
+*   `repository` (string)   
+    Alias of image.   
+*   `machine` (string)   
+    Name of the docker-machine, required if using docker-machine.   
 *   `tag` (string)   
-    Tag of the image. Default to latest   
+    Tag of the image, default to latest.   
 
 ## Callback parameters
 

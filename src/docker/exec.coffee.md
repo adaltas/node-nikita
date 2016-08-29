@@ -17,11 +17,6 @@ Run a command in a running container
     Username or uid.   
 *   `gid` (name | gid)   
     Groupname or gid.   
-*   `code` (int|array)   
-    Expected code(s) returned by the command, int or array of int, default to 0.   
-*   `code_skipped`   
-    Expected code(s) returned by the command if it has no effect, executed will
-    not be incremented, int or array of int.   
 
 
 ## Callback parameters

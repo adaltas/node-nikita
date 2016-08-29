@@ -16,11 +16,6 @@ Load Docker images
 *   `checksum` (string)   
     If provided, will check if attached input archive to checksum already exist.   
     Not native to docker. But implemented to get better performance.   
-*   `code` (int|array)   
-    Expected code(s) returned by the command, int or array of int, default to 0.   
-*   `code_skipped`   
-    Expected code(s) returned by the command if it has no effect, executed will
-    not be incremented, int or array of int.   
 
 ## Callback parameters
 
