@@ -12,11 +12,11 @@ See `docker.run` for list of options.
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       options.log message: "Entering Docker service", level: 'DEBUG', module: 'mecano/lib/docker/service'
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
       options.detach ?= true
       options.rm ?= false
-      return callback Error 'Missing container name' unless options.name? or options.container?
-      @docker.run options, callback
+      throw Error 'Missing container name' unless options.name? or options.container?
+      @docker.run options
