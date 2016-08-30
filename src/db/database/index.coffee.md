@@ -59,15 +59,15 @@ npm test test/db/database.coffee
       throw Error 'Missing option: "database"' unless options.database
       throw Error 'Missing option: "engine"' unless options.engine
       options.user ?= []
-      options.user = [options.user] unless Array.isArray options.user
+      options.user = [options.user] if typeof options.user is 'string'
       # Defines and check the engine type 
       options.engine = options.engine.toLowerCase()
       throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mysql', 'postgres']
-      options.log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'mecano/db/database/add'
+      options.log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'mecano/db/database'
       # Default values
       options.port ?= 5432 
       # Create database unless exist
-      options.log message: "Check if database #{options.database} exists", level: 'DEBUG', module: 'mecano/db/database/add'
+      options.log message: "Check if database #{options.database} exists", level: 'DEBUG', module: 'mecano/db/database'
       switch options.engine
         when 'mysql'
           cmd_database_create = db.cmd options, database: null, "CREATE DATABASE #{options.database};"
@@ -79,17 +79,18 @@ npm test test/db/database.coffee
         cmd: cmd_database_create
         unless_exec: cmd_database_exists
       , (err, status) ->
-        options.log message: "Database created: #{JSON.stringify options.database}", level: 'WARN', module: 'mecano/db/database/add' if status
-      for user in options.user
-        options.log message: "Check if user #{user} has PRIVILEGES on #{options.database} ", level: 'DEBUG', module: 'mecano/db/database/user'     
+        options.log message: "Database created: #{JSON.stringify options.database}", level: 'WARN', module: 'mecano/db/database' if status
+      for user in options.user then do =>
+        @call -> options.log message: "Check if user #{user} has PRIVILEGES on #{options.database} ", level: 'DEBUG', module: 'mecano/db/database'     
         @db.user.exists
+          engine: options.engine
           username: user
           admin_username: options.admin_username
           admin_password: options.admin_password
           port: options.port
           host: options.host
         , (err, exists) ->
-          throw Error "User does exists: #{user}" unless exists
+          throw Error "User does not exists: #{user}" if not err and not exists
         switch options.engine
           when 'mysql'
             cmd_grant_privileges = db.cmd options, database: "#{options.database}", "GRANT ALL PRIVILEGES ON #{options.database} TO '#{user}';" # FLUSH PRIVILEGES;
@@ -108,7 +109,7 @@ npm test test/db/database.coffee
           fi
           """
         , (err, status, stdout, stderr) ->
-          options.log message: "Privileges granted: to #{JSON.stringify user} on #{JSON.stringify options.database}", level: 'WARN', module: 'mecano/db/database/add' if status
+          options.log message: "Privileges granted: to #{JSON.stringify user} on #{JSON.stringify options.database}", level: 'WARN', module: 'mecano/db/database' if status
 
 ## Dependencies
 

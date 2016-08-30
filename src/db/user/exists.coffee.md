@@ -32,10 +32,11 @@ Check if a user exists in the database.
       options.db ?= {}
       options[k] ?= v for k, v of options.db
       # Check main options
-      throw Error 'Missing hostname' unless options.host?
-      throw Error 'Missing admin name' unless options.admin_username?
-      throw Error 'Missing admin password' unless options.admin_password?
-      throw Error 'Missing username' unless options.username?
+      throw Error 'Missing option: "hostname"' unless options.host?
+      throw Error 'Missing option: "admin_username"' unless options.admin_username?
+      throw Error 'Missing option: "admin_password"' unless options.admin_password?
+      throw Error 'Missing option: "username"' unless options.username?
+      throw Error 'Missing option: "engine"' unless options.engine
       # Defines and check the engine type
       options.engine = options.engine.toLowerCase()
       throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mysql', 'postgres']
