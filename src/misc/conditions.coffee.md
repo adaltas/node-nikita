@@ -132,7 +132,7 @@ were executed successfully otherwise the callback `skip` is called.
       if_exec: (options, skip, succeed) ->
         each(options.if_exec)
         .call (cmd, next) ->
-          options.log? "Mecano `if_exec`: #{cmd}"
+          options.log? message: "Mecano `if_exec`: #{cmd}", level: 'DEBUG', module: 'mecano/misc/conditions'
           options = { cmd: cmd, ssh: options.ssh }
           run = exec options
           if options.stdout
@@ -140,7 +140,7 @@ were executed successfully otherwise the callback `skip` is called.
           if options.stderr
             run.stderr.pipe options.stderr, end: false
           run.on "exit", (code) ->
-            options.log? "Mecano `if_exec`: code is \"#{code}\""
+            options.log? message: "Mecano `if_exec`: code is \"#{code}\"", level: 'INFO', module: 'mecano/misc/conditions'
             if code is 0 then next() else skip()
         .then succeed
   
@@ -155,7 +155,7 @@ were executed with failure otherwise the callback `skip` is called.
       unless_exec: (options, skip, succeed) ->
         each(options.unless_exec)
         .call (cmd, next) ->
-          options.log? "Mecano `unless_exec`: #{cmd}"
+          options.log? message: "Mecano `unless_exec`: #{cmd}", level: 'DEBUG', module: 'mecano/misc/conditions'
           options = { cmd: cmd, ssh: options.ssh }
           run = exec options
           if options.stdout
@@ -163,7 +163,7 @@ were executed with failure otherwise the callback `skip` is called.
           if options.stderr
             run.stderr.pipe options.stderr, end: false
           run.on "exit", (code) ->
-            options.log? "Mecano `unless_exec`: code is \"#{code}\""
+            options.log? message: "Mecano `unless_exec`: code is \"#{code}\"", level: 'INFO', module: 'mecano/misc/conditions'
             if code is 0 then skip() else next()
         .then succeed
 
