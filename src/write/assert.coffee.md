@@ -10,9 +10,9 @@ Assert a provided text match the content of a text file.
 *   `encoding` (string)   
     Content encoding, see the Node.js supported Buffer encoding.   
 *   `source` (string)   
-    File storing the content to assert.   
-*   `target` (string)   
     Alias of option "target".   
+*   `target` (string)   
+    File storing the content to assert.   
 
 ## Callback parameters
 
@@ -36,15 +36,15 @@ mecano.assert({
     module.exports = (options) ->
       options.log message: "Entering assert", level: 'DEBUG', module: 'mecano/lib/assert'
       options.encoding ?= 'utf8'
-      options.source ?= options.target
+      options.target ?= options.source
       throw Error "Required option 'content'" unless options.content?
-      throw Error "Required option 'source'" unless options.source
+      throw Error "Required option 'target'" unless options.target
       if typeof options.content is 'string'
         options.content = Buffer.from options.content, options.encoding
       else unless Buffer.isBuffer otions.content
         throw Error "Invalid option 'content': expect string or buffer"
       @call (_, callback) ->
-        fs.readFile options.source, (err, buffer) ->
+        fs.readFile options.target, (err, buffer) ->
           unless err or buffer.equals options.content
             options.error ?= "Invalid content match: expected #{JSON.stringify options.content.toString()}, got #{JSON.stringify buffer.toString()}"
             err = Error options.error 

@@ -12,23 +12,33 @@ describe 'write assert', ->
   they 'requires content', (ssh, next) ->
     mecano
     .write.assert
-      source: "#{scratch}/a_file"
+      target: "#{scratch}/a_file"
     .then (err) ->
       err.message.should.eql "Required option 'content'"
       next()
 
-  they 'requires source', (ssh, next) ->
+  they 'requires target', (ssh, next) ->
     mecano
     .write.assert
       content: "are u here"
     .then (err) ->
-      err.message.should.eql "Required option 'source'"
+      err.message.should.eql "Required option 'target'"
       next()
 
   they 'content match', (ssh, next) ->
     mecano
     .write
-      source: "#{scratch}/a_file"
+      target: "#{scratch}/a_file"
+      content: "are u here"
+    .write.assert
+      target: "#{scratch}/a_file"
+      content: "are u here"
+    .then next
+
+  they 'option source is alias of target', (ssh, next) ->
+    mecano
+    .write
+      target: "#{scratch}/a_file"
       content: "are u here"
     .write.assert
       source: "#{scratch}/a_file"
@@ -38,22 +48,22 @@ describe 'write assert', ->
   they 'content dont match', (ssh, next) ->
     mecano
     .write
-      source: "#{scratch}/a_file"
+      target: "#{scratch}/a_file"
       content: "are u here"
     .write.assert
-      source: "#{scratch}/a_file"
+      target: "#{scratch}/a_file"
       content: "are u sure"
     .then (err) ->
-      err.message.should.eql "Invalid content match"
+      err.message.should.eql 'Invalid content match: expected "are u sure", got "are u here"'
       next()
 
   they 'send custom error message', (ssh, next) ->
     mecano
     .write
-      source: "#{scratch}/a_file"
+      target: "#{scratch}/a_file"
       content: "are u here"
     .write.assert
-      source: "#{scratch}/a_file"
+      target: "#{scratch}/a_file"
       content: "are u sure"
       error: 'Got it'
     .then (err) ->
