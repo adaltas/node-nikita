@@ -2,7 +2,7 @@
 mecano = require '../../src'
 fs = require 'fs'
 
-describe 'options domain', ->
+describe 'options "domain"', ->
 
 	it 'uncatchable error in sync handler', (next) ->
 		mecano

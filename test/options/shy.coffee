@@ -3,7 +3,7 @@ mecano = require '../../src'
 test = require '../test'
 fs = require 'fs'
 
-describe 'options shy', ->
+describe 'options "shy"', ->
 
   scratch = test.scratch @
 

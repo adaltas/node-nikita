@@ -2,7 +2,7 @@
 mecano = require '../../src'
 fs = require 'fs'
 
-describe 'options retry', ->
+describe 'options "retry"', ->
 
   it 'stop once errorless', (next) ->
     count = 0

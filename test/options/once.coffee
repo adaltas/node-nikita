@@ -3,7 +3,7 @@ mecano = require '../../src'
 test = require '../test'
 fs = require 'fs'
 
-describe 'options once', ->
+describe 'options "once"', ->
 
   scratch = test.scratch @
 
