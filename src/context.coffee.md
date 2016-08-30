@@ -268,7 +268,24 @@
                 throw Error "Invalid Type Option Once: #{JSON.stringify options.once}"
               return do_callback [] if once[hash]
               once[hash] = true
-            do_intercept_before()
+            do_options_before()
+          do_options_before = ->
+            return do_intercept_before() if options.options_before
+            options.before ?= []
+            options.before = [options.before] unless Array.isArray options.before
+            each options.before
+            .call (before, next) ->
+              before = normalize_options [before], 'call', false
+              before = before[0]
+              opts = options_before: true
+              for k, v of before
+                opts[k] = v
+              for k, v of options
+                continue if k in ['handler', 'callback']
+                opts[k] ?= v
+              run opts, next
+            .error (err) -> do_callback [err]
+            .then do_intercept_before
           do_intercept_before = ->
             return do_conditions() if options.intercept_before
             each befores
@@ -341,7 +358,7 @@
               todos = []
               do_next [err]
           do_intercept_after = (args, callback) ->
-            return do_callback args if options.intercept_after
+            return do_options_after args if options.intercept_after
             each afters
             .call (after, next) ->
               for k, v of after
@@ -354,6 +371,23 @@
                 continue if k in ['handler', 'callback']
                 opts[k] ?= v
               opts.callback_arguments = args
+              run opts, next
+            .error (err) -> do_callback [err]
+            .then -> do_options_after args
+          do_options_after = (args) ->
+            return do_callback args if options.options_after
+            options.after ?= []
+            options.after = [options.after] unless Array.isArray options.after
+            each options.after
+            .call (after, next) ->
+              after = normalize_options [after], 'call', false
+              after = after[0]
+              opts = options_after: true
+              for k, v of after
+                opts[k] = v
+              for k, v of options
+                continue if k in ['handler', 'callback']
+                opts[k] ?= v
               run opts, next
             .error (err) -> do_callback [err]
             .then -> do_callback args
