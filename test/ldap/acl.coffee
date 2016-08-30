@@ -74,7 +74,7 @@ describe 'ldap.acl', ->
         ldap: client
         name: 'olcDatabase={2}bdb,cn=config'
         to: 'dn.base="ou=INSERTED,dc=test,dc=com"'
-        before: 'dn.base="ou=test2,dc=test,dc=com"'
+        place_before: 'dn.base="ou=test2,dc=test,dc=com"'
         by: [
           'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" read'
         ]

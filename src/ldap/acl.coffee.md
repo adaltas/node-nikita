@@ -7,7 +7,7 @@ Create new [ACLs](acls) for the OpenLDAP server.
 
 *   `to`   
     What to control access to as a string.   
-*   `before`   
+*   `place_before`   
     Place before another rule defined by "to".   
 *   `by`   
     Who to grant access to and the access to grant as an array
@@ -27,7 +27,7 @@ Create new [ACLs](acls) for the OpenLDAP server.
 *   `log`   
     Function called with a log related messages.   
 *   `acl`   
-    In case of multiple acls, regroup "before", "to" and "by" as an array.   
+    In case of multiple acls, regroup "place_before", "to" and "by" as an array.   
 
 ## Example
 
@@ -38,7 +38,7 @@ require('mecano').ldap.acl({
   passwd: 'password',
   name: 'olcDatabase={2}bdb,cn=config',
   acls: [{
-    before: 'dn.subtree="dc=domain,dc=com"',
+    place_before: 'dn.subtree="dc=domain,dc=com"',
     to: 'dn.subtree="ou=users,dc=domain,dc=com"',
     by: [
       'dn.exact="ou=users,dc=domain,dc=com" write',
@@ -145,9 +145,9 @@ require('mecano').ldap.acl({
             index = olcAccesses.length
             if acl.first # not tested
               index = 0
-            if acl.before
+            if acl.place_before
               for access, i in olcAccesses
-                index = i if access.to is acl.before
+                index = i if access.to is acl.place_before
             else if acl.after
               for access, i in olcAccesses
                 index = i+1 if access.to is options.after
