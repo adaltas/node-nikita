@@ -50,7 +50,7 @@ require('mecano').database.schema({
       # Defines and check the engine type 
       options.engine = options.engine.toLowerCase()
       throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['postgres']
-      # Defines port
+      # Options
       options.port ?= 5432 
       @execute
         code_skipped: 2

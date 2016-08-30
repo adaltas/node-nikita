@@ -23,6 +23,11 @@ Create a user for the destination database.
       # Import options from `options.db`
       options.db ?= {}
       options[k] ?= v for k, v of options.db
+      throw Error 'Missing option: "engine"' unless options.engine
+      # Defines and check the engine type 
+      options.engine = options.engine.toLowerCase()
+      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['postgres']
+      # Options
       options.schema ?= options.argument
       @execute
         cmd: db.cmd options, "DROP SCHEMA IF EXISTS #{options.schema};"
