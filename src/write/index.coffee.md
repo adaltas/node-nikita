@@ -36,6 +36,8 @@ Write a file or a portion of an existing file.
 *   `mode`   
     File mode (permission and sticky bits), default to `0o0666`, in the form of
     `{mode: 0o0744}` or `{mode: "0744"}`.   
+*   `place_before` (string, boolean, regex)   
+    Place the content before the match.   
 *   `replace`   
     The content to be inserted, used conjointly with the from, to or match   
     options.   
@@ -198,14 +200,14 @@ require('mecano').write({
       target  = null
       targetHash = null
       options.write ?= []
-      if options.from? or options.to? or options.match? or options.replace? or options.before?
+      if options.from? or options.to? or options.match? or options.replace? or options.place_before?
         options.write.push
           from: options.from
           to: options.to
           match: options.match
           replace: options.replace
           append: options.append
-          before: options.before
+          place_before: options.place_before
         options.append = false
       for w in options.write
         if not w.from? and not w.to? and not w.match? and w.replace?

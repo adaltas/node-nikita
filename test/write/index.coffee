@@ -350,13 +350,13 @@ describe 'write', ->
 
   describe 'replace', ->
   
-    they 'without match and before a string', (ssh, next) ->
+    they 'without match and place_before a string', (ssh, next) ->
       mecano.write
         ssh: ssh
         target: "#{scratch}/fromto.md"
         content: 'here we are\nyou+coquin'
         replace: 'my friend'
-        before: 'you+coquin' # Regexp must escape the plus sign
+        place_before: 'you+coquin' # Regexp must escape the plus sign
       , (err, written) ->
         return next err if err
         fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
@@ -364,13 +364,13 @@ describe 'write', ->
           content.should.eql 'here we are\nmy friend\nyou+coquin'
           next()
   
-    they 'without match and before a regexp', (ssh, next) ->
+    they 'without match and place_before a regexp', (ssh, next) ->
       mecano.write
         ssh: ssh
         target: "#{scratch}/fromto.md"
         content: 'here we are\nyou coquin'
         replace: 'my friend'
-        before: /^you coquin$/m
+        place_before: /^you coquin$/m
       , (err, written) ->
         return next err if err
         fs.readFile ssh, "#{scratch}/fromto.md", 'utf8', (err, content) ->
@@ -489,7 +489,7 @@ describe 'write', ->
           content.should.eql 'This is\na text\nfor testing'
           next()
 
-  describe 'before', ->
+  describe 'place_before', ->
 
     they 'append content to missing file', (ssh, next) ->
       # File does not exist, it create it with the content
@@ -513,11 +513,11 @@ describe 'write', ->
       .write
         target: "#{scratch}/file"
         content: 'world'
-        before: true
+        place_before: true
       .write # File exists, prepends to it
         target: "#{scratch}/file"
         replace: 'hello'
-        before: true
+        place_before: true
       .then (err) ->
         return next err if err
         # Check file content
@@ -563,11 +563,11 @@ describe 'write', ->
           content.should.eql 'helloworld'
           next()
 
-  describe 'match & append or before', ->
+  describe 'match & append or place_before', ->
 
     describe 'will not prepend/append if match', ->
 
-      they 'before true, replace a string, match a regexp', (ssh, next) ->
+      they 'place_before true, replace a string, match a regexp', (ssh, next) ->
         # Prepare by creating a file with content
         mecano.write
           ssh: ssh
@@ -580,7 +580,7 @@ describe 'write', ->
             target: "#{scratch}/file"
             match: /.*coquin/
             replace: 'new coquin'
-            before: true
+            place_before: true
           , (err, written) ->
             return next err if err
             written.should.be.true()
@@ -593,7 +593,7 @@ describe 'write', ->
                 target: "#{scratch}/file"
                 match: /.*coquin/
                 replace: 'new coquin'
-                before: true
+                place_before: true
               , (err, written) ->
                 return next err if err
                 written.should.be.false()
@@ -603,7 +603,7 @@ describe 'write', ->
                   content.should.eql 'new coquin\nhere we are\n'
                   next()
 
-      they 'before true, replace a string, match a string', (ssh, next) ->
+      they 'place_before true, replace a string, match a string', (ssh, next) ->
         # Prepare by creating a file with content
         mecano.write
           ssh: ssh
@@ -616,7 +616,7 @@ describe 'write', ->
             target: "#{scratch}/file"
             match: "you coquin"
             replace: 'new coquin'
-            before: true
+            place_before: true
           , (err, written) ->
             return next err if err
             written.should.be.true()
@@ -629,7 +629,7 @@ describe 'write', ->
                 target: "#{scratch}/file"
                 match: "new coquin"
                 replace: 'new coquin'
-                before: true
+                place_before: true
               , (err, written) ->
                 return next err if err
                 written.should.be.false()
@@ -639,7 +639,7 @@ describe 'write', ->
                   content.should.eql 'new coquin\nhere we are\n'
                   next()
 
-      they 'after', (ssh, next) ->
+      they 'place_after', (ssh, next) ->
         # Prepare by creating a file with content
         mecano.write
           ssh: ssh
@@ -696,9 +696,9 @@ describe 'write', ->
           content.should.eql 'here we are\nyou coquin\nAdd this line'
           next()
 
-    describe 'before/after a match if it is a regexp', ->
+    describe 'place_before/place_after a match if it is a regexp', ->
 
-      they 'before', (ssh, next) ->
+      they 'place_before', (ssh, next) ->
         # Prepare by creating a file with content
         mecano
           ssh: ssh
@@ -709,7 +709,7 @@ describe 'write', ->
           target: "#{scratch}/file"
           match: /will never work/
           replace: 'Add this line'
-          before: /^.*we.*$/m
+          place_before: /^.*we.*$/m
         , (err, written) ->
           return next err if err
           written.should.be.true()
@@ -719,7 +719,7 @@ describe 'write', ->
             content.should.eql 'Add this line\nhere we are\nyou coquin\nshould we\nhave fun'
             next()
 
-      they 'after', (ssh, next) ->
+      they 'place_after', (ssh, next) ->
         # Prepare by creating a file with content
         mecano.write
           ssh: ssh
@@ -742,9 +742,9 @@ describe 'write', ->
               content.should.eql 'here we are\nAdd this line\nyou coquin\nshould we\nhave fun'
               next()
 
-    describe 'before/after multiple times if regexp with global flag', ->
+    describe 'place_before/place_after multiple times if regexp with global flag', ->
 
-      they 'before', (ssh, next) ->
+      they 'place_before', (ssh, next) ->
         # Prepare by creating a file with content
         mecano.write
           ssh: ssh
@@ -757,7 +757,7 @@ describe 'write', ->
             target: "#{scratch}/file"
             match: /will never work/
             replace: 'Add this line'
-            before: /^.*we.*$/gm
+            place_before: /^.*we.*$/gm
           , (err, written) ->
             return next err if err
             written.should.be.true()
@@ -767,7 +767,7 @@ describe 'write', ->
               content.should.eql 'Add this line\nhere we are\nyou coquin\nAdd this line\nshould we\nhave fun'
               next()
 
-      they 'after', (ssh, next) ->
+      they 'place_after', (ssh, next) ->
         # Prepare by creating a file with content
         mecano.write
           ssh: ssh
@@ -791,7 +791,7 @@ describe 'write', ->
               next()
 
 
-    they 'will append after a match if append is a string', (ssh, next) ->
+    they 'will append place_after a match if append is a string', (ssh, next) ->
       # Prepare by creating a file with content
       mecano.write
         ssh: ssh
@@ -816,7 +816,7 @@ describe 'write', ->
 
     describe 'will detect new line if no match', ->
 
-      they 'before', (ssh, next) ->
+      they 'place_before', (ssh, next) ->
         # Create file for the test
         mecano.write
           ssh: ssh
@@ -829,7 +829,7 @@ describe 'write', ->
             target: "#{scratch}/file"
             match: /will never be found/
             replace: 'Add this line'
-            before: true
+            place_before: true
           , (err, written) ->
             return next err if err
             written.should.be.true()
@@ -839,7 +839,7 @@ describe 'write', ->
               content.should.eql 'Add this line\nhere we are\nyou coquin'
               next()
 
-      they 'after', (ssh, next) ->
+      they 'place_after', (ssh, next) ->
         # Create file for the test
         mecano.write
           ssh: ssh
@@ -864,14 +864,14 @@ describe 'write', ->
 
     describe 'create file if not exists', ->
 
-      they 'before', (ssh, next) ->
+      they 'place_before', (ssh, next) ->
         # File does not exist, it create it with the content
         mecano.write
           ssh: ssh
           target: "#{scratch}/file"
           match: /will never be found/
           replace: 'Add this line'
-          before: true
+          place_before: true
         , (err, written) ->
           return next err if err
           written.should.be.true()
@@ -881,7 +881,7 @@ describe 'write', ->
             content.should.eql 'Add this line'
             next()
 
-      they 'after', (ssh, next) ->
+      they 'place_after', (ssh, next) ->
         # File does not exist, it create it with the content
         mecano.write
           ssh: ssh

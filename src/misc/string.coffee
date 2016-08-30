@@ -74,20 +74,20 @@ module.exports =
           if opts.match.test options.content
             options.content = options.content.replace opts.match, opts.replace
             options.log message: "Match existing partial", level: 'INFO', module: 'mecano/lib/misc/string'
-          else if opts.before and typeof opts.replace is 'string'
-            if typeof opts.before is "string"
-              opts.before = new RegExp ///^.*#{quote opts.before}.*$///mg
-            if opts.before instanceof RegExp
-              options.log message: "Replace with match and before regexp", level: 'DEBUG', module: 'mecano/lib/misc/string'
+          else if opts.place_before and typeof opts.replace is 'string'
+            if typeof opts.place_before is "string"
+              opts.place_before = new RegExp ///^.*#{quote opts.place_before}.*$///mg
+            if opts.place_before instanceof RegExp
+              options.log message: "Replace with match and place_before regexp", level: 'DEBUG', module: 'mecano/lib/misc/string'
               posoffset = 0
               orgContent = options.content
-              while (res = opts.before.exec orgContent) isnt null
+              while (res = opts.place_before.exec orgContent) isnt null
                 options.log message: "Before regexp found a match", level: 'INFO', module: 'mecano/lib/misc/string'
                 pos = posoffset + res.index #+ res[0].length
                 options.content = options.content.slice(0,pos) + opts.replace + '\n' + options.content.slice(pos)
                 posoffset += opts.replace.length + 1
-                break unless opts.before.global
-              before = false
+                break unless opts.place_before.global
+              place_before = false
             else# if content
               options.log message: "Forgot how we could get there, test shall say it all", level: 'DEBUG', module: 'mecano/lib/misc/string'
               linebreak = if options.content.length is 0 or options.content.substr(options.content.length - 1) is '\n' then '' else '\n'
@@ -111,7 +111,7 @@ module.exports =
               options.content = options.content + linebreak + opts.replace
           else
             continue # Did not match, try callback
-        else if opts.before is true
+        else if opts.place_before is true
           options.log message: "Before is true, need to explain how we could get here", level: 'INFO', module: 'mecano/lib/misc/string'
         else if opts.from or opts.to
           if opts.from and opts.to
