@@ -16,9 +16,11 @@
       switch options.engine
         when 'mysql'
           options.path ?= 'mysql'
+          options.port ?= '3306'
           [
             "mysql"
             "-h#{options.host}"
+            "-P#{options.port}"
             "-u#{options.admin_username or options.username}"
             "-p#{options.admin_password or options.password}"
             "-D#{options.database}" if options.database
@@ -31,10 +33,12 @@
           ].join ' '
         when 'postgres'
           options.path ?= 'psql'
+          options.port ?= '5432'
           [
             "PGPASSWORD=#{options.admin_password or options.password}"
             "psql"
             "-h #{options.host}"
+            "-p #{options.port}"
             "-U #{options.admin_username or options.username}"
             "-d #{options.database}" if options.database
             "#{options.postgres_options}" if options.postgres_options
