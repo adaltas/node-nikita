@@ -76,7 +76,6 @@
               options.push a
           else
             if typeof arg isnt 'object' and arg isnt null
-              console.log 'GOT array', arg
               arg = argument: arg
             if options.length is 0
               cloned_arg = {}
