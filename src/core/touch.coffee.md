@@ -60,7 +60,7 @@ If not, write a new empty file.
       @write
         content: ''
         target: options.target
-        unless: @status()
+        unless: -> @status()
         mode: options.mode
         uid: options.uid
         gid: options.gid

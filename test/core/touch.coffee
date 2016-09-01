@@ -36,6 +36,22 @@ describe 'touch', ->
       target: "#{scratch}/a_file"
       content: ''
     .then next
+      
+  they 'as an array of strings', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .touch [
+      "#{scratch}/file_1"
+      "#{scratch}/file_2"
+    ], (err, status) ->
+      status.should.be.true() unless err
+    .write.assert
+      target: "#{scratch}/file_1"
+      content: ''
+    .write.assert
+      target: "#{scratch}/file_2"
+      content: ''
+    .then next
 
   they 'an existing file', (ssh, next) ->
     mecano
