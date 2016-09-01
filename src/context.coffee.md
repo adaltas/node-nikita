@@ -76,9 +76,8 @@
               options.push a
           else
             if typeof arg isnt 'object' and arg isnt null
-              if type is 'call'
-              then arg = handler: arg
-              else arg = argument: arg
+              console.log 'GOT array', arg
+              arg = argument: arg
             if options.length is 0
               cloned_arg = {}
               for k, v of arg then cloned_arg[k] = v
@@ -95,6 +94,10 @@
           options[i] = {}
           options[i][k] = v for k, v of opts
           opts = options[i]
+          # Argument
+          if type is 'call' and not opts.handler #and typeof opts.argument is 'function'
+            opts.handler = opts.argument
+            opts.argument = undefined
           # Enrich
           if opts.destination
             console.log 'Use options target instead of destination' unless called_deprecate_destination

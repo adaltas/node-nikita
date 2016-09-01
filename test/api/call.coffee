@@ -41,6 +41,11 @@ describe 'api call', ->
       .then (err) ->
         logs[0].should.eql 'Hello us' unless err
         next err
+    
+    it 'accept a string and an handler', (next) ->
+      mecano()
+      .call 'gotit', handler: ( (options) -> options.argument.should.eql 'gotit' )
+      .then next
 
   describe 'sync', ->
 
