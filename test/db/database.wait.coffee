@@ -5,6 +5,7 @@ test = require '../test'
 they = require 'ssh2-they'
 
 config = test.config()
+return if config.disable_db
 for engine, _ of config.db
 
   describe "db.database.wait #{engine}", ->

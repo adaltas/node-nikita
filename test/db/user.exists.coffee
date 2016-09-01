@@ -5,6 +5,7 @@ they = require 'ssh2-they'
 each = require 'each'
 
 config = test.config()
+return if config.disable_db
 for engine, _ of config.db
 
   describe "db.user.exists #{engine}", ->

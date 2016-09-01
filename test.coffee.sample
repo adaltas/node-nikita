@@ -8,6 +8,7 @@ module.exports =
   disable_ldap_index: true
   disable_ldap_user: true
   disable_service: true
+  disable_db: true
   docker: # eg `docker-machine create --driver virtualbox mecano`
     machine: 'mecano'
   krb5:
