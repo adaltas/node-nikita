@@ -66,8 +66,8 @@
     "url": "https://github.com/wdavidw/node-mecano"
   },
   "scripts": {
-    "coffee": "./node_modules/.bin/coffee -b -o lib src",
-    "pretest": "./node_modules/.bin/coffee -b -o lib src",
+    "coffee": "coffee -b -o lib src",
+    "pretest": "cp -n test.coffee.sample test.coffee; coffee -b -o lib src",
     "test": "NODE_ENV=test ./node_modules/.bin/mocha"
   }
 }
