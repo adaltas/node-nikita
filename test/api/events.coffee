@@ -4,7 +4,7 @@ test = require '../test'
 
 describe 'api events', ->
 
-  it 'end', (next) ->
+  it.skip 'end', (next) ->
     end = error = false
     mecano()
     .on 'end', -> end = true
@@ -15,7 +15,7 @@ describe 'api events', ->
         error.should.be.false()
         next()
 
-  it 'error', (next) ->
+  it.skip 'error', (next) ->
     end = error = false
     mecano()
     .on 'end', -> end = true
