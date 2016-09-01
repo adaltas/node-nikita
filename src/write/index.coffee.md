@@ -177,7 +177,6 @@ require('mecano').write({
 
     module.exports = (options, callback) ->
       options.log message: "Entering write", level: 'DEBUG', module: 'mecano/lib/write'
-      modified = false
       # Validate parameters
       return callback Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?
       return callback Error 'Define either source or content' if options.source and options.content
@@ -340,7 +339,6 @@ require('mecano').write({
           fs.writeFile options.ssh, options.target, options.content, options, (err) ->
             return callback err if err
             options.log message: "File written", level: 'INFO', module: 'mecano/lib/write'
-            modified = true
             callback()
       @chown
         target: options.target
