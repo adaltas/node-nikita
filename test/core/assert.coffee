@@ -10,7 +10,7 @@ describe 'assert', ->
   
   describe 'status', ->
 
-    they 'status false is false', (ssh, next) ->
+    they 'false when expected to be false', (ssh, next) ->
       mecano
         ssh: ssh
       .call (_, callback) ->
@@ -19,7 +19,7 @@ describe 'assert', ->
         status: false
       .then next
 
-    they 'status false is true', (ssh, next) ->
+    they 'false when expected to be true throw an error', (ssh, next) ->
       mecano
         ssh: ssh
       .call (_, callback) ->
@@ -30,7 +30,7 @@ describe 'assert', ->
         err.message.should.eql 'Invalid status: expected true, got false'
         next()
 
-    they 'status true is true', (ssh, next) ->
+    they 'true when expected to be true', (ssh, next) ->
       mecano
         ssh: ssh
       .call (_, callback) ->
@@ -39,7 +39,7 @@ describe 'assert', ->
         status: true
       .then next
 
-    they 'status true is false', (ssh, next) ->
+    they 'true when expected to be false throw an error', (ssh, next) ->
       mecano
         ssh: ssh
       .call (_, callback) ->
