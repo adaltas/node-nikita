@@ -1,29 +1,18 @@
 {
   "name": "mecano",
   "description": "Common functions for system deployment.",
-  "keywords": [
-    "deploy",
-    "masson",
-    "build",
-    "ssh",
-    "system",
-    "install",
-    "fs",
-    "task",
-    "cli"
-  ],
   "version": "0.5.5",
-  "homepage": "http://www.adaltas.com/projects/node-mecano/",
   "author": "David Worms <david@adaltas.com>",
-  "license": "BSD-3-Clause",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/wdavidw/node-mecano"
-  },
   "bugs": {
     "email": "open@adaltas.com",
     "url": "http://github.com/wdavidw/node-mecano/issues"
   },
+  "contributors": [
+    {
+      "name": "David Worms",
+      "email": "david@adaltas.com"
+    }
+  ],
   "dependencies": {
     "backmeup": "~0.0.1",
     "diff": "~2.2.1",
@@ -31,9 +20,9 @@
     "ftp": "~0.3.10",
     "glob": "~7.0.0",
     "ini": "~1.3.4",
+    "js-yaml": "~3.6.0",
     "jsesc": "~1.0.0",
     "jsftp": "~1.5.3",
-    "js-yaml": "~3.6.0",
     "minimatch": "~3.0.0",
     "mustache": "~2.2.1",
     "nunjucks": "~2.4.0",
@@ -52,18 +41,29 @@
     "should": ">=8.2.2",
     "ssh2-they": ">=0.0.7"
   },
+  "engines": {
+    "node": ">= 0.6.0"
+  },
+  "homepage": "http://www.adaltas.com/projects/node-mecano/",
+  "keywords": [
+    "build",
+    "cli",
+    "deploy",
+    "fs",
+    "install",
+    "masson",
+    "ssh",
+    "system",
+    "task"
+  ],
+  "license": "BSD-3-Clause",
+  "main": "./lib/index",
   "optionalDependencies": {
     "eco": "~1.1.0-rc-3"
   },
-  "contributors": [
-    {
-      "name": "David Worms",
-      "email": "david@adaltas.com"
-    }
-  ],
-  "main": "./lib/index",
-  "engines": {
-    "node": ">= 0.6.0"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wdavidw/node-mecano"
   },
   "scripts": {
     "coffee": "./node_modules/.bin/coffee -b -o lib src",
