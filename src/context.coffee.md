@@ -316,6 +316,9 @@
             do_next = ([err]) ->
               options.handler = options_handler
               options.callback = options_callback
+              if err and err not instanceof Error
+                err = Error 'First argument not a valid error' 
+                arguments[0][0] = err
               options.log message: err.message, level: 'ERROR', module: 'mecano' if err
               if err and options.attempt < options.retry - 1
                 options.log message: "Retry on error, attempt #{options.attempt+1}", level: 'WARN', module: 'mecano'

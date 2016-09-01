@@ -92,6 +92,28 @@ describe 'options "handler"', ->
         err.message.should.eql 'Catchme'
         next()
 
+    it 'pass an error as first argument', (next) ->
+      mecano()
+      .call (_, callback) ->
+        setImmediate ->
+         callback Error 'Catchme'
+      , (err, written) ->
+        err.message.should.eql 'Catchme'
+      .then (err, changed) ->
+        err.message.should.eql 'Catchme'
+        next()
+
+    it 'enforce a valid error as first argument', (next) ->
+      mecano()
+      .call (_, callback) ->
+        setImmediate ->
+         callback {message: 'not a valid error'}
+      , (err, written) ->
+        err.message.should.eql 'First argument not a valid error'
+      .then (err, changed) ->
+        err.message.should.eql 'First argument not a valid error'
+        next()
+
     it 'handler called multiple times', (next) ->
       mecano
       .call
