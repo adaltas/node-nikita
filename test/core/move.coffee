@@ -53,7 +53,7 @@ describe 'move', ->
   they 'overwrite a file', (ssh, next) ->
     mecano
       ssh: ssh
-    .write [
+    .file [
       content: "hello"
       target: "#{scratch}/src1.txt"
     ,
@@ -85,7 +85,7 @@ describe 'move', ->
   they 'force bypass checksum comparison', (ssh, next) ->
     mecano
       ssh: ssh
-    .write [
+    .file [
       content: "hello"
       target: "#{scratch}/src.txt"
     ,
@@ -99,6 +99,3 @@ describe 'move', ->
     , (err, moved) ->
       moved.should.be.true()
     .then next
-
-
-

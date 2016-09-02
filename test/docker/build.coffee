@@ -67,7 +67,7 @@ describe 'docker build', ->
       docker: config.docker
     .docker.rmi
       image: 'mecano/should_exists_3'
-    .write
+    .file
       target: "#{scratch}/Dockerfile"
       content: """
       FROM scratch
@@ -88,7 +88,7 @@ describe 'docker build', ->
       docker: config.docker
     .docker.rmi
       image: 'mecano/should_exists_3'
-    .write
+    .file
       content: "FROM scratch\nCMD ['echo \"hello build from Dockerfile #{Date.now()}\"']"
       target: "#{scratch}/mecano_Dockerfile"
     .docker.build
@@ -119,7 +119,7 @@ describe 'docker build', ->
       docker: config.docker
     .docker.rmi
       image: 'mecano/should_exists_5'
-    .write
+    .file
       target: "#{scratch}/mecano_Dockerfile"
       content: """
       FROM scratch

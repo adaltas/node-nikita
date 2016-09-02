@@ -11,10 +11,10 @@ describe 'api promise', ->
 
     it 'works', (next) ->
       mecano
-      .write
+      .file
         target: "#{scratch}/file_1"
         content: 'abc'
-      .write
+      .file
         target: "#{scratch}/file_1"
         content: 'def'
         append: true
@@ -28,10 +28,10 @@ describe 'api promise', ->
 
     it 'works', (next) ->
       mecano({})
-      .write
+      .file
         target: "#{scratch}/file_1"
         content: 'abc'
-      .write
+      .file
         target: "#{scratch}/file_1"
         content: 'def'
         append: true
@@ -45,10 +45,10 @@ describe 'api promise', ->
       logs = []
       mecano
       .on 'text', (log) -> logs.push log
-      .write
+      .file
         target: "#{scratch}/file_1"
         content: 'abc'
-      .write
+      .file
         target: "#{scratch}/file_1"
         content: 'def'
         append: true

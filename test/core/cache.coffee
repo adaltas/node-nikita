@@ -74,10 +74,10 @@ describe 'cache', ->
         mecano
           ssh: ssh
         .on 'text', (log) -> logs.push "[#{log.level}] #{log.message}"
-        .write
+        .file
           target: "#{scratch}/source"
           content: "okay"
-        .write
+        .file
           target: "#{scratch}/target"
           content: "okay"
         # In http mode, md5 value will not be calculated from source
@@ -136,10 +136,10 @@ describe 'cache', ->
         mecano
           ssh: ssh
         .on 'text', (log) -> logs.push "[#{log.level}] #{log.message}"
-        .write
+        .file
           target: "#{scratch}/source"
           content: "okay"
-        .write
+        .file
           target: "#{scratch}/target"
           content: "okay"
         # In file mode, md5 value will be calculated from source

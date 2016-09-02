@@ -5,7 +5,7 @@
 Mecano gather a set of functions usually used during system deployment.
 Documentation is available on the [project website][mecano].
 
-Functions include "chmod", "chown", "copy", "download", "execute", "extract", "git", "ini", "krb5_ktadd", "krb5_addprinc", "krb5_delprinc", "ldap_acl", "ldap_index", "ldap_schema", "link", "mkdir", "move", "remove", "render", "service", "touch", "upload" and "write". They all share common usages and philosophies:   
+Functions include "chmod", "chown", "copy", "download", "execute", "extract", "git", "ini", "krb5_ktadd", "krb5_addprinc", "krb5_delprinc", "ldap_acl", "ldap_index", "ldap_schema", "link", "mkdir", "move", "remove", "render", "service", "touch", "upload" and "file". They all share common usages and philosophies:   
 
 *   Run seamlessly both locally and remotely over SSH.   
 *   Each action report if it had an effect.   

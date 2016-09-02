@@ -17,10 +17,10 @@ describe 'wait exist', ->
       status.should.be.false()
     .call ->
       setTimeout ->
-        fs.mkdir ssh, "#{scratch}/a_file", -> # ok
+        fs.mkdir ssh, "#{scratch}/a_dir", -> # ok
       , 100
     .wait.exist
-      target: "#{scratch}/a_file"
+      target: "#{scratch}/a_dir"
       interval: 60
     , (err, status) ->
       status.should.be.true()

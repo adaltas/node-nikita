@@ -76,7 +76,7 @@ describe 'copy', ->
       source = "#{__dirname}/../resources/a_dir/a_file"
       target = "#{scratch}/test_this_file"
       mecano
-      .write
+      .file
         ssh: ssh
         content: 'Hello you'
         target: target
@@ -102,7 +102,7 @@ describe 'copy', ->
     they 'change permissions', (ssh, next) ->
       source = "#{__dirname}/../resources/a_dir/a_file"
       target = "#{scratch}/test_this_file"
-      mecano.write
+      mecano.file
         ssh: ssh
         content: 'Hello you'
         target: target
@@ -130,7 +130,7 @@ describe 'copy', ->
 
     they 'handle hidden files', (ssh, next) ->
       mecano
-      .write
+      .file
         ssh: ssh
         content: 'hello'
         target: "#{scratch}/.a_empty_file"
@@ -150,7 +150,7 @@ describe 'copy', ->
     they 'file into file', (ssh, next) ->
       mecano
         ssh: ssh
-      .write
+      .file
         content: 'hello'
         target: "#{scratch}/org_file"
       .link
@@ -169,7 +169,7 @@ describe 'copy', ->
     they 'file parent dir', (ssh, next) ->
       mecano
         ssh: ssh
-      .write
+      .file
         content: 'hello'
         target: "#{scratch}/source/org_file"
       , (err) ->

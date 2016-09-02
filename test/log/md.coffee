@@ -15,7 +15,7 @@ describe 'log md', ->
     .log.md basedir: scratch
     .call (options) ->
       options.log 'ok'
-    .write.assert
+    .file.assert
       source: "#{scratch}/localhost.log"
       content: "ok\n"
       log: false
@@ -29,7 +29,7 @@ describe 'log md', ->
     .log.md basedir: scratch
     .call (options) ->
       options.log message: 'ok'
-    .write.assert
+    .file.assert
       source: "#{scratch}/localhost.log"
       content: "ok\n"
       log: false
@@ -43,7 +43,7 @@ describe 'log md', ->
     .log.md basedir: scratch
     .call (options) ->
       options.log message: 'ok', module: 'mecano/test/log/md'
-    .write.assert
+    .file.assert
       source: "#{scratch}/localhost.log"
       content: "ok (INFO, written by mecano/test/log/md)\n"
       log: false
@@ -60,7 +60,7 @@ describe 'log md', ->
       .call (options) ->
         options.log message: 'this is a one line output', type: 'stdout_stream'
         options.log message: null, type: 'stdout_stream'
-      .write.assert
+      .file.assert
         source: "#{scratch}/localhost.log"
         content: '\n```stdout\nthis is a one line output\n```\n\n'
         log: false

@@ -20,7 +20,7 @@ describe 'touch', ->
       target: "#{scratch}/a_file"
     , (err, status) ->
       status.should.be.false() unless err
-    .write.assert
+    .file.assert
       target: "#{scratch}/a_file"
       content: ''
     .then next
@@ -32,7 +32,7 @@ describe 'touch', ->
       status.should.be.true() unless err
     .touch "#{scratch}/a_file", (err, status) ->
       status.should.be.false() unless err
-    .write.assert
+    .file.assert
       target: "#{scratch}/a_file"
       content: ''
     .then next
@@ -45,10 +45,10 @@ describe 'touch', ->
       "#{scratch}/file_2"
     ], (err, status) ->
       status.should.be.true() unless err
-    .write.assert
+    .file.assert
       target: "#{scratch}/file_1"
       content: ''
-    .write.assert
+    .file.assert
       target: "#{scratch}/file_2"
       content: ''
     .then next

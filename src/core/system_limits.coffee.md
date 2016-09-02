@@ -212,7 +212,7 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
               replace: "#{options.user}    -    #{opt}   #{options[opt]}"
               append: true
         return false
-      .write
+      .file
         target: options.target
         write: write
         eof: true

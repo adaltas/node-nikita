@@ -10,7 +10,7 @@ describe 'write.ini', ->
   scratch = test.scratch @
 
   they 'stringify an object', (ssh, next) ->
-    mecano.write.ini
+    mecano.file.ini
       ssh: ssh
       content: user: preference: color: 'rouge'
       target: "#{scratch}/user.ini"
@@ -23,7 +23,7 @@ describe 'write.ini', ->
         next()
 
   they 'stringify an object and with custom separator', (ssh, next) ->
-    mecano.write.ini
+    mecano.file.ini
       ssh: ssh
       content: user: preference: color: 'rouge'
       target: "#{scratch}/user.ini"
@@ -40,7 +40,7 @@ describe 'write.ini', ->
     content = '[user.preference]\nlanguage = node\ncolor = rouge\n'
     fs.writeFile ssh, "#{scratch}/user.ini", content, (err) ->
       return next err if err
-      mecano.write.ini
+      mecano.file.ini
         ssh: ssh
         content: user: preference: color: 'violet'
         target: "#{scratch}/user.ini"
@@ -54,7 +54,7 @@ describe 'write.ini', ->
           next()
 
   they 'discard undefined and null', (ssh, next) ->
-    mecano.write.ini
+    mecano.file.ini
       ssh: ssh
       content: user: preference: color: 'violet', age: undefined, gender: null
       target: "#{scratch}/user.ini"
@@ -71,7 +71,7 @@ describe 'write.ini', ->
     content = '[user.preference]\nlanguage = node\ncolor = rouge\n'
     fs.writeFile ssh, "#{scratch}/user.ini", content, (err) ->
       return next err if err
-      mecano.write.ini
+      mecano.file.ini
         ssh: ssh
         content: user: preference: color: null
         target: "#{scratch}/user.ini"
@@ -88,7 +88,7 @@ describe 'write.ini', ->
     content = '[user.preference]\nlanguage = node\ncolor = rouge\n'
     fs.writeFile ssh, "#{scratch}/user.ini", content, (err) ->
       return next err if err
-      mecano.write.ini
+      mecano.file.ini
         ssh: ssh
         content: user: preference: color: undefined
         target: "#{scratch}/user.ini"
@@ -99,7 +99,7 @@ describe 'write.ini', ->
         next()
 
   they 'call stringify udf', (ssh, next) ->
-    mecano.write.ini
+    mecano.file.ini
       ssh: ssh
       content: user: preference: color: true
       stringify: misc.ini.stringify_square_then_curly

@@ -137,7 +137,7 @@ describe 'download file', ->
         cache_dir: "#{scratch}/cache_dir"
       , (err, status) ->
         status.should.be.false() unless err
-      .write
+      .file
         content: 'abc'
         target: "#{scratch}/download_test"
       .download
@@ -156,7 +156,7 @@ describe 'download file', ->
       target = "#{scratch}/download"
       mecano
         ssh: ssh
-      .write
+      .file
         target: "#{scratch}/a_file"
         content: 'okay'
       .download
@@ -184,7 +184,7 @@ describe 'download file', ->
       mecano
         ssh: ssh
       .on 'text', (log) -> logs.push "[#{log.level}] #{log.message}"
-      .write
+      .file
         target: "#{scratch}/source"
         content: "okay"
       .download

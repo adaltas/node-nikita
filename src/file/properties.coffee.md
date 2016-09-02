@@ -1,5 +1,5 @@
 
-# `write_properties(options, callback)`
+# `file.properties(options, callback)`
 
 Write a file in the Java properties format.
 
@@ -30,16 +30,16 @@ Write a file in the Java properties format.
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering write_properties", level: 'DEBUG', module: 'mecano/lib/write_properties'
+      options.log message: "Entering file.ini", level: 'DEBUG', module: 'mecano/lib/file.ini'
       throw Error "Missing argument options.target" unless options.target
       options.separator ?= '='
       options.content ?= {}
       properties = if options.merge then {} else options.content
-      options.log message: "Merging \"#{if options.merge then 'true' else 'false'}\"", level: 'DEBUG', module: 'mecano/lib/write_properties'
+      options.log message: "Merging \"#{if options.merge then 'true' else 'false'}\"", level: 'DEBUG', module: 'mecano/lib/file.ini'
       @call
         if: options.merge
         handler: (_, callback) ->
-          options.log message: "Reading target \"#{options.target}\"", level: 'DEBUG', module: 'mecano/lib/write_properties'
+          options.log message: "Reading target \"#{options.target}\"", level: 'DEBUG', module: 'mecano/lib/file.ini'
           fs.readFile options.ssh, options.target, 'utf8', (err, data) ->
             return callback err if err
             # Extract properties
@@ -61,7 +61,7 @@ Write a file in the Java properties format.
         data = for k, v of properties
           "#{k}#{options.separator}#{v}"
         data = data.join '\n'
-        @write
+        @file
           target: "#{options.target}"
           content: data
           backup: options.backup

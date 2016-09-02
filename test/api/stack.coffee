@@ -143,12 +143,11 @@ describe 'api stack', ->
 
     it 'catch err thrown callback', (next) ->
       mecano
-      .write
+      .file
         content: 'hello'
         target: "#{scratch}/a_file"
       , (err, written) ->
-        throw err if err
-        throw Error 'Catchme'
+        throw new Error 'Catchme' unless err
       .then (err, changed) ->
         err.message.should.eql 'Catchme'
         next()

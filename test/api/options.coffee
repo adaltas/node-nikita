@@ -31,7 +31,7 @@ describe 'api options', ->
     mecano
     .call [], (options, callback) ->
       callback null, true
-    .write []
+    .file []
     .then (err, status) ->
       status.should.be.false() unless err
       next err
@@ -40,7 +40,7 @@ describe 'api options', ->
     mecano
     .call [], (options) ->
       return true
-    .write []
+    .file []
     .then (err, status) ->
       status.should.be.false() unless err
       next err

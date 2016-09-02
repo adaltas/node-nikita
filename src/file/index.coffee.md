@@ -93,7 +93,7 @@ string value will be converted to a regular expression. For example the string
 ## Replacing part of a file using from and to markers
 
 ```js
-require('mecano').write({
+require('mecano').file({
   content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin',
   from: '# from\n',
   to: '# to',
@@ -107,7 +107,7 @@ require('mecano').write({
 ## Replacing a matched line by a string
 
 ```js
-require('mecano').write({
+require('mecano').file({
   content: 'email=david(at)adaltas(dot)com\nusername=root',
   match: /(username)=(.*)/,
   replace: '$1=david (was $2)',
@@ -120,7 +120,7 @@ require('mecano').write({
 ## Replacing part of a file using a regular expression
 
 ```js
-require('mecano').write({
+require('mecano').file({
   content: 'here we are\nlets try to replace that one\nyou coquin',
   match: /(.*try) (.*)/,
   replace: ['my friend, $1'],
@@ -133,7 +133,7 @@ require('mecano').write({
 ## Replacing with the global and multiple lines options
 
 ```js
-require('mecano').write({
+require('mecano').file({
   content: '#A config file\n#property=30\nproperty=10\n#End of Config',
   match: /^property=.*$/mg,
   replace: 'property=50',
@@ -146,7 +146,7 @@ require('mecano').write({
 ## Appending a line after each line containing "property"
 
 ```js
-require('mecano').write({
+require('mecano').file({
   content: '#A config file\n#property=30\nproperty=10\n#End of Config',
   match: /^.*comment.*$/mg,
   replace: '# comment',
@@ -160,7 +160,7 @@ require('mecano').write({
 ## Multiple transformations
 
 ```js
-require('mecano').write({
+require('mecano').file({
   content: 'username: me\nemail: my@email\nfriends: you',
   write: [
     {match: /^(username).*$/mg, replace: '$1: you'},
@@ -176,13 +176,13 @@ require('mecano').write({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering write", level: 'DEBUG', module: 'mecano/lib/write'
+      options.log message: "Entering file", level: 'DEBUG', module: 'mecano/lib/file'
       # Validate parameters
       return callback Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?
       return callback Error 'Define either source or content' if options.source and options.content
       return callback Error 'Missing target' unless options.target
-      options.log message: "Source is \"#{options.source}\"", level: 'DEBUG', module: 'mecano/lib/write'
-      options.log message: "Destination is \"#{options.target}\"", level: 'DEBUG', module: 'mecano/lib/write'
+      options.log message: "Source is \"#{options.source}\"", level: 'DEBUG', module: 'mecano/lib/file'
+      options.log message: "Destination is \"#{options.target}\"", level: 'DEBUG', module: 'mecano/lib/file'
       options.content = options.content.toString() if options.content and Buffer.isBuffer options.content
       options.diff ?= options.diff or !!options.stdout
       options.engine ?= 'nunjunks'
@@ -219,7 +219,7 @@ require('mecano').write({
         # Option "local" force to bypass the ssh
         # connection, use by the upload function
         source = options.source or options.target
-        options.log message: "Force local source is \"#{if options.local then 'true' else 'false'}\"", level: 'DEBUG', module: 'mecano/lib/write'
+        options.log message: "Force local source is \"#{if options.local then 'true' else 'false'}\"", level: 'DEBUG', module: 'mecano/lib/file'
         ssh = if options.local then null else options.ssh
         fs.exists ssh, source, (err, exists) ->
           return callback err if err
@@ -227,7 +227,7 @@ require('mecano').write({
             return callback new Error "Source does not exist: #{JSON.stringify options.source}" if options.source
             options.content = ''
             return callback()
-          options.log message: "Reading source", level: 'DEBUG', module: 'mecano/lib/write'
+          options.log message: "Reading source", level: 'DEBUG', module: 'mecano/lib/file'
           fs.readFile ssh, source, 'utf8', (err, src) ->
             return callback err if err
             options.content = src
@@ -237,32 +237,32 @@ require('mecano').write({
         # no need to test changes if target is a callback
         return callback() if typeof options.target is 'function'
         exists = ->
-          options.log message: "Stat target", level: 'DEBUG', module: 'mecano/lib/write'
+          options.log message: "Stat target", level: 'DEBUG', module: 'mecano/lib/file'
           fs.lstat options.ssh, options.target, (err, stat) ->
             return do_mkdir() if err?.code is 'ENOENT'
             return callback err if err
             targetStat = stat
             if stat.isDirectory()
               options.target = "#{options.target}/#{path.basename options.source}"
-              options.log message: "Destination is a directory and is now \"options.target\"", level: 'INFO', module: 'mecano/lib/write'
+              options.log message: "Destination is a directory and is now \"options.target\"", level: 'INFO', module: 'mecano/lib/file'
               # Destination is the parent directory, let's see if the file exist inside
               fs.stat options.ssh, options.target, (err, stat) ->
                 if err?.code is 'ENOENT'
-                  options.log message: "New target does not exist", level: 'INFO', module: 'mecano/lib/write'
+                  options.log message: "New target does not exist", level: 'INFO', module: 'mecano/lib/file'
                   return callback()
                 return callback err if err
                 return callback new Error "Destination is not a file: #{options.target}" unless stat.isFile()
-                options.log message: "New target exist", level: 'INFO', module: 'mecano/lib/write'
+                options.log message: "New target exist", level: 'INFO', module: 'mecano/lib/file'
                 targetStat = stat
                 do_read()
             else if stat.isSymbolicLink()
-              options.log message: "Destination is a symlink", level: 'INFO', module: 'mecano/lib/write'
+              options.log message: "Destination is a symlink", level: 'INFO', module: 'mecano/lib/file'
               return do_read() unless options.unlink
               fs.unlink options.ssh, options.target, (err, stat) ->
                 return callback err if err
                 callback() # Dont go to mkdir since parent dir exists
             else if stat.isFile()
-              options.log message: "Destination is a file", level: 'INFO', module: 'mecano/lib/write'
+              options.log message: "Destination is a file", level: 'INFO', module: 'mecano/lib/file'
               do_read()
             else
               callback Error "Invalid File Type Destination: #{options.target}"
@@ -278,7 +278,7 @@ require('mecano').write({
             return callback err if err
             callback()
         do_read = ->
-          options.log message: "Reading target", level: 'DEBUG', module: 'mecano/lib/write'
+          options.log message: "Reading target", level: 'DEBUG', module: 'mecano/lib/file'
           fs.readFile options.ssh, options.target, 'utf8', (err, dest) ->
             return callback err if err
             target = dest # only used by diff
@@ -289,13 +289,13 @@ require('mecano').write({
         string.render options if options.context?
       @call -> # skip_empty_lines
         return unless options.skip_empty_lines?
-        options.log message: "Skip empty lines", level: 'DEBUG', module: 'mecano/lib/write'
+        options.log message: "Skip empty lines", level: 'DEBUG', module: 'mecano/lib/file'
         options.content = options.content.replace /(\r\n|[\n\r\u0085\u2028\u2029])\s*(\r\n|[\n\r\u0085\u2028\u2029])/g, "$1"
       @call -> # replace_partial
         string.replace_partial options if options.write.length
       @call -> # eof
         return unless options.eof?
-        options.log message: "Checking option eof", level: 'DEBUG', module: 'mecano/lib/write'
+        options.log message: "Checking option eof", level: 'DEBUG', module: 'mecano/lib/file'
         if options.eof is true
           for char, i in options.content
             if char is '\r'
@@ -305,40 +305,40 @@ require('mecano').write({
               options.eof = char
               break;
           options.eof = '\n' if options.eof is true
-          options.log message: "Option eof is true, gessing as #{JSON.stringify options.eof}", level: 'INFO', module: 'mecano/lib/write'
+          options.log message: "Option eof is true, gessing as #{JSON.stringify options.eof}", level: 'INFO', module: 'mecano/lib/file'
         unless string.endsWith options.content, options.eof
-          options.log message: "Add eof", level: 'WARN', module: 'mecano/lib/write'
+          options.log message: "Add eof", level: 'WARN', module: 'mecano/lib/file'
           options.content += options.eof
       @call (_, callback) -> # diff
         return callback() if targetHash is string.hash options.content
-        options.log message: "File content has changed: #{options.target}", level: 'WARN', module: 'mecano/lib/write'
+        options.log message: "File content has changed: #{options.target}", level: 'WARN', module: 'mecano/lib/file'
         {raw, text} = diff target, options.content, options
         options.diff text, raw if typeof options.diff is 'function'
-        options.log message: text, type: 'diff', level: 'INFO', module: 'mecano/lib/write'
+        options.log message: text, type: 'diff', level: 'INFO', module: 'mecano/lib/file'
         callback null, true
       @call -> # backup
         return unless @status()
         return unless options.backup and targetHash
-        options.log message: "Create backup", level: 'INFO', module: 'mecano/lib/write'
+        options.log message: "Create backup", level: 'INFO', module: 'mecano/lib/file'
         backup = if typeof options.backup is 'string' then options.backup else ".#{Date.now()}"
         @copy
           ssh: options.ssh
           source: options.target
           target: "#{options.target}#{backup}"
-      @call (_, callback) -> # write
+      @call (_, callback) -> # file
         return callback() unless @status()
         if typeof options.target is 'function'
-          options.log message: "Write target with user function", level: 'INFO', module: 'mecano/lib/write'
+          options.log message: "Write target with user function", level: 'INFO', module: 'mecano/lib/file'
           options.target options.content
           return callback()
-        options.log message: "Write target", level: 'INFO', module: 'mecano/lib/write'
+        options.log message: "Write target", level: 'INFO', module: 'mecano/lib/file'
         options.flags ?= 'a' if options.append
         # Ownership and permission are also handled
         uid_gid options, (err) ->
           return callback err if err
           fs.writeFile options.ssh, options.target, options.content, options, (err) ->
             return callback err if err
-            options.log message: "File written", level: 'INFO', module: 'mecano/lib/write'
+            options.log message: "File written", level: 'INFO', module: 'mecano/lib/file'
             callback()
       @chown
         target: options.target

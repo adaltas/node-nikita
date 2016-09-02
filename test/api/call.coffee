@@ -161,7 +161,7 @@ describe 'api call', ->
     it 'in a user callback', (next) ->
       m = mecano
       .call (options, next) ->
-        @write
+        @file
           content: 'ok'
           target: "#{scratch}/a_file"
         , next
@@ -172,7 +172,7 @@ describe 'api call', ->
     it 'in then with changes', (next) ->
       m = mecano
       .call (options, next) ->
-        @write
+        @file
           content: 'ok'
           target: "#{scratch}/a_file"
         .then next
@@ -184,7 +184,7 @@ describe 'api call', ->
     it 'in then without changes', (next) ->
       m = mecano
       .call (options, next) ->
-        @write
+        @file
           content: 'ok'
           target: "#{scratch}/a_file"
           if_exists: "#{scratch}/a_file"

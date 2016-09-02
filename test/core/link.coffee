@@ -81,10 +81,10 @@ describe 'link', ->
   they 'should override invalid link', (ssh, next) ->
     mecano
       ssh: ssh
-    .write
+    .file
       target: "#{scratch}/test/invalid_file"
       content: 'error'
-    .write
+    .file
       target: "#{scratch}/test/valid_file"
       content: 'ok'
     .link

@@ -5,13 +5,13 @@ test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
 
-describe 'write assert', ->
+describe 'file.assert', ->
 
   scratch = test.scratch @
 
   they 'requires content', (ssh, next) ->
     mecano
-    .write.assert
+    .file.assert
       target: "#{scratch}/a_file"
     .then (err) ->
       err.message.should.eql "Required option 'content'"
@@ -19,7 +19,7 @@ describe 'write assert', ->
 
   they 'requires target', (ssh, next) ->
     mecano
-    .write.assert
+    .file.assert
       content: "are u here"
     .then (err) ->
       err.message.should.eql "Required option 'target'"
@@ -27,30 +27,30 @@ describe 'write assert', ->
 
   they 'content match', (ssh, next) ->
     mecano
-    .write
+    .file
       target: "#{scratch}/a_file"
       content: "are u here"
-    .write.assert
+    .file.assert
       target: "#{scratch}/a_file"
       content: "are u here"
     .then next
 
   they 'option source is alias of target', (ssh, next) ->
     mecano
-    .write
+    .file
       target: "#{scratch}/a_file"
       content: "are u here"
-    .write.assert
+    .file.assert
       source: "#{scratch}/a_file"
       content: "are u here"
     .then next
 
   they 'content dont match', (ssh, next) ->
     mecano
-    .write
+    .file
       target: "#{scratch}/a_file"
       content: "are u here"
-    .write.assert
+    .file.assert
       target: "#{scratch}/a_file"
       content: "are u sure"
     .then (err) ->
@@ -59,10 +59,10 @@ describe 'write assert', ->
 
   they 'send custom error message', (ssh, next) ->
     mecano
-    .write
+    .file
       target: "#{scratch}/a_file"
       content: "are u here"
-    .write.assert
+    .file.assert
       target: "#{scratch}/a_file"
       content: "are u sure"
       error: 'Got it'

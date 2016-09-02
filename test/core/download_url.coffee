@@ -125,7 +125,7 @@ describe 'download url', ->
       mecano
         ssh: ssh
       .on 'text', (log) -> logs.push "[#{log.level}] #{log.message}"
-      .write
+      .file
         content: "okay"
         target: "#{scratch}/target"
       .download
@@ -143,7 +143,7 @@ describe 'download url', ->
       mecano
         ssh: ssh
       .on 'text', (log) -> logs.push "[#{log.level}] #{log.message}"
-      .write
+      .file
         content: "not okay"
         target: "#{scratch}/target"
       .download

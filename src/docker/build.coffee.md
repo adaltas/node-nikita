@@ -165,7 +165,7 @@ mecano.docker.build({
       else
         options.log message: "Building from CWD", level: 'INFO', module: 'mecano/docker/build'
         cmd += ' .'
-      @write
+      @file
         if: options.content
         content: options.content
         source: source

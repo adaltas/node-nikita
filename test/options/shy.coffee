@@ -9,11 +9,11 @@ describe 'options "shy"', ->
 
   it 'dont alter status', (next) ->
     mecano
-    .write
+    .file
       target: "#{scratch}/file_1"
       content: 'abc'
       shy: true
-    .write
+    .file
       target: "#{scratch}/file_1"
       content: 'abc'
     .then (err, status) ->
@@ -22,7 +22,7 @@ describe 'options "shy"', ->
 
   it 'callback receive status', (next) ->
     mecano
-    .write
+    .file
       target: "#{scratch}/file_1"
       content: 'abc'
       shy: true
@@ -35,7 +35,7 @@ describe 'options "shy"', ->
   it 'dont alter status', (next) ->
     mecano
     .call ->
-      @write
+      @file
         target: "#{scratch}/file_1"
         content: 'abc'
         shy: true
@@ -46,7 +46,7 @@ describe 'options "shy"', ->
   it 'array options', (next) ->
     count = 0
     mecano
-    .write [
+    .file [
       target: "#{scratch}/file_1"
       content: 'abc'
       shy: true
@@ -61,7 +61,7 @@ describe 'options "shy"', ->
       count++
     .then (err, status) ->
       status.should.be.false()
-    .write [
+    .file [
       target: "#{scratch}/file_2"
       content: 'abc'
       shy: false

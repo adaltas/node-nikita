@@ -7,8 +7,9 @@ http = require 'http'
 describe 'wait connect', ->
 
   scratch = test.scratch @
+  port = 12345
   
-  server = (port=12345) ->
+  server = (port) ->
     _ = null
     listen: (callback) ->
       _ = http.createServer (req, res) ->
@@ -21,14 +22,15 @@ describe 'wait connect', ->
   describe 'connection', ->
 
     they 'a single host and a single port', (ssh, next) ->
+      port = port++
       mecano
         ssh: ssh
-        server1: server 12345
+        server1: server port
       .call ->
         setTimeout @options.server1.listen, 100
       .wait.connect
         host: 'localhost'
-        port: 12345
+        port: port
       , (err, status) ->
         status.should.be.true()
       .call  (_, callback) ->
@@ -36,18 +38,20 @@ describe 'wait connect', ->
       .then next
 
     they 'server object', (ssh, next) ->
+      port1 = port++
+      port2 = port++
       mecano
         ssh: ssh
-        server1: server 12345
-        server2: server 12346
+        server1: server port1
+        server2: server port2
       .call -> setTimeout @options.server1.listen, 100
       .call -> setTimeout @options.server2.listen, 100
       .wait.connect
-        server: host: 'localhost', port: 12345
+        server: host: 'localhost', port: port1
       , (err, status) ->
         status.should.be.true()
       .wait.connect
-        server: host: 'localhost', port: [12345, 12346]
+        server: host: 'localhost', port: [port1, port2]
       , (err, status) ->
         status.should.be.false()
       .call  (_, callback) -> @options.server1.close callback
@@ -56,8 +60,8 @@ describe 'wait connect', ->
       .call -> setTimeout @options.server2.listen, 100
       .wait.connect
         server: [
-          [{host: 'localhost', port: 12345}]
-          [{host: 'localhost', port: 12346}]
+          [{host: 'localhost', port: port1}]
+          [{host: 'localhost', port: port2}]
         ]
       , (err, status) ->
         status.should.be.true()
@@ -66,13 +70,14 @@ describe 'wait connect', ->
       .then next
 
     they 'server string', (ssh, next) ->
+      port = port++
       mecano
         ssh: ssh
-        server1: server 12345
+        server1: server port
       .call ->
         setTimeout @options.server1.listen, 100
       .wait.connect
-        server: "localhost:12345"
+        server: "localhost:#{port}"
       , (err, status) ->
         status.should.be.true()
       .call  (_, callback) ->
@@ -80,14 +85,15 @@ describe 'wait connect', ->
       .then next
 
     they 'multiple connection', (ssh, next) ->
+      port = port++
       mecano
         ssh: ssh
-        server1: server 12345
+        server1: server port
       .call ->
         setTimeout @options.server1.listen, 200
       .wait.connect
         servers: for i in [0...12]
-          {host: 'localhost', port: 12345}
+          {host: 'localhost', port: port}
       , (err, status) ->
         status.should.be.true()
       .call  (_, callback) ->
@@ -97,15 +103,16 @@ describe 'wait connect', ->
   describe 'options', ->
 
     they 'test status', (ssh, next) ->
+      port = port++
       mecano
         ssh: ssh
-        server1: server 12345
+        server1: server port
       # Status false
       .call (_, callback) ->
         @options.server1.listen callback
       .wait.connect
         host: 'localhost'
-        port: 12345
+        port: port
       , (err, status) ->
         status.should.be.false()
       .call  (_, callback) ->
@@ -115,7 +122,7 @@ describe 'wait connect', ->
         setTimeout @options.server1.listen, 100
       .wait.connect
         host: 'localhost'
-        port: 12345
+        port: port
       , (err, status) ->
         status.should.be.true()
       .call  (_, callback) ->
@@ -123,22 +130,25 @@ describe 'wait connect', ->
       .then next
 
     they 'quorum true', (ssh, next) ->
+      port1 = port++
+      port2 = port++
+      port3 = port++
       mecano
         ssh: ssh
-        server1: server 12345
-        server2: server 12346
+        server1: server port1
+        server2: server port2
       .call ->
         setTimeout @options.server1.listen, 100
       .call ->
         setTimeout @options.server2.listen, 100
       .wait.connect
         servers: [
-          { host: 'localhost', port: 12345 }
-          { host: 'localhost', port: 12346 }
-          { host: 'localhost', port: 12347 }
+          { host: 'localhost', port: port1 }
+          { host: 'localhost', port: port2 }
+          { host: 'localhost', port: port3 }
         ]
         quorum: true
-        interval: 1000
+        interval: 500
       , (err, status) ->
         status.should.be.true()
       .call (_, callback) ->
@@ -148,22 +158,25 @@ describe 'wait connect', ->
       .then next
 
     they 'quorum number', (ssh, next) ->
+      port1 = port++
+      port2 = port++
+      port3 = port++
       mecano
         ssh: ssh
-        server1: server 12345
-        server2: server 12346
+        server1: server port1
+        server2: server port2
       .call (_, callback) ->
         @options.server1.listen callback
       .call (_, callback) ->
         @options.server2.listen callback
       .wait.connect
         servers: [
-          { host: 'localhost', port: 12345 }
-          { host: 'localhost', port: 12346 }
-          { host: 'localhost', port: 12347 }
+          { host: 'localhost', port: port1 }
+          { host: 'localhost', port: port2 }
+          { host: 'localhost', port: port3 }
         ]
         quorum: 2
-        interval: 1000
+        interval: 500
       , (err, status) ->
         status.should.be.true()
       .call  (_, callback) ->
@@ -175,11 +188,12 @@ describe 'wait connect', ->
   describe 'options', ->
     
     they 'validate host', (ssh, next) ->
+      port = port++
       mecano
         ssh: ssh
       .wait.connect
         servers: [
-          { host: undefined, port: 12345 }
+          { host: undefined, port: port }
         ]
         relax: true
       , (err, status) ->

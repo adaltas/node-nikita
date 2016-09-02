@@ -89,7 +89,7 @@ require('mecano').ldap.schema({
           ssh: options.ssh
         .call ->
           options.log? 'Prepare configuration'
-        .write
+        .file
           content: "include #{schema}"
           target: conf
           ssh: options.ssh
@@ -115,7 +115,7 @@ require('mecano').ldap.schema({
           do_configure()
       do_configure = =>
         options.log? 'Prepare ldif'
-        @write
+        @file
           target: "#{ldif}/cn=config/cn=schema/cn=#{options.name}.ldif"
           write: [
             match: /^dn: cn.*$/mg

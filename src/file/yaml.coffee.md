@@ -1,4 +1,4 @@
-# `write_yaml(options, callback)`
+# `file.yaml(options, callback)`
 
 Write an object serialized in YAML format. Note, we are internally using the [js-yaml] module.
 However, there is a subtile difference. Any key provided with value of
@@ -6,7 +6,7 @@ However, there is a subtile difference. Any key provided with value of
 prowerfull and tricky: the original value will be kept if `undefined` is
 provided while the value will be removed if `null` is provided.
 
-The `write_yaml` function rely on the `write` function and accept all of its
+The `file.yaml` function rely on the `file` function and accept all of its
 options. It introduces the `merge` option which instruct to read the
 target file if it exists and merge its parsed object with the one
 provided in the `content` option.
@@ -66,7 +66,7 @@ provided in the `content` option.
 ## Example
 
 ```js
-require('mecano').write_yaml({
+require('mecano').file.yaml({
   content: {
     'my_key': 'my value'
   },
@@ -80,7 +80,7 @@ require('mecano').write_yaml({
 
     module.exports = (options, callback) ->
       options.line_width ?= 160
-      options.log message: "Entering write_yaml", level: 'DEBUG', module: 'mecano/lib/write'
+      options.log message: "Entering file.yaml", level: 'DEBUG', module: 'mecano/lib/file/yaml'
       {merge, target, content, ssh} = options
       options.clean ?= true
       # Validate parameters
@@ -88,29 +88,29 @@ require('mecano').write_yaml({
       return callback Error 'Missing target' unless target
       # Start real work
       do_get = ->
-        return do_write() unless merge
-        options.log message: "Get content for merge", level: 'DEBUG', module: 'mecano/lib/write_yaml'
+        return do_file() unless merge
+        options.log message: "Get content for merge", level: 'DEBUG', module: 'mecano/lib/file/yaml'
         fs.exists ssh, target, (err, exists) ->
           return callback err if err
-          return do_write() unless exists
+          return do_file() unless exists
           fs.readFile ssh, target, 'ascii', (err, c) ->
             return callback err if err and err.code isnt 'ENOENT'
             try
               yaml.safeLoadAll c, (data) ->
                 data = misc.yaml.clean data, content, true
                 options.content = misc.yaml.merge data, content
-                do_write()
+                do_file()
             catch error
               return callback error
-      do_write = =>
+      do_file = =>
         options.indent ?= 2
         if options.clean
-          options.log message: "Clean content", level: 'INFO', module: 'mecano/lib/write_yaml'
+          options.log message: "Clean content", level: 'INFO', module: 'mecano/lib/file/yaml'
           misc.ini.clean content
-        options.log message: "Serialize content", level: 'DEBUG', module: 'mecano/lib/write_yaml'
+        options.log message: "Serialize content", level: 'DEBUG', module: 'mecano/lib/file/yaml'
         try
           options.content = yaml.safeDump options.content, noRefs:true, lineWidth: options.line_width
-          @write options, (err, written) ->
+          @file options, (err, written) ->
             callback err, written
       do_get()
 

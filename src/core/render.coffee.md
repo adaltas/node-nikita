@@ -82,22 +82,22 @@ require('mecano').render({
       return callback new Error 'Missing target' unless options.target
       # Start real work
       do_read_source = ->
-        return do_write() unless options.source
+        return do_file() unless options.source
         ssh = if options.local then null else options.ssh
         fs.exists ssh, options.source, (err, exists) ->
           return callback new Error "Invalid source, got #{JSON.stringify(options.source)}" unless exists
           fs.readFile ssh, options.source, 'utf8', (err, content) ->
             return callback err if err
             options.content = content
-            do_write()
-      do_write = =>
+            do_file()
+      do_file = =>
         if not options.engine and options.source
           extension = path.extname options.source
           switch extension
             when '.js2' then options.engine = 'nunjunks'
             when '.eco' then options.engine = 'eco'
         options.source = null
-        @write(options).then callback
+        @file(options).then callback
       do_read_source()
 
 ## Dependencies

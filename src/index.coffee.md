@@ -132,12 +132,12 @@ functions share a common API with flexible options.
         connect: '': require './wait/connect'
         execute: '': require './wait/execute'
         exist: '': require './wait/exist'
-      write:
-        '': require './write'
-        assert: require './write/assert'
-        ini: require './write/ini'
-        properties: require './write/properties'
-        yaml: require './write/yaml'
+      file:
+        '': require './file'
+        assert: require './file/assert'
+        ini: require './file/ini'
+        properties: require './file/properties'
+        yaml: require './file/yaml'
       # Backward compatibility
       cron_add: require './cron/add'
       cron_remove: require './cron/remove'
@@ -182,7 +182,7 @@ functions share a common API with flexible options.
       wait_connect: require './wait/connect'
       wait_execute: require './wait/execute'
       wait_exist: require './wait/exist'
-      write_ini: require './write/ini'
-      write_properties: require './write/properties'
-      write_yaml: require './write/yaml'
+      write_ini: require './file/ini'
+      write_properties: require './file/properties'
+      write_yaml: require './file/yaml'
     

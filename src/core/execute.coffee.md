@@ -138,7 +138,7 @@ mecano.execute({
           options.target ?= "/tmp/mecano_#{string.hash options.cmd}"
           options.log message: 'Writing bash script to #{JSON.stringify options.target}', level: 'INFO'
           options.cmd = "su - #{options.uid} -c 'bash /tmp/mecano_#{string.hash options.cmd}'"
-          @write target: options.target
+          @file target: options.target
       # Execute
       @call (_, callback) ->
         child = exec options

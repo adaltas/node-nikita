@@ -57,7 +57,7 @@ Test if file exists.
 
 If not, write a new empty file.
 
-      @write
+      @file
         content: ''
         target: options.target
         unless: -> @status()
