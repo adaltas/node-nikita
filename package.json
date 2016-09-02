@@ -11,6 +11,14 @@
     {
       "name": "David Worms",
       "email": "david@adaltas.com"
+    },
+    {
+      "name": "Pierre Sauvage",
+      "email": "pierre@adaltas.com"
+    },
+    {
+      "name": "Lucas Bakalian",
+      "email": "lucas@adaltas.com"
     }
   ],
   "dependencies": {
