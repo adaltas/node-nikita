@@ -71,7 +71,7 @@ for engine, _ of config.db
         user: 'postgres_user_4'
         relax: true
       , (err, status) ->
-        err.message.should.eql 'User does not exists: postgres_user_4'
+        err.message.should.eql 'DB user does not exists: postgres_user_4'
       .db.database.remove
         database: 'postgres_db_4'
         always: true

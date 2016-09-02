@@ -90,7 +90,7 @@ npm test test/db/database.coffee
           port: options.port
           host: options.host
         , (err, exists) ->
-          throw Error "User does not exists: #{user}" if not err and not exists
+          throw Error "DB user does not exists: #{user}" if not err and not exists
         switch options.engine
           when 'mysql'
             cmd_grant_privileges = db.cmd options, database: "#{options.database}", "GRANT ALL PRIVILEGES ON #{options.database} TO '#{user}';" # FLUSH PRIVILEGES;
