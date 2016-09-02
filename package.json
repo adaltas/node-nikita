@@ -36,10 +36,10 @@
     "tilde-expansion": "~0.0.0"
   },
   "devDependencies": {
-    "coffee-script": ">=1.10.0",
-    "mocha": ">=2.4.5",
-    "should": ">=8.2.2",
-    "ssh2-they": ">=0.0.7"
+    "coffee-script": "~1.10.0",
+    "mocha": "~2.4.5",
+    "should": "~8.2.2",
+    "ssh2-they": "~0.0.7"
   },
   "engines": {
     "node": ">= 0.6.0"
