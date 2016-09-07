@@ -103,11 +103,12 @@ npm test test/db/database.coffee
           cmd: """
           if #{cmd_has_privileges}; then
             echo '[INFO] User already with privileges'
-          else
-            echo '[WARN] User privileges granted'
-            #{cmd_grant_privileges}
+            exit 3
           fi
+          echo '[WARN] User privileges granted'
+          #{cmd_grant_privileges}
           """
+          code_skipped: 3
         , (err, status, stdout, stderr) ->
           options.log message: "Privileges granted: to #{JSON.stringify user} on #{JSON.stringify options.database}", level: 'WARN', module: 'mecano/db/database' if status
 

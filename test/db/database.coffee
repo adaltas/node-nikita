@@ -34,48 +34,67 @@ for engine, _ of config.db
       .db.database.remove 'postgres_db_1'
       .then next
 
-    they 'add new database and add existing user to it', (ssh, next) ->
-      mecano
-        ssh: ssh
-        db: config.db[engine]
-      .db.database.remove 'postgres_db_3'
-      .db.user.remove 'postgres_user_3'
-      .db.user
-        username: 'postgres_user_3'
-        password: 'postgres_user_3'
-      .db.database
-        database: 'postgres_db_3'
-        user: 'postgres_user_3'
-      .execute
-        cmd: switch engine
-          when 'mysql' then db.cmd(config.db[engine], database: 'mysql', "SELECT user FROM db WHERE db='postgres_db_3';") + " | grep 'postgres_user_3'"
-          when 'postgres' then db.cmd(config.db[engine], database: 'postgres_db_3', '\\l') + " | egrep '^postgres_user_3='"
-      , (err, status) ->
-        status.should.be.true() unless err
-      .db.database.remove
-        database: 'postgres_db_3'
-        always: true
-      .db.user.remove
-        username: "postgres_user_3"
-        always: true
-      .then next
+    describe 'user', ->
 
-    they 'add new database and add not-existing user to it', (ssh, next) ->
-      mecano
-        ssh: ssh
-        db: config.db[engine]
-      .db.database.remove 'postgres_db_4'
-      .db.user.remove 'postgres_user_4'
-      .db.database
-        database: 'postgres_db_4'
-        user: 'postgres_user_4'
-        relax: true
-      , (err, status) ->
-        err.message.should.eql 'DB user does not exists: postgres_user_4'
-      .db.database.remove
-        database: 'postgres_db_4'
-        always: true
-      .db.user.remove
-        username: "postgres_user_4"
-        always: true
-      .then next
+      they 'which is existing', (ssh, next) ->
+        mecano
+          ssh: ssh
+          db: config.db[engine]
+        .db.database.remove 'postgres_db_3'
+        .db.user.remove 'postgres_user_3'
+        .db.user
+          username: 'postgres_user_3'
+          password: 'postgres_user_3'
+        .db.database
+          database: 'postgres_db_3'
+          user: 'postgres_user_3'
+        .execute
+          cmd: switch engine
+            when 'mysql' then db.cmd(config.db[engine], database: 'mysql', "SELECT user FROM db WHERE db='postgres_db_3';") + " | grep 'postgres_user_3'"
+            when 'postgres' then db.cmd(config.db[engine], database: 'postgres_db_3', '\\l') + " | egrep '^postgres_user_3='"
+        , (err, status) ->
+          status.should.be.true() unless err
+        .db.database.remove 'postgres_db_3'
+        .db.user.remove 'postgres_user_3'
+        .then next
+
+      they 'honors status', (ssh, next) ->
+        mecano
+          ssh: ssh
+          db: config.db[engine]
+        .db.database.remove 'postgres_db_3'
+        .db.user.remove 'postgres_user_3'
+        .db.user
+          username: 'postgres_user_3'
+          password: 'postgres_user_3'
+        .db.database
+          database: 'postgres_db_3'
+        .db.database
+          database: 'postgres_db_3'
+          user: 'postgres_user_3'
+        , (err, status) ->
+          status.should.be.true()
+        .db.database
+          database: 'postgres_db_3'
+          user: 'postgres_user_3'
+        , (err, status) ->
+          status.should.be.false()
+        .db.database.remove 'postgres_db_3'
+        .db.user.remove 'postgres_user_3'
+        .then next
+
+      they 'which is not existing', (ssh, next) ->
+        mecano
+          ssh: ssh
+          db: config.db[engine]
+        .db.database.remove 'postgres_db_4'
+        .db.user.remove 'postgres_user_4'
+        .db.database
+          database: 'postgres_db_4'
+          user: 'postgres_user_4'
+          relax: true
+        , (err, status) ->
+          err.message.should.eql 'DB user does not exists: postgres_user_4'
+        .db.database.remove 'postgres_db_4'
+        .db.user.remove 'postgres_user_4'
+        .then next
