@@ -136,6 +136,7 @@ functions share a common API with flexible options.
         '': require './file'
         assert: require './file/assert'
         ini: require './file/ini'
+        json: require './file/json'
         properties: require './file/properties'
         yaml: require './file/yaml'
       # Backward compatibility
