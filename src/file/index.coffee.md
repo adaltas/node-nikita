@@ -184,6 +184,7 @@ require('mecano').file({
       options.log message: "Source is \"#{options.source}\"", level: 'DEBUG', module: 'mecano/lib/file'
       options.log message: "Destination is \"#{options.target}\"", level: 'DEBUG', module: 'mecano/lib/file'
       options.content = options.content.toString() if options.content and Buffer.isBuffer options.content
+      options.content = options.content options if typeof options.content is 'function'
       options.diff ?= options.diff or !!options.stdout
       options.engine ?= 'nunjunks'
       options.unlink ?= false

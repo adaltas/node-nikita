@@ -30,6 +30,20 @@ describe 'file', ->
         fs.readFile ssh, "#{scratch}/file", 'utf8', (err, content) ->
           content.should.eql 'Hello'
           next()
+    they 'is a function', (ssh, next) ->
+      content = 'invalid'
+      mecano
+        ssh: ssh
+      .call ->
+        content = 'valid'
+      .file
+        target: "#{scratch}/file"
+        trigger: true
+        content: (options) -> content if options.trigger
+      .file.assert
+        target: "#{scratch}/file"
+        content: 'valid'
+      .then next
     
     they 'doesnt increment if target is same than generated content', (ssh, next) ->
       mecano
