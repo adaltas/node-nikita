@@ -438,6 +438,24 @@
         todos.push opts for opts in options
         setImmediate _run_ if todos.length is options.length # Activate the pump
         proxy
+      properties.each = get: -> ->
+        args = [].slice.call(arguments)
+        arg = args.shift()
+        if not arg? or typeof arg isnt 'object'
+          jump_to_error Error "Invalid Argument: first argument must be an array or an object to iterate, got #{JSON.stringify arg}"
+          return proxy
+        options = normalize_options args, 'call'
+        for opts in options
+          if Array.isArray arg
+            for key in arg
+              opts.key = key
+              @call opts
+          else
+            for key, value of arg
+              opts.key = key
+              opts.value = value
+              @call opts
+        proxy
       properties.before = get: -> ->
         arguments[0] = type: arguments[0] if typeof arguments[0] is 'string'
         options = normalize_options arguments, null, false
