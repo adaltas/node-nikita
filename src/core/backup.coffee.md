@@ -3,7 +3,7 @@
 
 Commons backup functions provided by backmeup. For additional information, please refer to the [official backmeup webpage][backmeup].
 
-## Backmeup Option properties
+## Options
 
 *   `name` (string)   
     backup name (MANDATORY)   

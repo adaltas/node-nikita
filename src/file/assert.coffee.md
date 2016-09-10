@@ -3,7 +3,7 @@
 
 Assert a provided text match the content of a text file.
 
-## Option properties
+## Options
 
 *   `content` (buffer, string)   
     Text to validate.   

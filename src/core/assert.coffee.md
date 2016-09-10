@@ -3,7 +3,7 @@
 
 A set of assertion tools.
 
-## Option properties
+## Options
 
 *   `status` (boolean)   
     Ensure the current status match the provided value.   

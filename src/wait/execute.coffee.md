@@ -30,6 +30,8 @@ require 'mecano'
   # Command succeed, the file "/tmp/sth" now exists
 ```
 
+## Source Code
+
     module.exports = (options, callback) ->
       modified = false
       # Validate parameters

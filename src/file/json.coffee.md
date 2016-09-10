@@ -1,14 +1,16 @@
 
 # `file.json(options, callback)`
 
-## 
+## Options
 
 ## Source Code
 
     module.exports = (options) ->
       options.content ?= {}
-      options.pretty ?= false
+      options.prettify ?= false
       options.pretty = 2 if options.pretty is true
+      options.transform ?= null
+      throw Error "Invalid options: \"transform\"" if options.transform and typeof options.transform isnt 'function'
       @call if: options.merge, (_, callback) ->
         fs.readFile options.ssh, options.target, 'utf8', (err, json) ->
           options.content = merge JSON.parse(json), options.content unless err
@@ -18,6 +20,8 @@
         fs.readFile ssh, options.source, 'utf8', (err, json) ->
           options.content = merge JSON.parse(json), options.content unless err
           callback err
+      @call if: options.transform, ->
+        options.content = options.transform options.content
       @file
         target: options.target
         content: -> JSON.stringify options.content, null, options.pretty

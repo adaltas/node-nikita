@@ -23,6 +23,8 @@ require 'mecano'
   # Command succeed, the file now exists
 ```
 
+## Source Code
+
     module.exports = (options, callback) ->
       modified = false
       # Validate parameters

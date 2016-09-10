@@ -3,7 +3,7 @@
 
 Write log to the host filesystem in CSV.
 
-Options include:
+## Options
 
 *   `archive` (boolean)   
     Save a copy of the previous logs inside a dedicated directory, default is
@@ -16,6 +16,8 @@ Options include:
     Name of the log file, contextually rendered with all options passed to
     the mustache templating engine. Default to "{{shortname}}.log", where 
     "shortname" is the ssh host or localhost.   
+
+## Source Code
 
     module.exports = ssh: null, handler: (options) ->
       stdouting = 0

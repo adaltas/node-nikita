@@ -28,7 +28,9 @@ Otherwise it will be set to "true".
 Status is set to "true" if the first connection attempt was a failure and the 
 connection finaly succeeded.
 
-Example:
+## Examples
+
+Wait for two domains on the same port.
 
 ```coffee
 require 'mecano'
@@ -39,6 +41,8 @@ require 'mecano'
   # Servers listening on port 80
 ```
 
+Wait for one domain on two diffents ports.
+
 ```coffee
 require 'mecano'
 .wait_connect
@@ -47,6 +51,8 @@ require 'mecano'
 .then (err, status) ->
   # Server listening on ports 80 and 443
 ```
+
+Wait for two domains on diffents ports.
 
 ```coffee
 require 'mecano'
@@ -58,6 +64,8 @@ require 'mecano'
 .then (err, status) ->
   # Servers listening
 ```
+
+## Source Code
 
     module.exports = (options) ->
       options.log message: "Entering wait for connection", level: 'DEBUG', module: 'mecano/wait/connect'

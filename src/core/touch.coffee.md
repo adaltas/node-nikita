@@ -7,7 +7,7 @@ Create a empty file if it does not yet exists.
 
 Internally, it delegates most of the work to the `mecano.write` module. It isn't
 yet a real `touch` implementation since it doesnt change the file time if it
-exists.
+exists. This is expected to change soon.
 
 ## Options
 

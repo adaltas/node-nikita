@@ -20,6 +20,8 @@ require 'mecano'
     throw Error 'TOO SOON!' if (Date.now() - before) < 5000
 ```
 
+## Source Code
+
     module.exports = (options, callback) ->
       options.time ?= options.argument
       return callback new Error "Missing time: #{JSON.stringify options.time}" unless options.time?

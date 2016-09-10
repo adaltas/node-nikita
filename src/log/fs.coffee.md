@@ -3,7 +3,7 @@
 
 Write log to the host filesystem in a user provided format.
 
-Options include:
+## Options
 
 *   `archive` (boolean)   
     Save a copy of the previous logs inside a dedicated directory, default is
@@ -18,6 +18,8 @@ Options include:
     "shortname" is the ssh host or localhost.   
 *   `serializer` (object)   
     TODO...
+
+## Source Code
 
     module.exports = ssh: null, handler: (options) ->
       # Normalize
