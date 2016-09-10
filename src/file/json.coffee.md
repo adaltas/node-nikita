@@ -7,7 +7,7 @@
 
     module.exports = (options) ->
       options.content ?= {}
-      options.prettify ?= false
+      options.pretty ?= false
       options.pretty = 2 if options.pretty is true
       options.transform ?= null
       throw Error "Invalid options: \"transform\"" if options.transform and typeof options.transform isnt 'function'

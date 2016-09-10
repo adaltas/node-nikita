@@ -77,3 +77,57 @@ describe 'file.json', ->
       target: "#{scratch}/target.json"
       content: '{"source":"srcval","target":"tarval","user":"usrval"}'
     .then next
+  
+  they 'transform', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .file
+      target: "#{scratch}/target.json"
+      content: '{"target":"transform","user":"overwrite"}'
+    .file.json
+      target: "#{scratch}/target.json"
+      content: 'user': 'transform'
+      merge: true
+      transform: (json) ->
+        json.target = "#{json.target} tarval"
+        json.user = "#{json.user} usrval"
+        json.transform = "tfmval"
+        json
+    , (err, status) ->
+      status.should.be.true() unless err
+    .file.assert
+      target: "#{scratch}/target.json"
+      content: '{"target":"transform tarval","user":"transform usrval","transform":"tfmval"}'
+    .then next
+  
+  they 'pretty', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .file.json
+      target: "#{scratch}/pretty.json"
+      content: 'user': 'preferences': 'language': 'french'
+      pretty: true
+    .file.assert
+      target: "#{scratch}/pretty.json"
+      content: '{\n  \"user\": {\n    \"preferences\": {\n      \"language\": \"french\"\n    }\n  }\n}'
+    .then next
+  
+  they 'pretty with user indentation', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .file.json
+      target: "#{scratch}/pretty_0.json"
+      content: 'user': 'preferences': 'language': 'french'
+      pretty: 0
+    .file.assert
+      target: "#{scratch}/pretty_0.json"
+      content: '{"user":{"preferences":{"language":"french"}}}'
+    .file.json
+      target: "#{scratch}/pretty_1.json"
+      content: 'user': 'preferences': 'language': 'french'
+      pretty: 1
+    .file.assert
+      target: "#{scratch}/pretty_1.json"
+      content: '{\n \"user\": {\n  \"preferences\": {\n   \"language\": \"french\"\n  }\n }\n}'
+    .then next
+    
