@@ -78,6 +78,20 @@ describe 'file.json', ->
       content: '{"source":"srcval","target":"tarval","user":"usrval"}'
     .then next
   
+  they 'merge with target not yet created', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .file.json
+      target: "#{scratch}/target.json"
+      content: 'user': 'usrval'
+      merge: true
+    , (err, status) ->
+      status.should.be.true() unless err
+    .file.assert
+      target: "#{scratch}/target.json"
+      content: '{"user":"usrval"}'
+    .then next
+  
   they 'transform', (ssh, next) ->
     mecano
       ssh: ssh

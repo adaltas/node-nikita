@@ -50,6 +50,7 @@ require('mecano')
       throw Error "Invalid options: \"transform\"" if options.transform and typeof options.transform isnt 'function'
       @call if: options.merge, (_, callback) ->
         fs.readFile options.ssh, options.target, 'utf8', (err, json) ->
+          return callback() if err?.code is 'ENOENT'
           options.content = merge JSON.parse(json), options.content unless err
           callback err
       @call if: options.source, (_, callback) ->
