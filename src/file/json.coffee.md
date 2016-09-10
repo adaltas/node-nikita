@@ -3,6 +3,43 @@
 
 ## Options
 
+*   `content` (javascript)    
+    The javascript code to stringify.   
+*   `pretty` (boolean | int)    
+    Prettify the JSON output, accept the number of spaces as an integer, default
+    to none if false or to 2 spaces indentation if true.   
+*   `source` (string)   
+    Path to a JSON file providing default values.
+*   `target` (string)   
+    Path to the destination file.
+*   `merge` (boolean)    
+    Merge the user content with the content of the destination file if it
+    exists.   
+*   `transform` (function)    
+    User provided function to modify the javascript before it is stringified
+    into JSON.   
+
+The properties "backup", "diff", "eof", "gid", "uid", "mode" will
+be passed to the `file` function.
+
+## Exemple
+
+Merge the destination file with user provided content.
+
+```javascript
+require('mecano')
+.file.json({
+  target: "/path/to/target.json",
+  content: { preferences: { colors: 'blue' } },
+  transform: function(data){
+    if(data.indexOf('red') < 0){ data.push('red'); }
+    return data;
+  },
+  merge: true,
+  pretty: true
+})
+```
+
 ## Source Code
 
     module.exports = (options) ->
