@@ -5,21 +5,23 @@ Create a empty file if it does not yet exists.
 
 ## Implementation details
 
-Internally, it delegates most of the work to the `mecano.write` module. It isn't
-yet a real `touch` implementation since it doesnt change the file time if it
-exists. This is expected to change soon.
+Status will only be true if the file was created.
 
 ## Options
 
-*   `target`   
-    File path where to write content to.   
+*   `atime` (Date|int)    
+    Access time, default to now.   
 *   `gid`   
     File group name or group id.   
-*   `uid`   
-    File user name or user id.   
 *   `mode`   
     File mode (permission and sticky bits), default to `0o0666`, in the form of
     `{mode: 0o0744}` or `{mode: "0744"}`.   
+*   `mtime` (Date|int)    
+    Modification time, default to now.   
+*   `target`   
+    File path where to write content to.   
+*   `uid`   
+    File user name or user id.   
 
 ## Callback Parameters
 
@@ -49,18 +51,30 @@ require('mecano').touch({
       
 Test if file exists.
 
-      @call shy: true, (_, callback) ->
+      @call (_, callback) ->
         options.log message: "Check if target exists \"#{options.target}\"", level: 'DEBUG', module: 'mecano/lib/touch'
         fs.exists options.ssh, options.target, (err, exists) ->
           options.log message: "Destination does not exists", level: 'INFO', module: 'mecano/lib/touch' if not err and not exists
-          return callback err, exists
+          return callback err, !exists
+
+If true, update access and modification time, status wont be affected
+
+      @call
+        unless: -> @status()
+        shy: true
+      , (_, callback) ->
+        options.atime ?= Date.now()
+        options.mtime ?= Date.now()
+        fs.futimes options.ssh, options.target, options.atime, options.mtime, (err) ->
+          options.log message: "Access and modification times updated", level: 'DEBUG', module: 'mecano/lib/touch' unless err
+          callback err
 
 If not, write a new empty file.
 
       @file
         content: ''
         target: options.target
-        unless: -> @status()
+        if: -> @status()
         mode: options.mode
         uid: options.uid
         gid: options.gid

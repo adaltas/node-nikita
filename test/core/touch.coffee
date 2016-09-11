@@ -77,4 +77,18 @@ describe 'touch', ->
         misc.mode.compare(stat.mode, 0o0700).should.true() unless err
         callback err
     .then next
+  
+  they 'modify time', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .touch "#{scratch}/a_file"
+    .call (_, callback) ->
+      fs.stat ssh, "#{scratch}/a_file", (err, stat) ->
+        callback err
+    .touch "#{scratch}/a_file"
+    .call (_, callback) ->
+      fs.stat ssh, "#{scratch}/a_file", (err, stat) ->
+        callback err
+    .then next
+    
       
