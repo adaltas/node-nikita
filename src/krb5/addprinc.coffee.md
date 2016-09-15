@@ -5,35 +5,24 @@ Create a new Kerberos principal with a password or an optional keytab.
 
 ## Options
 
-*   `kadmin_server`, `admin_server`
-    Address of the kadmin server; optional, use "kadmin.local" if missing.
-*   `kadmin_principal`
-    KAdmin principal name unless `kadmin.local` is used.
-*   `kadmin_password`
-    Password associated to the KAdmin principal.
-*   `principal`
-    Principal to be created.
-*   `password`
+*   `kadmin_server`, `admin_server`   
+    Address of the kadmin server; optional, use "kadmin.local" if missing.   
+*   `kadmin_principal`   
+    KAdmin principal name unless `kadmin.local` is used.   
+*   `kadmin_password`   
+    Password associated to the KAdmin principal.   
+*   `principal`   
+    Principal to be created.   
+*   `password`   
     Password associated to this principal; required if no randkey is
-    provided.
+    provided.   
 *   `password_sync`   
     Wether the password should be created if the principal already exists,
     default to "false".   
-*   `randkey`
-    Generate a random key; required if no password is provided.
-*   `keytab`
-    Path to the file storing key entries.
-*   `log`
-    Function called with a log related messages.
-*   `ssh` (object|ssh2)
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.
-*   `stdout` (stream.Writable)
-    Writable EventEmitter in which the standard output of executed commands will
-    be piped.
-*   `stderr` (stream.Writable)
-    Writable EventEmitter in which the standard error output of executed command
-    will be piped.
+*   `randkey`   
+    Generate a random key; required if no password is provided.   
+*   `keytab`   
+    Path to the file storing key entries.   
 
 ## Keytab example
 
