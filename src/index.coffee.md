@@ -107,6 +107,7 @@ functions share a common API with flexible options.
         addprinc: require './krb5/addprinc'
         delprinc: require './krb5/delprinc'
         ktadd: require './krb5/ktadd'
+        ticket: require './krb5/ticket'
       ldap:
         acl: require './ldap/acl'
         add: require './ldap/add'

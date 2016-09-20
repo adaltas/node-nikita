@@ -19,13 +19,13 @@ describe 'krb5.addprinc', ->
     .krb5.addprinc
       principal: "mecano@#{config.krb5.realm}"
       randkey: true
-    , (err, created) ->
-      created.should.be.true() unless err
+    , (err, status) ->
+      status.should.be.true() unless err
     .krb5.addprinc
       principal: "mecano@#{config.krb5.realm}"
       randkey: true
-    , (err, created) ->
-      created.should.be.false() unless err
+    , (err, status) ->
+      status.should.be.false() unless err
     .then next
 
   they 'create a new principal with a password', (ssh, next) ->
@@ -39,24 +39,24 @@ describe 'krb5.addprinc', ->
     .krb5.addprinc
       principal: "mecano@#{config.krb5.realm}"
       password: 'password1'
-    , (err, created) ->
-      created.should.be.true()
+    , (err, status) ->
+      status.should.be.true()
     .krb5.addprinc
       principal: "mecano@#{config.krb5.realm}"
       password: 'password2'
       password_sync: true
-    , (err, created) ->
-      created.should.be.true()
+    , (err, status) ->
+      status.should.be.true()
     .krb5.addprinc
       principal: "mecano@#{config.krb5.realm}"
       password: 'password2'
       password_sync: true
-    , (err, created) ->
-      created.should.be.false()
+    , (err, status) ->
+      status.should.be.false()
     .execute
       cmd: "klist"
       code_skipped: 1
-    , (err, executed, stdout, stderr) ->
+    , (err, status, stdout, stderr) ->
       stderr.should.match /^(.*)No credentials cache found(.*)/
     .then next
 
@@ -71,14 +71,14 @@ describe 'krb5.addprinc', ->
     .krb5.addprinc
       principal: "mecano@#{config.krb5.realm}"
       password: 'password1'
-    , (err, created) ->
-      created.should.be.true()
+    , (err, status) ->
+      status.should.be.true()
     .krb5.addprinc
       principal: "mecano@#{config.krb5.realm}"
       password: 'password2'
       password_sync: false # Default
-    , (err, created) ->
-      created.should.be.false()
+    , (err, status) ->
+      status.should.be.false()
     .execute
       cmd: "echo password1 | kinit mecano@#{config.krb5.realm}"
     .then next
@@ -121,14 +121,14 @@ describe 'krb5.addprinc', ->
       randkey: true
       keytab: '/etc/security/keytabs/user1.service.keytab'
     .krb5.addprinc krb5, user
-    , (err, created) ->
+    , (err, status) ->
       return next err if err  
-      created.should.be.true()
+      status.should.be.true()
       mecano
         ssh: ssh
       .execute
         cmd: "echo #{user.password} | kinit #{user.principal}"
-      , (err, executed, stdout) ->
+      , (err, status, stdout) ->
         return next err if err
-        executed.should.be.true()
+        status.should.be.true()
         next()
