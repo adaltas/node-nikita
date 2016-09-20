@@ -140,6 +140,6 @@ data-type[1]
 
 ## Dependencies
 
-    path= require 'path'
+    path = require 'path'
     misc = require '../misc'
     string = require '../misc/string'
