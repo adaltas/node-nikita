@@ -1,7 +1,7 @@
 
 # `assert(options)`
 
-Assert a provided text match the content of a text file.
+Assert a file exists or a provided text match the content of a text file.
 
 ## Options
 
@@ -36,15 +36,19 @@ mecano.assert({
     module.exports = (options) ->
       options.log message: "Entering assert", level: 'DEBUG', module: 'mecano/lib/assert'
       options.encoding ?= 'utf8'
+      options.target ?= options.argument
       options.target ?= options.source
-      throw Error "Required option 'content'" unless options.content?
-      throw Error "Required option 'target'" unless options.target
+      throw Error 'Missing option: "target"' unless options.target
       if typeof options.content is 'string'
         options.content = Buffer.from options.content, options.encoding
-      else unless Buffer.isBuffer otions.content
+      else if options.content? and not Buffer.isBuffer options.content
         throw Error "Invalid option 'content': expect string or buffer"
-      @call (_, callback) ->
-        fs.readFile options.target, (err, buffer) ->
+      @call unless: options.content?.toString(), (_, callback) ->
+        fs.exists options.ssh, options.target.toString(), (err, exists) ->
+          err = Error "File does not exists: #{JSON.stringify options.target}" unless exists
+          callback err
+      @call if: options.content?.toString(), (_, callback) ->
+        fs.readFile options.ssh, options.target, (err, buffer) ->
           unless err or buffer.equals options.content
             options.error ?= "Invalid content match: expected #{JSON.stringify options.content.toString()}, got #{JSON.stringify buffer.toString()}"
             err = Error options.error 
@@ -52,4 +56,4 @@ mecano.assert({
 
 ## Dependencies
 
-    fs = require 'fs'
+    fs = require 'ssh2-fs'

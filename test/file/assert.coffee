@@ -9,20 +9,25 @@ describe 'file.assert', ->
 
   scratch = test.scratch @
 
-  they 'requires content', (ssh, next) ->
+  they 'file doesnt not exist', (ssh, next) ->
     mecano
-    .file.assert
-      target: "#{scratch}/a_file"
+    .file.assert "#{scratch}/a_file"
     .then (err) ->
-      err.message.should.eql "Required option 'content'"
+      err.message.should.eql "File does not exists: \"#{scratch}/a_file\""
       next()
+
+  they 'file exists', (ssh, next) ->
+    mecano
+    .touch "#{scratch}/a_file"
+    .file.assert "#{scratch}/a_file"
+    .then next
 
   they 'requires target', (ssh, next) ->
     mecano
     .file.assert
       content: "are u here"
     .then (err) ->
-      err.message.should.eql "Required option 'target'"
+      err.message.should.eql 'Missing option: "target"'
       next()
 
   they 'content match', (ssh, next) ->
