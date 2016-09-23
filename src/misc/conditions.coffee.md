@@ -62,9 +62,9 @@ mecano.render({
                 return next err if err
                 ok = false unless is_ok
                 next()
-          else if type is 'string'
             else next Error "Invalid argument length, expecting 2 or less, got #{si.length}"
-            si = template si, options
+          else if type is 'string' or (type is 'object' and Buffer.isBuffer si)
+            si = template si.toString(), options
             ok = false if si.length is 0
             next()
           else
@@ -111,9 +111,9 @@ pass.
                 return next err if err
                 ok = false if is_ok
                 next()
-          else if type is 'string'
             else next Error "Invalid callback"
-            not_if = template not_if, options
+          else if type is 'string' or (type is 'object' and Buffer.isBuffer not_if)
+            not_if = template not_if.toString(), options
             ok = false if not_if.length isnt 0
             next()
           else
