@@ -43,11 +43,11 @@ mecano.assert({
         options.content = Buffer.from options.content, options.encoding
       else if options.content? and not Buffer.isBuffer options.content
         throw Error "Invalid option 'content': expect string or buffer"
-      @call unless: options.content?.toString(), (_, callback) ->
+      @call unless: options.content, (_, callback) ->
         fs.exists options.ssh, options.target.toString(), (err, exists) ->
           err = Error "File does not exists: #{JSON.stringify options.target}" unless exists
           callback err
-      @call if: options.content?.toString(), (_, callback) ->
+      @call if: options.content, (_, callback) ->
         fs.readFile options.ssh, options.target, (err, buffer) ->
           unless err or buffer.equals options.content
             options.error ?= "Invalid content match: expected #{JSON.stringify options.content.toString()}, got #{JSON.stringify buffer.toString()}"
