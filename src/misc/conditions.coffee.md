@@ -62,13 +62,13 @@ mecano.render({
                 return next err if err
                 ok = false unless is_ok
                 next()
-            else next new Error "Invalid argument length, expecting 2 or less, got #{si.length}"
           else if type is 'string'
+            else next Error "Invalid argument length, expecting 2 or less, got #{si.length}"
             si = template si, options
             ok = false if si.length is 0
             next()
           else
-            next new Error "Invalid condition type"
+            next Error "Invalid condition type: #{type}"
         .then (err) ->
           if err or not ok then skip(err) else succeed()
 
@@ -111,13 +111,13 @@ pass.
                 return next err if err
                 ok = false if is_ok
                 next()
-            else next new Error "Invalid callback"
           else if type is 'string'
+            else next Error "Invalid callback"
             not_if = template not_if, options
             ok = false if not_if.length isnt 0
             next()
           else
-            next new Error "Invalid condition type"
+            next Error "Invalid condition type"
         .then (err) ->
           if err or not ok then skip(err) else succeed()
 
@@ -252,7 +252,7 @@ exists otherwise the callback `skip` is called with an error.
         .call (should_not_exist, next) ->
           fs.exists options.ssh, should_not_exist, (err, exists) ->
             if exists
-            then next new Error "File does not exist: #{should_not_exist}"
+            then next Error "File does not exist: #{should_not_exist}"
             else next()
         .error skip
         .then -> succeed()
