@@ -24,6 +24,9 @@ RUN yum install -y openssh-server openssh-clients \
 # Generate server key
 && ssh-keygen -f /etc/ssh/ssh_host_rsa_key
 
+# Install Java
+RUN yum install -y java
+
 # Install Krb5 client
 RUN yum install -y krb5-workstation
 ADD ./krb5.conf /etc/krb5.conf
