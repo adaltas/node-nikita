@@ -16,7 +16,7 @@ describe 'download file', ->
       target = "#{scratch}/download_test"
       mecano
         ssh: ssh
-      .download
+      .file.download
         source: source
         target: target # Download a non existing file
       , (err, status) ->
@@ -26,7 +26,7 @@ describe 'download file', ->
         fs.readFile @options.ssh, target, 'ascii', (err, content) ->
           content.should.containEql 'yeah' unless err
           callback err
-      .download
+      .file.download
         source: source
         target: target # Download on an existing file
       , (err, status) ->
@@ -39,7 +39,7 @@ describe 'download file', ->
       # Download a non existing file
       mecano
         ssh: ssh
-      .download
+      .file.download
         source: source
         target: target
       , (err, status) ->
@@ -48,7 +48,7 @@ describe 'download file', ->
         fs.readFile @options.ssh, target, 'ascii', (err, content) ->
           content.should.containEql 'yeah' unless err
           callback err
-      .download # Download on an existing file
+      .file.download # Download on an existing file
         source: source
         target: target
       , (err, status) ->
@@ -60,7 +60,7 @@ describe 'download file', ->
       target = "#{scratch}/download_test"
       mecano
         ssh: ssh
-      .download
+      .file.download
         source: source
         target: target
         # shy: true
@@ -77,7 +77,7 @@ describe 'download file', ->
         ssh: ssh
       .mkdir
         target: target
-      .download
+      .file.download
         source: source
         target: target
       .call (_, callback) ->
@@ -91,7 +91,8 @@ describe 'download file', ->
     they 'validate md5', (ssh, next) ->
       source = "#{__dirname}/download.zip"
       target = "#{scratch}/download"
-      mecano.download
+      mecano
+      .file.download
         ssh: ssh
         source: source
         target: "#{scratch}/download_test"
@@ -101,9 +102,8 @@ describe 'download file', ->
       , (err, status) ->
         return next err if err
         status.should.be.true()
-        fs.exists null, "#{scratch}/cache_dir/#{path.basename source}", (err, exists) ->
-          exists.should.be.true() unless err
-          next err
+      .assert "#{scratch}/cache_dir/#{path.basename source}"
+      .then next
 
     they 'cache dir', (ssh, next) ->
       # Download a non existing file

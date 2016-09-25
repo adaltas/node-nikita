@@ -10,11 +10,11 @@ describe 'upload', ->
 
   scratch = test.scratch @
 
-  they 'file into a file', (ssh, next) ->
+  they.only 'file into a file', (ssh, next) ->
       return next() unless ssh
       mecano
         ssh: ssh
-      .upload
+      .file.upload
         source: "#{__filename}"
         target: "#{scratch}/#{path.basename __filename}"
       , (err, status) ->
@@ -23,7 +23,7 @@ describe 'upload', ->
         fs.stat null, "#{scratch}/#{path.basename __filename}", (err, exist) ->
           exist.isFile().should.be.true() unless err
           callback err
-      .upload
+      .file.upload
         source: "#{__filename}"
         target: "#{scratch}/#{path.basename __filename}"
       , (err, status) ->
@@ -34,7 +34,7 @@ describe 'upload', ->
         return next() unless ssh
         mecano
           ssh: ssh
-        .upload
+        .file.upload
           source: "#{__filename}"
           target: "#{scratch}"
         , (err, status) ->
@@ -43,7 +43,7 @@ describe 'upload', ->
           fs.stat null, "#{scratch}/#{path.basename __filename}", (err, exist) ->
             exist.isFile().should.be.true() unless err
             callback err
-        .upload
+        .file.upload
           source: "#{__filename}"
           target: "#{scratch}"
         , (err, status) ->
