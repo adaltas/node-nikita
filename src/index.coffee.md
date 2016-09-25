@@ -126,6 +126,8 @@ functions share a common API with flexible options.
         fs: require './log/fs'
         md: require './log/md'
         csv: require './log/csv'
+      connection:
+        assert: require './connection/assert'
       service:
         '': require './service'
         install: require './service/install'
