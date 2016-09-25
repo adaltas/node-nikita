@@ -4,7 +4,7 @@ test = require '../test'
 they = require 'ssh2-they'
 http = require 'http'
 
-describe 'wait connect', ->
+describe 'connection.wait', ->
 
   scratch = test.scratch @
   port = 12345
@@ -28,7 +28,7 @@ describe 'wait connect', ->
         server1: server port
       .call ->
         setTimeout @options.server1.listen, 100
-      .wait.connect
+      .connection.wait
         host: 'localhost'
         port: port
       , (err, status) ->
@@ -46,11 +46,11 @@ describe 'wait connect', ->
         server2: server port2
       .call -> setTimeout @options.server1.listen, 100
       .call -> setTimeout @options.server2.listen, 100
-      .wait.connect
+      .connection.wait
         server: host: 'localhost', port: port1
       , (err, status) ->
         status.should.be.true()
-      .wait.connect
+      .connection.wait
         server: host: 'localhost', port: [port1, port2]
       , (err, status) ->
         status.should.be.false()
@@ -58,7 +58,7 @@ describe 'wait connect', ->
       .call  (_, callback) -> @options.server2.close callback
       .call -> setTimeout @options.server1.listen, 100
       .call -> setTimeout @options.server2.listen, 100
-      .wait.connect
+      .connection.wait
         server: [
           [{host: 'localhost', port: port1}]
           [{host: 'localhost', port: port2}]
@@ -76,7 +76,7 @@ describe 'wait connect', ->
         server1: server port
       .call ->
         setTimeout @options.server1.listen, 100
-      .wait.connect
+      .connection.wait
         server: "localhost:#{port}"
       , (err, status) ->
         status.should.be.true()
@@ -91,7 +91,7 @@ describe 'wait connect', ->
         server1: server port
       .call ->
         setTimeout @options.server1.listen, 200
-      .wait.connect
+      .connection.wait
         servers: for i in [0...12]
           {host: 'localhost', port: port}
       , (err, status) ->
@@ -110,7 +110,7 @@ describe 'wait connect', ->
       # Status false
       .call (_, callback) ->
         @options.server1.listen callback
-      .wait.connect
+      .connection.wait
         host: 'localhost'
         port: port
       , (err, status) ->
@@ -120,7 +120,7 @@ describe 'wait connect', ->
       # Status true
       .call ->
         setTimeout @options.server1.listen, 100
-      .wait.connect
+      .connection.wait
         host: 'localhost'
         port: port
       , (err, status) ->
@@ -141,7 +141,7 @@ describe 'wait connect', ->
         setTimeout @options.server1.listen, 100
       .call ->
         setTimeout @options.server2.listen, 100
-      .wait.connect
+      .connection.wait
         servers: [
           { host: 'localhost', port: port1 }
           { host: 'localhost', port: port2 }
@@ -169,7 +169,7 @@ describe 'wait connect', ->
         @options.server1.listen callback
       .call (_, callback) ->
         @options.server2.listen callback
-      .wait.connect
+      .connection.wait
         servers: [
           { host: 'localhost', port: port1 }
           { host: 'localhost', port: port2 }
@@ -191,7 +191,7 @@ describe 'wait connect', ->
       port = port++
       mecano
         ssh: ssh
-      .wait.connect
+      .connection.wait
         servers: [
           { host: undefined, port: port }
         ]
@@ -203,7 +203,7 @@ describe 'wait connect', ->
     they 'validate port', (ssh, next) ->
       mecano
         ssh: ssh
-      .wait.connect
+      .connection.wait
         servers: [
           { host: 'localhost', port: undefined }
         ]

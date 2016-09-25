@@ -128,6 +128,7 @@ functions share a common API with flexible options.
         csv: require './log/csv'
       connection:
         assert: require './connection/assert'
+        wait: '': require './connection/wait'
       service:
         '': require './service'
         install: require './service/install'
@@ -139,7 +140,6 @@ functions share a common API with flexible options.
         stop: require './service/stop'
       wait:
         '': require './wait/time'
-        connect: '': require './wait/connect'
         execute: '': require './wait/execute'
         exist: '': require './wait/exist'
       # Backward compatibility
@@ -184,8 +184,8 @@ functions share a common API with flexible options.
       service_startup: require './service/startup'
       service_status: require './service/status'
       service_stop: require './service/stop'
-      wait_connect: require './wait/connect'
       upload: require './file/upload'
+      wait_connect: require './connection/wait'
       wait_execute: require './wait/execute'
       wait_exist: require './wait/exist'
       write: require './file'
