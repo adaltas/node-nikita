@@ -18,8 +18,7 @@ describe 'connection.assert', ->
     server.listen 12345, next
 
   afterEach (next) ->
-    server.close()
-    server.on 'close', next
+    server.close next
 
   they 'port is listening', (ssh, next) ->
     mecano

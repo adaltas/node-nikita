@@ -8,6 +8,6 @@ Assert a TCP or HTTP server is listening.
     module.exports = shy: true, handler: (options) ->
       options.log message: "Entering connection.assert", level: 'DEBUG', module: 'mecano/lib/connection/assert'
       @execute
-        cmd: "echo > /dev/tcp/#{options.host}/#{options.port}"
+        cmd: "bash -c 'echo > /dev/tcp/#{options.host}/#{options.port}'"
       , (err) ->
         throw Error "Address not listening: \"#{options.host}:#{options.port}\"" if err
