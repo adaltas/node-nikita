@@ -54,6 +54,8 @@ require('mecano').service.start([{
         code_started: options.code_started
         code_stopped: options.code_stopped
         shy: true
+      # Todo: detect sysvinit versus systemd
+      # systemd: /usr/lib/systemd/system
       @execute
         cmd: "service #{options.name} start"
         unless: [
