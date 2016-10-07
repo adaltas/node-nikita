@@ -32,8 +32,8 @@ describe 'connection.wait', ->
         host: 'localhost'
         port: port
       , (err, status) ->
-        status.should.be.true()
-      .call  (_, callback) ->
+        status.should.be.true() unless err
+      .call (_, callback) ->
         @options.server1.close callback
       .then next
 
@@ -49,7 +49,7 @@ describe 'connection.wait', ->
       .connection.wait
         server: host: 'localhost', port: port1
       , (err, status) ->
-        status.should.be.true()
+        status.should.be.true() unless err
       .connection.wait
         server: host: 'localhost', port: [port1, port2]
       , (err, status) ->
@@ -64,7 +64,7 @@ describe 'connection.wait', ->
           [{host: 'localhost', port: port2}]
         ]
       , (err, status) ->
-        status.should.be.true()
+        status.should.be.true() unless err
       .call  (_, callback) -> @options.server1.close callback
       .call  (_, callback) -> @options.server2.close callback
       .then next
@@ -79,7 +79,7 @@ describe 'connection.wait', ->
       .connection.wait
         server: "localhost:#{port}"
       , (err, status) ->
-        status.should.be.true()
+        status.should.be.true() unless err
       .call  (_, callback) ->
         @options.server1.close callback
       .then next
@@ -95,7 +95,7 @@ describe 'connection.wait', ->
         servers: for i in [0...12]
           {host: 'localhost', port: port}
       , (err, status) ->
-        status.should.be.true()
+        status.should.be.true() unless err
       .call  (_, callback) ->
         @options.server1.close callback
       .then next
@@ -114,9 +114,9 @@ describe 'connection.wait', ->
         host: 'localhost'
         port: port
       , (err, status) ->
-        status.should.be.false()
+        status.should.be.false() unless err
       .call  (_, callback) ->
-        @options.server1.close callback
+        @options.server1gle host and a single por.close callback
       # Status true
       .call ->
         setTimeout @options.server1.listen, 100
@@ -124,7 +124,7 @@ describe 'connection.wait', ->
         host: 'localhost'
         port: port
       , (err, status) ->
-        status.should.be.true()
+        status.should.be.true() unless err
       .call  (_, callback) ->
         @options.server1.close callback
       .then next
@@ -150,7 +150,7 @@ describe 'connection.wait', ->
         quorum: true
         interval: 500
       , (err, status) ->
-        status.should.be.true()
+        status.should.be.true() unless err
       .call (_, callback) ->
         @options.server1.close callback
       .call (_, callback) ->
@@ -178,7 +178,7 @@ describe 'connection.wait', ->
         quorum: 2
         interval: 500
       , (err, status) ->
-        status.should.be.true()
+        status.should.be.true() unless err
       .call  (_, callback) ->
         @options.server1.close callback
       .call  (_, callback) ->
