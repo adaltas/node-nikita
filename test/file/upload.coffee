@@ -10,7 +10,7 @@ describe 'upload', ->
 
   scratch = test.scratch @
 
-  they.only 'file into a file', (ssh, next) ->
+  they 'file into a file', (ssh, next) ->
       return next() unless ssh
       mecano
         ssh: ssh
