@@ -21,7 +21,7 @@ describe 'log csv', ->
     data = []
     mecano
       ssh: ssh
-    .log.cli stdout: new MyWritable data: data
+    .log.cli stream: new MyWritable data: data
     .call header: 'h1', (options) ->
       @call header: 'h2a', (options) ->
       @call header: 'h2b', (options) ->
@@ -41,7 +41,7 @@ describe 'log csv', ->
     data = []
     mecano
       ssh: ssh
-    .log.cli depth: 2, stdout: new MyWritable data: data
+    .log.cli depth: 2, stream: new MyWritable data: data
     .call header: 'h1', (options) ->
       @call header: 'h2a', (options) ->
       @call header: 'h2b', (options) ->
@@ -59,7 +59,7 @@ describe 'log csv', ->
     data = []
     mecano
       ssh: ssh
-    .log.cli separator: ' : ', stdout: new MyWritable data: data
+    .log.cli separator: ' : ', stream: new MyWritable data: data
     .call header: 'h1', (options) ->
       @call header: 'h2a', (options) ->
       @call header: 'h2b', (options) ->

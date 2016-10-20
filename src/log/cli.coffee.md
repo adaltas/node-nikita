@@ -17,7 +17,7 @@ Write log to the host filesystem in a user provided format.
       # Normalize
       options.enabled ?= options.argument if options.argument?
       options.enabled ?= true
-      options.stdout ?= process.stdout
+      options.stream ?= process.stdout
       options.end ?= false
       options.separator ?= ' # '
       options.depth ?= false
