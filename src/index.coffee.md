@@ -123,6 +123,7 @@ functions share a common API with flexible options.
         schema: require './ldap/schema'
         user: require './ldap/user'
       log:
+        cli: require './log/cli'
         fs: require './log/fs'
         md: require './log/md'
         csv: require './log/csv'

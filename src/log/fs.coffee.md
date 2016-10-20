@@ -49,35 +49,48 @@ Write log to the host filesystem in a user provided format.
           shy: true
           source: options._logdir
           target: options._latestdir
+      options.stdout ?= fs.createWriteStream path.resolve options._logdir, options.filename
+      options.end ?= true
       # Events
       @call ->
-        out = fs.createWriteStream path.resolve options._logdir, options.filename
+        out = options.stdout
         stdouting = 0
         @on 'text', (log) ->
           return unless options.serializer.text
-          out.write options.serializer.text log
+          data = options.serializer.text log
+          out.write data if data?
         @on 'header', (log) ->
           return unless options.serializer.header
-          out.write options.serializer.header log
+          data = options.serializer.header log
+          out.write data if data?
         @on 'stdin', (log) ->
           return unless options.serializer.stdin
-          out.write options.serializer.stdin log
+          data = options.serializer.stdin log
+          out.write data if data?
         @on 'diff', (log) ->
           return unless options.serializer.diff
-          out.write options.serializer.diff log
+          data = options.serializer.diff log
+          out.write data if data?
         @on 'stdout_stream', (log) ->
           return unless options.serializer.stdout_stream
-          # console.log log, options.serializer.stdout_stream log
-          out.write options.serializer.stdout_stream log
+          data = options.serializer.stdout_stream log
+          out.write data if data?
         @on 'stderr', (log) ->
           return unless options.serializer.stderr
-          out.write options.serializer.stderr log
-        close = -> setTimeout (-> out.close()), 100
+          data = options.serializer.stderr log
+          out.write data if data?
+        close = -> setTimeout ->
+          out.close() if options.end
+        , 100
         @on 'end', ->
-          out.write options.serializer.end log if options.serializer.end
+          return unless options.serializer.end
+          data = options.serializer.end log
+          out.write data if data?
           close()
         @on 'error', (err) ->
-          out.write options.serializer.error log if options.serializer.error
+          return unless options.serializer.error
+          data = options.serializer.error log
+          out.write data if data?
           close()
 
 ## Dependencies

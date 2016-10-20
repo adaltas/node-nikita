@@ -45,7 +45,6 @@ Write log to the host filesystem in CSV.
           "#{log.type},#{log.level},#{JSON.stringify log.message},\n"
         'text': (log) ->
           "#{log.type},#{log.level},#{JSON.stringify log.message},\n"
-        
 
 ## Dependencies
 
