@@ -116,7 +116,7 @@ describe 'connection.wait', ->
       , (err, status) ->
         status.should.be.false() unless err
       .call  (_, callback) ->
-        @options.server1gle host and a single por.close callback
+        @options.server1.close callback
       # Status true
       .call ->
         setTimeout @options.server1.listen, 100
