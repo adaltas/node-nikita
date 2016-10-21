@@ -22,7 +22,7 @@ Write log to the host filesystem in a user provided format.
       options.separator ?= ' # '
       options.depth ?= false
       # Events
-      @call options, log_fs, serializer:
+      @call options, stream, serializer:
         'diff': null
         'end': ->
           "FINISH\n"
@@ -40,4 +40,4 @@ Write log to the host filesystem in a user provided format.
 
 ## Dependencies
 
-    log_fs = require './fs'
+    stream = require './stream'
