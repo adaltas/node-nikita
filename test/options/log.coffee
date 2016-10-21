@@ -13,7 +13,7 @@ describe 'options "log"', ->
       logs = []
       mecano
       .call 
-        log: (l) -> logs.push l
+        log: (l) -> logs.push l if l.type is 'text'
         handler: (options) -> options.log 'handler'
       .then (err) ->
         logs.length.should.eql 1
@@ -28,7 +28,7 @@ describe 'options "log"', ->
       logs = []
       mecano
       .call
-        log: (l) -> logs.push l
+        log: (l) -> logs.push l if l.type is 'text'
         handler: ->
           @call (options) ->
               options.log 'handler'
@@ -46,10 +46,10 @@ describe 'options "log"', ->
       logs_child = []
       mecano
       .call 
-        log: (l) -> logs_parent.push l
+        log: (l) -> logs_parent.push l if l.type is 'text'
         handler: ->
           @call
-            log: (l) -> logs_child.push l
+            log: (l) -> logs_child.push l if l.type is 'text'
             handler: (options) ->
               options.log 'handler'
       .then (err) ->
