@@ -25,15 +25,16 @@ describe 'log cli', ->
     .call header: 'h1', (options) ->
       @call header: 'h2a', (options) ->
       @call header: 'h2b', (options) ->
-        @call header: 'h3', (options) ->
+        @call header: 'h3', (options, callback) ->
+          callback null, true
     .wait 200
     .then (err, status) ->
       return next err if err
       data.should.eql [
-        'localhost  h1'
-        'localhost  h1 # h2a'
-        'localhost  h1 # h2b'
-        'localhost  h1 # h2b # h3'
+        'localhost   h1 : h2a   -\n'
+        'localhost   h1 : h2b : h3   +\n'
+        'localhost   h1 : h2b   +\n'
+        'localhost   h1   +\n'
       ]
       next()
       
@@ -49,17 +50,17 @@ describe 'log cli', ->
     .then (err, status) ->
       return next err if err
       data.should.eql [
-        'localhost  h1'
-        'localhost  h1 # h2a'
-        'localhost  h1 # h2b'
+        'localhost   h1 : h2a   -\n'
+        'localhost   h1 : h2b   -\n'
+        'localhost   h1   -\n'
       ]
       next()
       
-  they 'options separator', (ssh, next) ->
+  they 'options divider', (ssh, next) ->
     data = []
     mecano
       ssh: ssh
-    .log.cli separator: ' : ', stream: new MyWritable data: data
+    .log.cli divider: ' # ', stream: new MyWritable data: data
     .call header: 'h1', (options) ->
       @call header: 'h2a', (options) ->
       @call header: 'h2b', (options) ->
@@ -67,10 +68,29 @@ describe 'log cli', ->
     .then (err, status) ->
       return next err if err
       data.should.eql [
-        'localhost  h1'
-        'localhost  h1 : h2a'
-        'localhost  h1 : h2b'
-        'localhost  h1 : h2b : h3'
+        'localhost   h1 # h2a   -\n'
+        'localhost   h1 # h2b # h3   -\n'
+        'localhost   h1 # h2b   -\n'
+        'localhost   h1   -\n'
+      ]
+      next()
+      
+  they 'options pad', (ssh, next) ->
+    data = []
+    mecano
+      ssh: ssh
+    .log.cli pad: {host: 14, header: 18}, stream: new MyWritable data: data
+    .call header: 'h1', (options) ->
+      @call header: 'h2a', (options) ->
+      @call header: 'h2b', (options) ->
+        @call header: 'h3', (options) ->
+    .then (err, status) ->
+      return next err if err
+      data.should.eql [
+        'localhost     h1 : h2a          -\n'
+        'localhost     h1 : h2b : h3     -\n'
+        'localhost     h1 : h2b          -\n'
+        'localhost     h1                -\n'
       ]
       next()
   

@@ -27,6 +27,7 @@
       once = {}
       tree = []
       killed = false
+      index_counter = 0
       obj.options.domain =  domain.create() if obj.options.domain is true
       domain_on_error = (err) ->
         err.message = "Invalid State Error [#{err.message}]"
@@ -233,9 +234,10 @@
             while todos[0] and todos[0].type isnt 'then' then todos.shift()
             callback err if callback
             run()
+        index = index_counter++
         depth++ if options.header
         headers.push options.header if options.header
-        options.log message: options.header, type: 'header', depth: depth, headers: (header for header in headers) if options.header
+        options.log message: options.header, type: 'header', index: index, depth: depth, headers: (header for header in headers) if options.header
         todos.status.unshift shy: options.shy, value: undefined
         stack.unshift todos
         todos = todos_create()
@@ -321,9 +323,9 @@
               if err and err not instanceof Error
                 err = Error 'First argument not a valid error' 
                 arguments[0][0] = err
-              options.log message: err.message, level: 'ERROR', module: 'mecano' if err
+              options.log message: err.message, level: 'ERROR', index: index, module: 'mecano' if err
               if err and options.attempt < options.retry - 1
-                options.log message: "Retry on error, attempt #{options.attempt+1}", level: 'WARN', module: 'mecano'
+                options.log message: "Retry on error, attempt #{options.attempt+1}", level: 'WARN', index: index, module: 'mecano'
                 return setTimeout do_handler, options.wait
               do_intercept_after arguments...
             options.handler ?= obj.registry.get(options.type) or registry.get(options.type)
@@ -397,6 +399,9 @@
             .error (err) -> do_callback [err]
             .then -> do_callback args
           do_callback = (args) ->
+            depth-- if options.header
+            headers.pop() if options.header
+            options.log type: 'handled', index: index, depth: depth, status: args[1]
             return if killed
             args[0] = undefined unless args[0] # Error is undefined and not null or false
             args[1] = !!args[1] # Status is a boolean, error or not
@@ -406,8 +411,6 @@
             todos.status[0].value = args[1]
             call_callback options.callback, args if options.callback
             args[0] = null if options.relax
-            depth-- if options.header
-            headers.pop() if options.header
             callback args[0], args[1] if callback
             run()
           do_once()

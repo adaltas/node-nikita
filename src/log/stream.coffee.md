@@ -48,6 +48,10 @@ Write log to the host filesystem in a user provided format.
           return unless options.serializer.diff
           data = options.serializer.diff log
           options.stream.write data if data?
+        @on 'handled', (log) ->
+          return unless options.serializer.handled
+          data = options.serializer.handled log
+          options.stream.write data if data?
         @on 'stdout_stream', (log) ->
           return unless options.serializer.stdout_stream
           data = options.serializer.stdout_stream log

@@ -19,9 +19,15 @@ Write log to the host filesystem in a user provided format.
       options.enabled ?= true
       options.stream ?= process.stdout
       options.end ?= false
-      options.separator ?= ' # '
+      options.divider ?= ' : '
       options.depth ?= false
+      options.pad ?= {}
+      options.separator = host: options.separator, header: options.separator if typeof options.separator is 'string'
+      options.separator ?= {}
+      options.separator.host ?= unless options.pad.host? then '   ' else ''
+      options.separator.header ?= unless options.pad.header? then '   ' else ''
       # Events
+      ids = {}
       @call options, stream, serializer:
         'diff': null
         'end': ->
@@ -30,9 +36,20 @@ Write log to the host filesystem in a user provided format.
           "ERROR"
         'header': (log) ->
           return unless options.enabled
-          host = if options.ssh then options.ssh.config.host else 'localhost'
           return if options.depth and options.depth < log.headers.length
-          "#{host}  #{log.headers.join(options.separator)}"
+          ids[log.index] = log
+          null
+        "handled": (log) ->
+          status = if log.status then '+' else '-'
+          log = ids[log.index]
+          return null unless log
+          delete ids[log.index]
+          host = if options.ssh then options.ssh.config.host else 'localhost'
+          header = log.headers.join(options.divider)
+          # Padding
+          host = pad host, options.pad.host if options.pad.host
+          header = pad header, options.pad.header if options.pad.header
+          "#{host}#{options.separator.host}#{header}#{options.separator.header}#{status}\n"
         'stdin': null
         'stderr': null
         'stdout': null
@@ -40,4 +57,5 @@ Write log to the host filesystem in a user provided format.
 
 ## Dependencies
 
+    pad = require 'pad'
     stream = require './stream'
