@@ -41,7 +41,7 @@ Write log to the host filesystem in a user provided format.
           ids[log.index] = log
           null
         "handled": (log) ->
-          status = if log.status then '+' else '-'
+          info = if log.error then 'x' else if log.status then '+' else '-'
           log = ids[log.index]
           return null unless log
           delete ids[log.index]
@@ -50,7 +50,7 @@ Write log to the host filesystem in a user provided format.
           # Padding
           host = pad host, options.pad.host if options.pad.host
           header = pad header, options.pad.header if options.pad.header
-          "#{host}#{options.separator.host}#{header}#{options.separator.header}#{status}\n"
+          "#{host}#{options.separator.host}#{header}#{options.separator.header}#{info}\n"
         'stdin': null
         'stderr': null
         'stdout': null

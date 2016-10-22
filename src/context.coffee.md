@@ -401,7 +401,7 @@
           do_callback = (args) ->
             depth-- if options.header
             headers.pop() if options.header
-            options.log type: 'handled', index: index, depth: depth, status: args[1]
+            options.log type: 'handled', index: index, depth: depth, error: args[0], status: args[1]
             return if killed
             args[0] = undefined unless args[0] # Error is undefined and not null or false
             args[1] = !!args[1] # Status is a boolean, error or not

@@ -38,6 +38,22 @@ describe 'log cli', ->
       ]
       next()
       
+  they 'print info', (ssh, next) ->
+    data = []
+    mecano
+      ssh: ssh
+    .log.cli stream: new MyWritable data: data
+    .call header: 'a', (_, callback) -> callback null, false
+    .call header: 'b', (_, callback) -> callback null, true
+    .call header: 'c', (_, callback) -> callback new Error 'ok', false
+    .then (err, status) ->
+      data.should.eql [
+        'localhost   a   -\n'
+        'localhost   b   +\n'
+        'localhost   c   x\n'
+      ]
+      next()
+      
   they 'option depth', (ssh, next) ->
     data = []
     mecano
