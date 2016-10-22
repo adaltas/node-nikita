@@ -24,8 +24,9 @@ Write log to the host filesystem in a user provided format.
       options.pad ?= {}
       options.separator = host: options.separator, header: options.separator if typeof options.separator is 'string'
       options.separator ?= {}
-      options.separator.host ?= unless options.pad.host? then '   ' else ''
-      options.separator.header ?= unless options.pad.header? then '   ' else ''
+      options.separator.host ?= unless options.pad.host? then '   ' else ' '
+      options.separator.header ?= unless options.pad.header? then '   ' else ' '
+      options.host ?= if options.ssh then options.ssh.config.host else 'localhost'
       # Events
       ids = {}
       @call options, stream, serializer:
@@ -44,7 +45,7 @@ Write log to the host filesystem in a user provided format.
           log = ids[log.index]
           return null unless log
           delete ids[log.index]
-          host = if options.ssh then options.ssh.config.host else 'localhost'
+          host = options.host
           header = log.headers.join(options.divider)
           # Padding
           host = pad host, options.pad.host if options.pad.host

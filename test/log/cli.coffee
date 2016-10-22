@@ -87,10 +87,10 @@ describe 'log cli', ->
     .then (err, status) ->
       return next err if err
       data.should.eql [
-        'localhost     h1 : h2a          -\n'
-        'localhost     h1 : h2b : h3     -\n'
-        'localhost     h1 : h2b          -\n'
-        'localhost     h1                -\n'
+        'localhost      h1 : h2a           -\n'
+        'localhost      h1 : h2b : h3      -\n'
+        'localhost      h1 : h2b           -\n'
+        'localhost      h1                 -\n'
       ]
       next()
   
