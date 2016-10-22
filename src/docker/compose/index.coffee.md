@@ -12,6 +12,10 @@ Create and start containers according to a docker-compose file
     Name of the docker-machine. __Mandatory__ if using docker-machine   
 *   `content` (string)   
     The content of the docker-compose.yml to write if not exist.   
+*   `eof` (string)   
+    Inherited from mecano.file use when writing docker-compose.yml file.   
+*   `backup` (string)   
+    Inherited from mecano.file use when writing docker-compose.yml file.   
 *   `detached` (boolean)   
     Run Containers in detached mode. Default to true   
 *   `force` (boolean)   
@@ -55,17 +59,41 @@ Create and start containers according to a docker-compose file
       options.services = [options.services] if not Array.isArray options.services
       services = options.services.join ' '
       # Construct exec command
-      cmd = " --file #{options.target} up "
-      cmd += ' -d ' if options.detached
-      cmd += ' --force-recreate ' if options.force
-      cmd +=  " #{services}"
+      cmd = " --file #{options.target}"
+      cmd_ps = "#{cmd} ps -q | xargs docker inspect"
+      cmd_up = "#{cmd} up"
+      cmd_up += ' -d ' if options.detached
+      cmd_up += ' --force-recreate ' if options.force
+      cmd_up +=  " #{services}"
       source_dir = "#{path.dirname options.target}"
-      options.if ?= options.content?
+      options.eof ?= true
+      options.backup ?= false
       options.compose = true
-      @file.yaml options
+      @file.yaml 
+        if: options.content?
+        eof: options.eof
+        backup: options.backup
+        target: options.target
+        content: options.content
+      @call (_, callback) ->
+        start = true
+        @execute
+          cmd: docker.wrap options, cmd_ps
+          cwd: options.cwd
+          uid: options.uid
+          code_skipped: 123 # Container not created
+          stdout_log: false
+        , (err, status, stdout, stderr) ->
+          throw err if err
+          return start = true unless status
+          containers = JSON.parse stdout
+          start = containers.some (container) -> not container.State.Running
+          options.log "Docker created, need start" if start
+        @then -> callback null, start
       @execute 
+        if: -> options.force or @status()
         cwd: source_dir
-        cmd: docker.wrap options, cmd
+        cmd: docker.wrap options, cmd_up
       , docker.callback
       
 ## Modules Dependencies
