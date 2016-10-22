@@ -79,6 +79,9 @@ functions share a common API with flexible options.
       docker:
         build: require './docker/build'
         checksum: require './docker/checksum'
+        compose:
+          '': require './docker/compose'
+          up: require './docker/compose'
         cp: require './docker/cp'
         exec: require './docker/exec'
         kill: require './docker/kill'

@@ -3,7 +3,7 @@ MAINTAINER David Worms
 
 # Install Node.js
 ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 5.8.0
+ENV NODE_VERSION 6.2.2
 RUN yum install -y xz \
   && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
   && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1
@@ -36,6 +36,8 @@ RUN yum install -y zip git
 
 # Install docker
 RUN curl -fsSL https://get.docker.com/ | sh
+RUN curl -L "https://github.com/docker/compose/releases/download/1.8.1/docker-compose-$(uname -s)-$(uname -m)" > /usr/local/bin/docker-compose
+RUN chmod +x /usr/local/bin/docker-compose
 
 RUN yum clean all
 
