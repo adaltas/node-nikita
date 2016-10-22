@@ -95,3 +95,18 @@ describe 'api after', ->
         err.message.should.eql 'CatchMe'
         next()
         
+    it 'handler registered with namespace', (next) ->
+      history = []
+      mecano()
+      .register ['hello', 'baby'],  ((_) -> history.push 'hello_baby_handler')
+      .after 'hello', (_, callback) ->
+        setImmediate ->
+          history.push 'after sync'
+          callback()
+      .hello.baby (err,status) ->
+        history.push 'call_hello_baby_handler'
+      .then (err, status) ->
+        history.should.eql [
+          'hello_baby_handler', 'call_hello_baby_handler', 'after sync'
+        ]
+        next()
