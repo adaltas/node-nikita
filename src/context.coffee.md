@@ -243,10 +243,10 @@
         todos = todos_create()
         todos.options = org_options
         wrap.options options, (err) ->
-          copy = {}
-          for k, v of options
-            copy[k] = v
-          options = copy
+          # copy = {}
+          # for k, v of options
+          #   copy[k] = v
+          # options = copy
           do_once = ->
             hashme = (value) ->
               if typeof value is 'string'
@@ -336,8 +336,11 @@
             options.callback = undefined
             called = false
             try
+              opts = {}
+              for k, v of options
+                opts[k] = v
               if options_handler.length is 2 # Async style
-                options_handler.call proxy, options, ->
+                options_handler.call proxy, opts, ->
                   return if killed
                   return handle_multiple_call Error 'Multiple call detected' if called
                   called = true
@@ -345,7 +348,7 @@
                   setImmediate -> 
                     do_next args
               else # Sync style
-                options_handler.call proxy, options
+                options_handler.call proxy, opts
                 return if killed
                 return handle_multiple_call Error 'Multiple call detected' if called
                 called = true
