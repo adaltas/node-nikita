@@ -40,10 +40,12 @@ Write log to the host filesystem in Markdown.
         'header': (log) ->
           "\n#{'#'.repeat log.header_depth} #{log.message}\n\n"
         'stdin': (log) ->
+          out = []
           if log.message.indexOf('\n') is -1
-          then out.write "\nRunning Command: `#{log.message}`\n\n"
-          else out.write "\n```stdin\n#{log.message}\n```\n\n"
-          stdining = log.message isnt null
+          then out.push "\nRunning Command: `#{log.message}`\n\n"
+          else out.push "\n```stdin\n#{log.message}\n```\n\n"
+          # stdining = log.message isnt null
+          out.join ''
         'stderr': (log) ->
           "\n```stderr\n#{log.message}```\n\n"
         'stdout_stream': (log) ->
