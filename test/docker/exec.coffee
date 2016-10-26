@@ -65,3 +65,24 @@ describe 'docker exec', ->
     , (err, executed, stdout, stderr) ->
       err.message.should.eql 'No such container: mecano_fake_container'
     .then next
+
+  they 'skip exit code', (ssh, next) ->
+    mecano
+      ssh: ssh
+      docker: config.docker
+    .docker.rm
+      container: 'mecano_test_exec'
+      force: true
+    .docker.service
+      image: 'httpd'
+      container: 'mecano_test_exec'
+    .docker.exec
+      container: 'mecano_test_exec'
+      cmd: 'toto'
+      code_skipped: 126
+    , (err, executed, stdout, stderr) ->
+      executed.should.be.false() unless err
+    .docker.rm
+      container: 'mecano_test_exec'
+      force: true
+    .then next

@@ -9,6 +9,8 @@ Run a command in a running container
     Whether to use boot2docker or not, default to false.   
 *   `container` (string)   
     Name/ID of the container. __Mandatory__   
+*   `code_skipped` (int | array)   
+    The exit code(s) to skip.   
 *   `machine` (string)   
     Name of the docker-machine. __Mandatory__ if using docker-machine.   
 *   `service` (boolean)   
@@ -69,6 +71,7 @@ mecano.docker({
       delete options.cmd
       @execute
         cmd: docker.wrap options, cmd
+        code_skipped: options.code_skipped
       # Note: There is no way to pass additionnal arguments in sync mode without
       # a callback, or we would have ', docker.callback' as next line
       , ->
