@@ -145,7 +145,6 @@ describe 'docker.compose', ->
     mecano
       ssh: ssh
       docker: config.docker
-      debug: true
     .docker.rm
       container: 'mecano_docker_compose_idem'
       force: true
