@@ -71,6 +71,27 @@ describe 'api after', ->
         ]
         next()
 
+    it 'a namespaced sync function with async handler', (next) ->
+      history = []
+      mecano()
+      .register ['a','namespaced','function'], ((_) -> history.push 'sync handler' )
+      .after 'a.namespaced.function', (_, callback) ->
+        setImmediate ->
+          history.push 'after sync'
+          callback()
+      .call -> history.push 'call 1'
+      .a.namespaced.function -> history.push 'sync callback 1'
+      .call -> history.push 'call 2'
+      .a.namespaced.function -> history.push 'sync callback 2'
+      .call -> history.push 'call 3'
+      .then (err, status) ->
+        history.should.eql [
+          'call 1', 'sync handler', 'after sync', 'sync callback 1'
+          'call 2', 'sync handler', 'after sync', 'sync callback 2'
+          'call 3'
+        ]
+        next()
+
   describe 'error', ->
     
     it 'register sync function and throw error', (next) ->
@@ -93,20 +114,4 @@ describe 'api after', ->
         err.message.should.eql 'CatchMe'
       .then (err) ->
         err.message.should.eql 'CatchMe'
-        next()
-        
-    it 'handler registered with namespace', (next) ->
-      history = []
-      mecano()
-      .register ['hello', 'baby'],  ((_) -> history.push 'hello_baby_handler')
-      .after 'hello', (_, callback) ->
-        setImmediate ->
-          history.push 'after sync'
-          callback()
-      .hello.baby (err,status) ->
-        history.push 'call_hello_baby_handler'
-      .then (err, status) ->
-        history.should.eql [
-          'hello_baby_handler', 'call_hello_baby_handler', 'after sync'
-        ]
         next()

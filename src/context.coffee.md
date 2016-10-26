@@ -40,6 +40,7 @@
           return target[name] if target[name]?
           return target[name] if name in ['domain', '_events', '_maxListeners']
           tree.push name
+          full_name = null
           get_proxy_builder = ->
             builder = ->
               # Insert handler before callback or at the end of arguments
@@ -48,6 +49,7 @@
               tree = []
               args.unshift handler
               options = normalize_options args, name
+              opts.full_name = full_name for opts in options if full_name?
               todos.push opts for opts in options
               setImmediate _run_ if todos.length is options.length # Activate the pump
               proxy
@@ -55,6 +57,7 @@
               get: (target, name) ->
                 return target[name] if target[name]?
                 tree.push name
+                full_name = tree.join '.'
                 get_proxy_builder()
           get_proxy_builder()
       normalize_options = (_arguments, type, enrich=true) ->
@@ -296,7 +299,7 @@
             .call (before, next) ->
               for k, v of before
                 continue if k is 'handler'
-                return next() unless v is options[k]
+                return next() unless v is options[k] or v is options.full_name
               opts = intercept_before: true
               for k, v of before
                 opts[k] = v
@@ -373,7 +376,7 @@
             .call (after, next) ->
               for k, v of after
                 continue if k is 'handler'
-                return next() unless v is options[k]
+                return next() unless v is options[k] or v is options.full_name
               opts = intercept_after: true
               for k, v of after
                 opts[k] = v

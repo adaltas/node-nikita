@@ -147,3 +147,33 @@ describe 'api before', ->
           'call 3'
         ]
         next()
+
+    it 'an namespaced async function with async handler', (next) ->
+      history = []
+      mecano()
+      .register ['a','namespaced','func'], ((_, callback) -> setImmediate callback)
+      .before 'a.namespaced.func', (_, callback) ->
+        setImmediate ->
+          history.push 'before async'
+          callback null, false
+      .call ->
+        history.push 'call 1'
+      .a.namespaced.func
+        target: "#{scratch}/a_file"
+      , ->
+        history.push 'async 1'
+      .call ->
+        history.push 'call 2'
+      .a.namespaced.func
+        target: "#{scratch}/a_file"
+      , ->
+        history.push 'async 2'
+      .call ->
+        history.push 'call 3'
+      .then (err, status) ->
+        history.should.eql [
+          'call 1', 'before async', 'async 1'
+          'call 2', 'before async', 'async 2'
+          'call 3'
+        ]
+        next()
