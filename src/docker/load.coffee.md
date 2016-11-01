@@ -50,9 +50,10 @@ mecano.docker.load({
 
     module.exports = (options, callback) ->
       options.log message: "Entering Docker load", level: 'DEBUG', module: 'mecano/lib/docker/load'
-      # Validate parameters
+      # Obtains options from "docker" namespace
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
+      # Validate parameters
       options.input ?= options.source
       return callback Error 'Missing input parameter' unless options.input?
       cmd = "load -i #{options.input}"
