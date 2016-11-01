@@ -21,6 +21,7 @@ describe 'log cli', ->
     data = []
     mecano
       ssh: ssh
+      log_cli: colors: false
     .log.cli stream: new MyWritable data: data
     .call header: 'h1', (options) ->
       @call header: 'h2a', (options) ->
@@ -42,6 +43,7 @@ describe 'log cli', ->
     data = []
     mecano
       ssh: ssh
+      log_cli: colors: false
     .log.cli stream: new MyWritable data: data
     .call header: 'a', (_, callback) -> callback null, false
     .call header: 'b', (_, callback) -> callback null, true
@@ -58,6 +60,7 @@ describe 'log cli', ->
     data = []
     mecano
       ssh: ssh
+      log_cli: colors: false
     .log.cli depth: 2, stream: new MyWritable data: data
     .call header: 'h1', (options) ->
       @call header: 'h2a', (options) ->
@@ -72,10 +75,11 @@ describe 'log cli', ->
       ]
       next()
       
-  they 'options divider', (ssh, next) ->
+  they 'option divider', (ssh, next) ->
     data = []
     mecano
       ssh: ssh
+      log_cli: colors: false
     .log.cli divider: ' # ', stream: new MyWritable data: data
     .call header: 'h1', (options) ->
       @call header: 'h2a', (options) ->
@@ -91,10 +95,11 @@ describe 'log cli', ->
       ]
       next()
       
-  they 'options pad', (ssh, next) ->
+  they 'option pad', (ssh, next) ->
     data = []
     mecano
       ssh: ssh
+      log_cli: colors: false
     .log.cli pad: {host: 14, header: 18}, stream: new MyWritable data: data
     .call header: 'h1', (options) ->
       @call header: 'h2a', (options) ->
@@ -107,6 +112,22 @@ describe 'log cli', ->
         'localhost      h1 : h2b : h3      -\n'
         'localhost      h1 : h2b           -\n'
         'localhost      h1                 -\n'
+      ]
+      next()
+      
+  they 'option colors', (ssh, next) ->
+    data = []
+    mecano
+      ssh: ssh
+    .log.cli colors: true, stream: new MyWritable data: data
+    .call header: 'a', (_, callback) -> callback null, false
+    .call header: 'b', (_, callback) -> callback null, true
+    .call header: 'c', (_, callback) -> callback new Error 'ok', false
+    .then (err, status) ->
+      data.should.eql [
+        '\u001b[36m\u001b[2mlocalhost\u001b[22m\u001b[39m\u001b[36m\u001b[2m   \u001b[22m\u001b[39m\u001b[36m\u001b[2ma\u001b[22m\u001b[39m\u001b[36m\u001b[2m   \u001b[22m\u001b[39m\u001b[36m-\u001b[39m\n'
+        '\u001b[36m\u001b[2mlocalhost\u001b[22m\u001b[39m\u001b[36m\u001b[2m   \u001b[22m\u001b[39m\u001b[36m\u001b[2mb\u001b[22m\u001b[39m\u001b[36m\u001b[2m   \u001b[22m\u001b[39m\u001b[36m+\u001b[39m\n'
+        '\u001b[36m\u001b[2mlocalhost\u001b[22m\u001b[39m\u001b[36m\u001b[2m   \u001b[22m\u001b[39m\u001b[36m\u001b[2mc\u001b[22m\u001b[39m\u001b[36m\u001b[2m   \u001b[22m\u001b[39m\u001b[36mx\u001b[39m\n'
       ]
       next()
   

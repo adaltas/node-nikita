@@ -5,15 +5,59 @@ Write log to the host filesystem in a user provided format.
 
 ## Options
 
-*   `stdout` (stream.Writable)   
+*   `depth` (number|boolean)    
+*   `divider` (string)    
 *   `end` (boolean)    
 *   `enabled` (boolean)    
-*   `separator` (string)    
-*   `depth` (number|boolean)    
+*   `host` (string)    
+*   `pad` (string)    
+*   `separator` (string|object)    
+*   `stream` (stream.Writable)  
+
+Global options can be alternatively set with the "log.cli" property
+
+## Exemple with the depth option
+
+```js
+require('mecano')(
+  log: { cli: { colors: true } }
+)
+.log.cli({ depth: 2 })
+.call({
+  header: 'Print my header'
+}, function(){
+  @call({
+    header: 'Print sub header'
+  }, function(){
+    @call({
+      header: 'Header not printed'
+    }, function(){
+      // do sth
+    });
+  });
+});
+```
+
+## Exemple with global options
+
+```js
+require('mecano')(
+  log_cli: { colors: true }
+)
+.log.cli()
+.call({
+  header: 'Print my header'
+}, function(){
+  // do sth
+});
+```
 
 ## Source Code
 
     module.exports = ssh: null, handler: (options) ->
+      # Obtains options from "log_cli" namespace
+      options.log_cli ?= {}
+      options[k] = v for k, v of options.log_cli
       # Normalize
       options.enabled ?= options.argument if options.argument?
       options.enabled ?= true
@@ -27,6 +71,19 @@ Write log to the host filesystem in a user provided format.
       options.separator.host ?= unless options.pad.host? then '   ' else ' '
       options.separator.header ?= unless options.pad.header? then '   ' else ' '
       options.host ?= if options.ssh then options.ssh.config.host else 'localhost'
+      options.colors ?= process.stdout.isTTY
+      options.colors = {
+        host: colors.cyan.dim
+        header: colors.cyan.dim
+        # final_status_error: colors.red
+        # final_status_success: colors.blue
+        # final_host_error: colors.red
+        # final_host_success: colors.blue 
+        status_true: colors.cyan
+        status_false: colors.cyan
+        status_error: colors.magenta
+        time: colors.cyan.dim
+      } if options.colors
       # Events
       ids = {}
       @call options, stream, serializer:
@@ -41,16 +98,30 @@ Write log to the host filesystem in a user provided format.
           ids[log.index] = log
           null
         "handled": (log) ->
-          info = if log.error then 'x' else if log.status then '+' else '-'
+          status = if log.error then 'x' else if log.status then '+' else '-'
           log = ids[log.index]
           return null unless log
           delete ids[log.index]
+          time = Date.now() - log.time
+          time = string.print_time time
           host = options.host
+          host_separator = options.separator.host
           header = log.headers.join(options.divider)
+          header_separator = options.separator.header
           # Padding
           host = pad host, options.pad.host if options.pad.host
           header = pad header, options.pad.header if options.pad.header
-          "#{host}#{options.separator.host}#{header}#{options.separator.header}#{info}\n"
+          if options.colors
+            time = options.colors.time time
+            host = options.colors.host host
+            host_separator = options.colors.host host_separator
+            header = options.colors.header header
+            header_separator = options.colors.host header_separator
+            status = if log.error
+            then options.colors.status_error status
+            else if log.status then options.colors.status_true status
+            else options.colors.status_false status
+          "#{host}#{host_separator}#{header}#{header_separator}#{status}\n"
         'stdin': null
         'stderr': null
         'stdout': null
@@ -58,5 +129,7 @@ Write log to the host filesystem in a user provided format.
 
 ## Dependencies
 
+    colors = require 'colors/safe'
     pad = require 'pad'
     stream = require './stream'
+    string = require '../misc/string'
