@@ -122,7 +122,7 @@ describe 'file', ->
         content: 123
       , (err, status) ->
         status.should.be.true() unless err
-      .assert.file
+      .file.assert
         target: "#{scratch}/a_file"
         content: '123'
       .then next
@@ -135,7 +135,7 @@ describe 'file', ->
         content: 'hello'
       , (err, status) ->
         status.should.be.true() unless err
-      .assert.file
+      .file.assert
         target: "#{scratch}/a/missing/dir/a_file"
         content: 'hello'
       .then next
@@ -154,10 +154,10 @@ describe 'file', ->
       .file
         content: 'ok'
         target: "#{scratch}/link"
-      .assert.file
+      .file.assert
         target: "#{scratch}/target"
         content: 'ok'
-      .assert.file
+      .file.assert
         target: "#{scratch}/link"
         content: 'ok'
       .then next
@@ -190,10 +190,10 @@ describe 'file', ->
         content: 'ok'
         target: "#{scratch}/link"
         unlink: true
-      .assert.file
+      .file.assert
         target: "#{scratch}/target"
         content: 'ko'
-      .assert.file
+      .file.assert
         target: "#{scratch}/link"
         content: 'ok'
       .then next
