@@ -26,6 +26,7 @@ describe 'api register', ->
       mecano.my_function value: 'world'
       mecano.my.function value: 'world'
       mecano.unregister 'my_function'
+      mecano.unregister ['my', 'function']
 
     it 'is available from mecano instance', (next) ->
       mecano.register 'my_function', (options, callback) ->
