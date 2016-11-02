@@ -152,7 +152,7 @@ describe 'api before', ->
       history = []
       mecano()
       .register ['a','namespaced','func'], ((_, callback) -> setImmediate callback)
-      .before 'a.namespaced.func', (_, callback) ->
+      .before ['a','namespaced','func'], (_, callback) ->
         setImmediate ->
           history.push 'before async'
           callback null, false

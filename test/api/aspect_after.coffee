@@ -75,7 +75,7 @@ describe 'api after', ->
       history = []
       mecano()
       .register ['a','namespaced','function'], ((_) -> history.push 'sync handler' )
-      .after 'a.namespaced.function', (_, callback) ->
+      .after ['a','namespaced', 'function'], (_, callback) ->
         setImmediate ->
           history.push 'after sync'
           callback()

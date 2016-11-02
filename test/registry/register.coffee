@@ -164,8 +164,8 @@ describe 'api register', ->
       name = null
       mecano
       .call ->
-        @register 'my_function', (options) -> name = options.name
-      .my_function name: 'callme'
+        @register ['my', 'function'], (options) -> name = options.name
+      .my.function name: 'callme'
       .then (err) ->
         name.should.eql 'callme' unless err
         next err

@@ -25,7 +25,6 @@
       depth = 0
       headers = []
       once = {}
-      tree = []
       killed = false
       index_counter = 0
       obj.options.domain =  domain.create() if obj.options.domain is true
@@ -35,29 +34,27 @@
       obj.options.domain?.on 'error', domain_on_error
       proxy = new Proxy obj,
         has: (target, name) ->
-          target[name]? or target.registry.registered(tree)? or registry.registered(name)?
+          target[name]? or target.registry.registered(proxy.type)? or registry.registered(name)?
         get: (target, name) ->
           return target[name] if target[name]?
           return target[name] if name in ['domain', '_events', '_maxListeners']
-          tree.push name
-          full_name = null
+          proxy.type = []
+          proxy.type.push name
           get_proxy_builder = ->
             builder = ->
               # Insert handler before callback or at the end of arguments
-              handler = target.registry.get(tree) or registry.get(tree)
+              handler = target.registry.get(proxy.type) or registry.get(proxy.type)
               args = [].slice.call(arguments)
-              tree = []
               args.unshift handler
-              options = normalize_options args, name
-              opts.full_name = full_name for opts in options if full_name?
+              options = normalize_options args, proxy.type
+              proxy.type = []
               todos.push opts for opts in options
               setImmediate _run_ if todos.length is options.length # Activate the pump
               proxy
             new Proxy builder,
               get: (target, name) ->
                 return target[name] if target[name]?
-                tree.push name
-                full_name = tree.join '.'
+                proxy.type.push name
                 get_proxy_builder()
           get_proxy_builder()
       normalize_options = (_arguments, type, enrich=true) ->
@@ -111,6 +108,7 @@
             called_deprecate_local_source = true
             opts.local ?= opts.local_source
           opts.type = type if type
+          opts.type = [opts.type] unless Array.isArray opts.type
           opts.handler ?= handler if handler
           opts.callback ?= callback if callback
           opts.user_args = true if enrich and opts.callback?.length > 2
@@ -173,8 +171,6 @@
           log.line = line
           args.unshift("" + file + ":" + line + " in " + method + "()");
           _log log for _log in _logs
-          # for _log in _logs
-          #   _log log if _log
           obj.emit? log.type, log unless log_disabled
         options.log._mecano_ = true
         options
@@ -208,10 +204,6 @@
         unless options # Nothing more to do in current queue
           if stack.length is 0
             obj.options.domain?.removeListener 'error', domain_on_error
-          # if stack.length is 0
-          #   if todos.err or todos.final_err
-          #   then obj.emit 'error', todos.err or todos.final_err
-          #   else obj.emit 'end'
           if callback
             callback todos.err
           else
@@ -228,7 +220,7 @@
           run()
           return
         return if killed
-        if options.type is 'end'
+        if array.compare options.type, ['end']
           return conditions.all proxy, options
           , (err) ->
             callback err if callback
@@ -246,10 +238,6 @@
         todos = todos_create()
         todos.options = org_options
         wrap.options options, (err) ->
-          # copy = {}
-          # for k, v of options
-          #   copy[k] = v
-          # options = copy
           do_once = ->
             hashme = (value) ->
               if typeof value is 'string'
@@ -297,9 +285,10 @@
             return do_conditions() if options.intercept_before
             each befores
             .call (before, next) ->
-              for k, v of before
-                continue if k is 'handler'
-                return next() unless v is options[k] or v is options.full_name
+              for k, v of before then switch k
+                when 'handler' then continue
+                when 'type' then return next() unless array.compare v, options[k]
+                else return next() unless v is options[k]
               opts = intercept_before: true
               for k, v of before
                 opts[k] = v
@@ -374,9 +363,10 @@
             return do_options_after args if options.intercept_after
             each afters
             .call (after, next) ->
-              for k, v of after
-                continue if k is 'handler'
-                return next() unless v is options[k] or v is options.full_name
+              for k, v of after then switch k
+                when 'handler' then continue
+                when 'type' then return next() unless array.compare v, options[k]
+                else return next() unless v is options[k]
               opts = intercept_after: true
               for k, v of after
                 opts[k] = v
@@ -466,14 +456,14 @@
               @call opts
         proxy
       properties.before = get: -> ->
-        arguments[0] = type: arguments[0] if typeof arguments[0] is 'string'
+        arguments[0] = type: arguments[0] if typeof arguments[0] is 'string' or Array.isArray(arguments[0])
         options = normalize_options arguments, null, false
         for opts in options
           throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
           befores.push opts
         proxy
       properties.after = get: -> ->
-        arguments[0] = type: arguments[0] if typeof arguments[0] is 'string'
+        arguments[0] = type: arguments[0] if typeof arguments[0] is 'string' or Array.isArray(arguments[0])
         options = normalize_options arguments, null, false
         for opts in options
           throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
@@ -560,6 +550,7 @@
     registry = require './registry'
     domain = require 'domain'
     each = require 'each'
+    array = require './misc/array'
     conditions = require './misc/conditions'
     wrap = require './misc/wrap'
     string = require './misc/string'
