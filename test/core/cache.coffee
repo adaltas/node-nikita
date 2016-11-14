@@ -29,6 +29,16 @@ describe 'cache', ->
       server.close()
       server.on 'close', next
 
+    they 'handles string argument', (ssh, next) ->
+      mecano
+        ssh: ssh
+      .cache 'http://localhost:12345/my_file',
+        cache_dir: "#{scratch}/my_cache_dir"
+      , (err, status, file) ->
+        status.should.be.true() unless err
+        file.should.eql "#{scratch}/my_cache_dir/my_file" unless err
+      .then next
+
     they 'into local cache_dir', (ssh, next) ->
       mecano
         ssh: ssh
@@ -37,7 +47,7 @@ describe 'cache', ->
         cache_dir: "#{scratch}/my_cache_dir"
       , (err, status, file) ->
         status.should.be.true() unless err
-        file.should.eql "#{scratch}/my_cache_dir/my_file"
+        file.should.eql "#{scratch}/my_cache_dir/my_file" unless err
       .cache
         source: 'http://localhost:12345/my_file'
         cache_dir: "#{scratch}/my_cache_dir"
@@ -68,7 +78,7 @@ describe 'cache', ->
       .then next
 
     describe 'md5', ->
-      
+
       they 'bypass cache if string match', (ssh, next) ->
         logs = []
         mecano
@@ -130,7 +140,7 @@ describe 'cache', ->
       .then next
 
     describe 'md5', ->
-      
+
       they 'bypass cache if string match', (ssh, next) ->
         logs = []
         mecano
@@ -167,4 +177,4 @@ describe 'cache', ->
           status.should.be.true() unless err
           ("[WARN] Hashes don't match, delete then re-download" in logs).should.be.true() unless err
         .then next
-          
+
