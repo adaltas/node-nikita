@@ -21,7 +21,7 @@ describe 'log cli', ->
     data = []
     mecano
       ssh: ssh
-      log_cli: colors: false
+      log_cli: colors: false, time: false
     .log.cli stream: new MyWritable data: data
     .call header: 'h1', (options) ->
       @call header: 'h2a', (options) ->
@@ -43,7 +43,7 @@ describe 'log cli', ->
     data = []
     mecano
       ssh: ssh
-      log_cli: colors: false
+      log_cli: colors: false, time: false
     .log.cli stream: new MyWritable data: data
     .call header: 'a', (_, callback) -> callback null, false
     .call header: 'b', (_, callback) -> callback null, true
@@ -60,7 +60,7 @@ describe 'log cli', ->
     data = []
     mecano
       ssh: ssh
-      log_cli: colors: false
+      log_cli: colors: false, time: false
     .log.cli depth: 2, stream: new MyWritable data: data
     .call header: 'h1', (options) ->
       @call header: 'h2a', (options) ->
@@ -79,7 +79,7 @@ describe 'log cli', ->
     data = []
     mecano
       ssh: ssh
-      log_cli: colors: false
+      log_cli: colors: false, time: false
     .log.cli divider: ' # ', stream: new MyWritable data: data
     .call header: 'h1', (options) ->
       @call header: 'h2a', (options) ->
@@ -99,7 +99,7 @@ describe 'log cli', ->
     data = []
     mecano
       ssh: ssh
-      log_cli: colors: false
+      log_cli: colors: false, time: false
     .log.cli pad: {host: 14, header: 18}, stream: new MyWritable data: data
     .call header: 'h1', (options) ->
       @call header: 'h2a', (options) ->
@@ -119,6 +119,7 @@ describe 'log cli', ->
     data = []
     mecano
       ssh: ssh
+      log_cli: time: false
     .log.cli colors: true, stream: new MyWritable data: data
     .call header: 'a', (_, callback) -> callback null, false
     .call header: 'b', (_, callback) -> callback null, true
@@ -130,4 +131,18 @@ describe 'log cli', ->
         '\u001b[36m\u001b[2mlocalhost\u001b[22m\u001b[39m\u001b[36m\u001b[2m   \u001b[22m\u001b[39m\u001b[36m\u001b[2mc\u001b[22m\u001b[39m\u001b[36m\u001b[2m   \u001b[22m\u001b[39m\u001b[36mx\u001b[39m\n'
       ]
       next()
+  
+  they 'option time', (ssh, next) ->
+    data = []
+    mecano
+      ssh: ssh
+      log_cli: colors: false
+    .log.cli stream: new MyWritable data: data
+    .call header: 'h1', (->)
+    .wait 200
+    .then (err, status) ->
+      return next err if err
+      data[0].should.match /localhost   h1   -  \dms\n/
+      next()
+      
   

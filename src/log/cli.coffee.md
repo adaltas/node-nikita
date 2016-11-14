@@ -11,6 +11,8 @@ Write log to the host filesystem in a user provided format.
 *   `enabled` (boolean)    
 *   `host` (string)    
 *   `pad` (string)    
+*   `time` (boolean)    
+    Print time.   
 *   `separator` (string|object)    
 *   `stream` (stream.Writable)  
 
@@ -66,10 +68,12 @@ require('mecano')(
       options.divider ?= ' : '
       options.depth ?= false
       options.pad ?= {}
+      options.time ?= true
       options.separator = host: options.separator, header: options.separator if typeof options.separator is 'string'
       options.separator ?= {}
       options.separator.host ?= unless options.pad.host? then '   ' else ' '
       options.separator.header ?= unless options.pad.header? then '   ' else ' '
+      options.separator.time ?= unless options.pad.time? then '  ' else ' '
       options.host ?= if options.ssh then options.ssh.config.host else 'localhost'
       options.colors ?= process.stdout.isTTY
       options.colors = {
@@ -102,17 +106,18 @@ require('mecano')(
           log = ids[log.index]
           return null unless log
           delete ids[log.index]
-          time = Date.now() - log.time
-          time = string.print_time time
+          time = if options.time then string.print_time Date.now() - log.time else ''
           host = options.host
           host_separator = options.separator.host
           header = log.headers.join(options.divider)
           header_separator = options.separator.header
+          time_separator = if options.time then options.separator.time else ''
           # Padding
           host = pad host, options.pad.host if options.pad.host
           header = pad header, options.pad.header if options.pad.header
+          time = pad time, options.pad.time if options.pad.time
           if options.colors
-            time = options.colors.time time
+            time = options.colors.time time if options.time
             host = options.colors.host host
             host_separator = options.colors.host host_separator
             header = options.colors.header header
@@ -121,7 +126,7 @@ require('mecano')(
             then options.colors.status_error status
             else if log.status then options.colors.status_true status
             else options.colors.status_false status
-          "#{host}#{host_separator}#{header}#{header_separator}#{status}\n"
+          "#{host}#{host_separator}#{header}#{header_separator}#{status}#{time_separator}#{time}\n"
         'stdin': null
         'stderr': null
         'stdout': null
