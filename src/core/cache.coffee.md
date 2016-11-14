@@ -59,6 +59,7 @@ require('mecano').download({
       options.log message: "Entering cache", level: 'DEBUG', module: 'mecano/lib/cache'
       return callback Error "Missing source: '#{options.source}'" unless options.source
       return callback Error "Missing one of 'target', 'cache_file' or 'cache_dir' option" unless options.cache_file or options.target or options.cache_dir
+      options.target = options.argument if options.argument?
       options.target ?= options.cache_file
       options.target ?= path.basename options.source
       options.target = path.resolve options.cache_dir, options.target
