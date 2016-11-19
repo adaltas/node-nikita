@@ -21,6 +21,7 @@ Write log to the host filesystem in Markdown.
 
     module.exports = ssh: null, handler: (options) ->
       stdouting = 0
+      options.divider ?= ' : '
       @call options, log_fs, serializer:
         'diff': (log) ->
           "\n```diff\n#{log.message}```\n\n" unless log.message
@@ -38,7 +39,8 @@ Write log to the host filesystem in Markdown.
             for error in err.errors then content.push error
           content.join ''
         'header': (log) ->
-          "\n#{'#'.repeat log.header_depth} #{log.message}\n\n"
+          header = log.headers.join(options.divider)
+          "\n#{'#'.repeat log.headers.length} #{header}\n\n"
         'stdin': (log) ->
           out = []
           if log.message.indexOf('\n') is -1
