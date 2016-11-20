@@ -11,11 +11,11 @@ describe 'api register', ->
     it 'return false', ->
       (mecano.registered 'does_not_exists').should.be.false()
       (mecano.registered ['does_not_exists']).should.be.false()
-    
-    
+
+
 
   describe 'local', ->
 
     it 'return false', ->
-      (mecano().registered 'does_not_exists').should.be.false()
-      (mecano().registered ['does_not_exists']).should.be.false()
+      (mecano().registry.registered 'does_not_exists').should.be.false()
+      (mecano().registry.registered ['does_not_exists']).should.be.false()

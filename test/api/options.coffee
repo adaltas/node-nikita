@@ -9,13 +9,13 @@ describe 'api options', ->
     m = mecano
       global_param: true
     m.propagated_options.push 'parent_param_propagated'
-    m.register 'achild', (options, callback) ->
+    m.registry.register 'achild', (options, callback) ->
       options.local_param.should.be.true()
       options.parent_param_propagated.should.be.true()
       (options.parent_param_unpropagated is undefined).should.be.true()
       options.global_param.should.be.true()
       callback null, true
-    m.register 'aparent', (options, callback) ->
+    m.registry.register 'aparent', (options, callback) ->
       options.global_param.should.be.true()
       options.parent_param_propagated.should.be.true()
       options.parent_param_unpropagated.should.be.true()
@@ -44,7 +44,7 @@ describe 'api options', ->
     .then (err, status) ->
       status.should.be.false() unless err
       next err
-  
+
   describe 'merging', ->
 
     it 'accept multiple options', (next) ->

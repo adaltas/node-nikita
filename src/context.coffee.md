@@ -72,7 +72,7 @@
             for a in arg
               if type is 'call'
                 a = handler: a unless typeof a is 'object' and not Array.isArray(a) and a isnt null
-              else 
+              else
                 a = argument: a unless typeof a is 'object' and not Array.isArray(a) and a isnt null
               options.push a
           else
@@ -313,7 +313,7 @@
               options.handler = options_handler
               options.callback = options_callback
               if err and err not instanceof Error
-                err = Error 'First argument not a valid error' 
+                err = Error 'First argument not a valid error'
                 arguments[0][0] = err
               options.log message: err.message, level: 'ERROR', index: index, module: 'mecano' if err
               if err and options.attempt < options.retry - 1
@@ -337,7 +337,7 @@
                   return handle_multiple_call Error 'Multiple call detected' if called
                   called = true
                   args = [].slice.call(arguments, 0)
-                  setImmediate -> 
+                  setImmediate ->
                     do_next args
               else # Sync style
                 options_handler.call proxy, opts
@@ -482,54 +482,18 @@
           return value
         else
           stack[0].status[Math.abs index]?.value
-      proto = Object.defineProperties obj, properties
+      Object.defineProperties obj, properties
+      reg = registry.registry {}
       Object.defineProperty obj.registry, 'get', get: -> (name, handler) ->
-        name = [name] if typeof name is 'string'
-        cnames = obj.registry
-        for n, i in name
-          return null unless cnames[n]
-          return cnames[n][''] if cnames[n] and cnames[n][''] and i is name.length - 1
-          cnames = cnames[n]
-        return null
-      Object.defineProperty obj, 'register', get: -> (name, handler) ->
-        name = [name] if typeof name is 'string'
-        if Array.isArray name
-          handler = require.main.require handler if typeof handler is 'string'
-          cnames = names = obj.registry
-          for n in [0...name.length - 1]
-            n = name[n]
-            cnames[n] ?= {}
-            cnames = cnames[n]
-          cnames[name[name.length-1]] ?= {}
-          cnames[name[name.length-1]][''] = handler
-          merge obj.registry, names
-        else
-          cleanup = (obj) ->
-            for k, v of obj
-              v = require.main.require v if typeof v is 'string'
-              if v and typeof v is 'object' and not Array.isArray(v) and not v.handler
-                cleanup v
-              else
-                obj[k] = '': v unless k is ''
-          cleanup name
-          merge obj.registry, name
+        reg.get arguments...
+      Object.defineProperty obj.registry, 'register', get: -> (name, handler) ->
+        reg.register arguments...
         proxy
-      Object.defineProperty obj, 'registered', get: -> (name) ->
-        return true if registry.registered name
-        name = [name] if typeof name is 'string'
-        cnames = obj.registry
-        for n, i in name
-          return false unless cnames[n]
-          return true if cnames[n][''] and i is name.length - 1
-          cnames = cnames[n]
-      Object.defineProperty obj, 'unregister', get: -> (name, handler) ->
-        name = [name] if typeof name is 'string'
-        cnames = obj.registry
-        for n, i in name
-          delete cnames[n] if i is name.length - 1
-          cnames = cnames[n]
-          break
-        return proxy
+      Object.defineProperty obj.registry, 'registered', get: -> (name, handler) ->
+        reg.registered arguments...
+      Object.defineProperty obj.registry, 'unregister', get: -> (name, handler) ->
+        reg.unregister arguments...
+        proxy
       proxy
 
     module.exports.propagated_options = ['ssh', 'log', 'stdout', 'stderr', 'debug']

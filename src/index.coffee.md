@@ -12,7 +12,7 @@ functions share a common API with flexible options.
     an array of objects.
 
 ## Source Code
-    
+
     module.exports = new Proxy (-> context arguments...),
       get: (target, name) ->
         # return target[name] if target[name]
@@ -196,4 +196,3 @@ functions share a common API with flexible options.
       write_ini: require './file/ini'
       write_properties: require './file/properties'
       write_yaml: require './file/yaml'
-    

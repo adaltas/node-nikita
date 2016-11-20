@@ -22,10 +22,9 @@ describe 'options "handler"', ->
   describe 'error sync', ->
 
     it 'throw in sync action', (next) ->
-      m = mecano()
-      m.register 'anaction', (options, callback) ->
+      mecano()
+      .registry.register 'anaction', (options, callback) ->
         throw Error 'Catchme'
-      m
       .anaction
         key: "value"
       , (err, written) ->
@@ -48,10 +47,9 @@ describe 'options "handler"', ->
   describe 'error async', ->
 
     it 'passed as argument in same tick', (next) ->
-      m = mecano()
-      m.register 'anaction', (options, callback) ->
+      mecano()
+      .registry.register 'anaction', (options, callback) ->
         callback Error 'Catchme'
-      m
       .anaction
         key: "value"
       , (err, written) ->
@@ -61,10 +59,9 @@ describe 'options "handler"', ->
         next()
 
     it 'passed as argument', (next) ->
-      m = mecano()
-      m.register 'anaction', (options, callback) ->
+      mecano()
+      .register 'anaction', (options, callback) ->
         process.nextTick -> callback Error 'Catchme'
-      m
       .anaction
         key: "value"
       , (err, written) ->
@@ -119,7 +116,7 @@ describe 'options "handler"', ->
       .call
         handler: (_, callback) ->
           callback()
-          setImmediate -> 
+          setImmediate ->
             callback()
       .call ->
         setImmediate ->

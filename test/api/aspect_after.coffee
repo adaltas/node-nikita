@@ -9,8 +9,8 @@ describe 'api after', ->
     it 'is a string and match a action type', (next) ->
       history = []
       mecano()
-      .register 'good_handler', (->)
-      .register 'bad_handler', (->)
+      .registry.register 'good_handler', (->)
+      .registry.register 'bad_handler', (->)
       .after 'good_handler', (options) -> history.push options.key
       .good_handler key: 'value 1'
       .good_handler key: 'value 2'
@@ -21,7 +21,7 @@ describe 'api after', ->
     it 'is an object and match options', (next) ->
       history = []
       mecano()
-      .register 'handler', (->)
+      .registry.register 'handler', (->)
       .after type: 'handler', key: 'value 2', (options) ->
         history.push options.key
       .handler key: 'value 1'
@@ -31,11 +31,11 @@ describe 'api after', ->
         next err
 
   describe 'handler', ->
-  
+
     it 'a sync function with sync handler', (next) ->
       history = []
       mecano()
-      .register 'sync_fn', ((_) -> history.push 'sync handler' )
+      .registry.register 'sync_fn', ((_) -> history.push 'sync handler' )
       .after 'sync_fn', (_) -> history.push 'after sync'
       .call -> history.push 'call 1'
       .sync_fn -> history.push 'sync callback 1'
@@ -49,11 +49,11 @@ describe 'api after', ->
           'call 3'
         ] unless err
         next err
-  
+
     it 'a sync function with async handler', (next) ->
       history = []
       mecano()
-      .register 'afunction', ((_) -> history.push 'sync handler' )
+      .registry.register 'afunction', ((_) -> history.push 'sync handler' )
       .after 'afunction', (_, callback) ->
         setImmediate ->
           history.push 'after sync'
@@ -74,7 +74,7 @@ describe 'api after', ->
     it 'a namespaced sync function with async handler', (next) ->
       history = []
       mecano()
-      .register ['a','namespaced','function'], ((_) -> history.push 'sync handler' )
+      .registry.register ['a','namespaced','function'], ((_) -> history.push 'sync handler' )
       .after ['a','namespaced', 'function'], (_, callback) ->
         setImmediate ->
           history.push 'after sync'
@@ -93,10 +93,10 @@ describe 'api after', ->
         next()
 
   describe 'error', ->
-    
+
     it 'register sync function and throw error', (next) ->
       mecano()
-      .register 'afunction', ((_) -> )
+      .registry.register 'afunction', ((_) -> )
       .after 'afunction', (_) ->
         throw Error 'CatchMe'
       .afunction (err, status) ->
@@ -104,10 +104,10 @@ describe 'api after', ->
       .then (err) ->
         err.message.should.eql 'CatchMe'
         next()
-          
+
     it 'register sync function and throw error', (next) ->
       mecano()
-      .register 'afunction', ((_) -> )
+      .registry.register 'afunction', ((_) -> )
       .after 'afunction', (_, callback) ->
         setImmediate -> callback Error 'CatchMe'
       .afunction (err, status) ->

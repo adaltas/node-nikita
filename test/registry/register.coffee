@@ -34,30 +34,30 @@ describe 'api register', ->
         process.nextTick ->
           callback null, true
       m = mecano()
-      m.registered('my_function').should.be.true()
+      m.registry.registered('my_function').should.be.true()
       m.my_function
         my_option: 'my value'
       .then (err, status) ->
         status.should.be.true()
         mecano.unregister 'my_function'
         next err
-    
+
     it 'namespace accept array', (next) ->
       value = null
       mecano.register ['this', 'is', 'a', 'function'], (options, callback) ->
         value = options.value
         callback null, true
       m = mecano()
-      m.registered(['this', 'is', 'a', 'function']).should.be.true()
+      m.registry.registered(['this', 'is', 'a', 'function']).should.be.true()
       m.this.is.a.function value: 'yes'
       m.then (err, status) ->
         status.should.be.true()
         mecano.unregister ['this', 'is', 'a', 'function']
         next err
-        
+
     it 'namespace accept object', (next) ->
       value_a = value_b = null
-      mecano.register 
+      mecano.register
         namespace:
           "": (options, callback) ->
             value_a = options.value
@@ -76,7 +76,7 @@ describe 'api register', ->
         value_b.should.eql 'b'
         mecano.unregister "namespace"
         next err
-    
+
     it 'namespace call function with children', (next) ->
       value_a = value_b = null
       mecano.register ['a', 'function'], (options, callback) ->
@@ -96,7 +96,7 @@ describe 'api register', ->
         mecano.unregister ['a', 'function']
         mecano.unregister ['a', 'function', 'with', 'a', 'child']
         next err
-          
+
     it 'throw error unless registered', (next) ->
       mecano
       .invalid()
@@ -108,20 +108,20 @@ describe 'api register', ->
 
     it 'set property', ->
       m = mecano()
-      m.register 'my_function', -> 'my_function'
-      m.registered('my_function').should.be.true()
-      m.unregister 'my_function'
+      m.registry.register 'my_function', -> 'my_function'
+      m.registry.registered('my_function').should.be.true()
+      m.registry.unregister 'my_function'
 
     it 'register twice', ->
       mecano()
-      .register 'my_function', -> 'my_function'
-      .register 'my_function', -> 'my_function'
+      .registry.register 'my_function', -> 'my_function'
+      .registry.register 'my_function', -> 'my_function'
 
     it 'register an object', (next) ->
       value_a = value_b = null
       mecano()
-      .register 'my_function', (options) -> value_a = "hello #{options.value}"
-      .register
+      .registry.register 'my_function', (options) -> value_a = "hello #{options.value}"
+      .registry.register
         'my': 'function': shy: true, handler: (options, callback) ->
           value_b = "hello #{options.value}"
           callback null, true
@@ -135,7 +135,7 @@ describe 'api register', ->
 
     it 'receive options', (next) ->
       m = mecano()
-      .register 'my_function', (options, callback) ->
+      .registry.register 'my_function', (options, callback) ->
         options.my_option.should.eql 'my value'
         process.nextTick ->
           callback null, true
@@ -143,37 +143,37 @@ describe 'api register', ->
         my_option: 'my value'
       .then (err, modified) ->
         modified.should.be.true()
-        m.registered('my_function').should.be.true()
+        m.registry.registered('my_function').should.be.true()
         next err
-    
+
     it 'register module name', (next) ->
       logs = []
       m = mecano()
       .on 'text', (l) -> logs.push l.message
-      .register 'module_sync', 'test/resources/module_sync'
-      .register 'module_async', 'test/resources/module_async'
+      .registry.register 'module_sync', 'test/resources/module_sync'
+      .registry.register 'module_async', 'test/resources/module_async'
       .module_sync who: 'sync'
       .module_async who: 'async'
       .then (err, modified) ->
-        m.registered('module_sync').should.be.true() unless err
-        m.registered('module_async').should.be.true() unless err
+        m.registry.registered('module_sync').should.be.true() unless err
+        m.registry.registered('module_async').should.be.true() unless err
         logs.should.eql ['Hello sync', 'Hello async'] unless err
         next err
-          
+
     it 'support lazy validation for late registration', (next) ->
       name = null
       mecano
       .call ->
-        @register ['my', 'function'], (options) -> name = options.name
+        @registry.register ['my', 'function'], (options) -> name = options.name
       .my.function name: 'callme'
       .then (err) ->
         name.should.eql 'callme' unless err
         next err
-    
+
     it 'namespace accept array', (next) ->
       value = null
       mecano()
-      .register ['this', 'is', 'a', 'function'], (options, callback) ->
+      .registry.register ['this', 'is', 'a', 'function'], (options, callback) ->
         value = options.value
         callback null, true
       .this.is.a.function value: 'yes'
@@ -181,11 +181,11 @@ describe 'api register', ->
         status.should.be.true()
         mecano.unregister ['this', 'is', 'a', 'function']
         next err
-    
+
     it 'namespace accept object', (next) ->
       value_a = value_b = null
       mecano()
-      .register 
+      .registry.register
         namespace:
           "": (options, callback) ->
             value_a = options.value
@@ -200,14 +200,14 @@ describe 'api register', ->
         value_a.should.eql 'a'
         value_b.should.eql 'b'
         next err
-    
+
     it 'namespace call function with children', (next) ->
       value_a = value_b = null
       mecano()
-      .register ['a', 'function'], (options, callback) ->
+      .registry.register ['a', 'function'], (options, callback) ->
         value_a = options.value
         callback null, true
-      .register ['a', 'function', 'with', 'a', 'child'], (options, callback) ->
+      .registry.register ['a', 'function', 'with', 'a', 'child'], (options, callback) ->
         value_b = options.value
         callback null, true
       .a.function value: 'a'
@@ -219,7 +219,7 @@ describe 'api register', ->
         mecano.unregister ['a', 'function']
         mecano.unregister ['a', 'function', 'with', 'a', 'child']
         next err
-          
+
     it 'throw error unless registered', (next) ->
       mecano()
       .invalid()
@@ -228,7 +228,7 @@ describe 'api register', ->
         next()
 
   describe 'mixed', ->
-    
+
     it 'support lazy validation for late registration', (next) ->
       name = null
       mecano
