@@ -60,7 +60,7 @@ describe 'options "handler"', ->
 
     it 'passed as argument', (next) ->
       mecano()
-      .register 'anaction', (options, callback) ->
+      .registry.register 'anaction', (options, callback) ->
         process.nextTick -> callback Error 'Catchme'
       .anaction
         key: "value"
