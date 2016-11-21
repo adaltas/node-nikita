@@ -43,9 +43,8 @@
           get_proxy_builder = ->
             builder = ->
               # Insert handler before callback or at the end of arguments
-              handler = target.registry.get(proxy.type) or registry.get(proxy.type)
+              middleware = target.registry.get(proxy.type)?.handler or registry.get(proxy.type)?.handler
               args = [].slice.call(arguments)
-              args.unshift handler
               options = normalize_options args, proxy.type
               proxy.type = []
               todos.push opts for opts in options
@@ -59,12 +58,14 @@
           get_proxy_builder()
       normalize_options = (_arguments, type, enrich=true) ->
         empty = false
+        middleware = obj.registry.get(type) or registry.get(type) if Array.isArray(type)
+        _arguments.unshift middleware.handler if middleware
         handler = null
         callback = null
         options = []
         for arg in _arguments
           if typeof arg is 'function'
-            unless handler then handler = arg
+            if not handler then handler = arg
             else unless callback then callback = arg
             else throw Error "Invalid third function argument"
           else if Array.isArray arg
@@ -92,6 +93,7 @@
         for opts, i in options
           # Clone
           options[i] = {}
+          merge options[i], middleware if Array.isArray(type)
           options[i][k] = v for k, v of opts
           opts = options[i]
           # Argument
@@ -320,8 +322,8 @@
                 options.log message: "Retry on error, attempt #{options.attempt+1}", level: 'WARN', index: index, module: 'mecano'
                 return setTimeout do_handler, options.wait
               do_intercept_after arguments...
-            options.handler ?= obj.registry.get(options.type) or registry.get(options.type)
-            return handle_multiple_call Error "Unregistered Handler: #{options.type}" unless options.handler
+            options.handler ?= obj.registry.get(options.type)?.handler or registry.get(options.type)?.handler
+            return handle_multiple_call Error "Unregistered Middleware: #{options.type}" unless options.handler
             options_handler = options.handler
             options.handler = undefined
             options_callback = options.callback

@@ -1,6 +1,7 @@
 
 mecano = require '../../src'
 test = require '../test'
+each = require 'each'
 
 describe 'api register', ->
 
@@ -17,16 +18,53 @@ describe 'api register', ->
       mecano.register 'my_function', -> 'my_function'
       mecano.register 'my_function', -> 'my_function'
 
-    it 'register an object', ->
-      mecano.register 'my_function', shy: true, handler: (options) -> "hello #{options.value}"
+    it 'register an object with options', (next) ->
+      value_a = value_b = null
+      mecano.register 'my_function', shy: true, handler: (options) ->
+        value_a = "hello #{options.value}"
+      mecano.register 'my': 'function': shy: true, handler: (options, callback) ->
+        value_b = "hello #{options.value}"
+        callback null, true
+      mecano
+      .call (_, next) ->
+        mecano
+        .my_function value: 'world'
+        .then (err, status) ->
+          status.should.be.false() unless err
+          next err
+      .call (_, next) ->
+        mecano
+        .my.function value: 'world'
+        .then (err, status) ->
+          status.should.be.false() unless err
+          next err
+      .then (err) ->
+        value_a.should.eql "hello world" unless err
+        value_b.should.eql "hello world" unless err
+        mecano.unregister 'my_function'
+        mecano.unregister ['my', 'function']
+        next err
+
+    it 'overwrite middleware options', (next) ->
+      value_a = value_b = null
+      mecano.register 'my_function', key: 'a', handler: (->)
+      mecano.register 'my_function', key: 'b', handler: (options) -> value_a = "Got #{options.key}"
       mecano.register
-        'my': 'function': shy: true, handler: (options, callback) ->
-          value = "hello #{options.value}"
-          callback null, true
-      mecano.my_function value: 'world'
-      mecano.my.function value: 'world'
-      mecano.unregister 'my_function'
-      mecano.unregister ['my', 'function']
+        'my': 'function': key: 'a', handler: (->)
+      mecano.register
+        'my': 'function': key: 'b', handler: (options) ->
+          value_b = "Got #{options.key}"
+      mecano()
+      .call (_, next) ->
+        mecano.my_function next
+      .call (_, next) ->
+        mecano.my.function next
+      .then (err) ->
+        value_a.should.eql "Got b" unless err
+        value_b.should.eql "Got b" unless err
+        mecano.unregister 'my_function'
+        mecano.unregister ['my', 'function']
+        next err
 
     it 'is available from mecano instance', (next) ->
       mecano.register 'my_function', (options, callback) ->
@@ -101,7 +139,7 @@ describe 'api register', ->
       mecano
       .invalid()
       .then (err) ->
-        err.message.should.eql 'Unregistered Handler: invalid'
+        err.message.should.eql 'Unregistered Middleware: invalid'
         next()
 
   describe 'local', ->
@@ -112,15 +150,18 @@ describe 'api register', ->
       m.registry.registered('my_function').should.be.true()
       m.registry.unregister 'my_function'
 
-    it 'register twice', ->
+    it 'overwrite a middleware', ->
       mecano()
       .registry.register 'my_function', -> 'my_function'
       .registry.register 'my_function', -> 'my_function'
 
-    it 'register an object', (next) ->
+    it 'register an object with options', (next) ->
       value_a = value_b = null
       mecano()
-      .registry.register 'my_function', (options) -> value_a = "hello #{options.value}"
+      .registry.register( 'my_function', shy: true, handler: (options, callback) ->
+        value_a = "hello #{options.value}"
+        callback null, true
+      )
       .registry.register
         'my': 'function': shy: true, handler: (options, callback) ->
           value_b = "hello #{options.value}"
@@ -131,6 +172,22 @@ describe 'api register', ->
         status.should.be.false() unless err
         value_a.should.eql "hello world a" unless err
         value_b.should.eql "hello world b" unless err
+        next err
+
+    it 'overwrite middleware options', (next) ->
+      value_a = value_b = null
+      mecano()
+      .registry.register( 'my_function', key: 'a', handler: (->) )
+      .registry.register( 'my_function', key: 'b', handler: (options) -> value_a = "Got #{options.key}" )
+      .registry.register
+        'my': 'function': key: 'a', handler: (->)
+      .registry.register
+        'my': 'function': key: 'b', handler: (options) -> value_b = "Got #{options.key}"
+      .my_function()
+      .my.function()
+      .then (err, status) ->
+        value_a.should.eql "Got b" unless err
+        value_b.should.eql "Got b" unless err
         next err
 
     it 'receive options', (next) ->
@@ -224,7 +281,7 @@ describe 'api register', ->
       mecano()
       .invalid()
       .then (err) ->
-        err.message.should.eql 'Unregistered Handler: invalid'
+        err.message.should.eql 'Unregistered Middleware: invalid'
         next()
 
   describe 'mixed', ->

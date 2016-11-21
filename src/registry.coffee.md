@@ -1,6 +1,13 @@
 
 ## Register all functions
 
+    load = (middleware) ->
+      middleware = handler: middleware unless typeof middleware is 'object' and middleware? and not Array.isArray middleware
+      throw Error "Invalid middleware handler: got #{JSON.stringify middleware.handler}" unless typeof middleware.handler in ['function', 'string']
+      return middleware unless typeof middleware.handler is 'string'
+      middleware.module = middleware.handler
+      middleware.handler = if /^mecano\//.test(middleware.handler) then require(".#{middleware.handler.substr(6)}") else require.main.require middleware.handler
+      middleware
 
     registry = (obj) ->
 
@@ -8,6 +15,7 @@
         configurable: true
         enumerable: false
         get: -> (name) ->
+          return merge {}, obj unless name
           name = [name] if typeof name is 'string'
           cnames = obj
           for n, i in name
@@ -22,7 +30,7 @@
         get: -> (name, handler) ->
           name = [name] if typeof name is 'string'
           if Array.isArray name
-            handler = require.main.require handler if typeof handler is 'string'
+            handler = load handler
             cnames = names = obj
             for n in [0...name.length - 1]
               n = name[n]
@@ -32,14 +40,14 @@
             cnames[name[name.length-1]][''] = handler
             merge obj, names
           else
-            cleanup = (obj) ->
+            walk = (obj) ->
               for k, v of obj
-                v = require.main.require v if typeof v is 'string'
-                if v and typeof v is 'object' and not Array.isArray(v) and not v.handler
-                  cleanup v
+                if k isnt '' and v and typeof v is 'object' and not Array.isArray(v) and not v.handler
+                  walk v
                 else
-                  obj[k] = '': v unless k is ''
-            cleanup name
+                  v = load v
+                  obj[k] = if k is '' then v else '': v
+            walk name
             merge obj, name
 
       Object.defineProperty obj, 'registered',
