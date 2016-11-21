@@ -154,7 +154,7 @@ cat /proc/sys/fs/file-max  # print VALUE
 _Temporary change_: `echo 1631017 > /proc/sys/fs/file-max`
 
 _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
- 
+
 
 ## Callback parameters
 
@@ -164,53 +164,67 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
     Value is "true" if limits configuration file has been modified.
 
 ## Source Code
-    
+
     module.exports = (options, callback) ->
       options.log message: "Entering system_limits", level: 'DEBUG', module: 'mecano/lib/system_limits'
+      return callback Error "Incoherent options: both options system and user defined, #{JSON.stringify system: options.system, user: options.user}" if options.system and options.user
+      options.user = '*' if options.system
       return callback Error "Missing required option 'user'" unless options.user
       # Parameters where value can be guessed
-      for opt in ['nofile', 'nproc']
-        return callback Error "Invalid option '#{opt}'" if options[opt]? and typeof options[opt] not in ['boolean','number']
-      # Parameters where value cannot be guessed
-      for opt in ['as', 'core', 'cpu', 'data', 'fsize', 'locks', 'maxlogins',
-      'maxsyslogins', 'memlock', 'msgqueue', 'nice', 'priority', 'rss',
-      'sigpending', 'stack', 'rtprio']
-        return callback Error "Invalid option '#{opt}'" if options[opt]? and typeof options[opt] isnt 'number'
-      options.target ?= "/etc/security/limits.d/#{options.user}.conf"
+      # for opt in ['nofile', 'nproc']
+      #   return callback Error "Invalid option '#{opt}'" if options[opt]? and typeof options[opt] not in ['boolean','number']
+      # # Parameters where value cannot be guessed
+      # for opt in ['as', 'core', 'cpu', 'data', 'fsize', 'locks', 'maxlogins',
+      # 'maxsyslogins', 'memlock', 'msgqueue', 'nice', 'priority', 'rss',
+      # 'sigpending', 'stack', 'rtprio']
+      #   return callback Error "Invalid option '#{opt}'" if options[opt]? and typeof options[opt] isnt 'number'
+      options.target ?= "/etc/security/" + if options.user is '*' then "limits.conf" else "limits.d/#{options.user}.conf"
       write = []
       @
       # Calculate nofile from kernel limit
       .execute
         cmd: "cat /proc/sys/fs/file-max"
         shy: true
-        if: options.nofile
+        if: options.nofile?
       , (err, status, stdout) ->
         # console.log err, status, stdout
         throw err if err
         return unless status
         kern_limit = parseInt stdout.trim()
         if options.nofile is true then options.nofile = Math.round kern_limit*0.75
-        else throw Error "Invalid nofile options. Please set int value lesser than kernel limit: #{kern_limit}" if options.nofile >= kern_limit
+        else if typeof options.nofile is 'number'
+          throw Error "Invalid nofile options. Please set int value lesser than kernel limit: #{kern_limit}" if options.nofile >= kern_limit
+        else if typeof options.nofile is 'object'
+          for _, v of options.nofile
+            throw Error "Invalid nofile options. Please set int value lesser than kernel limit: #{kern_limit}" if v >= kern_limit
       # Calculate nproc from kernel limit
       .execute
         cmd: "cat /proc/sys/kernel/pid_max"
         shy: true
-        if: options.nproc
+        if: options.nproc?
       , (err, status, stdout) ->
         throw err if err
         return unless status
         kern_limit = parseInt stdout.trim()
         if options.nproc is true then options.nproc = Math.round kern_limit*0.75
-        else throw Error "Invalid nproc options. Please set int value lesser than kernel limit: #{kern_limit}" if options.nproc >= kern_limit
+        else if typeof options.nproc is 'number'
+          throw Error "Invalid nproc options. Please set int value lesser than kernel limit: #{kern_limit}" if options.nproc >= kern_limit
+        else if typeof options.nproc is 'object'
+          for _, v of options.nproc
+            throw Error "Invalid nproc options. Please set int value lesser than kernel limit: #{kern_limit}" if v >= kern_limit
       .call ->
         for opt in ['as', 'core', 'cpu', 'data', 'fsize', 'locks', 'maxlogins',
         'maxsyslogins', 'memlock', 'msgqueue', 'nice', 'nofile', 'nproc',
         'priority', 'rss', 'sigpending', 'stack', 'rtprio']
           if options[opt]?
-            write.push
-              match: RegExp "^#{options.user}.+#{opt}.+$", 'm'
-              replace: "#{options.user}    -    #{opt}   #{options[opt]}"
-              append: true
+            options[opt] = '-': options[opt] unless typeof options[opt] is 'object'
+            for k in Object.keys options[opt]
+              throw Error "Invalid option: #{JSON.stringify options[opt]}" unless k in ['soft', 'hard', '-']
+              throw Error "Invalid option: #{options[opt][k]} not a number" unless typeof options[opt][k] is 'number'
+              write.push
+                match: RegExp "^#{regexp.escape options.user} +#{regexp.escape k} +#{opt}.+$", 'm'
+                replace: "#{options.user}    #{k}    #{opt}    #{options[opt][k]}"
+                append: true
         return false
       .file
         target: options.target
@@ -223,4 +237,4 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
 
 ## Dependencies
 
-No dependency
+    {regexp} = require '../misc'

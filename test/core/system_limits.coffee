@@ -36,8 +36,49 @@ describe 'system_limits', ->
       status.should.be.true()
       fs.readFile ssh, "#{scratch}/me.conf", 'ascii', (err, content) ->
         content.should.eql """
-        me    -    nofile   2048
-        me    -    nproc   2048
+        me    -    nofile    2048
+        me    -    nproc    2048
+
+        """ unless err
+        next err
+
+  they 'set global value', (ssh, next) ->
+    return next() unless os.platform() is 'linux'
+    mecano
+      ssh: ssh
+    .system_limits
+      target: "#{scratch}/me.conf"
+      system: true
+      nofile: 2048
+      nproc: 2048
+    , (err, status) ->
+      return next err if err
+      status.should.be.true()
+      fs.readFile ssh, "#{scratch}/me.conf", 'ascii', (err, content) ->
+        content.should.eql """
+        *    -    nofile    2048
+        *    -    nproc    2048
+
+        """ unless err
+        next err
+
+  they 'specify hard and soft values', (ssh, next) ->
+    return next() unless os.platform() is 'linux'
+    mecano
+      ssh: ssh
+    .system_limits
+      target: "#{scratch}/me.conf"
+      user: 'me'
+      nofile:
+        soft: 2048
+        hard: 4096
+    , (err, status) ->
+      return next err if err
+      status.should.be.true()
+      fs.readFile ssh, "#{scratch}/me.conf", 'ascii', (err, content) ->
+        content.should.eql """
+        me    soft    nofile    2048
+        me    hard    nofile    4096
 
         """ unless err
         next err
@@ -110,8 +151,8 @@ describe 'system_limits', ->
         status.should.be.true()
         fs.readFile ssh, "#{scratch}/me.conf", 'ascii', (err, content) ->
           content.should.eql """
-          me    -    nofile   #{nofile}
-          me    -    nproc   #{nproc}
+          me    -    nofile    #{nofile}
+          me    -    nproc    #{nproc}
 
           """ unless err
           next err
@@ -127,7 +168,7 @@ describe 'system_limits', ->
     , (err, status) ->
       err.message.should.match /^Invalid nofile options.*$/
       next()
-        
+
   they 'raise an error if nproc is too high', (ssh, next) ->
     return next() unless os.platform() is 'linux'
     mecano
@@ -138,4 +179,18 @@ describe 'system_limits', ->
       nproc: 1000000000
     , (err, status) ->
       err.message.should.match /^Invalid nproc options.*$/
+      next()
+
+  they 'raise an error if hardness is incoherent', (ssh, next) ->
+    return next() unless os.platform() is 'linux'
+    mecano
+      ssh: ssh
+    .system_limits
+      target: "#{scratch}/me.conf"
+      user: 'me'
+      nproc:
+        hard: 12
+        toto: 24
+    , (err, status) ->
+      err.message.should.match /^Invalid option.*$/
       next()
