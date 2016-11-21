@@ -8,7 +8,7 @@ they = require 'ssh2-they'
 describe 'connection.assert', ->
 
   scratch = test.scratch @
-  
+
   server = null
 
   beforeEach (next) ->
@@ -25,7 +25,7 @@ describe 'connection.assert', ->
       ssh: ssh
     .connection.assert
       host: 'localhost'
-      port: "12345"
+      port: '12345'
     .then (err, status) ->
       status.should.be.false()
       next err
@@ -35,7 +35,7 @@ describe 'connection.assert', ->
       ssh: ssh
     .connection.assert
       host: 'localhost'
-      port: "54321"
+      port: '54321'
       relax: true
     , (err) ->
       err.message.should.eql 'Address not listening: "localhost:54321"'

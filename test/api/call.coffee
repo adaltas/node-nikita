@@ -6,9 +6,9 @@ fs = require 'fs'
 describe 'api call', ->
 
   scratch = test.scratch @
-  
+
   describe 'api', ->
-    
+
     it 'accept an array of handlers and a callback', (next) ->
       logs = []
       mecano
@@ -22,7 +22,7 @@ describe 'api call', ->
       .call ->
         logs.should.eql ['a', 'c', 'b', 'c']
       .then next
-    
+
     it 'string requires a module', (next) ->
       logs = []
       mecano
@@ -32,7 +32,7 @@ describe 'api call', ->
       .then (err) ->
         logs.should.eql ['Hello sync', 'Hello async'] unless err
         next err
-      
+
     it 'string requires a module which export an object', (next) ->
       logs = []
       mecano
@@ -41,7 +41,7 @@ describe 'api call', ->
       .then (err) ->
         logs[0].should.eql 'Hello us' unless err
         next err
-    
+
     it 'accept a string and an handler', (next) ->
       mecano()
       .call 'gotit', handler: ( (options) -> options.argument.should.eql 'gotit' )
@@ -207,5 +207,3 @@ describe 'api call', ->
         callback_called.should.be.true() unless err
         status.should.be.true() unless err
         next err
-
-        
