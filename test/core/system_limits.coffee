@@ -194,3 +194,23 @@ describe 'system_limits', ->
     , (err, status) ->
       err.message.should.match /^Invalid option.*$/
       next()
+
+  they 'accept value \'unlimited\'', (ssh, next) ->
+    return next() unless os.platform() is 'linux'
+    mecano
+      ssh: ssh
+    .system_limits
+      target: "#{scratch}/me.conf"
+      user: 'me'
+      nofile: 2048
+      nproc: 'unlimited'
+    , (err, status) ->
+      return next err if err
+      status.should.be.true()
+      fs.readFile ssh, "#{scratch}/me.conf", 'ascii', (err, content) ->
+        content.should.eql """
+        me    -    nofile    2048
+        me    -    nproc    unlimited
+
+        """ unless err
+        next err

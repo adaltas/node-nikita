@@ -220,7 +220,7 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
             options[opt] = '-': options[opt] unless typeof options[opt] is 'object'
             for k in Object.keys options[opt]
               throw Error "Invalid option: #{JSON.stringify options[opt]}" unless k in ['soft', 'hard', '-']
-              throw Error "Invalid option: #{options[opt][k]} not a number" unless typeof options[opt][k] is 'number'
+              throw Error "Invalid option: #{options[opt][k]} not a number" unless (typeof options[opt][k] is 'number') or options[opt][k] is 'unlimited'
               write.push
                 match: RegExp "^#{regexp.escape options.user} +#{regexp.escape k} +#{opt}.+$", 'm'
                 replace: "#{options.user}    #{k}    #{opt}    #{options[opt][k]}"
