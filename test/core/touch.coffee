@@ -66,6 +66,17 @@ describe 'touch', ->
       touched.should.be.false() unless err
     .then next
 
+  they 'valid default permissions', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .touch
+      target: "#{scratch}/a_file"
+    .call (_, callback) ->
+      fs.stat ssh, "#{scratch}/a_file", (err, stat) ->
+        misc.mode.compare(stat.mode, 0o0644).should.true() unless err
+        callback err
+    .then next
+
   they 'change permissions', (ssh, next) ->
     mecano
       ssh: ssh
@@ -77,7 +88,21 @@ describe 'touch', ->
         misc.mode.compare(stat.mode, 0o0700).should.true() unless err
         callback err
     .then next
-  
+
+  they 'do not change permissions on existing file if not specified', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .touch
+      target: "#{scratch}/a_file"
+      mode: 0o666
+    .touch
+      target: "#{scratch}/a_file"
+    .call (_, callback) ->
+      fs.stat ssh, "#{scratch}/a_file", (err, stat) ->
+        misc.mode.compare(stat.mode, 0o0666).should.true() unless err
+        callback err
+    .then next
+
   they 'modify time', (ssh, next) ->
     mecano
       ssh: ssh
@@ -90,5 +115,3 @@ describe 'touch', ->
       fs.stat ssh, "#{scratch}/a_file", (err, stat) ->
         callback err
     .then next
-    
-      

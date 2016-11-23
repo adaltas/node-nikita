@@ -34,7 +34,7 @@ Write a file or a portion of an existing file.
     Replace this marker, a string or a regular expression, default to the
     replaced string if missing.   
 *   `mode`   
-    File mode (permission and sticky bits), default to `0o0666`, in the form of
+    File mode (permission and sticky bits), default to `0o0644`, in the form of
     `{mode: 0o0744}` or `{mode: "0744"}`.   
 *   `place_before` (string, boolean, regex)   
     Place the content before the match.   
@@ -335,6 +335,8 @@ require('mecano').file({
         options.log message: "Write target", level: 'INFO', module: 'mecano/lib/file'
         options.flags ?= 'a' if options.append
         # Ownership and permission are also handled
+        # Mode is setted by default here to avoid a chmod 644 on existing file if option.mode is not specified
+        options.mode ?= 0o0644
         uid_gid options, (err) ->
           return callback err if err
           fs.writeFile options.ssh, options.target, options.content, options, (err) ->
