@@ -170,14 +170,6 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
       return callback Error "Incoherent options: both options system and user defined, #{JSON.stringify system: options.system, user: options.user}" if options.system and options.user
       options.user = '*' if options.system
       return callback Error "Missing required option 'user'" unless options.user
-      # Parameters where value can be guessed
-      # for opt in ['nofile', 'nproc']
-      #   return callback Error "Invalid option '#{opt}'" if options[opt]? and typeof options[opt] not in ['boolean','number']
-      # # Parameters where value cannot be guessed
-      # for opt in ['as', 'core', 'cpu', 'data', 'fsize', 'locks', 'maxlogins',
-      # 'maxsyslogins', 'memlock', 'msgqueue', 'nice', 'priority', 'rss',
-      # 'sigpending', 'stack', 'rtprio']
-      #   return callback Error "Invalid option '#{opt}'" if options[opt]? and typeof options[opt] isnt 'number'
       options.target ?= "/etc/security/" + if options.user is '*' then "limits.conf" else "limits.d/#{options.user}.conf"
       write = []
       @
