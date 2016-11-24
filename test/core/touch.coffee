@@ -103,6 +103,18 @@ describe 'touch', ->
         callback err
     .then next
 
+  they 'create valid parent dir', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .touch
+      target: "#{scratch}/subdir/a_file"
+      mode:'0640'
+    .call (_, callback) ->
+      fs.stat ssh, "#{scratch}/subdir", (err, stat) ->
+        misc.mode.compare(stat.mode, 0o0751).should.true() unless err
+        callback err
+    .then next
+
   they 'modify time', (ssh, next) ->
     mecano
       ssh: ssh

@@ -268,11 +268,13 @@ require('mecano').file({
             else
               callback Error "Invalid File Type Destination: #{options.target}"
         do_mkdir = =>
+          options.mode = parseInt(options.mode, 8) if typeof options.mode is 'string' 
           @mkdir
             target: path.dirname options.target
             uid: options.uid
             gid: options.gid
-            mode: options.mode
+            # force execution right on mkdir
+            mode: if options.mode then (options.mode | 0o111) else 0o755 
             # Modify uid and gid if the dir does not yet exists
             unless_exists: path.dirname options.target
           , (err, created) ->
