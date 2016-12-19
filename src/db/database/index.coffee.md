@@ -93,7 +93,7 @@ npm test test/db/database.coffee
           throw Error "DB user does not exists: #{user}" if not err and not exists
         switch options.engine
           when 'mysql'
-            cmd_grant_privileges = db.cmd options, database: "#{options.database}", "GRANT ALL PRIVILEGES ON #{options.database} TO '#{user}';" # FLUSH PRIVILEGES;
+            cmd_grant_privileges = db.cmd options, database: "#{options.database}", "GRANT ALL PRIVILEGES ON #{options.database}.* TO '#{user}';" # FLUSH PRIVILEGES;
             # cmd_has_privileges = db.cmd options, admin_username: null, username: user.username, password: user.password, database: options.database, "SHOW TABLES FROM pg_database"
             cmd_has_privileges = db.cmd(options, database: 'mysql', "SELECT user FROM db WHERE db='#{options.database}';") + " | grep '#{user}'"
           when 'postgres'

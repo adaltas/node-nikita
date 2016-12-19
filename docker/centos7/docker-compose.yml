@@ -26,6 +26,19 @@ services:
     image: docker:dind
     privileged: true
     # detach: true
+  postgres:
+    image: postgres:9.5
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: rootme
+    expose:
+      - "5432"
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: rootme
+    expose:
+      - "3306"
   krb5:
     image: sequenceiq/kerberos
     volumes:
