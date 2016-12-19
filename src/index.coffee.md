@@ -43,6 +43,7 @@ functions share a common API with flexible options.
       assert: 'mecano/core/assert'
       backup: 'mecano/core/backup'
       cache: 'mecano/core/cache'
+      cgroups: 'mecano/core/cgroups'
       chmod: 'mecano/core/chmod'
       chown: 'mecano/core/chown'
       compress: 'mecano/core/compress'
