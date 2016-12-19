@@ -4,7 +4,7 @@
 ## Build a Unix command
 
     module.exports.cmd = (opts..., cmd=null) ->
-      properties = ['engine', 'admin_username', 'admin_password', 'username', 'password', 'host', 'database']
+      properties = ['engine', 'admin_username', 'admin_password', 'username', 'password', 'host', 'database','silent']
       options = {}
       for opt in opts
         for k, v of opt
@@ -12,6 +12,7 @@
           options[k] = v
       options.engine = options.engine.toLowerCase()
       options.admin_password = null unless options.admin_username
+      options.silent ?= true
       # escape = (text) -> text.replace(/[\\"]/g, "\\$&")
       switch options.engine
         when 'mysql'
@@ -28,7 +29,7 @@
             # -N, --skip-column-names   Don't write column names in results.
             # -s, --silent              Be more silent. Print results with a tab as separator, each row on new line.
             # -r, --raw                 Write fields without conversion. Used with --batch.
-            "-N -s -r"
+            "-N -s -r" if options.silent
             "-e \"#{cmd}\"" if cmd
           ].join ' '
         when 'postgres'
