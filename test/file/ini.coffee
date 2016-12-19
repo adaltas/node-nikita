@@ -112,3 +112,40 @@ describe 'write.ini', ->
         return next err if err
         data.should.eql '[user]\n preference = {\n  color = true\n }\n\n'
         next()
+
+  they 'stringify write only key on props', (ssh, next) ->
+    mecano.file.ini
+      ssh: ssh
+      content:
+        'user':
+          'name': 'toto'
+          '--hasACar': ''
+      target: "#{scratch}/user.ini"
+      merge: false
+      stringify: misc.ini.stringify_single_key
+    , (err, written) ->
+      return next err if err
+      written.should.be.true()
+      fs.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
+        return next err if err
+        data.should.eql '[user]\nname = toto\n--hasACar'
+        next()
+
+  they 'merge ini containing single key lines', (ssh, next) ->
+    content = '[user.preference]\nlanguage = node\ncolor\n'
+    fs.writeFile ssh, "#{scratch}/user.ini", content, (err) ->
+      return next err if err
+      mecano.file.ini
+        ssh: ssh
+        debug: true
+        content: user: preference: {language: 'c++', color: ''}
+        stringify: misc.ini.stringify_single_key
+        target: "#{scratch}/user.ini"
+        merge: false
+      , (err, written) ->
+        return next err if err
+        written.should.be.true()
+        fs.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
+          return next err if err
+          data.should.eql '[user.preference]\nlanguage = c++\ncolor\n'
+          next()

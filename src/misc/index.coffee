@@ -310,6 +310,8 @@ misc = module.exports =
           else
             current[match[1]] = null
       data
+    # same as ini parse bu transforme value which are true an type of true as ''
+    # to be user by stringify_single_key
     stringify: (obj, section, options={}) ->
       if arguments.length is 2
         options = section
@@ -334,6 +336,36 @@ misc = module.exports =
       children.forEach (k, _, __) ->
         nk = dotSplit(k).join '\\.'
         child = misc.ini.stringify(obj[k], (if section then section + "." else "") + nk, options)
+        if out.length and child.length
+          out += eol
+        out += child
+      out
+    # works like stringy but write only the key when the value is ''
+    # be careful when using ini.parse is parses singke key line as key = true
+    stringify_single_key: (obj, section, options={}) ->
+      if arguments.length is 2
+        options = section
+        section = undefined
+      options.separator ?= ' = '
+      eol = if process.platform is "win32" then "\r\n" else "\n"
+      safe = misc.ini.safe
+      dotSplit = misc.ini.dotSplit
+      children = []
+      out = ""
+      Object.keys(obj).forEach (k, _, __) ->
+        val = obj[k]
+        if val and Array.isArray val
+            val.forEach (item) ->
+                out += if val is '' then "#{k}" + "\n" else safe("#{k}[]") + options.separator + safe(item) + "\n"
+        else if val and typeof val is "object"
+          children.push k
+        else
+          out += if val is '' then "#{k}" + eol else safe(k) + options.separator + safe(val) + eol
+      if section and out.length
+        out = "[" + safe(section) + "]" + eol + out
+      children.forEach (k, _, __) ->
+        nk = dotSplit(k).join '\\.'
+        child = misc.ini.stringify_single_key(obj[k], (if section then section + "." else "") + nk, options)
         if out.length and child.length
           out += eol
         out += child
