@@ -30,19 +30,32 @@ describe 'service start', ->
       status.should.be.false() unless err
     .then next
   
-  they 'detect invalid service name', (ssh, next) ->
+  # they 'detect invalid service name', (ssh, next) ->
+  #   mecano
+  #     ssh: ssh
+  #   .service.start
+  #     name: 'thisdoenstexit'
+  #     relax: true
+  #   , (err) ->
+  #     err.message.should.eql 'Invalid Service Name: thisdoenstexit'
+  #   .then next
+  they 'no error when invalid service name', (ssh, next) ->
     mecano
       ssh: ssh
     .service.start
       name: 'thisdoenstexit'
       relax: true
-    , (err) ->
-      err.message.should.eql 'Invalid Service Name: thisdoenstexit'
+    , (err, status) ->
+      status.should.be.false()
     .then next
   
   they 'store status', (ssh, next) ->
     mecano
       ssh: ssh
+    .service.remove
+      name: config.service.name
+    .service
+      name: config.service.name
     .service
       name: 'cronie'
       srv_name: config.service.srv_name

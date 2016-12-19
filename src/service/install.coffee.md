@@ -7,6 +7,8 @@ Install a service. For now, only Yum over SSH.
 
 *   `cacheonly` (boolean)   
     Run the yum command entirely from system cache, don't update cache.   
+*   `code_skipped` (integer|array)   
+     Error code to skip when using mecano.service.   
 *   `name` (string)   
     Package name, optional.   
     
@@ -43,6 +45,7 @@ require('mecano').service.install([{
       #   continue unless start
       #   installed.push pkg[1] if pkg = /^([^\. ]+?)\./.exec pkg
       cacheonly = if options.cacheonly then '-C' else ''
+      @call discover.system
       @execute
         cmd: """
         if which yum >/dev/null; then exit 1; fi
@@ -107,6 +110,7 @@ require('mecano').service.install([{
           when 'yum' then "yum install -y #{cacheonly} #{options.name}"
           when 'apt' then "apt-get install -y #{options.name}"
           else throw Error "Invalid Manager: #{options.manager}"
+        code_skipped: options.code_skipped
         if: ->
           installed.indexOf(options.name) is -1 or updates.indexOf(options.name) isnt -1
       , (err, succeed) ->
@@ -132,3 +136,4 @@ require('mecano').service.install([{
 ## Dependencies
 
     string = require '../misc/string'
+    discover = require '../misc/discover'

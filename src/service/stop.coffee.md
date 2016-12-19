@@ -49,15 +49,28 @@ require('mecano').service.stop([{
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       # Action
       options.log message: "Stop service #{options.name}", level: 'INFO', module: 'mecano/lib/service/stop'
-      @service.status
-        name: options.name
-        code_started: options.code_started
-        code_stopped: options.code_stopped
-        shy: true
-      @execute
-        cmd: "service #{options.name} stop"
-        if: -> @status -1
-        # unless: -> options.cache and options.store["mecano.service.#{options.name}.status"] is 'stopped'
-      , (err, stopped) ->
-        throw err if err
-        options.store["mecano.service.#{options.name}.status"] = 'stopped' if not err and options.cache
+      @call discover.system
+      @call discover.loader, -> options.loader ?= options.store['mecano:service:loader']
+      @call
+        if: -> options.store['mecano:system:type'] in ['redhat','centos']
+        if_exec: "ls /lib/systemd/system/*.service /etc/systemd/system/*.service /etc/rc.d/* | grep #{options.name}"
+        handler: ->
+          cmd = switch options.loader
+            when 'systemctl' then "systemctl stop #{options.name}"
+            when 'service' then "service #{options.name} stop"
+            else throw Error 'Init System not supported'
+          @service.status
+            name: options.name
+            code_started: options.code_started
+            code_stopped: options.code_stopped
+            shy: true
+          @execute
+            cmd: cmd
+            if: -> @status -1
+          , (err, stopped) ->
+            throw err if err
+            options.store["mecano.service.#{options.name}.status"] = 'stopped' if not err and options.cache
+      
+## Discover
+
+    discover = require '../misc/discover'

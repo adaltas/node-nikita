@@ -49,19 +49,31 @@ require('mecano').service.start([{
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       # Action
       options.log message: "Start service #{options.name}", level: 'INFO', module: 'mecano/lib/service/start'
-      @service.status
-        name: options.name
-        code_started: options.code_started
-        code_stopped: options.code_stopped
-        shy: true
-      # Todo: detect sysvinit versus systemd
-      # systemd: /usr/lib/systemd/system
-      @execute
-        cmd: "service #{options.name} start"
-        unless: [
-          -> @status -1
-          -> options.cache and options.store["mecano.service.#{options.name}.status"] is 'started'
-        ]
-      , (err, started) ->
-        throw err if err
-        options.store["mecano.service.#{options.name}.status"] = 'started' if not err and options.cache
+      @call discover.system
+      @call discover.loader, -> options.loader ?= options.store['mecano:service:loader']
+      @call
+        if: -> options.store['mecano:system:type'] in ['redhat','centos']
+        if_exec: "ls /lib/systemd/system/*.service /etc/systemd/system/*.service /etc/rc.d/* | grep #{options.name}"
+        handler: ->
+          cmd = switch options.store['mecano:service:loader']
+            when 'systemctl' then "systemctl start #{options.name}"
+            when 'service' then "service #{options.name} start"
+            else throw Error 'Init System not supported'
+          @service.status
+            name: options.name
+            code_started: options.code_started
+            code_stopped: options.code_stopped
+            shy: true
+          @execute
+            cmd: cmd
+            unless: [
+              -> @status -1
+              -> options.cache and options.store["mecano.service.#{options.name}.status"] is 'started'
+            ]
+          , (err, started) ->
+            throw err if err
+            options.store["mecano.service.#{options.name}.status"] = 'started' if not err and options.cache
+
+## Discover
+    
+    discover = require '../misc/discover'

@@ -5,9 +5,10 @@ they = require 'ssh2-they'
 
 describe 'service install', ->
   
-  @timeout 20000
+  @timeout 30000
   config = test.config()
   return if config.disable_service
+  process.env['TMPDIR'] = '/var/tmp' if config.isCentos6 or config.isCentos7
 
   they 'new package', (ssh, next) ->
     mecano
@@ -19,7 +20,7 @@ describe 'service install', ->
     , (err, status) ->
       status.should.be.true() unless err
     .then next
-
+  
   they 'already installed packages', (ssh, next) ->
     mecano
       ssh: ssh
@@ -41,7 +42,7 @@ describe 'service install', ->
     .service config.service.name, (err, status) ->
       status.should.be.true() unless err
     .then next
-
+  
   they 'cache', (ssh, next) ->
     mecano
       ssh: ssh
@@ -60,4 +61,14 @@ describe 'service install', ->
     #   cmd: 'yum list installed | grep cronie'
     # , (err, status) ->
     #   status.should.be.true() unless err
+    .then next
+
+  they 'skip code when error', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .service.install
+      name: 'thisservicedoesnotexist'
+      code_skipped: 1
+    , (err, status) ->
+      status.should.be.false() unless err
     .then next

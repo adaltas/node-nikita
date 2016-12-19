@@ -80,6 +80,12 @@ require('mecano').service([{
       chkname = options.chk_name or options.srv_name or options.name
       srvname = options.srv_name or options.chk_name or options.name
       options.action = options.action.split(',') if typeof options.action is 'string'
+      # discover Os and Version
+      # check /etc/system-release for redhat and centos
+      # Todo: Check /etc/issue for ubuntu
+      options.store ?= {}
+      @call discover.system
+      @call discover.loader
       @service.install
         name: pkgname
         cache: options.cache
@@ -89,8 +95,9 @@ require('mecano').service([{
         name: chkname
         startup: options.startup
         if: options.startup?
-      @call ->
-        return unless options.action
+      @call 
+        if: -> options.action
+      , ->
         @service.status
           name: srvname
           code_started: options.code_started
@@ -105,3 +112,7 @@ require('mecano').service([{
         @service.restart
           name: srvname
           if: -> @status(-3) and 'restart' in options.action
+
+## Dependencies
+
+    discover = require '../misc/discover'

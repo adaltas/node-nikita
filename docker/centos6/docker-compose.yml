@@ -21,6 +21,7 @@ services:
     environment:
       MECANO_TEST: /mecano/docker/centos6/test.coffee
       DOCKER_HOST: 'tcp://dind:2375'
+      TMPDIR: '/var/tmp'
   dind:
     image: docker:dind
     privileged: true

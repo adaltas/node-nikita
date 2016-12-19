@@ -32,7 +32,7 @@ RUN yum install -y krb5-workstation
 ADD ./krb5.conf /etc/krb5.conf
 
 # Install Misc dependencies
-RUN yum install -y zip git
+RUN yum install -y zip unzip git
 
 # Install docker
 RUN curl -fsSL https://get.docker.com/ | sh

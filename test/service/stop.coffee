@@ -32,7 +32,17 @@ describe 'service stop', ->
     .service.stop config.service.srv_name, (err, status) ->
       status.should.be.true() unless err
     .then next
-  
+
+  they 'no error when invalid service name', (ssh, next) ->
+    mecano
+      ssh: ssh
+    .service.stop
+      name: 'thisdoenstexit'
+      relax: true
+    , (err, status) ->
+      status.should.be.false()
+    .then next
+
   they 'store status', (ssh, next) ->
     mecano
       ssh: ssh

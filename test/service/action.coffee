@@ -5,7 +5,7 @@ they = require 'ssh2-they'
 
 describe 'service action', ->
   
-  @timeout 20000
+  @timeout 30000
   config = test.config()
   return if config.disable_service
 

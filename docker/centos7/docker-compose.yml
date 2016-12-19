@@ -9,6 +9,7 @@
 version: '2'
 services:
   nodejs:
+    privileged: true
     build: .
     image: mecano_centos7_nodejs
     volumes:
@@ -19,6 +20,8 @@ services:
     environment:
       MECANO_TEST: /mecano/docker/centos7/test.coffee
       DOCKER_HOST: 'tcp://dind:2375'
+      TMPDIR: '/var/tmp'
+    entrypoint: '/usr/sbin/init'
   dind:
     image: docker:dind
     privileged: true
