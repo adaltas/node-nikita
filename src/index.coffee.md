@@ -136,6 +136,7 @@ functions share a common API with flexible options.
       service:
         '': 'mecano/service'
         install: 'mecano/service/install'
+        init: 'mecano/service/init'
         remove: 'mecano/service/remove'
         restart: 'mecano/service/restart'
         start: 'mecano/service/start'
