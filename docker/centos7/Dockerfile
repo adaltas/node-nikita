@@ -34,6 +34,12 @@ ADD ./krb5.conf /etc/krb5.conf
 # Install Misc dependencies
 RUN yum install -y zip unzip git
 
+# Install PostgreSQL client
+RUN yum install -y postgresql
+
+## Install Mysql client
+RUN yum install -y mysql
+
 # Install docker
 RUN curl -fsSL https://get.docker.com/ | sh
 RUN curl -L "https://github.com/docker/compose/releases/download/1.8.1/docker-compose-$(uname -s)-$(uname -m)" > /usr/local/bin/docker-compose
