@@ -9,6 +9,8 @@ Pull a container
     Name of the tag to pull.   
 *   `version` (string)   
     Version of the tag to control.  Default to `latest`.   
+*   `code_skipped` (string)   
+    The exit code to skip if different from 0.   
 *   `all` (Boolean)   
     Download all tagged images in the repository.  Default to false.   
 
@@ -63,9 +65,8 @@ mecano.docker_pull({
       @execute
         unless: -> @status -1
         cmd: docker.wrap options, cmd
+        code_skipped: options.code_skipped
       , (err, status) -> callback err, status
-      
-
       
 
 ## Modules Dependencies
