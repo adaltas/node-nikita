@@ -50,28 +50,19 @@ require('mecano').service.start([{
       # Action
       options.log message: "Status for service #{options.name}", level: 'INFO', module: 'mecano/lib/service/status'
       options.log message: "Option code_stopped is #{options.code_stopped}", level: 'DEBUG', module: 'mecano/lib/service/status' unless options.code_stopped is 3
-      options.loader ?= options.store['mecano:service:loader']
       @call discover.loader, -> options.loader ?= options.store['mecano:service:loader']
       @call
         if: -> options.store['mecano:system:type'] in ['redhat','centos']
         if_exec: "ls /lib/systemd/system/*.service /etc/systemd/system/*.service /etc/rc.d/* | grep #{options.name}"
-        handler: ->
+        handler:  ->
+          cmd = switch options.loader
+            when 'systemctl' then "systemctl status #{options.name}"
+            when 'service' then "service #{options.name} status"
+            else 'Init Loader Not supported'
           @execute
-            if: -> options.loader is 'systemctl'
-            cmd: "systemctl status #{options.name}"
             code: 0
             code_skipped: 3
-          , (err, started) ->
-            throw Error "Invalid Service Name: #{options.name}" if err
-            status = if started then 'started' else 'stopped'
-            options.log message: "Status for #{options.name} is #{status}", level: 'INFO', module: 'mecano/lib/service/status'
-            # throw err if err
-            options.store["mecano.service.#{options.name}.status"] = "#{status}" if options.cache
-          @execute
-            if: -> options.loader is 'service'
-            cmd: "service #{options.name} status"
-            code: 0
-            code_skipped: 3
+            cmd: cmd
           , (err, started) ->
             throw Error "Invalid Service Name: #{options.name}" if err
             status = if started then 'started' else 'stopped'
