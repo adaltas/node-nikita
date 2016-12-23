@@ -45,6 +45,8 @@ Control system limits for a user.
     Max stack size (KB)   
 *   `rtprio` (int)   
     Max realtime priority.   
+*   `user` (string)   
+    The user to apply the limit to   
 
 ## Implemented strategy
 
