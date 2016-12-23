@@ -768,3 +768,105 @@ describe 'misc', ->
           }
         }
       """
+
+  describe 'tmpfs', ->
+    it 'parse single complete line file', ->
+      obj = """
+        # screen needs directory in /var/run
+        d /var/run/file_1 0775 root nikita 10s -
+      """
+      expected =
+        '/var/run/file_1':
+          type: 'd'
+          mount: '/var/run/file_1'
+          perm: '0775'
+          uid: 'root'
+          gid: 'nikita'
+          age: '10s'
+          argu: '-'
+      content = misc.tmpfs.parse obj
+      content.should.eql expected
+    it 'parse uncomplete complete line file', ->
+      obj = """
+        # screen needs directory in /var/run
+        d /var/run/file_1 0775 root nikita
+      """
+      expected =
+        '/var/run/file_1':
+          type: 'd'
+          mount: '/var/run/file_1'
+          perm: '0775'
+          uid: 'root'
+          gid: 'nikita'
+          age: '-'
+          argu: '-'
+      content = misc.tmpfs.parse obj
+      content.should.eql expected
+    it 'parse multiple complete line file', ->
+      obj = """
+        # nikita needs directory in /var/run
+        d /var/run/file_1 0775 root nikita 10s -
+        # an other comment ^^
+        d /var/run/file_2 0775 root nikita 10s -
+      """
+      expected =
+        '/var/run/file_1':
+          type: 'd'
+          mount: '/var/run/file_1'
+          perm: '0775'
+          uid: 'root'
+          gid: 'nikita'
+          age: '10s'
+          argu: '-'
+        '/var/run/file_2':
+          type: 'd'
+          mount: '/var/run/file_2'
+          perm: '0775'
+          uid: 'root'
+          gid: 'nikita'
+          age: '10s'
+          argu: '-'
+      content = misc.tmpfs.parse obj
+      content.should.eql expected
+    it 'stringify single complete object file', ->
+      obj =
+        '/var/run/file_1':
+          type: 'd'
+          mount: '/var/run/file_1'
+          perm: '0775'
+          uid: 'root'
+          gid: 'nikita'
+          age: '10s'
+          argu: '-'
+      misc.tmpfs.stringify(obj).should.eql """
+          d /var/run/file_1 0775 root nikita 10s -
+        """
+    it 'stringify not defined by omission value file', ->
+      obj =
+        '/var/run/file_1':
+          type: 'd'
+          mount: '/var/run/file_1'
+          perm: '0775'
+          uid: 'root'
+          gid: 'nikita'
+      misc.tmpfs.stringify(obj).should.eql """
+          d /var/run/file_1 0775 root nikita - -
+        """
+    it 'stringify multiple files', ->
+      obj =
+        '/var/run/file_1':
+          type: 'd'
+          mount: '/var/run/file_1'
+          perm: '0775'
+          uid: 'root'
+          gid: 'nikita'
+        '/var/run/file_2':
+          type: 'd'
+          mount: '/var/run/file_2'
+          perm: '0775'
+          uid: 'root'
+          gid: 'nikita'
+      misc.tmpfs.stringify(obj).should.eql """
+          d /var/run/file_1 0775 root nikita - -
+          d /var/run/file_2 0775 root nikita - -
+        """
