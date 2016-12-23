@@ -10,18 +10,18 @@ Store properties in the mecano store object.
           cmd: 'cat /etc/system-release'
           shy: true
           code_skipped: 1
-          , (err, status, stdout, stderr) ->
-            throw err if err
-            [line] = string.lines stdout
-            if /CentOS/.test line
-              options.store['mecano:system:type'] ?= 'centos' 
-              index = line.split(' ').indexOf 'release'
-              options.store['mecano:system:release'] ?= line.split(' ')[index+1]
-            if /Red\sHat/.test line
-              options.store['mecano:system:type'] ?= 'redhat'
-              index = line.split(' ').indexOf 'release'
-              options.store['mecano:system:release'] ?= line.split(' ')[index+1]
-            throw Error 'Unsupported OS' unless options.store['mecano:system:type']?
+        , (err, status, stdout, stderr) ->
+          throw err if err
+          [line] = string.lines stdout
+          if /CentOS/.test line
+            options.store['mecano:system:type'] ?= 'centos'
+            index = line.split(' ').indexOf 'release'
+            options.store['mecano:system:release'] ?= line.split(' ')[index+1]
+          if /Red\sHat/.test line
+            options.store['mecano:system:type'] ?= 'redhat'
+            index = line.split(' ').indexOf 'release'
+            options.store['mecano:system:release'] ?= line.split(' ')[index+1]
+          throw Error 'Unsupported OS' unless options.store['mecano:system:type']?
       loader: (options) ->
         @execute
           shy: true
