@@ -15,9 +15,11 @@ Write a file in the Java properties format.
 *   `local`
     Treat the source as local instead of remote, only apply with "ssh"
     option.
+*   `sort`
+    Sort the properties before writting them. False by default
 *   `merge`
     Merges content properties with target file. False by default
-#   `separator`
+*   `separator`
     The caracter to use for separating property and value. '=' by default.
 *   `ssh` (object|ssh2)
     Run the action on a remote server using SSH, an ssh2 instance or an
@@ -34,6 +36,7 @@ Write a file in the Java properties format.
       throw Error "Missing argument options.target" unless options.target
       options.separator ?= '='
       options.content ?= {}
+      options.sort ?= false
       properties = if options.merge then {} else options.content
       options.log message: "Merging \"#{if options.merge then 'true' else 'false'}\"", level: 'DEBUG', module: 'mecano/lib/file.ini'
       @call
@@ -58,8 +61,9 @@ Write a file in the Java properties format.
             callback()
       @call ->
         # Write data
-        data = for k, v of properties
-          "#{k}#{options.separator}#{v}"
+        keys = if options.sort then Object.keys(properties).sort() else Object.keys(properties)
+        data = for key in keys
+          "#{key}#{options.separator}#{properties[key]}"
         data = data.join '\n'
         @file
           target: "#{options.target}"
