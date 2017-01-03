@@ -31,7 +31,7 @@ integrated. More are added on demand.
 *   `gid`   
     File group name or group id.   
 *   `mode`   
-    File mode (permission and sticky bits), default to `0666`, in the for of
+    File mode (permission and sticky bits), default to `0644`, in the form of
     `{mode: 0o744}` or `{mode: "744"}`.   
 
 If target is a callback, it will be called with the generated content as
@@ -94,7 +94,7 @@ require('mecano').render({
         if not options.engine and options.source
           extension = path.extname options.source
           switch extension
-            when '.js2' then options.engine = 'nunjunks'
+            when '.j2' then options.engine = 'nunjunks'
             when '.eco' then options.engine = 'eco'
         options.source = null
         options.header = null
