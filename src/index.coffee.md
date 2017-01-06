@@ -143,10 +143,9 @@ functions share a common API with flexible options.
         startup: 'mecano/service/startup'
         status: 'mecano/service/status'
         stop: 'mecano/service/stop'
-      tmpfs:
-        '': 'mecano/tmpfs'
       system:
         limits: 'mecano/system/limits'
+        tmpfs: 'mecano/system/tmpfs'
       wait:
         '': 'mecano/wait/time'
         execute: 'mecano/wait/execute'

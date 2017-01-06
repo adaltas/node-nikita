@@ -8,7 +8,7 @@ they = require 'ssh2-they'
 misc = require '../../src/misc'
 
 
-describe 'tmpfs', ->
+describe 'system.tmpfs', ->
   config = test.config()
   return  unless config.isCentos6 or config.isCentos7
   scratch = test.scratch @
@@ -19,7 +19,7 @@ describe 'tmpfs', ->
         ssh: ssh
       .remove
         target: "#{scratch}/file_1.conf"
-      .tmpfs
+      .system.tmpfs
         target: "#{scratch}/file_1.conf"
         mount: '/var/run/file_1'
         uid: 'root'
@@ -46,7 +46,7 @@ describe 'tmpfs', ->
     they 'status not modified', (ssh, next) ->
       mecano
         ssh: ssh
-      .tmpfs
+      .system.tmpfs
         target: "#{scratch}/file_1.conf"
         mount: '/var/run/file_1'
         uid: 'root'
@@ -58,7 +58,7 @@ describe 'tmpfs', ->
       , (err, written) ->
         return next err if err
         written.should.be.true()
-      .tmpfs
+      .system.tmpfs
         target: "#{scratch}/file_1.conf"
         mount: '/var/run/file_1'
         uid: 'root'
@@ -85,7 +85,7 @@ describe 'tmpfs', ->
         ssh: ssh
       .remove
         target: "#{scratch}/file_1.conf"
-      .tmpfs
+      .system.tmpfs
         target: "#{scratch}/file_1.conf"
         mount: '/var/run/file_1'
         uid: 'root'
@@ -97,7 +97,7 @@ describe 'tmpfs', ->
       , (err, written) ->
         return next err if err
         written.should.be.true()
-      .tmpfs
+      .system.tmpfs
         target: "#{scratch}/file_1.conf"
         mount: '/var/run/file_2'
         uid: 'root'
@@ -127,7 +127,7 @@ describe 'tmpfs', ->
         ssh: ssh
       .remove
         target: "#{scratch}/file_2.conf"
-      .tmpfs
+      .system.tmpfs
         target: "#{scratch}/file_2.conf"
         mount: '/var/run/file_2'
         uid: 'root'
@@ -139,7 +139,7 @@ describe 'tmpfs', ->
       , (err, written) ->
         return next err if err
         written.should.be.true()
-      .tmpfs
+      .system.tmpfs
         target: "#{scratch}/file_2.conf"
         mount: '/var/run/file_1'
         uid: 'root'
@@ -169,7 +169,7 @@ describe 'tmpfs', ->
         ssh: ssh
       .remove
         target: "#{scratch}/file_2.conf"
-      .tmpfs
+      .system.tmpfs
         target: "#{scratch}/file_2.conf"
         mount: '/var/run/file_2'
         uid: 'root'
@@ -181,7 +181,7 @@ describe 'tmpfs', ->
       , (err, written) ->
         return next err if err
         written.should.be.true()
-      .tmpfs
+      .system.tmpfs
         target: "#{scratch}/file_2.conf"
         mount: '/var/run/file_1'
         uid: 'root'
@@ -193,7 +193,7 @@ describe 'tmpfs', ->
       , (err, written) ->
         return next err if err
         written.should.be.true()
-      .tmpfs
+      .system.tmpfs
         target: "#{scratch}/file_2.conf"
         mount: '/var/run/file_1'
         uid: 'root'
@@ -226,7 +226,7 @@ describe 'tmpfs', ->
         ssh: ssh
       .remove
         target: "/etc/tmpfiles.d/root.conf"
-      .tmpfs
+      .system.tmpfs
         mount: '/var/run/file_1'
         uid: 'root'
         gid: 'root'
@@ -252,7 +252,7 @@ describe 'tmpfs', ->
       mecano
         ssh: ssh
       .remove '/etc/tmpfiles.d/root.conf'
-      .tmpfs
+      .system.tmpfs
         mount: '/var/run/file_1'
         uid: 'root'
         gid: 'root'
@@ -279,8 +279,7 @@ describe 'tmpfs', ->
     they 'detect Centos/Redhat 6 not supported', (ssh, next) ->
       mecano
         ssh: ssh
-        debug: true
-      .tmpfs
+      .system.tmpfs
         mount: '/var/run/file_1'
         uid: 'root'
         gid: 'root'
