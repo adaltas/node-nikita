@@ -117,5 +117,7 @@ require('mecano').service([{
 
     discover = require '../misc/discover'
 
-[service in linux]:(https://www.digitalocean.com/community/tutorials/how-to-configure-a-linux-service-to-start-automatically-after-a-crash-or-reboot-part-2-reference#systemd-configuration-files-unit-files)
-[systemd vs sysvinit]:(https://fedoraproject.org/wiki/SysVinit_to_Systemd_Cheatsheet)
+## Further Reading
+
+*   [service in linux](https://www.digitalocean.com/community/tutorials/how-to-configure-a-linux-service-to-start-automatically-after-a-crash-or-reboot-part-2-reference#systemd-configuration-files-unit-files)
+*   [systemd vs sysvinit](https://fedoraproject.org/wiki/SysVinit_to_Systemd_Cheatsheet)
