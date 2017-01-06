@@ -26,10 +26,10 @@ and trustores.
 
 ## Callback parameters
 
-*   `err` (object|null)
-    Error object if any.
-*   `status` (boolean)
-    Indicates if the certificated was inserted.
+*   `err` (object|null)   
+    Error object if any.   
+*   `status` (boolean)   
+    Indicates if the certificated was inserted.   
 
 ## Relevant Java properties
 
@@ -49,7 +49,7 @@ and trustores.
 *   Change the password of a keystore:   
     `keytool -storepasswd -keystore my.keystore`
 *   Change the key's password:   
-    `keytool -keypasswd  -alias <key_name> -keystore my.keystore`
+    `keytool -keypasswd -alias <key_name> -keystore my.keystore`
 
 ## Uploading public and private keys into a keystore
 
