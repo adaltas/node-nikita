@@ -1,5 +1,5 @@
 
-# `mecano.system_limits(options, [callback])`
+# `system.limits(options, [callback])`
 
 Control system limits for a user.
 

@@ -58,7 +58,6 @@ functions share a common API with flexible options.
       move: 'mecano/core/move'
       remove: 'mecano/core/remove'
       render: 'mecano/core/render'
-      system_limits: 'mecano/core/system_limits'
       touch: 'mecano/core/touch'
       user: 'mecano/core/user'
       cron:
@@ -146,11 +145,14 @@ functions share a common API with flexible options.
         stop: 'mecano/service/stop'
       tmpfs:
         '': 'mecano/tmpfs'
+      system:
+        limits: 'mecano/system/limits'
       wait:
         '': 'mecano/wait/time'
         execute: 'mecano/wait/execute'
         exist: 'mecano/wait/exist'
       # Backward compatibility
+      system_limits: 'mecano/system/limits'
       cron_add: 'mecano/cron/add'
       cron_remove: 'mecano/cron/remove'
       docker_build: 'mecano/docker/build'

@@ -5,14 +5,14 @@ they = require 'ssh2-they'
 test = require '../test'
 fs = require 'ssh2-fs'
 
-describe 'system_limits', ->
+describe 'system.limits', ->
 
   scratch = test.scratch @
 
   they 'do nothing without any limits', (ssh, next) ->
     mecano
       ssh: ssh
-    .system_limits
+    .system.limits
       target: "#{scratch}/me.conf"
       user: 'me'
     , (err, status) ->
@@ -26,7 +26,7 @@ describe 'system_limits', ->
     return next() unless os.platform() is 'linux'
     mecano
       ssh: ssh
-    .system_limits
+    .system.limits
       target: "#{scratch}/me.conf"
       user: 'me'
       nofile: 2048
@@ -46,7 +46,7 @@ describe 'system_limits', ->
     return next() unless os.platform() is 'linux'
     mecano
       ssh: ssh
-    .system_limits
+    .system.limits
       target: "#{scratch}/me.conf"
       system: true
       nofile: 2048
@@ -66,7 +66,7 @@ describe 'system_limits', ->
     return next() unless os.platform() is 'linux'
     mecano
       ssh: ssh
-    .system_limits
+    .system.limits
       target: "#{scratch}/me.conf"
       user: 'me'
       nofile:
@@ -87,13 +87,13 @@ describe 'system_limits', ->
     return next() unless os.platform() is 'linux'
     mecano
       ssh: ssh
-    .system_limits
+    .system.limits
       target: "#{scratch}/me.conf"
       user: 'me'
       nofile: 2048
       nproc: 2048
       shy: true
-    .system_limits
+    .system.limits
       target: "#{scratch}/me.conf"
       user: 'me'
       nofile: 2047
@@ -106,13 +106,13 @@ describe 'system_limits', ->
     return next() unless os.platform() is 'linux'
     mecano
       ssh: ssh
-    .system_limits
+    .system.limits
       target: "#{scratch}/me.conf"
       user: 'me'
       nofile: 2048
       nproc: 2048
       shy: true
-    .system_limits
+    .system.limits
       target: "#{scratch}/me.conf"
       user: 'me'
       nofile: 2048
@@ -141,7 +141,7 @@ describe 'system_limits', ->
         return next err if err
         nproc = stdout.trim()
         nproc = Math.round parseInt(nproc)*0.75
-      .system_limits
+      .system.limits
         target: "#{scratch}/me.conf"
         user: 'me'
         nofile: true
@@ -161,7 +161,7 @@ describe 'system_limits', ->
     return next() unless os.platform() is 'linux'
     mecano
       ssh: ssh
-    .system_limits
+    .system.limits
       target: "#{scratch}/me.conf"
       user: 'me'
       nofile: 1000000000
@@ -173,7 +173,7 @@ describe 'system_limits', ->
     return next() unless os.platform() is 'linux'
     mecano
       ssh: ssh
-    .system_limits
+    .system.limits
       target: "#{scratch}/me.conf"
       user: 'me'
       nproc: 1000000000
@@ -185,7 +185,7 @@ describe 'system_limits', ->
     return next() unless os.platform() is 'linux'
     mecano
       ssh: ssh
-    .system_limits
+    .system.limits
       target: "#{scratch}/me.conf"
       user: 'me'
       nproc:
@@ -199,7 +199,7 @@ describe 'system_limits', ->
     return next() unless os.platform() is 'linux'
     mecano
       ssh: ssh
-    .system_limits
+    .system.limits
       target: "#{scratch}/me.conf"
       user: 'me'
       nofile: 2048
