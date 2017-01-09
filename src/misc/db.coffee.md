@@ -1,8 +1,15 @@
 
 # Misc DB
 
-## Build a Unix command
+## Escape
 
+Escape SQL for Bash processing.
+
+    module.exports.escape = (sql) ->
+      sql.replace /[\\"]/g, "\\$&"
+
+## Build a Unix command
+    
     module.exports.cmd = (opts..., cmd=null) ->
       properties = ['engine', 'admin_username', 'admin_password', 'username', 'password', 'host', 'database','silent']
       options = {}
@@ -13,7 +20,6 @@
       options.engine = options.engine.toLowerCase()
       options.admin_password = null unless options.admin_username
       options.silent ?= true
-      # escape = (text) -> text.replace(/[\\"]/g, "\\$&")
       switch options.engine
         when 'mysql'
           options.path ?= 'mysql'
@@ -30,7 +36,7 @@
             # -s, --silent              Be more silent. Print results with a tab as separator, each row on new line.
             # -r, --raw                 Write fields without conversion. Used with --batch.
             "-N -s -r" if options.silent
-            "-e \"#{cmd}\"" if cmd
+            "-e \"#{module.exports.escape cmd}\"" if cmd
           ].join ' '
         when 'postgres'
           options.path ?= 'psql'
