@@ -77,6 +77,6 @@
   "scripts": {
     "coffee": "coffee -b -o lib src",
     "pretest": "cp -n test.coffee.sample test.coffee; coffee -b -o lib src",
-    "test": "NODE_ENV=test ./node_modules/.bin/mocha"
+    "test": "NODE_ENV=test mocha"
   }
 }
