@@ -146,6 +146,10 @@ functions share a common API with flexible options.
       system:
         limits: 'mecano/system/limits'
         tmpfs: 'mecano/system/tmpfs'
+      ssh:
+        'open': 'mecano/ssh/open'
+        'close': 'mecano/ssh/close'
+        'root': 'mecano/ssh/root'
       wait:
         '': 'mecano/wait/time'
         execute: 'mecano/wait/execute'
