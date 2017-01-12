@@ -128,7 +128,7 @@ describe 'file.ini', ->
       written.should.be.true()
       fs.readFile ssh, "#{scratch}/user.ini", 'utf8', (err, data) ->
         return next err if err
-        data.should.eql '[user]\nname = toto\n--hasACar'
+        data.should.eql '[user]\nname = toto\n--hasACar\n'
         next()
 
   they 'merge ini containing single key lines', (ssh, next) ->
