@@ -493,8 +493,7 @@ misc = module.exports =
               sep = '='
               sep = ':' if line.indexOf(':') isnt -1
               line = line.split sep
-              [controller,path] = line
-              current_mount_section.push type: "#{controller.trim()}", path:"#{path.trim()}"
+              current_mount_section.push type: "#{line[0].trim()}", path:"#{line[1].trim()}"
           # we are parsing a group object
           # ^(cpuset|cpu|cpuacct|memory|devices|freezer|net_cls|blkio)\s=\s[aA-zZ|\s]*
           if current_group
@@ -561,8 +560,7 @@ misc = module.exports =
       if obj.mounts.length isnt 0
         mount_render = "mount {\n"
         for mount,k in obj.mounts
-          {type, path} = mount
-          mount_render += "#{indent}#{type} = #{path};\n"
+          mount_render += "#{indent}#{mount.type} = #{mount.path};\n"
         mount_render += '}'
         sections.push mount_render
       count = 0
