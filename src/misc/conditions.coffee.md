@@ -38,7 +38,7 @@ mecano.render({
 }, fonction(err, rendered){});
 ```
 
-      if: (options, skip, succeed) ->
+      if: (options, succeed, skip) ->
         options.if = [options.if] unless Array.isArray options.if
         ok = true
         each(options.if)
@@ -87,7 +87,7 @@ callback and the handler is run asynchronously.
 If it's an array, all its element must negatively resolve for the condition to
 pass.
 
-      unless: (options, skip, succeed) ->
+      unless: (options, succeed, skip) ->
         options.unless = [options.unless] unless Array.isArray options.unless
         ok = true
         each(options.unless)
@@ -129,7 +129,7 @@ be a single shell command or an array of commands.
 The callback `succeed` is called if all the provided command 
 were executed successfully otherwise the callback `skip` is called.
 
-      if_exec: (options, skip, succeed) ->
+      if_exec: (options, succeed, skip) ->
         each(options.if_exec)
         .call (cmd, next) ->
           options.log? message: "Mecano `if_exec`: #{cmd}", level: 'DEBUG', module: 'mecano/misc/conditions'
@@ -152,7 +152,7 @@ be a single shell command or an array of commands.
 The callback `succeed` is called if all the provided command 
 were executed with failure otherwise the callback `skip` is called.
 
-      unless_exec: (options, skip, succeed) ->
+      unless_exec: (options, succeed, skip) ->
         each(options.unless_exec)
         .call (cmd, next) ->
           options.log? message: "Mecano `unless_exec`: #{cmd}", level: 'DEBUG', module: 'mecano/misc/conditions'
@@ -177,7 +177,7 @@ option.
 The callback `succeed` is called if all the provided paths 
 exists otherwise the callback `skip` is called.
 
-      if_exists: (options, skip, succeed) ->
+      if_exists: (options, succeed, skip) ->
         {ssh, if_exists, target} = options
         if typeof if_exists is 'boolean' and target
           if_exists = if if_exists then [target] else null
@@ -202,7 +202,7 @@ option.
 The callback `succeed` is called if none of the provided paths 
 exists otherwise the callback `skip` is called.
 
-      unless_exists: (options, skip, succeed) ->
+      unless_exists: (options, succeed, skip) ->
         {ssh, unless_exists, target} = options
         if typeof unless_exists is 'boolean' and target
           unless_exists = if unless_exists then [target] else null
@@ -226,7 +226,7 @@ be a file path or an array of file paths.
 The callback `succeed` is called if all of the provided paths 
 exists otherwise the callback `skip` is called with an error.
 
-      should_exist: (options, skip, succeed) ->
+      should_exist: (options, succeed, skip) ->
         # return succeed() unless options.should_exist?
         each(options.should_exist)
         .call (should_exist, next) ->
@@ -246,7 +246,7 @@ be a file path or an array of file paths.
 The callback `succeed` is called if none of the provided paths 
 exists otherwise the callback `skip` is called with an error.
 
-      should_not_exist: (options, skip, succeed) ->
+      should_not_exist: (options, succeed, skip) ->
         # return succeed() unless options.should_not_exist?
         each(options.should_not_exist)
         .call (should_not_exist, next) ->
@@ -263,35 +263,35 @@ This is the function run internally to execute all the conditions.
 
 *   `opts`
     Command options
-*   `skip`
-    Skip callback, called when a condition is not fulfill. May also be called with on error on failure
 *   `succeed`
     Succeed callback, only called if all the condition succeed
+*   `skip`
+    Skip callback, called when a condition is not fulfill. May also be called with on error on failure
 
 Example:
 
 ```js
 conditions.all({
   if: true
-}, function(err){
-  console.log('Conditins failed or pass an error')
 }, function(){
   console.log('Conditions succeed')
+}, function(err){
+  console.log('Conditins failed or pass an error')
 })
 ```
 
-      all: (context, options, failed, succeed) ->
+      all: (context, options, succeed, failed) ->
         return succeed() unless options? and (typeof options is 'object' and not Array.isArray options)
         keys = Object.keys options
         i = 0
         next = ->
           key = keys[i++]
           return succeed() unless key?
+          return next() if key is 'all'
           return next() unless module.exports[key]?
-          module.exports[key].call context, options, (err) ->
+          module.exports[key].call context, options, next, (err) ->
             # options.log? "Mecano `#{key}`: skipping action"
             failed err
-          , next
         next()
 
 ## Dependencies

@@ -224,11 +224,11 @@
         return if killed
         if array.compare options.type, ['end']
           return conditions.all proxy, options
-          , (err) ->
-            callback err if callback
-            run()
           , ->
             while todos[0] and todos[0].type isnt 'then' then todos.shift()
+            callback err if callback
+            run()
+          , (err) ->
             callback err if callback
             run()
         index = index_counter++
@@ -302,12 +302,12 @@
             .then do_conditions
           do_conditions = ->
             conditions.all obj, options
-            , (err) ->
-              do_callback [err]
             , ->
               for k, v of options # Remove conditions from options
                 delete options[k] if /^if.*/.test(k) or /^unless.*/.test(k)
               do_handler()
+            , (err) ->
+              do_callback [err]
           options.attempt = -1
           do_handler = ->
             options.attempt++
