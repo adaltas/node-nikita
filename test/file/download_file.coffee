@@ -5,7 +5,7 @@ test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
 
-describe 'download file', ->
+describe 'file.download file', ->
 
   scratch = test.scratch @
   

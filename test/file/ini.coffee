@@ -5,7 +5,7 @@ test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
 
-describe 'write.ini', ->
+describe 'file.ini', ->
 
   scratch = test.scratch @
 
@@ -137,7 +137,6 @@ describe 'write.ini', ->
       return next err if err
       mecano.file.ini
         ssh: ssh
-        debug: true
         content: user: preference: {language: 'c++', color: ''}
         stringify: misc.ini.stringify_single_key
         target: "#{scratch}/user.ini"
