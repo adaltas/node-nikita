@@ -496,6 +496,7 @@
       Object.defineProperty obj.registry, 'unregister', get: -> (name, handler) ->
         reg.unregister arguments...
         proxy
+      proxy.ssh.open obj.options.ssh if obj.options.ssh and not obj.options.ssh.config
       proxy
 
     module.exports.propagated_options = ['ssh', 'log', 'stdout', 'stderr', 'debug']
