@@ -47,8 +47,15 @@ Reload the service daemon provider depending on the os.
       options.target ?= "/etc/init.d/#{options.name}"
       @call discover.loader, options
       # discover loader to put in cache
+      @call discover.system
       @call discover.loader, -> options.loader ?= options.store['mecano:service:loader']
       @call ->
+        cmd = "systemctl status #{options.name} 2>\&1 "
+        if options.store['mecano:system:type'] in ['redhat','centos'] and options.loader is 'systemctl'
+          cmd += switch options.store['mecano:system:release'].split('.')[1]
+            when '1' then "| grep '(Reason: No such file or directory)'"
+            when '2' then "| grep 'Unit #{options.name}.service could not be found.'"
+            when '3' then "| grep 'Unit #{options.name}.service could not be found.'"
         @render 
           target: options.target
           source: options.source
@@ -61,7 +68,7 @@ Reload the service daemon provider depending on the os.
         @execute
           if: -> (options.loader is 'systemctl') and (path.dirname(options.target) is '/etc/init.d')
           shy: true
-          cmd: "systemctl status #{options.name} 2>\&1| grep 'Unit #{options.name}.service could not be found.'"
+          cmd: cmd
           code_skipped: 1
         @execute
           if: ->  @status(-1)
