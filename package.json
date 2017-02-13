@@ -1,7 +1,7 @@
 {
   "name": "mecano",
   "description": "Common functions for system deployment.",
-  "version": "0.5.5",
+  "version": "0.6.0",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "email": "open@adaltas.com",
