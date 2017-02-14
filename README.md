@@ -1,4 +1,4 @@
-[![Build Status](https://secure.travis-ci.org/wdavidw/node-mecano.png)](http://travis-ci.org/wdavidw/node-mecano)
+[![Build Status](https://secure.travis-ci.org/adaltas/node-nikita.png)](http://travis-ci.org/adaltas/node-nikita)
 
 # Node.js Mecano
 
