@@ -1,5 +1,5 @@
 
-# `mecano.group(options, [callback])`
+# `mecano.system.group(options, [callback])`
 
 Create or modify a Unix group.
 
@@ -23,7 +23,7 @@ Create or modify a Unix group.
 ## Example
 
 ```js
-require('mecano').group({
+require('mecano').system.group({
   name: 'myself'
   system: true
   gid: 490
@@ -39,19 +39,19 @@ The result of the above action can be viewed with the command
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering group", level: 'DEBUG', module: 'mecano/lib/group'
+      options.log message: "Entering group", level: 'DEBUG', module: 'mecano/lib/system/group'
       return callback new Error "Option 'name' is required" unless options.name
       options.system ?= false
       options.gid ?= null
       modified = false
       info = null
       do_info = ->
-        options.log message: "Get group information for '#{options.name}'", level: 'DEBUG', module: 'mecano/lib/group'
+        options.log message: "Get group information for '#{options.name}'", level: 'DEBUG', module: 'mecano/lib/system/group'
         options.store.cache_group = undefined # Clear cache if any
         uid_gid.group options.ssh, options.store, (err, groups) ->
           return callback err if err
           info = groups[options.name]
-          options.log message: "Got #{JSON.stringify info}", level: 'INFO', module: 'mecano/lib/group'
+          options.log message: "Got #{JSON.stringify info}", level: 'INFO', module: 'mecano/lib/system/group'
           if info then do_compare() else do_create()
       do_create = =>
         cmd = 'groupadd'
@@ -65,14 +65,14 @@ The result of the above action can be viewed with the command
           return callback err if err
           if created
           then modified = true
-          else options.log message: "Group defined elsewhere than '/etc/group', exit code is 9", level: 'WARN', module: 'mecano/lib/group'
+          else options.log message: "Group defined elsewhere than '/etc/group', exit code is 9", level: 'WARN', module: 'mecano/lib/system/group'
           callback null, modified
       do_compare = ->
         for k in ['gid']
           modified = true if options[k]? and info[k] isnt options[k]
         if modified
-        then options.log message: "Group information modified", level: 'WARN', module: 'mecano/lib/group'
-        else options.log message: "Group information unchanged", level: 'DEBUG', module: 'mecano/lib/group'
+        then options.log message: "Group information modified", level: 'WARN', module: 'mecano/lib/system/group'
+        else options.log message: "Group information unchanged", level: 'DEBUG', module: 'mecano/lib/system/group'
         if modified then do_modify() else callback()
       do_modify = =>
         cmd = 'groupmod'
