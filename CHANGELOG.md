@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* #36 cgroups: move to system namespace
 * #35 chmod: move to system namespace
 * #34 chown: move to system namespace
 * #33 group: move to system namespace

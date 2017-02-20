@@ -43,7 +43,6 @@ functions share a common API with flexible options.
       assert: 'mecano/core/assert'
       backup: 'mecano/core/backup'
       cache: 'mecano/core/cache'
-      cgroups: 'mecano/core/cgroups'
       compress: 'mecano/core/compress'
       copy: 'mecano/core/copy'
       execute: 'mecano/core/execute'
@@ -139,6 +138,7 @@ functions share a common API with flexible options.
         status: 'mecano/service/status'
         stop: 'mecano/service/stop'
       system:
+        cgroups: 'mecano/system/cgroups'
         chmod: 'mecano/system/chmod'
         chown: 'mecano/system/chown'
         group: 'mecano/system/group'
@@ -157,6 +157,7 @@ functions share a common API with flexible options.
         exist: 'mecano/wait/exist'
       # Backward compatibility
       system_limits: 'mecano/system/limits'
+      cgroups: 'mecano/system/cgroups'
       chmod: 'mecano/system/chmod'
       chown: 'mecano/system/chown'
       cron_add: 'mecano/cron/add'
