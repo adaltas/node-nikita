@@ -124,3 +124,17 @@ describe 'options "handler"', ->
       .then (err, status) ->
         err.message.should.eql 'Multiple call detected'
         next()
+
+    it 'handler called multiple times with error', (next) ->
+      mecano
+      .call
+        handler: (_, callback) ->
+          callback Error 'message 1'
+          setImmediate ->
+            callback Error 'message 1'
+      .call ->
+        setImmediate ->
+          next Error 'Shouldnt be called'
+      .then (err, status) ->
+        err.message.should.eql 'Multiple call detected'
+        next()
