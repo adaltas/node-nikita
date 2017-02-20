@@ -17,12 +17,12 @@ describe 'git', ->
   they 'clones repo into new dir', (ssh, next) ->
     mecano
       ssh: ssh
-    .git
+    .tools.git
       source: "#{scratch}/repo.git"
       target: "#{scratch}/my_repo"
     , (err, updated) ->
       updated.should.be.true()
-    .git
+    .tools.git
       source: "#{scratch}/repo.git"
       target: "#{scratch}/my_repo"
     , (err, updated) ->
@@ -32,16 +32,16 @@ describe 'git', ->
   they 'honores revision', (ssh, next) ->
     mecano
       ssh: ssh
-    .git
+    .tools.git
       source: "#{scratch}/repo.git"
       target: "#{scratch}/my_repo"
-    .git
+    .tools.git
       source: "#{scratch}/repo.git"
       target: "#{scratch}/my_repo"
       revision: 'v0.0.1'
     , (err, updated) ->
       updated.should.be.true()
-    .git
+    .tools.git
       source: "#{scratch}/repo.git"
       target: "#{scratch}/my_repo"
       revision: 'v0.0.1'
@@ -50,16 +50,14 @@ describe 'git', ->
     .then next
 
   they 'preserves existing directory', (ssh, next) ->
-    fs.mkdir null, "#{scratch}/my_repo", (err) ->
-      return next err if err
-      mecano.git
-        ssh: ssh
-        source: "#{scratch}/repo.git"
-        target: "#{scratch}/my_repo"
-      , (err, updated) ->
-        err.message.should.eql 'Not a git repository'
-        next()
-
-
-
-
+    mecano
+      ssh: ssh
+    .mkdir
+      target: "#{scratch}/my_repo"
+    .tools.git
+      source: "#{scratch}/repo.git"
+      target: "#{scratch}/my_repo"
+      relax: true
+    , (err, updated) ->
+      err.message.should.eql 'Not a git repository'
+    .then next

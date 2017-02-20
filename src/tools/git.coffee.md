@@ -1,5 +1,5 @@
 
-# `mecano.git(options, [callback])`
+# `mecano.tools.git(options, [callback])`
 
 Create and synchronize a git repository.
 
@@ -25,7 +25,7 @@ The following action make sure the git repository is synchronized to the latest
 HEAD revision.
 
 ```javascript
-require('mecano').git({
+require('mecano').tools.git({
   source: 'https://github.com/wdavidw/node-mecano.git'
   target: '/tmp/mecano'
 }, function(err, synchronized){
@@ -36,7 +36,7 @@ require('mecano').git({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering git", level: 'DEBUG', module: 'mecano/lib/git'
+      options.log message: "Entering git", level: 'DEBUG', module: 'mecano/lib/tools/git'
       # Sanitize parameters
       options.revision ?= 'HEAD'
       # Start real work

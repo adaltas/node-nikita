@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* #43 git: move to tools namespace
 * #42 move: move to file namespace
 * #41 render: move to file namespace
 * #40 src: normalize titles

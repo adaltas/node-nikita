@@ -47,7 +47,6 @@ functions share a common API with flexible options.
       copy: 'mecano/core/copy'
       execute: 'mecano/core/execute'
       extract: 'mecano/core/extract'
-      git: 'mecano/core/git'
       link: 'mecano/core/link'
       remove: 'mecano/core/remove'
       cron:
@@ -151,6 +150,7 @@ functions share a common API with flexible options.
         'root': 'mecano/ssh/root'
       tools:
         iptables: 'mecano/tools/iptables'
+        git: 'mecano/tools/git'
       wait:
         '': 'mecano/wait'
         execute: 'mecano/wait/execute'
@@ -183,6 +183,7 @@ functions share a common API with flexible options.
       docker_volume_rm: 'mecano/docker/volume_rm'
       docker_wait: 'mecano/docker/wait'
       download: 'mecano/file/download'
+      git: 'mecano/tools/git'
       group: 'mecano/system/group'
       java_keystore_add: 'mecano/java/keystore_add'
       java_keystore_remove: 'mecano/java/keystore_remove'
