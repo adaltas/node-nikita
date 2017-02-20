@@ -51,7 +51,6 @@ functions share a common API with flexible options.
       execute: 'mecano/core/execute'
       extract: 'mecano/core/extract'
       git: 'mecano/core/git'
-      group: 'mecano/core/group'
       link: 'mecano/core/link'
       mkdir: 'mecano/core/mkdir'
       move: 'mecano/core/move'
@@ -142,6 +141,7 @@ functions share a common API with flexible options.
         status: 'mecano/service/status'
         stop: 'mecano/service/stop'
       system:
+        group: 'mecano/system/group'
         limits: 'mecano/system/limits'
         tmpfs: 'mecano/system/tmpfs'
         user: 'mecano/system/user'
@@ -180,6 +180,7 @@ functions share a common API with flexible options.
       docker_volume_rm: 'mecano/docker/volume_rm'
       docker_wait: 'mecano/docker/wait'
       download: 'mecano/file/download'
+      group: 'mecano/system/group'
       java_keystore_add: 'mecano/java/keystore_add'
       java_keystore_remove: 'mecano/java/keystore_remove'
       iptables: 'mecano/tools/iptables'
