@@ -1,5 +1,5 @@
 
-# `file.json(options, callback)`
+# `mecano.file.json(options, callback)`
 
 ## Options
 

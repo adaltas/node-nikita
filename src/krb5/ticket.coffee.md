@@ -1,5 +1,5 @@
 
-# `mecano.ticket(options, [callback])`
+# `mecano.krb5.ticket(options, [callback])`
 
 Renew the Kerberos ticket of a user principal inside a Unix session.
 

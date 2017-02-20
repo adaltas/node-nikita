@@ -1,5 +1,5 @@
 
-# `ldap.index(options, [goptions], callback)`
+# `mecano.ldap.index(options, [goptions], callback)`
 
 Create new [index](index) for the OpenLDAP server.   
 
@@ -120,5 +120,3 @@ require('mecano/alt/ldap.index')({
     wrap = require '../misc/wrap'
 
 [index]: http://www.zytrax.com/books/ldap/apa/indeces.html
-
-

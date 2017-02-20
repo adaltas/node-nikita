@@ -1,5 +1,5 @@
 
-# `system.tmpfs(options, callback)`
+# `mecano.system.tmpfs(options, callback)`
 
 Mount a direcoty with tmpfs.d as a [tmpfs](https://www.freedesktop.org/software/systemd/man/tmpfiles.d.html) configuration file.
 

@@ -1,5 +1,5 @@
 
-# `assert(options)`
+# `mecano.file.assert(options)`
 
 Assert a file exists or a provided text match the content of a text file.
 

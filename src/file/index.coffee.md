@@ -1,5 +1,5 @@
 
-# `write(options, callback)`
+# `mecano.write(options, callback)`
 
 Write a file or a portion of an existing file.
 

@@ -1,5 +1,5 @@
 
-# `file.properties(options, callback)`
+# `mecano.file.properties(options, callback)`
 
 Write a file in the Java properties format.
 

@@ -1,5 +1,5 @@
 
-# `mecano.service.start(options, [callback])`
+# `mecano.service.status(options, [callback])`
 
 Status of a service.
 
