@@ -27,7 +27,7 @@ pass.
 Updating the content of a file if we are the owner
 
 ```js
-mecano.render({
+mecano.file.render({
   source:'./file',
   if: function(options, callback){
     fs.stat(options.source, function(err, stat){

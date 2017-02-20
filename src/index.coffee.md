@@ -51,7 +51,6 @@ functions share a common API with flexible options.
       link: 'mecano/core/link'
       move: 'mecano/core/move'
       remove: 'mecano/core/remove'
-      render: 'mecano/core/render'
       cron:
         add: 'mecano/cron/add'
         remove: 'mecano/cron/remove'
@@ -100,6 +99,7 @@ functions share a common API with flexible options.
         ini: 'mecano/file/ini'
         json: 'mecano/file/json'
         properties: 'mecano/file/properties'
+        render: 'mecano/file/render'
         touch: 'mecano/file/touch'
         upload: 'mecano/file/upload'
         yaml: 'mecano/file/yaml'
@@ -197,6 +197,7 @@ functions share a common API with flexible options.
       ldap_schema: 'mecano/ldap/schema'
       ldap_user: 'mecano/ldap/user'
       mkdir: 'mecano/system/mkdir'
+      render: 'mecano/file/render'
       service_install: 'mecano/service/install'
       service_remove: 'mecano/service/remove'
       service_restart: 'mecano/service/restart'

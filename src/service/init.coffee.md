@@ -56,7 +56,7 @@ Reload the service daemon provider depending on the os.
             when '1' then "| grep '(Reason: No such file or directory)'"
             when '2' then "| grep 'Unit #{options.name}.service could not be found.'"
             when '3' then "| grep 'Unit #{options.name}.service could not be found.'"
-        @render 
+        @file.render 
           target: options.target
           source: options.source
           mode: options.mode

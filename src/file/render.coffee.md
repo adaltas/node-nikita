@@ -1,5 +1,5 @@
 
-# `mecano.render(options, [callback])`
+# `mecano.file.render(options, [callback])`
 
 Render a template file. The following templating engines are
 integrated. More are added on demand.      
@@ -62,35 +62,34 @@ parameters
 ## Rendering with Nunjucks
 
 ```js
-require('mecano').render({
+require('mecano').file.render({
   source: './some/a_template.j2',
   target: '/tmp/a_file',
   context: {
     username: 'a_user'
   }
-}, function(err, rendered){
-  console.log(err ? err.message : 'File rendered: ' + !!rendered);
+}, function(err, status){
+  console.log(err ? err.message : 'File rendered: ' + !!status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
-      options.log message: "Entering render", level: 'DEBUG', module: 'mecano/lib/render'
+    module.exports = (options) ->
+      options.log message: "Entering render", level: 'DEBUG', module: 'mecano/lib/file/render'
       # Validate parameters
-      return callback new Error 'Missing source or content' unless options.source or options.content
-      return callback new Error 'Missing target' unless options.target
+      throw Error 'Missing source or content' unless options.source or options.content
+      throw Error 'Missing target' unless options.target
       # Start real work
-      do_read_source = ->
-        return do_file() unless options.source
+      @call (_, callback) ->
+        return callback() unless options.source
         ssh = if options.local then null else options.ssh
         fs.exists ssh, options.source, (err, exists) ->
           return callback new Error "Invalid source, got #{JSON.stringify(options.source)}" unless exists
           fs.readFile ssh, options.source, 'utf8', (err, content) ->
-            return callback err if err
-            options.content = content
-            do_file()
-      do_file = =>
+            options.content = content unless err
+            callback err
+      @call ->
         if not options.engine and options.source
           extension = path.extname options.source
           switch extension
@@ -98,8 +97,7 @@ require('mecano').render({
             when '.eco' then options.engine = 'eco'
         options.source = null
         options.header = null
-        @file(options).then callback
-      do_read_source()
+        @file options
 
 ## Dependencies
 
