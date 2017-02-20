@@ -146,6 +146,18 @@ describe 'if', ->
       if: (options, callback) -> callback new Error 'cool'
       () -> false.should.be.true()
       (err) -> err.message is 'cool' and next()
+  
+  describe 'error', ->
+    
+    they 'fail if an object', (ssh, next) ->
+      conditions.if
+        ssh: ssh
+        if: {}
+        () -> false.should.be.true()
+        (err) ->
+          console.log err.message
+          err.message.should.eql "Invalid condition \"if\": {}"
+          next()
 
 describe 'unless', ->
 
@@ -252,3 +264,15 @@ describe 'unless', ->
       unless: (options, callback) -> callback new Error 'cool'
       () -> false.should.be.true()
       (err) -> err.message is 'cool' and next()
+  
+  describe 'error', ->
+    
+    they 'fail if an object', (ssh, next) ->
+      conditions.unless
+        ssh: ssh
+        unless: {}
+        () -> false.should.be.true()
+        (err) ->
+          err.message.should.eql "Invalid condition \"unless\": {}"
+          next()
+      

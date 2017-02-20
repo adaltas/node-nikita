@@ -68,7 +68,7 @@ mecano.render({
             ok = false if si.length is 0
             next()
           else
-            next Error "Invalid condition type: #{type}"
+            next Error "Invalid condition \"if\": #{JSON.stringify si}"
         .then (err) ->
           if err or not ok then skip(err) else succeed()
 
@@ -117,7 +117,7 @@ pass.
             ok = false if not_if.length isnt 0
             next()
           else
-            next Error "Invalid condition type"
+            next Error "Invalid condition \"unless\": #{JSON.stringify not_if}"
         .then (err) ->
           if err or not ok then skip(err) else succeed()
 
