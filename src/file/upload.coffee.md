@@ -134,7 +134,7 @@ require('mecano').upload({
           target: options.target
           mode: options.mode
           if: options.mode?
-        @chown
+        @system.chown
           ssh: null
           target: options.target
           uid: options.uid

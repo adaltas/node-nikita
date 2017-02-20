@@ -1,5 +1,5 @@
 
-# `mecano.chown(options, [callback])`
+# `mecano.system.chown(options, [callback])`
 
 Change the ownership of a file or a directory.
 
@@ -25,7 +25,7 @@ Change the ownership of a file or a directory.
 ## Example
 
 ```js
-require('mecano').chown({
+require('mecano').system.chown({
   target: '~/my/project',
   uid: 'my_user'
   gid: 'my_group'

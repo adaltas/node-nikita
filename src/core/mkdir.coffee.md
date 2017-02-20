@@ -133,7 +133,7 @@ require('mecano').mkdir({
             callback()
         do_update = (stat) =>
           options.log message: "Directory already exists", level: 'INFO', module: 'mecano/lib/mkdir'
-          @chown
+          @system.chown
             target: directory
             stat: stat
             uid: options.uid

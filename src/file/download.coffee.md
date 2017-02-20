@@ -257,7 +257,7 @@ mecano.download
           target: options.target
           mode: options.mode
           if: options.mode?
-        @chown
+        @system.chown
           target: options.target
           uid: options.uid
           gid: options.gid

@@ -94,7 +94,7 @@ require('mecano').krb5_delrinc({
         cmd: misc.kadmin options, "ktadd -k #{options.keytab} #{options.principal}"
         if: -> not keytab[options.principal]? or (keytab[options.principal]?.kvno isnt princ.kvno or keytab[options.principal].mdate isnt princ.mdate)
       # Keytab ownership and permissions
-      @chown
+      @system.chown
         target: options.keytab
         uid: options.uid
         gid: options.gid

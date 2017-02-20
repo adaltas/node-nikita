@@ -118,18 +118,17 @@ you are a member of the "wheel" group (gid of "10") with the command
         cmd += " -G #{options.groups.join ','}" if options.groups
         cmd += " -k #{options.skel}" if options.skel
         cmd += " #{options.name}"
-        @
-        .execute
+        @execute
           cmd: cmd
           code_skipped: 9
-        .chown
+        @system.chown
           target: options.home
           uid: options.uid
           gid: options.gid
           if_exists: options.home
           if: options.home?
           unless: options.no_home_ownership
-        .then (err, created) ->
+        @then (err, created) ->
           return callback err if err
           if created
             modified = true
@@ -157,7 +156,7 @@ you are a member of the "wheel" group (gid of "10") with the command
         @execute
           cmd: cmd
           if: changed
-        @chown
+        @system.chown
           target: options.home
           uid: options.uid
           gid: options.gid

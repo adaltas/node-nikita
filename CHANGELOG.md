@@ -3,6 +3,8 @@
 
 ## Version 0.6.0
 
+* #34 chown: move to system namespace
+* #33 group: move to system namespace
 * #32 user: move to system namespace
 * #31 iptables: move to tools namespace
 * #30 conditions: more descriptive message

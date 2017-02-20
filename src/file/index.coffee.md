@@ -345,7 +345,7 @@ require('mecano').file({
             return callback err if err
             options.log message: "File written", level: 'INFO', module: 'mecano/lib/file'
             callback()
-      @chown
+      @system.chown
         target: options.target
         stat: targetStat
         uid: options.uid
