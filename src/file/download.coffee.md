@@ -177,7 +177,7 @@ mecano.download
           cmd = "curl #{fail} #{k} -s #{options.source} -o #{stageDestination}"
           cmd += " -x #{options.proxy}" if options.proxy
           options.log message: "Download file from url using curl", level: 'INFO', module: 'mecano/lib/file/download'
-          @mkdir
+          @system.mkdir
             shy: true
             target: path.dirname stageDestination
           @execute
@@ -207,7 +207,7 @@ mecano.download
               options.log message: "Hash dont match, source is '#{hash1}' and target is '#{hash2}'", level: 'WARN', module: 'mecano/lib/file/download' unless match
               options.log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'mecano/lib/file/download' if match
               callback err, not match
-          @mkdir
+          @system.mkdir
             if: -> @status -1
             shy: true
             target: path.dirname stageDestination
@@ -232,7 +232,7 @@ mecano.download
               options.log message: "Hash dont match, source is '#{hash1}' and target is '#{hash2}'", level: 'WARN', module: 'mecano/lib/file/download' unless match
               options.log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'mecano/lib/file/download' if match
               callback err, not match
-          @mkdir
+          @system.mkdir
             if: -> @status -1
             shy: true
             target: path.dirname stageDestination

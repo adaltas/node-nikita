@@ -59,7 +59,7 @@ describe 'copy', ->
       source = "#{__dirname}/../resources/a_dir/a_file"
       mecano
         ssh: ssh
-      .mkdir
+      .system.mkdir
         target: "#{scratch}/existing_dir"
       .copy # Copy non existing file
         source: source
@@ -238,7 +238,7 @@ describe 'copy', ->
     they 'should copy hidden files', (ssh, next) ->
       mecano
         ssh: ssh
-      .mkdir
+      .system.mkdir
         target: "#{scratch}/a_dir"
       .touch
         target: "#{scratch}/a_dir/a_file"

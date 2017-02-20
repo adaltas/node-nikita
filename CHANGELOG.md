@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* #37 mkdir: move to system namespace
 * #36 cgroups: move to system namespace
 * #35 chmod: move to system namespace
 * #34 chown: move to system namespace

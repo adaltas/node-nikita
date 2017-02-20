@@ -77,7 +77,7 @@ require('mecano').link({
       return callback new Error "Missing target, got #{JSON.stringify(options.target)}" unless options.target
       options.mode ?= 0o0755
       do_mkdir = =>
-        @mkdir
+        @system.mkdir
           ssh: options.ssh
           target: path.dirname options.target
         , (err, created) ->

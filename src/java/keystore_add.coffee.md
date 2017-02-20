@@ -92,7 +92,7 @@ require('mecano').java.keystore_add([{
         cert: if options.cert? and options.local then  "#{tmp_location}/#{path.basename options.cert}" else options.cert
         cacert: if options.local then  "#{tmp_location}/#{path.basename options.cacert}" else options.cacert
         key: if options.key? and options.local then  "#{tmp_location}/#{path.basename options.key}" else options.key
-      @mkdir
+      @system.mkdir
         target: "#{tmp_location}"
         mode: 0o0600
         shy: true

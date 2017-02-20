@@ -87,7 +87,7 @@ require('mecano').krb5_delrinc({
         if: ->
           keytab[options.principal]? and (keytab[options.principal]?.kvno isnt princ.kvno or keytab[options.principal].mdate isnt princ.mdate)
       # Create keytab and add principal
-      @mkdir
+      @system.mkdir
         target: "#{path.dirname options.keytab}"
         if: -> not keytab[options.principal]? or (keytab[options.principal]?.kvno isnt princ.kvno or keytab[options.principal].mdate isnt princ.mdate)
       @execute

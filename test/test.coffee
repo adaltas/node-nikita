@@ -9,7 +9,7 @@ module.exports =
     context.beforeEach (next) ->
       mecano.remove
         target: scratch
-      .mkdir target: scratch
+      .system.mkdir target: scratch
       .then next
     scratch
   config: ->

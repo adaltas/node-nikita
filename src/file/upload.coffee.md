@@ -108,7 +108,7 @@ require('mecano').upload({
           return callback null, true unless target_stat
           file.compare_hash options.ssh, options.source, null, options.target, algo, (err, match) =>
             callback err, not match
-      @mkdir
+      @system.mkdir
         if: -> @status -1
         ssh: null
         target: path.dirname stage_target

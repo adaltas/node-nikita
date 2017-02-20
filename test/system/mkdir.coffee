@@ -13,13 +13,13 @@ describe 'mkdir', ->
   they 'as a directory option or as a string', (ssh, next) ->
     mecano
       ssh: ssh
-    .mkdir directory: "#{scratch}/a_dir", (err, created) ->
+    .system.mkdir directory: "#{scratch}/a_dir", (err, created) ->
       created.should.be.true()
-    .mkdir directory: "#{scratch}/a_dir", (err, created) ->
+    .system.mkdir directory: "#{scratch}/a_dir", (err, created) ->
       created.should.be.false()
-    .mkdir "#{scratch}/b_dir", (err, created) ->
+    .system.mkdir "#{scratch}/b_dir", (err, created) ->
       created.should.be.true()
-    .mkdir "#{scratch}/b_dir", (err, created) ->
+    .system.mkdir "#{scratch}/b_dir", (err, created) ->
       created.should.be.false()
     .then next
 
@@ -27,27 +27,27 @@ describe 'mkdir', ->
     source = "#{scratch}/a_dir"
     mecano
       ssh: ssh
-    .mkdir source, (err, created) ->
+    .system.mkdir source, (err, created) ->
       created.should.be.true()
-    .mkdir source, (err, created) ->
+    .system.mkdir source, (err, created) ->
       created.should.be.false()
     .then next
   
   they 'should create dir recursively', (ssh, next) ->
     mecano
       ssh: ssh
-    .mkdir
+    .system.mkdir
       directory: "#{scratch}/a_parent_dir_1/a_dir"
     , (err, created) ->
       created.should.be.true() unless err
-    .mkdir
+    .system.mkdir
       directory: "#{scratch}/a_parent_dir_2/a_dir/"
     , (err, created) ->
       created.should.be.true() unless err
     .then next
   
   they 'should create multiple directories', (ssh, next) ->
-    mecano.mkdir
+    mecano.system.mkdir
       ssh: ssh
       target: [
         "#{scratch}/a_parent_dir/a_dir_1"
@@ -61,7 +61,7 @@ describe 'mkdir', ->
   describe 'parent', ->
 
     they 'true set default permissions', (ssh, next) ->
-      mecano.mkdir
+      mecano.system.mkdir
         ssh: ssh
         target: [
           "#{scratch}/a_parent_dir/a_dir_1"
@@ -77,7 +77,7 @@ describe 'mkdir', ->
           next()
 
     they 'object set custom permissions', (ssh, next) ->
-      mecano.mkdir
+      mecano.system.mkdir
         ssh: ssh
         target: [
           "#{scratch}/a_parent_dir/a_dir_1"
@@ -99,7 +99,7 @@ describe 'mkdir', ->
   
     they 'should stop when `exclude` match', (ssh, next) ->
       source = "#{scratch}/a_parent_dir/a_dir/do_not_create_this"
-      mecano.mkdir
+      mecano.system.mkdir
         ssh: ssh
         directory: source
         exclude: /^do/
@@ -116,7 +116,7 @@ describe 'mkdir', ->
   describe 'cwd', ->
 
     they 'should honore `cwd` for relative paths', (ssh, next) ->
-      mecano.mkdir
+      mecano.system.mkdir
         ssh: ssh
         directory: './a_dir'
         cwd: scratch
@@ -132,7 +132,7 @@ describe 'mkdir', ->
     they 'change mode as string', (ssh, next) ->
       # 40744: 4 for directory, 744 for permissions
       @timeout 10000
-      mecano.mkdir
+      mecano.system.mkdir
         ssh: ssh
         directory: "#{scratch}/ssh_dir_string"
         mode: '744'
@@ -146,7 +146,7 @@ describe 'mkdir', ->
     they 'change mode as string', (ssh, next) ->
       # 40744: 4 for directory, 744 for permissions
       @timeout 10000
-      mecano.mkdir
+      mecano.system.mkdir
         ssh: ssh
         directory: "#{scratch}/ssh_dir_string"
         mode: 0o744
@@ -162,15 +162,15 @@ describe 'mkdir', ->
       @timeout 10000
       mecano
         ssh: ssh
-      .mkdir
+      .system.mkdir
         directory: "#{scratch}/ssh_dir_string"
         mode: 0o744
-      .mkdir
+      .system.mkdir
         directory: "#{scratch}/ssh_dir_string"
         mode: 0o755
       , (err, created) ->
         created.should.be.true()
-      .mkdir
+      .system.mkdir
         directory: "#{scratch}/ssh_dir_string"
         mode: 0o755
       , (err, created) ->
@@ -181,10 +181,10 @@ describe 'mkdir', ->
       @timeout 10000
       mecano
         ssh: ssh
-      .mkdir
+      .system.mkdir
         directory: "#{scratch}/a_dir"
         mode: 0o744
-      .mkdir
+      .system.mkdir
         directory: "#{scratch}/a_dir"
       , (err, created) ->
         created.should.be.false()

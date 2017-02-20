@@ -75,32 +75,31 @@ require('mecano').ldap.schema({
           return callback() if registered
           do_write()
       do_write = =>
-        @
-        .call ->
+        @call ->
           options.log? 'Create ldif directory'
-        .mkdir
+        @system.mkdir
           target: ldif
           ssh: options.ssh
-        .call ->
+        @call ->
           options.log? 'Copy schema'
-        .copy
+        @copy
           source: options.schema
           target: schema
           ssh: options.ssh
-        .call ->
+        @call ->
           options.log? 'Prepare configuration'
-        .file
+        @file
           content: "include #{schema}"
           target: conf
           ssh: options.ssh
           log: options.log
-        .call ->
+        @call ->
           options.log? 'Generate configuration'
-        .execute
+        @execute
           cmd: "slaptest -f #{conf} -F #{ldif}"
-        .call ->
+        @call ->
           options.log? 'Rename configuration'
-        .then (err) ->
+        @then (err) ->
           return callback err if err
           do_rename()
       do_rename = =>

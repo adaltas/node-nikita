@@ -75,7 +75,7 @@ describe 'file.download file', ->
       target = "#{scratch}/download_test"
       mecano
         ssh: ssh
-      .mkdir
+      .system.mkdir
         target: target
       .file.download
         source: source

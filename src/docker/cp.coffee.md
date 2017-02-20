@@ -69,7 +69,7 @@ mecano.docker({
           return target_mkdir = true and next() if err?.code is 'ENOENT'
           source_path = "#{source_path}/#{path.basename target_path}" if stat.isDirectory()
           next()
-      @mkdir
+      @system.mkdir
         target: source_path
         if: -> source_mkdir
       # Destination is on the host
@@ -83,7 +83,7 @@ mecano.docker({
           return target_mkdir = true and next() if err?.code is 'ENOENT'
           target_path = "#{target_path}/#{path.basename target_path}" if stat.isDirectory()
           next()
-      @mkdir
+      @system.mkdir
         target: target_path
         if: -> target_mkdir
       @execute

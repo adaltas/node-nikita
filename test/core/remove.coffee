@@ -94,7 +94,7 @@ describe 'remove', ->
     @timeout 10000
     mecano
       ssh: ssh
-    .mkdir
+    .system.mkdir
       target: "#{scratch}/remove_dir"
     .remove
       target: "#{scratch}/remove_dir"

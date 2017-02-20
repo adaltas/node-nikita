@@ -133,7 +133,7 @@ require('mecano').download({
         cmd += " --location" if options.location
         cmd += " --header \"#{header}\"" for header in options.headers
         cmd += " -x #{options.proxy}" if options.proxy
-        @mkdir
+        @system.mkdir
           ssh: if options.cache_local then null else options.ssh
           target: path.dirname options.target
         @execute
@@ -141,7 +141,7 @@ require('mecano').download({
           ssh: if options.cache_local then null else options.ssh
           unless_exists: options.target
       else
-        @mkdir # todo: copy shall handle this
+        @system.mkdir # todo: copy shall handle this
           target: "#{path.dirname options.target}"
         @copy
           source: "#{options.source}"

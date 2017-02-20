@@ -32,7 +32,7 @@ describe 'file', ->
         next()
 
     they 'returns the directory md5 when empty', (ssh, next) ->
-      mecano.mkdir "#{scratch}/a_dir", (err, created) ->
+      mecano.system.mkdir "#{scratch}/a_dir", (err, created) ->
         return next err if err
         misc.file.hash ssh, "#{scratch}/a_dir", (err, md5) ->
           return next err if err
@@ -58,7 +58,7 @@ describe 'file', ->
   describe 'remove', ->
 
     they 'a dir', (ssh, next) ->
-      mecano.mkdir
+      mecano.system.mkdir
         ssh: ssh
         target: "#{scratch}/remove_dir"
       , (err, created) ->

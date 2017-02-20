@@ -165,7 +165,7 @@ describe 'file', ->
     they 'throw error if link is a directory', (ssh, next) ->
       mecano
         ssh: ssh
-      .mkdir
+      .system.mkdir
         target: "#{scratch}/target"
       .link
         source: "#{scratch}/target"
@@ -201,7 +201,7 @@ describe 'file', ->
     they 'dont follow link if option "unlink" and link is directory', (ssh, next) ->
       mecano
         ssh: ssh
-      .mkdir
+      .system.mkdir
         target: "#{scratch}/target"
       .link
         source: "#{scratch}/target"

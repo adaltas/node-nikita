@@ -269,7 +269,7 @@ require('mecano').file({
               callback Error "Invalid File Type Destination: #{options.target}"
         do_mkdir = =>
           options.mode = parseInt(options.mode, 8) if typeof options.mode is 'string' 
-          @mkdir
+          @system.mkdir
             target: path.dirname options.target
             uid: options.uid
             gid: options.gid
