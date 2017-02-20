@@ -1,11 +1,11 @@
 {
-  "name": "mecano",
+  "name": "nikita",
   "description": "Common functions for system deployment.",
   "version": "0.6.0",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "email": "open@adaltas.com",
-    "url": "http://github.com/adaltas/node-mecano/issues"
+    "url": "http://github.com/adaltas/node-nikita/issues"
   },
   "contributors": [
     {
@@ -53,7 +53,7 @@
   "engines": {
     "node": ">= 6.2.2"
   },
-  "homepage": "http://www.adaltas.com/projects/node-mecano/",
+  "homepage": "http://www.adaltas.com/projects/node-nikita/",
   "keywords": [
     "build",
     "cli",
