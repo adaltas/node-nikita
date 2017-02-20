@@ -58,7 +58,6 @@ functions share a common API with flexible options.
       remove: 'mecano/core/remove'
       render: 'mecano/core/render'
       touch: 'mecano/core/touch'
-      user: 'mecano/core/user'
       cron:
         add: 'mecano/cron/add'
         remove: 'mecano/cron/remove'
@@ -145,6 +144,7 @@ functions share a common API with flexible options.
       system:
         limits: 'mecano/system/limits'
         tmpfs: 'mecano/system/tmpfs'
+        user: 'mecano/system/user'
       ssh:
         'open': 'mecano/ssh/open'
         'close': 'mecano/ssh/close'
@@ -200,6 +200,7 @@ functions share a common API with flexible options.
       service_status: 'mecano/service/status'
       service_stop: 'mecano/service/stop'
       upload: 'mecano/file/upload'
+      user: 'mecano/system/user'
       wait_connect: 'mecano/connection/wait'
       wait_execute: 'mecano/wait/execute'
       wait_exist: 'mecano/wait/exist'
