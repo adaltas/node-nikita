@@ -152,7 +152,7 @@ functions share a common API with flexible options.
       tools:
         iptables: 'mecano/tools/iptables'
       wait:
-        '': 'mecano/wait/time'
+        '': 'mecano/wait'
         execute: 'mecano/wait/execute'
         exist: 'mecano/wait/exist'
       # Backward compatibility

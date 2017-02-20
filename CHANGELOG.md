@@ -4,7 +4,8 @@
 ## Trunk
 
 * #41 render: move to file namespace
-* #40 src: normalize titles 
+* #40 src: normalize titles
+* #39 wait: rename wait/time to wait
 * #38 touch: move to system namespace
 * #37 mkdir: move to system namespace
 * #36 cgroups: move to system namespace
