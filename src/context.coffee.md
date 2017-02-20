@@ -119,6 +119,7 @@
           delete opts.once if opts.once is false
           opts.once = opts.once.sort() if Array.isArray opts.once
           opts.wait ?= 3000 # Wait 3s between retry
+          opts.disable ?= false
           # Validation
           jump_to_error Error "Invalid options wait, got #{JSON.stringify opts.wait}" unless typeof opts.wait is 'number' and opts.wait >= 0
         options
@@ -240,6 +241,10 @@
         todos = todos_create()
         todos.options = org_options
         wrap.options options, (err) ->
+          do_disabled = ->
+            return do_once() unless options.disabled
+            options.log type: 'disabled', index: index, depth: depth, error: null, status: false
+            do_callback []
           do_once = ->
             hashme = (value) ->
               if typeof value is 'string'
@@ -411,7 +416,7 @@
             args[0] = null if options.relax
             callback args[0], args[1] if callback
             run()
-          do_once()
+          do_disabled()
       properties.child = get: -> ->
         module.exports(obj.options)
       properties.then = get: -> ->
