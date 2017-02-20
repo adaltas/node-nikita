@@ -15,12 +15,12 @@ describe 'move', ->
       # ssh: ssh # copy not there yet
       source: "#{__dirname}/../resources/"
       target: "#{scratch}"
-    .move
+    .system.move
       source: "#{scratch}/render.eco"
       target: "#{scratch}/moved.eco"
-    , (err, moved) ->
+    , (err, status) ->
       return next err if err
-      moved.should.be.true()
+      status.should.be.true()
       # The target file should exists
       fs.exists ssh, "#{scratch}/moved.eco", (err, exists) ->
         exists.should.be.true()
@@ -36,12 +36,12 @@ describe 'move', ->
       # ssh: ssh # copy not there yet
       source: "#{__dirname}/../resources/"
       target: "#{scratch}"
-    .move
+    .system.move
       source: "#{scratch}/a_dir"
       target: "#{scratch}/moved"
-    , (err, moved) ->
+    , (err, status) ->
       return next err if err
-      moved.should.be.true()
+      status.should.be.true()
       # The target directory should exists
       fs.exists ssh, "#{scratch}/moved", (err, exists) ->
         exists.should.be.true()
@@ -63,17 +63,17 @@ describe 'move', ->
       content: "overwritten"
       target: "#{scratch}/dest.txt"
     ]
-    .move
+    .system.move
       source: "#{scratch}/src1.txt"
       target: "#{scratch}/dest.txt"
-    , (err, moved) ->
-      moved.should.be.true()
-    .move # Move a file with the same content
+    , (err, status) ->
+      status.should.be.true() unless err
+    .system.move # Move a file with the same content
       source: "#{scratch}/src2.txt"
       target: "#{scratch}/dest.txt"
-    , (err, moved) ->
+    , (err, status) ->
       return next err if err
-      moved.should.be.false()
+      status.should.be.false()
       fs.readFile ssh, "#{scratch}/dest.txt", 'utf8', (err, content) ->
         return next err if err
         content.should.eql 'hello'
@@ -92,10 +92,10 @@ describe 'move', ->
       content: "hello"
       target: "#{scratch}/dest.txt"
     ]
-    .move
+    .system.move
       source: "#{scratch}/src.txt"
       target: "#{scratch}/dest.txt"
       force: 1
-    , (err, moved) ->
-      moved.should.be.true()
+    , (err, status) ->
+      status.should.be.true()
     .then next

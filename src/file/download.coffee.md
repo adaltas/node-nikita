@@ -249,7 +249,7 @@ mecano.download
                 callback err
       @call ->
         options.log message: "Unstage downloaded file", level: 'DEBUG', module: 'mecano/lib/file/download'
-        @move
+        @system.move
           if: @status()
           source: stageDestination
           target: options.target

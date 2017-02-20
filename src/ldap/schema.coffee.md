@@ -104,13 +104,13 @@ require('mecano').ldap.schema({
           do_rename()
       do_rename = =>
         options.log? 'Rename configuration'
-        @move
+        @system.move
           source: "#{ldif}/cn=config/cn=schema/cn={0}#{options.name}.ldif"
           target: "#{ldif}/cn=config/cn=schema/cn=#{options.name}.ldif"
           force: true
-        , (err, moved) ->
+        , (err, status) ->
           return callback err if err
-          return new Error 'No generated schema' unless moved
+          return new Error 'No generated schema' unless status
           do_configure()
       do_configure = =>
         options.log? 'Prepare ldif'

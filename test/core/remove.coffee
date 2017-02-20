@@ -55,9 +55,9 @@ describe 'remove', ->
       target: "#{scratch}/a_file"
     .remove
       source: "#{scratch}/a_file"
-    , (err, removed) ->
+    , (err, status) ->
       return next err if err
-      removed.should.be.true()
+      status.should.be.true()
     .then next
 
   they 'a link', (ssh, next) ->
@@ -65,9 +65,9 @@ describe 'remove', ->
       mecano.remove
         ssh: ssh
         source: "#{scratch}/test"
-      , (err, removed) ->
+      , (err, status) ->
         return next err if err
-        removed.should.be.true()
+        status.should.be.true()
         fs.lstat ssh, "#{scratch}/test", (err, stat) ->
           err.code.should.eql 'ENOENT'
           next()
@@ -81,9 +81,9 @@ describe 'remove', ->
       target: "#{scratch}/"
     .remove
       source: "#{scratch}/*gz"
-    , (err, removed) ->
+    , (err, status) ->
       return next err if err
-      removed.should.be.true()
+      status.should.be.true()
       fs.readdir null, "#{scratch}", (err, files) ->
         files.should.not.containEql 'a_dir.tar.gz'
         files.should.not.containEql 'a_dir.tgz'
@@ -98,10 +98,10 @@ describe 'remove', ->
       target: "#{scratch}/remove_dir"
     .remove
       target: "#{scratch}/remove_dir"
-    , (err, removed) ->
-      removed.should.be.true()
+    , (err, status) ->
+      status.should.be.true()
     .remove
       target: "#{scratch}/remove_dir"
-    , (err, removed) ->
-      removed.should.be.false()
+    , (err, status) ->
+      status.should.be.false()
     .then next

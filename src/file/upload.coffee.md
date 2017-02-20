@@ -122,7 +122,7 @@ require('mecano').upload({
             .on 'close', callback
             .on 'error', callback
       @call ->
-        @move
+        @system.move
           ssh: null
           if: @status()
           source: stage_target

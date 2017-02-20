@@ -49,7 +49,6 @@ functions share a common API with flexible options.
       extract: 'mecano/core/extract'
       git: 'mecano/core/git'
       link: 'mecano/core/link'
-      move: 'mecano/core/move'
       remove: 'mecano/core/remove'
       cron:
         add: 'mecano/cron/add'
@@ -143,6 +142,7 @@ functions share a common API with flexible options.
         group: 'mecano/system/group'
         limits: 'mecano/system/limits'
         mkdir: 'mecano/system/mkdir'
+        move: 'mecano/system/move'
         tmpfs: 'mecano/system/tmpfs'
         user: 'mecano/system/user'
       ssh:
@@ -197,6 +197,7 @@ functions share a common API with flexible options.
       ldap_schema: 'mecano/ldap/schema'
       ldap_user: 'mecano/ldap/user'
       mkdir: 'mecano/system/mkdir'
+      move: 'mecano/system/move'
       render: 'mecano/file/render'
       service_install: 'mecano/service/install'
       service_remove: 'mecano/service/remove'

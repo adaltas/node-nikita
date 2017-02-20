@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* #42 move: move to file namespace
 * #41 render: move to file namespace
 * #40 src: normalize titles
 * #39 wait: rename wait/time to wait
