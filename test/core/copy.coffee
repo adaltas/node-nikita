@@ -153,7 +153,7 @@ describe 'copy', ->
       .file
         content: 'hello'
         target: "#{scratch}/org_file"
-      .link
+      .system.link
         source: "#{scratch}/org_file"
         target: "#{scratch}/ln_file"
       .copy
@@ -174,7 +174,7 @@ describe 'copy', ->
         target: "#{scratch}/source/org_file"
       , (err) ->
         return next err if err
-      .link
+      .system.link
         source: "#{scratch}/source/org_file"
         target: "#{scratch}/source/ln_file"
       , (err) ->

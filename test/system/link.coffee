@@ -14,16 +14,16 @@ describe 'link', ->
     target = "#{scratch}/link_test"
     mecano
       ssh: ssh
-    .link # Link does not exist
+    .system.link # Link does not exist
       source: __filename
       target: target
-    , (err, linked) ->
-      linked.should.be.true()
-    .link # Link already exists
+    , (err, status) ->
+      status.should.be.true() unless err
+    .system.link # Link already exists
       source: __filename
       target: target
-    , (err, linked) ->
-      linked.should.be.false()
+    , (err, status) ->
+      status.should.be.false() unless err
     .then (err) ->
       return next err if err
       fs.lstat ssh, target, (err, stat) ->
@@ -35,17 +35,17 @@ describe 'link', ->
     target = "#{scratch}/link_test"
     mecano
       ssh: ssh
-    .link # Link does not exist
+    .system.link # Link does not exist
       source: __dirname
       target: target
-    , (err, linked) ->
-      linked.should.be.true()
-    .link # Link already exists
+    , (err, status) ->
+      status.should.be.true() unless err
+    .system.link # Link already exists
       ssh: ssh
       source: __dirname
       target: target
-    , (err, linked) ->
-      linked.should.be.false()
+    , (err, status) ->
+      status.should.be.false() unless err
     .then (err) ->
       return next err if err
       fs.lstat ssh, target, (err, stat) ->
@@ -54,29 +54,28 @@ describe 'link', ->
   
   they 'should create parent directories', (ssh, next) ->
     # Create a non existing link
-    mecano.link
+    mecano
       ssh: ssh
+    .link
       source: __dirname
       target: "#{scratch}/test/dir/link_test"
-    , (err, linked) ->
-      return next err if err
-      linked.should.be.true()
+    , (err, status) ->
+      status.should.be.true() unless err
+    .call (_, callback) ->
       fs.lstat ssh, "#{scratch}/test/dir/link_test", (err, stat) ->
-        stat.isSymbolicLink().should.be.true()
-        # Test creating two identical parent dirs
-        target = "#{scratch}/test/dir2"
-        mecano.link [
-          ssh: ssh
-          source: "#{__dirname}/merge.coffee"
-          target: "#{target}/merge.coffee"
-        ,
-          ssh: ssh
-          source: "#{__dirname}/mkdir.coffee"
-          target: "#{target}/mkdir.coffee"
-        ], (err, linked) ->
-          return next err if err
-          linked.should.be.true()
-        .then next
+        stat.isSymbolicLink().should.be.true() unless err
+        callback err
+    .system.link [
+      ssh: ssh
+      source: "#{__dirname}/merge.coffee"
+      target: "#{scratch}/test/dir2/merge.coffee"
+    ,
+      ssh: ssh
+      source: "#{__dirname}/mkdir.coffee"
+      target: "#{scratch}/test/dir2/mkdir.coffee"
+    ], (err, status) ->
+      status.should.be.true() unless err
+    .then next
 
   they 'should override invalid link', (ssh, next) ->
     mecano
@@ -87,18 +86,18 @@ describe 'link', ->
     .file
       target: "#{scratch}/test/valid_file"
       content: 'ok'
-    .link
+    .system.link
       source: "#{scratch}/test/invalid_file"
       target: "#{scratch}/test/file_link"
-    , (err, linked) ->
-      linked.should.be.true() unless err
+    , (err, status) ->
+      status.should.be.true() unless err
     .remove
       target: "#{scratch}/test/invalid_file"
-    .link
+    .system.link
       source: "#{scratch}/test/valid_file"
       target: "#{scratch}/test/file_link"
-    , (err, linked) ->
-      linked.should.be.true() unless err
+    , (err, status) ->
+      status.should.be.true() unless err
     .then next
 
   describe 'error', ->
@@ -107,12 +106,12 @@ describe 'link', ->
       # Test missing source
       mecano
         ssh: ssh
-      .link
+      .system.link
         target: __filename
       .then (err, changed) ->
         err.message.should.eql "Missing source, got undefined"
-      .link # Test missing target
+      .system.link # Test missing target
         source: __filename
-      .then (err, linked) ->
+      .then (err) ->
         err.message.should.eql "Missing target, got undefined"
       .then next

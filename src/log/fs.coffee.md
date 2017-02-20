@@ -60,7 +60,7 @@ and "{options.basedir}/latest".
       @call ->
         options.stream ?= fs.createWriteStream path.resolve logdir, options.filename
         @call options, stream
-      @link
+      @system.link
         if: latestdir
         shy: true
         source: logdir

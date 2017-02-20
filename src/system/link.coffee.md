@@ -1,5 +1,5 @@
 
-# `mecano.link(options, [callback])`
+# `mecano.system.link(options, [callback])`
 
 Create a symbolic link and it's parent directories if they don't yet
 exist.
@@ -27,7 +27,7 @@ Note, it is valid for the "source" file to not exist.
 ## Example
 
 ```js
-require('mecano').link({
+require('mecano').system.link({
   source: __dirname,
   target: '/tmp/a_link'
 }, function(err, status){
@@ -38,7 +38,7 @@ require('mecano').link({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering link", level: 'DEBUG', module: 'mecano/lib/link'
+      options.log message: "Entering link", level: 'DEBUG', module: 'mecano/lib/system/link'
       linked = 0
       sym_exists = (options, callback) ->
         # fs.exists options.ssh, options.target, (err, exists) ->

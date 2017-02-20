@@ -148,7 +148,7 @@ describe 'file', ->
       .file
         content: 'ko'
         target: "#{scratch}/target"
-      .link
+      .system.link
         source: "#{scratch}/target"
         target: "#{scratch}/link"
       .file
@@ -167,7 +167,7 @@ describe 'file', ->
         ssh: ssh
       .system.mkdir
         target: "#{scratch}/target"
-      .link
+      .system.link
         source: "#{scratch}/target"
         target: "#{scratch}/link"
       .file
@@ -183,7 +183,7 @@ describe 'file', ->
       .file
         content: 'ko'
         target: "#{scratch}/target"
-      .link
+      .system.link
         source: "#{scratch}/target"
         target: "#{scratch}/link"
       .file
@@ -203,7 +203,7 @@ describe 'file', ->
         ssh: ssh
       .system.mkdir
         target: "#{scratch}/target"
-      .link
+      .system.link
         source: "#{scratch}/target"
         target: "#{scratch}/link"
       .file
