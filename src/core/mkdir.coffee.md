@@ -139,7 +139,7 @@ require('mecano').mkdir({
             uid: options.uid
             gid: options.gid
             if: options.uid? or options.gid?
-          @chmod
+          @system.chmod
             target: directory
             stat: stat
             mode: options.mode

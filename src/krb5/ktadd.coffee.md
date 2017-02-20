@@ -99,7 +99,7 @@ require('mecano').krb5_delrinc({
         uid: options.uid
         gid: options.gid
         if:  options.uid? or options.gid?
-      @chmod
+      @system.chmod
         target: options.keytab
         mode: options.mode
         if: options.mode?

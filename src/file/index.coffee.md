@@ -352,7 +352,7 @@ require('mecano').file({
         gid: options.gid
         if: options.uid? or options.gid?
         unless: options.target is 'function'
-      @chmod
+      @sytem.chmod
         target: options.target
         stat: targetStat
         mode: options.mode

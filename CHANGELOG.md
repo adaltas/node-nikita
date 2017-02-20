@@ -1,8 +1,9 @@
 
 # Change Log
 
-## Version 0.6.0
+## Trunk
 
+* #35 chmod: move to system namespace
 * #34 chown: move to system namespace
 * #33 group: move to system namespace
 * #32 user: move to system namespace
@@ -12,3 +13,5 @@
 * #28 changelog: time to be serious
 * #27 package: fix bug and repo url
 * #26 disable: Introduce new option "disable"
+
+## Version 0.6.0

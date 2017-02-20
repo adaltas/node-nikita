@@ -253,7 +253,7 @@ mecano.download
           if: @status()
           source: stageDestination
           target: options.target
-        @chmod
+        @sytem.chmod
           target: options.target
           mode: options.mode
           if: options.mode?

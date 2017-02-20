@@ -129,7 +129,7 @@ require('mecano').upload({
           target: options.target
         , (err, status) ->
           options.log message: "Unstaged uploaded file", level: 'INFO', module: 'mecano/lib/file/upload' if status
-        @chmod
+        @system.chmod
           ssh: null
           target: options.target
           mode: options.mode

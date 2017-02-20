@@ -16,12 +16,12 @@ describe 'chmod', ->
     .touch
       target: "#{scratch}/a_file"
       mode: 0o0754
-    .chmod
+    .system.chmod
       target: "#{scratch}/a_file"
       mode: 0o0744
     , (err, status) ->
       status.should.be.true() unless err
-    .chmod
+    .system.chmod
       target: "#{scratch}/a_file"
       mode: 0o0744
     , (err, status) ->

@@ -119,12 +119,12 @@ require('mecano').copy({
               modified = true
               do_chown_chmod target
         do_chown_chmod = (target) =>
-          @sytem.chown
+          @system.chown
             target: target
             uid: options.uid
             gid: options.gid
             if: options.uid? or options.gid?
-          @chmod
+          @system.chmod
             target: target
             mode: options.mode
             if: options.mode?
