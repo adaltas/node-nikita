@@ -1,37 +1,41 @@
 
-# `mecano.cgroups(options, [callback])`
+# `mecano.system.cgroups(options, [callback])`
 
-Mecano action to manipulate cgroups. [Example](http://manpages.ubuntu.com/manpages/xenial/man5/cgconfig.conf.5.html)
-of cgconfig configuration file. The configuration file is identitcal on ubuntu, redhat and centos.
+Mecano action to manipulate cgroups. [cgconfig.conf(5)] describes the 
+configuration file used by libcgroup to define control groups, their parameters 
+and also mount points.. The configuration file is identitcal on ubuntu, redhat 
+and centos.
 
 ## Options
 
-- `default` (object)   
-  The default object of cgconfig file.
-- `groups` (dictionnary)   
-  Object of cgroups to add to cgconfig file.
-- `ignore` (array|string)   
-  List of group path to ignore. Only used when merging
-- `mounts` (array)   
-  List of mount object to add to cgconfig file.
-  below)  
-- `merge` (boolean).   
+* `default` (object)   
+  The default object of cgconfig file.   
+* `groups` (dictionnary)   
+  Object of cgroups to add to cgconfig file.   
+* `ignore` (array|string)   
+  List of group path to ignore. Only used when merging.   
+* `mounts` (array)   
+  List of mount object to add to cgconfig file.   
+* `merge` (boolean).   
   Default to true. Read the config from cgsnapshot command and merge mounts part
-  of the cgroups.
-- `target` (string).   
-  The cgconfig configuration file. By default mecano detects provider based on os.
+  of the cgroups.   
+* `target` (string).   
+  The cgconfig configuration file. By default mecano detects provider based on 
+  os.   
 
-The groups object is a dictionnary containing as the key the cgroup name, and as a value
-the cgroup content. The content should contain the following properties.
+The groups object is a dictionnary containing as the key the cgroup name, and 
+as a value the cgroup content. The content should contain the following 
+properties.
     
-*    `perm` (object)   
-      Object to describe the permission of the owner and the task file.
-*    `controllers` (dictionary)   
-      Object of controller in the cgroup. Controllers can fe of the following type.
-      The key is the name of the controler, and the content are the value of the controller.
-      The controller's name can be of one of (cpuset|cpu|cpuacct|memory|devices|freezer|net_cls|blkio.  
+* `perm` (object)   
+  Object to describe the permission of the owner and the task file.   
+* `controllers` (dictionary)   
+  Object of controller in the cgroup. Controllers can fe of the following 
+  type. The key is the name of the controler, and the content are the value 
+  of the controller. The controller's name can be of one of 
+  (cpuset|cpu|cpuacct|memory|devices|freezer|net_cls|blkio.   
 
-It accepts also all the mecano.file options.
+It accepts also all the `mecano.file` options.
   
 Example:
 
@@ -50,7 +54,10 @@ Example of a group object
         'cpu.rt_period_us': '"1000000"'
         'cpu.rt_runtime_us': '"0"'
         'cpu.cfs_period_us': '"100000"'
+```
+
 Which will result in a file:
+
 ```text
     group bibi {
       perm {
@@ -72,11 +79,14 @@ Which will result in a file:
 ```
 
 ## Source Code
-When reading the current config, mecano uses cgsnaphsot command in order to have a well
-formatted file. Nonetheless if docker is installed and started, informations about live containers
-could be printed, that's why all path under docker/* are ignored.
+
+When reading the current config, mecano uses cgsnaphsot command in order to 
+have a well formatted file. Nonetheless if docker is installed and started, 
+informations about live containers could be printed, that's why all path under 
+docker/* are ignored.
     
     module.exports = (options) ->
+      options.log message: "Entering cgroups", level: 'DEBUG', module: 'mecano/lib/system/cgroups'
       throw Error 'Missing cgroups content' unless options.groups? or options.mounts? or options.default?
       options.mounts ?= []
       options.groups ?= {}
@@ -88,63 +98,61 @@ could be printed, that's why all path under docker/* are ignored.
       options.ignore ?= []
       options.ignore = [options.ignore] unless Array.isArray options.ignore
       options.store ?= {}
+      # Detect Os and version
       # Read the cpu controller point to cache the value in options.store['mecano:cgroups:cpu_path']
-      @call 
+      @execute
+        unless: -> options.store['mecano:system:type']? and options.store['mecano:system:release']?
         shy: true
-        unless: ->  options.store['mecano:system:type']? and options.store['mecano:system:release']?
-      , ->
-        #Detect Os and version
-        @execute
-          cmd: 'cat /etc/system-release'
-          code_skipped: 1
-          , (err, status, stdout, stderr) ->
-            throw err if err
-            [line] = string.lines stdout
-            if /CentOS/.test line
-              options.store['mecano:system:type'] ?= 'centos' 
-              index = line.split(' ').indexOf 'release'
-              options.store['mecano:system:release'] ?= line.split(' ')[index+1]
-            if /Red\sHat/.test line
-              options.store['mecano:system:type'] ?= 'redhat'
-              index = line.split(' ').indexOf 'release'
-              options.store['mecano:system:release'] ?= line.split(' ')[index+1]
-            throw Error 'Unsupported OS' unless options.store['mecano:system:type']?
+        cmd: 'cat /etc/system-release'
+        code_skipped: 1
+      , (err, status, stdout, stderr) ->
+        return unless status
+        [line] = string.lines stdout
+        if /CentOS/.test line
+          options.store['mecano:system:type'] ?= 'centos' 
+          index = line.split(' ').indexOf 'release'
+          options.store['mecano:system:release'] ?= line.split(' ')[index+1]
+        if /Red\sHat/.test line
+          options.store['mecano:system:type'] ?= 'redhat'
+          index = line.split(' ').indexOf 'release'
+          options.store['mecano:system:release'] ?= line.split(' ')[index+1]
+        throw Error 'Unsupported OS' unless options.store['mecano:system:type']?
       # configure parameters based on previous OS dection
       @call 
         shy: true
         if: -> (options.store['mecano:system:type'] in ['redhat','centos'])
-        handler: ->
-          @execute
-            cmd: 'cgsnapshot -s 2>&1'
-          , (err, status, stdout, stderr) ->
-            throw err if err
-            cgconfig = misc.cgconfig.parse stdout
-            cgconfig.mounts ?= []
-            cpus = cgconfig.mounts.filter( (mount) -> if mount.type is 'cpu' then return mount)
-            cpuaccts = cgconfig.mounts.filter( (mount) -> if mount.type is 'cpuacct' then return mount)
-            # We choose a path which is mounted by default
-            if not options.store['mecano:cgroups:cpu_path']?
-              if cpus.length > 0
-                cpu_path = cpus[0]['path'].split(',')[0]
-                options.store['mecano:cgroups:cpu_path'] ?= cpu_path
-              # a arbitrary path is given based on the
-              else
-                switch options.store['mecano:system:type']
-                  when 'redhat'
-                    options.store['mecano:cgroups:cpu_path'] ?= '/cgroups/cpu' if options.store['mecano:system:release'][0] is '6'
-                    options.store['mecano:cgroups:cpu_path'] ?= '/sys/fs/cgroup/cpu' if options.store['mecano:system:release'][0] is '7'
-                  else throw Error "Mecano does not support cgroups on your OS #{options.store['mecano:system:type']}"
-            if not options.store['mecano:cgroups:mount']?
-              options.store['mecano:cgroups:mount'] ?= "#{path.dirname options.store['mecano:cgroups:cpu_path']}"
-            # Running docker containers are remove from cgsnapshot output
-            if options.merge
-              groups = {}
-              for name, group of cgconfig.groups
-                groups[name] = group unless (name.indexOf('docker/') isnt -1) or (name in options.ignore)
-              options.cgconfig.groups = merge groups, options.groups
-              options.cgconfig.mounts.push cgconfig.mounts...
+      , ->
+        @execute
+          cmd: 'cgsnapshot -s 2>&1'
+        , (err, status, stdout, stderr) ->
+          throw err if err
+          cgconfig = misc.cgconfig.parse stdout
+          cgconfig.mounts ?= []
+          cpus = cgconfig.mounts.filter( (mount) -> if mount.type is 'cpu' then return mount)
+          cpuaccts = cgconfig.mounts.filter( (mount) -> if mount.type is 'cpuacct' then return mount)
+          # We choose a path which is mounted by default
+          if not options.store['mecano:cgroups:cpu_path']?
+            if cpus.length > 0
+              cpu_path = cpus[0]['path'].split(',')[0]
+              options.store['mecano:cgroups:cpu_path'] ?= cpu_path
+            # a arbitrary path is given based on the
+            else
+              switch options.store['mecano:system:type']
+                when 'redhat'
+                  options.store['mecano:cgroups:cpu_path'] ?= '/cgroups/cpu' if options.store['mecano:system:release'][0] is '6'
+                  options.store['mecano:cgroups:cpu_path'] ?= '/sys/fs/cgroup/cpu' if options.store['mecano:system:release'][0] is '7'
+                else throw Error "Mecano does not support cgroups on your OS #{options.store['mecano:system:type']}"
+          if not options.store['mecano:cgroups:mount']?
+            options.store['mecano:cgroups:mount'] ?= "#{path.dirname options.store['mecano:cgroups:cpu_path']}"
+          # Running docker containers are remove from cgsnapshot output
+          if options.merge
+            groups = {}
+            for name, group of cgconfig.groups
+              groups[name] = group unless (name.indexOf('docker/') isnt -1) or (name in options.ignore)
+            options.cgconfig.groups = merge groups, options.groups
+            options.cgconfig.mounts.push cgconfig.mounts...
       @call ->
-        options.target ?= '/etc/cgconfig.conf' if  options.store['mecano:system:type'] is 'redhat'
+        options.target ?= '/etc/cgconfig.conf' if options.store['mecano:system:type'] is 'redhat'
         @file options,
           content: misc.cgconfig.stringify(options.cgconfig)
 
@@ -154,4 +162,5 @@ could be printed, that's why all path under docker/* are ignored.
     string = require '../misc/string'
     {merge} = misc
     path = require 'path'
-    discover = require '../misc/discover'
+
+[cgconfig.conf(5)]: https://linux.die.net/man/5/cgconfig.conf
