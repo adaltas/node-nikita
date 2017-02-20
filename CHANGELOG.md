@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* #38 touch: move to system namespace
 * #37 mkdir: move to system namespace
 * #36 cgroups: move to system namespace
 * #35 chmod: move to system namespace

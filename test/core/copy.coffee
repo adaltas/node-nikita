@@ -240,9 +240,9 @@ describe 'copy', ->
         ssh: ssh
       .system.mkdir
         target: "#{scratch}/a_dir"
-      .touch
+      .file.touch
         target: "#{scratch}/a_dir/a_file"
-      .touch
+      .file.touch
         target: "#{scratch}/a_dir/.a_hidden_file"
       .copy
         source: "#{scratch}/a_dir"

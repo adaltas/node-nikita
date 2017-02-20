@@ -12,11 +12,11 @@ describe 'touch', ->
   they 'as a target option', (ssh, next) ->
     mecano
       ssh: ssh
-    .touch
+    .file.touch
       target: "#{scratch}/a_file"
     , (err, status) ->
       status.should.be.true() unless err
-    .touch
+    .file.touch
       target: "#{scratch}/a_file"
     , (err, status) ->
       status.should.be.false() unless err
@@ -28,9 +28,9 @@ describe 'touch', ->
   they 'as a string', (ssh, next) ->
     mecano
       ssh: ssh
-    .touch "#{scratch}/a_file", (err, status) ->
+    .file.touch "#{scratch}/a_file", (err, status) ->
       status.should.be.true() unless err
-    .touch "#{scratch}/a_file", (err, status) ->
+    .file.touch "#{scratch}/a_file", (err, status) ->
       status.should.be.false() unless err
     .file.assert
       target: "#{scratch}/a_file"
@@ -40,7 +40,7 @@ describe 'touch', ->
   they 'as an array of strings', (ssh, next) ->
     mecano
       ssh: ssh
-    .touch [
+    .file.touch [
       "#{scratch}/file_1"
       "#{scratch}/file_2"
     ], (err, status) ->
@@ -56,11 +56,11 @@ describe 'touch', ->
   they 'an existing file', (ssh, next) ->
     mecano
       ssh: ssh
-    .touch
+    .file.touch
       target: "#{scratch}/a_file"
     , (err, touched) ->
       touched.should.be.true()
-    .touch
+    .file.touch
       target: "#{scratch}/a_file"
     , (err, touched) ->
       touched.should.be.false() unless err
@@ -69,7 +69,7 @@ describe 'touch', ->
   they 'valid default permissions', (ssh, next) ->
     mecano
       ssh: ssh
-    .touch
+    .file.touch
       target: "#{scratch}/a_file"
     .call (_, callback) ->
       fs.stat ssh, "#{scratch}/a_file", (err, stat) ->
@@ -80,7 +80,7 @@ describe 'touch', ->
   they 'change permissions', (ssh, next) ->
     mecano
       ssh: ssh
-    .touch
+    .file.touch
       target: "#{scratch}/a_file"
       mode: 0o0700
     .call (_, callback) ->
@@ -92,10 +92,10 @@ describe 'touch', ->
   they 'do not change permissions on existing file if not specified', (ssh, next) ->
     mecano
       ssh: ssh
-    .touch
+    .file.touch
       target: "#{scratch}/a_file"
       mode: 0o666
-    .touch
+    .file.touch
       target: "#{scratch}/a_file"
     .call (_, callback) ->
       fs.stat ssh, "#{scratch}/a_file", (err, stat) ->
@@ -106,7 +106,7 @@ describe 'touch', ->
   they 'create valid parent dir', (ssh, next) ->
     mecano
       ssh: ssh
-    .touch
+    .file.touch
       target: "#{scratch}/subdir/a_file"
       mode:'0640'
     .call (_, callback) ->
@@ -118,11 +118,11 @@ describe 'touch', ->
   they 'modify time', (ssh, next) ->
     mecano
       ssh: ssh
-    .touch "#{scratch}/a_file"
+    .file.touch "#{scratch}/a_file"
     .call (_, callback) ->
       fs.stat ssh, "#{scratch}/a_file", (err, stat) ->
         callback err
-    .touch "#{scratch}/a_file"
+    .file.touch "#{scratch}/a_file"
     .call (_, callback) ->
       fs.stat ssh, "#{scratch}/a_file", (err, stat) ->
         callback err

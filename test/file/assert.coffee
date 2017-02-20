@@ -18,7 +18,7 @@ describe 'file.assert', ->
 
   they 'file exists', (ssh, next) ->
     mecano
-    .touch "#{scratch}/a_file"
+    .file.touch "#{scratch}/a_file"
     .file.assert "#{scratch}/a_file"
     .then next
 

@@ -53,13 +53,13 @@ describe 'api call', ->
       called = 0
       touched = 0
       mecano
-      .touch
+      .file.touch
         target: "#{scratch}/file_a"
       , (err) ->
         touched++
       .call (options) ->
         called++
-      .touch
+      .file.touch
         target: "#{scratch}/file_b"
       , (err) ->
         touched++
@@ -102,7 +102,7 @@ describe 'api call', ->
       called = 0
       touched = 0
       mecano
-      .touch
+      .file.touch
         target: "#{scratch}/a_file"
       , (err) ->
         touched++
@@ -110,7 +110,7 @@ describe 'api call', ->
         process.nextTick ->
           called++
           next()
-      .touch
+      .file.touch
         target: "#{scratch}/a_file"
       , (err) ->
         touched++
@@ -123,7 +123,7 @@ describe 'api call', ->
       called = 0
       touched = 0
       mecano
-      .touch
+      .file.touch
         target: "#{scratch}/a_file"
       , (err) ->
         touched++
@@ -132,7 +132,7 @@ describe 'api call', ->
           next()
       , (err, status) ->
         called++ unless err
-      .touch
+      .file.touch
         target: "#{scratch}/a_file"
       , (err) ->
         touched++

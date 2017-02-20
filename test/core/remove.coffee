@@ -13,7 +13,7 @@ describe 'remove', ->
   they 'accept an option', (ssh, next) ->
     mecano
       ssh: ssh
-    .touch "#{scratch}/a_file"
+    .file.touch "#{scratch}/a_file"
     .remove
       source: "#{scratch}/a_file"
     , (err, status) ->
@@ -23,7 +23,7 @@ describe 'remove', ->
   they 'accept a string', (ssh, next) ->
     mecano
       ssh: ssh
-    .touch "#{scratch}/a_file"
+    .file.touch "#{scratch}/a_file"
     .remove "#{scratch}/a_file", (err, status) ->
       status.should.be.true() unless err
     .then next
@@ -31,8 +31,8 @@ describe 'remove', ->
   they 'accept an array of strings', (ssh, next) ->
     mecano
       ssh: ssh
-    .touch "#{scratch}/file_1"
-    .touch "#{scratch}/file_2"
+    .file.touch "#{scratch}/file_1"
+    .file.touch "#{scratch}/file_2"
     .remove [
       "#{scratch}/file_1"
       "#{scratch}/file_2"

@@ -13,7 +13,7 @@ describe 'chmod', ->
   they 'change a permission of a file', (ssh, next) ->
     mecano
       ssh: ssh
-    .touch
+    .file.touch
       target: "#{scratch}/a_file"
       mode: 0o0754
     .system.chmod

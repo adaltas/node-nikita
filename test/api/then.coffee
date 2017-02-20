@@ -31,7 +31,7 @@ describe 'api then', ->
     d = domain.create()
     d.run ->
       mecano
-      .touch
+      .file.touch
         target: "#{scratch}/a_file"
       , (err) ->
         false

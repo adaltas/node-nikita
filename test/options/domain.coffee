@@ -39,7 +39,7 @@ describe 'options "domain"', ->
       next()
     mecano
       domain: d
-    .touch
+    .file.touch
       target: "#{scratch}/a_file"
     .call (options, next) ->
       next.property.does.not.exist

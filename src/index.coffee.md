@@ -52,7 +52,6 @@ functions share a common API with flexible options.
       move: 'mecano/core/move'
       remove: 'mecano/core/remove'
       render: 'mecano/core/render'
-      touch: 'mecano/core/touch'
       cron:
         add: 'mecano/cron/add'
         remove: 'mecano/cron/remove'
@@ -101,6 +100,7 @@ functions share a common API with flexible options.
         ini: 'mecano/file/ini'
         json: 'mecano/file/json'
         properties: 'mecano/file/properties'
+        touch: 'mecano/file/touch'
         upload: 'mecano/file/upload'
         yaml: 'mecano/file/yaml'
       java:
@@ -204,6 +204,7 @@ functions share a common API with flexible options.
       service_startup: 'mecano/service/startup'
       service_status: 'mecano/service/status'
       service_stop: 'mecano/service/stop'
+      touch: 'mecano/file/touch'
       upload: 'mecano/file/upload'
       user: 'mecano/system/user'
       wait_connect: 'mecano/connection/wait'

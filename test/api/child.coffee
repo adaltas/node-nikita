@@ -13,7 +13,7 @@ describe 'api child', ->
     .call (options, next) ->
       m
       .child()
-      .touch
+      .file.touch
         target: "#{scratch}/a_file"
       .then (err, changed) ->
         touched++
@@ -30,7 +30,7 @@ describe 'api child', ->
   #   .call (options, next) ->
   #     m
   #     .child()
-  #     .touch
+  #     .file.touch
   #       target: "#{scratch}/a_file"
   #     .then (err, changed) ->
   #       touched++

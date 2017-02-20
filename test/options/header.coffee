@@ -14,8 +14,8 @@ describe 'options "header"', ->
       headers.push message: log.message, depth: log.depth, headers: log.headers, header_depth: log.header_depth, total_depth: log.total_depth
     .call header: 'h1 call', ->
       @call header: 'h2 call', (_, callback) -> callback()
-      @touch header: 'h2 touch', target: "#{scratch}/file_h2"
-    .touch
+      @file.touch header: 'h2 touch', target: "#{scratch}/file_h2"
+    .file.touch
       header: 'h1 touch'
       target: "#{scratch}/file_h1"
     .then (err) ->
@@ -41,7 +41,7 @@ describe 'options "header"', ->
         @call options, header: 'h3a', (_, callback) -> callback()
         @then callback
       @call options, header: 'h2c', (_, callback) -> callback()
-    .touch
+    .file.touch
       header: 'h1b'
       target: "#{scratch}/file_h1"
     .then (err) ->
