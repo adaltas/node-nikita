@@ -52,7 +52,6 @@ functions share a common API with flexible options.
       extract: 'mecano/core/extract'
       git: 'mecano/core/git'
       group: 'mecano/core/group'
-      iptables: 'mecano/core/iptables'
       link: 'mecano/core/link'
       mkdir: 'mecano/core/mkdir'
       move: 'mecano/core/move'
@@ -150,6 +149,8 @@ functions share a common API with flexible options.
         'open': 'mecano/ssh/open'
         'close': 'mecano/ssh/close'
         'root': 'mecano/ssh/root'
+      tools:
+        iptables: 'mecano/tools/iptables'
       wait:
         '': 'mecano/wait/time'
         execute: 'mecano/wait/execute'
@@ -181,6 +182,7 @@ functions share a common API with flexible options.
       download: 'mecano/file/download'
       java_keystore_add: 'mecano/java/keystore_add'
       java_keystore_remove: 'mecano/java/keystore_remove'
+      iptables: 'mecano/tools/iptables'
       krb5_addprinc: 'mecano/krb5/addprinc'
       krb5_delprinc: 'mecano/krb5/delprinc'
       krb5_ktadd: 'mecano/krb5/ktadd'
