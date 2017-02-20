@@ -36,8 +36,8 @@ Takes the same options as the ssh2 module in an underscore form.
     module.exports = handler: (options) ->
       options.log message: "Entering ssh.open", level: 'DEBUG', module: 'mecano/lib/ssh/open'
       # SSH options namespace
-      options.ssh ?= {}
-      options[k] ?= v for k, v of options.ssh
+      # options.ssh ?= {}
+      options[k] ?= v for k, v of options.ssh or {}
       options.username ?= 'root'
       options.host ?= options.ip
       options.port ?= 22
