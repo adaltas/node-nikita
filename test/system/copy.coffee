@@ -79,17 +79,17 @@ describe 'copy', ->
       .system.copy
         source: source
         target: target
-      , (err, copied) ->
-        copied.should.be.true() unless err
+      , (err, status) ->
+        status.should.be.true() unless err
       .file.assert
         target: target
         md5: '3fb7c40c70b0ed19da713bd69ee12014'
       .system.copy
         source: source
         target: target
-      , (err, copied) ->
-        copied.should.be.false() unless err
-        next err
+      , (err, status) ->
+        status.should.be.false() unless err
+      .then next
 
     they 'change permissions', (ssh, next) ->
       source = "#{__dirname}/../resources/a_dir/a_file"
@@ -103,22 +103,20 @@ describe 'copy', ->
         source: source
         target: target
         mode: 0o750
-      , (err, copied) ->
+      , (err, status) ->
         return next err if err
-        copied.should.be.true()
-        fs.stat ssh, target, (err, stat) ->
-          misc.mode.compare(stat.mode, 0o750).should.be.true()
-          # Copy existing file
-          mecano.system.copy
-            ssh: ssh
-            source: source
-            target: target
-            mode: 0o755
-          , (err, copied) ->
-            return next err if err
-            fs.stat ssh, target, (err, stat) ->
-              misc.mode.compare(stat.mode, 0o755).should.be.true()
-              next()
+        status.should.be.true() unless err
+      .file.assert
+        target: target
+        mode: 0o0750
+      .system.copy
+        source: source
+        target: target
+        mode: 0o0755
+      .file.assert
+        target: target
+        mode: 0o0755
+      .then next
 
     they 'handle hidden files', (ssh, next) ->
       mecano
@@ -130,12 +128,10 @@ describe 'copy', ->
         ssh: ssh
         source: "#{scratch}/.a_empty_file"
         target: "#{scratch}/.a_copy"
-      , (err, copied) ->
-        return next err if err
-        fs.readFile ssh, "#{scratch}/.a_copy", 'ascii', (err, content) ->
-          return next err if err
-          content.should.eql 'hello'
-          next()
+      .file.assert
+        target: "#{scratch}/.a_copy"
+        content: 'hello'
+      .then next
           
   describe 'link', ->
 
@@ -151,12 +147,10 @@ describe 'copy', ->
       .system.copy
         source: "#{scratch}/ln_file"
         target: "#{scratch}/dst_file"
-      , (err, copied) ->
-        return next err if err
-        fs.readFile ssh, "#{scratch}/dst_file", 'ascii', (err, content) ->
-          return next err if err
-          content.should.eql 'hello'
-          next()
+      .file.assert
+        target: "#{scratch}/dst_file"
+        content: 'hello'
+      .then next
 
     they 'file parent dir', (ssh, next) ->
       mecano
@@ -174,58 +168,58 @@ describe 'copy', ->
       .system.copy
         source: "#{scratch}/source/ln_file"
         target: "#{scratch}"
-      , (err, copied) ->
-        return next err if err
-        fs.readFile ssh, "#{scratch}/ln_file", 'ascii', (err, content) ->
-          return next err if err
-          content.should.eql 'hello'
-          next()
+      .file.assert
+        target: "#{scratch}/ln_file"
+        content: 'hello'
+      .then next
           
   describe 'directory', ->
 
     they 'should copy without slash at the end', (ssh, next) ->
-      # if the target doesn't exists, then copy as target
-      mecano.system.copy
+      mecano
         ssh: ssh
+      # if the target doesn't exists, then copy as target
+      .system.copy
         source: "#{__dirname}/../resources"
         target: "#{scratch}/toto"
-      , (err, copied) ->
-        return next err if err
-        copied.should.be.true()
+      , (err, status) ->
+        status.should.be.true() unless err
+      .call (_, callback) ->
         checkDir ssh, "#{scratch}/toto", (err) ->
-          return next err if err
-          # if the target exists, then copy the folder inside target
-          mecano.system.copy
-            ssh: ssh
-            source: "#{__dirname}/../resources"
-            target: "#{scratch}/toto"
-          , (err, copied) ->
-            return next err if err
-            copied.should.be.true()
-            checkDir ssh, "#{scratch}/toto/resources", (err) ->
-              next err
+          callback err
+      # if the target exists, then copy the folder inside target
+      .system.copy
+        source: "#{__dirname}/../resources"
+        target: "#{scratch}/toto"
+      , (err, status) ->
+        status.should.be.true() unless err
+      .call (_, callback) ->
+        checkDir ssh, "#{scratch}/toto/resources", (err) ->
+          callback err
+      .then next
 
     they 'should copy the files when dir end with slash', (ssh, next) ->
-      # if the target doesn't exists, then copy as target
-      mecano.system.copy
+      mecano
         ssh: ssh
+      # if the target doesn't exists, then copy as target
+      .system.copy
         source: "#{__dirname}/../resources/"
         target: "#{scratch}/lulu"
-      , (err, copied) ->
-        return next err if err
-        copied.should.be.true()
+      , (err, status) ->
+        status.should.be.true() unless err
+      .call (_, callback) ->
         checkDir ssh, "#{scratch}/lulu", (err) ->
-          return next err if err
-          # if the target exists, then copy the files inside target
-          mecano.system.copy
-            ssh: ssh
-            source: "#{__dirname}/../resources/"
-            target: "#{scratch}/lulu"
-          , (err, copied) ->
-            return next err if err
-            copied.should.be.false()
-            checkDir ssh, "#{scratch}/lulu", (err) ->
-              next err
+          callback err
+      # if the target exists, then copy the files inside target
+      .system.copy
+        source: "#{__dirname}/../resources/"
+        target: "#{scratch}/lulu"
+      , (err, status) ->
+        status.should.be.false() unless err
+      .call (_, callback) ->
+        checkDir ssh, "#{scratch}/lulu", (err) ->
+          callback err
+      .then next
 
     they 'should copy hidden files', (ssh, next) ->
       mecano
@@ -239,27 +233,27 @@ describe 'copy', ->
       .system.copy
         source: "#{scratch}/a_dir"
         target: "#{scratch}/a_copy"
-      , (err, copied) ->
-        return next err if err
+      .call (_, callback) ->
         glob ssh, "#{scratch}/a_copy/**", dot: true, (err, files) ->
-          return next err if err
+          return callback err if err
           files.sort().should.eql [
             '/tmp/mecano-test/a_copy',
             '/tmp/mecano-test/a_copy/.a_hidden_file',
             '/tmp/mecano-test/a_copy/a_file'
           ]
-          next()
-
+          callback()
+      .then next
 
     they.skip 'should copy with globing and hidden files', (ssh, next) ->
-      # if the target doesn't exists, then copy as target
-      mecano.system.copy
+      mecano
         ssh: ssh
+      # if the target doesn't exists, then copy as target
+      .system.copy
         source: "#{__dirname}/../*"
         target: "#{scratch}"
-      , (err, copied) ->
-        return next err if err
-        copied.should.be.true()
+      , (err, status) ->
+        status.should.be.true() unless err
+      .call (_, callback) ->
         glob ssh, "#{scratch}/**", dot: true, (err, files) ->
-          return next err if err
-          next()
+          callback err
+      .then next

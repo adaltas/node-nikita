@@ -91,13 +91,9 @@ misc = module.exports =
     stringify: (mode) ->
       if typeof mode is 'number' then mode.toString(8) else mode
     compare: (modes...) ->
-      # ref = modes[0]
-      # ref = ref.toString(8) if typeof ref is 'number'
       ref = misc.mode.stringify modes[0]
       for i in [1...modes.length]
         mode = misc.mode.stringify modes[i]
-        # mode = modes[i]
-        # mode = mode.toString(8) if typeof mode is 'number'
         l = Math.min ref.length, mode.length
         return false if mode.substr(-l) isnt ref.substr(-l)
       true

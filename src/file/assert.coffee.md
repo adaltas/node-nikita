@@ -11,6 +11,8 @@ Assert a file exists or a provided text match the content of a text file.
     Content encoding, see the Node.js supported Buffer encoding.   
 *   `md5` (string)   
     Validate signature.   
+*   `mode` (string)   
+    Validate file permissions.   
 *   `sha1` (string)   
     Validate signature.   
 *   `source` (string)   
@@ -49,7 +51,7 @@ mecano.assert({
         throw Error "Invalid option 'content': expect string or buffer"
       # Assert file exists
       @call
-        unless: options.content or options.md5 or options.sha1
+        unless: options.content or options.md5 or options.sha1 or options.mode
       , (_, callback) ->
         fs.exists options.ssh, options.target.toString(), (err, exists) ->
           err = Error "File does not exists: #{JSON.stringify options.target}" unless exists
@@ -62,6 +64,14 @@ mecano.assert({
           unless err or buffer.equals options.content
             options.error ?= "Invalid content match: expect #{JSON.stringify options.content.toString()} and got #{JSON.stringify buffer.toString()}"
             err = Error options.error 
+          callback err
+      # Assert file permissions
+      @call
+        if: options.mode
+      , (_, callback) ->
+        fs.stat options.ssh, options.target, (err, stat) ->
+          err = Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
+          err = Error "Invalid mode: expect #{pad 4, misc.mode.stringify(options.mode), '0'} and got #{misc.mode.stringify(stat.mode).substr -4}" if not err and not misc.mode.compare options.mode, stat.mode
           callback err
       # Assert content match
       (algo = 'md5'; hash = options.md5) if options.md5
@@ -76,5 +86,7 @@ mecano.assert({
 
 ## Dependencies
 
+    pad = require 'pad'
     fs = require 'ssh2-fs'
     file = require '../misc/file'
+    misc = require '../misc'

@@ -81,7 +81,17 @@ describe 'file.assert', ->
   
   describe 'option md5', ->
     
-    they 'send custom error message', (ssh, next) ->
+    they 'detect if file does not exists', (ssh, next) ->
+      mecano
+      .file.assert
+        target: "#{scratch}/a_file"
+        md5: 'toto'
+        relax: true
+      , (err) ->
+        err.message.should.eql "Target does not exists: #{scratch}/a_file"
+      .then next
+    
+    they 'validate hash', (ssh, next) ->
       mecano
       .file.assert
         target: "#{scratch}/a_file"
@@ -103,9 +113,55 @@ describe 'file.assert', ->
         md5: "f0a1e0f2412f62cc97178fd6b44dc978"
       .then next
 
+  describe 'option mode', ->
+    
+    they 'detect if file does not exists', (ssh, next) ->
+      mecano
+      .file.assert
+        target: "#{scratch}/a_file"
+        mode: 0o755
+        relax: true
+      , (err) ->
+        err.message.should.eql "Target does not exists: #{scratch}/a_file"
+      .then next
+          
+    they 'on file', (ssh, next) ->
+      mecano
+      .file
+        target: "#{scratch}/a_file"
+        content: "are u here"
+        mode: 0o0755
+      .file.assert
+        target: "#{scratch}/a_file"
+        mode: 0o0644
+        relax: true
+      , (err) ->
+        err.message.should.eql "Invalid mode: expect 0644 and got 0755"
+      .file.assert
+        target: "#{scratch}/a_file"
+        mode: 0o0755
+      .then next
+
+    they 'on directory', (ssh, next) ->
+      mecano
+      .system.mkdir
+        target: "#{scratch}/a_file"
+        content: "are u here"
+        mode: 0o0755
+      .file.assert
+        target: "#{scratch}/a_file"
+        mode: 0o0644
+        relax: true
+      , (err) ->
+        err.message.should.eql "Invalid mode: expect 0644 and got 0755"
+      .file.assert
+        target: "#{scratch}/a_file"
+        mode: 0o0755
+      .then next
+
   describe 'option sha1', ->
     
-    they 'send custom error message', (ssh, next) ->
+    they 'validate hash', (ssh, next) ->
       mecano
       .file.assert
         target: "#{scratch}/a_file"
@@ -126,4 +182,5 @@ describe 'file.assert', ->
         target: "#{scratch}/a_file"
         sha1: "94d1f318f02816c590bd65595c28df1dd7ff326b"
       .then next
+      
     
