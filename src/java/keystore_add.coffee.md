@@ -139,7 +139,7 @@ require('mecano').java.keystore_add([{
         # trap: true
         if: !!options.cert
         code_skipped: 3
-      .execute # Deal with CACert
+      @execute # Deal with CACert
         cmd: """
         cleanup () { rm -rf #{tmp_location}; }
         # Check password
@@ -171,7 +171,7 @@ require('mecano').java.keystore_add([{
         """
         # trap: true
         code_skipped: 3
-      .remove
+      @system.remove
         target: "#{tmp_location}"
         shy: true
 

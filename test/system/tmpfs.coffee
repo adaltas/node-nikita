@@ -17,7 +17,7 @@ describe 'system.tmpfs', ->
     they 'simple mount group configuration with target', (ssh, next) ->
       mecano
         ssh: ssh
-      .remove
+      .system.remove
         target: "#{scratch}/file_1.conf"
       .system.tmpfs
         target: "#{scratch}/file_1.conf"
@@ -83,7 +83,7 @@ describe 'system.tmpfs', ->
     they 'Override existing configuration file with target', (ssh, next) ->
       mecano
         ssh: ssh
-      .remove
+      .system.remove
         target: "#{scratch}/file_1.conf"
       .system.tmpfs
         target: "#{scratch}/file_1.conf"
@@ -122,10 +122,9 @@ describe 'system.tmpfs', ->
   describe 'generate with merge', ->
     return unless config.isCentos7
     they 'multiple file with target', (ssh, next) ->
-      
       mecano
         ssh: ssh
-      .remove
+      .system.remove
         target: "#{scratch}/file_2.conf"
       .system.tmpfs
         target: "#{scratch}/file_2.conf"
@@ -167,7 +166,7 @@ describe 'system.tmpfs', ->
     they 'multiple file merge status not modifed with target', (ssh, next) ->
       mecano
         ssh: ssh
-      .remove
+      .system.remove
         target: "#{scratch}/file_2.conf"
       .system.tmpfs
         target: "#{scratch}/file_2.conf"
@@ -224,7 +223,7 @@ describe 'system.tmpfs', ->
     they 'simple mount group configuration', (ssh, next) ->
       mecano
         ssh: ssh
-      .remove
+      .system.remove
         target: "/etc/tmpfiles.d/root.conf"
       .system.tmpfs
         mount: '/var/run/file_1'
@@ -251,7 +250,7 @@ describe 'system.tmpfs', ->
     they 'simple mount group no uid', (ssh, next) ->
       mecano
         ssh: ssh
-      .remove '/etc/tmpfiles.d/root.conf'
+      .system.remove '/etc/tmpfiles.d/root.conf'
       .system.tmpfs
         mount: '/var/run/file_1'
         uid: 'root'

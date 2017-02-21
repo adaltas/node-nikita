@@ -15,7 +15,7 @@ describe 'compress', ->
       target: "#{scratch}/a_dir.tgz"
     , (err, compressed) ->
       compressed.should.be.true()
-    .remove
+    .system.remove
       target: "#{scratch}/a_dir.tgz"
     .then next
 
@@ -27,7 +27,7 @@ describe 'compress', ->
       target: "#{scratch}/a_dir.zip"
     , (err, compressed) ->
       compressed.should.be.true()
-    .remove
+    .system.remove
       target: "#{scratch}/a_dir.zip"
     .then next
 
@@ -39,7 +39,7 @@ describe 'compress', ->
       target: "#{scratch}/a_dir.tar.bz2"
     , (err, compressed) ->
       compressed.should.be.true()
-    .remove
+    .system.remove
       target: "#{scratch}/a_dir.tar.bz2"
     .then next
 
@@ -51,7 +51,7 @@ describe 'compress', ->
       target: "#{scratch}/a_dir.tar.xz"
     , (err, compressed) ->
       compressed.should.be.true()
-    .remove
+    .system.remove
       target: "#{scratch}/a_dir.tar.xz"
     .then next
 

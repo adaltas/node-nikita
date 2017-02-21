@@ -194,7 +194,7 @@ mecano.download
               options.log message: "Hash dont match, source is '#{hash1}' and target is '#{hash2}'", level: 'WARN', module: 'mecano/lib/file/download' unless match
               options.log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'mecano/lib/file/download' if match
               callback err, not match
-          @remove
+          @system.remove
             unless: -> @status -1
             shy: true
             target: stageDestination

@@ -40,24 +40,19 @@ describe 'krb5.addprinc', ->
       principal: "mecano@#{config.krb5.realm}"
       password: 'password1'
     , (err, status) ->
-      status.should.be.true()
+      status.should.be.true() unless err
     .krb5.addprinc
       principal: "mecano@#{config.krb5.realm}"
       password: 'password2'
       password_sync: true
     , (err, status) ->
-      status.should.be.true()
+      status.should.be.true() unless err
     .krb5.addprinc
       principal: "mecano@#{config.krb5.realm}"
       password: 'password2'
       password_sync: true
     , (err, status) ->
-      status.should.be.false()
-    .execute
-      cmd: "klist"
-      code_skipped: 1
-    , (err, status, stdout, stderr) ->
-      stderr.should.match /^(.*)No credentials cache found(.*)/
+      status.should.be.false() unless err
     .then next
 
   they 'dont overwrite password', (ssh, next) ->
@@ -72,13 +67,13 @@ describe 'krb5.addprinc', ->
       principal: "mecano@#{config.krb5.realm}"
       password: 'password1'
     , (err, status) ->
-      status.should.be.true()
+      status.should.be.true() unless err
     .krb5.addprinc
       principal: "mecano@#{config.krb5.realm}"
       password: 'password2'
       password_sync: false # Default
     , (err, status) ->
-      status.should.be.false()
+      status.should.be.false() unless err
     .execute
       cmd: "echo password1 | kinit mecano@#{config.krb5.realm}"
     .then next
@@ -122,13 +117,9 @@ describe 'krb5.addprinc', ->
       keytab: '/etc/security/keytabs/user1.service.keytab'
     .krb5.addprinc krb5, user
     , (err, status) ->
-      return next err if err  
-      status.should.be.true()
-      mecano
-        ssh: ssh
-      .execute
-        cmd: "echo #{user.password} | kinit #{user.principal}"
-      , (err, status, stdout) ->
-        return next err if err
-        status.should.be.true()
-        next()
+      status.should.be.true() unless err
+    .execute
+      cmd: "echo #{user.password} | kinit #{user.principal}"
+    , (err, status, stdout) ->
+      status.should.be.true() unless err
+    .then next

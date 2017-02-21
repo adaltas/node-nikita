@@ -91,7 +91,7 @@ describe 'link', ->
       target: "#{scratch}/test/file_link"
     , (err, status) ->
       status.should.be.true() unless err
-    .remove
+    .system.remove
       target: "#{scratch}/test/invalid_file"
     .system.link
       source: "#{scratch}/test/valid_file"

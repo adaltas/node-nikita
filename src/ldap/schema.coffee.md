@@ -161,7 +161,7 @@ require('mecano').ldap.schema({
           do_clean()
       do_clean = =>
         options.log? 'Clean up'
-        @remove
+        @system.remove
           target: tempdir
         , (err, removed) ->
           callback err, modified

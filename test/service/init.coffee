@@ -17,7 +17,7 @@ describe 'service render init scripts', ->
       mecano
         ssh: ssh
       .service.remove 'cronie'
-      .remove
+      .system.remove
         target: '/etc/init.d/crond'
       .service.init
         source: "#{__dirname}/crond.j2"
@@ -29,7 +29,7 @@ describe 'service render init scripts', ->
       mecano
         ssh: ssh
       .service.remove 'cronie'
-      .remove
+      .system.remove
         target: '/etc/init.d/crond'
       .service.init
         source: "#{__dirname}/crond.j2"
@@ -40,7 +40,7 @@ describe 'service render init scripts', ->
       mecano
         ssh: ssh
       .service.remove 'cronie'
-      .remove
+      .system.remove
         target: '/etc/init.d/crond'
       .service.init
         source: "#{__dirname}/crond.j2"
@@ -54,7 +54,7 @@ describe 'service render init scripts', ->
       mecano
         ssh: ssh
       .service.remove 'cronie'
-      .remove
+      .system.remove
         target: '/etc/init.d/crond'
       .service.init
         source: "#{__dirname}/crond.j2"
@@ -66,7 +66,7 @@ describe 'service render init scripts', ->
       mecano
         ssh: ssh
       .service.remove 'cronie'
-      .remove
+      .system.remove
         target: '/etc/init.d/crond'
       .service.init
         source: "#{__dirname}/crond.j2"
@@ -77,7 +77,7 @@ describe 'service render init scripts', ->
       mecano
         ssh: ssh
       .service.remove 'cronie'
-      .remove
+      .system.remove
         target: '/etc/init.d/crond'
       .service.init
         source: "#{__dirname}/crond.j2"
@@ -89,8 +89,8 @@ describe 'service render init scripts', ->
       mecano
         ssh: ssh
       .service.remove 'cronie'
-      .remove '/etc/systemd/system/crond.service'
-      .remove '/etc/init.d/crond'
+      .system.remove '/etc/systemd/system/crond.service'
+      .system.remove '/etc/init.d/crond'
       .service.init
         source: "#{__dirname}/crond.j2"
       , (err, status) -> status.should.be.true()
@@ -104,8 +104,8 @@ describe 'service render init scripts', ->
         ssh: ssh
       .service.remove 'cronie'
       .service.install 'cronie'
-      .remove '/etc/systemd/system/crond.service'
-      .remove '/etc/init.d/crond'
+      .system.remove '/etc/systemd/system/crond.service'
+      .system.remove '/etc/init.d/crond'
       .service.init
         source: "#{__dirname}/crond.j2"
         target: '/etc/init.d/crond'
@@ -118,8 +118,8 @@ describe 'service render init scripts', ->
       mecano
         ssh: ssh
       .service.remove 'cronie'
-      .remove '/etc/systemd/system/crond.service'
-      .remove '/etc/init.d/crond'
+      .system.remove '/etc/systemd/system/crond.service'
+      .system.remove '/etc/init.d/crond'
       .service.init
         source: "#{__dirname}/crond.j2"
         target: '/etc/init.d/crond'

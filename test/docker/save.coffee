@@ -15,7 +15,7 @@ describe 'docker save', ->
     mecano
       ssh: ssh
       docker: config.docker
-    .remove
+    .system.remove
       target:"#{scratch}/mecano_saved.tar"
     .docker.build
       image: 'mecano/load_test'
@@ -25,14 +25,14 @@ describe 'docker save', ->
       output: "#{scratch}/mecano_saved.tar"
     , (err, saved) ->
       saved.should.be.true() unless err
-    .remove
+    .system.remove
       target:"#{scratch}/mecano_saved.tar"
     .then next
 
   # they 'status not modified', (ssh, next) ->
   #   mecano
   #     ssh: ssh
-  #   .remove
+  #   .system.remove
   #     target:"#{scratch}/mecano_saved.tar"
   #   .docker.build
   #     image: 'mecano/load_test'
@@ -50,6 +50,6 @@ describe 'docker save', ->
   #     saved.should.be.false()
   #     mecano
   #       ssh: ssh
-  #     .remove
+  #     .system.remove
   #       target:"#{scratch}/mecano_saved.tar"
   #     .then next

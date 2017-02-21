@@ -190,7 +190,7 @@ mecano.execute({
               options.log message: "Skip exit code \"#{code}\"", level: 'INFO', module: 'mecano/lib/execute'
             callback null, status
           , 1
-      # @remove
+      # @system.remove
       #   if_exists: true
       #   target: -> @options.target
       @then (err, status) ->

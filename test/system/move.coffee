@@ -71,15 +71,18 @@ describe 'move', ->
       source: "#{scratch}/src2.txt"
       target: "#{scratch}/dest.txt"
     , (err, status) ->
-      return next err if err
-      status.should.be.false()
+      status.should.be.false() unless err
+    .call (_, callback) ->
       fs.readFile ssh, "#{scratch}/dest.txt", 'utf8', (err, content) ->
         return next err if err
         content.should.eql 'hello'
-        # The original file should no longer exists
-        fs.exists ssh, "#{scratch}/src2.txt", (err, exists) ->
-          exists.should.be.false()
-          next()
+        callback()
+    .call (_, callback) ->
+      # The original file should no longer exists
+      fs.exists ssh, "#{scratch}/src2.txt", (err, exists) ->
+        exists.should.be.false() unless err
+        callback err
+    .then next
 
   they 'force bypass checksum comparison', (ssh, next) ->
     mecano

@@ -71,7 +71,7 @@ require('mecano').system.move({
         else do_replace_dest()
       do_replace_dest = =>
         options.log message: "Remove #{options.target}", level: 'WARN', module: 'mecano/lib/system/move'
-        @remove
+        @system.remove
           target: options.target
         , (err, removed) ->
           return callback err if err
@@ -83,7 +83,7 @@ require('mecano').system.move({
           callback null, true
       do_remove_src = =>
         options.log message: "Remove #{options.source}", level: 'WARN', module: 'mecano/lib/system/move'
-        @remove
+        @system.remove
           target: options.source
         , (err, removed) ->
           callback err

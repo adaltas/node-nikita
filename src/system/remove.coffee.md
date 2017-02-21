@@ -1,5 +1,5 @@
 
-# `mecano.remove(options, [callback])`
+# `mecano.system.remove(options, [callback])`
 
 Recursively remove files, directories and links.
 
@@ -27,8 +27,8 @@ slow.
 
 ```js
 require('mecano')
-.remove('./some/dir', function(err, removed){
-  console.log(err ? err.message : "File removed: " + !!removed);
+.system.remove('./some/dir', function(err, status){
+  console.log(err ? err.message : "File removed: " + !!status);
 });
 ```
 
@@ -36,11 +36,11 @@ require('mecano')
 
 ```js
 require('mecano')
-.remove({
+.system.remove({
   target: './some/dir',
   unless_exists: './some/file'
-}, function(err, removed){
-  console.log(err ? err.message : "File removed: " + !!removed);
+}, function(err, status){
+  console.log(err ? err.message : "File removed: " + !!status);
 });
 ```
 
@@ -48,36 +48,35 @@ require('mecano')
 
 ```js
 require('mecano')
-.remove([
+.system.remove([
   { target: './some/dir', unless_exists: './some/file' },
   './some/file'
-], function(err, removed){
-  console.log(err ? err.message : 'File removed: ' + !!removed);
+], function(err, status){
+  console.log(err ? err.message : 'File removed: ' + !!status);
 });
 ```
 
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering remove", level: 'DEBUG', module: 'mecano/lib/remove'
+      options.log message: "Entering remove", level: 'DEBUG', module: 'mecano/lib/system/remove'
       # Validate parameters
       options.target = options.argument if options.argument?
       options.target ?= options.source
       return callback Error "Missing option: \"target\"" unless options.target?
       # Start real work
       glob options.ssh, options.target, (err, files) ->
-        modified = false
         return callback err if err
+        status = false
         each files
         .call (file, callback) ->
-          modified = true
+          status = true
           misc.file.remove options.ssh, file, callback
         .then (err) ->
-          callback err, modified
+          callback err, status
 
 ## Dependencies
 
-    fs = require 'ssh2-fs'
     each = require 'each'
     misc = require '../misc'
     glob = require '../misc/glob'

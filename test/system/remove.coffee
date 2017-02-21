@@ -14,7 +14,7 @@ describe 'remove', ->
     mecano
       ssh: ssh
     .file.touch "#{scratch}/a_file"
-    .remove
+    .system.remove
       source: "#{scratch}/a_file"
     , (err, status) ->
       status.should.be.true() unless err
@@ -24,7 +24,7 @@ describe 'remove', ->
     mecano
       ssh: ssh
     .file.touch "#{scratch}/a_file"
-    .remove "#{scratch}/a_file", (err, status) ->
+    .system.remove "#{scratch}/a_file", (err, status) ->
       status.should.be.true() unless err
     .then next
     
@@ -33,7 +33,7 @@ describe 'remove', ->
       ssh: ssh
     .file.touch "#{scratch}/file_1"
     .file.touch "#{scratch}/file_2"
-    .remove [
+    .system.remove [
       "#{scratch}/file_1"
       "#{scratch}/file_2"
     ], (err, status) ->
@@ -43,7 +43,7 @@ describe 'remove', ->
   they 'accept an empty array', (ssh, next) ->
     mecano
       ssh: ssh
-    .remove [], (err, status) ->
+    .system.remove [], (err, status) ->
       status.should.be.false() unless err
     .then next
     
@@ -53,7 +53,7 @@ describe 'remove', ->
     .system.copy
       source: "#{__dirname}/../resources/a_dir/a_file"
       target: "#{scratch}/a_file"
-    .remove
+    .system.remove
       source: "#{scratch}/a_file"
     , (err, status) ->
       return next err if err
@@ -61,16 +61,19 @@ describe 'remove', ->
     .then next
 
   they 'a link', (ssh, next) ->
-    fs.symlink ssh, __filename, "#{scratch}/test", (err) ->
-      mecano.remove
-        ssh: ssh
-        source: "#{scratch}/test"
-      , (err, status) ->
-        return next err if err
-        status.should.be.true()
-        fs.lstat ssh, "#{scratch}/test", (err, stat) ->
-          err.code.should.eql 'ENOENT'
-          next()
+    mecano
+      ssh: ssh
+    .call (options, callback) ->
+      fs.symlink options.ssh, __filename, "#{scratch}/test", callback
+    .system.remove
+      source: "#{scratch}/test"
+    , (err, status) ->
+      status.should.be.true() unless err
+    .call (options, callback) ->
+      fs.lstat options.ssh, "#{scratch}/test", (err, stat) ->
+        err.code.should.eql 'ENOENT'
+        callback()
+    .then next
 
   they 'use a pattern', (ssh, next) ->
     # todo, not working yet over ssh
@@ -79,29 +82,30 @@ describe 'remove', ->
     .system.copy
       source: "#{__dirname}/../resources/"
       target: "#{scratch}/"
-    .remove
+    .system.remove
       source: "#{scratch}/*gz"
     , (err, status) ->
-      return next err if err
-      status.should.be.true()
+      status.should.be.true() unless err
+    .call (_, callback) ->
       fs.readdir null, "#{scratch}", (err, files) ->
         files.should.not.containEql 'a_dir.tar.gz'
         files.should.not.containEql 'a_dir.tgz'
         files.should.containEql 'a_dir.zip'
-        next()
+        callback()
+    .then next
 
   they 'a dir', (ssh, next) ->
-    @timeout 10000
+    # @timeout 10000
     mecano
       ssh: ssh
     .system.mkdir
       target: "#{scratch}/remove_dir"
-    .remove
+    .system.remove
       target: "#{scratch}/remove_dir"
     , (err, status) ->
-      status.should.be.true()
-    .remove
+      status.should.be.true() unless err
+    .system.remove
       target: "#{scratch}/remove_dir"
     , (err, status) ->
-      status.should.be.false()
+      status.should.be.false() unless err
     .then next

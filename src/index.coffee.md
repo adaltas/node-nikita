@@ -15,7 +15,6 @@ functions share a common API with flexible options.
 
     module.exports = new Proxy (-> context arguments...),
       get: (target, name) ->
-        # return target[name] if target[name]
         ctx = context()
         tree = []
         tree.push name
@@ -46,7 +45,6 @@ functions share a common API with flexible options.
       compress: 'mecano/core/compress'
       execute: 'mecano/core/execute'
       extract: 'mecano/core/extract'
-      remove: 'mecano/core/remove'
       cron:
         add: 'mecano/cron/add'
         remove: 'mecano/cron/remove'
@@ -142,12 +140,13 @@ functions share a common API with flexible options.
         link: 'mecano/system/link'
         mkdir: 'mecano/system/mkdir'
         move: 'mecano/system/move'
+        remove: 'mecano/system/remove'
         tmpfs: 'mecano/system/tmpfs'
         user: 'mecano/system/user'
       ssh:
-        'open': 'mecano/ssh/open'
-        'close': 'mecano/ssh/close'
-        'root': 'mecano/ssh/root'
+        open: 'mecano/ssh/open'
+        close: 'mecano/ssh/close'
+        root: 'mecano/ssh/root'
       tools:
         iptables: 'mecano/tools/iptables'
         git: 'mecano/tools/git'
@@ -201,6 +200,7 @@ functions share a common API with flexible options.
       link: 'mecano/system/link'
       mkdir: 'mecano/system/mkdir'
       move: 'mecano/system/move'
+      remove: 'mecano/system/remove'
       render: 'mecano/file/render'
       service_install: 'mecano/service/install'
       service_remove: 'mecano/service/remove'
