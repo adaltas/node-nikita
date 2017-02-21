@@ -67,7 +67,7 @@ module.exports = file =
         return callback err if err
         callback null, hash1 is hash2, hash1, hash2
   ###
-  `files.hash(file, [algorithm], callback)`
+  `files.hash(ssh, file, [algorithm], callback)`
   -----------------------------------------
   Retrieve the hash of a supplied file in hexadecimal 
   form. If the provided file is a directory, the returned hash 

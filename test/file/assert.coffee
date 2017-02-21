@@ -8,70 +8,122 @@ fs = require 'ssh2-fs'
 describe 'file.assert', ->
 
   scratch = test.scratch @
+  
+  describe 'exists', ->
 
-  they 'file doesnt not exist', (ssh, next) ->
-    mecano
-    .file.assert "#{scratch}/a_file"
-    .then (err) ->
-      err.message.should.eql "File does not exists: \"#{scratch}/a_file\""
-      next()
+    they 'file doesnt not exist', (ssh, next) ->
+      mecano
+      .file.assert "#{scratch}/a_file"
+      .then (err) ->
+        err.message.should.eql "File does not exists: \"#{scratch}/a_file\""
+        next()
 
-  they 'file exists', (ssh, next) ->
-    mecano
-    .file.touch "#{scratch}/a_file"
-    .file.assert "#{scratch}/a_file"
-    .then next
+    they 'file exists', (ssh, next) ->
+      mecano
+      .file.touch "#{scratch}/a_file"
+      .file.assert "#{scratch}/a_file"
+      .then next
 
-  they 'requires target', (ssh, next) ->
-    mecano
-    .file.assert
-      content: "are u here"
-    .then (err) ->
-      err.message.should.eql 'Missing option: "target"'
-      next()
+    they 'requires target', (ssh, next) ->
+      mecano
+      .file.assert
+        content: "are u here"
+      .then (err) ->
+        err.message.should.eql 'Missing option: "target"'
+        next()
+  
+  describe 'content', ->
 
-  they 'content match', (ssh, next) ->
-    mecano
-    .file
-      target: "#{scratch}/a_file"
-      content: "are u here"
-    .file.assert
-      target: "#{scratch}/a_file"
-      content: "are u here"
-    .then next
+    they 'content match', (ssh, next) ->
+      mecano
+      .file
+        target: "#{scratch}/a_file"
+        content: "are u here"
+      .file.assert
+        target: "#{scratch}/a_file"
+        content: "are u here"
+      .then next
 
-  they 'option source is alias of target', (ssh, next) ->
-    mecano
-    .file
-      target: "#{scratch}/a_file"
-      content: "are u here"
-    .file.assert
-      source: "#{scratch}/a_file"
-      content: "are u here"
-    .then next
+    they 'option source is alias of target', (ssh, next) ->
+      mecano
+      .file
+        target: "#{scratch}/a_file"
+        content: "are u here"
+      .file.assert
+        source: "#{scratch}/a_file"
+        content: "are u here"
+      .then next
 
-  they 'content dont match', (ssh, next) ->
-    mecano
-    .file
-      target: "#{scratch}/a_file"
-      content: "are u here"
-    .file.assert
-      target: "#{scratch}/a_file"
-      content: "are u sure"
-    .then (err) ->
-      err.message.should.eql 'Invalid content match: expected "are u sure", got "are u here"'
-      next()
+    they 'content dont match', (ssh, next) ->
+      mecano
+      .file
+        target: "#{scratch}/a_file"
+        content: "are u here"
+      .file.assert
+        target: "#{scratch}/a_file"
+        content: "are u sure"
+      .then (err) ->
+        err.message.should.eql 'Invalid content match: expect "are u sure" and got "are u here"'
+        next()
 
-  they 'send custom error message', (ssh, next) ->
-    mecano
-    .file
-      target: "#{scratch}/a_file"
-      content: "are u here"
-    .file.assert
-      target: "#{scratch}/a_file"
-      content: "are u sure"
-      error: 'Got it'
-    .then (err) ->
-      err.message.should.eql "Got it"
-      next()
+    they 'send custom error message', (ssh, next) ->
+      mecano
+      .file
+        target: "#{scratch}/a_file"
+        content: "are u here"
+      .file.assert
+        target: "#{scratch}/a_file"
+        content: "are u sure"
+        error: 'Got it'
+      .then (err) ->
+        err.message.should.eql "Got it"
+        next()
+  
+  describe 'option md5', ->
+    
+    they 'send custom error message', (ssh, next) ->
+      mecano
+      .file.assert
+        target: "#{scratch}/a_file"
+        md5: 'toto'
+        relax: true
+      , (err) ->
+        err.message.should.eql "Target does not exists: #{scratch}/a_file"
+      .file
+        target: "#{scratch}/a_file"
+        content: "are u here"
+      .file.assert
+        target: "#{scratch}/a_file"
+        md5: "invalidmd5signature"
+        relax: true
+      , (err) ->
+        err.message.should.eql "Invalid md5 signature: expect \"invalidmd5signature\" and got \"f0a1e0f2412f62cc97178fd6b44dc978\""
+      .file.assert
+        target: "#{scratch}/a_file"
+        md5: "f0a1e0f2412f62cc97178fd6b44dc978"
+      .then next
+
+  describe 'option sha1', ->
+    
+    they 'send custom error message', (ssh, next) ->
+      mecano
+      .file.assert
+        target: "#{scratch}/a_file"
+        sha1: 'toto'
+        relax: true
+      , (err) ->
+        err.message.should.eql "Target does not exists: #{scratch}/a_file"
+      .file
+        target: "#{scratch}/a_file"
+        content: "are u here"
+      .file.assert
+        target: "#{scratch}/a_file"
+        sha1: "invalidmd5signature"
+        relax: true
+      , (err) ->
+        err.message.should.eql "Invalid sha1 signature: expect \"invalidmd5signature\" and got \"94d1f318f02816c590bd65595c28df1dd7ff326b\""
+      .file.assert
+        target: "#{scratch}/a_file"
+        sha1: "94d1f318f02816c590bd65595c28df1dd7ff326b"
+      .then next
     

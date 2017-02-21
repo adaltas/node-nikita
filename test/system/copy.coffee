@@ -41,11 +41,9 @@ describe 'copy', ->
       , (err, status) ->
         return next err if err
         status.should.be.true()
-      .call (options, next) ->
-        misc.file.compare @options.ssh, [source, target], (err, md5) ->
-          return next err if err
-          md5.should.eql '3fb7c40c70b0ed19da713bd69ee12014'
-          next()
+      .file.assert
+        target: target
+        md5: '3fb7c40c70b0ed19da713bd69ee12014'
       .system.copy
         ssh: ssh
         source: source
@@ -66,48 +64,42 @@ describe 'copy', ->
         target: "#{scratch}/existing_dir"
       , (err, status) ->
         status.should.be.true() unless err
-      .call (options, callback) ->
-        fs.exists @options.ssh, "#{scratch}/existing_dir/a_file", (err, exists) ->
-          exists.should.be.true()
-          callback()
+      .file.assert
+        target: "#{scratch}/existing_dir/a_file"
       .then next
 
     they 'over an existing file', (ssh, next) ->
       source = "#{__dirname}/../resources/a_dir/a_file"
       target = "#{scratch}/test_this_file"
       mecano
-      .file
         ssh: ssh
+      .file
         content: 'Hello you'
         target: target
       .system.copy
-        ssh: ssh
         source: source
         target: target
       , (err, copied) ->
-        return next err if err
-        copied.should.be.true()
-        misc.file.compare ssh, [source, target], (err, md5) ->
-          return next err if err
-          md5.should.eql '3fb7c40c70b0ed19da713bd69ee12014'
-          mecano.system.copy
-            ssh: ssh
-            source: source
-            target: target
-          , (err, copied) ->
-            return next err if err
-            copied.should.be.false()
-            next()
+        copied.should.be.true() unless err
+      .file.assert
+        target: target
+        md5: '3fb7c40c70b0ed19da713bd69ee12014'
+      .system.copy
+        source: source
+        target: target
+      , (err, copied) ->
+        copied.should.be.false() unless err
+        next err
 
     they 'change permissions', (ssh, next) ->
       source = "#{__dirname}/../resources/a_dir/a_file"
       target = "#{scratch}/test_this_file"
-      mecano.file
+      mecano
         ssh: ssh
+      .file
         content: 'Hello you'
         target: target
       .system.copy
-        ssh: ssh
         source: source
         target: target
         mode: 0o750

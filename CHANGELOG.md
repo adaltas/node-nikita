@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* #46 file.assert: validate signature with sha1 and md5
 * #45 copy: move to system namespace
 * #44 link: move to system namespace
 * #43 git: move to tools namespace
