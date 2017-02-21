@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* #45 copy: move to system namespace
 * #44 link: move to system namespace
 * #43 git: move to tools namespace
 * #42 move: move to file namespace

@@ -50,7 +50,7 @@ describe 'remove', ->
   they 'a file', (ssh, next) ->
     mecano
       ssh: ssh
-    .copy
+    .system.copy
       source: "#{__dirname}/../resources/a_dir/a_file"
       target: "#{scratch}/a_file"
     .remove
@@ -76,7 +76,7 @@ describe 'remove', ->
     # todo, not working yet over ssh
     mecano
       ssh: ssh
-    .copy
+    .system.copy
       source: "#{__dirname}/../resources/"
       target: "#{scratch}/"
     .remove

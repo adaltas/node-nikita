@@ -324,7 +324,7 @@ require('mecano').file({
         return unless options.backup and targetHash
         options.log message: "Create backup", level: 'INFO', module: 'mecano/lib/file'
         backup = if typeof options.backup is 'string' then options.backup else ".#{Date.now()}"
-        @copy
+        @system.copy
           ssh: options.ssh
           source: options.target
           target: "#{options.target}#{backup}"

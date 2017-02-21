@@ -35,7 +35,7 @@ describe 'copy', ->
       target = "#{scratch}/a_new_file"
       mecano
         ssh: ssh
-      .copy
+      .system.copy
         source: source
         target: target
       , (err, status) ->
@@ -46,7 +46,7 @@ describe 'copy', ->
           return next err if err
           md5.should.eql '3fb7c40c70b0ed19da713bd69ee12014'
           next()
-      .copy
+      .system.copy
         ssh: ssh
         source: source
         target: target
@@ -61,7 +61,7 @@ describe 'copy', ->
         ssh: ssh
       .system.mkdir
         target: "#{scratch}/existing_dir"
-      .copy # Copy non existing file
+      .system.copy # Copy non existing file
         source: source
         target: "#{scratch}/existing_dir"
       , (err, status) ->
@@ -80,7 +80,7 @@ describe 'copy', ->
         ssh: ssh
         content: 'Hello you'
         target: target
-      .copy
+      .system.copy
         ssh: ssh
         source: source
         target: target
@@ -90,7 +90,7 @@ describe 'copy', ->
         misc.file.compare ssh, [source, target], (err, md5) ->
           return next err if err
           md5.should.eql '3fb7c40c70b0ed19da713bd69ee12014'
-          mecano.copy
+          mecano.system.copy
             ssh: ssh
             source: source
             target: target
@@ -106,7 +106,7 @@ describe 'copy', ->
         ssh: ssh
         content: 'Hello you'
         target: target
-      .copy
+      .system.copy
         ssh: ssh
         source: source
         target: target
@@ -117,7 +117,7 @@ describe 'copy', ->
         fs.stat ssh, target, (err, stat) ->
           misc.mode.compare(stat.mode, 0o750).should.be.true()
           # Copy existing file
-          mecano.copy
+          mecano.system.copy
             ssh: ssh
             source: source
             target: target
@@ -134,7 +134,7 @@ describe 'copy', ->
         ssh: ssh
         content: 'hello'
         target: "#{scratch}/.a_empty_file"
-      .copy
+      .system.copy
         ssh: ssh
         source: "#{scratch}/.a_empty_file"
         target: "#{scratch}/.a_copy"
@@ -156,7 +156,7 @@ describe 'copy', ->
       .system.link
         source: "#{scratch}/org_file"
         target: "#{scratch}/ln_file"
-      .copy
+      .system.copy
         source: "#{scratch}/ln_file"
         target: "#{scratch}/dst_file"
       , (err, copied) ->
@@ -179,7 +179,7 @@ describe 'copy', ->
         target: "#{scratch}/source/ln_file"
       , (err) ->
         return next err if err
-      .copy
+      .system.copy
         source: "#{scratch}/source/ln_file"
         target: "#{scratch}"
       , (err, copied) ->
@@ -193,7 +193,7 @@ describe 'copy', ->
 
     they 'should copy without slash at the end', (ssh, next) ->
       # if the target doesn't exists, then copy as target
-      mecano.copy
+      mecano.system.copy
         ssh: ssh
         source: "#{__dirname}/../resources"
         target: "#{scratch}/toto"
@@ -203,7 +203,7 @@ describe 'copy', ->
         checkDir ssh, "#{scratch}/toto", (err) ->
           return next err if err
           # if the target exists, then copy the folder inside target
-          mecano.copy
+          mecano.system.copy
             ssh: ssh
             source: "#{__dirname}/../resources"
             target: "#{scratch}/toto"
@@ -215,7 +215,7 @@ describe 'copy', ->
 
     they 'should copy the files when dir end with slash', (ssh, next) ->
       # if the target doesn't exists, then copy as target
-      mecano.copy
+      mecano.system.copy
         ssh: ssh
         source: "#{__dirname}/../resources/"
         target: "#{scratch}/lulu"
@@ -225,7 +225,7 @@ describe 'copy', ->
         checkDir ssh, "#{scratch}/lulu", (err) ->
           return next err if err
           # if the target exists, then copy the files inside target
-          mecano.copy
+          mecano.system.copy
             ssh: ssh
             source: "#{__dirname}/../resources/"
             target: "#{scratch}/lulu"
@@ -244,7 +244,7 @@ describe 'copy', ->
         target: "#{scratch}/a_dir/a_file"
       .file.touch
         target: "#{scratch}/a_dir/.a_hidden_file"
-      .copy
+      .system.copy
         source: "#{scratch}/a_dir"
         target: "#{scratch}/a_copy"
       , (err, copied) ->
@@ -261,7 +261,7 @@ describe 'copy', ->
 
     they.skip 'should copy with globing and hidden files', (ssh, next) ->
       # if the target doesn't exists, then copy as target
-      mecano.copy
+      mecano.system.copy
         ssh: ssh
         source: "#{__dirname}/../*"
         target: "#{scratch}"

@@ -82,7 +82,7 @@ require('mecano').ldap.schema({
           ssh: options.ssh
         @call ->
           options.log? 'Copy schema'
-        @copy
+        @system.copy
           source: options.schema
           target: schema
           ssh: options.ssh

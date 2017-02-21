@@ -11,7 +11,7 @@ describe 'move', ->
   they 'rename a file', (ssh, next) ->
     mecano
       ssh: ssh
-    .copy
+    .system.copy
       # ssh: ssh # copy not there yet
       source: "#{__dirname}/../resources/"
       target: "#{scratch}"
@@ -32,8 +32,7 @@ describe 'move', ->
   they 'rename a directory', (ssh, next) ->
     mecano
       ssh: ssh
-    .copy
-      # ssh: ssh # copy not there yet
+    .system.copy
       source: "#{__dirname}/../resources/"
       target: "#{scratch}"
     .system.move

@@ -143,7 +143,7 @@ require('mecano').download({
       else
         @system.mkdir # todo: copy shall handle this
           target: "#{path.dirname options.target}"
-        @copy
+        @system.copy
           source: "#{options.source}"
           target: "#{options.target}"
       @then (err, status) ->

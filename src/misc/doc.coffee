@@ -35,7 +35,7 @@ fs.readFile source, 'ascii', (err, content) ->
     console.log 'Documentation generated'
     target = process.argv[2]
     return unless target
-    mecano.copy
+    mecano.system.copy
       source: "#{__dirname}/../doc/index.md"
       target: target
       force: true
