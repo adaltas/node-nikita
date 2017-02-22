@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* #50 file.assert: honor option error with exist, hash and mode
 * #49 file.assert: new option not
 * #48 remove: move to system namespace
 * #47 file.assert: validate file mode

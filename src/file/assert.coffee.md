@@ -57,9 +57,13 @@ mecano.assert({
       , (_, callback) ->
         fs.exists options.ssh, options.target.toString(), (err, exists) ->
           unless options.not
-            err = Error "File does not exists: #{JSON.stringify options.target}" unless exists
+            unless exists
+              options.error ?= "File does not exists: #{JSON.stringify options.target}"
+              err = Error options.error
           else
-            err = Error "File exists: #{JSON.stringify options.target}" if exists
+            if exists
+              options.error ?= "File exists: #{JSON.stringify options.target}"
+              err = Error options.error
           callback err
       # Assert content match
       @call
@@ -85,9 +89,13 @@ mecano.assert({
         file.hash options.ssh, options.target, algo, (err, h) =>
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
           unless options.not
-            err = Error "Invalid #{algo} signature: expect #{JSON.stringify hash} and got #{JSON.stringify h}" if hash isnt h
+            if hash isnt h
+              options.error ?= "Invalid #{algo} signature: expect #{JSON.stringify hash} and got #{JSON.stringify h}"
+              err = Error options.error
           else
-            err = Error "Matching #{algo} signature: #{JSON.stringify hash}" if hash is h
+            if hash is h
+              options.error ?= "Matching #{algo} signature: #{JSON.stringify hash}"
+              err = Error options.error
           callback err
       # Assert file permissions
       @call
@@ -96,9 +104,13 @@ mecano.assert({
         fs.stat options.ssh, options.target, (err, stat) ->
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
           unless options.not
-            err = Error "Invalid mode: expect #{pad 4, misc.mode.stringify(options.mode), '0'} and got #{misc.mode.stringify(stat.mode).substr -4}" unless misc.mode.compare options.mode, stat.mode
+            unless misc.mode.compare options.mode, stat.mode
+              options.error ?= "Invalid mode: expect #{pad 4, misc.mode.stringify(options.mode), '0'} and got #{misc.mode.stringify(stat.mode).substr -4}"
+              err = Error options.error
           else
-            err = Error "Unexpected valid mode: #{pad 4, misc.mode.stringify(options.mode), '0'}" if misc.mode.compare options.mode, stat.mode
+            if misc.mode.compare options.mode, stat.mode
+              options.error ?= "Unexpected valid mode: #{pad 4, misc.mode.stringify(options.mode), '0'}"
+              err = Error options.error
           callback err
 
 ## Dependencies

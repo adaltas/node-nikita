@@ -40,9 +40,21 @@ describe 'file.assert', ->
         ssh: ssh
       .file.assert
         content: "are u here"
-      .then (err) ->
+        relax: true
+      , (err) ->
         err.message.should.eql 'Missing option: "target"'
-        next()
+      .then next
+
+    they 'send custom error message', (ssh, next) ->
+      mecano
+        ssh: ssh
+      .file.assert
+        target: "#{scratch}/a_file"
+        error: 'Got it'
+        relax: true
+      , (err) ->
+        err.message.should.eql 'Got it'
+      .then next
   
   describe 'content', ->
 
@@ -169,6 +181,20 @@ describe 'file.assert', ->
         err.message.should.eql "Matching md5 signature: \"f0a1e0f2412f62cc97178fd6b44dc978\""
       .then next
 
+    they 'send custom error message', (ssh, next) ->
+      mecano
+        ssh: ssh
+      .file.touch
+        target: "#{scratch}/a_file"
+      .file.assert
+        target: "#{scratch}/a_file"
+        md5: 'toto'
+        error: 'Got it'
+        relax: true
+      , (err) ->
+        err.message.should.eql 'Got it'
+      .then next
+
   describe 'option sha1', ->
     
     they 'validate hash', (ssh, next) ->
@@ -259,6 +285,21 @@ describe 'file.assert', ->
         relax: true
       , (err) ->
         err.message.should.eql "Unexpected valid mode: 0755"
+      .then next
+
+    they 'send custom error message', (ssh, next) ->
+      mecano
+        ssh: ssh
+      .file.touch
+        target: "#{scratch}/a_file"
+        mode: 0o0755
+      .file.assert
+        target: "#{scratch}/a_file"
+        mode: 0o0644
+        error: 'Got it'
+        relax: true
+      , (err) ->
+        err.message.should.eql 'Got it'
       .then next
       
     
