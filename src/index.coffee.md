@@ -44,7 +44,6 @@ functions share a common API with flexible options.
       cache: 'mecano/core/cache'
       compress: 'mecano/core/compress'
       execute: 'mecano/core/execute'
-      extract: 'mecano/core/extract'
       cron:
         add: 'mecano/cron/add'
         remove: 'mecano/cron/remove'
@@ -148,6 +147,7 @@ functions share a common API with flexible options.
         close: 'mecano/ssh/close'
         root: 'mecano/ssh/root'
       tools:
+        extract: 'mecano/tools/extract'
         iptables: 'mecano/tools/iptables'
         git: 'mecano/tools/git'
       wait:
@@ -183,6 +183,7 @@ functions share a common API with flexible options.
       docker_volume_rm: 'mecano/docker/volume_rm'
       docker_wait: 'mecano/docker/wait'
       download: 'mecano/file/download'
+      extract: 'mecano/tools/extract'
       git: 'mecano/tools/git'
       group: 'mecano/system/group'
       java_keystore_add: 'mecano/java/keystore_add'

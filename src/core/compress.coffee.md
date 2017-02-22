@@ -26,7 +26,7 @@ moment, supported extensions are '.tgz', '.tar.gz', 'tar.xz', 'tar.bz2' and '.zi
 ## Example
 
 ```javascript
-require('mecano').extract({
+require('mecano').compress({
   source: '/path/to/file.tgz'
   destation: '/tmp'
 }, function(err, status){

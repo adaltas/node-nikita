@@ -1,5 +1,5 @@
 
-# `mecano.extract(options, [callback])`
+# `mecano.tools.extract(options, [callback])`
 
 Extract an archive. Multiple compression types are supported. Unless
 specified as an option, format is derived from the source extension. At the
@@ -32,18 +32,18 @@ moment, supported extensions are '.tgz', '.tar.gz', tar.bz2, 'tar.xz' and '.zip'
 ## Example
 
 ```javascript
-require('mecano').extract({
+require('mecano').tools.extract({
   source: '/path/to/file.tgz'
   destation: '/tmp'
-}, function(err, extracted){
-  console.log(err ? err.message : 'File was extracted: ' + extracted);
+}, function(err, status){
+  console.log(err ? err.message : 'File was extracted: ' + status);
 });
 ```
 
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering extract", level: 'DEBUG', module: 'mecano/lib/extract'
+      options.log message: "Entering extract", level: 'DEBUG', module: 'mecano/lib/tools/extract'
       # Validate parameters
       return callback new Error "Missing source: #{options.source}" unless options.source
       target = options.target ? path.dirname options.source
@@ -84,7 +84,7 @@ require('mecano').extract({
           extract()
       extract = () =>
         cmd = null
-        options.log message: "Format is #{format}", level: 'DEBUG', module: 'mecano/lib/extract'
+        options.log message: "Format is #{format}", level: 'DEBUG', module: 'mecano/lib/tools/extract'
         switch format
           when 'tgz' then cmd = "tar xzf #{options.source} -C #{target} #{tar_opts.join ' '}"
           when 'tar' then cmd = "tar xf #{options.source} -C #{target} #{tar_opts.join ' '}"
