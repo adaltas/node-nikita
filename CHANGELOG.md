@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* #49 file.assert: new option not
 * #48 remove: move to system namespace
 * #47 file.assert: validate file mode
 * #46 file.assert: validate signature with sha1 and md5
