@@ -56,7 +56,7 @@ describe 'java.keystore_remove', ->
         caname: "#{caname}"
       , (err, status) ->
         status.should.be.false() unless err
-      .execute
+      .system.execute
         cmd: """
         keytool -list -keystore #{keystore} -storepass #{storepass} -alias #{caname}
         """
@@ -96,7 +96,7 @@ describe 'java.keystore_remove', ->
         keypass: "#{keypass}"
       , (err, status) ->
         status.should.be.false() unless err
-      .execute
+      .system.execute
         cmd: """
         keytool -list -keystore #{keystore} -storepass #{storepass} -alias #{name}
         """

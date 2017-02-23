@@ -74,7 +74,7 @@ for engine, _ of config.db
       .db.user
         username: 'test_user_2_user'
         password: 'test_user_2_valid'
-      .execute
+      .system.execute
         cmd: db.cmd 
           engine: engine
           host: config.db[engine].host

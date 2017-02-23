@@ -69,7 +69,7 @@ mecano.docker({
         options.log message: 'options.gid ignored unless options.uid is provided', level: 'WARN', module: 'mecano/lib/docker/exec'
       cmd += " #{options.container} #{options.cmd}"
       delete options.cmd
-      @execute
+      @system.execute
         cmd: docker.wrap options, cmd
         code_skipped: options.code_skipped
       # Note: There is no way to pass additionnal arguments in sync mode without

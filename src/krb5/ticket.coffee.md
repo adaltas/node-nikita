@@ -34,7 +34,7 @@ require('mecano').krb5.ticket({
       throw Error "Incoherent options: expects one of keytab or password" if not options.keytab and not options.password
       @call (_, callback) ->
         uid_gid options, callback
-      @execute
+      @system.execute
         cmd: """
         if #{krb5.su options, 'klist -s'}; then exit 3; fi
         #{krb5.kinit options}

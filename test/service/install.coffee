@@ -57,10 +57,6 @@ describe 'service install', ->
       status.should.be.true() unless err
     .call (options) ->
       options.store['mecano:execute:installed'].should.containEql config.service.name
-    # .execute
-    #   cmd: 'yum list installed | grep cronie'
-    # , (err, status) ->
-    #   status.should.be.true() unless err
     .then next
 
   they 'skip code when error', (ssh, next) ->

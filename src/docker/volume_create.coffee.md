@@ -42,13 +42,13 @@ mecano.docker.pause({
       cmd.push "--name #{options.name}" if options.name
       cmd.push "--opt #{options.opt.join ','}" if options.opt
       cmd = cmd.join ' '
-      @execute
+      @system.execute
         if: options.name
         cmd: docker.wrap options, "volume inspect #{options.name}"
         code: 1
         code_skipped: 0
         shy: true
-      @execute
+      @system.execute
         if: -> not options.name or @status -1
         cmd: docker.wrap options, cmd
       , (err, status, stdout) ->

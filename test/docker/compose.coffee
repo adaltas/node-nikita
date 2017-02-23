@@ -27,7 +27,7 @@ describe 'docker.compose', ->
     , (err, status) ->
       return next err if err
       status.should.be.true()
-    .execute
+    .system.execute
       cmd: 'ping dind -c 1'
       code_skipped: [2,68]
     .wait_connect
@@ -60,7 +60,7 @@ describe 'docker.compose', ->
     , (err, status) ->
       return next err if err
       status.should.be.true()
-    .execute
+    .system.execute
       cmd: 'ping dind -c 1'
       code_skipped: [2,68]
     .wait_connect
@@ -92,7 +92,7 @@ describe 'docker.compose', ->
       target: "#{scratch}/docker_compose_up_file/docker-compose.yml"
     .docker.compose
       target: "#{scratch}/docker_compose_up_file/docker-compose.yml"
-    .execute
+    .system.execute
       cmd: 'ping dind -c 1'
       code_skipped: [2,68]
     .wait_connect
@@ -125,7 +125,7 @@ describe 'docker.compose', ->
     .docker.compose
       service: 'compose'
       target: "#{scratch}/docker_compose_up_file/docker-compose.yml"
-    .execute
+    .system.execute
       cmd: 'ping dind -c 1'
       code_skipped: [2,68]
     .wait_connect
@@ -157,7 +157,7 @@ describe 'docker.compose', ->
       target: "#{scratch}/mecano_docker_compose_idem/docker-compose.yml"
     .docker.compose
       target: "#{scratch}/mecano_docker_compose_idem/docker-compose.yml"
-    .execute
+    .system.execute
       cmd: 'ping dind -c 1'
       code_skipped: [2,68]
     .wait_connect

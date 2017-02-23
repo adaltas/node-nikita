@@ -70,7 +70,7 @@ require('mecano').ldap.index({
       # -c  Continuous operation mode.  Errors are reported, but ldapmodify will
       # continue with modifications.  The default is to exit after reporting an
       # error.
-      @execute
+      @system.execute
         cmd: """
         ldapadd -c #{binddn} #{passwd} #{uri} \
         <<-EOF

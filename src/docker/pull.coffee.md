@@ -59,10 +59,10 @@ mecano.docker_pull({
       # rm is false by default only if options.service is true
       cmd = 'pull'
       cmd += if options.all then  " -a #{options.tag}" else " #{options.tag}:#{options.version}"
-      @execute
+      @system.execute
         cmd: docker.wrap options, cmd_images
         code_skipped: 1
-      @execute
+      @system.execute
         unless: -> @status -1
         cmd: docker.wrap options, cmd
         code_skipped: options.code_skipped

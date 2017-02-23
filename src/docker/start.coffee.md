@@ -67,7 +67,7 @@ mecano.docker.start({
         then options.log message: "Container already started #{options.container} (Skipping)", level: 'INFO', module: 'mecano/lib/docker/start'
         else options.log message: "Starting container #{options.container}", level: 'INFO', module: 'mecano/lib/docker/start'
         @end() if is_running
-      @execute
+      @system.execute
         cmd: docker.wrap options, cmd
       , docker.callback
 

@@ -55,7 +55,7 @@ mecano.docker.stop({
         then options.log message: "Stopping container #{options.container}", level: 'INFO', module: 'mecano/lib/docker/stop'
         else options.log message: "Container already stopped #{options.container} (Skipping)", level: 'INFO', module: 'mecano/lib/docker/stop'
         @end() unless is_running
-      @execute
+      @system.execute
         cmd: docker.wrap options, cmd
       , docker.callback
 

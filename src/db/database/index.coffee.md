@@ -75,7 +75,7 @@ npm test test/db/database.coffee
         when 'postgres'
           cmd_database_create = db.cmd options, database: null, "CREATE DATABASE #{options.database};"
           cmd_database_exists = db.cmd options, database: options.database, "\\dt"
-      @execute
+      @system.execute
         cmd: cmd_database_create
         unless_exec: cmd_database_exists
       , (err, status) ->
@@ -99,7 +99,7 @@ npm test test/db/database.coffee
           when 'postgres'
             cmd_grant_privileges = db.cmd options, database: options.database, "GRANT ALL PRIVILEGES ON DATABASE #{options.database} TO #{user}"
             cmd_has_privileges = db.cmd(options, database: options.database, "\\l") + " | egrep '^#{user}='"
-        @execute
+        @system.execute
           cmd: """
           if #{cmd_has_privileges}; then
             echo '[INFO] User already with privileges'

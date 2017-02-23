@@ -129,13 +129,13 @@ describe 'system.limits', ->
       return next() unless exists # Not linux
       mecano
         ssh: ssh
-      .execute
+      .system.execute
         cmd: 'cat /proc/sys/fs/file-max'
       , (err, status, stdout) ->
         return next err if err
         nofile = stdout.trim()
         nofile = Math.round parseInt(nofile)*0.75
-      .execute
+      .system.execute
         cmd: 'cat /proc/sys/kernel/pid_max'
       , (err, status, stdout) ->
         return next err if err

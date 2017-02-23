@@ -50,7 +50,7 @@ mecano.assert({
 
       throw Error "Required option port if host" if options.host and not options.port
       throw Error "Required option host if port" if options.port and not options.host
-      @execute
+      @system.execute
         if: options.host
         cmd: "bash -c 'echo > /dev/tcp/#{options.host}/#{options.port}'"
       , (err) ->

@@ -51,7 +51,7 @@ mecano.docker.wait({
       # rm is false by default only if options.service is true
       cmd = "wait #{options.container} | read r; return $r"
       # Construct other exec parameter
-      @execute
+      @system.execute
         cmd: docker.wrap options, cmd
       , docker.callback
 

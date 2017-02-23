@@ -74,7 +74,7 @@ describe 'krb5.addprinc', ->
       password_sync: false # Default
     , (err, status) ->
       status.should.be.false() unless err
-    .execute
+    .system.execute
       cmd: "echo password1 | kinit mecano@#{config.krb5.realm}"
     .then next
 
@@ -105,7 +105,7 @@ describe 'krb5.addprinc', ->
       kadmin_server: config.krb5.kadmin_server
       kadmin_principal: config.krb5.kadmin_principal
       kadmin_password: config.krb5.kadmin_password
-    .execute 
+    .system.execute 
       cmd: 'rm -f /etc/security/keytabs/user1.service.keytab || true ; exit 0;'
     .krb5.delprinc
       principal: user.principal
@@ -118,7 +118,7 @@ describe 'krb5.addprinc', ->
     .krb5.addprinc krb5, user
     , (err, status) ->
       status.should.be.true() unless err
-    .execute
+    .system.execute
       cmd: "echo #{user.password} | kinit #{user.principal}"
     , (err, status, stdout) ->
       status.should.be.true() unless err

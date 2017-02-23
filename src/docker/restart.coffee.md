@@ -53,7 +53,7 @@ mecano.docker.restart({
       cmd = 'restart'
       cmd += " -t #{options.timeout}" if options.timeout?
       cmd += " #{options.container}"
-      @execute
+      @system.execute
         cmd: docker.wrap options, cmd
       , docker.callback
 

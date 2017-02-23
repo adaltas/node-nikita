@@ -39,14 +39,14 @@ require('mecano').service.install([{
       # Start real work
       # Note for legaciy
       # c = if options.cache then '-C' else ''
-      # @execute: cmd: "yum #{c} list installed"
+      # @system.execute: cmd: "yum #{c} list installed"
       # for pkg in string.lines stdout
       #   start = true if pkg.trim() is 'Installed Packages'
       #   continue unless start
       #   installed.push pkg[1] if pkg = /^([^\. ]+?)\./.exec pkg
       cacheonly = if options.cacheonly then '-C' else ''
       @call discover.system
-      @execute
+      @system.execute
         cmd: """
         if which yum >/dev/null; then exit 1; fi
         if which apt-get >/dev/null; then exit 2; fi
@@ -63,7 +63,7 @@ require('mecano').service.install([{
           when 1 then 'yum'
           when 2 then 'apt'
         options.store['mecano:service:manager'] = options.manager if options.cache
-      @execute
+      @system.execute
         cmd: -> switch options.manager
           when 'yum' then 'rpm -qa --qf "%{NAME}\n"'
           when 'apt' then 'dpkg -l | grep \'^ii\' | awk \'{print $2}\''
@@ -78,7 +78,7 @@ require('mecano').service.install([{
         return unless executed
         options.log message: "Installed packages retrieved", level: 'INFO', module: 'mecano/service/install'
         installed = for pkg in string.lines(stdout) then pkg
-      @execute
+      @system.execute
         cmd: -> switch options.manager
           when 'yum' then "yum #{cacheonly} list updates"
           when 'apt', 'apt-get' then "apt-get -u upgrade --assume-no | grep '^\\s' | sed 's/\\s/\\n/g'"
@@ -105,7 +105,7 @@ require('mecano').service.install([{
             continue unless pkg = /^([^\. ]+?)\./.exec pkg
             pkg[1]
           when 'apt' then string.lines stdout.trim()
-      @execute
+      @system.execute
         cmd: -> switch options.manager
           when 'yum' then "yum install -y #{cacheonly} #{options.name}"
           when 'apt' then "apt-get install -y #{options.name}"

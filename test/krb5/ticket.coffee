@@ -20,7 +20,7 @@ describe 'krb5.addprinc', ->
     .krb5.addprinc
       principal: "mecano@#{config.krb5.realm}"
       password: 'myprecious'
-    .execute 'kdestroy'
+    .system.execute 'kdestroy'
     .krb5.ticket
       principal: "mecano@#{config.krb5.realm}"
       password: 'myprecious'
@@ -31,6 +31,6 @@ describe 'krb5.addprinc', ->
       password: 'myprecious'
     , (err, status) ->
       status.should.be.false() unless err
-    .execute
+    .system.execute
       cmd: 'klist -s'
     .then next

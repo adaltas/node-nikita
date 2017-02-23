@@ -51,7 +51,7 @@ require('mecano').service.start([{
       options.log message: "Status for service #{options.name}", level: 'INFO', module: 'mecano/lib/service/status'
       options.log message: "Option code_stopped is #{options.code_stopped}", level: 'DEBUG', module: 'mecano/lib/service/status' unless options.code_stopped is 3
       @call discover.loader, -> options.loader ?= options.store['mecano:service:loader']
-      @call -> @execute
+      @call -> @system.execute
         if: -> options.store['mecano:system:type'] in ['redhat','centos']
         cmd: """
           ls \

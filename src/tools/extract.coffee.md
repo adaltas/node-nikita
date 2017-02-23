@@ -91,7 +91,7 @@ require('mecano').tools.extract({
           when 'bz2' then cmd = "tar xjf #{options.source} -C #{target} #{tar_opts.join ' '}"
           when 'xz'  then cmd = "tar xJf #{options.source} -C #{target} #{tar_opts.join ' '}"
           when 'zip' then cmd = "unzip -u #{options.source} -d #{target}"
-        @execute
+        @system.execute
           cmd: cmd
         , (err, created) ->
           return callback err if err

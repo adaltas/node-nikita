@@ -46,7 +46,7 @@ Check if a database exists.
         when 'postgres'
           # Not sure why we're not using \l
           db.cmd(options, "SELECT datname FROM pg_database WHERE datname = '#{options.database}'") + " | grep -w '#{options.database}'"
-      @execute
+      @system.execute
         cmd: cmd
         code_skipped: 1
 

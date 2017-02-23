@@ -24,7 +24,7 @@ Create a user for the destination database.
       options.db ?= {}
       options[k] ?= v for k, v of options.db
       options.username ?= options.argument
-      @execute
+      @system.execute
         cmd: db.cmd options, "DROP USER IF EXISTS #{options.username};"
 
 ## Dependencies

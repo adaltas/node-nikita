@@ -48,7 +48,7 @@ require('mecano').cron.remove({
         crontab = "crontab"
       status = false
       jobs = []
-      @execute
+      @system.execute
         cmd: "#{crontab} -l"
         shy: true
       , (err, _, stdout, stderr) ->
@@ -64,7 +64,7 @@ require('mecano').cron.remove({
           status = true
           jobs.splice i, 1
         options.log message: "No Job matches. Skipping", level: 'INFO', module: 'mecano/cron/remove'
-      .execute
+      .system.execute
         cmd: """
         #{crontab} - <<EOF
         #{jobs.join '\n'}

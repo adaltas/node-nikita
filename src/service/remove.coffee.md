@@ -41,7 +41,7 @@ require('mecano').service.start([{
       # Action
       options.log message: "Remove service #{options.name}", level: 'INFO', module: 'mecano/lib/service/remove'
       cacheonly = if options.cacheonly then '-C' else ''
-      @execute
+      @system.execute
         cmd: """
         if which yum >/dev/null; then exit 1; fi
         if which apt-get >/dev/null; then exit 2; fi
@@ -56,7 +56,7 @@ require('mecano').service.start([{
           when 1 then 'yum'
           when 2 then 'apt'
         options.store['mecano:service:manager'] = options.manager if options.cache
-      @execute
+      @system.execute
         cmd: -> switch options.manager
           when 'yum' then """
             if ! rpm -qa --qf "%{NAME}\n" | grep -w '#{options.name}'; then exit 3; fi;

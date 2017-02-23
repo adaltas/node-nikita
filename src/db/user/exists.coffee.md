@@ -48,7 +48,7 @@ Check if a user exists in the database.
         when 'postgres'
           # Not sure why we're not using du
           db.cmd(options, "SELECT 1 FROM pg_roles WHERE rolname='#{options.username}'") + " | grep 1"
-      @execute
+      @system.execute
         cmd: cmd
         code_skipped: 1
 

@@ -189,7 +189,7 @@ mecano.docker.build({
       @call -> # Count steps
         for line in string.lines options.content
           number_of_step++ if /^(.*?)\s/.exec(line)?[1] in dockerfile_cmds
-      @execute
+      @system.execute
         cmd: docker.wrap options, cmd
         cwd: options.cwd
       , (err, executed, stdout, stderr) ->

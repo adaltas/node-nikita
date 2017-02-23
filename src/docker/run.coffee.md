@@ -155,7 +155,7 @@ mecano.docker({
       cmd += " #{options.cmd}" if options.cmd
       # need to delete the cmd options or it will be used in docker.exec
       delete options.cmd
-      @execute
+      @system.execute
         if: options.name?
         cmd: docker.wrap options, "ps -a | grep '#{options.name}'"
         code_skipped: 1
@@ -163,7 +163,7 @@ mecano.docker({
       , (err, running) ->
         docker.callback arguments...
         options.log message: "Container already running. Skipping", level: 'INFO', module: 'mecano/docker/run' if running
-      @execute
+      @system.execute
         cmd: docker.wrap options, cmd
         if: ->
           not options.name? or @status(-1) is false

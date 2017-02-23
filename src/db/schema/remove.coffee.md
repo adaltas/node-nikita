@@ -29,7 +29,7 @@ Create a user for the destination database.
       throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['postgres']
       # Options
       options.schema ?= options.argument
-      @execute
+      @system.execute
         cmd: db.cmd options, "DROP SCHEMA IF EXISTS #{options.schema};"
 
 ## Dependencies

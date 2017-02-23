@@ -6,7 +6,7 @@ Store properties in the mecano store object.
 
     module.exports =
       system: (options) ->
-        @execute
+        @system.execute
           cmd: 'cat /etc/system-release'
           shy: true
           code_skipped: 1
@@ -23,7 +23,7 @@ Store properties in the mecano store object.
             options.store['mecano:system:release'] ?= line.split(' ')[index+1]
           throw Error 'Unsupported OS' unless options.store['mecano:system:type']?
       loader: (options) ->
-        @execute
+        @system.execute
           shy: true
           cmd: """
           if which systemctl >/dev/null; then exit 1; fi ;

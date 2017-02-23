@@ -136,7 +136,7 @@ require('mecano').download({
         @system.mkdir
           ssh: if options.cache_local then null else options.ssh
           target: path.dirname options.target
-        @execute
+        @system.execute
           cmd: cmd
           ssh: if options.cache_local then null else options.ssh
           unless_exists: options.target

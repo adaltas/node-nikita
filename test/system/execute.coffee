@@ -6,22 +6,22 @@ mecano = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
-describe 'execute', ->
+describe 'system.execute', ->
 
   scratch = test.scratch @
 
   they 'in option cmd or as a string', (ssh, next) ->
     mecano
       ssh: ssh
-    .execute
+    .system.execute
       cmd: 'text=yes; echo $text'
     , (err, status, stdout, stderr) ->
       status.should.be.true() unless err
       stdout.should.eql 'yes\n' unless err
-    .execute 'text=yes; echo $text', (err, status, stdout, stderr) ->
+    .system.execute 'text=yes; echo $text', (err, status, stdout, stderr) ->
       status.should.be.true() unless err
       stdout.should.eql 'yes\n' unless err
-      next()
+    .then next
 
   they 'cmd as a function', (ssh, next) ->
     mecano
@@ -29,11 +29,11 @@ describe 'execute', ->
     .call (options) ->
       @test_context = 'test context'
       options.store.test_options = 'test options'
-    .execute
+    .system.execute
       cmd: -> "text='#{@test_context}'; echo $text"
     , (err, status, stdout, stderr) ->
       stdout.should.eql 'test context\n' unless err
-    .execute
+    .system.execute
       cmd: (options) -> "text='#{options.store.test_options}'; echo $text"
     , (err, status, stdout, stderr) ->
       stdout.should.eql 'test options\n' unless err
@@ -56,10 +56,10 @@ describe 'execute', ->
       false.should.be.true()
     mecano
       ssh: ssh
-    .execute
+    .system.execute
       cmd: "cat #{__filename} | grep #{search1}"
       stdout: out
-    .execute
+    .system.execute
       cmd: "cat #{__filename} | grep #{search2}"
       stdout: out
     , (err, executed, stdout, stderr) ->
@@ -69,23 +69,25 @@ describe 'execute', ->
     .then next
 
   they 'stdout and stderr return empty', (ssh, next) -> #.skip 'remote',
-    mecano.execute
+    mecano
       ssh: ssh
+    .system.execute
       cmd: "echo 'some text' | grep nothing"
+      relax: true
     , (err, executed, stdout, stderr) ->
-      stdout.should.eql ''
-      stderr.should.eql ''
-      next()
+      stdout.should.eql '' unless err
+      stderr.should.eql '' unless err
+    .then next
 
   they 'validate exit code', (ssh, next) ->
     # code undefined
     mecano
       ssh: ssh
-    .execute
+    .system.execute
       cmd: "exit 42"
     .then (err, executed) ->
       err.message.should.eql 'Invalid Exit Code: 42'
-    .execute
+    .system.execute
       cmd: "exit 42"
       code: [0, 42]
     .then next
@@ -94,14 +96,14 @@ describe 'execute', ->
     # code undefined
     mecano
       ssh: ssh
-    .execute
+    .system.execute
       cmd: "mkdir #{scratch}/my_dir"
       code: 0
       code_skipped: 1
     , (err, executed, stdout, stderr) ->
       return next err if err
       executed.should.be.true()
-    .execute
+    .system.execute
       cmd: "mkdir #{scratch}/my_dir"
       code: 0
       code_skipped: 1
@@ -112,13 +114,13 @@ describe 'execute', ->
   they 'should honor conditions', (ssh, next) ->
     mecano
       ssh: ssh
-    .execute
+    .system.execute
       cmd: 'text=yes; echo $text'
       if_exists: __dirname
     , (err, executed, stdout, stderr) ->
       executed.should.be.true()
       stdout.should.eql 'yes\n'
-    .execute
+    .system.execute
       cmd: 'text=yes; echo $text'
       if_exists: "__dirname/toto"
     , (err, executed, stdout, stderr) ->
@@ -127,8 +129,9 @@ describe 'execute', ->
     .then next
 
   they 'honor unless_exists', (ssh, next) ->
-    mecano.execute
+    mecano
       ssh: ssh
+    .system.execute
       cmd: "ls -l #{__dirname}"
       unless_exists: __dirname
     , (err, executed, stdout, stderr) ->
@@ -138,8 +141,9 @@ describe 'execute', ->
   describe 'trim', ->
     
     they 'both stdout and stderr', (ssh, next) ->
-      mecano.execute
+      mecano
         ssh: ssh
+      .system.execute
         cmd: """
         echo '  bonjour  '
         echo ' monde  ' >&2
@@ -151,8 +155,9 @@ describe 'execute', ->
       .then next
         
     they 'with trim_stdout and trim_stderr', (ssh, next) ->
-      mecano.execute
+      mecano
         ssh: ssh
+      .system.execute
         cmd: """
         echo '  bonjour  '
         echo ' monde  ' >&2
@@ -173,7 +178,7 @@ describe 'execute', ->
       .on 'stdin', (log) -> stdin = log
       .on 'stdout', (log) -> stdout = log
       .on 'stderr', (log) -> stderr = log
-      .execute
+      .system.execute
         cmd: "echo 'to stderr' >&2; echo 'to stdout';"
       , (err, status) ->
         stdin.message.should.match /^echo.*;$/
@@ -191,7 +196,7 @@ describe 'execute', ->
       .on 'stdout_stream', (log) -> stdout_stream.push log
       .on 'stderr', (log) -> stderr = log
       .on 'stderr_stream', (log) -> stderr_stream.push log
-      .execute
+      .system.execute
         cmd: "echo 'to stderr' >&2; echo 'to stdout';"
         stdout_log: undefined
         stderr_log: undefined
@@ -201,7 +206,7 @@ describe 'execute', ->
         stdout_stream.length.should.eql 0
         (stderr is undefined).should.be.true()
         stderr_stream.length.should.eql 0
-      .execute
+      .system.execute
         cmd: "echo 'to stderr' >&2; echo 'to stdout';"
         stdout_log: null
         stderr_log: null
@@ -211,7 +216,7 @@ describe 'execute', ->
         stdout_stream.length.should.eql 0
         (stderr is undefined).should.be.true()
         stderr_stream.length.should.eql 0
-      .execute
+      .system.execute
         cmd: "echo 'to stderr' >&2; echo 'to stdout';"
         stdout_log: false
         stderr_log: false
@@ -226,33 +231,34 @@ describe 'execute', ->
   describe 'error', ->
 
     they 'provide stdout and stderr', (ssh, next) ->
-      mecano.execute
+      mecano
         ssh: ssh
+      .system.execute
         cmd: """
         sh -c '>&2 echo "Some Error"; exit 2'
         """
+        relax: true
       , (err, _, stdout, stderr) ->
         err.message.should.eql 'Invalid Exit Code: 2'
         stdout.should.eql ''
         stderr.should.eql 'Some Error\n'
-      next()
+      .then next
 
     they 'trap on error', (ssh, next) ->
       mecano
         ssh: ssh
-      .execute
+      .system.execute
         cmd: """
         sh -c '>&2 echo "exit 2'
         echo 'ok'
         """
-      , (err) ->
-        return next err if err
-      .execute
+      .system.execute
         cmd: """
         sh -c '>&2 echo "exit 2'
         echo 'ok'
         """
         trap: true
+        relax: true
       , (err) ->
         err.should.be.an.Error
-        next()
+      .then next

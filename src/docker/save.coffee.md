@@ -68,7 +68,7 @@ mecano.docker({
       cmd = "save -o #{options.output} #{options.image}"
       cmd += ":#{options.tag}" if options.tag?
       options.log message: "Extracting image #{options.output} to file:#{options.image}", level: 'INFO', module: 'mecano/lib/docker/save'
-      @execute
+      @system.execute
         cmd: docker.wrap options, cmd
       , docker.callback
 

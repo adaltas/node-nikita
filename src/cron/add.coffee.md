@@ -52,7 +52,7 @@ require('mecano').cron.add({
         options.log message: "Using default user", level: 'DEBUG', module: 'mecano/cron/add'
         crontab = "crontab"
       jobs = null
-      @execute
+      @system.execute
         cmd: "#{crontab} -l"
         code: [0, 1]
       , (err, _, stdout, stderr) ->
@@ -83,10 +83,10 @@ require('mecano').cron.add({
       .then (err) ->
         return callback err if err
         return callback() unless jobs
-        @execute
+        @system.execute
           cmd: if options.user? then "su -l #{options.user} -c '#{options.cmd}'" else options.cmd
           if: options.exec
-        @execute
+        @system.execute
           cmd: """
           #{crontab} - <<EOF
           #{jobs.join '\n'}

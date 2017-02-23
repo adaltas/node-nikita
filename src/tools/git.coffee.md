@@ -35,15 +35,14 @@ require('mecano').tools.git({
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       options.log message: "Entering git", level: 'DEBUG', module: 'mecano/lib/tools/git'
       # Sanitize parameters
       options.revision ?= 'HEAD'
       # Start real work
       repo_exists = false
       repo_uptodate = false
-      @
-      .call (_, callback) ->
+      @call (_, callback) ->
         fs.exists options.ssh, options.target, (err, exists) ->
           return callback err if err
           repo_exists = exists
@@ -53,11 +52,11 @@ require('mecano').tools.git({
           fs.exists options.ssh, gitDir, (err, exists) ->
             return callback Error "Not a git repository" unless exists
             callback()
-      .execute
+      @system.execute
         cmd: "git clone #{options.source} #{options.target}"
         cwd: path.dirname options.target
         unless: -> repo_exists
-      .execute
+      @system.execute
         cmd: """
         current=`git log --pretty=format:'%H' -n 1`
         target=`git rev-list --max-count=1 #{options.revision}`
@@ -74,12 +73,10 @@ require('mecano').tools.git({
       , (err, uptodate) ->
         throw err if err
         repo_uptodate = uptodate
-      .execute
+      @system.execute
         cmd: "git checkout #{options.revision}"
         cwd: options.target
         unless: -> repo_uptodate
-      .then (err, status) ->
-        callback err, status
 
 ## Dependencies
 

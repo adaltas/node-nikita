@@ -45,7 +45,7 @@ require('mecano').java.keystore_add([{
       options.caname = [options.caname] unless Array.isArray options.caname
       options.name = [options.name] unless Array.isArray options.name
       aliases = [options.caname..., options.name...].join(' ').trim()
-      @execute
+      @system.execute
         cmd: """
         [[ -f "#{options.keystore}" ]] || # Nothing to do if not a file
         exit 3

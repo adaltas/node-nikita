@@ -66,7 +66,7 @@ mecano.docker.load({
       options.log message: 'No checksum provided', level: 'INFO', module: 'mecano/lib/docker/load' if !options.checksum?
       options.log message: "Checksum provided :#{options.checksum}", level: 'INFO', module: 'mecano/lib/docker/load' if options.checksum
       options.checksum ?= ''
-      @execute
+      @system.execute
         cmd: docker.wrap options, " images | grep -v '<none>' | awk '{ print $1\":\"$2\":\"$3 }'"
       , (err, executed, stdout, stderr) =>
         return callback err if err
@@ -82,9 +82,9 @@ mecano.docker.load({
               return callback null, false if infos[2] == options.checksum
               images["#{infos[0]}:#{infos[1]}"] = "#{infos[2]}"
         options.log message: "Start Loading #{options.input} ", level: 'INFO', module: 'mecano/lib/docker/load'
-        @execute
+        @system.execute
           cmd: docker.wrap options, cmd
-        @execute
+        @system.execute
           cmd: docker.wrap options, 'images | grep -v \'<none>\' | awk \'{ print $1":"$2":"$3 }\''
         , (err, executed, out, stderr) ->
           return callback err, executed, out, stderr if err

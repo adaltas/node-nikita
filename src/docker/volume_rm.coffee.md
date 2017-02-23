@@ -30,7 +30,7 @@ mecano.docker.volume_rm({
       options.log message: "Entering Docker volume_rm", level: 'DEBUG', module: 'mecano/lib/docker/volume_rm'
       # Validate parameters
       throw Error "Missing required option name" unless options.name
-      @execute
+      @system.execute
         cmd: docker.wrap options, "volume rm #{options.name}"
         code: 0
         code_skipped: 1

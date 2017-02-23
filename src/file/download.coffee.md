@@ -180,7 +180,7 @@ mecano.download
           @system.mkdir
             shy: true
             target: path.dirname stageDestination
-          @execute
+          @system.execute
             cmd: cmd
             shy: true
           @call

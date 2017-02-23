@@ -96,7 +96,7 @@ require('mecano').iptables({
     module.exports = (options, callback) ->
       options.log message: "Entering iptables", level: 'DEBUG', module: 'mecano/lib/iptables'
       options.log message: "List existing rules", level: 'INFO', module: 'mecano/lib/iptables'
-      @execute
+      @system.execute
         cmd: "service iptables status &>/dev/null && iptables -S"
         code_skipped: 3
       , (err, executed, stdout) =>
@@ -107,7 +107,7 @@ require('mecano').iptables({
         cmd = iptables.cmd oldrules, newrules
         return callback() unless cmd.length
         options.log message: "#{cmd.length} modified rules", level: 'WARN', module: 'mecano/lib/iptables'
-        @execute
+        @system.execute
           cmd: "#{cmd.join '; '}; service iptables save;"
           trap: true
         , (err, executed) ->

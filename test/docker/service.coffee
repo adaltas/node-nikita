@@ -11,7 +11,7 @@ docker = require '../../src/misc/docker'
 
 ip = (ssh, machine, callback) ->
   mecano
-  .execute
+  .system.execute
     cmd: """
     export SHELL=/bin/bash
     export PATH=/opt/local/bin/:/opt/local/sbin/:/usr/local/bin/:/usr/local/sbin/:$PATH

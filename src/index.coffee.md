@@ -40,7 +40,6 @@ functions share a common API with flexible options.
 
     registry.register
       assert: 'mecano/core/assert'
-      execute: 'mecano/core/execute'
       cron:
         add: 'mecano/cron/add'
         remove: 'mecano/cron/remove'
@@ -132,6 +131,7 @@ functions share a common API with flexible options.
         chmod: 'mecano/system/chmod'
         chown: 'mecano/system/chown'
         copy: 'mecano/system/copy'
+        execute: 'mecano/system/execute'
         group: 'mecano/system/group'
         limits: 'mecano/system/limits'
         link: 'mecano/system/link'
@@ -185,6 +185,7 @@ functions share a common API with flexible options.
     registry.deprecate 'docker_volume_rm', 'mecano/docker/volume_rm'
     registry.deprecate 'docker_wait', 'mecano/docker/wait'
     registry.deprecate 'download', 'mecano/file/download'
+    registry.deprecate 'execute', 'mecano/system/execute'
     registry.deprecate 'extract', 'mecano/tools/extract'
     registry.deprecate 'cache', 'mecano/file/cache'
     registry.deprecate 'git', 'mecano/tools/git'

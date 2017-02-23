@@ -55,7 +55,7 @@ require 'mecano'
         run = =>
           count++
           options.log message: "Attempt ##{count}", level: 'INFO', module: 'mecano/wait/execute'
-          @execute
+          @system.execute
             cmd: cmd
             code: options.code or 0
             code_skipped: options.code_skipped

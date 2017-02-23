@@ -27,7 +27,7 @@ Create a user for the destination database.
       # Avoid Postgres error "ERROR:  cannot drop the currently open database"
       database = options.database
       delete options.database
-      @execute
+      @system.execute
         cmd: db.cmd options, "DROP DATABASE IF EXISTS #{database};"
         code_skipped: 2
 

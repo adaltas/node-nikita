@@ -52,11 +52,11 @@ mecano.docker.kill({
       cmd = 'kill'
       cmd += " -s #{options.signal}" if options.signal?
       cmd += " #{options.container}"
-      @execute
+      @system.execute
         cmd: docker.wrap options, "ps | grep '#{options.container}' | grep 'Up'"
         code_skipped: 1
       , docker.callback
-      @execute
+      @system.execute
         if: -> @status -1
         cmd: docker.wrap options, cmd
       , docker.callback

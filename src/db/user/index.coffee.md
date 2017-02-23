@@ -53,7 +53,7 @@ Create a user for the destination database.
           cmd_user_create = db.cmd options, "CREATE USER #{options.username} WITH PASSWORD '#{options.password}';"
           cmd_password_is_invalid = db.cmd(options, admin_username: null, admin_password: null, '\\dt') + " 2>&1 >/dev/null | grep -e '^psql:\\sFATAL.*password\\sauthentication\\sfailed\\sfor\\suser.*'"
           cmd_password_change = db.cmd options, "ALTER USER #{options.username} WITH PASSWORD '#{options.password}';"
-      @execute
+      @system.execute
         cmd: """
         signal=3
         if #{cmd_user_exists}; then

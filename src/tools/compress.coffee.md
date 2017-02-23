@@ -61,7 +61,7 @@ require('mecano').tools.compress({
           ext = path.extname options.source
           throw Error "Unsupported extension, got #{JSON.stringify(ext)}"
       # Run compression
-      @execute switch format
+      @system.execute switch format
         when 'tgz' then "tar czf #{options.target} -C #{dir} #{name}"
         when 'tar' then "tar cf  #{options.target} -C #{dir} #{name}"
         when 'bz2' then "tar cjf #{options.target} -C #{dir} #{name}"

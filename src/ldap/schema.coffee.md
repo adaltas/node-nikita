@@ -66,7 +66,7 @@ require('mecano').ldap.schema({
       do_registered = =>
         cmd = "ldapsearch -LLL #{binddn} #{passwd} #{uri} -b \"cn=schema,cn=config\" | grep -E cn=\\{[0-9]+\\}#{options.name},cn=schema,cn=config"
         options.log? "Check if schema is registered:"
-        @execute
+        @system.execute
           cmd: cmd
           code: 0
           code_skipped: 1
@@ -95,7 +95,7 @@ require('mecano').ldap.schema({
           log: options.log
         @call ->
           options.log? 'Generate configuration'
-        @execute
+        @system.execute
           cmd: "slaptest -f #{conf} -F #{ldif}"
         @call ->
           options.log? 'Rename configuration'
@@ -153,7 +153,7 @@ require('mecano').ldap.schema({
         # passwd = if options.passwd then "-w #{options.passwd}" else ''
         cmd = "ldapadd #{uri} #{binddn} #{passwd} -f #{ldif}/cn=config/cn=schema/cn=#{options.name}.ldif"
         options.log? "Add schema: #{cmd}"
-        @execute
+        @system.execute
           cmd: cmd
         , (err, executed) ->
           return callback err if err

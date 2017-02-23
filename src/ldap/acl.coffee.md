@@ -72,7 +72,7 @@ require('mecano').ldap.acl({
         do_getdn = =>
           return do_getacls() if options.hdb_dn
           options.log message: "Get DN of the HDB to modify", level: 'DEBUG', module: 'mecano/ldap/acl'
-          @execute
+          @system.execute
             cmd: """
             ldapsearch -LLL -Y EXTERNAL -H ldapi:/// \
               -b cn=config \
@@ -87,7 +87,7 @@ require('mecano').ldap.acl({
             do_getacls()
         do_getacls = =>
           options.log message: "List all ACL of the directory", level: 'DEBUG', module: 'mecano/ldap/acl'
-          @execute
+          @system.execute
             cmd: """
             ldapsearch -LLL -Y EXTERNAL -H ldapi:/// \
               -b olcDatabase=#{options.hdb_dn} \
@@ -177,7 +177,7 @@ require('mecano').ldap.acl({
             olcAccess: #{olcAccess}
             EOF
             """
-          @execute
+          @system.execute
             cmd: cmd
           , (err, _, hdb_dn) ->
             return callback err if err

@@ -44,7 +44,7 @@ require('mecano').krb5_delrinc({
       keytab = {} # keytab[principal] ?= {kvno: null, mdate: null}
       princ = {} # {kvno: null, mdate: null}
       # Get keytab information
-      @execute
+      @system.execute
         cmd: "export TZ=GMT; klist -kt #{options.keytab}"
         code_skipped: 1
         shy: true
@@ -64,7 +64,7 @@ require('mecano').krb5_delrinc({
           if not keytab[principal] or keytab[principal].kvno < kvno
             keytab[principal] = kvno: kvno, mdate: mdate
       # Get principal information
-      @execute
+      @system.execute
         cmd: misc.kadmin options, "getprinc -terse #{options.principal}"
         shy: true
         if: -> keytab[options.principal]?
@@ -82,7 +82,7 @@ require('mecano').krb5_delrinc({
         options.log message: "Keytab kvno '#{keytab[options.principal]?.kvno}', principal kvno '#{princ.kvno}'", level: 'INFO', module: 'mecano/krb5/ktadd'
         options.log message: "Keytab mdate '#{new Date keytab[options.principal]?.mdate}', principal mdate '#{new Date princ.mdate}'", level: 'INFO', module: 'mecano/krb5/ktadd'
       # Remove principal from keytab
-      @execute
+      @system.execute
         cmd: misc.kadmin options, "ktremove -k #{options.keytab} #{options.principal}"
         if: ->
           keytab[options.principal]? and (keytab[options.principal]?.kvno isnt princ.kvno or keytab[options.principal].mdate isnt princ.mdate)
@@ -90,7 +90,7 @@ require('mecano').krb5_delrinc({
       @system.mkdir
         target: "#{path.dirname options.keytab}"
         if: -> not keytab[options.principal]? or (keytab[options.principal]?.kvno isnt princ.kvno or keytab[options.principal].mdate isnt princ.mdate)
-      @execute
+      @system.execute
         cmd: misc.kadmin options, "ktadd -k #{options.keytab} #{options.principal}"
         if: -> not keytab[options.principal]? or (keytab[options.principal]?.kvno isnt princ.kvno or keytab[options.principal].mdate isnt princ.mdate)
       # Keytab ownership and permissions

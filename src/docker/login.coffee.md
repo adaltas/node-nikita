@@ -44,7 +44,7 @@ Register or log in to a Docker registry server.
       for opt in ['email', 'user', 'password']
         cmd += " -#{opt.charAt 0} #{options[opt]}" if options[opt]?
       cmd += " \"#{options.registry}\"" if options.registry?
-      @execute
+      @system.execute
         cmd: docker.wrap options, cmd
       , docker.callback
 

@@ -52,17 +52,17 @@ require('mecano').database.schema({
       throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['postgres']
       # Options
       options.port ?= 5432 
-      @execute
+      @system.execute
         code_skipped: 2
         cmd: db.cmd options, '\\dt'
       , (err, status, stdout, stderr) ->
         throw err if err
         throw Error "Database does not exist #{options.database}" if !err and !status
-      @execute
+      @system.execute
         cmd: db.cmd options, "CREATE SCHEMA #{options.schema};"
         unless_exec: db.cmd(options, "SELECT 1 FROM pg_namespace WHERE nspname = '#{options.schema}';") + " | grep 1"
       # Check if owner is the good one
-      @execute 
+      @system.execute 
         if: -> options.owner?
         unless_exec: db.cmd(options, '\\dn') + " | grep '#{options.schema}|#{options.owner}'"
         cmd: db.cmd options, "ALTER SCHEMA #{options.schema} OWNER TO #{options.owner};"

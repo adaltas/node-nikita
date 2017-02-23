@@ -110,7 +110,7 @@ require 'mecano'
       else unless quorum_target?
         quorum_target = servers.length
       options.timeout = '' unless options.timeout > 0
-      @execute
+      @system.execute
         cmd: """
         function compute_md5 {
           echo $1 | openssl md5 | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'

@@ -84,9 +84,9 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
           if: -> @status -1
           handler: ->
             options.log message: "re-creating #{options.mount} tmpfs file", level: 'INFO', module: 'mecano/tmpfs/index'
-            @execute
+            @system.execute
               cmd: "systemd-tmpfiles --remove #{options.target}"
-            @execute
+            @system.execute
               cmd: "systemd-tmpfiles --create #{options.target}"
 
 ## Dependencies

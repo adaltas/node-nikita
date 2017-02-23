@@ -86,7 +86,7 @@ mecano.docker({
       @system.mkdir
         target: target_path
         if: -> target_mkdir
-      @execute
+      @system.execute
         cmd: docker.wrap options, "cp #{options.source} #{options.target}"
       , docker.callback
 

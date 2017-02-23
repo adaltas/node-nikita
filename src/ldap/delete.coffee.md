@@ -48,7 +48,7 @@ require('mecano').ldap.delete({
       options.dn = [options.dn] unless Array.isArray options.dn
       dn = options.dn.map( (dn) -> "'#{dn}'").join(' ')
       # ldapdelete -D cn=Manager,dc=ryba -w test -H ldaps://master3.ryba:636 'cn=mecano,ou=users,dc=ryba' 
-      @execute
+      @system.execute
         cmd: "ldapdelete #{binddn} #{passwd} #{uri} #{dn}"
         # code_skipped: 68
       , (err, executed, stdout, stderr) ->

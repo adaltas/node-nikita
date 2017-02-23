@@ -8,10 +8,6 @@ test = require '../test'
 they = require 'ssh2-they'
 docker = require '../../src/misc/docker'
 
-# clean = (ssh, machine, image, callback) ->
-# clean = (options, callback) ->
-#   @execute docker.wrap options, " rmi -f #{options.image} || true"
-
 describe 'docker build', ->
 
   config = test.config()

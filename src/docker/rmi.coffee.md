@@ -31,11 +31,11 @@ force options is set.
         cmd_rmi += " --#{opt.replace '_', '-'}" if options[opt]?
       cmd_rmi += " #{options.image}"
       cmd_rmi += ":#{options.tag}" if options.tag?
-      @execute
+      @system.execute
         cmd: docker.wrap options, cmd_images
         code_skipped: 1
       , docker.callback
-      @execute
+      @system.execute
         cmd: docker.wrap options, cmd_rmi
         if: -> @status -1
       , docker.callback

@@ -167,16 +167,15 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       options.log message: "Entering system_limits", level: 'DEBUG', module: 'mecano/lib/system_limits'
       return callback Error "Incoherent options: both options system and user defined, #{JSON.stringify system: options.system, user: options.user}" if options.system and options.user
       options.user = '*' if options.system
       return callback Error "Missing required option 'user'" unless options.user
       options.target ?= "/etc/security/" + if options.user is '*' then "limits.conf" else "limits.d/#{options.user}.conf"
       write = []
-      @
       # Calculate nofile from kernel limit
-      .execute
+      @system.execute
         cmd: "cat /proc/sys/fs/file-max"
         shy: true
         if: options.nofile?
@@ -192,7 +191,7 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
           for _, v of options.nofile
             throw Error "Invalid nofile options. Please set int value lesser than kernel limit: #{kern_limit}" if v >= kern_limit
       # Calculate nproc from kernel limit
-      .execute
+      @system.execute
         cmd: "cat /proc/sys/kernel/pid_max"
         shy: true
         if: options.nproc?
@@ -206,7 +205,7 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
         else if typeof options.nproc is 'object'
           for _, v of options.nproc
             throw Error "Invalid nproc options. Please set int value lesser than kernel limit: #{kern_limit}" if v >= kern_limit
-      .call ->
+      @call ->
         for opt in ['as', 'core', 'cpu', 'data', 'fsize', 'locks', 'maxlogins',
         'maxsyslogins', 'memlock', 'msgqueue', 'nice', 'nofile', 'nproc',
         'priority', 'rss', 'sigpending', 'stack', 'rtprio']
@@ -220,14 +219,13 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
                 replace: "#{options.user}    #{k}    #{opt}    #{options[opt][k]}"
                 append: true
         return false
-      .file
+      @file
         target: options.target
         write: write
         eof: true
         uid: options.uid
         gid: options.gid
         if: -> write.length
-      .then callback
 
 ## Dependencies
 

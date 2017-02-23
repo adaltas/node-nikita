@@ -58,7 +58,7 @@ The result of the above action can be viewed with the command
         cmd += " -r" if options.system
         cmd += " -g #{options.gid}" if options.gid
         cmd += " #{options.name}"
-        @execute
+        @system.execute
           cmd: cmd
           code_skipped: 9
         , (err, created) ->
@@ -78,7 +78,7 @@ The result of the above action can be viewed with the command
         cmd = 'groupmod'
         cmd += " -g #{options.gid}" if options.gid
         cmd += " #{options.name}"
-        @execute
+        @system.execute
           cmd: cmd
         , (err) ->
           return callback err, modified

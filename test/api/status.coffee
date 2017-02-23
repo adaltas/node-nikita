@@ -64,7 +64,7 @@ describe 'api status', ->
     it 'set status to false while child module is true', (next) ->
       m = mecano()
       .call (options, callback) ->
-        m.execute
+        m.system.execute
           cmd: 'ls -l'
         , (err, executed, stdout, stderr) ->
           executed.should.be.true() unless err
@@ -76,7 +76,7 @@ describe 'api status', ->
     it 'set status to true while module sending is false', (next) ->
       m = mecano()
       .call (options, callback) ->
-        m.execute
+        m.system.execute
           cmd: 'ls -l'
           if: false
         , (err, executed, stdout, stderr) ->

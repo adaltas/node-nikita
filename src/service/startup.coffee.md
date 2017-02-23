@@ -62,7 +62,7 @@ require('mecano').service.startup([{
           @call 
             shy: true
             handler: (_, callback) ->
-              @execute
+              @system.execute
                 cmd: "chkconfig --list #{options.name}"
                 shy: true
                 code_skipped: 1
@@ -98,7 +98,7 @@ require('mecano').service.startup([{
                 cmd += "chkconfig --level #{startup_off} #{options.name} off;" if startup_off
               else
                 cmd += "chkconfig #{options.name} on;"
-              @execute
+              @system.execute
                 cmd: cmd
               , (err) ->
                 throw err if err
@@ -108,7 +108,7 @@ require('mecano').service.startup([{
             handler: ->
               options.log message: "Desactivating startup rules", level: 'DEBUG', module: 'mecano/service/startup'
               # Setting the level to off. An alternative is to delete it: `chkconfig --del #{options.name}`
-              @execute
+              @system.execute
                 cmd: "chkconfig #{options.name} off"
               , (err, disabled, stdout, stderr) ->
                 throw err if err
@@ -116,14 +116,14 @@ require('mecano').service.startup([{
       @call
         if: -> options.loader is 'systemctl'
         handler: ->
-          @execute
+          @system.execute
             shy: true
             cmd: "systemctl is-enabled #{options.name}"
             code_skipped: 1
-          @execute
+          @system.execute
             if: -> (not @status(-1)) and options.startup
             cmd: "systemctl enable #{options.name}"
-          @execute
+          @system.execute
             if: -> @status(-2) and (not options.startup)
             cmd: "systemctl disable #{options.name}"
 

@@ -118,7 +118,7 @@ you are a member of the "wheel" group (gid of "10") with the command
         cmd += " -G #{options.groups.join ','}" if options.groups
         cmd += " -k #{options.skel}" if options.skel
         cmd += " #{options.name}"
-        @execute
+        @system.execute
           cmd: cmd
           code_skipped: 9
         @system.chown
@@ -153,7 +153,7 @@ you are a member of the "wheel" group (gid of "10") with the command
         cmd += " -G #{options.groups.join ','}" if options.groups
         cmd += " -u #{options.uid}" if options.uid
         cmd += " #{options.name}"
-        @execute
+        @system.execute
           cmd: cmd
           if: changed
         @system.chown
@@ -170,7 +170,7 @@ you are a member of the "wheel" group (gid of "10") with the command
           do_password()
       do_password = =>
         # TODO, detect changes in password
-        @execute
+        @system.execute
           cmd: "echo #{options.password} | passwd --stdin #{options.name}"
           if: options.password_sync and options.password
         , (err, modified) ->

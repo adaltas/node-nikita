@@ -100,7 +100,7 @@ docker/* are ignored.
       options.store ?= {}
       # Detect Os and version
       # Read the cpu controller point to cache the value in options.store['mecano:cgroups:cpu_path']
-      @execute
+      @system.execute
         unless: -> options.store['mecano:system:type']? and options.store['mecano:system:release']?
         shy: true
         cmd: 'cat /etc/system-release'
@@ -122,7 +122,7 @@ docker/* are ignored.
         shy: true
         if: -> (options.store['mecano:system:type'] in ['redhat','centos'])
       , ->
-        @execute
+        @system.execute
           cmd: 'cgsnapshot -s 2>&1'
         , (err, status, stdout, stderr) ->
           throw err if err

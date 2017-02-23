@@ -77,7 +77,7 @@ Create and start containers according to a docker-compose file
         content: options.content
       @call (_, callback) ->
         start = true
-        @execute
+        @system.execute
           cmd: docker.wrap options, cmd_ps
           cwd: options.cwd
           uid: options.uid
@@ -90,7 +90,7 @@ Create and start containers according to a docker-compose file
           start = containers.some (container) -> not container.State.Running
           options.log "Docker created, need start" if start
         @then -> callback null, start
-      @execute 
+      @system.execute 
         if: -> options.force or @status()
         cwd: source_dir
         cmd: docker.wrap options, cmd_up

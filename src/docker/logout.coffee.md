@@ -52,7 +52,7 @@ mecano.docker.pause({
       # rm is false by default only if options.service is true
       cmd = 'logout'
       cmd += " \"#{options.registry}\"" if options.registry?
-      @execute
+      @system.execute
         cmd: docker.wrap options, cmd
       , docker.callback
 

@@ -52,7 +52,7 @@ mecano.docker({
       throw Error 'Missing container parameter' unless options.container?
       # Construct exec command
       cmd = "ps | grep '#{options.container}'"
-      @execute
+      @system.execute
         cmd: docker.wrap options, cmd
         code_skipped: 1
       , docker.callback

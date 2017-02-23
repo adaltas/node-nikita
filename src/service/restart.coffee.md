@@ -50,7 +50,7 @@ require('mecano').service.start([{
           when 'systemctl' then "systemctl restart #{options.name}"
           when 'service' then "service #{options.name} restart"
           else throw Error 'Init System not supported'
-        @execute
+        @system.execute
           cmd: cmd
         , (err, restarted) ->
           throw err if err

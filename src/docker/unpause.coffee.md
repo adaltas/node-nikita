@@ -43,7 +43,7 @@ mecano.docker.pause({
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
       return callback Error 'Missing container parameter' unless options.container?
-      @execute
+      @system.execute
         cmd: docker.wrap options, "unpause #{options.container}"
       , -> docker.callback callback, arguments...
 

@@ -63,11 +63,11 @@ require('mecano').krb5.addprinc({
       ktadd_options.if = options.keytab
       # Ticket cache location
       cache_name = "/tmp/mecano_#{Math.random()}"
-      @execute
+      @system.execute
         retry: 3
         cmd: cmd_addprinc
         unless_exec: "#{cmd_getprinc} | grep '#{options.principal}'"
-      @execute
+      @system.execute
         retry: 3
         cmd: misc.kadmin options, "cpw -pw #{options.password} #{options.principal}"
         if: options.password and options.password_sync

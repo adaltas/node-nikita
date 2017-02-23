@@ -65,12 +65,12 @@ Reload the service daemon provider depending on the os.
           backup: options.backup
           context: options.context
           local: options.local
-        @execute
+        @system.execute
           if: -> (options.loader is 'systemctl') and (path.dirname(options.target) is '/etc/init.d')
           shy: true
           cmd: cmd
           code_skipped: 1
-        @execute
+        @system.execute
           if: ->  @status(-1)
           cmd: 'systemctl daemon-reload'
 

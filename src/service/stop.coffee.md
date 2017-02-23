@@ -64,7 +64,7 @@ require('mecano').service.stop([{
             code_started: options.code_started
             code_stopped: options.code_stopped
             shy: true
-          @execute
+          @system.execute
             cmd: cmd
             if: -> @status -1
           , (err, stopped) ->

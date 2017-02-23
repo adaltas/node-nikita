@@ -48,7 +48,7 @@ for engine, _ of config.db
         .db.database
           database: 'postgres_db_3'
           user: 'postgres_user_3'
-        .execute
+        .system.execute
           cmd: switch engine
             when 'mysql' then db.cmd(config.db[engine], database: 'mysql', "SELECT user FROM db WHERE db='postgres_db_3';") + " | grep 'postgres_user_3'"
             when 'postgres' then db.cmd(config.db[engine], database: 'postgres_db_3', '\\l') + " | egrep '^postgres_user_3='"

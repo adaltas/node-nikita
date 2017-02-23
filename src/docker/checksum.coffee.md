@@ -39,7 +39,7 @@ Return the checksum of repository:tag, if it exists. Function not native to dock
       options.tag ?= 'latest'
       cmd = "images --no-trunc | grep '#{options.image}' | grep '#{options.tag}' | awk '{ print $3 }'"
       options.log message: "Getting image checksum :#{options.image}", level: 'INFO', module: 'mecano/lib/docker/checksum'
-      @execute
+      @system.execute
         cmd: docker.wrap options, cmd
       , (err, executed, stdout, stderr) ->
         checksum = if stdout is '' then false else stdout.toString().trim()

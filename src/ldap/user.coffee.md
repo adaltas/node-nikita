@@ -70,7 +70,7 @@ require('mecano').ldap.user({
             else do_checkpass()
         do_checkpass = =>
           return do_end() unless user.userPassword
-          @execute
+          @system.execute
             # See https://onemoretech.wordpress.com/2011/09/22/verifying-ldap-passwords/
             cmd: """
             ldapsearch -D #{user.dn} -w #{user.userPassword} #{uri} -b "" -s base "objectclass=*"
@@ -81,7 +81,7 @@ require('mecano').ldap.user({
             if identical then do_end() else do_ldappass()
         do_ldappass = =>
           return do_end() unless user.userPassword
-          @execute
+          @system.execute
             cmd: """
             ldappasswd #{binddn} #{passwd} #{uri} \
               -s #{user.userPassword} \

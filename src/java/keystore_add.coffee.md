@@ -114,7 +114,7 @@ require('mecano').java.keystore_add([{
         target: files.key
         mode: 0o0600
         shy: true
-      @execute # Deal with key and certificate
+      @system.execute # Deal with key and certificate
         cmd: """
         mkdir -p -m 700 #{tmp_location}
         user=`openssl x509  -noout -in "#{files.cert}" -md5 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/' | cat`
@@ -139,7 +139,7 @@ require('mecano').java.keystore_add([{
         # trap: true
         if: !!options.cert
         code_skipped: 3
-      @execute # Deal with CACert
+      @system.execute # Deal with CACert
         cmd: """
         cleanup () { rm -rf #{tmp_location}; }
         # Check password
