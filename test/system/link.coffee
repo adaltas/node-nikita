@@ -56,7 +56,7 @@ describe 'link', ->
     # Create a non existing link
     mecano
       ssh: ssh
-    .link
+    .system.link
       source: __dirname
       target: "#{scratch}/test/dir/link_test"
     , (err, status) ->

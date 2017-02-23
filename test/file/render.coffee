@@ -154,7 +154,7 @@ describe 'render', ->
 
     it 'should use `content`', (next) ->
       mecano
-      .render
+      .file.render
         engine: 'eco'
         content: 'Hello <%- @who %>'
         target: "#{scratch}/render.eco"

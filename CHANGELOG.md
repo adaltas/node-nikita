@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* #58 cache: move to file namespace
 * #57 package: clean lib before coffee generation
 * #56 compress: code simplification
 * #55 compress: move to tools namespace

@@ -9,10 +9,10 @@ describe 'touch', ->
 
   scratch = test.scratch @
   
-  they.only 'as a target option', (ssh, next) ->
+  they 'as a target option', (ssh, next) ->
     mecano
       ssh: ssh
-    .touch
+    .file.touch
       target: "#{scratch}/a_file"
     , (err, status) ->
       status.should.be.true() unless err

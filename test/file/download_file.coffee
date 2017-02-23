@@ -102,13 +102,14 @@ describe 'file.download file', ->
       , (err, status) ->
         return next err if err
         status.should.be.true()
-      .assert "#{scratch}/cache_dir/#{path.basename source}"
+      .file.assert "#{scratch}/cache_dir/#{path.basename source}"
       .then next
 
     they 'cache dir', (ssh, next) ->
       # Download a non existing file
       target = "#{scratch}/download"
-      mecano.download
+      mecano
+      .file.download
         ssh: ssh
         source: "#{__filename}"
         target: "#{scratch}/download_test"
@@ -116,21 +117,20 @@ describe 'file.download file', ->
         cache_dir: "#{scratch}/cache_dir"
       , (err, status) ->
         return next err if err
-        status.should.be.true()
-        fs.exists ssh, "#{scratch}/cache_dir/#{path.basename __filename}", (err, exists) ->
-          exists.should.be.true() unless err
-          next err
+        status.should.be.true() unless err
+      .file.assert "#{scratch}/cache_dir/#{path.basename __filename}"
+      .then next
 
     they 'detect file already present', (ssh, next) ->
       ssh = null
       mecano
         ssh: ssh
-      .download
+      .file.download
         source: "#{__filename}"
         target: "#{scratch}/download_test"
         cache: true
         cache_dir: "#{scratch}/cache_dir"
-      .download
+      .file.download
         source: "#{__filename}"
         target: "#{scratch}/download_test"
         cache: true
@@ -140,7 +140,7 @@ describe 'file.download file', ->
       .file
         content: 'abc'
         target: "#{scratch}/download_test"
-      .download
+      .file.download
         source: "#{__filename}"
         target: "#{scratch}/download_test"
         cache: true
@@ -159,22 +159,21 @@ describe 'file.download file', ->
       .file
         target: "#{scratch}/a_file"
         content: 'okay'
-      .download
+      .file.download
         source: "#{scratch}/a_file"
         target: "#{scratch}/download_test"
         cache: true
         cache_dir: "#{scratch}/cache_dir"
         md5: 'df8fede7ff71608e24a5576326e41c75'
       , (err, status) ->
-        return next err if err
-        status.should.be.true()
-        fs.readFile ssh, "#{scratch}/cache_dir/a_file", 'ascii', (err, data) ->
-          return next err if err
-          data.should.eql 'okay'
-          fs.readFile ssh, "#{scratch}/download_test", 'ascii', (err, data) ->
-            return next err if err
-            data.should.eql 'okay'
-            next()
+        status.should.be.true() unless err
+      .file.assert
+        target: "#{scratch}/cache_dir/a_file"
+        content: 'okay'
+      .file.assert
+        target: "#{scratch}/download_test"
+        content: 'okay'
+      .then next
 
     they 'is computed if true', (ssh, next) ->
       return next() unless ssh
@@ -187,13 +186,13 @@ describe 'file.download file', ->
       .file
         target: "#{scratch}/source"
         content: "okay"
-      .download
+      .file.download
         source: "#{scratch}/source"
         target: target
         md5: true
       , (err, status) ->
         status.should.be.true() unless err
-      .download
+      .file.download
         source: "#{scratch}/source"
         target: target
         md5: true

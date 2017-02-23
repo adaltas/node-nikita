@@ -9,10 +9,11 @@ describe 'git', ->
   scratch = test.scratch @
 
   beforeEach (next) ->
-    mecano.extract
+    mecano
+    .tools.extract
       source: "#{__dirname}/../resources/repo.git.zip"
       target: "#{scratch}"
-    , next
+    .then next
 
   they 'clones repo into new dir', (ssh, next) ->
     mecano
@@ -52,7 +53,7 @@ describe 'git', ->
   they 'preserves existing directory', (ssh, next) ->
     mecano
       ssh: ssh
-    .mkdir
+    .system.mkdir
       target: "#{scratch}/my_repo"
     .tools.git
       source: "#{scratch}/repo.git"

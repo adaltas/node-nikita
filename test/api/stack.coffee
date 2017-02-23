@@ -118,28 +118,30 @@ describe 'api stack', ->
 
     it 'catch err', (next) ->
       mecano
-      .chmod
+      .system.chmod
         target: "#{scratch}/doesnt_exist"
       .then (err, changed) ->
         err.message.should.eql "Missing option 'mode'"
-      .chmod
+      .system.chmod
         mode: 0o0644
       .then (err, changed) ->
         err.message.should.eql "Missing target: undefined"
       .then next
 
     it 'catch err without then', (next) ->
-      m = mecano()
-      m.chmod
+      mecano()
+      .system.chmod
         target: "#{scratch}/doesnt_exist"
+        relax: true
       , (err, changed) ->
         err.message.should.eql "Missing option 'mode'"
-        # There are multiple possibilities
-        m.chmod
-          mode: 0o0644
-        .then (err, changed) ->
-          err.message.should.eql "Missing target: undefined"
-        .then next
+      # There are multiple possibilities
+      .system.chmod
+        mode: 0o0644
+        relax: true
+      , (err, changed) ->
+        err.message.should.eql "Missing target: undefined"
+      .then next
 
     it 'catch err thrown callback', (next) ->
       mecano

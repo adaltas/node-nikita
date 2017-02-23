@@ -146,7 +146,7 @@ mecano.download
           return unless end
           options.log message: "Destination with valid signature, download aborted", level: 'INFO', module: 'mecano/lib/file/download'
           @end()
-      @cache # Download the file and place it inside local cache
+      @file.cache # Download the file and place it inside local cache
         if: options.cache
         ssh: null
         source: options.source

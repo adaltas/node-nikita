@@ -6,7 +6,7 @@ they = require 'ssh2-they'
 fs = require 'ssh2-fs'
 path = require 'path'
 
-describe 'cache', ->
+describe 'file.cache', ->
 
   scratch = test.scratch @
 
@@ -32,7 +32,7 @@ describe 'cache', ->
     they 'handles string argument', (ssh, next) ->
       mecano
         ssh: ssh
-      .cache 'http://localhost:12345/my_file',
+      .file.cache 'http://localhost:12345/my_file',
         cache_dir: "#{scratch}/my_cache_dir"
       , (err, status, file) ->
         status.should.be.true() unless err
@@ -42,33 +42,31 @@ describe 'cache', ->
     they 'into local cache_dir', (ssh, next) ->
       mecano
         ssh: ssh
-      .cache
+      .file.cache
         source: 'http://localhost:12345/my_file'
         cache_dir: "#{scratch}/my_cache_dir"
       , (err, status, file) ->
         status.should.be.true() unless err
         file.should.eql "#{scratch}/my_cache_dir/my_file" unless err
-      .cache
+      .file.cache
         source: 'http://localhost:12345/my_file'
         cache_dir: "#{scratch}/my_cache_dir"
       , (err, status, file) ->
         status.should.be.false() unless err
         file.should.eql "#{scratch}/my_cache_dir/my_file"
-      .call (_, callback) ->
-        fs.exists null, "#{scratch}/my_cache_dir/my_file", (err, exists) ->
-          exists.should.be.true()
-          callback err
+      .file.assert
+        target: "#{scratch}/my_cache_dir/my_file"
       .then next
 
     they 'option fail with invalid exit code', (ssh, next) ->
       mecano
         ssh: ssh
-      .cache
+      .file.cache
         source: 'http://localhost:12345/missing'
         cache_dir: "#{scratch}/cache_dir_1"
       , (err, status) ->
         (err is undefined).should.be.true()
-      .cache
+      .file.cache
         source: 'http://localhost:12345/missing'
         cache_dir: "#{scratch}/cache_dir_2"
         fail: true
@@ -91,7 +89,7 @@ describe 'cache', ->
           target: "#{scratch}/target"
           content: "okay"
         # In http mode, md5 value will not be calculated from source
-        .cache
+        .file.cache
           source: 'http://localhost:12345/my_file'
           cache_file: "#{scratch}/target"
           md5: true
@@ -99,7 +97,7 @@ describe 'cache', ->
           status.should.be.false() unless err # because target exists
           ("[WARN] Bypass source hash computation for non-file protocols" in logs).should.be.true() unless err
           logs = []
-        .cache
+        .file.cache
           source: 'http://localhost:12345/my_file'
           cache_file: "#{scratch}/target"
           md5: 'df8fede7ff71608e24a5576326e41c75'
@@ -107,7 +105,7 @@ describe 'cache', ->
           status.should.be.false() unless err
           ("[DEBUG] Hashes match, skipping" in logs).should.be.true() unless err
           logs = []
-        .cache
+        .file.cache
           source: 'http://localhost:12345/my_file'
           cache_file: "#{scratch}/target"
           md5: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
@@ -121,22 +119,20 @@ describe 'cache', ->
     they 'into local cache_dir', (ssh, next) ->
       mecano
         ssh: ssh
-      .cache
+      .file.cache
         source: "#{__filename}"
         cache_dir: "#{scratch}/my_cache_dir"
       , (err, status, file) ->
         status.should.be.true() unless err
         file.should.eql "#{scratch}/my_cache_dir/#{path.basename __filename}"
-      .cache
+      .file.cache
         source: "#{__filename}"
         cache_dir: "#{scratch}/my_cache_dir"
       , (err, status, file) ->
         status.should.be.false() unless err
         file.should.eql "#{scratch}/my_cache_dir/#{path.basename __filename}"
-      .call (_, callback) ->
-        fs.exists null, "#{scratch}/my_cache_dir/#{path.basename __filename}", (err, exists) ->
-          exists.should.be.true()
-          callback err
+      .file.assert
+        target: "#{scratch}/my_cache_dir/#{path.basename __filename}"
       .then next
 
     describe 'md5', ->
@@ -153,7 +149,7 @@ describe 'cache', ->
           target: "#{scratch}/target"
           content: "okay"
         # In file mode, md5 value will be calculated from source
-        .cache
+        .file.cache
           source: "#{scratch}/source"
           cache_file: "#{scratch}/target"
           md5: true
@@ -161,7 +157,7 @@ describe 'cache', ->
           status.should.be.false() unless err
           ('[DEBUG] Hashes match, skipping' in logs).should.be.true() unless err
           logs = []
-        .cache
+        .file.cache
           source: "#{scratch}/source"
           cache_file: "#{scratch}/target"
           md5: 'df8fede7ff71608e24a5576326e41c75'
@@ -169,7 +165,7 @@ describe 'cache', ->
           status.should.be.false() unless err
           ('[DEBUG] Hashes match, skipping' in logs).should.be.true() unless err
           logs = []
-        .cache
+        .file.cache
           source: "#{scratch}/source"
           cache_file: "#{scratch}/target"
           md5: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
@@ -177,4 +173,3 @@ describe 'cache', ->
           status.should.be.true() unless err
           ("[WARN] Hashes don't match, delete then re-download" in logs).should.be.true() unless err
         .then next
-

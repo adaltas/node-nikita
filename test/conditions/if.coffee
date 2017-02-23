@@ -155,7 +155,6 @@ describe 'if', ->
         if: {}
         () -> false.should.be.true()
         (err) ->
-          console.log err.message
           err.message.should.eql "Invalid condition \"if\": {}"
           next()
 

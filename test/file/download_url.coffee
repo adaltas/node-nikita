@@ -198,7 +198,7 @@ describe 'file.download url', ->
       , (err, status) ->
         return next err if err
         status.should.be.true()
-      .download
+      .file.download
         source: source
         target: target
         md5: 'df8fede7ff71608e24a5576326e41c75'
