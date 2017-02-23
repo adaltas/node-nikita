@@ -1,5 +1,5 @@
 
-# `mecano.backup(options, [callback])`
+# `mecano.tools.backup(options, [callback])`
 
 Commons backup functions provided by backmeup. For additional information, please refer to the [official backmeup webpage][backmeup].
 
@@ -54,7 +54,7 @@ Commons backup functions provided by backmeup. For additional information, pleas
 ## Example
 
 ```js
-mecano.backmeup({
+mecano.tools.backup({
   name: 'my_backup'
   ssh: ssh_connect
   source: '/etc'     
@@ -77,7 +77,7 @@ mecano.backmeup({
 ## Source code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering backup", level: 'DEBUG', module: 'mecano/lib/backup'
+      options.log message: "Entering backup", level: 'DEBUG', module: 'mecano/lib/tools/backup'
       backmeup options, callback
 
 ## Dependencies

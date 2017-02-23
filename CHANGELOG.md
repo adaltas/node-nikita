@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* #54 backup: move to tools namespace
 * #53 registry: api documentation
 * #52 deprecate: new function honoring Node.js native usage
 * #51 extract: move to system namespace

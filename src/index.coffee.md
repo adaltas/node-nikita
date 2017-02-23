@@ -40,7 +40,6 @@ functions share a common API with flexible options.
 
     registry.register
       assert: 'mecano/core/assert'
-      backup: 'mecano/core/backup'
       cache: 'mecano/core/cache'
       compress: 'mecano/core/compress'
       execute: 'mecano/core/execute'
@@ -147,6 +146,7 @@ functions share a common API with flexible options.
         close: 'mecano/ssh/close'
         root: 'mecano/ssh/root'
       tools:
+        backup: 'mecano/tools/backup'
         extract: 'mecano/tools/extract'
         iptables: 'mecano/tools/iptables'
         git: 'mecano/tools/git'
@@ -156,7 +156,7 @@ functions share a common API with flexible options.
         exist: 'mecano/wait/exist'
     
     # Backward compatibility
-    registry.deprecate 'system_limits', 'mecano/system/limits'
+    registry.deprecate 'backup', 'mecano/tools/backup'
     registry.deprecate 'cgroups', 'mecano/system/cgroups'
     registry.deprecate 'chmod', 'mecano/system/chmod'
     registry.deprecate 'chown', 'mecano/system/chown'
@@ -211,6 +211,7 @@ functions share a common API with flexible options.
     registry.deprecate 'service_startup', 'mecano/service/startup'
     registry.deprecate 'service_status', 'mecano/service/status'
     registry.deprecate 'service_stop', 'mecano/service/stop'
+    registry.deprecate 'system_limits', 'mecano/system/limits'
     registry.deprecate 'touch', 'mecano/file/touch'
     registry.deprecate 'upload', 'mecano/file/upload'
     registry.deprecate 'user', 'mecano/system/user'
