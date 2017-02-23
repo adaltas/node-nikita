@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* #57 package: clean lib before coffee generation
 * #56 compress: code simplification
 * #55 compress: move to tools namespace
 * #54 backup: move to tools namespace

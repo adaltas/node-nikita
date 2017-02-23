@@ -75,7 +75,7 @@
     "url": "https://github.com/adaltas/node-nikita"
   },
   "scripts": {
-    "coffee": "coffee -b -o lib src",
+    "coffee": "rm -rf lib; coffee -b -o lib src",
     "pretest": "cp -n test.coffee.sample test.coffee; coffee -b -o lib src",
     "test": "NODE_ENV=test mocha"
   }
