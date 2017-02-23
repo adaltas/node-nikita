@@ -12,7 +12,7 @@ describe 'extract', ->
     # Test a non existing extracted dir
     mecano
       ssh: ssh
-    .extract
+    .tools.extract
       source: "#{__dirname}/../resources/a_dir.tgz"
       target: scratch
     , (err, status) ->
@@ -22,7 +22,7 @@ describe 'extract', ->
   they 'should see extension .zip', (ssh, next) ->
     mecano
       ssh: ssh
-    .extract
+    .tools.extract
       source: "#{__dirname}/../resources/a_dir.zip"
       target: scratch
     , (err, status) ->
@@ -32,7 +32,7 @@ describe 'extract', ->
   they 'should see extension .tar.bz2', (ssh, next) ->
     mecano
       ssh: ssh
-    .extract
+    .tools.extract
       source: "#{__dirname}/../resources/a_dir.tar.bz2"
       target: scratch
     , (err, status) ->
@@ -42,7 +42,7 @@ describe 'extract', ->
   they 'should see extension .tar.xz', (ssh, next) ->
     mecano
       ssh: ssh
-    .extract
+    .tools.extract
       source: "#{__dirname}/../resources/a_dir.tar.xz"
       target: scratch
     , (err, status) ->
@@ -53,14 +53,14 @@ describe 'extract', ->
     # Test with invalid creates option
     mecano
       ssh: ssh
-    .extract
+    .tools.extract
       source: "#{__dirname}/../resources/a_dir.tgz"
       target: scratch
       creates: "#{scratch}/oh_no"
     .then (err, status) ->
       err.message.should.eql "Failed to create 'oh_no'"
     # Test with valid creates option
-    .extract
+    .tools.extract
       source: "#{__dirname}/../resources/a_dir.tgz"
       target: scratch
       creates: "#{scratch}/a_dir"
@@ -72,7 +72,7 @@ describe 'extract', ->
     # Test with invalid creates option
     mecano
       ssh: ssh
-    .extract
+    .tools.extract
       source: "#{__dirname}/../resources/a_dir.tgz"
       target: scratch
       unless_exists: __dirname
@@ -81,8 +81,9 @@ describe 'extract', ->
     .then next
 
   they 'should pass error for invalid extension', (ssh, next) ->
-    mecano.extract
+    mecano
       ssh: ssh
+    .tools.extract
       source: __filename
       relax: true
     , (err) ->
@@ -90,8 +91,9 @@ describe 'extract', ->
     .then next
 
   they 'should pass error for missing source file', (ssh, next) ->
-    mecano.extract
+    mecano
       ssh: ssh
+    .tools.extract
       source: '/does/not/exist.tgz'
       relax: true
     , (err) ->
@@ -102,7 +104,7 @@ describe 'extract', ->
     # Test a non existing status dir
     mecano
       ssh: ssh
-    .extract
+    .tools.extract
       source: "#{__dirname}/../resources/a_dir.tgz"
       target: scratch
       strip: 1
@@ -116,7 +118,7 @@ describe 'extract', ->
     # Test a non existing extracted dir
     mecano
       ssh: ssh
-    .extract
+    .tools.extract
       source: "#{__dirname}/../resources/a_dir.tgz"
       target: scratch
       strip: 2
