@@ -41,7 +41,6 @@ functions share a common API with flexible options.
     registry.register
       assert: 'mecano/core/assert'
       cache: 'mecano/core/cache'
-      compress: 'mecano/core/compress'
       execute: 'mecano/core/execute'
       cron:
         add: 'mecano/cron/add'
@@ -147,6 +146,7 @@ functions share a common API with flexible options.
         root: 'mecano/ssh/root'
       tools:
         backup: 'mecano/tools/backup'
+        compress: 'mecano/tools/compress'
         extract: 'mecano/tools/extract'
         iptables: 'mecano/tools/iptables'
         git: 'mecano/tools/git'
@@ -160,6 +160,7 @@ functions share a common API with flexible options.
     registry.deprecate 'cgroups', 'mecano/system/cgroups'
     registry.deprecate 'chmod', 'mecano/system/chmod'
     registry.deprecate 'chown', 'mecano/system/chown'
+    registry.deprecate 'compress', 'mecano/tools/compress'
     registry.deprecate 'copy', 'mecano/system/copy'
     registry.deprecate 'cron_add', 'mecano/cron/add'
     registry.deprecate 'cron_remove', 'mecano/cron/remove'

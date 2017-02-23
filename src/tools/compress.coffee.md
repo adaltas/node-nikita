@@ -1,5 +1,5 @@
 
-# `mecano.compress(options, [callback])`
+# `mecano.tools.compress(options, [callback])`
 
 Compress an archive. Multiple compression types are supported. Unless
 specified as an option, format is derived from the source extension. At the
@@ -26,7 +26,7 @@ moment, supported extensions are '.tgz', '.tar.gz', 'tar.xz', 'tar.bz2' and '.zi
 ## Example
 
 ```javascript
-require('mecano').compress({
+require('mecano').tools.compress({
   source: '/path/to/file.tgz'
   destation: '/tmp'
 }, function(err, status){
@@ -37,7 +37,7 @@ require('mecano').compress({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering compress", level: 'DEBUG', module: 'mecano/lib/compress'
+      options.log message: "Entering compress", level: 'DEBUG', module: 'mecano/lib/tools/compress'
       # Validate parameters
       return callback new Error "Missing source: #{options.source}" unless options.source
       return callback new Error "Missing target: #{options.target}" unless options.target
