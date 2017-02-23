@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* #53 registry: api documentation
 * #52 deprecate: new function honoring Node.js native usage
 * #51 extract: move to system namespace
 * #50 file.assert: honor option error with exist, hash and mode

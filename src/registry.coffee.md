@@ -11,6 +11,10 @@
 
     registry = (obj) ->
 
+## Get
+
+Retrieve an action by name.
+
       Object.defineProperty obj, 'get',
         configurable: true
         enumerable: false
@@ -23,6 +27,60 @@
             return cnames[n][''] if cnames[n] and cnames[n][''] and i is name.length - 1
             cnames = cnames[n]
           return null
+
+## Register
+
+Register new actions.
+
+With an action path:
+
+```javascript
+mecano.register('first_action', 'path/to/action')
+mecano.first_action(options);
+```
+
+With a namespace and an action path:
+
+```javascript
+mecano.register(['second', 'action'], 'path/to/action')
+mecano.second.action(options);
+```
+
+With an action object:
+
+```javascript
+mecano.register('third_action', {
+  relax: true,
+  handler: function(options){ console.log(options.relax) }
+})
+mecano.third_action(options);
+```
+
+With a namespace and an action object:
+
+```javascript
+mecano.register(['fourth', 'action'], {
+  relax: true,
+  handler: function(options){ console.log(options.relax) }
+})
+mecano.fourth.action(options);
+```
+
+Multiple actions:
+
+```javascript
+mecano.register({
+  'fifth_action': 'path/to/action'
+  'sixth': {
+    '': 'path/to/sixth',
+    'action': : 'path/to/sixth/actkon'
+  }
+})
+mecano
+.fifth_action(options);
+.sixth(options);
+.sixth.action(options);
+```
 
       Object.defineProperty obj, 'register',
         configurable: true
@@ -79,6 +137,10 @@ mecano.new_function()
           handler.deprecate ?= true
           obj.register old_name, handler
 
+# Registered
+
+Test if a function is depreated or not.
+
       Object.defineProperty obj, 'registered',
         configurable: true
         enumerable: false
@@ -91,6 +153,10 @@ mecano.new_function()
             return true if cnames[n][''] and i is name.length - 1
             cnames = cnames[n]
           return false
+
+## Unregister
+
+Remove an action from registry.
 
       Object.defineProperty obj, 'unregister',
         configurable: true
@@ -113,3 +179,5 @@ mecano.new_function()
 ## Dependencies
 
     {merge} = require './misc'
+
+[deprecate]: https://nodejs.org/api/util.html#util_util_deprecate_function_string
