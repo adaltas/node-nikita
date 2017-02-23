@@ -330,15 +330,22 @@
             options.handler ?= obj.registry.get(options.type)?.handler or registry.get(options.type)?.handler
             return handle_multiple_call Error "Unregistered Middleware: #{options.type}" unless options.handler
             options_handler = options.handler
+            options_handler_length = options.handler.length
             options.handler = undefined
             options_callback = options.callback
             options.callback = undefined
             called = false
             try
               opts = {}
-              for k, v of options
-                opts[k] = v
-              if options_handler.length is 2 # Async style
+              for k, v of options then opts[k] = v
+              options_handler = ( (options_handler) ->
+                util.deprecate ->
+                  options_handler.apply @, arguments
+                , if options.deprecate is true
+                then "#{options.type.join '/'} is deprecated"
+                else "#{options.type.join '/'} is deprecated, use #{options.deprecate}"
+              )(options_handler) if options.deprecate
+              if options_handler_length is 2 # Async style
                 options_handler.call proxy, opts, ->
                   return if killed
                   return handle_multiple_call Error 'Multiple call detected' if called
@@ -519,6 +526,7 @@
 
 ## Dependencies
 
+    util = require 'util'
     registry = require './registry'
     domain = require 'domain'
     each = require 'each'

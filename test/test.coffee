@@ -7,7 +7,7 @@ scratch = "/tmp/mecano-test"
 module.exports = 
   scratch: (context) ->
     context.beforeEach (next) ->
-      mecano.remove
+      mecano.system.remove
         target: scratch
       .system.mkdir target: scratch
       .then next

@@ -14,7 +14,7 @@ describe 'api get', ->
 
     it 'get unregistered module', ->
       module = mecano.get ['does', 'not', 'exists']
-      console.log 'todo regsitry.get', module
+      console.log 'todo registry.get', module
 
     it 'get all modules', ->
       modules = mecano.get()
