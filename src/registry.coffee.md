@@ -115,7 +115,7 @@ mecano
 Deprecate an old or renamed action. Internally, it leverages 
 [Node.js `util.deprecate`][deprecate].
 
-For exemple:
+For example:
 
 ```javascript
 mecano.deprecate('old_function', 'new_function', -> 'my_function')
