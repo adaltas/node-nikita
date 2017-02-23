@@ -7,8 +7,6 @@ moment, supported extensions are '.tgz', '.tar.gz', 'tar.xz', 'tar.bz2' and '.zi
 
 ## Options
 
-*   `creates`   
-    Ensure the given file is created or an error is send in the callback.   
 *   `format`   
     One of 'tgz', 'tar', 'xz', 'bz2' or 'zip'.   
 *   `source`   
@@ -36,11 +34,11 @@ require('mecano').tools.compress({
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       options.log message: "Entering compress", level: 'DEBUG', module: 'mecano/lib/tools/compress'
       # Validate parameters
-      return callback new Error "Missing source: #{options.source}" unless options.source
-      return callback new Error "Missing target: #{options.target}" unless options.target
+      throw Error "Missing source: #{options.source}" unless options.source
+      throw Error "Missing target: #{options.target}" unless options.target
       options.source = path.normalize options.source
       options.target = path.normalize options.target
       dir = path.dirname options.source
@@ -61,21 +59,14 @@ require('mecano').tools.compress({
           format = 'xz'
         else
           ext = path.extname options.source
-          return callback Error "Unsupported extension, got #{JSON.stringify(ext)}"
-      cmd = null
-      switch format
-        when 'tgz' then cmd = "tar czf #{options.target} -C #{dir} #{name}"
-        when 'tar' then cmd = "tar cf  #{options.target} -C #{dir} #{name}"
-        when 'bz2' then cmd = "tar cjf #{options.target} -C #{dir} #{name}"
-        when 'xz'  then cmd = "tar cJf #{options.target} -C #{dir} #{name}"
-        when 'zip' then cmd = "(cd #{dir} && zip -r #{options.target} #{name} && cd -)"
-      @execute
-        cmd: cmd
-      , (err, created) ->
-        return callback err if err
-        fs.exists options.ssh, options.target, (err, exists) ->
-          return callback new Error "Failed to create '#{options.target}'" unless exists
-          callback null, true
+          throw Error "Unsupported extension, got #{JSON.stringify(ext)}"
+      # Run compression
+      @execute switch format
+        when 'tgz' then "tar czf #{options.target} -C #{dir} #{name}"
+        when 'tar' then "tar cf  #{options.target} -C #{dir} #{name}"
+        when 'bz2' then "tar cjf #{options.target} -C #{dir} #{name}"
+        when 'xz'  then "tar cJf #{options.target} -C #{dir} #{name}"
+        when 'zip' then "(cd #{dir} && zip -r #{options.target} #{name} && cd -)"
 
 ## Dependencies
 

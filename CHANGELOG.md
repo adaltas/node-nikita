@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* #56 compress: code simplification
 * #55 compress: move to tools namespace
 * #54 backup: move to tools namespace
 * #53 registry: api documentation
