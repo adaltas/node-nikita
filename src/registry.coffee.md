@@ -50,6 +50,22 @@
             walk name
             merge obj, name
 
+## Deprecate
+
+`mecano.deprecate(old_function, [new_function], action)`
+
+Deprecate an old or renamed action. Internally, it leverages 
+[Node.js `util.deprecate`][deprecate].
+
+For exemple:
+
+```javascript
+mecano.deprecate('old_function', 'new_function', -> 'my_function')
+mecano.new_function()
+# Print
+# (node:75923) DeprecationWarning: old_function is deprecated, use new_function
+```
+
       Object.defineProperty obj, 'deprecate',
         configurable: true
         enumerable: false
