@@ -123,7 +123,6 @@ mecano.system.execute({
         else process.env['USER']
       # Determines if writing is required and eventually convert uid to username
       @call shy: true, (_, callback)->
-        return callback null, true if options.target
         return callback null, false if current_username is 'root'
         return callback null, false unless options.uid
         return callback null, options.uid isnt current_username unless /\d/.test "#{options.uid}"
@@ -132,13 +131,19 @@ mecano.system.execute({
           callback err, options.uid isnt current_username
       # Write script
       @call
-        if: -> @status(-1)
+        if: -> @status(-1) or options.target
         handler: () ->
+          cmd = options.cmd
           options.cmd = "#!/bin/bash\n\n#{options.cmd}"
-          options.target ?= "/tmp/mecano_#{string.hash options.cmd}"
+          options.target = "/tmp/mecano_#{string.hash options.cmd}" if options.target and typeof options.target isnt 'string'
           options.log message: 'Writing bash script to #{JSON.stringify options.target}', level: 'INFO'
-          options.cmd = "su - #{options.uid} -c 'bash /tmp/mecano_#{string.hash options.cmd}'"
-          @file target: options.target
+          options.cmd = "bash #{options.target}"
+          options.cmd = "su - #{options.uid} -c '#{options.cmd}'" if options.uid
+          @file
+            target: options.target
+            content: cmd
+            uid: options.uid
+            shy: true
       # Execute
       @call (_, callback) ->
         child = exec options
@@ -190,11 +195,12 @@ mecano.system.execute({
               options.log message: "Skip exit code \"#{code}\"", level: 'INFO', module: 'mecano/lib/system/execute'
             callback null, status
           , 1
-      # @system.remove
-      #   if_exists: true
-      #   target: -> @options.target
-      @then (err, status) ->
-        callback err, status, result.stdout, result.stderr, result.code
+      @then (err1, status) ->
+        @system.remove
+          if: options.target
+          target: options.target
+        @then (err2) ->
+          callback err1 or err2, status, result.stdout, result.stderr, result.code
 
 ## Dependencies
 

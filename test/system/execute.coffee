@@ -169,6 +169,42 @@ describe 'system.execute', ->
         stderr.should.eql 'monde' unless err
       .then next
 
+  describe 'target', ->
+    
+    they 'in generated path', (ssh, next) ->
+      mecano
+        ssh: ssh
+      .system.execute
+        cmd: "echo $BASH"
+        target: true
+      , (err, executed, stdout, stderr) ->
+        stdout.should.eql '/bin/bash\n'
+      .then next
+        
+    they 'in user path', (ssh, next) ->
+      mecano
+        ssh: ssh
+      .system.execute
+        cmd: "echo $BASH"
+        target: "#{scratch}/my_script"
+      , (err, executed, stdout, stderr) ->
+        stdout.should.eql '/bin/bash\n'
+      .file.assert
+        target: "#{scratch}/my_script"
+        not: true
+      .then next
+        
+    they 'honors exit code', (ssh, next) ->
+      mecano
+        ssh: ssh
+      .system.execute
+        cmd: "exit 2"
+        target: true
+        code_skipped: 2
+      , (err, status) ->
+        status.should.be.false() unless err
+      .then next
+
   describe 'log', ->
 
     they 'stdin, stdout, stderr', (ssh, next) ->
