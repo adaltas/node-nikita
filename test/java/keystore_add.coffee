@@ -64,6 +64,7 @@ describe 'java.keystore_add', ->
     they 'create new cacerts file', (ssh, next) ->
       mecano
         ssh: ssh
+        debug: true
       .java.keystore_add
         keystore: "#{scratch}/cacerts"
         storepass: "changeit"
@@ -139,12 +140,32 @@ describe 'java.keystore_add', ->
         storepass: "changeit"
         caname: "my_alias"
         cacert: "#{__dirname}/keystore/certs1/cacert.pem"
-        shy: true
       .java.keystore_add
         keystore: "#{scratch}/cacerts"
         storepass: "changednow"
         caname: "my_alias"
         cacert: "#{__dirname}/keystore/certs1/cacert.pem"
-      .then (err, status) ->
+      , (err, status) ->
         status.should.be.true() unless err
-        next err
+      .then next
+  
+  describe 'option openssl', ->
+    
+    they 'throw error if not detected', (ssh, next) ->
+      mecano
+        ssh: ssh
+      .java.keystore_add
+        keystore: "#{scratch}/cacerts"
+        storepass: "changeit"
+        caname: "my_alias"
+        cacert: "#{__dirname}/keystore/certs2/cacert.pem"
+        key: "#{__dirname}/keystore/certs2/node_1_key.pem"
+        cert: "#{__dirname}/keystore/certs2/node_1_cert.pem"
+        keypass: 'mypassword'
+        openssl: '/doesnt/not/exists'
+        name: 'node_1'
+        relax: true
+      , (err) ->
+        err.message.should.eql 'OpenSSL command line tool not detected'
+      .then next
+    

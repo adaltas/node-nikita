@@ -102,7 +102,3 @@ describe 'java.keystore_remove', ->
         """
         code: 1
       .then next
-
-
-
-

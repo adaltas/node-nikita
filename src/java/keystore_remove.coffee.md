@@ -38,16 +38,17 @@ require('mecano').java.keystore_add([{
 ```
 ## Source Code
 
-    module.exports = (options, callback) ->
-      return callback new Error "Required option 'keystore'" unless options.keystore
-      return callback new Error "Required option 'storepass'" unless options.storepass
-      return callback new Error "Required option 'name' or 'caname'" unless options.name or options.caname
+    module.exports = (options) ->
+      throw Error "Required option 'keystore'" unless options.keystore
+      throw Error "Required option 'storepass'" unless options.storepass
+      throw Error "Required option 'name' or 'caname'" unless options.name or options.caname
       options.caname = [options.caname] unless Array.isArray options.caname
       options.name = [options.name] unless Array.isArray options.name
       aliases = [options.caname..., options.name...].join(' ').trim()
       @system.execute
+        target: true
         cmd: """
-        [[ -f "#{options.keystore}" ]] || # Nothing to do if not a file
+        test -f "#{options.keystore}" || # Nothing to do if not a file
         exit 3
         count=0
         for alias in #{aliases}; do
@@ -60,4 +61,3 @@ require('mecano').java.keystore_add([{
         exit 0
         """
         code_skipped: 3
-      .then callback
