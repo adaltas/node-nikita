@@ -6,12 +6,10 @@ do
   echo 'waiting for kinit to succeed'
   sleep 4
 done
-
 # We have TTY, so probably an interactive container...
 if test -t 0; then
   # Run supervisord detached...
   supervisord -c /etc/supervisord.conf
-  
   # Some command(s) has been passed to container? Execute them and exit.
   # No commands provided? Run bash.
   if [[ $@ ]]; then 
@@ -20,7 +18,6 @@ if test -t 0; then
     export PS1='[\u@\h : \w]\$ '
     /bin/bash
   fi
-
 # Detached mode? Run supervisord in foreground, which will stay until container is stopped.
 else
   supervisord -c /etc/supervisord.conf

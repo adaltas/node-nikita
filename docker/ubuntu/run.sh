@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 : ${TEST_FILES:='test'}
 
@@ -10,11 +10,18 @@ do
   echo 'waiting for kinit to succeed'
   sleep 4
 done
-
-if [ $DEBUG -eq '1' ]; then
-  /bin/bash
+# We have TTY, so probably an interactive container...
+if test -t 0; then
+  # Some command(s) has been passed to container? Execute them and exit.
+  # No commands provided? Run bash.
+  if [[ $@ ]]; then 
+    node_modules/.bin/mocha $@
+  else 
+    export PS1='[\u@\h : \w]\$ '
+    /bin/bash
+  fi
 else
-  node_modules/.bin/mocha $TEST_FILES
+  node_modules/.bin/mocha $@
 fi
 
 # For debuging purpose
