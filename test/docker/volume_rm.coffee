@@ -19,7 +19,6 @@ describe 'docker volume rm', ->
     mecano
       ssh: ssh
       docker: config.docker
-      debug: true
     .docker.volume_rm
       name: 'my_volume'
       relax: true
