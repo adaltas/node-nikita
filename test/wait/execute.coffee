@@ -58,22 +58,17 @@ describe 'wait execute', ->
       mecano
         ssh: ssh
       .on 'text', (log) ->
-        logs.push "[#{log.level}] #{log.message}" if /Attempt/.test log.message
+        logs.push "[#{log.level}] #{log.message}" if /Attempt #\d/.test log.message
       .call ->
         setTimeout ->
           fs.mkdir ssh, "#{scratch}/a_file", -> # ok
-        , 100
+        , 200
       .wait.execute
         cmd: "test -d #{scratch}/a_file"
-        interval: 60
-        # log: (msg) -> logs.push msg if /Attempt/.test msg
+        interval: 100
       .then (err) ->
         return next err if err
-        logs.should.eql [
-          '[INFO] Attempt #1'
-          '[INFO] Attempt #2'
-          '[INFO] Attempt #3'
-        ]
+        logs.length.should.be.within 2, 4
         next()
 
   describe 'quorum', ->

@@ -64,7 +64,6 @@ describe 'java.keystore_add', ->
     they 'create new cacerts file', (ssh, next) ->
       mecano
         ssh: ssh
-        debug: true
       .java.keystore_add
         keystore: "#{scratch}/cacerts"
         storepass: "changeit"
