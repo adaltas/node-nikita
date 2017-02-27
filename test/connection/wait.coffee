@@ -27,7 +27,7 @@ describe 'connection.wait', ->
         ssh: ssh
         server1: server port
       .call ->
-        setTimeout @options.server1.listen, 100
+        setTimeout @options.server1.listen, 200
       .connection.wait
         host: 'localhost'
         port: port
@@ -44,8 +44,8 @@ describe 'connection.wait', ->
         ssh: ssh
         server1: server port1
         server2: server port2
-      .call -> setTimeout @options.server1.listen, 100
-      .call -> setTimeout @options.server2.listen, 100
+      .call -> setTimeout @options.server1.listen, 200
+      .call -> setTimeout @options.server2.listen, 200
       .connection.wait
         server: host: 'localhost', port: port1
       , (err, status) ->
@@ -56,8 +56,8 @@ describe 'connection.wait', ->
         status.should.be.false()
       .call  (_, callback) -> @options.server1.close callback
       .call  (_, callback) -> @options.server2.close callback
-      .call -> setTimeout @options.server1.listen, 100
-      .call -> setTimeout @options.server2.listen, 100
+      .call -> setTimeout @options.server1.listen, 200
+      .call -> setTimeout @options.server2.listen, 200
       .connection.wait
         server: [
           [{host: 'localhost', port: port1}]
@@ -75,7 +75,7 @@ describe 'connection.wait', ->
         ssh: ssh
         server1: server port
       .call ->
-        setTimeout @options.server1.listen, 100
+        setTimeout @options.server1.listen, 200
       .connection.wait
         server: "localhost:#{port}"
       , (err, status) ->
@@ -119,7 +119,7 @@ describe 'connection.wait', ->
         @options.server1.close callback
       # Status true
       .call ->
-        setTimeout @options.server1.listen, 100
+        setTimeout @options.server1.listen, 200
       .connection.wait
         host: 'localhost'
         port: port
@@ -138,9 +138,9 @@ describe 'connection.wait', ->
         server1: server port1
         server2: server port2
       .call ->
-        setTimeout @options.server1.listen, 100
+        setTimeout @options.server1.listen, 200
       .call ->
-        setTimeout @options.server2.listen, 100
+        setTimeout @options.server2.listen, 200
       .connection.wait
         servers: [
           { host: 'localhost', port: port1 }

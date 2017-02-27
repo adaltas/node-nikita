@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* test: fix travis #60
 * execute: execute a file in bash if target #61
 * execute: move to system namespace #59
 * cache: move to file namespace #58
