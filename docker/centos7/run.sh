@@ -14,7 +14,7 @@ if test -t 0; then
   # No commands provided? Run bash.
   if [[ $@ ]]; then 
     node_modules/.bin/mocha $@
-  else 
+  else
     export PS1='[\u@\h : \w]\$ '
     /bin/bash
   fi

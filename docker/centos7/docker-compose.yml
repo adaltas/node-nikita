@@ -9,19 +9,19 @@
 version: '2'
 services:
   nodejs:
-    privileged: true
     build: .
     image: mecano_centos7_nodejs
     volumes:
       - ../..:/mecano
     depends_on:
-      - krb5
       - dind
+      - krb5
+      - postgres
+      - mysql
     environment:
       MECANO_TEST: /mecano/docker/centos7/test.coffee
       DOCKER_HOST: 'tcp://dind:2375'
       TMPDIR: '/var/tmp'
-    entrypoint: '/usr/sbin/init'
   dind:
     image: docker:dind
     privileged: true
