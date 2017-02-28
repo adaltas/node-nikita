@@ -1,9 +1,7 @@
 
 module.exports =
   disable_docker: false
-  isCentos6: true
-  isCentos7: false
-  isUbuntu: false
+  disable_discover: false
   disable_docker_volume: true # centos6 ship docker 1.7 which doesnt support volume
   disable_krb5_addprinc: false # not sure if working
   disable_krb5_delprinc: false # not sure if working
@@ -13,6 +11,7 @@ module.exports =
   disable_ldap_user: true # can be activated
   disable_service: false # cant be activated
   disable_db: false # can be activated
+  disable_system_tmpfs: true #can not be activated
   docker: # eg `docker-machine create --driver virtualbox mecano || docker-machine start mecano`
     host: 'dind:2375'
     # machine: 'mecano'

@@ -1,6 +1,6 @@
 
 module.exports =
-  disable_discover: false
+  disable_discover: false # can be activated
   disable_docker: true
   disable_krb5_addprinc: false # not sure if working
   disable_krb5_delprinc: false # not sure if working
