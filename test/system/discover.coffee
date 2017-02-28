@@ -7,7 +7,7 @@ describe 'service system discover', ->
   
   @timeout 30000
   config = test.config()
-  return if config.disable_discover
+  return if config.disable_system_tmpfs
 
   they 'they detect OS type and release', (ssh, next) ->
     mecano
