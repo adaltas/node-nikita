@@ -5,7 +5,7 @@ test = require '../test'
 they = require 'ssh2-they'
 misc = require '../../src/misc'
 
-describe 'cgroups', ->
+describe 'system.cgroups', ->
   
   config = test.config()
   return unless config.isCentos6 or config.isCentos7

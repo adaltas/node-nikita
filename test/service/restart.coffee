@@ -3,7 +3,7 @@ mecano = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
-describe 'service restart', ->
+describe 'service.restart', ->
   
   @timeout 20000
   config = test.config()

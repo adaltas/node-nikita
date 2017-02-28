@@ -5,7 +5,7 @@ they = require 'ssh2-they'
 fs = require 'ssh2-fs'
 
 
-describe 'docker save', ->
+describe 'docker.save', ->
 
   scratch = test.scratch @
   config = test.config()

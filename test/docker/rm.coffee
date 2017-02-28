@@ -6,7 +6,7 @@ fs = require 'ssh2-fs'
 docker = require '../../src/misc/docker'
 
 
-describe 'docker rm', ->
+describe 'docker.rm', ->
 
   scratch = test.scratch @
   config = test.config()

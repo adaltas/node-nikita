@@ -8,7 +8,7 @@ mecano = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
-describe 'docker volume rm', ->
+describe 'docker.volume_rm', ->
 
   config = test.config()
   return if config.disable_docker

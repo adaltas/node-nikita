@@ -5,7 +5,7 @@ mecano = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
-describe 'log cli', ->
+describe 'log.cli', ->
   
   scratch = test.scratch @
   

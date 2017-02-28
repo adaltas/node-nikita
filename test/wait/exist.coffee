@@ -4,7 +4,7 @@ test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
 
-describe 'wait exist', ->
+describe 'wait.exist', ->
 
   scratch = test.scratch @
 

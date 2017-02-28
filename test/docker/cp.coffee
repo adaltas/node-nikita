@@ -7,7 +7,7 @@ test = require '../test'
 they = require 'ssh2-they'
 
 
-describe 'docker cp', ->
+describe 'docker.cp', ->
 
   config = test.config()
   return if config.disable_docker

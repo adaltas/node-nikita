@@ -5,7 +5,7 @@ test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
 
-describe 'touch', ->
+describe 'file.touch', ->
 
   scratch = test.scratch @
   

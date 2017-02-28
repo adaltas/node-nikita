@@ -4,7 +4,7 @@ krb5 = require '../../src/misc/krb5'
 test = require '../test'
 they = require 'ssh2-they'
 
-describe 'krb5.addprinc', ->
+describe 'krb5.ticket', ->
 
   config = test.config()
   return if config.disable_krb5_addprinc

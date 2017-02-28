@@ -11,7 +11,7 @@ they = require 'ssh2-they'
 docker = require '../../src/misc/docker'
 
 
-describe 'docker status', ->
+describe 'docker.status', ->
 
   scratch = test.scratch @
   config = test.config()

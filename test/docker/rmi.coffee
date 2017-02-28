@@ -5,7 +5,7 @@ they = require 'ssh2-they'
 fs = require 'ssh2-fs'
 docker = require '../../src/misc/docker'
 
-describe 'docker rmi', ->
+describe 'docker.rmi', ->
 
   scratch = test.scratch @
   config = test.config()

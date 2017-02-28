@@ -6,7 +6,7 @@ path = require 'path'
 test = require '../test'
 they = require 'ssh2-they'
 
-describe 'remove', ->
+describe 'system.remove', ->
   
   scratch = test.scratch @
   

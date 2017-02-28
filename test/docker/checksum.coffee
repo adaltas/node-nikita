@@ -8,7 +8,7 @@ test = require '../test'
 they = require 'ssh2-they'
 docker = require '../../src/misc/docker'
 
-describe 'docker checksum', ->
+describe 'docker.checksum', ->
 
   config = test.config()
   return if config.disable_docker

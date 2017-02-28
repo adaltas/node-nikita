@@ -7,7 +7,7 @@ they = require 'ssh2-they'
 fs = require 'ssh2-fs'
 
 
-describe 'docker pull', ->
+describe 'docker.pull', ->
 
   scratch = test.scratch @
   destination = "#{scratch}/default.script"

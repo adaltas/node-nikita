@@ -7,7 +7,7 @@ they = require 'ssh2-they'
 
 machine = 'ryba'
 
-describe 'docker stop', ->
+describe 'docker.stop', ->
 
   scratch = test.scratch @
   config = test.config()

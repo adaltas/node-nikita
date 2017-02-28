@@ -5,7 +5,7 @@ they = require 'ssh2-they'
 fs = require 'ssh2-fs'
 
 
-describe 'docker load', ->
+describe 'docker.load', ->
 
   machine= 'dev'
   config = test.config()

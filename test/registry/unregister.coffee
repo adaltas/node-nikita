@@ -2,7 +2,7 @@
 mecano = require '../../src'
 test = require '../test'
 
-describe 'api unregister', ->
+describe 'registry.unregister', ->
 
   scratch = test.scratch @
 

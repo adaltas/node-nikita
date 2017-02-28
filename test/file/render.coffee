@@ -4,7 +4,7 @@ fs = require 'fs'
 they = require 'ssh2-they'
 test = require '../test'
 
-describe 'render', ->
+describe 'file.render', ->
 
   scratch = test.scratch @
 

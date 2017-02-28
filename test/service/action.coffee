@@ -3,7 +3,7 @@ mecano = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
-describe 'service action', ->
+describe 'service.action', ->
   
   @timeout 30000
   config = test.config()

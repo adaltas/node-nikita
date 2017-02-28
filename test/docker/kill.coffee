@@ -7,7 +7,7 @@ they = require 'ssh2-they'
 fs = require 'ssh2-fs'
 
 
-describe 'docker kill', ->
+describe 'docker.kill', ->
 
   scratch = test.scratch @
   target = "#{scratch}/default.script"

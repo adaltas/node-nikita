@@ -4,7 +4,7 @@ they = require 'ssh2-they'
 test = require '../test'
 fs = require 'ssh2-fs'
 
-describe 'extract', ->
+describe 'tools.extract', ->
 
   scratch = test.scratch @
 

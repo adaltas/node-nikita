@@ -33,7 +33,7 @@ ip = (ssh, machine, callback) ->
       ipadress = stdout.trim()
       return callback null, ipadress
 
-describe 'docker run', ->
+describe 'docker.run', ->
 
   config = test.config()
   return if config.disable_docker

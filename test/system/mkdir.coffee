@@ -6,7 +6,7 @@ test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
 
-describe 'mkdir', ->
+describe 'system.mkdir', ->
 
   scratch = test.scratch @
 

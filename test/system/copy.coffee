@@ -23,7 +23,7 @@ checkDir = (ssh, dir, callback) ->
       scratchFiles.sort().should.eql dirFiles.sort()
       callback()
 
-describe 'copy', ->
+describe 'system.copy', ->
 
   scratch = test.scratch @
 
