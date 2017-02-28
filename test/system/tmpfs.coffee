@@ -10,10 +10,9 @@ misc = require '../../src/misc'
 
 describe 'system.tmpfs', ->
   config = test.config()
-  return  unless config.isCentos6 or config.isCentos7
+  return  if config.disable_system_tmpfs
   scratch = test.scratch @
   describe 'generate without merge', ->
-    return unless config.isCentos7
     they 'simple mount group configuration with target', (ssh, next) ->
       mecano
         ssh: ssh
@@ -114,7 +113,6 @@ describe 'system.tmpfs', ->
       .then next
   
   describe 'generate with merge', ->
-    return unless config.isCentos7
     they 'multiple file with target', (ssh, next) ->
       mecano
         ssh: ssh
@@ -207,7 +205,6 @@ describe 'system.tmpfs', ->
       .then next
 
   describe 'default target Centos/Redhat 7', ->
-    return unless config.isCentos7
     they 'simple mount group configuration', (ssh, next) ->
       mecano
         ssh: ssh
@@ -255,21 +252,4 @@ describe 'system.tmpfs', ->
         content: """
           d /var/run/file_1 0644 root root 10s -
         """
-      .then next
-  
-  describe 'OS discovery', ->
-    return unless config.isCentos6
-    they 'detect Centos/Redhat 6 not supported', (ssh, next) ->
-      mecano
-        ssh: ssh
-      .system.tmpfs
-        mount: '/var/run/file_1'
-        uid: 'root'
-        gid: 'root'
-        age: '10s'
-        argu: '-'
-        perm: '0644'
-        merge: false
-      , (err) ->
-        err.message.should.eql 'tempfs not available on your OS'
       .then next

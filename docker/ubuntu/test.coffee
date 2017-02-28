@@ -1,5 +1,6 @@
 
 module.exports =
+  disable_discover: false
   disable_docker: true
   disable_krb5_addprinc: false # not sure if working
   disable_krb5_delprinc: false # not sure if working
@@ -9,6 +10,7 @@ module.exports =
   disable_ldap_user: true # can be activated
   disable_service: false # cant be activated
   disable_db: true # can be activated
+  disable_system_tmpfs: true #can not be activated
   docker: # eg `docker-machine create --driver virtualbox mecano || docker-machine start mecano`
     host: 'dind:2375'
     # machine: 'mecano'
@@ -34,6 +36,6 @@ module.exports =
     host: 'localhost'
     username: 'root'
   service:
-    name: 'cron'
-    srv_name: 'cron'
-    chk_name: 'cron'
+    name: 'nginx-light'
+    srv_name: 'nginx'
+    chk_name: 'nginx'

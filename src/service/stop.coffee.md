@@ -49,11 +49,15 @@ require('mecano').service.stop([{
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       # Action
       options.log message: "Stop service #{options.name}", level: 'INFO', module: 'mecano/lib/service/stop'
-      @call discover.system
-      @call discover.loader, -> options.loader ?= options.store['mecano:service:loader']
+      options.os ?= {}
+      @system.discover (err, status, os) -> 
+        options.os.type ?= os.type
+        options.os.release ?= os.release
+      @service.discover (err, status, loader) -> 
+        options.loader ?= loader
       @call
-        if: -> options.store['mecano:system:type'] in ['redhat','centos']
-        if_exec: "ls /lib/systemd/system/*.service /etc/systemd/system/*.service /etc/rc.d/* | grep #{options.name}"
+        if: -> options.os.type in ['redhat','centos','ubuntu']
+        if_exec: "ls /lib/systemd/system/*.service /etc/systemd/system/*.service /etc/rc.d/ /etc/init.d/* | grep #{options.name}"
         handler: ->
           cmd = switch options.loader
             when 'systemctl' then "systemctl stop #{options.name}"
@@ -70,7 +74,3 @@ require('mecano').service.stop([{
           , (err, stopped) ->
             throw err if err
             options.store["mecano.service.#{options.name}.status"] = 'stopped' if not err and options.cache
-      
-## Discover
-
-    discover = require '../misc/discover'

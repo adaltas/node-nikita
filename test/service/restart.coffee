@@ -15,9 +15,9 @@ describe 'service restart', ->
     .service
       name: config.service.name
     .service.start
-      name: 'crond'
+      name: config.service.srv_name
     .service.restart
-      name: 'crond'
+      name: config.service.srv_name
     , (err, restarted) ->
       restarted.should.be.true()
     .then next

@@ -50,14 +50,20 @@ require('mecano').service.start([{
       # Action
       options.log message: "Status for service #{options.name}", level: 'INFO', module: 'mecano/lib/service/status'
       options.log message: "Option code_stopped is #{options.code_stopped}", level: 'DEBUG', module: 'mecano/lib/service/status' unless options.code_stopped is 3
-      @call discover.loader, -> options.loader ?= options.store['mecano:service:loader']
+      options.os ?= {}
+      @system.discover (err, status, os) ->
+        options.os.type ?= os.type
+        options.os.release ?= os.release
+      @service.discover (err, status, loader) ->
+        options.loader ?= loader
       @call -> @system.execute
-        if: -> options.store['mecano:system:type'] in ['redhat','centos']
+        if: -> options.os.type in ['redhat','centos','ubuntu']
         cmd: """
           ls \
             /lib/systemd/system/*.service \
             /etc/systemd/system/*.service \
             /etc/rc.d/* \
+            /etc/init.d/* \
           | grep -w "#{options.name}" || exit 1
           case "#{options.loader}" in
             systemctl)
@@ -79,7 +85,3 @@ require('mecano').service.start([{
         options.log message: "Status for #{options.name} is #{status}", level: 'INFO', module: 'mecano/lib/service/status'
         # throw err if err
         options.store["mecano.service.#{options.name}.status"] = "#{status}" if options.cache
-
-## Discover
-  
-    discover = require '../misc/discover'

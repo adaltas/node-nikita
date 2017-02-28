@@ -45,7 +45,7 @@ require('mecano').service.install([{
       #   continue unless start
       #   installed.push pkg[1] if pkg = /^([^\. ]+?)\./.exec pkg
       cacheonly = if options.cacheonly then '-C' else ''
-      @call discover.system
+      @system.discover
       @system.execute
         cmd: """
         if which yum >/dev/null; then exit 1; fi
@@ -136,4 +136,3 @@ require('mecano').service.install([{
 ## Dependencies
 
     string = require '../misc/string'
-    discover = require '../misc/discover'

@@ -53,7 +53,8 @@ require('mecano').service.startup([{
       # Action
       options.log message: "Startup service #{options.name}", level: 'INFO', module: 'mecano/lib/service/startup'
       modified = false
-      @call discover.loader, -> options.loader ?= options.store['mecano:service:loader']
+      @service.discover (err, status, loader) -> 
+        options.loader ?= loader
       @call
         if: -> options.loader is 'service'
         handler: ->
@@ -126,7 +127,3 @@ require('mecano').service.startup([{
           @system.execute
             if: -> @status(-2) and (not options.startup)
             cmd: "systemctl disable #{options.name}"
-
-## Dependencies
-    
-    discover = require '../misc/discover'

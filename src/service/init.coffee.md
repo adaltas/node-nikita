@@ -45,17 +45,23 @@ Reload the service daemon provider depending on the os.
       # detect daemon loader provider to construct target
       options.name ?= path.basename(options.source).split('.')[0]
       options.target ?= "/etc/init.d/#{options.name}"
-      @call discover.loader, options
+      options.os ?= {}
+      @system.discover (err, status, os) -> 
+        options.os.type ?= os.type
+        options.os.release ?= os.release
+      @service.discover (err, status, loader) -> 
+        options.loader ?= loader
       # discover loader to put in cache
-      @call discover.system
-      @call discover.loader, -> options.loader ?= options.store['mecano:service:loader']
       @call ->
         cmd = "systemctl status #{options.name} 2>\&1 "
-        if options.store['mecano:system:type'] in ['redhat','centos'] and options.loader is 'systemctl'
-          cmd += switch options.store['mecano:system:release'].split('.')[1]
-            when '1' then "| grep '(Reason: No such file or directory)'"
-            when '2' then "| grep 'Unit #{options.name}.service could not be found.'"
-            when '3' then "| grep 'Unit #{options.name}.service could not be found.'"
+        switch options.loader
+          when 'service'
+            cmd += "| grep '(Reason: No such file or directory)'" if options.os.type in ['redhat','centos']
+            cmd += "| grep '(#{options.name}: unrecognized service)'" if options.os.type in ['ubuntu']
+          when 'systemctl'  
+            cmd += "| grep '(Reason: No such file or directory)'" if options.os.type in ['redhat','centos'] and /^7.1/.exec options.os.release
+            cmd += "| grep 'Unit #{options.name}.service could not be found.'" if options.os.type in ['redhat','centos'] and /^7.2/.exec options.os.release
+            cmd += "| grep 'Unit #{options.name}.service could not be found.'" if options.os.type in ['redhat','centos'] and /^7.3/.exec options.os.release
         @file.render 
           target: options.target
           source: options.source
@@ -78,6 +84,5 @@ Reload the service daemon provider depending on the os.
     
     fs = require 'ssh2-fs'
     path = require 'path'
-    discover = require '../misc/discover'
 
 [sysvinit vs systemd]:(https://www.digitalocean.com/community/tutorials/how-to-configure-a-linux-service-to-start-automatically-after-a-crash-or-reboot-part-2-reference)

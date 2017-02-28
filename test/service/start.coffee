@@ -13,7 +13,7 @@ describe 'service start', ->
     mecano
       ssh: ssh
     .service
-      name: 'cronie'
+      name: config.service.name
     .service.stop
       name: config.service.srv_name
     .service.start
@@ -61,10 +61,10 @@ describe 'service start', ->
       srv_name: config.service.srv_name
       action: 'stop'
     .call (options) ->
-      (options.store["mecano.service.crond.status"] is undefined).should.be.true()
+      (options.store["mecano.service.#{config.service.srv_name}.status"] is undefined).should.be.true()
     .service.start # Detect already started
       name: config.service.srv_name
       cache: true
     .call (options) ->
-      options.store["mecano.service.crond.status"].should.eql 'started'
+      options.store["mecano.service.#{config.service.srv_name}.status"].should.eql 'started'
     .then next

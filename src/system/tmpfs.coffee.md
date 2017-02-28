@@ -58,8 +58,11 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
       options.content[options.mount]['type'] = 'd'
       if options.uid?
         options.name ?= options.uid unless /^[0-9]+/.exec options.uid
-      @call discover.system, ->
-        available = (options.store['mecano:system:type'] in ['redhat','centos']) and (options.store['mecano:system:release'][0] is '7')
+      options.os ?= {}
+      @system.discover (err, status, os) -> 
+        options.os.type ?= os.type
+        options.os.release ?= os.release
+        available = (options.os.type in ['redhat','centos']) and (/^7./.test options.os.release)
         throw Error 'tempfs not available on your OS' unless available
         options.log message: "discovering tmpfs file target", level: 'DEBUG', module: 'mecano/tmpfs/index'
         options.target ?=  if options.name? then "/etc/tmpfiles.d/#{options.name}.conf" else '/etc/tmpfiles.d/default.conf'
@@ -94,7 +97,6 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
     fs = require 'ssh2-fs'
     path = require 'path'
     uid_gid = require '../misc/uid_gid'
-    discover = require '../misc/discover'
     misc = require '../misc'
     {merge} = require '../misc'
 

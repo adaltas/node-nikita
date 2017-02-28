@@ -84,8 +84,6 @@ require('mecano').service([{
       # check /etc/system-release for redhat and centos
       # Todo: Check /etc/issue for ubuntu
       options.store ?= {}
-      @call discover.system
-      @call discover.loader
       @service.install
         name: pkgname
         cache: options.cache
@@ -112,10 +110,6 @@ require('mecano').service([{
         @service.restart
           name: srvname
           if: -> @status(-3) and 'restart' in options.action
-
-## Dependencies
-
-    discover = require '../misc/discover'
 
 ## Further Reading
 

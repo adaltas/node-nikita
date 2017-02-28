@@ -48,10 +48,10 @@ describe 'service stop', ->
       ssh: ssh
     .service.install config.service.name
     .call (options) ->
-      (options.store["mecano.service.crond.status"] is undefined).should.be.true()
+      (options.store["mecano.service.#{config.service.srv_name}.status"] is undefined).should.be.true()
     .service.stop # Detect already started
       name: config.service.srv_name
       cache: true
     .call (options) ->
-      options.store["mecano.service.crond.status"].should.eql 'stopped'
+      options.store["mecano.service.#{config.service.srv_name}.status"].should.eql 'stopped'
     .then next

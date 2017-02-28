@@ -43,9 +43,9 @@ require('mecano').service.start([{
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       # Action
       options.log message: "Restart service #{options.name}", level: 'INFO', module: 'mecano/lib/service/restart'
-      @call discover.loader
+      @service.discover (err, status, loader) -> 
+        options.loader ?= loader
       @call ->
-        options.loader ?= options.store['mecano:service:loader']
         cmd = switch options.loader
           when 'systemctl' then "systemctl restart #{options.name}"
           when 'service' then "service #{options.name} restart"
@@ -55,7 +55,3 @@ require('mecano').service.start([{
         , (err, restarted) ->
           throw err if err
           options.store["mecano.service.#{options.name}.status"] = 'started' if restarted
-
-## Dependencies
-    
-    discover = require '../misc/discover'

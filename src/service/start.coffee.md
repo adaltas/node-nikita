@@ -49,13 +49,17 @@ require('mecano').service.start([{
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       # Action
       options.log message: "Start service #{options.name}", level: 'INFO', module: 'mecano/lib/service/start'
-      @call discover.system
-      @call discover.loader, -> options.loader ?= options.store['mecano:service:loader']
+      options.os ?= {}
+      @system.discover (err, status, os) -> 
+        options.os.type ?= os.type
+        options.os.release ?= os.release
+      @service.discover (err, status, loader) -> 
+        options.loader ?= loader
       @call
-        if: -> options.store['mecano:system:type'] in ['redhat','centos']
-        if_exec: "ls /lib/systemd/system/*.service /etc/systemd/system/*.service /etc/rc.d/* | grep #{options.name}"
+        if: -> options.os.type in ['redhat', 'centos', 'ubuntu']
+        if_exec: "ls /lib/systemd/system/*.service /etc/systemd/system/*.service /etc/rc.d/* /etc/init.d/* | grep #{options.name}"
         handler: ->
-          cmd = switch options.store['mecano:service:loader']
+          cmd = switch options.loader
             when 'systemctl' then "systemctl start #{options.name}"
             when 'service' then "service #{options.name} start"
             else throw Error 'Init System not supported'
@@ -73,7 +77,3 @@ require('mecano').service.start([{
           , (err, started) ->
             throw err if err
             options.store["mecano.service.#{options.name}.status"] = 'started' if not err and options.cache
-
-## Discover
-    
-    discover = require '../misc/discover'

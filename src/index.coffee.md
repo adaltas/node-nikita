@@ -118,6 +118,7 @@ functions share a common API with flexible options.
         wait: '': 'mecano/connection/wait'
       service:
         '': 'mecano/service'
+        discover: 'mecano/service/discover'
         install: 'mecano/service/install'
         init: 'mecano/service/init'
         remove: 'mecano/service/remove'
@@ -131,6 +132,7 @@ functions share a common API with flexible options.
         chmod: 'mecano/system/chmod'
         chown: 'mecano/system/chown'
         copy: 'mecano/system/copy'
+        discover: 'mecano/system/discover'
         execute: 'mecano/system/execute'
         group: 'mecano/system/group'
         limits: 'mecano/system/limits'
