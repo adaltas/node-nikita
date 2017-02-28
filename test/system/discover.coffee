@@ -32,7 +32,6 @@ describe 'service system discover', ->
       handler: (options) ->
         mecano
           ssh: ssh
-          debug: true
         .system.discover (err, status, os) ->
           #os object
           os.type.should.match /^(ubuntu)/
