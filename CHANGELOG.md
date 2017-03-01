@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* kv: shared key/value store with events #64
 * tempfs: fix test when not executed on centos #63
 * samples: update mkdir #62
 * test: fix travis #60
