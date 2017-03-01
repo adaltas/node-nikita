@@ -40,6 +40,10 @@ functions share a common API with flexible options.
 
     registry.register
       assert: 'mecano/core/assert'
+      kv:
+        get: 'mecano/core/kv/get'
+        engine: 'mecano/core/kv/engine'
+        set: 'mecano/core/kv/set'
       cron:
         add: 'mecano/cron/add'
         remove: 'mecano/cron/remove'
