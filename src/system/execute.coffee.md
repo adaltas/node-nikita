@@ -96,7 +96,6 @@ mecano.system.execute({
 
     module.exports = (options, callback) ->
       options.log message: "Entering execute", level: 'DEBUG', module: 'mecano/lib/system/execute'
-      stds = options.user_args
       # Note, heres how to get username from uid
       # 
       # Validate parameters
