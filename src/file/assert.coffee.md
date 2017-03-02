@@ -16,6 +16,8 @@ Assert a file exists or a provided text match the content of a text file.
 *   `not` (boolean)   
     Negate the validation.   
 *   `sha1` (string)   
+    Validate signature.    
+*   `sha256` (string)   
     Validate signature.   
 *   `source` (string)   
     Alias of option "target".   
@@ -53,7 +55,7 @@ mecano.assert({
         throw Error "Invalid option 'content': expect string or buffer"
       # Assert file exists
       @call
-        unless: options.content or options.md5 or options.sha1 or options.mode
+        unless: options.content or options.md5 or options.sha1 or options.sha256 or options.mode
       , (_, callback) ->
         fs.exists options.ssh, options.target.toString(), (err, exists) ->
           unless options.not
@@ -83,11 +85,13 @@ mecano.assert({
       # Assert content match
       (algo = 'md5'; hash = options.md5) if options.md5
       (algo = 'sha1'; hash = options.sha1) if options.sha1
+      (algo = 'sha256'; hash = options.sha256) if options.sha256
       @call
         if: algo
       , (_, callback) ->
         file.hash options.ssh, options.target, algo, (err, h) =>
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
+          return callback err if err
           unless options.not
             if hash isnt h
               options.error ?= "Invalid #{algo} signature: expect #{JSON.stringify hash} and got #{JSON.stringify h}"

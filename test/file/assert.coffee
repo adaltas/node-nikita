@@ -211,13 +211,38 @@ describe 'file.assert', ->
         content: "are u here"
       .file.assert
         target: "#{scratch}/a_file"
-        sha1: "invalidmd5signature"
+        sha1: "invalidsignature"
         relax: true
       , (err) ->
-        err.message.should.eql "Invalid sha1 signature: expect \"invalidmd5signature\" and got \"94d1f318f02816c590bd65595c28df1dd7ff326b\""
+        err.message.should.eql "Invalid sha1 signature: expect \"invalidsignature\" and got \"94d1f318f02816c590bd65595c28df1dd7ff326b\""
       .file.assert
         target: "#{scratch}/a_file"
         sha1: "94d1f318f02816c590bd65595c28df1dd7ff326b"
+      .then next
+
+  describe 'option sha256', ->
+    
+    they 'validate hash', (ssh, next) ->
+      mecano
+        ssh: ssh
+      .file.assert
+        target: "#{scratch}/a_file"
+        sha256: 'toto'
+        relax: true
+      , (err) ->
+        err.message.should.eql "Target does not exists: #{scratch}/a_file"
+      .file
+        target: "#{scratch}/a_file"
+        content: "are u here"
+      .file.assert
+        target: "#{scratch}/a_file"
+        sha256: "invalidsignature"
+        relax: true
+      , (err) ->
+        err.message.should.eql "Invalid sha256 signature: expect \"invalidsignature\" and got \"c98fbf6b29ab2b709b642997930f3679eedd1f5f33078bc527f770c088f0463c\""
+      .file.assert
+        target: "#{scratch}/a_file"
+        sha256: "c98fbf6b29ab2b709b642997930f3679eedd1f5f33078bc527f770c088f0463c"
       .then next
 
   describe 'option mode', ->

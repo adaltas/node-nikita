@@ -12,7 +12,7 @@ not. It's philosophy mostly rely on the target point of view. When download
 run, the target is local, compared to the upload function where target
 is remote.
 
-A checksum may provided with the option "sha1" or "md5" to validate the uploaded
+A checksum may provided with the option "sha256", "sha1" or "md5" to validate the uploaded
 file signature.
 
 Caching is active if "cache_dir" or "cache_file" are defined to anything but false.
@@ -26,7 +26,7 @@ If no cache is used, signature validation is only active if a checksum is
 provided.
 
 If cache is used, signature validation is always active, and md5sum is automatically
-calculated if neither md5 nor sha1 is provided
+calculated if neither sha256, sh1 nor md5 is provided.
 
 ## Options
 
@@ -61,7 +61,9 @@ calculated if neither md5 nor sha1 is provided
     Use the specified HTTP proxy. If the port number is not specified, it is
     assumed at port 1080. See curl(1) man page.   
 *   `sha1` (SHA-1 Hash)   
-    Hash of the file using SHA-1. Used to check integrity   
+    Hash of the file using SHA-1. Used to check integrity.   
+*   `sha256` (SHA-256 Hash)   
+    Hash of the file using SHA-256. Used to check integrity.   
 *   `source` (path)   
     File, HTTP URL, FTP, GIT repository. File is the default protocol if source
     is provided without any.   
@@ -112,18 +114,22 @@ mecano.download
 
     module.exports = (options) ->
       options.log message: "Entering download", level: 'DEBUG', module: 'mecano/lib/file/download'
-      return callback new Error "Missing source: #{options.source}" unless options.source
-      return callback new Error "Missing target: #{options.target}" unless options.target
+      throw Error "Missing source: #{options.source}" unless options.source
+      throw Error "Missing target: #{options.target}" unless options.target
       options.source = options.source.substr 7 if /^file:\/\//.test options.source
       stageDestination = null
       if options.md5?
-        return callback new Error "Invalid MD5 Hash:#{options.md5}" unless typeof options.md5 in ['string', 'boolean']
+        throw Error "Invalid MD5 Hash:#{options.md5}" unless typeof options.md5 in ['string', 'boolean']
         algo = 'md5'
         source_hash = options.md5
       else if options.sha1?
-        return callback new Error "Invalid SHA-1 Hash:#{options.sha1}" unless typeof options.sha1 in ['string', 'boolean']
+        throw Error "Invalid SHA-1 Hash:#{options.sha1}" unless typeof options.sha1 in ['string', 'boolean']
         algo = 'sha1'
         source_hash = options.sha1
+      else if options.sha256?
+        throw Error "Invalid SHA-256 Hash:#{options.sha256}" unless typeof options.sha256 in ['string', 'boolean']
+        algo = 'sha256'
+        source_hash = options.sha256
       else
         algo = 'md5'
       protocols_http = ['http:', 'https:']

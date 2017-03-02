@@ -73,6 +73,10 @@ require('mecano').download({
         return callback new Error "Invalid SHA-1 Hash:#{options.sha1}" unless typeof options.sha1 in ['string', 'boolean']
         algo = 'sha1'
         hash = options.sha1
+      else if options.sha256?
+        return callback new Error "Invalid SHA-1 Hash:#{options.sha256}" unless typeof options.sha256 in ['string', 'boolean']
+        algo = 'sha256'
+        hash = options.sha256
       else
         algo = 'md5'
         hash = false

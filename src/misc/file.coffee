@@ -86,7 +86,7 @@ module.exports = file =
       algorithm = 'md5'
     hasher = (ssh, path, callback) ->
       shasum = crypto.createHash algorithm
-      if not ssh
+      unless ssh
         ssh2fs.createReadStream ssh, path, (err, stream) ->
           return callback err if err
           stream
@@ -102,7 +102,7 @@ module.exports = file =
           return callback err if err
           return callback() if stat.isDirectory()
           exec
-            cmd: "openssl #{algorithm} #{path} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'"
+            cmd: "openssl dgst -#{algorithm} #{path} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'"
             ssh: ssh
             trim: true
           , (err, stdout) ->
