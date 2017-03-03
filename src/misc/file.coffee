@@ -102,11 +102,15 @@ module.exports = file =
           return callback err if err
           return callback() if stat.isDirectory()
           exec
-            cmd: "openssl dgst -#{algorithm} #{path} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'"
+            cmd: """
+            which openssl >/dev/null || exit 2
+            openssl dgst -#{algorithm} #{path} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'
+            """
             ssh: ssh
             trim: true
-          , (err, stdout) ->
-            callback err, stdout?.trim()
+          , (err, stdout, stderr) ->
+            err = Error "Command does not exist: openssl" if err?.code is 2
+            callback err, stdout?.trim(), stderr?.trim()
     hashs = []
     ssh2fs.stat ssh, file, (err, stat) ->
       if err?.code is 'ENOENT'
