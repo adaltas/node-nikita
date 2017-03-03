@@ -1,45 +1,27 @@
 
 # `mecano.tools.backup(options, [callback])`
 
-Commons backup functions provided by backmeup. For additional information, please refer to the [official backmeup webpage][backmeup].
+Backup a file, a directory or the output of a command.
 
 ## Options
 
 *   `name` (string)   
-    backup name (MANDATORY)   
-    default value: randomly generated   
+    Backup file name, required.   
 *   `cmd` (string)      
-    execute cmd, the output stream will be backuped. If the cmd cannot be piped to
-    the compression algorithm, an error will occur. Ignored if source.   
-    default value: _undefined_   
+    Command from which to pipe the ouptut or generating a file if the "target" 
+    option is defined.   
+*   `format` (string)   
+    Format used to name the backup directory, used by [Moment.js], default to 
+    "ISO-8601".   
+*   `locale` (string)   
+    Locale used to name the backup directory, used by [Moment.js], default to 
+    UTC.   
+*   `compress`   
+    One of "tgz", "tar", "xz", "bz2" or "zip", default to "tgz" if true or a directory otherwise no compression.   
 *   `source` (string)   
-    file or directory (path) to copy. Error if source and cmd are both _null_ or _undefined_   
-    default value: _undefined_   
+    Path to a file or a directory to backup.   
 *   `target` (string)
-    where the file or directory is copied. Error if _null_ or _undefined_   
-    default value: _undefined_   
-*   `filter` (string | array)   
-    filter files in source. Accept globbing. Source is treated as a directory if exist   
-    default value: _undefined_   
-*   `interval` (object | number | string)   
-    the minimum interval between two backups. If the actual time is before 
-    the last backup plus this duration parameter, backup will be skipped.
-    See momentjs duration parameter for possible value.   
-*   `archive` (boolean)   
-    if _false_, source is copied. If _true_ files are archived (tar).   
-    default value: _true_   
-*   `algorithm` ('gzip' | 'xz' | 'bunzip2' | 'none')   
-    compression algorithm. Ignored if archive is _false_ and source is defined
-    default value: if archive _'gzip'_, else _undefined_   
-*   `clean_source` (boolean)   
-    if _true_, source is deleted after backup.   
-    default value: _false_   
-*   `ignore_hidden_files` (boolean)   
-    if _true_, hidden files are ignored.   
-    default value: _false_   
-*   `retention` (object)   
-    if neither _undefined_ nor _null_, backup.clean will be called. See below
-    default value: _undefined_   
+    Directory storing the backup, required.
 
 ## Callback parameters
 
@@ -51,25 +33,21 @@ Commons backup functions provided by backmeup. For additional information, pleas
     backup passes options to a callback. Info contains _options_ properties with default
     and/or generated missing values.   
 
-## Example
+## Backup a directory
 
 ```js
 mecano.tools.backup({
   name: 'my_backup'
-  ssh: ssh_connect
-  source: '/etc'     
-  filter: 'myfile' | '*.log' | ['file1, 'file2', 'toto/titi'] 
-  target: '/tmp'
-  archive: false
-  algorithm: 'gzip' | 'bzip2' | 'xz' | 'none'
+  source: '/etc' 
+  target: '/tmp/backup'
+  algorithm: 'gzip' # Value are "gzip", "bzip2", "xz" or "none"
   extension: 'tgz'
-  clean_source: true
-  retention: {
-    count: 3
-    date: '2015-01-01-00:00:00'
-    age: month: 2
-  }
-}, function(err, done, info){
+  # retention: {
+  #   count: 3
+  #   date: '2015-01-01-00:00:00'
+  #   age: month: 2
+  # }
+}, function(err, status, info){
   console.log(info);
 });
 ```
@@ -78,10 +56,38 @@ mecano.tools.backup({
 
     module.exports = (options, callback) ->
       options.log message: "Entering backup", level: 'DEBUG', module: 'mecano/lib/tools/backup'
-      backmeup options, callback
+      throw  Error 'Missing option: "target"' unless options.target
+      throw  Error 'Missing option: "name"' unless options.name
+      m = moment()
+      if options.locale then m.locale(options.locale) else m.utc()
+      filename = m.format(options.format)
+      target = "#{options.target}/#{options.name}/#{filename}"
+      compress = options.compress
+      compress = 'tgz' if compress is true or not compress
+      options.log message: "Source is #{JSON.stringify options.source}", level: 'INFO', module: 'mecano/lib/tools/backup'
+      options.log message: "Target is #{JSON.stringify target}", level: 'INFO', module: 'mecano/lib/tools/backup'
+      @system.mkdir "#{path.dirname target}"
+      @system.copy
+        source: "#{options.source}"
+        target: "#{target}"
+        if: options.source
+        if_exec: "[ -f #{options.source} ]"
+        unless: options.compress
+      @tools.compress
+        source: "#{options.source}"
+        target: "#{target}.#{compress}"
+        format: "#{compress}"
+        unless: -> @status(-1)
+      @then (err, status) ->
+        callback err, status,
+          base_dir: options.target
+          name: options.name
+          filename: filename
+          target: target
 
 ## Dependencies
 
-    backmeup = require 'backmeup'
+    moment = require 'moment'
+    path = require 'path'
 
 [backmeup]: https://github.com/adaltas/node-backmeup

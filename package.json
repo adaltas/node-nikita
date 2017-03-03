@@ -1,5 +1,5 @@
 {
-  "name": "nikita",
+  "name": "mecano",
   "description": "Common functions for system deployment.",
   "version": "0.6.0",
   "author": "David Worms <david@adaltas.com>",
@@ -23,7 +23,8 @@
   ],
   "dependencies": {
     "backmeup": "~0.0.2",
-    "colors": "^1.1.2",
+    "colors": "~1.1.2",
+    "cron-parser": "~2.3.1",
     "diff": "~3.0.0",
     "each": "~0.6.1",
     "ftp": "~0.3.10",
@@ -33,6 +34,7 @@
     "jsesc": "~2.2.0",
     "jsftp": "~1.5.4",
     "minimatch": "~3.0.3",
+    "moment": "~2.17.1",
     "mustache": "~2.2.1",
     "nunjucks": "~2.5.2",
     "pad": "~1.0.1",
