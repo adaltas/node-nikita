@@ -45,6 +45,9 @@ RUN curl -fsSL https://get.docker.com/ | sh
 RUN curl -L "https://github.com/docker/compose/releases/download/1.8.1/docker-compose-$(uname -s)-$(uname -m)" > /usr/local/bin/docker-compose
 RUN chmod +x /usr/local/bin/docker-compose
 
+# Install openssl
+RUN yum install -y openssl
+
 RUN yum clean all
 
 ADD ./run.sh /run.sh
