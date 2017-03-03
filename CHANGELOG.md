@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* debug: print stdin and better filter on printable logs #70 
 * docker: clean up node.js downloaded archive #69
 * system discover: support oracle and cache not enabled by default #68
 * docker rh: pass hash test by installing openssl #67
