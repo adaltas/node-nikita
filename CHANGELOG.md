@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* system discover: support oracle and cache not enabled by default #68
 * docker rh: pass hash test by installing openssl #67
 * docker ubuntu: install java to support tests #66
 * misc.file.hash: support for sha256 digest #65

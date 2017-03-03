@@ -41,16 +41,16 @@ describe 'service.action', ->
       srv_name: config.service.srv_name
       action: 'stop'
     , (err, status) ->
-      status.should.be.true()
+      status.should.be.true() unless err
     .service.status
       name: config.service.srv_name
     , (err, status) ->
-      status.should.be.false()
+      status.should.be.false() unless err
     .service # Detect already stopped
       srv_name: config.service.srv_name
       action: 'stop'
     , (err, status) ->
-      status.should.be.false()
+      status.should.be.false() unless err
     .then next
 
   they 'should restart', (ssh, next) ->

@@ -66,5 +66,6 @@ describe 'service.install', ->
       name: 'thisservicedoesnotexist'
       code_skipped: 1
     , (err, status) ->
+      (!!err).should.be.false()
       status.should.be.false() unless err
     .then next

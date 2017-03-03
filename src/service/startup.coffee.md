@@ -5,6 +5,8 @@ Activate or desactivate a service on startup.
 
 ## Options
 
+*   `cache` (boolean)   
+    Cache service information.   
 *   `name` (string)   
     Service name, required.   
 *   `startup` (boolean|string)
@@ -53,7 +55,7 @@ require('mecano').service.startup([{
       # Action
       options.log message: "Startup service #{options.name}", level: 'INFO', module: 'mecano/lib/service/startup'
       modified = false
-      @service.discover (err, status, loader) -> 
+      @service.discover cache: options.cache, shy: true, (err, status, loader) -> 
         options.loader ?= loader
       @call
         if: -> options.loader is 'service'

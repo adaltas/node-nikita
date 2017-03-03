@@ -5,6 +5,8 @@ Start a service.
 
 ## Options
 
+*   `cache` (boolean)   
+    Cache system and service information.   
 *   `name` (string)   
     Service name.   
 *   `ssh` (object|ssh2)   
@@ -50,30 +52,29 @@ require('mecano').service.start([{
       # Action
       options.log message: "Start service #{options.name}", level: 'INFO', module: 'mecano/lib/service/start'
       options.os ?= {}
-      @system.discover (err, status, os) -> 
+      @system.discover cache: options.cache, shy: true, (err, status, os) -> 
         options.os.type ?= os.type
         options.os.release ?= os.release
-      @service.discover (err, status, loader) -> 
+      @service.discover cache: options.cache, shy: true, (err, status, loader) -> 
         options.loader ?= loader
       @call
         if: -> options.os.type in ['redhat', 'centos', 'ubuntu']
-        if_exec: "ls /lib/systemd/system/*.service /etc/systemd/system/*.service /etc/rc.d/* /etc/init.d/* | grep #{options.name}"
-        handler: ->
-          cmd = switch options.loader
+        if_exec: "ls /lib/systemd/system/*.service /etc/systemd/system/*.service /etc/rc.d/* /etc/init.d/* 2>/dev/null | grep #{options.name}"
+      , ->
+        @service.status
+          name: options.name
+          code_started: options.code_started
+          code_stopped: options.code_stopped
+          shy: true
+        @system.execute
+          cmd: switch options.loader
             when 'systemctl' then "systemctl start #{options.name}"
             when 'service' then "service #{options.name} start"
             else throw Error 'Init System not supported'
-          @service.status
-            name: options.name
-            code_started: options.code_started
-            code_stopped: options.code_stopped
-            shy: true
-          @system.execute
-            cmd: cmd
-            unless: [
-              -> @status -1
-              -> options.cache and options.store["mecano.service.#{options.name}.status"] is 'started'
-            ]
-          , (err, started) ->
-            throw err if err
-            options.store["mecano.service.#{options.name}.status"] = 'started' if not err and options.cache
+          unless: [
+            -> @status -1
+            -> options.cache and options.store["mecano.service.#{options.name}.status"] is 'started'
+          ]
+        , (err, started) ->
+          throw err if err
+          options.store["mecano.service.#{options.name}.status"] = 'started' if not err and options.cache

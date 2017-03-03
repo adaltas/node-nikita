@@ -31,29 +31,38 @@ Store properties in the mecano store object.
       os.type = null
       os.release = null
       options.strict ?= false
-      options.shy ?= true
-      options.cache ?= true
+      options.cache ?= false
+      @call
+        if: options.cache and options.store['mecano:system:type']
+      , ->
+        callback err, false, 
+          type: options.store['mecano:system:type']
+          release: options.store['mecano:system:release']
       @system.execute
-        cmd: 'cat /etc/system-release'
-        if_exec: "cat /etc/system-release | egrep '(Red\\sHat)|(CentOS)'"
+        cmd: 'cat /etc/redhat-release'
+        if_exec: "cat /etc/redhat-release | egrep '(Red\\sHat)|(CentOS)'"
         unless: options.store['mecano:system:type']?
-        shy: options.shy
       , (err, status, stdout, stderr) ->
         throw err if err
-        if stdout
-          [line] = string.lines stdout
-          #might only redhat for centos/redhat
-          if /CentOS/.test line
-            os.type = 'centos'
-            splits = line.split ' '
-            os.release = splits[splits.indexOf('release')+1]
-          if /Red\sHat/.test line
-            os.type = 'redhat'
-            splits = line.split ' '
-            os.release = splits[splits.indexOf('release')+1]
-          if options.cache
-            options.store['mecano:system:type'] = os.type
-            options.store['mecano:system:release'] = os.release
+        return unless status
+        [line] = string.lines stdout
+        #might only redhat for centos/redhat
+        if /^CentOS/.test line
+          os.type = 'centos'
+          splits = line.split ' '
+          os.release = splits[splits.indexOf('release')+1]
+        if /^Red\sHat/.test line
+          os.type = 'redhat'
+          splits = line.split ' '
+          os.release = splits[splits.indexOf('release')+1]
+        if /^Oracle/.test line
+          os.type = 'redhat'
+          splits = line.split ' '
+          os.release = splits[splits.indexOf('release')+1]
+        if options.cache
+          options.store['mecano:system:type'] = os.type
+          options.store['mecano:system:release'] = os.release
+        throw Error 'OS not supported' if options.strict and os.type not in ['redhat', 'centos', 'oracle']
       @system.execute
         cmd: """
           . /etc/lsb-release
@@ -61,23 +70,18 @@ Store properties in the mecano store object.
         """
         if_exec: "cat /etc/lsb-release | egrep 'Ubuntu'"
         unless: -> options.store['mecano:system:type']?
-        shy: options.shy
       , (err, status, stdout, stderr) ->
         throw err if err
-        if stdout
-          [distrib_id, distrib_release] = stdout.trim().split ','
-          #backward compatibilty remove 'mecano:system:type'
-          os.type = distrib_id.toLowerCase()
-          os.release = distrib_release
-          if options.cache
-            options.store['mecano:system:type'] = os.type
-            options.store['mecano:system:release'] = os.release
-          return callback Error 'Os not supported' unless (distrib_id in ['Ubuntu']) or options.strict
-      @then (err, status) ->
+        return unless status
+        [distrib_id, distrib_release] = stdout.trim().split ','
+        #backward compatibilty remove 'mecano:system:type'
+        os.type = distrib_id.toLowerCase()
+        os.release = distrib_release
         if options.cache
-          os.type ?= options.store['mecano:system:type']
-          os.release ?= options.store['mecano:system:release']
-        err = Error 'OS not discovered' unless os.type or options.strict or err
+          options.store['mecano:system:type'] = os.type
+          options.store['mecano:system:release'] = os.release
+        throw Error 'OS not supported' if options.strict and os.type not in ['ubuntu']
+      @then (err, status) ->
         callback err, status, os
 
 ## Dependencies

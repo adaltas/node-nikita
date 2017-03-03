@@ -5,6 +5,8 @@ Status of a service.
 
 ## Options
 
+*   `cache` (boolean)   
+    Cache system and service information.   
 *   `name` (string)   
     Service name.   
 *   `ssh` (object|ssh2)   
@@ -51,10 +53,10 @@ require('mecano').service.start([{
       options.log message: "Status for service #{options.name}", level: 'INFO', module: 'mecano/lib/service/status'
       options.log message: "Option code_stopped is #{options.code_stopped}", level: 'DEBUG', module: 'mecano/lib/service/status' unless options.code_stopped is 3
       options.os ?= {}
-      @system.discover (err, status, os) ->
+      @system.discover cache: options.cache, shy: true, (err, status, os) ->
         options.os.type ?= os.type
         options.os.release ?= os.release
-      @service.discover (err, status, loader) ->
+      @service.discover cache: options.cache, shy: true, (err, status, loader) ->
         options.loader ?= loader
       @call -> @system.execute
         if: -> options.os.type in ['redhat','centos','ubuntu']
@@ -64,6 +66,7 @@ require('mecano').service.start([{
             /etc/systemd/system/*.service \
             /etc/rc.d/* \
             /etc/init.d/* \
+            2>/dev/null \
           | grep -w "#{options.name}" || exit 1
           case "#{options.loader}" in
             systemctl)
