@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* docker ubuntu: install java to support tests #66
 * misc.file.hash: support for sha256 digest #65
 * kv: shared key/value store with events #64
 * tempfs: fix test when not executed on centos #63

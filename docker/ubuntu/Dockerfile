@@ -14,6 +14,9 @@ RUN apt-get install -y openssh-server \
   && ssh-keygen -t rsa -f ~/.ssh/id_rsa -N '' \
   && cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 
+# Install Java
+RUN apt-get install -y openjdk-7-jdk
+
 # Install Krb5 client
 RUN apt-get install -y krb5-user
 ADD ./krb5.conf /etc/krb5.conf
