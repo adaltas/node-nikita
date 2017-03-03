@@ -32,12 +32,10 @@ Store properties in the mecano store object.
       os.release = null
       options.strict ?= false
       options.cache ?= false
-      @call
-        if: options.cache and options.store['mecano:system:type']
-      , ->
-        callback err, false, 
+      ( return callback null, false, 
           type: options.store['mecano:system:type']
           release: options.store['mecano:system:release']
+      ) if options.cache and options.store['mecano:system:type']
       @system.execute
         cmd: 'cat /etc/redhat-release'
         if_exec: "cat /etc/redhat-release | egrep '(Red\\sHat)|(CentOS)'"
