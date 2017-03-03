@@ -7,7 +7,8 @@ ENV NODE_VERSION 6.2.2
 RUN apt-get update -y \
   && apt-get install -y curl xz-utils \
   && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
-  && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1
+  && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
+  && rm -f "/node-v$NODE_VERSION-linux-x64.tar.xz"
 
 # Install SSH
 RUN apt-get install -y openssh-server \
