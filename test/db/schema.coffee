@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
@@ -9,7 +9,7 @@ describe 'db.schema postgres', ->
   return if config.disable_db
 
   they 'add new schema with no owner (existing db)', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       db: config.db.postgres
     .db.database.remove 'postgres_db_0'
@@ -23,7 +23,7 @@ describe 'db.schema postgres', ->
     .then next
 
   they 'add new schema with not existing owner (existing db)', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       db: config.db.postgres
     .db.database.remove 'postgres_db_1'
@@ -39,7 +39,7 @@ describe 'db.schema postgres', ->
     .then next
 
   they 'add new schema with existing owner (existing db)', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       db: config.db.postgres
     .db.schema.remove 'postgres_schema_2'
@@ -63,7 +63,7 @@ describe 'db.schema postgres', ->
     .then next
   
   they 'add new schema with no owner (not existing db)', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       db: config.db.postgres
     .db.schema
@@ -76,26 +76,26 @@ describe 'db.schema postgres', ->
     .then next
   
   they 'add new schema after adding database and user', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       db: config.db.postgres
     .db.schema.remove 'postgres_db_5'
     .db.database.remove 'postgres_db_5'
-    .db.user.remove 'mecano_test_5'
+    .db.user.remove 'nikita_test_5'
     .db.user
-      username: 'mecano_test_5'
+      username: 'nikita_test_5'
       password: 'test'
       engine: 'postgres'
     .db.database
-      user: 'mecano_test_5'
+      user: 'nikita_test_5'
       database: 'postgres_db_5'
     .db.schema
       database: 'postgres_db_5'
       schema: 'postgres_schema_5'
-      owner: 'mecano_test_5'
+      owner: 'nikita_test_5'
     , (err, status) ->
       status.should.be.true() unless err
     .db.schema.remove 'postgres_db_5'
     .db.database.remove 'postgres_db_5'
-    .db.user.remove 'mecano_test_5'
+    .db.user.remove 'nikita_test_5'
     .then next

@@ -1,5 +1,5 @@
 
-# `mecano.file.download(options, [callback])`
+# `nikita.file.download(options, [callback])`
 
 Download files using various protocols.
 
@@ -19,7 +19,7 @@ Caching is active if "cache_dir" or "cache_file" are defined to anything but fal
 If cache_dir is not a string, default value is './'
 If cache_file is not a string, default is source basename.
 
-Mecano resolve the path from "cache_dir" to "cache_file", so if cache_file is an
+Nikita resolve the path from "cache_dir" to "cache_file", so if cache_file is an
 absolute path, "cache_dir" will be ignored
 
 If no cache is used, signature validation is only active if a checksum is
@@ -56,7 +56,7 @@ calculated if neither sha256, sh1 nor md5 is provided.
 *   `md5` (MD5 Hash)   
     Hash of the file using MD5. Used to check integrity
 *   `mode` (octal mode)   
-    Permissions of the target. If specified, mecano will chmod after download   
+    Permissions of the target. If specified, nikita will chmod after download   
 *   `proxy` (string)   
     Use the specified HTTP proxy. If the port number is not specified, it is
     assumed at port 1080. See curl(1) man page.   
@@ -82,7 +82,7 @@ calculated if neither sha256, sh1 nor md5 is provided.
 ## File example
 
 ```js
-require('mecano').download({
+require('nikita').download({
   source: 'file://path/to/something',
   target: 'node-sigar.tgz'
 }, function(err, downloaded){
@@ -93,8 +93,8 @@ require('mecano').download({
 ## HTTP example
 
 ```coffee
-mecano.download
-  source: 'https://github.com/wdavidw/node-mecano/tarball/v0.0.1'
+nikita.download
+  source: 'https://github.com/wdavidw/node-nikita/tarball/v0.0.1'
   target: 'node-sigar.tgz'
 , (err, downloaded) -> ...
 ```
@@ -102,8 +102,8 @@ mecano.download
 ## FTP example
 
 ```coffee
-mecano.download
-  source: 'ftp://myhost.com:3334/wdavidw/node-mecano/tarball/v0.0.1'
+nikita.download
+  source: 'ftp://myhost.com:3334/wdavidw/node-nikita/tarball/v0.0.1'
   target: 'node-sigar.tgz'
   user: 'johndoe',
   pass: '12345'
@@ -113,7 +113,7 @@ mecano.download
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering download", level: 'DEBUG', module: 'mecano/lib/file/download'
+      options.log message: "Entering download", level: 'DEBUG', module: 'nikita/lib/file/download'
       throw Error "Missing source: #{options.source}" unless options.source
       throw Error "Missing target: #{options.target}" unless options.target
       options.source = options.source.substr 7 if /^file:\/\//.test options.source
@@ -135,7 +135,7 @@ mecano.download
       protocols_http = ['http:', 'https:']
       protocols_ftp = ['ftp:', 'ftps:']
       # hash_info = null
-      options.log message: "Using force: #{JSON.stringify options.force}", level: 'DEBUG', module: 'mecano/lib/file/download'
+      options.log message: "Using force: #{JSON.stringify options.force}", level: 'DEBUG', module: 'nikita/lib/file/download'
       source_url = url.parse options.source
       # Disable caching if source is a local file and cache isnt exlicitly set by user
       options.cache = false if not options.cache? and source_url.protocol is null
@@ -144,13 +144,13 @@ mecano.download
         if: typeof source_hash is 'string'
         shy: true
         handler: (_, callback) ->
-          options.log message: "Shortcircuit check if provided hash match target", level: 'WARN', module: 'mecano/lib/file/download'
+          options.log message: "Shortcircuit check if provided hash match target", level: 'WARN', module: 'nikita/lib/file/download'
           file.hash options.ssh, options.target, algo, (err, hash) =>
             err = null if err?.code is 'ENOENT'
             callback err, source_hash is hash
         , (err, end) ->
           return unless end
-          options.log message: "Destination with valid signature, download aborted", level: 'INFO', module: 'mecano/lib/file/download'
+          options.log message: "Destination with valid signature, download aborted", level: 'INFO', module: 'nikita/lib/file/download'
           @end()
       @file.cache # Download the file and place it inside local cache
         if: options.cache
@@ -170,19 +170,19 @@ mecano.download
         ssh2fs.stat @options.ssh, options.target, (err, stat) ->
           return callback err if err and err.code isnt 'ENOENT'
           if stat?.isDirectory()
-            options.log message: "Destination is a directory", level: 'DEBUG', module: 'mecano/lib/file/download'
+            options.log message: "Destination is a directory", level: 'DEBUG', module: 'nikita/lib/file/download'
             options.target = path.join options.target, path.basename options.source
           stageDestination = "#{options.target}.#{Date.now()}#{Math.round(Math.random()*1000)}"
           callback()
       @call
         if: -> source_url.protocol in protocols_http
         handler: ->
-          options.log message: "HTTP Download", level: 'DEBUG', module: 'mecano/lib/file/download'
+          options.log message: "HTTP Download", level: 'DEBUG', module: 'nikita/lib/file/download'
           fail = if options.fail then "--fail" else ''
           k = if source_url.protocol is 'https:' then '-k' else ''
           cmd = "curl #{fail} #{k} -s #{options.source} -o #{stageDestination}"
           cmd += " -x #{options.proxy}" if options.proxy
-          options.log message: "Download file from url using curl", level: 'INFO', module: 'mecano/lib/file/download'
+          options.log message: "Download file from url using curl", level: 'INFO', module: 'nikita/lib/file/download'
           @system.mkdir
             shy: true
             target: path.dirname stageDestination
@@ -197,8 +197,8 @@ mecano.download
                 callback()
           @call (_, callback) ->
             file.compare_hash null, stageDestination, options.ssh, options.target, algo, (err, match, hash1, hash2) ->
-              options.log message: "Hash dont match, source is '#{hash1}' and target is '#{hash2}'", level: 'WARN', module: 'mecano/lib/file/download' unless match
-              options.log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'mecano/lib/file/download' if match
+              options.log message: "Hash dont match, source is '#{hash1}' and target is '#{hash2}'", level: 'WARN', module: 'nikita/lib/file/download' unless match
+              options.log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'nikita/lib/file/download' if match
               callback err, not match
           @system.remove
             unless: -> @status -1
@@ -207,11 +207,11 @@ mecano.download
       @call
         if: -> source_url.protocol not in protocols_http and not options.ssh
         handler: ->
-          options.log message: "File Download without ssh (with or without cache)", level: 'DEBUG', module: 'mecano/lib/file/download'
+          options.log message: "File Download without ssh (with or without cache)", level: 'DEBUG', module: 'nikita/lib/file/download'
           @call (_, callback) ->
             file.compare_hash null, options.source, null, options.target, algo, (err, match, hash1, hash2) ->
-              options.log message: "Hash dont match, source is '#{hash1}' and target is '#{hash2}'", level: 'WARN', module: 'mecano/lib/file/download' unless match
-              options.log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'mecano/lib/file/download' if match
+              options.log message: "Hash dont match, source is '#{hash1}' and target is '#{hash2}'", level: 'WARN', module: 'nikita/lib/file/download' unless match
+              options.log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'nikita/lib/file/download' if match
               callback err, not match
           @system.mkdir
             if: -> @status -1
@@ -222,7 +222,7 @@ mecano.download
             handler: (_, callback) ->
               rs = fs.createReadStream options.source
               rs.on 'error', (err) ->
-                options.log  message: "No such source file: #{options.source} (ssh is #{JSON.stringify !!options.ssh})", level: 'ERROR', module: 'mecano/lib/file/download'
+                options.log  message: "No such source file: #{options.source} (ssh is #{JSON.stringify !!options.ssh})", level: 'ERROR', module: 'nikita/lib/file/download'
                 err.message = 'No such source file'
                 callback err
               ws = fs.createWriteStream stageDestination
@@ -232,11 +232,11 @@ mecano.download
       @call
         if: -> source_url.protocol not in protocols_http and options.ssh
         handler: ->
-          options.log message: "File Download with ssh (with or without cache)", level: 'DEBUG', module: 'mecano/lib/file/download'
+          options.log message: "File Download with ssh (with or without cache)", level: 'DEBUG', module: 'nikita/lib/file/download'
           @call (_, callback) ->
             file.compare_hash null, options.source, options.ssh, options.target, algo, (err, match, hash1, hash2) ->
-              options.log message: "Hash dont match, source is '#{hash1}' and target is '#{hash2}'", level: 'WARN', module: 'mecano/lib/file/download' unless match
-              options.log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'mecano/lib/file/download' if match
+              options.log message: "Hash dont match, source is '#{hash1}' and target is '#{hash2}'", level: 'WARN', module: 'nikita/lib/file/download' unless match
+              options.log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'nikita/lib/file/download' if match
               callback err, not match
           @system.mkdir
             if: -> @status -1
@@ -245,8 +245,8 @@ mecano.download
           @call
             if: -> @status -2
             handler: (_, callback) ->
-              options.log message: "Local source: '#{options.source}'", level: 'INFO', module: 'mecano/lib/file/download'
-              options.log message: "Remote target: '#{stageDestination}'", level: 'INFO', module: 'mecano/lib/file/download'
+              options.log message: "Local source: '#{options.source}'", level: 'INFO', module: 'nikita/lib/file/download'
+              options.log message: "Remote target: '#{stageDestination}'", level: 'INFO', module: 'nikita/lib/file/download'
               rs = fs.createReadStream options.source
               rs.on 'error', (err) ->
                 console.log 'rs on error', err
@@ -254,7 +254,7 @@ mecano.download
                 options.log "Upload failed from local to remote" if err
                 callback err
       @call ->
-        options.log message: "Unstage downloaded file", level: 'DEBUG', module: 'mecano/lib/file/download'
+        options.log message: "Unstage downloaded file", level: 'DEBUG', module: 'nikita/lib/file/download'
         @system.move
           if: @status()
           source: stageDestination

@@ -1,5 +1,5 @@
 
-# Mecano Context
+# Nikita Context
 
     called_deprecate_destination = false
     called_deprecate_local_source = false
@@ -140,7 +140,7 @@
             _logs = []
         log_disabled = true if options.log is false
         options.log = [] if log_disabled
-        options.log = [] if options.log?._mecano_ # not clean but no better way to detect user provided option with the one from mecano
+        options.log = [] if options.log?._nikita_ # not clean but no better way to detect user provided option with the one from nikita
         options.log ?= []
         options.log = [options.log] unless Array.isArray options.log
         _logs = options.log
@@ -177,7 +177,7 @@
           args.unshift("" + file + ":" + line + " in " + method + "()");
           _log log for _log in _logs
           obj.emit? log.type, log unless log_disabled
-        options.log._mecano_ = true
+        options.log._nikita_ = true
         options
       call_callback = (fn, args) ->
         stack.unshift todos
@@ -324,9 +324,9 @@
               if err and err not instanceof Error
                 err = Error 'First argument not a valid error'
                 arguments[0][0] = err
-              options.log message: err.message, level: 'ERROR', index: index, module: 'mecano' if err
+              options.log message: err.message, level: 'ERROR', index: index, module: 'nikita' if err
               if err and options.attempt < options.retry - 1
-                options.log message: "Retry on error, attempt #{options.attempt+1}", level: 'WARN', index: index, module: 'mecano'
+                options.log message: "Retry on error, attempt #{options.attempt+1}", level: 'WARN', index: index, module: 'nikita'
                 return setTimeout do_handler, options.wait
               do_intercept_after arguments...
             options.handler ?= obj.registry.get(options.type)?.handler or registry.get(options.type)?.handler

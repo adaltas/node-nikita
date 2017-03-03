@@ -1,5 +1,5 @@
 
-# `mecano.system.mkdir(options, [callback])`
+# `nikita.system.mkdir(options, [callback])`
 
 Recursively create a directory. The behavior is similar to the Unix command
 `mkdir -p`. It supports an alternative syntax where options is simply the path
@@ -37,7 +37,7 @@ of the directory to create.
 ## Simple usage
 
 ```js
-require('mecano').system.mkdir('./some/dir', function(err, status){
+require('nikita').system.mkdir('./some/dir', function(err, status){
   console.log(err ? err.message : "Directory created: " + status);
 });
 ```
@@ -45,7 +45,7 @@ require('mecano').system.mkdir('./some/dir', function(err, status){
 ## Advanced usage
 
 ```js
-require('mecano').system.mkdir({
+require('nikita').system.mkdir({
   ssh: ssh,
   target: './some/dir',
   uid: 'a_user',
@@ -59,7 +59,7 @@ require('mecano').system.mkdir({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering mkdir", level: 'DEBUG', module: 'mecano/lib/system/mkdir'
+      options.log message: "Entering mkdir", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
       modified = false
       # Validate parameters
       # options = { directory: options } if typeof options is 'string'
@@ -73,7 +73,7 @@ require('mecano').system.mkdir({
       each options.directory
       .call (directory, callback) =>
         # first, we need to find which directory need to be created
-        # options.log message: "Creating directory '#{directory}'", level: 'DEBUG', module: 'mecano/lib/system/mkdir'
+        # options.log message: "Creating directory '#{directory}'", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
         do_stats = ->
           end = false
           dirs = []
@@ -88,7 +88,7 @@ require('mecano').system.mkdir({
           each(directories)
           .call (directory, i, next) ->
             return next() if end
-            options.log message: "Stat '#{directory}'", level: 'DEBUG', module: 'mecano/lib/system/mkdir'
+            options.log message: "Stat '#{directory}'", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
             fs.stat options.ssh, directory, (err, stat) ->
               if err?.code is 'ENOENT' # if the directory is not yet created
                 directory.stat = stat
@@ -116,7 +116,7 @@ require('mecano').system.mkdir({
             # eg /\${/ on './var/cache/${user}' creates './var/cache/'
             if options.exclude? and options.exclude instanceof RegExp
               return callback() if options.exclude.test path.basename directory
-            options.log message: "Create directory \"#{directory}\"", level: 'DEBUG', module: 'mecano/lib/system/mkdir' # unless directory is options.directory
+            options.log message: "Create directory \"#{directory}\"", level: 'DEBUG', module: 'nikita/lib/system/mkdir' # unless directory is options.directory
             attrs = ['mode', 'uid', 'gid', 'size', 'atime', 'mtime']
             opts = {}
             for attr in attrs
@@ -124,7 +124,7 @@ require('mecano').system.mkdir({
               opts[attr] = val if val?
             fs.mkdir options.ssh, directory, opts, (err) ->
               return callback err if err
-              options.log message: "Directory \"#{directory}\" created ", level: 'INFO', module: 'mecano/lib/system/mkdir'
+              options.log message: "Directory \"#{directory}\" created ", level: 'INFO', module: 'nikita/lib/system/mkdir'
               modified = true
               callback()
             , 1000
@@ -132,7 +132,7 @@ require('mecano').system.mkdir({
             return callback err if err
             callback()
         do_update = (stat) =>
-          options.log message: "Directory already exists", level: 'INFO', module: 'mecano/lib/system/mkdir'
+          options.log message: "Directory already exists", level: 'INFO', module: 'nikita/lib/system/mkdir'
           @system.chown
             target: directory
             stat: stat

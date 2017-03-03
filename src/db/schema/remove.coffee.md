@@ -1,5 +1,5 @@
 
-# `mecano.db.schema.remove`
+# `nikita.db.schema.remove`
 
 Create a user for the destination database.
 

@@ -1,7 +1,7 @@
 
 they = require 'ssh2-they'
 conditions = require '../../src/misc/conditions'
-mecano = require '../../src'
+nikita = require '../../src'
 
 describe 'should_exist', ->
 
@@ -31,7 +31,7 @@ describe 'should_exist', ->
         next()
     
   they 'error propagated to context', (ssh, next) ->
-    mecano
+    nikita
     .call should_exist: '/does/not/exist', ->
       throw Error 'Oh no'
     .then (err) ->
@@ -66,7 +66,7 @@ describe 'should_not_exist', ->
         next()
     
   they 'error propagated to context', (ssh, next) ->
-    mecano
+    nikita
     .call should_not_exist: __filename, ->
       throw Error 'Oh no'
     .then (err) ->

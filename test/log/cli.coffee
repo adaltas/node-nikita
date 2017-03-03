@@ -1,7 +1,7 @@
 
 fs = require 'fs'
 should = require 'should'
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
@@ -19,7 +19,7 @@ describe 'log.cli', ->
   
   they 'default options', (ssh, next) ->
     data = []
-    mecano
+    nikita
       ssh: ssh
       log_cli: colors: false, time: false
     .log.cli stream: new MyWritable data: data
@@ -41,7 +41,7 @@ describe 'log.cli', ->
       
   they 'print info', (ssh, next) ->
     data = []
-    mecano
+    nikita
       ssh: ssh
       log_cli: colors: false, time: false
     .log.cli stream: new MyWritable data: data
@@ -58,7 +58,7 @@ describe 'log.cli', ->
       
   they 'option depth', (ssh, next) ->
     data = []
-    mecano
+    nikita
       ssh: ssh
       log_cli: colors: false, time: false
     .log.cli depth: 2, stream: new MyWritable data: data
@@ -77,7 +77,7 @@ describe 'log.cli', ->
       
   they 'option divider', (ssh, next) ->
     data = []
-    mecano
+    nikita
       ssh: ssh
       log_cli: colors: false, time: false
     .log.cli divider: ' # ', stream: new MyWritable data: data
@@ -97,7 +97,7 @@ describe 'log.cli', ->
       
   they 'option pad', (ssh, next) ->
     data = []
-    mecano
+    nikita
       ssh: ssh
       log_cli: colors: false, time: false
     .log.cli pad: {host: 14, header: 18}, stream: new MyWritable data: data
@@ -117,7 +117,7 @@ describe 'log.cli', ->
       
   they 'option colors', (ssh, next) ->
     data = []
-    mecano
+    nikita
       ssh: ssh
       log_cli: time: false
     .log.cli colors: true, stream: new MyWritable data: data
@@ -134,7 +134,7 @@ describe 'log.cli', ->
   
   they 'option time', (ssh, next) ->
     data = []
-    mecano
+    nikita
       ssh: ssh
       log_cli: colors: false
     .log.cli stream: new MyWritable data: data

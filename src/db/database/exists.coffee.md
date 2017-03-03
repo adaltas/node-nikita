@@ -1,5 +1,5 @@
 
-# `mecano.db.database.exists(options, callback)`
+# `nikita.db.database.exists(options, callback)`
 
 Check if a database exists.
 

@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 fs = require 'fs'
 
@@ -9,7 +9,7 @@ describe 'options "header"', ->
   
   it 'print value', (next) ->
     headers = []
-    mecano
+    nikita
     .on 'header', (log) ->
       headers.push message: log.message, depth: log.depth, headers: log.headers, header_depth: log.header_depth, total_depth: log.total_depth
     .call header: 'h1 call', ->
@@ -30,7 +30,7 @@ describe 'options "header"', ->
     
   it 'decrement when option is reset', (next) ->
     headers = []
-    mecano
+    nikita
     .on 'header', (log) ->
       headers.push depth: log.depth, header_depth: log.header_depth, headers: log.headers
     .call header: 'h1a', (options) ->

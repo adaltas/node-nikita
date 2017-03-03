@@ -1,5 +1,5 @@
 
-# `mecano.krb5.addprinc(options, [callback])`
+# `nikita.krb5.addprinc(options, [callback])`
 
 Create a new Kerberos principal with a password or an optional keytab.
 
@@ -27,7 +27,7 @@ Create a new Kerberos principal with a password or an optional keytab.
 ## Keytab example
 
 ```js
-require('mecano').krb5.addprinc({
+require('nikita').krb5.addprinc({
   principal: 'myservice/my.fqdn@MY.REALM',
   randkey: true,
   keytab: '/etc/security/keytabs/my.service.keytab',
@@ -62,7 +62,7 @@ require('mecano').krb5.addprinc({
       for k, v of options then ktadd_options[k] = v
       ktadd_options.if = options.keytab
       # Ticket cache location
-      cache_name = "/tmp/mecano_#{Math.random()}"
+      cache_name = "/tmp/nikita_#{Math.random()}"
       @system.execute
         retry: 3
         cmd: cmd_addprinc

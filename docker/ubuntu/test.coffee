@@ -11,9 +11,9 @@ module.exports =
   disable_service: false # cant be activated
   disable_db: true # can be activated
   disable_system_tmpfs: true #can not be activated
-  docker: # eg `docker-machine create --driver virtualbox mecano || docker-machine start mecano`
+  docker: # eg `docker-machine create --driver virtualbox nikita || docker-machine start nikita`
     host: 'dind:2375'
-    # machine: 'mecano'
+    # machine: 'nikita'
   krb5:
     realm: 'NODE.DC1.CONSUL'
     kadmin_server: 'krb5'

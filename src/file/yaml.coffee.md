@@ -1,5 +1,5 @@
 
-# `mecano.file.yaml(options, callback)`
+# `nikita.file.yaml(options, callback)`
 
 Write an object serialized in YAML format. Note, we are internally using the [js-yaml] module.
 However, there is a subtile difference. Any key provided with value of
@@ -67,7 +67,7 @@ provided in the `content` option.
 ## Example
 
 ```js
-require('mecano').file.yaml({
+require('nikita').file.yaml({
   content: {
     'my_key': 'my value'
   },
@@ -81,7 +81,7 @@ require('mecano').file.yaml({
 
     module.exports = (options, callback) ->
       options.line_width ?= 160
-      options.log message: "Entering file.yaml", level: 'DEBUG', module: 'mecano/lib/file/yaml'
+      options.log message: "Entering file.yaml", level: 'DEBUG', module: 'nikita/lib/file/yaml'
       {merge, target, content, ssh} = options
       options.clean ?= true
       # Validate parameters
@@ -90,7 +90,7 @@ require('mecano').file.yaml({
       # Start real work
       do_get = ->
         return do_file() unless merge
-        options.log message: "Get content for merge", level: 'DEBUG', module: 'mecano/lib/file/yaml'
+        options.log message: "Get content for merge", level: 'DEBUG', module: 'nikita/lib/file/yaml'
         fs.exists ssh, target, (err, exists) ->
           return callback err if err
           return do_file() unless exists
@@ -106,9 +106,9 @@ require('mecano').file.yaml({
       do_file = =>
         options.indent ?= 2
         if options.clean
-          options.log message: "Clean content", level: 'INFO', module: 'mecano/lib/file/yaml'
+          options.log message: "Clean content", level: 'INFO', module: 'nikita/lib/file/yaml'
           misc.ini.clean content
-        options.log message: "Serialize content", level: 'DEBUG', module: 'mecano/lib/file/yaml'
+        options.log message: "Serialize content", level: 'DEBUG', module: 'nikita/lib/file/yaml'
         try
           options.content = yaml.safeDump options.content, noRefs:true, lineWidth: options.line_width
           @file options, (err, written) ->

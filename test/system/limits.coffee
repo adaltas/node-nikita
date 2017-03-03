@@ -1,6 +1,6 @@
 
 os = require 'os'
-mecano = require '../../src'
+nikita = require '../../src'
 they = require 'ssh2-they'
 test = require '../test'
 fs = require 'ssh2-fs'
@@ -10,7 +10,7 @@ describe 'system.limits', ->
   scratch = test.scratch @
 
   they 'do nothing without any limits', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .system.limits
       target: "#{scratch}/me.conf"
@@ -24,7 +24,7 @@ describe 'system.limits', ->
 
   they 'nofile and noproc accept int', (ssh, next) ->
     return next() unless os.platform() is 'linux'
-    mecano
+    nikita
       ssh: ssh
     .system.limits
       target: "#{scratch}/me.conf"
@@ -44,7 +44,7 @@ describe 'system.limits', ->
 
   they 'set global value', (ssh, next) ->
     return next() unless os.platform() is 'linux'
-    mecano
+    nikita
       ssh: ssh
     .system.limits
       target: "#{scratch}/me.conf"
@@ -64,7 +64,7 @@ describe 'system.limits', ->
 
   they 'specify hard and soft values', (ssh, next) ->
     return next() unless os.platform() is 'linux'
-    mecano
+    nikita
       ssh: ssh
     .system.limits
       target: "#{scratch}/me.conf"
@@ -85,7 +85,7 @@ describe 'system.limits', ->
 
   they 'detect changes', (ssh, next) ->
     return next() unless os.platform() is 'linux'
-    mecano
+    nikita
       ssh: ssh
     .system.limits
       target: "#{scratch}/me.conf"
@@ -104,7 +104,7 @@ describe 'system.limits', ->
 
   they 'detect no change', (ssh, next) ->
     return next() unless os.platform() is 'linux'
-    mecano
+    nikita
       ssh: ssh
     .system.limits
       target: "#{scratch}/me.conf"
@@ -127,7 +127,7 @@ describe 'system.limits', ->
     nofile = null
     fs.exists ssh, '/proc/sys/fs/file-max', (err, exists) ->
       return next() unless exists # Not linux
-      mecano
+      nikita
         ssh: ssh
       .system.execute
         cmd: 'cat /proc/sys/fs/file-max'
@@ -159,7 +159,7 @@ describe 'system.limits', ->
 
   they 'raise an error if nofile is too high', (ssh, next) ->
     return next() unless os.platform() is 'linux'
-    mecano
+    nikita
       ssh: ssh
     .system.limits
       target: "#{scratch}/me.conf"
@@ -171,7 +171,7 @@ describe 'system.limits', ->
 
   they 'raise an error if nproc is too high', (ssh, next) ->
     return next() unless os.platform() is 'linux'
-    mecano
+    nikita
       ssh: ssh
     .system.limits
       target: "#{scratch}/me.conf"
@@ -183,7 +183,7 @@ describe 'system.limits', ->
 
   they 'raise an error if hardness is incoherent', (ssh, next) ->
     return next() unless os.platform() is 'linux'
-    mecano
+    nikita
       ssh: ssh
     .system.limits
       target: "#{scratch}/me.conf"
@@ -197,7 +197,7 @@ describe 'system.limits', ->
 
   they 'accept value \'unlimited\'', (ssh, next) ->
     return next() unless os.platform() is 'linux'
-    mecano
+    nikita
       ssh: ssh
     .system.limits
       target: "#{scratch}/me.conf"

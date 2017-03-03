@@ -1,5 +1,5 @@
 
-# `mecano.db.schema(options, callback)`
+# `nikita.db.schema(options, callback)`
 
 Create a database for the destination database.
 
@@ -26,7 +26,7 @@ Create a database for the destination database.
 ## Create Schema example
 
 ```js
-require('mecano').database.schema({
+require('nikita').database.schema({
   admin_username: 'test',
   admin_password: 'test',
   database: 'my_db',

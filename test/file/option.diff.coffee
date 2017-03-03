@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
@@ -9,7 +9,7 @@ describe 'file options diff', ->
 
   they 'type is a function', (ssh, next) ->
     diffcalled = false
-    mecano
+    nikita
       ssh: ssh
     .file
       target: "#{scratch}/file"
@@ -31,7 +31,7 @@ describe 'file options diff', ->
   they 'emit logs', (ssh, next) ->
     # Prepare by creating a file with content
     logs = []
-    mecano
+    nikita
       ssh: ssh
     .on 'diff', (log) -> logs.push log.message
     .file
@@ -51,7 +51,7 @@ describe 'file options diff', ->
     # Passing a buffer as content resulted to a diff error 
     # with message "#{content} has no method 'split'",
     # make sure this is fixed for ever
-    mecano
+    nikita
       ssh: ssh
     .file
       target: "#{scratch}/file"
@@ -61,7 +61,7 @@ describe 'file options diff', ->
 
   they 'empty source on empty file', (ssh, next) ->
     logs = []
-    mecano
+    nikita
       ssh: ssh
     .on 'diff', (log) -> logs.push log.message
     .file
@@ -76,7 +76,7 @@ describe 'file options diff', ->
 
   they 'content on created file', (ssh, next) ->
     diff = null
-    mecano.file
+    nikita.file
       ssh: ssh
       target: "#{scratch}/file"
       content: 'some content'

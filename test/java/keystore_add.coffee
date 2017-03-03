@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 they = require 'ssh2-they'
 test = require '../test'
 
@@ -10,7 +10,7 @@ describe 'java.keystore_add', ->
   describe 'cacert', ->
 
     they 'create new cacerts file', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .java.keystore_add
         keystore: "#{scratch}/cacerts"
@@ -24,7 +24,7 @@ describe 'java.keystore_add', ->
         next err
 
     they 'detect existing cacert signature', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .java.keystore_add
         keystore: "#{scratch}/cacerts"
@@ -42,7 +42,7 @@ describe 'java.keystore_add', ->
         next err
 
     they 'update a new cacert with same alias', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .java.keystore_add
         keystore: "#{scratch}/cacerts"
@@ -62,7 +62,7 @@ describe 'java.keystore_add', ->
   describe 'key', ->
 
     they 'create new cacerts file', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .java.keystore_add
         keystore: "#{scratch}/cacerts"
@@ -78,7 +78,7 @@ describe 'java.keystore_add', ->
         next err
 
     they 'detect existing cacert signature', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .java.keystore_add
         keystore: "#{scratch}/cacerts"
@@ -104,7 +104,7 @@ describe 'java.keystore_add', ->
         next err
 
     they 'update a new cacert with same alias', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .java.keystore_add
         keystore: "#{scratch}/cacerts"
@@ -132,7 +132,7 @@ describe 'java.keystore_add', ->
   describe 'keystore', ->
 
     they.skip 'change password', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .java.keystore_add
         keystore: "#{scratch}/cacerts"
@@ -151,7 +151,7 @@ describe 'java.keystore_add', ->
   describe 'option openssl', ->
     
     they 'throw error if not detected', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .java.keystore_add
         keystore: "#{scratch}/cacerts"

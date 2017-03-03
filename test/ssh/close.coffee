@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
@@ -10,7 +10,7 @@ describe 'ssh.close', ->
 
   they 'check status', (ssh, next) ->
     return next() unless ssh
-    mecano
+    nikita
     .ssh.open
       host: ssh.config.host
       port: ssh.config.port

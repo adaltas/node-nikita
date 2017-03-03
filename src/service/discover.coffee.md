@@ -1,9 +1,9 @@
 
-# `mecano.service.discover(options, [callback])`
+# `nikita.service.discover(options, [callback])`
 
 Discover the OS init loader.
 For now it only supports Centos/Redhat OS in version 6 or 7, ubuntu.
-Store properties in the mecano store object.
+Store properties in the nikita store object.
 
 ## Options
 
@@ -32,7 +32,7 @@ Store properties in the mecano store object.
       options.cache ?= true
       @system.execute
         shy: options.shy
-        unless: options.store['mecano:service:loader']?
+        unless: options.store['nikita:service:loader']?
         cmd: """
         if which systemctl >/dev/null; then exit 1; fi ;
         if which service >/dev/null; then exit 2; fi ;
@@ -46,7 +46,7 @@ Store properties in the mecano store object.
         loader = switch signal
           when 1 then 'systemctl'
           when 2 then 'service'
-        options.store['mecano:service:loader'] = options.loader if options.cache
+        options.store['nikita:service:loader'] = options.loader if options.cache
       @then (err, status) ->
-        loader = options.store['mecano:service:loader']? if options.cache and not loader?
+        loader = options.store['nikita:service:loader']? if options.cache and not loader?
         callback err, status, loader

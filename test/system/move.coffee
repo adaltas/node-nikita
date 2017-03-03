@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
@@ -9,7 +9,7 @@ describe 'system.move', ->
   scratch = test.scratch @
 
   they 'rename a file', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .system.copy
       # ssh: ssh # copy not there yet
@@ -30,7 +30,7 @@ describe 'system.move', ->
           next()
 
   they 'rename a directory', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .system.copy
       source: "#{__dirname}/../resources/"
@@ -50,7 +50,7 @@ describe 'system.move', ->
           next()
 
   they 'overwrite a file', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file [
       content: "hello"
@@ -85,7 +85,7 @@ describe 'system.move', ->
     .then next
 
   they 'force bypass checksum comparison', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file [
       content: "hello"

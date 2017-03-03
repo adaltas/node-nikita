@@ -1,5 +1,5 @@
 
-# `mecano.connection.wait(options, [callback])`
+# `nikita.connection.wait(options, [callback])`
 
 Check if one or multiple hosts listen one or multiple ports periodically and
 continue once all the connections succeed. Status will be set to "false" if the
@@ -33,7 +33,7 @@ connection finaly succeeded.
 Wait for two domains on the same port.
 
 ```coffee
-require 'mecano'
+require 'nikita'
 .wait_connect
   hosts: [ '1.domain.com', '2.domain.com' ]
   port: 80
@@ -44,7 +44,7 @@ require 'mecano'
 Wait for one domain on two diffents ports.
 
 ```coffee
-require 'mecano'
+require 'nikita'
 .wait_connect
   host: 'my.domain.com'
   ports: [80, 443]
@@ -55,7 +55,7 @@ require 'mecano'
 Wait for two domains on diffents ports.
 
 ```coffee
-require 'mecano'
+require 'nikita'
 .wait_connect
   servers: [
     {host: '1.domain.com', port: 80}
@@ -68,7 +68,7 @@ require 'mecano'
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering wait for connection", level: 'DEBUG', module: 'mecano/connection/wait'
+      options.log message: "Entering wait for connection", level: 'DEBUG', module: 'nikita/connection/wait'
       extract_servers = (options) ->
         throw Error "Invalid host: #{server.host}" if (options.port or options.ports) and not options.host
         throw Error "Invalid port: #{server.port}" if (options.host or options.hosts) and not options.port
@@ -99,7 +99,7 @@ require 'mecano'
         for server in options[k]
           servers.push extract_servers(server)...
       unless servers.length
-        options.log message: "No connection to wait for", level: 'WARN', module: 'mecano/connection/wait'
+        options.log message: "No connection to wait for", level: 'WARN', module: 'nikita/connection/wait'
         return 
       # Validate servers
       options.interval ?= 2000 # 2s

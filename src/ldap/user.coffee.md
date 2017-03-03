@@ -1,5 +1,5 @@
 
-# `mecano.ldap.user(options, [callback])`
+# `nikita.ldap.user(options, [callback])`
 
 Create and modify a user store inside an OpenLDAP server.   
 
@@ -22,7 +22,7 @@ Create and modify a user store inside an OpenLDAP server.
 ## Example
 
 ```js
-require('mecano').ldap.user({
+require('nikita').ldap.user({
   url: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
@@ -40,12 +40,12 @@ require('mecano').ldap.user({
       binddn = if options.binddn then "-D #{options.binddn}" else ''
       passwd = if options.passwd then "-w #{options.passwd}" else ''
       if options.url
-        console.log "Mecano: option 'options.url' is deprecated, use 'options.uri'"
+        console.log "Nikita: option 'options.url' is deprecated, use 'options.uri'"
         options.uri ?= options.url
       options.uri = 'ldapi:///' if options.uri is true
       uri = if options.uri then "-H #{options.uri}" else '' # URI is obtained from local openldap conf unless provided
       # User related options
-      return callback Error "Mecano `ldap.user`: required property 'user'" unless options.user
+      return callback Error "Nikita `ldap.user`: required property 'user'" unless options.user
       options.user = [options.user] unless Array.isArray options.user
       modified = false
       each(options.user)
@@ -62,8 +62,8 @@ require('mecano').ldap.user({
             passwd: options.passwd
           , (err, updated, added) ->
             return callback err if err
-            if added then options.log message: "User added", level: 'WARN', module: 'mecano/ldap/user'
-            else if updated then options.log message: "User updated", level: 'WARN', module: 'mecano/ldap/user'
+            if added then options.log message: "User added", level: 'WARN', module: 'nikita/ldap/user'
+            else if updated then options.log message: "User updated", level: 'WARN', module: 'nikita/ldap/user'
             modified = true if updated or added
             if added
             then do_ldappass()
@@ -89,7 +89,7 @@ require('mecano').ldap.user({
             """
           , (err) ->
             return callback err if err
-            options.log message: "Password modified", level: 'WARN', module: 'mecano/ldap/user'
+            options.log message: "Password modified", level: 'WARN', module: 'nikita/ldap/user'
             modified = true
             do_end()
         do_end = ->

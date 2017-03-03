@@ -1,5 +1,5 @@
 
-# `mecano.service.remove(options, [callback])`
+# `nikita.service.remove(options, [callback])`
 
 Status of a service.
 
@@ -23,7 +23,7 @@ Status of a service.
 ## Example
 
 ```js
-require('mecano').service.start([{
+require('nikita').service.start([{
   ssh: ssh,
   name: 'gmetad'
 }, function(err, status){ /* do sth */ });
@@ -32,14 +32,14 @@ require('mecano').service.start([{
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering service.remove", level: 'DEBUG', module: 'mecano/lib/service/remove'
+      options.log message: "Entering service.remove", level: 'DEBUG', module: 'nikita/lib/service/remove'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'
-      options.manager ?= options.store['mecano:service:manager']
+      options.manager ?= options.store['nikita:service:manager']
       # Validation
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       # Action
-      options.log message: "Remove service #{options.name}", level: 'INFO', module: 'mecano/lib/service/remove'
+      options.log message: "Remove service #{options.name}", level: 'INFO', module: 'nikita/lib/service/remove'
       cacheonly = if options.cacheonly then '-C' else ''
       @system.execute
         cmd: """
@@ -55,7 +55,7 @@ require('mecano').service.start([{
         options.manager = switch signal
           when 1 then 'yum'
           when 2 then 'apt'
-        options.store['mecano:service:manager'] = options.manager if options.cache
+        options.store['nikita:service:manager'] = options.manager if options.cache
       @system.execute
         cmd: -> switch options.manager
           when 'yum' then """
@@ -70,6 +70,6 @@ require('mecano').service.start([{
       , (err, removed) ->
         throw Error "Invalid Service Name: #{options.name}" if err
         options.log if removed
-        then message: "Service removed", level: 'WARN', module: 'mecano/lib/service/remove'
-        else message: "Service already removed", level: 'INFO', module: 'mecano/lib/service/remove'
+        then message: "Service removed", level: 'WARN', module: 'nikita/lib/service/remove'
+        else message: "Service already removed", level: 'INFO', module: 'nikita/lib/service/remove'
         

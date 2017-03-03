@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 fs = require 'fs'
 
@@ -9,7 +9,7 @@ describe 'api callback', ->
 
   it 'call callback multiple times for array of options', (next) ->
     callbacks = []
-    mecano
+    nikita
     .call [
       handler: -> # do sth
     ,
@@ -25,7 +25,7 @@ describe 'api callback', ->
 
   it 'register actions in callback', (next) ->
     msgs = []
-    m = mecano log: (msg) -> msgs.push msg if /\/file_\d/.test msg
+    m = nikita log: (msg) -> msgs.push msg if /\/file_\d/.test msg
     m
     .file
       target: "#{scratch}/a_file"
@@ -52,7 +52,7 @@ describe 'api callback', ->
   describe 'error', ->
 
     it 'without parent', (next) ->
-      mecano()
+      nikita()
       .file
         target: "#{scratch}/a_file"
         content: 'abc'
@@ -65,7 +65,7 @@ describe 'api callback', ->
         next()
 
     it 'inside sync call', (next) ->
-      mecano
+      nikita
       .call () ->
         @call (->), ->
           throw Error 'Catchme'
@@ -74,7 +74,7 @@ describe 'api callback', ->
         next()
 
     it 'inside async call', (next) ->
-      mecano
+      nikita
       .call (_, callback) ->
         @call (->), ->
           throw Error 'Catchme'

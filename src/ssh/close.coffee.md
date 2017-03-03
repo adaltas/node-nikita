@@ -1,5 +1,5 @@
 
-# `mecano.ssh.close(options, [callback])`
+# `nikita.ssh.close(options, [callback])`
 
 Close the existing connection if any.
 
@@ -10,7 +10,7 @@ There are no options.
 ## Source code
 
     module.exports = handler: (options, callback) ->
-      options.log message: "Entering ssh.close", level: 'DEBUG', module: 'mecano/lib/ssh/close'
+      options.log message: "Entering ssh.close", level: 'DEBUG', module: 'nikita/lib/ssh/close'
       return callback() unless @options.ssh
       @options.ssh.end()
       @options.ssh.on 'error', (err) -> callback err

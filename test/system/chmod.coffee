@@ -2,7 +2,7 @@
 fs = require 'fs'
 path = require 'path'
 fs.exists ?= path.exists
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
@@ -11,7 +11,7 @@ describe 'system.chmod', ->
   scratch = test.scratch @
 
   they 'change a permission of a file', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file.touch
       target: "#{scratch}/a_file"

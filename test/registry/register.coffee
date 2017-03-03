@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 each = require 'each'
 
@@ -10,30 +10,30 @@ describe 'registry.register', ->
   describe 'global', ->
 
     it 'set property', ->
-      mecano.register 'my_function', -> 'my_function'
-      mecano.registered('my_function').should.be.true()
-      mecano.unregister 'my_function'
+      nikita.register 'my_function', -> 'my_function'
+      nikita.registered('my_function').should.be.true()
+      nikita.unregister 'my_function'
 
     it 'register twice', ->
-      mecano.register 'my_function', -> 'my_function'
-      mecano.register 'my_function', -> 'my_function'
+      nikita.register 'my_function', -> 'my_function'
+      nikita.register 'my_function', -> 'my_function'
 
     it 'register an object with options', (next) ->
       value_a = value_b = null
-      mecano.register 'my_function', shy: true, handler: (options) ->
+      nikita.register 'my_function', shy: true, handler: (options) ->
         value_a = "hello #{options.value}"
-      mecano.register 'my': 'function': shy: true, handler: (options, callback) ->
+      nikita.register 'my': 'function': shy: true, handler: (options, callback) ->
         value_b = "hello #{options.value}"
         callback null, true
-      mecano
+      nikita
       .call (_, next) ->
-        mecano
+        nikita
         .my_function value: 'world'
         .then (err, status) ->
           status.should.be.false() unless err
           next err
       .call (_, next) ->
-        mecano
+        nikita
         .my.function value: 'world'
         .then (err, status) ->
           status.should.be.false() unless err
@@ -41,61 +41,61 @@ describe 'registry.register', ->
       .then (err) ->
         value_a.should.eql "hello world" unless err
         value_b.should.eql "hello world" unless err
-        mecano.unregister 'my_function'
-        mecano.unregister ['my', 'function']
+        nikita.unregister 'my_function'
+        nikita.unregister ['my', 'function']
         next err
 
     it 'overwrite middleware options', (next) ->
       value_a = value_b = null
-      mecano.register 'my_function', key: 'a', handler: (->)
-      mecano.register 'my_function', key: 'b', handler: (options) -> value_a = "Got #{options.key}"
-      mecano.register
+      nikita.register 'my_function', key: 'a', handler: (->)
+      nikita.register 'my_function', key: 'b', handler: (options) -> value_a = "Got #{options.key}"
+      nikita.register
         'my': 'function': key: 'a', handler: (->)
-      mecano.register
+      nikita.register
         'my': 'function': key: 'b', handler: (options) ->
           value_b = "Got #{options.key}"
-      mecano()
+      nikita()
       .call (_, next) ->
-        mecano.my_function next
+        nikita.my_function next
       .call (_, next) ->
-        mecano.my.function next
+        nikita.my.function next
       .then (err) ->
         value_a.should.eql "Got b" unless err
         value_b.should.eql "Got b" unless err
-        mecano.unregister 'my_function'
-        mecano.unregister ['my', 'function']
+        nikita.unregister 'my_function'
+        nikita.unregister ['my', 'function']
         next err
 
-    it 'is available from mecano instance', (next) ->
-      mecano.register 'my_function', (options, callback) ->
+    it 'is available from nikita instance', (next) ->
+      nikita.register 'my_function', (options, callback) ->
         options.my_option.should.eql 'my value'
         process.nextTick ->
           callback null, true
-      m = mecano()
+      m = nikita()
       m.registry.registered('my_function').should.be.true()
       m.my_function
         my_option: 'my value'
       .then (err, status) ->
         status.should.be.true()
-        mecano.unregister 'my_function'
+        nikita.unregister 'my_function'
         next err
 
     it 'namespace accept array', (next) ->
       value = null
-      mecano.register ['this', 'is', 'a', 'function'], (options, callback) ->
+      nikita.register ['this', 'is', 'a', 'function'], (options, callback) ->
         value = options.value
         callback null, true
-      m = mecano()
+      m = nikita()
       m.registry.registered(['this', 'is', 'a', 'function']).should.be.true()
       m.this.is.a.function value: 'yes'
       m.then (err, status) ->
         status.should.be.true()
-        mecano.unregister ['this', 'is', 'a', 'function']
+        nikita.unregister ['this', 'is', 'a', 'function']
         next err
 
     it 'namespace accept object', (next) ->
       value_a = value_b = null
-      mecano.register
+      nikita.register
         namespace:
           "": (options, callback) ->
             value_a = options.value
@@ -103,40 +103,40 @@ describe 'registry.register', ->
           "child": (options, callback) ->
             value_b = options.value
             callback null, true
-      mecano
+      nikita
       .call (_, next) ->
-        mecano.namespace(value: 'a').then next
+        nikita.namespace(value: 'a').then next
       .call (_, next) ->
-        mecano.namespace.child(value: 'b').then next
+        nikita.namespace.child(value: 'b').then next
       .then (err, status) ->
         status.should.be.true()
         value_a.should.eql 'a'
         value_b.should.eql 'b'
-        mecano.unregister "namespace"
+        nikita.unregister "namespace"
         next err
 
     it 'namespace call function with children', (next) ->
       value_a = value_b = null
-      mecano.register ['a', 'function'], (options, callback) ->
+      nikita.register ['a', 'function'], (options, callback) ->
         value_a = options.value
         callback null, true
-      mecano.register ['a', 'function', 'with', 'a', 'child'], (options, callback) ->
+      nikita.register ['a', 'function', 'with', 'a', 'child'], (options, callback) ->
         value_b = options.value
         callback null, true
-      mecano.registered(['a', 'function']).should.be.true()
-      mecano
-      .call (_, next) -> mecano.a.function(value: 'a').then next
-      .call (_, next) -> mecano.a.function.with.a.child(value: 'b').then next
+      nikita.registered(['a', 'function']).should.be.true()
+      nikita
+      .call (_, next) -> nikita.a.function(value: 'a').then next
+      .call (_, next) -> nikita.a.function.with.a.child(value: 'b').then next
       .then (err, status) ->
         status.should.be.true()
         value_a.should.eql 'a'
         value_b.should.eql 'b'
-        mecano.unregister ['a', 'function']
-        mecano.unregister ['a', 'function', 'with', 'a', 'child']
+        nikita.unregister ['a', 'function']
+        nikita.unregister ['a', 'function', 'with', 'a', 'child']
         next err
 
     it 'throw error unless registered', (next) ->
-      mecano
+      nikita
       .invalid()
       .then (err) ->
         err.message.should.eql 'Unregistered Middleware: invalid'
@@ -145,19 +145,19 @@ describe 'registry.register', ->
   describe 'local', ->
 
     it 'set property', ->
-      m = mecano()
+      m = nikita()
       m.registry.register 'my_function', -> 'my_function'
       m.registry.registered('my_function').should.be.true()
       m.registry.unregister 'my_function'
 
     it 'overwrite a middleware', ->
-      mecano()
+      nikita()
       .registry.register 'my_function', -> 'my_function'
       .registry.register 'my_function', -> 'my_function'
 
     it 'register an object with options', (next) ->
       value_a = value_b = null
-      mecano()
+      nikita()
       .registry.register( 'my_function', shy: true, handler: (options, callback) ->
         value_a = "hello #{options.value}"
         callback null, true
@@ -176,7 +176,7 @@ describe 'registry.register', ->
 
     it 'overwrite middleware options', (next) ->
       value_a = value_b = null
-      mecano()
+      nikita()
       .registry.register( 'my_function', key: 'a', handler: (->) )
       .registry.register( 'my_function', key: 'b', handler: (options) -> value_a = "Got #{options.key}" )
       .registry.register
@@ -191,7 +191,7 @@ describe 'registry.register', ->
         next err
 
     it 'receive options', (next) ->
-      m = mecano()
+      m = nikita()
       .registry.register 'my_function', (options, callback) ->
         options.my_option.should.eql 'my value'
         process.nextTick ->
@@ -205,7 +205,7 @@ describe 'registry.register', ->
 
     it 'register module name', (next) ->
       logs = []
-      m = mecano()
+      m = nikita()
       .on 'text', (l) -> logs.push l.message
       .registry.register 'module_sync', 'test/resources/module_sync'
       .registry.register 'module_async', 'test/resources/module_async'
@@ -219,7 +219,7 @@ describe 'registry.register', ->
 
     it 'support lazy validation for late registration', (next) ->
       name = null
-      mecano
+      nikita
       .call ->
         @registry.register ['my', 'function'], (options) -> name = options.name
       .my.function name: 'callme'
@@ -229,19 +229,19 @@ describe 'registry.register', ->
 
     it 'namespace accept array', (next) ->
       value = null
-      mecano()
+      nikita()
       .registry.register ['this', 'is', 'a', 'function'], (options, callback) ->
         value = options.value
         callback null, true
       .this.is.a.function value: 'yes'
       .then (err, status) ->
         status.should.be.true()
-        mecano.unregister ['this', 'is', 'a', 'function']
+        nikita.unregister ['this', 'is', 'a', 'function']
         next err
 
     it 'namespace accept object', (next) ->
       value_a = value_b = null
-      mecano()
+      nikita()
       .registry.register
         namespace:
           "": (options, callback) ->
@@ -260,7 +260,7 @@ describe 'registry.register', ->
 
     it 'namespace call function with children', (next) ->
       value_a = value_b = null
-      mecano()
+      nikita()
       .registry.register ['a', 'function'], (options, callback) ->
         value_a = options.value
         callback null, true
@@ -273,12 +273,12 @@ describe 'registry.register', ->
         status.should.be.true()
         value_a.should.eql 'a'
         value_b.should.eql 'b'
-        mecano.unregister ['a', 'function']
-        mecano.unregister ['a', 'function', 'with', 'a', 'child']
+        nikita.unregister ['a', 'function']
+        nikita.unregister ['a', 'function', 'with', 'a', 'child']
         next err
 
     it 'throw error unless registered', (next) ->
-      mecano()
+      nikita()
       .invalid()
       .then (err) ->
         err.message.should.eql 'Unregistered Middleware: invalid'
@@ -288,11 +288,11 @@ describe 'registry.register', ->
 
     it 'support lazy validation for late registration', (next) ->
       name = null
-      mecano
+      nikita
       .call ->
-        mecano.register 'my_function', (options) -> name = options.name
+        nikita.register 'my_function', (options) -> name = options.name
       .my_function name: 'callme'
       .then (err) ->
         name.should.eql 'callme' unless err
-        mecano.unregister 'my_function'
+        nikita.unregister 'my_function'
         next err

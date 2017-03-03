@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 http = require 'http'
@@ -23,7 +23,7 @@ describe 'connection.wait', ->
 
     they 'a single host and a single port', (ssh, next) ->
       port = port++
-      mecano
+      nikita
         ssh: ssh
         server1: server port
       .call ->
@@ -40,7 +40,7 @@ describe 'connection.wait', ->
     they 'server object', (ssh, next) ->
       port1 = port++
       port2 = port++
-      mecano
+      nikita
         ssh: ssh
         server1: server port1
         server2: server port2
@@ -71,7 +71,7 @@ describe 'connection.wait', ->
 
     they 'server string', (ssh, next) ->
       port = port++
-      mecano
+      nikita
         ssh: ssh
         server1: server port
       .call ->
@@ -86,7 +86,7 @@ describe 'connection.wait', ->
 
     they 'multiple connection', (ssh, next) ->
       port = port++
-      mecano
+      nikita
         ssh: ssh
         server1: server port
       .call ->
@@ -104,7 +104,7 @@ describe 'connection.wait', ->
 
     they 'test status', (ssh, next) ->
       port = port++
-      mecano
+      nikita
         ssh: ssh
         server1: server port
       # Status false
@@ -133,7 +133,7 @@ describe 'connection.wait', ->
       port1 = port++
       port2 = port++
       port3 = port++
-      mecano
+      nikita
         ssh: ssh
         server1: server port1
         server2: server port2
@@ -161,7 +161,7 @@ describe 'connection.wait', ->
       port1 = port++
       port2 = port++
       port3 = port++
-      mecano
+      nikita
         ssh: ssh
         server1: server port1
         server2: server port2
@@ -189,7 +189,7 @@ describe 'connection.wait', ->
     
     they 'validate host', (ssh, next) ->
       port = port++
-      mecano
+      nikita
         ssh: ssh
       .connection.wait
         servers: [
@@ -201,7 +201,7 @@ describe 'connection.wait', ->
       .then next
         
     they 'validate port', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .connection.wait
         servers: [

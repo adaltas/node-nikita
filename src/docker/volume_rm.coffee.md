@@ -1,5 +1,5 @@
 
-# `mecano.volume_rm(options, [callback])`
+# `nikita.volume_rm(options, [callback])`
 
 Remove a volume. 
 
@@ -17,7 +17,7 @@ Remove a volume.
 ## Example
 
 ```javascript
-mecano.docker.volume_rm({
+nikita.docker.volume_rm({
   name: 'my_volume'
 }, function(err, removed){
   console.log(err or 'Status'+removed);
@@ -27,7 +27,7 @@ mecano.docker.volume_rm({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering Docker volume_rm", level: 'DEBUG', module: 'mecano/lib/docker/volume_rm'
+      options.log message: "Entering Docker volume_rm", level: 'DEBUG', module: 'nikita/lib/docker/volume_rm'
       # Validate parameters
       throw Error "Missing required option name" unless options.name
       @system.execute

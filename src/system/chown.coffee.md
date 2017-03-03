@@ -1,5 +1,5 @@
 
-# `mecano.system.chown(options, [callback])`
+# `nikita.system.chown(options, [callback])`
 
 Change the ownership of a file or a directory.
 
@@ -25,7 +25,7 @@ Change the ownership of a file or a directory.
 ## Example
 
 ```js
-require('mecano').system.chown({
+require('nikita').system.chown({
   target: '~/my/project',
   uid: 'my_user'
   gid: 'my_group'
@@ -47,7 +47,7 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering chown", level: 'DEBUG', module: 'mecano/lib/chown'
+      options.log message: "Entering chown", level: 'DEBUG', module: 'nikita/lib/chown'
       # Validate parameters
       return callback Error "Missing target option" unless options.target?
       return callback Error "Missing one of uid or gid option" unless options.uid? or options.gid?
@@ -58,19 +58,19 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
       do_stat = ->
         # Option 'stat' short-circuit
         return do_chown options.stat if options.stat
-        options.log message: "Stat #{options.target}", level: 'DEBUG', module: 'mecano/lib/chown'
+        options.log message: "Stat #{options.target}", level: 'DEBUG', module: 'nikita/lib/chown'
         fs.stat options.ssh, options.target, (err, stat) ->
           return callback err if err
           do_chown stat
       do_chown = (stat) ->
         # Detect changes
         if stat.uid is options.uid and stat.gid is options.gid
-          options.log message: "Matching ownerships on '#{options.target}'", level: 'INFO', module: 'mecano/lib/chown'
+          options.log message: "Matching ownerships on '#{options.target}'", level: 'INFO', module: 'nikita/lib/chown'
           return callback()
         # Apply changes
         fs.chown options.ssh, options.target, options.uid, options.gid, (err) ->
-          options.log message: "change uid from #{stat.uid} to #{options.uid}", level: 'WARN', module: 'mecano/lib/chown'
-          options.log message: "change gid from #{stat.gid} to #{options.gid}", level: 'WARN', module: 'mecano/lib/chown'
+          options.log message: "change uid from #{stat.uid} to #{options.uid}", level: 'WARN', module: 'nikita/lib/chown'
+          options.log message: "change gid from #{stat.gid} to #{options.gid}", level: 'WARN', module: 'nikita/lib/chown'
           callback err, true
       do_uid_gid()
 

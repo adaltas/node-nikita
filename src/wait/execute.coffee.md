@@ -1,5 +1,5 @@
 
-# `mecano.wait.execute(options, [callback])`
+# `nikita.wait.execute(options, [callback])`
 
 Run a command periodically and continue once the command succeed. Status will be
 set to "false" if the user command succeed right away, considering that no
@@ -23,7 +23,7 @@ change had occured. Otherwise it will be set to "true".
 ## Example
 
 ```coffee
-require 'mecano'
+require 'nikita'
 .wait.execute
   cmd: "test -f /tmp/sth"
 .then (err, status) ->
@@ -45,7 +45,7 @@ require 'mecano'
         options.quorum = options.cmd.length
       options.interval ?= 2000
       options.code_skipped ?= 1
-      options.log message: "Entering wait for execution", level: 'DEBUG', module: 'mecano/wait/execute'
+      options.log message: "Entering wait for execution", level: 'DEBUG', module: 'nikita/wait/execute'
       quorum_current = 0
       modified = false
       each options.cmd
@@ -54,7 +54,7 @@ require 'mecano'
         return next() if quorum_current >= options.quorum
         run = =>
           count++
-          options.log message: "Attempt ##{count}", level: 'INFO', module: 'mecano/wait/execute'
+          options.log message: "Attempt ##{count}", level: 'INFO', module: 'nikita/wait/execute'
           @system.execute
             cmd: cmd
             code: options.code or 0
@@ -64,7 +64,7 @@ require 'mecano'
               setTimeout run, options.interval
               return
             return next err if err
-            options.log message: "Finish wait for execution", level: 'INFO', module: 'mecano/wait/execute'
+            options.log message: "Finish wait for execution", level: 'INFO', module: 'nikita/wait/execute'
             quorum_current++
             modified = true if count > 1
             next()

@@ -1,21 +1,21 @@
 
 fs = require 'fs'
-mecano = require '..'
+nikita = require '..'
 
 date = -> d = (new Date).toISOString()
 
-source = "#{__dirname}/mecano.coffee"
+source = "#{__dirname}/nikita.coffee"
 target = "#{__dirname}/../doc/index.md"
 docs = """
 ---
 language: en
 layout: page
-title: "Node Mecano: Common functions for system deployment"
+title: "Node Nikita: Common functions for system deployment"
 date: #{date()}
 comments: false
 sharing: false
 footer: false
-github: https://github.com/wdavidw/node-mecano
+github: https://github.com/wdavidw/node-nikita
 ---
 """
 
@@ -35,7 +35,7 @@ fs.readFile source, 'ascii', (err, content) ->
     console.log 'Documentation generated'
     target = process.argv[2]
     return unless target
-    mecano.system.copy
+    nikita.system.copy
       source: "#{__dirname}/../doc/index.md"
       target: target
       force: true

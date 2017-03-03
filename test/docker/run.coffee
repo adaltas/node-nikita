@@ -4,13 +4,13 @@
 # For this purpos ip, and clean are used
 
 should = require 'should'
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 docker = require '../../src/misc/docker'
 
 ip = (ssh, machine, callback) ->
-  mecano
+  nikita
   .system.execute
     cmd: """
     export SHELL=/bin/bash
@@ -40,7 +40,7 @@ describe 'docker.run', ->
   scratch = test.scratch @
 
   they 'simple command', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.run
@@ -52,43 +52,43 @@ describe 'docker.run', ->
     .then next
   
   they '--rm (flag option)', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.rm
       force: true
-      container: 'mecano_test_rm'
+      container: 'nikita_test_rm'
     .docker.run
       cmd: "/bin/echo 'test'"
       image: 'alpine'
-      name: 'mecano_test_rm'
+      name: 'nikita_test_rm'
       rm: false
       , (err, executed, stdout, stderr) ->
         return err if err
         stdout.should.match /^test.*/ unless err
-        mecano
+        nikita
           ssh: ssh
         .docker.rm
           machine: config.docker.machine
           force: true
-          container: 'mecano_test_rm'
+          container: 'nikita_test_rm'
         .then next
 
   they 'unique option from array option', (ssh, next) ->
     ip ssh, config.docker.machine, (err, ipadress) =>
       return next err if  err
       @timeout 60000
-      mecano
+      nikita
         ssh: ssh
         machine: config.docker.machine
       .docker.rm
-        container: 'mecano_test_unique'
+        container: 'nikita_test_unique'
         force: true
       .docker.run
         image: 'httpd'
         port: '499:80'
         machine: config.docker.machine
-        name: 'mecano_test_unique'
+        name: 'nikita_test_unique'
         detach: true
         rm: false
       .wait_connect
@@ -96,23 +96,23 @@ describe 'docker.run', ->
         host: ipadress
       .docker.rm
         force: true
-        container: 'mecano_test_unique'
+        container: 'nikita_test_unique'
       .then next
 
   they 'array options', (ssh, next) ->
     ip ssh, config.docker.machine, (err, ipadress) =>
       return next err if  err
       @timeout 60000
-      mecano
+      nikita
         ssh: ssh
         machine: config.docker.machine
       .docker.rm
         force: true
-        container: 'mecano_test_array'
+        container: 'nikita_test_array'
       .docker.run
         image: 'httpd'
         port: [ '500:80', '501:81' ]
-        name: 'mecano_test_array'
+        name: 'nikita_test_array'
         detach: true
         rm: false
       .wait_connect
@@ -120,57 +120,57 @@ describe 'docker.run', ->
         port: 500
       .docker.rm
         force: true
-        container: 'mecano_test_array'
+        container: 'nikita_test_array'
       .then next
 
   they 'existing container', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.rm
       force: true
-      container: 'mecano_test'
+      container: 'nikita_test'
     .docker.run
       cmd: 'echo test'
       image: 'alpine'
-      name: 'mecano_test'
+      name: 'nikita_test'
       rm: false
     .docker.run
       cmd: "echo test"
       image: 'alpine'
-      name: 'mecano_test'
+      name: 'nikita_test'
       rm: false
     , (err, runned) ->
       runned.should.be.false()
     .docker.rm
       force: true
-      container: 'mecano_test'
+      container: 'nikita_test'
     .then next
 
   they 'status not modified', (ssh, next) ->
     @timeout 30000
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.rm
       force: true
-      container: 'mecano_test'
+      container: 'nikita_test'
     .docker.run
       cmd: 'echo test'
       image: 'alpine'
-      name: 'mecano_test'
+      name: 'nikita_test'
       rm: false
     .docker.run
       cmd: 'echo test'
       image: 'alpine'
-      name: 'mecano_test'
+      name: 'nikita_test'
       rm: false
     , (err, executed, out, serr) ->
       executed.should.be.false()
-      mecano
+      nikita
         ssh: ssh
         machine: config.docker.machine
       .docker.rm
         force: true
-        container: 'mecano_test'
+        container: 'nikita_test'
       .then next

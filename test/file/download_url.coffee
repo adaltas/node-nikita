@@ -1,6 +1,6 @@
 
 http = require 'http'
-mecano = require '../../src'
+nikita = require '../../src'
 misc = require '../../src/misc'
 test = require '../test'
 they = require 'ssh2-they'
@@ -25,7 +25,7 @@ describe 'file.download url', ->
   they 'download without cache and md5', (ssh, next) ->
     @timeout 100000
     # Download a non existing file
-    mecano
+    nikita
       ssh: ssh
     .file.download
       source: 'http://localhost:12345'
@@ -45,7 +45,7 @@ describe 'file.download url', ->
 
   they 'should chmod', (ssh, next) ->
     @timeout 10000
-    mecano
+    nikita
       ssh: ssh
     .file.download
       source: 'http://localhost:12345'
@@ -64,7 +64,7 @@ describe 'file.download url', ->
     they 'cache file', (ssh, next) ->
       @timeout 100000
       # Download a non existing file
-      mecano
+      nikita
         ssh: ssh
       .file.download
         source: 'http://localhost:12345'
@@ -88,7 +88,7 @@ describe 'file.download url', ->
       source = 'http://localhost:12345'
       target = "#{scratch}/download"
       cache = "#{scratch}/cache_file"
-      mecano(cache_file: cache).file.download
+      nikita(cache_file: cache).file.download
         ssh: ssh
         source: source
         target: target
@@ -105,7 +105,7 @@ describe 'file.download url', ->
       # Download a non existing file
       source = 'http://localhost:12345'
       target = "#{scratch}/download"
-      mecano
+      nikita
       .file.download
         ssh: ssh
         source: source
@@ -123,7 +123,7 @@ describe 'file.download url', ->
 
     they 'use shortcircuit if target match md5', (ssh, next) ->
       logs = []
-      mecano
+      nikita
         ssh: ssh
       .on 'text', (log) -> logs.push "[#{log.level}] #{log.message}"
       .file
@@ -141,7 +141,7 @@ describe 'file.download url', ->
 
     they 'bypass shortcircuit if target dont match md5', (ssh, next) ->
       logs = []
-      mecano
+      nikita
         ssh: ssh
       .on 'text', (log) -> logs.push "[#{log.level}] #{log.message}"
       .file
@@ -161,7 +161,7 @@ describe 'file.download url', ->
 
     they 'check signature on downloaded file', (ssh, next) ->
       # Download with invalid checksum
-      mecano
+      nikita
         ssh: ssh
       .file.download
         source: 'http://localhost:12345'
@@ -176,7 +176,7 @@ describe 'file.download url', ->
       # Download with invalid checksum
       source = 'http://localhost:12345'
       target = "#{scratch}/check_md5"
-      mecano
+      nikita
       .file.download
         ssh: ssh
         source: source
@@ -190,7 +190,7 @@ describe 'file.download url', ->
       # Download with invalid checksum
       source = 'http://localhost:12345'
       target = "#{scratch}/check_md5"
-      mecano
+      nikita
         ssh: ssh
       .file.download
         source: source

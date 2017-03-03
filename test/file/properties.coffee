@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 misc = require '../../src/misc'
 test = require '../test'
 they = require 'ssh2-they'
@@ -10,7 +10,7 @@ describe 'file.properties', ->
   scratch = test.scratch @
 
   they 'overwrite by default', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file.properties
       target: "#{scratch}/file.properties"
@@ -35,7 +35,7 @@ describe 'file.properties', ->
     .then next
     
   they 'honors merge', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file.properties
       target: "#{scratch}/file.properties"
@@ -62,7 +62,7 @@ describe 'file.properties', ->
     .then next
 
   they 'honor separator', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file.properties
       target: "#{scratch}/file.properties"
@@ -81,7 +81,7 @@ describe 'file.properties', ->
     .then next
 
   they 'honor sort', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file.properties
       target: "#{scratch}/file.properties"

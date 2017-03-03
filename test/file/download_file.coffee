@@ -1,6 +1,6 @@
 
 path = require 'path'
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
@@ -14,7 +14,7 @@ describe 'file.download file', ->
     they 'with file protocol', (ssh, next) ->
       source = "file://#{__filename}"
       target = "#{scratch}/download_test"
-      mecano
+      nikita
         ssh: ssh
       .file.download
         source: source
@@ -37,7 +37,7 @@ describe 'file.download file', ->
       source = "#{__filename}"
       target = "#{scratch}/download_test"
       # Download a non existing file
-      mecano
+      nikita
         ssh: ssh
       .file.download
         source: source
@@ -58,7 +58,7 @@ describe 'file.download file', ->
     they 'doesnt exists', (ssh, next) ->
       source = "#{__dirname}/doesnotexists"
       target = "#{scratch}/download_test"
-      mecano
+      nikita
         ssh: ssh
       .file.download
         source: source
@@ -73,7 +73,7 @@ describe 'file.download file', ->
     they 'into an existing directory', (ssh, next) ->
       source = "#{__filename}"
       target = "#{scratch}/download_test"
-      mecano
+      nikita
         ssh: ssh
       .system.mkdir
         target: target
@@ -91,7 +91,7 @@ describe 'file.download file', ->
     they 'validate md5', (ssh, next) ->
       source = "#{__dirname}/download.zip"
       target = "#{scratch}/download"
-      mecano
+      nikita
       .file.download
         ssh: ssh
         source: source
@@ -108,7 +108,7 @@ describe 'file.download file', ->
     they 'cache dir', (ssh, next) ->
       # Download a non existing file
       target = "#{scratch}/download"
-      mecano
+      nikita
       .file.download
         ssh: ssh
         source: "#{__filename}"
@@ -123,7 +123,7 @@ describe 'file.download file', ->
 
     they 'detect file already present', (ssh, next) ->
       ssh = null
-      mecano
+      nikita
         ssh: ssh
       .file.download
         source: "#{__filename}"
@@ -154,7 +154,7 @@ describe 'file.download file', ->
     they 'cache dir with md5 string', (ssh, next) ->
       # Download a non existing file
       target = "#{scratch}/download"
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/a_file"
@@ -180,7 +180,7 @@ describe 'file.download file', ->
       logs = []
       # Download with invalid checksum
       target = "#{scratch}/check_md5"
-      mecano
+      nikita
         ssh: ssh
       .on 'text', (log) -> logs.push "[#{log.level}] #{log.message}"
       .file

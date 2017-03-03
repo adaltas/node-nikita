@@ -1,12 +1,12 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 
 describe 'api events', ->
 
   it.skip 'end', (next) ->
     end = error = false
-    mecano()
+    nikita()
     .on 'end', -> end = true
     .on 'error', (err) -> error = err
     .then ->
@@ -17,7 +17,7 @@ describe 'api events', ->
 
   it.skip 'error', (next) ->
     end = error = false
-    mecano()
+    nikita()
     .on 'end', -> end = true
     .on 'error', (err) -> error = err
     .call -> throw Error 'KO'

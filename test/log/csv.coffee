@@ -1,7 +1,7 @@
 
 fs = require 'fs'
 should = require 'should'
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
@@ -10,7 +10,7 @@ describe 'log.csv', ->
   scratch = test.scratch @
   
   they 'write string', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .log.csv basedir: scratch
     .call (options) ->

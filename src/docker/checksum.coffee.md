@@ -1,5 +1,5 @@
 
-# `mecano.docker.build(options, [callback])`
+# `nikita.docker.build(options, [callback])`
 
 Return the checksum of repository:tag, if it exists. Function not native to docker.
 
@@ -30,7 +30,7 @@ Return the checksum of repository:tag, if it exists. Function not native to dock
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering Docker checksum", level: 'DEBUG', module: 'mecano/lib/docker/checksum'
+      options.log message: "Entering Docker checksum", level: 'DEBUG', module: 'nikita/lib/docker/checksum'
       # Validate parameters and __Mandatory__ conditions
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
@@ -38,12 +38,12 @@ Return the checksum of repository:tag, if it exists. Function not native to dock
       return callback Error 'Missing repository parameter' unless options.image?
       options.tag ?= 'latest'
       cmd = "images --no-trunc | grep '#{options.image}' | grep '#{options.tag}' | awk '{ print $3 }'"
-      options.log message: "Getting image checksum :#{options.image}", level: 'INFO', module: 'mecano/lib/docker/checksum'
+      options.log message: "Getting image checksum :#{options.image}", level: 'INFO', module: 'nikita/lib/docker/checksum'
       @system.execute
         cmd: docker.wrap options, cmd
       , (err, executed, stdout, stderr) ->
         checksum = if stdout is '' then false else stdout.toString().trim()
-        options.log message: "Image checksum for #{options.image}: #{checksum}", level: 'INFO', module: 'mecano/lib/docker/checksum' if executed
+        options.log message: "Image checksum for #{options.image}: #{checksum}", level: 'INFO', module: 'nikita/lib/docker/checksum' if executed
         return callback err, executed, checksum
 
 

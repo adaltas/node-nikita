@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
@@ -9,7 +9,7 @@ describe 'wait.execute', ->
   scratch = test.scratch @
 
   they 'take a single cmd', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .wait.execute
       cmd: "test -d #{scratch}"
@@ -27,7 +27,7 @@ describe 'wait.execute', ->
     .then next
 
   they 'take a multiple cmds', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .wait.execute
       cmd: [
@@ -55,7 +55,7 @@ describe 'wait.execute', ->
 
     they 'attemps', (ssh, next) ->
       logs = []
-      mecano
+      nikita
         ssh: ssh
       .on 'text', (log) ->
         logs.push "[#{log.level}] #{log.message}" if /Attempt #\d/.test log.message
@@ -74,7 +74,7 @@ describe 'wait.execute', ->
   describe 'quorum', ->
 
     they 'is not defined', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .call ->
         setTimeout ->
@@ -103,7 +103,7 @@ describe 'wait.execute', ->
           next err
 
     they 'is a number', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .call ->
         setTimeout ->
@@ -132,7 +132,7 @@ describe 'wait.execute', ->
           next err
 
     they 'is "true"', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .call ->
         setTimeout ->

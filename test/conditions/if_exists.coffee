@@ -1,7 +1,7 @@
 
 they = require 'ssh2-they'
 conditions = require '../../src/misc/conditions'
-mecano = require '../../src'
+nikita = require '../../src'
 
 describe 'if_exists', ->
 
@@ -45,7 +45,7 @@ describe 'if_exists', ->
   
   they 'print log', (ssh, next) ->
     logs = []
-    mecano
+    nikita
     .on 'text', (log) -> logs.push log.message
     .call
       if_exists: __filename
@@ -121,7 +121,7 @@ describe 'unless_exists', ->
   
   they 'print log', (ssh, next) ->
     logs = []
-    mecano
+    nikita
     .on 'text', (log) -> logs.push log.message
     .call
       unless_exists: __filename

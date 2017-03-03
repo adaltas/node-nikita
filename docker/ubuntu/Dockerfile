@@ -31,8 +31,8 @@ RUN curl -L "https://github.com/docker/compose/releases/download/1.8.1/docker-co
 RUN chmod +x /usr/local/bin/docker-compose
 
 ADD ./run.sh /run.sh
-RUN mkdir -p /mecano
-WORKDIR /mecano
+RUN mkdir -p /nikita
+WORKDIR /nikita
 
 #CMD ["node_modules/.bin/mocha", "test/api/"]
 # CMD []

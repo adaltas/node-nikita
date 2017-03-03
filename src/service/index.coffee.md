@@ -1,5 +1,5 @@
 
-# `mecano.service(options, [callback])`
+# `nikita.service(options, [callback])`
 
 Install a service. For now, only yum over SSH.
 
@@ -56,7 +56,7 @@ Install a service. For now, only yum over SSH.
 ## Example
 
 ```js
-require('mecano').service([{
+require('nikita').service([{
   ssh: ssh,
   name: 'ganglia-gmetad-3.5.0-99',
   srv_name: 'gmetad',
@@ -73,7 +73,7 @@ require('mecano').service([{
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering service", level: 'DEBUG', module: 'mecano/lib/service'
+      options.log message: "Entering service", level: 'DEBUG', module: 'nikita/lib/service'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'
       pkgname = options.yum_name or options.name

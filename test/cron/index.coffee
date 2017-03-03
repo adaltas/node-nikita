@@ -1,6 +1,6 @@
 
 should = require 'should'
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
@@ -19,7 +19,7 @@ describe 'cron', ->
   rand = Math.random().toString(36).substring(7);
 
   they 'add a job', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .cron.add
       cmd: "/bin/true #{rand}/toto - *.mp3"
@@ -46,7 +46,7 @@ describe 'cron', ->
   describe 'match', ->
 
     they 'regexp', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .cron.add
         cmd: "/bin/true #{rand}"
@@ -77,7 +77,7 @@ describe 'cron', ->
       .then next
 
     they 'string', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .cron.add
         cmd: "/bin/true #{rand}"
@@ -110,7 +110,7 @@ describe 'cron', ->
   describe 'error', ->
 
     they 'invalid job: no time', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .cron.add
         cmd: '/remove/me'
@@ -119,7 +119,7 @@ describe 'cron', ->
       .then -> next()
 
     they 'invalid job: invalid time', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .cron.add
         cmd: '/remove/me'
@@ -129,7 +129,7 @@ describe 'cron', ->
       .then -> next()
 
     they 'invalid job: no cmd', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .cron.add
         when: '1 2 3 4 5'
@@ -138,7 +138,7 @@ describe 'cron', ->
       .then -> next()
 
     they 'invalid job: invalid cmd', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .cron.add
         cmd: ''
@@ -148,7 +148,7 @@ describe 'cron', ->
       .then -> next()
 
     they 'invalid job: invalid cmd to exec', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .cron.add
         cmd: 'azertyytreza'

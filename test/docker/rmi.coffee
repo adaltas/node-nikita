@@ -1,5 +1,5 @@
 should = require 'should'
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
@@ -12,30 +12,30 @@ describe 'docker.rmi', ->
   return if config.disable_docker
 
   they 'remove image', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.build
-      image: 'mecano/rmi_test'
+      image: 'nikita/rmi_test'
       content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
     .docker.rmi
-      image: 'mecano/rmi_test'
+      image: 'nikita/rmi_test'
     , (err, removed, stdout, stderr) ->
       return err if err
       removed.should.be.true()
     .then next
 
   they 'status unmodifed', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.build
-      image: 'mecano/rmi_test:latest'
+      image: 'nikita/rmi_test:latest'
       content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
     .docker.rmi
-      image: 'mecano/rmi_test'
+      image: 'nikita/rmi_test'
     .docker.rmi
-      image: 'mecano/rmi_test'
+      image: 'nikita/rmi_test'
     , (err, removed) ->
       removed.should.be.false()
     .then next

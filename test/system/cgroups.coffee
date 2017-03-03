@@ -1,6 +1,6 @@
 
 fs = require 'fs'
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 misc = require '../../src/misc'
@@ -45,7 +45,7 @@ describe 'system.cgroups', ->
         'cpu.rt_runtime_us': '"0"'
         'cpu.cfs_period_us': '"100000"'
     they 'simple mount group configuration file', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.cgroups
         target: "#{scratch}/a_file_mount_only.cgconfig.conf"
@@ -67,7 +67,7 @@ describe 'system.cgroups', ->
         """
       .then next
     they 'simple cgroup configuration file', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.cgroups
         target: "#{scratch}/a_file_cgroup_only.cgconfig.conf"
@@ -99,7 +99,7 @@ describe 'system.cgroups', ->
         """
       .then next
     they 'default only configuration file', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.cgroups
         target: "#{scratch}/a_file_default_only.cgconfig.conf"
@@ -131,7 +131,7 @@ describe 'system.cgroups', ->
         """
       .then next
     they 'complete configuration file', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.cgroups
         target: "#{scratch}/a_file_complete.cgconfig.conf"
@@ -189,7 +189,7 @@ describe 'system.cgroups', ->
         """
       .then next
     they 'status not modifed', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.cgroups
         target: "#{scratch}/a_file_complete.cgconfig.conf"
@@ -240,7 +240,7 @@ describe 'system.cgroups', ->
         'cpu.rt_runtime_us': '"0"'
         'cpu.cfs_period_us': '"100000"'
     they 'read mount from system and merge group', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.cgroups
         target: "#{scratch}/a_file_merge_mount_groups.cgconfig.conf"
@@ -258,7 +258,7 @@ describe 'system.cgroups', ->
           callback()
       .then next
     they 'status not modified', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.cgroups
         target: "#{scratch}/a_file_merge_mount_groups.cgconfig.conf"
@@ -276,7 +276,7 @@ describe 'system.cgroups', ->
 
   describe 'centos only', ->
     they 'cache system type', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.cgroups
         target: "#{scratch}/a_file_merge_mount_groups.cgconfig.conf"
@@ -291,6 +291,6 @@ describe 'system.cgroups', ->
             'cpu.cfs_period_us': '"100000"'
         merge: true
       .call (options) ->
-        options.store['mecano:system:type'].should.match /^((redhat)|(centos))/
+        options.store['nikita:system:type'].should.match /^((redhat)|(centos))/
       .then next
       

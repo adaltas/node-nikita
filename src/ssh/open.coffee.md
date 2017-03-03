@@ -1,5 +1,5 @@
 
-# `mecano.ssh.open(options, [callback])`
+# `nikita.ssh.open(options, [callback])`
 
 Initialize an SSH connection.
 
@@ -29,12 +29,12 @@ Takes the same options as the ssh2 module in an underscore form.
 *   `host` (string)   
     Port of the remove server, default to 22.   
 *   `root` (object)    
-    Options passed to `mecano.ssh.root` to enable password-less root login.   
+    Options passed to `nikita.ssh.root` to enable password-less root login.   
 
 ## Source code
 
     module.exports = handler: (options) ->
-      options.log message: "Entering ssh.open", level: 'DEBUG', module: 'mecano/lib/ssh/open'
+      options.log message: "Entering ssh.open", level: 'DEBUG', module: 'nikita/lib/ssh/open'
       # SSH options namespace
       # options.ssh ?= {}
       options[k] ?= v for k, v of options.ssh or {}

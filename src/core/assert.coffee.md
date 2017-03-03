@@ -1,5 +1,5 @@
 
-# `mecano.assert(options, [callback])`
+# `nikita.assert(options, [callback])`
 
 A set of assertion tools.
 
@@ -16,12 +16,12 @@ A set of assertion tools.
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering assert", level: 'DEBUG', module: 'mecano/lib/assert'
+      options.log message: "Entering assert", level: 'DEBUG', module: 'nikita/lib/assert'
 
 ## Check current status
 
 ```js
-mecano.assert({
+nikita.assert({
   ssh: connection   
   status: true
 }, function(err){
@@ -39,7 +39,7 @@ mecano.assert({
 ## Check server listening
 
 ```js
-mecano.assert({
+nikita.assert({
   ssh: connection   
   host: 'localhost'
   port: 80

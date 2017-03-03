@@ -1,5 +1,5 @@
 
-# `mecano.db.user.remove(options, callback)`
+# `nikita.db.user.remove(options, callback)`
 
 Create a user for the destination database.
 

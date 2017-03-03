@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 each = require 'each'
@@ -11,7 +11,7 @@ for engine, _ of config.db
   describe "db.user.exists #{engine}", ->
 
     they 'with status as false', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
         db: config.db[engine]
       .db.user.remove 'test_user_exists_1_user', shy: true
@@ -25,7 +25,7 @@ for engine, _ of config.db
         next err
 
     they 'with status as false as true', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
         db: config.db[engine]
       .db.user.remove 'test_user_exists_2_user', shy: true

@@ -1,5 +1,5 @@
 
-# `mecano.docker.wait(options, [callback])`
+# `nikita.docker.wait(options, [callback])`
 
 Block until a container stops
 
@@ -27,7 +27,7 @@ Block until a container stops
 ## Example
 
 ```javascript
-mecano.docker.wait({
+nikita.docker.wait({
   container: 'toto'
 }, function(err, is_true){
   if(err){
@@ -43,7 +43,7 @@ mecano.docker.wait({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering Docker wait", level: 'DEBUG', module: 'mecano/lib/docker/wait'
+      options.log message: "Entering Docker wait", level: 'DEBUG', module: 'nikita/lib/docker/wait'
       # Validate parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

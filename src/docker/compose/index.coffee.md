@@ -1,8 +1,8 @@
 
-# `mecano.docker.compose(options, [callback])`
+# `nikita.docker.compose(options, [callback])`
 
 Create and start containers according to a docker-compose file
-`mecano.docker.compose` is an alias to `mecano.docker.compose.up`
+`nikita.docker.compose` is an alias to `nikita.docker.compose.up`
 
 ## Options
 
@@ -13,9 +13,9 @@ Create and start containers according to a docker-compose file
 *   `content` (string)   
     The content of the docker-compose.yml to write if not exist.   
 *   `eof` (string)   
-    Inherited from mecano.file use when writing docker-compose.yml file.   
+    Inherited from nikita.file use when writing docker-compose.yml file.   
 *   `backup` (string)   
-    Inherited from mecano.file use when writing docker-compose.yml file.   
+    Inherited from nikita.file use when writing docker-compose.yml file.   
 *   `detached` (boolean)   
     Run Containers in detached mode. Default to true   
 *   `force` (boolean)   
@@ -46,7 +46,7 @@ Create and start containers according to a docker-compose file
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering Docker Compose", level: 'DEBUG', module: 'mecano/lib/docker/compose/up'
+      options.log message: "Entering Docker Compose", level: 'DEBUG', module: 'nikita/lib/docker/compose/up'
       # Validate parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

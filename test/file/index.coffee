@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 misc = require '../../src/misc'
 test = require '../test'
 they = require 'ssh2-they'
@@ -12,7 +12,7 @@ describe 'file', ->
   describe 'options content', ->
   
     they 'is a string', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/file"
@@ -31,7 +31,7 @@ describe 'file', ->
           
     they 'is a function', (ssh, next) ->
       content = 'invalid'
-      mecano
+      nikita
         ssh: ssh
       .call ->
         content = 'valid'
@@ -45,7 +45,7 @@ describe 'file', ->
       .then next
     
     they 'doesnt increment if target is same than generated content', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/file"
@@ -60,7 +60,7 @@ describe 'file', ->
       .then next
     
     they 'doesnt increment if target is same than generated content', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/file"
@@ -76,7 +76,7 @@ describe 'file', ->
       .then next
     
     they 'empty file', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/empty_file"
@@ -89,7 +89,7 @@ describe 'file', ->
       .then next
 
     they 'touch file', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/empty_file"
@@ -115,7 +115,7 @@ describe 'file', ->
       .then next
 
     they 'handle integer type', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/a_file"
@@ -128,7 +128,7 @@ describe 'file', ->
       .then next
     
     they 'create parent directory', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/a/missing/dir/a_file"
@@ -143,7 +143,7 @@ describe 'file', ->
   describe 'link', ->
 
     they 'follow link by default', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         content: 'ko'
@@ -163,7 +163,7 @@ describe 'file', ->
       .then next
 
     they 'throw error if link is a directory', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.mkdir
         target: "#{scratch}/target"
@@ -178,7 +178,7 @@ describe 'file', ->
         next()
 
     they 'dont follow link if option "unlink"', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         content: 'ko'
@@ -199,7 +199,7 @@ describe 'file', ->
       .then next
 
     they 'dont follow link if option "unlink" and link is directory', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.mkdir
         target: "#{scratch}/target"
@@ -221,7 +221,7 @@ describe 'file', ->
   describe 'ownerships and permissions', ->
 
     they 'set permission', (ssh, next) ->
-      mecano.file
+      nikita.file
         ssh: ssh
         target: "#{scratch}/a_file"
         content: 'ok'
@@ -237,7 +237,7 @@ describe 'file', ->
             next()
 
     they 'change permission', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/a_file"
@@ -258,7 +258,7 @@ describe 'file', ->
       .then next
 
     they 'change permission after modification', (ssh, next) ->
-      mecano
+      nikita
       .file
         ssh: ssh
         target: "#{scratch}/a_file"
@@ -279,7 +279,7 @@ describe 'file', ->
   describe 'from and to', ->
   
     they 'with from and with to', (ssh, next) ->
-      mecano.file
+      nikita.file
         ssh: ssh
         target: "#{scratch}/fromto.md"
         from: '# from'
@@ -296,7 +296,7 @@ describe 'file', ->
     they 'with from and with to append', (ssh, next) ->
       fs.writeFile ssh, "#{scratch}/fromto.md", 'here we are\nyou coquin', (err) ->
         return next err if err
-        mecano
+        nikita
           ssh: ssh
         .file
           target: "#{scratch}/fromto.md"
@@ -324,7 +324,7 @@ describe 'file', ->
         .then next
     
     they 'with from and without to', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/fromto.md"
@@ -339,7 +339,7 @@ describe 'file', ->
       .then next
     
     they 'without from and with to', (ssh, next) ->
-      mecano.file
+      nikita.file
         ssh: ssh
         target: "#{scratch}/fromto.md"
         to: '# to'
@@ -355,7 +355,7 @@ describe 'file', ->
   describe 'replace', ->
   
     they 'without match and place_before a string', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/fromto.md"
@@ -368,7 +368,7 @@ describe 'file', ->
       .then next
   
     they 'without match and place_before a regexp', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/fromto.md"
@@ -383,7 +383,7 @@ describe 'file', ->
   describe 'match & replace', ->
   
     they 'with match a line as a string', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/fromto.md"
@@ -398,7 +398,7 @@ describe 'file', ->
       .then next
   
     they 'with match a word as a string', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/fromto.md"
@@ -414,7 +414,7 @@ describe 'file', ->
   
     they 'with match as a regular expression', (ssh, next) ->
       # With a match
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/replace"
@@ -435,7 +435,7 @@ describe 'file', ->
       .then next
     
     they 'with match as a regular expression and multiple content', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         match: /(.*try) (.*)/
@@ -450,7 +450,7 @@ describe 'file', ->
       .then next
     
     they 'with match with global and multilines', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/replace"
@@ -465,7 +465,7 @@ describe 'file', ->
       .then next
     
     they 'will replace target if source or content does not exists', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/a_file"
@@ -491,7 +491,7 @@ describe 'file', ->
 
     they 'append content to missing file', (ssh, next) ->
       # File does not exist, it create it with the content
-      mecano.file
+      nikita.file
         ssh: ssh
         target: "#{scratch}/a_file"
         content: 'hello'
@@ -503,7 +503,7 @@ describe 'file', ->
 
     they 'is true, prepend the content', (ssh, next) ->
       # File doesnt exists, creates one
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/a_file"
@@ -522,7 +522,7 @@ describe 'file', ->
 
     they 'append content to missing file', (ssh, next) ->
       # File does not exist, it create it with the content
-      mecano.file
+      nikita.file
         ssh: ssh
         target: "#{scratch}/a_file"
         content: 'hello'
@@ -534,7 +534,7 @@ describe 'file', ->
 
     they 'append content to existing file', (ssh, next) ->
       # File does not exists, it create one
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/a_file"
@@ -555,7 +555,7 @@ describe 'file', ->
 
       they 'place_before true, replace a string, match a regexp', (ssh, next) ->
         # Prepare by creating a file with content
-        mecano
+        nikita
           ssh: ssh
         .file
           target: "#{scratch}/file"
@@ -584,7 +584,7 @@ describe 'file', ->
         .then next
 
       they 'place_before true, replace a string, match a string', (ssh, next) ->
-        mecano
+        nikita
           ssh: ssh
         .file
           target: "#{scratch}/file"
@@ -614,7 +614,7 @@ describe 'file', ->
 
       they 'place_after', (ssh, next) ->
         # Prepare by creating a file with content
-        mecano
+        nikita
           ssh: ssh
         .file
           target: "#{scratch}/file"
@@ -644,7 +644,7 @@ describe 'file', ->
 
     they 'will append if no match', (ssh, next) ->
       # Prepare by creating a file with content
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/file"
@@ -665,7 +665,7 @@ describe 'file', ->
 
       they 'place_before', (ssh, next) ->
         # Prepare by creating a file with content
-        mecano
+        nikita
           ssh: ssh
         .file
           target: "#{scratch}/file"
@@ -684,7 +684,7 @@ describe 'file', ->
 
       they 'place_after', (ssh, next) ->
         # Prepare by creating a file with content
-        mecano
+        nikita
           ssh: ssh
         .file
           target: "#{scratch}/file"
@@ -704,7 +704,7 @@ describe 'file', ->
     describe 'place_before/place_after multiple times if regexp with global flag', ->
 
       they 'place_before', (ssh, next) ->
-        mecano
+        nikita
           ssh: ssh
         .file
           target: "#{scratch}/file"
@@ -723,7 +723,7 @@ describe 'file', ->
 
       they 'place_after', (ssh, next) ->
         # Prepare by creating a file with content
-        mecano
+        nikita
           ssh: ssh
         .file
           target: "#{scratch}/file"
@@ -742,7 +742,7 @@ describe 'file', ->
 
 
     they 'will append place_after a match if append is a string', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/file"
@@ -762,7 +762,7 @@ describe 'file', ->
     describe 'will detect new line if no match', ->
 
       they 'place_before', (ssh, next) ->
-        mecano
+        nikita
           ssh: ssh
         .file
           target: "#{scratch}/file"
@@ -780,7 +780,7 @@ describe 'file', ->
         .then next
 
       they 'place_after', (ssh, next) ->
-        mecano
+        nikita
           ssh: ssh
         .file
           target: "#{scratch}/file"
@@ -800,7 +800,7 @@ describe 'file', ->
     describe 'create file if not exists', ->
 
       they 'place_before', (ssh, next) ->
-        mecano
+        nikita
           ssh: ssh
         .file
           target: "#{scratch}/file"
@@ -815,7 +815,7 @@ describe 'file', ->
         .then next
 
       they 'place_after', (ssh, next) ->
-        mecano
+        nikita
           ssh: ssh
         .file
           target: "#{scratch}/file"
@@ -830,7 +830,7 @@ describe 'file', ->
         .then next
     
     they 'match is optional', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/a_file"
@@ -864,7 +864,7 @@ describe 'file', ->
   
     they 'create a file', (ssh, next) ->
       # First we create a file
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/file"
@@ -891,7 +891,7 @@ describe 'file', ->
       .then next
   
     they 'a non-existing file', (ssh, next) ->
-      mecano.file
+      nikita.file
         ssh: ssh
         target: "#{scratch}/new_file"
         content: 'Hello'
@@ -903,7 +903,7 @@ describe 'file', ->
   describe 'write', ->
   
     they 'do multiple replace', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/file"
@@ -928,7 +928,7 @@ describe 'file', ->
       .then next
   
     they 'use append', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/file"
@@ -955,7 +955,7 @@ describe 'file', ->
   
     they 'handle partial match', (ssh, next) ->
       # First we create a file
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/file"
@@ -983,7 +983,7 @@ describe 'file', ->
   describe 'error', ->
 
     they 'can not define source and content', (ssh, next) ->
-      mecano.file
+      nikita.file
         ssh: ssh
         target: 'abc'
         source: 'abc'
@@ -993,7 +993,7 @@ describe 'file', ->
         next()
 
     they 'if source doesn\'t exists', (ssh, next) ->
-      mecano.file
+      nikita.file
         ssh: ssh
         target: "#{scratch}/file"
         source: "#{scratch}/does/not/exists"
@@ -1002,7 +1002,7 @@ describe 'file', ->
         next()
 
     they 'if local source doesn\'t exists', (ssh, next) ->
-      mecano.file
+      nikita.file
         ssh: ssh
         target: "#{scratch}/file"
         source: "#{scratch}/does/not/exists"
@@ -1014,7 +1014,7 @@ describe 'file', ->
   describe 'eof', ->
 
     they 'auto-detected', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/file"
@@ -1028,7 +1028,7 @@ describe 'file', ->
       .then next
 
     they 'not detected', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         ssh: ssh

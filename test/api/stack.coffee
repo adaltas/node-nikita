@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 fs = require 'fs'
 
@@ -9,7 +9,7 @@ describe 'api stack', ->
 
   it 'sync handler register actions', (next) ->
     msgs = []
-    m = mecano()
+    m = nikita()
     m.on 'text', (log) -> msgs.push log.message
     m.call (options) ->
       options.log 'a1'
@@ -28,7 +28,7 @@ describe 'api stack', ->
 
   it 'async handler register actions and callback async', (next) ->
     msgs = []
-    m = mecano()
+    m = nikita()
     m.on 'text', (log) -> msgs.push log.message
     m.call (options, next) ->
       options.log 'a'
@@ -46,7 +46,7 @@ describe 'api stack', ->
 
   it 'async handler register actions and callback sync', (next) ->
     msgs = []
-    m = mecano()
+    m = nikita()
     m.on 'text', (log) -> msgs.push log.message
     m.call (options, next) ->
       options.log 'a'
@@ -65,7 +65,7 @@ describe 'api stack', ->
 
   it 'clean stack with then', (next) ->
     msgs = []
-    m = mecano()
+    m = nikita()
     m.on 'text', (log) -> msgs.push log.message
     m
     .call (options, callback) ->
@@ -86,7 +86,7 @@ describe 'api stack', ->
 
   it 'clean stack with callback', (next) ->
     msgs = []
-    m = mecano()
+    m = nikita()
     m.on 'text', (log) -> msgs.push log.message
     m.call (options, callback) ->
       options.log 'a'
@@ -104,7 +104,7 @@ describe 'api stack', ->
         next err
   
   it 'can finish and resume', (next) ->
-    m = mecano
+    m = nikita
     .call(->)
     .then (err, status) ->
       process.nextTick =>
@@ -117,7 +117,7 @@ describe 'api stack', ->
   describe 'error', ->
 
     it 'catch err', (next) ->
-      mecano
+      nikita
       .system.chmod
         target: "#{scratch}/doesnt_exist"
       .then (err, changed) ->
@@ -129,7 +129,7 @@ describe 'api stack', ->
       .then next
 
     it 'catch err without then', (next) ->
-      mecano()
+      nikita()
       .system.chmod
         target: "#{scratch}/doesnt_exist"
         relax: true
@@ -144,7 +144,7 @@ describe 'api stack', ->
       .then next
 
     it 'catch err thrown callback', (next) ->
-      mecano
+      nikita
       .file
         content: 'hello'
         target: "#{scratch}/a_file"
@@ -155,7 +155,7 @@ describe 'api stack', ->
         next()
 
     it 'catch err in child', (next) ->
-      mecano
+      nikita
       .call ->
         @call ->
           throw Error 'Catchme'

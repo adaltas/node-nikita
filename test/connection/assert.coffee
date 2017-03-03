@@ -1,6 +1,6 @@
 
 http = require 'http'
-mecano = require '../../src'
+nikita = require '../../src'
 misc = require '../../src/misc'
 test = require '../test'
 they = require 'ssh2-they'
@@ -21,7 +21,7 @@ describe 'connection.assert', ->
     server.close next
 
   they 'port is listening', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .connection.assert
       host: 'localhost'
@@ -31,7 +31,7 @@ describe 'connection.assert', ->
       next err
 
   they 'port is not listening', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .connection.assert
       host: 'localhost'

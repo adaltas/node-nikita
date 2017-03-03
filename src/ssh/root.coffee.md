@@ -1,5 +1,5 @@
 
-# `mecano.ssh.root(options, [callback])`
+# `nikita.ssh.root(options, [callback])`
 
 Prepare the system to receive password-less root login with SSL/TLS keys.
 
@@ -40,7 +40,7 @@ SSH connection is again available.
 ## Exemple
 
 ```js
-require('mecano')
+require('nikita')
 .ssh.root({
   "username": "vagrant",
   "private_key_path": "/Users/wdavidw/.vagrant.d/insecure_private_key"
@@ -53,7 +53,7 @@ require('mecano')
 ## Source code
 
     module.exports = handler: (options) ->
-      options.log message: "Entering ssh.root", level: 'DEBUG', module: 'mecano/lib/ssh/root'
+      options.log message: "Entering ssh.root", level: 'DEBUG', module: 'nikita/lib/ssh/root'
       options.host ?= options.ip
       # options.cmd ?= 'su -'
       options.username ?= null

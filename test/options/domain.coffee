@@ -1,11 +1,11 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 fs = require 'fs'
 
 describe 'options "domain"', ->
 
 	it 'uncatchable error in sync handler', (next) ->
-		mecano
+		nikita
 			domain: true
 		.call
 			handler: ->
@@ -25,7 +25,7 @@ describe 'options "domain"', ->
       err.message.should.eql 'Catchme'
       d.exit()
       next()
-    mecano
+    nikita
       domain: d
     .then ->
       throw Error 'Catchme'
@@ -37,7 +37,7 @@ describe 'options "domain"', ->
       err.name.should.eql 'TypeError'
       d.exit()
       next()
-    mecano
+    nikita
       domain: d
     .file.touch
       target: "#{scratch}/a_file"

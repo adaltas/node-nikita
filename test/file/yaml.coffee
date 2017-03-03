@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 misc = require '../../src/misc'
 test = require '../test'
 they = require 'ssh2-they'
@@ -10,7 +10,7 @@ describe 'file.yaml', ->
   scratch = test.scratch @
 
   they 'stringify an object', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file.yaml
       content: user: preference: color: 'rouge'
@@ -27,7 +27,7 @@ describe 'file.yaml', ->
     content = 'user:\n  preference:\n    language: english\n'
     fs.writeFile ssh, "#{scratch}/user.yml", content, (err) ->
       return next err if err
-      mecano
+      nikita
         ssh: ssh
       .file.yaml
         content: user: preference: language: 'french'
@@ -41,7 +41,7 @@ describe 'file.yaml', ->
       .then next
 
   they 'discard undefined and null', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file.yaml
       content: user: preference: color: 'violet', age: undefined, gender: null
@@ -55,7 +55,7 @@ describe 'file.yaml', ->
     .then next
 
   they 'remove null within merge', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file
       target: "#{scratch}/user.yml"
@@ -74,7 +74,7 @@ describe 'file.yaml', ->
     .then next
 
   they 'disregard undefined within merge', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file
       target: "#{scratch}/user.yml"
@@ -93,7 +93,7 @@ describe 'file.yaml', ->
     .then next
 
   they 'disregard undefined within merge', (ssh, next) ->
-    mecano
+    nikita
     .file
       target: "#{scratch}/user.yml"
       content: 'user:\n  preference:\n    language: node\n  name: toto\ngroup: hadoop_user\n'

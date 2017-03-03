@@ -1,5 +1,5 @@
 
-# `mecano.docker_rmi(options, [callback])`
+# `nikita.docker_rmi(options, [callback])`
 
 Remove images. All container using image should be stopped to delete it unless
 force options is set.
@@ -18,7 +18,7 @@ force options is set.
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering Docker rmi", level: 'DEBUG', module: 'mecano/lib/docker/rmi'
+      options.log message: "Entering Docker rmi", level: 'DEBUG', module: 'nikita/lib/docker/rmi'
       # Validate parameters and madatory conditions
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

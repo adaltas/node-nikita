@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 misc = require '../../src/misc'
 fs = require 'ssh2-fs'
 path = require 'path'
@@ -11,7 +11,7 @@ describe 'system.remove', ->
   scratch = test.scratch @
   
   they 'accept an option', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file.touch "#{scratch}/a_file"
     .system.remove
@@ -21,7 +21,7 @@ describe 'system.remove', ->
     .then next
     
   they 'accept a string', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file.touch "#{scratch}/a_file"
     .system.remove "#{scratch}/a_file", (err, status) ->
@@ -29,7 +29,7 @@ describe 'system.remove', ->
     .then next
     
   they 'accept an array of strings', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file.touch "#{scratch}/file_1"
     .file.touch "#{scratch}/file_2"
@@ -41,14 +41,14 @@ describe 'system.remove', ->
     .then next
     
   they 'accept an empty array', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .system.remove [], (err, status) ->
       status.should.be.false() unless err
     .then next
     
   they 'a file', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .system.copy
       source: "#{__dirname}/../resources/a_dir/a_file"
@@ -61,7 +61,7 @@ describe 'system.remove', ->
     .then next
 
   they 'a link', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .call (options, callback) ->
       fs.symlink options.ssh, __filename, "#{scratch}/test", callback
@@ -77,7 +77,7 @@ describe 'system.remove', ->
 
   they 'use a pattern', (ssh, next) ->
     # todo, not working yet over ssh
-    mecano
+    nikita
       ssh: ssh
     .system.copy
       source: "#{__dirname}/../resources/"
@@ -96,7 +96,7 @@ describe 'system.remove', ->
 
   they 'a dir', (ssh, next) ->
     # @timeout 10000
-    mecano
+    nikita
       ssh: ssh
     .system.mkdir
       target: "#{scratch}/remove_dir"

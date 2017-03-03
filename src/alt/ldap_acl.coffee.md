@@ -1,5 +1,5 @@
 
-# `mecano.ldap.acl(options, [goptions], callback)`
+# `nikita.ldap.acl(options, [goptions], callback)`
 
 Create new [ACLs](acls) for the OpenLDAP server.   
 
@@ -42,7 +42,7 @@ accessible.
 ## Example
 
 ```js
-require('mecano/alt/ldap.acl')({
+require('nikita/alt/ldap.acl')({
   url: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',

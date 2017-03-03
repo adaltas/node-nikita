@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 they = require 'ssh2-they'
 test = require '../test'
 
@@ -10,7 +10,7 @@ describe 'java.keystore_remove', ->
   describe 'options', ->
 
     they 'keystore doesnt need to exists', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .java.keystore_remove
         keystore: "#{scratch}/does/not/exist"
@@ -21,7 +21,7 @@ describe 'java.keystore_remove', ->
       .then next
 
     they 'caname or name must be provided', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .java.keystore_remove
         keystore: "invalid"
@@ -37,7 +37,7 @@ describe 'java.keystore_remove', ->
       keystore =  "#{scratch}/cacerts"
       caname = 'my_alias'
       storepass = 'changeit'
-      mecano
+      nikita
         ssh: ssh
       .java.keystore_add
         keystore: "#{keystore}"
@@ -71,7 +71,7 @@ describe 'java.keystore_remove', ->
       storepass = 'changeit'
       keypass = 'mypassword'
       name = 'node_1'
-      mecano
+      nikita
         ssh: ssh
       .java.keystore_add
         keystore: "#{keystore}"

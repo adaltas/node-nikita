@@ -1,11 +1,11 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 
 describe 'api end', ->
 
   it 'honor conditions', (next) ->
-    mecano
+    nikita
     .end if: false
     .call (_, handler) -> handler null, true # Set status to true
     .end if: true
@@ -16,7 +16,7 @@ describe 'api end', ->
       return next()
 
   it 'inside callback', (next) ->
-    mecano
+    nikita
     .call (_, handler) ->
       handler null, true # Set status to true
     , (err, status) ->
@@ -27,7 +27,7 @@ describe 'api end', ->
 
   # Doest work yet, need to spec clarification
   # it 'inside call', (next) ->
-  #   mecano
+  #   nikita
   #   .call (_, handler) ->
   #     @end()
   #     # handler null, true # Set status to true

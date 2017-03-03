@@ -4,7 +4,7 @@
 # For this purpos ip, and clean are used
 
 should = require 'should'
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
@@ -16,7 +16,7 @@ describe 'docker.volume_rm', ->
   scratch = test.scratch @
 
   they 'a named volume', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.volume_rm

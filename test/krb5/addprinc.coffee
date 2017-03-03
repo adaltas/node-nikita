@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
@@ -9,46 +9,46 @@ describe 'krb5.addprinc', ->
   return if config.disable_krb5_addprinc
 
   they 'create a new principal without a randkey', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       kadmin_server: config.krb5.kadmin_server
       kadmin_principal: config.krb5.kadmin_principal
       kadmin_password: config.krb5.kadmin_password
     .krb5.delprinc
-      principal: "mecano@#{config.krb5.realm}"
+      principal: "nikita@#{config.krb5.realm}"
     .krb5.addprinc
-      principal: "mecano@#{config.krb5.realm}"
+      principal: "nikita@#{config.krb5.realm}"
       randkey: true
     , (err, status) ->
       status.should.be.true() unless err
     .krb5.addprinc
-      principal: "mecano@#{config.krb5.realm}"
+      principal: "nikita@#{config.krb5.realm}"
       randkey: true
     , (err, status) ->
       status.should.be.false() unless err
     .then next
 
   they 'create a new principal with a password', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       kadmin_server: config.krb5.kadmin_server
       kadmin_principal: config.krb5.kadmin_principal
       kadmin_password: config.krb5.kadmin_password
     .krb5.delprinc
-      principal: "mecano@#{config.krb5.realm}"
+      principal: "nikita@#{config.krb5.realm}"
     .krb5.addprinc
-      principal: "mecano@#{config.krb5.realm}"
+      principal: "nikita@#{config.krb5.realm}"
       password: 'password1'
     , (err, status) ->
       status.should.be.true() unless err
     .krb5.addprinc
-      principal: "mecano@#{config.krb5.realm}"
+      principal: "nikita@#{config.krb5.realm}"
       password: 'password2'
       password_sync: true
     , (err, status) ->
       status.should.be.true() unless err
     .krb5.addprinc
-      principal: "mecano@#{config.krb5.realm}"
+      principal: "nikita@#{config.krb5.realm}"
       password: 'password2'
       password_sync: true
     , (err, status) ->
@@ -56,26 +56,26 @@ describe 'krb5.addprinc', ->
     .then next
 
   they 'dont overwrite password', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       kadmin_server: config.krb5.kadmin_server
       kadmin_principal: config.krb5.kadmin_principal
       kadmin_password: config.krb5.kadmin_password
     .krb5.delprinc
-      principal: "mecano@#{config.krb5.realm}"
+      principal: "nikita@#{config.krb5.realm}"
     .krb5.addprinc
-      principal: "mecano@#{config.krb5.realm}"
+      principal: "nikita@#{config.krb5.realm}"
       password: 'password1'
     , (err, status) ->
       status.should.be.true() unless err
     .krb5.addprinc
-      principal: "mecano@#{config.krb5.realm}"
+      principal: "nikita@#{config.krb5.realm}"
       password: 'password2'
       password_sync: false # Default
     , (err, status) ->
       status.should.be.false() unless err
     .system.execute
-      cmd: "echo password1 | kinit mecano@#{config.krb5.realm}"
+      cmd: "echo password1 | kinit nikita@#{config.krb5.realm}"
     .then next
 
   they 'call function with new style', (ssh, next) ->
@@ -100,7 +100,7 @@ describe 'krb5.addprinc', ->
       password: 'user123'
       password_sync: true
       principal: 'user2@NODE.DC1.CONSUL'
-    mecano
+    nikita
       ssh: ssh
       kadmin_server: config.krb5.kadmin_server
       kadmin_principal: config.krb5.kadmin_principal

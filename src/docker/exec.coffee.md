@@ -1,5 +1,5 @@
 
-# `mecano.docker.exec(options, [callback])`
+# `nikita.docker.exec(options, [callback])`
 
 Run a command in a running container
 
@@ -35,7 +35,7 @@ Run a command in a running container
 ## Example
 
 ```javascript
-mecano.docker({
+nikita.docker({
   ssh: ssh
   container: 'myContainer'
   cmd: '/bin/bash -c "echo toto"'
@@ -53,7 +53,7 @@ mecano.docker({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering Docker exec", level: 'DEBUG', module: 'mecano/lib/docker/exec'
+      options.log message: "Entering Docker exec", level: 'DEBUG', module: 'nikita/lib/docker/exec'
       # Validate parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
@@ -66,7 +66,7 @@ mecano.docker({
         cmd += " -u #{options.uid}"
         cmd += ":#{options.gid}" if options.gid?
       else if options.gid?
-        options.log message: 'options.gid ignored unless options.uid is provided', level: 'WARN', module: 'mecano/lib/docker/exec'
+        options.log message: 'options.gid ignored unless options.uid is provided', level: 'WARN', module: 'nikita/lib/docker/exec'
       cmd += " #{options.container} #{options.cmd}"
       delete options.cmd
       @system.execute

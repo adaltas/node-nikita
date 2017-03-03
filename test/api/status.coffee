@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 fs = require 'fs'
 
@@ -8,7 +8,7 @@ describe 'api status', ->
   describe 'sync', ->
 
     it 'default to false', (next) ->
-      mecano
+      nikita
       .call (options) ->
         return true
       .then (err, status) ->
@@ -16,7 +16,7 @@ describe 'api status', ->
         next()
 
     it 'set status to true', (next) ->
-      mecano
+      nikita
       .call (options) ->
         @call (_, callback) ->
           callback null, true
@@ -25,7 +25,7 @@ describe 'api status', ->
         next()
 
     it 'set status to false', (next) ->
-      mecano
+      nikita
       .call (options) ->
         @call (_, callback) ->
           callback null, false
@@ -34,7 +34,7 @@ describe 'api status', ->
         next()
 
     it 'catch error', (next) ->
-      mecano
+      nikita
       .call (options) ->
         throw Error 'Catchme'
       .then (err, status) ->
@@ -44,7 +44,7 @@ describe 'api status', ->
   describe 'async', ->
 
     it 'set status to true', (next) ->
-      mecano
+      nikita
       .call (options, next) ->
         process.nextTick ->
           next null, true
@@ -53,7 +53,7 @@ describe 'api status', ->
         next err
 
     it 'set status to false', (next) ->
-      mecano
+      nikita
       .call (options, next) ->
         process.nextTick ->
           next null, false
@@ -62,7 +62,7 @@ describe 'api status', ->
         next()
 
     it 'set status to false while child module is true', (next) ->
-      m = mecano()
+      m = nikita()
       .call (options, callback) ->
         m.system.execute
           cmd: 'ls -l'
@@ -74,7 +74,7 @@ describe 'api status', ->
         next()
 
     it 'set status to true while module sending is false', (next) ->
-      m = mecano()
+      m = nikita()
       .call (options, callback) ->
         m.system.execute
           cmd: 'ls -l'
@@ -89,7 +89,7 @@ describe 'api status', ->
   describe 'function', ->
 
     it 'get without arguments', (next) ->
-      mecano
+      nikita
       .call (options, callback) ->
         @status().should.be.false()
         callback null, false
@@ -107,7 +107,7 @@ describe 'api status', ->
       .then next
 
     it 'get current', (next) ->
-      mecano
+      nikita
       .call (options, callback) ->
         (@status(0) is undefined).should.be.true()
         callback null, false
@@ -121,7 +121,7 @@ describe 'api status', ->
       .then next
 
     it 'get previous', (next) ->
-      mecano
+      nikita
       .call (options, callback) ->
         (@status(-1) is undefined).should.be.true()
         callback null, false
@@ -139,7 +139,7 @@ describe 'api status', ->
       .then next
 
     it 'get previous n', (next) ->
-      mecano
+      nikita
       .call (options, callback) ->
         callback null, false
       .call (options, callback) ->
@@ -163,7 +163,7 @@ describe 'api status', ->
       .then next
 
     it 'report conditions', (next) ->
-      mecano
+      nikita
       .call
         if: -> true
       , (options, callback) ->
@@ -181,7 +181,7 @@ describe 'api status', ->
         next()
 
     it 'retrieve inside conditions', (next) ->
-      mecano
+      nikita
       .call
         if: -> @status()
       , (options, callback) -> 
@@ -195,7 +195,7 @@ describe 'api status', ->
         next()
 
     it 'set status to false', (next) ->
-      mecano
+      nikita
       .call (options, callback) ->
         callback null, true
       .call ->
@@ -206,7 +206,7 @@ describe 'api status', ->
       .then next
 
     it 'set status to true', (next) ->
-      mecano
+      nikita
       .call (options, callback) ->
         callback null, false
       .call ->

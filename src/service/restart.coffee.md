@@ -1,5 +1,5 @@
 
-# `mecano.service.restart(options, [callback])`
+# `nikita.service.restart(options, [callback])`
 
 Start a service.
 
@@ -27,7 +27,7 @@ Start a service.
 ## Example
 
 ```js
-require('mecano').service.start([{
+require('nikita').service.start([{
   ssh: ssh,
   name: 'gmetad'
 }, function(err, status){ /* do sth */ });
@@ -36,13 +36,13 @@ require('mecano').service.start([{
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering service.restart", level: 'DEBUG', module: 'mecano/lib/service/restart'
+      options.log message: "Entering service.restart", level: 'DEBUG', module: 'nikita/lib/service/restart'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'
       # Validation
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       # Action
-      options.log message: "Restart service #{options.name}", level: 'INFO', module: 'mecano/lib/service/restart'
+      options.log message: "Restart service #{options.name}", level: 'INFO', module: 'nikita/lib/service/restart'
       @service.discover (err, status, loader) -> 
         options.loader ?= loader
       @call ->
@@ -54,4 +54,4 @@ require('mecano').service.start([{
           cmd: cmd
         , (err, restarted) ->
           throw err if err
-          options.store["mecano.service.#{options.name}.status"] = 'started' if restarted
+          options.store["nikita.service.#{options.name}.status"] = 'started' if restarted

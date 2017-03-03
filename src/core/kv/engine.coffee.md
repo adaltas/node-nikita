@@ -1,5 +1,5 @@
 
-# `mecano.kv.memory(options, [callback])`
+# `nikita.kv.memory(options, [callback])`
 
 ## Source Code
 

@@ -1,5 +1,5 @@
 
-# `mecano.db.user(options, callback)`
+# `nikita.db.user(options, callback)`
 
 Create a user for the destination database.
 

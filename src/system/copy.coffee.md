@@ -1,5 +1,5 @@
 
-# `mecano.system.copy(options, [callback])`
+# `nikita.system.copy(options, [callback])`
 
 Copy a file. The behavior is similar to the one of the `cp`
 Unix utility. Copying a file over an existing file will
@@ -37,7 +37,7 @@ overwrite it.
 ## Example
 
 ```js
-require('mecano').system.copy({
+require('nikita').system.copy({
   source: '/etc/passwd',
   target: '/etc/passwd.bck',
   uid: 'my_user'
@@ -51,7 +51,7 @@ require('mecano').system.copy({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering copy", level: 'DEBUG', module: 'mecano/lib/system/copy'
+      options.log message: "Entering copy", level: 'DEBUG', module: 'nikita/lib/system/copy'
       # Validate parameters
       return callback Error 'Missing source' unless options.source
       return callback Error 'Missing target' unless options.target
@@ -61,12 +61,12 @@ require('mecano').system.copy({
       modified = false
       srcStat = null
       dstStat = null
-      options.log message: "Stat source file", level: 'DEBUG', module: 'mecano/lib/system/copy'
+      options.log message: "Stat source file", level: 'DEBUG', module: 'nikita/lib/system/copy'
       fs.stat options.ssh, options.source, (err, stat) ->
         # Source must exists
         return callback err if err
         srcStat = stat
-        options.log message: "Stat target file", level: 'DEBUG', module: 'mecano/lib/system/copy'
+        options.log message: "Stat target file", level: 'DEBUG', module: 'nikita/lib/system/copy'
         fs.stat options.ssh, options.target, (err, stat) ->
           return callback err if err and err.code isnt 'ENOENT'
           dstStat = stat
@@ -78,7 +78,7 @@ require('mecano').system.copy({
           else do_copy options.source, (err) -> callback err, modified
       # Copy a directory
       do_directory = (dir, callback) ->
-        options.log message: "Source is a directory", level: 'INFO', module: 'mecano/lib/system/copy'
+        options.log message: "Source is a directory", level: 'INFO', module: 'nikita/lib/system/copy'
         glob options.ssh, "#{dir}/**", dot: true, (err, files) ->
           return callback err if err
           each files
@@ -98,7 +98,7 @@ require('mecano').system.copy({
           then do_copy_dir source, target
           else do_copy_file source, target
         do_copy_dir = (source, target) ->
-          options.log message: "Create directory #{target}", level: 'WARN', module: 'mecano/lib/system/copy'
+          options.log message: "Create directory #{target}", level: 'WARN', module: 'nikita/lib/system/copy'
           # todo, add permission
           fs.mkdir options.ssh, target, (err) ->
             return callback() if err?.code is 'EEXIST'
@@ -112,7 +112,7 @@ require('mecano').system.copy({
             return callback err if err and err.message.indexOf('Does not exist') isnt 0
             # Files are the same, we can skip copying
             return do_chown_chmod target if md5
-            options.log message: "Copy file from #{source} into #{target}", level: 'WARN', module: 'mecano/lib/system/copy'
+            options.log message: "Copy file from #{source} into #{target}", level: 'WARN', module: 'nikita/lib/system/copy'
             misc.file.copyFile options.ssh, source, target, (err) ->
               return callback err if err
               modified = true
@@ -132,7 +132,7 @@ require('mecano').system.copy({
             modified = true if status
             do_end()
         do_end = ->
-          options.log message: "File #{source} copied", level: 'DEBUG', module: 'mecano/lib/system/copy'
+          options.log message: "File #{source} copied", level: 'DEBUG', module: 'nikita/lib/system/copy'
           callback null, modified
 
 ## Dependencies

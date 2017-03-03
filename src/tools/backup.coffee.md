@@ -1,5 +1,5 @@
 
-# `mecano.tools.backup(options, [callback])`
+# `nikita.tools.backup(options, [callback])`
 
 Backup a file, a directory or the output of a command.
 
@@ -36,7 +36,7 @@ Backup a file, a directory or the output of a command.
 ## Backup a directory
 
 ```js
-mecano.tools.backup({
+nikita.tools.backup({
   name: 'my_backup'
   source: '/etc' 
   target: '/tmp/backup'
@@ -55,7 +55,7 @@ mecano.tools.backup({
 ## Source code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering backup", level: 'DEBUG', module: 'mecano/lib/tools/backup'
+      options.log message: "Entering backup", level: 'DEBUG', module: 'nikita/lib/tools/backup'
       throw  Error 'Missing option: "target"' unless options.target
       throw  Error 'Missing option: "name"' unless options.name
       m = moment()
@@ -64,8 +64,8 @@ mecano.tools.backup({
       target = "#{options.target}/#{options.name}/#{filename}"
       compress = options.compress
       compress = 'tgz' if compress is true or not compress
-      options.log message: "Source is #{JSON.stringify options.source}", level: 'INFO', module: 'mecano/lib/tools/backup'
-      options.log message: "Target is #{JSON.stringify target}", level: 'INFO', module: 'mecano/lib/tools/backup'
+      options.log message: "Source is #{JSON.stringify options.source}", level: 'INFO', module: 'nikita/lib/tools/backup'
+      options.log message: "Target is #{JSON.stringify target}", level: 'INFO', module: 'nikita/lib/tools/backup'
       @system.mkdir "#{path.dirname target}"
       @system.copy
         source: "#{options.source}"

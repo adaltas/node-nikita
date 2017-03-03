@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
@@ -12,7 +12,7 @@ describe 'service.startup', ->
   
   if config.isCentos6
     they 'declare on startup with boolean CentOS 6', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .service.remove
         name: config.service.name
@@ -44,7 +44,7 @@ describe 'service.startup', ->
       .then next
       
     they 'declare on startup with boolean CentOS 6', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .service.remove
         name: config.service.name
@@ -57,7 +57,7 @@ describe 'service.startup', ->
       .then next
 
     they 'notice a change in startup level CentOS 6', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .service
         name: config.service.name
@@ -79,7 +79,7 @@ describe 'service.startup', ->
 
   if config.isCentos7
     they 'declare on startup with boolean Centos 7', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .service.remove
         name: config.service.name
@@ -110,7 +110,7 @@ describe 'service.startup', ->
       .then next
       
     they 'declare on startup with boolean CentOS 7', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .service.remove
         name: config.service.name

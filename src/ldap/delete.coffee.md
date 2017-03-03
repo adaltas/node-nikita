@@ -1,5 +1,5 @@
 
-# `mecano.ldap.delete(options, [callback])`
+# `nikita.ldap.delete(options, [callback])`
 
 Insert or modify an entry inside an OpenLDAP server.   
 
@@ -22,7 +22,7 @@ Insert or modify an entry inside an OpenLDAP server.
 ## Example
 
 ```js
-require('mecano').ldap.delete({
+require('nikita').ldap.delete({
   url: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
@@ -39,15 +39,15 @@ require('mecano').ldap.delete({
       binddn = if options.binddn then "-D #{options.binddn}" else ''
       passwd = if options.passwd then "-w #{options.passwd}" else ''
       if options.url
-        console.log "Mecano: option 'options.url' is deprecated, use 'options.uri'"
+        console.log "Nikita: option 'options.url' is deprecated, use 'options.uri'"
         options.uri ?= options.url
       options.uri = 'ldapi:///' if options.uri is true
       uri = if options.uri then "-H #{options.uri}" else '' # URI is obtained from local openldap conf unless provided
       # Add related options
-      return callback Error "Mecano `ldap.delete`: required property 'dn'" unless options.dn
+      return callback Error "Nikita `ldap.delete`: required property 'dn'" unless options.dn
       options.dn = [options.dn] unless Array.isArray options.dn
       dn = options.dn.map( (dn) -> "'#{dn}'").join(' ')
-      # ldapdelete -D cn=Manager,dc=ryba -w test -H ldaps://master3.ryba:636 'cn=mecano,ou=users,dc=ryba' 
+      # ldapdelete -D cn=Manager,dc=ryba -w test -H ldaps://master3.ryba:636 'cn=nikita,ou=users,dc=ryba' 
       @system.execute
         cmd: "ldapdelete #{binddn} #{passwd} #{uri} #{dn}"
         # code_skipped: 68

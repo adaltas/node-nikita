@@ -1,5 +1,5 @@
 
-# `mecano.system.execute(options, [callback])`
+# `nikita.system.execute(options, [callback])`
 
 Run a command locally or with ssh if `host` or `ssh` is provided.
 
@@ -77,7 +77,7 @@ An exit code equal to "9" defined by the "code_skipped" option indicates that
 the command is considered successfull but without any impact.
 
 ```javascript
-mecano.system.execute({
+nikita.system.execute({
   ssh: ssh
   cmd: 'useradd myfriend'
   code_skipped: 9
@@ -95,7 +95,7 @@ mecano.system.execute({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering execute", level: 'DEBUG', module: 'mecano/lib/system/execute'
+      options.log message: "Entering execute", level: 'DEBUG', module: 'nikita/lib/system/execute'
       # Note, heres how to get username from uid
       # 
       # Validate parameters
@@ -113,7 +113,7 @@ mecano.system.execute({
       throw Error "Missing cmd: #{options.cmd}" unless options.cmd?
       if options.trap
         options.cmd = "set -e\n#{options.cmd}"
-      options.log message: options.cmd, type: 'stdin', module: 'mecano/lib/system/execute' if options.stdin_log
+      options.log message: options.cmd, type: 'stdin', module: 'nikita/lib/system/execute' if options.stdin_log
       result = stdout: null, stderr: null, code: null
       # Guess current username
       current_username = 
@@ -134,7 +134,7 @@ mecano.system.execute({
         handler: () ->
           cmd = options.cmd
           options.cmd = "#!/bin/bash\n\n#{options.cmd}"
-          options.target = "/tmp/mecano_#{string.hash options.cmd}" if options.target and typeof options.target isnt 'string'
+          options.target = "/tmp/nikita_#{string.hash options.cmd}" if options.target and typeof options.target isnt 'string'
           options.log message: 'Writing bash script to #{JSON.stringify options.target}', level: 'INFO'
           options.cmd = "bash #{options.target}"
           options.cmd = "su - #{options.uid} -c '#{options.cmd}'" if options.uid
@@ -153,7 +153,7 @@ mecano.system.execute({
         if options.stdout_callback or options.stdout_log
           child.stdout.on 'data', (data) ->
             stdout_stream_open = true if options.stdout_log
-            options.log message: data, type: 'stdout_stream', module: 'mecano/lib/system/execute' if options.stdout_log
+            options.log message: data, type: 'stdout_stream', module: 'nikita/lib/system/execute' if options.stdout_log
             if options.stdout_callback
               if Array.isArray result.stdout # A string on exit
                 result.stdout.push data
@@ -161,7 +161,7 @@ mecano.system.execute({
         if options.stderr_callback or options.stderr_log
           child.stderr.on 'data', (data) ->
             stderr_stream_open = true if options.stderr_log
-            options.log message: data, type: 'stderr_stream', module: 'mecano/lib/system/execute' if options.stderr_log
+            options.log message: data, type: 'stderr_stream', module: 'nikita/lib/system/execute' if options.stderr_log
             if options.stderr_callback
               if Array.isArray result.stderr # A string on exit
                 result.stderr.push data
@@ -172,14 +172,14 @@ mecano.system.execute({
           # called before the "stdout" "data" event when runing
           # `npm test`
           setTimeout ->
-            options.log message: null, type: 'stdout_stream', module: 'mecano/lib/system/execute' if stdout_stream_open and options.stdout_log
-            options.log message: null, type: 'stderr_stream', module: 'mecano/lib/system/execute' if  stderr_stream_open and options.stderr_log
+            options.log message: null, type: 'stdout_stream', module: 'nikita/lib/system/execute' if stdout_stream_open and options.stdout_log
+            options.log message: null, type: 'stderr_stream', module: 'nikita/lib/system/execute' if  stderr_stream_open and options.stderr_log
             result.stdout = result.stdout.map((d) -> d.toString()).join('')
             result.stdout = result.stdout.trim() if options.trim or options.stdout_trim
             result.stderr = result.stderr.map((d) -> d.toString()).join('')
             result.stderr = result.stderr.trim() if options.trim or options.stderr_trim
-            options.log message: result.stdout, type: 'stdout', module: 'mecano/lib/system/execute' if result.stdout and result.stdout isnt '' and options.stdout_log
-            options.log message: result.stderr, type: 'stderr', module: 'mecano/lib/system/execute' if result.stderr and result.stderr isnt '' and options.stderr_log
+            options.log message: result.stdout, type: 'stdout', module: 'nikita/lib/system/execute' if result.stdout and result.stdout isnt '' and options.stdout_log
+            options.log message: result.stderr, type: 'stderr', module: 'nikita/lib/system/execute' if result.stderr and result.stderr isnt '' and options.stderr_log
             if options.stdout
               child.stdout.unpipe options.stdout
             if options.stderr
@@ -191,7 +191,7 @@ mecano.system.execute({
             if options.code_skipped.indexOf(code) is -1
               status = true
             else
-              options.log message: "Skip exit code \"#{code}\"", level: 'INFO', module: 'mecano/lib/system/execute'
+              options.log message: "Skip exit code \"#{code}\"", level: 'INFO', module: 'nikita/lib/system/execute'
             callback null, status
           , 1
       @then (err1, status) ->

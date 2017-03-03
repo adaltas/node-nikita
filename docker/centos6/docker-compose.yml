@@ -10,16 +10,16 @@ version: '2'
 services:
   nodejs:
     build: .
-    image: mecano_centos6_nodejs
+    image: nikita_centos6_nodejs
     volumes:
-      - ../..:/mecano
+      - ../..:/nikita
     depends_on:
       - dind
       - krb5
       - postgres
       - mysql
     environment:
-      MECANO_TEST: /mecano/docker/centos6/test.coffee
+      MECANO_TEST: /nikita/docker/centos6/test.coffee
       DOCKER_HOST: 'tcp://dind:2375'
       TMPDIR: '/var/tmp'
   dind:

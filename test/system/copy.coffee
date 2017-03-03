@@ -1,6 +1,6 @@
 
 path = require 'path'
-mecano = require '../../src'
+nikita = require '../../src'
 misc = require '../../src/misc'
 glob = require '../../src/misc/glob'
 test = require '../test'
@@ -33,7 +33,7 @@ describe 'system.copy', ->
       # @timeout 1000000
       source = "#{__dirname}/../resources/a_dir/a_file"
       target = "#{scratch}/a_new_file"
-      mecano
+      nikita
         ssh: ssh
       .system.copy
         source: source
@@ -55,7 +55,7 @@ describe 'system.copy', ->
 
     they 'into a directory', (ssh, next) ->
       source = "#{__dirname}/../resources/a_dir/a_file"
-      mecano
+      nikita
         ssh: ssh
       .system.mkdir
         target: "#{scratch}/existing_dir"
@@ -71,7 +71,7 @@ describe 'system.copy', ->
     they 'over an existing file', (ssh, next) ->
       source = "#{__dirname}/../resources/a_dir/a_file"
       target = "#{scratch}/test_this_file"
-      mecano
+      nikita
         ssh: ssh
       .file
         content: 'Hello you'
@@ -94,7 +94,7 @@ describe 'system.copy', ->
     they 'change permissions', (ssh, next) ->
       source = "#{__dirname}/../resources/a_dir/a_file"
       target = "#{scratch}/test_this_file"
-      mecano
+      nikita
         ssh: ssh
       .file
         content: 'Hello you'
@@ -119,7 +119,7 @@ describe 'system.copy', ->
       .then next
 
     they 'handle hidden files', (ssh, next) ->
-      mecano
+      nikita
       .file
         ssh: ssh
         content: 'hello'
@@ -136,7 +136,7 @@ describe 'system.copy', ->
   describe 'link', ->
 
     they 'file into file', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         content: 'hello'
@@ -153,7 +153,7 @@ describe 'system.copy', ->
       .then next
 
     they 'file parent dir', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         content: 'hello'
@@ -176,7 +176,7 @@ describe 'system.copy', ->
   describe 'directory', ->
 
     they 'should copy without slash at the end', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       # if the target doesn't exists, then copy as target
       .system.copy
@@ -199,7 +199,7 @@ describe 'system.copy', ->
       .then next
 
     they 'should copy the files when dir end with slash', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       # if the target doesn't exists, then copy as target
       .system.copy
@@ -222,7 +222,7 @@ describe 'system.copy', ->
       .then next
 
     they 'should copy hidden files', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.mkdir
         target: "#{scratch}/a_dir"
@@ -237,15 +237,15 @@ describe 'system.copy', ->
         glob ssh, "#{scratch}/a_copy/**", dot: true, (err, files) ->
           return callback err if err
           files.sort().should.eql [
-            '/tmp/mecano-test/a_copy',
-            '/tmp/mecano-test/a_copy/.a_hidden_file',
-            '/tmp/mecano-test/a_copy/a_file'
+            '/tmp/nikita-test/a_copy',
+            '/tmp/nikita-test/a_copy/.a_hidden_file',
+            '/tmp/nikita-test/a_copy/a_file'
           ]
           callback()
       .then next
 
     they.skip 'should copy with globing and hidden files', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       # if the target doesn't exists, then copy as target
       .system.copy

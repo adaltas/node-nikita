@@ -1,5 +1,5 @@
 
-# `mecano.file.properties(options, callback)`
+# `nikita.file.properties(options, callback)`
 
 Write a file in the Java properties format.
 
@@ -32,17 +32,17 @@ Write a file in the Java properties format.
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering file.ini", level: 'DEBUG', module: 'mecano/lib/file.ini'
+      options.log message: "Entering file.ini", level: 'DEBUG', module: 'nikita/lib/file.ini'
       throw Error "Missing argument options.target" unless options.target
       options.separator ?= '='
       options.content ?= {}
       options.sort ?= false
       properties = if options.merge then {} else options.content
-      options.log message: "Merging \"#{if options.merge then 'true' else 'false'}\"", level: 'DEBUG', module: 'mecano/lib/file.ini'
+      options.log message: "Merging \"#{if options.merge then 'true' else 'false'}\"", level: 'DEBUG', module: 'nikita/lib/file.ini'
       @call
         if: options.merge
         handler: (_, callback) ->
-          options.log message: "Reading target \"#{options.target}\"", level: 'DEBUG', module: 'mecano/lib/file.ini'
+          options.log message: "Reading target \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/file.ini'
           fs.readFile options.ssh, options.target, 'utf8', (err, data) ->
             return callback err if err
             # Extract properties

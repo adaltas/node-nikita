@@ -1,6 +1,6 @@
 
 fs = require 'ssh2-fs'
-mecano = require '../../src'
+nikita = require '../../src'
 path = require 'path'
 should = require 'should'
 test = require '../test'
@@ -15,18 +15,18 @@ describe 'docker.cp', ->
   @timeout 20000
   
   they 'a remote file to a local file', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.rm
-      container: 'mecano_extract'
+      container: 'nikita_extract'
     .docker.run
-      name: 'mecano_extract'
+      name: 'nikita_extract'
       image: 'alpine'
       cmd: "whoami"
       rm: false
     .docker.cp
-      source: 'mecano_extract:/etc/apk/repositories'
+      source: 'nikita_extract:/etc/apk/repositories'
       target: "#{scratch}/a_file"
     , (err, status) ->
       status.should.be.true() unless err
@@ -35,21 +35,21 @@ describe 'docker.cp', ->
         exists.should.be.true() unless err
         callback err
     .docker.rm
-      container: 'mecano_extract'
+      container: 'nikita_extract'
     .then next
     
   they 'a remote file to a local directory', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
-    .docker.rm container: 'mecano_extract'
+    .docker.rm container: 'nikita_extract'
     .docker.run
-      name: 'mecano_extract'
+      name: 'nikita_extract'
       image: 'alpine'
       cmd: "whoami"
       rm: false
     .docker.cp
-      source: 'mecano_extract:/etc/apk/repositories'
+      source: 'nikita_extract:/etc/apk/repositories'
       target: "#{scratch}"
     , (err, status) ->
       status.should.be.true() unless err
@@ -57,57 +57,57 @@ describe 'docker.cp', ->
       fs.exists ssh, "#{scratch}/repositories", (err, exists) ->
         exists.should.be.true() unless err
         callback()
-    .docker.rm container: 'mecano_extract'
+    .docker.rm container: 'nikita_extract'
     .then next
     
   they 'a local file to a remote file', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
-    .docker.rm container: 'mecano_extract'
+    .docker.rm container: 'nikita_extract'
     .docker.run
-      name: 'mecano_extract'
+      name: 'nikita_extract'
       image: 'alpine'
       volume: "#{scratch}:/root"
       cmd: "whoami"
       rm: false
     .docker.cp
       source: "#{__filename}"
-      target: "mecano_extract:/root/a_file"
+      target: "nikita_extract:/root/a_file"
     , (err, status) ->
       status.should.be.true() unless err
     .docker.cp
-      source: 'mecano_extract:/root/a_file'
+      source: 'nikita_extract:/root/a_file'
       target: "#{scratch}"
     .call (_, callback) ->
       fs.exists ssh, "#{scratch}/a_file", (err, exists) ->
         exists.should.be.true() unless err
         callback()
-    .docker.rm container: 'mecano_extract'
+    .docker.rm container: 'nikita_extract'
     .then next
     
   they 'a local file to a remote directory', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
-    .docker.rm container: 'mecano_extract'
+    .docker.rm container: 'nikita_extract'
     .docker.run
-      name: 'mecano_extract'
+      name: 'nikita_extract'
       image: 'alpine'
       volume: "#{scratch}:/root"
       cmd: "whoami"
       rm: false
     .docker.cp
       source: "#{__filename}"
-      target: "mecano_extract:/root"
+      target: "nikita_extract:/root"
     , (err, status) ->
       status.should.be.true() unless err
     .docker.cp
-      source: "mecano_extract:/root/#{path.basename __filename}"
+      source: "nikita_extract:/root/#{path.basename __filename}"
       target: "#{scratch}"
     .call (_, callback) ->
       fs.exists ssh, "#{scratch}/#{path.basename __filename}", (err, exists) ->
         exists.should.be.true() unless err
         callback()
-    .docker.rm container: 'mecano_extract'
+    .docker.rm container: 'nikita_extract'
     .then next

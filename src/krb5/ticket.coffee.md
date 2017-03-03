@@ -1,5 +1,5 @@
 
-# `mecano.krb5.ticket(options, [callback])`
+# `nikita.krb5.ticket(options, [callback])`
 
 Renew the Kerberos ticket of a user principal inside a Unix session.
 
@@ -20,7 +20,7 @@ Renew the Kerberos ticket of a user principal inside a Unix session.
 ## Keytab example
 
 ```js
-require('mecano').krb5.ticket({
+require('nikita').krb5.ticket({
   principal: 'myservice/my.fqdn@MY.REALM',
   keytab: '/etc/security/keytabs/my.service.keytab',
 }, function(err, status){

@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 fs = require 'fs'
 
@@ -11,7 +11,7 @@ describe 'api call', ->
 
     it 'accept an array of handlers and a callback', (next) ->
       logs = []
-      mecano
+      nikita
       .call [
         (options) -> logs.push 'a'
       ,
@@ -25,7 +25,7 @@ describe 'api call', ->
 
     it 'string requires a module', (next) ->
       logs = []
-      mecano
+      nikita
       .on 'text', (log) -> logs.push log.message
       .call who: 'sync', 'test/resources/module_sync'
       .call who: 'async', 'test/resources/module_async'
@@ -35,7 +35,7 @@ describe 'api call', ->
 
     it 'string requires a module which export an object', (next) ->
       logs = []
-      mecano
+      nikita
       .on 'text', (l) -> logs.push l.message
       .call who: 'us', 'test/resources/module_async_object'
       .then (err) ->
@@ -43,7 +43,7 @@ describe 'api call', ->
         next err
 
     it 'accept a string and an handler', (next) ->
-      mecano()
+      nikita()
       .call 'gotit', handler: ( (options) -> options.argument.should.eql 'gotit' )
       .then next
 
@@ -52,7 +52,7 @@ describe 'api call', ->
     it 'execute a handler', (next) ->
       called = 0
       touched = 0
-      mecano
+      nikita
       .file.touch
         target: "#{scratch}/file_a"
       , (err) ->
@@ -70,7 +70,7 @@ describe 'api call', ->
 
     it 'execute a callback', (next) ->
       called = 0
-      mecano
+      nikita
       # 1st arg options with handler, 2nd arg a callback
       .call handler: (->), (err, status) ->
         status.should.be.false() unless err
@@ -84,13 +84,13 @@ describe 'api call', ->
         next()
 
     it 'pass options', (next) ->
-      mecano
+      nikita
       .call test: true, (options) ->
         options.test.should.be.true()
       .then next
 
     it 'pass multiple options', (next) ->
-      mecano
+      nikita
       .call {test1: true}, {test2: true}, (options) ->
         options.test1.should.be.true()
         options.test2.should.be.true()
@@ -101,7 +101,7 @@ describe 'api call', ->
     it 'execute a handler', (next) ->
       called = 0
       touched = 0
-      mecano
+      nikita
       .file.touch
         target: "#{scratch}/a_file"
       , (err) ->
@@ -122,7 +122,7 @@ describe 'api call', ->
     it 'execute a callback', (next) ->
       called = 0
       touched = 0
-      mecano
+      nikita
       .file.touch
         target: "#{scratch}/a_file"
       , (err) ->
@@ -142,14 +142,14 @@ describe 'api call', ->
         next err
 
     it 'pass options', (next) ->
-      mecano
+      nikita
       .call test: true, (options, next) ->
         options.test.should.be.true()
         next()
       .then next
 
     it 'pass multiple options', (next) ->
-      mecano
+      nikita
       .call {test1: true}, {test2: true}, (options, next) ->
         options.test1.should.be.true()
         options.test2.should.be.true()
@@ -159,7 +159,7 @@ describe 'api call', ->
   describe 'async nested', ->
 
     it 'in a user callback', (next) ->
-      m = mecano
+      m = nikita
       .call (options, next) ->
         @file
           content: 'ok'
@@ -170,7 +170,7 @@ describe 'api call', ->
           next()
 
     it 'in then with changes', (next) ->
-      m = mecano
+      m = nikita
       .call (options, next) ->
         @file
           content: 'ok'
@@ -182,7 +182,7 @@ describe 'api call', ->
           next()
 
     it 'in then without changes', (next) ->
-      m = mecano
+      m = nikita
       .call (options, next) ->
         @file
           content: 'ok'
@@ -195,7 +195,7 @@ describe 'api call', ->
 
     it 'pass user arguments', (next) ->
       callback_called = false
-      m = mecano
+      m = nikita
       .call (options, next) ->
         setImmediate ->
           next null, true, 'argument'

@@ -1,5 +1,5 @@
 
-# `mecano.volume_create(options, [callback])`
+# `nikita.volume_create(options, [callback])`
 
 Create a volume. 
 
@@ -21,7 +21,7 @@ Create a volume.
 ## Example
 
 ```javascript
-mecano.docker.pause({
+nikita.docker.pause({
   name: 'my_volume'
 }, function(err, created){
   console.log(err or 'Status: '+created);
@@ -31,7 +31,7 @@ mecano.docker.pause({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering Docker volume_create", level: 'DEBUG', module: 'mecano/lib/docker/volume_create'
+      options.log message: "Entering Docker volume_create", level: 'DEBUG', module: 'nikita/lib/docker/volume_create'
       # Normalize options
       options.label = [options.label] if typeof options.label is 'string'
       options.opt = [options.opt] if typeof options.opt is 'string'

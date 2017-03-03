@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 
 describe 'options "argument"', ->
@@ -7,7 +7,7 @@ describe 'options "argument"', ->
   scratch = test.scratch @
 
   it 'pass a string', (next) ->
-    mecano()
+    nikita()
     .registry.register 'catchme', (options) ->
       options.argument.should.eql 'gotit'
     .catchme 'gotit'
@@ -15,7 +15,7 @@ describe 'options "argument"', ->
 
   it 'pass an array of strings', (next) ->
     i = 0
-    mecano()
+    nikita()
     .registry.register 'catchme', (options, next) ->
       options.argument.should.eql switch i++
         when 0 then 'gotit'

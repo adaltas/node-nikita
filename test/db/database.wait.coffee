@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 db = require '../../src/misc/db'
 test = require '../test'
 they = require 'ssh2-they'
@@ -11,7 +11,7 @@ for engine, _ of config.db
   describe "db.database.wait #{engine}", ->
 
     they 'is already created', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
         db: config.db[engine]
       .db.database.remove 'db_wait_1'
@@ -22,7 +22,7 @@ for engine, _ of config.db
       .then next
 
     they 'is not yet created', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
         db: config.db[engine]
       .db.database.remove 'db_wait_1'
@@ -31,7 +31,7 @@ for engine, _ of config.db
       .db.database.remove 'db_wait_1'
       .then next
       setTimeout ->
-        mecano
+        nikita
           ssh: ssh
           db: config.db[engine]
         .db.database 'db_wait_1'

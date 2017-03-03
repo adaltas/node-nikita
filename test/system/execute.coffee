@@ -2,7 +2,7 @@
 {EventEmitter} = require 'events'
 stream = require 'stream'
 should = require 'should'
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
@@ -11,7 +11,7 @@ describe 'system.execute', ->
   scratch = test.scratch @
 
   they 'in option cmd or as a string', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .system.execute
       cmd: 'text=yes; echo $text'
@@ -24,7 +24,7 @@ describe 'system.execute', ->
     .then next
 
   they 'cmd as a function', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .call (options) ->
       @test_context = 'test context'
@@ -54,7 +54,7 @@ describe 'system.execute', ->
       unpiped++
     out.on 'finish', ->
       false.should.be.true()
-    mecano
+    nikita
       ssh: ssh
     .system.execute
       cmd: "cat #{__filename} | grep #{search1}"
@@ -69,7 +69,7 @@ describe 'system.execute', ->
     .then next
 
   they 'stdout and stderr return empty', (ssh, next) -> #.skip 'remote',
-    mecano
+    nikita
       ssh: ssh
     .system.execute
       cmd: "echo 'some text' | grep nothing"
@@ -81,7 +81,7 @@ describe 'system.execute', ->
 
   they 'validate exit code', (ssh, next) ->
     # code undefined
-    mecano
+    nikita
       ssh: ssh
     .system.execute
       cmd: "exit 42"
@@ -94,7 +94,7 @@ describe 'system.execute', ->
 
   they 'should honor code skipped', (ssh, next) ->
     # code undefined
-    mecano
+    nikita
       ssh: ssh
     .system.execute
       cmd: "mkdir #{scratch}/my_dir"
@@ -112,7 +112,7 @@ describe 'system.execute', ->
     .then next
 
   they 'should honor conditions', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .system.execute
       cmd: 'text=yes; echo $text'
@@ -129,7 +129,7 @@ describe 'system.execute', ->
     .then next
 
   they 'honor unless_exists', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .system.execute
       cmd: "ls -l #{__dirname}"
@@ -141,7 +141,7 @@ describe 'system.execute', ->
   describe 'trim', ->
     
     they 'both stdout and stderr', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.execute
         cmd: """
@@ -155,7 +155,7 @@ describe 'system.execute', ->
       .then next
         
     they 'with trim_stdout and trim_stderr', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.execute
         cmd: """
@@ -172,7 +172,7 @@ describe 'system.execute', ->
   describe 'target', ->
     
     they 'in generated path', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.execute
         cmd: "echo $BASH"
@@ -182,7 +182,7 @@ describe 'system.execute', ->
       .then next
         
     they 'in user path', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.execute
         cmd: "echo $BASH"
@@ -195,7 +195,7 @@ describe 'system.execute', ->
       .then next
         
     they 'honors exit code', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.execute
         cmd: "exit 2"
@@ -209,7 +209,7 @@ describe 'system.execute', ->
 
     they 'stdin, stdout, stderr', (ssh, next) ->
       stdin = stdout = stderr = undefined
-      mecano
+      nikita
         ssh: ssh
       .on 'stdin', (log) -> stdin = log
       .on 'stdout', (log) -> stdout = log
@@ -225,7 +225,7 @@ describe 'system.execute', ->
     they 'disable logging', (ssh, next) ->
       stdin = stdout = stderr = undefined
       stdout_stream = stderr_stream = []
-      mecano
+      nikita
         ssh: ssh
       .on 'stdin', (log) -> stdin = log
       .on 'stdout', (log) -> stdout = log
@@ -267,7 +267,7 @@ describe 'system.execute', ->
   describe 'error', ->
 
     they 'provide stdout and stderr', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.execute
         cmd: """
@@ -281,7 +281,7 @@ describe 'system.execute', ->
       .then next
 
     they 'trap on error', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.execute
         cmd: """

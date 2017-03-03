@@ -1,9 +1,9 @@
 [![Build Status](https://secure.travis-ci.org/adaltas/node-nikita.png)](http://travis-ci.org/adaltas/node-nikita)
 
-# Node.js Mecano
+# Node.js Nikita
 
-Mecano gather a set of functions usually used during system deployment.
-Documentation is available on the [project website][mecano].
+Nikita gather a set of functions usually used during system deployment.
+Documentation is available on the [project website][nikita].
 
 Functions include "chmod", "chown", "copy", "download", "execute", "extract", "git", "ini", "krb5_ktadd", "krb5_addprinc", "krb5_delprinc", "ldap_acl", "ldap_index", "ldap_schema", "link", "mkdir", "move", "remove", "render", "service", "touch", "upload" and "file". They all share common usages and philosophies:   
 
@@ -21,7 +21,7 @@ argument being an object or an array of objects.
 ## Installation
 
 ```bash
-npm install mecano
+npm install nikita
 ```
 
 ## Test
@@ -59,4 +59,4 @@ docker-compose run --rm nodejs
 docker-compose run --rm nodejs test/core
 ```
 
-[mecano]: http://www.adaltas.com/projects/node-mecano/
+[nikita]: http://www.adaltas.com/projects/node-nikita/

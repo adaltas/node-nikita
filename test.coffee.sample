@@ -10,12 +10,12 @@ module.exports =
   disable_service: true
   disable_db: true
   disable_system_tmpfs: true
-  docker: # eg `docker-machine create --driver virtualbox mecano`
-    machine: 'mecano'
+  docker: # eg `docker-machine create --driver virtualbox nikita`
+    machine: 'nikita'
   krb5:
     realm: 'DOMAIN.COM'
     kadmin_server: 'domain.com'
-    kadmin_principal: 'mecano/admin@DOMAIN.COM'
+    kadmin_principal: 'nikita/admin@DOMAIN.COM'
     kadmin_password: 'test'
   ldap: 
     url: 'ldap://openldap.domain'

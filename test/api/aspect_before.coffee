@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 
 describe 'api before', ->
@@ -10,7 +10,7 @@ describe 'api before', ->
 
     it 'is a string and match a action type', (next) ->
       history = []
-      mecano()
+      nikita()
       .registry.register 'good_handler', (->)
       .registry.register 'bad_handler', (->)
       .before 'good_handler', (options) ->
@@ -25,7 +25,7 @@ describe 'api before', ->
 
     it 'is an object and match options', (next) ->
       history = []
-      mecano()
+      nikita()
       .registry.register 'handler', (->)
       .before type: 'handler', key: 'value 2', (options) ->
         history.push options.key
@@ -41,7 +41,7 @@ describe 'api before', ->
 
     it 'a sync function with sync handler', (next) ->
       history = []
-      mecano()
+      nikita()
       .registry.register 'sync_fn', ((_) ->)
       .before 'sync_fn', (_) ->
         history.push 'before sync'
@@ -65,7 +65,7 @@ describe 'api before', ->
 
     it 'a sync function with async handler', (next) ->
       history = []
-      mecano()
+      nikita()
       .registry.register 'afunction', ((_) ->)
       .before 'afunction', (_, callback) ->
         setImmediate ->
@@ -91,7 +91,7 @@ describe 'api before', ->
 
     it 'an async function with sync handler', (next) ->
       history = []
-      mecano()
+      nikita()
       .registry.register 'async_fn', ((_, callback) -> setImmediate callback)
       .before 'async_fn', (_) ->
         history.push 'before async'
@@ -120,7 +120,7 @@ describe 'api before', ->
 
     it 'an async function with async handler', (next) ->
       history = []
-      mecano()
+      nikita()
       .registry.register 'async_fn', ((_, callback) -> setImmediate callback)
       .before 'async_fn', (_, callback) ->
         setImmediate ->
@@ -150,7 +150,7 @@ describe 'api before', ->
 
     it 'an namespaced async function with async handler', (next) ->
       history = []
-      mecano()
+      nikita()
       .registry.register ['a','namespaced','func'], ((_, callback) -> setImmediate callback)
       .before ['a','namespaced','func'], (_, callback) ->
         setImmediate ->

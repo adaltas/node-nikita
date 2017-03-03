@@ -1,5 +1,5 @@
 
-# `mecano.db.database.wait(options, callback)`
+# `nikita.db.database.wait(options, callback)`
 
 Wait for the creation of a database.
 
@@ -23,7 +23,7 @@ Wait for the creation of a database.
 ## Create Database example
 
 ```js
-require('mecano').database.db.wait({
+require('nikita').database.db.wait({
   admin_username: 'test',
   admin_password: 'test',
   database: 'my_db',

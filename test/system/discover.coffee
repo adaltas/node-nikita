@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
@@ -10,7 +10,7 @@ describe 'system.discover', ->
   return if config.disable_discover
 
   they 'return info on RH', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .call
       if_exec: "cat /etc/system-release | egrep '(Red\sHat)|(CentOS)'"
@@ -21,7 +21,7 @@ describe 'system.discover', ->
     .then next
 
   they 'return info on Ubuntu', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .call
       if_exec: "cat /etc/lsb-release | egrep '(Ubuntu)'"
@@ -32,7 +32,7 @@ describe 'system.discover', ->
     .then next
 
   they 'dont cache by default on RH', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .call
       if_exec: "cat /etc/system-release | egrep '(Red\sHat)|(CentOS)'"
@@ -42,7 +42,7 @@ describe 'system.discover', ->
     .then next
 
   they 'dont cache by default on Ubuntu', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .call
       if_exec: "cat /etc/lsb-release | egrep '(Ubuntu)'"
@@ -52,7 +52,7 @@ describe 'system.discover', ->
     .then next
 
   they 'honors cache on RH', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .call
       if_exec: "cat /etc/system-release | egrep '(Red\sHat)|(CentOS)'"
@@ -60,12 +60,12 @@ describe 'system.discover', ->
       @system.discover cache: true, (err, status) -> status.should.be.true() unless err
       @system.discover cache: true, (err, status) -> status.should.be.false() unless err
       @call (options) ->
-        options.store['mecano:system:type'].should.match /^((redhat)|(centos))/
-        options.store['mecano:system:release'].should.match /^[6|7]./
+        options.store['nikita:system:type'].should.match /^((redhat)|(centos))/
+        options.store['nikita:system:release'].should.match /^[6|7]./
     .then next
 
   they 'honors cache on Ubuntu', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .call
       if_exec: "cat /etc/lsb-release | egrep '(Ubuntu)'"
@@ -73,6 +73,6 @@ describe 'system.discover', ->
       @system.discover cache: true, (err, status) -> status.should.be.true() unless err
       @system.discover cache: true, (err, status) -> status.should.be.false() unless err
       @call (options) ->
-        options.store['mecano:system:type'].should.match /^(ubuntu)/
-        options.store['mecano:system:release'].should.match /^\d+./
+        options.store['nikita:system:type'].should.match /^(ubuntu)/
+        options.store['nikita:system:release'].should.match /^\d+./
     .then next

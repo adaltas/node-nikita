@@ -1,10 +1,10 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 
 describe 'api conditions', ->
   
   it 'dont pass conditions to children', (next) ->
-    mecano
+    nikita
     .call
       if: -> true
       unless: -> false

@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
@@ -11,7 +11,7 @@ describe 'service.install', ->
   process.env['TMPDIR'] = '/var/tmp' if config.isCentos6 or config.isCentos7
 
   they 'new package', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .service.remove
       name: config.service.name
@@ -22,7 +22,7 @@ describe 'service.install', ->
     .then next
   
   they 'already installed packages', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .service.remove
       name: config.service.name
@@ -35,7 +35,7 @@ describe 'service.install', ->
     .then next
 
   they 'name as default argument', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .service.remove
       name: config.service.name
@@ -44,23 +44,23 @@ describe 'service.install', ->
     .then next
   
   they 'cache', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .service.remove
       name: config.service.name
     .call (options) ->
-      (options.store['mecano:execute:installed'] is undefined).should.be.true()
+      (options.store['nikita:execute:installed'] is undefined).should.be.true()
     .service
       name: config.service.name
       cache: true
     , (err, status) ->
       status.should.be.true() unless err
     .call (options) ->
-      options.store['mecano:execute:installed'].should.containEql config.service.name
+      options.store['nikita:execute:installed'].should.containEql config.service.name
     .then next
 
   they 'skip code when error', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .service.install
       name: 'thisservicedoesnotexist'

@@ -1,13 +1,13 @@
 
-mecano = require '../src'
+nikita = require '../src'
 fs = require 'fs'
 
-scratch = "/tmp/mecano-test"
+scratch = "/tmp/nikita-test"
 
 module.exports = 
   scratch: (context) ->
     context.beforeEach (next) ->
-      mecano.system.remove
+      nikita.system.remove
         target: scratch
       .system.mkdir target: scratch
       .then next

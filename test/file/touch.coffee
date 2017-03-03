@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 misc = require '../../src/misc'
 test = require '../test'
 they = require 'ssh2-they'
@@ -10,7 +10,7 @@ describe 'file.touch', ->
   scratch = test.scratch @
   
   they 'as a target option', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file.touch
       target: "#{scratch}/a_file"
@@ -26,7 +26,7 @@ describe 'file.touch', ->
     .then next
       
   they 'as a string', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file.touch "#{scratch}/a_file", (err, status) ->
       status.should.be.true() unless err
@@ -38,7 +38,7 @@ describe 'file.touch', ->
     .then next
       
   they 'as an array of strings', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file.touch [
       "#{scratch}/file_1"
@@ -54,7 +54,7 @@ describe 'file.touch', ->
     .then next
 
   they 'an existing file', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file.touch
       target: "#{scratch}/a_file"
@@ -67,7 +67,7 @@ describe 'file.touch', ->
     .then next
 
   they 'valid default permissions', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file.touch
       target: "#{scratch}/a_file"
@@ -78,7 +78,7 @@ describe 'file.touch', ->
     .then next
 
   they 'change permissions', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file.touch
       target: "#{scratch}/a_file"
@@ -90,7 +90,7 @@ describe 'file.touch', ->
     .then next
 
   they 'do not change permissions on existing file if not specified', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file.touch
       target: "#{scratch}/a_file"
@@ -104,7 +104,7 @@ describe 'file.touch', ->
     .then next
 
   they 'create valid parent dir', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file.touch
       target: "#{scratch}/subdir/a_file"
@@ -116,7 +116,7 @@ describe 'file.touch', ->
     .then next
 
   they 'modify time', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file.touch "#{scratch}/a_file"
     .call (_, callback) ->

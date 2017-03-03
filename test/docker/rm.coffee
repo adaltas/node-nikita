@@ -1,5 +1,5 @@
 should = require 'should'
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
@@ -14,60 +14,60 @@ describe 'docker.rm', ->
 
   they 'remove stopped container', (ssh, next) ->
     @timeout 30000
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.rm
       force: true
-      container: 'mecano_rm'
+      container: 'nikita_rm'
     .docker.run
       cmd: "/bin/echo 'test'"
       image: 'alpine'
-      name: 'mecano_rm'
+      name: 'nikita_rm'
       rm: false
     .docker.rm
-      container: 'mecano_rm'
+      container: 'nikita_rm'
     , (err, removed, stdout, stderr) ->
       removed.should.be.true() unless err
     .then next
 
   they 'remove live container (no force)', (ssh, next) ->
     @timeout 30000
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.rm
-      container: 'mecano_rm'
+      container: 'nikita_rm'
       force: true
     .docker.service
       image: 'httpd'
       port: '499:80'
-      name: 'mecano_rm'
+      name: 'nikita_rm'
     .docker.rm
-      container: 'mecano_rm'
+      container: 'nikita_rm'
       relax: true
     , (err, removed, stdout, stderr) ->
       err.message.should.eql 'Container must be stopped to be removed without force'
     .docker.stop
-      container: 'mecano_rm'
+      container: 'nikita_rm'
     .docker.rm
-      container: 'mecano_rm'
+      container: 'nikita_rm'
     .then next
 
   they 'remove live container (with force)', (ssh, next) ->
     @timeout 30000
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.rm
-      container: 'mecano_rm'
+      container: 'nikita_rm'
       force: true
     .docker.service
       image: 'httpd'
       port: '499:80'
-      name: 'mecano_rm'
+      name: 'nikita_rm'
     .docker.rm
-      container: 'mecano_rm'
+      container: 'nikita_rm'
       force: true
     , (err, removed, stdout, stderr) ->
       removed.should.be.true()

@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 fs = require 'fs'
 
 describe 'options "handler"', ->
@@ -8,7 +8,7 @@ describe 'options "handler"', ->
 
     it 'is an option', (next) ->
       history = []
-      mecano
+      nikita
       .call
         handler: ->  history.push 'a'
       .call
@@ -22,7 +22,7 @@ describe 'options "handler"', ->
   describe 'error sync', ->
 
     it 'throw in sync action', (next) ->
-      mecano()
+      nikita()
       .registry.register 'anaction', (options, callback) ->
         throw Error 'Catchme'
       .anaction
@@ -34,7 +34,7 @@ describe 'options "handler"', ->
         next()
 
     it 'throw after registered function', (next) ->
-      mecano()
+      nikita()
       .call ->
         @call fuck: 'yeah', ->
         throw Error 'Catchme'
@@ -47,7 +47,7 @@ describe 'options "handler"', ->
   describe 'error async', ->
 
     it 'passed as argument in same tick', (next) ->
-      mecano()
+      nikita()
       .registry.register 'anaction', (options, callback) ->
         callback Error 'Catchme'
       .anaction
@@ -59,7 +59,7 @@ describe 'options "handler"', ->
         next()
 
     it 'passed as argument', (next) ->
-      mecano()
+      nikita()
       .registry.register 'anaction', (options, callback) ->
         process.nextTick -> callback Error 'Catchme'
       .anaction
@@ -71,7 +71,7 @@ describe 'options "handler"', ->
         next()
 
     it 'thrown', (next) ->
-      mecano
+      nikita
       .call (options, next) ->
         throw Error 'Catchme'
       .then (err, status) ->
@@ -79,7 +79,7 @@ describe 'options "handler"', ->
         next()
 
     it 'throw after registered function', (next) ->
-      mecano()
+      nikita()
       .call (_, callback) ->
         @call fuck: 'yeah', ->
         throw Error 'Catchme'
@@ -90,7 +90,7 @@ describe 'options "handler"', ->
         next()
 
     it 'pass an error as first argument', (next) ->
-      mecano()
+      nikita()
       .call (_, callback) ->
         setImmediate ->
          callback Error 'Catchme'
@@ -101,7 +101,7 @@ describe 'options "handler"', ->
         next()
 
     it 'enforce a valid error as first argument', (next) ->
-      mecano()
+      nikita()
       .call (_, callback) ->
         setImmediate ->
          callback {message: 'not a valid error'}
@@ -112,7 +112,7 @@ describe 'options "handler"', ->
         next()
 
     it 'handler called multiple times', (next) ->
-      mecano
+      nikita
       .call
         handler: (_, callback) ->
           callback()
@@ -126,7 +126,7 @@ describe 'options "handler"', ->
         next()
 
     it 'handler called multiple times with error', (next) ->
-      mecano
+      nikita
       .call
         handler: (_, callback) ->
           callback Error 'message 1'

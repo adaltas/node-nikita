@@ -1,5 +1,5 @@
 
-# `mecano.docker.unpause(options, [callback])`
+# `nikita.docker.unpause(options, [callback])`
 
 Unpause all processes within a container
 
@@ -22,7 +22,7 @@ Unpause all processes within a container
 ## Example
 
 ```javascript
-mecano.docker.pause({
+nikita.docker.pause({
   container: 'toto'
 }, function(err, is_true){
   if(err){
@@ -38,7 +38,7 @@ mecano.docker.pause({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering Docker unpause", level: 'DEBUG', module: 'mecano/lib/docker/unpause'
+      options.log message: "Entering Docker unpause", level: 'DEBUG', module: 'nikita/lib/docker/unpause'
       # Validate parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

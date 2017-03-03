@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 fs = require 'fs'
 
@@ -8,7 +8,7 @@ describe 'options "shy"', ->
   scratch = test.scratch @
 
   it 'dont alter status', (next) ->
-    mecano
+    nikita
     .file
       target: "#{scratch}/file_1"
       content: 'abc'
@@ -21,7 +21,7 @@ describe 'options "shy"', ->
       next err
 
   it 'callback receive status', (next) ->
-    mecano
+    nikita
     .file
       target: "#{scratch}/file_1"
       content: 'abc'
@@ -33,7 +33,7 @@ describe 'options "shy"', ->
       next()
 
   it 'dont alter status', (next) ->
-    mecano
+    nikita
     .call ->
       @file
         target: "#{scratch}/file_1"
@@ -45,7 +45,7 @@ describe 'options "shy"', ->
 
   it 'array options', (next) ->
     count = 0
-    mecano
+    nikita
     .file [
       target: "#{scratch}/file_1"
       content: 'abc'
@@ -79,7 +79,7 @@ describe 'options "shy"', ->
       next err
   
   it 'dont interferce with previous status', (next) ->
-    mecano
+    nikita
     .call shy: true, (err, callback)->
       callback null, true
     .call ->

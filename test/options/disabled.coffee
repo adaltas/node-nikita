@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 fs = require 'fs'
 
@@ -8,7 +8,7 @@ describe 'options "disable"', ->
   scratch = test.scratch @
 
   it 'dont call handler', (next) ->
-    mecano
+    nikita
     .call
       disabled: true
     , (otions) ->
@@ -16,7 +16,7 @@ describe 'options "disable"', ->
     .then next
 
   it 'emit log type "disabled"', (next) ->
-    mecano
+    nikita
     .call
       disabled: true
     , (otions) ->

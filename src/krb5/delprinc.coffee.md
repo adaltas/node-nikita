@@ -1,5 +1,5 @@
 
-# `mecano.krb5.delprinc(options, [callback])`
+# `nikita.krb5.delprinc(options, [callback])`
 
 Remove a Kerberos principal and optionally its keytab.
 
@@ -19,7 +19,7 @@ Remove a Kerberos principal and optionally its keytab.
 ## Example
 
 ```
-require('mecano').krb5_delrinc({
+require('nikita').krb5_delrinc({
   principal: 'myservice/my.fqdn@MY.REALM',
   keytab: '/etc/security/keytabs/my.service.keytab',
   kadmin_principal: 'me/admin@MY_REALM',

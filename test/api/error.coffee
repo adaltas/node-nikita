@@ -1,12 +1,12 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 
 describe 'api error', ->
 
   it 'log', (next) ->
     logs = []
-    mecano
+    nikita
     .on 'text', (log) -> logs.push log
     .call -> throw Error 'Catchme'
     .then (err) ->
@@ -17,7 +17,7 @@ describe 'api error', ->
 
   it 'log with relax', (next) ->
     logs = []
-    mecano
+    nikita
     .on 'text', (log) -> logs.push log
     .call relax: true, -> throw Error 'Catchme'
     .then (err) ->

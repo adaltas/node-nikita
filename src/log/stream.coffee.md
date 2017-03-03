@@ -1,5 +1,5 @@
 
-# `mecano.log.stream(options, [callback])`
+# `nikita.log.stream(options, [callback])`
 
 Write log to the host filesystem in a user provided format.
 

@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 db = require '../../src/misc/db'
 test = require '../test'
 they = require 'ssh2-they'
@@ -12,7 +12,7 @@ for engine, _ of config.db
   describe "db.database.exists #{engine}", ->
 
     they 'database missing', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
         db: config.db[engine]
       .db.database.exists database: 'test_database_exists_0_db', (err, status) ->
@@ -23,7 +23,7 @@ for engine, _ of config.db
       .then next
 
     they 'database exists', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
         db: config.db[engine]
       .db.database.remove 'test_database_exists_1_db', shy: true

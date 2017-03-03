@@ -1,10 +1,10 @@
 
-# `mecano.docker.build(options, [callback])`
+# `nikita.docker.build(options, [callback])`
 
 Build docker repository from Dockerfile, from content or from current working
 directory (exclusive options).
 The user can choose whether the build is local or on the remote.
-Options are the same than docker build command with mecano's one.
+Options are the same than docker build command with nikita's one.
 Be aware than you can not use ADD with content option because docker build
 from STDIN does not support a context.
 By default docker always run the build and overwrite existing repositories.
@@ -55,7 +55,7 @@ Status unmodified if the repository is identical to a previous one
 1- builds a repository from dockerfile without any resourcess
 
 ```javascript
-mecano.docker.build({
+nikita.docker.build({
   image: 'ryba/targe-build'
   source: '/home/ryba/Dockerfile'
 }, function(err, is_true, stdout, stderr){
@@ -71,7 +71,7 @@ mecano.docker.build({
 
 2- builds an repository from dockerfile with external resources
 
-In this case mecano download all the external files into a resources directory in the same location
+In this case nikita download all the external files into a resources directory in the same location
 than the Dockerfile.
 The Dockerfile content:   "
                             FROM centos6
@@ -85,7 +85,7 @@ Build directory tree :
                           │   ├── configuration.sh
 
 ```javascript
-mecano.docker.build({
+nikita.docker.build({
   ssh: ssh
   tag: 'ryba/target-build'
   source: '/home/ryba/Dockerfile'
@@ -104,7 +104,7 @@ mecano.docker.build({
 3- builds an repository from stdin
 
 ```javascript
-mecano.docker.build({
+nikita.docker.build({
   ssh: ssh
   tag: 'ryba/target-build'
   content: "FROM ubuntu\nRUN echo 'helloworld'"
@@ -114,7 +114,7 @@ mecano.docker.build({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering Docker build", level: 'DEBUG', module: 'mecano/lib/docker/build'
+      options.log message: "Entering Docker build", level: 'DEBUG', module: 'nikita/lib/docker/build'
       # Validate parameters and __Mandatory__ conditions
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
@@ -157,13 +157,13 @@ mecano.docker.build({
       # custom command for content option0
       options.file ?= path.resolve options.cwd, 'Dockerfile' if options.cwd
       if options.content?
-        options.log message: "Building from text: Docker won't have a context. ADD/COPY not working", level: 'WARN', module: 'mecano/docker/build'
+        options.log message: "Building from text: Docker won't have a context. ADD/COPY not working", level: 'WARN', module: 'nikita/docker/build'
         cmd += " - <<DOCKERFILE\n#{options.content}\nDOCKERFILE" if options.content?
       else if options.file?
-        options.log message: "Building from Dockerfile: \"#{options.file}\"", level: 'INFO', module: 'mecano/docker/build'
+        options.log message: "Building from Dockerfile: \"#{options.file}\"", level: 'INFO', module: 'nikita/docker/build'
         cmd += " -f #{options.file} #{options.cwd}"
       else
-        options.log message: "Building from CWD", level: 'INFO', module: 'mecano/docker/build'
+        options.log message: "Building from CWD", level: 'INFO', module: 'nikita/docker/build'
         cmd += ' .'
       @file
         if: options.content
@@ -181,7 +181,7 @@ mecano.docker.build({
       @call # Read Dockerfile if necessary to count steps
         unless: options.content
         handler: (_, callback) ->
-          options.log message: "Reading Dockerfile from : #{options.file}", level: 'INFO', module: 'mecano/lib/build'
+          options.log message: "Reading Dockerfile from : #{options.file}", level: 'INFO', module: 'nikita/lib/build'
           fs.readFile options.ssh, options.file, 'utf8', (err, content) ->
             return callback err if err
             options.content = content
@@ -207,8 +207,8 @@ mecano.docker.build({
       @then (err, status) ->
         return callback err if err
         options.log if userargs[0]
-        then message: "New image id #{userargs[1]}", level: 'INFO', module: 'mecano/lib/docker/build' 
-        else message: "Identical image id #{userargs[1]}", level: 'INFO', module: 'mecano/lib/docker/build'
+        then message: "New image id #{userargs[1]}", level: 'INFO', module: 'nikita/lib/docker/build' 
+        else message: "Identical image id #{userargs[1]}", level: 'INFO', module: 'nikita/lib/docker/build'
         callback null, userargs...
 
 ## Modules Dependencies

@@ -1,5 +1,5 @@
 
-# `mecano.docker.build(options, [callback])`
+# `nikita.docker.build(options, [callback])`
 
 Register or log in to a Docker registry server.
 
@@ -34,7 +34,7 @@ Register or log in to a Docker registry server.
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering Docker login", level: 'DEBUG', module: 'mecano/lib/docker/login'
+      options.log message: "Entering Docker login", level: 'DEBUG', module: 'nikita/lib/docker/login'
       # Validate parameters and madatory conditions
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

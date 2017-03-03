@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 
 describe 'ldap.index', ->
@@ -29,7 +29,7 @@ describe 'ldap.index', ->
         next err
 
   it 'create a new index', (next) ->
-    mecano
+    nikita
       ldap: client
     .ldap.index
       name: 'olcDatabase={2}bdb,cn=config'
@@ -46,7 +46,7 @@ describe 'ldap.index', ->
     .then next
 
   it 'update an existing index', (next) ->
-    mecano
+    nikita
       ldap: client
     .ldap.index
       name: 'olcDatabase={2}bdb,cn=config'

@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
@@ -10,7 +10,7 @@ describe 'service.start', ->
   return if config.disable_service
   
   they 'should start', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .service
       name: config.service.name
@@ -31,7 +31,7 @@ describe 'service.start', ->
     .then next
   
   they 'no error when invalid service name', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .service.start
       name: 'thisdoenstexit'
@@ -41,7 +41,7 @@ describe 'service.start', ->
     .then next
   
   they 'store status', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .service
       name: config.service.name
@@ -50,10 +50,10 @@ describe 'service.start', ->
       srv_name: config.service.srv_name
       action: 'stop'
     .call (options) ->
-      (options.store["mecano.service.#{config.service.srv_name}.status"] is undefined).should.be.true()
+      (options.store["nikita.service.#{config.service.srv_name}.status"] is undefined).should.be.true()
     .service.start # Detect already started
       name: config.service.srv_name
       cache: true
     .call (options) ->
-      options.store["mecano.service.#{config.service.srv_name}.status"].should.eql 'started'
+      options.store["nikita.service.#{config.service.srv_name}.status"].should.eql 'started'
     .then next

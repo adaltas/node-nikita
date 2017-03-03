@@ -1,5 +1,5 @@
 
-# `mecano.db.user.exists(options, callback)`
+# `nikita.db.user.exists(options, callback)`
 
 Check if a user exists in the database.
 

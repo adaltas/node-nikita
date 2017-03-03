@@ -1,5 +1,5 @@
 
-# `mecano.docker.rm(options, [callback])`
+# `nikita.docker.rm(options, [callback])`
 
 Remove one or more containers. Containers need to be stopped to be deleted unless
 force options is set.
@@ -31,7 +31,7 @@ force options is set.
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering Docker rm", level: 'DEBUG', module: 'mecano/lib/docker/rm'
+      options.log message: "Entering Docker rm", level: 'DEBUG', module: 'nikita/lib/docker/rm'
       # Validate parameters and madatory conditions
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

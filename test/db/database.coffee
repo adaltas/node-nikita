@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 db = require '../../src/misc/db'
 test = require '../test'
 they = require 'ssh2-they'
@@ -12,7 +12,7 @@ for engine, _ of config.db
   describe "db.database #{engine}", ->
 
     they 'add new database', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
         db: config.db[engine]
       .db.database.remove 'postgres_db_0a'
@@ -24,7 +24,7 @@ for engine, _ of config.db
       .then next
       
     they 'status not modified new database', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
         db: config.db[engine]
       .db.database.remove 'postgres_db_1'
@@ -37,7 +37,7 @@ for engine, _ of config.db
     describe 'user', ->
 
       they 'which is existing', (ssh, next) ->
-        mecano
+        nikita
           ssh: ssh
           db: config.db[engine]
         .db.database.remove 'postgres_db_3'
@@ -59,7 +59,7 @@ for engine, _ of config.db
         .then next
 
       they 'honors status', (ssh, next) ->
-        mecano
+        nikita
           ssh: ssh
           db: config.db[engine]
         .db.database.remove 'postgres_db_3'
@@ -84,7 +84,7 @@ for engine, _ of config.db
         .then next
 
       they 'which is not existing', (ssh, next) ->
-        mecano
+        nikita
           ssh: ssh
           db: config.db[engine]
         .db.database.remove 'postgres_db_4'

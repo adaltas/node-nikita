@@ -2,7 +2,7 @@
 fs = require 'fs'
 path = require 'path'
 fs.exists ?= path.exists
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 misc = require '../../src/misc'
@@ -14,7 +14,7 @@ describe 'system.tmpfs', ->
   scratch = test.scratch @
   describe 'generate without merge', ->
     they 'simple mount group configuration with target', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.remove
         target: "#{scratch}/file_1.conf"
@@ -40,7 +40,7 @@ describe 'system.tmpfs', ->
       .then next
     
     they 'status not modified', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.tmpfs
         target: "#{scratch}/file_1.conf"
@@ -75,7 +75,7 @@ describe 'system.tmpfs', ->
       .then next
   
     they 'Override existing configuration file with target', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.remove
         target: "#{scratch}/file_1.conf"
@@ -114,7 +114,7 @@ describe 'system.tmpfs', ->
   
   describe 'generate with merge', ->
     they 'multiple file with target', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.remove
         target: "#{scratch}/file_2.conf"
@@ -155,7 +155,7 @@ describe 'system.tmpfs', ->
       .then next
 
     they 'multiple file merge status not modifed with target', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.remove
         target: "#{scratch}/file_2.conf"
@@ -206,7 +206,7 @@ describe 'system.tmpfs', ->
 
   describe 'default target Centos/Redhat 7', ->
     they 'simple mount group configuration', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.remove
         target: "/etc/tmpfiles.d/root.conf"
@@ -231,7 +231,7 @@ describe 'system.tmpfs', ->
         .then next
           
     they 'simple mount group no uid', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.remove '/etc/tmpfiles.d/root.conf'
       .system.tmpfs

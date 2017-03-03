@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 misc = require '../../src/misc'
 path = require 'path'
 test = require '../test'
@@ -11,7 +11,7 @@ describe 'system.mkdir', ->
   scratch = test.scratch @
 
   they 'as a directory option or as a string', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .system.mkdir directory: "#{scratch}/a_dir", (err, created) ->
       created.should.be.true()
@@ -25,7 +25,7 @@ describe 'system.mkdir', ->
 
   they 'should take source if first argument is a string', (ssh, next) ->
     source = "#{scratch}/a_dir"
-    mecano
+    nikita
       ssh: ssh
     .system.mkdir source, (err, created) ->
       created.should.be.true()
@@ -34,7 +34,7 @@ describe 'system.mkdir', ->
     .then next
   
   they 'should create dir recursively', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .system.mkdir
       directory: "#{scratch}/a_parent_dir_1/a_dir"
@@ -47,7 +47,7 @@ describe 'system.mkdir', ->
     .then next
   
   they 'should create multiple directories', (ssh, next) ->
-    mecano.system.mkdir
+    nikita.system.mkdir
       ssh: ssh
       target: [
         "#{scratch}/a_parent_dir/a_dir_1"
@@ -61,7 +61,7 @@ describe 'system.mkdir', ->
   describe 'parent', ->
 
     they 'true set default permissions', (ssh, next) ->
-      mecano.system.mkdir
+      nikita.system.mkdir
         ssh: ssh
         target: [
           "#{scratch}/a_parent_dir/a_dir_1"
@@ -77,7 +77,7 @@ describe 'system.mkdir', ->
           next()
 
     they 'object set custom permissions', (ssh, next) ->
-      mecano.system.mkdir
+      nikita.system.mkdir
         ssh: ssh
         target: [
           "#{scratch}/a_parent_dir/a_dir_1"
@@ -99,7 +99,7 @@ describe 'system.mkdir', ->
   
     they 'should stop when `exclude` match', (ssh, next) ->
       source = "#{scratch}/a_parent_dir/a_dir/do_not_create_this"
-      mecano.system.mkdir
+      nikita.system.mkdir
         ssh: ssh
         directory: source
         exclude: /^do/
@@ -116,7 +116,7 @@ describe 'system.mkdir', ->
   describe 'cwd', ->
 
     they 'should honore `cwd` for relative paths', (ssh, next) ->
-      mecano.system.mkdir
+      nikita.system.mkdir
         ssh: ssh
         directory: './a_dir'
         cwd: scratch
@@ -132,7 +132,7 @@ describe 'system.mkdir', ->
     they 'change mode as string', (ssh, next) ->
       # 40744: 4 for directory, 744 for permissions
       @timeout 10000
-      mecano.system.mkdir
+      nikita.system.mkdir
         ssh: ssh
         directory: "#{scratch}/ssh_dir_string"
         mode: '744'
@@ -146,7 +146,7 @@ describe 'system.mkdir', ->
     they 'change mode as string', (ssh, next) ->
       # 40744: 4 for directory, 744 for permissions
       @timeout 10000
-      mecano.system.mkdir
+      nikita.system.mkdir
         ssh: ssh
         directory: "#{scratch}/ssh_dir_string"
         mode: 0o744
@@ -160,7 +160,7 @@ describe 'system.mkdir', ->
     they 'detect a permission change', (ssh, next) ->
       # 40744: 4 for directory, 744 for permissions
       @timeout 10000
-      mecano
+      nikita
         ssh: ssh
       .system.mkdir
         directory: "#{scratch}/ssh_dir_string"
@@ -179,7 +179,7 @@ describe 'system.mkdir', ->
 
     they 'dont ovewrite permission', (ssh, next) ->
       @timeout 10000
-      mecano
+      nikita
         ssh: ssh
       .system.mkdir
         directory: "#{scratch}/a_dir"

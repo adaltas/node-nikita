@@ -1,5 +1,5 @@
 
-# `mecano.docker.logout(options, [callback])`
+# `nikita.docker.logout(options, [callback])`
 
 Log out from a Docker registry, if no server is
 specified  is the default.
@@ -28,7 +28,7 @@ specified  is the default.
 ## Example
 
 ```javascript
-mecano.docker.pause({
+nikita.docker.pause({
   container: 'toto'
 }, function(err, is_true){
   if(err){
@@ -44,7 +44,7 @@ mecano.docker.pause({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering Docker logout", level: 'DEBUG', module: 'mecano/lib/docker/logout'
+      options.log message: "Entering Docker logout", level: 'DEBUG', module: 'nikita/lib/docker/logout'
       # Validate parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

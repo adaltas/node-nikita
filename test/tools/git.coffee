@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
@@ -9,14 +9,14 @@ describe 'tools.git', ->
   scratch = test.scratch @
 
   beforeEach (next) ->
-    mecano
+    nikita
     .tools.extract
       source: "#{__dirname}/../resources/repo.git.zip"
       target: "#{scratch}"
     .then next
 
   they 'clones repo into new dir', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .tools.git
       source: "#{scratch}/repo.git"
@@ -31,7 +31,7 @@ describe 'tools.git', ->
     .then next
 
   they 'honores revision', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .tools.git
       source: "#{scratch}/repo.git"
@@ -51,7 +51,7 @@ describe 'tools.git', ->
     .then next
 
   they 'preserves existing directory', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .system.mkdir
       target: "#{scratch}/my_repo"

@@ -1,5 +1,5 @@
 
-# `mecano.docker.start(options, [callback])`
+# `nikita.docker.start(options, [callback])`
 
 Start stopped containers. Or stop/starts started container
 
@@ -29,7 +29,7 @@ Start stopped containers. Or stop/starts started container
 ## Example
 
 ```javascript
-mecano.docker.restart({
+nikita.docker.restart({
   container: 'toto'
 }, function(err, is_true){
   if(err){
@@ -45,7 +45,7 @@ mecano.docker.restart({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering Docker restart", level: 'DEBUG', module: 'mecano/lib/docker/restart'
+      options.log message: "Entering Docker restart", level: 'DEBUG', module: 'nikita/lib/docker/restart'
       # Validate parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

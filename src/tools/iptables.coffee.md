@@ -1,5 +1,5 @@
 
-# `mecano.system.iptables(options, [callback])`
+# `nikita.system.iptables(options, [callback])`
 
 Iptables  is  used to set up, maintain, and inspect the tables of IPv4 packet 
 filter rules in the Linux kernel.
@@ -81,7 +81,7 @@ modules are:
 
 ```coffee
 var after = {chain: 'INPUT', jump: 'ACCEPT', 'in-interface': 'lo'}
-require('mecano').iptables({
+require('nikita').iptables({
   ssh: ssh,
   rules: [
     chain: 'INPUT', after: after, jump: 'ACCEPT', dport: 22, protocol: 'tcp'
@@ -94,8 +94,8 @@ require('mecano').iptables({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering iptables", level: 'DEBUG', module: 'mecano/lib/iptables'
-      options.log message: "List existing rules", level: 'INFO', module: 'mecano/lib/iptables'
+      options.log message: "Entering iptables", level: 'DEBUG', module: 'nikita/lib/iptables'
+      options.log message: "List existing rules", level: 'INFO', module: 'nikita/lib/iptables'
       @system.execute
         cmd: "service iptables status &>/dev/null && iptables -S"
         code_skipped: 3
@@ -106,7 +106,7 @@ require('mecano').iptables({
         newrules = iptables.normalize options.rules
         cmd = iptables.cmd oldrules, newrules
         return callback() unless cmd.length
-        options.log message: "#{cmd.length} modified rules", level: 'WARN', module: 'mecano/lib/iptables'
+        options.log message: "#{cmd.length} modified rules", level: 'WARN', module: 'nikita/lib/iptables'
         @system.execute
           cmd: "#{cmd.join '; '}; service iptables save;"
           trap: true

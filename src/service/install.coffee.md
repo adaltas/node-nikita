@@ -1,5 +1,5 @@
 
-# `mecano.service.install(options, [callback])`
+# `nikita.service.install(options, [callback])`
 
 Install a service. For now, only Yum over SSH.
 
@@ -8,14 +8,14 @@ Install a service. For now, only Yum over SSH.
 *   `cacheonly` (boolean)   
     Run the yum command entirely from system cache, don't update cache.   
 *   `code_skipped` (integer|array)   
-     Error code to skip when using mecano.service.   
+     Error code to skip when using nikita.service.   
 *   `name` (string)   
     Package name, optional.   
     
 ## Example
 
 ```js
-require('mecano').service.install([{
+require('nikita').service.install([{
   ssh: ssh,
   name: 'ntp'
 }, function(err, status){ /* do sth */ });
@@ -24,16 +24,16 @@ require('mecano').service.install([{
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering service.install", level: 'DEBUG', module: 'mecano/lib/service/install'
+      options.log message: "Entering service.install", level: 'DEBUG', module: 'nikita/lib/service/install'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'
       # Action
-      options.log message: "Install service #{options.name}", level: 'INFO', module: 'mecano/lib/service/install'
+      options.log message: "Install service #{options.name}", level: 'INFO', module: 'nikita/lib/service/install'
       installed = updates = null
       if options.cache
-        installed = options.store['mecano:execute:installed']
-        updates = options.store['mecano:execute:updates']
-      options.manager ?= options.store['mecano:service:manager']
+        installed = options.store['nikita:execute:installed']
+        updates = options.store['nikita:execute:updates']
+      options.manager ?= options.store['nikita:service:manager']
       # Validation
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       # Start real work
@@ -62,7 +62,7 @@ require('mecano').service.install([{
         options.manager = switch signal
           when 1 then 'yum'
           when 2 then 'apt'
-        options.store['mecano:service:manager'] = options.manager if options.cache
+        options.store['nikita:service:manager'] = options.manager if options.cache
       @system.execute
         cmd: -> switch options.manager
           when 'yum' then 'rpm -qa --qf "%{NAME}\n"'
@@ -76,7 +76,7 @@ require('mecano').service.install([{
       , (err, executed, stdout) ->
         throw err if err
         return unless executed
-        options.log message: "Installed packages retrieved", level: 'INFO', module: 'mecano/service/install'
+        options.log message: "Installed packages retrieved", level: 'INFO', module: 'nikita/service/install'
         installed = for pkg in string.lines(stdout) then pkg
       @system.execute
         cmd: -> switch options.manager
@@ -91,7 +91,7 @@ require('mecano').service.install([{
       , (err, executed, stdout) ->
         throw err if err
         return updates = [] unless executed
-        options.log message: "Available updates retrieved", level: 'INFO', module: 'mecano/service/install'
+        options.log message: "Available updates retrieved", level: 'INFO', module: 'nikita/service/install'
         start = false
         # if options.manager is 'yum' then updates = for pkg in string.lines(stdout)
         #   start = true if pkg.trim() is 'Updated Packages'
@@ -116,8 +116,8 @@ require('mecano').service.install([{
       , (err, succeed) ->
         throw err if err
         options.log if succeed
-        then message: "Package \"#{options.name}\" is installed", level: 'WARN', module: 'mecano/service/install'
-        else message: "Package \"#{options.name}\" is already installed", level: 'WARN', module: 'mecano/service/install'
+        then message: "Package \"#{options.name}\" is installed", level: 'WARN', module: 'nikita/service/install'
+        else message: "Package \"#{options.name}\" is already installed", level: 'WARN', module: 'nikita/service/install'
         # Enrich installed array with package name unless already there
         installedIndex = installed.indexOf options.name
         installed.push options.name if installedIndex is -1
@@ -128,10 +128,10 @@ require('mecano').service.install([{
       @call
         if: options.cache
         handler: ->
-          options.log message: "Caching installed on \"mecano:execute:installed\"", level: 'INFO', module: 'mecano/service/install'
-          options.store['mecano:execute:installed'] = installed
-          options.log message: "Caching updates on \"mecano:execute:updates\"", level: 'INFO', module: 'mecano/service/install'
-          options.store['mecano:execute:updates'] = updates
+          options.log message: "Caching installed on \"nikita:execute:installed\"", level: 'INFO', module: 'nikita/service/install'
+          options.store['nikita:execute:installed'] = installed
+          options.log message: "Caching updates on \"nikita:execute:updates\"", level: 'INFO', module: 'nikita/service/install'
+          options.store['nikita:execute:updates'] = updates
 
 ## Dependencies
 

@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 misc = require '../../src/misc'
 test = require '../test'
 they = require 'ssh2-they'
@@ -12,7 +12,7 @@ describe 'file.assert', ->
   describe 'exists', ->
 
     they 'file doesnt not exist', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file.assert "#{scratch}/a_file"
       .then (err) ->
@@ -20,14 +20,14 @@ describe 'file.assert', ->
         next()
 
     they 'file exists', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file.touch "#{scratch}/a_file"
       .file.assert "#{scratch}/a_file"
       .then next
 
     they 'with option not', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file.assert "#{scratch}/a_file", not: true
       .file.touch "#{scratch}/a_file"
@@ -36,7 +36,7 @@ describe 'file.assert', ->
       .then next
 
     they 'requires target', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file.assert
         content: "are u here"
@@ -46,7 +46,7 @@ describe 'file.assert', ->
       .then next
 
     they 'send custom error message', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file.assert
         target: "#{scratch}/a_file"
@@ -59,7 +59,7 @@ describe 'file.assert', ->
   describe 'content', ->
 
     they 'content match', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/a_file"
@@ -70,7 +70,7 @@ describe 'file.assert', ->
       .then next
 
     they 'option source is alias of target', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/a_file"
@@ -81,7 +81,7 @@ describe 'file.assert', ->
       .then next
 
     they 'content dont match', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/a_file"
@@ -94,7 +94,7 @@ describe 'file.assert', ->
         next()
 
     they 'with option not', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/a_file"
@@ -113,7 +113,7 @@ describe 'file.assert', ->
       .then next
 
     they 'send custom error message', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/a_file"
@@ -129,7 +129,7 @@ describe 'file.assert', ->
   describe 'option md5', ->
     
     they 'detect if file does not exists', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file.assert
         target: "#{scratch}/a_file"
@@ -140,7 +140,7 @@ describe 'file.assert', ->
       .then next
     
     they 'validate hash', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file.assert
         target: "#{scratch}/a_file"
@@ -163,7 +163,7 @@ describe 'file.assert', ->
       .then next
 
     they 'with option not', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file
         target: "#{scratch}/a_file"
@@ -182,7 +182,7 @@ describe 'file.assert', ->
       .then next
 
     they 'send custom error message', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file.touch
         target: "#{scratch}/a_file"
@@ -198,7 +198,7 @@ describe 'file.assert', ->
   describe 'option sha1', ->
     
     they 'validate hash', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file.assert
         target: "#{scratch}/a_file"
@@ -223,7 +223,7 @@ describe 'file.assert', ->
   describe 'option sha256', ->
     
     they 'validate hash', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file.assert
         target: "#{scratch}/a_file"
@@ -248,7 +248,7 @@ describe 'file.assert', ->
   describe 'option mode', ->
     
     they 'detect if file does not exists', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file.assert
         target: "#{scratch}/a_file"
@@ -259,7 +259,7 @@ describe 'file.assert', ->
       .then next
           
     they 'on file', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file.touch
         target: "#{scratch}/a_file"
@@ -276,7 +276,7 @@ describe 'file.assert', ->
       .then next
 
     they 'on directory', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .system.mkdir
         target: "#{scratch}/a_file"
@@ -294,7 +294,7 @@ describe 'file.assert', ->
       .then next
 
     they 'with option not', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file.touch
         target: "#{scratch}/a_file"
@@ -313,7 +313,7 @@ describe 'file.assert', ->
       .then next
 
     they 'send custom error message', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file.touch
         target: "#{scratch}/a_file"

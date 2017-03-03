@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
@@ -10,7 +10,7 @@ describe 'service.restart', ->
   return if config.disable_service
 
   they 'should restart', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .service
       name: config.service.name

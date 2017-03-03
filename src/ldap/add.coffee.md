@@ -1,5 +1,5 @@
 
-# `mecano.ldap.add(options, [callback])`
+# `nikita.ldap.add(options, [callback])`
 
 Insert or modify an entry inside an OpenLDAP server.   
 
@@ -22,7 +22,7 @@ Insert or modify an entry inside an OpenLDAP server.
 ## Example
 
 ```js
-require('mecano').ldap.index({
+require('nikita').ldap.index({
   url: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
@@ -45,16 +45,16 @@ require('mecano').ldap.index({
       binddn = if options.binddn then "-D #{options.binddn}" else ''
       passwd = if options.passwd then "-w #{options.passwd}" else ''
       if options.url
-        console.log "Mecano: option 'options.url' is deprecated, use 'options.uri'"
+        console.log "Nikita: option 'options.url' is deprecated, use 'options.uri'"
         options.uri ?= options.url
       options.uri = 'ldapi:///' if options.uri is true
       uri = if options.uri then "-H #{options.uri}" else '' # URI is obtained from local openldap conf unless provided
       # Add related options
-      return callback Error "Mecano `ldap.add`: required property 'entry'" unless options.entry
+      return callback Error "Nikita `ldap.add`: required property 'entry'" unless options.entry
       options.entry = [options.entry] unless Array.isArray options.entry
       ldif = ''
       for entry in options.entry
-        return callback Error "Mecano `ldap.add`: required property 'dn'" unless entry.dn
+        return callback Error "Nikita `ldap.add`: required property 'dn'" unless entry.dn
         ldif += '\n'
         ldif += "dn: #{entry.dn}\n"
         [_, k, v] = /^(.*?)=(.+?),.*$/.exec entry.dn

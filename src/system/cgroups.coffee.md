@@ -1,7 +1,7 @@
 
-# `mecano.system.cgroups(options, [callback])`
+# `nikita.system.cgroups(options, [callback])`
 
-Mecano action to manipulate cgroups. [cgconfig.conf(5)] describes the 
+Nikita action to manipulate cgroups. [cgconfig.conf(5)] describes the 
 configuration file used by libcgroup to define control groups, their parameters 
 and also mount points.. The configuration file is identitcal on ubuntu, redhat 
 and centos.
@@ -20,7 +20,7 @@ and centos.
   Default to true. Read the config from cgsnapshot command and merge mounts part
   of the cgroups.   
 * `target` (string).   
-  The cgconfig configuration file. By default mecano detects provider based on 
+  The cgconfig configuration file. By default nikita detects provider based on 
   os.   
 
 The groups object is a dictionnary containing as the key the cgroup name, and 
@@ -35,7 +35,7 @@ properties.
   of the controller. The controller's name can be of one of 
   (cpuset|cpu|cpuacct|memory|devices|freezer|net_cls|blkio.   
 
-It accepts also all the `mecano.file` options.
+It accepts also all the `nikita.file` options.
   
 Example:
 
@@ -80,13 +80,13 @@ Which will result in a file:
 
 ## Source Code
 
-When reading the current config, mecano uses cgsnaphsot command in order to 
+When reading the current config, nikita uses cgsnaphsot command in order to 
 have a well formatted file. Nonetheless if docker is installed and started, 
 informations about live containers could be printed, that's why all path under 
 docker/* are ignored.
     
     module.exports = (options) ->
-      options.log message: "Entering cgroups", level: 'DEBUG', module: 'mecano/lib/system/cgroups'
+      options.log message: "Entering cgroups", level: 'DEBUG', module: 'nikita/lib/system/cgroups'
       throw Error 'Missing cgroups content' unless options.groups? or options.mounts? or options.default?
       options.mounts ?= []
       options.groups ?= {}
@@ -99,9 +99,9 @@ docker/* are ignored.
       options.ignore = [options.ignore] unless Array.isArray options.ignore
       options.store ?= {}
       # Detect Os and version
-      # Read the cpu controller point to cache the value in options.store['mecano:cgroups:cpu_path']
+      # Read the cpu controller point to cache the value in options.store['nikita:cgroups:cpu_path']
       @system.execute
-        unless: -> options.store['mecano:system:type']? and options.store['mecano:system:release']?
+        unless: -> options.store['nikita:system:type']? and options.store['nikita:system:release']?
         shy: true
         cmd: 'cat /etc/system-release'
         code_skipped: 1
@@ -109,18 +109,18 @@ docker/* are ignored.
         return unless status
         [line] = string.lines stdout
         if /CentOS/.test line
-          options.store['mecano:system:type'] ?= 'centos' 
+          options.store['nikita:system:type'] ?= 'centos' 
           index = line.split(' ').indexOf 'release'
-          options.store['mecano:system:release'] ?= line.split(' ')[index+1]
+          options.store['nikita:system:release'] ?= line.split(' ')[index+1]
         if /Red\sHat/.test line
-          options.store['mecano:system:type'] ?= 'redhat'
+          options.store['nikita:system:type'] ?= 'redhat'
           index = line.split(' ').indexOf 'release'
-          options.store['mecano:system:release'] ?= line.split(' ')[index+1]
-        throw Error 'Unsupported OS' unless options.store['mecano:system:type']?
+          options.store['nikita:system:release'] ?= line.split(' ')[index+1]
+        throw Error 'Unsupported OS' unless options.store['nikita:system:type']?
       # configure parameters based on previous OS dection
       @call 
         shy: true
-        if: -> (options.store['mecano:system:type'] in ['redhat','centos'])
+        if: -> (options.store['nikita:system:type'] in ['redhat','centos'])
       , ->
         @system.execute
           cmd: 'cgsnapshot -s 2>&1'
@@ -131,19 +131,19 @@ docker/* are ignored.
           cpus = cgconfig.mounts.filter( (mount) -> if mount.type is 'cpu' then return mount)
           cpuaccts = cgconfig.mounts.filter( (mount) -> if mount.type is 'cpuacct' then return mount)
           # We choose a path which is mounted by default
-          if not options.store['mecano:cgroups:cpu_path']?
+          if not options.store['nikita:cgroups:cpu_path']?
             if cpus.length > 0
               cpu_path = cpus[0]['path'].split(',')[0]
-              options.store['mecano:cgroups:cpu_path'] ?= cpu_path
+              options.store['nikita:cgroups:cpu_path'] ?= cpu_path
             # a arbitrary path is given based on the
             else
-              switch options.store['mecano:system:type']
+              switch options.store['nikita:system:type']
                 when 'redhat'
-                  options.store['mecano:cgroups:cpu_path'] ?= '/cgroups/cpu' if options.store['mecano:system:release'][0] is '6'
-                  options.store['mecano:cgroups:cpu_path'] ?= '/sys/fs/cgroup/cpu' if options.store['mecano:system:release'][0] is '7'
-                else throw Error "Mecano does not support cgroups on your OS #{options.store['mecano:system:type']}"
-          if not options.store['mecano:cgroups:mount']?
-            options.store['mecano:cgroups:mount'] ?= "#{path.dirname options.store['mecano:cgroups:cpu_path']}"
+                  options.store['nikita:cgroups:cpu_path'] ?= '/cgroups/cpu' if options.store['nikita:system:release'][0] is '6'
+                  options.store['nikita:cgroups:cpu_path'] ?= '/sys/fs/cgroup/cpu' if options.store['nikita:system:release'][0] is '7'
+                else throw Error "Nikita does not support cgroups on your OS #{options.store['nikita:system:type']}"
+          if not options.store['nikita:cgroups:mount']?
+            options.store['nikita:cgroups:mount'] ?= "#{path.dirname options.store['nikita:cgroups:cpu_path']}"
           # Running docker containers are remove from cgsnapshot output
           if options.merge
             groups = {}
@@ -152,7 +152,7 @@ docker/* are ignored.
             options.cgconfig.groups = merge groups, options.groups
             options.cgconfig.mounts.push cgconfig.mounts...
       @call ->
-        options.target ?= '/etc/cgconfig.conf' if options.store['mecano:system:type'] is 'redhat'
+        options.target ?= '/etc/cgconfig.conf' if options.store['nikita:system:type'] is 'redhat'
         @file options,
           content: misc.cgconfig.stringify(options.cgconfig)
 

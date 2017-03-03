@@ -1,5 +1,5 @@
 
-# `mecano.docker.save(options, [callback])`
+# `nikita.docker.save(options, [callback])`
 
 Save Docker images
 
@@ -37,7 +37,7 @@ Save Docker images
 ## Example
 
 ```javascript
-mecano.docker({
+nikita.docker({
   ssh: ssh
   output: 'test-image.tar'
   image: 'test-image'
@@ -57,7 +57,7 @@ mecano.docker({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering Docker save", level: 'DEBUG', module: 'mecano/lib/docker/save'
+      options.log message: "Entering Docker save", level: 'DEBUG', module: 'nikita/lib/docker/save'
       # Validate parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
@@ -67,7 +67,7 @@ mecano.docker({
       # Saves image to local tmp path, than copy it
       cmd = "save -o #{options.output} #{options.image}"
       cmd += ":#{options.tag}" if options.tag?
-      options.log message: "Extracting image #{options.output} to file:#{options.image}", level: 'INFO', module: 'mecano/lib/docker/save'
+      options.log message: "Extracting image #{options.output} to file:#{options.image}", level: 'INFO', module: 'nikita/lib/docker/save'
       @system.execute
         cmd: docker.wrap options, cmd
       , docker.callback

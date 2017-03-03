@@ -1,5 +1,5 @@
 
-# `mecano.system.remove(options, [callback])`
+# `nikita.system.remove(options, [callback])`
 
 Recursively remove files, directories and links.
 
@@ -26,7 +26,7 @@ slow.
 ## Simple example
 
 ```js
-require('mecano')
+require('nikita')
 .system.remove('./some/dir', function(err, status){
   console.log(err ? err.message : "File removed: " + !!status);
 });
@@ -35,7 +35,7 @@ require('mecano')
 ## Removing a directory unless a given file exists
 
 ```js
-require('mecano')
+require('nikita')
 .system.remove({
   target: './some/dir',
   unless_exists: './some/file'
@@ -47,7 +47,7 @@ require('mecano')
 ## Removing multiple files and directories
 
 ```js
-require('mecano')
+require('nikita')
 .system.remove([
   { target: './some/dir', unless_exists: './some/file' },
   './some/file'
@@ -59,7 +59,7 @@ require('mecano')
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering remove", level: 'DEBUG', module: 'mecano/lib/system/remove'
+      options.log message: "Entering remove", level: 'DEBUG', module: 'nikita/lib/system/remove'
       # Validate parameters
       options.target = options.argument if options.argument?
       options.target ?= options.source

@@ -6,7 +6,7 @@
       throw Error "Invalid middleware handler: got #{JSON.stringify middleware.handler}" unless typeof middleware.handler in ['function', 'string']
       return middleware unless typeof middleware.handler is 'string'
       middleware.module = middleware.handler
-      middleware.handler = if /^mecano\//.test(middleware.handler) then require(".#{middleware.handler.substr(6)}") else require.main.require middleware.handler
+      middleware.handler = if /^nikita\//.test(middleware.handler) then require(".#{middleware.handler.substr(6)}") else require.main.require middleware.handler
       middleware
 
     registry = (obj) ->
@@ -35,48 +35,48 @@ Register new actions.
 With an action path:
 
 ```javascript
-mecano.register('first_action', 'path/to/action')
-mecano.first_action(options);
+nikita.register('first_action', 'path/to/action')
+nikita.first_action(options);
 ```
 
 With a namespace and an action path:
 
 ```javascript
-mecano.register(['second', 'action'], 'path/to/action')
-mecano.second.action(options);
+nikita.register(['second', 'action'], 'path/to/action')
+nikita.second.action(options);
 ```
 
 With an action object:
 
 ```javascript
-mecano.register('third_action', {
+nikita.register('third_action', {
   relax: true,
   handler: function(options){ console.log(options.relax) }
 })
-mecano.third_action(options);
+nikita.third_action(options);
 ```
 
 With a namespace and an action object:
 
 ```javascript
-mecano.register(['fourth', 'action'], {
+nikita.register(['fourth', 'action'], {
   relax: true,
   handler: function(options){ console.log(options.relax) }
 })
-mecano.fourth.action(options);
+nikita.fourth.action(options);
 ```
 
 Multiple actions:
 
 ```javascript
-mecano.register({
+nikita.register({
   'fifth_action': 'path/to/action'
   'sixth': {
     '': 'path/to/sixth',
     'action': : 'path/to/sixth/actkon'
   }
 })
-mecano
+nikita
 .fifth_action(options);
 .sixth(options);
 .sixth.action(options);
@@ -110,7 +110,7 @@ mecano
 
 ## Deprecate
 
-`mecano.deprecate(old_function, [new_function], action)`
+`nikita.deprecate(old_function, [new_function], action)`
 
 Deprecate an old or renamed action. Internally, it leverages 
 [Node.js `util.deprecate`][deprecate].
@@ -118,8 +118,8 @@ Deprecate an old or renamed action. Internally, it leverages
 For example:
 
 ```javascript
-mecano.deprecate('old_function', 'new_function', -> 'my_function')
-mecano.new_function()
+nikita.deprecate('old_function', 'new_function', -> 'my_function')
+nikita.new_function()
 # Print
 # (node:75923) DeprecationWarning: old_function is deprecated, use new_function
 ```

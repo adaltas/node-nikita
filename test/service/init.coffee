@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
@@ -12,7 +12,7 @@ describe 'service.init', ->
 
 
   they 'init file with target and source (default)', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .service.remove 'cronie'
     .system.remove
@@ -24,7 +24,7 @@ describe 'service.init', ->
     .then next
 
   they 'init file with source only (default)', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .service.remove 'cronie'
     .system.remove
@@ -35,7 +35,7 @@ describe 'service.init', ->
     .then next
 
   they 'init file with source and name (default)', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .service.remove 'cronie'
     .system.remove
@@ -48,7 +48,7 @@ describe 'service.init', ->
 
   #redhat 7
   # they 'init file with target and source (default)', (ssh, next) ->
-  #   mecano
+  #   nikita
   #     ssh: ssh
   #   .service.remove 'cronie'
   #   .system.remove
@@ -60,7 +60,7 @@ describe 'service.init', ->
   #   .then next
   # 
   # they 'init file with source only (default)', (ssh, next) ->
-  #   mecano
+  #   nikita
   #     ssh: ssh
   #   .service.remove 'cronie'
   #   .system.remove
@@ -71,7 +71,7 @@ describe 'service.init', ->
   #   .then next
   # 
   # they 'init file with source and name (default)', (ssh, next) ->
-  #   mecano
+  #   nikita
   #     ssh: ssh
   #   .service.remove 'cronie'
   #   .system.remove
@@ -83,7 +83,7 @@ describe 'service.init', ->
   #   .then next
   # 
   # they 'status not modified', (ssh, next) ->
-  #   mecano
+  #   nikita
   #     ssh: ssh
   #   .service.remove 'cronie'
   #   .system.remove '/etc/systemd/system/crond.service'
@@ -97,7 +97,7 @@ describe 'service.init', ->
   #   .then next
   #       
   # they 'init file to init.d legacy CentOS/Redhat7', (ssh, next) ->
-  #   mecano
+  #   nikita
   #     ssh: ssh
   #   .service.remove 'cronie'
   #   .service.install 'cronie'
@@ -112,7 +112,7 @@ describe 'service.init', ->
   #   .then next
   # 
   # they 'status not modified daemon reload CentOS/Redhat7', (ssh, next) ->
-  #   mecano
+  #   nikita
   #     ssh: ssh
   #   .service.remove 'cronie'
   #   .system.remove '/etc/systemd/system/crond.service'

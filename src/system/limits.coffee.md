@@ -1,5 +1,5 @@
 
-# `mecano.system.limits(options, [callback])`
+# `nikita.system.limits(options, [callback])`
 
 Control system limits for a user.
 
@@ -56,15 +56,15 @@ there is two cases, depending on the specified value
 
 1. int value
 
-If an int value is specified, then mecano checks that the value is lesser than 
+If an int value is specified, then nikita checks that the value is lesser than 
 the kernel limit. Please be aware that it is necessary but not sufficient to 
 guarantee that the user would be able to open session.
 
 2. true value
 
-If a true value is specified, then mecano set it to 75% of the kernel limit.
+If a true value is specified, then nikita set it to 75% of the kernel limit.
 This value is neither optimal nor able to guarantee that the user would be
-able to open session, but that is the best mecano can automatically do.
+able to open session, but that is the best nikita can automatically do.
 
 ### Other values
 
@@ -168,7 +168,7 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering system_limits", level: 'DEBUG', module: 'mecano/lib/system_limits'
+      options.log message: "Entering system_limits", level: 'DEBUG', module: 'nikita/lib/system_limits'
       return callback Error "Incoherent options: both options system and user defined, #{JSON.stringify system: options.system, user: options.user}" if options.system and options.user
       options.user = '*' if options.system
       return callback Error "Missing required option 'user'" unless options.user

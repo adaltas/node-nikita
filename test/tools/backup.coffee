@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 they = require 'ssh2-they'
 test = require '../test'
 
@@ -10,7 +10,7 @@ describe 'tools.backup', ->
   describe 'file', ->
 
     they 'backup to a directory', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .tools.backup
         name: 'my_backup'
@@ -30,7 +30,7 @@ describe 'tools.backup', ->
       .then next
 
     they 'compress', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .tools.backup
         name: 'my_backup'

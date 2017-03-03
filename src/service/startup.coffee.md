@@ -1,5 +1,5 @@
 
-# `mecano.service.startup(options, [callback])`
+# `nikita.service.startup(options, [callback])`
 
 Activate or desactivate a service on startup.
 
@@ -14,7 +14,7 @@ Activate or desactivate a service on startup.
     levels, for example '2345' or 'multi-user'.   
     An empty string to not define any run level.   
     Note: String argument is only used if SysVinit runlevel is installed on 
-    the OS (automatically detected by mecano).   
+    the OS (automatically detected by nikita).   
 *   `ssh` (object|ssh2)   
     Run the action on a remote server using SSH, an ssh2 instance or an
     configuration object used to initialize the SSH connection.   
@@ -35,7 +35,7 @@ Activate or desactivate a service on startup.
 ## Example
 
 ```js
-require('mecano').service.startup([{
+require('nikita').service.startup([{
   ssh: ssh,
   name: 'gmetad',
   startup: false
@@ -45,7 +45,7 @@ require('mecano').service.startup([{
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering service.startup", level: 'DEBUG', module: 'mecano/lib/service/startup'
+      options.log message: "Entering service.startup", level: 'DEBUG', module: 'nikita/lib/service/startup'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'
       options.startup ?= true
@@ -53,7 +53,7 @@ require('mecano').service.startup([{
       # Validation
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name?
       # Action
-      options.log message: "Startup service #{options.name}", level: 'INFO', module: 'mecano/lib/service/startup'
+      options.log message: "Startup service #{options.name}", level: 'INFO', module: 'nikita/lib/service/startup'
       modified = false
       @service.discover cache: options.cache, shy: true, (err, status, loader) -> 
         options.loader ?= loader
@@ -73,7 +73,7 @@ require('mecano').service.startup([{
                 return callback err if err
                 # Invalid service name return code is 0 and message in stderr start by error
                 if /^error/.test stderr
-                  options.log message: "Invalid chkconfig name for \"#{options.name}\"", level: 'ERROR', module: 'mecano/service/startup'
+                  options.log message: "Invalid chkconfig name for \"#{options.name}\"", level: 'ERROR', module: 'nikita/service/startup'
                   return callback new Error "Invalid chkconfig name for `#{options.name}`"
                 current_startup = ''
                 if registered
@@ -105,17 +105,17 @@ require('mecano').service.startup([{
                 cmd: cmd
               , (err) ->
                 throw err if err
-                options.log message: "Startup rules modified", level: 'INFO', module: 'mecano/service/startup'
+                options.log message: "Startup rules modified", level: 'INFO', module: 'nikita/service/startup'
           @call 
             if: -> do_disable and not do_enable
             handler: ->
-              options.log message: "Desactivating startup rules", level: 'DEBUG', module: 'mecano/service/startup'
+              options.log message: "Desactivating startup rules", level: 'DEBUG', module: 'nikita/service/startup'
               # Setting the level to off. An alternative is to delete it: `chkconfig --del #{options.name}`
               @system.execute
                 cmd: "chkconfig #{options.name} off"
               , (err, disabled, stdout, stderr) ->
                 throw err if err
-                options.log message: "Startup rules desactivating", level: 'INFO', module: 'mecano/service/startup'
+                options.log message: "Startup rules desactivating", level: 'INFO', module: 'nikita/service/startup'
       @call
         if: -> options.loader is 'systemctl'
         handler: ->

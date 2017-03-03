@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 
 describe 'registry.register', ->
@@ -9,13 +9,13 @@ describe 'registry.register', ->
   describe 'global', ->
 
     it 'return false', ->
-      (mecano.registered 'does_not_exists').should.be.false()
-      (mecano.registered ['does_not_exists']).should.be.false()
+      (nikita.registered 'does_not_exists').should.be.false()
+      (nikita.registered ['does_not_exists']).should.be.false()
 
 
 
   describe 'local', ->
 
     it 'return false', ->
-      (mecano().registry.registered 'does_not_exists').should.be.false()
-      (mecano().registry.registered ['does_not_exists']).should.be.false()
+      (nikita().registry.registered 'does_not_exists').should.be.false()
+      (nikita().registry.registered ['does_not_exists']).should.be.false()

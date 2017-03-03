@@ -1,10 +1,10 @@
 
 # Conditions
 
-Conditions are a set of properties you may add to the options of the Mecano
+Conditions are a set of properties you may add to the options of the Nikita
 functions. They apply to all functions and control their execution.
 
-A Mecano action will be executed if all the positive conditions are "true" and
+A Nikita action will be executed if all the positive conditions are "true" and
 none of the negative conditions are "true".
 
     module.exports = 
@@ -27,7 +27,7 @@ pass.
 Updating the content of a file if we are the owner
 
 ```js
-mecano.file.render({
+nikita.file.render({
   source:'./file',
   if: function(options, callback){
     fs.stat(options.source, function(err, stat){
@@ -132,7 +132,7 @@ were executed successfully otherwise the callback `skip` is called.
       if_exec: (options, succeed, skip) ->
         each(options.if_exec)
         .call (cmd, next) ->
-          options.log? message: "Mecano `if_exec`: #{cmd}", level: 'DEBUG', module: 'mecano/misc/conditions'
+          options.log? message: "Nikita `if_exec`: #{cmd}", level: 'DEBUG', module: 'nikita/misc/conditions'
           options = { cmd: cmd, ssh: options.ssh }
           run = exec options
           if options.stdout
@@ -140,7 +140,7 @@ were executed successfully otherwise the callback `skip` is called.
           if options.stderr
             run.stderr.pipe options.stderr, end: false
           run.on "exit", (code) ->
-            options.log? message: "Mecano `if_exec`: code is \"#{code}\"", level: 'INFO', module: 'mecano/misc/conditions'
+            options.log? message: "Nikita `if_exec`: code is \"#{code}\"", level: 'INFO', module: 'nikita/misc/conditions'
             if code is 0 then next() else skip()
         .then succeed
   
@@ -155,7 +155,7 @@ were executed with failure otherwise the callback `skip` is called.
       unless_exec: (options, succeed, skip) ->
         each(options.unless_exec)
         .call (cmd, next) ->
-          options.log? message: "Mecano `unless_exec`: #{cmd}", level: 'DEBUG', module: 'mecano/misc/conditions'
+          options.log? message: "Nikita `unless_exec`: #{cmd}", level: 'DEBUG', module: 'nikita/misc/conditions'
           options = { cmd: cmd, ssh: options.ssh }
           run = exec options
           if options.stdout
@@ -163,7 +163,7 @@ were executed with failure otherwise the callback `skip` is called.
           if options.stderr
             run.stderr.pipe options.stderr, end: false
           run.on "exit", (code) ->
-            options.log? message: "Mecano `unless_exec`: code is \"#{code}\"", level: 'INFO', module: 'mecano/misc/conditions'
+            options.log? message: "Nikita `unless_exec`: code is \"#{code}\"", level: 'INFO', module: 'nikita/misc/conditions'
             if code is 0 then skip() else next()
         .then succeed
 
@@ -185,10 +185,10 @@ exists otherwise the callback `skip` is called.
         .call (if_exists, next) ->
           fs.exists ssh, if_exists, (err, exists) ->
             if exists
-              options.log? message: "File exists #{if_exists}, continuing", level: 'DEBUG', module: 'mecano/misc/conditions'
+              options.log? message: "File exists #{if_exists}, continuing", level: 'DEBUG', module: 'nikita/misc/conditions'
               next()
             else
-              options.log? message: "File doesnt exists #{if_exists}, skipping", level: 'INFO', module: 'mecano/misc/conditions'
+              options.log? message: "File doesnt exists #{if_exists}, skipping", level: 'INFO', module: 'nikita/misc/conditions'
               skip()
         .then succeed
 
@@ -210,10 +210,10 @@ exists otherwise the callback `skip` is called.
         .call (unless_exists, next) ->
           fs.exists ssh, unless_exists, (err, exists) ->
             if exists
-              options.log? message: "File exists #{unless_exists}, skipping", level: 'INFO', module: 'mecano/misc/conditions'
+              options.log? message: "File exists #{unless_exists}, skipping", level: 'INFO', module: 'nikita/misc/conditions'
               skip()
             else
-              options.log? message: "File doesnt exists #{unless_exists}, continuing", level: 'DEBUG', module: 'mecano/misc/conditions'
+              options.log? message: "File doesnt exists #{unless_exists}, continuing", level: 'DEBUG', module: 'nikita/misc/conditions'
               next()
         .then succeed
 
@@ -290,7 +290,7 @@ conditions.all({
           return next() if key is 'all'
           return next() unless module.exports[key]?
           module.exports[key].call context, options, next, (err) ->
-            # options.log? "Mecano `#{key}`: skipping action"
+            # options.log? "Nikita `#{key}`: skipping action"
             failed err
         next()
 

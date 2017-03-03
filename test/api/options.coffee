@@ -1,12 +1,12 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 fs = require 'fs'
 
 describe 'api options', ->
 
   it 'global dont overwrite local options', (next) ->
-    m = mecano
+    m = nikita
       global_param: true
     m.propagated_options.push 'parent_param_propagated'
     m.registry.register 'achild', (options, callback) ->
@@ -28,7 +28,7 @@ describe 'api options', ->
     .then next
 
   it 'accept empty array [async]', (next) ->
-    mecano
+    nikita
     .call [], (options, callback) ->
       callback null, true
     .file []
@@ -37,7 +37,7 @@ describe 'api options', ->
       next err
 
   it 'accept empty array [sync]', (next) ->
-    mecano
+    nikita
     .call [], (options) ->
       return true
     .file []
@@ -48,7 +48,7 @@ describe 'api options', ->
   describe 'merging', ->
 
     it 'accept multiple options', (next) ->
-      mecano
+      nikita
       .call {a: 1, b: 0}, {b: 2, c: 3}, (options) ->
         options.should.containEql a: 1, b: 2, c: 3
       .then next
@@ -56,7 +56,7 @@ describe 'api options', ->
     it 'is immutable', (next) ->
       opts1 = {a: 1, b: 0}
       opts2 = {b: 2, c: 3}
-      mecano
+      nikita
       .call opts1, opts2, (options) ->
         options.should.containEql a: 1, b: 2, c: 3
       , ->

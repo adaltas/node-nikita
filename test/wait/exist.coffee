@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
@@ -9,7 +9,7 @@ describe 'wait.exist', ->
   scratch = test.scratch @
 
   they 'take a single cmd', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .wait.exist
       target: "#{scratch}"

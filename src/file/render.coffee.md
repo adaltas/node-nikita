@@ -1,5 +1,5 @@
 
-# `mecano.file.render(options, [callback])`
+# `nikita.file.render(options, [callback])`
 
 Render a template file. The following templating engines are
 integrated. More are added on demand.      
@@ -39,7 +39,7 @@ its first argument.
 
 ## Custom Filters
 
-Nunjucks allow to add custom filters. Mecano provides some custom filters listed below.
+Nunjucks allow to add custom filters. Nikita provides some custom filters listed below.
 These filters are implemented misc/string. They can be overriden through the filters
 parameters   
 
@@ -62,7 +62,7 @@ parameters
 ## Rendering with Nunjucks
 
 ```js
-require('mecano').file.render({
+require('nikita').file.render({
   source: './some/a_template.j2',
   target: '/tmp/a_file',
   context: {
@@ -76,7 +76,7 @@ require('mecano').file.render({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering render", level: 'DEBUG', module: 'mecano/lib/file/render'
+      options.log message: "Entering render", level: 'DEBUG', module: 'nikita/lib/file/render'
       # Validate parameters
       throw Error 'Missing source or content' unless options.source or options.content
       throw Error 'Missing target' unless options.target

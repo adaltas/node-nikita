@@ -1,5 +1,5 @@
 
-# `mecano.ldap.acl(options, [callback])`
+# `nikita.ldap.acl(options, [callback])`
 
 Create new [ACLs](acls) for the OpenLDAP server.
 
@@ -32,7 +32,7 @@ Create new [ACLs](acls) for the OpenLDAP server.
 ## Example
 
 ```js
-require('mecano').ldap.acl({
+require('nikita').ldap.acl({
   url: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
@@ -71,7 +71,7 @@ require('mecano').ldap.acl({
       .call (acl, callback) =>
         do_getdn = =>
           return do_getacls() if options.hdb_dn
-          options.log message: "Get DN of the HDB to modify", level: 'DEBUG', module: 'mecano/ldap/acl'
+          options.log message: "Get DN of the HDB to modify", level: 'DEBUG', module: 'nikita/ldap/acl'
           @system.execute
             cmd: """
             ldapsearch -LLL -Y EXTERNAL -H ldapi:/// \
@@ -86,7 +86,7 @@ require('mecano').ldap.acl({
             options.hdb_dn = hdb_dn.trim()
             do_getacls()
         do_getacls = =>
-          options.log message: "List all ACL of the directory", level: 'DEBUG', module: 'mecano/ldap/acl'
+          options.log message: "List all ACL of the directory", level: 'DEBUG', module: 'nikita/ldap/acl'
           @system.execute
             cmd: """
             ldapsearch -LLL -Y EXTERNAL -H ldapi:/// \
@@ -129,19 +129,19 @@ require('mecano').ldap.acl({
                   found = false if acl_by isnt access_by
                 not_found_acl.push acl_by unless found
             if is_perfect_match
-              options.log message: "No modification to apply", level: 'INFO', module: 'mecano/ldap/acl'
+              options.log message: "No modification to apply", level: 'INFO', module: 'nikita/ldap/acl'
               return do_end()
             if not_found_acl.length
-              options.log message: "Modify access after undefined acl", level: 'INFO', module: 'mecano/ldap/acl'
+              options.log message: "Modify access after undefined acl", level: 'INFO', module: 'nikita/ldap/acl'
               for access_by in olcAccess.by
                 not_found_acl.push access_by
               olcAccess.by = not_found_acl
             else
-              options.log message: "Modify access after reorder", level: 'INFO', module: 'mecano/ldap/acl'
-              options.log? 'mecano `ldap.acl`: m'
+              options.log message: "Modify access after reorder", level: 'INFO', module: 'nikita/ldap/acl'
+              options.log? 'nikita `ldap.acl`: m'
               olcAccess.by = acl.by
           else
-            options.log message: "Insert a new access", level: 'INFO', module: 'mecano/ldap/acl'
+            options.log message: "Insert a new access", level: 'INFO', module: 'nikita/ldap/acl'
             index = olcAccesses.length
             if acl.first # not tested
               index = 0

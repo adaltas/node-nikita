@@ -3,7 +3,7 @@
 # test amd should not relie on them
 
 should = require 'should'
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 docker = require '../../src/misc/docker'
@@ -16,7 +16,7 @@ describe 'docker.build', ->
   @timeout 60000
 
   they 'fail with missing image parameter', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.build
@@ -27,11 +27,11 @@ describe 'docker.build', ->
     .then next
 
   they 'fail with exclusive parameters', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.build
-      image: 'mecano/should_not_exists_1'
+      image: 'nikita/should_not_exists_1'
       file: "#{__dirname}/Dockerfile"
       content: "FROM scratch \ CMD ['echo \"hello world\"']"
     .then (err) ->
@@ -39,13 +39,13 @@ describe 'docker.build', ->
     .then next
 
   they 'from text', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.rmi
-      image: 'mecano/should_exists_2'
+      image: 'nikita/should_exists_2'
     .docker.build
-      image: 'mecano/should_exists_2'
+      image: 'nikita/should_exists_2'
       content: """
       FROM scratch
       CMD echo hello
@@ -54,15 +54,15 @@ describe 'docker.build', ->
       executed.should.be.true() unless err
       stderr.should.containEql 'Step 2 : CMD echo hello' unless err
     .docker.rmi
-      image: 'mecano/should_exists_2'
+      image: 'nikita/should_exists_2'
     .then next
 
   they 'from cwd',  (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.rmi
-      image: 'mecano/should_exists_3'
+      image: 'nikita/should_exists_3'
     .file
       target: "#{scratch}/Dockerfile"
       content: """
@@ -70,38 +70,38 @@ describe 'docker.build', ->
       CMD echo hello
       """
     .docker.build
-      image: 'mecano/should_exists_3'
+      image: 'nikita/should_exists_3'
       cwd: scratch
     , (err, executed, stdout, stderr) ->
       executed.should.be.true() unless err
     .docker.rmi
-      image: 'mecano/should_exists_3'
+      image: 'nikita/should_exists_3'
     .then next
 
   they 'from Dockerfile (exist)', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.rmi
-      image: 'mecano/should_exists_3'
+      image: 'nikita/should_exists_3'
     .file
       content: "FROM scratch\nCMD ['echo \"hello build from Dockerfile #{Date.now()}\"']"
-      target: "#{scratch}/mecano_Dockerfile"
+      target: "#{scratch}/nikita_Dockerfile"
     .docker.build
-      image: 'mecano/should_exists_4'
-      file: "#{scratch}/mecano_Dockerfile"
+      image: 'nikita/should_exists_4'
+      file: "#{scratch}/nikita_Dockerfile"
     , (err, executed) ->
       executed.should.be.true() unless err
     .docker.rmi
-      image: 'mecano/should_exists_3'
+      image: 'nikita/should_exists_3'
     .then next
 
   they 'from Dockerfile (not exist)', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.build
-      image: 'mecano/should_not_exists_4'
+      image: 'nikita/should_not_exists_4'
       file: 'unexisting/file'
       relax: true
     , (err, executed, stdout, stderr) ->
@@ -110,31 +110,31 @@ describe 'docker.build', ->
 
   they 'status not modified', (ssh, next) ->
     status_true = status_false = null
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.rmi
-      image: 'mecano/should_exists_5'
+      image: 'nikita/should_exists_5'
     .file
-      target: "#{scratch}/mecano_Dockerfile"
+      target: "#{scratch}/nikita_Dockerfile"
       content: """
       FROM scratch
       CMD echo hello
       """
     .docker.build
-      image: 'mecano/should_exists_5'
-      file: "#{scratch}/mecano_Dockerfile"
+      image: 'nikita/should_exists_5'
+      file: "#{scratch}/nikita_Dockerfile"
       log: (msg) -> status_true = msg
     , (err, executed) ->
       executed.should.be.true()
     .docker.build
-      image: 'mecano/should_exists_5'
-      file: "#{scratch}/mecano_Dockerfile"
+      image: 'nikita/should_exists_5'
+      file: "#{scratch}/nikita_Dockerfile"
       log: (msg) -> status_false = msg
     , (err, executed) ->
       executed.should.be.false()
     .docker.rmi
-      image: 'mecano/should_exists_5'
+      image: 'nikita/should_exists_5'
     .call ->
       status_true.message.should.match /^New image id/
       status_false.message.should.match /^Identical image id/

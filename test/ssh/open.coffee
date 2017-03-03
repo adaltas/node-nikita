@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
@@ -10,7 +10,7 @@ describe 'ssh.open', ->
 
   they 'with handler options', (ssh, next) ->
     return next() unless ssh
-    mecano
+    nikita
     .call (options) ->
       (!!options.ssh).should.be.false()
     .ssh.open
@@ -29,7 +29,7 @@ describe 'ssh.open', ->
 
   they 'with global options', (ssh, next) ->
     return next() unless ssh
-    mecano
+    nikita
       ssh:
         host: ssh.config.host
         port: ssh.config.port
@@ -55,7 +55,7 @@ describe 'ssh.open', ->
       password: ssh.config.password
       private_key: ssh.config.privateKey.privateOrig
       public_key: ssh.config.publicKey.publicOrig
-    mecano
+    nikita
     .ssh.open options
     .ssh.open options, (err, status) ->
       status.should.be.false() unless err

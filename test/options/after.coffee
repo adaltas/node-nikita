@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 fs = require 'fs'
 
@@ -9,7 +9,7 @@ describe 'options "after"', ->
   
   it 'is a function', (next) ->
     history = []
-    mecano
+    nikita
     .call
       key: '1'
       after: (options) -> history.push "after #{options.key}"
@@ -20,7 +20,7 @@ describe 'options "after"', ->
   
    it 'has custom options', (next) ->
      history = []
-     mecano
+     nikita
      .call
        key: '1'
        after: key: 2, handler: (options) -> history.push "after #{options.key}"
@@ -31,7 +31,7 @@ describe 'options "after"', ->
     
     it 'register child handlers', (next) ->
       history = []
-      mecano
+      nikita
       .call
         key: 'parent'
         after: (options) ->

@@ -1,5 +1,5 @@
 
-# `mecano.service.status(options, [callback])`
+# `nikita.service.status(options, [callback])`
 
 Status of a service.
 
@@ -35,7 +35,7 @@ Status of a service.
 ## Example
 
 ```js
-require('mecano').service.start([{
+require('nikita').service.start([{
   ssh: ssh,
   name: 'gmetad'
 }, function(err, status){ /* do sth */ });
@@ -44,14 +44,14 @@ require('mecano').service.start([{
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering service.status", level: 'DEBUG', module: 'mecano/lib/service/status'
+      options.log message: "Entering service.status", level: 'DEBUG', module: 'nikita/lib/service/status'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'
       # Validation
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       # Action
-      options.log message: "Status for service #{options.name}", level: 'INFO', module: 'mecano/lib/service/status'
-      options.log message: "Option code_stopped is #{options.code_stopped}", level: 'DEBUG', module: 'mecano/lib/service/status' unless options.code_stopped is 3
+      options.log message: "Status for service #{options.name}", level: 'INFO', module: 'nikita/lib/service/status'
+      options.log message: "Option code_stopped is #{options.code_stopped}", level: 'DEBUG', module: 'nikita/lib/service/status' unless options.code_stopped is 3
       options.os ?= {}
       @system.discover cache: options.cache, shy: true, (err, status, os) ->
         options.os.type ?= os.type
@@ -85,6 +85,6 @@ require('mecano').service.start([{
       , (err, started) ->
         throw Error "Invalid Service Name: #{options.name}" if err
         status = if started then 'started' else 'stopped'
-        options.log message: "Status for #{options.name} is #{status}", level: 'INFO', module: 'mecano/lib/service/status'
+        options.log message: "Status for #{options.name} is #{status}", level: 'INFO', module: 'nikita/lib/service/status'
         # throw err if err
-        options.store["mecano.service.#{options.name}.status"] = "#{status}" if options.cache
+        options.store["nikita.service.#{options.name}.status"] = "#{status}" if options.cache

@@ -1,6 +1,6 @@
 
 fs = require 'fs'
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
@@ -12,7 +12,7 @@ describe 'system.link', ->
   they 'should link file', (ssh, next) ->
     # Create a non existing link
     target = "#{scratch}/link_test"
-    mecano
+    nikita
       ssh: ssh
     .system.link # Link does not exist
       source: __filename
@@ -33,7 +33,7 @@ describe 'system.link', ->
   they 'should link dir', (ssh, next) ->
     # Create a non existing link
     target = "#{scratch}/link_test"
-    mecano
+    nikita
       ssh: ssh
     .system.link # Link does not exist
       source: __dirname
@@ -54,7 +54,7 @@ describe 'system.link', ->
   
   they 'should create parent directories', (ssh, next) ->
     # Create a non existing link
-    mecano
+    nikita
       ssh: ssh
     .system.link
       source: __dirname
@@ -78,7 +78,7 @@ describe 'system.link', ->
     .then next
 
   they 'should override invalid link', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file
       target: "#{scratch}/test/invalid_file"
@@ -104,7 +104,7 @@ describe 'system.link', ->
 
     they 'for invalid arguments', (ssh, next) ->
       # Test missing source
-      mecano
+      nikita
         ssh: ssh
       .system.link
         target: __filename

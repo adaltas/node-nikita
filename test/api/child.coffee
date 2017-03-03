@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 fs = require 'fs'
 
@@ -9,7 +9,7 @@ describe 'api child', ->
 
   it 'dont change status of parent context', (next) ->
     touched = 0
-    m = mecano
+    m = nikita
     .call (options, next) ->
       m
       .child()
@@ -26,7 +26,7 @@ describe 'api child', ->
 
   # it 'accept conditions', (next) ->
   #   touched = 0
-  #   m = mecano
+  #   m = nikita
   #   .call (options, next) ->
   #     m
   #     .child()

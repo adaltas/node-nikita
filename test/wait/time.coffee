@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
@@ -10,7 +10,7 @@ describe 'wait.time', ->
 
   they 'time as main argument', (ssh, next) ->
     before = Date.now()
-    mecano
+    nikita
       ssh: ssh
     .wait 500
     .wait '500'
@@ -22,7 +22,7 @@ describe 'wait.time', ->
 
   they 'before callback', (ssh, next) ->
     before = Date.now()
-    mecano
+    nikita
       ssh: ssh
     .wait
       time: 1000
@@ -33,7 +33,7 @@ describe 'wait.time', ->
 
   they 'wait before sync call', (ssh, next) ->
     before = Date.now()
-    mecano
+    nikita
       ssh: ssh
     .wait
       time: 1000
@@ -44,7 +44,7 @@ describe 'wait.time', ->
   
   they  'validate argument', (ssh, next) ->
     before = Date.now()
-    mecano
+    nikita
       ssh: ssh
     .wait
       time: 'an': 'object'

@@ -1,7 +1,7 @@
 
 fs = require 'fs'
 should = require 'should'
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
@@ -10,7 +10,7 @@ describe 'log.md', ->
   scratch = test.scratch @
   
   they 'write string', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .log.md basedir: scratch
     .call (options) ->
@@ -24,7 +24,7 @@ describe 'log.md', ->
     .then next
   
   they 'write message', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .log.md basedir: scratch
     .call (options) ->
@@ -38,14 +38,14 @@ describe 'log.md', ->
     .then next
   
   they 'write message and module', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .log.md basedir: scratch
     .call (options) ->
-      options.log message: 'ok', module: 'mecano/test/log/md'
+      options.log message: 'ok', module: 'nikita/test/log/md'
     .file.assert
       source: "#{scratch}/localhost.log"
-      content: "ok (INFO, written by mecano/test/log/md)\n"
+      content: "ok (INFO, written by nikita/test/log/md)\n"
       log: false
     .assert
       status: false
@@ -54,7 +54,7 @@ describe 'log.md', ->
   describe 'stdout', ->
     
     they 'in base directory', (ssh, next) ->
-      m = mecano
+      m = nikita
         ssh: ssh
       .log.md basedir: scratch
       .call (options) ->

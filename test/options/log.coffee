@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 fs = require 'fs'
 
@@ -11,7 +11,7 @@ describe 'options "log"', ->
   
     it 'convert string to objects', (next) ->
       logs = []
-      mecano
+      nikita
       .call 
         log: (l) -> logs.push l if l.type is 'text'
         handler: (options) -> options.log 'handler'
@@ -26,7 +26,7 @@ describe 'options "log"', ->
         
     it 'work recursively', (next) ->
       logs = []
-      mecano
+      nikita
       .call
         log: (l) -> logs.push l if l.type is 'text'
         handler: ->
@@ -44,7 +44,7 @@ describe 'options "log"', ->
     it 'is overwritteable', (next) ->
       logs_parent = []
       logs_child = []
-      mecano
+      nikita
       .call 
         log: (l) -> logs_parent.push l if l.type is 'text'
         handler: ->
@@ -64,7 +64,7 @@ describe 'options "log"', ->
   
     it 'disable if set to false', (next) ->
       log = null
-      mecano
+      nikita
       .on 'text', ({message}) ->
         log = message
       .call
@@ -81,7 +81,7 @@ describe 'options "log"', ->
     it 'can be safely passed to the options of a child handler', (next) ->
       # Fix a bug in which the child log "yes, dont kill her was called twice"
       logs = []
-      mecano
+      nikita
       .on 'text', ({message}) ->
         logs.push message
       .call (options) ->
@@ -98,7 +98,7 @@ describe 'options "log"', ->
   
     it 'convert string to objects', (next) ->
       logs = []
-      mecano
+      nikita
       .on 'text', (l) -> logs.push l
       .call (options) -> options.log 'handler'
       .then (err) ->
@@ -113,7 +113,7 @@ describe 'options "log"', ->
   it.skip 'serialize into string with default serializer', (next) ->
     # log_serializer isnt yet activated
     log = null
-    mecano
+    nikita
       log_serializer: true
     .on 'text', (l) -> log = l
     .call (options) ->
@@ -125,7 +125,7 @@ describe 'options "log"', ->
   it.skip 'serialize into string with user serializer', (next) ->
     # log_serializer isnt yet activated
     log = null
-    mecano
+    nikita
       log_serializer: (log) -> "[#{log.level}] #{log.message}"
     .on 'text', (l) -> log = l
     .call (options) ->
@@ -137,10 +137,10 @@ describe 'options "log"', ->
   it.skip 'print value', (next) ->
     # Doesnt work for now
     # The idea is that log shouldnt be an option
-    # But be part of mecano context
+    # But be part of nikita context
     # which will make it also available inside callbacks
     logs = []
-    mecano
+    nikita
     .on 'text', (l) -> log.push l
     .call ->
       @log 'handler'

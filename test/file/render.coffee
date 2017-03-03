@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 fs = require 'fs'
 they = require 'ssh2-they'
 test = require '../test'
@@ -11,7 +11,7 @@ describe 'file.render', ->
   describe 'error', ->
 
     it 'when source doesnt exist', (next) ->
-      mecano.file.render
+      nikita.file.render
         source: "oups"
         target: "#{scratch}/output"
       , (err) ->
@@ -21,7 +21,7 @@ describe 'file.render', ->
   describe 'nunjunks', ->
 
     it 'use `content`', (next) ->
-      mecano
+      nikita
       .file.render
         engine: 'nunjunks'
         content: 'Hello {{ who }}'
@@ -37,7 +37,7 @@ describe 'file.render', ->
     it 'use `source`', (next) ->
       source = "#{scratch}/render.j2"
       target = "#{scratch}/render.txt"
-      mecano
+      nikita
       .file
         target: source
         content: 'Hello {{ who }}'
@@ -52,10 +52,10 @@ describe 'file.render', ->
         content: 'Hello you'
       .then next
 
-    it 'test mecano type filters', (next) ->
+    it 'test nikita type filters', (next) ->
       source = "#{scratch}/render.j2"
       target = "#{scratch}/render.txt"
-      mecano
+      nikita
       .file
         target: source
         content: """
@@ -78,10 +78,10 @@ describe 'file.render', ->
         content: '\nHello\nworld'
       .then next
 
-    it 'test mecano isEmpty filter', (next) ->
+    it 'test nikita isEmpty filter', (next) ->
       source = "#{scratch}/render.j2"
       target = "#{scratch}/render.txt"
-      mecano
+      nikita
       .file
         target: source
         content: """
@@ -110,7 +110,7 @@ describe 'file.render', ->
     it 'test personal filter', (next) ->
       source = "#{scratch}/render.j2"
       target = "#{scratch}/render.txt"
-      mecano
+      nikita
       .file
         target: source
         content: 'Hello {% if who | isString %}{{ who }} {% endif %}{% if anInt | isNum %}{{ anInt }} {% endif %}{% if arr | contains("toto") %}ok{% endif %}'
@@ -132,7 +132,7 @@ describe 'file.render', ->
     it 'check autoescaping (disabled)', (next) ->
       source = "#{scratch}/render.j2"
       target = "#{scratch}/render.txt"
-      mecano
+      nikita
       .file
         target: source
         content: 'Hello "{{ who }}" \'{{ anInt }}\''
@@ -153,7 +153,7 @@ describe 'file.render', ->
   describe 'eco', ->
 
     it 'should use `content`', (next) ->
-      mecano
+      nikita
       .file.render
         engine: 'eco'
         content: 'Hello <%- @who %>'
@@ -167,7 +167,7 @@ describe 'file.render', ->
       .then next
 
     it 'detect `source`', (next) ->
-      mecano
+      nikita
       .file.render
         source: "#{__dirname}/../resources/render.eco"
         target: "#{scratch}/render.eco"
@@ -180,7 +180,7 @@ describe 'file.render', ->
       .then next
 
     it 'skip empty lines', (next) ->
-      mecano
+      nikita
       .file.render
         engine: 'eco'
         content: "Hello\n\n\n<%- @who %>"
@@ -195,7 +195,7 @@ describe 'file.render', ->
       .then next
 
     they 'doesnt increment if target is same than generated content', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file.render
         source: "#{__dirname}/../resources/render.eco"
@@ -213,7 +213,7 @@ describe 'file.render', ->
 
     it 'detect extention and accept target as a callback', (next) ->
       content = null
-      mecano
+      nikita
       .file.render
         source: "#{__dirname}/../resources/render.eco"
         target: (c) -> content = c
@@ -223,7 +223,7 @@ describe 'file.render', ->
         next()
 
     it 'when syntax is incorrect', (next) ->
-      mecano
+      nikita
       .file.render
         content: '<%- @host ->'
         engine: 'eco'

@@ -1,5 +1,5 @@
 
-# `mecano.docker.status(options, [callback])`
+# `nikita.docker.status(options, [callback])`
 
 Return true if container is running. This function is not native to docker. 
 
@@ -26,7 +26,7 @@ Return true if container is running. This function is not native to docker.
 ## Example
 
 ```javascript
-mecano.docker({
+nikita.docker({
   ssh: ssh
   target: 'test-image.tar'
   image: 'test-image'

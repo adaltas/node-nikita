@@ -1,5 +1,5 @@
 
-# `mecano.docker.stop(options, [callback])`
+# `nikita.docker.stop(options, [callback])`
 
 Stop started containers
 
@@ -24,7 +24,7 @@ Stop started containers
 ## Example
 
 ```javascript
-mecano.docker.stop({
+nikita.docker.stop({
   container: 'toto'
 }, function(err, is_true){
   if(err){
@@ -40,7 +40,7 @@ mecano.docker.stop({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering Docker stop", level: 'DEBUG', module: 'mecano/lib/docker/stop'
+      options.log message: "Entering Docker stop", level: 'DEBUG', module: 'nikita/lib/docker/stop'
       # Validate parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
@@ -52,8 +52,8 @@ mecano.docker.stop({
       @docker.status shy: true, options, (err, is_running) ->
         throw err if err
         if is_running
-        then options.log message: "Stopping container #{options.container}", level: 'INFO', module: 'mecano/lib/docker/stop'
-        else options.log message: "Container already stopped #{options.container} (Skipping)", level: 'INFO', module: 'mecano/lib/docker/stop'
+        then options.log message: "Stopping container #{options.container}", level: 'INFO', module: 'nikita/lib/docker/stop'
+        else options.log message: "Container already stopped #{options.container} (Skipping)", level: 'INFO', module: 'nikita/lib/docker/stop'
         @end() unless is_running
       @system.execute
         cmd: docker.wrap options, cmd

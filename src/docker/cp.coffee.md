@@ -1,5 +1,5 @@
 
-# `mecano.docker.cp(options, [callback])`
+# `nikita.docker.cp(options, [callback])`
 
 Copy files/folders between a container and the local filesystem.
 
@@ -27,7 +27,7 @@ Note, stream are not yet supported.
 ## Uploading a file
 
 ```javascript
-mecano.docker({
+nikita.docker({
   source: readable_stream or '/path/to/source'
   target: 'my_container:/path/to/target'
 }, function(err, status){})
@@ -36,7 +36,7 @@ mecano.docker({
 ## Downloading a file
 
 ```javascript
-mecano.docker({
+nikita.docker({
   source: 'my_container:/path/to/source'
   target: writable_stream or '/path/to/target'
 }, function(err, status){})
@@ -45,7 +45,7 @@ mecano.docker({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering Docker cp", level: 'DEBUG', module: 'mecano/lib/docker/cp'
+      options.log message: "Entering Docker cp", level: 'DEBUG', module: 'nikita/lib/docker/cp'
       # Validate parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

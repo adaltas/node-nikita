@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 fs = require 'fs'
 
@@ -10,7 +10,7 @@ describe 'api promise', ->
   describe 'object', ->
 
     it 'works', (next) ->
-      mecano
+      nikita
       .file
         target: "#{scratch}/file_1"
         content: 'abc'
@@ -27,7 +27,7 @@ describe 'api promise', ->
   describe 'function', ->
 
     it 'works', (next) ->
-      mecano({})
+      nikita({})
       .file
         target: "#{scratch}/file_1"
         content: 'abc'
@@ -43,7 +43,7 @@ describe 'api promise', ->
 
     it 'pass global options', (next) ->
       logs = []
-      mecano
+      nikita
       .on 'text', (log) -> logs.push log
       .file
         target: "#{scratch}/file_1"

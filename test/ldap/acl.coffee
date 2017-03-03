@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 
 describe 'ldap.acl', ->
@@ -29,7 +29,7 @@ describe 'ldap.acl', ->
         next err
 
   it 'create a new permission', (next) ->
-    mecano
+    nikita
     .ldap.acl
       # ldap: client
       url: config.ldap.url
@@ -54,7 +54,7 @@ describe 'ldap.acl', ->
     .then next
 
   it 'respect order in creation', (next) ->
-    mecano.ldap.acl [
+    nikita.ldap.acl [
       ldap: client
       name: 'olcDatabase={2}bdb,cn=config'
       to: 'dn.base="ou=test1,dc=test,dc=com"'
@@ -70,7 +70,7 @@ describe 'ldap.acl', ->
       ]
     ], (err, modified) ->
       return next err if err
-      mecano.ldap.acl
+      nikita.ldap.acl
         ldap: client
         name: 'olcDatabase={2}bdb,cn=config'
         to: 'dn.base="ou=INSERTED,dc=test,dc=com"'

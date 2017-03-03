@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 db = require '../../src/misc/db'
 test = require '../test'
 they = require 'ssh2-they'
@@ -12,7 +12,7 @@ for engine, _ of config.db
   describe "db.user #{engine}", ->
 
     they 'validate options', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .db.user
         port: 5432
@@ -33,7 +33,7 @@ for engine, _ of config.db
       .then next
     
     they 'add new user', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
         db: config.db[engine]
       .db.user.remove 'test_user_1_user'
@@ -60,7 +60,7 @@ for engine, _ of config.db
           'show tables'
         when 'postgres'
           '\\dt'
-      mecano
+      nikita
         ssh: ssh
         db: config.db[engine]
       .db.database.remove 'test_user_2_db'

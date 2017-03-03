@@ -1,5 +1,5 @@
 
-# `mecano.cron.add(options, [callback])`
+# `nikita.cron.add(options, [callback])`
 
 Create a new Kerberos principal with a password or an optional keytab.
 
@@ -31,7 +31,7 @@ Create a new Kerberos principal with a password or an optional keytab.
 ## Example
 
 ```js
-require('mecano').cron.add({
+require('nikita').cron.add({
   cmd: 'kinit service/my.fqdn@MY.REALM -kt /etc/security/service.keytab',
   when: '0 */9 * * *'
   user: 'service'
@@ -46,10 +46,10 @@ require('mecano').cron.add({
       return callback new Error 'valid when is required' unless options.when
       return callback new Error 'valid cmd is required' unless options.cmd
       if options.user?
-        options.log message: "Using user #{options.user}", level: 'DEBUG', module: 'mecano/cron/add'
+        options.log message: "Using user #{options.user}", level: 'DEBUG', module: 'nikita/cron/add'
         crontab = "crontab -u #{options.user}"
       else
-        options.log message: "Using default user", level: 'DEBUG', module: 'mecano/cron/add'
+        options.log message: "Using default user", level: 'DEBUG', module: 'nikita/cron/add'
         crontab = "crontab"
       jobs = null
       @system.execute
@@ -71,14 +71,14 @@ require('mecano').cron.add({
           if regex.test job
             added = false
             break if job is new_job # Found job, stop here
-            options.log message: "Entry has changed", level: 'WARN', module: 'mecano/cron/add'
+            options.log message: "Entry has changed", level: 'WARN', module: 'nikita/cron/add'
             diff job, new_job, options
             job = new_job
             modified = true
           job
         if added
           jobs.push new_job
-          options.log message: "Job not found in crontab, adding", level: 'WARN', module: 'mecano/cron/add'
+          options.log message: "Job not found in crontab, adding", level: 'WARN', module: 'nikita/cron/add'
         jobs = null unless added or modified
       .then (err) ->
         return callback err if err

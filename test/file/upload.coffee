@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 misc = require '../../src/misc'
 path = require 'path'
 test = require '../test'
@@ -12,7 +12,7 @@ describe 'file.upload', ->
 
   they 'file into a file', (ssh, next) ->
       return next() unless ssh
-      mecano
+      nikita
         ssh: ssh
       .file.upload
         source: "#{__filename}"
@@ -32,7 +32,7 @@ describe 'file.upload', ->
 
     they 'file into a directory', (ssh, next) ->
         return next() unless ssh
-        mecano
+        nikita
           ssh: ssh
         .file.upload
           source: "#{__filename}"

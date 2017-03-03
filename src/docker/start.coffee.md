@@ -1,5 +1,5 @@
 
-# `mecano.docker.restart(options, [callback])`
+# `nikita.docker.restart(options, [callback])`
 
 Restart containers
 
@@ -35,7 +35,7 @@ Restart containers
 1- builds an image from dockerfile without any resourcess
 
 ```javascript
-mecano.docker.start({
+nikita.docker.start({
   container: 'toto',
   attach: true
 }, function(err, is_true, stdout, stderr){
@@ -52,7 +52,7 @@ mecano.docker.start({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering Docker start", level: 'DEBUG', module: 'mecano/lib/docker/start'
+      options.log message: "Entering Docker start", level: 'DEBUG', module: 'nikita/lib/docker/start'
       # Validate parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
@@ -64,8 +64,8 @@ mecano.docker.start({
       @docker.status shy: true, options, (err, is_running) ->
         throw err if err
         if is_running
-        then options.log message: "Container already started #{options.container} (Skipping)", level: 'INFO', module: 'mecano/lib/docker/start'
-        else options.log message: "Starting container #{options.container}", level: 'INFO', module: 'mecano/lib/docker/start'
+        then options.log message: "Container already started #{options.container} (Skipping)", level: 'INFO', module: 'nikita/lib/docker/start'
+        else options.log message: "Starting container #{options.container}", level: 'INFO', module: 'nikita/lib/docker/start'
         @end() if is_running
       @system.execute
         cmd: docker.wrap options, cmd

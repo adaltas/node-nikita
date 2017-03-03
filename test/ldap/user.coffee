@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 
 describe 'ldap.user', ->
@@ -10,15 +10,15 @@ describe 'ldap.user', ->
 
   it 'create a new user', (next) ->
     @timeout 100000
-    mecano
+    nikita
       binddn: config.ldap.binddn
       passwd: config.ldap.passwd
       uri: config.ldap.uri
     .ldap.user
       user:
-        dn: "cn=mecano,#{config.ldap.suffix_dn}"
+        dn: "cn=nikita,#{config.ldap.suffix_dn}"
         userPassword: 'test'
-        uid: 'mecano'
+        uid: 'nikita'
         objectClass: [ 'top', 'account', 'posixAccount', 'shadowAccount' ]
         shadowLastChange: '15140'
         shadowMin: '0'
@@ -27,20 +27,20 @@ describe 'ldap.user', ->
         loginShell: '/bin/bash'
         uidNumber: '9610'
         gidNumber: '9610'
-        homeDirectory: '/home/mecano'
+        homeDirectory: '/home/nikita'
     .then (err, modified) ->
       throw err if err
       modified.should.be.true()
     .ldap.delete
-      dn: "cn=mecano,#{config.ldap.suffix_dn}"
+      dn: "cn=nikita,#{config.ldap.suffix_dn}"
     .then next
 
   it 'detect no change', (next) ->
     @timeout 100000
     user = 
-      dn: "cn=mecano,#{config.ldap.suffix_dn}"
+      dn: "cn=nikita,#{config.ldap.suffix_dn}"
       userPassword: 'test'
-      uid: 'mecano'
+      uid: 'nikita'
       objectClass: [ 'top', 'account', 'posixAccount', 'shadowAccount' ]
       shadowLastChange: '15140'
       shadowMin: '0'
@@ -49,8 +49,8 @@ describe 'ldap.user', ->
       loginShell: '/bin/bash'
       uidNumber: '9610'
       gidNumber: '9610'
-      homeDirectory: '/home/mecano'
-    mecano
+      homeDirectory: '/home/nikita'
+    nikita
       binddn: config.ldap.binddn
       passwd: config.ldap.passwd
       uri: config.ldap.uri
@@ -64,5 +64,5 @@ describe 'ldap.user', ->
       throw err if err
       modified.should.be.false()
     .ldap.delete
-      dn: "cn=mecano,#{config.ldap.suffix_dn}"
+      dn: "cn=nikita,#{config.ldap.suffix_dn}"
     .then next

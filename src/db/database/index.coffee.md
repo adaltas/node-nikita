@@ -1,5 +1,5 @@
 
-# `mecano.db.database(options, callback)`
+# `nikita.db.database(options, callback)`
 
 Create a database for the destination database.
 
@@ -25,7 +25,7 @@ This user will be granted superuser permissions (see above) for the database spe
 ## Create Database example
 
 ```js
-require('mecano').database.db({
+require('nikita').database.db({
   admin_username: 'test',
   admin_password: 'test',
   database: 'my_db',
@@ -63,11 +63,11 @@ npm test test/db/database.coffee
       # Defines and check the engine type 
       options.engine = options.engine.toLowerCase()
       throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mysql', 'postgres']
-      options.log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'mecano/db/database'
+      options.log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'nikita/db/database'
       # Default values
       options.port ?= 5432 
       # Create database unless exist
-      options.log message: "Check if database #{options.database} exists", level: 'DEBUG', module: 'mecano/db/database'
+      options.log message: "Check if database #{options.database} exists", level: 'DEBUG', module: 'nikita/db/database'
       switch options.engine
         when 'mysql'
           cmd_database_create = db.cmd options, database: null, "CREATE DATABASE #{options.database};"
@@ -79,9 +79,9 @@ npm test test/db/database.coffee
         cmd: cmd_database_create
         unless_exec: cmd_database_exists
       , (err, status) ->
-        options.log message: "Database created: #{JSON.stringify options.database}", level: 'WARN', module: 'mecano/db/database' if status
+        options.log message: "Database created: #{JSON.stringify options.database}", level: 'WARN', module: 'nikita/db/database' if status
       for user in options.user then do =>
-        @call -> options.log message: "Check if user #{user} has PRIVILEGES on #{options.database} ", level: 'DEBUG', module: 'mecano/db/database'     
+        @call -> options.log message: "Check if user #{user} has PRIVILEGES on #{options.database} ", level: 'DEBUG', module: 'nikita/db/database'     
         @db.user.exists
           engine: options.engine
           username: user
@@ -110,7 +110,7 @@ npm test test/db/database.coffee
           """
           code_skipped: 3
         , (err, status, stdout, stderr) ->
-          options.log message: "Privileges granted: to #{JSON.stringify user} on #{JSON.stringify options.database}", level: 'WARN', module: 'mecano/db/database' if status
+          options.log message: "Privileges granted: to #{JSON.stringify user} on #{JSON.stringify options.database}", level: 'WARN', module: 'nikita/db/database' if status
 
 ## Dependencies
 

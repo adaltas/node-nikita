@@ -1,9 +1,9 @@
 
-# `mecano.system.discover(options, [callback])`
+# `nikita.system.discover(options, [callback])`
 
 Discover the OS.
 For now it only supports Centos/Redhat OS in version 6 or 7, ubuntu.
-Store properties in the mecano store object.
+Store properties in the nikita store object.
 
 ## Options
 
@@ -33,13 +33,13 @@ Store properties in the mecano store object.
       options.strict ?= false
       options.cache ?= false
       ( return callback null, false, 
-          type: options.store['mecano:system:type']
-          release: options.store['mecano:system:release']
-      ) if options.cache and options.store['mecano:system:type']
+          type: options.store['nikita:system:type']
+          release: options.store['nikita:system:release']
+      ) if options.cache and options.store['nikita:system:type']
       @system.execute
         cmd: 'cat /etc/redhat-release'
         if_exec: "cat /etc/redhat-release | egrep '(Red\\sHat)|(CentOS)'"
-        unless: options.store['mecano:system:type']?
+        unless: options.store['nikita:system:type']?
       , (err, status, stdout, stderr) ->
         throw err if err
         return unless status
@@ -58,8 +58,8 @@ Store properties in the mecano store object.
           splits = line.split ' '
           os.release = splits[splits.indexOf('release')+1]
         if options.cache
-          options.store['mecano:system:type'] = os.type
-          options.store['mecano:system:release'] = os.release
+          options.store['nikita:system:type'] = os.type
+          options.store['nikita:system:release'] = os.release
         throw Error 'OS not supported' if options.strict and os.type not in ['redhat', 'centos', 'oracle']
       @system.execute
         cmd: """
@@ -67,17 +67,17 @@ Store properties in the mecano store object.
           echo "$DISTRIB_ID,$DISTRIB_RELEASE"
         """
         if_exec: "cat /etc/lsb-release | egrep 'Ubuntu'"
-        unless: -> options.store['mecano:system:type']?
+        unless: -> options.store['nikita:system:type']?
       , (err, status, stdout, stderr) ->
         throw err if err
         return unless status
         [distrib_id, distrib_release] = stdout.trim().split ','
-        #backward compatibilty remove 'mecano:system:type'
+        #backward compatibilty remove 'nikita:system:type'
         os.type = distrib_id.toLowerCase()
         os.release = distrib_release
         if options.cache
-          options.store['mecano:system:type'] = os.type
-          options.store['mecano:system:release'] = os.release
+          options.store['nikita:system:type'] = os.type
+          options.store['nikita:system:release'] = os.release
         throw Error 'OS not supported' if options.strict and os.type not in ['ubuntu']
       @then (err, status) ->
         callback err, status, os

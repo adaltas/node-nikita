@@ -1,5 +1,5 @@
 
-# `mecano.service.init(options, [callback])`
+# `nikita.service.init(options, [callback])`
 
 Render startup script.
 Reload the service daemon provider depending on the os.
@@ -23,7 +23,7 @@ Reload the service daemon provider depending on the os.
     The source of startup script template.   
 *   `target` (string) OPTIONAL   
     The destination file. `/etc/init.d/crond` or `/etc/systemd/system/crond.service` for example.
-    If no provided, mecano put it on the default folder based on the service daemon
+    If no provided, nikita put it on the default folder based on the service daemon
     provider,the OS and use the source filename as the name.
 *   `uid`   
     File user name or user id.   
@@ -36,7 +36,7 @@ Reload the service daemon provider depending on the os.
 ## Source Code
     
     module.exports = (options) ->
-      options.log message: "Entering service.init", level: 'DEBUG', module: 'mecano/lib/service/init'
+      options.log message: "Entering service.init", level: 'DEBUG', module: 'nikita/lib/service/init'
       # mandatory options
       throw Error 'Missing source' unless options.source?
       options.engine ?= 'nunjunks'

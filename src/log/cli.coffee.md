@@ -1,5 +1,5 @@
 
-# `mecano.log.cli(options, [callback])`
+# `nikita.log.cli(options, [callback])`
 
 Write log to the host filesystem in a user provided format.
 
@@ -21,7 +21,7 @@ Global options can be alternatively set with the "log.cli" property
 ## Exemple with the depth option
 
 ```js
-require('mecano')(
+require('nikita')(
   log: { cli: { colors: true } }
 )
 .log.cli({ depth: 2 })
@@ -43,7 +43,7 @@ require('mecano')(
 ## Exemple with global options
 
 ```js
-require('mecano')(
+require('nikita')(
   log_cli: { colors: true }
 )
 .log.cli()

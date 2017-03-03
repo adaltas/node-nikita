@@ -1,5 +1,5 @@
 
-    mecano = require '..'
+    nikita = require '..'
 
     module.exports.options = [
       'api-cors-header', 'bridge', 'bip', 'debug', 'daemon', 

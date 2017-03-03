@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 fs = require 'fs'
 
@@ -8,7 +8,7 @@ describe 'options "relax"', ->
   scratch = test.scratch @
 
   it 'sync', (next) ->
-    mecano
+    nikita
     .call relax: true, ->
       throw Error 'Dont worry, be happy'
     , (err) ->
@@ -26,7 +26,7 @@ describe 'options "relax"', ->
       next()
 
   it 'sync with error throw in child', (next) ->
-    mecano
+    nikita
     .call relax: true, ->
       @call ->
         throw Error 'Dont worry, be happy'
@@ -57,7 +57,7 @@ describe 'options "relax"', ->
       next()
 
   it 'async', (next) ->
-    mecano
+    nikita
     .call relax: true, ({}, callback) ->
       setImmediate ->
         callback Error 'Dont worry, be happy'

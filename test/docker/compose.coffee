@@ -1,6 +1,6 @@
 
 should = require 'should'
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
@@ -12,17 +12,17 @@ describe 'docker.compose', ->
   @timeout 90000
 
   they 'up from content', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.rm
-      container: 'mecano_docker_compose_up_content'
+      container: 'nikita_docker_compose_up_content'
       force: true
     .docker.compose.up
       content:
         compose:
           image: 'httpd'
-          container_name: 'mecano_docker_compose_up_content'
+          container_name: 'nikita_docker_compose_up_content'
           ports: ['499:80']
     , (err, status) ->
       return next err if err
@@ -39,22 +39,22 @@ describe 'docker.compose', ->
       host: '127.0.0.1'
       port: 499
     .docker.rm
-      container: 'mecano_docker_compose_up_content'
+      container: 'nikita_docker_compose_up_content'
       force: true
     .then next
   
   they 'up from content to file', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.rm
-      container: 'mecano_docker_docker_compose_up_content_to_file'
+      container: 'nikita_docker_docker_compose_up_content_to_file'
       force: true
     .docker.compose
       content:
         compose:
           image: 'httpd'
-          container_name: 'mecano_docker_docker_compose_up_content_to_file'
+          container_name: 'nikita_docker_docker_compose_up_content_to_file'
           ports: ['499:80']
       target: "#{scratch}/docker_compose_up_content_to_file/docker-compose.yml"
     , (err, status) ->
@@ -72,22 +72,22 @@ describe 'docker.compose', ->
       host: '127.0.0.1'
       port: 499
     .docker.rm
-      container: 'mecano_docker_docker_compose_up_content_to_file'
+      container: 'nikita_docker_docker_compose_up_content_to_file'
       force: true
     .then next
 
   they 'up from file', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.rm
-      container: 'mecano_docker_compose_up_file'
+      container: 'nikita_docker_compose_up_file'
       force: true
     .file.yaml
       content: 
         compose:
           image: 'httpd'
-          container_name: 'mecano_docker_compose_up_file'
+          container_name: 'nikita_docker_compose_up_file'
           ports: ['499:80']
       target: "#{scratch}/docker_compose_up_file/docker-compose.yml"
     .docker.compose
@@ -104,22 +104,22 @@ describe 'docker.compose', ->
       host: '127.0.0.1'
       port: 499
     .docker.rm
-      container: 'mecano_docker_compose_up_file'
+      container: 'nikita_docker_compose_up_file'
       force: true
     .then next
   
   they 'up with service name', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.rm
-      container: 'mecano_docker_compose_up_service'
+      container: 'nikita_docker_compose_up_service'
       force: true
     .file.yaml
       content:
         compose:
           image: 'httpd'
-          container_name: 'mecano_docker_compose_up_service'
+          container_name: 'nikita_docker_compose_up_service'
           ports: ['499:80']
       target: "#{scratch}/docker_compose_up_file/docker-compose.yml"
     .docker.compose
@@ -137,26 +137,26 @@ describe 'docker.compose', ->
       host: '127.0.0.1'
       port: 499
     .docker.rm
-      container: 'mecano_docker_compose_up_service'
+      container: 'nikita_docker_compose_up_service'
       force: true
     .then next
   
   they 'status not modified', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.rm
-      container: 'mecano_docker_compose_idem'
+      container: 'nikita_docker_compose_idem'
       force: true
     .file.yaml
       content: 
         compose:
           image: 'httpd'
-          container_name: 'mecano_docker_compose_idem'
+          container_name: 'nikita_docker_compose_idem'
           ports: ['499:80']
-      target: "#{scratch}/mecano_docker_compose_idem/docker-compose.yml"
+      target: "#{scratch}/nikita_docker_compose_idem/docker-compose.yml"
     .docker.compose
-      target: "#{scratch}/mecano_docker_compose_idem/docker-compose.yml"
+      target: "#{scratch}/nikita_docker_compose_idem/docker-compose.yml"
     .system.execute
       cmd: 'ping dind -c 1'
       code_skipped: [2,68]
@@ -169,11 +169,11 @@ describe 'docker.compose', ->
       host: '127.0.0.1'
       port: 499
     .docker.compose
-      target: "#{scratch}/mecano_docker_compose_idem/docker-compose.yml"
+      target: "#{scratch}/nikita_docker_compose_idem/docker-compose.yml"
     , (err, status) ->
       return next err if err
       status.should.be.false()
     .docker.rm
-      container: 'mecano_docker_compose_idem'
+      container: 'nikita_docker_compose_idem'
       force: true
     .then next

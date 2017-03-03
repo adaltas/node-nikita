@@ -1,5 +1,5 @@
 
-# `mecano.file.ini(options, callback)`
+# `nikita.file.ini(options, callback)`
 
 Write an object as .ini file. Note, we are internally using the [ini] module.
 However, there is a subtile difference. Any key provided with value of 
@@ -74,7 +74,7 @@ provided in the `content` option.
 ## Example
 
 ```js
-require('mecano').ini({
+require('nikita').ini({
   content: {
     'my_key': 'my value'
   },
@@ -87,7 +87,7 @@ require('mecano').ini({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering ini", level: 'DEBUG', module: 'mecano/lib/file/ini'
+      options.log message: "Entering ini", level: 'DEBUG', module: 'nikita/lib/file/ini'
       {merge, target, content, ssh} = options
       options.clean ?= true
       # Validate parameters
@@ -96,7 +96,7 @@ require('mecano').ini({
       # Start real work
       do_get = ->
         return do_file() unless merge
-        options.log message: "Get content for merge", level: 'DEBUG', module: 'mecano/lib/file/ini'
+        options.log message: "Get content for merge", level: 'DEBUG', module: 'nikita/lib/file/ini'
         fs.exists ssh, target, (err, exists) ->
           return callback err if err
           return do_file() unless exists
@@ -108,9 +108,9 @@ require('mecano').ini({
             do_file()
       do_file = =>
         if options.clean
-          options.log message: "Clean content", level: 'INFO', module: 'mecano/lib/file/ini'
+          options.log message: "Clean content", level: 'INFO', module: 'nikita/lib/file/ini'
           misc.ini.clean content
-        options.log message: "Serialize content", level: 'DEBUG', module: 'mecano/lib/file/ini'
+        options.log message: "Serialize content", level: 'DEBUG', module: 'nikita/lib/file/ini'
         stringify = options.stringify or misc.ini.stringify
         options.content = stringify content, options
         @file options, (err, written) ->

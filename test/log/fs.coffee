@@ -2,7 +2,7 @@
 fs = require 'fs'
 path = require 'path'
 should = require 'should'
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
@@ -11,14 +11,14 @@ describe 'log.fs', ->
   scratch = test.scratch @
 
   they 'requires option "serializer"', (ssh, next) ->
-    mecano ssh: ssh
+    nikita ssh: ssh
     .log.fs basedir: scratch
     .then (err, status) ->
       err.message.should.eql 'Missing option: serializer'
       next()
 
   they 'in base directory', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .log.fs
       basedir: scratch
@@ -35,7 +35,7 @@ describe 'log.fs', ->
   describe 'archive', ->
 
     they 'archive default directory name', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .log.fs
         basedir: scratch
@@ -56,7 +56,7 @@ describe 'log.fs', ->
             next err
 
     they 'latest', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .log.fs
         basedir: scratch

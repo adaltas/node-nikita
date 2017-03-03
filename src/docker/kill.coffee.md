@@ -1,5 +1,5 @@
 
-# `mecano.docker.kill(options, [callback])`
+# `nikita.docker.kill(options, [callback])`
 
 Send signal to containers using SIGKILL or a specified signal.
 Note if container is not running , SIGKILL is not executed and
@@ -27,7 +27,7 @@ SIGNAL is not sent.
 ## Example
 
 ```javascript
-mecano.docker.kill({
+nikita.docker.kill({
   container: 'toto'
   signal: 9
 }, function(err, is_true){
@@ -44,7 +44,7 @@ mecano.docker.kill({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering Docker kill", level: 'DEBUG', module: 'mecano/lib/docker/kill'
+      options.log message: "Entering Docker kill", level: 'DEBUG', module: 'nikita/lib/docker/kill'
       # Validate parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

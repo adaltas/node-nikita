@@ -1,5 +1,5 @@
 
-# `mecano.docker.pull(options, [callback])`
+# `nikita.docker.pull(options, [callback])`
 
 Pull a container
 
@@ -30,7 +30,7 @@ Pull a container
 1- builds an image from dockerfile without any resourcess
 
 ```javascript
-mecano.docker_pull({
+nikita.docker_pull({
   tag: 'postgres'
 }, function(err, is_true, stdout, stderr){
   if(err){
@@ -46,7 +46,7 @@ mecano.docker_pull({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering Docker pull", level: 'DEBUG', module: 'mecano/lib/docker/pull'
+      options.log message: "Entering Docker pull", level: 'DEBUG', module: 'nikita/lib/docker/pull'
       # Validate parameters
       options.docker ?= {}
       options.version ?= 'latest'  

@@ -1,5 +1,5 @@
 
-# `mecano.tools.git(options, [callback])`
+# `nikita.tools.git(options, [callback])`
 
 Create and synchronize a git repository.
 
@@ -25,9 +25,9 @@ The following action make sure the git repository is synchronized to the latest
 HEAD revision.
 
 ```javascript
-require('mecano').tools.git({
-  source: 'https://github.com/wdavidw/node-mecano.git'
-  target: '/tmp/mecano'
+require('nikita').tools.git({
+  source: 'https://github.com/wdavidw/node-nikita.git'
+  target: '/tmp/nikita'
 }, function(err, synchronized){
   console.log(err ? err.message : 'Repo was synchronized: ' + synchronized);
 });
@@ -36,7 +36,7 @@ require('mecano').tools.git({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering git", level: 'DEBUG', module: 'mecano/lib/tools/git'
+      options.log message: "Entering git", level: 'DEBUG', module: 'nikita/lib/tools/git'
       # Sanitize parameters
       options.revision ?= 'HEAD'
       # Start real work

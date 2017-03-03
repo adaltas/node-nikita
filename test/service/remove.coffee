@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
@@ -10,7 +10,7 @@ describe 'service.remove', ->
   return if config.disable_service
 
   they 'new package', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .service.install
       name: config.service.name

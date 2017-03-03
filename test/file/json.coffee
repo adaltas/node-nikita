@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
@@ -8,7 +8,7 @@ describe 'file.json', ->
   scratch = test.scratch @
 
   they 'stringify content to target', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file
       target: "#{scratch}/target.json"
@@ -24,7 +24,7 @@ describe 'file.json', ->
     .then next
 
   they 'merge target', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file
       target: "#{scratch}/target.json"
@@ -41,7 +41,7 @@ describe 'file.json', ->
     .then next
 
   they 'merge source', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file
       target: "#{scratch}/source.json"
@@ -58,7 +58,7 @@ describe 'file.json', ->
     .then next
 
   they 'merge source and traget', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file
       target: "#{scratch}/source.json"
@@ -79,7 +79,7 @@ describe 'file.json', ->
     .then next
   
   they 'merge with target not yet created', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file.json
       target: "#{scratch}/target.json"
@@ -93,7 +93,7 @@ describe 'file.json', ->
     .then next
   
   they 'transform', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file
       target: "#{scratch}/target.json"
@@ -115,7 +115,7 @@ describe 'file.json', ->
     .then next
   
   they 'pretty', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file.json
       target: "#{scratch}/pretty.json"
@@ -127,7 +127,7 @@ describe 'file.json', ->
     .then next
   
   they 'pretty with user indentation', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .file.json
       target: "#{scratch}/pretty_0.json"

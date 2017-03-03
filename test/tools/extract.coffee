@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 they = require 'ssh2-they'
 test = require '../test'
 fs = require 'ssh2-fs'
@@ -10,7 +10,7 @@ describe 'tools.extract', ->
 
   they 'should see extension .tgz', (ssh, next) ->
     # Test a non existing extracted dir
-    mecano
+    nikita
       ssh: ssh
     .tools.extract
       source: "#{__dirname}/../resources/a_dir.tgz"
@@ -20,7 +20,7 @@ describe 'tools.extract', ->
     .then next
 
   they 'should see extension .zip', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .tools.extract
       source: "#{__dirname}/../resources/a_dir.zip"
@@ -30,7 +30,7 @@ describe 'tools.extract', ->
     .then next
 
   they 'should see extension .tar.bz2', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .tools.extract
       source: "#{__dirname}/../resources/a_dir.tar.bz2"
@@ -40,7 +40,7 @@ describe 'tools.extract', ->
     .then next
 
   they 'should see extension .tar.xz', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .tools.extract
       source: "#{__dirname}/../resources/a_dir.tar.xz"
@@ -51,7 +51,7 @@ describe 'tools.extract', ->
 
   they 'should validate a created file', (ssh, next) ->
     # Test with invalid creates option
-    mecano
+    nikita
       ssh: ssh
     .tools.extract
       source: "#{__dirname}/../resources/a_dir.tgz"
@@ -70,7 +70,7 @@ describe 'tools.extract', ->
 
   they 'should # option # unless_exists', (ssh, next) ->
     # Test with invalid creates option
-    mecano
+    nikita
       ssh: ssh
     .tools.extract
       source: "#{__dirname}/../resources/a_dir.tgz"
@@ -81,7 +81,7 @@ describe 'tools.extract', ->
     .then next
 
   they 'should pass error for invalid extension', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .tools.extract
       source: __filename
@@ -91,7 +91,7 @@ describe 'tools.extract', ->
     .then next
 
   they 'should pass error for missing source file', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
     .tools.extract
       source: '/does/not/exist.tgz'
@@ -102,7 +102,7 @@ describe 'tools.extract', ->
 
   they 'should strip component level 1', (ssh, next) ->
     # Test a non existing status dir
-    mecano
+    nikita
       ssh: ssh
     .tools.extract
       source: "#{__dirname}/../resources/a_dir.tgz"
@@ -116,7 +116,7 @@ describe 'tools.extract', ->
     
   they 'should strip component level 2', (ssh, next) ->
     # Test a non existing extracted dir
-    mecano
+    nikita
       ssh: ssh
     .tools.extract
       source: "#{__dirname}/../resources/a_dir.tgz"

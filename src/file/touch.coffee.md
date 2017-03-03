@@ -1,5 +1,5 @@
 
-# `mecano.file.touch(options, [callback])`
+# `nikita.file.touch(options, [callback])`
 
 Create a empty file if it does not yet exists.
 
@@ -33,7 +33,7 @@ Status will only be true if the file was created.
 ## Example
 
 ```js
-require('mecano').file.touch({
+require('nikita').file.touch({
   ssh: ssh,
   target: '/tmp/a_file'
 }, function(err, touched){
@@ -44,7 +44,7 @@ require('mecano').file.touch({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering touch", level: 'DEBUG', module: 'mecano/lib/file/touch'
+      options.log message: "Entering touch", level: 'DEBUG', module: 'nikita/lib/file/touch'
       # Options
       options.target = options.argument if options.argument?
       throw Error "Missing target: #{options.target}" unless options.target
@@ -52,9 +52,9 @@ require('mecano').file.touch({
 Test if file exists.
 
       @call (_, callback) ->
-        options.log message: "Check if target exists \"#{options.target}\"", level: 'DEBUG', module: 'mecano/lib/file/touch'
+        options.log message: "Check if target exists \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/file/touch'
         fs.exists options.ssh, options.target, (err, exists) ->
-          options.log message: "Destination does not exists", level: 'INFO', module: 'mecano/lib/file/touch' if not err and not exists
+          options.log message: "Destination does not exists", level: 'INFO', module: 'nikita/lib/file/touch' if not err and not exists
           return callback err, !exists
 
 If true, update access and modification time, status wont be affected
@@ -66,7 +66,7 @@ If true, update access and modification time, status wont be affected
         options.atime ?= Date.now()
         options.mtime ?= Date.now()
         fs.futimes options.ssh, options.target, options.atime, options.mtime, (err) ->
-          options.log message: "Access and modification times updated", level: 'DEBUG', module: 'mecano/lib/file/touch' unless err
+          options.log message: "Access and modification times updated", level: 'DEBUG', module: 'nikita/lib/file/touch' unless err
           callback err
 
 If not, write a new empty file.

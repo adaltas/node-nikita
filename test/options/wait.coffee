@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 fs = require 'fs'
 
@@ -9,7 +9,7 @@ describe 'options "wait"', ->
   
   it 'enforce default to 3s', (next) ->
     times = []
-    mecano
+    nikita
     .call retry: 2, relax: true, (options) ->
       times.push Date.now()
       throw Error 'Catchme'
@@ -20,7 +20,7 @@ describe 'options "wait"', ->
       
   it 'is set by user', (next) ->
     times = []
-    mecano
+    nikita
     .call wait: 1, retry: 2, relax: true, (options) ->
       times.push Date.now()
       throw Error 'Catchme'
@@ -30,14 +30,14 @@ describe 'options "wait"', ->
       next err
   
   it 'ensure wait is a number', (next) ->
-    mecano
+    nikita
     .call wait: 'a string', (->)
     .then (err) ->
       err.message.should.eql 'Invalid options wait, got "a string"'
       next()
   
   it 'ensure wait equals or is greater than 0', (next) ->
-    mecano
+    nikita
     .call wait: 0, (->)
     .call wait: 1, (->)
     .call wait: -1, (->)

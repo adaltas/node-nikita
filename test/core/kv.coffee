@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 memory = require '../../src/core/kv/engines/memory'
 test = require '../test'
 they = require 'ssh2-they'
@@ -11,14 +11,14 @@ describe 'kv', ->
   
   they 'set then get', (ssh, next) ->
     engine = memory()
-    mecano
+    nikita
       ssh: ssh
     .kv.engine
       engine: engine
     .kv.set
       key: 'a_key'
       value: 'a value'
-    mecano
+    nikita
       ssh: ssh
     .kv.engine
       engine: engine
@@ -33,7 +33,7 @@ describe 'kv', ->
     
   they 'get then set', (ssh, next) ->
     engine = memory()
-    mecano
+    nikita
       ssh: ssh
     .kv.engine
       engine: engine
@@ -45,7 +45,7 @@ describe 'kv', ->
       key.should.eql 'a_key'
       value.should.eql 'a value'
     .then next
-    mecano
+    nikita
       ssh: ssh
     .kv.engine
       engine: engine

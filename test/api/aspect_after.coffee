@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 
 describe 'api after', ->
@@ -8,7 +8,7 @@ describe 'api after', ->
 
     it 'is a string and match a action type', (next) ->
       history = []
-      mecano()
+      nikita()
       .registry.register 'good_handler', (->)
       .registry.register 'bad_handler', (->)
       .after 'good_handler', (options) -> history.push options.key
@@ -20,7 +20,7 @@ describe 'api after', ->
 
     it 'is an object and match options', (next) ->
       history = []
-      mecano()
+      nikita()
       .registry.register 'handler', (->)
       .after type: 'handler', key: 'value 2', (options) ->
         history.push options.key
@@ -34,7 +34,7 @@ describe 'api after', ->
 
     it 'a sync function with sync handler', (next) ->
       history = []
-      mecano()
+      nikita()
       .registry.register 'sync_fn', ((_) -> history.push 'sync handler' )
       .after 'sync_fn', (_) -> history.push 'after sync'
       .call -> history.push 'call 1'
@@ -52,7 +52,7 @@ describe 'api after', ->
 
     it 'a sync function with async handler', (next) ->
       history = []
-      mecano()
+      nikita()
       .registry.register 'afunction', ((_) -> history.push 'sync handler' )
       .after 'afunction', (_, callback) ->
         setImmediate ->
@@ -73,7 +73,7 @@ describe 'api after', ->
 
     it 'a namespaced sync function with async handler', (next) ->
       history = []
-      mecano()
+      nikita()
       .registry.register ['a','namespaced','function'], ((_) -> history.push 'sync handler' )
       .after ['a','namespaced', 'function'], (_, callback) ->
         setImmediate ->
@@ -95,7 +95,7 @@ describe 'api after', ->
   describe 'error', ->
 
     it 'register sync function and throw error', (next) ->
-      mecano()
+      nikita()
       .registry.register 'afunction', ((_) -> )
       .after 'afunction', (_) ->
         throw Error 'CatchMe'
@@ -106,7 +106,7 @@ describe 'api after', ->
         next()
 
     it 'register sync function and throw error', (next) ->
-      mecano()
+      nikita()
       .registry.register 'afunction', ((_) -> )
       .after 'afunction', (_, callback) ->
         setImmediate -> callback Error 'CatchMe'

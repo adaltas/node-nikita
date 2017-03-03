@@ -1,7 +1,7 @@
 
 domain = require 'domain'
 test = require '../test'
-mecano = require '../../src'
+nikita = require '../../src'
 
 describe 'api then', ->
 
@@ -10,7 +10,7 @@ describe 'api then', ->
   it 'throw error if no more element', (next) ->
     d = domain.create()
     d.run ->
-      mecano.then ->
+      nikita.then ->
         throw Error 'Catchme'
     d.on 'error', (err) ->
       err.message.should.eql 'Catchme'
@@ -19,7 +19,7 @@ describe 'api then', ->
 
   it 'then without arguments', (next) ->
     history = []
-    mecano
+    nikita
     .call -> history.push 'a'
     .then()
     .call -> history.push 'b'
@@ -30,7 +30,7 @@ describe 'api then', ->
   it 'throw error when then not defined', (next) ->
     d = domain.create()
     d.run ->
-      mecano
+      nikita
       .file.touch
         target: "#{scratch}/a_file"
       , (err) ->

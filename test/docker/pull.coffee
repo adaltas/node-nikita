@@ -1,7 +1,7 @@
 #Be aware to specify the machine if docker mahcine is used
 
 should = require 'should'
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
@@ -16,7 +16,7 @@ describe 'docker.pull', ->
   return if config.disable_docker
 
   they 'No Image', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.rmi
@@ -28,7 +28,7 @@ describe 'docker.pull', ->
     .then next
   
   they 'Status Not Modified', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.rmi

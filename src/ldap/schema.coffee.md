@@ -1,5 +1,5 @@
 
-# `mecano.ldap.schema(options, [callback])`
+# `nikita.ldap.schema(options, [callback])`
 
 Register a new ldap schema.
 
@@ -33,7 +33,7 @@ Register a new ldap schema.
 ## Example
 
 ```js
-require('mecano').ldap.schema({
+require('nikita').ldap.schema({
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
   name: 'kerberos',
@@ -50,7 +50,7 @@ require('mecano').ldap.schema({
       binddn = if options.binddn then "-D #{options.binddn}" else ''
       passwd = if options.passwd then "-w #{options.passwd}" else ''
       if options.url
-        console.log "Mecano: option 'options.url' is deprecated, use 'options.uri'"
+        console.log "Nikita: option 'options.url' is deprecated, use 'options.uri'"
         options.uri ?= options.url
       options.uri = 'ldapi:///' if options.uri is true
       uri = if options.uri then "-H #{options.uri}" else '' # URI is obtained from local openldap conf unless provided
@@ -58,7 +58,7 @@ require('mecano').ldap.schema({
       return callback new Error "Missing name" unless options.name
       return callback new Error "Missing schema" unless options.schema
       options.schema = options.schema.trim()
-      tempdir = options.tempdir or "/tmp/mecano_ldap.schema_#{Date.now()}"
+      tempdir = options.tempdir or "/tmp/nikita_ldap.schema_#{Date.now()}"
       schema = "#{tempdir}/#{options.name}.schema"
       conf = "#{tempdir}/schema.conf"
       ldif = "#{tempdir}/ldif"

@@ -4,13 +4,13 @@
 # For this purpos ip, and clean are used
 
 should = require 'should'
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 docker = require '../../src/misc/docker'
 
 ip = (ssh, machine, callback) ->
-  mecano
+  nikita
   .system.execute
     cmd: """
     export SHELL=/bin/bash
@@ -43,33 +43,33 @@ describe 'docker.service', ->
     ip ssh, config.docker.machine, (err, ipadress) =>
       return next err if  err
       @timeout 60000
-      mecano
+      nikita
         ssh: ssh
         docker: config.docker
       .docker.rm
         force: true
-        container: 'mecano_test_unique'
+        container: 'nikita_test_unique'
       .docker.service
         image: 'httpd'
-        name: 'mecano_test_unique'
+        name: 'nikita_test_unique'
         port: '499:80'
       .wait_connect
         port: 499
         host: ipadress
       .docker.rm
         force: true
-        container: 'mecano_test_unique'
+        container: 'nikita_test_unique'
       .then next
 
   they 'invalid options', (ssh, next) ->
     ip ssh, config.docker.machine, (err, ipadress) =>
       return next err if  err
       @timeout 60000
-      mecano
+      nikita
         ssh: ssh
         docker: config.docker
       .docker.rm
-        container: 'mecano_test'
+        container: 'nikita_test'
         force: true
       .docker.service
         image: 'httpd'
@@ -83,27 +83,27 @@ describe 'docker.service', ->
         err.message.should.eql 'Missing image'
       .docker.rm
         force: true
-        container: 'mecano_test'
+        container: 'nikita_test'
       .then (err) -> next()
 
   they 'status not modified', (ssh, next) ->
-    mecano
+    nikita
       ssh: ssh
       docker: config.docker
     .docker.rm
       force: true
-      container: 'mecano_test'
+      container: 'nikita_test'
     .docker.service
-      name: 'mecano_test'
+      name: 'nikita_test'
       image: 'httpd'
       port: '499:80'
     .docker.service
-      name: 'mecano_test'
+      name: 'nikita_test'
       image: 'httpd'
       port: '499:80'
     , (err, executed, out, serr) ->
       executed.should.be.false()
     .docker.rm
       force: true
-      container: 'mecano_test'
+      container: 'nikita_test'
     .then next

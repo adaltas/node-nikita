@@ -6,13 +6,13 @@ version: '2'
 services:
   nodejs:
     build: .
-    image: mecano_ubuntu_nodejs
+    image: nikita_ubuntu_nodejs
     volumes:
-      - ../..:/mecano
+      - ../..:/nikita
     depends_on:
       - krb5
     environment:
-      MECANO_TEST: /mecano/docker/ubuntu/test.coffee
+      MECANO_TEST: /nikita/docker/ubuntu/test.coffee
       # TEST_FILES: test/krb5/ktadd.coffee
       # TEST_FILES: test
       DEBUG: 1

@@ -1,5 +1,5 @@
 
-# `mecano.log.csv(options, [callback])`
+# `nikita.log.csv(options, [callback])`
 
 Write log to the host filesystem in CSV.
 

@@ -1,5 +1,5 @@
 
-# `mecano.java.keystore_add(options, [callback])`
+# `nikita.java.keystore_add(options, [callback])`
 
 Add certificates, private keys and certificate authorities to java keystores
 and trustores.
@@ -56,7 +56,7 @@ and trustores.
 ## Uploading public and private keys into a keystore
 
 ```js
-require('mecano').java.keystore_add([{
+require('nikita').java.keystore_add([{
   keystore: java_home + '/lib/security/cacerts',
   storepass: 'changeit',
   caname: 'my_ca_certificate',
@@ -71,7 +71,7 @@ require('mecano').java.keystore_add([{
 ## Uploading a certificate authority
 
 ```js
-require('mecano').java.keystore_add([{
+require('nikita').java.keystore_add([{
   keystore: java_home + '/lib/security/cacerts',
   storepass: 'changeit',
   caname: 'my_ca_certificate',
@@ -90,7 +90,7 @@ require('mecano').java.keystore_add([{
       throw Error "Required option 'caname'" unless options.caname
       throw Error "Required option 'cacert'" unless options.cacert
       options.openssl ?= 'openssl'
-      tmp_location = "/tmp/mecano/java_keystore_#{Date.now()}"
+      tmp_location = "/tmp/nikita/java_keystore_#{Date.now()}"
       files =
         cert: if options.cert? and options.local then  "#{tmp_location}/#{path.basename options.cert}" else options.cert
         cacert: if options.local then  "#{tmp_location}/#{path.basename options.cacert}" else options.cacert

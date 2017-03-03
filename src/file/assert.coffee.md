@@ -1,5 +1,5 @@
 
-# `mecano.file.assert(options)`
+# `nikita.file.assert(options)`
 
 Assert a file exists or a provided text match the content of a text file.
 
@@ -32,7 +32,7 @@ Assert a file exists or a provided text match the content of a text file.
 ## Example
 
 ```js
-mecano.assert({
+nikita.assert({
   ssh: connection
   source: '/tmp/a_file'     
   content: 'nikita is around' 
@@ -44,7 +44,7 @@ mecano.assert({
 ## Source code
 
     module.exports = (options) ->
-      options.log message: "Entering assert", level: 'DEBUG', module: 'mecano/lib/assert'
+      options.log message: "Entering assert", level: 'DEBUG', module: 'nikita/lib/assert'
       options.encoding ?= 'utf8'
       options.target ?= options.argument
       options.target ?= options.source

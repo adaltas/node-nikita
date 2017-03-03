@@ -1,5 +1,5 @@
 
-# `mecano.ldap.index(options, [callback])`
+# `nikita.ldap.index(options, [callback])`
 
 Create new [index](index) for the OpenLDAP server.
 
@@ -23,7 +23,7 @@ Create new [index](index) for the OpenLDAP server.
 ## Example
 
 ```js
-require('mecano').ldap.index({
+require('nikita').ldap.index({
   url: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
@@ -42,7 +42,7 @@ require('mecano').ldap.index({
       modified = false
       do_getdn = =>
         return do_get_indexes() if options.hdb_dn
-        options.log message: "Get DN of the HDB to modify", level: 'DEBUG', module: 'mecano/ldap/index'
+        options.log message: "Get DN of the HDB to modify", level: 'DEBUG', module: 'nikita/ldap/index'
         @system.execute
           cmd: """
           ldapsearch -LLL -Y EXTERNAL -H ldapi:/// \
@@ -57,7 +57,7 @@ require('mecano').ldap.index({
           options.hdb_dn = hdb_dn.trim()
           do_get_indexes()
       do_get_indexes = =>
-        options.log message: "List all indexes of the directory", level: 'DEBUG', module: 'mecano/ldap/index'
+        options.log message: "List all indexes of the directory", level: 'DEBUG', module: 'nikita/ldap/index'
         @system.execute
           cmd: """
           ldapsearch -LLL -Y EXTERNAL -H ldapi:/// \

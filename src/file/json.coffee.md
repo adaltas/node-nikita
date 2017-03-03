@@ -1,5 +1,5 @@
 
-# `mecano.file.json(options, callback)`
+# `nikita.file.json(options, callback)`
 
 ## Options
 
@@ -27,7 +27,7 @@ be passed to the `file` function.
 Merge the destination file with user provided content.
 
 ```javascript
-require('mecano')
+require('nikita')
 .file.json({
   target: "/path/to/target.json",
   content: { preferences: { colors: 'blue' } },

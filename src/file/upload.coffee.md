@@ -1,5 +1,5 @@
 
-# `mecano.file.upload(options, [callback])`
+# `nikita.file.upload(options, [callback])`
 
 Upload a file to a remote location. Options are identical to the "write"
 function with the addition of the "binary" option.
@@ -54,7 +54,7 @@ function with the addition of the "binary" option.
 ## Example
 
 ```js
-require('mecano').upload({
+require('nikita').upload({
   ssh: ssh
   source: '/tmp/local_file',
   target: '/tmp/remote_file'
@@ -66,11 +66,11 @@ require('mecano').upload({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering upload", level: 'DEBUG', module: 'mecano/lib/file/upload'
+      options.log message: "Entering upload", level: 'DEBUG', module: 'nikita/lib/file/upload'
       throw Error "Required \"source\" option" unless options.source
       throw Error "Required \"target\" option" unless options.target
-      options.log message: "Source is \"#{options.source}\"", level: 'DEBUG', module: 'mecano/lib/file/upload'
-      options.log message: "Destination is \"#{options.target}\"", level: 'DEBUG', module: 'mecano/lib/file/upload'
+      options.log message: "Source is \"#{options.source}\"", level: 'DEBUG', module: 'nikita/lib/file/upload'
+      options.log message: "Destination is \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/file/upload'
       status = false
       source_stat = null
       target_stat = null
@@ -128,7 +128,7 @@ require('mecano').upload({
           source: stage_target
           target: options.target
         , (err, status) ->
-          options.log message: "Unstaged uploaded file", level: 'INFO', module: 'mecano/lib/file/upload' if status
+          options.log message: "Unstaged uploaded file", level: 'INFO', module: 'nikita/lib/file/upload' if status
         @system.chmod
           ssh: null
           target: options.target

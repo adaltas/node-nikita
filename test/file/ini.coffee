@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 misc = require '../../src/misc'
 test = require '../test'
 they = require 'ssh2-they'
@@ -10,7 +10,7 @@ describe 'file.ini', ->
   scratch = test.scratch @
 
   they 'stringify an object', (ssh, next) ->
-    mecano.file.ini
+    nikita.file.ini
       ssh: ssh
       content: user: preference: color: 'rouge'
       target: "#{scratch}/user.ini"
@@ -23,7 +23,7 @@ describe 'file.ini', ->
         next()
 
   they 'stringify an object and with custom separator', (ssh, next) ->
-    mecano.file.ini
+    nikita.file.ini
       ssh: ssh
       content: user: preference: color: 'rouge'
       target: "#{scratch}/user.ini"
@@ -40,7 +40,7 @@ describe 'file.ini', ->
     content = '[user.preference]\nlanguage = node\ncolor = rouge\n'
     fs.writeFile ssh, "#{scratch}/user.ini", content, (err) ->
       return next err if err
-      mecano.file.ini
+      nikita.file.ini
         ssh: ssh
         content: user: preference: color: 'violet'
         target: "#{scratch}/user.ini"
@@ -54,7 +54,7 @@ describe 'file.ini', ->
           next()
 
   they 'discard undefined and null', (ssh, next) ->
-    mecano.file.ini
+    nikita.file.ini
       ssh: ssh
       content: user: preference: color: 'violet', age: undefined, gender: null
       target: "#{scratch}/user.ini"
@@ -71,7 +71,7 @@ describe 'file.ini', ->
     content = '[user.preference]\nlanguage = node\ncolor = rouge\n'
     fs.writeFile ssh, "#{scratch}/user.ini", content, (err) ->
       return next err if err
-      mecano.file.ini
+      nikita.file.ini
         ssh: ssh
         content: user: preference: color: null
         target: "#{scratch}/user.ini"
@@ -88,7 +88,7 @@ describe 'file.ini', ->
     content = '[user.preference]\nlanguage = node\ncolor = rouge\n'
     fs.writeFile ssh, "#{scratch}/user.ini", content, (err) ->
       return next err if err
-      mecano.file.ini
+      nikita.file.ini
         ssh: ssh
         content: user: preference: color: undefined
         target: "#{scratch}/user.ini"
@@ -99,7 +99,7 @@ describe 'file.ini', ->
         next()
 
   they 'call stringify udf', (ssh, next) ->
-    mecano.file.ini
+    nikita.file.ini
       ssh: ssh
       content: user: preference: color: true
       stringify: misc.ini.stringify_square_then_curly
@@ -114,7 +114,7 @@ describe 'file.ini', ->
         next()
 
   they 'stringify write only key on props', (ssh, next) ->
-    mecano.file.ini
+    nikita.file.ini
       ssh: ssh
       content:
         'user':
@@ -135,7 +135,7 @@ describe 'file.ini', ->
     content = '[user.preference]\nlanguage = node\ncolor\n'
     fs.writeFile ssh, "#{scratch}/user.ini", content, (err) ->
       return next err if err
-      mecano.file.ini
+      nikita.file.ini
         ssh: ssh
         content: user: preference: {language: 'c++', color: ''}
         stringify: misc.ini.stringify_single_key

@@ -1,5 +1,5 @@
 
-# `mecano.ldap.index(options, [goptions], callback)`
+# `nikita.ldap.index(options, [goptions], callback)`
 
 Create new [index](index) for the OpenLDAP server.   
 
@@ -36,7 +36,7 @@ accessible.
 ## Example
 
 ```js
-require('mecano/alt/ldap.index')({
+require('nikita/alt/ldap.index')({
   url: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',

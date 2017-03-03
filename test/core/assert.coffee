@@ -1,5 +1,5 @@
 
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 http = require 'http'
@@ -11,7 +11,7 @@ describe 'assert', ->
   describe 'status', ->
 
     they 'false when expected to be false', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .call (_, callback) ->
         callback null, false
@@ -20,7 +20,7 @@ describe 'assert', ->
       .then next
 
     they 'false when expected to be true throw an error', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .call (_, callback) ->
         callback null, false
@@ -31,7 +31,7 @@ describe 'assert', ->
         next()
 
     they 'true when expected to be true', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .call (_, callback) ->
         callback null, true
@@ -40,7 +40,7 @@ describe 'assert', ->
       .then next
 
     they 'true when expected to be false throw an error', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .call (_, callback) ->
         callback null, true
@@ -64,7 +64,7 @@ describe 'assert', ->
         _.close callback
     
     they 'succeed', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
         server: server 12345
       .call (options, callback) ->
@@ -77,7 +77,7 @@ describe 'assert', ->
       .then next
   
     they 'failed', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .assert
         host: 'localhost'

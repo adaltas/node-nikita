@@ -1,5 +1,5 @@
 
-# `mecano.log.md(options, [callback])`
+# `nikita.log.md(options, [callback])`
 
 Write log to the host filesystem in Markdown.
 

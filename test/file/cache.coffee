@@ -1,6 +1,6 @@
 
 http = require 'http'
-mecano = require '../../src'
+nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 fs = require 'ssh2-fs'
@@ -30,7 +30,7 @@ describe 'file.cache', ->
       server.on 'close', next
 
     they 'handles string argument', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file.cache 'http://localhost:12345/my_file',
         cache_dir: "#{scratch}/my_cache_dir"
@@ -40,7 +40,7 @@ describe 'file.cache', ->
       .then next
 
     they 'into local cache_dir', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file.cache
         source: 'http://localhost:12345/my_file'
@@ -59,7 +59,7 @@ describe 'file.cache', ->
       .then next
 
     they 'option fail with invalid exit code', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file.cache
         source: 'http://localhost:12345/missing'
@@ -79,7 +79,7 @@ describe 'file.cache', ->
 
       they 'bypass cache if string match', (ssh, next) ->
         logs = []
-        mecano
+        nikita
           ssh: ssh
         .on 'text', (log) -> logs.push "[#{log.level}] #{log.message}"
         .file
@@ -117,7 +117,7 @@ describe 'file.cache', ->
   describe 'file', ->
 
     they 'into local cache_dir', (ssh, next) ->
-      mecano
+      nikita
         ssh: ssh
       .file.cache
         source: "#{__filename}"
@@ -139,7 +139,7 @@ describe 'file.cache', ->
 
       they 'bypass cache if string match', (ssh, next) ->
         logs = []
-        mecano
+        nikita
           ssh: ssh
         .on 'text', (log) -> logs.push "[#{log.level}] #{log.message}"
         .file

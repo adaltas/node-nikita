@@ -1,5 +1,5 @@
 
-# `mecano.wait.exist(options, [callback])`
+# `nikita.wait.exist(options, [callback])`
 
 Wait for a file or directory to exists. Status will be
 set to "false" if the file already existed, considering that no
@@ -16,7 +16,7 @@ change had occured. Otherwise it will be set to "true".
 Example:
 
 ```coffee
-require 'mecano'
+require 'nikita'
 .wait.exist
   target: "/path/to/file_or_directory"
 .then (err, status) ->
@@ -31,18 +31,18 @@ require 'mecano'
       return callback Error "Missing target: #{options.target}" unless options.target?
       options.target = [options.target] unless Array.isArray options.target
       options.interval ?= 2000
-      options.log message: "Entering wait for file", level: 'DEBUG', module: 'mecano/wait/exist'
+      options.log message: "Entering wait for file", level: 'DEBUG', module: 'nikita/wait/exist'
       modified = false
       each options.target
       .call (target, next) =>
         count = 0
         run = ->
           count++
-          options.log message: "Attempt ##{count}", level: 'INFO', module: 'mecano/wait/exist'
+          options.log message: "Attempt ##{count}", level: 'INFO', module: 'nikita/wait/exist'
           ssh2fs.stat options.ssh, target, (err, stat) ->
             return next err if err and err.code isnt 'ENOENT'
             return setTimeout run, options.interval if err
-            options.log message: "Finish wait for file", level: 'INFO', module: 'mecano/wait/exist'
+            options.log message: "Finish wait for file", level: 'INFO', module: 'nikita/wait/exist'
             modified = true if count > 1
             next()
         run()

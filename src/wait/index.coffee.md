@@ -1,7 +1,7 @@
 
-# `mecano.wait(options, [callback])`
+# `nikita.wait(options, [callback])`
 
-Simple mecano action that calls setTimeout. Thus, time is in millisecond.
+Simple nikita action that calls setTimeout. Thus, time is in millisecond.
 
 ## Options
 
@@ -12,7 +12,7 @@ Simple mecano action that calls setTimeout. Thus, time is in millisecond.
 
 ```coffee
 before = Date.now()
-require 'mecano'
+require 'nikita'
 .wait
   time: 5000
 .then (err, status) ->
