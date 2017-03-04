@@ -1,4 +1,4 @@
-[![Build Status](https://secure.travis-ci.org/adaltas/node-nikita.png)](http://travis-ci.org/adaltas/node-nikita)
+[![Build Status](https://secure.travis-ci.org/adaltas/node-nikita.svg)](http://travis-ci.org/adaltas/node-nikita)
 
 # Node.js Nikita
 
