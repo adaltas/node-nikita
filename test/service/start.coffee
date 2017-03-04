@@ -39,21 +39,3 @@ describe 'service.start', ->
       (!!err).should.be.false()
       status.should.be.false()
     .then next
-  
-  they 'store status', (ssh, next) ->
-    nikita
-      ssh: ssh
-    .service
-      name: config.service.name
-    .service
-      name: config.service.name
-      srv_name: config.service.srv_name
-      action: 'stop'
-    .call (options) ->
-      (options.store["nikita.service.#{config.service.srv_name}.status"] is undefined).should.be.true()
-    .service.start # Detect already started
-      name: config.service.srv_name
-      cache: true
-    .call (options) ->
-      options.store["nikita.service.#{config.service.srv_name}.status"].should.eql 'started'
-    .then next

@@ -10,18 +10,28 @@ Store properties in the nikita store object.
 *   `strict` (boolean)   
     Throw an error if the OS is not supported. false by default.   
 *   `cache`   
-    Disable cache. false by default   
+    Enable cache, "false" by default.   
 
 ## Callback parameters
 
 *   `err`   
     Error object if any.   
 *   `status`   
-    Indicate a change in service such as a change in installation, update, 
-    start/stop or startup registration.   
+    True if information was fetch from system, false if retrieved from cache.   
 *   `info`   
     List of info about system   
 
+## Example
+
+```javascript
+nikita.system.discover({
+  ssh: ssh
+}, function(err, status, info){
+  console.log(err || 'Use cache: ' + status);
+  console.log(err || 'System: ' + info.type);     // eg "redhat" or "centos"
+  console.log(err || 'Release: ' + info.release); // eg "6" or "7"
+});
+```
 
 ## Source Code
 

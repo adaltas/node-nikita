@@ -1,7 +1,7 @@
 
 # `nikita.service.status(options, [callback])`
 
-Status of a service.
+Status of a service. Note, does not throw an error if service is not installed.
 
 ## Options
 
@@ -52,14 +52,7 @@ require('nikita').service.start([{
       # Action
       options.log message: "Status for service #{options.name}", level: 'INFO', module: 'nikita/lib/service/status'
       options.log message: "Option code_stopped is #{options.code_stopped}", level: 'DEBUG', module: 'nikita/lib/service/status' unless options.code_stopped is 3
-      options.os ?= {}
-      @system.discover cache: options.cache, shy: true, (err, status, os) ->
-        options.os.type ?= os.type
-        options.os.release ?= os.release
-      @service.discover cache: options.cache, shy: true, (err, status, loader) ->
-        options.loader ?= loader
       @call -> @system.execute
-        if: -> options.os.type in ['redhat','centos','ubuntu']
         cmd: """
           ls \
             /lib/systemd/system/*.service \
@@ -67,24 +60,19 @@ require('nikita').service.start([{
             /etc/rc.d/* \
             /etc/init.d/* \
             2>/dev/null \
-          | grep -w "#{options.name}" || exit 1
-          case "#{options.loader}" in
-            systemctl)
-              systemctl status #{options.name} || exit 3
-              ;;
-            service)
-              service #{options.name} status || exit 3
-              ;;
-            *)
-              exit 2 # Unsupported Loader
-              ;;
-          esac
+          | grep -w "#{options.name}" || exit 3
+          if which systemctl >/dev/null; then
+            systemctl status #{options.name} || exit 3
+          elif which service >/dev/null; then
+            service #{options.name} status || exit 3
+          else
+            echo "Unsupported Loader"
+            exit 2
+          fi
           """
         code: 0
         code_skipped: 3
-      , (err, started) ->
-        throw Error "Invalid Service Name: #{options.name}" if err
-        status = if started then 'started' else 'stopped'
-        options.log message: "Status for #{options.name} is #{status}", level: 'INFO', module: 'nikita/lib/service/status'
-        # throw err if err
-        options.store["nikita.service.#{options.name}.status"] = "#{status}" if options.cache
+      , (err, status) ->
+        throw Error "Unsupported Loader" if err?.code is 2
+        return if err
+        options.log message: "Status for #{options.name} is #{if status then 'started' else 'stoped'}", level: 'INFO', module: 'nikita/lib/service/status'

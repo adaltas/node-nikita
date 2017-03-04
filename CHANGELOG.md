@@ -3,6 +3,10 @@
 
 ## Trunk
 
+* service: remove all ref to option.store and rewrite all this mess #72
+
+## Version 0.6.1
+
 * backup: start complete rewrite #71
 * debug: print stdin and better filter on printable logs #70 
 * docker: clean up node.js downloaded archive #69

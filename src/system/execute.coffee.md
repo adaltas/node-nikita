@@ -89,7 +89,7 @@ nikita.system.execute({
   }else{
     console.log('User already exists');
   }
-})
+});
 ```
 
 ## Source Code

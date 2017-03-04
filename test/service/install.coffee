@@ -64,7 +64,7 @@ describe 'service.install', ->
       ssh: ssh
     .service.install
       name: 'thisservicedoesnotexist'
-      code_skipped: 1
+      code_skipped: [1, 100] # 1 for RH, 100 for Ubuntu
     , (err, status) ->
       (!!err).should.be.false()
       status.should.be.false() unless err

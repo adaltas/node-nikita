@@ -1,7 +1,7 @@
 
 # `nikita.service.install(options, [callback])`
 
-Install a service. For now, only Yum over SSH.
+Install a service. Yum and apt-get are supported.
 
 ## Options
 
@@ -15,10 +15,12 @@ Install a service. For now, only Yum over SSH.
 ## Example
 
 ```js
-require('nikita').service.install([{
+require('nikita').service.install({
   ssh: ssh,
   name: 'ntp'
-}, function(err, status){ /* do sth */ });
+}, function(err, status){
+  console.log(err || "Package installed: " + status ? 'yes' : 'no');
+});
 ```
 
 ## Source Code
@@ -37,85 +39,59 @@ require('nikita').service.install([{
       # Validation
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       # Start real work
-      # Note for legaciy
-      # c = if options.cache then '-C' else ''
-      # @system.execute: cmd: "yum #{c} list installed"
-      # for pkg in string.lines stdout
-      #   start = true if pkg.trim() is 'Installed Packages'
-      #   continue unless start
-      #   installed.push pkg[1] if pkg = /^([^\. ]+?)\./.exec pkg
       cacheonly = if options.cacheonly then '-C' else ''
-      @system.discover
+      # List installed packages
       @system.execute
         cmd: """
-        if which yum >/dev/null; then exit 1; fi
-        if which apt-get >/dev/null; then exit 2; fi
-        exit 3
+        if which yum >/dev/null; then
+          rpm -qa --qf "%{NAME}\n"
+        elif which apt-get >/dev/null; then
+          dpkg -l | grep \'^ii\' | awk \'{print $2}\'
+        fi
         """
-        code: [1, 2]
-        unless: options.manager
-        shy: true
-      , (err, status, stdout, stderr, signal) ->
-        throw Error "Undetected Package Manager" if err?.code is 3
-        throw err if err
-        return unless status
-        options.manager = switch signal
-          when 1 then 'yum'
-          when 2 then 'apt'
-        options.store['nikita:service:manager'] = options.manager if options.cache
-      @system.execute
-        cmd: -> switch options.manager
-          when 'yum' then 'rpm -qa --qf "%{NAME}\n"'
-          when 'apt' then 'dpkg -l | grep \'^ii\' | awk \'{print $2}\''
-          else throw Error "Invalid Manager: #{options.manager}"
         code_skipped: 1
         stdout_log: false
         shy: true
         unless: installed?
         # if: -> not options.cache or not installed
-      , (err, executed, stdout) ->
+      , (err, status, stdout) ->
         throw err if err
-        return unless executed
+        return unless status
         options.log message: "Installed packages retrieved", level: 'INFO', module: 'nikita/service/install'
         installed = for pkg in string.lines(stdout) then pkg
+      # List packages waiting for update
       @system.execute
-        cmd: -> switch options.manager
-          when 'yum' then "yum #{cacheonly} list updates"
-          when 'apt', 'apt-get' then "apt-get -u upgrade --assume-no | grep '^\\s' | sed 's/\\s/\\n/g'"
-          else throw Error "Invalid Manager: #{options.manager}"
+        cmd: """
+        if which yum >/dev/null; then
+          yum #{cacheonly} list updates | egrep updates$ | sed 's/\\([^\\.]*\\).*/\\1/'
+        elif which apt-get >/dev/null; then
+          apt-get -u upgrade --assume-no | grep '^\\s' | sed 's/\\s/\\n/g'
+        fi
+        """
         code_skipped: 1
         stdout_log: false
         shy: true
         unless: updates?
         if: -> installed.indexOf(options.name) is -1
-      , (err, executed, stdout) ->
+      , (err, status, stdout) ->
         throw err if err
-        return updates = [] unless executed
+        return updates = [] unless status
         options.log message: "Available updates retrieved", level: 'INFO', module: 'nikita/service/install'
-        start = false
-        # if options.manager is 'yum' then updates = for pkg in string.lines(stdout)
-        #   start = true if pkg.trim() is 'Updated Packages'
-        #   continue unless start
-        #   continue unless pkg = /^([^\. ]+?)\./.exec pkg
-        #   pkg[1]
-        updates = switch options.manager
-          when 'yum' then for pkg in string.lines stdout
-            start = true if pkg.trim() is 'Updated Packages'
-            continue unless start
-            continue unless pkg = /^([^\. ]+?)\./.exec pkg
-            pkg[1]
-          when 'apt' then string.lines stdout.trim()
+        updates = string.lines stdout.trim()
       @system.execute
-        cmd: -> switch options.manager
-          when 'yum' then "yum install -y #{cacheonly} #{options.name}"
-          when 'apt' then "apt-get install -y #{options.name}"
-          else throw Error "Invalid Manager: #{options.manager}"
+        cmd: """
+        if which yum >/dev/null; then
+          yum install -y #{cacheonly} #{options.name}
+        elif which apt-get >/dev/null; then
+          apt-get install -y #{options.name}
+        fi
+        """
         code_skipped: options.code_skipped
         if: ->
           installed.indexOf(options.name) is -1 or updates.indexOf(options.name) isnt -1
-      , (err, succeed) ->
+      , (err, status) ->
         throw err if err
-        options.log if succeed
+        options.log if status
         then message: "Package \"#{options.name}\" is installed", level: 'WARN', module: 'nikita/service/install'
         else message: "Package \"#{options.name}\" is already installed", level: 'WARN', module: 'nikita/service/install'
         # Enrich installed array with package name unless already there

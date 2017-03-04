@@ -14,23 +14,10 @@ describe 'service.stop', ->
       ssh: ssh
     .service.install config.service.name
     .service.start config.service.srv_name
-    .service.stop
-      name: config.service.srv_name
-    , (err, status) ->
-      status.should.be.true() unless err
-    .service.stop
-      name: config.service.srv_name
-    , (err, status) ->
-      status.should.be.false() unless err
-    .then next
-
-  they 'name as default argument', (ssh, next) ->
-    nikita
-      ssh: ssh
-    .service.install config.service.name
-    .service.start config.service.srv_name
     .service.stop config.service.srv_name, (err, status) ->
       status.should.be.true() unless err
+    .service.stop config.service.srv_name, (err, status) ->
+      status.should.be.false() unless err
     .then next
 
   they 'no error when invalid service name', (ssh, next) ->
@@ -41,17 +28,4 @@ describe 'service.stop', ->
       relax: true
     , (err, status) ->
       status.should.be.false()
-    .then next
-
-  they 'store status', (ssh, next) ->
-    nikita
-      ssh: ssh
-    .service.install config.service.name
-    .call (options) ->
-      (options.store["nikita.service.#{config.service.srv_name}.status"] is undefined).should.be.true()
-    .service.stop # Detect already started
-      name: config.service.srv_name
-      cache: true
-    .call (options) ->
-      options.store["nikita.service.#{config.service.srv_name}.status"].should.eql 'stopped'
     .then next

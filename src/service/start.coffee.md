@@ -1,7 +1,7 @@
 
 # `nikita.service.start(options, [callback])`
 
-Start a service.
+Start a service. Note, does not throw an error if service is not installed.
 
 ## Options
 
@@ -50,31 +50,28 @@ require('nikita').service.start([{
       # Validation
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       # Action
-      options.log message: "Start service #{options.name}", level: 'INFO', module: 'nikita/lib/service/start'
-      options.os ?= {}
-      @system.discover cache: options.cache, shy: true, (err, status, os) -> 
-        options.os.type ?= os.type
-        options.os.release ?= os.release
-      @service.discover cache: options.cache, shy: true, (err, status, loader) -> 
-        options.loader ?= loader
-      @call
-        if: -> options.os.type in ['redhat', 'centos', 'ubuntu']
-        if_exec: "ls /lib/systemd/system/*.service /etc/systemd/system/*.service /etc/rc.d/* /etc/init.d/* 2>/dev/null | grep #{options.name}"
-      , ->
-        @service.status
-          name: options.name
-          code_started: options.code_started
-          code_stopped: options.code_stopped
-          shy: true
-        @system.execute
-          cmd: switch options.loader
-            when 'systemctl' then "systemctl start #{options.name}"
-            when 'service' then "service #{options.name} start"
-            else throw Error 'Init System not supported'
-          unless: [
-            -> @status -1
-            -> options.cache and options.store["nikita.service.#{options.name}.status"] is 'started'
-          ]
-        , (err, started) ->
-          throw err if err
-          options.store["nikita.service.#{options.name}.status"] = 'started' if not err and options.cache
+      @system.execute
+        cmd: """
+        ls \
+          /lib/systemd/system/*.service \
+          /etc/systemd/system/*.service \
+          /etc/rc.d/* \
+          /etc/init.d/* \
+          2>/dev/null \
+        | grep -w "#{options.name}" || exit 3
+        if which systemctl >/dev/null; then
+          systemctl status #{options.name} && exit 3
+          systemctl start #{options.name}
+        elif which service >/dev/null; then
+          service #{options.name} status && exit 3
+          service #{options.name} start
+        else
+          echo "Unsupported Loader"
+          exit 2
+        fi
+        """
+        code_skipped: 3
+      , (err, started) ->
+        options.log message: "Service already started", level: 'WARN', module: 'nikita/lib/service/start' if not err and not started
+        options.log message: "Service is started", level: 'INFO', module: 'nikita/lib/service/start' if not err and started
+        
