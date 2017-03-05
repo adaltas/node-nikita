@@ -118,7 +118,7 @@ require('nikita').java.keystore_add([{
         mode: 0o0600
         shy: true
       @system.execute # Deal with key and certificate
-        target: true
+        bash: true
         cmd: """
         if ! which #{options.openssl}; then echo 'OpenSSL command line tool not detected'; exit 4; fi
         # mkdir -p -m 700 #{tmp_location}
@@ -147,7 +147,7 @@ require('nikita').java.keystore_add([{
       , (err) ->
         throw Error "OpenSSL command line tool not detected" if err?.code is 4
       @system.execute # Deal with CACert
-        target: true
+        bash: true
         cmd: """
         cleanup () { rm -rf #{tmp_location}; }
         # Check password

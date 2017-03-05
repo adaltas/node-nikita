@@ -15,6 +15,8 @@ creating any modifications.
 
 ## Options
 
+*   `bash` (boolean|string)   
+    Serialize the command into a file and execute it with bash.   
 *   `cmd`   
     String, Object or array; Command to execute.   
 *   `code` (int|string|array)   
@@ -52,6 +54,8 @@ creating any modifications.
     pass stdout output to the logs of type "stdout_stream", default is "true".   
 *   `stderr_trim` (boolean)   
     Trim stderr argument passed in the callback.   
+*   `target` (string)   
+    Path storing the script, apply witht the bash and arch_chroot options.   
 *   `uid`   
     Unix user id.   
 
@@ -78,17 +82,27 @@ the command is considered successfull but without any impact.
 
 ```javascript
 nikita.system.execute({
-  ssh: ssh
-  cmd: 'useradd myfriend'
+  ssh: ssh,
+  cmd: 'useradd myfriend',
   code_skipped: 9
-}, function(err, created, stdout, stderr){
-  if(err){
-    console.log(err.message);
-  }else if(created){
+}, function(err, created){
+  if(err) return;
+  if(created){
     console.log('User created');
   }else{
     console.log('User already exists');
   }
+});
+```
+
+## Run a command with bash
+
+```javascript
+nikita.system.execute({
+  bash: true,
+  cmd: 'env'
+}, function(err, status, stdout, stderr){
+  console.log(err || stdout);
 });
 ```
 
@@ -110,9 +124,10 @@ nikita.system.execute({
       options.stdout_log = if options.hasOwnProperty('stdout_log') then options.stdout_log else true
       options.stderr_log = if options.hasOwnProperty('stderr_log') then options.stderr_log else true
       options.cmd = options.cmd.call @, options if typeof options.cmd is 'function'
+      options.bash = 'bash' if options.bash is true
+      options.arch_chroot = 'arch-chroot' if options.arch_chroot is true
       throw Error "Missing cmd: #{options.cmd}" unless options.cmd?
-      if options.trap
-        options.cmd = "set -e\n#{options.cmd}"
+      options.cmd = "set -e\n#{options.cmd}" if options.trap
       options.log message: options.cmd, type: 'stdin', module: 'nikita/lib/system/execute' if options.stdin_log
       result = stdout: null, stderr: null, code: null
       # Guess current username
@@ -130,19 +145,19 @@ nikita.system.execute({
           callback err, options.uid isnt current_username
       # Write script
       @call
-        if: -> @status(-1) or options.target
-        handler: () ->
-          cmd = options.cmd
-          options.cmd = "#!/bin/bash\n\n#{options.cmd}"
-          options.target = "/tmp/nikita_#{string.hash options.cmd}" if options.target and typeof options.target isnt 'string'
-          options.log message: 'Writing bash script to #{JSON.stringify options.target}', level: 'INFO'
-          options.cmd = "bash #{options.target}"
-          options.cmd = "su - #{options.uid} -c '#{options.cmd}'" if options.uid
-          @file
-            target: options.target
-            content: cmd
-            uid: options.uid
-            shy: true
+        if: -> @status(-1) or options.bash
+      , ->
+        cmd = options.cmd
+        options.cmd = "#!/bin/bash\n\n#{options.cmd}"
+        options.target = "/tmp/nikita_#{string.hash options.cmd}" if typeof options.target isnt 'string'
+        options.log message: 'Writing bash script to #{JSON.stringify options.target}', level: 'INFO'
+        options.cmd = "bash #{options.target}"
+        options.cmd = "su - #{options.uid} -c '#{options.cmd}'" if options.uid
+        @file
+          target: options.target
+          content: cmd
+          uid: options.uid
+          shy: true
       # Execute
       @call (_, callback) ->
         child = exec options

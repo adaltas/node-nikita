@@ -46,7 +46,7 @@ require('nikita').java.keystore_add([{
       options.name = [options.name] unless Array.isArray options.name
       aliases = [options.caname..., options.name...].join(' ').trim()
       @system.execute
-        target: true
+        bash: true
         cmd: """
         test -f "#{options.keystore}" || # Nothing to do if not a file
         exit 3
