@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* docker: test against archlinux #73
 * system.execute: bash explicitly defined by its option #75
 * file: support pacman conf #74
 * service: remove all ref to option.store and rewrite all this mess #72

@@ -6,6 +6,7 @@ do
   echo 'waiting for kinit to succeed'
   sleep 4
 done
+
 # We have TTY, so probably an interactive container...
 if test -t 0; then
   # Run supervisord detached...
@@ -18,8 +19,9 @@ if test -t 0; then
     export PS1='[\u@\h : \w]\$ '
     /bin/bash
   fi
-# Detached mode? Run supervisord in foreground, which will stay until container is stopped.
+# Detached mode
 else
+  # Run supervisord in foreground, which will stay until container is stopped.
   supervisord -c /etc/supervisord.conf
   node_modules/.bin/mocha $@
 fi

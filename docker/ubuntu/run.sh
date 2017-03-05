@@ -1,7 +1,5 @@
 #!/bin/bash
 
-: ${TEST_FILES:='test'}
-
 service ssh start
 
 # kadmin NODE.DC1.CONSUL -p admin/admin -s krb5 -w admin -q 'listprincs'
@@ -23,6 +21,3 @@ if test -t 0; then
 else
   node_modules/.bin/mocha $@
 fi
-
-# For debuging purpose
-#sleep 10000
