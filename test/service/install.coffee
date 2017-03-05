@@ -8,7 +8,7 @@ describe 'service.install', ->
   @timeout 30000
   config = test.config()
   return if config.disable_service
-  process.env['TMPDIR'] = '/var/tmp' if config.isCentos6 or config.isCentos7
+  # process.env['TMPDIR'] = '/var/tmp' if config.isCentos6 or config.isCentos7
 
   they 'new package', (ssh, next) ->
     nikita

@@ -47,14 +47,17 @@ require('nikita').service.install({
           rpm -qa --qf "%{NAME}\n"
         elif which apt-get >/dev/null; then
           dpkg -l | grep \'^ii\' | awk \'{print $2}\'
+        else
+          echo "Failed Package Installed" >&2
+          exit 2
         fi
         """
         code_skipped: 1
         stdout_log: false
         shy: true
         unless: installed?
-        # if: -> not options.cache or not installed
       , (err, status, stdout) ->
+        throw Error "Failed Package Installed" if err?.code is 2
         throw err if err
         return unless status
         options.log message: "Installed packages retrieved", level: 'INFO', module: 'nikita/service/install'
@@ -66,6 +69,9 @@ require('nikita').service.install({
           yum #{cacheonly} list updates | egrep updates$ | sed 's/\\([^\\.]*\\).*/\\1/'
         elif which apt-get >/dev/null; then
           apt-get -u upgrade --assume-no | grep '^\\s' | sed 's/\\s/\\n/g'
+        else
+          echo "Failed Package Updates" >&2
+          exit 2
         fi
         """
         code_skipped: 1
@@ -74,6 +80,7 @@ require('nikita').service.install({
         unless: updates?
         if: -> installed.indexOf(options.name) is -1
       , (err, status, stdout) ->
+        throw Error "Failed Package Updates" if err?.code is 2
         throw err if err
         return updates = [] unless status
         options.log message: "Available updates retrieved", level: 'INFO', module: 'nikita/service/install'
@@ -84,12 +91,16 @@ require('nikita').service.install({
           yum install -y #{cacheonly} #{options.name}
         elif which apt-get >/dev/null; then
           apt-get install -y #{options.name}
+        else
+          echo "Unsupported Package Manager: yum, apt-get supported" >&2
+          exit 2
         fi
         """
         code_skipped: options.code_skipped
         if: ->
           installed.indexOf(options.name) is -1 or updates.indexOf(options.name) isnt -1
       , (err, status) ->
+        throw Error "Unsupported Package Manager: yum, apt-get supported" if err?.code is 2
         throw err if err
         options.log if status
         then message: "Package \"#{options.name}\" is installed", level: 'WARN', module: 'nikita/service/install'

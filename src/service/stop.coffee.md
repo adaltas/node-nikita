@@ -67,7 +67,7 @@ require('nikita').service.stop([{
           service #{options.name} status || exit 3
           service #{options.name} stop
         else
-          echo "Unsupported Loader"
+          echo "Unsupported Loader" >&2
           exit 2
         fi
         """

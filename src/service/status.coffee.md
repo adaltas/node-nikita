@@ -66,7 +66,7 @@ require('nikita').service.start([{
           elif which service >/dev/null; then
             service #{options.name} status || exit 3
           else
-            echo "Unsupported Loader"
+            echo "Unsupported Loader" >&2
             exit 2
           fi
           """
