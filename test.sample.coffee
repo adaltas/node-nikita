@@ -7,7 +7,8 @@ module.exports =
   disable_ldap_acl: true
   disable_ldap_index: true
   disable_ldap_user: true
-  disable_service: true
+  disable_service_install: true
+  disable_service_start: true
   disable_db: true
   disable_system_tmpfs: true
   docker: # eg `docker-machine create --driver virtualbox nikita`
