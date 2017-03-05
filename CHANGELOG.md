@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* test: fix creation of test config file #76
 * docker: test against archlinux #73
 * system.execute: bash explicitly defined by its option #75
 * file: support pacman conf #74
