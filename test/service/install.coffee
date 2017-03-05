@@ -5,9 +5,9 @@ they = require 'ssh2-they'
 
 describe 'service.install', ->
   
-  @timeout 30000
+  @timeout 50000
   config = test.config()
-  return if config.disable_service
+  return if config.disable_service_install
   # process.env['TMPDIR'] = '/var/tmp' if config.isCentos6 or config.isCentos7
 
   they 'new package', (ssh, next) ->

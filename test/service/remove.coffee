@@ -7,7 +7,7 @@ describe 'service.remove', ->
   
   @timeout 20000
   config = test.config()
-  return if config.disable_service
+  return if config.disable_service_install
 
   they 'new package', (ssh, next) ->
     nikita

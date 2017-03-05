@@ -7,7 +7,7 @@ describe 'service.start', ->
   
   @timeout 20000
   config = test.config()
-  return if config.disable_service
+  return if config.disable_service_start
   
   they 'should start', (ssh, next) ->
     nikita

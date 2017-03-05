@@ -7,9 +7,8 @@ describe 'service.init', ->
   
   @timeout 30000
   config = test.config()
-  return if config.disable_service
-  process.env['TMPDIR'] = '/var/tmp'
-
+  # return if config.disable_service
+  # process.env['TMPDIR'] = '/var/tmp'
 
   they 'init file with target and source (default)', (ssh, next) ->
     nikita

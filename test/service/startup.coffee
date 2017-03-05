@@ -7,7 +7,7 @@ describe 'service.startup', ->
   
   @timeout 30000
   config = test.config()
-  return if config.disable_service
+  return if config.disable_service_start
   # process.env['TMPDIR'] = '/var/tmp' if config.isCentos6 or config.isCentos7
   
   if config.isCentos6

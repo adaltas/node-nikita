@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* service: split activation between install & start #78
 * service: throw err if loader not detected #77
 * test: fix creation of test config file #76
 * docker: test against archlinux #73
