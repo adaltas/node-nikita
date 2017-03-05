@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* file: support pacman conf #74
 * service: remove all ref to option.store and rewrite all this mess #72
 
 ## Version 0.6.1

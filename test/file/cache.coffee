@@ -3,7 +3,6 @@ http = require 'http'
 nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
-fs = require 'ssh2-fs'
 path = require 'path'
 
 describe 'file.cache', ->

@@ -352,11 +352,11 @@ misc = module.exports =
         val = obj[k]
         if val and Array.isArray val
             val.forEach (item) ->
-                out += if val is '' then "#{k}" + "\n" else safe("#{k}[]") + options.separator + safe(item) + "\n"
+                out += if val is '' or val is true then "#{k}" + "\n" else safe("#{k}[]") + options.separator + safe(item) + "\n"
         else if val and typeof val is "object"
           children.push k
         else
-          out += if val is '' then "#{k}" + eol else safe(k) + options.separator + safe(val) + eol
+          out += if val is '' or val is true then "#{k}" + eol else safe(k) + options.separator + safe(val) + eol
       if section and out.length
         out = "[" + safe(section) + "]" + eol + out
       children.forEach (k, _, __) ->

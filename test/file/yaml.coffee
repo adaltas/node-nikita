@@ -3,7 +3,6 @@ nikita = require '../../src'
 misc = require '../../src/misc'
 test = require '../test'
 they = require 'ssh2-they'
-fs = require 'ssh2-fs'
 
 describe 'file.yaml', ->
 
@@ -24,21 +23,21 @@ describe 'file.yaml', ->
 
 
   they 'merge an object', (ssh, next) ->
-    content = 'user:\n  preference:\n    language: english\n'
-    fs.writeFile ssh, "#{scratch}/user.yml", content, (err) ->
-      return next err if err
-      nikita
-        ssh: ssh
-      .file.yaml
-        content: user: preference: language: 'french'
-        target: "#{scratch}/user.yml"
-        merge: true
-      , (err, status) ->
-        status.should.be.true() unless err
-      .file.assert
-        target: "#{scratch}/user.yml"
-        content: 'user:\n  preference:\n    language: french\n'
-      .then next
+    nikita
+      ssh: ssh
+    file
+      target: "#{scratch}/user.yml"
+      content: 'user:\n  preference:\n    language: english\n'
+    .file.yaml
+      content: user: preference: language: 'french'
+      target: "#{scratch}/user.yml"
+      merge: true
+    , (err, status) ->
+      status.should.be.true() unless err
+    .file.assert
+      target: "#{scratch}/user.yml"
+      content: 'user:\n  preference:\n    language: french\n'
+    .then next
 
   they 'discard undefined and null', (ssh, next) ->
     nikita

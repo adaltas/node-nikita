@@ -1,6 +1,5 @@
 
 nikita = require '../../src'
-fs = require 'fs'
 they = require 'ssh2-they'
 test = require '../test'
 

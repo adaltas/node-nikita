@@ -1,5 +1,5 @@
 
-# `nikita.cache(options, [callback])`
+# `nikita.file.cache(options, [callback])`
 
 Download a file and place it on a local or remote folder for later usage.
 

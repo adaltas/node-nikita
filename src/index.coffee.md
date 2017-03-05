@@ -97,6 +97,8 @@ functions share a common API with flexible options.
         touch: 'nikita/file/touch'
         upload: 'nikita/file/upload'
         yaml: 'nikita/file/yaml'
+        types:
+          pacman_conf: 'nikita/file/types/pacman_conf'
       java:
         keystore_add: 'nikita/java/keystore_add'
         keystore_remove: 'nikita/java/keystore_remove'
