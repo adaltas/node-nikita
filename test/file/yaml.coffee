@@ -21,11 +21,10 @@ describe 'file.yaml', ->
       content: 'user:\n  preference:\n    color: rouge\n'
     .then next
 
-
   they 'merge an object', (ssh, next) ->
     nikita
       ssh: ssh
-    file
+    .file
       target: "#{scratch}/user.yml"
       content: 'user:\n  preference:\n    language: english\n'
     .file.yaml
