@@ -24,6 +24,8 @@ creating any modifications.
 *   `code_skipped` (int|string|array)   
     Expected code(s) returned by the command if it has no effect, executed will
     not be incremented, int or array of int.   
+*   `dirty` (boolean)   
+    Leave temporary files on the filesystem.   
 *   `trap`   
     Exit immediately if a commands exits with a non-zero status.   
 *   `cwd`   
@@ -211,7 +213,7 @@ nikita.system.execute({
           , 1
       @then (err1, status) ->
         @system.remove
-          if: options.target
+          if: not options.dirty && options.target
           target: options.target
         @then (err2) ->
           callback err1 or err2, status, result.stdout, result.stderr, result.code

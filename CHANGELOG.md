@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* execute: option dirty leave temp file as is #82 
 * service: support pacman #81
 * travis: test with node 7 #80
 * misc.glob: only used command #79
