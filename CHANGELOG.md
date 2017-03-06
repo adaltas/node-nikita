@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* travis: test with node 7 #80
 * misc.glob: only used command #79
 * service: split activation between install & start #78
 * service: throw err if loader not detected #77
