@@ -60,10 +60,10 @@ require('nikita').service.stop([{
           /etc/init.d/* \
           2>/dev/null \
         | grep -w "#{options.name}" || exit 3
-        if which systemctl >/dev/null; then
+        if which systemctl >/dev/null 2>&1; then
           systemctl status #{options.name} || exit 3
           systemctl stop #{options.name}
-        elif which service >/dev/null; then
+        elif which service >/dev/null 2>&1; then
           service #{options.name} status || exit 3
           service #{options.name} stop
         else

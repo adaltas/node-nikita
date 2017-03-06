@@ -41,35 +41,62 @@ require('nikita').service.start([{
       # Action
       options.log message: "Remove service #{options.name}", level: 'INFO', module: 'nikita/lib/service/remove'
       cacheonly = if options.cacheonly then '-C' else ''
+      if options.cache
+        installed = options.store['nikita:execute:installed']
       @system.execute
         cmd: """
-        if which yum >/dev/null; then exit 1; fi
-        if which apt-get >/dev/null; then exit 2; fi
+        if which yum >/dev/null 2>&1; then
+          rpm -qa --qf "%{NAME}\n"
+        elif which pacman >/dev/null 2>&1; then
+          pacman -Qqe
+        elif which apt-get >/dev/null 2>&1; then
+          dpkg -l | grep \'^ii\' | awk \'{print $2}\'
+        else
+          echo "Failed Package Installed" >&2
+          exit 2
+        fi
         """
-        code: [1, 2]
-        unless: options.manager
-        relax: true
+        code_skipped: 1
+        stdout_log: false
         shy: true
-      , (err, status, stdout, stderr, signal) ->
+        unless: installed?
+      , (err, status, stdout) ->
+        throw Error "Failed Package Installed" if err?.code is 2
         throw err if err
-        options.manager = switch signal
-          when 1 then 'yum'
-          when 2 then 'apt'
-        options.store['nikita:service:manager'] = options.manager if options.cache
+        return unless status
+        options.log message: "Installed packages retrieved", level: 'INFO', module: 'nikita/service/remove'
+        installed = for pkg in string.lines(stdout) then pkg
       @system.execute
-        cmd: -> switch options.manager
-          when 'yum' then """
-            if ! rpm -qa --qf "%{NAME}\n" | grep -w '#{options.name}'; then exit 3; fi;
-            yum remove -y #{cacheonly} '#{options.name}'
-            """
-          when 'apt' then """
-          if ! dpkg -l | grep \'^ii\' | awk \'{print $2}\' | grep -w '#{options.name}'; then exit 3; fi;
-          apt-get remove -y #{cacheonly} '#{options.name}'
-          """
+        cmd: """
+        if which yum >/dev/null 2>&1; then
+          yum remove -y #{cacheonly} '#{options.name}'
+        elif which pacman >/dev/null 2>&1; then
+          pacman --noconfirm -R #{options.name}
+        elif which apt-get >/dev/null 2>&1; then
+          apt-get remove -y #{options.name}
+        else
+          echo "Unsupported Package Manager: yum, pacman, apt-get supported" >&2
+          exit 2
+        fi
+        """
         code_skipped: 3
-      , (err, removed) ->
+        if: ->
+          installed.indexOf(options.name) isnt -1 
+      , (err, status) ->
         throw Error "Invalid Service Name: #{options.name}" if err
-        options.log if removed
+        # Update list of installed packages
+        installed.splice installed.indexOf(options.name), 1
+        # Log information
+        options.log if status
         then message: "Service removed", level: 'WARN', module: 'nikita/lib/service/remove'
         else message: "Service already removed", level: 'INFO', module: 'nikita/lib/service/remove'
+      @call
+        if: options.cache
+        handler: ->
+          options.log message: "Caching installed on \"nikita:execute:installed\"", level: 'INFO', module: 'nikita/service/install'
+          options.store['nikita:execute:installed'] = installed
+
+## Dependencies
+
+    string = require '../misc/string'
         

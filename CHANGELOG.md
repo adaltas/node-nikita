@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* service: support pacman #81
 * travis: test with node 7 #80
 * misc.glob: only used command #79
 * service: split activation between install & start #78

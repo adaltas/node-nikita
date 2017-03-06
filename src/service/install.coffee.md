@@ -43,9 +43,11 @@ require('nikita').service.install({
       # List installed packages
       @system.execute
         cmd: """
-        if which yum >/dev/null; then
+        if which yum >/dev/null 2>&1; then
           rpm -qa --qf "%{NAME}\n"
-        elif which apt-get >/dev/null; then
+        elif which pacman >/dev/null 2>&1; then
+          pacman -Qqe
+        elif which apt-get >/dev/null 2>&1; then
           dpkg -l | grep \'^ii\' | awk \'{print $2}\'
         else
           echo "Failed Package Installed" >&2
@@ -65,9 +67,11 @@ require('nikita').service.install({
       # List packages waiting for update
       @system.execute
         cmd: """
-        if which yum >/dev/null; then
+        if which yum >/dev/null 2>&1; then
           yum #{cacheonly} list updates | egrep updates$ | sed 's/\\([^\\.]*\\).*/\\1/'
-        elif which apt-get >/dev/null; then
+        elif which pacman >/dev/null 2>&1; then
+          pacman -Qu | sed 's/\\([^ ]*\\).*/\\1/'
+        elif which apt-get >/dev/null 2>&1; then
           apt-get -u upgrade --assume-no | grep '^\\s' | sed 's/\\s/\\n/g'
         else
           echo "Failed Package Updates" >&2
@@ -87,12 +91,14 @@ require('nikita').service.install({
         updates = string.lines stdout.trim()
       @system.execute
         cmd: """
-        if which yum >/dev/null; then
+        if which yum >/dev/null 2>&1; then
           yum install -y #{cacheonly} #{options.name}
-        elif which apt-get >/dev/null; then
+        elif which pacman >/dev/null 2>&1; then
+          pacman --noconfirm -S #{options.name}
+        elif which apt-get >/dev/null 2>&1; then
           apt-get install -y #{options.name}
         else
-          echo "Unsupported Package Manager: yum, apt-get supported" >&2
+          echo "Unsupported Package Manager: yum, pacman, apt-get supported" >&2
           exit 2
         fi
         """
@@ -100,11 +106,11 @@ require('nikita').service.install({
         if: ->
           installed.indexOf(options.name) is -1 or updates.indexOf(options.name) isnt -1
       , (err, status) ->
-        throw Error "Unsupported Package Manager: yum, apt-get supported" if err?.code is 2
+        throw Error "Unsupported Package Manager: yum, pacman, apt-get supported" if err?.code is 2
         throw err if err
         options.log if status
         then message: "Package \"#{options.name}\" is installed", level: 'WARN', module: 'nikita/service/install'
-        else message: "Package \"#{options.name}\" is already installed", level: 'WARN', module: 'nikita/service/install'
+        else message: "Package \"#{options.name}\" is already installed", level: 'INFO', module: 'nikita/service/install'
         # Enrich installed array with package name unless already there
         installedIndex = installed.indexOf options.name
         installed.push options.name if installedIndex is -1
