@@ -1,6 +1,5 @@
 
 path = require 'path'
-glob = require 'glob'
 {Minimatch} = require 'minimatch'
 exec = require 'ssh2-exec'
 string = require './string'
@@ -36,24 +35,25 @@ module.exports = (ssh, pattern, options, callback) ->
   if arguments.length is 3
     callback = options
     options = {}
-  if ssh
-    pattern = path.normalize pattern
-    minimatch = new Minimatch pattern, options
-    cmd = "find"
+  pattern = path.normalize pattern
+  minimatch = new Minimatch pattern, options
+  cmd = "find"
+  for s in minimatch.set
+    prefix = getprefix s
+    cmd += " #{prefix}"
+  child = exec ssh, cmd, shell: true#, timeout: 0, maxBuffer: 2000*1024
+  stdout = []
+  child.stdout.on 'data', (data) ->
+    stdout.push data.toString()
+  child.on 'error', callback
+  child.on 'close', (code) ->
+    files = string.lines stdout.join('\n').trim()
+    files = files.filter (file) -> minimatch.match file
     for s in minimatch.set
-      prefix = getprefix s
-      cmd += " #{prefix}"
-    exec ssh, cmd, (err, stdout) ->
-      return callback null, [] if err
-      files = string.lines stdout.trim()
-      files = files.filter (file) -> minimatch.match file
-      for s in minimatch.set
-        n = 0
-        while typeof s[n] is "string" then n++
-        if s[n] is Minimatch.GLOBSTAR
-          prefix = getprefix s
-          files.unshift prefix if prefix
-      callback err, files
-  else
-    glob "#{pattern}", options, (err, files) ->
-      callback err, files
+      n = 0
+      while typeof s[n] is "string" then n++
+      if s[n] is Minimatch.GLOBSTAR
+        prefix = getprefix s
+        files.unshift prefix if prefix
+    callback null, files
+    
