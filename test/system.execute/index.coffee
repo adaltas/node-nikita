@@ -62,7 +62,7 @@ describe 'system.execute', ->
     .system.execute
       cmd: "cat #{__filename} | grep #{search2}"
       stdout: out
-    , (err, executed, stdout, stderr) ->
+    , (err, status, stdout, stderr) ->
       unpiped.should.eql 2
       data.should.containEql search1
       data.should.containEql search2
@@ -74,7 +74,7 @@ describe 'system.execute', ->
     .system.execute
       cmd: "echo 'some text' | grep nothing"
       relax: true
-    , (err, executed, stdout, stderr) ->
+    , (err, status, stdout, stderr) ->
       stdout.should.eql '' unless err
       stderr.should.eql '' unless err
     .then next
@@ -85,7 +85,7 @@ describe 'system.execute', ->
       ssh: ssh
     .system.execute
       cmd: "exit 42"
-    .then (err, executed) ->
+    .then (err, status) ->
       err.message.should.eql 'Invalid Exit Code: 42'
     .system.execute
       cmd: "exit 42"
@@ -100,15 +100,14 @@ describe 'system.execute', ->
       cmd: "mkdir #{scratch}/my_dir"
       code: 0
       code_skipped: 1
-    , (err, executed, stdout, stderr) ->
-      return next err if err
-      executed.should.be.true()
+    , (err, status, stdout, stderr) ->
+      status.should.be.true() unless err
     .system.execute
       cmd: "mkdir #{scratch}/my_dir"
       code: 0
       code_skipped: 1
-    , (err, executed, stdout, stderr) ->
-      executed.should.be.false() unless err
+    , (err, status, stdout, stderr) ->
+      status.should.be.false() unless err
     .then next
 
   they 'should honor conditions', (ssh, next) ->
@@ -117,14 +116,14 @@ describe 'system.execute', ->
     .system.execute
       cmd: 'text=yes; echo $text'
       if_exists: __dirname
-    , (err, executed, stdout, stderr) ->
-      executed.should.be.true()
+    , (err, status, stdout, stderr) ->
+      status.should.be.true()
       stdout.should.eql 'yes\n'
     .system.execute
       cmd: 'text=yes; echo $text'
       if_exists: "__dirname/toto"
-    , (err, executed, stdout, stderr) ->
-      executed.should.be.false()
+    , (err, status, stdout, stderr) ->
+      status.should.be.false()
       should.not.exist stdout
     .then next
 
@@ -134,8 +133,8 @@ describe 'system.execute', ->
     .system.execute
       cmd: "ls -l #{__dirname}"
       unless_exists: __dirname
-    , (err, executed, stdout, stderr) ->
-      executed.should.be.false() unless err
+    , (err, status, stdout, stderr) ->
+      status.should.be.false() unless err
     .then next
 
   describe 'trim', ->
@@ -149,7 +148,7 @@ describe 'system.execute', ->
         echo ' monde  ' >&2
         """
         trim: true
-      , (err, executed, stdout, stderr) ->
+      , (err, status, stdout, stderr) ->
         stdout.should.eql 'bonjour' unless err
         stderr.should.eql 'monde' unless err
       .then next
@@ -164,45 +163,9 @@ describe 'system.execute', ->
         """
         stdout_trim: true
         stderr_trim: true
-      , (err, executed, stdout, stderr) ->
+      , (err, status, stdout, stderr) ->
         stdout.should.eql 'bonjour' unless err
         stderr.should.eql 'monde' unless err
-      .then next
-
-  describe 'target', ->
-    
-    they 'in generated path', (ssh, next) ->
-      nikita
-        ssh: ssh
-      .system.execute
-        cmd: "echo $BASH"
-        target: true
-      , (err, executed, stdout, stderr) ->
-        stdout.should.eql '/bin/bash\n'
-      .then next
-        
-    they 'in user path', (ssh, next) ->
-      nikita
-        ssh: ssh
-      .system.execute
-        cmd: "echo $BASH"
-        target: "#{scratch}/my_script"
-      , (err, executed, stdout, stderr) ->
-        stdout.should.eql '/bin/bash\n'
-      .file.assert
-        target: "#{scratch}/my_script"
-        not: true
-      .then next
-        
-    they 'honors exit code', (ssh, next) ->
-      nikita
-        ssh: ssh
-      .system.execute
-        cmd: "exit 2"
-        target: true
-        code_skipped: 2
-      , (err, status) ->
-        status.should.be.false() unless err
       .then next
 
   describe 'log', ->
