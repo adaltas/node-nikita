@@ -5,6 +5,8 @@ Install a service. Yum and apt-get are supported.
 
 ## Options
 
+*   `cache` (boolean)   
+    Cache the list of installed and outpdated packages.
 *   `cacheonly` (boolean)   
     Run the yum command entirely from system cache, don't update cache.   
 *   `code_skipped` (integer|array)   
@@ -31,11 +33,10 @@ require('nikita').service.install({
       options.name ?= options.argument if typeof options.argument is 'string'
       # Action
       options.log message: "Install service #{options.name}", level: 'INFO', module: 'nikita/lib/service/install'
-      installed = updates = null
+      installed = outpdated = null
       if options.cache
         installed = options.store['nikita:execute:installed']
-        updates = options.store['nikita:execute:updates']
-      options.manager ?= options.store['nikita:service:manager']
+        outpdated = options.store['nikita:execute:outpdated']
       # Validation
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       # Start real work
@@ -81,14 +82,14 @@ require('nikita').service.install({
         code_skipped: 1
         stdout_log: false
         shy: true
-        unless: updates?
+        unless: outpdated?
         if: -> installed.indexOf(options.name) is -1
       , (err, status, stdout) ->
         throw Error "Failed Package Updates" if err?.code is 2
         throw err if err
-        return updates = [] unless status
-        options.log message: "Available updates retrieved", level: 'INFO', module: 'nikita/service/install'
-        updates = string.lines stdout.trim()
+        return outpdated = [] unless status
+        options.log message: "Outpdated package list retrieved", level: 'INFO', module: 'nikita/service/install'
+        outpdated = string.lines stdout.trim()
       @system.execute
         cmd: """
         if which yum >/dev/null 2>&1; then
@@ -104,7 +105,7 @@ require('nikita').service.install({
         """
         code_skipped: options.code_skipped
         if: ->
-          installed.indexOf(options.name) is -1 or updates.indexOf(options.name) isnt -1
+          installed.indexOf(options.name) is -1 or outpdated.indexOf(options.name) isnt -1
       , (err, status) ->
         throw Error "Unsupported Package Manager: yum, pacman, apt-get supported" if err?.code is 2
         throw err if err
@@ -114,17 +115,17 @@ require('nikita').service.install({
         # Enrich installed array with package name unless already there
         installedIndex = installed.indexOf options.name
         installed.push options.name if installedIndex is -1
-        # Remove package name from updates if listed
-        if updates
-          updatesIndex = updates.indexOf options.name
-          updates.splice updatesIndex, 1 unless updatesIndex is -1
+        # Remove package name from outpdated if listed
+        if outpdated
+          outpdatedIndex = outpdated.indexOf options.name
+          outpdated.splice outpdatedIndex, 1 unless outpdatedIndex is -1
       @call
         if: options.cache
         handler: ->
           options.log message: "Caching installed on \"nikita:execute:installed\"", level: 'INFO', module: 'nikita/service/install'
           options.store['nikita:execute:installed'] = installed
-          options.log message: "Caching updates on \"nikita:execute:updates\"", level: 'INFO', module: 'nikita/service/install'
-          options.store['nikita:execute:updates'] = updates
+          options.log message: "Caching outpdated list on \"nikita:execute:outpdated\"", level: 'INFO', module: 'nikita/service/install'
+          options.store['nikita:execute:outpdated'] = outpdated
 
 ## Dependencies
 
