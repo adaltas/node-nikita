@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* locale_gen: new file types action #88
 * file: fix log information #87
 * src: enforce line ending with git #83
 * service: support arch-chroot in install, start, status, stop #86

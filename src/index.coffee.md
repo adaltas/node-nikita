@@ -98,6 +98,7 @@ functions share a common API with flexible options.
         upload: 'nikita/file/upload'
         yaml: 'nikita/file/yaml'
         types:
+          locale_gen: 'nikita/file/types/locale_gen'
           pacman_conf: 'nikita/file/types/pacman_conf'
       java:
         keystore_add: 'nikita/java/keystore_add'
