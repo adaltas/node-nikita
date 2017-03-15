@@ -36,3 +36,18 @@ describe 'file.types.pacman_conf', ->
       target: "#{scratch}/pacman.conf"
       content: '[options]\nArchitecture = auto\nCheckSpace\n'
     .then next
+
+  they 'rootdir with default target', (ssh, next) ->
+    nikita
+      ssh: ssh
+    .file.types.pacman_conf
+      rootdir: "#{scratch}"
+      content: 'options':
+        'Architecture': 'auto'
+        'CheckSpace': true      
+    , (err, status) ->
+      status.should.be.true() unless err
+    .file.assert
+      target: "#{scratch}/etc/pacman.conf"
+      content: '[options]\nArchitecture = auto\nCheckSpace\n'
+    .then next

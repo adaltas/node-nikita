@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* pacman_conf: target default path and rootdir support #89
 * locale_gen: new file types action #88
 * file: fix log information #87
 * src: enforce line ending with git #83
