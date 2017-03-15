@@ -26,12 +26,12 @@ describe 'service.status', ->
       name: config.service.srv_name
     , (err, status) ->
       status.should.be.true() unless err
-    # .service.stop
-    #   name: config.service.srv_name
-    # .service.status
-    #   name: config.service.name
-    #   srv_name: config.service.srv_name
-    # , (err, status) ->
-    #   status.should.be.false() unless err
+    .service.stop
+      name: config.service.srv_name
+    .service.status
+      name: config.service.name
+      srv_name: config.service.srv_name
+    , (err, status) ->
+      status.should.be.false() unless err
     .then next
     

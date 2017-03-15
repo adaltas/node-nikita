@@ -5,32 +5,22 @@ Start a service. Note, does not throw an error if service is not installed.
 
 ## Options
 
-*   `cache` (boolean)   
-    Cache system and service information.   
+*   `arch_chroot` (boolean|string)   
+    Run this command inside a root directory with the arc-chroot command or any 
+    provided string, require the "rootdir" option if activated.   
+*   `rootdir` (string)   
+    Path to the mount point corresponding to the root directory, required if 
+    the "arch_chroot" option is activated.   
 *   `name` (string)   
     Service name.   
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-*   `code_started` (int|string|array)   
-    Expected code(s) returned by service status for STARTED, int or array of
-    int, default to 0.   
-*   `code_stopped` (int|string|array)   
-    Expected code(s) returned by service status for STOPPED, int or array of 
-    int, default to 3   
-*   `stdout` (stream.Writable)   
-    Writable EventEmitter in which the standard output of executed commands will
-    be piped.   
-*   `stderr` (stream.Writable)   
-    Writable EventEmitter in which the standard error output of executed command
-    will be piped.   
 
 ## Callback parameters
 
 *   `err`   
     Error object if any.   
-*   `modified`   
-    Indicates if the startup behavior has changed.   
+*   `status`   
+    Indicates if the service was stopped ("true") or if it was already stopped 
+    ("false").   
 
 ## Example
 
@@ -72,6 +62,8 @@ require('nikita').service.stop([{
         fi
         """
         code_skipped: 3
+        arch_chroot: options.arch_chroot
+        rootdir: options.rootdir
       , (err, status) ->
         options.log message: "Service already stopped", level: 'WARN', module: 'nikita/lib/service/stop' if not err and not status
         options.log message: "Service is stopped", level: 'INFO', module: 'nikita/lib/service/stop' if not err and status

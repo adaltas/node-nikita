@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* service: support arch-chroot in install, start, status, stop #86
 * user: support arch-chroot #85
 * execute: suport arch-chroot commands #84
 * execute: option dirty leave temp file as is #82 

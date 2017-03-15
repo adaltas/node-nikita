@@ -5,8 +5,14 @@ Install a service. Yum and apt-get are supported.
 
 ## Options
 
+*   `arch_chroot` (boolean|string)   
+    Run this command inside a root directory with the arc-chroot command or any 
+    provided string, require the "rootdir" option if activated.   
 *   `cache` (boolean)   
-    Cache the list of installed and outpdated packages.
+    Cache the list of installed and outpdated packages.   
+*   `rootdir` (string)   
+    Path to the mount point corresponding to the root directory, required if 
+    the "arch_chroot" option is activated.   
 *   `cacheonly` (boolean)   
     Run the yum command entirely from system cache, don't update cache.   
 *   `code_skipped` (integer|array)   
@@ -43,6 +49,7 @@ require('nikita').service.install({
       cacheonly = if options.cacheonly then '-C' else ''
       # List installed packages
       @system.execute
+        unless: installed?
         cmd: """
         if which yum >/dev/null 2>&1; then
           rpm -qa --qf "%{NAME}\n"
@@ -56,9 +63,10 @@ require('nikita').service.install({
         fi
         """
         code_skipped: 1
+        arch_chroot: options.arch_chroot
+        rootdir: options.rootdir
         stdout_log: false
         shy: true
-        unless: installed?
       , (err, status, stdout) ->
         throw Error "Failed Package Installed" if err?.code is 2
         throw err if err
@@ -67,6 +75,8 @@ require('nikita').service.install({
         installed = for pkg in string.lines(stdout) then pkg
       # List packages waiting for update
       @system.execute
+        unless: outpdated?
+        if: -> installed.indexOf(options.name) is -1
         cmd: """
         if which yum >/dev/null 2>&1; then
           yum #{cacheonly} list updates | egrep updates$ | sed 's/\\([^\\.]*\\).*/\\1/'
@@ -80,10 +90,10 @@ require('nikita').service.install({
         fi
         """
         code_skipped: 1
+        arch_chroot: options.arch_chroot
+        rootdir: options.rootdir
         stdout_log: false
         shy: true
-        unless: outpdated?
-        if: -> installed.indexOf(options.name) is -1
       , (err, status, stdout) ->
         throw Error "Failed Package Updates" if err?.code is 2
         throw err if err
@@ -91,9 +101,12 @@ require('nikita').service.install({
         options.log message: "Outpdated package list retrieved", level: 'INFO', module: 'nikita/service/install'
         outpdated = string.lines stdout.trim()
       @system.execute
+        if: -> installed.indexOf(options.name) is -1 or outpdated.indexOf(options.name) isnt -1
         cmd: """
         if which yum >/dev/null 2>&1; then
           yum install -y #{cacheonly} #{options.name}
+        elif which yaourt >/dev/null 2>&1; then
+          yaourt --noconfirm -S #{options.name}
         elif which pacman >/dev/null 2>&1; then
           pacman --noconfirm -S #{options.name}
         elif which apt-get >/dev/null 2>&1; then
@@ -104,10 +117,10 @@ require('nikita').service.install({
         fi
         """
         code_skipped: options.code_skipped
-        if: ->
-          installed.indexOf(options.name) is -1 or outpdated.indexOf(options.name) isnt -1
+        arch_chroot: options.arch_chroot
+        rootdir: options.rootdir
       , (err, status) ->
-        throw Error "Unsupported Package Manager: yum, pacman, apt-get supported" if err?.code is 2
+        throw Error "Unsupported Package Manager: yum, yaourt, pacman, apt-get supported" if err?.code is 2
         throw err if err
         options.log if status
         then message: "Package \"#{options.name}\" is installed", level: 'WARN', module: 'nikita/service/install'
