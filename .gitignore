@@ -2,6 +2,7 @@
 /node_modules
 !.travis.yml
 !.gitignore
+!.gitattributes
 !.npmignore
 /test.coffee
 !/test.coffee.sample
