@@ -1,7 +1,7 @@
 FROM base/archlinux
 MAINTAINER David Worms
 
-RUN pacman -Syu && pacman --noconfirm -S procps grep
+RUN pacman -Syu && pacman --noconfirm -S procps grep which
 
 # Install Node.js
 ENV NPM_CONFIG_LOGLEVEL info
@@ -28,7 +28,13 @@ ADD ./krb5.conf /etc/krb5.conf
 RUN pacman --noconfirm -S zip git
 
 # Install docker
-RUN pacman --noconfirm -S docker docker-compose
+RUN pacman -Syy && pacman --noconfirm -S docker docker-compose
+
+# Install arch-chroot
+RUN pacman --noconfirm -S arch-install-scripts tar gzip \
+ && curl https://mirrors.kernel.org/archlinux/iso/2017.03.01/archlinux-bootstrap-2017.03.01-x86_64.tar.gz -o /var/tmp/archlinux-bootstrap-2017.03.01-x86_64.tar.gz \
+ && tar xzf /var/tmp/archlinux-bootstrap-2017.03.01-x86_64.tar.gz -C /var/tmp \
+ && rm -f /var/tmp/archlinux-bootstrap-2017.03.01-x86_64.tar.gz
 
 ADD ./run.sh /run.sh
 RUN mkdir -p /nikita

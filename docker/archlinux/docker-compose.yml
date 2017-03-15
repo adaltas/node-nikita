@@ -10,6 +10,8 @@ services:
       - krb5
     environment:
       MECANO_TEST: /nikita/docker/archlinux/test.coffee
+    cap_add:
+      - SYS_ADMIN # Required to use `mount`
   krb5:
     image: sequenceiq/kerberos
     volumes:

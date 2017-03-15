@@ -15,8 +15,14 @@ creating any modifications.
 
 ## Options
 
+*   `arch_chroot` (boolean|string)   
+    Run this command inside a root directory with the arc-chroot command or any 
+    provided string, require the "rootdir" option if activated.   
 *   `bash` (boolean|string)   
     Serialize the command into a file and execute it with bash.   
+*   `rootdir` (string)   
+    Path to the mount point corresponding to the root directory, required if 
+    the "arch_chroot" option is activated.   
 *   `cmd`   
     String, Object or array; Command to execute.   
 *   `code` (int|string|array)   
@@ -128,9 +134,11 @@ nikita.system.execute({
       options.cmd = options.cmd.call @, options if typeof options.cmd is 'function'
       options.bash = 'bash' if options.bash is true
       options.arch_chroot = 'arch-chroot' if options.arch_chroot is true
+      options.cmd = "set -e\n#{options.cmd}" if options.cmd and options.trap
+      options.cmd_original = "#{options.cmd}"
       throw Error "Missing cmd: #{options.cmd}" unless options.cmd?
-      options.cmd = "set -e\n#{options.cmd}" if options.trap
-      options.log message: options.cmd, type: 'stdin', module: 'nikita/lib/system/execute' if options.stdin_log
+      throw Error "Incompatible options: bash, arch_chroot" if options.bash and options.arch_chroot
+      throw Error "Required Option: \"rootdir\" with \"arch_chroot\"" if options.arch_chroot and not options.rootdir
       result = stdout: null, stderr: null, code: null
       # Guess current username
       current_username = 
@@ -139,29 +147,43 @@ nikita.system.execute({
         else process.env['USER']
       # Determines if writing is required and eventually convert uid to username
       @call shy: true, (_, callback)->
-        return callback null, false if current_username is 'root'
         return callback null, false unless options.uid
+        return callback null, false if current_username is 'root'
         return callback null, options.uid isnt current_username unless /\d/.test "#{options.uid}"
         @system.execute "awk -v val=#{options.uid} -F ":" '$3==val{print $1}' /etc/passwd`", (err, _, stdout) ->
           options.uid = stdout.trim() unless err
+          options.bash = 'bash' unless options.bash or options.arch_chroot
           callback err, options.uid isnt current_username
       # Write script
       @call
-        if: -> @status(-1) or options.bash
+        if: -> options.bash
       , ->
         cmd = options.cmd
-        options.cmd = "#!/bin/bash\n\n#{options.cmd}"
         options.target = "/tmp/nikita_#{string.hash options.cmd}" if typeof options.target isnt 'string'
         options.log message: 'Writing bash script to #{JSON.stringify options.target}', level: 'INFO'
-        options.cmd = "bash #{options.target}"
+        options.cmd = "#{options.bash} #{options.target}"
         options.cmd = "su - #{options.uid} -c '#{options.cmd}'" if options.uid
         @file
           target: options.target
           content: cmd
           uid: options.uid
           shy: true
+      @call
+        if: -> options.arch_chroot
+      , ->
+        cmd = options.cmd
+        options.target = "/var/tmp/nikita_#{string.hash options.cmd}" if typeof options.target isnt 'string'
+        options.log message: "Writing arch-chroot script to #{JSON.stringify options.target}", level: 'INFO'
+        options.cmd = "arch-chroot #{options.rootdir} bash #{options.target}"
+        @file
+          target: "#{path.join options.rootdir, options.target}"
+          content: "#{cmd}"
+          mode: options.mode
+          shy: true
+          eof: true
       # Execute
       @call (_, callback) ->
+        options.log message: options.cmd_original, type: 'stdin', level: 'INFO', module: 'nikita/lib/system/execute' if options.stdin_log
         child = exec options
         result.stdout = []; result.stderr = []
         child.stdout.pipe options.stdout, end: false if options.stdout
@@ -215,6 +237,7 @@ nikita.system.execute({
         @system.remove
           if: not options.dirty && options.target
           target: options.target
+          always: true # todo, need to create this option (run even on error)
         @then (err2) ->
           callback err1 or err2, status, result.stdout, result.stderr, result.code
 

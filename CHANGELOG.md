@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* execute: suport arch-chroot commands #84
 * execute: option dirty leave temp file as is #82 
 * service: support pacman #81
 * travis: test with node 7 #80
