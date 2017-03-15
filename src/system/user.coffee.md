@@ -5,40 +5,46 @@ Create or modify a Unix user.
 
 ## Options
 
-*   `name`   
-    Login name of the user.   
+*   `arch_chroot` (boolean|string)   
+    Run this command inside a root directory with the arc-chroot command or any 
+    provided string, require the "rootdir" option if activated.   
+*   `rootdir` (string)   
+    Path to the mount point corresponding to the root directory, required if 
+    the "arch_chroot" option is activated.   
+*   `comment`   
+    Short description of the login.   
+*   `expiredate`  
+    The date on which the user account is disabled.   
+*   `gid`   
+    Group name or number of the user´s initial login group.   
+*   `groups`   
+    List of supplementary groups which the user is also a member of.   
 *   `home`   
     Value for the user´s login directory, default to the login name appended to "BASE_DIR".   
+*   `inactive`   
+    The number of days after a password has expired before the account will be
+    disabled.   
+*   `name`   
+    Login name of the user.   
+*   `no_home_ownership` (boolean)   
+    Disable ownership on home directory which default to the "uid" and "gid"
+    options, default is "false".   
+*   `password`   
+    The unencrypted password.   
+*   `password_sync`   
+    Synchronize password, default is "true".   
 *   `shell`   
-    Path to the user shell, set to "/sbin/nologin" if "false, "/bin/bash" if
+    Path to the user shell, set to "/sbin/nologin" if "false", "/bin/bash" if
     true or default to the system shell value in "/etc/default/useradd", by
     default "/bin/bash".   
+*   `skel`   
+    The skeleton directory, which contains files and directories to be copied in
+    the user´s home directory, when the home directory is created by useradd.   
 *   `system`   
     Create a system account, such user are not created with a home by default,
     set the "home" option if we it to be created.   
 *   `uid`   
     Numerical value of the user´s ID, must not exist.   
-*   `gid`   
-    Group name or number of the user´s initial login group.   
-*   `groups`   
-    List of supplementary groups which the user is also a member of.   
-*   `comment`   
-    Short description of the login.   
-*   `password`   
-    The unencrypted password.   
-*   `password_sync`   
-    Synchronize password, default is "true".   
-*   `expiredate`  
-    The date on which the user account is disabled.     
-*   `inactive`   
-    The number of days after a password has expired before the account will be
-    disabled.   
-*   `skel`   
-    The skeleton directory, which contains files and directories to be copied in
-    the user´s home directory, when the home directory is created by useradd.   
-*   `no_home_ownership` (boolean)   
-    Disable ownership on home directory which default to the "uid" and "gid"
-    options, default is "false".   
 
 ## Callback parameters
 
@@ -121,6 +127,8 @@ you are a member of the "wheel" group (gid of "10") with the command
         @system.execute
           cmd: cmd
           code_skipped: 9
+          arch_chroot: options.arch_chroot
+          rootdir: options.rootdir
         @system.chown
           target: options.home
           uid: options.uid
@@ -156,6 +164,8 @@ you are a member of the "wheel" group (gid of "10") with the command
         @system.execute
           cmd: cmd
           if: changed
+          arch_chroot: options.arch_chroot
+          rootdir: options.rootdir
         @system.chown
           target: options.home
           uid: options.uid
@@ -170,9 +180,15 @@ you are a member of the "wheel" group (gid of "10") with the command
           do_password()
       do_password = =>
         # TODO, detect changes in password
+        # echo #{options.password} | passwd --stdin #{options.name}
         @system.execute
-          cmd: "echo #{options.password} | passwd --stdin #{options.name}"
+          cmd: """
+          hash=$(echo #{options.password} | openssl passwd -1 -stdin)
+          usermod --pass="$hash" #{options.name}
+          """
           if: options.password_sync and options.password
+          arch_chroot: options.arch_chroot
+          rootdir: options.rootdir
         , (err, modified) ->
           return callback err if err
           options.log message: "Password modified", level: 'WARN', module: 'nikita/lib/system/user' if modified
