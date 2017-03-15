@@ -20,7 +20,7 @@ describe 'options "log"', ->
         logs[0].level.should.eql 'INFO'
         logs[0].message.should.eql 'handler'
         (logs[0].module is undefined).should.be.true()
-        logs[0].time.should.match /\d+/
+        logs[0].time.should.be.a.Number()
         logs[0].total_depth.should.eql 1
         next err
         
@@ -37,7 +37,7 @@ describe 'options "log"', ->
         logs[0].level.should.eql 'INFO'
         logs[0].message.should.eql 'handler'
         (logs[0].module is undefined).should.be.true()
-        logs[0].time.should.match /\d+/
+        logs[0].time.should.be.a.Number()
         logs[0].total_depth.should.eql 2
         next err
         
@@ -58,7 +58,7 @@ describe 'options "log"', ->
         logs_child[0].level.should.eql 'INFO'
         logs_child[0].message.should.eql 'handler'
         (logs_child[0].module is undefined).should.be.true()
-        logs_child[0].time.should.match /\d+/
+        logs_child[0].time.should.be.a.Number()
         logs_child[0].total_depth.should.eql 2
         next err
   
@@ -106,7 +106,7 @@ describe 'options "log"', ->
         logs[0].level.should.eql 'INFO'
         logs[0].message.should.eql 'handler'
         (logs[0].module is undefined).should.be.true()
-        logs[0].time.should.match /\d+/
+        logs[0].time.should.be.a.Number()
         logs[0].total_depth.should.eql 1
         next err
       
