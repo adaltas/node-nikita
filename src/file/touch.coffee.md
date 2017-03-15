@@ -44,7 +44,7 @@ require('nikita').file.touch({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering touch", level: 'DEBUG', module: 'nikita/lib/file/touch'
+      options.log message: "Entering file.touch", level: 'DEBUG', module: 'nikita/lib/file/touch'
       # Options
       options.target = options.argument if options.argument?
       throw Error "Missing target: #{options.target}" unless options.target

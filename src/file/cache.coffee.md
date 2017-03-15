@@ -56,7 +56,7 @@ require('nikita').download({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering cache", level: 'DEBUG', module: 'nikita/lib/cache'
+      options.log message: "Entering file.cache", level: 'DEBUG', module: 'nikita/lib/file/cache'
       options.source = options.argument if options.argument?
       return callback Error "Missing source: '#{options.source}'" unless options.source
       return callback Error "Missing one of 'target', 'cache_file' or 'cache_dir' option" unless options.cache_file or options.target or options.cache_dir
@@ -84,12 +84,12 @@ require('nikita').download({
       @call
         handler: (_, callback) ->
           unless u.protocol is null
-            options.log message: "Bypass source hash computation for non-file protocols", level: 'WARN', module: 'nikita/lib/cache'
+            options.log message: "Bypass source hash computation for non-file protocols", level: 'WARN', module: 'nikita/lib/file/cache'
             return callback()
           return callback() if hash isnt true
           file.hash options.ssh, options.source, algo, (err, value) ->
             return callback err if err
-            options.log message: "Computed hash value is '#{value}'", level: 'INFO', module: 'nikita/lib/cache'
+            options.log message: "Computed hash value is '#{value}'", level: 'INFO', module: 'nikita/lib/file/cache'
             hash = value
             callback()
       # Download the file if
@@ -99,33 +99,33 @@ require('nikita').download({
       @call
         shy: true
         handler: (_, callback) ->
-          options.log message: "Check if target (#{options.target}) exists", level: 'DEBUG', module: 'nikita/lib/cache'
+          options.log message: "Check if target (#{options.target}) exists", level: 'DEBUG', module: 'nikita/lib/file/cache'
           ssh2fs.exists options.ssh, options.target, (err, exists) =>
             return callback err if err
             if exists
-              options.log message: "Target file exists", level: 'INFO', module: 'nikita/lib/cache'
+              options.log message: "Target file exists", level: 'INFO', module: 'nikita/lib/file/cache'
               # If no checksum , we ignore MD5 check
               if options.force
-                options.log message: "Force mode, cache will be overwritten", level: 'DEBUG', module: 'nikita/lib/cache'
+                options.log message: "Force mode, cache will be overwritten", level: 'DEBUG', module: 'nikita/lib/file/cache'
                 return callback null, true
               else if hash and typeof hash is 'string'
                 # then we compute the checksum of the file
-                options.log message: "Comparing #{algo} hash", level: 'DEBUG', module: 'nikita/lib/cache'
+                options.log message: "Comparing #{algo} hash", level: 'DEBUG', module: 'nikita/lib/file/cache'
                 file.hash options.ssh, options.target, algo, (err, c_hash) ->
                   return callback err if err
                   # And compare with the checksum provided by the user
                   if hash is c_hash
-                    options.log message: "Hashes match, skipping", level: 'DEBUG', module: 'nikita/lib/cache'
+                    options.log message: "Hashes match, skipping", level: 'DEBUG', module: 'nikita/lib/file/cache'
                     return callback null, false
-                  options.log message: "Hashes don't match, delete then re-download", level: 'WARN', module: 'nikita/lib/cache'
+                  options.log message: "Hashes don't match, delete then re-download", level: 'WARN', module: 'nikita/lib/file/cache'
                   ssh2fs.unlink options.ssh, options.target, (err) ->
                     return callback err if err
                     callback null, true
               else
-                options.log message: "Target file exists, check disabled, skipping", level: 'DEBUG', module: 'nikita/lib/cache'
+                options.log message: "Target file exists, check disabled, skipping", level: 'DEBUG', module: 'nikita/lib/file/cache'
                 callback null, false
             else
-              options.log message: "Target file does not exists", level: 'INFO', module: 'nikita/lib/cache'
+              options.log message: "Target file does not exists", level: 'INFO', module: 'nikita/lib/file/cache'
               callback null, true
       , (err, status) ->
         @end() unless status

@@ -43,6 +43,7 @@ require('nikita')
 ## Source Code
 
     module.exports = (options) ->
+      options.log message: "Entering file.json", level: 'DEBUG', module: 'nikita/lib/file/json'
       options.content ?= {}
       options.pretty ?= false
       options.pretty = 2 if options.pretty is true

@@ -87,7 +87,7 @@ require('nikita').ini({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering ini", level: 'DEBUG', module: 'nikita/lib/file/ini'
+      options.log message: "Entering file.ini", level: 'DEBUG', module: 'nikita/lib/file/ini'
       {merge, target, content, ssh} = options
       options.clean ?= true
       # Validate parameters

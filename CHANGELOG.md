@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* file: fix log information #87
 * src: enforce line ending with git #83
 * service: support arch-chroot in install, start, status, stop #86
 * user: support arch-chroot #85

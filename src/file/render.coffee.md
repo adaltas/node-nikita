@@ -76,7 +76,7 @@ require('nikita').file.render({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering render", level: 'DEBUG', module: 'nikita/lib/file/render'
+      options.log message: "Entering file.render", level: 'DEBUG', module: 'nikita/lib/file/render'
       # Validate parameters
       throw Error 'Missing source or content' unless options.source or options.content
       throw Error 'Missing target' unless options.target

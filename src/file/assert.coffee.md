@@ -44,7 +44,7 @@ nikita.assert({
 ## Source code
 
     module.exports = (options) ->
-      options.log message: "Entering assert", level: 'DEBUG', module: 'nikita/lib/assert'
+      options.log message: "Entering file.assert", level: 'DEBUG', module: 'nikita/lib/file/assert'
       options.encoding ?= 'utf8'
       options.target ?= options.argument
       options.target ?= options.source

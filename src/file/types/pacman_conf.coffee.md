@@ -7,6 +7,7 @@ in "/etc/pacman.conf".
 ## Source Code
 
     module.exports = (options) ->
+      options.log message: "Entering file.types.pacman_conf", level: 'DEBUG', module: 'nikita/lib/file/types/pacman_conf'
       @file.ini
         stringify: misc.ini.stringify_single_key
       , options

@@ -66,7 +66,7 @@ require('nikita').upload({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering upload", level: 'DEBUG', module: 'nikita/lib/file/upload'
+      options.log message: "Entering file.upload", level: 'DEBUG', module: 'nikita/lib/file/upload'
       throw Error "Required \"source\" option" unless options.source
       throw Error "Required \"target\" option" unless options.target
       options.log message: "Source is \"#{options.source}\"", level: 'DEBUG', module: 'nikita/lib/file/upload'
