@@ -7,7 +7,7 @@ describe 'file.types.locale_gen', ->
 
   scratch = test.scratch @
 
-  they.only 'activate locales', (ssh, next) ->
+  they 'activate locales', (ssh, next) ->
     nikita
       ssh: ssh
     .file
@@ -51,7 +51,7 @@ describe 'file.types.locale_gen', ->
       fr_FR ISO-8859-1
       es_ES.UTF-8 UTF-8
       """
-    .file.types.locale
+    .file.types.locale_gen
       target: "#{scratch}/etc/locale.gen"
       locales: ['fr_FR.UTF-8', 'en_US.UTF-8']
       locale: ['en_US.UTF-8']   
@@ -75,7 +75,7 @@ describe 'file.types.locale_gen', ->
     .file
       target: "#{scratch}/etc/locale.gen"
       content: "#en_US.UTF-8 UTF-8"
-    .file.types.locale
+    .file.types.locale_gen
       rootdir: "#{scratch}"
       locales: ['en_US.UTF-8'] 
     , (err, status) ->
