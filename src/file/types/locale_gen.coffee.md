@@ -9,8 +9,6 @@ Update the locale definition file located in "/etc/locale.gen".
     Path to the mount point corresponding to the root directory, optional.   
 *   `generate` (string)   
     Run `locale-gen` if target was modified.   
-*   `locale` (string)   
-    System locale, default to the first locale in "locales" options.
 *   `locales` (string)   
     List of supported locales, required.   
 *   `target` (string)   

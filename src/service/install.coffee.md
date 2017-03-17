@@ -71,7 +71,7 @@ require('nikita').service.install({
         throw Error "Failed Package Installed" if err?.code is 2
         throw err if err
         return unless status
-        options.log message: "Installed packages retrieved", level: 'INFO', module: 'nikita/service/install'
+        options.log message: "Installed packages retrieved", level: 'INFO', module: 'nikita/lib/service/install'
         installed = for pkg in string.lines(stdout) then pkg
       # List packages waiting for update
       @system.execute
@@ -98,7 +98,7 @@ require('nikita').service.install({
         throw Error "Failed Package Updates" if err?.code is 2
         throw err if err
         return outpdated = [] unless status
-        options.log message: "Outpdated package list retrieved", level: 'INFO', module: 'nikita/service/install'
+        options.log message: "Outpdated package list retrieved", level: 'INFO', module: 'nikita/lib/service/install'
         outpdated = string.lines stdout.trim()
       @system.execute
         if: -> installed.indexOf(options.name) is -1 or outpdated.indexOf(options.name) isnt -1
@@ -123,8 +123,8 @@ require('nikita').service.install({
         throw Error "Unsupported Package Manager: yum, yaourt, pacman, apt-get supported" if err?.code is 2
         throw err if err
         options.log if status
-        then message: "Package \"#{options.name}\" is installed", level: 'WARN', module: 'nikita/service/install'
-        else message: "Package \"#{options.name}\" is already installed", level: 'INFO', module: 'nikita/service/install'
+        then message: "Package \"#{options.name}\" is installed", level: 'WARN', module: 'nikita/lib/service/install'
+        else message: "Package \"#{options.name}\" is already installed", level: 'INFO', module: 'nikita/lib/service/install'
         # Enrich installed array with package name unless already there
         installedIndex = installed.indexOf options.name
         installed.push options.name if installedIndex is -1
@@ -135,9 +135,9 @@ require('nikita').service.install({
       @call
         if: options.cache
         handler: ->
-          options.log message: "Caching installed on \"nikita:execute:installed\"", level: 'INFO', module: 'nikita/service/install'
+          options.log message: "Caching installed on \"nikita:execute:installed\"", level: 'INFO', module: 'nikita/lib/service/install'
           options.store['nikita:execute:installed'] = installed
-          options.log message: "Caching outpdated list on \"nikita:execute:outpdated\"", level: 'INFO', module: 'nikita/service/install'
+          options.log message: "Caching outpdated list on \"nikita:execute:outpdated\"", level: 'INFO', module: 'nikita/lib/service/install'
           options.store['nikita:execute:outpdated'] = outpdated
 
 ## Dependencies

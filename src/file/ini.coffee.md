@@ -14,55 +14,26 @@ provided in the `content` option.
 
 ## Options   
 
-*   `append`   
-    Append the content to the target file. If target does not exist,
-    the file will be created. When used with the `match` and `replace` options,
-    it will append the `replace` value at the end of the file if no match if
-    found and if the value is a string.   
 *   `backup`   
     Create a backup, append a provided string to the filename extension or a
     timestamp if value is not a string.   
+*   `clean`   
+    Remove all the lines whithout a key and a value, default to "true".   
 *   `content`   
     Object to stringify.   
-*   `target`   
-    File path where to write content to or a callback.   
-*   `from`   
-    Replace from after this marker, a string or a regular expression.   
-*   `local`   
-    Treat the source as local instead of remote, only apply with "ssh"
-    option.   
-*   `match`   
-    Replace this marker, a string or a regular expression.   
 *   `merge`   
     Read the target if it exists and merge its content.   
-*   `replace`   
-    The content to be inserted, used conjointly with the from, to or match
-    options.   
-*   `source`   
-    File path from where to extract the content, do not use conjointly with
-    content.   
 *   `parse`   
     User-defined function to parse the content from ini format, default to
     `require('ini').parse`, see 'misc.ini.parse_multi_brackets'.   
+*   `separator`   
+    Default separator between keys and values, default to " : ".   
 *   `stringify`   
     User-defined function to stringify the content to ini format, default to
     `require('ini').stringify`, see 'misc.ini.stringify_square_then_curly' for
     an example.   
-*   `separator`   
-    Default separator between keys and values, default to " : ".   
-*   `to`   
-    Replace to before this marker, a string or a regular expression.   
-*   `clean`   
-    Remove all the lines whithout a key and a value, default to "true".   
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-*   `stdout` (stream.Writable)   
-    Writable EventEmitter in which the standard output of executed commands will
-    be piped.   
-*   `stderr` (stream.Writable)   
-    Writable EventEmitter in which the standard error output of executed command
-    will be piped.   
+*   `target`   
+    File path where to write content to or a callback.   
 
 ## Callback parameters
 

@@ -64,7 +64,7 @@ require('nikita').service.start([{
         throw Error "Failed Package Installed" if err?.code is 2
         throw err if err
         return unless status
-        options.log message: "Installed packages retrieved", level: 'INFO', module: 'nikita/service/remove'
+        options.log message: "Installed packages retrieved", level: 'INFO', module: 'nikita/lib/service/remove'
         installed = for pkg in string.lines(stdout) then pkg
       @system.execute
         cmd: """
@@ -93,7 +93,7 @@ require('nikita').service.start([{
       @call
         if: options.cache
         handler: ->
-          options.log message: "Caching installed on \"nikita:execute:installed\"", level: 'INFO', module: 'nikita/service/install'
+          options.log message: "Caching installed on \"nikita:execute:installed\"", level: 'INFO', module: 'nikita/lib/service/remove'
           options.store['nikita:execute:installed'] = installed
 
 ## Dependencies
