@@ -1,7 +1,7 @@
 FROM base/archlinux
 MAINTAINER David Worms
 
-RUN pacman -Syu && pacman --noconfirm -S procps grep which
+RUN pacman -Syu && pacman --noconfirm -S procps grep which sed
 
 # Install Node.js
 ENV NPM_CONFIG_LOGLEVEL info

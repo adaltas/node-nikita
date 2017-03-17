@@ -9,6 +9,7 @@ module.exports =
   disable_ldap_user: true
   disable_service_install: true
   disable_service_start: true
+  disable_service_startup: true
   disable_db: true
   disable_system_tmpfs: true
   disable_system_execute_arc_chroot: true

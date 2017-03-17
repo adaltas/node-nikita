@@ -5,6 +5,12 @@ Activate or desactivate a service on startup.
 
 ## Options
 
+*   `arch_chroot` (boolean|string)   
+    Run this command inside a root directory with the arc-chroot command or any 
+    provided string, require the "rootdir" option if activated.   
+*   `rootdir` (string)   
+    Path to the mount point corresponding to the root directory, required if 
+    the "arch_chroot" option is activated.   
 *   `cache` (boolean)   
     Cache service information.   
 *   `name` (string)   
@@ -29,7 +35,7 @@ Activate or desactivate a service on startup.
 
 *   `err`   
     Error object if any.   
-*   `modified`   
+*   `status`   
     Indicates if the startup behavior has changed.   
 
 ## Example
@@ -54,78 +60,91 @@ require('nikita').service.startup([{
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name?
       # Action
       options.log message: "Startup service #{options.name}", level: 'INFO', module: 'nikita/lib/service/startup'
-      modified = false
-      @service.discover cache: options.cache, shy: true, (err, status, loader) -> 
-        options.loader ?= loader
+      @system.execute
+        unless: options.cmd
+        cmd: """
+        if which systemctl >/dev/null 2>&1; then
+          echo 'systemctl'
+        elif which chkconfig >/dev/null 2>&1; then
+          echo 'chkconfig'
+        else
+          echo "Unsupported Loader" >&2
+          exit 2
+        fi
+        """
+        shy: true
+      , (err, _, stdout) ->
+        throw err if err
+        options.cmd = stdout.trim()
+      @system.execute
+        if: -> options.cmd is 'systemctl'
+        cmd: """
+          startup=#{if options.startup then '1' else ''}
+          if systemctl is-enabled #{options.name}; then
+            [ -z "$startup" ] || exit 3
+            echo 'Disable #{options.name}'
+            systemctl disable #{options.name}
+          else
+            [ -z "$startup" ] && exit 3
+            echo 'Enable #{options.name}'
+            systemctl enable #{options.name}
+          fi
+          """
+        code_skipped: 3
+        arch_chroot: options.arch_chroot
+        rootdir: options.rootdir
+      , (err, status) ->
+        throw err if err
+        message = if options.startup then 'activated' else 'disabled'
+        options.log if status
+        then message: "Service startup updated: #{message}", level: 'WARN', module: 'nikita/lib/service/remove'
+        else message: "Service startup not modified: #{message}", level: 'INFO', module: 'nikita/lib/service/remove'
       @call
-        if: -> options.loader is 'service'
-        handler: ->
-          do_enable = false
-          do_disable = false
-          @call 
-            shy: true
-            handler: (_, callback) ->
-              @system.execute
-                cmd: "chkconfig --list #{options.name}"
-                shy: true
-                code_skipped: 1
-              , (err, registered, stdout, stderr) ->
-                return callback err if err
-                # Invalid service name return code is 0 and message in stderr start by error
-                if /^error/.test stderr
-                  options.log message: "Invalid chkconfig name for \"#{options.name}\"", level: 'ERROR', module: 'nikita/service/startup'
-                  return callback new Error "Invalid chkconfig name for `#{options.name}`"
-                current_startup = ''
-                if registered
-                  for c in stdout.split(' ').pop().trim().split '\t'
-                    [level, status] = c.split ':'
-                    current_startup += level if ['on', 'marche'].indexOf(status) > -1
-                istr = typeof options.startup is 'string'
-                startup = if istr then true else options.startup
-                if startup
-                  do_enable = (current_startup.length is 0) or  (if istr then (options.startup isnt current_startup) else false)
-                else
-                  do_disable = registered and current_startup.length isnt 0
-                callback null, false
-          @call 
-            if: -> do_enable and not @status -1
-            handler: ->
-              cmd = "chkconfig --add #{options.name};"
-              if typeof options.startup is 'string'
-                startup_on = startup_off = ''
-                for i in [0...6]
-                  if options.startup.indexOf(i) isnt -1
-                  then startup_on += i
-                  else startup_off += i
-                cmd += "chkconfig --level #{startup_on} #{options.name} on;" if startup_on
-                cmd += "chkconfig --level #{startup_off} #{options.name} off;" if startup_off
-              else
-                cmd += "chkconfig #{options.name} on;"
-              @system.execute
-                cmd: cmd
-              , (err) ->
-                throw err if err
-                options.log message: "Startup rules modified", level: 'INFO', module: 'nikita/service/startup'
-          @call 
-            if: -> do_disable and not do_enable
-            handler: ->
-              options.log message: "Desactivating startup rules", level: 'DEBUG', module: 'nikita/service/startup'
-              # Setting the level to off. An alternative is to delete it: `chkconfig --del #{options.name}`
-              @system.execute
-                cmd: "chkconfig #{options.name} off"
-              , (err, disabled, stdout, stderr) ->
-                throw err if err
-                options.log message: "Startup rules desactivating", level: 'INFO', module: 'nikita/service/startup'
-      @call
-        if: -> options.loader is 'systemctl'
-        handler: ->
-          @system.execute
-            shy: true
-            cmd: "systemctl is-enabled #{options.name}"
-            code_skipped: 1
-          @system.execute
-            if: -> (not @status(-1)) and options.startup
-            cmd: "systemctl enable #{options.name}"
-          @system.execute
-            if: -> @status(-2) and (not options.startup)
-            cmd: "systemctl disable #{options.name}"
+        if: -> options.cmd is 'chkconfig'
+      , (_, callback) ->
+        @system.execute
+          if: -> options.cmd is 'chkconfig'
+          cmd: "chkconfig --list #{options.name}"
+          code_skipped: 1
+        , (err, registered, stdout, stderr) ->
+          return callback err if err
+          # Invalid service name return code is 0 and message in stderr start by error
+          if /^error/.test stderr
+            options.log message: "Invalid chkconfig name for \"#{options.name}\"", level: 'ERROR', module: 'mecano/lib/service/startup'
+            throw Error "Invalid chkconfig name for `#{options.name}`"
+          current_startup = ''
+          if registered
+            for c in stdout.split(' ').pop().trim().split '\t'
+              [level, status] = c.split ':'
+              current_startup += level if ['on', 'marche'].indexOf(status) > -1
+          return callback() if options.startup is true and current_startup.length
+          return callback() if options.startup is current_startup
+          return callback() if registered and options.startup is false and current_startup is ''
+          @call if: options.startup, ->
+            cmd = "chkconfig --add #{options.name};"
+            if typeof options.startup is 'string'
+              startup_on = startup_off = ''
+              for i in [0...6]
+                if options.startup.indexOf(i) isnt -1
+                then startup_on += i
+                else startup_off += i
+              cmd += "chkconfig --level #{startup_on} #{options.name} on;" if startup_on
+              cmd += "chkconfig --level #{startup_off} #{options.name} off;" if startup_off
+            else
+              cmd += "chkconfig #{options.name} on;"
+            @system.execute
+              cmd: cmd
+            , (err) -> callback err, true
+          @call unless: options.startup, ->
+            options.log message: "Desactivating startup rules", level: 'DEBUG', module: 'mecano/lib/service/startup'
+            options.log? "Mecano `service.startup`: s"
+            # Setting the level to off. An alternative is to delete it: `chkconfig --del #{options.name}`
+            @system.execute
+              cmd: "chkconfig #{options.name} off"
+            , (err) -> callback err, true
+      , (err, status) ->
+        throw err if err
+        message = if options.startup then 'activated' else 'disabled'
+        options.log if status
+        then message: "Service startup updated: #{message}", level: 'WARN', module: 'nikita/lib/service/startup'
+        else message: "Service startup not modified: #{message}", level: 'INFO', module: 'nikita/lib/service/startup'
