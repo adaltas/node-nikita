@@ -67,6 +67,8 @@ require('nikita').service.startup([{
           echo 'systemctl'
         elif which chkconfig >/dev/null 2>&1; then
           echo 'chkconfig'
+        elif which update-rc.d >/dev/null 2>&1; then
+          echo 'update-rc'
         else
           echo "Unsupported Loader" >&2
           exit 2
@@ -76,6 +78,7 @@ require('nikita').service.startup([{
       , (err, _, stdout) ->
         throw err if err
         options.cmd = stdout.trim()
+        throw Error "Unsupported Loader" unless options.cmd in ['systemctl', 'chkconfig', 'update-rc']
       @system.execute
         if: -> options.cmd is 'systemctl'
         cmd: """
@@ -148,3 +151,26 @@ require('nikita').service.startup([{
         options.log if status
         then message: "Service startup updated: #{message}", level: 'WARN', module: 'nikita/lib/service/startup'
         else message: "Service startup not modified: #{message}", level: 'INFO', module: 'nikita/lib/service/startup'
+      @system.execute
+        if: -> options.cmd is 'update-rc'
+        cmd: """
+          startup=#{if options.startup then '1' else ''}
+          if ls /etc/rc*.d/S??#{options.name}; then
+            [ -z "$startup" ] || exit 3
+            echo 'Disable #{options.name}'
+            update-rc.d -f #{options.name} disable
+          else
+            [ -z "$startup" ] && exit 3
+            echo 'Enable #{options.name}'
+            update-rc.d -f #{options.name} enable
+          fi
+          """
+        code_skipped: 3
+        arch_chroot: options.arch_chroot
+        rootdir: options.rootdir
+      , (err, status) ->
+        throw err if err
+        message = if options.startup then 'activated' else 'disabled'
+        options.log if status
+        then message: "Service startup updated: #{message}", level: 'WARN', module: 'nikita/lib/service/remove'
+        else message: "Service startup not modified: #{message}", level: 'INFO', module: 'nikita/lib/service/remove'

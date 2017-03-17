@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* service.startup: update-rc support for ubuntu #91
 * service startup: refactoring and chroot support #90
 * pacman_conf: target default path and rootdir support #89
 * locale_gen: new file types action #88
