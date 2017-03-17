@@ -330,7 +330,7 @@
                 return setTimeout do_handler, options.wait
               do_intercept_after arguments...
             options.handler ?= obj.registry.get(options.type)?.handler or registry.get(options.type)?.handler
-            return handle_multiple_call Error "Unregistered Middleware: #{options.type}" unless options.handler
+            return handle_multiple_call Error "Unregistered Middleware: #{options.type.join('.')}" unless options.handler
             options_handler = options.handler
             options_handler_length = options.handler.length
             options.handler = undefined
