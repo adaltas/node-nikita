@@ -6,20 +6,29 @@ Install a service. Yum and apt-get are supported.
 ## Options
 
 *   `arch_chroot` (boolean|string)   
-    Run this command inside a root directory with the arc-chroot command or any 
-    provided string, require the "rootdir" option if activated.   
+    Run this command inside a root directory with the arc-chroot command or any
+    provided string, require the "rootdir" option if activated.
 *   `cache` (boolean)   
-    Cache the list of installed and outpdated packages.   
-*   `rootdir` (string)   
-    Path to the mount point corresponding to the root directory, required if 
-    the "arch_chroot" option is activated.   
+    Cache the list of installed and outpdated packages.
 *   `cacheonly` (boolean)   
-    Run the yum command entirely from system cache, don't update cache.   
+    Run the yum command entirely from system cache, don't update cache.
 *   `code_skipped` (integer|array)   
-     Error code to skip when using nikita.service.   
+     Error code to skip when using nikita.service.
+*   `installed`   
+    Cache a list of installed services. If an object, the service will be
+    installed if a key of the same name exists; if anything else (default), no
+    caching will take place.
+*   `outdated`   
+    Cache a list of outdated services. If an object, the service will be updated
+    if a key of the same name exists; If true, the option will be converted to
+    an object with all the outdated service names as keys; if anything else
+    (default), no caching will take place.
 *   `name` (string)   
-    Package name, optional.   
-    
+    Package name, optional.
+*   `rootdir` (string)   
+    Path to the mount point corresponding to the root directory, required if
+    the "arch_chroot" option is activated.
+
 ## Example
 
 ```js
@@ -37,19 +46,16 @@ require('nikita').service.install({
       options.log message: "Entering service.install", level: 'DEBUG', module: 'nikita/lib/service/install'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'
-      # Action
-      options.log message: "Install service #{options.name}", level: 'INFO', module: 'nikita/lib/service/install'
-      installed = outpdated = null
-      if options.cache
-        installed = options.store['nikita:execute:installed']
-        outpdated = options.store['nikita:execute:outpdated']
+      options.installed ?= options.store['nikita:execute:installed'] if options.cache
+      options.outpdated ?= options.store['nikita:execute:outpdated'] if options.cache
+      cacheonly = if options.cacheonly then '-C' else ''
       # Validation
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       # Start real work
-      cacheonly = if options.cacheonly then '-C' else ''
+      options.log message: "Install service #{options.name}", level: 'INFO', module: 'nikita/lib/service/install'
       # List installed packages
       @system.execute
-        unless: installed?
+        unless: options.installed?
         cmd: """
         if which yum >/dev/null 2>&1; then
           rpm -qa --qf "%{NAME}\n"
@@ -72,11 +78,11 @@ require('nikita').service.install({
         throw err if err
         return unless status
         options.log message: "Installed packages retrieved", level: 'INFO', module: 'nikita/lib/service/install'
-        installed = for pkg in string.lines(stdout) then pkg
+        options.installed = for pkg in string.lines(stdout) then pkg
       # List packages waiting for update
       @system.execute
-        unless: outpdated?
-        if: -> installed.indexOf(options.name) is -1
+        unless: options.outpdated?
+        if: -> options.installed.indexOf(options.name) is -1
         cmd: """
         if which yum >/dev/null 2>&1; then
           yum #{cacheonly} list updates | egrep updates$ | sed 's/\\([^\\.]*\\).*/\\1/'
@@ -97,11 +103,11 @@ require('nikita').service.install({
       , (err, status, stdout) ->
         throw Error "Failed Package Updates" if err?.code is 2
         throw err if err
-        return outpdated = [] unless status
+        return options.outpdated = [] unless status
         options.log message: "Outpdated package list retrieved", level: 'INFO', module: 'nikita/lib/service/install'
-        outpdated = string.lines stdout.trim()
+        options.outpdated = string.lines stdout.trim()
       @system.execute
-        if: -> installed.indexOf(options.name) is -1 or outpdated.indexOf(options.name) isnt -1
+        if: -> options.installed.indexOf(options.name) is -1 or options.outpdated.indexOf(options.name) isnt -1
         cmd: """
         if which yum >/dev/null 2>&1; then
           yum install -y #{cacheonly} #{options.name}
@@ -126,19 +132,19 @@ require('nikita').service.install({
         then message: "Package \"#{options.name}\" is installed", level: 'WARN', module: 'nikita/lib/service/install'
         else message: "Package \"#{options.name}\" is already installed", level: 'INFO', module: 'nikita/lib/service/install'
         # Enrich installed array with package name unless already there
-        installedIndex = installed.indexOf options.name
-        installed.push options.name if installedIndex is -1
+        installedIndex = options.installed.indexOf options.name
+        options.installed.push options.name if installedIndex is -1
         # Remove package name from outpdated if listed
-        if outpdated
-          outpdatedIndex = outpdated.indexOf options.name
-          outpdated.splice outpdatedIndex, 1 unless outpdatedIndex is -1
+        if options.outpdated
+          outpdatedIndex = options.outpdated.indexOf options.name
+          options.outpdated.splice outpdatedIndex, 1 unless outpdatedIndex is -1
       @call
         if: options.cache
         handler: ->
           options.log message: "Caching installed on \"nikita:execute:installed\"", level: 'INFO', module: 'nikita/lib/service/install'
-          options.store['nikita:execute:installed'] = installed
+          options.store['nikita:execute:installed'] = options.installed
           options.log message: "Caching outpdated list on \"nikita:execute:outpdated\"", level: 'INFO', module: 'nikita/lib/service/install'
-          options.store['nikita:execute:outpdated'] = outpdated
+          options.store['nikita:execute:outpdated'] = options.outpdated
 
 ## Dependencies
 
