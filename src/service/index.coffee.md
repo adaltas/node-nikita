@@ -1,7 +1,11 @@
 
 # `nikita.service(options, [callback])`
 
-Install a service. For now, only yum over SSH.
+Install, start/stop/restart and startup a service.
+
+The option "action" takes 3 possible values: "start", "stop" and "restart". A 
+service will only be restarted if it leads to a change of status. Set the value 
+to "['start', 'restart']" to ensure the service will be always started.
 
 ## Options
 
@@ -34,14 +38,14 @@ Install a service. For now, only yum over SSH.
 
 ## Callback parameters
 
-*   `err`
+*   `err`   
     Error object if any.
-*   `status`
+*   `status`   
     Indicate a change in service such as a change in installation, update,
     start/stop or startup registration.
-*   `installed`
+*   `installed`   
     List of installed services.
-*   `updates`
+*   `updates`   
     List of services to update.
 
 ## Example
@@ -100,8 +104,3 @@ require('nikita').service([{
         @service.restart
           name: srvname
           if: -> @status(-3) and 'restart' in options.action
-
-## Further Reading
-
-*   [service in linux](https://www.digitalocean.com/community/tutorials/how-to-configure-a-linux-service-to-start-automatically-after-a-crash-or-reboot-part-2-reference#systemd-configuration-files-unit-files)
-*   [systemd vs sysvinit](https://fedoraproject.org/wiki/SysVinit_to_Systemd_Cheatsheet)

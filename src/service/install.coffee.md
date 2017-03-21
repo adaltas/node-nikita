@@ -1,7 +1,7 @@
 
 # `nikita.service.install(options, [callback])`
 
-Install a service. Yum and apt-get are supported.
+Install a service. Yum, Yaourt, Pacman and apt-get are supported.
 
 ## Options
 
