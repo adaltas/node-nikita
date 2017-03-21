@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* execute: support sudo #92
 * service: re-introduce outdated and installed options
 * context: fix error message for unregistered middleware
 * service.startup: update-rc support for ubuntu #91

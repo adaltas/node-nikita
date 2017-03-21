@@ -16,68 +16,68 @@ creating any modifications.
 ## Options
 
 *   `arch_chroot` (boolean|string)   
-    Run this command inside a root directory with the arc-chroot command or any 
-    provided string, require the "rootdir" option if activated.   
+    Run this command inside a root directory with the arc-chroot command or any
+    provided string, require the "rootdir" option if activated.
 *   `bash` (boolean|string)   
-    Serialize the command into a file and execute it with bash.   
+    Serialize the command into a file and execute it with bash.
 *   `rootdir` (string)   
-    Path to the mount point corresponding to the root directory, required if 
-    the "arch_chroot" option is activated.   
+    Path to the mount point corresponding to the root directory, required if
+    the "arch_chroot" option is activated.
 *   `cmd`   
-    String, Object or array; Command to execute.   
+    String, Object or array; Command to execute.
 *   `code` (int|string|array)   
-    Expected code(s) returned by the command, int or array of int, default to 0.   
+    Expected code(s) returned by the command, int or array of int, default to 0.
 *   `code_skipped` (int|string|array)   
     Expected code(s) returned by the command if it has no effect, executed will
-    not be incremented, int or array of int.   
+    not be incremented, int or array of int.
 *   `dirty` (boolean)   
-    Leave temporary files on the filesystem.   
+    Leave temporary files on the filesystem.
 *   `trap`   
-    Exit immediately if a commands exits with a non-zero status.   
+    Exit immediately if a commands exits with a non-zero status.
 *   `cwd`   
-    Current working directory.   
+    Current working directory.
 *   `env`   
-    Environment variables, default to `process.env`.   
+    Environment variables, default to `process.env`.
 *   `gid`   
-    Unix group id.   
+    Unix group id.
 *   `log`   
-    Function called with a log related messages.   
-*   `stdin_log` (boolean)
-    Log the executed command of type stdin, default is "true".   
+    Function called with a log related messages.
+*   `stdin_log` (boolean)   
+    Log the executed command of type stdin, default is "true".
 *   `stdout` (stream.Writable)   
     Writable EventEmitter in which the standard output of executed commands will
-    be piped.   
-*   `stdout_callback` (boolean)
-    pass stdout output to the callback as fourth argument, default is "true".   
-*   `stdout_log` (boolean)
-    pass stdout output to the logs of type "stdout_stream", default is "true".   
+    be piped.
+*   `stdout_callback` (boolean)   
+    pass stdout output to the callback as fourth argument, default is "true".
+*   `stdout_log` (boolean)   
+    pass stdout output to the logs of type "stdout_stream", default is "true".
 *   `stdout_trim` (boolean)   
-    Trim stdout argument passed in the callback.   
+    Trim stdout argument passed in the callback.
 *   `stderr` (stream.Writable)   
     Writable EventEmitter in which the standard error output of executed command
-    will be piped.   
-*   `stderr_callback` (boolean)
-    pass stderr output to the callback as fourth argument, default is "true".   
-*   `stderr_log` (boolean)
-    pass stdout output to the logs of type "stdout_stream", default is "true".   
+    will be piped.
+*   `stderr_callback` (boolean)   
+    pass stderr output to the callback as fourth argument, default is "true".
+*   `stderr_log` (boolean)   
+    pass stdout output to the logs of type "stdout_stream", default is "true".
 *   `stderr_trim` (boolean)   
-    Trim stderr argument passed in the callback.   
+    Trim stderr argument passed in the callback.
 *   `target` (string)   
-    Path storing the script, apply witht the bash and arch_chroot options.   
+    Path storing the script, apply witht the bash and arch_chroot options.
 *   `uid`   
-    Unix user id.   
+    Unix user id.
 
 ## Callback parameters
 
 *   `err`   
-    Error object if any.   
+    Error object if any.
 *   `executed`   
-    Value is "true" if command exit equals option "code", "0" by default, "false" if 
-    command exit equals option "code_skipped", none by default.   
+    Value is "true" if command exit equals option "code", "0" by default, "false" if
+    command exit equals option "code_skipped", none by default.
 *   `stdout`   
-    Stdout value(s) unless `stdout` option is provided.   
+    Stdout value(s) unless `stdout` option is provided.
 *   `stderr`   
-    Stderr value(s) unless `stderr` option is provided.   
+    Stderr value(s) unless `stderr` option is provided.
 
 ## Create a user over SSH:
 
@@ -118,8 +118,6 @@ nikita.system.execute({
 
     module.exports = (options, callback) ->
       options.log message: "Entering execute", level: 'DEBUG', module: 'nikita/lib/system/execute'
-      # Note, heres how to get username from uid
-      # 
       # Validate parameters
       options.cmd = options.argument if typeof options.argument is 'string'
       options.code ?= [0]
@@ -137,14 +135,20 @@ nikita.system.execute({
       options.cmd = "set -e\n#{options.cmd}" if options.cmd and options.trap
       options.cmd_original = "#{options.cmd}"
       throw Error "Missing cmd: #{options.cmd}" unless options.cmd?
-      throw Error "Incompatible options: bash, arch_chroot" if options.bash and options.arch_chroot
+      throw Error "Incompatible options: bash, arch_chroot" if ['bash', 'arch_chroot'].filter((k) -> options[k]).length > 1
       throw Error "Required Option: \"rootdir\" with \"arch_chroot\"" if options.arch_chroot and not options.rootdir
       result = stdout: null, stderr: null, code: null
       # Guess current username
-      current_username = 
+      current_username =
         if options.ssh then options.ssh.config.username
         else if /^win/.test(process.platform) then process.env['USERPROFILE'].split(path.sep)[2]
         else process.env['USER']
+      # Sudo
+      @call ->
+        return unless options.sudo
+        return options.sudo = false if current_username is 'root'
+        options.bash = 'bash' unless ['bash', 'arch_chroot'].some (k) -> options[k]
+      # User substitution
       # Determines if writing is required and eventually convert uid to username
       @call shy: true, (_, callback)->
         return callback null, false unless options.uid
@@ -181,6 +185,9 @@ nikita.system.execute({
           mode: options.mode
           shy: true
           eof: true
+      @call ->
+        return unless options.sudo
+        options.cmd = "sudo #{options.cmd}" if options.sudo
       # Execute
       @call (_, callback) ->
         options.log message: options.cmd_original, type: 'stdin', level: 'INFO', module: 'nikita/lib/system/execute' if options.stdin_log
