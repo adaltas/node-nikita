@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* cson: new file writer #93
 * execute: support sudo #92
 * service: re-introduce outdated and installed options
 * context: fix error message for unregistered middleware

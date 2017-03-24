@@ -89,6 +89,7 @@ functions share a common API with flexible options.
         '': 'nikita/file'
         assert: 'nikita/file/assert'
         cache: 'nikita/file/cache'
+        cson: 'nikita/file/cson'
         download: 'nikita/file/download'
         ini: 'nikita/file/ini'
         json: 'nikita/file/json'
