@@ -50,54 +50,6 @@ describe 'ini', ->
         group2:
           key1: 'value1b'
 
-    it 'parse multi brackets multi lines', ->
-      content = """
-            ###########################################################################
-            # Some comments
-
-            [group1]
-              
-              key1a="value1a"
-
-              # comment
-              key1b=1
-
-              # Administrators
-              # ----------------
-              [[group1a1]]
-                ## [[[admin1aX]]]
-                key1a1 = value1a1
-              [[group1b]]
-                # comment
-                ## double comment
-                key1b1 = value1b1
-                following value
-            [group2]
-              key1=value1b
-              """ 
-      res = misc.ini.parse_multi_brackets_multi_lines content, { comment : '#'}
-      res.should.eql
-        '###########################################################################': null
-        '# Some comments': null
-        group1:
-          key1a: '"value1a"'
-          '# comment': null
-          key1b: '1'
-          '# Administrators': null
-          '# ----------------': null
-          group1a1:
-            '## [[[admin1aX]]]': null
-            key1a1: 'value1a1'
-          group1b:
-            '# comment': null
-            '## double comment': null
-            key1b1: "value1b1following value"
-        group2:
-          key1: 'value1b'
-
-
-
-
     it 'parse style with comment', ->
       res = misc.ini.parse_multi_brackets """
       # Some = comments
@@ -118,6 +70,14 @@ describe 'ini', ->
             key1b1: 'value1b1'
         group2:
           key1: 'value1b'
+
+    it 'stringify test eol', ->
+      res = misc.ini.stringify_multi_brackets 
+        user: preference: color: true
+        group:
+          name: 'us'
+      , eol: '|'
+      res.should.eql '[user]|  [[preference]]|    color = true|[group]|  name = us|'
 
     it 'stringify style', ->
       res = misc.ini.stringify_multi_brackets 
@@ -178,20 +138,66 @@ describe 'ini', ->
           key1 = value1b
 
         """
+  
+  describe 'multi brackets multi lines', ->
 
+    it 'parse', ->
+      content = """
+            ###########################################################################
+            # Some comments
+
+            [group1]
+              
+              key1a="value1a"
+
+              # comment
+              key1b=1
+
+              # Administrators
+              # ----------------
+              [[group1a1]]
+                ## [[[admin1aX]]]
+                key1a1 = value1a1
+              [[group1b]]
+                # comment
+                ## double comment
+                key1b1 = value1b1
+                following value
+            [group2]
+              key1=value1b
+              """ 
+      res = misc.ini.parse_multi_brackets_multi_lines content, { comment : '#'}
+      res.should.eql
+        '###########################################################################': null
+        '# Some comments': null
+        group1:
+          key1a: '"value1a"'
+          '# comment': null
+          key1b: '1'
+          '# Administrators': null
+          '# ----------------': null
+          group1a1:
+            '## [[[admin1aX]]]': null
+            key1a1: 'value1a1'
+          group1b:
+            '# comment': null
+            '## double comment': null
+            key1b1: "value1b1following value"
+        group2:
+          key1: 'value1b'
 
   describe 'square and curly brackets', ->
 
-    it 'stringify', ->
+    it 'stringify test eol', ->
       res = misc.ini.stringify_square_then_curly 
         user: preference: color: true
         group:
           name: 'us'
-      res.should.eql '[user]\n preference = {\n  color = true\n }\n\n[group]\n name = us\n\n'
-
+      , eol: '|'
+      res.should.eql '[user]| preference = {|  color = true| }||[group]| name = us||'
 
     it 'stringify simple values before array values', ->
-      res = misc.ini.stringify_square_then_curly 
+      res = misc.ini.stringify_square_then_curly
         group1:
           key1: 'value1'
           group1b:
@@ -215,6 +221,3 @@ describe 'ini', ->
 
 
         """
-
-
-

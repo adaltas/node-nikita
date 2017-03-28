@@ -32,6 +32,11 @@ provided in the `content` option.
     User-defined function to stringify the content to ini format, default to
     `require('ini').stringify`, see 'misc.ini.stringify_square_then_curly' for
     an example.   
+*   `eol` (string)   
+    Characters for line delimiter, usage depends on the stringify option, with 
+    the default stringify option, default to unix style if executed remotely 
+    (SSH) or to the platform if executed locally ("\r\n for windows", 
+    "\n" otherwise)
 *   `target`   
     File path where to write content to or a callback.   
 

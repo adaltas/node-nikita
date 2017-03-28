@@ -313,7 +313,7 @@ misc = module.exports =
         options = section
         section = undefined
       options.separator ?= ' = '
-      eol = if process.platform is "win32" then "\r\n" else "\n"
+      options.eol ?= if not options.ssh and process.platform is "win32" then "\r\n" else "\n"
       safe = misc.ini.safe
       dotSplit = misc.ini.dotSplit
       children = []
@@ -326,14 +326,14 @@ misc = module.exports =
         else if val and typeof val is "object"
           children.push k
         else
-          out += safe(k) + options.separator + safe(val) + eol
+          out += safe(k) + options.separator + safe(val) + options.eol
       if section and out.length
-        out = "[" + safe(section) + "]" + eol + out
+        out = "[" + safe(section) + "]" + options.eol + out
       children.forEach (k, _, __) ->
         nk = dotSplit(k).join '\\.'
         child = misc.ini.stringify(obj[k], (if section then section + "." else "") + nk, options)
         if out.length and child.length
-          out += eol
+          out += options.eol
         out += child
       out
     # works like stringy but write only the key when the value is ''
@@ -343,7 +343,7 @@ misc = module.exports =
         options = section
         section = undefined
       options.separator ?= ' = '
-      eol = if process.platform is "win32" then "\r\n" else "\n"
+      options.eol ?= if not options.ssh and process.platform is "win32" then "\r\n" else "\n"
       safe = misc.ini.safe
       dotSplit = misc.ini.dotSplit
       children = []
@@ -356,14 +356,14 @@ misc = module.exports =
         else if val and typeof val is "object"
           children.push k
         else
-          out += if val is '' or val is true then "#{k}" + eol else safe(k) + options.separator + safe(val) + eol
+          out += if val is '' or val is true then "#{k}" + options.eol else safe(k) + options.separator + safe(val) + options.eol
       if section and out.length
-        out = "[" + safe(section) + "]" + eol + out
+        out = "[" + safe(section) + "]" + options.eol + out
       children.forEach (k, _, __) ->
         nk = dotSplit(k).join '\\.'
         child = misc.ini.stringify_single_key(obj[k], (if section then section + "." else "") + nk, options)
         if out.length and child.length
-          out += eol
+          out += options.eol
         out += child
       out
     stringify_square_then_curly: (content, depth=0, options={}) ->
@@ -371,6 +371,7 @@ misc = module.exports =
         options = depth
         depth = 0
       options.separator ?= ' = '
+      options.eol ?= if not options.ssh and process.platform is "win32" then "\r\n" else "\n"
       out = ''
       indent = ' '
       prefix = ''
@@ -384,26 +385,26 @@ misc = module.exports =
         isObj = typeof v is 'object' and not isNull and not isArray
         if isObj
           if depth is 0
-            out += "#{prefix}[#{k}]\n"
+            out += "#{prefix}[#{k}]#{options.eol}"
             out += misc.ini.stringify_square_then_curly v, depth + 1, options
-            out += "\n"
+            out += "#{options.eol}"
           else
-            out += "#{prefix}#{k}#{options.separator}{\n"
+            out += "#{prefix}#{k}#{options.separator}{#{options.eol}"
             out += misc.ini.stringify_square_then_curly v, depth + 1, options
-            out += "#{prefix}}\n"
+            out += "#{prefix}}#{options.eol}"
         else 
           if isArray
             outa = []
             for element in v
               outa.push "#{prefix}#{k}#{options.separator}#{element}"
-            out += outa.join '\n'
+            out += outa.join "#{options.eol}"
           else if isNull
             out += "#{prefix}#{k}#{options.separator}null"
           else if isBoolean
             out += "#{prefix}#{k}#{options.separator}#{if v then 'true' else 'false'}"
           else
             out += "#{prefix}#{k}#{options.separator}#{v}"
-          out += '\n'
+          out += "#{options.eol}"
       out
     ###
     Each category is surrounded by one or several square brackets. The number of brackets indicates
@@ -415,6 +416,7 @@ misc = module.exports =
         options = depth
         depth = 0
       options.separator ?= ' = '
+      options.eol ?= if not options.ssh and process.platform is "win32" then "\r\n" else "\n"
       out = ''
       indent = if options.indent? then options.indent else '  ' 
       prefix = ''
@@ -432,12 +434,12 @@ misc = module.exports =
           out += "#{prefix}#{k}#{options.separator}#{if v then 'true' else 'false'}"
         else
           out += "#{prefix}#{k}#{options.separator}#{v}"
-        out += '\n'
+        out += "#{options.eol}"
       for k, v of content
         isNull = v is null
         isObj = typeof v is 'object' and not isNull
         continue unless isObj
-        out += "#{prefix}#{string.repeat '[', depth+1}#{k}#{string.repeat ']', depth+1}\n"
+        out += "#{prefix}#{string.repeat '[', depth+1}#{k}#{string.repeat ']', depth+1}#{options.eol}"
         out += misc.ini.stringify_multi_brackets v, depth + 1, options
       out
   cgconfig:
