@@ -64,7 +64,7 @@ nikita.system.discover({
           splits = line.split ' '
           os.release = splits[splits.indexOf('release')+1]
         if /^Oracle/.test line
-          os.type = 'redhat'
+          os.type = 'oracle'
           splits = line.split ' '
           os.release = splits[splits.indexOf('release')+1]
         if options.cache
