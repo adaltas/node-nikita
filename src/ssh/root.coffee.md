@@ -123,6 +123,7 @@ require('nikita')
               options.cmd += "-- sh -c \"#{cmd}\""
               cmd = options.cmd
           options.log message: "Enable Root Access", level: 'DEBUG', module: 'nikita/lib/ssh/root'
+          options.log message: cmd, type: 'stdin', module: 'nikita/lib/ssh/root'
           child = exec
             ssh: ssh
             cmd: cmd
@@ -133,13 +134,13 @@ require('nikita')
               rebooting = true
             callback err
           child.stdout.on 'data', (data) ->
-            options.log message: data, type: 'stdout'
+            options.log message: data, type: 'stdout', module: 'nikita/lib/ssh/root'
           child.stdout.on 'end', (data) ->
-            options.log message: null, type: 'stdout'
+            options.log message: null, type: 'stdout', module: 'nikita/lib/ssh/root'
           child.stderr.on 'data', (data) ->
-            options.log message: data, type: 'stderr'
+            options.log message: data, type: 'stderr', module: 'nikita/lib/ssh/root'
           child.stderr.on 'end', (data) ->
-            options.log message: null, type: 'stderr'
+            options.log message: null, type: 'stderr', module: 'nikita/lib/ssh/root'
       @call retry: true, if: rebooting, (_, callback) ->
         connect config, (err, conn) =>
           return callback err unless conn
