@@ -3,7 +3,7 @@ MAINTAINER David Worms
 
 # Install Node.js
 ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 6.2.2
+ENV NODE_VERSION 6.10.1
 RUN apt-get update -y \
   && apt-get install -y curl xz-utils \
   && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \

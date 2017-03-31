@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* docker: latest node 6.10.1
 * tempfs: remove unused dependencies
 * group: write tests #97
 * group.remove: new action #96
