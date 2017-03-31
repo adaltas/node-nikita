@@ -48,6 +48,7 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
 
     module.exports = (options, callback) ->
       options.log message: "Entering chown", level: 'DEBUG', module: 'nikita/lib/chown'
+      options.target = options.argument if options.argument?
       # Validate parameters
       return callback Error "Missing target option" unless options.target?
       return callback Error "Missing one of uid or gid option" unless options.uid? or options.gid?

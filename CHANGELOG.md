@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* chown: name as main argument
 * user.remove: new action #99
 * system.user: isolate and refactor #98
 * ssh root: fix log messages
