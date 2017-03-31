@@ -12,6 +12,7 @@ describe 'system.group', ->
   they 'accept only user name', (ssh, next) ->
     nikita
       ssh: ssh
+    .system.user.remove 'toto'
     .system.group.remove 'toto'
     .system.group 'toto', (err, status) ->
       status.should.be.true() unless err

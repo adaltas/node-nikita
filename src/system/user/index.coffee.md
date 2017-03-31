@@ -1,57 +1,57 @@
 
-# `nikita.system.user(options, [callback])`
+# `nikita.system.user.add(options, [callback])`
 
 Create or modify a Unix user.
 
 ## Options
 
 *   `arch_chroot` (boolean|string)   
-    Run this command inside a root directory with the arc-chroot command or any 
-    provided string, require the "rootdir" option if activated.   
+    Run this command inside a root directory with the arc-chroot command or any
+    provided string, require the "rootdir" option if activated.
 *   `rootdir` (string)   
-    Path to the mount point corresponding to the root directory, required if 
-    the "arch_chroot" option is activated.   
+    Path to the mount point corresponding to the root directory, required if
+    the "arch_chroot" option is activated.
 *   `comment`   
-    Short description of the login.   
-*   `expiredate`  
-    The date on which the user account is disabled.   
+    Short description of the login.
+*   `expiredate`   
+    The date on which the user account is disabled.
 *   `gid`   
-    Group name or number of the user´s initial login group.   
+    Group name or number of the user´s initial login group.
 *   `groups`   
-    List of supplementary groups which the user is also a member of.   
+    List of supplementary groups which the user is also a member of.
 *   `home`   
-    Value for the user´s login directory, default to the login name appended to "BASE_DIR".   
+    Value for the user´s login directory, default to the login name appended to "BASE_DIR".
 *   `inactive`   
     The number of days after a password has expired before the account will be
-    disabled.   
+    disabled.
 *   `name`   
-    Login name of the user.   
+    Login name of the user.
 *   `no_home_ownership` (boolean)   
     Disable ownership on home directory which default to the "uid" and "gid"
-    options, default is "false".   
+    options, default is "false".
 *   `password`   
-    The unencrypted password.   
+    The unencrypted password.
 *   `password_sync`   
-    Synchronize password, default is "true".   
+    Synchronize password, default is "true".
 *   `shell`   
     Path to the user shell, set to "/sbin/nologin" if "false", "/bin/bash" if
     true or default to the system shell value in "/etc/default/useradd", by
-    default "/bin/bash".   
+    default "/bin/bash".
 *   `skel`   
     The skeleton directory, which contains files and directories to be copied in
-    the user´s home directory, when the home directory is created by useradd.   
+    the user´s home directory, when the home directory is created by useradd.
 *   `system`   
     Create a system account, such user are not created with a home by default,
-    set the "home" option if we it to be created.   
+    set the "home" option if we it to be created.
 *   `uid`   
-    Numerical value of the user´s ID, must not exist.   
+    Numerical value of the user´s ID, must not exist.
 
 ## Callback parameters
 
 *   `err`   
-    Error object if any.   
+    Error object if any.
 *   `status`   
-    Value is "true" if user was created or modified.   
+    Value is "true" if user was created or modified.
 
 ## Example
 
@@ -76,40 +76,44 @@ you are a member of the "wheel" group (gid of "10") with the command
 
 ## Source Code
 
-    module.exports = (options, callback) ->
-      options.log message: "Entering user", level: 'DEBUG', module: 'nikita/lib/system/user'
-      return callback new Error "Option 'name' is required" unless options.name
+    module.exports = (options) ->
+      options.log message: "Entering user", level: 'DEBUG', module: 'nikita/lib/system/user/add'
+      options.name = options.argument if options.argument?
+      throw Error "Option 'name' is required" unless options.name
       options.shell = "/sbin/nologin" if options.shell is false
       options.shell = "/bin/bash" if options.shell is true
       options.system ?= false
       options.gid ?= null
       options.password_sync ?= true
       options.groups = options.groups.split ',' if typeof options.groups is 'string'
-      return callback new Error "Invalid option 'shell': #{JSON.strinfigy options.shell}" if options.shell? typeof options.shell isnt 'string'
+      throw Error "Invalid option 'shell': #{JSON.strinfigy options.shell}" if options.shell? typeof options.shell isnt 'string'
       modified = false
       user_info = groups_info = null
-      do_uid_gid = ->
-        uid_gid options, (err) ->
-          return callback err if err
-          do_info()
-      do_info = ->
-        options.log message: "Get user information for #{options.name}", level: 'DEBUG', module: 'nikita/lib/system/user'
-        options.store.cache_passwd = undefined # Clear cache if any 
+      @call (_, callback) ->
+        # Note, we shall be able to remove the call to "uid_gid"
+        # because it itself call "uid_gid.passwd" and "uid_gid.group"
+        # which are called below
+        uid_gid options, callback
+      @call (_, callback) ->
+        options.log message: "Get user information for #{options.name}", level: 'DEBUG', module: 'nikita/lib/system/user/add'
+        options.store.cache_passwd = undefined # Clear cache if any
         uid_gid.passwd options.ssh, options.store, (err, users) ->
           return callback err if err
-          options.log message: "Got #{JSON.stringify users[options.name]}", level: 'INFO', module: 'nikita/lib/system/user'
+          options.log message: "Got #{JSON.stringify users[options.name]}", level: 'INFO', module: 'nikita/lib/system/user/add'
           user_info = users[options.name]
-          # Create user if it does not exist
-          return do_create() unless user_info
-          # Compare user attributes unless we need to compare groups membership
-          return do_update() unless options.groups
-          # Renew group cache
-          options.store.cache_group = null # Clear cache if any
-          uid_gid.group options.ssh, options.store, (err, groups) ->
-            return callback err if err
-            groups_info = groups
-            do_update()
-      do_create = =>
+          callback()
+      @call
+        # Get group information if
+        # * user already exists
+        # * we need to compare groups membership
+        if: -> user_info and options.groups
+      , (_, callback) ->
+        options.store.cache_group = null # Clear cache if any
+        uid_gid.group options.ssh, options.store, (err, groups) ->
+          return callback err if err
+          groups_info = groups
+          callback()
+      @call unless: (-> user_info), ->
         cmd = 'useradd'
         cmd += " -r" if options.system
         cmd += " -M" unless options.home
@@ -129,6 +133,10 @@ you are a member of the "wheel" group (gid of "10") with the command
           code_skipped: 9
           arch_chroot: options.arch_chroot
           rootdir: options.rootdir
+          sudo: options.sudo
+        , (err, status) ->
+          throw err if err
+          options.log message: "User defined elsewhere than '/etc/passwd', exit code is 9", level: 'WARN', module: 'nikita/lib/system/user/add'
         @system.chown
           target: options.home
           uid: options.uid
@@ -136,23 +144,16 @@ you are a member of the "wheel" group (gid of "10") with the command
           if_exists: options.home
           if: options.home?
           unless: options.no_home_ownership
-        @then (err, created) ->
-          return callback err if err
-          if created
-            modified = true
-            do_password()
-          else
-            options.log message: "User defined elsewhere than '/etc/passwd', exit code is 9", level: 'WARN', module: 'nikita/lib/system/user'
-            callback null, modified
-      do_update = =>
-        changed = false
+      @call if: (-> user_info), ->
+        changed = []
         for k in ['uid', 'home', 'shell', 'comment', 'gid']
-          changed = true if options[k]? and user_info[k] isnt options[k]
+          changed.push k if options[k]? and user_info[k] isnt options[k]
         if options.groups then for group in options.groups
-          return callback Error "Group does not exist: #{group}" unless groups_info[group]
-          changed = true if groups_info[group].user_list.indexOf(options.name) is -1
-        options.log message: "User #{options.name} not modified", level: 'DEBUG', module: 'nikita/lib/system/user' unless changed
-        options.log message: "User #{options.name} modified", level: 'WARN', module: 'nikita/lib/system/user' if changed
+          throw Error "Group does not exist: #{group}" unless groups_info[group]
+          changed.push 'groups' if groups_info[group].user_list.indexOf(options.name) is -1
+        options.log if changed.length
+        then message: "User #{options.name} modified", level: 'WARN', module: 'nikita/lib/system/user/add'
+        else message: "User #{options.name} not modified", level: 'DEBUG', module: 'nikita/lib/system/user/add'
         cmd = 'usermod'
         cmd += " -d #{options.home}" if options.home
         cmd += " -s #{options.shell}" if options.shell
@@ -163,9 +164,12 @@ you are a member of the "wheel" group (gid of "10") with the command
         cmd += " #{options.name}"
         @system.execute
           cmd: cmd
-          if: changed
+          if: changed.length
           arch_chroot: options.arch_chroot
           rootdir: options.rootdir
+          sudo: options.sudo
+        , (err) ->
+          throw Error "User #{options.name} is logged in" if err?.code is 8
         @system.chown
           target: options.home
           uid: options.uid
@@ -173,12 +177,7 @@ you are a member of the "wheel" group (gid of "10") with the command
           if: options.home and (options.uid or options.gid)
           if_exists: options.home
           unless: options.no_home_ownership
-        @then (err, changed, __, stderr) ->
-          return callback new Error "User #{options.name} is logged in" if err?.code is 8
-          return callback err if err
-          modified = true if changed
-          do_password()
-      do_password = =>
+      @call ->
         # TODO, detect changes in password
         # echo #{options.password} | passwd --stdin #{options.name}
         @system.execute
@@ -189,17 +188,13 @@ you are a member of the "wheel" group (gid of "10") with the command
           if: options.password_sync and options.password
           arch_chroot: options.arch_chroot
           rootdir: options.rootdir
+          sudo: options.sudo
         , (err, modified) ->
-          return callback err if err
-          options.log message: "Password modified", level: 'WARN', module: 'nikita/lib/system/user' if modified
-          # modified = true if modified
-          do_end()
-      do_end = ->
-        return callback null, modified
-      do_uid_gid()
+          throw err if err
+          options.log message: "Password modified", level: 'WARN', module: 'nikita/lib/system/user/add' if modified
 
 ## Dependencies
 
-    misc = require '../misc'
-    string = require '../misc/string'
-    uid_gid = require '../misc/uid_gid'
+    misc = require '../../misc'
+    string = require '../../misc/string'
+    uid_gid = require '../../misc/uid_gid'

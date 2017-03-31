@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* system.user: isolate and refactor #98
 * ssh root: fix log messages
 * docker: latest node 6.10.1
 * tempfs: remove unused dependencies

@@ -12,6 +12,8 @@ describe 'system.group.remove', ->
   they 'handle status', (ssh, next) ->
     nikita
       ssh: ssh
+    .system.user.remove 'toto'
+    .system.group.remove 'toto'
     .system.group 'toto'
     .system.group.remove 'toto', (err, status) ->
       status.should.be.true() unless err
