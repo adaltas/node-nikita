@@ -13,8 +13,9 @@ module.exports =
   disable_service_start: false
   disable_service_startup: false
   disable_db: false # can be activated
-  disable_system_tmpfs: true #can not be activated
   disable_system_execute_arc_chroot: true #can not be activated
+  disable_system_tmpfs: true #can not be activated
+  disable_system_user: false
   docker: # eg `docker-machine create --driver virtualbox nikita || docker-machine start nikita`
     host: 'dind:2375'
     # machine: 'nikita'

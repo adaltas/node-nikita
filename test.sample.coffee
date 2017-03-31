@@ -11,8 +11,9 @@ module.exports =
   disable_service_start: true
   disable_service_startup: true
   disable_db: true
-  disable_system_tmpfs: true
   disable_system_execute_arc_chroot: true
+  disable_system_tmpfs: true
+  disable_system_user: true
   docker: # eg `docker-machine create --driver virtualbox nikita`
     machine: 'nikita'
   krb5:
