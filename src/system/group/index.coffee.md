@@ -38,22 +38,24 @@ The result of the above action can be viewed with the command
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       options.log message: "Entering group", level: 'DEBUG', module: 'nikita/lib/system/group'
-      return callback new Error "Option 'name' is required" unless options.name
+      options.name = options.argument if options.argument?
+      throw Error "Option 'name' is required" unless options.name
       options.system ?= false
       options.gid ?= null
       modified = false
       info = null
-      do_info = ->
+      @call (_, callback) ->
         options.log message: "Get group information for '#{options.name}'", level: 'DEBUG', module: 'nikita/lib/system/group'
         options.store.cache_group = undefined # Clear cache if any
         uid_gid.group options.ssh, options.store, (err, groups) ->
           return callback err if err
           info = groups[options.name]
           options.log message: "Got #{JSON.stringify info}", level: 'INFO', module: 'nikita/lib/system/group'
-          if info then do_compare() else do_create()
-      do_create = =>
+          callback()
+      # Create group
+      @call unless: (-> info), ->
         cmd = 'groupadd'
         cmd += " -r" if options.system
         cmd += " -g #{options.gid}" if options.gid
@@ -61,29 +63,25 @@ The result of the above action can be viewed with the command
         @system.execute
           cmd: cmd
           code_skipped: 9
-        , (err, created) ->
-          return callback err if err
-          if created
-          then modified = true
-          else options.log message: "Group defined elsewhere than '/etc/group', exit code is 9", level: 'WARN', module: 'nikita/lib/system/group'
-          callback null, modified
-      do_compare = ->
+        , (err, status) ->
+          throw err if err
+          options.log message: "Group defined elsewhere than '/etc/group', exit code is 9", level: 'WARN', module: 'nikita/lib/system/group' unless status
+      # Modify group
+      @call if: (-> info), ->
+        changed = []
         for k in ['gid']
-          modified = true if options[k]? and info[k] isnt options[k]
-        if modified
-        then options.log message: "Group information modified", level: 'WARN', module: 'nikita/lib/system/group'
-        else options.log message: "Group information unchanged", level: 'DEBUG', module: 'nikita/lib/system/group'
-        if modified then do_modify() else callback()
-      do_modify = =>
+          changed.push 'gid' if options[k]? and info[k] isnt options[k]
+        options.log if changed.length
+        then message: "Group information modified", level: 'WARN', module: 'nikita/lib/system/group'
+        else message: "Group information unchanged", level: 'DEBUG', module: 'nikita/lib/system/group'
+        return unless changed.length
         cmd = 'groupmod'
         cmd += " -g #{options.gid}" if options.gid
         cmd += " #{options.name}"
         @system.execute
           cmd: cmd
-        , (err) ->
-          return callback err, modified
-      do_info()
+          if: changed.length
 
 ## Dependencies
 
-    uid_gid = require '../misc/uid_gid'
+    uid_gid = require '../../misc/uid_gid'
