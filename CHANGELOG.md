@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* tempfs: remove unused dependencies
 * group: write tests #97
 * group.remove: new action #96
 * group: isolate and refactor #95

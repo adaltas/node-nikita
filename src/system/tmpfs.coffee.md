@@ -95,8 +95,6 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
 ## Dependencies
 
     fs = require 'ssh2-fs'
-    path = require 'path'
-    uid_gid = require '../misc/uid_gid'
     misc = require '../misc'
     {merge} = require '../misc'
 
