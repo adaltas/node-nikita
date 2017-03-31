@@ -69,9 +69,9 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
           options.log message: "Matching ownerships on '#{options.target}'", level: 'INFO', module: 'nikita/lib/chown'
           return callback()
         # Apply changes
-        fs.chown options.ssh, options.target, options.uid, options.gid, (err) ->
-          options.log message: "change uid from #{stat.uid} to #{options.uid}", level: 'WARN', module: 'nikita/lib/chown'
-          options.log message: "change gid from #{stat.gid} to #{options.gid}", level: 'WARN', module: 'nikita/lib/chown'
+        fs.chown options.ssh, options.target, options.uid or -1, options.gid or -1, (err) ->
+          options.log message: "change uid from #{stat.uid} to #{options.uid}", level: 'WARN', module: 'nikita/lib/chown' if options.uid
+          options.log message: "change gid from #{stat.gid} to #{options.gid}", level: 'WARN', module: 'nikita/lib/chown' if options.gid
           callback err, true
       do_uid_gid()
 

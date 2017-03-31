@@ -22,15 +22,14 @@ uid_gid options, (err) ->
 
     module.exports = (options, callback) ->
       do_uid = ->
-        # uid=`id -u $USER`,
         return do_gid() unless options.uid?
         options.uid = parseInt options.uid, 10 if typeof options.uid is 'string' and /\d+/.test options.uid
         return do_gid() if typeof options.uid is 'number'
         module.exports.passwd options.ssh, options.store, options.uid, (err, user) ->
-          return do_gid err if err
+          return callback err if err
           if user
             options.uid = user.uid
-            options.gid ?= user.gid
+            options.default_gid ?= user.gid
           do_gid()
       do_gid = ->
         return callback() unless options.gid?
@@ -136,7 +135,3 @@ uid_gid options, (err) ->
     misc = require './index'
     ssh2fs = require 'ssh2-fs'
     string = require './string'
-
-
-
-

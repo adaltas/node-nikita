@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* uid_gid: fix intrusive determination of gid #100
 * chown: name as main argument
 * user.remove: new action #99
 * system.user: isolate and refactor #98

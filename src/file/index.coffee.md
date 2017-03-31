@@ -341,6 +341,7 @@ require('nikita').file({
         options.mode ?= 0o0644
         uid_gid options, (err) ->
           return callback err if err
+          options.gid = options.default_gid unless targetStat
           fs.writeFile options.ssh, options.target, options.content, options, (err) ->
             return callback err if err
             options.log message: "File written", level: 'INFO', module: 'nikita/lib/file'
