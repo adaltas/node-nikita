@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* group.remove: new action #96
 * group: isolate and refactor #95
 * ssh.root: improve logs
 * ini: detect platform if local otherwise unix styles #94

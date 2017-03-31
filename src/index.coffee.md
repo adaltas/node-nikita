@@ -142,7 +142,9 @@ functions share a common API with flexible options.
         copy: 'nikita/system/copy'
         discover: 'nikita/system/discover'
         execute: 'nikita/system/execute'
-        group: 'nikita/system/group'
+        group:
+          '': 'nikita/system/group/index'
+          remove: 'nikita/system/group/remove'
         limits: 'nikita/system/limits'
         link: 'nikita/system/link'
         mkdir: 'nikita/system/mkdir'
