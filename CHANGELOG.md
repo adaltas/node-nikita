@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* options: handle user home in source and target #101
 * uid_gid: fix intrusive determination of gid #100
 * chown: name as main argument
 * user.remove: new action #99

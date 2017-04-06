@@ -167,7 +167,6 @@
           log.type ?= 'text'
           args = if 1 <= arguments.length then [].slice.call(arguments, 0) else []
           stackTrace = require 'stack-trace'
-          path = require 'path'
           frame = stackTrace.get()[1]
           file = path.basename(frame.getFileName())
           line = frame.getLineNumber()
@@ -178,6 +177,14 @@
           _log log for _log in _logs
           obj.emit? log.type, log unless log_disabled
         options.log._nikita_ = true
+        if options.source and match = /~($|\/.*)/.exec options.source
+          unless options.ssh
+          then options.source = path.join process.env.HOME, match[1]
+          else options.source = path.posix.join '.', match[1]
+        if options.target and match = /~($|\/.*)/.exec options.target
+          unless options.ssh
+          then options.target = path.join process.env.HOME, match[1]
+          else options.target = path.posix.join '.', match[1]
         options
       call_callback = (fn, args) ->
         stack.unshift todos
@@ -528,10 +535,11 @@
 
 ## Dependencies
 
-    util = require 'util'
     registry = require './registry'
     domain = require 'domain'
     each = require 'each'
+    path = require 'path'
+    util = require 'util'
     array = require './misc/array'
     conditions = require './misc/conditions'
     wrap = require './misc/wrap'
