@@ -88,8 +88,16 @@ require('nikita').ini({
           misc.ini.clean content
         options.log message: "Serialize content", level: 'DEBUG', module: 'nikita/lib/file/ini'
         stringify = options.stringify or misc.ini.stringify
-        options.content = stringify content, options
-        @file options, (err, written) ->
+        @file
+          target: options.target
+          content: stringify content, options
+          backup: options.backup
+          diff: options.diff
+          eof: options.eof
+          gid: options.gid
+          uid: options.uid
+          mode: options.mode
+        , (err, written) ->
           callback err, written
       do_get()
 
