@@ -1,5 +1,6 @@
 
 module.exports =
+  disable_conditions_if_os: false
   disable_discover: false # can be activated
   disable_docker: true
   disable_krb5_addprinc: false # not sure if working
@@ -16,6 +17,10 @@ module.exports =
   disable_system_execute_arc_chroot: false
   disable_system_tmpfs: true #can not be activated
   disable_system_user: false
+  conditions_is_os:
+    arch: '64'
+    name: 'arch'
+    version: '4.10.0-1'
   docker: # eg `docker-machine create --driver virtualbox nikita || docker-machine start nikita`
     host: 'dind:2375'
     # machine: 'nikita'

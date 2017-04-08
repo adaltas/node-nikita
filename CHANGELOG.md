@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* conditions: new if_os and unless_os #102
 * ini: fix header, dont pass options to write
 * options: handle user home in source and target #101
 * uid_gid: fix intrusive determination of gid #100

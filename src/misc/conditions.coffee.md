@@ -133,12 +133,12 @@ were executed successfully otherwise the callback `skip` is called.
         each(options.if_exec)
         .call (cmd, next) ->
           options.log? message: "Nikita `if_exec`: #{cmd}", level: 'DEBUG', module: 'nikita/misc/conditions'
-          options = { cmd: cmd, ssh: options.ssh }
-          run = exec options
-          if options.stdout
-            run.stdout.pipe options.stdout, end: false
-          if options.stderr
-            run.stderr.pipe options.stderr, end: false
+          # options = ssh: options.ssh, cmd: cmd
+          run = exec ssh: options.ssh, cmd: cmd
+          # if options.stdout
+          #   run.stdout.pipe options.stdout, end: false
+          # if options.stderr
+          #   run.stderr.pipe options.stderr, end: false
           run.on "exit", (code) ->
             options.log? message: "Nikita `if_exec`: code is \"#{code}\"", level: 'INFO', module: 'nikita/misc/conditions'
             if code is 0 then next() else skip()
@@ -156,16 +156,86 @@ were executed with failure otherwise the callback `skip` is called.
         each(options.unless_exec)
         .call (cmd, next) ->
           options.log? message: "Nikita `unless_exec`: #{cmd}", level: 'DEBUG', module: 'nikita/misc/conditions'
-          options = { cmd: cmd, ssh: options.ssh }
-          run = exec options
-          if options.stdout
-            run.stdout.pipe options.stdout, end: false
-          if options.stderr
-            run.stderr.pipe options.stderr, end: false
+          # options = ssh: options.ssh, cmd: cmd
+          run = exec ssh: options.ssh, cmd: cmd
+          # if options.stdout
+          #   run.stdout.pipe options.stdout, end: false
+          # if options.stderr
+          #   run.stderr.pipe options.stderr, end: false
           run.on "exit", (code) ->
             options.log? message: "Nikita `unless_exec`: code is \"#{code}\"", level: 'INFO', module: 'nikita/misc/conditions'
             if code is 0 then skip() else next()
         .then succeed
+
+## Run an action if OS match: `if_os`
+
+Work on the property `if_os` in `options`. The value may 
+be a single condition command or an array of conditions.   
+
+The callback `succeed` is called if any of the provided filter passed otherwise
+the callback `skip` is called.
+      
+      if_os: (options, succeed, skip) ->
+        options.if_os = [options.if_os] unless Array.isArray options.if_os
+        for rule in options.if_os
+          rule.name ?= []
+          rule.name = [rule.name] unless Array.isArray rule.name
+          rule.version ?= []
+          rule.version = [rule.version] unless Array.isArray rule.version
+          rule.version = semver.sanitize rule.version, 'x'
+          rule.arch ?= []
+          rule.arch = [rule.arch] unless Array.isArray rule.arch
+        options.log? message: "Nikita `if_os`: #{JSON.stringify options.if_os}", level: 'DEBUG', module: 'nikita/misc/conditions'
+        exec options.ssh, os, (err, stdout, stderr) ->
+          return skip err if err
+          [arch, name, version] = stdout.split '|'
+          # Remove minor version (eg centos 7)
+          version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec version
+          match = options.if_os.some (rule) ->
+            n = !rule.name.length || rule.name.some (value) ->
+              return true if typeof value is 'string' and value is name
+              return true if value instanceof RegExp and value.test name
+            v = !rule.version.length || rule.version.some (value) ->
+              version = semver.sanitize version, '0'
+              return true if typeof value is 'string' and semver.satisfies version, value
+              return true if value instanceof RegExp and value.test version
+            return n and v
+          if match then succeed() else skip()
+
+## Run an action unless OS match: `unless_os`
+
+Work on the property `unless_os` in `options`. The value may 
+be a single condition command or an array of conditions.   
+
+The callback `succeed` is called if none of the provided filter passed otherwise
+the callback `skip` is called.
+      
+      unless_os: (options, succeed, skip) ->
+        options.unless_os = [options.unless_os] unless Array.isArray options.unless_os
+        for rule in options.unless_os
+          rule.name ?= []
+          rule.name = [rule.name] unless Array.isArray rule.name
+          rule.version ?= []
+          rule.version = [rule.version] unless Array.isArray rule.version
+          rule.version = semver.sanitize rule.version, 'x'
+          rule.arch ?= []
+          rule.arch = [rule.arch] unless Array.isArray rule.arch
+        options.log? message: "Nikita `unless_os`: #{JSON.stringify options.unless_os}", level: 'DEBUG', module: 'nikita/misc/conditions'
+        exec options.ssh, os, (err, stdout, stderr) ->
+          return skip err if err
+          [arch, name, version] = stdout.split '|'
+          # Remove minor version (eg centos 7)
+          version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec version
+          match = options.unless_os.some (rule) ->
+            n = !rule.name.length || rule.name.some (value) ->
+              return true if typeof value is 'string' and value is name
+              return true if value instanceof RegExp and value.test name
+            v = !rule.version.length || rule.version.some (value) ->
+              version = semver.sanitize version, '0'
+              return true if typeof value is 'string' and semver.satisfies version, value
+              return true if value instanceof RegExp and value.test version
+            return n and v
+          if match then skip() else succeed()
 
 ## Run an action if a file exists: `if_exists`
 
@@ -299,4 +369,6 @@ conditions.all({
     each = require 'each'
     exec = require 'ssh2-exec'
     fs = require 'ssh2-fs'
+    os = require './os'
+    semver = require './semver'
     template = require './template'

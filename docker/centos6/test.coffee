@@ -1,5 +1,6 @@
 
 module.exports =
+  disable_conditions_if_os: false
   disable_docker: false
   disable_discover: false
   disable_docker_volume: true # centos6 ship docker 1.7 which doesnt support volume
@@ -17,6 +18,10 @@ module.exports =
   disable_system_execute_arc_chroot: true #can not be activated
   disable_system_tmpfs: true #can not be activated
   disable_system_user: false
+  conditions_is_os:
+    arch: '64'
+    name: 'centos'
+    version: '6.8'
   docker: # eg `docker-machine create --driver virtualbox nikita || docker-machine start nikita`
     host: 'dind:2375'
     # machine: 'nikita'

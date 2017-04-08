@@ -1,5 +1,6 @@
 
 module.exports =
+  disable_conditions_if_os: false
   disable_discover: false # can be activated
   disable_docker: true
   disable_krb5_addprinc: false # not sure if working
@@ -19,6 +20,10 @@ module.exports =
   docker: # eg `docker-machine create --driver virtualbox nikita || docker-machine start nikita`
     host: 'dind:2375'
     # machine: 'nikita'
+  conditions_is_os:
+    arch: '64'
+    name: 'ubuntu'
+    version: '14.04'
   krb5:
     realm: 'NODE.DC1.CONSUL'
     kadmin_server: 'krb5'

@@ -1,5 +1,6 @@
 
 module.exports =
+  disable_conditions_if_os: false
   disable_discover: false
   disable_docker: false
   disable_docker_volume: false # centos6 ship docker 1.7 which doesnt support volume
@@ -20,6 +21,10 @@ module.exports =
   docker: # eg `docker-machine create --driver virtualbox nikita || docker-machine start nikita`
     host: 'dind:2375'
     # machine: 'nikita'
+  conditions_is_os:
+    arch: '64'
+    name: 'centos'
+    version: '7.3'
   db:
     mysql:
       engine: 'mysql'
