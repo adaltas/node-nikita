@@ -37,45 +37,71 @@ Write a file in the Java properties format.
       options.separator ?= '='
       options.content ?= {}
       options.sort ?= false
-      properties = if options.merge then {} else options.content
+      # org_props = if options.merge then {} else options.content
+      fnl_props = options.content
+      org_props = {}
       options.log message: "Merging \"#{if options.merge then 'true' else 'false'}\"", level: 'DEBUG', module: 'nikita/lib/file/properties'
-      @call
-        if: options.merge
-        handler: (_, callback) ->
-          options.log message: "Reading target \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/file/properties'
-          fs.readFile options.ssh, options.target, 'utf8', (err, data) ->
-            return callback err if err
-            # Extract properties
-            lines = string.lines data
-            for line in lines
-              continue if /^\s*$/.test line # Empty line
-              if /^#/.test line # Comment
-                properties[line] = null if options.comment
-                continue
-              [_,k,v] = ///^(.*?)#{quote options.separator}(.*)$///.exec line
-              properties[k] = v
-            # Diff
-            
-            # Merge with user properties
-            for k, v of options.content
-              if v is null
-                delete properties[k]
-              else
-                properties[k] = v
-            callback()
+      # Read Original
+      @call (_, callback) ->
+        options.log message: "Reading target \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/file/properties'
+        module.exports.properties options, (err, props) ->
+          return callback err if err
+          org_props = props
+          callback()
+      # Diff
+      @call (_, callback) ->
+        status = false
+        keys = {}
+        for k in Object.keys(org_props) then keys[k] = true
+        for k in Object.keys(fnl_props) then keys[k] = true # unless keys[k]?
+        for key in Object.keys keys
+          if "#{org_props[key]}" isnt "#{fnl_props[key]}"
+            options.log? message: "Property '#{key}' was '#{org_props[k]}' and is now '#{fnl_props[k]}'", level: 'WARN', module: 'ryba/lib/file/properties'
+            status = true if fnl_props[key]?
+        callback null, status
+      # Merge
+      @call if: options.merge, ->
+        for k, v of fnl_props
+          org_props[k] = fnl_props[k]
+        fnl_props = org_props
       @call ->
         # Write data
-        keys = if options.sort then Object.keys(properties).sort() else Object.keys(properties)
+        keys = if options.sort then Object.keys(fnl_props).sort() else Object.keys(fnl_props)
         data = for key in keys
-          if properties[key]?
-          then "#{key}#{options.separator}#{properties[key]}"
+          if fnl_props[key]?
+          then "#{key}#{options.separator}#{fnl_props[key]}"
           else "#{key}" # This is a comment
-        data = data.join '\n'
         @file
           target: "#{options.target}"
-          content: data
+          content: data.join '\n'
           backup: options.backup
           eof: true
+          shy: true
+        @system.chown
+          target: options.target
+          uid: options.uid
+          gid: options.gid
+          if: options.uid? or options.gid?
+        @system.chmod
+          target: options.target
+          mode: options.mode
+          if: options.mode?
+
+    module.exports.properties = (options, callback) ->
+      fs.readFile options.ssh, options.target, 'utf8', (err, data) ->
+        return callback null, {} if err?.code is 'ENOENT'
+        return callback err if err
+        props = {}
+        # Parse
+        lines = string.lines data
+        for line in lines
+          continue if /^\s*$/.test line # Empty line
+          if /^#/.test line # Comment
+            props[line] = null if options.comment
+            continue
+          [_,k,v] = ///^(.*?)#{quote options.separator}(.*)$///.exec line
+          props[k] = v
+        callback null, props
 
 ## Dependencies
 

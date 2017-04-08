@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* properties: status detection based on diff
 * properties: new comment option #103
 * conditions: new if_os and unless_os #102
 * ini: fix header, dont pass options to write
