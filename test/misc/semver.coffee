@@ -8,6 +8,7 @@ describe 'misc semver', ->
 
     it 'sanitize', ->
       semver.sanitize('5').should.eql '5.x.x'
+      semver.sanitize(['5']).should.eql ['5.x.x']
       semver.sanitize('5', '0').should.eql '5.0.0'
       semver.sanitize('5.1.2', '0').should.eql '5.1.2'
       semver.sanitize('5.1.2.3', '0').should.eql '5.1.2'
