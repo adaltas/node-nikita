@@ -48,10 +48,14 @@ Write a file in the Java properties format.
             # Extract properties
             lines = string.lines data
             for line in lines
-              continue if /^#/.test line # Comment
-              continue if /^\w*$/.test line # Empty line
+              continue if /^\s*$/.test line # Empty line
+              if /^#/.test line # Comment
+                properties[line] = null if options.comment
+                continue
               [_,k,v] = ///^(.*?)#{quote options.separator}(.*)$///.exec line
               properties[k] = v
+            # Diff
+            
             # Merge with user properties
             for k, v of options.content
               if v is null
@@ -63,7 +67,9 @@ Write a file in the Java properties format.
         # Write data
         keys = if options.sort then Object.keys(properties).sort() else Object.keys(properties)
         data = for key in keys
-          "#{key}#{options.separator}#{properties[key]}"
+          if properties[key]?
+          then "#{key}#{options.separator}#{properties[key]}"
+          else "#{key}" # This is a comment
         data = data.join '\n'
         @file
           target: "#{options.target}"

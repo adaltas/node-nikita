@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* properties: new comment option #103
 * conditions: new if_os and unless_os #102
 * ini: fix header, dont pass options to write
 * options: handle user home in source and target #101

@@ -29,9 +29,8 @@ describe 'file.properties', ->
       status.should.be.false() unless err
     .call (_, callback)->
       fs.readFile ssh, "#{scratch}/file.properties", 'ascii', (err, data) ->
-        return callback err if err
-        data.should.eql "another_key=another value\n"
-        callback()
+        data.should.eql "another_key=another value\n" unless err
+        callback err
     .then next
     
   they 'honors merge', (ssh, next) ->
@@ -56,9 +55,8 @@ describe 'file.properties', ->
       status.should.be.false() unless err
     .call (_, callback)->
       fs.readFile ssh, "#{scratch}/file.properties", 'ascii', (err, data) ->
-        return callback err if err
-        data.should.eql "a_key=a value\nanother_key=another value\n"
-        callback()
+        data.should.eql "a_key=a value\nanother_key=another value\n" unless err
+        callback err
     .then next
 
   they 'honor separator', (ssh, next) ->
@@ -75,9 +73,8 @@ describe 'file.properties', ->
       merge: true
     .call (_, callback)->
       fs.readFile ssh, "#{scratch}/file.properties", 'ascii', (err, data) ->
-        return callback err if err
-        data.should.eql "a_key a value\nanother_key another value\n"
-        callback()
+        data.should.eql "a_key a value\nanother_key another value\n" unless err
+        callback err
     .then next
 
   they 'honor sort', (ssh, next) ->
@@ -102,7 +99,29 @@ describe 'file.properties', ->
       sort: true
     .call (_, callback) ->
       fs.readFile ssh, "#{scratch}/file.properties", 'ascii', (err, data) ->
-        return callback err if err
-        data.should.eql "a_key=value\nb_key=value\n"
-        callback()
+        data.should.eql "a_key=value\nb_key=value\n" unless err
+        callback err
+    .then next
+
+  they 'honor comments', (ssh, next) ->
+    nikita
+      ssh: ssh
+    .file
+      target: "#{scratch}/file.properties"
+      content: """
+      a_key=value
+      # comment
+      b_key=value
+      """
+    .file.properties
+      target: "#{scratch}/file.properties"
+      content:
+        b_key: 'new value'
+        a_key: 'new value'
+      merge: true
+      comment: true
+    .call (_, callback) ->
+      fs.readFile ssh, "#{scratch}/file.properties", 'ascii', (err, data) ->
+        data.should.eql "a_key=new value\n# comment\nb_key=new value\n" unless err
+        callback err
     .then next
