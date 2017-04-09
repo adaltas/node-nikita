@@ -21,6 +21,9 @@ Escape SQL for Bash processing.
       options.engine = options.engine.toLowerCase()
       options.admin_password = null unless options.admin_username
       options.silent ?= true
+      throw Error "Required Option: \"engine\"" unless options.engine
+      throw Error "Required Option: \"host\"" unless options.host
+      throw Error "Required Option: \"admin_username\" or \"username\"" unless options.admin_username or options.username
       switch options.engine
         when 'mysql'
           options.path ?= 'mysql'
