@@ -3,7 +3,8 @@
 
 ## Trunk
 
-* db.admin: engine, host and username now required
+* misc.db: surround password by quotes
+* misc.db: engine, host and username now required
 * misc.db: cmd now optianal, stronger argument parsing
 * properties: status detection based on diff
 * properties: new comment option #103
