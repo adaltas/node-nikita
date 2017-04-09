@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* misc.regexp.esace: add example
 * startup: improve error message
 * misc.db: surround password by quotes
 * misc.db: engine, host and username now required

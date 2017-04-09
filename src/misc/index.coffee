@@ -40,6 +40,8 @@ misc = module.exports =
           r.push el
       r
   regexp:
+    # Escape RegExp related charracteres
+    # eg `///^\*/\w+@#{misc.regexp.escape realm}\s+\*///mg`
     escape: (str) ->
       str.replace /[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"
   object:
