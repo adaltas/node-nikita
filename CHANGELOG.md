@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* startup: improve error message
 * misc.db: surround password by quotes
 * misc.db: engine, host and username now required
 * misc.db: cmd now optianal, stronger argument parsing

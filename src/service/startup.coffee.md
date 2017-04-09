@@ -93,10 +93,13 @@ require('nikita').service.startup([{
             systemctl enable #{options.name}
           fi
           """
+        trap: true
         code_skipped: 3
         arch_chroot: options.arch_chroot
         rootdir: options.rootdir
       , (err, status) ->
+        err = Error "Startup Enable Failed: #{options.name}" if err and options.startup
+        err = Error "Startup Disable Failed: #{options.name}" if err and not options.startup
         throw err if err
         message = if options.startup then 'activated' else 'disabled'
         options.log if status
