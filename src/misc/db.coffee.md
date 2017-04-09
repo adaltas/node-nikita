@@ -10,10 +10,11 @@ Escape SQL for Bash processing.
 
 ## Build a Unix command
     
-    module.exports.cmd = (opts..., cmd=null) ->
-      properties = ['engine', 'admin_username', 'admin_password', 'username', 'password', 'host', 'database','silent']
+    module.exports.cmd = (opts...) ->
+      properties = ['engine', 'cmd', 'admin_username', 'admin_password', 'username', 'password', 'host', 'database','silent']
       options = {}
       for opt in opts
+        opt = cmd: opt if typeof opt is 'string'
         for k, v of opt
           continue unless k in properties
           options[k] = v

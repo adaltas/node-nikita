@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* misc.db: cmd now optianal, stronger argument parsing
 * properties: status detection based on diff
 * properties: new comment option #103
 * conditions: new if_os and unless_os #102
