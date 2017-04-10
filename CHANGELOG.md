@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* disable repo test for archlinux, ubuntu test environment
 * tools.repo: add tools action to push repo file for packet manager closes #104
 * file.types.yum_repo: add action to write repo file to yum format
 * file.ini: complete rewrite and add source options support

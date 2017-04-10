@@ -15,6 +15,7 @@ module.exports =
   disable_system_execute_arc_chroot: true
   disable_system_tmpfs: true
   disable_system_user: true
+  disable_tools_repo: true
   docker: # eg `docker-machine create --driver virtualbox nikita`
     machine: 'nikita'
   krb5:

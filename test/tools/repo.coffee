@@ -8,7 +8,7 @@ describe 'tools.repo', ->
 
   @timeout 50000
   config = test.config()
-  return if config.disable_toosl_repo
+  return if config.disable_tools_repo
   scratch = test.scratch @
   
   they 'Write simple file', (ssh, next) ->
