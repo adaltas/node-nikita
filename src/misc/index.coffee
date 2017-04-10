@@ -316,6 +316,7 @@ misc = module.exports =
         section = undefined
       options.separator ?= ' = '
       options.eol ?= if not options.ssh and process.platform is "win32" then "\r\n" else "\n"
+      options.escape ?= true
       safe = misc.ini.safe
       dotSplit = misc.ini.dotSplit
       children = []
@@ -332,7 +333,8 @@ misc = module.exports =
       if section and out.length
         out = "[" + safe(section) + "]" + options.eol + out
       children.forEach (k, _, __) ->
-        nk = dotSplit(k).join '\\.'
+        # escape the section name dot as some daemon could not parse it
+        nk = if options.escape then dotSplit(k).join '\\.'  else k
         child = misc.ini.stringify(obj[k], (if section then section + "." else "") + nk, options)
         if out.length and child.length
           out += options.eol

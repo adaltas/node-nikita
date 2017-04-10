@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* misc.ini.stringify: add escape option
 * misc.regexp.esace: add example
 * startup: improve error message
 * misc.db: surround password by quotes
