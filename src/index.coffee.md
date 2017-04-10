@@ -101,6 +101,7 @@ functions share a common API with flexible options.
         types:
           locale_gen: 'nikita/file/types/locale_gen'
           pacman_conf: 'nikita/file/types/pacman_conf'
+          yum_repo: 'nikita/file/types/yum_repo'
       java:
         keystore_add: 'nikita/java/keystore_add'
         keystore_remove: 'nikita/java/keystore_remove'

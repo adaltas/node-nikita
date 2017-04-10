@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* file.types.yum_repo: add action to write repo file to yum format
 * file.ini: complete rewrite and add source options support
 * misc.ini.stringify: add escape option
 * misc.regexp.esace: add example
