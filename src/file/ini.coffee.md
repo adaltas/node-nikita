@@ -21,6 +21,8 @@ provided in the `content` option.
     Remove all the lines whithout a key and a value, default to "true".   
 *   `content`   
     Object to stringify.   
+*   `escape` (boolean)   
+    Escape the section's header title replace '.' by '\.'. True by default.
 *   `merge`   
     Read the target if it exists and merge its content.   
 *   `parse`   
@@ -62,48 +64,59 @@ require('nikita').ini({
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       options.log message: "Entering file.ini", level: 'DEBUG', module: 'nikita/lib/file/ini'
-      {merge, target, content, ssh} = options
       options.clean ?= true
+      # escape the header section name '.' as some daemons could not parse it.
+      options.escape ?= true
+      options.content ?= {}
       # Validate parameters
-      return callback new Error 'Missing content' unless content
-      return callback new Error 'Missing target' unless target
-      # Start real work
-      do_get = ->
-        return do_file() unless merge
-        options.log message: "Get content for merge", level: 'DEBUG', module: 'nikita/lib/file/ini'
-        fs.exists ssh, target, (err, exists) ->
+      throw Error 'Missing content' unless options.content? or not options.source?
+      throw Error 'Missing target' unless options.target?
+      org_props = {}
+      default_props = {}
+      parse = options.parse or misc.ini.parse
+      # Original properties
+      @call (_, callback) ->
+        fs.readFile options.ssh, options.target, 'utf8', (err, data) ->
+          return callback() if err?.code is 'ENOENT'
           return callback err if err
-          return do_file() unless exists
-          fs.readFile ssh, target, 'ascii', (err, c) ->
-            return callback err if err and err.code isnt 'ENOENT'
-            content = misc.ini.clean content, true
-            parse = options.parse or misc.ini.parse
-            content = misc.merge parse(c, options), content
-            do_file()
-      do_file = =>
+          org_props = misc.merge parse(data, options)
+          callback()
+      # Default properties
+      @call if: options.source, (_, callback) ->
+        ssh = if options.local then null else options.ssh
+        fs.readFile options.ssh, options.source, 'utf8', (err, data) ->
+          return callback() if err?.code is 'ENOENT'
+          return callback err if err
+          content = misc.ini.clean options.content, true
+          options.content = misc.merge parse(data, options), options.content
+          callback()
+      # Merge
+      @call if: options.merge , (_, callback) ->
+        options.content = misc.merge org_props, options.content
+        options.log message: "Get content for merge", level: 'DEBUG', module: 'nikita/lib/file/ini'
+        callback()
+      @call ->
         if options.clean
           options.log message: "Clean content", level: 'INFO', module: 'nikita/lib/file/ini'
-          misc.ini.clean content
+          misc.ini.clean options.content
         options.log message: "Serialize content", level: 'DEBUG', module: 'nikita/lib/file/ini'
         stringify = options.stringify or misc.ini.stringify
         @file
           target: options.target
-          content: stringify content, options
+          content: stringify options.content, options
           backup: options.backup
           diff: options.diff
           eof: options.eof
           gid: options.gid
           uid: options.uid
           mode: options.mode
-        , (err, written) ->
-          callback err, written
-      do_get()
 
 ## Dependencies
 
     fs = require 'ssh2-fs'
     misc = require '../misc'
+    {merge} = require '../misc'
 
 [ini]: https://github.com/isaacs/ini

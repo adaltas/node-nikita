@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* file.ini: complete rewrite and add source options support
 * misc.ini.stringify: add escape option
 * misc.regexp.esace: add example
 * startup: improve error message

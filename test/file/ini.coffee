@@ -16,6 +16,11 @@ describe 'file.ini', ->
       target: "#{scratch}/user.ini"
     , (err, status) ->
       status.should.be.true() unless err
+    .file.ini
+      content: user: preference: color: 'rouge'
+      target: "#{scratch}/user.ini"
+    , (err, status) ->
+      status.should.be.false() unless err
     .file.assert
       target: "#{scratch}/user.ini"
       content: '[user.preference]\ncolor = rouge\n'
@@ -142,9 +147,138 @@ describe 'file.ini', ->
       target: "#{scratch}/user.ini"
       merge: false
     , (err, status) ->
-      return next err if err
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/user.ini"
       content: '[user.preference]\nlanguage = c++\ncolor\n'
+    .then next
+    
+  they 'use default source file', (ssh, next) ->
+    nikita
+      ssh: ssh
+    .file
+      target: "#{scratch}/user.ini"
+      content: '[user.preference]\nlanguage = node\n'
+    .file.ini
+      source: "#{scratch}/user.ini"
+      target: "#{scratch}/test.ini"
+      merge: false
+    , (err, written) ->
+      written.should.be.true() unless err
+    .file.ini
+      source: "#{scratch}/user.ini"
+      target: "#{scratch}/test.ini"
+      merge: false
+    , (err, written) ->
+      written.should.be.false() unless err
+    .file.assert
+      target: "#{scratch}/test.ini"
+      content: '[user.preference]\nlanguage = node\n'
+    .then next
+
+  they 'use default source file with content', (ssh, next) ->
+    nikita
+      ssh: ssh
+    .system.remove
+      target: "#{scratch}/test.ini"
+    .file
+      target: "#{scratch}/user.ini"
+      content: '[user.preference]\nlanguage = node\n'
+    .file.ini
+      source: "#{scratch}/user.ini"
+      target: "#{scratch}/test.ini"
+      content: user: preference: remember: 'me'
+      merge: false
+    , (err, written) ->
+      written.should.be.true() unless err
+    .file.assert
+      target: "#{scratch}/test.ini"
+      content: '[user.preference]\nlanguage = node\nremember = me\n'
+    .then next
+    
+  they 'use default source file with merge', (ssh, next) ->
+    nikita
+      ssh: ssh
+    .system.remove
+      target: "#{scratch}/test.ini"
+    .file
+      target: "#{scratch}/user.ini"
+      content: '[user.preference]\nlanguage = node\n'
+    .file
+      target: "#{scratch}/test.ini"
+      content: '[user.preference]\nlanguage = c++\n'
+    .file.ini
+      source: "#{scratch}/user.ini"
+      target: "#{scratch}/test.ini"
+      merge: true
+    , (err, written) ->
+      written.should.be.true() unless err
+    .file.ini
+      source: "#{scratch}/user.ini"
+      target: "#{scratch}/test.ini"
+      merge: true
+    , (err, written) ->
+      written.should.be.false() unless err
+    .file.assert
+      target: "#{scratch}/test.ini"
+      content: '[user.preference]\nlanguage = node\n'
+    .then next
+
+  they 'use default source file with merge and content', (ssh, next) ->
+    nikita
+      ssh: ssh
+    .system.remove
+      target: "#{scratch}/test.ini"
+    .file
+      target: "#{scratch}/user.ini"
+      content: '[user.preference]\nlanguage = node\n'
+    .file
+      target: "#{scratch}/test.ini"
+      content: '[user.preference]\nlanguage = java\n'
+    .file.ini
+      source: "#{scratch}/user.ini"
+      target: "#{scratch}/test.ini"
+      content: user: preference: language: 'c++'
+      merge: true
+    , (err, written) ->
+      written.should.be.true() unless err
+    .file.assert
+      target: "#{scratch}/test.ini"
+      content: '[user.preference]\nlanguage = c++\n'
+    .file.ini
+      source: "#{scratch}/user.ini"
+      target: "#{scratch}/test.ini"
+      content: user: preference: language: 'c++'
+      merge: true
+    , (err, written) ->
+      written.should.be.false() unless err
+    .then next
+
+  they 'generate from content object with escape', (ssh, next) ->
+    nikita
+      ssh: ssh
+    .file.ini
+      target: "#{scratch}/test.ini"
+      escape: false
+      content:
+        "test-repo-0.0.1":
+          'name': 'CentOS-$releasever - Base'
+          'mirrorlist': 'http://test/?infra=$infra'
+          'baseurl': 'http://mirror.centos.org/centos/$releasever/os/$basearch/'
+          'gpgcheck': '1'
+          'gpgkey': 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7'
+    , (err, status) ->
+      status.should.be.true() unless err
+    .file.ini
+      target: "#{scratch}/test.ini"
+      escape: false
+      content:
+        "test-repo-0.0.1":
+          'name': 'CentOS-$releasever - Base'
+          'mirrorlist': 'http://test/?infra=$infra'
+          'baseurl': 'http://mirror.centos.org/centos/$releasever/os/$basearch/'
+          'gpgcheck': '1'
+          'gpgkey': 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7'
+    , (err, status) ->
+      status.should.be.false() unless err
     .then next
