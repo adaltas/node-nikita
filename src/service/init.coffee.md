@@ -45,23 +45,9 @@ Reload the service daemon provider depending on the os.
       # detect daemon loader provider to construct target
       options.name ?= path.basename(options.source).split('.')[0]
       options.target ?= "/etc/init.d/#{options.name}"
-      options.os ?= {}
-      @system.discover (err, status, os) -> 
-        options.os.type ?= os.type
-        options.os.release ?= os.release
       @service.discover (err, status, loader) -> 
         options.loader ?= loader
       # discover loader to put in cache
-      @call ->
-        cmd = "systemctl status #{options.name} 2>\&1 "
-        switch options.loader
-          when 'service'
-            cmd += "| grep '(Reason: No such file or directory)'" if options.os.type in ['redhat','centos']
-            cmd += "| grep '(#{options.name}: unrecognized service)'" if options.os.type in ['ubuntu']
-          when 'systemctl'  
-            cmd += "| grep '(Reason: No such file or directory)'" if options.os.type in ['redhat','centos'] and /^7.1/.exec options.os.release
-            cmd += "| grep 'Unit #{options.name}.service could not be found.'" if options.os.type in ['redhat','centos'] and /^7.2/.exec options.os.release
-            cmd += "| grep 'Unit #{options.name}.service could not be found.'" if options.os.type in ['redhat','centos'] and /^7.3/.exec options.os.release
         @file.render 
           target: options.target
           source: options.source
@@ -74,7 +60,10 @@ Reload the service daemon provider depending on the os.
         @system.execute
           if: -> (options.loader is 'systemctl') and (path.dirname(options.target) is '/etc/init.d')
           shy: true
-          cmd: cmd
+          cmd: """
+            systemctl status #{options.name} 2>\&1 | egrep \
+            '(Reason: No such file or directory)|(Unit #{options.name}.service could not be found)'
+            """
           code_skipped: 1
         @system.execute
           if: ->  @status(-1)

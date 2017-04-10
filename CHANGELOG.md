@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* service.init: daemon-reload based on loader only and not system.discover
 * disable repo test for archlinux, ubuntu test environment
 * tools.repo: add tools action to push repo file for packet manager closes #104
 * file.types.yum_repo: add action to write repo file to yum format
