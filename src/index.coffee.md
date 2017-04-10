@@ -165,6 +165,7 @@ functions share a common API with flexible options.
         extract: 'nikita/tools/extract'
         iptables: 'nikita/tools/iptables'
         git: 'nikita/tools/git'
+        repo: 'nikita/tools/repo'
       wait:
         '': 'nikita/wait'
         execute: 'nikita/wait/execute'
