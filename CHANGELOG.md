@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* database: create user with grant options
 * service.init: daemon-reload based on loader only and not system.discover
 * disable repo test for archlinux, ubuntu test environment
 * tools.repo: add tools action to push repo file for packet manager closes #104
