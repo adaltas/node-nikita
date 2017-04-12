@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* ldap index: refactor
 * database: create user with grant options
 * service.init: daemon-reload based on loader only and not system.discover
 * disable repo test for archlinux, ubuntu test environment

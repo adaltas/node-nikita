@@ -38,12 +38,15 @@ require('nikita').ldap.index({
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       modified = false
-      do_getdn = =>
-        return do_get_indexes() if options.hdb_dn
+      indexes = {}
+      add = {}
+      modify = {}
+      @call unless: options.hdb_dn, ->
         options.log message: "Get DN of the HDB to modify", level: 'DEBUG', module: 'nikita/ldap/index'
         @system.execute
+          shy: true
           cmd: """
           ldapsearch -LLL -Y EXTERNAL -H ldapi:/// \
             -b cn=config \
@@ -52,36 +55,34 @@ require('nikita').ldap.index({
             | egrep '^dn' \
             | sed -e 's/^dn:\\s*olcDatabase=\\(.*\\)$/\\1/g'
           """
+          shy: true
         , (err, _, hdb_dn) ->
-          return callback err if err
+          throw err if err
+          options.log message: "HDB is #{hdb_dn.trim()}", level: 'INFO', module: 'nikita/ldap/index'
           options.hdb_dn = hdb_dn.trim()
-          do_get_indexes()
-      do_get_indexes = =>
+      @call ->
         options.log message: "List all indexes of the directory", level: 'DEBUG', module: 'nikita/ldap/index'
         @system.execute
+          shy: true
           cmd: """
           ldapsearch -LLL -Y EXTERNAL -H ldapi:/// \
             -b olcDatabase=#{options.hdb_dn} \
             "(olcDbIndex=*)" olcDbIndex
           """
         , (err, _, stdout) ->
-          return callback err if err
-          indexes = {}
+          throw err if err
           for line in string.lines stdout
             continue unless match = /^olcDbIndex:\s+(.*)\s+(.*)/.exec line
             [_, attrlist, indices] = match
             indexes[attrlist] = indices
-          do_diff indexes
-      do_diff = (orgp) ->
-        add = {}
-        modify = {}
+      @call (_, callback) ->
         for k, v of options.indexes
-          if not orgp[k]?
+          if not indexes[k]?
             add[k] = v
-          else if v != orgp[k]
-            modify[k] = [v, orgp[k]]
-        if Object.keys(add).length or Object.keys(modify).length then do_save(add, modify) else do_end()
-      do_save = (add, modify) =>
+          else if v != indexes[k]
+            modify[k] = [v, indexes[k]]
+        callback null, Object.keys(add).length or Object.keys(modify).length
+      @call if: (-> @status -1), ->
         cmd = []
         for k, v of add
           cmd.push """
@@ -104,13 +105,6 @@ require('nikita').ldap.index({
           #{cmd.join '\n-\n'}
           EOF
           """
-        , (err, _, stdout) ->
-          return callback err if err
-          modified = true
-          do_end()
-      do_end = (err) ->
-        callback err, modified
-      do_getdn()
 
 ## Dependencies
 
