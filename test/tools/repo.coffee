@@ -48,7 +48,7 @@ describe 'tools.repo', ->
     .file.assert '/etc/yum.repos.d/CentOS-nikita.repo'
     .system.remove '/etc/yum.repos.d/CentOS-nikita.repo'
     .then next
-
+  
   they 'Download GPG Keys option', (ssh, next) ->
     nikita
       ssh: ssh
@@ -65,4 +65,19 @@ describe 'tools.repo', ->
     .file.assert '/etc/yum.repos.d/hdp-nikita.repo'
     .system.remove '/etc/yum.repos.d/hdp-nikita.repo'
     .system.remove '/etc/pki/rpm-gpg/RPM-GPG-KEY-Jenkins'
+    .then next
+
+  they 'Download repo from remote location', (ssh, next) ->
+    nikita
+      ssh: ssh
+    .system.remove '/etc/yum.repos.d/hdp.repo'
+    .tools.repo
+      source: "http://public-repo-1.hortonworks.com/HDP/centos6/2.x/updates/2.6.0.3/hdp.repo"
+    , (err, status) ->
+      status.should.be.true() unless err
+    .tools.repo
+      source: "http://public-repo-1.hortonworks.com/HDP/centos6/2.x/updates/2.6.0.3/hdp.repo"
+    , (err, status) ->
+      status.should.be.false() unless err
+    .file.assert '/etc/yum.repos.d/hdp.repo'
     .then next

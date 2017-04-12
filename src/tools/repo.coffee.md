@@ -41,25 +41,47 @@ require('nikita').tools.repo({
       options.local ?= false
       remote_files = []
       keys = []
+      file_name = path.basename options.source
+      options.target ?= path.resolve '/etc/yum.repos.d/', file_name
       # Delete
       @call if: options.replace?, (_, callback) ->
         options.log message: "Searching repositories inside \"/etc/yum.repos.d/\"", level: 'DEBUG', module: 'nikita/lib/tools/repo'
         glob options.ssh, "/etc/yum.repos.d/#{options.replace}", (err, files) ->
           return callback err if err
           remote_files = for file in files
-            continue if file is path.basename options.source
+            continue if file is file_name
             "/etc/yum.repos.d/#{file}"
           callback()
       @system.remove remote_files
       # Write
-      @file.types.yum_repo
-        source: options.source
-        local: options.local
-        content: options.content
-        mode: options.mode
-        uid: options.uid
-        gid: options.gid
-        target: "/etc/yum.repos.d/#{path.basename options.source}"
+      @call ->
+        cache  = (url.parse options.source).protocol in ['http:', 'https:']
+        tmp_dir = "/tmp/nikita_repo_#{Date.now()}"
+        @system.mkdir
+          target: tmp_dir
+          shy: true
+        @file.cache
+          if: cache
+          source: options.source
+          target: file_name
+          cache_dir: tmp_dir
+          cache_local: options.local
+          headers: options.headers
+          md5: options.md5
+          proxy: options.proxy
+          location: options.location
+          shy: true
+        @file.types.yum_repo
+          source: if cache then "#{tmp_dir}/#{file_name}" else options.source
+          local: options.local
+          content: options.content
+          mode: options.mode
+          uid: options.uid
+          gid: options.gid
+          target: options.target
+        @system.remove
+          target: tmp_dir
+          shy: true
       #Read GPG Keys
       @call 
         if: -> options.verify or @status -1
@@ -67,7 +89,7 @@ require('nikita').tools.repo({
         options.log "Download #{options.source}'s GPG keys", level: 'INFO', module: 'nikita/lib/tools/repo'
         @call (_, callback)->
           options.log "Read GPG keys from #{options.source}", level: 'DEBUG', module: 'nikita/lib/tools/repo'
-          fs.readFile options.ssh, options.source , 'utf8', (err, content) =>
+          fs.readFile options.ssh, options.target , 'utf8', (err, content) =>
             return callback err if err
             data  = misc.ini.parse_multi_brackets content
             keys = for name, section of data
@@ -82,6 +104,7 @@ require('nikita').tools.repo({
         , ->
           @each keys, (options) ->
             gpgkey = options.key
+            options.log "Downloading GPG keys from #{gpgkey}", level: 'DEBUG', module: 'nikita/lib/tools/repo'
             @file.download
               source: gpgkey
               target: "/etc/pki/rpm-gpg/#{path.basename gpgkey}"
@@ -100,3 +123,4 @@ require('nikita').tools.repo({
     path = require 'path'
     glob = require '../misc/glob'
     misc = require '../misc'
+    url = require 'url'
