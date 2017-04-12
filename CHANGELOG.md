@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* ldap schema: refactor
 * ldap index: refactor
 * database: create user with grant options
 * service.init: daemon-reload based on loader only and not system.discover

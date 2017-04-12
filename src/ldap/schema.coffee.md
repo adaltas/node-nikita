@@ -45,7 +45,7 @@ require('nikita').ldap.schema({
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       # Auth related options
       binddn = if options.binddn then "-D #{options.binddn}" else ''
       passwd = if options.passwd then "-w #{options.passwd}" else ''
@@ -55,65 +55,51 @@ require('nikita').ldap.schema({
       options.uri = 'ldapi:///' if options.uri is true
       uri = if options.uri then "-H #{options.uri}" else '' # URI is obtained from local openldap conf unless provided
       # Schema related options
-      return callback new Error "Missing name" unless options.name
-      return callback new Error "Missing schema" unless options.schema
+      throw Error "Missing name" unless options.name
+      throw Error "Missing schema" unless options.schema
       options.schema = options.schema.trim()
       tempdir = options.tempdir or "/tmp/nikita_ldap.schema_#{Date.now()}"
       schema = "#{tempdir}/#{options.name}.schema"
       conf = "#{tempdir}/schema.conf"
       ldif = "#{tempdir}/ldif"
-      modified = false
-      do_registered = =>
-        cmd = "ldapsearch -LLL #{binddn} #{passwd} #{uri} -b \"cn=schema,cn=config\" | grep -E cn=\\{[0-9]+\\}#{options.name},cn=schema,cn=config"
-        options.log? "Check if schema is registered:"
-        @system.execute
-          cmd: cmd
-          code: 0
-          code_skipped: 1
-        , (err, registered, stdout) ->
-          return callback err if err
-          return callback() if registered
-          do_write()
-      do_write = =>
-        @call ->
-          options.log? 'Create ldif directory'
+      @system.execute
+        # shy: true
+        cmd: """
+        ldapsearch -LLL #{binddn} #{passwd} #{uri} -b \"cn=schema,cn=config\" \
+        | grep -E cn=\\{[0-9]+\\}#{options.name},cn=schema,cn=config
+        """
+        code: 1
+        code_skipped: 0
+      @call if: (-> @status -1), ->
         @system.mkdir
           target: ldif
           ssh: options.ssh
-        @call ->
-          options.log? 'Copy schema'
+        , (err) ->
+          options.log 'Directory ldif created'
         @system.copy
           source: options.schema
           target: schema
           ssh: options.ssh
-        @call ->
-          options.log? 'Prepare configuration'
+        , (err) ->
+          options.log 'Schema copied'
         @file
           content: "include #{schema}"
           target: conf
           ssh: options.ssh
           log: options.log
-        @call ->
-          options.log? 'Generate configuration'
+        , (err) ->
+          options.log 'Configuration generated'
         @system.execute
           cmd: "slaptest -f #{conf} -F #{ldif}"
-        @call ->
-          options.log? 'Rename configuration'
-        @then (err) ->
-          return callback err if err
-          do_rename()
-      do_rename = =>
-        options.log? 'Rename configuration'
+        , (err) ->
+          options.log 'Configuration validated' unless err
         @system.move
           source: "#{ldif}/cn=config/cn=schema/cn={0}#{options.name}.ldif"
           target: "#{ldif}/cn=config/cn=schema/cn=#{options.name}.ldif"
           force: true
         , (err, status) ->
-          return callback err if err
-          return new Error 'No generated schema' unless status
-          do_configure()
-      do_configure = =>
-        options.log? 'Prepare ldif'
+          throw Error 'No generated schema' unless status
+          options.log 'Configuration renamed'
         @file
           target: "#{ldif}/cn=config/cn=schema/cn=#{options.name}.ldif"
           write: [
@@ -144,25 +130,13 @@ require('nikita').ldap.schema({
             match: /^modifyTimestamp.*/mg
             replace: ''
           ]
-        , (err, written) ->
-          return callback err if err
-          do_register()
-      do_register = =>
-        # uri = if options.uri then"-L #{options.uri}" else ''
-        # binddn = if options.binddn then "-D #{options.binddn}" else ''
-        # passwd = if options.passwd then "-w #{options.passwd}" else ''
-        cmd = "ldapadd #{uri} #{binddn} #{passwd} -f #{ldif}/cn=config/cn=schema/cn=#{options.name}.ldif"
-        options.log? "Add schema: #{cmd}"
+        , (err) ->
+          options.log "File ldif ready" unless err
         @system.execute
-          cmd: cmd
-        , (err, executed) ->
-          return callback err if err
-          modified = true
-          do_clean()
-      do_clean = =>
-        options.log? 'Clean up'
-        @system.remove
-          target: tempdir
-        , (err, removed) ->
-          callback err, modified
-      do_registered()
+          cmd: "ldapadd #{uri} #{binddn} #{passwd} -f #{ldif}/cn=config/cn=schema/cn=#{options.name}.ldif"
+        , (err) ->
+          throw err if err
+          options.log "Schema added: #{options.name}"
+      @system.remove
+        if: -> @status -1
+        target: tempdir
