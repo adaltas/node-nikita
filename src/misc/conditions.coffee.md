@@ -189,6 +189,7 @@ the callback `skip` is called.
         exec options.ssh, os, (err, stdout, stderr) ->
           return skip err if err
           [arch, name, version] = stdout.split '|'
+          name = 'redhat' if name is 'red hat'
           # Remove minor version (eg centos 7)
           version = "#{match[0]}" if match = /^(\d+)\.(\d+)/.exec version
           match = options.if_os.some (rule) ->
