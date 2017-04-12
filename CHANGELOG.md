@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* system discover: default to shy
 * ldap schema: refactor
 * ldap index: refactor
 * database: create user with grant options

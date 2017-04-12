@@ -35,7 +35,7 @@ nikita.system.discover({
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = shy: true, handler: (options, callback) ->
       detected = false
       os = {}
       os.type = null
