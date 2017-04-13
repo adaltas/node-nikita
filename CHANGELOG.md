@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* system.tmpfs: remove system.discover and fix status not modifed
 * tools.repo: support http(s) protocol for source
 * conditions: normalize redhat name
 * system discover: default to shy

@@ -225,10 +225,8 @@ describe 'system.tmpfs', ->
         cmd: " if [ -d \"/var/run/file_1\" ] ; then exit 0; else exit 1; fi"
       .file.assert
         target: '/etc/tmpfiles.d/root.conf'
-        content: """
-          d /var/run/file_1 0644 root root 10s -
-        """
-        .then next
+        content: "d /var/run/file_1 0644 root root 10s -"
+      .then next
           
     they 'simple mount group no uid', (ssh, next) ->
       nikita
@@ -243,13 +241,10 @@ describe 'system.tmpfs', ->
         perm: '0644'
         merge: false
       , (err, written) ->
-        return next err if err
-        written.should.be.true()
+        written.should.be.true() unless err
       .system.execute
         cmd: " if [ -d \"/var/run/file_1\" ] ; then exit 0; else exit 1; fi"
       .file.assert
         target: '/etc/tmpfiles.d/root.conf'
-        content: """
-          d /var/run/file_1 0644 root root 10s -
-        """
+        content: "d /var/run/file_1 0644 root root 10s -"
       .then next
