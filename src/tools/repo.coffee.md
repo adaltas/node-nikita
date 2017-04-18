@@ -128,7 +128,7 @@ require('nikita').tools.repo({
       # Clean Metadata
       @system.execute
         cmd: 'yum clean metadata; yum repolist'
-        if: -> @status()
+        if: -> options.update and @status()
 
 ## Dependencies
 
