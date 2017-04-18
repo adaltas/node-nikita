@@ -182,6 +182,15 @@ require('nikita').java.keystore_add([{
       @system.remove
         target: "#{tmp_location}"
         shy: true
+      @system.chown
+        target: options.keystore
+        uid: options.uid
+        gid: options.gid
+        if: options.uid? or options.gid?
+      @system.chmod
+        target: options.keystore
+        mode: options.mode
+        if: options.mode?
 
 ## Dependencies
 
