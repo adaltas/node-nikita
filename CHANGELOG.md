@@ -5,6 +5,7 @@
 
 * system.tmpfs: remove system.discover and fix status not modifed
 * tools.repo: support http(s) protocol for source
+* file.properties: internal parse fn take source as first argument
 * krb5.addprinc: dont pass header to child action
 * ldap.add: enforce auto detection of first attribute
 * conditions: normalize redhat name

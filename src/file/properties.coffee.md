@@ -44,7 +44,7 @@ Write a file in the Java properties format.
       # Read Original
       @call (_, callback) ->
         options.log message: "Reading target \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/file/properties'
-        module.exports.properties options, (err, props) ->
+        module.exports.properties options.target, options, (err, props) ->
           return callback err if err
           org_props = props
           callback()
@@ -87,10 +87,11 @@ Write a file in the Java properties format.
           mode: options.mode
           if: options.mode?
 
-    module.exports.properties = (options, callback) ->
-      fs.readFile options.ssh, options.target, 'utf8', (err, data) ->
+    module.exports.properties = (source, options, callback) ->
+      fs.readFile options.ssh, source, 'utf8', (err, data) ->
         return callback null, {} if err?.code is 'ENOENT'
         return callback err if err
+        options.separator ?= '='
         props = {}
         # Parse
         lines = string.lines data
