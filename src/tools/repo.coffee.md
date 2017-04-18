@@ -5,17 +5,21 @@ Setup packet manager repository. Only support yum for now.
 
 ## Options
 
-*   `local` (boolean)
-    Treat the source as local instead of remote, only apply with "ssh"
-    option, default to "false".
-*   `replace` (String)   
-    Globing expression used to match replaced files.
-*   `update` (boolean)   
-    Cleanup cache and update repo list, default to "false".   
 *   `source` (string)   
-    The source file(s) containing the repository(ies), required.   
-*   `verify` (boolean)   
-    Download the PGP keys if it's enabled in the repo file, default to "true".
+    The source file(s) containing the repository(ies)   
+*   `local`
+    Treat the source as local instead of remote, only apply with "ssh"
+    option.
+*   'replace' (String)   
+    Globing expression used to match replaced files.
+*   `verify`   
+    Download the PGP keys if it's enabled in the repo file.
+*   `ssh` (object|ssh2)   
+    Run the action on a remote server using SSH, an ssh2 instance or an
+    configuration object used to initialize the SSH connection.
+*   `stdout` (stream.Writable)   
+    Writable EventEmitter where diff information is written if option "diff" is
+    "true"
 
 ## Example
 
@@ -53,36 +57,6 @@ require('nikita').tools.repo({
           callback()
       @system.remove remote_files
       # Write
-<<<<<<< HEAD
-      @call ->
-        cache  = (url.parse options.source).protocol in ['http:', 'https:']
-        tmp_dir = "/tmp/nikita_repo_#{Date.now()}"
-        @system.mkdir
-          target: tmp_dir
-          shy: true
-        @file.cache
-          if: cache
-          source: options.source
-          target: file_name
-          cache_dir: tmp_dir
-          cache_local: options.local
-          headers: options.headers
-          md5: options.md5
-          proxy: options.proxy
-          location: options.location
-          shy: true
-        @file.types.yum_repo
-          source: if cache then "#{tmp_dir}/#{file_name}" else options.source
-          local: options.local
-          content: options.content
-          mode: options.mode
-          uid: options.uid
-          gid: options.gid
-          target: options.target
-        @system.remove
-          target: tmp_dir
-          shy: true
-=======
       @file.types.yum_repo
         source: options.source
         local: options.local
@@ -91,8 +65,7 @@ require('nikita').tools.repo({
         uid: options.uid
         gid: options.gid
         target: options.target
->>>>>>> tools.repo: fix path resolution
-      #Read GPG Keys
+      # Read GPG Keys
       @call 
         if: -> options.verify
       , ->
@@ -108,10 +81,11 @@ require('nikita').tools.repo({
               continue unless /^http(s)??:\/\//.test section.gpgkey
               section.gpgkey
             callback()
-        #Download GPG Keys
+        # Download GPG Keys
         @call
           if: -> keys.length isnt 0
         , ->
+          console.log keys
           @each keys, (options) ->
             gpgkey = options.key
             options.log "Downloading GPG keys from #{gpgkey}", level: 'DEBUG', module: 'nikita/lib/tools/repo'
