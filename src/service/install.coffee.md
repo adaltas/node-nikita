@@ -71,6 +71,7 @@ require('nikita').service.install({
         code_skipped: 1
         arch_chroot: options.arch_chroot
         rootdir: options.rootdir
+        stdin_log: false
         stdout_log: false
         shy: true
       , (err, status, stdout) ->
@@ -98,6 +99,7 @@ require('nikita').service.install({
         code_skipped: 1
         arch_chroot: options.arch_chroot
         rootdir: options.rootdir
+        stdin_log: false
         stdout_log: false
         shy: true
       , (err, status, stdout) ->
