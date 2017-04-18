@@ -53,7 +53,7 @@ require('nikita').ldap.user({
         do_user = =>
           entry = {}
           for k, v of user
-            continue if k is 'userPassword'
+            continue if k is 'userPassword' and not /^\{SASL\}/.test user.userPassword
             entry[k] = v
           @ldap.add
             entry: entry
@@ -69,7 +69,7 @@ require('nikita').ldap.user({
             then do_ldappass()
             else do_checkpass()
         do_checkpass = =>
-          return do_end() unless user.userPassword
+          return do_end() unless user.userPassword or /^\{SASL\}/.test user.userPassword
           @system.execute
             # See https://onemoretech.wordpress.com/2011/09/22/verifying-ldap-passwords/
             cmd: """
@@ -80,7 +80,7 @@ require('nikita').ldap.user({
             return callback err if err
             if identical then do_end() else do_ldappass()
         do_ldappass = =>
-          return do_end() unless user.userPassword
+          return do_end() unless user.userPassword or /^\{SASL\}/.test user.userPassword
           @system.execute
             cmd: """
             ldappasswd #{binddn} #{passwd} #{uri} \
