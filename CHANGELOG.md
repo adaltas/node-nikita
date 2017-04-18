@@ -5,6 +5,8 @@
 
 * system.tmpfs: remove system.discover and fix status not modifed
 * tools.repo: support http(s) protocol for source
+* krb5.addprinc: dont pass header to child action
+* ldap.add: enforce auto detection of first attribute
 * conditions: normalize redhat name
 * system discover: default to shy
 * ldap schema: refactor

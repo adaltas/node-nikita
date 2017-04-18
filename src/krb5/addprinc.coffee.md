@@ -61,6 +61,7 @@ require('nikita').krb5.addprinc({
       ktadd_options = {}
       for k, v of options then ktadd_options[k] = v
       ktadd_options.if = options.keytab
+      delete ktadd_options.header
       # Ticket cache location
       cache_name = "/tmp/nikita_#{Math.random()}"
       @system.execute
