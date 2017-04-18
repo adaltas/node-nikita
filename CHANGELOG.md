@@ -5,6 +5,7 @@
 
 * system.tmpfs: remove system.discover and fix status not modifed
 * tools.repo: support http(s) protocol for source
+* tools.repo: convert ugly test to unit test
 * tools.repo: fix documentation
 * tools.repo: repo udpate disabled by default
 * tools.repo: fix path resolution

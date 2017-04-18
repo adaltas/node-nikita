@@ -6,25 +6,40 @@ fs = require 'ssh2-fs'
 
 describe 'tools.repo', ->
 
-  @timeout 50000
-  config = test.config()
-  return if config.disable_tools_repo
   scratch = test.scratch @
   
   they 'Write simple file', (ssh, next) ->
     nikita
       ssh: ssh
-    .system.remove '/etc/yum.repos.d/CentOS-nikita.repo'
+    .system.remove "#{scratch}/repo"
+    .system.mkdir "#{scratch}/repo"
+    .file
+      target: "#{scratch}/CentOS.repo"
+      content: """
+      [base]
+      name=CentOS-$releasever - Base
+      mirrorlist=http://localhost?release=$releasever&arch=$basearch&repo=os&infra=$infra
+      baseurl=http://localhost/centos/$releasever/os/$basearch/
+      gpgcheck=1
+      gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+      """
     .tools.repo
-      source: "#{__dirname}/../resources/CentOS-nikita.repo"
+      source: "#{scratch}/CentOS.repo"
+      target: "#{scratch}/repo/centos.repo"
     , (err, status) ->
       status.should.be.true() unless err
     .tools.repo
-      source: "#{__dirname}/../resources/CentOS-nikita.repo"
+      source: "#{scratch}/CentOS.repo"
+      target: "#{scratch}/repo/centos.repo"
     , (err, status) ->
       status.should.be.false() unless err
-    .file.assert '/etc/yum.repos.d/CentOS-nikita.repo'
+    .file.assert "#{scratch}/repo/centos.repo"
     .then next
+
+describe 'tools.repo system', ->
+  
+  config = test.config()
+  return if config.disable_tools_repo
   
   they 'Replace option to delete files', (ssh, next) ->
     nikita
