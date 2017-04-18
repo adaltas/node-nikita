@@ -59,6 +59,9 @@ require('nikita').ldap.index({
         ldif += "dn: #{entry.dn}\n"
         [_, k, v] = /^(.*?)=(.+?),.*$/.exec entry.dn
         ldif += "#{k}: #{v}\n"
+        if entry[k]
+          throw Error "Inconsistent value: #{entry[k]} is not #{v} for attribute #{k}" if entry[k] isnt v
+          delete entry[k]
         for k, v of entry
           continue if k is 'dn'
           v = [v] unless Array.isArray v
