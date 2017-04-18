@@ -1,6 +1,7 @@
 
 module.exports =
   disable_conditions_if_os: true
+  disable_db: true
   disable_docker: true
   disable_krb5_addprinc: true
   disable_krb5_delprinc: true
@@ -11,7 +12,6 @@ module.exports =
   disable_service_install: true
   disable_service_start: true
   disable_service_startup: true
-  disable_db: true
   disable_system_execute_arc_chroot: true
   disable_system_tmpfs: true
   disable_system_user: true
