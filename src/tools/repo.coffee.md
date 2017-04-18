@@ -37,6 +37,9 @@ require('nikita').tools.repo({
     module.exports = (options) ->
       options.log message: "Entering tools.repo", level: 'DEBUG', module: 'nikita/lib/tools/repo'
       throw Error "Missing source: #{options.source}" unless options.source
+      options.source = path.resolve '/etc/yum.repos.d', options.source
+      options.target ?= path.basename options.source
+      options.target = path.resolve '/etc/yum.repos.d', options.target
       options.verify ?= true
       options.local ?= false
       remote_files = []
@@ -54,6 +57,7 @@ require('nikita').tools.repo({
           callback()
       @system.remove remote_files
       # Write
+<<<<<<< HEAD
       @call ->
         cache  = (url.parse options.source).protocol in ['http:', 'https:']
         tmp_dir = "/tmp/nikita_repo_#{Date.now()}"
@@ -82,9 +86,19 @@ require('nikita').tools.repo({
         @system.remove
           target: tmp_dir
           shy: true
+=======
+      @file.types.yum_repo
+        source: options.source
+        local: options.local
+        content: options.content
+        mode: options.mode
+        uid: options.uid
+        gid: options.gid
+        target: options.target
+>>>>>>> tools.repo: fix path resolution
       #Read GPG Keys
       @call 
-        if: -> options.verify or @status -1
+        if: -> options.verify
       , ->
         options.log "Download #{options.source}'s GPG keys", level: 'INFO', module: 'nikita/lib/tools/repo'
         @call (_, callback)->
