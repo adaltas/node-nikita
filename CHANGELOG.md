@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* condition: fix Red Hat detection
 * file.properties: add exemple
 * db.user: trap any error
 * database: default mysql charset as utf8
