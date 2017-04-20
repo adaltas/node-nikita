@@ -70,7 +70,7 @@ npm test test/db/database.coffee
       options.log message: "Check if database #{options.database} exists", level: 'DEBUG', module: 'nikita/db/database'
       switch options.engine
         when 'mysql'
-          cmd_database_create = db.cmd options, database: null, "CREATE DATABASE #{options.database};"
+          cmd_database_create = db.cmd options, database: null, "CREATE DATABASE #{options.database} DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;"
           cmd_database_exists = db.cmd options, database: options.database, "USE #{options.database};"
         when 'postgres'
           cmd_database_create = db.cmd options, database: null, "CREATE DATABASE #{options.database};"

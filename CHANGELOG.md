@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* database: default mysql charset as utf8
 * system.tmpfs: remove system.discover and fix status not modifed
 * tools.repo: support http(s) protocol for source
 * tools.repo: convert ugly test to unit test
