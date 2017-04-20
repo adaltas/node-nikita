@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* java.keystore: detect if keystore exists
 * condition: fix Red Hat detection
 * file.properties: add exemple
 * db.user: trap any error

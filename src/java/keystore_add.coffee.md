@@ -121,12 +121,13 @@ require('nikita').java.keystore_add([{
         bash: true
         cmd: """
         if ! which #{options.openssl}; then echo 'OpenSSL command line tool not detected'; exit 4; fi
+        [ -f #{files.cert} ] || exit 6
         # mkdir -p -m 700 #{tmp_location}
         user=`#{options.openssl} x509  -noout -in "#{files.cert}" -md5 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/' | cat`
         keystore=`keytool -list -v -keystore #{options.keystore} -alias #{options.name} -storepass #{options.storepass} | grep MD5: | sed -E 's/.+MD5: +(.*)/\\1/'`
         echo "User Certificate: $user"
         echo "Keystore Certificate: $keystore"
-        if [[ "$user" == "$keystore" ]]; then exit 3; fi
+        if [[ "$user" == "$keystore" ]]; then exit 5; fi
         # Create a PKCS12 file that contains key and certificate
         #{options.openssl} pkcs12 -export \
           -in "#{files.cert}" -inkey "#{files.key}" \
@@ -143,9 +144,10 @@ require('nikita').java.keystore_add([{
         """
         trap: true
         if: !!options.cert
-        code_skipped: 3
+        code_skipped: 5 # OpenSSL exit 3 if file does not exists
       , (err) ->
         throw Error "OpenSSL command line tool not detected" if err?.code is 4
+        throw Error "Keystore file does not exists" if err?.code is 6
       @system.execute # Deal with CACert
         bash: true
         cmd: """
@@ -162,7 +164,7 @@ require('nikita').java.keystore_add([{
         keystore=`keytool -list -v -keystore #{options.keystore} -alias #{options.caname} -storepass #{options.storepass} | grep MD5: | sed -E 's/.+MD5: +(.*)/\\1/'`
         echo "User CACert: $user"
         echo "Keystore CACert: $keystore"
-        if [[ "$user" == "$keystore" ]]; then exit 3; fi
+        if [[ "$user" == "$keystore" ]]; then exit 5; fi
         # Remove CACert if signature doesnt match
         if [[ "$keystore" != "" ]]; then
           keytool -delete \
@@ -178,7 +180,7 @@ require('nikita').java.keystore_add([{
           -file #{files.cacert}
         """
         # trap: true
-        code_skipped: 3
+        code_skipped: 5
       @system.remove
         target: "#{tmp_location}"
         shy: true
