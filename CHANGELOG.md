@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* file.properties: add exemple
 * db.user: trap any error
 * database: default mysql charset as utf8
 * system.tmpfs: remove system.discover and fix status not modifed

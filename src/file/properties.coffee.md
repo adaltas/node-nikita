@@ -5,29 +5,36 @@ Write a file in the Java properties format.
 
 ## Options
 
-*   `backup` (boolean)
+*   `backup` (boolean)   
     Create a backup, append a provided string to the filename extension or a
     timestamp if value is not a string.
-*   `content`
+*   `content` (object)   
     List of properties to write.
-*   `target`
+*   `target` (string)   
     File path where to write content to.
-*   `local`
+*   `local` (boolean)   
     Treat the source as local instead of remote, only apply with "ssh"
     option.
-*   `sort`
+*   `sort` (boolean)   
     Sort the properties before writting them. False by default
-*   `merge`
+*   `merge` (boolean)   
     Merges content properties with target file. False by default
-*   `separator`
+*   `separator` (string)   
     The caracter to use for separating property and value. '=' by default.
-*   `ssh` (object|ssh2)
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.
-*   `stdout` (stream.Writable)
-    Writable EventEmitter where diff information is written if option "diff" is
-    "true".
 
+## Exemple
+
+Use a custom delimiter with spaces around the equal sign.
+
+```javascript
+require('nikita')
+.file.properties({
+  target: "/path/to/target.json",
+  content: { key: "value" },
+  separator: ' = '
+  merge: true
+})
+```
 
 ## Source Code
 
