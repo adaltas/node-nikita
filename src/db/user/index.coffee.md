@@ -75,6 +75,7 @@ Create a user for the destination database.
         exit $signal
         """
         code_skipped: 3
+        trap: true
 
 ## Dependencies
 
