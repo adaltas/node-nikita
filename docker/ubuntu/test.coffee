@@ -18,6 +18,7 @@ module.exports =
   disable_system_tmpfs: true #can not be activated
   disable_system_user: false
   disable_tools_repo: true
+  disable_yum_conf: true
   docker: # eg `docker-machine create --driver virtualbox nikita || docker-machine start nikita`
     host: 'dind:2375'
     # machine: 'nikita'

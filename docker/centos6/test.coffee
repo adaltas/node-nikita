@@ -19,6 +19,7 @@ module.exports =
   disable_system_tmpfs: true #can not be activated
   disable_system_user: false
   disable_tools_repo: false
+  disable_yum_conf: false
   conditions_is_os:
     arch: '64'
     name: 'centos'
