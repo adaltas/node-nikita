@@ -234,7 +234,7 @@ nikita.download
         handler: ->
           options.log message: "File Download with ssh (with or without cache)", level: 'DEBUG', module: 'nikita/lib/file/download'
           @call (_, callback) ->
-            file.compare_hash (if options.cache then null else options.ssh), options.source, options.ssh, options.target, algo, (err, match, hash1, hash2) ->
+            file.compare_hash null, options.source, options.ssh, options.target, algo, (err, match, hash1, hash2) ->
               options.log message: "Hash dont match, source is '#{hash1}' and target is '#{hash2}'", level: 'WARN', module: 'nikita/lib/file/download' unless match
               options.log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'nikita/lib/file/download' if match
               callback err, not match

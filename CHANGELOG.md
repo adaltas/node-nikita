@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* download: fix file based checksum validation
 * java.keystore: detect if keystore exists
 * condition: fix Red Hat detection
 * file.properties: add exemple
