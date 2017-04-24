@@ -8,22 +8,22 @@ Otherwise it will be set to "true".
 
 ## Options
 
-*   `host`, `hosts` (array|string)    
-    One or multiple host, used to build or enrich the 'servers' option.   
-*   `interval` (number)    
-    Time in millisecond between each connection attempt.   
-*   `quorum` (number|boolean)    
-    Number of minimal successful connection, 50%+1 if "true".   
-    timeout, default to "/tmp".   
-*   `port`, `ports` (array|string)    
-    One or multiple ports, used to build or enrich the 'servers' option.   
-*   `randdir`   
-    Directory where to write temporary file used internally to triger a 
-*   `server`, `servers` (array|object|string)    
-    One or multiple servers, string must be in the form of "{host}:{port}",
-    object must have the properties "host" and "port".   
-*   `timeout`   
-    Maximum time to wait until this function is considered to have failed.   
+* `host`, `hosts` (array|string)  
+  One or multiple host, used to build or enrich the 'servers' option.   
+* `interval` (number)  
+  Time in millisecond between each connection attempt.   
+* `quorum` (number|boolean)  
+  Number of minimal successful connection, 50%+1 if "true".   
+  timeout, default to "/tmp".   
+* `port`, `ports` (array|string)  
+  One or multiple ports, used to build or enrich the 'servers' option.   
+* `randdir`   
+  Directory where to write temporary file used internally to triger a 
+* `server`, `servers` (array|object|string)  
+  One or multiple servers, string must be in the form of "{host}:{port}",
+  object must have the properties "host" and "port".   
+* `timeout`   
+  Maximum time to wait until this function is considered to have failed.   
 
 Status is set to "true" if the first connection attempt was a failure and the 
 connection finaly succeeded.

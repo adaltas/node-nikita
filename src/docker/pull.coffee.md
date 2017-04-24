@@ -5,25 +5,25 @@ Pull a container
 
 ## Options
   
-*   `tag` (string)   
-    Name of the tag to pull.   
-*   `version` (string)   
-    Version of the tag to control.  Default to `latest`.   
-*   `code_skipped` (string)   
-    The exit code to skip if different from 0.   
-*   `all` (Boolean)   
-    Download all tagged images in the repository.  Default to false.   
+* `tag` (string)   
+  Name of the tag to pull.   
+* `version` (string)   
+  Version of the tag to control.  Default to `latest`.   
+* `code_skipped` (string)   
+  The exit code to skip if different from 0.   
+* `all` (Boolean)   
+  Download all tagged images in the repository.  Default to false.   
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `executed`   
-    if command was executed   
-*   `stdout`   
-    Stdout value(s) unless `stdout` option is provided.   
-*   `stderr`   
-    Stderr value(s) unless `stderr` option is provided.   
+* `err`   
+  Error object if any.   
+* `executed`   
+  if command was executed   
+* `stdout`   
+  Stdout value(s) unless `stdout` option is provided.   
+* `stderr`   
+  Stderr value(s) unless `stderr` option is provided.   
 
 ## Example
 

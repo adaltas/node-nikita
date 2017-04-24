@@ -6,32 +6,32 @@ Reload the service daemon provider depending on the os.
 
 ## Options
 
-*   `context` (object)   
-    The context object used to render the scripts file
-*   `engine`   
-    Template engine to use. Nunjucks by default   
-*   `filters` (function)   
-    Filter function to extend the nunjucks engine.   
-*   `local`   
-    Treat the source as local instead of remote, only apply with "ssh"
-    option.   
-*   `name` (string)   
-    The name of the destination file. Use the name of the template if missing.
-*   `skip_empty_lines`   
-    Remove empty lines.   
-*   `source` (boolean) REQUIRED   
-    The source of startup script template.   
-*   `target` (string) OPTIONAL   
-    The destination file. `/etc/init.d/crond` or `/etc/systemd/system/crond.service` for example.
-    If no provided, nikita put it on the default folder based on the service daemon
-    provider,the OS and use the source filename as the name.
-*   `uid`   
-    File user name or user id.   
-*   `gid`   
-    File group name or group id.   
-*   `mode`   
-    File mode (permission and sticky bits), default to `0666`, in the for of
-    `{mode: 0o744}` or `{mode: "744"}`.   
+* `context` (object)   
+  The context object used to render the scripts file
+* `engine`   
+  Template engine to use. Nunjucks by default   
+* `filters` (function)   
+  Filter function to extend the nunjucks engine.   
+* `local`   
+  Treat the source as local instead of remote, only apply with "ssh"
+  option.   
+* `name` (string)   
+  The name of the destination file. Use the name of the template if missing.
+* `skip_empty_lines`   
+  Remove empty lines.   
+* `source` (boolean) REQUIRED   
+  The source of startup script template.   
+* `target` (string) OPTIONAL   
+  The destination file. `/etc/init.d/crond` or `/etc/systemd/system/crond.service` for example.
+  If no provided, nikita put it on the default folder based on the service daemon
+  provider,the OS and use the source filename as the name.
+* `uid`   
+  File user name or user id.   
+* `gid`   
+  File group name or group id.   
+* `mode`   
+  File mode (permission and sticky bits), default to `0666`, in the for of
+  `{mode: 0o744}` or `{mode: "744"}`.   
 
 ## Source Code
     

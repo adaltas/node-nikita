@@ -5,93 +5,93 @@ Run Docker Containers
 
 ## Options
 
-*   `boot2docker` (boolean)   
-    Whether to use boot2docker or not, default to false.   
-*   `container` (string)   
-    Alias of name   
-*   `name` (string)   
-     Assign a name to the container to run.   
-*   `image` (string)   
-    Name/ID of base image. __Mandatory__   
-*   `machine` (string)   
-    Name of the docker-machine. __Mandatory__ if using docker-machine   
-*   `cmd` (string)   
-    Overwrite the default ENTRYPOINT of the image   
-    Equivalent to --entrypoint docker parameter   
-*   `hostname` (string)   
-    Hostname in the docker container   
-*   `port` ( 'int:int' | [] )   
-    port mapping   
-*   `volume` ( 'path:path' | [] )   
-    path mapping   
-*   `device` ('path' | [] )   
-    Send host device(s) to container   
-*   `dns` (ip-address | [] )   
-    Set custom DNS server(s)   
-*   `dns_search` (ip-address | [] )   
-    Set custom DNS search domain(s)   
-*   `expose` ( int | string | [] )   
-    Export port(s)   
-*   `link` ( containerName | containerID | [] )   
-    Link to other container(s)   
-*   `label` (string | [] )   
-    Set meta data on a container   
-*   `label_file` (path)   
-    Read in a line delimited file of labels   
-*   `add_host` ('host:ip' | [] )   
-    Add a custom host-to-IP mapping (host:ip)   
-*   `cap_add` ( | [] )   
-    Add Linux Capabilities   
-*   `cap_drop` ( | [] )   
-    Drop Linux Capabilities   
-*   `blkio_weight` (int)   
-    Block IO (relative weight), between 10 and 1000   
-*   `cgroup_parent`   
-    Optional parent cgroup for the container   
-*   `cid_file` ( path )   
-    Write the container ID to the file   
-*   `cpuset_cpus` (string)   
-    CPUs in which to allow execution (ex: 0-3 0,1 ...)   
-*   `entrypoint` ()   
-    Overwrite the default ENTRYPOINT of the image   
-*   `ipc` ()   
-    IPC namespace to use   
-*   `ulimit`  ( | [] )   
-    Ulimit options   
-*   `volumes_from` (containerName | containerID | [] )   
-    Mount volumes from the specified container(s)   
-*   `detach` (boolean)   
-    if true, run container in background   
-*   `env` ('VAR=value' | [] )   
-    Environment variables for the container.   
-*   `env_file` ( path | [] )   
-    Read in a file of environment variables   
-*   `rm` (boolean)   
-    delete the container when it ends. True by default   
-*   `cwd` (path)   
-    working directory of container   
-*   `net` (string)   
-    Set the Network mode for the container   
-*   `pid` (string)   
-    PID namespace to use   
-*   `publish_all` (boolean)   
-    Publish all exposed ports to random ports   
-*   `code`   (int|array)   
-    Expected code(s) returned by the command, int or array of int, default to 0.   
-*   `code_skipped`   
-    Expected code(s) returned by the command if it has no effect, executed will   
-    not be incremented, int or array of int.   
+* `boot2docker` (boolean)   
+  Whether to use boot2docker or not, default to false.   
+* `container` (string)   
+  Alias of name   
+* `name` (string)   
+   Assign a name to the container to run.   
+* `image` (string)   
+  Name/ID of base image. __Mandatory__   
+* `machine` (string)   
+  Name of the docker-machine. __Mandatory__ if using docker-machine   
+* `cmd` (string)   
+  Overwrite the default ENTRYPOINT of the image   
+  Equivalent to --entrypoint docker parameter   
+* `hostname` (string)   
+  Hostname in the docker container   
+* `port` ( 'int:int' | [] )   
+  port mapping   
+* `volume` ( 'path:path' | [] )   
+  path mapping   
+* `device` ('path' | [] )   
+  Send host device(s) to container   
+* `dns` (ip-address | [] )   
+  Set custom DNS server(s)   
+* `dns_search` (ip-address | [] )   
+  Set custom DNS search domain(s)   
+* `expose` ( int | string | [] )   
+  Export port(s)   
+* `link` ( containerName | containerID | [] )   
+  Link to other container(s)   
+* `label` (string | [] )   
+  Set meta data on a container   
+* `label_file` (path)   
+  Read in a line delimited file of labels   
+* `add_host` ('host:ip' | [] )   
+  Add a custom host-to-IP mapping (host:ip)   
+* `cap_add` ( | [] )   
+  Add Linux Capabilities   
+* `cap_drop` ( | [] )   
+  Drop Linux Capabilities   
+* `blkio_weight` (int)   
+  Block IO (relative weight), between 10 and 1000   
+* `cgroup_parent`   
+  Optional parent cgroup for the container   
+* `cid_file` ( path )   
+  Write the container ID to the file   
+* `cpuset_cpus` (string)   
+  CPUs in which to allow execution (ex: 0-3 0,1 ...)   
+* `entrypoint` ()   
+  Overwrite the default ENTRYPOINT of the image   
+* `ipc` ()   
+  IPC namespace to use   
+* `ulimit`  ( | [] )   
+  Ulimit options   
+* `volumes_from` (containerName | containerID | [] )   
+  Mount volumes from the specified container(s)   
+* `detach` (boolean)   
+  if true, run container in background   
+* `env` ('VAR=value' | [] )   
+  Environment variables for the container.   
+* `env_file` ( path | [] )   
+  Read in a file of environment variables   
+* `rm` (boolean)   
+  delete the container when it ends. True by default   
+* `cwd` (path)   
+  working directory of container   
+* `net` (string)   
+  Set the Network mode for the container   
+* `pid` (string)   
+  PID namespace to use   
+* `publish_all` (boolean)   
+  Publish all exposed ports to random ports   
+* `code`   (int|array)   
+  Expected code(s) returned by the command, int or array of int, default to 0.   
+* `code_skipped`   
+  Expected code(s) returned by the command if it has no effect, executed will   
+  not be incremented, int or array of int.   
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `executed`   
-    if command was executed   
-*   `stdout`   
-    Stdout value(s) unless `stdout` option is provided.   
-*   `stderr`   
-    Stderr value(s) unless `stderr` option is provided.   
+* `err`   
+  Error object if any.   
+* `executed`   
+  if command was executed   
+* `stdout`   
+  Stdout value(s) unless `stdout` option is provided.   
+* `stderr`   
+  Stderr value(s) unless `stderr` option is provided.   
 
 ## Example
 

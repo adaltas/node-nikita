@@ -5,8 +5,8 @@ Simple nikita action that calls setTimeout. Thus, time is in millisecond.
 
 ## Options
 
-*   `time` (number)    
-    Time in millisecond to wait to.   
+* `time` (number)    
+  Time in millisecond to wait to.   
 
 ## Example
 

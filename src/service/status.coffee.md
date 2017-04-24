@@ -5,21 +5,21 @@ Status of a service. Note, does not throw an error if service is not installed.
 
 ## Options
 
-*   `arch_chroot` (boolean|string)   
-    Run this command inside a root directory with the arc-chroot command or any 
-    provided string, require the "rootdir" option if activated.   
-*   `rootdir` (string)   
-    Path to the mount point corresponding to the root directory, required if 
-    the "arch_chroot" option is activated.   
-*   `name` (string)   
-    Service name.   
+* `arch_chroot` (boolean|string)   
+  Run this command inside a root directory with the arc-chroot command or any 
+  provided string, require the "rootdir" option if activated.   
+* `rootdir` (string)   
+  Path to the mount point corresponding to the root directory, required if 
+  the "arch_chroot" option is activated.   
+* `name` (string)   
+  Service name.   
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `modified`   
-    Indicates if the startup behavior has changed.   
+* `err`   
+  Error object if any.   
+* `modified`   
+  Indicates if the startup behavior has changed.   
 
 ## Example
 
@@ -34,10 +34,10 @@ require('nikita').service.start([{
 
 Historically, we had the following two options:
 
-*   `code_started` (int|string|array)   
+* `code_started` (int|string|array)   
 Expected code(s) returned by the command for STARTED status, int or array of
 int, default to 0.   
-*   `code_stopped` (int|string|array)   
+* `code_stopped` (int|string|array)   
 Expected code(s) returned by the command for STOPPED status, int or array of 
 int, default to 3   
 

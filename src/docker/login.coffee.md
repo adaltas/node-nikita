@@ -5,31 +5,31 @@ Register or log in to a Docker registry server.
 
 ## Options
 
-*   `boot2docker` (boolean)   
-    Whether to use boot2docker or not, default to false.   
-*   `registry` (string)   
-    Address of the registry server. "https://index.docker.io/v1/" by default   
-*   `machine` (string)   
-    Name of the docker-machine. __Mandatory__ if using docker-machine   
-*   `email` (string)   
-    Email   
-*   `user` (string)   
-    Username   
-*   `password` (string)   
-    Remove intermediate containers after build. Default to false   
-*   `cwd` (string)   
-    change the working directory for the build.   
+* `boot2docker` (boolean)   
+  Whether to use boot2docker or not, default to false.   
+* `registry` (string)   
+  Address of the registry server. "https://index.docker.io/v1/" by default   
+* `machine` (string)   
+  Name of the docker-machine. __Mandatory__ if using docker-machine   
+* `email` (string)   
+  Email   
+* `user` (string)   
+  Username   
+* `password` (string)   
+  Remove intermediate containers after build. Default to false   
+* `cwd` (string)   
+  change the working directory for the build.   
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `executed`   
-    if command was executed   
-*   `stdout`   
-    Stdout value(s) unless `stdout` option is provided.   
-*   `stderr`   
-    Stderr value(s) unless `stderr` option is provided.   
+* `err`   
+  Error object if any.   
+* `executed`   
+  if command was executed   
+* `stdout`   
+  Stdout value(s) unless `stdout` option is provided.   
+* `stderr`   
+  Stderr value(s) unless `stderr` option is provided.   
 
 ## Source Code
 

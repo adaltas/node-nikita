@@ -5,17 +5,17 @@ Write log to the host filesystem in Markdown.
 
 ## Options
 
-*   `archive` (boolean)   
-    Save a copy of the previous logs inside a dedicated directory, default is
-    "false".   
-*   `basedir` (string)    
-    Directory where to store logs relative to the process working directory.
-    Default to the "log" directory. Note, if the "archive" option is activated
-    log file will be stored accessible from "./log/latest".   
-*   `filename` (string)   
-    Name of the log file, contextually rendered with all options passed to
-    the mustache templating engine. Default to "{{shortname}}.log", where 
-    "shortname" is the ssh host or localhost.   
+* `archive` (boolean)   
+  Save a copy of the previous logs inside a dedicated directory, default is
+  "false".   
+* `basedir` (string)    
+  Directory where to store logs relative to the process working directory.
+  Default to the "log" directory. Note, if the "archive" option is activated
+  log file will be stored accessible from "./log/latest".   
+* `filename` (string)   
+  Name of the log file, contextually rendered with all options passed to
+  the mustache templating engine. Default to "{{shortname}}.log", where 
+  "shortname" is the ssh host or localhost.   
 
 ## Source Code
 

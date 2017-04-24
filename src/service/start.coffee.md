@@ -5,22 +5,22 @@ Start a service. Note, does not throw an error if service is not installed.
 
 ## Options
 
-*   `arch_chroot` (boolean|string)   
-    Run this command inside a root directory with the arc-chroot command or any 
-    provided string, require the "rootdir" option if activated.   
-*   `rootdir` (string)   
-    Path to the mount point corresponding to the root directory, required if 
-    the "arch_chroot" option is activated.   
-*   `name` (string)   
-    Service name.   
+* `arch_chroot` (boolean|string)   
+  Run this command inside a root directory with the arc-chroot command or any 
+  provided string, require the "rootdir" option if activated.   
+* `rootdir` (string)   
+  Path to the mount point corresponding to the root directory, required if 
+  the "arch_chroot" option is activated.   
+* `name` (string)   
+  Service name.   
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `status`   
-    Indicates if the service was started ("true") or if it was already running 
-    ("false").   
+* `err`   
+  Error object if any.   
+* `status`   
+  Indicates if the service was started ("true") or if it was already running 
+  ("false").   
 
 ## Example
 

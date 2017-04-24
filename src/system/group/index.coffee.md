@@ -5,20 +5,20 @@ Create or modify a Unix group.
 
 ## Options
 
-*   `name`   
-    Login name of the group.   
-*   `system`   
-    Create a system account, such user are not created with ahome by default,
-    set the "home" option if we it to be created.   
-*   `gid`   
-    Group name or number of the user´s initial login group.   
+* `name`   
+  Login name of the group.   
+* `system`   
+  Create a system account, such user are not created with ahome by default,
+  set the "home" option if we it to be created.   
+* `gid`   
+  Group name or number of the user´s initial login group.   
 
 ## Callback Parameters
 
-*   `err`   
-    Error object if any.   
-*   `status`   
-    Value is "true" if group was created or modified.   
+* `err`   
+  Error object if any.   
+* `status`   
+  Value is "true" if group was created or modified.   
 
 ## Example
 

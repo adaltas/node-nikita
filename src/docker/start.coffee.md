@@ -6,29 +6,29 @@ Restart containers
 ## Options
 
 *   `boot2docker` (boolean)   
-    Whether to use boot2docker or not, default to false.   
+  Whether to use boot2docker or not, default to false.   
 *   `container` (string)   
-    Name/ID of the container. __Mandatory__   
+  Name/ID of the container. __Mandatory__   
 *   `machine` (string)   
-    Name of the docker-machine. __Mandatory__ if using docker-machine   
+  Name of the docker-machine. __Mandatory__ if using docker-machine   
 *   `attach` (boolean)   
-    attach STDOUT/STDERR. False by default   
+  attach STDOUT/STDERR. False by default   
 *   `code` (int|array)   
-    Expected code(s) returned by the command, int or array of int, default to 0.   
+  Expected code(s) returned by the command, int or array of int, default to 0.   
 *   `code_skipped`   
-    Expected code(s) returned by the command if it has no effect, executed will   
-    not be incremented, int or array of int.   
+  Expected code(s) returned by the command if it has no effect, executed will   
+  not be incremented, int or array of int.   
 
 ## Callback parameters
 
 *   `err`   
-    Error object if any.   
+  Error object if any.   
 *   `executed`   
-    if command was executed   
+  if command was executed   
 *   `stdout`   
-    Stdout value(s) unless `stdout` option is provided.   
+  Stdout value(s) unless `stdout` option is provided.   
 *   `stderr`   
-    Stderr value(s) unless `stderr` option is provided.   
+  Stderr value(s) unless `stderr` option is provided.   
 
 ## Example
 

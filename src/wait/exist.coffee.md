@@ -7,11 +7,11 @@ change had occured. Otherwise it will be set to "true".
 
 ## Options  
   
-*   `target` (string|array)   
-    Path to a file or directory.    
-*   `interval`   
-    Time interval between which we should wait before re-executing the check,
-    default to 2s.     
+* `target` (string|array)   
+  Path to a file or directory.    
+* `interval`   
+  Time interval between which we should wait before re-executing the check,
+  default to 2s.     
 
 Example:
 

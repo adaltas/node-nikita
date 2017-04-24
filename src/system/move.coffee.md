@@ -11,7 +11,7 @@ exists, in which case the source file will no longer exists.
 * `force`   
   Force the replacement of the file without checksum verification, speed up
   the action and disable the `moved` indicator in the callback.   
-*  `source`   
+* `source`   
   File or directory to move.   
 * `target_md5`   
   Destination md5 checkum if known, otherwise computed if target
@@ -21,10 +21,10 @@ exists, in which case the source file will no longer exists.
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `status`   
-    Value is "true" if resource was moved.   
+* `err`   
+  Error object if any.   
+* `status`   
+  Value is "true" if resource was moved.   
 
 ## Example
 

@@ -5,20 +5,20 @@ Status of a service.
 
 ## Options
 
-*   `cacheonly` (boolean)   
-    Run the yum command entirely from system cache, don't update cache.   
-*   `name` (string)   
-    Service name.   
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
+* `cacheonly` (boolean)   
+  Run the yum command entirely from system cache, don't update cache.   
+* `name` (string)   
+  Service name.   
+* `ssh` (object|ssh2)   
+  Run the action on a remote server using SSH, an ssh2 instance or an
+  configuration object used to initialize the SSH connection.   
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `modified`   
-    Indicates if the startup behavior has changed.   
+* `err`   
+  Error object if any.   
+* `modified`   
+  Indicates if the startup behavior has changed.   
 
 ## Example
 

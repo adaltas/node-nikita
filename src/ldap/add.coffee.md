@@ -5,19 +5,19 @@ Insert or modify an entry inside an OpenLDAP server.
 
 ## Options
 
-*   `entry` (object | array)   
-    Object to be inserted or modified.   
-*   `uri`   
-    Specify URI referring to the ldap server.   
-*   `binddn`   
-    Distinguished Name to bind to the LDAP directory.   
-*   `passwd`   
-    Password for simple authentication.   
-*   `name`   
-    Distinguish name storing the "olcAccess" property, using the database adress
-    (eg: "olcDatabase={2}bdb,cn=config").   
-*   `overwrite`   
-    Overwrite existing "olcAccess", default is to merge.   
+* `entry` (object | array)   
+  Object to be inserted or modified.   
+* `uri`   
+  Specify URI referring to the ldap server.   
+* `binddn`   
+  Distinguished Name to bind to the LDAP directory.   
+* `passwd`   
+  Password for simple authentication.   
+* `name`   
+  Distinguish name storing the "olcAccess" property, using the database adress
+  (eg: "olcDatabase={2}bdb,cn=config").   
+* `overwrite`   
+  Overwrite existing "olcAccess", default is to merge.   
 
 ## Example
 

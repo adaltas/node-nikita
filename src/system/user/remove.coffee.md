@@ -5,21 +5,21 @@ Create or modify a Unix user.
 
 ## Options
 
-*   `arch_chroot` (boolean|string)   
-    Run this command inside a root directory with the arc-chroot command or any
-    provided string, require the "rootdir" option if activated.
-*   `rootdir` (string)   
-    Path to the mount point corresponding to the root directory, required if
-    the "arch_chroot" option is activated.
-*   `name`   
-    Name of the user to removed.
+* `arch_chroot` (boolean|string)   
+  Run this command inside a root directory with the arc-chroot command or any
+  provided string, require the "rootdir" option if activated.
+* `rootdir` (string)   
+  Path to the mount point corresponding to the root directory, required if
+  the "arch_chroot" option is activated.
+* `name`   
+  Name of the user to removed.
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.
-*   `status`   
-    Value is "true" if user was created or modified.
+* `err`   
+  Error object if any.
+* `status`   
+  Value is "true" if user was created or modified.
 
 ## Example
 

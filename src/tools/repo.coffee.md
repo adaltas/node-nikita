@@ -5,21 +5,21 @@ Setup packet manager repository. Only support yum for now.
 
 ## Options
 
-*   `source` (string)   
-    The source file(s) containing the repository(ies)   
-*   `local`
-    Treat the source as local instead of remote, only apply with "ssh"
-    option.
-*   'replace' (String)   
-    Globing expression used to match replaced files.
-*   `verify`   
-    Download the PGP keys if it's enabled in the repo file.
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.
-*   `stdout` (stream.Writable)   
-    Writable EventEmitter where diff information is written if option "diff" is
-    "true"
+* `source` (string)   
+  The source file(s) containing the repository(ies)   
+* `local`
+  Treat the source as local instead of remote, only apply with "ssh"
+  option.
+* 'replace' (String)   
+  Globing expression used to match replaced files.
+* `verify`   
+  Download the PGP keys if it's enabled in the repo file.
+* `ssh` (object|ssh2)   
+  Run the action on a remote server using SSH, an ssh2 instance or an
+  configuration object used to initialize the SSH connection.
+* `stdout` (stream.Writable)   
+  Writable EventEmitter where diff information is written if option "diff" is
+  "true"
 
 ## Example
 

@@ -2,23 +2,23 @@
 # `nikita.file.cson(options, callback)`
 
 ## Options
-E
-*   `backup`
-    Create a backup, append a provided string to the filename extension or a
-    timestamp if value is not a string.
-*   `content`   
-    Object to stringify.
-*   `target`   
-    File path where to write content to or a callback.
-*   `merge`   
-    Read the target if it exists and merge its content.
+
+* `backup`
+  Create a backup, append a provided string to the filename extension or a
+  timestamp if value is not a string.
+* `content`   
+  Object to stringify.
+* `target`   
+  File path where to write content to or a callback.
+* `merge`   
+  Read the target if it exists and merge its content.
 
 ## Callback parameters
 
-*   `err`
-    Error object if any.
-*   `written`
-    Number of written actions with modifications.
+* `err`
+  Error object if any.
+* `written`
+  Number of written actions with modifications.
 
 ## Example
 

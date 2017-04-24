@@ -5,48 +5,48 @@ Control system limits for a user.
 
 ## Options
 
-*   `target` (string)   
-    Where to write the file, default to "/etc/security/limits.d/#{options.user}.conf".   
-*   `as` (int)   
-    Address space limit (KB)   
-*   `core` (int)   
-    Limits the core file size (KB)   
-*   `cpu`  (int)   
-    CPU time limit (in seconds).   
-    When the process reaches the soft limit, it receives a SIGXCPU every second.   
-    When it reaches the hard limit, it receives SIGKILL.   
-*   `data` (int)   
-    Max data size (KB)   
-*   `fsize` (int)   
-    Maximum filesize (KB)   
-*   `locks` (int)   
-    Max number of file locks the user can hold.   
-*   `maxlogins` (int)   
-    Max number of logins for this user.   
-*   `maxsyslogins` (int)   
-    Max number of logins on the system.   
-*   `memlock` (int)   
-    Max locked-in-memory address space (KB)   
-*   `msgqueue` (int)   
-    Max memory used by POSIX message queues (bytes)   
-*   `nice` (int: [-20, 19])   
-    Max nice priority allowed to raise to values   
-*   `nofile` (int)   
-    Max number of open file descriptors   
-*   `nproc` (int)   
-    Max number of processes   
-*   `priority` (int)   
-    Priority to run user process with   
-*   `rss` (int)   
-    Max resident set size (KB)   
-*   `sigpending` (int)   
-    Max number of pending signals.   
-*   `stack` (int)   
-    Max stack size (KB)   
-*   `rtprio` (int)   
-    Max realtime priority.   
-*   `user` (string)   
-    The user to apply the limit to   
+* `target` (string)   
+  Where to write the file, default to "/etc/security/limits.d/#{options.user}.conf".   
+* `as` (int)   
+  Address space limit (KB)   
+* `core` (int)   
+  Limits the core file size (KB)   
+* `cpu`  (int)   
+  CPU time limit (in seconds).   
+  When the process reaches the soft limit, it receives a SIGXCPU every second.   
+  When it reaches the hard limit, it receives SIGKILL.   
+* `data` (int)   
+  Max data size (KB)   
+* `fsize` (int)   
+  Maximum filesize (KB)   
+* `locks` (int)   
+  Max number of file locks the user can hold.   
+* `maxlogins` (int)   
+  Max number of logins for this user.   
+* `maxsyslogins` (int)   
+  Max number of logins on the system.   
+* `memlock` (int)   
+  Max locked-in-memory address space (KB)   
+* `msgqueue` (int)   
+  Max memory used by POSIX message queues (bytes)   
+* `nice` (int: [-20, 19])   
+  Max nice priority allowed to raise to values   
+* `nofile` (int)   
+  Max number of open file descriptors   
+* `nproc` (int)   
+  Max number of processes   
+* `priority` (int)   
+  Priority to run user process with   
+* `rss` (int)   
+  Max resident set size (KB)   
+* `sigpending` (int)   
+  Max number of pending signals.   
+* `stack` (int)   
+  Max stack size (KB)   
+* `rtprio` (int)   
+  Max realtime priority.   
+* `user` (string)   
+  The user to apply the limit to   
 
 ## Implemented strategy
 
@@ -160,9 +160,9 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
 
 ## Callback parameters
 
-*   `err`
+* `err`
     Error object if any.
-*   `status`
+* `status`
     Value is "true" if limits configuration file has been modified.
 
 ## Source Code

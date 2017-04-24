@@ -5,19 +5,19 @@ Create and synchronize a git repository.
 
 ## Options
 
-*   `source`   
-    Git source repository address.   
-*   `target`   
-    Directory where to clone the repository.   
-*   `revision`   
-    Git revision, branch or tag.   
+* `source`   
+  Git source repository address.   
+* `target`   
+  Directory where to clone the repository.   
+* `revision`   
+  Git revision, branch or tag.   
 
 ## Callback Parameters
 
-*   `err`   
-    Error object if any.   
-*   `status`   
-    Value "true" if repository was created or modified.   
+* `err`   
+  Error object if any.   
+* `status`   
+  Value "true" if repository was created or modified.   
 
 ## Example
 

@@ -5,33 +5,33 @@ Backup a file, a directory or the output of a command.
 
 ## Options
 
-*   `name` (string)   
-    Backup file name, required.   
-*   `cmd` (string)      
-    Command from which to pipe the ouptut or generating a file if the "target" 
-    option is defined.   
-*   `format` (string)   
-    Format used to name the backup directory, used by [Moment.js], default to 
-    "ISO-8601".   
-*   `locale` (string)   
-    Locale used to name the backup directory, used by [Moment.js], default to 
-    UTC.   
-*   `compress`   
-    One of "tgz", "tar", "xz", "bz2" or "zip", default to "tgz" if true or a directory otherwise no compression.   
-*   `source` (string)   
-    Path to a file or a directory to backup.   
-*   `target` (string)
-    Directory storing the backup, required.
+* `name` (string)   
+  Backup file name, required.   
+* `cmd` (string)      
+  Command from which to pipe the ouptut or generating a file if the "target" 
+  option is defined.   
+* `format` (string)   
+  Format used to name the backup directory, used by [Moment.js], default to 
+  "ISO-8601".   
+* `locale` (string)   
+  Locale used to name the backup directory, used by [Moment.js], default to 
+  UTC.   
+* `compress`   
+  One of "tgz", "tar", "xz", "bz2" or "zip", default to "tgz" if true or a directory otherwise no compression.   
+* `source` (string)   
+  Path to a file or a directory to backup.   
+* `target` (string)
+  Directory storing the backup, required.
 
 ## Callback parameters
 
-*   `err` (Error)   
-    Error object if any.   
-*   `status`  (boolean)   
-    Value is "true" if backup was created.   
-*   `info` (object)   
-    backup passes options to a callback. Info contains _options_ properties with default
-    and/or generated missing values.   
+* `err` (Error)   
+  Error object if any.   
+* `status`  (boolean)   
+  Value is "true" if backup was created.   
+* `info` (object)   
+  backup passes options to a callback. Info contains _options_ properties with default
+  and/or generated missing values.   
 
 ## Backup a directory
 

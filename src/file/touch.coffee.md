@@ -9,26 +9,26 @@ Status will only be true if the file was created.
 
 ## Options
 
-*   `atime` (Date|int)    
-    Access time, default to now.   
-*   `gid`   
-    File group name or group id.   
-*   `mode`   
-    File mode (permission and sticky bits), default to `0o0666`, in the form of
-    `{mode: 0o0744}` or `{mode: "0744"}`.   
-*   `mtime` (Date|int)    
-    Modification time, default to now.   
-*   `target`   
-    File path where to write content to.   
-*   `uid`   
-    File user name or user id.   
+* `atime` (Date|int)  
+  Access time, default to now.   
+* `gid`   
+  File group name or group id.   
+* `mode`   
+  File mode (permission and sticky bits), default to `0o0666`, in the form of
+  `{mode: 0o0744}` or `{mode: "0744"}`.   
+* `mtime` (Date|int)  
+  Modification time, default to now.   
+* `target`   
+  File path where to write content to.   
+* `uid`   
+  File user name or user id.   
 
 ## Callback Parameters
 
-*   `err`   
-    Error object if any.   
-*   `status`   
-    Value is "true" if file was created or modified.   
+* `err`   
+  Error object if any.   
+* `status`   
+  Value is "true" if file was created or modified.   
 
 ## Example
 

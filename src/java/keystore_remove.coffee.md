@@ -6,14 +6,14 @@ keystores and trustores.
 
 ## Options
 
-*   `name` (string|array)   
-    Alias of the key and the certificate, required if "caname" isn't provided.   
-*   `caname` (string|array)   
-    Alias of the certificate authority (CA), required if "name" isn't provided.   
-*   `keystore` (string)   
-    Path to the keystore (doesn't need to exists).   
-*   `storepass` (string)   
-    Password to manage the keystore.   
+* `name` (string|array)   
+  Alias of the key and the certificate, required if "caname" isn't provided.   
+* `caname` (string|array)   
+  Alias of the certificate authority (CA), required if "name" isn't provided.   
+* `keystore` (string)   
+  Path to the keystore (doesn't need to exists).   
+* `storepass` (string)   
+  Password to manage the keystore.   
 
 ## Removing a key and its certificate
 

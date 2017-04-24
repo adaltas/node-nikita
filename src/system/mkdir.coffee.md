@@ -7,32 +7,32 @@ of the directory to create.
 
 ## Options
 
-*   `cwd`   
-    Current working directory for relative paths.   
-*   `uid`   
-    Unix user id.   
-*   `gid`   
-    Unix group id.   
-*   `mode`   
-    Default to "0755".   
-*   `directory`   
-    Path or array of paths.   
-*   `target`   
-    Alias for `directory`.   
-*   `exclude`   
-    Regular expression.   
-*   `parent` (boolean|object)   
-    Create parent directory with provided options if an object or default 
-    system options if "true".   
-*   `source`   
-    Alias for `directory`.   
+* `cwd`   
+  Current working directory for relative paths.   
+* `uid`   
+  Unix user id.   
+* `gid`   
+  Unix group id.   
+* `mode`   
+  Default to "0755".   
+* `directory`   
+  Path or array of paths.   
+* `target`   
+  Alias for `directory`.   
+* `exclude`   
+  Regular expression.   
+* `parent` (boolean|object)   
+  Create parent directory with provided options if an object or default 
+  system options if "true".   
+* `source`   
+  Alias for `directory`.   
 
 ## Callback Parameters
 
-*   `err`   
-    Error object if any.   
-*   `status`   
-    Value is "true" if directory was created or modified.   
+* `err`   
+  Error object if any.   
+* `status`   
+  Value is "true" if directory was created or modified.   
 
 ## Simple usage
 

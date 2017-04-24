@@ -5,28 +5,28 @@ Create a new Kerberos principal with a password or an optional keytab.
 
 ## Options
 
-*   `user` (name | uid)   
-    the user of the crontab. the SSH user by default   
-*   `match` (null | string | regexp).   
-    The cron entry to match, a string will be converted to a regexp and an
-    undefined or null value will match the exact command.   
-*   `when` (string)   
-    cron-styled time string. Defines the frequency of the cron job.   
-*   `cmd`   
-    the shell command of the job   
-*   `exec`   
-    if true, then cmd will be executed just after if added to crontab   
-*   `log`   
-    Function called with a log related messages.   
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-*   `stdout` (stream.Writable)   
-    Writable EventEmitter in which the standard output of executed commands will
-    be piped.   
-*   `stderr` (stream.Writable)   
-    Writable EventEmitter in which the standard error output of executed command
-    will be piped.   
+* `user` (name | uid)   
+  the user of the crontab. the SSH user by default   
+* `match` (null | string | regexp).   
+  The cron entry to match, a string will be converted to a regexp and an
+  undefined or null value will match the exact command.   
+* `when` (string)   
+  cron-styled time string. Defines the frequency of the cron job.   
+* `cmd`   
+  the shell command of the job   
+* `exec`   
+  if true, then cmd will be executed just after if added to crontab   
+* `log`   
+  Function called with a log related messages.   
+* `ssh` (object|ssh2)   
+  Run the action on a remote server using SSH, an ssh2 instance or an
+  configuration object used to initialize the SSH connection.   
+* `stdout` (stream.Writable)   
+  Writable EventEmitter in which the standard output of executed commands will
+  be piped.   
+* `stderr` (stream.Writable)   
+  Writable EventEmitter in which the standard error output of executed command
+  will be piped.   
 
 ## Example
 

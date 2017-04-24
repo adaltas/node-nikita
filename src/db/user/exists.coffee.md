@@ -5,25 +5,25 @@ Check if a user exists in the database.
 
 ## Options
 
-*   `admin_username`   
-    The login of the database administrator. It should have credentials to 
-    create accounts.   
-*   `admin_password`   
-    The password of the database administrator.
-*   `database` (String)
-    The database name to which the user should be added.   
-*   `engine`      
-    The engine type, can be MySQL or PostgreSQL, default to MySQL.   
-*   `host`   
-    The hostname of the database.   
-*   `username`   
-    The new user name.   
-*   `password`   
-    The new user password.   
-*   `port`   
-    Port to the associated database.   
-*   `user` String   
-    User name.   
+* `admin_username`   
+  The login of the database administrator. It should have credentials to 
+  create accounts.   
+* `admin_password`   
+  The password of the database administrator.
+* `database` (String)
+  The database name to which the user should be added.   
+* `engine`    
+  The engine type, can be MySQL or PostgreSQL, default to MySQL.   
+* `host`   
+  The hostname of the database.   
+* `username`   
+  The new user name.   
+* `password`   
+  The new user password.   
+* `port`   
+  Port to the associated database.   
+* `user` String   
+  User name.   
 
 ## Source Code
 

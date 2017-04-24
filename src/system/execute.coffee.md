@@ -15,69 +15,69 @@ creating any modifications.
 
 ## Options
 
-*   `arch_chroot` (boolean|string)   
-    Run this command inside a root directory with the arc-chroot command or any
-    provided string, require the "rootdir" option if activated.
-*   `bash` (boolean|string)   
-    Serialize the command into a file and execute it with bash.
-*   `rootdir` (string)   
-    Path to the mount point corresponding to the root directory, required if
-    the "arch_chroot" option is activated.
-*   `cmd`   
-    String, Object or array; Command to execute.
-*   `code` (int|string|array)   
-    Expected code(s) returned by the command, int or array of int, default to 0.
-*   `code_skipped` (int|string|array)   
-    Expected code(s) returned by the command if it has no effect, executed will
-    not be incremented, int or array of int.
-*   `dirty` (boolean)   
-    Leave temporary files on the filesystem.
-*   `trap`   
-    Exit immediately if a commands exits with a non-zero status.
-*   `cwd`   
-    Current working directory.
-*   `env`   
-    Environment variables, default to `process.env`.
-*   `gid`   
-    Unix group id.
-*   `log`   
-    Function called with a log related messages.
-*   `stdin_log` (boolean)   
-    Log the executed command of type stdin, default is "true".
-*   `stdout` (stream.Writable)   
-    Writable EventEmitter in which the standard output of executed commands will
-    be piped.
-*   `stdout_callback` (boolean)   
-    pass stdout output to the callback as fourth argument, default is "true".
-*   `stdout_log` (boolean)   
-    pass stdout output to the logs of type "stdout_stream", default is "true".
-*   `stdout_trim` (boolean)   
-    Trim stdout argument passed in the callback.
-*   `stderr` (stream.Writable)   
-    Writable EventEmitter in which the standard error output of executed command
-    will be piped.
-*   `stderr_callback` (boolean)   
-    pass stderr output to the callback as fourth argument, default is "true".
-*   `stderr_log` (boolean)   
-    pass stdout output to the logs of type "stdout_stream", default is "true".
-*   `stderr_trim` (boolean)   
-    Trim stderr argument passed in the callback.
-*   `target` (string)   
-    Path storing the script, apply witht the bash and arch_chroot options.
-*   `uid`   
-    Unix user id.
+* `arch_chroot` (boolean|string)   
+  Run this command inside a root directory with the arc-chroot command or any
+  provided string, require the "rootdir" option if activated.
+* `bash` (boolean|string)   
+  Serialize the command into a file and execute it with bash.
+* `rootdir` (string)   
+  Path to the mount point corresponding to the root directory, required if
+  the "arch_chroot" option is activated.
+* `cmd`   
+  String, Object or array; Command to execute.
+* `code` (int|string|array)   
+  Expected code(s) returned by the command, int or array of int, default to 0.
+* `code_skipped` (int|string|array)   
+  Expected code(s) returned by the command if it has no effect, executed will
+  not be incremented, int or array of int.
+* `dirty` (boolean)   
+  Leave temporary files on the filesystem.
+* `trap`   
+  Exit immediately if a commands exits with a non-zero status.
+* `cwd`   
+  Current working directory.
+* `env`   
+  Environment variables, default to `process.env`.
+* `gid`   
+  Unix group id.
+* `log`   
+  Function called with a log related messages.
+* `stdin_log` (boolean)   
+  Log the executed command of type stdin, default is "true".
+* `stdout` (stream.Writable)   
+  Writable EventEmitter in which the standard output of executed commands will
+  be piped.
+* `stdout_callback` (boolean)   
+  Pass stdout output to the callback as fourth argument, default is "true".
+* `stdout_log` (boolean)   
+  Pass stdout output to the logs of type "stdout_stream", default is "true".
+* `stdout_trim` (boolean)   
+  Trim stdout argument passed in the callback.
+* `stderr` (stream.Writable)   
+  Writable EventEmitter in which the standard error output of executed command
+  will be piped.
+* `stderr_callback` (boolean)   
+  Pass stderr output to the callback as fourth argument, default is "true".
+* `stderr_log` (boolean)   
+  Pass stdout output to the logs of type "stdout_stream", default is "true".
+* `stderr_trim` (boolean)   
+  Trim stderr argument passed in the callback.
+* `target` (string)   
+  Path storing the script, apply witht the bash and arch_chroot options.
+* `uid`   
+  Unix user id.
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.
-*   `executed`   
-    Value is "true" if command exit equals option "code", "0" by default, "false" if
-    command exit equals option "code_skipped", none by default.
-*   `stdout`   
-    Stdout value(s) unless `stdout` option is provided.
-*   `stderr`   
-    Stderr value(s) unless `stderr` option is provided.
+* `err`   
+  Error object if any.
+* `executed`   
+  Value is "true" if command exit equals option "code", "0" by default, "false" if
+  command exit equals option "code_skipped", none by default.
+* `stdout`   
+  Stdout value(s) unless `stdout` option is provided.
+* `stderr`   
+  Stderr value(s) unless `stderr` option is provided.
 
 ## Create a user over SSH:
 

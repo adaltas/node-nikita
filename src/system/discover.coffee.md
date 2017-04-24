@@ -7,19 +7,19 @@ Store properties in the nikita store object.
 
 ## Options
 
-*   `strict` (boolean)   
-    Throw an error if the OS is not supported. false by default.   
-*   `cache`   
-    Enable cache, "false" by default.   
+* `strict` (boolean)   
+  Throw an error if the OS is not supported. false by default.   
+* `cache`   
+  Enable cache, "false" by default.   
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `status`   
-    True if information was fetch from system, false if retrieved from cache.   
-*   `info`   
-    List of info about system   
+* `err`   
+  Error object if any.   
+* `status`   
+  True if information was fetch from system, false if retrieved from cache.   
+* `info`   
+  List of info about system   
 
 ## Example
 

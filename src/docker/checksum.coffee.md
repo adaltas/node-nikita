@@ -5,27 +5,27 @@ Return the checksum of repository:tag, if it exists. Function not native to dock
 
 ## Options
 
-*   `boot2docker` (boolean)   
-    Whether to use boot2docker or not, default to false.   
-*   `cwd` (string)   
-    change the working directory for the build.   
-*   `image` (string)   
-    Name of the image, required.   
-*   `repository` (string)   
-    Alias of image.   
-*   `machine` (string)   
-    Name of the docker-machine, required if using docker-machine.   
-*   `tag` (string)   
-    Tag of the image, default to latest.   
+* `boot2docker` (boolean)   
+  Whether to use boot2docker or not, default to false.   
+* `cwd` (string)   
+  change the working directory for the build.   
+* `image` (string)   
+  Name of the image, required.   
+* `repository` (string)   
+  Alias of image.   
+* `machine` (string)   
+  Name of the docker-machine, required if using docker-machine.   
+* `tag` (string)   
+  Tag of the image, default to latest.   
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `status`   
-    True if command was executed.   
-*   `checksum`   
-    Image cheksum if it exist, false otherwise.   
+* `err`   
+  Error object if any.   
+* `status`   
+  True if command was executed.   
+* `checksum`   
+  Image cheksum if it exist, false otherwise.   
 
 ## Source Code
 

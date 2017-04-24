@@ -5,37 +5,37 @@ Mount a direcoty with tmpfs.d as a [tmpfs](https://www.freedesktop.org/software/
 
 ## Options
 
-*  `age` (String)   
-    Used to decide what files to delete when cleaning   
-*  `argument` (String)
-    the destination path of the symlink if type is `L`
-*   `backup`   
-    Create a backup, append a provided string to the filename extension or a
-    timestamp if value is not a string.   
-*   `mount`
-    The mount point dir to create on system startup.   
-*   `name`
-    The file name. can not be used with target. If only options.name is set, it
-    writes the content to default configuration directory and creates the file 
-    as '`name`.conf'   
-*   `target`   
-    File path where to write content to. Defined to /etc/tmpfs.d/{options.uid}.conf
-    if uid is defined or /etc/tmpfs.d/default.conf.   
-*   `gid`   
-    File group name or group id.   
-*   `Perm`   (String)
-    target mount path mode in string format like `'0644'`.   
-*   `merge` (boolean)
-     Overrides properties if already exits.
-*   `uid`   
-    File user name or user id.   
+* `age` (String)   
+  Used to decide what files to delete when cleaning   
+* `argument` (String)
+  the destination path of the symlink if type is `L`
+* `backup`   
+  Create a backup, append a provided string to the filename extension or a
+  timestamp if value is not a string.   
+* `mount`
+  The mount point dir to create on system startup.   
+* `name`
+  The file name. can not be used with target. If only options.name is set, it
+  writes the content to default configuration directory and creates the file 
+  as '`name`.conf'   
+* `target`   
+  File path where to write content to. Defined to /etc/tmpfs.d/{options.uid}.conf
+  if uid is defined or /etc/tmpfs.d/default.conf.   
+* `gid`   
+  File group name or group id.   
+* `Perm`   (String)
+  target mount path mode in string format like `'0644'`.   
+* `merge` (boolean)
+   Overrides properties if already exits.
+* `uid`   
+  File user name or user id.   
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `modified`   
-    Number of written actions with modifications.   
+* `err`   
+  Error object if any.   
+* `modified`   
+  Number of written actions with modifications.   
 
 # Example
 All parameters can be omitted except type. nikita.tmpfs will ommit by replacing 

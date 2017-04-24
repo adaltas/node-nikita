@@ -5,20 +5,20 @@ Wait for the creation of a database.
 
 ## Options
 
-*   `admin_username`   
-    The login of the database administrator. It should have credentials to create accounts.   
-*   `admin_password`   
-    The password of the database administrator.   
-*   `database` (Array or String)   
-    The database name to check for existance.   
-*   `engine`      
-    The engine type, can be MySQL or PostgreSQL, required.   
-*   `host`   
-    The hostname of the database.   
-*   `port`   
-    Port to the associated database.   
-*   `user` Array or String   
-    Contains  user(s) to add to the database, optional.   
+* `admin_username`   
+  The login of the database administrator. It should have credentials to create accounts.   
+* `admin_password`   
+  The password of the database administrator.   
+* `database` (Array or String)   
+  The database name to check for existance.   
+* `engine`    
+  The engine type, can be MySQL or PostgreSQL, required.   
+* `host`   
+  The hostname of the database.   
+* `port`   
+  Port to the associated database.   
+* `user` Array or String   
+  Contains  user(s) to add to the database, optional.   
 
 ## Create Database example
 

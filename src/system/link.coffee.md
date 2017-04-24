@@ -8,21 +8,21 @@ Note, it is valid for the "source" file to not exist.
 
 ## Options
 
-*   `source`   
-    Referenced file to be linked.   
-*   `target`   
-    Symbolic link to be created.   
-*   `exec`   
-    Create an executable file with an `exec` command.   
-*   `mode`   
-    Default to `0o0755`.   
+* `source`   
+  Referenced file to be linked.   
+* `target`   
+  Symbolic link to be created.   
+* `exec`   
+  Create an executable file with an `exec` command.   
+* `mode`   
+  Default to `0o0755`.   
 
 ## Callback Parameters
 
-*   `err`   
-    Error object if any.   
-*   `status`   
-    Value is "true" if link was created or modified.   
+* `err`   
+  Error object if any.   
+* `status`   
+  Value is "true" if link was created or modified.   
 
 ## Example
 

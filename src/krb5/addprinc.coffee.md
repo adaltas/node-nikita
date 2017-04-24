@@ -5,24 +5,24 @@ Create a new Kerberos principal with a password or an optional keytab.
 
 ## Options
 
-*   `kadmin_server`, `admin_server`   
-    Address of the kadmin server; optional, use "kadmin.local" if missing.   
-*   `kadmin_principal`   
-    KAdmin principal name unless `kadmin.local` is used.   
-*   `kadmin_password`   
-    Password associated to the KAdmin principal.   
-*   `principal`   
-    Principal to be created.   
-*   `password`   
-    Password associated to this principal; required if no randkey is
-    provided.   
-*   `password_sync`   
-    Wether the password should be created if the principal already exists,
-    default to "false".   
-*   `randkey`   
-    Generate a random key; required if no password is provided.   
-*   `keytab`   
-    Path to the file storing key entries.   
+* `kadmin_server`, `admin_server`   
+  Address of the kadmin server; optional, use "kadmin.local" if missing.   
+* `kadmin_principal`   
+  KAdmin principal name unless `kadmin.local` is used.   
+* `kadmin_password`   
+  Password associated to the KAdmin principal.   
+* `principal`   
+  Principal to be created.   
+* `password`   
+  Password associated to this principal; required if no randkey is
+  provided.   
+* `password_sync`   
+  Wether the password should be created if the principal already exists,
+  default to "false".   
+* `randkey`   
+  Generate a random key; required if no password is provided.   
+* `keytab`   
+  Path to the file storing key entries.   
 
 ## Keytab example
 

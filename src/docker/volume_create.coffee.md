@@ -5,18 +5,18 @@ Create a volume.
 
 ## Options
 
-*   `boot2docker` (boolean)   
-    Whether to use boot2docker or not, default to false.   
-*   `driver` (string)   
-    Specify volume driver name.   
-*   `label` (string|array)   
-    Set metadata for a volume.   
-*   `machine` (string)   
-    Name of the docker-machine. __Mandatory__ if using docker-machine   
-*   `name` (string)   
-    Specify volume name.   
-*   `opt` (string|array)   
-    Set driver specific options.
+* `boot2docker` (boolean)   
+  Whether to use boot2docker or not, default to false.   
+* `driver` (string)   
+  Specify volume driver name.   
+* `label` (string|array)   
+  Set metadata for a volume.   
+* `machine` (string)   
+  Name of the docker-machine. __Mandatory__ if using docker-machine   
+* `name` (string)   
+  Specify volume name.   
+* `opt` (string|array)   
+  Set driver specific options.
 
 ## Example
 

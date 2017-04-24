@@ -5,21 +5,21 @@ Stop started containers
 
 ## Options
 
-*   `boot2docker` (boolean)   
-    Whether to use boot2docker or not, default to false.   
-*   `container` (string)   
-    Name/ID of the container. __Mandatory__   
-*   `machine` (string)   
-    Name of the docker-machine. __Mandatory__ if using docker-machine   
-*   `timeout` (int)   
-    Seconds to wait for stop before killing it   
+* `boot2docker` (boolean)   
+  Whether to use boot2docker or not, default to false.   
+* `container` (string)   
+  Name/ID of the container. __Mandatory__   
+* `machine` (string)   
+  Name of the docker-machine. __Mandatory__ if using docker-machine   
+* `timeout` (int)   
+  Seconds to wait for stop before killing it   
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `executed`   
-    Wether the container was stoped or not.   
+* `err`   
+  Error object if any.   
+* `executed`   
+  Wether the container was stoped or not.   
 
 ## Example
 

@@ -5,29 +5,29 @@ Create new [ACLs](acls) for the OpenLDAP server.
 
 ## Options
 
-*   `to`   
-    What to control access to as a string.   
-*   `place_before`   
-    Place before another rule defined by "to".   
-*   `by`   
-    Who to grant access to and the access to grant as an array
-    (eg: `{..., by:["ssf=64 anonymous auth"]}`).   
-*   `first`   
-*   `url`   
-    Specify URI referring to the ldap server.   
-*   `binddn`   
-    Distinguished Name to bind to the LDAP directory.   
-*   `passwd`   
-    Password for simple authentication.   
-*   `name`   
-    Distinguish name storing the "olcAccess" property, using the database adress
-    (eg: "olcDatabase={2}bdb,cn=config").   
-*   `overwrite`   
-    Overwrite existing "olcAccess", default is to merge.   
-*   `log`   
-    Function called with a log related messages.   
-*   `acl`   
-    In case of multiple acls, regroup "place_before", "to" and "by" as an array.   
+* `to`   
+  What to control access to as a string.   
+* `place_before`   
+  Place before another rule defined by "to".   
+* `by`   
+  Who to grant access to and the access to grant as an array
+  (eg: `{..., by:["ssf=64 anonymous auth"]}`).   
+* `first`   
+* `url`   
+  Specify URI referring to the ldap server.   
+* `binddn`   
+  Distinguished Name to bind to the LDAP directory.   
+* `passwd`   
+  Password for simple authentication.   
+* `name`   
+  Distinguish name storing the "olcAccess" property, using the database adress
+  (eg: "olcDatabase={2}bdb,cn=config").   
+* `overwrite`   
+  Overwrite existing "olcAccess", default is to merge.   
+* `log`   
+  Function called with a log related messages.   
+* `acl`   
+  In case of multiple acls, regroup "place_before", "to" and "by" as an array.   
 
 ## Example
 

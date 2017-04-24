@@ -5,16 +5,16 @@ Write log to the host filesystem in a user provided format.
 
 ## Options
 
-*   `depth` (number|boolean)    
-*   `divider` (string)    
-*   `end` (boolean)    
-*   `enabled` (boolean)    
-*   `host` (string)    
-*   `pad` (string)    
-*   `time` (boolean)    
-    Print time.   
-*   `separator` (string|object)    
-*   `stream` (stream.Writable)  
+* `depth` (number|boolean)    
+* `divider` (string)    
+* `end` (boolean)    
+* `enabled` (boolean)    
+* `host` (string)    
+* `pad` (string)    
+* `time` (boolean)    
+  Print time.   
+* `separator` (string|object)    
+* `stream` (stream.Writable)  
 
 Global options can be alternatively set with the "log.cli" property
 

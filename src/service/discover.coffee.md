@@ -7,20 +7,20 @@ Store properties in the nikita store object.
 
 ## Options
 
-*   `strict` (boolean)   
-    Throw an error if the OS is not supported. false by default.   
-*   `cache`   
-    Disable cache. false by default   
+* `strict` (boolean)   
+  Throw an error if the OS is not supported. false by default.   
+* `cache`   
+  Disable cache. false by default   
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `status`   
-    Indicate a change in service such as a change in installation, update, 
-    start/stop or startup registration.   
-*   `loader`   
-    the init loader name   
+* `err`   
+  Error object if any.   
+* `status`   
+  Indicate a change in service such as a change in installation, update, 
+  start/stop or startup registration.   
+* `loader`   
+  the init loader name   
 
 ## Source Code
 

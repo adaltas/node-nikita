@@ -5,32 +5,32 @@ Run a command in a running container
 
 ## Options
 
-*   `boot2docker` (boolean)   
-    Whether to use boot2docker or not, default to false.   
-*   `container` (string)   
-    Name/ID of the container. __Mandatory__   
-*   `code_skipped` (int | array)   
-    The exit code(s) to skip.   
-*   `machine` (string)   
-    Name of the docker-machine. __Mandatory__ if using docker-machine.   
-*   `service` (boolean)   
-    if true, run container as a service, else run as a command, true by default.   
-*   `uid` (name | uid)   
-    Username or uid.   
-*   `gid` (name | gid)   
-    Groupname or gid.   
+* `boot2docker` (boolean)   
+  Whether to use boot2docker or not, default to false.   
+* `container` (string)   
+  Name/ID of the container. __Mandatory__   
+* `code_skipped` (int | array)   
+  The exit code(s) to skip.   
+* `machine` (string)   
+  Name of the docker-machine. __Mandatory__ if using docker-machine.   
+* `service` (boolean)   
+  if true, run container as a service, else run as a command, true by default.   
+* `uid` (name | uid)   
+  Username or uid.   
+* `gid` (name | gid)   
+  Groupname or gid.   
 
 
 ## Callback parameters
 
-*   `err`
-    Error object if any.
-*   `executed`
-    if command was executed
-*   `stdout`
-    Stdout value(s) unless `stdout` option is provided.
-*   `stderr`
-    Stderr value(s) unless `stderr` option is provided.
+* `err`
+  Error object if any.
+* `executed`
+  if command was executed
+* `stdout`
+  Stdout value(s) unless `stdout` option is provided.
+* `stderr`
+  Stderr value(s) unless `stderr` option is provided.
 
 ## Example
 

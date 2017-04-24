@@ -5,20 +5,20 @@ Change the permissions of a file or directory.
 
 ## Options
 
-*   `mode`   
-    Permissions of the file or the parent directory.   
-*   `stat` (Stat instance, optional)   
-    Pass the Stat object relative to the target file or directory, to be
-    used as an optimization.     
-*   `target`   
-    Where the file or directory is copied.   
+* `mode`   
+  Permissions of the file or the parent directory.   
+* `stat` (Stat instance, optional)   
+  Pass the Stat object relative to the target file or directory, to be
+  used as an optimization.     
+* `target`   
+  Where the file or directory is copied.   
 
 ## Callback Parameters
 
-*   `err`   
-    Error object if any.   
-*   `status`   
-    Value is "true" if file permissions was created or modified.   
+* `err`   
+  Error object if any.   
+* `status`   
+  Value is "true" if file permissions was created or modified.   
 
 ## Example
 

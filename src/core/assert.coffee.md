@@ -5,13 +5,13 @@ A set of assertion tools.
 
 ## Options
 
-*   `status` (boolean)   
-    Ensure the current status match the provided value.   
+* `status` (boolean)   
+  Ensure the current status match the provided value.   
 
 ## Callback Parameters
 
-*   `err`   
-    Error object if assertion failed.   
+* `err`   
+  Error object if assertion failed.   
 
 ## Source Code
 

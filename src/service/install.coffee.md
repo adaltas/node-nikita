@@ -5,29 +5,29 @@ Install a service. Yum, Yaourt, Pacman and apt-get are supported.
 
 ## Options
 
-*   `arch_chroot` (boolean|string)   
-    Run this command inside a root directory with the arc-chroot command or any
-    provided string, require the "rootdir" option if activated.
-*   `cache` (boolean)   
-    Cache the list of installed and outpdated packages.
-*   `cacheonly` (boolean)   
-    Run the yum command entirely from system cache, don't update cache.
-*   `code_skipped` (integer|array)   
-     Error code to skip when using nikita.service.
-*   `installed`   
-    Cache a list of installed services. If an object, the service will be
-    installed if a key of the same name exists; if anything else (default), no
-    caching will take place.
-*   `outdated`   
-    Cache a list of outdated services. If an object, the service will be updated
-    if a key of the same name exists; If true, the option will be converted to
-    an object with all the outdated service names as keys; if anything else
-    (default), no caching will take place.
-*   `name` (string)   
-    Package name, optional.
-*   `rootdir` (string)   
-    Path to the mount point corresponding to the root directory, required if
-    the "arch_chroot" option is activated.
+* `arch_chroot` (boolean|string)   
+  Run this command inside a root directory with the arc-chroot command or any
+  provided string, require the "rootdir" option if activated.
+* `cache` (boolean)   
+  Cache the list of installed and outpdated packages.
+* `cacheonly` (boolean)   
+  Run the yum command entirely from system cache, don't update cache.
+* `code_skipped` (integer|array)   
+   Error code to skip when using nikita.service.
+* `installed`   
+  Cache a list of installed services. If an object, the service will be
+  installed if a key of the same name exists; if anything else (default), no
+  caching will take place.
+* `outdated`   
+  Cache a list of outdated services. If an object, the service will be updated
+  if a key of the same name exists; If true, the option will be converted to
+  an object with all the outdated service names as keys; if anything else
+  (default), no caching will take place.
+* `name` (string)   
+  Package name, optional.
+* `rootdir` (string)   
+  Path to the mount point corresponding to the root directory, required if
+  the "arch_chroot" option is activated.
 
 ## Example
 

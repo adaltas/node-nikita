@@ -7,32 +7,32 @@ overwrite it.
 
 ## Options
 
-*   `gid`   
-    Group name or id who owns the file.   
-*   `mode`   
-    Permissions of the file or the parent directory.   
-*   `source`   
-    The file or directory to copy.   
-*   `target`   
-    Where the file or directory is copied.   
-*   `uid`   
-    User name or id who owns the file.   
-*   `unless_exists`   
-    Equals target if true.   
+* `gid`   
+  Group name or id who owns the file.   
+* `mode`   
+  Permissions of the file or the parent directory.   
+* `source`   
+  The file or directory to copy.   
+* `target`   
+  Where the file or directory is copied.   
+* `uid`   
+  User name or id who owns the file.   
+* `unless_exists`   
+  Equals target if true.   
 
 ## Callback Parameters
 
-*   `err`   
-    Error object if any.   
-*   `status`   
-    Value is "true" if copied file was created or modified.   
+* `err`   
+  Error object if any.   
+* `status`   
+  Value is "true" if copied file was created or modified.   
 
 ## Todo
 
-*   Apply permissions to directories
-*   Handle symlinks
-*   Handle globing
-*   Preserve permissions if `mode` is `true`
+* Apply permissions to directories
+* Handle symlinks
+* Handle globing
+* Preserve permissions if `mode` is `true`
 
 ## Example
 

@@ -5,19 +5,19 @@ Create and modify a user store inside an OpenLDAP server.
 
 ## Options
 
-*   `binddn`   
-    Distinguished Name to bind to the LDAP directory.   
-*   `passwd`   
-    Password for simple authentication.   
-*   `name`   
-    Distinguish name storing the "olcAccess" property, using the database adress
-    (eg: "olcDatabase={2}bdb,cn=config").   
-*   `overwrite`   
-    Overwrite existing "olcAccess", default is to merge.   
-*   `uri`   
-    Specify URI referring to the ldap server.   
-*   `user`   
-    User object.   
+* `binddn`   
+  Distinguished Name to bind to the LDAP directory.   
+* `passwd`   
+  Password for simple authentication.   
+* `name`   
+  Distinguish name storing the "olcAccess" property, using the database adress
+  (eg: "olcDatabase={2}bdb,cn=config").   
+* `overwrite`   
+  Overwrite existing "olcAccess", default is to merge.   
+* `uri`   
+  Specify URI referring to the ldap server.   
+* `user`   
+  User object.   
 
 ## Example
 

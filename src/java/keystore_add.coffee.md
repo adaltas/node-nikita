@@ -6,51 +6,51 @@ and trustores.
 
 ## Options
 
-*   `name` (string)   
-    Name of the certificate, required if a certificate is provided.   
-*   `caname` (string)   
-    Name of the certificate authority (CA), required.   
-*   `cacert` (string)   
-    Path to the certificate authority (CA), required.   
-*   `openssl` (string)   
-    Path to OpenSSl command line tool, default to "openssl".   
-*   `storepass` (string)   
-    Password to manage the keystore.   
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-*   `stdout` (stream.Writable)   
-    Writable EventEmitter in which the standard output of executed commands will
-    be piped.   
-*   `stderr` (stream.Writable)   
-    Writable EventEmitter in which the standard error output of executed command
-    will be piped.   
+* `name` (string)   
+  Name of the certificate, required if a certificate is provided.   
+* `caname` (string)   
+  Name of the certificate authority (CA), required.   
+* `cacert` (string)   
+  Path to the certificate authority (CA), required.   
+* `openssl` (string)   
+  Path to OpenSSl command line tool, default to "openssl".   
+* `storepass` (string)   
+  Password to manage the keystore.   
+* `ssh` (object|ssh2)   
+  Run the action on a remote server using SSH, an ssh2 instance or an
+  configuration object used to initialize the SSH connection.   
+* `stdout` (stream.Writable)   
+  Writable EventEmitter in which the standard output of executed commands will
+  be piped.   
+* `stderr` (stream.Writable)   
+  Writable EventEmitter in which the standard error output of executed command
+  will be piped.   
 
 ## Callback parameters
 
-*   `err` (object|null)   
-    Error object if any.   
-*   `status` (boolean)   
-    Indicates if the certificated was inserted.   
+* `err` (object|null)   
+  Error object if any.   
+* `status` (boolean)   
+  Indicates if the certificated was inserted.   
 
 ## Relevant Java properties
 
-*   `javax.net.ssl.trustStore`
-*   `javax.net.ssl.trustStorePassword`
-*   `javax.net.ssl.keyStore`
-*   `javax.net.ssl.keyStoreType`
-*   `javax.net.ssl.keyStorePassword`
+* `javax.net.ssl.trustStore`
+* `javax.net.ssl.trustStorePassword`
+* `javax.net.ssl.keyStore`
+* `javax.net.ssl.keyStoreType`
+* `javax.net.ssl.keyStorePassword`
 
 ## Relevant commands
 
-*   View the content of a Java KeyStore (JKS) and Java TrustStore:
+* View the content of a Java KeyStore (JKS) and Java TrustStore:
    `keytool -list -v -keystore $keystore -storepass $storepass` -alias $caname
     Note, alias is optional and may reference a CA or a certificate
-*   View the content of a ".pem" certificate:
+* View the content of a ".pem" certificate:
     `openssl x509 -in cert.pem -text`
-*   Change the password of a keystore:   
+* Change the password of a keystore:   
     `keytool -storepasswd -keystore my.keystore`
-*   Change the key's password:   
+* Change the key's password:   
     `keytool -keypasswd -alias <key_name> -keystore my.keystore`
 
 ## Uploading public and private keys into a keystore

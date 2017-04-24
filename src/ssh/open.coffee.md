@@ -7,29 +7,29 @@ Initialize an SSH connection.
 
 Takes the same options as the ssh2 module in an underscore form.
 
-*   `cmd` (string)   
-    Command used to become the root user on the remote server, default to "su -".   
-*   `private_key` (string)   
-    Private key for Ryba, optional, default to the value defined by
-    "bootstrap.private_key_location".   
-*   `private_key_path` (string)   
-    Path where to read the private key for Ryba, default to "~/.ssh/id_rsa".   
-*   `public_key` (string)   
-    Public key associated with the private key.   
-*   `password` (string)   
-    Password of the user with super user permissions, required if current user 
-    running masson doesnt yet have remote access as root.   
-*   `username` (string)   
-    Username of the user with super user permissions, required if current user 
-    running masson doesnt yet have remote access as root.  
-*   `host` (string)   
-    Hostname or IP address of the remove server.   
-*   `ip` (string)   
-    IP address of the remove server, used if "host" option isn't defined.   
-*   `host` (string)   
-    Port of the remove server, default to 22.   
-*   `root` (object)    
-    Options passed to `nikita.ssh.root` to enable password-less root login.   
+* `cmd` (string)   
+  Command used to become the root user on the remote server, default to "su -".   
+* `private_key` (string)   
+  Private key for Ryba, optional, default to the value defined by
+  "bootstrap.private_key_location".   
+* `private_key_path` (string)   
+  Path where to read the private key for Ryba, default to "~/.ssh/id_rsa".   
+* `public_key` (string)   
+  Public key associated with the private key.   
+* `password` (string)   
+  Password of the user with super user permissions, required if current user 
+  running masson doesnt yet have remote access as root.   
+* `username` (string)   
+  Username of the user with super user permissions, required if current user 
+  running masson doesnt yet have remote access as root.  
+* `host` (string)   
+  Hostname or IP address of the remove server.   
+* `ip` (string)   
+  IP address of the remove server, used if "host" option isn't defined.   
+* `host` (string)   
+  Port of the remove server, default to 22.   
+* `root` (object)    
+  Options passed to `nikita.ssh.root` to enable password-less root login.   
 
 ## Source code
 

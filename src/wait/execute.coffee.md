@@ -7,24 +7,24 @@ change had occured. Otherwise it will be set to "true".
 
 ## Options  
 
-*   `quorum` (number|boolean)    
-    Number of minimal successful connection, 50%+1 if "true".   
-*   `cmd` (string|array)   
-    The commands to be executed.    
-*   `interval`   
-    Time interval between which we should wait before re-executing the command,
-    default to 2s.   
-*   `code`   
-    Expected exit code to recieve to exit and call the user callback, default to "0".   
-*   `code_skipped`   
-    Expected code to be returned when the command failed and should be scheduled
-    for later execution, default to "1".   
-*   `stdin_log` (boolean)   
-    pass stdin output to the logs of type "stdin_stream", default is "true".
-*   `stdout_log` (boolean)   
-    pass stdout output to the logs of type "stdout_stream", default is "true".
-*   `stderr_log` (boolean)   
-    pass stderr output to the logs of type "stderr_stream", default is "true".
+* `quorum` (number|boolean)    
+  Number of minimal successful connection, 50%+1 if "true".   
+* `cmd` (string|array)   
+  The commands to be executed.    
+* `interval`   
+  Time interval between which we should wait before re-executing the command,
+  default to 2s.   
+* `code`   
+  Expected exit code to recieve to exit and call the user callback, default to "0".   
+* `code_skipped`   
+  Expected code to be returned when the command failed and should be scheduled
+  for later execution, default to "1".   
+* `stdin_log` (boolean)   
+  Pass stdin output to the logs of type "stdin_stream", default is "true".
+* `stdout_log` (boolean)   
+  Pass stdout output to the logs of type "stdout_stream", default is "true".
+* `stderr_log` (boolean)   
+  Pass stderr output to the logs of type "stderr_stream", default is "true".
 
 ## Example
 

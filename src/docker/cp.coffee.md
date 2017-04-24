@@ -6,23 +6,23 @@ Copy files/folders between a container and the local filesystem.
 Reflecting the original docker ps command usage, source and target may take
 the following forms:
 
-*   CONTAINER:PATH 
-*   LOCALPATH
-*   process.readableStream as the source or process.writableStream as the
-    target (equivalent of "-")
+* CONTAINER:PATH 
+* LOCALPATH
+* process.readableStream as the source or process.writableStream as the
+  target (equivalent of "-")
 
 Note, stream are not yet supported.
 
 ## Options
 
-*   `boot2docker` (boolean)   
-    Whether to use boot2docker or not, default to false.   
-*   `machine` (string)   
-    Name of the docker-machine, required if using docker-machine or boot2docker.   
-*   `source` (string)   
-    The path to upload or the container followed by the path to download.   
-*   `target` (string)   
-    The path to download or the container followed by the path to upload.   
+* `boot2docker` (boolean)   
+  Whether to use boot2docker or not, default to false.   
+* `machine` (string)   
+  Name of the docker-machine, required if using docker-machine or boot2docker.   
+* `source` (string)   
+  The path to upload or the container followed by the path to download.   
+* `target` (string)   
+  The path to download or the container followed by the path to upload.   
 
 ## Uploading a file
 

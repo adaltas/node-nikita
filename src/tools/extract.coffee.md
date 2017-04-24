@@ -7,27 +7,27 @@ moment, supported extensions are '.tgz', '.tar.gz', tar.bz2, 'tar.xz' and '.zip'
 
 ## Options
 
-*   `creates`   
-    Ensure the given file is created or an error is send in the callback.  
-*   `format`   
-    One of 'tgz', 'tar', 'xz', 'bz2' or 'zip'.   
-*   `preserve_owner`   
-    Preserve ownership when extracting. True by default if runned as root, else false.   
-*   `preserve_permissions`   
-    Preserve permissions when extracting. True by default if runned as root, else false.   
-*   `source`   
-    Archive to decompress.   
-*   `strip`   
-    Remove the specified number of leading path elements. Apply only to tar(s) formats.   
-*   `target`   
-    Default to the source parent directory.   
+* `creates`   
+  Ensure the given file is created or an error is send in the callback.  
+* `format`   
+  One of 'tgz', 'tar', 'xz', 'bz2' or 'zip'.   
+* `preserve_owner`   
+  Preserve ownership when extracting. True by default if runned as root, else false.   
+* `preserve_permissions`   
+  Preserve permissions when extracting. True by default if runned as root, else false.   
+* `source`   
+  Archive to decompress.   
+* `strip`   
+  Remove the specified number of leading path elements. Apply only to tar(s) formats.   
+* `target`   
+  Default to the source parent directory.   
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `extracted`   
-    Value is "true" if archive was extracted.   
+* `err`   
+  Error object if any.   
+* `extracted`   
+  Value is "true" if archive was extracted.   
 
 ## Example
 

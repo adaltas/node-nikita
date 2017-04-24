@@ -6,25 +6,25 @@ force options is set.
 
 ## Options
 
-*   `boot2docker` (boolean)   
-    Whether to use boot2docker or not, default to false.   
-*   `container` (string)   
-    Name/ID of the container. __Mandatory__   
-*   `machine` (string)   
-    Name of the docker-machine. __Mandatory__ if docker-machine installed   
-*   `link` (boolean)   
-    Remove the specified link   
-*   `volumes` (boolean)   
-    Remove the volumes associated with the container   
-*   `force` (boolean)   
-    Force the removal of a running container (uses SIGKILL)   
+* `boot2docker` (boolean)   
+  Whether to use boot2docker or not, default to false.   
+* `container` (string)   
+  Name/ID of the container. __Mandatory__   
+* `machine` (string)   
+  Name of the docker-machine. __Mandatory__ if docker-machine installed   
+* `link` (boolean)   
+  Remove the specified link   
+* `volumes` (boolean)   
+  Remove the volumes associated with the container   
+* `force` (boolean)   
+  Force the removal of a running container (uses SIGKILL)   
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `executed`   
-    if command was executed   
+* `err`   
+  Error object if any.   
+* `executed`   
+  if command was executed   
 
 ## Example Code
 

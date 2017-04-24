@@ -14,28 +14,28 @@ SSH connection is again available.
 
 ## Options
 
-*   `cmd` (string | function)   
-    Command used to become the root user on the remote server, for exemple 
-    `su -`.   
-*   `public_key` (string | Buffer)   
-    Public key added to "authorized_keys" to enable the root user.   
-*   `public_key_path` (string | Buffer)   
-    Local path to the public key added to "authorized_keys" to enable the root 
-    user.   
-*   `username` (string)   
-    Username of the user with sudo permissions to establish the SSH connection.   
-*   `password` (string)   
-    Password of the user with sudo permissions to establish the SSH connection 
-    if no private key is provided.   
-*   `private_key` (string)   
-    Private key of the user with sudo permissions to establish the SSH 
-    connection if no password is provided.   
-*   `private_key_path` (string)   
-    Local path to the private key of the user with sudo permissions to 
-    establish the SSH connection if no password is provided.   
-*   `selinux` (string | boolean)   
-    Controls the state of SELinux on the system, values are "enforcing", 
-    "permissive", "disabled".   
+* `cmd` (string | function)   
+  Command used to become the root user on the remote server, for exemple 
+  `su -`.   
+* `public_key` (string | Buffer)   
+  Public key added to "authorized_keys" to enable the root user.   
+* `public_key_path` (string | Buffer)   
+  Local path to the public key added to "authorized_keys" to enable the root 
+  user.   
+* `username` (string)   
+  Username of the user with sudo permissions to establish the SSH connection.   
+* `password` (string)   
+  Password of the user with sudo permissions to establish the SSH connection 
+  if no private key is provided.   
+* `private_key` (string)   
+  Private key of the user with sudo permissions to establish the SSH 
+  connection if no password is provided.   
+* `private_key_path` (string)   
+  Local path to the private key of the user with sudo permissions to 
+  establish the SSH connection if no password is provided.   
+* `selinux` (string | boolean)   
+  Controls the state of SELinux on the system, values are "enforcing", 
+  "permissive", "disabled".   
 
 ## Exemple
 

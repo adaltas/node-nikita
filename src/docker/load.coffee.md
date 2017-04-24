@@ -5,28 +5,28 @@ Load Docker images
 
 ## Options
 
-*   `boot2docker` (boolean)   
-    Whether to use boot2docker or not, default to false.   
-*   `machine` (string)   
-    Name of the docker-machine. __Mandatory__ if using docker-machine   
-*   `input` (string)   
-    TAR archive file to read from   
-*   `source` (string)   
-    Alias for the "input" option.   
-*   `checksum` (string)   
-    If provided, will check if attached input archive to checksum already exist.   
-    Not native to docker. But implemented to get better performance.   
+* `boot2docker` (boolean)   
+  Whether to use boot2docker or not, default to false.   
+* `machine` (string)   
+  Name of the docker-machine. __Mandatory__ if using docker-machine   
+* `input` (string)   
+  TAR archive file to read from   
+* `source` (string)   
+  Alias for the "input" option.   
+* `checksum` (string)   
+  If provided, will check if attached input archive to checksum already exist.   
+  Not native to docker. But implemented to get better performance.   
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `executed`   
-    if command was executed   
-*   `stdout`   
-    Stdout value(s) unless `stdout` option is provided.   
-*   `stderr`   
-    Stderr value(s) unless `stderr` option is provided.   
+* `err`   
+  Error object if any.   
+* `executed`   
+  if command was executed   
+* `stdout`   
+  Stdout value(s) unless `stdout` option is provided.   
+* `stderr`   
+  Stderr value(s) unless `stderr` option is provided.   
 
 ## Example
 

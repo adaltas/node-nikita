@@ -5,64 +5,64 @@ Write a file or a portion of an existing file.
 
 ## Options
 
-*   `append`   
-    Append the content to the target file. If target does not exist,
-    the file will be created.   
-*   `backup`   
-    Create a backup, append a provided string to the filename extension or a
-    timestamp if value is not a string.   
-*   `content`   
-    Text to be written, an alternative to source which reference a file.   
-*   `target`   
-    File path where to write content to.   
-*   `diff` (boolean | function)   
-    Print diff information, pass a readable diff and the result of [jsdiff.diffLines][diffLines] as
-    arguments if a function, default to true.   
-*   `eof`   
-    Ensure the file ends with this charactere sequence, special values are
-    'windows', 'mac', 'unix' and 'unicode' (respectively "\r\n", "\r", "\n",
-    "\u2028"), will be auto-detected if "true", default to false or "\n" if
-    "true" and not detected.   
-*   `from`   
-    Replace from after this marker, a string or a regular expression.   
-*   `gid`   
-    File group name or group id.   
-*   `local`   
-    Treat the source as local instead of remote, only apply with "ssh"
-    option.   
-*   `match`   
-    Replace this marker, a string or a regular expression, default to the
-    replaced string if missing.   
-*   `mode`   
-    File mode (permission and sticky bits), default to `0o0644`, in the form of
-    `{mode: 0o0744}` or `{mode: "0744"}`.   
-*   `place_before` (string, boolean, regex)   
-    Place the content before the match.   
-*   `replace`   
-    The content to be inserted, used conjointly with the from, to or match   
-    options.   
-*   `source`   
-    File path from where to extract the content, do not use conjointly with   
-    content.   
-*   `to`   
-    Replace to before this marker, a string or a regular expression.   
-*   `uid`   
-    File user name or user id.   
-*   `unlink` (boolean)   
-    Replace the existing link, leaving the refered file untouched.   
-*   `write`   
-    An array containing multiple transformation where a transformation is an
-    object accepting the options `from`, `to`, `match` and `replace`.   
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.    
+* `append`   
+  Append the content to the target file. If target does not exist,
+  the file will be created.   
+* `backup`   
+  Create a backup, append a provided string to the filename extension or a
+  timestamp if value is not a string.   
+* `content`   
+  Text to be written, an alternative to source which reference a file.   
+* `target`   
+  File path where to write content to.   
+* `diff` (boolean | function)   
+  Print diff information, pass a readable diff and the result of [jsdiff.diffLines][diffLines] as
+  arguments if a function, default to true.   
+* `eof`   
+  Ensure the file ends with this charactere sequence, special values are
+  'windows', 'mac', 'unix' and 'unicode' (respectively "\r\n", "\r", "\n",
+  "\u2028"), will be auto-detected if "true", default to false or "\n" if
+  "true" and not detected.   
+* `from`   
+  Replace from after this marker, a string or a regular expression.   
+* `gid`   
+  File group name or group id.   
+* `local`   
+  Treat the source as local instead of remote, only apply with "ssh"
+  option.   
+* `match`   
+  Replace this marker, a string or a regular expression, default to the
+  replaced string if missing.   
+* `mode`   
+  File mode (permission and sticky bits), default to `0o0644`, in the form of
+  `{mode: 0o0744}` or `{mode: "0744"}`.   
+* `place_before` (string, boolean, regex)   
+  Place the content before the match.   
+* `replace`   
+  The content to be inserted, used conjointly with the from, to or match   
+  options.   
+* `source`   
+  File path from where to extract the content, do not use conjointly with   
+  content.   
+* `to`   
+  Replace to before this marker, a string or a regular expression.   
+* `uid`   
+  File user name or user id.   
+* `unlink` (boolean)   
+  Replace the existing link, leaving the refered file untouched.   
+* `write`   
+  An array containing multiple transformation where a transformation is an
+  object accepting the options `from`, `to`, `match` and `replace`.   
+* `ssh` (object|ssh2)   
+  Run the action on a remote server using SSH, an ssh2 instance or an
+  configuration object used to initialize the SSH connection.   
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `modified`   
-    Number of written actions with modifications.   
+* `err`   
+  Error object if any.   
+* `modified`   
+  Number of written actions with modifications.   
 
 ## Implementation details
 
@@ -74,8 +74,8 @@ honor all their options including "mode", "uid" and "gid".
 Diff can be obtained when the options "diff" is set to true or a function. The
 information is provided in two ways:
 
-*   when `true`, a formated string written to the "stdout" option.   
-*   when a function, a readable diff and the array returned by the function 
+* when `true`, a formated string written to the "stdout" option.   
+* when a function, a readable diff and the array returned by the function 
     `diff.diffLines`, see the [diffLines] package for additionnal information.   
 
 ## More about the `append` option

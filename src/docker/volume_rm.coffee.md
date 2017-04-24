@@ -5,14 +5,14 @@ Remove a volume.
 
 ## Options
 
-*   `boot2docker` (boolean)   
-    Whether to use boot2docker or not, default to false.   
-*   `container` (string|array). __Mandatory__   
-    Name or Id of the container.   
-*   `machine` (string)   
-    Name of the docker-machine. __Mandatory__ if using docker-machine.   
-*   `name` (string)   
-    Specify volume name.   
+* `boot2docker` (boolean)   
+  Whether to use boot2docker or not, default to false.   
+* `container` (string|array). __Mandatory__   
+  Name or Id of the container.   
+* `machine` (string)   
+  Name of the docker-machine. __Mandatory__ if using docker-machine.   
+* `name` (string)   
+  Specify volume name.   
 
 ## Example
 

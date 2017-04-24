@@ -5,22 +5,22 @@ Change the ownership of a file or a directory.
 
 ## Options
 
-*   `gid`   
-    Group name or id who owns the target file.   
-*   `stat` (Stat instance, optional)   
-    Pass the Stat object relative to the target file or directory, to be
-    used as an optimization, discovered otherwise.   
-*   `target`   
-    Where the file or directory is copied.   
-*   `uid`   
-    User name or id who owns the target file.   
+* `gid`   
+  Group name or id who owns the target file.   
+* `stat` (Stat instance, optional)   
+  Pass the Stat object relative to the target file or directory, to be
+  used as an optimization, discovered otherwise.   
+* `target`   
+  Where the file or directory is copied.   
+* `uid`   
+  User name or id who owns the target file.   
 
 ## Callback Parameters
 
-*   `err`   
-    Error object if any.   
-*   `status`   
-    Value is "true" if file ownership was created or modified.   
+* `err`   
+  Error object if any.   
+* `status`   
+  Value is "true" if file ownership was created or modified.   
 
 ## Example
 

@@ -5,17 +5,17 @@ Recursively remove files, directories and links.
 
 ## Options
 
-*   `target` (string|[string])      
-    File, directory or glob (pattern matching based on wildcard characters).   
-*   `source` (alias)   
-    Alias for "target".   
+* `target` (string|[string])      
+  File, directory or glob (pattern matching based on wildcard characters).   
+* `source` (alias)   
+  Alias for "target".   
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `status`   
-    Value is "true" if files were removed.   
+* `err`   
+  Error object if any.   
+* `status`   
+  Value is "true" if files were removed.   
 
 ## Implementation details
 

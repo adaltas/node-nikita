@@ -8,21 +8,21 @@ SIGNAL is not sent.
 
 ## Options
 
-*   `boot2docker` (boolean)   
-    Whether to use boot2docker or not, default to false.   
-*   `container` (string)   
-    Name/ID of the container. __Mandatory__   
-*   `machine` (string)   
-    Name of the docker-machine. __Mandatory__ if using docker-machine.   
-*   `signal` (int|string)   
-    Use a specified signal. SIGKILL by default   
+* `boot2docker` (boolean)   
+  Whether to use boot2docker or not, default to false.   
+* `container` (string)   
+  Name/ID of the container. __Mandatory__   
+* `machine` (string)   
+  Name of the docker-machine. __Mandatory__ if using docker-machine.   
+* `signal` (int|string)   
+  Use a specified signal. SIGKILL by default   
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `executed`   
-    if command was executed   
+* `err`   
+  Error object if any.   
+* `executed`   
+  if command was executed   
 
 ## Example
 

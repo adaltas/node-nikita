@@ -5,22 +5,22 @@ Write a file in the Java properties format.
 
 ## Options
 
-*   `backup` (boolean)   
-    Create a backup, append a provided string to the filename extension or a
-    timestamp if value is not a string.
-*   `content` (object)   
-    List of properties to write.
-*   `target` (string)   
-    File path where to write content to.
-*   `local` (boolean)   
-    Treat the source as local instead of remote, only apply with "ssh"
-    option.
-*   `sort` (boolean)   
-    Sort the properties before writting them. False by default
-*   `merge` (boolean)   
-    Merges content properties with target file. False by default
-*   `separator` (string)   
-    The caracter to use for separating property and value. '=' by default.
+* `backup` (boolean)   
+  Create a backup, append a provided string to the filename extension or a
+  timestamp if value is not a string.
+* `content` (object)   
+  List of properties to write.
+* `target` (string)   
+  File path where to write content to.
+* `local` (boolean)   
+  Treat the source as local instead of remote, only apply with "ssh"
+  option.
+* `sort` (boolean)   
+  Sort the properties before writting them. False by default
+* `merge` (boolean)   
+  Merges content properties with target file. False by default
+* `separator` (string)   
+  The caracter to use for separating property and value. '=' by default.
 
 ## Exemple
 

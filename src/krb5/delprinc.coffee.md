@@ -5,16 +5,16 @@ Remove a Kerberos principal and optionally its keytab.
 
 ## Options
 
-*   `principal`   
-    Principal to be created.   
-*   `kadmin_server`   
-    Address of the kadmin server; optional, use "kadmin.local" if missing.   
-*   `kadmin_principal`   
-    KAdmin principal name unless `kadmin.local` is used.   
-*   `kadmin_password`   
-    Password associated to the KAdmin principal.   
-*   `keytab`   
-    Path to the file storing key entries.   
+* `principal`   
+  Principal to be created.   
+* `kadmin_server`   
+  Address of the kadmin server; optional, use "kadmin.local" if missing.   
+* `kadmin_principal`   
+  KAdmin principal name unless `kadmin.local` is used.   
+* `kadmin_password`   
+  Password associated to the KAdmin principal.   
+* `keytab`   
+  Path to the file storing key entries.   
 
 ## Example
 

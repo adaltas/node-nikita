@@ -5,20 +5,20 @@ Create a database for the destination database.
 
 ## Options
 
-*   `admin_username`   
-    The login of the database administrator. It should have credentials to create accounts.   
-*   `admin_password`   
-    The password of the database administrator.   
-*   `database` (Array or String)   
-    The database name(s) to which the user should be added.   
-*   `engine`      
-    The engine type, can be MySQL or PostgreSQL, required.   
-*   `host`   
-    The hostname of the database.   
-*   `port`   
-    Port to the associated database.   
-*   `user` Array or String   
-    Contains  user(s) to add to the database, optional.   
+* `admin_username`   
+  The login of the database administrator. It should have credentials to create accounts.   
+* `admin_password`   
+  The password of the database administrator.   
+* `database` (Array or String)   
+  The database name(s) to which the user should be added.   
+* `engine`    
+  The engine type, can be MySQL or PostgreSQL, required.   
+* `host`   
+  The hostname of the database.   
+* `port`   
+  Port to the associated database.   
+* `user` Array or String   
+  Contains  user(s) to add to the database, optional.   
 
 This user will be granted superuser permissions (see above) for the database specified by the
 

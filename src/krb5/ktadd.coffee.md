@@ -6,16 +6,16 @@ called by the `krb5.addprinc` function.
 
 ## Options
 
-*   `kadmin_server`   
-    Address of the kadmin server; optional, use "kadmin.local" if missing.   
-*   `kadmin_principal`   
-    KAdmin principal name unless `kadmin.local` is used.   
-*   `kadmin_password`   
-    Password associated to the KAdmin principal.   
-*   `principal`   
-    Principal to be created.   
-*   `keytab`   
-    Path to the file storing key entries.   
+* `kadmin_server`   
+  Address of the kadmin server; optional, use "kadmin.local" if missing.   
+* `kadmin_principal`   
+  KAdmin principal name unless `kadmin.local` is used.   
+* `kadmin_password`   
+  Password associated to the KAdmin principal.   
+* `principal`   
+  Principal to be created.   
+* `keytab`   
+  Path to the file storing key entries.   
 
 ## Example
 

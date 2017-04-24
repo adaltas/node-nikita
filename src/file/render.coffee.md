@@ -9,30 +9,30 @@ integrated. More are added on demand.
 
 ## Options
 
-*   `engine`   
-    Template engine to use, default to "eco".   
-*   `content`   
-    Templated content, bypassed if source is provided.   
-*   `source`   
-    File path where to extract content from.   
-*   `target`   
-    File path where to write content to or a callback.   
-*   `context`   
-    Map of key values to inject into the template.   
-*   `filters` (function)   
-    Filter function to extend the nunjucks engine.   
-*   `local`   
-    Treat the source as local instead of remote, only apply with "ssh"
-    option.   
-*   `skip_empty_lines`   
-    Remove empty lines.   
-*   `uid`   
-    File user name or user id.   
-*   `gid`   
-    File group name or group id.   
-*   `mode`   
-    File mode (permission and sticky bits), default to `0644`, in the form of
-    `{mode: 0o744}` or `{mode: "744"}`.   
+* `engine`   
+  Template engine to use, default to "eco".   
+* `content`   
+  Templated content, bypassed if source is provided.   
+* `source`   
+  File path where to extract content from.   
+* `target`   
+  File path where to write content to or a callback.   
+* `context`   
+  Map of key values to inject into the template.   
+* `filters` (function)   
+  Filter function to extend the nunjucks engine.   
+* `local`   
+  Treat the source as local instead of remote, only apply with "ssh"
+  option.   
+* `skip_empty_lines`   
+  Remove empty lines.   
+* `uid`   
+  File user name or user id.   
+* `gid`   
+  File group name or group id.   
+* `mode`   
+  File mode (permission and sticky bits), default to `0644`, in the form of
+  `{mode: 0o744}` or `{mode: "744"}`.   
 
 If target is a callback, it will be called with the generated content as
 its first argument.   
@@ -43,21 +43,21 @@ Nunjucks allow to add custom filters. Nikita provides some custom filters listed
 These filters are implemented misc/string. They can be overriden through the filters
 parameters   
 
-*   `isString`   
-    return true if the variable is a string   
-*   `isArray`   
-    return true if the variable is an array   
-*   `isObject`   
-    return true if the variable is an object. Return false if the variable is an array.   
-*   `isEmpty`   
-    return true if the variable is `null`, `undefined`, `''`, `[]`, or `{}`   
+* `isString`   
+  return true if the variable is a string   
+* `isArray`   
+  return true if the variable is an array   
+* `isObject`   
+  return true if the variable is an object. Return false if the variable is an array.   
+* `isEmpty`   
+  return true if the variable is `null`, `undefined`, `''`, `[]`, or `{}`   
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `status`   
-    Value is true if rendered file was created or modified.   
+* `err`   
+  Error object if any.   
+* `status`   
+  Value is true if rendered file was created or modified.   
 
 ## Rendering with Nunjucks
 

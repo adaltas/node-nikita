@@ -5,23 +5,23 @@ Check if a database exists.
 
 ## Options
 
-*   `admin_username`   
-    The login of the database administrator. It should have credentials to 
-    create accounts.   
-*   `admin_password`   
-    The password of the database administrator.
-*   `database` (String)
-    The database name to check for existance.   
-*   `engine`      
-    The engine type, can be MySQL or PostgreSQL, default to MySQL.   
-*   `host`   
-    The hostname of the database.   
-*   `port`   
-    Port to the associated database.   
-*   `username`   
-    The username of a user with privileges on the database, used unless admin_username is provided.   
-*   `password`   
-    The password of a user with privileges on the database, used unless admin_password is provided.   
+* `admin_username`   
+  The login of the database administrator. It should have credentials to 
+  create accounts.   
+* `admin_password`   
+  The password of the database administrator.
+* `database` (String)
+  The database name to check for existance.   
+* `engine`  
+  The engine type, can be MySQL or PostgreSQL, default to MySQL.   
+* `host`   
+  The hostname of the database.   
+* `port`   
+  Port to the associated database.   
+* `username`   
+  The username of a user with privileges on the database, used unless admin_username is provided.   
+* `password`   
+  The password of a user with privileges on the database, used unless admin_password is provided.   
 
 ## Source Code
 

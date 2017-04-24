@@ -5,38 +5,38 @@ Activate or desactivate a service on startup.
 
 ## Options
 
-*   `arch_chroot` (boolean|string)   
-    Run this command inside a root directory with the arc-chroot command or any 
-    provided string, require the "rootdir" option if activated.   
-*   `rootdir` (string)   
-    Path to the mount point corresponding to the root directory, required if 
-    the "arch_chroot" option is activated.   
-*   `cache` (boolean)   
-    Cache service information.   
-*   `name` (string)   
-    Service name, required.   
-*   `startup` (boolean|string)
-    Run service daemon on startup, required. A string represent a list of activated
-    levels, for example '2345' or 'multi-user'.   
-    An empty string to not define any run level.   
-    Note: String argument is only used if SysVinit runlevel is installed on 
-    the OS (automatically detected by nikita).   
-*   `ssh` (object|ssh2)   
-    Run the action on a remote server using SSH, an ssh2 instance or an
-    configuration object used to initialize the SSH connection.   
-*   `stdout` (stream.Writable)   
-    Writable EventEmitter in which the standard output of executed commands will
-    be piped.   
-*   `stderr` (stream.Writable)   
-    Writable EventEmitter in which the standard error output of executed command
-    will be piped.   
+* `arch_chroot` (boolean|string)   
+  Run this command inside a root directory with the arc-chroot command or any 
+  provided string, require the "rootdir" option if activated.   
+* `rootdir` (string)   
+  Path to the mount point corresponding to the root directory, required if 
+  the "arch_chroot" option is activated.   
+* `cache` (boolean)   
+  Cache service information.   
+* `name` (string)   
+  Service name, required.   
+* `startup` (boolean|string)
+  Run service daemon on startup, required. A string represent a list of activated
+  levels, for example '2345' or 'multi-user'.   
+  An empty string to not define any run level.   
+  Note: String argument is only used if SysVinit runlevel is installed on 
+  the OS (automatically detected by nikita).   
+* `ssh` (object|ssh2)   
+  Run the action on a remote server using SSH, an ssh2 instance or an
+  configuration object used to initialize the SSH connection.   
+* `stdout` (stream.Writable)   
+  Writable EventEmitter in which the standard output of executed commands will
+  be piped.   
+* `stderr` (stream.Writable)   
+  Writable EventEmitter in which the standard error output of executed command
+  will be piped.   
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `status`   
-    Indicates if the startup behavior has changed.   
+* `err`   
+  Error object if any.   
+* `status`   
+  Indicates if the startup behavior has changed.   
 
 ## Example
 

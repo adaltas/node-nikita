@@ -5,29 +5,29 @@ Assert a file exists or a provided text match the content of a text file.
 
 ## Options
 
-*   `content` (buffer|string)   
-    Text to validate.   
-*   `encoding` (string)   
-    Content encoding, see the Node.js supported Buffer encoding.   
-*   `md5` (string)   
-    Validate signature.   
-*   `mode` (string)   
-    Validate file permissions.   
-*   `not` (boolean)   
-    Negate the validation.   
-*   `sha1` (string)   
-    Validate signature.    
-*   `sha256` (string)   
-    Validate signature.   
-*   `source` (string)   
-    Alias of option "target".   
-*   `target` (string)   
-    File storing the content to assert.   
+* `content` (buffer|string)   
+  Text to validate.   
+* `encoding` (string)   
+  Content encoding, see the Node.js supported Buffer encoding.   
+* `md5` (string)   
+  Validate signature.   
+* `mode` (string)   
+  Validate file permissions.   
+* `not` (boolean)   
+  Negate the validation.   
+* `sha1` (string)   
+  Validate signature.    
+* `sha256` (string)   
+  Validate signature.   
+* `source` (string)   
+  Alias of option "target".   
+* `target` (string)   
+  File storing the content to assert.   
 
 ## Callback parameters
 
-*   `err` (Error)   
-    Error if assertion failed.   
+* `err` (Error)   
+  Error if assertion failed.   
 
 ## Example
 

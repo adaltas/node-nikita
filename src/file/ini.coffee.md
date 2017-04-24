@@ -14,40 +14,40 @@ provided in the `content` option.
 
 ## Options   
 
-*   `backup`   
-    Create a backup, append a provided string to the filename extension or a
-    timestamp if value is not a string.   
-*   `clean`   
-    Remove all the lines whithout a key and a value, default to "true".   
-*   `content`   
-    Object to stringify.   
-*   `escape` (boolean)   
-    Escape the section's header title replace '.' by '\.'. True by default.
-*   `merge`   
-    Read the target if it exists and merge its content.   
-*   `parse`   
-    User-defined function to parse the content from ini format, default to
-    `require('ini').parse`, see 'misc.ini.parse_multi_brackets'.   
-*   `separator`   
-    Default separator between keys and values, default to " : ".   
-*   `stringify`   
-    User-defined function to stringify the content to ini format, default to
-    `require('ini').stringify`, see 'misc.ini.stringify_square_then_curly' for
-    an example.   
-*   `eol` (string)   
-    Characters for line delimiter, usage depends on the stringify option, with 
-    the default stringify option, default to unix style if executed remotely 
-    (SSH) or to the platform if executed locally ("\r\n for windows", 
-    "\n" otherwise)
-*   `target`   
-    File path where to write content to or a callback.   
+* `backup`   
+  Create a backup, append a provided string to the filename extension or a
+  timestamp if value is not a string.   
+* `clean`   
+  Remove all the lines whithout a key and a value, default to "true".   
+* `content`   
+  Object to stringify.   
+* `escape` (boolean)   
+  Escape the section's header title replace '.' by '\.'. True by default.
+* `merge`   
+  Read the target if it exists and merge its content.   
+* `parse`   
+  User-defined function to parse the content from ini format, default to
+  `require('ini').parse`, see 'misc.ini.parse_multi_brackets'.   
+* `separator`   
+  Default separator between keys and values, default to " : ".   
+* `stringify`   
+  User-defined function to stringify the content to ini format, default to
+  `require('ini').stringify`, see 'misc.ini.stringify_square_then_curly' for
+  an example.   
+* `eol` (string)   
+  Characters for line delimiter, usage depends on the stringify option, with 
+  the default stringify option, default to unix style if executed remotely 
+  (SSH) or to the platform if executed locally ("\r\n for windows", 
+  "\n" otherwise)
+* `target`   
+  File path where to write content to or a callback.   
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `written`   
-    Number of written actions with modifications.   
+* `err`   
+  Error object if any.   
+* `written`   
+  Number of written actions with modifications.   
 
 ## Example
 

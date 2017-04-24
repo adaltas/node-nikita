@@ -7,19 +7,19 @@ moment, supported extensions are '.tgz', '.tar.gz', 'tar.xz', 'tar.bz2' and '.zi
 
 ## Options
 
-*   `format`   
-    One of 'tgz', 'tar', 'xz', 'bz2' or 'zip'.   
-*   `source`   
-    Archive to compress.   
-*   `target`   
-    Default to the source parent directory.   
+* `format`   
+  One of 'tgz', 'tar', 'xz', 'bz2' or 'zip'.   
+* `source`   
+  Archive to compress.   
+* `target`   
+  Default to the source parent directory.   
 
 ## Callback Parameters
 
-*   `err`   
-    Error object if any.   
-*   `status`   
-    Value is "true" if file was compressed.   
+* `err`   
+  Error object if any.   
+* `status`   
+  Value is "true" if file was compressed.   
 
 ## Example
 

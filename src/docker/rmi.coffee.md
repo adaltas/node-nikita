@@ -6,14 +6,14 @@ force options is set.
 
 ## Options
 
-*   `boot2docker` (boolean)   
-    Whether to use boot2docker or not, default to false.   
-*   `image` (string)   
-    Name of the image. __Mandatory__   
-*   `machine` (string)   
-    Name of the docker-machine. __Mandatory__ if docker-machine installed   
-*   `no_prune` (boolean)   
-    Do not delete untagged parents   
+* `boot2docker` (boolean)   
+  Whether to use boot2docker or not, default to false.   
+* `image` (string)   
+  Name of the image. __Mandatory__   
+* `machine` (string)   
+  Name of the docker-machine. __Mandatory__ if docker-machine installed   
+* `no_prune` (boolean)   
+  Do not delete untagged parents   
 
 ## Source Code
 

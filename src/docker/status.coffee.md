@@ -5,23 +5,23 @@ Return true if container is running. This function is not native to docker.
 
 ## Options
 
-*   `boot2docker` (boolean)   
-    Whether to use boot2docker or not, default to false.   
-*   `container` (string|array). __Mandatory__   
-    Name or Id of the container.   
-*   `machine` (string)   
-    Name of the docker-machine. __Mandatory__ if using docker-machine   
+* `boot2docker` (boolean)   
+  Whether to use boot2docker or not, default to false.   
+* `container` (string|array). __Mandatory__   
+  Name or Id of the container.   
+* `machine` (string)   
+  Name of the docker-machine. __Mandatory__ if using docker-machine   
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.   
-*   `executed`   
-    Wether the container is running or not.   
-*   `stdout`   
-    Stdout value(s) unless `stdout` option is provided.   
-*   `stderr`   
-    Stderr value(s) unless `stderr` option is provided.   
+* `err`   
+  Error object if any.   
+* `executed`   
+  Wether the container is running or not.   
+* `stdout`   
+  Stdout value(s) unless `stdout` option is provided.   
+* `stderr`   
+  Stderr value(s) unless `stderr` option is provided.   
 
 ## Example
 

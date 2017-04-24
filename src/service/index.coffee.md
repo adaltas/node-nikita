@@ -9,44 +9,44 @@ to "['start', 'restart']" to ensure the service will be always started.
 
 ## Options
 
-*   `cache`   
-    Run entirely from system cache to list installed and outdated packages.
-*   `cacheonly` (boolean)   
-    Run the yum command entirely from system cache, don't update cache.
-*   `name` (string)   
-    Package name, optional.
-*   `chk_name` (string)   
-    Name used by the chkconfig utility, default to "srv_name" and "name".
-*   `srv_name` (string)   
-    Name used by the service utility, default to "name".
-*   `action` (string)   
-    Execute the service with the provided action argument.
-*   `installed`   
-    Cache a list of installed services. If an object, the service will be
-    installed if a key of the same name exists; if anything else (default), no
-    caching will take place.
-*   `outdated`   
-    Cache a list of outdated services. If an object, the service will be updated
-    if a key of the same name exists; If true, the option will be converted to
-    an object with all the outdated service names as keys; if anything else
-    (default), no caching will take place.
-*   `startup` (boolean|string)   
-    Run service daemon on startup. If true, startup will be set to '2345', use
-    an empty string to not define any run level.
-*   `yum_name` (string)
-    Name used by the yum utility, default to "name".
+* `cache`   
+  Run entirely from system cache to list installed and outdated packages.
+* `cacheonly` (boolean)   
+  Run the yum command entirely from system cache, don't update cache.
+* `name` (string)   
+  Package name, optional.
+* `chk_name` (string)   
+  Name used by the chkconfig utility, default to "srv_name" and "name".
+* `srv_name` (string)   
+  Name used by the service utility, default to "name".
+* `action` (string)   
+  Execute the service with the provided action argument.
+* `installed`   
+  Cache a list of installed services. If an object, the service will be
+  installed if a key of the same name exists; if anything else (default), no
+  caching will take place.
+* `outdated`   
+  Cache a list of outdated services. If an object, the service will be updated
+  if a key of the same name exists; If true, the option will be converted to
+  an object with all the outdated service names as keys; if anything else
+  (default), no caching will take place.
+* `startup` (boolean|string)   
+  Run service daemon on startup. If true, startup will be set to '2345', use
+  an empty string to not define any run level.
+* `yum_name` (string)
+  Name used by the yum utility, default to "name".
 
 ## Callback parameters
 
-*   `err`   
-    Error object if any.
-*   `status`   
-    Indicate a change in service such as a change in installation, update,
-    start/stop or startup registration.
-*   `installed`   
-    List of installed services.
-*   `updates`   
-    List of services to update.
+* `err`   
+  Error object if any.
+* `status`   
+  Indicate a change in service such as a change in installation, update,
+  start/stop or startup registration.
+* `installed`   
+  List of installed services.
+* `updates`   
+  List of services to update.
 
 ## Example
 
