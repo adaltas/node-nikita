@@ -23,7 +23,7 @@ describe 'wait.execute', ->
       cmd: "test -d #{scratch}/a_file"
       interval: 60
     , (err, status) ->
-      status.should.be.true()
+      status.should.be.true() unless err
     .then next
 
   they 'take a multiple cmds', (ssh, next) ->
@@ -48,7 +48,7 @@ describe 'wait.execute', ->
       ]
       interval: 20
     , (err, status) ->
-      status.should.be.true()
+      status.should.be.true() unless err
     .then next
 
   describe 'log', ->
@@ -67,9 +67,40 @@ describe 'wait.execute', ->
         cmd: "test -d #{scratch}/a_file"
         interval: 100
       .then (err) ->
-        return next err if err
-        logs.length.should.be.within 2, 4
-        next()
+        logs.length.should.be.within 2, 4 unless err
+        next err
+    
+    they 'honors *_log as true', (ssh, next) ->
+      logs = 0
+      nikita
+        ssh: ssh
+      .on 'stdin', (log) -> logs++
+      .on 'stdout', (log) -> logs++
+      .on 'stderr', (log) -> logs++
+      .wait.execute
+        cmd: "echo stdout; echo stderr >&2"
+        stdin_log: true
+        stdout_log: true
+        stderr_log: true
+      .then (err) ->
+        logs.should.eql 3 unless err
+        next err
+    
+    they 'honors *_log as false', (ssh, next) ->
+      logs = 0
+      nikita
+        ssh: ssh
+      .on 'stdin', (log) -> logs++
+      .on 'stdout', (log) -> logs++
+      .on 'stderr', (log) -> logs++
+      .wait.execute
+        cmd: "echo stdout; echo stderr >&2"
+        stdin_log: false
+        stdout_log: false
+        stderr_log: false
+      .then (err) ->
+        logs.should.eql 0 unless err
+        next err
 
   describe 'quorum', ->
 
@@ -95,7 +126,7 @@ describe 'wait.execute', ->
         interval: 20
         # quorum: 1
       , (err, status) ->
-        status.should.be.true()
+        status.should.be.true() unless err
       .then (err) ->
         return next err if err
         fs.readFile ssh, "#{scratch}/result", 'ascii', (err, data) ->
@@ -124,7 +155,7 @@ describe 'wait.execute', ->
         interval: 20
         quorum: 2
       , (err, status) ->
-        status.should.be.true()
+        status.should.be.true() unless err
       .then (err) ->
         return next err if err
         fs.readFile ssh, "#{scratch}/result", 'ascii', (err, data) ->
@@ -153,7 +184,7 @@ describe 'wait.execute', ->
         interval: 20
         quorum: true
       , (err, status) ->
-        status.should.be.true()
+        status.should.be.true() unless err
       .then (err) ->
         return next err if err
         fs.readFile ssh, "#{scratch}/result", 'ascii', (err, data) ->

@@ -19,6 +19,12 @@ change had occured. Otherwise it will be set to "true".
 *   `code_skipped`   
     Expected code to be returned when the command failed and should be scheduled
     for later execution, default to "1".   
+*   `stdin_log` (boolean)   
+    pass stdin output to the logs of type "stdin_stream", default is "true".
+*   `stdout_log` (boolean)   
+    pass stdout output to the logs of type "stdout_stream", default is "true".
+*   `stderr_log` (boolean)   
+    pass stderr output to the logs of type "stderr_stream", default is "true".
 
 ## Example
 
@@ -59,6 +65,9 @@ require 'nikita'
             cmd: cmd
             code: options.code or 0
             code_skipped: options.code_skipped
+            stdin_log: options.stdin_log
+            stdout_log: options.stdout_log
+            stderr_log: options.stderr_log
           , (err, ready) =>
             if not err and not ready
               setTimeout run, options.interval
