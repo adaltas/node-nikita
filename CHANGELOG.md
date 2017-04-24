@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* conditions: support redhat in unless_os
 * context: load modules relative to process cwd
 * ping: call it and receive pong
 * wait.execute: pass std_log options
