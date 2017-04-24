@@ -44,6 +44,8 @@ functions share a common API with flexible options.
         get: 'nikita/core/kv/get'
         engine: 'nikita/core/kv/engine'
         set: 'nikita/core/kv/set'
+      core:
+        ping: 'nikita/core/ping'
       cron:
         add: 'nikita/cron/add'
         remove: 'nikita/cron/remove'
