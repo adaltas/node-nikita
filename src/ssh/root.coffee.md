@@ -104,6 +104,8 @@ require('nikita')
           selinux="#{options.selinux or ''}";
           if [ -n "$selinux" ] && [ -f /etc/selinux/config ] && grep ^SELINUX="$selinux" /etc/selinux/config;
           then
+            exit 2;
+          else
             sed -i.back "s/^SELINUX=enforcing/SELINUX=$selinux/" /etc/selinux/config;
             reboot;
             exit 2;
