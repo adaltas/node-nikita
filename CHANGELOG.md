@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* compress and extract: support bz2 tests on centos7
 * conditions: support redhat in unless_os
 * context: load modules relative to process cwd
 * ping: call it and receive pong
