@@ -450,6 +450,7 @@
         options = normalize_options args, 'call'
         for opts in options
           if typeof opts.handler is 'string'
+            opts.handler = path.resolve process.cwd(), opts.handler if opts.handler.substr(0, 1) is '.'
             mod = require.main.require opts.handler
             throw Error 'Array modules not yet supported' if Array.isArray mod
             mod = normalize_options [mod], 'call'

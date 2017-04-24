@@ -2,6 +2,7 @@
 nikita = require '../../src'
 test = require '../test'
 fs = require 'fs'
+path = require 'path'
 
 describe 'api call', ->
 
@@ -32,6 +33,16 @@ describe 'api call', ->
       .then (err) ->
         logs.should.eql ['Hello sync', 'Hello async'] unless err
         next err
+
+    it 'string requires a module from process cwd', (next) ->
+      cwd = null
+      nikita
+      .call -> cwd = process.cwd()
+      .call -> process.chdir path.resolve __dirname, '../../'
+      .call './src/core/ping', (err, status, message) ->
+        message.should.eql 'pong' unless err
+      .call -> process.chdir cwd
+      .then next
 
     it 'string requires a module which export an object', (next) ->
       logs = []
