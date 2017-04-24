@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* ping: call it and receive pong
 * wait.execute: pass std_log options
 * execute: std_log options not disabled if undefined or null
 * download: fix file based checksum validation
