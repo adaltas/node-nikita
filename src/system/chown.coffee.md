@@ -9,7 +9,7 @@ Change the ownership of a file or a directory.
     Group name or id who owns the target file.   
 *   `stat` (Stat instance, optional)   
     Pass the Stat object relative to the target file or directory, to be
-    used as an optimization.   
+    used as an optimization, discovered otherwise.   
 *   `target`   
     Where the file or directory is copied.   
 *   `uid`   
@@ -46,34 +46,38 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       options.log message: "Entering chown", level: 'DEBUG', module: 'nikita/lib/chown'
       options.target = options.argument if options.argument?
       # Validate parameters
-      return callback Error "Missing target option" unless options.target?
-      return callback Error "Missing one of uid or gid option" unless options.uid? or options.gid?
-      do_uid_gid = ->
-        uid_gid options, (err) ->
-          return callback err if err
-          do_stat()
-      do_stat = ->
-        # Option 'stat' short-circuit
-        return do_chown options.stat if options.stat
+      throw Error "Missing target option" unless options.target?
+      throw Error "Missing one of uid or gid option" unless options.uid? or options.gid?
+      # Convert user and group names to uid and gid if necessary
+      @call (_, callback) ->
+        uid_gid options, callback
+      # Use option 'stat' short-circuit or discover
+      @call unless: options.stat, (_, callback) ->
         options.log message: "Stat #{options.target}", level: 'DEBUG', module: 'nikita/lib/chown'
         fs.stat options.ssh, options.target, (err, stat) ->
+          return callback Error "Target Does Not Exist: #{JSON.stringify options.target}" if err?.code is 'ENOENT'
           return callback err if err
-          do_chown stat
-      do_chown = (stat) ->
+          options.stat = stat
+          callback()
+      # Detect changes
+      @call (_, callback) ->
         # Detect changes
-        if stat.uid is options.uid and stat.gid is options.gid
+        if (not options.uid or options.stat.uid is options.uid) and (not options.gid or options.stat.gid is options.gid)
           options.log message: "Matching ownerships on '#{options.target}'", level: 'INFO', module: 'nikita/lib/chown'
           return callback()
+        callback null, true
+      @call if: (-> @status -1), (_, callback) ->
         # Apply changes
-        fs.chown options.ssh, options.target, options.uid or -1, options.gid or -1, (err) ->
-          options.log message: "change uid from #{stat.uid} to #{options.uid}", level: 'WARN', module: 'nikita/lib/chown' if options.uid
-          options.log message: "change gid from #{stat.gid} to #{options.gid}", level: 'WARN', module: 'nikita/lib/chown' if options.gid
-          callback err, true
-      do_uid_gid()
+        options.uid ?= options.stat.uid
+        options.gid ?= options.stat.gid
+        fs.chown options.ssh, options.target, options.uid, options.gid, (err) ->
+          options.log message: "change uid from #{options.stat.uid} to #{options.uid}", level: 'WARN', module: 'nikita/lib/chown' if options.stat.uid is not options.uid
+          options.log message: "change gid from #{options.stat.gid} to #{options.gid}", level: 'WARN', module: 'nikita/lib/chown' if options.stat.gid is not options.gid
+          callback err
 
 ## Dependencies
 
