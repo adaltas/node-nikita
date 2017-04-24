@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* execute: std_log options not disabled if undefined or null
 * download: fix file based checksum validation
 * java.keystore: detect if keystore exists
 * condition: fix Red Hat detection

@@ -197,26 +197,6 @@ describe 'system.execute', ->
       .on 'stderr_stream', (log) -> stderr_stream.push log
       .system.execute
         cmd: "echo 'to stderr' >&2; echo 'to stdout';"
-        stdout_log: undefined
-        stderr_log: undefined
-      , (err, status) ->
-        stdin.message.should.match /^echo.*;$/
-        (stdout is undefined).should.be.true()
-        stdout_stream.length.should.eql 0
-        (stderr is undefined).should.be.true()
-        stderr_stream.length.should.eql 0
-      .system.execute
-        cmd: "echo 'to stderr' >&2; echo 'to stdout';"
-        stdout_log: null
-        stderr_log: null
-      , (err, status) ->
-        stdin.message.should.match /^echo.*;$/
-        (stdout is undefined).should.be.true()
-        stdout_stream.length.should.eql 0
-        (stderr is undefined).should.be.true()
-        stderr_stream.length.should.eql 0
-      .system.execute
-        cmd: "echo 'to stderr' >&2; echo 'to stdout';"
         stdout_log: false
         stderr_log: false
       , (err, status) ->

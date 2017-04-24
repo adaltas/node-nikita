@@ -125,10 +125,10 @@ nikita.system.execute({
       options.code_skipped ?= []
       options.code_skipped = [options.code_skipped] unless Array.isArray options.code_skipped
       options.stdin_log ?= true
+      options.stdout_log ?= true
+      options.stderr_log ?= true
       options.stdout_callback = true if options.stdout_callback is undefined
       options.stderr_callback = true if options.stderr_callback is undefined
-      options.stdout_log = if options.hasOwnProperty('stdout_log') then options.stdout_log else true
-      options.stderr_log = if options.hasOwnProperty('stderr_log') then options.stderr_log else true
       options.cmd = options.cmd.call @, options if typeof options.cmd is 'function'
       options.bash = 'bash' if options.bash is true
       options.arch_chroot = 'arch-chroot' if options.arch_chroot is true
