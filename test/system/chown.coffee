@@ -16,6 +16,25 @@ describe 'system.chown', ->
     .system.chown "#{scratch}/a_file", uid: 1234, gid: 1234, relax: true, (err) ->
       err.message.should.eql "Target Does Not Exist: \"#{scratch}/a_file\""
     .then next
+    
+  they 'use stat shortcircuit', (ssh, next) ->
+    nikita
+      ssh: ssh
+    .file.touch "#{scratch}/a_file"
+    .system.user.remove 'toto'
+    .system.group.remove 'toto', gid: 1234
+    .system.group 'toto', gid: 1234
+    .system.user 'toto', uid: 1234, gid: 1234
+    .call (_, callback) ->
+      fs.stat ssh, "#{scratch}/a_file", (err, stat) =>
+        logs = []
+        @on 'text', (log) -> logs.push log
+        @system.chown "#{scratch}/a_file", uid: 1234, gid: 1234, (err) ->
+          logs.filter( (log) -> /^Stat /.test log.message ).length.should.eql 1 unless err
+        @system.chown "#{scratch}/a_file", uid: 1234, gid: 1234, stat: stat, (err) ->
+          logs.filter( (log) -> /^Stat /.test log.message ).length.should.eql 1 unless err
+        @then callback
+    .then next
 
   they 'change uid and leave gid', (ssh, next) ->
     nikita

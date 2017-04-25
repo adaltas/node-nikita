@@ -56,7 +56,7 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
       @call (_, callback) ->
         uid_gid options, callback
       # Use option 'stat' short-circuit or discover
-      @call unless: options.stat, (_, callback) ->
+      @call unless: !!options.stat, (_, callback) ->
         options.log message: "Stat #{options.target}", level: 'DEBUG', module: 'nikita/lib/chown'
         fs.stat options.ssh, options.target, (err, stat) ->
           return callback Error "Target Does Not Exist: #{JSON.stringify options.target}" if err?.code is 'ENOENT'

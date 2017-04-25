@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* chown: fix and test stat option
 * src: 2 spaces md list indentation
 * chown: complete refactoring
 * compress and extract: support bz2 tests on centos7
