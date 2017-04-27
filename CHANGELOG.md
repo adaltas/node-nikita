@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* system.remove: log removed files
 * chown: fix and test stat option
 * src: 2 spaces md list indentation
 * chown: complete refactoring

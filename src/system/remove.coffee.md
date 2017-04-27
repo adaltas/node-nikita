@@ -71,6 +71,7 @@ require('nikita')
         each files
         .call (file, callback) ->
           status = true
+          options.log message: "Removing file #{file}", level: 'INFO', module: 'nikita/lib/system/remove'
           misc.file.remove options.ssh, file, callback
         .then (err) ->
           callback err, status

@@ -40,13 +40,6 @@ describe 'system.remove', ->
       status.should.be.true() unless err
     .then next
     
-  they 'accept an empty array', (ssh, next) ->
-    nikita
-      ssh: ssh
-    .system.remove [], (err, status) ->
-      status.should.be.false() unless err
-    .then next
-    
   they 'a file', (ssh, next) ->
     nikita
       ssh: ssh
@@ -56,8 +49,11 @@ describe 'system.remove', ->
     .system.remove
       source: "#{scratch}/a_file"
     , (err, status) ->
-      return next err if err
-      status.should.be.true()
+      status.should.be.true() unless err
+    .system.remove
+      source: "#{scratch}/a_file"
+    , (err, status) ->
+      status.should.be.false() unless err
     .then next
 
   they 'a link', (ssh, next) ->
