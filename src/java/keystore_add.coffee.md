@@ -16,15 +16,6 @@ and trustores.
   Path to OpenSSl command line tool, default to "openssl".   
 * `storepass` (string)   
   Password to manage the keystore.   
-* `ssh` (object|ssh2)   
-  Run the action on a remote server using SSH, an ssh2 instance or an
-  configuration object used to initialize the SSH connection.   
-* `stdout` (stream.Writable)   
-  Writable EventEmitter in which the standard output of executed commands will
-  be piped.   
-* `stderr` (stream.Writable)   
-  Writable EventEmitter in which the standard error output of executed command
-  will be piped.   
 
 ## Callback parameters
 
@@ -87,8 +78,8 @@ require('nikita').java.keystore_add([{
       throw Error "Required option 'key' for certificate" if options.cert and not options.key
       throw Error "Required option 'keypass' for certificate" if options.cert and not options.keypass
       throw Error "Required option 'name' for certificate" if options.cert and not options.name
-      throw Error "Required option 'caname'" unless options.caname
-      throw Error "Required option 'cacert'" unless options.cacert
+      # throw Error "Required option 'caname'" unless options.caname
+      # throw Error "Required option 'cacert'" unless options.cacert
       options.openssl ?= 'openssl'
       tmp_location = "/tmp/nikita/java_keystore_#{Date.now()}"
       files =
@@ -149,6 +140,7 @@ require('nikita').java.keystore_add([{
         throw Error "OpenSSL command line tool not detected" if err?.code is 4
         throw Error "Keystore file does not exists" if err?.code is 6
       @system.execute # Deal with CACert
+        if: options.cacert
         bash: true
         cmd: """
         cleanup () { rm -rf #{tmp_location}; }
