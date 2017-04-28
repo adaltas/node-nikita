@@ -66,7 +66,7 @@ require('nikita').system.mkdir({
       options.target = options.argument if options.argument?
       options.directory ?= options.target
       options.directory ?= options.source
-      return callback new Error 'Missing directory option' unless options.directory?
+      return callback Error 'Missing target option' unless options.directory?
       options.cwd = process.cwd() if not options.ssh and (options.cwd is true or not options.cwd)
       options.directory = [options.directory] unless Array.isArray options.directory
       options.parent = {} if options.parent is true
