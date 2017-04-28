@@ -37,7 +37,7 @@ module.exports = file =
       target.on 'error', callback
     else
       # todo: use cp to copy over ssh
-      callback new Error 'Copy over SSH not yet implemented'
+      callback Error 'Copy over SSH not yet implemented'
   ###
   `files.compare(files, callback)`
   --------------------------------
@@ -45,7 +45,7 @@ module.exports = file =
   if the file are the same or false otherwise.
   ###
   compare: (ssh, files, callback) ->
-    return callback new Error 'Minimum of 2 files' if files.length < 2
+    return callback Error 'Minimum of 2 files' if files.length < 2
     result = null
     each files
     .call (f, next) ->
@@ -134,7 +134,7 @@ module.exports = file =
             switch hashs.length
               when 0
                 if stat.isFile() 
-                then callback new Error "Does not exist: #{file}"
+                then callback Error "Does not exist: #{file}"
                 else callback null, crypto.createHash(algorithm).update('').digest('hex')
               when 1
                 return callback null, hashs[0]

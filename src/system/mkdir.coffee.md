@@ -102,7 +102,7 @@ require('nikita').system.mkdir({
               if err
                 return next err
               else # a file or symlink exists at this location
-                return next new Error "Not a directory: #{JSON.stringify directory}"
+                return next Error "Not a directory: #{JSON.stringify directory}"
           .then callback
         do_create_parent = (directories) ->
           return do_create directories unless options.uid or options.guid

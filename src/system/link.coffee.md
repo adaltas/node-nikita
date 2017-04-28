@@ -73,8 +73,8 @@ require('nikita').system.link({
             return callback err if err
             linked++
             callback()
-      return callback new Error "Missing source, got #{JSON.stringify(options.source)}" unless options.source
-      return callback new Error "Missing target, got #{JSON.stringify(options.target)}" unless options.target
+      return callback Error "Missing source, got #{JSON.stringify(options.source)}" unless options.source
+      return callback Error "Missing target, got #{JSON.stringify(options.target)}" unless options.target
       options.mode ?= 0o0755
       do_mkdir = =>
         @system.mkdir

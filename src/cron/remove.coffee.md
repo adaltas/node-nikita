@@ -39,7 +39,7 @@ require('nikita').cron.remove({
 ## Source Code
 
     module.exports = (options, callback) ->
-      return callback new Error 'valid cmd is required' unless options.cmd?.length > 0
+      return callback Error 'valid cmd is required' unless options.cmd?.length > 0
       if options.user?
         options.log message: "Using user #{options.user}", level: 'INFO', module: 'nikita/cron/remove'
         crontab = "crontab -u #{options.user}"

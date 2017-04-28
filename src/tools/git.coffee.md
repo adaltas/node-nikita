@@ -47,7 +47,7 @@ require('nikita').tools.git({
           return callback err if err
           repo_exists = exists
           return callback() unless exists # todo, isolate inside call when they receive conditions
-          # return callback new Error "Destination not a directory, got #{options.target}" unless stat.isDirectory()
+          # return callback Error "Destination not a directory, got #{options.target}" unless stat.isDirectory()
           gitDir = "#{options.target}/.git"
           fs.exists options.ssh, gitDir, (err, exists) ->
             return callback Error "Not a git repository" unless exists

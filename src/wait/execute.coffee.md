@@ -42,7 +42,7 @@ require 'nikita'
       options.log message: "Entering wait for execution", level: 'DEBUG', module: 'nikita/lib/wait/execute'
       # Validate parameters
       options.cmd ?= options.argument if typeof options.argument?
-      return callback new Error "Missing cmd: #{options.cmd}" unless options.cmd?
+      return callback Error "Missing cmd: #{options.cmd}" unless options.cmd?
       options.cmd = [options.cmd] unless Array.isArray options.cmd
       options.quorum = options.quorum
       if options.quorum and options.quorum is true  

@@ -231,7 +231,7 @@ nikita.system.execute({
             if options.stderr
               child.stderr.unpipe options.stderr
             if options.code.indexOf(code) is -1 and options.code_skipped.indexOf(code) is -1
-              err = new Error "Invalid Exit Code: #{code}"
+              err = Error "Invalid Exit Code: #{code}"
               err.code = code
               return callback err, null
             if options.code_skipped.indexOf(code) is -1

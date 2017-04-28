@@ -225,7 +225,7 @@ require('nikita').file({
         fs.exists ssh, source, (err, exists) ->
           return callback err if err
           unless exists
-            return callback new Error "Source does not exist: #{JSON.stringify options.source}" if options.source
+            return callback Error "Source does not exist: #{JSON.stringify options.source}" if options.source
             options.content = ''
             return callback()
           options.log message: "Reading source", level: 'DEBUG', module: 'nikita/lib/file'
@@ -252,7 +252,7 @@ require('nikita').file({
                   options.log message: "New target does not exist", level: 'INFO', module: 'nikita/lib/file'
                   return callback()
                 return callback err if err
-                return callback new Error "Destination is not a file: #{options.target}" unless stat.isFile()
+                return callback Error "Destination is not a file: #{options.target}" unless stat.isFile()
                 options.log message: "New target exist", level: 'INFO', module: 'nikita/lib/file'
                 targetStat = stat
                 do_read()

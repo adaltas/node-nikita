@@ -43,8 +43,8 @@ require('nikita').cron.add({
 ## Source Code
 
     module.exports = (options, callback) ->
-      return callback new Error 'valid when is required' unless options.when
-      return callback new Error 'valid cmd is required' unless options.cmd
+      return callback Error 'valid when is required' unless options.when
+      return callback Error 'valid cmd is required' unless options.cmd
       if options.user?
         options.log message: "Using user #{options.user}", level: 'DEBUG', module: 'nikita/cron/add'
         crontab = "crontab -u #{options.user}"

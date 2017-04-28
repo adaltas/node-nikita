@@ -155,14 +155,14 @@ require('nikita/alt/ldap.acl')({
               found = null
               for access, i in olcAccess
                 found = i if access.to is acl.before
-              # throw new Error 'Before does not match any "to" rule' unless found?
+              # throw Error 'Before does not match any "to" rule' unless found?
               olcAccess.splice found-1, 0, to: acl.to, by: acl.by
             # place after
             else if acl.after
               found = false
               for access, i in olcAccess
                 found = i if access.to is options.after
-              # throw new Error 'After does not match any "to" rule'
+              # throw Error 'After does not match any "to" rule'
               olcAccess.splice found, 0, to: acl.to, by: acl.by
             # append
             else

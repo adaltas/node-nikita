@@ -66,15 +66,15 @@ require('nikita').download({
       options.source = options.source.substr 7 if /^file:\/\//.test options.source
       options.headers ?= []
       if options.md5?
-        return callback new Error "Invalid MD5 Hash:#{options.md5}" unless typeof options.md5 in ['string', 'boolean']
+        return callback Error "Invalid MD5 Hash:#{options.md5}" unless typeof options.md5 in ['string', 'boolean']
         algo = 'md5'
         hash = options.md5
       else if options.sha1?
-        return callback new Error "Invalid SHA-1 Hash:#{options.sha1}" unless typeof options.sha1 in ['string', 'boolean']
+        return callback Error "Invalid SHA-1 Hash:#{options.sha1}" unless typeof options.sha1 in ['string', 'boolean']
         algo = 'sha1'
         hash = options.sha1
       else if options.sha256?
-        return callback new Error "Invalid SHA-1 Hash:#{options.sha256}" unless typeof options.sha256 in ['string', 'boolean']
+        return callback Error "Invalid SHA-1 Hash:#{options.sha256}" unless typeof options.sha256 in ['string', 'boolean']
         algo = 'sha256'
         hash = options.sha256
       else

@@ -45,7 +45,7 @@ require('nikita').tools.extract({
     module.exports = (options, callback) ->
       options.log message: "Entering extract", level: 'DEBUG', module: 'nikita/lib/tools/extract'
       # Validate parameters
-      return callback new Error "Missing source: #{options.source}" unless options.source
+      return callback Error "Missing source: #{options.source}" unless options.source
       target = options.target ? path.dirname options.source
       tar_opts = []
       # If undefined, we do not apply flag. Default behaviour depends on the user
@@ -100,7 +100,7 @@ require('nikita').tools.extract({
       creates = () ->
         return success() unless options.creates?
         fs.exists options.ssh, options.creates, (err, exists) ->
-          return callback new Error "Failed to create '#{path.basename options.creates}'" unless exists
+          return callback Error "Failed to create '#{path.basename options.creates}'" unless exists
           success()
       # Final step
       success = () ->

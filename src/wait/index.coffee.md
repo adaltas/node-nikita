@@ -24,7 +24,7 @@ require 'nikita'
 
     module.exports = (options, callback) ->
       options.time ?= options.argument
-      return callback new Error "Missing time: #{JSON.stringify options.time}" unless options.time?
+      return callback Error "Missing time: #{JSON.stringify options.time}" unless options.time?
       options.time = parseInt options.time if typeof options.time is 'string'
-      return callback new Error "Invalid time format: #{JSON.stringify options.time}" unless typeof options.time is 'number'
+      return callback Error "Invalid time format: #{JSON.stringify options.time}" unless typeof options.time is 'number'
       setTimeout callback, options.time

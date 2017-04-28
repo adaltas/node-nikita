@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* src: remove usage of new while creating error instances
 * system.mkdir: use target in error messages
 * java.keystore_add: cacert not required
 * system.remove: log removed files

@@ -76,11 +76,11 @@ require('nikita').upload({
       target_stat = null
       stage_target = "#{options.target}.#{Date.now()}#{Math.round(Math.random()*1000)}"
       if options.md5?
-        return callback new Error "Invalid MD5 Hash:#{options.md5}" unless typeof options.md5 in ['string', 'boolean']
+        return callback Error "Invalid MD5 Hash:#{options.md5}" unless typeof options.md5 in ['string', 'boolean']
         algo = 'md5'
         # source_hash = options.md5
       else if options.sha1?
-        return callback new Error "Invalid SHA-1 Hash:#{options.sha1}" unless typeof options.sha1 in ['string', 'boolean']
+        return callback Error "Invalid SHA-1 Hash:#{options.sha1}" unless typeof options.sha1 in ['string', 'boolean']
         algo = 'sha1'
         # source_hash = options.sha1
       else

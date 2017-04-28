@@ -68,7 +68,7 @@ uid_gid options, (err) ->
           return callback err if err
           user = users[username]
           # Dont throw exception, just return undefined
-          # return callback new Error "User #{username} does not exists" unless user
+          # return callback Error "User #{username} does not exists" unless user
           callback null, user
       callback = username
       username = null
@@ -113,7 +113,7 @@ uid_gid options, (err) ->
           return callback err if err
           gid = groups[group]
           # Dont throw exception, just return undefined
-          # return callback new Error "Group does not exists: #{group}" unless gid
+          # return callback Error "Group does not exists: #{group}" unless gid
           callback null, gid
       callback = group
       group = null

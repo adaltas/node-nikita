@@ -240,7 +240,7 @@ misc = module.exports =
             stack.push current
           # Invalid child hierarchy
           if depth > stack.length
-            throw new Error "Invalid child #{match[2]}"
+            throw Error "Invalid child #{match[2]}"
           # Move up or at the same level
           if depth < stack.length
             stack.splice depth, stack.length - depth
@@ -284,7 +284,7 @@ misc = module.exports =
             stack.push current
           # Invalid child hierarchy
           if depth > stack.length
-            throw new Error "Invalid child #{match[2]}"
+            throw Error "Invalid child #{match[2]}"
           # Move up or at the same level
           if depth < stack.length
             stack.splice depth, stack.length - depth

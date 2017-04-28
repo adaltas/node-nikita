@@ -85,7 +85,7 @@ require('nikita').file.render({
         return callback() unless options.source
         ssh = if options.local then null else options.ssh
         fs.exists ssh, options.source, (err, exists) ->
-          return callback new Error "Invalid source, got #{JSON.stringify(options.source)}" unless exists
+          return callback Error "Invalid source, got #{JSON.stringify(options.source)}" unless exists
           fs.readFile ssh, options.source, 'utf8', (err, content) ->
             options.content = content unless err
             callback err
