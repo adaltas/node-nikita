@@ -85,7 +85,6 @@ require('nikita').tools.repo({
         @call
           if: -> keys.length isnt 0
         , ->
-          console.log keys
           @each keys, (options) ->
             gpgkey = options.key
             options.log "Downloading GPG keys from #{gpgkey}", level: 'DEBUG', module: 'nikita/lib/tools/repo'
