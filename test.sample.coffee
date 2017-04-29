@@ -16,6 +16,7 @@ module.exports =
   disable_system_tmpfs: true
   disable_system_user: true
   disable_tools_repo: true
+  disable_yum_conf: true
   docker: # eg `docker-machine create --driver virtualbox nikita`
     machine: 'nikita'
   krb5:
