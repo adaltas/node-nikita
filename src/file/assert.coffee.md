@@ -51,11 +51,11 @@ nikita.assert({
       throw Error 'Missing option: "target"' unless options.target
       if typeof options.content is 'string'
         options.content = Buffer.from options.content, options.encoding
-      else if options.content? and not Buffer.isBuffer options.content
-        throw Error "Invalid option 'content': expect string or buffer"
+      else if options.content? and not Buffer.isBuffer(options.content) and not options.content instanceof RegExp
+        throw Error "Invalid option 'content': expect string, buffer or regexp"
       # Assert file exists
       @call
-        unless: options.content or options.md5 or options.sha1 or options.sha256 or options.mode
+        unless: options.content? or options.md5 or options.sha1 or options.sha256 or options.mode
       , (_, callback) ->
         fs.exists options.ssh, options.target.toString(), (err, exists) ->
           unless options.not
@@ -67,18 +67,33 @@ nikita.assert({
               options.error ?= "File exists: #{JSON.stringify options.target}"
               err = Error options.error
           callback err
-      # Assert content match
+      # Assert content equal
       @call
-        if: options.content
+        if: options.content and (typeof options.content is 'string' or Buffer.isBuffer options.content)
       , (_, callback) ->
         fs.readFile options.ssh, options.target, (err, buffer) ->
           return callback err if err
           unless options.not
             unless buffer.equals options.content
-              options.error ?= "Invalid content match: expect #{JSON.stringify options.content.toString()} and got #{JSON.stringify buffer.toString()}"
+              options.error ?= "Invalid content: expect #{JSON.stringify options.content.toString()} and got #{JSON.stringify buffer.toString()}"
               err = Error options.error
           else
             if buffer.equals options.content
+              options.error ?= "Unexpected content: #{JSON.stringify options.content.toString()}"
+              err = Error options.error
+          callback err
+      # Assert content match
+      @call
+        if: options.content and options.content instanceof RegExp
+      , (_, callback) ->
+        fs.readFile options.ssh, options.target, (err, buffer) ->
+          return callback err if err
+          unless options.not
+            unless options.content.test buffer 
+              options.error ?= "Invalid content match: expect #{JSON.stringify options.content.toString()} and got #{JSON.stringify buffer.toString()}"
+              err = Error options.error
+          else
+            if options.content.test buffer
               options.error ?= "Unexpected content match: #{JSON.stringify options.content.toString()}"
               err = Error options.error
           callback err

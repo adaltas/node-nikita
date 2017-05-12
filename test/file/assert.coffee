@@ -89,8 +89,19 @@ describe 'file.assert', ->
         target: "#{scratch}/a_file"
         content: "are u sure"
       .then (err) ->
-        err.message.should.eql 'Invalid content match: expect "are u sure" and got "are u here"'
+        err.message.should.eql 'Invalid content: expect "are u sure" and got "are u here"'
         next()
+
+    they 'content match regexp', (ssh, next) ->
+      nikita
+        ssh: ssh
+      .file
+        target: "#{scratch}/a_file"
+        content: "toto\nest\r\nau\rbistrot"
+      .file.assert
+        target: "#{scratch}/a_file"
+        content: /est/m
+      .then next
 
     they 'with option not', (ssh, next) ->
       nikita
@@ -108,7 +119,7 @@ describe 'file.assert', ->
         relax: true
         not: true
       , (err) ->
-        err.message.should.eql 'Unexpected content match: "are u here"'
+        err.message.should.eql 'Unexpected content: "are u here"'
       .then next
 
     they 'send custom error message', (ssh, next) ->
