@@ -20,6 +20,8 @@ Write log to the host filesystem in a user provided format.
 * `serializer` (object)   
   TODO...
 
+Global options can be alternatively set with the "log_fs" property.
+
 ## Layout
 
 By default, a file name "{{basename}}.log" will be created inside the base
@@ -34,6 +36,9 @@ and "{options.basedir}/latest".
 ## Source Code
 
     module.exports = ssh: null, handler: (options) ->
+      # Obtains options from "log_fs" namespace
+      options.log_fs ?= {}
+      options[k] = v for k, v of options.log_fs
       # Validate options
       throw Error "Missing option: serializer" unless options.serializer
       # Normalize

@@ -50,6 +50,21 @@ describe 'log.md', ->
     .assert
       status: false
     .then next
+    
+  they 'default options', (ssh, next) ->
+    nikita
+      ssh: ssh
+      log_md: basedir: scratch
+    .log.md()
+    .call (options) ->
+      options.log 'ok'
+    .file.assert
+      source: "#{scratch}/localhost.log"
+      content: "ok\n"
+      log: false
+    .assert
+      status: false
+    .then next
 
   describe 'stdout', ->
     

@@ -17,11 +17,18 @@ Write log to the host filesystem in Markdown.
   the mustache templating engine. Default to "{{shortname}}.log", where 
   "shortname" is the ssh host or localhost.   
 
+Global options can be alternatively set with the "log_md" property.
+
 ## Source Code
 
     module.exports = ssh: null, handler: (options) ->
-      stdouting = 0
+      # Obtains options from "log_md" namespace
+      options.log_md ?= {}
+      options[k] = v for k, v of options.log_md
+      # Normalize
       options.divider ?= ' : '
+      # State
+      stdouting = 0
       @call options, log_fs, serializer:
         'diff': (log) ->
           "\n```diff\n#{log.message}```\n\n" unless log.message

@@ -15,12 +15,23 @@ describe 'log.csv', ->
     .log.csv basedir: scratch
     .call (options) ->
       options.log 'ok'
-    .then (err, status) ->
-      return next err if err
-      status.should.be.false()
-      setTimeout ->
-        fs.readFile "#{scratch}/localhost.log", 'utf8', (err, content) ->
-          content.should.eql 'text,INFO,"ok",\n' unless err
-          next err
-      , 100
+    .file.assert
+      source: "#{scratch}/localhost.log"
+      content: 'text,INFO,"ok",\n'
+      log: false
+    .assert status: false
+    .then next
+      
+  they 'default options', (ssh, next) ->
+    nikita
+      ssh: ssh
+      log_csv: basedir: scratch
+    .log.csv()
+    .call (options) ->
+      options.log 'ok'
+    .file.assert
+      source: "#{scratch}/localhost.log"
+      content: 'text,INFO,"ok",\n'
+      log: false
+    .then next
   

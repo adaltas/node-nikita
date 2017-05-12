@@ -19,13 +19,18 @@ Write log to the host filesystem in a user provided format.
 * `serializer` (object)   
   TODO...
 
+Global options can be alternatively set with the "log_stream" property.
+
 ## Source Code
 
     module.exports = ssh: null, handler: (options) ->
+      # Obtains options from "log_stream" namespace
+      options.log_stream ?= {}
+      options[k] = v for k, v of options.log_stream
       # Validate options
       throw Error 'Missing option: "stream"' unless options.stream
       throw Error 'Missing option: "serializer"' unless options.serializer
-      # Default values
+      # Normalize
       options.end ?= true
       # Events
       @call ->

@@ -17,7 +17,7 @@ describe 'log.fs', ->
       err.message.should.eql 'Missing option: serializer'
       next()
 
-  they 'in base directory', (ssh, next) ->
+  they 'serializer can be empty', (ssh, next) ->
     nikita
       ssh: ssh
     .log.fs
@@ -25,12 +25,25 @@ describe 'log.fs', ->
       serializer: {}
     .call (options) ->
       options.log message: 'ok'
-    .then (err, status) ->
-      return next err if err
-      status.should.be.false()
-      fs.exists "#{scratch}/localhost.log", (exists) ->
-        exists.should.be.true()
-        next()
+    .file.assert
+      source: "#{scratch}/localhost.log"
+      content: ''
+      log: false
+    .assert status: false
+    .then next
+
+  they 'default options', (ssh, next) ->
+    nikita
+      ssh: ssh
+      log_fs: basedir: scratch, serializer: text: (log) -> "#{log.message}\n"
+    .log.fs()
+    .call (options) ->
+      options.log message: 'ok'
+    .file.assert
+      source: "#{scratch}/localhost.log"
+      content: 'ok\n'
+      log: false
+    .then next
 
   describe 'archive', ->
 
@@ -43,17 +56,15 @@ describe 'log.fs', ->
         archive: true
       .call (options) ->
         options.log message: 'ok'
-      .then (err, status) ->
-        return next err if err
+      .call ->
         now = new Date()
         dir = "#{now.getFullYear()}".slice(-2) + "0#{now.getFullYear()}".slice(-2) + "0#{now.getDate()}".slice(-2)
-        fs.stat "#{scratch}/#{dir}", (err, stats) ->
-          return err if err
-          stats.isDirectory().should.be.true()
-          fs.readFile "#{scratch}/#{dir}/localhost.log", 'utf8', (err, content) ->
-            content = content.split if ssh or path.posix then '\n' else '\r\n'
-            content.should.containEql 'ok' unless err
-            next err
+        @file.assert
+          source: "#{scratch}/#{dir}/localhost.log"
+          content: /ok/m
+          log: false
+      .assert status: false
+      .then next
 
     they 'latest', (ssh, next) ->
       nikita
@@ -64,13 +75,13 @@ describe 'log.fs', ->
         archive: true
       .call (options) ->
         options.log message: 'ok'
-      .then (err, status) ->
-        return next err if err
-        status.should.be.false()
+      .call (_, callback) ->
         fs.lstat "#{scratch}/latest", (err, stats) ->
-          return err if err
-          stats.isSymbolicLink().should.be.true()
-          fs.readFile "#{scratch}/latest/localhost.log", 'utf8', (err, content) ->
-            content = content.split if ssh or path.posix then '\n' else '\r\n'
-            content.should.containEql 'ok' unless err
-            next err
+          stats.isSymbolicLink().should.be.true() unless err
+          callback err
+      .file.assert
+        source: "#{scratch}/latest/localhost.log"
+        content: /ok/m
+        log: false
+      .assert status: false
+      .then next

@@ -17,9 +17,14 @@ Write log to the host filesystem in CSV.
   the mustache templating engine. Default to "{{shortname}}.log", where 
   "shortname" is the ssh host or localhost.   
 
+Global options can be alternatively set with the "log_csv" property.
+
 ## Source Code
 
     module.exports = ssh: null, handler: (options) ->
+      # Obtains options from "log_csv" namespace
+      options.log_csv ?= {}
+      options[k] = v for k, v of options.log_csv
       stdouting = 0
       @call options, log_fs, serializer:
         'diff': (log) ->

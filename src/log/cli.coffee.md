@@ -16,7 +16,7 @@ Write log to the host filesystem in a user provided format.
 * `separator` (string|object)    
 * `stream` (stream.Writable)  
 
-Global options can be alternatively set with the "log.cli" property
+Global options can be alternatively set with the "log_cli" property.
 
 ## Exemple with the depth option
 
