@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* package: latest dependencies
 * log: global options with log_csv, log_fs, log_md and log_stream
 * file.assert: content as a regexp
 * src: remove usage of new while creating error instances
