@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* file: fix typo and lower eof log level
 * package: latest dependencies
 * log: global options with log_csv, log_fs, log_md and log_stream
 * file.assert: content as a regexp

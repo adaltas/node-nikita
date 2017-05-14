@@ -308,9 +308,9 @@ require('nikita').file({
               options.eof = char
               break;
           options.eof = '\n' if options.eof is true
-          options.log message: "Option eof is true, gessing as #{JSON.stringify options.eof}", level: 'INFO', module: 'nikita/lib/file'
+          options.log message: "Option eof is true, guessing as #{JSON.stringify options.eof}", level: 'INFO', module: 'nikita/lib/file'
         unless string.endsWith options.content, options.eof
-          options.log message: "Add eof", level: 'WARN', module: 'nikita/lib/file'
+          options.log message: "Add eof", level: 'INFO', module: 'nikita/lib/file'
           options.content += options.eof
       @call (_, callback) -> # diff
         return callback() if targetHash is string.hash options.content
