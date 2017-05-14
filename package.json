@@ -29,10 +29,10 @@
     "each": "~0.6.1",
     "ftp": "~0.3.10",
     "ini": "~1.3.4",
-    "js-yaml": "~3.8.3",
-    "jsesc": "~2.4.0",
+    "js-yaml": "~3.8.4",
+    "jsesc": "~2.5.1",
     "jsftp": "~1.5.5",
-    "minimatch": "~3.0.3",
+    "minimatch": "~3.0.4",
     "moment": "~2.18.1",
     "mustache": "~2.3.0",
     "nunjucks": "~3.0.0",
@@ -48,8 +48,8 @@
     "tilde-expansion": "~0.0.0"
   },
   "devDependencies": {
-    "coffee-script": "~1.12.4",
-    "mocha": "2.4.5",
+    "coffee-script": "~1.12.5",
+    "mocha": "3.3.0",
     "should": "~11.2.1",
     "ssh2-they": "~1.0.2"
   },
