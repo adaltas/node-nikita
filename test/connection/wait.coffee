@@ -157,7 +157,28 @@ describe 'connection.wait', ->
         @options.server2.close callback
       .then next
 
-    they 'quorum number', (ssh, next) ->
+    they 'quorum even number', (ssh, next) ->
+      port1 = port++
+      port2 = port++
+      nikita
+        ssh: ssh
+        server1: server port1
+      .call (_, callback) ->
+        @options.server1.listen callback
+      .connection.wait
+        servers: [
+          { host: 'localhost', port: port1 }
+          { host: 'localhost', port: port2 }
+        ]
+        quorum: 1
+        interval: 500
+      , (err, status) ->
+        status.should.be.true() unless err
+      .call  (_, callback) ->
+        @options.server1.close callback
+      .then next
+
+    they 'quorum odd number', (ssh, next) ->
       port1 = port++
       port2 = port++
       port3 = port++

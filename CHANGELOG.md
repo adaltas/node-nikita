@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* connection wait: fix errors
 * file: fix typo and lower eof log level
 * package: latest dependencies
 * log: global options with log_csv, log_fs, log_md and log_stream

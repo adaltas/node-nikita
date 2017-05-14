@@ -74,12 +74,12 @@ require 'nikita'
         throw Error "Invalid port: #{server.port}" if (options.host or options.hosts) and not options.port
         for k in ['host', 'hosts']
           options[k] ?= []
-          throw error "Invalid option '#{options[k]}'" if typeof options[k] not in ['string', 'object']
+          throw Error "Invalid option '#{options[k]}'" if typeof options[k] not in ['string', 'object']
           options[k] = [options[k]] unless Array.isArray options[k]
         hosts = [options.host..., options.hosts...]
         for k in ['port', 'ports']
           options[k] ?= []
-          throw error "Invalid option '#{options[k]}'" if typeof options[k] not in ['string', 'number', 'object']
+          throw Error "Invalid option '#{options[k]}'" if typeof options[k] not in ['string', 'number', 'object']
           options[k] = [options[k]] unless Array.isArray options[k]
         ports = [options.port..., options.ports...]
         servers = []
@@ -90,7 +90,7 @@ require 'nikita'
       servers = extract_servers options
       for k in ['server', 'servers']
         options[k] ?= []
-        throw error "Invalid option '#{options[k]}'" if typeof options[k] not in ['string', 'object']
+        throw Error "Invalid option '#{options[k]}'" if typeof options[k] not in ['string', 'object']
         if typeof options[k] is 'string'
           [host, port] = options[k].split ':'
           options[k] = host: host, port: port
