@@ -1,21 +1,21 @@
 
-# `nikita.ping(options, [callback])`
+# `nikita.core.ping(options, [callback])`
 
 Call ping, receive pong.
 
 ## Options
 
 * `content` (string)   
-  Messasge to broadcast, default to "pong".   
+  Message to broadcast, default to "pong".   
 
 ## Callback Parameters
 
 *   `err` (error)   
     Error object if assertion failed.   
 *   `status` (boolean)   
-    Always "true".
+    Always "true".   
 *   `message` (string)   
-    The content options.
+    The content options.   
 
 ## Source Code
 
