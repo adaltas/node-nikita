@@ -205,7 +205,7 @@
         jump_to_error err
         run()
       jump_to_error = (err) ->
-        while todos[0] and todos[0].type not in ['catch', 'then'] then todos.shift()
+        while todos[0] and todos[0].type not in ['catch', 'then', 'promise'] then todos.shift()
         todos.err = err
       _run_ = ->
         if obj.options.domain
@@ -230,6 +230,17 @@
           todos_reset todos
           options.handler?.call proxy, err, status
           run()
+          return
+        if options.type is 'promise'
+          {err, status} = todos
+          status = status.some (status) -> not status.shy and !!status.value
+          todos.final_err = err
+          todos_reset todos
+          options.handler?.call proxy, err, status
+          # run()
+          unless err
+          then options.deferred.resolve status
+          else options.deferred.reject err
           return
         return if killed
         if array.compare options.type, ['end']
@@ -439,6 +450,14 @@
         todos.push type: 'then', handler: arguments[0]
         setImmediate _run_ if todos.length is 1 # Activate the pump
         proxy
+      properties.promise = get: -> ->
+        deferred = {}
+        promise = new Promise (resolve, reject)->
+          deferred.resolve = resolve
+          deferred.reject = reject
+        todos.push type: 'promise', deferred: deferred # handler: arguments[0], 
+        setImmediate _run_ if todos.length is 1 # Activate the pump
+        promise
       properties.end = get: -> ->
         args = [].slice.call(arguments)
         options = normalize_options args, 'end'

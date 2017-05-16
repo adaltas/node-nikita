@@ -7,54 +7,20 @@ describe 'api promise', ->
 
   scratch = test.scratch @
 
-  describe 'object', ->
+  it 'call resolve', ->
+    nikita
+    .call (_, callback) ->
+      setImmediate -> callback null, true
+    .promise()
 
-    it 'works', (next) ->
-      nikita
-      .file
-        target: "#{scratch}/file_1"
-        content: 'abc'
-      .file
-        target: "#{scratch}/file_1"
-        content: 'def'
-        append: true
-      .then (err, changed) ->
-        return next err if err
-        fs.readFile "#{scratch}/file_1", 'utf8', (err, content) ->
-          content.should.eql 'abcdef'
-          next()
-
-  describe 'function', ->
-
-    it 'works', (next) ->
-      nikita({})
-      .file
-        target: "#{scratch}/file_1"
-        content: 'abc'
-      .file
-        target: "#{scratch}/file_1"
-        content: 'def'
-        append: true
-      .then (err, changed) ->
-        return next err if err
-        fs.readFile "#{scratch}/file_1", 'utf8', (err, content) ->
-          content.should.eql 'abcdef'
-          next()
-
-    it 'pass global options', (next) ->
-      logs = []
-      nikita
-      .on 'text', (log) -> logs.push log
-      .file
-        target: "#{scratch}/file_1"
-        content: 'abc'
-      .file
-        target: "#{scratch}/file_1"
-        content: 'def'
-        append: true
-      .then (err, changed) ->
-        return next err if err
-        logs.length.should.be.above 1
-        next()
-
+  it 'call reject', (next) ->
+    nikita
+    .call (_, callback) ->
+      setImmediate -> callback Error 'CatchMe'
+    .promise()
+    .then () ->
+      next Error 'Promise was expected to be rejected'
+    , (err) ->
+      err.message.should.eql 'CatchMe'
+      next()
         

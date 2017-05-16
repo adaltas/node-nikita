@@ -5,6 +5,7 @@
 
 * service.init: reload daemon when file changed on disk
 * tools.repo: refactor to support remote download
+* context: introduce promise
 * connection wait: fix errors
 * file: fix typo and lower eof log level
 * package: latest dependencies
