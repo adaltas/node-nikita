@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* tools.repo: refactor to support remote download
 * connection wait: fix errors
 * file: fix typo and lower eof log level
 * package: latest dependencies

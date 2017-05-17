@@ -10,10 +10,10 @@ describe 'tools.repo', ->
   config = test.config()
   return if config.disable_tools_repo
 
-  they 'Write simple file', (ssh, next) ->
+  they 'Write with source option', (ssh, next) ->
     nikita
       ssh: ssh
-    .system.remove "#{scratch}/repo"
+    .system.remove "#{scratch}/repo/centos.repo"
     .system.mkdir "#{scratch}/repo"
     .file
       target: "#{scratch}/CentOS.repo"
@@ -38,7 +38,35 @@ describe 'tools.repo', ->
     .file.assert "#{scratch}/repo/centos.repo"
     .then next
 
-  they 'Replace option to delete files', (ssh, next) ->
+  they 'Write with content option', (ssh, next) ->
+    nikita
+      ssh: ssh
+    .system.remove "#{scratch}/repo/centos.repo"
+    .system.mkdir "#{scratch}/repo"
+    .tools.repo
+      target: "#{scratch}/repo/centos.repo"
+      content:
+        'base':
+          'name':'CentOS-$releasever - Base'
+          'baseurl':'http://mirror.centos.org/centos/$releasever/os/$basearch/'
+          'gpgcheck':'0'
+    , (err, status) ->
+      status.should.be.true() unless err
+    .tools.repo
+      target: "#{scratch}/repo/centos.repo"
+      content:
+        'base':
+          'name':'CentOS-$releasever - Base'
+          'baseurl':'http://mirror.centos.org/centos/$releasever/os/$basearch/'
+          'gpgcheck':'0'
+    , (err, status) ->
+      status.should.be.false() unless err
+    .file.assert 
+      target: "#{scratch}/repo/centos.repo"
+      content: '[base]\nname = CentOS-$releasever - Base\nbaseurl = http://mirror.centos.org/centos/$releasever/os/$basearch/\ngpgcheck = 0\n'
+    .then next
+
+  they 'delete files with replace option', (ssh, next) ->
     nikita
       ssh: ssh
     .system.remove '/etc/yum.repos.d/CentOS-nikita.repo'
@@ -100,7 +128,7 @@ describe 'tools.repo', ->
     .system.remove '/etc/yum.repos.d/hdp-test.repo'
     .system.remove '/etc/pki/rpm-gpg/RPM-GPG-KEY-Jenkins'
     .then next
-
+  
   they 'Download repo from remote location', (ssh, next) ->
     nikita
       ssh: ssh

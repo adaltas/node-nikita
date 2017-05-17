@@ -10,6 +10,8 @@ Setup packet manager repository. Only support yum for now.
 * `local`
   Treat the source as local instead of remote, only apply with "ssh"
   option.
+* `content`   
+  Content to write inside the file. can not be used with source
 * 'replace' (String)   
   Globing expression used to match replaced files.
 * `verify`   
@@ -36,30 +38,38 @@ require('nikita').tools.repo({
 
     module.exports = (options) ->
       options.log message: "Entering tools.repo", level: 'DEBUG', module: 'nikita/lib/tools/repo'
-      throw Error "Missing source: #{options.source}" unless options.source
-      options.source = path.resolve '/etc/yum.repos.d', options.source
-      options.target ?= path.basename options.source
+      throw Error "Can not specify source and content"if options.source and options.content
+      throw Error "Missing source or content: " unless options.source or options.content
+      options.target ?= "/etc/yum.repos.d/#{path.basename options.source}" if options.source?
       options.target = path.resolve '/etc/yum.repos.d', options.target
+      throw Error " Missing target" unless options.target?
       options.verify ?= true
       options.local ?= false
       remote_files = []
       keys = []
-      file_name = path.basename options.source
-      options.target ?= path.resolve '/etc/yum.repos.d/', file_name
       # Delete
       @call if: options.replace?, (_, callback) ->
         options.log message: "Searching repositories inside \"/etc/yum.repos.d/\"", level: 'DEBUG', module: 'nikita/lib/tools/repo'
         glob options.ssh, "/etc/yum.repos.d/#{options.replace}", (err, files) ->
           return callback err if err
           remote_files = for file in files
-            continue if file is file_name
-            "/etc/yum.repos.d/#{file}"
+            continue if file is options.target
+            file
           callback()
       @system.remove remote_files
+      #download source
+      @file.download
+        if: options.source?
+        source: options.source
+        target: options.target
+        headers: options.headers
+        md5: options.md5
+        proxy: options.proxy
+        location: options.location
+        cache: false
       # Write
       @file.types.yum_repo
-        source: options.source
-        local: options.local
+        if: options.content?
         content: options.content
         mode: options.mode
         uid: options.uid
@@ -69,9 +79,9 @@ require('nikita').tools.repo({
       @call 
         if: -> options.verify
       , ->
-        options.log "Download #{options.source}'s GPG keys", level: 'INFO', module: 'nikita/lib/tools/repo'
+        options.log "Download #{options.target}'s GPG keys", level: 'INFO', module: 'nikita/lib/tools/repo'
         @call (_, callback)->
-          options.log "Read GPG keys from #{options.source}", level: 'DEBUG', module: 'nikita/lib/tools/repo'
+          options.log "Read GPG keys from #{options.target}", level: 'DEBUG', module: 'nikita/lib/tools/repo'
           fs.readFile options.ssh, options.target , 'utf8', (err, content) =>
             return callback err if err
             data  = misc.ini.parse_multi_brackets content
