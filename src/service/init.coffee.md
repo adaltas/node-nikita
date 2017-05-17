@@ -44,6 +44,7 @@ Reload the service daemon provider depending on the os.
       # check if file is target is directory
       # detect daemon loader provider to construct target
       options.name ?= path.basename(options.source).split('.')[0]
+      options.name = path.basename(options.target) if options.target?
       options.target ?= "/etc/init.d/#{options.name}"
       @service.discover (err, status, loader) -> 
         options.loader ?= loader
@@ -58,11 +59,11 @@ Reload the service daemon provider depending on the os.
           context: options.context
           local: options.local
         @system.execute
-          if: -> (options.loader is 'systemctl') and (path.dirname(options.target) is '/etc/init.d')
+          if: -> (options.loader is 'systemctl')
           shy: true
           cmd: """
             systemctl status #{options.name} 2>\&1 | egrep \
-            '(Reason: No such file or directory)|(Unit #{options.name}.service could not be found)'
+            '(Reason: No such file or directory)|(Unit #{options.name}.service could not be found)|(#{options.name}.service changed on disk)'
             """
           code_skipped: 1
         @system.execute

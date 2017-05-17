@@ -45,10 +45,9 @@ describe 'service.init', ->
     .file.assert '/etc/init.d/crond-name'
     .then next
 
-  they 'daemon-reload with systemctl', (ssh, next) ->
+  they 'daemon-reload with systemctl sysv-generator', (ssh, next) ->
     nikita
       ssh: ssh
-      debug: true
       if_os: name: ['redhat','centos'], version: '7'
     .service.remove 'cronie'
     .service.install 'cronie'
@@ -60,6 +59,29 @@ describe 'service.init', ->
       source: "#{__dirname}/crond.j2"
       name: 'crond'
     .file.assert '/etc/init.d/crond'
+    .service.start
+      name: 'crond'
+    .service.start
+      name: 'stop'
+    .then next
+
+  they 'daemon-reload with systemctl systemd script', (ssh, next) ->
+    nikita
+      ssh: ssh
+      if_os: name: ['redhat','centos'], version: '7'
+    .service.remove 'cronie'
+    .service.install 'cronie'
+    .system.remove
+      target: '/etc/init.d/crond'
+    .system.remove
+      target: '/usr/lib/systemd/system/crond.service'
+    .service.init
+      source: "#{__dirname}/crond-systemd.j2"
+      context: description: 'Command Scheduler Test 1'
+      target: '/usr/lib/systemd/system/crond.service'
+    , (err, status) ->
+        status.should.be.true() unless err
+    .file.assert '/usr/lib/systemd/system/crond.service'
     .service.start
       name: 'crond'
     .then next
