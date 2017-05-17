@@ -21,6 +21,7 @@
     module.exports.wrap = (options, cmd) ->
       docker = {}
       options.compose ?= false
+      options.docker ?= {}
       docker.opts ?= ''
       if not options.compose
         docker.opts = for option in module.exports.options
