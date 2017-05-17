@@ -3,6 +3,8 @@
 
 Call ping, receive pong.
 
+This constitutes a dummy action created for demonstration purposes.
+
 ## Options
 
 * `content` (string)   
