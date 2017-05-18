@@ -21,7 +21,7 @@ describe 'service.init', ->
       target: '/etc/init.d/crond'
     .file.assert '/etc/init.d/crond'
     .then next
-
+  
   they 'init file with source only (default)', (ssh, next) ->
     nikita
       ssh: ssh
@@ -32,7 +32,7 @@ describe 'service.init', ->
       source: "#{__dirname}/crond.j2"
     .file.assert '/etc/init.d/crond'
     .then next
-
+  
   they 'init file with source and name (default)', (ssh, next) ->
     nikita
       ssh: ssh
@@ -44,7 +44,7 @@ describe 'service.init', ->
       name: 'crond-name'
     .file.assert '/etc/init.d/crond-name'
     .then next
-
+  
   they 'daemon-reload with systemctl sysv-generator', (ssh, next) ->
     nikita
       ssh: ssh

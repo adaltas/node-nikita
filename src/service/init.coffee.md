@@ -44,7 +44,7 @@ Reload the service daemon provider depending on the os.
       # check if file is target is directory
       # detect daemon loader provider to construct target
       options.name ?= path.basename(options.source).split('.')[0]
-      options.name = path.basename(options.target) if options.target?
+      options.name = path.basename(options.target).split('.service')[0] if options.target?
       options.target ?= "/etc/init.d/#{options.name}"
       @service.discover (err, status, loader) -> 
         options.loader ?= loader
