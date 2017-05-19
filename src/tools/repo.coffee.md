@@ -14,6 +14,10 @@ Setup packet manager repository. Only support yum for now.
   Content to write inside the file. can not be used with source
 * 'replace' (String)   
   Globing expression used to match replaced files.
+* 'clean' (Boolean)   
+    Run yum clean metadata after repo file is placed. True by default.
+* 'update' (Boolean)   
+  Run yum update enabling only the ids present in repo file. Default to false.
 * `verify`   
   Download the PGP keys if it's enabled in the repo file.
 * `ssh` (object|ssh2)   
@@ -45,8 +49,11 @@ require('nikita').tools.repo({
       throw Error " Missing target" unless options.target?
       options.verify ?= true
       options.local ?= false
+      options.clean ?= true
+      options.update ?= false
       remote_files = []
       keys = []
+      repoids = []
       # Delete
       @call if: options.replace?, (_, callback) ->
         options.log message: "Searching repositories inside \"/etc/yum.repos.d/\"", level: 'DEBUG', module: 'nikita/lib/tools/repo'
@@ -86,6 +93,7 @@ require('nikita').tools.repo({
             return callback err if err
             data  = misc.ini.parse_multi_brackets content
             keys = for name, section of data
+              repoids.push name
               continue unless section.gpgcheck is '1'
               throw Error 'Missing data.gpgkey' unless section.gpgkey?
               continue unless /^http(s)??:\/\//.test section.gpgkey
@@ -107,7 +115,12 @@ require('nikita').tools.repo({
       # Clean Metadata
       @system.execute
         cmd: 'yum clean metadata; yum repolist'
+        if: -> options.clean and @status()
+      @call
         if: -> options.update and @status()
+      , ->
+        @system.execute
+          cmd: "yum update -y --disablerepo=* --enablerepo=#{repoids.join(',')}; yum repolist"
 
 ## Dependencies
 

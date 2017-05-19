@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* tools.repo: add update option
 * service.init: reload daemon when file changed on disk
 * tools.repo: refactor to support remote download
 * context: introduce promise
