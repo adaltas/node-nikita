@@ -19,9 +19,19 @@ describe 'java.keystore_add', ->
         cacert: "#{__dirname}/keystore/certs1/cacert.pem"
       , (err, status) ->
         status.should.be.true() unless err
-      .then (err, status) ->
+      .then next
+
+    they 'create parent directory', (ssh, next) ->
+      nikita
+        ssh: ssh
+      .java.keystore_add
+        keystore: "#{scratch}/a/dir/cacerts"
+        storepass: "changeit"
+        caname: "my_alias"
+        cacert: "#{__dirname}/keystore/certs1/cacert.pem"
+      , (err, status) ->
         status.should.be.true() unless err
-        next err
+      .then next
 
     they 'detect existing cacert signature', (ssh, next) ->
       nikita
@@ -37,9 +47,9 @@ describe 'java.keystore_add', ->
         storepass: "changeit"
         caname: "my_alias"
         cacert: "#{__dirname}/keystore/certs1/cacert.pem"
-      .then (err, status) ->
+      , (err, status) ->
         status.should.be.false() unless err
-        next err
+      .then next
 
     they 'update a new cacert with same alias', (ssh, next) ->
       nikita
@@ -55,9 +65,9 @@ describe 'java.keystore_add', ->
         storepass: "changeit"
         caname: "my_alias"
         cacert: "#{__dirname}/keystore/certs2/cacert.pem"
-      .then (err, status) ->
+      , (err, status) ->
         status.should.be.true() unless err
-        next err
+      .then next
 
   describe 'key', ->
 
@@ -73,9 +83,9 @@ describe 'java.keystore_add', ->
         cert: "#{__dirname}/keystore/certs1/node_1_cert.pem"
         keypass: 'mypassword'
         name: 'node_1'
-      .then (err, status) ->
+      , (err, status) ->
         status.should.be.true() unless err
-        next err
+      .then next
 
     they 'detect existing cacert signature', (ssh, next) ->
       nikita
@@ -99,9 +109,9 @@ describe 'java.keystore_add', ->
         cert: "#{__dirname}/keystore/certs1/node_1_cert.pem"
         keypass: 'mypassword'
         name: 'node_1'
-      .then (err, status) ->
+      , (err, status) ->
         status.should.be.false() unless err
-        next err
+      .then next
 
     they 'update a new cacert with same alias', (ssh, next) ->
       nikita
@@ -125,9 +135,9 @@ describe 'java.keystore_add', ->
         cert: "#{__dirname}/keystore/certs2/node_1_cert.pem"
         keypass: 'mypassword'
         name: 'node_1'
-      .then (err, status) ->
+      , (err, status) ->
         status.should.be.true() unless err
-        next err
+      .then next
 
   describe 'keystore', ->
 

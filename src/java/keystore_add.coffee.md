@@ -14,6 +14,9 @@ and trustores.
   Path to the certificate authority (CA), required.   
 * `openssl` (string)   
   Path to OpenSSl command line tool, default to "openssl".   
+* `parent` (boolean|object)   
+  Create parent directory with provided options if an object or default 
+  system options if "true".   
 * `storepass` (string)   
   Password to manage the keystore.   
 
@@ -80,6 +83,7 @@ require('nikita').java.keystore_add([{
       throw Error "Required option 'name' for certificate" if options.cert and not options.name
       # throw Error "Required option 'caname'" unless options.caname
       # throw Error "Required option 'cacert'" unless options.cacert
+      options.parent ?= {}
       options.openssl ?= 'openssl'
       tmp_location = "/tmp/nikita/java_keystore_#{Date.now()}"
       files =
@@ -108,6 +112,9 @@ require('nikita').java.keystore_add([{
         target: files.key
         mode: 0o0600
         shy: true
+      @system.mkdir options, options.parent,
+        header: null
+        target: path.dirname options.keystore
       @system.execute # Deal with key and certificate
         bash: true
         cmd: """
