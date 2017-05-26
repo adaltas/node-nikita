@@ -4,6 +4,7 @@
 ## Trunk
 
 * tools.repo: add update option
+* copy: print source and target stat logs
 * compress: externalize utils functions
 * keystore add: create parent directories
 * service.init: reload daemon when file changed on disk

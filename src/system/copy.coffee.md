@@ -61,12 +61,12 @@ require('nikita').system.copy({
       modified = false
       srcStat = null
       dstStat = null
-      options.log message: "Stat source file", level: 'DEBUG', module: 'nikita/lib/system/copy'
+      options.log message: "Stat source file #{options.source}", level: 'DEBUG', module: 'nikita/lib/system/copy'
       fs.stat options.ssh, options.source, (err, stat) ->
         # Source must exists
         return callback err if err
         srcStat = stat
-        options.log message: "Stat target file", level: 'DEBUG', module: 'nikita/lib/system/copy'
+        options.log message: "Stat target file #{options.target}", level: 'DEBUG', module: 'nikita/lib/system/copy'
         fs.stat options.ssh, options.target, (err, stat) ->
           return callback err if err and err.code isnt 'ENOENT'
           dstStat = stat
