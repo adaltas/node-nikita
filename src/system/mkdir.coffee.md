@@ -117,9 +117,8 @@ require('nikita').system.mkdir({
             if options.exclude? and options.exclude instanceof RegExp
               return callback() if options.exclude.test path.basename directory
             options.log message: "Create directory \"#{directory}\"", level: 'DEBUG', module: 'nikita/lib/system/mkdir' # unless directory is options.directory
-            attrs = ['mode', 'uid', 'gid', 'size', 'atime', 'mtime']
             opts = {}
-            for attr in attrs
+            for attr in ['mode', 'uid', 'gid', 'size', 'atime', 'mtime']
               val = if i is directories.length - 1 then options[attr] else options.parent?[attr]
               opts[attr] = val if val?
             fs.mkdir options.ssh, directory, opts, (err) ->
