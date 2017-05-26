@@ -13,6 +13,8 @@ moment, supported extensions are '.tgz', '.tar.gz', 'tar.xz', 'tar.bz2' and '.zi
   Archive to compress.   
 * `target`   
   Default to the source parent directory.   
+* `clean`   
+  Remove the source file or directory
 
 ## Callback Parameters
 
@@ -47,19 +49,7 @@ require('nikita').tools.compress({
       if options.format?
         format = options.format
       else
-        if /\.(tar\.gz|tgz)$/.test options.target
-          format = 'tgz'
-        else if /\.tar$/.test options.target
-          format = 'tar'
-        else if /\.zip$/.test options.target
-          format = 'zip'
-        else if /\.bz2$/.test options.target
-          format = 'bz2'
-        else if /\.xz$/.test options.target
-          format = 'xz'
-        else
-          ext = path.extname options.source
-          throw Error "Unsupported extension, got #{JSON.stringify(ext)}"
+        format = module.exports.ext_to_type options.target
       # Run compression
       @system.execute switch format
         when 'tgz' then "tar czf #{options.target} -C #{dir} #{name}"
@@ -67,6 +57,29 @@ require('nikita').tools.compress({
         when 'bz2' then "tar cjf #{options.target} -C #{dir} #{name}"
         when 'xz'  then "tar cJf #{options.target} -C #{dir} #{name}"
         when 'zip' then "(cd #{dir} && zip -r #{options.target} #{name} && cd -)"
+      @system.remove
+        if: options.clean
+        source: options.source
+
+## Type of extension
+
+    module.exports.type_to_ext = (type) ->
+      return ".#{type}" if type in ['tgz', 'tar', 'zip', 'bz2', 'xz']
+      throw Error "Unsupported Type: #{JSON.stringify(type)}"
+
+## Extention to type
+
+Convert a full path, a filename or an extension into a supported compression 
+type.
+
+    module.exports.ext_to_type = (name) ->
+      if /((.+\.)|^\.|^)(tar\.gz|tgz)$/.test name then 'tgz'
+      else if /((.+\.)|^\.|^)tar$/.test name then 'tar'
+      else if /((.+\.)|^\.|^)zip$/.test name then 'zip'
+      else if /((.+\.)|^\.|^)bz2$/.test name then 'bz2'
+      else if /((.+\.)|^\.|^)xz$/.test name then 'xz'
+      else
+        throw Error "Unsupported Extension: #{JSON.stringify(path.extname name)}"
 
 ## Dependencies
 

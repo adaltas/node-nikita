@@ -54,17 +54,39 @@ describe 'tools.compress', ->
     .system.remove
       target: "#{scratch}/a_dir.tar.xz"
     .then next
-
-  they 'should # option # unless_exists', (ssh, next) ->
-    # Test with invalid creates option
+  
+  they 'remove source file with clean option', (ssh, next) ->
     nikita
       ssh: ssh
+    .file
+      target: "#{scratch}/a_dir/a_file"
+      content: 'hellow'
     .tools.compress
-      source: "#{__dirname}/../resources/a_dir"
-      target: "#{scratch}/should_never_exists.tgz"
-      unless_exists: __dirname
+      source: "#{scratch}/a_dir/a_file"
+      target: "#{scratch}/a_dir.tar.xz"
+      clean: true
     , (err, status) ->
-      status.should.be.false() unless err
+      status.should.be.true()
+    .file.assert
+      source: "#{scratch}/a_dir/a_file"
+      not: true
+    .then next
+  
+  they 'remove source directory with clean option', (ssh, next) ->
+    nikita
+      ssh: ssh
+    .file
+      target: "#{scratch}/a_dir/a_file"
+      content: 'hellow'
+    .tools.compress
+      source: "#{scratch}/a_dir"
+      target: "#{scratch}/a_dir.tar.xz"
+      clean: true
+    , (err, status) ->
+      status.should.be.true()
+    .file.assert
+      source: "#{scratch}/a_dir"
+      not: true
     .then next
 
   they 'should pass error for invalid extension', (ssh, next) ->
@@ -75,5 +97,5 @@ describe 'tools.compress', ->
       target: __filename
       relax: true
     , (err) ->
-      err.message.should.eql 'Unsupported extension, got ".coffee"'
+      err.message.should.eql 'Unsupported Extension: ".coffee"'
     .then next
