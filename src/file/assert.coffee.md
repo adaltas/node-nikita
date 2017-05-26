@@ -14,7 +14,7 @@ Assert a file exists or a provided text match the content of a text file.
 * `mode` (string)   
   Validate file permissions.   
 * `not` (boolean)   
-  Negate the validation.   
+  Negates the validation.   
 * `sha1` (string)   
   Validate signature.    
 * `sha256` (string)   
