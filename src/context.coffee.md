@@ -119,7 +119,7 @@
           delete opts.once if opts.once is false
           opts.once = opts.once.sort() if Array.isArray opts.once
           opts.wait ?= 3000 # Wait 3s between retry
-          opts.disable ?= false
+          opts.disabled ?= false
           # Validation
           jump_to_error Error "Invalid options wait, got #{JSON.stringify opts.wait}" unless typeof opts.wait is 'number' and opts.wait >= 0
         options
