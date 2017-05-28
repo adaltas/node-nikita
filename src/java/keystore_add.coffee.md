@@ -114,6 +114,7 @@ require('nikita').java.keystore_add([{
         shy: true
       @system.mkdir options, options.parent,
         header: null
+        unless_exists: true
         target: path.dirname options.keystore
       @system.execute # Deal with key and certificate
         bash: true

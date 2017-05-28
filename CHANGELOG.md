@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* keystore add: create parent directories if not exists
 * tools.repo: add update option
 * copy: print source and target stat logs
 * compress: externalize utils functions
