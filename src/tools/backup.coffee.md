@@ -67,17 +67,24 @@ nikita.tools.backup({
       options.log message: "Source is #{JSON.stringify options.source}", level: 'INFO', module: 'nikita/lib/tools/backup'
       options.log message: "Target is #{JSON.stringify target}", level: 'INFO', module: 'nikita/lib/tools/backup'
       @system.mkdir "#{path.dirname target}"
-      @system.copy
-        source: "#{options.source}"
-        target: "#{target}"
-        if: options.source
-        if_exec: "[ -f #{options.source} ]"
-        unless: options.compress
-      @tools.compress
-        source: "#{options.source}"
-        target: "#{target}.#{compress}"
-        format: "#{compress}"
-        unless: -> @status(-1)
+      @call if: options.source, ->
+        @system.copy
+          if: options.source
+          # if_exec: "[ -f #{options.source} ]"
+          unless: options.compress
+          target: "#{target}"
+          source: "#{options.source}"
+        @tools.compress
+          source: "#{options.source}"
+          target: "#{target}.#{compress}"
+          format: "#{compress}"
+          if: -> options.compress
+        , (err) ->
+          throw err unless err
+          filename = "#{filename}.tgz"
+      @system.execute
+        cmd: "#{options.cmd} > #{target}"
+        if: options.cmd
       @then (err, status) ->
         callback err, status,
           base_dir: options.target

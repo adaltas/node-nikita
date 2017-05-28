@@ -38,6 +38,24 @@ describe 'tools.backup', ->
         target: "#{scratch}/backup"
         compress: true
       , (err, status, info) ->
-        status.should.be.true() unless err
-        @system.execute "[ -f #{scratch}/backup/my_backup/#{info.filename}.tgz ]" unless err
+        throw err if err
+        status.should.be.true()
+        @system.execute "[ -f #{scratch}/backup/my_backup/#{info.filename}.tgz ]"
+      .then next
+
+  describe 'cmd', ->
+
+    they 'pipe to a file', (ssh, next) ->
+      nikita
+        ssh: ssh
+      .tools.backup
+        name: 'my_backup'
+        cmd: "echo hello"
+        target: "#{scratch}/backup"
+      , (err, status, info) ->
+        throw err if err
+        status.should.be.true()
+        @file.assert
+          target: "#{scratch}/backup/my_backup/#{info.filename}"
+          content: "hello\n"
       .then next
