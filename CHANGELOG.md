@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* user: create parent directory
 * test: use promise in bootstrap test
 * file assert: uid & gid ownerships
 * backup: support cmd

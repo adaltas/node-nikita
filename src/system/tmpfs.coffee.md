@@ -19,8 +19,8 @@ Mount a direcoty with tmpfs.d as a [tmpfs](https://www.freedesktop.org/software/
   writes the content to default configuration directory and creates the file 
   as '`name`.conf'   
 * `target`   
-  File path where to write content to. Defined to /etc/tmpfs.d/{options.uid}.conf
-  if uid is defined or /etc/tmpfs.d/default.conf.   
+  File path where to write content to. Defined to /etc/tmpfiles.d/{options.uid}.conf
+  if uid is defined or /etc/tmpfiles.d/default.conf.   
 * `gid`   
   File group name or group id.   
 * `Perm`   (String)

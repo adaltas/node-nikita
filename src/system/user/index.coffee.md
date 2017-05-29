@@ -3,6 +3,9 @@
 
 Create or modify a Unix user.
 
+If the user home is provided, its parent directory will be created with root 
+ownerships and 0644 permissions unless it already exists.
+
 ## Options
 
 * `arch_chroot` (boolean|string)   
@@ -113,6 +116,13 @@ you are a member of the "wheel" group (gid of "10") with the command
           return callback err if err
           groups_info = groups
           callback()
+      @call if: options.home, ->
+        @system.mkdir
+          unless_exists: path.dirname options.home
+          target: path.dirname options.home
+          uid: 0
+          gid: 0
+          mode: 0o0644 # Same as '/home'
       @call unless: (-> user_info), ->
         cmd = 'useradd'
         cmd += " -r" if options.system
@@ -127,23 +137,24 @@ you are a member of the "wheel" group (gid of "10") with the command
         cmd += " -f #{options.inactive}" if options.inactive
         cmd += " -G #{options.groups.join ','}" if options.groups
         cmd += " -k #{options.skel}" if options.skel
-        cmd += " #{options.name}"
+        cmd += " #{options.name}\n"
+        cmd += "chown #{options.name}. #{options.home}" if options.home
         @system.execute
           cmd: cmd
           code_skipped: 9
           arch_chroot: options.arch_chroot
           rootdir: options.rootdir
           sudo: options.sudo
-        , (err, status) ->
+        , (err, status, stdout) ->
           throw err if err
           options.log message: "User defined elsewhere than '/etc/passwd', exit code is 9", level: 'WARN', module: 'nikita/lib/system/user/add'
-        @system.chown
-          target: options.home
-          uid: options.uid
-          gid: options.gid
-          if_exists: options.home
-          if: options.home?
-          unless: options.no_home_ownership
+        # @system.chown
+        #   if: options.home?
+        #   if_exists: options.home
+        #   unless: options.no_home_ownership
+        #   target: options.home
+        #   uid: options.uid
+        #   gid: options.gid
       @call if: (-> user_info), ->
         changed = []
         for k in ['uid', 'home', 'shell', 'comment', 'gid']
@@ -171,12 +182,12 @@ you are a member of the "wheel" group (gid of "10") with the command
         , (err) ->
           throw Error "User #{options.name} is logged in" if err?.code is 8
         @system.chown
-          target: options.home
-          uid: options.uid
-          gid: options.gid
           if: options.home and (options.uid or options.gid)
           if_exists: options.home
           unless: options.no_home_ownership
+          target: options.home
+          uid: options.uid
+          gid: options.gid
       @call ->
         # TODO, detect changes in password
         # echo #{options.password} | passwd --stdin #{options.name}
@@ -195,6 +206,8 @@ you are a member of the "wheel" group (gid of "10") with the command
 
 ## Dependencies
 
+    path = require 'path'
+    fs = require 'ssh2-fs'
     misc = require '../../misc'
     string = require '../../misc/string'
     uid_gid = require '../../misc/uid_gid'

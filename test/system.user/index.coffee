@@ -47,3 +47,17 @@ describe 'system.user', ->
     .system.user 'toto', (err, status) ->
       status.should.be.false() unless err
     .then next
+    
+  they.only 'parent home does not exist', (ssh, next) ->
+    nikita
+      ssh: ssh
+    .system.user.remove 'toto'
+    .system.group.remove 'toto'
+    .system.remove "#{scratch}/toto/subdir"
+    .system.user 'toto', home: "#{scratch}/toto/subdir", (err, status) ->
+      status.should.be.true() unless err
+    .file.assert "#{scratch}/toto",
+      mode: 0o0644
+      uid: 0
+      gid: 0
+    .then next
