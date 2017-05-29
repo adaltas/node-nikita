@@ -116,6 +116,35 @@ nikita.assert({
               options.error ?= "Matching #{algo} signature: #{JSON.stringify hash}"
               err = Error options.error
           callback err
+      # Assert uid and gid ownerships
+      @call
+        if: options.uid
+      , (_, callback) ->
+        fs.stat options.ssh, options.target, (err, stat) ->
+          return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
+          unless options.not
+            unless "#{stat.uid}" is "#{options.uid}"
+              options.error ?= "Unexpected uid: expected \"#{options.uid}\" and got \"#{stat.uid}\""
+              err = Error options.error
+          else
+            if "#{stat.uid}" is "#{options.uid}"
+              options.error ?= "Unexpected matching uid: expected \"#{options.uid}\""
+              err = Error options.error
+          callback err
+      @call
+        if: options.gid
+      , (_, callback) ->
+        fs.stat options.ssh, options.target, (err, stat) ->
+          return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
+          unless options.not
+            unless "#{stat.gid}" is "#{options.gid}"
+              options.error ?= "Unexpected gid: expected \"#{options.gid}\" and got \"#{stat.gid}\""
+              err = Error options.error
+          else
+            if "#{stat.gid}" is "#{options.gid}"
+              options.error ?= "Unexpected matching gid: expected \"#{options.gid}\""
+              err = Error options.error
+          callback err
       # Assert file permissions
       @call
         if: options.mode

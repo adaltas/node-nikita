@@ -10,13 +10,12 @@ describe 'file.assert', ->
   
   describe 'exists', ->
 
-    they 'file doesnt not exist', (ssh, next) ->
+    they 'file doesnt not exist', (ssh) ->
       nikita
         ssh: ssh
-      .file.assert "#{scratch}/a_file"
-      .then (err) ->
+      .file.assert "#{scratch}/a_file", relax: true, (err) ->
         err.message.should.eql "File does not exists: \"#{scratch}/a_file\""
-        next()
+      .promise()
 
     they 'file exists', (ssh, next) ->
       nikita
@@ -335,6 +334,29 @@ describe 'file.assert', ->
         relax: true
       , (err) ->
         err.message.should.eql 'Got it'
+      .then next
+
+  describe 'options uid & gid', ->
+    
+    they 'detect root ownerships', (ssh, next) ->
+      nikita
+        ssh: ssh
+      .file.touch "#{scratch}/a_file"
+      .file.assert "#{scratch}/a_file",
+        uid: 0
+        gid: 0
+      .file.assert "#{scratch}/a_file",
+        uid: 1
+        gid: 0
+        relax: true
+      , (err) ->
+        err.message.should.eql "Unexpected uid: expected \"1\" and got \"0\""
+      .file.assert "#{scratch}/a_file",
+        uid: 0
+        gid: 1
+        relax: true
+      , (err) ->
+        err.message.should.eql "Unexpected gid: expected \"1\" and got \"0\""
       .then next
       
     

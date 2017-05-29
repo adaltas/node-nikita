@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* file assert: uid & gid ownerships
 * backup: support cmd
 * keystore add: create parent directories if not exists
 * tools.repo: add update option
