@@ -6,11 +6,11 @@ scratch = "/tmp/nikita-test"
 
 module.exports = 
   scratch: (context) ->
-    context.beforeEach (next) ->
+    context.beforeEach ->
       nikita.system.remove
         target: scratch
       .system.mkdir target: scratch
-      .then next
+      .promise()
     scratch
   config: ->
     try

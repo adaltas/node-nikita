@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* test: use promise in bootstrap test
 * file assert: uid & gid ownerships
 * backup: support cmd
 * keystore add: create parent directories if not exists
