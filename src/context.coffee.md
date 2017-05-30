@@ -262,9 +262,12 @@
         todos.options = org_options
         wrap.options options, (err) ->
           do_disabled = ->
-            return do_once() unless options.disabled
-            options.log type: 'disabled', index: index, depth: depth, error: null, status: false
-            do_callback []
+            unless options.disabled
+              options.log type: 'lifecycle', message: 'disabled_false', index: index, depth: depth, error: null, status: false
+              do_once() 
+            else
+              options.log type: 'lifecycle', message: 'disabled_true', index: index, depth: depth, error: null, status: false
+              do_callback []
           do_once = ->
             hashme = (value) ->
               if typeof value is 'string'
@@ -330,8 +333,10 @@
             , ->
               for k, v of options # Remove conditions from options
                 delete options[k] if /^if.*/.test(k) or /^unless.*/.test(k)
+              options.log type: 'lifecycle', message: 'conditions_passed', index: index, depth: depth, error: null, status: false
               do_handler()
             , (err) ->
+              options.log type: 'lifecycle', message: 'conditions_failed', index: index, depth: depth, error: err, status: false
               do_callback [err]
           options.attempt = -1
           do_handler = ->

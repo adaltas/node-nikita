@@ -53,6 +53,21 @@ describe 'log.cli', ->
         'localhost   a   -\n'
         'localhost   b   +\n'
         'localhost   c   x\n'
+      
+  they 'bypass disabled and false conditionnal', (ssh, next) ->
+    data = []
+    nikita
+      ssh: ssh
+      log_cli: colors: false, time: false
+    .log.cli stream: new MyWritable data: data
+    .call header: 'a', (_, callback) -> callback null, false
+    .call header: 'b', disabled: true, (_, callback) -> callback null, true
+    .call header: 'c', if: false, (_, callback) -> callback null, true
+    .call header: 'd', (_, callback) -> callback null, true
+    .then (err, status) ->
+      data.should.eql [
+        'localhost   a   -\n'
+        'localhost   d   +\n'
       ]
       next()
       

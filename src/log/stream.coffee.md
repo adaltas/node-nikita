@@ -37,6 +37,10 @@ Global options can be alternatively set with the "log_stream" property.
         close = -> setTimeout ->
           options.stream.close() if options.end
         , 100
+        @on 'lifecycle', (log) ->
+          return unless options.serializer.lifecycle
+          data = options.serializer.lifecycle log
+          options.stream.write data if data?
         @on 'text', (log) ->
           return unless options.serializer.text
           data = options.serializer.text log

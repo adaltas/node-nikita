@@ -101,10 +101,14 @@ require('nikita')(
           return if options.depth and options.depth < log.headers.length
           ids[log.index] = log
           null
+        "lifecycle": (log) ->
+          ids[log.index].disabled = true if log.message in ['conditions_failed', 'disabled_true']
+          null
         "handled": (log) ->
           status = if log.error then 'x' else if log.status then '+' else '-'
           log = ids[log.index]
           return null unless log
+          return null if log.disabled
           delete ids[log.index]
           time = if options.time then string.print_time Date.now() - log.time else ''
           host = options.host

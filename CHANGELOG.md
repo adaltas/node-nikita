@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* log cli: dont display disabled and failed conditions
 * user: create parent directory
 * test: use promise in bootstrap test
 * file assert: uid & gid ownerships
