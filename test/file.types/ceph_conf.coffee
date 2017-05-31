@@ -1,0 +1,51 @@
+
+nikita = require '../../src'
+test = require '../test'
+they = require 'ssh2-they'
+
+describe 'file.types.yum_repo', ->
+
+  scratch = test.scratch @
+
+  they 'generate from content', (ssh, next) ->
+    nikita
+      ssh: ssh
+    .file.types.ceph_conf
+      target: "#{scratch}/ceph_conf_test.repo"
+      content:
+        'global':
+          'fsid': 'a7-a6-d0'
+          'prop with spaces': '2spaces'
+          'prop ip': '192.168.10.1'
+    , (err, status) ->
+      status.should.be.true() unless err
+    .file.assert
+      target: "#{scratch}/ceph_conf_test.repo"
+      content: "[global]\nfsid = a7-a6-d0\nprop with spaces = 2spaces\nprop ip = 192.168.10.1\n"
+    .then next
+
+  they 'status not modified', (ssh, next) ->
+    nikita
+      ssh: ssh
+    .file.types.ceph_conf
+      target: "#{scratch}/ceph_conf_test.repo"
+      content:
+        'global':
+          'fsid': 'a7-a6-d0'
+          'prop with spaces': '2spaces'
+          'prop ip': '192.168.10.1'
+    , (err, status) ->
+      status.should.be.true() unless err
+    .file.types.ceph_conf
+      target: "#{scratch}/ceph_conf_test.repo"
+      content:
+        'global':
+          'fsid': 'a7-a6-d0'
+          'prop with spaces': '2spaces'
+          'prop ip': '192.168.10.1'
+    , (err, status) ->
+      status.should.be.false() unless err
+    .file.assert
+      target: "#{scratch}/ceph_conf_test.repo"
+      content: "[global]\nfsid = a7-a6-d0\nprop with spaces = 2spaces\nprop ip = 192.168.10.1\n"
+    .then next
