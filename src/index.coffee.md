@@ -144,7 +144,9 @@ functions share a common API with flexible options.
         chown: 'nikita/system/chown'
         copy: 'nikita/system/copy'
         discover: 'nikita/system/discover'
-        execute: 'nikita/system/execute'
+        execute: 
+          '': 'nikita/system/execute'
+          'assert': 'nikita/system/execute/assert'
         group:
           '': 'nikita/system/group/index'
           remove: 'nikita/system/group/remove'

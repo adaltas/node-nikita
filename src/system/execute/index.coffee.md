@@ -164,7 +164,7 @@ nikita.system.execute({
       , ->
         cmd = options.cmd
         options.target = "/tmp/nikita_#{string.hash options.cmd}" if typeof options.target isnt 'string'
-        options.log message: 'Writing bash script to #{JSON.stringify options.target}', level: 'INFO'
+        options.log message: "Writing bash script to #{JSON.stringify options.target}", level: 'INFO'
         options.cmd = "#{options.bash} #{options.target}"
         options.cmd = "su - #{options.uid} -c '#{options.cmd}'" if options.uid
         @file
@@ -252,5 +252,5 @@ nikita.system.execute({
 
     path = require 'path'
     exec = require 'ssh2-exec'
-    misc = require '../misc'
-    string = require '../misc/string'
+    misc = require '../../misc'
+    string = require '../../misc/string'

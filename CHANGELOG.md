@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* execute assert: new action
 * file assert: minor improvements
 * log cli: shy dislay no status change
 * log cli: dont display disabled and failed conditions
