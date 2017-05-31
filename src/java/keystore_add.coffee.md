@@ -27,6 +27,12 @@ and trustores.
 * `status` (boolean)   
   Indicates if the certificated was inserted.   
 
+## CA Cert Chains
+
+In case the CA file reference a chain of certificates, each certificate will be
+referenced by a unique incremented alias, starting at 0. For example if the 
+alias value is "my-alias", the aliases will be "my-alias-0" then "my-alias-1"... 
+
 ## Relevant Java properties
 
 * `javax.net.ssl.trustStore`
@@ -38,14 +44,16 @@ and trustores.
 ## Relevant commands
 
 * View the content of a Java KeyStore (JKS) and Java TrustStore:
-   `keytool -list -v -keystore $keystore -storepass $storepass` -alias $caname
-    Note, alias is optional and may reference a CA or a certificate
+  `keytool -list -v -keystore $keystore -storepass $storepass`
+  `keytool -list -v -keystore $keystore -storepass $storepass -alias $caname`
+  Note, alias is optional and may reference a CA or a certificate
 * View the content of a ".pem" certificate:
-    `openssl x509 -in cert.pem -text`
+  `openssl x509 -in cert.pem -text`
+  `keytool -printcert -file certs.pem`
 * Change the password of a keystore:   
-    `keytool -storepasswd -keystore my.keystore`
+  `keytool -storepasswd -keystore my.keystore`
 * Change the key's password:   
-    `keytool -keypasswd -alias <key_name> -keystore my.keystore`
+  `keytool -keypasswd -alias <key_name> -keystore my.keystore`
 
 ## Uploading public and private keys into a keystore
 
@@ -119,14 +127,17 @@ require('nikita').java.keystore_add([{
       @system.execute # Deal with key and certificate
         bash: true
         cmd: """
-        if ! which #{options.openssl}; then echo 'OpenSSL command line tool not detected'; exit 4; fi
-        [ -f #{files.cert} ] || exit 6
+        cleanup () {
+          [ -n "#{if options.cacert then '1' else ''}" ] || rm -rf #{tmp_location};
+        }
+        if ! which #{options.openssl}; then echo 'OpenSSL command line tool not detected'; cleanup; exit 4; fi
+        [ -f #{files.cert} ] || (cleanup; exit 6)
         # mkdir -p -m 700 #{tmp_location}
         user=`#{options.openssl} x509  -noout -in "#{files.cert}" -md5 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/' | cat`
         keystore=`keytool -list -v -keystore #{options.keystore} -alias #{options.name} -storepass #{options.storepass} | grep MD5: | sed -E 's/.+MD5: +(.*)/\\1/'`
         echo "User Certificate: $user"
         echo "Keystore Certificate: $keystore"
-        if [[ "$user" == "$keystore" ]]; then exit 5; fi
+        if [[ "$user" == "$keystore" ]]; then cleanup; exit 5; fi
         # Create a PKCS12 file that contains key and certificate
         #{options.openssl} pkcs12 -export \
           -in "#{files.cert}" -inkey "#{files.key}" \
@@ -151,39 +162,52 @@ require('nikita').java.keystore_add([{
         if: options.cacert
         bash: true
         cmd: """
-        cleanup () { rm -rf #{tmp_location}; }
+        # cleanup () { rm -rf #{tmp_location}; }
+        cleanup () { echo 'clean'; }
         # Check password
         if [ -f #{options.keystore} ] && ! keytool -list -keystore #{options.keystore} -storepass #{options.storepass} >/dev/null; then
           # Keystore password is invalid, change it manually with:
           # keytool -storepasswd -keystore #{options.keystore} -storepass #{options.storepass}
           cleanup; exit 2
         fi
-        # Read user CACert signature
-        user=`#{options.openssl} x509  -noout -in "#{files.cacert}" -md5 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/'`
-        # Read registered CACert signature
-        keystore=`keytool -list -v -keystore #{options.keystore} -alias #{options.caname} -storepass #{options.storepass} | grep MD5: | sed -E 's/.+MD5: +(.*)/\\1/'`
-        echo "User CACert: $user"
-        echo "Keystore CACert: $keystore"
-        if [[ "$user" == "$keystore" ]]; then exit 5; fi
-        # Remove CACert if signature doesnt match
-        if [[ "$keystore" != "" ]]; then
-          keytool -delete \
-            -keystore #{options.keystore} \
-            -storepass #{options.storepass} \
-            -alias #{options.caname}
-        fi
+        [ -f #{files.cacert} ] || (echo 'CA file doesnt not exists: #{files.cacert} 1>&2'; cleanup; exit 3)
         # Import CACert
-        keytool -noprompt -importcert \
-          -keystore #{options.keystore} \
-          -storepass #{options.storepass} \
-          -alias #{options.caname} \
-          -file #{files.cacert}
+        PEM_FILE=#{files.cacert}
+        CERTS=$(grep 'END CERTIFICATE' $PEM_FILE| wc -l)
+        code=5
+        for N in $(seq 0 $(($CERTS - 1))); do
+          if [[ $CERTS == '1' ]]; then
+            ALIAS="#{options.caname}"
+          else
+            ALIAS="#{options.caname}-$N"
+          fi
+          # Isolate cert into a file
+          CACERT_FILE=#{tmp_location}/$ALIAS
+          cat $PEM_FILE | awk "n==$N { print }; /END CERTIFICATE/ { n++ }" > $CACERT_FILE
+          # Read user CACert signature
+          user=`#{options.openssl} x509  -noout -in "$CACERT_FILE" -md5 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/'`
+          # Read registered CACert signature
+          keystore=`keytool -list -v -keystore #{options.keystore} -alias $ALIAS -storepass #{options.storepass} | grep MD5: | sed -E 's/.+MD5: +(.*)/\\1/'`
+          echo "User CA Cert: $user"
+          echo "Keystore CA Cert: $keystore"
+          if [[ "$user" == "$keystore" ]]; then echo 'Identical Signature'; code=5; continue; fi
+          # Remove CACert if signature doesnt match
+          if [[ "$keystore" != "" ]]; then
+            keytool -delete \
+              -keystore #{options.keystore} \
+              -storepass #{options.storepass} \
+              -alias $ALIAS
+          fi
+          keytool -noprompt -import -trustcacerts -alias $ALIAS -keystore #{options.keystore} -storepass changeit -file #{tmp_location}/$ALIAS
+          code=0
+        done
+        cleanup
+        exit $code
         """
-        # trap: true
+        trap: true
         code_skipped: 5
-      @system.remove
-        target: "#{tmp_location}"
-        shy: true
+      , (err) ->
+        throw Error "CA file does not exist: #{files.cacert}" if err?.code is 3
       @system.chown
         target: options.keystore
         uid: options.uid

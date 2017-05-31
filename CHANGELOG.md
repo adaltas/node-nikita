@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* keystore add: handle CA certs chain
 * execute assert: new action
 * file assert: minor improvements
 * log cli: shy dislay no status change
