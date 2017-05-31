@@ -12,7 +12,7 @@ Setup packet manager repository. Only support yum for now.
   option.
 * `content`   
   Content to write inside the file. can not be used with source
-* 'replace' (String)   
+* 'clean' (String)   
   Globing expression used to match replaced files.
 * 'clean' (Boolean)   
     Run yum clean metadata after repo file is placed. True by default.
@@ -32,7 +32,7 @@ Setup packet manager repository. Only support yum for now.
 ```js
 require('nikita').tools.repo({
   source: '/tmp/centos.repo',
-  replace: 'CentOs*'
+  clean: 'CentOs*'
 }, function(err, written){
   console.log(err ? err.message : 'Repo updated: ' + !!written);
 });
@@ -45,7 +45,7 @@ require('nikita').tools.repo({
       throw Error "Can not specify source and content"if options.source and options.content
       throw Error "Missing source or content: " unless options.source or options.content
       options.target ?= "/etc/yum.repos.d/#{path.basename options.source}" if options.source?
-      options.target = path.resolve '/etc/yum.repos.d', options.target
+      options.target = path.posix.resolve '/etc/yum.repos.d', options.target
       throw Error " Missing target" unless options.target?
       options.verify ?= true
       options.local ?= false
@@ -55,15 +55,15 @@ require('nikita').tools.repo({
       keys = []
       repoids = []
       # Delete
-      @call if: options.replace?, (_, callback) ->
+      @call if: options.clean?, (_, callback) ->
         options.log message: "Searching repositories inside \"/etc/yum.repos.d/\"", level: 'DEBUG', module: 'nikita/lib/tools/repo'
-        glob options.ssh, "/etc/yum.repos.d/#{options.replace}", (err, files) ->
+        glob options.ssh, "/etc/yum.repos.d/#{options.clean}", (err, files) ->
           return callback err if err
           remote_files = for file in files
             continue if file is options.target
             file
           callback()
-      @system.remove remote_files
+      @call -> @system.remove remote_files
       #download source
       @file.download
         if: options.source?
