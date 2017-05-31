@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* group: handle root gid "0"
 * keystore add: handle CA certs chain
 * execute assert: new action
 * file assert: minor improvements

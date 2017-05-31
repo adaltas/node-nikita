@@ -19,3 +19,24 @@ describe 'system.group', ->
     .system.group 'toto', (err, status) ->
       status.should.be.false() unless err
     .then next
+    
+  they 'accept gid as int or string', (ssh, next) ->
+    nikita
+      ssh: ssh
+    .system.user.remove 'toto'
+    .system.group.remove 'toto'
+    .system.group 'toto', gid: '1234', (err, status) ->
+      status.should.be.true() unless err
+    .system.group 'toto', gid: '1234', (err, status) ->
+      status.should.be.false() unless err
+    .system.group 'toto', gid: 1234, (err, status) ->
+      status.should.be.false() unless err
+    .then next
+    
+  they 'throw if empty gid string', (ssh, next) ->
+    nikita
+      ssh: ssh
+    .system.group.remove 'toto'
+    .system.group 'toto', gid: '', relax: true, (err, status) ->
+      err.message.should.eql 'Invalid gid option'
+    .then next

@@ -27,8 +27,8 @@ require('nikita').system.group({
   name: 'myself'
   system: true
   gid: 490
-}, function(err, modified){
-  console.log(err ? err.message : 'Group was created/modified: ' + modified);
+}, function(err, status){
+  console.log(err ? err.message : 'Group was created/modified: ' + status);
 });
 ```
 
@@ -44,7 +44,8 @@ The result of the above action can be viewed with the command
       throw Error "Option 'name' is required" unless options.name
       options.system ?= false
       options.gid ?= null
-      modified = false
+      options.gid = parseInt options.gid, 10 if typeof options.gid is 'string'
+      throw Error 'Invalid gid option' if options.gid? and isNaN options.gid
       info = null
       @call (_, callback) ->
         options.log message: "Get group information for '#{options.name}'", level: 'DEBUG', module: 'nikita/lib/system/group'
@@ -56,12 +57,13 @@ The result of the above action can be viewed with the command
           callback()
       # Create group
       @call unless: (-> info), ->
-        cmd = 'groupadd'
-        cmd += " -r" if options.system
-        cmd += " -g #{options.gid}" if options.gid
-        cmd += " #{options.name}"
         @system.execute
-          cmd: cmd
+          cmd: (
+            cmd = 'groupadd'
+            cmd += " -r" if options.system
+            cmd += " -g #{options.gid}" if options.gid?
+            cmd += " #{options.name}"
+          )
           code_skipped: 9
         , (err, status) ->
           throw err if err
@@ -70,17 +72,18 @@ The result of the above action can be viewed with the command
       @call if: (-> info), ->
         changed = []
         for k in ['gid']
-          changed.push 'gid' if options[k]? and info[k] isnt options[k]
+          changed.push 'gid' if options[k]? and "#{info[k]}" isnt "#{options[k]}"
         options.log if changed.length
         then message: "Group information modified", level: 'WARN', module: 'nikita/lib/system/group'
         else message: "Group information unchanged", level: 'DEBUG', module: 'nikita/lib/system/group'
         return unless changed.length
-        cmd = 'groupmod'
-        cmd += " -g #{options.gid}" if options.gid
-        cmd += " #{options.name}"
         @system.execute
-          cmd: cmd
           if: changed.length
+          cmd: (
+            cmd = 'groupmod'
+            cmd += " -g #{options.gid}" if options.gid
+            cmd += " #{options.name}"
+          )
 
 ## Dependencies
 
