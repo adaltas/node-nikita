@@ -105,7 +105,7 @@ require('nikita')(
           ids[log.index].disabled = true if log.message in ['conditions_failed', 'disabled_true']
           null
         "handled": (log) ->
-          status = if log.error then 'x' else if log.status then '+' else '-'
+          status = if log.error then 'x' else if log.status and not log.shy then '+' else '-'
           log = ids[log.index]
           return null unless log
           return null if log.disabled

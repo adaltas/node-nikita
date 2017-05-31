@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* log cli: shy dislay no status change
 * log cli: dont display disabled and failed conditions
 * user: create parent directory
 * test: use promise in bootstrap test

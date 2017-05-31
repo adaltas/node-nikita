@@ -165,6 +165,7 @@
           log.headers ?= header for header in headers
           log.total_depth ?= stack.length
           log.type ?= 'text'
+          log.shy ?= options.shy
           args = if 1 <= arguments.length then [].slice.call(arguments, 0) else []
           stackTrace = require 'stack-trace'
           frame = stackTrace.get()[1]

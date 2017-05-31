@@ -39,7 +39,7 @@ describe 'log.cli', ->
       ]
       next()
       
-  they 'print info', (ssh, next) ->
+  they 'print status', (ssh, next) ->
     data = []
     nikita
       ssh: ssh
@@ -47,12 +47,16 @@ describe 'log.cli', ->
     .log.cli stream: new MyWritable data: data
     .call header: 'a', (_, callback) -> callback null, false
     .call header: 'b', (_, callback) -> callback null, true
-    .call header: 'c', (_, callback) -> callback new Error 'ok', false
+    .call header: 'c', shy: true, (_, callback) -> callback null, true
+    .call header: 'd', (_, callback) -> callback new Error 'ok', false
     .then (err, status) ->
       data.should.eql [
         'localhost   a   -\n'
         'localhost   b   +\n'
-        'localhost   c   x\n'
+        'localhost   c   -\n'
+        'localhost   d   x\n'
+      ]
+      next()
       
   they 'bypass disabled and false conditionnal', (ssh, next) ->
     data = []
