@@ -69,7 +69,7 @@ nikita.assert({
           callback err
       # Assert content equal
       @call
-        if: options.content and (typeof options.content is 'string' or Buffer.isBuffer options.content)
+        if: options.content? and (typeof options.content is 'string' or Buffer.isBuffer options.content)
       , (_, callback) ->
         fs.readFile options.ssh, options.target, (err, buffer) ->
           return callback err if err
@@ -84,7 +84,7 @@ nikita.assert({
           callback err
       # Assert content match
       @call
-        if: options.content and options.content instanceof RegExp
+        if: options.content? and options.content instanceof RegExp
       , (_, callback) ->
         fs.readFile options.ssh, options.target, (err, buffer) ->
           return callback err if err
@@ -97,7 +97,7 @@ nikita.assert({
               options.error ?= "Unexpected content match: #{JSON.stringify options.content.toString()}"
               err = Error options.error
           callback err
-      # Assert content match
+      # Assert hash match
       (algo = 'md5'; hash = options.md5) if options.md5
       (algo = 'sha1'; hash = options.sha1) if options.sha1
       (algo = 'sha256'; hash = options.sha256) if options.sha256

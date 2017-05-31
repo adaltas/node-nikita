@@ -99,7 +99,7 @@ describe 'file.assert', ->
         content: "toto\nest\r\nau\rbistrot"
       .file.assert
         target: "#{scratch}/a_file"
-        content: /est/m
+        content: /^bistrot$/m
       .then next
 
     they 'with option not', (ssh, next) ->
@@ -339,6 +339,7 @@ describe 'file.assert', ->
   describe 'options uid & gid', ->
     
     they 'detect root ownerships', (ssh, next) ->
+      return next() unless process.getuid() is 0
       nikita
         ssh: ssh
       .file.touch "#{scratch}/a_file"
