@@ -101,6 +101,7 @@ functions share a common API with flexible options.
         upload: 'nikita/file/upload'
         yaml: 'nikita/file/yaml'
         types:
+          ceph_conf: 'nikita/file/types/ceph_conf'
           locale_gen: 'nikita/file/types/locale_gen'
           pacman_conf: 'nikita/file/types/pacman_conf'
           yum_repo: 'nikita/file/types/yum_repo'
