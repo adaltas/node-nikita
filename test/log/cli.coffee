@@ -38,6 +38,28 @@ describe 'log.cli', ->
         'localhost   h1   +\n'
       ]
       next()
+  
+  they 'pass over actions without header', (ssh, next) ->
+    data = []
+    nikita
+      ssh: ssh
+      log_cli: colors: false, time: false
+    .log.cli stream: new MyWritable data: data
+    .call header: 'h1', (options) ->
+      @call header: 'h2a', (options) ->
+      @call (options) ->
+        @call (options) ->
+          @call header: 'h2b', (options, callback) ->
+            callback null, true
+    .wait 200
+    .then (err, status) ->
+      return next err if err
+      data.should.eql [
+        'localhost   h1 : h2a   -\n'
+        'localhost   h1 : h2b   +\n'
+        'localhost   h1   +\n'
+      ]
+      next()
       
   they 'print status', (ssh, next) ->
     data = []

@@ -102,6 +102,7 @@ require('nikita')(
           ids[log.index] = log
           null
         "lifecycle": (log) ->
+          return unless ids[log.index]
           ids[log.index].disabled = true if log.message in ['conditions_failed', 'disabled_true']
           null
         "handled": (log) ->
