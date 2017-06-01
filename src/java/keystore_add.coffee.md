@@ -198,7 +198,7 @@ require('nikita').java.keystore_add([{
               -storepass #{options.storepass} \
               -alias $ALIAS
           fi
-          keytool -noprompt -import -trustcacerts -alias $ALIAS -keystore #{options.keystore} -storepass changeit -file #{tmp_location}/$ALIAS
+          keytool -noprompt -import -trustcacerts -alias $ALIAS -keystore #{options.keystore} -storepass #{options.storepass} -file #{tmp_location}/$ALIAS
           code=0
         done
         cleanup
