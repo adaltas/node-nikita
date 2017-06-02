@@ -96,7 +96,7 @@ require('nikita').java.keystore_add([{
       tmp_location = "/tmp/nikita/java_keystore_#{Date.now()}"
       files =
         cert: if options.cert? and options.local then  "#{tmp_location}/#{path.basename options.cert}" else options.cert
-        cacert: if options.local then  "#{tmp_location}/#{path.basename options.cacert}" else options.cacert
+        cacert: if options.cacert?  and options.local then  "#{tmp_location}/#{path.basename options.cacert}" else options.cacert
         key: if options.key? and options.local then  "#{tmp_location}/#{path.basename options.key}" else options.key
       @system.mkdir
         target: "#{tmp_location}"
@@ -143,7 +143,6 @@ require('nikita').java.keystore_add([{
           -in "#{files.cert}" -inkey "#{files.key}" \
           -out "#{tmp_location}/pkcs12" -name #{options.name} \
           -password pass:#{options.keypass}
-          #-CAfile "#{tmp_location}/cacert" -caname #{options.caname} \
         # Import PKCS12 into keystore
         keytool -noprompt -importkeystore \
           -destkeystore #{options.keystore} \
@@ -198,7 +197,7 @@ require('nikita').java.keystore_add([{
               -storepass #{options.storepass} \
               -alias $ALIAS
           fi
-          keytool -noprompt -import -trustcacerts -alias $ALIAS -keystore #{options.keystore} -storepass changeit -file #{tmp_location}/$ALIAS
+          keytool -noprompt -import -trustcacerts -alias $ALIAS -keystore #{options.keystore} -storepass #{options.storepass} -file #{tmp_location}/$ALIAS
           code=0
         done
         cleanup
