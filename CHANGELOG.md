@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* path: renaming path to path.posix
 * file.types.ceph_conf: add file type for ceph configuration file
 * group: handle root gid "0"
 * keystore add: handle CA certs chain

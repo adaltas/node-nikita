@@ -219,4 +219,4 @@ require('nikita').java.keystore_add([{
 
 ## Dependencies
 
-    path = require 'path'
+    path = require('path').posix
