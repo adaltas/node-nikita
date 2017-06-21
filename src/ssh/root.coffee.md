@@ -105,7 +105,7 @@ require('nikita')
           if [ -n "$selinux" ] && [ -f /etc/selinux/config ] && grep ^SELINUX="$selinux" /etc/selinux/config;
           then
             sed -i.back "s/^SELINUX=enforcing/SELINUX=$selinux/" /etc/selinux/config;
-            reboot;
+            ( reboot )&
             exit 2;
           fi;
           """
@@ -141,9 +141,9 @@ require('nikita')
             options.log message: data, type: 'stderr', module: 'nikita/lib/ssh/root'
           child.stderr.on 'end', (data) ->
             options.log message: null, type: 'stderr', module: 'nikita/lib/ssh/root'
-      @call retry: true, if: rebooting, (_, callback) ->
-        connect config, (err, conn) =>
-          return callback err unless conn
+      @call retry: true, wait: 3000, if: (-> rebooting), (_, callback) ->
+        connect options, (err, conn) =>
+          return callback err if err
           conn.end()
           conn.on 'error', callback
           conn.on 'end', callback

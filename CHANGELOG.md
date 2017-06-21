@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* ssh root: fix new connection after reboot
 * option retry: unlimited if true
 * file.types.ceph_conf: add file type for ceph configuration file
 * group: handle root gid "0"
