@@ -34,4 +34,11 @@ describe 'options "retry"', ->
     .then ->
       logs.should.eql ['Retry on error, attempt 1']
       next()
+
+  it 'retry true is unlimited', (next) ->
+    count = 0
+    nikita
+    .call retry: true, wait: 200, (options) ->
+      throw Error 'Catchme' if count++ < 10
+    .then next
       

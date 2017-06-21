@@ -119,6 +119,7 @@
           delete opts.once if opts.once is false
           opts.once = opts.once.sort() if Array.isArray opts.once
           opts.wait ?= 3000 # Wait 3s between retry
+          opts.retry ?= 0
           opts.disabled ?= false
           # Validation
           jump_to_error Error "Invalid options wait, got #{JSON.stringify opts.wait}" unless typeof opts.wait is 'number' and opts.wait >= 0
@@ -349,7 +350,7 @@
                 err = Error 'First argument not a valid error'
                 arguments[0][0] = err
               options.log message: err.message, level: 'ERROR', index: index, module: 'nikita' if err
-              if err and options.attempt < options.retry - 1
+              if err and ( options.retry is true or options.attempt < options.retry - 1 )
                 options.log message: "Retry on error, attempt #{options.attempt+1}", level: 'WARN', index: index, module: 'nikita'
                 return setTimeout do_handler, options.wait
               do_intercept_after arguments...
