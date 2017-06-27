@@ -273,7 +273,7 @@ nikita.download
 
     fs = require 'fs'
     ssh2fs = require 'ssh2-fs'
-    path = require ('path').posix
+    path = require('path').posix # need to detect ssh connection
     url = require 'url'
     curl = require '../misc/curl'
     file = require '../misc/file'
