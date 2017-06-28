@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* file ini: value as array in stringify_then_curly
 * ssh root: fix new connection after reboot
 * option retry: unlimited if true
 * file.types.ceph_conf: add file type for ceph configuration file

@@ -102,21 +102,6 @@ describe 'file.ini', ->
       status.should.be.false() unless err
     .then next
 
-  they 'call stringify udf', (ssh, next) ->
-    nikita
-      ssh: ssh
-    .file.ini
-      content: user: preference: color: true
-      stringify: misc.ini.stringify_square_then_curly
-      target: "#{scratch}/user.ini"
-      merge: true
-    , (err, status) ->
-      status.should.be.true() unless err
-    .file.assert
-      target: "#{scratch}/user.ini"
-      content: '[user]\n preference = {\n  color = true\n }\n\n'
-    .then next
-
   they 'stringify write only key on props', (ssh, next) ->
     nikita
       ssh: ssh
@@ -251,7 +236,7 @@ describe 'file.ini', ->
       content: user: preference: language: 'c++'
       merge: true
     , (err, written) ->
-      written.should.be.false() unless err
+      written.sh
     .then next
 
   they 'generate from content object with escape', (ssh, next) ->
@@ -282,3 +267,36 @@ describe 'file.ini', ->
     , (err, status) ->
       status.should.be.false() unless err
     .then next
+  
+  describe 'stringify_square_then_curly', ->
+
+    they 'call stringify udf', (ssh, next) ->
+      nikita
+        ssh: ssh
+      .file.ini
+        stringify: misc.ini.stringify_square_then_curly
+        target: "#{scratch}/user.ini"
+        content: user: preference: color: true
+      , (err, status) ->
+        status.should.be.true() unless err
+      .file.assert
+        target: "#{scratch}/user.ini"
+        content: '[user]\n preference = {\n  color = true\n }\n\n'
+      .then next
+
+    they 'convert array to multiple keys', (ssh, next) ->
+      nikita
+        ssh: ssh
+      # Create a new file
+      .file.ini
+        stringify: misc.ini.stringify_square_then_curly
+        target: "#{scratch}/user.ini"
+        content: user: preference: language: ['c', 'c++', 'ada']
+      , (err, written) ->
+        written.should.be.true() unless err
+      .file.assert
+        target: "#{scratch}/user.ini"
+        content: '[user]\n preference = {\n  language = c\n  language = c++\n  language = ada\n }\n\n'
+      # Modify an existing file
+      # TODO: merge is not supported
+      .then next
