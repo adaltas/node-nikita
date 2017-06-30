@@ -7,25 +7,23 @@ Setup packet manager repository. Only support yum for now.
 
 * `source` (string)   
   The source file(s) containing the repository(ies)   
-* `local`
+* `local` (boolean)   
   Treat the source as local instead of remote, only apply with "ssh"
-  option.
+  option.   
 * `content`   
-  Content to write inside the file. can not be used with source
-* 'clean' (String)   
-  Globing expression used to match replaced files.
-* 'clean' (Boolean)   
-    Run yum clean metadata after repo file is placed. True by default.
-* 'update' (Boolean)   
-  Run yum update enabling only the ids present in repo file. Default to false.
+  Content to write inside the file. can not be used with source.   
+* `clean` (String)   
+  Globing expression used to match replaced files.   
+* `clean` (Boolean)   
+  Run yum clean metadata after repo file is placed. True by default.   
+* `gpg_dir` (string)   
+  Directory storing GPG keys.   
+* `update` (Boolean)   
+  Run yum update enabling only the ids present in repo file. Default to false.   
 * `verify`   
-  Download the PGP keys if it's enabled in the repo file.
-* `ssh` (object|ssh2)   
-  Run the action on a remote server using SSH, an ssh2 instance or an
-  configuration object used to initialize the SSH connection.
-* `stdout` (stream.Writable)   
-  Writable EventEmitter where diff information is written if option "diff" is
-  "true"
+  Download the PGP keys if it's enabled in the repo file, keys are by default
+  placed inside "/etc/pki/rpm-gpg" defined by the gpg_dir option and the 
+  filename is derivated from the url.   
 
 ## Example
 
@@ -51,8 +49,8 @@ require('nikita').tools.repo({
       options.local ?= false
       options.clean ?= true
       options.update ?= false
+      options.gpg_dir ?= '/etc/pki/rpm-gpg'
       remote_files = []
-      keys = []
       repoids = []
       # Delete
       @call if: options.clean?, (_, callback) ->
@@ -86,6 +84,7 @@ require('nikita').tools.repo({
       @call 
         if: -> options.verify
       , ->
+        keys = []
         options.log "Download #{options.target}'s GPG keys", level: 'INFO', module: 'nikita/lib/tools/repo'
         @call (_, callback)->
           options.log "Read GPG keys from #{options.target}", level: 'DEBUG', module: 'nikita/lib/tools/repo'
@@ -95,32 +94,26 @@ require('nikita').tools.repo({
             keys = for name, section of data
               repoids.push name
               continue unless section.gpgcheck is '1'
-              throw Error 'Missing data.gpgkey' unless section.gpgkey?
+              throw Error 'Missing gpgkey' unless section.gpgkey?
               continue unless /^http(s)??:\/\//.test section.gpgkey
               section.gpgkey
             callback()
         # Download GPG Keys
-        @call
-          if: -> keys.length isnt 0
-        , ->
-          @each keys, (options) ->
-            gpgkey = options.key
-            options.log "Downloading GPG keys from #{gpgkey}", level: 'DEBUG', module: 'nikita/lib/tools/repo'
-            @file.download
-              source: gpgkey
-              target: "/etc/pki/rpm-gpg/#{path.basename gpgkey}"
-            @system.execute
-              if: -> @status -1
-              cmd: "rpm --import  /etc/pki/rpm-gpg/#{path.basename gpgkey}"
+        @call -> for key in keys
+          options.log "Downloading GPG keys from #{key}", level: 'DEBUG', module: 'nikita/lib/tools/repo'
+          @file.download
+            source: key
+            target: "#{options.gpg_dir}/#{path.basename key}"
+          @system.execute
+            if: -> @status -1
+            cmd: "rpm --import #{options.gpg_dir}/#{path.basename key}"
       # Clean Metadata
       @system.execute
-        cmd: 'yum clean metadata; yum repolist'
         if: -> options.clean and @status()
-      @call
+        cmd: 'yum clean metadata; yum repolist'
+      @system.execute
         if: -> options.update and @status()
-      , ->
-        @system.execute
-          cmd: "yum update -y --disablerepo=* --enablerepo=#{repoids.join(',')}; yum repolist"
+        cmd: "yum update -y --disablerepo=* --enablerepo=#{repoids.join(',')}; yum repolist"
 
 ## Dependencies
 

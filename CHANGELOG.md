@@ -3,6 +3,10 @@
 
 ## Trunk
 
+* repo: fix and refactor gpg verify
+
+## Version 0.6.2
+
 * disabled: emit lifecycle event
 * package: latest dependencies
 * test: remove unrequired timeout

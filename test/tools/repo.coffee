@@ -14,7 +14,6 @@ describe 'tools.repo', ->
   they 'Write with source option', (ssh, next) ->
     nikita
       ssh: ssh
-    .system.remove "#{scratch}/repo/centos.repo"
     .system.mkdir "#{scratch}/repo"
     .file
       target: "#{scratch}/CentOS.repo"
@@ -42,7 +41,6 @@ describe 'tools.repo', ->
   they 'Write with content option', (ssh, next) ->
     nikita
       ssh: ssh
-    .system.remove "#{scratch}/repo/centos.repo"
     .system.mkdir "#{scratch}/repo"
     .tools.repo
       target: "#{scratch}/repo/centos.repo"
@@ -70,8 +68,6 @@ describe 'tools.repo', ->
   they 'delete files with replace option', (ssh, next) ->
     nikita
       ssh: ssh
-    .system.remove '/etc/yum.repos.d/CentOS-nikita.repo'
-    .file.touch '/etc/yum.repos.d/test.repo'
     .file
       target: "#{scratch}/CentOS.repo"
       content: """
@@ -96,16 +92,12 @@ describe 'tools.repo', ->
       source: "#{scratch}/CentOS.repo"
     , (err, status) ->
       status.should.be.false() unless err
-    .file.assert '/etc/yum.repos.d/CentOS.repo'
-    .system.remove '/etc/yum.repos.d/CentOS.repo'
+    .file.assert "#{scratch}/CentOS.repo"
     .then next
   
   they 'Download GPG Keys option', (ssh, next) ->
     nikita
       ssh: ssh
-    .system.remove "#{scratch}/hdp-test.repo"
-    .system.remove '/etc/yum.repos.d/hdp-test.repo'
-    .system.remove '/etc/pki/rpm-gpg/RPM-GPG-KEY-Jenkins'
     .file
       target: "#{scratch}/hdp-test.repo"
       content: """
@@ -119,15 +111,10 @@ describe 'tools.repo', ->
       """
     .tools.repo
       source: "#{scratch}/hdp-test.repo"
-    , (err, status) ->
-      status.should.be.true() unless err
-    .tools.repo
-      source: "#{scratch}/hdp-test.repo"
-    , (err, status) ->
-      status.should.be.false() unless err
-    .file.assert '/etc/yum.repos.d/hdp-test.repo'
-    .system.remove '/etc/yum.repos.d/hdp-test.repo'
-    .system.remove '/etc/pki/rpm-gpg/RPM-GPG-KEY-Jenkins'
+      gpg_dir: "#{scratch}"
+      clean: false
+      update: false
+    .file.assert "#{scratch}/RPM-GPG-KEY-Jenkins"
     .then next
   
   they 'Download repo from remote location', (ssh, next) ->
