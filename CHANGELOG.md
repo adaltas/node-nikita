@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* package: latest dependencies
 * test: remove unrequired timeout
 * cron: disabled by default, enable in docker
 * file ini: value as array in stringify_then_curly
@@ -29,7 +30,6 @@
 * context: introduce promise
 * connection wait: fix errors
 * file: fix typo and lower eof log level
-* package: latest dependencies
 * log: global options with log_csv, log_fs, log_md and log_stream
 * file.assert: content as a regexp
 * src: remove usage of new while creating error instances
