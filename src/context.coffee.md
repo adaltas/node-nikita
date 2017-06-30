@@ -265,10 +265,10 @@
         wrap.options options, (err) ->
           do_disabled = ->
             unless options.disabled
-              options.log type: 'lifecycle', message: 'disabled_false', index: index, depth: depth, error: null, status: false
+              options.log type: 'lifecycle', message: 'disabled_false', level: 'DEBUG', index: index, depth: depth, error: null, status: false
               do_once() 
             else
-              options.log type: 'lifecycle', message: 'disabled_true', index: index, depth: depth, error: null, status: false
+              options.log type: 'lifecycle', message: 'disabled_true', level: 'INFO', index: index, depth: depth, error: null, status: false
               do_callback []
           do_once = ->
             hashme = (value) ->

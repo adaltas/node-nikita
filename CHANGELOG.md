@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* disabled: emit lifecycle event
 * package: latest dependencies
 * test: remove unrequired timeout
 * cron: disabled by default, enable in docker
