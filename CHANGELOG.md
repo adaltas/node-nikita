@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* cron: disabled by default, enable in docker
 * file ini: value as array in stringify_then_curly
 * ssh root: fix new connection after reboot
 * option retry: unlimited if true

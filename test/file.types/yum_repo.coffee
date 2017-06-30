@@ -68,11 +68,8 @@ describe 'file.types.yum_repo', ->
 
   they 'write to default repository dir', (ssh, next) ->
     nikita
-      ssh: ssh
-    .system.remove
-      target: '/etc/yum.repos.d/test.repo'
     .file.types.yum_repo
-      target: '/etc/yum.repos.d/test.repo'
+      target: "#{scratch}/test.repo"
       content:
         "test-repo-0.0.3":
           'name': 'CentOS'
@@ -81,21 +78,17 @@ describe 'file.types.yum_repo', ->
     , (err, status) ->
       status.should.be.true() unless err
     .file.assert
-      target: "/etc/yum.repos.d/test.repo"
+      target: "#{scratch}/test.repo"
       content: """
         [test-repo-0.0.3]\nname = CentOS\nmirrorlist = http://test/?infra=$infra\nbaseurl = http://mirror.centos.org\n
       """
-    .system.remove
-      target: '/etc/yum.repos.d/test.repo'
     .then next
     
   they 'default from source with content', (ssh, next) ->
     nikita
       ssh: ssh
-    .system.remove
-      target: '/etc/yum.repos.d/CentOS-nikita.repo'
     .file.types.yum_repo
-      target: '/etc/yum.repos.d/CentOS-nikita.repo'
+      target: "#{scratch}/CentOS-nikita.repo"
       source: "#{__dirname}/../resources/CentOS-nikita.repo"
       local: true
       content:
@@ -108,7 +101,5 @@ describe 'file.types.yum_repo', ->
     , (err, status) ->
       status.should.be.true() unless err
     .file.assert
-      target: "/etc/yum.repos.d/CentOS-nikita.repo"
-    .system.remove
-      target: '/etc/yum.repos.d/CentOS-nikita.repo'
+      target: "#{scratch}/CentOS-nikita.repo"
     .then next

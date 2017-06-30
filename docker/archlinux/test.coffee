@@ -1,6 +1,7 @@
 
 module.exports =
   disable_conditions_if_os: false
+  disable_cron: false
   disable_discover: false # can be activated
   disable_docker: true
   disable_krb5_addprinc: false # not sure if working

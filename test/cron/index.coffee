@@ -16,6 +16,8 @@ crontab -l
 
 describe 'cron', ->
 
+  config = test.config()
+  return if config.disable_cron
   rand = Math.random().toString(36).substring(7);
 
   they 'add a job', (ssh, next) ->
