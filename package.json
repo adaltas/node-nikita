@@ -1,7 +1,7 @@
 {
   "name": "nikita",
   "description": "Common functions for system deployment.",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "email": "open@adaltas.com",
