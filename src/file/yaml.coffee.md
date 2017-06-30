@@ -111,7 +111,7 @@ require('nikita').file.yaml({
         options.log message: "Serialize content", level: 'DEBUG', module: 'nikita/lib/file/yaml'
         try
           options.content = yaml.safeDump options.content, noRefs:true, lineWidth: options.line_width
-          @file options, (err, written) ->
+          @file options, header: null, (err, written) ->
             callback err, written
       do_get()
 
