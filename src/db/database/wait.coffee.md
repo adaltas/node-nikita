@@ -6,7 +6,7 @@ Wait for the creation of a database.
 ## Options
 
 * `admin_username`   
-  The login of the database administrator. It should have credentials to create accounts.   
+  The login of the database administrator.   
 * `admin_password`   
   The password of the database administrator.   
 * `database` (Array or String)   

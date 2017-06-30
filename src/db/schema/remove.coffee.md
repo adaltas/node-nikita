@@ -15,7 +15,7 @@ Create a user for the destination database.
 * `host`   
   The hostname of the database.   
 * `schema`   
-  New schema name.
+  New schema name.   
 
 ## Source Code
 

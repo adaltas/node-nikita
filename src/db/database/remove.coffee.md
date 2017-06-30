@@ -6,16 +6,15 @@ Create a user for the destination database.
 ## Options
 
 * `admin_username`   
-  The login of the database administrator. It should have credentials to create accounts.
+  The login of the database administrator.   
 * `admin_password`   
-  The password of the database administrator.
-  provided.
-* `engine`    
-  The engine type, can be MySQL or PostgreSQL. Default to MySQL
+  The password of the database administrator.   
+* `engine`   
+  The engine type, can be MySQL or PostgreSQL. Default to MySQL   
 * `host`   
-  The hostname of the database
+  The hostname of the database   
 * `database`   
-  The database to be removed.
+  The database to be removed.   
 
 ## Source Code
 

@@ -6,22 +6,21 @@ Create a database for the destination database.
 ## Options
 
 * `admin_username`   
-  The login of the database administrator. It should have credentials to create accounts.
+  The login of the database administrator.   
 * `admin_password`   
-  The password of the database administrator.
-  provided.
+  The password of the database administrator.   
 * `database` (String)   
   The database name where the schema is created.
 * `engine`    
-  The engine type, can be MySQL or PostgreSQL. Default to MySQL
+  The engine type, can be MySQL or PostgreSQL. Default to MySQL   
 * `host`   
-  The hostname of the database
+  The hostname of the database   
 * `port`   
-  Port to the associated database
+  Port to the associated database   
 * `schema`   
-  New schema name.
+  New schema name.   
 * `owner` Array or String   
-  The Schema owner. Alter Schema if schema already exists.
+  The Schema owner. Alter Schema if schema already exists.   
 
 ## Create Schema example
 

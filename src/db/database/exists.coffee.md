@@ -6,13 +6,12 @@ Check if a database exists.
 ## Options
 
 * `admin_username`   
-  The login of the database administrator. It should have credentials to 
-  create accounts.   
+  The login of the database administrator.   
 * `admin_password`   
-  The password of the database administrator.
-* `database` (String)
+  The password of the database administrator.   
+* `database` (String)   
   The database name to check for existance.   
-* `engine`  
+* `engine`   
   The engine type, can be MySQL or PostgreSQL, default to MySQL.   
 * `host`   
   The hostname of the database.   
@@ -32,7 +31,7 @@ Check if a database exists.
       options.database ?= options.argument
       # Check main options
       throw Error 'Missing option: "host"' unless options.host
-      throw Error 'Missing option: "username" or "admin_username"' if not options.admin_username and not options.username
+      throw Error 'Missing option: "username" or "admin_username"' unless options.admin_username or options.username
       throw Error 'Missing option: "admin_password"' if options.admin_username and not options.admin_password
       throw Error 'Missing option: "password"' if options.username and not options.password
       # Defines and check the engine type

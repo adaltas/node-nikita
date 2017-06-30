@@ -10,7 +10,7 @@ Create a user for the destination database.
   create accounts.   
 * `admin_password`   
   The password of the database administrator.   
-* `db` (Array or String)
+* `db` (Array or String)   
   The database name(s) to which the user should be added.   
 * `engine`    
   The engine type, can be MySQL or PostgreSQL, default to MySQL.   

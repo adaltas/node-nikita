@@ -6,8 +6,7 @@ Create a user for the destination database.
 ## Options
 
 * `admin_username`   
-  The login of the database administrator. It should have credentials to 
-  create accounts.   
+  The login of the database administrator.   
 * `admin_password`   
   The password of the database administrator.   
 * `engine`   
@@ -30,4 +29,3 @@ Create a user for the destination database.
 ## Dependencies
 
     db = require '../../misc/db'
-        
