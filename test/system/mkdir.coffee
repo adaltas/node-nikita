@@ -131,7 +131,6 @@ describe 'system.mkdir', ->
 
     they 'change mode as string', (ssh, next) ->
       # 40744: 4 for directory, 744 for permissions
-      @timeout 10000
       nikita.system.mkdir
         ssh: ssh
         directory: "#{scratch}/ssh_dir_string"
@@ -145,7 +144,6 @@ describe 'system.mkdir', ->
 
     they 'change mode as string', (ssh, next) ->
       # 40744: 4 for directory, 744 for permissions
-      @timeout 10000
       nikita.system.mkdir
         ssh: ssh
         directory: "#{scratch}/ssh_dir_string"
@@ -159,7 +157,6 @@ describe 'system.mkdir', ->
 
     they 'detect a permission change', (ssh, next) ->
       # 40744: 4 for directory, 744 for permissions
-      @timeout 10000
       nikita
         ssh: ssh
       .system.mkdir
@@ -178,7 +175,6 @@ describe 'system.mkdir', ->
       .then next
 
     they 'dont ovewrite permission', (ssh, next) ->
-      @timeout 10000
       nikita
         ssh: ssh
       .system.mkdir

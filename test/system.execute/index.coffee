@@ -39,8 +39,7 @@ describe 'system.execute', ->
       stdout.should.eql 'test options\n' unless err
     .then next
 
-  they 'stream stdout and unpipe', (ssh, next) -> #.skip 'remote',
-    @timeout 10000000
+  they 'stream stdout and unpipe', (ssh, next) ->
     writer_done = callback_done = null
     data = ''
     out = new stream.Writable
