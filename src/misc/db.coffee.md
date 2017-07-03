@@ -21,9 +21,17 @@ Escape SQL for Bash processing.
       options.engine = options.engine.toLowerCase()
       options.admin_password = null unless options.admin_username
       options.silent ?= true
-      throw Error "Required Option: \"engine\"" unless options.engine
-      throw Error "Required Option: \"host\"" unless options.host
-      throw Error "Required Option: \"admin_username\" or \"username\"" unless options.admin_username or options.username
+      throw Error 'Required Option: "engine"' unless options.engine
+      throw Error 'Required Option: "host"' unless options.host
+      if options.admin_username
+        throw Error 'Required Option: "admin_password"' unless options.admin_password
+        username = options.admin_username
+        password = options.admin_password
+      else if options.username
+        throw Error 'Required Option: "password"' unless options.password
+        username = options.username
+        password = options.password
+      else throw Error 'Required Option: "admin_username" or "username"'
       switch options.engine
         when 'mysql'
           options.path ?= 'mysql'
@@ -32,8 +40,8 @@ Escape SQL for Bash processing.
             "mysql"
             "-h#{options.host}"
             "-P#{options.port}"
-            "-u#{options.admin_username or options.username}"
-            "-p'#{options.admin_password or options.password}'"
+            "-u#{username}"
+            "-p'#{password}'"
             "-D#{options.database}" if options.database
             "#{options.mysql_options}" if options.mysql_options
             # -N, --skip-column-names   Don't write column names in results.

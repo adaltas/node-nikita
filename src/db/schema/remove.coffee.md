@@ -24,6 +24,9 @@ Create a user for the destination database.
       options.db ?= {}
       options[k] ?= v for k, v of options.db
       throw Error 'Missing option: "engine"' unless options.engine
+      throw Error 'Missing option: "schema"' unless options.schema
+      throw Error 'Missing option: "admin_username"' unless options.admin_username
+      throw Error 'Missing option: "admin_password"' unless options.admin_password
       # Defines and check the engine type 
       options.engine = options.engine.toLowerCase()
       throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['postgres']

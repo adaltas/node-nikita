@@ -23,6 +23,8 @@ Create a user for the destination database.
       options.db ?= {}
       options[k] ?= v for k, v of options.db
       options.database ?= options.argument
+      throw Error 'Missing option: "admin_username"' unless options.admin_username
+      throw Error 'Missing option: "admin_password"' unless options.admin_password
       # Avoid Postgres error "ERROR:  cannot drop the currently open database"
       database = options.database
       delete options.database
