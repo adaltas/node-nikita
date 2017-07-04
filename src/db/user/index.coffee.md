@@ -12,7 +12,7 @@ Create a user for the destination database.
   The password of the database administrator.   
 * `db` (Array or String)   
   The database name(s) to which the user should be added.   
-* `engine`    
+* `engine`   
   The engine type, can be MySQL or PostgreSQL, default to MySQL.   
 * `host`   
   The hostname of the database.   

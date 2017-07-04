@@ -11,7 +11,7 @@ Wait for the creation of a database.
   The password of the database administrator.   
 * `database` (Array or String)   
   The database name to check for existance.   
-* `engine`    
+* `engine`   
   The engine type, can be MySQL or PostgreSQL, required.   
 * `host`   
   The hostname of the database.   

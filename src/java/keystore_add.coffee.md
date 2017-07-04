@@ -35,11 +35,11 @@ alias value is "my-alias", the aliases will be "my-alias-0" then "my-alias-1"...
 
 ## Relevant Java properties
 
-* `javax.net.ssl.trustStore`
-* `javax.net.ssl.trustStorePassword`
-* `javax.net.ssl.keyStore`
-* `javax.net.ssl.keyStoreType`
-* `javax.net.ssl.keyStorePassword`
+* `javax.net.ssl.trustStore`   
+* `javax.net.ssl.trustStorePassword`   
+* `javax.net.ssl.keyStore`   
+* `javax.net.ssl.keyStoreType`   
+* `javax.net.ssl.keyStorePassword`   
 
 ## Relevant commands
 

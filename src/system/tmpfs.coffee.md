@@ -7,14 +7,14 @@ Mount a direcoty with tmpfs.d as a [tmpfs](https://www.freedesktop.org/software/
 
 * `age` (String)   
   Used to decide what files to delete when cleaning   
-* `argument` (String)
-  the destination path of the symlink if type is `L`
+* `argument` (String)   
+  the destination path of the symlink if type is `L`.   
 * `backup`   
   Create a backup, append a provided string to the filename extension or a
   timestamp if value is not a string.   
-* `mount`
+* `mount`   
   The mount point dir to create on system startup.   
-* `name`
+* `name`   
   The file name. can not be used with target. If only options.name is set, it
   writes the content to default configuration directory and creates the file 
   as '`name`.conf'   
@@ -23,10 +23,10 @@ Mount a direcoty with tmpfs.d as a [tmpfs](https://www.freedesktop.org/software/
   if uid is defined or /etc/tmpfiles.d/default.conf.   
 * `gid`   
   File group name or group id.   
-* `Perm`   (String)
+* `Perm`   (String)   
   target mount path mode in string format like `'0644'`.   
-* `merge` (boolean)
-   Overrides properties if already exits.
+* `merge` (boolean)   
+   Overrides properties if already exits.   
 * `uid`   
   File user name or user id.   
 

@@ -5,42 +5,42 @@ Download a file and place it on a local or remote folder for later usage.
 
 ## Options
 
-* `cache_dir` (path)
+* `cache_dir` (path)    
   If local_cache is not a string, the cache file path is resolved from cache dir and cache file.
-  By default: './'
-* `cache_file` (string | boolean)
-  Alias for "target".
-* `cache_local` (boolean)
+  By default: './'    
+* `cache_file` (string | boolean)   
+  Alias for "target".   
+* `cache_local` (boolean)   
   Apply to SSH mode, treat the cache file and directories as local from where
-  the command is used instead of over SSH.
-* `fail` (boolean)
+  the command is used instead of over SSH.   
+* `fail` (boolean)   
   Send an error if the HTTP response code is invalid. Similar to the curl
-  option of the same name.
-* `force` (boolean)
-  Overwrite the target file if it exists, bypass md5 verification.
-* `headers` (array)
-  Extra header  to include in the request when sending HTTP to a server.
-* `location` (boolean)
+  option of the same name.   
+* `force` (boolean)   
+  Overwrite the target file if it exists, bypass md5 verification.   
+* `headers` (array)   
+  Extra header  to include in the request when sending HTTP to a server.   
+* `location` (boolean)   
   If the server reports that the requested page has moved to a different
   location (indicated with a Location: header and a 3XX response code), this
-  option will make curl redo the request on the new place.
-* `proxy` (string)
+  option will make curl redo the request on the new place.   
+* `proxy` (string)   
   Use the specified HTTP proxy. If the port number is not specified, it is
-  assumed at port 1080. See curl(1) man page.
-* `source` (path)
+  assumed at port 1080. See curl(1) man page.   
+* `source` (path)   
   File, HTTP URL, FTP, GIT repository. File is the default protocol if source
-  is provided without any.
-* `target` (string | boolean)
+  is provided without any.   
+* `target` (string | boolean)   
   Cache the file on the executing machine, equivalent to cache unless an ssh
   connection is provided. If a string is provided, it will be the cache path.
-  Default to the basename of source.
+  Default to the basename of source.   
 
 ## Callback Parameters
 
-* `err`
-  Error object if any.
-* `status`
-  Value is "true" if cache file was created or modified.
+* `err`   
+  Error object if any.   
+* `status`   
+  Value is "true" if cache file was created or modified.   
 
 ## HTTP example
 

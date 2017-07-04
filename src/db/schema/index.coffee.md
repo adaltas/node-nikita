@@ -11,7 +11,7 @@ Create a database for the destination database.
   The password of the database administrator.   
 * `database` (String)   
   The database name where the schema is created.
-* `engine`    
+* `engine`   
   The engine type, can be MySQL or PostgreSQL. Default to MySQL   
 * `host`   
   The hostname of the database   

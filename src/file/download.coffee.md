@@ -30,12 +30,12 @@ calculated if neither sha256, sh1 nor md5 is provided.
 
 ## Options
 
-* `cache` (boolean)
+* `cache` (boolean)   
   Activate the cache, default to true if either "cache_dir" or "cache_file" is
   activated.   
 * `cache_dir` (path)   
   If local_cache is not a string, the cache file path is resolved from cache
-  dir and cache file.
+  dir and cache file.   
   By default: './'   
 * `cache_file` (string | boolean)   
   Cache the file on the executing machine, equivalent to cache unless an ssh
@@ -74,10 +74,10 @@ calculated if neither sha256, sh1 nor md5 is provided.
 
 ## Callback parameters
 
-* `err`
-  Error object if any.
-* `downloaded`
-  Value is "true" if file was downloaded.
+* `err`   
+  Error object if any.   
+* `downloaded`   
+  Value is "true" if file was downloaded.   
 
 ## File example
 

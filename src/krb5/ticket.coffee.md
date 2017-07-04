@@ -5,17 +5,17 @@ Renew the Kerberos ticket of a user principal inside a Unix session.
 
 ## Options
 
-* `principal`
-  Principal to be created.
-* `password`
+* `principal`   
+  Principal to be created.   
+* `password`   
   Password associated to this principal; required if no randkey is
-  provided.
-* `keytab`
-  Path to the file storing key entries.
+  provided.   
+* `keytab`   
+  Path to the file storing key entries.   
 * `cache_name` (string)    
   Path to Kerberos cache file.    
-* `uid`    
-  Unix uid or username of the Unix session
+* `uid`   
+  Unix uid or username of the Unix session   
 
 ## Keytab example
 

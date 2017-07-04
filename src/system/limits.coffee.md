@@ -160,10 +160,10 @@ _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
 
 ## Callback parameters
 
-* `err`
-    Error object if any.
-* `status`
-    Value is "true" if limits configuration file has been modified.
+* `err`   
+    Error object if any.   
+* `status`   
+    Value is "true" if limits configuration file has been modified.   
 
 ## Source Code
 
