@@ -52,7 +52,7 @@ require('nikita').system.chmod({
           return callback()
         # Apply changes
         fs.chmod options.ssh, options.target, options.mode, (err) ->
-          options.log message: "Change permissions from \"#{stat.mode}\" to \"#{options.mode}\" on \"#{options.target}\"", level: 'WARN', module: 'nikita/lib/system/chmod'
+          options.log message: "Change permissions from \"#{stat.mode.toString 8}\" to \"#{options.mode.toString 8}\" on \"#{options.target}\"", level: 'WARN', module: 'nikita/lib/system/chmod'
           callback err, true
       do_stat()
 
