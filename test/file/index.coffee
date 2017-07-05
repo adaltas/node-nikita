@@ -900,6 +900,35 @@ describe 'file', ->
         status.should.be.true() unless err
       .then next
 
+    they 'with specific permissions', (ssh, next) ->
+      nikita
+        ssh: ssh
+      .file
+        target: "#{scratch}/new_file_perm"
+        content: 'Hello World'
+      .file
+        target: "#{scratch}/new_file_perm"
+        content: 'Hello'
+        backup: '.bck1'
+      , (err, status) ->
+        status.should.be.true() unless err
+      .file.assert
+        target: "#{scratch}/new_file_perm.bck1"
+        content: 'Hello World'
+        mode: 0o0400
+      .file
+        target: "#{scratch}/new_file_perm"
+        content: 'Hello World'
+        backup: '.bck2'
+        backup_mode: 0o0640
+      , (err, status) ->
+        status.should.be.true() unless err
+      .file.assert
+        target: "#{scratch}/new_file_perm.bck2"
+        content: 'Hello'
+        mode: 0o0640
+      .then next
+
   describe 'write', ->
   
     they 'do multiple replace', (ssh, next) ->

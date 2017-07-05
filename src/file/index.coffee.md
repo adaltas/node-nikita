@@ -36,6 +36,9 @@ Write a file or a portion of an existing file.
 * `mode`   
   File mode (permission and sticky bits), default to `0o0644`, in the form of
   `{mode: 0o0744}` or `{mode: "0744"}`.   
+* `backup_mode`   
+  Backup file mode (permission and sticky bits), defaults to `0o0400`, in the 
+  form of `{mode: 0o0400}` or `{mode: "0400"}`.   
 * `place_before` (string, boolean, regex)   
   Place the content before the match.   
 * `replace`   
@@ -323,11 +326,13 @@ require('nikita').file({
         return unless @status()
         return unless options.backup and targetHash
         options.log message: "Create backup", level: 'INFO', module: 'nikita/lib/file'
+        options.backup_mode ?= 0o0400
         backup = if typeof options.backup is 'string' then options.backup else ".#{Date.now()}"
         @system.copy
           ssh: options.ssh
           source: options.target
           target: "#{options.target}#{backup}"
+          mode: options.backup_mode
       @call (_, callback) -> # file
         return callback() unless @status()
         if typeof options.target is 'function'
