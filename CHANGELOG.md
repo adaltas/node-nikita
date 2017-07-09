@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* sysctl: new action
 * repo: fix and refactor gpg verify
 
 ## Version 0.6.2

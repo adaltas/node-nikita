@@ -171,6 +171,7 @@ functions share a common API with flexible options.
         iptables: 'nikita/tools/iptables'
         git: 'nikita/tools/git'
         repo: 'nikita/tools/repo'
+        sysctl: 'nikita/tools/sysctl'
       wait:
         '': 'nikita/wait'
         execute: 'nikita/wait/execute'
