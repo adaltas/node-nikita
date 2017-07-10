@@ -41,13 +41,15 @@ RUN yum install -y postgresql
 ## Install Mysql client
 RUN yum install -y mysql
 
-# Install docker
-RUN curl -fsSL https://get.docker.com/ | sh
-RUN curl -L "https://github.com/docker/compose/releases/download/1.8.1/docker-compose-$(uname -s)-$(uname -m)" > /usr/local/bin/docker-compose
-RUN chmod +x /usr/local/bin/docker-compose
-
 # Install openssl
 RUN yum install -y openssl
+
+# Install docker
+# RUN curl -fsSL https://get.docker.com/ | sh
+RUN yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+RUN yum install -y docker-ce
+RUN curl -L "https://github.com/docker/compose/releases/tag/1.14.0/docker-compose-$(uname -s)-$(uname -m)" > /usr/local/bin/docker-compose
+RUN chmod +x /usr/local/bin/docker-compose
 
 RUN yum clean all
 

@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* docker centos7: update docker installation
 * sysctl: new action
 * file: set permission for backup (security fix)
 * repo: fix and refactor gpg verify
