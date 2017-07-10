@@ -909,6 +909,7 @@ describe 'file', ->
       .file
         target: "#{scratch}/new_file_perm"
         content: 'Hello'
+        mode: 0o0644
         backup: '.bck1'
       , (err, status) ->
         status.should.be.true() unless err
@@ -920,6 +921,7 @@ describe 'file', ->
         target: "#{scratch}/new_file_perm"
         content: 'Hello World'
         backup: '.bck2'
+        mode: 0o0644
         backup_mode: 0o0640
       , (err, status) ->
         status.should.be.true() unless err
