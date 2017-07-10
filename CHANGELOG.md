@@ -4,6 +4,7 @@
 ## Trunk
 
 * sysctl: new action
+* file: set permission for backup (security fix)
 * repo: fix and refactor gpg verify
 
 ## Version 0.6.2
