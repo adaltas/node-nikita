@@ -3,6 +3,8 @@
 
 ## Trunk
 
+* service: replace `which` by `command -v`
+* test: rename disable_service_start to disable_service_systemctl
 * docker centos7: update docker installation
 * sysctl: new action
 * file: set permission for backup (security fix)
