@@ -12,8 +12,8 @@ module.exports =
   disable_ldap_index: true # can be activated
   disable_ldap_user: true # can be activated
   disable_service_install: false
-  disable_service_start: true # cant be activated
   disable_service_startup: false
+  disable_service_systemctl: true # cant be activated because systemctl not compatible with Docker
   disable_db: false # can be activated
   disable_system_chmod: false
   disable_system_execute_arc_chroot: true #can not be activated
