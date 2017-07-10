@@ -29,6 +29,13 @@ Install a service. Yum, Yaourt, Pacman and apt-get are supported.
   Path to the mount point corresponding to the root directory, required if
   the "arch_chroot" option is activated.
 
+## Callback parameters
+
+* `err`   
+  Error object if any.   
+* `status`   
+  Indicates if the service was installed.   
+
 ## Example
 
 ```js

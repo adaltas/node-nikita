@@ -18,7 +18,7 @@ Status of a service. Note, does not throw an error if service is not installed.
 
 * `err`   
   Error object if any.   
-* `modified`   
+* `status`   
   Indicates if the startup behavior has changed.   
 
 ## Example

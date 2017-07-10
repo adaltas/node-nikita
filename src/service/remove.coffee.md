@@ -17,7 +17,7 @@ Status of a service.
 
 * `err`   
   Error object if any.   
-* `modified`   
+* `status`   
   Indicates if the startup behavior has changed.   
 
 ## Example

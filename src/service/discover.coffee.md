@@ -2,7 +2,7 @@
 # `nikita.service.discover(options, [callback])`
 
 Discover the OS init loader.
-For now it only supports Centos/Redhat OS in version 6 or 7, ubuntu.
+For now it only supports Centos/Redhat OS in version 6 or 7, Ubuntu.
 Store properties in the nikita store object.
 
 ## Options

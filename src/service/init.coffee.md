@@ -33,6 +33,13 @@ Reload the service daemon provider depending on the os.
   File mode (permission and sticky bits), default to `0666`, in the for of
   `{mode: 0o744}` or `{mode: "744"}`.   
 
+## Callback parameters
+
+* `err`   
+  Error object if any.   
+* `status`   
+  Indicates if the init script was reloaded.   
+
 ## Source Code
     
     module.exports = (options) ->
@@ -59,7 +66,7 @@ Reload the service daemon provider depending on the os.
           context: options.context
           local: options.local
         @system.execute
-          if: -> (options.loader is 'systemctl')
+          if: -> options.loader is 'systemctl'
           shy: true
           cmd: """
             systemctl status #{options.name} 2>\&1 | egrep \
@@ -67,7 +74,7 @@ Reload the service daemon provider depending on the os.
             """
           code_skipped: 1
         @system.execute
-          if: ->  @status(-1)
+          if: ->  @status -1
           cmd: 'systemctl daemon-reload'
 
 ## Dependencies
