@@ -45,11 +45,11 @@ require('nikita').service.start([{
         installed = options.store['nikita:execute:installed']
       @system.execute
         cmd: """
-        if which yum >/dev/null 2>&1; then
+        if command -v yum >/dev/null 2>&1; then
           rpm -qa --qf "%{NAME}\n"
-        elif which pacman >/dev/null 2>&1; then
+        elif command -v pacman >/dev/null 2>&1; then
           pacman -Qqe
-        elif which apt-get >/dev/null 2>&1; then
+        elif command -v apt-get >/dev/null 2>&1; then
           dpkg -l | grep \'^ii\' | awk \'{print $2}\'
         else
           echo "Failed Package Installed" >&2
@@ -68,11 +68,11 @@ require('nikita').service.start([{
         installed = for pkg in string.lines(stdout) then pkg
       @system.execute
         cmd: """
-        if which yum >/dev/null 2>&1; then
+        if command -v yum >/dev/null 2>&1; then
           yum remove -y #{cacheonly} '#{options.name}'
-        elif which pacman >/dev/null 2>&1; then
+        elif command -v pacman >/dev/null 2>&1; then
           pacman --noconfirm -R #{options.name}
-        elif which apt-get >/dev/null 2>&1; then
+        elif command -v apt-get >/dev/null 2>&1; then
           apt-get remove -y #{options.name}
         else
           echo "Unsupported Package Manager: yum, pacman, apt-get supported" >&2

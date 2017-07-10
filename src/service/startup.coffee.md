@@ -54,11 +54,11 @@ require('nikita').service.startup([{
       @system.execute
         unless: options.cmd
         cmd: """
-        if which systemctl >/dev/null 2>&1; then
+        if command -v systemctl >/dev/null 2>&1; then
           echo 'systemctl'
-        elif which chkconfig >/dev/null 2>&1; then
+        elif command -v chkconfig >/dev/null 2>&1; then
           echo 'chkconfig'
-        elif which update-rc.d >/dev/null 2>&1; then
+        elif command -v update-rc.d >/dev/null 2>&1; then
           echo 'update-rc'
         else
           echo "Unsupported Loader" >&2

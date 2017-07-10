@@ -64,11 +64,11 @@ require('nikita').service.install({
       @system.execute
         unless: options.installed?
         cmd: """
-        if which yum >/dev/null 2>&1; then
+        if command -v yum >/dev/null 2>&1; then
           rpm -qa --qf "%{NAME}\n"
-        elif which pacman >/dev/null 2>&1; then
+        elif command -v pacman >/dev/null 2>&1; then
           pacman -Qqe
-        elif which apt-get >/dev/null 2>&1; then
+        elif command -v apt-get >/dev/null 2>&1; then
           dpkg -l | grep \'^ii\' | awk \'{print $2}\'
         else
           echo "Failed Package Installed" >&2
@@ -92,11 +92,11 @@ require('nikita').service.install({
         unless: options.outpdated?
         if: -> options.installed.indexOf(options.name) is -1
         cmd: """
-        if which yum >/dev/null 2>&1; then
+        if command -v yum >/dev/null 2>&1; then
           yum #{cacheonly} list updates | egrep updates$ | sed 's/\\([^\\.]*\\).*/\\1/'
-        elif which pacman >/dev/null 2>&1; then
+        elif command -v pacman >/dev/null 2>&1; then
           pacman -Qu | sed 's/\\([^ ]*\\).*/\\1/'
-        elif which apt-get >/dev/null 2>&1; then
+        elif command -v apt-get >/dev/null 2>&1; then
           apt-get -u upgrade --assume-no | grep '^\\s' | sed 's/\\s/\\n/g'
         else
           echo "Failed Package Updates" >&2
@@ -118,13 +118,13 @@ require('nikita').service.install({
       @system.execute
         if: -> options.installed.indexOf(options.name) is -1 or options.outpdated.indexOf(options.name) isnt -1
         cmd: """
-        if which yum >/dev/null 2>&1; then
+        if command -v yum >/dev/null 2>&1; then
           yum install -y #{cacheonly} #{options.name}
-        elif which yaourt >/dev/null 2>&1; then
+        elif command -v yaourt >/dev/null 2>&1; then
           yaourt --noconfirm -S #{options.name}
-        elif which pacman >/dev/null 2>&1; then
+        elif command -v pacman >/dev/null 2>&1; then
           pacman --noconfirm -S #{options.name}
-        elif which apt-get >/dev/null 2>&1; then
+        elif command -v apt-get >/dev/null 2>&1; then
           apt-get install -y #{options.name}
         else
           echo "Unsupported Package Manager: yum, pacman, apt-get supported" >&2

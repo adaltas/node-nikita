@@ -34,8 +34,8 @@ Store properties in the nikita store object.
         shy: options.shy
         unless: options.store['nikita:service:loader']?
         cmd: """
-        if which systemctl >/dev/null; then exit 1; fi ;
-        if which service >/dev/null; then exit 2; fi ;
+        if command -v systemctl >/dev/null; then exit 1; fi ;
+        if command -v service >/dev/null; then exit 2; fi ;
         exit 3 ;
         """
         code: [1, 2]
