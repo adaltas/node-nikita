@@ -23,39 +23,41 @@ describe 'cron', ->
   they 'add a job', (ssh, next) ->
     nikita
       ssh: ssh
+    .service 'cronie'
     .cron.add
       cmd: "/bin/true #{rand}/toto - *.mp3"
       when: '0 * * * *'
-    , (err, executed) ->
-      executed.should.be.true()
+    , (err, status) ->
+      status.should.be.true()
     .cron.add
       cmd: "/bin/true #{rand}/toto - *.mp3"
       when: '0 * * * *'
-    , (err, executed) ->
-      executed.should.be.false()
+    , (err, status) ->
+      status.should.be.false()
     .cron.remove
       cmd: "/bin/true #{rand}/toto - *.mp3"
       when: '0 * * * *'
-    , (err, executed) ->
-      executed.should.be.true()
+    , (err, status) ->
+      status.should.be.true()
     .cron.remove
       cmd: "/bin/true #{rand}/toto - *.mp3"
       when: '0 * * * *'
-    , (err, executed) ->
-      executed.should.be.false()
-    .then next  
+    , (err, status) ->
+      status.should.be.false()
+    .promise()
 
   describe 'match', ->
 
     they 'regexp', (ssh, next) ->
       nikita
         ssh: ssh
+      .service 'cronie'
       .cron.add
         cmd: "/bin/true #{rand}"
         when: '0 * * * *'
         match: '.*bin.*'
-      , (err, executed) ->
-        executed.should.be.true()
+      , (err, status) ->
+        status.should.be.true()
       .cron.add
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
@@ -65,14 +67,14 @@ describe 'cron', ->
             { count: 1, added: undefined, removed: true, value: "0 * * * * /bin/false #{rand}" }
             { count: 1, added: true, removed: undefined, value: "0 * * * * /bin/true #{rand}" }
           ]
-      , (err, executed) ->
-        executed.should.be.true() unless err
+      , (err, status) ->
+        status.should.be.true() unless err
       .cron.add
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
         match: /.*bin.*/
-      , (err, executed) ->
-        executed.should.be.false() unless err
+      , (err, status) ->
+        status.should.be.false() unless err
       .cron.remove
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
@@ -81,12 +83,13 @@ describe 'cron', ->
     they 'string', (ssh, next) ->
       nikita
         ssh: ssh
+      .service 'cronie'
       .cron.add
         cmd: "/bin/true #{rand}"
         when: '0 * * * *'
         match: '.*bin.*'
-      , (err, executed) ->
-        executed.should.be.true() unless err
+      , (err, status) ->
+        status.should.be.true() unless err
       .cron.add
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
@@ -96,14 +99,14 @@ describe 'cron', ->
             { count: 1, added: undefined, removed: true, value: "0 * * * * /bin/false #{rand}" }
             { count: 1, added: true, removed: undefined, value: "0 * * * * /bin/true #{rand}" }
           ]
-      , (err, executed) ->
-        executed.should.be.true() unless err
+      , (err, status) ->
+        status.should.be.true() unless err
       .cron.add
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
         match: '.*bin.*'
-      , (err, executed) ->
-        executed.should.be.false() unless err
+      , (err, status) ->
+        status.should.be.false() unless err
       .cron.remove
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
@@ -114,48 +117,58 @@ describe 'cron', ->
     they 'invalid job: no time', (ssh, next) ->
       nikita
         ssh: ssh
+      .service 'cronie'
       .cron.add
         cmd: '/remove/me'
-      , (err, executed) ->
+        relax: true
+      , (err) ->
         err.message.should.eql 'valid when is required'
       .then -> next()
 
     they 'invalid job: invalid time', (ssh, next) ->
       nikita
         ssh: ssh
+      .service 'cronie'
       .cron.add
         cmd: '/remove/me'
         when: true
-      , (err, executed) ->
+        relax: true
+      , (err) ->
         err.message.should.eql 'valid when is required'
       .then -> next()
 
     they 'invalid job: no cmd', (ssh, next) ->
       nikita
         ssh: ssh
+      .service 'cronie'
       .cron.add
         when: '1 2 3 4 5'
-      , (err, executed) ->
+        relax: true
+      , (err) ->
         err.message.should.eql 'valid cmd is required'
       .then -> next()
 
     they 'invalid job: invalid cmd', (ssh, next) ->
       nikita
         ssh: ssh
+      .service 'cronie'
       .cron.add
         cmd: ''
         when: '1 2 3 4 5'
-      , (err, executed) ->
+        relax: true
+      , (err) ->
         err.message.should.eql 'valid cmd is required'
       .then -> next()
 
     they 'invalid job: invalid cmd to exec', (ssh, next) ->
       nikita
         ssh: ssh
+      .service 'cronie'
       .cron.add
         cmd: 'azertyytreza'
         when: '1 2 3 4 5'
         exec: true
+        relax: true
       , (err, added) ->
         err.code.should.eql 127
         next()

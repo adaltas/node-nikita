@@ -3,12 +3,13 @@
 
 ## Trunk
 
-* service: replace `which` by `command -v`
-* test: rename disable_service_start to disable_service_systemctl
-* docker centos7: update docker installation
-* sysctl: new action
+* cron: test now passing on centos7 [bug]
+* service: replace `which` by `command -v` [enhancement]
+* test: rename disable_service_start to disable_service_systemctl [enhancement]
+* docker centos7: update docker installation [enhancement]
+* sysctl: new action [feature]
 * file: set permission for backup (security fix)
-* repo: fix and refactor gpg verify
+* repo: fix and refactor gpg verify [bug]
 
 ## Version 0.6.2
 

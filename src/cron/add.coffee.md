@@ -43,7 +43,7 @@ require('nikita').cron.add({
 ## Source Code
 
     module.exports = (options, callback) ->
-      return callback Error 'valid when is required' unless options.when
+      return callback Error 'valid when is required' unless options.when and typeof options.when is 'string'
       return callback Error 'valid cmd is required' unless options.cmd
       if options.user?
         options.log message: "Using user #{options.user}", level: 'DEBUG', module: 'nikita/cron/add'
