@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* package: npm lock file
 * doc: migrate to nikita-www and clean up
 * cron: test now passing on centos7 [bug]
 * service: replace `which` by `command -v` [enhancement]
