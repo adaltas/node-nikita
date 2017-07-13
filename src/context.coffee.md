@@ -248,7 +248,7 @@
         if array.compare options.type, ['end']
           return conditions.all proxy, options
           , ->
-            while todos[0] and todos[0].type isnt 'then' then todos.shift()
+            while todos[0] and todos[0].type not in ['then', 'promise'] then todos.shift()
             callback err if callback
             run()
           , (err) ->
