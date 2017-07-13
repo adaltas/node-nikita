@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* file.assert: validate file types
 * context: end honoring promise
 * package: npm lock file
 * doc: migrate to nikita-www and clean up

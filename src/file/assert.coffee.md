@@ -9,6 +9,11 @@ Assert a file exists or a provided text match the content of a text file.
   Text to validate.   
 * `encoding` (string)   
   Content encoding, see the Node.js supported Buffer encoding.   
+* `filetype` (string|array)   
+  Validate the file, could be any [file type constants](https://nodejs.org/api/fs.html#fs_file_type_constants)
+  or one of 'ifreg', 'file', 'ifdir', 'directory', 'ifchr', 'chardevice', 
+  'iffblk', 'blockdevice', 'ififo', 'fifo', 'iflink', 'symlink', 'ifsock', 
+  'socket'.   
 * `md5` (string)   
   Validate signature.   
 * `mode` (string)   
@@ -48,6 +53,21 @@ nikita.assert({
       options.encoding ?= 'utf8'
       options.target ?= options.argument
       options.target ?= options.source
+      options.filetype ?= []
+      options.filetype = [options.filetype] unless Array.isArray options.filetype
+      options.filetype = for filetype in options.filetype
+        continue unless filetype
+        if typeof filetype is 'string'
+          switch filetype.toLowerCase()
+            when 'ifreg', 'file' then fs.constants.S_IFREG
+            when 'ifdir', 'directory' then fs.constants.S_IFDIR
+            when 'ifchr', 'chardevice' then fs.constants.S_IFCHR
+            when 'iffblk', 'blockdevice' then fs.constants.S_IFBLK
+            when 'ififo', 'fifo' then fs.constants.S_IFIFO
+            when 'iflink', 'symlink' then fs.constants.S_IFLNK
+            when 'ifsock', 'socket' then fs.constants.S_IFSOCK
+            else filetype
+        else filetype
       throw Error 'Missing option: "target"' unless options.target
       if typeof options.content is 'string'
         options.content = Buffer.from options.content, options.encoding
@@ -67,6 +87,29 @@ nikita.assert({
               options.error ?= "File exists: #{JSON.stringify options.target}"
               err = Error options.error
           callback err
+      # Assert file filetype
+      @call
+        if: options.filetype.length
+      , (_, callback) ->
+        fs.stat options.ssh, options.target, (err, stat) ->
+          return callback err if err
+          if fs.constants.S_IFREG in options.filetype
+            return callback Error "Invalid filetype: expect a regular file" unless stat.isFile()
+          else if fs.constants.S_IFDIR in options.filetype
+            return callback Error "Invalid filetype: expect a directory" unless stat.isDirectory()
+          else if fs.constants.S_IFCHR in options.filetype
+            return callback Error "Invalid filetype: expect a character-oriented device file" unless stat.isDirectory()
+          else if fs.constants.S_IFBLK in options.filetype
+            return callback Error "Invalid filetype: expect a block-oriented device file" unless stat.isDirectory()
+          else if fs.constants.S_IFIFO in options.filetype
+            return callback Error "Invalid filetype: expect a FIFO/pipe" unless stat.isDirectory()
+          else if fs.constants.S_IFLNK in options.filetype
+            return callback Error "Invalid filetype: expect a symbolic link" unless stat.isDirectory()
+          else if fs.constants.S_IFSOCK in options.filetype
+            return callback Error "Invalid filetype: expect a socket" unless stat.isDirectory()
+          else
+            return callback Error "Invalid filetype: #{options.filetype.join ' '}"
+          callback()
       # Assert content equal
       @call
         if: options.content? and (typeof options.content is 'string' or Buffer.isBuffer options.content)
@@ -116,7 +159,7 @@ nikita.assert({
               options.error ?= "Matching #{algo} signature: #{JSON.stringify hash}"
               err = Error options.error
           callback err
-      # Assert uid and gid ownerships
+      # Assert uid ownerships
       @call
         if: options.uid
       , (_, callback) ->
@@ -131,6 +174,7 @@ nikita.assert({
               options.error ?= "Unexpected matching uid: expected \"#{options.uid}\""
               err = Error options.error
           callback err
+      # Assert gid ownerships
       @call
         if: options.gid
       , (_, callback) ->

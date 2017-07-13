@@ -3,6 +3,7 @@ nikita = require '../../src'
 misc = require '../../src/misc'
 test = require '../test'
 they = require 'ssh2-they'
+fs = require 'fs'
 
 describe 'file.assert', ->
 
@@ -54,6 +55,44 @@ describe 'file.assert', ->
         err.message.should.eql 'Got it'
       .then next
   
+  describe 'type', ->
+    
+    they 'assert a file', (ssh) ->
+      nikita
+        ssh: ssh
+      .file.touch "#{scratch}/a_file"
+      .file.assert
+        target: "#{scratch}/a_file"
+        filetype: 'file'
+      .file.assert
+        target: "#{scratch}/a_file"
+        filetype: fs.constants.S_IFREG
+      .file.assert
+        target: "#{scratch}"
+        filetype: 'file'
+        relax: true
+      , (err) ->
+        err.message.should.eql 'Invalid filetype: expect a regular file'
+      .promise()
+    
+    they 'assert a directory', (ssh) ->
+      nikita
+        ssh: ssh
+      .file.assert
+        target: "#{scratch}"
+        filetype: 'directory'
+      .file.assert
+        target: "#{scratch}"
+        filetype: fs.constants.S_IFDIR
+      .file.touch "#{scratch}/a_file"
+      .file.assert
+        target: "#{scratch}/a_file"
+        filetype: 'directory'
+        relax: true
+      , (err) ->
+        err.message.should.eql 'Invalid filetype: expect a directory'
+      .promise()
+
   describe 'content', ->
 
     they 'content match', (ssh, next) ->
