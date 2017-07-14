@@ -11,10 +11,11 @@ Write a file or a portion of an existing file.
 * `backup`   
   Create a backup, append a provided string to the filename extension or a
   timestamp if value is not a string.   
+* `backup_mode`   
+  Backup file mode (permission and sticky bits), defaults to `0o0400`, in the 
+  form of `{mode: 0o0400}` or `{mode: "0400"}`.   
 * `content`   
   Text to be written, an alternative to source which reference a file.   
-* `target`   
-  File path where to write content to.   
 * `diff` (boolean | function)   
   Print diff information, pass a readable diff and the result of [jsdiff.diffLines][diffLines] as
   arguments if a function, default to true.   
@@ -36,9 +37,6 @@ Write a file or a portion of an existing file.
 * `mode`   
   File mode (permission and sticky bits), default to `0o0644`, in the form of
   `{mode: 0o0744}` or `{mode: "0744"}`.   
-* `backup_mode`   
-  Backup file mode (permission and sticky bits), defaults to `0o0400`, in the 
-  form of `{mode: 0o0400}` or `{mode: "0400"}`.   
 * `place_before` (string, boolean, regex)   
   Place the content before the match.   
 * `replace`   
@@ -47,6 +45,8 @@ Write a file or a portion of an existing file.
 * `source`   
   File path from where to extract the content, do not use conjointly with   
   content.   
+* `target`   
+  File path where to write content to.   
 * `to`   
   Replace to before this marker, a string or a regular expression.   
 * `uid`   
@@ -56,9 +56,6 @@ Write a file or a portion of an existing file.
 * `write`   
   An array containing multiple transformation where a transformation is an
   object accepting the options `from`, `to`, `match` and `replace`.   
-* `ssh` (object|ssh2)   
-  Run the action on a remote server using SSH, an ssh2 instance or an
-  configuration object used to initialize the SSH connection.   
 
 ## Callback parameters
 
