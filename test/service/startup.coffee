@@ -7,53 +7,59 @@ describe 'service.startup', ->
   
   @timeout 30000
   config = test.config()
-  return if config.disable_service_startup
   
-  they 'from service', (ssh, next) ->
-    nikita
-      ssh: ssh
-    .service.remove
-      name: config.service.name
-    .service
-      name: config.service.name
-      chk_name: config.service.chk_name
-      startup: true
-    , (err, status) ->
-      status.should.be.true() unless err
-    .service
-      name: config.service.name
-      chk_name: config.service.chk_name
-      startup: true
-    , (err, status) ->
-      status.should.be.false() unless err
-    .service
-      name: config.service.name
-      chk_name: config.service.chk_name
-      startup: false
-    , (err, status) ->
-      status.should.be.true() unless err
-    .service
-      name: config.service.name
-      chk_name: config.service.chk_name
-      startup: false
-    , (err, status) ->
-      status.should.be.false() unless err
-    .then next
+  describe 'startup', ->
     
-  they 'string argument', (ssh, next) ->
-    nikita
-      ssh: ssh
-    .service.remove
-      name: config.service.name
-    .service.install config.service.name
-    .service.startup
-      startup: false
-      name: config.service.chk_name
-    .service.startup config.service.chk_name, (err, status) ->
-      status.should.be.true() unless err
-    .then next
+    return if config.disable_service_startup
+  
+    they 'from service', (ssh, next) ->
+      nikita
+        ssh: ssh
+      .service.remove
+        name: config.service.name
+      .service
+        name: config.service.name
+        chk_name: config.service.chk_name
+        startup: true
+      , (err, status) ->
+        status.should.be.true() unless err
+      .service
+        name: config.service.name
+        chk_name: config.service.chk_name
+        startup: true
+      , (err, status) ->
+        status.should.be.false() unless err
+      .service
+        name: config.service.name
+        chk_name: config.service.chk_name
+        startup: false
+      , (err, status) ->
+        status.should.be.true() unless err
+      .service
+        name: config.service.name
+        chk_name: config.service.chk_name
+        startup: false
+      , (err, status) ->
+        status.should.be.false() unless err
+      .then next
+      
+    they 'string argument', (ssh, next) ->
+      nikita
+        ssh: ssh
+      .service.remove
+        name: config.service.name
+      .service.install config.service.name
+      .service.startup
+        startup: false
+        name: config.service.chk_name
+      .service.startup config.service.chk_name, (err, status) ->
+        status.should.be.true() unless err
+      .then next
   
   describe 'chkconfig', ->
+    
+    return if config.disable_service_startup
+    return if config.disable_service_systemctl
 
     they 'notice a change in startup level ', (ssh, next) ->
       nikita

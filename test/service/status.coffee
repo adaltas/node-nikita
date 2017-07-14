@@ -7,7 +7,7 @@ describe 'service.status', ->
   
   @timeout 20000
   config = test.config()
-  return if config.disable_service_start
+  return if config.disable_service_systemctl
   
   they 'store status', (ssh, next) ->
     nikita
