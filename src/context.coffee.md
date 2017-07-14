@@ -365,8 +365,13 @@
             options.callback = undefined
             called = false
             try
+              # Option to inject
               opts = {}
+              # Clone first level properties
               for k, v of options then opts[k] = v
+              for option, propagate of obj.propagation
+                delete opts[option] if propagate is false
+              # Handle deprecation
               options_handler = ( (options_handler) ->
                 util.deprecate ->
                   options_handler.apply @, arguments
@@ -555,6 +560,16 @@
       stdout: true
       stderr: true
       debug: true
+      after: false
+      before: false
+      disabled: false
+      domain: false
+      handler: false
+      header: false
+      once: false
+      relax: false
+      shy: false
+      wait: false
 
 ## Helper functions
 

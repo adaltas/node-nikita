@@ -29,6 +29,16 @@ describe 'api propagation', ->
       @call (options) ->
         options.my_context_option.should.be.equal 'value'
     .then next
+  
+  it 'dont propagate context options', (next) ->
+    n = nikita
+    .call ->
+      n.propagation.header.should.be.false()
+    .call header: 'h1', (options) ->
+      (options.header is undefined).should.be.true()
+      @call header: 'h2', (options) ->
+        (options.header is undefined).should.be.true()
+    .then next
 
   it 'global dont overwrite local options', (next) ->
     m = nikita

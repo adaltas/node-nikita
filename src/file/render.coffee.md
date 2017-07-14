@@ -96,7 +96,6 @@ require('nikita').file.render({
             when '.j2' then options.engine = 'nunjunks'
             when '.eco' then options.engine = 'eco'
         options.source = null
-        options.header = null
         @file options
 
 ## Dependencies

@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* propagation: prevent context option to propagate
 * propagation: rename from propagated_option, refactor as object
 * file.assert: validate file types
 * context: end honoring promise
