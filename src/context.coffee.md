@@ -14,8 +14,10 @@
         obj = new EventEmitter
         obj.options = {}
       obj.registry ?= {}
-      obj.propagated_options ?= []
-      for option in module.exports.propagated_options then obj.propagated_options.push option
+      obj.propagation ?= obj.options.propagation or {}
+      # Merge global default propagation
+      for k, v of module.exports.propagation
+        obj.propagation[k] = v unless obj.propagation[k] isnt undefined
       store = {}
       properties = {}
       stack = []
@@ -131,7 +133,7 @@
         options = {}
         for k, v of user_options then options[k] = user_options[k]
         for k, v of parent_options
-          options[k] = v if options[k] is undefined and k in obj.propagated_options
+          options[k] = v if options[k] is undefined and obj.propagation[k]
         for k, v of global_options
           options[k] = v if options[k] is undefined
         unless options.log?.dont
@@ -547,7 +549,12 @@
       proxy.ssh.open obj.options.ssh if obj.options.ssh and not obj.options.ssh.config
       proxy
 
-    module.exports.propagated_options = ['ssh', 'log', 'stdout', 'stderr', 'debug']
+    module.exports.propagation = 
+      ssh: true
+      log: true
+      stdout: true
+      stderr: true
+      debug: true
 
 ## Helper functions
 

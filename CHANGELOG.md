@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* propagation: rename from propagated_option, refactor as object
 * file.assert: validate file types
 * context: end honoring promise
 * package: npm lock file
