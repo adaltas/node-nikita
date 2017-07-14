@@ -7,7 +7,7 @@ describe 'options "relax"', ->
 
   scratch = test.scratch @
 
-  it 'sync', (next) ->
+  it 'sync', ->
     nikita
     .call relax: true, ->
       throw Error 'Dont worry, be happy'
@@ -23,9 +23,9 @@ describe 'options "relax"', ->
     .then (err, status) ->
       (err is null).should.be.true()
       status.should.be.true() unless err
-      next()
+    .promise()
 
-  it 'sync with error throw in child', (next) ->
+  it 'sync with error throw in child', ->
     nikita
     .call relax: true, ->
       @call ->
@@ -54,9 +54,9 @@ describe 'options "relax"', ->
     .then (err, status) ->
       (err is null).should.be.true()
       status.should.be.true() unless err
-      next()
+    .promise()
 
-  it 'async', (next) ->
+  it 'async', ->
     nikita
     .call relax: true, ({}, callback) ->
       setImmediate ->
@@ -68,4 +68,4 @@ describe 'options "relax"', ->
     .then (err, status) ->
       (err is null).should.be.true()
       status.should.be.true() unless err
-      next()
+    .promise()

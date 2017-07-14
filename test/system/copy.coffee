@@ -29,7 +29,7 @@ describe 'system.copy', ->
 
   describe 'file', ->
 
-    they 'with a filename inside a existing directory', (ssh, next) ->
+    they 'with a filename inside a existing directory', (ssh) ->
       # @timeout 1000000
       source = "#{__dirname}/../resources/a_dir/a_file"
       target = "#{scratch}/a_new_file"
@@ -39,8 +39,7 @@ describe 'system.copy', ->
         source: source
         target: target
       , (err, status) ->
-        return next err if err
-        status.should.be.true()
+        status.should.be.true() unless err
       .file.assert
         target: target
         md5: '3fb7c40c70b0ed19da713bd69ee12014'
@@ -49,11 +48,10 @@ describe 'system.copy', ->
         source: source
         target: target
       , (err, status) ->
-        return next err if err
-        status.should.be.false()
-        next()
+        status.should.be.false() unless err
+      .promise()
 
-    they 'into a directory', (ssh, next) ->
+    they 'into a directory', (ssh) ->
       source = "#{__dirname}/../resources/a_dir/a_file"
       nikita
         ssh: ssh
@@ -66,9 +64,9 @@ describe 'system.copy', ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/existing_dir/a_file"
-      .then next
+      .promise()
 
-    they 'over an existing file', (ssh, next) ->
+    they 'over an existing file', (ssh) ->
       source = "#{__dirname}/../resources/a_dir/a_file"
       target = "#{scratch}/test_this_file"
       nikita
@@ -89,9 +87,9 @@ describe 'system.copy', ->
         target: target
       , (err, status) ->
         status.should.be.false() unless err
-      .then next
+      .promise()
 
-    they 'change permissions', (ssh, next) ->
+    they 'change permissions', (ssh) ->
       source = "#{__dirname}/../resources/a_dir/a_file"
       target = "#{scratch}/test_this_file"
       nikita
@@ -116,9 +114,9 @@ describe 'system.copy', ->
       .file.assert
         target: target
         mode: 0o0755
-      .then next
+      .promise()
 
-    they 'handle hidden files', (ssh, next) ->
+    they 'handle hidden files', (ssh) ->
       nikita
       .file
         ssh: ssh
@@ -131,11 +129,11 @@ describe 'system.copy', ->
       .file.assert
         target: "#{scratch}/.a_copy"
         content: 'hello'
-      .then next
+      .promise()
           
   describe 'link', ->
 
-    they 'file into file', (ssh, next) ->
+    they 'file into file', (ssh) ->
       nikita
         ssh: ssh
       .file
@@ -150,9 +148,9 @@ describe 'system.copy', ->
       .file.assert
         target: "#{scratch}/dst_file"
         content: 'hello'
-      .then next
+      .promise()
 
-    they 'file parent dir', (ssh, next) ->
+    they 'file parent dir', (ssh) ->
       nikita
         ssh: ssh
       .file
@@ -171,11 +169,11 @@ describe 'system.copy', ->
       .file.assert
         target: "#{scratch}/ln_file"
         content: 'hello'
-      .then next
+      .promise()
           
   describe 'directory', ->
 
-    they 'should copy without slash at the end', (ssh, next) ->
+    they 'should copy without slash at the end', (ssh) ->
       nikita
         ssh: ssh
       # if the target doesn't exists, then copy as target
@@ -196,9 +194,9 @@ describe 'system.copy', ->
       .call (_, callback) ->
         checkDir ssh, "#{scratch}/toto/resources", (err) ->
           callback err
-      .then next
+      .promise()
 
-    they 'should copy the files when dir end with slash', (ssh, next) ->
+    they 'should copy the files when dir end with slash', (ssh) ->
       nikita
         ssh: ssh
       # if the target doesn't exists, then copy as target
@@ -219,9 +217,9 @@ describe 'system.copy', ->
       .call (_, callback) ->
         checkDir ssh, "#{scratch}/lulu", (err) ->
           callback err
-      .then next
+      .promise()
 
-    they 'should copy hidden files', (ssh, next) ->
+    they 'should copy hidden files', (ssh) ->
       nikita
         ssh: ssh
       .system.mkdir
@@ -242,9 +240,9 @@ describe 'system.copy', ->
             '/tmp/nikita-test/a_copy/a_file'
           ]
           callback()
-      .then next
+      .promise()
 
-    they.skip 'should copy with globing and hidden files', (ssh, next) ->
+    they.skip 'should copy with globing and hidden files', (ssh) ->
       nikita
         ssh: ssh
       # if the target doesn't exists, then copy as target
@@ -256,4 +254,4 @@ describe 'system.copy', ->
       .call (_, callback) ->
         glob ssh, "#{scratch}/**", dot: true, (err, files) ->
           callback err
-      .then next
+      .promise()

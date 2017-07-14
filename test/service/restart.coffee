@@ -9,7 +9,7 @@ describe 'service.restart', ->
   config = test.config()
   return if config.disable_service_systemctl
 
-  they 'should restart', (ssh, next) ->
+  they 'should restart', (ssh) ->
     nikita
       ssh: ssh
     .service
@@ -20,4 +20,4 @@ describe 'service.restart', ->
       name: config.service.srv_name
     , (err, restarted) ->
       restarted.should.be.true()
-    .then next
+    .promise()

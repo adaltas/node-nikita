@@ -7,7 +7,7 @@ describe 'options "before"', ->
 
   scratch = test.scratch @
   
-  it 'is a function', (next) ->
+  it 'is a function', ->
     history = []
     nikita
     .call
@@ -16,9 +16,9 @@ describe 'options "before"', ->
       handler: (options) -> history.push "handler #{options.key}"
     .then (err) ->
       history.should.eql ['before 1', 'handler 1'] unless err
-      next err
+    .promise()
   
-   it 'has custom options', (next) ->
+   it 'has custom options',  ->
      history = []
      nikita
      .call
@@ -27,9 +27,9 @@ describe 'options "before"', ->
        handler: (options) -> history.push "handler #{options.key}"
      .then (err) ->
        history.should.eql ['before 2', 'handler 1'] unless err
-       next err
+     .promise()
     
-    it 'register child handlers', (next) ->
+    it 'register child handlers', ->
       history = []
       nikita
       .call
@@ -40,4 +40,4 @@ describe 'options "before"', ->
         handler: (options) -> history.push "handler #{options.key}"
       .then (err) ->
         history.should.eql ['before parent', 'handler child', 'handler parent'] unless err
-        next err
+      .promise()

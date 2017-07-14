@@ -7,7 +7,7 @@ describe 'file.types.locale_gen', ->
 
   scratch = test.scratch @
 
-  they 'activate locales', (ssh, next) ->
+  they 'activate locales', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -36,9 +36,9 @@ describe 'file.types.locale_gen', ->
       #fr_FR ISO-8859-1
       #es_ES.UTF-8 UTF-8
       """
-    .then next
+    .promise()
 
-  they 'desactivate locales', (ssh, next) ->
+  they 'desactivate locales', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -67,9 +67,9 @@ describe 'file.types.locale_gen', ->
       #fr_FR ISO-8859-1
       #es_ES.UTF-8 UTF-8
       """
-    .then next
+    .promise()
 
-  they 'rootdir with default target', (ssh, next) ->
+  they 'rootdir with default target', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -83,4 +83,4 @@ describe 'file.types.locale_gen', ->
     .file.assert
       target: "#{scratch}/etc/locale.gen"
       content: "en_US.UTF-8 UTF-8"
-    .then next
+    .promise()

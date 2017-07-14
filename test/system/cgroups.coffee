@@ -7,11 +7,12 @@ misc = require '../../src/misc'
 
 describe 'system.cgroups', ->
   
-  config = test.config()
-  return unless config.isCentos6 or config.isCentos7
   scratch = test.scratch @
+  config = test.config()
+  return if config.disable_system_cgroups
   
   describe 'generate without merge', ->
+    
     mounts = [
       type: 'cpuset', path: '/cgroup/cpuset'
     ,
@@ -44,7 +45,8 @@ describe 'system.cgroups', ->
         'cpu.rt_period_us': '"1000000"'
         'cpu.rt_runtime_us': '"0"'
         'cpu.cfs_period_us': '"100000"'
-    they 'simple mount group configuration file', (ssh, next) ->
+    
+    they 'simple mount group configuration file', (ssh) ->
       nikita
         ssh: ssh
       .system.cgroups
@@ -65,8 +67,9 @@ describe 'system.cgroups', ->
             devices = /cgroup/devices;
           }
         """
-      .then next
-    they 'simple cgroup configuration file', (ssh, next) ->
+      .promise()
+    
+    they 'simple cgroup configuration file', (ssh) ->
       nikita
         ssh: ssh
       .system.cgroups
@@ -97,8 +100,9 @@ describe 'system.cgroups', ->
             }
           }
         """
-      .then next
-    they 'default only configuration file', (ssh, next) ->
+      .promise()
+      
+    they 'default only configuration file', (ssh) ->
       nikita
         ssh: ssh
       .system.cgroups
@@ -129,8 +133,9 @@ describe 'system.cgroups', ->
             }
           }
         """
-      .then next
-    they 'complete configuration file', (ssh, next) ->
+      .promise()
+    
+    they 'complete configuration file', (ssh) ->
       nikita
         ssh: ssh
       .system.cgroups
@@ -187,8 +192,9 @@ describe 'system.cgroups', ->
             }
           }
         """
-      .then next
-    they 'status not modifed', (ssh, next) ->
+      .promise()
+
+    they 'status not modifed', (ssh) ->
       nikita
         ssh: ssh
       .system.cgroups
@@ -207,9 +213,10 @@ describe 'system.cgroups', ->
         merge: false
       , (err, status) ->
         status.should.be.false() unless err
-      .then next
+      .promise()
 
   describe 'generate with merge', ->
+    
     mounts = [
         type: 'cpuset'
         path: '/cgroup/cpuset'
@@ -239,7 +246,8 @@ describe 'system.cgroups', ->
         'cpu.rt_period_us': '"1000000"'
         'cpu.rt_runtime_us': '"0"'
         'cpu.cfs_period_us': '"100000"'
-    they 'read mount from system and merge group', (ssh, next) ->
+    
+    they 'read mount from system and merge group', (ssh) ->
       nikita
         ssh: ssh
       .system.cgroups
@@ -256,8 +264,9 @@ describe 'system.cgroups', ->
           content.mounts.should.not.be.empty()
           content.groups.should.eql groups
           callback()
-      .then next
-    they 'status not modified', (ssh, next) ->
+      .promise()
+    
+    they 'status not modified', (ssh) ->
       nikita
         ssh: ssh
       .system.cgroups
@@ -272,10 +281,11 @@ describe 'system.cgroups', ->
         merge: true
       , (err, status) ->
         status.should.be.false() unless err
-      .then next
+      .promise()
 
   describe 'centos only', ->
-    they 'cache system type', (ssh, next) ->
+    
+    they 'cache system type', (ssh) ->
       nikita
         ssh: ssh
       .system.cgroups
@@ -292,5 +302,5 @@ describe 'system.cgroups', ->
         merge: true
       .call (options) ->
         options.store['nikita:system:type'].should.match /^((redhat)|(centos))/
-      .then next
+      .promise()
       

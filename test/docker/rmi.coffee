@@ -11,7 +11,7 @@ describe 'docker.rmi', ->
   config = test.config()
   return if config.disable_docker
 
-  they 'remove image', (ssh, next) ->
+  they 'remove image', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -23,9 +23,9 @@ describe 'docker.rmi', ->
     , (err, removed, stdout, stderr) ->
       return err if err
       removed.should.be.true()
-    .then next
+    .promise()
 
-  they 'status unmodifed', (ssh, next) ->
+  they 'status unmodifed', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -38,4 +38,4 @@ describe 'docker.rmi', ->
       image: 'nikita/rmi_test'
     , (err, removed) ->
       removed.should.be.false()
-    .then next
+    .promise()

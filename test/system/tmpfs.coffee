@@ -9,11 +9,14 @@ misc = require '../../src/misc'
 
 
 describe 'system.tmpfs', ->
+  
+  scratch = test.scratch @
   config = test.config()
   return  if config.disable_system_tmpfs
-  scratch = test.scratch @
+  
   describe 'generate without merge', ->
-    they 'simple mount group configuration with target', (ssh, next) ->
+    
+    they 'simple mount group configuration with target', (ssh) ->
       nikita
         ssh: ssh
       .system.remove
@@ -37,9 +40,9 @@ describe 'system.tmpfs', ->
         content: """
           d /var/run/file_1 0644 root root 10s -
         """
-      .then next
+      .promise()
     
-    they 'status not modified', (ssh, next) ->
+    they 'status not modified', (ssh) ->
       nikita
         ssh: ssh
       .system.tmpfs
@@ -72,9 +75,9 @@ describe 'system.tmpfs', ->
         content: """
           d /var/run/file_1 0644 root root 10s -
         """
-      .then next
+      .promise()
   
-    they 'Override existing configuration file with target', (ssh, next) ->
+    they 'Override existing configuration file with target', (ssh) ->
       nikita
         ssh: ssh
       .system.remove
@@ -110,10 +113,11 @@ describe 'system.tmpfs', ->
         content: """
           d /var/run/file_2 0644 root root 10s -
         """
-      .then next
+      .promise()
   
   describe 'generate with merge', ->
-    they 'multiple file with target', (ssh, next) ->
+    
+    they 'multiple file with target', (ssh) ->
       nikita
         ssh: ssh
       .system.remove
@@ -152,9 +156,9 @@ describe 'system.tmpfs', ->
           d /var/run/file_2 0644 root root 10s -
           d /var/run/file_1 0644 root root 10s -
         """
-      .then next
+      .promise()
 
-    they 'multiple file merge status not modifed with target', (ssh, next) ->
+    they 'multiple file merge status not modifed with target', (ssh) ->
       nikita
         ssh: ssh
       .system.remove
@@ -202,10 +206,11 @@ describe 'system.tmpfs', ->
           d /var/run/file_2 0644 root root 10s -
           d /var/run/file_1 0644 root root 10s -
         """
-      .then next
+      .promise()
 
   describe 'default target Centos/Redhat 7', ->
-    they 'simple mount group configuration', (ssh, next) ->
+    
+    they 'simple mount group configuration', (ssh) ->
       nikita
         ssh: ssh
       .system.remove
@@ -226,9 +231,9 @@ describe 'system.tmpfs', ->
       .file.assert
         target: '/etc/tmpfiles.d/root.conf'
         content: "d /var/run/file_1 0644 root root 10s -"
-      .then next
+      .promise()
           
-    they 'simple mount group no uid', (ssh, next) ->
+    they 'simple mount group no uid', (ssh) ->
       nikita
         ssh: ssh
       .system.remove '/etc/tmpfiles.d/root.conf'
@@ -247,4 +252,4 @@ describe 'system.tmpfs', ->
       .file.assert
         target: '/etc/tmpfiles.d/root.conf'
         content: "d /var/run/file_1 0644 root root 10s -"
-      .then next
+      .promise()

@@ -8,7 +8,7 @@ describe 'system.move', ->
 
   scratch = test.scratch @
 
-  they 'rename a file', (ssh, next) ->
+  they 'rename a file', (ssh) ->
     nikita
       ssh: ssh
     .system.copy
@@ -19,17 +19,17 @@ describe 'system.move', ->
       source: "#{scratch}/render.eco"
       target: "#{scratch}/moved.eco"
     , (err, status) ->
-      return next err if err
-      status.should.be.true()
-      # The target file should exists
-      fs.exists ssh, "#{scratch}/moved.eco", (err, exists) ->
-        exists.should.be.true()
-        # The source file should no longer exists
-        fs.exists ssh, "#{scratch}/render.eco", (err, exists) ->
-          exists.should.be.false()
-          next()
+      status.should.be.true() unless err
+    # The target file should exists
+    .file.assert
+      target: "#{scratch}/moved.eco"
+    # The source file should no longer exists
+    .file.assert
+      target: "#{scratch}/render.eco"
+      not: true
+    .promise()
 
-  they 'rename a directory', (ssh, next) ->
+  they 'rename a directory', (ssh) ->
     nikita
       ssh: ssh
     .system.copy
@@ -39,17 +39,17 @@ describe 'system.move', ->
       source: "#{scratch}/a_dir"
       target: "#{scratch}/moved"
     , (err, status) ->
-      return next err if err
-      status.should.be.true()
-      # The target directory should exists
-      fs.exists ssh, "#{scratch}/moved", (err, exists) ->
-        exists.should.be.true()
-        # The source directory should no longer exists
-        fs.exists ssh, "#{scratch}/a_dir", (err, exists) ->
-          exists.should.be.false()
-          next()
+      status.should.be.true() unless err
+    # The target file should exists
+    .file.assert
+      target: "#{scratch}/moved"
+    # The source file should no longer exists
+    .file.assert
+      target: "#{scratch}/a_dir"
+      not: true
+    .promise()
 
-  they 'overwrite a file', (ssh, next) ->
+  they 'overwrite a file', (ssh) ->
     nikita
       ssh: ssh
     .file [
@@ -82,9 +82,9 @@ describe 'system.move', ->
       fs.exists ssh, "#{scratch}/src2.txt", (err, exists) ->
         exists.should.be.false() unless err
         callback err
-    .then next
+    .promise()
 
-  they 'force bypass checksum comparison', (ssh, next) ->
+  they 'force bypass checksum comparison', (ssh) ->
     nikita
       ssh: ssh
     .file [
@@ -100,4 +100,4 @@ describe 'system.move', ->
       force: 1
     , (err, status) ->
       status.should.be.true()
-    .then next
+    .promise()

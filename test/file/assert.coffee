@@ -18,23 +18,23 @@ describe 'file.assert', ->
         err.message.should.eql "File does not exists: \"#{scratch}/a_file\""
       .promise()
 
-    they 'file exists', (ssh, next) ->
+    they 'file exists', (ssh) ->
       nikita
         ssh: ssh
       .file.touch "#{scratch}/a_file"
       .file.assert "#{scratch}/a_file"
-      .then next
+      .promise()
 
-    they 'with option not', (ssh, next) ->
+    they 'with option not', (ssh) ->
       nikita
         ssh: ssh
       .file.assert "#{scratch}/a_file", not: true
       .file.touch "#{scratch}/a_file"
       .file.assert "#{scratch}/a_file", not: true, relax: true, (err) ->
         err.message.should.eql "File exists: \"#{scratch}/a_file\""
-      .then next
+      .promise()
 
-    they 'requires target', (ssh, next) ->
+    they 'requires target', (ssh) ->
       nikita
         ssh: ssh
       .file.assert
@@ -42,9 +42,9 @@ describe 'file.assert', ->
         relax: true
       , (err) ->
         err.message.should.eql 'Missing option: "target"'
-      .then next
+      .promise()
 
-    they 'send custom error message', (ssh, next) ->
+    they 'send custom error message', (ssh) ->
       nikita
         ssh: ssh
       .file.assert
@@ -53,7 +53,7 @@ describe 'file.assert', ->
         relax: true
       , (err) ->
         err.message.should.eql 'Got it'
-      .then next
+      .promise()
   
   describe 'type', ->
     
@@ -95,7 +95,7 @@ describe 'file.assert', ->
 
   describe 'content', ->
 
-    they 'content match', (ssh, next) ->
+    they 'content match', (ssh) ->
       nikita
         ssh: ssh
       .file
@@ -104,9 +104,9 @@ describe 'file.assert', ->
       .file.assert
         target: "#{scratch}/a_file"
         content: "are u here"
-      .then next
+      .promise()
 
-    they 'option source is alias of target', (ssh, next) ->
+    they 'option source is alias of target', (ssh) ->
       nikita
         ssh: ssh
       .file
@@ -115,9 +115,9 @@ describe 'file.assert', ->
       .file.assert
         source: "#{scratch}/a_file"
         content: "are u here"
-      .then next
+      .promise()
 
-    they 'content dont match', (ssh, next) ->
+    they 'content dont match', (ssh) ->
       nikita
         ssh: ssh
       .file
@@ -126,11 +126,12 @@ describe 'file.assert', ->
       .file.assert
         target: "#{scratch}/a_file"
         content: "are u sure"
-      .then (err) ->
+        relax: true
+      , (err) ->
         err.message.should.eql 'Invalid content: expect "are u sure" and got "are u here"'
-        next()
+      .promise()
 
-    they 'content match regexp', (ssh, next) ->
+    they 'content match regexp', (ssh) ->
       nikita
         ssh: ssh
       .file
@@ -139,9 +140,9 @@ describe 'file.assert', ->
       .file.assert
         target: "#{scratch}/a_file"
         content: /^bistrot$/m
-      .then next
+      .promise()
 
-    they 'with option not', (ssh, next) ->
+    they 'with option not', (ssh) ->
       nikita
         ssh: ssh
       .file
@@ -158,9 +159,9 @@ describe 'file.assert', ->
         not: true
       , (err) ->
         err.message.should.eql 'Unexpected content: "are u here"'
-      .then next
+      .promise()
 
-    they 'send custom error message', (ssh, next) ->
+    they 'send custom error message', (ssh) ->
       nikita
         ssh: ssh
       .file
@@ -170,13 +171,14 @@ describe 'file.assert', ->
         target: "#{scratch}/a_file"
         content: "are u sure"
         error: 'Got it'
-      .then (err) ->
+        relax: true
+      , (err) ->
         err.message.should.eql "Got it"
-        next()
+      .promise()
   
   describe 'option md5', ->
     
-    they 'detect if file does not exists', (ssh, next) ->
+    they 'detect if file does not exists', (ssh) ->
       nikita
         ssh: ssh
       .file.assert
@@ -185,9 +187,9 @@ describe 'file.assert', ->
         relax: true
       , (err) ->
         err.message.should.eql "Target does not exists: #{scratch}/a_file"
-      .then next
+      .promise()
     
-    they 'validate hash', (ssh, next) ->
+    they 'validate hash', (ssh) ->
       nikita
         ssh: ssh
       .file.assert
@@ -208,9 +210,9 @@ describe 'file.assert', ->
       .file.assert
         target: "#{scratch}/a_file"
         md5: "f0a1e0f2412f62cc97178fd6b44dc978"
-      .then next
+      .promise()
 
-    they 'with option not', (ssh, next) ->
+    they 'with option not', (ssh) ->
       nikita
         ssh: ssh
       .file
@@ -227,9 +229,9 @@ describe 'file.assert', ->
         relax: true
       , (err) ->
         err.message.should.eql "Matching md5 signature: \"f0a1e0f2412f62cc97178fd6b44dc978\""
-      .then next
+      .promise()
 
-    they 'send custom error message', (ssh, next) ->
+    they 'send custom error message', (ssh) ->
       nikita
         ssh: ssh
       .file.touch
@@ -241,11 +243,11 @@ describe 'file.assert', ->
         relax: true
       , (err) ->
         err.message.should.eql 'Got it'
-      .then next
+      .promise()
 
   describe 'option sha1', ->
     
-    they 'validate hash', (ssh, next) ->
+    they 'validate hash', (ssh) ->
       nikita
         ssh: ssh
       .file.assert
@@ -266,11 +268,11 @@ describe 'file.assert', ->
       .file.assert
         target: "#{scratch}/a_file"
         sha1: "94d1f318f02816c590bd65595c28df1dd7ff326b"
-      .then next
+      .promise()
 
   describe 'option sha256', ->
     
-    they 'validate hash', (ssh, next) ->
+    they 'validate hash', (ssh) ->
       nikita
         ssh: ssh
       .file.assert
@@ -291,11 +293,11 @@ describe 'file.assert', ->
       .file.assert
         target: "#{scratch}/a_file"
         sha256: "c98fbf6b29ab2b709b642997930f3679eedd1f5f33078bc527f770c088f0463c"
-      .then next
+      .promise()
 
   describe 'option mode', ->
     
-    they 'detect if file does not exists', (ssh, next) ->
+    they 'detect if file does not exists', (ssh) ->
       nikita
         ssh: ssh
       .file.assert
@@ -304,9 +306,9 @@ describe 'file.assert', ->
         relax: true
       , (err) ->
         err.message.should.eql "Target does not exists: #{scratch}/a_file"
-      .then next
+      .promise()
           
-    they 'on file', (ssh, next) ->
+    they 'on file', (ssh) ->
       nikita
         ssh: ssh
       .file.touch
@@ -321,9 +323,9 @@ describe 'file.assert', ->
       .file.assert
         target: "#{scratch}/a_file"
         mode: 0o0755
-      .then next
+      .promise()
 
-    they 'on directory', (ssh, next) ->
+    they 'on directory', (ssh) ->
       nikita
         ssh: ssh
       .system.mkdir
@@ -339,9 +341,9 @@ describe 'file.assert', ->
       .file.assert
         target: "#{scratch}/a_file"
         mode: 0o0755
-      .then next
+      .promise()
 
-    they 'with option not', (ssh, next) ->
+    they 'with option not', (ssh) ->
       nikita
         ssh: ssh
       .file.touch
@@ -358,9 +360,9 @@ describe 'file.assert', ->
         relax: true
       , (err) ->
         err.message.should.eql "Unexpected valid mode: 0755"
-      .then next
+      .promise()
 
-    they 'send custom error message', (ssh, next) ->
+    they 'send custom error message', (ssh) ->
       nikita
         ssh: ssh
       .file.touch
@@ -373,12 +375,12 @@ describe 'file.assert', ->
         relax: true
       , (err) ->
         err.message.should.eql 'Got it'
-      .then next
+      .promise()
 
   describe 'options uid & gid', ->
     
-    they 'detect root ownerships', (ssh, next) ->
-      return next() unless process.getuid() is 0
+    they 'detect root ownerships', (ssh) ->
+      return unless process.getuid() is 0
       nikita
         ssh: ssh
       .file.touch "#{scratch}/a_file"
@@ -397,6 +399,6 @@ describe 'file.assert', ->
         relax: true
       , (err) ->
         err.message.should.eql "Unexpected gid: expected \"1\" and got \"0\""
-      .then next
+      .promise()
       
     

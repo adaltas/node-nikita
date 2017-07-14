@@ -7,15 +7,15 @@ describe 'options "disable"', ->
 
   scratch = test.scratch @
 
-  it 'dont call handler', (next) ->
+  it 'dont call handler', ->
     nikita
     .call
       disabled: true
     , (otions) ->
       throw Error 'Achtung'
-    .then next
+    .promise()
 
-  it 'emit lifecycle event when disabled', (next) ->
+  it 'emit lifecycle event when disabled', ->
     nikita
     .call
       disabled: true
@@ -32,15 +32,16 @@ describe 'options "disable"', ->
       (log.module is undefined).should.be.true()
       log.header_depth.should.eql 0
       log.file.should.eql 'context.coffee.md'
-      next()
+    .promise()
 
-  it 'emit lifecycle event when not disabled', (next) ->
+  it 'emit lifecycle event when not disabled', ->
     nikita
     .call
       disabled: false
     , (otions) ->
       throw Error 'Achtung'
     .on 'lifecycle', (log) ->
+      return if log.message is 'conditions_passed'
       log.type.should.eql 'lifecycle'
       log.message.should.eql 'disabled_false'
       log.index.should.eql 0
@@ -51,4 +52,5 @@ describe 'options "disable"', ->
       (log.module is undefined).should.be.true()
       log.header_depth.should.eql 0
       log.file.should.eql 'context.coffee.md'
-      next()
+    .then (->)
+    .promise()

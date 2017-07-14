@@ -7,7 +7,7 @@ describe 'file.types.pacman_conf', ->
 
   scratch = test.scratch @
 
-  they 'empty values dont print values', (ssh, next) ->
+  they 'empty values dont print values', (ssh) ->
     nikita
       ssh: ssh
     .file.types.pacman_conf
@@ -20,9 +20,9 @@ describe 'file.types.pacman_conf', ->
     .file.assert
       target: "#{scratch}/pacman.conf"
       content: '[options]\nArchitecture = auto\nCheckSpace\n'
-    .then next
+    .promise()
 
-  they 'boolean values dont print values', (ssh, next) ->
+  they 'boolean values dont print values', (ssh) ->
     nikita
       ssh: ssh
     .file.types.pacman_conf
@@ -35,9 +35,9 @@ describe 'file.types.pacman_conf', ->
     .file.assert
       target: "#{scratch}/pacman.conf"
       content: '[options]\nArchitecture = auto\nCheckSpace\n'
-    .then next
+    .promise()
 
-  they 'rootdir with default target', (ssh, next) ->
+  they 'rootdir with default target', (ssh) ->
     nikita
       ssh: ssh
     .file.types.pacman_conf
@@ -50,4 +50,4 @@ describe 'file.types.pacman_conf', ->
     .file.assert
       target: "#{scratch}/etc/pacman.conf"
       content: '[options]\nArchitecture = auto\nCheckSpace\n'
-    .then next
+    .promise()

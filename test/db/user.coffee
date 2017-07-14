@@ -11,7 +11,7 @@ for engine, _ of config.db
 
   describe "db.user #{engine}", ->
 
-    they 'validate options', (ssh, next) ->
+    they 'validate options', (ssh) ->
       nikita
         ssh: ssh
       .db.user
@@ -30,9 +30,9 @@ for engine, _ of config.db
         relax: true
       , (err) ->
         err.message.should.eql 'Missing option: "admin_username"'
-      .then next
+      .promise()
     
-    they 'add new user', (ssh, next) ->
+    they 'add new user', (ssh) ->
       nikita
         ssh: ssh
         db: config.db[engine]
@@ -52,9 +52,9 @@ for engine, _ of config.db
       , (err, exists) ->
         throw Error 'User not created' if not err and not exists
       .db.user.remove 'test_user_1_user'
-      .then next
+      .promise()
 
-    they 'change password', (ssh, next) ->
+    they 'change password', (ssh) ->
       sql_list_tables = switch engine
         when 'mysql'
           'show tables'
@@ -85,4 +85,4 @@ for engine, _ of config.db
           , sql_list_tables
       .db.database.remove 'test_user_2_db'
       .db.user.remove 'test_user_2_user'
-      .then next
+      .promise()

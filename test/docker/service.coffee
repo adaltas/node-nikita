@@ -39,54 +39,50 @@ describe 'docker.service', ->
   return if config.disable_docker
   scratch = test.scratch @
 
-  they 'simple service', (ssh, next) ->
-    ip ssh, config.docker.machine, (err, ipadress) =>
-      return next err if  err
-      @timeout 60000
-      nikita
-        ssh: ssh
-        docker: config.docker
-      .docker.rm
-        force: true
-        container: 'nikita_test_unique'
-      .docker.service
-        image: 'httpd'
-        name: 'nikita_test_unique'
-        port: '499:80'
-      .wait_connect
-        port: 499
-        host: ipadress
-      .docker.rm
-        force: true
-        container: 'nikita_test_unique'
-      .then next
+  they 'simple service', (ssh) ->
+    nikita
+      ssh: ssh
+      docker: config.docker
+    .docker.rm
+      force: true
+      container: 'nikita_test_unique'
+    .docker.service
+      image: 'httpd'
+      name: 'nikita_test_unique'
+      port: '499:80'
+    # .wait_connect
+    #   port: 499
+    #   host: ipadress of docker, docker-machine...
+    .docker.rm
+      force: true
+      container: 'nikita_test_unique'
+    .promise()
 
-  they 'invalid options', (ssh, next) ->
-    ip ssh, config.docker.machine, (err, ipadress) =>
-      return next err if  err
-      @timeout 60000
-      nikita
-        ssh: ssh
-        docker: config.docker
-      .docker.rm
-        container: 'nikita_test'
-        force: true
-      .docker.service
-        image: 'httpd'
-        port: '499:80'
-      , (err, executed) ->
-        err.message.should.eql 'Missing container name'
-      .docker.service
-        name: 'toto'
-        port: '499:80'
-      , (err, executed) ->
-        err.message.should.eql 'Missing image'
-      .docker.rm
-        force: true
-        container: 'nikita_test'
-      .then (err) -> next()
+  they 'invalid options', (ssh) ->
+    nikita
+      ssh: ssh
+      docker: config.docker
+    .docker.rm
+      container: 'nikita_test'
+      force: true
+    .docker.service
+      image: 'httpd'
+      port: '499:80'
+      relax: true
+    , (err, executed) ->
+      err.message.should.eql 'Missing container name'
+    .docker.service
+      name: 'toto'
+      port: '499:80'
+      relax: true
+    , (err, executed) ->
+      err.message.should.eql 'Missing image'
+    .docker.rm
+      force: true
+      container: 'nikita_test'
+    .promise()
 
-  they 'status not modified', (ssh, next) ->
+  they 'status not modified', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -106,4 +102,4 @@ describe 'docker.service', ->
     .docker.rm
       force: true
       container: 'nikita_test'
-    .then next
+    .promise()

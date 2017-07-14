@@ -4,6 +4,7 @@ module.exports =
   disable_cron: true
   disable_db: true
   disable_docker: true
+  disable_docker_volume: true
   disable_krb5_addprinc: true
   disable_krb5_delprinc: true
   disable_krb5_ktadd: true
@@ -13,7 +14,11 @@ module.exports =
   disable_service_install: true
   disable_service_startup: true
   disable_service_systemctl: true
+  disable_system_chmod: true
+  disable_system_cgroups: true
+  disable_system_discover: true
   disable_system_execute_arc_chroot: true
+  disable_system_limits: true
   disable_system_tmpfs: true
   disable_system_user: true
   disable_tools_repo: true

@@ -8,7 +8,7 @@ describe 'ldap.user', ->
   config = test.config()
   return if config.disable_ldap_user
 
-  it 'create a new user', (next) ->
+  it 'create a new user', ->
     @timeout 100000
     nikita
       binddn: config.ldap.binddn
@@ -33,9 +33,9 @@ describe 'ldap.user', ->
       modified.should.be.true()
     .ldap.delete
       dn: "cn=nikita,#{config.ldap.suffix_dn}"
-    .then next
+    .promise()
 
-  it 'detect no change', (next) ->
+  it 'detect no change', ->
     @timeout 100000
     user = 
       dn: "cn=nikita,#{config.ldap.suffix_dn}"
@@ -65,4 +65,4 @@ describe 'ldap.user', ->
       modified.should.be.false()
     .ldap.delete
       dn: "cn=nikita,#{config.ldap.suffix_dn}"
-    .then next
+    .promise()

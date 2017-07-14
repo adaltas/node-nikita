@@ -9,7 +9,7 @@ describe 'krb5.ktadd', ->
   config = test.config()
   return if config.disable_krb5_ktadd
 
-  they 'create a new keytab', (ssh, next) ->
+  they 'create a new keytab', (ssh) ->
     nikita
       ssh: ssh
       kadmin_server: config.krb5.kadmin_server
@@ -28,9 +28,9 @@ describe 'krb5.ktadd', ->
       keytab: "#{scratch}/nikita.keytab"
     , (err, status) ->
       status.should.be.false() unless err
-    .then next
+    .promise()
 
-  they 'detect kvno', (ssh, next) ->
+  they 'detect kvno', (ssh) ->
     nikita
       ssh: ssh
       kadmin_server: config.krb5.kadmin_server
@@ -55,10 +55,9 @@ describe 'krb5.ktadd', ->
       keytab: "#{scratch}/nikita_1.keytab"
     , (err, status) ->
       status.should.be.false() unless err
-    .then next
-      
+    .promise()
 
-  they 'change permission', (ssh, next) ->
+  they 'change permission', (ssh) ->
     nikita
       ssh: ssh
       kadmin_server: config.krb5.kadmin_server
@@ -77,4 +76,4 @@ describe 'krb5.ktadd', ->
       mode: 0o0707
     , (err, status) ->
       status.should.be.true() unless err
-    .then next
+    .promise()

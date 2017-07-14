@@ -10,7 +10,7 @@ for engine, _ of config.db
 
   describe "db.database.wait #{engine}", ->
 
-    they 'is already created', (ssh, next) ->
+    they 'is already created', (ssh) ->
       nikita
         ssh: ssh
         db: config.db[engine]
@@ -19,9 +19,15 @@ for engine, _ of config.db
       .db.database.wait 'db_wait_0', (err, status) ->
         status.should.be.false() unless err
       .db.database.remove 'db_wait_0'
-      .then next
+      .promise()
 
-    they 'is not yet created', (ssh, next) ->
+    they 'is not yet created', (ssh) ->
+      setTimeout ->
+        nikita
+          ssh: ssh
+          db: config.db[engine]
+        .db.database 'db_wait_1'
+      , 200
       nikita
         ssh: ssh
         db: config.db[engine]
@@ -29,10 +35,4 @@ for engine, _ of config.db
       .db.database.wait 'db_wait_1', (err, status) ->
         status.should.be.true() unless err
       .db.database.remove 'db_wait_1'
-      .then next
-      setTimeout ->
-        nikita
-          ssh: ssh
-          db: config.db[engine]
-        .db.database 'db_wait_1'
-       , 200
+      .promise()

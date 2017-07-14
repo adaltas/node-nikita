@@ -11,7 +11,7 @@ for engine, _ of config.db
 
   describe "db.database #{engine}", ->
 
-    they 'add new database', (ssh, next) ->
+    they 'add new database', (ssh) ->
       nikita
         ssh: ssh
         db: config.db[engine]
@@ -21,9 +21,9 @@ for engine, _ of config.db
       .db.database 'postgres_db_0b'
       .db.database.remove 'postgres_db_0a'
       .db.database.remove 'postgres_db_0b'
-      .then next
+      .promise()
       
-    they 'status not modified new database', (ssh, next) ->
+    they 'status not modified new database', (ssh) ->
       nikita
         ssh: ssh
         db: config.db[engine]
@@ -32,11 +32,11 @@ for engine, _ of config.db
       .db.database 'postgres_db_1', (err, status) ->
         status.should.be.false() unless err
       .db.database.remove 'postgres_db_1'
-      .then next
+      .promise()
 
     describe 'user', ->
 
-      they 'which is existing', (ssh, next) ->
+      they 'which is existing', (ssh) ->
         nikita
           ssh: ssh
           db: config.db[engine]
@@ -56,9 +56,9 @@ for engine, _ of config.db
           status.should.be.true() unless err
         .db.database.remove 'postgres_db_3'
         .db.user.remove 'postgres_user_3'
-        .then next
+        .promise()
 
-      they 'honors status', (ssh, next) ->
+      they 'honors status', (ssh) ->
         nikita
           ssh: ssh
           db: config.db[engine]
@@ -81,9 +81,9 @@ for engine, _ of config.db
           status.should.be.false()
         .db.database.remove 'postgres_db_3'
         .db.user.remove 'postgres_user_3'
-        .then next
+        .promise()
 
-      they 'which is not existing', (ssh, next) ->
+      they 'which is not existing', (ssh) ->
         nikita
           ssh: ssh
           db: config.db[engine]
@@ -97,4 +97,4 @@ for engine, _ of config.db
           err.message.should.eql 'DB user does not exists: postgres_user_4'
         .db.database.remove 'postgres_db_4'
         .db.user.remove 'postgres_user_4'
-        .then next
+        .promise()

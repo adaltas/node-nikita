@@ -7,29 +7,29 @@ describe 'options "after"', ->
 
   scratch = test.scratch @
   
-  it 'is a function', (next) ->
+  it 'is a function', ->
     history = []
     nikita
     .call
       key: '1'
       after: (options) -> history.push "after #{options.key}"
       handler: (options) -> history.push "handler #{options.key}"
-    .then (err) ->
-      history.should.eql ['handler 1', 'after 1'] unless err
-      next err
+    .call ->
+      history.should.eql ['handler 1', 'after 1']
+    .promise()
   
-   it 'has custom options', (next) ->
+   it 'has custom options', ->
      history = []
      nikita
      .call
        key: '1'
        after: key: 2, handler: (options) -> history.push "after #{options.key}"
        handler: (options) -> history.push "handler #{options.key}"
-     .then (err) ->
-       history.should.eql ['handler 1', 'after 2'] unless err
-       next err
+     .call ->
+       history.should.eql ['handler 1', 'after 2']
+     .promise()
     
-    it 'register child handlers', (next) ->
+    it 'register child handlers', ->
       history = []
       nikita
       .call
@@ -38,6 +38,6 @@ describe 'options "after"', ->
           history.push "after #{options.key}"
           @call key: 'child', (options) -> history.push "handler #{options.key}"
         handler: (options) -> history.push "handler #{options.key}"
-      .then (err) ->
-        history.should.eql ['handler parent', 'after parent', 'handler child'] unless err
-        next err
+      .call ->
+        history.should.eql ['handler parent', 'after parent', 'handler child']
+      .promise()

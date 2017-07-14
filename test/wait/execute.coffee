@@ -8,7 +8,7 @@ describe 'wait.execute', ->
 
   scratch = test.scratch @
 
-  they 'take a single cmd', (ssh, next) ->
+  they 'take a single cmd', (ssh) ->
     nikita
       ssh: ssh
     .wait.execute
@@ -24,9 +24,9 @@ describe 'wait.execute', ->
       interval: 60
     , (err, status) ->
       status.should.be.true() unless err
-    .then next
+    .promise()
 
-  they 'take a multiple cmds', (ssh, next) ->
+  they 'take a multiple cmds', (ssh) ->
     nikita
       ssh: ssh
     .wait.execute
@@ -49,11 +49,11 @@ describe 'wait.execute', ->
       interval: 20
     , (err, status) ->
       status.should.be.true() unless err
-    .then next
+    .promise()
 
   describe 'log', ->
 
-    they 'attemps', (ssh, next) ->
+    they 'attemps', (ssh) ->
       logs = []
       nikita
         ssh: ssh
@@ -66,11 +66,11 @@ describe 'wait.execute', ->
       .wait.execute
         cmd: "test -d #{scratch}/a_file"
         interval: 100
-      .then (err) ->
-        logs.length.should.be.within 2, 4 unless err
-        next err
+      .call ->
+        logs.length.should.be.within 2, 4
+      .promise()
     
-    they 'honors *_log as true', (ssh, next) ->
+    they 'honors *_log as true', (ssh) ->
       logs = 0
       nikita
         ssh: ssh
@@ -82,11 +82,11 @@ describe 'wait.execute', ->
         stdin_log: true
         stdout_log: true
         stderr_log: true
-      .then (err) ->
-        logs.should.eql 3 unless err
-        next err
+      .call ->
+        logs.should.eql 3
+      .promise()
     
-    they 'honors *_log as false', (ssh, next) ->
+    they 'honors *_log as false', (ssh) ->
       logs = 0
       nikita
         ssh: ssh
@@ -98,13 +98,13 @@ describe 'wait.execute', ->
         stdin_log: false
         stdout_log: false
         stderr_log: false
-      .then (err) ->
-        logs.should.eql 0 unless err
-        next err
+      .call ->
+        logs.should.eql 0
+      .promise()
 
   describe 'quorum', ->
 
-    they 'is not defined', (ssh, next) ->
+    they 'is not defined', (ssh) ->
       nikita
         ssh: ssh
       .call ->
@@ -127,13 +127,12 @@ describe 'wait.execute', ->
         # quorum: 1
       , (err, status) ->
         status.should.be.true() unless err
-      .then (err) ->
-        return next err if err
-        fs.readFile ssh, "#{scratch}/result", 'ascii', (err, data) ->
-          data.should.eql '1\n2\n3\n' unless err
-          next err
+      .file.assert
+        target: "#{scratch}/result"
+        content: '1\n2\n3\n'
+      .promise()
 
-    they 'is a number', (ssh, next) ->
+    they 'is a number', (ssh) ->
       nikita
         ssh: ssh
       .call ->
@@ -156,13 +155,12 @@ describe 'wait.execute', ->
         quorum: 2
       , (err, status) ->
         status.should.be.true() unless err
-      .then (err) ->
-        return next err if err
-        fs.readFile ssh, "#{scratch}/result", 'ascii', (err, data) ->
-          data.should.eql '1\n2\n' unless err
-          next err
+      .file.assert
+        target: "#{scratch}/result"
+        content: '1\n2\n'
+      .promise()
 
-    they 'is "true"', (ssh, next) ->
+    they 'is "true"', (ssh) ->
       nikita
         ssh: ssh
       .call ->
@@ -185,8 +183,7 @@ describe 'wait.execute', ->
         quorum: true
       , (err, status) ->
         status.should.be.true() unless err
-      .then (err) ->
-        return next err if err
-        fs.readFile ssh, "#{scratch}/result", 'ascii', (err, data) ->
-          data.should.eql '1\n2\n' unless err
-          next err
+      .file.assert
+        target: "#{scratch}/result"
+        content: '1\n2\n'
+      .promise()

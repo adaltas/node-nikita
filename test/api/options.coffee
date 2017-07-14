@@ -5,33 +5,33 @@ fs = require 'fs'
 
 describe 'api options', ->
 
-  it 'accept empty array [async]', (next) ->
+  it 'accept empty array [async]', ->
     nikita
     .call [], (options, callback) ->
       callback null, true
     .file []
     .then (err, status) ->
       status.should.be.false() unless err
-      next err
+    .promise()
 
-  it 'accept empty array [sync]', (next) ->
+  it 'accept empty array [sync]', ->
     nikita
     .call [], (options) ->
       return true
     .file []
     .then (err, status) ->
       status.should.be.false() unless err
-      next err
+    .promise()
 
   describe 'merging', ->
 
-    it 'accept multiple options', (next) ->
+    it 'accept multiple options', ->
       nikita
       .call {a: 1, b: 0}, {b: 2, c: 3}, (options) ->
         options.should.containEql a: 1, b: 2, c: 3
-      .then next
+      .promise()
 
-    it 'is immutable', (next) ->
+    it 'is immutable', ->
       opts1 = {a: 1, b: 0}
       opts2 = {b: 2, c: 3}
       nikita
@@ -40,4 +40,4 @@ describe 'api options', ->
       , ->
         opts1.should.eql {a: 1, b: 0}
         opts2.should.eql {b: 2, c: 3}
-      .then next
+      .promise()

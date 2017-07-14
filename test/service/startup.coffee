@@ -12,7 +12,7 @@ describe 'service.startup', ->
     
     return if config.disable_service_startup
   
-    they 'from service', (ssh, next) ->
+    they 'from service', (ssh) ->
       nikita
         ssh: ssh
       .service.remove
@@ -41,9 +41,9 @@ describe 'service.startup', ->
         startup: false
       , (err, status) ->
         status.should.be.false() unless err
-      .then next
+      .promise()
       
-    they 'string argument', (ssh, next) ->
+    they 'string argument', (ssh) ->
       nikita
         ssh: ssh
       .service.remove
@@ -54,16 +54,17 @@ describe 'service.startup', ->
         name: config.service.chk_name
       .service.startup config.service.chk_name, (err, status) ->
         status.should.be.true() unless err
-      .then next
+      .promise()
   
   describe 'chkconfig', ->
     
     return if config.disable_service_startup
     return if config.disable_service_systemctl
 
-    they 'notice a change in startup level ', (ssh, next) ->
+    they 'notice a change in startup level ', (ssh) ->
       nikita
         ssh: ssh
+        debug: true
       .system.execute 'which chkconfig', code_skipped: 1, (err, status) ->
         @end() unless status
       .service
@@ -82,10 +83,10 @@ describe 'service.startup', ->
         startup: '2345'
       , (err, status) ->
         status.should.be.false() unless err
-      .then next
+      .promise()
 
   # if config.isCentos7
-  #   they 'declare on startup with boolean Centos 7', (ssh, next) ->
+  #   they 'declare on startup with boolean Centos 7', (ssh) ->
   #     nikita
   #       ssh: ssh
   #     .service.remove
@@ -114,9 +115,9 @@ describe 'service.startup', ->
   #       startup: false
   #     , (err, status) ->
   #       status.should.be.false() unless err
-  #     .then next
+  #     .promise()
   #     
-  #   they 'declare on startup with boolean CentOS 7', (ssh, next) ->
+  #   they 'declare on startup with boolean CentOS 7', (ssh) ->
   #     nikita
   #       ssh: ssh
   #     .service.remove
@@ -127,4 +128,4 @@ describe 'service.startup', ->
   #       name: config.service.chk_name
   #     .service.startup config.service.chk_name, (err, status) ->
   #       status.should.be.true() unless err
-  #     .then next
+  #     .promise()

@@ -9,7 +9,7 @@ describe 'java.keystore_add', ->
 
   describe 'cacert', ->
 
-    they 'create new cacerts file', (ssh, next) ->
+    they 'create new cacerts file', (ssh) ->
       nikita
         ssh: ssh
       .java.keystore_add
@@ -19,9 +19,9 @@ describe 'java.keystore_add', ->
         cacert: "#{__dirname}/keystore/certs1/cacert.pem"
       , (err, status) ->
         status.should.be.true() unless err
-      .then next
+      .promise()
 
-    they 'create parent directory', (ssh, next) ->
+    they 'create parent directory', (ssh) ->
       nikita
         ssh: ssh
       .java.keystore_add
@@ -31,9 +31,9 @@ describe 'java.keystore_add', ->
         cacert: "#{__dirname}/keystore/certs1/cacert.pem"
       , (err, status) ->
         status.should.be.true() unless err
-      .then next
+      .promise()
 
-    they 'detect existing cacert signature', (ssh, next) ->
+    they 'detect existing cacert signature', (ssh) ->
       nikita
         ssh: ssh
       .java.keystore_add
@@ -49,9 +49,9 @@ describe 'java.keystore_add', ->
         cacert: "#{__dirname}/keystore/certs1/cacert.pem"
       , (err, status) ->
         status.should.be.false() unless err
-      .then next
+      .promise()
 
-    they 'update a new cacert with same alias', (ssh, next) ->
+    they 'update a new cacert with same alias', (ssh) ->
       nikita
         ssh: ssh
       .java.keystore_add
@@ -70,9 +70,9 @@ describe 'java.keystore_add', ->
       .system.execute.assert
         cmd: "keytool -list -keystore #{scratch}/keystore -storepass changeit -alias my_alias"
         content: /^my_alias,/m
-      .then next
+      .promise()
 
-    they 'fail if ca file does not exist', (ssh, next) ->
+    they 'fail if ca file does not exist', (ssh) ->
       nikita
         ssh: ssh
       .java.keystore_add
@@ -83,7 +83,7 @@ describe 'java.keystore_add', ->
         relax: true
       , (err) ->
         err.message.should.eql 'CA file does not exist: /path/to/missing/ca.cert.pem'
-      .then next
+      .promise()
     
     they 'import certificate chain', (ssh) ->
       nikita
@@ -157,7 +157,7 @@ describe 'java.keystore_add', ->
 
   describe 'key', ->
 
-    they 'create new cacerts file', (ssh, next) ->
+    they 'create new cacerts file', (ssh) ->
       nikita
         ssh: ssh
       .java.keystore_add
@@ -171,9 +171,9 @@ describe 'java.keystore_add', ->
         name: 'node_1'
       , (err, status) ->
         status.should.be.true() unless err
-      .then next
+      .promise()
 
-    they 'detect existing cacert signature', (ssh, next) ->
+    they 'detect existing cacert signature', (ssh) ->
       nikita
         ssh: ssh
       .java.keystore_add
@@ -198,9 +198,9 @@ describe 'java.keystore_add', ->
         name: 'node_1'
       , (err, status) ->
         status.should.be.false() unless err
-      .then next
+      .promise()
 
-    they 'update a new cacert with same alias', (ssh, next) ->
+    they 'update a new cacert with same alias', (ssh) ->
       nikita
         ssh: ssh
       .java.keystore_add
@@ -223,11 +223,11 @@ describe 'java.keystore_add', ->
         name: 'node_1'
       , (err, status) ->
         status.should.be.true() unless err
-      .then next
+      .promise()
 
   describe 'keystore', ->
 
-    they.skip 'change password', (ssh, next) ->
+    they.skip 'change password', (ssh) ->
       nikita
         ssh: ssh
       .java.keystore_add
@@ -242,11 +242,11 @@ describe 'java.keystore_add', ->
         cacert: "#{__dirname}/keystore/certs1/cacert.pem"
       , (err, status) ->
         status.should.be.true() unless err
-      .then next
+      .promise()
   
   describe 'option openssl', ->
     
-    they 'throw error if not detected', (ssh, next) ->
+    they 'throw error if not detected', (ssh) ->
       nikita
         ssh: ssh
       .java.keystore_add
@@ -262,5 +262,5 @@ describe 'java.keystore_add', ->
         relax: true
       , (err) ->
         err.message.should.eql 'OpenSSL command line tool not detected'
-      .then next
+      .promise()
     

@@ -15,7 +15,7 @@ describe 'docker.volume_rm', ->
   return if config.disable_docker_volume
   scratch = test.scratch @
 
-  they 'a named volume', (ssh, next) ->
+  they 'a named volume', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -32,4 +32,4 @@ describe 'docker.volume_rm', ->
       name: 'my_volume'
     , (err, status) ->
       status.should.be.false() unless err
-    .then next
+    .promise()

@@ -10,14 +10,14 @@ describe 'system.chown', ->
   return if config.disable_system_user
   scratch = test.scratch @
   
-  they 'throw error if target does not exists', (ssh, next) ->
+  they 'throw error if target does not exists', (ssh) ->
     nikita
       ssh: ssh
     .system.chown "#{scratch}/a_file", uid: 1234, gid: 1234, relax: true, (err) ->
       err.message.should.eql "Target Does Not Exist: \"#{scratch}/a_file\""
-    .then next
+    .promise()
     
-  they 'use stat shortcircuit', (ssh, next) ->
+  they 'use stat shortcircuit', (ssh) ->
     nikita
       ssh: ssh
     .file.touch "#{scratch}/a_file"
@@ -34,9 +34,9 @@ describe 'system.chown', ->
         @system.chown "#{scratch}/a_file", uid: 1234, gid: 1234, stat: stat, (err) ->
           logs.filter( (log) -> /^Stat /.test log.message ).length.should.eql 1 unless err
         @then callback
-    .then next
+    .promise()
 
-  they 'change uid and leave gid', (ssh, next) ->
+  they 'change uid and leave gid', (ssh) ->
     nikita
       ssh: ssh
     .system.user.remove 'toto'
@@ -57,9 +57,9 @@ describe 'system.chown', ->
         stat.uid.should.eql 1235 unless err
         stat.gid.should.eql 1234 unless err
         callback err
-    .then next
+    .promise()
 
-  they 'change gid and leave uid', (ssh, next) ->
+  they 'change gid and leave uid', (ssh) ->
     nikita
       ssh: null
     .system.user.remove 'toto'
@@ -79,9 +79,9 @@ describe 'system.chown', ->
         stat.uid.should.eql 1234 unless err
         stat.gid.should.eql 1235 unless err
         callback err
-    .then next
+    .promise()
 
-  they 'detect status if uid is null', (ssh, next) ->
+  they 'detect status if uid is null', (ssh) ->
     nikita
       ssh: ssh
     .system.user.remove 'toto'
@@ -91,4 +91,4 @@ describe 'system.chown', ->
     .file.touch "#{scratch}/a_file", uid: 'toto', gid: 'toto'
     .system.chown "#{scratch}/a_file", uid: null, gid: 1234, (err, status) ->
       status.should.be.false() unless err
-    .then next
+    .promise()

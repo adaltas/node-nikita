@@ -20,17 +20,17 @@ describe 'connection.assert', ->
   afterEach (next) ->
     server.close next
 
-  they 'port is listening', (ssh, next) ->
+  they 'port is listening', (ssh) ->
     nikita
       ssh: ssh
     .connection.assert
       host: 'localhost'
       port: '12345'
-    .then (err, status) ->
-      status.should.be.false()
-      next err
+    .call ->
+      @status().should.be.false()
+    .promise()
 
-  they 'port is not listening', (ssh, next) ->
+  they 'port is not listening', (ssh) ->
     nikita
       ssh: ssh
     .connection.assert
@@ -39,4 +39,4 @@ describe 'connection.assert', ->
       relax: true
     , (err) ->
       err.message.should.eql 'Address not listening: "localhost:54321"'
-    .then next
+    .promise()

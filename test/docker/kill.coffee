@@ -15,8 +15,7 @@ describe 'docker.kill', ->
   config = test.config()
   return if config.disable_docker
 
-
-  they 'running container', (ssh, next) ->
+  they 'running container', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -31,9 +30,9 @@ describe 'docker.kill', ->
       container: 'nikita_test_kill'
     , (err, killed, stdout, stderr) ->
       killed.should.be.true()
-    .then next
+    .promise()
 
-  they 'status not modified (previously killed)', (ssh, next) ->
+  they 'status not modified (previously killed)', (ssh) ->
     @timeout 120000
     nikita
       ssh: ssh
@@ -51,9 +50,9 @@ describe 'docker.kill', ->
       container: 'nikita_test_kill'
     , (err, killed) ->
       killed.should.be.false()
-    .then next
+    .promise()
 
-  they 'status not modified (not living)', (ssh, next) ->
+  they 'status not modified (not living)', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -70,4 +69,4 @@ describe 'docker.kill', ->
       killed.should.be.false()
     .docker.rm
       container: 'nikita_test_kill'
-    .then next
+    .promise()

@@ -10,14 +10,14 @@ describe 'log.fs', ->
 
   scratch = test.scratch @
 
-  they 'requires option "serializer"', (ssh, next) ->
+  they 'requires option "serializer"', (ssh) ->
     nikita ssh: ssh
     .log.fs basedir: scratch
-    .then (err, status) ->
+    .then (err) ->
       err.message.should.eql 'Missing option: serializer'
-      next()
+    .promise()
 
-  they 'serializer can be empty', (ssh, next) ->
+  they 'serializer can be empty', (ssh) ->
     nikita
       ssh: ssh
     .log.fs
@@ -30,9 +30,9 @@ describe 'log.fs', ->
       content: ''
       log: false
     .assert status: false
-    .then next
+    .promise()
 
-  they 'default options', (ssh, next) ->
+  they 'default options', (ssh) ->
     nikita
       ssh: ssh
       log_fs: basedir: scratch, serializer: text: (log) -> "#{log.message}\n"
@@ -43,11 +43,11 @@ describe 'log.fs', ->
       source: "#{scratch}/localhost.log"
       content: 'ok\n'
       log: false
-    .then next
+    .promise()
 
   describe 'archive', ->
 
-    they 'archive default directory name', (ssh, next) ->
+    they 'archive default directory name', (ssh) ->
       nikita
         ssh: ssh
       .log.fs
@@ -64,9 +64,9 @@ describe 'log.fs', ->
           content: /ok/m
           log: false
       .assert status: false
-      .then next
+      .promise()
 
-    they 'latest', (ssh, next) ->
+    they 'latest', (ssh) ->
       nikita
         ssh: ssh
       .log.fs
@@ -84,4 +84,4 @@ describe 'log.fs', ->
         content: /ok/m
         log: false
       .assert status: false
-      .then next
+      .promise()

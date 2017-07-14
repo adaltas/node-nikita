@@ -9,7 +9,7 @@ describe 'krb5.ticket', ->
   config = test.config()
   return if config.disable_krb5_addprinc
 
-  they 'create a new principal without a randkey', (ssh, next) ->
+  they 'create a new principal without a randkey', (ssh) ->
     nikita
       ssh: ssh
       kadmin_server: config.krb5.kadmin_server
@@ -33,4 +33,4 @@ describe 'krb5.ticket', ->
       status.should.be.false() unless err
     .system.execute
       cmd: 'klist -s'
-    .then next
+    .promise()

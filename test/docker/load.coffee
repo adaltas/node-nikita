@@ -15,7 +15,7 @@ describe 'docker.load', ->
 # timestamp ensures that hash of the built image will be unique and
 # image checksum is also unique
 
-  they 'loads simple image', (ssh, next) ->
+  they 'loads simple image', (ssh) ->
     @timeout 30000
     nikita
       ssh: ssh
@@ -40,9 +40,9 @@ describe 'docker.load', ->
       loaded.should.be.true() unless err
     .docker.rmi
       image: 'nikita/load_test'
-    .then next
+    .promise()
 
-  they 'not loading if checksum', (ssh, next) ->
+  they 'not loading if checksum', (ssh) ->
     checksum = null
     nikita
       ssh: ssh
@@ -65,9 +65,9 @@ describe 'docker.load', ->
         checksum: checksum
       , (err, loaded) ->
         loaded.should.be.false() unless err
-    .then next
+    .promise()
 
-  they 'status not modified if same image', (ssh, next) ->
+  they 'status not modified if same image', (ssh) ->
     @timeout 30000
     nikita
       ssh: ssh
@@ -91,4 +91,4 @@ describe 'docker.load', ->
       input: "#{scratch}/load.tar"
     , (err, loaded) ->
       loaded.should.be.false()
-      next(err)
+    .promise()

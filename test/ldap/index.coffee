@@ -28,7 +28,7 @@ describe 'ldap.index', ->
       client.unbind (err) ->
         next err
 
-  it 'create a new index', (next) ->
+  it 'create a new index', ->
     nikita
       ldap: client
     .ldap.index
@@ -43,9 +43,9 @@ describe 'ldap.index', ->
         aliasedEntryName: 'eq'
     , (err, modified) ->
       modified.should.be.false()
-    .then next
+    .promise()
 
-  it 'update an existing index', (next) ->
+  it 'update an existing index', ->
     nikita
       ldap: client
     .ldap.index
@@ -68,4 +68,4 @@ describe 'ldap.index', ->
         aliasedEntryName: 'pres,eq'
     , (err, modified) ->
       modified.should.be.true()
-    .then next
+    .promise()

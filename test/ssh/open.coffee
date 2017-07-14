@@ -8,8 +8,8 @@ describe 'ssh.open', ->
 
   scratch = test.scratch @
 
-  they 'with handler options', (ssh, next) ->
-    return next() unless ssh
+  they 'with handler options', (ssh) ->
+    return unless ssh
     nikita
     .call (options) ->
       (!!options.ssh).should.be.false()
@@ -25,10 +25,10 @@ describe 'ssh.open', ->
     .call (options) ->
       (!!options.ssh).should.be.true()
     .ssh.close()
-    .then next
+    .promise()
 
-  they 'with global options', (ssh, next) ->
-    return next() unless ssh
+  they 'with global options', (ssh) ->
+    return unless ssh
     nikita
       ssh:
         host: ssh.config.host
@@ -44,10 +44,10 @@ describe 'ssh.open', ->
       status.should.be.true() unless err
     .ssh.close {}, (err, status) ->
       status.should.be.false() unless err
-    .then next
+    .promise()
 
-  they 'check status', (ssh, next) ->
-    return next() unless ssh
+  they 'check status', (ssh) ->
+    return unless ssh
     options = 
       host: ssh.config.host
       port: ssh.config.port
@@ -60,4 +60,4 @@ describe 'ssh.open', ->
     .ssh.open options, (err, status) ->
       status.should.be.false() unless err
     .ssh.close()
-    .then next
+    .promise()

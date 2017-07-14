@@ -9,7 +9,7 @@ describe 'service.stop', ->
   config = test.config()
   return if config.disable_service_systemctl
 
-  they 'should stop', (ssh, next) ->
+  they 'should stop', (ssh) ->
     nikita
       ssh: ssh
     .service.install config.service.name
@@ -18,9 +18,9 @@ describe 'service.stop', ->
       status.should.be.true() unless err
     .service.stop config.service.srv_name, (err, status) ->
       status.should.be.false() unless err
-    .then next
+    .promise()
 
-  they 'no error when invalid service name', (ssh, next) ->
+  they 'no error when invalid service name', (ssh) ->
     nikita
       ssh: ssh
     .service.stop
@@ -28,4 +28,4 @@ describe 'service.stop', ->
       relax: true
     , (err, status) ->
       status.should.be.false()
-    .then next
+    .promise()

@@ -7,7 +7,7 @@ describe 'registry.deprecate', ->
 
   scratch = test.scratch @
 
-  it 'function handler without new name', (next) ->
+  it 'function handler without new name', ->
     nikita
     .call ->
       nikita.deprecate 'my_function', -> 'my_function'
@@ -18,9 +18,9 @@ describe 'registry.deprecate', ->
       .then next
     .call ->
       nikita.unregister 'my_function'
-    .then next
+    .promise()
 
-  it 'function handler with new name', (next) ->
+  it 'function handler with new name', ->
     nikita
     .call ->
       nikita.deprecate 'my_function', 'my_new_function', -> 'my_function'
@@ -31,9 +31,9 @@ describe 'registry.deprecate', ->
       .then next
     .call ->
       nikita.unregister 'my_function'
-    .then next
+    .promise()
 
-  it 'string handler without new name', (next) ->
+  it 'string handler without new name', ->
     nikita
     .call ->
       nikita.deprecate 'my_function', 'nikita/file/touch'
@@ -44,9 +44,9 @@ describe 'registry.deprecate', ->
       .then next
     .call ->
       nikita.unregister 'my_function'
-    .then next
+    .promise()
 
-  it 'string handler with new name', (next) ->
+  it 'string handler with new name', ->
     nikita
     .call ->
       nikita.deprecate 'my_function', 'my_new_function', 'nikita/file/touch'
@@ -57,4 +57,4 @@ describe 'registry.deprecate', ->
       .then next
     .call ->
       nikita.unregister 'my_function'
-    .then next
+    .promise()

@@ -8,7 +8,7 @@ describe 'api before', ->
 
   describe 'event', ->
 
-    it 'is a string and match a action type', (next) ->
+    it 'is a string and match a action type', ->
       history = []
       nikita()
       .registry.register 'good_handler', (->)
@@ -19,11 +19,11 @@ describe 'api before', ->
         key: 'value 1'
       .good_handler
         key: 'value 2'
-      .then (err) ->
-        history.should.eql ['value 1', 'value 2'] unless err
-        next err
+      .call ->
+        history.should.eql ['value 1', 'value 2']
+      .promise()
 
-    it 'is an object and match options', (next) ->
+    it 'is an object and match options', ->
       history = []
       nikita()
       .registry.register 'handler', (->)
@@ -33,13 +33,13 @@ describe 'api before', ->
         key: 'value 1'
       .handler
         key: 'value 2'
-      .then (err) ->
-        history.should.eql ['value 2'] unless err
-        next err
+      .call ->
+        history.should.eql ['value 2']
+      .promise()
 
   describe 'handler', ->
 
-    it 'a sync function with sync handler', (next) ->
+    it 'a sync function with sync handler', ->
       history = []
       nikita()
       .registry.register 'sync_fn', ((_) ->)
@@ -55,15 +55,15 @@ describe 'api before', ->
         history.push 'sync 2'
       .call ->
         history.push 'call 3'
-      .then (err, status) ->
+      .call ->
         history.should.eql [
           'call 1', 'before sync', 'sync 1'
           'call 2', 'before sync', 'sync 2'
           'call 3'
-        ] unless err
-        next err
+        ]
+      .promise()
 
-    it 'a sync function with async handler', (next) ->
+    it 'a sync function with async handler', ->
       history = []
       nikita()
       .registry.register 'afunction', ((_) ->)
@@ -81,15 +81,15 @@ describe 'api before', ->
         history.push 'sync 2'
       .call ->
         history.push 'call 3'
-      .then (err, status) ->
+      .call ->
         history.should.eql [
           'call 1', 'before sync', 'sync 1'
           'call 2', 'before sync', 'sync 2'
           'call 3'
         ]
-        next()
+      .promise()
 
-    it 'an async function with sync handler', (next) ->
+    it 'an async function with sync handler', ->
       history = []
       nikita()
       .registry.register 'async_fn', ((_, callback) -> setImmediate callback)
@@ -110,15 +110,15 @@ describe 'api before', ->
         history.push 'async 2'
       .call ->
         history.push 'call 3'
-      .then (err, status) ->
+      .call ->
         history.should.eql [
           'call 1', 'before async', 'async 1'
           'call 2', 'before async', 'async 2'
           'call 3'
         ]
-        next()
+      .promise()
 
-    it 'an async function with async handler', (next) ->
+    it 'an async function with async handler', ->
       history = []
       nikita()
       .registry.register 'async_fn', ((_, callback) -> setImmediate callback)
@@ -140,15 +140,15 @@ describe 'api before', ->
         history.push 'async 2'
       .call ->
         history.push 'call 3'
-      .then (err, status) ->
+      .call ->
         history.should.eql [
           'call 1', 'before async', 'async 1'
           'call 2', 'before async', 'async 2'
           'call 3'
         ]
-        next()
+      .promise()
 
-    it 'an namespaced async function with async handler', (next) ->
+    it 'an namespaced async function with async handler', ->
       history = []
       nikita()
       .registry.register ['a','namespaced','func'], ((_, callback) -> setImmediate callback)
@@ -170,10 +170,10 @@ describe 'api before', ->
         history.push 'async 2'
       .call ->
         history.push 'call 3'
-      .then (err, status) ->
+      .call ->
         history.should.eql [
           'call 1', 'before async', 'async 1'
           'call 2', 'before async', 'async 2'
           'call 3'
         ]
-        next()
+      .promise()

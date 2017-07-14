@@ -7,10 +7,10 @@ describe 'service.init', ->
   
   @timeout 60000
   config = test.config()
+  
   return if config.disable_service_systemctl
-  # process.env['TMPDIR'] = '/var/tmp'
 
-  they 'init file with target and source (default)', (ssh, next) ->
+  they 'init file with target and source (default)', (ssh) ->
     nikita
       ssh: ssh
     .service.remove 'cronie'
@@ -20,9 +20,9 @@ describe 'service.init', ->
       source: "#{__dirname}/crond.j2"
       target: '/etc/init.d/crond'
     .file.assert '/etc/init.d/crond'
-    .then next
+    .promise()
   
-  they 'init file with source only (default)', (ssh, next) ->
+  they 'init file with source only (default)', (ssh) ->
     nikita
       ssh: ssh
     .service.remove 'cronie'
@@ -31,9 +31,9 @@ describe 'service.init', ->
     .service.init
       source: "#{__dirname}/crond.j2"
     .file.assert '/etc/init.d/crond'
-    .then next
+    .promise()
   
-  they 'init file with source and name (default)', (ssh, next) ->
+  they 'init file with source and name (default)', (ssh) ->
     nikita
       ssh: ssh
     .service.remove 'cronie'
@@ -43,13 +43,13 @@ describe 'service.init', ->
       source: "#{__dirname}/crond.j2"
       name: 'crond-name'
     .file.assert '/etc/init.d/crond-name'
-    .then next
-    
+    .promise()
+  
   describe 'daemon-reload', ->
     
     return if config.disable_service_systemctl
   
-    they 'daemon-reload with systemctl sysv-generator', (ssh, next) ->
+    they 'with systemctl sysv-generator', (ssh) ->
       nikita
         ssh: ssh
         if_os: name: ['redhat','centos'], version: '7'
@@ -67,9 +67,9 @@ describe 'service.init', ->
         name: 'crond'
       .service.start
         name: 'stop'
-      .then next
+      .promise()
 
-    they 'daemon-reload with systemctl systemd script', (ssh, next) ->
+    they 'daemon-reload with systemctl systemd script', (ssh) ->
       nikita
         ssh: ssh
       .call
@@ -86,8 +86,8 @@ describe 'service.init', ->
           context: description: 'Command Scheduler Test 1'
           target: '/usr/lib/systemd/system/crond.service'
         , (err, status) ->
-            status.should.be.true() unless err
+          status.should.be.true() unless err
         @file.assert '/usr/lib/systemd/system/crond.service'
         @service.start
           name: 'crond'
-      .then next
+      .promise()

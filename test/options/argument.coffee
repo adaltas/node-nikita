@@ -6,14 +6,14 @@ describe 'options "argument"', ->
 
   scratch = test.scratch @
 
-  it 'pass a string', (next) ->
+  it 'pass a string', ->
     nikita()
     .registry.register 'catchme', (options) ->
       options.argument.should.eql 'gotit'
     .catchme 'gotit'
-    .then next
+    .promise()
 
-  it 'pass an array of strings', (next) ->
+  it 'pass an array of strings', ->
     i = 0
     nikita()
     .registry.register 'catchme', (options, next) ->
@@ -23,4 +23,4 @@ describe 'options "argument"', ->
       next null, true
     .catchme ['gotit', 'gotu'], (err, status) ->
       status.should.be.true() unless err
-    .then next
+    .promise()

@@ -8,7 +8,7 @@ describe 'file.yaml', ->
 
   scratch = test.scratch @
 
-  they 'stringify an object', (ssh, next) ->
+  they 'stringify an object', (ssh) ->
     nikita
       ssh: ssh
     .file.yaml
@@ -19,9 +19,9 @@ describe 'file.yaml', ->
     .file.assert
       target: "#{scratch}/user.yml"
       content: 'user:\n  preference:\n    color: rouge\n'
-    .then next
+    .promise()
 
-  they 'merge an object', (ssh, next) ->
+  they 'merge an object', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -36,9 +36,9 @@ describe 'file.yaml', ->
     .file.assert
       target: "#{scratch}/user.yml"
       content: 'user:\n  preference:\n    language: french\n'
-    .then next
+    .promise()
 
-  they 'discard undefined and null', (ssh, next) ->
+  they 'discard undefined and null', (ssh) ->
     nikita
       ssh: ssh
     .file.yaml
@@ -50,9 +50,9 @@ describe 'file.yaml', ->
     .file.assert
       target: "#{scratch}/user.yml"
       content: 'user:\n  preference:\n    color: violet\n'
-    .then next
+    .promise()
 
-  they 'remove null within merge', (ssh, next) ->
+  they 'remove null within merge', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -69,9 +69,9 @@ describe 'file.yaml', ->
     .file.assert
       target: "#{scratch}/user.yml"
       content: 'user:\n  preference:\n    color: rouge\n    country: france\n'
-    .then next
+    .promise()
 
-  they 'disregard undefined within merge', (ssh, next) ->
+  they 'disregard undefined within merge', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -88,9 +88,9 @@ describe 'file.yaml', ->
     .file.assert
       target: "#{scratch}/user.yml"
       content: 'user:\n  preference:\n    language: node\n'
-    .then next
+    .promise()
 
-  they 'disregard undefined within merge', (ssh, next) ->
+  they 'disregard undefined within merge', (ssh) ->
     nikita
     .file
       target: "#{scratch}/user.yml"
@@ -107,4 +107,4 @@ describe 'file.yaml', ->
     .file.assert
       target: "#{scratch}/user.yml"
       content: 'user:\n  preference:\n    language: node\n  name: toto\n'
-    .then next
+    .promise()

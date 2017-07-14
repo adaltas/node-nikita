@@ -11,7 +11,7 @@ for engine, _ of config.db
 
   describe "db.database.exists #{engine}", ->
 
-    they 'database missing', (ssh, next) ->
+    they 'database missing', (ssh) ->
       nikita
         ssh: ssh
         db: config.db[engine]
@@ -20,9 +20,9 @@ for engine, _ of config.db
       .db.database.exists 'test_database_exists_0_db', (err, status) ->
         status.should.be.false() unless err
       .assert status: false
-      .then next
+      .promise()
 
-    they 'database exists', (ssh, next) ->
+    they 'database exists', (ssh) ->
       nikita
         ssh: ssh
         db: config.db[engine]
@@ -34,4 +34,4 @@ for engine, _ of config.db
         status.should.be.true() unless err
       .db.database.remove 'test_database_exists_1_db', shy: true
       .assert status: false
-      .then next
+      .promise()

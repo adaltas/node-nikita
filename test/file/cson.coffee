@@ -7,7 +7,7 @@ describe 'file.cson', ->
 
   scratch = test.scratch @
 
-  they 'stringify content to target', (ssh, next) ->
+  they 'stringify content to target', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -21,9 +21,9 @@ describe 'file.cson', ->
     .file.assert
       target: "#{scratch}/target.cson"
       content: 'user: \"torval\"'
-    .then next
+    .promise()
 
-  they 'merge target', (ssh, next) ->
+  they 'merge target', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -38,4 +38,4 @@ describe 'file.cson', ->
     .file.assert
       target: "#{scratch}/target.cson"
       content: 'user: \"torval\"\nmerge: true'
-    .then next
+    .promise()

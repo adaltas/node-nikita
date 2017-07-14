@@ -4,20 +4,19 @@ test = require '../test'
 
 describe 'api each', ->
 
-  it 'over an array', (next) ->
+  it 'over an array', ->
     data =[]
     nikita()
     .each ['a', 'b'], (options) ->
       @call -> data.push "#{options.key}"
-      @then next
     .each ['c', 'd'], (options, next) ->
       @call -> data.push "#{options.key}"
       @then next
-    .then (err) ->
-      data.join(',').should.eql 'a,b,c,d' unless err
-      next err
+    .call ->
+      data.join(',').should.eql 'a,b,c,d'
+    .promise()
 
-  it 'over an object', (next) ->
+  it 'over an object', ->
     data =[]
     nikita()
     .each {a: '1', b: '2'}, (options) ->
@@ -25,14 +24,14 @@ describe 'api each', ->
     .each {c: '3', d: '4'}, (options, next) ->
       @call -> data.push "#{options.key}:#{options.value}"
       @then next
-    .then (err) ->
-      data.join(',').should.eql 'a:1,b:2,c:3,d:4' unless err
-      next err
+    .call ->
+      data.join(',').should.eql 'a:1,b:2,c:3,d:4'
+    .promise()
 
-  it 'validate 1st argument', (next) ->
+  it 'validate 1st argument', ->
     data =[]
     nikita()
     .each 'a string', ((options) ->)
     .then (err) ->
       err.message.should.eql 'Invalid Argument: first argument must be an array or an object to iterate, got "a string"'
-      next()
+    .promise()

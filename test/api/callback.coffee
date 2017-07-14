@@ -7,7 +7,7 @@ describe 'api callback', ->
 
   scratch = test.scratch @
 
-  it 'call callback multiple times for array of options', (next) ->
+  it 'call callback multiple times for array of options', ->
     callbacks = []
     nikita
     .call [
@@ -16,23 +16,23 @@ describe 'api callback', ->
       handler: (_, callback) -> callback null, true
     ], (err, status) ->
       callbacks.push [err, status]
-    .then (err) ->
+    .call ->
       callbacks.should.eql [
         [undefined, false]
         [undefined, true]
       ]
-      next err
+    .promise()
 
-  it 'register actions in callback', (next) ->
+  it 'register actions in callback', ->
     msgs = []
-    m = nikita log: (msg) -> msgs.push msg if /\/file_\d/.test msg
-    m
+    n = nikita log: (msg) -> msgs.push msg if /\/file_\d/.test msg
+    n
     .file
       target: "#{scratch}/a_file"
       content: 'abc'
     , (err, written) ->
       return next err if err
-      m.file
+      n.file
         target: "#{scratch}/a_file"
         content: 'def'
         append: true
@@ -42,44 +42,42 @@ describe 'api callback', ->
       target: "#{scratch}/a_file"
       content: 'hij'
       append: true
-    .then (err, changed) ->
-      return next err if err
-      fs.readFile "#{scratch}/a_file", 'ascii', (err, content) ->
-        return next err if err
-        content.should.eql 'abcdefhij'
-        next()
+    .file.assert
+      target: "#{scratch}/a_file"
+      content: 'abcdefhij'
+    .promise()
         
   describe 'error', ->
 
-    it 'without parent', (next) ->
+    it 'without parent', ->
       nikita()
       .file
         target: "#{scratch}/a_file"
         content: 'abc'
       , (err, written) ->
         throw Error 'Catchme'
-      .file
-        invalid: true
-      .then (err, changed) ->
+      .call ->
+        throw Error "Dont come here"
+      .then (err) ->
         err.message.should.eql 'Catchme'
-        next()
+      .promise()
 
-    it 'inside sync call', (next) ->
+    it 'inside sync call', ->
       nikita
       .call () ->
         @call (->), ->
           throw Error 'Catchme'
-      .then (err, changed) ->
+      .then (err) ->
         err.message.should.eql 'Catchme'
-        next()
+      .promise()
 
-    it 'inside async call', (next) ->
+    it 'inside async call', ->
       nikita
       .call (_, callback) ->
         @call (->), ->
           throw Error 'Catchme'
         @then callback
-      .then (err, changed) ->
+      .then (err) ->
         err.message.should.eql 'Catchme'
-        next()
+      .promise()
       

@@ -18,7 +18,7 @@ describe 'registry.register', ->
       nikita.register 'my_function', -> 'my_function'
       nikita.register 'my_function', -> 'my_function'
 
-    it 'register an object with options', (next) ->
+    it 'register an object with options', ->
       value_a = value_b = null
       nikita.register 'my_function', shy: true, handler: (options) ->
         value_a = "hello #{options.value}"
@@ -26,26 +26,26 @@ describe 'registry.register', ->
         value_b = "hello #{options.value}"
         callback null, true
       nikita
-      .call (_, next) ->
+      .call (_, callback) ->
         nikita
         .my_function value: 'world'
         .then (err, status) ->
           status.should.be.false() unless err
-          next err
-      .call (_, next) ->
+          callback err
+      .call (_, callback) ->
         nikita
         .my.function value: 'world'
         .then (err, status) ->
           status.should.be.false() unless err
-          next err
-      .then (err) ->
-        value_a.should.eql "hello world" unless err
-        value_b.should.eql "hello world" unless err
+          callback err
+      .call ->
+        value_a.should.eql "hello world"
+        value_b.should.eql "hello world"
         nikita.unregister 'my_function'
         nikita.unregister ['my', 'function']
-        next err
+      .promise()
 
-    it 'overwrite middleware options', (next) ->
+    it 'overwrite middleware options', ->
       value_a = value_b = null
       nikita.register 'my_function', key: 'a', handler: (->)
       nikita.register 'my_function', key: 'b', handler: (options) -> value_a = "Got #{options.key}"
@@ -55,45 +55,47 @@ describe 'registry.register', ->
         'my': 'function': key: 'b', handler: (options) ->
           value_b = "Got #{options.key}"
       nikita()
-      .call (_, next) ->
-        nikita.my_function next
-      .call (_, next) ->
-        nikita.my.function next
-      .then (err) ->
-        value_a.should.eql "Got b" unless err
-        value_b.should.eql "Got b" unless err
+      .call (_, callback) ->
+        nikita.my_function callback
+      .call (_, callback) ->
+        nikita.my.function callback
+      .call ->
+        value_a.should.eql "Got b"
+        value_b.should.eql "Got b"
         nikita.unregister 'my_function'
         nikita.unregister ['my', 'function']
-        next err
+      .promise()
 
-    it 'is available from nikita instance', (next) ->
+    it 'is available from nikita instance', ->
       nikita.register 'my_function', (options, callback) ->
         options.my_option.should.eql 'my value'
         process.nextTick ->
           callback null, true
-      m = nikita()
-      m.registry.registered('my_function').should.be.true()
-      m.my_function
+      n = nikita()
+      n.registry.registered('my_function').should.be.true()
+      n.my_function
         my_option: 'my value'
-      .then (err, status) ->
+      n.then (err, status) ->
+        throw err if err
         status.should.be.true()
         nikita.unregister 'my_function'
-        next err
+      n.promise()
 
-    it 'namespace accept array', (next) ->
+    it 'namespace accept array', ->
       value = null
       nikita.register ['this', 'is', 'a', 'function'], (options, callback) ->
         value = options.value
         callback null, true
-      m = nikita()
-      m.registry.registered(['this', 'is', 'a', 'function']).should.be.true()
-      m.this.is.a.function value: 'yes'
-      m.then (err, status) ->
+      n = nikita()
+      n.registry.registered(['this', 'is', 'a', 'function']).should.be.true()
+      n.this.is.a.function value: 'yes'
+      n.then (err, status) ->
+        throw err if err
         status.should.be.true()
         nikita.unregister ['this', 'is', 'a', 'function']
-        next err
+      n.promise()
 
-    it 'namespace accept object', (next) ->
+    it 'namespace accept object', ->
       value_a = value_b = null
       nikita.register
         namespace:
@@ -109,13 +111,14 @@ describe 'registry.register', ->
       .call (_, next) ->
         nikita.namespace.child(value: 'b').then next
       .then (err, status) ->
+        throw err if err
         status.should.be.true()
         value_a.should.eql 'a'
         value_b.should.eql 'b'
         nikita.unregister "namespace"
-        next err
+      .promise()
 
-    it 'namespace call function with children', (next) ->
+    it 'namespace call function with children', ->
       value_a = value_b = null
       nikita.register ['a', 'function'], (options, callback) ->
         value_a = options.value
@@ -125,37 +128,38 @@ describe 'registry.register', ->
         callback null, true
       nikita.registered(['a', 'function']).should.be.true()
       nikita
-      .call (_, next) -> nikita.a.function(value: 'a').then next
-      .call (_, next) -> nikita.a.function.with.a.child(value: 'b').then next
+      .call (_, callback) -> nikita.a.function(value: 'a').then callback
+      .call (_, callback) -> nikita.a.function.with.a.child(value: 'b').then callback
       .then (err, status) ->
+        throw err if err
         status.should.be.true()
         value_a.should.eql 'a'
         value_b.should.eql 'b'
         nikita.unregister ['a', 'function']
         nikita.unregister ['a', 'function', 'with', 'a', 'child']
-        next err
+      .promise()
 
-    it 'throw error unless registered', (next) ->
+    it 'throw error unless registered', ->
       nikita
       .invalid()
       .then (err) ->
         err.message.should.eql 'Unregistered Middleware: invalid'
-        next()
+      .promise()
 
   describe 'local', ->
 
     it 'set property', ->
-      m = nikita()
-      m.registry.register 'my_function', -> 'my_function'
-      m.registry.registered('my_function').should.be.true()
-      m.registry.unregister 'my_function'
+      n = nikita()
+      n.registry.register 'my_function', -> 'my_function'
+      n.registry.registered('my_function').should.be.true()
+      n.registry.unregister 'my_function'
 
     it 'overwrite a middleware', ->
       nikita()
       .registry.register 'my_function', -> 'my_function'
       .registry.register 'my_function', -> 'my_function'
 
-    it 'register an object with options', (next) ->
+    it 'register an object with options', ->
       value_a = value_b = null
       nikita()
       .registry.register( 'my_function', shy: true, handler: (options, callback) ->
@@ -169,12 +173,13 @@ describe 'registry.register', ->
       .my_function value: 'world a'
       .my.function value: 'world b'
       .then (err, status) ->
-        status.should.be.false() unless err
-        value_a.should.eql "hello world a" unless err
-        value_b.should.eql "hello world b" unless err
-        next err
+        throw err if err
+        status.should.be.false()
+        value_a.should.eql "hello world a"
+        value_b.should.eql "hello world b"
+      .promise()
 
-    it 'overwrite middleware options', (next) ->
+    it 'overwrite middleware options', ->
       value_a = value_b = null
       nikita()
       .registry.register( 'my_function', key: 'a', handler: (->) )
@@ -185,49 +190,50 @@ describe 'registry.register', ->
         'my': 'function': key: 'b', handler: (options) -> value_b = "Got #{options.key}"
       .my_function()
       .my.function()
-      .then (err, status) ->
-        value_a.should.eql "Got b" unless err
-        value_b.should.eql "Got b" unless err
-        next err
+      .call ->
+        value_a.should.eql "Got b"
+        value_b.should.eql "Got b"
+      .promise()
 
-    it 'receive options', (next) ->
-      m = nikita()
+    it 'receive options', ->
+      n = nikita()
       .registry.register 'my_function', (options, callback) ->
         options.my_option.should.eql 'my value'
         process.nextTick ->
           callback null, true
       .my_function
         my_option: 'my value'
-      .then (err, modified) ->
-        modified.should.be.true()
-        m.registry.registered('my_function').should.be.true()
-        next err
+      .then (err, status) ->
+        throw err if err
+        status.should.be.true()
+        n.registry.registered('my_function').should.be.true()
+      n.promise()
 
-    it 'register module name', (next) ->
+    it 'register module name', ->
       logs = []
-      m = nikita()
+      n = nikita()
       .on 'text', (l) -> logs.push l.message
       .registry.register 'module_sync', 'test/resources/module_sync'
       .registry.register 'module_async', 'test/resources/module_async'
       .module_sync who: 'sync'
       .module_async who: 'async'
-      .then (err, modified) ->
-        m.registry.registered('module_sync').should.be.true() unless err
-        m.registry.registered('module_async').should.be.true() unless err
-        logs.should.eql ['Hello sync', 'Hello async'] unless err
-        next err
+      .call ->
+        n.registry.registered('module_sync').should.be.true()
+        n.registry.registered('module_async').should.be.true()
+        logs.should.eql ['Hello sync', 'Hello async']
+      n.promise()
 
-    it 'support lazy validation for late registration', (next) ->
+    it 'support lazy validation for late registration', ->
       name = null
       nikita
       .call ->
         @registry.register ['my', 'function'], (options) -> name = options.name
       .my.function name: 'callme'
-      .then (err) ->
-        name.should.eql 'callme' unless err
-        next err
+      .call ->
+        name.should.eql 'callme'
+      .promise()
 
-    it 'namespace accept array', (next) ->
+    it 'namespace accept array', ->
       value = null
       nikita()
       .registry.register ['this', 'is', 'a', 'function'], (options, callback) ->
@@ -235,11 +241,12 @@ describe 'registry.register', ->
         callback null, true
       .this.is.a.function value: 'yes'
       .then (err, status) ->
+        throw err if err
         status.should.be.true()
         nikita.unregister ['this', 'is', 'a', 'function']
-        next err
+      .promise()
 
-    it 'namespace accept object', (next) ->
+    it 'namespace accept object', ->
       value_a = value_b = null
       nikita()
       .registry.register
@@ -253,12 +260,13 @@ describe 'registry.register', ->
       .namespace value: 'a'
       .namespace.child value: 'b'
       .then (err, status) ->
+        throw err if err
         status.should.be.true()
         value_a.should.eql 'a'
         value_b.should.eql 'b'
-        next err
+      .promise()
 
-    it 'namespace call function with children', (next) ->
+    it 'namespace call function with children', ->
       value_a = value_b = null
       nikita()
       .registry.register ['a', 'function'], (options, callback) ->
@@ -270,29 +278,30 @@ describe 'registry.register', ->
       .a.function value: 'a'
       .a.function.with.a.child value: 'b'
       .then (err, status) ->
+        throw err if err
         status.should.be.true()
         value_a.should.eql 'a'
         value_b.should.eql 'b'
         nikita.unregister ['a', 'function']
         nikita.unregister ['a', 'function', 'with', 'a', 'child']
-        next err
+      .promise()
 
-    it 'throw error unless registered', (next) ->
+    it 'throw error unless registered', ->
       nikita()
       .invalid()
       .then (err) ->
         err.message.should.eql 'Unregistered Middleware: invalid'
-        next()
+      .promise()
 
   describe 'mixed', ->
 
-    it 'support lazy validation for late registration', (next) ->
+    it 'support lazy validation for late registration', ->
       name = null
       nikita
       .call ->
         nikita.register 'my_function', (options) -> name = options.name
       .my_function name: 'callme'
-      .then (err) ->
-        name.should.eql 'callme' unless err
+      .call ->
+        name.should.eql 'callme'
         nikita.unregister 'my_function'
-        next err
+      .promise()

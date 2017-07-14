@@ -8,7 +8,7 @@ describe 'krb5.delprinc', ->
   config = test.config()
   return if config.disable_krb5_delprinc
 
-  they 'a principal which exists', (ssh, next) ->
+  they 'a principal which exists', (ssh) ->
     nikita
       ssh: ssh
       kadmin_server: config.krb5.kadmin_server
@@ -21,9 +21,9 @@ describe 'krb5.delprinc', ->
       principal: "nikita@#{config.krb5.realm}"
     , (err, status) ->
       status.should.be.true() unless err
-    .then next
+    .promise()
 
-  they 'a principal which does not exist', (ssh, next) ->
+  they 'a principal which does not exist', (ssh) ->
     nikita
       ssh: ssh
       kadmin_server: config.krb5.kadmin_server
@@ -35,4 +35,4 @@ describe 'krb5.delprinc', ->
       principal: "nikita@#{config.krb5.realm}"
     , (err, status) ->
       status.should.be.false()
-    .then next
+    .promise()

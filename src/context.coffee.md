@@ -92,6 +92,7 @@
         if options.length and options.filter( (opts) -> not opts.handler ).length is 0
           callback = handler
           handler = null
+        # Normalize
         for opts, i in options
           # Clone
           options[i] = {}
@@ -218,12 +219,12 @@
       run = (options, callback) ->
         options = todos.shift() unless options
         unless options # Nothing more to do in current queue
-          if stack.length is 0
-            obj.options.domain?.removeListener 'error', domain_on_error
           if callback
             callback todos.err
           else
-            throw todos.err if stack.length is 0 and todos.err and todos.throw_if_error
+            throw todos.err if not killed and stack.length is 0 and todos.err and todos.throw_if_error
+          if stack.length is 0
+            obj.options.domain?.removeListener 'error', domain_on_error
           return
         org_options = options
         options = enrich_options options

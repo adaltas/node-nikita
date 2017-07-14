@@ -4,24 +4,24 @@ test = require '../test'
 
 describe 'api error', ->
 
-  it 'log', (next) ->
+  it 'log', ->
     logs = []
     nikita
     .on 'text', (log) -> logs.push log
     .call -> throw Error 'Catchme'
-    .then (err) ->
+    .then ->
       logs.length.should.eql 1
       logs[0].message.should.eql 'Catchme'
       logs[0].level.should.eql 'ERROR'
-      next()
+    .promise()
 
-  it 'log with relax', (next) ->
+  it 'log with relax', ->
     logs = []
     nikita
     .on 'text', (log) -> logs.push log
     .call relax: true, -> throw Error 'Catchme'
-    .then (err) ->
+    .call ->
       logs.length.should.eql 1
       logs[0].message.should.eql 'Catchme'
       logs[0].level.should.eql 'ERROR'
-      next()
+    .promise()

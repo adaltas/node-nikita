@@ -28,7 +28,7 @@ describe 'file.cache', ->
       server.close()
       server.on 'close', next
 
-    they 'handles string argument', (ssh, next) ->
+    they 'handles string argument', (ssh) ->
       nikita
         ssh: ssh
       .file.cache 'http://localhost:12345/my_file',
@@ -36,9 +36,9 @@ describe 'file.cache', ->
       , (err, status, file) ->
         status.should.be.true() unless err
         file.should.eql "#{scratch}/my_cache_dir/my_file" unless err
-      .then next
+      .promise()
 
-    they 'into local cache_dir', (ssh, next) ->
+    they 'into local cache_dir', (ssh) ->
       nikita
         ssh: ssh
       .file.cache
@@ -55,9 +55,9 @@ describe 'file.cache', ->
         file.should.eql "#{scratch}/my_cache_dir/my_file"
       .file.assert
         target: "#{scratch}/my_cache_dir/my_file"
-      .then next
+      .promise()
 
-    they 'option fail with invalid exit code', (ssh, next) ->
+    they 'option fail with invalid exit code', (ssh) ->
       nikita
         ssh: ssh
       .file.cache
@@ -72,11 +72,11 @@ describe 'file.cache', ->
         relax: true
       , (err, status) ->
         err.message.should.eql 'Invalid Exit Code: 22'
-      .then next
+      .promise()
 
     describe 'md5', ->
 
-      they 'bypass cache if string match', (ssh, next) ->
+      they 'bypass cache if string match', (ssh) ->
         logs = []
         nikita
           ssh: ssh
@@ -111,11 +111,11 @@ describe 'file.cache', ->
         , (err, status, file) ->
           status.should.be.true() unless err
           ("[WARN] Hashes don\'t match, delete then re-download" in logs).should.be.true() unless err
-        .then next
+        .promise()
 
   describe 'file', ->
 
-    they 'into local cache_dir', (ssh, next) ->
+    they 'into local cache_dir', (ssh) ->
       nikita
         ssh: ssh
       .file.cache
@@ -132,11 +132,11 @@ describe 'file.cache', ->
         file.should.eql "#{scratch}/my_cache_dir/#{path.basename __filename}"
       .file.assert
         target: "#{scratch}/my_cache_dir/#{path.basename __filename}"
-      .then next
+      .promise()
 
     describe 'md5', ->
 
-      they 'bypass cache if string match', (ssh, next) ->
+      they 'bypass cache if string match', (ssh) ->
         logs = []
         nikita
           ssh: ssh
@@ -171,4 +171,4 @@ describe 'file.cache', ->
         , (err, status, file) ->
           status.should.be.true() unless err
           ("[WARN] Hashes don't match, delete then re-download" in logs).should.be.true() unless err
-        .then next
+        .promise()

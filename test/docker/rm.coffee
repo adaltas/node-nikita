@@ -12,7 +12,7 @@ describe 'docker.rm', ->
   config = test.config()
   return if config.disable_docker
 
-  they 'remove stopped container', (ssh, next) ->
+  they 'remove stopped container', (ssh) ->
     @timeout 30000
     nikita
       ssh: ssh
@@ -29,9 +29,9 @@ describe 'docker.rm', ->
       container: 'nikita_rm'
     , (err, removed, stdout, stderr) ->
       removed.should.be.true() unless err
-    .then next
+    .promise()
 
-  they 'remove live container (no force)', (ssh, next) ->
+  they 'remove live container (no force)', (ssh) ->
     @timeout 30000
     nikita
       ssh: ssh
@@ -52,9 +52,9 @@ describe 'docker.rm', ->
       container: 'nikita_rm'
     .docker.rm
       container: 'nikita_rm'
-    .then next
+    .promise()
 
-  they 'remove live container (with force)', (ssh, next) ->
+  they 'remove live container (with force)', (ssh) ->
     @timeout 30000
     nikita
       ssh: ssh
@@ -71,4 +71,4 @@ describe 'docker.rm', ->
       force: true
     , (err, removed, stdout, stderr) ->
       removed.should.be.true()
-      next(err)
+    .promise()

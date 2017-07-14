@@ -9,7 +9,7 @@ describe 'service.remove', ->
   config = test.config()
   return if config.disable_service_install
 
-  they 'new package', (ssh, next) ->
+  they 'new package', (ssh) ->
     nikita
       ssh: ssh
     .service.install
@@ -22,4 +22,4 @@ describe 'service.remove', ->
       name: config.service.name
     , (err, status) ->
       status.should.be.false() unless err
-    .then next
+    .promise()

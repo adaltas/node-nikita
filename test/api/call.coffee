@@ -10,7 +10,7 @@ describe 'api call', ->
 
   describe 'api', ->
 
-    it 'accept an array of handlers and a callback', (next) ->
+    it 'accept an array of handlers and a callback', ->
       logs = []
       nikita
       .call [
@@ -22,19 +22,19 @@ describe 'api call', ->
         status.should.be.false() unless err
       .call ->
         logs.should.eql ['a', 'c', 'b', 'c']
-      .then next
+      .promise()
 
-    it 'string requires a module', (next) ->
+    it 'string requires a module', ->
       logs = []
       nikita
       .on 'text', (log) -> logs.push log.message
       .call who: 'sync', 'test/resources/module_sync'
       .call who: 'async', 'test/resources/module_async'
-      .then (err) ->
-        logs.should.eql ['Hello sync', 'Hello async'] unless err
-        next err
+      .call ->
+        logs.should.eql ['Hello sync', 'Hello async']
+      .promise()
 
-    it 'string requires a module from process cwd', (next) ->
+    it 'string requires a module from process cwd', ->
       cwd = null
       nikita
       .call -> cwd = process.cwd()
@@ -42,25 +42,26 @@ describe 'api call', ->
       .call './src/core/ping', (err, status, message) ->
         message.should.eql 'pong' unless err
       .call -> process.chdir cwd
-      .then next
+      .promise()
 
-    it 'string requires a module which export an object', (next) ->
+    it 'string requires a module which export an object', ->
       logs = []
       nikita
       .on 'text', (l) -> logs.push l.message
       .call who: 'us', 'test/resources/module_async_object'
-      .then (err) ->
-        logs[0].should.eql 'Hello us' unless err
-        next err
+      .call ->
+        logs[0].should.eql 'Hello us'
+      .promise()
 
-    it 'accept a string and an handler', (next) ->
+    it 'accept a string and an handler', ->
       nikita()
-      .call 'gotit', handler: ( (options) -> options.argument.should.eql 'gotit' )
-      .then next
+      .call 'gotit',
+        handler: (options) -> options.argument.should.eql 'gotit'
+      .promise()
 
   describe 'sync', ->
 
-    it 'execute a handler', (next) ->
+    it 'execute a handler', ->
       called = 0
       touched = 0
       nikita
@@ -74,12 +75,12 @@ describe 'api call', ->
         target: "#{scratch}/file_b"
       , (err) ->
         touched++
-      .then (err, status) ->
-        called.should.eql 1 unless err
-        touched.should.eql 2 unless err
-        next err
+      .call ->
+        called.should.eql 1
+        touched.should.eql 2
+      .promise()
 
-    it 'execute a callback', (next) ->
+    it 'execute a callback', ->
       called = 0
       nikita
       # 1st arg options with handler, 2nd arg a callback
@@ -90,26 +91,26 @@ describe 'api call', ->
       .call (->), (err, status) ->
         status.should.be.false() unless err
         called++ unless err
-      .then (err, status) ->
+      .call ->
         called.should.eql 2
-        next()
+      .promise()
 
-    it 'pass options', (next) ->
+    it 'pass options', ->
       nikita
       .call test: true, (options) ->
         options.test.should.be.true()
-      .then next
+      .promise()
 
-    it 'pass multiple options', (next) ->
+    it 'pass multiple options', ->
       nikita
       .call {test1: true}, {test2: true}, (options) ->
         options.test1.should.be.true()
         options.test2.should.be.true()
-      .then next
+      .promise()
 
   describe 'async', ->
 
-    it 'execute a handler', (next) ->
+    it 'execute a handler', ->
       called = 0
       touched = 0
       nikita
@@ -125,12 +126,12 @@ describe 'api call', ->
         target: "#{scratch}/a_file"
       , (err) ->
         touched++
-      .then (err, status) ->
-        called.should.eql 1 unless err
-        touched.should.eql 2 unless err
-        next err
+      .call ->
+        called.should.eql 1
+        touched.should.eql 2
+      .promise()
 
-    it 'execute a callback', (next) ->
+    it 'execute a callback', ->
       called = 0
       touched = 0
       nikita
@@ -147,52 +148,57 @@ describe 'api call', ->
         target: "#{scratch}/a_file"
       , (err) ->
         touched++
-      .then (err, status) ->
-        called.should.eql 1 unless err
-        touched.should.eql 2 unless err
-        next err
+      .call ->
+        called.should.eql 1
+        touched.should.eql 2
+      .promise()
 
-    it 'pass options', (next) ->
+    it 'pass options', ->
       nikita
       .call test: true, (options, next) ->
         options.test.should.be.true()
         next()
-      .then next
+      .promise()
 
-    it 'pass multiple options', (next) ->
+    it 'pass multiple options', ->
       nikita
       .call {test1: true}, {test2: true}, (options, next) ->
         options.test1.should.be.true()
         options.test2.should.be.true()
         next()
-      .then next
+      .promise()
 
   describe 'async nested', ->
 
-    it 'in a user callback', (next) ->
-      m = nikita
+    it 'in a user callback', ->
+      nikita
       .call (options, next) ->
         @file
-          content: 'ok'
           target: "#{scratch}/a_file"
+          content: 'ok'
         , next
-      .then (err, status) ->
-        fs.readFile "#{scratch}/a_file", 'ascii', (err, content) ->
-          next()
+      .assert
+        status: true
+      .file.assert
+        target: "#{scratch}/a_file"
+        content: 'ok'
+      .promise()
 
-    it 'in then with changes', (next) ->
-      m = nikita
+    it 'in then with changes', ->
+      nikita
       .call (options, next) ->
         @file
           content: 'ok'
           target: "#{scratch}/a_file"
         .then next
-      .then (err, status) ->
-        status.should.be.true()
-        fs.readFile "#{scratch}/a_file", 'ascii', (err, content) ->
-          next()
+      .assert
+        status: true
+      .file.assert
+        target: "#{scratch}/a_file"
+        content: 'ok'
+      .promise()
 
-    it 'in then without changes', (next) ->
+    it 'in then without changes', ->
       m = nikita
       .call (options, next) ->
         @file
@@ -200,11 +206,11 @@ describe 'api call', ->
           target: "#{scratch}/a_file"
           if_exists: "#{scratch}/a_file"
         .then next
-      .then (err, status) ->
-        status.should.be.false()
-        next()
+      .assert
+        status: false
+      .promise()
 
-    it 'pass user arguments', (next) ->
+    it 'pass user arguments', ->
       callback_called = false
       m = nikita
       .call (options, next) ->
@@ -214,7 +220,8 @@ describe 'api call', ->
         callback_called = true
         status.should.be.true()
         argument.should.equal 'argument'
-      .then (err, status) ->
-        callback_called.should.be.true() unless err
-        status.should.be.true() unless err
-        next err
+      .assert
+        status: true
+      .call ->
+        callback_called.should.be.true()
+      .promise()

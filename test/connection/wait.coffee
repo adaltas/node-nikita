@@ -21,7 +21,7 @@ describe 'connection.wait', ->
 
   describe 'connection', ->
 
-    they 'a single host and a single port', (ssh, next) ->
+    they 'a single host and a single port', (ssh) ->
       port = port++
       nikita
         ssh: ssh
@@ -35,9 +35,9 @@ describe 'connection.wait', ->
         status.should.be.true() unless err
       .call (_, callback) ->
         @options.server1.close callback
-      .then next
+      .promise()
 
-    they 'server object', (ssh, next) ->
+    they 'server object', (ssh) ->
       port1 = port++
       port2 = port++
       nikita
@@ -67,9 +67,9 @@ describe 'connection.wait', ->
         status.should.be.true() unless err
       .call  (_, callback) -> @options.server1.close callback
       .call  (_, callback) -> @options.server2.close callback
-      .then next
+      .promise()
 
-    they 'server string', (ssh, next) ->
+    they 'server string', (ssh) ->
       port = port++
       nikita
         ssh: ssh
@@ -82,9 +82,9 @@ describe 'connection.wait', ->
         status.should.be.true() unless err
       .call  (_, callback) ->
         @options.server1.close callback
-      .then next
+      .promise()
 
-    they 'multiple connection', (ssh, next) ->
+    they 'multiple connection', (ssh) ->
       port = port++
       nikita
         ssh: ssh
@@ -98,11 +98,11 @@ describe 'connection.wait', ->
         status.should.be.true() unless err
       .call  (_, callback) ->
         @options.server1.close callback
-      .then next
+      .promise()
 
   describe 'options', ->
 
-    they 'test status', (ssh, next) ->
+    they 'test status', (ssh) ->
       port = port++
       nikita
         ssh: ssh
@@ -127,9 +127,9 @@ describe 'connection.wait', ->
         status.should.be.true() unless err
       .call  (_, callback) ->
         @options.server1.close callback
-      .then next
+      .promise()
 
-    they 'quorum true', (ssh, next) ->
+    they 'quorum true', (ssh) ->
       port1 = port++
       port2 = port++
       port3 = port++
@@ -155,9 +155,9 @@ describe 'connection.wait', ->
         @options.server1.close callback
       .call (_, callback) ->
         @options.server2.close callback
-      .then next
+      .promise()
 
-    they 'quorum even number', (ssh, next) ->
+    they 'quorum even number', (ssh) ->
       port1 = port++
       port2 = port++
       nikita
@@ -176,9 +176,9 @@ describe 'connection.wait', ->
         status.should.be.true() unless err
       .call  (_, callback) ->
         @options.server1.close callback
-      .then next
+      .promise()
 
-    they 'quorum odd number', (ssh, next) ->
+    they 'quorum odd number', (ssh) ->
       port1 = port++
       port2 = port++
       port3 = port++
@@ -204,11 +204,11 @@ describe 'connection.wait', ->
         @options.server1.close callback
       .call  (_, callback) ->
         @options.server2.close callback
-      .then next
+      .promise()
 
   describe 'options', ->
     
-    they 'validate host', (ssh, next) ->
+    they 'validate host', (ssh) ->
       port = port++
       nikita
         ssh: ssh
@@ -219,9 +219,9 @@ describe 'connection.wait', ->
         relax: true
       , (err, status) ->
         err.message.should.eql 'Invalid host: undefined'
-      .then next
+      .promise()
         
-    they 'validate port', (ssh, next) ->
+    they 'validate port', (ssh) ->
       nikita
         ssh: ssh
       .connection.wait
@@ -231,5 +231,5 @@ describe 'connection.wait', ->
         relax: true
       , (err, status) ->
         err.message.should.eql 'Invalid port: undefined'
-      .then next
+      .promise()
   

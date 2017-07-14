@@ -22,7 +22,7 @@ describe 'file.download url', ->
     server.close()
     server.on 'close', next
 
-  they 'download without cache and md5', (ssh, next) ->
+  they 'download without cache and md5', (ssh) ->
     @timeout 100000
     # Download a non existing file
     nikita
@@ -41,9 +41,9 @@ describe 'file.download url', ->
       target: "#{scratch}/download"
     , (err, status) ->
       status.should.be.false() unless err
-    .then next
+    .promise()
 
-  they 'should chmod', (ssh, next) ->
+  they 'should chmod', (ssh) ->
     @timeout 10000
     nikita
       ssh: ssh
@@ -57,11 +57,11 @@ describe 'file.download url', ->
       fs.stat @options.ssh, "#{scratch}/download_test", (err, stat) ->
         misc.mode.compare(stat.mode, 0o0770).should.be.true() unless err
         callback()
-    .then next
+    .promise()
 
   describe 'cache', ->
 
-    they 'cache file', (ssh, next) ->
+    they 'cache file', (ssh) ->
       @timeout 100000
       # Download a non existing file
       nikita
@@ -80,9 +80,9 @@ describe 'file.download url', ->
         fs.readFile @options.ssh, "#{scratch}/target", 'ascii', (err, content) ->
           content.should.equal 'okay' unless err
           callback()
-      .then next
+      .promise()
 
-    they 'cache file defined globally', (ssh, next) ->
+    they 'cache file defined globally', (ssh) ->
       @timeout 100000
       # Download a non existing file
       source = 'http://localhost:12345'
@@ -95,12 +95,13 @@ describe 'file.download url', ->
       , (err, status) ->
         return next err if err
         status.should.be.true()
-        fs.readFile null, cache, 'ascii', (err, content) ->
-          return next err if err
-          content.should.equal 'okay'
-          next()
+      .file.assert
+        ssh: null
+        target: cache
+        content: 'okay'
+      .promise()
 
-    they 'cache dir', (ssh, next) ->
+    they 'cache dir', (ssh) ->
       @timeout 100000
       # Download a non existing file
       source = 'http://localhost:12345'
@@ -112,16 +113,16 @@ describe 'file.download url', ->
         target: target
         cache_dir: "#{scratch}/cache_dir"
       , (err, status) ->
-        return next err if err
-        status.should.be.true()
-        fs.exists null, "#{scratch}/cache_dir/localhost:12345", (err, exists) ->
-          return next err if err
-          exists.should.be.true()
-          next()
+        status.should.be.true() unless err
+      .file.assert
+        ssh: null
+        target: "#{scratch}/cache_dir/localhost:12345"
+      .promise()
 
+  return
   describe 'md5', ->
 
-    they 'use shortcircuit if target match md5', (ssh, next) ->
+    they 'use shortcircuit if target match md5', (ssh) ->
       logs = []
       nikita
         ssh: ssh
@@ -139,7 +140,7 @@ describe 'file.download url', ->
         ("[INFO] Destination with valid signature, download aborted" in logs).should.be.true()
       .then next
 
-    they 'bypass shortcircuit if target dont match md5', (ssh, next) ->
+    they 'bypass shortcircuit if target dont match md5', (ssh) ->
       logs = []
       nikita
         ssh: ssh
@@ -159,7 +160,7 @@ describe 'file.download url', ->
           callback err
       .then next
 
-    they 'check signature on downloaded file', (ssh, next) ->
+    they 'check signature on downloaded file', (ssh) ->
       # Download with invalid checksum
       nikita
         ssh: ssh
@@ -172,7 +173,7 @@ describe 'file.download url', ->
         err.message.should.eql "Invalid downloaded checksum, found 'df8fede7ff71608e24a5576326e41c75' instead of '2f74dbbee4142b7366c93b115f914fff'"
       .then next
 
-    they 'count 1 if new file has correct checksum', (ssh, next) ->
+    they 'count 1 if new file has correct checksum', (ssh) ->
       # Download with invalid checksum
       source = 'http://localhost:12345'
       target = "#{scratch}/check_md5"
@@ -186,7 +187,7 @@ describe 'file.download url', ->
         status.should.be.true() unless err
       .then next
 
-    they 'count 0 if a file exist with same checksum', (ssh, next) ->
+    they 'count 0 if a file exist with same checksum', (ssh) ->
       # Download with invalid checksum
       source = 'http://localhost:12345'
       target = "#{scratch}/check_md5"

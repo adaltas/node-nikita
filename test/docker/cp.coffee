@@ -14,7 +14,7 @@ describe 'docker.cp', ->
   scratch = test.scratch @
   @timeout 20000
   
-  they 'a remote file to a local file', (ssh, next) ->
+  they 'a remote file to a local file', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -36,9 +36,9 @@ describe 'docker.cp', ->
         callback err
     .docker.rm
       container: 'nikita_extract'
-    .then next
+    .promise()
     
-  they 'a remote file to a local directory', (ssh, next) ->
+  they 'a remote file to a local directory', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -58,9 +58,9 @@ describe 'docker.cp', ->
         exists.should.be.true() unless err
         callback()
     .docker.rm container: 'nikita_extract'
-    .then next
+    .promise()
     
-  they 'a local file to a remote file', (ssh, next) ->
+  they 'a local file to a remote file', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -84,9 +84,9 @@ describe 'docker.cp', ->
         exists.should.be.true() unless err
         callback()
     .docker.rm container: 'nikita_extract'
-    .then next
+    .promise()
     
-  they 'a local file to a remote directory', (ssh, next) ->
+  they 'a local file to a remote directory', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -110,4 +110,4 @@ describe 'docker.cp', ->
         exists.should.be.true() unless err
         callback()
     .docker.rm container: 'nikita_extract'
-    .then next
+    .promise()

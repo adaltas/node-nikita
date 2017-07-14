@@ -10,8 +10,8 @@ describe 'file.upload', ->
 
   scratch = test.scratch @
 
-  they 'file into a file', (ssh, next) ->
-      return next() unless ssh
+  they 'file into a file', (ssh) ->
+      return unless ssh
       nikita
         ssh: ssh
       .file.upload
@@ -28,10 +28,10 @@ describe 'file.upload', ->
         target: "#{scratch}/#{path.basename __filename}"
       , (err, status) ->
         status.should.be.false() unless err
-      .then next
+      .promise()
 
-    they 'file into a directory', (ssh, next) ->
-        return next() unless ssh
+    they 'file into a directory', (ssh) ->
+        return unless ssh
         nikita
           ssh: ssh
         .file.upload
@@ -48,6 +48,6 @@ describe 'file.upload', ->
           target: "#{scratch}"
         , (err, status) ->
           status.should.be.false() unless err
-        .then next
+        .promise()
 
            

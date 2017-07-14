@@ -9,7 +9,7 @@ describe 'tools.backup', ->
 
   describe 'file', ->
 
-    they 'backup to a directory', (ssh, next) ->
+    they 'backup to a directory', (ssh) ->
       nikita
         ssh: ssh
       .tools.backup
@@ -18,7 +18,9 @@ describe 'tools.backup', ->
         target: "#{scratch}/backup"
       , (err, status, info) ->
         status.should.be.true() unless err
-        @system.execute "[ -f #{scratch}/backup/my_backup/#{info.filename} ]" unless err
+        @file.assert
+          target: "#{scratch}/backup/my_backup/#{info.filename}"
+          filetype: 'file'
       .wait 1000
       .tools.backup
         name: 'my_backup'
@@ -26,10 +28,12 @@ describe 'tools.backup', ->
         target: "#{scratch}/backup"
       , (err, status, info) ->
         status.should.be.true() unless err
-        @system.execute "[ -f #{scratch}/backup/my_backup/#{info.filename} ]" unless err
-      .then next
+        @file.assert
+          target: "#{scratch}/backup/my_backup/#{info.filename}"
+          filetype: 'file'
+      .promise()
 
-    they 'compress', (ssh, next) ->
+    they 'compress', (ssh) ->
       nikita
         ssh: ssh
       .tools.backup
@@ -38,14 +42,15 @@ describe 'tools.backup', ->
         target: "#{scratch}/backup"
         compress: true
       , (err, status, info) ->
-        throw err if err
-        status.should.be.true()
-        @system.execute "[ -f #{scratch}/backup/my_backup/#{info.filename}.tgz ]"
-      .then next
+        status.should.be.true() unless err
+        @file.assert
+          target: "#{scratch}/backup/my_backup/#{info.filename}.tgz"
+          filetype: 'file'
+      .promise()
 
   describe 'cmd', ->
 
-    they 'pipe to a file', (ssh, next) ->
+    they 'pipe to a file', (ssh) ->
       nikita
         ssh: ssh
       .tools.backup
@@ -53,9 +58,8 @@ describe 'tools.backup', ->
         cmd: "echo hello"
         target: "#{scratch}/backup"
       , (err, status, info) ->
-        throw err if err
-        status.should.be.true()
+        status.should.be.true() unless err
         @file.assert
           target: "#{scratch}/backup/my_backup/#{info.filename}"
           content: "hello\n"
-      .then next
+      .promise()

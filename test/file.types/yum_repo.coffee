@@ -9,7 +9,7 @@ describe 'file.types.yum_repo', ->
   config = test.config()
   return if config.disable_yum_conf
 
-  they 'generate from content object', (ssh, next) ->
+  they 'generate from content object', (ssh) ->
     nikita
       ssh: ssh
     .file.types.yum_repo
@@ -36,10 +36,9 @@ describe 'file.types.yum_repo', ->
       status.should.be.false() unless err
     .file.assert
       target: "#{scratch}/test.repo"
-    .then next
-  
+    .promise()
 
-  they 'merge with content object', (ssh, next) ->
+  they 'merge with content object', (ssh) ->
     nikita
       ssh: ssh
     .file.types.yum_repo
@@ -64,9 +63,9 @@ describe 'file.types.yum_repo', ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/test.repo"
-    .then next
+    .promise()
 
-  they 'write to default repository dir', (ssh, next) ->
+  they 'write to default repository dir', (ssh) ->
     nikita
     .file.types.yum_repo
       target: "#{scratch}/test.repo"
@@ -82,9 +81,9 @@ describe 'file.types.yum_repo', ->
       content: """
         [test-repo-0.0.3]\nname = CentOS\nmirrorlist = http://test/?infra=$infra\nbaseurl = http://mirror.centos.org\n
       """
-    .then next
+    .promise()
     
-  they 'default from source with content', (ssh, next) ->
+  they 'default from source with content', (ssh) ->
     nikita
       ssh: ssh
     .file.types.yum_repo
@@ -102,4 +101,4 @@ describe 'file.types.yum_repo', ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/CentOS-nikita.repo"
-    .then next
+    .promise()

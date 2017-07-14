@@ -9,17 +9,18 @@ describe 'file.render', ->
 
   describe 'error', ->
 
-    it 'when source doesnt exist', (next) ->
+    it 'when source doesnt exist', ->
       nikita.file.render
         source: "oups"
         target: "#{scratch}/output"
+        relax: true
       , (err) ->
         err.message.should.eql 'Invalid source, got "oups"'
-        next()
+      .promise()
 
   describe 'nunjunks', ->
 
-    it 'use `content`', (next) ->
+    it 'use `content`', ->
       nikita
       .file.render
         engine: 'nunjunks'
@@ -31,9 +32,9 @@ describe 'file.render', ->
       .file.assert
         target: "#{scratch}/render.txt"
         content: 'Hello you'
-      .then next
+      .promise()
 
-    it 'use `source`', (next) ->
+    it 'use `source`', ->
       source = "#{scratch}/render.j2"
       target = "#{scratch}/render.txt"
       nikita
@@ -49,9 +50,9 @@ describe 'file.render', ->
       .file.assert
         target: target
         content: 'Hello you'
-      .then next
+      .promise()
 
-    it 'test nikita type filters', (next) ->
+    it 'test nikita type filters', ->
       source = "#{scratch}/render.j2"
       target = "#{scratch}/render.txt"
       nikita
@@ -75,9 +76,9 @@ describe 'file.render', ->
       .file.assert
         target: target
         content: '\nHello\nworld'
-      .then next
+      .promise()
 
-    it 'test nikita isEmpty filter', (next) ->
+    it 'test nikita isEmpty filter', ->
       source = "#{scratch}/render.j2"
       target = "#{scratch}/render.txt"
       nikita
@@ -104,9 +105,9 @@ describe 'file.render', ->
       .file.assert
         target: target
         content: '\nsucceed\n'
-      .then next
+      .promise()
 
-    it 'test personal filter', (next) ->
+    it 'test personal filter', ->
       source = "#{scratch}/render.j2"
       target = "#{scratch}/render.txt"
       nikita
@@ -126,9 +127,9 @@ describe 'file.render', ->
       .file.assert
         target: target
         content: 'Hello you 42 ok'
-      .then next
+      .promise()
 
-    it 'check autoescaping (disabled)', (next) ->
+    it 'check autoescaping (disabled)', ->
       source = "#{scratch}/render.j2"
       target = "#{scratch}/render.txt"
       nikita
@@ -147,11 +148,11 @@ describe 'file.render', ->
       .file.assert
         target: target
         content: 'Hello "you" \'42\''
-      .then next
+      .promise()
 
   describe 'eco', ->
 
-    it 'should use `content`', (next) ->
+    it 'should use `content`', ->
       nikita
       .file.render
         engine: 'eco'
@@ -163,9 +164,9 @@ describe 'file.render', ->
       .file.assert
         target: "#{scratch}/render.eco"
         content: 'Hello you'
-      .then next
+      .promise()
 
-    it 'detect `source`', (next) ->
+    it 'detect `source`', ->
       nikita
       .file.render
         source: "#{__dirname}/../resources/render.eco"
@@ -176,9 +177,9 @@ describe 'file.render', ->
       .file.assert
         target: "#{scratch}/render.eco"
         content: 'Hello you'
-      .then next
+      .promise()
 
-    it 'skip empty lines', (next) ->
+    it 'skip empty lines', ->
       nikita
       .file.render
         engine: 'eco'
@@ -191,9 +192,9 @@ describe 'file.render', ->
       .file.assert
         target: "#{scratch}/render.eco"
         content: 'Hello\nyou'
-      .then next
+      .promise()
 
-    they 'doesnt increment if target is same than generated content', (ssh, next) ->
+    they 'doesnt increment if target is same than generated content', (ssh) ->
       nikita
         ssh: ssh
       .file.render
@@ -208,9 +209,9 @@ describe 'file.render', ->
         context: who: 'you'
       , (err, status) ->
         status.should.be.false()
-      .then next
+      .promise()
 
-    it 'detect extention and accept target as a callback', (next) ->
+    it 'detect extention and accept target as a callback', ->
       content = null
       nikita
       .file.render
@@ -219,15 +220,16 @@ describe 'file.render', ->
         context: who: 'you'
       , (err, status) ->
         content.should.eql 'Hello you'
-        next()
+      .promise()
 
-    it 'when syntax is incorrect', (next) ->
+    it 'when syntax is incorrect', ->
       nikita
       .file.render
         content: '<%- @host ->'
         engine: 'eco'
         target: "#{scratch}/render.eco"
         context: toto: 'lulu'
+        relax: true
       , (err, status) ->
         err.message.should.eql 'Parse error on line 1: unexpected end of template'
-        next()
+      .promise()

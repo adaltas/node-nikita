@@ -20,7 +20,7 @@ describe 'cron', ->
   return if config.disable_cron
   rand = Math.random().toString(36).substring(7);
 
-  they 'add a job', (ssh, next) ->
+  they 'add a job', (ssh) ->
     nikita
       ssh: ssh
     .service 'cronie'
@@ -48,7 +48,7 @@ describe 'cron', ->
 
   describe 'match', ->
 
-    they 'regexp', (ssh, next) ->
+    they 'regexp', (ssh) ->
       nikita
         ssh: ssh
       .service 'cronie'
@@ -78,9 +78,9 @@ describe 'cron', ->
       .cron.remove
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
-      .then next
+      .promise()
 
-    they 'string', (ssh, next) ->
+    they 'string', (ssh) ->
       nikita
         ssh: ssh
       .service 'cronie'
@@ -110,11 +110,11 @@ describe 'cron', ->
       .cron.remove
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
-      .then next
+      .promise()
 
   describe 'error', ->
 
-    they 'invalid job: no time', (ssh, next) ->
+    they 'invalid job: no time', (ssh) ->
       nikita
         ssh: ssh
       .service 'cronie'
@@ -123,9 +123,9 @@ describe 'cron', ->
         relax: true
       , (err) ->
         err.message.should.eql 'valid when is required'
-      .then -> next()
+      .promise()
 
-    they 'invalid job: invalid time', (ssh, next) ->
+    they 'invalid job: invalid time', (ssh) ->
       nikita
         ssh: ssh
       .service 'cronie'
@@ -135,9 +135,9 @@ describe 'cron', ->
         relax: true
       , (err) ->
         err.message.should.eql 'valid when is required'
-      .then -> next()
+      .promise()
 
-    they 'invalid job: no cmd', (ssh, next) ->
+    they 'invalid job: no cmd', (ssh) ->
       nikita
         ssh: ssh
       .service 'cronie'
@@ -146,9 +146,9 @@ describe 'cron', ->
         relax: true
       , (err) ->
         err.message.should.eql 'valid cmd is required'
-      .then -> next()
+      .promise()
 
-    they 'invalid job: invalid cmd', (ssh, next) ->
+    they 'invalid job: invalid cmd', (ssh) ->
       nikita
         ssh: ssh
       .service 'cronie'
@@ -158,9 +158,9 @@ describe 'cron', ->
         relax: true
       , (err) ->
         err.message.should.eql 'valid cmd is required'
-      .then -> next()
+      .promise()
 
-    they 'invalid job: invalid cmd to exec', (ssh, next) ->
+    they 'invalid job: invalid cmd to exec', (ssh) ->
       nikita
         ssh: ssh
       .service 'cronie'
@@ -171,4 +171,4 @@ describe 'cron', ->
         relax: true
       , (err, added) ->
         err.code.should.eql 127
-        next()
+      .promise()

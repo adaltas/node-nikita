@@ -8,7 +8,7 @@ describe 'file.ini', ->
 
   scratch = test.scratch @
 
-  they 'stringify an object', (ssh, next) ->
+  they 'stringify an object', (ssh) ->
     nikita
       ssh: ssh
     .file.ini
@@ -24,9 +24,9 @@ describe 'file.ini', ->
     .file.assert
       target: "#{scratch}/user.ini"
       content: '[user.preference]\ncolor = rouge\n'
-    .then next
+    .promise()
 
-  they 'stringify an object and with custom separator', (ssh, next) ->
+  they 'stringify an object and with custom separator', (ssh) ->
     nikita
       ssh: ssh
     .file.ini
@@ -38,9 +38,9 @@ describe 'file.ini', ->
     .file.assert
       target: "#{scratch}/user.ini"
       content: '[user.preference]\ncolor:rouge\n'
-    .then next
+    .promise()
 
-  they 'merge an object', (ssh, next) ->
+  they 'merge an object', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -55,9 +55,9 @@ describe 'file.ini', ->
     .file.assert
       target: "#{scratch}/user.ini"
       content: '[user.preference]\nlanguage = node\ncolor = violet\n'
-    .then next
+    .promise()
 
-  they 'discard undefined and null', (ssh, next) ->
+  they 'discard undefined and null', (ssh) ->
     nikita
       ssh: ssh
     .file.ini
@@ -69,9 +69,9 @@ describe 'file.ini', ->
     .file.assert
       target: "#{scratch}/user.ini"
       content: '[user.preference]\ncolor = violet\n'
-    .then next
+    .promise()
 
-  they 'remove null within merge', (ssh, next) ->
+  they 'remove null within merge', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -86,9 +86,9 @@ describe 'file.ini', ->
     .file.assert
       target: "#{scratch}/user.ini"
       content: '[user.preference]\nlanguage = node\n'
-    .then next
+    .promise()
 
-  they 'disregard undefined within merge', (ssh, next) ->
+  they 'disregard undefined within merge', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -100,9 +100,9 @@ describe 'file.ini', ->
       merge: true
     , (err, status) ->
       status.should.be.false() unless err
-    .then next
+    .promise()
 
-  they 'stringify write only key on props', (ssh, next) ->
+  they 'stringify write only key on props', (ssh) ->
     nikita
       ssh: ssh
     .file.ini
@@ -118,9 +118,9 @@ describe 'file.ini', ->
     .file.assert
       target: "#{scratch}/user.ini"
       content: '[user]\nname = toto\n--hasACar\n'
-    .then next
+    .promise()
 
-  they 'merge ini containing single key lines', (ssh, next) ->
+  they 'merge ini containing single key lines', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -136,9 +136,9 @@ describe 'file.ini', ->
     .file.assert
       target: "#{scratch}/user.ini"
       content: '[user.preference]\nlanguage = c++\ncolor\n'
-    .then next
+    .promise()
     
-  they 'use default source file', (ssh, next) ->
+  they 'use default source file', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -159,9 +159,9 @@ describe 'file.ini', ->
     .file.assert
       target: "#{scratch}/test.ini"
       content: '[user.preference]\nlanguage = node\n'
-    .then next
+    .promise()
 
-  they 'use default source file with content', (ssh, next) ->
+  they 'use default source file with content', (ssh) ->
     nikita
       ssh: ssh
     .system.remove
@@ -179,9 +179,9 @@ describe 'file.ini', ->
     .file.assert
       target: "#{scratch}/test.ini"
       content: '[user.preference]\nlanguage = node\nremember = me\n'
-    .then next
+    .promise()
     
-  they 'use default source file with merge', (ssh, next) ->
+  they 'use default source file with merge', (ssh) ->
     nikita
       ssh: ssh
     .system.remove
@@ -207,9 +207,9 @@ describe 'file.ini', ->
     .file.assert
       target: "#{scratch}/test.ini"
       content: '[user.preference]\nlanguage = node\n'
-    .then next
+    .promise()
 
-  they 'use default source file with merge and content', (ssh, next) ->
+  they 'use default source file with merge and content', (ssh) ->
     nikita
       ssh: ssh
     .system.remove
@@ -237,9 +237,9 @@ describe 'file.ini', ->
       merge: true
     , (err, written) ->
       written.sh
-    .then next
+    .promise()
 
-  they 'generate from content object with escape', (ssh, next) ->
+  they 'generate from content object with escape', (ssh) ->
     nikita
       ssh: ssh
     .file.ini
@@ -266,11 +266,11 @@ describe 'file.ini', ->
           'gpgkey': 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7'
     , (err, status) ->
       status.should.be.false() unless err
-    .then next
+    .promise()
   
   describe 'stringify_square_then_curly', ->
 
-    they 'call stringify udf', (ssh, next) ->
+    they 'call stringify udf', (ssh) ->
       nikita
         ssh: ssh
       .file.ini
@@ -282,9 +282,9 @@ describe 'file.ini', ->
       .file.assert
         target: "#{scratch}/user.ini"
         content: '[user]\n preference = {\n  color = true\n }\n\n'
-      .then next
+      .promise()
 
-    they 'convert array to multiple keys', (ssh, next) ->
+    they 'convert array to multiple keys', (ssh) ->
       nikita
         ssh: ssh
       # Create a new file
@@ -299,4 +299,4 @@ describe 'file.ini', ->
         content: '[user]\n preference = {\n  language = c\n  language = c++\n  language = ada\n }\n\n'
       # Modify an existing file
       # TODO: merge is not supported
-      .then next
+      .promise()

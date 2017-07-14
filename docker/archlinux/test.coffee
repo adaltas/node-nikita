@@ -2,8 +2,9 @@
 module.exports =
   disable_conditions_if_os: false
   disable_cron: false
-  disable_discover: false # can be activated
+  disable_db: true # can be activated
   disable_docker: true
+  disable_docker_volume: true
   disable_krb5_addprinc: false # not sure if working
   disable_krb5_delprinc: false # not sure if working
   disable_krb5_ktadd: false # not sure if working
@@ -13,12 +14,15 @@ module.exports =
   disable_service_install: false
   disable_service_startup: false
   disable_service_systemctl: false # cant be activated because systemctl not compatible with Docker
-  disable_db: true # can be activated
   disable_system_chmod: false
+  disable_system_cgroups: false
+  disable_system_discover: false
   disable_system_execute_arc_chroot: false
+  disable_system_limits: false
   disable_system_tmpfs: true #can not be activated
   disable_system_user: false
   disable_tools_repo: true
+  disable_yum_conf: true
   conditions_is_os:
     arch: '64'
     name: 'arch'

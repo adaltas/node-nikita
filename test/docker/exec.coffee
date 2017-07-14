@@ -10,7 +10,7 @@ describe 'docker.exec', ->
   return if config.disable_docker
   scratch = test.scratch @
 
-  they 'simple command', (ssh, next) ->
+  they 'simple command', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -29,9 +29,9 @@ describe 'docker.exec', ->
     .docker.rm
       container: 'nikita_test_exec'
       force: true
-    .then next
+    .promise()
 
-  they 'on stopped container', (ssh, next) ->
+  they 'on stopped container', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -52,9 +52,9 @@ describe 'docker.exec', ->
     .docker.rm
       container: 'nikita_test_exec'
       force: true
-    .then next
+    .promise()
 
-  they 'on non existing container', (ssh, next) ->
+  they 'on non existing container', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -64,9 +64,9 @@ describe 'docker.exec', ->
       relax: true
     , (err, executed, stdout, stderr) ->
       err.message.should.eql 'No such container: nikita_fake_container'
-    .then next
+    .promise()
 
-  they 'skip exit code', (ssh, next) ->
+  they 'skip exit code', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -85,4 +85,4 @@ describe 'docker.exec', ->
     .docker.rm
       container: 'nikita_test_exec'
       force: true
-    .then next
+    .promise()

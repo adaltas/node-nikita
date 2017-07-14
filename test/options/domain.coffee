@@ -1,25 +1,29 @@
 
+domain = require 'domain'
 nikita = require '../../src'
+test = require '../test'
 fs = require 'fs'
 
 describe 'options "domain"', ->
 
-	it 'uncatchable error in sync handler', (next) ->
-		nikita
-			domain: true
-		.call
-			handler: ->
-				setImmediate -> 
-					throw Error 'Catch me'
-		.call ->
-			setImmediate ->
-				next Error 'Shouldnt be called'
-		.then (err, status) ->
-			err.message.should.eql 'Invalid State Error [Catch me]'
-			next()
+  scratch = test.scratch @
+
+  it 'uncatchable error in sync handler', ->
+    nikita
+      domain: true
+    .call
+      handler: ->
+        setImmediate -> 
+          throw Error 'Catch me'
+    .call ->
+      setImmediate ->
+        next Error 'Shouldnt be called'
+    .then (err, status) ->
+      err.message.should.eql 'Invalid State Error [Catch me]'
+    .promise()
 
   it 'catch thrown error in then', (next) ->
-		# @see alternative test in "then.coffee"
+    # @see alternative test in "then.coffee"
     d = domain.create()
     d.on 'error', (err) ->
       err.message.should.eql 'Catchme'
@@ -29,9 +33,10 @@ describe 'options "domain"', ->
       domain: d
     .then ->
       throw Error 'Catchme'
+    null
 
   it 'catch thrown error when then not defined', (next) ->
-		# @see alternative test in "then.coffee"
+    # @see alternative test in "then.coffee"
     d = domain.create()
     d.on 'error', (err) ->
       err.name.should.eql 'TypeError'
@@ -45,3 +50,4 @@ describe 'options "domain"', ->
       next.property.does.not.exist
     .call (options) ->
       next Error 'Shouldnt be called'
+    null

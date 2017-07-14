@@ -6,9 +6,10 @@ fs = require 'fs'
 
 describe 'api propagation', ->
   
-  it 'propagate global option', (next) ->
+  it 'propagate global option', ->
     context.propagation.my_global_option = true
     n = nikita
+    n
     .call ->
       n.propagation.my_global_option.should.be.true()
     .call my_global_option: 'value', (options) ->
@@ -17,47 +18,49 @@ describe 'api propagation', ->
         options.my_global_option.should.be.equal 'value'
     .call ->
       delete context.propagation.my_global_option
-    .then next
+    .promise()
       
-  it 'propagate context option', (next) ->
+  it 'propagate context option', ->
     n = nikita
       propagation: my_context_option: true
+    n
     .call ->
       n.propagation.my_context_option.should.be.true()
     .call my_context_option: 'value', (options) ->
       options.my_context_option.should.be.equal 'value'
       @call (options) ->
         options.my_context_option.should.be.equal 'value'
-    .then next
+    .promise()
   
-  it 'dont propagate context options', (next) ->
+  it 'dont propagate context options', ->
     n = nikita
+    n
     .call ->
       n.propagation.header.should.be.false()
     .call header: 'h1', (options) ->
       (options.header is undefined).should.be.true()
       @call header: 'h2', (options) ->
         (options.header is undefined).should.be.true()
-    .then next
+    .promise()
 
-  it 'global dont overwrite local options', (next) ->
-    m = nikita
+  it 'global dont overwrite local options', ->
+    n = nikita
       global_param: true
-    m.propagation.parent_param_propagated = true
-    m.registry.register 'achild', (options, callback) ->
+    n.propagation.parent_param_propagated = true
+    n.registry.register 'achild', (options, callback) ->
       options.local_param.should.be.true()
       options.parent_param_propagated.should.be.true()
       (options.parent_param_unpropagated is undefined).should.be.true()
       options.global_param.should.be.true()
       callback null, true
-    m.registry.register 'aparent', (options, callback) ->
+    n.registry.register 'aparent', (options, callback) ->
       options.global_param.should.be.true()
       options.parent_param_propagated.should.be.true()
       options.parent_param_unpropagated.should.be.true()
       @achild
         local_param: true
       .then (err, status) -> callback err, true
-    m.aparent
+    n.aparent
       parent_param_propagated: true
       parent_param_unpropagated: true
-    .then next
+    .promise()

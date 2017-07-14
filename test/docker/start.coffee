@@ -10,7 +10,7 @@ describe 'docker.start', ->
   return if config.disable_docker
   scratch = test.scratch @
 
-  they 'on stopped container', (ssh, next) ->
+  they 'on stopped container', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -29,9 +29,9 @@ describe 'docker.start', ->
     .docker.rm
       container: 'nikita_test_start'
       force: true
-    .then next
+    .promise()
 
-  they 'on started container', (ssh, next) ->
+  they 'on started container', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -52,4 +52,4 @@ describe 'docker.start', ->
     .docker.rm
       container: 'nikita_test_start'
       force: true
-    .then next
+    .promise()

@@ -10,16 +10,16 @@ describe 'assert', ->
   
   describe 'status', ->
 
-    they 'false when expected to be false', (ssh, next) ->
+    they 'false when expected to be false', (ssh) ->
       nikita
         ssh: ssh
       .call (_, callback) ->
         callback null, false
       .assert
         status: false
-      .then next
+      .promise()
 
-    they 'false when expected to be true throw an error', (ssh, next) ->
+    they 'false when expected to be true throw an error', (ssh) ->
       nikita
         ssh: ssh
       .call (_, callback) ->
@@ -28,18 +28,18 @@ describe 'assert', ->
         status: true
       .then (err) ->
         err.message.should.eql 'Invalid status: expected true, got false'
-        next()
+      .promise()
 
-    they 'true when expected to be true', (ssh, next) ->
+    they 'true when expected to be true', (ssh) ->
       nikita
         ssh: ssh
       .call (_, callback) ->
         callback null, true
       .assert
         status: true
-      .then next
+      .promise()
 
-    they 'true when expected to be false throw an error', (ssh, next) ->
+    they 'true when expected to be false throw an error', (ssh) ->
       nikita
         ssh: ssh
       .call (_, callback) ->
@@ -48,7 +48,7 @@ describe 'assert', ->
         status: false
       .then (err) ->
         err.message.should.eql 'Invalid status: expected false, got true'
-        next()
+      .promise()
   
   describe 'connection', ->
     
@@ -63,7 +63,7 @@ describe 'assert', ->
       close: (callback) ->
         _.close callback
     
-    they 'succeed', (ssh, next) ->
+    they 'succeed', (ssh) ->
       nikita
         ssh: ssh
         server: server 12345
@@ -74,9 +74,9 @@ describe 'assert', ->
         port: 12345
       .call (options, callback) ->
         options.server.close callback
-      .then next
+      .promise()
   
-    they 'failed', (ssh, next) ->
+    they 'failed', (ssh) ->
       nikita
         ssh: ssh
       .assert
@@ -84,5 +84,5 @@ describe 'assert', ->
         port: 12345
       .then (err) ->
         err.message.should.eql "Closed Connection to 'localhost:12345'"
-        next()
+      .promise()
       

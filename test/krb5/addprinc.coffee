@@ -8,7 +8,7 @@ describe 'krb5.addprinc', ->
   config = test.config()
   return if config.disable_krb5_addprinc
 
-  they 'create a new principal without a randkey', (ssh, next) ->
+  they 'create a new principal without a randkey', (ssh) ->
     nikita
       ssh: ssh
       kadmin_server: config.krb5.kadmin_server
@@ -28,7 +28,7 @@ describe 'krb5.addprinc', ->
       status.should.be.false() unless err
     .then next
 
-  they 'create a new principal with a password', (ssh, next) ->
+  they 'create a new principal with a password', (ssh) ->
     nikita
       ssh: ssh
       kadmin_server: config.krb5.kadmin_server
@@ -55,7 +55,7 @@ describe 'krb5.addprinc', ->
       status.should.be.false() unless err
     .then next
 
-  they 'dont overwrite password', (ssh, next) ->
+  they 'dont overwrite password', (ssh) ->
     nikita
       ssh: ssh
       kadmin_server: config.krb5.kadmin_server
@@ -78,7 +78,7 @@ describe 'krb5.addprinc', ->
       cmd: "echo password1 | kinit nikita@#{config.krb5.realm}"
     .then next
 
-  they 'call function with new style', (ssh, next) ->
+  they 'call function with new style', (ssh) ->
     krb5 =    
       etc_krb5_conf:
         libdefaults: 

@@ -4,35 +4,23 @@ test = require '../test'
 
 describe 'api end', ->
 
-  it 'honor conditions', (next) ->
+  it 'honor conditions', ->
     nikita
     .end if: false
     .call (_, handler) -> handler null, true # Set status to true
     .end if: true
     .call ({}, callback) -> next Error "Should never get here"
     .then (err, status) ->
-      return next err if err
-      return next Error 'False condition not honored' unless status
-      return next()
+      status.should.be.true() unless err
+    .promise()
 
-  it 'inside callback', (next) ->
+  it 'inside callback', ->
     nikita
     .call (_, handler) ->
       handler null, true # Set status to true
     , (err, status) ->
       @end()
-    .call ({}, callback) -> next Error "Should never get here"
-    .then (err, status) ->
-      return next err
-
-  # Doest work yet, need to spec clarification
-  # it 'inside call', (next) ->
-  #   nikita
-  #   .call (_, handler) ->
-  #     @end()
-  #     # handler null, true # Set status to true
-  #   .call ({}, callback) -> next Error "Should never get here"
-  #   .then (err, status) ->
-  #     return next err
+    .call ({}, callback) -> callback Error 'Should never get here'
+    .promise()
 
       

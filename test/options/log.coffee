@@ -9,22 +9,22 @@ describe 'options "log"', ->
   
   describe 'local via log option', ->
   
-    it 'convert string to objects', (next) ->
+    it 'convert string to objects', ->
       logs = []
       nikita
       .call 
         log: (l) -> logs.push l if l.type is 'text'
         handler: (options) -> options.log 'handler'
-      .then (err) ->
+      .call ->
         logs.length.should.eql 1
         logs[0].level.should.eql 'INFO'
         logs[0].message.should.eql 'handler'
         (logs[0].module is undefined).should.be.true()
         logs[0].time.should.be.a.Number()
         logs[0].total_depth.should.eql 1
-        next err
+      .promise()
         
-    it 'work recursively', (next) ->
+    it 'work recursively', ->
       logs = []
       nikita
       .call
@@ -32,16 +32,16 @@ describe 'options "log"', ->
         handler: ->
           @call (options) ->
               options.log 'handler'
-      .then (err) ->
+      .call ->
         logs.length.should.eql 1
         logs[0].level.should.eql 'INFO'
         logs[0].message.should.eql 'handler'
         (logs[0].module is undefined).should.be.true()
         logs[0].time.should.be.a.Number()
         logs[0].total_depth.should.eql 2
-        next err
+      .promise()
         
-    it 'is overwritteable', (next) ->
+    it 'is overwritteable', ->
       logs_parent = []
       logs_child = []
       nikita
@@ -52,7 +52,7 @@ describe 'options "log"', ->
             log: (l) -> logs_child.push l if l.type is 'text'
             handler: (options) ->
               options.log 'handler'
-      .then (err) ->
+      .call ->
         logs_parent.length.should.eql 0
         logs_child.length.should.eql 1
         logs_child[0].level.should.eql 'INFO'
@@ -60,9 +60,9 @@ describe 'options "log"', ->
         (logs_child[0].module is undefined).should.be.true()
         logs_child[0].time.should.be.a.Number()
         logs_child[0].total_depth.should.eql 2
-        next err
+      .promise()
   
-    it 'disable if set to false', (next) ->
+    it 'disable if set to false', ->
       log = null
       nikita
       .on 'text', ({message}) ->
@@ -74,11 +74,11 @@ describe 'options "log"', ->
         log: false
         handler: (options) ->
           options.log 'no, u wont find her'
-      .then (err) ->
-        log.should.eql 'is nikita around' unless err
-        next err
+      .call ->
+        log.should.eql 'is nikita around'
+      .promise()
   
-    it 'can be safely passed to the options of a child handler', (next) ->
+    it 'can be safely passed to the options of a child handler', ->
       # Fix a bug in which the child log "yes, dont kill her was called twice"
       logs = []
       nikita
@@ -90,27 +90,27 @@ describe 'options "log"', ->
           log: options.log
           handler: (options) ->
             options.log 'yes, dont kill her'
-      .then (err) ->
-        logs.should.eql ['is nikita around', 'yes, dont kill her'] unless err
-        next err
+      .call ->
+        logs.should.eql ['is nikita around', 'yes, dont kill her']
+      .promise()
   
   describe 'global via on', ->
   
-    it 'convert string to objects', (next) ->
+    it 'convert string to objects', ->
       logs = []
       nikita
       .on 'text', (l) -> logs.push l
       .call (options) -> options.log 'handler'
-      .then (err) ->
+      .call ->
         logs.length.should.eql 1
         logs[0].level.should.eql 'INFO'
         logs[0].message.should.eql 'handler'
         (logs[0].module is undefined).should.be.true()
         logs[0].time.should.be.a.Number()
         logs[0].total_depth.should.eql 1
-        next err
+      .promise()
       
-  it.skip 'serialize into string with default serializer', (next) ->
+  it.skip 'serialize into string with default serializer', ->
     # log_serializer isnt yet activated
     log = null
     nikita
@@ -118,11 +118,11 @@ describe 'options "log"', ->
     .on 'text', (l) -> log = l
     .call (options) ->
       options.log 'handler'
-    .then (err) ->
-      log.should.match /^\[INFO \d+\] handler/ unless err
-      next err
+    .call ->
+      log.should.match /^\[INFO \d+\] handler/
+    .promise()
       
-  it.skip 'serialize into string with user serializer', (next) ->
+  it.skip 'serialize into string with user serializer', ->
     # log_serializer isnt yet activated
     log = null
     nikita
@@ -130,11 +130,11 @@ describe 'options "log"', ->
     .on 'text', (l) -> log = l
     .call (options) ->
       options.log 'handler'
-    .then (err) ->
-      log.should.eql "[INFO] handler" unless err
-      next err
+    .call ->
+      log.should.eql "[INFO] handler"
+    .promise()
       
-  it.skip 'print value', (next) ->
+  it.skip 'print value', ->
     # Doesnt work for now
     # The idea is that log shouldnt be an option
     # But be part of nikita context
@@ -146,9 +146,9 @@ describe 'options "log"', ->
       @log 'handler'
     , (err, status) ->
       @log 'callback' unless err
-    .then (err) ->
+    .call ->
       logs
       .map (log) -> log.message
-      .should.eql ['handler', 'callback'] unless err
-      next err
+      .should.eql ['handler', 'callback']
+    .promise()
     

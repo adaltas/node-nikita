@@ -9,7 +9,7 @@ describe 'java.keystore_remove', ->
 
   describe 'options', ->
 
-    they 'keystore doesnt need to exists', (ssh, next) ->
+    they 'keystore doesnt need to exists', (ssh) ->
       nikita
         ssh: ssh
       .java.keystore_remove
@@ -18,22 +18,22 @@ describe 'java.keystore_remove', ->
         caname: "invalid"
       , (err, status) ->
         status.should.be.false() unless err
-      .then next
+      .promise()
 
-    they 'caname or name must be provided', (ssh, next) ->
+    they 'caname or name must be provided', (ssh) ->
       nikita
         ssh: ssh
       .java.keystore_remove
         keystore: "invalid"
         storepass: "invalid"
-        caname: "invalid"
+        relax: true
       , (err) ->
         err.message.should.eql "Required option 'name' or 'caname'"
-      .then -> next()
+      .promise()
 
   describe 'cacert', ->
 
-    they 'remove cacerts', (ssh, next) ->
+    they 'remove cacerts', (ssh) ->
       keystore =  "#{scratch}/cacerts"
       caname = 'my_alias'
       storepass = 'changeit'
@@ -61,11 +61,11 @@ describe 'java.keystore_remove', ->
         keytool -list -keystore #{keystore} -storepass #{storepass} -alias #{caname}
         """
         code: 1
-      .then next
+      .promise()
 
   describe 'key', ->
 
-    they 'remove cacerts file', (ssh, next) ->
+    they 'remove cacerts file', (ssh) ->
       keystore =  "#{scratch}/cacerts"
       caname = 'my_alias'
       storepass = 'changeit'
@@ -101,4 +101,4 @@ describe 'java.keystore_remove', ->
         keytool -list -keystore #{keystore} -storepass #{storepass} -alias #{name}
         """
         code: 1
-      .then next
+      .promise()

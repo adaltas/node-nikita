@@ -7,88 +7,88 @@ describe 'api status', ->
 
   describe 'sync', ->
 
-    it 'default to false', (next) ->
+    it 'default to false', ->
       nikita
       .call (options) ->
         return true
-      .then (err, status) ->
-        status.should.be.false()
-        next()
+      .call ->
+        @status().should.be.false()
+      .promise()
 
-    it 'set status to true', (next) ->
+    it 'set status to true', ->
       nikita
       .call (options) ->
         @call (_, callback) ->
           callback null, true
-      .then (err, status) ->
-        status.should.be.true()
-        next()
+      .call ->
+        @status().should.be.true()
+      .promise()
 
-    it 'set status to false', (next) ->
+    it 'set status to false', ->
       nikita
       .call (options) ->
         @call (_, callback) ->
           callback null, false
-      .then (err, status) ->
-        status.should.be.false()
-        next()
+      .call ->
+        @status().should.be.false()
+      .promise()
 
-    it 'catch error', (next) ->
+    it 'catch error', ->
       nikita
       .call (options) ->
         throw Error 'Catchme'
-      .then (err, status) ->
+      .then (err) ->
         err.message.should.eql 'Catchme'
-        next()
+      .promise()
 
   describe 'async', ->
 
-    it 'set status to true', (next) ->
+    it 'set status to true', ->
       nikita
       .call (options, next) ->
         process.nextTick ->
           next null, true
-      .then (err, status) ->
-        status.should.be.true() unless err
-        next err
+      .call ->
+        @status().should.be.true()
+      .promise()
 
-    it 'set status to false', (next) ->
+    it 'set status to false', ->
       nikita
       .call (options, next) ->
         process.nextTick ->
           next null, false
-      .then (err, status) ->
-        status.should.be.false()
-        next()
+      .call ->
+        @status().should.be.false()
+      .promise()
 
-    it 'set status to false while child module is true', (next) ->
-      m = nikita()
-      .call (options, callback) ->
-        m.system.execute
+    it 'set status to false while child module is true', ->
+      n = nikita()
+      n.call (options, callback) ->
+        n.system.execute
           cmd: 'ls -l'
         , (err, executed, stdout, stderr) ->
           executed.should.be.true() unless err
           callback err, false
-      .then (err, status) ->
-        status.should.be.false()
-        next()
+      n.call ->
+        @status().should.be.false()
+      n.promise()
 
-    it 'set status to true while module sending is false', (next) ->
-      m = nikita()
-      .call (options, callback) ->
-        m.system.execute
+    it 'set status to true while module sending is false', ->
+      n = nikita()
+      n.call (options, callback) ->
+        n.system.execute
           cmd: 'ls -l'
           if: false
         , (err, executed, stdout, stderr) ->
           executed.should.be.false() unless err
           callback err, true
-      .then (err, status) ->
-        status.should.be.true()
-        next()
+      n.call ->
+        @status().should.be.true()
+      n.promise()
 
   describe 'function', ->
 
-    it 'get without arguments', (next) ->
+    it 'get without arguments', ->
       nikita
       .call (options, callback) ->
         @status().should.be.false()
@@ -104,9 +104,9 @@ describe 'api status', ->
       .call (options, callback) ->
         @status().should.be.true()
         callback null, false
-      .then next
+      .promise()
 
-    it 'get current', (next) ->
+    it 'get current', ->
       nikita
       .call (options, callback) ->
         (@status(0) is undefined).should.be.true()
@@ -118,9 +118,9 @@ describe 'api status', ->
         callback null, true
       , (err, status) ->
         @status(0).should.be.true()
-      .then next
+      .promise()
 
-    it 'get previous', (next) ->
+    it 'get previous', ->
       nikita
       .call (options, callback) ->
         (@status(-1) is undefined).should.be.true()
@@ -136,9 +136,9 @@ describe 'api status', ->
       .call (options, callback) ->
         @status(-1).should.be.false()
         callback null, false
-      .then next
+      .promise()
 
-    it 'get previous n', (next) ->
+    it 'get previous n', ->
       nikita
       .call (options, callback) ->
         callback null, false
@@ -160,9 +160,9 @@ describe 'api status', ->
         @status(-1).should.be.true()
         @status(-2).should.be.false()
         callback null, false
-      .then next
+      .promise()
 
-    it 'report conditions', (next) ->
+    it 'report conditions', ->
       nikita
       .call
         if: -> true
@@ -175,12 +175,12 @@ describe 'api status', ->
         if: -> false
       , (options, callback) ->
         callback null, true
-      .then (err, status) ->
-        return next err if err
-        status.should.be.false()
-        next()
+      .call ->
+        @status().should.be.false()
+      .promise()
 
-    it 'retrieve inside conditions', (next) ->
+    it 'retrieve inside conditions', ->
+      condition_called = false
       nikita
       .call
         if: -> @status()
@@ -191,10 +191,13 @@ describe 'api status', ->
       .call
         if: -> @status()
       , (options, callback) ->
-        # Must be called
-        next()
+        condition_called = true
+        callback()
+      .call ->
+        throw Error 'Should be called' unless condition_called
+      .promise()
 
-    it 'set status to false', (next) ->
+    it 'set status to false', ->
       nikita
       .call (options, callback) ->
         callback null, true
@@ -203,9 +206,9 @@ describe 'api status', ->
         status.should.be.true()
       .call ->
         @status().should.be.false()
-      .then next
+      .promise()
 
-    it 'set status to true', (next) ->
+    it 'set status to true', ->
       nikita
       .call (options, callback) ->
         callback null, false
@@ -214,4 +217,4 @@ describe 'api status', ->
         status.should.be.false()
       .call ->
         @status().should.be.true()
-      .then next
+      .promise()

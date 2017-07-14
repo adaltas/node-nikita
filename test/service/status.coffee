@@ -9,7 +9,7 @@ describe 'service.status', ->
   config = test.config()
   return if config.disable_service_systemctl
   
-  they 'store status', (ssh, next) ->
+  they 'store status', (ssh) ->
     nikita
       ssh: ssh
     .service
@@ -33,5 +33,5 @@ describe 'service.status', ->
       srv_name: config.service.srv_name
     , (err, status) ->
       status.should.be.false() unless err
-    .then next
+    .promise()
     

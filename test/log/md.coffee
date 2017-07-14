@@ -9,7 +9,7 @@ describe 'log.md', ->
   
   scratch = test.scratch @
   
-  they 'write string', (ssh, next) ->
+  they 'write string', (ssh) ->
     nikita
       ssh: ssh
     .log.md basedir: scratch
@@ -21,9 +21,9 @@ describe 'log.md', ->
       log: false
     .assert
       status: false
-    .then next
+    .promise()
   
-  they 'write message', (ssh, next) ->
+  they 'write message', (ssh) ->
     nikita
       ssh: ssh
     .log.md basedir: scratch
@@ -35,9 +35,9 @@ describe 'log.md', ->
       log: false
     .assert
       status: false
-    .then next
+    .promise()
   
-  they 'write message and module', (ssh, next) ->
+  they 'write message and module', (ssh) ->
     nikita
       ssh: ssh
     .log.md basedir: scratch
@@ -49,9 +49,9 @@ describe 'log.md', ->
       log: false
     .assert
       status: false
-    .then next
+    .promise()
     
-  they 'default options', (ssh, next) ->
+  they 'default options', (ssh) ->
     nikita
       ssh: ssh
       log_md: basedir: scratch
@@ -64,11 +64,11 @@ describe 'log.md', ->
       log: false
     .assert
       status: false
-    .then next
+    .promise()
 
   describe 'stdout', ->
     
-    they 'in base directory', (ssh, next) ->
+    they 'in base directory', (ssh) ->
       m = nikita
         ssh: ssh
       .log.md basedir: scratch
@@ -81,5 +81,5 @@ describe 'log.md', ->
         log: false
       .assert
         status: false
-      .then next
+      .promise()
       

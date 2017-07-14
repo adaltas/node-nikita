@@ -7,11 +7,11 @@ describe 'api child', ->
 
   scratch = test.scratch @
 
-  it 'dont change status of parent context', (next) ->
+  it 'dont change status of parent context', ->
     touched = 0
-    m = nikita
-    .call (options, next) ->
-      m
+    n = nikita()
+    n.call (options, next) ->
+      n
       .child()
       .file.touch
         target: "#{scratch}/a_file"
@@ -22,7 +22,7 @@ describe 'api child', ->
     .then (err, changed) ->
       changed.should.be.false()
       touched.should.eql 1
-      next()
+    .promise()
 
   # it 'accept conditions', (next) ->
   #   touched = 0

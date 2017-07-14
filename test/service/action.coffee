@@ -9,7 +9,7 @@ describe 'service.action', ->
   config = test.config()
   return if config.disable_service_systemctl
 
-  they 'should start', (ssh, next) ->
+  they 'should start', (ssh) ->
     nikita
       ssh: ssh
     .service.remove
@@ -29,9 +29,9 @@ describe 'service.action', ->
       action: 'start'
     , (err, status) ->
       status.should.be.false()
-    .then next
+    .promise()
 
-  they 'should stop', (ssh, next) ->
+  they 'should stop', (ssh) ->
     nikita
       ssh: ssh
     .service.remove
@@ -51,9 +51,9 @@ describe 'service.action', ->
       action: 'stop'
     , (err, status) ->
       status.should.be.false() unless err
-    .then next
+    .promise()
 
-  they 'should restart', (ssh, next) ->
+  they 'should restart', (ssh) ->
     nikita
       ssh: ssh
     .service.remove
@@ -74,4 +74,4 @@ describe 'service.action', ->
       action: 'restart'
     , (err, status) ->
       status.should.be.false()
-    .then next
+    .promise()

@@ -17,7 +17,7 @@ describe 'docker.status', ->
   config = test.config()
   return if config.disable_docker
 
-  they 'on stopped  container', (ssh, next) ->
+  they 'on stopped  container', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -36,9 +36,9 @@ describe 'docker.status', ->
     .docker.rm
       container: 'nikita_status'
       force: true
-    .then next
+    .promise()
 
-  they 'on running container', (ssh, next) ->
+  they 'on running container', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -56,4 +56,4 @@ describe 'docker.status', ->
     .docker.rm
       container: 'nikita_status'
       force: true
-    .then next
+    .promise()

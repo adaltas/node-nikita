@@ -8,7 +8,7 @@ describe 'db.schema postgres', ->
   config = test.config()
   return if config.disable_db
 
-  they 'add new schema with no owner (existing db)', (ssh, next) ->
+  they 'add new schema with no owner (existing db)', (ssh) ->
     nikita
       ssh: ssh
       db: config.db.postgres
@@ -20,9 +20,9 @@ describe 'db.schema postgres', ->
     , (err, status) ->
       status.should.be.true() unless err
     .db.database.remove 'postgres_db_0'
-    .then next
+    .promise()
 
-  they 'add new schema with not existing owner (existing db)', (ssh, next) ->
+  they 'add new schema with not existing owner (existing db)', (ssh) ->
     nikita
       ssh: ssh
       db: config.db.postgres
@@ -36,9 +36,9 @@ describe 'db.schema postgres', ->
     , (err, status) ->
       err.message.should.eql 'Owner Johny does not exists'
     .db.database.remove 'postgres_db_1'
-    .then next
+    .promise()
 
-  they 'add new schema with existing owner (existing db)', (ssh, next) ->
+  they 'add new schema with existing owner (existing db)', (ssh) ->
     nikita
       ssh: ssh
       db: config.db.postgres
@@ -60,9 +60,9 @@ describe 'db.schema postgres', ->
     .db.schema.remove 'postgres_schema_2'
     .db.database.remove 'postgres_db_2'
     .db.user.remove 'postgres_user_2'
-    .then next
+    .promise()
   
-  they 'add new schema with no owner (not existing db)', (ssh, next) ->
+  they 'add new schema with no owner (not existing db)', (ssh) ->
     nikita
       ssh: ssh
       db: config.db.postgres
@@ -73,9 +73,9 @@ describe 'db.schema postgres', ->
     , (err, status) ->
       err.message.should.eql 'Database does not exist postgres_db_4'
       status.should.be.false()
-    .then next
+    .promise()
   
-  they 'add new schema after adding database and user', (ssh, next) ->
+  they 'add new schema after adding database and user', (ssh) ->
     nikita
       ssh: ssh
       db: config.db.postgres
@@ -98,4 +98,4 @@ describe 'db.schema postgres', ->
     .db.schema.remove 'postgres_db_5'
     .db.database.remove 'postgres_db_5'
     .db.user.remove 'nikita_test_5'
-    .then next
+    .promise()

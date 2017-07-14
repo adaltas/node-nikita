@@ -9,7 +9,7 @@ describe 'service.start', ->
   config = test.config()
   return if config.disable_service_systemctl
   
-  they 'should start', (ssh, next) ->
+  they 'should start', (ssh) ->
     nikita
       ssh: ssh
     .service
@@ -28,9 +28,9 @@ describe 'service.start', ->
       name: config.service.srv_name
     , (err, status) ->
       status.should.be.false() unless err
-    .then next
+    .promise()
   
-  they 'no error when invalid service name', (ssh, next) ->
+  they 'no error when invalid service name', (ssh) ->
     nikita
       ssh: ssh
     .service.start
@@ -38,4 +38,4 @@ describe 'service.start', ->
     , (err, status) ->
       (!!err).should.be.false()
       status.should.be.false()
-    .then next
+    .promise()

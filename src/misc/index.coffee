@@ -89,6 +89,7 @@ misc = module.exports =
           next()
       .then ->
         callback path.resolve normalized...
+      null
   mode:
     stringify: (mode) ->
       if typeof mode is 'number' then mode.toString(8) else mode

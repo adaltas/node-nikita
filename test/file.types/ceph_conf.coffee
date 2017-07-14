@@ -7,7 +7,7 @@ describe 'file.types.yum_repo', ->
 
   scratch = test.scratch @
 
-  they 'generate from content', (ssh, next) ->
+  they 'generate from content', (ssh) ->
     nikita
       ssh: ssh
     .file.types.ceph_conf
@@ -22,9 +22,9 @@ describe 'file.types.yum_repo', ->
     .file.assert
       target: "#{scratch}/ceph_conf_test.repo"
       content: "[global]\nfsid = a7-a6-d0\nprop with spaces = 2spaces\nprop ip = 192.168.10.1\n"
-    .then next
+    .promise()
 
-  they 'status not modified', (ssh, next) ->
+  they 'status not modified', (ssh) ->
     nikita
       ssh: ssh
     .file.types.ceph_conf
@@ -48,4 +48,4 @@ describe 'file.types.yum_repo', ->
     .file.assert
       target: "#{scratch}/ceph_conf_test.repo"
       content: "[global]\nfsid = a7-a6-d0\nprop with spaces = 2spaces\nprop ip = 192.168.10.1\n"
-    .then next
+    .promise()

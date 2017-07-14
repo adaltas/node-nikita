@@ -8,9 +8,8 @@ describe 'service.install', ->
   @timeout 50000
   config = test.config()
   return if config.disable_service_install
-  # process.env['TMPDIR'] = '/var/tmp' if config.isCentos6 or config.isCentos7
 
-  they 'new package', (ssh, next) ->
+  they 'new package', (ssh) ->
     nikita
       ssh: ssh
     .service.remove
@@ -19,9 +18,9 @@ describe 'service.install', ->
       name: config.service.name
     , (err, status) ->
       status.should.be.true() unless err
-    .then next
+    .promise()
   
-  they 'already installed packages', (ssh, next) ->
+  they 'already installed packages', (ssh) ->
     nikita
       ssh: ssh
     .service.remove
@@ -32,18 +31,18 @@ describe 'service.install', ->
       name: config.service.name
     , (err, status) ->
       status.should.be.false() unless err
-    .then next
+    .promise()
 
-  they 'name as default argument', (ssh, next) ->
+  they 'name as default argument', (ssh) ->
     nikita
       ssh: ssh
     .service.remove
       name: config.service.name
     .service config.service.name, (err, status) ->
       status.should.be.true() unless err
-    .then next
+    .promise()
   
-  they 'cache', (ssh, next) ->
+  they 'cache', (ssh) ->
     nikita
       ssh: ssh
     .service.remove
@@ -57,15 +56,14 @@ describe 'service.install', ->
       status.should.be.true() unless err
     .call (options) ->
       options.store['nikita:execute:installed'].should.containEql config.service.name
-    .then next
+    .promise()
 
-  they 'skip code when error', (ssh, next) ->
+  they 'skip code when error', (ssh) ->
     nikita
       ssh: ssh
     .service.install
       name: 'thisservicedoesnotexist'
       code_skipped: [1, 100] # 1 for RH, 100 for Ubuntu
     , (err, status) ->
-      (!!err).should.be.false()
       status.should.be.false() unless err
-    .then next
+    .promise()

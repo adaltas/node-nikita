@@ -365,6 +365,7 @@ conditions.all({
             # options.log? "Nikita `#{key}`: skipping action"
             failed err
         next()
+        null
 
 ## Dependencies
 

@@ -15,7 +15,7 @@ describe 'docker.pull', ->
   config = test.config()
   return if config.disable_docker
 
-  they 'No Image', (ssh, next) ->
+  they 'No Image', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -25,9 +25,9 @@ describe 'docker.pull', ->
       tag: 'alpine'
     , (err, downloaded, stdout, stderr) ->
       downloaded.should.be.true()
-    .then next
+    .promise()
   
-  they 'Status Not Modified', (ssh, next) ->
+  they 'Status Not Modified', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -39,4 +39,4 @@ describe 'docker.pull', ->
       tag: 'alpine'
     , (err, downloaded) ->
       downloaded.should.be.false()
-    .then next
+    .promise()

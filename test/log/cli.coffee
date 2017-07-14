@@ -17,7 +17,7 @@ describe 'log.cli', ->
       @options.data.push chunk.toString()
       callback()
   
-  they 'default options', (ssh, next) ->
+  they 'default options', (ssh) ->
     data = []
     nikita
       ssh: ssh
@@ -29,17 +29,16 @@ describe 'log.cli', ->
         @call header: 'h3', (options, callback) ->
           callback null, true
     .wait 200
-    .then (err, status) ->
-      return next err if err
+    .call ->
       data.should.eql [
         'localhost   h1 : h2a   -\n'
         'localhost   h1 : h2b : h3   +\n'
         'localhost   h1 : h2b   +\n'
         'localhost   h1   +\n'
       ]
-      next()
+    .promise()
   
-  they 'pass over actions without header', (ssh, next) ->
+  they 'pass over actions without header', (ssh) ->
     data = []
     nikita
       ssh: ssh
@@ -52,16 +51,15 @@ describe 'log.cli', ->
           @call header: 'h2b', (options, callback) ->
             callback null, true
     .wait 200
-    .then (err, status) ->
-      return next err if err
+    .call ->
       data.should.eql [
         'localhost   h1 : h2a   -\n'
         'localhost   h1 : h2b   +\n'
         'localhost   h1   +\n'
       ]
-      next()
+    .promise()
       
-  they 'print status', (ssh, next) ->
+  they 'print status', (ssh) ->
     data = []
     nikita
       ssh: ssh
@@ -70,17 +68,17 @@ describe 'log.cli', ->
     .call header: 'a', (_, callback) -> callback null, false
     .call header: 'b', (_, callback) -> callback null, true
     .call header: 'c', shy: true, (_, callback) -> callback null, true
-    .call header: 'd', (_, callback) -> callback new Error 'ok', false
-    .then (err, status) ->
+    .call header: 'd', relax: true, (_, callback) -> callback new Error 'ok', false
+    .call ->
       data.should.eql [
         'localhost   a   -\n'
         'localhost   b   +\n'
         'localhost   c   -\n'
         'localhost   d   x\n'
       ]
-      next()
+    .promise()
       
-  they 'bypass disabled and false conditionnal', (ssh, next) ->
+  they 'bypass disabled and false conditionnal', (ssh) ->
     data = []
     nikita
       ssh: ssh
@@ -90,14 +88,14 @@ describe 'log.cli', ->
     .call header: 'b', disabled: true, (_, callback) -> callback null, true
     .call header: 'c', if: false, (_, callback) -> callback null, true
     .call header: 'd', (_, callback) -> callback null, true
-    .then (err, status) ->
+    .call ->
       data.should.eql [
         'localhost   a   -\n'
         'localhost   d   +\n'
       ]
-      next()
+    .promise()
       
-  they 'option depth', (ssh, next) ->
+  they 'option depth', (ssh) ->
     data = []
     nikita
       ssh: ssh
@@ -107,16 +105,15 @@ describe 'log.cli', ->
       @call header: 'h2a', (options) ->
       @call header: 'h2b', (options) ->
         @call header: 'h3', (options) ->
-    .then (err, status) ->
-      return next err if err
+    .call ->
       data.should.eql [
         'localhost   h1 : h2a   -\n'
         'localhost   h1 : h2b   -\n'
         'localhost   h1   -\n'
       ]
-      next()
+    .promise()
       
-  they 'option divider', (ssh, next) ->
+  they 'option divider', (ssh) ->
     data = []
     nikita
       ssh: ssh
@@ -126,17 +123,16 @@ describe 'log.cli', ->
       @call header: 'h2a', (options) ->
       @call header: 'h2b', (options) ->
         @call header: 'h3', (options) ->
-    .then (err, status) ->
-      return next err if err
+    .call ->
       data.should.eql [
         'localhost   h1 # h2a   -\n'
         'localhost   h1 # h2b # h3   -\n'
         'localhost   h1 # h2b   -\n'
         'localhost   h1   -\n'
       ]
-      next()
+    .promise()
       
-  they 'option pad', (ssh, next) ->
+  they 'option pad', (ssh) ->
     data = []
     nikita
       ssh: ssh
@@ -146,17 +142,16 @@ describe 'log.cli', ->
       @call header: 'h2a', (options) ->
       @call header: 'h2b', (options) ->
         @call header: 'h3', (options) ->
-    .then (err, status) ->
-      return next err if err
+    .call ->
       data.should.eql [
         'localhost      h1 : h2a           -\n'
         'localhost      h1 : h2b : h3      -\n'
         'localhost      h1 : h2b           -\n'
         'localhost      h1                 -\n'
       ]
-      next()
+    .promise()
       
-  they 'option colors', (ssh, next) ->
+  they 'option colors', (ssh) ->
     data = []
     nikita
       ssh: ssh
@@ -164,16 +159,16 @@ describe 'log.cli', ->
     .log.cli colors: true, stream: new MyWritable data: data
     .call header: 'a', (_, callback) -> callback null, false
     .call header: 'b', (_, callback) -> callback null, true
-    .call header: 'c', (_, callback) -> callback new Error 'ok', false
-    .then (err, status) ->
+    .call header: 'c', relax: true, (_, callback) -> callback new Error 'ok', false
+    .call ->
       data.should.eql [
         '\u001b[36m\u001b[2mlocalhost\u001b[22m\u001b[39m\u001b[36m\u001b[2m   \u001b[22m\u001b[39m\u001b[36m\u001b[2ma\u001b[22m\u001b[39m\u001b[36m\u001b[2m   \u001b[22m\u001b[39m\u001b[36m-\u001b[39m\n'
         '\u001b[36m\u001b[2mlocalhost\u001b[22m\u001b[39m\u001b[36m\u001b[2m   \u001b[22m\u001b[39m\u001b[36m\u001b[2mb\u001b[22m\u001b[39m\u001b[36m\u001b[2m   \u001b[22m\u001b[39m\u001b[36m+\u001b[39m\n'
         '\u001b[36m\u001b[2mlocalhost\u001b[22m\u001b[39m\u001b[36m\u001b[2m   \u001b[22m\u001b[39m\u001b[36m\u001b[2mc\u001b[22m\u001b[39m\u001b[36m\u001b[2m   \u001b[22m\u001b[39m\u001b[36mx\u001b[39m\n'
       ]
-      next()
+    .promise()
   
-  they 'option time', (ssh, next) ->
+  they 'option time', (ssh) ->
     data = []
     nikita
       ssh: ssh
@@ -181,9 +176,8 @@ describe 'log.cli', ->
     .log.cli stream: new MyWritable data: data
     .call header: 'h1', (->)
     .wait 200
-    .then (err, status) ->
-      return next err if err
+    .call ->
       data[0].should.match /localhost   h1   -  \dms\n/
-      next()
+    .promise()
       
   

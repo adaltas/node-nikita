@@ -17,7 +17,7 @@ describe 'api then', ->
       d.exit()
       next()
 
-  it 'then without arguments', (next) ->
+  it 'then without arguments', ->
     history = []
     nikita
     .call -> history.push 'a'
@@ -25,7 +25,7 @@ describe 'api then', ->
     .call -> history.push 'b'
     .then (err) ->
       history.should.eql ['a', 'b']
-      next err
+    .promise()
 
   it 'throw error when then not defined', (next) ->
     d = domain.create()

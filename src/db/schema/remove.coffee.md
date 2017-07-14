@@ -23,6 +23,8 @@ Create a user for the destination database.
       # Import options from `options.db`
       options.db ?= {}
       options[k] ?= v for k, v of options.db
+      # Options
+      options.schema ?= options.argument
       throw Error 'Missing option: "engine"' unless options.engine
       throw Error 'Missing option: "schema"' unless options.schema
       throw Error 'Missing option: "admin_username"' unless options.admin_username
@@ -30,8 +32,6 @@ Create a user for the destination database.
       # Defines and check the engine type 
       options.engine = options.engine.toLowerCase()
       throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['postgres']
-      # Options
-      options.schema ?= options.argument
       @system.execute
         cmd: db.cmd options, "DROP SCHEMA IF EXISTS #{options.schema};"
 

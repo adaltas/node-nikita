@@ -91,22 +91,22 @@ nikita.assert({
       @call
         if: options.filetype.length
       , (_, callback) ->
-        fs.stat options.ssh, options.target, (err, stat) ->
+        fs.lstat options.ssh, options.target, (err, stat) ->
           return callback err if err
           if fs.constants.S_IFREG in options.filetype
             return callback Error "Invalid filetype: expect a regular file" unless stat.isFile()
           else if fs.constants.S_IFDIR in options.filetype
             return callback Error "Invalid filetype: expect a directory" unless stat.isDirectory()
           else if fs.constants.S_IFCHR in options.filetype
-            return callback Error "Invalid filetype: expect a character-oriented device file" unless stat.isDirectory()
+            return callback Error "Invalid filetype: expect a character-oriented device file" unless stat.isCharacterDevice()
           else if fs.constants.S_IFBLK in options.filetype
-            return callback Error "Invalid filetype: expect a block-oriented device file" unless stat.isDirectory()
+            return callback Error "Invalid filetype: expect a block-oriented device file" unless stat.isBlockDevice()
           else if fs.constants.S_IFIFO in options.filetype
-            return callback Error "Invalid filetype: expect a FIFO/pipe" unless stat.isDirectory()
+            return callback Error "Invalid filetype: expect a FIFO/pipe" unless stat.isFIFO()
           else if fs.constants.S_IFLNK in options.filetype
-            return callback Error "Invalid filetype: expect a symbolic link" unless stat.isDirectory()
+            return callback Error "Invalid filetype: expect a symbolic link" unless stat.isSymbolicLink()
           else if fs.constants.S_IFSOCK in options.filetype
-            return callback Error "Invalid filetype: expect a socket" unless stat.isDirectory()
+            return callback Error "Invalid filetype: expect a socket" unless stat.isSocket()
           else
             return callback Error "Invalid filetype: #{options.filetype.join ' '}"
           callback()

@@ -11,7 +11,7 @@ describe 'docker.compose', ->
   scratch = test.scratch @
   @timeout 90000
 
-  they 'up from content', (ssh, next) ->
+  they 'up from content', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -41,9 +41,9 @@ describe 'docker.compose', ->
     .docker.rm
       container: 'nikita_docker_compose_up_content'
       force: true
-    .then next
+    .promise()
   
-  they 'up from content to file', (ssh, next) ->
+  they 'up from content to file', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -74,9 +74,9 @@ describe 'docker.compose', ->
     .docker.rm
       container: 'nikita_docker_docker_compose_up_content_to_file'
       force: true
-    .then next
+    .promise()
 
-  they 'up from file', (ssh, next) ->
+  they 'up from file', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -106,9 +106,9 @@ describe 'docker.compose', ->
     .docker.rm
       container: 'nikita_docker_compose_up_file'
       force: true
-    .then next
+    .promise()
   
-  they 'up with service name', (ssh, next) ->
+  they 'up with service name', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -139,9 +139,9 @@ describe 'docker.compose', ->
     .docker.rm
       container: 'nikita_docker_compose_up_service'
       force: true
-    .then next
+    .promise()
   
-  they 'status not modified', (ssh, next) ->
+  they 'status not modified', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -176,4 +176,4 @@ describe 'docker.compose', ->
     .docker.rm
       container: 'nikita_docker_compose_idem'
       force: true
-    .then next
+    .promise()

@@ -10,7 +10,7 @@ describe 'system.execute', ->
 
   scratch = test.scratch @
 
-  they 'in option cmd or as a string', (ssh, next) ->
+  they 'in option cmd or as a string', (ssh) ->
     nikita
       ssh: ssh
     .system.execute
@@ -21,9 +21,9 @@ describe 'system.execute', ->
     .system.execute 'text=yes; echo $text', (err, status, stdout, stderr) ->
       status.should.be.true() unless err
       stdout.should.eql 'yes\n' unless err
-    .then next
+    .promise()
 
-  they 'cmd as a function', (ssh, next) ->
+  they 'cmd as a function', (ssh) ->
     nikita
       ssh: ssh
     .call (options) ->
@@ -37,9 +37,9 @@ describe 'system.execute', ->
       cmd: (options) -> "text='#{options.store.test_options}'; echo $text"
     , (err, status, stdout, stderr) ->
       stdout.should.eql 'test options\n' unless err
-    .then next
+    .promise()
 
-  they 'stream stdout and unpipe', (ssh, next) ->
+  they 'stream stdout and unpipe', (ssh) ->
     writer_done = callback_done = null
     data = ''
     out = new stream.Writable
@@ -65,9 +65,9 @@ describe 'system.execute', ->
       unpiped.should.eql 2
       data.should.containEql search1
       data.should.containEql search2
-    .then next
+    .promise()
 
-  they 'stdout and stderr return empty', (ssh, next) -> #.skip 'remote',
+  they 'stdout and stderr return empty', (ssh) -> #.skip 'remote',
     nikita
       ssh: ssh
     .system.execute
@@ -76,9 +76,9 @@ describe 'system.execute', ->
     , (err, status, stdout, stderr) ->
       stdout.should.eql '' unless err
       stderr.should.eql '' unless err
-    .then next
+    .promise()
 
-  they 'validate exit code', (ssh, next) ->
+  they 'validate exit code', (ssh) ->
     # code undefined
     nikita
       ssh: ssh
@@ -89,9 +89,9 @@ describe 'system.execute', ->
     .system.execute
       cmd: "exit 42"
       code: [0, 42]
-    .then next
+    .promise()
 
-  they 'should honor code skipped', (ssh, next) ->
+  they 'should honor code skipped', (ssh) ->
     # code undefined
     nikita
       ssh: ssh
@@ -107,9 +107,9 @@ describe 'system.execute', ->
       code_skipped: 1
     , (err, status, stdout, stderr) ->
       status.should.be.false() unless err
-    .then next
+    .promise()
 
-  they 'should honor conditions', (ssh, next) ->
+  they 'should honor conditions', (ssh) ->
     nikita
       ssh: ssh
     .system.execute
@@ -124,9 +124,9 @@ describe 'system.execute', ->
     , (err, status, stdout, stderr) ->
       status.should.be.false()
       should.not.exist stdout
-    .then next
+    .promise()
 
-  they 'honor unless_exists', (ssh, next) ->
+  they 'honor unless_exists', (ssh) ->
     nikita
       ssh: ssh
     .system.execute
@@ -134,11 +134,11 @@ describe 'system.execute', ->
       unless_exists: __dirname
     , (err, status, stdout, stderr) ->
       status.should.be.false() unless err
-    .then next
+    .promise()
 
   describe 'trim', ->
     
-    they 'both stdout and stderr', (ssh, next) ->
+    they 'both stdout and stderr', (ssh) ->
       nikita
         ssh: ssh
       .system.execute
@@ -150,9 +150,9 @@ describe 'system.execute', ->
       , (err, status, stdout, stderr) ->
         stdout.should.eql 'bonjour' unless err
         stderr.should.eql 'monde' unless err
-      .then next
+      .promise()
         
-    they 'with trim_stdout and trim_stderr', (ssh, next) ->
+    they 'with trim_stdout and trim_stderr', (ssh) ->
       nikita
         ssh: ssh
       .system.execute
@@ -165,11 +165,11 @@ describe 'system.execute', ->
       , (err, status, stdout, stderr) ->
         stdout.should.eql 'bonjour' unless err
         stderr.should.eql 'monde' unless err
-      .then next
+      .promise()
 
   describe 'log', ->
 
-    they 'stdin, stdout, stderr', (ssh, next) ->
+    they 'stdin, stdout, stderr', (ssh) ->
       stdin = stdout = stderr = undefined
       nikita
         ssh: ssh
@@ -182,9 +182,9 @@ describe 'system.execute', ->
         stdin.message.should.match /^echo.*;$/
         stdout.message.should.eql 'to stdout\n'
         stderr.message.should.eql 'to stderr\n'
-      .then next
+      .promise()
 
-    they 'disable logging', (ssh, next) ->
+    they 'disable logging', (ssh) ->
       stdin = stdout = stderr = undefined
       stdout_stream = stderr_stream = []
       nikita
@@ -204,11 +204,11 @@ describe 'system.execute', ->
         stdout_stream.length.should.eql 0
         (stderr is undefined).should.be.true()
         stderr_stream.length.should.eql 0
-      .then next
+      .promise()
 
   describe 'error', ->
 
-    they 'provide stdout and stderr', (ssh, next) ->
+    they 'provide stdout and stderr', (ssh) ->
       nikita
         ssh: ssh
       .system.execute
@@ -220,9 +220,9 @@ describe 'system.execute', ->
         err.message.should.eql 'Invalid Exit Code: 2'
         stdout.should.eql ''
         stderr.should.eql 'Some Error\n'
-      .then next
+      .promise()
 
-    they 'trap on error', (ssh, next) ->
+    they 'trap on error', (ssh) ->
       nikita
         ssh: ssh
       .system.execute
@@ -239,4 +239,4 @@ describe 'system.execute', ->
         relax: true
       , (err) ->
         err.should.be.an.Error
-      .then next
+      .promise()

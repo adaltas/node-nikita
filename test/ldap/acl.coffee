@@ -6,6 +6,7 @@ describe 'ldap.acl', ->
 
   scratch = test.scratch @
   config = test.config()
+  
   return if config.disable_ldap_acl
   client = olcAccess = null
   beforeEach (next) ->
@@ -28,7 +29,7 @@ describe 'ldap.acl', ->
       client.unbind (err) ->
         next err
 
-  it 'create a new permission', (next) ->
+  it 'create a new permission', ->
     nikita
     .ldap.acl
       # ldap: client
@@ -51,45 +52,43 @@ describe 'ldap.acl', ->
       ]
     , (err, modified) ->
       modified.should.be.false()
-    .then next
+    .promise()
 
-  it 'respect order in creation', (next) ->
-    nikita.ldap.acl [
+  it 'respect order in creation', ->
+    nikita
+    .ldap.acl
       ldap: client
       name: 'olcDatabase={2}bdb,cn=config'
       to: 'dn.base="ou=test1,dc=test,dc=com"'
       by: [
         'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" read'
       ]
-    ,
+    .ldap.acl
       ldap: client
       name: 'olcDatabase={2}bdb,cn=config'
       to: 'dn.base="ou=test2,dc=test,dc=com"'
       by: [
         'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" read'
       ]
-    ], (err, modified) ->
-      return next err if err
-      nikita.ldap.acl
-        ldap: client
-        name: 'olcDatabase={2}bdb,cn=config'
-        to: 'dn.base="ou=INSERTED,dc=test,dc=com"'
-        place_before: 'dn.base="ou=test2,dc=test,dc=com"'
-        by: [
-          'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" read'
-        ]
-      , (err, modified) ->
-        return next err if err
-        client.search 'olcDatabase={2}bdb,cn=config',
-          scope: 'base'
-          attributes:['olcAccess']
-        , (err, search) ->
-          search.on 'searchEntry', (entry) ->
-            accesses = entry.object.olcAccess
-            for access, i in accesses
-              if /\{\d+\}(.*?) by/.exec(access)[1] is 'to dn.base="ou=test1,dc=test,dc=com"'
-                /\{\d+\}(.*?) by/.exec(accesses[i+1])[1].should.eql 'to dn.base="ou=INSERTED,dc=test,dc=com"'
-                /\{\d+\}(.*?) by/.exec(accesses[i+2])[1].should.eql 'to dn.base="ou=test2,dc=test,dc=com"'
-                break
-          search.on 'end', ->
-            next()
+    .ldap.acl
+      ldap: client
+      name: 'olcDatabase={2}bdb,cn=config'
+      to: 'dn.base="ou=INSERTED,dc=test,dc=com"'
+      place_before: 'dn.base="ou=test2,dc=test,dc=com"'
+      by: [
+        'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" read'
+      ]
+    .call (_, callback) ->
+      client.search 'olcDatabase={2}bdb,cn=config',
+        scope: 'base'
+        attributes:['olcAccess']
+      , (err, search) ->
+        search.on 'searchEntry', (entry) ->
+          accesses = entry.object.olcAccess
+          for access, i in accesses
+            if /\{\d+\}(.*?) by/.exec(access)[1] is 'to dn.base="ou=test1,dc=test,dc=com"'
+              /\{\d+\}(.*?) by/.exec(accesses[i+1])[1].should.eql 'to dn.base="ou=INSERTED,dc=test,dc=com"'
+              /\{\d+\}(.*?) by/.exec(accesses[i+2])[1].should.eql 'to dn.base="ou=test2,dc=test,dc=com"'
+              break
+        search.on 'end', callback
+      .promise()

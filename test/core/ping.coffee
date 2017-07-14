@@ -5,16 +5,16 @@ they = require 'ssh2-they'
 
 describe 'ping', ->
 
-  they 'arguments', (ssh, next) ->
+  they 'arguments', (ssh) ->
     nikita
       ssh: ssh
     .core.ping (err, status, message) ->
       (err is undefined).should.be.true()
       status.should.be.true()
       message.should.eql 'pong'
-    .then next
+    .promise()
 
-  they 'log', (ssh, next) ->
+  they 'log', (ssh) ->
     logs = []
     nikita
       ssh: ssh
@@ -25,4 +25,4 @@ describe 'ping', ->
         'Entering ping'
         'Sending pong'
       ]
-    .then next
+    .promise()

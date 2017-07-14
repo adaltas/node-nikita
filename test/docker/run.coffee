@@ -39,7 +39,7 @@ describe 'docker.run', ->
   return if config.disable_docker
   scratch = test.scratch @
 
-  they 'simple command', (ssh, next) ->
+  they 'simple command', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -49,9 +49,9 @@ describe 'docker.run', ->
     , (err, status, stdout, stderr) ->
       status.should.be.true()
       stdout.should.match /^test.*/ unless err
-    .then next
+    .promise()
   
-  they '--rm (flag option)', (ssh, next) ->
+  they '--rm (flag option)', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -63,67 +63,58 @@ describe 'docker.run', ->
       image: 'alpine'
       name: 'nikita_test_rm'
       rm: false
-      , (err, executed, stdout, stderr) ->
-        return err if err
-        stdout.should.match /^test.*/ unless err
-        nikita
-          ssh: ssh
-        .docker.rm
-          machine: config.docker.machine
-          force: true
-          container: 'nikita_test_rm'
-        .then next
+    , (err, executed, stdout, stderr) ->
+      stdout.should.match /^test.*/ unless err
+    .docker.rm
+      machine: config.docker.machine
+      force: true
+      container: 'nikita_test_rm'
+    .promise()
 
-  they 'unique option from array option', (ssh, next) ->
-    ip ssh, config.docker.machine, (err, ipadress) =>
-      return next err if  err
-      @timeout 60000
-      nikita
-        ssh: ssh
-        machine: config.docker.machine
-      .docker.rm
-        container: 'nikita_test_unique'
-        force: true
-      .docker.run
-        image: 'httpd'
-        port: '499:80'
-        machine: config.docker.machine
-        name: 'nikita_test_unique'
-        detach: true
-        rm: false
-      .wait_connect
-        port: 499
-        host: ipadress
-      .docker.rm
-        force: true
-        container: 'nikita_test_unique'
-      .then next
+  they 'unique option from array option', (ssh) ->
+    nikita
+      ssh: ssh
+      machine: config.docker.machine
+    .docker.rm
+      container: 'nikita_test_unique'
+      force: true
+    .docker.run
+      image: 'httpd'
+      port: '499:80'
+      machine: config.docker.machine
+      name: 'nikita_test_unique'
+      detach: true
+      rm: false
+    # .wait_connect
+    #   port: 499
+    #   host: ipadress of docker, docker-machine...
+    .docker.rm
+      force: true
+      container: 'nikita_test_unique'
+    .promise()
 
-  they 'array options', (ssh, next) ->
-    ip ssh, config.docker.machine, (err, ipadress) =>
-      return next err if  err
-      @timeout 60000
-      nikita
-        ssh: ssh
-        machine: config.docker.machine
-      .docker.rm
-        force: true
-        container: 'nikita_test_array'
-      .docker.run
-        image: 'httpd'
-        port: [ '500:80', '501:81' ]
-        name: 'nikita_test_array'
-        detach: true
-        rm: false
-      .wait_connect
-        host: ipadress
-        port: 500
-      .docker.rm
-        force: true
-        container: 'nikita_test_array'
-      .then next
+  they 'array options', (ssh) ->
+    nikita
+      ssh: ssh
+      machine: config.docker.machine
+    .docker.rm
+      force: true
+      container: 'nikita_test_array'
+    .docker.run
+      image: 'httpd'
+      port: [ '500:80', '501:81' ]
+      name: 'nikita_test_array'
+      detach: true
+      rm: false
+    # .wait_connect
+    #   host: ipadress of docker, docker-machine...
+    #   port: 500
+    .docker.rm
+      force: true
+      container: 'nikita_test_array'
+    .promise()
 
-  they 'existing container', (ssh, next) ->
+  they 'existing container', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -140,15 +131,14 @@ describe 'docker.run', ->
       image: 'alpine'
       name: 'nikita_test'
       rm: false
-    , (err, runned) ->
-      runned.should.be.false()
+    , (err, status) ->
+      status.should.be.false()
     .docker.rm
       force: true
       container: 'nikita_test'
-    .then next
+    .promise()
 
-  they 'status not modified', (ssh, next) ->
-    @timeout 30000
+  they 'status not modified', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -165,12 +155,9 @@ describe 'docker.run', ->
       image: 'alpine'
       name: 'nikita_test'
       rm: false
-    , (err, executed, out, serr) ->
-      executed.should.be.false()
-      nikita
-        ssh: ssh
-        machine: config.docker.machine
-      .docker.rm
-        force: true
-        container: 'nikita_test'
-      .then next
+    , (err, status, out, serr) ->
+      status.should.be.false()
+    .docker.rm
+      force: true
+      container: 'nikita_test'
+    .promise()

@@ -7,7 +7,7 @@ describe 'options "header"', ->
 
   scratch = test.scratch @
   
-  it 'print value', (next) ->
+  it 'print value', ->
     headers = []
     nikita
     .on 'header', (log) ->
@@ -18,17 +18,16 @@ describe 'options "header"', ->
     .file.touch
       header: 'h1 touch'
       target: "#{scratch}/file_h1"
-    .then (err) ->
-      return next err if err
+    .call ->
       headers.should.eql [
         { message: 'h1 call', depth: 1, headers: ['h1 call'], header_depth: 1, total_depth: 0 }
         { message: 'h2 call', depth: 2, headers: ['h1 call', 'h2 call'], header_depth: 2, total_depth: 1 }
         { message: 'h2 touch', depth: 2, headers: ['h1 call', 'h2 touch'], header_depth: 2, total_depth: 1 }
         { message: 'h1 touch', depth: 1, headers: ['h1 touch'], header_depth: 1, total_depth: 0 }
       ]
-      next()
+    .promise()
     
-  it 'decrement when option is reset', (next) ->
+  it 'decrement when option is reset', ->
     headers = []
     nikita
     .on 'header', (log) ->
@@ -55,5 +54,5 @@ describe 'options "header"', ->
         { depth: 2, header_depth: 2, headers: ['h1a', 'h2c'] }
         { depth: 1, header_depth: 1, headers: ['h1b'] }
       ]
-      next()
+    .promise()
     

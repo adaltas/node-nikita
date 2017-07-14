@@ -8,7 +8,7 @@ describe 'wait.exist', ->
 
   scratch = test.scratch @
 
-  they 'take a single cmd', (ssh, next) ->
+  they 'take a single cmd', (ssh) ->
     nikita
       ssh: ssh
     .wait.exist
@@ -24,4 +24,4 @@ describe 'wait.exist', ->
       interval: 60
     , (err, status) ->
       status.should.be.true()
-    .then next
+    .promise()

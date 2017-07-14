@@ -6,7 +6,7 @@ describe 'api after', ->
 
   describe 'event', ->
 
-    it 'is a string and match a action type', (next) ->
+    it 'is a string and match a action type', ->
       history = []
       nikita()
       .registry.register 'good_handler', (->)
@@ -14,11 +14,11 @@ describe 'api after', ->
       .after 'good_handler', (options) -> history.push options.key
       .good_handler key: 'value 1'
       .good_handler key: 'value 2'
-      .then (err) ->
-        history.should.eql ['value 1', 'value 2'] unless err
-        next err
+      .call ->
+        history.should.eql ['value 1', 'value 2']
+      .promise()
 
-    it 'is an object and match options', (next) ->
+    it 'is an object and match options', ->
       history = []
       nikita()
       .registry.register 'handler', (->)
@@ -26,13 +26,13 @@ describe 'api after', ->
         history.push options.key
       .handler key: 'value 1'
       .handler key: 'value 2'
-      .then (err) ->
-        history.should.eql ['value 2'] unless err
-        next err
+      .call ->
+        history.should.eql ['value 2']
+      .promise()
 
   describe 'handler', ->
 
-    it 'a sync function with sync handler', (next) ->
+    it 'a sync function with sync handler', ->
       history = []
       nikita()
       .registry.register 'sync_fn', ((_) -> history.push 'sync handler' )
@@ -42,15 +42,15 @@ describe 'api after', ->
       .call -> history.push 'call 2'
       .sync_fn -> history.push 'sync callback 2'
       .call -> history.push 'call 3'
-      .then (err, status) ->
+      .call ->
         history.should.eql [
           'call 1', 'sync handler', 'after sync', 'sync callback 1'
           'call 2', 'sync handler', 'after sync', 'sync callback 2'
           'call 3'
-        ] unless err
-        next err
+        ]
+      .promise()
 
-    it 'a sync function with async handler', (next) ->
+    it 'a sync function with async handler', ->
       history = []
       nikita()
       .registry.register 'afunction', ((_) -> history.push 'sync handler' )
@@ -63,15 +63,15 @@ describe 'api after', ->
       .call -> history.push 'call 2'
       .afunction -> history.push 'sync callback 2'
       .call -> history.push 'call 3'
-      .then (err, status) ->
+      .call ->
         history.should.eql [
           'call 1', 'sync handler', 'after sync', 'sync callback 1'
           'call 2', 'sync handler', 'after sync', 'sync callback 2'
           'call 3'
         ]
-        next()
+      .promise()
 
-    it 'a namespaced sync function with async handler', (next) ->
+    it 'a namespaced sync function with async handler', ->
       history = []
       nikita()
       .registry.register ['a','namespaced','function'], ((_) -> history.push 'sync handler' )
@@ -84,34 +84,34 @@ describe 'api after', ->
       .call -> history.push 'call 2'
       .a.namespaced.function -> history.push 'sync callback 2'
       .call -> history.push 'call 3'
-      .then (err, status) ->
+      .call ->
         history.should.eql [
           'call 1', 'sync handler', 'after sync', 'sync callback 1'
           'call 2', 'sync handler', 'after sync', 'sync callback 2'
           'call 3'
         ]
-        next()
+      .promise()
 
   describe 'error', ->
 
-    it 'register sync function and throw error', (next) ->
+    it 'register sync function and throw error', ->
       nikita()
-      .registry.register 'afunction', ((_) -> )
+      .registry.register 'afunction', ( -> )
       .after 'afunction', (_) ->
         throw Error 'CatchMe'
       .afunction (err, status) ->
         err.message.should.eql 'CatchMe'
       .then (err) ->
         err.message.should.eql 'CatchMe'
-        next()
+      .promise()
 
-    it 'register sync function and throw error', (next) ->
+    it 'register sync function and throw error', ->
       nikita()
-      .registry.register 'afunction', ((_) -> )
+      .registry.register 'afunction', ( -> )
       .after 'afunction', (_, callback) ->
         setImmediate -> callback Error 'CatchMe'
       .afunction (err, status) ->
         err.message.should.eql 'CatchMe'
       .then (err) ->
         err.message.should.eql 'CatchMe'
-        next()
+      .promise()

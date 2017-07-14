@@ -15,7 +15,7 @@ describe 'docker.build', ->
   scratch = test.scratch @
   @timeout 60000
 
-  they 'fail with missing image parameter', (ssh, next) ->
+  they 'fail with missing image parameter', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -24,9 +24,9 @@ describe 'docker.build', ->
     .then (err) ->
       return next Error 'Expect error' unless err
       err.message.should.eql 'Required option "image"'
-    .then next
+    .promise()
 
-  they 'fail with exclusive parameters', (ssh, next) ->
+  they 'fail with exclusive parameters', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -36,9 +36,9 @@ describe 'docker.build', ->
       content: "FROM scratch \ CMD ['echo \"hello world\"']"
     .then (err) ->
       err.message.should.eql 'Can not build from Dockerfile and content'
-    .then next
+    .promise()
 
-  they 'from text', (ssh, next) ->
+  they 'from text', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -55,9 +55,9 @@ describe 'docker.build', ->
       stderr.should.containEql 'Step 2 : CMD echo hello' unless err
     .docker.rmi
       image: 'nikita/should_exists_2'
-    .then next
+    .promise()
 
-  they 'from cwd',  (ssh, next) ->
+  they 'from cwd',  (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -76,9 +76,9 @@ describe 'docker.build', ->
       executed.should.be.true() unless err
     .docker.rmi
       image: 'nikita/should_exists_3'
-    .then next
+    .promise()
 
-  they 'from Dockerfile (exist)', (ssh, next) ->
+  they 'from Dockerfile (exist)', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -94,9 +94,9 @@ describe 'docker.build', ->
       executed.should.be.true() unless err
     .docker.rmi
       image: 'nikita/should_exists_3'
-    .then next
+    .promise()
 
-  they 'from Dockerfile (not exist)', (ssh, next) ->
+  they 'from Dockerfile (not exist)', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -106,9 +106,9 @@ describe 'docker.build', ->
       relax: true
     , (err, executed, stdout, stderr) ->
       err.code.should.eql 'ENOENT'
-    .then next
+    .promise()
 
-  they 'status not modified', (ssh, next) ->
+  they 'status not modified', (ssh) ->
     status_true = status_false = null
     nikita
       ssh: ssh
@@ -138,4 +138,4 @@ describe 'docker.build', ->
     .call ->
       status_true.message.should.match /^New image id/
       status_false.message.should.match /^Identical image id/
-    .then next
+    .promise()

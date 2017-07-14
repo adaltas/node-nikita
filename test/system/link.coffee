@@ -9,50 +9,46 @@ describe 'system.link', ->
 
   scratch = test.scratch @
 
-  they 'should link file', (ssh, next) ->
+  they 'should link file', (ssh) ->
     # Create a non existing link
-    target = "#{scratch}/link_test"
     nikita
       ssh: ssh
     .system.link # Link does not exist
       source: __filename
-      target: target
+      target: "#{scratch}/link_test"
     , (err, status) ->
       status.should.be.true() unless err
     .system.link # Link already exists
       source: __filename
-      target: target
+      target: "#{scratch}/link_test"
     , (err, status) ->
       status.should.be.false() unless err
-    .then (err) ->
-      return next err if err
-      fs.lstat ssh, target, (err, stat) ->
-        stat.isSymbolicLink().should.be.true()
-        next()
+    .file.assert
+      target: "#{scratch}/link_test"
+      filetype: 'symlink'
+    .promise()
   
-  they 'should link dir', (ssh, next) ->
+  they 'should link dir', (ssh) ->
     # Create a non existing link
-    target = "#{scratch}/link_test"
     nikita
       ssh: ssh
     .system.link # Link does not exist
       source: __dirname
-      target: target
+      target: "#{scratch}/link_test"
     , (err, status) ->
       status.should.be.true() unless err
     .system.link # Link already exists
       ssh: ssh
       source: __dirname
-      target: target
+      target: "#{scratch}/link_test"
     , (err, status) ->
       status.should.be.false() unless err
-    .then (err) ->
-      return next err if err
-      fs.lstat ssh, target, (err, stat) ->
-        stat.isSymbolicLink().should.be.true()
-        next()
+    .file.assert
+      target: "#{scratch}/link_test"
+      filetype: 'symlink'
+    .promise()
   
-  they 'should create parent directories', (ssh, next) ->
+  they 'should create parent directories', (ssh) ->
     # Create a non existing link
     nikita
       ssh: ssh
@@ -75,9 +71,9 @@ describe 'system.link', ->
       target: "#{scratch}/test/dir2/mkdir.coffee"
     ], (err, status) ->
       status.should.be.true() unless err
-    .then next
+    .promise()
 
-  they 'should override invalid link', (ssh, next) ->
+  they 'should override invalid link', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -98,11 +94,11 @@ describe 'system.link', ->
       target: "#{scratch}/test/file_link"
     , (err, status) ->
       status.should.be.true() unless err
-    .then next
+    .promise()
 
   describe 'error', ->
 
-    they 'for invalid arguments', (ssh, next) ->
+    they 'for invalid arguments', (ssh) ->
       # Test missing source
       nikita
         ssh: ssh
@@ -114,4 +110,4 @@ describe 'system.link', ->
         source: __filename
       .then (err) ->
         err.message.should.eql "Missing target, got undefined"
-      .then next
+      .promise()

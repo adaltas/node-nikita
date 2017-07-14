@@ -12,7 +12,7 @@ describe 'system.execute', ->
   return  if config.disable_system_execute_arc_chroot
   scratch = test.scratch @
     
-  they 'target as true', (ssh, next) ->
+  they 'target as true', (ssh) ->
     nikita
       ssh: ssh
     .system.execute
@@ -33,9 +33,9 @@ describe 'system.execute', ->
     .system.execute
       always: true # todo, need to create this option (run even on error)
       cmd: "umount /mnt"
-    .then next
+    .promise()
       
-  they 'target as string', (ssh, next) ->
+  they 'target as string', (ssh) ->
     nikita
       ssh: ssh
     .system.execute
@@ -58,9 +58,9 @@ describe 'system.execute', ->
       cmd: """
       umount /mnt
       """
-    .then next
+    .promise()
       
-  they 'require ', (ssh, next) ->
+  they 'require ', (ssh) ->
     nikita
       ssh: ssh
     .system.execute
@@ -69,5 +69,5 @@ describe 'system.execute', ->
       relax: true
     , (err, status, stdout, stderr) ->
       err.message.should.equal 'Required Option: "rootdir" with "arch_chroot"'
-    .then next
+    .promise()
   

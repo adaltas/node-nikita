@@ -9,7 +9,7 @@ describe 'system.user', ->
   return if config.disable_system_user
   scratch = test.scratch @
   
-  they 'accept only user name', (ssh, next) ->
+  they 'accept only user name', (ssh) ->
     nikita
       ssh: ssh
     .system.user.remove 'toto'
@@ -18,9 +18,9 @@ describe 'system.user', ->
       status.should.be.true() unless err
     .system.user 'toto', (err, status) ->
       status.should.be.false() unless err
-    .then next
+    .promise()
     
-  they 'created with a uid', (ssh, next) ->
+  they 'created with a uid', (ssh) ->
     nikita
       ssh: ssh
     .system.user.remove 'toto'
@@ -33,9 +33,9 @@ describe 'system.user', ->
       status.should.be.false() unless err
     .system.user 'toto', (err, status) ->
       status.should.be.false() unless err
-    .then next
+    .promise()
     
-  they 'created without a uid', (ssh, next) ->
+  they 'created without a uid', (ssh) ->
     nikita
       ssh: ssh
     .system.user.remove 'toto'
@@ -46,9 +46,9 @@ describe 'system.user', ->
       status.should.be.true() unless err
     .system.user 'toto', (err, status) ->
       status.should.be.false() unless err
-    .then next
+    .promise()
     
-  they.only 'parent home does not exist', (ssh, next) ->
+  they 'parent home does not exist', (ssh) ->
     nikita
       ssh: ssh
     .system.user.remove 'toto'
@@ -60,4 +60,4 @@ describe 'system.user', ->
       mode: 0o0644
       uid: 0
       gid: 0
-    .then next
+    .promise()

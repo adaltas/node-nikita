@@ -11,7 +11,7 @@ describe 'file.download file', ->
   
   describe 'source', ->
 
-    they 'with file protocol', (ssh, next) ->
+    they 'with file protocol', (ssh) ->
       source = "file://#{__filename}"
       target = "#{scratch}/download_test"
       nikita
@@ -31,9 +31,9 @@ describe 'file.download file', ->
         target: target # Download on an existing file
       , (err, status) ->
         status.should.be.false() unless err
-        next err
+      .promise()
 
-    they 'without protocol', (ssh, next) ->
+    they 'without protocol', (ssh) ->
       source = "#{__filename}"
       target = "#{scratch}/download_test"
       # Download a non existing file
@@ -53,9 +53,9 @@ describe 'file.download file', ->
         target: target
       , (err, status) ->
         status.should.be.false() unless err
-      .then next
+      .promise()
 
-    they 'doesnt exists', (ssh, next) ->
+    they 'doesnt exists', (ssh) ->
       source = "#{__dirname}/doesnotexists"
       target = "#{scratch}/download_test"
       nikita
@@ -63,14 +63,13 @@ describe 'file.download file', ->
       .file.download
         source: source
         target: target
-        # shy: true
+        relax: true
       , (err, status) ->
-        err.message.should.eql 'No such source file'
+        err.message.should.eql "Does not exist: #{source}"
         err.code.should.eql 'ENOENT'
-      .then (err) ->
-        next()
+      .promise()
 
-    they 'into an existing directory', (ssh, next) ->
+    they 'into an existing directory', (ssh) ->
       source = "#{__filename}"
       target = "#{scratch}/download_test"
       nikita
@@ -84,11 +83,11 @@ describe 'file.download file', ->
         fs.stat ssh, "#{target}/#{path.basename source}", (err, stat) ->
           stat.isFile().should.be.true() unless err
           callback err
-      .then next
+      .promise()
 
   describe 'cache', ->
 
-    they 'validate md5', (ssh, next) ->
+    they 'validate md5', (ssh) ->
       source = "#{__dirname}/download.zip"
       target = "#{scratch}/download"
       nikita
@@ -103,9 +102,9 @@ describe 'file.download file', ->
         return next err if err
         status.should.be.true()
       .file.assert "#{scratch}/cache_dir/#{path.basename source}"
-      .then next
+      .promise()
 
-    they 'cache dir', (ssh, next) ->
+    they 'cache dir', (ssh) ->
       # Download a non existing file
       target = "#{scratch}/download"
       nikita
@@ -119,9 +118,9 @@ describe 'file.download file', ->
         return next err if err
         status.should.be.true() unless err
       .file.assert "#{scratch}/cache_dir/#{path.basename __filename}"
-      .then next
+      .promise()
 
-    they 'detect file already present', (ssh, next) ->
+    they 'detect file already present', (ssh) ->
       ssh = null
       nikita
         ssh: ssh
@@ -147,11 +146,11 @@ describe 'file.download file', ->
         cache_dir: "#{scratch}/cache_dir"
       , (err, status) ->
         status.should.be.true() unless err
-      .then next
+      .promise()
   
   describe 'md5', ->
 
-    they 'cache dir with md5 string', (ssh, next) ->
+    they 'cache dir with md5 string', (ssh) ->
       # Download a non existing file
       target = "#{scratch}/download"
       nikita
@@ -173,10 +172,10 @@ describe 'file.download file', ->
       .file.assert
         target: "#{scratch}/download_test"
         content: 'okay'
-      .then next
+      .promise()
 
-    they 'is computed if true', (ssh, next) ->
-      return next() unless ssh
+    they 'is computed if true', (ssh) ->
+      return unless ssh
       logs = []
       # Download with invalid checksum
       target = "#{scratch}/check_md5"
@@ -201,4 +200,4 @@ describe 'file.download file', ->
       .call ->
         ("[WARN] Hash dont match, source is 'df8fede7ff71608e24a5576326e41c75' and target is 'undefined'" in logs).should.be.true()
         ("[INFO] Hash matches as 'df8fede7ff71608e24a5576326e41c75'" in logs).should.be.true()
-      .then next
+      .promise()

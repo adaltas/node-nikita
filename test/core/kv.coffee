@@ -9,7 +9,7 @@ describe 'kv', ->
 
   scratch = test.scratch @
   
-  they 'set then get', (ssh, next) ->
+  they 'set then get', (ssh) ->
     engine = memory()
     nikita
       ssh: ssh
@@ -29,11 +29,11 @@ describe 'kv', ->
       status.should.be.true()
       key.should.eql 'a_key'
       value.should.eql 'a value'
-    .then next
+    .promise()
     
-  they 'get then set', (ssh, next) ->
+  they 'get then set', (ssh) ->
     engine = memory()
-    nikita
+    promise = nikita
       ssh: ssh
     .kv.engine
       engine: engine
@@ -44,7 +44,7 @@ describe 'kv', ->
       status.should.be.true()
       key.should.eql 'a_key'
       value.should.eql 'a value'
-    .then next
+    .promise()
     nikita
       ssh: ssh
     .kv.engine
@@ -52,4 +52,5 @@ describe 'kv', ->
     .kv.set
       key: 'a_key'
       value: 'a value'
+    promise
       

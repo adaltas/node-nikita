@@ -10,7 +10,7 @@ describe 'system.mkdir', ->
 
   scratch = test.scratch @
 
-  they 'as a directory option or as a string', (ssh, next) ->
+  they 'as a directory option or as a string', (ssh) ->
     nikita
       ssh: ssh
     .system.mkdir directory: "#{scratch}/a_dir", (err, created) ->
@@ -21,9 +21,9 @@ describe 'system.mkdir', ->
       created.should.be.true()
     .system.mkdir "#{scratch}/b_dir", (err, created) ->
       created.should.be.false()
-    .then next
+    .promise()
 
-  they 'should take source if first argument is a string', (ssh, next) ->
+  they 'should take source if first argument is a string', (ssh) ->
     source = "#{scratch}/a_dir"
     nikita
       ssh: ssh
@@ -31,9 +31,9 @@ describe 'system.mkdir', ->
       created.should.be.true()
     .system.mkdir source, (err, created) ->
       created.should.be.false()
-    .then next
+    .promise()
   
-  they 'should create dir recursively', (ssh, next) ->
+  they 'should create dir recursively', (ssh) ->
     nikita
       ssh: ssh
     .system.mkdir
@@ -44,118 +44,115 @@ describe 'system.mkdir', ->
       directory: "#{scratch}/a_parent_dir_2/a_dir/"
     , (err, created) ->
       created.should.be.true() unless err
-    .then next
+    .promise()
   
-  they 'should create multiple directories', (ssh, next) ->
-    nikita.system.mkdir
+  they 'should create multiple directories', (ssh) ->
+    nikita
+      ssh: ssh
+    .system.mkdir
       ssh: ssh
       target: [
         "#{scratch}/a_parent_dir/a_dir_1"
         "#{scratch}/a_parent_dir/a_dir_2"
       ]
-    , (err, created) ->
-      return next err if err
-      created.should.be.true()
-      next()
+    , (err, status) ->
+      status.should.be.true() unless err
+    .promise()
 
   describe 'parent', ->
 
-    they 'true set default permissions', (ssh, next) ->
-      nikita.system.mkdir
+    they 'true set default permissions', (ssh) ->
+      nikita
         ssh: ssh
+      .system.mkdir
         target: [
           "#{scratch}/a_parent_dir/a_dir_1"
           "#{scratch}/a_parent_dir/a_dir_2"
         ]
         parent: true
         mode: 0o717
-      , (err, created) ->
-        return next err if err
-        fs.stat ssh, "#{scratch}/a_parent_dir", (err, stat) ->
-          return next err if err
-          stat.mode.toString(8).should.not.eql '40717'
-          next()
+      .file.assert
+        target: "#{scratch}/a_parent_dir"
+        mode: 0o0717
+        not: true
+      .promise()
 
-    they 'object set custom permissions', (ssh, next) ->
-      nikita.system.mkdir
+    they 'object set custom permissions', (ssh) ->
+      nikita
         ssh: ssh
+      .system.mkdir
         target: [
           "#{scratch}/a_parent_dir/a_dir_1"
           "#{scratch}/a_parent_dir/a_dir_2"
         ]
         parent: mode: 0o741
         mode: 0o715
-      , (err, created) ->
-        return next err if err
-        fs.stat ssh, "#{scratch}/a_parent_dir", (err, stat) ->
-          return next err if err
-          stat.mode.toString(8).should.eql '40741'
-          fs.stat ssh, "#{scratch}/a_parent_dir/a_dir_1", (err, stat) ->
-            return next err if err
-            stat.mode.toString(8).should.eql '40715'
-            next()
+      .file.assert
+        target: "#{scratch}/a_parent_dir"
+        mode: 0o0741
+      .file.assert
+        target: "#{scratch}/a_parent_dir/a_dir_1"
+        mode: 0o0715
+      .promise()
 
   describe 'exclude', ->
   
-    they 'should stop when `exclude` match', (ssh, next) ->
+    they 'should stop when `exclude` match', (ssh) ->
       source = "#{scratch}/a_parent_dir/a_dir/do_not_create_this"
-      nikita.system.mkdir
+      nikita
         ssh: ssh
+      .system.mkdir
         directory: source
         exclude: /^do/
-      , (err, created) ->
-        return next err if err
-        created.should.be.true()
-        fs.exists ssh, source, (err, created) ->
-          created.should.be.false()
-          source = path.dirname source
-          fs.exists ssh, source, (err, created) ->
-            created.should.be.true() 
-            next()
+      , (err, status) ->
+        status.should.be.true() unless err
+      .file.assert
+        target: source
+        not: true
+      .file.assert
+        target: path.dirname source
+      .promise()
 
   describe 'cwd', ->
 
-    they 'should honore `cwd` for relative paths', (ssh, next) ->
+    they 'should honore `cwd` for relative paths', (ssh) ->
       nikita.system.mkdir
         ssh: ssh
         directory: './a_dir'
         cwd: scratch
-      , (err, created) ->
-        return next err if err
-        created.should.be.true()
-        fs.exists ssh, "#{scratch}/a_dir", (err, created) ->
-          created.should.be.true()
-          next()
+      , (err, status) ->
+        status.should.be.true() unless err
+      .file.assert
+        target: "#{scratch}/a_dir"
+      .promise()
 
   describe 'mode', ->
 
-    they 'change mode as string', (ssh, next) ->
+    they 'change mode as string', (ssh) ->
       # 40744: 4 for directory, 744 for permissions
-      nikita.system.mkdir
+      nikita
         ssh: ssh
+      .system.mkdir
         directory: "#{scratch}/ssh_dir_string"
         mode: '744'
-      , (err, created) ->
-        return next err if err
-        fs.stat ssh, "#{scratch}/ssh_dir_string", (err, stat) ->
-          return next err if err
-          stat.mode.toString(8).should.eql '40744'
-          next()
+      .file.assert
+        target: "#{scratch}/ssh_dir_string"
+        mode: 0o0744
+      .promise()
 
-    they 'change mode as string', (ssh, next) ->
+    they 'change mode as octal', (ssh) ->
       # 40744: 4 for directory, 744 for permissions
-      nikita.system.mkdir
+      nikita
         ssh: ssh
+      .system.mkdir
         directory: "#{scratch}/ssh_dir_string"
         mode: 0o744
-      , (err, created) ->
-        return next err if err
-        fs.stat ssh, "#{scratch}/ssh_dir_string", (err, stat) ->
-          return next err if err
-          stat.mode.toString(8).should.eql '40744'
-          next()
+      .file.assert
+        target: "#{scratch}/ssh_dir_string"
+        mode: 0o0744
+      .promise()
 
-    they 'detect a permission change', (ssh, next) ->
+    they 'detect a permission change', (ssh) ->
       # 40744: 4 for directory, 744 for permissions
       nikita
         ssh: ssh
@@ -165,16 +162,16 @@ describe 'system.mkdir', ->
       .system.mkdir
         directory: "#{scratch}/ssh_dir_string"
         mode: 0o755
-      , (err, created) ->
-        created.should.be.true()
+      , (err, status) ->
+        status.should.be.true()
       .system.mkdir
         directory: "#{scratch}/ssh_dir_string"
         mode: 0o755
-      , (err, created) ->
-        created.should.be.false()
-      .then next
+      , (err, status) ->
+        status.should.be.false()
+      .promise()
 
-    they 'dont ovewrite permission', (ssh, next) ->
+    they 'dont ovewrite permission', (ssh) ->
       nikita
         ssh: ssh
       .system.mkdir
@@ -182,11 +179,9 @@ describe 'system.mkdir', ->
         mode: 0o744
       .system.mkdir
         directory: "#{scratch}/a_dir"
-      , (err, created) ->
-        created.should.be.false()
-      .then (err) ->
-        return next err if err
-        fs.stat ssh, "#{scratch}/a_dir", (err, stat) ->
-          return next err if err
-          misc.mode.stringify(stat.mode).should.eql '40744'
-          next()
+      , (err, status) ->
+        status.should.be.false()
+      .file.assert
+        target: "#{scratch}/a_dir"
+        mode: 0o0744
+      .promise()

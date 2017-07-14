@@ -10,7 +10,7 @@ describe 'system.execute', ->
 
   scratch = test.scratch @
     
-  they 'in generated path', (ssh, next) ->
+  they 'in generated path', (ssh) ->
     nikita
       ssh: ssh
     .system.execute
@@ -18,9 +18,9 @@ describe 'system.execute', ->
       bash: true
     , (err, status, stdout, stderr) ->
       stdout.should.containEql 'bash'
-    .then next
+    .promise()
       
-  they 'in user path', (ssh, next) ->
+  they 'in user path', (ssh) ->
     nikita
       ssh: ssh
     .system.execute
@@ -42,9 +42,9 @@ describe 'system.execute', ->
     .file.assert
       target: "#{scratch}/my_script"
       not: true
-    .then next
+    .promise()
       
-  they 'honors exit code', (ssh, next) ->
+  they 'honors exit code', (ssh) ->
     nikita
       ssh: ssh
     .system.execute
@@ -53,4 +53,4 @@ describe 'system.execute', ->
       code_skipped: 2
     , (err, status) ->
       status.should.be.false() unless err
-    .then next
+    .promise()

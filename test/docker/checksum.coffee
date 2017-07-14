@@ -14,7 +14,7 @@ describe 'docker.checksum', ->
   return if config.disable_docker
   scratch = test.scratch @
 
-  they 'checksum on existing repository', (ssh, next) ->
+  they 'checksum on existing repository', (ssh) ->
     checksum = null
     nikita
       ssh: ssh
@@ -33,9 +33,9 @@ describe 'docker.checksum', ->
       checksum_valid.should.startWith "sha256:#{checksum}" unless err
     .docker.rmi
       image: 'nikita/checksum'
-    .then next
+    .promise()
 
-  they 'checksum on not existing repository', (ssh, next) ->
+  they 'checksum on not existing repository', (ssh) ->
     nikita
       ssh: ssh
       docker: config.docker
@@ -44,4 +44,4 @@ describe 'docker.checksum', ->
       tag: 'latest'
     , (err, executed, checksum) ->
       checksum.should.be.false()
-      next()
+    .promise()

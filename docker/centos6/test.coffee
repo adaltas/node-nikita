@@ -2,8 +2,8 @@
 module.exports =
   disable_conditions_if_os: false
   disable_cron: false
+  disable_db: false # can be activated
   disable_docker: false
-  disable_discover: false
   disable_docker_volume: true # centos6 ship docker 1.7 which doesnt support volume
   disable_krb5_addprinc: false # not sure if working
   disable_krb5_delprinc: false # not sure if working
@@ -14,9 +14,11 @@ module.exports =
   disable_service_install: false
   disable_service_startup: false
   disable_service_systemctl: false
-  disable_db: false # can be activated
   disable_system_chmod: false
+  disable_system_cgroups: false
+  disable_system_discover: false
   disable_system_execute_arc_chroot: true #can not be activated
+  disable_system_limits: false
   disable_system_tmpfs: true #can not be activated
   disable_system_user: false
   disable_tools_repo: false

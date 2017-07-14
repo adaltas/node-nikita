@@ -8,7 +8,7 @@ describe 'system.execute.assert', ->
 
   scratch = test.scratch @
 
-  they 'assert stdout match content', (ssh, next) ->
+  they 'assert stdout match content', (ssh) ->
     nikita
       ssh: ssh
     .system.execute.assert
@@ -20,9 +20,9 @@ describe 'system.execute.assert', ->
       relax: true
     , (err) ->
       err.message.should.eql 'Invalid content'
-    .then next
+    .promise()
 
-  they 'assert stdout match regexp', (ssh, next) ->
+  they 'assert stdout match regexp', (ssh) ->
     nikita
       ssh: ssh
     .system.execute.assert
@@ -34,4 +34,4 @@ describe 'system.execute.assert', ->
       relax: true
     , (err) ->
       err.message.should.eql 'Invalid content match'
-    .then next
+    .promise()

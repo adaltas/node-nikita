@@ -9,7 +9,7 @@ describe 'file.properties', ->
 
   scratch = test.scratch @
 
-  they 'overwrite by default', (ssh, next) ->
+  they 'overwrite by default', (ssh) ->
     nikita
       ssh: ssh
     .file.properties
@@ -31,9 +31,9 @@ describe 'file.properties', ->
       fs.readFile ssh, "#{scratch}/file.properties", 'ascii', (err, data) ->
         data.should.eql "another_key=another value\n" unless err
         callback err
-    .then next
+    .promise()
     
-  they 'honors merge', (ssh, next) ->
+  they 'honors merge', (ssh) ->
     nikita
       ssh: ssh
     .file.properties
@@ -57,9 +57,9 @@ describe 'file.properties', ->
       fs.readFile ssh, "#{scratch}/file.properties", 'ascii', (err, data) ->
         data.should.eql "a_key=a value\nanother_key=another value\n" unless err
         callback err
-    .then next
+    .promise()
 
-  they 'honor separator', (ssh, next) ->
+  they 'honor separator', (ssh) ->
     nikita
       ssh: ssh
     .file.properties
@@ -75,9 +75,9 @@ describe 'file.properties', ->
       fs.readFile ssh, "#{scratch}/file.properties", 'ascii', (err, data) ->
         data.should.eql "a_key a value\nanother_key another value\n" unless err
         callback err
-    .then next
+    .promise()
 
-  they 'honor sort', (ssh, next) ->
+  they 'honor sort', (ssh) ->
     nikita
       ssh: ssh
     .file.properties
@@ -101,9 +101,9 @@ describe 'file.properties', ->
       fs.readFile ssh, "#{scratch}/file.properties", 'ascii', (err, data) ->
         data.should.eql "a_key=value\nb_key=value\n" unless err
         callback err
-    .then next
+    .promise()
 
-  they 'honor comments', (ssh, next) ->
+  they 'honor comments', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -124,4 +124,4 @@ describe 'file.properties', ->
       fs.readFile ssh, "#{scratch}/file.properties", 'ascii', (err, data) ->
         data.should.eql "a_key=new value\n# comment\nb_key=new value\n" unless err
         callback err
-    .then next
+    .promise()

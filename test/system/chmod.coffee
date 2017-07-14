@@ -10,7 +10,7 @@ describe 'system.chmod', ->
 
   scratch = test.scratch @
 
-  they 'change a permission of a file', (ssh, next) ->
+  they 'change a permission of a file', (ssh) ->
     nikita
       ssh: ssh
     .file.touch
@@ -20,9 +20,9 @@ describe 'system.chmod', ->
       fs.stat ssh, "#{scratch}/a_file", (err, stat) ->
         misc.mode.compare(stat.mode, '600').should.eql true unless err
         callback err
-    .then next
+    .promise()
 
-  they 'change status', (ssh, next) ->
+  they 'change status', (ssh) ->
     nikita
       ssh: ssh
     .file.touch
@@ -38,4 +38,4 @@ describe 'system.chmod', ->
       mode: 0o0744
     , (err, status) ->
       status.should.be.false() unless err
-    .then next
+    .promise()

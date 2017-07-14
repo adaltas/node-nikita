@@ -8,8 +8,8 @@ describe 'ssh.close', ->
 
   scratch = test.scratch @
 
-  they 'check status', (ssh, next) ->
-    return next() unless ssh
+  they 'check status', (ssh) ->
+    return unless ssh
     nikita
     .ssh.open
       host: ssh.config.host
@@ -22,4 +22,4 @@ describe 'ssh.close', ->
       status.should.be.true() unless err
     .ssh.close (err, status) ->
       status.should.be.false() unless err
-    .then next
+    .promise()

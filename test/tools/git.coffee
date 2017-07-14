@@ -15,7 +15,7 @@ describe 'tools.git', ->
       target: "#{scratch}"
     .then next
 
-  they 'clones repo into new dir', (ssh, next) ->
+  they 'clones repo into new dir', (ssh) ->
     nikita
       ssh: ssh
     .tools.git
@@ -28,9 +28,9 @@ describe 'tools.git', ->
       target: "#{scratch}/my_repo"
     , (err, updated) ->
       updated.should.be.false()
-    .then next
+    .promise()
 
-  they 'honores revision', (ssh, next) ->
+  they 'honores revision', (ssh) ->
     nikita
       ssh: ssh
     .tools.git
@@ -48,9 +48,9 @@ describe 'tools.git', ->
       revision: 'v0.0.1'
     , (err, updated) ->
       updated.should.be.false()
-    .then next
+    .promise()
 
-  they 'preserves existing directory', (ssh, next) ->
+  they 'preserves existing directory', (ssh) ->
     nikita
       ssh: ssh
     .system.mkdir
@@ -61,4 +61,4 @@ describe 'tools.git', ->
       relax: true
     , (err, updated) ->
       err.message.should.eql 'Not a git repository'
-    .then next
+    .promise()

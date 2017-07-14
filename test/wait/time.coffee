@@ -8,7 +8,7 @@ describe 'wait.time', ->
 
   scratch = test.scratch @
 
-  they 'time as main argument', (ssh, next) ->
+  they 'time as main argument', (ssh) ->
     before = Date.now()
     nikita
       ssh: ssh
@@ -18,9 +18,9 @@ describe 'wait.time', ->
     .call ->
       interval = Date.now() - before
       (interval > 1000 and interval < 1500).should.be.true()
-    .then next
+    .promise()
 
-  they 'before callback', (ssh, next) ->
+  they 'before callback', (ssh) ->
     before = Date.now()
     nikita
       ssh: ssh
@@ -29,9 +29,9 @@ describe 'wait.time', ->
     , (err, status) ->
       interval = Date.now() - before
       (interval > 1000 and interval < 1500).should.be.true()
-    .then next
+    .promise()
 
-  they 'wait before sync call', (ssh, next) ->
+  they 'wait before sync call', (ssh) ->
     before = Date.now()
     nikita
       ssh: ssh
@@ -40,14 +40,15 @@ describe 'wait.time', ->
     .call ->
       interval = Date.now() - before
       (interval > 1000 and interval < 1500).should.be.true()
-    .then next
+    .promise()
   
-  they  'validate argument', (ssh, next) ->
+  they  'validate argument', (ssh) ->
     before = Date.now()
     nikita
       ssh: ssh
     .wait
       time: 'an': 'object'
-    .then (err) ->
+      relax: true
+    , (err) ->
       err.message.should.eql 'Invalid time format: {"an":"object"}'
-      next()
+    .promise()

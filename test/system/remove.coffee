@@ -10,7 +10,7 @@ describe 'system.remove', ->
   
   scratch = test.scratch @
   
-  they 'accept an option', (ssh, next) ->
+  they 'accept an option', (ssh) ->
     nikita
       ssh: ssh
     .file.touch "#{scratch}/a_file"
@@ -18,17 +18,17 @@ describe 'system.remove', ->
       source: "#{scratch}/a_file"
     , (err, status) ->
       status.should.be.true() unless err
-    .then next
+    .promise()
     
-  they 'accept a string', (ssh, next) ->
+  they 'accept a string', (ssh) ->
     nikita
       ssh: ssh
     .file.touch "#{scratch}/a_file"
     .system.remove "#{scratch}/a_file", (err, status) ->
       status.should.be.true() unless err
-    .then next
+    .promise()
     
-  they 'accept an array of strings', (ssh, next) ->
+  they 'accept an array of strings', (ssh) ->
     nikita
       ssh: ssh
     .file.touch "#{scratch}/file_1"
@@ -38,9 +38,9 @@ describe 'system.remove', ->
       "#{scratch}/file_2"
     ], (err, status) ->
       status.should.be.true() unless err
-    .then next
+    .promise()
     
-  they 'a file', (ssh, next) ->
+  they 'a file', (ssh) ->
     nikita
       ssh: ssh
     .system.copy
@@ -54,9 +54,9 @@ describe 'system.remove', ->
       source: "#{scratch}/a_file"
     , (err, status) ->
       status.should.be.false() unless err
-    .then next
+    .promise()
 
-  they 'a link', (ssh, next) ->
+  they 'a link', (ssh) ->
     nikita
       ssh: ssh
     .call (options, callback) ->
@@ -69,9 +69,9 @@ describe 'system.remove', ->
       fs.lstat options.ssh, "#{scratch}/test", (err, stat) ->
         err.code.should.eql 'ENOENT'
         callback()
-    .then next
+    .promise()
 
-  they 'use a pattern', (ssh, next) ->
+  they 'use a pattern', (ssh) ->
     # todo, not working yet over ssh
     nikita
       ssh: ssh
@@ -88,9 +88,9 @@ describe 'system.remove', ->
         files.should.not.containEql 'a_dir.tgz'
         files.should.containEql 'a_dir.zip'
         callback()
-    .then next
+    .promise()
 
-  they 'a dir', (ssh, next) ->
+  they 'a dir', (ssh) ->
     # @timeout 10000
     nikita
       ssh: ssh
@@ -104,4 +104,4 @@ describe 'system.remove', ->
       target: "#{scratch}/remove_dir"
     , (err, status) ->
       status.should.be.false() unless err
-    .then next
+    .promise()

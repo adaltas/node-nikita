@@ -11,7 +11,7 @@ describe 'tools.repo', ->
   return if config.disable_tools_repo
   @timeout 50000
 
-  they 'Write with source option', (ssh, next) ->
+  they 'Write with source option', (ssh) ->
     nikita
       ssh: ssh
     .system.mkdir "#{scratch}/repo"
@@ -36,9 +36,9 @@ describe 'tools.repo', ->
     , (err, status) ->
       status.should.be.false() unless err
     .file.assert "#{scratch}/repo/centos.repo"
-    .then next
+    .promise()
   
-  they 'Write with content option', (ssh, next) ->
+  they 'Write with content option', (ssh) ->
     nikita
       ssh: ssh
     .system.mkdir "#{scratch}/repo"
@@ -63,9 +63,9 @@ describe 'tools.repo', ->
     .file.assert 
       target: "#{scratch}/repo/centos.repo"
       content: '[base]\nname = CentOS-$releasever - Base\nbaseurl = http://mirror.centos.org/centos/$releasever/os/$basearch/\ngpgcheck = 0\n'
-    .then next
+    .promise()
   
-  they 'delete files with replace option', (ssh, next) ->
+  they 'delete files with replace option', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -93,9 +93,9 @@ describe 'tools.repo', ->
     , (err, status) ->
       status.should.be.false() unless err
     .file.assert "#{scratch}/CentOS.repo"
-    .then next
+    .promise()
   
-  they 'Download GPG Keys option', (ssh, next) ->
+  they 'Download GPG Keys option', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -115,9 +115,9 @@ describe 'tools.repo', ->
       clean: false
       update: false
     .file.assert "#{scratch}/RPM-GPG-KEY-Jenkins"
-    .then next
+    .promise()
   
-  they 'Download repo from remote location', (ssh, next) ->
+  they 'Download repo from remote location', (ssh) ->
     nikita
       ssh: ssh
     .system.remove '/etc/yum.repos.d/hdp.repo'
@@ -130,9 +130,9 @@ describe 'tools.repo', ->
     , (err, status) ->
       status.should.be.false() unless err
     .file.assert '/etc/yum.repos.d/hdp.repo'
-    .then next
+    .promise()
 
-  they 'Do Not update Package', (ssh, next) ->
+  they 'Do Not update Package', (ssh) ->
     nikita
       ssh: ssh
     .system.remove '/etc/yum.repos.d/mongodb.repo'
@@ -187,9 +187,9 @@ describe 'tools.repo', ->
         status.should.be.false() unless err
     .system.execute
       cmd: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.2'"
-    .then next
+    .promise()
 
-  they 'Update Package', (ssh, next) ->
+  they 'Update Package', (ssh) ->
     nikita
       ssh: ssh
     .system.remove '/etc/yum.repos.d/mongodb.repo'
@@ -246,4 +246,4 @@ describe 'tools.repo', ->
         status.should.be.false() unless err
     .system.execute
       cmd: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.4'"
-    .then next
+    .promise()

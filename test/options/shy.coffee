@@ -7,7 +7,7 @@ describe 'options "shy"', ->
 
   scratch = test.scratch @
 
-  it 'dont alter status', (next) ->
+  it 'dont alter status', ->
     nikita
     .file
       target: "#{scratch}/file_1"
@@ -18,9 +18,9 @@ describe 'options "shy"', ->
       content: 'abc'
     .then (err, status) ->
       status.should.be.false() unless err
-      next err
+    .promise()
 
-  it 'callback receive status', (next) ->
+  it 'callback receive status', ->
     nikita
     .file
       target: "#{scratch}/file_1"
@@ -30,9 +30,9 @@ describe 'options "shy"', ->
       status.should.be.true()
     .then (err, status) ->
       status.should.be.false()
-      next()
+    .promise()
 
-  it 'dont alter status', (next) ->
+  it 'dont alter status', ->
     nikita
     .call ->
       @file
@@ -41,9 +41,9 @@ describe 'options "shy"', ->
         shy: true
     .then (err, status) ->
       status.should.be.false() unless err
-      next err
+    .promise()
 
-  it 'array options', (next) ->
+  it 'array options', ->
     count = 0
     nikita
     .file [
@@ -76,9 +76,9 @@ describe 'options "shy"', ->
       count++
     .then (err, status) ->
       status.should.be.true() unless err
-      next err
+    .promise()
   
-  it 'dont interferce with previous status', (next) ->
+  it 'dont interferce with previous status', ->
     nikita
     .call shy: true, (err, callback)->
       callback null, true
@@ -87,6 +87,6 @@ describe 'options "shy"', ->
     .then (err, status) ->
       # @status(-2).should.be.true() # TODO, not ready yet, stack is empty before then
       status.should.be.false() unless err
-      next err
+    .promise()
     
         

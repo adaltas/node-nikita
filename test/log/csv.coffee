@@ -9,7 +9,7 @@ describe 'log.csv', ->
   
   scratch = test.scratch @
   
-  they 'write string', (ssh, next) ->
+  they 'write string', (ssh) ->
     nikita
       ssh: ssh
     .log.csv basedir: scratch
@@ -20,9 +20,9 @@ describe 'log.csv', ->
       content: 'text,INFO,"ok",\n'
       log: false
     .assert status: false
-    .then next
+    .promise()
       
-  they 'default options', (ssh, next) ->
+  they 'default options', (ssh) ->
     nikita
       ssh: ssh
       log_csv: basedir: scratch
@@ -33,5 +33,5 @@ describe 'log.csv', ->
       source: "#{scratch}/localhost.log"
       content: 'text,INFO,"ok",\n'
       log: false
-    .then next
+    .promise()
   

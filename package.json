@@ -48,7 +48,7 @@
     "tilde-expansion": "~0.0.0"
   },
   "devDependencies": {
-    "coffee-script": "~1.12.6",
+    "coffee-script": "^1.12.5",
     "mocha": "3.4.2",
     "should": "~11.2.1",
     "ssh2-they": "^1.0.4"

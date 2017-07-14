@@ -7,7 +7,7 @@ describe 'file.json', ->
 
   scratch = test.scratch @
 
-  they 'stringify content to target', (ssh, next) ->
+  they 'stringify content to target', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -21,9 +21,9 @@ describe 'file.json', ->
     .file.assert
       target: "#{scratch}/target.json"
       content: '{"user":"usrval"}'
-    .then next
+    .promise()
 
-  they 'merge target', (ssh, next) ->
+  they 'merge target', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -38,9 +38,9 @@ describe 'file.json', ->
     .file.assert
       target: "#{scratch}/target.json"
       content: '{"target":"tarval","user":"usrval"}'
-    .then next
+    .promise()
 
-  they 'merge source', (ssh, next) ->
+  they 'merge source', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -55,9 +55,9 @@ describe 'file.json', ->
     .file.assert
       target: "#{scratch}/target.json"
       content: '{"source":"srcval","user":"usrval"}'
-    .then next
+    .promise()
 
-  they 'merge source and traget', (ssh, next) ->
+  they 'merge source and traget', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -76,9 +76,9 @@ describe 'file.json', ->
     .file.assert
       target: "#{scratch}/target.json"
       content: '{"source":"srcval","target":"tarval","user":"usrval"}'
-    .then next
+    .promise()
   
-  they 'merge with target not yet created', (ssh, next) ->
+  they 'merge with target not yet created', (ssh) ->
     nikita
       ssh: ssh
     .file.json
@@ -90,9 +90,9 @@ describe 'file.json', ->
     .file.assert
       target: "#{scratch}/target.json"
       content: '{"user":"usrval"}'
-    .then next
+    .promise()
   
-  they 'transform', (ssh, next) ->
+  they 'transform', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -112,9 +112,9 @@ describe 'file.json', ->
     .file.assert
       target: "#{scratch}/target.json"
       content: '{"target":"transform tarval","user":"transform usrval","transform":"tfmval"}'
-    .then next
+    .promise()
   
-  they 'pretty', (ssh, next) ->
+  they 'pretty', (ssh) ->
     nikita
       ssh: ssh
     .file.json
@@ -124,9 +124,9 @@ describe 'file.json', ->
     .file.assert
       target: "#{scratch}/pretty.json"
       content: '{\n  \"user\": {\n    \"preferences\": {\n      \"language\": \"french\"\n    }\n  }\n}'
-    .then next
+    .promise()
   
-  they 'pretty with user indentation', (ssh, next) ->
+  they 'pretty with user indentation', (ssh) ->
     nikita
       ssh: ssh
     .file.json
@@ -143,5 +143,5 @@ describe 'file.json', ->
     .file.assert
       target: "#{scratch}/pretty_1.json"
       content: '{\n \"user\": {\n  \"preferences\": {\n   \"language\": \"french\"\n  }\n }\n}'
-    .then next
+    .promise()
     

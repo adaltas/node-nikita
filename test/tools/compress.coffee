@@ -7,7 +7,7 @@ describe 'tools.compress', ->
 
   scratch = test.scratch @
 
-  they 'should see extension .tgz', (ssh, next) ->
+  they 'should see extension .tgz', (ssh) ->
     nikita
       ssh: ssh
     .tools.compress
@@ -17,9 +17,9 @@ describe 'tools.compress', ->
       status.should.be.true()
     .system.remove
       target: "#{scratch}/a_dir.tgz"
-    .then next
+    .promise()
 
-  they 'should see extension .zip', (ssh, next) ->
+  they 'should see extension .zip', (ssh) ->
     nikita
       ssh: ssh
     .tools.compress
@@ -29,9 +29,9 @@ describe 'tools.compress', ->
       status.should.be.true()
     .system.remove
       target: "#{scratch}/a_dir.zip"
-    .then next
+    .promise()
 
-  they 'should see extension .tar.bz2', (ssh, next) ->
+  they 'should see extension .tar.bz2', (ssh) ->
     nikita
       ssh: ssh
     .tools.compress
@@ -41,9 +41,9 @@ describe 'tools.compress', ->
       status.should.be.true()
     .system.remove
       target: "#{scratch}/a_dir.tar.bz2"
-    .then next
+    .promise()
 
-  they 'should see extension .tar.xz', (ssh, next) ->
+  they 'should see extension .tar.xz', (ssh) ->
     nikita
       ssh: ssh
     .tools.compress
@@ -53,9 +53,9 @@ describe 'tools.compress', ->
       status.should.be.true()
     .system.remove
       target: "#{scratch}/a_dir.tar.xz"
-    .then next
+    .promise()
   
-  they 'remove source file with clean option', (ssh, next) ->
+  they 'remove source file with clean option', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -70,9 +70,9 @@ describe 'tools.compress', ->
     .file.assert
       source: "#{scratch}/a_dir/a_file"
       not: true
-    .then next
+    .promise()
   
-  they 'remove source directory with clean option', (ssh, next) ->
+  they 'remove source directory with clean option', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -87,9 +87,9 @@ describe 'tools.compress', ->
     .file.assert
       source: "#{scratch}/a_dir"
       not: true
-    .then next
+    .promise()
 
-  they 'should pass error for invalid extension', (ssh, next) ->
+  they 'should pass error for invalid extension', (ssh) ->
     nikita
       ssh: ssh
     .tools.compress
@@ -98,4 +98,4 @@ describe 'tools.compress', ->
       relax: true
     , (err) ->
       err.message.should.eql 'Unsupported Extension: ".coffee"'
-    .then next
+    .promise()
