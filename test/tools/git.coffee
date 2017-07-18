@@ -8,12 +8,12 @@ describe 'tools.git', ->
 
   scratch = test.scratch @
 
-  beforeEach (next) ->
+  beforeEach ->
     nikita
     .tools.extract
       source: "#{__dirname}/../resources/repo.git.zip"
       target: "#{scratch}"
-    .then next
+    .promise()
 
   they 'clones repo into new dir', (ssh) ->
     nikita
