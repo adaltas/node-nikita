@@ -68,6 +68,8 @@ nikita.assert({
             when 'ifsock', 'socket' then fs.constants.S_IFSOCK
             else filetype
         else filetype
+      options.mode ?= []
+      options.mode = [options.mode] unless Array.isArray options.mode
       throw Error 'Missing option: "target"' unless options.target
       if typeof options.content is 'string'
         options.content = Buffer.from options.content, options.encoding
@@ -75,7 +77,7 @@ nikita.assert({
         throw Error "Invalid option 'content': expect string, buffer or regexp"
       # Assert file exists
       @call
-        unless: options.content? or options.md5 or options.sha1 or options.sha256 or options.mode
+        unless: options.content? or options.md5 or options.sha1 or options.sha256 or options.mode.length
       , (_, callback) ->
         fs.exists options.ssh, options.target.toString(), (err, exists) ->
           unless options.not
@@ -191,17 +193,19 @@ nikita.assert({
           callback err
       # Assert file permissions
       @call
-        if: options.mode
+        if: options.mode.length
       , (_, callback) ->
         fs.stat options.ssh, options.target, (err, stat) ->
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
           unless options.not
             unless misc.mode.compare options.mode, stat.mode
-              options.error ?= "Invalid mode: expect #{pad 4, misc.mode.stringify(options.mode), '0'} and got #{misc.mode.stringify(stat.mode).substr -4}"
+              expect = options.mode.map (mode) -> "#{pad 4, misc.mode.stringify(mode), '0'}"
+              options.error ?= "Invalid mode: expect #{expec} and got #{misc.mode.stringify(stat.mode).substr -4}"
               err = Error options.error
           else
             if misc.mode.compare options.mode, stat.mode
-              options.error ?= "Unexpected valid mode: #{pad 4, misc.mode.stringify(options.mode), '0'}"
+              expect = options.mode.map (mode) -> "#{pad 4, misc.mode.stringify(mode), '0'}"
+              options.error ?= "Unexpected valid mode: #{expect}"
               err = Error options.error
           callback err
 

@@ -3,6 +3,8 @@
 
 ## Trunk
 
+* file.assert: accept an array of modes
+* test: upgrade mocha by using promise
 * propagation: prevent context option to propagate
 * propagation: rename from propagated_option, refactor as object
 * file.assert: validate file types

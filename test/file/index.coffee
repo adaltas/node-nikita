@@ -233,7 +233,7 @@ describe 'file', ->
         mode: 0o0700
       .file.assert
         target: "#{scratch}"
-        mode: 0o0755
+        mode: [0o0755, 0o0775]
       .promise()
 
     they 'change permission', (ssh) ->

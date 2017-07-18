@@ -30,3 +30,10 @@ describe 'misc mode', ->
     it 'compare int with string', ->
       misc.mode.compare('744', 0o0744).should.be.true()
       misc.mode.compare('0744', 0o0744).should.be.true()
+
+    it 'compare multiple arguments', ->
+      misc.mode.compare('744', 0o0744, '0744').should.be.true()
+
+    it 'compare multiple arguments', ->
+      misc.mode.compare(['747', '744', '774'], 0o0744).should.be.true()
+      misc.mode.compare(['747', '774'], 0o0744).should.be.false()
