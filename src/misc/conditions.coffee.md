@@ -7,7 +7,7 @@ functions. They apply to all functions and control their execution.
 A Nikita action will be executed if all the positive conditions are "true" and
 none of the negative conditions are "true".
 
-    module.exports = 
+    module.exports =
 
 ## Run an action for a user defined condition: `if`
 
@@ -143,7 +143,7 @@ were executed successfully otherwise the callback `skip` is called.
             options.log? message: "Nikita `if_exec`: code is \"#{code}\"", level: 'INFO', module: 'nikita/misc/conditions'
             if code is 0 then next() else skip()
         .then succeed
-  
+
 ## Run an action unless a command succeed: `unless_exec`
 
 Work on the property `unless_exec` in `options`. The value may 
@@ -174,7 +174,7 @@ be a single condition command or an array of conditions.
 
 The callback `succeed` is called if any of the provided filter passed otherwise
 the callback `skip` is called.
-      
+
       if_os: (options, succeed, skip) ->
         options.if_os = [options.if_os] unless Array.isArray options.if_os
         for rule in options.if_os
@@ -210,7 +210,7 @@ be a single condition command or an array of conditions.
 
 The callback `succeed` is called if none of the provided filter passed otherwise
 the callback `skip` is called.
-      
+
       unless_os: (options, succeed, skip) ->
         options.unless_os = [options.unless_os] unless Array.isArray options.unless_os
         for rule in options.unless_os

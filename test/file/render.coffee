@@ -68,7 +68,7 @@ describe 'file.render', ->
         target: target
         context:
           randArray: [1, 2]
-          randObject: toto: 0 
+          randObject: toto: 0
           who: 'world'
           anInt: 42
       , (err, status) ->
@@ -97,7 +97,7 @@ describe 'file.render', ->
           emptyArray: []
           fullArray: [0]
           emptyObject: {}
-          fullObject: toto: 0 
+          fullObject: toto: 0
           emptyString: ''
           fullString: 'succeed'
       , (err, status) ->

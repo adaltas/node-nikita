@@ -3,7 +3,7 @@ they = require 'ssh2-they'
 test = require '../test'
 conditions = require '../../src/misc/conditions'
 nikita = require '../../src'
-  
+
 config = test.config()
 return if config.disable_conditions_if_os
 

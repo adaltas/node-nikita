@@ -24,7 +24,7 @@ describe 'file.touch', ->
       target: "#{scratch}/a_file"
       content: ''
     .promise()
-      
+
   they 'as a string', (ssh) ->
     nikita
       ssh: ssh
@@ -36,7 +36,7 @@ describe 'file.touch', ->
       target: "#{scratch}/a_file"
       content: ''
     .promise()
-      
+
   they 'as an array of strings', (ssh) ->
     nikita
       ssh: ssh

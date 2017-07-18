@@ -21,7 +21,7 @@ describe 'ldap.index', ->
         search.on 'end', ->
           next()
   afterEach (next) ->
-    change = new ldap.Change 
+    change = new ldap.Change
       operation: 'replace'
       modification: olcDbIndex: olcDbIndex
     client.modify 'olcDatabase={2}bdb,cn=config', change, (err) ->

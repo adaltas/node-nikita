@@ -50,7 +50,7 @@ module.exports =
     kadmin_server: 'krb5'
     kadmin_principal: 'admin/admin@NODE.DC1.CONSUL'
     kadmin_password: 'admin'
-  ldap: 
+  ldap:
     uri: 'ldaps://master3.ryba:636'
     binddn: 'cn=Manager,dc=ryba'
     passwd: 'test'

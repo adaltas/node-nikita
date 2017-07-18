@@ -37,7 +37,7 @@ describe 'docker.cp', ->
     .docker.rm
       container: 'nikita_extract'
     .promise()
-    
+
   they 'a remote file to a local directory', (ssh) ->
     nikita
       ssh: ssh
@@ -59,7 +59,7 @@ describe 'docker.cp', ->
         callback()
     .docker.rm container: 'nikita_extract'
     .promise()
-    
+
   they 'a local file to a remote file', (ssh) ->
     nikita
       ssh: ssh
@@ -85,7 +85,7 @@ describe 'docker.cp', ->
         callback()
     .docker.rm container: 'nikita_extract'
     .promise()
-    
+
   they 'a local file to a remote directory', (ssh) ->
     nikita
       ssh: ssh

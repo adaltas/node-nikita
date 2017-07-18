@@ -82,7 +82,7 @@ describe 'file.types.yum_repo', ->
         [test-repo-0.0.3]\nname = CentOS\nmirrorlist = http://test/?infra=$infra\nbaseurl = http://mirror.centos.org\n
       """
     .promise()
-    
+
   they 'default from source with content', (ssh) ->
     nikita
       ssh: ssh

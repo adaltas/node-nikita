@@ -69,7 +69,7 @@ Create and start containers according to a docker-compose file
       options.eof ?= true
       options.backup ?= false
       options.compose = true
-      @file.yaml 
+      @file.yaml
         if: options.content?
         eof: options.eof
         backup: options.backup
@@ -90,12 +90,12 @@ Create and start containers according to a docker-compose file
           start = containers.some (container) -> not container.State.Running
           options.log "Docker created, need start" if start
         @then -> callback null, start
-      @system.execute 
+      @system.execute
         if: -> options.force or @status()
         cwd: source_dir
         cmd: docker.wrap options, cmd_up
       , docker.callback
-      
+
 ## Modules Dependencies
 
     docker = require '../../misc/docker'

@@ -28,7 +28,7 @@ describe 'options "after"', ->
      .call ->
        history.should.eql ['handler 1', 'after 2']
      .promise()
-    
+
     it 'register child handlers', ->
       history = []
       nikita

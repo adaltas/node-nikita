@@ -18,6 +18,6 @@ describe 'misc.db', ->
         engine: 'postgres',
         addresses: [ { host: 'localhost', port: 5432 } ],
         database: 'my_db'
-    
+
     it 'get database', ->
       db.jdbc('jdbc:mysql://master3.ryba:3306/my_db?a_param=true').database.should.eql 'my_db'

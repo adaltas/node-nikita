@@ -40,4 +40,3 @@ describe 'api promise', ->
       console.log 'callback_is_called', callback_is_called
       true.should.be.true()
     .promise()
-        

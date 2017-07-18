@@ -30,7 +30,7 @@ describe 'kv', ->
       key.should.eql 'a_key'
       value.should.eql 'a value'
     .promise()
-    
+
   they 'get then set', (ssh) ->
     engine = memory()
     promise = nikita
@@ -52,5 +52,4 @@ describe 'kv', ->
     .kv.set
       key: 'a_key'
       value: 'a value'
-    promise
-      
+    promise  

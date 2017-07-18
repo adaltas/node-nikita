@@ -41,7 +41,7 @@ Check if a user exists in the database.
       options.engine = options.engine.toLowerCase()
       throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mysql', 'postgres']
       # Defines port
-      options.port ?= 5432      
+      options.port ?= 5432
       cmd = switch options.engine
         when 'mysql'
           db.cmd(options, database: 'mysql', "select User from user where User = '#{options.username}'") + " | grep '#{options.username}'"

@@ -87,7 +87,7 @@ describe 'tools.sysctl', ->
       vm.overcommit_memory = 1
       """
     .promise()
-    
+
   describe 'comment', ->
 
     they 'Not preserved by default', (ssh) ->

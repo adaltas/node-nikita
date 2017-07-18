@@ -28,4 +28,3 @@ describe 'api events', ->
         error.message.should.eql 'KO'
         callback()
     .promise()
-      

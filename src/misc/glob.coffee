@@ -56,4 +56,3 @@ module.exports = (ssh, pattern, options, callback) ->
         prefix = getprefix s
         files.unshift prefix if prefix
     callback null, files
-    

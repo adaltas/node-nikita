@@ -30,7 +30,7 @@ module.exports =
     kadmin_server: 'domain.com'
     kadmin_principal: 'nikita/admin@DOMAIN.COM'
     kadmin_password: 'test'
-  ldap: 
+  ldap:
     url: 'ldap://openldap.domain'
     binddn: 'cn=manager,cn=config'
     passwd: 'test'

@@ -298,7 +298,7 @@ require('nikita').file({
         string.replace_partial options if options.write.length
       @call -> # eof
         return unless options.eof?
-        options.log message: "Checking option eof", level: 'DEBUG', module: 'nikita/lib/file'
+        options.log message: 'Checking option eof', level: 'DEBUG', module: 'nikita/lib/file'
         if options.eof is true
           for char, i in options.content
             if char is '\r'
@@ -310,7 +310,7 @@ require('nikita').file({
           options.eof = '\n' if options.eof is true
           options.log message: "Option eof is true, guessing as #{JSON.stringify options.eof}", level: 'INFO', module: 'nikita/lib/file'
         unless string.endsWith options.content, options.eof
-          options.log message: "Add eof", level: 'INFO', module: 'nikita/lib/file'
+          options.log message: 'Add eof', level: 'INFO', module: 'nikita/lib/file'
           options.content += options.eof
       @call (_, callback) -> # diff
         return callback() if targetHash is string.hash options.content
@@ -333,10 +333,10 @@ require('nikita').file({
       @call (_, callback) -> # file
         return callback() unless @status()
         if typeof options.target is 'function'
-          options.log message: "Write target with user function", level: 'INFO', module: 'nikita/lib/file'
+          options.log message: 'Write target with user function', level: 'INFO', module: 'nikita/lib/file'
           options.target options.content
           return callback()
-        options.log message: "Write target", level: 'INFO', module: 'nikita/lib/file'
+        options.log message: 'Write target', level: 'INFO', module: 'nikita/lib/file'
         options.flags ?= 'a' if options.append
         # Ownership and permission are also handled
         # Mode is setted by default here to avoid a chmod 644 on existing file if option.mode is not specified
@@ -346,7 +346,7 @@ require('nikita').file({
           options.gid = options.default_gid unless targetStat
           fs.writeFile options.ssh, options.target, options.content, options, (err) ->
             return callback err if err
-            options.log message: "File written", level: 'INFO', module: 'nikita/lib/file'
+            options.log message: 'File written', level: 'INFO', module: 'nikita/lib/file'
             callback()
       @system.chown
         target: options.target

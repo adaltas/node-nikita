@@ -23,14 +23,14 @@ describe 'if', ->
       if: 1
       next
       () -> false.should.be.true()
-  
+
   they 'succeed if buffer and length > 1', (ssh, next) ->
     conditions.if
       ssh: ssh
       if: Buffer.from 'abc'
       next
       () -> false.should.be.true()
-  
+
   they 'fail if buffer and length is 0', (ssh, next) ->
     conditions.if
       ssh: ssh
@@ -146,9 +146,9 @@ describe 'if', ->
       if: (options, callback) -> callback new Error 'cool'
       () -> false.should.be.true()
       (err) -> err.message is 'cool' and next()
-  
+
   describe 'error', ->
-    
+
     they 'fail if an object', (ssh, next) ->
       conditions.if
         ssh: ssh
@@ -200,14 +200,14 @@ describe 'unless', ->
       unless: 1
       () -> false.should.be.true()
       next
-  
+
   they 'succeed if buffer and length > 1', (ssh, next) ->
     conditions.unless
       ssh: ssh
       unless: Buffer.from 'abc'
       () -> false.should.be.true()
       next
-  
+
   they 'fail if buffer and length is 0', (ssh, next) ->
     conditions.unless
       ssh: ssh
@@ -263,9 +263,9 @@ describe 'unless', ->
       unless: (options, callback) -> callback new Error 'cool'
       () -> false.should.be.true()
       (err) -> err.message is 'cool' and next()
-  
+
   describe 'error', ->
-    
+
     they 'fail if an object', (ssh, next) ->
       conditions.unless
         ssh: ssh
@@ -274,4 +274,3 @@ describe 'unless', ->
         (err) ->
           err.message.should.eql "Invalid condition \"unless\": {}"
           next()
-      

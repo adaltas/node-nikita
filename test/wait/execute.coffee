@@ -69,7 +69,7 @@ describe 'wait.execute', ->
       .call ->
         logs.length.should.be.within 2, 4
       .promise()
-    
+
     they 'honors *_log as true', (ssh) ->
       logs = 0
       nikita
@@ -85,7 +85,7 @@ describe 'wait.execute', ->
       .call ->
         logs.should.eql 3
       .promise()
-    
+
     they 'honors *_log as false', (ssh) ->
       logs = 0
       nikita

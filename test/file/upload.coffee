@@ -49,5 +49,3 @@ describe 'file.upload', ->
         , (err, status) ->
           status.should.be.false() unless err
         .promise()
-
-           

@@ -32,7 +32,7 @@ describe 'file.properties', ->
         data.should.eql "another_key=another value\n" unless err
         callback err
     .promise()
-    
+
   they 'honors merge', (ssh) ->
     nikita
       ssh: ssh

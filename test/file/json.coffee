@@ -144,4 +144,3 @@ describe 'file.json', ->
       target: "#{scratch}/pretty_1.json"
       content: '{\n \"user\": {\n  \"preferences\": {\n   \"language\": \"french\"\n  }\n }\n}'
     .promise()
-    

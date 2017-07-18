@@ -28,7 +28,7 @@ describe 'options "before"', ->
      .then (err) ->
        history.should.eql ['before 2', 'handler 1'] unless err
      .promise()
-    
+
     it 'register child handlers', ->
       history = []
       nikita

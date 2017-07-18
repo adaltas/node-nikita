@@ -36,13 +36,13 @@ properties.
   (cpuset|cpu|cpuacct|memory|devices|freezer|net_cls|blkio.   
 
 It accepts also all the `nikita.file` options.
-  
+
 Example:
 
 ```cson
 Example of a group object
   bibi:
-    perm: 
+    perm:
       admin:
         uid: 'bibi'
         gid: 'bibi'
@@ -50,7 +50,7 @@ Example of a group object
         uid: 'bibi'
         gid: 'bibi'
     controllers:
-      cpu: 
+      cpu:
         'cpu.rt_period_us': '"1000000"'
         'cpu.rt_runtime_us': '"0"'
         'cpu.cfs_period_us': '"100000"'
@@ -84,7 +84,7 @@ When reading the current config, nikita uses cgsnaphsot command in order to
 have a well formatted file. Nonetheless if docker is installed and started, 
 informations about live containers could be printed, that's why all path under 
 docker/* are ignored.
-    
+
     module.exports = (options) ->
       options.log message: "Entering cgroups", level: 'DEBUG', module: 'nikita/lib/system/cgroups'
       throw Error 'Missing cgroups content' unless options.groups? or options.mounts? or options.default?
@@ -109,7 +109,7 @@ docker/* are ignored.
         return unless status
         [line] = string.lines stdout
         if /CentOS/.test line
-          options.store['nikita:system:type'] ?= 'centos' 
+          options.store['nikita:system:type'] ?= 'centos'
           index = line.split(' ').indexOf 'release'
           options.store['nikita:system:release'] ?= line.split(' ')[index+1]
         if /Red\sHat/.test line
@@ -118,7 +118,7 @@ docker/* are ignored.
           options.store['nikita:system:release'] ?= line.split(' ')[index+1]
         throw Error 'Unsupported OS' unless options.store['nikita:system:type']?
       # configure parameters based on previous OS dection
-      @call 
+      @call
         shy: true
         if: -> (options.store['nikita:system:type'] in ['redhat','centos'])
       , ->
@@ -157,7 +157,7 @@ docker/* are ignored.
           content: misc.cgconfig.stringify(options.cgconfig)
 
 ## Dependencies
-    
+
     misc = require '../misc'
     string = require '../misc/string'
     {merge} = misc

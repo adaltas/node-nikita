@@ -65,7 +65,7 @@ npm test test/db/database.coffee
       throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mysql', 'postgres']
       options.log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'nikita/db/database'
       # Default values
-      options.port ?= 5432 
+      options.port ?= 5432
       # Create database unless exist
       options.log message: "Check if database #{options.database} exists", level: 'DEBUG', module: 'nikita/db/database'
       switch options.engine

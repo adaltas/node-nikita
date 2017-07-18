@@ -58,7 +58,7 @@ describe 'log.cli', ->
         'localhost   h1   +\n'
       ]
     .promise()
-      
+
   they 'print status', (ssh) ->
     data = []
     nikita
@@ -77,7 +77,7 @@ describe 'log.cli', ->
         'localhost   d   x\n'
       ]
     .promise()
-      
+
   they 'bypass disabled and false conditionnal', (ssh) ->
     data = []
     nikita
@@ -94,7 +94,7 @@ describe 'log.cli', ->
         'localhost   d   +\n'
       ]
     .promise()
-      
+
   they 'option depth', (ssh) ->
     data = []
     nikita
@@ -112,7 +112,7 @@ describe 'log.cli', ->
         'localhost   h1   -\n'
       ]
     .promise()
-      
+
   they 'option divider', (ssh) ->
     data = []
     nikita
@@ -131,7 +131,7 @@ describe 'log.cli', ->
         'localhost   h1   -\n'
       ]
     .promise()
-      
+
   they 'option pad', (ssh) ->
     data = []
     nikita
@@ -150,7 +150,7 @@ describe 'log.cli', ->
         'localhost      h1                 -\n'
       ]
     .promise()
-      
+
   they 'option colors', (ssh) ->
     data = []
     nikita
@@ -179,5 +179,3 @@ describe 'log.cli', ->
     .call ->
       data[0].should.match /localhost   h1   -  \dms\n/
     .promise()
-      
-  

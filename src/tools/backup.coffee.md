@@ -38,7 +38,7 @@ Backup a file, a directory or the output of a command.
 ```js
 nikita.tools.backup({
   name: 'my_backup'
-  source: '/etc' 
+  source: '/etc'
   target: '/tmp/backup'
   algorithm: 'gzip' # Value are "gzip", "bzip2", "xz" or "none"
   extension: 'tgz'

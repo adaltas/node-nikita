@@ -60,7 +60,7 @@ describe 'tools.repo', ->
           'gpgcheck':'0'
     , (err, status) ->
       status.should.be.false() unless err
-    .file.assert 
+    .file.assert
       target: "#{scratch}/repo/centos.repo"
       content: '[base]\nname = CentOS-$releasever - Base\nbaseurl = http://mirror.centos.org/centos/$releasever/os/$basearch/\ngpgcheck = 0\n'
     .promise()

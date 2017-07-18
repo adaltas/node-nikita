@@ -67,7 +67,7 @@ misc = module.exports =
         continue unless keys.indexOf(k) >= 0
         continue if obj2[k] is v
         diff[k] = []
-        diff[k][0] = v 
+        diff[k][0] = v
       for k, v of obj2
         continue unless keys.indexOf(k) >= 0
         continue if obj1[k] is v
@@ -259,7 +259,6 @@ misc = module.exports =
           current[match[1]] = null
       data
     ###
-    
     Same as the parse_multi_brackets instead it takes in count values which are defined on several lines
     As an example the ambari-agent .ini configuration file
 
@@ -303,7 +302,7 @@ misc = module.exports =
           previous = match[1]
           writing = true
         # else
-        else if match = line.match /^\s*(.+?)\s*$/ 
+        else if match = line.match /^\s*(.+?)\s*$/
           if writing
             current[previous] += match[1]
           else
@@ -397,7 +396,7 @@ misc = module.exports =
             out += "#{prefix}#{k}#{options.separator}{#{options.eol}"
             out += misc.ini.stringify_square_then_curly v, depth + 1, options
             out += "#{prefix}}#{options.eol}"
-        else 
+        else
           if isArray
             outa = []
             for element in v
@@ -423,7 +422,7 @@ misc = module.exports =
       options.separator ?= ' = '
       options.eol ?= if not options.ssh and process.platform is "win32" then "\r\n" else "\n"
       out = ''
-      indent = if options.indent? then options.indent else '  ' 
+      indent = if options.indent? then options.indent else '  '
       prefix = ''
       for i in [0...depth]
         prefix += indent
@@ -510,7 +509,7 @@ misc = module.exports =
                     current_group_perm_content = false
                   else
                     current_group_perm = false
-                else 
+                else
                   current_group = false
                   # push the group if the closing bracket is closing a group
                   # list_of_group_sections["#{current_group_name}"] = current_group_section

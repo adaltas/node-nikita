@@ -9,9 +9,9 @@ describe 'service.startup', ->
   config = test.config()
   
   describe 'startup', ->
-    
+
     return if config.disable_service_startup
-  
+
     they 'from service', (ssh) ->
       nikita
         ssh: ssh
@@ -42,7 +42,7 @@ describe 'service.startup', ->
       , (err, status) ->
         status.should.be.false() unless err
       .promise()
-      
+
     they 'string argument', (ssh) ->
       nikita
         ssh: ssh

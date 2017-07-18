@@ -17,7 +17,7 @@ describe 'options "wait"', ->
       times.length.should.eql 2
       ((times[1] - times[0]) / 1000 - 3).should.be.below 0.01
     .promise()
-      
+
   it 'is set by user', ->
     times = []
     nikita
@@ -44,4 +44,3 @@ describe 'options "wait"', ->
     .then (err) ->
       err.message.should.eql 'Invalid options wait, got -1'
     .promise()
-      

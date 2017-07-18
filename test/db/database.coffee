@@ -22,7 +22,7 @@ for engine, _ of config.db
       .db.database.remove 'postgres_db_0a'
       .db.database.remove 'postgres_db_0b'
       .promise()
-      
+
     they 'status not modified new database', (ssh) ->
       nikita
         ssh: ssh

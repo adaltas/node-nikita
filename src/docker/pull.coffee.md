@@ -4,7 +4,7 @@
 Pull a container
 
 ## Options
-  
+
 * `tag` (string)   
   Name of the tag to pull.   
 * `version` (string)   
@@ -49,12 +49,12 @@ nikita.docker_pull({
       options.log message: "Entering Docker pull", level: 'DEBUG', module: 'nikita/lib/docker/pull'
       # Validate parameters
       options.docker ?= {}
-      options.version ?= 'latest'  
+      options.version ?= 'latest'
       options.all ?= false
       options[k] ?= v for k, v of options.docker
       cmd_images = 'images'
       cmd_images += " | grep '#{options.tag}'"
-      cmd_images += " | grep '#{options.version}'" unless options.all            
+      cmd_images += " | grep '#{options.version}'" unless options.all
       throw Error 'Missing Tag Name' unless options.tag?
       # rm is false by default only if options.service is true
       cmd = 'pull'
@@ -67,7 +67,6 @@ nikita.docker_pull({
         cmd: docker.wrap options, cmd
         code_skipped: options.code_skipped
       , (err, status) -> callback err, status
-      
 
 ## Modules Dependencies
 

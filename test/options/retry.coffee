@@ -41,4 +41,3 @@ describe 'options "retry"', ->
     .call retry: true, wait: 200, (options) ->
       throw Error 'Catchme' if count++ < 10
     .promise()
-      

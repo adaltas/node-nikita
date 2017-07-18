@@ -21,7 +21,7 @@ describe 'log.csv', ->
       log: false
     .assert status: false
     .promise()
-      
+
   they 'default options', (ssh) ->
     nikita
       ssh: ssh

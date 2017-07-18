@@ -113,7 +113,7 @@ describe 'tools.extract', ->
     .file.assert
       target: "#{scratch}/a_file"
     .promise()
-    
+
   they 'should strip component level 2', (ssh) ->
     # Test a non existing extracted dir
     nikita

@@ -9,7 +9,7 @@ Escape SQL for Bash processing.
       sql.replace /[\\"]/g, "\\$&"
 
 ## Build a Unix command
-    
+
     module.exports.cmd = (opts...) ->
       properties = ['engine', 'cmd', 'admin_username', 'admin_password', 'username', 'password', 'host', 'database','silent']
       options = {}
@@ -79,7 +79,7 @@ Exemple:
 ```
 parse 'jdbc:mysql://host1:3306,host2:3306/hive?createDatabaseIfNotExist=true'
 { engine: 'mysql',
-  addresses: 
+  addresses:
    [ { host: 'host1', port: '3306' },
      { host: 'host2', port: '3306' } ],
   database: 'hive' }
@@ -104,7 +104,7 @@ parse 'jdbc:mysql://host1:3306,host2:3306/hive?createDatabaseIfNotExist=true'
         database: database
       else
         throw Error 'Invalid JDBC URL'
-    
+
 ## Dependencies
 
     misc = require '.'

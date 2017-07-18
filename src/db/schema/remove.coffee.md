@@ -38,4 +38,3 @@ Create a user for the destination database.
 ## Dependencies
 
     db = require '../../misc/db'
-        

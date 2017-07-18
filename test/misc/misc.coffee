@@ -149,14 +149,14 @@ describe 'misc', ->
           mounts: []
           groups:
             toto:
-              perm: 
+              perm:
                 admin:
                   uid: 'toto'
                   gid: 'toto'
                 task:
                   uid: 'toto'
                   gid: 'toto'
-              cpu: 
+              cpu:
                 'cpu.rt_period_us': '"1000000"'
                 'cpu.rt_runtime_us': '"0"'
                 'cpu.cfs_period_us': '"100000"'
@@ -202,26 +202,26 @@ describe 'misc', ->
           mounts: []
           groups:
             toto:
-              perm: 
+              perm:
                 admin:
                   uid: 'toto'
                   gid: 'toto'
                 task:
                   uid: 'toto'
                   gid: 'toto'
-              cpu: 
+              cpu:
                 'cpu.rt_period_us': '"1000000"'
                 'cpu.rt_runtime_us': '"0"'
                 'cpu.cfs_period_us': '"100000"'
             bibi:
-              perm: 
+              perm:
                 admin:
                   uid: 'bibi'
                   gid: 'bibi'
                 task:
                   uid: 'bibi'
                   gid: 'bibi'
-              cpu: 
+              cpu:
                 'cpu.rt_period_us': '"1000000"'
                 'cpu.rt_runtime_us': '"0"'
                 'cpu.cfs_period_us': '"100000"'
@@ -289,26 +289,26 @@ describe 'misc', ->
           ]
           groups:
             toto:
-              perm: 
+              perm:
                 admin:
                   uid: 'toto'
                   gid: 'toto'
                 task:
                   uid: 'toto'
                   gid: 'toto'
-              cpu: 
+              cpu:
                 'cpu.rt_period_us': '"1000000"'
                 'cpu.rt_runtime_us': '"0"'
                 'cpu.cfs_period_us': '"100000"'
             bibi:
-              perm: 
+              perm:
                 admin:
                   uid: 'bibi'
                   gid: 'bibi'
                 task:
                   uid: 'bibi'
                   gid: 'bibi'
-              cpu: 
+              cpu:
                 'cpu.rt_period_us': '"1000000"'
                 'cpu.rt_runtime_us': '"0"'
                 'cpu.cfs_period_us': '"100000"'
@@ -393,44 +393,44 @@ describe 'misc', ->
         ]
         groups:
           toto:
-            perm: 
+            perm:
               admin:
                 uid: 'toto'
                 gid: 'toto'
               task:
                 uid: 'toto'
                 gid: 'toto'
-            cpu: 
+            cpu:
               'cpu.rt_period_us': '"1000000"'
               'cpu.rt_runtime_us': '"0"'
               'cpu.cfs_period_us': '"100000"'
           bibi:
-            perm: 
+            perm:
               admin:
                 uid: 'bibi'
                 gid: 'bibi'
               task:
                 uid: 'bibi'
                 gid: 'bibi'
-            cpu: 
+            cpu:
               'cpu.rt_period_us': '"1000000"'
               'cpu.rt_runtime_us': '"0"'
               'cpu.cfs_period_us': '"100000"'
           '':
-            perm: 
+            perm:
               admin:
                 uid: 'root'
                 gid: 'root'
               task:
                 uid: 'root'
                 gid: 'root'
-            cpu: 
+            cpu:
               'cpu.rt_period_us': '"1000000"'
               'cpu.rt_runtime_us': '"0"'
               'cpu.cfs_period_us': '"100000"'
         }
     it 'stringify a mount only object', ->
-      cgroups = 
+      cgroups =
         mounts: [
           type: 'cpuset'
           path: '/cgroup/cpuset'
@@ -457,17 +457,17 @@ describe 'misc', ->
         }
       """
     it 'stringify a group only object', ->
-      cgroups = 
+      cgroups =
         groups:
           toto:
-            perm: 
+            perm:
               admin:
                 uid: 'toto'
                 gid: 'toto'
               task:
                 uid: 'toto'
                 gid: 'toto'
-            cpu: 
+            cpu:
               'cpu.rt_period_us': '"1000000"'
               'cpu.rt_runtime_us': '"0"'
               'cpu.cfs_period_us': '"100000"'
@@ -510,14 +510,14 @@ describe 'misc', ->
         ]
         groups:
           toto:
-            perm: 
+            perm:
               admin:
                 uid: 'toto'
                 gid: 'toto'
               task:
                 uid: 'toto'
                 gid: 'toto'
-            cpu: 
+            cpu:
               'cpu.rt_period_us': '"1000000"'
               'cpu.rt_runtime_us': '"0"'
               'cpu.cfs_period_us': '"100000"'
@@ -567,26 +567,26 @@ describe 'misc', ->
         ]
         groups:
           toto:
-            perm: 
+            perm:
               admin:
                 uid: 'toto'
                 gid: 'toto'
               task:
                 uid: 'toto'
                 gid: 'toto'
-            cpu: 
+            cpu:
               'cpu.rt_period_us': '"1000000"'
               'cpu.rt_runtime_us': '"0"'
               'cpu.cfs_period_us': '"100000"'
           bibi:
-            perm: 
+            perm:
               admin:
                 uid: 'bibi'
                 gid: 'bibi'
               task:
                 uid: 'bibi'
                 gid: 'bibi'
-            cpu: 
+            cpu:
               'cpu.rt_period_us': '"1000000"'
               'cpu.rt_runtime_us': '"0"'
               'cpu.cfs_period_us': '"100000"'
@@ -668,38 +668,38 @@ describe 'misc', ->
         ]
         groups:
           toto:
-            perm: 
+            perm:
               admin:
                 uid: 'toto'
                 gid: 'toto'
               task:
                 uid: 'toto'
                 gid: 'toto'
-            cpu: 
+            cpu:
               'cpu.rt_period_us': '"1000000"'
               'cpu.rt_runtime_us': '"0"'
               'cpu.cfs_period_us': '"100000"'
           bibi:
-            perm: 
+            perm:
               admin:
                 uid: 'bibi'
                 gid: 'bibi'
               task:
                 uid: 'bibi'
                 gid: 'bibi'
-            cpu: 
+            cpu:
               'cpu.rt_period_us': '"1000000"'
               'cpu.rt_runtime_us': '"0"'
               'cpu.cfs_period_us': '"100000"'
           default:
-            perm: 
+            perm:
               admin:
                 uid: 'bibi'
                 gid: 'bibi'
               task:
                 uid: 'bibi'
                 gid: 'bibi'
-            cpu: 
+            cpu:
               'cpu.rt_period_us': '"1000000"'
               'cpu.rt_runtime_us': '"0"'
               'cpu.cfs_period_us': '"100000"'

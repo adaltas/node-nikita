@@ -28,7 +28,7 @@ describe 'file', ->
         target: "#{scratch}/file"
         content: 'Hello'
       .promise()
-          
+  
     they 'is a function', (ssh) ->
       content = 'invalid'
       nikita
@@ -43,7 +43,7 @@ describe 'file', ->
         target: "#{scratch}/file"
         content: 'valid'
       .promise()
-    
+
     they 'doesnt increment if target is same than generated content', (ssh) ->
       nikita
         ssh: ssh
@@ -58,7 +58,7 @@ describe 'file', ->
       , (err, status) ->
         status.should.be.false() unless err
       .promise()
-    
+
     they 'doesnt increment if target is same than generated content', (ssh) ->
       nikita
         ssh: ssh
@@ -74,7 +74,7 @@ describe 'file', ->
         target: "#{scratch}/file"
         content: 'Hello'
       .promise()
-    
+
     they 'empty file', (ssh) ->
       nikita
         ssh: ssh
@@ -126,7 +126,7 @@ describe 'file', ->
         target: "#{scratch}/a_file"
         content: '123'
       .promise()
-    
+
     they 'create parent directory', (ssh) ->
       nikita
         ssh: ssh
@@ -290,7 +290,7 @@ describe 'file', ->
         target: "#{scratch}/fromto.md"
         content: 'here we are\n# from\nmy friend\n# to\nyou coquin'
       .promise()
-  
+
     they 'with from and with to append', (ssh) ->
       nikita
         ssh: ssh
@@ -321,7 +321,7 @@ describe 'file', ->
         target: "#{scratch}/fromto.md"
         content: 'here we are\nyou coquin\n# from\nmy best friend\n# to\n'
       .promise()
-    
+
     they 'with from and without to', (ssh) ->
       nikita
         ssh: ssh
@@ -336,7 +336,7 @@ describe 'file', ->
         target: "#{scratch}/fromto.md"
         content: 'here we are\n# from\nmy friend'
       .promise()
-    
+
     they 'without from and with to', (ssh) ->
       nikita.file
         ssh: ssh
@@ -432,7 +432,7 @@ describe 'file', ->
         target: "#{scratch}/replace"
         content: 'email=david(at)adaltas(dot)com\nusername=david (was root)'
       .promise()
-    
+
     they 'with match as a regular expression and multiple content', (ssh) ->
       nikita
         ssh: ssh
@@ -447,7 +447,7 @@ describe 'file', ->
         target: "#{scratch}/replace"
         content: 'here we are\nmy friend, lets try\nyou coquin'
       .promise()
-    
+
     they 'with match with global and multilines', (ssh) ->
       nikita
         ssh: ssh
@@ -462,7 +462,7 @@ describe 'file', ->
         target: "#{scratch}/replace"
         content: '#A config file\n#property=30\nproperty=50\nproperty=50\n#End of Config'
       .promise()
-    
+
     they 'will replace target if source or content does not exists', (ssh) ->
       nikita
         ssh: ssh
@@ -826,7 +826,7 @@ describe 'file', ->
           target: "#{scratch}/file"
           content: 'Add this line'
         .promise()
-    
+
     they 'match is optional', (ssh) ->
       nikita
         ssh: ssh

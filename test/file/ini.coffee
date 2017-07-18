@@ -137,7 +137,7 @@ describe 'file.ini', ->
       target: "#{scratch}/user.ini"
       content: '[user.preference]\nlanguage = c++\ncolor\n'
     .promise()
-    
+
   they 'use default source file', (ssh) ->
     nikita
       ssh: ssh
@@ -180,7 +180,7 @@ describe 'file.ini', ->
       target: "#{scratch}/test.ini"
       content: '[user.preference]\nlanguage = node\nremember = me\n'
     .promise()
-    
+
   they 'use default source file with merge', (ssh) ->
     nikita
       ssh: ssh

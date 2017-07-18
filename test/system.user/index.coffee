@@ -19,7 +19,7 @@ describe 'system.user', ->
     .system.user 'toto', (err, status) ->
       status.should.be.false() unless err
     .promise()
-    
+
   they 'created with a uid', (ssh) ->
     nikita
       ssh: ssh
@@ -34,7 +34,7 @@ describe 'system.user', ->
     .system.user 'toto', (err, status) ->
       status.should.be.false() unless err
     .promise()
-    
+
   they 'created without a uid', (ssh) ->
     nikita
       ssh: ssh
@@ -47,7 +47,7 @@ describe 'system.user', ->
     .system.user 'toto', (err, status) ->
       status.should.be.false() unless err
     .promise()
-    
+
   they 'parent home does not exist', (ssh) ->
     nikita
       ssh: ssh

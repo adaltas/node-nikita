@@ -16,7 +16,7 @@ describe 'system.chown', ->
     .system.chown "#{scratch}/a_file", uid: 1234, gid: 1234, relax: true, (err) ->
       err.message.should.eql "Target Does Not Exist: \"#{scratch}/a_file\""
     .promise()
-    
+
   they 'use stat shortcircuit', (ssh) ->
     nikita
       ssh: ssh

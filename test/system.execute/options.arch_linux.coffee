@@ -11,7 +11,7 @@ describe 'system.execute', ->
   config = test.config()
   return  if config.disable_system_execute_arc_chroot
   scratch = test.scratch @
-    
+
   they 'target as true', (ssh) ->
     nikita
       ssh: ssh
@@ -34,7 +34,7 @@ describe 'system.execute', ->
       always: true # todo, need to create this option (run even on error)
       cmd: "umount /mnt"
     .promise()
-      
+
   they 'target as string', (ssh) ->
     nikita
       ssh: ssh
@@ -59,7 +59,7 @@ describe 'system.execute', ->
       umount /mnt
       """
     .promise()
-      
+
   they 'require ', (ssh) ->
     nikita
       ssh: ssh

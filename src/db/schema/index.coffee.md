@@ -50,7 +50,7 @@ require('nikita').database.schema({
       options.engine = options.engine.toLowerCase()
       throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['postgres']
       # Options
-      options.port ?= 5432 
+      options.port ?= 5432
       @system.execute
         code_skipped: 2
         cmd: db.cmd options, '\\dt'
@@ -61,7 +61,7 @@ require('nikita').database.schema({
         cmd: db.cmd options, "CREATE SCHEMA #{options.schema};"
         unless_exec: db.cmd(options, "SELECT 1 FROM pg_namespace WHERE nspname = '#{options.schema}';") + " | grep 1"
       # Check if owner is the good one
-      @system.execute 
+      @system.execute
         if: -> options.owner?
         unless_exec: db.cmd(options, '\\dn') + " | grep '#{options.schema}|#{options.owner}'"
         cmd: db.cmd options, "ALTER SCHEMA #{options.schema} OWNER TO #{options.owner};"

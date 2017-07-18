@@ -26,7 +26,7 @@ describe 'krb5.addprinc', ->
       randkey: true
     , (err, status) ->
       status.should.be.false() unless err
-    .then next
+    .promise()
 
   they 'create a new principal with a password', (ssh) ->
     nikita
@@ -76,22 +76,22 @@ describe 'krb5.addprinc', ->
       status.should.be.false() unless err
     .system.execute
       cmd: "echo password1 | kinit nikita@#{config.krb5.realm}"
-    .then next
+    .promise()
 
   they 'call function with new style', (ssh) ->
-    krb5 =    
+    krb5 =
       etc_krb5_conf:
         libdefaults: 
           default_realm: 'NODE.DC1.CONSUL'
-        realms: 
+        realms:
           'NODE.DC1.CONSUL':
             kadmin_server: 'krb5'
             kadmin_principal: 'admin/admin@NODE.DC1.CONSUL'
             kadmin_password: 'admin'
-        domain_realm: 
+        domain_realm:
           ryba: 'NODE.DC1.CONSUL'
-      kdc_conf: 
-        realms: 
+      kdc_conf:
+        realms:
           'NODE.DC1.CONSUL':
             kadmin_server: 'krb5'
             kadmin_principal: 'admin/admin@NODE.DC1.CONSUL'
@@ -105,13 +105,13 @@ describe 'krb5.addprinc', ->
       kadmin_server: config.krb5.kadmin_server
       kadmin_principal: config.krb5.kadmin_principal
       kadmin_password: config.krb5.kadmin_password
-    .system.execute 
+    .system.execute
       cmd: 'rm -f /etc/security/keytabs/user1.service.keytab || true ; exit 0;'
     .krb5.delprinc
       principal: user.principal
     .krb5.delprinc
       principal: "user1/krb5@NODE.DC1.CONSUL"
-    .krb5.addprinc krb5, 
+    .krb5.addprinc krb5,
       principal: "user1/krb5@NODE.DC1.CONSUL"
       randkey: true
       keytab: '/etc/security/keytabs/user1.service.keytab'
@@ -122,4 +122,4 @@ describe 'krb5.addprinc', ->
       cmd: "echo #{user.password} | kinit #{user.principal}"
     , (err, status, stdout) ->
       status.should.be.true() unless err
-    .then next
+    .promise()

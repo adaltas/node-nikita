@@ -46,7 +46,7 @@ describe 'api callback', ->
       target: "#{scratch}/a_file"
       content: 'abcdefhij'
     .promise()
-        
+
   describe 'error', ->
 
     it 'without parent', ->
@@ -80,4 +80,3 @@ describe 'api callback', ->
       .then (err) ->
         err.message.should.eql 'Catchme'
       .promise()
-      

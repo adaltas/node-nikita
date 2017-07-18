@@ -177,7 +177,7 @@ describe 'file.assert', ->
       .promise()
   
   describe 'option md5', ->
-    
+
     they 'detect if file does not exists', (ssh) ->
       nikita
         ssh: ssh
@@ -188,7 +188,7 @@ describe 'file.assert', ->
       , (err) ->
         err.message.should.eql "Target does not exists: #{scratch}/a_file"
       .promise()
-    
+
     they 'validate hash', (ssh) ->
       nikita
         ssh: ssh
@@ -246,7 +246,7 @@ describe 'file.assert', ->
       .promise()
 
   describe 'option sha1', ->
-    
+
     they 'validate hash', (ssh) ->
       nikita
         ssh: ssh
@@ -271,7 +271,7 @@ describe 'file.assert', ->
       .promise()
 
   describe 'option sha256', ->
-    
+
     they 'validate hash', (ssh) ->
       nikita
         ssh: ssh
@@ -296,7 +296,7 @@ describe 'file.assert', ->
       .promise()
 
   describe 'option mode', ->
-    
+
     they 'detect if file does not exists', (ssh) ->
       nikita
         ssh: ssh
@@ -307,7 +307,7 @@ describe 'file.assert', ->
       , (err) ->
         err.message.should.eql "Target does not exists: #{scratch}/a_file"
       .promise()
-          
+
     they 'on file', (ssh) ->
       nikita
         ssh: ssh
@@ -378,7 +378,7 @@ describe 'file.assert', ->
       .promise()
 
   describe 'options uid & gid', ->
-    
+
     they 'detect root ownerships', (ssh) ->
       return unless process.getuid() is 0
       nikita
@@ -400,5 +400,3 @@ describe 'file.assert', ->
       , (err) ->
         err.message.should.eql "Unexpected gid: expected \"1\" and got \"0\""
       .promise()
-      
-    

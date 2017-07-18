@@ -130,7 +130,7 @@ describe 'system.copy', ->
         target: "#{scratch}/.a_copy"
         content: 'hello'
       .promise()
-          
+  
   describe 'link', ->
 
     they 'file into file', (ssh) ->
@@ -170,7 +170,7 @@ describe 'system.copy', ->
         target: "#{scratch}/ln_file"
         content: 'hello'
       .promise()
-          
+
   describe 'directory', ->
 
     they 'should copy without slash at the end', (ssh) ->

@@ -73,7 +73,6 @@ Global options can be alternatively set with the "log_md" property.
           content.push " (#{log.level}, written by #{log.module})" if log.module
           content.push "\n"
           content.join ''
-        
 
 ## Dependencies
 

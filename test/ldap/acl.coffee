@@ -22,7 +22,7 @@ describe 'ldap.acl', ->
         search.on 'end', ->
           next()
   afterEach (next) ->
-    change = new ldap.Change 
+    change = new ldap.Change
       operation: 'replace'
       modification: olcAccess: olcAccess
     client.modify 'olcDatabase={2}bdb,cn=config', change, (err) ->

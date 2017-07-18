@@ -26,22 +26,22 @@ describe 'system.cgroups', ->
     ]
     groups =
       toto:
-        perm: 
+        perm:
           admin: uid: 'toto', gid: 'toto'
           task: uid: 'toto', gid: 'toto'
-        cpu: 
+        cpu:
           'cpu.rt_period_us': '"1000000"'
           'cpu.rt_runtime_us': '"0"'
           'cpu.cfs_period_us': '"100000"'
     def =
-      perm: 
+      perm:
         admin:
           uid: 'toto'
           gid: 'toto'
         task:
           uid: 'toto'
           gid: 'toto'
-      cpu: 
+      cpu:
         'cpu.rt_period_us': '"1000000"'
         'cpu.rt_runtime_us': '"0"'
         'cpu.cfs_period_us': '"100000"'
@@ -231,18 +231,18 @@ describe 'system.cgroups', ->
       ]
     groups =
       toto:
-        perm: 
+        perm:
           admin: uid: 'toto', gid: 'toto'
           task: uid: 'toto', gid: 'toto'
-        cpu: 
+        cpu:
           'cpu.rt_period_us': '"1000000"'
           'cpu.rt_runtime_us': '"0"'
           'cpu.cfs_period_us': '"100000"'
     def =
-      perm: 
+      perm:
         admin: uid: 'toto', gid: 'toto'
         task: uid: 'toto', gid: 'toto'
-      cpu: 
+      cpu:
         'cpu.rt_period_us': '"1000000"'
         'cpu.rt_runtime_us': '"0"'
         'cpu.cfs_period_us': '"100000"'
@@ -292,10 +292,10 @@ describe 'system.cgroups', ->
         target: "#{scratch}/a_file_merge_mount_groups.cgconfig.conf"
         mode: 0o0754
         groups: toto:
-          perm: 
+          perm:
             admin: uid: 'toto', gid: 'toto'
             task: uid: 'toto', gid: 'toto'
-          cpu: 
+          cpu:
             'cpu.rt_period_us': '"1000000"'
             'cpu.rt_runtime_us': '"0"'
             'cpu.cfs_period_us': '"100000"'
@@ -303,4 +303,3 @@ describe 'system.cgroups', ->
       .call (options) ->
         options.store['nikita:system:type'].should.match /^((redhat)|(centos))/
       .promise()
-      

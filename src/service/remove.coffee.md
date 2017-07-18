@@ -99,4 +99,3 @@ require('nikita').service.start([{
 ## Dependencies
 
     string = require '../misc/string'
-        

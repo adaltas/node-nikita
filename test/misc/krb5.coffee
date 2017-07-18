@@ -26,5 +26,3 @@ describe 'misc krb5', ->
         keytab: '/tmp/keytab'
         uid: 'me'
       .should.eql 'su - me -c \'kinit -kt /tmp/keytab myself@realm\''
-
-      

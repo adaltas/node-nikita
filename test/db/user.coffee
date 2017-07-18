@@ -31,7 +31,7 @@ for engine, _ of config.db
       , (err) ->
         err.message.should.eql 'Missing option: "admin_username"'
       .promise()
-    
+
     they 'add new user', (ssh) ->
       nikita
         ssh: ssh
@@ -75,7 +75,7 @@ for engine, _ of config.db
         username: 'test_user_2_user'
         password: 'test_user_2_valid'
       .system.execute
-        cmd: db.cmd 
+        cmd: db.cmd
           engine: engine
           host: config.db[engine].host
           port: config.db[engine].port

@@ -22,5 +22,3 @@ describe 'api end', ->
       @end()
     .call ({}, callback) -> callback Error 'Should never get here'
     .promise()
-
-      

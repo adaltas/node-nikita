@@ -45,7 +45,7 @@ Takes the same options as the ssh2 module in an underscore form.
       options.private_key_path ?= '~/.ssh/id_rsa'
       # options.public_key ?= []
       # options.public_key = [options.public_key] if typeof options.public_key is 'string'
-      options.root ?= {} 
+      options.root ?= {}
       options.root.host ?= options.ip or options.host
       options.root.port ?= options.port
       # Check status

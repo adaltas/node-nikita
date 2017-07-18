@@ -49,9 +49,9 @@ describe 'assert', ->
       .then (err) ->
         err.message.should.eql 'Invalid status: expected false, got true'
       .promise()
-  
+
   describe 'connection', ->
-    
+
     server = (port=12345) ->
       _ = null
       listen: (callback) ->
@@ -85,4 +85,3 @@ describe 'assert', ->
       .then (err) ->
         err.message.should.eql "Closed Connection to 'localhost:12345'"
       .promise()
-      

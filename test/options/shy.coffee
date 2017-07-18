@@ -88,5 +88,3 @@ describe 'options "shy"', ->
       # @status(-2).should.be.true() # TODO, not ready yet, stack is empty before then
       status.should.be.false() unless err
     .promise()
-    
-        

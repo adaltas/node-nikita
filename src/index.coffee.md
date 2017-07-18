@@ -145,7 +145,7 @@ functions share a common API with flexible options.
         chown: 'nikita/system/chown'
         copy: 'nikita/system/copy'
         discover: 'nikita/system/discover'
-        execute: 
+        execute:
           '': 'nikita/system/execute'
           'assert': 'nikita/system/execute/assert'
         group:
@@ -176,7 +176,7 @@ functions share a common API with flexible options.
         '': 'nikita/wait'
         execute: 'nikita/wait/execute'
         exist: 'nikita/wait/exist'
-    
+
     # Backward compatibility
     registry.deprecate 'backup', 'nikita/tools/backup'
     registry.deprecate 'cgroups', 'nikita/system/cgroups'

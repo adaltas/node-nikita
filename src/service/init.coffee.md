@@ -53,10 +53,10 @@ Reload the service daemon provider depending on the os.
       options.name ?= path.basename(options.source).split('.')[0]
       options.name = path.basename(options.target).split('.service')[0] if options.target?
       options.target ?= "/etc/init.d/#{options.name}"
-      @service.discover (err, status, loader) -> 
+      @service.discover (err, status, loader) ->
         options.loader ?= loader
       # discover loader to put in cache
-        @file.render 
+        @file.render
           target: options.target
           source: options.source
           mode: options.mode
@@ -78,7 +78,7 @@ Reload the service daemon provider depending on the os.
           cmd: 'systemctl daemon-reload'
 
 ## Dependencies
-    
+
     fs = require 'ssh2-fs'
     path = require 'path'
 

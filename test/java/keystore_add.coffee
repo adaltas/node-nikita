@@ -84,7 +84,7 @@ describe 'java.keystore_add', ->
       , (err) ->
         err.message.should.eql 'CA file does not exist: /path/to/missing/ca.cert.pem'
       .promise()
-    
+
     they 'import certificate chain', (ssh) ->
       nikita
         ssh: ssh
@@ -122,7 +122,7 @@ describe 'java.keystore_add', ->
         cmd: "keytool -list -keystore #{scratch}/keystore -storepass changeit -alias my_alias-2"
         content: /^my_alias-2,/m
       .promise()
-    
+
     they 'honors status with certificate chain', (ssh) ->
       nikita
         ssh: ssh
@@ -245,7 +245,7 @@ describe 'java.keystore_add', ->
       .promise()
   
   describe 'option openssl', ->
-    
+
     they 'throw error if not detected', (ssh) ->
       nikita
         ssh: ssh
@@ -263,4 +263,3 @@ describe 'java.keystore_add', ->
       , (err) ->
         err.message.should.eql 'OpenSSL command line tool not detected'
       .promise()
-    

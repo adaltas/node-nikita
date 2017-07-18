@@ -20,13 +20,13 @@ describe 'docker.pull', ->
       ssh: ssh
       docker: config.docker
     .docker.rmi
-      image: 'alpine'    
+      image: 'alpine'
     .docker.pull
       tag: 'alpine'
     , (err, downloaded, stdout, stderr) ->
       downloaded.should.be.true()
     .promise()
-  
+
   they 'Status Not Modified', (ssh) ->
     nikita
       ssh: ssh

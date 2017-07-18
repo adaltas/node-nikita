@@ -72,7 +72,7 @@ describe 'ini', ->
           key1: 'value1b'
 
     it 'stringify test eol', ->
-      res = misc.ini.stringify_multi_brackets 
+      res = misc.ini.stringify_multi_brackets
         user: preference: color: true
         group:
           name: 'us'
@@ -80,7 +80,7 @@ describe 'ini', ->
       res.should.eql '[user]|  [[preference]]|    color = true|[group]|  name = us|'
 
     it 'stringify style', ->
-      res = misc.ini.stringify_multi_brackets 
+      res = misc.ini.stringify_multi_brackets
         '###########################################################################': null
         '# Some comments': null
         group1:
@@ -120,7 +120,7 @@ describe 'ini', ->
       """
 
     it 'stringify simple values before complex values', ->
-      res = misc.ini.stringify_multi_brackets 
+      res = misc.ini.stringify_multi_brackets
         group1:
           key1: 'value1'
           group1b:
@@ -165,7 +165,7 @@ describe 'ini', ->
                 following value
             [group2]
               key1=value1b
-              """ 
+              """
       res = misc.ini.parse_multi_brackets_multi_lines content, { comment : '#'}
       res.should.eql
         '###########################################################################': null
@@ -189,7 +189,7 @@ describe 'ini', ->
   describe 'square and curly brackets', ->
 
     it 'stringify test eol', ->
-      res = misc.ini.stringify_square_then_curly 
+      res = misc.ini.stringify_square_then_curly
         user: preference: color: true
         group:
           name: 'us'

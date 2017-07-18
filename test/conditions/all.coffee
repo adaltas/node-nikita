@@ -52,10 +52,9 @@ describe 'conditions', ->
         unless: [false, true, false]
         () -> false.should.be.true()
         next
-    
+
     it 'ensure an option all doesnt conflict', (next) ->
       conditions.all {},
         all: 'this is messy'
         next
         () -> false.should.be.true()
-      

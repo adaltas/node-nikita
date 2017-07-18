@@ -41,7 +41,7 @@ describe 'system.tmpfs', ->
           d /var/run/file_1 0644 root root 10s -
         """
       .promise()
-    
+
     they 'status not modified', (ssh) ->
       nikita
         ssh: ssh
@@ -232,7 +232,7 @@ describe 'system.tmpfs', ->
         target: '/etc/tmpfiles.d/root.conf'
         content: "d /var/run/file_1 0644 root root 10s -"
       .promise()
-          
+
     they 'simple mount group no uid', (ssh) ->
       nikita
         ssh: ssh

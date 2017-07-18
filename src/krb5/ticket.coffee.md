@@ -40,7 +40,7 @@ require('nikita').krb5.ticket({
         #{krb5.kinit options}
         """
         code_skipped: 3
-    
+
 ## Dependencies
 
     krb5 = require '../misc/krb5'

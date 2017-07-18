@@ -49,9 +49,15 @@ describe 'log.md', ->
       log: false
     .assert
       status: false
+<<<<<<< HEAD
     .promise()
     
   they 'default options', (ssh) ->
+=======
+    .then next
+
+  they 'default options', (ssh, next) ->
+>>>>>>> trailing spaces and typos
     nikita
       ssh: ssh
       log_md: basedir: scratch
@@ -67,8 +73,13 @@ describe 'log.md', ->
     .promise()
 
   describe 'stdout', ->
+<<<<<<< HEAD
     
     they 'in base directory', (ssh) ->
+=======
+
+    they 'in base directory', (ssh, next) ->
+>>>>>>> trailing spaces and typos
       m = nikita
         ssh: ssh
       .log.md basedir: scratch
@@ -81,5 +92,9 @@ describe 'log.md', ->
         log: false
       .assert
         status: false
+<<<<<<< HEAD
       .promise()
       
+=======
+      .then next
+>>>>>>> trailing spaces and typos

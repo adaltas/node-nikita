@@ -48,7 +48,7 @@ require('nikita').file.touch({
       # Options
       options.target = options.argument if options.argument?
       throw Error "Missing target: #{options.target}" unless options.target
-      
+
 Test if file exists.
 
       @call (_, callback) ->

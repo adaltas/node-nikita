@@ -81,7 +81,7 @@ require('nikita').tools.repo({
         gid: options.gid
         target: options.target
       # Read GPG Keys
-      @call 
+      @call
         if: -> options.verify
       , ->
         keys = []

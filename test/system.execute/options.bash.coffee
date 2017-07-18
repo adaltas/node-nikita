@@ -9,7 +9,7 @@ they = require 'ssh2-they'
 describe 'system.execute', ->
 
   scratch = test.scratch @
-    
+
   they 'in generated path', (ssh) ->
     nikita
       ssh: ssh
@@ -19,7 +19,7 @@ describe 'system.execute', ->
     , (err, status, stdout, stderr) ->
       stdout.should.containEql 'bash'
     .promise()
-      
+
   they 'in user path', (ssh) ->
     nikita
       ssh: ssh
@@ -43,7 +43,7 @@ describe 'system.execute', ->
       target: "#{scratch}/my_script"
       not: true
     .promise()
-      
+
   they 'honors exit code', (ssh) ->
     nikita
       ssh: ssh

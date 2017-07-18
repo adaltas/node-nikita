@@ -70,7 +70,7 @@ require('nikita')
         gid: options.gid
         uid: options.uid
         mode: options.mode
-      
+
 ## Dependencies
 
     fs = require 'ssh2-fs'

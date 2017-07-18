@@ -45,7 +45,7 @@ require 'nikita'
       return callback Error "Missing cmd: #{options.cmd}" unless options.cmd?
       options.cmd = [options.cmd] unless Array.isArray options.cmd
       options.quorum = options.quorum
-      if options.quorum and options.quorum is true  
+      if options.quorum and options.quorum is true
         options.quorum = Math.ceil options.cmd.length / 2
       else unless options.quorum?
         options.quorum = options.cmd.length

@@ -33,4 +33,3 @@ following plateform are supported:
       OS=`echo $OS | tr '[:upper:]' '[:lower:]'`
       echo -n "$ARCH|$OS|$VERSION"
       """
-      

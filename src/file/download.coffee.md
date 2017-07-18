@@ -113,7 +113,7 @@ nikita.download
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering file.download", level: 'DEBUG', module: 'nikita/lib/file/download'
+      options.log message: 'Entering file.download', level: 'DEBUG', module: 'nikita/lib/file/download'
       throw Error "Missing source: #{options.source}" unless options.source
       throw Error "Missing target: #{options.target}" unless options.target
       options.source = options.source.substr 7 if /^file:\/\//.test options.source

@@ -8,7 +8,7 @@ describe 'misc.array', ->
   scratch = test.scratch @
 
   describe 'compare', ->
-    
+
     it 'validate', ->
       array.compare(['a'], ['a']).should.be.true()
       array.compare(['a', 'b'], ['a', 'b']).should.be.true()

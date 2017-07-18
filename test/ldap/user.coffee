@@ -37,7 +37,7 @@ describe 'ldap.user', ->
 
   it 'detect no change', ->
     @timeout 100000
-    user = 
+    user =
       dn: "cn=nikita,#{config.ldap.suffix_dn}"
       userPassword: 'test'
       uid: 'nikita'

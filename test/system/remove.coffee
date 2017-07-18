@@ -19,7 +19,7 @@ describe 'system.remove', ->
     , (err, status) ->
       status.should.be.true() unless err
     .promise()
-    
+
   they 'accept a string', (ssh) ->
     nikita
       ssh: ssh
@@ -27,7 +27,7 @@ describe 'system.remove', ->
     .system.remove "#{scratch}/a_file", (err, status) ->
       status.should.be.true() unless err
     .promise()
-    
+
   they 'accept an array of strings', (ssh) ->
     nikita
       ssh: ssh
@@ -39,7 +39,7 @@ describe 'system.remove', ->
     ], (err, status) ->
       status.should.be.true() unless err
     .promise()
-    
+
   they 'a file', (ssh) ->
     nikita
       ssh: ssh

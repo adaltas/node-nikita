@@ -19,7 +19,7 @@ describe 'system.group', ->
     .system.group 'toto', (err, status) ->
       status.should.be.false() unless err
     .promise()
-    
+
   they 'accept gid as int or string', (ssh) ->
     nikita
       ssh: ssh
@@ -32,7 +32,7 @@ describe 'system.group', ->
     .system.group 'toto', gid: 1234, (err, status) ->
       status.should.be.false() unless err
     .promise()
-    
+
   they 'throw if empty gid string', (ssh) ->
     nikita
       ssh: ssh

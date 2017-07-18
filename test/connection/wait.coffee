@@ -8,7 +8,7 @@ describe 'connection.wait', ->
 
   scratch = test.scratch @
   port = 12345
-  
+
   server = (port) ->
     _ = null
     listen: (callback) ->
@@ -207,7 +207,7 @@ describe 'connection.wait', ->
       .promise()
 
   describe 'options', ->
-    
+
     they 'validate host', (ssh) ->
       port = port++
       nikita
@@ -220,7 +220,7 @@ describe 'connection.wait', ->
       , (err, status) ->
         err.message.should.eql 'Invalid host: undefined'
       .promise()
-        
+
     they 'validate port', (ssh) ->
       nikita
         ssh: ssh
@@ -232,4 +232,3 @@ describe 'connection.wait', ->
       , (err, status) ->
         err.message.should.eql 'Invalid port: undefined'
       .promise()
-  

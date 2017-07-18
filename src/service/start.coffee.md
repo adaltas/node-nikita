@@ -66,4 +66,3 @@ require('nikita').service.start([{
       , (err, started) ->
         options.log message: "Service already started", level: 'WARN', module: 'nikita/lib/service/start' if not err and not started
         options.log message: "Service is started", level: 'INFO', module: 'nikita/lib/service/start' if not err and started
-        

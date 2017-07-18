@@ -84,7 +84,7 @@ describe 'docker.compose', ->
       container: 'nikita_docker_compose_up_file'
       force: true
     .file.yaml
-      content: 
+      content:
         compose:
           image: 'httpd'
           container_name: 'nikita_docker_compose_up_file'
@@ -149,7 +149,7 @@ describe 'docker.compose', ->
       container: 'nikita_docker_compose_idem'
       force: true
     .file.yaml
-      content: 
+      content:
         compose:
           image: 'httpd'
           container_name: 'nikita_docker_compose_idem'

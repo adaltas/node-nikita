@@ -184,8 +184,8 @@ describe 'api status', ->
       nikita
       .call
         if: -> @status()
-      , (options, callback) -> 
-        callback Error 'Shouldnt be called' 
+      , (options, callback) ->
+        callback Error 'Shouldnt be called'
       .call (options, callback) ->
         callback null, true
       .call

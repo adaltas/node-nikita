@@ -137,7 +137,7 @@ describe 'system.execute', ->
     .promise()
 
   describe 'trim', ->
-    
+
     they 'both stdout and stderr', (ssh) ->
       nikita
         ssh: ssh
@@ -151,7 +151,7 @@ describe 'system.execute', ->
         stdout.should.eql 'bonjour' unless err
         stderr.should.eql 'monde' unless err
       .promise()
-        
+
     they 'with trim_stdout and trim_stderr', (ssh) ->
       nikita
         ssh: ssh

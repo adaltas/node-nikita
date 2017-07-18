@@ -12,7 +12,7 @@ describe 'options "log"', ->
     it 'convert string to objects', ->
       logs = []
       nikita
-      .call 
+      .call
         log: (l) -> logs.push l if l.type is 'text'
         handler: (options) -> options.log 'handler'
       .call ->
@@ -23,7 +23,7 @@ describe 'options "log"', ->
         logs[0].time.should.be.a.Number()
         logs[0].total_depth.should.eql 1
       .promise()
-        
+
     it 'work recursively', ->
       logs = []
       nikita
@@ -40,12 +40,12 @@ describe 'options "log"', ->
         logs[0].time.should.be.a.Number()
         logs[0].total_depth.should.eql 2
       .promise()
-        
+
     it 'is overwritteable', ->
       logs_parent = []
       logs_child = []
       nikita
-      .call 
+      .call
         log: (l) -> logs_parent.push l if l.type is 'text'
         handler: ->
           @call
@@ -108,9 +108,15 @@ describe 'options "log"', ->
         (logs[0].module is undefined).should.be.true()
         logs[0].time.should.be.a.Number()
         logs[0].total_depth.should.eql 1
+<<<<<<< HEAD
       .promise()
       
   it.skip 'serialize into string with default serializer', ->
+=======
+        next err
+
+  it.skip 'serialize into string with default serializer', (next) ->
+>>>>>>> trailing spaces and typos
     # log_serializer isnt yet activated
     log = null
     nikita
@@ -118,11 +124,19 @@ describe 'options "log"', ->
     .on 'text', (l) -> log = l
     .call (options) ->
       options.log 'handler'
+<<<<<<< HEAD
     .call ->
       log.should.match /^\[INFO \d+\] handler/
     .promise()
       
   it.skip 'serialize into string with user serializer', ->
+=======
+    .then (err) ->
+      log.should.match /^\[INFO \d+\] handler/ unless err
+      next err
+
+  it.skip 'serialize into string with user serializer', (next) ->
+>>>>>>> trailing spaces and typos
     # log_serializer isnt yet activated
     log = null
     nikita
@@ -130,11 +144,19 @@ describe 'options "log"', ->
     .on 'text', (l) -> log = l
     .call (options) ->
       options.log 'handler'
+<<<<<<< HEAD
     .call ->
       log.should.eql "[INFO] handler"
     .promise()
       
   it.skip 'print value', ->
+=======
+    .then (err) ->
+      log.should.eql "[INFO] handler" unless err
+      next err
+
+  it.skip 'print value', (next) ->
+>>>>>>> trailing spaces and typos
     # Doesnt work for now
     # The idea is that log shouldnt be an option
     # But be part of nikita context
@@ -149,6 +171,11 @@ describe 'options "log"', ->
     .call ->
       logs
       .map (log) -> log.message
+<<<<<<< HEAD
       .should.eql ['handler', 'callback']
     .promise()
     
+=======
+      .should.eql ['handler', 'callback'] unless err
+      next err
+>>>>>>> trailing spaces and typos

@@ -26,4 +26,3 @@ nikita
 , (err, executed, stdout) ->
   console.log stdout
 .ssh.close()
-  

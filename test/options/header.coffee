@@ -26,7 +26,7 @@ describe 'options "header"', ->
         { message: 'h1 touch', depth: 1, headers: ['h1 touch'], header_depth: 1, total_depth: 0 }
       ]
     .promise()
-    
+
   it 'decrement when option is reset', ->
     headers = []
     nikita
@@ -55,4 +55,3 @@ describe 'options "header"', ->
         { depth: 1, header_depth: 1, headers: ['h1b'] }
       ]
     .promise()
-    
