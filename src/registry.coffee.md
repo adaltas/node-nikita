@@ -139,7 +139,7 @@ nikita.new_function()
 
 # Registered
 
-Test if a function is depreated or not.
+Test if a function is registered or not.
 
       Object.defineProperty obj, 'registered',
         configurable: true
