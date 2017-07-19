@@ -22,6 +22,7 @@ describe 'misc mode', ->
       misc.mode.compare('544', '4543').should.be.false()
       misc.mode.compare('0322', '322').should.be.true()
       misc.mode.compare('0544', '322').should.be.false()
+      misc.mode.compare('100754', '744').should.be.false()
 
     it 'compare int with string', ->
       misc.mode.compare(0o0744, '744').should.be.true()

@@ -61,7 +61,6 @@ misc = module.exports =
         keys1 = Object.keys obj1
         keys2 = Object.keys obj2
         keys = misc.array.merge keys1, keys2, misc.array.unique keys1
-
       diff = {}
       for k, v of obj1
         continue unless keys.indexOf(k) >= 0
@@ -104,8 +103,9 @@ misc = module.exports =
       ref = ref.map (mode) -> misc.mode.stringify mode
       for i in [1...modes.length]
         mode = misc.mode.stringify modes[i]
-        l = Math.min ref.length, mode.length
-        return false unless ref.some (m) -> m.substr(-l) is mode.substr(-l)
+        return false unless ref.some (m) ->
+          l = Math.min m.length, mode.length
+          m.substr(-l) is mode.substr(-l)
       true
   file: require './file'
   ###
