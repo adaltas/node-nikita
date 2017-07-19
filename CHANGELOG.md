@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* chmod: refactor in no callback style
 * misc.mode.compare: fix after multi mode comparaison
 * file.assert: accept an array of modes
 * test: upgrade mocha by using promise

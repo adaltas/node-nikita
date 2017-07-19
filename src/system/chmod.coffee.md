@@ -33,28 +33,27 @@ require('nikita').system.chmod({
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       options.log message: "Entering chmod", level: 'DEBUG', module: 'nikita/lib/system/chmod'
       # Validate parameters
-      return callback Error "Missing target: #{JSON.stringify options.target}" unless options.target
-      return callback Error "Missing option 'mode'" unless options.mode
-      do_stat = ->
-        # Option 'stat' short-circuit
-        return do_chmod options.stat if options.stat
-        options.log message: "Stat \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/system/chmod'
+      throw Error "Missing target: #{JSON.stringify options.target}" unless options.target
+      throw Error "Missing option 'mode'" unless options.mode
+      @call
+        unless: !!options.stat # Option 'stat' short-circuit
+      , (_, callback) ->
+        options.log message: "Stat information: \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/system/chmod'
         fs.stat options.ssh, options.target, (err, stat) ->
-          return callback err if err
-          do_chmod stat
-      do_chmod = (stat) ->
+          options.stat = stat unless err
+          callback err
+      @call (_, callback) ->
         # Detect changes
-        if misc.mode.compare stat.mode, options.mode
+        if misc.mode.compare options.stat.mode, options.mode
           options.log message: "Identical permissions on \"#{options.target}\"", level: 'INFO', module: 'nikita/lib/system/chmod'
           return callback()
         # Apply changes
         fs.chmod options.ssh, options.target, options.mode, (err) ->
-          options.log message: "Change permissions from \"#{stat.mode.toString 8}\" to \"#{options.mode.toString 8}\" on \"#{options.target}\"", level: 'WARN', module: 'nikita/lib/system/chmod'
+          options.log message: "Change permissions from \"#{options.stat.mode.toString 8}\" to \"#{options.mode.toString 8}\" on \"#{options.target}\"", level: 'WARN', module: 'nikita/lib/system/chmod'
           callback err, true
-      do_stat()
 
 ## Dependencies
 
