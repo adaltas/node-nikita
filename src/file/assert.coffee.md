@@ -200,7 +200,7 @@ nikita.assert({
           unless options.not
             unless misc.mode.compare options.mode, stat.mode
               expect = options.mode.map (mode) -> "#{pad 4, misc.mode.stringify(mode), '0'}"
-              options.error ?= "Invalid mode: expect #{expec} and got #{misc.mode.stringify(stat.mode).substr -4}"
+              options.error ?= "Invalid mode: expect #{expect} and got #{misc.mode.stringify(stat.mode).substr -4}"
               err = Error options.error
           else
             if misc.mode.compare options.mode, stat.mode
