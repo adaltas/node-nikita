@@ -380,23 +380,28 @@ describe 'file.assert', ->
   describe 'options uid & gid', ->
 
     they 'detect root ownerships', (ssh) ->
-      return unless process.getuid() is 0
+      # This test only apply if the current user or the SSH user is root
       nikita
         ssh: ssh
-      .file.touch "#{scratch}/a_file"
-      .file.assert "#{scratch}/a_file",
-        uid: 0
-        gid: 0
-      .file.assert "#{scratch}/a_file",
-        uid: 1
-        gid: 0
-        relax: true
-      , (err) ->
-        err.message.should.eql "Unexpected uid: expected \"1\" and got \"0\""
-      .file.assert "#{scratch}/a_file",
-        uid: 0
-        gid: 1
-        relax: true
-      , (err) ->
-        err.message.should.eql "Unexpected gid: expected \"1\" and got \"0\""
+      .call
+        if_exec: '[[ `whoami` == "rot" ]]'
+      , ->
+        @file.touch "#{scratch}/a_file"
+        @file.assert "#{scratch}/a_file",
+          uid: 0
+          gid: 0
+        @file.assert "#{scratch}/a_file",
+          uid: 1
+          gid: 0
+          relax: true
+        , (err) ->
+          err.message.should.eql "Unexpected uid: expected \"1\" and got \"0\""
+        @file.assert "#{scratch}/a_file",
+          uid: 0
+          gid: 1
+          relax: true
+        , (err) ->
+          err.message.should.eql "Unexpected gid: expected \"1\" and got \"0\""
+      , (err, status) =>
+        @skip()
       .promise()

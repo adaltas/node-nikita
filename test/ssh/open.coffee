@@ -9,7 +9,7 @@ describe 'ssh.open', ->
   scratch = test.scratch @
 
   they 'with handler options', (ssh) ->
-    return unless ssh
+    return @skip() unless ssh
     nikita
     .call (options) ->
       (!!options.ssh).should.be.false()
@@ -28,7 +28,7 @@ describe 'ssh.open', ->
     .promise()
 
   they 'with global options', (ssh) ->
-    return unless ssh
+    return @skip() unless ssh
     nikita
       ssh:
         host: ssh.config.host
@@ -47,7 +47,7 @@ describe 'ssh.open', ->
     .promise()
 
   they 'check status', (ssh) ->
-    return unless ssh
+    return @skip() unless ssh
     options = 
       host: ssh.config.host
       port: ssh.config.port

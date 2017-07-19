@@ -9,7 +9,7 @@ describe 'ssh.close', ->
   scratch = test.scratch @
 
   they 'check status', (ssh) ->
-    return unless ssh
+    return @skip() unless ssh
     nikita
     .ssh.open
       host: ssh.config.host

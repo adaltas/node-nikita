@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* test: use skip for non applyable tests
 * chmod: refactor in no callback style
 * misc.mode.compare: fix after multi mode comparaison
 * file.assert: accept an array of modes

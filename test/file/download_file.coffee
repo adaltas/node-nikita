@@ -175,7 +175,7 @@ describe 'file.download file', ->
       .promise()
 
     they 'is computed if true', (ssh) ->
-      return unless ssh
+      return @skip() unless ssh
       logs = []
       # Download with invalid checksum
       target = "#{scratch}/check_md5"

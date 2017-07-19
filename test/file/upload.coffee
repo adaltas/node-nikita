@@ -11,7 +11,7 @@ describe 'file.upload', ->
   scratch = test.scratch @
 
   they 'file into a file', (ssh) ->
-      return unless ssh
+      return @skip() unless ssh
       nikita
         ssh: ssh
       .file.upload
@@ -31,7 +31,7 @@ describe 'file.upload', ->
       .promise()
 
     they 'file into a directory', (ssh) ->
-        return unless ssh
+        return @skip() unless ssh
         nikita
           ssh: ssh
         .file.upload
