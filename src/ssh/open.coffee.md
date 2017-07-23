@@ -71,7 +71,7 @@ Takes the same options as the ssh2 module in an underscore form.
       , (err, status) ->
         @end() unless err
       # Enable root access
-      @call if: options.root.username, unless: options.ssh, ->
+      @call if: options.root.username, ->
         @ssh.root public_key: options.public_key, options.root
       @call retry: 3, (_, callback) ->
         connect options, (err, ssh) =>

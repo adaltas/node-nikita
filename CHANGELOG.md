@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* ssh: allow root bootstraping if ssh is an object
 * test: use skip for non applyable tests
 * chmod: refactor in no callback style
 * misc.mode.compare: fix after multi mode comparaison
