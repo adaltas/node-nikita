@@ -146,3 +146,27 @@ describe 'tools.sysctl', ->
         vm.overcommit_memory = 1
         """
       .promise()
+
+    they 'handle equal sign in comment', (ssh) ->
+      nikita
+        ssh: ssh
+      .file
+        target: "#{scratch}/sysctl.conf"
+        content: """
+        # Key = Value
+        vm.swappiness = 1
+        """
+      .tools.sysctl
+        target: "#{scratch}/sysctl.conf"
+        properties:
+          'vm.swappiness': 10
+        merge: true
+        comment: true
+        load: false
+      .file.assert
+        target: "#{scratch}/sysctl.conf"
+        content: """
+        # Key = Value
+        vm.swappiness = 10
+        """
+      .promise()

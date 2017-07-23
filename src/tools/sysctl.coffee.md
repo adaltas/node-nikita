@@ -51,27 +51,29 @@ require('nikita').tools.sysctl({
 ## Source Code
 
     module.exports = (options) ->
+      options.log message: "Entering sysctl", level: 'DEBUG', module: 'nikita/lib/tools/sysctl'
       options.load ?= true
       options.target ?= '/etc/sysctl.conf'
       # Read current properties
       current = {}
       @call (_, callback) ->
         status = false
+        options.log message: "Read target: #{options.target}", level: 'DEBUG', module: 'nikita/lib/tools/sysctl'
         fs.readFile options.ssh, options.target, 'ascii', (err, data) =>
-          return callback err if err and err.code isnt 'ENOENT'
-          return callback() if err
+          return callback() if err and err.code is 'ENOENT'
+          return callback err if err
           for line in string.lines data
-            [key, value] = line.split '='
             # Preserve comments
-            if /^#/.test key
-              current[key] = null if options.comment
+            if /^#/.test line
+              current[line] = null if options.comment
               continue
+            [key, value] = line.split '='
             # Trim
             key = key.trim()
             value = value.trim()
             # Skip property
             if key in options.properties and not options.properties[key]?
-              options.log "Removing Property: #{key}, was #{value}"
+              options.log "Removing Property: #{key}, was #{value}", level: 'INFO', module: 'nikita/lib/tools/sysctl'
               status = true
               continue
             # Set property
@@ -86,6 +88,7 @@ require('nikita').tools.sysctl({
           continue unless value?
           value = "#{value}" if typeof value is 'number'
           continue if current[key] is value
+          options.log "Update Property: key \"#{key}\" from \"#{final[key]}\" to \"#{value}\"", level: 'INFO', module: 'nikita/lib/tools/sysctl'
           final[key] = value
           status = true
         callback null, status
