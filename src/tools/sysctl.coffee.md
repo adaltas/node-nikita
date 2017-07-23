@@ -67,6 +67,9 @@ require('nikita').tools.sysctl({
             if /^#/.test line
               current[line] = null if options.comment
               continue
+            if /^\s*$/.test line
+              current[line] = null
+              continue
             [key, value] = line.split '='
             # Trim
             key = key.trim()

@@ -88,6 +88,29 @@ describe 'tools.sysctl', ->
       """
     .promise()
 
+  they 'Merge properties with file containing empty lines', (ssh) ->
+    nikita
+      ssh: ssh
+    .file
+      target: "#{scratch}/sysctl.conf"
+      content: """
+      vm.swappiness = 1
+      
+      """
+    .tools.sysctl
+      target: "#{scratch}/sysctl.conf"
+      properties:
+        'vm.swappiness': 10
+      merge: true
+      load: false
+    .file.assert
+      target: "#{scratch}/sysctl.conf"
+      content: """
+      vm.swappiness = 10
+      
+      """
+    .promise()
+
   describe 'comment', ->
 
     they 'Not preserved by default', (ssh) ->

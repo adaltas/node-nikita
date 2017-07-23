@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* sysctl: handle empty line in merge
 * sysctl: hande equal sign in comment
 * ssh: allow root bootstraping if ssh is an object
 * test: use skip for non applyable tests
