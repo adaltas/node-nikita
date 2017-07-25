@@ -11,14 +11,18 @@ overwrite it.
   Group name or id who owns the file.   
 * `mode`   
   Permissions of the file or the parent directory.   
+* `preserve`   
+  Preserve file ownerships and permissions, default to "false".
 * `source`   
   The file or directory to copy.   
+* `source_stats`   
+  Short-circuit to prevent source stat retrieval if already at our disposal.   
 * `target`   
   Where the file or directory is copied.   
+* `target_stats`   
+  Short-circuit to prevent target stat retrieval if already at our disposal.   
 * `uid`   
   User name or id who owns the file.   
-* `unless_exists`   
-  Equals target if true.   
 
 ## Callback Parameters
 
@@ -55,32 +59,37 @@ require('nikita').system.copy({
 
 Validate parameters.
 
+      options.uid ?= false
+      options.uid = parseInt options.uid if typeof options.uid is 'string'
+      options.gid ?= false
+      options.gid = parseInt options.gid if typeof options.gid is 'string'
+      options.preserve ?= false
       throw Error 'Missing source' unless options.source
       throw Error 'Missing target' unless options.target
 
-Retrieve stat information about the source unless provided through the "source_stat" option.
+Retrieve stats information about the source unless provided through the "source_stats" option.
 
       @call (_, callback) ->
-        if options.source_stat
-          options.log message: "Source Stat: using short circuit", level: 'DEBUG', module: 'nikita/lib/system/copy'
+        if options.source_stats
+          options.log message: "Source Stats: using short circuit", level: 'DEBUG', module: 'nikita/lib/system/copy'
           return callback()
-        options.log message: "Stat source file #{options.source}", level: 'DEBUG', module: 'nikita/lib/system/copy'
-        fs.stat options.ssh, options.source, (err, stat) =>
+        options.log message: "Stats source file #{options.source}", level: 'DEBUG', module: 'nikita/lib/system/copy'
+        fs.stat options.ssh, options.source, (err, stats) =>
           return callback err if err
-          options.source_stat = stat unless err
+          options.source_stats = stats unless err
           callback()
 
-Retrieve stat information about the traget unless provided through the "target_stat" option.
+Retrieve stat information about the traget unless provided through the "target_stats" option.
 
       @call (_, callback) ->
-        if options.target_stat
-          options.log message: "Target Stat: using short circuit", level: 'DEBUG', module: 'nikita/lib/system/copy'
+        if options.target_stats
+          options.log message: "Target Stats: using short circuit", level: 'DEBUG', module: 'nikita/lib/system/copy'
           return callback()
-        options.log message: "Stat target file #{options.target}", level: 'DEBUG', module: 'nikita/lib/system/copy'
-        fs.stat options.ssh, options.target, (err, stat) =>
+        options.log message: "Stats target file #{options.target}", level: 'DEBUG', module: 'nikita/lib/system/copy'
+        fs.stat options.ssh, options.target, (err, stats) =>
           # Note, target file doesnt necessarily exist
           return callback err if err and err.code isnt 'ENOENT'
-          options.target_stat = stat
+          options.target_stats = stats
           callback()
 
 Stop here if source is a directory. We traverse all its children
@@ -93,25 +102,38 @@ copied into "/tmp/a_target/a_source". With an ending slash, all the files
 present inside "/tmp/a_source" are copied inside "/tmp/a_target".
 
       @call (_, callback) ->
-        return callback() unless options.source_stat.isDirectory()
+        return callback() unless options.source_stats.isDirectory()
         sourceEndWithSlash = options.source.lastIndexOf('/') is options.source.length - 1
-        if options.target_stat and not sourceEndWithSlash
+        if options.target_stats and not sourceEndWithSlash
           options.target = path.resolve options.target, path.basename options.source
         options.log message: "Source is a directory", level: 'INFO', module: 'nikita/lib/system/copy'
         @call (_, callback) -> 
           glob options.ssh, "#{options.source}/**", dot: true, (err, sources) =>
             return callback err if err
             for source in sources then do (source) =>
-              # target = path.resolve options.target, path.basename source
               target = path.resolve options.target, path.relative options.source, source
               @call (_, callback) ->
-                fs.stat options.ssh, source, (err, source_stat) =>
-                  if source_stat.isDirectory()
-                    # todo: pass uid, gid and mode, use options and default to stat
-                    @system.mkdir target
+                fs.stat options.ssh, source, (err, source_stats) =>
+                  uid = options.uid
+                  uid ?= source_stats.uid if options.preserve
+                  gid = options.gid
+                  gid ?= source_stats.gid if options.preserve
+                  mode = options.mode
+                  mode ?= source_stats.mode if options.preserve
+                  if source_stats.isDirectory()
+                    @system.mkdir
+                      target: target
+                      uid: uid
+                      gid: gid
+                      mode: mode
                   else
-                    # todo: pass uid, gid and mode, use options and default to stat
-                    @system.copy source: source, source_stat: source_stat, target: target
+                    @system.copy
+                      target: target
+                      source: source
+                      source_stat: source_stats
+                      uid: uid
+                      gid: gid
+                      mode: mode
                   @then callback
             @then callback
         @then (err, status) -> callback err, status, true
@@ -122,10 +144,10 @@ If source is a file and target is a directory, then transform
 target into a file.
 
       @call ->
-        return unless options.target_stat and options.target_stat.isDirectory()
+        return unless options.target_stats and options.target_stats.isDirectory()
         options.target = path.resolve options.target, path.basename options.source
 
-Copy the file if content doesnt match.
+Copy the file if content doesn't match.
 
       @call (_, callback) =>
         # Copy a file
@@ -143,13 +165,18 @@ Copy the file if content doesnt match.
 File ownership and permissions
 
       @call ->
+        options.uid ?= options.source_stats.uid if options.preserve
+        options.gid ?= options.source_stats.gid if options.preserve
+        options.mode ?= options.source_stats.mode if options.preserve
         @system.chown
           target: options.target
+          stat: options.target_stats
           uid: options.uid
           gid: options.gid
           if: options.uid? or options.gid?
         @system.chmod
           target: options.target
+          stat: options.target_stats
           mode: options.mode
           if: options.mode?
 

@@ -30,35 +30,32 @@ describe 'system.copy', ->
   describe 'file', ->
 
     they 'with a filename inside a existing directory', (ssh) ->
-      source = "#{__dirname}/../resources/a_dir/a_file"
-      target = "#{scratch}/a_new_file"
       nikita
         ssh: ssh
       .system.copy
-        source: source
-        target: target
+        source: "#{__dirname}/../resources/a_dir/a_file"
+        target: "#{scratch}/a_new_file"
       , (err, status) ->
         status.should.be.true() unless err
       .file.assert
-        target: target
+        target: "#{scratch}/a_new_file"
         md5: '3fb7c40c70b0ed19da713bd69ee12014'
       .system.copy
         ssh: ssh
-        source: source
-        target: target
+        source: "#{__dirname}/../resources/a_dir/a_file"
+        target: "#{scratch}/a_new_file"
       , (err, status) ->
         status.should.be.false() unless err
       .promise()
 
     they 'into a directory', (ssh) ->
-      source = "#{__dirname}/../resources/a_dir/a_file"
       nikita
         ssh: ssh
       .system.mkdir
         target: "#{scratch}/existing_dir"
       .system.copy # Copy non existing file
-        source: source
         target: "#{scratch}/existing_dir"
+        source: "#{__dirname}/../resources/a_dir/a_file"
       , (err, status) ->
         status.should.be.true() unless err
       .file.assert
@@ -66,24 +63,22 @@ describe 'system.copy', ->
       .promise()
 
     they 'over an existing file', (ssh) ->
-      source = "#{__dirname}/../resources/a_dir/a_file"
-      target = "#{scratch}/test_this_file"
       nikita
         ssh: ssh
       .file
+        target: "#{scratch}/a_target_file"
         content: 'Hello you'
-        target: target
       .system.copy
-        source: source
-        target: target
+        target: "#{scratch}/a_target_file"
+        source: "#{__dirname}/../resources/a_dir/a_file"
       , (err, status) ->
         status.should.be.true() unless err
       .file.assert
-        target: target
+        target: "#{scratch}/a_target_file"
         md5: '3fb7c40c70b0ed19da713bd69ee12014'
       .system.copy
-        source: source
-        target: target
+        target: "#{scratch}/a_target_file"
+        source: "#{__dirname}/../resources/a_dir/a_file"
       , (err, status) ->
         status.should.be.false() unless err
       .promise()
@@ -92,16 +87,16 @@ describe 'system.copy', ->
       nikita
         ssh: ssh
       .file
-        content: 'hello you'
         target: "#{scratch}/source_file"
+        content: 'hello you'
         mode: 0o0644
       .file
-        content: 'Hello you'
         target: "#{scratch}/target_file"
+        content: 'Hello you'
         mode: 0o0644
       .system.copy
-        source: "#{scratch}/source_file"
         target: "#{scratch}/target_file"
+        source: "#{scratch}/source_file"
         mode: 0o0750
       , (err, status) ->
         status.should.be.true() unless err
@@ -109,8 +104,8 @@ describe 'system.copy', ->
         target: "#{scratch}/target_file"
         mode: 0o0750
       .system.copy
-        source: "#{scratch}/source_file"
         target: "#{scratch}/target_file"
+        source: "#{scratch}/source_file"
         mode: 0o0755
       .file.assert
         target: "#{scratch}/target_file"
@@ -119,17 +114,44 @@ describe 'system.copy', ->
 
     they 'handle hidden files', (ssh) ->
       nikita
+        ssh: ssh
       .file
-        ssh: ssh
-        content: 'hello'
         target: "#{scratch}/.a_empty_file"
+        content: 'hello'
       .system.copy
-        ssh: ssh
-        source: "#{scratch}/.a_empty_file"
         target: "#{scratch}/.a_copy"
+        source: "#{scratch}/.a_empty_file"
       .file.assert
         target: "#{scratch}/.a_copy"
         content: 'hello'
+      .promise()
+    
+    they 'set permissions', (ssh) ->
+      nikita
+      .file.touch
+        target: "#{scratch}/a_source_file"
+        mode: 0o0606
+      .system.copy
+        target: "#{scratch}/a_target_file"
+        source: "#{scratch}/a_source_file"
+        mode: 0o0644
+      .file.assert
+        target: "#{scratch}/a_target_file"
+        mode: 0o0644
+      .promise()
+    
+    they 'preserve permissions', (ssh) ->
+      nikita
+      .file.touch
+        target: "#{scratch}/a_source_file"
+        mode: 0o0606
+      .system.copy
+        target: "#{scratch}/a_target_file"
+        source: "#{scratch}/a_source_file"
+        preserve: true
+      .file.assert
+        target: "#{scratch}/a_target_file"
+        mode: 0o0606
       .promise()
   
   describe 'link', ->
@@ -241,6 +263,62 @@ describe 'system.copy', ->
             '/tmp/nikita-test/a_copy/a_file'
           ]
           callback()
+      .promise()
+    
+    they 'set permissions', (ssh) ->
+      nikita
+      .system.mkdir
+        target: "#{scratch}/a_source"
+      .file.touch
+        target: "#{scratch}/a_source/a_file"
+        mode: 0o0606
+      .system.mkdir
+        target: "#{scratch}/a_source/a_dir"
+        mode: 0o0777
+      .file.touch
+        target: "#{scratch}/a_source/a_dir/a_file"
+        mode: 0o0644
+      .system.copy
+        target: "#{scratch}/a_target"
+        source: "#{scratch}/a_source"
+        mode: 0o0700
+      .file.assert
+        target: "#{scratch}/a_target/a_file"
+        mode: 0o0700
+      .file.assert
+        target: "#{scratch}/a_target/a_dir"
+        mode: 0o0700
+      .file.assert
+        target: "#{scratch}/a_target/a_dir/a_file"
+        mode: 0o0700
+      .promise()
+    
+    they 'preserve permissions', (ssh) ->
+      nikita
+      .system.mkdir
+        target: "#{scratch}/a_source"
+      .file.touch
+        target: "#{scratch}/a_source/a_file"
+        mode: 0o0606
+      .system.mkdir
+        target: "#{scratch}/a_source/a_dir"
+        mode: 0o0700
+      .file.touch
+        target: "#{scratch}/a_source/a_dir/a_file"
+        mode: 0o0644
+      .system.copy
+        target: "#{scratch}/a_target"
+        source: "#{scratch}/a_source"
+        preserve: true
+      .file.assert
+        target: "#{scratch}/a_target/a_file"
+        mode: 0o0606
+      .file.assert
+        target: "#{scratch}/a_target/a_dir"
+        mode: 0o0700
+      .file.assert
+        target: "#{scratch}/a_target/a_dir/a_file"
+        mode: 0o0644
       .promise()
 
     they.skip 'should copy with globing and hidden files', (ssh) ->

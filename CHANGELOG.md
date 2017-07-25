@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* system.copy: honors uid, gid, mode or preserve ownership and permissions #117
 * system.copy: refactor current source code #116
 * sysctl: handle empty line in merge
 * sysctl: hande equal sign in comment
