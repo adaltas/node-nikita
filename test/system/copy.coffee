@@ -30,7 +30,6 @@ describe 'system.copy', ->
   describe 'file', ->
 
     they 'with a filename inside a existing directory', (ssh) ->
-      # @timeout 1000000
       source = "#{__dirname}/../resources/a_dir/a_file"
       target = "#{scratch}/a_new_file"
       nikita
@@ -90,29 +89,31 @@ describe 'system.copy', ->
       .promise()
 
     they 'change permissions', (ssh) ->
-      source = "#{__dirname}/../resources/a_dir/a_file"
-      target = "#{scratch}/test_this_file"
       nikita
         ssh: ssh
       .file
+        content: 'hello you'
+        target: "#{scratch}/source_file"
+        mode: 0o0644
+      .file
         content: 'Hello you'
-        target: target
+        target: "#{scratch}/target_file"
+        mode: 0o0644
       .system.copy
-        source: source
-        target: target
-        mode: 0o750
+        source: "#{scratch}/source_file"
+        target: "#{scratch}/target_file"
+        mode: 0o0750
       , (err, status) ->
-        return next err if err
         status.should.be.true() unless err
       .file.assert
-        target: target
+        target: "#{scratch}/target_file"
         mode: 0o0750
       .system.copy
-        source: source
-        target: target
+        source: "#{scratch}/source_file"
+        target: "#{scratch}/target_file"
         mode: 0o0755
       .file.assert
-        target: target
+        target: "#{scratch}/target_file"
         mode: 0o0755
       .promise()
 

@@ -50,90 +50,108 @@ require('nikita').system.copy({
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       options.log message: "Entering copy", level: 'DEBUG', module: 'nikita/lib/system/copy'
-      # Validate parameters
-      return callback Error 'Missing source' unless options.source
-      return callback Error 'Missing target' unless options.target
-      # Cancel action if target exists ? really ? no md5 comparaison, strange
-      # options.unless_exists = options.target if options.unless_exists is true
-      # Start real work
-      modified = false
-      srcStat = null
-      dstStat = null
-      options.log message: "Stat source file #{options.source}", level: 'DEBUG', module: 'nikita/lib/system/copy'
-      fs.stat options.ssh, options.source, (err, stat) ->
-        # Source must exists
-        return callback err if err
-        srcStat = stat
+
+Validate parameters.
+
+      throw Error 'Missing source' unless options.source
+      throw Error 'Missing target' unless options.target
+
+Retrieve stat information about the source unless provided through the "source_stat" option.
+
+      @call (_, callback) ->
+        if options.source_stat
+          options.log message: "Source Stat: using short circuit", level: 'DEBUG', module: 'nikita/lib/system/copy'
+          return callback()
+        options.log message: "Stat source file #{options.source}", level: 'DEBUG', module: 'nikita/lib/system/copy'
+        fs.stat options.ssh, options.source, (err, stat) =>
+          return callback err if err
+          options.source_stat = stat unless err
+          callback()
+
+Retrieve stat information about the traget unless provided through the "target_stat" option.
+
+      @call (_, callback) ->
+        if options.target_stat
+          options.log message: "Target Stat: using short circuit", level: 'DEBUG', module: 'nikita/lib/system/copy'
+          return callback()
         options.log message: "Stat target file #{options.target}", level: 'DEBUG', module: 'nikita/lib/system/copy'
-        fs.stat options.ssh, options.target, (err, stat) ->
+        fs.stat options.ssh, options.target, (err, stat) =>
+          # Note, target file doesnt necessarily exist
           return callback err if err and err.code isnt 'ENOENT'
-          dstStat = stat
-          sourceEndWithSlash = options.source.lastIndexOf('/') is options.source.length - 1
-          if srcStat.isDirectory() and dstStat and not sourceEndWithSlash
-            options.target = path.resolve options.target, path.basename options.source
-          if srcStat.isDirectory()
-          then do_directory options.source, (err) -> callback err, modified
-          else do_copy options.source, (err) -> callback err, modified
-      # Copy a directory
-      do_directory = (dir, callback) ->
+          options.target_stat = stat
+          callback()
+
+Stop here if source is a directory. We traverse all its children
+Recursively, calling either `system.mkdir` or `system.copy`.
+
+Like with the Unix `cp` command, ending slash matters if the target directory 
+exists. Let's consider a source directory "/tmp/a_source" and a target directory
+"/tmp/a_target". Without an ending slash , the directory "/tmp/a_source" is 
+copied into "/tmp/a_target/a_source". With an ending slash, all the files
+present inside "/tmp/a_source" are copied inside "/tmp/a_target".
+
+      @call (_, callback) ->
+        return callback() unless options.source_stat.isDirectory()
+        sourceEndWithSlash = options.source.lastIndexOf('/') is options.source.length - 1
+        if options.target_stat and not sourceEndWithSlash
+          options.target = path.resolve options.target, path.basename options.source
         options.log message: "Source is a directory", level: 'INFO', module: 'nikita/lib/system/copy'
-        glob options.ssh, "#{dir}/**", dot: true, (err, files) ->
-          return callback err if err
-          each files
-          .call (file, callback) ->
-            do_copy file, callback
-          .then callback
-      do_copy = (source, callback) =>
-        if srcStat.isDirectory()
-          target = path.resolve options.target, path.relative options.source, source
-        else if not srcStat.isDirectory() and dstStat?.isDirectory()
-          target = path.resolve options.target, path.basename source
-        else
-          target = options.target
-        fs.stat options.ssh, source, (err, stat) ->
-          return callback err if err
-          if stat.isDirectory()
-          then do_copy_dir source, target
-          else do_copy_file source, target
-        do_copy_dir = (source, target) ->
-          options.log message: "Create directory #{target}", level: 'WARN', module: 'nikita/lib/system/copy'
-          # todo, add permission
-          fs.mkdir options.ssh, target, (err) ->
-            return callback() if err?.code is 'EEXIST'
+        @call (_, callback) -> 
+          glob options.ssh, "#{options.source}/**", dot: true, (err, sources) =>
             return callback err if err
-            modified = true
-            do_end()
+            for source in sources then do (source) =>
+              # target = path.resolve options.target, path.basename source
+              target = path.resolve options.target, path.relative options.source, source
+              @call (_, callback) ->
+                fs.stat options.ssh, source, (err, source_stat) =>
+                  if source_stat.isDirectory()
+                    # todo: pass uid, gid and mode, use options and default to stat
+                    @system.mkdir target
+                  else
+                    # todo: pass uid, gid and mode, use options and default to stat
+                    @system.copy source: source, source_stat: source_stat, target: target
+                  @then callback
+            @then callback
+        @then (err, status) -> callback err, status, true
+      , (err, status, end) ->
+        @end() if not err and end
+
+If source is a file and target is a directory, then transform
+target into a file.
+
+      @call ->
+        return unless options.target_stat and options.target_stat.isDirectory()
+        options.target = path.resolve options.target, path.basename options.source
+
+Copy the file if content doesnt match.
+
+      @call (_, callback) =>
         # Copy a file
-        do_copy_file = (source, target) ->
-          misc.file.compare options.ssh, [source, target], (err, md5) ->
-            # Destination may not exists
-            return callback err if err and err.message.indexOf('Does not exist') isnt 0
-            # Files are the same, we can skip copying
-            return do_chown_chmod target if md5
-            options.log message: "Copy file from #{source} into #{target}", level: 'WARN', module: 'nikita/lib/system/copy'
-            misc.file.copyFile options.ssh, source, target, (err) ->
-              return callback err if err
-              modified = true
-              do_chown_chmod target
-        do_chown_chmod = (target) =>
-          @system.chown
-            target: target
-            uid: options.uid
-            gid: options.gid
-            if: options.uid? or options.gid?
-          @system.chmod
-            target: target
-            mode: options.mode
-            if: options.mode?
-          @then (err, status) ->
-            return callback err if err
-            modified = true if status
-            do_end()
-        do_end = ->
-          options.log message: "File #{source} copied", level: 'DEBUG', module: 'nikita/lib/system/copy'
-          callback null, modified
+        misc.file.compare options.ssh, [options.source, options.target], (err, md5) ->
+          # Destination may not exists
+          return callback err if err and err.message.indexOf('Does not exist') isnt 0
+          # Files are the same, we can skip copying
+          return callback null, false if md5
+          options.log message: "Copy file from #{options.source} into #{options.target}", level: 'WARN', module: 'nikita/lib/system/copy'
+          misc.file.copyFile options.ssh, options.source, options.target, (err) ->
+            callback err, true
+      , (err, status) ->
+        options.log message: "File #{options.source} copied", level: 'DEBUG', module: 'nikita/lib/system/copy'
+
+File ownership and permissions
+
+      @call ->
+        @system.chown
+          target: options.target
+          uid: options.uid
+          gid: options.gid
+          if: options.uid? or options.gid?
+        @system.chmod
+          target: options.target
+          mode: options.mode
+          if: options.mode?
 
 ## Dependencies
 

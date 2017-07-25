@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* system.copy: refactor current source code #116
 * sysctl: handle empty line in merge
 * sysctl: hande equal sign in comment
 * ssh: allow root bootstraping if ssh is an object
