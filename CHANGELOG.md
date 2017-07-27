@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* progragation: fix multi level propagation
 * context: disable ssh auto connect if no_ssh is enabled
 * system.copy: honors uid, gid, mode or preserve ownership and permissions #117
 * system.copy: refactor current source code #116

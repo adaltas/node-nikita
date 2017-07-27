@@ -16,6 +16,8 @@ describe 'api propagation', ->
       options.my_global_option.should.be.equal 'value'
       @call (options) ->
         options.my_global_option.should.be.equal 'value'
+        @call (options) ->
+          options.my_global_option.should.be.equal 'value'
     .call ->
       delete context.propagation.my_global_option
     .promise()
@@ -30,6 +32,10 @@ describe 'api propagation', ->
       options.my_context_option.should.be.equal 'value'
       @call (options) ->
         options.my_context_option.should.be.equal 'value'
+        @call (options) ->
+          options.my_context_option.should.be.equal 'value'
+    .call ->
+      n.propagation.my_context_option.should.be.true()
     .promise()
   
   it 'dont propagate context options', ->
@@ -63,4 +69,21 @@ describe 'api propagation', ->
     n.aparent
       parent_param_propagated: true
       parent_param_unpropagated: true
+    .promise()
+  
+  it 'can be disabled in action', ->
+    n = nikita
+    n
+      propagation: a_key: true
+      a_key: 'a value'
+    .call (options) ->
+      options.a_key.should.eql 'a value'
+    .call a_key: null, (options) ->
+      (options.a_key is null).should.be.true()
+      @call (options) ->
+        (options.a_key is null).should.be.true()
+        @call (options) ->
+          (options.a_key is null).should.be.true()
+    .call (options) ->
+      options.a_key.should.eql 'a value'
     .promise()

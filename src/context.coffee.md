@@ -227,7 +227,11 @@
             obj.options.domain?.removeListener 'error', domain_on_error
           return
         org_options = options
+        parent_options = todos.options
+        for k, v of parent_options
+          org_options[k] = v if org_options[k] is undefined and k isnt 'log' and obj.propagation[k] is true
         options = enrich_options options
+        options.original = org_options
         if options.type is 'then'
           {err, status} = todos
           status = status.some (status) -> not status.shy and !!status.value
