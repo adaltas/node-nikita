@@ -242,7 +242,6 @@
           todos.final_err = err
           todos_reset todos
           options.handler?.call proxy, err, status
-          # run()
           unless err
           then options.deferred.resolve status
           else options.deferred.reject err
@@ -552,7 +551,7 @@
       Object.defineProperty obj.registry, 'unregister', get: -> (name, handler) ->
         reg.unregister arguments...
         proxy
-      proxy.ssh.open obj.options.ssh if obj.options.ssh and not obj.options.ssh.config
+      proxy.ssh.open obj.options.ssh if not obj.options.no_ssh and obj.options.ssh and not obj.options.ssh.config
       proxy
 
     module.exports.propagation = 
