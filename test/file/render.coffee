@@ -9,8 +9,10 @@ describe 'file.render', ->
 
   describe 'error', ->
 
-    it 'when source doesnt exist', ->
-      nikita.file.render
+    they 'when source doesnt exist', (ssh) ->
+      nikita
+        ssh: ssh
+      .file.render
         source: "oups"
         target: "#{scratch}/output"
         relax: true
@@ -20,8 +22,9 @@ describe 'file.render', ->
 
   describe 'nunjunks', ->
 
-    it 'use `content`', ->
+    they 'use `content`', (ssh) ->
       nikita
+        ssh: ssh
       .file.render
         engine: 'nunjunks'
         content: 'Hello {{ who }}'
@@ -34,38 +37,36 @@ describe 'file.render', ->
         content: 'Hello you'
       .promise()
 
-    it 'use `source`', ->
-      source = "#{scratch}/render.j2"
-      target = "#{scratch}/render.txt"
+    they 'use `source`', (ssh) ->
       nikita
+        ssh: ssh
       .file
-        target: source
+        target: "#{scratch}/source.j2"
         content: 'Hello {{ who }}'
       .file.render
-        source: source
-        target: target
+        source: "#{scratch}/source.j2"
+        target: "#{scratch}/target.txt"
         context: who: 'you'
       , (err, status) ->
         status.should.be.true() unless err
       .file.assert
-        target: target
+        target: "#{scratch}/target.txt"
         content: 'Hello you'
       .promise()
 
-    it 'test nikita type filters', ->
-      source = "#{scratch}/render.j2"
-      target = "#{scratch}/render.txt"
+    they 'test nikita type filters', (ssh) ->
       nikita
+        ssh: ssh
       .file
-        target: source
+        target: "#{scratch}/source.j2"
         content: """
         {% if randArray | isArray and randObject | isObject and not randArray | isObject %}
         Hello{% endif %}
         {% if who | isString and not anInt | isString %}{{ who }}{% endif %}
         """
       .file.render
-        source: source
-        target: target
+        source: "#{scratch}/source.j2"
+        target: "#{scratch}/target.txt"
         context:
           randArray: [1, 2]
           randObject: toto: 0
@@ -74,16 +75,15 @@ describe 'file.render', ->
       , (err, status) ->
         status.should.be.true() unless err
       .file.assert
-        target: target
+        target: "#{scratch}/target.txt"
         content: '\nHello\nworld'
       .promise()
 
-    it 'test nikita isEmpty filter', ->
-      source = "#{scratch}/render.j2"
-      target = "#{scratch}/render.txt"
+    they 'test nikita isEmpty filter', (ssh) ->
       nikita
+        ssh: ssh
       .file
-        target: source
+        target: "#{scratch}/source.j2"
         content: """
         {% if fake | isEmpty and emptyArray | isEmpty and not fullArray | isEmpty
         and emptyObject | isEmpty and not fullObject | isEmpty and emptyString | isEmpty and not fullString | isEmpty %}
@@ -91,8 +91,8 @@ describe 'file.render', ->
         {% endif %}
         """
       .file.render
-        source: source
-        target: target
+        source: "#{scratch}/source.j2"
+        target: "#{scratch}/target.txt"
         context:
           emptyArray: []
           fullArray: [0]
@@ -103,20 +103,19 @@ describe 'file.render', ->
       , (err, status) ->
         status.should.be.true() unless err
       .file.assert
-        target: target
+        target: "#{scratch}/target.txt"
         content: '\nsucceed\n'
       .promise()
 
-    it 'test personal filter', ->
-      source = "#{scratch}/render.j2"
-      target = "#{scratch}/render.txt"
+    they 'test personal filter', (ssh) ->
       nikita
+        ssh: ssh
       .file
-        target: source
+        target: "#{scratch}/source.j2"
         content: 'Hello {% if who | isString %}{{ who }} {% endif %}{% if anInt | isNum %}{{ anInt }} {% endif %}{% if arr | contains("toto") %}ok{% endif %}'
       .file.render
-        source: source
-        target: target
+        source: "#{scratch}/source.j2"
+        target: "#{scratch}/target.txt"
         context:
           who: 'you'
           anInt: 42
@@ -125,20 +124,19 @@ describe 'file.render', ->
       , (err, status) ->
         status.should.be.true() unless err
       .file.assert
-        target: target
+        target: "#{scratch}/target.txt"
         content: 'Hello you 42 ok'
       .promise()
 
-    it 'check autoescaping (disabled)', ->
-      source = "#{scratch}/render.j2"
-      target = "#{scratch}/render.txt"
+    they 'check autoescaping (disabled)', (ssh) ->
       nikita
+        ssh: ssh
       .file
-        target: source
+        target: "#{scratch}/source.j2"
         content: 'Hello "{{ who }}" \'{{ anInt }}\''
       .file.render
-        source: source
-        target: target
+        source: "#{scratch}/source.j2"
+        target: "#{scratch}/target.txt"
         context:
           who: 'you'
           anInt: 42
@@ -146,14 +144,15 @@ describe 'file.render', ->
       , (err, status) ->
         status.should.be.true() unless err
       .file.assert
-        target: target
+        target: "#{scratch}/target.txt"
         content: 'Hello "you" \'42\''
       .promise()
 
   describe 'eco', ->
 
-    it 'should use `content`', ->
+    they 'should use `content`', (ssh) ->
       nikita
+        ssh: ssh
       .file.render
         engine: 'eco'
         content: 'Hello <%- @who %>'
@@ -166,8 +165,9 @@ describe 'file.render', ->
         content: 'Hello you'
       .promise()
 
-    it 'detect `source`', ->
+    they 'detect `source`', (ssh) ->
       nikita
+        ssh: ssh
       .file.render
         source: "#{__dirname}/../resources/render.eco"
         target: "#{scratch}/render.eco"
@@ -179,8 +179,9 @@ describe 'file.render', ->
         content: 'Hello you'
       .promise()
 
-    it 'skip empty lines', ->
+    they 'skip empty lines', (ssh) ->
       nikita
+        ssh: ssh
       .file.render
         engine: 'eco'
         content: "Hello\n\n\n<%- @who %>"
@@ -211,9 +212,10 @@ describe 'file.render', ->
         status.should.be.false()
       .promise()
 
-    it 'detect extention and accept target as a callback', ->
+    they 'detect extention and accept target as a callback', (ssh) ->
       content = null
       nikita
+        ssh: ssh
       .file.render
         source: "#{__dirname}/../resources/render.eco"
         target: (c) -> content = c
@@ -222,8 +224,9 @@ describe 'file.render', ->
         content.should.eql 'Hello you'
       .promise()
 
-    it 'when syntax is incorrect', ->
+    they 'when syntax is incorrect', (ssh) ->
       nikita
+        ssh: ssh
       .file.render
         content: '<%- @host ->'
         engine: 'eco'
