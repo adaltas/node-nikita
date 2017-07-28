@@ -168,6 +168,10 @@ functions share a common API with flexible options.
         backup: 'nikita/tools/backup'
         compress: 'nikita/tools/compress'
         extract: 'nikita/tools/extract'
+        rubygems:
+          'fetch': 'nikita/tools/rubygems/fetch'
+          'install': 'nikita/tools/rubygems/install'
+          'remove': 'nikita/tools/rubygems/remove'
         iptables: 'nikita/tools/iptables'
         git: 'nikita/tools/git'
         repo: 'nikita/tools/repo'

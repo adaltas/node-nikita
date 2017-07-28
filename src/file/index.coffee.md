@@ -61,8 +61,8 @@ Write a file or a portion of an existing file.
 
 * `err`   
   Error object if any.   
-* `modified`   
-  Number of written actions with modifications.   
+* `status`   
+  Indicate file modifications.   
 
 ## Implementation details
 
