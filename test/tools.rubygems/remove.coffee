@@ -5,15 +5,18 @@ test = require '../test'
 
 describe 'tools.gem.remove', ->
 
+  config = test.config()
+  return if config.disable_tools_rubygems
   scratch = test.scratch @
 
   they 'remove an existing package', (ssh) ->
     nikita
       ssh: ssh
+      ruby: config.ruby
     .tools.rubygems.install
-      name: 'json'
+      name: 'execjs'
     .tools.rubygems.remove
-      name: 'json'
+      name: 'execjs'
     , (err, status) ->
       status.should.be.true() unless err
     .promise()
@@ -21,12 +24,13 @@ describe 'tools.gem.remove', ->
   they 'remove a non existing package', (ssh) ->
     nikita
       ssh: ssh
+      ruby: config.ruby
     .tools.rubygems.install
-      name: 'json'
+      name: 'execjs'
     .tools.rubygems.remove
-      name: 'json'
+      name: 'execjs'
     .tools.rubygems.remove
-      name: 'json'
+      name: 'execjs'
     , (err, status) ->
       status.should.be.false() unless err
     .promise()
@@ -34,18 +38,19 @@ describe 'tools.gem.remove', ->
   they 'remove multiple versions', (ssh) ->
     nikita
       ssh: ssh
+      ruby: config.ruby
     .tools.rubygems.install
-      name: 'json'
-      version: '2.0.0'
+      name: 'execjs'
+      version: '2.6.0'
     .tools.rubygems.install
-      name: 'json'
-      version: '2.1.0'
+      name: 'execjs'
+      version: '2.7.0'
     .tools.rubygems.remove
-      name: 'json'
+      name: 'execjs'
     , (err, status) ->
       status.should.be.true() unless err
     .tools.rubygems.remove
-      name: 'json'
+      name: 'execjs'
     , (err, status) ->
       status.should.be.false() unless err
     .promise()

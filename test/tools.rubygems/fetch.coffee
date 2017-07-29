@@ -5,35 +5,39 @@ test = require '../test'
 
 describe 'tools.gem.fetch', ->
 
+  config = test.config()
+  return if config.disable_tools_rubygems
   scratch = test.scratch @
 
   they 'with a version', (ssh) ->
     nikita
       ssh: ssh
+      ruby: config.ruby
     .tools.rubygems.fetch
-      name: 'json'
-      version: '2.1.0'
+      name: 'execjs'
+      version: '2.7.0'
       cwd: "#{scratch}"
     , (err, status, filename, filepath) ->
       throw err if err
       status.should.be.true()
-      filename.should.eql "json-2.1.0.gem"
-      filepath.should.eql "#{scratch}/json-2.1.0.gem"
+      filename.should.eql "execjs-2.7.0.gem"
+      filepath.should.eql "#{scratch}/execjs-2.7.0.gem"
     .file.assert
-      target: "#{scratch}/json-2.1.0.gem"
+      target: "#{scratch}/execjs-2.7.0.gem"
     .promise()
 
   they 'without a version', (ssh) ->
     nikita
       ssh: ssh
+      ruby: config.ruby
     .tools.rubygems.fetch
-      name: 'json'
+      name: 'execjs'
       cwd: "#{scratch}"
     , (err, status, filename, filepath) ->
       throw err if err
       status.should.be.true()
-      filename.should.eql "json-2.1.0.gem"
-      filepath.should.eql "#{scratch}/json-2.1.0.gem"
+      filename.should.eql "execjs-2.7.0.gem"
+      filepath.should.eql "#{scratch}/execjs-2.7.0.gem"
     .file.assert
-      target: "#{scratch}/json-2.1.0.gem"
+      target: "#{scratch}/execjs-2.7.0.gem"
     .promise()

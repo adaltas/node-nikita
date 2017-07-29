@@ -22,6 +22,7 @@ module.exports =
   disable_system_tmpfs: true #can not be activated
   disable_system_user: false
   disable_tools_repo: true
+  disable_tools_rubygems: false
   disable_yum_conf: true
   docker: # eg `docker-machine create --driver virtualbox nikita || docker-machine start nikita`
     host: 'dind:2375'
@@ -40,6 +41,8 @@ module.exports =
     binddn: 'cn=Manager,dc=ryba'
     passwd: 'test'
     suffix_dn: 'ou=users,dc=ryba' # used by ldap_user
+  ruby:
+    gem_bin: '/usr/local/rvm/rubies/ruby-2.4.1/bin/gem'
   #ssh:
   #  host: '127.0.0.1'
   #  username: process.env.USER

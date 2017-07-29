@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* rubygem: improve test suport and resilience
 * rubygem: new fetch, install and remove actions
 * progragation: fix multi level propagation
 * context: disable ssh auto connect if no_ssh is enabled

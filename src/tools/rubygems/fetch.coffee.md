@@ -38,18 +38,27 @@ require('nikita')
 });
 ```
 
+## Implementation
+
+We do not support gem returning specification with binary strings because we
+couldn't find any suitable parser on NPM.
+
 ## Source code
 
     module.exports = (options, callback) ->
       options.log message: "Entering rubygem.fetch", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/fetch'
+      # Global Options
+      options.ruby ?= {}
+      options[k] ?= v for k, v of options.ruby
       options.gem_bin ?= 'gem'
       @system.execute
         unless: options.version
         cmd: """
-        gem specification json version -r | grep -v '^\\-\\-\\-' | sed 's/.*: \\(.*\\)$/\\1/'
+        #{options.gem_bin} specification #{options.name} version -r | grep '^version' | sed 's/.*: \\(.*\\)$/\\1/'
         """
         cwd: options.cwd
         shy: true
+        bash: options.bash
       , (err, status, stdout) ->
         throw err if err
         options.version = stdout.trim() if status
@@ -60,6 +69,7 @@ require('nikita')
           #{options.gem_bin} fetch #{options.name} -v #{options.version}
           """
           cwd: options.cwd
+          bash: options.bash
       @then (err, status) ->
         callback err, status, options.target, path.resolve options.cwd, options.target
 

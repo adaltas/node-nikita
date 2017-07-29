@@ -39,6 +39,9 @@ uninstall -i /usr/share/gems json"
 
     module.exports = (options) ->
       options.log message: "Entering rubygem.remove", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/remove'
+      # Global Options
+      options.ruby ?= {}
+      options[k] ?= v for k, v of options.ruby
       options.gem_bin ?= 'gem'
       version = if options.version then "-v #{options.version}" else '-a'
       gems = null
@@ -48,3 +51,4 @@ uninstall -i /usr/share/gems json"
         #{options.gem_bin} uninstall #{options.name} #{version}
         """
         code_skipped: 3
+        bash: options.bash

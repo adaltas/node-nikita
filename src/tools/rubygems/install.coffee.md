@@ -62,19 +62,23 @@ require('nikita')
 
     module.exports = (options) ->
       options.log message: "Entering rubygem.install", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/install'
+      # Global Options
+      options.ruby ?= {}
+      options[k] ?= v for k, v of options.ruby
       options.gem_bin ?= 'gem'
       options.gems ?= {}
       options.gems[options.name] ?= options.version if options.name
       current_gems = {}
       @system.execute
         cmd: """
-        gem list --versions
+        #{options.gem_bin} list --versions
         """
         shy: true
+        bash: options.bash
       , (err, _, stdout) ->
         for line in string.lines stdout
           continue if line.trim() is ''
-          [name, version] = line.match(/(.*?)(?:$| \(([\d\., ]+)\))/)[1..3]
+          [name, version] = line.match(/(.*?)(?:$| \((?:default:\s+)?([\d\., ]+)\))/)[1..3]
           current_gems[name] = version.split(', ')
       @call ->
         for name, version of options.gems
@@ -101,6 +105,7 @@ require('nikita')
               ].join ' '
             ).join '\n'
           code: [0, 2]
+          bash: options.bash
       
 ## Dependencies
 

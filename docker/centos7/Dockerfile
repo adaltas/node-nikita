@@ -53,7 +53,6 @@ RUN chmod +x /usr/local/bin/docker-compose
 
 # Ruby & Gem
 RUN yum install -y gcc ruby ruby-devel
-RUN gem uninstall -i /usr/share/gems json
 
 RUN yum clean all
 

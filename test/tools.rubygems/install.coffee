@@ -5,15 +5,18 @@ test = require '../test'
 
 describe 'tools.gem.install', ->
 
+  config = test.config()
+  return if config.disable_tools_rubygems
   scratch = test.scratch @
 
   they 'install a non existing package', (ssh) ->
     nikita
       ssh: ssh
+      ruby: config.ruby
     .tools.rubygems.remove
-      name: 'json'
+      name: 'execjs'
     .tools.rubygems.install
-      name: 'json'
+      name: 'execjs'
     , (err, status) ->
       status.should.be.true() unless err
     .promise()
@@ -21,12 +24,13 @@ describe 'tools.gem.install', ->
   they 'bypass existing package', (ssh) ->
     nikita
       ssh: ssh
+      ruby: config.ruby
     .tools.rubygems.remove
-      name: 'json'
+      name: 'execjs'
     .tools.rubygems.install
-      name: 'json'
+      name: 'execjs'
     .tools.rubygems.install
-      name: 'json'
+      name: 'execjs'
     , (err, status) ->
       status.should.be.false() unless err
     .promise()
@@ -34,24 +38,25 @@ describe 'tools.gem.install', ->
   they 'install multiple versions', (ssh) ->
     nikita
       ssh: ssh
+      ruby: config.ruby
     .tools.rubygems.remove
-      name: 'json'
+      name: 'execjs'
     .tools.rubygems.install
-      name: 'json'
-      version: '2.0.0'
+      name: 'execjs'
+      version: '2.6.0'
     .tools.rubygems.install
-      name: 'json'
-      version: '2.1.0'
+      name: 'execjs'
+      version: '2.7.0'
     , (err, status) ->
       status.should.be.true() unless err
     .tools.rubygems.install
-      name: 'json'
-      version: '2.0.0'
+      name: 'execjs'
+      version: '2.6.0'
     , (err, status) ->
       status.should.be.false() unless err
     .tools.rubygems.install
-      name: 'json'
-      version: '2.1.0'
+      name: 'execjs'
+      version: '2.7.0'
     , (err, status) ->
       status.should.be.false() unless err
     .promise()
@@ -59,20 +64,21 @@ describe 'tools.gem.install', ->
   they 'local gem', (ssh) ->
     nikita
       ssh: ssh
+      ruby: config.ruby
     .tools.rubygems.remove
-      name: 'json'
+      name: 'execjs'
     .tools.rubygems.fetch
-      name: 'json'
-      version: '2.1.0'
+      name: 'execjs'
+      version: '2.7.0'
       cwd: "#{scratch}"
     .tools.rubygems.install
-      name: 'json'
-      source: "#{scratch}/json-2.1.0.gem"
+      name: 'execjs'
+      source: "#{scratch}/execjs-2.7.0.gem"
     , (err, status) ->
       status.should.be.true() unless err
     .tools.rubygems.install
-      name: 'json'
-      version: '2.1.0'
+      name: 'execjs'
+      version: '2.7.0'
     , (err, status) ->
       status.should.be.false() unless err
     .promise()
