@@ -61,7 +61,7 @@ describe 'tools.gem.install', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'local gem', (ssh) ->
+  they 'local gem from file', (ssh) ->
     nikita
       ssh: ssh
       ruby: config.ruby
@@ -76,6 +76,33 @@ describe 'tools.gem.install', ->
       source: "#{scratch}/execjs-2.7.0.gem"
     , (err, status) ->
       status.should.be.true() unless err
+    .tools.rubygems.install
+      name: 'execjs'
+      version: '2.7.0'
+    , (err, status) ->
+      status.should.be.false() unless err
+    .promise()
+
+  they 'local gem from glob', (ssh) ->
+    nikita
+      ssh: ssh
+      ruby: config.ruby
+    .tools.rubygems.remove
+      name: 'execjs'
+    .tools.rubygems.fetch
+      name: 'execjs'
+      version: '2.7.0'
+      cwd: "#{scratch}"
+    .tools.rubygems.install
+      name: 'execjs'
+      source: "#{scratch}/*.gem"
+    , (err, status) ->
+      status.should.be.true() unless err
+    .tools.rubygems.install
+      name: 'execjs'
+      source: "#{scratch}/*.gem"
+    , (err, status) ->
+      status.should.be.false() unless err
     .tools.rubygems.install
       name: 'execjs'
       version: '2.7.0'

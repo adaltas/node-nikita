@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* rubygem: source support glob expression
 * rubygem: improve test suport and resilience
 * rubygem: new fetch, install and remove actions
 * progragation: fix multi level propagation
