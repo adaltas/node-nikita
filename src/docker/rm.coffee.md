@@ -7,26 +7,34 @@ force options is set.
 ## Options
 
 * `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.   
+  Whether to use boot2docker or not, default to false.
 * `container` (string)   
-  Name/ID of the container. __Mandatory__   
+  Name/ID of the container, required.
 * `machine` (string)   
-  Name of the docker-machine. __Mandatory__ if docker-machine installed   
+  Name of the docker-machine, required if docker-machine installed.
 * `link` (boolean)   
-  Remove the specified link   
+  Remove the specified link.
 * `volumes` (boolean)   
-  Remove the volumes associated with the container   
+  Remove the volumes associated with the container.
 * `force` (boolean)   
-  Force the removal of a running container (uses SIGKILL)   
+  Force the removal of a running container (uses SIGKILL).
 
 ## Callback parameters
 
 * `err`   
-  Error object if any.   
-* `executed`   
-  if command was executed   
+  Error object if any.
+* `status`   
+  True if container was removed.
 
 ## Example Code
+
+```javascript
+nikita.docker.rm({
+  container: 'toto'
+}, function(err, status){
+  console.log( err ? err.message : 'Container removed: ' + status);
+})
+```
 
 ## Source Code
 

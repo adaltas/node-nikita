@@ -17,13 +17,13 @@ Pull a container
 ## Callback parameters
 
 * `err`   
-  Error object if any.   
-* `executed`   
-  if command was executed   
+  Error object if any.
+* `status`   
+  True if container was pulled.
 * `stdout`   
-  Stdout value(s) unless `stdout` option is provided.   
+  Stdout value(s) unless `stdout` option is provided.
 * `stderr`   
-  Stderr value(s) unless `stderr` option is provided.   
+  Stderr value(s) unless `stderr` option is provided.
 
 ## Example
 
@@ -32,14 +32,8 @@ Pull a container
 ```javascript
 nikita.docker_pull({
   tag: 'postgres'
-}, function(err, is_true, stdout, stderr){
-  if(err){
-    console.log(err.message);
-  }else if(is_true){
-    console.log('OK!');
-  }else{
-    console.log('Ooops!');
-  }
+}, function(err, status, stdout, stderr){
+  console.log( err ? err.message : 'Container pulled: ' + status);
 })
 ```
 

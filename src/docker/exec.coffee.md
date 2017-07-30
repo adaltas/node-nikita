@@ -6,27 +6,27 @@ Run a command in a running container
 ## Options
 
 * `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.   
+  Whether to use boot2docker or not, default to false.
 * `container` (string)   
-  Name/ID of the container. __Mandatory__   
+  Name/ID of the container, required.
 * `code_skipped` (int | array)   
-  The exit code(s) to skip.   
+  The exit code(s) to skip.
 * `machine` (string)   
-  Name of the docker-machine. __Mandatory__ if using docker-machine.   
+  Name of the docker-machine, required using docker-machine.
 * `service` (boolean)   
-  if true, run container as a service, else run as a command, true by default.   
+  if true, run container as a service, else run as a command, true by default.
 * `uid` (name | uid)   
-  Username or uid.   
+  Username or uid.
 * `gid` (name | gid)   
-  Groupname or gid.   
+  Groupname or gid.
 
 
 ## Callback parameters
 
 * `err`   
   Error object if any.   
-* `executed`   
-  if command was executed   
+* `status`   
+  True if command was executed in container.
 * `stdout`   
   Stdout value(s) unless `stdout` option is provided.   
 * `stderr`   
@@ -36,18 +36,12 @@ Run a command in a running container
 
 ```javascript
 nikita.docker({
-  ssh: ssh
-  container: 'myContainer'
+  ssh: ssh,
+  container: 'myContainer',
   cmd: '/bin/bash -c "echo toto"'
-}, function(err, is_true, stdout, stderr){
-  if(err){
-    console.log(err.message);
-  }else if(is_true){
-    console.log('OK!');
-  }else{
-    console.log('Ooops!');
-  }
-})
+}, function(err, status, stdout, stderr){
+  console.log( err ? err.message : 'Command executed: ' + status);
+});
 ```
 
 ## Source Code

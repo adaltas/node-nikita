@@ -3,6 +3,7 @@
 
 Run a container in a service mode. This module is just a wrapper for docker.run
 with correct options.
+
 Indeed, in a service mode, the container must be detached and NOT removed by default
 after execution. 
 

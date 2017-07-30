@@ -1,23 +1,23 @@
 
 # `nikita.docker.unpause(options, [callback])`
 
-Unpause all processes within a container
+Unpause all processes within a container.
 
 ## Options
 
 * `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.   
+  Whether to use boot2docker or not, default to false.
 * `container` (string)   
-  Name/ID of the container. __Mandatory__   
+  Name/ID of the container, required.
 * `machine` (string)   
-  Name of the docker-machine. __Mandatory__ if using docker-machine   
+  Name of the docker-machine, required if using docker-machine.
 
 ## Callback parameters
 
 * `err`   
-  Error object if any.   
-* `executed`   
-  if command was executed   
+  Error object if any.
+* `status`   
+  True if container was unpaused.
 
 ## Example
 
@@ -25,13 +25,7 @@ Unpause all processes within a container
 nikita.docker.pause({
   container: 'toto'
 }, function(err, is_true){
-  if(err){
-    console.log(err.message);
-  }else if(is_true){
-    console.log('OK!');
-  }else{
-    console.log('Ooops!');
-  }
+  console.log( err ? err.message : 'Container was unpaused: ' + status);
 })
 ```
 

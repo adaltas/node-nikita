@@ -6,32 +6,32 @@ Return the checksum of repository:tag, if it exists. Function not native to dock
 ## Options
 
 * `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.   
+  Whether to use boot2docker or not, default to false.
 * `cwd` (string)   
-  change the working directory for the build.   
+  change the working directory for the build.
 * `image` (string)   
-  Name of the image, required.   
+  Name of the image, required.
 * `repository` (string)   
-  Alias of image.   
+  Alias of image.
 * `machine` (string)   
-  Name of the docker-machine, required if using docker-machine.   
+  Name of the docker-machine, required if using docker-machine.
 * `tag` (string)   
-  Tag of the image, default to latest.   
+  Tag of the image, default to latest.
 
 ## Callback parameters
 
 * `err`   
-  Error object if any.   
+  Error object if any.
 * `status`   
-  True if command was executed.   
+  True if command was executed.
 * `checksum`   
-  Image cheksum if it exist, false otherwise.   
+  Image cheksum if it exist, false otherwise.
 
 ## Source Code
 
     module.exports = (options, callback) ->
       options.log message: "Entering Docker checksum", level: 'DEBUG', module: 'nikita/lib/docker/checksum'
-      # Validate parameters and __Mandatory__ conditions
+      # Validation
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
       options.image ?= options.repository

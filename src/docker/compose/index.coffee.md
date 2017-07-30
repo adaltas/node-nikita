@@ -9,7 +9,7 @@ Create and start containers according to a docker-compose file
 *   `boot2docker` (boolean)   
     Whether to use boot2docker or not, default to false.   
 *   `machine` (string)   
-    Name of the docker-machine. __Mandatory__ if using docker-machine   
+    Name of the docker-machine, required if using docker-machine   
 *   `content` (string)   
     The content of the docker-compose.yml to write if not exist.   
 *   `eof` (string)   
@@ -24,7 +24,7 @@ Create and start containers according to a docker-compose file
 *   `services` (string|array)
     Specify specific services to create.
 *   `target` (string)   
-    The docker-compose.yml absolute's file's path. Mandatory if no content is 
+    The docker-compose.yml absolute's file's path, required if no content is 
     specified.   
 *   `code` (int|array)   
     Expected code(s) returned by the command, int or array of int, default to 0.   

@@ -8,35 +8,29 @@ Pause all processes within a container
 * `boot2docker` (boolean)   
   Whether to use boot2docker or not, default to false.   
 * `container` (string)   
-  Name/ID of the container. __Mandatory__   
+  Name/ID of the container, required.
 * `machine` (string)   
-  Name of the docker-machine. __Mandatory__ if using docker-machine   
+  Name of the docker-machine, required.
 * `code` (int|array)   
-  Expected code(s) returned by the command, int or array of int, default to 0.   
+  Expected code(s) returned by the command, int or array of int, default to 0.
 * `code_skipped`   
   Expected code(s) returned by the command if it has no effect, executed will
-  not be incremented, int or array of int.   
+  not be incremented, int or array of int.
 
 ## Callback parameters
 
 * `err`   
-  Error object if any.   
-* `executed`   
-  if command was executed   
+  Error object if any.
+* `status`   
+  True if container was pulled.
 
 ## Example
 
 ```javascript
 nikita.docker.pause({
   container: 'toto'
-}, function(err, is_true){
-  if(err){
-    console.log(err.message);
-  }else if(is_true){
-    console.log('OK!');
-  }else{
-    console.log('Ooops!');
-  }
+}, function(err, status){
+  console.log( err ? err.message : 'Container paused: ' + status);
 })
 ```
 

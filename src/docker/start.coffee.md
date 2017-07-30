@@ -1,34 +1,34 @@
 
 # `nikita.docker.restart(options, [callback])`
 
-Restart containers
+Start a container.
 
 ## Options
 
-*   `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.   
-*   `container` (string)   
-  Name/ID of the container. __Mandatory__   
-*   `machine` (string)   
-  Name of the docker-machine. __Mandatory__ if using docker-machine   
-*   `attach` (boolean)   
-  attach STDOUT/STDERR. False by default   
-*   `code` (int|array)   
-  Expected code(s) returned by the command, int or array of int, default to 0.   
-*   `code_skipped`   
-  Expected code(s) returned by the command if it has no effect, executed will   
-  not be incremented, int or array of int.   
+* `boot2docker` (boolean)   
+  Whether to use boot2docker or not, default to false.
+* `container` (string)   
+  Name/ID of the container, required.
+* `machine` (string)   
+  Name of the docker-machine, required if using docker-machine.
+* `attach` (boolean)   
+  attach STDOUT/STDERR, default to false.
+* `code` (int|array)   
+  Expected code(s) returned by the command, int or array of int, default to 0.
+* `code_skipped`   
+  Expected code(s) returned by the command if it has no effect, executed will
+  not be incremented, int or array of int.
 
 ## Callback parameters
 
-*   `err`   
-  Error object if any.   
-*   `executed`   
-  if command was executed   
-*   `stdout`   
-  Stdout value(s) unless `stdout` option is provided.   
-*   `stderr`   
-  Stderr value(s) unless `stderr` option is provided.   
+* `err`   
+  Error object if any.
+* `status`   
+  True unless container was already started.
+* `stdout`   
+  Stdout value(s) unless `stdout` option is provided.
+* `stderr`   
+  Stderr value(s) unless `stderr` option is provided.
 
 ## Example
 
@@ -39,13 +39,7 @@ nikita.docker.start({
   container: 'toto',
   attach: true
 }, function(err, is_true, stdout, stderr){
-  if(err){
-    console.log(err.message);
-  }else if(is_true){
-    console.log('OK!');
-  }else{
-    console.log('Ooops!');
-  }
+  console.log( err ? err.message : 'Container state changed to started: ' + status);
 })
 ```
 

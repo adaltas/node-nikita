@@ -3,6 +3,8 @@
 
 ## Trunk
 
+* docker: doc cleanup #119
+* misc: merge support null as first argument
 * rubygem: source support glob expression
 * rubygem: improve test suport and resilience
 * rubygem: new fetch, install and remove actions

@@ -1,16 +1,16 @@
 
 # `nikita.docker.start(options, [callback])`
 
-Start stopped containers. Or stop/starts started container
+Start stopped containers or restart (stop + starts) a started container.
 
 ## Options
 
 * `boot2docker` (boolean)   
   Whether to use boot2docker or not, default to false.   
 * `container` (string)   
-  Name/ID of the container. __Mandatory__   
+  Name/ID of the container, required.   
 * `machine` (string)   
-  Name of the docker-machine. __Mandatory__ if using docker-machine   
+  Name of the docker-machine, required if using docker-machine   
 * `timeout` (int)   
   Seconds to wait for stop before killing it   
 * `code` (int|array)   
@@ -23,22 +23,16 @@ Start stopped containers. Or stop/starts started container
 
 * `err`   
   Error object if any.   
-* `executed`   
-  if command was executed   
+* `status`   
+  True if container was restarted.  
 
 ## Example
 
 ```javascript
 nikita.docker.restart({
   container: 'toto'
-}, function(err, is_true){
-  if(err){
-    console.log(err.message);
-  }else if(is_true){
-    console.log('OK!');
-  }else{
-    console.log('Ooops!');
-  }
+}, function(err, status){
+  console.log( err ? err.message : 'Container restarted: ' + status);
 })
 ```
 

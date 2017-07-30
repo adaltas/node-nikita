@@ -1,28 +1,28 @@
 
 # `nikita.docker.wait(options, [callback])`
 
-Block until a container stops
+Block until a container stops.
 
 ## Options
 
 * `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.   
+  Whether to use boot2docker or not, default to false.
 * `container` (string)   
-  Name/ID of the container. __Mandatory__   
+  Name/ID of the container, optional.
 * `machine` (string)   
-  Name of the docker-machine. __Mandatory__ if using docker-machine   
+  Name of the docker-machine, optional if using docker-machine.
 * `code` (int|array)   
-  Expected code(s) returned by the command, int or array of int, default to 0.   
+  Expected code(s) returned by the command, int or array of int, default to 0.
 * `code_skipped`   
   Expected code(s) returned by the command if it has no effect, executed will
-  not be incremented, int or array of int.   
+  not be incremented, int or array of int.
 
 ## Callback parameters
 
 * `err`   
   Error object if any.   
-* `executed`   
-  if command was executed   
+* `status`   
+  True unless container was already stopped.
 
 ## Example
 
@@ -30,13 +30,7 @@ Block until a container stops
 nikita.docker.wait({
   container: 'toto'
 }, function(err, is_true){
-  if(err){
-    console.log(err.message);
-  }else if(is_true){
-    console.log('OK!');
-  }else{
-    console.log('Ooops!');
-  }
+  console.log( err ? err.message : 'Volume removed: ' + status);
 })
 ```
 

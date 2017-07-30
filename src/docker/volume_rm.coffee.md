@@ -6,21 +6,28 @@ Remove a volume.
 ## Options
 
 * `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.   
-* `container` (string|array). __Mandatory__   
-  Name or Id of the container.   
+  Whether to use boot2docker or not, default to false.
+* `container` (string|array).   
+  Name or Id of the container, required.   
 * `machine` (string)   
-  Name of the docker-machine. __Mandatory__ if using docker-machine.   
+  Name of the docker-machine, required if using docker-machine.
 * `name` (string)   
-  Specify volume name.   
+  Specify volume name.
+
+## Callback parameters
+
+* `err`   
+  Error object if any.
+* `status`   
+  True is volume was removed.
 
 ## Example
 
 ```javascript
 nikita.docker.volume_rm({
   name: 'my_volume'
-}, function(err, removed){
-  console.log(err or 'Status'+removed);
+}, function(err, status){
+  console.log( err ? err.message : 'Volume removed: ' + status);
 })
 ```
 

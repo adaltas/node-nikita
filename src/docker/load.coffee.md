@@ -1,32 +1,32 @@
 
 # `nikita.docker.load(options, [callback])`
 
-Load Docker images
+Load Docker images.
 
 ## Options
 
 * `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.   
+  Whether to use boot2docker or not, default to false.
 * `machine` (string)   
-  Name of the docker-machine. __Mandatory__ if using docker-machine   
+  Name of the docker-machine, required if using docker-machine.
 * `input` (string)   
-  TAR archive file to read from   
+  TAR archive file to read from.
 * `source` (string)   
-  Alias for the "input" option.   
+  Alias for the "input" option.
 * `checksum` (string)   
-  If provided, will check if attached input archive to checksum already exist.   
-  Not native to docker. But implemented to get better performance.   
+  If provided, will check if attached input archive to checksum already exist,
+  not native to docker but implemented to get better performance.
 
 ## Callback parameters
 
 * `err`   
-  Error object if any.   
-* `executed`   
-  if command was executed   
+  Error object if any.
+* `status`   
+  True if container was loaded.
 * `stdout`   
-  Stdout value(s) unless `stdout` option is provided.   
+  Stdout value(s) unless `stdout` option is provided.
 * `stderr`   
-  Stderr value(s) unless `stderr` option is provided.   
+  Stderr value(s) unless `stderr` option is provided.
 
 ## Example
 
@@ -35,14 +35,8 @@ nikita.docker.load({
   image: 'nikita/load_test:latest',
   machine: machine,
   source: source + "/nikita_load.tar"
-}, function(err, loaded, stdout, stderr) {
-  if(err){
-    console.log(err.message);
-  }else if(is_true){
-    console.log('OK!');
-  }else{
-    console.log('Ooops!');
-  }
+}, function(err, status, stdout, stderr) {
+  console.log( err ? err.message : 'Container loaded: ' + status);
 })
 ```
 

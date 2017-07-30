@@ -1,38 +1,38 @@
 
 # `nikita.docker.save(options, [callback])`
 
-Save Docker images
+Save Docker images.
 
 ## Options
 
 * `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.   
+  Whether to use boot2docker or not, default to false.
 * `image` (string)   
-  Name/ID of base image. __Mandatory__   
+  Name/ID of base image, required.
 * `tag` (string)   
-  Tag of the image   
+  Tag of the image.
 * `machine` (string)   
-  Name of the docker-machine. __Mandatory__ if using docker-machine   
-* `output` (string). __Mandatory__   
-  TAR archive output path   
-* `target` (string). __Mandatory__   
-  Shortcut for "output" option.   
+  Name of the docker-machine, required if using docker-machine.
+* `output` (string).   
+  TAR archive output path, required.
+* `target` (string).   
+  Shortcut for "output" option, required.
 * `code` (int | array)   
-  Expected code(s) returned by the command, int or array of int, default to 0.   
+  Expected code(s) returned by the command, int or array of int, default to 0.
 * `code_skipped`   
-  Expected code(s) returned by the command if it has no effect, executed will   
-  not be incremented, int or array of int.   
+  Expected code(s) returned by the command if it has no effect, executed will
+  not be incremented, int or array of int.
 
 ## Callback parameters
 
 * `err`   
-  Error object if any.   
-* `executed`   
-  if command was executed   
+  Error object if any.
+* `status`   
+  True if container was saved.
 * `stdout`   
-  Stdout value(s) unless `stdout` option is provided.   
+  Stdout value(s) unless `stdout` option is provided.
 * `stderr`   
-  Stderr value(s) unless `stderr` option is provided.   
+  Stderr value(s) unless `stderr` option is provided.
 
 ## Example
 
@@ -43,14 +43,8 @@ nikita.docker({
   image: 'test-image'
   compression: 'gzip'
   entrypoint: '/bin/true'
-}, function(err, is_true, stdout, stderr){
-  if(err){
-    console.log(err.message);
-  }else if(is_true){
-    console.log('OK!');
-  }else{
-    console.log('Ooops!');
-  }
+}, function(err, status, stdout, stderr){
+  console.log( err ? err.message : 'Container saved: ' + status);
 })
 ```
 

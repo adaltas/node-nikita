@@ -16,13 +16,13 @@ Note, stream are not yet supported.
 ## Options
 
 * `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.   
+  Whether to use boot2docker or not, default to false.
 * `machine` (string)   
-  Name of the docker-machine, required if using docker-machine or boot2docker.   
+  Name of the docker-machine, required if using docker-machine or boot2docker.
 * `source` (string)   
-  The path to upload or the container followed by the path to download.   
+  The path to upload or the container followed by the path to download.
 * `target` (string)   
-  The path to download or the container followed by the path to upload.   
+  The path to download or the container followed by the path to upload.
 
 ## Uploading a file
 
@@ -37,9 +37,11 @@ nikita.docker({
 
 ```javascript
 nikita.docker({
-  source: 'my_container:/path/to/source'
+  source: 'my_container:/path/to/source',
   target: writable_stream or '/path/to/target'
-}, function(err, status){})
+}, function(err, status){
+  console.log( err ? err.message : 'Container copied: ' + status);
+});
 ```
 
 ## Source Code
@@ -92,7 +94,6 @@ nikita.docker({
 
 ## Modules Dependencies
 
-    # file = require('../misc').file
     path = require 'path'
     ssh2fs = require 'ssh2-fs'
     docker = require '../misc/docker'

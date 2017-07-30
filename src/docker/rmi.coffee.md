@@ -7,13 +7,20 @@ force options is set.
 ## Options
 
 * `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.   
+  Whether to use boot2docker or not, default to false.
 * `image` (string)   
-  Name of the image. __Mandatory__   
+  Name of the image, required.
 * `machine` (string)   
-  Name of the docker-machine. __Mandatory__ if docker-machine installed   
+  Name of the docker-machine, required if docker-machine installed.
 * `no_prune` (boolean)   
-  Do not delete untagged parents   
+  Do not delete untagged parents.
+
+## Callback parameters
+
+* `err`   
+  Error object if any.
+* `status`   
+  True if image was removed.
 
 ## Source Code
 

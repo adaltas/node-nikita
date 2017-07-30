@@ -1,25 +1,25 @@
 
 # `nikita.docker.stop(options, [callback])`
 
-Stop started containers
+Stop a started container.
 
 ## Options
 
 * `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.   
+  Whether to use boot2docker or not, default to false.
 * `container` (string)   
-  Name/ID of the container. __Mandatory__   
+  Name/ID of the container, required.
 * `machine` (string)   
-  Name of the docker-machine. __Mandatory__ if using docker-machine   
+  Name of the docker-machine, required if using docker-machine.
 * `timeout` (int)   
-  Seconds to wait for stop before killing it   
+  Seconds to wait for stop before killing it
 
 ## Callback parameters
 
 * `err`   
-  Error object if any.   
-* `executed`   
-  Wether the container was stoped or not.   
+  Error object if any.
+* `status`   
+  True unless container was already stopped.
 
 ## Example
 
@@ -27,13 +27,7 @@ Stop started containers
 nikita.docker.stop({
   container: 'toto'
 }, function(err, is_true){
-  if(err){
-    console.log(err.message);
-  }else if(is_true){
-    console.log('OK!');
-  }else{
-    console.log('Ooops!');
-  }
+  console.log( err ? err.message : 'Container state changed to stopped: ' + status);
 })
 ```
 

@@ -9,35 +9,29 @@ SIGNAL is not sent.
 ## Options
 
 * `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.   
+  Whether to use boot2docker or not, default to false.
 * `container` (string)   
-  Name/ID of the container. __Mandatory__   
+  Name/ID of the container, required.   
 * `machine` (string)   
-  Name of the docker-machine. __Mandatory__ if using docker-machine.   
+  Name of the docker-machine, required if using docker-machine.
 * `signal` (int|string)   
-  Use a specified signal. SIGKILL by default   
+  Use a specified signal. SIGKILL by default.
 
 ## Callback parameters
 
 * `err`   
-  Error object if any.   
-* `executed`   
-  if command was executed   
+  Error object if any.
+* `status`   
+  True if container was killed.
 
 ## Example
 
 ```javascript
 nikita.docker.kill({
-  container: 'toto'
+  container: 'toto',
   signal: 9
-}, function(err, is_true){
-  if(err){
-    console.log(err.message);
-  }else if(is_true){
-    console.log('OK!');
-  }else{
-    console.log('Ooops!');
-  }
+}, function(err, status){  
+  console.log( err ? err.message : 'Container killed: ' + status);
 })
 ```
 
