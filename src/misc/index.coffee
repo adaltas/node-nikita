@@ -156,6 +156,7 @@ misc = module.exports =
       inverse = !! target
       target = arguments[1]
       from = 2
+    target ?= {}
     # Handle case when target is a string or something (possible in deep copy)
     if typeof target isnt "object" and typeof target isnt 'function'
       target = {}
