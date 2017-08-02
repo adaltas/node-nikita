@@ -60,9 +60,9 @@ require('nikita').system.copy({
 Validate parameters.
 
       options.uid ?= false
-      options.uid = parseInt options.uid if typeof options.uid is 'int'
+      options.uid = parseInt options.uid if typeof options.uid is 'string' and not isNaN parseInt options.uid
       options.gid ?= false
-      options.gid = parseInt options.gid if typeof options.gid is 'int'
+      options.gid = parseInt options.gid if typeof options.gid is 'string' and not isNaN parseInt options.uid
       options.preserve ?= false
       throw Error 'Missing source' unless options.source
       throw Error 'Missing target' unless options.target

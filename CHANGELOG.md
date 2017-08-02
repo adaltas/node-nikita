@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* system.copy: better fix
 * system.copy: fixed parseInt
 * docker: doc cleanup #119
 * misc: merge support null as first argument
