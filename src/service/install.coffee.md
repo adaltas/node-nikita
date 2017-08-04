@@ -18,13 +18,13 @@ Install a service. Yum, Yaourt, Pacman and apt-get are supported.
   Cache a list of installed services. If an object, the service will be
   installed if a key of the same name exists; if anything else (default), no
   caching will take place.
+* `name` (string)   
+  Package name, required unless provided as main argument.
 * `outdated`   
   Cache a list of outdated services. If an object, the service will be updated
   if a key of the same name exists; If true, the option will be converted to
   an object with all the outdated service names as keys; if anything else
   (default), no caching will take place.
-* `name` (string)   
-  Package name, optional.
 * `rootdir` (string)   
   Path to the mount point corresponding to the root directory, required if
   the "arch_chroot" option is activated.
@@ -71,7 +71,7 @@ require('nikita').service.install({
         elif command -v apt-get >/dev/null 2>&1; then
           dpkg -l | grep \'^ii\' | awk \'{print $2}\'
         else
-          echo "Failed Package Installed" >&2
+          echo "Unsupported Package Manager" >&2
           exit 2
         fi
         """
@@ -82,7 +82,7 @@ require('nikita').service.install({
         stdout_log: false
         shy: true
       , (err, status, stdout) ->
-        throw Error "Failed Package Installed" if err?.code is 2
+        throw Error "Unsupported Package Manager" if err?.code is 2
         throw err if err
         return unless status
         options.log message: "Installed packages retrieved", level: 'INFO', module: 'nikita/lib/service/install'
@@ -99,7 +99,7 @@ require('nikita').service.install({
         elif command -v apt-get >/dev/null 2>&1; then
           apt-get -u upgrade --assume-no | grep '^\\s' | sed 's/\\s/\\n/g'
         else
-          echo "Failed Package Updates" >&2
+          echo "Unsupported Package Manager" >&2
           exit 2
         fi
         """
@@ -110,7 +110,7 @@ require('nikita').service.install({
         stdout_log: false
         shy: true
       , (err, status, stdout) ->
-        throw Error "Failed Package Updates" if err?.code is 2
+        throw Error "Unsupported Package Manager" if err?.code is 2
         throw err if err
         return options.outpdated = [] unless status
         options.log message: "Outpdated package list retrieved", level: 'INFO', module: 'nikita/lib/service/install'

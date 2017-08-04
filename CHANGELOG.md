@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* service: new assert action with installed, started and stopped options
 * system.copy: better fix
 * system.copy: fixed parseInt
 * docker: doc cleanup #119

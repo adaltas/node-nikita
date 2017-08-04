@@ -130,6 +130,7 @@ functions share a common API with flexible options.
         wait: '': 'nikita/connection/wait'
       service:
         '': 'nikita/service'
+        assert: 'nikita/service/assert'
         discover: 'nikita/service/discover'
         install: 'nikita/service/install'
         init: 'nikita/service/init'

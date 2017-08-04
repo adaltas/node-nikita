@@ -52,7 +52,7 @@ require('nikita').service.start([{
         elif command -v apt-get >/dev/null 2>&1; then
           dpkg -l | grep \'^ii\' | awk \'{print $2}\'
         else
-          echo "Failed Package Installed" >&2
+          echo "Unsupported Package Manager" >&2
           exit 2
         fi
         """
@@ -61,7 +61,7 @@ require('nikita').service.start([{
         shy: true
         unless: installed?
       , (err, status, stdout) ->
-        throw Error "Failed Package Installed" if err?.code is 2
+        throw Error "Unsupported Package Manager" if err?.code is 2
         throw err if err
         return unless status
         options.log message: "Installed packages retrieved", level: 'INFO', module: 'nikita/lib/service/remove'
