@@ -29,6 +29,7 @@ to "['start', 'restart']" to ensure the service will be always started.
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'
       options.srv_name ?= options.name
+      options.name = [options.name] if typeof options.name is 'string'
       # Validation
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
 
@@ -38,11 +39,11 @@ to "['start', 'restart']" to ensure the service will be always started.
         if: options.installed?
         cmd: """
         if command -v yum >/dev/null 2>&1; then
-          rpm -qa --qf "%{NAME}\n" | grep '^#{options.name}$'
+          rpm -qa --qf "%{NAME}\n" | grep '^#{options.name.join '|'}$'
         elif command -v pacman >/dev/null 2>&1; then
-          pacman -Qqe | grep '^#{options.name}$'
+          pacman -Qqe | grep '^#{options.name.join '|'}$'
         elif command -v apt-get >/dev/null 2>&1; then
-          dpkg -l | grep \'^ii\' | awk \'{print $2}\' | grep '^#{options.name}$'
+          dpkg -l | grep \'^ii\' | awk \'{print $2}\' | grep '^#{options.name.join '|'}$'
         else
           echo "Unsupported Package Manager" >&2
           exit 2

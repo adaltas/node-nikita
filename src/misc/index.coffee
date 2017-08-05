@@ -9,36 +9,9 @@ ini = require 'ini'
 tilde = require 'tilde-expansion'
 file = require './file'
 string = require './string'
+array = require './array'
 
 misc = module.exports = 
-  array:
-    flatten: (arr, ret) ->
-      ret ?= []
-      for i in [0 ... arr.length]
-        if Array.isArray arr[i]
-          misc.array.flatten arr[i], ret
-        else
-          ret.push arr[i]
-      ret
-    intersect: (array) ->
-      return [] if array is null
-      result = []
-      for item, i in array
-        continue if result.indexOf(item) isnt -1
-        for argument, j in arguments
-          break if argument.indexOf(item) is -1
-        result.push item if j is arguments.length
-      result
-    unique: (array) ->
-      o = {}
-      for el in array then o[el] = true
-      Object.keys o
-    merge: (arrays...) ->
-      r = []
-      for array in arrays
-        for el in array
-          r.push el
-      r
   regexp:
     # Escape RegExp related charracteres
     # eg `///^\*/\w+@#{misc.regexp.escape realm}\s+\*///mg`
@@ -60,7 +33,7 @@ misc = module.exports =
       unless keys
         keys1 = Object.keys obj1
         keys2 = Object.keys obj2
-        keys = misc.array.merge keys1, keys2, misc.array.unique keys1
+        keys = array.merge keys1, keys2, array.unique keys1
       diff = {}
       for k, v of obj1
         continue unless keys.indexOf(k) >= 0

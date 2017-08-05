@@ -2,6 +2,7 @@
 misc = require './index'
 string = require './string'
 jsesc = require 'jsesc'
+array = require '../misc/array'
 
 module.exports = iptables = 
   # add_properties: ['target', 'protocol', 'dport', 'in-interface', 'out-interface', 'source', 'target']
@@ -123,7 +124,7 @@ module.exports = iptables =
         delete newrule.before
       create = true
       # Get add properties present in new rule
-      add_properties = misc.array.intersect iptables.add_properties, Object.keys newrule
+      add_properties = array.intersect iptables.add_properties, Object.keys newrule
       for oldrule in oldrules
         continue if oldrule.chain isnt newrule.chain
         # Add properties are the same

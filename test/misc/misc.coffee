@@ -8,19 +8,6 @@ describe 'misc', ->
 
   scratch = test.scratch @
 
-  describe 'array', ->
-
-    it 'intersect', ->
-      misc.array.intersect(['a', 'c', 'd'], ['e', 'd', 'c']).should.eql ['c', 'd']
-      misc.array.intersect(['a', 'c', 'd'], []).should.eql []
-      misc.array.intersect([], ['e', 'd', 'c']).should.eql []
-
-    it 'unique', ->
-      misc.array.unique(['a', 'b', 'c', 'a']).should.eql ['a', 'b', 'c']
-
-    it 'merge', ->
-      misc.array.merge(['a', 'b'], ['c', 'a']).should.eql ['a', 'b', 'c', 'a']
-
   describe 'object', ->
 
     describe 'equals', ->

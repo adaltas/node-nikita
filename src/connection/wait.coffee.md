@@ -95,7 +95,7 @@ require 'nikita'
           [host, port] = options[k].split ':'
           options[k] = host: host, port: port
         options[k] = [options[k]] unless Array.isArray options[k]
-        options[k] = misc.array.flatten options[k]
+        options[k] = array.flatten options[k]
         for server in options[k]
           servers.push extract_servers(server)...
       unless servers.length
@@ -198,5 +198,4 @@ require 'nikita'
 
 ## Dependencies
 
-    each = require 'each'
-    misc = require '../misc'
+    array = require '../misc/array'

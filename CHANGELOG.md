@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* misc: isolate array functions
 * service: new assert action with installed, started and stopped options
 * system.copy: better fix
 * system.copy: fixed parseInt
