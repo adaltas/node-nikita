@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* options: rename wait to sleep
 * misc: isolate array functions
 * service: new assert action with installed, started and stopped options
 * system.copy: better fix

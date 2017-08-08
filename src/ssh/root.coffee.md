@@ -141,7 +141,7 @@ require('nikita')
             options.log message: data, type: 'stderr', module: 'nikita/lib/ssh/root'
           child.stderr.on 'end', (data) ->
             options.log message: null, type: 'stderr', module: 'nikita/lib/ssh/root'
-      @call retry: true, wait: 3000, if: (-> rebooting), (_, callback) ->
+      @call retry: true, sleep: 3000, if: (-> rebooting), (_, callback) ->
         connect options, (err, conn) =>
           return callback err if err
           conn.end()

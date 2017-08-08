@@ -3,7 +3,7 @@ nikita = require '../../src'
 test = require '../test'
 fs = require 'fs'
 
-describe 'options "wait"', ->
+describe 'options "sleep"', ->
 
   scratch = test.scratch @
   
@@ -21,7 +21,7 @@ describe 'options "wait"', ->
   it 'is set by user', ->
     times = []
     nikita
-    .call wait: 1, retry: 2, relax: true, (options) ->
+    .call sleep: 1, retry: 2, relax: true, (options) ->
       times.push Date.now()
       throw Error 'Catchme'
     .then (err) ->
@@ -29,18 +29,18 @@ describe 'options "wait"', ->
       ((times[1] - times[0]) / 1000 - 1).should.be.below 0.01
     .promise()
   
-  it 'ensure wait is a number', ->
+  it 'ensure sleep is a number', ->
     nikita
-    .call wait: 'a string', (->)
+    .call sleep: 'a string', (->)
     .then (err) ->
-      err.message.should.eql 'Invalid options wait, got "a string"'
+      err.message.should.eql 'Invalid options sleep, got "a string"'
     .promise()
   
-  it 'ensure wait equals or is greater than 0', ->
+  it 'ensure sleep equals or is greater than 0', ->
     nikita
-    .call wait: 0, (->)
-    .call wait: 1, (->)
-    .call wait: -1, (->)
+    .call sleep: 0, (->)
+    .call sleep: 1, (->)
+    .call sleep: -1, (->)
     .then (err) ->
-      err.message.should.eql 'Invalid options wait, got -1'
+      err.message.should.eql 'Invalid options sleep, got -1'
     .promise()

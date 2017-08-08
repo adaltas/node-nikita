@@ -121,11 +121,11 @@
           opts.once = ['handler'] if opts.once is true
           delete opts.once if opts.once is false
           opts.once = opts.once.sort() if Array.isArray opts.once
-          opts.wait ?= 3000 # Wait 3s between retry
+          opts.sleep ?= 3000 # Wait 3s between retry
           opts.retry ?= 0
           opts.disabled ?= false
           # Validation
-          jump_to_error Error "Invalid options wait, got #{JSON.stringify opts.wait}" unless typeof opts.wait is 'number' and opts.wait >= 0
+          jump_to_error Error "Invalid options sleep, got #{JSON.stringify opts.sleep}" unless typeof opts.sleep is 'number' and opts.sleep >= 0
         options
       enrich_options = (user_options) ->
         user_options.enriched = true
@@ -358,7 +358,7 @@
               options.log message: err.message, level: 'ERROR', index: index, module: 'nikita' if err
               if err and ( options.retry is true or options.attempt < options.retry - 1 )
                 options.log message: "Retry on error, attempt #{options.attempt+1}", level: 'WARN', index: index, module: 'nikita'
-                return setTimeout do_handler, options.wait
+                return setTimeout do_handler, options.sleep
               do_intercept_after arguments...
             options.handler ?= obj.registry.get(options.type)?.handler or registry.get(options.type)?.handler
             return handle_multiple_call Error "Unregistered Middleware: #{options.type.join('.')}" unless options.handler
@@ -573,7 +573,7 @@
       once: false
       relax: false
       shy: false
-      wait: false
+      sleep: false
 
 ## Helper functions
 
