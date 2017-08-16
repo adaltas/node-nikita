@@ -7,25 +7,28 @@ and trustores.
 ## Options
 
 * `name` (string)   
-  Name of the certificate, required if a certificate is provided.   
+  Name of the certificate, required if a certificate is provided.
 * `caname` (string)   
-  Name of the certificate authority (CA), required.   
+  Name of the certificate authority (CA), required.
 * `cacert` (string)   
-  Path to the certificate authority (CA), required.   
+  Path to the certificate authority (CA), required.
+* `local` (boolean)    
+  treat the source file (key, cert or cacert) as a local file present on the 
+  host, only apply with remote actions over SSH, default is "false".
 * `openssl` (string)   
-  Path to OpenSSl command line tool, default to "openssl".   
+  Path to OpenSSl command line tool, default to "openssl".
 * `parent` (boolean|object)   
   Create parent directory with provided options if an object or default 
-  system options if "true".   
+  system options if "true".
 * `storepass` (string)   
-  Password to manage the keystore.   
+  Password to manage the keystore.
 
 ## Callback parameters
 
 * `err` (object|null)   
-  Error object if any.   
+  Error object if any.
 * `status` (boolean)   
-  Indicates if the certificated was inserted.   
+  Indicates if the certificated was inserted.
 
 ## CA Cert Chains
 
@@ -35,21 +38,21 @@ alias value is "my-alias", the aliases will be "my-alias-0" then "my-alias-1"...
 
 ## Relevant Java properties
 
-* `javax.net.ssl.trustStore`   
-* `javax.net.ssl.trustStorePassword`   
-* `javax.net.ssl.keyStore`   
-* `javax.net.ssl.keyStoreType`   
-* `javax.net.ssl.keyStorePassword`   
+* `javax.net.ssl.trustStore`
+* `javax.net.ssl.trustStorePassword`
+* `javax.net.ssl.keyStore`
+* `javax.net.ssl.keyStoreType`
+* `javax.net.ssl.keyStorePassword`
 
 ## Relevant commands
 
-* View the content of a Java KeyStore (JKS) and Java TrustStore:
-  `keytool -list -v -keystore $keystore -storepass $storepass`
-  `keytool -list -v -keystore $keystore -storepass $storepass -alias $caname`
+* View the content of a Java KeyStore (JKS) and Java TrustStore:   
+  `keytool -list -v -keystore $keystore -storepass $storepass`   
+  `keytool -list -v -keystore $keystore -storepass $storepass -alias $caname`   
   Note, alias is optional and may reference a CA or a certificate
-* View the content of a ".pem" certificate:
-  `openssl x509 -in cert.pem -text`
-  `keytool -printcert -file certs.pem`
+* View the content of a ".pem" certificate:   
+  `openssl x509 -in cert.pem -text`   
+  `keytool -printcert -file certs.pem`   
 * Change the password of a keystore:   
   `keytool -storepasswd -keystore my.keystore`
 * Change the key's password:   
