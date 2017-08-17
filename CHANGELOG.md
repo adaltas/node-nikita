@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* connection: assert accept servers and server
 * options: rename wait to sleep
 * misc: isolate array functions
 * service: new assert action with installed, started and stopped options

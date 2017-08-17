@@ -9,23 +9,49 @@ describe 'connection.assert', ->
 
   scratch = test.scratch @
 
-  server = null
+  servers = []
 
-  beforeEach (next) ->
-    server = http.createServer (req, res) ->
-      res.writeHead 200, {'Content-Type': 'text/plain'}
-      res.end 'okay'
-    server.listen 12345, next
+  afterEach ->
+    server.close() for server in servers
+    servers = []
 
-  afterEach (next) ->
-    server.close next
-
-  they 'port is listening', (ssh) ->
+  they 'port and host', (ssh) ->
     nikita
       ssh: ssh
+    .call (_, handler) ->
+      server = http.createServer (req, res) ->
+        res.writeHead 200, {'Content-Type': 'text/plain'}
+        res.end 'okay'
+      server.listen 12345, handler
+      servers.push server
     .connection.assert
       host: 'localhost'
       port: '12345'
+    .call ->
+      @status().should.be.false()
+    .promise()
+
+  they 'multiple servers', (ssh) ->
+    nikita
+      ssh: ssh
+    .call (_, handler) ->
+      server = http.createServer (req, res) ->
+        res.writeHead 200, {'Content-Type': 'text/plain'}
+        res.end 'okay'
+      server.listen 12346, handler
+      servers.push server
+    .call (_, handler) ->
+      server = http.createServer (req, res) ->
+        res.writeHead 200, {'Content-Type': 'text/plain'}
+        res.end 'okay'
+      server.listen 12347, handler
+      servers.push server
+    .connection.assert
+      servers: [
+        host: 'localhost', port: '12346'
+      ,
+        host: 'localhost', port: '12347'
+      ]
     .call ->
       @status().should.be.false()
     .promise()
