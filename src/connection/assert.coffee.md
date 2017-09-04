@@ -26,4 +26,4 @@ Assert a TCP or HTTP server is listening.
         @system.execute
           cmd: "bash -c 'echo > /dev/tcp/#{server.host}/#{server.port}'"
         , (err) ->
-          throw Error "Address not listening: \"#{options.host}:#{options.port}\"" if err
+          throw Error "Address not listening: \"#{server.host}:#{server.port}\"" if err

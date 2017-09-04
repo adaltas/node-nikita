@@ -169,7 +169,7 @@ require('nikita').java.keystore_add([{
         # Check password
         if [ -f #{options.keystore} ] && ! keytool -list -keystore #{options.keystore} -storepass #{options.storepass} >/dev/null; then
           # Keystore password is invalid, change it manually with:
-          # keytool -storepasswd -keystore #{options.keystore} -storepass #{options.storepass}
+          # keytool -storepasswd -keystore #{options.keystore} -storepass ${old_pasword} -new #{options.storepass}
           cleanup; exit 2
         fi
         [ -f #{files.cacert} ] || (echo 'CA file doesnt not exists: #{files.cacert} 1>&2'; cleanup; exit 3)
