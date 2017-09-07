@@ -473,7 +473,7 @@
         promise = new Promise (resolve, reject)->
           deferred.resolve = resolve
           deferred.reject = reject
-        todos.push type: 'promise', deferred: deferred # handler: arguments[0], 
+        todos.push type: 'promise', deferred: deferred # handler: arguments[0],
         setImmediate _run_ if todos.length is 1 # Activate the pump
         promise
       properties.end = get: -> ->
@@ -558,7 +558,7 @@
       proxy.ssh.open obj.options.ssh if not obj.options.no_ssh and obj.options.ssh and not obj.options.ssh.config
       proxy
 
-    module.exports.propagation = 
+    module.exports.propagation =
       ssh: true
       log: true
       stdout: true

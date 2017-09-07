@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* log: improve and simplify CLI coloration
 * connection: assert accept servers and server
 * options: rename wait to sleep
 * misc: isolate array functions
@@ -149,7 +150,7 @@
 * service: support arch-chroot in install, start, status, stop #86
 * user: support arch-chroot #85
 * execute: suport arch-chroot commands #84
-* execute: option dirty leave temp file as is #82 
+* execute: option dirty leave temp file as is #82
 * service: support pacman #81
 * travis: test with node 7 #80
 * misc.glob: only used command #79
@@ -164,7 +165,7 @@
 ## Version 0.6.1
 
 * backup: start complete rewrite #71
-* debug: print stdin and better filter on printable logs #70 
+* debug: print stdin and better filter on printable logs #70
 * docker: clean up node.js downloaded archive #69
 * system discover: support oracle and cache not enabled by default #68
 * docker rh: pass hash test by installing openssl #67

@@ -77,17 +77,17 @@ require('nikita')(
       options.host ?= if options.ssh then options.ssh.config.host else 'localhost'
       options.colors ?= process.stdout.isTTY
       options.colors = {
-        host: colors.cyan.dim
-        header: colors.cyan.dim
+        # host: colors.cyan.dim
+        # header: colors.cyan.dim
         # final_status_error: colors.red
         # final_status_success: colors.blue
         # final_host_error: colors.red
-        # final_host_success: colors.blue 
-        status_true: colors.cyan
-        status_false: colors.cyan
-        status_error: colors.magenta
-        time: colors.cyan.dim
-      } if options.colors
+        # final_host_success: colors.blue
+        status_true: colors.green
+        status_false: colors.cyan.dim
+        status_error: colors.red
+        # time: colors.cyan.dim
+      } if options.colors is true
       # Events
       ids = {}
       @call options, stream, serializer:
@@ -106,7 +106,12 @@ require('nikita')(
           ids[log.index].disabled = true if log.message in ['conditions_failed', 'disabled_true']
           null
         "handled": (log) ->
-          status = if log.error then 'x' else if log.status and not log.shy then '+' else '-'
+          status = if log.error then '✘' else if log.status and not log.shy then '✔' else '-'
+          color = false
+          if options.colors
+            color = if log.error then options.colors.status_error
+            else if log.status then options.colors.status_true
+            else options.colors.status_false
           log = ids[log.index]
           return null unless log
           return null if log.disabled
@@ -121,17 +126,8 @@ require('nikita')(
           host = pad host, options.pad.host if options.pad.host
           header = pad header, options.pad.header if options.pad.header
           time = pad time, options.pad.time if options.pad.time
-          if options.colors
-            time = options.colors.time time if options.time
-            host = options.colors.host host
-            host_separator = options.colors.host host_separator
-            header = options.colors.header header
-            header_separator = options.colors.host header_separator
-            status = if log.error
-            then options.colors.status_error status
-            else if log.status then options.colors.status_true status
-            else options.colors.status_false status
-          "#{host}#{host_separator}#{header}#{header_separator}#{status}#{time_separator}#{time}\n"
+          line = "#{host}#{host_separator}#{header}#{header_separator}#{status}#{time_separator}#{time}\n"
+          return if color then color line else line
         'stdin': null
         'stderr': null
         'stdout': null
