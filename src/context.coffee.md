@@ -320,14 +320,14 @@
             .error (err) -> do_callback [err]
             .then do_intercept_before
           do_intercept_before = ->
-            return do_conditions() if options.intercept_before
+            return do_conditions() if options.intercepting
             each befores
             .call (before, next) ->
               for k, v of before then switch k
                 when 'handler' then continue
                 when 'type' then return next() unless array.compare v, options[k]
                 else return next() unless v is options[k]
-              opts = intercept_before: true
+              opts = intercepting: true
               for k, v of before
                 opts[k] = v
               for k, v of options
@@ -412,14 +412,14 @@
               todos = []
               do_next [err]
           do_intercept_after = (args, callback) ->
-            return do_options_after args if options.intercept_after
+            return do_options_after args if options.intercepting
             each afters
             .call (after, next) ->
               for k, v of after then switch k
                 when 'handler' then continue
                 when 'type' then return next() unless array.compare v, options[k]
                 else return next() unless v is options[k]
-              opts = intercept_after: true
+              opts = intercepting: true
               for k, v of after
                 opts[k] = v
               for k, v of options

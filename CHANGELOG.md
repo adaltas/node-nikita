@@ -4,6 +4,7 @@
 ## Trunk
 
 * log: improve and simplify CLI coloration
+* api: fix aspect when call co-jointly
 * db: rename postgres engine to postgresql
 * connection: assert accept servers and server
 * options: rename wait to sleep
