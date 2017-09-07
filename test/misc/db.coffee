@@ -15,7 +15,7 @@ describe 'misc.db', ->
         addresses: [ { host: 'localhost', port: 3306 } ],
         database: 'my_db'
       db.jdbc('jdbc:postgresql://localhost/my_db').should.eql
-        engine: 'postgres',
+        engine: 'postgresql',
         addresses: [ { host: 'localhost', port: 5432 } ],
         database: 'my_db'
 

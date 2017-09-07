@@ -34,15 +34,19 @@ Check if a database exists.
       throw Error 'Missing option: "username" or "admin_username"' unless options.admin_username or options.username
       throw Error 'Missing option: "admin_password"' if options.admin_username and not options.admin_password
       throw Error 'Missing option: "password"' if options.username and not options.password
+      # Deprecation
+      if options.engine is 'postgres'
+        console.log 'Depracated Value: options "postgres" is deprecated in favor of "postgresql"'
+        options.engine = 'postgresql'
       # Defines and check the engine type
       options.engine = options.engine.toLowerCase()
-      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mysql', 'postgres']
+      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mysql', 'postgresql']
       # Defines port
       options.port ?= 5432
       cmd = switch options.engine
         when 'mysql'
           db.cmd(options, database: 'mysql', "SHOW DATABASES") + " | grep -w '#{options.database}'"
-        when 'postgres'
+        when 'postgresql'
           # Not sure why we're not using \l
           db.cmd(options, "SELECT datname FROM pg_database WHERE datname = '#{options.database}'") + " | grep -w '#{options.database}'"
       @system.execute

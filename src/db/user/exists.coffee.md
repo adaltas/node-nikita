@@ -37,15 +37,19 @@ Check if a user exists in the database.
       throw Error 'Missing option: "admin_password"' unless options.admin_password
       throw Error 'Missing option: "username"' unless options.username
       throw Error 'Missing option: "engine"' unless options.engine
+      # Deprecation
+      if options.engine is 'postgres'
+        console.log 'Depracated Value: options "postgres" is deprecated in favor of "postgresql"'
+        options.engine = 'postgresql'
       # Defines and check the engine type
       options.engine = options.engine.toLowerCase()
-      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mysql', 'postgres']
+      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mysql', 'postgresql']
       # Defines port
       options.port ?= 5432
       cmd = switch options.engine
         when 'mysql'
           db.cmd(options, database: 'mysql', "select User from user where User = '#{options.username}'") + " | grep '#{options.username}'"
-        when 'postgres'
+        when 'postgresql'
           # Not sure why we're not using du
           db.cmd(options, "SELECT 1 FROM pg_roles WHERE rolname='#{options.username}'") + " | grep 1"
       @system.execute

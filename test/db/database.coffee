@@ -51,7 +51,7 @@ for engine, _ of config.db
         .system.execute
           cmd: switch engine
             when 'mysql' then db.cmd(config.db[engine], database: 'mysql', "SELECT user FROM db WHERE db='postgres_db_3';") + " | grep 'postgres_user_3'"
-            when 'postgres' then db.cmd(config.db[engine], database: 'postgres_db_3', '\\l') + " | egrep '^postgres_user_3='"
+            when 'postgresql' then db.cmd(config.db[engine], database: 'postgres_db_3', '\\l') + " | egrep '^postgres_user_3='"
         , (err, status) ->
           status.should.be.true() unless err
         .db.database.remove 'postgres_db_3'

@@ -60,9 +60,13 @@ npm test test/db/database.coffee
       throw Error 'Missing option: "engine"' unless options.engine
       options.user ?= []
       options.user = [options.user] if typeof options.user is 'string'
-      # Defines and check the engine type 
+      # Deprecation
+      if options.engine is 'postgres'
+        console.log 'Depracated Value: options "postgres" is deprecated in favor of "postgresql"'
+        options.engine = 'postgresql'
+      # Defines and check the engine type
       options.engine = options.engine.toLowerCase()
-      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mysql', 'postgres']
+      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mysql', 'postgresql']
       options.log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'nikita/db/database'
       # Default values
       options.port ?= 5432
@@ -72,7 +76,7 @@ npm test test/db/database.coffee
         when 'mysql'
           cmd_database_create = db.cmd options, database: null, "CREATE DATABASE #{options.database} DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;"
           cmd_database_exists = db.cmd options, database: options.database, "USE #{options.database};"
-        when 'postgres'
+        when 'postgresql'
           cmd_database_create = db.cmd options, database: null, "CREATE DATABASE #{options.database};"
           cmd_database_exists = db.cmd options, database: options.database, "\\dt"
       @system.execute
@@ -96,7 +100,7 @@ npm test test/db/database.coffee
             # cmd_has_privileges = db.cmd options, admin_username: null, username: user.username, password: user.password, database: options.database, "SHOW TABLES FROM pg_database"
             cmd_has_privileges = db.cmd(options, database: 'mysql', "SELECT user FROM db WHERE db='#{options.database}';") + " | grep '#{user}'"
             cmd_grant_privileges = db.cmd options, database: null, "GRANT ALL PRIVILEGES ON #{options.database}.* TO '#{user}' WITH GRANT OPTION;" # FLUSH PRIVILEGES;
-          when 'postgres'
+          when 'postgresql'
             cmd_has_privileges = db.cmd(options, database: options.database, "\\l") + " | egrep '^#{user}='"
             cmd_grant_privileges = db.cmd options, database: null, "GRANT ALL PRIVILEGES ON DATABASE #{options.database} TO #{user}"
         @system.execute

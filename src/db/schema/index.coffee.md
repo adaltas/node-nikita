@@ -46,9 +46,13 @@ require('nikita').database.schema({
       throw Error 'Missing option: "admin_password"' unless options.admin_password
       throw Error 'Missing option: "database"' unless options.database
       throw Error 'Missing option: "engine"' unless options.engine
+      # Deprecation
+      if options.engine is 'postgres'
+        console.log 'Depracated Value: options "postgres" is deprecated in favor of "postgresql"'
+        options.engine = 'postgresql'
       # Defines and check the engine type 
       options.engine = options.engine.toLowerCase()
-      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['postgres']
+      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['postgresql']
       # Options
       options.port ?= 5432
       @system.execute

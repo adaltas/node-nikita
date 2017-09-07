@@ -4,6 +4,7 @@
 ## Trunk
 
 * log: improve and simplify CLI coloration
+* db: rename postgres engine to postgresql
 * connection: assert accept servers and server
 * options: rename wait to sleep
 * misc: isolate array functions

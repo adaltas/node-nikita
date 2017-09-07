@@ -18,6 +18,10 @@ Escape SQL for Bash processing.
         for k, v of opt
           continue unless k in properties
           options[k] = v
+      # Deprecation
+      if options.engine is 'postgres'
+        console.log 'Depracated Value: options "postgres" is deprecated in favor of "postgresql"'
+        options.engine = 'postgresql'
       options.engine = options.engine.toLowerCase()
       options.admin_password = null unless options.admin_username
       options.silent ?= true
@@ -50,7 +54,7 @@ Escape SQL for Bash processing.
             "-N -s -r" if options.silent
             "-e \"#{module.exports.escape options.cmd}\"" if options.cmd
           ].join ' '
-        when 'postgres'
+        when 'postgresql'
           options.path ?= 'psql'
           options.port ?= '5432'
           [
@@ -99,7 +103,7 @@ parse 'jdbc:mysql://host1:3306,host2:3306/hive?createDatabaseIfNotExist=true'
         addresses = addresses.split(',').map (address) ->
           [host, port] = address.split ':'
           host: host, port: port or 5432
-        engine: 'postgres'
+        engine: 'postgresql'
         addresses: addresses
         database: database
       else

@@ -58,7 +58,7 @@ for engine, _ of config.db
       sql_list_tables = switch engine
         when 'mysql'
           'show tables'
-        when 'postgres'
+        when 'postgresql'
           '\\dt'
       nikita
         ssh: ssh

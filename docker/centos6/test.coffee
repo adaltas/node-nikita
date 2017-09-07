@@ -39,8 +39,8 @@ module.exports =
       admin_username: 'root'
       admin_password: 'rootme'
       admin_db: 'root'
-    postgres:
-      engine: 'postgres'
+    postgresql:
+      engine: 'postgresql'
       host: 'postgres'
       port: 5432
       admin_username: 'root'
