@@ -40,11 +40,11 @@ Check if a database exists.
         options.engine = 'postgresql'
       # Defines and check the engine type
       options.engine = options.engine.toLowerCase()
-      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mysql', 'postgresql']
+      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mariadb', 'mysql', 'postgresql']
       # Defines port
       options.port ?= 5432
       cmd = switch options.engine
-        when 'mysql'
+        when 'mariadb', 'mysql'
           db.cmd(options, database: 'mysql', "SHOW DATABASES") + " | grep -w '#{options.database}'"
         when 'postgresql'
           # Not sure why we're not using \l

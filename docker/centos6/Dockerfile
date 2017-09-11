@@ -20,10 +20,9 @@ ADD ./supervisord.conf /etc/supervisord.conf
 
 # Install SSH
 RUN yum install -y openssh-server openssh-clients \
-&& ssh-keygen -t rsa -f ~/.ssh/id_rsa -N '' \
-&& cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys \
-# Generate server key
-&& ssh-keygen -f /etc/ssh/ssh_host_rsa_key
+  && ssh-keygen -t rsa -f ~/.ssh/id_rsa -N '' \
+  && cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys \
+  && ssh-keygen -f /etc/ssh/ssh_host_rsa_key
 
 # Install Java
 RUN yum install -y java
@@ -42,7 +41,8 @@ RUN yum install -y postgresql
 RUN yum install -y mysql
 
 # Install docker
-RUN curl -fsSL https://get.docker.com/ | sh
+# RUN curl -fsSL https://raw.githubusercontent.com/docker/docker-install/868abfe9603db7d320e6231978dbda1d1f58aec5/install.sh | sh
+RUN yum install -y docker-io
 RUN curl -L https://github.com/docker/compose/releases/download/1.5.1/docker-compose-Linux-x86_64 > /usr/local/bin/docker-compose
 RUN chmod +x /usr/local/bin/docker-compose
 

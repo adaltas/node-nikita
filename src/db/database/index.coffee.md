@@ -66,14 +66,14 @@ npm test test/db/database.coffee
         options.engine = 'postgresql'
       # Defines and check the engine type
       options.engine = options.engine.toLowerCase()
-      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mysql', 'postgresql']
+      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mariadb', 'mysql', 'postgresql']
       options.log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'nikita/db/database'
       # Default values
       options.port ?= 5432
       # Create database unless exist
       options.log message: "Check if database #{options.database} exists", level: 'DEBUG', module: 'nikita/db/database'
       switch options.engine
-        when 'mysql'
+        when 'mariadb', 'mysql'
           cmd_database_create = db.cmd options, database: null, "CREATE DATABASE #{options.database} DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;"
           cmd_database_exists = db.cmd options, database: options.database, "USE #{options.database};"
         when 'postgresql'
@@ -96,7 +96,7 @@ npm test test/db/database.coffee
         , (err, exists) ->
           throw Error "DB user does not exists: #{user}" if not err and not exists
         switch options.engine
-          when 'mysql'
+          when 'mariadb', 'mysql'
             # cmd_has_privileges = db.cmd options, admin_username: null, username: user.username, password: user.password, database: options.database, "SHOW TABLES FROM pg_database"
             cmd_has_privileges = db.cmd(options, database: 'mysql', "SELECT user FROM db WHERE db='#{options.database}';") + " | grep '#{user}'"
             cmd_grant_privileges = db.cmd options, database: null, "GRANT ALL PRIVILEGES ON #{options.database}.* TO '#{user}' WITH GRANT OPTION;" # FLUSH PRIVILEGES;

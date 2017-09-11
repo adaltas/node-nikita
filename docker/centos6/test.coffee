@@ -32,6 +32,13 @@ module.exports =
     host: 'dind:2375'
     # machine: 'nikita'
   db:
+    mariadb:
+      engine: 'mariadb'
+      host: 'mariadb'
+      port: 5432
+      admin_username: 'root'
+      admin_password: 'rootme'
+      admin_db: 'root'
     mysql:
       engine: 'mysql'
       host: 'mysql'

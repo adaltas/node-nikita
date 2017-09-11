@@ -7,7 +7,7 @@ each = require 'each'
 
 config = test.config()
 return if config.disable_db
-for engine, _ of config.db
+for engine, _ of config.db then do (engine) ->
 
   describe "db.database #{engine}", ->
 
@@ -50,7 +50,7 @@ for engine, _ of config.db
           user: 'postgres_user_3'
         .system.execute
           cmd: switch engine
-            when 'mysql' then db.cmd(config.db[engine], database: 'mysql', "SELECT user FROM db WHERE db='postgres_db_3';") + " | grep 'postgres_user_3'"
+            when 'mariadb', 'mysql' then db.cmd(config.db[engine], database: 'mysql', "SELECT user FROM db WHERE db='postgres_db_3';") + " | grep 'postgres_user_3'"
             when 'postgresql' then db.cmd(config.db[engine], database: 'postgres_db_3', '\\l') + " | egrep '^postgres_user_3='"
         , (err, status) ->
           status.should.be.true() unless err

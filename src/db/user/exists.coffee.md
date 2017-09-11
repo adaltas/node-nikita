@@ -43,11 +43,11 @@ Check if a user exists in the database.
         options.engine = 'postgresql'
       # Defines and check the engine type
       options.engine = options.engine.toLowerCase()
-      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mysql', 'postgresql']
+      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mariadb', 'mysql', 'postgresql']
       # Defines port
       options.port ?= 5432
       cmd = switch options.engine
-        when 'mysql'
+        when 'mariadb', 'mysql'
           db.cmd(options, database: 'mysql', "select User from user where User = '#{options.username}'") + " | grep '#{options.username}'"
         when 'postgresql'
           # Not sure why we're not using du

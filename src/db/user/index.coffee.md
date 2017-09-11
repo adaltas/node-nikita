@@ -42,12 +42,12 @@ Create a user for the destination database.
         options.engine = 'postgresql'
       # Defines and check the engine type
       options.engine = options.engine.toLowerCase()
-      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mysql', 'postgresql']
+      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mariadb', 'mysql', 'postgresql']
       # Default values
       options.port ?= 5432
       # Commands
       switch options.engine
-        when 'mysql'
+        when 'mariadb', 'mysql'
           cmd_user_exists = db.cmd(options, "SELECT User FROM mysql.user WHERE User='#{options.username}'") + " | grep #{options.username}"
           cmd_user_create = db.cmd options, "CREATE USER #{options.username} IDENTIFIED BY '#{options.password}';"
           cmd_password_is_invalid = db.cmd(options, admin_username: null, admin_password: null, '\\dt') + " 2>&1 >/dev/null | grep -e '^ERROR 1045.*'"

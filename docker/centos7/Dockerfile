@@ -20,10 +20,9 @@ ADD ./supervisord.conf /etc/supervisord.conf
 
 # Install SSH
 RUN yum install -y openssh-server openssh-clients \
-&& ssh-keygen -t rsa -f ~/.ssh/id_rsa -N '' \
-&& cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys \
-# Generate server key
-&& ssh-keygen -f /etc/ssh/ssh_host_rsa_key
+  && ssh-keygen -t rsa -f ~/.ssh/id_rsa -N '' \
+  && cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys \
+  && ssh-keygen -f /etc/ssh/ssh_host_rsa_key
 
 # Install Java
 RUN yum install -y java

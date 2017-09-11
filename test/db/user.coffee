@@ -56,7 +56,7 @@ for engine, _ of config.db
 
     they 'change password', (ssh) ->
       sql_list_tables = switch engine
-        when 'mysql'
+        when 'mariadb', 'mysql'
           'show tables'
         when 'postgresql'
           '\\dt'

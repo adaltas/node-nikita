@@ -37,7 +37,7 @@ Escape SQL for Bash processing.
         password = options.password
       else throw Error 'Required Option: "admin_username" or "username"'
       switch options.engine
-        when 'mysql'
+        when 'mariadb', 'mysql'
           options.path ?= 'mysql'
           options.port ?= '3306'
           [

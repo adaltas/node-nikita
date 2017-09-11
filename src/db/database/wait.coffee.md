@@ -56,11 +56,11 @@ npm test test/db/database.coffee
         options.engine = 'postgresql'
       # Defines and check the engine type
       options.engine = options.engine.toLowerCase()
-      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mysql', 'postgresql']
+      throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mariadb', 'mysql', 'postgresql']
       # Command
       @wait.execute
         cmd: switch options.engine
-          when 'mysql'
+          when 'mariadb', 'mysql'
             db.cmd(options, database: null, "show databases") + " | grep '#{options.database}'"
           when 'postgresql'
             db.cmd(options, database: null, null) + " -l | cut -d \\| -f 1 | grep -qw '#{options.database}'"
