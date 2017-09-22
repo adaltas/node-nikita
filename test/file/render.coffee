@@ -9,15 +9,27 @@ describe 'file.render', ->
 
   describe 'error', ->
 
-    they 'when source doesnt exist', (ssh) ->
+    they 'when option "source" doesnt exist', (ssh) ->
       nikita
         ssh: ssh
       .file.render
-        source: "oups"
+        source: 'oups'
         target: "#{scratch}/output"
+        context: {}
         relax: true
       , (err) ->
         err.message.should.eql 'Invalid source, got "oups"'
+      .promise()
+
+    they 'when option "context" is missing', (ssh) ->
+      nikita
+        ssh: ssh
+      .file.render
+        content: 'Hello {{ who }}'
+        target: "#{scratch}/output"
+        relax: true
+      , (err) ->
+        err.message.should.eql 'Required option: context'
       .promise()
 
   describe 'nunjunks', ->

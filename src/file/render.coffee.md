@@ -78,8 +78,9 @@ require('nikita').file.render({
     module.exports = (options) ->
       options.log message: "Entering file.render", level: 'DEBUG', module: 'nikita/lib/file/render'
       # Validate parameters
-      throw Error 'Missing source or content' unless options.source or options.content
-      throw Error 'Missing target' unless options.target
+      throw Error 'Required option: source or content' unless options.source or options.content
+      throw Error 'Required option: target' unless options.target
+      throw Error 'Required option: context' unless options.context
       # Start real work
       @call (_, callback) ->
         return callback() unless options.source

@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* render: ensure context is provided
 * db: support mariadb engine
 * log: improve and simplify CLI coloration
 * api: fix aspect when call co-jointly
