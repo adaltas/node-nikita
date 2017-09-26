@@ -298,7 +298,7 @@
               else if Array.isArray options.once
                 hash = string.hash options.once.map((k) -> hashme options[k]).join '|'
               else
-                throw Error "Invalid Type Option Once: #{JSON.stringify options.once}"
+                throw Error "Invalid Option \"once\": \"#{JSON.stringify options.once}\" must be a string or an array of string"
               return do_callback [] if once[hash]
               once[hash] = true
             do_options_before()

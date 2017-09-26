@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* package: use coffescript v2
 * render: ensure context is provided
 * db: support mariadb engine
 * log: improve and simplify CLI coloration

@@ -19,7 +19,7 @@ Escape SQL for Bash processing.
           continue unless k in properties
           options[k] = v
       # Deprecation
-      if options.engine is 'postgres'
+      if options.engine is 'postgresql'
         console.log 'Depracated Value: options "postgres" is deprecated in favor of "postgresql"'
         options.engine = 'postgresql'
       options.engine = options.engine.toLowerCase()

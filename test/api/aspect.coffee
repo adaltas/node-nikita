@@ -14,6 +14,5 @@ describe 'aspect', ->
       .after 'my_action', (options) -> history.push "after #{options.key}"
       .my_action key: 'called'
       .call ->
-        console.log history
         history.should.eql ['before called', 'action called', 'after called']
       .promise()

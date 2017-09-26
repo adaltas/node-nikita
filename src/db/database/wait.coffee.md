@@ -51,7 +51,7 @@ npm test test/db/database.coffee
       options[k] ?= v for k, v of options.db
       options.database ?= options.argument
       # Deprecation
-      if options.engine is 'postgres'
+      if options.engine is 'postgresql'
         console.log 'Depracated Value: options "postgres" is deprecated in favor of "postgresql"'
         options.engine = 'postgresql'
       # Defines and check the engine type

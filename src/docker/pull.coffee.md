@@ -31,7 +31,7 @@ Pull a container
 
 ```javascript
 nikita.docker_pull({
-  tag: 'postgres'
+  tag: 'postgresql'
 }, function(err, status, stdout, stderr){
   console.log( err ? err.message : 'Container pulled: ' + status);
 })
