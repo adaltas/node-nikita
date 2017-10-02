@@ -2,7 +2,7 @@
 # `nikita.java.keystore_add(options, [callback])`
 
 Add certificates, private keys and certificate authorities to java keystores
-and trustores.
+and truststores.
 
 ## Options
 
@@ -87,11 +87,12 @@ require('nikita').java.keystore_add([{
 ## Source Code
 
     module.exports = (options) ->
-      throw Error "Required option 'keystore'" unless options.keystore
-      throw Error "Required option 'storepass'" unless options.storepass
-      throw Error "Required option 'key' for certificate" if options.cert and not options.key
-      throw Error "Required option 'keypass' for certificate" if options.cert and not options.keypass
-      throw Error "Required option 'name' for certificate" if options.cert and not options.name
+      throw Error "Required Option: 'keystore'" unless options.keystore
+      throw Error "Required Option: 'storepass'" unless options.storepass
+      throw Error "Required Options: 'cacert' or 'cert'" unless options.cacert or options.cert
+      throw Error "Required Option: 'key' for certificate" if options.cert and not options.key
+      throw Error "Required Option: 'keypass' for certificate" if options.cert and not options.keypass
+      throw Error "Required Option: 'name' for certificate" if options.cert and not options.name
       # throw Error "Required option 'caname'" unless options.caname
       # throw Error "Required option 'cacert'" unless options.cacert
       options.parent ?= {}

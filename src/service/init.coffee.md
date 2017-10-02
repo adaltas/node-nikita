@@ -53,6 +53,7 @@ Reload the service daemon provider depending on the os.
       options.name ?= path.basename(options.source).split('.')[0]
       options.name = path.basename(options.target).split('.service')[0] if options.target?
       options.target ?= "/etc/init.d/#{options.name}"
+      options.context ?= {}
       @service.discover (err, status, loader) ->
         options.loader ?= loader
       # discover loader to put in cache

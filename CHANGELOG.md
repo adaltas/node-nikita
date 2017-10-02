@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* service.init: pass empty context to render unless provided
 * package: use coffescript v2
 * render: ensure context is provided
 * db: support mariadb engine
