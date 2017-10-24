@@ -38,7 +38,7 @@ Install a gem from its name and version:
 
 ```js
 require('nikita')
-.tools.rubygems.fetch({
+.tools.rubygems.install({
   name: 'json',
   version: '2.1.0',
 }, function(err, status){
@@ -50,7 +50,7 @@ Install a gem from a local file:
 
 ```js
 require('nikita')
-.tools.rubygems.fetch({
+.tools.rubygems.install({
   source: '/path/to/json-2.1.0.gem',
 }, function(err, status){
   console.log( err ? err.messgage : 'Gem installed: ' + status);
@@ -61,7 +61,7 @@ Install gems from a glob expressoin:
 
 ```js
 require('nikita')
-.tools.rubygems.fetch({
+.tools.rubygems.install({
   source: '/path/to/*.gem',
 }, function(err, status){
   console.log( err ? err.messgage : 'Gem installed: ' + status);
