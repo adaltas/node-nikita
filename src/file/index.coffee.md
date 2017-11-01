@@ -7,88 +7,88 @@ Write a file or a portion of an existing file.
 
 * `append`   
   Append the content to the target file. If target does not exist,
-  the file will be created.   
+  the file will be created.
 * `backup`   
   Create a backup, append a provided string to the filename extension or a
-  timestamp if value is not a string.   
+  timestamp if value is not a string.
 * `backup_mode`   
   Backup file mode (permission and sticky bits), defaults to `0o0400`, in the 
-  form of `{mode: 0o0400}` or `{mode: "0400"}`.   
+  form of `{mode: 0o0400}` or `{mode: "0400"}`.
 * `content`   
-  Text to be written, an alternative to source which reference a file.   
+  Text to be written, an alternative to source which reference a file.
 * `diff` (boolean | function)   
   Print diff information, pass a readable diff and the result of [jsdiff.diffLines][diffLines] as
-  arguments if a function, default to true.   
+  arguments if a function, default to true.
 * `eof`   
   Ensure the file ends with this charactere sequence, special values are
   'windows', 'mac', 'unix' and 'unicode' (respectively "\r\n", "\r", "\n",
   "\u2028"), will be auto-detected if "true", default to false or "\n" if
-  "true" and not detected.   
+  "true" and not detected.
 * `from`   
-  Replace from after this marker, a string or a regular expression.   
+  Replace from after this marker, a string or a regular expression.
 * `gid`   
-  File group name or group id.   
+  File group name or group id.
 * `local`   
   Treat the source as local instead of remote, only apply with "ssh"
-  option.   
+  option.
 * `match`   
   Replace this marker, a string or a regular expression, default to the
-  replaced string if missing.   
+  replaced string if missing.
 * `mode`   
   File mode (permission and sticky bits), default to `0o0644`, in the form of
-  `{mode: 0o0744}` or `{mode: "0744"}`.   
+  `{mode: 0o0744}` or `{mode: "0744"}`.
 * `place_before` (string, boolean, regex)   
-  Place the content before the match.   
+  Place the content before the match.
 * `replace`   
-  The content to be inserted, used conjointly with the from, to or match   
-  options.   
+  The content to be inserted, used conjointly with the from, to or match
+  options.
 * `source`   
-  File path from where to extract the content, do not use conjointly with   
-  content.   
+  File path from where to extract the content, do not use conjointly with
+  content.
 * `target`   
-  File path where to write content to.   
+  File path where to write content to.
 * `to`   
-  Replace to before this marker, a string or a regular expression.   
+  Replace to before this marker, a string or a regular expression.
 * `uid`   
-  File user name or user id.   
+  File user name or user id.
 * `unlink` (boolean)   
-  Replace the existing link, leaving the refered file untouched.   
+  Replace the existing link, leaving the refered file untouched.
 * `write`   
   An array containing multiple transformation where a transformation is an
-  object accepting the options `from`, `to`, `match` and `replace`.   
+  object accepting the options `from`, `to`, `match` and `replace`.
 
 ## Callback parameters
 
 * `err`   
-  Error object if any.   
+  Error object if any.
 * `status`   
-  Indicate file modifications.   
+  Indicate file modifications.
 
 ## Implementation details
 
 Internally, this function uses the "chmod" and "chown" function and, thus,
-honor all their options including "mode", "uid" and "gid".   
+honor all their options including "mode", "uid" and "gid".
 
 ## Diff Lines
 
 Diff can be obtained when the options "diff" is set to true or a function. The
 information is provided in two ways:
 
-* when `true`, a formated string written to the "stdout" option.   
+* when `true`, a formated string written to the "stdout" option.
 * when a function, a readable diff and the array returned by the function 
-    `diff.diffLines`, see the [diffLines] package for additionnal information.   
+  `diff.diffLines`, see the [diffLines] package for additionnal information.
 
 ## More about the `append` option
 
 The `append` option allows more advanced usages. If `append` is "null", it will
 add the value of the "replace" option at the end of the file when no match
-is found and when the value is a string.   
+is found and when the value is a string.
 
 Using the `append` option conjointly with the `match` and `replace` options gets
 even more interesting. If append is a string or a regular expression, it will
 place the value of the "replace" option just after the match. Internally, a
 string value will be converted to a regular expression. For example the string
-"test" will end up converted to the regular expression `/test/mg`.   
+"test" will end up converted to the regular expression `/test/mg`.
 
 ## Replacing part of a file using from and to markers
 

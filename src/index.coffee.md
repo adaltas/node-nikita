@@ -104,6 +104,7 @@ functions share a common API with flexible options.
           ceph_conf: 'nikita/file/types/ceph_conf'
           locale_gen: 'nikita/file/types/locale_gen'
           pacman_conf: 'nikita/file/types/pacman_conf'
+          ssh_authorized_keys: 'nikita/file/types/ssh_authorized_keys'
           yum_repo: 'nikita/file/types/yum_repo'
       java:
         keystore_add: 'nikita/java/keystore_add'

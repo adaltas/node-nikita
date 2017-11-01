@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* ssh_authorized_keys: new action
 * tests: update mocha coffee registration
 * service.init: pass empty context to render unless provided
 * package: use coffescript v2
