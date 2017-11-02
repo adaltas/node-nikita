@@ -69,7 +69,7 @@ nikita.file.render({
             next()
           else
             next Error "Invalid condition \"if\": #{JSON.stringify si}"
-        .then (err) ->
+        .next (err) ->
           if err or not ok then skip(err) else succeed()
 
 ## Run an action if false: `unless`
@@ -118,7 +118,7 @@ pass.
             next()
           else
             next Error "Invalid condition \"unless\": #{JSON.stringify not_if}"
-        .then (err) ->
+        .next (err) ->
           if err or not ok then skip(err) else succeed()
 
 ## Run an action if a command succeed: `if_exec`
@@ -142,7 +142,7 @@ were executed successfully otherwise the callback `skip` is called.
           run.on "exit", (code) ->
             options.log? message: "Nikita `if_exec`: code is \"#{code}\"", level: 'INFO', module: 'nikita/misc/conditions'
             if code is 0 then next() else skip()
-        .then succeed
+        .next succeed
 
 ## Run an action unless a command succeed: `unless_exec`
 
@@ -165,7 +165,7 @@ were executed with failure otherwise the callback `skip` is called.
           run.on "exit", (code) ->
             options.log? message: "Nikita `unless_exec`: code is \"#{code}\"", level: 'INFO', module: 'nikita/misc/conditions'
             if code is 0 then skip() else next()
-        .then succeed
+        .next succeed
 
 ## Run an action if OS match: `if_os`
 
@@ -262,7 +262,7 @@ exists otherwise the callback `skip` is called.
             else
               options.log? message: "File doesnt exists #{if_exists}, skipping", level: 'INFO', module: 'nikita/misc/conditions'
               skip()
-        .then succeed
+        .next succeed
 
 ## Skip an action if a file exists: `unless_exists`
 
@@ -287,7 +287,7 @@ exists otherwise the callback `skip` is called.
             else
               options.log? message: "File doesnt exists #{unless_exists}, continuing", level: 'DEBUG', module: 'nikita/misc/conditions'
               next()
-        .then succeed
+        .next succeed
 
 ## Ensure a file exist: `should_exist`
 
@@ -307,7 +307,7 @@ exists otherwise the callback `skip` is called with an error.
             then next()
             else next Error "File does not exist: #{should_exist}"
         .error skip
-        .then succeed
+        .next succeed
 
 ## Ensure a file already exist: `should_not_exist`
 
@@ -327,7 +327,7 @@ exists otherwise the callback `skip` is called with an error.
             then next Error "File does not exist: #{should_not_exist}"
             else next()
         .error skip
-        .then -> succeed()
+        .next -> succeed()
 
 ## Run all conditions: `all(options, skip, succeed)`
 

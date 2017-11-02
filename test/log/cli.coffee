@@ -11,8 +11,9 @@ describe 'log.cli', ->
   
   Writable = require('stream').Writable;
   class MyWritable extends Writable
-    constructor: (@options) ->
-      super @options
+    constructor: (options) ->
+      super options
+      @options = options
     _write: (chunk, encoding, callback) ->
       @options.data.push chunk.toString()
       callback()
@@ -32,9 +33,9 @@ describe 'log.cli', ->
     .call ->
       data.should.eql [
         'localhost   h1 : h2a   -\n'
-        'localhost   h1 : h2b : h3   +\n'
-        'localhost   h1 : h2b   +\n'
-        'localhost   h1   +\n'
+        'localhost   h1 : h2b : h3   ✔\n'
+        'localhost   h1 : h2b   ✔\n'
+        'localhost   h1   ✔\n'
       ]
     .promise()
   
@@ -54,8 +55,8 @@ describe 'log.cli', ->
     .call ->
       data.should.eql [
         'localhost   h1 : h2a   -\n'
-        'localhost   h1 : h2b   +\n'
-        'localhost   h1   +\n'
+        'localhost   h1 : h2b   ✔\n'
+        'localhost   h1   ✔\n'
       ]
     .promise()
 
@@ -72,9 +73,9 @@ describe 'log.cli', ->
     .call ->
       data.should.eql [
         'localhost   a   -\n'
-        'localhost   b   +\n'
+        'localhost   b   ✔\n'
         'localhost   c   -\n'
-        'localhost   d   x\n'
+        'localhost   d   ✘\n'
       ]
     .promise()
 
@@ -91,7 +92,7 @@ describe 'log.cli', ->
     .call ->
       data.should.eql [
         'localhost   a   -\n'
-        'localhost   d   +\n'
+        'localhost   d   ✔\n'
       ]
     .promise()
 
@@ -162,9 +163,9 @@ describe 'log.cli', ->
     .call header: 'c', relax: true, (_, callback) -> callback new Error 'ok', false
     .call ->
       data.should.eql [
-        '\u001b[36m\u001b[2mlocalhost\u001b[22m\u001b[39m\u001b[36m\u001b[2m   \u001b[22m\u001b[39m\u001b[36m\u001b[2ma\u001b[22m\u001b[39m\u001b[36m\u001b[2m   \u001b[22m\u001b[39m\u001b[36m-\u001b[39m\n'
-        '\u001b[36m\u001b[2mlocalhost\u001b[22m\u001b[39m\u001b[36m\u001b[2m   \u001b[22m\u001b[39m\u001b[36m\u001b[2mb\u001b[22m\u001b[39m\u001b[36m\u001b[2m   \u001b[22m\u001b[39m\u001b[36m+\u001b[39m\n'
-        '\u001b[36m\u001b[2mlocalhost\u001b[22m\u001b[39m\u001b[36m\u001b[2m   \u001b[22m\u001b[39m\u001b[36m\u001b[2mc\u001b[22m\u001b[39m\u001b[36m\u001b[2m   \u001b[22m\u001b[39m\u001b[36mx\u001b[39m\n'
+        '\u001b[36m\u001b[2mlocalhost   a   -\n\u001b[22m\u001b[39m'
+        '\u001b[32mlocalhost   b   ✔\n\u001b[39m'
+        '\u001b[31mlocalhost   c   ✘\n\u001b[39m'
       ]
     .promise()
   
