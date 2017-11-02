@@ -46,7 +46,7 @@ require 'nikita'
             modified = true if count > 1
             next()
         run()
-      .then (err) ->
+      .next (err) ->
         callback err, modified
 
     each = require 'each'

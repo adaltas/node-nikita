@@ -191,7 +191,7 @@ require('nikita/alt/ldap.acl')({
         end = (err) ->
           next err
         connect()
-      .then (err) ->
+      .next (err) ->
         next err, updated
 
 ## Dependencies

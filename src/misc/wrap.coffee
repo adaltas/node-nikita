@@ -55,5 +55,5 @@ module.exports.options = (options, callback) ->
       options.mode = parseInt(options.mode, 8) if typeof options.mode is 'string'
       next()
     connection()
-  .then (err) ->
+  .next (err) ->
     callback err, options

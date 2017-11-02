@@ -2,7 +2,6 @@
 nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
-each = require 'each'
 
 config = test.config()
 return if config.disable_db

@@ -59,7 +59,7 @@ misc = module.exports =
         misc.path.normalize location, (location) ->
           normalized.push location
           next()
-      .then ->
+      .next ->
         callback path.resolve normalized...
       null
   mode:

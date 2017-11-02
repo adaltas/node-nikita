@@ -318,7 +318,7 @@
                 opts[k] ?= v
               run opts, next
             .error (err) -> do_callback [err]
-            .then do_intercept_before
+            .next do_intercept_before
           do_intercept_before = ->
             return do_conditions() if options.intercepting
             each befores
@@ -335,7 +335,7 @@
                 opts[k] ?= v
               run opts, next
             .error (err) -> do_callback [err]
-            .then do_conditions
+            .next do_conditions
           do_conditions = ->
             conditions.all obj, options
             , ->
@@ -428,7 +428,7 @@
               opts.callback_arguments = args
               run opts, next
             .error (err) -> do_callback [err]
-            .then -> do_options_after args
+            .next -> do_options_after args
           do_options_after = (args) ->
             return do_callback args if options.options_after
             options.after ?= []
@@ -445,7 +445,7 @@
                 opts[k] ?= v
               run opts, next
             .error (err) -> do_callback [err]
-            .then -> do_callback args
+            .next -> do_callback args
           do_callback = (args) ->
             depth-- if options.header
             headers.pop() if options.header

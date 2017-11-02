@@ -42,10 +42,10 @@ nikita.system.discover({
       os.release = null
       options.strict ?= false
       options.cache ?= false
-      ( return callback null, false, 
+      if options.cache and options.store['nikita:system:type']
+        return callback null, false, 
           type: options.store['nikita:system:type']
           release: options.store['nikita:system:release']
-      ) if options.cache and options.store['nikita:system:type']
       @system.execute
         cmd: 'cat /etc/redhat-release'
         if_exec: "cat /etc/redhat-release | egrep '(Red\\sHat)|(CentOS)'"

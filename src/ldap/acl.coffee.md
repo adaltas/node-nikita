@@ -186,7 +186,7 @@ require('nikita').ldap.acl({
         do_end = ->
           callback()
         do_getdn()
-      .then (err) ->
+      .next (err) ->
         callback err, modified
 
 ## Dependencies

@@ -95,7 +95,7 @@ require('nikita').ldap.user({
         do_end = ->
           callback()
         do_user()
-      .then (err) ->
+      .next (err) ->
         callback err, modified
 
 ## Note

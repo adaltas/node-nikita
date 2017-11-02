@@ -1,7 +1,6 @@
 
 nikita = require '../../src'
 test = require '../test'
-each = require 'each'
 
 describe 'registry.deprecate', ->
 

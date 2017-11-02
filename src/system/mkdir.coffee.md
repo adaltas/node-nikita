@@ -103,7 +103,7 @@ require('nikita').system.mkdir({
                 return next err
               else # a file or symlink exists at this location
                 return next Error "Not a directory: #{JSON.stringify directory}"
-          .then callback
+          .next callback
         do_create_parent = (directories) ->
           return do_create directories unless options.uid or options.guid
           uid_gid options, (err) ->
@@ -127,7 +127,7 @@ require('nikita').system.mkdir({
               modified = true
               callback()
             , 1000
-          .then (err) ->
+          .next (err) ->
             return callback err if err
             callback()
         do_update = (stat) =>
@@ -148,7 +148,7 @@ require('nikita').system.mkdir({
             modified = true if moded
             callback()
         do_stats()
-      .then (err) ->
+      .next (err) ->
         callback err, modified
 
 ## Dependencies

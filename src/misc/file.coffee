@@ -56,7 +56,7 @@ module.exports = file =
         else if result isnt md5
           result = false 
         next()
-    .then (err) ->
+    .next (err) ->
       return callback err if err
       callback null, result
   compare_hash: (ssh1, file1, ssh2, file2, algo, callback) ->
@@ -129,7 +129,7 @@ module.exports = file =
               return next err if err
               hashs.push h if h?
               next()
-          .then (err) ->
+          .next (err) ->
             return callback err if err
             switch hashs.length
               when 0
