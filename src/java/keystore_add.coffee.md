@@ -137,8 +137,9 @@ require('nikita').java.keystore_add([{
         if ! which #{options.openssl}; then echo 'OpenSSL command line tool not detected'; cleanup; exit 4; fi
         [ -f #{files.cert} ] || (cleanup; exit 6)
         # mkdir -p -m 700 #{tmp_location}
-        user=`#{options.openssl} x509  -noout -in "#{files.cert}" -md5 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/' | cat`
-        keystore=`keytool -list -v -keystore #{options.keystore} -storepass #{options.storepass} -alias #{options.name} | grep MD5: | sed -E 's/.+MD5: +(.*)/\\1/'`
+        user=`#{options.openssl} x509  -noout -in "#{files.cert}" -sha1 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/' | cat`
+        # We are only retrieving the first certificate found in the chain with `head -n 1`
+        keystore=`keytool -list -v -keystore #{options.keystore} -storepass #{options.storepass} -alias #{options.name} | grep SHA1: | head -n 1 | sed -E 's/.+SHA1: +(.*)/\\1/'`
         echo "User Certificate: $user"
         echo "Keystore Certificate: $keystore"
         if [[ "$user" == "$keystore" ]]; then cleanup; exit 5; fi
@@ -188,9 +189,9 @@ require('nikita').java.keystore_add([{
           CACERT_FILE=#{tmp_location}/$ALIAS
           cat $PEM_FILE | awk "n==$N { print }; /END CERTIFICATE/ { n++ }" > $CACERT_FILE
           # Read user CACert signature
-          user=`#{options.openssl} x509  -noout -in "$CACERT_FILE" -md5 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/'`
+          user=`#{options.openssl} x509  -noout -in "$CACERT_FILE" -sha1 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/'`
           # Read registered CACert signature
-          keystore=`keytool -list -v -keystore #{options.keystore} -storepass #{options.storepass} -alias $ALIAS | grep MD5: | sed -E 's/.+MD5: +(.*)/\\1/'`
+          keystore=`keytool -list -v -keystore #{options.keystore} -storepass #{options.storepass} -alias $ALIAS | grep SHA1: | sed -E 's/.+SHA1: +(.*)/\\1/'`
           echo "User CA Cert: $user"
           echo "Keystore CA Cert: $keystore"
           if [[ "$user" == "$keystore" ]]; then echo 'Identical Signature'; code=5; continue; fi

@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* keystore: use sha1 instead of md5
 * ssh_authorized_keys: new action
 * tests: update mocha coffee registration
 * service.init: pass empty context to render unless provided
