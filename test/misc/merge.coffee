@@ -46,3 +46,9 @@ describe 'merge', ->
     obj2 = { a_key: { regkey_key : /^.*$/ } }
     res = misc.merge {}, obj1, obj2
     res.should.eql { reg_key: /.*/mg, a_key: { regkey_key : /^.*$/ } }
+
+  it 'overwrite buffer value', ->
+    obj1 = { a_key: Buffer.from 'abc' }
+    obj2 = { a_key: Buffer.from 'def' }
+    res = misc.merge {}, obj1, obj2
+    res.a_key.toString().should.eql 'def'
