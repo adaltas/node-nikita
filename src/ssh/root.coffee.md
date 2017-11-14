@@ -79,7 +79,7 @@ require('nikita')
         if: options.private_key_path
         unless: options.private_key
       , (_, callback) ->
-        options.log message: "Read Private Key from: #{options.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/root'
+        options.log message: "Read Private Key: #{JSON.stringify options.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/root'
         misc.path.normalize options.private_key_path, (location) =>
           fs.readFile location, 'ascii', (err, content) =>
             return callback Error "Private key doesnt exists: #{JSON.stringify location}" if err and err.code is 'ENOENT'

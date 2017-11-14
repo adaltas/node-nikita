@@ -57,6 +57,7 @@ Takes the same options as the ssh2 module in an underscore form.
       )
       # Read private key if option is a path
       @call unless: options.private_key, (_, callback) ->
+        options.log message: "Read Private Key from: #{options.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/open'
         misc.path.normalize options.private_key_path, (location) =>
           fs.readFile location, 'ascii', (err, content) =>
             return callback Error "Private key doesnt exists: #{JSON.stringify location}" if err and err.code is 'ENOENT'
@@ -65,15 +66,21 @@ Takes the same options as the ssh2 module in an underscore form.
             callback()
       # Establish connection
       @call relax: true, (_, callback) ->
+        options.log message: "Read Private Key: #{JSON.stringify options.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/open'
         connect options, (err, ssh) =>
+          options.log unless err
+          then message: "Connection is established", level: 'INFO', module: 'nikita/lib/ssh/open'
+          else message: "Connection failed", level: 'WARN', module: 'nikita/lib/ssh/open'
           @options.ssh = ssh unless err
           callback err, !!ssh
       , (err, status) ->
         @end() unless err
       # Enable root access
       @call if: options.root.username, ->
+        options.log message: "Bootstrap Root Access", level: 'INFO', module: 'nikita/lib/ssh/open'
         @ssh.root public_key: options.public_key, options.root
       @call retry: 3, (_, callback) ->
+        options.log message: "Establish Connection: attempt after enabling root access", level: 'DEBUG', module: 'nikita/lib/ssh/open'
         connect options, (err, ssh) =>
           @options.ssh = ssh unless err
           callback err
