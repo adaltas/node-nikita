@@ -24,7 +24,6 @@ describe 'kv', ->
       engine: engine
     .kv.get
       key: 'a_key'
-      value: 'a value'
     , (err, status, key, value) ->
       status.should.be.true()
       key.should.eql 'a_key'
@@ -39,7 +38,6 @@ describe 'kv', ->
       engine: engine
     .kv.get
       key: 'a_key'
-      value: 'a value'
     , (err, status, key, value) ->
       status.should.be.true()
       key.should.eql 'a_key'
