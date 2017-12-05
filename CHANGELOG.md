@@ -3,6 +3,9 @@
 
 ## Trunk
 
+* merge: duplicate arrays
+* mod: new system.mod action
+* kv: fix log enter in get
 * ssh: improve log messages
 * misc: merge buffer
 * keystore: use sha1 instead of md5

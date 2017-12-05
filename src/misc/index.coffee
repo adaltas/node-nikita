@@ -149,6 +149,7 @@ misc = module.exports =
             target[ name ] = misc.merge false, clone, copy
           # Don't bring in undefined values
           else if copy isnt undefined
+            copy = copy.slice(0) if Array.isArray copy
             target[ name ] = copy unless inverse and typeof target[ name ] isnt 'undefined'
     # Return the modified object
     target
