@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* repos: auto confirmation in repolist after repo creation
 * merge: duplicate arrays
 * mod: new system.mod action
 * kv: fix log enter in get

@@ -110,7 +110,7 @@ require('nikita').tools.repo({
       # Clean Metadata
       @system.execute
         if: -> options.clean and @status()
-        cmd: 'yum clean metadata; yum repolist'
+        cmd: 'yum clean metadata; yum repolist -y'
       @system.execute
         if: -> options.update and @status()
         cmd: "yum update -y --disablerepo=* --enablerepo=#{repoids.join(',')}; yum repolist"
