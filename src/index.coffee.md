@@ -156,6 +156,7 @@ functions share a common API with flexible options.
         limits: 'nikita/system/limits'
         link: 'nikita/system/link'
         mkdir: 'nikita/system/mkdir'
+        mod: 'nikita/system/mod'
         move: 'nikita/system/move'
         remove: 'nikita/system/remove'
         tmpfs: 'nikita/system/tmpfs'
