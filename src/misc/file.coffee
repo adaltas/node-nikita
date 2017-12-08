@@ -17,11 +17,20 @@ module.exports = file =
       return callback err if err
       rs = fs.createReadStream source
       ws = rs.pipe fs.createWriteStream target
-      ws.on 'close', ->
+      ws.on 'finish', ->
         fs.end() if fs.end
         modified = true
         callback()
-      ws.on 'error', callback
+      ws.on 'error', (err) ->
+        if (!ssh and err.code is 'ENOENT') or (ssh and err.code is 2)
+          if err.code is 2
+            err.code = 'ENOENT'
+            err.errno = -2
+            err.syscall = 'open'
+            err.path = target
+          err.message = "Invalid Target: no such file or directory, open #{JSON.stringify target}"
+        fs.end() if fs.end
+        callback err
   ###
   Compare modes
   -------------

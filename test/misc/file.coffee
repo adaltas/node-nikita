@@ -54,24 +54,55 @@ describe 'file', ->
     #     err.message.should.eql "Is a directory: #{__dirname}"
     #     should.not.exist md5
     #     next()
+  
+  describe 'copyFile', ->
+
+    they 'into parent dir', (ssh) ->
+      nikita
+        ssh: ssh
+      .file
+        target: "#{scratch}/a_source"
+        content: 'hello'
+      .call (_, callback) ->
+        misc.file.copyFile ssh, "#{scratch}/a_source", "#{scratch}/a_target", (err) ->
+          callback err
+      .file.assert
+        target: "#{scratch}/a_source"
+        content: 'hello'
+      .promise()
+
+    they 'parent dir must exists', (ssh) ->
+      nikita
+        ssh: ssh
+      .file.touch
+        target: "#{scratch}/a_source"
+      .call (_, callback) ->
+        misc.file.copyFile ssh, "#{scratch}/a_source", "#{scratch}/a_dir/a_target", (err) ->
+          err.code.should.eql 'ENOENT'
+          err.errno.should.eql -2
+          err.syscall.should.eql 'open'
+          err.path.should.eql "#{scratch}/a_dir/a_target"
+          err.message.should.eql "Invalid Target: no such file or directory, open \"/tmp/nikita-test/a_dir/a_target\""
+          callback()
+      .promise()
 
   describe 'remove', ->
 
-    they 'a dir', (ssh, next) ->
-      nikita.system.mkdir
+    they 'a dir', (ssh) ->
+      nikita
         ssh: ssh
+      .system.mkdir
         target: "#{scratch}/remove_dir"
-      , (err, created) ->
-        return next err if err
-        misc.file.remove ssh, "#{scratch}/remove_dir", (err) ->
-          return next err if err
-          fs.exists ssh, "#{scratch}/remove_dir", (err, exists) ->
-            return next err if err
-            exists.should.be.false()
-            next()
+      .call (_, callback ) ->
+        misc.file.remove ssh, "#{scratch}/remove_dir", callback
+      .file.assert
+        target: "#{scratch}/remove_dir"
+        not: true
+      .promise()
 
     they 'handle a missing remote dir', (ssh, next) ->
       misc.file.remove ssh, "#{scratch}/remove_missing_dir", (err) ->
+        (err is null).should.be.True()
         fs.exists ssh, "#{scratch}/remove_missing_dir", (err, exists) ->
           return next err if err
           exists.should.be.false()
