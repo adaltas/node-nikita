@@ -1,7 +1,7 @@
 {
   "name": "nikita",
   "description": "Automation and deployment orchestration solution for distributed apps and infrastructure.",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "email": "open@adaltas.com",
