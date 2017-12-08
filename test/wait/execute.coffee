@@ -138,13 +138,13 @@ describe 'wait.execute', ->
       .call ->
         setTimeout ->
           fs.mkdir ssh, "#{scratch}/file_1", -> # ok
-        , 30
+        , 50
         setTimeout ->
           fs.mkdir ssh, "#{scratch}/file_2", -> # ok
-        , 60
+        , 100
         setTimeout ->
           fs.mkdir ssh, "#{scratch}/file_3", -> # ok
-        , 90
+        , 200
       .wait.execute
         cmd: [
           "test -d #{scratch}/file_1 && echo 1 >> #{scratch}/result"

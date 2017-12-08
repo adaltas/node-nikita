@@ -17,7 +17,7 @@ describe 'wait.time', ->
     .wait 0
     .call ->
       interval = Date.now() - before
-      (interval > 1000 and interval < 1500).should.be.true()
+      (interval >= 1000 and interval < 1500).should.be.true()
     .promise()
 
   they 'before callback', (ssh) ->
@@ -28,7 +28,7 @@ describe 'wait.time', ->
       time: 1000
     , (err, status) ->
       interval = Date.now() - before
-      (interval > 1000 and interval < 1500).should.be.true()
+      (interval >= 1000 and interval < 1500).should.be.true()
     .promise()
 
   they 'wait before sync call', (ssh) ->
@@ -39,7 +39,7 @@ describe 'wait.time', ->
       time: 1000
     .call ->
       interval = Date.now() - before
-      (interval > 1000 and interval < 1500).should.be.true()
+      (interval >= 1000 and interval < 1500).should.be.true()
     .promise()
   
   they  'validate argument', (ssh) ->
