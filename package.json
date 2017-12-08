@@ -1,6 +1,6 @@
 {
   "name": "nikita",
-  "description": "Common functions for system deployment.",
+  "description": "Automation and deployment orchestration solution for distributed apps and infrastructure.",
   "version": "0.6.2",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
@@ -78,8 +78,14 @@
     "url": "https://github.com/adaltas/node-nikita"
   },
   "scripts": {
-    "coffee": "rm -rf lib; coffee -b -o lib src",
-    "pretest": "coffee -b -o lib src",
-    "test": "NODE_ENV=test mocha test/**/*.coffee"
+    "preversion": "grep '## Trunk' CHANGELOG.md && rm -rf lib && npm test",
+    "version": "version=`grep '^  \"version\": ' package.json | sed 's/.*\"\\([0-9\\.]*\\)\".*/\\1/'` && sed -i \"s/## Trunk/## Version $version/\" CHANGELOG.md && git add CHANGELOG.md",
+    "postversion": "git push && git push --tags && npm publish",
+    "patch": "npm version patch -m 'Bump to version %s'",
+    "minor": "npm version minor -m 'Bump to version %s'",
+    "major": "npm version major -m 'Bump to version %s'",
+    "coffee": "./node_modules/.bin/coffee -b -o lib src",
+    "pretest": "./node_modules/.bin/coffee -b -o lib src",
+    "test": "./node_modules/.bin/mocha test/**.coffee"
   }
 }

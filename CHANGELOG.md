@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* package: publishing workflow
 * copy: fix multiple callback on error
 * repos: auto confirmation in repolist after repo creation
 * merge: duplicate arrays
