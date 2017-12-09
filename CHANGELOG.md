@@ -1,6 +1,10 @@
 
 # Changelog
 
+## Trunk
+
+* package: update jsftp
+
 ## Version 0.6.3
 
 * package: publishing workflow
