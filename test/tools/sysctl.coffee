@@ -111,6 +111,27 @@ describe 'tools.sysctl', ->
       """
     .promise()
 
+  they 'honors backup option', (ssh) ->
+    nikita
+      ssh: ssh
+    .tools.sysctl
+      target: "#{scratch}/sysctl.conf"
+      properties:
+        'vm.swappiness': 10
+      load: false
+      backup: true
+    .system.execute.assert
+      cmd: "[[ `ls #{scratch}/sysctl.* | wc -l` == '1' ]]"
+    .tools.sysctl
+      target: "#{scratch}/sysctl.conf"
+      properties:
+        'vm.swappiness': 20
+      load: false
+      backup: true
+    .system.execute.assert
+      cmd: "[[ `ls #{scratch}/sysctl.* | wc -l` == '2' ]]"
+    .promise()
+
   describe 'comment', ->
 
     they 'Not preserved by default', (ssh) ->

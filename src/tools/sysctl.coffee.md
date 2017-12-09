@@ -9,12 +9,14 @@ Comments will be preserved if the `comments` and `merge` options are enabled.
 
 ## Options
 
+* `backup` (string|boolean)   
+  Create a backup, append a provided string to the filename extension or a
+  timestamp if value is not a string, only apply if the target file exists and
+  is modified.
 * `load` (boolean)   
-  Load properties if target is modified, default is "true".   
+  Load properties if target is modified, default is "true".
 * `merge` (boolean)    
-  Preserve existing variables in the target file.   
-* `source` (object)   
-  List of properties to write and load.   
+  Preserve existing variables in the target file.
 * `target` (string)
   Destination to write properties and load in sysctl settings, default to "/etc/sysctl.conf" if none given.
 
@@ -23,7 +25,7 @@ Comments will be preserved if the `comments` and `merge` options are enabled.
 * `err` (Error)   
   Error object if any.   
 * `status`  (boolean)   
-  Value is "true" if backup was created.   
+  Value is "true" if the property was created or updated.
 
 ## Usefull Commands
 
@@ -99,7 +101,8 @@ require('nikita').tools.sysctl({
         if: -> @status()
       , ->
         @file
-          target: "#{options.target}"
+          target: options.target
+          backup: options.backup
           content: (
             for key, value of final
               if value?

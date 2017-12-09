@@ -8,9 +8,10 @@ Write a file or a portion of an existing file.
 * `append`   
   Append the content to the target file. If target does not exist,
   the file will be created.
-* `backup`   
+* `backup` (string|boolean)   
   Create a backup, append a provided string to the filename extension or a
-  timestamp if value is not a string.
+  timestamp if value is not a string, only apply if the target file exists and
+  is modified.
 * `backup_mode`   
   Backup file mode (permission and sticky bits), defaults to `0o0400`, in the 
   form of `{mode: 0o0400}` or `{mode: "0400"}`.

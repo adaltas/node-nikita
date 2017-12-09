@@ -5,9 +5,10 @@ Write a file in the Java properties format.
 
 ## Options
 
-* `backup` (boolean)   
+* `backup` (string|boolean)   
   Create a backup, append a provided string to the filename extension or a
-  timestamp if value is not a string.
+  timestamp if value is not a string, only apply if the target file exists and
+  is modified.
 * `content` (object)   
   List of properties to write.
 * `target` (string)   

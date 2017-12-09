@@ -8,41 +8,42 @@ function with the addition of the "binary" option.
 
 * `binary`   
   Fast upload implementation, discard all the other option and use its own
-  stream based implementation.   
+  stream based implementation.
 * `from`   
-  Replace from after this marker, a string or a regular expression.   
+  Replace from after this marker, a string or a regular expression.
 * `to`   
-  Replace to before this marker, a string or a regular expression.   
+  Replace to before this marker, a string or a regular expression.
 * `match`   
-  Replace this marker, a string or a regular expression.   
+  Replace this marker, a string or a regular expression.
 * `replace`   
   The content to be inserted, used conjointly with the from, to or match
-  options.   
+  options.
 * `content`   
-  Text to be written.   
+  Text to be written.
 * `source`   
   File path from where to extract the content, do not use conjointly with
-  content.   
+  content.
 * `target`   
-  File path where to write content to.   
-* `backup`   
+  File path where to write content to.
+* `backup` (string|boolean)   
   Create a backup, append a provided string to the filename extension or a
-  timestamp if value is not a string.   
+  timestamp if value is not a string, only apply if the target file exists and
+  is modified.
 * `md5`   
   Validate uploaded file with md5 checksum (only for binary upload for now),
-  may be the string checksum or will be deduced from source if "true".   
+  may be the string checksum or will be deduced from source if "true".
 * `sha1`   
   Validate uploaded file with sha1 checksum (only for binary upload for now),
-  may be the string checksum or will be deduced from source if "true".   
+  may be the string checksum or will be deduced from source if "true".
 * `ssh` (object|ssh2)   
   Run the action on a remote server using SSH, an ssh2 instance or an
-  configuration object used to initialize the SSH connection.   
+  configuration object used to initialize the SSH connection.
 * `stdout` (stream.Writable)   
   Writable EventEmitter in which the standard output of executed commands will
-  be piped.   
+  be piped.
 * `stderr` (stream.Writable)   
   Writable EventEmitter in which the standard error output of executed command
-  will be piped.   
+  will be piped.
 
 ## Callback parameters
 

@@ -18,50 +18,51 @@ provided in the `content` option.
   Append the content to the target file. If target does not exist,
   the file will be created. When used with the `match` and `replace` options,
   it will append the `replace` value at the end of the file if no match if
-  found and if the value is a string.   
-* `backup`   
+  found and if the value is a string.
+* `backup` (string|boolean)   
   Create a backup, append a provided string to the filename extension or a
-  timestamp if value is not a string.   
+  timestamp if value is not a string, only apply if the target file exists and
+  is modified.
 * `content`   
-  Object to stringify.   
+  Object to stringify.
 * `target`   
-  File path where to write content to or a callback.   
+  File path where to write content to or a callback.
 * `from`   
-  Replace from after this marker, a string or a regular expression.   
+  Replace from after this marker, a string or a regular expression.
 * `local`   
-  Treat the source as local instead of remote, only apply with "ssh" option.   
+  Treat the source as local instead of remote, only apply with "ssh" option.
 * `indent`   
-  Number of space used for indentation. Default to 2.   
+  Number of space used for indentation. Default to 2.
   * `line_width`.
-  Number of max character before a new line is written. Default to 160.   
+  Number of max character before a new line is written. Default to 160.
 * `match`   
-  Replace this marker, a string or a regular expression.   
+  Replace this marker, a string or a regular expression.
 * `merge`   
-  Read the target if it exists and merge its content.   
+  Read the target if it exists and merge its content.
 * `replace`   
   The content to be inserted, used conjointly with the from, to or match
-  options.   
+  options.
 * `source`   
   File path from where to extract the content, do not use conjointly with
-  content.   
+  content.
 * `to`   
-  Replace to before this marker, a string or a regular expression.   
+  Replace to before this marker, a string or a regular expression.
 * `ssh` (object|ssh2)   
   Run the action on a remote server using SSH, an ssh2 instance or an
-  configuration object used to initialize the SSH connection.   
+  configuration object used to initialize the SSH connection.
 * `stdout` (stream.Writable)   
   Writable EventEmitter in which the standard output of executed commands will
-  be piped.   
+  be piped.
 * `stderr` (stream.Writable)   
   Writable EventEmitter in which the standard error output of executed command
-  will be piped.   
+  will be piped.
 
 ## Callback parameters
 
 * `err`   
-  Error object if any.   
+  Error object if any.
 * `written`   
-  Number of written actions with modifications.   
+  Number of written actions with modifications.
 
 ## Example
 

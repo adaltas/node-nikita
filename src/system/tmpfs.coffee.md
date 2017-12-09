@@ -1,43 +1,45 @@
 
 # `nikita.system.tmpfs(options, callback)`
 
-Mount a direcoty with tmpfs.d as a [tmpfs](https://www.freedesktop.org/software/systemd/man/tmpfiles.d.html) configuration file.
+Mount a directory with tmpfs.d as a [tmpfs](https://www.freedesktop.org/software/systemd/man/tmpfiles.d.html) configuration file.
 
 ## Options
 
-* `age` (String)   
-  Used to decide what files to delete when cleaning   
-* `argument` (String)   
-  the destination path of the symlink if type is `L`.   
-* `backup`   
+* `age` (string)   
+  Used to decide what files to delete when cleaning.
+* `argument` (string)   
+  the destination path of the symlink if type is `L`.
+* `backup` (string|boolean)   
   Create a backup, append a provided string to the filename extension or a
-  timestamp if value is not a string.   
-* `mount`   
-  The mount point dir to create on system startup.   
-* `name`   
-  The file name. can not be used with target. If only options.name is set, it
+  timestamp if value is not a string, only apply if the target file exists and
+  is modified.
+* `mount` (string)   
+  The mount point dir to create on system startup.
+* `name` (string)   
+  The file name, can not be used with target. If only options.name is set, it
   writes the content to default configuration directory and creates the file 
-  as '`name`.conf'   
-* `target`   
+  as '`name`.conf'.
+* `target` (string)   
   File path where to write content to. Defined to /etc/tmpfiles.d/{options.uid}.conf
-  if uid is defined or /etc/tmpfiles.d/default.conf.   
-* `gid`   
-  File group name or group id.   
-* `Perm`   (String)   
-  target mount path mode in string format like `'0644'`.   
+  if uid is defined or /etc/tmpfiles.d/default.conf.
+* `gid` (string|integer)   
+  File group name or group id.
+* `Perm` (string)   
+  target mount path mode in string format like `'0644'`.
 * `merge` (boolean)   
-   Overrides properties if already exits.   
-* `uid`   
-  File user name or user id.   
+   Overrides properties if already exits.
+* `uid` (string|integer)   
+  File user name or user id.
 
 ## Callback parameters
 
 * `err`   
-  Error object if any.   
-* `modified`   
-  Number of written actions with modifications.   
+  Error object if any.
+* `status`   
+  Wheter the directory was mounted or already mounted.
 
 # Example
+
 All parameters can be omitted except type. nikita.tmpfs will ommit by replacing 
 the undefined value as '-', which does apply the os default behavior.
 

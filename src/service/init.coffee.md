@@ -6,39 +6,43 @@ Reload the service daemon provider depending on the os.
 
 ## Options
 
+* `backup` (string|boolean)   
+  Create a backup, append a provided string to the filename extension or a
+  timestamp if value is not a string, only apply if the target file exists and
+  is modified.
 * `context` (object)   
-  The context object used to render the scripts file
+  The context object used to render the scripts file.
 * `engine`   
-  Template engine to use. Nunjucks by default   
+  Template engine to use. Nunjucks by default.
 * `filters` (function)   
-  Filter function to extend the nunjucks engine.   
+  Filter function to extend the nunjucks engine.
 * `local`   
   Treat the source as local instead of remote, only apply with "ssh"
-  option.   
+  option.
 * `name` (string)   
   The name of the destination file. Use the name of the template if missing.
 * `skip_empty_lines`   
-  Remove empty lines.   
+  Remove empty lines.
 * `source` (boolean) REQUIRED   
-  The source of startup script template.   
+  The source of startup script template.
 * `target` (string) OPTIONAL   
   The destination file. `/etc/init.d/crond` or `/etc/systemd/system/crond.service` for example.
   If no provided, nikita put it on the default folder based on the service daemon
   provider,the OS and use the source filename as the name.
 * `uid`   
-  File user name or user id.   
+  File user name or user id.
 * `gid`   
-  File group name or group id.   
+  File group name or group id.
 * `mode`   
   File mode (permission and sticky bits), default to `0666`, in the for of
-  `{mode: 0o744}` or `{mode: "744"}`.   
+  `{mode: 0o744}` or `{mode: "744"}`.
 
 ## Callback parameters
 
 * `err`   
-  Error object if any.   
+  Error object if any.
 * `status`   
-  Indicates if the init script was reloaded.   
+  Indicates if the init script was reloaded.
 
 ## Source Code
     
