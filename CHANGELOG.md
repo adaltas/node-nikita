@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* file.cache: coffee esthetic
 * package: update jsftp
 
 ## Version 0.6.3
