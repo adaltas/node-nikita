@@ -11,6 +11,10 @@ overwrite it.
   Group name or id who owns the file.   
 * `mode`   
   Permissions of the file or the parent directory.   
+* `parent` (boolean|object)   
+  Create parent directory with provided attributes if an object or default 
+  system options if "true", supported attributes include 'mode', 'uid', 'gid', 
+  'size', 'atime', and 'mtime'.   
 * `preserve`   
   Preserve file ownerships and permissions, default to "false".
 * `source`   
@@ -64,6 +68,7 @@ Validate parameters.
       options.gid ?= false
       options.gid = parseInt options.gid if typeof options.gid is 'string' and not isNaN parseInt options.uid
       options.preserve ?= false
+      options.parent ?= true
       throw Error 'Missing source' unless options.source
       throw Error 'Missing target' unless options.target
 
@@ -92,6 +97,14 @@ Retrieve stat information about the traget unless provided through the "target_s
           options.target_stats = stats
           callback()
 
+Create target parent directory if target does not exists
+
+      @system.mkdir
+        if: !!options.parent
+        unless: options.target_stats
+        target: path.dirname options.target
+        parent: options.parent
+        
 Stop here if source is a directory. We traverse all its children
 Recursively, calling either `system.mkdir` or `system.copy`.
 

@@ -22,8 +22,9 @@ of the directory to create.
 * `exclude`   
   Regular expression.   
 * `parent` (boolean|object)   
-  Create parent directory with provided options if an object or default 
-  system options if "true".   
+  Create parent directory with provided attributes if an object or default 
+  system options if "true", supported attributes include 'mode', 'uid', 'gid', 
+  'size', 'atime', and 'mtime'.   
 * `source`   
   Alias for `directory`.   
 

@@ -26,6 +26,53 @@ checkDir = (ssh, dir, callback) ->
 describe 'system.copy', ->
 
   scratch = test.scratch @
+  
+  describe 'options parent', ->
+    
+    they 'create parent directory', (ssh) ->
+      nikita
+        ssh: ssh
+      .file
+        target: "#{scratch}/a_new_file"
+        content: 'hello'
+      .system.copy
+        source: "#{scratch}/a_new_file"
+        target: "#{scratch}/a_dir/a_new_file"
+      .file.assert
+        target: "#{scratch}/a_dir/a_new_file"
+        content: 'hello'
+      .promise()
+  
+    they 'throw error if false', (ssh) ->
+      nikita
+        ssh: ssh
+      .file
+        target: "#{scratch}/a_new_file"
+        content: 'hello'
+      .system.copy
+        source: "#{scratch}/a_new_file"
+        target: "#{scratch}/a_dir/a_new_file"
+        parent: false
+      .promise()
+      .should.be.rejectedWith 'Invalid Target: no such file or directory, open "/tmp/nikita-test/a_dir/a_new_file"'
+        
+    they 'pass mode attribute', (ssh) ->
+      nikita
+        ssh: ssh
+      .file
+        target: "#{scratch}/a_new_file"
+        content: 'hello'
+      .system.copy
+        source: "#{scratch}/a_new_file"
+        target: "#{scratch}/a_dir/a_new_file"
+        parent: mode: 0o0600
+        mode: 0o0604
+      .file.assert
+        target: "#{scratch}/a_dir"
+        mode: 0o0600
+      .file.assert
+        target: "#{scratch}/a_dir/a_new_file"
+        mode: 0o0604
 
   describe 'file', ->
 
