@@ -9,7 +9,7 @@ Otherwise it will be set to "true".
 ## Options
 
 * `host`, `hosts` (array|string)  
-  One or multiple host, used to build or enrich the 'servers' option.
+  One or multiple hosts, used to build or enrich the 'servers' option.
 * `interval` (number)  
   Time in millisecond between each connection attempt.
 * `quorum` (number|boolean)  
@@ -31,37 +31,40 @@ connection finaly succeeded.
 
 Wait for two domains on the same port.
 
-```coffee
-require 'nikita'
-.wait_connect
-  hosts: [ '1.domain.com', '2.domain.com' ]
+```js
+require('nikita')
+.wait_connect({
+  hosts: [ '1.domain.com', '2.domain.com' ],
   port: 80
-.then (err, status) ->
-  # Servers listening on port 80
+}, function(err, status){
+  // Servers listening on port 80
+})
 ```
 
 Wait for one domain on two diffents ports.
 
-```coffee
-require 'nikita'
-.wait_connect
-  host: 'my.domain.com'
+```js
+require('nikita')
+.wait_connect({
+  host: 'my.domain.com',
   ports: [80, 443]
-.then (err, status) ->
-  # Server listening on ports 80 and 443
+}, function(err, status){
+  // Server listening on ports 80 and 443
+})
 ```
 
 Wait for two domains on diffents ports.
 
-```coffee
-require 'nikita'
-.wait_connect
+```js
+require('nikita')
+.wait_connect({
   servers: [
-    {host: '1.domain.com', port: 80}
+    {host: '1.domain.com', port: 80},
     {host: '2.domain.com', port: 443}
   ]
-.then (err, status) ->
-  # Servers listening
+}, function(err, status){
+  // Servers listening
+})
 ```
 
 ## Source Code
