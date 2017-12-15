@@ -391,6 +391,12 @@ describe 'file', ->
         replace: 'my friend'
       , (err, status) ->
         status.should.be.true() unless err
+      .file
+        target: "#{scratch}/fromto.md"
+        match: 'my friend'
+        replace: 'my friend'
+      , (err, status) ->
+        status.should.be.false() unless err
       .file.assert
         target: "#{scratch}/fromto.md"
         content: 'here we are\nmy friend\nyou coquin'
@@ -458,6 +464,12 @@ describe 'file', ->
         replace: 'property=50'
       , (err, status) ->
         status.should.be.true() unless err
+      .file
+        target: "#{scratch}/replace"
+        match: /^property=50$/mg
+        replace: 'property=50'
+      , (err, status) ->
+        status.should.be.false() unless err
       .file.assert
         target: "#{scratch}/replace"
         content: '#A config file\n#property=30\nproperty=50\nproperty=50\n#End of Config'

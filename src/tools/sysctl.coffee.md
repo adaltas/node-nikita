@@ -13,10 +13,14 @@ Comments will be preserved if the `comments` and `merge` options are enabled.
   Create a backup, append a provided string to the filename extension or a
   timestamp if value is not a string, only apply if the target file exists and
   is modified.
+* `comment` (boolean)   
+  Preserve comments.
 * `load` (boolean)   
   Load properties if target is modified, default is "true".
 * `merge` (boolean)    
   Preserve existing variables in the target file.
+* `properties` (object)   
+  Key/value object representing sysctl properties and values.
 * `target` (string)
   Destination to write properties and load in sysctl settings, default to "/etc/sysctl.conf" if none given.
 

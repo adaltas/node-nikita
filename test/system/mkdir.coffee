@@ -13,24 +13,24 @@ describe 'system.mkdir', ->
   they 'as a directory option or as a string', (ssh) ->
     nikita
       ssh: ssh
-    .system.mkdir directory: "#{scratch}/a_dir", (err, created) ->
-      created.should.be.true()
-    .system.mkdir directory: "#{scratch}/a_dir", (err, created) ->
-      created.should.be.false()
-    .system.mkdir "#{scratch}/b_dir", (err, created) ->
-      created.should.be.true()
-    .system.mkdir "#{scratch}/b_dir", (err, created) ->
-      created.should.be.false()
+    .system.mkdir directory: "#{scratch}/a_dir", (err, status) ->
+      status.should.be.true()
+    .system.mkdir directory: "#{scratch}/a_dir", (err, status) ->
+      status.should.be.false()
+    .system.mkdir "#{scratch}/b_dir", (err, status) ->
+      status.should.be.true()
+    .system.mkdir "#{scratch}/b_dir", (err, status) ->
+      status.should.be.false()
     .promise()
 
   they 'should take source if first argument is a string', (ssh) ->
     source = "#{scratch}/a_dir"
     nikita
       ssh: ssh
-    .system.mkdir source, (err, created) ->
-      created.should.be.true()
-    .system.mkdir source, (err, created) ->
-      created.should.be.false()
+    .system.mkdir source, (err, status) ->
+      status.should.be.true()
+    .system.mkdir source, (err, status) ->
+      status.should.be.false()
     .promise()
   
   they 'should create dir recursively', (ssh) ->
@@ -38,12 +38,12 @@ describe 'system.mkdir', ->
       ssh: ssh
     .system.mkdir
       directory: "#{scratch}/a_parent_dir_1/a_dir"
-    , (err, created) ->
-      created.should.be.true() unless err
+    , (err, status) ->
+      status.should.be.true() unless err
     .system.mkdir
       directory: "#{scratch}/a_parent_dir_2/a_dir/"
-    , (err, created) ->
-      created.should.be.true() unless err
+    , (err, status) ->
+      status.should.be.true() unless err
     .promise()
   
   they 'should create multiple directories', (ssh) ->

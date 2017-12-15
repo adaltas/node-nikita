@@ -1,6 +1,4 @@
 
-crypto = require 'crypto'
-
 module.exports =
     escapeshellarg: (arg) ->
       result = arg.replace /[^\\]'/g, (match) ->
@@ -65,6 +63,9 @@ module.exports =
                 options.log message: "Option filter not a function and ignored", level: 'WARN', module: 'nikita/lib/write'
             options.content = env.renderString options.content.toString(), options.context
           when 'eco'
+            try
+              eco = require 'eco'
+            catch e then throw Error "Uninstalled Package: the optional package \"echo\" is not installed"
             options.content = eco.render options.content.toString(), options.context
           else throw Error "Invalid engine: #{options.engine}"
       catch err
@@ -149,6 +150,6 @@ module.exports =
             else # TODO: honors append
               options.log message: "Missing 'to', skip writing", level: 'WARN', module: 'nikita/lib/misc/string'
 
-eco = require 'eco'
 nunjucks = require 'nunjucks/src/environment'
 quote = require 'regexp-quote'
+crypto = require 'crypto'
