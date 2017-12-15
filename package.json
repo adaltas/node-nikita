@@ -87,6 +87,6 @@
     "major": "npm version major -m 'Bump to version %s'",
     "coffee": "./node_modules/.bin/coffee -b -o lib src",
     "pretest": "./node_modules/.bin/coffee -b -o lib src",
-    "test": "./node_modules/.bin/mocha test/**.coffee"
+    "test": "./node_modules/.bin/mocha test/**/*.coffee"
   }
 }

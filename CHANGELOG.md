@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* package: fix npm test command
 * mod: persistent configuration
 * system.copy: create target parent directory
 * tools.sysctl: honors backup
