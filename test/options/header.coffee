@@ -38,12 +38,12 @@ describe 'options "header"', ->
       @call options, header: 'h2b', (options, callback) ->
         options.header = null
         @call options, header: 'h3a', (_, callback) -> callback()
-        @then callback
+        @next callback
       @call options, header: 'h2c', (_, callback) -> callback()
     .file.touch
       header: 'h1b'
       target: "#{scratch}/file_h1"
-    .then (err) ->
+    .next (err) ->
       # console.log err, headers
       # return next err if err
       headers.should.eql [

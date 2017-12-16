@@ -91,7 +91,7 @@ Create and start containers according to a docker-compose file
           containers = JSON.parse stdout
           start = containers.some (container) -> not container.State.Running
           options.log "Docker created, need start" if start
-        @then -> callback null, start
+        @next -> callback null, start
       @system.execute
         if: -> options.force or @status()
         cwd: source_dir

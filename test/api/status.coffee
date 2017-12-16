@@ -37,7 +37,7 @@ describe 'api status', ->
       nikita
       .call (options) ->
         throw Error 'Catchme'
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'Catchme'
       .promise()
 
@@ -168,7 +168,7 @@ describe 'api status', ->
         if: -> true
       , (options, callback) ->
         callback null, true
-      .then (err, status) ->
+      .next (err, status) ->
         return next err if err
         status.should.be.true()
       .call

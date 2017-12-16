@@ -84,7 +84,7 @@ describe 'system.execute', ->
       ssh: ssh
     .system.execute
       cmd: "exit 42"
-    .then (err, status) ->
+    .next (err, status) ->
       err.message.should.eql 'Invalid Exit Code: 42'
     .system.execute
       cmd: "exit 42"

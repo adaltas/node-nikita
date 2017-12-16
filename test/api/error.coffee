@@ -9,7 +9,7 @@ describe 'api error', ->
     nikita
     .on 'text', (log) -> logs.push log
     .call -> throw Error 'Catchme'
-    .then ->
+    .next ->
       logs.length.should.eql 1
       logs[0].message.should.eql 'Catchme'
       logs[0].level.should.eql 'ERROR'

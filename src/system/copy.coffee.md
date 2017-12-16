@@ -68,7 +68,8 @@ Validate parameters.
       options.gid ?= false
       options.gid = parseInt options.gid if typeof options.gid is 'string' and not isNaN parseInt options.uid
       options.preserve ?= false
-      options.parent ?= true
+      options.parent ?= {}
+      options.parent = {} if options.parent is true
       throw Error 'Missing source' unless options.source
       throw Error 'Missing target' unless options.target
 
@@ -97,13 +98,14 @@ Retrieve stat information about the traget unless provided through the "target_s
           options.target_stats = stats
           callback()
 
-Create target parent directory if target does not exists
+Create target parent directory if target does not exists and if the "parent"
+options is set to "true" (default) or as an object.
 
       @system.mkdir
         if: !!options.parent
         unless: options.target_stats
         target: path.dirname options.target
-        parent: options.parent
+      , options.parent
         
 Stop here if source is a directory. We traverse all its children
 Recursively, calling either `system.mkdir` or `system.copy`.
@@ -147,9 +149,9 @@ present inside "/tmp/a_source" are copied inside "/tmp/a_target".
                       uid: uid
                       gid: gid
                       mode: mode
-                  @then callback
-            @then callback
-        @then (err, status) -> callback err, status, true
+                  @next callback
+            @next callback
+        @next (err, status) -> callback err, status, true
       , (err, status, end) ->
         @end() if not err and end
 

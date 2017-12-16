@@ -28,7 +28,7 @@ describe 'ldap.user', ->
         uidNumber: '9610'
         gidNumber: '9610'
         homeDirectory: '/home/nikita'
-    .then (err, modified) ->
+    .next (err, modified) ->
       throw err if err
       modified.should.be.true()
     .ldap.delete
@@ -56,11 +56,11 @@ describe 'ldap.user', ->
       uri: config.ldap.uri
     .ldap.user
       user: user
-    .then ->
+    .next ->
       return # reset status
     .ldap.user
       user: user
-    .then (err, modified) ->
+    .next (err, modified) ->
       throw err if err
       modified.should.be.false()
     .ldap.delete

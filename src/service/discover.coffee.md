@@ -47,6 +47,6 @@ Store properties in the nikita store object.
           when 1 then 'systemctl'
           when 2 then 'service'
         options.store['nikita:service:loader'] = options.loader if options.cache
-      @then (err, status) ->
+      @next (err, status) ->
         loader = options.store['nikita:service:loader']? if options.cache and not loader?
         callback err, status, loader

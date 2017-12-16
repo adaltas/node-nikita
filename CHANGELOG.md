@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* api: rename then as next to avoid conflict with promise #125
 * package: fix npm test command
 * mod: persistent configuration
 * system.copy: create target parent directory

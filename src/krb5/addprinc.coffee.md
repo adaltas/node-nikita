@@ -43,9 +43,9 @@ require('nikita').krb5.addprinc({
 
 ## Source Code
 
-    module.exports = (options, callback) ->
-      return callback Error 'Property principal is required' unless options.principal
-      return callback Error 'Password or randkey missing' if not options.password and not options.randkey
+    module.exports = (options) ->
+      return throw Error 'Property principal is required' unless options.principal
+      return throw Error 'Password or randkey missing' if not options.password and not options.randkey
       # Normalize realm and principal for later usage of options
       options.realm ?= options.kadmin_principal.split('@')[1] if /.*@.*/.test options.kadmin_principal
       options.principal = "#{options.principal}@#{options.realm}" unless /^\S+@\S+$/.test options.principal
@@ -76,7 +76,6 @@ require('nikita').krb5.addprinc({
         if ! echo #{options.password} | kinit '#{options.principal}' -c '#{cache_name}'; then exit 1; else kdestroy -c '#{cache_name}'; fi
         """
       @krb5.ktadd ktadd_options
-      @then callback
 
 ## Dependencies
 

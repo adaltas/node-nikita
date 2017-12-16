@@ -65,14 +65,15 @@ describe 'system.copy', ->
       .system.copy
         source: "#{scratch}/a_new_file"
         target: "#{scratch}/a_dir/a_new_file"
-        parent: mode: 0o0600
+        parent: mode: 0o0700
         mode: 0o0604
       .file.assert
         target: "#{scratch}/a_dir"
-        mode: 0o0600
+        mode: 0o0700
       .file.assert
         target: "#{scratch}/a_dir/a_new_file"
         mode: 0o0604
+      .promise()
 
   describe 'file', ->
 

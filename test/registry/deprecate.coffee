@@ -14,7 +14,7 @@ describe 'registry.deprecate', ->
       nikita
       .my_function relax: true, (err) ->
         err.message.should.eql 'my_function is deprecated'
-      .then next
+      .next next
     .call ->
       nikita.unregister 'my_function'
     .promise()
@@ -27,7 +27,7 @@ describe 'registry.deprecate', ->
       nikita
       .my_function relax: true, (err) ->
         err.message.should.eql 'my_function is deprecated, use my_new_function'
-      .then next
+      .next next
     .call ->
       nikita.unregister 'my_function'
     .promise()
@@ -40,7 +40,7 @@ describe 'registry.deprecate', ->
       nikita
       .my_function relax: true, (err) ->
         err.message.should.eql 'my_function is deprecated, use nikita/file/touch'
-      .then next
+      .next next
     .call ->
       nikita.unregister 'my_function'
     .promise()
@@ -53,7 +53,7 @@ describe 'registry.deprecate', ->
       nikita
       .my_function relax: true, (err) ->
         err.message.should.eql 'my_function is deprecated, use my_new_function'
-      .then next
+      .next next
     .call ->
       nikita.unregister 'my_function'
     .promise()

@@ -22,7 +22,7 @@ describe 'api stack', ->
       options.log 'b'
     , (err, status) ->
       msgs.push 'a2'
-    n.then (err) ->
+    n.next (err) ->
       msgs.should.eql ['a1', 'b', 'c', 'd', 'e', 'a2']
     n.promise()
 
@@ -74,12 +74,12 @@ describe 'api stack', ->
     .call (options, callback) ->
       options.log 'b'
       callback()
-    .then ->
+    .next ->
       n
       .call (options, callback) ->
         options.log 'c'
         callback()
-      .then (err, changed) ->
+      .next (err, changed) ->
         msgs.should.eql ['a', 'b', 'c'] unless err
     .promise()
 
@@ -98,7 +98,7 @@ describe 'api stack', ->
       n.call (options, callback) ->
         options.log 'c'
         callback()
-      n.then (err, changed) ->
+      n.next (err, changed) ->
         msgs.should.eql ['a', 'b', 'c'] unless err
     .promise()
   
@@ -106,12 +106,12 @@ describe 'api stack', ->
     setImmediate ->
       nikita
       .call(->)
-      .then (err, status) ->
+      .next (err, status) ->
         process.nextTick =>
           # At this point internal stack is empty
           # let's fill it again
           @call ->
-          @then next
+          @next next
         , 1000
 
   describe 'error', ->
@@ -120,11 +120,11 @@ describe 'api stack', ->
       nikita
       .system.chmod
         target: "#{scratch}/doesnt_exist"
-      .then (err, changed) ->
+      .next (err, changed) ->
         err.message.should.eql "Missing option 'mode'"
       .system.chmod
         mode: 0o0644
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql "Missing target: undefined"
       .promise()
 
@@ -150,7 +150,7 @@ describe 'api stack', ->
         target: "#{scratch}/a_file"
       , (err, written) ->
         throw new Error 'Catchme' unless err
-      .then (err, changed) ->
+      .next (err, changed) ->
         err.message.should.eql 'Catchme'
       .promise()
 
@@ -159,6 +159,6 @@ describe 'api stack', ->
       .call ->
         @call ->
           throw Error 'Catchme'
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql "Catchme"
       .promise()

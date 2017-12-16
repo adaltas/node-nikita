@@ -210,7 +210,7 @@
         jump_to_error err
         run()
       jump_to_error = (err) ->
-        while todos[0] and todos[0].type not in ['catch', 'then', 'promise'] then todos.shift()
+        while todos[0] and todos[0].type not in ['catch', 'next', 'promise'] then todos.shift()
         todos.err = err
       _run_ = ->
         if obj.options.domain
@@ -232,7 +232,7 @@
           org_options[k] = v if org_options[k] is undefined and k isnt 'log' and obj.propagation[k] is true
         options = enrich_options options
         options.original = org_options
-        if options.type is 'then'
+        if options.type is 'next'
           {err, status} = todos
           status = status.some (status) -> not status.shy and !!status.value
           todos.final_err = err
@@ -254,7 +254,7 @@
         if array.compare options.type, ['end']
           return conditions.all proxy, options
           , ->
-            while todos[0] and todos[0].type not in ['then', 'promise'] then todos.shift()
+            while todos[0] and todos[0].type not in ['next', 'promise'] then todos.shift()
             callback err if callback
             run()
           , (err) ->
@@ -464,8 +464,8 @@
           do_disabled()
       properties.child = get: -> ->
         module.exports(obj.options)
-      properties.then = get: -> ->
-        todos.push type: 'then', handler: arguments[0]
+      properties.next = get: -> ->
+        todos.push type: 'next', handler: arguments[0]
         setImmediate _run_ if todos.length is 1 # Activate the pump
         proxy
       properties.promise = get: -> ->

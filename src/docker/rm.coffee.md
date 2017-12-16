@@ -38,7 +38,7 @@ nikita.docker.rm({
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       options.log message: "Entering Docker rm", level: 'DEBUG', module: 'nikita/lib/docker/rm'
       # Validate parameters and madatory conditions
       options.docker ?= {}
@@ -60,7 +60,6 @@ nikita.docker.rm({
         cmd: docker.wrap options, cmd
         if: -> @status -1
       , docker.callback
-      @then callback
 
 ## Modules Dependencies
 

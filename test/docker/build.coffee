@@ -21,7 +21,7 @@ describe 'docker.build', ->
       docker: config.docker
     .docker.build
       false_source: 'Dockerfile'
-    .then (err) ->
+    .next (err) ->
       return next Error 'Expect error' unless err
       err.message.should.eql 'Required option "image"'
     .promise()
@@ -34,7 +34,7 @@ describe 'docker.build', ->
       image: 'nikita/should_not_exists_1'
       file: "#{__dirname}/Dockerfile"
       content: "FROM scratch \ CMD ['echo \"hello world\"']"
-    .then (err) ->
+    .next (err) ->
       err.message.should.eql 'Can not build from Dockerfile and content'
     .promise()
 

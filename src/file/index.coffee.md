@@ -176,12 +176,12 @@ require('nikita').file({
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       options.log message: "Entering file", level: 'DEBUG', module: 'nikita/lib/file'
       # Validate parameters
-      return callback Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?
-      return callback Error 'Define either source or content' if options.source and options.content
-      return callback Error 'Missing target' unless options.target
+      return throw Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?
+      return throw Error 'Define either source or content' if options.source and options.content
+      return throw Error 'Missing target' unless options.target
       options.log message: "Source is \"#{options.source}\"", level: 'DEBUG', module: 'nikita/lib/file'
       options.log message: "Destination is \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/file'
       options.content = options.content.toString() if options.content and Buffer.isBuffer options.content
@@ -362,7 +362,6 @@ require('nikita').file({
         mode: options.mode
         if: options.mode?
         unless: options.target is 'function'
-      @then callback
 
 ## Dependencies
 

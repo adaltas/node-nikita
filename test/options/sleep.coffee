@@ -13,7 +13,7 @@ describe 'options "sleep"', ->
     .call retry: 2, relax: true, (options) ->
       times.push Date.now()
       throw Error 'Catchme'
-    .then (err) ->
+    .next (err) ->
       times.length.should.eql 2
       ((times[1] - times[0]) / 1000 - 3).should.be.below 0.01
     .promise()
@@ -24,7 +24,7 @@ describe 'options "sleep"', ->
     .call sleep: 1, retry: 2, relax: true, (options) ->
       times.push Date.now()
       throw Error 'Catchme'
-    .then (err) ->
+    .next (err) ->
       times.length.should.eql 2
       ((times[1] - times[0]) / 1000 - 1).should.be.below 0.01
     .promise()
@@ -32,7 +32,7 @@ describe 'options "sleep"', ->
   it 'ensure sleep is a number', ->
     nikita
     .call sleep: 'a string', (->)
-    .then (err) ->
+    .next (err) ->
       err.message.should.eql 'Invalid options sleep, got "a string"'
     .promise()
   
@@ -41,6 +41,6 @@ describe 'options "sleep"', ->
     .call sleep: 0, (->)
     .call sleep: 1, (->)
     .call sleep: -1, (->)
-    .then (err) ->
+    .next (err) ->
       err.message.should.eql 'Invalid options sleep, got -1'
     .promise()

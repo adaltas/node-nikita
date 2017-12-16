@@ -30,13 +30,9 @@ describe 'api promise', ->
     nikita
     .call (_, callback) ->
       nikita
-      .then (err, changed) ->
+      .next (err, changed) ->
         callback_is_called = true
         callback err
-      # setImmediate ->
-      #   callback_is_called = true
-      #   callback()
-    .then ->
-      console.log 'callback_is_called', callback_is_called
+    .next ->
       true.should.be.true()
     .promise()

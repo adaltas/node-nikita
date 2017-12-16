@@ -138,7 +138,7 @@ describe 'file.download url', ->
         status.should.be.false() unless err
       .call ->
         ("[INFO] Destination with valid signature, download aborted" in logs).should.be.true()
-      .then next
+      .next next
 
     they 'bypass shortcircuit if target dont match md5', (ssh) ->
       logs = []
@@ -158,7 +158,7 @@ describe 'file.download url', ->
         fs.readFile ssh, "#{scratch}/target", 'ascii', (err, content) ->
           content.should.equal 'okay' unless err
           callback err
-      .then next
+      .next next
 
     they 'check signature on downloaded file', (ssh) ->
       # Download with invalid checksum
@@ -171,7 +171,7 @@ describe 'file.download url', ->
         relax: true
       , (err, status) ->
         err.message.should.eql "Invalid downloaded checksum, found 'df8fede7ff71608e24a5576326e41c75' instead of '2f74dbbee4142b7366c93b115f914fff'"
-      .then next
+      .next next
 
     they 'count 1 if new file has correct checksum', (ssh) ->
       # Download with invalid checksum
@@ -185,7 +185,7 @@ describe 'file.download url', ->
         md5: 'df8fede7ff71608e24a5576326e41c75'
       , (err, status) ->
         status.should.be.true() unless err
-      .then next
+      .next next
 
     they 'count 0 if a file exist with same checksum', (ssh) ->
       # Download with invalid checksum
@@ -205,4 +205,4 @@ describe 'file.download url', ->
         md5: 'df8fede7ff71608e24a5576326e41c75'
       , (err, status) ->
         status.should.be.false() unless err
-      .then next
+      .next next

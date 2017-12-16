@@ -144,7 +144,7 @@ require('nikita').system.mkdir({
             stat: stat
             mode: options.mode
             if: options.mode?
-          @then (err, moded) ->
+          @next (err, moded) ->
             return callback err if err
             modified = true if moded
             callback()

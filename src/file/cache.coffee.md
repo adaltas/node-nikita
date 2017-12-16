@@ -148,7 +148,7 @@ require('nikita').download({
           source: "#{options.source}"
           target: "#{options.target}"
       # TODO: validate the cache
-      @then (err, status) ->
+      @next (err, status) ->
         callback err, status, options.target
 
     module.exports.protocols_http = protocols_http = ['http:', 'https:']

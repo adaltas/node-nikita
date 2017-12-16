@@ -70,7 +70,7 @@ couldn't find any suitable parser on NPM.
           """
           cwd: options.cwd
           bash: options.bash
-      @then (err, status) ->
+      @next (err, status) ->
         callback err, status, options.target, path.resolve options.cwd, options.target
 
 ## Dependencies

@@ -65,7 +65,7 @@ describe 'api propagation', ->
       options.parent_param_unpropagated.should.be.true()
       @achild
         local_param: true
-      .then (err, status) -> callback err, true
+      .next (err, status) -> callback err, true
     n.aparent
       parent_param_propagated: true
       parent_param_unpropagated: true

@@ -33,7 +33,7 @@ describe 'system.chown', ->
           logs.filter( (log) -> /^Stat /.test log.message ).length.should.eql 1 unless err
         @system.chown "#{scratch}/a_file", uid: 1234, gid: 1234, stat: stat, (err) ->
           logs.filter( (log) -> /^Stat /.test log.message ).length.should.eql 1 unless err
-        @then callback
+        @next callback
     .promise()
 
   they 'change uid and leave gid', (ssh) ->

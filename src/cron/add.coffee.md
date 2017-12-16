@@ -35,8 +35,8 @@ require('nikita').cron.add({
   cmd: 'kinit service/my.fqdn@MY.REALM -kt /etc/security/service.keytab',
   when: '0 */9 * * *'
   user: 'service'
-}, function(err, modified){
-  console.log(err ? err.message : 'Cron entry created or modified: ' + !!modified);
+}, function(err, status){
+  console.log(err ? err.message : 'Cron entry created or modified: ' + !!status);
 });
 ```
 
@@ -80,7 +80,7 @@ require('nikita').cron.add({
           jobs.push new_job
           options.log message: "Job not found in crontab, adding", level: 'WARN', module: 'nikita/cron/add'
         jobs = null unless added or modified
-      .then (err) ->
+      .next (err) ->
         return callback err if err
         return callback() unless jobs
         @system.execute
@@ -92,8 +92,7 @@ require('nikita').cron.add({
           #{jobs.join '\n'}
           EOF
           """
-          # if: -> jobs
-        .then callback
+        .next callback
 
 ## Dependencies
 

@@ -34,7 +34,7 @@ describe 'should_exist', ->
     nikita
     .call should_exist: '/does/not/exist', ->
       throw Error 'Oh no'
-    .then (err) ->
+    .next (err) ->
       err.message.should.eql 'File does not exist: /does/not/exist'
       next()
 
@@ -69,6 +69,6 @@ describe 'should_not_exist', ->
     nikita
     .call should_not_exist: __filename, ->
       throw Error 'Oh no'
-    .then (err) ->
+    .next (err) ->
       err.message.should.eql "File does not exist: #{__filename}"
       next()

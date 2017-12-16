@@ -58,7 +58,7 @@ describe 'api callback', ->
         throw Error 'Catchme'
       .call ->
         throw Error "Dont come here"
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'Catchme'
       .promise()
 
@@ -67,7 +67,7 @@ describe 'api callback', ->
       .call () ->
         @call (->), ->
           throw Error 'Catchme'
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'Catchme'
       .promise()
 
@@ -76,7 +76,7 @@ describe 'api callback', ->
       .call (_, callback) ->
         @call (->), ->
           throw Error 'Catchme'
-        @then callback
-      .then (err) ->
+        @next callback
+      .next (err) ->
         err.message.should.eql 'Catchme'
       .promise()

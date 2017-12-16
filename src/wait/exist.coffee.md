@@ -15,12 +15,13 @@ change had occured. Otherwise it will be set to "true".
 
 Example:
 
-```coffee
-require 'nikita'
-.wait.exist
+```js
+require('nikita')
+.wait.exist({
   target: "/path/to/file_or_directory"
-.then (err, status) ->
-  # Command succeed, the file now exists
+}, function(err, status){
+  // Command succeed, the file now exists
+})
 ```
 
 ## Source Code

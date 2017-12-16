@@ -104,10 +104,10 @@ describe 'system.link', ->
         ssh: ssh
       .system.link
         target: __filename
-      .then (err, changed) ->
+      .next (err, changed) ->
         err.message.should.eql "Missing source, got undefined"
       .system.link # Test missing target
         source: __filename
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql "Missing target, got undefined"
       .promise()

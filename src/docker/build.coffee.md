@@ -201,7 +201,7 @@ nikita.docker.build({
           if (line.indexOf('Successfully built') isnt  -1 )
             container_id_hash = line.split(' ').pop().toString()
         userargs = [number_of_step isnt number_of_cache, container_id_hash, stdout, stderr]
-      @then (err, status) ->
+      @next (err, status) ->
         return callback err if err
         options.log if userargs[0]
         then message: "New image id #{userargs[1]}", level: 'INFO', module: 'nikita/lib/docker/build' 

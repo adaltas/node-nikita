@@ -53,7 +53,7 @@ describe 'krb5.addprinc', ->
       password_sync: true
     , (err, status) ->
       status.should.be.false() unless err
-    .then next
+    .promise()
 
   they 'dont overwrite password', (ssh) ->
     nikita

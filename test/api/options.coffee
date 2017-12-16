@@ -10,7 +10,7 @@ describe 'api options', ->
     .call [], (options, callback) ->
       callback null, true
     .file []
-    .then (err, status) ->
+    .next (err, status) ->
       status.should.be.false() unless err
     .promise()
 
@@ -19,7 +19,7 @@ describe 'api options', ->
     .call [], (options) ->
       return true
     .file []
-    .then (err, status) ->
+    .next (err, status) ->
       status.should.be.false() unless err
     .promise()
 

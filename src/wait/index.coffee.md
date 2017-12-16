@@ -10,14 +10,15 @@ Simple nikita action that calls setTimeout. Thus, time is in millisecond.
 
 ## Example
 
-```coffee
-before = Date.now()
-require 'nikita'
-.wait
+```js
+before = Date.now();
+require('nikita')
+.wait({
   time: 5000
-.then (err, status) ->
-    throw Error 'TOO LATE!' if (Date.now() - before) > 5200
-    throw Error 'TOO SOON!' if (Date.now() - before) < 5000
+}, function(err, status){
+  throw Error 'TOO LATE!' if (Date.now() - before) > 5200
+  throw Error 'TOO SOON!' if (Date.now() - before) < 5000
+})
 ```
 
 ## Source Code

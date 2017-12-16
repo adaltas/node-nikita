@@ -47,8 +47,8 @@ require('nikita').database.schema({
       throw Error 'Missing option: "database"' unless options.database
       throw Error 'Missing option: "engine"' unless options.engine
       # Deprecation
-      if options.engine is 'postgresql'
-        console.log 'Depracated Value: options "postgres" is deprecated in favor of "postgresql"'
+      if options.engine is 'postgres'
+        console.log 'Deprecated Value: options "postgres" is deprecated in favor of "postgresql"'
         options.engine = 'postgresql'
       # Defines and check the engine type 
       options.engine = options.engine.toLowerCase()

@@ -35,8 +35,8 @@ Check if a database exists.
       throw Error 'Missing option: "admin_password"' if options.admin_username and not options.admin_password
       throw Error 'Missing option: "password"' if options.username and not options.password
       # Deprecation
-      if options.engine is 'postgresql'
-        console.log 'Depracated Value: options "postgres" is deprecated in favor of "postgresql"'
+      if options.engine is 'postgres'
+        console.log 'Deprecated Value: options "postgres" is deprecated in favor of "postgresql"'
         options.engine = 'postgresql'
       # Defines and check the engine type
       options.engine = options.engine.toLowerCase()

@@ -28,12 +28,13 @@ change had occured. Otherwise it will be set to "true".
 
 ## Example
 
-```coffee
-require 'nikita'
-.wait.execute
+```js
+require('nikita')
+.wait.execute({
   cmd: "test -f /tmp/sth"
-.then (err, status) ->
-  # Command succeed, the file "/tmp/sth" now exists
+}, function(err, status){
+  // Command succeed, the file "/tmp/sth" now exists
+})
 ```
 
 ## Source Code

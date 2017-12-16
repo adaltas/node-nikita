@@ -20,7 +20,7 @@ describe 'options "retry"', ->
     .call retry: 3, wait: 500, (options) ->
       options.attempt.should.eql count++
       throw Error 'Catchme'
-    .then (err) ->
+    .next (err) ->
       err.message.should.eql 'Catchme'
       count.should.eql 3
     .promise()

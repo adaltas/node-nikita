@@ -18,7 +18,7 @@ for engine, _ of config.db
         username: 'test_user_exists_1_user'
       , (err, status) ->
         status.should.be.false() unless err
-      .then (err, status) ->
+      .next (err, status) ->
         throw err if err
         # Modules of type exists shall be shy
         status.should.be.false()

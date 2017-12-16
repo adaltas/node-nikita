@@ -13,7 +13,7 @@ describe 'log.fs', ->
   they 'requires option "serializer"', (ssh) ->
     nikita ssh: ssh
     .log.fs basedir: scratch
-    .then (err) ->
+    .next (err) ->
       err.message.should.eql 'Missing option: serializer'
     .promise()
 

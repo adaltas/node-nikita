@@ -18,7 +18,7 @@ describe 'options "domain"', ->
     .call ->
       setImmediate ->
         next Error 'Shouldnt be called'
-    .then (err, status) ->
+    .next (err, status) ->
       err.message.should.eql 'Invalid State Error [Catch me]'
     .promise()
 
@@ -31,7 +31,7 @@ describe 'options "domain"', ->
       next()
     nikita
       domain: d
-    .then ->
+    .next ->
       throw Error 'Catchme'
     null
 

@@ -53,7 +53,7 @@ describe 'if_exists', ->
     .call
       if_exists: __filename + '/does/not/exists'
       handler: -> logs.push 'handler not called'
-    .then (err) ->
+    .next (err) ->
       logs.should.eql [
         "File exists #{__filename}, continuing"
         'handler called'
@@ -129,7 +129,7 @@ describe 'unless_exists', ->
     .call
       unless_exists: __filename + '/does/not/exists'
       handler: -> logs.push 'handler called'
-    .then (err) ->
+    .next (err) ->
       logs.should.eql [
         "File exists #{__filename}, skipping"
         "File doesnt exists #{__filename}/does/not/exists, continuing"

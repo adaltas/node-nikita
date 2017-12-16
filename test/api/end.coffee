@@ -10,7 +10,7 @@ describe 'api end', ->
     .call (_, handler) -> handler null, true # Set status to true
     .end if: true
     .call ({}, callback) -> next Error "Should never get here"
-    .then (err, status) ->
+    .next (err, status) ->
       status.should.be.true() unless err
     .promise()
 

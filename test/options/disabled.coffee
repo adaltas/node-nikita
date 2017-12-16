@@ -52,5 +52,5 @@ describe 'options "disable"', ->
       (log.module is undefined).should.be.true()
       log.header_depth.should.eql 0
       log.file.should.eql 'context.coffee.md'
-    .then (->)
+    .next (->)
     .promise()

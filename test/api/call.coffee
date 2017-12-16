@@ -190,7 +190,7 @@ describe 'api call', ->
         @file
           content: 'ok'
           target: "#{scratch}/a_file"
-        .then next
+        .next next
       .assert
         status: true
       .file.assert
@@ -199,20 +199,20 @@ describe 'api call', ->
       .promise()
 
     it 'in then without changes', ->
-      m = nikita
+      nikita
       .call (options, next) ->
         @file
           content: 'ok'
           target: "#{scratch}/a_file"
           if_exists: "#{scratch}/a_file"
-        .then next
+        .next next
       .assert
         status: false
       .promise()
 
     it 'pass user arguments', ->
       callback_called = false
-      m = nikita
+      nikita
       .call (options, next) ->
         setImmediate ->
           next null, true, 'argument'

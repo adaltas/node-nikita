@@ -71,7 +71,7 @@ require('nikita').cron.remove({
         EOF
         """
         if: -> status
-      .then callback
+      .next callback
 
 ## Dependencies
 

@@ -57,7 +57,7 @@ describe 'tools.extract', ->
       source: "#{__dirname}/../resources/a_dir.tgz"
       target: scratch
       creates: "#{scratch}/oh_no"
-    .then (err, status) ->
+    .next (err, status) ->
       err.message.should.eql "Failed to create 'oh_no'"
     # Test with valid creates option
     .tools.extract

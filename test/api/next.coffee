@@ -3,31 +3,31 @@ domain = require 'domain'
 test = require '../test'
 nikita = require '../../src'
 
-describe 'api then', ->
+describe 'api next', ->
 
   scratch = test.scratch @
   
   it 'throw error if no more element', (next) ->
     d = domain.create()
     d.run ->
-      nikita.then ->
+      nikita.next ->
         throw Error 'Catchme'
     d.on 'error', (err) ->
       err.message.should.eql 'Catchme'
       d.exit()
       next()
 
-  it 'then without arguments', ->
+  it 'without arguments', ->
     history = []
     nikita
     .call -> history.push 'a'
-    .then()
+    .next()
     .call -> history.push 'b'
-    .then (err) ->
+    .next (err) ->
       history.should.eql ['a', 'b']
     .promise()
 
-  it 'throw error when then not defined', (next) ->
+  it 'throw error when next not defined', (next) ->
     d = domain.create()
     d.run ->
       nikita

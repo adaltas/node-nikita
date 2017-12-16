@@ -240,12 +240,12 @@ nikita.system.execute({
               options.log message: "Skip exit code \"#{code}\"", level: 'INFO', module: 'nikita/lib/system/execute'
             callback null, status
           , 1
-      @then (err1, status) ->
+      @next (err1, status) ->
         @system.remove
           if: not options.dirty && options.target
           target: options.target
           always: true # todo, need to create this option (run even on error)
-        @then (err2) ->
+        @next (err2) ->
           callback err1 or err2, status, result.stdout, result.stderr, result.code
 
 ## Dependencies

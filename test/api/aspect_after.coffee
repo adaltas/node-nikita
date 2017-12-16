@@ -101,7 +101,7 @@ describe 'api after', ->
         throw Error 'CatchMe'
       .afunction (err, status) ->
         err.message.should.eql 'CatchMe'
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'CatchMe'
       .promise()
 
@@ -112,6 +112,6 @@ describe 'api after', ->
         setImmediate -> callback Error 'CatchMe'
       .afunction (err, status) ->
         err.message.should.eql 'CatchMe'
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'CatchMe'
       .promise()

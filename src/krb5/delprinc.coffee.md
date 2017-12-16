@@ -32,8 +32,8 @@ require('nikita').krb5_delrinc({
 
 ## Source Code
 
-    module.exports = (options, callback) ->
-      return callback Error 'Property principal is required' unless options.principal
+    module.exports = (options) ->
+      return throw Error 'Property principal is required' unless options.principal
       # Normalize realm and principal for later usage of options
       options.realm ?= options.kadmin_principal.split('@')[1] if /.*@.*/.test options.kadmin_principal
       options.principal = "#{options.principal}@#{options.realm}" unless /^\S+@\S+$/.test options.principal
@@ -46,7 +46,6 @@ require('nikita').krb5_delrinc({
       @system.remove
         target: options.keytab
         if: options.keytab
-      @then callback
 
 ## Dependencies
 

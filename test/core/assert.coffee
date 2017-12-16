@@ -26,7 +26,7 @@ describe 'assert', ->
         callback null, false
       .assert
         status: true
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'Invalid status: expected true, got false'
       .promise()
 
@@ -46,7 +46,7 @@ describe 'assert', ->
         callback null, true
       .assert
         status: false
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'Invalid status: expected false, got true'
       .promise()
 
@@ -82,6 +82,6 @@ describe 'assert', ->
       .assert
         host: 'localhost'
         port: 12345
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql "Closed Connection to 'localhost:12345'"
       .promise()

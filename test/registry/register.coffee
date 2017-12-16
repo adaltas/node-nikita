@@ -28,13 +28,13 @@ describe 'registry.register', ->
       .call (_, callback) ->
         nikita
         .my_function value: 'world'
-        .then (err, status) ->
+        .next (err, status) ->
           status.should.be.false() unless err
           callback err
       .call (_, callback) ->
         nikita
         .my.function value: 'world'
-        .then (err, status) ->
+        .next (err, status) ->
           status.should.be.false() unless err
           callback err
       .call ->
@@ -74,7 +74,7 @@ describe 'registry.register', ->
       n.registry.registered('my_function').should.be.true()
       n.my_function
         my_option: 'my value'
-      n.then (err, status) ->
+      n.next (err, status) ->
         throw err if err
         status.should.be.true()
         nikita.unregister 'my_function'
@@ -88,7 +88,7 @@ describe 'registry.register', ->
       n = nikita()
       n.registry.registered(['this', 'is', 'a', 'function']).should.be.true()
       n.this.is.a.function value: 'yes'
-      n.then (err, status) ->
+      n.next (err, status) ->
         throw err if err
         status.should.be.true()
         nikita.unregister ['this', 'is', 'a', 'function']
@@ -106,10 +106,10 @@ describe 'registry.register', ->
             callback null, true
       nikita
       .call (_, next) ->
-        nikita.namespace(value: 'a').then next
+        nikita.namespace(value: 'a').next next
       .call (_, next) ->
-        nikita.namespace.child(value: 'b').then next
-      .then (err, status) ->
+        nikita.namespace.child(value: 'b').next next
+      .next (err, status) ->
         throw err if err
         status.should.be.true()
         value_a.should.eql 'a'
@@ -127,9 +127,9 @@ describe 'registry.register', ->
         callback null, true
       nikita.registered(['a', 'function']).should.be.true()
       nikita
-      .call (_, callback) -> nikita.a.function(value: 'a').then callback
-      .call (_, callback) -> nikita.a.function.with.a.child(value: 'b').then callback
-      .then (err, status) ->
+      .call (_, callback) -> nikita.a.function(value: 'a').next callback
+      .call (_, callback) -> nikita.a.function.with.a.child(value: 'b').next callback
+      .next (err, status) ->
         throw err if err
         status.should.be.true()
         value_a.should.eql 'a'
@@ -141,7 +141,7 @@ describe 'registry.register', ->
     it 'throw error unless registered', ->
       nikita
       .invalid()
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'Unregistered Middleware: invalid'
       .promise()
 
@@ -152,11 +152,13 @@ describe 'registry.register', ->
       n.registry.register 'my_function', -> 'my_function'
       n.registry.registered('my_function').should.be.true()
       n.registry.unregister 'my_function'
+      .promise()
 
     it 'overwrite a middleware', ->
       nikita()
       .registry.register 'my_function', -> 'my_function'
       .registry.register 'my_function', -> 'my_function'
+      .promise()
 
     it 'register an object with options', ->
       value_a = value_b = null
@@ -171,7 +173,7 @@ describe 'registry.register', ->
           callback null, true
       .my_function value: 'world a'
       .my.function value: 'world b'
-      .then (err, status) ->
+      .next (err, status) ->
         throw err if err
         status.should.be.false()
         value_a.should.eql "hello world a"
@@ -202,7 +204,7 @@ describe 'registry.register', ->
           callback null, true
       .my_function
         my_option: 'my value'
-      .then (err, status) ->
+      .next (err, status) ->
         throw err if err
         status.should.be.true()
         n.registry.registered('my_function').should.be.true()
@@ -239,7 +241,7 @@ describe 'registry.register', ->
         value = options.value
         callback null, true
       .this.is.a.function value: 'yes'
-      .then (err, status) ->
+      .next (err, status) ->
         throw err if err
         status.should.be.true()
         nikita.unregister ['this', 'is', 'a', 'function']
@@ -258,7 +260,7 @@ describe 'registry.register', ->
             callback null, true
       .namespace value: 'a'
       .namespace.child value: 'b'
-      .then (err, status) ->
+      .next (err, status) ->
         throw err if err
         status.should.be.true()
         value_a.should.eql 'a'
@@ -276,7 +278,7 @@ describe 'registry.register', ->
         callback null, true
       .a.function value: 'a'
       .a.function.with.a.child value: 'b'
-      .then (err, status) ->
+      .next (err, status) ->
         throw err if err
         status.should.be.true()
         value_a.should.eql 'a'
@@ -288,7 +290,7 @@ describe 'registry.register', ->
     it 'throw error unless registered', ->
       nikita()
       .invalid()
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'Unregistered Middleware: invalid'
       .promise()
 

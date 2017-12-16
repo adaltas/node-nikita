@@ -29,7 +29,7 @@ describe 'options "handler"', ->
         key: "value"
       , (err, written) ->
         err.message.should.eql 'Catchme'
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'Catchme'
       .promise()
 
@@ -40,7 +40,7 @@ describe 'options "handler"', ->
         throw Error 'Catchme'
       , (err, written) ->
         err.message.should.eql 'Catchme'
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'Catchme'
       .promise()
 
@@ -54,7 +54,7 @@ describe 'options "handler"', ->
         key: "value"
       , (err, written) ->
         err.message.should.eql 'Catchme'
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'Catchme'
       .promise()
 
@@ -66,7 +66,7 @@ describe 'options "handler"', ->
         key: "value"
       , (err, written) ->
         err.message.should.eql 'Catchme'
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'Catchme'
       .promise()
 
@@ -74,7 +74,7 @@ describe 'options "handler"', ->
       nikita
       .call (options, next) ->
         throw Error 'Catchme'
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'Catchme'
       .promise()
 
@@ -85,7 +85,7 @@ describe 'options "handler"', ->
         throw Error 'Catchme'
       , (err, written) ->
         err.message.should.eql 'Catchme'
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'Catchme'
       .promise()
 
@@ -96,7 +96,7 @@ describe 'options "handler"', ->
          callback Error 'Catchme'
       , (err, written) ->
         err.message.should.eql 'Catchme'
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'Catchme'
       .promise()
 
@@ -107,7 +107,7 @@ describe 'options "handler"', ->
          callback {message: 'not a valid error'}
       , (err, written) ->
         err.message.should.eql 'First argument not a valid error'
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'First argument not a valid error'
       .promise()
 
@@ -121,7 +121,7 @@ describe 'options "handler"', ->
       .call ->
         setImmediate ->
           next Error 'Shouldnt be called'
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'Multiple call detected'
       .promise()
 
@@ -135,6 +135,6 @@ describe 'options "handler"', ->
       .call ->
         setImmediate ->
           next Error 'Shouldnt be called'
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'Multiple call detected'
       .promise()
