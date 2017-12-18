@@ -15,11 +15,43 @@
 
 Retrieve an action by name.
 
+Options include: flatten, deprecate
+
       Object.defineProperty obj, 'get',
         configurable: true
         enumerable: false
-        get: -> (name) ->
-          return merge {}, obj unless name
+        get: -> (name, options) ->
+          if arguments.length is 1 and is_object arguments[0]
+            options = name
+            name = null
+          options ?= {}
+          unless name
+            # Flatten result
+            if options.flatten
+              flatobj = {}
+              walk = (obj, keys) ->
+                for k, v of obj
+                  if k is ''
+                    continue if v.deprecate and not options.deprecate
+                    flatobj[keys.join '.'] = merge {}, v
+                  else
+                    walk v, [keys..., k]
+              walk obj, []
+              return flatobj
+            # Tree result
+            else
+              walk = (obj, keys) ->
+                res = {}
+                for k, v of obj
+                  if k is ''
+                    continue if v.deprecate and not options.deprecate
+                    res[k] = merge {}, v
+                  else
+                    v = walk v, [keys..., k]
+                    res[k] = v unless Object.values(v).length is 0
+                res
+              return walk obj, []
+            # return merge {}, obj if arguments.length is 0
           name = [name] if typeof name is 'string'
           cnames = obj
           for n, i in name
@@ -179,5 +211,6 @@ Remove an action from registry.
 ## Dependencies
 
     {merge} = require './misc'
+    {is_object} = require './misc/object'
 
 [deprecate]: https://nodejs.org/api/util.html#util_util_deprecate_function_string
