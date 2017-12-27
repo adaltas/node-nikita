@@ -173,15 +173,21 @@ nikita.new_function()
 
 Test if a function is registered or not.
 
+Options:
+
+* `parent` (boolean)   
+  Return true if the name match an parent action name.
+
       Object.defineProperty obj, 'registered',
         configurable: true
         enumerable: false
-        get: -> (name) ->
+        get: -> (name, options = {}) ->
           return true if module.exports isnt obj and module.exports.registered name
           name = [name] if typeof name is 'string'
           cnames = obj
           for n, i in name
             return false unless cnames[n]
+            return true if options.parent and cnames[n] and i is name.length - 1
             return true if cnames[n][''] and i is name.length - 1
             cnames = cnames[n]
           return false

@@ -1,10 +1,7 @@
 
 nikita = require '../../src'
-test = require '../test'
 
 describe 'registry.register', ->
-
-  scratch = test.scratch @
 
   describe 'global', ->
 
@@ -139,11 +136,14 @@ describe 'registry.register', ->
       .promise()
 
     it 'throw error unless registered', ->
-      nikita
-      .invalid()
-      .next (err) ->
-        err.message.should.eql 'Unregistered Middleware: invalid'
-      .promise()
+      (->
+        nikita.invalid()
+      ).should.throw 'nikita.invalid is not a function'
+      nikita.register ['ok', 'and', 'valid'], (->)
+      (->
+        nikita.ok.and.invalid()
+      ).should.throw 'nikita.ok.and.invalid is not a function'
+      nikita.unregister ['ok', 'and', 'valid']
 
   describe 'local', ->
 
@@ -224,16 +224,6 @@ describe 'registry.register', ->
         logs.should.eql ['Hello sync', 'Hello async']
       n.promise()
 
-    it 'support lazy validation for late registration', ->
-      name = null
-      nikita
-      .call ->
-        @registry.register ['my', 'function'], (options) -> name = options.name
-      .my.function name: 'callme'
-      .call ->
-        name.should.eql 'callme'
-      .promise()
-
     it 'namespace accept array', ->
       value = null
       nikita()
@@ -288,21 +278,11 @@ describe 'registry.register', ->
       .promise()
 
     it 'throw error unless registered', ->
-      nikita()
-      .invalid()
-      .next (err) ->
-        err.message.should.eql 'Unregistered Middleware: invalid'
-      .promise()
-
-  describe 'mixed', ->
-
-    it 'support lazy validation for late registration', ->
-      name = null
-      nikita
-      .call ->
-        nikita.register 'my_function', (options) -> name = options.name
-      .my_function name: 'callme'
-      .call ->
-        name.should.eql 'callme'
-        nikita.unregister 'my_function'
-      .promise()
+      (->
+        nikita().invalid()
+      ).should.throw 'nikita(...).invalid is not a function'
+      (->
+        n = nikita()
+        n.registry.register ['ok', 'and', 'valid'], (->)
+        n.ok.and.invalid()
+      ).should.throw 'n.ok.and.invalid is not a function'

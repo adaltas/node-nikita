@@ -16,13 +16,19 @@ describe 'registry.registered', ->
       nikita.register ['my_module'], (->)
       (nikita.registered 'my_module').should.be.true()
       (nikita.registered ['my_module']).should.be.true()
-      nikita.unregister ['my_module'], (->)
+      nikita.unregister ['my_module']
 
     it 'return true with multi level', ->
       nikita.register ['my', 'module'], (->)
       (nikita.registered ['my', 'module']).should.be.true()
       (nikita.registered ['my']).should.be.false()
-      nikita.unregister ['my', 'module'], (->)
+      nikita.unregister ['my', 'module']
+
+    it 'option parent', ->
+      nikita.register ['my', 'nice', 'module'], (->)
+      nikita.registered(['my'], parent: true).should.be.true()
+      nikita.registered(['my', 'nice'], parent: true).should.be.true()
+      nikita.unregister ['my', 'nice', 'module']
 
   describe 'local', ->
 
@@ -44,3 +50,9 @@ describe 'registry.registered', ->
       n.registry.register ['my', 'module'], (->)
       n.registry.registered(['my', 'module']).should.be.true()
       n.registry.registered(['my']).should.be.false()
+
+    it 'option parent', ->
+      n = nikita()
+      n.registry.register ['my', 'nice', 'module'], (->)
+      n.registry.registered(['my'], parent: true).should.be.true()
+      n.registry.registered(['my', 'nice'], parent: true).should.be.true()

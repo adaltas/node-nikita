@@ -15,11 +15,13 @@ functions share a common API with flexible options.
 
     module.exports = new Proxy (-> context arguments...),
       get: (target, name) ->
+        return registry[name] if name in ['get', 'register', 'deprecate', 'registered', 'unregister']
         ctx = context()
+        return undefined unless ctx[name]
+        return ctx[name] if name in ['propagation']
         tree = []
         tree.push name
         builder = ->
-          return registry[name].apply registry, arguments if name in ['get', 'register', 'deprecate', 'registered', 'unregister']
           a = ctx[tree.shift()]
           return a unless typeof a is 'function'
           while name = tree.shift()
@@ -28,6 +30,9 @@ functions share a common API with flexible options.
         proxy = new Proxy builder,
           get: (target, name) ->
             tree.push name
+            if not registry.registered(tree, parent: true)
+              tree = []
+              return undefined
             proxy
         proxy
 

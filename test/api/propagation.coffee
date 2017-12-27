@@ -1,8 +1,6 @@
 
 nikita = require '../../src'
 context = require '../../src/context'
-test = require '../test'
-fs = require 'fs'
 
 describe 'api propagation', ->
   

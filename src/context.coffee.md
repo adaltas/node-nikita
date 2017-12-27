@@ -36,16 +36,23 @@
       obj.options.domain?.on 'error', domain_on_error
       proxy = new Proxy obj,
         has: (target, name) ->
-          target[name]? or target.registry.registered(proxy.type)? or registry.registered(name)?
+          console.log 'proxy has is being called', name
+          # target[name]? or target.registry.registered(proxy.type)? or registry.registered(name)?
+        apply: (target, thisArg, argumentsList) ->
+          console.log 'apply'
         get: (target, name) ->
-          return target[name] if target[name]?
+          return target[name] if obj[name]?
           return target[name] if name in ['domain', '_events', '_maxListeners']
           proxy.type = []
           proxy.type.push name
+          if not obj.registry.registered(proxy.type, parent: true) and not registry.registered(proxy.type, parent: true)
+            proxy.type = []
+            return undefined
+            # return throw Error "Unregistered Action: #{name}"
           get_proxy_builder = ->
             builder = ->
               # Insert handler before callback or at the end of arguments
-              middleware = target.registry.get(proxy.type)?.handler or registry.get(proxy.type)?.handler
+              # middleware = target.registry.get(proxy.type)?.handler or registry.get(proxy.type)?.handler
               args = [].slice.call(arguments)
               options = normalize_options args, proxy.type
               proxy.type = []
@@ -56,6 +63,9 @@
               get: (target, name) ->
                 return target[name] if target[name]?
                 proxy.type.push name
+                if not obj.registry.registered(proxy.type, parent: true) and not registry.registered(proxy.type, parent: true)
+                  proxy.type = []
+                  return undefined
                 get_proxy_builder()
           get_proxy_builder()
       normalize_options = (_arguments, type, enrich=true) ->
