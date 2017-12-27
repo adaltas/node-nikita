@@ -15,7 +15,7 @@ functions share a common API with flexible options.
 
     module.exports = new Proxy (-> context arguments...),
       get: (target, name) ->
-        return registry[name] if name in ['get', 'register', 'deprecate', 'registered', 'unregister']
+        return registry if name in ['registry']
         ctx = context()
         return undefined unless ctx[name]
         return ctx[name] if name in ['propagation']

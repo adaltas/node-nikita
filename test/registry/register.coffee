@@ -6,19 +6,19 @@ describe 'registry.register', ->
   describe 'global', ->
 
     it 'set property', ->
-      nikita.register 'my_function', -> 'my_function'
-      nikita.registered('my_function').should.be.true()
-      nikita.unregister 'my_function'
+      nikita.registry.register 'my_function', -> 'my_function'
+      nikita.registry.registered('my_function').should.be.true()
+      nikita.registry.unregister 'my_function'
 
     it 'register twice', ->
-      nikita.register 'my_function', -> 'my_function'
-      nikita.register 'my_function', -> 'my_function'
+      nikita.registry.register 'my_function', -> 'my_function'
+      nikita.registry.register 'my_function', -> 'my_function'
 
     it 'register an object with options', ->
       value_a = value_b = null
-      nikita.register 'my_function', shy: true, handler: (options) ->
+      nikita.registry.register 'my_function', shy: true, handler: (options) ->
         value_a = "hello #{options.value}"
-      nikita.register 'my': 'function': shy: true, handler: (options, callback) ->
+      nikita.registry.register 'my': 'function': shy: true, handler: (options, callback) ->
         value_b = "hello #{options.value}"
         callback null, true
       nikita
@@ -37,17 +37,17 @@ describe 'registry.register', ->
       .call ->
         value_a.should.eql "hello world"
         value_b.should.eql "hello world"
-        nikita.unregister 'my_function'
-        nikita.unregister ['my', 'function']
+        nikita.registry.unregister 'my_function'
+        nikita.registry.unregister ['my', 'function']
       .promise()
 
     it 'overwrite middleware options', ->
       value_a = value_b = null
-      nikita.register 'my_function', key: 'a', handler: (->)
-      nikita.register 'my_function', key: 'b', handler: (options) -> value_a = "Got #{options.key}"
-      nikita.register
+      nikita.registry.register 'my_function', key: 'a', handler: (->)
+      nikita.registry.register 'my_function', key: 'b', handler: (options) -> value_a = "Got #{options.key}"
+      nikita.registry.register
         'my': 'function': key: 'a', handler: (->)
-      nikita.register
+      nikita.registry.register
         'my': 'function': key: 'b', handler: (options) ->
           value_b = "Got #{options.key}"
       nikita()
@@ -58,12 +58,12 @@ describe 'registry.register', ->
       .call ->
         value_a.should.eql "Got b"
         value_b.should.eql "Got b"
-        nikita.unregister 'my_function'
-        nikita.unregister ['my', 'function']
+        nikita.registry.unregister 'my_function'
+        nikita.registry.unregister ['my', 'function']
       .promise()
 
     it 'is available from nikita instance', ->
-      nikita.register 'my_function', (options, callback) ->
+      nikita.registry.register 'my_function', (options, callback) ->
         options.my_option.should.eql 'my value'
         process.nextTick ->
           callback null, true
@@ -74,12 +74,12 @@ describe 'registry.register', ->
       n.next (err, status) ->
         throw err if err
         status.should.be.true()
-        nikita.unregister 'my_function'
+        nikita.registry.unregister 'my_function'
       n.promise()
 
     it 'namespace accept array', ->
       value = null
-      nikita.register ['this', 'is', 'a', 'function'], (options, callback) ->
+      nikita.registry.register ['this', 'is', 'a', 'function'], (options, callback) ->
         value = options.value
         callback null, true
       n = nikita()
@@ -88,12 +88,12 @@ describe 'registry.register', ->
       n.next (err, status) ->
         throw err if err
         status.should.be.true()
-        nikita.unregister ['this', 'is', 'a', 'function']
+        nikita.registry.unregister ['this', 'is', 'a', 'function']
       n.promise()
 
     it 'namespace accept object', ->
       value_a = value_b = null
-      nikita.register
+      nikita.registry.register
         namespace:
           "": (options, callback) ->
             value_a = options.value
@@ -111,18 +111,18 @@ describe 'registry.register', ->
         status.should.be.true()
         value_a.should.eql 'a'
         value_b.should.eql 'b'
-        nikita.unregister "namespace"
+        nikita.registry.unregister "namespace"
       .promise()
 
     it 'namespace call function with children', ->
       value_a = value_b = null
-      nikita.register ['a', 'function'], (options, callback) ->
+      nikita.registry.register ['a', 'function'], (options, callback) ->
         value_a = options.value
         callback null, true
-      nikita.register ['a', 'function', 'with', 'a', 'child'], (options, callback) ->
+      nikita.registry.register ['a', 'function', 'with', 'a', 'child'], (options, callback) ->
         value_b = options.value
         callback null, true
-      nikita.registered(['a', 'function']).should.be.true()
+      nikita.registry.registered(['a', 'function']).should.be.true()
       nikita
       .call (_, callback) -> nikita.a.function(value: 'a').next callback
       .call (_, callback) -> nikita.a.function.with.a.child(value: 'b').next callback
@@ -131,19 +131,19 @@ describe 'registry.register', ->
         status.should.be.true()
         value_a.should.eql 'a'
         value_b.should.eql 'b'
-        nikita.unregister ['a', 'function']
-        nikita.unregister ['a', 'function', 'with', 'a', 'child']
+        nikita.registry.unregister ['a', 'function']
+        nikita.registry.unregister ['a', 'function', 'with', 'a', 'child']
       .promise()
 
     it 'throw error unless registered', ->
       (->
         nikita.invalid()
       ).should.throw 'nikita.invalid is not a function'
-      nikita.register ['ok', 'and', 'valid'], (->)
+      nikita.registry.register ['ok', 'and', 'valid'], (->)
       (->
         nikita.ok.and.invalid()
       ).should.throw 'nikita.ok.and.invalid is not a function'
-      nikita.unregister ['ok', 'and', 'valid']
+      nikita.registry.unregister ['ok', 'and', 'valid']
 
   describe 'local', ->
 
@@ -234,7 +234,6 @@ describe 'registry.register', ->
       .next (err, status) ->
         throw err if err
         status.should.be.true()
-        nikita.unregister ['this', 'is', 'a', 'function']
       .promise()
 
     it 'namespace accept object', ->
@@ -273,8 +272,6 @@ describe 'registry.register', ->
         status.should.be.true()
         value_a.should.eql 'a'
         value_b.should.eql 'b'
-        nikita.unregister ['a', 'function']
-        nikita.unregister ['a', 'function', 'with', 'a', 'child']
       .promise()
 
     it 'throw error unless registered', ->

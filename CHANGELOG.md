@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* registry: isolate registry functions from nikita
 * promise: synchronous handler may return a promise
 * api: remove lazy registry in favor of return undefined unless property exists
 * registry: get takes flatten and depracted options
