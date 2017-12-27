@@ -393,31 +393,46 @@
                 then "#{options.type.join '/'} is deprecated"
                 else "#{options.type.join '/'} is deprecated, use #{options.deprecate}"
               )(options_handler) if options.deprecate
-              if options_handler_length is 2 # Async style
-                options_handler.call proxy, opts, ->
-                  return if killed
-                  return handle_multiple_call Error 'Multiple call detected' if called
-                  called = true
-                  args = [].slice.call(arguments, 0)
-                  setImmediate ->
-                    do_next args
-              else # Sync style
-                options_handler.call proxy, opts
+              handle_async_and_promise = ->
                 return if killed
                 return handle_multiple_call Error 'Multiple call detected' if called
                 called = true
-                status_sync = false
-                wait_children = ->
-                  unless todos.length
-                    return setImmediate ->
-                      do_next [null, status_sync]
-                  loptions = todos.shift()
-                  run loptions, (err, status) ->
-                    return do_next [err] if err
-                    # Discover status of all unshy children
-                    status_sync = true if status and not loptions.shy
-                    wait_children()
-                wait_children()
+                args = [].slice.call(arguments, 0)
+                setImmediate ->
+                  do_next args
+              if options_handler_length is 2 # Async style
+                promise_returned = false
+                result = options_handler.call proxy, opts, ->
+                  return if promise_returned
+                  handle_async_and_promise.apply null, arguments
+                if promise.is result
+                  promise_returned = true
+                  return handle_async_and_promise Error 'Invalid Promise: returning promise is not supported in asynchronuous mode'
+              else # Sync style
+                result = options_handler.call proxy, opts
+                if promise.is result # result is a promisee
+                  result.then (value) ->
+                    value = [value] unless Array.isArray value
+                    handle_async_and_promise null, value...
+                  , (reason) ->
+                    reason = Error 'Rejected Promise: reject called without any arguments' unless reason?
+                    handle_async_and_promise reason
+                else
+                  return if killed
+                  return handle_multiple_call Error 'Multiple call detected' if called
+                  called = true
+                  status_sync = false
+                  wait_children = ->
+                    unless todos.length
+                      return setImmediate ->
+                        do_next [null, status_sync]
+                    loptions = todos.shift()
+                    run loptions, (err, status) ->
+                      return do_next [err] if err
+                      # Discover status of all unshy children
+                      status_sync = true if status and not loptions.shy
+                      wait_children()
+                  wait_children()
             catch err
               todos = []
               do_next [err]
@@ -504,7 +519,7 @@
             opts.handler = mod.handler
             opts[k] ?= v for k, v of mod[0]
           throw Error 'Missing handler option' unless opts.handler
-          throw Error "Handler not a function, got '#{opts.handler}'" unless typeof opts.handler is 'function'
+          throw Error "Invalid Handler: expect a function, got '#{opts.handler}'" unless typeof opts.handler is 'function'
         todos.push opts for opts in options
         setImmediate _run_ if todos.length is options.length # Activate the pump
         proxy
@@ -604,6 +619,7 @@
     path = require 'path'
     util = require 'util'
     array = require './misc/array'
+    promise = require './misc/promise'
     conditions = require './misc/conditions'
     wrap = require './misc/wrap'
     string = require './misc/string'
