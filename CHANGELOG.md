@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* get: new option to call synchronuous
 * context: isolate internal state variables
 * registry: isolate registry functions from nikita
 * promise: synchronous handler may return a promise

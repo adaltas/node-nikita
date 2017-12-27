@@ -52,13 +52,13 @@
           if not obj.registry.registered(proxy.type, parent: true) and not registry.registered(proxy.type, parent: true)
             proxy.type = []
             return undefined
-            # return throw Error "Unregistered Action: #{name}"
           get_proxy_builder = ->
             builder = ->
-              # Insert handler before callback or at the end of arguments
-              # middleware = target.registry.get(proxy.type)?.handler or registry.get(proxy.type)?.handler
               args = [].slice.call(arguments)
               options = normalize_options args, proxy.type
+              # console.log 'options.get', options
+              {get, values} = handle_get proxy, options
+              return values if get
               proxy.type = []
               state.todos.push opts for opts in options
               setImmediate _run_ if state.todos.length is options.length # Activate the pump
@@ -524,6 +524,8 @@
             opts[k] ?= v for k, v of mod[0]
           throw Error 'Missing handler option' unless opts.handler
           throw Error "Invalid Handler: expect a function, got '#{opts.handler}'" unless typeof opts.handler is 'function'
+        {get, values} = handle_get proxy, options
+        return values if get
         state.todos.push opts for opts in options
         setImmediate _run_ if state.todos.length is options.length # Activate the pump
         proxy
@@ -614,6 +616,14 @@
       todos.err = null
       todos.status = []
       todos.throw_if_error = true
+    handle_get = (proxy, options) ->
+      return get: false unless options.length is 1
+      if options.length is options.filter( (opts) -> opts.get ).length
+        get = true
+        values = for opts in options
+          opts.handler.call proxy, opts
+        values = values[0] if values.length is 1
+      get: get, values: values
 
 ## Dependencies
 

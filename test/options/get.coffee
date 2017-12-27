@@ -1,17 +1,19 @@
 
 nikita = require '../../src'
-test = require '../test'
-fs = require 'fs'
 
 describe 'options "domain"', ->
 
-  scratch = test.scratch @
-
-  it.skip 'synchronous', ->
-    # Implementation not yet started
+  it 'synchronous call', ->
     n = nikita
     result = n.call
       get: true
-      handler: ->
-        return 'get me'
-    console.log result
+      handler: -> 'get me'
+    result.should.eql 'get me'
+
+  it 'synchronous registered action', ->
+    n = nikita
+    n.registry.register ['an', 'action'], 
+      get: true
+      handler: -> 'get me'
+    result = n.an.action()
+    result.should.eql 'get me'
