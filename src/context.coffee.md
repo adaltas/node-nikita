@@ -18,22 +18,26 @@
       # Merge global default propagation
       for k, v of module.exports.propagation
         obj.propagation[k] = v unless obj.propagation[k] isnt undefined
-      store = {}
-      properties = {}
-      stack = []
-      todos = todos_create()
-      befores = []
-      afters = []
-      depth = 0
-      headers = []
-      once = {}
-      killed = false
-      index_counter = 0
+      # Internal state
+      state = {}
+      state.store = {}
+      state.properties = {}
+      state.stack = []
+      state.todos = todos_create()
+      state.befores = []
+      state.afters = []
+      state.depth = 0
+      state.headers = []
+      state.once = {}
+      state.killed = false
+      state.index_counter = 0
+      # Domain
       obj.options.domain =  domain.create() if obj.options.domain is true
       domain_on_error = (err) ->
         err.message = "Invalid State Error [#{err.message}]"
         handle_multiple_call err
       obj.options.domain?.on 'error', domain_on_error
+      # Proxify
       proxy = new Proxy obj,
         has: (target, name) ->
           console.log 'proxy has is being called', name
@@ -56,8 +60,8 @@
               args = [].slice.call(arguments)
               options = normalize_options args, proxy.type
               proxy.type = []
-              todos.push opts for opts in options
-              setImmediate _run_ if todos.length is options.length # Activate the pump
+              state.todos.push opts for opts in options
+              setImmediate _run_ if state.todos.length is options.length # Activate the pump
               proxy
             new Proxy builder,
               get: (target, name) ->
@@ -127,7 +131,7 @@
           opts.handler ?= handler if handler
           opts.callback ?= callback if callback
           opts.user_args = true if enrich and opts.callback?.length > 2
-          opts.store ?= store if enrich and store
+          opts.store ?= state.store if enrich and state.store
           opts.once = ['handler'] if opts.once is true
           delete opts.once if opts.once is false
           opts.once = opts.once.sort() if Array.isArray opts.once
@@ -140,7 +144,7 @@
       enrich_options = (user_options) ->
         user_options.enriched = true
         global_options = obj.options
-        parent_options = todos.options
+        parent_options = state.todos.options
         options = {}
         for k, v of user_options then options[k] = user_options[k]
         for k, v of parent_options
@@ -175,9 +179,9 @@
           log.level ?= 'INFO'
           log.time ?= Date.now()
           log.module ?= undefined
-          log.header_depth ?= depth
-          log.headers ?= header for header in headers
-          log.total_depth ?= stack.length
+          log.header_depth ?= state.depth
+          log.headers ?= header for header in state.headers
+          log.total_depth ?= state.stack.length
           log.type ?= 'text'
           log.shy ?= options.shy
           args = if 1 <= arguments.length then [].slice.call(arguments, 0) else []
@@ -202,89 +206,89 @@
           else options.target = path.posix.join '.', match[1]
         options
       call_callback = (fn, args) ->
-        stack.unshift todos
-        todos = todos_create()
+        state.stack.unshift state.todos
+        state.todos = todos_create()
         try
           fn.apply proxy, args
         catch err
-          todos = stack.shift()
+          state.todos = state.stack.shift()
           jump_to_error err
           args[0] = err
           return run()
-        mtodos = todos
-        todos = stack.shift()
-        todos.unshift mtodos... if mtodos.length
+        mtodos = state.todos
+        state.todos = state.stack.shift()
+        state.todos.unshift mtodos... if mtodos.length
       handle_multiple_call = (err) ->
-        killed = true
-        todos = stack.shift() while stack.length
+        state.killed = true
+        state.todos = state.stack.shift() while state.stack.length
         jump_to_error err
         run()
       jump_to_error = (err) ->
-        while todos[0] and todos[0].type not in ['catch', 'next', 'promise'] then todos.shift()
-        todos.err = err
+        while state.todos[0] and state.todos[0].type not in ['catch', 'next', 'promise'] then state.todos.shift()
+        state.todos.err = err
       _run_ = ->
         if obj.options.domain
         then obj.options.domain.run run
         else run()
       run = (options, callback) ->
-        options = todos.shift() unless options
+        options = state.todos.shift() unless options
         unless options # Nothing more to do in current queue
           if callback
-            callback todos.err
+            callback state.todos.err
           else
-            throw todos.err if not killed and stack.length is 0 and todos.err and todos.throw_if_error
-          if stack.length is 0
+            throw state.todos.err if not state.killed and state.stack.length is 0 and state.todos.err and state.todos.throw_if_error
+          if state.stack.length is 0
             obj.options.domain?.removeListener 'error', domain_on_error
           return
         org_options = options
-        parent_options = todos.options
+        parent_options = state.todos.options
         for k, v of parent_options
           org_options[k] = v if org_options[k] is undefined and k isnt 'log' and obj.propagation[k] is true
         options = enrich_options options
         options.original = org_options
         if options.type is 'next'
-          {err, status} = todos
+          {err, status} = state.todos
           status = status.some (status) -> not status.shy and !!status.value
-          todos.final_err = err
-          todos_reset todos
+          state.todos.final_err = err
+          todos_reset state.todos
           options.handler?.call proxy, err, status
           run()
           return
         if options.type is 'promise'
-          {err, status} = todos
+          {err, status} = state.todos
           status = status.some (status) -> not status.shy and !!status.value
-          todos.final_err = err
-          todos_reset todos
+          state.todos.final_err = err
+          todos_reset state.todos
           options.handler?.call proxy, err, status
           unless err
           then options.deferred.resolve status
           else options.deferred.reject err
           return
-        return if killed
+        return if state.killed
         if array.compare options.type, ['end']
           return conditions.all proxy, options
           , ->
-            while todos[0] and todos[0].type not in ['next', 'promise'] then todos.shift()
+            while state.todos[0] and state.todos[0].type not in ['next', 'promise'] then state.todos.shift()
             callback err if callback
             run()
           , (err) ->
             callback err if callback
             run()
-        index = index_counter++
-        depth++ if options.header
-        headers.push options.header if options.header
-        options.log message: options.header, type: 'header', index: index, depth: depth, headers: (header for header in headers) if options.header
-        todos.status.unshift shy: options.shy, value: undefined
-        stack.unshift todos
-        todos = todos_create()
-        todos.options = org_options
+        index = state.index_counter++
+        state.depth++ if options.header
+        state.headers.push options.header if options.header
+        options.log message: options.header, type: 'header', index: index, depth: state.depth, headers: (header for header in state.headers) if options.header
+        state.todos.status.unshift shy: options.shy, value: undefined
+        state.stack.unshift state.todos
+        state.todos = todos_create()
+        state.todos.options = org_options
         wrap.options options, (err) ->
           do_disabled = ->
             unless options.disabled
-              options.log type: 'lifecycle', message: 'disabled_false', level: 'DEBUG', index: index, depth: depth, error: null, status: false
+              options.log type: 'lifecycle', message: 'disabled_false', level: 'DEBUG', index: index, depth: state.depth, error: null, status: false
               do_once()
             else
-              options.log type: 'lifecycle', message: 'disabled_true', level: 'INFO', index: index, depth: depth, error: null, status: false
+              options.log type: 'lifecycle', message: 'disabled_true', level: 'INFO', index: index, depth: state.depth, error: null, status: false
               do_callback []
           do_once = ->
             hashme = (value) ->
@@ -309,8 +313,8 @@
                 hash = string.hash options.once.map((k) -> hashme options[k]).join '|'
               else
                 throw Error "Invalid Option \"once\": \"#{JSON.stringify options.once}\" must be a string or an array of string"
-              return do_callback [] if once[hash]
-              once[hash] = true
+              return do_callback [] if state.once[hash]
+              state.once[hash] = true
             do_options_before()
           do_options_before = ->
             return do_intercept_before() if options.options_before
@@ -331,7 +335,7 @@
             .next do_intercept_before
           do_intercept_before = ->
             return do_conditions() if options.intercepting
-            each befores
+            each state.befores
             .call (before, next) ->
               for k, v of before then switch k
                 when 'handler' then continue
@@ -351,10 +355,10 @@
             , ->
               for k, v of options # Remove conditions from options
                 delete options[k] if /^if.*/.test(k) or /^unless.*/.test(k)
-              options.log type: 'lifecycle', message: 'conditions_passed', index: index, depth: depth, error: null, status: false
+              options.log type: 'lifecycle', message: 'conditions_passed', index: index, depth: state.depth, error: null, status: false
               do_handler()
             , (err) ->
-              options.log type: 'lifecycle', message: 'conditions_failed', index: index, depth: depth, error: err, status: false
+              options.log type: 'lifecycle', message: 'conditions_failed', index: index, depth: state.depth, error: err, status: false
               do_callback [err]
           options.attempt = -1
           do_handler = ->
@@ -394,7 +398,7 @@
                 else "#{options.type.join '/'} is deprecated, use #{options.deprecate}"
               )(options_handler) if options.deprecate
               handle_async_and_promise = ->
-                return if killed
+                return if state.killed
                 return handle_multiple_call Error 'Multiple call detected' if called
                 called = true
                 args = [].slice.call(arguments, 0)
@@ -418,15 +422,15 @@
                     reason = Error 'Rejected Promise: reject called without any arguments' unless reason?
                     handle_async_and_promise reason
                 else
-                  return if killed
+                  return if state.killed
                   return handle_multiple_call Error 'Multiple call detected' if called
                   called = true
                   status_sync = false
                   wait_children = ->
-                    unless todos.length
+                    unless state.todos.length
                       return setImmediate ->
                         do_next [null, status_sync]
-                    loptions = todos.shift()
+                    loptions = state.todos.shift()
                     run loptions, (err, status) ->
                       return do_next [err] if err
                       # Discover status of all unshy children
@@ -434,11 +438,11 @@
                       wait_children()
                   wait_children()
             catch err
-              todos = []
+              state.todos = []
               do_next [err]
           do_intercept_after = (args, callback) ->
             return do_options_after args if options.intercepting
-            each afters
+            each state.afters
             .call (after, next) ->
               for k, v of after then switch k
                 when 'handler' then continue
@@ -472,42 +476,42 @@
             .error (err) -> do_callback [err]
             .next -> do_callback args
           do_callback = (args) ->
-            depth-- if options.header
-            headers.pop() if options.header
-            options.log type: 'handled', index: index, depth: depth, error: args[0], status: args[1]
-            return if killed
+            state.depth-- if options.header
+            state.headers.pop() if options.header
+            options.log type: 'handled', index: index, depth: state.depth, error: args[0], status: args[1]
+            return if state.killed
             args[0] = undefined unless args[0] # Error is undefined and not null or false
             args[1] = !!args[1] # Status is a boolean, error or not
-            todos = stack.shift() if todos.length is 0
+            state.todos = state.stack.shift() if state.todos.length is 0
             jump_to_error args[0] if args[0] and not options.relax
-            todos.throw_if_error = false if args[0] and options.callback
-            todos.status[0].value = args[1]
+            state.todos.throw_if_error = false if args[0] and options.callback
+            state.todos.status[0].value = args[1]
             call_callback options.callback, args if options.callback
             args[0] = null if options.relax
             callback args[0], args[1] if callback
             run()
           do_disabled()
-      properties.child = get: -> ->
+      state.properties.child = get: -> ->
         module.exports(obj.options)
-      properties.next = get: -> ->
-        todos.push type: 'next', handler: arguments[0]
-        setImmediate _run_ if todos.length is 1 # Activate the pump
+      state.properties.next = get: -> ->
+        state.todos.push type: 'next', handler: arguments[0]
+        setImmediate _run_ if state.todos.length is 1 # Activate the pump
         proxy
-      properties.promise = get: -> ->
+      state.properties.promise = get: -> ->
         deferred = {}
         promise = new Promise (resolve, reject)->
           deferred.resolve = resolve
           deferred.reject = reject
-        todos.push type: 'promise', deferred: deferred # handler: arguments[0],
-        setImmediate _run_ if todos.length is 1 # Activate the pump
+        state.todos.push type: 'promise', deferred: deferred # handler: arguments[0],
+        setImmediate _run_ if state.todos.length is 1 # Activate the pump
         promise
-      properties.end = get: -> ->
+      state.properties.end = get: -> ->
         args = [].slice.call(arguments)
         options = normalize_options args, 'end'
-        todos.push opts for opts in options
-        setImmediate _run_ if todos.length is options.length # Activate the pump
+        state.todos.push opts for opts in options
+        setImmediate _run_ if state.todos.length is options.length # Activate the pump
         proxy
-      properties.call = get: -> ->
+      state.properties.call = get: -> ->
         args = [].slice.call(arguments)
         options = normalize_options args, 'call'
         for opts in options
@@ -520,10 +524,10 @@
             opts[k] ?= v for k, v of mod[0]
           throw Error 'Missing handler option' unless opts.handler
           throw Error "Invalid Handler: expect a function, got '#{opts.handler}'" unless typeof opts.handler is 'function'
-        todos.push opts for opts in options
-        setImmediate _run_ if todos.length is options.length # Activate the pump
+        state.todos.push opts for opts in options
+        setImmediate _run_ if state.todos.length is options.length # Activate the pump
         proxy
-      properties.each = get: -> ->
+      state.properties.each = get: -> ->
         args = [].slice.call(arguments)
         arg = args.shift()
         if not arg? or typeof arg isnt 'object'
@@ -541,34 +545,34 @@
               opts.value = value
               @call opts
         proxy
-      properties.before = get: -> ->
+      state.properties.before = get: -> ->
         arguments[0] = type: arguments[0] if typeof arguments[0] is 'string' or Array.isArray(arguments[0])
         options = normalize_options arguments, null, false
         for opts in options
           throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
-          befores.push opts
+          state.befores.push opts
         proxy
-      properties.after = get: -> ->
+      state.properties.after = get: -> ->
         arguments[0] = type: arguments[0] if typeof arguments[0] is 'string' or Array.isArray(arguments[0])
         options = normalize_options arguments, null, false
         for opts in options
           throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
-          afters.push opts
+          state.afters.push opts
         proxy
-      properties.status = get: -> (index) ->
+      state.properties.status = get: -> (index) ->
         if arguments.length is 0
-          return stack[0].status.some (status) -> not status.shy and !!status.value
+          return state.stack[0].status.some (status) -> not status.shy and !!status.value
         else if index is false
-          value = stack[0].status.some (status) -> not status.shy and !!status.value
-          status.value = false for status in stack[0].status
+          value = state.stack[0].status.some (status) -> not status.shy and !!status.value
+          status.value = false for status in state.stack[0].status
           return value
         else if index is true
-          value = stack[0].status.some (status) -> not status.shy and !!status.value
-          status.value = true for status in stack[0].status
+          value = state.stack[0].status.some (status) -> not status.shy and !!status.value
+          status.value = true for status in state.stack[0].status
           return value
         else
-          stack[0].status[Math.abs index]?.value
-      Object.defineProperties obj, properties
+          state.stack[0].status[Math.abs index]?.value
+      Object.defineProperties obj, state.properties
       reg = registry.registry {}
       Object.defineProperty obj.registry, 'get', get: -> (name, handler) ->
         reg.get arguments...
