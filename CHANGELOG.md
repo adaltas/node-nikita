@@ -1,7 +1,7 @@
 
 # Changelog
 
-## Trunk
+## Version 0.6.4
 
 * get: new option to call synchronuous
 * context: isolate internal state variables
