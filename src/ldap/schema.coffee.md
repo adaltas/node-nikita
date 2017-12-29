@@ -46,6 +46,9 @@ require('nikita').ldap.schema({
 ## Source Code
 
     module.exports = (options) ->
+      options.log message: "Entering ldap.schema", level: 'DEBUG', module: 'nikita/lib/ldap/schema'
+      # SSH connection
+      ssh = @ssh options.ssh
       # Auth related options
       binddn = if options.binddn then "-D #{options.binddn}" else ''
       passwd = if options.passwd then "-w #{options.passwd}" else ''
@@ -73,19 +76,19 @@ require('nikita').ldap.schema({
       @call if: (-> @status -1), ->
         @system.mkdir
           target: ldif
-          ssh: options.ssh
+          ssh: ssh
         , (err) ->
           options.log 'Directory ldif created'
         @system.copy
           source: options.schema
           target: schema
-          ssh: options.ssh
+          ssh: ssh
         , (err) ->
           options.log 'Schema copied'
         @file
           content: "include #{schema}"
           target: conf
-          ssh: options.ssh
+          ssh: ssh
           log: options.log
         , (err) ->
           options.log 'Configuration generated'

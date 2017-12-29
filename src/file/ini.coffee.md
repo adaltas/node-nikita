@@ -67,6 +67,9 @@ require('nikita').ini({
 
     module.exports = (options) ->
       options.log message: "Entering file.ini", level: 'DEBUG', module: 'nikita/lib/file/ini'
+      # SSH connection
+      ssh = @ssh options.ssh
+      # Options
       options.clean ?= true
       # escape the header section name '.' as some daemons could not parse it.
       options.escape ?= true
@@ -79,15 +82,15 @@ require('nikita').ini({
       parse = options.parse or misc.ini.parse
       # Original properties
       @call (_, callback) ->
-        fs.readFile options.ssh, options.target, 'utf8', (err, data) ->
+        fs.readFile ssh, options.target, 'utf8', (err, data) ->
           return callback() if err?.code is 'ENOENT'
           return callback err if err
           org_props = misc.merge parse(data, options)
           callback()
       # Default properties
       @call if: options.source, (_, callback) ->
-        ssh = if options.local then null else options.ssh
-        fs.readFile options.ssh, options.source, 'utf8', (err, data) ->
+        ssh = if options.local then null else ssh
+        fs.readFile ssh, options.source, 'utf8', (err, data) ->
           return callback() if err?.code is 'ENOENT'
           return callback err if err
           content = misc.ini.clean options.content, true

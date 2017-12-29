@@ -37,19 +37,21 @@ require('nikita').tools.git({
 
     module.exports = (options) ->
       options.log message: "Entering git", level: 'DEBUG', module: 'nikita/lib/tools/git'
-      # Sanitize parameters
+      # SSH connection
+      ssh = @ssh options.ssh
+      # Sanitize options
       options.revision ?= 'HEAD'
       # Start real work
       repo_exists = false
       repo_uptodate = false
       @call (_, callback) ->
-        fs.exists options.ssh, options.target, (err, exists) ->
+        fs.exists ssh, options.target, (err, exists) ->
           return callback err if err
           repo_exists = exists
           return callback() unless exists # todo, isolate inside call when they receive conditions
           # return callback Error "Destination not a directory, got #{options.target}" unless stat.isDirectory()
           gitDir = "#{options.target}/.git"
-          fs.exists options.ssh, gitDir, (err, exists) ->
+          fs.exists ssh, gitDir, (err, exists) ->
             return callback Error "Not a git repository" unless exists
             callback()
       @system.execute

@@ -44,7 +44,9 @@ require('nikita').tools.extract({
 
     module.exports = (options, callback) ->
       options.log message: "Entering extract", level: 'DEBUG', module: 'nikita/lib/tools/extract'
-      # Validate parameters
+      # SSH connection
+      ssh = @ssh options.ssh
+      # Validate options
       return callback Error "Missing source: #{options.source}" unless options.source
       target = options.target ? path.dirname options.source
       tar_opts = []
@@ -78,7 +80,7 @@ require('nikita').tools.extract({
           return callback Error "Unsupported extension, got #{JSON.stringify(ext)}"
       # Start real work
       stat = () ->
-        fs.stat options.ssh, options.source, (err, stat) ->
+        fs.stat ssh, options.source, (err, stat) ->
           return callback Error "File does not exist: #{options.source}" if err
           return callback Error "Not a File: #{options.source}" unless stat.isFile()
           extract()
@@ -99,7 +101,7 @@ require('nikita').tools.extract({
       # Step for `creates`
       creates = () ->
         return success() unless options.creates?
-        fs.exists options.ssh, options.creates, (err, exists) ->
+        fs.exists ssh, options.creates, (err, exists) ->
           return callback Error "Failed to create '#{path.basename options.creates}'" unless exists
           success()
       # Final step

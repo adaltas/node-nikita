@@ -178,6 +178,8 @@ require('nikita').file({
 
     module.exports = (options) ->
       options.log message: "Entering file", level: 'DEBUG', module: 'nikita/lib/file'
+      # SSH connection
+      ssh = @ssh options.ssh
       # Validate parameters
       return throw Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?
       return throw Error 'Define either source or content' if options.source and options.content
@@ -222,15 +224,15 @@ require('nikita').file({
         # connection, use by the upload function
         source = options.source or options.target
         options.log message: "Force local source is \"#{if options.local then 'true' else 'false'}\"", level: 'DEBUG', module: 'nikita/lib/file'
-        ssh = if options.local then null else options.ssh
-        fs.exists ssh, source, (err, exists) ->
+        sshOrLocal = if options.local then null else ssh
+        fs.exists sshOrLocal, source, (err, exists) ->
           return callback err if err
           unless exists
             return callback Error "Source does not exist: #{JSON.stringify options.source}" if options.source
             options.content = ''
             return callback()
           options.log message: "Reading source", level: 'DEBUG', module: 'nikita/lib/file'
-          fs.readFile ssh, source, 'utf8', (err, src) ->
+          fs.readFile sshOrLocal, source, 'utf8', (err, src) ->
             return callback err if err
             options.content = src
             callback()
@@ -240,7 +242,7 @@ require('nikita').file({
         return callback() if typeof options.target is 'function'
         exists = ->
           options.log message: "Stat target", level: 'DEBUG', module: 'nikita/lib/file'
-          fs.lstat options.ssh, options.target, (err, stat) ->
+          fs.lstat ssh, options.target, (err, stat) ->
             return do_mkdir() if err?.code is 'ENOENT'
             return callback err if err
             targetStat = stat
@@ -248,7 +250,7 @@ require('nikita').file({
               options.target = "#{options.target}/#{path.basename options.source}"
               options.log message: "Destination is a directory and is now \"options.target\"", level: 'INFO', module: 'nikita/lib/file'
               # Destination is the parent directory, let's see if the file exist inside
-              fs.stat options.ssh, options.target, (err, stat) ->
+              fs.stat ssh, options.target, (err, stat) ->
                 if err?.code is 'ENOENT'
                   options.log message: "New target does not exist", level: 'INFO', module: 'nikita/lib/file'
                   return callback()
@@ -260,7 +262,7 @@ require('nikita').file({
             else if stat.isSymbolicLink()
               options.log message: "Destination is a symlink", level: 'INFO', module: 'nikita/lib/file'
               return do_read() unless options.unlink
-              fs.unlink options.ssh, options.target, (err, stat) ->
+              fs.unlink ssh, options.target, (err, stat) ->
                 return callback err if err
                 callback() # Dont go to mkdir since parent dir exists
             else if stat.isFile()
@@ -283,7 +285,7 @@ require('nikita').file({
             callback()
         do_read = ->
           options.log message: "Reading target", level: 'DEBUG', module: 'nikita/lib/file'
-          fs.readFile options.ssh, options.target, 'utf8', (err, dest) ->
+          fs.readFile ssh, options.target, 'utf8', (err, dest) ->
             return callback err if err
             target = dest # only used by diff
             targetHash = string.hash dest
@@ -327,7 +329,7 @@ require('nikita').file({
         options.backup_mode ?= 0o0400
         backup = if typeof options.backup is 'string' then options.backup else ".#{Date.now()}"
         @system.copy
-          ssh: options.ssh
+          ssh: ssh
           source: options.target
           target: "#{options.target}#{backup}"
           mode: options.backup_mode
@@ -345,7 +347,7 @@ require('nikita').file({
         uid_gid options, (err) ->
           return callback err if err
           options.gid = options.default_gid unless targetStat
-          fs.writeFile options.ssh, options.target, options.content, options, (err) ->
+          fs.writeFile ssh, options.target, options.content, options, (err) ->
             return callback err if err
             options.log message: 'File written', level: 'INFO', module: 'nikita/lib/file'
             callback()

@@ -35,6 +35,8 @@ require('nikita').system.chmod({
 
     module.exports = (options) ->
       options.log message: "Entering chmod", level: 'DEBUG', module: 'nikita/lib/system/chmod'
+      # SSH connection
+      ssh = @ssh options.ssh
       # Validate parameters
       throw Error "Missing target: #{JSON.stringify options.target}" unless options.target
       throw Error "Missing option 'mode'" unless options.mode
@@ -42,7 +44,7 @@ require('nikita').system.chmod({
         unless: !!options.stat # Option 'stat' short-circuit
       , (_, callback) ->
         options.log message: "Stat information: \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/system/chmod'
-        fs.stat options.ssh, options.target, (err, stat) ->
+        fs.stat ssh, options.target, (err, stat) ->
           options.stat = stat unless err
           callback err
       @call (_, callback) ->
@@ -51,7 +53,7 @@ require('nikita').system.chmod({
           options.log message: "Identical permissions on \"#{options.target}\"", level: 'INFO', module: 'nikita/lib/system/chmod'
           return callback()
         # Apply changes
-        fs.chmod options.ssh, options.target, options.mode, (err) ->
+        fs.chmod ssh, options.target, options.mode, (err) ->
           options.log message: "Change permissions from \"#{options.stat.mode.toString 8}\" to \"#{options.mode.toString 8}\" on \"#{options.target}\"", level: 'WARN', module: 'nikita/lib/system/chmod'
           callback err, true
 

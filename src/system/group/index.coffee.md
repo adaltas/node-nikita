@@ -40,6 +40,9 @@ The result of the above action can be viewed with the command
 
     module.exports = (options) ->
       options.log message: "Entering group", level: 'DEBUG', module: 'nikita/lib/system/group'
+      # SSH connection
+      ssh = @ssh options.ssh
+      # Options
       options.name = options.argument if options.argument?
       throw Error "Option 'name' is required" unless options.name
       options.system ?= false
@@ -50,7 +53,7 @@ The result of the above action can be viewed with the command
       @call (_, callback) ->
         options.log message: "Get group information for '#{options.name}'", level: 'DEBUG', module: 'nikita/lib/system/group'
         options.store.cache_group = undefined # Clear cache if any
-        uid_gid.group options.ssh, options.store, (err, groups) ->
+        uid_gid.group ssh, options.store, (err, groups) ->
           return callback err if err
           info = groups[options.name]
           options.log message: "Got #{JSON.stringify info}", level: 'INFO', module: 'nikita/lib/system/group'

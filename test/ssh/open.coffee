@@ -12,7 +12,7 @@ describe 'ssh.open', ->
     return @skip() unless ssh
     nikita
     .call (options) ->
-      (!!options.ssh).should.be.false()
+      (!!@ssh()).should.be.false()
     .ssh.open
       host: ssh.config.host
       port: ssh.config.port
@@ -23,7 +23,7 @@ describe 'ssh.open', ->
     , (err, status) ->
       status.should.be.true() unless err
     .call (options) ->
-      (!!options.ssh).should.be.true()
+      (!!@ssh()).should.be.true()
     .ssh.close()
     .promise()
 
@@ -38,8 +38,8 @@ describe 'ssh.open', ->
         private_key: ssh.config.privateKey.privateOrig
         public_key: ssh.config.publicKey.publicOrig
     .call (options) ->
-      (!!options.ssh).should.be.true()
-      options.ssh.should.be.an.instanceof require('ssh2').Client
+      (!!@ssh()).should.be.true()
+      @ssh().should.be.an.instanceof require('ssh2').Client
     .ssh.close {}, (err, status) ->
       status.should.be.true() unless err
     .ssh.close {}, (err, status) ->

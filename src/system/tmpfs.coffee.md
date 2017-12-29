@@ -49,6 +49,9 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
 
     module.exports = (options) ->
       options.log message: "Entering tmpfs action", level: 'DEBUG', module: 'nikita/tmpfs/index'
+      # SSH connection
+      ssh = @ssh options.ssh
+      # Options
       throw Error 'Missing Mount Point' unless options.mount?
       # for now only support directory type path option
       options.merge ?= true
@@ -67,7 +70,7 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
         if: options.merge
         handler: (_, callback) ->
           options.log message: "opening target file for merge", level: 'DEBUG', module: 'nikita/tmpfs/index'
-          fs.readFile options.ssh, options.target, 'utf8', (err, data) ->
+          fs.readFile ssh, options.target, 'utf8', (err, data) ->
             if err
               return callback null, false if err.code is 'ENOENT'
               return callback err if err

@@ -40,6 +40,9 @@ require('nikita').tools.repo({
 
     module.exports = (options) ->
       options.log message: "Entering tools.repo", level: 'DEBUG', module: 'nikita/lib/tools/repo'
+      # SSH connection
+      ssh = @ssh options.ssh
+      # Options
       throw Error "Can not specify source and content"if options.source and options.content
       throw Error "Missing source or content: " unless options.source or options.content
       options.target ?= "/etc/yum.repos.d/#{path.basename options.source}" if options.source?
@@ -55,7 +58,7 @@ require('nikita').tools.repo({
       # Delete
       @call if: options.clean?, (_, callback) ->
         options.log message: "Searching repositories inside \"/etc/yum.repos.d/\"", level: 'DEBUG', module: 'nikita/lib/tools/repo'
-        glob options.ssh, "/etc/yum.repos.d/#{options.clean}", (err, files) ->
+        glob ssh, "/etc/yum.repos.d/#{options.clean}", (err, files) ->
           return callback err if err
           remote_files = for file in files
             continue if file is options.target
@@ -88,7 +91,7 @@ require('nikita').tools.repo({
         options.log "Download #{options.target}'s GPG keys", level: 'INFO', module: 'nikita/lib/tools/repo'
         @call (_, callback)->
           options.log "Read GPG keys from #{options.target}", level: 'DEBUG', module: 'nikita/lib/tools/repo'
-          fs.readFile options.ssh, options.target , 'utf8', (err, content) =>
+          fs.readFile ssh, options.target , 'utf8', (err, content) =>
             return callback err if err
             data  = misc.ini.parse_multi_brackets content
             keys = for name, section of data

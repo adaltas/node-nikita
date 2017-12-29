@@ -45,6 +45,8 @@ require('nikita').file.touch({
 
     module.exports = (options) ->
       options.log message: "Entering file.touch", level: 'DEBUG', module: 'nikita/lib/file/touch'
+      # SSH connection
+      ssh = @ssh options.ssh
       # Options
       options.target = options.argument if options.argument?
       throw Error "Missing target: #{options.target}" unless options.target
@@ -53,7 +55,7 @@ Test if file exists.
 
       @call (_, callback) ->
         options.log message: "Check if target exists \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/file/touch'
-        fs.exists options.ssh, options.target, (err, exists) ->
+        fs.exists ssh, options.target, (err, exists) ->
           options.log message: "Destination does not exists", level: 'INFO', module: 'nikita/lib/file/touch' if not err and not exists
           return callback err, !exists
 
@@ -65,7 +67,7 @@ If true, update access and modification time, status wont be affected
       , (_, callback) ->
         options.atime ?= Date.now()
         options.mtime ?= Date.now()
-        fs.futimes options.ssh, options.target, options.atime, options.mtime, (err) ->
+        fs.futimes ssh, options.target, options.atime, options.mtime, (err) ->
           options.log message: "Access and modification times updated", level: 'DEBUG', module: 'nikita/lib/file/touch' unless err
           callback err
 

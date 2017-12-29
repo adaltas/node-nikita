@@ -112,6 +112,8 @@ nikita.docker.build({
 
     module.exports = (options, callback) ->
       options.log message: "Entering Docker build", level: 'DEBUG', module: 'nikita/lib/docker/build'
+      # SSH connection
+      ssh = @ssh options.ssh
       # Validation
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
@@ -179,7 +181,7 @@ nikita.docker.build({
         unless: options.content
         handler: (_, callback) ->
           options.log message: "Reading Dockerfile from : #{options.file}", level: 'INFO', module: 'nikita/lib/build'
-          fs.readFile options.ssh, options.file, 'utf8', (err, content) ->
+          fs.readFile ssh, options.file, 'utf8', (err, content) ->
             return callback err if err
             options.content = content
             callback()

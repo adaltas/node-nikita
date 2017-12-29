@@ -50,6 +50,9 @@ nikita.assert({
 
     module.exports = (options) ->
       options.log message: "Entering file.assert", level: 'DEBUG', module: 'nikita/lib/file/assert'
+      # SSH connection
+      ssh = @ssh options.ssh
+      # Options
       options.encoding ?= 'utf8'
       options.target ?= options.argument
       options.target ?= options.source
@@ -79,7 +82,7 @@ nikita.assert({
       @call
         unless: options.content? or options.md5 or options.sha1 or options.sha256 or options.mode.length
       , (_, callback) ->
-        fs.exists options.ssh, options.target.toString(), (err, exists) ->
+        fs.exists ssh, options.target.toString(), (err, exists) ->
           unless options.not
             unless exists
               options.error ?= "File does not exists: #{JSON.stringify options.target}"
@@ -93,7 +96,7 @@ nikita.assert({
       @call
         if: options.filetype.length
       , (_, callback) ->
-        fs.lstat options.ssh, options.target, (err, stat) ->
+        fs.lstat ssh, options.target, (err, stat) ->
           return callback err if err
           if fs.constants.S_IFREG in options.filetype
             return callback Error "Invalid filetype: expect a regular file" unless stat.isFile()
@@ -116,7 +119,7 @@ nikita.assert({
       @call
         if: options.content? and (typeof options.content is 'string' or Buffer.isBuffer options.content)
       , (_, callback) ->
-        fs.readFile options.ssh, options.target, (err, buffer) ->
+        fs.readFile ssh, options.target, (err, buffer) ->
           return callback err if err
           unless options.not
             unless buffer.equals options.content
@@ -131,7 +134,7 @@ nikita.assert({
       @call
         if: options.content? and options.content instanceof RegExp
       , (_, callback) ->
-        fs.readFile options.ssh, options.target, (err, buffer) ->
+        fs.readFile ssh, options.target, (err, buffer) ->
           return callback err if err
           unless options.not
             unless options.content.test buffer 
@@ -149,7 +152,7 @@ nikita.assert({
       @call
         if: algo
       , (_, callback) ->
-        file.hash options.ssh, options.target, algo, (err, h) =>
+        file.hash ssh, options.target, algo, (err, h) =>
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
           return callback err if err
           unless options.not
@@ -165,7 +168,7 @@ nikita.assert({
       @call
         if: options.uid
       , (_, callback) ->
-        fs.stat options.ssh, options.target, (err, stat) ->
+        fs.stat ssh, options.target, (err, stat) ->
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
           unless options.not
             unless "#{stat.uid}" is "#{options.uid}"
@@ -180,7 +183,7 @@ nikita.assert({
       @call
         if: options.gid
       , (_, callback) ->
-        fs.stat options.ssh, options.target, (err, stat) ->
+        fs.stat ssh, options.target, (err, stat) ->
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
           unless options.not
             unless "#{stat.gid}" is "#{options.gid}"
@@ -195,7 +198,7 @@ nikita.assert({
       @call
         if: options.mode.length
       , (_, callback) ->
-        fs.stat options.ssh, options.target, (err, stat) ->
+        fs.stat ssh, options.target, (err, stat) ->
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
           unless options.not
             unless misc.mode.compare options.mode, stat.mode

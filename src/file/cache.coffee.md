@@ -57,6 +57,9 @@ require('nikita').download({
 
     module.exports = (options, callback) ->
       options.log message: "Entering file.cache", level: 'DEBUG', module: 'nikita/lib/file/cache'
+      # SSH connection
+      ssh = @ssh options.ssh
+      # Options
       options.source = options.argument if options.argument?
       return callback Error "Missing source: '#{options.source}'" unless options.source
       return callback Error "Missing one of 'target', 'cache_file' or 'cache_dir' option" unless options.cache_file or options.target or options.cache_dir
@@ -86,7 +89,7 @@ require('nikita').download({
           options.log message: "Bypass source hash computation for non-file protocols", level: 'WARN', module: 'nikita/lib/file/cache'
           return callback()
         return callback() if hash isnt true
-        file.hash options.ssh, options.source, algo, (err, value) ->
+        file.hash ssh, options.source, algo, (err, value) ->
           return callback err if err
           options.log message: "Computed hash value is '#{value}'", level: 'INFO', module: 'nikita/lib/file/cache'
           hash = value
@@ -97,7 +100,7 @@ require('nikita').download({
       # - hash isnt true and doesnt match
       @call shy: true, (_, callback) ->
         options.log message: "Check if target (#{options.target}) exists", level: 'DEBUG', module: 'nikita/lib/file/cache'
-        ssh2fs.exists options.ssh, options.target, (err, exists) =>
+        ssh2fs.exists ssh, options.target, (err, exists) =>
           return callback err if err
           if exists
             options.log message: "Target file exists", level: 'INFO', module: 'nikita/lib/file/cache'
@@ -108,14 +111,14 @@ require('nikita').download({
             else if hash and typeof hash is 'string'
               # then we compute the checksum of the file
               options.log message: "Comparing #{algo} hash", level: 'DEBUG', module: 'nikita/lib/file/cache'
-              file.hash options.ssh, options.target, algo, (err, c_hash) ->
+              file.hash ssh, options.target, algo, (err, c_hash) ->
                 return callback err if err
                 # And compare with the checksum provided by the user
                 if hash is c_hash
                   options.log message: "Hashes match, skipping", level: 'DEBUG', module: 'nikita/lib/file/cache'
                   return callback null, false
                 options.log message: "Hashes don't match, delete then re-download", level: 'WARN', module: 'nikita/lib/file/cache'
-                ssh2fs.unlink options.ssh, options.target, (err) ->
+                ssh2fs.unlink ssh, options.target, (err) ->
                   return callback err if err
                   callback null, true
             else
@@ -135,11 +138,11 @@ require('nikita').download({
         cmd += " --header \"#{header}\"" for header in options.headers
         cmd += " -x #{options.proxy}" if options.proxy
         @system.mkdir
-          ssh: if options.cache_local then null else options.ssh
+          ssh: if options.cache_local then null else ssh
           target: path.dirname options.target
         @system.execute
           cmd: cmd
-          ssh: if options.cache_local then null else options.ssh
+          ssh: if options.cache_local then null else ssh
           unless_exists: options.target
       else
         @system.mkdir # todo: copy shall handle this

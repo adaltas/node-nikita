@@ -169,6 +169,7 @@ functions share a common API with flexible options.
           '': 'nikita/system/user/index'
           remove: 'nikita/system/user/remove'
       ssh:
+        '': 'nikita/ssh'
         open: 'nikita/ssh/open'
         close: 'nikita/ssh/close'
         root: 'nikita/ssh/root'

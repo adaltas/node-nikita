@@ -48,6 +48,8 @@ nikita.docker({
 
     module.exports = (options) ->
       options.log message: "Entering Docker cp", level: 'DEBUG', module: 'nikita/lib/docker/cp'
+      # SSH connection
+      ssh = @ssh options.ssh
       # Validate parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
@@ -65,7 +67,7 @@ nikita.docker({
         if /\/$/.test source_path
           source_path = "#{source_path}/#{path.basename target_path}"
           return next()
-        ssh2fs.stat options.ssh, source_path, (err, stat) ->
+        ssh2fs.stat ssh, source_path, (err, stat) ->
           return next err if err and err.code isnt 'ENOENT'
           # TODO wdavidw: seems like a mistake to me, we shall have source_mkdir instead
           return target_mkdir = true and next() if err?.code is 'ENOENT'
@@ -80,7 +82,7 @@ nikita.docker({
         if /\/$/.test target_path
           target_path = "#{target_path}/#{path.basename target_path}"
           return next()
-        ssh2fs.stat options.ssh, target_path, (err, stat) ->
+        ssh2fs.stat ssh, target_path, (err, stat) ->
           return next err if err and err.code isnt 'ENOENT'
           return target_mkdir = true and next() if err?.code is 'ENOENT'
           target_path = "#{target_path}/#{path.basename target_path}" if stat.isDirectory()

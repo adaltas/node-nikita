@@ -60,6 +60,8 @@ require('nikita').system.copy({
 
     module.exports = (options) ->
       options.log message: "Entering copy", level: 'DEBUG', module: 'nikita/lib/system/copy'
+      # SSH connection
+      ssh = @ssh options.ssh
 
 Validate parameters.
 
@@ -80,7 +82,7 @@ Retrieve stats information about the source unless provided through the "source_
           options.log message: "Source Stats: using short circuit", level: 'DEBUG', module: 'nikita/lib/system/copy'
           return callback()
         options.log message: "Stats source file #{options.source}", level: 'DEBUG', module: 'nikita/lib/system/copy'
-        fs.stat options.ssh, options.source, (err, stats) =>
+        fs.stat ssh, options.source, (err, stats) =>
           return callback err if err
           options.source_stats = stats unless err
           callback()
@@ -92,7 +94,7 @@ Retrieve stat information about the traget unless provided through the "target_s
           options.log message: "Target Stats: using short circuit", level: 'DEBUG', module: 'nikita/lib/system/copy'
           return callback()
         options.log message: "Stats target file #{options.target}", level: 'DEBUG', module: 'nikita/lib/system/copy'
-        fs.stat options.ssh, options.target, (err, stats) =>
+        fs.stat ssh, options.target, (err, stats) =>
           # Note, target file doesnt necessarily exist
           return callback err if err and err.code isnt 'ENOENT'
           options.target_stats = stats
@@ -123,12 +125,12 @@ present inside "/tmp/a_source" are copied inside "/tmp/a_target".
           options.target = path.resolve options.target, path.basename options.source
         options.log message: "Source is a directory", level: 'INFO', module: 'nikita/lib/system/copy'
         @call (_, callback) -> 
-          glob options.ssh, "#{options.source}/**", dot: true, (err, sources) =>
+          glob ssh, "#{options.source}/**", dot: true, (err, sources) =>
             return callback err if err
             for source in sources then do (source) =>
               target = path.resolve options.target, path.relative options.source, source
               @call (_, callback) ->
-                fs.stat options.ssh, source, (err, source_stats) =>
+                fs.stat ssh, source, (err, source_stats) =>
                   uid = options.uid
                   uid ?= source_stats.uid if options.preserve
                   gid = options.gid
@@ -166,13 +168,13 @@ Copy the file if content doesn't match.
 
       @call (_, callback) =>
         # Copy a file
-        misc.file.compare options.ssh, [options.source, options.target], (err, md5) ->
+        misc.file.compare ssh, [options.source, options.target], (err, md5) ->
           # Destination may not exists
           return callback err if err and err.message.indexOf('Does not exist') isnt 0
           # Files are the same, we can skip copying
           return callback null, false if md5
           options.log message: "Copy file from #{options.source} into #{options.target}", level: 'WARN', module: 'nikita/lib/system/copy'
-          misc.file.copyFile options.ssh, options.source, options.target, (err) ->
+          misc.file.copyFile ssh, options.source, options.target, (err) ->
             callback err, true
       , (err, status) ->
         options.log message: "File #{options.source} copied", level: 'DEBUG', module: 'nikita/lib/system/copy'

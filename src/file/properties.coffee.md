@@ -41,6 +41,9 @@ require('nikita')
 
     module.exports = (options) ->
       options.log message: "Entering file.properties", level: 'DEBUG', module: 'nikita/lib/file/properties'
+      # SSH connection
+      ssh = @ssh options.ssh
+      # Options
       throw Error "Missing argument options.target" unless options.target
       options.separator ?= '='
       options.content ?= {}
@@ -52,7 +55,7 @@ require('nikita')
       # Read Original
       @call (_, callback) ->
         options.log message: "Reading target \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/file/properties'
-        module.exports.properties options.target, options, (err, props) ->
+        module.exports.properties ssh, options.target, options, (err, props) ->
           return callback err if err
           org_props = props
           callback()
@@ -95,8 +98,8 @@ require('nikita')
           mode: options.mode
           if: options.mode?
 
-    module.exports.properties = (source, options, callback) ->
-      fs.readFile options.ssh, source, 'utf8', (err, data) ->
+    module.exports.properties = (ssh, source, options, callback) ->
+      fs.readFile ssh, source, 'utf8', (err, data) ->
         return callback null, {} if err?.code is 'ENOENT'
         return callback err if err
         options.separator ?= '='

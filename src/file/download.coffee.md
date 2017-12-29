@@ -114,6 +114,9 @@ nikita.download
 
     module.exports = (options) ->
       options.log message: 'Entering file.download', level: 'DEBUG', module: 'nikita/lib/file/download'
+      # SSH connection
+      ssh = @ssh options.ssh
+      # Options
       throw Error "Missing source: #{options.source}" unless options.source
       throw Error "Missing target: #{options.target}" unless options.target
       options.source = options.source.substr 7 if /^file:\/\//.test options.source
@@ -145,7 +148,7 @@ nikita.download
         shy: true
         handler: (_, callback) ->
           options.log message: "Shortcircuit check if provided hash match target", level: 'WARN', module: 'nikita/lib/file/download'
-          file.hash options.ssh, options.target, algo, (err, hash) =>
+          file.hash ssh, options.target, algo, (err, hash) =>
             err = null if err?.code is 'ENOENT'
             callback err, source_hash is hash
         , (err, end) ->
@@ -167,7 +170,7 @@ nikita.download
         options.source = file if options.cache
         source_url = url.parse options.source
       @call (_, callback) ->
-        ssh2fs.stat @options.ssh, options.target, (err, stat) ->
+        ssh2fs.stat ssh, options.target, (err, stat) ->
           return callback err if err and err.code isnt 'ENOENT'
           if stat?.isDirectory()
             options.log message: "Destination is a directory", level: 'DEBUG', module: 'nikita/lib/file/download'
@@ -192,11 +195,11 @@ nikita.download
           @call
             if: typeof source_hash is 'string'
             handler: (_, callback) ->
-              file.hash options.ssh, stageDestination, algo, (err, hash) =>
+              file.hash ssh, stageDestination, algo, (err, hash) =>
                 return callback Error "Invalid downloaded checksum, found '#{hash}' instead of '#{source_hash}'" if source_hash isnt hash
                 callback()
           @call (_, callback) ->
-            file.compare_hash (if options.cache then null else options.ssh), stageDestination, options.ssh, options.target, algo, (err, match, hash1, hash2) ->
+            file.compare_hash (if options.cache then null else ssh), stageDestination, ssh, options.target, algo, (err, match, hash1, hash2) ->
               options.log message: "Hash dont match, source is '#{hash1}' and target is '#{hash2}'", level: 'WARN', module: 'nikita/lib/file/download' unless match
               options.log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'nikita/lib/file/download' if match
               callback err, not match
@@ -205,7 +208,7 @@ nikita.download
             shy: true
             target: stageDestination
       @call
-        if: -> source_url.protocol not in protocols_http and not options.ssh
+        if: -> source_url.protocol not in protocols_http and not ssh
         handler: ->
           options.log message: "File Download without ssh (with or without cache)", level: 'DEBUG', module: 'nikita/lib/file/download'
           @call (_, callback) ->
@@ -222,7 +225,7 @@ nikita.download
             handler: (_, callback) ->
               rs = fs.createReadStream options.source
               rs.on 'error', (err) ->
-                options.log  message: "No such source file: #{options.source} (ssh is #{JSON.stringify !!options.ssh})", level: 'ERROR', module: 'nikita/lib/file/download'
+                options.log  message: "No such source file: #{options.source} (ssh is #{JSON.stringify !!ssh})", level: 'ERROR', module: 'nikita/lib/file/download'
                 err.message = 'No such source file'
                 callback err
               ws = fs.createWriteStream stageDestination
@@ -230,11 +233,11 @@ nikita.download
               .on 'close', callback
               .on 'error', callback
       @call
-        if: -> source_url.protocol not in protocols_http and options.ssh
+        if: -> source_url.protocol not in protocols_http and ssh
         handler: ->
           options.log message: "File Download with ssh (with or without cache)", level: 'DEBUG', module: 'nikita/lib/file/download'
           @call (_, callback) ->
-            file.compare_hash null, options.source, options.ssh, options.target, algo, (err, match, hash1, hash2) ->
+            file.compare_hash null, options.source, ssh, options.target, algo, (err, match, hash1, hash2) ->
               options.log message: "Hash dont match, source is '#{hash1}' and target is '#{hash2}'", level: 'WARN', module: 'nikita/lib/file/download' unless match
               options.log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'nikita/lib/file/download' if match
               callback err, not match
@@ -250,7 +253,7 @@ nikita.download
               rs = fs.createReadStream options.source
               rs.on 'error', (err) ->
                 console.log 'rs on error', err
-              ssh2fs.writeFile options.ssh, stageDestination, rs, (err) ->
+              ssh2fs.writeFile ssh, stageDestination, rs, (err) ->
                 options.log "Upload failed from local to remote" if err
                 callback err
       @call ->

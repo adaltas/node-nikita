@@ -6,14 +6,14 @@ nikita = require '../../src'
 describe 'should_exist', ->
 
   they 'should succeed if file exists', (ssh, next) ->
-    conditions.should_exist
+    conditions.should_exist.call nikita(),
       ssh: ssh
       should_exist: __filename
       -> next()
       () -> false.should.be.true()
 
   they 'should fail if file does not exist', (ssh, next) ->
-    conditions.should_exist
+    conditions.should_exist.call nikita(),
       ssh: ssh
       should_exist: './oh_no'
       () -> false.should.be.true()
@@ -22,7 +22,7 @@ describe 'should_exist', ->
         next()
 
   they 'should fail if at least one file does not exist', (ssh, next) ->
-    conditions.should_exist
+    conditions.should_exist.call nikita(),
       ssh: ssh
       should_exist: ['./oh_no', __filename]
       () -> false.should.be.true()
@@ -41,14 +41,14 @@ describe 'should_exist', ->
 describe 'should_not_exist', ->
 
   they 'should succeed if file doesnt exist', (ssh, next) ->
-    conditions.should_not_exist
+    conditions.should_not_exist.call nikita(),
       ssh: ssh
       should_not_exist: './oh_no'
       next
       () -> false.should.be.true()
 
   they 'should fail if file exists', (ssh, next) ->
-    conditions.should_not_exist
+    conditions.should_not_exist.call nikita(),
       ssh: ssh
       should_not_exist: __filename
       () -> false.should.be.true()
@@ -57,7 +57,7 @@ describe 'should_not_exist', ->
         next()
 
   they 'should fail if at least one file exists', (ssh, next) ->
-    conditions.should_not_exist
+    conditions.should_not_exist.call nikita(),
       ssh: ssh
       should_not_exist: ['./oh_no', __filename]
       () -> false.should.be.true()

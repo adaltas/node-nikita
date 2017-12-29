@@ -50,10 +50,10 @@ Takes the same options as the ssh2 module in an underscore form.
       options.root.port ?= options.port
       # Check status
       return if (
-        @options.ssh?.config and
-        @options.ssh.config.host is options.host and
-        @options.ssh.config.port is options.port and
-        @options.ssh.config.username is options.username
+        options.store.ssh?.config and
+        options.store.ssh.config.host is options.host and
+        options.store.ssh.config.port is options.port and
+        options.store.ssh.config.username is options.username
       )
       # Read private key if option is a path
       @call unless: options.private_key, (_, callback) ->
@@ -71,7 +71,7 @@ Takes the same options as the ssh2 module in an underscore form.
           options.log unless err
           then message: "Connection is established", level: 'INFO', module: 'nikita/lib/ssh/open'
           else message: "Connection failed", level: 'WARN', module: 'nikita/lib/ssh/open'
-          @options.ssh = ssh unless err
+          options.store.ssh = ssh unless err
           callback err, !!ssh
       , (err, status) ->
         @end() unless err
@@ -82,7 +82,7 @@ Takes the same options as the ssh2 module in an underscore form.
       @call retry: 3, (_, callback) ->
         options.log message: "Establish Connection: attempt after enabling root access", level: 'DEBUG', module: 'nikita/lib/ssh/open'
         connect options, (err, ssh) =>
-          @options.ssh = ssh unless err
+          options.store.ssh = ssh unless err
           callback err
 
 ## Dependencies

@@ -27,10 +27,13 @@ require('nikita').file.types.locale({
 
     module.exports = (options) ->
       options.log message: "Entering file.types.local_gen", level: 'DEBUG', module: 'nikita/lib/file/types/local_gen'
+      # SSH connection
+      ssh = @ssh options.ssh
+      # Options
       options.target ?= '/etc/locale.gen'
       options.target = "#{path.join options.rootdir, options.target}" if options.rootdir
       @call (_, callback) ->
-        fs.readFile options.ssh, options.target, 'ascii', (err, data) ->
+        fs.readFile ssh, options.target, 'ascii', (err, data) ->
           return callback err if err
           status = false
           locales = data.split '\n'
@@ -45,7 +48,7 @@ require('nikita').file.types.locale({
                 status = true
           return callback() unless status
           data = locales.join '\n'
-          fs.writeFile options.ssh, options.target, data, (err) ->
+          fs.writeFile ssh, options.target, data, (err) ->
             callback err, true
       @system.execute
         if: -> options.generate and @status -1

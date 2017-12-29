@@ -1,6 +1,10 @@
 
 # Changelog
 
+## Trunk
+
+* ssh: move from options to action
+
 ## Version 0.6.4
 
 * get: new option to call synchronuous

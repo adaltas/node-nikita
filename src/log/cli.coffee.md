@@ -57,6 +57,9 @@ require('nikita')(
 ## Source Code
 
     module.exports = ssh: null, handler: (options) ->
+      options.log message: "Entering log.cli", level: 'DEBUG', module: 'nikita/lib/log/cli'
+      # SSH connection
+      ssh = @ssh options.ssh
       # Obtains options from "log_cli" namespace
       options.log_cli ?= {}
       options[k] = v for k, v of options.log_cli
@@ -74,7 +77,7 @@ require('nikita')(
       options.separator.host ?= unless options.pad.host? then '   ' else ' '
       options.separator.header ?= unless options.pad.header? then '   ' else ' '
       options.separator.time ?= unless options.pad.time? then '  ' else ' '
-      options.host ?= if options.ssh then options.ssh.config.host else 'localhost'
+      options.host ?= if ssh then ssh.config.host else 'localhost'
       options.colors ?= process.stdout.isTTY
       options.colors = {
         # host: colors.cyan.dim

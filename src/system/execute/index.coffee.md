@@ -118,6 +118,8 @@ nikita.system.execute({
 
     module.exports = (options, callback) ->
       options.log message: "Entering execute", level: 'DEBUG', module: 'nikita/lib/system/execute'
+      # SSH connection
+      ssh = @ssh options.ssh
       # Validate parameters
       options.cmd = options.argument if typeof options.argument is 'string'
       options.code ?= [0]
@@ -140,7 +142,7 @@ nikita.system.execute({
       result = stdout: null, stderr: null, code: null
       # Guess current username
       current_username =
-        if options.ssh then options.ssh.config.username
+        if ssh then ssh.config.username
         else if /^win/.test(process.platform) then process.env['USERPROFILE'].split(path.sep)[2]
         else process.env['USER']
       # Sudo
@@ -191,7 +193,7 @@ nikita.system.execute({
       # Execute
       @call (_, callback) ->
         options.log message: options.cmd_original, type: 'stdin', level: 'INFO', module: 'nikita/lib/system/execute' if options.stdin_log
-        child = exec options
+        child = exec options, ssh: ssh
         result.stdout = []; result.stderr = []
         child.stdout.pipe options.stdout, end: false if options.stdout
         child.stderr.pipe options.stderr, end: false if options.stderr

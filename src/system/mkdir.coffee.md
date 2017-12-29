@@ -61,16 +61,18 @@ require('nikita').system.mkdir({
 
     module.exports = (options, callback) ->
       options.log message: "Entering mkdir", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
-      modified = false
-      # Validate parameters
-      # options = { directory: options } if typeof options is 'string'
+      # SSH connection
+      ssh = @ssh options.ssh
+      # Validate options
       options.target = options.argument if options.argument?
       options.directory ?= options.target
       options.directory ?= options.source
       return callback Error 'Missing target option' unless options.directory?
-      options.cwd = process.cwd() if not options.ssh and (options.cwd is true or not options.cwd)
+      options.cwd = process.cwd() if not ssh and (options.cwd is true or not options.cwd)
       options.directory = [options.directory] unless Array.isArray options.directory
       options.parent = {} if options.parent is true
+      # State
+      state = false
       each options.directory
       .call (directory, callback) =>
         # first, we need to find which directory need to be created
@@ -78,7 +80,7 @@ require('nikita').system.mkdir({
         do_stats = ->
           end = false
           dirs = []
-          p = if options.ssh then path.posix else path
+          p = if ssh then path.posix else path
           directory = if options.cwd then p.resolve options.cwd, directory else p.normalize directory # path.resolve also normalize
           # Create directory and its parent directories
           directories = directory.split('/')
@@ -90,7 +92,7 @@ require('nikita').system.mkdir({
           .call (directory, i, next) ->
             return next() if end
             options.log message: "Stat '#{directory}'", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
-            fs.stat options.ssh, directory, (err, stat) ->
+            fs.stat ssh, directory, (err, stat) ->
               if err?.code is 'ENOENT' # if the directory is not yet created
                 directory.stat = stat
                 dirs.push directory
@@ -122,10 +124,10 @@ require('nikita').system.mkdir({
             for attr in ['mode', 'uid', 'gid', 'size', 'atime', 'mtime']
               val = if i is directories.length - 1 then options[attr] else options.parent?[attr]
               opts[attr] = val if val?
-            fs.mkdir options.ssh, directory, opts, (err) ->
+            fs.mkdir ssh, directory, opts, (err) ->
               return callback err if err
               options.log message: "Directory \"#{directory}\" created ", level: 'INFO', module: 'nikita/lib/system/mkdir'
-              modified = true
+              state = true
               callback()
             , 1000
           .next (err) ->
@@ -146,11 +148,11 @@ require('nikita').system.mkdir({
             if: options.mode?
           @next (err, moded) ->
             return callback err if err
-            modified = true if moded
+            state = true if moded
             callback()
         do_stats()
       .next (err) ->
-        callback err, modified
+        callback err, state
 
 ## Dependencies
 

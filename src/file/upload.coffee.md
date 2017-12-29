@@ -68,6 +68,9 @@ require('nikita').upload({
 
     module.exports = (options) ->
       options.log message: "Entering file.upload", level: 'DEBUG', module: 'nikita/lib/file/upload'
+      # SSH connection
+      ssh = @ssh options.ssh
+      # Options
       throw Error "Required \"source\" option" unless options.source
       throw Error "Required \"target\" option" unless options.target
       options.log message: "Source is \"#{options.source}\"", level: 'DEBUG', module: 'nikita/lib/file/upload'
@@ -87,7 +90,7 @@ require('nikita').upload({
       else
         algo = 'md5'
       @call (_, callback) ->
-        ssh2fs.stat options.ssh, options.source, (err, stat) ->
+        ssh2fs.stat ssh, options.source, (err, stat) ->
           callback err if err and err.code isnt 'ENOENT'
           source_stat = stat
           callback()
@@ -107,7 +110,7 @@ require('nikita').upload({
       @call
         handler: (_, callback) ->
           return callback null, true unless target_stat
-          file.compare_hash options.ssh, options.source, null, options.target, algo, (err, match) =>
+          file.compare_hash ssh, options.source, null, options.target, algo, (err, match) =>
             callback err, not match
       @system.mkdir
         if: -> @status -1
@@ -116,7 +119,7 @@ require('nikita').upload({
       @call
         if: -> @status -2
         handler: (_, callback) ->
-          ssh2fs.createReadStream options.ssh, options.source, (err, rs) =>
+          ssh2fs.createReadStream ssh, options.source, (err, rs) =>
             return callback err if err
             ws = fs.createWriteStream stage_target
             rs.pipe(ws)

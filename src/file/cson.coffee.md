@@ -37,8 +37,11 @@ require('nikita').file.yaml({
 ## Source Code
 
     module.exports = (options) ->
-      options.line_width ?= 160
       options.log message: "Entering file.yaml", level: 'DEBUG', module: 'nikita/lib/file/yaml'
+      # SSH connection
+      ssh = @ssh options.ssh
+      # Options
+      options.line_width ?= 160
       options.clean ?= true
       # Validate parameters
       throw Error 'Required Option: content' unless options.content
@@ -47,7 +50,7 @@ require('nikita').file.yaml({
       @call (_, callback) ->
         return callback() unless options.merge
         options.log message: "Get Target Content", level: 'DEBUG', module: 'nikita/lib/file/cson'
-        fs.readFile options.ssh, options.target, 'utf8', (err, content) ->
+        fs.readFile ssh, options.target, 'utf8', (err, content) ->
           if err?.code is 'ENOENT'
             options.log message: "No Target Content To Merged", level: 'DEBUG', module: 'nikita/lib/file/cson'
             return callback()

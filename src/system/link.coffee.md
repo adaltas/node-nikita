@@ -39,26 +39,25 @@ require('nikita').system.link({
 
     module.exports = (options, callback) ->
       options.log message: "Entering link", level: 'DEBUG', module: 'nikita/lib/system/link'
+      # SSH connection
+      ssh = @ssh options.ssh
       linked = 0
       sym_exists = (options, callback) ->
-        # fs.exists options.ssh, options.target, (err, exists) ->
-        #   console.log 'link exists', options.target, exists
-        #   return callback null, false unless exists
-        fs.readlink options.ssh, options.target, (err, resolvedPath) ->
+        fs.readlink ssh, options.target, (err, resolvedPath) ->
           return callback null, false if err
           return callback null, true if resolvedPath is options.source
-          fs.unlink options.ssh, options.target, (err) ->
+          fs.unlink ssh, options.target, (err) ->
             return callback err if err
             callback null, false
       sym_create = (options, callback) ->
-        fs.symlink options.ssh, options.source, options.target, (err) ->
+        fs.symlink ssh, options.source, options.target, (err) ->
           return callback err if err
           linked++
           callback()
       exec_exists = (options, callback) ->
-        fs.exists options.ssh, options.target, (err, exists) ->
+        fs.exists ssh, options.target, (err, exists) ->
           return callback null, false unless exists
-          fs.readFile options.ssh, options.target, 'utf8', (err, content) ->
+          fs.readFile ssh, options.target, 'utf8', (err, content) ->
             return callback err if err
             exec_cmd = /exec (.*) \$@/.exec(content)[1]
             callback null, exec_cmd and exec_cmd is options.source
@@ -67,9 +66,9 @@ require('nikita').system.link({
         #!/bin/bash
         exec #{options.source} $@
         """
-        fs.writeFile options.ssh, options.target, content, (err) ->
+        fs.writeFile ssh, options.target, content, (err) ->
           return callback err if err
-          fs.chmod options.ssh, options.target, options.mode, (err) ->
+          fs.chmod ssh, options.target, options.mode, (err) ->
             return callback err if err
             linked++
             callback()
@@ -78,7 +77,7 @@ require('nikita').system.link({
       options.mode ?= 0o0755
       do_mkdir = =>
         @system.mkdir
-          ssh: options.ssh
+          ssh: ssh
           target: path.dirname options.target
         , (err, created) ->
           # It is possible to have collision if to symlink

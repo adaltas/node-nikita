@@ -290,7 +290,7 @@ misc = module.exports =
           else
             current[match[1]] = null
       data
-    # same as ini parse bu transforme value which are true an type of true as ''
+    # same as ini parse but transform value which are true and type of true as ''
     # to be user by stringify_single_key
     stringify: (obj, section, options={}) ->
       if arguments.length is 2
@@ -322,8 +322,8 @@ misc = module.exports =
           out += options.eol
         out += child
       out
-    # works like stringy but write only the key when the value is ''
-    # be careful when using ini.parse is parses singke key line as key = true
+    # works like stringify but write only the key when the value is ''
+    # be careful when using ini.parse is parses single key line as key = true
     stringify_single_key: (obj, section, options={}) ->
       if arguments.length is 2
         options = section

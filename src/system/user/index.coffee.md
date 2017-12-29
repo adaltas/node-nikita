@@ -81,6 +81,9 @@ you are a member of the "wheel" group (gid of "10") with the command
 
     module.exports = (options) ->
       options.log message: "Entering user", level: 'DEBUG', module: 'nikita/lib/system/user/add'
+      # SSH connection
+      ssh = @ssh options.ssh
+      # Options
       options.name = options.argument if options.argument?
       throw Error "Option 'name' is required" unless options.name
       options.shell = "/sbin/nologin" if options.shell is false
@@ -100,7 +103,7 @@ you are a member of the "wheel" group (gid of "10") with the command
       @call (_, callback) ->
         options.log message: "Get user information for #{options.name}", level: 'DEBUG', module: 'nikita/lib/system/user/add'
         options.store.cache_passwd = undefined # Clear cache if any
-        uid_gid.passwd options.ssh, options.store, (err, users) ->
+        uid_gid.passwd ssh, options.store, (err, users) ->
           return callback err if err
           options.log message: "Got #{JSON.stringify users[options.name]}", level: 'INFO', module: 'nikita/lib/system/user/add'
           user_info = users[options.name]
@@ -112,7 +115,7 @@ you are a member of the "wheel" group (gid of "10") with the command
         if: -> user_info and options.groups
       , (_, callback) ->
         options.store.cache_group = null # Clear cache if any
-        uid_gid.group options.ssh, options.store, (err, groups) ->
+        uid_gid.group ssh, options.store, (err, groups) ->
           return callback err if err
           groups_info = groups
           callback()

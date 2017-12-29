@@ -72,6 +72,8 @@ require('nikita')
 
     module.exports = (options) ->
       options.log message: "Entering rubygem.install", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/install'
+      # SSH connection
+      ssh = @ssh options.ssh
       # Global Options
       options.ruby ?= {}
       options[k] ?= v for k, v of options.ruby
@@ -92,7 +94,7 @@ require('nikita')
           [name, version] = line.match(/(.*?)(?:$| \((?:default:\s+)?([\d\., ]+)\))/)[1..3]
           current_gems[name] = version.split(', ')
       @call if: options.source, (_, callback) ->
-        glob options.ssh, options.source, (err, sources) ->
+        glob ssh, options.source, (err, sources) ->
           return callback err if err
           options.source = sources.filter (source) ->
             filename = path.basename source

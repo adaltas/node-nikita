@@ -60,19 +60,21 @@ require('nikita')
 
     module.exports = (options, callback) ->
       options.log message: "Entering remove", level: 'DEBUG', module: 'nikita/lib/system/remove'
+      # SSH connection
+      ssh = @ssh options.ssh
       # Validate parameters
       options.target = options.argument if options.argument?
       options.target ?= options.source
       return callback Error "Missing option: \"target\"" unless options.target?
       # Start real work
-      glob options.ssh, options.target, (err, files) ->
+      glob ssh, options.target, (err, files) ->
         return callback err if err
         status = false
         each files
         .call (file, callback) ->
           status = true
           options.log message: "Removing file #{file}", level: 'INFO', module: 'nikita/lib/system/remove'
-          misc.file.remove options.ssh, file, callback
+          misc.file.remove ssh, file, callback
         .next (err) ->
           callback err, status
 

@@ -48,18 +48,21 @@ require('nikita')
 
     module.exports = (options) ->
       options.log message: "Entering file.json", level: 'DEBUG', module: 'nikita/lib/file/json'
+      # SSH connection
+      ssh = @ssh options.ssh
+      # Options
       options.content ?= {}
       options.pretty ?= false
       options.pretty = 2 if options.pretty is true
       options.transform ?= null
       throw Error "Invalid options: \"transform\"" if options.transform and typeof options.transform isnt 'function'
       @call if: options.merge, (_, callback) ->
-        fs.readFile options.ssh, options.target, 'utf8', (err, json) ->
+        fs.readFile ssh, options.target, 'utf8', (err, json) ->
           return callback() if err?.code is 'ENOENT'
           options.content = merge JSON.parse(json), options.content unless err
           callback err
       @call if: options.source, (_, callback) ->
-        ssh = if options.local then null else options.ssh
+        ssh = if options.local then null else ssh
         fs.readFile ssh, options.source, 'utf8', (err, json) ->
           options.content = merge JSON.parse(json), options.content unless err
           callback err

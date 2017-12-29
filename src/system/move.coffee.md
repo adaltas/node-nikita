@@ -41,9 +41,11 @@ require('nikita').system.move({
 
     module.exports = (options, callback) ->
       options.log message: "Entering move", level: 'DEBUG', module: 'nikita/lib/system/move'
+      # SSH connection
+      ssh = @ssh options.ssh
       do_exists = ->
         options.log message: "Stat target", level: 'DEBUG', module: 'nikita/lib/system/move'
-        fs.stat options.ssh, options.target, (err, stat) ->
+        fs.stat ssh, options.target, (err, stat) ->
           return do_move() if err?.code is 'ENOENT'
           return callback err if err
           if options.force
@@ -52,7 +54,7 @@ require('nikita').system.move({
       do_srchash = ->
         return do_dsthash() if options.source_md5
         options.log message: "Get source md5", level: 'DEBUG', module: 'nikita/lib/system/move'
-        file.hash options.ssh, options.source, 'md5', (err, hash) ->
+        file.hash ssh, options.source, 'md5', (err, hash) ->
           return callback err if err
           options.log message: "Source md5 is \"hash\"", level: 'INFO', module: 'nikita/lib/system/move'
           options.source_md5 = hash
@@ -60,7 +62,7 @@ require('nikita').system.move({
       do_dsthash = ->
         return do_chkhash() if options.target_md5
         options.log message: "Get target md5", level: 'DEBUG', module: 'nikita/lib/system/move'
-        file.hash options.ssh, options.target, 'md5', (err, hash) ->
+        file.hash ssh, options.target, 'md5', (err, hash) ->
           return callback err if err
           options.log message: "Destination md5 is \"hash\"", level: 'INFO', module: 'nikita/lib/system/move'
           options.target_md5 = hash
@@ -78,7 +80,7 @@ require('nikita').system.move({
           do_move()
       do_move = ->
         options.log message: "Rename #{options.source} to #{options.target}", level: 'WARN', module: 'nikita/lib/system/move'
-        fs.rename options.ssh, options.source, options.target, (err) ->
+        fs.rename ssh, options.source, options.target, (err) ->
           return callback err if err
           callback null, true
       do_remove_src = =>

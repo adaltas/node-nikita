@@ -130,11 +130,12 @@ The callback `succeed` is called if all the provided command
 were executed successfully otherwise the callback `skip` is called.
 
       if_exec: (options, succeed, skip) ->
+        # SSH connection
+        ssh = @ssh options.ssh
         each(options.if_exec)
         .call (cmd, next) ->
           options.log? message: "Nikita `if_exec`: #{cmd}", level: 'DEBUG', module: 'nikita/misc/conditions'
-          # options = ssh: options.ssh, cmd: cmd
-          run = exec ssh: options.ssh, cmd: cmd
+          run = exec ssh: ssh, cmd: cmd
           # if options.stdout
           #   run.stdout.pipe options.stdout, end: false
           # if options.stderr
@@ -153,11 +154,12 @@ The callback `succeed` is called if all the provided command
 were executed with failure otherwise the callback `skip` is called.
 
       unless_exec: (options, succeed, skip) ->
+        # SSH connection
+        ssh = @ssh options.ssh
         each(options.unless_exec)
         .call (cmd, next) ->
           options.log? message: "Nikita `unless_exec`: #{cmd}", level: 'DEBUG', module: 'nikita/misc/conditions'
-          # options = ssh: options.ssh, cmd: cmd
-          run = exec ssh: options.ssh, cmd: cmd
+          run = exec ssh: ssh, cmd: cmd
           # if options.stdout
           #   run.stdout.pipe options.stdout, end: false
           # if options.stderr
@@ -176,6 +178,8 @@ The callback `succeed` is called if any of the provided filter passed otherwise
 the callback `skip` is called.
 
       if_os: (options, succeed, skip) ->
+        # SSH connection
+        ssh = @ssh options.ssh
         options.if_os = [options.if_os] unless Array.isArray options.if_os
         for rule in options.if_os
           rule.name ?= []
@@ -186,7 +190,7 @@ the callback `skip` is called.
           rule.arch ?= []
           rule.arch = [rule.arch] unless Array.isArray rule.arch
         options.log? message: "Nikita `if_os`: #{JSON.stringify options.if_os}", level: 'DEBUG', module: 'nikita/misc/conditions'
-        exec options.ssh, os, (err, stdout, stderr) ->
+        exec ssh, os, (err, stdout, stderr) ->
           return skip err if err
           [arch, name, version] = stdout.split '|'
           name = 'redhat' if name.toLowerCase() is 'red hat'
@@ -212,6 +216,8 @@ The callback `succeed` is called if none of the provided filter passed otherwise
 the callback `skip` is called.
 
       unless_os: (options, succeed, skip) ->
+        # SSH connection
+        ssh = @ssh options.ssh
         options.unless_os = [options.unless_os] unless Array.isArray options.unless_os
         for rule in options.unless_os
           rule.name ?= []
@@ -222,7 +228,7 @@ the callback `skip` is called.
           rule.arch ?= []
           rule.arch = [rule.arch] unless Array.isArray rule.arch
         options.log? message: "Nikita `unless_os`: #{JSON.stringify options.unless_os}", level: 'DEBUG', module: 'nikita/misc/conditions'
-        exec options.ssh, os, (err, stdout, stderr) ->
+        exec ssh, os, (err, stdout, stderr) ->
           return skip err if err
           [arch, name, version] = stdout.split '|'
           name = 'redhat' if name.toLowerCase() is 'red hat'
@@ -250,10 +256,11 @@ The callback `succeed` is called if all the provided paths
 exists otherwise the callback `skip` is called.
 
       if_exists: (options, succeed, skip) ->
-        {ssh, if_exists, target} = options
-        if typeof if_exists is 'boolean' and target
-          if_exists = if if_exists then [target] else null
-        each(if_exists)
+        # SSH connection
+        ssh = @ssh options.ssh
+        if typeof options.if_exists is 'boolean' and options.target
+          options.if_exists = if options.if_exists then [options.target] else null
+        each(options.if_exists)
         .call (if_exists, next) ->
           fs.exists ssh, if_exists, (err, exists) ->
             if exists
@@ -275,10 +282,11 @@ The callback `succeed` is called if none of the provided paths
 exists otherwise the callback `skip` is called.
 
       unless_exists: (options, succeed, skip) ->
-        {ssh, unless_exists, target} = options
-        if typeof unless_exists is 'boolean' and target
-          unless_exists = if unless_exists then [target] else null
-        each(unless_exists)
+        # SSH connection
+        ssh = @ssh options.ssh
+        if typeof options.unless_exists is 'boolean' and options.target
+          options.unless_exists = if options.unless_exists then [options.target] else null
+        each(options.unless_exists)
         .call (unless_exists, next) ->
           fs.exists ssh, unless_exists, (err, exists) ->
             if exists
@@ -299,10 +307,11 @@ The callback `succeed` is called if all of the provided paths
 exists otherwise the callback `skip` is called with an error.
 
       should_exist: (options, succeed, skip) ->
-        # return succeed() unless options.should_exist?
+        # SSH connection
+        ssh = @ssh options.ssh
         each(options.should_exist)
         .call (should_exist, next) ->
-          fs.exists options.ssh, should_exist, (err, exists) ->
+          fs.exists ssh, should_exist, (err, exists) ->
             if exists
             then next()
             else next Error "File does not exist: #{should_exist}"
@@ -319,10 +328,11 @@ The callback `succeed` is called if none of the provided paths
 exists otherwise the callback `skip` is called with an error.
 
       should_not_exist: (options, succeed, skip) ->
-        # return succeed() unless options.should_not_exist?
+        # SSH connection
+        ssh = @ssh options.ssh
         each(options.should_not_exist)
         .call (should_not_exist, next) ->
-          fs.exists options.ssh, should_not_exist, (err, exists) ->
+          fs.exists ssh, should_not_exist, (err, exists) ->
             if exists
             then next Error "File does not exist: #{should_not_exist}"
             else next()

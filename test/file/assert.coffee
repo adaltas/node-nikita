@@ -384,7 +384,7 @@ describe 'file.assert', ->
       nikita
         ssh: ssh
       .call
-        if_exec: '[[ `whoami` == "rot" ]]'
+        if_exec: '[[ `whoami` == "root" ]]'
       , ->
         @file.touch "#{scratch}/a_file"
         @file.assert "#{scratch}/a_file",

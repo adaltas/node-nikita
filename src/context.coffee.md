@@ -197,11 +197,11 @@
           obj.emit? log.type, log unless log_disabled
         options.log._nikita_ = true
         if options.source and match = /~($|\/.*)/.exec options.source
-          unless options.ssh
+          unless state.store.ssh
           then options.source = path.join process.env.HOME, match[1]
           else options.source = path.posix.join '.', match[1]
         if options.target and match = /~($|\/.*)/.exec options.target
-          unless options.ssh
+          unless state.store.ssh
           then options.target = path.join process.env.HOME, match[1]
           else options.target = path.posix.join '.', match[1]
         options
@@ -351,7 +351,7 @@
             .error (err) -> do_callback [err]
             .next do_conditions
           do_conditions = ->
-            conditions.all obj, options
+            conditions.all proxy, options
             , ->
               for k, v of options # Remove conditions from options
                 delete options[k] if /^if.*/.test(k) or /^unless.*/.test(k)
@@ -586,7 +586,12 @@
       Object.defineProperty obj.registry, 'unregister', get: -> (name, handler) ->
         reg.unregister arguments...
         proxy
-      proxy.ssh.open obj.options.ssh if not obj.options.no_ssh and obj.options.ssh and not obj.options.ssh.config
+      if obj.options.ssh
+        if obj.options.ssh.config
+          state.store.ssh = obj.options.ssh
+          delete obj.options.ssh
+        else
+          proxy.ssh.open obj.options.ssh if not obj.options.no_ssh
       proxy
 
     module.exports.propagation =

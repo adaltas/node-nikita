@@ -77,6 +77,8 @@ require('nikita').file.render({
 
     module.exports = (options) ->
       options.log message: "Entering file.render", level: 'DEBUG', module: 'nikita/lib/file/render'
+      # SSH connection
+      ssh = @ssh options.ssh
       # Validate parameters
       throw Error 'Required option: source or content' unless options.source or options.content
       throw Error 'Required option: target' unless options.target
@@ -84,10 +86,10 @@ require('nikita').file.render({
       # Start real work
       @call (_, callback) ->
         return callback() unless options.source
-        ssh = if options.local then null else options.ssh
-        fs.exists ssh, options.source, (err, exists) ->
+        sshOrLocal = if options.local then null else ssh
+        fs.exists sshOrLocal, options.source, (err, exists) ->
           return callback Error "Invalid source, got #{JSON.stringify(options.source)}" unless exists
-          fs.readFile ssh, options.source, 'utf8', (err, content) ->
+          fs.readFile sshOrLocal, options.source, 'utf8', (err, content) ->
             options.content = content unless err
             callback err
       @call ->

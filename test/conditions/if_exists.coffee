@@ -6,27 +6,27 @@ nikita = require '../../src'
 describe 'if_exists', ->
 
   they 'should pass if not present', (ssh, next) ->
-    conditions.if_exists
+    conditions.if_exists.call nikita(),
       ssh: ssh
       next
       () -> false.should.be.true()
 
   they 'should succeed if dir exists', (ssh, next) ->
-    conditions.if_exists
+    conditions.if_exists.call nikita(),
       ssh: ssh
       if_exists: __dirname
       -> next()
       () -> false.should.be.true()
 
   they 'should skip if file does not exists', (ssh, next) ->
-    conditions.if_exists
+    conditions.if_exists.call nikita(),
       ssh: ssh
       if_exists: './oh_no'
       () -> false.should.be.true()
       next
 
   they 'should fail if at least one file is missing', (ssh, next) ->
-    conditions.if_exists
+    conditions.if_exists.call nikita(),
       ssh: ssh
       if_exists: [
         __filename
@@ -37,7 +37,7 @@ describe 'if_exists', ->
       next
 
   they 'should succeed if all files exist', (ssh, next) ->
-    conditions.if_exists
+    conditions.if_exists.call nikita(),
       ssh: ssh
       if_exists: [__filename, __filename, __filename]
       -> next()
@@ -64,34 +64,34 @@ describe 'if_exists', ->
 describe 'unless_exists', ->
 
   they 'succeed if not present', (ssh, next) ->
-    conditions.unless_exists
+    conditions.unless_exists.call nikita(),
       ssh: ssh
       next
       () -> false.should.be.true()
 
   they 'skip if dir exists', (ssh, next) ->
-    conditions.unless_exists
+    conditions.unless_exists.call nikita(),
       ssh: ssh
       unless_exists: __dirname
       () -> false.should.be.true()
       next
 
   they 'succeed if dir does not exists', (ssh, next) ->
-    conditions.unless_exists
+    conditions.unless_exists.call nikita(),
       ssh: ssh
       unless_exists: './oh_no'
       -> next()
       () -> false.should.be.true()
 
   they 'succeed if no file exists', (ssh, next) ->
-    conditions.unless_exists
+    conditions.unless_exists.call nikita(),
       ssh: ssh
       unless_exists: ['./oh_no', './eh_no']
       -> next()
       () -> false.should.be.true()
 
   they 'default to target if true', (ssh, next) ->
-    conditions.unless_exists
+    conditions.unless_exists.call nikita(),
       ssh: ssh
       target: __dirname
       unless_exists: true
@@ -99,21 +99,21 @@ describe 'unless_exists', ->
       -> next()
 
   they 'skip if at least one file exists', (ssh, next) ->
-    conditions.unless_exists
+    conditions.unless_exists.call nikita(),
       ssh: ssh
       unless_exists: ['./oh_no', __filename]
       () -> false.should.be.true()
       next
 
   they 'should fail if at least one file exists', (ssh, next) ->
-    conditions.unless_exists
+    conditions.unless_exists.call nikita(),
       ssh: ssh
       unless_exists: ['./oh_no', __filename, './oh_no']
       -> false.should.be.true()
       next
 
   they 'should succeed if all files are missing', (ssh, next) ->
-    conditions.unless_exists
+    conditions.unless_exists.call nikita(),
       ssh: ssh
       unless_exists: ['./oh_no', './oh_no', './oh_no']
       -> next()
