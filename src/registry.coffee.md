@@ -186,7 +186,7 @@ Options:
           name = [name] if typeof name is 'string'
           cnames = obj
           for n, i in name
-            return false unless cnames[n]
+            return false if not cnames[n]? or not cnames.propertyIsEnumerable(n)
             return true if options.parent and cnames[n] and i is name.length - 1
             return true if cnames[n][''] and i is name.length - 1
             cnames = cnames[n]

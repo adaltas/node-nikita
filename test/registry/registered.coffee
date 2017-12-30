@@ -51,8 +51,17 @@ describe 'registry.registered', ->
       n.registry.registered(['my', 'module']).should.be.true()
       n.registry.registered(['my']).should.be.false()
 
+    it 'ensure non enumerable property are skipped', ->
+      n = nikita()
+      n.registry.registered(['register'], parent: true).should.be.false()
+
     it 'option parent', ->
       n = nikita()
       n.registry.register ['my', 'nice', 'module'], (->)
       n.registry.registered(['my'], parent: true).should.be.true()
       n.registry.registered(['my', 'nice'], parent: true).should.be.true()
+
+    it 'option parent check all path', ->
+      n = nikita()
+      n.registry.register ['my', 'nice', 'module'], (->)
+      n.registry.registered(['wrong', 'nice'], parent: true).should.be.false()

@@ -56,7 +56,6 @@
             builder = ->
               args = [].slice.call(arguments)
               options = normalize_options args, proxy.type
-              # console.log 'options.get', options
               {get, values} = handle_get proxy, options
               return values if get
               proxy.type = []
