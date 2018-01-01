@@ -114,7 +114,7 @@ require('nikita').upload({
             callback err, not match
       @system.mkdir
         if: -> @status -1
-        ssh: null
+        ssh: false
         target: path.dirname stage_target
       @call
         if: -> @status -2
@@ -127,19 +127,19 @@ require('nikita').upload({
             .on 'error', callback
       @call ->
         @system.move
-          ssh: null
+          ssh: false
           if: @status()
           source: stage_target
           target: options.target
         , (err, status) ->
           options.log message: "Unstaged uploaded file", level: 'INFO', module: 'nikita/lib/file/upload' if status
         @system.chmod
-          ssh: null
+          ssh: false
           target: options.target
           mode: options.mode
           if: options.mode?
         @system.chown
-          ssh: null
+          ssh: false
           target: options.target
           uid: options.uid
           gid: options.gid

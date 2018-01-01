@@ -35,7 +35,7 @@ and "{options.basedir}/latest".
 
 ## Source Code
 
-    module.exports = ssh: null, handler: (options) ->
+    module.exports = ssh: false, handler: (options) ->
       # Obtains options from "log_fs" namespace
       options.log_fs ?= {}
       options[k] = v for k, v of options.log_fs

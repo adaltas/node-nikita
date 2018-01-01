@@ -56,7 +56,7 @@ require('nikita')(
 
 ## Source Code
 
-    module.exports = ssh: null, handler: (options) ->
+    module.exports = ssh: false, handler: (options) ->
       options.log message: "Entering log.cli", level: 'DEBUG', module: 'nikita/lib/log/cli'
       # SSH connection
       ssh = @ssh options.ssh

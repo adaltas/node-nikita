@@ -21,7 +21,7 @@ Global options can be alternatively set with the "log_md" property.
 
 ## Source Code
 
-    module.exports = ssh: null, handler: (options) ->
+    module.exports = ssh: false, handler: (options) ->
       # Obtains options from "log_md" namespace
       options.log_md ?= {}
       options[k] = v for k, v of options.log_md

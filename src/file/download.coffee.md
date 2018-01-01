@@ -157,7 +157,7 @@ nikita.download
           @end()
       @file.cache # Download the file and place it inside local cache
         if: options.cache
-        ssh: null
+        ssh: false
         source: options.source
         cache_dir: options.cache_dir
         cache_file: options.cache_file
