@@ -52,8 +52,8 @@
     "eco": "~1.1.0-rc-3"
   },
   "devDependencies": {
-    "coffeescript": "^2.1.0",
-    "mocha": "4.0.1",
+    "coffeescript": "^2.1.1",
+    "mocha": "4.1.0",
     "should": "~13.2.0",
     "ssh2-they": "^1.2.0"
   },
