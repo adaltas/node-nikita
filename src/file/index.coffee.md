@@ -224,7 +224,7 @@ require('nikita').file({
         # connection, use by the upload function
         source = options.source or options.target
         options.log message: "Force local source is \"#{if options.local then 'true' else 'false'}\"", level: 'DEBUG', module: 'nikita/lib/file'
-        sshOrLocal = if options.local then null else ssh
+        sshOrLocal = if options.local then false else ssh
         fs.exists sshOrLocal, source, (err, exists) ->
           return callback err if err
           unless exists
@@ -344,7 +344,7 @@ require('nikita').file({
         # Ownership and permission are also handled
         # Mode is setted by default here to avoid a chmod 644 on existing file if option.mode is not specified
         options.mode ?= 0o0644
-        uid_gid options, (err) ->
+        uid_gid ssh, options, (err) ->
           return callback err if err
           options.gid = options.default_gid unless targetStat
           fs.writeFile ssh, options.target, options.content, options, (err) ->

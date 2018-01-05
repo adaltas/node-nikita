@@ -109,7 +109,7 @@ require('nikita').system.mkdir({
           .next callback
         do_create_parent = (directories) ->
           return do_create directories unless options.uid or options.guid
-          uid_gid options, (err) ->
+          uid_gid ssh, options, (err) ->
             return next err if err
             do_create directories
         do_create = (directories) ->

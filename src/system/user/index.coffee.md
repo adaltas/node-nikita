@@ -99,7 +99,7 @@ you are a member of the "wheel" group (gid of "10") with the command
         # Note, we shall be able to remove the call to "uid_gid"
         # because it itself call "uid_gid.passwd" and "uid_gid.group"
         # which are called below
-        uid_gid options, callback
+        uid_gid ssh, options, callback
       @call (_, callback) ->
         options.log message: "Get user information for #{options.name}", level: 'DEBUG', module: 'nikita/lib/system/user/add'
         options.store.cache_passwd = undefined # Clear cache if any

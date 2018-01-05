@@ -89,8 +89,8 @@ require('nikita').ini({
           callback()
       # Default properties
       @call if: options.source, (_, callback) ->
-        ssh = if options.local then null else ssh
-        fs.readFile ssh, options.source, 'utf8', (err, data) ->
+        sshOrLocal = if options.local then false else ssh
+        fs.readFile sshOrLocal, options.source, 'utf8', (err, data) ->
           return callback() if err?.code is 'ENOENT'
           return callback err if err
           content = misc.ini.clean options.content, true

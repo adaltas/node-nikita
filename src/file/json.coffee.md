@@ -62,8 +62,8 @@ require('nikita')
           options.content = merge JSON.parse(json), options.content unless err
           callback err
       @call if: options.source, (_, callback) ->
-        ssh = if options.local then null else ssh
-        fs.readFile ssh, options.source, 'utf8', (err, json) ->
+        sshOrLocal = if options.local then false else ssh
+        fs.readFile sshOrLocal, options.source, 'utf8', (err, json) ->
           options.content = merge JSON.parse(json), options.content unless err
           callback err
       @call if: options.transform, ->

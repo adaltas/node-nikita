@@ -20,12 +20,12 @@ uid_gid options, (err) ->
   console.log options.gid
 ```
 
-    module.exports = (options, callback) ->
+    module.exports = (ssh, options, callback) ->
       do_uid = ->
         return do_gid() unless options.uid?
         options.uid = parseInt options.uid, 10 if typeof options.uid is 'string' and /\d+/.test options.uid
         return do_gid() if typeof options.uid is 'number'
-        module.exports.passwd options.ssh, options.store, options.uid, (err, user) ->
+        module.exports.passwd ssh, options.store, options.uid, (err, user) ->
           return callback err if err
           if user
             options.uid = user.uid
@@ -35,7 +35,7 @@ uid_gid options, (err) ->
         return callback() unless options.gid?
         options.gid = parseInt options.gid, 10 if typeof options.gid is 'string' and /\d+/.test options.gid
         return callback() if typeof options.gid is 'number'
-        module.exports.group options.ssh, options.store, options.gid, (err, group) ->
+        module.exports.group ssh, options.store, options.gid, (err, group) ->
           return callback err if err
           options.gid = group.gid if group
           callback()

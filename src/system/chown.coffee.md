@@ -57,7 +57,7 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
       throw Error "Missing one of uid or gid option" unless options.uid? or options.gid?
       # Convert user and group names to uid and gid if necessary
       @call (_, callback) ->
-        uid_gid options, callback
+        uid_gid ssh, options, callback
       # Use option 'stat' short-circuit or discover
       @call unless: !!options.stat, (_, callback) ->
         options.log message: "Stat #{options.target}", level: 'DEBUG', module: 'nikita/lib/chown'
