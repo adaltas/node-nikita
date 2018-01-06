@@ -69,7 +69,7 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
       # Detect changes
       @call (_, callback) ->
         # Detect changes
-        if (not options.uid or options.stat.uid is options.uid) and (not options.gid or options.stat.gid is options.gid)
+        if (not options.uid? or options.stat.uid is options.uid) and (not options.gid? or options.stat.gid is options.gid)
           options.log message: "Matching ownerships on '#{options.target}'", level: 'INFO', module: 'nikita/lib/chown'
           return callback()
         callback null, true

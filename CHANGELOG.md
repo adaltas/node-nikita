@@ -3,6 +3,7 @@
 
 ## Version 0.6.5
 
+* system.chown: handle uid and gid 0
 * system.execute: enforce target
 * registry: registered handle non enumerable properties
 * ssh: move from options to action
