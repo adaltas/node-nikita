@@ -63,7 +63,7 @@ creating any modifications.
 * `stderr_trim` (boolean)   
   Trim stderr argument passed in the callback.
 * `target` (string)   
-  Path storing the script, apply witht the bash and arch_chroot options.
+  Temporary path storing the script, only apply with the bash and arch_chroot options, always disposed once executed.
 * `uid`   
   Unix user id.
 
@@ -71,7 +71,7 @@ creating any modifications.
 
 * `err`   
   Error object if any.
-* `executed`   
+* `status`   
   Value is "true" if command exit equals option "code", "0" by default, "false" if
   command exit equals option "code_skipped", none by default.
 * `stdout`   
@@ -139,6 +139,7 @@ nikita.system.execute({
       throw Error "Missing cmd: #{options.cmd}" unless options.cmd?
       throw Error "Incompatible options: bash, arch_chroot" if ['bash', 'arch_chroot'].filter((k) -> options[k]).length > 1
       throw Error "Required Option: \"rootdir\" with \"arch_chroot\"" if options.arch_chroot and not options.rootdir
+      throw Error "Invalid Option: the \"target\" option requires either one of the \"bash\" or \"arch_chroot\" options" if options.target and not ['bash', 'arch_chroot'].filter((k) -> options[k]).length
       result = stdout: null, stderr: null, code: null
       # Guess current username
       current_username =
