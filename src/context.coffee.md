@@ -137,6 +137,7 @@
           opts.sleep ?= 3000 # Wait 3s between retry
           opts.retry ?= 0
           opts.disabled ?= false
+          opts.status ?= true
           # Validation
           jump_to_error Error "Invalid options sleep, got #{JSON.stringify opts.sleep}" unless typeof opts.sleep is 'number' and opts.sleep >= 0
         options
@@ -480,11 +481,13 @@
             options.log type: 'handled', index: index, depth: state.depth, error: args[0], status: args[1]
             return if state.killed
             args[0] = undefined unless args[0] # Error is undefined and not null or false
-            args[1] = !!args[1] # Status is a boolean, error or not
+            args[1] = !!args[1] if options.status # Status is a boolean, error or not
             state.todos = state.stack.shift() if state.todos.length is 0
             jump_to_error args[0] if args[0] and not options.relax
             state.todos.throw_if_error = false if args[0] and options.callback
-            state.todos.status[0].value = args[1]
+            # todo: we might want to log here a change of status, sth like:
+            # options.log type: 'lifecycle', message: 'status', index: index, depth: state.depth, error: err, status: true if options.status and args[1] and not state.todos.status.some (satus) -> status
+            state.todos.status[0].value = args[1] if options.status
             call_callback options.callback, args if options.callback
             args[0] = null if options.relax
             callback args[0], args[1] if callback
@@ -609,6 +612,7 @@
       relax: false
       shy: false
       sleep: false
+      # sudo: true
 
 ## Helper functions
 
@@ -622,10 +626,10 @@
       todos.throw_if_error = true
     handle_get = (proxy, options) ->
       return get: false unless options.length is 1
-      if options.length is options.filter( (opts) -> opts.get ).length
+      if options.length is options.filter( (opts) -> opts.get is true ).length
         get = true
         values = for opts in options
-          opts.handler.call proxy, opts
+          opts.handler.call proxy, opts, opts.callback
         values = values[0] if values.length is 1
       get: get, values: values
 

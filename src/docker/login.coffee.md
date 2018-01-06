@@ -35,9 +35,10 @@ Register or log in to a Docker registry server.
 
     module.exports = (options, callback) ->
       options.log message: "Entering Docker login", level: 'DEBUG', module: 'nikita/lib/docker/login'
-      # Validate parameters and madatory conditions
+      # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
+      # Validate parameters and madatory conditions
       return callback  Error 'Missing image parameter' unless options.image?
       return callback  Error 'Can not build from Dockerfile and content' if options.content? and options.dockerfile?
       cmd = 'login'

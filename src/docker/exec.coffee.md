@@ -48,9 +48,10 @@ nikita.docker({
 
     module.exports = (options, callback) ->
       options.log message: "Entering Docker exec", level: 'DEBUG', module: 'nikita/lib/docker/exec'
-      # Validate parameters
+      # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
+      # Validate parameters
       throw Error 'Missing container' unless options.container?
       throw Error 'Missing cmd' unless options.cmd?
       options.service ?= false

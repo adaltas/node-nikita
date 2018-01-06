@@ -114,9 +114,10 @@ nikita.docker.build({
       options.log message: "Entering Docker build", level: 'DEBUG', module: 'nikita/lib/docker/build'
       # SSH connection
       ssh = @ssh options.ssh
-      # Validation
+      # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
+      # Validation
       return callback Error 'Required option "image"' unless options.image?
       return callback Error 'Can not build from Dockerfile and content' if options.content? and options.file?
       options.rm ?= true

@@ -25,16 +25,15 @@ describe 'docker.compose', ->
           container_name: 'nikita_docker_compose_up_content'
           ports: ['499:80']
     , (err, status) ->
-      return next err if err
-      status.should.be.true()
+      status.should.be.true() unless err
     .system.execute
       cmd: 'ping dind -c 1'
       code_skipped: [2,68]
-    .wait_connect
+    .connection.wait
       if: -> @status -1
       host: 'dind'
       port: 499
-    .wait_connect
+    .connection.wait
       unless: -> @status -2
       host: '127.0.0.1'
       port: 499
@@ -58,16 +57,15 @@ describe 'docker.compose', ->
           ports: ['499:80']
       target: "#{scratch}/docker_compose_up_content_to_file/docker-compose.yml"
     , (err, status) ->
-      return next err if err
-      status.should.be.true()
+      status.should.be.true() unless err
     .system.execute
       cmd: 'ping dind -c 1'
       code_skipped: [2,68]
-    .wait_connect
+    .connection.wait
       if: -> @status -1
       host: 'dind'
       port: 499
-    .wait_connect
+    .connection.wait
       unless: -> @status -2
       host: '127.0.0.1'
       port: 499
@@ -95,11 +93,11 @@ describe 'docker.compose', ->
     .system.execute
       cmd: 'ping dind -c 1'
       code_skipped: [2,68]
-    .wait_connect
+    .connection.wait
       if: -> @status -1
       host: 'dind'
       port: 499
-    .wait_connect
+    .connection.wait
       unless: -> @status -2
       host: '127.0.0.1'
       port: 499
@@ -128,11 +126,11 @@ describe 'docker.compose', ->
     .system.execute
       cmd: 'ping dind -c 1'
       code_skipped: [2,68]
-    .wait_connect
+    .connection.wait
       if: -> @status -1
       host: 'dind'
       port: 499
-    .wait_connect
+    .connection.wait
       unless: -> @status -2
       host: '127.0.0.1'
       port: 499
@@ -157,22 +155,13 @@ describe 'docker.compose', ->
       target: "#{scratch}/nikita_docker_compose_idem/docker-compose.yml"
     .docker.compose
       target: "#{scratch}/nikita_docker_compose_idem/docker-compose.yml"
-    .system.execute
-      cmd: 'ping dind -c 1'
-      code_skipped: [2,68]
-    .wait_connect
-      if: -> @status -1
+    .connection.wait
       host: 'dind'
-      port: 499
-    .wait_connect
-      unless: -> @status -2
-      host: '127.0.0.1'
       port: 499
     .docker.compose
       target: "#{scratch}/nikita_docker_compose_idem/docker-compose.yml"
     , (err, status) ->
-      return next err if err
-      status.should.be.false()
+      status.should.be.false() unless err
     .docker.rm
       container: 'nikita_docker_compose_idem'
       force: true

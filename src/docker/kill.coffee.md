@@ -39,9 +39,10 @@ nikita.docker.kill({
 
     module.exports = (options) ->
       options.log message: "Entering Docker kill", level: 'DEBUG', module: 'nikita/lib/docker/kill'
-      # Validate parameters
+      # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
+      # Validate parameters
       return callback Error 'Missing container parameter' unless options.container?
       cmd = 'kill'
       cmd += " -s #{options.signal}" if options.signal?

@@ -52,12 +52,13 @@ nikita.docker({
 
     module.exports = (options) ->
       options.log message: "Entering Docker save", level: 'DEBUG', module: 'nikita/lib/docker/save'
-      # Validate parameters
+      # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
-      return callback Error 'Missing image parameter' unless options.image?
+      # Validate parameters
+      throw Error 'Missing image parameter' unless options.image?
       options.output ?= options.target
-      return callback Error 'Missing output parameter' unless options.output?
+      throw Error 'Missing output parameter' unless options.output?
       # Saves image to local tmp path, than copy it
       cmd = "save -o #{options.output} #{options.image}"
       cmd += ":#{options.tag}" if options.tag?

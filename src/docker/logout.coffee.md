@@ -39,9 +39,10 @@ nikita.docker.pause({
 
     module.exports = (options, callback) ->
       options.log message: "Entering Docker logout", level: 'DEBUG', module: 'nikita/lib/docker/logout'
-      # Validate parameters
+      # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
+      # Validate parameters
       return callback Error 'Missing container parameter' unless options.container?
       # rm is false by default only if options.service is true
       cmd = 'logout'

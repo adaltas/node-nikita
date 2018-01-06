@@ -40,9 +40,10 @@ nikita.docker.rm({
 
     module.exports = (options) ->
       options.log message: "Entering Docker rm", level: 'DEBUG', module: 'nikita/lib/docker/rm'
-      # Validate parameters and madatory conditions
+      # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
+      # Validate parameters and madatory conditions
       return callback Error 'Missing container parameter' unless options.container?
       cmd = for opt in ['link', 'volumes', 'force']
         "-#{opt.charAt 0}" if options[opt]

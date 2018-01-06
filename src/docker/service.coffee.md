@@ -15,9 +15,12 @@ See `docker.run` for list of options.
 
     module.exports = (options) ->
       options.log message: "Entering Docker service", level: 'DEBUG', module: 'nikita/lib/docker/service'
+      # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
+      # Normalization
       options.detach ?= true
       options.rm ?= false
+      # Validation
       throw Error 'Missing container name' unless options.name? or options.container?
       @docker.run options

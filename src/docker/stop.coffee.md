@@ -35,9 +35,10 @@ nikita.docker.stop({
 
     module.exports = (options) ->
       options.log message: "Entering Docker stop", level: 'DEBUG', module: 'nikita/lib/docker/stop'
-      # Validate parameters
+      # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
+      # Validate parameters
       throw Error 'Missing container parameter' unless options.container?
       # rm is false by default only if options.service is true
       cmd = 'stop'

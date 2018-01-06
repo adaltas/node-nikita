@@ -41,18 +41,20 @@ nikita.docker_pull({
 
     module.exports = (options, callback) ->
       options.log message: "Entering Docker pull", level: 'DEBUG', module: 'nikita/lib/docker/pull'
-      # Validate parameters
+      # Global options
       options.docker ?= {}
-      options.version ?= 'latest'
-      options.all ?= false
       options[k] ?= v for k, v of options.docker
+      # Validate parameters
+      version = options.version or options.tag.split(':')[1] or 'latest'
+      delete options.version # present in misc.docker.options, will probably disappear at some point
+      options.all ?= false
       cmd_images = 'images'
       cmd_images += " | grep '#{options.tag}'"
-      cmd_images += " | grep '#{options.version}'" unless options.all
+      cmd_images += " | grep '#{version}'" unless options.all
       throw Error 'Missing Tag Name' unless options.tag?
       # rm is false by default only if options.service is true
       cmd = 'pull'
-      cmd += if options.all then  " -a #{options.tag}" else " #{options.tag}:#{options.version}"
+      cmd += if options.all then  " -a #{options.tag}" else " #{options.tag}:#{version}"
       @system.execute
         cmd: docker.wrap options, cmd_images
         code_skipped: 1

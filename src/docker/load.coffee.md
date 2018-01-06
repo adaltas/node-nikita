@@ -44,7 +44,7 @@ nikita.docker.load({
 
     module.exports = (options, callback) ->
       options.log message: "Entering Docker load", level: 'DEBUG', module: 'nikita/lib/docker/load'
-      # Obtains options from "docker" namespace
+      # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
       # Validate parameters

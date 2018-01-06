@@ -49,9 +49,10 @@ Create and start containers according to a docker-compose file
 
     module.exports = (options) ->
       options.log message: "Entering Docker Compose", level: 'DEBUG', module: 'nikita/lib/docker/compose/up'
-      # Validate parameters
+      # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
+      # Validate parameters
       throw Error 'Missing docker-compose content or target' if not options.target? and not options.content?
       options.target ?= "/tmp/docker_compose_#{Date.now()}/docker-compose.yml" if options.content and not options.target?
       options.detached ?= true
@@ -62,7 +63,7 @@ Create and start containers according to a docker-compose file
       services = options.services.join ' '
       # Construct exec command
       cmd = " --file #{options.target}"
-      cmd_ps = "#{cmd} ps -q | xargs docker inspect"
+      cmd_ps = "#{cmd} ps -q | xargs docker #{docker.opts options} inspect"
       cmd_up = "#{cmd} up"
       cmd_up += ' -d ' if options.detached
       cmd_up += ' --force-recreate ' if options.force
@@ -78,23 +79,24 @@ Create and start containers according to a docker-compose file
         target: options.target
         content: options.content
       @call (_, callback) ->
-        start = true
         @system.execute
           cmd: docker.wrap options, cmd_ps
           cwd: options.cwd
           uid: options.uid
-          code_skipped: 123 # Container not created
+          code_skipped: 123
           stdout_log: false
         , (err, status, stdout, stderr) ->
           throw err if err
-          return start = true unless status
+          # console.log '??', err, status
+          return callback null, true unless status
           containers = JSON.parse stdout
-          start = containers.some (container) -> not container.State.Running
-          options.log "Docker created, need start" if start
-        @next -> callback null, start
+          status = containers.some (container) -> not container.State.Running
+          options.log "Docker created, need start" if status
+          callback null, status
       @system.execute
         if: -> options.force or @status()
         cwd: source_dir
+        uid: options.uid
         cmd: docker.wrap options, cmd_up
       , docker.callback
 

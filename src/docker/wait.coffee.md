@@ -38,9 +38,10 @@ nikita.docker.wait({
 
     module.exports = (options, callback) ->
       options.log message: "Entering Docker wait", level: 'DEBUG', module: 'nikita/lib/docker/wait'
-      # Validate parameters
+      # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
+      # Validation
       return callback Error 'Missing container parameter' unless options.container?
       # rm is false by default only if options.service is true
       cmd = "wait #{options.container} | read r; return $r"

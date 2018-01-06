@@ -23,8 +23,8 @@ describe 'docker.exec', ->
     .docker.exec
       container: 'nikita_test_exec'
       cmd: 'echo toto'
-    , (err, executed, stdout, stderr) ->
-      executed.should.be.true() unless err
+    , (err, status, stdout, stderr) ->
+      status.should.be.true() unless err
       stdout.trim().should.eql 'toto' unless err
     .docker.rm
       container: 'nikita_test_exec'
@@ -47,8 +47,8 @@ describe 'docker.exec', ->
       container: 'nikita_test_exec'
       cmd: 'echo toto'
       relax: true
-    , (err, executed, stdout, stderr) ->
-      err.message.should.eql 'Container nikita_test_exec is not running'
+    , (err, status, stdout, stderr) ->
+      err.message.should.match /Container [a-z0-9]+ is not running/
     .docker.rm
       container: 'nikita_test_exec'
       force: true
@@ -62,8 +62,8 @@ describe 'docker.exec', ->
       container: 'nikita_fake_container'
       cmd: 'echo toto'
       relax: true
-    , (err, executed, stdout, stderr) ->
-      err.message.should.eql 'No such container: nikita_fake_container'
+    , (err, status, stdout, stderr) ->
+      err.message.should.eql 'Error: No such container: nikita_fake_container'
     .promise()
 
   they 'skip exit code', (ssh) ->
@@ -80,8 +80,8 @@ describe 'docker.exec', ->
       container: 'nikita_test_exec'
       cmd: 'toto'
       code_skipped: 126
-    , (err, executed, stdout, stderr) ->
-      executed.should.be.false() unless err
+    , (err, status, stdout, stderr) ->
+      status.should.be.false() unless err
     .docker.rm
       container: 'nikita_test_exec'
       force: true

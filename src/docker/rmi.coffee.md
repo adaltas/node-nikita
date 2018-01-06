@@ -26,9 +26,10 @@ force options is set.
 
     module.exports = (options) ->
       options.log message: "Entering Docker rmi", level: 'DEBUG', module: 'nikita/lib/docker/rmi'
-      # Validate parameters and madatory conditions
+      # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
+      # Validate parameters and madatory conditions
       throw Error 'Missing image parameter' unless options.image?
       cmd_images = 'images'
       cmd_images += " | grep '#{options.image} '"

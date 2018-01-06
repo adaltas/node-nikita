@@ -50,9 +50,9 @@ describe 'docker.build', ->
       FROM scratch
       CMD echo hello
       """
-    , (err, executed, stdout, stderr) ->
-      executed.should.be.true() unless err
-      stderr.should.containEql 'Step 2 : CMD echo hello' unless err
+    , (err, status, stdout, stderr) ->
+      status.should.be.true() unless err
+      stderr.should.containEql 'Step 2/2 : CMD echo hello' unless err
     .docker.rmi
       image: 'nikita/should_exists_2'
     .promise()
@@ -109,7 +109,8 @@ describe 'docker.build', ->
     .promise()
 
   they 'status not modified', (ssh) ->
-    status_true = status_false = null
+    status_true = []
+    status_false = []
     nikita
       ssh: ssh
       docker: config.docker
@@ -124,18 +125,18 @@ describe 'docker.build', ->
     .docker.build
       image: 'nikita/should_exists_5'
       file: "#{scratch}/nikita_Dockerfile"
-      log: (msg) -> status_true = msg
-    , (err, executed) ->
-      executed.should.be.true()
+      log: (msg) -> status_true.push msg
+    , (err, status) ->
+      status.should.be.true()
     .docker.build
       image: 'nikita/should_exists_5'
       file: "#{scratch}/nikita_Dockerfile"
-      log: (msg) -> status_false = msg
-    , (err, executed) ->
-      executed.should.be.false()
+      log: (msg) -> status_false.push msg
+    , (err, status) ->
+      status.should.be.false()
     .docker.rmi
       image: 'nikita/should_exists_5'
     .call ->
-      status_true.message.should.match /^New image id/
-      status_false.message.should.match /^Identical image id/
+      status_true.filter( (s) -> /^New image id/.test s?.message ).length.should.eql 1
+      status_false.filter( (s) -> /^Identical image id/.test s?.message ).length.should.eql 1
     .promise()

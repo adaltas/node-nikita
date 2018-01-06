@@ -35,7 +35,10 @@ nikita.docker.volume_rm({
 
     module.exports = (options) ->
       options.log message: "Entering Docker volume_rm", level: 'DEBUG', module: 'nikita/lib/docker/volume_rm'
-      # Validate parameters
+      # Global options
+      options.docker ?= {}
+      options[k] ?= v for k, v of options.docker
+      # Validation
       throw Error "Missing required option name" unless options.name
       @system.execute
         cmd: docker.wrap options, "volume rm #{options.name}"

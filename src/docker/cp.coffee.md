@@ -50,9 +50,10 @@ nikita.docker({
       options.log message: "Entering Docker cp", level: 'DEBUG', module: 'nikita/lib/docker/cp'
       # SSH connection
       ssh = @ssh options.ssh
-      # Validate parameters
+      # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
+      # Validate parameters
       throw Error 'Missing option "source"' unless options.source
       throw Error 'Missing option "target"' unless options.target
       [_, source_container, source_path] = /(.*:)?(.*)/.exec options.source

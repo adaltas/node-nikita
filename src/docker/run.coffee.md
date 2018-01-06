@@ -111,9 +111,10 @@ nikita.docker({
 
     module.exports = (options, callback) ->
       options.log message: "Entering Docker run", level: 'DEBUG', module: 'nikita/lib/docker/run'
-      # Validate parameters
+      # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
+      # Validate parameters
       return callback Error 'Missing image' unless options.image?
       options.rm ?= true
       options.name ?= options.container

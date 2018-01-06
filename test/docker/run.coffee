@@ -66,7 +66,6 @@ describe 'docker.run', ->
     , (err, executed, stdout, stderr) ->
       stdout.should.match /^test.*/ unless err
     .docker.rm
-      machine: config.docker.machine
       force: true
       container: 'nikita_test_rm'
     .promise()
@@ -74,20 +73,16 @@ describe 'docker.run', ->
   they 'unique option from array option', (ssh) ->
     nikita
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker.rm
       container: 'nikita_test_unique'
       force: true
     .docker.run
       image: 'httpd'
       port: '499:80'
-      machine: config.docker.machine
       name: 'nikita_test_unique'
       detach: true
       rm: false
-    # .wait_connect
-    #   port: 499
-    #   host: ipadress of docker, docker-machine...
     .docker.rm
       force: true
       container: 'nikita_test_unique'
@@ -96,7 +91,7 @@ describe 'docker.run', ->
   they 'array options', (ssh) ->
     nikita
       ssh: ssh
-      machine: config.docker.machine
+      docker: config.docker
     .docker.rm
       force: true
       container: 'nikita_test_array'

@@ -9,9 +9,6 @@ fs = require 'ssh2-fs'
 
 describe 'docker.pull', ->
 
-  scratch = test.scratch @
-  destination = "#{scratch}/default.script"
-  source = '/usr/share/udhcpc/default.script'
   config = test.config()
   return if config.disable_docker
 
@@ -23,8 +20,8 @@ describe 'docker.pull', ->
       image: 'alpine'
     .docker.pull
       tag: 'alpine'
-    , (err, downloaded, stdout, stderr) ->
-      downloaded.should.be.true()
+    , (err, status, stdout, stderr) ->
+      status.should.be.true()
     .promise()
 
   they 'Status Not Modified', (ssh) ->
@@ -37,6 +34,6 @@ describe 'docker.pull', ->
       tag: 'alpine'
     .docker.pull
       tag: 'alpine'
-    , (err, downloaded) ->
-      downloaded.should.be.false()
+    , (err, status) ->
+      status.should.be.false()
     .promise()

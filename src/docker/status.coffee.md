@@ -40,9 +40,10 @@ nikita.docker({
 ## Source Code
 
     module.exports = (options) ->
-      # Validate parameters
+      # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
+      # Validation
       throw Error 'Missing container parameter' unless options.container?
       # Construct exec command
       cmd = "ps | grep '#{options.container}'"

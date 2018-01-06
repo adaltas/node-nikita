@@ -38,9 +38,10 @@ nikita.docker.pause({
 
     module.exports = (options, callback) ->
       options.log message: "Entering Docker pause", level: 'DEBUG', module: 'nikita/lib/docker/pause'
-      # Validate parameters
+      # Global parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
+      # Validate parameters
       return callback Error 'Missing container parameter' unless options.container?
       cmd = "pause #{options.container}"
       @system.execute

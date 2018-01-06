@@ -47,9 +47,10 @@ nikita.docker.start({
 
     module.exports = (options) ->
       options.log message: "Entering Docker start", level: 'DEBUG', module: 'nikita/lib/docker/start'
-      # Validate parameters
+      # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
+      # Validation
       throw Error 'Missing container parameter' unless options.container?
       # rm is false by default only if options.service is true
       cmd = 'start'

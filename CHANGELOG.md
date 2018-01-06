@@ -1,6 +1,10 @@
 
 # Changelog
 
+## Trunk
+
+* docker: fix tests
+
 ## Version 0.6.5
 
 * system.chown: handle uid and gid 0

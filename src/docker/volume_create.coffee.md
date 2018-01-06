@@ -39,6 +39,9 @@ nikita.docker.pause({
 
     module.exports = (options) ->
       options.log message: "Entering Docker volume_create", level: 'DEBUG', module: 'nikita/lib/docker/volume_create'
+      # Global options
+      options.docker ?= {}
+      options[k] ?= v for k, v of options.docker
       # Normalize options
       options.label = [options.label] if typeof options.label is 'string'
       options.opt = [options.opt] if typeof options.opt is 'string'
@@ -58,8 +61,6 @@ nikita.docker.pause({
       @system.execute
         if: -> not options.name or @status -1
         cmd: docker.wrap options, cmd
-      , (err, status, stdout) ->
-        console.log 'STDOUT: '+stdout
 
 ## Modules Dependencies
 

@@ -40,9 +40,10 @@ nikita.docker.restart({
 
     module.exports = (options, callback) ->
       options.log message: "Entering Docker restart", level: 'DEBUG', module: 'nikita/lib/docker/restart'
-      # Validate parameters
+      # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
+      # Validate parameters
       return callback Error 'Missing container parameter' unless options.container?
       cmd = 'restart'
       cmd += " -t #{options.timeout}" if options.timeout?

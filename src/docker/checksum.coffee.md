@@ -31,9 +31,10 @@ Return the checksum of repository:tag, if it exists. Function not native to dock
 
     module.exports = (options, callback) ->
       options.log message: "Entering Docker checksum", level: 'DEBUG', module: 'nikita/lib/docker/checksum'
-      # Validation
+      # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
+      # Validation
       options.image ?= options.repository
       return callback Error 'Missing repository parameter' unless options.image?
       options.tag ?= 'latest'
