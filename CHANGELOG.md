@@ -1,7 +1,7 @@
 
 # Changelog
 
-## Trunk
+## Version 0.6.5
 
 * registry: registered handle non enumerable properties
 * ssh: move from options to action
