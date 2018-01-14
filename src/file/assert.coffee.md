@@ -188,7 +188,7 @@ nikita.file.assert({
           callback err
       # Assert uid ownerships
       @call
-        if: options.uid
+        if: options.uid?
       , (_, callback) ->
         fs.stat ssh, options.target, (err, stat) ->
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
@@ -203,7 +203,7 @@ nikita.file.assert({
           callback err
       # Assert gid ownerships
       @call
-        if: options.gid
+        if: options.gid?
       , (_, callback) ->
         fs.stat ssh, options.target, (err, stat) ->
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'

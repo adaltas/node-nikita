@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* file.assert: handle root uid and gid
 * file.assert: new trim option
 * assert: remove connection
 * docker: fix tests
