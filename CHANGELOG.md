@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* conditions: fix test after latest ssh move to action
 * file.assert: handle root uid and gid
 * file.assert: new trim option
 * assert: remove connection
