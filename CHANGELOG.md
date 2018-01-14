@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* file.assert: new trim option
 * assert: remove connection
 * docker: fix tests
 

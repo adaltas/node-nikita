@@ -89,8 +89,11 @@ nikita.file.assert({
       options.mode = [options.mode] unless Array.isArray options.mode
       throw Error 'Missing option: "target"' unless options.target
       if typeof options.content is 'string'
+        options.content = options.content.trim() if options.trim
         options.content = Buffer.from options.content, options.encoding
-      else if options.content? and not Buffer.isBuffer(options.content) and not options.content instanceof RegExp
+      else if Buffer.isBuffer options.content
+        options.content = buffer.trim options.content, options.encoding if options.trim
+      else if options.content? and not options.content instanceof RegExp
         throw Error "Invalid option 'content': expect string, buffer or regexp"
       # Assert file exists
       @call
@@ -135,12 +138,17 @@ nikita.file.assert({
       , (_, callback) ->
         fs.readFile ssh, options.target, (err, buffer) ->
           return callback err if err
+          try
+            buf = buffer.trim buf, options.encoding if options.trim
+          catch err
+            console.log err
+            throw err
           unless options.not
-            unless buffer.equals options.content
-              options.error ?= "Invalid content: expect #{JSON.stringify options.content.toString()} and got #{JSON.stringify buffer.toString()}"
+            unless buf.equals options.content
+              options.error ?= "Invalid content: expect #{JSON.stringify options.content.toString()} and got #{JSON.stringify buf.toString()}"
               err = Error options.error
           else
-            if buffer.equals options.content
+            if buf.equals options.content
               options.error ?= "Unexpected content: #{JSON.stringify options.content.toString()}"
               err = Error options.error
           callback err
@@ -232,3 +240,4 @@ nikita.file.assert({
     fs = require 'ssh2-fs'
     file = require '../misc/file'
     misc = require '../misc'
+    buffer = require '../misc/buffer'
