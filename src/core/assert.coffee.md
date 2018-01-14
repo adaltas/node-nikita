@@ -35,23 +35,3 @@ nikita.assert({
         handler: ->
           message = "Invalid status: expected #{JSON.stringify options.status}, got #{JSON.stringify status}"
           throw Error message
-
-## Check server listening
-
-```js
-nikita.assert({
-  ssh: connection   
-  host: 'localhost'
-  port: 80
-}, function(err){
-  console.log(err);
-});
-```
-
-      throw Error "Required option port if host" if options.host and not options.port
-      throw Error "Required option host if port" if options.port and not options.host
-      @system.execute
-        if: options.host
-        cmd: "bash -c 'echo > /dev/tcp/#{options.host}/#{options.port}'"
-      , (err) ->
-        throw Error "Closed Connection to '#{options.host}:#{options.port}'" if err

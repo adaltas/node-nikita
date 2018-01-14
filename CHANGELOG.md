@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* assert: remove connection
 * docker: fix tests
 
 ## Version 0.6.5
