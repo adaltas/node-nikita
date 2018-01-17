@@ -43,7 +43,7 @@ describe 'if_exists', ->
       -> next()
       (err) -> false.should.be.true()
   
-  they 'print log', (ssh, next) ->
+  they 'print log', (ssh) ->
     logs = []
     nikita
       ssh: ssh
@@ -54,13 +54,11 @@ describe 'if_exists', ->
     .call
       if_exists: __filename + '/does/not/exists'
       handler: -> logs.push 'handler not called'
-    .next (err) ->
-      logs.should.eql [
-        "File exists #{__filename}, continuing"
-        'handler called'
-        "File doesnt exists #{__filename}/does/not/exists, skipping"
-      ] unless err
-      next err
+    .call ->
+      logs.should.containEql "File exists #{__filename}, continuing"
+      logs.should.containEql 'handler called'
+      logs.should.containEql "File doesnt exists #{__filename}/does/not/exists, skipping"
+    .promise()
 
 describe 'unless_exists', ->
 

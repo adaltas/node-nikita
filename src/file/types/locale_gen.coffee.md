@@ -1,5 +1,5 @@
 
-`nikita.file.types.locale`
+`nikita.file.types.locale_gen`
 
 Update the locale definition file located in "/etc/locale.gen".
 
@@ -17,7 +17,7 @@ Update the locale definition file located in "/etc/locale.gen".
 ## Example
 
 ```javascript
-require('nikita').file.types.locale({
+require('nikita').file.types.locale_gen({
   target: '/etc/locale.gen',
   rootdir: '/mnt',
   locales: ['fr_FR.UTF-8', 'en_US.UTF-8'],
@@ -27,13 +27,12 @@ require('nikita').file.types.locale({
 
     module.exports = (options) ->
       options.log message: "Entering file.types.local_gen", level: 'DEBUG', module: 'nikita/lib/file/types/local_gen'
-      # SSH connection
-      ssh = @ssh options.ssh
       # Options
       options.target ?= '/etc/locale.gen'
       options.target = "#{path.join options.rootdir, options.target}" if options.rootdir
+      # Write configuration
       @call (_, callback) ->
-        fs.readFile ssh, options.target, 'ascii', (err, data) ->
+        @fs.readFile ssh: options.ssh, target: options.target, encoding: 'ascii', (err, data) ->
           return callback err if err
           status = false
           locales = data.split '\n'
@@ -48,8 +47,9 @@ require('nikita').file.types.locale({
                 status = true
           return callback() unless status
           data = locales.join '\n'
-          fs.writeFile ssh, options.target, data, (err) ->
+          @fs.writeFile ssh: options.ssh, target: options.target, content: data, (err) ->
             callback err, true
+      # Reload configuration
       @system.execute
         if: -> options.generate and @status -1
         cmd: "locale-gen"
@@ -57,4 +57,3 @@ require('nikita').file.types.locale({
 ## Dependencies
 
     path = require 'path'
-    fs = require 'ssh2-fs'

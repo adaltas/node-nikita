@@ -19,7 +19,7 @@ describe 'system.execute.assert', ->
       content: 'hello'
       relax: true
     , (err) ->
-      err.message.should.eql 'Invalid content'
+      err.message.should.eql 'Invalid content: expect "hello" and got "hello\\n"'
     .promise()
 
   they 'assert stdout match regexp', (ssh) ->
@@ -34,4 +34,22 @@ describe 'system.execute.assert', ->
       relax: true
     , (err) ->
       err.message.should.eql 'Invalid content match'
+    .promise()
+
+  they 'option trim on cmd', (ssh) ->
+    nikita
+      ssh: ssh
+    .system.execute.assert
+      cmd: "echo '' && echo 'yo'"
+      content: 'yo'
+      trim: true
+    .promise()
+
+  they 'option trim on content', (ssh) ->
+    nikita
+      ssh: ssh
+    .system.execute.assert
+      cmd: "echo -n 'yo'"
+      content: '\nyo\n'
+      trim: true
     .promise()

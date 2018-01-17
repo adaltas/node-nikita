@@ -9,6 +9,7 @@ rimraf = require 'rimraf'
 
 module.exports = file =
   copyFile: (ssh, source, target, callback) ->
+    console.log 'deprecated, use nikita.fs.copy instead'
     s = (ssh, callback) ->
       unless ssh
       then callback null, fs
@@ -35,9 +36,6 @@ module.exports = file =
   Compare modes
   -------------
   ###
-  cmpmod: (modes...) ->
-    console.log 'Deprecated, use `misc.mode.compare`'
-    misc.mode.compare.call @, modes...
   copy: (ssh, source, target, callback) ->
     unless ssh
       source = fs.createReadStream(u.pathname)

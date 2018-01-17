@@ -12,13 +12,14 @@ Setup packet manager repository. Only support yum for now.
   option.   
 * `content`   
   Content to write inside the file. can not be used with source.   
-* `clean` (String)   
-  Globing expression used to match replaced files.   
-* `clean` (Boolean)   
-  Run yum clean metadata after repo file is placed. True by default.   
+* `clean` (string)   
+  Globing expression used to match replaced files, path will resolve to
+  '/etc/yum.repos.d' if relative.   
 * `gpg_dir` (string)   
   Directory storing GPG keys.   
-* `update` (Boolean)   
+* `target` (string)   
+  Path of the repository definition file, relative to '/etc/yum.repos.d'.
+* `update` (boolean)   
   Run yum update enabling only the ids present in repo file. Default to false.   
 * `verify`   
   Download the PGP keys if it's enabled in the repo file, keys are by default
@@ -32,7 +33,7 @@ require('nikita').tools.repo({
   source: '/tmp/centos.repo',
   clean: 'CentOs*'
 }, function(err, written){
-  console.log(err ? err.message : 'Repo updated: ' + !!written);
+  console.info(err ? err.message : 'Repo updated: ' + !!written);
 });
 ```
 
@@ -45,20 +46,23 @@ require('nikita').tools.repo({
       # Options
       throw Error "Can not specify source and content"if options.source and options.content
       throw Error "Missing source or content: " unless options.source or options.content
-      options.target ?= "/etc/yum.repos.d/#{path.basename options.source}" if options.source?
+      # TODO wdavidw 180115, target should be mandatory and not default to the source filename
+      options.target ?= path.resolve "/etc/yum.repos.d", path.basename options.source if options.source?
+      throw Error "Missing target" unless options.target?
       options.target = path.posix.resolve '/etc/yum.repos.d', options.target
-      throw Error " Missing target" unless options.target?
       options.verify ?= true
-      options.local ?= false
-      options.clean ?= true
+      throw Error "Invalid Option: option 'clean' must be a 'string'" if options.clean and typeof options.clean isnt 'string'
+      options.clean = path.resolve '/etc/yum.repos.d', options.clean if options.clean
       options.update ?= false
       options.gpg_dir ?= '/etc/pki/rpm-gpg'
       remote_files = []
       repoids = []
       # Delete
-      @call if: options.clean?, (_, callback) ->
+      @call
+        if: options.clean
+      , (_, callback) ->
         options.log message: "Searching repositories inside \"/etc/yum.repos.d/\"", level: 'DEBUG', module: 'nikita/lib/tools/repo'
-        glob ssh, "/etc/yum.repos.d/#{options.clean}", (err, files) ->
+        glob ssh, options.clean, (err, files) ->
           return callback err if err
           remote_files = for file in files
             continue if file is options.target
@@ -83,26 +87,27 @@ require('nikita').tools.repo({
         uid: options.uid
         gid: options.gid
         target: options.target
-      # Read GPG Keys
+      # Parse the definition file
+      keys = []
+      options.log "Read GPG keys from #{options.target}", level: 'DEBUG', module: 'nikita/lib/tools/repo'
+      @fs.readFile
+        ssh: options.ssh
+        target: options.target
+        encoding: 'utf8'
+      , (err, content) =>
+        throw err if err
+        data  = misc.ini.parse_multi_brackets content
+        keys = for name, section of data
+          repoids.push name
+          continue unless section.gpgcheck is '1'
+          throw Error 'Missing gpgkey' unless section.gpgkey?
+          continue unless /^http(s)??:\/\//.test section.gpgkey
+          section.gpgkey
+      # Download GPG Keys
       @call
-        if: -> options.verify
+        if: options.verify
       , ->
-        keys = []
-        options.log "Download #{options.target}'s GPG keys", level: 'INFO', module: 'nikita/lib/tools/repo'
-        @call (_, callback)->
-          options.log "Read GPG keys from #{options.target}", level: 'DEBUG', module: 'nikita/lib/tools/repo'
-          fs.readFile ssh, options.target , 'utf8', (err, content) =>
-            return callback err if err
-            data  = misc.ini.parse_multi_brackets content
-            keys = for name, section of data
-              repoids.push name
-              continue unless section.gpgcheck is '1'
-              throw Error 'Missing gpgkey' unless section.gpgkey?
-              continue unless /^http(s)??:\/\//.test section.gpgkey
-              section.gpgkey
-            callback()
-        # Download GPG Keys
-        @call -> for key in keys
+        for key in keys
           options.log "Downloading GPG keys from #{key}", level: 'DEBUG', module: 'nikita/lib/tools/repo'
           @file.download
             source: key
@@ -112,15 +117,24 @@ require('nikita').tools.repo({
             cmd: "rpm --import #{options.gpg_dir}/#{path.basename key}"
       # Clean Metadata
       @system.execute
-        if: -> options.clean and @status()
-        cmd: 'yum clean metadata; yum repolist -y'
-      @system.execute
+        if: -> path.relative('/etc/yum.repos.d', options.target) isnt '..' and @status()
+        # wdavidw: 180114, was "yum clean metadata", ensure an appropriate
+        # explanation is provided in case of revert.
+        # expire-cache is much faster,  It forces yum to go redownload the small
+        # repo files only, then if there's newer repo data, it will downloaded it.
+        cmd: 'yum clean expire-cache; yum repolist -y'
+      @call 
         if: -> options.update and @status()
-        cmd: "yum update -y --disablerepo=* --enablerepo=#{repoids.join(',')}; yum repolist"
+      , ->
+        @system.execute
+          cmd: """
+          yum update -y --disablerepo=* --enablerepo='#{repoids.join(',')}'
+          yum repolist
+          """
+          trap: true
 
 ## Dependencies
 
-    fs = require 'ssh2-fs'
     string = require '../misc/string'
     path = require 'path'
     glob = require '../misc/glob'

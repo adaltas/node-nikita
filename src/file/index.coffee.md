@@ -191,6 +191,7 @@ require('nikita').file({
       options.diff ?= options.diff or !!options.stdout
       options.engine ?= 'nunjunks'
       options.unlink ?= false
+      options.encoding ?= 'utf8'
       switch options.eof
         when 'unix'
           options.eof = "\n"
@@ -224,15 +225,21 @@ require('nikita').file({
         # connection, use by the upload function
         source = options.source or options.target
         options.log message: "Force local source is \"#{if options.local then 'true' else 'false'}\"", level: 'DEBUG', module: 'nikita/lib/file'
-        sshOrLocal = if options.local then false else ssh
-        @fs.exists ssh: sshOrLocal, target: source, (err, exists) ->
+        @fs.exists
+          ssh: if options.local then false else options.ssh
+          target: source
+        , (err, exists) ->
           return callback err if err
           unless exists
             return callback Error "Source does not exist: #{JSON.stringify options.source}" if options.source
             options.content = ''
             return callback()
           options.log message: "Reading source", level: 'DEBUG', module: 'nikita/lib/file'
-          @fs.read ssh: sshOrLocal, target: source, 'utf8', (err, src) ->
+          @fs.readFile
+            ssh: if options.local then false else options.ssh
+            target: source
+            encoding: options.encoding
+          , (err, src) ->
             return callback err if err
             options.content = src
             callback()
@@ -283,9 +290,9 @@ require('nikita').file({
           , (err, created) ->
             return callback err if err
             callback()
-        do_read = ->
+        do_read = =>
           options.log message: "Reading target", level: 'DEBUG', module: 'nikita/lib/file'
-          @fs.read ssh: options.ssh, target: options.target, 'utf8', (err, dest) ->
+          @fs.readFile ssh: options.ssh, target: options.target, encoding: options.encoding, (err, dest) ->
             return callback err if err
             target = dest # only used by diff
             targetHash = string.hash dest
@@ -329,7 +336,7 @@ require('nikita').file({
         options.backup_mode ?= 0o0400
         backup = if typeof options.backup is 'string' then options.backup else ".#{Date.now()}"
         @system.copy
-          ssh: ssh
+          ssh: options.ssh
           source: options.target
           target: "#{options.target}#{backup}"
           mode: options.backup_mode
@@ -339,38 +346,30 @@ require('nikita').file({
           options.log message: 'Write target with user function', level: 'INFO', module: 'nikita/lib/file'
           options.target options.content
           return callback()
-        options.flags ?= 'a' if options.append
-        # Ownership and permission are also handled
-        # Mode is setted by default here to avoid a chmod 644 on existing file if option.mode is not specified
-        options.mode ?= 0o0644
-        uid_gid ssh, options, (err) ->
+        uid_gid ssh, options, (err) =>
           return callback err if err
-          target = unless options.sudo
-          then options.target
-          else target = "/tmp/nikita_#{string.hash options.target}"
-          @call if: options.sudo, ->
-            options.log message: "Temporary Upload: #{target}", level: 'INFO', module: 'nikita/lib/file'
-          @call (_, callback) ->
-            options.log message: 'Write Target', level: 'INFO', module: 'nikita/lib/file'
-            # options.mode ?= 0o0644
-            # options.gid ?= options.default_gid unless targetStat
-            fs.writeFile ssh, target, options.content, (err) ->
-              return callback err if err
-              options.log message: 'File written', level: 'INFO', module: 'nikita/lib/file'
-              callback()
-          @system.execute
-            if: options.sudo
-            cmd: "mv #{target} #{options.target}"
-          @next callback
-      @system.chown
-        target: options.target
-        stat: targetStat
-        ssh: options.ssh
-        sudo: options.sudo
-        uid: options.uid
-        gid: options.gid
-        if: options.uid? or options.gid?
-        unless: options.target is 'function'
+          # File gid default to user gid if file is new
+          options.gid = options.default_gid unless targetStat
+          options.flags ?= 'a' if options.append
+          # Ownership and permission are also handled
+          # Mode is setted by default here to avoid a chmod 644 on existing file if option.mode is not specified
+          options.mode ?= 0o0644
+          @fs.writeFile
+            target: options.target
+            flags: options.flags
+            content: options.content
+          , callback
+      @call ->
+        # Option gid is set at runtime if target is a new file
+        @system.chown
+          target: options.target
+          stat: targetStat
+          ssh: options.ssh
+          sudo: options.sudo
+          uid: options.uid
+          gid: options.gid
+          if: options.uid? or options.gid?
+          unless: options.target is 'function'
       @system.chmod
         target: options.target
         stat: targetStat
@@ -382,7 +381,6 @@ require('nikita').file({
 
 ## Dependencies
 
-    fs = require 'ssh2-fs'
     path = require 'path'
     eco = require 'eco'
     nunjucks = require 'nunjucks/src/environment'

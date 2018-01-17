@@ -62,6 +62,8 @@ creating any modifications.
   Pass stdout output to the logs of type "stdout_stream", default is "true".
 * `stderr_trim` (boolean)   
   Trim stderr argument passed in the callback.
+* `sudo` (boolean)   
+  Run a command as sudo, desactivated if user is "root".
 * `target` (string)   
   Temporary path storing the script, only apply with the bash and arch_chroot options, always disposed once executed.
 * `uid`   
@@ -136,8 +138,8 @@ nikita.system.execute({
       options.arch_chroot = 'arch-chroot' if options.arch_chroot is true
       options.cmd = "set -e\n#{options.cmd}" if options.cmd and options.trap
       options.cmd_original = "#{options.cmd}"
-      throw Error "Missing cmd: #{options.cmd}" unless options.cmd?
-      throw Error "Incompatible options: bash, arch_chroot" if ['bash', 'arch_chroot'].filter((k) -> options[k]).length > 1
+      throw Error "Required Option: the \"cmd\" option is not provided" unless options.cmd?
+      throw Error "Incompatible Options: bash, arch_chroot" if ['bash', 'arch_chroot'].filter((k) -> options[k]).length > 1
       throw Error "Required Option: \"rootdir\" with \"arch_chroot\"" if options.arch_chroot and not options.rootdir
       throw Error "Invalid Option: the \"target\" option requires either one of the \"bash\" or \"arch_chroot\" options" if options.target and not ['bash', 'arch_chroot'].filter((k) -> options[k]).length
       result = stdout: null, stderr: null, code: null
@@ -170,11 +172,11 @@ nikita.system.execute({
         options.log message: "Writing bash script to #{JSON.stringify options.target}", level: 'INFO'
         options.cmd = "#{options.bash} #{options.target}"
         options.cmd = "su - #{options.uid} -c '#{options.cmd}'" if options.uid
-        @file
+        @fs.writeFile
           target: options.target
           content: cmd
           uid: options.uid
-          shy: true
+          sudo: false
       @call
         if: -> options.arch_chroot
       , ->
@@ -182,12 +184,11 @@ nikita.system.execute({
         options.target = "/var/tmp/nikita_#{string.hash options.cmd}" if typeof options.target isnt 'string'
         options.log message: "Writing arch-chroot script to #{JSON.stringify options.target}", level: 'INFO'
         options.cmd = "arch-chroot #{options.rootdir} bash #{options.target}"
-        @file
+        @fs.writeFile
           target: "#{path.join options.rootdir, options.target}"
           content: "#{cmd}"
           mode: options.mode
-          shy: true
-          eof: true
+          sudo: false
       @call ->
         return unless options.sudo
         options.cmd = "sudo #{options.cmd}" if options.sudo
@@ -245,7 +246,7 @@ nikita.system.execute({
           , 1
       @next (err1, status) ->
         @system.remove
-          if: not options.dirty && options.target
+          if: not options.dirty and options.target
           target: options.target
           always: true # todo, need to create this option (run even on error)
         @next (err2) ->

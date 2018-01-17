@@ -55,21 +55,18 @@ Test if file exists.
 
       @call (_, callback) ->
         options.log message: "Check if target exists \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/file/touch'
-        fs.exists ssh, options.target, (err, exists) ->
+        @fs.exists ssh: options.ssh, target: options.target, (err, exists) ->
           options.log message: "Destination does not exists", level: 'INFO', module: 'nikita/lib/file/touch' if not err and not exists
           return callback err, !exists
 
 If true, update access and modification time, status wont be affected
 
-      @call
+      @system.execute
         unless: -> @status()
+        cmd: "touch #{options.target}"
         shy: true
-      , (_, callback) ->
-        options.atime ?= Date.now()
-        options.mtime ?= Date.now()
-        fs.futimes ssh, options.target, options.atime, options.mtime, (err) ->
-          options.log message: "Access and modification times updated", level: 'DEBUG', module: 'nikita/lib/file/touch' unless err
-          callback err
+      , (err) ->
+        options.log message: "Access and modification times updated", level: 'DEBUG', module: 'nikita/lib/file/touch' unless err
 
 If not, write a new empty file.
 
@@ -80,7 +77,3 @@ If not, write a new empty file.
         mode: options.mode
         uid: options.uid
         gid: options.gid
-
-## Dependencies
-
-    fs = require 'ssh2-fs'

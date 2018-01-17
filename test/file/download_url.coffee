@@ -93,8 +93,7 @@ describe 'file.download url', ->
         source: source
         target: target
       , (err, status) ->
-        return next err if err
-        status.should.be.true()
+        status.should.be.true() unless err
       .file.assert
         ssh: null
         target: cache
@@ -119,7 +118,6 @@ describe 'file.download url', ->
         target: "#{scratch}/cache_dir/localhost:12345"
       .promise()
 
-  return
   describe 'md5', ->
 
     they 'use shortcircuit if target match md5', (ssh) ->
@@ -138,7 +136,7 @@ describe 'file.download url', ->
         status.should.be.false() unless err
       .call ->
         ("[INFO] Destination with valid signature, download aborted" in logs).should.be.true()
-      .next next
+      .promise()
 
     they 'bypass shortcircuit if target dont match md5', (ssh) ->
       logs = []
@@ -158,7 +156,7 @@ describe 'file.download url', ->
         fs.readFile ssh, "#{scratch}/target", 'ascii', (err, content) ->
           content.should.equal 'okay' unless err
           callback err
-      .next next
+      .promise()
 
     they 'check signature on downloaded file', (ssh) ->
       # Download with invalid checksum
@@ -171,38 +169,33 @@ describe 'file.download url', ->
         relax: true
       , (err, status) ->
         err.message.should.eql "Invalid downloaded checksum, found 'df8fede7ff71608e24a5576326e41c75' instead of '2f74dbbee4142b7366c93b115f914fff'"
-      .next next
+      .promise()
 
     they 'count 1 if new file has correct checksum', (ssh) ->
       # Download with invalid checksum
-      source = 'http://localhost:12345'
-      target = "#{scratch}/check_md5"
       nikita
       .file.download
         ssh: ssh
-        source: source
-        target: target
+        source: 'http://localhost:12345'
+        target: "#{scratch}/check_md5"
         md5: 'df8fede7ff71608e24a5576326e41c75'
       , (err, status) ->
         status.should.be.true() unless err
-      .next next
+      .promise()
 
     they 'count 0 if a file exist with same checksum', (ssh) ->
       # Download with invalid checksum
-      source = 'http://localhost:12345'
-      target = "#{scratch}/check_md5"
       nikita
         ssh: ssh
       .file.download
-        source: source
-        target: target
+        source: 'http://localhost:12345'
+        target: "#{scratch}/check_md5"
       , (err, status) ->
-        return next err if err
-        status.should.be.true()
+        status.should.be.true() unless err
       .file.download
-        source: source
-        target: target
+        source: 'http://localhost:12345'
+        target: "#{scratch}/check_md5"
         md5: 'df8fede7ff71608e24a5576326e41c75'
       , (err, status) ->
         status.should.be.false() unless err
-      .next next
+      .promise()

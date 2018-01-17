@@ -54,7 +54,9 @@ Create and start containers according to a docker-compose file
       options[k] ?= v for k, v of options.docker
       # Validate parameters
       throw Error 'Missing docker-compose content or target' if not options.target? and not options.content?
-      options.target ?= "/tmp/docker_compose_#{Date.now()}/docker-compose.yml" if options.content and not options.target?
+      if options.content and not options.target?
+        options.target ?= "/tmp/nikita_docker_compose_#{Date.now()}/docker-compose.yml"
+        clean_target = true
       options.detached ?= true
       options.force ?= false
       options.recreate ?= false
@@ -72,12 +74,13 @@ Create and start containers according to a docker-compose file
       options.eof ?= true
       options.backup ?= false
       options.compose = true
-      @file.yaml
-        if: options.content?
-        eof: options.eof
-        backup: options.backup
-        target: options.target
-        content: options.content
+      @call ->
+        @file.yaml
+          if: options.content?
+          eof: options.eof
+          backup: options.backup
+          target: options.target
+          content: options.content
       @call (_, callback) ->
         @system.execute
           cmd: docker.wrap options, cmd_ps
@@ -86,8 +89,7 @@ Create and start containers according to a docker-compose file
           code_skipped: 123
           stdout_log: false
         , (err, status, stdout, stderr) ->
-          throw err if err
-          # console.log '??', err, status
+          return callback err if err
           return callback null, true unless status
           containers = JSON.parse stdout
           status = containers.some (container) -> not container.State.Running
@@ -99,6 +101,10 @@ Create and start containers according to a docker-compose file
         uid: options.uid
         cmd: docker.wrap options, cmd_up
       , docker.callback
+      @system.remove
+        if: clean_target
+        target: options.target
+        always: true # Not yet implemented
 
 ## Modules Dependencies
 

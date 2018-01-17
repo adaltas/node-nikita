@@ -84,7 +84,6 @@ Reload the service daemon provider depending on the os.
 
 ## Dependencies
 
-    fs = require 'ssh2-fs'
     path = require 'path'
 
 [sysvinit vs systemd]:(https://www.digitalocean.com/community/tutorials/how-to-configure-a-linux-service-to-start-automatically-after-a-crash-or-reboot-part-2-reference)

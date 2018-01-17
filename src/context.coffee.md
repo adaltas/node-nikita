@@ -40,10 +40,10 @@
       # Proxify
       proxy = new Proxy obj,
         has: (target, name) ->
-          console.log 'proxy has is being called', name
+          console.warns 'proxy has is being called', name
           # target[name]? or target.registry.registered(proxy.type)? or registry.registered(name)?
         apply: (target, thisArg, argumentsList) ->
-          console.log 'apply'
+          console.warn 'apply'
         get: (target, name) ->
           return target[name] if obj[name]?
           return target[name] if name in ['domain', '_events', '_maxListeners']
@@ -118,11 +118,11 @@
             opts.argument = undefined
           # Enrich
           if opts.destination
-            console.log 'Use options target instead of destination' unless called_deprecate_destination
+            console.info 'Use options target instead of destination' unless called_deprecate_destination
             called_deprecate_destination = true
             opts.target ?= opts.destination
           if opts.local_source
-            console.log 'Use options local instead of local_source' unless called_deprecate_local_source
+            console.info 'Use options local instead of local_source' unless called_deprecate_local_source
             called_deprecate_local_source = true
             opts.local ?= opts.local_source
           opts.type = type if type
@@ -138,6 +138,8 @@
           opts.retry ?= 0
           opts.disabled ?= false
           opts.status ?= true
+          throw Error 'Incompatible Options: status "false" implies shy "true"' if opts.status is false and opts.shy is false # Room for argument, leave it strict for now until we come accross a usecase justifying it.
+          opts.shy ?= true if opts.status is false
           # Validation
           jump_to_error Error "Invalid options sleep, got #{JSON.stringify opts.sleep}" unless typeof opts.sleep is 'number' and opts.sleep >= 0
         options
@@ -612,7 +614,7 @@
       relax: false
       shy: false
       sleep: false
-      # sudo: true
+      sudo: true
 
 ## Helper functions
 

@@ -44,14 +44,12 @@ describe 'file', ->
         content: 'valid'
       .promise()
 
-    they 'doesnt increment if target is same than generated content', (ssh) ->
+    they 'status is false is content is the same', (ssh) ->
       nikita
         ssh: ssh
       .file
         target: "#{scratch}/file"
         content: 'Hello'
-      , (err, status) ->
-        status.should.be.true() unless err
       .file
         target: "#{scratch}/file"
         content: 'Hello'
@@ -59,19 +57,27 @@ describe 'file', ->
         status.should.be.false() unless err
       .promise()
 
-    they 'doesnt increment if target is same than generated content', (ssh) ->
+    they 'with source is a file', (ssh) ->
       nikita
         ssh: ssh
       .file
-        target: "#{scratch}/file"
+        target: "#{scratch}/a_source"
         content: 'Hello'
       .file
-        target: "#{scratch}/file_copy"
-        source: "#{scratch}/file"
+        target: "#{scratch}/a_target"
+        source: "#{scratch}/a_source"
       , (err, status) ->
         status.should.be.true() unless err
+      .file
+        target: "#{scratch}/a_target"
+        source: "#{scratch}/a_source"
+      , (err, status) ->
+        status.should.be.false() unless err
       .file.assert
-        target: "#{scratch}/file"
+        target: "#{scratch}/a_source"
+        content: 'Hello'
+      .file.assert
+        target: "#{scratch}/a_target"
         content: 'Hello'
       .promise()
 
@@ -183,19 +189,19 @@ describe 'file', ->
         ssh: ssh
       .file
         content: 'ko'
-        target: "#{scratch}/target"
+        target: "#{scratch}/a_target"
       .system.link
-        source: "#{scratch}/target"
-        target: "#{scratch}/link"
+        source: "#{scratch}/a_target"
+        target: "#{scratch}/a_link"
       .file
         content: 'ok'
-        target: "#{scratch}/link"
+        target: "#{scratch}/a_link"
         unlink: true
       .file.assert
-        target: "#{scratch}/target"
+        target: "#{scratch}/a_target"
         content: 'ko'
       .file.assert
-        target: "#{scratch}/link"
+        target: "#{scratch}/a_link"
         content: 'ok'
       .promise()
 

@@ -77,31 +77,31 @@ require('nikita').file.render({
 
     module.exports = (options) ->
       options.log message: "Entering file.render", level: 'DEBUG', module: 'nikita/lib/file/render'
-      # SSH connection
-      ssh = @ssh options.ssh
       # Validate parameters
+      options.encoding ?= 'utf8'
       throw Error 'Required option: source or content' unless options.source or options.content
       throw Error 'Required option: target' unless options.target
       throw Error 'Required option: context' unless options.context
-      # Start real work
-      @call (_, callback) ->
-        return callback() unless options.source
-        sshOrLocal = if options.local then false else ssh
-        fs.exists sshOrLocal, options.source, (err, exists) ->
-          return callback Error "Invalid source, got #{JSON.stringify(options.source)}" unless exists
-          fs.readFile sshOrLocal, options.source, 'utf8', (err, content) ->
-            options.content = content unless err
-            callback err
+      # Extension
+      if not options.engine and options.source
+        extension = path.extname options.source
+        switch extension
+          when '.j2' then options.engine = 'nunjunks'
+          when '.eco' then options.engine = 'eco'
+          else throw Error "Invalid Option: extension '#{extension}' is not supported"
+      # Read source
+      @fs.readFile
+        if: options.source
+        ssh: if options.local then false else options.ssh
+        target: options.source
+        encoding: options.encoding
+      , (err, content) ->
+        if content?
+          options.source = null
+          options.content = content
       @call ->
-        if not options.engine and options.source
-          extension = path.extname options.source
-          switch extension
-            when '.j2' then options.engine = 'nunjunks'
-            when '.eco' then options.engine = 'eco'
-        options.source = null
         @file options
 
 ## Dependencies
 
-    fs = require 'ssh2-fs'
     path = require 'path'

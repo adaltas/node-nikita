@@ -58,8 +58,6 @@ require('nikita').tools.sysctl({
 
     module.exports = (options) ->
       options.log message: "Entering sysctl", level: 'DEBUG', module: 'nikita/lib/tools/sysctl'
-      # SSH connection
-      ssh = @ssh options.ssh
       # Options
       options.load ?= true
       options.target ?= '/etc/sysctl.conf'
@@ -68,7 +66,11 @@ require('nikita').tools.sysctl({
       @call (_, callback) ->
         status = false
         options.log message: "Read target: #{options.target}", level: 'DEBUG', module: 'nikita/lib/tools/sysctl'
-        fs.readFile ssh, options.target, 'ascii', (err, data) =>
+        @fs.readFile
+          ssh: options.ssh
+          target: options.target
+          encoding: 'ascii'
+        , (err, data) =>
           return callback() if err and err.code is 'ENOENT'
           return callback err if err
           for line in string.lines data
@@ -126,5 +128,4 @@ require('nikita').tools.sysctl({
 
 ## Dependencies
 
-    fs = require 'ssh2-fs'
     string = require '../misc/string'

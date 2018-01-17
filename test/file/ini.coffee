@@ -161,11 +161,9 @@ describe 'file.ini', ->
       content: '[user.preference]\nlanguage = node\n'
     .promise()
 
-  they 'use default source file with content', (ssh) ->
+  they 'options source file + content', (ssh) ->
     nikita
       ssh: ssh
-    .system.remove
-      target: "#{scratch}/test.ini"
     .file
       target: "#{scratch}/user.ini"
       content: '[user.preference]\nlanguage = node\n'
@@ -181,11 +179,24 @@ describe 'file.ini', ->
       content: '[user.preference]\nlanguage = node\nremember = me\n'
     .promise()
 
-  they 'use default source file with merge', (ssh) ->
+  they 'options missing source file + content', (ssh) ->
     nikita
       ssh: ssh
-    .system.remove
+    .file.ini
+      source: "#{scratch}/does_not_exist.ini"
       target: "#{scratch}/test.ini"
+      content: user: preference: remember: 'me'
+      merge: false
+    , (err, written) ->
+      written.should.be.true() unless err
+    .file.assert
+      target: "#{scratch}/test.ini"
+      content: '[user.preference]\nremember = me\n'
+    .promise()
+
+  they 'options source file + merge', (ssh) ->
+    nikita
+      ssh: ssh
     .file
       target: "#{scratch}/user.ini"
       content: '[user.preference]\nlanguage = node\n'
@@ -212,8 +223,6 @@ describe 'file.ini', ->
   they 'use default source file with merge and content', (ssh) ->
     nikita
       ssh: ssh
-    .system.remove
-      target: "#{scratch}/test.ini"
     .file
       target: "#{scratch}/user.ini"
       content: '[user.preference]\nlanguage = node\n'

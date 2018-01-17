@@ -1,0 +1,18 @@
+
+# `nikita.fs.rename(options, callback)`
+
+Change the name or location of a file.
+
+## Source Code
+
+    module.exports = status: false, handler: (options, callback) ->
+      options.log message: "Entering fs.rename", level: 'DEBUG', module: 'nikita/lib/fs/rename'
+      throw Error "Required Option: the \"target\" option is mandatory" unless options.target
+      throw Error "Required Option: the \"source\" option is mandatory" unless options.source
+      @system.execute
+        cmd: "mv #{options.source} #{options.target}"
+        sudo: options.sudo
+        bash: options.bash
+        arch_chroot: options.arch_chroot
+      , (err, _, stdout) ->
+        callback err, stdout.trim()

@@ -43,25 +43,32 @@ require('nikita').file.yaml({
       # Options
       options.line_width ?= 160
       options.clean ?= true
+      options.encoding ?= 'utf8'
       # Validate parameters
       throw Error 'Required Option: content' unless options.content
       throw Error 'Required Option: target' unless options.target
       # Start real work
-      @call (_, callback) ->
-        return callback() unless options.merge
+      @call
+        if: options.merge
+      , ->
         options.log message: "Get Target Content", level: 'DEBUG', module: 'nikita/lib/file/cson'
-        fs.readFile ssh, options.target, 'utf8', (err, content) ->
+        @fs.readFile
+          ssh: options.ssh
+          target: options.target
+          encoding: options.encoding
+        , (err, content) ->
+          # File does not exists, this is ok, there is simply nothing to merge
           if err?.code is 'ENOENT'
             options.log message: "No Target Content To Merged", level: 'DEBUG', module: 'nikita/lib/file/cson'
-            return callback()
-          return callback err if err and err.code isnt 'ENOENT'
+            return
+          throw err if err
           try
             content = season.parse content
             options.content = misc.merge content, options.content
             options.log message: "Target Content Merged", level: 'DEBUG', module: 'nikita/lib/file/cson'
-            callback()
           catch err
-            callback err
+            # Maybe change error message with sth like "Failed to parse..."
+            throw err
       @call ->
         options.log message: "Serialize Content", level: 'DEBUG', module: 'nikita/lib/file/cson'
         @file
@@ -71,7 +78,6 @@ require('nikita').file.yaml({
 
 ## Dependencies
 
-    fs = require 'ssh2-fs'
     misc = require '../misc'
     season = require 'season'
 

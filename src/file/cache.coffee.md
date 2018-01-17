@@ -61,23 +61,23 @@ require('nikita').download({
       ssh = @ssh options.ssh
       # Options
       options.source = options.argument if options.argument?
-      return callback Error "Missing source: '#{options.source}'" unless options.source
-      return callback Error "Missing one of 'target', 'cache_file' or 'cache_dir' option" unless options.cache_file or options.target or options.cache_dir
+      throw Error "Missing source: '#{options.source}'" unless options.source
+      throw Error "Missing one of 'target', 'cache_file' or 'cache_dir' option" unless options.cache_file or options.target or options.cache_dir
       options.target ?= options.cache_file
       options.target ?= path.basename options.source
       options.target = path.resolve options.cache_dir, options.target
       options.source = options.source.substr 7 if /^file:\/\//.test options.source
       options.headers ?= []
       if options.md5?
-        return callback Error "Invalid MD5 Hash:#{options.md5}" unless typeof options.md5 in ['string', 'boolean']
+        throw Error "Invalid MD5 Hash:#{options.md5}" unless typeof options.md5 in ['string', 'boolean']
         algo = 'md5'
         hash = options.md5
       else if options.sha1?
-        return callback Error "Invalid SHA-1 Hash:#{options.sha1}" unless typeof options.sha1 in ['string', 'boolean']
+        throw Error "Invalid SHA-1 Hash:#{options.sha1}" unless typeof options.sha1 in ['string', 'boolean']
         algo = 'sha1'
         hash = options.sha1
       else if options.sha256?
-        return callback Error "Invalid SHA-1 Hash:#{options.sha256}" unless typeof options.sha256 in ['string', 'boolean']
+        throw Error "Invalid SHA-1 Hash:#{options.sha256}" unless typeof options.sha256 in ['string', 'boolean']
         algo = 'sha256'
         hash = options.sha256
       else
@@ -100,7 +100,7 @@ require('nikita').download({
       # - hash isnt true and doesnt match
       @call shy: true, (_, callback) ->
         options.log message: "Check if target (#{options.target}) exists", level: 'DEBUG', module: 'nikita/lib/file/cache'
-        ssh2fs.exists ssh, options.target, (err, exists) =>
+        @fs.exists ssh: options.ssh, target: options.target, (err, exists) =>
           return callback err if err
           if exists
             options.log message: "Target file exists", level: 'INFO', module: 'nikita/lib/file/cache'
@@ -111,14 +111,14 @@ require('nikita').download({
             else if hash and typeof hash is 'string'
               # then we compute the checksum of the file
               options.log message: "Comparing #{algo} hash", level: 'DEBUG', module: 'nikita/lib/file/cache'
-              file.hash ssh, options.target, algo, (err, c_hash) ->
+              file.hash ssh, options.target, algo, (err, c_hash) =>
                 return callback err if err
                 # And compare with the checksum provided by the user
                 if hash is c_hash
                   options.log message: "Hashes match, skipping", level: 'DEBUG', module: 'nikita/lib/file/cache'
                   return callback null, false
                 options.log message: "Hashes don't match, delete then re-download", level: 'WARN', module: 'nikita/lib/file/cache'
-                ssh2fs.unlink ssh, options.target, (err) ->
+                @fs.unlink ssh: options.ssh, target: options.target, (err) ->
                   return callback err if err
                   callback null, true
             else
@@ -161,6 +161,5 @@ require('nikita').download({
 
     path = require 'path'
     url = require 'url'
-    ssh2fs = require 'ssh2-fs'
     curl = require '../misc/curl'
     file = require '../misc/file'

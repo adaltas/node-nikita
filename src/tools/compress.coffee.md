@@ -83,5 +83,4 @@ type.
 
 ## Dependencies
 
-    fs = require 'ssh2-fs'
     path = require 'path'

@@ -82,16 +82,16 @@ describe 'system.copy', ->
         ssh: ssh
       .system.copy
         source: "#{__dirname}/../resources/a_dir/a_file"
-        target: "#{scratch}/a_new_file"
+        target: "#{scratch}/a_target"
       , (err, status) ->
         status.should.be.true() unless err
       .file.assert
-        target: "#{scratch}/a_new_file"
+        target: "#{scratch}/a_target"
         md5: '3fb7c40c70b0ed19da713bd69ee12014'
       .system.copy
         ssh: ssh
         source: "#{__dirname}/../resources/a_dir/a_file"
-        target: "#{scratch}/a_new_file"
+        target: "#{scratch}/a_target"
       , (err, status) ->
         status.should.be.false() unless err
       .promise()

@@ -43,13 +43,13 @@ Global options can be alternatively set with the "log_csv" property.
         'header': (log) ->
           "#{log.type},,,#{log.header}\n"
         'stdin': (log) ->
-          "#{log.type},#{log.level},#{JSON.stringify log.message},\n"
+          "#{log.type},#{log.level},#{JSON.stringify log.message}\n"
         'stderr': (log) ->
-          "#{log.type},#{log.level},#{JSON.stringify log.message},\n"
+          "#{log.type},#{log.level},#{JSON.stringify log.message}\n"
         'stdout': (log) ->
-          "#{log.type},#{log.level},#{JSON.stringify log.message},\n"
+          "#{log.type},#{log.level},#{JSON.stringify log.message}\n"
         'text': (log) ->
-          "#{log.type},#{log.level},#{JSON.stringify log.message},\n"
+          "#{log.type},#{log.level},#{JSON.stringify log.message}\n"
 
 ## Dependencies
 

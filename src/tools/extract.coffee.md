@@ -79,12 +79,12 @@ require('nikita').tools.extract({
           ext = path.extname options.source
           return callback Error "Unsupported extension, got #{JSON.stringify(ext)}"
       # Start real work
-      stat = () ->
-        fs.stat ssh, options.source, (err, stat) ->
+      stat = =>
+        @fs.stat ssh: options.ssh, target: options.source, (err, stat) ->
           return callback Error "File does not exist: #{options.source}" if err
           return callback Error "Not a File: #{options.source}" unless stat.isFile()
           extract()
-      extract = () =>
+      extract = =>
         cmd = null
         options.log message: "Format is #{format}", level: 'DEBUG', module: 'nikita/lib/tools/extract'
         switch format
@@ -99,17 +99,16 @@ require('nikita').tools.extract({
           return callback err if err
           creates()
       # Step for `creates`
-      creates = () ->
+      creates = =>
         return success() unless options.creates?
-        fs.exists ssh, options.creates, (err, exists) ->
+        @fs.exists ssh: options.ssh, target: options.creates, (err, exists) ->
           return callback Error "Failed to create '#{path.basename options.creates}'" unless exists
           success()
       # Final step
-      success = () ->
+      success = ->
         callback null, true
       stat()
 
 ## Dependencies
 
-    fs = require 'ssh2-fs'
     path = require 'path'

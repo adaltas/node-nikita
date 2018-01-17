@@ -17,7 +17,7 @@ describe 'log.md', ->
       options.log 'ok'
     .file.assert
       source: "#{scratch}/localhost.log"
-      content: "ok\n"
+      content: /^ok\n/
       log: false
     .assert
       status: false
@@ -31,7 +31,7 @@ describe 'log.md', ->
       options.log message: 'ok'
     .file.assert
       source: "#{scratch}/localhost.log"
-      content: "ok\n"
+      content: /^ok\n/
       log: false
     .assert
       status: false
@@ -45,7 +45,7 @@ describe 'log.md', ->
       options.log message: 'ok', module: 'nikita/test/log/md'
     .file.assert
       source: "#{scratch}/localhost.log"
-      content: "ok (INFO, written by nikita/test/log/md)\n"
+      content: /^ok \(INFO, written by nikita\/test\/log\/md\)\n/
       log: false
     .assert
       status: false
@@ -60,7 +60,7 @@ describe 'log.md', ->
       options.log 'ok'
     .file.assert
       source: "#{scratch}/localhost.log"
-      content: "ok\n"
+      content: /^ok\n/
       log: false
     .assert
       status: false
@@ -77,7 +77,7 @@ describe 'log.md', ->
         options.log message: null, type: 'stdout_stream'
       .file.assert
         source: "#{scratch}/localhost.log"
-        content: '\n```stdout\nthis is a one line output\n```\n\n'
+        content: /^\n```stdout\nthis is a one line output\n```\n\n/
         log: false
       .assert
         status: false

@@ -146,7 +146,7 @@ nikita.download
       @call # Accelarator in case we know the target signature
         if: typeof source_hash is 'string'
         shy: true
-        handler: (_, callback) ->
+      , (_, callback) ->
           options.log message: "Shortcircuit check if provided hash match target", level: 'WARN', module: 'nikita/lib/file/download'
           file.hash ssh, options.target, algo, (err, hash) =>
             err = null if err?.code is 'ENOENT'
@@ -169,17 +169,15 @@ nikita.download
         throw err if err
         options.source = file if options.cache
         source_url = url.parse options.source
-      @call (_, callback) ->
-        ssh2fs.stat ssh, options.target, (err, stat) ->
-          return callback err if err and err.code isnt 'ENOENT'
-          if stat?.isDirectory()
-            options.log message: "Destination is a directory", level: 'DEBUG', module: 'nikita/lib/file/download'
-            options.target = path.join options.target, path.basename options.source
-          stageDestination = "#{options.target}.#{Date.now()}#{Math.round(Math.random()*1000)}"
-          callback()
+      @fs.stat ssh: options.ssh, target: options.target, relax: true, (err, stat) ->
+        throw err if err and err.code isnt 'ENOENT'
+        if stat?.isDirectory()
+          options.log message: "Destination is a directory", level: 'DEBUG', module: 'nikita/lib/file/download'
+          options.target = path.join options.target, path.basename options.source
+        stageDestination = "#{options.target}.#{Date.now()}#{Math.round(Math.random()*1000)}"
       @call
         if: -> source_url.protocol in protocols_http
-        handler: ->
+      , ->
           options.log message: "HTTP Download", level: 'DEBUG', module: 'nikita/lib/file/download'
           fail = if options.fail then "--fail" else ''
           k = if source_url.protocol is 'https:' then '-k' else ''
@@ -194,7 +192,7 @@ nikita.download
             shy: true
           @call
             if: typeof source_hash is 'string'
-            handler: (_, callback) ->
+          , (_, callback) ->
               file.hash ssh, stageDestination, algo, (err, hash) =>
                 return callback Error "Invalid downloaded checksum, found '#{hash}' instead of '#{source_hash}'" if source_hash isnt hash
                 callback()
@@ -209,7 +207,7 @@ nikita.download
             target: stageDestination
       @call
         if: -> source_url.protocol not in protocols_http and not ssh
-        handler: ->
+      , ->
           options.log message: "File Download without ssh (with or without cache)", level: 'DEBUG', module: 'nikita/lib/file/download'
           @call (_, callback) ->
             file.compare_hash null, options.source, null, options.target, algo, (err, match, hash1, hash2) ->
@@ -220,21 +218,13 @@ nikita.download
             if: -> @status -1
             shy: true
             target: path.dirname stageDestination
-          @call
+          @fs.copy
             if: -> @status -2
-            handler: (_, callback) ->
-              rs = fs.createReadStream options.source
-              rs.on 'error', (err) ->
-                options.log  message: "No such source file: #{options.source} (ssh is #{JSON.stringify !!ssh})", level: 'ERROR', module: 'nikita/lib/file/download'
-                err.message = 'No such source file'
-                callback err
-              ws = fs.createWriteStream stageDestination
-              rs.pipe(ws)
-              .on 'close', callback
-              .on 'error', callback
+            source: options.source
+            target: stageDestination
       @call
         if: -> source_url.protocol not in protocols_http and ssh
-        handler: ->
+      , ->
           options.log message: "File Download with ssh (with or without cache)", level: 'DEBUG', module: 'nikita/lib/file/download'
           @call (_, callback) ->
             file.compare_hash null, options.source, ssh, options.target, algo, (err, match, hash1, hash2) ->
@@ -247,9 +237,10 @@ nikita.download
             target: path.dirname stageDestination
           @call
             if: -> @status -2
-            handler: (_, callback) ->
+          , (_, callback) ->
               options.log message: "Local source: '#{options.source}'", level: 'INFO', module: 'nikita/lib/file/download'
               options.log message: "Remote target: '#{stageDestination}'", level: 'INFO', module: 'nikita/lib/file/download'
+              # TODO: incompatible with sudo
               rs = fs.createReadStream options.source
               rs.on 'error', (err) ->
                 console.log 'rs on error', err

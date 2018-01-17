@@ -31,7 +31,7 @@ require('nikita').system.link({
   source: __dirname,
   target: '/tmp/a_link'
 }, function(err, status){
-  console.log(err ? err.message : 'Link created: ' + status);
+  console.info(err ? err.message : 'Link created: ' + status);
 });
 ```
 
@@ -39,36 +39,34 @@ require('nikita').system.link({
 
     module.exports = (options, callback) ->
       options.log message: "Entering link", level: 'DEBUG', module: 'nikita/lib/system/link'
-      # SSH connection
-      ssh = @ssh options.ssh
       linked = 0
-      sym_exists = (options, callback) ->
-        fs.readlink ssh, options.target, (err, resolvedPath) ->
+      sym_exists = (options, callback) =>
+        @fs.readlink ssh: options.ssh, target: options.target, (err, resolvedPath) ->
           return callback null, false if err
           return callback null, true if resolvedPath is options.source
-          fs.unlink ssh, options.target, (err) ->
+          @fs.unlink ssh: options.ssh, target: options.target, (err) ->
             return callback err if err
             callback null, false
-      sym_create = (options, callback) ->
-        fs.symlink ssh, options.source, options.target, (err) ->
+      sym_create = (options, callback) =>
+        @fs.symlink ssh: options.ssh, source: options.source, target: options.target, (err) ->
           return callback err if err
           linked++
           callback()
-      exec_exists = (options, callback) ->
-        fs.exists ssh, options.target, (err, exists) ->
+      exec_exists = (options, callback) =>
+        @fs.exists ssh: options.ssh, target: options.target, (err, exists) ->
           return callback null, false unless exists
-          fs.readFile ssh, options.target, 'utf8', (err, content) ->
+          @fs.readFile ssh: options.ssh, target: options.target, encoding: 'utf8', (err, content) ->
             return callback err if err
             exec_cmd = /exec (.*) \$@/.exec(content)[1]
             callback null, exec_cmd and exec_cmd is options.source
-      exec_create = (options, callback) ->
+      exec_create = (options, callback) =>
         content = """
         #!/bin/bash
         exec #{options.source} $@
         """
-        fs.writeFile ssh, options.target, content, (err) ->
+        @fs.writeFile ssh: options.ssh, target: options.target, content: content, (err) ->
           return callback err if err
-          fs.chmod ssh, options.target, options.mode, (err) ->
+          @fs.chmod ssh: options.ssh, target: options.target, mode: options.mode, (err) ->
             return callback err if err
             linked++
             callback()
@@ -77,14 +75,14 @@ require('nikita').system.link({
       options.mode ?= 0o0755
       do_mkdir = =>
         @system.mkdir
-          ssh: ssh
+          ssh: options.ssh
           target: path.dirname options.target
         , (err, created) ->
           # It is possible to have collision if to symlink
           # have the same parent directory
           return callback err if err and err.code isnt 'EEXIST'
           do_dispatch()
-      do_dispatch = ->
+      do_dispatch = =>
         if options.exec
           exec_exists options, (err, exists) ->
             return do_end() if exists
@@ -99,5 +97,4 @@ require('nikita').system.link({
 
 ## Dependencies
 
-    fs = require 'ssh2-fs'
     path = require 'path'

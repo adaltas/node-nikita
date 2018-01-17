@@ -17,7 +17,8 @@ describe 'log.csv', ->
       options.log 'ok'
     .file.assert
       source: "#{scratch}/localhost.log"
-      content: 'text,INFO,"ok",\n'
+      content: /^text,INFO,"ok"\n/
+      trim: true
       log: false
     .assert status: false
     .promise()
@@ -31,7 +32,7 @@ describe 'log.csv', ->
       options.log 'ok'
     .file.assert
       source: "#{scratch}/localhost.log"
-      content: 'text,INFO,"ok",\n'
+      content: /^text,INFO,"ok"\n/
       log: false
     .promise()
   

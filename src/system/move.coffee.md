@@ -43,9 +43,9 @@ require('nikita').system.move({
       options.log message: "Entering move", level: 'DEBUG', module: 'nikita/lib/system/move'
       # SSH connection
       ssh = @ssh options.ssh
-      do_exists = ->
+      do_exists = =>
         options.log message: "Stat target", level: 'DEBUG', module: 'nikita/lib/system/move'
-        fs.stat ssh, options.target, (err, stat) ->
+        @fs.stat ssh: options.ssh, target: options.target, (err, stat) ->
           return do_move() if err?.code is 'ENOENT'
           return callback err if err
           if options.force
@@ -78,9 +78,9 @@ require('nikita').system.move({
         , (err, removed) ->
           return callback err if err
           do_move()
-      do_move = ->
+      do_move = =>
         options.log message: "Rename #{options.source} to #{options.target}", level: 'WARN', module: 'nikita/lib/system/move'
-        fs.rename ssh, options.source, options.target, (err) ->
+        @fs.rename ssh: options.ssh, source: options.source, target: options.target, (err) ->
           return callback err if err
           callback null, true
       do_remove_src = =>
@@ -93,5 +93,4 @@ require('nikita').system.move({
 
 ## Dependencies
 
-    fs = require 'ssh2-fs'
     file = require '../misc/file'

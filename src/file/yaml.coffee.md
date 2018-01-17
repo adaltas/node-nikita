@@ -73,7 +73,7 @@ require('nikita').file.yaml({
   },
   target: '/tmp/my_file'
 }, function(err, written){
-  console.log(err ? err.message : 'Content was updated: ' + !!written);
+  console.info(err ? err.message : 'Content was updated: ' + !!written);
 });
 ```
 
@@ -82,42 +82,35 @@ require('nikita').file.yaml({
     module.exports = (options, callback) ->
       options.line_width ?= 160
       options.log message: "Entering file.yaml", level: 'DEBUG', module: 'nikita/lib/file/yaml'
-      {merge, target, content, ssh} = options
       options.clean ?= true
       # Validate parameters
-      return callback Error 'Missing content' unless content
-      return callback Error 'Missing target' unless target
+      throw Error 'Missing content' unless options.content
+      throw Error 'Missing target' unless options.target
       # Start real work
-      do_get = ->
-        return do_file() unless merge
-        options.log message: "Get content for merge", level: 'DEBUG', module: 'nikita/lib/file/yaml'
-        fs.exists ssh, target, (err, exists) ->
-          return callback err if err
-          return do_file() unless exists
-          fs.readFile ssh, target, 'ascii', (err, c) ->
-            return callback err if err and err.code isnt 'ENOENT'
-            try
-              yaml.safeLoadAll c, (data) ->
-                data = misc.yaml.clean data, content, true
-                options.content = misc.yaml.merge data, content
-                do_file()
-            catch error
-              return callback error
-      do_file = =>
+      @fs.readFile
+        if: options.merge
+        target: options.target
+        encoding: 'utf8'
+        relax: true
+      , (err, content) ->
+        return unless content?
+        return if err?.code is 'ENOENT'
+        throw err if err
+        yaml.safeLoadAll content, (data) ->
+          data = misc.yaml.clean data, options.content, true
+          options.content = misc.yaml.merge data, options.content
+      @call ->
         options.indent ?= 2
         if options.clean
           options.log message: "Clean content", level: 'INFO', module: 'nikita/lib/file/yaml'
-          misc.ini.clean content
+          misc.ini.clean options.content
         options.log message: "Serialize content", level: 'DEBUG', module: 'nikita/lib/file/yaml'
-        try
-          options.content = yaml.safeDump options.content, noRefs:true, lineWidth: options.line_width
-          @file options, header: null, (err, written) ->
-            callback err, written
-      do_get()
+        options.content = yaml.safeDump options.content, noRefs:true, lineWidth: options.line_width
+        @file options, header: null, (err, written) ->
+          callback err, written
 
 ## Dependencies
 
-    fs = require 'ssh2-fs'
     misc = require '../misc'
     yaml = require 'js-yaml'
 

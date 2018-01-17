@@ -68,9 +68,9 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
       @call
         shy: true
         if: options.merge
-        handler: (_, callback) ->
+      , (_, callback) ->
           options.log message: "opening target file for merge", level: 'DEBUG', module: 'nikita/tmpfs/index'
-          fs.readFile ssh, options.target, 'utf8', (err, data) ->
+          @fs.readFile ssh: options.ssh, target: options.target, encoding: 'utf8', (err, data) ->
             if err
               return callback null, false if err.code is 'ENOENT'
               return callback err if err
@@ -83,7 +83,7 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
         @file options, content: misc.tmpfs.stringify(options.content), merge: false, target: options.target
         @call
           if: -> @status -1
-          handler: ->
+        , ->
             options.log message: "re-creating #{options.mount} tmpfs file", level: 'INFO', module: 'nikita/tmpfs/index'
             @system.execute
               cmd: "systemd-tmpfiles --remove #{options.target}"
@@ -92,7 +92,6 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
 
 ## Dependencies
 
-    fs = require 'ssh2-fs'
     misc = require '../misc'
     {merge} = require '../misc'
 

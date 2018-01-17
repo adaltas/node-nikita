@@ -1,46 +1,27 @@
 
 `nikita.file.types.yum_repo`
 
-Yum is a packet manager for centos/redhat. It uses .repo file located in /etc/yum.repos.d/
-directory to configure the list of available mirrors.
+Yum is a packet manager for centos/redhat. It uses .repo file located in 
+"/etc/yum.repos.d/" directory to configure the list of available mirrors.
 
 ## Options
 
-* `backup` (string|boolean)   
-  Create a backup, append a provided string to the filename extension or a
-  timestamp if value is not a string, only apply if the target file exists and
-  is modified.
-* `clean`   
-  Remove all the lines whithout a key and a value, default to "true".
-* `content`   
-  Object to stringify.
-* `merge`   
-  Read the target if it exists and merge its content.
+This action honors all the options from "nikita.file.ini". It overwrites the
+following options:
+
+* `escape` (boolean)   
+  Set to `false` instead of `true` by default.
 * `parse`   
-  User-defined function to parse the content from ini format, default to
-  `require('ini').parse`, see 'misc.ini.parse_multi_brackets'.
-* `target`   
-  Can be absolute or relative to '/etc/yum.repos.d'
-  `require('ini').parse`, see 'misc.ini.parse_multi_brackets'.
-* `separator`   
-  Default separator between keys and values, default to " : ".
-* `stringify`   
-  User-defined function to stringify the content to ini format, default to
-  `require('ini').stringify`, see 'misc.ini.stringify_square_then_curly' for
-  an example.
-* `target` (string)   
-  File to write, default to "/etc/pacman.conf".
+  Set to `misc.ini.parse_multi_brackets`.
 
 ## Source Code
 
     module.exports = (options) ->
       options.log message: "Entering file.types.yum_repo", level: 'DEBUG', module: 'nikita/lib/file/types/yum_repo'
-      # set option.target to yum's default path if source and not target
-      options.target = "#{path.resolve '/etc/yum.repos.d', options.target}" if options.target?
-      throw Error 'Missing target' unless options.target?
-      # set target to yum's default path if target is not absolute path
+      throw Error "Required Option: option 'target' is mandatory" unless options.target
+      # Set the targeyt directory to yum's default path if target is a file name
+      options.target = path.resolve '/etc/yum.repos.d', options.target
       @file.ini
-        stringify: misc.ini.stringify
         parse: misc.ini.parse_multi_brackets
         escape: false
       , options

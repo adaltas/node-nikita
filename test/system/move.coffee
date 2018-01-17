@@ -11,21 +11,19 @@ describe 'system.move', ->
   they 'rename a file', (ssh) ->
     nikita
       ssh: ssh
-    .system.copy
-      # ssh: ssh # copy not there yet
-      source: "#{__dirname}/../resources/"
-      target: "#{scratch}"
+    .file.touch
+      target: "#{scratch}/org_file"
     .system.move
-      source: "#{scratch}/render.eco"
-      target: "#{scratch}/moved.eco"
+      target: "#{scratch}/new_name"
+      source: "#{scratch}/org_file"
     , (err, status) ->
       status.should.be.true() unless err
     # The target file should exists
     .file.assert
-      target: "#{scratch}/moved.eco"
+      target: "#{scratch}/new_name"
     # The source file should no longer exists
     .file.assert
-      target: "#{scratch}/render.eco"
+      target: "#{scratch}/org_file"
       not: true
     .promise()
 

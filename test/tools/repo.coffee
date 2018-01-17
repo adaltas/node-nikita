@@ -9,7 +9,7 @@ describe 'tools.repo', ->
   scratch = test.scratch @
   config = test.config()
   return if config.disable_tools_repo
-  @timeout 50000
+  @timeout 200000
 
   they 'Write with source option', (ssh) ->
     nikita
@@ -80,19 +80,19 @@ describe 'tools.repo', ->
       """
     .tools.repo
       source: "#{scratch}/CentOS.repo"
-      replace: 'test*'
+      clean: 'test*'
+    , (err, status) ->
+      status.should.be.false() unless err
+    .file.touch
+      target: "#{scratch}/test.repo"
+    .tools.repo
+      source: "#{scratch}/CentOS.repo"
+      clean: "#{scratch}/test*"
     , (err, status) ->
       status.should.be.true() unless err
-    .tools.repo
-      source: "#{scratch}/CentOS.repo"
-      replace: 'test*'
-    , (err, status) ->
-      status.should.be.false() unless err
-    .tools.repo
-      source: "#{scratch}/CentOS.repo"
-    , (err, status) ->
-      status.should.be.false() unless err
-    .file.assert "#{scratch}/CentOS.repo"
+    .file.assert
+      target: "#{scratch}/test.repo"
+      not: true
     .promise()
   
   they 'Download GPG Keys option', (ssh) ->
@@ -112,7 +112,6 @@ describe 'tools.repo', ->
     .tools.repo
       source: "#{scratch}/hdp-test.repo"
       gpg_dir: "#{scratch}"
-      clean: false
       update: false
     .file.assert "#{scratch}/RPM-GPG-KEY-Jenkins"
     .promise()
@@ -203,19 +202,6 @@ describe 'tools.repo', ->
           'gpgcheck':'1'
           'enabled':'1'
           'gpgkey':'https://www.mongodb.org/static/pgp/server-3.2.asc'
-    , (err, status) ->
-      status.should.be.true() unless err
-    .tools.repo
-      target: '/etc/yum.repos.d/mongodb.repo'
-      content:
-        'mongodb-org-3.2':
-          'name':'MongoDB Repository'
-          'baseurl':'https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.2/x86_64/'
-          'gpgcheck':'1'
-          'enabled':'1'
-          'gpgkey':'https://www.mongodb.org/static/pgp/server-3.2.asc'
-    , (err, status) ->
-      status.should.be.false() unless err
     .service.install
       name: 'mongodb-org-shell'
     .system.execute
@@ -242,8 +228,8 @@ describe 'tools.repo', ->
           'gpgcheck':'1'
           'enabled':'1'
           'gpgkey':'https://www.mongodb.org/static/pgp/server-3.4.asc'
-      , (err, status) ->
-        status.should.be.false() unless err
+    , (err, status) ->
+      status.should.be.false() unless err
     .system.execute
       cmd: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.4'"
     .promise()

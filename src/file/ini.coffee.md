@@ -23,7 +23,7 @@ provided in the `content` option.
 * `content` (object)   
   Object to stringify.
 * `escape` (boolean)   
-  Escape the section's header title replace '.' by '\.'. True by default.
+  Escape the section's header title replace '.' by '\.'; "true" by default.
 * `merge`   
   Read the target if it exists and merge its content.
 * `parse`   
@@ -40,6 +40,10 @@ provided in the `content` option.
   the default stringify option, default to unix style if executed remotely 
   (SSH) or to the platform if executed locally ("\r\n for windows", 
   "\n" otherwise)
+* `source` (string)   
+  Path to a ini file providing default options; lower precedence than the
+  content object; may be used conjointly with the local option; optional, use
+  should_exists to enforce its presence.
 * `target`   
   File path where to write content to or a callback.
 
@@ -67,35 +71,40 @@ require('nikita').ini({
 
     module.exports = (options) ->
       options.log message: "Entering file.ini", level: 'DEBUG', module: 'nikita/lib/file/ini'
-      # SSH connection
-      ssh = @ssh options.ssh
-      # Options
+      # Normalization
       options.clean ?= true
-      # escape the header section name '.' as some daemons could not parse it.
       options.escape ?= true
       options.content ?= {}
-      # Validate parameters
-      throw Error 'Missing content' unless options.content? or not options.source?
-      throw Error 'Missing target' unless options.target?
+      options.encoding ?= 'utf8'
+      # Validation
+      throw Error "Required Option: one of 'content' or 'source' is mandatory" unless options.content or not options.source
+      throw Error "Required Option: option 'target' is mandatory" unless options.target
       org_props = {}
       default_props = {}
       parse = options.parse or misc.ini.parse
       # Original properties
-      @call (_, callback) ->
-        fs.readFile ssh, options.target, 'utf8', (err, data) ->
-          return callback() if err?.code is 'ENOENT'
-          return callback err if err
-          org_props = misc.merge parse(data, options)
-          callback()
+      @fs.readFile
+        ssh: options.ssh
+        target: options.target
+        encoding: options.encoding
+        relax: true
+      , (err, data) ->
+        return if err?.code is 'ENOENT'
+        throw err if err
+        org_props = misc.merge parse(data, options)
       # Default properties
-      @call if: options.source, (_, callback) ->
-        sshOrLocal = if options.local then false else ssh
-        fs.readFile sshOrLocal, options.source, 'utf8', (err, data) ->
-          return callback() if err?.code is 'ENOENT'
-          return callback err if err
-          content = misc.ini.clean options.content, true
-          options.content = misc.merge parse(data, options), options.content
-          callback()
+      @fs.readFile
+        if: options.source
+        ssh: if options.local then false else options.ssh
+        target: options.source
+        encoding: options.encoding
+        relax: true
+      , (err, data) ->
+        return if err?.code is 'ENOENT'
+        throw err if err
+        return unless options.source
+        content = misc.ini.clean options.content, true
+        options.content = misc.merge parse(data, options), options.content
       # Merge
       @call if: options.merge , (_, callback) ->
         options.content = misc.merge org_props, options.content
@@ -119,7 +128,6 @@ require('nikita').ini({
 
 ## Dependencies
 
-    fs = require 'ssh2-fs'
     misc = require '../misc'
     {merge} = require '../misc'
 

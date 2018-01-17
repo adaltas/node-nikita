@@ -40,10 +40,10 @@ require('nikita')
       each options.target
       .call (target, next) =>
         count = 0
-        run = ->
+        run = =>
           count++
           options.log message: "Attempt ##{count}", level: 'INFO', module: 'nikita/wait/exist'
-          ssh2fs.stat ssh, target, (err, stat) ->
+          @fs.stat ssh: options.ssh, target: options.target, (err, stat) ->
             return next err if err and err.code isnt 'ENOENT'
             return setTimeout run, options.interval if err
             options.log message: "Finish wait for file", level: 'INFO', module: 'nikita/wait/exist'
@@ -54,4 +54,3 @@ require('nikita')
         callback err, status
 
     each = require 'each'
-    ssh2fs = require 'ssh2-fs'

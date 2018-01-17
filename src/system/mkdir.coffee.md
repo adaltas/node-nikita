@@ -77,7 +77,7 @@ require('nikita').system.mkdir({
       .call (directory, callback) =>
         # first, we need to find which directory need to be created
         # options.log message: "Creating directory '#{directory}'", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
-        do_stats = ->
+        do_stats = =>
           end = false
           dirs = []
           p = if ssh then path.posix else path
@@ -89,10 +89,9 @@ require('nikita').system.mkdir({
           directories = for i in [0...directories.length]
             '/' + directories.slice(0, directories.length - i).join '/'
           each(directories)
-          .call (directory, i, next) ->
-            return next() if end
+          .call (directory, i, next) =>
             options.log message: "Stat '#{directory}'", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
-            fs.stat ssh, directory, (err, stat) ->
+            @fs.stat ssh: options.ssh, target: directory, (err, stat) ->
               if err?.code is 'ENOENT' # if the directory is not yet created
                 directory.stat = stat
                 dirs.push directory
@@ -112,9 +111,9 @@ require('nikita').system.mkdir({
           uid_gid ssh, options, (err) ->
             return next err if err
             do_create directories
-        do_create = (directories) ->
+        do_create = (directories) =>
           each(directories.reverse())
-          .call (directory, i, callback) ->
+          .call (directory, i, callback) =>
             # Directory name contains variables
             # eg /\${/ on './var/cache/${user}' creates './var/cache/'
             if options.exclude? and options.exclude instanceof RegExp
@@ -124,7 +123,7 @@ require('nikita').system.mkdir({
             for attr in ['mode', 'uid', 'gid', 'size', 'atime', 'mtime']
               val = if i is directories.length - 1 then options[attr] else options.parent?[attr]
               opts[attr] = val if val?
-            fs.mkdir ssh, directory, opts, (err) ->
+            @fs.mkdir ssh: options.ssh, target: directory, opts, (err) ->
               return callback err if err
               options.log message: "Directory \"#{directory}\" created ", level: 'INFO', module: 'nikita/lib/system/mkdir'
               state = true
@@ -156,7 +155,6 @@ require('nikita').system.mkdir({
 
 ## Dependencies
 
-    fs = require 'ssh2-fs'
     path = require 'path'
     each = require 'each'
     misc = require '../misc'

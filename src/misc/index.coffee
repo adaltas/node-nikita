@@ -174,6 +174,7 @@ misc = module.exports =
         delete original[k] if new_obj[k]  is null
       original
   ini:
+    # Remove undefined and null values
     clean: (content, undefinedOnly) ->
       for k, v of content
         if v and typeof v is 'object'

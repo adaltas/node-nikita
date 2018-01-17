@@ -41,7 +41,7 @@ describe 'log.fs', ->
       options.log message: 'ok'
     .file.assert
       source: "#{scratch}/localhost.log"
-      content: 'ok\n'
+      content: /^ok\n/
       log: false
     .promise()
 

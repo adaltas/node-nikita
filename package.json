@@ -43,13 +43,13 @@
     "semver": "^5.4.1",
     "ssh2-connect": "~2.0.1",
     "ssh2-exec": "~0.5.0",
-    "ssh2-fs": "^0.3.0",
+    "ssh2-fs": "^0.3.3",
     "stack-trace": "~0.0.10",
     "tilde-expansion": "~0.0.0"
   },
   "optionalDependencies": {
-    "season": "^6.0.2",
-    "eco": "~1.1.0-rc-3"
+    "eco": "~1.1.0-rc-3",
+    "season": "^6.0.2"
   },
   "devDependencies": {
     "coffeescript": "^2.1.1",

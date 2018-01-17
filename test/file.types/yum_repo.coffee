@@ -79,8 +79,12 @@ describe 'file.types.yum_repo', ->
     .file.assert
       target: "#{scratch}/test.repo"
       content: """
-        [test-repo-0.0.3]\nname = CentOS\nmirrorlist = http://test/?infra=$infra\nbaseurl = http://mirror.centos.org\n
+        [test-repo-0.0.3]
+        name = CentOS
+        mirrorlist = http://test/?infra=$infra
+        baseurl = http://mirror.centos.org\n
       """
+      trim: true
     .promise()
 
   they 'default from source with content', (ssh) ->

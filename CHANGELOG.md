@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* sudo: start working on new option
 * conditions: fix test after latest ssh move to action
 * file.assert: handle root uid and gid
 * file.assert: new trim option

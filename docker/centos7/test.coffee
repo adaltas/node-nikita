@@ -14,6 +14,7 @@ module.exports =
   disable_service_install: false
   disable_service_startup: false
   disable_service_systemctl: true # cant be activated because systemctl not compatible with Docker
+  disable_sudo: true
   disable_system_chmod: false
   disable_system_cgroups: false
   disable_system_discover: false

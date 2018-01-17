@@ -68,7 +68,7 @@ nikita.docker({
         if /\/$/.test source_path
           source_path = "#{source_path}/#{path.basename target_path}"
           return next()
-        ssh2fs.stat ssh, source_path, (err, stat) ->
+        @fs.stat ssh: options.ssh, target: source_path, (err, stat) ->
           return next err if err and err.code isnt 'ENOENT'
           # TODO wdavidw: seems like a mistake to me, we shall have source_mkdir instead
           return target_mkdir = true and next() if err?.code is 'ENOENT'
@@ -83,7 +83,7 @@ nikita.docker({
         if /\/$/.test target_path
           target_path = "#{target_path}/#{path.basename target_path}"
           return next()
-        ssh2fs.stat ssh, target_path, (err, stat) ->
+        @fs.stat ssh: options.ssh, target: target_path, (err, stat) ->
           return next err if err and err.code isnt 'ENOENT'
           return target_mkdir = true and next() if err?.code is 'ENOENT'
           target_path = "#{target_path}/#{path.basename target_path}" if stat.isDirectory()
@@ -98,5 +98,4 @@ nikita.docker({
 ## Modules Dependencies
 
     path = require 'path'
-    ssh2fs = require 'ssh2-fs'
     docker = require '../misc/docker'

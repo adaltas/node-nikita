@@ -27,9 +27,10 @@ uid_gid options, (err) ->
         return do_gid() if typeof options.uid is 'number'
         module.exports.passwd ssh, options.store, options.uid, (err, user) ->
           return callback err if err
-          if user
-            options.uid = user.uid
-            options.default_gid ?= user.gid
+          return callback Error "Invalid User: #{options.uid}" unless user
+          # if user
+          options.uid = user.uid
+          options.default_gid ?= user.gid
           do_gid()
       do_gid = ->
         return callback() unless options.gid?

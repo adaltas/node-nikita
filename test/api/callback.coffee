@@ -7,7 +7,7 @@ describe 'api callback', ->
 
   scratch = test.scratch @
 
-  it 'call callback multiple times for array of options', ->
+  it 'call callback multiple times if options an array', ->
     callbacks = []
     nikita
     .call [
@@ -23,7 +23,7 @@ describe 'api callback', ->
       ]
     .promise()
 
-  it 'register actions in callback', ->
+  it 'call actions in callback', ->
     msgs = []
     n = nikita log: (msg) -> msgs.push msg if /\/file_\d/.test msg
     n
@@ -31,7 +31,7 @@ describe 'api callback', ->
       target: "#{scratch}/a_file"
       content: 'abc'
     , (err, written) ->
-      return next err if err
+      throw err if err
       n.file
         target: "#{scratch}/a_file"
         content: 'def'
@@ -48,35 +48,94 @@ describe 'api callback', ->
     .promise()
 
   describe 'error', ->
+    
+    describe 'next', ->
 
-    it 'without parent', ->
-      nikita()
-      .file
-        target: "#{scratch}/a_file"
-        content: 'abc'
-      , (err, written) ->
-        throw Error 'Catchme'
-      .call ->
-        throw Error "Dont come here"
-      .next (err) ->
-        err.message.should.eql 'Catchme'
-      .promise()
-
-    it 'inside sync call', ->
-      nikita
-      .call () ->
-        @call (->), ->
+      it 'without parent', ->
+        nikita()
+        .file
+          target: "#{scratch}/a_file"
+          content: 'abc'
+        , (err, written) ->
           throw Error 'Catchme'
-      .next (err) ->
-        err.message.should.eql 'Catchme'
-      .promise()
+        .call ->
+          throw Error "Dont come here"
+        .next (err) ->
+          err.message.should.eql 'Catchme'
+        .promise()
 
-    it 'inside async call', ->
-      nikita
-      .call (_, callback) ->
-        @call (->), ->
+      it 'inside sync call', ->
+        nikita
+        .call () ->
+          @call (->), ->
+            throw Error 'Catchme'
+          @call ->
+            throw Error 'Dont come here'
+        .call ->
+          throw Error 'Dont come here'
+        .next (err) ->
+          err.message.should.eql 'Catchme'
+        .promise()
+
+      it 'inside async call', ->
+        nikita
+        .call (_, callback) ->
+          @call (->), ->
+            throw Error 'Catchme'
+          @call ->
+            throw Error 'Dont come here'
+          @next callback
+        .next (err) ->
+          err.message.should.eql 'Catchme'
+        .promise()
+          
+    describe 'promise', ->
+
+      it 'without parent', ->
+        nikita()
+        .file
+          target: "#{scratch}/a_file"
+          content: 'abc'
+        , (err) ->
           throw Error 'Catchme'
-        @next callback
-      .next (err) ->
-        err.message.should.eql 'Catchme'
-      .promise()
+        .call ->
+          throw Error 'Dont come here'
+        .promise()
+        .then ->
+          throw Error 'Dont come here'
+        .catch (err) ->
+          err.message.should.eql 'Catchme'
+        .then()
+
+      it 'inside sync call', ->
+        nikita
+        .call () ->
+          @call (->), ->
+            throw Error 'Catchme'
+          @call ->
+            throw Error 'Dont come here'
+        .call ->
+          throw Error 'Dont come here'
+        .promise()
+        .then ->
+          throw Error 'Dont come here'
+        .catch (err) ->
+          err.message.should.eql 'Catchme'
+        .then()
+
+      it 'inside sync call', ->
+        nikita
+        .call (_, callback) ->
+          @call (->), ->
+            throw Error 'Catchme'
+          @call ->
+            throw Error 'Dont come here'
+          @next callback
+        .call ->
+          throw Error 'Dont come here'
+        .promise()
+        .then ->
+          throw Error 'Dont come here'
+        .catch (err) ->
+          err.message.should.eql 'Catchme'
+        .then()

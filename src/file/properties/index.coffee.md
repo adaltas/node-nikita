@@ -9,15 +9,19 @@ Write a file in the Java properties format.
   Create a backup, append a provided string to the filename extension or a
   timestamp if value is not a string, only apply if the target file exists and
   is modified.
+* `comment` (boolean)   
+  Preserve comments.
 * `content` (object)   
   List of properties to write.
-* `target` (string)   
-  File path where to write content to.
 * `local` (boolean)   
   Treat the source as local instead of remote, only apply with "ssh"
   option.
 * `sort` (boolean)   
-  Sort the properties before writting them. False by default
+  Sort the properties before writting them. False by default.
+* `target` (string)   
+  File path where to write content to.
+* `trim` (boolean)   
+  Trim keys and value.
 * `merge` (boolean)   
   Merges content properties with target file. False by default
 * `separator` (string)   
@@ -41,30 +45,38 @@ require('nikita')
 
     module.exports = (options) ->
       options.log message: "Entering file.properties", level: 'DEBUG', module: 'nikita/lib/file/properties'
-      # SSH connection
-      ssh = @ssh options.ssh
       # Options
       throw Error "Missing argument options.target" unless options.target
       options.separator ?= '='
       options.content ?= {}
       options.sort ?= false
-      # org_props = if options.merge then {} else options.content
-      fnl_props = options.content
+      # Trim
+      unless options.trim
+        fnl_props = options.content
+      else 
+        fnl_props = {}
+        for k, v of options.content
+          k = k.trim()
+          v = v.trim() if typeof v is 'string'
+          fnl_props[k] = v
       org_props = {}
       options.log message: "Merging \"#{if options.merge then 'true' else 'false'}\"", level: 'DEBUG', module: 'nikita/lib/file/properties'
       # Read Original
-      @call (_, callback) ->
-        options.log message: "Reading target \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/file/properties'
-        module.exports.properties ssh, options.target, options, (err, props) ->
-          return callback err if err
-          org_props = props
-          callback()
+      @file.properties.read
+        if_exists: true
+        ssh: options.ssh
+        target: options.target
+        separator: options.separator
+        comment: options.comment
+        trim: options.trim
+      , (err, props) ->
+        org_props = props or {} unless err
       # Diff
       @call (_, callback) ->
         status = false
         keys = {}
         for k in Object.keys(org_props) then keys[k] = true
-        for k in Object.keys(fnl_props) then keys[k] = true # unless keys[k]?
+        for k in Object.keys(fnl_props) then keys[k] = true
         for key in Object.keys keys
           if "#{org_props[key]}" isnt "#{fnl_props[key]}"
             options.log? message: "Property '#{key}' was '#{org_props[k]}' and is now '#{fnl_props[k]}'", level: 'WARN', module: 'ryba/lib/file/properties'
@@ -97,26 +109,3 @@ require('nikita')
           target: options.target
           mode: options.mode
           if: options.mode?
-
-    module.exports.properties = (ssh, source, options, callback) ->
-      fs.readFile ssh, source, 'utf8', (err, data) ->
-        return callback null, {} if err?.code is 'ENOENT'
-        return callback err if err
-        options.separator ?= '='
-        props = {}
-        # Parse
-        lines = string.lines data
-        for line in lines
-          continue if /^\s*$/.test line # Empty line
-          if /^#/.test line # Comment
-            props[line] = null if options.comment
-            continue
-          [_,k,v] = ///^(.*?)#{quote options.separator}(.*)$///.exec line
-          props[k] = v
-        callback null, props
-
-## Dependencies
-
-    fs = require 'ssh2-fs'
-    quote = require 'regexp-quote'
-    string = require '../misc/string'

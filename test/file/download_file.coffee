@@ -12,23 +12,20 @@ describe 'file.download file', ->
   describe 'source', ->
 
     they 'with file protocol', (ssh) ->
-      source = "file://#{__filename}"
-      target = "#{scratch}/download_test"
       nikita
         ssh: ssh
       .file.download
-        source: source
-        target: target # Download a non existing file
+        source: "file://#{__filename}"
+        target: "#{scratch}/download_test" # Download a non existing file
       , (err, status) ->
-        return next err if err
-        status.should.be.true()
+        status.should.be.true() unless err
       .call ({}, callback) ->
-        fs.readFile @options.ssh, target, 'ascii', (err, content) ->
+        fs.readFile @options.ssh, "#{scratch}/download_test", 'ascii', (err, content) ->
           content.should.containEql 'yeah' unless err
           callback err
       .file.download
-        source: source
-        target: target # Download on an existing file
+        source: "file://#{__filename}"
+        target: "#{scratch}/download_test" # Download on an existing file
       , (err, status) ->
         status.should.be.false() unless err
       .promise()
@@ -99,8 +96,7 @@ describe 'file.download file', ->
         cache_dir: "#{scratch}/cache_dir"
         md5: '3f104676a5f72de08b811dbb725244ff'
       , (err, status) ->
-        return next err if err
-        status.should.be.true()
+        status.should.be.true() unless err
       .file.assert "#{scratch}/cache_dir/#{path.basename source}"
       .promise()
 
@@ -115,7 +111,6 @@ describe 'file.download file', ->
         cache: true
         cache_dir: "#{scratch}/cache_dir"
       , (err, status) ->
-        return next err if err
         status.should.be.true() unless err
       .file.assert "#{scratch}/cache_dir/#{path.basename __filename}"
       .promise()
@@ -175,10 +170,9 @@ describe 'file.download file', ->
       .promise()
 
     they 'is computed if true', (ssh) ->
-      return @skip() unless ssh
+      # return @skip() unless ssh
       logs = []
       # Download with invalid checksum
-      target = "#{scratch}/check_md5"
       nikita
         ssh: ssh
       .on 'text', (log) -> logs.push "[#{log.level}] #{log.message}"
@@ -187,13 +181,13 @@ describe 'file.download file', ->
         content: "okay"
       .file.download
         source: "#{scratch}/source"
-        target: target
+        target: "#{scratch}/check_md5"
         md5: true
       , (err, status) ->
         status.should.be.true() unless err
       .file.download
         source: "#{scratch}/source"
-        target: target
+        target: "#{scratch}/check_md5"
         md5: true
       , (err, status) ->
         status.should.be.false() unless err

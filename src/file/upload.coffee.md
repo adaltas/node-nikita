@@ -60,7 +60,7 @@ require('nikita').upload({
   source: '/tmp/local_file',
   target: '/tmp/remote_file'
 }, function(err, status){
-  console.log(err ? err.message : 'File uploaded: ' + status);
+  console.info(err ? err.message : 'File uploaded: ' + status);
 });
 ```
 
@@ -90,18 +90,18 @@ require('nikita').upload({
       else
         algo = 'md5'
       @call (_, callback) ->
-        ssh2fs.stat ssh, options.source, (err, stat) ->
+        @fs.stat ssh: options.ssh, target: options.source, (err, stat) ->
           callback err if err and err.code isnt 'ENOENT'
           source_stat = stat
           callback()
       @call (_, callback) ->
-        ssh2fs.stat null, options.target, (err, stat) ->
+        @fs.stat ssh: false, target: options.target, (err, stat) ->
           return callback() if err and err.code is 'ENOENT'
           return callback err if err
           target_stat = stat if stat.isFile()
           return callback() unless stat.isDirectory()
           options.target = path.resolve options.target, path.basename options.source
-          ssh2fs.stat null, options.target, (err, stat) ->
+          @fs.stat ssh: false, target: options.target, (err, stat) ->
             return callback() if err and err.code is 'ENOENT'
             return callback err if err
             target_stat = stat if stat.isFile()

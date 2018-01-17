@@ -1,0 +1,26 @@
+
+# `nikita.fs.chown(options, callback)`
+
+Change ownership of a file.
+
+## Source Code
+
+    module.exports = status: false, handler: (options, callback) ->
+      options.log message: "Entering fs.chown", level: 'DEBUG', module: 'nikita/lib/fs/chown'
+      # Normalize parameters
+      options.uid = null if options.uid is false
+      options.gid = null if options.gid is false
+      # Validate parameters
+      throw Error "Missing target: #{JSON.stringify options.target}" unless options.target
+      throw Error "Missing one of uid or gid option" unless options.uid? or options.gid?
+      @system.execute
+        if: options.uid? or options.gid?
+        cmd: """
+        [ ! -z '#{if options.uid? then options.uid else ''}' ] && chown #{options.uid} #{options.target}
+        [ ! -z '#{if options.gid? then options.gid else ''}' ] && chgrp #{options.gid} #{options.target}
+        """
+        sudo: options.sudo
+        bash: options.bash
+        arch_chroot: options.arch_chroot
+      , (err) ->
+       callback err

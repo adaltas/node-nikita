@@ -52,11 +52,10 @@ describe 'system.chown', ->
       status.should.be.true() unless err
     .system.chown "#{scratch}/a_file", uid: 1235, (err, status) ->
       status.should.be.false() unless err
-    .call (_, callback) ->
-      fs.stat ssh, "#{scratch}/a_file", (err, stat) ->
-        stat.uid.should.eql 1235 unless err
-        stat.gid.should.eql 1234 unless err
-        callback err
+    .file.assert
+      target: "#{scratch}/a_file"
+      uid: 1235
+      gid: 1234
     .promise()
 
   they 'change gid and leave uid', (ssh) ->
@@ -74,11 +73,10 @@ describe 'system.chown', ->
       status.should.be.true() unless err
     .system.chown "#{scratch}/a_file", gid: 1235, (err, status) ->
       status.should.be.false() unless err
-    .call (_, callback) ->
-      fs.stat ssh, "#{scratch}/a_file", (err, stat) ->
-        stat.uid.should.eql 1234 unless err
-        stat.gid.should.eql 1235 unless err
-        callback err
+    .file.assert
+      target: "#{scratch}/a_file"
+      uid: 1234
+      gid: 1235
     .promise()
 
   they 'detect status if uid is null', (ssh) ->

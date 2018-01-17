@@ -210,7 +210,5 @@ you are a member of the "wheel" group (gid of "10") with the command
 ## Dependencies
 
     path = require 'path'
-    fs = require 'ssh2-fs'
-    misc = require '../../misc'
     string = require '../../misc/string'
     uid_gid = require '../../misc/uid_gid'

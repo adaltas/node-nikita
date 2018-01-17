@@ -13,12 +13,12 @@ describe 'file.render', ->
       nikita
         ssh: ssh
       .file.render
-        source: 'oups'
+        source: "#{scratch}/oups.j2"
         target: "#{scratch}/output"
         context: {}
         relax: true
       , (err) ->
-        err.message.should.eql 'Invalid source, got "oups"'
+        err.message.should.eql "ENOENT: no such file or directory, open '#{scratch}/oups.j2'"
       .promise()
 
     they 'when option "context" is missing', (ssh) ->
@@ -32,14 +32,26 @@ describe 'file.render', ->
         err.message.should.eql 'Required option: context'
       .promise()
 
+    they 'unsuppoorted source extension', (ssh) ->
+      nikita
+        ssh: ssh
+      .file.render
+        source: 'gohome.et'
+        target: "#{scratch}/output"
+        context: {}
+        relax: true
+      , (err) ->
+        err.message.should.eql "Invalid Option: extension '.et' is not supported"
+      .promise()
+
   describe 'nunjunks', ->
 
     they 'use `content`', (ssh) ->
       nikita
         ssh: ssh
       .file.render
-        engine: 'nunjunks'
         content: 'Hello {{ who }}'
+        engine: 'nunjunks'
         target: "#{scratch}/render.txt"
         context: who: 'you'
       , (err, status) ->
@@ -49,7 +61,7 @@ describe 'file.render', ->
         content: 'Hello you'
       .promise()
 
-    they 'use `source`', (ssh) ->
+    they 'detect `source`', (ssh) ->
       nikita
         ssh: ssh
       .file

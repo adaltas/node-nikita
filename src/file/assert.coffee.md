@@ -28,6 +28,12 @@ Assert a file exists or a provided text match the content of a text file.
   Alias of option "target".   
 * `target` (string)   
   File storing the content to assert.   
+* `trim` (boolean)   
+  Trim the actuel and expected content before matching, default is "false".
+* `uid` (int|string)   
+  User ID to assert.   
+* `gid` (int|string)   
+  Group ID to assert.   
 
 ## Callback parameters
 
@@ -67,6 +73,7 @@ nikita.file.assert({
       # SSH connection
       ssh = @ssh options.ssh
       # Options
+      options.trim ?= false
       options.encoding ?= 'utf8'
       options.target ?= options.argument
       options.target ?= options.source
@@ -99,7 +106,7 @@ nikita.file.assert({
       @call
         unless: options.content? or options.md5 or options.sha1 or options.sha256 or options.mode.length
       , (_, callback) ->
-        fs.exists ssh, options.target.toString(), (err, exists) ->
+        @fs.exists ssh: options.ssh, target: options.target.toString(), (err, exists) ->
           unless options.not
             unless exists
               options.error ?= "File does not exists: #{JSON.stringify options.target}"
@@ -113,7 +120,7 @@ nikita.file.assert({
       @call
         if: options.filetype.length
       , (_, callback) ->
-        fs.lstat ssh, options.target, (err, stat) ->
+        @fs.lstat ssh: options.ssh, target: options.target, (err, stat) ->
           return callback err if err
           if fs.constants.S_IFREG in options.filetype
             return callback Error "Invalid filetype: expect a regular file" unless stat.isFile()
@@ -136,13 +143,9 @@ nikita.file.assert({
       @call
         if: options.content? and (typeof options.content is 'string' or Buffer.isBuffer options.content)
       , (_, callback) ->
-        fs.readFile ssh, options.target, (err, buffer) ->
+        @fs.readFile ssh: options.ssh, target: options.target, (err, buf) ->
           return callback err if err
-          try
-            buf = buffer.trim buf, options.encoding if options.trim
-          catch err
-            console.log err
-            throw err
+          buf = buffer.trim buf, options.encoding if options.trim
           unless options.not
             unless buf.equals options.content
               options.error ?= "Invalid content: expect #{JSON.stringify options.content.toString()} and got #{JSON.stringify buf.toString()}"
@@ -156,7 +159,7 @@ nikita.file.assert({
       @call
         if: options.content? and options.content instanceof RegExp
       , (_, callback) ->
-        fs.readFile ssh, options.target, (err, buffer) ->
+        @fs.readFile ssh: options.ssh, target: options.target, (err, buffer) ->
           return callback err if err
           unless options.not
             unless options.content.test buffer 
@@ -190,7 +193,7 @@ nikita.file.assert({
       @call
         if: options.uid?
       , (_, callback) ->
-        fs.stat ssh, options.target, (err, stat) ->
+        @fs.stat ssh: options.ssh, target: options.target, (err, stat) ->
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
           unless options.not
             unless "#{stat.uid}" is "#{options.uid}"
@@ -205,7 +208,7 @@ nikita.file.assert({
       @call
         if: options.gid?
       , (_, callback) ->
-        fs.stat ssh, options.target, (err, stat) ->
+        @fs.stat ssh: options.ssh, target: options.target, (err, stat) ->
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
           unless options.not
             unless "#{stat.gid}" is "#{options.gid}"
@@ -220,7 +223,7 @@ nikita.file.assert({
       @call
         if: options.mode.length
       , (_, callback) ->
-        fs.stat ssh, options.target, (err, stat) ->
+        @fs.stat ssh: options.ssh, target: options.target, (err, stat) ->
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
           unless options.not
             unless misc.mode.compare options.mode, stat.mode
@@ -237,7 +240,7 @@ nikita.file.assert({
 ## Dependencies
 
     pad = require 'pad'
-    fs = require 'ssh2-fs'
-    file = require '../misc/file'
+    fs = require 'fs'
     misc = require '../misc'
+    file = require '../misc/file'
     buffer = require '../misc/buffer'

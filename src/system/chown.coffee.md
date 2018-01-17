@@ -47,11 +47,13 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering chown", level: 'DEBUG', module: 'nikita/lib/chown'
+      options.log message: "Entering chown", level: 'DEBUG', module: 'nikita/lib/system/chown'
       # SSH connection
       ssh = @ssh options.ssh
       # Normalize options
       options.target = options.argument if options.argument?
+      options.uid = null if options.uid is false
+      options.gid = null if options.gid is false
       # Validate parameters
       throw Error "Missing target option" unless options.target?
       throw Error "Missing one of uid or gid option" unless options.uid? or options.gid?
@@ -61,7 +63,7 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
       # Use option 'stat' short-circuit or discover
       @call unless: !!options.stat, (_, callback) ->
         options.log message: "Stat #{options.target}", level: 'DEBUG', module: 'nikita/lib/chown'
-        fs.stat ssh, options.target, (err, stat) ->
+        @fs.stat ssh: options.ssh, target: options.target, (err, stat) ->
           return callback Error "Target Does Not Exist: #{JSON.stringify options.target}" if err?.code is 'ENOENT'
           return callback err if err
           options.stat = stat
@@ -77,12 +79,11 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
         # Apply changes
         options.uid ?= options.stat.uid
         options.gid ?= options.stat.gid
-        fs.chown ssh, options.target, options.uid, options.gid, (err) ->
+        @fs.chown ssh: options.ssh, target: options.target, uid: options.uid, gid: options.gid, sudo: options.sudo, (err) ->
           options.log message: "change uid from #{options.stat.uid} to #{options.uid}", level: 'WARN', module: 'nikita/lib/chown' if options.stat.uid is not options.uid
           options.log message: "change gid from #{options.stat.gid} to #{options.gid}", level: 'WARN', module: 'nikita/lib/chown' if options.stat.gid is not options.gid
           callback err
 
 ## Dependencies
 
-    fs = require 'ssh2-fs'
     uid_gid = require '../misc/uid_gid'

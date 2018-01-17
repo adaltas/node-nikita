@@ -44,7 +44,10 @@ require('nikita').system.chmod({
         unless: !!options.stat # Option 'stat' short-circuit
       , (_, callback) ->
         options.log message: "Stat information: \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/system/chmod'
-        fs.stat ssh, options.target, (err, stat) ->
+        @fs.stat
+          ssh: options.ssh
+          target: options.target
+        , (err, stat) ->
           options.stat = stat unless err
           callback err
       @call (_, callback) ->
@@ -53,11 +56,10 @@ require('nikita').system.chmod({
           options.log message: "Identical permissions on \"#{options.target}\"", level: 'INFO', module: 'nikita/lib/system/chmod'
           return callback()
         # Apply changes
-        fs.chmod ssh, options.target, options.mode, (err) ->
+        @fs.chmod ssh: options.ssh, target: options.target, mode: options.mode, sudo: options.sudo, (err) ->
           options.log message: "Change permissions from \"#{options.stat.mode.toString 8}\" to \"#{options.mode.toString 8}\" on \"#{options.target}\"", level: 'WARN', module: 'nikita/lib/system/chmod'
           callback err, true
 
 ## Dependencies
 
-    fs = require 'ssh2-fs'
     misc = require '../misc'

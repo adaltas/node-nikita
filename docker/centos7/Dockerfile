@@ -3,7 +3,7 @@ MAINTAINER David Worms
 
 # Install Node.js
 ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 6.10.1
+ENV NODE_VERSION 9.4.0
 RUN yum install -y xz \
   && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
   && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
@@ -52,6 +52,9 @@ RUN chmod +x /usr/local/bin/docker-compose
 
 # Ruby & Gem
 RUN yum install -y gcc ruby ruby-devel
+
+# Cgroup
+RUN yum install -y libcgroup-tools
 
 RUN yum clean all
 

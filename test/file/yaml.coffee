@@ -102,8 +102,7 @@ describe 'file.yaml', ->
       target: "#{scratch}/user.yml"
       merge: true
     , (err, status) ->
-      return next err if err
-      status.should.be.true()
+      status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/user.yml"
       content: 'user:\n  preference:\n    language: node\n  name: toto\n'

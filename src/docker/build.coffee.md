@@ -182,7 +182,7 @@ nikita.docker.build({
         unless: options.content
         handler: (_, callback) ->
           options.log message: "Reading Dockerfile from : #{options.file}", level: 'INFO', module: 'nikita/lib/build'
-          fs.readFile ssh, options.file, 'utf8', (err, content) ->
+          @fs.readFile ssh: options.ssh, target: options.file, encoding: 'utf8', (err, content) ->
             return callback err if err
             options.content = content
             callback()
@@ -217,5 +217,4 @@ nikita.docker.build({
     string = require '../misc/string'
     path = require 'path'
     util = require 'util'
-    fs = require 'ssh2-fs'
     {merge} = require '../misc'

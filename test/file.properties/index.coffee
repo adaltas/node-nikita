@@ -33,7 +33,7 @@ describe 'file.properties', ->
         callback err
     .promise()
 
-  they 'honors merge', (ssh) ->
+  they 'option merge', (ssh) ->
     nikita
       ssh: ssh
     .file.properties
@@ -103,7 +103,7 @@ describe 'file.properties', ->
         callback err
     .promise()
 
-  they 'honor comments', (ssh) ->
+  they 'option comments', (ssh) ->
     nikita
       ssh: ssh
     .file
@@ -123,5 +123,25 @@ describe 'file.properties', ->
     .call (_, callback) ->
       fs.readFile ssh, "#{scratch}/file.properties", 'ascii', (err, data) ->
         data.should.eql "a_key=new value\n# comment\nb_key=new value\n" unless err
+        callback err
+    .promise()
+
+  they 'option trim + merge', (ssh) ->
+    nikita
+      ssh: ssh
+    .file
+      target: "#{scratch}/file.properties"
+      content: """
+      a_key = a value
+      """
+    .file.properties
+      target: "#{scratch}/file.properties"
+      content:
+        'b_key ': ' b value'
+      merge: true
+      trim: true
+    .call (_, callback) ->
+      fs.readFile ssh, "#{scratch}/file.properties", 'ascii', (err, data) ->
+        data.should.eql "a_key=a value\nb_key=b value\n" unless err
         callback err
     .promise()
