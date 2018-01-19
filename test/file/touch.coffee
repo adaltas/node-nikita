@@ -3,7 +3,6 @@ nikita = require '../../src'
 misc = require '../../src/misc'
 test = require '../test'
 they = require 'ssh2-they'
-fs = require 'ssh2-fs'
 
 describe 'file.touch', ->
 
@@ -71,10 +70,9 @@ describe 'file.touch', ->
       ssh: ssh
     .file.touch
       target: "#{scratch}/a_file"
-    .call (_, callback) ->
-      fs.stat ssh, "#{scratch}/a_file", (err, stat) ->
-        misc.mode.compare(stat.mode, 0o0644).should.true() unless err
-        callback err
+    .file.assert
+      target: "#{scratch}/a_file"
+      mode: 0o0644
     .promise()
 
   they 'change permissions', (ssh) ->
@@ -83,10 +81,9 @@ describe 'file.touch', ->
     .file.touch
       target: "#{scratch}/a_file"
       mode: 0o0700
-    .call (_, callback) ->
-      fs.stat ssh, "#{scratch}/a_file", (err, stat) ->
-        misc.mode.compare(stat.mode, 0o0700).should.true() unless err
-        callback err
+    .file.assert
+      target: "#{scratch}/a_file"
+      mode: 0o0700
     .promise()
 
   they 'do not change permissions on existing file if not specified', (ssh) ->
@@ -97,10 +94,9 @@ describe 'file.touch', ->
       mode: 0o666
     .file.touch
       target: "#{scratch}/a_file"
-    .call (_, callback) ->
-      fs.stat ssh, "#{scratch}/a_file", (err, stat) ->
-        misc.mode.compare(stat.mode, 0o0666).should.true() unless err
-        callback err
+    .file.assert
+      target: "#{scratch}/a_file"
+      mode: 0o0666
     .promise()
 
   they 'create valid parent dir', (ssh) ->
@@ -109,21 +105,28 @@ describe 'file.touch', ->
     .file.touch
       target: "#{scratch}/subdir/a_file"
       mode:'0640'
-    .call (_, callback) ->
-      fs.stat ssh, "#{scratch}/subdir", (err, stat) ->
-        misc.mode.compare(stat.mode, 0o0751).should.true() unless err
-        callback err
+    .file.assert
+      target: "#{scratch}/subdir"
+      mode: 0o0751
     .promise()
 
-  they 'modify time', (ssh) ->
+  they 'modify time but not status', (ssh) ->
+    stat_org = null
+    stat_new = null
     nikita
       ssh: ssh
     .file.touch "#{scratch}/a_file"
     .call (_, callback) ->
-      fs.stat ssh, "#{scratch}/a_file", (err, stat) ->
+      @fs.stat target: "#{scratch}/a_file", (err, stat) ->
+        stat_org = stat
         callback err
-    .file.touch "#{scratch}/a_file"
+    .call (_, callback) -> setTimeout callback, 2000
+    .file.touch "#{scratch}/a_file", (err, status) ->
+      status.should.be.false()
     .call (_, callback) ->
-      fs.stat ssh, "#{scratch}/a_file", (err, stat) ->
+      @fs.stat target: "#{scratch}/a_file", (err, stat) ->
+        stat_new = stat
         callback err
+    .call ->
+      stat_org.mtime.should.not.eql stat_new.mtime
     .promise()

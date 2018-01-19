@@ -2,9 +2,7 @@ should = require 'should'
 nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
-fs = require 'ssh2-fs'
 docker = require '../../src/misc/docker'
-
 
 describe 'docker.rm', ->
 

@@ -2,7 +2,6 @@
 nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
-fs = require 'ssh2-fs'
 
 describe 'system.move', ->
 
@@ -70,16 +69,12 @@ describe 'system.move', ->
       target: "#{scratch}/dest.txt"
     , (err, status) ->
       status.should.be.false() unless err
-    .call (_, callback) ->
-      fs.readFile ssh, "#{scratch}/dest.txt", 'utf8', (err, content) ->
-        return next err if err
-        content.should.eql 'hello'
-        callback()
-    .call (_, callback) ->
-      # The original file should no longer exists
-      fs.exists ssh, "#{scratch}/src2.txt", (err, exists) ->
-        exists.should.be.false() unless err
-        callback err
+    .file.assert
+      target: "#{scratch}/dest.txt"
+      content: 'hello'
+    .file.assert
+      target: "#{scratch}/src2.txt"
+      not: true
     .promise()
 
   they 'force bypass checksum comparison', (ssh) ->

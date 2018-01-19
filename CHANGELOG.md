@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* test: limit usage of ssh2-fs
 * fs: set default argument to target
 * sudo: start working on new option
 * conditions: fix test after latest ssh move to action

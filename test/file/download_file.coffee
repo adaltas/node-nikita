@@ -3,7 +3,6 @@ path = require 'path'
 nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
-fs = require 'ssh2-fs'
 
 describe 'file.download file', ->
 
@@ -19,10 +18,9 @@ describe 'file.download file', ->
         target: "#{scratch}/download_test" # Download a non existing file
       , (err, status) ->
         status.should.be.true() unless err
-      .call ({}, callback) ->
-        fs.readFile @options.ssh, "#{scratch}/download_test", 'ascii', (err, content) ->
-          content.should.containEql 'yeah' unless err
-          callback err
+      .file.assert
+        target: "#{scratch}/download_test"
+        content: /yeah/
       .file.download
         source: "file://#{__filename}"
         target: "#{scratch}/download_test" # Download on an existing file
@@ -31,55 +29,49 @@ describe 'file.download file', ->
       .promise()
 
     they 'without protocol', (ssh) ->
-      source = "#{__filename}"
-      target = "#{scratch}/download_test"
+      source = 
       # Download a non existing file
       nikita
         ssh: ssh
       .file.download
-        source: source
-        target: target
+        source: "#{__filename}"
+        target: "#{scratch}/download_test"
       , (err, status) ->
         status.should.be.true() unless err
-      .call ({}, callback) ->
-        fs.readFile @options.ssh, target, 'ascii', (err, content) ->
-          content.should.containEql 'yeah' unless err
-          callback err
+      .file.assert
+        target: "#{scratch}/download_test"
+        content: /yeah/
       .file.download # Download on an existing file
-        source: source
-        target: target
+        source: "#{__filename}"
+        target: "#{scratch}/download_test"
       , (err, status) ->
         status.should.be.false() unless err
       .promise()
 
     they 'doesnt exists', (ssh) ->
-      source = "#{__dirname}/doesnotexists"
-      target = "#{scratch}/download_test"
       nikita
         ssh: ssh
       .file.download
-        source: source
-        target: target
+        source: "#{__dirname}/doesnotexists"
+        target: "#{scratch}/download_test"
         relax: true
       , (err, status) ->
-        err.message.should.eql "Does not exist: #{source}"
+        err.message.should.eql "Does not exist: #{__dirname}/doesnotexists"
         err.code.should.eql 'ENOENT'
       .promise()
 
     they 'into an existing directory', (ssh) ->
-      source = "#{__filename}"
-      target = "#{scratch}/download_test"
+      source = ""
+      target = 
       nikita
         ssh: ssh
       .system.mkdir
-        target: target
+        target: "#{scratch}/download_test"
       .file.download
-        source: source
-        target: target
-      .call (_, callback) ->
-        fs.stat ssh, "#{target}/#{path.basename source}", (err, stat) ->
-          stat.isFile().should.be.true() unless err
-          callback err
+        source: "#{__filename}"
+        target: "#{scratch}/download_test"
+      .file.assert
+        target: "#{scratch}/download_test/#{path.basename __filename}"
       .promise()
 
   describe 'cache', ->

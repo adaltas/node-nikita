@@ -4,7 +4,6 @@ misc = require '../../src/misc'
 path = require 'path'
 test = require '../test'
 they = require 'ssh2-they'
-fs = require 'ssh2-fs'
 
 describe 'file.upload', ->
 
@@ -19,10 +18,8 @@ describe 'file.upload', ->
         target: "#{scratch}/#{path.basename __filename}"
       , (err, status) ->
         status.should.be.true() unless err
-      .call (_, callback) ->
-        fs.stat null, "#{scratch}/#{path.basename __filename}", (err, exist) ->
-          exist.isFile().should.be.true() unless err
-          callback err
+      .file.assert
+        target: "#{scratch}/#{path.basename __filename}"
       .file.upload
         source: "#{__filename}"
         target: "#{scratch}/#{path.basename __filename}"
@@ -39,10 +36,8 @@ describe 'file.upload', ->
           target: "#{scratch}"
         , (err, status) ->
           status.should.be.true() unless err
-        .call (_, callback) ->
-          fs.stat null, "#{scratch}/#{path.basename __filename}", (err, exist) ->
-            exist.isFile().should.be.true() unless err
-            callback err
+        .file.assert
+          target: "#{scratch}/#{path.basename __filename}"
         .file.upload
           source: "#{__filename}"
           target: "#{scratch}"

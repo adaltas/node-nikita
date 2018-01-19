@@ -1,9 +1,7 @@
 
-fs = require 'fs'
 nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
-fs = require 'ssh2-fs'
 
 describe 'system.link', ->
 
@@ -57,10 +55,9 @@ describe 'system.link', ->
       target: "#{scratch}/test/dir/link_test"
     , (err, status) ->
       status.should.be.true() unless err
-    .call (_, callback) ->
-      fs.lstat ssh, "#{scratch}/test/dir/link_test", (err, stat) ->
-        stat.isSymbolicLink().should.be.true() unless err
-        callback err
+    .file.assert
+      target: "#{scratch}/test/dir/link_test"
+      type: 'symlink'
     .system.link [
       ssh: ssh
       source: "#{__dirname}/merge.coffee"

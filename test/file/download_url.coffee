@@ -4,7 +4,6 @@ nikita = require '../../src'
 misc = require '../../src/misc'
 test = require '../test'
 they = require 'ssh2-they'
-fs = require 'ssh2-fs'
 
 describe 'file.download url', ->
 
@@ -32,10 +31,9 @@ describe 'file.download url', ->
       target: "#{scratch}/download"
     , (err, status) ->
       status.should.be.true() unless err
-    .call (_, callback) ->
-      fs.readFile @options.ssh, "#{scratch}/download", 'ascii', (err, content) ->
-        content.should.equal 'okay' unless err
-        callback()
+    .file.assert
+      target: "#{scratch}/download"
+      content: /okay/
     .file.download # Download on an existing file
       source: 'http://localhost:12345'
       target: "#{scratch}/download"
@@ -53,10 +51,9 @@ describe 'file.download url', ->
       mode: 0o0770
     , (err, status) ->
       status.should.be.true() unless err
-    .call (_, callback) ->
-      fs.stat @options.ssh, "#{scratch}/download_test", (err, stat) ->
-        misc.mode.compare(stat.mode, 0o0770).should.be.true() unless err
-        callback()
+    .file.assert
+      target: "#{scratch}/download_test"
+      mode: 0o0770
     .promise()
 
   describe 'cache', ->
@@ -72,14 +69,12 @@ describe 'file.download url', ->
         cache_file: "#{scratch}/cache_file"
       , (err, status) ->
         status.should.be.true() unless err
-      .call (_, callback) ->
-        fs.readFile @options.ssh, "#{scratch}/cache_file", 'ascii', (err, content) ->
-          content.should.equal 'okay' unless err
-          callback()
-      .call (_, callback) ->
-        fs.readFile @options.ssh, "#{scratch}/target", 'ascii', (err, content) ->
-          content.should.equal 'okay' unless err
-          callback()
+      .file.assert
+        target: "#{scratch}/cache_file"
+        content: /okay/
+      .file.assert
+        target: "#{scratch}/target"
+        content: /okay/
       .promise()
 
     they 'cache file defined globally', (ssh) ->
@@ -152,10 +147,9 @@ describe 'file.download url', ->
         md5: 'df8fede7ff71608e24a5576326e41c75'
       , (err, status) ->
         status.should.be.true() unless err
-      .call (_, callback) ->
-        fs.readFile ssh, "#{scratch}/target", 'ascii', (err, content) ->
-          content.should.equal 'okay' unless err
-          callback err
+      .file.assert
+        target: "#{scratch}/target"
+        content: /okay/
       .promise()
 
     they 'check signature on downloaded file', (ssh) ->

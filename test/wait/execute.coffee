@@ -2,7 +2,6 @@
 nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
-fs = require 'ssh2-fs'
 
 describe 'wait.execute', ->
 
@@ -17,7 +16,7 @@ describe 'wait.execute', ->
       status.should.be.false()
     .call ->
       setTimeout ->
-        fs.mkdir ssh, "#{scratch}/a_file", -> # ok
+        nikita(ssh: ssh).fs.mkdir "#{scratch}/a_file", -> # ok
       , 100
     .wait.execute
       cmd: "test -d #{scratch}/a_file"
@@ -38,8 +37,8 @@ describe 'wait.execute', ->
       status.should.be.false()
     .call ->
       setTimeout ->
-        fs.mkdir ssh, "#{scratch}/file_1", -> # ok
-        fs.mkdir ssh, "#{scratch}/file_2", -> # ok
+        nikita(ssh: ssh).fs.mkdir "#{scratch}/file_1", -> # ok
+        nikita(ssh: ssh).fs.mkdir "#{scratch}/file_2", -> # ok
       , 100
     .wait.execute
       cmd: [
@@ -61,7 +60,7 @@ describe 'wait.execute', ->
         logs.push "[#{log.level}] #{log.message}" if /Attempt #\d/.test log.message
       .call ->
         setTimeout ->
-          fs.mkdir ssh, "#{scratch}/a_file", -> # ok
+          nikita(ssh: ssh).fs.mkdir "#{scratch}/a_file", -> # ok
         , 200
       .wait.execute
         cmd: "test -d #{scratch}/a_file"
@@ -109,13 +108,13 @@ describe 'wait.execute', ->
         ssh: ssh
       .call ->
         setTimeout ->
-          fs.mkdir ssh, "#{scratch}/file_1", -> # ok
+          nikita(ssh: ssh).fs.mkdir "#{scratch}/file_1", -> # ok
         , 30
         setTimeout ->
-          fs.mkdir ssh, "#{scratch}/file_2", -> # ok
+          nikita(ssh: ssh).fs.mkdir "#{scratch}/file_2", -> # ok
         , 60
         setTimeout ->
-          fs.mkdir ssh, "#{scratch}/file_3", -> # ok
+          nikita(ssh: ssh).fs.mkdir "#{scratch}/file_3", -> # ok
         , 90
       .wait.execute
         cmd: [
@@ -137,13 +136,13 @@ describe 'wait.execute', ->
         ssh: ssh
       .call ->
         setTimeout ->
-          fs.mkdir ssh, "#{scratch}/file_1", -> # ok
+          nikita(ssh: ssh).fs.mkdir "#{scratch}/file_1", -> # ok
         , 50
         setTimeout ->
-          fs.mkdir ssh, "#{scratch}/file_2", -> # ok
+          nikita(ssh: ssh).fs.mkdir "#{scratch}/file_2", -> # ok
         , 100
         setTimeout ->
-          fs.mkdir ssh, "#{scratch}/file_3", -> # ok
+          nikita(ssh: ssh).fs.mkdir "#{scratch}/file_3", -> # ok
         , 200
       .wait.execute
         cmd: [
@@ -165,13 +164,13 @@ describe 'wait.execute', ->
         ssh: ssh
       .call ->
         setTimeout ->
-          fs.mkdir ssh, "#{scratch}/file_1", -> # ok
+          nikita(ssh: ssh).fs.mkdir "#{scratch}/file_1", -> # ok
         , 30
         setTimeout ->
-          fs.mkdir ssh, "#{scratch}/file_2", -> # ok
+          nikita(ssh: ssh).fs.mkdir "#{scratch}/file_2", -> # ok
         , 60
         setTimeout ->
-          fs.mkdir ssh, "#{scratch}/file_3", -> # ok
+          nikita(ssh: ssh).fs.mkdir "#{scratch}/file_3", -> # ok
         , 90
       .wait.execute
         cmd: [

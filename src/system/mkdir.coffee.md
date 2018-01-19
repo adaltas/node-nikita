@@ -128,7 +128,6 @@ require('nikita').system.mkdir({
               options.log message: "Directory \"#{directory}\" created ", level: 'INFO', module: 'nikita/lib/system/mkdir'
               state = true
               callback()
-            , 1000
           .next (err) ->
             return callback err if err
             callback()

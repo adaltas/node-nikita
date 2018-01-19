@@ -2,7 +2,6 @@
 nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
-fs = require 'ssh2-fs'
 
 describe 'wait.exist', ->
 
@@ -17,7 +16,7 @@ describe 'wait.exist', ->
       status.should.be.false()
     .call ->
       setTimeout ->
-        fs.mkdir ssh, "#{scratch}/a_dir", -> # ok
+        nikita(ssh: ssh).fs.mkdir "#{scratch}/a_dir"
       , 100
     .wait.exist
       target: "#{scratch}/a_dir"

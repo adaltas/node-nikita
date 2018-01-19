@@ -3,7 +3,6 @@ nikita = require '../../src'
 misc = require '../../src/misc'
 test = require '../test'
 they = require 'ssh2-they'
-fs = require 'ssh2-fs'
 
 describe 'file.properties', ->
 
@@ -27,10 +26,9 @@ describe 'file.properties', ->
       content: another_key: 'another value'
     , (err, status) ->
       status.should.be.false() unless err
-    .call (_, callback)->
-      fs.readFile ssh, "#{scratch}/file.properties", 'ascii', (err, data) ->
-        data.should.eql "another_key=another value\n" unless err
-        callback err
+    .file.assert
+      target: "#{scratch}/file.properties"
+      content: "another_key=another value\n"
     .promise()
 
   they 'option merge', (ssh) ->
@@ -53,10 +51,9 @@ describe 'file.properties', ->
       merge: true
     , (err, status) ->
       status.should.be.false() unless err
-    .call (_, callback)->
-      fs.readFile ssh, "#{scratch}/file.properties", 'ascii', (err, data) ->
-        data.should.eql "a_key=a value\nanother_key=another value\n" unless err
-        callback err
+    .file.assert
+      target: "#{scratch}/file.properties"
+      content: "a_key=a value\nanother_key=another value\n"
     .promise()
 
   they 'honor separator', (ssh) ->
@@ -71,10 +68,9 @@ describe 'file.properties', ->
       content: another_key: 'another value'
       separator: ' '
       merge: true
-    .call (_, callback)->
-      fs.readFile ssh, "#{scratch}/file.properties", 'ascii', (err, data) ->
-        data.should.eql "a_key a value\nanother_key another value\n" unless err
-        callback err
+    .file.assert
+      target: "#{scratch}/file.properties"
+      content: "a_key a value\nanother_key another value\n"
     .promise()
 
   they 'honor sort', (ssh) ->
@@ -86,21 +82,18 @@ describe 'file.properties', ->
         b_key: 'value'
         a_key: 'value'
       sort: false
-    .call (_, callback) ->
-      fs.readFile ssh, "#{scratch}/file.properties", 'ascii', (err, data) ->
-        return callback err if err
-        data.should.eql "b_key=value\na_key=value\n"
-        callback()
+    .file.assert
+      target: "#{scratch}/file.properties"
+      content: "b_key=value\na_key=value\n"
     .file.properties
       target: "#{scratch}/file.properties"
       content:
         b_key: 'value'
         a_key: 'value'
       sort: true
-    .call (_, callback) ->
-      fs.readFile ssh, "#{scratch}/file.properties", 'ascii', (err, data) ->
-        data.should.eql "a_key=value\nb_key=value\n" unless err
-        callback err
+    .file.assert
+      target: "#{scratch}/file.properties"
+      content: "a_key=value\nb_key=value\n"
     .promise()
 
   they 'option comments', (ssh) ->
@@ -120,10 +113,9 @@ describe 'file.properties', ->
         a_key: 'new value'
       merge: true
       comment: true
-    .call (_, callback) ->
-      fs.readFile ssh, "#{scratch}/file.properties", 'ascii', (err, data) ->
-        data.should.eql "a_key=new value\n# comment\nb_key=new value\n" unless err
-        callback err
+    .file.assert
+      target: "#{scratch}/file.properties"
+      content: "a_key=new value\n# comment\nb_key=new value\n"
     .promise()
 
   they 'option trim + merge', (ssh) ->
@@ -140,8 +132,7 @@ describe 'file.properties', ->
         'b_key ': ' b value'
       merge: true
       trim: true
-    .call (_, callback) ->
-      fs.readFile ssh, "#{scratch}/file.properties", 'ascii', (err, data) ->
-        data.should.eql "a_key=a value\nb_key=b value\n" unless err
-        callback err
+    .file.assert
+      target: "#{scratch}/file.properties"
+      content: "a_key=a value\nb_key=b value\n"
     .promise()

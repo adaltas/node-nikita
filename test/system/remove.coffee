@@ -1,7 +1,6 @@
 
 nikita = require '../../src'
 misc = require '../../src/misc'
-fs = require 'ssh2-fs'
 path = require 'path'
 test = require '../test'
 they = require 'ssh2-they'
@@ -59,39 +58,35 @@ describe 'system.remove', ->
   they 'a link', (ssh) ->
     nikita
       ssh: ssh
-    .call (options, callback) ->
-      fs.symlink options.ssh, __filename, "#{scratch}/test", callback
+    .file.touch "#{scratch}/a_file"
+    .fs.symlink source: "#{scratch}/a_file", target: "#{scratch}/a_link"
     .system.remove
-      source: "#{scratch}/test"
+      source: "#{scratch}/a_link"
     , (err, status) ->
       status.should.be.true() unless err
-    .call (options, callback) ->
-      fs.lstat options.ssh, "#{scratch}/test", (err, stat) ->
-        err.code.should.eql 'ENOENT'
-        callback()
+    .file.assert
+      target: "#{scratch}/a_link"
+      not: true
     .promise()
 
   they 'use a pattern', (ssh) ->
-    # todo, not working yet over ssh
     nikita
       ssh: ssh
-    .system.copy
-      source: "#{__dirname}/../resources/"
-      target: "#{scratch}/"
+    .file.touch "#{scratch}/a_dir/a_file"
+    .file.touch "#{scratch}/a_dir.tar.gz"
+    .file.touch "#{scratch}/a_dir.tz"
+    .file.touch "#{scratch}/a_dir.zip"
     .system.remove
       source: "#{scratch}/*gz"
     , (err, status) ->
       status.should.be.true() unless err
-    .call (_, callback) ->
-      fs.readdir null, "#{scratch}", (err, files) ->
-        files.should.not.containEql 'a_dir.tar.gz'
-        files.should.not.containEql 'a_dir.tgz'
-        files.should.containEql 'a_dir.zip'
-        callback()
+    .file.assert "#{scratch}/a_dir.tar.gz", not: true
+    .file.assert "#{scratch}/a_dir.tgz", not: true
+    .file.assert "#{scratch}/a_dir.zip"
+    .file.assert "#{scratch}/a_dir", type: 'directory'
     .promise()
 
   they 'a dir', (ssh) ->
-    # @timeout 10000
     nikita
       ssh: ssh
     .system.mkdir

@@ -3,7 +3,6 @@ os = require 'os'
 nikita = require '../../src'
 they = require 'ssh2-they'
 test = require '../test'
-fs = require 'ssh2-fs'
 
 describe 'system.limits', ->
 

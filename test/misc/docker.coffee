@@ -5,7 +5,6 @@ should = require 'should'
 docker = require '../../src/misc/docker'
 test = require '../test'
 they = require 'ssh2-they'
-fs = require 'ssh2-fs'
 
 describe 'docker exec', ->
 

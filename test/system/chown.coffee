@@ -2,14 +2,13 @@
 nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
-fs = require 'ssh2-fs'
 
 describe 'system.chown', ->
 
   config = test.config()
   return if config.disable_system_user
   scratch = test.scratch @
-  
+
   they 'throw error if target does not exists', (ssh) ->
     nikita
       ssh: ssh
@@ -25,15 +24,14 @@ describe 'system.chown', ->
     .system.group.remove 'toto', gid: 1234
     .system.group 'toto', gid: 1234
     .system.user 'toto', uid: 1234, gid: 1234
-    .call (_, callback) ->
-      fs.stat ssh, "#{scratch}/a_file", (err, stat) =>
-        logs = []
-        @on 'text', (log) -> logs.push log
-        @system.chown "#{scratch}/a_file", uid: 1234, gid: 1234, (err) ->
-          logs.filter( (log) -> /^Stat /.test log.message ).length.should.eql 1 unless err
-        @system.chown "#{scratch}/a_file", uid: 1234, gid: 1234, stat: stat, (err) ->
-          logs.filter( (log) -> /^Stat /.test log.message ).length.should.eql 1 unless err
-        @next callback
+    .fs.stat target: "#{scratch}/a_file", (err, stat) ->
+      return if err
+      logs = []
+      @on 'text', (log) -> logs.push log
+      @system.chown "#{scratch}/a_file", uid: 1234, gid: 1234, (err) ->
+        logs.filter( (log) -> /^Stat /.test log.message ).length.should.eql 1 unless err
+      @system.chown "#{scratch}/a_file", uid: 1234, gid: 1234, stat: stat, (err) ->
+        logs.filter( (log) -> /^Stat /.test log.message ).length.should.eql 1 unless err
     .promise()
 
   they 'change uid and leave gid', (ssh) ->

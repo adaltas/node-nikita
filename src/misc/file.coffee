@@ -5,7 +5,6 @@ exec = require 'ssh2-exec'
 each = require 'each'
 fs = require 'fs'
 glob = require './glob'
-rimraf = require 'rimraf'
 
 module.exports = file =
   copyFile: (ssh, source, target, callback) ->
@@ -153,16 +152,3 @@ module.exports = file =
           compute files
       else
         callback Error "File type not supported"
-  ###
-  remove(ssh, path, callback)
-  ---------------------------
-  Remove a file or directory
-  ###
-  remove: (ssh, path, callback) ->
-    unless ssh
-      rimraf path, callback
-    else
-      # Not very pretty but fast and no time to try make a version of rimraf over ssh
-      child = exec ssh, "rm -rf #{path}"
-      child.on 'exit', (code) ->
-        callback null, code

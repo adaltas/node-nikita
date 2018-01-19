@@ -1,27 +1,8 @@
 
-path = require 'path'
 nikita = require '../../src'
-misc = require '../../src/misc'
 glob = require '../../src/misc/glob'
 test = require '../test'
 they = require 'ssh2-they'
-fs = require 'ssh2-fs'
-
-checkDir = (ssh, dir, callback) ->
-  fs.readdir ssh, "#{__dirname}/../resources", (err, files) ->
-    return callback err if err
-    scratchFiles = []
-    for f in files
-      continue if f.substr(0, 1) is '.'
-      scratchFiles.push f
-    fs.readdir ssh, dir, (err, files) ->
-      return callback err if err
-      dirFiles = []
-      for f in files
-        continue if f.substr(0, 1) is '.'
-        dirFiles.push f
-      scratchFiles.sort().should.eql dirFiles.sort()
-      callback()
 
 describe 'system.copy', ->
 
@@ -247,47 +228,53 @@ describe 'system.copy', ->
     they 'should copy without slash at the end', (ssh) ->
       nikita
         ssh: ssh
+      .system.mkdir "#{scratch}/source/a_dir"
+      .file.touch "#{scratch}/source/a_dir/a_file"
+      .file.touch "#{scratch}/source/a_file"
       # if the target doesn't exists, then copy as target
       .system.copy
-        source: "#{__dirname}/../resources"
-        target: "#{scratch}/toto"
+        source: "#{scratch}/source"
+        target: "#{scratch}/target_1"
       , (err, status) ->
         status.should.be.true() unless err
-      .call (_, callback) ->
-        checkDir ssh, "#{scratch}/toto", (err) ->
-          callback err
+      .file.assert "#{scratch}/target_1/a_dir/a_file"
+      .file.assert "#{scratch}/target_1/a_file"
       # if the target exists, then copy the folder inside target
+      .system.mkdir
+        target: "#{scratch}/target_2"
       .system.copy
-        source: "#{__dirname}/../resources"
-        target: "#{scratch}/toto"
+        source: "#{scratch}/source"
+        target: "#{scratch}/target_2"
       , (err, status) ->
         status.should.be.true() unless err
-      .call (_, callback) ->
-        checkDir ssh, "#{scratch}/toto/resources", (err) ->
-          callback err
+      .file.assert "#{scratch}/target_2/source/a_dir/a_file"
+      .file.assert "#{scratch}/target_2/source/a_file"
       .promise()
 
     they 'should copy the files when dir end with slash', (ssh) ->
       nikita
         ssh: ssh
+      .system.mkdir "#{scratch}/source/a_dir"
+      .file.touch "#{scratch}/source/a_dir/a_file"
+      .file.touch "#{scratch}/source/a_file"
       # if the target doesn't exists, then copy as target
       .system.copy
-        source: "#{__dirname}/../resources/"
-        target: "#{scratch}/lulu"
+        source: "#{scratch}/source/"
+        target: "#{scratch}/target_1"
       , (err, status) ->
         status.should.be.true() unless err
-      .call (_, callback) ->
-        checkDir ssh, "#{scratch}/lulu", (err) ->
-          callback err
+      .file.assert "#{scratch}/target_1/a_dir/a_file"
+      .file.assert "#{scratch}/target_1/a_file"
       # if the target exists, then copy the files inside target
+      .system.mkdir
+        target: "#{scratch}/target_2"
       .system.copy
-        source: "#{__dirname}/../resources/"
-        target: "#{scratch}/lulu"
+        source: "#{scratch}/source/"
+        target: "#{scratch}/target_2"
       , (err, status) ->
-        status.should.be.false() unless err
-      .call (_, callback) ->
-        checkDir ssh, "#{scratch}/lulu", (err) ->
-          callback err
+        status.should.be.true() unless err
+      .file.assert "#{scratch}/target_2/a_dir/a_file"
+      .file.assert "#{scratch}/target_2/a_file"
       .promise()
 
     they 'should copy hidden files', (ssh) ->

@@ -1,5 +1,4 @@
 
-fs = require 'ssh2-fs'
 nikita = require '../../src'
 path = require 'path'
 should = require 'should'
@@ -30,10 +29,8 @@ describe 'docker.cp', ->
       target: "#{scratch}/a_file"
     , (err, status) ->
       status.should.be.true() unless err
-    .call (_, callback) ->
-      fs.exists ssh, "#{scratch}/a_file", (err, exists) ->
-        exists.should.be.true() unless err
-        callback err
+    .file.assert
+      target: "#{scratch}/a_file"
     .docker.rm
       container: 'nikita_extract'
     .promise()
@@ -53,10 +50,8 @@ describe 'docker.cp', ->
       target: "#{scratch}"
     , (err, status) ->
       status.should.be.true() unless err
-    .call (_, callback) ->
-      fs.exists ssh, "#{scratch}/repositories", (err, exists) ->
-        exists.should.be.true() unless err
-        callback()
+    .file.assert
+      target: "#{scratch}/repositories"
     .docker.rm container: 'nikita_extract'
     .promise()
 
@@ -79,10 +74,8 @@ describe 'docker.cp', ->
     .docker.cp
       source: 'nikita_extract:/root/a_file'
       target: "#{scratch}"
-    .call (_, callback) ->
-      fs.exists ssh, "#{scratch}/a_file", (err, exists) ->
-        exists.should.be.true() unless err
-        callback()
+    .file.assert
+      target: "#{scratch}/a_file"
     .docker.rm container: 'nikita_extract'
     .promise()
 
@@ -105,9 +98,7 @@ describe 'docker.cp', ->
     .docker.cp
       source: "nikita_extract:/root/#{path.basename __filename}"
       target: "#{scratch}"
-    .call (_, callback) ->
-      fs.exists ssh, "#{scratch}/#{path.basename __filename}", (err, exists) ->
-        exists.should.be.true() unless err
-        callback()
+    .file.assert
+      target: "#{scratch}/#{path.basename __filename}"
     .docker.rm container: 'nikita_extract'
     .promise()

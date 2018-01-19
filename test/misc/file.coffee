@@ -5,7 +5,6 @@ should = require 'should'
 crypto = require 'crypto'
 test = require '../test'
 they = require 'ssh2-they'
-fs = require 'ssh2-fs'
 
 describe 'file', ->
 
@@ -85,25 +84,3 @@ describe 'file', ->
           err.message.should.eql "Invalid Target: no such file or directory, open \"/tmp/nikita-test/a_dir/a_target\""
           callback()
       .promise()
-
-  describe 'remove', ->
-
-    they 'a dir', (ssh) ->
-      nikita
-        ssh: ssh
-      .system.mkdir
-        target: "#{scratch}/remove_dir"
-      .call (_, callback ) ->
-        misc.file.remove ssh, "#{scratch}/remove_dir", callback
-      .file.assert
-        target: "#{scratch}/remove_dir"
-        not: true
-      .promise()
-
-    they 'handle a missing remote dir', (ssh, next) ->
-      misc.file.remove ssh, "#{scratch}/remove_missing_dir", (err) ->
-        (err is null).should.be.True()
-        fs.exists ssh, "#{scratch}/remove_missing_dir", (err, exists) ->
-          return next err if err
-          exists.should.be.false()
-          next()

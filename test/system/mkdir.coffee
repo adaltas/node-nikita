@@ -1,10 +1,8 @@
 
 nikita = require '../../src'
-misc = require '../../src/misc'
 path = require 'path'
 test = require '../test'
 they = require 'ssh2-they'
-fs = require 'ssh2-fs'
 
 describe 'system.mkdir', ->
 

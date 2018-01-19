@@ -2,7 +2,6 @@
 iptables = require '../../src/misc/iptables'
 test = require '../test'
 they = require 'ssh2-they'
-fs = require 'ssh2-fs'
 
 describe 'misc iptables', ->
 
@@ -328,7 +327,3 @@ describe 'misc iptables', ->
       iptables.cmd(oldrules, iptables.normalize [
         { chain: 'INPUT', jump: 'ACCEPT', source: "10.10.10.0/24", comment: 'Local Network', before: {'in-interface': 'lo', jump: 'ACCEPT' } }
       ]).should.eql []
-
-
-
-

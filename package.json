@@ -39,7 +39,6 @@
     "nunjucks": "~3.0.1",
     "pad": "~2.0.3",
     "regexp-quote": "~0.0.0",
-    "rimraf": "~2.6.2",
     "semver": "^5.4.1",
     "ssh2-connect": "~2.0.1",
     "ssh2-exec": "~0.5.0",

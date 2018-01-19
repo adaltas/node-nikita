@@ -3,7 +3,6 @@ nikita = require '../../src'
 misc = require '../../src/misc'
 test = require '../test'
 they = require 'ssh2-they'
-fs = require 'ssh2-fs'
 
 describe 'file', ->
 
@@ -891,10 +890,9 @@ describe 'file', ->
         backup: '.bck'
       , (err, status) ->
         status.should.be.false() unless err
-      .call (_, callback) ->
-        fs.exists ssh, "#{scratch}/file.bck", (err, exists) ->
-          exists.should.be.false() unless err
-          callback err
+      .file.assert
+        target: "#{scratch}/file.bck"
+        not: true
       .file
         target: "#{scratch}/file"
         content: 'Hello Node'

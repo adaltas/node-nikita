@@ -19,9 +19,8 @@ Recursively remove files, directories and links.
 
 ## Implementation details
 
-Files are removed localling using the [rimraf] package. The Unix "rm" utility
-is used over an SSH remote connection. Porting [rimraf] over SSH would be too 
-slow.
+Files are removed localling using the Unix "rm" utility. Porting [rimraf] over
+SSH would be too slow.
 
 ## Simple example
 
@@ -67,16 +66,18 @@ require('nikita')
       options.target ?= options.source
       return callback Error "Missing option: \"target\"" unless options.target?
       # Start real work
-      glob ssh, options.target, (err, files) ->
+      glob ssh, options.target, (err, files) =>
         return callback err if err
-        status = false
         each files
-        .call (file, callback) ->
-          status = true
+        .call (file, callback) =>
           options.log message: "Removing file #{file}", level: 'INFO', module: 'nikita/lib/system/remove'
-          misc.file.remove ssh, file, callback
+          @system.execute
+            cmd: """
+            rm -rf '#{file}'
+            """
+          , callback
         .next (err) ->
-          callback err, status
+          callback err, files.length
 
 ## Dependencies
 
