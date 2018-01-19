@@ -7,7 +7,9 @@ Change permissions of a file.
 
     module.exports = status: false, handler: (options, callback) ->
       options.log message: "Entering fs.chmod", level: 'DEBUG', module: 'nikita/lib/fs/chmod'
-      # Validate parameters
+      # Normalize options
+      options.target = options.argument if options.argument?
+      # Validate options
       throw Error "Missing target: #{JSON.stringify options.target}" unless options.target
       throw Error "Missing option 'mode'" unless options.mode
       options.mode = options.mode.toString(8).substr(-4) if typeof options.mode is 'number'

@@ -7,7 +7,9 @@ Change permissions of a file.
 
     module.exports = status: false, handler: (options, callback) ->
       options.log message: "Entering fs.copy", level: 'DEBUG', module: 'nikita/lib/fs/copy'
-      # Validate parameters
+      # Normalize options
+      options.target = options.argument if options.argument?
+      # Validate options
       throw Error "Missing target: #{JSON.stringify options.target}" unless options.target
       throw Error "Missing source: #{JSON.stringify options.source}" unless options.source
       @system.execute

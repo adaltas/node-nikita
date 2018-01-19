@@ -39,3 +39,12 @@ describe 'fs.copy', ->
       target: "#{scratch}/a_target"
       content: 'some source content'
     .promise()
+
+  they 'option argument default to target', (ssh) ->
+    nikita
+      ssh: ssh
+    .file.touch "#{scratch}/a_source"
+    .fs.copy "#{scratch}/a_target",
+      source: "#{scratch}/a_source"
+    .file.assert "#{scratch}/a_target"
+    .promise()

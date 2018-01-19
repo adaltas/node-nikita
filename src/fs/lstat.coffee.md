@@ -8,6 +8,8 @@ stat-ed, not the file that it refers to.
 
     module.exports = status: false, handler: (options, callback) ->
       options.log message: "Entering fs.lstat", level: 'DEBUG', module: 'nikita/lib/fs/lstat'
+      # Normalize options
+      options.target = options.argument if options.argument?
       throw Error "Required Option: the \"target\" option is mandatory" unless options.target
       @fs.stat
         target: options.target

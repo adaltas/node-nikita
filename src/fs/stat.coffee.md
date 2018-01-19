@@ -10,6 +10,8 @@ Options include:
 
     module.exports = status: false, handler: (options, callback) ->
       options.log message: "Entering fs.stat", level: 'DEBUG', module: 'nikita/lib/fs/stat'
+      # Normalize options
+      options.target = options.argument if options.argument?
       options.dereference ?= true
       dereference = if options.dereference then '-L' else ''
       throw Error "Required Option: the \"target\" option is mandatory" unless options.target
@@ -32,9 +34,9 @@ Options include:
           mode: parseInt '0x' + rawmodehex, 16
           uid: parseInt uid, 10
           gid: parseInt gid, 10
-          size: parseInt size, 8
-          atime: parseInt atime, 8 # File Access Time
-          mtime: parseInt mtime, 8 # File Modify Time
+          size: parseInt size, 10
+          atime: parseInt atime, 10 # File Access Time
+          mtime: parseInt mtime, 10 # File Modify Time
         callback null, stats
 
     Stats = (initial) ->

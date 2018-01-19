@@ -8,6 +8,8 @@ stat-ed, not the file that it refers to.
 
     module.exports = status: false, handler: (options, callback) ->
       options.log message: "Entering fs.exists", level: 'DEBUG', module: 'nikita/lib/fs/exists'
+      # Normalize options
+      options.target = options.argument if options.argument?
       @fs.stat
         target: options.target
         dereference: true

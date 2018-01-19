@@ -7,10 +7,11 @@ Change ownership of a file.
 
     module.exports = status: false, handler: (options, callback) ->
       options.log message: "Entering fs.chown", level: 'DEBUG', module: 'nikita/lib/fs/chown'
-      # Normalize parameters
+      # Normalize options
+      options.target = options.argument if options.argument?
       options.uid = null if options.uid is false
       options.gid = null if options.gid is false
-      # Validate parameters
+      # Validate options
       throw Error "Missing target: #{JSON.stringify options.target}" unless options.target
       throw Error "Missing one of uid or gid option" unless options.uid? or options.gid?
       @system.execute

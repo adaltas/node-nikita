@@ -5,7 +5,8 @@
 
     module.exports = status: false, handler: (options, callback) ->
       options.log message: "Entering fs.readFile", level: 'DEBUG', module: 'nikita/lib/fs/readFile'
-      ssh = @ssh options.ssh
+      # Normalize options
+      options.target = options.argument if options.argument?
       @system.execute
         cmd: """
         [ ! -e '#{options.target}' ] && exit 2

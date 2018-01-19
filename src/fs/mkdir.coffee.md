@@ -7,6 +7,8 @@ Make directories.
 
     module.exports = status: false, handler: (options, callback) ->
       options.log message: "Entering fs.mkdir", level: 'DEBUG', module: 'nikita/lib/fs/mkdir'
+      # Normalize options
+      options.target = options.argument if options.argument?
       # Validate parameters
       throw Error "Missing target: #{JSON.stringify options.target}" unless options.target
       if options.mode

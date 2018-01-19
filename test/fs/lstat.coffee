@@ -39,3 +39,16 @@ describe 'fs.lstat', ->
       stat.isDirectory().should.be.false()
       stat.isSymbolicLink().should.be.true()
     .promise()
+
+  they 'option argument default to target', (ssh) ->
+    nikita
+      ssh: ssh
+    .file.touch "#{scratch}/a_source"
+    .system.link
+      target: "#{scratch}/a_target"
+      source: "#{scratch}/a_source"
+    .fs.lstat
+      target: "#{scratch}/a_target"
+    , (err, stat) ->
+      stat.isSymbolicLink().should.be.true() unless err
+    .promise()

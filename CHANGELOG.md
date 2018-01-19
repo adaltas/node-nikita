@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* fs: set default argument to target
 * sudo: start working on new option
 * conditions: fix test after latest ssh move to action
 * file.assert: handle root uid and gid

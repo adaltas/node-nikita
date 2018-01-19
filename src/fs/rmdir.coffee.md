@@ -10,7 +10,8 @@ Delete a directory.
 
     module.exports = status: false, handler: (options) ->
       options.log message: "Entering fs.rmdir", level: 'DEBUG', module: 'nikita/lib/fs/rmdir'
-      ssh = @ssh options.ssh
+      # Normalize options
+      options.target = options.argument if options.argument?
       throw Error "Required Option: the \"target\" option is mandatory" unless options.target
       @system.execute
         cmd: """

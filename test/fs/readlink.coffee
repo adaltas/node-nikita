@@ -1,7 +1,6 @@
 
 nikita = require '../../src'
 they = require 'ssh2-they'
-fs = require 'ssh2-fs'
 test = require '../test'
 
 describe 'fs.readlink', ->

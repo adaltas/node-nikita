@@ -29,3 +29,12 @@ describe 'fs.exists', ->
       throw err if err
       exists.should.be.true()
     .promise()
+
+  they 'option argument default to target', (ssh) ->
+    nikita
+      ssh: ssh
+    .file.touch "#{scratch}/a_file"
+    .fs.exists "#{scratch}/a_file"
+    , (err, exists) ->
+      exists.should.be.true() unless err
+    .promise()
