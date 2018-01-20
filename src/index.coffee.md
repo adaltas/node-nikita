@@ -109,6 +109,10 @@ functions share a common API with flexible options.
         yaml: 'nikita/file/yaml'
         types:
           ceph_conf: 'nikita/file/types/ceph_conf'
+          etc_group:
+            'read': 'nikita/file/types/etc_group/read'
+          etc_passwd:
+            'read': 'nikita/file/types/etc_passwd/read'
           locale_gen: 'nikita/file/types/locale_gen'
           pacman_conf: 'nikita/file/types/pacman_conf'
           ssh_authorized_keys: 'nikita/file/types/ssh_authorized_keys'
