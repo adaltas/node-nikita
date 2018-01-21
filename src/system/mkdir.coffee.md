@@ -106,10 +106,13 @@ require('nikita').system.mkdir({
               else # a file or symlink exists at this location
                 return next Error "Not a directory: #{JSON.stringify directory}"
           .next callback
-        do_create_parent = (directories) ->
-          return do_create directories unless options.uid or options.guid
-          uid_gid ssh, options, (err) ->
-            return next err if err
+        do_create_parent = (directories) =>
+          @system.uid_gid
+            uid: options.uid
+            gid: options.gid
+          , (err, status, {uid, gid}) ->
+            options.uid = uid
+            options.gid = gid
             do_create directories
         do_create = (directories) =>
           each(directories.reverse())
@@ -158,4 +161,3 @@ require('nikita').system.mkdir({
     each = require 'each'
     misc = require '../misc'
     wrap = require '../misc/wrap'
-    uid_gid = require '../misc/uid_gid'

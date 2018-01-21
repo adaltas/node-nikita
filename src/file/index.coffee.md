@@ -346,19 +346,22 @@ require('nikita').file({
           options.log message: 'Write target with user function', level: 'INFO', module: 'nikita/lib/file'
           options.target options.content
           return callback()
-        uid_gid ssh, options, (err) =>
-          return callback err if err
-          # File gid default to user gid if file is new
-          options.gid = options.default_gid unless targetStat
-          options.flags ?= 'a' if options.append
-          # Ownership and permission are also handled
-          # Mode is setted by default here to avoid a chmod 644 on existing file if option.mode is not specified
-          options.mode ?= 0o0644
-          @fs.writeFile
-            target: options.target
-            flags: options.flags
-            content: options.content
-          , callback
+        options.flags ?= 'a' if options.append
+        # Ownership and permission are also handled
+        # Mode is setted by default here to avoid a chmod 644 on existing file if option.mode is not specified
+        options.mode ?= 0o0644
+        @fs.writeFile
+          target: options.target
+          flags: options.flags
+          content: options.content
+        , callback
+      @system.uid_gid
+        uid: options.uid
+        gid: options.gid
+        shy: true
+      , (err, status, {uid, gid, default_gid}) ->
+        options.uid = uid
+        options.gid = unless targetStat then default_gid else gid
       @call ->
         # Option gid is set at runtime if target is a new file
         @system.chown
@@ -387,6 +390,5 @@ require('nikita').file({
     misc = require '../misc'
     diff = require '../misc/diff'
     string = require '../misc/string'
-    uid_gid = require '../misc/uid_gid'
 
 [diffLines]: https://github.com/kpdecker/jsdiff

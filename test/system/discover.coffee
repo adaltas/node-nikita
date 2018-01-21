@@ -60,8 +60,8 @@ describe 'system.discover', ->
       @system.discover cache: true, (err, status) -> status.should.be.true() unless err
       @system.discover cache: true, (err, status) -> status.should.be.false() unless err
       @call (options) ->
-        options.store['nikita:system:type'].should.match /^((redhat)|(centos))/
-        options.store['nikita:system:release'].should.match /^[6|7]./
+        @store['nikita:system:type'].should.match /^((redhat)|(centos))/
+        @store['nikita:system:release'].should.match /^[6|7]./
     .promise()
 
   they 'honors cache on Ubuntu', (ssh) ->
@@ -73,6 +73,6 @@ describe 'system.discover', ->
       @system.discover cache: true, (err, status) -> status.should.be.true() unless err
       @system.discover cache: true, (err, status) -> status.should.be.false() unless err
       @call (options) ->
-        options.store['nikita:system:type'].should.match /^(ubuntu)/
-        options.store['nikita:system:release'].should.match /^\d+./
+        @store['nikita:system:type'].should.match /^(ubuntu)/
+        @store['nikita:system:release'].should.match /^\d+./
     .promise()

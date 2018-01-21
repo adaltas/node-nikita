@@ -42,14 +42,14 @@ nikita.system.discover({
       os.release = null
       options.strict ?= false
       options.cache ?= false
-      if options.cache and options.store['nikita:system:type']
+      if options.cache and @store['nikita:system:type']
         return callback null, false, 
-          type: options.store['nikita:system:type']
-          release: options.store['nikita:system:release']
+          type: @store['nikita:system:type']
+          release: @store['nikita:system:release']
       @system.execute
         cmd: 'cat /etc/redhat-release'
         if_exec: "cat /etc/redhat-release | egrep '(Red\\sHat)|(CentOS)'"
-        unless: options.store['nikita:system:type']?
+        unless: @store['nikita:system:type']?
       , (err, status, stdout, stderr) ->
         throw err if err
         return unless status
@@ -68,8 +68,8 @@ nikita.system.discover({
           splits = line.split ' '
           os.release = splits[splits.indexOf('release')+1]
         if options.cache
-          options.store['nikita:system:type'] = os.type
-          options.store['nikita:system:release'] = os.release
+          @store['nikita:system:type'] = os.type
+          @store['nikita:system:release'] = os.release
         throw Error 'OS not supported' if options.strict and os.type not in ['redhat', 'centos', 'oracle']
       @system.execute
         cmd: """
@@ -77,7 +77,7 @@ nikita.system.discover({
           echo "$DISTRIB_ID,$DISTRIB_RELEASE"
         """
         if_exec: "cat /etc/lsb-release | egrep 'Ubuntu'"
-        unless: -> options.store['nikita:system:type']?
+        unless: -> @store['nikita:system:type']?
       , (err, status, stdout, stderr) ->
         throw err if err
         return unless status
@@ -86,8 +86,8 @@ nikita.system.discover({
         os.type = distrib_id.toLowerCase()
         os.release = distrib_release
         if options.cache
-          options.store['nikita:system:type'] = os.type
-          options.store['nikita:system:release'] = os.release
+          @store['nikita:system:type'] = os.type
+          @store['nikita:system:release'] = os.release
         throw Error 'OS not supported' if options.strict and os.type not in ['ubuntu']
       @next (err, status) ->
         callback err, status, os

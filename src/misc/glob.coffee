@@ -47,8 +47,10 @@ module.exports = (ssh, pattern, options, callback) ->
     stdout.push data.toString()
   child.on 'error', callback
   child.on 'close', (code) ->
-    files = string.lines stdout.join('\n').trim()
-    files = files.filter (file) -> minimatch.match file
+    # console.log files
+    files = string.lines stdout.join('').trim()
+    files = files.filter (file) ->
+      minimatch.match file
     for s in minimatch.set
       n = 0
       while typeof s[n] is "string" then n++

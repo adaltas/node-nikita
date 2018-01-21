@@ -70,7 +70,7 @@ Global options can be alternatively set with the "log_md" property.
         'text': (log) ->
           content = []
           content.push "#{log.message}"
-          content.push " (#{log.level}, written by #{log.module})" if log.module
+          content.push " (#{log.total_depth}.#{log.level}, written by #{log.module})" if log.module
           content.push "\n"
           content.join ''
 

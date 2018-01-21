@@ -15,12 +15,12 @@
         obj.options = {}
       obj.registry ?= {}
       obj.propagation ?= obj.options.propagation or {}
+      obj.store ?= {}
       # Merge global default propagation
       for k, v of module.exports.propagation
         obj.propagation[k] = v unless obj.propagation[k] isnt undefined
       # Internal state
       state = {}
-      state.store = {}
       state.properties = {}
       state.stack = []
       state.todos = todos_create()
@@ -130,7 +130,6 @@
           opts.handler ?= handler if handler
           opts.callback ?= callback if callback
           opts.user_args = true if enrich and opts.callback?.length > 2
-          opts.store ?= state.store if enrich and state.store
           opts.once = ['handler'] if opts.once is true
           delete opts.once if opts.once is false
           opts.once = opts.once.sort() if Array.isArray opts.once
@@ -199,11 +198,11 @@
           obj.emit? log.type, log unless log_disabled
         options.log._nikita_ = true
         if options.source and match = /~($|\/.*)/.exec options.source
-          unless state.store.ssh
+          unless obj.store['nikita:ssh:connection']
           then options.source = path.join process.env.HOME, match[1]
           else options.source = path.posix.join '.', match[1]
         if options.target and match = /~($|\/.*)/.exec options.target
-          unless state.store.ssh
+          unless obj.store['nikita:ssh:connection']
           then options.target = path.join process.env.HOME, match[1]
           else options.target = path.posix.join '.', match[1]
         options
@@ -592,7 +591,7 @@
         proxy
       if obj.options.ssh
         if obj.options.ssh.config
-          state.store.ssh = obj.options.ssh
+          obj.store['nikita:ssh:connection'] = obj.options.ssh
           delete obj.options.ssh
         else
           proxy.ssh.open obj.options.ssh if not obj.options.no_ssh

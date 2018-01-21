@@ -301,5 +301,5 @@ describe 'system.cgroups', ->
             'cpu.cfs_period_us': '"100000"'
         merge: true
       .call (options) ->
-        options.store['nikita:system:type'].should.match /^((redhat)|(centos))/
+        @store['nikita:system:type'].should.match /^((redhat)|(centos))/
       .promise()

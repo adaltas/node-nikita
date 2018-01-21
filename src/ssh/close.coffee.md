@@ -11,8 +11,9 @@ There are no options.
 
     module.exports = handler: (options, callback) ->
       options.log message: "Entering ssh.close", level: 'DEBUG', module: 'nikita/lib/ssh/close'
-      return callback() unless options.store.ssh
-      options.store.ssh.end()
-      options.store.ssh.on 'error', (err) -> callback err
-      options.store.ssh.on 'end', -> callback null, true
-      options.store.ssh = undefined
+      return callback() unless @store['nikita:ssh:connection']
+      ssh = @store['nikita:ssh:connection']
+      ssh.end()
+      ssh.on 'error', (err) -> callback err
+      ssh.on 'end', -> callback null, true
+      @store['nikita:ssh:connection'] = undefined

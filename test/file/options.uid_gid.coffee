@@ -3,7 +3,7 @@ nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
-describe 'system.chown', ->
+describe 'file options uid gid', ->
 
   config = test.config()
   return if config.disable_system_user
@@ -51,5 +51,5 @@ describe 'system.chown', ->
       uid: 'toto'
       relax: true
     , (err) ->
-      err.message.should.eql 'Invalid User: toto'
+      err.message.should.eql 'Invalid Option: no uid matching "toto"'
     .promise()

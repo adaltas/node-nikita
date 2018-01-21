@@ -34,16 +34,25 @@ require('nikita').krb5.ticket({
       throw Error "Incoherent options: expects one of keytab or password" if not options.keytab and not options.password
       # SSH connection
       ssh = @ssh options.ssh
-      @call (_, callback) ->
-        uid_gid ssh, options, callback
+      @system.uid_gid
+        uid: options.uid
+        gid: options.gid
+        shy: true
+      , (err, status, {uid, gid, default_gid}) ->
+        options.uid = uid
+        options.gid = gid
       @system.execute
         cmd: """
         if #{krb5.su options, 'klist -s'}; then exit 3; fi
         #{krb5.kinit options}
         """
         code_skipped: 3
+      @system.chown
+        if: options.uid? or options.gid?
+        uid: options.uid
+        gid: options.gid
+        target: options.target
 
 ## Dependencies
 
     krb5 = require '../misc/krb5'
-    uid_gid = require '../misc/uid_gid'

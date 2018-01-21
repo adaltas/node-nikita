@@ -54,4 +54,4 @@ require('nikita').service.start([{
           cmd: cmd
         , (err, restarted) ->
           throw err if err
-          options.store["nikita.service.#{options.name}.status"] = 'started' if restarted
+          @store["nikita.service.#{options.name}.status"] = 'started' if restarted

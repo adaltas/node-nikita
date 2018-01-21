@@ -40,3 +40,16 @@ describe 'system.group', ->
     .system.group 'toto', gid: '', relax: true, (err, status) ->
       err.message.should.eql 'Invalid gid option'
     .promise()
+  
+  they 'clean the cache', (ssh) ->
+    nikita
+      ssh: ssh
+    .system.group.remove 'toto'
+    .call ->
+      (@store['nikita:etc_group'] is undefined).should.be.true()
+    .file.types.etc_group.read cache: true, (err, status, groups) ->
+      @store['nikita:etc_group'].should.be.an.Object()
+    .system.group 'toto', cache: true, (err, status) ->
+      (@store['nikita:etc_group'] is undefined).should.be.true()
+    .promise()
+    

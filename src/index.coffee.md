@@ -186,6 +186,7 @@ functions share a common API with flexible options.
         move: 'nikita/system/move'
         remove: 'nikita/system/remove'
         tmpfs: 'nikita/system/tmpfs'
+        uid_gid: 'nikita/system/uid_gid'
         user:
           '': 'nikita/system/user/index'
           remove: 'nikita/system/user/remove'

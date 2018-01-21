@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* store: move from options to context
 * uid gid: externalize reading to etc_passwd and etc_group
 * test: limit usage of ssh2-fs
 * fs: set default argument to target

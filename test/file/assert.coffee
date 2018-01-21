@@ -403,7 +403,7 @@ describe 'file.assert', ->
         , (err) ->
           err.message.should.eql "Unexpected gid: expected \"1\" and got \"0\""
       , (err, status) =>
-        @skip()
+        @skip() unless status
       .promise()
   
   describe 'option trim', ->

@@ -75,7 +75,6 @@ require('nikita').service([{
       chkname = options.chk_name or options.srv_name or options.name
       srvname = options.srv_name or options.chk_name or options.name
       options.action = options.action.split(',') if typeof options.action is 'string'
-      options.store ?= {}
       @service.install
         name: pkgname
         cache: options.cache

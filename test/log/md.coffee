@@ -45,7 +45,7 @@ describe 'log.md', ->
       options.log message: 'ok', module: 'nikita/test/log/md'
     .file.assert
       source: "#{scratch}/localhost.log"
-      content: /^ok \(INFO, written by nikita\/test\/log\/md\)\n/
+      content: /^ok \(1.INFO, written by nikita\/test\/log\/md\)\n/
       log: false
     .assert
       status: false

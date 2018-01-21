@@ -93,32 +93,23 @@ you are a member of the "wheel" group (gid of "10") with the command
       options.password_sync ?= true
       options.groups = options.groups.split ',' if typeof options.groups is 'string'
       throw Error "Invalid option 'shell': #{JSON.strinfigy options.shell}" if options.shell? typeof options.shell isnt 'string'
-      modified = false
       user_info = groups_info = null
-      @call (_, callback) ->
-        # Note, we shall be able to remove the call to "uid_gid"
-        # because it itself call "uid_gid.passwd" and "uid_gid.group"
-        # which are called below
-        uid_gid ssh, options, callback
-      @call (_, callback) ->
-        options.log message: "Get user information for #{options.name}", level: 'DEBUG', module: 'nikita/lib/system/user/add'
-        options.store.cache_passwd = undefined # Clear cache if any
-        uid_gid.passwd ssh, options.store, (err, users) ->
-          return callback err if err
-          options.log message: "Got #{JSON.stringify users[options.name]}", level: 'INFO', module: 'nikita/lib/system/user/add'
-          user_info = users[options.name]
-          callback()
-      @call
-        # Get group information if
-        # * user already exists
-        # * we need to compare groups membership
+      @file.types.etc_passwd.read
+        cache: options.cache
+      , (err, status, users) ->
+        user_info = users[options.name]
+        options.log if user_info
+        then message: "Got user information for #{JSON.stringify options.name}", level: 'DEBUG', module: 'nikita/lib/system/group'
+        else message: "User #{JSON.stringify options.name} not present", level: 'DEBUG', module: 'nikita/lib/system/group'
+      # Get group information if
+      # * user already exists
+      # * we need to compare groups membership
+      @file.types.etc_group.read
         if: -> user_info and options.groups
-      , (_, callback) ->
-        options.store.cache_group = null # Clear cache if any
-        uid_gid.group ssh, options.store, (err, groups) ->
-          return callback err if err
-          groups_info = groups
-          callback()
+        cache: options.cache
+      , (err, status, groups) ->
+        groups_info = groups
+        options.log message: "Got group information for #{JSON.stringify options.name}", level: 'DEBUG', module: 'nikita/lib/system/group' if groups_info
       @call if: options.home, ->
         @system.mkdir
           unless_exists: path.dirname options.home
@@ -151,13 +142,6 @@ you are a member of the "wheel" group (gid of "10") with the command
         , (err, status, stdout) ->
           throw err if err
           options.log message: "User defined elsewhere than '/etc/passwd', exit code is 9", level: 'WARN', module: 'nikita/lib/system/user/add'
-        # @system.chown
-        #   if: options.home?
-        #   if_exists: options.home
-        #   unless: options.no_home_ownership
-        #   target: options.home
-        #   uid: options.uid
-        #   gid: options.gid
       @call if: (-> user_info), ->
         changed = []
         for k in ['uid', 'home', 'shell', 'comment', 'gid']
@@ -203,12 +187,20 @@ you are a member of the "wheel" group (gid of "10") with the command
           arch_chroot: options.arch_chroot
           rootdir: options.rootdir
           sudo: options.sudo
-        , (err, modified) ->
+        , (err, status) ->
           throw err if err
-          options.log message: "Password modified", level: 'WARN', module: 'nikita/lib/system/user/add' if modified
+          options.log message: "Password modified", level: 'WARN', module: 'nikita/lib/system/user/add' if status
+      # Reset Cache
+      @call
+        if: -> @status()
+      , ->
+        delete  @store['nikita:etc_passwd']
+      @call
+        if: -> @status() and options.groups
+      , ->
+        delete  @store['nikita:etc_group']
 
 ## Dependencies
 
     path = require 'path'
     string = require '../../misc/string'
-    uid_gid = require '../../misc/uid_gid'

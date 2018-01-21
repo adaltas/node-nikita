@@ -27,14 +27,14 @@ describe 'system.execute', ->
     nikita
       ssh: ssh
     .call (options) ->
-      @test_context = 'test context'
-      options.store.test_options = 'test options'
+      @store['test:a_key'] = 'test context'
     .system.execute
-      cmd: -> "text='#{@test_context}'; echo $text"
+      cmd: -> "text='#{@store['test:a_key']}'; echo $text"
     , (err, status, stdout, stderr) ->
       stdout.should.eql 'test context\n' unless err
     .system.execute
-      cmd: (options) -> "text='#{options.store.test_options}'; echo $text"
+      a_key: 'test options'
+      cmd: (options) -> "text='#{options.a_key}'; echo $text"
     , (err, status, stdout, stderr) ->
       stdout.should.eql 'test options\n' unless err
     .promise()

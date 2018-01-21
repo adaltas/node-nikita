@@ -5,6 +5,8 @@ Create or modify a Unix group.
 
 ## Options
 
+* `cache` (boolean)   
+  Retrieve groups information from cache.
 * `name`   
   Login name of the group.   
 * `system`   
@@ -50,14 +52,13 @@ The result of the above action can be viewed with the command
       options.gid = parseInt options.gid, 10 if typeof options.gid is 'string'
       throw Error 'Invalid gid option' if options.gid? and isNaN options.gid
       info = null
-      @call (_, callback) ->
-        options.log message: "Get group information for '#{options.name}'", level: 'DEBUG', module: 'nikita/lib/system/group'
-        options.store.cache_group = undefined # Clear cache if any
-        uid_gid.group ssh, options.store, (err, groups) ->
-          return callback err if err
-          info = groups[options.name]
-          options.log message: "Got #{JSON.stringify info}", level: 'INFO', module: 'nikita/lib/system/group'
-          callback()
+      @file.types.etc_group.read
+        cache: options.cache
+      , (err, status, groups) ->
+        info = groups[options.name]
+        options.log if info
+        then message: "Got group information for #{JSON.stringify options.name}", level: 'DEBUG', module: 'nikita/lib/system/group'
+        else message: "Group #{JSON.stringify options.name} not present", level: 'DEBUG', module: 'nikita/lib/system/group'
       # Create group
       @call unless: (-> info), ->
         @system.execute
@@ -87,7 +88,8 @@ The result of the above action can be viewed with the command
             cmd += " -g #{options.gid}" if options.gid
             cmd += " #{options.name}"
           )
-
-## Dependencies
-
-    uid_gid = require '../../misc/uid_gid'
+      # Reset Cache
+      @call
+        if: -> @status()
+      , ->
+        delete  @store['nikita:etc_group']

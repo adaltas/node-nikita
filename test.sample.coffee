@@ -14,6 +14,7 @@ module.exports =
   disable_service_install: true
   disable_service_startup: true
   disable_service_systemctl: true
+  disable_sudo: true
   disable_system_chmod: true
   disable_system_cgroups: true
   disable_system_discover: true

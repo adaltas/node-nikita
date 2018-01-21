@@ -32,7 +32,7 @@ Store properties in the nikita store object.
       options.cache ?= true
       @system.execute
         shy: options.shy
-        unless: options.store['nikita:service:loader']?
+        unless: @store['nikita:service:loader']?
         cmd: """
         if command -v systemctl >/dev/null; then exit 1; fi ;
         if command -v service >/dev/null; then exit 2; fi ;
@@ -42,11 +42,10 @@ Store properties in the nikita store object.
         shy: true
       , (err, status, stdout, stderr, signal) ->
         throw Error "Undetected Operating System Loader" if err?.code is 3 and options.strict
-        options.store ?= {}
         loader = switch signal
           when 1 then 'systemctl'
           when 2 then 'service'
-        options.store['nikita:service:loader'] = options.loader if options.cache
+        @store['nikita:service:loader'] = options.loader if options.cache
       @next (err, status) ->
-        loader = options.store['nikita:service:loader']? if options.cache and not loader?
+        loader = @store['nikita:service:loader']? if options.cache and not loader?
         callback err, status, loader

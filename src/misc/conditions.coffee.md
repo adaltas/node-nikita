@@ -356,9 +356,9 @@ Example:
 conditions.all({
   if: true
 }, function(){
-  console.log('Conditions succeed')
+  console.info('Conditions succeed')
 }, function(err){
-  console.log('Conditins failed or pass an error')
+  console.info('Conditins failed or pass an error')
 })
 ```
 

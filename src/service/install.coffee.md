@@ -53,8 +53,8 @@ require('nikita').service.install({
       options.log message: "Entering service.install", level: 'DEBUG', module: 'nikita/lib/service/install'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'
-      options.installed ?= options.store['nikita:execute:installed'] if options.cache
-      options.outpdated ?= options.store['nikita:execute:outpdated'] if options.cache
+      options.installed ?= @store['nikita:execute:installed'] if options.cache
+      options.outpdated ?= @store['nikita:execute:outpdated'] if options.cache
       cacheonly = if options.cacheonly then '-C' else ''
       # Validation
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
@@ -151,9 +151,9 @@ require('nikita').service.install({
         if: options.cache
         handler: ->
           options.log message: "Caching installed on \"nikita:execute:installed\"", level: 'INFO', module: 'nikita/lib/service/install'
-          options.store['nikita:execute:installed'] = options.installed
+          @store['nikita:execute:installed'] = options.installed
           options.log message: "Caching outpdated list on \"nikita:execute:outpdated\"", level: 'INFO', module: 'nikita/lib/service/install'
-          options.store['nikita:execute:outpdated'] = options.outpdated
+          @store['nikita:execute:outpdated'] = options.outpdated
 
 ## Dependencies
 

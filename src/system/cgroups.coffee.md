@@ -98,11 +98,9 @@ docker/* are ignored.
       options.cgconfig['groups'][''] = options.default if options.default?
       options.ignore ?= []
       options.ignore = [options.ignore] unless Array.isArray options.ignore
-      options.store ?= {}
       # Detect Os and version
-      # Read the cpu controller point to cache the value in options.store['nikita:cgroups:cpu_path']
       @system.execute
-        unless: -> options.store['nikita:system:type']? and options.store['nikita:system:release']?
+        unless: -> @store['nikita:system:type']? and @store['nikita:system:release']?
         shy: true
         cmd: 'cat /etc/system-release'
         code_skipped: 1
@@ -110,18 +108,18 @@ docker/* are ignored.
         return unless status
         [line] = string.lines stdout
         if /CentOS/.test line
-          options.store['nikita:system:type'] ?= 'centos'
+          @store['nikita:system:type'] ?= 'centos'
           index = line.split(' ').indexOf 'release'
-          options.store['nikita:system:release'] ?= line.split(' ')[index+1]
+          @store['nikita:system:release'] ?= line.split(' ')[index+1]
         if /Red\sHat/.test line
-          options.store['nikita:system:type'] ?= 'redhat'
+          @store['nikita:system:type'] ?= 'redhat'
           index = line.split(' ').indexOf 'release'
-          options.store['nikita:system:release'] ?= line.split(' ')[index+1]
-        throw Error 'Unsupported OS' unless options.store['nikita:system:type']?
+          @store['nikita:system:release'] ?= line.split(' ')[index+1]
+        throw Error 'Unsupported OS' unless @store['nikita:system:type']?
       # configure parameters based on previous OS dection
       @call
         shy: true
-        if: -> (options.store['nikita:system:type'] in ['redhat','centos'])
+        if: -> (@store['nikita:system:type'] in ['redhat','centos'])
       , ->
         @system.execute
           cmd: 'cgsnapshot -s 2>&1'
@@ -132,19 +130,19 @@ docker/* are ignored.
           cpus = cgconfig.mounts.filter( (mount) -> if mount.type is 'cpu' then return mount)
           cpuaccts = cgconfig.mounts.filter( (mount) -> if mount.type is 'cpuacct' then return mount)
           # We choose a path which is mounted by default
-          if not options.store['nikita:cgroups:cpu_path']?
+          if not @store['nikita:cgroups:cpu_path']?
             if cpus.length > 0
               cpu_path = cpus[0]['path'].split(',')[0]
-              options.store['nikita:cgroups:cpu_path'] ?= cpu_path
+              @store['nikita:cgroups:cpu_path'] ?= cpu_path
             # a arbitrary path is given based on the
             else
-              switch options.store['nikita:system:type']
+              switch @store['nikita:system:type']
                 when 'redhat'
-                  options.store['nikita:cgroups:cpu_path'] ?= '/cgroups/cpu' if options.store['nikita:system:release'][0] is '6'
-                  options.store['nikita:cgroups:cpu_path'] ?= '/sys/fs/cgroup/cpu' if options.store['nikita:system:release'][0] is '7'
-                else throw Error "Nikita does not support cgroups on your OS #{options.store['nikita:system:type']}"
-          if not options.store['nikita:cgroups:mount']?
-            options.store['nikita:cgroups:mount'] ?= "#{path.dirname options.store['nikita:cgroups:cpu_path']}"
+                  @store['nikita:cgroups:cpu_path'] ?= '/cgroups/cpu' if @store['nikita:system:release'][0] is '6'
+                  @store['nikita:cgroups:cpu_path'] ?= '/sys/fs/cgroup/cpu' if @store['nikita:system:release'][0] is '7'
+                else throw Error "Nikita does not support cgroups on your OS #{@store['nikita:system:type']}"
+          if not @store['nikita:cgroups:mount']?
+            @store['nikita:cgroups:mount'] ?= "#{path.dirname @store['nikita:cgroups:cpu_path']}"
           # Running docker containers are remove from cgsnapshot output
           if options.merge
             groups = {}
@@ -153,7 +151,7 @@ docker/* are ignored.
             options.cgconfig.groups = merge groups, options.groups
             options.cgconfig.mounts.push cgconfig.mounts...
       @call ->
-        options.target ?= '/etc/cgconfig.conf' if options.store['nikita:system:type'] is 'redhat'
+        options.target ?= '/etc/cgconfig.conf' if @store['nikita:system:type'] is 'redhat'
         @file options,
           content: misc.cgconfig.stringify(options.cgconfig)
 

@@ -35,14 +35,14 @@ require('nikita').service.start([{
       options.log message: "Entering service.remove", level: 'DEBUG', module: 'nikita/lib/service/remove'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'
-      options.manager ?= options.store['nikita:service:manager']
+      options.manager ?= @store['nikita:service:manager']
       # Validation
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       # Action
       options.log message: "Remove service #{options.name}", level: 'INFO', module: 'nikita/lib/service/remove'
       cacheonly = if options.cacheonly then '-C' else ''
       if options.cache
-        installed = options.store['nikita:execute:installed']
+        installed = @store['nikita:execute:installed']
       @system.execute
         cmd: """
         if command -v yum >/dev/null 2>&1; then
@@ -94,7 +94,7 @@ require('nikita').service.start([{
         if: options.cache
         handler: ->
           options.log message: "Caching installed on \"nikita:execute:installed\"", level: 'INFO', module: 'nikita/lib/service/remove'
-          options.store['nikita:execute:installed'] = installed
+          @store['nikita:execute:installed'] = installed
 
 ## Dependencies
 
