@@ -86,7 +86,7 @@ have a well formatted file. Nonetheless if docker is installed and started,
 informations about live containers could be printed, that's why all path under 
 docker/* are ignored.
 
-    module.exports = (options) ->
+    module.exports = (options, callback) ->
       options.log message: "Entering cgroups", level: 'DEBUG', module: 'nikita/lib/system/cgroups'
       throw Error 'Missing cgroups content' unless options.groups? or options.mounts? or options.default?
       options.mounts ?= []
@@ -154,6 +154,10 @@ docker/* are ignored.
         options.target ?= '/etc/cgconfig.conf' if @store['nikita:system:type'] is 'redhat'
         @file options,
           content: misc.cgconfig.stringify(options.cgconfig)
+      @next (err, status) -> callback err, status, 
+        cpu_path: @store['nikita:cgroups:cpu_path']
+        mount: @store['nikita:cgroups:mount']
+        
 
 ## Dependencies
 

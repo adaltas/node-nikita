@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* system.cgroups: prepare store remove by cgroups in callback
 * fs.mkdir: fix uid/gid ingored options
 * store: move from options to context
 * uid gid: externalize reading to etc_passwd and etc_group
