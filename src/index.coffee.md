@@ -140,6 +140,8 @@ functions share a common API with flexible options.
         delprinc: 'nikita/krb5/delprinc'
         ktadd: 'nikita/krb5/ktadd'
         ticket: 'nikita/krb5/ticket'
+        ktutil:
+          add: 'nikita/krb5/ktutil/add'
       ldap:
         acl: 'nikita/ldap/acl'
         add: 'nikita/ldap/add'
