@@ -3,7 +3,7 @@ nikita = require '../../src'
 they = require 'ssh2-they'
 test = require '../test'
 
-describe 'tools.gem.fetch', ->
+describe 'tools.rubygems.fetch', ->
 
   config = test.config()
   return if config.disable_tools_rubygems

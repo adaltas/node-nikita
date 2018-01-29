@@ -249,6 +249,7 @@ nikita.system.execute({
           if: not options.dirty and options.target
           target: options.target
           always: true # todo, need to create this option (run even on error)
+          sudo: false
         @next (err2) ->
           callback err1 or err2, status, result.stdout, result.stderr, result.code
 

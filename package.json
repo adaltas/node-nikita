@@ -24,7 +24,7 @@
   "dependencies": {
     "backmeup": "~0.0.2",
     "colors": "~1.1.2",
-    "cron-parser": "~2.4.3",
+    "cron-parser": "~2.4.4",
     "diff": "~3.4.0",
     "each": "^1.0.0",
     "fs.realpath": "^1.0.0",
@@ -32,17 +32,17 @@
     "ini": "~1.3.5",
     "js-yaml": "~3.10.0",
     "jsesc": "~2.5.1",
-    "jsftp": "~2.1.2",
+    "jsftp": "~2.1.3",
     "minimatch": "~3.0.4",
     "moment": "~2.20.1",
     "mustache": "~2.3.0",
     "nunjucks": "~3.0.1",
     "pad": "~2.0.3",
     "regexp-quote": "~0.0.0",
-    "semver": "^5.4.1",
+    "semver": "^5.5.0",
     "ssh2-connect": "~2.0.1",
     "ssh2-exec": "~0.5.0",
-    "ssh2-fs": "^0.3.3",
+    "ssh2-fs": "^0.3.4",
     "stack-trace": "~0.0.10",
     "tilde-expansion": "~0.0.0"
   },
@@ -52,8 +52,8 @@
   },
   "devDependencies": {
     "coffeescript": "^2.1.1",
-    "mocha": "4.1.0",
-    "should": "~13.2.0",
+    "mocha": "5.0.0",
+    "should": "~13.2.1",
     "ssh2-they": "^1.2.0"
   },
   "engines": {

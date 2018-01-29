@@ -23,7 +23,6 @@ describe 'system.user', ->
   they 'created with a uid', (ssh) ->
     nikita
       ssh: ssh
-      debug: true
     .system.user.remove 'toto'
     .system.group.remove 'toto'
     .system.user 'toto', uid: 1234, (err, status) ->

@@ -24,6 +24,7 @@ Options include
       options.mode ?= 0o644 # Node.js default to 0o666
       @call if: options.flags[0] is 'a', ->
         @system.execute
+          if: options.flags[0] is 'a'
           cmd: """
           [ ! -f '#{options.target}' ] && exit
           cp '#{options.target}' '#{options.target_tmp}'

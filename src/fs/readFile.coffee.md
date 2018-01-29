@@ -1,33 +1,28 @@
 
 # `nikita.fs.readFile(options, callback)`
 
+Options:
+
+* `target` (string)   
+  Path of the file to read; required.
+* `encoding` (string)
+  Return a string with a particular encoding, otherwise a buffer is returned; 
+  optional.
+
 ## Source Code
 
     module.exports = status: false, handler: (options, callback) ->
       options.log message: "Entering fs.readFile", level: 'DEBUG', module: 'nikita/lib/fs/readFile'
       # Normalize options
       options.target = options.argument if options.argument?
-      @system.execute
-        cmd: """
-        [ ! -e '#{options.target}' ] && exit 2
-        [ -d '#{options.target}' ] && exit 3
-        cat #{options.target}
-        """
-        sudo: options.sudo
-        bash: options.bash
-        arch_chroot: options.arch_chroot
-      , (err, status, stdout, stderr) ->
-        if err?.code is 2
-          err = Error "ENOENT: no such file or directory, open '#{options.target}'"
-          err.errno = -2
-          err.code = 'ENOENT'
-          err.syscall = 'open'
-          err.path = options.target
-        if err?.code is 3
-          err = Error 'EISDIR: illegal operation on a directory, read'
-          err.errno = -21
-          err.code = 'EISDIR'
-          err.syscall = 'read'
-        unless options.encoding
-          stdout = new Buffer stdout, 'utf8'
-        callback err, stdout
+      throw Error "Required Option: the \"target\" option is mandatory" unless options.target
+      buffers = []
+      @fs.createReadStream
+        target: options.target
+        on_readable: (rs) ->
+          while buffer = rs.read()
+            buffers.push buffer
+      , (err) ->
+        result = Buffer.concat buffers
+        result = result.toString options.encoding if options.encoding
+        callback err, result
