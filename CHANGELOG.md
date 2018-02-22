@@ -16,6 +16,7 @@
 * file.assert: new trim option
 * assert: remove connection
 * docker: fix tests
+* file.yaml: remove callback style
 
 ## Version 0.6.5
 

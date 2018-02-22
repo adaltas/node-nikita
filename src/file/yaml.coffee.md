@@ -79,7 +79,7 @@ require('nikita').file.yaml({
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = (options) ->
       options.line_width ?= 160
       options.log message: "Entering file.yaml", level: 'DEBUG', module: 'nikita/lib/file/yaml'
       options.clean ?= true
@@ -106,8 +106,7 @@ require('nikita').file.yaml({
           misc.ini.clean options.content
         options.log message: "Serialize content", level: 'DEBUG', module: 'nikita/lib/file/yaml'
         options.content = yaml.safeDump options.content, noRefs:true, lineWidth: options.line_width
-        @file options, header: null, (err, written) ->
-          callback err, written
+        @file options, header: null
 
 ## Dependencies
 
