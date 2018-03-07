@@ -24,7 +24,7 @@
         continue unless value?
         value = 'true' if value is true
         value = 'false' if value is false
-        "--#{option}=#{value}"
+        if option in ['tlsverify'] then  "--#{option}" else "--#{option}=#{value}"
       opts.join ' '
       
     ###
