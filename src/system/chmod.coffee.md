@@ -26,8 +26,8 @@ Change the permissions of a file or directory.
 require('nikita').system.chmod({
   target: '~/my/project',
   mode: 0o755
-}, function(err, modified){
-  console.log(err ? err.message : 'File was modified: ' + modified);
+}, function(err, status){
+  console.log(err ? err.message : 'File was modified: ' + status);
 });
 ```
 
