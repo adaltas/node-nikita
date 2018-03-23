@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* fs.createReadStream: new sample and test
 * file etc_passwrd: read sample
 * system.limits: add sample
 * fs: new createReadStream action
