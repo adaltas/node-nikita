@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* file etc_passwrd: read sample
 * system.limits: add sample
 * fs: new createReadStream action
 * system.cgroups: prepare store remove by cgroups in callback
