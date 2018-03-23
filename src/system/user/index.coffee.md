@@ -97,6 +97,7 @@ you are a member of the "wheel" group (gid of "10") with the command
       @file.types.etc_passwd.read
         cache: options.cache
       , (err, status, users) ->
+        throw err if err
         user_info = users[options.name]
         options.log if user_info
         then message: "Got user information for #{JSON.stringify options.name}", level: 'DEBUG', module: 'nikita/lib/system/group'
