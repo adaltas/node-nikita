@@ -157,6 +157,20 @@ _Temporary change_: `echo 1631017 > /proc/sys/fs/file-max`
 
 _Permanent change_ : `vi /etc/sysctl.conf # fs.file-max = 1631017`
 
+## Example
+
+Setting the number of open file descriptors to .75 of the maximum value for 
+all the users:
+
+```js
+nikita
+.system.limits({
+  system: true,
+  nofile: true
+}, function(err, status){
+  console.log(err ? err.message : 'Limits modified: ' + modified);
+});
+```
 
 ## Callback parameters
 
