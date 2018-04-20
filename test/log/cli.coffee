@@ -11,11 +11,11 @@ describe 'log.cli', ->
   
   Writable = require('stream').Writable;
   class MyWritable extends Writable
-    constructor: (options) ->
-      super options
-      @options = options
+    constructor: (data) ->
+      super()
+      @data = data
     _write: (chunk, encoding, callback) ->
-      @options.data.push chunk.toString()
+      @data.push chunk.toString()
       callback()
   
   they 'default options', (ssh) ->
@@ -23,7 +23,7 @@ describe 'log.cli', ->
     nikita
       ssh: ssh
       log_cli: colors: false, time: false
-    .log.cli stream: new MyWritable data: data
+    .log.cli stream: new MyWritable data
     .call header: 'h1', (options) ->
       @call header: 'h2a', (options) ->
       @call header: 'h2b', (options) ->
@@ -44,7 +44,7 @@ describe 'log.cli', ->
     nikita
       ssh: ssh
       log_cli: colors: false, time: false
-    .log.cli stream: new MyWritable data: data
+    .log.cli stream: new MyWritable data
     .call header: 'h1', (options) ->
       @call header: 'h2a', (options) ->
       @call (options) ->
@@ -65,7 +65,7 @@ describe 'log.cli', ->
     nikita
       ssh: ssh
       log_cli: colors: false, time: false
-    .log.cli stream: new MyWritable data: data
+    .log.cli stream: new MyWritable data
     .call header: 'a', (_, callback) -> callback null, false
     .call header: 'b', (_, callback) -> callback null, true
     .call header: 'c', shy: true, (_, callback) -> callback null, true
@@ -84,7 +84,7 @@ describe 'log.cli', ->
     nikita
       ssh: ssh
       log_cli: colors: false, time: false
-    .log.cli stream: new MyWritable data: data
+    .log.cli stream: new MyWritable data
     .call header: 'a', (_, callback) -> callback null, false
     .call header: 'b', disabled: true, (_, callback) -> callback null, true
     .call header: 'c', if: false, (_, callback) -> callback null, true
@@ -101,7 +101,7 @@ describe 'log.cli', ->
     nikita
       ssh: ssh
       log_cli: colors: false, time: false
-    .log.cli depth: 2, stream: new MyWritable data: data
+    .log.cli depth: 2, stream: new MyWritable data
     .call header: 'h1', (options) ->
       @call header: 'h2a', (options) ->
       @call header: 'h2b', (options) ->
@@ -119,7 +119,7 @@ describe 'log.cli', ->
     nikita
       ssh: ssh
       log_cli: colors: false, time: false
-    .log.cli divider: ' # ', stream: new MyWritable data: data
+    .log.cli divider: ' # ', stream: new MyWritable data
     .call header: 'h1', (options) ->
       @call header: 'h2a', (options) ->
       @call header: 'h2b', (options) ->
@@ -138,7 +138,7 @@ describe 'log.cli', ->
     nikita
       ssh: ssh
       log_cli: colors: false, time: false
-    .log.cli pad: {host: 14, header: 18}, stream: new MyWritable data: data
+    .log.cli pad: {host: 14, header: 18}, stream: new MyWritable data
     .call header: 'h1', (options) ->
       @call header: 'h2a', (options) ->
       @call header: 'h2b', (options) ->
@@ -157,7 +157,7 @@ describe 'log.cli', ->
     nikita
       ssh: ssh
       log_cli: time: false
-    .log.cli colors: true, stream: new MyWritable data: data
+    .log.cli colors: true, stream: new MyWritable data
     .call header: 'a', (_, callback) -> callback null, false
     .call header: 'b', (_, callback) -> callback null, true
     .call header: 'c', relax: true, (_, callback) -> callback new Error 'ok', false
@@ -174,7 +174,7 @@ describe 'log.cli', ->
     nikita
       ssh: ssh
       log_cli: colors: false
-    .log.cli stream: new MyWritable data: data
+    .log.cli stream: new MyWritable data
     .call header: 'h1', (->)
     .wait 200
     .call ->
