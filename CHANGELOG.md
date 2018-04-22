@@ -3,7 +3,7 @@
 
 ## Trunk
 
-* events: emit end
+* events: emit error and end
 * system.user: catch error on reading etc/passwd
 * fs.createReadStream: new sample and test
 * file etc_passwrd: read sample

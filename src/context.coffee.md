@@ -233,14 +233,19 @@
         else run()
       run = (options, callback) ->
         options = state.todos.shift() unless options
-        unless options # Nothing more to do in current queue
+        # Nothing more to do in current queue
+        unless options
+          obj.options.domain?.removeListener 'error', domain_on_error
+          # Run is called with a callback
           if callback
-            callback state.todos.err
+            callback state.todos.err if callback
+            return
           else
-            throw state.todos.err if not state.killed and state.stack.length is 0 and state.todos.err and state.todos.throw_if_error
+            if not state.killed and state.stack.length is 0 and state.todos.err and state.todos.throw_if_error
+              obj.emit 'error', state.todos.err
+              throw state.todos.err
           if state.stack.length is 0
-            obj.options.domain?.removeListener 'error', domain_on_error
-            obj.emit 'end', level: 'INFO'
+            obj.emit 'end', level: 'INFO' unless state.todos.err
           return
         org_options = options
         parent_options = state.todos.options

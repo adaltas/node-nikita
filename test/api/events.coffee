@@ -5,38 +5,39 @@ test = require '../test'
 describe 'api events', ->
 
   it 'end is called after handler', (next) ->
-    calls = []
+    next_called = false
     nikita()
     .on 'end', ->
-      calls.handler.should.be.true()
+      next_called.should.be.true()
       next()
     .on 'error', (err) -> next err
     .call (_, callback) ->
       setImmediate ->
         callback()
-        calls.handler = true
+        next_called = true
 
   it 'end is called after next', (next) ->
-    calls = []
+    next_called = false
     nikita()
     .on 'end', ->
-      calls.next.should.be.true()
+      next_called.should.be.true()
       next()
     .on 'error', (err) -> next err
     .call (_, callback) ->
       setImmediate callback
     .next ->
-      calls.next = true
+      next_called = true
 
-  it.skip 'error', (next) ->
-    end = error = false
+  it 'error', (next) ->
+    error_called = false
     nikita()
-    .on 'end', -> end = true
-    .on 'error', (err) -> error = err
-    .call -> throw Error 'KO'
-    .call (callback) ->
+    .on 'end', -> next Error 'Not here'
+    .on 'error', (err) ->
+      error_called.should.be.true()
+      err.message.should.eql 'Get me'
+      next()
+    .call (_, callback) ->
       process.nextTick ->
-        end.should.be.false()
-        error.message.should.eql 'KO'
-        callback()
-    .promise()
+        error_called = true
+        callback Error 'Get me'
+    .call -> throw Error 'KO'

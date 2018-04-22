@@ -69,7 +69,7 @@ describe 'log.cli', ->
     .call header: 'a', (_, callback) -> callback null, false
     .call header: 'b', (_, callback) -> callback null, true
     .call header: 'c', shy: true, (_, callback) -> callback null, true
-    .call header: 'd', relax: true, (_, callback) -> callback new Error 'ok', false
+    .call header: 'd', relax: true, (_, callback) -> callback new Error 'ok'
     .call ->
       data.should.eql [
         'localhost   a   -\n'
