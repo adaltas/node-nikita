@@ -240,6 +240,7 @@
             throw state.todos.err if not state.killed and state.stack.length is 0 and state.todos.err and state.todos.throw_if_error
           if state.stack.length is 0
             obj.options.domain?.removeListener 'error', domain_on_error
+            obj.emit 'end', level: 'INFO'
           return
         org_options = options
         parent_options = state.todos.options

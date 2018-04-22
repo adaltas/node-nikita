@@ -4,17 +4,29 @@ test = require '../test'
 
 describe 'api events', ->
 
-  it.skip 'end', ->
-    end = error = false
+  it 'end is called after handler', (next) ->
+    calls = []
     nikita()
-    .on 'end', -> end = true
-    .on 'error', (err) -> error = err
-    .call (callback) ->
-      process.nextTick ->
-        end.should.be.true()
-        error.should.be.false()
+    .on 'end', ->
+      calls.handler.should.be.true()
+      next()
+    .on 'error', (err) -> next err
+    .call (_, callback) ->
+      setImmediate ->
         callback()
-    .promise()
+        calls.handler = true
+
+  it 'end is called after next', (next) ->
+    calls = []
+    nikita()
+    .on 'end', ->
+      calls.next.should.be.true()
+      next()
+    .on 'error', (err) -> next err
+    .call (_, callback) ->
+      setImmediate callback
+    .next ->
+      calls.next = true
 
   it.skip 'error', (next) ->
     end = error = false
