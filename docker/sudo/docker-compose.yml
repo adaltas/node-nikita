@@ -14,5 +14,5 @@ services:
     volumes:
       - ../..:/home/nikita/work
     environment:
-      MECANO_TEST: /nikita/docker/centos7/test.coffee
+      MECANO_TEST: /home/nikita/work/docker/sudo/test.coffee
       TMPDIR: '/var/tmp'
