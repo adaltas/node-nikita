@@ -243,7 +243,7 @@
           else
             if not state.killed and state.stack.length is 0 and state.todos.err and state.todos.throw_if_error
               obj.emit 'error', state.todos.err
-              throw state.todos.err
+              throw state.todos.err unless obj.listenerCount() is 0
           if state.stack.length is 0
             obj.emit 'end', level: 'INFO' unless state.todos.err
           return
