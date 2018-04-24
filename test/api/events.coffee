@@ -31,8 +31,11 @@ describe 'api events', ->
   it 'error', (next) ->
     error_called = false
     nikita()
-    .on 'end', -> next Error 'Not here'
+    .on 'end', ->
+      console.log '!!!!!!!!!!!!!!!!!!!!!!!!!!! end'
+      next Error 'Not here'
     .on 'error', (err) ->
+      console.log '!!!!!!!!!!!!!!!!!!!!!!!!!!! error'
       error_called.should.be.true()
       err.message.should.eql 'Get me'
       next()
@@ -41,3 +44,4 @@ describe 'api events', ->
         error_called = true
         callback Error 'Get me'
     .call -> throw Error 'KO'
+    null
