@@ -1,7 +1,7 @@
 
 # Changelog
 
-## Trunk
+## Version 0.6.6
 
 * fs.createWriteStream: new implementation
 * events: emit error and end
