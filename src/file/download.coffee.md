@@ -158,6 +158,7 @@ nikita.download
       @file.cache # Download the file and place it inside local cache
         if: options.cache
         ssh: false
+        sudo: false # Local file must be readable by the current process
         source: options.source
         cache_dir: options.cache_dir
         cache_file: options.cache_file
@@ -169,6 +170,8 @@ nikita.download
         throw err if err
         options.source = file if options.cache
         source_url = url.parse options.source
+      @call ->
+        console.log '!!2'
       @fs.stat ssh: options.ssh, target: options.target, relax: true, (err, stat) ->
         throw err if err and err.code isnt 'ENOENT'
         if stat?.isDirectory()
@@ -235,18 +238,16 @@ nikita.download
             if: -> @status -1
             shy: true
             target: path.dirname stageDestination
-          @call
+          @fs.createWriteStream
             if: -> @status -2
-          , (_, callback) ->
-              options.log message: "Local source: '#{options.source}'", level: 'INFO', module: 'nikita/lib/file/download'
-              options.log message: "Remote target: '#{stageDestination}'", level: 'INFO', module: 'nikita/lib/file/download'
-              # TODO: incompatible with sudo
+            target: stageDestination
+            stream: (ws) ->
               rs = fs.createReadStream options.source
-              rs.on 'error', (err) ->
-                console.log 'rs on error', err
-              ssh2fs.writeFile ssh, stageDestination, rs, (err) ->
-                options.log "Upload failed from local to remote" if err
-                callback err
+              rs.pipe ws
+          , (err) ->
+            options.log if err
+            then message: "Downloaded local source #{JSON.stringify options.source} to remote target #{JSON.stringify stageDestination} failed", level: 'ERROR', module: 'nikita/lib/file/download'
+            else message: "Downloaded local source #{JSON.stringify options.source} to remote target #{JSON.stringify stageDestination}", level: 'INFO', module: 'nikita/lib/file/download'
       @call ->
         options.log message: "Unstage downloaded file", level: 'DEBUG', module: 'nikita/lib/file/download'
         @system.move
@@ -266,7 +267,6 @@ nikita.download
 ## Module Dependencies
 
     fs = require 'fs'
-    ssh2fs = require 'ssh2-fs'
     path = require('path').posix # need to detect ssh connection
     url = require 'url'
     curl = require '../misc/curl'

@@ -18,7 +18,8 @@ Write log to the host filesystem in a user provided format.
 * `basename` (string)   
   Default variable used by the filename rendering. Default to "localhost"   
 * `serializer` (object)   
-  TODO...
+  An object of key value pairs where keys are the event types and the value is a
+  function which must be implemented to serialize the information.
 
 Global options can be alternatively set with the "log_fs" property.
 

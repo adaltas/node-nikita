@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* fs.createWriteStream: new implementation
 * events: emit error and end
 * system.user: catch error on reading etc/passwd
 * fs.createReadStream: new sample and test

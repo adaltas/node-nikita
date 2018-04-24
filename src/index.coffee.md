@@ -122,6 +122,7 @@ functions share a common API with flexible options.
         chown: 'nikita/fs/chown'
         copy: 'nikita/fs/copy'
         createReadStream: 'nikita/fs/createReadStream'
+        createWriteStream: 'nikita/fs/createWriteStream'
         exists: 'nikita/fs/exists'
         lstat: 'nikita/fs/lstat'
         mkdir: 'nikita/fs/mkdir'

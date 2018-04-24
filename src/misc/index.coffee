@@ -11,7 +11,7 @@ file = require './file'
 string = require './string'
 array = require './array'
 
-misc = module.exports = 
+misc = module.exports =
   regexp:
     # Escape RegExp related charracteres
     # eg `///^\*/\w+@#{misc.regexp.escape realm}\s+\*///mg`

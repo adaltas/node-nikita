@@ -116,15 +116,12 @@ require('nikita').upload({
         if: -> @status -1
         ssh: false
         target: path.dirname stage_target
-      @call
+      @fs.createReadStream
         if: -> @status -2
-        handler: (_, callback) ->
-          ssh2fs.createReadStream ssh, options.source, (err, rs) =>
-            return callback err if err
-            ws = fs.createWriteStream stage_target
-            rs.pipe(ws)
-            .on 'close', callback
-            .on 'error', callback
+        target: options.source
+        stream: (rs) ->
+          ws = fs.createWriteStream stage_target
+          rs.pipe ws
       @call ->
         @system.move
           ssh: false
@@ -148,7 +145,6 @@ require('nikita').upload({
 ## Dependencies
 
     fs = require 'fs'
-    ssh2fs = require 'ssh2-fs'
     path = require 'path'
     misc = require '../misc'
     file = require '../misc/file'

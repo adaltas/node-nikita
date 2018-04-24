@@ -7,43 +7,6 @@ fs = require 'fs'
 glob = require './glob'
 
 module.exports = file =
-  copyFile: (ssh, source, target, callback) ->
-    console.log 'deprecated, use nikita.fs.copy instead'
-    s = (ssh, callback) ->
-      unless ssh
-      then callback null, fs
-      else ssh.sftp callback
-    s ssh, (err, fs) ->
-      return callback err if err
-      rs = fs.createReadStream source
-      ws = rs.pipe fs.createWriteStream target
-      ws.on 'finish', ->
-        fs.end() if fs.end
-        modified = true
-        callback()
-      ws.on 'error', (err) ->
-        if (!ssh and err.code is 'ENOENT') or (ssh and err.code is 2)
-          if err.code is 2
-            err.code = 'ENOENT'
-            err.errno = -2
-            err.syscall = 'open'
-            err.path = target
-          err.message = "Invalid Target: no such file or directory, open #{JSON.stringify target}"
-        fs.end() if fs.end
-        callback err
-  ###
-  Compare modes
-  -------------
-  ###
-  copy: (ssh, source, target, callback) ->
-    unless ssh
-      source = fs.createReadStream(u.pathname)
-      source.pipe target
-      target.on 'close', callback
-      target.on 'error', callback
-    else
-      # todo: use cp to copy over ssh
-      callback Error 'Copy over SSH not yet implemented'
   ###
   `files.compare(files, callback)`
   --------------------------------
