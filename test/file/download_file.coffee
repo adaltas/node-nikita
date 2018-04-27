@@ -187,3 +187,19 @@ describe 'file.download file', ->
         ("[WARN] Hash dont match, source is 'df8fede7ff71608e24a5576326e41c75' and target is 'undefined'" in logs).should.be.true()
         ("[INFO] Hash matches as 'df8fede7ff71608e24a5576326e41c75'" in logs).should.be.true()
       .promise()
+      
+  describe 'error', ->
+
+    they 'path must be absolute over ssh', (ssh) ->
+      return unless ssh
+      nikita
+        ssh: ssh
+      .file.touch
+        target: "#{scratch}/a_file"
+      .file.download
+        source: "#{scratch}/a_file"
+        target: "a_dir/download_test"
+        relax: true
+      , (err, status) ->
+        err.message.should.eql 'Target path not absolute with SSH: "a_dir"'
+      .promise()

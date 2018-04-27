@@ -68,7 +68,7 @@ calculated if neither sha256, sh1 nor md5 is provided.
   File, HTTP URL, FTP, GIT repository. File is the default protocol if source
   is provided without any.   
 * `target` (path)   
-  Path where the file is downloaded.   
+  Path where to write the destination file.   
 * `uid`   
   User name or id who owns the target file.   
 
@@ -86,7 +86,7 @@ require('nikita').download({
   source: 'file://path/to/something',
   target: 'node-sigar.tgz'
 }, function(err, downloaded){
-  console.log(err ? err.message : 'File was downloaded: ' + downloaded);
+  console.info(err ? err.message : 'File was downloaded: ' + downloaded);
 });
 ```
 
@@ -138,7 +138,7 @@ nikita.download
       protocols_http = ['http:', 'https:']
       protocols_ftp = ['ftp:', 'ftps:']
       # hash_info = null
-      options.log message: "Using force: #{JSON.stringify options.force}", level: 'DEBUG', module: 'nikita/lib/file/download'
+      options.log message: "Using force: #{JSON.stringify options.force}", level: 'DEBUG', module: 'nikita/lib/file/download' if options.force
       source_url = url.parse options.source
       # Disable caching if source is a local file and cache isnt exlicitly set by user
       options.cache = false if not options.cache? and source_url.protocol is null
@@ -170,8 +170,6 @@ nikita.download
         throw err if err
         options.source = file if options.cache
         source_url = url.parse options.source
-      @call ->
-        console.log '!!2'
       @fs.stat ssh: options.ssh, target: options.target, relax: true, (err, stat) ->
         throw err if err and err.code isnt 'ENOENT'
         if stat?.isDirectory()

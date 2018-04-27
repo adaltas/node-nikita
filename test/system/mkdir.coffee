@@ -205,3 +205,16 @@ describe 'system.mkdir', ->
         uid: 1234
         gid: 1234
       .promise()
+  
+  describe 'error', ->
+
+    they.only 'path must be absolute over ssh', (ssh) ->
+      return unless ssh
+      nikita
+        ssh: ssh
+      .system.mkdir
+        target: "download_test"
+        relax: true
+      , (err, status) ->
+        err.message.should.eql 'Target path not absolute with SSH: "download_test"'
+      .promise()

@@ -39,7 +39,7 @@ of the directory to create.
 
 ```js
 require('nikita').system.mkdir('./some/dir', function(err, status){
-  console.log(err ? err.message : "Directory created: " + status);
+  console.info(err ? err.message : "Directory created: " + status);
 });
 ```
 
@@ -53,7 +53,7 @@ require('nikita').system.mkdir({
   gid: 'a_group'
   mode: 0o0777 // or '777'
 }, function(err, status){
-  console.log(err ? err.message : 'Directory created: ' + status);
+  console.info(err ? err.message : 'Directory created: ' + status);
 });
 ```
 
@@ -63,6 +63,7 @@ require('nikita').system.mkdir({
       options.log message: "Entering mkdir", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
       # SSH connection
       ssh = @ssh options.ssh
+      p = if ssh then path.posix else path
       # Validate options
       options.target = options.argument if options.argument?
       options.directory ?= options.target
@@ -71,6 +72,9 @@ require('nikita').system.mkdir({
       options.cwd = process.cwd() if not ssh and (options.cwd is true or not options.cwd)
       options.directory = [options.directory] unless Array.isArray options.directory
       options.parent = {} if options.parent is true
+      if ssh
+        for directory in options.directory
+          throw Error "Target path not absolute with SSH: #{JSON.stringify directory}" unless p.isAbsolute directory
       # State
       state = false
       each options.directory
@@ -80,7 +84,6 @@ require('nikita').system.mkdir({
         do_stats = =>
           end = false
           dirs = []
-          p = if ssh then path.posix else path
           directory = if options.cwd then p.resolve options.cwd, directory else p.normalize directory # path.resolve also normalize
           # Create directory and its parent directories
           directories = directory.split('/')
@@ -157,7 +160,7 @@ require('nikita').system.mkdir({
 
 ## Dependencies
 
-    path = require 'path'
+    path = require('path').posix
     each = require 'each'
     misc = require '../misc'
     wrap = require '../misc/wrap'

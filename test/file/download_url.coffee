@@ -193,3 +193,17 @@ describe 'file.download url', ->
       , (err, status) ->
         status.should.be.false() unless err
       .promise()
+      
+  describe 'error', ->
+
+    they 'path must be absolute over ssh', (ssh) ->
+      return unless ssh
+      nikita
+        ssh: ssh
+      .file.download
+        source: "http://localhost/sth"
+        target: "a_dir/download_test"
+        relax: true
+      , (err, status) ->
+        err.message.should.eql 'Target path not absolute with SSH: "a_dir"'
+      .promise()
