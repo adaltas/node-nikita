@@ -61,7 +61,7 @@ Global options can be alternatively set with the "log_stream" property.
           return unless options.serializer.stderr
           data = options.serializer.stderr log
           options.stream.write data if data?
-        @on 'end', ->
+        @on 'end', (log) ->
           return unless options.serializer.end
           data = options.serializer.end log
           options.stream.write data if data?
