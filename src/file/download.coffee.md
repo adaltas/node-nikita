@@ -116,6 +116,7 @@ nikita.download
       options.log message: 'Entering file.download', level: 'DEBUG', module: 'nikita/lib/file/download'
       # SSH connection
       ssh = @ssh options.ssh
+      p = if ssh then path.posix else path
       # Options
       throw Error "Missing source: #{options.source}" unless options.source
       throw Error "Missing target: #{options.target}" unless options.target
@@ -137,12 +138,14 @@ nikita.download
         algo = 'md5'
       protocols_http = ['http:', 'https:']
       protocols_ftp = ['ftp:', 'ftps:']
-      # hash_info = null
       options.log message: "Using force: #{JSON.stringify options.force}", level: 'DEBUG', module: 'nikita/lib/file/download' if options.force
       source_url = url.parse options.source
       # Disable caching if source is a local file and cache isnt exlicitly set by user
       options.cache = false if not options.cache? and source_url.protocol is null
       options.cache ?= !!(options.cache_dir or options.cache_file)
+      # Normalization
+      options.target = if options.cwd then p.resolve options.cwd, options.target else p.normalize options.target
+      throw Error "Non Absolute Path: target is #{JSON.stringify options.target}, SSH requires absolute paths, you must provide an absolute path in the target or the cwd option" if ssh and not p.isAbsolute options.target
       @call # Accelarator in case we know the target signature
         if: typeof source_hash is 'string'
         shy: true

@@ -205,5 +205,5 @@ describe 'file.download url', ->
         target: "a_dir/download_test"
         relax: true
       , (err, status) ->
-        err.message.should.eql 'Target path not absolute with SSH: "a_dir"'
+        err.message.should.eql 'Non Absolute Path: target is "a_dir/download_test", SSH requires absolute paths, you must provide an absolute path in the target or the cwd option'
       .promise()

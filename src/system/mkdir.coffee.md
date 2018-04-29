@@ -72,9 +72,11 @@ require('nikita').system.mkdir({
       options.cwd = process.cwd() if not ssh and (options.cwd is true or not options.cwd)
       options.directory = [options.directory] unless Array.isArray options.directory
       options.parent = {} if options.parent is true
-      if ssh
-        for directory in options.directory
-          throw Error "Target path not absolute with SSH: #{JSON.stringify directory}" unless p.isAbsolute directory
+      for directory, i in options.directory
+        # Note: path.resolve also normalize
+        options.directory[i] = directory = if options.cwd then p.resolve options.cwd, directory else p.normalize directory
+        if ssh
+          throw Error "Non Absolute Path: target is #{JSON.stringify directory}, SSH requires absolute paths, you must provide an absolute path in the target or the cwd option" unless p.isAbsolute directory
       # State
       state = false
       each options.directory
@@ -84,7 +86,6 @@ require('nikita').system.mkdir({
         do_stats = =>
           end = false
           dirs = []
-          directory = if options.cwd then p.resolve options.cwd, directory else p.normalize directory # path.resolve also normalize
           # Create directory and its parent directories
           directories = directory.split('/')
           directories.shift() # first element is empty with absolute path

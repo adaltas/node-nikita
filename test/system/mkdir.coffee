@@ -208,7 +208,7 @@ describe 'system.mkdir', ->
   
   describe 'error', ->
 
-    they.only 'path must be absolute over ssh', (ssh) ->
+    they 'path must be absolute over ssh', (ssh) ->
       return unless ssh
       nikita
         ssh: ssh
@@ -216,5 +216,5 @@ describe 'system.mkdir', ->
         target: "download_test"
         relax: true
       , (err, status) ->
-        err.message.should.eql 'Target path not absolute with SSH: "download_test"'
+        err.message.should.eql 'Non Absolute Path: target is "download_test", SSH requires absolute paths, you must provide an absolute path in the target or the cwd option'
       .promise()
