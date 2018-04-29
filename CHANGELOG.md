@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* fs.createWriteStream: normalize error with missing parent directory
 * log.cli: print to stderr
 * mkdir: ensure target path are absolute over SSH
 

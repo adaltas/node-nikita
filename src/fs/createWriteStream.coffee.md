@@ -24,7 +24,7 @@ nikita.fs.createWriteStream({
     ws.end();
   }
 }, function(err){
-  console.log(err ? err.message : 'File written');
+  console.info(err ? err.message : 'File written');
 })
 ```
 
@@ -56,12 +56,21 @@ nikita.fs.createWriteStream({
         fs.createWriteStream ssh, options.target_tmp or options.target, flags: options.flags, mode: options.mode, (err, ws) ->
           return callback err if err
           options.stream ws
+          # Quick fix ws sending both the error and close events on error
+          error = false
           ws.on 'error', (err) ->
+            error = true
+            if ssh and err.code is 2
+              err = Error "ENOENT: no such file or directory, open '#{options.target_tmp or options.target}'"
+              err.errno = -2
+              err.code = 'ENOENT'
+              err.syscall = 'open'
+              err.path = options.target_tmp or options.target
             callback err
           ws.on 'end', ->
             ws.destroy()
-          ws.on 'close', =>
-            callback()
+          ws.on 'close', ->
+            callback() unless error
       @system.execute
         if: options.target_tmp
         cmd: """
