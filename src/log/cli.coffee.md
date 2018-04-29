@@ -66,7 +66,7 @@ require('nikita')(
       # Normalize
       options.enabled ?= options.argument if options.argument?
       options.enabled ?= true
-      options.stream ?= process.stdout
+      options.stream ?= process.stderr
       options.end ?= false
       options.divider ?= ' : '
       options.depth ?= false

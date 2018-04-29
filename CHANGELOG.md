@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* log.cli: print to stderr
 * mkdir: ensure target path are absolute over SSH
 
 ## Version 0.6.7
