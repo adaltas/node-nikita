@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* context: simplify options cloning
 * context: remove deprecation about destatination and local_source
 * package: latest dependencies
 * cwd: marked as propagated

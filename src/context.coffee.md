@@ -54,9 +54,9 @@
             builder = ->
               args = [].slice.call(arguments)
               options = normalize_options args, proxy.type
+              proxy.type = []
               {get, values} = handle_get proxy, options
               return values if get
-              proxy.type = []
               state.todos.push opts for opts in options
               setImmediate _run_ if state.todos.length is options.length # Activate the pump
               proxy
@@ -104,12 +104,11 @@
           callback = handler
           handler = null
         # Normalize
-        for opts, i in options
-          # Clone
-          options[i] = {}
-          merge options[i], middleware if Array.isArray(type)
-          options[i][k] = v for k, v of opts
-          opts = options[i]
+        options = for i in [0...options.length]
+          # Clone with performing a deep merge
+          opts = {}
+          opts[k] = v for k, v of middleware if middleware
+          opts[k] = v for k, v of options[i]
           # Argument
           if type is 'call' and not opts.handler #and typeof opts.argument is 'function'
             opts.handler = opts.argument
@@ -131,6 +130,7 @@
           opts.shy ?= true if opts.status is false
           # Validation
           jump_to_error Error "Invalid options sleep, got #{JSON.stringify opts.sleep}" unless typeof opts.sleep is 'number' and opts.sleep >= 0
+          opts
         options
       enrich_options = (user_options) ->
         user_options.enriched = true
