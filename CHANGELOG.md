@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* context: remove deprecation about destatination and local_source
 * package: latest dependencies
 * cwd: marked as propagated
 * fs.createWriteStream: normalize error with missing parent directory

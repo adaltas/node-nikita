@@ -1,8 +1,6 @@
 
 # Nikita Context
 
-    called_deprecate_destination = false
-    called_deprecate_local_source = false
     module.exports = ->
       if arguments.length is 2
         obj = arguments[0]
@@ -117,14 +115,6 @@
             opts.handler = opts.argument
             opts.argument = undefined
           # Enrich
-          if opts.destination
-            console.info 'Use options target instead of destination' unless called_deprecate_destination
-            called_deprecate_destination = true
-            opts.target ?= opts.destination
-          if opts.local_source
-            console.info 'Use options local instead of local_source' unless called_deprecate_local_source
-            called_deprecate_local_source = true
-            opts.local ?= opts.local_source
           opts.type = type if type
           opts.type = [opts.type] unless Array.isArray opts.type
           opts.handler ?= handler if handler
