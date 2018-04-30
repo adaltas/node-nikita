@@ -604,6 +604,7 @@
       proxy
 
     module.exports.propagation =
+      cwd: true
       ssh: true
       log: true
       stdout: true
