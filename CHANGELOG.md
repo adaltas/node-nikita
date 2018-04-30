@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* package: latest dependencies
 * cwd: marked as propagated
 * fs.createWriteStream: normalize error with missing parent directory
 * log.cli: print to stderr
