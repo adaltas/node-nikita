@@ -98,9 +98,9 @@ nikita.system.execute({
 }, function(err, created){
   if(err) return;
   if(created){
-    console.log('User created');
+    console.info('User created');
   }else{
-    console.log('User already exists');
+    console.info('User already exists');
   }
 });
 ```
@@ -112,7 +112,7 @@ nikita.system.execute({
   bash: true,
   cmd: 'env'
 }, function(err, status, stdout, stderr){
-  console.log(err || stdout);
+  console.info(err || stdout);
 });
 ```
 
@@ -207,7 +207,7 @@ nikita.system.execute({
             if options.stdout_callback
               if Array.isArray result.stdout # A string on exit
                 result.stdout.push data
-              else console.log 'stdout coming after child exit'
+              else console.warn 'stdout coming after child exit'
         if options.stderr_callback or options.stderr_log
           child.stderr.on 'data', (data) ->
             stderr_stream_open = true if options.stderr_log
@@ -215,7 +215,7 @@ nikita.system.execute({
             if options.stderr_callback
               if Array.isArray result.stderr # A string on exit
                 result.stderr.push data
-              else console.log 'stderr coming after child exit'
+              else console.warn 'stderr coming after child exit'
         child.on "exit", (code) ->
           result.code = code
           # Give it some time because the "exit" event is sometimes
