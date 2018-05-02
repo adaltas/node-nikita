@@ -23,11 +23,14 @@ module.exports =
         break if argument.indexOf(item) is -1
       result.push item if j is arguments.length
     result
-  flatten: (arr, ret) ->
-    ret ?= []
+  flatten: (arr, depth=-1) ->
+    ret = []
     for i in [0 ... arr.length]
       if Array.isArray arr[i]
-        module.exports.flatten arr[i], ret
+        if depth is 0
+          ret.push arr[i]...
+        else
+          ret.push module.exports.flatten(arr[i], depth - 1)...
       else
         ret.push arr[i]
     ret
