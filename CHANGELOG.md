@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* context: refactor arguments conversion to actions
 * log.cli: escape new line from color
 * array.flatten: depth limit as 2nd argument
 * context: simplify options cloning

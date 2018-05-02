@@ -44,7 +44,7 @@
           console.warn 'apply'
         get: (target, name) ->
           return target[name] if obj[name]?
-          return target[name] if name in ['domain', '_events', '_maxListeners']
+          return target[name] if name in ['domain', '_events', '_maxListeners', 'internal']
           proxy.type = []
           proxy.type.push name
           if not obj.registry.registered(proxy.type, parent: true) and not registry.registered(proxy.type, parent: true)
@@ -69,56 +69,68 @@
                   return undefined
                 get_proxy_builder()
           get_proxy_builder()
-      normalize_options = (_arguments, type, enrich=true) ->
-        empty = false
+      obj.internal = {}
+      obj.internal.options = (_arguments, type, params={}) ->
+        params.enrich ?= true
+        # Does the actions require a handler
+        params.hander ?= false
+        _arguments = [{}] if _arguments.length is 0
+        # Convert every argument to an array
+        for args, i in _arguments
+          _arguments[i] = [args] unless Array.isArray args
+        # Get middleware
         middleware = obj.registry.get(type) or registry.get(type) if Array.isArray(type)
-        _arguments.unshift middleware.handler if middleware
-        handler = null
-        callback = null
-        options = []
-        for arg in _arguments
-          if typeof arg is 'function'
-            if not handler then handler = arg
-            else unless callback then callback = arg
-            else throw Error "Invalid third function argument"
-          else if Array.isArray arg
-            empty = true if arg.length is 0
-            for a in arg
-              if type is 'call'
-                a = handler: a unless typeof a is 'object' and not Array.isArray(a) and a isnt null
+        # Multiply arguments
+        options = null
+        for __arguments, i in _arguments
+          newoptions = for __argument, j in __arguments
+            if i is 0
+              [[middleware, __argument]]
+            else
+              for __options, i in options
+                [__options..., __argument]
+          options = array.flatten newoptions, 0
+        # Load module
+        unless middleware
+          for opts in options
+            middleware = null
+            for opt in opts
+              if typeof opt is 'string'
+                middleware = opt
+                middleware = path.resolve process.cwd(), opt if opt.substr(0, 1) is '.'
+                middleware = require.main.require middleware
+            opts.unshift middleware if middleware
+        # Build actions
+        options = for opts in options
+          action = {}
+          for opt in opts
+            continue unless opts?
+            if typeof opt is 'string'
+              if not action.argument
+                opt = argument: opt
               else
-                a = argument: a unless typeof a is 'object' and not Array.isArray(a) and a isnt null
-              options.push a
-          else
-            if typeof arg isnt 'object' and arg isnt null
-              arg = argument: arg
-            if options.length is 0
-              cloned_arg = {}
-              for k, v of arg then cloned_arg[k] = v
-              options.push cloned_arg
-            else for opts in options
-              for k, v of arg then opts[k] = v
-        return options if options.length is 0 and empty
-        options.push {} if options.length is 0
-        if options.length and options.filter( (opts) -> not opts.handler ).length is 0
-          callback = handler
-          handler = null
+                throw Error 'Invalid option: encountered a string while argument is already defined'
+            if typeof opt is 'function'
+              # todo: handler could be registed later by an external module,
+              # in such case, the user provided function should be interpreted
+              # as a callback
+              if not action.handler
+                opt = handler: opt
+              else if not action.callback
+                opt = callback: opt
+              else
+                throw Error 'Invalid option: encountered a function while both handler and callback options are defined.'
+            if typeof opt isnt 'object'
+              opt = argument: opt
+            for k, v of opt
+              action[k] = v
+          action
         # Normalize
-        options = for i in [0...options.length]
-          # Clone with performing a deep merge
-          opts = {}
-          opts[k] = v for k, v of middleware if middleware
-          opts[k] = v for k, v of options[i]
-          # Argument
-          if type is 'call' and not opts.handler #and typeof opts.argument is 'function'
-            opts.handler = opts.argument
-            opts.argument = undefined
+        options = for opts in options
           # Enrich
           opts.type = type if type
           opts.type = [opts.type] unless Array.isArray opts.type
-          opts.handler ?= handler if handler
-          opts.callback ?= callback if callback
-          opts.user_args = true if enrich and opts.callback?.length > 2
+          opts.user_args = true if params.enrich and opts.callback?.length > 2
           opts.once = ['handler'] if opts.once is true
           delete opts.once if opts.once is false
           opts.once = opts.once.sort() if Array.isArray opts.once
@@ -129,9 +141,13 @@
           throw Error 'Incompatible Options: status "false" implies shy "true"' if opts.status is false and opts.shy is false # Room for argument, leave it strict for now until we come accross a usecase justifying it.
           opts.shy ?= true if opts.status is false
           # Validation
+          if params.handler
+            throw Error 'Missing handler option' unless opts.handler
+            throw Error "Invalid Handler: expect a function, got '#{opts.handler}'" unless typeof opts.handler is 'function'
           jump_to_error Error "Invalid options sleep, got #{JSON.stringify opts.sleep}" unless typeof opts.sleep is 'number' and opts.sleep >= 0
           opts
         options
+      normalize_options = obj.internal.options
       enrich_options = (user_options) ->
         user_options.enriched = true
         global_options = obj.options
@@ -319,7 +335,7 @@
             options.before = [options.before] unless Array.isArray options.before
             each options.before
             .call (before, next) ->
-              before = normalize_options [before], 'call', false
+              before = normalize_options [before], 'call', enrich: false
               before = before[0]
               opts = options_before: true
               for k, v of before
@@ -461,7 +477,7 @@
             options.after = [options.after] unless Array.isArray options.after
             each options.after
             .call (after, next) ->
-              after = normalize_options [after], 'call', false
+              after = normalize_options [after], 'call', enrich: false
               after = after[0]
               opts = options_after: true
               for k, v of after
@@ -513,16 +529,6 @@
       state.properties.call = get: -> ->
         args = [].slice.call(arguments)
         options = normalize_options args, 'call'
-        for opts in options
-          if typeof opts.handler is 'string'
-            opts.handler = path.resolve process.cwd(), opts.handler if opts.handler.substr(0, 1) is '.'
-            mod = require.main.require opts.handler
-            throw Error 'Array modules not yet supported' if Array.isArray mod
-            mod = normalize_options [mod], 'call'
-            opts.handler = mod.handler
-            opts[k] ?= v for k, v of mod[0]
-          throw Error 'Missing handler option' unless opts.handler
-          throw Error "Invalid Handler: expect a function, got '#{opts.handler}'" unless typeof opts.handler is 'function'
         {get, values} = handle_get proxy, options
         return values if get
         state.todos.push opts for opts in options
@@ -548,14 +554,14 @@
         proxy
       state.properties.before = get: -> ->
         arguments[0] = type: arguments[0] if typeof arguments[0] is 'string' or Array.isArray(arguments[0])
-        options = normalize_options arguments, null, false
+        options = normalize_options arguments, null, enrich: false
         for opts in options
           throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
           state.befores.push opts
         proxy
       state.properties.after = get: -> ->
         arguments[0] = type: arguments[0] if typeof arguments[0] is 'string' or Array.isArray(arguments[0])
-        options = normalize_options arguments, null, false
+        options = normalize_options arguments, null, enrich: false
         for opts in options
           throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
           state.afters.push opts
@@ -586,6 +592,15 @@
         reg.unregister arguments...
         proxy
       if obj.options.ssh
+        # opened = (options) ->
+        #   return false unless obj.store['nikita:ssh:connection:original']
+        #   return false if obj.store['nikita:ssh:connection'].config.host is options.host and
+        #   return false if obj.store['nikita:ssh:connection'].config.port is options.port and
+        #   return false if obj.store['nikita:ssh:connection'].config.username is options.username
+        #   match = true
+        #   for k, v of obj.options.ssh
+        #     match = false if obj.store['nikita:ssh:connection:original'].config[k] isnt v
+        #   match
         if obj.options.ssh.config
           obj.store['nikita:ssh:connection'] = obj.options.ssh
           delete obj.options.ssh

@@ -6,8 +6,11 @@
       throw Error "Invalid middleware handler: got #{JSON.stringify middleware.handler}" unless typeof middleware.handler in ['function', 'string']
       return middleware unless typeof middleware.handler is 'string'
       middleware.module = middleware.handler
-      middleware.handler = if /^nikita\//.test(middleware.handler) then require(".#{middleware.handler.substr(6)}") else require.main.require middleware.handler
-      middleware
+      result = if /^nikita\//.test(middleware.handler) then require(".#{middleware.handler.substr(6)}") else require.main.require middleware.handler
+      if typeof result is 'function'
+        result = handler: result
+        result.module = middleware.module
+      result
 
     registry = (obj) ->
 

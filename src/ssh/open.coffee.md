@@ -78,7 +78,9 @@ Takes the same options as the ssh2 module in an underscore form.
       # Enable root access
       @call if: options.root.username, ->
         options.log message: "Bootstrap Root Access", level: 'INFO', module: 'nikita/lib/ssh/open'
-        @ssh.root public_key: options.public_key, options.root
+        console.log 'Deprecated Options: public_key' if options.public_key
+        # @ssh.root public_key: options.public_key, options.root
+        @ssh.root options.root
       @call retry: 3, (_, callback) ->
         options.log message: "Establish Connection: attempt after enabling root access", level: 'DEBUG', module: 'nikita/lib/ssh/open'
         connect options, (err, ssh) =>

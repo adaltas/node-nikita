@@ -35,12 +35,15 @@ describe 'api call', ->
       .promise()
 
     it 'string requires a module from process cwd', ->
-      cwd = null
+      cwd = process.cwd()
+      process.chdir path.resolve __dirname, "#{scratch}"
       nikita
-      .call -> cwd = process.cwd()
-      .call -> process.chdir path.resolve __dirname, '../../'
-      .call './src/core/ping', (err, status, message) ->
-        message.should.eql 'pong' unless err
+      .file
+        target: "#{scratch}/a_dir/ping.coffee"
+        content: 'module.exports = (_, callback) -> callback null, true, "pong"'
+      .call ->
+        @call './a_dir/ping', (err, status, message) ->
+          message.should.eql 'pong' unless err
       .call -> process.chdir cwd
       .promise()
 
@@ -53,7 +56,11 @@ describe 'api call', ->
         logs[0].should.eql 'Hello us'
       .promise()
 
-    it 'accept a string and an handler', ->
+    it.skip 'accept a string and an handler', ->
+      # No longer supported with the current implementation
+      # Was working before but it seems really awkward as it
+      # would imply having different behavior when a handler is provided
+      # as a function or as a value assiated to the handler key
       nikita()
       .call 'gotit',
         handler: (options) -> options.argument.should.eql 'gotit'
