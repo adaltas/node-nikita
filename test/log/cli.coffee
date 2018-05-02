@@ -163,9 +163,9 @@ describe 'log.cli', ->
     .call header: 'c', relax: true, (_, callback) -> callback new Error 'ok', false
     .call ->
       data.should.eql [
-        '\u001b[36m\u001b[2mlocalhost   a   -\n\u001b[22m\u001b[39m'
-        '\u001b[32mlocalhost   b   ✔\n\u001b[39m'
-        '\u001b[31mlocalhost   c   ✘\n\u001b[39m'
+        '\u001b[36m\u001b[2mlocalhost   a   -\u001b[22m\u001b[39m\n'
+        '\u001b[32mlocalhost   b   ✔\u001b[39m\n'
+        '\u001b[31mlocalhost   c   ✘\u001b[39m\n'
       ]
     .promise()
   

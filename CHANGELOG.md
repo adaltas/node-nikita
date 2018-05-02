@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* log.cli: escape new line from color
 * array.flatten: depth limit as 2nd argument
 * context: simplify options cloning
 * context: remove deprecation about destatination and local_source

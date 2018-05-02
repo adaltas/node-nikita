@@ -129,8 +129,9 @@ require('nikita')(
           host = pad host, options.pad.host if options.pad.host
           header = pad header, options.pad.header if options.pad.header
           time = pad time, options.pad.time if options.pad.time
-          line = "#{host}#{host_separator}#{header}#{header_separator}#{status}#{time_separator}#{time}\n"
-          return if color then color line else line
+          line = "#{host}#{host_separator}#{header}#{header_separator}#{status}#{time_separator}#{time}"
+          line = color line if color
+          return line+'\n'
         'stdin': null
         'stderr': null
         'stdout': null
