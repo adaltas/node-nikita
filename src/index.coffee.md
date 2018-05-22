@@ -18,7 +18,7 @@ functions share a common API with flexible options.
         return registry if name in ['registry']
         ctx = context()
         return undefined unless ctx[name]
-        return ctx[name] if name in ['propagation']
+        return ctx[name] if name in ['cascade']
         tree = []
         tree.push name
         builder = ->

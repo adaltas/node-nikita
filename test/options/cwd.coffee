@@ -7,7 +7,7 @@ describe 'options "cwd"', ->
 
   scratch = test.scratch @
   
-  it 'is propagated', ->
+  it 'is cascaded', ->
     history = []
     nikita
     .call cwd: "#{scratch}/a_dir", ->

@@ -12,11 +12,11 @@
         obj = new EventEmitter
         obj.options = {}
       obj.registry ?= {}
-      obj.propagation ?= obj.options.propagation or {}
+      obj.cascade ?= obj.options.cascade or {}
       obj.store ?= {}
-      # Merge global default propagation
-      for k, v of module.exports.propagation
-        obj.propagation[k] = v unless obj.propagation[k] isnt undefined
+      # Merge global default cascade
+      for k, v of module.exports.cascade
+        obj.cascade[k] = v unless obj.cascade[k] isnt undefined
       # Internal state
       state = {}
       state.properties = {}
@@ -155,7 +155,7 @@
         options = {}
         for k, v of user_options then options[k] = user_options[k]
         for k, v of parent_options
-          options[k] = v if options[k] is undefined and obj.propagation[k]
+          options[k] = v if options[k] is undefined and obj.cascade[k]
         for k, v of global_options
           options[k] = v if options[k] is undefined
         unless options.log?.dont
@@ -256,7 +256,7 @@
         org_options = options
         parent_options = state.todos.options
         for k, v of parent_options
-          org_options[k] = v if org_options[k] is undefined and k isnt 'log' and obj.propagation[k] is true
+          org_options[k] = v if org_options[k] is undefined and k isnt 'log' and obj.cascade[k] is true
         options = enrich_options options
         options.original = org_options
         if options.type is 'next'
@@ -400,8 +400,8 @@
               opts = {}
               # Clone first level properties
               for k, v of options then opts[k] = v
-              for option, propagate of obj.propagation
-                delete opts[option] if propagate is false
+              for option, cascade of obj.cascade
+                delete opts[option] if cascade is false
               # Handle deprecation
               options_handler = ( (options_handler) ->
                 util.deprecate ->
@@ -608,7 +608,7 @@
           proxy.ssh.open obj.options.ssh if not obj.options.no_ssh
       proxy
 
-    module.exports.propagation =
+    module.exports.cascade =
       cwd: true
       ssh: true
       log: true
