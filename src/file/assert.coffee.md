@@ -50,7 +50,7 @@ nikita.file.assert({
   target: '/tmp/a_file'     
   content: 'nikita is around' 
 }, function(err){
-  console.log(err);
+  console.info(err);
 });
 ```
 
@@ -62,7 +62,7 @@ nikita.file.assert({
   target: '/tmp/a_file'     
   not: true
 }, function(err){
-  console.log(err);
+  console.info(err);
 });
 ```
 
@@ -159,14 +159,14 @@ nikita.file.assert({
       @call
         if: options.content? and options.content instanceof RegExp
       , (_, callback) ->
-        @fs.readFile ssh: options.ssh, target: options.target, (err, buffer) ->
+        @fs.readFile ssh: options.ssh, target: options.target, (err, buf) ->
           return callback err if err
           unless options.not
-            unless options.content.test buffer 
+            unless options.content.test buf 
               options.error ?= "Invalid content match: expect #{JSON.stringify options.content.toString()} and got #{JSON.stringify buffer.toString()}"
               err = Error options.error
           else
-            if options.content.test buffer
+            if options.content.test buf
               options.error ?= "Unexpected content match: #{JSON.stringify options.content.toString()}"
               err = Error options.error
           callback err
