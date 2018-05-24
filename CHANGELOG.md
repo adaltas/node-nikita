@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* debug: print to stderr
 * file.assert: isolate tests and fix buffer usage
 * context: refactor arguments conversion to actions
 * log.cli: escape new line from color
