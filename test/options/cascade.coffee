@@ -4,20 +4,20 @@ context = require '../../src/context'
 
 describe 'options "cascade"', ->
   
-  describe 'global', ->
+  describe 'session', ->
   
     it 'propagate option', ->
       context.cascade.my_global_option = true
       n = nikita
       n
       .call ->
-        n.cascade.my_global_option.should.be.true()
+        n.cascade.my_global_option.should.true()
       .call my_global_option: 'value', (options) ->
-        options.my_global_option.should.be.equal 'value'
+        options.my_global_option.should.equal 'value'
         @call (options) ->
-          options.my_global_option.should.be.equal 'value'
+          options.my_global_option.should.equal 'value'
           @call (options) ->
-            options.my_global_option.should.be.equal 'value'
+            options.my_global_option.should.equal 'value'
       .call ->
         delete context.cascade.my_global_option
       .promise()
@@ -44,7 +44,7 @@ describe 'options "cascade"', ->
         parent_param_uncascaded: true
       .promise()
         
-  describe 'context', ->
+  describe 'action', ->
       
     it 'propagate option', ->
       n = nikita
@@ -53,39 +53,39 @@ describe 'options "cascade"', ->
       .call ->
         n.cascade.my_context_option.should.be.true()
       .call my_context_option: 'value', (options) ->
-        options.my_context_option.should.be.equal 'value'
+        options.my_context_option.should.equal 'value'
         @call (options) ->
-          options.my_context_option.should.be.equal 'value'
+          options.my_context_option.should.equal 'value'
           @call (options) ->
-            options.my_context_option.should.be.equal 'value'
+            options.my_context_option.should.equal 'value'
       .call ->
         n.cascade.my_context_option.should.be.true()
       .promise()
   
-  it 'dont cascade context options', ->
-    n = nikita
-    n
-    .call ->
-      n.cascade.header.should.be.false()
-    .call header: 'h1', (options) ->
-      (options.header is undefined).should.be.true()
-      @call header: 'h2', (options) ->
+    it 'dont cascade context options', ->
+      n = nikita
+      n
+      .call ->
+        n.cascade.header.should.be.false()
+      .call header: 'h1', (options) ->
         (options.header is undefined).should.be.true()
-    .promise()
-  
-  it 'can be disabled in action', ->
-    n = nikita
-    n
-      cascade: a_key: true
-      a_key: 'a value'
-    .call (options) ->
-      options.a_key.should.eql 'a value'
-    .call a_key: null, (options) ->
-      (options.a_key is null).should.be.true()
-      @call (options) ->
+        @call header: 'h2', (options) ->
+          (options.header is undefined).should.be.true()
+      .promise()
+    
+    it 'can be disabled in action', ->
+      n = nikita
+      n
+        cascade: a_key: true
+        a_key: 'a value'
+      .call (options) ->
+        options.a_key.should.eql 'a value'
+      .call a_key: null, (options) ->
         (options.a_key is null).should.be.true()
         @call (options) ->
           (options.a_key is null).should.be.true()
-    .call (options) ->
-      options.a_key.should.eql 'a value'
-    .promise()
+          @call (options) ->
+            (options.a_key is null).should.be.true()
+      .call (options) ->
+        options.a_key.should.eql 'a value'
+      .promise()
