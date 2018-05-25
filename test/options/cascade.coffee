@@ -62,7 +62,7 @@ describe 'options "cascade"', ->
         n.cascade.my_context_option.should.be.true()
       .promise()
   
-  it.only 'dont cascade context options', ->
+  it 'dont cascade context options', ->
     n = nikita
     n
     .call ->

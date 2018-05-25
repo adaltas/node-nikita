@@ -5,18 +5,18 @@ nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
+Writable = require('stream').Writable
+class MyWritable extends Writable
+  constructor: (data) ->
+    super()
+    @data = data
+  _write: (chunk, encoding, callback) ->
+    @data.push chunk.toString()
+    callback()
+
 describe 'log.cli', ->
   
   scratch = test.scratch @
-  
-  Writable = require('stream').Writable;
-  class MyWritable extends Writable
-    constructor: (data) ->
-      super()
-      @data = data
-    _write: (chunk, encoding, callback) ->
-      @data.push chunk.toString()
-      callback()
   
   they 'default options', (ssh) ->
     data = []

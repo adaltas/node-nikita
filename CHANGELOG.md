@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* debug: accept stdout value
 * debug: print to stderr
 * file.assert: isolate tests and fix buffer usage
 * context: refactor arguments conversion to actions

@@ -180,7 +180,10 @@
               when 'stdout_stream' then "\x1b[36m#{msg}\x1b[39m"
               when 'stderr_stream' then "\x1b[35m#{msg}\x1b[39m"
               else "\x1b[32m#{msg}\x1b[39m"
-            process.stderr.write "#{msg}\n" # todo: switch with stderr
+            if options.debug is 'stdout'
+              process.stdout.write "#{msg}\n"
+            else
+              process.stderr.write "#{msg}\n"
         options.log = (log) ->
           log = message: log if typeof log is 'string'
           log.level ?= 'INFO'

@@ -64,7 +64,7 @@ describe 'service.startup', ->
     they 'notice a change in startup level ', (ssh) ->
       nikita
         ssh: ssh
-        debug: true
+        # debug: true
       .system.execute 'which chkconfig', code_skipped: 1, (err, status) ->
         @end() unless status
       .service
