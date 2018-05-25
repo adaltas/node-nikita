@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* events handled: write tests
 * debug: accept stdout value
 * debug: print to stderr
 * file.assert: isolate tests and fix buffer usage
