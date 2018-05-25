@@ -620,6 +620,7 @@
       debug: true
       after: false
       before: false
+      cascade: true
       disabled: false
       domain: false
       handler: false

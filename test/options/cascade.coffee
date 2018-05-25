@@ -4,7 +4,7 @@ context = require '../../src/context'
 
 describe 'options "cascade"', ->
   
-  describe 'session', ->
+  describe 'globally', ->
   
     it 'propagate option', ->
       context.cascade.my_global_option = true
@@ -21,6 +21,21 @@ describe 'options "cascade"', ->
       .call ->
         delete context.cascade.my_global_option
       .promise()
+      
+    it 'dont cascade context options', ->
+      n = nikita
+      n
+      .call ->
+        # Use the cascade option as example
+        # Ensure the cascade option is marked as false
+        n.cascade.header.should.be.false()
+      .call header: 'h1', (options) ->
+        (options.header is undefined).should.be.true()
+        @call header: 'h2', (options) ->
+          (options.header is undefined).should.be.true()
+      .promise()
+        
+  describe 'defined in session', ->
 
     it 'dont overwrite context options', ->
       n = nikita
@@ -43,8 +58,6 @@ describe 'options "cascade"', ->
         parent_param_cascaded: true
         parent_param_uncascaded: true
       .promise()
-        
-  describe 'action', ->
       
     it 'propagate option', ->
       n = nikita
@@ -61,18 +74,7 @@ describe 'options "cascade"', ->
       .call ->
         n.cascade.my_context_option.should.be.true()
       .promise()
-  
-    it 'dont cascade context options', ->
-      n = nikita
-      n
-      .call ->
-        n.cascade.header.should.be.false()
-      .call header: 'h1', (options) ->
-        (options.header is undefined).should.be.true()
-        @call header: 'h2', (options) ->
-          (options.header is undefined).should.be.true()
-      .promise()
-    
+        
     it 'can be disabled in action', ->
       n = nikita
       n
@@ -88,4 +90,16 @@ describe 'options "cascade"', ->
             (options.a_key is null).should.be.true()
       .call (options) ->
         options.a_key.should.eql 'a value'
+      .promise()
+        
+  describe 'defined in action', ->
+    
+    it 'is itself cascaded', ->
+      nikita
+      .call 
+        cascade: a_key: 'a value'
+      , (options) ->
+        options.cascade.a_key.should.eql 'a value'
+        @call (options) ->
+          options.cascade.a_key.should.eql 'a value'
       .promise()

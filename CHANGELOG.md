@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* cascade: defined as a cascaded option
 * events handled: write tests
 * debug: accept stdout value
 * debug: print to stderr
