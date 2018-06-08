@@ -16,7 +16,7 @@ describe 'api callback', ->
     ] , 'call'
     .map((action) ->
       (action.handler is undefined).should.be.a.true()
-      action.type.should.eql ['call']
+      action.action.should.eql ['call']
       action.sleep.should.eql 3000
       action.retry.should.eql 0
       action.disabled.should.be.false()

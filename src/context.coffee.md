@@ -35,22 +35,22 @@
       proxy = new Proxy obj,
         has: (target, name) ->
           console.warns 'proxy has is being called', name
-          # target[name]? or target.registry.registered(proxy.type)? or registry.registered(name)?
+          # target[name]? or target.registry.registered(proxy.action)? or registry.registered(name)?
         apply: (target, thisArg, argumentsList) ->
           console.warn 'apply'
         get: (target, name) ->
           return target[name] if obj[name]?
           return target[name] if name in ['domain', '_events', '_maxListeners', 'internal']
-          proxy.type = []
-          proxy.type.push name
-          if not obj.registry.registered(proxy.type, parent: true) and not registry.registered(proxy.type, parent: true)
-            proxy.type = []
+          proxy.action = []
+          proxy.action.push name
+          if not obj.registry.registered(proxy.action, parent: true) and not registry.registered(proxy.action, parent: true)
+            proxy.action = []
             return undefined
           get_proxy_builder = ->
             builder = ->
               args = [].slice.call(arguments)
-              options = normalize_options args, proxy.type
-              proxy.type = []
+              options = normalize_options args, proxy.action
+              proxy.action = []
               {get, values} = handle_get proxy, options
               return values if get
               state.todos.push opts for opts in options
@@ -59,14 +59,14 @@
             new Proxy builder,
               get: (target, name) ->
                 return target[name] if target[name]?
-                proxy.type.push name
-                if not obj.registry.registered(proxy.type, parent: true) and not registry.registered(proxy.type, parent: true)
-                  proxy.type = []
+                proxy.action.push name
+                if not obj.registry.registered(proxy.action, parent: true) and not registry.registered(proxy.action, parent: true)
+                  proxy.action = []
                   return undefined
                 get_proxy_builder()
           get_proxy_builder()
       obj.internal = {}
-      obj.internal.options = (_arguments, type, params={}) ->
+      obj.internal.options = (_arguments, action_name, params={}) ->
         params.enrich ?= true
         # Does the actions require a handler
         params.hander ?= false
@@ -75,7 +75,7 @@
         for args, i in _arguments
           _arguments[i] = [args] unless Array.isArray args
         # Get middleware
-        middleware = obj.registry.get(type) or registry.get(type) if Array.isArray(type)
+        middleware = obj.registry.get(action_name) or registry.get(action_name) if Array.isArray(action_name)
         # Multiply arguments
         options = null
         for __arguments, i in _arguments
@@ -124,8 +124,8 @@
         # Normalize
         options = for opts in options
           # Enrich
-          opts.type = type if type
-          opts.type = [opts.type] unless Array.isArray opts.type
+          opts.action = action_name if action_name
+          opts.action = [opts.action] unless Array.isArray opts.action
           opts.user_args = true if params.enrich and opts.callback?.length > 2
           opts.once = ['handler'] if opts.once is true
           delete opts.once if opts.once is false
@@ -240,7 +240,7 @@
         jump_to_error err
         run()
       jump_to_error = (err) ->
-        while state.todos[0] and state.todos[0].type not in ['catch', 'next', 'promise'] then state.todos.shift()
+        while state.todos[0] and state.todos[0].action not in ['catch', 'next', 'promise'] then state.todos.shift()
         state.todos.err = err
       _run_ = ->
         if obj.options.domain
@@ -269,7 +269,7 @@
           org_options[k] = v if org_options[k] is undefined and k isnt 'log' and obj.cascade[k] is true
         options = enrich_options options
         options.original = org_options
-        if options.type is 'next'
+        if options.action is 'next'
           {err, status} = state.todos
           status = status.some (status) -> not status.shy and !!status.value
           state.todos.final_err = err
@@ -277,7 +277,7 @@
           options.handler?.call proxy, err, status
           run()
           return
-        if options.type is 'promise'
+        if options.action is 'promise'
           {err, status} = state.todos
           status = status.some (status) -> not status.shy and !!status.value
           state.todos.final_err = err
@@ -288,10 +288,10 @@
           else options.deferred.reject err
           return
         return if state.killed
-        if array.compare options.type, ['end']
+        if array.compare options.action, ['end']
           return conditions.all proxy, options
           , ->
-            while state.todos[0] and state.todos[0].type not in ['next', 'promise'] then state.todos.shift()
+            while state.todos[0] and state.todos[0].action not in ['next', 'promise'] then state.todos.shift()
             callback err if callback
             run()
           , (err) ->
@@ -362,7 +362,7 @@
             .call (before, next) ->
               for k, v of before then switch k
                 when 'handler' then continue
-                when 'type' then return next() unless array.compare v, options[k]
+                when 'action' then return next() unless array.compare v, options[k]
                 else return next() unless v is options[k]
               opts = intercepting: true
               for k, v of before
@@ -397,8 +397,8 @@
                 options.log message: "Retry on error, attempt #{options.attempt+1}", level: 'WARN', index: index, module: 'nikita'
                 return setTimeout do_handler, options.sleep
               do_intercept_after arguments...
-            options.handler ?= obj.registry.get(options.type)?.handler or registry.get(options.type)?.handler
-            return handle_multiple_call Error "Unregistered Middleware: #{options.type.join('.')}" unless options.handler
+            options.handler ?= obj.registry.get(options.action)?.handler or registry.get(options.action)?.handler
+            return handle_multiple_call Error "Unregistered Middleware: #{options.action.join('.')}" unless options.handler
             options_handler = options.handler
             options_handler_length = options.handler.length
             options.handler = undefined
@@ -418,8 +418,8 @@
                 util.deprecate ->
                   options_handler.apply @, arguments
                 , if options.deprecate is true
-                then "#{options.type.join '/'} is deprecated"
-                else "#{options.type.join '/'} is deprecated, use #{options.deprecate}"
+                then "#{options.action.join '/'} is deprecated"
+                else "#{options.action.join '/'} is deprecated, use #{options.deprecate}"
               )(options_handler) if options.deprecate
               handle_async_and_promise = ->
                 return if state.killed
@@ -470,7 +470,7 @@
             .call (after, next) ->
               for k, v of after then switch k
                 when 'handler' then continue
-                when 'type' then return next() unless array.compare v, options[k]
+                when 'action' then return next() unless array.compare v, options[k]
                 else return next() unless v is options[k]
               opts = intercepting: true
               for k, v of after
@@ -520,7 +520,7 @@
       state.properties.child = get: -> ->
         module.exports(obj.options)
       state.properties.next = get: -> ->
-        state.todos.push type: 'next', handler: arguments[0]
+        state.todos.push action: 'next', handler: arguments[0]
         setImmediate _run_ if state.todos.length is 1 # Activate the pump
         proxy
       state.properties.promise = get: -> ->
@@ -528,7 +528,7 @@
         promise = new Promise (resolve, reject)->
           deferred.resolve = resolve
           deferred.reject = reject
-        state.todos.push type: 'promise', deferred: deferred # handler: arguments[0],
+        state.todos.push action: 'promise', deferred: deferred # handler: arguments[0],
         setImmediate _run_ if state.todos.length is 1 # Activate the pump
         promise
       state.properties.end = get: -> ->
@@ -564,14 +564,14 @@
               @call opts
         proxy
       state.properties.before = get: -> ->
-        arguments[0] = type: arguments[0] if typeof arguments[0] is 'string' or Array.isArray(arguments[0])
+        arguments[0] = action: arguments[0] if typeof arguments[0] is 'string' or Array.isArray(arguments[0])
         options = normalize_options arguments, null, enrich: false
         for opts in options
           throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
           state.befores.push opts
         proxy
       state.properties.after = get: -> ->
-        arguments[0] = type: arguments[0] if typeof arguments[0] is 'string' or Array.isArray(arguments[0])
+        arguments[0] = action: arguments[0] if typeof arguments[0] is 'string' or Array.isArray(arguments[0])
         options = normalize_options arguments, null, enrich: false
         for opts in options
           throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
