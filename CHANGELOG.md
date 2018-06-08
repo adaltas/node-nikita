@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* cascade: global, session and action merge
 * cascade: defined as a cascaded option
 * events handled: write tests
 * debug: accept stdout value

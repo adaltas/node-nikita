@@ -6,95 +6,107 @@ describe 'options "cascade"', ->
   
   describe 'globally', ->
   
-    it 'propagate option', ->
-      context.cascade.my_global_option = true
-      n = nikita
-      n
-      .call ->
-        n.cascade.my_global_option.should.true()
-      .call my_global_option: 'value', (options) ->
-        options.my_global_option.should.equal 'value'
+    it 'pass the cascade option', ->
+      context.cascade.global_option_true = true
+      context.cascade.global_option_false = false
+      nikita
+      # Test the cascade option
+      .call (options) ->
+        options.cascade.global_option_true.should.true()
+        options.cascade.global_option_false.should.false()
         @call (options) ->
-          options.my_global_option.should.equal 'value'
-          @call (options) ->
-            options.my_global_option.should.equal 'value'
+          options.cascade.global_option_true.should.true()
+          options.cascade.global_option_false.should.false()
+      # Cleanup
       .call ->
-        delete context.cascade.my_global_option
+        delete context.cascade.global_option_true
+        delete context.cascade.global_option_false
       .promise()
       
-    it 'dont cascade context options', ->
-      n = nikita
-      n
+    it 'pass the action cascaded value', ->
+      context.cascade.global_option_true = true
+      context.cascade.global_option_false = false
+      nikita
+      # Test the action cascaded value
+      .call
+        global_option_true: 'value'
+        global_option_false: 'value'
+      , (options) ->
+        options.global_option_true.should.equal 'value'
+        (options.global_option_false is undefined).should.be.true()
+        @call (options) ->
+          options.global_option_true.should.equal 'value'
+          (options.global_option_false is undefined).should.be.true()
+          @call (options) ->
+            options.global_option_true.should.equal 'value'
+            (options.global_option_false is undefined).should.be.true()
+      # Cleanup
       .call ->
-        # Use the cascade option as example
-        # Ensure the cascade option is marked as false
-        n.cascade.header.should.be.false()
-      .call header: 'h1', (options) ->
-        (options.header is undefined).should.be.true()
-        @call header: 'h2', (options) ->
-          (options.header is undefined).should.be.true()
+        delete context.cascade.global_option_true
+        delete context.cascade.global_option_false
       .promise()
         
   describe 'defined in session', ->
 
-    it 'dont overwrite context options', ->
-      n = nikita
-        global_param: true
-      n.cascade.parent_param_cascaded = true
-      n.registry.register 'achild', (options, callback) ->
-        options.local_param.should.be.true()
-        options.parent_param_cascaded.should.be.true()
-        (options.parent_param_uncascaded is undefined).should.be.true()
-        options.global_param.should.be.true()
-        callback null, true
-      n.registry.register 'aparent', (options, callback) ->
-        options.global_param.should.be.true()
-        options.parent_param_cascaded.should.be.true()
-        options.parent_param_uncascaded.should.be.true()
-        @achild
-          local_param: true
-        .next (err, status) -> callback err, true
-      n.aparent
-        parent_param_cascaded: true
-        parent_param_uncascaded: true
-      .promise()
-      
-    it 'propagate option', ->
-      n = nikita
-        cascade: my_context_option: true
-      n
-      .call ->
-        n.cascade.my_context_option.should.be.true()
-      .call my_context_option: 'value', (options) ->
-        options.my_context_option.should.equal 'value'
+    it 'pass the cascade option', ->
+      nikita
+        cascade:
+          option_true: true
+          option_false: false
+      # Test the cascade option
+      .call (options) ->
+        options.cascade.option_true.should.be.true()
+        options.cascade.option_false.should.be.false()
+        (options.cascade.option_undefined is undefined).should.be.true()
+        # Call child
         @call (options) ->
-          options.my_context_option.should.equal 'value'
-          @call (options) ->
-            options.my_context_option.should.equal 'value'
-      .call ->
-        n.cascade.my_context_option.should.be.true()
+          options.cascade.option_true.should.be.true()
+          options.cascade.option_false.should.be.false()
+          (options.cascade.option_undefined is undefined).should.be.true()
+      .promise()
+
+    it 'pass the action cascaded value', ->
+      nikita
+        cascade:
+          option_true: true
+          option_false: false
+      # Test the cascaded value
+      .call
+        option_true: 'value'
+        option_false: 'value'
+        option_undefined: 'value'
+      , (options) ->
+        options.option_true.should.eql 'value'
+        (options.option_false is undefined).should.be.true()
+        options.option_undefined.should.eql 'value'
+        # Call child
+        @call (options) ->
+          options.option_true.should.eql 'value'
+          (options.option_false is undefined).should.be.true()
+          (options.option_undefined is undefined).should.be.true()
       .promise()
         
-    it 'can be disabled in action', ->
-      n = nikita
-      n
-        cascade: a_key: true
-        a_key: 'a value'
+    it 'session option is overwritten by action option', ->
+      nikita
+        a_session_key: 'value'
+        cascade:
+          a_session_key: true
+      # Get the session value
       .call (options) ->
-        options.a_key.should.eql 'a value'
-      .call a_key: null, (options) ->
-        (options.a_key is null).should.be.true()
-        @call (options) ->
-          (options.a_key is null).should.be.true()
+        options.a_session_key.should.eql 'value'
+        # Overwrite the option with null value
+        @call a_session_key: null, (options) ->
+          (options.a_session_key is null).should.be.true()
           @call (options) ->
-            (options.a_key is null).should.be.true()
+            (options.a_session_key is null).should.be.true()
+      # Ensure the session value is preserve
       .call (options) ->
-        options.a_key.should.eql 'a value'
+        options.a_session_key.should.eql 'value'
       .promise()
         
   describe 'defined in action', ->
     
-    it 'is itself cascaded', ->
+    it 'cascade option cascaded', ->
       nikita
       .call 
         cascade: a_key: 'a value'
@@ -102,4 +114,52 @@ describe 'options "cascade"', ->
         options.cascade.a_key.should.eql 'a value'
         @call (options) ->
           options.cascade.a_key.should.eql 'a value'
+      .promise()
+        
+    it 'cascade option merged with session options', ->
+      nikita
+        cascade:
+          key_a: false
+          key_b: true
+      .call
+        cascade:
+          key_a: true
+          key_c: true
+      , (options) ->
+        options.cascade.key_a.should.be.true()
+        options.cascade.key_b.should.be.true()
+        options.cascade.key_c.should.be.true()
+        @call (options) ->
+          # Check if key_* are cascaded into child
+          options.cascade.key_a.should.be.true()
+          options.cascade.key_b.should.be.true()
+          options.cascade.key_c.should.be.true()
+      .promise()
+        
+    it 'keys and values are cascaded if true', ->
+      nikita
+        cascade:
+          overwritten_true: false
+          overwritten_false: true
+          session_b: true
+      .call
+        cascade:
+          overwritten_true: true
+          overwritten_false: false
+          action_c: true
+        overwritten_true: 'a'
+        overwritten_false: 'a'
+        session_b: 'b'
+        action_c: 'c'
+      , (options) ->
+        options.overwritten_true.should.equal 'a'
+        (options.overwritten_false is undefined).should.be.true()
+        options.session_b.should.equal 'b'
+        options.action_c.should.equal 'c'
+        # Check if key_* are cascaded into child
+        @call (options) ->
+          options.overwritten_true.should.equal 'a'
+          (options.overwritten_false is undefined).should.be.true()
+          options.session_b.should.equal 'b'
+          options.action_c.should.equal 'c'
       .promise()

@@ -12,11 +12,7 @@
         obj = new EventEmitter
         obj.options = {}
       obj.registry ?= {}
-      obj.cascade ?= obj.options.cascade or {}
       obj.store ?= {}
-      # Merge global default cascade
-      for k, v of module.exports.cascade
-        obj.cascade[k] = v unless obj.cascade[k] isnt undefined
       # Internal state
       state = {}
       state.properties = {}
@@ -150,13 +146,23 @@
       normalize_options = obj.internal.options
       enrich_options = (user_options) ->
         user_options.enriched = true
-        global_options = obj.options
+        session_options = obj.options
+        session_options.cascade ?= {}
         parent_options = state.todos.options
         options = {}
-        for k, v of user_options then options[k] = user_options[k]
+        # Merge cascade action options with default session options 
+        options.cascade = {...module.exports.cascade, ...session_options.cascade, ...user_options.cascade}
+        # Copy initial options
+        for k, v of user_options
+          continue if k is 'cascade'
+          options[k] = user_options[k]
+        # Merge parent cascaded options
         for k, v of parent_options
-          options[k] = v if options[k] is undefined and obj.cascade[k]
-        for k, v of global_options
+          continue unless options.cascade[k] is true
+          options[k] = v if options[k] is undefined
+        # Merge action options with default session options 
+        for k, v of session_options
+          continue if k is 'cascade'
           options[k] = v if options[k] is undefined
         unless options.log?.dont
           if options.log and not Array.isArray options.log
@@ -258,6 +264,7 @@
           return
         org_options = options
         parent_options = state.todos.options
+        obj.cascade = {...obj.options.cascade, ...module.exports.cascade}
         for k, v of parent_options
           org_options[k] = v if org_options[k] is undefined and k isnt 'log' and obj.cascade[k] is true
         options = enrich_options options
@@ -297,7 +304,7 @@
         state.todos.status.unshift shy: options.shy, value: undefined
         state.stack.unshift state.todos
         state.todos = todos_create()
-        state.todos.options = org_options
+        state.todos.options = options.original
         wrap.options options, (err) ->
           do_disabled = ->
             unless options.disabled
@@ -403,7 +410,8 @@
               opts = {}
               # Clone first level properties
               for k, v of options then opts[k] = v
-              for option, cascade of obj.cascade
+              # Filter cascaded options
+              for option, cascade of opts.cascade
                 delete opts[option] if cascade is false
               # Handle deprecation
               options_handler = ( (options_handler) ->
