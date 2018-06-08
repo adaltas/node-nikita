@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* event end: new test
 * action: rename option, was type
 * cascade: global, session and action merge
 * cascade: defined as a cascaded option

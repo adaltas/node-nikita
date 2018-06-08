@@ -4,30 +4,6 @@ test = require '../test'
 
 describe 'api events', ->
 
-  it 'end is called after handler', (next) ->
-    next_called = false
-    nikita()
-    .on 'end', ->
-      next_called.should.be.true()
-      next()
-    .on 'error', (err) -> next err
-    .call (_, callback) ->
-      setImmediate ->
-        callback()
-        next_called = true
-
-  it 'end is called after next', (next) ->
-    next_called = false
-    nikita()
-    .on 'end', ->
-      next_called.should.be.true()
-      next()
-    .on 'error', (err) -> next err
-    .call (_, callback) ->
-      setImmediate callback
-    .next ->
-      next_called = true
-
   it 'error', (next) ->
     error_called = false
     nikita()
