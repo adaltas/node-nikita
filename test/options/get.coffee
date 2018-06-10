@@ -17,3 +17,15 @@ describe 'options "domain"', ->
       handler: -> 'get me'
     result = n.an.action()
     result.should.eql 'get me'
+
+  it 'clone options', ->
+    my_options = a_key: 'a value'
+    n = nikita
+    n.call
+      get: true
+    , my_options
+    , (options) ->
+      options['a_key'] = 'should not be visible'
+    n.next ->
+      my_options['a_key'].should.eql 'a value'
+    n.promise()

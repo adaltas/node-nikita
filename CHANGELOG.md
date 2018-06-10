@@ -3,6 +3,8 @@
 
 ## Trunk
 
+* options get: ensure options are cloned
+* log: new action
 * event end: new test
 * action: rename option, was type
 * cascade: global, session and action merge
