@@ -1,7 +1,6 @@
 
 nikita = require '../../src'
 misc = require '../../src/misc'
-should = require 'should'
 crypto = require 'crypto'
 test = require '../test'
 they = require 'ssh2-they'

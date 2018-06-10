@@ -1,6 +1,5 @@
 #Be aware to specify the machine if docker mahcine is used
 
-should = require 'should'
 nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'

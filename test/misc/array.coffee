@@ -1,6 +1,5 @@
 
 array = require '../../src/misc/array'
-should = require 'should'
 test = require '../test'
 
 describe 'misc.array', ->

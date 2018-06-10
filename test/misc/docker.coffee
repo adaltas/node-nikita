@@ -1,7 +1,6 @@
 
 # Test the internal docker.exec function which execute a docker command
 
-should = require 'should'
 docker = require '../../src/misc/docker'
 test = require '../test'
 they = require 'ssh2-they'

@@ -3,7 +3,6 @@
 # as a conseauence docker.run should not docker an other command from docker family
 # For this purpos ip, and clean are used
 
-should = require 'should'
 nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'

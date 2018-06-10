@@ -1,6 +1,5 @@
 
 db = require '../../src/misc/db'
-should = require 'should'
 test = require '../test'
 
 describe 'misc.db', ->

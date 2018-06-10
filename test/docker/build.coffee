@@ -2,7 +2,6 @@
 # docker.build like, docker.run , docker.rm is used by other docker.command inside
 # test amd should not relie on them
 
-should = require 'should'
 nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
