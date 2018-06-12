@@ -3,7 +3,9 @@
 
 ## Trunk
 
-* options get: ensure options are cloned
+* cascade: test false value in action
+* attempt: new test
+* get: ensure options are cloned
 * log: new action
 * event end: new test
 * action: rename option, was type

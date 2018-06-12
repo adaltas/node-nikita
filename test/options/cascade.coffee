@@ -109,11 +109,15 @@ describe 'options "cascade"', ->
     it 'cascade option cascaded', ->
       nikita
       .call 
-        cascade: a_key: 'a value'
+        cascade:
+          option_true: true
+          option_false: false
       , (options) ->
-        options.cascade.a_key.should.eql 'a value'
+        options.cascade.option_true.should.be.true()
+        options.cascade.option_false.should.be.false()
         @call (options) ->
-          options.cascade.a_key.should.eql 'a value'
+          options.cascade.option_true.should.be.true()
+          options.cascade.option_false.should.be.false()
       .promise()
         
     it 'cascade option merged with session options', ->
