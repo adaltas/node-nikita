@@ -3,30 +3,47 @@
 
 ## Trunk
 
-* log: remove depth and header_depth
-* cascade: honored by get actions
-* cascade: test false value in action
-* attempt: new test
-* get: ensure options are cloned
+Backward incompatibilities:
+
+* option log: remove depth and header_depth
+* option action: rename option, was type
+* option debug: print to stderr
+* log.cli: escape new line from color
+* log.cli: print to stderr
+
+New features:
+
+* option get: ensure options are cloned
 * log: new action
-* event end: new test
-* action: rename option, was type
+* option cascade: defined as a cascaded option
+* option debug: accept stdout value
+* array.flatten: depth limit as 2nd argument
+* cwd: marked as propagated
+
+Fixes:
+
+* ssh: no longer reference ssh2
+* cascade: honored by get actions
 * cascade: global, session and action merge
-* cascade: defined as a cascaded option
-* events handled: write tests
-* debug: accept stdout value
-* debug: print to stderr
+
+Cleanup and minor enhancements:
+
+* option cascade: test false value in action
+* attempt: new test
+* event end: new test
+* event handled: write tests
 * file.assert: isolate tests and fix buffer usage
 * context: refactor arguments conversion to actions
-* log.cli: escape new line from color
-* array.flatten: depth limit as 2nd argument
 * context: simplify options cloning
-* context: remove deprecation about destatination and local_source
-* package: latest dependencies
-* cwd: marked as propagated
+* context: remove deprecation about destination and local_source
 * fs.createWriteStream: normalize error with missing parent directory
-* log.cli: print to stderr
-* src: ensure target path are absolute over SSH
+* src: ensure target paths are absolute over SSH
+
+Management:
+
+* changelog: organize messages by group
+* package: latest dependencies
+
 
 ## Version 0.6.7
 
