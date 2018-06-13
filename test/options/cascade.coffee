@@ -104,7 +104,7 @@ describe 'options "cascade"', ->
         options.a_session_key.should.eql 'value'
       .promise()
         
-  describe 'defined in action', ->
+  describe 'passed to action', ->
     
     it 'cascade option cascaded', ->
       nikita

@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* cascade: honored by get actions
 * cascade: test false value in action
 * attempt: new test
 * get: ensure options are cloned

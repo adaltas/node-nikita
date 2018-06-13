@@ -144,24 +144,23 @@
           opts
         options
       normalize_options = obj.internal.options
-      enrich_options = (user_options) ->
-        user_options.enriched = true
-        session_options = obj.options
-        session_options.cascade ?= {}
-        parent_options = state.todos.options
+      enrich_options = (options_action) ->
+        options_session = obj.options
+        options_session.cascade ?= {}
+        options_parent = state.todos.options
         options = {}
-        # Merge cascade action options with default session options 
-        options.cascade = {...module.exports.cascade, ...session_options.cascade, ...user_options.cascade}
+        # Merge cascade action options with default session options
+        options.cascade = {...module.exports.cascade, ...options_session.cascade, ...options_action.cascade}
         # Copy initial options
-        for k, v of user_options
+        for k, v of options_action
           continue if k is 'cascade'
-          options[k] = user_options[k]
+          options[k] = options_action[k]
         # Merge parent cascaded options
-        for k, v of parent_options
+        for k, v of options_parent
           continue unless options.cascade[k] is true
           options[k] = v if options[k] is undefined
         # Merge action options with default session options 
-        for k, v of session_options
+        for k, v of options_session
           continue if k is 'cascade'
           options[k] = v if options[k] is undefined
         unless options.log?.dont
@@ -221,6 +220,20 @@
           then options.target = path.join process.env.HOME, match[1]
           else options.target = path.posix.join '.', match[1]
         options
+      handle_get = (proxy, options) ->
+        return get: false unless options.length is 1
+        options = options[0]
+        return get: false unless options.get is true
+        options = enrich_options options
+        opts = options_filter_cascade options
+        values = options.handler.call proxy, opts, options.callback
+        get: true, values: values
+      options_filter_cascade = (options) ->
+        opts = {}
+        for k, v of options
+          continue if options.cascade[k] is false
+          opts[k] = v
+        opts
       call_callback = (fn, args) ->
         state.stack.unshift state.todos
         state.todos = todos_create()
@@ -262,13 +275,13 @@
           if state.stack.length is 0
             obj.emit 'end', level: 'INFO' unless state.todos.err
           return
-        org_options = options
-        parent_options = state.todos.options
+        options_original = options
+        options_parent = state.todos.options
         obj.cascade = {...obj.options.cascade, ...module.exports.cascade}
-        for k, v of parent_options
-          org_options[k] = v if org_options[k] is undefined and k isnt 'log' and obj.cascade[k] is true
+        for k, v of options_parent
+          options_original[k] = v if options_original[k] is undefined and k isnt 'log' and obj.cascade[k] is true
         options = enrich_options options
-        options.original = org_options
+        options.original = options_original
         if options.action is 'next'
           {err, status} = state.todos
           status = status.some (status) -> not status.shy and !!status.value
@@ -406,13 +419,8 @@
             options.callback = undefined
             called = false
             try
-              # Option to inject
-              opts = {}
-              # Clone first level properties
-              for k, v of options then opts[k] = v
-              # Filter cascaded options
-              for option, cascade of opts.cascade
-                delete opts[option] if cascade is false
+              # Clone and filter cascaded options
+              opts = options_filter_cascade options
               # Handle deprecation
               options_handler = ( (options_handler) ->
                 util.deprecate ->
@@ -649,14 +657,6 @@
       todos.err = null
       todos.status = []
       todos.throw_if_error = true
-    handle_get = (proxy, options) ->
-      return get: false unless options.length is 1
-      if options.length is options.filter( (opts) -> opts.get is true ).length
-        get = true
-        values = for opts in options
-          opts.handler.call proxy, opts, opts.callback
-        values = values[0] if values.length is 1
-      get: get, values: values
 
 ## Dependencies
 
