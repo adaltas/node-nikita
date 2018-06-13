@@ -20,7 +20,6 @@
       state.todos = todos_create()
       state.befores = []
       state.afters = []
-      state.depth = 0
       state.headers = []
       state.once = {}
       state.killed = false
@@ -194,8 +193,7 @@
           log.level ?= 'INFO'
           log.time ?= Date.now()
           log.module ?= undefined
-          log.header_depth ?= state.depth
-          log.headers ?= header for header in state.headers
+          log.headers ?= for header in state.headers then header
           log.total_depth ?= state.stack.length
           log.type ?= 'text'
           log.shy ?= options.shy
@@ -311,9 +309,8 @@
             callback err if callback
             run()
         index = state.index_counter++
-        state.depth++ if options.header
         state.headers.push options.header if options.header
-        options.log message: options.header, type: 'header', index: index, depth: state.depth, headers: (header for header in state.headers) if options.header
+        options.log message: options.header, type: 'header', index: index, headers: (header for header in state.headers) if options.header
         state.todos.status.unshift shy: options.shy, value: undefined
         state.stack.unshift state.todos
         state.todos = todos_create()
@@ -321,10 +318,10 @@
         wrap.options options, (err) ->
           do_disabled = ->
             unless options.disabled
-              options.log type: 'lifecycle', message: 'disabled_false', level: 'DEBUG', index: index, depth: state.depth, error: null, status: false
+              options.log type: 'lifecycle', message: 'disabled_false', level: 'DEBUG', index: index, error: null, status: false
               do_once()
             else
-              options.log type: 'lifecycle', message: 'disabled_true', level: 'INFO', index: index, depth: state.depth, error: null, status: false
+              options.log type: 'lifecycle', message: 'disabled_true', level: 'INFO', index: index, error: null, status: false
               do_callback []
           do_once = ->
             hashme = (value) ->
@@ -391,10 +388,10 @@
             , ->
               for k, v of options # Remove conditions from options
                 delete options[k] if /^if.*/.test(k) or /^unless.*/.test(k)
-              options.log type: 'lifecycle', message: 'conditions_passed', index: index, depth: state.depth, error: null, status: false
+              options.log type: 'lifecycle', message: 'conditions_passed', index: index, error: null, status: false
               do_handler()
             , (err) ->
-              options.log type: 'lifecycle', message: 'conditions_failed', index: index, depth: state.depth, error: err, status: false
+              options.log type: 'lifecycle', message: 'conditions_failed', index: index, error: err, status: false
               do_callback [err]
           options.attempt = -1
           do_handler = ->
@@ -508,9 +505,8 @@
             .error (err) -> do_callback [err]
             .next -> do_callback args
           do_callback = (args) ->
-            state.depth-- if options.header
             state.headers.pop() if options.header
-            options.log type: 'handled', index: index, depth: state.depth, error: args[0], status: args[1]
+            options.log type: 'handled', index: index, error: args[0], status: args[1]
             return if state.killed
             args[0] = undefined unless args[0] # Error is undefined and not null or false
             args[1] = !!args[1] if options.status # Status is a boolean, error or not
@@ -518,7 +514,7 @@
             jump_to_error args[0] if args[0] and not options.relax
             state.todos.throw_if_error = false if args[0] and options.callback
             # todo: we might want to log here a change of status, sth like:
-            # options.log type: 'lifecycle', message: 'status', index: index, depth: state.depth, error: err, status: true if options.status and args[1] and not state.todos.status.some (satus) -> status
+            # options.log type: 'lifecycle', message: 'status', index: index, error: err, status: true if options.status and args[1] and not state.todos.status.some (satus) -> status
             state.todos.status[0].value = args[1] if options.status
             call_callback options.callback, args if options.callback
             args[0] = null if options.relax
@@ -610,16 +606,8 @@
       Object.defineProperty obj.registry, 'unregister', get: -> (name, handler) ->
         reg.unregister arguments...
         proxy
+      # Todo: remove
       if obj.options.ssh
-        # opened = (options) ->
-        #   return false unless obj.store['nikita:ssh:connection:original']
-        #   return false if obj.store['nikita:ssh:connection'].config.host is options.host and
-        #   return false if obj.store['nikita:ssh:connection'].config.port is options.port and
-        #   return false if obj.store['nikita:ssh:connection'].config.username is options.username
-        #   match = true
-        #   for k, v of obj.options.ssh
-        #     match = false if obj.store['nikita:ssh:connection:original'].config[k] isnt v
-        #   match
         if obj.options.ssh.config
           obj.store['nikita:ssh:connection'] = obj.options.ssh
           delete obj.options.ssh

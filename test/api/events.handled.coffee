@@ -8,11 +8,10 @@ describe 'api events "handled"', ->
     nikita()
     .on 'handled', (log) ->
       arguments.length.should.eql 1
-      Object.keys(log).should.eql [
-        'type', 'index', 'depth', 'error'
-        'status', 'level', 'time', 'module'
-        'header_depth', 'total_depth'
-        'shy', 'file', 'line'
+      Object.keys(log).sort().should.eql [
+        'error', 'file', 'headers',
+        'index', 'level', 'line', 'module', 'shy', 
+        'status', 'time', 'total_depth', 'type'
       ]
     .call (_, callback) ->
       callback()

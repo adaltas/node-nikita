@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* log: remove depth and header_depth
 * cascade: honored by get actions
 * cascade: test false value in action
 * attempt: new test

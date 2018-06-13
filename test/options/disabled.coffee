@@ -25,12 +25,11 @@ describe 'options "disable"', ->
       log.type.should.eql 'lifecycle'
       log.message.should.eql 'disabled_true'
       log.index.should.eql 0
-      log.depth.should.eql 0
       (log.error is null).should.be.true()
       log.status.should.be.false()
       log.level.should.eql 'INFO'
       (log.module is undefined).should.be.true()
-      log.header_depth.should.eql 0
+      log.headers.should.eql []
       log.file.should.eql 'context.coffee.md'
     .promise()
 
@@ -45,12 +44,11 @@ describe 'options "disable"', ->
       log.type.should.eql 'lifecycle'
       log.message.should.eql 'disabled_false'
       log.index.should.eql 0
-      log.depth.should.eql 0
       (log.error is null).should.be.true()
       log.status.should.be.false()
       log.level.should.eql 'DEBUG'
       (log.module is undefined).should.be.true()
-      log.header_depth.should.eql 0
+      log.headers.should.eql []
       log.file.should.eql 'context.coffee.md'
     .next (->)
     .promise()
