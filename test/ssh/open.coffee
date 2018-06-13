@@ -23,6 +23,8 @@ describe 'ssh.open', ->
       status.should.be.true() unless err
     .call (options) ->
       (!!@ssh()).should.be.true()
+      # Note, assert instance of SSH2 which isnt a direct dependency
+      @ssh()._sshstream.config.ident.should.eql 'SSH-2.0-ssh2js0.2.0'
     .ssh.close()
     .promise()
 
@@ -38,7 +40,8 @@ describe 'ssh.open', ->
         public_key: ssh.config.publicKey.publicOrig
     .call (options) ->
       (!!@ssh()).should.be.true()
-      @ssh().should.be.an.instanceof require('ssh2').Client
+      # Note, assert instance of SSH2 which isnt a direct dependency
+      @ssh()._sshstream.config.ident.should.eql 'SSH-2.0-ssh2js0.2.0'
     .ssh.close {}, (err, status) ->
       status.should.be.true() unless err
     .ssh.close {}, (err, status) ->
