@@ -41,6 +41,7 @@ Cleanup and minor enhancements:
 
 Management:
 
+* travis: test against Node.js versions 8 and 10
 * changelog: organize messages by group
 * package: latest dependencies
 
