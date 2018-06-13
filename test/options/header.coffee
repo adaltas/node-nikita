@@ -11,7 +11,7 @@ describe 'options "header"', ->
     headers = []
     nikita
     .on 'header', (log) ->
-      headers.push message: log.message, headers: log.headers, total_depth: log.total_depth
+      headers.push message: log.message, headers: log.headers, depth: log.depth
     .call header: 'h1 call', ->
       @call header: 'h2 call', (_, callback) -> callback()
       @file.touch header: 'h2 touch', target: "#{scratch}/file_h2"
@@ -20,10 +20,10 @@ describe 'options "header"', ->
       target: "#{scratch}/file_h1"
     .call ->
       headers.should.eql [
-        { message: 'h1 call', headers: ['h1 call'], total_depth: 0 }
-        { message: 'h2 call', headers: ['h1 call', 'h2 call'], total_depth: 1 }
-        { message: 'h2 touch', headers: ['h1 call', 'h2 touch'], total_depth: 1 }
-        { message: 'h1 touch', headers: ['h1 touch'], total_depth: 0 }
+        { message: 'h1 call', headers: ['h1 call'], depth: 0 }
+        { message: 'h2 call', headers: ['h1 call', 'h2 call'], depth: 1 }
+        { message: 'h2 touch', headers: ['h1 call', 'h2 touch'], depth: 1 }
+        { message: 'h1 touch', headers: ['h1 touch'], depth: 0 }
       ]
     .promise()
 

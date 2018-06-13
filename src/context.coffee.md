@@ -178,7 +178,7 @@
             return unless log.type in ['text', 'stdin', 'stdout_stream', 'stderr_stream']
             return if log.type in ['stdout_stream', 'stderr_stream'] and log.message is null
             msg = if log.message?.toString? then log.message.toString() else log.message
-            msg = "[#{log.total_depth}.#{log.level} #{log.module}] #{JSON.stringify msg}"
+            msg = "[#{log.depth}.#{log.level} #{log.module}] #{JSON.stringify msg}"
             msg = switch log.type
               when 'stdin' then "\x1b[33m#{msg}\x1b[39m"
               when 'stdout_stream' then "\x1b[36m#{msg}\x1b[39m"
@@ -194,7 +194,7 @@
           log.time ?= Date.now()
           log.module ?= undefined
           log.headers ?= for header in state.headers then header
-          log.total_depth ?= state.stack.length
+          log.depth ?= state.stack.length
           log.type ?= 'text'
           log.shy ?= options.shy
           args = if 1 <= arguments.length then [].slice.call(arguments, 0) else []

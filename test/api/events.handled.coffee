@@ -9,9 +9,9 @@ describe 'api events "handled"', ->
     .on 'handled', (log) ->
       arguments.length.should.eql 1
       Object.keys(log).sort().should.eql [
-        'error', 'file', 'headers',
+        'depth', 'error', 'file', 'headers',
         'index', 'level', 'line', 'module', 'shy', 
-        'status', 'time', 'total_depth', 'type'
+        'status', 'time', 'type'
       ]
     .call (_, callback) ->
       callback()

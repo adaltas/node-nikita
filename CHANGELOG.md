@@ -5,6 +5,7 @@
 
 Backward incompatibilities:
 
+* option depth: renaming, was total_depth
 * option log: remove depth and header_depth
 * option action: rename option, was type
 * option debug: print to stderr
@@ -44,7 +45,6 @@ Management:
 * travis: test against Node.js versions 8 and 10
 * changelog: organize messages by group
 * package: latest dependencies
-
 
 ## Version 0.6.7
 

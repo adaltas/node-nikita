@@ -21,7 +21,7 @@ describe 'options "log"', ->
         logs[0].message.should.eql 'handler'
         (logs[0].module is undefined).should.be.true()
         logs[0].time.should.be.a.Number()
-        logs[0].total_depth.should.eql 1
+        logs[0].depth.should.eql 1
       .promise()
 
     it 'work recursively', ->
@@ -38,7 +38,7 @@ describe 'options "log"', ->
         logs[0].message.should.eql 'handler'
         (logs[0].module is undefined).should.be.true()
         logs[0].time.should.be.a.Number()
-        logs[0].total_depth.should.eql 2
+        logs[0].depth.should.eql 2
       .promise()
 
     it 'is overwritteable', ->
@@ -59,7 +59,7 @@ describe 'options "log"', ->
         logs_child[0].message.should.eql 'handler'
         (logs_child[0].module is undefined).should.be.true()
         logs_child[0].time.should.be.a.Number()
-        logs_child[0].total_depth.should.eql 2
+        logs_child[0].depth.should.eql 2
       .promise()
   
     it 'disable if set to false', ->
@@ -107,7 +107,7 @@ describe 'options "log"', ->
         logs[0].message.should.eql 'handler'
         (logs[0].module is undefined).should.be.true()
         logs[0].time.should.be.a.Number()
-        logs[0].total_depth.should.eql 1
+        logs[0].depth.should.eql 1
       .promise()
       
   it.skip 'serialize into string with default serializer', ->
