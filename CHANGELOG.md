@@ -25,6 +25,7 @@ New features:
 
 Fixes:
 
+* context: fix default param handler value 
 * ssh: no longer reference ssh2
 * cascade: honored by get actions
 * cascade: global, session and action merge

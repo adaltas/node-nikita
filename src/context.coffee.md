@@ -68,7 +68,7 @@
       obj.internal.options = (_arguments, action_name, params={}) ->
         params.enrich ?= true
         # Does the actions require a handler
-        params.hander ?= false
+        params.handler ?= false
         _arguments = [{}] if _arguments.length is 0
         # Convert every argument to an array
         for args, i in _arguments
