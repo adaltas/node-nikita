@@ -133,6 +133,7 @@
           opts.retry ?= 0
           opts.disabled ?= false
           opts.status ?= true
+          opts.depth = state.stack.length + 1
           throw Error 'Incompatible Options: status "false" implies shy "true"' if opts.status is false and opts.shy is false # Room for argument, leave it strict for now until we come accross a usecase justifying it.
           opts.shy ?= true if opts.status is false
           # Validation
