@@ -58,7 +58,7 @@ require('nikita')
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering remove", level: 'DEBUG', module: 'nikita/lib/system/remove'
+      @log message: "Entering remove", level: 'DEBUG', module: 'nikita/lib/system/remove'
       # SSH connection
       ssh = @ssh options.ssh
       # Validate parameters
@@ -70,7 +70,7 @@ require('nikita')
         return callback err if err
         each files
         .call (file, callback) =>
-          options.log message: "Removing file #{file}", level: 'INFO', module: 'nikita/lib/system/remove'
+          @log message: "Removing file #{file}", level: 'INFO', module: 'nikita/lib/system/remove'
           @system.execute
             cmd: """
             rm -rf '#{file}'

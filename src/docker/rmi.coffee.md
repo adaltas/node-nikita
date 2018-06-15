@@ -25,7 +25,7 @@ force options is set.
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering Docker rmi", level: 'DEBUG', module: 'nikita/lib/docker/rmi'
+      @log message: "Entering Docker rmi", level: 'DEBUG', module: 'nikita/lib/docker/rmi'
       # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

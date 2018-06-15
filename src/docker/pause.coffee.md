@@ -37,7 +37,7 @@ nikita.docker.pause({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering Docker pause", level: 'DEBUG', module: 'nikita/lib/docker/pause'
+      @log message: "Entering Docker pause", level: 'DEBUG', module: 'nikita/lib/docker/pause'
       # Global parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

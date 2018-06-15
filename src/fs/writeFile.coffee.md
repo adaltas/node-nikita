@@ -17,7 +17,7 @@ Options include
 ## Source Code
 
     module.exports = status: false, handler: (options) ->
-      options.log message: "Entering fs.writeFile", level: 'DEBUG', module: 'nikita/lib/fs/writeFile'
+      @log message: "Entering fs.writeFile", level: 'DEBUG', module: 'nikita/lib/fs/writeFile'
       ssh = @ssh options.ssh
       p = if ssh then path.posix else path
       # Default argument

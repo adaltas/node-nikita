@@ -62,8 +62,8 @@ require('nikita').ldap.user({
             passwd: options.passwd
           , (err, updated, added) ->
             return callback err if err
-            if added then options.log message: "User added", level: 'WARN', module: 'nikita/ldap/user'
-            else if updated then options.log message: "User updated", level: 'WARN', module: 'nikita/ldap/user'
+            if added then @log message: "User added", level: 'WARN', module: 'nikita/ldap/user'
+            else if updated then @log message: "User updated", level: 'WARN', module: 'nikita/ldap/user'
             modified = true if updated or added
             if added
             then do_ldappass()
@@ -89,7 +89,7 @@ require('nikita').ldap.user({
             """
           , (err) ->
             return callback err if err
-            options.log message: "Password modified", level: 'WARN', module: 'nikita/ldap/user'
+            @log message: "Password modified", level: 'WARN', module: 'nikita/ldap/user'
             modified = true
             do_end()
         do_end = ->

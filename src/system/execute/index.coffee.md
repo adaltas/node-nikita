@@ -119,7 +119,7 @@ nikita.system.execute({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering execute", level: 'DEBUG', module: 'nikita/lib/system/execute'
+      @log message: "Entering execute", level: 'DEBUG', module: 'nikita/lib/system/execute'
       # SSH connection
       ssh = @ssh options.ssh
       # Validate parameters
@@ -169,7 +169,7 @@ nikita.system.execute({
       , ->
         cmd = options.cmd
         options.target = "/tmp/nikita_#{string.hash options.cmd}" if typeof options.target isnt 'string'
-        options.log message: "Writing bash script to #{JSON.stringify options.target}", level: 'INFO'
+        @log message: "Writing bash script to #{JSON.stringify options.target}", level: 'INFO'
         options.cmd = "#{options.bash} #{options.target}"
         options.cmd = "su - #{options.uid} -c '#{options.cmd}'" if options.uid
         @fs.writeFile
@@ -182,7 +182,7 @@ nikita.system.execute({
       , ->
         cmd = options.cmd
         options.target = "/var/tmp/nikita_#{string.hash options.cmd}" if typeof options.target isnt 'string'
-        options.log message: "Writing arch-chroot script to #{JSON.stringify options.target}", level: 'INFO'
+        @log message: "Writing arch-chroot script to #{JSON.stringify options.target}", level: 'INFO'
         options.cmd = "arch-chroot #{options.rootdir} bash #{options.target}"
         @fs.writeFile
           target: "#{path.join options.rootdir, options.target}"
@@ -194,42 +194,42 @@ nikita.system.execute({
         options.cmd = "sudo #{options.cmd}" if options.sudo
       # Execute
       @call (_, callback) ->
-        options.log message: options.cmd_original, type: 'stdin', level: 'INFO', module: 'nikita/lib/system/execute' if options.stdin_log
+        @log message: options.cmd_original, type: 'stdin', level: 'INFO', module: 'nikita/lib/system/execute' if options.stdin_log
         child = exec options, ssh: ssh
         result.stdout = []; result.stderr = []
         child.stdout.pipe options.stdout, end: false if options.stdout
         child.stderr.pipe options.stderr, end: false if options.stderr
         stdout_stream_open = stderr_stream_open = false
         if options.stdout_callback or options.stdout_log
-          child.stdout.on 'data', (data) ->
+          child.stdout.on 'data', (data) =>
             stdout_stream_open = true if options.stdout_log
-            options.log message: data, type: 'stdout_stream', module: 'nikita/lib/system/execute' if options.stdout_log
+            @log message: data, type: 'stdout_stream', module: 'nikita/lib/system/execute' if options.stdout_log
             if options.stdout_callback
               if Array.isArray result.stdout # A string on exit
                 result.stdout.push data
               else console.warn 'stdout coming after child exit'
         if options.stderr_callback or options.stderr_log
-          child.stderr.on 'data', (data) ->
+          child.stderr.on 'data', (data) =>
             stderr_stream_open = true if options.stderr_log
-            options.log message: data, type: 'stderr_stream', module: 'nikita/lib/system/execute' if options.stderr_log
+            @log message: data, type: 'stderr_stream', module: 'nikita/lib/system/execute' if options.stderr_log
             if options.stderr_callback
               if Array.isArray result.stderr # A string on exit
                 result.stderr.push data
               else console.warn 'stderr coming after child exit'
-        child.on "exit", (code) ->
+        child.on "exit", (code) =>
           result.code = code
           # Give it some time because the "exit" event is sometimes
           # called before the "stdout" "data" event when runing
           # `npm test`
-          setTimeout ->
-            options.log message: null, type: 'stdout_stream', module: 'nikita/lib/system/execute' if stdout_stream_open and options.stdout_log
-            options.log message: null, type: 'stderr_stream', module: 'nikita/lib/system/execute' if  stderr_stream_open and options.stderr_log
+          setTimeout =>
+            @log message: null, type: 'stdout_stream', module: 'nikita/lib/system/execute' if stdout_stream_open and options.stdout_log
+            @log message: null, type: 'stderr_stream', module: 'nikita/lib/system/execute' if  stderr_stream_open and options.stderr_log
             result.stdout = result.stdout.map((d) -> d.toString()).join('')
             result.stdout = result.stdout.trim() if options.trim or options.stdout_trim
             result.stderr = result.stderr.map((d) -> d.toString()).join('')
             result.stderr = result.stderr.trim() if options.trim or options.stderr_trim
-            options.log message: result.stdout, type: 'stdout', module: 'nikita/lib/system/execute' if result.stdout and result.stdout isnt '' and options.stdout_log
-            options.log message: result.stderr, type: 'stderr', module: 'nikita/lib/system/execute' if result.stderr and result.stderr isnt '' and options.stderr_log
+            @log message: result.stdout, type: 'stdout', module: 'nikita/lib/system/execute' if result.stdout and result.stdout isnt '' and options.stdout_log
+            @log message: result.stderr, type: 'stderr', module: 'nikita/lib/system/execute' if result.stderr and result.stderr isnt '' and options.stderr_log
             if options.stdout
               child.stdout.unpipe options.stdout
             if options.stderr
@@ -241,7 +241,7 @@ nikita.system.execute({
             if options.code_skipped.indexOf(code) is -1
               status = true
             else
-              options.log message: "Skip exit code \"#{code}\"", level: 'INFO', module: 'nikita/lib/system/execute'
+              @log message: "Skip exit code \"#{code}\"", level: 'INFO', module: 'nikita/lib/system/execute'
             callback null, status
           , 1
       @next (err1, status) ->

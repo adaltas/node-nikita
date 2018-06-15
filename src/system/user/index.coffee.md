@@ -80,7 +80,7 @@ you are a member of the "wheel" group (gid of "10") with the command
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering user", level: 'DEBUG', module: 'nikita/lib/system/user/add'
+      @log message: "Entering user", level: 'DEBUG', module: 'nikita/lib/system/user/add'
       # SSH connection
       ssh = @ssh options.ssh
       # Options
@@ -99,7 +99,7 @@ you are a member of the "wheel" group (gid of "10") with the command
       , (err, status, users) ->
         throw err if err
         user_info = users[options.name]
-        options.log if user_info
+        @log if user_info
         then message: "Got user information for #{JSON.stringify options.name}", level: 'DEBUG', module: 'nikita/lib/system/group'
         else message: "User #{JSON.stringify options.name} not present", level: 'DEBUG', module: 'nikita/lib/system/group'
       # Get group information if
@@ -110,7 +110,7 @@ you are a member of the "wheel" group (gid of "10") with the command
         cache: options.cache
       , (err, status, groups) ->
         groups_info = groups
-        options.log message: "Got group information for #{JSON.stringify options.name}", level: 'DEBUG', module: 'nikita/lib/system/group' if groups_info
+        @log message: "Got group information for #{JSON.stringify options.name}", level: 'DEBUG', module: 'nikita/lib/system/group' if groups_info
       @call if: options.home, ->
         @system.mkdir
           unless_exists: path.dirname options.home
@@ -142,7 +142,7 @@ you are a member of the "wheel" group (gid of "10") with the command
           sudo: options.sudo
         , (err, status, stdout) ->
           throw err if err
-          options.log message: "User defined elsewhere than '/etc/passwd', exit code is 9", level: 'WARN', module: 'nikita/lib/system/user/add'
+          @log message: "User defined elsewhere than '/etc/passwd', exit code is 9", level: 'WARN', module: 'nikita/lib/system/user/add'
       @call if: (-> user_info), ->
         changed = []
         for k in ['uid', 'home', 'shell', 'comment', 'gid']
@@ -150,7 +150,7 @@ you are a member of the "wheel" group (gid of "10") with the command
         if options.groups then for group in options.groups
           throw Error "Group does not exist: #{group}" unless groups_info[group]
           changed.push 'groups' if groups_info[group].user_list.indexOf(options.name) is -1
-        options.log if changed.length
+        @log if changed.length
         then message: "User #{options.name} modified", level: 'WARN', module: 'nikita/lib/system/user/add'
         else message: "User #{options.name} not modified", level: 'DEBUG', module: 'nikita/lib/system/user/add'
         cmd = 'usermod'
@@ -190,7 +190,7 @@ you are a member of the "wheel" group (gid of "10") with the command
           sudo: options.sudo
         , (err, status) ->
           throw err if err
-          options.log message: "Password modified", level: 'WARN', module: 'nikita/lib/system/user/add' if status
+          @log message: "Password modified", level: 'WARN', module: 'nikita/lib/system/user/add' if status
       # Reset Cache
       @call
         if: -> @status()

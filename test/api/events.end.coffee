@@ -7,8 +7,7 @@ describe 'api events "end"', ->
   it 'provide a single log argument', (next) ->
     nikita()
     .on 'end', (log) ->
-      console.log 'on end', log
-      # console.log log
+      console.log 'TODO: test log object', log
       next()
     .on 'error', (err) -> next err
     .call (_, callback) ->

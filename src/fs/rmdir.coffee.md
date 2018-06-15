@@ -9,7 +9,7 @@ Delete a directory.
 ## Source Code
 
     module.exports = status: false, handler: (options) ->
-      options.log message: "Entering fs.rmdir", level: 'DEBUG', module: 'nikita/lib/fs/rmdir'
+      @log message: "Entering fs.rmdir", level: 'DEBUG', module: 'nikita/lib/fs/rmdir'
       # Normalize options
       options.target = options.argument if options.argument?
       throw Error "Required Option: the \"target\" option is mandatory" unless options.target
@@ -28,7 +28,7 @@ Delete a directory.
           err.code = 'ENOENT'
           err.syscall = 'rmdir'
           err.path = "#{options.target}"
-        options.log unless err
+        @log unless err
         then message: "Directory successfully removed", level: 'INFO', module: 'nikita/lib/fs/write'
         else message: "Fail to remove directory", level: 'ERROR', module: 'nikita/lib/fs/write'
         throw err

@@ -37,7 +37,7 @@ nikita.docker.wait({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering Docker wait", level: 'DEBUG', module: 'nikita/lib/docker/wait'
+      @log message: "Entering Docker wait", level: 'DEBUG', module: 'nikita/lib/docker/wait'
       # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

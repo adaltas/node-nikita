@@ -3,7 +3,7 @@ nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
-describe 'file.types.yum_repo', ->
+describe 'file.types.ssh_authorized_keys', ->
 
   scratch = test.scratch @
 

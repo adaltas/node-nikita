@@ -31,7 +31,7 @@ nikita.fs.createWriteStream({
 ## Source Code
 
     module.exports = status: false, handler: (options) ->
-      options.log message: "Entering fs.writeFile", level: 'DEBUG', module: 'nikita/lib/fs/writeFile'
+      @log message: "Entering fs.writeFile", level: 'DEBUG', module: 'nikita/lib/fs/writeFile'
       ssh = @ssh options.ssh
       # Normalize options
       options.target = options.argument if options.argument?
@@ -48,11 +48,11 @@ nikita.fs.createWriteStream({
           cp '#{options.target}' '#{options.target_tmp}'
           """
       , (err, status) ->
-        options.log unless err
+        @log unless err
         then message: "Append prepared by placing original file in temporary path", level: 'INFO', module: 'nikita/lib/fs/write'
         else message: "Failed to place original file in temporary path", level: 'ERROR', module: 'nikita/lib/fs/writeFile'
       @call (_, callback) ->
-        options.log message: 'Writting file', level: 'DEBUG', module: 'nikita/lib/fs/writeFile'
+        @log message: 'Writting file', level: 'DEBUG', module: 'nikita/lib/fs/writeFile'
         fs.createWriteStream ssh, options.target_tmp or options.target, flags: options.flags, mode: options.mode, (err, ws) ->
           return callback err if err
           options.stream ws

@@ -152,6 +152,7 @@ functions share a common API with flexible options.
         schema: 'nikita/ldap/schema'
         user: 'nikita/ldap/user'
       log:
+        '': 'nikita/log'
         cli: 'nikita/log/cli'
         fs: 'nikita/log/fs'
         md: 'nikita/log/md'

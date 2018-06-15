@@ -4,13 +4,13 @@ test = require '../test'
 
 describe 'api events "handled"', ->
 
-  it 'provide a single log argument', ->
+  it 'provides a single log argument', ->
     nikita()
     .on 'handled', (log) ->
       arguments.length.should.eql 1
       Object.keys(log).sort().should.eql [
         'depth', 'error', 'file', 'headers',
-        'index', 'level', 'line', 'module', 'shy', 
+        'index', 'level', 'line', 'module',
         'status', 'time', 'type'
       ]
     .call (_, callback) ->

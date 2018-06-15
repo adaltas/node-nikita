@@ -48,7 +48,7 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering tmpfs action", level: 'DEBUG', module: 'nikita/tmpfs/index'
+      @log message: "Entering tmpfs action", level: 'DEBUG', module: 'nikita/tmpfs/index'
       # SSH connection
       ssh = @ssh options.ssh
       # Options
@@ -64,12 +64,12 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
       if options.uid?
         options.name ?= options.uid unless /^[0-9]+/.exec options.uid
       options.target ?=  if options.name? then "/etc/tmpfiles.d/#{options.name}.conf" else '/etc/tmpfiles.d/default.conf'
-      options.log message: "target set to #{options.target}", level: 'DEBUG', module: 'nikita/tmpfs/index'
+      @log message: "target set to #{options.target}", level: 'DEBUG', module: 'nikita/tmpfs/index'
       @call
         shy: true
         if: options.merge
       , (_, callback) ->
-          options.log message: "opening target file for merge", level: 'DEBUG', module: 'nikita/tmpfs/index'
+          @log message: "opening target file for merge", level: 'DEBUG', module: 'nikita/tmpfs/index'
           @fs.readFile ssh: options.ssh, target: options.target, encoding: 'utf8', (err, data) ->
             if err
               return callback null, false if err.code is 'ENOENT'
@@ -77,14 +77,14 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
             else
               source = misc.tmpfs.parse data
               options.content = merge {}, source, options.content
-              options.log message: "content has been merged", level: 'DEBUG', module: 'nikita/tmpfs/index'
+              @log message: "content has been merged", level: 'DEBUG', module: 'nikita/tmpfs/index'
               callback null, false
       @call ->
         @file options, content: misc.tmpfs.stringify(options.content), merge: false, target: options.target
         @call
           if: -> @status -1
         , ->
-            options.log message: "re-creating #{options.mount} tmpfs file", level: 'INFO', module: 'nikita/tmpfs/index'
+            @log message: "re-creating #{options.mount} tmpfs file", level: 'INFO', module: 'nikita/tmpfs/index'
             @system.execute
               cmd: "systemd-tmpfiles --remove #{options.target}"
             @system.execute

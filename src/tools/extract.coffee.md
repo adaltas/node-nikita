@@ -43,7 +43,7 @@ require('nikita').tools.extract({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering extract", level: 'DEBUG', module: 'nikita/lib/tools/extract'
+      @log message: "Entering extract", level: 'DEBUG', module: 'nikita/lib/tools/extract'
       # SSH connection
       ssh = @ssh options.ssh
       # Validate options
@@ -86,7 +86,7 @@ require('nikita').tools.extract({
           extract()
       extract = =>
         cmd = null
-        options.log message: "Format is #{format}", level: 'DEBUG', module: 'nikita/lib/tools/extract'
+        @log message: "Format is #{format}", level: 'DEBUG', module: 'nikita/lib/tools/extract'
         switch format
           when 'tgz' then cmd = "tar xzf #{options.source} -C #{target} #{tar_opts.join ' '}"
           when 'tar' then cmd = "tar xf #{options.source} -C #{target} #{tar_opts.join ' '}"

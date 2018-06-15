@@ -38,7 +38,7 @@ nikita.docker.pause({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering Docker volume_create", level: 'DEBUG', module: 'nikita/lib/docker/volume_create'
+      @log message: "Entering Docker volume_create", level: 'DEBUG', module: 'nikita/lib/docker/volume_create'
       # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

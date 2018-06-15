@@ -37,7 +37,7 @@ require('nikita').tools.compress({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering compress", level: 'DEBUG', module: 'nikita/lib/tools/compress'
+      @log message: "Entering compress", level: 'DEBUG', module: 'nikita/lib/tools/compress'
       # Validate parameters
       throw Error "Missing source: #{options.source}" unless options.source
       throw Error "Missing target: #{options.target}" unless options.target

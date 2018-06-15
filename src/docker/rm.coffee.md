@@ -39,7 +39,7 @@ nikita.docker.rm({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering Docker rm", level: 'DEBUG', module: 'nikita/lib/docker/rm'
+      @log message: "Entering Docker rm", level: 'DEBUG', module: 'nikita/lib/docker/rm'
       # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

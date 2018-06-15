@@ -36,13 +36,13 @@ require('nikita').service.start([{
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering service.restart", level: 'DEBUG', module: 'nikita/lib/service/restart'
+      @log message: "Entering service.restart", level: 'DEBUG', module: 'nikita/lib/service/restart'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'
       # Validation
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       # Action
-      options.log message: "Restart service #{options.name}", level: 'INFO', module: 'nikita/lib/service/restart'
+      @log message: "Restart service #{options.name}", level: 'INFO', module: 'nikita/lib/service/restart'
       @service.discover (err, status, loader) -> 
         options.loader ?= loader
       @call ->

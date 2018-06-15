@@ -12,14 +12,14 @@ describe 'api stack', ->
     n = nikita()
     n.on 'text', (log) -> msgs.push log.message
     n.call (options) ->
-      options.log 'a1'
+      @log 'a1'
       n.call (options) ->
-        options.log 'c'
+        @log 'c'
         n.call (options) ->
-          options.log 'd'
+          @log 'd'
       n.call (options) ->
-        options.log 'e'
-      options.log 'b'
+        @log 'e'
+      @log 'b'
     , (err, status) ->
       msgs.push 'a2'
     n.next (err) ->
@@ -31,15 +31,15 @@ describe 'api stack', ->
     n = nikita()
     n.on 'text', (log) -> msgs.push log.message
     n.call (options, next) ->
-      options.log 'a'
+      @log 'a'
       n.call (options, next) ->
-        options.log 'c'
+        @log 'c'
         setImmediate next
       n.call (options, next) ->
-        options.log 'd'
+        @log 'd'
         setImmediate next
       setImmediate next
-      options.log 'b'
+      @log 'b'
     n.call ->
       msgs.should.eql ['a', 'b', 'c', 'd']
     n.promise()
@@ -49,15 +49,15 @@ describe 'api stack', ->
     n = nikita()
     n.on 'text', (log) -> msgs.push log.message
     n.call (options, next) ->
-      options.log 'a'
+      @log 'a'
       n.call (options, next) ->
-        options.log 'c'
+        @log 'c'
         next()
       n.call (options, next) ->
-        options.log 'd'
+        @log 'd'
         next()
       next()
-      options.log 'b'
+      @log 'b'
     n.call ->
       msgs.should.eql ['a', 'b', 'c', 'd']
     n.promise()
@@ -69,15 +69,15 @@ describe 'api stack', ->
     n.on 'text', (log) -> msgs.push log.message
     n
     .call (options, callback) ->
-      options.log 'a'
+      @log 'a'
       callback()
     .call (options, callback) ->
-      options.log 'b'
+      @log 'b'
       callback()
     .next ->
       n
       .call (options, callback) ->
-        options.log 'c'
+        @log 'c'
         callback()
       .next (err, changed) ->
         msgs.should.eql ['a', 'b', 'c'] unless err
@@ -88,15 +88,15 @@ describe 'api stack', ->
     n = nikita()
     n.on 'text', (log) -> msgs.push log.message
     n.call (options, callback) ->
-      options.log 'a'
+      @log 'a'
       callback()
     n.call (options, callback) ->
-      options.log 'b'
+      @log 'b'
       callback()
     , (err, changed) ->
       return next err if err
       n.call (options, callback) ->
-        options.log 'c'
+        @log 'c'
         callback()
       n.next (err, changed) ->
         msgs.should.eql ['a', 'b', 'c'] unless err

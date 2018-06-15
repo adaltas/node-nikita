@@ -16,7 +16,7 @@ A set of assertion tools.
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering assert", level: 'DEBUG', module: 'nikita/lib/assert'
+      @log message: "Entering assert", level: 'DEBUG', module: 'nikita/lib/assert'
 
 ## Check current status
 

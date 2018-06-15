@@ -34,7 +34,7 @@ nikita.docker.volume_rm({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering Docker volume_rm", level: 'DEBUG', module: 'nikita/lib/docker/volume_rm'
+      @log message: "Entering Docker volume_rm", level: 'DEBUG', module: 'nikita/lib/docker/volume_rm'
       # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

@@ -67,11 +67,11 @@ npm test test/db/database.coffee
       # Defines and check the engine type
       options.engine = options.engine.toLowerCase()
       throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mariadb', 'mysql', 'postgresql']
-      options.log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'nikita/db/database'
+      @log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'nikita/db/database'
       # Default values
       options.port ?= 5432
       # Create database unless exist
-      options.log message: "Check if database #{options.database} exists", level: 'DEBUG', module: 'nikita/db/database'
+      @log message: "Check if database #{options.database} exists", level: 'DEBUG', module: 'nikita/db/database'
       switch options.engine
         when 'mariadb', 'mysql'
           cmd_database_create = db.cmd options, database: null, "CREATE DATABASE #{options.database} DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;"
@@ -83,9 +83,9 @@ npm test test/db/database.coffee
         cmd: cmd_database_create
         unless_exec: cmd_database_exists
       , (err, status) ->
-        options.log message: "Database created: #{JSON.stringify options.database}", level: 'WARN', module: 'nikita/db/database' if status
+        @log message: "Database created: #{JSON.stringify options.database}", level: 'WARN', module: 'nikita/db/database' if status
       for user in options.user then do =>
-        @call -> options.log message: "Check if user #{user} has PRIVILEGES on #{options.database} ", level: 'DEBUG', module: 'nikita/db/database'     
+        @call -> @log message: "Check if user #{user} has PRIVILEGES on #{options.database} ", level: 'DEBUG', module: 'nikita/db/database'     
         @db.user.exists
           engine: options.engine
           username: user
@@ -114,7 +114,7 @@ npm test test/db/database.coffee
           """
           code_skipped: 3
         , (err, status, stdout, stderr) ->
-          options.log message: "Privileges granted: to #{JSON.stringify user} on #{JSON.stringify options.database}", level: 'WARN', module: 'nikita/db/database' if status
+          @log message: "Privileges granted: to #{JSON.stringify user} on #{JSON.stringify options.database}", level: 'WARN', module: 'nikita/db/database' if status
 
 ## Dependencies
 

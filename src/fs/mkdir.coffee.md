@@ -19,7 +19,7 @@ Make directories.
 ## Source Code
 
     module.exports = status: false, handler: (options, callback) ->
-      options.log message: "Entering fs.mkdir", level: 'DEBUG', module: 'nikita/lib/fs/mkdir'
+      @log message: "Entering fs.mkdir", level: 'DEBUG', module: 'nikita/lib/fs/mkdir'
       # Normalize options
       options.target = options.argument if options.argument?
       # Validate parameters

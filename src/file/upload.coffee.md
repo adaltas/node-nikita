@@ -67,14 +67,14 @@ require('nikita').upload({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering file.upload", level: 'DEBUG', module: 'nikita/lib/file/upload'
+      @log message: "Entering file.upload", level: 'DEBUG', module: 'nikita/lib/file/upload'
       # SSH connection
       ssh = @ssh options.ssh
       # Options
       throw Error "Required \"source\" option" unless options.source
       throw Error "Required \"target\" option" unless options.target
-      options.log message: "Source is \"#{options.source}\"", level: 'DEBUG', module: 'nikita/lib/file/upload'
-      options.log message: "Destination is \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/file/upload'
+      @log message: "Source is \"#{options.source}\"", level: 'DEBUG', module: 'nikita/lib/file/upload'
+      @log message: "Destination is \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/file/upload'
       status = false
       source_stat = null
       target_stat = null
@@ -129,7 +129,7 @@ require('nikita').upload({
           source: stage_target
           target: options.target
         , (err, status) ->
-          options.log message: "Unstaged uploaded file", level: 'INFO', module: 'nikita/lib/file/upload' if status
+          @log message: "Unstaged uploaded file", level: 'INFO', module: 'nikita/lib/file/upload' if status
         @system.chmod
           ssh: false
           target: options.target

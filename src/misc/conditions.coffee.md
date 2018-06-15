@@ -133,15 +133,15 @@ were executed successfully otherwise the callback `skip` is called.
         # SSH connection
         ssh = @ssh options.ssh
         each(options.if_exec)
-        .call (cmd, next) ->
-          options.log? message: "Nikita `if_exec`: #{cmd}", level: 'DEBUG', module: 'nikita/misc/conditions'
+        .call (cmd, next) =>
+          @log message: "Nikita `if_exec`: #{cmd}", level: 'DEBUG', module: 'nikita/misc/conditions'
           run = exec ssh: ssh, cmd: cmd
           # if options.stdout
           #   run.stdout.pipe options.stdout, end: false
           # if options.stderr
           #   run.stderr.pipe options.stderr, end: false
-          run.on "exit", (code) ->
-            options.log? message: "Nikita `if_exec`: code is \"#{code}\"", level: 'INFO', module: 'nikita/misc/conditions'
+          run.on "exit", (code) =>
+            @log message: "Nikita `if_exec`: code is \"#{code}\"", level: 'INFO', module: 'nikita/misc/conditions'
             if code is 0 then next() else skip()
         .next succeed
 
@@ -157,15 +157,15 @@ were executed with failure otherwise the callback `skip` is called.
         # SSH connection
         ssh = @ssh options.ssh
         each(options.unless_exec)
-        .call (cmd, next) ->
-          options.log? message: "Nikita `unless_exec`: #{cmd}", level: 'DEBUG', module: 'nikita/misc/conditions'
+        .call (cmd, next) =>
+          @log message: "Nikita `unless_exec`: #{cmd}", level: 'DEBUG', module: 'nikita/misc/conditions'
           run = exec ssh: ssh, cmd: cmd
           # if options.stdout
           #   run.stdout.pipe options.stdout, end: false
           # if options.stderr
           #   run.stderr.pipe options.stderr, end: false
-          run.on "exit", (code) ->
-            options.log? message: "Nikita `unless_exec`: code is \"#{code}\"", level: 'INFO', module: 'nikita/misc/conditions'
+          run.on "exit", (code) =>
+            @log message: "Nikita `unless_exec`: code is \"#{code}\"", level: 'INFO', module: 'nikita/misc/conditions'
             if code is 0 then skip() else next()
         .next succeed
 
@@ -189,7 +189,7 @@ the callback `skip` is called.
           rule.version = semver.sanitize rule.version, 'x'
           rule.arch ?= []
           rule.arch = [rule.arch] unless Array.isArray rule.arch
-        options.log? message: "Nikita `if_os`: #{JSON.stringify options.if_os}", level: 'DEBUG', module: 'nikita/misc/conditions'
+        @log message: "Nikita `if_os`: #{JSON.stringify options.if_os}", level: 'DEBUG', module: 'nikita/misc/conditions'
         exec ssh, os, (err, stdout, stderr) ->
           return skip err if err
           [arch, name, version] = stdout.split '|'
@@ -227,7 +227,7 @@ the callback `skip` is called.
           rule.version = semver.sanitize rule.version, 'x'
           rule.arch ?= []
           rule.arch = [rule.arch] unless Array.isArray rule.arch
-        options.log? message: "Nikita `unless_os`: #{JSON.stringify options.unless_os}", level: 'DEBUG', module: 'nikita/misc/conditions'
+        @log message: "Nikita `unless_os`: #{JSON.stringify options.unless_os}", level: 'DEBUG', module: 'nikita/misc/conditions'
         exec ssh, os, (err, stdout, stderr) ->
           return skip err if err
           [arch, name, version] = stdout.split '|'
@@ -261,13 +261,13 @@ exists otherwise the callback `skip` is called.
         if typeof options.if_exists is 'boolean' and options.target
           options.if_exists = if options.if_exists then [options.target] else null
         each(options.if_exists)
-        .call (if_exists, next) ->
-          fs.exists ssh, if_exists, (err, exists) ->
+        .call (if_exists, next) =>
+          fs.exists ssh, if_exists, (err, exists) =>
             if exists
-              options.log? message: "File exists #{if_exists}, continuing", level: 'DEBUG', module: 'nikita/misc/conditions'
+              @log message: "File exists #{if_exists}, continuing", level: 'DEBUG', module: 'nikita/misc/conditions'
               next()
             else
-              options.log? message: "File doesnt exists #{if_exists}, skipping", level: 'INFO', module: 'nikita/misc/conditions'
+              @log message: "File doesnt exists #{if_exists}, skipping", level: 'INFO', module: 'nikita/misc/conditions'
               skip()
         .next succeed
 
@@ -287,13 +287,13 @@ exists otherwise the callback `skip` is called.
         if typeof options.unless_exists is 'boolean' and options.target
           options.unless_exists = if options.unless_exists then [options.target] else null
         each(options.unless_exists)
-        .call (unless_exists, next) ->
-          fs.exists ssh, unless_exists, (err, exists) ->
+        .call (unless_exists, next) =>
+          fs.exists ssh, unless_exists, (err, exists) =>
             if exists
-              options.log? message: "File exists #{unless_exists}, skipping", level: 'INFO', module: 'nikita/misc/conditions'
+              @log message: "File exists #{unless_exists}, skipping", level: 'INFO', module: 'nikita/misc/conditions'
               skip()
             else
-              options.log? message: "File doesnt exists #{unless_exists}, continuing", level: 'DEBUG', module: 'nikita/misc/conditions'
+              @log message: "File doesnt exists #{unless_exists}, continuing", level: 'DEBUG', module: 'nikita/misc/conditions'
               next()
         .next succeed
 
@@ -372,7 +372,7 @@ conditions.all({
           return next() if key is 'all'
           return next() unless module.exports[key]?
           module.exports[key].call context, options, next, (err) ->
-            # options.log? "Nikita `#{key}`: skipping action"
+            # @log "Nikita `#{key}`: skipping action"
             failed err
         next()
         null

@@ -60,7 +60,7 @@ require('nikita').system.mkdir({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering mkdir", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
+      @log message: "Entering mkdir", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
       # SSH connection
       ssh = @ssh options.ssh
       p = if ssh then path.posix else path
@@ -82,7 +82,7 @@ require('nikita').system.mkdir({
       each options.directory
       .call (directory, callback) =>
         # first, we need to find which directory need to be created
-        # options.log message: "Creating directory '#{directory}'", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
+        # @log message: "Creating directory '#{directory}'", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
         do_stats = =>
           end = false
           dirs = []
@@ -94,7 +94,7 @@ require('nikita').system.mkdir({
             '/' + directories.slice(0, directories.length - i).join '/'
           each(directories)
           .call (directory, i, next) =>
-            options.log message: "Stat '#{directory}'", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
+            @log message: "Stat '#{directory}'", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
             @fs.stat ssh: options.ssh, target: directory, (err, stat) ->
               if err?.code is 'ENOENT' # if the directory is not yet created
                 directory.stat = stat
@@ -125,21 +125,21 @@ require('nikita').system.mkdir({
             # eg /\${/ on './var/cache/${user}' creates './var/cache/'
             if options.exclude? and options.exclude instanceof RegExp
               return callback() if options.exclude.test path.basename directory
-            options.log message: "Create directory \"#{directory}\"", level: 'DEBUG', module: 'nikita/lib/system/mkdir' # unless directory is options.directory
+            @log message: "Create directory \"#{directory}\"", level: 'DEBUG', module: 'nikita/lib/system/mkdir' # unless directory is options.directory
             opts = {}
             for attr in ['mode', 'uid', 'gid', 'size', 'atime', 'mtime']
               val = if i is directories.length - 1 then options[attr] else options.parent?[attr]
               opts[attr] = val if val?
             @fs.mkdir ssh: options.ssh, target: directory, opts, (err) ->
               return callback err if err
-              options.log message: "Directory \"#{directory}\" created ", level: 'INFO', module: 'nikita/lib/system/mkdir'
+              @log message: "Directory \"#{directory}\" created ", level: 'INFO', module: 'nikita/lib/system/mkdir'
               state = true
               callback()
           .next (err) ->
             return callback err if err
             callback()
         do_update = (stat) =>
-          options.log message: "Directory already exists", level: 'INFO', module: 'nikita/lib/system/mkdir'
+          @log message: "Directory already exists", level: 'INFO', module: 'nikita/lib/system/mkdir'
           @system.chown
             target: directory
             stat: stat

@@ -177,15 +177,15 @@ require('nikita').file({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering file", level: 'DEBUG', module: 'nikita/lib/file'
+      @log message: "Entering file", level: 'DEBUG', module: 'nikita/lib/file'
       # SSH connection
       ssh = @ssh options.ssh
       # Validate parameters
       return throw Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?
       return throw Error 'Define either source or content' if options.source and options.content
       return throw Error 'Missing target' unless options.target
-      options.log message: "Source is \"#{options.source}\"", level: 'DEBUG', module: 'nikita/lib/file'
-      options.log message: "Destination is \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/file'
+      @log message: "Source is \"#{options.source}\"", level: 'DEBUG', module: 'nikita/lib/file'
+      @log message: "Destination is \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/file'
       options.content = options.content.toString() if options.content and Buffer.isBuffer options.content
       options.content = options.content options if typeof options.content is 'function'
       options.diff ?= options.diff or !!options.stdout
@@ -224,7 +224,7 @@ require('nikita').file({
         # Option "local" force to bypass the ssh
         # connection, use by the upload function
         source = options.source or options.target
-        options.log message: "Force local source is \"#{if options.local then 'true' else 'false'}\"", level: 'DEBUG', module: 'nikita/lib/file'
+        @log message: "Force local source is \"#{if options.local then 'true' else 'false'}\"", level: 'DEBUG', module: 'nikita/lib/file'
         @fs.exists
           ssh: if options.local then false else options.ssh
           target: source
@@ -234,7 +234,7 @@ require('nikita').file({
             return callback Error "Source does not exist: #{JSON.stringify options.source}" if options.source
             options.content = ''
             return callback()
-          options.log message: "Reading source", level: 'DEBUG', module: 'nikita/lib/file'
+          @log message: "Reading source", level: 'DEBUG', module: 'nikita/lib/file'
           @fs.readFile
             ssh: if options.local then false else options.ssh
             target: source
@@ -248,32 +248,32 @@ require('nikita').file({
         # no need to test changes if target is a callback
         return callback() if typeof options.target is 'function'
         exists = =>
-          options.log message: "Stat target", level: 'DEBUG', module: 'nikita/lib/file'
+          @log message: "Stat target", level: 'DEBUG', module: 'nikita/lib/file'
           @fs.lstat ssh: options.ssh, target: options.target, relax: true, (err, stat) ->
             return do_mkdir() if err?.code is 'ENOENT'
             return callback err if err
             targetStat = stat
             if stat.isDirectory()
               options.target = "#{options.target}/#{path.basename options.source}"
-              options.log message: "Destination is a directory and is now \"options.target\"", level: 'INFO', module: 'nikita/lib/file'
+              @log message: "Destination is a directory and is now \"options.target\"", level: 'INFO', module: 'nikita/lib/file'
               # Destination is the parent directory, let's see if the file exist inside
               @fs.stat ssh: options.ssh, target: options.target, (err, stat) ->
                 if err?.code is 'ENOENT'
-                  options.log message: "New target does not exist", level: 'INFO', module: 'nikita/lib/file'
+                  @log message: "New target does not exist", level: 'INFO', module: 'nikita/lib/file'
                   return callback()
                 return callback err if err
                 return callback Error "Destination is not a file: #{options.target}" unless stat.isFile()
-                options.log message: "New target exist", level: 'INFO', module: 'nikita/lib/file'
+                @log message: "New target exist", level: 'INFO', module: 'nikita/lib/file'
                 targetStat = stat
                 do_read()
             else if stat.isSymbolicLink()
-              options.log message: "Destination is a symlink", level: 'INFO', module: 'nikita/lib/file'
+              @log message: "Destination is a symlink", level: 'INFO', module: 'nikita/lib/file'
               return do_read() unless options.unlink
               @fs.unlink ssh: options.ssh, target: options.target, (err) ->
                 return callback err if err
                 callback() # Dont go to mkdir since parent dir exists
             else if stat.isFile()
-              options.log message: "Destination is a file", level: 'INFO', module: 'nikita/lib/file'
+              @log message: "Destination is a file", level: 'INFO', module: 'nikita/lib/file'
               do_read()
             else
               callback Error "Invalid File Type Destination: #{options.target}"
@@ -291,7 +291,7 @@ require('nikita').file({
             return callback err if err
             callback()
         do_read = =>
-          options.log message: "Reading target", level: 'DEBUG', module: 'nikita/lib/file'
+          @log message: "Reading target", level: 'DEBUG', module: 'nikita/lib/file'
           @fs.readFile ssh: options.ssh, target: options.target, encoding: options.encoding, (err, dest) ->
             return callback err if err
             target = dest # only used by diff
@@ -299,16 +299,16 @@ require('nikita').file({
             callback()
         exists()
       @call  -> # render
-        string.render options if options.context?
+        string.render.call @, options if options.context?
       @call -> # skip_empty_lines
         return unless options.skip_empty_lines?
-        options.log message: "Skip empty lines", level: 'DEBUG', module: 'nikita/lib/file'
+        @log message: "Skip empty lines", level: 'DEBUG', module: 'nikita/lib/file'
         options.content = options.content.replace /(\r\n|[\n\r\u0085\u2028\u2029])\s*(\r\n|[\n\r\u0085\u2028\u2029])/g, "$1"
       @call -> # replace_partial
-        string.replace_partial options if options.write.length
+        string.replace_partial.call @, options if options.write.length
       @call -> # eof
         return unless options.eof?
-        options.log message: 'Checking option eof', level: 'DEBUG', module: 'nikita/lib/file'
+        @log message: 'Checking option eof', level: 'DEBUG', module: 'nikita/lib/file'
         if options.eof is true
           for char, i in options.content
             if char is '\r'
@@ -318,21 +318,21 @@ require('nikita').file({
               options.eof = char
               break;
           options.eof = '\n' if options.eof is true
-          options.log message: "Option eof is true, guessing as #{JSON.stringify options.eof}", level: 'INFO', module: 'nikita/lib/file'
+          @log message: "Option eof is true, guessing as #{JSON.stringify options.eof}", level: 'INFO', module: 'nikita/lib/file'
         unless string.endsWith options.content, options.eof
-          options.log message: 'Add eof', level: 'INFO', module: 'nikita/lib/file'
+          @log message: 'Add eof', level: 'INFO', module: 'nikita/lib/file'
           options.content += options.eof
       @call (_, callback) -> # diff
         return callback() if targetHash is string.hash options.content
-        options.log message: "File content has changed: #{options.target}", level: 'WARN', module: 'nikita/lib/file'
+        @log message: "File content has changed: #{options.target}", level: 'WARN', module: 'nikita/lib/file'
         {raw, text} = diff target, options.content, options
         options.diff text, raw if typeof options.diff is 'function'
-        options.log message: text, type: 'diff', level: 'INFO', module: 'nikita/lib/file'
+        @log message: text, type: 'diff', level: 'INFO', module: 'nikita/lib/file'
         callback null, true
       @call -> # backup
         return unless @status()
         return unless options.backup and targetHash
-        options.log message: "Create backup", level: 'INFO', module: 'nikita/lib/file'
+        @log message: "Create backup", level: 'INFO', module: 'nikita/lib/file'
         options.backup_mode ?= 0o0400
         backup = if typeof options.backup is 'string' then options.backup else ".#{Date.now()}"
         @system.copy
@@ -343,7 +343,7 @@ require('nikita').file({
       @call (_, callback) -> # file
         return callback() unless @status()
         if typeof options.target is 'function'
-          options.log message: 'Write target with user function', level: 'INFO', module: 'nikita/lib/file'
+          @log message: 'Write target with user function', level: 'INFO', module: 'nikita/lib/file'
           options.target options.content
           return callback()
         options.flags ?= 'a' if options.append

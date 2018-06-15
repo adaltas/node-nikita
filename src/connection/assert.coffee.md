@@ -16,7 +16,7 @@ Assert a TCP or HTTP server is listening.
 ## Source code
 
     module.exports = shy: true, handler: (options) ->
-      options.log message: "Entering connection.assert", level: 'DEBUG', module: 'nikita/lib/connection/assert'
+      @log message: "Entering connection.assert", level: 'DEBUG', module: 'nikita/lib/connection/assert'
       options.servers ?= []
       options.servers.push options.server if options.server
       throw Error "Required Option: host is required if port is provided" if options.port and not options.host

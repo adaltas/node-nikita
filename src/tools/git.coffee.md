@@ -36,7 +36,7 @@ require('nikita').tools.git({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering git", level: 'DEBUG', module: 'nikita/lib/tools/git'
+      @log message: "Entering git", level: 'DEBUG', module: 'nikita/lib/tools/git'
       # SSH connection
       ssh = @ssh options.ssh
       # Sanitize options

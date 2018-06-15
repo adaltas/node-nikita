@@ -14,7 +14,7 @@ describe 'options "log"', ->
       nikita
       .call
         log: (l) -> logs.push l if l.type is 'text'
-        handler: (options) -> options.log 'handler'
+        handler: (options) -> @log 'handler'
       .call ->
         logs.length.should.eql 1
         logs[0].level.should.eql 'INFO'
@@ -31,7 +31,7 @@ describe 'options "log"', ->
         log: (l) -> logs.push l if l.type is 'text'
         handler: ->
           @call (options) ->
-              options.log 'handler'
+            @log 'handler'
       .call ->
         logs.length.should.eql 1
         logs[0].level.should.eql 'INFO'
@@ -51,7 +51,7 @@ describe 'options "log"', ->
           @call
             log: (l) -> logs_child.push l if l.type is 'text'
             handler: (options) ->
-              options.log 'handler'
+              @log 'handler'
       .call ->
         logs_parent.length.should.eql 0
         logs_child.length.should.eql 1
@@ -69,11 +69,11 @@ describe 'options "log"', ->
         log = message
       .call
         handler: (options) ->
-          options.log 'is nikita around'
+          @log 'is nikita around'
       .call
         log: false
         handler: (options) ->
-          options.log 'no, u wont find her'
+          @log 'no, u wont find her'
       .call ->
         log.should.eql 'is nikita around'
       .promise()
@@ -85,11 +85,11 @@ describe 'options "log"', ->
       .on 'text', ({message}) ->
         logs.push message
       .call (options) ->
-        options.log 'is nikita around'
+        @log 'is nikita around'
         @call
           log: options.log
           handler: (options) ->
-            options.log 'yes, dont kill her'
+            @log 'yes, dont kill her'
       .call ->
         logs.should.eql ['is nikita around', 'yes, dont kill her']
       .promise()
@@ -100,7 +100,7 @@ describe 'options "log"', ->
       logs = []
       nikita
       .on 'text', (l) -> logs.push l
-      .call (options) -> options.log 'handler'
+      .call (options) -> @log 'handler'
       .call ->
         logs.length.should.eql 1
         logs[0].level.should.eql 'INFO'
@@ -117,7 +117,7 @@ describe 'options "log"', ->
       log_serializer: true
     .on 'text', (l) -> log = l
     .call (options) ->
-      options.log 'handler'
+      @log 'handler'
     .call ->
       log.should.match /^\[INFO \d+\] handler/
     .promise()
@@ -129,7 +129,7 @@ describe 'options "log"', ->
       log_serializer: (log) -> "[#{log.level}] #{log.message}"
     .on 'text', (l) -> log = l
     .call (options) ->
-      options.log 'handler'
+      @log 'handler'
     .call ->
       log.should.eql "[INFO] handler"
     .promise()

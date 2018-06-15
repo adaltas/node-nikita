@@ -38,7 +38,7 @@ nikita.docker.pause({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering Docker logout", level: 'DEBUG', module: 'nikita/lib/docker/logout'
+      @log message: "Entering Docker logout", level: 'DEBUG', module: 'nikita/lib/docker/logout'
       # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

@@ -5,7 +5,7 @@ Write log to the host filesystem in a user provided format.
 
 ## Options
 
-* `depth` (number|boolean)    
+* `depth_max` (number|boolean)    
 * `divider` (string)    
 * `end` (boolean)    
 * `enabled` (boolean)    
@@ -18,13 +18,13 @@ Write log to the host filesystem in a user provided format.
 
 Global options can be alternatively set with the "log_cli" property.
 
-## Exemple with the depth option
+## Exemple with the depth_max option
 
 ```js
 require('nikita')(
   log: { cli: { colors: true } }
 )
-.log.cli({ depth: 2 })
+.log.cli({ depth_max: 2 })
 .call({
   header: 'Print my header'
 }, function(){
@@ -57,7 +57,7 @@ require('nikita')(
 ## Source Code
 
     module.exports = ssh: false, handler: (options) ->
-      options.log message: "Entering log.cli", level: 'DEBUG', module: 'nikita/lib/log/cli'
+      @log message: "Entering log.cli", level: 'DEBUG', module: 'nikita/lib/log/cli'
       # SSH connection
       ssh = @ssh options.ssh
       # Obtains options from "log_cli" namespace
@@ -69,7 +69,7 @@ require('nikita')(
       options.stream ?= process.stderr
       options.end ?= false
       options.divider ?= ' : '
-      options.depth ?= false
+      options.depth_max ?= false
       options.pad ?= {}
       options.time ?= true
       options.separator = host: options.separator, header: options.separator if typeof options.separator is 'string'
@@ -101,14 +101,14 @@ require('nikita')(
           "ERROR"
         'header': (log) ->
           return unless options.enabled
-          return if options.depth and options.depth < log.headers.length
+          return if options.depth_max and options.depth_max < log.headers.length
           ids[log.index] = log
           null
-        "lifecycle": (log) ->
+        'lifecycle': (log) ->
           return unless ids[log.index]
           ids[log.index].disabled = true if log.message in ['conditions_failed', 'disabled_true']
           null
-        "handled": (log) ->
+        'handled': (log) ->
           status = if log.error then '✘' else if log.status and not log.shy then '✔' else '-'
           color = false
           if options.colors

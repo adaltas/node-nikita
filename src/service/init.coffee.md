@@ -47,7 +47,7 @@ Reload the service daemon provider depending on the os.
 ## Source Code
     
     module.exports = (options) ->
-      options.log message: "Entering service.init", level: 'DEBUG', module: 'nikita/lib/service/init'
+      @log message: "Entering service.init", level: 'DEBUG', module: 'nikita/lib/service/init'
       # mandatory options
       throw Error 'Missing source' unless options.source?
       options.engine ?= 'nunjunks'

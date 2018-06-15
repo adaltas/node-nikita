@@ -111,7 +111,7 @@ nikita.docker.build({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering Docker build", level: 'DEBUG', module: 'nikita/lib/docker/build'
+      @log message: "Entering Docker build", level: 'DEBUG', module: 'nikita/lib/docker/build'
       # SSH connection
       ssh = @ssh options.ssh
       # Global options
@@ -157,13 +157,13 @@ nikita.docker.build({
       # custom command for content option0
       options.file ?= path.resolve options.cwd, 'Dockerfile' if options.cwd
       if options.content?
-        options.log message: "Building from text: Docker won't have a context. ADD/COPY not working", level: 'WARN', module: 'nikita/docker/build'
+        @log message: "Building from text: Docker won't have a context. ADD/COPY not working", level: 'WARN', module: 'nikita/docker/build'
         cmd += " - <<DOCKERFILE\n#{options.content}\nDOCKERFILE" if options.content?
       else if options.file?
-        options.log message: "Building from Dockerfile: \"#{options.file}\"", level: 'INFO', module: 'nikita/docker/build'
+        @log message: "Building from Dockerfile: \"#{options.file}\"", level: 'INFO', module: 'nikita/docker/build'
         cmd += " -f #{options.file} #{options.cwd}"
       else
-        options.log message: "Building from CWD", level: 'INFO', module: 'nikita/docker/build'
+        @log message: "Building from CWD", level: 'INFO', module: 'nikita/docker/build'
         cmd += ' .'
       @file
         if: options.content
@@ -181,7 +181,7 @@ nikita.docker.build({
       @call # Read Dockerfile if necessary to count steps
         unless: options.content
         handler: (_, callback) ->
-          options.log message: "Reading Dockerfile from : #{options.file}", level: 'INFO', module: 'nikita/lib/build'
+          @log message: "Reading Dockerfile from : #{options.file}", level: 'INFO', module: 'nikita/lib/build'
           @fs.readFile ssh: options.ssh, target: options.file, encoding: 'utf8', (err, content) ->
             return callback err if err
             options.content = content
@@ -206,7 +206,7 @@ nikita.docker.build({
         userargs = [number_of_step isnt number_of_cache, container_id_hash, stdout, stderr]
       @next (err, status) ->
         return callback err if err
-        options.log if userargs[0]
+        @log if userargs[0]
         then message: "New image id #{userargs[1]}", level: 'INFO', module: 'nikita/lib/docker/build' 
         else message: "Identical image id #{userargs[1]}", level: 'INFO', module: 'nikita/lib/docker/build'
         callback null, userargs...

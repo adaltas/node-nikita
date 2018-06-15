@@ -34,7 +34,7 @@ Register or log in to a Docker registry server.
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering Docker login", level: 'DEBUG', module: 'nikita/lib/docker/login'
+      @log message: "Entering Docker login", level: 'DEBUG', module: 'nikita/lib/docker/login'
       # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

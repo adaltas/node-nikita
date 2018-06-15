@@ -110,7 +110,7 @@ nikita.docker({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering Docker run", level: 'DEBUG', module: 'nikita/lib/docker/run'
+      @log message: "Entering Docker run", level: 'DEBUG', module: 'nikita/lib/docker/run'
       # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
@@ -118,7 +118,7 @@ nikita.docker({
       return callback Error 'Missing image' unless options.image?
       options.rm ?= true
       options.name ?= options.container
-      options.log message: "Should specify a container name if rm is false", level: 'WARN', module: 'nikita/docker/run' unless options.name? or options.rm
+      @log message: "Should specify a container name if rm is false", level: 'WARN', module: 'nikita/docker/run' unless options.name? or options.rm
       # Construct exec command
       cmd = 'run'
       # Classic options
@@ -157,14 +157,14 @@ nikita.docker({
         shy: true
       , (err, running) ->
         docker.callback arguments...
-        options.log message: "Container already running. Skipping", level: 'INFO', module: 'nikita/docker/run' if running
+        @log message: "Container already running. Skipping", level: 'INFO', module: 'nikita/docker/run' if running
       @system.execute
         cmd: docker.wrap options, cmd
         if: ->
           not options.name? or @status(-1) is false
       , (err, running) ->
         docker.callback arguments...
-        options.log message: "Container now running", level: 'WARN', module: 'nikita/docker/run' if running
+        @log message: "Container now running", level: 'WARN', module: 'nikita/docker/run' if running
         callback arguments...
 
 ## Modules Dependencies

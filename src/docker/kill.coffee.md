@@ -38,7 +38,7 @@ nikita.docker.kill({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering Docker kill", level: 'DEBUG', module: 'nikita/lib/docker/kill'
+      @log message: "Entering Docker kill", level: 'DEBUG', module: 'nikita/lib/docker/kill'
       # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

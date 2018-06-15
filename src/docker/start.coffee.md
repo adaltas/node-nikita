@@ -46,7 +46,7 @@ nikita.docker.start({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering Docker start", level: 'DEBUG', module: 'nikita/lib/docker/start'
+      @log message: "Entering Docker start", level: 'DEBUG', module: 'nikita/lib/docker/start'
       # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
@@ -59,8 +59,8 @@ nikita.docker.start({
       @docker.status shy: true, options, (err, is_running) ->
         throw err if err
         if is_running
-        then options.log message: "Container already started #{options.container} (Skipping)", level: 'INFO', module: 'nikita/lib/docker/start'
-        else options.log message: "Starting container #{options.container}", level: 'INFO', module: 'nikita/lib/docker/start'
+        then @log message: "Container already started #{options.container} (Skipping)", level: 'INFO', module: 'nikita/lib/docker/start'
+        else @log message: "Starting container #{options.container}", level: 'INFO', module: 'nikita/lib/docker/start'
         @end() if is_running
       @system.execute
         cmd: docker.wrap options, cmd

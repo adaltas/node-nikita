@@ -22,15 +22,22 @@ describe 'options "disable"', ->
     , (otions) ->
       throw Error 'Achtung'
     .on 'lifecycle', (log) ->
-      log.type.should.eql 'lifecycle'
-      log.message.should.eql 'disabled_true'
-      log.index.should.eql 0
+      Object.keys(log).sort().should.eql [
+        'depth', 'error', 'file', 'headers', 'index', 
+        'level', 'line', 'message', 'module', 'shy', 
+        'status', 'time', 'type'
+      ]
+      log.depth.should.eql 1
       (log.error is null).should.be.true()
-      log.status.should.be.false()
-      log.level.should.eql 'INFO'
-      (log.module is undefined).should.be.true()
       log.headers.should.eql []
-      log.file.should.eql 'context.coffee.md'
+      log.index.should.eql 0
+      log.level.should.eql 'INFO'
+      log.message.should.eql 'disabled_true'
+      (log.module is undefined).should.be.true()
+      log.shy.should.be.true()
+      log.status.should.be.false()
+      log.type.should.eql 'lifecycle'
+      # log.file.should.eql 'context.coffee.md'
     .promise()
 
   it 'emit lifecycle event when not disabled', ->

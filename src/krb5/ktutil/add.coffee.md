@@ -58,11 +58,8 @@ require('nikita').krb5.ktutil.add({
         shy: true
       , (err, exists, stdout, stderr) ->
         throw err if err
-        # unless exists
-        #   options.log message: "Keytab does not yet exists", level: 'INFO', module: 'nikita/krb5/ktadd'
-        #   return do_ktadd()
         return unless exists
-        options.log message: "Principal exist in Keytab, check kvno validity", level: 'DEBUG', module: 'nikita/krb5/ktutil/add'
+        @log message: "Principal exist in Keytab, check kvno validity", level: 'DEBUG', module: 'nikita/krb5/ktutil/add'
         for line in string.lines stdout
           continue unless match = /^\s*(\d+)\s*(\d+)\s+([\d\/:]+\s+[\d\/:]+)\s+(.*)\s*\(([\w|-]*)\)\s*$/.exec line
           [_, slot, kvno, timestamp, principal, enctype] = match
@@ -99,7 +96,7 @@ require('nikita').krb5.ktutil.add({
           if entry? and (entry?.kvno isnt princ.kvno)
             cmd ?= "echo -e 'rkt #{options.keytab}\n"
             # remove entry if kvno not identical
-            options.log message: "Remove from Keytab kvno '#{entry.kvno}', principal kvno '#{princ.kvno}'", level: 'INFO', module: 'nikita/krb5/ktutil/add'
+            @log message: "Remove from Keytab kvno '#{entry.kvno}', principal kvno '#{princ.kvno}'", level: 'INFO', module: 'nikita/krb5/ktutil/add'
             cmd += "delete_entry #{entry?.slot}\n"
         @call
           if: entries.length > princ_entries.length

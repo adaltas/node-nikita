@@ -13,7 +13,7 @@ describe 'log.csv', ->
       ssh: ssh
     .log.csv basedir: scratch
     .call (options) ->
-      options.log 'ok'
+      @log 'ok'
     .file.assert
       source: "#{scratch}/localhost.log"
       content: /^text,INFO,"ok"\n/
@@ -28,7 +28,7 @@ describe 'log.csv', ->
       log_csv: basedir: scratch
     .log.csv()
     .call (options) ->
-      options.log 'ok'
+      @log 'ok'
     .file.assert
       source: "#{scratch}/localhost.log"
       content: /^text,INFO,"ok"\n/

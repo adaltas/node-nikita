@@ -76,7 +76,7 @@ require('nikita').file.render({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering file.render", level: 'DEBUG', module: 'nikita/lib/file/render'
+      @log message: "Entering file.render", level: 'DEBUG', module: 'nikita/lib/file/render'
       # Validate parameters
       options.encoding ?= 'utf8'
       throw Error 'Required option: source or content' unless options.source or options.content

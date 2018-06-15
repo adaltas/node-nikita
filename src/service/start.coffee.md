@@ -34,7 +34,7 @@ require('nikita').service.start([{
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering service.start", level: 'DEBUG', module: 'nikita/lib/service/start'
+      @log message: "Entering service.start", level: 'DEBUG', module: 'nikita/lib/service/start'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'
       # Validation
@@ -64,5 +64,5 @@ require('nikita').service.start([{
         arch_chroot: options.arch_chroot
         rootdir: options.rootdir
       , (err, started) ->
-        options.log message: "Service already started", level: 'WARN', module: 'nikita/lib/service/start' if not err and not started
-        options.log message: "Service is started", level: 'INFO', module: 'nikita/lib/service/start' if not err and started
+        @log message: "Service already started", level: 'WARN', module: 'nikita/lib/service/start' if not err and not started
+        @log message: "Service is started", level: 'INFO', module: 'nikita/lib/service/start' if not err and started

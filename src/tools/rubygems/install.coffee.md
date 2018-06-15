@@ -71,7 +71,7 @@ require('nikita')
 ## Source code
 
     module.exports = (options) ->
-      options.log message: "Entering rubygem.install", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/install'
+      @log message: "Entering rubygem.install", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/install'
       # SSH connection
       ssh = @ssh options.ssh
       # Global Options

@@ -37,7 +37,7 @@ require('nikita').file.yaml({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering file.yaml", level: 'DEBUG', module: 'nikita/lib/file/yaml'
+      @log message: "Entering file.yaml", level: 'DEBUG', module: 'nikita/lib/file/yaml'
       # SSH connection
       ssh = @ssh options.ssh
       # Options
@@ -51,7 +51,7 @@ require('nikita').file.yaml({
       @call
         if: options.merge
       , ->
-        options.log message: "Get Target Content", level: 'DEBUG', module: 'nikita/lib/file/cson'
+        @log message: "Get Target Content", level: 'DEBUG', module: 'nikita/lib/file/cson'
         @fs.readFile
           ssh: options.ssh
           target: options.target
@@ -59,18 +59,18 @@ require('nikita').file.yaml({
         , (err, content) ->
           # File does not exists, this is ok, there is simply nothing to merge
           if err?.code is 'ENOENT'
-            options.log message: "No Target Content To Merged", level: 'DEBUG', module: 'nikita/lib/file/cson'
+            @log message: "No Target Content To Merged", level: 'DEBUG', module: 'nikita/lib/file/cson'
             return
           throw err if err
           try
             content = season.parse content
             options.content = misc.merge content, options.content
-            options.log message: "Target Content Merged", level: 'DEBUG', module: 'nikita/lib/file/cson'
+            @log message: "Target Content Merged", level: 'DEBUG', module: 'nikita/lib/file/cson'
           catch err
             # Maybe change error message with sth like "Failed to parse..."
             throw err
       @call ->
-        options.log message: "Serialize Content", level: 'DEBUG', module: 'nikita/lib/file/cson'
+        @log message: "Serialize Content", level: 'DEBUG', module: 'nikita/lib/file/cson'
         @file
           content: season.stringify options.content
           target: options.target

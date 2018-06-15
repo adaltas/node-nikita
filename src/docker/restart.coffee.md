@@ -39,7 +39,7 @@ nikita.docker.restart({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering Docker restart", level: 'DEBUG', module: 'nikita/lib/docker/restart'
+      @log message: "Entering Docker restart", level: 'DEBUG', module: 'nikita/lib/docker/restart'
       # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

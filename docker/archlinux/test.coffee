@@ -23,7 +23,6 @@ module.exports =
   disable_system_user: false
   disable_tools_repo: true
   disable_tools_rubygems: true
-  disable_yum_conf: true
   conditions_is_os:
     arch: '64'
     name: 'arch'

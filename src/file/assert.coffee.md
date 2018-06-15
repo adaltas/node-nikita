@@ -69,7 +69,7 @@ nikita.file.assert({
 ## Source code
 
     module.exports = (options) ->
-      options.log message: "Entering file.assert", level: 'DEBUG', module: 'nikita/lib/file/assert'
+      @log message: "Entering file.assert", level: 'DEBUG', module: 'nikita/lib/file/assert'
       # SSH connection
       ssh = @ssh options.ssh
       # Options

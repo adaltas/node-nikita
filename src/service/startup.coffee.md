@@ -42,7 +42,7 @@ require('nikita').service.startup([{
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering service.startup", level: 'DEBUG', module: 'nikita/lib/service/startup'
+      @log message: "Entering service.startup", level: 'DEBUG', module: 'nikita/lib/service/startup'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'
       options.startup ?= true
@@ -50,7 +50,7 @@ require('nikita').service.startup([{
       # Validation
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name?
       # Action
-      options.log message: "Startup service #{options.name}", level: 'INFO', module: 'nikita/lib/service/startup'
+      @log message: "Startup service #{options.name}", level: 'INFO', module: 'nikita/lib/service/startup'
       @system.execute
         unless: options.cmd
         cmd: """
@@ -93,7 +93,7 @@ require('nikita').service.startup([{
         err = Error "Startup Disable Failed: #{options.name}" if err and not options.startup
         throw err if err
         message = if options.startup then 'activated' else 'disabled'
-        options.log if status
+        @log if status
         then message: "Service startup updated: #{message}", level: 'WARN', module: 'nikita/lib/service/remove'
         else message: "Service startup not modified: #{message}", level: 'INFO', module: 'nikita/lib/service/remove'
       @call
@@ -107,7 +107,7 @@ require('nikita').service.startup([{
           return callback err if err
           # Invalid service name return code is 0 and message in stderr start by error
           if /^error/.test stderr
-            options.log message: "Invalid chkconfig name for \"#{options.name}\"", level: 'ERROR', module: 'mecano/lib/service/startup'
+            @log message: "Invalid chkconfig name for \"#{options.name}\"", level: 'ERROR', module: 'mecano/lib/service/startup'
             throw Error "Invalid chkconfig name for `#{options.name}`"
           current_startup = ''
           if registered
@@ -133,8 +133,8 @@ require('nikita').service.startup([{
               cmd: cmd
             , (err) -> callback err, true
           @call unless: options.startup, ->
-            options.log message: "Desactivating startup rules", level: 'DEBUG', module: 'mecano/lib/service/startup'
-            options.log? "Mecano `service.startup`: s"
+            @log message: "Desactivating startup rules", level: 'DEBUG', module: 'mecano/lib/service/startup'
+            @log? "Mecano `service.startup`: s"
             # Setting the level to off. An alternative is to delete it: `chkconfig --del #{options.name}`
             @system.execute
               cmd: "chkconfig #{options.name} off"
@@ -142,7 +142,7 @@ require('nikita').service.startup([{
       , (err, status) ->
         throw err if err
         message = if options.startup then 'activated' else 'disabled'
-        options.log if status
+        @log if status
         then message: "Service startup updated: #{message}", level: 'WARN', module: 'nikita/lib/service/startup'
         else message: "Service startup not modified: #{message}", level: 'INFO', module: 'nikita/lib/service/startup'
       @system.execute
@@ -165,6 +165,6 @@ require('nikita').service.startup([{
       , (err, status) ->
         throw err if err
         message = if options.startup then 'activated' else 'disabled'
-        options.log if status
+        @log if status
         then message: "Service startup updated: #{message}", level: 'WARN', module: 'nikita/lib/service/remove'
         else message: "Service startup not modified: #{message}", level: 'INFO', module: 'nikita/lib/service/remove'

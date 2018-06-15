@@ -55,7 +55,7 @@ nikita.tools.backup({
 ## Source code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering backup", level: 'DEBUG', module: 'nikita/lib/tools/backup'
+      @log message: "Entering backup", level: 'DEBUG', module: 'nikita/lib/tools/backup'
       throw  Error 'Missing option: "target"' unless options.target
       throw  Error 'Missing option: "name"' unless options.name
       m = moment()
@@ -64,8 +64,8 @@ nikita.tools.backup({
       target = "#{options.target}/#{options.name}/#{filename}"
       compress = options.compress
       compress = 'tgz' if compress is true or not compress
-      options.log message: "Source is #{JSON.stringify options.source}", level: 'INFO', module: 'nikita/lib/tools/backup'
-      options.log message: "Target is #{JSON.stringify target}", level: 'INFO', module: 'nikita/lib/tools/backup'
+      @log message: "Source is #{JSON.stringify options.source}", level: 'INFO', module: 'nikita/lib/tools/backup'
+      @log message: "Target is #{JSON.stringify target}", level: 'INFO', module: 'nikita/lib/tools/backup'
       @system.mkdir "#{path.dirname target}"
       @call if: options.source, ->
         @system.copy

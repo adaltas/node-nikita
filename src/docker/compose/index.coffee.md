@@ -48,7 +48,7 @@ Create and start containers according to a docker-compose file
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering Docker Compose", level: 'DEBUG', module: 'nikita/lib/docker/compose/up'
+      @log message: "Entering Docker Compose", level: 'DEBUG', module: 'nikita/lib/docker/compose/up'
       # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
@@ -93,7 +93,7 @@ Create and start containers according to a docker-compose file
           return callback null, true unless status
           containers = JSON.parse stdout
           status = containers.some (container) -> not container.State.Running
-          options.log "Docker created, need start" if status
+          @log "Docker created, need start" if status
           callback null, status
       @system.execute
         if: -> options.force or @status()

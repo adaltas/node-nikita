@@ -38,7 +38,7 @@ require('nikita').system.link({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering link", level: 'DEBUG', module: 'nikita/lib/system/link'
+      @log message: "Entering link", level: 'DEBUG', module: 'nikita/lib/system/link'
       linked = 0
       sym_exists = (options, callback) =>
         @fs.readlink ssh: options.ssh, target: options.target, (err, resolvedPath) ->

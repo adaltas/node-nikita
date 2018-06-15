@@ -36,7 +36,7 @@ nikita.fs.createReadStream({
 ## Source Code
 
     module.exports = status: false, handler: (options, callback) ->
-      options.log message: "Entering fs.createReadStream", level: 'DEBUG', module: 'nikita/lib/fs/createReadStream'
+      @log message: "Entering fs.createReadStream", level: 'DEBUG', module: 'nikita/lib/fs/createReadStream'
       ssh = @ssh options.ssh
       p = if ssh then path.posix else path
       # Default argument
@@ -62,14 +62,14 @@ nikita.fs.createReadStream({
           chown '#{current_username}' '#{options.target_tmp}'
           """
       , (err, status) ->
-        options.log unless err
+        @log unless err
         then message: "Placing original file in temporary path before reading", level: 'INFO', module: 'nikita/lib/fs/createReadStream'
         else message: "Failed to place original file in temporary path", level: 'ERROR', module: 'nikita/lib/fs/createReadStream'
         callback err if err
       callback_args = null
       @call (_, callback) ->
         buffers = []
-        options.log message: "Reading file #{options.target_tmp or options.target}", level: 'DEBUG', module: 'nikita/lib/fs/createReadStream'
+        @log message: "Reading file #{options.target_tmp or options.target}", level: 'DEBUG', module: 'nikita/lib/fs/createReadStream'
         fs.createReadStream ssh, options.target_tmp or options.target, (err, rs) =>
           return callback err if err
           done = (err) ->

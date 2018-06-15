@@ -9,7 +9,7 @@ Options include:
 ## Source Code
 
     module.exports = status: false, handler: (options, callback) ->
-      options.log message: "Entering fs.stat", level: 'DEBUG', module: 'nikita/lib/fs/stat'
+      @log message: "Entering fs.stat", level: 'DEBUG', module: 'nikita/lib/fs/stat'
       # Normalize options
       options.target = options.argument if options.argument?
       options.dereference ?= true

@@ -59,7 +59,7 @@ require('nikita').system.copy({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering copy", level: 'DEBUG', module: 'nikita/lib/system/copy'
+      @log message: "Entering copy", level: 'DEBUG', module: 'nikita/lib/system/copy'
       # SSH connection
       ssh = @ssh options.ssh
 
@@ -79,9 +79,9 @@ Retrieve stats information about the source unless provided through the "source_
 
       @call (_, callback) ->
         if options.source_stats
-          options.log message: "Source Stats: using short circuit", level: 'DEBUG', module: 'nikita/lib/system/copy'
+          @log message: "Source Stats: using short circuit", level: 'DEBUG', module: 'nikita/lib/system/copy'
           return callback()
-        options.log message: "Stats source file #{options.source}", level: 'DEBUG', module: 'nikita/lib/system/copy'
+        @log message: "Stats source file #{options.source}", level: 'DEBUG', module: 'nikita/lib/system/copy'
         @fs.stat ssh: options.ssh, target: options.source, (err, stats) =>
           return callback err if err
           options.source_stats = stats unless err
@@ -91,9 +91,9 @@ Retrieve stat information about the traget unless provided through the "target_s
 
       @call (_, callback) ->
         if options.target_stats
-          options.log message: "Target Stats: using short circuit", level: 'DEBUG', module: 'nikita/lib/system/copy'
+          @log message: "Target Stats: using short circuit", level: 'DEBUG', module: 'nikita/lib/system/copy'
           return callback()
-        options.log message: "Stats target file #{options.target}", level: 'DEBUG', module: 'nikita/lib/system/copy'
+        @log message: "Stats target file #{options.target}", level: 'DEBUG', module: 'nikita/lib/system/copy'
         @fs.stat ssh: options.ssh, target: options.target, (err, stats) =>
           # Note, target file doesnt necessarily exist
           return callback err if err and err.code isnt 'ENOENT'
@@ -123,7 +123,7 @@ present inside "/tmp/a_source" are copied inside "/tmp/a_target".
         sourceEndWithSlash = options.source.lastIndexOf('/') is options.source.length - 1
         if options.target_stats and not sourceEndWithSlash
           options.target = path.resolve options.target, path.basename options.source
-        options.log message: "Source is a directory", level: 'INFO', module: 'nikita/lib/system/copy'
+        @log message: "Source is a directory", level: 'INFO', module: 'nikita/lib/system/copy'
         @call (_, callback) -> 
           glob ssh, "#{options.source}/**", dot: true, (err, sources) =>
             return callback err if err
@@ -173,7 +173,7 @@ Copy the file if content doesn't match.
           return callback err if err and err.message.indexOf('Does not exist') isnt 0
           # Files are the same, we can skip copying
           return callback null, false if md5
-          options.log message: "Copy file from #{options.source} into #{options.target}", level: 'WARN', module: 'nikita/lib/system/copy'
+          @log message: "Copy file from #{options.source} into #{options.target}", level: 'WARN', module: 'nikita/lib/system/copy'
           @fs.copy
             ssh: options.ssh
             source: options.source
@@ -181,7 +181,7 @@ Copy the file if content doesn't match.
           , (err) ->
             callback err, true
       , (err, status) ->
-        options.log message: "File #{options.source} copied", level: 'DEBUG', module: 'nikita/lib/system/copy'
+        @log message: "File #{options.source} copied", level: 'DEBUG', module: 'nikita/lib/system/copy'
 
 File ownership and permissions
 

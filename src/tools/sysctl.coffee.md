@@ -57,7 +57,7 @@ require('nikita').tools.sysctl({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering sysctl", level: 'DEBUG', module: 'nikita/lib/tools/sysctl'
+      @log message: "Entering sysctl", level: 'DEBUG', module: 'nikita/lib/tools/sysctl'
       # Options
       options.load ?= true
       options.target ?= '/etc/sysctl.conf'
@@ -65,7 +65,7 @@ require('nikita').tools.sysctl({
       current = {}
       @call (_, callback) ->
         status = false
-        options.log message: "Read target: #{options.target}", level: 'DEBUG', module: 'nikita/lib/tools/sysctl'
+        @log message: "Read target: #{options.target}", level: 'DEBUG', module: 'nikita/lib/tools/sysctl'
         @fs.readFile
           ssh: options.ssh
           target: options.target
@@ -87,7 +87,7 @@ require('nikita').tools.sysctl({
             value = value.trim()
             # Skip property
             if key in options.properties and not options.properties[key]?
-              options.log "Removing Property: #{key}, was #{value}", level: 'INFO', module: 'nikita/lib/tools/sysctl'
+              @log "Removing Property: #{key}, was #{value}", level: 'INFO', module: 'nikita/lib/tools/sysctl'
               status = true
               continue
             # Set property
@@ -102,7 +102,7 @@ require('nikita').tools.sysctl({
           continue unless value?
           value = "#{value}" if typeof value is 'number'
           continue if current[key] is value
-          options.log "Update Property: key \"#{key}\" from \"#{final[key]}\" to \"#{value}\"", level: 'INFO', module: 'nikita/lib/tools/sysctl'
+          @log "Update Property: key \"#{key}\" from \"#{final[key]}\" to \"#{value}\"", level: 'INFO', module: 'nikita/lib/tools/sysctl'
           final[key] = value
           status = true
         callback null, status

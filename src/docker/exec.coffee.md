@@ -47,7 +47,7 @@ nikita.docker({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering Docker exec", level: 'DEBUG', module: 'nikita/lib/docker/exec'
+      @log message: "Entering Docker exec", level: 'DEBUG', module: 'nikita/lib/docker/exec'
       # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
@@ -61,7 +61,7 @@ nikita.docker({
         cmd += " -u #{options.uid}"
         cmd += ":#{options.gid}" if options.gid?
       else if options.gid?
-        options.log message: 'options.gid ignored unless options.uid is provided', level: 'WARN', module: 'nikita/lib/docker/exec'
+        @log message: 'options.gid ignored unless options.uid is provided', level: 'WARN', module: 'nikita/lib/docker/exec'
       cmd += " #{options.container} #{options.cmd}"
       delete options.cmd
       @system.execute

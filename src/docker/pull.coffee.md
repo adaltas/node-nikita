@@ -40,7 +40,7 @@ nikita.docker_pull({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering Docker pull", level: 'DEBUG', module: 'nikita/lib/docker/pull'
+      @log message: "Entering Docker pull", level: 'DEBUG', module: 'nikita/lib/docker/pull'
       # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

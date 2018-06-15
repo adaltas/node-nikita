@@ -43,7 +43,7 @@ nikita.docker.load({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering Docker load", level: 'DEBUG', module: 'nikita/lib/docker/load'
+      @log message: "Entering Docker load", level: 'DEBUG', module: 'nikita/lib/docker/load'
       # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
@@ -56,9 +56,9 @@ nikita.docker.load({
       # parse the result to record images as an array of   {'REPOSITORY:TAG:'= 'IMAGE'}
       images = {}
       delete options.cmd
-      options.log message: 'Storing previous state of image', level: 'INFO', module: 'nikita/lib/docker/load'
-      options.log message: 'No checksum provided', level: 'INFO', module: 'nikita/lib/docker/load' if !options.checksum?
-      options.log message: "Checksum provided :#{options.checksum}", level: 'INFO', module: 'nikita/lib/docker/load' if options.checksum
+      @log message: 'Storing previous state of image', level: 'INFO', module: 'nikita/lib/docker/load'
+      @log message: 'No checksum provided', level: 'INFO', module: 'nikita/lib/docker/load' if !options.checksum?
+      @log message: "Checksum provided :#{options.checksum}", level: 'INFO', module: 'nikita/lib/docker/load' if options.checksum
       options.checksum ?= ''
       @system.execute
         cmd: docker.wrap options, " images | grep -v '<none>' | awk '{ print $1\":\"$2\":\"$3 }'"
@@ -72,10 +72,10 @@ nikita.docker.load({
             if image != ''
               infos = image.split(':')
               # if image is here we skip
-              options.log message: "Image already exist checksum :#{options.checksum}, repo:tag #{"#{infos[0]}:#{infos[1]}"}", level: 'INFO', module: 'nikita/lib/docker/load' if infos[2] == options.checksum
+              @log message: "Image already exist checksum :#{options.checksum}, repo:tag #{"#{infos[0]}:#{infos[1]}"}", level: 'INFO', module: 'nikita/lib/docker/load' if infos[2] == options.checksum
               return callback null, false if infos[2] == options.checksum
               images["#{infos[0]}:#{infos[1]}"] = "#{infos[2]}"
-        options.log message: "Start Loading #{options.input} ", level: 'INFO', module: 'nikita/lib/docker/load'
+        @log message: "Start Loading #{options.input} ", level: 'INFO', module: 'nikita/lib/docker/load'
         @system.execute
           cmd: docker.wrap options, cmd
         @system.execute
@@ -84,7 +84,7 @@ nikita.docker.load({
           return callback err, executed, out, stderr if err
           new_images = {}
           diff = false
-          options.log message: 'Comparing new images', level: 'INFO', module: 'nikita/lib/docker/load'
+          @log message: 'Comparing new images', level: 'INFO', module: 'nikita/lib/docker/load'
           if string.lines(stdout).length > 1
             for image in string.lines out.toString()
               if image != ''
@@ -98,7 +98,7 @@ nikita.docker.load({
               for k, image of images
                 if image != new_image && new_k == k
                   diff = true
-                  options.log message: 'Identical images', level: 'INFO', module: 'nikita/lib/docker/load'
+                  @log message: 'Identical images', level: 'INFO', module: 'nikita/lib/docker/load'
                   break;
           callback err, diff, stdout, stderr
 

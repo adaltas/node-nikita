@@ -94,8 +94,8 @@ require('nikita').iptables({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering iptables", level: 'DEBUG', module: 'nikita/lib/iptables'
-      options.log message: "List existing rules", level: 'INFO', module: 'nikita/lib/iptables'
+      @log message: "Entering iptables", level: 'DEBUG', module: 'nikita/lib/iptables'
+      @log message: "List existing rules", level: 'INFO', module: 'nikita/lib/iptables'
       @system.execute
         cmd: "service iptables status &>/dev/null && iptables -S"
         code_skipped: 3
@@ -106,7 +106,7 @@ require('nikita').iptables({
         newrules = iptables.normalize options.rules
         cmd = iptables.cmd oldrules, newrules
         return callback() unless cmd.length
-        options.log message: "#{cmd.length} modified rules", level: 'WARN', module: 'nikita/lib/iptables'
+        @log message: "#{cmd.length} modified rules", level: 'WARN', module: 'nikita/lib/iptables'
         @system.execute
           cmd: "#{cmd.join '; '}; service iptables save;"
           trap: true

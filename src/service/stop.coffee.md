@@ -34,13 +34,13 @@ require('nikita').service.stop([{
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering service.stop", level: 'DEBUG', module: 'nikita/lib/service/stop'
+      @log message: "Entering service.stop", level: 'DEBUG', module: 'nikita/lib/service/stop'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'
       # Validation
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       # Action
-      options.log message: "Stop service #{options.name}", level: 'INFO', module: 'nikita/lib/service/stop'
+      @log message: "Stop service #{options.name}", level: 'INFO', module: 'nikita/lib/service/stop'
       @system.execute
         cmd: """
         ls \
@@ -65,5 +65,5 @@ require('nikita').service.stop([{
         arch_chroot: options.arch_chroot
         rootdir: options.rootdir
       , (err, status) ->
-        options.log message: "Service already stopped", level: 'WARN', module: 'nikita/lib/service/stop' if not err and not status
-        options.log message: "Service is stopped", level: 'INFO', module: 'nikita/lib/service/stop' if not err and status
+        @log message: "Service already stopped", level: 'WARN', module: 'nikita/lib/service/stop' if not err and not status
+        @log message: "Service is stopped", level: 'INFO', module: 'nikita/lib/service/stop' if not err and status

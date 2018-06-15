@@ -78,31 +78,31 @@ require('nikita/alt/ldap.acl')({
         acl.to = acl.to.trim()
         for b, i in acl.by
           acl.by[i] = b.trim()
-        connect = ->
+        connect = =>
           # if options.ldap instanceof ldap.client
           if options.ldap?.url?.protocol?.indexOf('ldap') is 0
             client = options.ldap
             return search()
-          options.log? 'Open and bind connection'
+          @log 'Open and bind connection'
           client = ldap.createClient url: options.url
           client.bind options.binddn, options.passwd, (err) ->
             return end err if err
             search()
-        search = ->
-            options.log? 'Search attribute olcAccess'
+        search = =>
+            @log 'Search attribute olcAccess'
             client.search options.name,
               scope: 'base'
               attributes: ['olcAccess']
-            , (err, search) ->
+            , (err, search) =>
               return unbind err if err
               olcAccess = null
-              search.on 'searchEntry', (entry) ->
-                options.log? "Found #{JSON.stringify entry.object}"
+              search.on 'searchEntry', (entry) =>
+                @log "Found #{JSON.stringify entry.object}"
                 # typeof olcAccess may be undefined, array or string
                 olcAccess = entry.object.olcAccess or []
                 olcAccess = [olcAccess] unless Array.isArray olcAccess
-              search.on 'end', ->
-                options.log? "Attribute olcAccess was #{JSON.stringify olcAccess}"
+              search.on 'end', =>
+                @log "Attribute olcAccess was #{JSON.stringify olcAccess}"
                 parse olcAccess
         parse = (_olcAccess) ->
           olcAccess = []
@@ -181,8 +181,8 @@ require('nikita/alt/ldap.acl')({
             modification: olcAccess: olcAccess
           client.modify options.name, change, (err) ->
             unbind err
-        unbind = (err) ->
-          options.log? 'Unbind connection'
+        unbind = (err) =>
+          @log 'Unbind connection'
           # return end err if options.ldap instanceof ldap.client and not options.unbind
           return end err if options.ldap?.url?.protocol?.indexOf('ldap') is 0 and not options.unbind
           client.unbind (e) ->

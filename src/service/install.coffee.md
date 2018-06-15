@@ -50,7 +50,7 @@ require('nikita').service.install({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering service.install", level: 'DEBUG', module: 'nikita/lib/service/install'
+      @log message: "Entering service.install", level: 'DEBUG', module: 'nikita/lib/service/install'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'
       options.installed ?= @store['nikita:execute:installed'] if options.cache
@@ -59,7 +59,7 @@ require('nikita').service.install({
       # Validation
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       # Start real work
-      options.log message: "Install service #{options.name}", level: 'INFO', module: 'nikita/lib/service/install'
+      @log message: "Install service #{options.name}", level: 'INFO', module: 'nikita/lib/service/install'
       # List installed packages
       @system.execute
         unless: options.installed?
@@ -85,7 +85,7 @@ require('nikita').service.install({
         throw Error "Unsupported Package Manager" if err?.code is 2
         throw err if err
         return unless status
-        options.log message: "Installed packages retrieved", level: 'INFO', module: 'nikita/lib/service/install'
+        @log message: "Installed packages retrieved", level: 'INFO', module: 'nikita/lib/service/install'
         options.installed = for pkg in string.lines(stdout) then pkg
       # List packages waiting for update
       @system.execute
@@ -113,7 +113,7 @@ require('nikita').service.install({
         throw Error "Unsupported Package Manager" if err?.code is 2
         throw err if err
         return options.outpdated = [] unless status
-        options.log message: "Outpdated package list retrieved", level: 'INFO', module: 'nikita/lib/service/install'
+        @log message: "Outpdated package list retrieved", level: 'INFO', module: 'nikita/lib/service/install'
         options.outpdated = string.lines stdout.trim()
       @system.execute
         if: -> options.installed.indexOf(options.name) is -1 or options.outpdated.indexOf(options.name) isnt -1
@@ -137,7 +137,7 @@ require('nikita').service.install({
       , (err, status) ->
         throw Error "Unsupported Package Manager: yum, yaourt, pacman, apt-get supported" if err?.code is 2
         throw err if err
-        options.log if status
+        @log if status
         then message: "Package \"#{options.name}\" is installed", level: 'WARN', module: 'nikita/lib/service/install'
         else message: "Package \"#{options.name}\" is already installed", level: 'INFO', module: 'nikita/lib/service/install'
         # Enrich installed array with package name unless already there
@@ -150,9 +150,9 @@ require('nikita').service.install({
       @call
         if: options.cache
         handler: ->
-          options.log message: "Caching installed on \"nikita:execute:installed\"", level: 'INFO', module: 'nikita/lib/service/install'
+          @log message: "Caching installed on \"nikita:execute:installed\"", level: 'INFO', module: 'nikita/lib/service/install'
           @store['nikita:execute:installed'] = options.installed
-          options.log message: "Caching outpdated list on \"nikita:execute:outpdated\"", level: 'INFO', module: 'nikita/lib/service/install'
+          @log message: "Caching outpdated list on \"nikita:execute:outpdated\"", level: 'INFO', module: 'nikita/lib/service/install'
           @store['nikita:execute:outpdated'] = options.outpdated
 
 ## Dependencies

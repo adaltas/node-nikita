@@ -100,7 +100,7 @@ describe 'log.cli', ->
     nikita
       ssh: ssh
       log_cli: colors: false, time: false
-    .log.cli depth: 2, stream: new MyWritable data
+    .log.cli depth_max: 2, stream: new MyWritable data
     .call header: 'h1', (options) ->
       @call header: 'h2a', (options) ->
       @call header: 'h2b', (options) ->

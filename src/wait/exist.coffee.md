@@ -27,7 +27,7 @@ require('nikita')
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering wait.exists", level: 'DEBUG', module: 'nikita/lib/wait/exist'
+      @log message: "Entering wait.exists", level: 'DEBUG', module: 'nikita/lib/wait/exist'
       # SSH connection
       ssh = @ssh options.ssh
       status = false
@@ -35,18 +35,18 @@ require('nikita')
       return callback Error "Missing target: #{options.target}" unless options.target?
       options.target = [options.target] unless Array.isArray options.target
       options.interval ?= 2000
-      options.log message: "Entering wait for file", level: 'DEBUG', module: 'nikita/wait/exist'
+      @log message: "Entering wait for file", level: 'DEBUG', module: 'nikita/wait/exist'
       status = false
       each options.target
       .call (target, next) =>
         count = 0
         run = =>
           count++
-          options.log message: "Attempt ##{count}", level: 'INFO', module: 'nikita/wait/exist'
+          @log message: "Attempt ##{count}", level: 'INFO', module: 'nikita/wait/exist'
           @fs.stat ssh: options.ssh, target: options.target, (err, stat) ->
             return next err if err and err.code isnt 'ENOENT'
             return setTimeout run, options.interval if err
-            options.log message: "Finish wait for file", level: 'INFO', module: 'nikita/wait/exist'
+            @log message: "Finish wait for file", level: 'INFO', module: 'nikita/wait/exist'
             status = true if count > 1
             next()
         run()

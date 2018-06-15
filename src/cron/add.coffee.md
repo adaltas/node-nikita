@@ -46,10 +46,10 @@ require('nikita').cron.add({
       return callback Error 'valid when is required' unless options.when and typeof options.when is 'string'
       return callback Error 'valid cmd is required' unless options.cmd
       if options.user?
-        options.log message: "Using user #{options.user}", level: 'DEBUG', module: 'nikita/cron/add'
+        @log message: "Using user #{options.user}", level: 'DEBUG', module: 'nikita/cron/add'
         crontab = "crontab -u #{options.user}"
       else
-        options.log message: "Using default user", level: 'DEBUG', module: 'nikita/cron/add'
+        @log message: "Using default user", level: 'DEBUG', module: 'nikita/cron/add'
         crontab = "crontab"
       jobs = null
       @system.execute
@@ -71,14 +71,14 @@ require('nikita').cron.add({
           if regex.test job
             added = false
             break if job is new_job # Found job, stop here
-            options.log message: "Entry has changed", level: 'WARN', module: 'nikita/cron/add'
+            @log message: "Entry has changed", level: 'WARN', module: 'nikita/cron/add'
             diff job, new_job, options
             job = new_job
             modified = true
           job
         if added
           jobs.push new_job
-          options.log message: "Job not found in crontab, adding", level: 'WARN', module: 'nikita/cron/add'
+          @log message: "Job not found in crontab, adding", level: 'WARN', module: 'nikita/cron/add'
         jobs = null unless added or modified
       .next (err) ->
         return callback err if err

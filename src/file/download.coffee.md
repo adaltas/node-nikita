@@ -113,7 +113,7 @@ nikita.download
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: 'Entering file.download', level: 'DEBUG', module: 'nikita/lib/file/download'
+      @log message: 'Entering file.download', level: 'DEBUG', module: 'nikita/lib/file/download'
       # SSH connection
       ssh = @ssh options.ssh
       p = if ssh then path.posix else path
@@ -138,7 +138,7 @@ nikita.download
         algo = 'md5'
       protocols_http = ['http:', 'https:']
       protocols_ftp = ['ftp:', 'ftps:']
-      options.log message: "Using force: #{JSON.stringify options.force}", level: 'DEBUG', module: 'nikita/lib/file/download' if options.force
+      @log message: "Using force: #{JSON.stringify options.force}", level: 'DEBUG', module: 'nikita/lib/file/download' if options.force
       source_url = url.parse options.source
       # Disable caching if source is a local file and cache isnt exlicitly set by user
       options.cache = false if not options.cache? and source_url.protocol is null
@@ -150,13 +150,13 @@ nikita.download
         if: typeof source_hash is 'string'
         shy: true
       , (_, callback) ->
-          options.log message: "Shortcircuit check if provided hash match target", level: 'WARN', module: 'nikita/lib/file/download'
+          @log message: "Shortcircuit check if provided hash match target", level: 'WARN', module: 'nikita/lib/file/download'
           file.hash ssh, options.target, algo, (err, hash) =>
             err = null if err?.code is 'ENOENT'
             callback err, source_hash is hash
         , (err, end) ->
           return unless end
-          options.log message: "Destination with valid signature, download aborted", level: 'INFO', module: 'nikita/lib/file/download'
+          @log message: "Destination with valid signature, download aborted", level: 'INFO', module: 'nikita/lib/file/download'
           @end()
       @file.cache # Download the file and place it inside local cache
         if: options.cache
@@ -176,18 +176,18 @@ nikita.download
       @fs.stat ssh: options.ssh, target: options.target, relax: true, (err, stat) ->
         throw err if err and err.code isnt 'ENOENT'
         if stat?.isDirectory()
-          options.log message: "Destination is a directory", level: 'DEBUG', module: 'nikita/lib/file/download'
+          @log message: "Destination is a directory", level: 'DEBUG', module: 'nikita/lib/file/download'
           options.target = path.join options.target, path.basename options.source
         stageDestination = "#{options.target}.#{Date.now()}#{Math.round(Math.random()*1000)}"
       @call
         if: -> source_url.protocol in protocols_http
       , ->
-          options.log message: "HTTP Download", level: 'DEBUG', module: 'nikita/lib/file/download'
+          @log message: "HTTP Download", level: 'DEBUG', module: 'nikita/lib/file/download'
           fail = if options.fail then "--fail" else ''
           k = if source_url.protocol is 'https:' then '-k' else ''
           cmd = "curl #{fail} #{k} -s #{options.source} -o #{stageDestination}"
           cmd += " -x #{options.proxy}" if options.proxy
-          options.log message: "Download file from url using curl", level: 'INFO', module: 'nikita/lib/file/download'
+          @log message: "Download file from url using curl", level: 'INFO', module: 'nikita/lib/file/download'
           @system.mkdir
             shy: true
             target: path.dirname stageDestination
@@ -201,9 +201,9 @@ nikita.download
                 return callback Error "Invalid downloaded checksum, found '#{hash}' instead of '#{source_hash}'" if source_hash isnt hash
                 callback()
           @call (_, callback) ->
-            file.compare_hash (if options.cache then null else ssh), stageDestination, ssh, options.target, algo, (err, match, hash1, hash2) ->
-              options.log message: "Hash dont match, source is '#{hash1}' and target is '#{hash2}'", level: 'WARN', module: 'nikita/lib/file/download' unless match
-              options.log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'nikita/lib/file/download' if match
+            file.compare_hash (if options.cache then null else ssh), stageDestination, ssh, options.target, algo, (err, match, hash1, hash2) =>
+              @log message: "Hash dont match, source is '#{hash1}' and target is '#{hash2}'", level: 'WARN', module: 'nikita/lib/file/download' unless match
+              @log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'nikita/lib/file/download' if match
               callback err, not match
           @system.remove
             unless: -> @status -1
@@ -212,11 +212,11 @@ nikita.download
       @call
         if: -> source_url.protocol not in protocols_http and not ssh
       , ->
-          options.log message: "File Download without ssh (with or without cache)", level: 'DEBUG', module: 'nikita/lib/file/download'
+          @log message: "File Download without ssh (with or without cache)", level: 'DEBUG', module: 'nikita/lib/file/download'
           @call (_, callback) ->
-            file.compare_hash null, options.source, null, options.target, algo, (err, match, hash1, hash2) ->
-              options.log message: "Hash dont match, source is '#{hash1}' and target is '#{hash2}'", level: 'WARN', module: 'nikita/lib/file/download' unless match
-              options.log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'nikita/lib/file/download' if match
+            file.compare_hash null, options.source, null, options.target, algo, (err, match, hash1, hash2) =>
+              @log message: "Hash dont match, source is '#{hash1}' and target is '#{hash2}'", level: 'WARN', module: 'nikita/lib/file/download' unless match
+              @log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'nikita/lib/file/download' if match
               callback err, not match
           @system.mkdir
             if: -> @status -1
@@ -229,11 +229,11 @@ nikita.download
       @call
         if: -> source_url.protocol not in protocols_http and ssh
       , ->
-          options.log message: "File Download with ssh (with or without cache)", level: 'DEBUG', module: 'nikita/lib/file/download'
+          @log message: "File Download with ssh (with or without cache)", level: 'DEBUG', module: 'nikita/lib/file/download'
           @call (_, callback) ->
-            file.compare_hash null, options.source, ssh, options.target, algo, (err, match, hash1, hash2) ->
-              options.log message: "Hash dont match, source is '#{hash1}' and target is '#{hash2}'", level: 'WARN', module: 'nikita/lib/file/download' unless match
-              options.log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'nikita/lib/file/download' if match
+            file.compare_hash null, options.source, ssh, options.target, algo, (err, match, hash1, hash2) =>
+              @log message: "Hash dont match, source is '#{hash1}' and target is '#{hash2}'", level: 'WARN', module: 'nikita/lib/file/download' unless match
+              @log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'nikita/lib/file/download' if match
               callback err, not match
           @system.mkdir
             if: -> @status -1
@@ -246,11 +246,11 @@ nikita.download
               rs = fs.createReadStream options.source
               rs.pipe ws
           , (err) ->
-            options.log if err
+            @log if err
             then message: "Downloaded local source #{JSON.stringify options.source} to remote target #{JSON.stringify stageDestination} failed", level: 'ERROR', module: 'nikita/lib/file/download'
             else message: "Downloaded local source #{JSON.stringify options.source} to remote target #{JSON.stringify stageDestination}", level: 'INFO', module: 'nikita/lib/file/download'
       @call ->
-        options.log message: "Unstage downloaded file", level: 'DEBUG', module: 'nikita/lib/file/download'
+        @log message: "Unstage downloaded file", level: 'DEBUG', module: 'nikita/lib/file/download'
         @system.move
           if: @status()
           source: stageDestination

@@ -40,31 +40,31 @@ require('nikita').system.move({
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering move", level: 'DEBUG', module: 'nikita/lib/system/move'
+      @log message: "Entering move", level: 'DEBUG', module: 'nikita/lib/system/move'
       # SSH connection
       ssh = @ssh options.ssh
       do_exists = =>
-        options.log message: "Stat target", level: 'DEBUG', module: 'nikita/lib/system/move'
+        @log message: "Stat target", level: 'DEBUG', module: 'nikita/lib/system/move'
         @fs.stat ssh: options.ssh, target: options.target, (err, stat) ->
           return do_move() if err?.code is 'ENOENT'
           return callback err if err
           if options.force
           then do_replace_dest()
           else do_srchash()
-      do_srchash = ->
+      do_srchash = =>
         return do_dsthash() if options.source_md5
-        options.log message: "Get source md5", level: 'DEBUG', module: 'nikita/lib/system/move'
-        file.hash ssh, options.source, 'md5', (err, hash) ->
+        @log message: "Get source md5", level: 'DEBUG', module: 'nikita/lib/system/move'
+        file.hash ssh, options.source, 'md5', (err, hash) =>
           return callback err if err
-          options.log message: "Source md5 is \"hash\"", level: 'INFO', module: 'nikita/lib/system/move'
+          @log message: "Source md5 is \"hash\"", level: 'INFO', module: 'nikita/lib/system/move'
           options.source_md5 = hash
           do_dsthash()
-      do_dsthash = ->
+      do_dsthash = =>
         return do_chkhash() if options.target_md5
-        options.log message: "Get target md5", level: 'DEBUG', module: 'nikita/lib/system/move'
-        file.hash ssh, options.target, 'md5', (err, hash) ->
+        @log message: "Get target md5", level: 'DEBUG', module: 'nikita/lib/system/move'
+        file.hash ssh, options.target, 'md5', (err, hash) =>
           return callback err if err
-          options.log message: "Destination md5 is \"hash\"", level: 'INFO', module: 'nikita/lib/system/move'
+          @log message: "Destination md5 is \"hash\"", level: 'INFO', module: 'nikita/lib/system/move'
           options.target_md5 = hash
           do_chkhash()
       do_chkhash = ->
@@ -72,19 +72,19 @@ require('nikita').system.move({
         then do_remove_src()
         else do_replace_dest()
       do_replace_dest = =>
-        options.log message: "Remove #{options.target}", level: 'WARN', module: 'nikita/lib/system/move'
+        @log message: "Remove #{options.target}", level: 'WARN', module: 'nikita/lib/system/move'
         @system.remove
           target: options.target
         , (err, removed) ->
           return callback err if err
           do_move()
       do_move = =>
-        options.log message: "Rename #{options.source} to #{options.target}", level: 'WARN', module: 'nikita/lib/system/move'
+        @log message: "Rename #{options.source} to #{options.target}", level: 'WARN', module: 'nikita/lib/system/move'
         @fs.rename ssh: options.ssh, source: options.source, target: options.target, (err) ->
           return callback err if err
           callback null, true
       do_remove_src = =>
-        options.log message: "Remove #{options.source}", level: 'WARN', module: 'nikita/lib/system/move'
+        @log message: "Remove #{options.source}", level: 'WARN', module: 'nikita/lib/system/move'
         @system.remove
           target: options.source
         , (err, removed) ->

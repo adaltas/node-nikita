@@ -40,7 +40,7 @@ require('nikita').tools.repo({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering tools.repo", level: 'DEBUG', module: 'nikita/lib/tools/repo'
+      @log message: "Entering tools.repo", level: 'DEBUG', module: 'nikita/lib/tools/repo'
       # SSH connection
       ssh = @ssh options.ssh
       # Options
@@ -61,7 +61,7 @@ require('nikita').tools.repo({
       @call
         if: options.clean
       , (_, callback) ->
-        options.log message: "Searching repositories inside \"/etc/yum.repos.d/\"", level: 'DEBUG', module: 'nikita/lib/tools/repo'
+        @log message: "Searching repositories inside \"/etc/yum.repos.d/\"", level: 'DEBUG', module: 'nikita/lib/tools/repo'
         glob ssh, options.clean, (err, files) ->
           return callback err if err
           remote_files = for file in files
@@ -89,7 +89,7 @@ require('nikita').tools.repo({
         target: options.target
       # Parse the definition file
       keys = []
-      options.log "Read GPG keys from #{options.target}", level: 'DEBUG', module: 'nikita/lib/tools/repo'
+      @log "Read GPG keys from #{options.target}", level: 'DEBUG', module: 'nikita/lib/tools/repo'
       @fs.readFile
         ssh: options.ssh
         target: options.target
@@ -108,7 +108,7 @@ require('nikita').tools.repo({
         if: options.verify
       , ->
         for key in keys
-          options.log "Downloading GPG keys from #{key}", level: 'DEBUG', module: 'nikita/lib/tools/repo'
+          @log "Downloading GPG keys from #{key}", level: 'DEBUG', module: 'nikita/lib/tools/repo'
           @file.download
             source: key
             target: "#{options.gpg_dir}/#{path.basename key}"

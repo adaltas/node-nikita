@@ -12,7 +12,7 @@ Options:
 ## Source Code
 
     module.exports = status: false, handler: (options, callback) ->
-      options.log message: "Entering fs.readFile", level: 'DEBUG', module: 'nikita/lib/fs/readFile'
+      @log message: "Entering fs.readFile", level: 'DEBUG', module: 'nikita/lib/fs/readFile'
       # Normalize options
       options.target = options.argument if options.argument?
       throw Error "Required Option: the \"target\" option is mandatory" unless options.target

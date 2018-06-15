@@ -81,7 +81,7 @@ require('nikita').file.yaml({
 
     module.exports = (options) ->
       options.line_width ?= 160
-      options.log message: "Entering file.yaml", level: 'DEBUG', module: 'nikita/lib/file/yaml'
+      @log message: "Entering file.yaml", level: 'DEBUG', module: 'nikita/lib/file/yaml'
       options.clean ?= true
       # Validate parameters
       throw Error 'Missing content' unless options.content
@@ -102,9 +102,9 @@ require('nikita').file.yaml({
       @call ->
         options.indent ?= 2
         if options.clean
-          options.log message: "Clean content", level: 'INFO', module: 'nikita/lib/file/yaml'
+          @log message: "Clean content", level: 'INFO', module: 'nikita/lib/file/yaml'
           misc.ini.clean options.content
-        options.log message: "Serialize content", level: 'DEBUG', module: 'nikita/lib/file/yaml'
+        @log message: "Serialize content", level: 'DEBUG', module: 'nikita/lib/file/yaml'
         options.content = yaml.safeDump options.content, noRefs:true, lineWidth: options.line_width
         @file options, header: null
 

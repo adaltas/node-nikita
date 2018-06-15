@@ -40,7 +40,7 @@ require('nikita')
 ## Source Code
 
     module.exports = (options, callback) ->
-      options.log message: "Entering wait for execution", level: 'DEBUG', module: 'nikita/lib/wait/execute'
+      @log message: "Entering wait for execution", level: 'DEBUG', module: 'nikita/lib/wait/execute'
       # Validate parameters
       options.cmd ?= options.argument if typeof options.argument?
       return callback Error "Missing cmd: #{options.cmd}" unless options.cmd?
@@ -52,7 +52,7 @@ require('nikita')
         options.quorum = options.cmd.length
       options.interval ?= 2000
       options.code_skipped ?= 1
-      options.log message: "Entering wait for execution", level: 'DEBUG', module: 'nikita/lib/wait/execute'
+      @log message: "Entering wait for execution", level: 'DEBUG', module: 'nikita/lib/wait/execute'
       quorum_current = 0
       modified = false
       each options.cmd
@@ -61,7 +61,7 @@ require('nikita')
         return next() if quorum_current >= options.quorum
         run = =>
           count++
-          options.log message: "Attempt ##{count}", level: 'INFO', module: 'nikita/lib/wait/execute'
+          @log message: "Attempt ##{count}", level: 'INFO', module: 'nikita/lib/wait/execute'
           @system.execute
             cmd: cmd
             code: options.code or 0
@@ -74,7 +74,7 @@ require('nikita')
               setTimeout run, options.interval
               return
             return next err if err
-            options.log message: "Finish wait for execution", level: 'INFO', module: 'nikita/lib/wait/execute'
+            @log message: "Finish wait for execution", level: 'INFO', module: 'nikita/lib/wait/execute'
             quorum_current++
             modified = true if count > 1
             next()

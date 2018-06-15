@@ -41,7 +41,7 @@ The result of the above action can be viewed with the command
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering group", level: 'DEBUG', module: 'nikita/lib/system/group'
+      @log message: "Entering group", level: 'DEBUG', module: 'nikita/lib/system/group'
       # SSH connection
       ssh = @ssh options.ssh
       # Options
@@ -56,7 +56,7 @@ The result of the above action can be viewed with the command
         cache: options.cache
       , (err, status, groups) ->
         info = groups[options.name]
-        options.log if info
+        @log if info
         then message: "Got group information for #{JSON.stringify options.name}", level: 'DEBUG', module: 'nikita/lib/system/group'
         else message: "Group #{JSON.stringify options.name} not present", level: 'DEBUG', module: 'nikita/lib/system/group'
       # Create group
@@ -71,13 +71,13 @@ The result of the above action can be viewed with the command
           code_skipped: 9
         , (err, status) ->
           throw err if err
-          options.log message: "Group defined elsewhere than '/etc/group', exit code is 9", level: 'WARN', module: 'nikita/lib/system/group' unless status
+          @log message: "Group defined elsewhere than '/etc/group', exit code is 9", level: 'WARN', module: 'nikita/lib/system/group' unless status
       # Modify group
       @call if: (-> info), ->
         changed = []
         for k in ['gid']
           changed.push 'gid' if options[k]? and "#{info[k]}" isnt "#{options[k]}"
-        options.log if changed.length
+        @log if changed.length
         then message: "Group information modified", level: 'WARN', module: 'nikita/lib/system/group'
         else message: "Group information unchanged", level: 'DEBUG', module: 'nikita/lib/system/group'
         return unless changed.length

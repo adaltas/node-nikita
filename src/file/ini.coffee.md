@@ -70,7 +70,7 @@ require('nikita').ini({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering file.ini", level: 'DEBUG', module: 'nikita/lib/file/ini'
+      @log message: "Entering file.ini", level: 'DEBUG', module: 'nikita/lib/file/ini'
       # Normalization
       options.clean ?= true
       options.escape ?= true
@@ -108,13 +108,13 @@ require('nikita').ini({
       # Merge
       @call if: options.merge , (_, callback) ->
         options.content = misc.merge org_props, options.content
-        options.log message: "Get content for merge", level: 'DEBUG', module: 'nikita/lib/file/ini'
+        @log message: "Get content for merge", level: 'DEBUG', module: 'nikita/lib/file/ini'
         callback()
       @call ->
         if options.clean
-          options.log message: "Clean content", level: 'INFO', module: 'nikita/lib/file/ini'
+          @log message: "Clean content", level: 'INFO', module: 'nikita/lib/file/ini'
           misc.ini.clean options.content
-        options.log message: "Serialize content", level: 'DEBUG', module: 'nikita/lib/file/ini'
+        @log message: "Serialize content", level: 'DEBUG', module: 'nikita/lib/file/ini'
         stringify = options.stringify or misc.ini.stringify
         @file
           target: options.target

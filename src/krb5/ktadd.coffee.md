@@ -50,11 +50,8 @@ require('nikita').krb5_delrinc({
         shy: true
       , (err, exists, stdout, stderr) ->
         throw err if err
-        # unless exists
-        #   options.log message: "Keytab does not yet exists", level: 'INFO', module: 'nikita/krb5/ktadd'
-        #   return do_ktadd()
         return unless exists
-        options.log message: "Keytab exists, check kvno validity", level: 'DEBUG', module: 'nikita/krb5/ktadd'
+        @log message: "Keytab exists, check kvno validity", level: 'DEBUG', module: 'nikita/krb5/ktadd'
         for line in string.lines stdout
           continue unless match = /^\s*(\d+)\s+([\d\/:]+\s+[\d\/:]+)\s+(.*)\s*$/.exec line
           [_, kvno, mdate, principal] = match
@@ -79,8 +76,8 @@ require('nikita').krb5_delrinc({
         mdate = parseInt(values[2], 10) * 1000
         kvno = parseInt values[8], 10
         princ = mdate: mdate, kvno: kvno
-        options.log message: "Keytab kvno '#{keytab[options.principal]?.kvno}', principal kvno '#{princ.kvno}'", level: 'INFO', module: 'nikita/krb5/ktadd'
-        options.log message: "Keytab mdate '#{new Date keytab[options.principal]?.mdate}', principal mdate '#{new Date princ.mdate}'", level: 'INFO', module: 'nikita/krb5/ktadd'
+        @log message: "Keytab kvno '#{keytab[options.principal]?.kvno}', principal kvno '#{princ.kvno}'", level: 'INFO', module: 'nikita/krb5/ktadd'
+        @log message: "Keytab mdate '#{new Date keytab[options.principal]?.mdate}', principal mdate '#{new Date princ.mdate}'", level: 'INFO', module: 'nikita/krb5/ktadd'
       # Remove principal from keytab
       @system.execute
         cmd: misc.kadmin options, "ktremove -k #{options.keytab} #{options.principal}"

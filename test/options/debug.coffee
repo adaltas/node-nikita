@@ -13,7 +13,7 @@ describe 'options "debug"', ->
     process.stderr.write = (chunk) -> data.push chunk
     nikita
     .call debug: true, (options) ->
-      options.log 'Some message'
+      @log 'Some message'
     .next (err) ->
       throw err if err
       # TODO: detect isTTY
@@ -27,7 +27,7 @@ describe 'options "debug"', ->
     process.stdout.write = (chunk) -> data.push chunk
     nikita
     .call debug: 'stdout', (options) ->
-      options.log 'Some message'
+      @log 'Some message'
     .next (err) ->
       throw err if err
       # TODO: detect isTTY

@@ -26,7 +26,7 @@ require('nikita').file.types.locale_gen({
 ```
 
     module.exports = (options) ->
-      options.log message: "Entering file.types.local_gen", level: 'DEBUG', module: 'nikita/lib/file/types/local_gen'
+      @log message: "Entering file.types.local_gen", level: 'DEBUG', module: 'nikita/lib/file/types/local_gen'
       # Options
       options.target ?= '/etc/locale.gen'
       options.target = "#{path.join options.rootdir, options.target}" if options.rootdir

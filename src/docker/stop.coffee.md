@@ -34,7 +34,7 @@ nikita.docker.stop({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering Docker stop", level: 'DEBUG', module: 'nikita/lib/docker/stop'
+      @log message: "Entering Docker stop", level: 'DEBUG', module: 'nikita/lib/docker/stop'
       # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
@@ -47,8 +47,8 @@ nikita.docker.stop({
       @docker.status shy: true, options, (err, is_running) ->
         throw err if err
         if is_running
-        then options.log message: "Stopping container #{options.container}", level: 'INFO', module: 'nikita/lib/docker/stop'
-        else options.log message: "Container already stopped #{options.container} (Skipping)", level: 'INFO', module: 'nikita/lib/docker/stop'
+        then @log message: "Stopping container #{options.container}", level: 'INFO', module: 'nikita/lib/docker/stop'
+        else @log message: "Container already stopped #{options.container} (Skipping)", level: 'INFO', module: 'nikita/lib/docker/stop'
         @end() unless is_running
       @system.execute
         cmd: docker.wrap options, cmd

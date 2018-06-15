@@ -44,7 +44,7 @@ require('nikita').ldap.index({
       add = {}
       modify = {}
       @call unless: options.hdb_dn, ->
-        options.log message: "Get DN of the HDB to modify", level: 'DEBUG', module: 'nikita/ldap/index'
+        @log message: "Get DN of the HDB to modify", level: 'DEBUG', module: 'nikita/ldap/index'
         @system.execute
           shy: true
           cmd: """
@@ -58,10 +58,10 @@ require('nikita').ldap.index({
           shy: true
         , (err, _, hdb_dn) ->
           throw err if err
-          options.log message: "HDB is #{hdb_dn.trim()}", level: 'INFO', module: 'nikita/ldap/index'
+          @log message: "HDB is #{hdb_dn.trim()}", level: 'INFO', module: 'nikita/ldap/index'
           options.hdb_dn = hdb_dn.trim()
       @call ->
-        options.log message: "List all indexes of the directory", level: 'DEBUG', module: 'nikita/ldap/index'
+        @log message: "List all indexes of the directory", level: 'DEBUG', module: 'nikita/ldap/index'
         @system.execute
           shy: true
           cmd: """

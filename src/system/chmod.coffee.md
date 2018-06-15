@@ -34,7 +34,7 @@ require('nikita').system.chmod({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering chmod", level: 'DEBUG', module: 'nikita/lib/system/chmod'
+      @log message: "Entering chmod", level: 'DEBUG', module: 'nikita/lib/system/chmod'
       # SSH connection
       ssh = @ssh options.ssh
       # Validate parameters
@@ -43,7 +43,7 @@ require('nikita').system.chmod({
       @call
         unless: !!options.stat # Option 'stat' short-circuit
       , (_, callback) ->
-        options.log message: "Stat information: \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/system/chmod'
+        @log message: "Stat information: \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/system/chmod'
         @fs.stat
           ssh: options.ssh
           target: options.target
@@ -53,11 +53,11 @@ require('nikita').system.chmod({
       @call (_, callback) ->
         # Detect changes
         if misc.mode.compare options.stat.mode, options.mode
-          options.log message: "Identical permissions on \"#{options.target}\"", level: 'INFO', module: 'nikita/lib/system/chmod'
+          @log message: "Identical permissions on \"#{options.target}\"", level: 'INFO', module: 'nikita/lib/system/chmod'
           return callback()
         # Apply changes
         @fs.chmod ssh: options.ssh, target: options.target, mode: options.mode, sudo: options.sudo, (err) ->
-          options.log message: "Change permissions from \"#{options.stat.mode.toString 8}\" to \"#{options.mode.toString 8}\" on \"#{options.target}\"", level: 'WARN', module: 'nikita/lib/system/chmod'
+          @log message: "Change permissions from \"#{options.stat.mode.toString 8}\" to \"#{options.mode.toString 8}\" on \"#{options.target}\"", level: 'WARN', module: 'nikita/lib/system/chmod'
           callback err, true
 
 ## Dependencies

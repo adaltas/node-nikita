@@ -70,7 +70,7 @@ require('nikita')
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering wait for connection", level: 'DEBUG', module: 'nikita/connection/wait'
+      @log message: "Entering wait for connection", level: 'DEBUG', module: 'nikita/connection/wait'
       extract_servers = (options) ->
         throw Error "Invalid host: #{server.host}" if (options.port or options.ports) and not options.host
         throw Error "Invalid port: #{server.port}" if (options.host or options.hosts) and not options.port
@@ -101,7 +101,7 @@ require('nikita')
         for server in options[k]
           servers.push extract_servers(server)...
       unless servers.length
-        options.log message: "No connection to wait for", level: 'WARN', module: 'nikita/connection/wait'
+        @log message: "No connection to wait for", level: 'WARN', module: 'nikita/connection/wait'
         return 
       # Validate servers
       options.interval ?= 2000 # 2s

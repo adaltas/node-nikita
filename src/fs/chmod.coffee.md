@@ -6,7 +6,7 @@ Change permissions of a file.
 ## Source Code
 
     module.exports = status: false, handler: (options, callback) ->
-      options.log message: "Entering fs.chmod", level: 'DEBUG', module: 'nikita/lib/fs/chmod'
+      @log message: "Entering fs.chmod", level: 'DEBUG', module: 'nikita/lib/fs/chmod'
       # Normalize options
       options.target = options.argument if options.argument?
       # Validate options

@@ -46,7 +46,7 @@ require('nikita').ldap.schema({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering ldap.schema", level: 'DEBUG', module: 'nikita/lib/ldap/schema'
+      @log message: "Entering ldap.schema", level: 'DEBUG', module: 'nikita/lib/ldap/schema'
       # SSH connection
       ssh = @ssh options.ssh
       # Auth related options
@@ -78,31 +78,30 @@ require('nikita').ldap.schema({
           target: ldif
           ssh: ssh
         , (err) ->
-          options.log 'Directory ldif created'
+          @log 'Directory ldif created'
         @system.copy
           source: options.schema
           target: schema
           ssh: ssh
         , (err) ->
-          options.log 'Schema copied'
+          @log 'Schema copied'
         @file
           content: "include #{schema}"
           target: conf
           ssh: ssh
-          log: options.log
         , (err) ->
-          options.log 'Configuration generated'
+          @log 'Configuration generated'
         @system.execute
           cmd: "slaptest -f #{conf} -F #{ldif}"
         , (err) ->
-          options.log 'Configuration validated' unless err
+          @log 'Configuration validated' unless err
         @system.move
           source: "#{ldif}/cn=config/cn=schema/cn={0}#{options.name}.ldif"
           target: "#{ldif}/cn=config/cn=schema/cn=#{options.name}.ldif"
           force: true
         , (err, status) ->
           throw Error 'No generated schema' unless status
-          options.log 'Configuration renamed'
+          @log 'Configuration renamed'
         @file
           target: "#{ldif}/cn=config/cn=schema/cn=#{options.name}.ldif"
           write: [
@@ -134,12 +133,12 @@ require('nikita').ldap.schema({
             replace: ''
           ]
         , (err) ->
-          options.log "File ldif ready" unless err
+          @log "File ldif ready" unless err
         @system.execute
           cmd: "ldapadd #{uri} #{binddn} #{passwd} -f #{ldif}/cn=config/cn=schema/cn=#{options.name}.ldif"
         , (err) ->
           throw err if err
-          options.log "Schema added: #{options.name}"
+          @log "Schema added: #{options.name}"
       @system.remove
         if: -> @status -1
         target: tempdir

@@ -7,7 +7,6 @@ describe 'file.types.yum_repo', ->
 
   scratch = test.scratch @
   config = test.config()
-  return if config.disable_yum_conf
 
   they 'generate from content object', (ssh) ->
     nikita

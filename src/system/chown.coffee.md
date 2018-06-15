@@ -47,7 +47,7 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering chown", level: 'DEBUG', module: 'nikita/lib/system/chown'
+      @log message: "Entering chown", level: 'DEBUG', module: 'nikita/lib/system/chown'
       # SSH connection
       ssh = @ssh options.ssh
       # Normalize options
@@ -67,7 +67,7 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
         options.gid = gid
       # Use option 'stat' short-circuit or discover
       @call unless: !!options.stat, (_, callback) ->
-        options.log message: "Stat #{options.target}", level: 'DEBUG', module: 'nikita/lib/chown'
+        @log message: "Stat #{options.target}", level: 'DEBUG', module: 'nikita/lib/chown'
         @fs.stat ssh: options.ssh, target: options.target, (err, stat) ->
           return callback Error "Target Does Not Exist: #{JSON.stringify options.target}" if err?.code is 'ENOENT'
           return callback err if err
@@ -76,7 +76,7 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
       # Detect changes
       @call (_, callback) ->
         if (not options.uid? or options.stat.uid is options.uid) and (not options.gid? or options.stat.gid is options.gid)
-          options.log message: "Matching ownerships on '#{options.target}'", level: 'INFO', module: 'nikita/lib/chown'
+          @log message: "Matching ownerships on '#{options.target}'", level: 'INFO', module: 'nikita/lib/chown'
           return callback()
         callback null, true
       # Apply changes
@@ -84,6 +84,6 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
         options.uid ?= options.stat.uid
         options.gid ?= options.stat.gid
         @fs.chown ssh: options.ssh, target: options.target, uid: options.uid, gid: options.gid, sudo: options.sudo, (err) ->
-          options.log message: "change uid from #{options.stat.uid} to #{options.uid}", level: 'WARN', module: 'nikita/lib/chown' if options.stat.uid is not options.uid
-          options.log message: "change gid from #{options.stat.gid} to #{options.gid}", level: 'WARN', module: 'nikita/lib/chown' if options.stat.gid is not options.gid
+          @log message: "change uid from #{options.stat.uid} to #{options.uid}", level: 'WARN', module: 'nikita/lib/chown' if options.stat.uid is not options.uid
+          @log message: "change gid from #{options.stat.gid} to #{options.gid}", level: 'WARN', module: 'nikita/lib/chown' if options.stat.gid is not options.gid
           callback err

@@ -47,7 +47,7 @@ nikita.docker({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering Docker cp", level: 'DEBUG', module: 'nikita/lib/docker/cp'
+      @log message: "Entering Docker cp", level: 'DEBUG', module: 'nikita/lib/docker/cp'
       # SSH connection
       ssh = @ssh options.ssh
       # Global options

@@ -33,7 +33,7 @@ as ceph daemons expect it.
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering file.types.ceph_conf", level: 'DEBUG', module: 'nikita/lib/file/types/ceph_conf'
+      @log message: "Entering file.types.ceph_conf", level: 'DEBUG', module: 'nikita/lib/file/types/ceph_conf'
       throw Error 'Missing target' unless options.target
       options.target = "#{path.join options.rootdir, options.target}" if options.rootdir
       @file.ini

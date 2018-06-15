@@ -25,7 +25,7 @@ to "['start', 'restart']" to ensure the service will be always started.
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering service.install", level: 'DEBUG', module: 'nikita/lib/service/install'
+      @log message: "Entering service.install", level: 'DEBUG', module: 'nikita/lib/service/install'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'
       options.srv_name ?= options.name

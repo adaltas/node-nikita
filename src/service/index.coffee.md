@@ -68,7 +68,7 @@ require('nikita').service([{
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering service", level: 'DEBUG', module: 'nikita/lib/service'
+      @log message: "Entering service", level: 'DEBUG', module: 'nikita/lib/service'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'
       pkgname = options.yum_name or options.name

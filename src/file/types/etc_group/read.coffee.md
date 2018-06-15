@@ -15,14 +15,14 @@ Read and parse the group definition file located in "/etc/group".
 ## Source Code
 
     module.exports = shy: true, handler: (options, callback) ->
-      options.log message: "Entering etc_group.read", level: 'DEBUG', module: 'nikita/lib/system/etc_group/read'
+      @log message: "Entering etc_group.read", level: 'DEBUG', module: 'nikita/lib/system/etc_group/read'
       options.target ?= '/etc/group'
       # Retrieve groups from cache
       groups = null
       @call
         if: options.cache and !!@store['nikita:etc_group']
       , ->
-        options.log message: "Get group definition from cache", level: 'INFO', module: 'nikita/lib/system/etc_group/read'
+        @log message: "Get group definition from cache", level: 'INFO', module: 'nikita/lib/system/etc_group/read'
         groups = @store['nikita:etc_group']
       # Read system groups and place in cache if requested
       @fs.readFile

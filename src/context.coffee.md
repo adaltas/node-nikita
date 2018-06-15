@@ -162,11 +162,6 @@
         for k, v of options_session
           continue if k is 'cascade'
           options[k] = v if options[k] is undefined
-        unless options.log?.dont
-          if options.log and not Array.isArray options.log
-            _logs = [options.log]
-          else if not options.log
-            _logs = []
         # Build headers option
         headers = []
         push_headers = (options) ->
@@ -174,49 +169,6 @@
           push_headers options.parent if options.parent
         push_headers options
         options.headers = headers.reverse()
-        # Deal with log
-        log_disabled = true if options.log is false
-        options.log = [] if log_disabled
-        options.log = [] if options.log?._nikita_ # not clean but no better way to detect user provided option with the one from nikita
-        options.log ?= []
-        options.log = [options.log] unless Array.isArray options.log
-        _logs = options.log
-        if options.debug
-          _logs.push (log) ->
-            return unless log.type in ['text', 'stdin', 'stdout_stream', 'stderr_stream']
-            return if log.type in ['stdout_stream', 'stderr_stream'] and log.message is null
-            msg = if log.message?.toString? then log.message.toString() else log.message
-            msg = "[#{log.depth}.#{log.level} #{log.module}] #{JSON.stringify msg}"
-            msg = switch log.type
-              when 'stdin' then "\x1b[33m#{msg}\x1b[39m"
-              when 'stdout_stream' then "\x1b[36m#{msg}\x1b[39m"
-              when 'stderr_stream' then "\x1b[35m#{msg}\x1b[39m"
-              else "\x1b[32m#{msg}\x1b[39m"
-            if options.debug is 'stdout'
-              process.stdout.write "#{msg}\n"
-            else
-              process.stderr.write "#{msg}\n"
-        options.log = (log) ->
-          log = message: log if typeof log is 'string'
-          log.level ?= 'INFO'
-          log.time ?= Date.now()
-          log.module ?= undefined
-          log.depth ?= state.stack.length
-          log.headers = options.headers
-          log.type ?= 'text'
-          log.shy ?= options.shy
-          args = if 1 <= arguments.length then [].slice.call(arguments, 0) else []
-          stackTrace = require 'stack-trace'
-          frame = stackTrace.get()[1]
-          file = path.basename(frame.getFileName())
-          line = frame.getLineNumber()
-          method = frame.getFunctionName()
-          log.file = file
-          log.line = line
-          args.unshift("" + file + ":" + line + " in " + method + "()");
-          _log log for _log in _logs
-          obj.emit? log.type, log unless log_disabled
-        options.log._nikita_ = true
         if options.source and match = /~($|\/.*)/.exec options.source
           unless obj.store['nikita:ssh:connection']
           then options.source = path.join process.env.HOME, match[1]
@@ -285,7 +237,7 @@
         options_parent = state.todos.options
         obj.cascade = {...obj.options.cascade, ...module.exports.cascade}
         for k, v of options_parent
-          options_original[k] = v if options_original[k] is undefined and k isnt 'log' and obj.cascade[k] is true
+          options_original[k] = v if options_original[k] is undefined and obj.cascade[k] is true
         options = enrich_options options
         options.original = options_original
         if options.action is 'next'
@@ -317,18 +269,18 @@
             callback err if callback
             run()
         index = state.index_counter++
-        options.log message: options.header, type: 'header', index: index, headers: options.headers if options.header
         state.todos.status.unshift shy: options.shy, value: undefined
         state.stack.unshift state.todos
         state.todos = todos_create()
         state.todos.options = options
+        proxy.log message: options.header, type: 'header', index: index, headers: options.headers if options.header
         wrap.options options, (err) ->
           do_disabled = ->
             unless options.disabled
-              options.log type: 'lifecycle', message: 'disabled_false', level: 'DEBUG', index: index, error: null, status: false
+              proxy.log type: 'lifecycle', message: 'disabled_false', level: 'DEBUG', index: index, error: null, status: false
               do_once()
             else
-              options.log type: 'lifecycle', message: 'disabled_true', level: 'INFO', index: index, error: null, status: false
+              proxy.log type: 'lifecycle', message: 'disabled_true', level: 'INFO', index: index, error: null, status: false
               do_callback []
           do_once = ->
             hashme = (value) ->
@@ -395,10 +347,10 @@
             , ->
               for k, v of options # Remove conditions from options
                 delete options[k] if /^if.*/.test(k) or /^unless.*/.test(k)
-              options.log type: 'lifecycle', message: 'conditions_passed', index: index, error: null, status: false
+              proxy.log type: 'lifecycle', message: 'conditions_passed', index: index, error: null, status: false
               do_handler()
             , (err) ->
-              options.log type: 'lifecycle', message: 'conditions_failed', index: index, error: err, status: false
+              proxy.log type: 'lifecycle', message: 'conditions_failed', index: index, error: err, status: false
               do_callback [err]
           options.attempt = -1
           do_handler = ->
@@ -409,9 +361,9 @@
               if err and err not instanceof Error
                 err = Error 'First argument not a valid error'
                 arguments[0][0] = err
-              options.log message: err.message, level: 'ERROR', index: index, module: 'nikita' if err
+              proxy.log message: err.message, level: 'ERROR', index: index, module: 'nikita' if err
               if err and ( options.retry is true or options.attempt < options.retry - 1 )
-                options.log message: "Retry on error, attempt #{options.attempt+1}", level: 'WARN', index: index, module: 'nikita'
+                proxy.log message: "Retry on error, attempt #{options.attempt+1}", level: 'WARN', index: index, module: 'nikita'
                 return setTimeout do_handler, options.sleep
               do_intercept_after arguments...
             options.handler ?= obj.registry.get(options.action)?.handler or registry.get(options.action)?.handler
@@ -512,7 +464,7 @@
             .error (err) -> do_callback [err]
             .next -> do_callback args
           do_callback = (args) ->
-            options.log type: 'handled', index: index, error: args[0], status: args[1]
+            proxy.log type: 'handled', index: index, error: args[0], status: args[1]
             return if state.killed
             args[0] = undefined unless args[0] # Error is undefined and not null or false
             args[1] = !!args[1] if options.status # Status is a boolean, error or not
@@ -520,7 +472,7 @@
             jump_to_error args[0] if args[0] and not options.relax
             state.todos.throw_if_error = false if args[0] and options.callback
             # todo: we might want to log here a change of status, sth like:
-            # options.log type: 'lifecycle', message: 'status', index: index, error: err, status: true if options.status and args[1] and not state.todos.status.some (satus) -> status
+            # proxy.log type: 'lifecycle', message: 'status', index: index, error: err, status: true if options.status and args[1] and not state.todos.status.some (satus) -> status
             state.todos.status[0].value = args[1] if options.status
             call_callback options.callback, args if options.callback
             args[0] = null if options.relax
@@ -631,6 +583,7 @@
       after: false
       before: false
       cascade: true
+      depth: null
       disabled: false
       domain: false
       handler: false

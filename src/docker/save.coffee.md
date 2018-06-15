@@ -51,7 +51,7 @@ nikita.docker({
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering Docker save", level: 'DEBUG', module: 'nikita/lib/docker/save'
+      @log message: "Entering Docker save", level: 'DEBUG', module: 'nikita/lib/docker/save'
       # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
@@ -62,7 +62,7 @@ nikita.docker({
       # Saves image to local tmp path, than copy it
       cmd = "save -o #{options.output} #{options.image}"
       cmd += ":#{options.tag}" if options.tag?
-      options.log message: "Extracting image #{options.output} to file:#{options.image}", level: 'INFO', module: 'nikita/lib/docker/save'
+      @log message: "Extracting image #{options.output} to file:#{options.image}", level: 'INFO', module: 'nikita/lib/docker/save'
       @system.execute
         cmd: docker.wrap options, cmd
       , docker.callback

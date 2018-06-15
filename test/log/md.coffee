@@ -13,7 +13,7 @@ describe 'log.md', ->
       ssh: ssh
     .log.md basedir: scratch
     .call (options) ->
-      options.log 'ok'
+      @log 'ok'
     .file.assert
       source: "#{scratch}/localhost.log"
       content: /^ok\n/
@@ -27,7 +27,7 @@ describe 'log.md', ->
       ssh: ssh
     .log.md basedir: scratch
     .call (options) ->
-      options.log message: 'ok'
+      @log message: 'ok'
     .file.assert
       source: "#{scratch}/localhost.log"
       content: /^ok\n/
@@ -41,7 +41,7 @@ describe 'log.md', ->
       ssh: ssh
     .log.md basedir: scratch
     .call (options) ->
-      options.log message: 'ok', module: 'nikita/test/log/md'
+      @log message: 'ok', module: 'nikita/test/log/md'
     .file.assert
       source: "#{scratch}/localhost.log"
       content: /^ok \(1.INFO, written by nikita\/test\/log\/md\)\n/
@@ -56,7 +56,7 @@ describe 'log.md', ->
       log_md: basedir: scratch
     .log.md()
     .call (options) ->
-      options.log 'ok'
+      @log 'ok'
     .file.assert
       source: "#{scratch}/localhost.log"
       content: /^ok\n/
@@ -72,8 +72,8 @@ describe 'log.md', ->
         ssh: ssh
       .log.md basedir: scratch
       .call (options) ->
-        options.log message: 'this is a one line output', type: 'stdout_stream'
-        options.log message: null, type: 'stdout_stream'
+        @log message: 'this is a one line output', type: 'stdout_stream'
+        @log message: null, type: 'stdout_stream'
       .file.assert
         source: "#{scratch}/localhost.log"
         content: /^\n```stdout\nthis is a one line output\n```\n\n/

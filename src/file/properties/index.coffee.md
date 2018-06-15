@@ -44,7 +44,7 @@ require('nikita')
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering file.properties", level: 'DEBUG', module: 'nikita/lib/file/properties'
+      @log message: "Entering file.properties", level: 'DEBUG', module: 'nikita/lib/file/properties'
       # Options
       throw Error "Missing argument options.target" unless options.target
       options.separator ?= '='
@@ -60,7 +60,7 @@ require('nikita')
           v = v.trim() if typeof v is 'string'
           fnl_props[k] = v
       org_props = {}
-      options.log message: "Merging \"#{if options.merge then 'true' else 'false'}\"", level: 'DEBUG', module: 'nikita/lib/file/properties'
+      @log message: "Merging \"#{if options.merge then 'true' else 'false'}\"", level: 'DEBUG', module: 'nikita/lib/file/properties'
       # Read Original
       @file.properties.read
         if_exists: true
@@ -79,7 +79,7 @@ require('nikita')
         for k in Object.keys(fnl_props) then keys[k] = true
         for key in Object.keys keys
           if "#{org_props[key]}" isnt "#{fnl_props[key]}"
-            options.log? message: "Property '#{key}' was '#{org_props[k]}' and is now '#{fnl_props[k]}'", level: 'WARN', module: 'ryba/lib/file/properties'
+            @log message: "Property '#{key}' was '#{org_props[k]}' and is now '#{fnl_props[k]}'", level: 'WARN', module: 'ryba/lib/file/properties'
             status = true if fnl_props[key]?
         callback null, status
       # Merge

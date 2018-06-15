@@ -87,7 +87,7 @@ informations about live containers could be printed, that's why all path under
 docker/* are ignored.
 
     module.exports = (options, callback) ->
-      options.log message: "Entering cgroups", level: 'DEBUG', module: 'nikita/lib/system/cgroups'
+      @log message: "Entering cgroups", level: 'DEBUG', module: 'nikita/lib/system/cgroups'
       throw Error 'Missing cgroups content' unless options.groups? or options.mounts? or options.default?
       options.mounts ?= []
       options.groups ?= {}

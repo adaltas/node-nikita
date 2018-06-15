@@ -34,7 +34,7 @@ nikita
 ## Source Code
 
     module.exports = shy: true, handler: (options, callback) ->
-      options.log message: "Entering etc_passwd.read", level: 'DEBUG', module: 'nikita/lib/system/etc_passwd/read'
+      @log message: "Entering etc_passwd.read", level: 'DEBUG', module: 'nikita/lib/system/etc_passwd/read'
       throw Error 'Invalid Option: uid must be a string or a number' if options.uid and not typeof options.uid in ['string', 'number']
       options.uid = parseInt options.uid, 10 if typeof options.uid is 'string' and /\d+/.test options.uid
       options.target ?= '/etc/passwd'
@@ -43,7 +43,7 @@ nikita
       @call
         if: options.cache and !!@store['nikita:etc_passwd']
       , ->
-        options.log message: "Get passwd definition from cache", level: 'INFO', module: 'nikita/lib/system/etc_passwd/read'
+        @log message: "Get passwd definition from cache", level: 'INFO', module: 'nikita/lib/system/etc_passwd/read'
         passwd = @store['nikita:etc_passwd']
       # Read system passwd and place in cache if requested
       @fs.readFile

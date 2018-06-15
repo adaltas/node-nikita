@@ -14,7 +14,7 @@ See `docker.run` for list of options.
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering Docker service", level: 'DEBUG', module: 'nikita/lib/docker/service'
+      @log message: "Entering Docker service", level: 'DEBUG', module: 'nikita/lib/docker/service'
       # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

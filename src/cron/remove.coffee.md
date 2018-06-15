@@ -41,10 +41,10 @@ require('nikita').cron.remove({
     module.exports = (options, callback) ->
       return callback Error 'valid cmd is required' unless options.cmd?.length > 0
       if options.user?
-        options.log message: "Using user #{options.user}", level: 'INFO', module: 'nikita/cron/remove'
+        @log message: "Using user #{options.user}", level: 'INFO', module: 'nikita/cron/remove'
         crontab = "crontab -u #{options.user}"
       else
-        options.log message: "Using default user", level: 'INFO', module: 'nikita/cron/remove'
+        @log message: "Using default user", level: 'INFO', module: 'nikita/cron/remove'
         crontab = "crontab"
       status = false
       jobs = []
@@ -60,10 +60,10 @@ require('nikita').cron.remove({
         jobs = stdout.trim().split '\n'
         for job, i in jobs
           continue unless regex.test job
-          options.log message: "Job '#{job}' matches. Removing from list", level: 'WARN', module: 'nikita/cron/remove'
+          @log message: "Job '#{job}' matches. Removing from list", level: 'WARN', module: 'nikita/cron/remove'
           status = true
           jobs.splice i, 1
-        options.log message: "No Job matches. Skipping", level: 'INFO', module: 'nikita/cron/remove'
+        @log message: "No Job matches. Skipping", level: 'INFO', module: 'nikita/cron/remove'
       .system.execute
         cmd: """
         #{crontab} - <<EOF

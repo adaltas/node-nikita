@@ -182,7 +182,7 @@ nikita
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering system_limits", level: 'DEBUG', module: 'nikita/lib/system_limits'
+      @log message: "Entering system_limits", level: 'DEBUG', module: 'nikita/lib/system_limits'
       return callback Error "Incoherent options: both options system and user defined, #{JSON.stringify system: options.system, user: options.user}" if options.system and options.user
       options.user = '*' if options.system
       return callback Error "Missing required option 'user'" unless options.user

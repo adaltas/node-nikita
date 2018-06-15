@@ -23,7 +23,7 @@ describe 'log.fs', ->
       basedir: scratch
       serializer: {}
     .call (options) ->
-      options.log message: 'ok'
+      @log message: 'ok'
     .file.assert
       source: "#{scratch}/localhost.log"
       content: ''
@@ -37,7 +37,7 @@ describe 'log.fs', ->
       log_fs: basedir: scratch, serializer: text: (log) -> "#{log.message}\n"
     .log.fs()
     .call (options) ->
-      options.log message: 'ok'
+      @log message: 'ok'
     .file.assert
       source: "#{scratch}/localhost.log"
       content: /^ok\n/
@@ -54,7 +54,7 @@ describe 'log.fs', ->
         serializer: text: (log) -> "#{log.message}\n"
         archive: true
       .call (options) ->
-        options.log message: 'ok'
+        @log message: 'ok'
       .call ->
         now = new Date()
         dir = "#{now.getFullYear()}".slice(-2) + "0#{now.getFullYear()}".slice(-2) + "0#{now.getDate()}".slice(-2)
@@ -73,9 +73,9 @@ describe 'log.fs', ->
         serializer: text: (log) -> "#{log.message}\n"
         archive: true
       .call (options) ->
-        options.log message: 'ok'
+        @log message: 'ok'
       .call (_, callback) ->
-        fs.lstat "#{scratch}/latest", (err, stats) ->
+        @fs.lstat "#{scratch}/latest", (err, stats) ->
           stats.isSymbolicLink().should.be.true() unless err
           callback err
       .file.assert

@@ -46,13 +46,13 @@ We might think about re-integrating them.
 ## Source Code
 
     module.exports = (options) ->
-      options.log message: "Entering service.status", level: 'DEBUG', module: 'nikita/lib/service/status'
+      @log message: "Entering service.status", level: 'DEBUG', module: 'nikita/lib/service/status'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'
       # Validation
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       # Action
-      options.log message: "Status for service #{options.name}", level: 'INFO', module: 'nikita/lib/service/status'
+      @log message: "Status for service #{options.name}", level: 'INFO', module: 'nikita/lib/service/status'
       @call -> @system.execute
         cmd: """
           ls \
@@ -78,4 +78,4 @@ We might think about re-integrating them.
       , (err, status) ->
         throw Error "Unsupported Loader" if err?.code is 2
         return if err
-        options.log message: "Status for #{options.name} is #{if status then 'started' else 'stoped'}", level: 'INFO', module: 'nikita/lib/service/status'
+        @log message: "Status for #{options.name} is #{if status then 'started' else 'stoped'}", level: 'INFO', module: 'nikita/lib/service/status'
