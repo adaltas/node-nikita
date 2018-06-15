@@ -149,6 +149,7 @@
         options_session.cascade ?= {}
         options_parent = state.todos.options
         options = {}
+        options.parent = options_parent
         # Merge cascade action options with default session options
         options.cascade = {...module.exports.cascade, ...options_session.cascade, ...options_action.cascade}
         # Copy initial options
@@ -194,8 +195,8 @@
           log.level ?= 'INFO'
           log.time ?= Date.now()
           log.module ?= undefined
-          log.headers ?= for header in state.headers then header
           log.depth ?= state.stack.length
+          log.headers ?= for header in state.headers then header
           log.type ?= 'text'
           log.shy ?= options.shy
           args = if 1 <= arguments.length then [].slice.call(arguments, 0) else []
@@ -315,7 +316,7 @@
         state.todos.status.unshift shy: options.shy, value: undefined
         state.stack.unshift state.todos
         state.todos = todos_create()
-        state.todos.options = options.original
+        state.todos.options = options.internal
         wrap.options options, (err) ->
           do_disabled = ->
             unless options.disabled

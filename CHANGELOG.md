@@ -14,6 +14,7 @@ Backward incompatibilities:
 
 New features:
 
+* option parent: inject parent options
 * option depth: pass depth to actions
 * option get: ensure options are cloned
 * log: new action
