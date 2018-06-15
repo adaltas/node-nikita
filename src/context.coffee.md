@@ -20,7 +20,6 @@
       state.todos = todos_create()
       state.befores = []
       state.afters = []
-      state.headers = []
       state.once = {}
       state.killed = false
       state.index_counter = 0
@@ -34,7 +33,6 @@
       proxy = new Proxy obj,
         has: (target, name) ->
           console.warns 'proxy has is being called', name
-          # target[name]? or target.registry.registered(proxy.action)? or registry.registered(name)?
         apply: (target, thisArg, argumentsList) ->
           console.warn 'apply'
         get: (target, name) ->
@@ -169,6 +167,14 @@
             _logs = [options.log]
           else if not options.log
             _logs = []
+        # Build headers option
+        headers = []
+        push_headers = (options) ->
+          headers.push options.header if options.header
+          push_headers options.parent if options.parent
+        push_headers options
+        options.headers = headers.reverse()
+        # Deal with log
         log_disabled = true if options.log is false
         options.log = [] if log_disabled
         options.log = [] if options.log?._nikita_ # not clean but no better way to detect user provided option with the one from nikita
@@ -196,7 +202,7 @@
           log.time ?= Date.now()
           log.module ?= undefined
           log.depth ?= state.stack.length
-          log.headers ?= for header in state.headers then header
+          log.headers = options.headers
           log.type ?= 'text'
           log.shy ?= options.shy
           args = if 1 <= arguments.length then [].slice.call(arguments, 0) else []
@@ -311,12 +317,11 @@
             callback err if callback
             run()
         index = state.index_counter++
-        state.headers.push options.header if options.header
-        options.log message: options.header, type: 'header', index: index, headers: (header for header in state.headers) if options.header
+        options.log message: options.header, type: 'header', index: index, headers: options.headers if options.header
         state.todos.status.unshift shy: options.shy, value: undefined
         state.stack.unshift state.todos
         state.todos = todos_create()
-        state.todos.options = options.internal
+        state.todos.options = options
         wrap.options options, (err) ->
           do_disabled = ->
             unless options.disabled
@@ -507,7 +512,6 @@
             .error (err) -> do_callback [err]
             .next -> do_callback args
           do_callback = (args) ->
-            state.headers.pop() if options.header
             options.log type: 'handled', index: index, error: args[0], status: args[1]
             return if state.killed
             args[0] = undefined unless args[0] # Error is undefined and not null or false
@@ -630,7 +634,7 @@
       disabled: false
       domain: false
       handler: false
-      header: false
+      header: null
       once: false
       relax: false
       shy: false
