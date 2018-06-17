@@ -5,6 +5,7 @@
 
 Backward incompatibilities:
 
+* wrap: remove connection
 * log: move options.log to nikita.log 
 * option depth: renaming, was total_depth
 * option log: remove depth and header_depth

@@ -28,16 +28,17 @@ describe 'ssh.open', ->
     .ssh.close()
     .promise()
 
-  they 'with global options', (ssh) ->
-    return @skip() unless ssh
+  it 'with global options', ->
+    config = test.config()
     nikita
+    .ssh.open
       ssh:
-        host: ssh.config.host
-        port: ssh.config.port
-        username: ssh.config.username
-        password: ssh.config.password
-        private_key: ssh.config.privateKey.privateOrig
-        public_key: ssh.config.publicKey.publicOrig
+        host: config.ssh.host
+        port: config.ssh.port
+        username: config.ssh.username
+        password: config.ssh.password
+        private_key: config.ssh.privateKey
+        public_key: config.ssh.publicKey
     .call (options) ->
       (!!@ssh()).should.be.true()
       # Note, assert instance of SSH2 which isnt a direct dependency
