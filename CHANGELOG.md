@@ -16,6 +16,7 @@ Backward incompatibilities:
 
 New features:
 
+* ssh.open: accept connection
 * options headers: inject parent headers
 * option parent: inject parent options
 * option depth: pass depth to actions
