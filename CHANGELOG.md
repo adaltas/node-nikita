@@ -5,6 +5,7 @@
 
 Management:
 
+* package: remove fs.realpath dependency
 * wrap: remove ssh2-connect dependency
 * package: remove backmeup, ftp and jsftp dependencies
 * package: re-activate lock file
