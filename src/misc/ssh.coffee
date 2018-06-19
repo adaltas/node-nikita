@@ -32,4 +32,4 @@ module.exports = ssh =
     ) or false
   is: (ssh) ->
     return false unless ssh?._sshstream?.config?.ident?
-    ssh._sshstream.config.ident is 'SSH-2.0-ssh2js0.2.0'
+    /SSH-\d+.\d+-ssh2js\d+.\d+.\d+/.test ssh._sshstream.config.ident
