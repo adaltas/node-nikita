@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* package: remove backmeup, ftp and jsftp dependencies
 * package: re-activate lock file
 * package: latest dependencies
 
