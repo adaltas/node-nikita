@@ -2,7 +2,6 @@
 
 each = require 'each'
 tilde = require 'tilde-expansion'
-connect = require 'ssh2-connect'
 misc = require './index'
 conditions = require './conditions'
 
