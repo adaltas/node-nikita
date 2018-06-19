@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* package: re-activate lock file
 * package: latest dependencies
 
 ## Version 0.6.8
