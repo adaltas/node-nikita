@@ -87,7 +87,6 @@ require('nikita').file.render({
         extension = path.extname options.source
         switch extension
           when '.j2' then options.engine = 'nunjunks'
-          when '.eco' then options.engine = 'eco'
           else throw Error "Invalid Option: extension '#{extension}' is not supported"
       # Read source
       @fs.readFile

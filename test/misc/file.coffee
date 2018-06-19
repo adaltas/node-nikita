@@ -11,11 +11,17 @@ describe 'file', ->
 
   describe 'hash', ->
 
-    they 'returns the file md5', (ssh, next) ->
-      misc.file.hash ssh, "#{__dirname}/../resources/render.eco", (err, md5) ->
-        return next err if err
-        md5.should.eql '287621a8df3c3f6c99c7b7645bd09ffd'
-        next()
+    they 'returns the file md5', (ssh) ->
+      nikita
+        ssh: ssh
+      .file
+        target: "#{scratch}/a_file"
+        content: 'Hello'
+      .call (_, callback) ->
+        misc.file.hash ssh, "#{scratch}/a_file", (err, md5) ->
+          md5.should.eql '8b1a9953c4611296a827abf8c47804d7' unless err
+          callback err
+      .promise()
 
     they 'throws error if file does not exist', (ssh, next) ->
       misc.file.hash ssh, "#{__dirname}/does/not/exist", (err, md5) ->
@@ -39,9 +45,14 @@ describe 'file', ->
 
   describe 'compare', ->
 
-    they '2 differents files', (ssh, next) ->
-      file = "#{__dirname}/../resources/render.eco"
-      misc.file.compare ssh, [file, file], (err, md5) ->
-        return next err if err
-        md5.should.eql '287621a8df3c3f6c99c7b7645bd09ffd'
-        next()
+    they '2 differents files', (ssh) ->
+      nikita
+        ssh: ssh
+      .file
+        target: "#{scratch}/a_file"
+        content: 'Hello'
+      .call (_, callback) ->
+        misc.file.compare ssh, ["#{scratch}/a_file", "#{scratch}/a_file"], (err, md5) ->
+          md5.should.eql '8b1a9953c4611296a827abf8c47804d7' unless err
+          callback err
+      .promise()

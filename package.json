@@ -43,7 +43,6 @@
     "tilde-expansion": "~0.0.0"
   },
   "optionalDependencies": {
-    "eco": "~1.1.0-rc-3",
     "season": "^6.0.2"
   },
   "devDependencies": {

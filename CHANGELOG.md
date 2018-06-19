@@ -3,6 +3,10 @@
 
 ## Trunk
 
+Backward incompatibilities:
+
+* file.render: remove eco dependency
+
 Management:
 
 * package: remove fs.realpath dependency

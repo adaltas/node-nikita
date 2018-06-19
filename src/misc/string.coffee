@@ -62,11 +62,6 @@ module.exports =
               else
                 @log message: "Option filter not a function and ignored", level: 'WARN', module: 'nikita/lib/write'
             options.content = env.renderString options.content.toString(), options.context
-          when 'eco'
-            try
-              eco = require 'eco'
-            catch e then throw Error "Uninstalled Package: the optional package \"echo\" is not installed"
-            options.content = eco.render options.content.toString(), options.context
           else throw Error "Invalid engine: #{options.engine}"
       catch err
         throw (if typeof err is 'string' then Error(err) else err)

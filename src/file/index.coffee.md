@@ -385,7 +385,6 @@ require('nikita').file({
 ## Dependencies
 
     path = require 'path'
-    eco = require 'eco'
     nunjucks = require 'nunjucks/src/environment'
     misc = require '../misc'
     diff = require '../misc/diff'
