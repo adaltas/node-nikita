@@ -64,6 +64,6 @@ require('nikita').service.stop([{
         code_skipped: 3
         arch_chroot: options.arch_chroot
         rootdir: options.rootdir
-      , (err, status) ->
+      , (err, {status}) ->
         @log message: "Service already stopped", level: 'WARN', module: 'nikita/lib/service/stop' if not err and not status
         @log message: "Service is stopped", level: 'INFO', module: 'nikita/lib/service/stop' if not err and status

@@ -27,7 +27,7 @@ describe 'options "handler"', ->
         throw Error 'Catchme'
       .anaction
         key: "value"
-      , (err, written) ->
+      , (err) ->
         err.message.should.eql 'Catchme'
       .next (err) ->
         err.message.should.eql 'Catchme'
@@ -38,7 +38,7 @@ describe 'options "handler"', ->
       .call ->
         @call fuck: 'yeah', ->
         throw Error 'Catchme'
-      , (err, written) ->
+      , (err) ->
         err.message.should.eql 'Catchme'
       .next (err) ->
         err.message.should.eql 'Catchme'
@@ -52,7 +52,7 @@ describe 'options "handler"', ->
         callback Error 'Catchme'
       .anaction
         key: "value"
-      , (err, written) ->
+      , (err) ->
         err.message.should.eql 'Catchme'
       .next (err) ->
         err.message.should.eql 'Catchme'
@@ -64,7 +64,7 @@ describe 'options "handler"', ->
         process.nextTick -> callback Error 'Catchme'
       .anaction
         key: "value"
-      , (err, written) ->
+      , (err) ->
         err.message.should.eql 'Catchme'
       .next (err) ->
         err.message.should.eql 'Catchme'
@@ -83,7 +83,7 @@ describe 'options "handler"', ->
       .call (_, callback) ->
         @call fuck: 'yeah', ->
         throw Error 'Catchme'
-      , (err, written) ->
+      , (err) ->
         err.message.should.eql 'Catchme'
       .next (err) ->
         err.message.should.eql 'Catchme'
@@ -94,7 +94,7 @@ describe 'options "handler"', ->
       .call (_, callback) ->
         setImmediate ->
          callback Error 'Catchme'
-      , (err, written) ->
+      , (err) ->
         err.message.should.eql 'Catchme'
       .next (err) ->
         err.message.should.eql 'Catchme'
@@ -105,7 +105,7 @@ describe 'options "handler"', ->
       .call (_, callback) ->
         setImmediate ->
          callback {message: 'not a valid error'}
-      , (err, written) ->
+      , (err) ->
         err.message.should.eql 'First argument not a valid error'
       .next (err) ->
         err.message.should.eql 'First argument not a valid error'

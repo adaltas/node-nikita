@@ -21,25 +21,25 @@ describe 'service.startup', ->
         name: config.service.name
         chk_name: config.service.chk_name
         startup: true
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .service
         name: config.service.name
         chk_name: config.service.chk_name
         startup: true
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .service
         name: config.service.name
         chk_name: config.service.chk_name
         startup: false
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .service
         name: config.service.name
         chk_name: config.service.chk_name
         startup: false
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .promise()
 
@@ -52,7 +52,7 @@ describe 'service.startup', ->
       .service.startup
         startup: false
         name: config.service.chk_name
-      .service.startup config.service.chk_name, (err, status) ->
+      .service.startup config.service.chk_name, (err, {status}) ->
         status.should.be.true() unless err
       .promise()
   
@@ -65,23 +65,23 @@ describe 'service.startup', ->
       nikita
         ssh: ssh
         # debug: true
-      .system.execute 'which chkconfig', code_skipped: 1, (err, status) ->
+      .system.execute 'which chkconfig', code_skipped: 1, (err, {status}) ->
         @end() unless status
       .service
         name: config.service.name
         chk_name: config.service.chk_name
         startup: '235'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .service
         chk_name: config.service.chk_name
         startup: '2345'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .service
         chk_name: config.service.chk_name
         startup: '2345'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .promise()
 
@@ -95,25 +95,25 @@ describe 'service.startup', ->
   #       name: config.service.name
   #       chk_name: config.service.chk_name
   #       startup: true
-  #     , (err, status) ->
+  #     , (err, {status}) ->
   #       status.should.be.true() unless err
   #     .service
   #       name: config.service.name
   #       chk_name: config.service.chk_name
   #       startup: true
-  #     , (err, status) ->
+  #     , (err, {status}) ->
   #       status.should.be.false() unless err
   #     .service
   #       name: config.service.name
   #       chk_name: config.service.chk_name
   #       startup: false
-  #     , (err, status) ->
+  #     , (err, {status}) ->
   #       status.should.be.true() unless err
   #     .service
   #       name: config.service.name
   #       chk_name: config.service.chk_name
   #       startup: false
-  #     , (err, status) ->
+  #     , (err, {status}) ->
   #       status.should.be.false() unless err
   #     .promise()
   #     
@@ -126,6 +126,6 @@ describe 'service.startup', ->
   #     .service.startup
   #       startup: false
   #       name: config.service.chk_name
-  #     .service.startup config.service.chk_name, (err, status) ->
+  #     .service.startup config.service.chk_name, (err, {status}) ->
   #       status.should.be.true() unless err
   #     .promise()

@@ -25,8 +25,8 @@ describe 'docker.rm', ->
       rm: false
     .docker.rm
       container: 'nikita_rm'
-    , (err, removed, stdout, stderr) ->
-      removed.should.be.true() unless err
+    , (err, {status}) ->
+      status.should.be.true() unless err
     .promise()
 
   they 'remove live container (no force)', (ssh) ->
@@ -44,7 +44,7 @@ describe 'docker.rm', ->
     .docker.rm
       container: 'nikita_rm'
       relax: true
-    , (err, removed, stdout, stderr) ->
+    , (err) ->
       err.message.should.eql 'Container must be stopped to be removed without force'
     .docker.stop
       container: 'nikita_rm'
@@ -67,6 +67,6 @@ describe 'docker.rm', ->
     .docker.rm
       container: 'nikita_rm'
       force: true
-    , (err, removed, stdout, stderr) ->
-      removed.should.be.true()
+    , (err, {status}) ->
+      status.should.be.true() unless err
     .promise()

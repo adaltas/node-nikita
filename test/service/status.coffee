@@ -18,19 +18,19 @@ describe 'service.status', ->
       name: config.service.srv_name
     .service.status
       name: config.service.srv_name
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .service.start
       name: config.service.srv_name
     .service.status
       name: config.service.srv_name
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .service.stop
       name: config.service.srv_name
     .service.status
       name: config.service.name
       srv_name: config.service.srv_name
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()

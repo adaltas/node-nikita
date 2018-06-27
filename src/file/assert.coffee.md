@@ -106,7 +106,7 @@ nikita.file.assert({
       @call
         unless: options.content? or options.md5 or options.sha1 or options.sha256 or options.mode.length
       , (_, callback) ->
-        @fs.exists ssh: options.ssh, target: options.target.toString(), (err, exists) ->
+        @fs.exists ssh: options.ssh, target: options.target.toString(), (err, {exists}) ->
           unless options.not
             unless exists
               options.error ?= "File does not exists: #{JSON.stringify options.target}"
@@ -120,22 +120,22 @@ nikita.file.assert({
       @call
         if: options.filetype.length
       , (_, callback) ->
-        @fs.lstat ssh: options.ssh, target: options.target, (err, stat) ->
+        @fs.lstat ssh: options.ssh, target: options.target, (err, {stats}) ->
           return callback err if err
           if fs.constants.S_IFREG in options.filetype
-            return callback Error "Invalid filetype: expect a regular file" unless stat.isFile()
+            return callback Error "Invalid filetype: expect a regular file" unless misc.stats.isFile stats.mode
           else if fs.constants.S_IFDIR in options.filetype
-            return callback Error "Invalid filetype: expect a directory" unless stat.isDirectory()
+            return callback Error "Invalid filetype: expect a directory" unless misc.stats.isDirectory stats.mode
           else if fs.constants.S_IFCHR in options.filetype
-            return callback Error "Invalid filetype: expect a character-oriented device file" unless stat.isCharacterDevice()
+            return callback Error "Invalid filetype: expect a character-oriented device file" unless misc.stats.isCharacterDevice stats.mode
           else if fs.constants.S_IFBLK in options.filetype
-            return callback Error "Invalid filetype: expect a block-oriented device file" unless stat.isBlockDevice()
+            return callback Error "Invalid filetype: expect a block-oriented device file" unless misc.stats.isBlockDevice stats.mode
           else if fs.constants.S_IFIFO in options.filetype
-            return callback Error "Invalid filetype: expect a FIFO/pipe" unless stat.isFIFO()
+            return callback Error "Invalid filetype: expect a FIFO/pipe" unless misc.stats.isFIFO stats.mode
           else if fs.constants.S_IFLNK in options.filetype
-            return callback Error "Invalid filetype: expect a symbolic link" unless stat.isSymbolicLink()
+            return callback Error "Invalid filetype: expect a symbolic link" unless misc.stats.isSymbolicLink stats.mode
           else if fs.constants.S_IFSOCK in options.filetype
-            return callback Error "Invalid filetype: expect a socket" unless stat.isSocket()
+            return callback Error "Invalid filetype: expect a socket" unless misc.stats.isSocket stats.mode
           else
             return callback Error "Invalid filetype: #{options.filetype.join ' '}"
           callback()
@@ -143,15 +143,15 @@ nikita.file.assert({
       @call
         if: options.content? and (typeof options.content is 'string' or Buffer.isBuffer options.content)
       , (_, callback) ->
-        @fs.readFile ssh: options.ssh, target: options.target, (err, buf) ->
+        @fs.readFile ssh: options.ssh, target: options.target, (err, {data}) ->
           return callback err if err
-          buf = buffer.trim buf, options.encoding if options.trim
+          data = buffer.trim data, options.encoding if options.trim
           unless options.not
-            unless buf.equals options.content
-              options.error ?= "Invalid content: expect #{JSON.stringify options.content.toString()} and got #{JSON.stringify buf.toString()}"
+            unless data.equals options.content
+              options.error ?= "Invalid content: expect #{JSON.stringify options.content.toString()} and got #{JSON.stringify data.toString()}"
               err = Error options.error
           else
-            if buf.equals options.content
+            if data.equals options.content
               options.error ?= "Unexpected content: #{JSON.stringify options.content.toString()}"
               err = Error options.error
           callback err
@@ -159,14 +159,14 @@ nikita.file.assert({
       @call
         if: options.content? and options.content instanceof RegExp
       , (_, callback) ->
-        @fs.readFile ssh: options.ssh, target: options.target, (err, buf) ->
+        @fs.readFile ssh: options.ssh, target: options.target, (err, {data}) ->
           return callback err if err
           unless options.not
-            unless options.content.test buf 
+            unless options.content.test data 
               options.error ?= "Invalid content match: expect #{JSON.stringify options.content.toString()} and got #{JSON.stringify buffer.toString()}"
               err = Error options.error
           else
-            if options.content.test buf
+            if options.content.test data
               options.error ?= "Unexpected content match: #{JSON.stringify options.content.toString()}"
               err = Error options.error
           callback err
@@ -193,14 +193,14 @@ nikita.file.assert({
       @call
         if: options.uid?
       , (_, callback) ->
-        @fs.stat ssh: options.ssh, target: options.target, (err, stat) ->
+        @fs.stat ssh: options.ssh, target: options.target, (err, {stats}) ->
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
           unless options.not
-            unless "#{stat.uid}" is "#{options.uid}"
-              options.error ?= "Unexpected uid: expected \"#{options.uid}\" and got \"#{stat.uid}\""
+            unless "#{stats.uid}" is "#{options.uid}"
+              options.error ?= "Unexpected uid: expected \"#{options.uid}\" and got \"#{stats.uid}\""
               err = Error options.error
           else
-            if "#{stat.uid}" is "#{options.uid}"
+            if "#{stats.uid}" is "#{options.uid}"
               options.error ?= "Unexpected matching uid: expected \"#{options.uid}\""
               err = Error options.error
           callback err
@@ -208,14 +208,14 @@ nikita.file.assert({
       @call
         if: options.gid?
       , (_, callback) ->
-        @fs.stat ssh: options.ssh, target: options.target, (err, stat) ->
+        @fs.stat ssh: options.ssh, target: options.target, (err, {stats}) ->
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
           unless options.not
-            unless "#{stat.gid}" is "#{options.gid}"
-              options.error ?= "Unexpected gid: expected \"#{options.gid}\" and got \"#{stat.gid}\""
+            unless "#{stats.gid}" is "#{options.gid}"
+              options.error ?= "Unexpected gid: expected \"#{options.gid}\" and got \"#{stats.gid}\""
               err = Error options.error
           else
-            if "#{stat.gid}" is "#{options.gid}"
+            if "#{stats.gid}" is "#{options.gid}"
               options.error ?= "Unexpected matching gid: expected \"#{options.gid}\""
               err = Error options.error
           callback err
@@ -223,15 +223,15 @@ nikita.file.assert({
       @call
         if: options.mode.length
       , (_, callback) ->
-        @fs.stat ssh: options.ssh, target: options.target, (err, stat) ->
+        @fs.stat ssh: options.ssh, target: options.target, (err, {stats}) ->
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
           unless options.not
-            unless misc.mode.compare options.mode, stat.mode
+            unless misc.mode.compare options.mode, stats.mode
               expect = options.mode.map (mode) -> "#{pad 4, misc.mode.stringify(mode), '0'}"
-              options.error ?= "Invalid mode: expect #{expect} and got #{misc.mode.stringify(stat.mode).substr -4}"
+              options.error ?= "Invalid mode: expect #{expect} and got #{misc.mode.stringify(stats.mode).substr -4}"
               err = Error options.error
           else
-            if misc.mode.compare options.mode, stat.mode
+            if misc.mode.compare options.mode, stats.mode
               expect = options.mode.map (mode) -> "#{pad 4, misc.mode.stringify(mode), '0'}"
               options.error ?= "Unexpected valid mode: #{expect}"
               err = Error options.error

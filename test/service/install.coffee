@@ -16,7 +16,7 @@ describe 'service.install', ->
       name: config.service.name
     .service
       name: config.service.name
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .promise()
   
@@ -29,7 +29,7 @@ describe 'service.install', ->
       name: config.service.name
     .service
       name: config.service.name
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
 
@@ -38,7 +38,7 @@ describe 'service.install', ->
       ssh: ssh
     .service.remove
       name: config.service.name
-    .service config.service.name, (err, status) ->
+    .service config.service.name, (err, {status}) ->
       status.should.be.true() unless err
     .promise()
   
@@ -52,7 +52,7 @@ describe 'service.install', ->
     .service
       name: config.service.name
       cache: true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .call (options) ->
       @store['nikita:execute:installed'].should.containEql config.service.name
@@ -64,6 +64,6 @@ describe 'service.install', ->
     .service.install
       name: 'thisservicedoesnotexist'
       code_skipped: [1, 100] # 1 for RH, 100 for Ubuntu
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()

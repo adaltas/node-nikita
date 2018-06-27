@@ -25,13 +25,13 @@ describe 'registry.register', ->
       .call (_, callback) ->
         nikita
         .my_function value: 'world'
-        .next (err, status) ->
+        .next (err, {status}) ->
           status.should.be.false() unless err
           callback err
       .call (_, callback) ->
         nikita
         .my.function value: 'world'
-        .next (err, status) ->
+        .next (err, {status}) ->
           status.should.be.false() unless err
           callback err
       .call ->
@@ -71,7 +71,7 @@ describe 'registry.register', ->
       n.registry.registered('my_function').should.be.true()
       n.my_function
         my_option: 'my value'
-      n.next (err, status) ->
+      n.next (err, {status}) ->
         throw err if err
         status.should.be.true()
         nikita.registry.unregister 'my_function'
@@ -85,7 +85,7 @@ describe 'registry.register', ->
       n = nikita()
       n.registry.registered(['this', 'is', 'a', 'function']).should.be.true()
       n.this.is.a.function value: 'yes'
-      n.next (err, status) ->
+      n.next (err, {status}) ->
         throw err if err
         status.should.be.true()
         nikita.registry.unregister ['this', 'is', 'a', 'function']
@@ -106,7 +106,7 @@ describe 'registry.register', ->
         nikita.namespace(value: 'a').next next
       .call (_, next) ->
         nikita.namespace.child(value: 'b').next next
-      .next (err, status) ->
+      .next (err, {status}) ->
         throw err if err
         status.should.be.true()
         value_a.should.eql 'a'
@@ -126,7 +126,7 @@ describe 'registry.register', ->
       nikita
       .call (_, callback) -> nikita.a.function(value: 'a').next callback
       .call (_, callback) -> nikita.a.function.with.a.child(value: 'b').next callback
-      .next (err, status) ->
+      .next (err, {status}) ->
         throw err if err
         status.should.be.true()
         value_a.should.eql 'a'
@@ -173,7 +173,7 @@ describe 'registry.register', ->
           callback null, true
       .my_function value: 'world a'
       .my.function value: 'world b'
-      .next (err, status) ->
+      .next (err, {status}) ->
         throw err if err
         status.should.be.false()
         value_a.should.eql "hello world a"
@@ -204,7 +204,7 @@ describe 'registry.register', ->
           callback null, true
       .my_function
         my_option: 'my value'
-      .next (err, status) ->
+      .next (err, {status}) ->
         throw err if err
         status.should.be.true()
         n.registry.registered('my_function').should.be.true()
@@ -231,7 +231,7 @@ describe 'registry.register', ->
         value = options.value
         callback null, true
       .this.is.a.function value: 'yes'
-      .next (err, status) ->
+      .next (err, {status}) ->
         throw err if err
         status.should.be.true()
       .promise()
@@ -249,7 +249,7 @@ describe 'registry.register', ->
             callback null, true
       .namespace value: 'a'
       .namespace.child value: 'b'
-      .next (err, status) ->
+      .next (err, {status}) ->
         throw err if err
         status.should.be.true()
         value_a.should.eql 'a'
@@ -267,7 +267,7 @@ describe 'registry.register', ->
         callback null, true
       .a.function value: 'a'
       .a.function.with.a.child value: 'b'
-      .next (err, status) ->
+      .next (err, {status}) ->
         throw err if err
         status.should.be.true()
         value_a.should.eql 'a'

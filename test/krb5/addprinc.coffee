@@ -19,12 +19,12 @@ describe 'krb5.addprinc', ->
     .krb5.addprinc
       principal: "nikita@#{config.krb5.realm}"
       randkey: true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .krb5.addprinc
       principal: "nikita@#{config.krb5.realm}"
       randkey: true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
 
@@ -39,19 +39,19 @@ describe 'krb5.addprinc', ->
     .krb5.addprinc
       principal: "nikita@#{config.krb5.realm}"
       password: 'password1'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .krb5.addprinc
       principal: "nikita@#{config.krb5.realm}"
       password: 'password2'
       password_sync: true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .krb5.addprinc
       principal: "nikita@#{config.krb5.realm}"
       password: 'password2'
       password_sync: true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
 
@@ -66,13 +66,13 @@ describe 'krb5.addprinc', ->
     .krb5.addprinc
       principal: "nikita@#{config.krb5.realm}"
       password: 'password1'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .krb5.addprinc
       principal: "nikita@#{config.krb5.realm}"
       password: 'password2'
       password_sync: false # Default
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .system.execute
       cmd: "echo password1 | kinit nikita@#{config.krb5.realm}"
@@ -116,10 +116,10 @@ describe 'krb5.addprinc', ->
       randkey: true
       keytab: '/etc/security/keytabs/user1.service.keytab'
     .krb5.addprinc krb5, user
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .system.execute
       cmd: "echo #{user.password} | kinit #{user.principal}"
-    , (err, status, stdout) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .promise()

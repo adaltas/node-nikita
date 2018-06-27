@@ -38,7 +38,8 @@ of the directory to create.
 ## Simple usage
 
 ```js
-require('nikita').system.mkdir('./some/dir', function(err, status){
+require('nikita')
+.system.mkdir('./some/dir', function(err, status){
   console.info(err ? err.message : "Directory created: " + status);
 });
 ```
@@ -46,7 +47,8 @@ require('nikita').system.mkdir('./some/dir', function(err, status){
 ## Advanced usage
 
 ```js
-require('nikita').system.mkdir({
+require('nikita')
+.system.mkdir({
   ssh: ssh,
   target: './some/dir',
   uid: 'a_user',
@@ -78,7 +80,7 @@ require('nikita').system.mkdir({
         if ssh
           throw Error "Non Absolute Path: target is #{JSON.stringify directory}, SSH requires absolute paths, you must provide an absolute path in the target or the cwd option" unless p.isAbsolute directory
       # State
-      state = false
+      state = status: false
       each options.directory
       .call (directory, callback) =>
         # first, we need to find which directory need to be created
@@ -95,16 +97,16 @@ require('nikita').system.mkdir({
           each(directories)
           .call (directory, i, next) =>
             @log message: "Stat '#{directory}'", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
-            @fs.stat ssh: options.ssh, target: directory, (err, stat) ->
+            @fs.stat ssh: options.ssh, target: directory, (err, {stats}) ->
               if err?.code is 'ENOENT' # if the directory is not yet created
-                directory.stat = stat
+                directory.stats = stats
                 dirs.push directory
                 if i is directories.length - 1
                 then return do_create_parent(dirs)
                 else return next()
-              if stat?.isDirectory()
+              if misc.stats.isDirectory stats.mode
                 end = true
-                return  if i is 0 then do_update(stat) else do_create_parent(dirs)
+                return  if i is 0 then do_update(stats) else do_create_parent(dirs)
               if err
                 return next err
               else # a file or symlink exists at this location
@@ -114,7 +116,7 @@ require('nikita').system.mkdir({
           @system.uid_gid
             uid: options.uid
             gid: options.gid
-          , (err, status, {uid, gid}) ->
+          , (err, {uid, gid}) ->
             options.uid = uid
             options.gid = gid
             do_create directories
@@ -133,31 +135,31 @@ require('nikita').system.mkdir({
             @fs.mkdir ssh: options.ssh, target: directory, opts, (err) ->
               return callback err if err
               @log message: "Directory \"#{directory}\" created ", level: 'INFO', module: 'nikita/lib/system/mkdir'
-              state = true
+              state.status = true
               callback()
           .next (err) ->
             return callback err if err
             callback()
-        do_update = (stat) =>
+        do_update = (stats) =>
           @log message: "Directory already exists", level: 'INFO', module: 'nikita/lib/system/mkdir'
           @system.chown
             target: directory
-            stat: stat
+            stats: stats
             uid: options.uid
             gid: options.gid
             if: options.uid? or options.gid?
           @system.chmod
             target: directory
-            stat: stat
+            stats: stats
             mode: options.mode
             if: options.mode?
-          @next (err, moded) ->
+          @next (err, {status}) ->
             return callback err if err
-            state = true if moded
+            state.status = true if status
             callback()
         do_stats()
       .next (err) ->
-        callback err, state
+        callback err, state.status
 
 ## Dependencies
 

@@ -16,7 +16,7 @@ for engine, _ of config.db
         db: config.db[engine]
       .db.database.remove 'db_wait_1'
       .db.database 'db_wait_0'
-      .db.database.wait 'db_wait_0', (err, status) ->
+      .db.database.wait 'db_wait_0', (err, {status}) ->
         status.should.be.false() unless err
       .db.database.remove 'db_wait_0'
       .promise()
@@ -32,7 +32,7 @@ for engine, _ of config.db
         ssh: ssh
         db: config.db[engine]
       .db.database.remove 'db_wait_1'
-      .db.database.wait 'db_wait_1', (err, status) ->
+      .db.database.wait 'db_wait_1', (err, {status}) ->
         status.should.be.true() unless err
       .db.database.remove 'db_wait_1'
       .promise()

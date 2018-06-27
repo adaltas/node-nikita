@@ -21,6 +21,6 @@ describe 'options "argument"', ->
         when 0 then 'gotit'
         when 1 then 'gotu'
       next null, true
-    .catchme ['gotit', 'gotu'], (err, status) ->
+    .catchme ['gotit', 'gotu'], (err, {status}) ->
       status.should.be.true() unless err
     .promise()

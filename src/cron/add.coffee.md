@@ -55,7 +55,7 @@ require('nikita').cron.add({
       @system.execute
         cmd: "#{crontab} -l"
         code: [0, 1]
-      , (err, _, stdout, stderr) ->
+      , (err, {stdout, stderr}) ->
         throw err if err and not /^no crontab for/.test stderr
         # throw Error 'User crontab not found' if /^no crontab for/.test stderr
         new_job = "#{options.when} #{options.cmd}"
@@ -67,7 +67,6 @@ require('nikita').cron.add({
           else throw Error "Invalid option 'match'"
         added = true
         jobs = for job, i in string.lines stdout.trim()
-          # console.log job, regex.test job
           if regex.test job
             added = false
             break if job is new_job # Found job, stop here

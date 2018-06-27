@@ -20,7 +20,7 @@ describe 'ssh.open', ->
       password: config.ssh.password
       private_key: config.ssh.privateKey
       public_key: config.ssh.publicKey
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .call (options) ->
       (!!@ssh()).should.be.true()
@@ -42,9 +42,9 @@ describe 'ssh.open', ->
     .call (options) ->
       (!!@ssh()).should.be.true()
       ssh.is( @ssh() ).should.be.true()
-    .ssh.close {}, (err, status) ->
+    .ssh.close {}, (err, {status}) ->
       status.should.be.true() unless err
-    .ssh.close {}, (err, status) ->
+    .ssh.close {}, (err, {status}) ->
       status.should.be.false() unless err
     .promise()
 
@@ -59,7 +59,7 @@ describe 'ssh.open', ->
       public_key: config.ssh.publicKey
     nikita
     .ssh.open options
-    .ssh.open options, (err, status) ->
+    .ssh.open options, (err, {status}) ->
       status.should.be.false() unless err
     .ssh.close()
     .promise()
@@ -76,9 +76,9 @@ describe 'ssh.open', ->
     , (err, ssh) ->
       return next err if err
       nikita
-      .ssh.open ssh: ssh, (err, status) ->
+      .ssh.open ssh: ssh, (err, {status}) ->
         status.should.eql true unless err
-      .ssh.open ssh: ssh, (err, status) ->
+      .ssh.open ssh: ssh, (err, {status}) ->
         status.should.be.false() unless err
       .ssh.close()
       .next (err) ->

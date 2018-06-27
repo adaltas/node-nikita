@@ -33,9 +33,9 @@ describe 'file.cache', ->
         ssh: ssh
       .file.cache 'http://localhost:12345/my_file',
         cache_dir: "#{scratch}/my_cache_dir"
-      , (err, status, file) ->
+      , (err, {status, target}) ->
         status.should.be.true() unless err
-        file.should.eql "#{scratch}/my_cache_dir/my_file" unless err
+        target.should.eql "#{scratch}/my_cache_dir/my_file" unless err
       .promise()
 
     they 'into local cache_dir', (ssh) ->
@@ -44,15 +44,15 @@ describe 'file.cache', ->
       .file.cache
         source: 'http://localhost:12345/my_file'
         cache_dir: "#{scratch}/my_cache_dir"
-      , (err, status, file) ->
+      , (err, {status, target}) ->
         status.should.be.true() unless err
-        file.should.eql "#{scratch}/my_cache_dir/my_file" unless err
+        target.should.eql "#{scratch}/my_cache_dir/my_file" unless err
       .file.cache
         source: 'http://localhost:12345/my_file'
         cache_dir: "#{scratch}/my_cache_dir"
-      , (err, status, file) ->
+      , (err, {status, target}) ->
         status.should.be.false() unless err
-        file.should.eql "#{scratch}/my_cache_dir/my_file"
+        target.should.eql "#{scratch}/my_cache_dir/my_file"
       .file.assert
         target: "#{scratch}/my_cache_dir/my_file"
       .promise()
@@ -63,14 +63,14 @@ describe 'file.cache', ->
       .file.cache
         source: 'http://localhost:12345/missing'
         cache_dir: "#{scratch}/cache_dir_1"
-      , (err, status) ->
+      , (err) ->
         (err is undefined).should.be.true()
       .file.cache
         source: 'http://localhost:12345/missing'
         cache_dir: "#{scratch}/cache_dir_2"
         fail: true
         relax: true
-      , (err, status) ->
+      , (err) ->
         err.message.should.eql 'Invalid Exit Code: 22'
       .promise()
 
@@ -92,7 +92,7 @@ describe 'file.cache', ->
           source: 'http://localhost:12345/my_file'
           cache_file: "#{scratch}/target"
           md5: true
-        , (err, status, file) ->
+        , (err, {status}) ->
           status.should.be.false() unless err # because target exists
           ("[WARN] Bypass source hash computation for non-file protocols" in logs).should.be.true() unless err
           logs = []
@@ -100,7 +100,7 @@ describe 'file.cache', ->
           source: 'http://localhost:12345/my_file'
           cache_file: "#{scratch}/target"
           md5: 'df8fede7ff71608e24a5576326e41c75'
-        , (err, status, file) ->
+        , (err, {status}) ->
           status.should.be.false() unless err
           ("[DEBUG] Hashes match, skipping" in logs).should.be.true() unless err
           logs = []
@@ -108,7 +108,7 @@ describe 'file.cache', ->
           source: 'http://localhost:12345/my_file'
           cache_file: "#{scratch}/target"
           md5: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-        , (err, status, file) ->
+        , (err, {status}) ->
           status.should.be.true() unless err
           ("[WARN] Hashes don\'t match, delete then re-download" in logs).should.be.true() unless err
         .promise()
@@ -121,15 +121,15 @@ describe 'file.cache', ->
       .file.cache
         source: "#{__filename}"
         cache_dir: "#{scratch}/my_cache_dir"
-      , (err, status, file) ->
+      , (err, {status, target}) ->
         status.should.be.true() unless err
-        file.should.eql "#{scratch}/my_cache_dir/#{path.basename __filename}"
+        target.should.eql "#{scratch}/my_cache_dir/#{path.basename __filename}"
       .file.cache
         source: "#{__filename}"
         cache_dir: "#{scratch}/my_cache_dir"
-      , (err, status, file) ->
+      , (err, {status, target}) ->
         status.should.be.false() unless err
-        file.should.eql "#{scratch}/my_cache_dir/#{path.basename __filename}"
+        target.should.eql "#{scratch}/my_cache_dir/#{path.basename __filename}"
       .file.assert
         target: "#{scratch}/my_cache_dir/#{path.basename __filename}"
       .promise()
@@ -152,7 +152,7 @@ describe 'file.cache', ->
           source: "#{scratch}/source"
           cache_file: "#{scratch}/target"
           md5: true
-        , (err, status, file) ->
+        , (err, {status}) ->
           status.should.be.false() unless err
           ('[DEBUG] Hashes match, skipping' in logs).should.be.true() unless err
           logs = []
@@ -160,7 +160,7 @@ describe 'file.cache', ->
           source: "#{scratch}/source"
           cache_file: "#{scratch}/target"
           md5: 'df8fede7ff71608e24a5576326e41c75'
-        , (err, status, file) ->
+        , (err, {status}) ->
           status.should.be.false() unless err
           ('[DEBUG] Hashes match, skipping' in logs).should.be.true() unless err
           logs = []
@@ -168,7 +168,7 @@ describe 'file.cache', ->
           source: "#{scratch}/source"
           cache_file: "#{scratch}/target"
           md5: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-        , (err, status, file) ->
+        , (err, {status}) ->
           status.should.be.true() unless err
           ("[WARN] Hashes don't match, delete then re-download" in logs).should.be.true() unless err
         .promise()

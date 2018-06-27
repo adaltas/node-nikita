@@ -37,21 +37,21 @@ require('nikita')
       options.comment ?= false
       options.encoding ?= 'utf8'
       throw Error "Missing argument options.target" unless options.target
-      @fs.readFile ssh: options.ssh, target: options.target, encoding: options.encoding, (err, data) ->
+      @fs.readFile ssh: options.ssh, target: options.target, encoding: options.encoding, (err, {data}) ->
         return callback err if err
-        props = {}
+        properties = {}
         # Parse
         lines = string.lines data
         for line in lines
           continue if /^\s*$/.test line # Empty line
           if /^#/.test line # Comment
-            props[line] = null if options.comment
+            properties[line] = null if options.comment
             continue
           [_,k,v] = ///^(.*?)#{quote options.separator}(.*)$///.exec line
           k = k.trim() if options.trim
           v = v.trim() if options.trim
-          props[k] = v
-        callback null, props
+          properties[k] = v
+        callback null, {properties: properties}
 
 ## Dependencies
 

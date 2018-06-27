@@ -245,7 +245,7 @@
           status = status.some (status) -> not status.shy and !!status.value
           state.todos.final_err = err
           todos_reset state.todos
-          options.handler?.call proxy, err, status
+          options.handler?.call proxy, err, {status: status}
           run()
           return
         if options.action is 'promise'
@@ -263,10 +263,10 @@
           return conditions.all proxy, options
           , ->
             while state.todos[0] and state.todos[0].action not in ['next', 'promise'] then state.todos.shift()
-            callback err if callback
+            callback err, {} if callback
             run()
           , (err) ->
-            callback err if callback
+            callback err, {} if callback
             run()
         index = state.index_counter++
         state.todos.status.unshift shy: options.shy, value: undefined
@@ -281,7 +281,7 @@
               do_once()
             else
               proxy.log type: 'lifecycle', message: 'disabled_true', level: 'INFO', index: index, error: null, status: false
-              do_callback []
+              do_callback [null, status: false]
           do_once = ->
             hashme = (value) ->
               if typeof value is 'string'
@@ -305,7 +305,7 @@
                 hash = string.hash options.once.map((k) -> hashme options[k]).join '|'
               else
                 throw Error "Invalid Option 'once': #{JSON.stringify options.once} must be a string or an array of string"
-              return do_callback [] if state.once[hash]
+              return do_callback [null, status: false] if state.once[hash]
               state.once[hash] = true
             do_options_before()
           do_options_before = ->
@@ -323,7 +323,7 @@
                 continue if k in ['handler', 'callback']
                 opts[k] ?= v
               run opts, next
-            .error (err) -> do_callback [err]
+            .error (err) -> do_callback [err, status: false]
             .next do_intercept_before
           do_intercept_before = ->
             return do_conditions() if options.intercepting
@@ -340,7 +340,7 @@
                 continue if k in ['handler', 'callback']
                 opts[k] ?= v
               run opts, next
-            .error (err) -> do_callback [err]
+            .error (err) -> do_callback [err, status: false]
             .next do_conditions
           do_conditions = ->
             conditions.all proxy, options
@@ -351,16 +351,27 @@
               do_handler()
             , (err) ->
               proxy.log type: 'lifecycle', message: 'conditions_failed', index: index, error: err, status: false
-              do_callback [err]
+              do_callback [err, status: false]
           options.attempt = -1
           do_handler = ->
             options.attempt++
-            do_next = ([err]) ->
+            do_next = ([err, args]) ->
               options.handler = options_handler
               options.callback = options_callback
               if err and err not instanceof Error
                 err = Error 'First argument not a valid error'
                 arguments[0][0] = err
+                arguments[0][1] ?= {}
+                arguments[0][1].status ?= false
+              else
+                if typeof args is 'boolean'
+                  arguments[0][1] = {status: args}
+                else if not args
+                  arguments[0][1] = { status: false }
+                else if typeof args isnt 'object'
+                  arguments[0][0] = Error "Invalid Argument: expect an object or a boolean, got #{JSON.stringify args}"
+                else
+                  arguments[0][1].status ?= false
               proxy.log message: err.message, level: 'ERROR', index: index, module: 'nikita' if err
               if err and ( options.retry is true or options.attempt < options.retry - 1 )
                 proxy.log message: "Retry on error, attempt #{options.attempt+1}", level: 'WARN', index: index, module: 'nikita'
@@ -419,7 +430,7 @@
                       return setImmediate ->
                         do_next [null, status_sync]
                     loptions = state.todos.shift()
-                    run loptions, (err, status) ->
+                    run loptions, (err, {status}) ->
                       return do_next [err] if err
                       # Discover status of all unshy children
                       status_sync = true if status and not loptions.shy
@@ -444,7 +455,7 @@
                 opts[k] ?= v
               opts.callback_arguments = args
               run opts, next
-            .error (err) -> do_callback [err]
+            .error (err) -> do_callback [err, status: false]
             .next -> do_options_after args
           do_options_after = (args) ->
             return do_callback args if options.options_after
@@ -461,21 +472,21 @@
                 continue if k in ['handler', 'callback']
                 opts[k] ?= v
               run opts, next
-            .error (err) -> do_callback [err]
+            .error (err) -> do_callback [err, status: false]
             .next -> do_callback args
           do_callback = (args) ->
-            proxy.log type: 'handled', index: index, error: args[0], status: args[1]
+            proxy.log type: 'handled', index: index, error: args[0], status: args[1].status
             return if state.killed
             args[0] = undefined unless args[0] # Error is undefined and not null or false
-            args[1] = !!args[1] if options.status # Status is a boolean, error or not
             state.todos = state.stack.shift() if state.todos.length is 0
             jump_to_error args[0] if args[0] and not options.relax
             state.todos.throw_if_error = false if args[0] and options.callback
-            # todo: we might want to log here a change of status, sth like:
-            # proxy.log type: 'lifecycle', message: 'status', index: index, error: err, status: true if options.status and args[1] and not state.todos.status.some (satus) -> status
-            state.todos.status[0].value = args[1] if options.status
+            state.todos.status[0].value = args[1].status if options.status
             call_callback options.callback, args if options.callback
             args[0] = null if options.relax
+            args[1] ?= {}
+            args[1].status ?= false
+            args[1] = merge {}, args[1]
             callback args[0], args[1] if callback
             run()
           do_disabled()

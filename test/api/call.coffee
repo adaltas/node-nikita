@@ -17,7 +17,7 @@ describe 'api call', ->
         (options) -> logs.push 'a'
       ,
         (options, callback) -> logs.push('b'); callback()
-      ], (err, status) ->
+      ], (err, {status}) ->
         logs.push 'c'
         status.should.be.false() unless err
       .call ->
@@ -40,9 +40,9 @@ describe 'api call', ->
       nikita
       .file
         target: "#{scratch}/a_dir/ping.coffee"
-        content: 'module.exports = (_, callback) -> callback null, true, "pong"'
+        content: 'module.exports = (_, callback) -> callback null, status: true, message: "pong"'
       .call ->
-        @call './a_dir/ping', (err, status, message) ->
+        @call './a_dir/ping', (err, {status, message}) ->
           message.should.eql 'pong' unless err
       .call -> process.chdir cwd
       .promise()
@@ -91,11 +91,11 @@ describe 'api call', ->
       called = 0
       nikita
       # 1st arg options with handler, 2nd arg a callback
-      .call handler: (->), (err, status) ->
+      .call handler: (->), (err, {status}) ->
         status.should.be.false() unless err
         called++ unless err
       # 1st arg handler, 2nd arg a callback
-      .call (->), (err, status) ->
+      .call (->), (err, {status}) ->
         status.should.be.false() unless err
         called++ unless err
       .call ->
@@ -149,7 +149,7 @@ describe 'api call', ->
       .call (options, next) ->
         process.nextTick ->
           next()
-      , (err, status) ->
+      , (err) ->
         called++ unless err
       .file.touch
         target: "#{scratch}/a_file"
@@ -222,8 +222,8 @@ describe 'api call', ->
       nikita
       .call (options, next) ->
         setImmediate ->
-          next null, true, 'argument'
-      , (err, status, argument) ->
+          next null, status: true, argument: 'argument'
+      , (err, {status, argument}) ->
         callback_called = true
         status.should.be.true()
         argument.should.equal 'argument'

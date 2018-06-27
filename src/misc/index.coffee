@@ -12,6 +12,8 @@ string = require './string'
 array = require './array'
 
 misc = module.exports =
+  stats: require './stats'
+  # TODO: to move
   regexp:
     # Escape RegExp related charracteres
     # eg `///^\*/\w+@#{misc.regexp.escape realm}\s+\*///mg`

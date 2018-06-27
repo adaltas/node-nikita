@@ -7,8 +7,8 @@ scratch = "/tmp/nikita-test"
 module.exports = 
   scratch: (context) ->
     context.beforeEach ->
-      nikita.system.remove
-        target: scratch
+      nikita
+      .system.remove target: scratch
       .system.mkdir target: scratch
       .promise()
     scratch

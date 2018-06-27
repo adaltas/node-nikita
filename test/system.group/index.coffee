@@ -14,9 +14,9 @@ describe 'system.group', ->
       ssh: ssh
     .system.user.remove 'toto'
     .system.group.remove 'toto'
-    .system.group 'toto', (err, status) ->
+    .system.group 'toto', (err, {status}) ->
       status.should.be.true() unless err
-    .system.group 'toto', (err, status) ->
+    .system.group 'toto', (err, {status}) ->
       status.should.be.false() unless err
     .promise()
 
@@ -25,11 +25,11 @@ describe 'system.group', ->
       ssh: ssh
     .system.user.remove 'toto'
     .system.group.remove 'toto'
-    .system.group 'toto', gid: '1234', (err, status) ->
+    .system.group 'toto', gid: '1234', (err, {status}) ->
       status.should.be.true() unless err
-    .system.group 'toto', gid: '1234', (err, status) ->
+    .system.group 'toto', gid: '1234', (err, {status}) ->
       status.should.be.false() unless err
-    .system.group 'toto', gid: 1234, (err, status) ->
+    .system.group 'toto', gid: 1234, (err, {status}) ->
       status.should.be.false() unless err
     .promise()
 
@@ -37,7 +37,7 @@ describe 'system.group', ->
     nikita
       ssh: ssh
     .system.group.remove 'toto'
-    .system.group 'toto', gid: '', relax: true, (err, status) ->
+    .system.group 'toto', gid: '', relax: true, (err) ->
       err.message.should.eql 'Invalid gid option'
     .promise()
   
@@ -47,9 +47,9 @@ describe 'system.group', ->
     .system.group.remove 'toto'
     .call ->
       (@store['nikita:etc_group'] is undefined).should.be.true()
-    .file.types.etc_group.read cache: true, (err, status, groups) ->
-      @store['nikita:etc_group'].should.be.an.Object()
-    .system.group 'toto', cache: true, (err, status) ->
-      (@store['nikita:etc_group'] is undefined).should.be.true()
+    .file.types.etc_group.read cache: true, (err) ->
+      @store['nikita:etc_group'].should.be.an.Object() unless err
+    .system.group 'toto', cache: true, (err) ->
+      (@store['nikita:etc_group'] is undefined).should.be.true() unless err
     .promise()
     

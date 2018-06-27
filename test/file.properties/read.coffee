@@ -16,7 +16,7 @@ describe 'file.properties.read', ->
       content: "another_key=another value"
     .file.properties.read
       target: "#{scratch}/file.properties"
-    , (err, properties) ->
+    , (err, {properties}) ->
       properties.should.eql another_key: 'another value'
     .promise()
 
@@ -29,7 +29,7 @@ describe 'file.properties.read', ->
     .file.properties.read
       target: "#{scratch}/file.properties"
       separator: ':'
-    , (err, properties) ->
+    , (err, {properties}) ->
       properties.should.eql another_key: 'another value'
     .promise()
 
@@ -43,7 +43,7 @@ describe 'file.properties.read', ->
       target: "#{scratch}/file.properties"
       separator: ':'
       trim: true
-    , (err, properties) ->
+    , (err, {properties}) ->
       properties.should.eql another_key: 'another value'
     .promise()
   
@@ -53,6 +53,6 @@ describe 'file.properties.read', ->
     .file.properties.read
       target: "#{scratch}/ohno"
       relax: true
-    , (err, properties) ->
+    , (err, {properties}) ->
       err.code.should.eql 'ENOENT'
     .promise()

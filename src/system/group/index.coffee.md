@@ -54,7 +54,7 @@ The result of the above action can be viewed with the command
       info = null
       @file.types.etc_group.read
         cache: options.cache
-      , (err, status, groups) ->
+      , (err, {status, groups}) ->
         info = groups[options.name]
         @log if info
         then message: "Got group information for #{JSON.stringify options.name}", level: 'DEBUG', module: 'nikita/lib/system/group'
@@ -69,7 +69,7 @@ The result of the above action can be viewed with the command
             cmd += " #{options.name}"
           )
           code_skipped: 9
-        , (err, status) ->
+        , (err, {status}) ->
           throw err if err
           @log message: "Group defined elsewhere than '/etc/group', exit code is 9", level: 'WARN', module: 'nikita/lib/system/group' unless status
       # Modify group

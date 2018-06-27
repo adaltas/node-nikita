@@ -23,11 +23,11 @@ describe 'docker.volume_create', ->
       relax: true
     .docker.volume_create
       name: 'my_volume'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .docker.volume_create
       name: 'my_volume'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .docker.volume_rm
       name: 'my_volume'

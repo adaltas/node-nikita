@@ -16,7 +16,7 @@ describe 'options "shy"', ->
     .file
       target: "#{scratch}/file_1"
       content: 'abc'
-    .next (err, status) ->
+    .next (err, {status}) ->
       status.should.be.false() unless err
     .promise()
 
@@ -28,7 +28,7 @@ describe 'options "shy"', ->
       shy: true
     , (err, status) ->
       status.should.be.true()
-    .next (err, status) ->
+    .next (err, {status}) ->
       status.should.be.false()
     .promise()
 
@@ -39,7 +39,7 @@ describe 'options "shy"', ->
         target: "#{scratch}/file_1"
         content: 'abc'
         shy: true
-    .next (err, status) ->
+    .next (err, {status}) ->
       status.should.be.false() unless err
     .promise()
 
@@ -54,12 +54,12 @@ describe 'options "shy"', ->
       target: "#{scratch}/file_1"
       content: 'abc'
       shy: false
-    ], (err, status) ->
+    ], (err, {status}) ->
       if count is 0
       then status.should.be.true()
       else status.should.be.false()
       count++
-    .next (err, status) ->
+    .next (err, {status}) ->
       status.should.be.false()
     .file [
       target: "#{scratch}/file_2"
@@ -69,12 +69,12 @@ describe 'options "shy"', ->
       target: "#{scratch}/file_2"
       content: 'abc'
       shy: true
-    ], (err, status) ->
+    ], (err, {status}) ->
       if count is 2
       then status.should.be.true()
       else status.should.be.false()
       count++
-    .next (err, status) ->
+    .next (err, {status}) ->
       status.should.be.true() unless err
     .promise()
   
@@ -84,7 +84,7 @@ describe 'options "shy"', ->
       callback null, true
     .call ->
       @status(-1).should.be.true()
-    .next (err, status) ->
+    .next (err, {status}) ->
       # @status(-2).should.be.true() # TODO, not ready yet, stack is empty before then
       status.should.be.false() unless err
     .promise()

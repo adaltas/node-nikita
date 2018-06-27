@@ -85,8 +85,9 @@ nikita.tools.backup({
       @system.execute
         cmd: "#{options.cmd} > #{target}"
         if: options.cmd
-      @next (err, status) ->
-        callback err, status,
+      @next (err, {status}) ->
+        callback err,
+          status: status,
           base_dir: options.target
           name: options.name
           filename: filename

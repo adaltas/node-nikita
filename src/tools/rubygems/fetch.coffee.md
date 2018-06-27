@@ -33,7 +33,7 @@ require('nikita')
   name: 'json',
   version: '2.1.0',
   cwd: '/tmp/my_gems'
-}, function(err, status, filename, filepath){
+}, function(err, {status, filename, filepath}){
   console.log( err ? err.messgage : 'Gem fetched: ' + status);
 });
 ```
@@ -59,7 +59,7 @@ couldn't find any suitable parser on NPM.
         cwd: options.cwd
         shy: true
         bash: options.bash
-      , (err, status, stdout) ->
+      , (err, {status, stdout}) ->
         throw err if err
         options.version = stdout.trim() if status
         options.target = "#{options.name}-#{options.version}.gem"
@@ -70,8 +70,11 @@ couldn't find any suitable parser on NPM.
           """
           cwd: options.cwd
           bash: options.bash
-      @next (err, status) ->
-        callback err, status, options.target, path.resolve options.cwd, options.target
+      @next (err, {status}) ->
+        callback err, 
+          status: status,
+          filename: options.target
+          filepath: path.resolve options.cwd, options.target
 
 ## Dependencies
 

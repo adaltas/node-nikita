@@ -3,6 +3,7 @@ fs = require 'fs'
 path = require 'path'
 nikita = require '../../src'
 test = require '../test'
+misc = require '../../src/misc'
 they = require 'ssh2-they'
 
 describe 'log.fs', ->
@@ -75,8 +76,8 @@ describe 'log.fs', ->
       .call (options) ->
         @log message: 'ok'
       .call (_, callback) ->
-        @fs.lstat "#{scratch}/latest", (err, stats) ->
-          stats.isSymbolicLink().should.be.true() unless err
+        @fs.lstat "#{scratch}/latest", (err, {stats}) ->
+          misc.stats.isSymbolicLink(stats.mode).should.be.true() unless err
           callback err
       .file.assert
         source: "#{scratch}/latest/localhost.log"

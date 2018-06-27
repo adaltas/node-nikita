@@ -51,8 +51,8 @@ nikita.docker.rm({
       @system.execute
         cmd: docker.wrap options, "ps | grep '#{options.container}'"
         code_skipped: 1
-      , (err, executed, stdout, stderr) =>
-        throw Error 'Container must be stopped to be removed without force', null if executed and not options.force
+      , (err, {status}) =>
+        throw Error 'Container must be stopped to be removed without force', null if status and not options.force
       @system.execute
         cmd: docker.wrap options, "ps -a | grep '#{options.container}'"
         code_skipped: 1

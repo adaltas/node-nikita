@@ -27,7 +27,7 @@ describe 'system.execute', ->
       # so a file in host isnt visible from jail
       target: '/root/my_script'
       cmd: "cat /root/hello"
-    , (err, status, stdout, stderr) ->
+    , (err, {stdout}) ->
       stdout.should.eql 'you' unless err
     .system.execute
       always: true # todo, need to create this option (run even on error)
@@ -46,7 +46,7 @@ describe 'system.execute', ->
       cmd: "echo $BASH"
       arch_chroot: true
       relax: true
-    , (err, status, stdout, stderr) ->
+    , (err) ->
       err.message.should.equal 'Required Option: "rootdir" with "arch_chroot"'
     .promise()
   

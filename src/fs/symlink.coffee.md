@@ -17,4 +17,4 @@ Delete a name and possibly the file it refers to.
         bash: options.bash
         arch_chroot: options.arch_chroot
       , (err) ->
-       callback err
+        callback err

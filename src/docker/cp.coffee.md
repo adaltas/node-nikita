@@ -63,31 +63,31 @@ nikita.docker({
       source_mkdir = false
       target_mkdir = false
       # Source is on the host, normalize path
-      @call (_, next) ->
-        return next() if source_container
+      @call (_, callback) ->
+        return callback() if source_container
         if /\/$/.test source_path
           source_path = "#{source_path}/#{path.basename target_path}"
-          return next()
-        @fs.stat ssh: options.ssh, target: source_path, (err, stat) ->
-          return next err if err and err.code isnt 'ENOENT'
+          return callback()
+        @fs.stat ssh: options.ssh, target: source_path, (err, {stats}) ->
+          return callback err if err and err.code isnt 'ENOENT'
           # TODO wdavidw: seems like a mistake to me, we shall have source_mkdir instead
-          return target_mkdir = true and next() if err?.code is 'ENOENT'
-          source_path = "#{source_path}/#{path.basename target_path}" if stat.isDirectory()
-          next()
+          return target_mkdir = true and callback() if err?.code is 'ENOENT'
+          source_path = "#{source_path}/#{path.basename target_path}" if misc.stats.isDirectory stats.mode
+          callback()
       @system.mkdir
         target: source_path
         if: -> source_mkdir
       # Destination is on the host
-      @call (_, next)  ->
-        return next() if target_container
+      @call (_, callback)  ->
+        return callback() if target_container
         if /\/$/.test target_path
           target_path = "#{target_path}/#{path.basename target_path}"
-          return next()
-        @fs.stat ssh: options.ssh, target: target_path, (err, stat) ->
-          return next err if err and err.code isnt 'ENOENT'
-          return target_mkdir = true and next() if err?.code is 'ENOENT'
-          target_path = "#{target_path}/#{path.basename target_path}" if stat.isDirectory()
-          next()
+          return callback()
+        @fs.stat ssh: options.ssh, target: target_path, (err, {stats}) ->
+          return callback err if err and err.code isnt 'ENOENT'
+          return target_mkdir = true and callback() if err?.code is 'ENOENT'
+          target_path = "#{target_path}/#{path.basename target_path}" if misc.stats.isDirectory stats.mode
+          callback()
       @system.mkdir
         target: target_path
         if: -> target_mkdir
@@ -99,3 +99,4 @@ nikita.docker({
 
     path = require 'path'
     docker = require '../misc/docker'
+    misc = require '../misc'

@@ -17,6 +17,6 @@ describe 'system.execute option "target"', ->
       target: true
       cmd: "cat /root/hello"
       relax: true
-    , (err, status, stdout, stderr) ->
+    , (err) ->
       err.message.should.eql 'Invalid Option: the "target" option requires either one of the "bash" or "arch_chroot" options'
     .promise()

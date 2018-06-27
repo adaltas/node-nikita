@@ -17,7 +17,7 @@ describe 'tools.rubygems.remove', ->
       name: 'execjs'
     .tools.rubygems.remove
       name: 'execjs'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .promise()
 
@@ -31,7 +31,7 @@ describe 'tools.rubygems.remove', ->
       name: 'execjs'
     .tools.rubygems.remove
       name: 'execjs'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
 
@@ -47,10 +47,10 @@ describe 'tools.rubygems.remove', ->
       version: '2.7.0'
     .tools.rubygems.remove
       name: 'execjs'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .tools.rubygems.remove
       name: 'execjs'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()

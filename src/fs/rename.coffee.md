@@ -16,5 +16,5 @@ Change the name or location of a file.
         sudo: options.sudo
         bash: options.bash
         arch_chroot: options.arch_chroot
-      , (err, _, stdout) ->
+      , (err, {stdout}) ->
         callback err, stdout.trim()

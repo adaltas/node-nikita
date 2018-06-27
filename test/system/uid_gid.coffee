@@ -29,7 +29,7 @@ describe 'system.uid_gid', ->
       passwd_target: "#{scratch}/etc/passwd"
       gid: 'users'
       uid: 'wdavidw'
-    , (err, status, {uid, gid, default_gid}) ->
+    , (err, {status, uid, gid, default_gid}) ->
       throw err if err
       status.should.be.true()
       uid.should.eql 99
@@ -59,7 +59,7 @@ describe 'system.uid_gid', ->
       passwd_target: "#{scratch}/etc/passwd"
       gid: '994'
       uid: '99'
-    , (err, status, {uid, gid}) ->
+    , (err, {status, uid, gid}) ->
       throw err if err
       status.should.be.false()
       uid.should.eql 99
@@ -72,7 +72,7 @@ describe 'system.uid_gid', ->
     .system.uid_gid
       group_target: "#{scratch}/etc/group"
       passwd_target: "#{scratch}/etc/passwd"
-    , (err, status, {uid, gid}) ->
+    , (err, {status, uid, gid}) ->
       throw err if err
       status.should.be.false()
       (uid is undefined).should.be.true()

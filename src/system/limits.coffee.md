@@ -167,7 +167,7 @@ nikita
 .system.limits({
   system: true,
   nofile: true
-}, function(err, status){
+}, function(err, {status}){
   console.log(err ? err.message : 'Limits modified: ' + modified);
 });
 ```
@@ -193,8 +193,7 @@ nikita
         cmd: "cat /proc/sys/fs/file-max"
         shy: true
         if: options.nofile?
-      , (err, status, stdout) ->
-        # console.log err, status, stdout
+      , (err, {status, stdout}) ->
         throw err if err
         return unless status
         kern_limit = parseInt stdout.trim()
@@ -209,7 +208,7 @@ nikita
         cmd: "cat /proc/sys/kernel/pid_max"
         shy: true
         if: options.nproc?
-      , (err, status, stdout) ->
+      , (err, {status, stdout}) ->
         throw err if err
         return unless status
         kern_limit = parseInt stdout.trim()

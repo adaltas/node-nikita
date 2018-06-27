@@ -11,10 +11,9 @@ describe 'api callback', ->
     callbacks = []
     nikita
     .call [
-      handler: -> # do sth
-    ,
-      handler: (_, callback) -> callback null, true
-    ], (err, status) ->
+      { handler: (->) }
+      { handler: (_, callback) -> callback null, true }
+    ], (err, {status}) ->
       callbacks.push [err, status]
     .call ->
       callbacks.should.eql [
@@ -23,21 +22,35 @@ describe 'api callback', ->
       ]
     .promise()
 
+  it 'default params', ->
+    callbacks = []
+    nikita
+    # Sync handler
+    .call (->), (err, params) ->
+      (err is undefined).should.be.true()
+      params.should.eql status: false
+    # Async handler
+    .call (_, callback) ->
+      callback()
+    , (err, params) ->
+      (err is undefined).should.be.true()
+      params.should.eql status: false
+    .promise()
+
   it 'call actions in callback', ->
-    msgs = []
-    n = nikita log: (msg) -> msgs.push msg if /\/file_\d/.test msg
+    n = nikita()
     n
     .file
       target: "#{scratch}/a_file"
       content: 'abc'
-    , (err, written) ->
+    , (err) ->
       throw err if err
       n.file
         target: "#{scratch}/a_file"
         content: 'def'
         append: true
-      , (err, written) ->
-        # ok
+      , (err) ->
+        throw err if err
     .file
       target: "#{scratch}/a_file"
       content: 'hij'
@@ -49,14 +62,14 @@ describe 'api callback', ->
 
   describe 'error', ->
     
-    describe 'next', ->
+    describe 'are catched in following next', ->
 
       it 'without parent', ->
         nikita()
         .file
           target: "#{scratch}/a_file"
           content: 'abc'
-        , (err, written) ->
+        , (err) ->
           throw Error 'Catchme'
         .call ->
           throw Error "Dont come here"
@@ -89,7 +102,7 @@ describe 'api callback', ->
           err.message.should.eql 'Catchme'
         .promise()
           
-    describe 'promise', ->
+    describe 'are catched in following promise', ->
 
       it 'without parent', ->
         nikita()

@@ -23,6 +23,6 @@ Options:
           while buffer = rs.read()
             buffers.push buffer
       , (err) ->
-        result = Buffer.concat buffers
-        result = result.toString options.encoding if options.encoding
-        callback err, result
+        data = Buffer.concat buffers
+        data = data.toString options.encoding if options.encoding
+        callback err, data: data

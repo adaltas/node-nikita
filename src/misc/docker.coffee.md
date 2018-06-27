@@ -64,6 +64,6 @@
       """
     # Reformat error message if any
     # TODO: rename this function as format_error
-    module.exports.callback = (err, status, stdout, stderr) ->
+    module.exports.callback = (err, {stderr}) ->
       throw Error stderr.trim() if err and string.lines(stderr.trim()).length is 1
       throw Error stderr.trim().replace 'Error response from daemon: ', '' if err and /^Error response from daemon/.test stderr

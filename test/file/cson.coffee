@@ -16,7 +16,7 @@ describe 'file.cson', ->
     .file.cson
       target: "#{scratch}/target.cson"
       content: user: 'torval'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/target.cson"
@@ -33,7 +33,7 @@ describe 'file.cson', ->
       target: "#{scratch}/target.cson"
       content: 'user': 'torval'
       merge: true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/target.cson"

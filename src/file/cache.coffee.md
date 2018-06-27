@@ -49,7 +49,7 @@ require('nikita').download({
   source: 'https://github.com/wdavidw/node-nikita/tarball/v0.0.1',
   cache_dir: '/var/tmp'
 }, function(err, status){
-  console.log(err ? err.message : 'File downloaded: ' + status);
+  console.info(err ? err.message : 'File downloaded: ' + status);
 });
 ```
 
@@ -100,7 +100,7 @@ require('nikita').download({
       # - hash isnt true and doesnt match
       @call shy: true, (_, callback) ->
         @log message: "Check if target (#{options.target}) exists", level: 'DEBUG', module: 'nikita/lib/file/cache'
-        @fs.exists ssh: options.ssh, target: options.target, (err, exists) =>
+        @fs.exists ssh: options.ssh, target: options.target, (err, {exists}) =>
           return callback err if err
           if exists
             @log message: "Target file exists", level: 'INFO', module: 'nikita/lib/file/cache'
@@ -151,8 +151,8 @@ require('nikita').download({
           source: "#{options.source}"
           target: "#{options.target}"
       # TODO: validate the cache
-      @next (err, status) ->
-        callback err, status, options.target
+      @next (err, {status}) ->
+        callback err, status: status, target: options.target
 
     module.exports.protocols_http = protocols_http = ['http:', 'https:']
     module.exports.protocols_ftp = protocols_ftp = ['ftp:', 'ftps:']

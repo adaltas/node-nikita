@@ -61,17 +61,17 @@ require('nikita')
           target: options.target
           encoding: 'utf8'
           relax: true
-        , (err, json) ->
+        , (err, {data}) ->
           return callback() if err?.code is 'ENOENT'
-          options.content = merge JSON.parse(json), options.content unless err
+          options.content = merge JSON.parse(data), options.content unless err
           callback err
       @call if: options.source, (_, callback) ->
         @fs.readFile
           ssh: if options.local then false else options.ssh
           target: options.source
           encoding: 'utf8'
-        , (err, json) ->
-          options.content = merge JSON.parse(json), options.content unless err
+        , (err, {data}) ->
+          options.content = merge JSON.parse(data), options.content unless err
           callback err
       @call if: options.transform, ->
         options.content = options.transform options.content

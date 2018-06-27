@@ -20,7 +20,7 @@ describe 'file.types.yum_repo', ->
           'baseurl': 'http://mirror.centos.org/centos/$releasever/os/$basearch/'
           'gpgcheck': '1'
           'gpgkey': 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.types.yum_repo
       target: "#{scratch}/test.repo"
@@ -31,7 +31,7 @@ describe 'file.types.yum_repo', ->
           'baseurl': 'http://mirror.centos.org/centos/$releasever/os/$basearch/'
           'gpgcheck': '1'
           'gpgkey': 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .file.assert
       target: "#{scratch}/test.repo"
@@ -49,7 +49,7 @@ describe 'file.types.yum_repo', ->
           'baseurl': 'http://mirror.centos.org/centos/$releasever/os/$basearch/'
           'gpgcheck': '1'
           'gpgkey': 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.types.yum_repo
       target: "#{scratch}/test.repo"
@@ -58,7 +58,7 @@ describe 'file.types.yum_repo', ->
           'gpgcheck': '0'
           'gpgkey': 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7'
       merge: true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/test.repo"
@@ -73,7 +73,7 @@ describe 'file.types.yum_repo', ->
           'name': 'CentOS'
           'mirrorlist': 'http://test/?infra=$infra'
           'baseurl': 'http://mirror.centos.org'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/test.repo"
@@ -100,7 +100,7 @@ describe 'file.types.yum_repo', ->
           'baseurl': 'http://mirror.centos.org/centos/$releasever/os/$basearch/'
           'gpgcheck': '1'
           'gpgkey': 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/CentOS-nikita.repo"

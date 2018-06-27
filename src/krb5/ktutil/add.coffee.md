@@ -56,9 +56,9 @@ require('nikita').krb5.ktutil.add({
         cmd: "echo -e 'rkt #{options.keytab}\nlist -e -t \n' | ktutil"
         code_skipped: 1
         shy: true
-      , (err, exists, stdout, stderr) ->
+      , (err, {status, stdout}) ->
         throw err if err
-        return unless exists
+        return unless status
         @log message: "Principal exist in Keytab, check kvno validity", level: 'DEBUG', module: 'nikita/krb5/ktutil/add'
         for line in string.lines stdout
           continue unless match = /^\s*(\d+)\s*(\d+)\s+([\d\/:]+\s+[\d\/:]+)\s+(.*)\s*\(([\w|-]*)\)\s*$/.exec line
@@ -75,9 +75,9 @@ require('nikita').krb5.ktutil.add({
       @system.execute
         cmd: misc.kadmin options, "getprinc -terse #{options.principal}"
         shy: true
-      , (err, executed, stdout, stderr) ->
+      , (err, {status, stdout}) ->
         return err if err
-        return unless executed
+        return unless status
         values = string.lines(stdout)[1]
         # Check if a ticket exists for this
         throw Error "Principal does not exist: '#{options.principal}'" unless values

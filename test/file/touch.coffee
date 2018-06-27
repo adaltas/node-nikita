@@ -13,11 +13,11 @@ describe 'file.touch', ->
       ssh: ssh
     .file.touch
       target: "#{scratch}/a_file"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.touch
       target: "#{scratch}/a_file"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .file.assert
       target: "#{scratch}/a_file"
@@ -27,9 +27,9 @@ describe 'file.touch', ->
   they 'as a string', (ssh) ->
     nikita
       ssh: ssh
-    .file.touch "#{scratch}/a_file", (err, status) ->
+    .file.touch "#{scratch}/a_file", (err, {status}) ->
       status.should.be.true() unless err
-    .file.touch "#{scratch}/a_file", (err, status) ->
+    .file.touch "#{scratch}/a_file", (err, {status}) ->
       status.should.be.false() unless err
     .file.assert
       target: "#{scratch}/a_file"
@@ -42,7 +42,7 @@ describe 'file.touch', ->
     .file.touch [
       "#{scratch}/file_1"
       "#{scratch}/file_2"
-    ], (err, status) ->
+    ], (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/file_1"
@@ -57,12 +57,12 @@ describe 'file.touch', ->
       ssh: ssh
     .file.touch
       target: "#{scratch}/a_file"
-    , (err, touched) ->
-      touched.should.be.true()
+    , (err, {status}) ->
+      status.should.be.true()
     .file.touch
       target: "#{scratch}/a_file"
-    , (err, touched) ->
-      touched.should.be.false() unless err
+    , (err, {status}) ->
+      status.should.be.false() unless err
     .promise()
 
   they 'valid default permissions', (ssh) ->
@@ -117,15 +117,16 @@ describe 'file.touch', ->
       ssh: ssh
     .file.touch "#{scratch}/a_file"
     .call (_, callback) ->
-      @fs.stat target: "#{scratch}/a_file", (err, stat) ->
-        stat_org = stat
+      @fs.stat target: "#{scratch}/a_file", (err, {stats}) ->
+        stat_org = stats
         callback err
-    .call (_, callback) -> setTimeout callback, 2000
-    .file.touch "#{scratch}/a_file", (err, status) ->
+    # Bypass fs cache, a value of 500 is not always enough
+    .call (_, callback) -> setTimeout callback, 1000
+    .file.touch "#{scratch}/a_file", (err, {status}) ->
       status.should.be.false()
     .call (_, callback) ->
-      @fs.stat target: "#{scratch}/a_file", (err, stat) ->
-        stat_new = stat
+      @fs.stat target: "#{scratch}/a_file", (err, {stats}) ->
+        stat_new = stats
         callback err
     .call ->
       stat_org.mtime.should.not.eql stat_new.mtime

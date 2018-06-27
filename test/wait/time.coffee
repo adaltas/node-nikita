@@ -25,7 +25,7 @@ describe 'wait.time', ->
       ssh: ssh
     .wait
       time: 1000
-    , (err, status) ->
+    , (err, {status}) ->
       interval = Date.now() - before
       (interval >= 1000 and interval < 1500).should.be.true()
     .promise()

@@ -30,9 +30,9 @@ Updating the content of a file if we are the owner
 nikita.file.render({
   source:'./file',
   if: function(options, callback){
-    fs.stat(options.source, function(err, stat){
+    fs.stat(options.source, function(err, stats){
       # Render the file if we own it
-      callback(err, stat.uid == process.getuid())
+      callback(err, stats.uid == process.getuid())
     });
   }
 }, fonction(err, rendered){});

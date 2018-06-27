@@ -43,7 +43,7 @@ require('nikita').service.start([{
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       # Action
       @log message: "Restart service #{options.name}", level: 'INFO', module: 'nikita/lib/service/restart'
-      @service.discover (err, status, loader) -> 
+      @service.discover (err, {loader}) -> 
         options.loader ?= loader
       @call ->
         cmd = switch options.loader
@@ -52,6 +52,6 @@ require('nikita').service.start([{
           else throw Error 'Init System not supported'
         @system.execute
           cmd: cmd
-        , (err, restarted) ->
+        , (err, {status}) ->
           throw err if err
-          @store["nikita.service.#{options.name}.status"] = 'started' if restarted
+          @store["nikita.service.#{options.name}.status"] = 'started' if status

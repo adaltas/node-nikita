@@ -228,7 +228,7 @@ require('nikita').file({
         @fs.exists
           ssh: if options.local then false else options.ssh
           target: source
-        , (err, exists) ->
+        , (err, {exists}) ->
           return callback err if err
           unless exists
             return callback Error "Source does not exist: #{JSON.stringify options.source}" if options.source
@@ -239,40 +239,40 @@ require('nikita').file({
             ssh: if options.local then false else options.ssh
             target: source
             encoding: options.encoding
-          , (err, src) ->
+          , (err, {data}) ->
             return callback err if err
-            options.content = src
+            options.content = data
             callback()
-      targetStat = null
+      targetStats = null
       @call (_, callback) -> # read target
         # no need to test changes if target is a callback
         return callback() if typeof options.target is 'function'
         exists = =>
           @log message: "Stat target", level: 'DEBUG', module: 'nikita/lib/file'
-          @fs.lstat ssh: options.ssh, target: options.target, relax: true, (err, stat) ->
+          @fs.lstat ssh: options.ssh, target: options.target, relax: true, (err, {stats}) ->
             return do_mkdir() if err?.code is 'ENOENT'
             return callback err if err
-            targetStat = stat
-            if stat.isDirectory()
+            targetStats = stats
+            if misc.stats.isDirectory stats
               options.target = "#{options.target}/#{path.basename options.source}"
               @log message: "Destination is a directory and is now \"options.target\"", level: 'INFO', module: 'nikita/lib/file'
               # Destination is the parent directory, let's see if the file exist inside
-              @fs.stat ssh: options.ssh, target: options.target, (err, stat) ->
+              @fs.stat ssh: options.ssh, target: options.target, (err, {stats}) ->
                 if err?.code is 'ENOENT'
                   @log message: "New target does not exist", level: 'INFO', module: 'nikita/lib/file'
                   return callback()
                 return callback err if err
-                return callback Error "Destination is not a file: #{options.target}" unless stat.isFile()
+                return callback Error "Destination is not a file: #{options.target}" unless misc.stats.isFile stats.mode
                 @log message: "New target exist", level: 'INFO', module: 'nikita/lib/file'
-                targetStat = stat
+                targetStats = stats
                 do_read()
-            else if stat.isSymbolicLink()
+            else if misc.stats.isSymbolicLink stats.mode
               @log message: "Destination is a symlink", level: 'INFO', module: 'nikita/lib/file'
               return do_read() unless options.unlink
               @fs.unlink ssh: options.ssh, target: options.target, (err) ->
                 return callback err if err
                 callback() # Dont go to mkdir since parent dir exists
-            else if stat.isFile()
+            else if misc.stats.isFile stats.mode
               @log message: "Destination is a file", level: 'INFO', module: 'nikita/lib/file'
               do_read()
             else
@@ -292,10 +292,10 @@ require('nikita').file({
             callback()
         do_read = =>
           @log message: "Reading target", level: 'DEBUG', module: 'nikita/lib/file'
-          @fs.readFile ssh: options.ssh, target: options.target, encoding: options.encoding, (err, dest) ->
+          @fs.readFile ssh: options.ssh, target: options.target, encoding: options.encoding, (err, {data}) ->
             return callback err if err
-            target = dest # only used by diff
-            targetHash = string.hash dest
+            target = data # only used by diff
+            targetHash = string.hash data
             callback()
         exists()
       @call  -> # render
@@ -359,28 +359,28 @@ require('nikita').file({
         uid: options.uid
         gid: options.gid
         shy: true
-      , (err, status, {uid, gid, default_gid}) ->
+      , (err, {status, uid, gid, default_gid}) ->
         options.uid = uid
-        options.gid = unless targetStat then default_gid else gid
+        options.gid = unless targetStats then default_gid else gid
       @call ->
         # Option gid is set at runtime if target is a new file
         @system.chown
           target: options.target
-          stat: targetStat
+          stats: targetStats
           ssh: options.ssh
           sudo: options.sudo
           uid: options.uid
           gid: options.gid
           if: options.uid? or options.gid?
           unless: options.target is 'function'
-      @system.chmod
-        target: options.target
-        stat: targetStat
-        ssh: options.ssh
-        sudo: options.sudo
-        mode: options.mode
-        if: options.mode?
-        unless: options.target is 'function'
+        @system.chmod
+          target: options.target
+          stats: targetStats
+          ssh: options.ssh
+          sudo: options.sudo
+          mode: options.mode
+          if: options.mode?
+          unless: options.target is 'function'
 
 ## Dependencies
 

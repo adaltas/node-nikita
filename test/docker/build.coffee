@@ -49,9 +49,9 @@ describe 'docker.build', ->
       FROM scratch
       CMD echo hello
       """
-    , (err, status, stdout, stderr) ->
+    , (err, {status, stdout}) ->
       status.should.be.true() unless err
-      stderr.should.containEql 'Step 2/2 : CMD echo hello' unless err
+      stdout.should.containEql 'Step 2/2 : CMD echo hello' unless err
     .docker.rmi
       image: 'nikita/should_exists_2'
     .promise()
@@ -71,8 +71,8 @@ describe 'docker.build', ->
     .docker.build
       image: 'nikita/should_exists_3'
       cwd: scratch
-    , (err, executed, stdout, stderr) ->
-      executed.should.be.true() unless err
+    , (err, {status}) ->
+      status.should.be.true() unless err
     .docker.rmi
       image: 'nikita/should_exists_3'
     .promise()
@@ -84,13 +84,16 @@ describe 'docker.build', ->
     .docker.rmi
       image: 'nikita/should_exists_3'
     .file
-      content: "FROM scratch\nCMD ['echo \"hello build from Dockerfile #{Date.now()}\"']"
+      content: """
+      FROM scratch
+      CMD ['echo "hello build from Dockerfile #{Date.now()}"']
+      """
       target: "#{scratch}/nikita_Dockerfile"
     .docker.build
       image: 'nikita/should_exists_4'
       file: "#{scratch}/nikita_Dockerfile"
-    , (err, executed) ->
-      executed.should.be.true() unless err
+    , (err, {status}) ->
+      status.should.be.true() unless err
     .docker.rmi
       image: 'nikita/should_exists_3'
     .promise()
@@ -101,9 +104,9 @@ describe 'docker.build', ->
       docker: config.docker
     .docker.build
       image: 'nikita/should_not_exists_4'
-      file: 'unexisting/file'
+      file: "#{scratch}/file/does/not/exist"
       relax: true
-    , (err, executed, stdout, stderr) ->
+    , (err) ->
       err.code.should.eql 'ENOENT'
     .promise()
 
@@ -125,13 +128,13 @@ describe 'docker.build', ->
       image: 'nikita/should_exists_5'
       file: "#{scratch}/nikita_Dockerfile"
       log: (msg) -> status_true.push msg
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true()
     .docker.build
       image: 'nikita/should_exists_5'
       file: "#{scratch}/nikita_Dockerfile"
       log: (msg) -> status_false.push msg
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false()
     .docker.rmi
       image: 'nikita/should_exists_5'

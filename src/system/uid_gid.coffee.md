@@ -28,7 +28,7 @@ retrieve information from external identity provideds.
 require('nikita').system.uid_gid({
   uid: 'myuser',
   gid: 'mygroup'
-}, function(err, status, {uid, gid}){
+}, function(err, {status, uid, gid}){
   console.log(options.uid)
   console.log(options.gid)
 })
@@ -44,7 +44,7 @@ require('nikita').system.uid_gid({
         target: options.passwd_target
         uid: options.uid
         shy: false
-      , (err, status, user) ->
+      , (err, {status, user}) ->
         throw err if err
         return unless status
         options.uid = user.uid
@@ -54,9 +54,9 @@ require('nikita').system.uid_gid({
         target: options.group_target
         gid: options.gid
         shy: false
-      , (err, status, group) ->
+      , (err, {status, group}) ->
         throw err if err
         return unless status
         options.gid = group.gid
-      @next (err, status) ->
-        callback err, status, uid: options.uid, gid: options.gid, default_gid: options.default_gid 
+      @next (err, {status}) ->
+        callback err, status: status, uid: options.uid, gid: options.gid, default_gid: options.default_gid 

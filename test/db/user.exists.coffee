@@ -16,9 +16,9 @@ for engine, _ of config.db
       .db.user.remove 'test_user_exists_1_user', shy: true
       .db.user.exists
         username: 'test_user_exists_1_user'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
-      .next (err, status) ->
+      .next (err, {status}) ->
         throw err if err
         # Modules of type exists shall be shy
         status.should.be.false()
@@ -35,7 +35,7 @@ for engine, _ of config.db
         shy: true
       .db.user.exists
         username: 'test_user_exists_2_user'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .db.user.remove 'test_user_exists_2_user', shy: true
       .call ->

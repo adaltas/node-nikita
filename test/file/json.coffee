@@ -16,7 +16,7 @@ describe 'file.json', ->
     .file.json
       target: "#{scratch}/target.json"
       content: user: 'usrval'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/target.json"
@@ -33,7 +33,7 @@ describe 'file.json', ->
       target: "#{scratch}/target.json"
       content: 'user': 'usrval'
       merge: true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/target.json"
@@ -50,7 +50,7 @@ describe 'file.json', ->
       source: "#{scratch}/source.json"
       target: "#{scratch}/target.json"
       content: 'user': 'usrval'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/target.json"
@@ -71,7 +71,7 @@ describe 'file.json', ->
       target: "#{scratch}/target.json"
       content: 'user': 'usrval'
       merge: true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/target.json"
@@ -85,7 +85,7 @@ describe 'file.json', ->
       target: "#{scratch}/target.json"
       content: 'user': 'usrval'
       merge: true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/target.json"
@@ -107,7 +107,7 @@ describe 'file.json', ->
         json.user = "#{json.user} usrval"
         json.transform = "tfmval"
         json
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/target.json"

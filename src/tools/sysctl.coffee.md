@@ -70,7 +70,7 @@ require('nikita').tools.sysctl({
           ssh: options.ssh
           target: options.target
           encoding: 'ascii'
-        , (err, data) =>
+        , (err, {data}) =>
           return callback() if err and err.code is 'ENOENT'
           return callback err if err
           for line in string.lines data

@@ -88,7 +88,7 @@ Create and start containers according to a docker-compose file
           uid: options.uid
           code_skipped: 123
           stdout_log: false
-        , (err, status, stdout, stderr) ->
+        , (err, {status, stdout}) ->
           return callback err if err
           return callback null, true unless status
           containers = JSON.parse stdout

@@ -18,15 +18,15 @@ describe 'service.start', ->
       name: config.service.srv_name
     .service.start
       name: config.service.srv_name
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .service.status
       name: config.service.srv_name
-    , (err, started) ->
+    , (err, {status}) ->
       started.should.be.true() unless err
     .service.start # Detect already started
       name: config.service.srv_name
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
   
@@ -35,7 +35,7 @@ describe 'service.start', ->
       ssh: ssh
     .service.start
       name: 'thisdoenstexit'
-    , (err, status) ->
+    , (err, {status}) ->
       (!!err).should.be.false()
       status.should.be.false()
     .promise()

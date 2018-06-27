@@ -45,9 +45,9 @@ require('nikita').system.move({
       ssh = @ssh options.ssh
       do_exists = =>
         @log message: "Stat target", level: 'DEBUG', module: 'nikita/lib/system/move'
-        @fs.stat ssh: options.ssh, target: options.target, (err, stat) ->
-          return do_move() if err?.code is 'ENOENT'
+        @fs.exists options.target, (err, {exists}) ->
           return callback err if err
+          return do_move() unless exists
           if options.force
           then do_replace_dest()
           else do_srchash()
@@ -75,19 +75,19 @@ require('nikita').system.move({
         @log message: "Remove #{options.target}", level: 'WARN', module: 'nikita/lib/system/move'
         @system.remove
           target: options.target
-        , (err, removed) ->
+        , (err) ->
           return callback err if err
           do_move()
       do_move = =>
         @log message: "Rename #{options.source} to #{options.target}", level: 'WARN', module: 'nikita/lib/system/move'
-        @fs.rename ssh: options.ssh, source: options.source, target: options.target, (err) ->
+        @fs.rename source: options.source, target: options.target, (err) ->
           return callback err if err
           callback null, true
       do_remove_src = =>
         @log message: "Remove #{options.source}", level: 'WARN', module: 'nikita/lib/system/move'
         @system.remove
           target: options.source
-        , (err, removed) ->
+        , (err) ->
           callback err
       do_exists()
 

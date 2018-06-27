@@ -12,13 +12,13 @@ describe 'system.mkdir', ->
   they 'as a directory option or as a string', (ssh) ->
     nikita
       ssh: ssh
-    .system.mkdir directory: "#{scratch}/a_dir", (err, status) ->
+    .system.mkdir directory: "#{scratch}/a_dir", (err, {status}) ->
       status.should.be.true()
-    .system.mkdir directory: "#{scratch}/a_dir", (err, status) ->
+    .system.mkdir directory: "#{scratch}/a_dir", (err, {status}) ->
       status.should.be.false()
-    .system.mkdir "#{scratch}/b_dir", (err, status) ->
+    .system.mkdir "#{scratch}/b_dir", (err, {status}) ->
       status.should.be.true()
-    .system.mkdir "#{scratch}/b_dir", (err, status) ->
+    .system.mkdir "#{scratch}/b_dir", (err, {status}) ->
       status.should.be.false()
     .promise()
 
@@ -26,9 +26,9 @@ describe 'system.mkdir', ->
     source = "#{scratch}/a_dir"
     nikita
       ssh: ssh
-    .system.mkdir source, (err, status) ->
+    .system.mkdir source, (err, {status}) ->
       status.should.be.true()
-    .system.mkdir source, (err, status) ->
+    .system.mkdir source, (err, {status}) ->
       status.should.be.false()
     .promise()
   
@@ -37,11 +37,11 @@ describe 'system.mkdir', ->
       ssh: ssh
     .system.mkdir
       directory: "#{scratch}/a_parent_dir_1/a_dir"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .system.mkdir
       directory: "#{scratch}/a_parent_dir_2/a_dir/"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .promise()
   
@@ -54,7 +54,7 @@ describe 'system.mkdir', ->
         "#{scratch}/a_parent_dir/a_dir_1"
         "#{scratch}/a_parent_dir/a_dir_2"
       ]
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .promise()
 
@@ -103,7 +103,7 @@ describe 'system.mkdir', ->
       .system.mkdir
         directory: source
         exclude: /^do/
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: source
@@ -119,7 +119,7 @@ describe 'system.mkdir', ->
         ssh: ssh
         directory: './a_dir'
         cwd: scratch
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/a_dir"
@@ -161,12 +161,12 @@ describe 'system.mkdir', ->
       .system.mkdir
         directory: "#{scratch}/ssh_dir_string"
         mode: 0o755
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true()
       .system.mkdir
         directory: "#{scratch}/ssh_dir_string"
         mode: 0o755
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false()
       .promise()
 
@@ -178,7 +178,7 @@ describe 'system.mkdir', ->
         mode: 0o744
       .system.mkdir
         directory: "#{scratch}/a_dir"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false()
       .file.assert
         target: "#{scratch}/a_dir"
@@ -215,6 +215,6 @@ describe 'system.mkdir', ->
       .system.mkdir
         target: "download_test"
         relax: true
-      , (err, status) ->
+      , (err) ->
         err.message.should.eql 'Non Absolute Path: target is "download_test", SSH requires absolute paths, you must provide an absolute path in the target or the cwd option'
       .promise()

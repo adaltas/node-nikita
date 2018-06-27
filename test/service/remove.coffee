@@ -16,10 +16,10 @@ describe 'service.remove', ->
       name: config.service.name
     .service.remove
       name: config.service.name
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .service.remove
       name: config.service.name
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()

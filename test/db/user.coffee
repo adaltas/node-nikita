@@ -39,12 +39,12 @@ for engine, _ of config.db
       .db.user
         username: 'test_user_1_user'
         password: 'test_user_1_password'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .db.user
         username: 'test_user_1_user'
         password: 'test_user_1_password'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .db.user.exists
         username: 'test_user_1_user'

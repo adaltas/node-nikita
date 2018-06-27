@@ -43,7 +43,7 @@ require('nikita')
         run = =>
           count++
           @log message: "Attempt ##{count}", level: 'INFO', module: 'nikita/wait/exist'
-          @fs.stat ssh: options.ssh, target: options.target, (err, stat) ->
+          @fs.stat ssh: options.ssh, target: options.target, (err) ->
             return next err if err and err.code isnt 'ENOENT'
             return setTimeout run, options.interval if err
             @log message: "Finish wait for file", level: 'INFO', module: 'nikita/wait/exist'

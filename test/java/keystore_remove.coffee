@@ -16,7 +16,7 @@ describe 'java.keystore_remove', ->
         keystore: "#{scratch}/does/not/exist"
         storepass: "invalid"
         caname: "invalid"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .promise()
 
@@ -48,13 +48,13 @@ describe 'java.keystore_remove', ->
         keystore: "#{keystore}"
         storepass: "#{storepass}"
         caname: "#{caname}"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .java.keystore_remove
         keystore: "#{keystore}"
         storepass: "#{storepass}"
         caname: "#{caname}"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .system.execute
         cmd: """
@@ -87,14 +87,14 @@ describe 'java.keystore_remove', ->
         storepass: "#{storepass}"
         name: "#{name}"
         keypass: "#{keypass}"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .java.keystore_remove
         keystore: "#{keystore}"
         storepass: "#{storepass}"
         name: "#{name}"
         keypass: "#{keypass}"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .system.execute
         cmd: """

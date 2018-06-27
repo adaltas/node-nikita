@@ -14,7 +14,7 @@ describe 'tools.extract', ->
     .tools.extract
       source: "#{__dirname}/../resources/a_dir.tgz"
       target: scratch
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .promise()
 
@@ -24,7 +24,7 @@ describe 'tools.extract', ->
     .tools.extract
       source: "#{__dirname}/../resources/a_dir.zip"
       target: scratch
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .promise()
 
@@ -34,7 +34,7 @@ describe 'tools.extract', ->
     .tools.extract
       source: "#{__dirname}/../resources/a_dir.tar.bz2"
       target: scratch
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .promise()
 
@@ -44,7 +44,7 @@ describe 'tools.extract', ->
     .tools.extract
       source: "#{__dirname}/../resources/a_dir.tar.xz"
       target: scratch
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .promise()
 
@@ -56,14 +56,14 @@ describe 'tools.extract', ->
       source: "#{__dirname}/../resources/a_dir.tgz"
       target: scratch
       creates: "#{scratch}/oh_no"
-    .next (err, status) ->
+    .next (err, {status}) ->
       err.message.should.eql "Failed to create 'oh_no'"
     # Test with valid creates option
     .tools.extract
       source: "#{__dirname}/../resources/a_dir.tgz"
       target: scratch
       creates: "#{scratch}/a_dir"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .promise()
 
@@ -75,7 +75,7 @@ describe 'tools.extract', ->
       source: "#{__dirname}/../resources/a_dir.tgz"
       target: scratch
       unless_exists: __dirname
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
 
@@ -107,7 +107,7 @@ describe 'tools.extract', ->
       source: "#{__dirname}/../resources/a_dir.tgz"
       target: scratch
       strip: 1
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/a_file"
@@ -121,7 +121,7 @@ describe 'tools.extract', ->
       source: "#{__dirname}/../resources/a_dir.tgz"
       target: scratch
       strip: 2
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/a_file"

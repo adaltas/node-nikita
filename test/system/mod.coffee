@@ -14,13 +14,13 @@ describe 'system.mod', ->
       name: 'a_module'
       target: "#{scratch}/mods/modules.conf"
       load: false
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .system.mod 
       name: 'a_module'
       target: "#{scratch}/mods/modules.conf"
       load: false
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .file.assert
       target: "#{scratch}/mods/modules.conf"

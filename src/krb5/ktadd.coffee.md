@@ -48,9 +48,9 @@ require('nikita').krb5_delrinc({
         cmd: "export TZ=GMT; klist -kt #{options.keytab}"
         code_skipped: 1
         shy: true
-      , (err, exists, stdout, stderr) ->
+      , (err, {status, stdout}) ->
         throw err if err
-        return unless exists
+        return unless status
         @log message: "Keytab exists, check kvno validity", level: 'DEBUG', module: 'nikita/krb5/ktadd'
         for line in string.lines stdout
           continue unless match = /^\s*(\d+)\s+([\d\/:]+\s+[\d\/:]+)\s+(.*)\s*$/.exec line
@@ -65,9 +65,9 @@ require('nikita').krb5_delrinc({
         cmd: misc.kadmin options, "getprinc -terse #{options.principal}"
         shy: true
         if: -> keytab[options.principal]?
-      , (err, executed, stdout, stderr) ->
+      , (err, {status, stdout}) ->
         return err if err
-        return unless executed
+        return unless status
         # return do_ktadd() unless -1 is stdout.indexOf 'does not exist'
         values = string.lines(stdout)[1]
         # Check if a ticket exists for this

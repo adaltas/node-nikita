@@ -39,25 +39,25 @@ require('nikita').system.link({
 
     module.exports = (options, callback) ->
       @log message: "Entering link", level: 'DEBUG', module: 'nikita/lib/system/link'
-      linked = 0
+      count = 0
       sym_exists = (options, callback) =>
-        @fs.readlink ssh: options.ssh, target: options.target, (err, resolvedPath) ->
+        @fs.readlink ssh: options.ssh, target: options.target, (err, {target}) ->
           return callback null, false if err
-          return callback null, true if resolvedPath is options.source
+          return callback null, true if target is options.source
           @fs.unlink ssh: options.ssh, target: options.target, (err) ->
             return callback err if err
             callback null, false
       sym_create = (options, callback) =>
         @fs.symlink ssh: options.ssh, source: options.source, target: options.target, (err) ->
           return callback err if err
-          linked++
+          count++
           callback()
       exec_exists = (options, callback) =>
-        @fs.exists ssh: options.ssh, target: options.target, (err, exists) ->
+        @fs.exists ssh: options.ssh, target: options.target, (err, {exists}) ->
           return callback null, false unless exists
-          @fs.readFile ssh: options.ssh, target: options.target, encoding: 'utf8', (err, content) ->
+          @fs.readFile ssh: options.ssh, target: options.target, encoding: 'utf8', (err, {data}) ->
             return callback err if err
-            exec_cmd = /exec (.*) \$@/.exec(content)[1]
+            exec_cmd = /exec (.*) \$@/.exec(data)[1]
             callback null, exec_cmd and exec_cmd is options.source
       exec_create = (options, callback) =>
         content = """
@@ -68,7 +68,7 @@ require('nikita').system.link({
           return callback err if err
           @fs.chmod ssh: options.ssh, target: options.target, mode: options.mode, (err) ->
             return callback err if err
-            linked++
+            count++
             callback()
       return callback Error "Missing source, got #{JSON.stringify(options.source)}" unless options.source
       return callback Error "Missing target, got #{JSON.stringify(options.target)}" unless options.target
@@ -92,7 +92,7 @@ require('nikita').system.link({
             return do_end() if exists
             sym_create options, do_end
       do_end = ->
-        callback null, linked
+        callback null, status: !!count, count: count
       do_mkdir()
 
 ## Dependencies

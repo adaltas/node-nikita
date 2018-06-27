@@ -15,9 +15,9 @@ describe 'system.discover', ->
     .call
       if_exec: "cat /etc/system-release | egrep '(Red\sHat)|(CentOS)'"
     , ->
-      @system.discover (err, status, info) ->
-        info.type.should.match /^((redhat)|(centos))/ unless err
-        info.release.should.match /^[6|7]./ unless err
+      @system.discover (err, {type, release}) ->
+        type.should.match /^((redhat)|(centos))/ unless err
+        release.should.match /^[6|7]./ unless err
     .promise()
 
   they 'return info on Ubuntu', (ssh) ->
@@ -26,9 +26,9 @@ describe 'system.discover', ->
     .call
       if_exec: "cat /etc/lsb-release | egrep '(Ubuntu)'"
     , ->
-      @system.discover (err, status, info) ->
-        info.type.should.match /^(ubuntu)/
-        info.release.should.match /^\d+./
+      @system.discover (err, {type, release}) ->
+        type.should.match /^(ubuntu)/
+        release.should.match /^\d+./
     .promise()
 
   they 'dont cache by default on RH', (ssh) ->
@@ -37,8 +37,8 @@ describe 'system.discover', ->
     .call
       if_exec: "cat /etc/system-release | egrep '(Red\sHat)|(CentOS)'"
     , ->
-      @system.discover (err, status) -> status.should.be.true() unless err
-      @system.discover (err, status) -> status.should.be.true() unless err
+      @system.discover (err, {status}) -> status.should.be.true() unless err
+      @system.discover (err, {status}) -> status.should.be.true() unless err
     .promise()
 
   they 'dont cache by default on Ubuntu', (ssh) ->
@@ -47,8 +47,8 @@ describe 'system.discover', ->
     .call
       if_exec: "cat /etc/lsb-release | egrep '(Ubuntu)'"
     , ->
-      @system.discover (err, status) -> status.should.be.true() unless err
-      @system.discover (err, status) -> status.should.be.true() unless err
+      @system.discover (err, {status}) -> status.should.be.true() unless err
+      @system.discover (err, {status}) -> status.should.be.true() unless err
     .promise()
 
   they 'honors cache on RH', (ssh) ->
@@ -57,8 +57,8 @@ describe 'system.discover', ->
     .call
       if_exec: "cat /etc/system-release | egrep '(Red\sHat)|(CentOS)'"
     , ->
-      @system.discover cache: true, (err, status) -> status.should.be.true() unless err
-      @system.discover cache: true, (err, status) -> status.should.be.false() unless err
+      @system.discover cache: true, (err, {status}) -> status.should.be.true() unless err
+      @system.discover cache: true, (err, {status}) -> status.should.be.false() unless err
       @call (options) ->
         @store['nikita:system:type'].should.match /^((redhat)|(centos))/
         @store['nikita:system:release'].should.match /^[6|7]./
@@ -70,8 +70,8 @@ describe 'system.discover', ->
     .call
       if_exec: "cat /etc/lsb-release | egrep '(Ubuntu)'"
     , ->
-      @system.discover cache: true, (err, status) -> status.should.be.true() unless err
-      @system.discover cache: true, (err, status) -> status.should.be.false() unless err
+      @system.discover cache: true, (err, {status}) -> status.should.be.true() unless err
+      @system.discover cache: true, (err, {status}) -> status.should.be.false() unless err
       @call (options) ->
         @store['nikita:system:type'].should.match /^(ubuntu)/
         @store['nikita:system:release'].should.match /^\d+./

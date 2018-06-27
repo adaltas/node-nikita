@@ -20,7 +20,7 @@ describe 'options "relax"', ->
         err.message.should.eql 'Dont worry, laugh outloud'
     .call ({}, callback) ->
       callback null, true
-    .next (err, status) ->
+    .next (err, {status}) ->
       (err is null).should.be.true()
       status.should.be.true() unless err
     .promise()
@@ -51,7 +51,7 @@ describe 'options "relax"', ->
         err.message.should.eql 'Dont worry, laugh outloud'
     .call ({}, callback) ->
       callback null, true
-    .next (err, status) ->
+    .next (err, {status}) ->
       (err is null).should.be.true()
       status.should.be.true() unless err
     .promise()
@@ -65,7 +65,7 @@ describe 'options "relax"', ->
       err.message.should.eql 'Dont worry, be happy'
     .call ({}, callback) ->
       callback null, true
-    .next (err, status) ->
+    .next (err, {status}) ->
       (err is null).should.be.true()
       status.should.be.true() unless err
     .promise()

@@ -26,7 +26,7 @@ describe 'docker.cp', ->
     .docker.cp
       source: 'nikita_extract:/etc/apk/repositories'
       target: "#{scratch}/a_file"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/a_file"
@@ -47,7 +47,7 @@ describe 'docker.cp', ->
     .docker.cp
       source: 'nikita_extract:/etc/apk/repositories'
       target: "#{scratch}"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/repositories"
@@ -68,7 +68,7 @@ describe 'docker.cp', ->
     .docker.cp
       source: "#{__filename}"
       target: "nikita_extract:/root/a_file"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .docker.cp
       source: 'nikita_extract:/root/a_file'
@@ -92,7 +92,7 @@ describe 'docker.cp', ->
     .docker.cp
       source: "#{__filename}"
       target: "nikita_extract:/root"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .docker.cp
       source: "nikita_extract:/root/#{path.basename __filename}"

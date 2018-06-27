@@ -28,9 +28,9 @@ describe 'ldap.user', ->
         uidNumber: '9610'
         gidNumber: '9610'
         homeDirectory: '/home/nikita'
-    .next (err, modified) ->
+    .next (err, {status}) ->
       throw err if err
-      modified.should.be.true()
+      status.should.be.true()
     .ldap.delete
       dn: "cn=nikita,#{config.ldap.suffix_dn}"
     .promise()
@@ -60,9 +60,9 @@ describe 'ldap.user', ->
       return # reset status
     .ldap.user
       user: user
-    .next (err, modified) ->
+    .next (err, {status}) ->
       throw err if err
-      modified.should.be.false()
+      status.should.be.false()
     .ldap.delete
       dn: "cn=nikita,#{config.ldap.suffix_dn}"
     .promise()

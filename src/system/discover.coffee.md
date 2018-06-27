@@ -43,14 +43,15 @@ nikita.system.discover({
       options.strict ?= false
       options.cache ?= false
       if options.cache and @store['nikita:system:type']
-        return callback null, false, 
+        return callback null,
+          status: false, 
           type: @store['nikita:system:type']
           release: @store['nikita:system:release']
       @system.execute
         cmd: 'cat /etc/redhat-release'
         if_exec: "cat /etc/redhat-release | egrep '(Red\\sHat)|(CentOS)'"
         unless: @store['nikita:system:type']?
-      , (err, status, stdout, stderr) ->
+      , (err, {status, stdout, stderr}) ->
         throw err if err
         return unless status
         [line] = string.lines stdout
@@ -78,7 +79,7 @@ nikita.system.discover({
         """
         if_exec: "cat /etc/lsb-release | egrep 'Ubuntu'"
         unless: -> @store['nikita:system:type']?
-      , (err, status, stdout, stderr) ->
+      , (err, {status, stdout, stderr}) ->
         throw err if err
         return unless status
         [distrib_id, distrib_release] = stdout.trim().split ','
@@ -89,8 +90,11 @@ nikita.system.discover({
           @store['nikita:system:type'] = os.type
           @store['nikita:system:release'] = os.release
         throw Error 'OS not supported' if options.strict and os.type not in ['ubuntu']
-      @next (err, status) ->
-        callback err, status, os
+      @next (err, {status}) ->
+        callback err,
+          status: status, 
+          type: os.type
+          release: os.release
 
 ## Dependencies
 

@@ -81,7 +81,7 @@ require('nikita').service.install({
         stdin_log: false
         stdout_log: false
         shy: true
-      , (err, status, stdout) ->
+      , (err, {status, stdout}) ->
         throw Error "Unsupported Package Manager" if err?.code is 2
         throw err if err
         return unless status
@@ -109,7 +109,7 @@ require('nikita').service.install({
         stdin_log: false
         stdout_log: false
         shy: true
-      , (err, status, stdout) ->
+      , (err, {status, stdout}) ->
         throw Error "Unsupported Package Manager" if err?.code is 2
         throw err if err
         return options.outpdated = [] unless status
@@ -134,7 +134,7 @@ require('nikita').service.install({
         code_skipped: options.code_skipped
         arch_chroot: options.arch_chroot
         rootdir: options.rootdir
-      , (err, status) ->
+      , (err, {status}) ->
         throw Error "Unsupported Package Manager: yum, yaourt, pacman, apt-get supported" if err?.code is 2
         throw err if err
         @log if status

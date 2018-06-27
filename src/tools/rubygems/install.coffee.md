@@ -41,7 +41,7 @@ require('nikita')
 .tools.rubygems.install({
   name: 'json',
   version: '2.1.0',
-}, function(err, status){
+}, function(err, {status}){
   console.log( err ? err.messgage : 'Gem installed: ' + status);
 });
 ```
@@ -52,7 +52,7 @@ Install a gem from a local file:
 require('nikita')
 .tools.rubygems.install({
   source: '/path/to/json-2.1.0.gem',
-}, function(err, status){
+}, function(err, {status}){
   console.log( err ? err.messgage : 'Gem installed: ' + status);
 });
 ```
@@ -63,7 +63,7 @@ Install gems from a glob expressoin:
 require('nikita')
 .tools.rubygems.install({
   source: '/path/to/*.gem',
-}, function(err, status){
+}, function(err, {status}){
   console.log( err ? err.messgage : 'Gem installed: ' + status);
 });
 ```
@@ -88,7 +88,7 @@ require('nikita')
         """
         shy: true
         bash: options.bash
-      , (err, _, stdout) ->
+      , (err, {stdout}) ->
         for line in string.lines stdout
           continue if line.trim() is ''
           [name, version] = line.match(/(.*?)(?:$| \((?:default:\s+)?([\d\., ]+)\))/)[1..3]

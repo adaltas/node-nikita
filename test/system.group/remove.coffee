@@ -15,8 +15,8 @@ describe 'system.group.remove', ->
     .system.user.remove 'toto'
     .system.group.remove 'toto'
     .system.group 'toto'
-    .system.group.remove 'toto', (err, status) ->
+    .system.group.remove 'toto', (err, {status}) ->
       status.should.be.true() unless err
-    .system.group.remove 'toto', (err, status) ->
+    .system.group.remove 'toto', (err, {status}) ->
       status.should.be.false() unless err
     .promise()

@@ -24,7 +24,7 @@ describe 'file.types.locale_gen', ->
       target: "#{scratch}/etc/locale.gen"
       locales: ['fr_FR.UTF-8', 'en_US.UTF-8']
       locale: ['en_US.UTF-8']
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/etc/locale.gen"
@@ -55,7 +55,7 @@ describe 'file.types.locale_gen', ->
       target: "#{scratch}/etc/locale.gen"
       locales: ['fr_FR.UTF-8', 'en_US.UTF-8']
       locale: ['en_US.UTF-8']
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/etc/locale.gen"
@@ -78,7 +78,7 @@ describe 'file.types.locale_gen', ->
     .file.types.locale_gen
       rootdir: "#{scratch}"
       locales: ['en_US.UTF-8']
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/etc/locale.gen"

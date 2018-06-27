@@ -26,8 +26,8 @@ describe 'docker.kill', ->
       name: 'nikita_test_kill'
     .docker.kill
       container: 'nikita_test_kill'
-    , (err, killed, stdout, stderr) ->
-      killed.should.be.true()
+    , (err, {status}) ->
+      status.should.be.true()
     .promise()
 
   they 'status not modified (previously killed)', (ssh) ->
@@ -46,8 +46,8 @@ describe 'docker.kill', ->
       container: 'nikita_test_kill'
     .docker.kill
       container: 'nikita_test_kill'
-    , (err, killed) ->
-      killed.should.be.false()
+    , (err, {status}) ->
+      status.should.be.false()
     .promise()
 
   they 'status not modified (not living)', (ssh) ->
@@ -63,8 +63,8 @@ describe 'docker.kill', ->
       name: 'nikita_test_kill'
     .docker.kill
       container: 'nikita_test_kill'
-    , (err, killed) ->
-      killed.should.be.false()
+    , (err, {status}) ->
+      status.should.be.false()
     .docker.rm
       container: 'nikita_test_kill'
     .promise()

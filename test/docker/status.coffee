@@ -30,8 +30,8 @@ describe 'docker.status', ->
       name: 'nikita_status'
     .docker.status
       container: 'nikita_status'
-    , (err, running, stdout, stderr) ->
-      running.should.be.false() unless err
+    , (err, {status}) ->
+      status.should.be.false() unless err
     .docker.rm
       container: 'nikita_status'
       force: true
@@ -50,8 +50,8 @@ describe 'docker.status', ->
       name: 'nikita_status'
     .docker.status
       container: 'nikita_status'
-    , (err, running, stdout, stderr) ->
-      running.should.be.true()
+    , (err, {status}) ->
+      status.should.be.true()
     .docker.rm
       container: 'nikita_status'
       force: true

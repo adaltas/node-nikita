@@ -7,8 +7,8 @@ Change the ownership of a file or a directory.
 
 * `gid`   
   Group name or id who owns the target file.   
-* `stat` (Stat instance, optional)   
-  Pass the Stat object relative to the target file or directory, to be
+* `stats` (Stat instance, optional)   
+  Pass the Stats object relative to the target file or directory, to be
   used as an optimization, discovered otherwise.   
 * `target`   
   Where the file or directory is copied.   
@@ -48,6 +48,9 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
 
     module.exports = (options) ->
       @log message: "Entering chown", level: 'DEBUG', module: 'nikita/lib/system/chown'
+      if options.stat
+        console.log 'Deprecated Option: receive options.stat instead of options.stats in system.chown'
+        options.stats = options.stat
       # SSH connection
       ssh = @ssh options.ssh
       # Normalize options
@@ -62,28 +65,28 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
         uid: options.uid
         gid: options.gid
         shy: true
-      , (err, status, {uid, gid}) ->
+      , (err, {status, uid, gid}) ->
         options.uid = uid
         options.gid = gid
       # Use option 'stat' short-circuit or discover
-      @call unless: !!options.stat, (_, callback) ->
+      @call unless: !!options.stats, (_, callback) ->
         @log message: "Stat #{options.target}", level: 'DEBUG', module: 'nikita/lib/chown'
-        @fs.stat ssh: options.ssh, target: options.target, (err, stat) ->
+        @fs.stat ssh: options.ssh, target: options.target, (err, {stats}) ->
           return callback Error "Target Does Not Exist: #{JSON.stringify options.target}" if err?.code is 'ENOENT'
           return callback err if err
-          options.stat = stat
+          options.stats = stats
           callback()
       # Detect changes
       @call (_, callback) ->
-        if (not options.uid? or options.stat.uid is options.uid) and (not options.gid? or options.stat.gid is options.gid)
+        if (not options.uid? or options.stats.uid is options.uid) and (not options.gid? or options.stats.gid is options.gid)
           @log message: "Matching ownerships on '#{options.target}'", level: 'INFO', module: 'nikita/lib/chown'
           return callback()
         callback null, true
       # Apply changes
       @call if: (-> @status -1), (_, callback) ->
-        options.uid ?= options.stat.uid
-        options.gid ?= options.stat.gid
+        options.uid ?= options.stats.uid
+        options.gid ?= options.stats.gid
         @fs.chown ssh: options.ssh, target: options.target, uid: options.uid, gid: options.gid, sudo: options.sudo, (err) ->
-          @log message: "change uid from #{options.stat.uid} to #{options.uid}", level: 'WARN', module: 'nikita/lib/chown' if options.stat.uid is not options.uid
-          @log message: "change gid from #{options.stat.gid} to #{options.gid}", level: 'WARN', module: 'nikita/lib/chown' if options.stat.gid is not options.gid
+          @log message: "change uid from #{options.stats.uid} to #{options.uid}", level: 'WARN', module: 'nikita/lib/chown' if options.stats.uid is not options.uid
+          @log message: "change gid from #{options.stats.gid} to #{options.gid}", level: 'WARN', module: 'nikita/lib/chown' if options.stats.gid is not options.gid
           callback err

@@ -80,9 +80,9 @@ require('nikita').tools.extract({
           return callback Error "Unsupported extension, got #{JSON.stringify(ext)}"
       # Start real work
       stat = =>
-        @fs.stat ssh: options.ssh, target: options.source, (err, stat) ->
+        @fs.stat ssh: options.ssh, target: options.source, (err, {stats}) ->
           return callback Error "File does not exist: #{options.source}" if err
-          return callback Error "Not a File: #{options.source}" unless stat.isFile()
+          return callback Error "Not a File: #{options.source}" unless misc.stats.isFile stats.mode
           extract()
       extract = =>
         cmd = null
@@ -101,7 +101,7 @@ require('nikita').tools.extract({
       # Step for `creates`
       creates = =>
         return success() unless options.creates?
-        @fs.exists ssh: options.ssh, target: options.creates, (err, exists) ->
+        @fs.exists ssh: options.ssh, target: options.creates, (err, {exists}) ->
           return callback Error "Failed to create '#{path.basename options.creates}'" unless exists
           success()
       # Final step
@@ -112,3 +112,4 @@ require('nikita').tools.extract({
 ## Dependencies
 
     path = require 'path'
+    misc = require '../misc'

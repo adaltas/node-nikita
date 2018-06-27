@@ -21,8 +21,8 @@ describe 'docker.stop', ->
       name: 'nikita_test_stop'
     .docker.stop
       container: 'nikita_test_stop'
-    , (err, stopped) ->
-      stopped.should.be.true()
+    , (err, {status}) ->
+      status.should.be.true()
     .docker.rm
       container: 'nikita_test_stop'
       force: true
@@ -39,8 +39,8 @@ describe 'docker.stop', ->
       container: 'nikita_test_stop'
     .docker.stop
       container: 'nikita_test_stop'
-    , (err, stopped) ->
-      stopped.should.be.false() unless err
+    , (err, {status}) ->
+      status.should.be.false() unless err
     .docker.rm
       container: 'nikita_test_stop'
       force: true

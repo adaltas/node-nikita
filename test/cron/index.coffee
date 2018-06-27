@@ -26,22 +26,22 @@ describe 'cron', ->
     .cron.add
       cmd: "/bin/true #{rand}/toto - *.mp3"
       when: '0 * * * *'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true()
     .cron.add
       cmd: "/bin/true #{rand}/toto - *.mp3"
       when: '0 * * * *'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false()
     .cron.remove
       cmd: "/bin/true #{rand}/toto - *.mp3"
       when: '0 * * * *'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true()
     .cron.remove
       cmd: "/bin/true #{rand}/toto - *.mp3"
       when: '0 * * * *'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false()
     .promise()
 
@@ -55,7 +55,7 @@ describe 'cron', ->
         cmd: "/bin/true #{rand}"
         when: '0 * * * *'
         match: '.*bin.*'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true()
       .cron.add
         cmd: "/bin/false #{rand}"
@@ -66,13 +66,13 @@ describe 'cron', ->
             { count: 1, added: undefined, removed: true, value: "0 * * * * /bin/false #{rand}" }
             { count: 1, added: true, removed: undefined, value: "0 * * * * /bin/true #{rand}" }
           ]
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .cron.add
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
         match: /.*bin.*/
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .cron.remove
         cmd: "/bin/false #{rand}"
@@ -87,7 +87,7 @@ describe 'cron', ->
         cmd: "/bin/true #{rand}"
         when: '0 * * * *'
         match: '.*bin.*'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .cron.add
         cmd: "/bin/false #{rand}"
@@ -98,13 +98,13 @@ describe 'cron', ->
             { count: 1, added: undefined, removed: true, value: "0 * * * * /bin/false #{rand}" }
             { count: 1, added: true, removed: undefined, value: "0 * * * * /bin/true #{rand}" }
           ]
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .cron.add
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
         match: '.*bin.*'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .cron.remove
         cmd: "/bin/false #{rand}"

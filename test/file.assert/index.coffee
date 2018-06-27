@@ -402,6 +402,6 @@ describe 'file.assert', ->
           relax: true
         , (err) ->
           err.message.should.eql "Unexpected gid: expected \"1\" and got \"0\""
-      , (err, status) =>
+      , (err, {status}) =>
         @skip() unless status
       .promise()

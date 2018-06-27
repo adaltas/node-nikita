@@ -11,6 +11,8 @@ describe 'docker.compose', ->
   @timeout 90000
 
   they 'up from content', (ssh) ->
+    # Note, this fail the first time because the container take some time
+    # to be downloaded. We shall prefetch the image at container creation
     nikita
       ssh: ssh
       docker: config.docker
@@ -23,7 +25,7 @@ describe 'docker.compose', ->
           image: 'httpd'
           container_name: 'nikita_docker_compose_up_content'
           ports: ['499:80']
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .system.execute
       cmd: 'ping dind -c 1'
@@ -55,7 +57,7 @@ describe 'docker.compose', ->
           container_name: 'nikita_docker_docker_compose_up_content_to_file'
           ports: ['499:80']
       target: "#{scratch}/docker_compose_up_content_to_file/docker-compose.yml"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .system.execute
       cmd: 'ping dind -c 1'
@@ -159,7 +161,7 @@ describe 'docker.compose', ->
       port: 499
     .docker.compose
       target: "#{scratch}/nikita_docker_compose_idem/docker-compose.yml"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .docker.rm
       container: 'nikita_docker_compose_idem'

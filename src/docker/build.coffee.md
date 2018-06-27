@@ -45,8 +45,8 @@ Status unmodified if the repository is identical to a previous one
   Error object if any.   
 * `status`   
   True if image was successfully built.   
-* `checksum`   
-  Image cheksum if built.   
+* `image`   
+  Image ID if the image was built, the ID is based on the image sha256 checksum.   
 * `stdout`   
   Stdout value(s) unless `stdout` option is provided.   
 * `stderr`   
@@ -180,36 +180,40 @@ nikita.docker.build({
         write: options.write
       @call # Read Dockerfile if necessary to count steps
         unless: options.content
-        handler: (_, callback) ->
-          @log message: "Reading Dockerfile from : #{options.file}", level: 'INFO', module: 'nikita/lib/build'
-          @fs.readFile ssh: options.ssh, target: options.file, encoding: 'utf8', (err, content) ->
-            return callback err if err
-            options.content = content
-            callback()
+      , (_, callback) ->
+        @log message: "Reading Dockerfile from : #{options.file}", level: 'INFO', module: 'nikita/lib/build'
+        @fs.readFile ssh: options.ssh, target: options.file, encoding: 'utf8', (err, {data}) ->
+          return callback err if err
+          options.content = data
+          callback()
       @call -> # Count steps
         for line in string.lines options.content
           number_of_step++ if /^(.*?)\s/.exec(line)?[1] in dockerfile_cmds
       @system.execute
         cmd: docker.wrap options, cmd
         cwd: options.cwd
-      , (err, executed, stdout, stderr) ->
+      , (err, {stdout, stderr}) ->
         throw err if err
-        container_id_hash = null
-        lines = string.lines stderr
+        image_id = null
+        # lines = string.lines stderr
         lines = string.lines stdout
         number_of_cache = 0
         for k,  line of lines
           if (line.indexOf('Using cache') isnt  -1 )
             number_of_cache = number_of_cache + 1
           if (line.indexOf('Successfully built') isnt  -1 )
-            container_id_hash = line.split(' ').pop().toString()
-        userargs = [number_of_step isnt number_of_cache, container_id_hash, stdout, stderr]
-      @next (err, status) ->
+            image_id = line.split(' ').pop().toString()
+        userargs =
+          status: number_of_step isnt number_of_cache
+          image: image_id
+          stdout: stdout
+          stderr: stderr
+      @next (err) ->
         return callback err if err
-        @log if userargs[0]
+        @log if userargs.status
         then message: "New image id #{userargs[1]}", level: 'INFO', module: 'nikita/lib/docker/build' 
         else message: "Identical image id #{userargs[1]}", level: 'INFO', module: 'nikita/lib/docker/build'
-        callback null, userargs...
+        callback null, userargs
 
 ## Modules Dependencies
 

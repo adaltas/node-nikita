@@ -61,8 +61,7 @@ require('nikita')(
       # SSH connection
       ssh = @ssh options.ssh
       # Obtains options from "log_cli" namespace
-      options.log_cli ?= {}
-      options[k] = v for k, v of options.log_cli
+      options = {...options.log_cli, ...options} if options.log_cli
       # Normalize
       options.enabled ?= options.argument if options.argument?
       options.enabled ?= true

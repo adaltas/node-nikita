@@ -66,8 +66,8 @@ describe 'api status', ->
       n.call (options, callback) ->
         n.system.execute
           cmd: 'ls -l'
-        , (err, executed, stdout, stderr) ->
-          executed.should.be.true() unless err
+        , (err, {status}) ->
+          status.should.be.true() unless err
           callback err, false
       n.call ->
         @status().should.be.false()
@@ -79,8 +79,8 @@ describe 'api status', ->
         n.system.execute
           cmd: 'ls -l'
           if: false
-        , (err, executed, stdout, stderr) ->
-          executed.should.be.false() unless err
+        , (err, {status}) ->
+          status.should.be.false() unless err
           callback err, true
       n.call ->
         @status().should.be.true()
@@ -146,7 +146,7 @@ describe 'api status', ->
         (@status(0) is undefined).should.be.true()
         @status(-1).should.be.false()
         callback null, false
-      , (err, status) ->
+      , (err) ->
         @status(0).should.be.false()
         @status(-1).should.be.false()
       .call (options, callback) ->
@@ -168,9 +168,8 @@ describe 'api status', ->
         if: -> true
       , (options, callback) ->
         callback null, true
-      .next (err, status) ->
-        return next err if err
-        status.should.be.true()
+      .next (err, {status}) ->
+        status.should.be.true() unless err
       .call
         if: -> false
       , (options, callback) ->

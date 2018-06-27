@@ -7,7 +7,7 @@ Change the permissions of a file or directory.
 
 * `mode`   
   Permissions of the file or the parent directory.   
-* `stat` (Stat instance, optional)   
+* `stats` (Stat instance, optional)   
   Pass the Stat object relative to the target file or directory, to be
   used as an optimization.     
 * `target`   
@@ -35,29 +35,32 @@ require('nikita').system.chmod({
 
     module.exports = (options) ->
       @log message: "Entering chmod", level: 'DEBUG', module: 'nikita/lib/system/chmod'
+      if options.stat
+        console.log 'Deprecated Option: receive options.stat instead of options.stats in system.chmod'
+        options.stats = options.stat
       # SSH connection
       ssh = @ssh options.ssh
       # Validate parameters
       throw Error "Missing target: #{JSON.stringify options.target}" unless options.target
       throw Error "Missing option 'mode'" unless options.mode
       @call
-        unless: !!options.stat # Option 'stat' short-circuit
+        unless: !!options.stats # Option 'stat' short-circuit
       , (_, callback) ->
         @log message: "Stat information: \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/system/chmod'
         @fs.stat
           ssh: options.ssh
           target: options.target
-        , (err, stat) ->
-          options.stat = stat unless err
+        , (err, {stats}) ->
+          options.stats = stats unless err
           callback err
       @call (_, callback) ->
         # Detect changes
-        if misc.mode.compare options.stat.mode, options.mode
+        if misc.mode.compare options.stats.mode, options.mode
           @log message: "Identical permissions on \"#{options.target}\"", level: 'INFO', module: 'nikita/lib/system/chmod'
           return callback()
         # Apply changes
         @fs.chmod ssh: options.ssh, target: options.target, mode: options.mode, sudo: options.sudo, (err) ->
-          @log message: "Change permissions from \"#{options.stat.mode.toString 8}\" to \"#{options.mode.toString 8}\" on \"#{options.target}\"", level: 'WARN', module: 'nikita/lib/system/chmod'
+          @log message: "Change permissions from \"#{options.stats.mode.toString 8}\" to \"#{options.mode.toString 8}\" on \"#{options.target}\"", level: 'WARN', module: 'nikita/lib/system/chmod'
           callback err, true
 
 ## Dependencies

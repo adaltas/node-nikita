@@ -32,8 +32,8 @@ Setup packet manager repository. Only support yum for now.
 require('nikita').tools.repo({
   source: '/tmp/centos.repo',
   clean: 'CentOs*'
-}, function(err, written){
-  console.info(err ? err.message : 'Repo updated: ' + !!written);
+}, function(err, {status}){
+  console.info(err ? err.message : 'Repo updated: ' + !!status);
 });
 ```
 
@@ -94,9 +94,9 @@ require('nikita').tools.repo({
         ssh: options.ssh
         target: options.target
         encoding: 'utf8'
-      , (err, content) =>
+      , (err, {data}) =>
         throw err if err
-        data  = misc.ini.parse_multi_brackets content
+        data  = misc.ini.parse_multi_brackets data
         keys = for name, section of data
           repoids.push name
           continue unless section.gpgcheck is '1'

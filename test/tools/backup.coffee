@@ -16,20 +16,20 @@ describe 'tools.backup', ->
         name: 'my_backup'
         source: "#{__filename}"
         target: "#{scratch}/backup"
-      , (err, status, info) ->
+      , (err, {status, filename}) ->
         status.should.be.true() unless err
         @file.assert
-          target: "#{scratch}/backup/my_backup/#{info.filename}"
+          target: "#{scratch}/backup/my_backup/#{filename}"
           filetype: 'file'
       .wait 1000
       .tools.backup
         name: 'my_backup'
         source: "#{__filename}"
         target: "#{scratch}/backup"
-      , (err, status, info) ->
+      , (err, {status, filename}) ->
         status.should.be.true() unless err
         @file.assert
-          target: "#{scratch}/backup/my_backup/#{info.filename}"
+          target: "#{scratch}/backup/my_backup/#{filename}"
           filetype: 'file'
       .promise()
 
@@ -41,10 +41,10 @@ describe 'tools.backup', ->
         source: "#{__filename}"
         target: "#{scratch}/backup"
         compress: true
-      , (err, status, info) ->
+      , (err, {status, filename}) ->
         status.should.be.true() unless err
         @file.assert
-          target: "#{scratch}/backup/my_backup/#{info.filename}.tgz"
+          target: "#{scratch}/backup/my_backup/#{filename}.tgz"
           filetype: 'file'
       .promise()
 
@@ -57,9 +57,9 @@ describe 'tools.backup', ->
         name: 'my_backup'
         cmd: "echo hello"
         target: "#{scratch}/backup"
-      , (err, status, info) ->
+      , (err, {status, filename}) ->
         status.should.be.true() unless err
         @file.assert
-          target: "#{scratch}/backup/my_backup/#{info.filename}"
+          target: "#{scratch}/backup/my_backup/#{filename}"
           content: "hello\n"
       .promise()

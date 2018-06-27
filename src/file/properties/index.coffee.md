@@ -69,8 +69,8 @@ require('nikita')
         separator: options.separator
         comment: options.comment
         trim: options.trim
-      , (err, props) ->
-        org_props = props or {} unless err
+      , (err, {properties}) ->
+        org_props = properties or {} unless err
       # Diff
       @call (_, callback) ->
         status = false

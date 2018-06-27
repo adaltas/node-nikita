@@ -76,8 +76,8 @@ require('nikita').upload({
       @log message: "Source is \"#{options.source}\"", level: 'DEBUG', module: 'nikita/lib/file/upload'
       @log message: "Destination is \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/file/upload'
       status = false
-      source_stat = null
-      target_stat = null
+      # source_stats = null
+      target_stats = null
       stage_target = "#{options.target}.#{Date.now()}#{Math.round(Math.random()*1000)}"
       if options.md5?
         return callback Error "Invalid MD5 Hash:#{options.md5}" unless typeof options.md5 in ['string', 'boolean']
@@ -89,29 +89,28 @@ require('nikita').upload({
         # source_hash = options.sha1
       else
         algo = 'md5'
+      # @call (_, callback) ->
+      #   @fs.stat ssh: options.ssh, target: options.source, (err, {stats}) ->
+      #     callback err if err and err.code isnt 'ENOENT'
+      #     source_stats = stats
+      #     callback()
       @call (_, callback) ->
-        @fs.stat ssh: options.ssh, target: options.source, (err, stat) ->
-          callback err if err and err.code isnt 'ENOENT'
-          source_stat = stat
-          callback()
-      @call (_, callback) ->
-        @fs.stat ssh: false, target: options.target, (err, stat) ->
+        @fs.stat ssh: false, target: options.target, (err, {stats}) ->
           return callback() if err and err.code is 'ENOENT'
           return callback err if err
-          target_stat = stat if stat.isFile()
-          return callback() unless stat.isDirectory()
+          target_stats = stats if misc.stats.isFile stats.mode
+          return callback() unless misc.stats.isDirectory stats.mode
           options.target = path.resolve options.target, path.basename options.source
-          @fs.stat ssh: false, target: options.target, (err, stat) ->
+          @fs.stat ssh: false, target: options.target, (err, {stats}) ->
             return callback() if err and err.code is 'ENOENT'
             return callback err if err
-            target_stat = stat if stat.isFile()
-            return callback() if stat.isFile()
+            target_stats = stats if misc.stats.isFile stats.mode
+            return callback() if misc.stats.isFile stats.mode
             callback Error "Invalid target: #{options.target}"
-      @call
-        handler: (_, callback) ->
-          return callback null, true unless target_stat
-          file.compare_hash ssh, options.source, null, options.target, algo, (err, match) =>
-            callback err, not match
+      @call (_, callback) ->
+        return callback null, true unless target_stats
+        file.compare_hash ssh, options.source, null, options.target, algo, (err, match) =>
+          callback err, not match
       @system.mkdir
         if: -> @status -1
         ssh: false
@@ -128,7 +127,7 @@ require('nikita').upload({
           if: @status()
           source: stage_target
           target: options.target
-        , (err, status) ->
+        , (err, {status}) ->
           @log message: "Unstaged uploaded file", level: 'INFO', module: 'nikita/lib/file/upload' if status
         @system.chmod
           ssh: false

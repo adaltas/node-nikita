@@ -15,7 +15,7 @@ describe 'file.types.pacman_conf', ->
       content: 'options':
         'Architecture': 'auto'
         'CheckSpace': ''
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/pacman.conf"
@@ -30,7 +30,7 @@ describe 'file.types.pacman_conf', ->
       content: 'options':
         'Architecture': 'auto'
         'CheckSpace': true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/pacman.conf"
@@ -45,7 +45,7 @@ describe 'file.types.pacman_conf', ->
       content: 'options':
         'Architecture': 'auto'
         'CheckSpace': true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/etc/pacman.conf"

@@ -58,7 +58,7 @@ require('nikita').database.schema({
       @system.execute
         code_skipped: 2
         cmd: db.cmd options, '\\dt'
-      , (err, status, stdout, stderr) ->
+      , (err, {status}) ->
         throw err if err
         throw Error "Database does not exist #{options.database}" if !err and !status
       @system.execute
@@ -70,7 +70,7 @@ require('nikita').database.schema({
         unless_exec: db.cmd(options, '\\dn') + " | grep '#{options.schema}|#{options.owner}'"
         cmd: db.cmd options, "ALTER SCHEMA #{options.schema} OWNER TO #{options.owner};"
         code_skipped: 1
-      , (err, status , stdout, stderr) ->
+      , (err, {stderr}) ->
         throw Error "Owner #{options.owner} does not exists" if /^ERROR:\s\srole.*does\snot\sexist/.test stderr
 
 ## Dependencies

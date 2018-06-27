@@ -56,12 +56,12 @@ nikita.docker.start({
       cmd = 'start'
       cmd += ' -a' if options.attach
       cmd += " #{options.container}"
-      @docker.status shy: true, options, (err, is_running) ->
+      @docker.status shy: true, options, (err, {status}) ->
         throw err if err
-        if is_running
+        if status
         then @log message: "Container already started #{options.container} (Skipping)", level: 'INFO', module: 'nikita/lib/docker/start'
         else @log message: "Starting container #{options.container}", level: 'INFO', module: 'nikita/lib/docker/start'
-        @end() if is_running
+        @end() if status
       @system.execute
         cmd: docker.wrap options, cmd
       , docker.callback
