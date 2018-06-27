@@ -62,7 +62,7 @@ nikita.docker_pull({
         unless: -> @status -1
         cmd: docker.wrap options, cmd
         code_skipped: options.code_skipped
-      , (err, status) -> callback err, status
+      , callback
 
 ## Modules Dependencies
 

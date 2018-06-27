@@ -23,13 +23,13 @@ describe 'krb5.ktadd', ->
       principal: "nikita@#{config.krb5.realm}"
       keytab: "#{scratch}/nikita.keytab"
       password: 'nikita123-1'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .krb5.ktutil.add
       principal: "nikita@#{config.krb5.realm}"
       keytab: "#{scratch}/nikita.keytab"
       password: 'nikita123-1'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
 
@@ -55,13 +55,13 @@ describe 'krb5.ktadd', ->
       principal: "nikita@#{config.krb5.realm}"
       keytab: "#{scratch}/nikita_1.keytab"
       password: 'nikita123-2'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .krb5.ktutil.add
       principal: "nikita@#{config.krb5.realm}"
       keytab: "#{scratch}/nikita_1.keytab"
       password: 'nikita123-2'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
   
@@ -85,6 +85,6 @@ describe 'krb5.ktadd', ->
       keytab: "#{scratch}/nikita_1.keytab"
       password: 'nikita123-1'
       mode: 0o0707
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .promise()

@@ -17,6 +17,6 @@ describe 'fs.readlink', ->
       source: "#{scratch}/a_source"
     .fs.readlink
       target: "#{scratch}/a_target"
-    , (err, target) ->
+    , (err, {target}) ->
       target.should.eql "#{scratch}/a_source"
     .promise()

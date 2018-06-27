@@ -18,6 +18,6 @@ describe 'service.restart', ->
       name: config.service.srv_name
     .service.restart
       name: config.service.srv_name
-    , (err, restarted) ->
-      restarted.should.be.true()
+    , (err, {status}) ->
+      status.should.be.true()
     .promise()

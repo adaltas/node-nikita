@@ -17,7 +17,7 @@ describe 'file.types.yum_repo', ->
           'fsid': 'a7-a6-d0'
           'prop with spaces': '2spaces'
           'prop ip': '192.168.10.1'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/ceph_conf_test.repo"
@@ -34,7 +34,7 @@ describe 'file.types.yum_repo', ->
           'fsid': 'a7-a6-d0'
           'prop with spaces': '2spaces'
           'prop ip': '192.168.10.1'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.types.ceph_conf
       target: "#{scratch}/ceph_conf_test.repo"
@@ -43,7 +43,7 @@ describe 'file.types.yum_repo', ->
           'fsid': 'a7-a6-d0'
           'prop with spaces': '2spaces'
           'prop ip': '192.168.10.1'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .file.assert
       target: "#{scratch}/ceph_conf_test.repo"

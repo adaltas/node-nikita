@@ -17,7 +17,7 @@ describe 'docker.pull', ->
       image: 'alpine'
     .docker.pull
       tag: 'alpine'
-    , (err, status, stdout, stderr) ->
+    , (err, {status}) ->
       status.should.be.true()
     .promise()
 
@@ -31,6 +31,6 @@ describe 'docker.pull', ->
       tag: 'alpine'
     .docker.pull
       tag: 'alpine'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false()
     .promise()

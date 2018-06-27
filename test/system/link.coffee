@@ -14,12 +14,12 @@ describe 'system.link', ->
     .system.link # Link does not exist
       source: __filename
       target: "#{scratch}/link_test"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .system.link # Link already exists
       source: __filename
       target: "#{scratch}/link_test"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .file.assert
       target: "#{scratch}/link_test"
@@ -33,13 +33,13 @@ describe 'system.link', ->
     .system.link # Link does not exist
       source: __dirname
       target: "#{scratch}/link_test"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .system.link # Link already exists
       ssh: ssh
       source: __dirname
       target: "#{scratch}/link_test"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .file.assert
       target: "#{scratch}/link_test"
@@ -53,7 +53,7 @@ describe 'system.link', ->
     .system.link
       source: __dirname
       target: "#{scratch}/test/dir/link_test"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/test/dir/link_test"
@@ -66,7 +66,7 @@ describe 'system.link', ->
       ssh: ssh
       source: "#{__dirname}/mkdir.coffee"
       target: "#{scratch}/test/dir2/mkdir.coffee"
-    ], (err, status) ->
+    ], (err, {status}) ->
       status.should.be.true() unless err
     .promise()
 
@@ -82,14 +82,14 @@ describe 'system.link', ->
     .system.link
       source: "#{scratch}/test/invalid_file"
       target: "#{scratch}/test/file_link"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .system.remove
       target: "#{scratch}/test/invalid_file"
     .system.link
       source: "#{scratch}/test/valid_file"
       target: "#{scratch}/test/file_link"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .promise()
 
@@ -101,7 +101,7 @@ describe 'system.link', ->
         ssh: ssh
       .system.link
         target: __filename
-      .next (err, changed) ->
+      .next (err) ->
         err.message.should.eql "Missing source, got undefined"
       .system.link # Test missing target
         source: __filename

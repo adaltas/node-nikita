@@ -29,7 +29,7 @@ describe 'file.download url', ->
     .file.download
       source: 'http://localhost:12345'
       target: "#{scratch}/download"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/download"
@@ -37,7 +37,7 @@ describe 'file.download url', ->
     .file.download # Download on an existing file
       source: 'http://localhost:12345'
       target: "#{scratch}/download"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
 
@@ -49,7 +49,7 @@ describe 'file.download url', ->
       source: 'http://localhost:12345'
       target: "#{scratch}/download_test"
       mode: 0o0770
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/download_test"
@@ -67,7 +67,7 @@ describe 'file.download url', ->
         source: 'http://localhost:12345'
         target: "#{scratch}/target"
         cache_file: "#{scratch}/cache_file"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/cache_file"
@@ -87,7 +87,7 @@ describe 'file.download url', ->
         ssh: ssh
         source: source
         target: target
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         ssh: null
@@ -106,7 +106,7 @@ describe 'file.download url', ->
         source: source
         target: target
         cache_dir: "#{scratch}/cache_dir"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         ssh: null
@@ -121,13 +121,13 @@ describe 'file.download url', ->
         ssh: ssh
       .on 'text', (log) -> logs.push "[#{log.level}] #{log.message}"
       .file
-        content: "okay"
+        content: 'okay'
         target: "#{scratch}/target"
       .file.download
         source: 'http://localhost:12345'
         target: "#{scratch}/target"
         md5: 'df8fede7ff71608e24a5576326e41c75'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .call ->
         ("[INFO] Destination with valid signature, download aborted" in logs).should.be.true()
@@ -145,7 +145,7 @@ describe 'file.download url', ->
         source: 'http://localhost:12345'
         target: "#{scratch}/target"
         md5: 'df8fede7ff71608e24a5576326e41c75'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/target"
@@ -161,7 +161,7 @@ describe 'file.download url', ->
         target: "#{scratch}/target"
         md5: '2f74dbbee4142b7366c93b115f914fff'
         relax: true
-      , (err, status) ->
+      , (err, {status}) ->
         err.message.should.eql "Invalid downloaded checksum, found 'df8fede7ff71608e24a5576326e41c75' instead of '2f74dbbee4142b7366c93b115f914fff'"
       .promise()
 
@@ -173,7 +173,7 @@ describe 'file.download url', ->
         source: 'http://localhost:12345'
         target: "#{scratch}/check_md5"
         md5: 'df8fede7ff71608e24a5576326e41c75'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .promise()
 
@@ -184,13 +184,13 @@ describe 'file.download url', ->
       .file.download
         source: 'http://localhost:12345'
         target: "#{scratch}/check_md5"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.download
         source: 'http://localhost:12345'
         target: "#{scratch}/check_md5"
         md5: 'df8fede7ff71608e24a5576326e41c75'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .promise()
       
@@ -204,6 +204,6 @@ describe 'file.download url', ->
         source: "http://localhost/sth"
         target: "a_dir/download_test"
         relax: true
-      , (err, status) ->
+      , (err, {status}) ->
         err.message.should.eql 'Non Absolute Path: target is "a_dir/download_test", SSH requires absolute paths, you must provide an absolute path in the target or the cwd option'
       .promise()

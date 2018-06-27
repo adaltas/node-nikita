@@ -16,14 +16,14 @@ describe 'tools.sysctl', ->
         'vm.swappiness': 10
         'vm.overcommit_memory': 1
       load: false
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .tools.sysctl
       target: "#{scratch}/sysctl.conf"
       properties:
         'vm.swappiness': 10
         'vm.overcommit_memory': 1
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .file.assert
       target: "#{scratch}/sysctl.conf"
@@ -47,7 +47,7 @@ describe 'tools.sysctl', ->
       properties:
         'vm.swappiness': 1
       load: false
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/sysctl.conf"
@@ -70,7 +70,7 @@ describe 'tools.sysctl', ->
         'vm.swappiness': 10
       merge: true
       load: false
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .tools.sysctl
       target: "#{scratch}/sysctl.conf"
@@ -78,7 +78,7 @@ describe 'tools.sysctl', ->
         'vm.overcommit_memory': 1
       merge: true
       load: false
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/sysctl.conf"
@@ -151,7 +151,7 @@ describe 'tools.sysctl', ->
           'vm.overcommit_memory': 1
         merge: true
         load: false
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/sysctl.conf"
@@ -179,7 +179,7 @@ describe 'tools.sysctl', ->
         merge: true
         comment: true
         load: false
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/sysctl.conf"

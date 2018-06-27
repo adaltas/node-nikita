@@ -62,7 +62,7 @@ require('nikita/alt/ldap.acl')({
     ]
   }]
 }, function(err, modified){
-  console.log(err ? err.message : "ACL modified: " + !!modified);
+  console.info(err ? err.message : "ACL modified: " + !!modified);
 });
 ```
 

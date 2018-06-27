@@ -19,9 +19,8 @@ describe 'docker.rmi', ->
       content: "FROM scratch\nCMD ['echo \"hello build from text\"']"
     .docker.rmi
       image: 'nikita/rmi_test'
-    , (err, removed, stdout, stderr) ->
-      return err if err
-      removed.should.be.true()
+    , (err, {status}) ->
+      status.should.be.true() unless err
     .promise()
 
   they 'status unmodifed', (ssh) ->
@@ -35,6 +34,6 @@ describe 'docker.rmi', ->
       image: 'nikita/rmi_test'
     .docker.rmi
       image: 'nikita/rmi_test'
-    , (err, removed) ->
-      removed.should.be.false()
+    , (err, {status}) ->
+      status.should.be.false() unless err
     .promise()

@@ -43,7 +43,8 @@ nikita.system.discover({
       options.strict ?= false
       options.cache ?= false
       if options.cache and @store['nikita:system:type']
-        return callback null, false, 
+        return callback null,
+          status: false, 
           type: @store['nikita:system:type']
           release: @store['nikita:system:release']
       @system.execute
@@ -90,7 +91,10 @@ nikita.system.discover({
           @store['nikita:system:release'] = os.release
         throw Error 'OS not supported' if options.strict and os.type not in ['ubuntu']
       @next (err, status) ->
-        callback err, status, os
+        callback err,
+          status: status, 
+          type: os.type
+          release: os.release
 
 ## Dependencies
 

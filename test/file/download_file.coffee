@@ -16,7 +16,7 @@ describe 'file.download file', ->
       .file.download
         source: "file://#{__filename}"
         target: "#{scratch}/download_test" # Download a non existing file
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/download_test"
@@ -24,7 +24,7 @@ describe 'file.download file', ->
       .file.download
         source: "file://#{__filename}"
         target: "#{scratch}/download_test" # Download on an existing file
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .promise()
 
@@ -36,7 +36,7 @@ describe 'file.download file', ->
       .file.download
         source: "#{__filename}"
         target: "#{scratch}/download_test"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/download_test"
@@ -44,7 +44,7 @@ describe 'file.download file', ->
       .file.download # Download on an existing file
         source: "#{__filename}"
         target: "#{scratch}/download_test"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .promise()
 
@@ -55,14 +55,12 @@ describe 'file.download file', ->
         source: "#{__dirname}/doesnotexists"
         target: "#{scratch}/download_test"
         relax: true
-      , (err, status) ->
+      , (err, {status}) ->
         err.message.should.eql "Does not exist: #{__dirname}/doesnotexists"
         err.code.should.eql 'ENOENT'
       .promise()
 
     they 'into an existing directory', (ssh) ->
-      source = ""
-      target = 
       nikita
         ssh: ssh
       .system.mkdir
@@ -87,7 +85,7 @@ describe 'file.download file', ->
         cache: true
         cache_dir: "#{scratch}/cache_dir"
         md5: '3f104676a5f72de08b811dbb725244ff'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert "#{scratch}/cache_dir/#{path.basename source}"
       .promise()
@@ -102,7 +100,7 @@ describe 'file.download file', ->
         target: "#{scratch}/download_test"
         cache: true
         cache_dir: "#{scratch}/cache_dir"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert "#{scratch}/cache_dir/#{path.basename __filename}"
       .promise()
@@ -121,7 +119,7 @@ describe 'file.download file', ->
         target: "#{scratch}/download_test"
         cache: true
         cache_dir: "#{scratch}/cache_dir"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .file
         content: 'abc'
@@ -131,7 +129,7 @@ describe 'file.download file', ->
         target: "#{scratch}/download_test"
         cache: true
         cache_dir: "#{scratch}/cache_dir"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .promise()
   
@@ -151,7 +149,7 @@ describe 'file.download file', ->
         cache: true
         cache_dir: "#{scratch}/cache_dir"
         md5: 'df8fede7ff71608e24a5576326e41c75'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/cache_dir/a_file"
@@ -175,13 +173,13 @@ describe 'file.download file', ->
         source: "#{scratch}/source"
         target: "#{scratch}/check_md5"
         md5: true
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.download
         source: "#{scratch}/source"
         target: "#{scratch}/check_md5"
         md5: true
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .call ->
         ("[WARN] Hash dont match, source is 'df8fede7ff71608e24a5576326e41c75' and target is 'undefined'" in logs).should.be.true()
@@ -200,6 +198,6 @@ describe 'file.download file', ->
         source: "#{scratch}/a_file"
         target: "a_dir/download_test"
         relax: true
-      , (err, status) ->
+      , (err, {status}) ->
         err.message.should.eql 'Non Absolute Path: target is "a_dir/download_test", SSH requires absolute paths, you must provide an absolute path in the target or the cwd option'
       .promise()

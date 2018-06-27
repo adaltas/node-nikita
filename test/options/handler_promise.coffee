@@ -15,9 +15,10 @@ describe 'options "handler" return promise', ->
             setImmediate ->
               called = true
               resolve()
-      , (err, value) ->
-        value.should.be.false()
-      .next ->
+      , (err, {status}) ->
+        status.should.be.false()
+      .next (err) ->
+        throw err if err
         called.should.be.true()
       .promise()
 
@@ -27,7 +28,7 @@ describe 'options "handler" return promise', ->
         handler: ->
           new Promise (resolve, reject) ->
             setImmediate -> resolve true
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true()
       .promise()
 
@@ -37,19 +38,42 @@ describe 'options "handler" return promise', ->
         handler: ->
           new Promise (resolve, reject) ->
             setImmediate -> resolve false
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false()
       .promise()
 
-    it 'array is converted to arguments', ->
+    it 'pass object', ->
       nikita
       .call
         handler: ->
           new Promise (resolve, reject) ->
-            setImmediate -> resolve [false, 'a value']
-      , (err, status, value) ->
-        status.should.be.false()
-        value.should.eql 'a value'
+            setImmediate -> resolve {status: true, a_key: 'a value'}
+      , (err, {status, a_key}) ->
+        status.should.be.true()
+        a_key.should.eql 'a value'
+      .promise()
+
+    it 'array with first boolean argument is converted to arguments', ->
+      nikita
+      .call
+        handler: ->
+          new Promise (resolve, reject) ->
+            setImmediate -> resolve [true, '2nd arg']
+      , (err, {status}, value) ->
+        status.should.be.true()
+        value.should.eql '2nd arg'
+      .promise()
+
+    it 'array with first object argument is converted to arguments', ->
+      nikita
+      .call
+        handler: ->
+          new Promise (resolve, reject) ->
+            setImmediate -> resolve [{status: true, a_key: 'a value'}, '2nd arg']
+      , (err, {status, a_key}, value) ->
+        status.should.be.true()
+        a_key.should.eql 'a value'
+        value.should.eql '2nd arg'
       .promise()
         
   describe 'reject', ->

@@ -59,4 +59,3 @@ nikita.docker.kill({
 ## Modules Dependencies
 
     docker = require '../misc/docker'
-    util = require 'util'

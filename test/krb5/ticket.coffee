@@ -24,12 +24,12 @@ describe 'krb5.ticket', ->
     .krb5.ticket
       principal: "nikita@#{config.krb5.realm}"
       password: 'myprecious'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .krb5.ticket
       principal: "nikita@#{config.krb5.realm}"
       password: 'myprecious'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .system.execute
       cmd: 'klist -s'

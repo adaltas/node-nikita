@@ -63,6 +63,6 @@ require('nikita').service.start([{
         code_skipped: 3
         arch_chroot: options.arch_chroot
         rootdir: options.rootdir
-      , (err, started) ->
-        @log message: "Service already started", level: 'WARN', module: 'nikita/lib/service/start' if not err and not started
-        @log message: "Service is started", level: 'INFO', module: 'nikita/lib/service/start' if not err and started
+      , (err, {status}) ->
+        @log message: "Service already started", level: 'WARN', module: 'nikita/lib/service/start' if not err and not status
+        @log message: "Service is started", level: 'INFO', module: 'nikita/lib/service/start' if not err and status

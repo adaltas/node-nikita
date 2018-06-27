@@ -16,7 +16,7 @@ describe 'system.limits', ->
     .system.limits
       target: "#{scratch}/me.conf"
       user: 'me'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .file.assert
       target: "#{scratch}/me.conf"
@@ -31,7 +31,7 @@ describe 'system.limits', ->
       user: 'me'
       nofile: 2048
       nproc: 2048
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/me.conf"
@@ -50,7 +50,7 @@ describe 'system.limits', ->
       system: true
       nofile: 2048
       nproc: 2048
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/me.conf"
@@ -70,7 +70,7 @@ describe 'system.limits', ->
       nofile:
         soft: 2048
         hard: 4096
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/me.conf"
@@ -95,7 +95,7 @@ describe 'system.limits', ->
       user: 'me'
       nofile: 2047
       nproc: 2047
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .promise()
 
@@ -113,7 +113,7 @@ describe 'system.limits', ->
       user: 'me'
       nofile: 2048
       nproc: 2048
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
 
@@ -126,13 +126,13 @@ describe 'system.limits', ->
       target: '/proc/sys/fs/file-max'
     .system.execute
       cmd: 'cat /proc/sys/fs/file-max'
-    , (err, status, stdout) ->
+    , (err, {status, stdout}) ->
       return next err if err
       nofile = stdout.trim()
       nofile = Math.round parseInt(nofile)*0.75
     .system.execute
       cmd: 'cat /proc/sys/kernel/pid_max'
-    , (err, status, stdout) ->
+    , (err, {status, stdout}) ->
       return next err if err
       nproc = stdout.trim()
       nproc = Math.round parseInt(nproc)*0.75
@@ -141,7 +141,7 @@ describe 'system.limits', ->
       user: 'me'
       nofile: true
       nproc: true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .call ->
       @file.assert
@@ -161,7 +161,7 @@ describe 'system.limits', ->
       user: 'me'
       nofile: 1000000000
       relax: true
-    , (err, status) ->
+    , (err, {status}) ->
       err.message.should.match /^Invalid nofile options.*$/
     .promise()
 
@@ -173,7 +173,7 @@ describe 'system.limits', ->
       user: 'me'
       nproc: 1000000000
       relax: true
-    , (err, status) ->
+    , (err, {status}) ->
       err.message.should.match /^Invalid nproc options.*$/
     .promise()
 
@@ -187,7 +187,7 @@ describe 'system.limits', ->
         hard: 12
         toto: 24
       relax: true
-    , (err, status) ->
+    , (err, {status}) ->
       err.message.should.match /^Invalid option.*$/
     .promise()
 
@@ -199,7 +199,7 @@ describe 'system.limits', ->
       user: 'me'
       nofile: 2048
       nproc: 'unlimited'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/me.conf"

@@ -12,7 +12,7 @@ describe 'wait.exist', ->
       ssh: ssh
     .wait.exist
       target: "#{scratch}"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false()
     .call ->
       setTimeout ->
@@ -21,6 +21,6 @@ describe 'wait.exist', ->
     .wait.exist
       target: "#{scratch}/a_dir"
       interval: 60
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true()
     .promise()

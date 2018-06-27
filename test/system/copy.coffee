@@ -64,7 +64,7 @@ describe 'system.copy', ->
       .system.copy
         source: "#{__dirname}/../resources/a_dir/a_file"
         target: "#{scratch}/a_target"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/a_target"
@@ -73,7 +73,7 @@ describe 'system.copy', ->
         ssh: ssh
         source: "#{__dirname}/../resources/a_dir/a_file"
         target: "#{scratch}/a_target"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .promise()
 
@@ -85,7 +85,7 @@ describe 'system.copy', ->
       .system.copy # Copy non existing file
         target: "#{scratch}/existing_dir"
         source: "#{__dirname}/../resources/a_dir/a_file"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/existing_dir/a_file"
@@ -100,7 +100,7 @@ describe 'system.copy', ->
       .system.copy
         target: "#{scratch}/a_target_file"
         source: "#{__dirname}/../resources/a_dir/a_file"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/a_target_file"
@@ -108,7 +108,7 @@ describe 'system.copy', ->
       .system.copy
         target: "#{scratch}/a_target_file"
         source: "#{__dirname}/../resources/a_dir/a_file"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .promise()
 
@@ -127,7 +127,7 @@ describe 'system.copy', ->
         target: "#{scratch}/target_file"
         source: "#{scratch}/source_file"
         mode: 0o0750
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/target_file"
@@ -235,7 +235,7 @@ describe 'system.copy', ->
       .system.copy
         source: "#{scratch}/source"
         target: "#{scratch}/target_1"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert "#{scratch}/target_1/a_dir/a_file"
       .file.assert "#{scratch}/target_1/a_file"
@@ -245,7 +245,7 @@ describe 'system.copy', ->
       .system.copy
         source: "#{scratch}/source"
         target: "#{scratch}/target_2"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert "#{scratch}/target_2/source/a_dir/a_file"
       .file.assert "#{scratch}/target_2/source/a_file"
@@ -261,7 +261,7 @@ describe 'system.copy', ->
       .system.copy
         source: "#{scratch}/source/"
         target: "#{scratch}/target_1"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert "#{scratch}/target_1/a_dir/a_file"
       .file.assert "#{scratch}/target_1/a_file"
@@ -271,7 +271,7 @@ describe 'system.copy', ->
       .system.copy
         source: "#{scratch}/source/"
         target: "#{scratch}/target_2"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert "#{scratch}/target_2/a_dir/a_file"
       .file.assert "#{scratch}/target_2/a_file"
@@ -363,7 +363,7 @@ describe 'system.copy', ->
       .system.copy
         source: "#{__dirname}/../*"
         target: "#{scratch}"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .call (_, callback) ->
         glob ssh, "#{scratch}/**", dot: true, (err, files) ->

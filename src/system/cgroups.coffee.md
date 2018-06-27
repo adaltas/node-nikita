@@ -104,7 +104,7 @@ docker/* are ignored.
         shy: true
         cmd: 'cat /etc/system-release'
         code_skipped: 1
-      , (err, status, stdout, stderr) ->
+      , (err, {status, stdout}) ->
         return unless status
         [line] = string.lines stdout
         if /CentOS/.test line
@@ -123,7 +123,7 @@ docker/* are ignored.
       , ->
         @system.execute
           cmd: 'cgsnapshot -s 2>&1'
-        , (err, status, stdout, stderr) ->
+        , (err, {status, stdout}) ->
           throw err if err
           cgconfig = misc.cgconfig.parse stdout
           cgconfig.mounts ?= []
@@ -154,7 +154,7 @@ docker/* are ignored.
         options.target ?= '/etc/cgconfig.conf' if @store['nikita:system:type'] is 'redhat'
         @file options,
           content: misc.cgconfig.stringify(options.cgconfig)
-      @next (err, status) -> callback err, status, 
+      @next (err, {status}) -> callback err, status: status, cgroups:
         cpu_path: @store['nikita:cgroups:cpu_path']
         mount: @store['nikita:cgroups:mount']
         

@@ -14,7 +14,7 @@ describe 'file.yaml', ->
     .file.yaml
       content: user: preference: color: 'rouge'
       target: "#{scratch}/user.yml"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/user.yml"
@@ -31,7 +31,7 @@ describe 'file.yaml', ->
       content: user: preference: language: 'french'
       target: "#{scratch}/user.yml"
       merge: true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/user.yml"
@@ -45,7 +45,7 @@ describe 'file.yaml', ->
       content: user: preference: color: 'violet', age: undefined, gender: null
       target: "#{scratch}/user.yml"
       merge: true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/user.yml"
@@ -64,7 +64,7 @@ describe 'file.yaml', ->
         language: null
       target: "#{scratch}/user.yml"
       merge: true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/user.yml"
@@ -83,7 +83,7 @@ describe 'file.yaml', ->
         language: 'node'
         name: null
       merge: true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/user.yml"
@@ -101,7 +101,7 @@ describe 'file.yaml', ->
         group: null
       target: "#{scratch}/user.yml"
       merge: true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/user.yml"

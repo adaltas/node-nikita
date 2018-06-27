@@ -85,7 +85,7 @@ Note, this doesnt check wether a service is installed or not.
         code_skipped: 3
         arch_chroot: options.arch_chroot
         rootdir: options.rootdir
-      , (err, status) ->
+      , (err, {status}) ->
         throw Error "Unsupported Loader" if err?.code is 2
         return if err
         if options.started?

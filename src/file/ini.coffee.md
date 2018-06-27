@@ -88,7 +88,7 @@ require('nikita').ini({
         target: options.target
         encoding: options.encoding
         relax: true
-      , (err, data) ->
+      , (err, {data}) ->
         return if err?.code is 'ENOENT'
         throw err if err
         org_props = misc.merge parse(data, options)
@@ -99,7 +99,7 @@ require('nikita').ini({
         target: options.source
         encoding: options.encoding
         relax: true
-      , (err, data) ->
+      , (err, {data}) ->
         return if err?.code is 'ENOENT'
         throw err if err
         return unless options.source

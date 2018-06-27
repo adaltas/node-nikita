@@ -54,7 +54,7 @@ describe 'file.render', ->
         engine: 'nunjunks'
         target: "#{scratch}/render.txt"
         context: who: 'you'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/render.txt"
@@ -71,7 +71,7 @@ describe 'file.render', ->
         source: "#{scratch}/source.j2"
         target: "#{scratch}/target.txt"
         context: who: 'you'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/target.txt"
@@ -96,7 +96,7 @@ describe 'file.render', ->
           randObject: toto: 0
           who: 'world'
           anInt: 42
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/target.txt"
@@ -124,7 +124,7 @@ describe 'file.render', ->
           fullObject: toto: 0
           emptyString: ''
           fullString: 'succeed'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/target.txt"
@@ -145,7 +145,7 @@ describe 'file.render', ->
           anInt: 42
           arr: ['titi', 'toto']
         filters: isNum: (obj) -> return typeof obj is 'number'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/target.txt"
@@ -165,7 +165,7 @@ describe 'file.render', ->
           who: 'you'
           anInt: 42
         filters: isNum: (obj) -> return typeof obj is 'number'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/target.txt"

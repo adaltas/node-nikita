@@ -36,8 +36,8 @@ require('nikita').krb5.addprinc({
   kadmin_principal: 'me/admin@MY_REALM',
   kadmin_password: 'pass',
   kadmin_server: 'localhost'
-}, function(err, modified){
-  console.log(err ? err.message : 'Principal created or modified: ' + !!modified);
+}, function(err, {status}){
+  console.log(err ? err.message : 'Principal created or modified: ' + !!status);
 });
 ```
 

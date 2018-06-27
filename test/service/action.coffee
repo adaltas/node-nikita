@@ -18,16 +18,16 @@ describe 'service.action', ->
       name: config.service.name
       srv_name: config.service.srv_name
       action: 'start'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true()
     .service.status
       name: config.service.srv_name
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true()
     .service # Detect already started
       srv_name: config.service.srv_name
       action: 'start'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false()
     .promise()
 
@@ -40,16 +40,16 @@ describe 'service.action', ->
       name: config.service.name
       srv_name: config.service.srv_name
       action: 'stop'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .service.status
       name: config.service.srv_name
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .service # Detect already stopped
       srv_name: config.service.srv_name
       action: 'stop'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
 
@@ -65,13 +65,13 @@ describe 'service.action', ->
     .service
       srv_name: config.service.srv_name
       action: 'restart'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true()
     .service.stop
       name: config.service.srv_name
     .service
       srv_name: config.service.srv_name
       action: 'restart'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false()
     .promise()

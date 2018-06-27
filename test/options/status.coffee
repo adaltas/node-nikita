@@ -4,21 +4,19 @@ test = require '../test'
 
 describe 'options "status"', ->
   
-  it 'dont pass status in callback', ->
+  it 'pass arguments', ->
     nikita
     .call status: false, (_, callback) ->
-      callback null, 'a message'
-    , (err, message) ->
+      callback null, status: true, message: 'a message'
+    , (err, {status, message}) ->
+      status.should.be.true()
       message.should.eql 'a message' unless err
     .promise()
       
-  it 'dont modify status', ->
+  it 'dont modify session status', ->
     nikita
-    .call ->
-      @call status: false, (_, callback) ->
-        callback null, 'something'
-    , (err, status) ->
-      status.should.be.false() unless err
+    .call status: false, (_, callback) ->
+      callback null, status: true
     .call ->
       @status().should.be.false()
     .promise()

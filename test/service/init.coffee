@@ -85,7 +85,7 @@ describe 'service.init', ->
           source: "#{__dirname}/crond-systemd.j2"
           context: description: 'Command Scheduler Test 1'
           target: '/usr/lib/systemd/system/crond.service'
-        , (err, status) ->
+        , (err, {status}) ->
           status.should.be.true() unless err
         @file.assert '/usr/lib/systemd/system/crond.service'
         @service.start

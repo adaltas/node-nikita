@@ -29,11 +29,11 @@ describe 'system.chmod', ->
     .system.chmod
       target: "#{scratch}/a_file"
       mode: 0o0744
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .system.chmod
       target: "#{scratch}/a_file"
       mode: 0o0744
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()

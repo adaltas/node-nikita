@@ -5,10 +5,13 @@
 
 Backward incompatibilities:
 
+* context: 2nd arg in callback is now an object
+* file.types.etc_group.read: rename output params user_list ot users
 * file.render: remove eco dependency
 
 Management:
 
+* misc.doc: remove unused module
 * package: remove fs.realpath dependency
 * wrap: remove ssh2-connect dependency
 * package: remove backmeup, ftp and jsftp dependencies

@@ -14,7 +14,7 @@ describe 'docker.checksum', ->
   scratch = test.scratch @
 
   they 'checksum on existing repository', (ssh) ->
-    checksum = null
+    image_id = null
     nikita
       ssh: ssh
       docker: config.docker
@@ -23,13 +23,13 @@ describe 'docker.checksum', ->
     .docker.build
       image: 'nikita/checksum'
       content: "FROM scratch\nCMD ['echo \"hello build from text #{Date.now()}\"']"
-    , (err, executed, _checksum, stdout, stderr) ->
-      checksum = _checksum.trim() unless err
+    , (err, {image}) ->
+      image_id = image unless err
     .docker.checksum
       image: 'nikita/checksum'
       tag: 'latest'
-    , (err, executed, checksum_valid) ->
-      checksum_valid.should.startWith "sha256:#{checksum}" unless err
+    , (err, {checksum}) ->
+      checksum.should.startWith "sha256:#{image_id}" unless err
     .docker.rmi
       image: 'nikita/checksum'
     .promise()
@@ -39,8 +39,8 @@ describe 'docker.checksum', ->
       ssh: ssh
       docker: config.docker
     .docker.checksum
-      image: 'nikita/checksum'
+      image: 'nikita/invalid_checksum'
       tag: 'latest'
-    , (err, executed, checksum) ->
-      checksum.should.be.false()
+    , (err, {checksum}) ->
+      (checksum is undefined).should.be.true() unless err
     .promise()

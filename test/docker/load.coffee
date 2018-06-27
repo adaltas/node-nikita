@@ -34,14 +34,14 @@ describe 'docker.load', ->
       image: 'nikita/load_test'
       tag: 'latest'
       input: "#{scratch}/nikita_load.tar"
-    , (err, loaded, stdout, stderr) ->
-      loaded.should.be.true() unless err
+    , (err, {status}) ->
+      status.should.be.true() unless err
     .docker.rmi
       image: 'nikita/load_test'
     .promise()
 
   they 'not loading if checksum', (ssh) ->
-    checksum = null
+    expect_checksum = null
     nikita
       ssh: ssh
       docker: config.docker
@@ -51,8 +51,8 @@ describe 'docker.load', ->
       image: 'nikita/load_test'
       tag: 'latest'
       content: "FROM alpine\nCMD ['echo \"docker.build #{Date.now()}\"']"
-    , (err, execute, _checksum) ->
-      checksum = _checksum
+    , (err, {status, checksum}) ->
+      expect_checksum = checksum
     .docker.save
       image: 'nikita/load_test'
       tag: 'latest'
@@ -60,9 +60,9 @@ describe 'docker.load', ->
     .call ->
       @docker.load
         input: "#{scratch}/nikita_load.tar"
-        checksum: checksum
-      , (err, loaded) ->
-        loaded.should.be.false() unless err
+        checksum: expect_checksum
+      , (err, {status}) ->
+        status.should.be.false() unless err
     .promise()
 
   they 'status not modified if same image', (ssh) ->
@@ -87,6 +87,6 @@ describe 'docker.load', ->
     .docker.load
       image: 'nikita/nikita_load:latest'
       input: "#{scratch}/load.tar"
-    , (err, loaded) ->
-      loaded.should.be.false()
+    , (err, {status}) ->
+      status.should.be.false()
     .promise()

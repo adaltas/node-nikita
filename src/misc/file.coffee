@@ -67,9 +67,9 @@ module.exports = file =
           .on 'end', ->
             callback err, shasum.digest 'hex'
       else
-        ssh2fs.stat ssh, path, (err, stat) ->
+        ssh2fs.stat ssh, path, (err, stats) ->
           return callback err if err
-          return callback() if stat.isDirectory()
+          return callback() if stats.isDirectory()
           exec
             cmd: """
             which openssl >/dev/null || exit 2
@@ -81,15 +81,15 @@ module.exports = file =
             err = Error "Command does not exist: openssl" if err?.code is 2
             callback err, stdout?.trim(), stderr?.trim()
     hashs = []
-    ssh2fs.stat ssh, file, (err, stat) ->
+    ssh2fs.stat ssh, file, (err, stats) ->
       if err?.code is 'ENOENT'
         err = Error "Does not exist: #{file}"
         err.code = 'ENOENT'
         return callback err
       return callback err if err
-      if stat.isFile()
+      if stats.isFile()
         return hasher ssh, file, callback
-      else if stat.isDirectory()
+      else if stats.isDirectory()
         compute = (files) ->
           files.sort()
           each files
@@ -102,7 +102,7 @@ module.exports = file =
             return callback err if err
             switch hashs.length
               when 0
-                if stat.isFile() 
+                if stats.isFile() 
                 then callback Error "Does not exist: #{file}"
                 else callback null, crypto.createHash(algorithm).update('').digest('hex')
               when 1

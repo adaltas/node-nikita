@@ -8,7 +8,7 @@ describe 'ping', ->
   they 'arguments', (ssh) ->
     nikita
       ssh: ssh
-    .core.ping (err, status, message) ->
+    .core.ping (err, {status, message}) ->
       (err is undefined).should.be.true()
       status.should.be.true()
       message.should.eql 'pong'
@@ -20,7 +20,7 @@ describe 'ping', ->
       ssh: ssh
     .on 'text', (log) ->
       logs.push log
-    .core.ping (err, status, message) ->
+    .core.ping (err, {status, message}) ->
       logs.map( (log) -> log.message).should.eql [
         'Entering ping'
         'Sending pong'

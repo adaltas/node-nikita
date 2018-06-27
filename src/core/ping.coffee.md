@@ -26,4 +26,4 @@ This constitutes a dummy action created for demonstration purposes.
       options.content ?= 'pong'
       setImmediate =>
         @log message: "Sending #{options.content}", level: 'DEBUG', module: 'nikita/lib/assert'
-        callback null, true, options.content
+        callback null, status: true, message: options.content

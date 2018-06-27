@@ -17,7 +17,7 @@ describe 'tools.rubygems.fetch', ->
       name: 'execjs'
       version: '2.7.0'
       cwd: "#{scratch}"
-    , (err, status, filename, filepath) ->
+    , (err, {status, filename, filepath}) ->
       throw err if err
       status.should.be.true()
       filename.should.eql "execjs-2.7.0.gem"
@@ -33,7 +33,7 @@ describe 'tools.rubygems.fetch', ->
     .tools.rubygems.fetch
       name: 'execjs'
       cwd: "#{scratch}"
-    , (err, status, filename, filepath) ->
+    , (err, {status, filename, filepath}) ->
       throw err if err
       status.should.be.true()
       filename.should.eql "execjs-2.7.0.gem"

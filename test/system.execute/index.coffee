@@ -14,10 +14,10 @@ describe 'system.execute', ->
       ssh: ssh
     .system.execute
       cmd: 'text=yes; echo $text'
-    , (err, status, stdout, stderr) ->
+    , (err, {status, stdout}) ->
       status.should.be.true() unless err
       stdout.should.eql 'yes\n' unless err
-    .system.execute 'text=yes; echo $text', (err, status, stdout, stderr) ->
+    .system.execute 'text=yes; echo $text', (err, {status, stdout}) ->
       status.should.be.true() unless err
       stdout.should.eql 'yes\n' unless err
     .promise()
@@ -29,12 +29,12 @@ describe 'system.execute', ->
       @store['test:a_key'] = 'test context'
     .system.execute
       cmd: -> "text='#{@store['test:a_key']}'; echo $text"
-    , (err, status, stdout, stderr) ->
+    , (err, {status, stdout}) ->
       stdout.should.eql 'test context\n' unless err
     .system.execute
       a_key: 'test options'
       cmd: (options) -> "text='#{options.a_key}'; echo $text"
-    , (err, status, stdout, stderr) ->
+    , (err, {status, stdout}) ->
       stdout.should.eql 'test options\n' unless err
     .promise()
 
@@ -60,7 +60,7 @@ describe 'system.execute', ->
     .system.execute
       cmd: "cat #{__filename} | grep #{search2}"
       stdout: out
-    , (err, status, stdout, stderr) ->
+    , (err) ->
       unpiped.should.eql 2
       data.should.containEql search1
       data.should.containEql search2
@@ -72,7 +72,7 @@ describe 'system.execute', ->
     .system.execute
       cmd: "echo 'some text' | grep nothing"
       relax: true
-    , (err, status, stdout, stderr) ->
+    , (err, {stdout, stderr}) ->
       stdout.should.eql '' unless err
       stderr.should.eql '' unless err
     .promise()
@@ -83,7 +83,7 @@ describe 'system.execute', ->
       ssh: ssh
     .system.execute
       cmd: "exit 42"
-    .next (err, status) ->
+    .next (err) ->
       err.message.should.eql 'Invalid Exit Code: 42'
     .system.execute
       cmd: "exit 42"
@@ -98,13 +98,13 @@ describe 'system.execute', ->
       cmd: "mkdir #{scratch}/my_dir"
       code: 0
       code_skipped: 1
-    , (err, status, stdout, stderr) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .system.execute
       cmd: "mkdir #{scratch}/my_dir"
       code: 0
       code_skipped: 1
-    , (err, status, stdout, stderr) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
 
@@ -114,13 +114,13 @@ describe 'system.execute', ->
     .system.execute
       cmd: 'text=yes; echo $text'
       if_exists: __dirname
-    , (err, status, stdout, stderr) ->
+    , (err, {status, stdout}) ->
       status.should.be.true()
       stdout.should.eql 'yes\n'
     .system.execute
       cmd: 'text=yes; echo $text'
       if_exists: "__dirname/toto"
-    , (err, status, stdout, stderr) ->
+    , (err, {status, stdout}) ->
       status.should.be.false()
       should.not.exist stdout
     .promise()
@@ -131,7 +131,7 @@ describe 'system.execute', ->
     .system.execute
       cmd: "ls -l #{__dirname}"
       unless_exists: __dirname
-    , (err, status, stdout, stderr) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
 
@@ -146,7 +146,7 @@ describe 'system.execute', ->
         echo ' monde  ' >&2
         """
         trim: true
-      , (err, status, stdout, stderr) ->
+      , (err, {stdout, stderr}) ->
         stdout.should.eql 'bonjour' unless err
         stderr.should.eql 'monde' unless err
       .promise()
@@ -161,7 +161,7 @@ describe 'system.execute', ->
         """
         stdout_trim: true
         stderr_trim: true
-      , (err, status, stdout, stderr) ->
+      , (err, {stdout, stderr}) ->
         stdout.should.eql 'bonjour' unless err
         stderr.should.eql 'monde' unless err
       .promise()
@@ -177,7 +177,7 @@ describe 'system.execute', ->
       .on 'stderr', (log) -> stderr = log
       .system.execute
         cmd: "echo 'to stderr' >&2; echo 'to stdout';"
-      , (err, status) ->
+      , (err) ->
         stdin.message.should.match /^echo.*;$/
         stdout.message.should.eql 'to stdout\n'
         stderr.message.should.eql 'to stderr\n'
@@ -197,7 +197,7 @@ describe 'system.execute', ->
         cmd: "echo 'to stderr' >&2; echo 'to stdout';"
         stdout_log: false
         stderr_log: false
-      , (err, status) ->
+      , (err) ->
         stdin.message.should.match /^echo.*;$/
         (stdout is undefined).should.be.true()
         stdout_stream.length.should.eql 0
@@ -215,7 +215,7 @@ describe 'system.execute', ->
         sh -c '>&2 echo "Some Error"; exit 2'
         """
         relax: true
-      , (err, _, stdout, stderr) ->
+      , (err, {stdout, stderr}) ->
         err.message.should.eql 'Invalid Exit Code: 2'
         stdout.should.eql ''
         stderr.should.eql 'Some Error\n'

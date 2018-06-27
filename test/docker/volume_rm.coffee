@@ -25,10 +25,10 @@ describe 'docker.volume_rm', ->
       name: 'my_volume'
     .docker.volume_rm
       name: 'my_volume'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .docker.volume_rm
       name: 'my_volume'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()

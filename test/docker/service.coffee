@@ -27,7 +27,7 @@ ip = (ssh, machine, callback) ->
       echo '127.0.0.1'
     fi
     """
-    , (err, executed, stdout, stderr) ->
+    , (err, {stdout}) ->
       return callback err if err
       ipadress = stdout.trim()
       return callback null, ipadress
@@ -68,13 +68,13 @@ describe 'docker.service', ->
       image: 'httpd'
       port: '499:80'
       relax: true
-    , (err, executed) ->
+    , (err) ->
       err.message.should.eql 'Missing container name'
     .docker.service
       name: 'toto'
       port: '499:80'
       relax: true
-    , (err, executed) ->
+    , (err) ->
       err.message.should.eql 'Missing image'
     .docker.rm
       force: true
@@ -96,8 +96,8 @@ describe 'docker.service', ->
       name: 'nikita_test'
       image: 'httpd'
       port: '499:80'
-    , (err, executed, out, serr) ->
-      executed.should.be.false()
+    , (err, {status}) ->
+      status.should.be.false()
     .docker.rm
       force: true
       container: 'nikita_test'

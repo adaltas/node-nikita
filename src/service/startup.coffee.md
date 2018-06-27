@@ -66,7 +66,7 @@ require('nikita').service.startup([{
         fi
         """
         shy: true
-      , (err, _, stdout) ->
+      , (err, {stdout}) ->
         throw err if err
         options.cmd = stdout.trim()
         throw Error "Unsupported Loader" unless options.cmd in ['systemctl', 'chkconfig', 'update-rc']
@@ -88,7 +88,7 @@ require('nikita').service.startup([{
         code_skipped: 3
         arch_chroot: options.arch_chroot
         rootdir: options.rootdir
-      , (err, status) ->
+      , (err, {status}) ->
         err = Error "Startup Enable Failed: #{options.name}" if err and options.startup
         err = Error "Startup Disable Failed: #{options.name}" if err and not options.startup
         throw err if err
@@ -103,20 +103,20 @@ require('nikita').service.startup([{
           if: -> options.cmd is 'chkconfig'
           cmd: "chkconfig --list #{options.name}"
           code_skipped: 1
-        , (err, registered, stdout, stderr) ->
+        , (err, {status, stdout, stderr}) ->
           return callback err if err
           # Invalid service name return code is 0 and message in stderr start by error
           if /^error/.test stderr
             @log message: "Invalid chkconfig name for \"#{options.name}\"", level: 'ERROR', module: 'mecano/lib/service/startup'
             throw Error "Invalid chkconfig name for `#{options.name}`"
           current_startup = ''
-          if registered
+          if status
             for c in stdout.split(' ').pop().trim().split '\t'
               [level, status] = c.split ':'
               current_startup += level if ['on', 'marche'].indexOf(status) > -1
           return callback() if options.startup is true and current_startup.length
           return callback() if options.startup is current_startup
-          return callback() if registered and options.startup is false and current_startup is ''
+          return callback() if status and options.startup is false and current_startup is ''
           @call if: options.startup, ->
             cmd = "chkconfig --add #{options.name};"
             if typeof options.startup is 'string'
@@ -162,7 +162,7 @@ require('nikita').service.startup([{
         code_skipped: 3
         arch_chroot: options.arch_chroot
         rootdir: options.rootdir
-      , (err, status) ->
+      , (err, {status}) ->
         throw err if err
         message = if options.startup then 'activated' else 'disabled'
         @log if status

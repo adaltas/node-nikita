@@ -16,12 +16,12 @@ describe 'file', ->
       .file
         target: "#{scratch}/file"
         content: 'Hello'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file
         target: "#{scratch}/file"
         content: 'Hello'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .file.assert
         target: "#{scratch}/file"
@@ -52,7 +52,7 @@ describe 'file', ->
       .file
         target: "#{scratch}/file"
         content: 'Hello'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .promise()
 
@@ -65,12 +65,12 @@ describe 'file', ->
       .file
         target: "#{scratch}/a_target"
         source: "#{scratch}/a_source"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file
         target: "#{scratch}/a_target"
         source: "#{scratch}/a_source"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .file.assert
         target: "#{scratch}/a_source"
@@ -86,7 +86,7 @@ describe 'file', ->
       .file
         target: "#{scratch}/empty_file"
         content: ''
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/empty_file"
@@ -100,7 +100,7 @@ describe 'file', ->
         target: "#{scratch}/empty_file"
         content: ''
         unless_exists: true
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/empty_file"
@@ -112,7 +112,7 @@ describe 'file', ->
         target: "#{scratch}/empty_file"
         content: ''
         unless_exists: true
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .file.assert
         target: "#{scratch}/empty_file"
@@ -125,7 +125,7 @@ describe 'file', ->
       .file
         target: "#{scratch}/a_file"
         content: 123
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/a_file"
@@ -138,7 +138,7 @@ describe 'file', ->
       .file
         target: "#{scratch}/a/missing/dir/a_file"
         content: 'hello'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/a/missing/dir/a_file"
@@ -252,13 +252,13 @@ describe 'file', ->
         target: "#{scratch}/a_file"
         content: 'ok'
         mode: 0o0705
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file
         target: "#{scratch}/a_file"
         content: 'ok'
         mode: 0o0705
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .promise()
 
@@ -289,7 +289,7 @@ describe 'file', ->
         to: '# to'
         content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
         replace: 'my friend'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/fromto.md"
@@ -308,7 +308,7 @@ describe 'file', ->
         to: '# to'
         append: true
         replace: 'my friend'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true()
       .file.assert
         target: "#{scratch}/fromto.md"
@@ -320,7 +320,7 @@ describe 'file', ->
         append: true
         replace: 'my best friend'
         eof: true
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true()
       .file.assert
         target: "#{scratch}/fromto.md"
@@ -335,7 +335,7 @@ describe 'file', ->
         from: '# from'
         content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
         replace: 'my friend'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/fromto.md"
@@ -349,7 +349,7 @@ describe 'file', ->
         to: '# to'
         content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
         replace: 'my friend'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/fromto.md"
@@ -394,13 +394,13 @@ describe 'file', ->
         match: 'lets try to replace that one'
         content: 'here we are\nlets try to replace that one\nyou coquin'
         replace: 'my friend'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file
         target: "#{scratch}/fromto.md"
         match: 'my friend'
         replace: 'my friend'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .file.assert
         target: "#{scratch}/fromto.md"
@@ -415,7 +415,7 @@ describe 'file', ->
         match: 'replace'
         content: 'replace that one\nand\nreplace this one\nand not this one'
         replace: 'switch'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/fromto.md"
@@ -431,13 +431,13 @@ describe 'file', ->
         content: 'email=david(at)adaltas(dot)com\nusername=root'
         match: /(username)=(.*)/
         replace: '$1=david (was $2)'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file # Without a match
         target: "#{scratch}/replace"
         match: /this wont work/
         replace: '$1=david (was $2)'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .file.assert
         target: "#{scratch}/replace"
@@ -452,7 +452,7 @@ describe 'file', ->
         content: 'here we are\nlets try to replace that one\nyou coquin'
         replace: ['my friend, $1']
         target: "#{scratch}/replace"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/replace"
@@ -467,13 +467,13 @@ describe 'file', ->
         match: /^property=.*$/mg
         content: '#A config file\n#property=30\nproperty=10\nproperty=20\n#End of Config'
         replace: 'property=50'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file
         target: "#{scratch}/replace"
         match: /^property=50$/mg
         replace: 'property=50'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .file.assert
         target: "#{scratch}/replace"
@@ -490,13 +490,13 @@ describe 'file', ->
         target: "#{scratch}/a_file"
         match: /(.*content)/
         replace: 'a text'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file
         target: "#{scratch}/a_file"
         match: /(.*content)/
         replace: 'a text'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .file.assert
         target: "#{scratch}/a_file"
@@ -581,7 +581,7 @@ describe 'file', ->
           match: /.*coquin/
           replace: 'new coquin'
           place_before: true
-        , (err, status) ->
+        , (err, {status}) ->
           status.should.be.true() unless err
         .file.assert
           target: "#{scratch}/file"
@@ -592,7 +592,7 @@ describe 'file', ->
           match: /.*coquin/
           replace: 'new coquin'
           place_before: true
-        , (err, status) ->
+        , (err, {status}) ->
           status.should.be.false() unless err
         .file.assert
           target: "#{scratch}/file"
@@ -610,7 +610,7 @@ describe 'file', ->
           match: "you coquin"
           replace: 'new coquin'
           place_before: true
-        , (err, status) ->
+        , (err, {status}) ->
           status.should.be.true() unless err
         .file.assert
           target: "#{scratch}/file"
@@ -621,7 +621,7 @@ describe 'file', ->
           match: "new coquin"
           replace: 'new coquin'
           place_before: true
-        , (err, status) ->
+        , (err, {status}) ->
           status.should.be.false() unless err
         .file.assert
           target: "#{scratch}/file"
@@ -640,7 +640,7 @@ describe 'file', ->
           match: /.*coquin/
           replace: 'new coquin'
           append: true
-        , (err, status) ->
+        , (err, {status}) ->
           status.should.be.true() unless err
         .file.assert
           target: "#{scratch}/file"
@@ -651,7 +651,7 @@ describe 'file', ->
           match: /.*coquin/
           replace: 'new coquin'
           append: true
-        , (err, status) ->
+        , (err, {status}) ->
           status.should.be.false() unless err
         .file.assert
           target: "#{scratch}/file"
@@ -670,7 +670,7 @@ describe 'file', ->
         match: /will never work/
         replace: 'Add this line'
         append: true
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/file"
@@ -691,7 +691,7 @@ describe 'file', ->
           match: /will never work/
           replace: 'Add this line'
           place_before: /^.*we.*$/m
-        , (err, status) ->
+        , (err, {status}) ->
           status.should.be.true() unless err
         .file.assert
           target: "#{scratch}/file"
@@ -710,7 +710,7 @@ describe 'file', ->
           match: /will never work/
           replace: 'Add this line'
           append: /^.*we.*$/m
-        , (err, status) ->
+        , (err, {status}) ->
           status.should.be.true() unless err
         .file.assert
           target: "#{scratch}/file"
@@ -730,7 +730,7 @@ describe 'file', ->
           match: /will never work/
           replace: 'Add this line'
           place_before: /^.*we.*$/gm
-        , (err, status) ->
+        , (err, {status}) ->
           status.should.be.true() unless err
         .file.assert
           target: "#{scratch}/file"
@@ -749,7 +749,7 @@ describe 'file', ->
           match: /will never work/
           replace: 'Add this line'
           append: /^.*we.*$/gm
-        , (err, status) ->
+        , (err, {status}) ->
           status.should.be.true() unless err
         .file.assert
           target: "#{scratch}/file"
@@ -767,7 +767,7 @@ describe 'file', ->
         match: /will never work/
         replace: 'Add this line'
         append: 'we'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/file"
@@ -787,7 +787,7 @@ describe 'file', ->
           match: /will never be found/
           replace: 'Add this line'
           place_before: true
-        , (err, status) ->
+        , (err, {status}) ->
           status.should.be.true() unless err
         .file.assert
           target: "#{scratch}/file"
@@ -805,7 +805,7 @@ describe 'file', ->
           match: /will never be found/
           replace: 'Add this line'
           append: true
-        , (err, status) ->
+        , (err, {status}) ->
           status.should.be.true() unless err
         .file.assert
           target: "#{scratch}/file"
@@ -822,7 +822,7 @@ describe 'file', ->
           match: /will never be found/
           replace: 'Add this line'
           place_before: true
-        , (err, status) ->
+        , (err, {status}) ->
           status.should.be.true() unless err
         .file.assert
           target: "#{scratch}/file"
@@ -837,7 +837,7 @@ describe 'file', ->
           match: /will never be found/
           replace: 'Add this line'
           append: true
-        , (err, status) ->
+        , (err, {status}) ->
           status.should.be.true() unless err
         .file.assert
           target: "#{scratch}/file"
@@ -854,13 +854,13 @@ describe 'file', ->
         target: "#{scratch}/a_file"
         replace: 'Add this line'
         append: true
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file
         target: "#{scratch}/a_file"
         replace: 'Add this line'
         append: true
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .file
         target: "#{scratch}/a_file"
@@ -868,7 +868,7 @@ describe 'file', ->
           replace: 'Add this line'
           append: true
         ]
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .file.assert
         target: "#{scratch}/a_file"
@@ -888,7 +888,7 @@ describe 'file', ->
         target: "#{scratch}/file"
         content: 'Hello'
         backup: '.bck'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .file.assert
         target: "#{scratch}/file.bck"
@@ -897,7 +897,7 @@ describe 'file', ->
         target: "#{scratch}/file"
         content: 'Hello Node'
         backup: '.bck'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/file.bck"
@@ -910,7 +910,7 @@ describe 'file', ->
         target: "#{scratch}/new_file"
         content: 'Hello'
         backup: true
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .promise()
 
@@ -925,7 +925,7 @@ describe 'file', ->
         content: 'Hello'
         mode: 0o0644
         backup: '.bck1'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/new_file_perm.bck1"
@@ -937,7 +937,7 @@ describe 'file', ->
         backup: '.bck2'
         mode: 0o0644
         backup_mode: 0o0640
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/new_file_perm.bck2"
@@ -965,7 +965,7 @@ describe 'file', ->
           match: /^(friends).*$/m
           replace: "$1: me"
         ]
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/file"
@@ -991,7 +991,7 @@ describe 'file', ->
           match: /^(friends).*$/m
           replace: "$1: me"
         ]
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/file"
@@ -1018,7 +1018,7 @@ describe 'file', ->
           match: /^(friends).*$/m
           replace: "$1: you"
         ]
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/file"
@@ -1068,7 +1068,7 @@ describe 'file', ->
         target: "#{scratch}/file"
         content: 'this is\r\nsome content'
         eof: true
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/file"
@@ -1083,7 +1083,7 @@ describe 'file', ->
         target: "#{scratch}/file"
         content: 'this is some content'
         eof: true
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/file"

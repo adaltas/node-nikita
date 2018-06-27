@@ -155,16 +155,16 @@ nikita.docker({
         cmd: docker.wrap options, "ps -a | grep '#{options.name}'"
         code_skipped: 1
         shy: true
-      , (err, running) ->
+      , (err, {status}) ->
         docker.callback arguments...
-        @log message: "Container already running. Skipping", level: 'INFO', module: 'nikita/docker/run' if running
+        @log message: "Container already running. Skipping", level: 'INFO', module: 'nikita/docker/run' if status
       @system.execute
         cmd: docker.wrap options, cmd
         if: ->
           not options.name? or @status(-1) is false
-      , (err, running) ->
+      , (err, {status}) ->
         docker.callback arguments...
-        @log message: "Container now running", level: 'WARN', module: 'nikita/docker/run' if running
+        @log message: "Container now running", level: 'WARN', module: 'nikita/docker/run' if status
         callback arguments...
 
 ## Modules Dependencies

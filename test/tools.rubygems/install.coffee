@@ -17,7 +17,7 @@ describe 'tools.rubygems.install', ->
       name: 'execjs'
     .tools.rubygems.install
       name: 'execjs'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .promise()
 
@@ -31,7 +31,7 @@ describe 'tools.rubygems.install', ->
       name: 'execjs'
     .tools.rubygems.install
       name: 'execjs'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
 
@@ -47,7 +47,7 @@ describe 'tools.rubygems.install', ->
     .tools.rubygems.install
       name: 'execjs'
       version: '2.7.0'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .tools.rubygems.install
       name: 'execjs'
@@ -57,7 +57,7 @@ describe 'tools.rubygems.install', ->
     .tools.rubygems.install
       name: 'execjs'
       version: '2.7.0'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
 
@@ -74,12 +74,12 @@ describe 'tools.rubygems.install', ->
     .tools.rubygems.install
       name: 'execjs'
       source: "#{scratch}/execjs-2.7.0.gem"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .tools.rubygems.install
       name: 'execjs'
       version: '2.7.0'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
 
@@ -96,16 +96,16 @@ describe 'tools.rubygems.install', ->
     .tools.rubygems.install
       name: 'execjs'
       source: "#{scratch}/*.gem"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .tools.rubygems.install
       name: 'execjs'
       source: "#{scratch}/*.gem"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .tools.rubygems.install
       name: 'execjs'
       version: '2.7.0'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()

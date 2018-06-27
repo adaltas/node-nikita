@@ -15,5 +15,5 @@ Delete a name and possibly the file it refers to.
         sudo: options.sudo
         bash: options.bash
         arch_chroot: options.arch_chroot
-      , (err, _, stdout) ->
-        callback err, stdout.trim()
+      , (err, {stdout}) ->
+        callback err, target: stdout.trim()

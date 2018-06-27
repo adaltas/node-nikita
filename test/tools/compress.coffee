@@ -13,7 +13,7 @@ describe 'tools.compress', ->
     .tools.compress
       source: "#{__dirname}/../resources/a_dir"
       target: "#{scratch}/a_dir.tgz"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true()
     .system.remove
       target: "#{scratch}/a_dir.tgz"
@@ -25,7 +25,7 @@ describe 'tools.compress', ->
     .tools.compress
       source: "#{__dirname}/../resources/a_dir"
       target: "#{scratch}/a_dir.zip"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true()
     .system.remove
       target: "#{scratch}/a_dir.zip"
@@ -37,7 +37,7 @@ describe 'tools.compress', ->
     .tools.compress
       source: "#{__dirname}/../resources/a_dir"
       target: "#{scratch}/a_dir.tar.bz2"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true()
     .system.remove
       target: "#{scratch}/a_dir.tar.bz2"
@@ -49,7 +49,7 @@ describe 'tools.compress', ->
     .tools.compress
       source: "#{__dirname}/../resources/a_dir"
       target: "#{scratch}/a_dir.tar.xz"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true()
     .system.remove
       target: "#{scratch}/a_dir.tar.xz"
@@ -65,7 +65,7 @@ describe 'tools.compress', ->
       source: "#{scratch}/a_dir/a_file"
       target: "#{scratch}/a_dir.tar.xz"
       clean: true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true()
     .file.assert
       source: "#{scratch}/a_dir/a_file"
@@ -82,7 +82,7 @@ describe 'tools.compress', ->
       source: "#{scratch}/a_dir"
       target: "#{scratch}/a_dir.tar.xz"
       clean: true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true()
     .file.assert
       source: "#{scratch}/a_dir"

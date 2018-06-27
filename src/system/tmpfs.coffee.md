@@ -70,7 +70,7 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
         if: options.merge
       , (_, callback) ->
           @log message: "opening target file for merge", level: 'DEBUG', module: 'nikita/tmpfs/index'
-          @fs.readFile ssh: options.ssh, target: options.target, encoding: 'utf8', (err, data) ->
+          @fs.readFile ssh: options.ssh, target: options.target, encoding: 'utf8', (err, {data}) ->
             if err
               return callback null, false if err.code is 'ENOENT'
               return callback err if err

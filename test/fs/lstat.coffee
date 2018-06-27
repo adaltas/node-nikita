@@ -1,5 +1,6 @@
 
 nikita = require '../../src'
+misc = require '../../src/misc'
 they = require 'ssh2-they'
 test = require '../test'
 
@@ -18,10 +19,10 @@ describe 'fs.lstat', ->
       source: "#{scratch}/a_file"
     .fs.lstat
       target: "#{scratch}/a_link"
-    , (err, stat) ->
+    , (err, {stats}) ->
       return if err
-      stat.isFile().should.be.false()
-      stat.isSymbolicLink().should.be.true()
+      misc.stats.isFile(stats.mode).should.be.false()
+      misc.stats.isSymbolicLink(stats.mode).should.be.true()
     .promise()
 
   they 'with a directory link', (ssh) ->
@@ -34,10 +35,10 @@ describe 'fs.lstat', ->
       source: "#{scratch}/a_dir"
     .fs.lstat
       target: "#{scratch}/a_link"
-    , (err, stat) ->
+    , (err, {stats}) ->
       return if err
-      stat.isDirectory().should.be.false()
-      stat.isSymbolicLink().should.be.true()
+      misc.stats.isDirectory(stats.mode).should.be.false()
+      misc.stats.isSymbolicLink(stats.mode).should.be.true()
     .promise()
 
   they 'option argument default to target', (ssh) ->
@@ -49,6 +50,6 @@ describe 'fs.lstat', ->
       source: "#{scratch}/a_source"
     .fs.lstat
       target: "#{scratch}/a_target"
-    , (err, stat) ->
-      stat.isSymbolicLink().should.be.true() unless err
+    , (err, {stats}) ->
+      misc.stats.isSymbolicLink(stats.mode).should.be.true() unless err
     .promise()

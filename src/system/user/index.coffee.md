@@ -96,7 +96,7 @@ you are a member of the "wheel" group (gid of "10") with the command
       user_info = groups_info = null
       @file.types.etc_passwd.read
         cache: options.cache
-      , (err, status, users) ->
+      , (err, {status, users}) ->
         throw err if err
         user_info = users[options.name]
         @log if user_info
@@ -108,7 +108,7 @@ you are a member of the "wheel" group (gid of "10") with the command
       @file.types.etc_group.read
         if: -> user_info and options.groups
         cache: options.cache
-      , (err, status, groups) ->
+      , (err, {status, groups}) ->
         groups_info = groups
         @log message: "Got group information for #{JSON.stringify options.name}", level: 'DEBUG', module: 'nikita/lib/system/group' if groups_info
       @call if: options.home, ->
@@ -140,7 +140,7 @@ you are a member of the "wheel" group (gid of "10") with the command
           arch_chroot: options.arch_chroot
           rootdir: options.rootdir
           sudo: options.sudo
-        , (err, status, stdout) ->
+        , (err) ->
           throw err if err
           @log message: "User defined elsewhere than '/etc/passwd', exit code is 9", level: 'WARN', module: 'nikita/lib/system/user/add'
       @call if: (-> user_info), ->
@@ -149,7 +149,7 @@ you are a member of the "wheel" group (gid of "10") with the command
           changed.push k if options[k]? and user_info[k] isnt options[k]
         if options.groups then for group in options.groups
           throw Error "Group does not exist: #{group}" unless groups_info[group]
-          changed.push 'groups' if groups_info[group].user_list.indexOf(options.name) is -1
+          changed.push 'groups' if groups_info[group].users.indexOf(options.name) is -1
         @log if changed.length
         then message: "User #{options.name} modified", level: 'WARN', module: 'nikita/lib/system/user/add'
         else message: "User #{options.name} not modified", level: 'DEBUG', module: 'nikita/lib/system/user/add'
@@ -188,7 +188,7 @@ you are a member of the "wheel" group (gid of "10") with the command
           arch_chroot: options.arch_chroot
           rootdir: options.rootdir
           sudo: options.sudo
-        , (err, status) ->
+        , (err, {status}) ->
           throw err if err
           @log message: "Password modified", level: 'WARN', module: 'nikita/lib/system/user/add' if status
       # Reset Cache

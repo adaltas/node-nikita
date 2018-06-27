@@ -15,7 +15,7 @@ describe 'system.execute', ->
     .system.execute
       cmd: "echo $BASH"
       bash: true
-    , (err, status, stdout, stderr) ->
+    , (err, {stdout}) ->
       stdout.should.containEql 'bash'
     .promise()
 
@@ -27,7 +27,7 @@ describe 'system.execute', ->
       bash: true
       dirty: true
       target: "#{scratch}/my_script"
-    , (err, status, stdout, stderr) ->
+    , (err, {stdout}) ->
       stdout.should.containEql 'bash'
     .file.assert
       target: "#{scratch}/my_script"
@@ -36,7 +36,7 @@ describe 'system.execute', ->
       bash: true
       dirty: false
       target: "#{scratch}/my_script"
-    , (err, status, stdout, stderr) ->
+    , (err, {stdout}) ->
       stdout.should.containEql 'bash'
     .file.assert
       target: "#{scratch}/my_script"
@@ -50,6 +50,6 @@ describe 'system.execute', ->
       cmd: "exit 2"
       bash: true
       code_skipped: 2
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()

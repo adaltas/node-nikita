@@ -20,13 +20,13 @@ describe 'tools.git', ->
     .tools.git
       source: "#{scratch}/repo.git"
       target: "#{scratch}/my_repo"
-    , (err, updated) ->
-      updated.should.be.true()
+    , (err, {status}) ->
+      status.should.be.true()
     .tools.git
       source: "#{scratch}/repo.git"
       target: "#{scratch}/my_repo"
-    , (err, updated) ->
-      updated.should.be.false()
+    , (err, {status}) ->
+      status.should.be.false()
     .promise()
 
   they 'honores revision', (ssh) ->
@@ -39,14 +39,14 @@ describe 'tools.git', ->
       source: "#{scratch}/repo.git"
       target: "#{scratch}/my_repo"
       revision: 'v0.0.1'
-    , (err, updated) ->
-      updated.should.be.true()
+    , (err, {status}) ->
+      status.should.be.true()
     .tools.git
       source: "#{scratch}/repo.git"
       target: "#{scratch}/my_repo"
       revision: 'v0.0.1'
-    , (err, updated) ->
-      updated.should.be.false()
+    , (err, {status}) ->
+      status.should.be.false()
     .promise()
 
   they 'preserves existing directory', (ssh) ->
@@ -58,6 +58,6 @@ describe 'tools.git', ->
       source: "#{scratch}/repo.git"
       target: "#{scratch}/my_repo"
       relax: true
-    , (err, updated) ->
+    , (err) ->
       err.message.should.eql 'Not a git repository'
     .promise()

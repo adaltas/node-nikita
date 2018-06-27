@@ -56,16 +56,16 @@ require('nikita').file.yaml({
           ssh: options.ssh
           target: options.target
           encoding: options.encoding
-        , (err, content) ->
+        , (err, {data}) ->
           # File does not exists, this is ok, there is simply nothing to merge
           if err?.code is 'ENOENT'
-            @log message: "No Target Content To Merged", level: 'DEBUG', module: 'nikita/lib/file/cson'
+            @log message: "No Target To Merged", level: 'DEBUG', module: 'nikita/lib/file/cson'
             return
           throw err if err
           try
-            content = season.parse content
-            options.content = misc.merge content, options.content
-            @log message: "Target Content Merged", level: 'DEBUG', module: 'nikita/lib/file/cson'
+            data = season.parse data
+            options.content = misc.merge data, options.content
+            @log message: "Target Merged", level: 'DEBUG', module: 'nikita/lib/file/cson'
           catch err
             # Maybe change error message with sth like "Failed to parse..."
             throw err

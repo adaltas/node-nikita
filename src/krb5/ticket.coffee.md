@@ -38,7 +38,7 @@ require('nikita').krb5.ticket({
         uid: options.uid
         gid: options.gid
         shy: true
-      , (err, status, {uid, gid, default_gid}) ->
+      , (err, {status, uid, gid, default_gid}) ->
         options.uid = uid
         options.gid = gid
       @system.execute

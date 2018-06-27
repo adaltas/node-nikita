@@ -14,17 +14,17 @@ describe 'file.properties', ->
     .file.properties
       target: "#{scratch}/file.properties"
       content: a_key: 'a value'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.properties
       target: "#{scratch}/file.properties"
       content: another_key: 'another value'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.properties
       target: "#{scratch}/file.properties"
       content: another_key: 'another value'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .file.assert
       target: "#{scratch}/file.properties"
@@ -37,19 +37,19 @@ describe 'file.properties', ->
     .file.properties
       target: "#{scratch}/file.properties"
       content: a_key: 'a value'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.properties
       target: "#{scratch}/file.properties"
       content: another_key: 'another value'
       merge: true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.properties
       target: "#{scratch}/file.properties"
       content: another_key: 'another value'
       merge: true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .file.assert
       target: "#{scratch}/file.properties"

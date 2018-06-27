@@ -47,7 +47,6 @@ module.exports = (ssh, pattern, options, callback) ->
     stdout.push data.toString()
   child.on 'error', callback
   child.on 'close', (code) ->
-    # console.log files
     files = string.lines stdout.join('').trim()
     files = files.filter (file) ->
       minimatch.match file

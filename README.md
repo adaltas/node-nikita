@@ -56,7 +56,7 @@ docker-compose up --abort-on-container-exit
 # Enter bash console
 docker-compose run --rm nodejs
 # Run a subset of the tests
-docker-compose run --rm nodejs test/core
+docker-compose run --rm nodejs 'test/core/*'
 ```
 
 [nikita]: http://www.adaltas.com/projects/node-nikita/

@@ -45,13 +45,13 @@ require('nikita').tools.git({
       repo_exists = false
       repo_uptodate = false
       @call (_, callback) ->
-        @fs.exists ssh: options.ssh, target: options.target, (err, exists) ->
+        @fs.exists ssh: options.ssh, target: options.target, (err, {exists}) ->
           return callback err if err
           repo_exists = exists
           return callback() unless exists # todo, isolate inside call when they receive conditions
           # return callback Error "Destination not a directory, got #{options.target}" unless stat.isDirectory()
           gitDir = "#{options.target}/.git"
-          @fs.exists ssh: options.ssh, target: gitDir, (err, exists) ->
+          @fs.exists ssh: options.ssh, target: gitDir, (err, {exists}) ->
             return callback Error "Not a git repository" unless exists
             callback()
       @system.execute
@@ -72,9 +72,9 @@ require('nikita').tools.git({
         code_skipped: 3
         if: -> repo_exists
         shy: true
-      , (err, uptodate) ->
+      , (err, {status}) ->
         throw err if err
-        repo_uptodate = uptodate
+        repo_uptodate = status
       @system.execute
         cmd: "git checkout #{options.revision}"
         cwd: options.target

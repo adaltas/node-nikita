@@ -69,8 +69,8 @@ require('nikita')
             stdin_log: options.stdin_log
             stdout_log: options.stdout_log
             stderr_log: options.stderr_log
-          , (err, ready) =>
-            if not err and not ready
+          , (err, {status}) =>
+            if not err and not status
               setTimeout run, options.interval
               return
             return next err if err

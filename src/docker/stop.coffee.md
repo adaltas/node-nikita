@@ -44,12 +44,12 @@ nikita.docker.stop({
       cmd = 'stop'
       cmd += " -t #{options.timeout}" if options.timeout?
       cmd += " #{options.container}"
-      @docker.status shy: true, options, (err, is_running) ->
+      @docker.status shy: true, options, (err, {status}) ->
         throw err if err
-        if is_running
+        if status
         then @log message: "Stopping container #{options.container}", level: 'INFO', module: 'nikita/lib/docker/stop'
         else @log message: "Container already stopped #{options.container} (Skipping)", level: 'INFO', module: 'nikita/lib/docker/stop'
-        @end() unless is_running
+        @end() unless status
       @system.execute
         cmd: docker.wrap options, cmd
       , docker.callback

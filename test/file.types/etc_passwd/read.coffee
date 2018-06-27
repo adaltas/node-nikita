@@ -6,6 +6,23 @@ they = require 'ssh2-they'
 describe 'file.types.etc_passwd.read', ->
 
   scratch = test.scratch @
+  
+  they 'shy doesnt modify the status', (ssh) ->
+    nikita
+      ssh: ssh
+    .file
+      target: "#{scratch}/etc/passwd"
+      content: """
+      root:x:0:0:root:/root:/bin/bash
+      bin:x:1:1:bin:/bin:/usr/bin/nologin
+      """
+    .file.types.etc_passwd.read
+      target: "#{scratch}/etc/group"
+    , (err, {status}) ->
+      status.should.be.false() unless err
+    .next (err, {status}) ->
+      status.should.be.false() unless err
+    .promise()
 
   they 'activate locales', (ssh) ->
     nikita
@@ -18,7 +35,7 @@ describe 'file.types.etc_passwd.read', ->
       """
     .file.types.etc_passwd.read
       target: "#{scratch}/etc/passwd"
-    , (err, status, users) ->
+    , (err, {status, users}) ->
       throw err if err
       users.should.eql
         root: user: 'root', uid: 0, gid: 0, comment: 'root', home: '/root', shell: '/bin/bash'
@@ -38,7 +55,7 @@ describe 'file.types.etc_passwd.read', ->
     .file.types.etc_passwd.read
       target: "#{scratch}/etc/passwd"
       uid: 'nobody'
-    , (err, status, user) ->
+    , (err, {status, user}) ->
       throw err if err
       user.should.eql user: 'nobody', uid: 99, gid: 99, comment: 'nobody', home: '/', shell: '/usr/bin/nologin'
     .promise()
@@ -56,7 +73,7 @@ describe 'file.types.etc_passwd.read', ->
     .file.types.etc_passwd.read
       target: "#{scratch}/etc/passwd"
       uid: '99'
-    , (err, status, user) ->
+    , (err, {status, user}) ->
       throw err if err
       user.should.eql user: 'nobody', uid: 99, gid: 99, comment: 'nobody', home: '/', shell: '/usr/bin/nologin'
     .promise()
@@ -95,7 +112,7 @@ describe 'file.types.etc_passwd.read', ->
       """
     .file.types.etc_passwd.read
       target: "#{scratch}/etc/passwd"
-    , (err, status, users) ->
+    , (err, {status, users}) ->
       throw err if err
       (@store['nikita:etc_passwd'] is undefined).should.be.true()
     .promise()
@@ -113,14 +130,14 @@ describe 'file.types.etc_passwd.read', ->
     .file.types.etc_passwd.read
       target: "#{scratch}/etc/passwd"
       cache: true
-    , (err, status, users) ->
+    , (err, {status, users}) ->
       throw err if err
       @store['nikita:etc_passwd'].should.eql users
     .file.types.etc_passwd.read
       log: (log) -> logs.push log
       target: "#{scratch}/etc/passwd"
       cache: true
-    , (err, status, users) ->
+    , (err, {status, users}) ->
       throw err if err
       logs.some( (log) -> log.message is 'Get passwd definition from cache' ).should.be.true()
     .promise()

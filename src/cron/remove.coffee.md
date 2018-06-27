@@ -51,7 +51,7 @@ require('nikita').cron.remove({
       @system.execute
         cmd: "#{crontab} -l"
         shy: true
-      , (err, _, stdout, stderr) ->
+      , (err, {stdout, stderr}) ->
         throw err if err
         throw Error 'User crontab not found' if /^no crontab for/.test stderr
         myjob = if options.when then regexp.escape options.when else '.*'

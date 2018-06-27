@@ -15,12 +15,12 @@ describe 'api child', ->
       .child()
       .file.touch
         target: "#{scratch}/a_file"
-      .next (err, changed) ->
+      .next (err, {status}) ->
         touched++
-        changed.should.be.true()
+        status.should.be.true()
         next err
-    .next (err, changed) ->
-      changed.should.be.false()
+    .next (err, {status}) ->
+      status.should.be.false()
       touched.should.eql 1
     .promise()
 

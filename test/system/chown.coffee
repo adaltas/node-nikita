@@ -24,13 +24,13 @@ describe 'system.chown', ->
     .system.group.remove 'toto', gid: 1234
     .system.group 'toto', gid: 1234
     .system.user 'toto', uid: 1234, gid: 1234
-    .fs.stat target: "#{scratch}/a_file", (err, stat) ->
+    .fs.stat target: "#{scratch}/a_file", (err, {stats}) ->
       return if err
       logs = []
       @on 'text', (log) -> logs.push log
       @system.chown "#{scratch}/a_file", uid: 1234, gid: 1234, (err) ->
         logs.filter( (log) -> /^Stat /.test log.message ).length.should.eql 1 unless err
-      @system.chown "#{scratch}/a_file", uid: 1234, gid: 1234, stat: stat, (err) ->
+      @system.chown "#{scratch}/a_file", uid: 1234, gid: 1234, stats: stats, (err) ->
         logs.filter( (log) -> /^Stat /.test log.message ).length.should.eql 1 unless err
     .promise()
 
@@ -46,9 +46,9 @@ describe 'system.chown', ->
     .system.user 'toto', uid: 1234, gid: 1234
     .system.user 'lulu', uid: 1235, gid: 1235
     .file.touch "#{scratch}/a_file", uid: 'toto'
-    .system.chown "#{scratch}/a_file", uid: 1235, (err, status) ->
+    .system.chown "#{scratch}/a_file", uid: 1235, (err, {status}) ->
       status.should.be.true() unless err
-    .system.chown "#{scratch}/a_file", uid: 1235, (err, status) ->
+    .system.chown "#{scratch}/a_file", uid: 1235, (err, {status}) ->
       status.should.be.false() unless err
     .file.assert
       target: "#{scratch}/a_file"
@@ -67,9 +67,9 @@ describe 'system.chown', ->
     .system.group 'lulu', gid: 1235
     .system.user 'toto', uid: 1234, gid: 1234
     .file.touch "#{scratch}/a_file", uid: 'toto'
-    .system.chown "#{scratch}/a_file", gid: 1235, (err, status) ->
+    .system.chown "#{scratch}/a_file", gid: 1235, (err, {status}) ->
       status.should.be.true() unless err
-    .system.chown "#{scratch}/a_file", gid: 1235, (err, status) ->
+    .system.chown "#{scratch}/a_file", gid: 1235, (err, {status}) ->
       status.should.be.false() unless err
     .file.assert
       target: "#{scratch}/a_file"
@@ -85,6 +85,6 @@ describe 'system.chown', ->
     .system.group 'toto', gid: 1234
     .system.user 'toto', uid: 1234, gid: 1234
     .file.touch "#{scratch}/a_file", uid: 'toto', gid: 'toto'
-    .system.chown "#{scratch}/a_file", uid: null, gid: 1234, (err, status) ->
+    .system.chown "#{scratch}/a_file", uid: null, gid: 1234, (err, {status}) ->
       status.should.be.false() unless err
     .promise()

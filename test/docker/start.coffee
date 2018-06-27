@@ -23,8 +23,8 @@ describe 'docker.start', ->
       container: 'nikita_test_start'
     .docker.start
       container: 'nikita_test_start'
-    , (err, started) ->
-      started.should.be.true() unless err
+    , (err, {status}) ->
+      status.should.be.true() unless err
     .docker.rm
       container: 'nikita_test_start'
       force: true
@@ -46,8 +46,8 @@ describe 'docker.start', ->
       container: 'nikita_test_start'
     .docker.start
       container: 'nikita_test_start'
-    , (err, started) ->
-      started.should.be.false() unless err
+    , (err, {status}) ->
+      status.should.be.false() unless err
     .docker.rm
       container: 'nikita_test_start'
       force: true

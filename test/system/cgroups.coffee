@@ -14,15 +14,11 @@ describe 'system.cgroups', ->
   describe 'generate without merge', ->
     
     mounts = [
-      type: 'cpuset', path: '/cgroup/cpuset'
-    ,
-      type: 'cpu', path: '/cgroup/cpu'
-    ,
-      type: 'cpuacct', path: '/cgroup/cpuacct'
-    ,
-      type: 'memory', path: '/cgroup/memory'
-    ,
-      type: 'devices', path: '/cgroup/devices'
+      { type: 'cpuset', path: '/cgroup/cpuset' }
+      { type: 'cpu', path: '/cgroup/cpu' }
+      { type: 'cpuacct', path: '/cgroup/cpuacct' }
+      { type: 'memory', path: '/cgroup/memory' }
+      { type: 'devices', path: '/cgroup/devices' }
     ]
     groups =
       toto:
@@ -54,7 +50,7 @@ describe 'system.cgroups', ->
         mode: 0o0754
         mounts: mounts
         merge:false
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/a_file_mount_only.cgconfig.conf"
@@ -77,7 +73,7 @@ describe 'system.cgroups', ->
         mode: 0o0754
         groups: groups
         merge: false
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/a_file_cgroup_only.cgconfig.conf"
@@ -110,7 +106,7 @@ describe 'system.cgroups', ->
         mode: 0o0754
         default: def
         merge: false
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/a_file_default_only.cgconfig.conf"
@@ -145,7 +141,7 @@ describe 'system.cgroups', ->
         groups: groups
         mounts: mounts
         merge: false
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/a_file_complete.cgconfig.conf"
@@ -211,7 +207,7 @@ describe 'system.cgroups', ->
         groups: groups
         mounts: mounts
         merge: false
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .promise()
 
@@ -255,14 +251,14 @@ describe 'system.cgroups', ->
         mode: 0o0754
         groups: groups
         merge: true
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .call (_, callback) ->
         fs.readFile "#{scratch}/a_file_merge_mount_groups.cgconfig.conf", 'utf8', (err, data) ->
           return callback err if err
-          content = misc.cgconfig.parse data
-          content.mounts.should.not.be.empty()
-          content.groups.should.eql groups
+          data = misc.cgconfig.parse data
+          data.mounts.should.not.be.empty()
+          data.groups.should.eql groups
           callback()
       .promise()
     
@@ -279,7 +275,7 @@ describe 'system.cgroups', ->
         mode: 0o0754
         groups: groups
         merge: true
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .promise()
 
@@ -319,7 +315,7 @@ describe 'system.cgroups', ->
             'cpu.rt_runtime_us': '"0"'
             'cpu.cfs_period_us': '"100000"'
         merge: true
-      , (err, status, cgroups) ->
+      , (err, {status, cgroups}) ->
         cgroups['cpu_path'].should.match /^((\/sys\/fs\/cgroup\/cpu)|(\/cgroups\/cpu))/
         cgroups['mount'].should.match /^((\/sys\/fs\/cgroup)|(\/cgroups))/
       .promise()

@@ -25,7 +25,7 @@ Return the checksum of repository:tag, if it exists. Function not native to dock
 * `status`   
   True if command was executed.
 * `checksum`   
-  Image cheksum if it exist, false otherwise.
+  Image cheksum if it exist, undefined otherwise.
 
 ## Source Code
 
@@ -38,14 +38,17 @@ Return the checksum of repository:tag, if it exists. Function not native to dock
       options.image ?= options.repository
       return callback Error 'Missing repository parameter' unless options.image?
       options.tag ?= 'latest'
-      cmd = "images --no-trunc | grep '#{options.image}' | grep '#{options.tag}' | awk '{ print $3 }'"
+      # Run `docker images` with the following options:
+      # - `--no-trunc`: display full checksum
+      # - `--quiet`: discard headers
+      cmd = "images --no-trunc --quiet #{options.image}:#{options.tag}"
       @log message: "Getting image checksum :#{options.image}", level: 'INFO', module: 'nikita/lib/docker/checksum'
       @system.execute
         cmd: docker.wrap options, cmd
-      , (err, executed, stdout, stderr) ->
-        checksum = if stdout is '' then false else stdout.toString().trim()
-        @log message: "Image checksum for #{options.image}: #{checksum}", level: 'INFO', module: 'nikita/lib/docker/checksum' if executed
-        return callback err, executed, checksum
+      , (err, {status, stdout, stderr}) ->
+        checksum = if stdout is '' then undefined else stdout.toString().trim()
+        @log message: "Image checksum for #{options.image}: #{checksum}", level: 'INFO', module: 'nikita/lib/docker/checksum' if status
+        return callback err, status: status, checksum: checksum
 
 
 ## Modules Dependencies

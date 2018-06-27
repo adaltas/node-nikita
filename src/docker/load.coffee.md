@@ -62,7 +62,7 @@ nikita.docker.load({
       options.checksum ?= ''
       @system.execute
         cmd: docker.wrap options, " images | grep -v '<none>' | awk '{ print $1\":\"$2\":\"$3 }'"
-      , (err, executed, stdout, stderr) =>
+      , (err, {stdout}) =>
         return callback err if err
         # skip header line, wi skip it here instead of in the grep  to have
         # an array with at least one not empty line
@@ -80,27 +80,27 @@ nikita.docker.load({
           cmd: docker.wrap options, cmd
         @system.execute
           cmd: docker.wrap options, 'images | grep -v \'<none>\' | awk \'{ print $1":"$2":"$3 }\''
-        , (err, executed, out, stderr) ->
-          return callback err, executed, out, stderr if err
+        , (err, {stdout, stderr}) ->
+          return callback err if err
           new_images = {}
-          diff = false
+          status = false
           @log message: 'Comparing new images', level: 'INFO', module: 'nikita/lib/docker/load'
           if string.lines(stdout).length > 1
-            for image in string.lines out.toString()
+            for image in string.lines stdout.toString()
               if image != ''
                 infos = image.split(':')
                 new_images["#{infos[0]}:#{infos[1]}"] = "#{infos[2]}"
           for new_k, new_image of new_images
             if !images[new_k]?
-              diff = true
+              status = true
               break;
             else
               for k, image of images
                 if image != new_image && new_k == k
-                  diff = true
+                  status = true
                   @log message: 'Identical images', level: 'INFO', module: 'nikita/lib/docker/load'
                   break;
-          callback err, diff, stdout, stderr
+          callback err, status: status, stdout: stdout, stderr: stderr
 
 
 ## Modules Dependencies

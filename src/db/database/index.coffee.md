@@ -82,7 +82,7 @@ npm test test/db/database.coffee
       @system.execute
         cmd: cmd_database_create
         unless_exec: cmd_database_exists
-      , (err, status) ->
+      , (err, {status}) ->
         @log message: "Database created: #{JSON.stringify options.database}", level: 'WARN', module: 'nikita/db/database' if status
       for user in options.user then do =>
         @call -> @log message: "Check if user #{user} has PRIVILEGES on #{options.database} ", level: 'DEBUG', module: 'nikita/db/database'     
@@ -93,8 +93,8 @@ npm test test/db/database.coffee
           admin_password: options.admin_password
           port: options.port
           host: options.host
-        , (err, exists) ->
-          throw Error "DB user does not exists: #{user}" if not err and not exists
+        , (err, {status}) ->
+          throw Error "DB user does not exists: #{user}" if not err and not status
         switch options.engine
           when 'mariadb', 'mysql'
             # cmd_has_privileges = db.cmd options, admin_username: null, username: user.username, password: user.password, database: options.database, "SHOW TABLES FROM pg_database"
@@ -113,7 +113,7 @@ npm test test/db/database.coffee
           #{cmd_grant_privileges}
           """
           code_skipped: 3
-        , (err, status, stdout, stderr) ->
+        , (err, {status}) ->
           @log message: "Privileges granted: to #{JSON.stringify user} on #{JSON.stringify options.database}", level: 'WARN', module: 'nikita/db/database' if status
 
 ## Dependencies

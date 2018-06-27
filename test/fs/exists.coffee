@@ -12,9 +12,8 @@ describe 'fs.exists', ->
       ssh: ssh
     .fs.exists
       target: "#{scratch}/not_here"
-    , (err, exists) ->
-      throw err if err
-      exists.should.be.false()
+    , (err, {exists}) ->
+      exists.should.be.false() unless err
     .promise()
 
   they 'exists', (ssh) ->
@@ -25,9 +24,8 @@ describe 'fs.exists', ->
       content: "some content"
     .fs.exists
       target: "#{scratch}/a_file"
-    , (err, exists) ->
-      throw err if err
-      exists.should.be.true()
+    , (err, {exists}) ->
+      exists.should.be.true() unless err
     .promise()
 
   they 'option argument default to target', (ssh) ->
@@ -35,6 +33,6 @@ describe 'fs.exists', ->
       ssh: ssh
     .file.touch "#{scratch}/a_file"
     .fs.exists "#{scratch}/a_file"
-    , (err, exists) ->
+    , (err, {exists}) ->
       exists.should.be.true() unless err
     .promise()

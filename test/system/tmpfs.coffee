@@ -1,7 +1,6 @@
 
 fs = require 'fs'
 path = require 'path'
-fs.exists ?= path.exists
 nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
@@ -30,9 +29,9 @@ describe 'system.tmpfs', ->
         argu: '-'
         perm: '0644'
         merge: false
-      , (err, written) ->
+      , (err, {status}) ->
         return next err if err
-        written.should.be.true()
+        status.should.be.true()
       .system.execute
         cmd: " if [ -d \"/var/run/file_1\" ] ; then exit 0; else exit 1; fi"
       .file.assert
@@ -54,8 +53,8 @@ describe 'system.tmpfs', ->
         argu: '-'
         perm: '0644'
         merge: false
-      , (err, written) ->
-        written.should.be.true() unless true
+      , (err, {status}) ->
+        status.should.be.true() unless true
       .system.tmpfs
         target: "#{scratch}/file_1.conf"
         mount: '/var/run/file_1'
@@ -65,9 +64,9 @@ describe 'system.tmpfs', ->
         argu: '-'
         perm: '0644'
         merge: false
-      , (err, written) ->
+      , (err, {status}) ->
         return next err if err
-        written.should.be.false()
+        status.should.be.false()
       .system.execute
         cmd: " if [ -d \"/var/run/file_1\" ] ; then exit 0; else exit 1; fi"
       .file.assert
@@ -91,9 +90,8 @@ describe 'system.tmpfs', ->
         argu: '-'
         perm: '0644'
         merge: false
-      , (err, written) ->
-        return next err if err
-        written.should.be.true()
+      , (err, {status}) ->
+        status.should.be.true() unless err
       .system.tmpfs
         target: "#{scratch}/file_1.conf"
         mount: '/var/run/file_2'
@@ -103,9 +101,8 @@ describe 'system.tmpfs', ->
         argu: '-'
         perm: '0644'
         merge: false
-      , (err, written) ->
-        return next err if err
-        written.should.be.true()
+      , (err, {status}) ->
+        status.should.be.true() unless err
       .system.execute
         cmd: " if [ -d \"/var/run/file_2\" ] ; then exit 0; else exit 1; fi"
       .file.assert
@@ -131,9 +128,8 @@ describe 'system.tmpfs', ->
         argu: '-'
         perm: '0644'
         merge: false
-      , (err, written) ->
-        return next err if err
-        written.should.be.true()
+      , (err, {status}) ->
+        status.should.be.true() unless err
       .system.tmpfs
         target: "#{scratch}/file_2.conf"
         mount: '/var/run/file_1'
@@ -143,9 +139,8 @@ describe 'system.tmpfs', ->
         argu: '-'
         perm: '0644'
         merge: true
-      , (err, written) ->
-        return next err if err
-        written.should.be.true()
+      , (err, {status}) ->
+        status.should.be.true() unless err
       .system.execute
         cmd: " if [ -d \"/var/run/file_1\" ] ; then exit 0; else exit 1; fi"
       .system.execute
@@ -172,8 +167,8 @@ describe 'system.tmpfs', ->
         argu: '-'
         perm: '0644'
         merge: false
-      , (err, written) ->
-        written.should.be.true() unless err
+      , (err, {status}) ->
+        status.should.be.true() unless err
       .system.tmpfs
         target: "#{scratch}/file_2.conf"
         mount: '/var/run/file_1'
@@ -183,8 +178,8 @@ describe 'system.tmpfs', ->
         argu: '-'
         perm: '0644'
         merge: true
-      , (err, written) ->
-        written.should.be.true() unless err
+      , (err, {status}) ->
+        status.should.be.true() unless err
       .system.tmpfs
         target: "#{scratch}/file_2.conf"
         mount: '/var/run/file_1'
@@ -194,8 +189,8 @@ describe 'system.tmpfs', ->
         argu: '-'
         perm: '0644'
         merge: true
-      , (err, written) ->
-        written.should.be.false() unless err
+      , (err, {status}) ->
+        status.should.be.false() unless err
       .system.execute
         cmd: " if [ -d \"/var/run/file_1\" ] ; then exit 0; else exit 1; fi"
       .system.execute
@@ -223,9 +218,8 @@ describe 'system.tmpfs', ->
         argu: '-'
         perm: '0644'
         merge: false
-      , (err, written) ->
-        return next err if err
-        written.should.be.true()
+      , (err, {status}) ->
+        status.should.be.true() unless err
       .system.execute
         cmd: " if [ -d \"/var/run/file_1\" ] ; then exit 0; else exit 1; fi"
       .file.assert
@@ -245,8 +239,8 @@ describe 'system.tmpfs', ->
         argu: '-'
         perm: '0644'
         merge: false
-      , (err, written) ->
-        written.should.be.true() unless err
+      , (err, {status}) ->
+        status.should.be.true() unless err
       .system.execute
         cmd: " if [ -d \"/var/run/file_1\" ] ; then exit 0; else exit 1; fi"
       .file.assert

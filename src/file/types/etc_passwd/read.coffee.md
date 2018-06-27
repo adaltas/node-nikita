@@ -12,6 +12,25 @@ Read and parse the passwd definition file located in "/etc/passwd".
 * `uid` (string|integer)   
   Retrieve the information for a specific user name or uid.
 
+## Output parameters
+
+* `users`   
+  An object where keys are the usernames and values are the user properties.
+  See the parameter `user` for a list of available properties.
+* `user`
+  Properties associated witht the user, only if the input parameter `uid` is
+  provided. Available properties are:   
+  * `user` (string)   
+  Username.
+  * `uid` (integer)   
+  User Id.
+  * `comment` (string)   
+  User description
+  * `home` (string)   
+  User home directory.
+  * `shell` (string)   
+  Default user shell command.
+
 ## Example
 
 ```js
@@ -50,11 +69,11 @@ nikita
         unless: options.cache and !!@store['nikita:etc_passwd']
         target: options.target
         encoding: 'ascii'
-      , (err, content) ->
+      , (err, {data}) ->
         throw err if err
-        return unless content?
+        return unless data?
         passwd = {}
-        for line in string.lines content
+        for line in string.lines data
           line = /(.*)\:\w\:(.*)\:(.*)\:(.*)\:(.*)\:(.*)/.exec line
           continue unless line
           passwd[line[1]] = user: line[1], uid: parseInt(line[2]), gid: parseInt(line[3]), comment: line[4], home: line[5], shell: line[6]
@@ -62,15 +81,15 @@ nikita
       # Pass the passwd information
       @next (err) ->
         return callback err if err
-        return callback null, true, passwd unless options.uid
+        return callback null, status: true, users: passwd unless options.uid
         if typeof options.uid is 'string'
           user = passwd[options.uid]
           return callback Error "Invalid Option: no uid matching #{JSON.stringify options.uid}" unless user
-          callback null, true, user
+          callback null, status: true, user: user
         else
           user = Object.values(passwd).filter((user) -> user.uid is options.uid)[0]
           return callback Error "Invalid Option: no uid matching #{JSON.stringify options.uid}" unless user
-          callback null, true, user
+          callback null, status: true, user: user
       
 ## Dependencies
 

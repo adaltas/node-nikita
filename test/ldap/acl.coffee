@@ -41,8 +41,8 @@ describe 'ldap.acl', ->
       by: [
         'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage'
       ]
-    , (err, modified) ->
-      modified.should.be.true()
+    , (err, {status}) ->
+      status.should.be.true()
     .ldap.acl
       ldap: client
       name: 'olcDatabase={2}bdb,cn=config'
@@ -50,8 +50,8 @@ describe 'ldap.acl', ->
       by: [
         'dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage'
       ]
-    , (err, modified) ->
-      modified.should.be.false()
+    , (err, {status}) ->
+      status.should.be.false()
     .promise()
 
   it 'respect order in creation', ->

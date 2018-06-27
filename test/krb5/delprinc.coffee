@@ -19,7 +19,7 @@ describe 'krb5.delprinc', ->
       randkey: true
     .krb5.delprinc
       principal: "nikita@#{config.krb5.realm}"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .promise()
 
@@ -33,6 +33,6 @@ describe 'krb5.delprinc', ->
       principal: "nikita@#{config.krb5.realm}"
     .krb5.delprinc
       principal: "nikita@#{config.krb5.realm}"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false()
     .promise()

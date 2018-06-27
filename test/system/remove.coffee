@@ -15,7 +15,7 @@ describe 'system.remove', ->
     .file.touch "#{scratch}/a_file"
     .system.remove
       source: "#{scratch}/a_file"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .promise()
 
@@ -23,7 +23,7 @@ describe 'system.remove', ->
     nikita
       ssh: ssh
     .file.touch "#{scratch}/a_file"
-    .system.remove "#{scratch}/a_file", (err, status) ->
+    .system.remove "#{scratch}/a_file", (err, {status}) ->
       status.should.be.true() unless err
     .promise()
 
@@ -35,7 +35,7 @@ describe 'system.remove', ->
     .system.remove [
       "#{scratch}/file_1"
       "#{scratch}/file_2"
-    ], (err, status) ->
+    ], (err, {status}) ->
       status.should.be.true() unless err
     .promise()
 
@@ -47,11 +47,11 @@ describe 'system.remove', ->
       target: "#{scratch}/a_file"
     .system.remove
       source: "#{scratch}/a_file"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .system.remove
       source: "#{scratch}/a_file"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
 
@@ -62,7 +62,7 @@ describe 'system.remove', ->
     .fs.symlink source: "#{scratch}/a_file", target: "#{scratch}/a_link"
     .system.remove
       source: "#{scratch}/a_link"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/a_link"
@@ -78,7 +78,7 @@ describe 'system.remove', ->
     .file.touch "#{scratch}/a_dir.zip"
     .system.remove
       source: "#{scratch}/*gz"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert "#{scratch}/a_dir.tar.gz", not: true
     .file.assert "#{scratch}/a_dir.tgz", not: true
@@ -93,10 +93,10 @@ describe 'system.remove', ->
       target: "#{scratch}/remove_dir"
     .system.remove
       target: "#{scratch}/remove_dir"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .system.remove
       target: "#{scratch}/remove_dir"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()

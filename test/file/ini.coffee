@@ -14,12 +14,12 @@ describe 'file.ini', ->
     .file.ini
       content: user: preference: color: 'rouge'
       target: "#{scratch}/user.ini"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.ini
       content: user: preference: color: 'rouge'
       target: "#{scratch}/user.ini"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .file.assert
       target: "#{scratch}/user.ini"
@@ -33,7 +33,7 @@ describe 'file.ini', ->
       content: user: preference: color: 'rouge'
       target: "#{scratch}/user.ini"
       separator: ':'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/user.ini"
@@ -50,7 +50,7 @@ describe 'file.ini', ->
       content: user: preference: color: 'violet'
       target: "#{scratch}/user.ini"
       merge: true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/user.ini"
@@ -64,7 +64,7 @@ describe 'file.ini', ->
       content: user: preference: color: 'violet', age: undefined, gender: null
       target: "#{scratch}/user.ini"
       merge: true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/user.ini"
@@ -81,7 +81,7 @@ describe 'file.ini', ->
       content: user: preference: color: null
       target: "#{scratch}/user.ini"
       merge: true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/user.ini"
@@ -98,7 +98,7 @@ describe 'file.ini', ->
       content: user: preference: color: undefined
       target: "#{scratch}/user.ini"
       merge: true
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
 
@@ -113,7 +113,7 @@ describe 'file.ini', ->
       target: "#{scratch}/user.ini"
       merge: false
       stringify: misc.ini.stringify_single_key
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/user.ini"
@@ -131,7 +131,7 @@ describe 'file.ini', ->
       stringify: misc.ini.stringify_single_key
       target: "#{scratch}/user.ini"
       merge: false
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/user.ini"
@@ -148,14 +148,14 @@ describe 'file.ini', ->
       source: "#{scratch}/user.ini"
       target: "#{scratch}/test.ini"
       merge: false
-    , (err, written) ->
-      written.should.be.true() unless err
+    , (err, {status}) ->
+      status.should.be.true() unless err
     .file.ini
       source: "#{scratch}/user.ini"
       target: "#{scratch}/test.ini"
       merge: false
-    , (err, written) ->
-      written.should.be.false() unless err
+    , (err, {status}) ->
+      status.should.be.false() unless err
     .file.assert
       target: "#{scratch}/test.ini"
       content: '[user.preference]\nlanguage = node\n'
@@ -172,8 +172,8 @@ describe 'file.ini', ->
       target: "#{scratch}/test.ini"
       content: user: preference: remember: 'me'
       merge: false
-    , (err, written) ->
-      written.should.be.true() unless err
+    , (err, {status}) ->
+      status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/test.ini"
       content: '[user.preference]\nlanguage = node\nremember = me\n'
@@ -187,8 +187,8 @@ describe 'file.ini', ->
       target: "#{scratch}/test.ini"
       content: user: preference: remember: 'me'
       merge: false
-    , (err, written) ->
-      written.should.be.true() unless err
+    , (err, {status}) ->
+      status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/test.ini"
       content: '[user.preference]\nremember = me\n'
@@ -207,14 +207,14 @@ describe 'file.ini', ->
       source: "#{scratch}/user.ini"
       target: "#{scratch}/test.ini"
       merge: true
-    , (err, written) ->
-      written.should.be.true() unless err
+    , (err, {status}) ->
+      status.should.be.true() unless err
     .file.ini
       source: "#{scratch}/user.ini"
       target: "#{scratch}/test.ini"
       merge: true
-    , (err, written) ->
-      written.should.be.false() unless err
+    , (err, {status}) ->
+      status.should.be.false() unless err
     .file.assert
       target: "#{scratch}/test.ini"
       content: '[user.preference]\nlanguage = node\n'
@@ -234,8 +234,8 @@ describe 'file.ini', ->
       target: "#{scratch}/test.ini"
       content: user: preference: language: 'c++'
       merge: true
-    , (err, written) ->
-      written.should.be.true() unless err
+    , (err, {status}) ->
+      status.should.be.true() unless err
     .file.assert
       target: "#{scratch}/test.ini"
       content: '[user.preference]\nlanguage = c++\n'
@@ -244,8 +244,8 @@ describe 'file.ini', ->
       target: "#{scratch}/test.ini"
       content: user: preference: language: 'c++'
       merge: true
-    , (err, written) ->
-      written.sh
+    , (err, status) ->
+      {status}.sh
     .promise()
 
   they 'generate from content object with escape', (ssh) ->
@@ -261,7 +261,7 @@ describe 'file.ini', ->
           'baseurl': 'http://mirror.centos.org/centos/$releasever/os/$basearch/'
           'gpgcheck': '1'
           'gpgkey': 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .file.ini
       target: "#{scratch}/test.ini"
@@ -273,7 +273,7 @@ describe 'file.ini', ->
           'baseurl': 'http://mirror.centos.org/centos/$releasever/os/$basearch/'
           'gpgcheck': '1'
           'gpgkey': 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
   
@@ -286,7 +286,7 @@ describe 'file.ini', ->
         stringify: misc.ini.stringify_square_then_curly
         target: "#{scratch}/user.ini"
         content: user: preference: color: true
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/user.ini"
@@ -301,8 +301,8 @@ describe 'file.ini', ->
         stringify: misc.ini.stringify_square_then_curly
         target: "#{scratch}/user.ini"
         content: user: preference: language: ['c', 'c++', 'ada']
-      , (err, written) ->
-        written.should.be.true() unless err
+      , (err, {status}) ->
+        status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/user.ini"
         content: '[user]\n preference = {\n  language = c\n  language = c++\n  language = ada\n }\n\n'

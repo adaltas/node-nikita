@@ -17,7 +17,7 @@ describe 'java.keystore_add', ->
         storepass: "changeit"
         caname: "my_alias"
         cacert: "#{__dirname}/keystore/certs1/cacert.pem"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .promise()
 
@@ -29,7 +29,7 @@ describe 'java.keystore_add', ->
         storepass: "changeit"
         caname: "my_alias"
         cacert: "#{__dirname}/keystore/certs1/cacert.pem"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .promise()
 
@@ -47,7 +47,7 @@ describe 'java.keystore_add', ->
         storepass: "changeit"
         caname: "my_alias"
         cacert: "#{__dirname}/keystore/certs1/cacert.pem"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .promise()
 
@@ -65,7 +65,7 @@ describe 'java.keystore_add', ->
         storepass: "changeit"
         caname: "my_alias"
         cacert: "#{__dirname}/keystore/certs2/cacert.pem"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .system.execute.assert
         cmd: "keytool -list -keystore #{scratch}/keystore -storepass changeit -alias my_alias"
@@ -103,15 +103,15 @@ describe 'java.keystore_add', ->
         storepass: "changeit"
         caname: "my_alias"
         cacert: "#{scratch}/tmp/ca.cert.pem"
-      , (err, status) ->
-        status.should.be.true()
+      , (err, {status}) ->
+        status.should.be.true() unless err
       .java.keystore_add
         keystore: "#{scratch}/keystore"
         storepass: "changeit"
         caname: "my_alias"
         cacert: "#{scratch}/tmp/ca.cert.pem"
-      , (err, status) ->
-        status.should.be.false()
+      , (err, {status}) ->
+        status.should.be.false() unless err
       .system.execute.assert
         cmd: "keytool -list -keystore #{scratch}/keystore -storepass changeit -alias my_alias-0"
         content: /^my_alias-0,/m
@@ -144,14 +144,14 @@ describe 'java.keystore_add', ->
         storepass: "changeit"
         caname: "my_alias"
         cacert: "#{scratch}/ca/ca.a.cert.pem"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .java.keystore_add
         keystore: "#{scratch}/keystore"
         storepass: "changeit"
         caname: "my_alias"
         cacert: "#{scratch}/ca/ca.b.cert.pem"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .promise()
 
@@ -169,7 +169,7 @@ describe 'java.keystore_add', ->
         cert: "#{__dirname}/keystore/certs1/node_1_cert.pem"
         keypass: 'mypassword'
         name: 'node_1'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .promise()
 
@@ -185,7 +185,7 @@ describe 'java.keystore_add', ->
         cert: "#{__dirname}/keystore/certs1/node_1_cert.pem"
         keypass: 'mypassword'
         name: 'node_1'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .java.keystore_add
         keystore: "#{scratch}/keystore"
@@ -196,7 +196,7 @@ describe 'java.keystore_add', ->
         cert: "#{__dirname}/keystore/certs1/node_1_cert.pem"
         keypass: 'mypassword'
         name: 'node_1'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.false() unless err
       .promise()
 
@@ -221,7 +221,7 @@ describe 'java.keystore_add', ->
         cert: "#{__dirname}/keystore/certs2/node_1_cert.pem"
         keypass: 'mypassword'
         name: 'node_1'
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .promise()
 
@@ -240,7 +240,7 @@ describe 'java.keystore_add', ->
         storepass: "changednow"
         caname: "my_alias"
         cacert: "#{__dirname}/keystore/certs1/cacert.pem"
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .promise()
   

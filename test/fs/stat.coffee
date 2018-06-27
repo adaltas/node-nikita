@@ -1,5 +1,6 @@
 
 nikita = require '../../src'
+misc = require '../../src/misc'
 they = require 'ssh2-they'
 test = require '../test'
 
@@ -13,7 +14,7 @@ describe 'fs.stat', ->
     .fs.stat
       target: "#{scratch}/not_here"
       relax: true
-    , (err, stat) ->
+    , (err) ->
       err.code.should.eql 'ENOENT'
     .promise()
 
@@ -25,15 +26,15 @@ describe 'fs.stat', ->
       content: 'hello'
     .fs.stat
       target: "#{scratch}/a_file"
-    , (err, stat) ->
+    , (err, {stats}) ->
       return if err
-      stat.isFile().should.be.true()
-      stat.mode.should.be.a.Number()
-      stat.uid.should.be.a.Number()
-      stat.gid.should.be.a.Number()
-      stat.size.should.be.a.Number()
-      stat.atime.should.be.a.Number()
-      stat.mtime.should.be.a.Number()
+      misc.stats.isFile(stats.mode).should.be.true()
+      stats.mode.should.be.a.Number()
+      stats.uid.should.be.a.Number()
+      stats.gid.should.be.a.Number()
+      stats.size.should.be.a.Number()
+      stats.atime.should.be.a.Number()
+      stats.mtime.should.be.a.Number()
     .promise()
 
   they 'with a directory', (ssh) ->
@@ -43,9 +44,9 @@ describe 'fs.stat', ->
       target: "#{scratch}/a_dir"
     .fs.stat
       target: "#{scratch}/a_dir"
-    , (err, stat) ->
+    , (err, {stats}) ->
       return if err
-      stat.isDirectory().should.be.true()
+      misc.stats.isDirectory(stats.mode).should.be.true()
     .promise()
 
   they 'with a file link', (ssh) ->
@@ -59,10 +60,10 @@ describe 'fs.stat', ->
       source: "#{scratch}/a_file"
     .fs.stat
       target: "#{scratch}/a_link"
-    , (err, stat) ->
+    , (err, {stats}) ->
       return if err
-      stat.isFile().should.be.true()
-      stat.isSymbolicLink().should.be.false()
+      misc.stats.isFile(stats.mode).should.be.true()
+      misc.stats.isSymbolicLink(stats.mode).should.be.false()
     .promise()
 
   they 'with a directory link', (ssh) ->
@@ -75,8 +76,8 @@ describe 'fs.stat', ->
       source: "#{scratch}/a_dir"
     .fs.stat
       target: "#{scratch}/a_link"
-    , (err, stat) ->
+    , (err, {stats}) ->
       return if err
-      stat.isDirectory().should.be.true()
-      stat.isSymbolicLink().should.be.false()
+      misc.stats.isDirectory(stats.mode).should.be.true()
+      misc.stats.isSymbolicLink(stats.mode).should.be.false()
     .promise()

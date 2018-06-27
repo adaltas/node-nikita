@@ -34,7 +34,7 @@ nikita.system.execute({
       @call
         if: options.content? and (typeof options.content is 'string' or Buffer.isBuffer options.content)
       , ->
-        @system.execute options.cmd, (err, _, stdout) ->
+        @system.execute options.cmd, (err, {stdout}) ->
           throw err if err
           stdout = stdout.trim() if options.trim
           unless options.not
@@ -49,7 +49,7 @@ nikita.system.execute({
       @call
         if: options.content? and options.content instanceof RegExp
       , ->
-        @system.execute options.cmd, (err, _, stdout) ->
+        @system.execute options.cmd, (err, {stdout}) ->
           throw err if err
           stdout = stdout.trim() if options.trim
           unless options.not

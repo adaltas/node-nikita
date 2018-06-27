@@ -17,7 +17,7 @@ describe 'db.schema postgres', ->
     .db.schema
       schema: 'postgres_schema_0'
       database: 'postgres_db_0'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .db.database.remove 'postgres_db_0'
     .promise()
@@ -33,7 +33,7 @@ describe 'db.schema postgres', ->
       database: 'postgres_db_1'
       owner: 'Johny'
       relax: true
-    , (err, status) ->
+    , (err) ->
       err.message.should.eql 'Owner Johny does not exists'
     .db.database.remove 'postgres_db_1'
     .promise()
@@ -55,7 +55,7 @@ describe 'db.schema postgres', ->
       schema: 'postgres_schema_2'
       database: 'postgres_db_2'
       owner: 'postgres_user_2'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .db.schema.remove 'postgres_schema_2'
     .db.database.remove 'postgres_db_2'
@@ -70,9 +70,8 @@ describe 'db.schema postgres', ->
       schema: 'postgres_schema_4'
       database: 'postgres_db_4'
       relax: true
-    , (err, status) ->
+    , (err) ->
       err.message.should.eql 'Database does not exist postgres_db_4'
-      status.should.be.false()
     .promise()
   
   they 'add new schema after adding database and user', (ssh) ->
@@ -93,7 +92,7 @@ describe 'db.schema postgres', ->
       database: 'postgres_db_5'
       schema: 'postgres_schema_5'
       owner: 'nikita_test_5'
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .db.schema.remove 'postgres_db_5'
     .db.database.remove 'postgres_db_5'

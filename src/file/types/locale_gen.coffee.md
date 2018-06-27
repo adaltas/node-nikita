@@ -32,7 +32,7 @@ require('nikita').file.types.locale_gen({
       options.target = "#{path.join options.rootdir, options.target}" if options.rootdir
       # Write configuration
       @call (_, callback) ->
-        @fs.readFile ssh: options.ssh, target: options.target, encoding: 'ascii', (err, data) ->
+        @fs.readFile ssh: options.ssh, target: options.target, encoding: 'ascii', (err, {data}) ->
           return callback err if err
           status = false
           locales = data.split '\n'

@@ -12,7 +12,7 @@ describe 'wait.execute', ->
       ssh: ssh
     .wait.execute
       cmd: "test -d #{scratch}"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false()
     .call ->
       setTimeout ->
@@ -21,7 +21,7 @@ describe 'wait.execute', ->
     .wait.execute
       cmd: "test -d #{scratch}/a_file"
       interval: 60
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .promise()
 
@@ -33,7 +33,7 @@ describe 'wait.execute', ->
         "test -d #{scratch}"
         "test -d #{scratch}"
       ]
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false()
     .call ->
       setTimeout ->
@@ -46,7 +46,7 @@ describe 'wait.execute', ->
         "test -d #{scratch}/file_2"
       ]
       interval: 20
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .promise()
 
@@ -124,7 +124,7 @@ describe 'wait.execute', ->
         ]
         interval: 20
         # quorum: 1
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/result"
@@ -152,7 +152,7 @@ describe 'wait.execute', ->
         ]
         interval: 20
         quorum: 2
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/result"
@@ -180,7 +180,7 @@ describe 'wait.execute', ->
         ]
         interval: 20
         quorum: true
-      , (err, status) ->
+      , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
         target: "#{scratch}/result"

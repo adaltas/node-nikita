@@ -60,7 +60,7 @@ require('nikita').service.start([{
         stdout_log: false
         shy: true
         unless: installed?
-      , (err, status, stdout) ->
+      , (err, {status, stdout}) ->
         throw Error "Unsupported Package Manager" if err?.code is 2
         throw err if err
         return unless status
@@ -82,7 +82,7 @@ require('nikita').service.start([{
         code_skipped: 3
         if: ->
           installed.indexOf(options.name) isnt -1 
-      , (err, status) ->
+      , (err, {status}) ->
         throw Error "Invalid Service Name: #{options.name}" if err
         # Update list of installed packages
         installed.splice installed.indexOf(options.name), 1

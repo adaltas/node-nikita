@@ -1,16 +1,17 @@
 
 # `nikita.file.render(options, [callback])`
 
-Render a template file. The following templating engines are
-integrated. More are added on demand.      
+Render a template file. More templating engine could be added on demand. The
+following templating engines are l integrated:     
 
-*   [ECO](http://github.com/sstephenson/eco) (default)   
-*   [Nunjucks](http://mozilla.github.io/nunjucks/) ("*.j2")   
+* [Nunjucks](http://mozilla.github.io/nunjucks/)   
+  ".j2" extension, engine name is "nunjunks"
 
 ## Options
 
 * `engine`   
-  Template engine to use, default to "eco".   
+  Template engine to use, required unless discovered with the target file
+  extension.   
 * `content`   
   Templated content, bypassed if source is provided.   
 * `source`   
@@ -94,10 +95,10 @@ require('nikita').file.render({
         ssh: if options.local then false else options.ssh
         target: options.source
         encoding: options.encoding
-      , (err, content) ->
-        if content?
+      , (err, {data}) ->
+        if data?
           options.source = null
-          options.content = content
+          options.content = data
       @call ->
         @file options
 

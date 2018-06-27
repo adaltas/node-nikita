@@ -24,8 +24,8 @@ describe 'options "sudo"', ->
       @fs.readFile
         target: "#{scratch}/a_file"
         encoding: 'ascii'
-      , (err, content) ->
-        content.should.eql 'hello' unless err
+      , (err, {data}) ->
+        data.should.eql 'hello' unless err
         callback err
     .promise()
 

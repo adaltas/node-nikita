@@ -2,7 +2,7 @@
 # `nikita.fs.lstat(options, callback)`
 
 Retrieve file information. If path is a symbolic link, then the link itself is
-stat-ed, not the file that it refers to.
+stated, not the file that it refers to.
 
 ## Source Code
 

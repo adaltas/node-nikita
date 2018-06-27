@@ -72,12 +72,10 @@ require('nikita')
         .call (file, callback) =>
           @log message: "Removing file #{file}", level: 'INFO', module: 'nikita/lib/system/remove'
           @system.execute
-            cmd: """
-            rm -rf '#{file}'
-            """
+            cmd: "rm -rf '#{file}'"
           , callback
         .next (err) ->
-          callback err, files.length
+          callback err, status: !!files.length, count: files.length
 
 ## Dependencies
 

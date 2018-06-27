@@ -92,11 +92,11 @@ require('nikita').file.yaml({
         target: options.target
         encoding: 'utf8'
         relax: true
-      , (err, content) ->
-        return unless content?
+      , (err, {data}) ->
+        return unless data?
         return if err?.code is 'ENOENT'
         throw err if err
-        yaml.safeLoadAll content, (data) ->
+        yaml.safeLoadAll data, (data) ->
           data = misc.yaml.clean data, options.content, true
           options.content = misc.yaml.merge data, options.content
       @call ->

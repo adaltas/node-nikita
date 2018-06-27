@@ -19,7 +19,7 @@ describe 'docker.save', ->
     .docker.save
       image: 'nikita/load_test:latest'
       output: "#{scratch}/nikita_saved.tar"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .promise()
 
@@ -38,6 +38,6 @@ describe 'docker.save', ->
     .docker.save
       image: 'nikita/load_test:latest'
       output: "#{scratch}/nikita_saved.tar"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .promise()

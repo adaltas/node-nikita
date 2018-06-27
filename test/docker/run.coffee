@@ -27,7 +27,7 @@ ip = (ssh, machine, callback) ->
       echo '127.0.0.1'
     fi
     """
-    , (err, executed, stdout, stderr) ->
+    , (err, {stdout}) ->
       return callback err if err
       ipadress = stdout.trim()
       return callback null, ipadress
@@ -45,7 +45,7 @@ describe 'docker.run', ->
     .docker.run
       cmd: "/bin/echo 'test'"
       image: 'alpine'
-    , (err, status, stdout, stderr) ->
+    , (err, {status, stdout}) ->
       status.should.be.true()
       stdout.should.match /^test.*/ unless err
     .promise()
@@ -62,7 +62,7 @@ describe 'docker.run', ->
       image: 'alpine'
       name: 'nikita_test_rm'
       rm: false
-    , (err, executed, stdout, stderr) ->
+    , (err, {stdout}) ->
       stdout.should.match /^test.*/ unless err
     .docker.rm
       force: true
@@ -125,8 +125,8 @@ describe 'docker.run', ->
       image: 'alpine'
       name: 'nikita_test'
       rm: false
-    , (err, status) ->
-      status.should.be.false()
+    , (err, {status}) ->
+      status.should.be.false() unless err
     .docker.rm
       force: true
       container: 'nikita_test'
@@ -149,8 +149,8 @@ describe 'docker.run', ->
       image: 'alpine'
       name: 'nikita_test'
       rm: false
-    , (err, status, out, serr) ->
-      status.should.be.false()
+    , (err, {status}) ->
+      status.should.be.false() unless err
     .docker.rm
       force: true
       container: 'nikita_test'

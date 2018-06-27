@@ -155,11 +155,11 @@ nikita.system.execute({
         options.bash = 'bash' unless ['bash', 'arch_chroot'].some (k) -> options[k]
       # User substitution
       # Determines if writing is required and eventually convert uid to username
-      @call shy: true, (_, callback)->
+      @call shy: true, (_, callback) ->
         return callback null, false unless options.uid
         return callback null, false if current_username is 'root'
         return callback null, options.uid isnt current_username unless /\d/.test "#{options.uid}"
-        @system.execute "awk -v val=#{options.uid} -F ":" '$3==val{print $1}' /etc/passwd`", (err, _, stdout) ->
+        @system.execute "awk -v val=#{options.uid} -F ":" '$3==val{print $1}' /etc/passwd`", (err, {stdout}) ->
           options.uid = stdout.trim() unless err
           options.bash = 'bash' unless options.bash or options.arch_chroot
           callback err, options.uid isnt current_username
@@ -244,14 +244,14 @@ nikita.system.execute({
               @log message: "Skip exit code \"#{code}\"", level: 'INFO', module: 'nikita/lib/system/execute'
             callback null, status
           , 1
-      @next (err1, status) ->
+      @next (err1, {status}) ->
         @system.remove
           if: not options.dirty and options.target
           target: options.target
           always: true # todo, need to create this option (run even on error)
           sudo: false
         @next (err2) ->
-          callback err1 or err2, status, result.stdout, result.stderr, result.code
+          callback err1 or err2, status: status, stdout: result.stdout, stderr: result.stderr, code: result.code
 
 ## Dependencies
 

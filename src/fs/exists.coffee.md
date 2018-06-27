@@ -1,5 +1,5 @@
 
-# `nikita.fs.lstat(options, callback)`
+# `nikita.fs.exists(options, callback)`
 
 Retrieve file information. If path is a symbolic link, then the link itself is
 stat-ed, not the file that it refers to.
@@ -18,4 +18,9 @@ stat-ed, not the file that it refers to.
         arch_chroot: options.arch_chroot
         relax: true
       , (err) ->
-        callback null, not err
+        if err?.code is 'ENOENT'
+          exists = false
+          err = null
+        else unless err
+          exists = true
+        callback err, exists: exists

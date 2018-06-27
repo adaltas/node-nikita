@@ -15,7 +15,7 @@ describe 'system.move', ->
     .system.move
       target: "#{scratch}/new_name"
       source: "#{scratch}/org_file"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     # The target file should exists
     .file.assert
@@ -35,7 +35,7 @@ describe 'system.move', ->
     .system.move
       source: "#{scratch}/a_dir"
       target: "#{scratch}/moved"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     # The target file should exists
     .file.assert
@@ -62,12 +62,12 @@ describe 'system.move', ->
     .system.move
       source: "#{scratch}/src1.txt"
       target: "#{scratch}/dest.txt"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true() unless err
     .system.move # Move a file with the same content
       source: "#{scratch}/src2.txt"
       target: "#{scratch}/dest.txt"
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.false() unless err
     .file.assert
       target: "#{scratch}/dest.txt"
@@ -91,6 +91,6 @@ describe 'system.move', ->
       source: "#{scratch}/src.txt"
       target: "#{scratch}/dest.txt"
       force: 1
-    , (err, status) ->
+    , (err, {status}) ->
       status.should.be.true()
     .promise()
