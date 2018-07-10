@@ -68,8 +68,6 @@ npm test test/db/database.coffee
       options.engine = options.engine.toLowerCase()
       throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mariadb', 'mysql', 'postgresql']
       @log message: "Database engine set to #{options.engine}", level: 'INFO', module: 'nikita/db/database'
-      # Default values
-      options.port ?= 5432
       # Create database unless exist
       @log message: "Check if database #{options.database} exists", level: 'DEBUG', module: 'nikita/db/database'
       switch options.engine

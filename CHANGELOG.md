@@ -9,6 +9,10 @@ Backward incompatibilities:
 * file.types.etc_group.read: rename output params user_list ot users
 * file.render: remove eco dependency
 
+Fixes:
+
+* db: honors the port property
+
 Management:
 
 * misc.doc: remove unused module

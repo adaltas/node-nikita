@@ -35,14 +35,14 @@ module.exports =
     mariadb:
       engine: 'mariadb'
       host: 'mariadb'
-      port: 5432
+      port: 3306
       admin_username: 'root'
       admin_password: 'rootme'
       admin_db: 'root'
     mysql:
       engine: 'mysql'
       host: 'mysql'
-      port: 5432
+      port: 3306
       admin_username: 'root'
       admin_password: 'rootme'
       admin_db: 'root'

@@ -69,7 +69,7 @@ require('nikita').tools.repo({
             file
           callback()
       @call -> @system.remove remote_files
-      #download source
+      # Download source
       @file.download
         if: options.source?
         source: options.source
