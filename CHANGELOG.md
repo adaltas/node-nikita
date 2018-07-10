@@ -11,6 +11,7 @@ Backward incompatibilities:
 
 Fixes:
 
+* mysql: freeze version 5.7 to avoid authentication issues
 * db: honors the port property
 
 Management:
