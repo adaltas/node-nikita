@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# kadmin NODE.DC1.CONSUL -p admin/admin -s krb5 -w admin -q 'listprincs'
+until echo admin | kinit admin/admin
+do
+  echo 'waiting for kinit to succeed'
+  sleep 4
+done
+
 # We have TTY, so probably an interactive container...
 if test -t 0; then
   # Run supervisord detached...

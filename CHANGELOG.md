@@ -11,8 +11,12 @@ Backward incompatibilities:
 
 Fixes:
 
-* mysql: freeze version 5.7 to avoid authentication issues
 * db: honors the port property
+
+Cleanup:
+
+* krb5: isolate tests into their own container
+* mysql: freeze version 5.7 to avoid authentication issues
 
 Management:
 

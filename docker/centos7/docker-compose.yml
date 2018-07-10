@@ -15,7 +15,6 @@ services:
       - ../..:/nikita
     depends_on:
       - dind
-      - krb5
       - postgres
       - mariadb
       - mysql
@@ -46,9 +45,3 @@ services:
       MYSQL_ROOT_PASSWORD: rootme
     expose:
       - "3306"
-  krb5:
-    image: sequenceiq/kerberos
-    volumes:
-      - /dev/urandom:/dev/random
-    environment:
-      BOOTSTRAP: 1

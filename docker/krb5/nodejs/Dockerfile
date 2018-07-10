@@ -27,6 +27,10 @@ RUN yum install -y openssh-server openssh-clients \
 # Install Java
 RUN yum install -y java
 
+# Install Krb5 client
+RUN yum install -y krb5-workstation
+ADD ./krb5.conf /etc/krb5.conf
+
 # Install Misc dependencies
 RUN yum install -y zip unzip bzip2 git
 

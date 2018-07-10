@@ -5,9 +5,9 @@ module.exports =
   disable_db: false # can be activated
   disable_docker: false
   disable_docker_volume: false # centos6 ship docker 1.7 which doesnt support volume
-  disable_krb5_addprinc: false # not sure if working
-  disable_krb5_delprinc: false # not sure if working
-  disable_krb5_ktadd: false # not sure if working
+  disable_krb5_addprinc: true # not sure if working
+  disable_krb5_delprinc: true # not sure if working
+  disable_krb5_ktadd: true # not sure if working
   disable_ldap_acl: true # can be activated
   disable_ldap_index: true # can be activated
   disable_ldap_user: true # can be activated
@@ -30,7 +30,7 @@ module.exports =
   conditions_is_os:
     arch: '64'
     name: 'centos'
-    version: '7.3'
+    version: '7.5'
   db:
     mariadb:
       engine: 'mariadb'
@@ -53,11 +53,6 @@ module.exports =
       admin_username: 'root'
       admin_password: 'rootme'
       admin_db: 'root'
-  krb5:
-    realm: 'NODE.DC1.CONSUL'
-    kadmin_server: 'krb5'
-    kadmin_principal: 'admin/admin@NODE.DC1.CONSUL'
-    kadmin_password: 'admin'
   ldap:
     uri: 'ldaps://master3.ryba:636'
     binddn: 'cn=Manager,dc=ryba'
