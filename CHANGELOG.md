@@ -20,6 +20,7 @@ Cleanup:
 
 Management:
 
+* package: use https url for issues
 * misc.doc: remove unused module
 * package: remove fs.realpath dependency
 * wrap: remove ssh2-connect dependency
