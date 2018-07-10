@@ -10,30 +10,16 @@ version: '2'
 services:
   nodejs:
     build: .
-    image: nikita_centos7_nodejs
+    image: nikita_mariadb_nodejs
     volumes:
       - ../..:/nikita
     depends_on:
-      - dind
-      - postgres
-      - mysql
+      - mariadb
     environment:
-      MECANO_TEST: /nikita/docker/centos7/test.coffee
-      DOCKER_HOST: 'tcp://dind:2375'
+      MECANO_TEST: /nikita/docker/mariadb/test.coffee
       TMPDIR: '/var/tmp'
-  dind:
-    image: docker:dind
-    privileged: true
-    # detach: true
-  postgres:
-    image: postgres:9.5
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: rootme
-    expose:
-      - "5432"
-  mysql:
-    image: mysql:5.7
+  mariadb:
+    image: mariadb:latest
     environment:
       MYSQL_ROOT_PASSWORD: rootme
     expose:

@@ -15,6 +15,7 @@ Fixes:
 
 Cleanup:
 
+* mariadb: isolate tests into their container
 * krb5: isolate tests into their own container
 * mysql: freeze version 5.7 to avoid authentication issues
 

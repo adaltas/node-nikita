@@ -32,13 +32,6 @@ module.exports =
     name: 'centos'
     version: '7.5'
   db:
-    mariadb:
-      engine: 'mariadb'
-      host: 'mariadb'
-      port: 3306
-      admin_username: 'root'
-      admin_password: 'rootme'
-      admin_db: 'root'
     mysql:
       engine: 'mysql'
       host: 'mysql'

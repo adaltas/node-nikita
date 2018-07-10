@@ -7,6 +7,7 @@ describe 'db.schema postgres', ->
 
   config = test.config()
   return if config.disable_db
+  return unless config.db.postgresql
 
   they 'add new schema with no owner (existing db)', (ssh) ->
     nikita
