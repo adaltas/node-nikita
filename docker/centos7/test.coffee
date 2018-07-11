@@ -23,7 +23,7 @@ module.exports =
   disable_system_tmpfs: false
   disable_system_user: false
   disable_tools_repo: false
-  disable_tools_rubygems: false
+  disable_tools_rubygems: true
   docker: # eg `docker-machine create --driver virtualbox nikita || docker-machine start nikita`
     host: 'dind:2375'
     # machine: 'nikita'

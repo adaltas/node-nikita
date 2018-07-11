@@ -24,24 +24,8 @@ RUN yum install -y openssh-server openssh-clients \
   && cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys \
   && ssh-keygen -f /etc/ssh/ssh_host_rsa_key
 
-# Install Java
-RUN yum install -y java
-
-# Install Misc dependencies
-RUN yum install -y zip unzip bzip2 git
-
-# Install openssl
-RUN yum install -y openssl
-
-# Install docker
-# RUN curl -fsSL https://get.docker.com/ | sh
-RUN yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-RUN yum install -y docker-ce
-RUN curl -L https://github.com/docker/compose/releases/download/1.18.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
-RUN chmod +x /usr/local/bin/docker-compose
-
-# Cgroup
-RUN yum install -y libcgroup-tools
+# Ruby & Gem
+RUN yum install -y gcc ruby ruby-devel
 
 RUN yum clean all
 
