@@ -14,20 +14,14 @@ services:
     volumes:
       - ../..:/nikita
     depends_on:
-      - dind
-      - postgres
+      - mysql
     environment:
-      MECANO_TEST: /nikita/docker/centos7/test.coffee
+      MECANO_TEST: /nikita/docker/mysql5/test.coffee
       DOCKER_HOST: 'tcp://dind:2375'
       TMPDIR: '/var/tmp'
-  dind:
-    image: docker:dind
-    privileged: true
-    # detach: true
-  postgres:
-    image: postgres:9.5
+  mysql:
+    image: mysql:5.7
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: rootme
+      MYSQL_ROOT_PASSWORD: rootme
     expose:
-      - "5432"
+      - "3306"
