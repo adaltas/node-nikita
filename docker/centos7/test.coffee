@@ -2,7 +2,7 @@
 module.exports =
   disable_conditions_if_os: false
   disable_cron: false
-  disable_db: false # can be activated
+  disable_db: true # can be activated
   disable_docker: false
   disable_docker_volume: false # centos6 ship docker 1.7 which doesnt support volume
   disable_krb5_addprinc: true # not sure if working
@@ -31,14 +31,6 @@ module.exports =
     arch: '64'
     name: 'centos'
     version: '7.5'
-  db:
-    postgresql:
-      engine: 'postgresql'
-      host: 'postgres'
-      port: 5432
-      admin_username: 'root'
-      admin_password: 'rootme'
-      admin_db: 'root'
   ldap:
     uri: 'ldaps://master3.ryba:636'
     binddn: 'cn=Manager,dc=ryba'

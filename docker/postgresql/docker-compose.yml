@@ -10,18 +10,18 @@ version: '2'
 services:
   nodejs:
     build: .
-    image: nikita_mysql5_nodejs
+    image: nikita_postgresql_nodejs
     volumes:
       - ../..:/nikita
     depends_on:
-      - mysql
+      - postgres
     environment:
-      MECANO_TEST: /nikita/docker/mysql5/test.coffee
-      DOCKER_HOST: 'tcp://dind:2375'
+      MECANO_TEST: /nikita/docker/postgresql/test.coffee
       TMPDIR: '/var/tmp'
-  mysql:
-    image: mysql:5.7
+  postgres:
+    image: postgres:9.5
     environment:
-      MYSQL_ROOT_PASSWORD: rootme
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: rootme
     expose:
-      - "3306"
+      - "5432"

@@ -34,6 +34,5 @@ RUN mkdir -p /nikita
 WORKDIR /nikita
 ENV TERM xterm
 
-#CMD ["node_modules/.bin/mocha", "test/api/"]
 ENTRYPOINT ["/run.sh"]
 CMD []
