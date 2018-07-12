@@ -3,8 +3,8 @@ module.exports =
   disable_conditions_if_os: false
   disable_cron: false
   disable_db: true # can be activated
-  disable_docker: false
-  disable_docker_volume: false # centos6 ship docker 1.7 which doesnt support volume
+  disable_docker: true
+  disable_docker_volume: true # centos6 ship docker 1.7 which doesnt support volume
   disable_krb5_addprinc: true # not sure if working
   disable_krb5_delprinc: true # not sure if working
   disable_krb5_ktadd: true # not sure if working
@@ -24,9 +24,6 @@ module.exports =
   disable_system_user: false
   disable_tools_repo: false
   disable_tools_rubygems: true
-  docker: # eg `docker-machine create --driver virtualbox nikita || docker-machine start nikita`
-    host: 'dind:2375'
-    # machine: 'nikita'
   conditions_is_os:
     arch: '64'
     name: 'centos'

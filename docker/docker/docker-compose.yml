@@ -13,6 +13,12 @@ services:
     image: nikita_centos7_nodejs
     volumes:
       - ../..:/nikita
+    depends_on:
+      - dind
     environment:
-      MECANO_TEST: /nikita/docker/centos7/test.coffee
+      MECANO_TEST: /nikita/docker/docker/test.coffee
+      DOCKER_HOST: 'tcp://dind:2375'
       TMPDIR: '/var/tmp'
+  dind:
+    image: docker:dind
+    privileged: true
