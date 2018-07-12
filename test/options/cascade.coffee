@@ -167,3 +167,14 @@ describe 'options "cascade"', ->
           options.session_b.should.equal 'b'
           options.action_c.should.equal 'c'
       .promise()
+    
+    it 'can be declared as an array', ->
+      nikita
+      .call
+        cascade: ['an_option']
+        an_option: true
+      , (options) ->
+        options.an_option.should.be.true()
+        @call (options) ->
+          (options.an_option is undefined).should.be.true()
+      .promise()

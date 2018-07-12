@@ -13,8 +13,9 @@ Fixes:
 
 * db: honors the port property
 
-Cleanup:
+Cleanup and minor enhancements:
 
+* cascade: test array when defined in action
 * mysql: isolate tests into their container
 * mariadb: isolate tests into their container
 * krb5: isolate tests into their own container
