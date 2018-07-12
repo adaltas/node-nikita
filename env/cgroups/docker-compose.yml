@@ -10,9 +10,9 @@ version: '2'
 services:
   nodejs:
     build: .
-    image: nikita_systemctl_nodejs
+    image: nikita_cgroups_nodejs
     volumes:
       - ../..:/nikita
     environment:
-      MECANO_TEST: /nikita/docker/systemctl/test.coffee
+      MECANO_TEST: /nikita/env/cgroups/test.coffee
       TMPDIR: '/var/tmp'

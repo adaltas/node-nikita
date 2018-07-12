@@ -9,18 +9,19 @@
 version: '2'
 services:
   nodejs:
-    build: .
-    image: nikita_mariadb_nodejs
+    build: ./nodejs
+    image: nikita_centos7_nodejs
     volumes:
       - ../..:/nikita
     depends_on:
-      - mariadb
+      - krb5
     environment:
-      MECANO_TEST: /nikita/docker/mariadb/test.coffee
+      MECANO_TEST: /nikita/env/krb5/test.coffee
       TMPDIR: '/var/tmp'
-  mariadb:
-    image: mariadb:latest
+  krb5:
+    build: ./server
+    image: nikita_krb5_server
+    volumes:
+      - /dev/urandom:/dev/random
     environment:
-      MYSQL_ROOT_PASSWORD: rootme
-    expose:
-      - "3306"
+      BOOTSTRAP: 1

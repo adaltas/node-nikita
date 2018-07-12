@@ -9,19 +9,10 @@
 version: '2'
 services:
   nodejs:
-    build: ./nodejs
-    image: nikita_centos7_nodejs
+    build: .
+    image: nikita_sudo_nodejs
     volumes:
-      - ../..:/nikita
-    depends_on:
-      - krb5
+      - ../..:/home/nikita/work
     environment:
-      MECANO_TEST: /nikita/docker/krb5/test.coffee
+      MECANO_TEST: /home/nikita/work/env/sudo/test.coffee
       TMPDIR: '/var/tmp'
-  krb5:
-    build: ./server
-    image: nikita_krb5_server
-    volumes:
-      - /dev/urandom:/dev/random
-    environment:
-      BOOTSTRAP: 1

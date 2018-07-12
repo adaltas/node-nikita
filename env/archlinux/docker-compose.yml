@@ -9,7 +9,7 @@ services:
     depends_on:
       - krb5
     environment:
-      MECANO_TEST: /nikita/docker/archlinux/test.coffee
+      MECANO_TEST: /nikita/env/archlinux/test.coffee
     cap_add:
       - SYS_ADMIN # Required to use `mount`
   krb5:

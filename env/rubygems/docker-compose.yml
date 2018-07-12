@@ -10,9 +10,9 @@ version: '2'
 services:
   nodejs:
     build: .
-    image: nikita_sudo_nodejs
+    image: nikita_centos7_nodejs
     volumes:
-      - ../..:/home/nikita/work
+      - ../..:/nikita
     environment:
-      MECANO_TEST: /home/nikita/work/docker/sudo/test.coffee
+      MECANO_TEST: /nikita/env/rubygems/test.coffee
       TMPDIR: '/var/tmp'

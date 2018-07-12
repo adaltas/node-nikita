@@ -16,7 +16,7 @@ services:
     depends_on:
       - mysql
     environment:
-      MECANO_TEST: /nikita/docker/mysql5/test.coffee
+      MECANO_TEST: /nikita/env/mysql5/test.coffee
       DOCKER_HOST: 'tcp://dind:2375'
       TMPDIR: '/var/tmp'
   mysql:
