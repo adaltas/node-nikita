@@ -31,10 +31,6 @@ RUN yum install -y docker-ce
 RUN curl -L https://github.com/docker/compose/releases/download/1.18.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 RUN chmod +x /usr/local/bin/docker-compose
 
-# Prefect the httpd image to avoid timeout 
-# in tests the first time they are executed.
-RUN docker pull httpd
-
 RUN yum clean all
 
 ADD ./run.sh /run.sh

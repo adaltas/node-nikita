@@ -9,6 +9,12 @@ describe 'docker.compose', ->
   return if config.disable_docker
   scratch = test.scratch @
   @timeout 90000
+  
+  it 'fetch image to avoid timeout later', ->
+    @timeout 0
+    nikita
+    .docker.pull tag: 'httpd'
+    .promise()
 
   they 'up from content', (ssh) ->
     # Note, this fail the first time because the container take some time
