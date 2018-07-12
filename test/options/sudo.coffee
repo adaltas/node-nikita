@@ -36,7 +36,7 @@ describe 'options "sudo"', ->
       sudo: false
     .system.execute
       cmd: 'id -u && id -g'
-    , (err, _, stdout) ->
+    , (err, {stdout}) ->
       throw err if err
       [uid, gid] = stdout.split '\n'
     .fs.mkdir
