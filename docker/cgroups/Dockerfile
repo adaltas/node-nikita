@@ -9,9 +9,6 @@ RUN yum install -y xz \
   && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
   && rm -f "/node-v$NODE_VERSION-linux-x64.tar.xz"
 
-# Install epel (requirement for service nginx)
-RUN yum install -y epel-release
-
 # Install supervisor
 RUN \
   yum install -y iproute python-setuptools hostname inotify-tools yum-utils which && \
@@ -24,14 +21,8 @@ RUN yum install -y openssh-server openssh-clients \
   && cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys \
   && ssh-keygen -f /etc/ssh/ssh_host_rsa_key
 
-# Install Java
-RUN yum install -y java
-
-# Install Misc dependencies
-RUN yum install -y zip unzip bzip2 git
-
-# Install openssl
-RUN yum install -y openssl
+# Cgroup
+RUN yum install -y libcgroup-tools
 
 RUN yum clean all
 
