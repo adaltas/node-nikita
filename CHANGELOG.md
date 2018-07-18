@@ -11,6 +11,7 @@ Backward incompatibilities:
 
 Fixes:
 
+* ssh: fix conflict with session options
 * db: honors the port property
 
 Cleanup and minor enhancements:
