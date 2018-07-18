@@ -10,9 +10,11 @@ tilde = require 'tilde-expansion'
 file = require './file'
 string = require './string'
 array = require './array'
+ssh = require './ssh'
 
 misc = module.exports =
   stats: require './stats'
+  ssh: require './ssh'
   # TODO: to move
   regexp:
     # Escape RegExp related charracteres

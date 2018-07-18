@@ -129,7 +129,6 @@ require('nikita')({
         # The new connection refer to the same target and the current one
         return if ssh.compare @store['nikita:ssh:connection'], options
         throw Error "SSH Connection Already Set: call `ssh.close` before attempting to create a new connection with `ssh.open`."
-          
       # Read private key if option is a path
       @call unless: options.private_key, (_, callback) ->
         @log message: "Read Private Key from: #{options.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/open'

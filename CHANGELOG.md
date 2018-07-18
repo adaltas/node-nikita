@@ -15,6 +15,7 @@ Fixes:
 
 Cleanup and minor enhancements:
 
+* ssh: test arguments
 * cascade: test array when defined in action
 * mysql: isolate tests into their container
 * mariadb: isolate tests into their container
