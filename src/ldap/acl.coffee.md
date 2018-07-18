@@ -108,7 +108,7 @@ require('nikita').ldap.acl({
                   olcAccesses.push current
                   current = null
             do_diff ldap.acl.parse olcAccesses
-        do_diff = (olcAccesses) ->
+        do_diff = (olcAccesses) =>
           olcAccess = null
           # Find match "to" property
           for access, i in olcAccesses

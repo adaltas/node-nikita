@@ -1,6 +1,16 @@
 
 # Changelog
 
+## Trunk
+
+Fixes:
+
+* ldap.acl: fix call to log
+
+Management:
+
+* package: push to current branch
+
 ## Version 0.6.8
 
 Backward incompatibilities:
@@ -49,7 +59,6 @@ Cleanup and minor enhancements:
 
 Management:
 
-* package: push to current branch
 * travis: test against Node.js versions 8 and 10
 * changelog: organize messages by group
 * package: latest dependencies
