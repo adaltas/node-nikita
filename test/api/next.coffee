@@ -16,6 +16,16 @@ describe 'api next', ->
       err.message.should.eql 'Catchme'
       d.exit()
       next()
+  
+  it 'provide status', ->
+    nikita
+    .call (_, callback) -> callback null, true
+    .next (err, {status}) ->
+      status.should.be.true()
+    .call (_, callback) -> callback null, false
+    .next (err, {status}) ->
+      status.should.be.false()
+    .promise()
 
   it 'without arguments', ->
     history = []
@@ -23,7 +33,7 @@ describe 'api next', ->
     .call -> history.push 'a'
     .next()
     .call -> history.push 'b'
-    .next (err) ->
+    .next () ->
       history.should.eql ['a', 'b']
     .promise()
 
