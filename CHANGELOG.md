@@ -23,6 +23,7 @@ Cleanup and minor enhancements:
 
 Management:
 
+* package: push to current branch
 * package: use https url for issues
 * misc.doc: remove unused module
 * package: remove fs.realpath dependency
