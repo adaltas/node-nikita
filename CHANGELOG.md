@@ -1,6 +1,12 @@
 
 # Changelog
 
+## Trunk
+
+Fixes:
+
+* ssh: fix conflict with session options
+
 ## Version 0.6.10
 
 Fixes:
