@@ -1,10 +1,11 @@
 
 # Changelog
 
-## Version 0.6.9
+## Trunk
 
 Fixes:
 
+* misc.ssh: fix ssh version detection
 * ldap.acl: fix call to log
 
 Management:
