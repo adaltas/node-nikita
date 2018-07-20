@@ -101,7 +101,7 @@ describe 'api callback', ->
         .next (err) ->
           err.message.should.eql 'Catchme'
         .promise()
-          
+        
     describe 'are catched in following promise', ->
 
       it 'without parent', ->

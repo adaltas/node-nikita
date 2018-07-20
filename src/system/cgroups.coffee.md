@@ -37,7 +37,7 @@ properties.
 
 It accepts also all the `nikita.file` options.
 
-Example:
+## Example
 
 Example of a group object
 

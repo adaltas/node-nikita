@@ -184,6 +184,8 @@ functions share a common API with flexible options.
         group:
           '': 'nikita/system/group/index'
           remove: 'nikita/system/group/remove'
+        info:
+          'disks': 'nikita/system/info/disks'
         limits: 'nikita/system/limits'
         link: 'nikita/system/link'
         mkdir: 'nikita/system/mkdir'

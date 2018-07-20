@@ -19,6 +19,7 @@ module.exports =
   disable_system_cgroups: false
   disable_system_discover: false
   disable_system_execute_arc_chroot: true #can not be activated
+  disable_system_info: false
   disable_system_limits: false
   disable_system_tmpfs: true #can not be activated
   disable_system_user: false
