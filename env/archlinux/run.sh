@@ -1,12 +1,5 @@
 #!/bin/bash
 
-# kadmin NODE.DC1.CONSUL -p admin/admin -s krb5 -w admin -q 'listprincs'
-until echo admin | kinit admin/admin
-do
-  echo 'waiting for kinit to succeed'
-  sleep 4
-done
-
 # mount --bind /var/tmp/root.x86_64 /mnt
 
 # We have TTY, so probably an interactive container...

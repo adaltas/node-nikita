@@ -1,7 +1,7 @@
 FROM base/archlinux
 MAINTAINER David Worms
 
-RUN pacman -Syu && pacman --noconfirm -S procps grep which sed
+RUN pacman --noconfirm -Syu && pacman --noconfirm -S procps grep which sed
 
 # Install Node.js
 ENV NPM_CONFIG_LOGLEVEL info
@@ -20,10 +20,6 @@ RUN pacman --noconfirm -S openssh \
 # Install Java
 RUN pacman --noconfirm -S jdk8-openjdk
 
-# Install Krb5 client
-RUN pacman --noconfirm -S krb5
-ADD ./krb5.conf /etc/krb5.conf
-
 # Install Misc dependencies
 RUN pacman --noconfirm -S zip git
 
@@ -32,9 +28,9 @@ RUN pacman -Syy && pacman --noconfirm -S docker docker-compose
 
 # Install arch-chroot
 RUN pacman --noconfirm -S arch-install-scripts tar gzip \
- && curl https://mirrors.kernel.org/archlinux/iso/2017.03.01/archlinux-bootstrap-2017.03.01-x86_64.tar.gz -o /var/tmp/archlinux-bootstrap-2017.03.01-x86_64.tar.gz \
- && tar xzf /var/tmp/archlinux-bootstrap-2017.03.01-x86_64.tar.gz -C /var/tmp \
- && rm -f /var/tmp/archlinux-bootstrap-2017.03.01-x86_64.tar.gz
+ && curl -L https://mirrors.kernel.org/archlinux/iso/2018.07.01/archlinux-bootstrap-2018.07.01-x86_64.tar.gz -o /var/tmp/archlinux-bootstrap-2018.07.01-x86_64.tar.gz \
+ && tar xzf /var/tmp/archlinux-bootstrap-2018.07.01-x86_64.tar.gz -C /var/tmp \
+ && rm -f /var/tmp/archlinux-bootstrap-2018.07.01-x86_64.tar.gz
 
 ADD ./run.sh /run.sh
 RUN mkdir -p /nikita
