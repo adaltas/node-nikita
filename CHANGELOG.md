@@ -1,7 +1,7 @@
 
 # Changelog
 
-## Trunk
+## Version 0.7.0
 
 Backward incompatibilities:
 
