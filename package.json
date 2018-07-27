@@ -1,6 +1,7 @@
 {
   "name": "nikita",
-  "description": "Automation and deployment orchestration solution for distributed apps and infrastructure.",
+  "description": "Automation of system deployments for applications and infrastructures.",
+  "keywords": "automation, deployment, node.js, devops, systems, applications, infrastructures",
   "version": "0.6.8",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
