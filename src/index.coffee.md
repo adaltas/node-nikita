@@ -186,6 +186,7 @@ functions share a common API with flexible options.
           remove: 'nikita/system/group/remove'
         info:
           'disks': 'nikita/system/info/disks'
+          'system': 'nikita/system/info/system'
         limits: 'nikita/system/limits'
         link: 'nikita/system/link'
         mkdir: 'nikita/system/mkdir'

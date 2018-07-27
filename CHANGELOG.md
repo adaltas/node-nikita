@@ -12,6 +12,7 @@ Backward incompatibilities:
 New features:
 
 * system.info.disk: new action
+* system.info.system: new action
 
 Fixes:
 
