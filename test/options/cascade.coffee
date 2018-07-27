@@ -1,14 +1,14 @@
 
 nikita = require '../../src'
-context = require '../../src/context'
+session = require '../../src/session'
 
 describe 'options "cascade"', ->
   
   describe 'globally', ->
   
     it 'pass the cascade option', ->
-      context.cascade.global_option_true = true
-      context.cascade.global_option_false = false
+      session.cascade.global_option_true = true
+      session.cascade.global_option_false = false
       nikita
       # Test the cascade option
       .call (options) ->
@@ -19,13 +19,13 @@ describe 'options "cascade"', ->
           options.cascade.global_option_false.should.false()
       # Cleanup
       .call ->
-        delete context.cascade.global_option_true
-        delete context.cascade.global_option_false
+        delete session.cascade.global_option_true
+        delete session.cascade.global_option_false
       .promise()
       
     it 'pass the action cascaded value', ->
-      context.cascade.global_option_true = true
-      context.cascade.global_option_false = false
+      session.cascade.global_option_true = true
+      session.cascade.global_option_false = false
       nikita
       # Test the action cascaded value
       .call
@@ -42,8 +42,8 @@ describe 'options "cascade"', ->
             (options.global_option_false is undefined).should.be.true()
       # Cleanup
       .call ->
-        delete context.cascade.global_option_true
-        delete context.cascade.global_option_false
+        delete session.cascade.global_option_true
+        delete session.cascade.global_option_false
       .promise()
         
   describe 'defined in session', ->

@@ -1,5 +1,5 @@
 
-# Nikita Context
+# Nikita Session
 
     module.exports = ->
       if arguments.length is 2

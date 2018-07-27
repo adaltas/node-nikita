@@ -5,7 +5,8 @@
 
 Backward incompatibilities:
 
-* context: 2nd arg in callback is now an object
+* session: renamed from context
+* actions: 2nd arg in callback is now an object
 * file.types.etc_group.read: rename output params user_list ot users
 * file.render: remove eco dependency
 

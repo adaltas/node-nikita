@@ -362,7 +362,7 @@ conditions.all({
 })
 ```
 
-      all: (context, options, succeed, failed) ->
+      all: (session, options, succeed, failed) ->
         return succeed() unless options? and (typeof options is 'object' and not Array.isArray options)
         keys = Object.keys options
         i = 0
@@ -371,7 +371,7 @@ conditions.all({
           return succeed() unless key?
           return next() if key is 'all'
           return next() unless module.exports[key]?
-          module.exports[key].call context, options, next, (err) ->
+          module.exports[key].call session, options, next, (err) ->
             # @log "Nikita `#{key}`: skipping action"
             failed err
         next()

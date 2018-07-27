@@ -7,7 +7,7 @@ describe 'api child', ->
 
   scratch = test.scratch @
 
-  it 'dont change status of parent context', ->
+  it 'dont change status of parent action', ->
     touched = 0
     n = nikita()
     n.call (options, next) ->

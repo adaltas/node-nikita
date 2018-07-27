@@ -25,7 +25,7 @@ describe 'api promise', ->
         err.message.should.eql 'CatchMe'
         next()
   
-  it 'handle nested context', ->
+  it 'handle nested sessions', ->
     callback_is_called = false
     nikita
     .call (_, callback) ->

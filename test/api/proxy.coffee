@@ -11,5 +11,5 @@ describe 'api proxy', ->
       nikita().invalid()
     ).should.throw 'nikita(...).invalid is not a function'
 
-  it 'return false if property in context', ->
+  it 'return false if property in session', ->
     ('invalid' in nikita()).should.be.false()

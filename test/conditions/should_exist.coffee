@@ -30,7 +30,7 @@ describe 'should_exist', ->
         err.should.be.an.Object
         next()
 
-  they 'error propagated to context', (ssh, next) ->
+  they 'error propagated to session', (ssh, next) ->
     nikita
     .call should_exist: '/does/not/exist', ->
       throw Error 'Oh no'
@@ -65,7 +65,7 @@ describe 'should_not_exist', ->
         err.should.be.an.Object
         next()
 
-  they 'error propagated to context', (ssh, next) ->
+  they 'error propagated to session', (ssh, next) ->
     nikita
     .call should_not_exist: __filename, ->
       throw Error 'Oh no'

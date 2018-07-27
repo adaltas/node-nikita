@@ -137,7 +137,7 @@ describe 'options "log"', ->
   it.skip 'print value', ->
     # Doesnt work for now
     # The idea is that log shouldnt be an option
-    # But be part of nikita context
+    # But be part of Nikita session
     # which will make it also available inside callbacks
     logs = []
     nikita

@@ -13,10 +13,10 @@ functions share a common API with flexible options.
 
 ## Source Code
 
-    module.exports = new Proxy (-> context arguments...),
+    module.exports = new Proxy (-> session arguments...),
       get: (target, name) ->
         return registry if name in ['registry']
-        ctx = context()
+        ctx = session()
         return undefined unless ctx[name]
         return ctx[name] if name in ['cascade']
         tree = []
@@ -38,7 +38,7 @@ functions share a common API with flexible options.
 
 ## Dependencies
 
-    context = require './context'
+    session = require './session'
     registry = require './registry'
 
 ## Register

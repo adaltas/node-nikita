@@ -45,6 +45,6 @@ describe 'registry.unregister', ->
       try
         m.registry.unregister 'my_function'
       catch e
-        e.message.should.eql 'Unregister a global function from local context'
+        e.message.should.eql 'Unregister a global function from local session'
         nikita.registry.unregister 'my_function'
         next()

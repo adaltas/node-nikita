@@ -37,7 +37,7 @@ describe 'options "disable"', ->
       log.shy.should.be.true()
       log.status.should.be.false()
       log.type.should.eql 'lifecycle'
-      # log.file.should.eql 'context.coffee.md'
+      # log.file.should.eql 'session.coffee.md'
     .promise()
 
   it 'emit lifecycle event when not disabled', ->
@@ -56,6 +56,6 @@ describe 'options "disable"', ->
       log.level.should.eql 'DEBUG'
       (log.module is undefined).should.be.true()
       log.headers.should.eql []
-      log.file.should.eql 'context.coffee.md'
+      log.file.should.eql 'session.coffee.md'
     .next (->)
     .promise()
