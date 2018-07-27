@@ -1,7 +1,17 @@
 {
   "name": "nikita",
   "description": "Automation of system deployments for applications and infrastructures.",
-  "keywords": "automation, deployment, node.js, devops, systems, applications, infrastructures",
+  "keywords": [
+    "build",
+    "cli",
+    "deploy",
+    "fs",
+    "install",
+    "masson",
+    "ssh",
+    "system",
+    "task"
+  ],
   "version": "0.6.8",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
@@ -23,7 +33,7 @@
     }
   ],
   "dependencies": {
-    "colors": "~1.3.0",
+    "colors": "~1.3.1",
     "cron-parser": "~2.5.0",
     "diff": "~3.5.0",
     "each": "^1.2.0",
@@ -49,24 +59,13 @@
   "devDependencies": {
     "coffeescript": "^2.3.1",
     "mocha": "5.2.0",
-    "should": "~13.2.1",
+    "should": "~13.2.2",
     "ssh2-they": "^1.2.1"
   },
   "engines": {
     "node": ">= 6.2.2"
   },
   "homepage": "http://www.adaltas.com/projects/node-nikita/",
-  "keywords": [
-    "build",
-    "cli",
-    "deploy",
-    "fs",
-    "install",
-    "masson",
-    "ssh",
-    "system",
-    "task"
-  ],
   "license": "BSD-3-Clause",
   "main": "./lib/index",
   "repository": {
