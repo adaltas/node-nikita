@@ -50,7 +50,7 @@ of the docker directory and run docker-compose, here's an example to run tests
 on CentOS:
 
 ```
-cd docker/centos7 # or centos6
+cd env/centos7 # or any other directory
 # Run all tests
 docker-compose up --abort-on-container-exit
 # Enter bash console
