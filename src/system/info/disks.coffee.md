@@ -4,11 +4,84 @@
 Expose disk information. Internally, it parse the result of the "df" command. 
 The properties "total", "used" and "available" are expressed in bytes.
 
+## Options
+
+There are no required options.
+
+- `output` ([string])   
+  The list of properties to be returned; valid properties are 'source',
+  'fstype', 'itotal', 'iused', 'iavail', 'ipcent', 'size', 'used', 'avail',
+  'pcent' and 'target'; default to all of them.
+
+## Callback
+
+The following properties are available:
+
+- `filesystem` (string)   
+  The source of the mount point, usually a device; alias of the "source"
+  property of the `df` command.
+- `total` (integer)   
+  Total space available in bytes; derivated from the "itotal" output property of
+  the `df` command.
+- `used` (integer)   
+  Total space used in bytes; derivated from the "iused" output property of
+  the `df` command.
+- `available` (integer)   
+  Total space available in bytes; derivated from the "iavail" output property of
+  the `df` command.
+- `available_pourcent` (string)   
+  Total space available in pourcentage; alias of the "ipcent" output
+  property of the `df` command.
+- `mountpoint` (string)
+  The mount point location; alias of the "target" output property of the `df`
+  command.
+
+Additionnaly, the `df` property export the low level information obtained from
+the `df` command:
+
+- `disks[].df.source` (string)   
+  The source of the mount point, usually a device; correspond to the
+  "Filesystem" header of the `df` command.
+- `disks[].df.fstype` (string)   
+  File system type; correspond to the "Type" header of the `df` command.
+- `disks[].df.itotal` (integer)   
+  Total number of inodes, in bytes; correspond to the "Inodes" header of the
+  `df` command.
+- `disks[].df.iused` (integer)   
+  Number of used inodes, in bytes; correspond to the "IUsed" header of the `df`
+  command.
+- `disks[].df.iavail` (integer)   
+  Number of available inodes, in bytes; correspond to the "IFree" header of the
+  `df` command.
+- `disks[].df.ipcent` (string)   
+  Percentage of iused divided by itotal; correspond to the "IUse%" header of the
+  `df` command.
+- `disks[].df.size` (integer)   
+  The total space available, measured in 1kB units; correspond to the
+  "1K-blocks" header of the `df` command.
+- `disks[].df.used` (integer)   
+  Number of used blocks; correspond to the "Used" header of the `df` command.
+- `disks[].df.avail` (integer)   
+  Number of available blocks; correspond to the
+  "Avail" header of the `df` command.
+- `disks[].df.pcent` (float)   
+  Percentage of used divided by size; correspond to the
+  "Use%" header of the `df` command.
+- `disks[].df.target` (string)   
+  The mount point; correspond to the
+  "Mounted on" header of the `df` command.
+
+Note that if you add The Used and Available columns you don't get the total size
+shown; this is because of blocks that are reserved for root as shown in the
+output of `dumpe2fs` as "Reserved block count:". Those blocks can only be used by
+root, the idea behind this is that if a user fills up the filesystem, critical
+stuff still works and root can fix the problem.
+
 ## Example
 
 ```js
 require('nikita')
-.system.info.disks(function(err, disks){
+.system.info.disks(function(err, {disks}){
   if(err) throw err;
   disks.forEach(function(disk){
     console.log('File system:', disk.filesystem)
@@ -41,22 +114,29 @@ Here is how the output may look like:
 ## Source Code
 
     module.exports = (options, callback) ->
-      properties = ['filesystem', 'total', 'used', 'available', 'available_pourcent', 'mountpoint']
+      options.output ?= [
+        'source', 'fstype', 'itotal', 'iused',
+        'iavail', 'ipcent', 'size', 'used', 'avail',
+        'pcent', 'target'
+      ]
       @system.execute
         header: 'Disk'
-        cmd: 'df'
+        cmd: "df --output='#{options.output.join ','}'"
       , (err, {stdout}) ->
         return callback err if err
         disks = for line, i in string.lines stdout
           continue if i is 0
           continue if /^\s*$/.test line
           line = line.split /\s+/
-          disk = {}
-          for property, i in properties
-            disk[property] = line[i]
-          disk.total *= 1024
-          disk.used *= 1024
-          disk.available *= 1024
+          disk = {df: {}}
+          for property, i in options.output
+            disk.df[property] = line[i]
+          disk.filesystem = disk.df.source
+          disk.total = disk.df.itotal * 1024
+          disk.used = disk.df.iused * 1024
+          disk.available = disk.df.avail * 1024
+          disk.available_pourcent = disk.df.pcent
+          disk.mountpoint = disk.df.target
           disk
         callback null, disks: disks
 

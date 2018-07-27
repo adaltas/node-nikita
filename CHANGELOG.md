@@ -9,6 +9,10 @@ Backward incompatibilities:
 * file.types.etc_group.read: rename output params user_list ot users
 * file.render: remove eco dependency
 
+New features:
+
+* system.info.disk: new action
+
 Fixes:
 
 * ssh: fix conflict with session options

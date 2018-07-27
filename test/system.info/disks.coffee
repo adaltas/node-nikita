@@ -8,7 +8,7 @@ describe 'system.info.disks', ->
   config = test.config()
   return if config.disable_system_info
 
-  they 'with handler options', (ssh) ->
+  they 'with no options', (ssh) ->
     nikita
       ssh: ssh
     .system.info.disks (err, {status, disks}) ->
@@ -17,7 +17,12 @@ describe 'system.info.disks', ->
       disks.length.should.be.above 0
       for disk in disks
         Object.keys(disk).should.eql [
-          'filesystem', 'total', 'used',
+          'df', 'filesystem', 'total', 'used',
           'available', 'available_pourcent', 'mountpoint'
+        ]
+        Object.keys(disk.df).should.eql [
+          'source', 'fstype', 'itotal', 'iused',
+          'iavail', 'ipcent', 'size', 'used', 'avail',
+          'pcent', 'target'
         ]
     .promise()
