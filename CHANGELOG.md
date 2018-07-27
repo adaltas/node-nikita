@@ -366,3 +366,5 @@ Management:
 * disable: Introduce new option "disable" #26
 
 ## Version 0.6.0
+
+Not yet imported!
