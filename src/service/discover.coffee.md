@@ -40,12 +40,12 @@ Store properties in the nikita store object.
         """
         code: [1, 2]
         shy: true
-      , (err, status, stdout, stderr, signal) ->
+      , (err, data) ->
         throw Error "Undetected Operating System Loader" if err?.code is 3 and options.strict
-        loader = switch signal
+        loader = switch data.code
           when 1 then 'systemctl'
           when 2 then 'service'
         @store['nikita:service:loader'] = options.loader if options.cache
-      @next (err, {status}) ->
+      @next (err, data) ->
         loader = @store['nikita:service:loader']? if options.cache and not loader?
-        callback err, status: status, loader: loader
+        callback err, status: data.status, loader: loader

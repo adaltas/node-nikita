@@ -43,8 +43,8 @@ require('nikita').service.start([{
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       # Action
       @log message: "Restart service #{options.name}", level: 'INFO', module: 'nikita/lib/service/restart'
-      @service.discover (err, {loader}) -> 
-        options.loader ?= loader
+      @service.discover (err, system) -> 
+        options.loader ?= system.loader
       @call ->
         cmd = switch options.loader
           when 'systemctl' then "systemctl restart #{options.name}"

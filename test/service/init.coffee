@@ -58,7 +58,7 @@ describe 'service.init', ->
       .system.remove
         target: '/etc/init.d/crond'
       .system.execute
-        cmd: 'systemctl daemon-reload'
+        cmd: 'systemctl daemon-reload;systemctl reset-failed'
       .service.init
         source: "#{__dirname}/crond.j2"
         name: 'crond'

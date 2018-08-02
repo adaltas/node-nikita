@@ -58,8 +58,8 @@ Reload the service daemon provider depending on the os.
       options.name = path.basename(options.target).split('.service')[0] if options.target?
       options.target ?= "/etc/init.d/#{options.name}"
       options.context ?= {}
-      @service.discover (err, status, loader) ->
-        options.loader ?= loader
+      @service.discover (err, system) ->
+        options.loader ?= system.loader
       # discover loader to put in cache
         @file.render
           target: options.target
@@ -80,7 +80,7 @@ Reload the service daemon provider depending on the os.
           code_skipped: 1
         @system.execute
           if: ->  @status -1
-          cmd: 'systemctl daemon-reload'
+          cmd: 'systemctl daemon-reload;systemctl reset-failed'
 
 ## Dependencies
 
