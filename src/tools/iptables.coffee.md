@@ -99,10 +99,10 @@ require('nikita').iptables({
       @system.execute
         cmd: "service iptables status &>/dev/null && iptables -S"
         code_skipped: 3
-      , (err, executed, stdout) =>
+      , (err, data) =>
         return callback err if err
-        return callback Error "Service iptables not started" unless executed
-        oldrules = iptables.parse stdout
+        return callback Error "Service iptables not started" unless data.status
+        oldrules = iptables.parse data.stdout
         newrules = iptables.normalize options.rules
         cmd = iptables.cmd oldrules, newrules
         return callback() unless cmd.length
@@ -110,7 +110,7 @@ require('nikita').iptables({
         @system.execute
           cmd: "#{cmd.join '; '}; service iptables save;"
           trap: true
-        , (err, executed) ->
+        , (err, data) ->
           callback err, true
 
 ## Dependencies
