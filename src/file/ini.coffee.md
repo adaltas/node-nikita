@@ -51,8 +51,8 @@ provided in the `content` option.
 
 * `err`   
   Error object if any.   
-* `written`   
-  Number of written actions with modifications.   
+* `status`   
+  Indicate a change in the target file.   
 
 ## Example
 

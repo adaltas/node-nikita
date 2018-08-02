@@ -9,6 +9,7 @@ Fixes:
 * service: 2nd argument is not a callback
 * ldap: 2nd argument is not a callback
 * tools.iptables: 2nd arg is not a callback
+* misc.ini.stringify: handle boolean values
 
 Cleanup:
 

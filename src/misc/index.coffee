@@ -315,6 +315,11 @@ misc = module.exports =
                 out += safe("#{k}[]") + options.separator + safe(item) + "\n"
         else if val and typeof val is "object"
           children.push k
+        else if typeof val is 'boolean'
+          if val is true
+            out += safe(k) + options.eol
+          else
+            # disregard false value
         else
           out += safe(k) + options.separator + safe(val) + options.eol
       if section and out.length

@@ -13,3 +13,16 @@ describe 'misc.ini stringify', ->
     color:rouge
     
     """
+
+  it 'handle boolean', ->
+    misc.ini.stringify
+      user: preference:
+        a_string: 'a value'
+        a_boolean_true: true
+        a_boolean_false: false
+    .should.eql """
+    [user.preference]
+    a_string = a value
+    a_boolean_true
+    
+    """
