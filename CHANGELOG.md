@@ -1,6 +1,10 @@
 
 # Changelog
 
+* service: 2nd argument is not a callback
+* ldap: 2nd argument is not a callback
+* tools.iptables: 2nd arg is not a callback
+
 ## Version 0.7.0
 
 Backward incompatibilities:
