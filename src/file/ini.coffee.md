@@ -29,8 +29,6 @@ provided in the `content` option.
 * `parse`   
   User-defined function to parse the content from ini format, default to
   `require('ini').parse`, see 'misc.ini.parse_multi_brackets'.
-* `separator`   
-  Default separator between keys and values, default to " : ".
 * `stringify`   
   User-defined function to stringify the content to ini format, default to
   `require('ini').stringify`, see 'misc.ini.stringify_square_then_curly' for
@@ -46,6 +44,18 @@ provided in the `content` option.
   should_exists to enforce its presence.
 * `target`   
   File path where to write content to or a callback.
+
+Available values for the `stringify` option are:
+
+* `stringify`
+  Default, implemented by `require('nikita/lib/misc/ini').stringify`
+* `stringify`
+  Default, implemented by `require('nikita/lib/misc/ini').stringify`
+
+The default stringify function accepts:
+
+* `separator` (string)   
+  Characteres used to separate keys from values; default to " : ".
 
 ## Callback parameters
 
