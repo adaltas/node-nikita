@@ -26,20 +26,6 @@ describe 'file.ini', ->
       content: '[user.preference]\ncolor = rouge\n'
     .promise()
 
-  they 'stringify an object and with custom separator', (ssh) ->
-    nikita
-      ssh: ssh
-    .file.ini
-      content: user: preference: color: 'rouge'
-      target: "#{scratch}/user.ini"
-      separator: ':'
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .file.assert
-      target: "#{scratch}/user.ini"
-      content: '[user.preference]\ncolor:rouge\n'
-    .promise()
-
   they 'merge an object', (ssh) ->
     nikita
       ssh: ssh

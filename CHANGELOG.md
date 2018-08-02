@@ -12,6 +12,7 @@ Fixes:
 
 Cleanup:
 
+* misc.ini: reorganize tests
 * file.ini: isolate tests
 
 ## Version 0.7.0
