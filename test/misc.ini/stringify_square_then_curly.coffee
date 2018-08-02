@@ -1,19 +1,20 @@
 
-misc = require '../../src/misc'
+ini = require '../../src/misc/ini'
 test = require '../test'
 
 describe 'misc.ini stringify_square_then_curly', ->
 
     it 'option eol', ->
-      res = misc.ini.stringify_square_then_curly
+      ini.stringify_square_then_curly
         user: preference: color: true
         group:
           name: 'us'
-      , eol: '|'
-      res.should.eql '[user]| preference = {|  color = true| }||[group]| name = us||'
+      ,
+        eol: '|'
+      .should.eql '[user]| preference = {|  color = true| }||[group]| name = us||'
 
     it 'stringify simple values before array values', ->
-      res = misc.ini.stringify_square_then_curly
+      ini.stringify_square_then_curly
         group1:
           key1: 'value1'
           group1b:
@@ -22,7 +23,7 @@ describe 'misc.ini stringify_square_then_curly', ->
           key2: 'value2'
         group2:
           key1: 'value1b'
-      res.should.eql """
+      .should.eql """
         [group1]
          key1 = value1
          group1b = {

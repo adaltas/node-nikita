@@ -1,5 +1,5 @@
 
-misc = require '../../src/misc'
+ini = require '../../src/misc/ini'
 test = require '../test'
 
 describe 'misc.ini parse_multi_brackets', ->
@@ -7,7 +7,7 @@ describe 'misc.ini parse_multi_brackets', ->
   describe 'multi brackets', ->
 
     it 'parse style', ->
-      res = misc.ini.parse_multi_brackets """
+      ini.parse_multi_brackets """
       ###########################################################################
       # Some comments
 
@@ -30,7 +30,7 @@ describe 'misc.ini parse_multi_brackets', ->
       [group2]
         key1=value1b
       """
-      res.should.eql
+      .should.eql
         '###########################################################################': null
         '# Some comments': null
         group1:
@@ -50,7 +50,7 @@ describe 'misc.ini parse_multi_brackets', ->
           key1: 'value1b'
 
     it 'parse style with comment', ->
-      res = misc.ini.parse_multi_brackets """
+      ini.parse_multi_brackets """
       # Some = comments
       [group1]
         [[group1b]]
@@ -60,7 +60,7 @@ describe 'misc.ini parse_multi_brackets', ->
       [group2]
         key1=value1b
       """, comment: '#'
-      res.should.eql
+      .should.eql
         '# Some = comments': null
         group1:
           group1b:

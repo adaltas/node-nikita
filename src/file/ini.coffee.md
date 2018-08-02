@@ -81,7 +81,7 @@ require('nikita').ini({
       throw Error "Required Option: option 'target' is mandatory" unless options.target
       org_props = {}
       default_props = {}
-      parse = options.parse or misc.ini.parse
+      parse = options.parse or ini.parse
       # Original properties
       @fs.readFile
         ssh: options.ssh
@@ -91,7 +91,7 @@ require('nikita').ini({
       , (err, {data}) ->
         return if err?.code is 'ENOENT'
         throw err if err
-        org_props = misc.merge parse(data, options)
+        org_props = merge parse(data, options)
       # Default properties
       @fs.readFile
         if: options.source
@@ -103,19 +103,19 @@ require('nikita').ini({
         return if err?.code is 'ENOENT'
         throw err if err
         return unless options.source
-        content = misc.ini.clean options.content, true
-        options.content = misc.merge parse(data, options), options.content
+        content = ini.clean options.content, true
+        options.content = merge parse(data, options), options.content
       # Merge
       @call if: options.merge , (_, callback) ->
-        options.content = misc.merge org_props, options.content
+        options.content = merge org_props, options.content
         @log message: "Get content for merge", level: 'DEBUG', module: 'nikita/lib/file/ini'
         callback()
       @call ->
         if options.clean
           @log message: "Clean content", level: 'INFO', module: 'nikita/lib/file/ini'
-          misc.ini.clean options.content
+          ini.clean options.content
         @log message: "Serialize content", level: 'DEBUG', module: 'nikita/lib/file/ini'
-        stringify = options.stringify or misc.ini.stringify
+        stringify = options.stringify or ini.stringify
         @file
           target: options.target
           content: stringify options.content, options
@@ -128,7 +128,7 @@ require('nikita').ini({
 
 ## Dependencies
 
-    misc = require '../misc'
+    ini = require '../misc/ini'
     {merge} = require '../misc'
 
 [ini]: https://github.com/isaacs/ini

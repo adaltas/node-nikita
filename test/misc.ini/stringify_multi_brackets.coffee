@@ -1,11 +1,11 @@
 
-misc = require '../../src/misc'
+ini = require '../../src/misc/ini'
 test = require '../test'
 
 describe 'misc.ini stringify_multi_brackets', ->
 
   it 'stringify test eol', ->
-    res = misc.ini.stringify_multi_brackets
+    res = ini.stringify_multi_brackets
       user: preference: color: true
       group:
         name: 'us'
@@ -13,7 +13,7 @@ describe 'misc.ini stringify_multi_brackets', ->
     res.should.eql '[user]|  [[preference]]|    color = true|[group]|  name = us|'
 
   it 'stringify style', ->
-    res = misc.ini.stringify_multi_brackets
+    ini.stringify_multi_brackets
       '###########################################################################': null
       '# Some comments': null
       group1:
@@ -31,7 +31,7 @@ describe 'misc.ini stringify_multi_brackets', ->
           key1b1: 'value1b1'
       group2:
         key1: 'value1b'
-    res.should.eql """
+    .should.eql """
     ###########################################################################
     # Some comments
     [group1]
@@ -53,7 +53,7 @@ describe 'misc.ini stringify_multi_brackets', ->
     """
 
   it 'stringify simple values before complex values', ->
-    res = misc.ini.stringify_multi_brackets
+    ini.stringify_multi_brackets
       group1:
         key1: 'value1'
         group1b:
@@ -61,7 +61,7 @@ describe 'misc.ini stringify_multi_brackets', ->
         key2: 'value2'
       group2:
         key1: 'value1b'
-    res.should.eql """
+    .should.eql """
       [group1]
         key1 = value1
         key2 = value2

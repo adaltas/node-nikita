@@ -1,11 +1,11 @@
 
-misc = require '../../src/misc'
+ini = require '../../src/misc/ini'
 test = require '../test'
 
 describe 'misc.ini stringify', ->
 
   it 'honors option separator', ->
-    misc.ini.stringify
+    ini.stringify
       user: preference: color: 'rouge'
     , separator: ':'
     .should.eql """
@@ -15,7 +15,7 @@ describe 'misc.ini stringify', ->
     """
 
   it 'handle boolean', ->
-    misc.ini.stringify
+    ini.stringify
       user: preference:
         a_string: 'a value'
         a_boolean_true: true
