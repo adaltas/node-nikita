@@ -1,9 +1,18 @@
 
 # Changelog
 
+
+## Trunk
+
+Fixes:
+
 * service: 2nd argument is not a callback
 * ldap: 2nd argument is not a callback
 * tools.iptables: 2nd arg is not a callback
+
+Cleanup:
+
+* file.ini: isolate tests
 
 ## Version 0.7.0
 

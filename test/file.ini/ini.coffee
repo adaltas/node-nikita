@@ -102,42 +102,6 @@ describe 'file.ini', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'stringify write only key on props', (ssh) ->
-    nikita
-      ssh: ssh
-    .file.ini
-      content:
-        'user':
-          'name': 'toto'
-          '--hasACar': ''
-      target: "#{scratch}/user.ini"
-      merge: false
-      stringify: misc.ini.stringify_single_key
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .file.assert
-      target: "#{scratch}/user.ini"
-      content: '[user]\nname = toto\n--hasACar\n'
-    .promise()
-
-  they 'merge ini containing single key lines', (ssh) ->
-    nikita
-      ssh: ssh
-    .file
-      target: "#{scratch}/user.ini"
-      content: '[user.preference]\nlanguage = node\ncolor\n'
-    .file.ini
-      content: user: preference: {language: 'c++', color: ''}
-      stringify: misc.ini.stringify_single_key
-      target: "#{scratch}/user.ini"
-      merge: false
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .file.assert
-      target: "#{scratch}/user.ini"
-      content: '[user.preference]\nlanguage = c++\ncolor\n'
-    .promise()
-
   they 'use default source file', (ssh) ->
     nikita
       ssh: ssh
@@ -276,36 +240,3 @@ describe 'file.ini', ->
     , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
-  
-  describe 'stringify_square_then_curly', ->
-
-    they 'call stringify udf', (ssh) ->
-      nikita
-        ssh: ssh
-      .file.ini
-        stringify: misc.ini.stringify_square_then_curly
-        target: "#{scratch}/user.ini"
-        content: user: preference: color: true
-      , (err, {status}) ->
-        status.should.be.true() unless err
-      .file.assert
-        target: "#{scratch}/user.ini"
-        content: '[user]\n preference = {\n  color = true\n }\n\n'
-      .promise()
-
-    they 'convert array to multiple keys', (ssh) ->
-      nikita
-        ssh: ssh
-      # Create a new file
-      .file.ini
-        stringify: misc.ini.stringify_square_then_curly
-        target: "#{scratch}/user.ini"
-        content: user: preference: language: ['c', 'c++', 'ada']
-      , (err, {status}) ->
-        status.should.be.true() unless err
-      .file.assert
-        target: "#{scratch}/user.ini"
-        content: '[user]\n preference = {\n  language = c\n  language = c++\n  language = ada\n }\n\n'
-      # Modify an existing file
-      # TODO: merge is not supported
-      .promise()
