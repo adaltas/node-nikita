@@ -81,9 +81,9 @@ require('nikita').ldap.acl({
               | egrep '^dn' \
               | sed -e 's/^dn:\\s*olcDatabase=\\(.*\\)$/\\1/g'
             """
-          , (err, _, hdb_dn) ->
+          , (err, data) ->
             return callback err if err
-            options.hdb_dn = hdb_dn.trim()
+            options.hdb_dn = data.stdout.trim()
             do_getacls()
         do_getacls = =>
           @log message: "List all ACL of the directory", level: 'DEBUG', module: 'nikita/ldap/acl'
@@ -93,11 +93,11 @@ require('nikita').ldap.acl({
               -b olcDatabase=#{options.hdb_dn} \
               "(olcAccess=*)" olcAccess
             """
-          , (err, _, stdout) ->
+          , (err, data) ->
             return callback err if err
             current = null
             olcAccesses = []
-            for line in string.lines stdout
+            for line in string.lines data.stdout
               if match = /^olcAccess: (.*)$/.exec line
                 olcAccesses.push current if current? # Push previous rule
                 current = match[1] # Create new rule
@@ -179,7 +179,7 @@ require('nikita').ldap.acl({
             """
           @system.execute
             cmd: cmd
-          , (err, _, hdb_dn) ->
+          , (err, data) ->
             return callback err if err
             modified = true
             do_end()

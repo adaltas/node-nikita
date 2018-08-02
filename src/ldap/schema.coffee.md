@@ -99,8 +99,8 @@ require('nikita').ldap.schema({
           source: "#{ldif}/cn=config/cn=schema/cn={0}#{options.name}.ldif"
           target: "#{ldif}/cn=config/cn=schema/cn=#{options.name}.ldif"
           force: true
-        , (err, status) ->
-          throw Error 'No generated schema' unless status
+        , (err, data) ->
+          throw Error 'No generated schema' unless data.status
           @log 'Configuration renamed'
         @file
           target: "#{ldif}/cn=config/cn=schema/cn=#{options.name}.ldif"

@@ -56,10 +56,10 @@ require('nikita').ldap.index({
             | sed -e 's/^dn:\\s*olcDatabase=\\(.*\\)$/\\1/g'
           """
           shy: true
-        , (err, _, hdb_dn) ->
+        , (err, data) ->
           throw err if err
-          @log message: "HDB is #{hdb_dn.trim()}", level: 'INFO', module: 'nikita/ldap/index'
-          options.hdb_dn = hdb_dn.trim()
+          @log message: "HDB is #{data.stdout.trim()}", level: 'INFO', module: 'nikita/ldap/index'
+          options.hdb_dn = data.stdout.trim()
       @call ->
         @log message: "List all indexes of the directory", level: 'DEBUG', module: 'nikita/ldap/index'
         @system.execute
@@ -69,9 +69,9 @@ require('nikita').ldap.index({
             -b olcDatabase=#{options.hdb_dn} \
             "(olcDbIndex=*)" olcDbIndex
           """
-        , (err, _, stdout) ->
+        , (err, data) ->
           throw err if err
-          for line in string.lines stdout
+          for line in string.lines data.stdout
             continue unless match = /^olcDbIndex:\s+(.*)\s+(.*)/.exec line
             [_, attrlist, indices] = match
             indexes[attrlist] = indices
@@ -81,7 +81,7 @@ require('nikita').ldap.index({
             add[k] = v
           else if v != indexes[k]
             modify[k] = [v, indexes[k]]
-        callback null, Object.keys(add).length or Object.keys(modify).length
+        callback null, Object.keys(add).length? or Object.keys(modify).length?
       @call if: (-> @status -1), ->
         cmd = []
         for k, v of add

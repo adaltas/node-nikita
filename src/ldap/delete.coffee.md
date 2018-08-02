@@ -51,9 +51,9 @@ require('nikita').ldap.delete({
       @system.execute
         cmd: "ldapdelete #{binddn} #{passwd} #{uri} #{dn}"
         # code_skipped: 68
-      , (err, executed, stdout, stderr) ->
+      , (err, data) ->
         return callback err if err
-        callback err, executed
+        callback err, data.status
         # modified = stderr.match(/Already exists/g)?.length isnt stdout.match(/adding new entry/g).length
         # added = modified # For now, we dont modify
         # callback err, modified, added

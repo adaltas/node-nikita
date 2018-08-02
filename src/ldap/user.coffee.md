@@ -76,9 +76,9 @@ require('nikita').ldap.user({
             ldapsearch -D #{user.dn} -w #{user.userPassword} #{uri} -b "" -s base "objectclass=*"
             """
             code_skipped: 49
-          , (err, identical, stdout) ->
+          , (err, data) ->
             return callback err if err
-            if identical then do_end() else do_ldappass()
+            if data.status then do_end() else do_ldappass()
         do_ldappass = =>
           return do_end() unless user.userPassword or /^\{SASL\}/.test user.userPassword
           @system.execute
