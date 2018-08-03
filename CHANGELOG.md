@@ -17,6 +17,7 @@ Cleanup:
 * misc.ini: isolate misc ini into its own module
 * misc.ini: reorganize tests
 * file.ini: isolate tests
+* register: isolate registration into its own module
 
 ## Version 0.7.0
 
