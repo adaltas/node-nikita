@@ -9,7 +9,7 @@ describe 'service.action', ->
   config = test.config()
   return if config.disable_service_systemctl
 
-  they.only 'should start', (ssh) ->
+  they 'should start', (ssh) ->
     nikita
       ssh: ssh
     .service.remove
