@@ -12,7 +12,7 @@ services:
     depends_on:
       - krb5
     environment:
-      MECANO_TEST: /nikita/env/ubuntu/test.coffee
+      NIKITA_TEST_MODULE: /nikita/env/ubuntu/test.coffee
       # TEST_FILES: test/krb5/ktadd.coffee
       # TEST_FILES: test
       DEBUG: 1

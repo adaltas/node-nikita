@@ -14,7 +14,7 @@ module.exports =
     scratch
   config: ->
     try
-      config = require process.env['MECANO_TEST'] or '../test.coffee'
+      config = require process.env['NIKITA_TEST_MODULE'] or '../test'
     catch err
       throw err unless err.code is 'MODULE_NOT_FOUND'
       config = fs.readFileSync "#{__dirname}/../test.sample.coffee"

@@ -7,6 +7,6 @@ services:
     volumes:
       - ../..:/nikita
     environment:
-      MECANO_TEST: /nikita/env/archlinux/test.coffee
+      NIKITA_TEST_MODULE: /nikita/env/archlinux/test.coffee
     cap_add:
       - SYS_ADMIN # Required to use `mount`

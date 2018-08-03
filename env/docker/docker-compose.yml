@@ -16,7 +16,7 @@ services:
     depends_on:
       - dind
     environment:
-      MECANO_TEST: /nikita/env/docker/test.coffee
+      NIKITA_TEST_MODULE: /nikita/env/docker/test.coffee
       DOCKER_HOST: 'tcp://dind:2375'
       TMPDIR: '/var/tmp'
   dind:

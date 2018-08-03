@@ -14,5 +14,5 @@ services:
     volumes:
       - ../..:/nikita
     environment:
-      MECANO_TEST: /nikita/env/cgroups/test.coffee
+      NIKITA_TEST_MODULE: /nikita/env/cgroups/test.coffee
       TMPDIR: '/var/tmp'

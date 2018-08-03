@@ -16,7 +16,7 @@ services:
     depends_on:
       - postgres
     environment:
-      MECANO_TEST: /nikita/env/postgresql/test.coffee
+      NIKITA_TEST_MODULE: /nikita/env/postgresql/test.coffee
       TMPDIR: '/var/tmp'
   postgres:
     image: postgres:9.5

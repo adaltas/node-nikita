@@ -16,7 +16,7 @@ services:
     depends_on:
       - krb5
     environment:
-      MECANO_TEST: /nikita/env/krb5/test.coffee
+      NIKITA_TEST_MODULE: /nikita/env/krb5/test.coffee
       TMPDIR: '/var/tmp'
   krb5:
     build: ./server

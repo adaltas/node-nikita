@@ -20,7 +20,7 @@ services:
       - mysql
       - mariadb
     environment:
-      MECANO_TEST: /nikita/env/centos6/test.coffee
+      NIKITA_TEST_MODULE: /nikita/env/centos6/test.coffee
       DOCKER_HOST: 'tcp://dind:2375'
       TMPDIR: '/var/tmp'
   dind:
