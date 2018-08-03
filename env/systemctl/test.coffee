@@ -13,7 +13,7 @@ module.exports =
   disable_ldap_user: true # can be activated
   disable_service_install: false
   disable_service_startup: false
-  disable_service_systemctl: true # cant be activated because systemctl not compatible with Docker
+  disable_service_systemctl: false # cant be activated because systemctl not compatible with Docker
   disable_sudo: true
   disable_system_chmod: true
   disable_system_cgroups: true

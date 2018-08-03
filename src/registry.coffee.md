@@ -1,4 +1,8 @@
 
+# Registry
+
+Management facility to register and unregister actions.
+
 ## Register all functions
 
     load = (middleware) ->

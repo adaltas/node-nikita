@@ -24,6 +24,9 @@ RUN yum install -y openssh-server openssh-clients \
   && cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys \
   && ssh-keygen -f /etc/ssh/ssh_host_rsa_key
 
+# Swtch systemctl script
+ADD ./systemctl /usr/bin/systemctl
+
 RUN yum clean all
 
 ADD ./run.sh /run.sh

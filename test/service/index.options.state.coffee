@@ -3,7 +3,7 @@ nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
 
-describe 'service.action', ->
+describe 'service options state', ->
   
   @timeout 30000
   config = test.config()
@@ -17,18 +17,18 @@ describe 'service.action', ->
     .service
       name: config.service.name
       srv_name: config.service.srv_name
-      action: 'start'
+      state: 'started'
     , (err, {status}) ->
-      status.should.be.true()
+      status.should.be.true() unless err
     .service.status
       name: config.service.srv_name
     , (err, {status}) ->
-      status.should.be.true()
+      status.should.be.true() unless err
     .service # Detect already started
       srv_name: config.service.srv_name
-      action: 'start'
+      state: 'started'
     , (err, {status}) ->
-      status.should.be.false()
+      status.should.be.false() unless err
     .promise()
 
   they 'should stop', (ssh) ->
@@ -39,7 +39,7 @@ describe 'service.action', ->
     .service
       name: config.service.name
       srv_name: config.service.srv_name
-      action: 'stop'
+      state: 'stopped'
     , (err, {status}) ->
       status.should.be.true() unless err
     .service.status
@@ -48,7 +48,7 @@ describe 'service.action', ->
       status.should.be.false() unless err
     .service # Detect already stopped
       srv_name: config.service.srv_name
-      action: 'stop'
+      state: 'stopped'
     , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
@@ -61,17 +61,17 @@ describe 'service.action', ->
     .service
       name: config.service.name
       srv_name: config.service.srv_name
-      action: 'start'
+      state: 'started'
     .service
       srv_name: config.service.srv_name
-      action: 'restart'
+      state: 'restarted'
     , (err, {status}) ->
       status.should.be.true()
     .service.stop
       name: config.service.srv_name
     .service
       srv_name: config.service.srv_name
-      action: 'restart'
+      state: 'restarted'
     , (err, {status}) ->
       status.should.be.false()
     .promise()

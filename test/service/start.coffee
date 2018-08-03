@@ -23,7 +23,7 @@ describe 'service.start', ->
     .service.status
       name: config.service.srv_name
     , (err, {status}) ->
-      started.should.be.true() unless err
+      status.should.be.true() unless err
     .service.start # Detect already started
       name: config.service.srv_name
     , (err, {status}) ->

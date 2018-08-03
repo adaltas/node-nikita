@@ -14,6 +14,7 @@ Fixes:
 
 Cleanup:
 
+* env: emulate systemctl
 * env: rename MECANO_TEST to NIKITA_TEST_MODULE
 * misc.ini: isolate misc ini into its own module
 * misc.ini: reorganize tests

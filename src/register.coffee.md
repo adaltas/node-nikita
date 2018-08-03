@@ -1,7 +1,7 @@
 
 # Register
 
-Register action into the global namespace. The actions registered below will be
+Register actions into the global namespace. The actions registered below will be
 available to every Nikita sessions.
 
 ## Source code

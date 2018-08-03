@@ -12,8 +12,8 @@ module.exports =
   disable_ldap_index: true # can be activated
   disable_ldap_user: true # can be activated
   disable_service_install: false
-  disable_service_startup: false
-  disable_service_systemctl: false # cant be activated because systemctl not compatible with Docker
+  disable_service_startup: true
+  disable_service_systemctl: true # cant be activated because systemctl not compatible with Docker
   disable_sudo: true
   disable_system_chmod: false
   disable_system_cgroups: false
@@ -32,11 +32,6 @@ module.exports =
   docker: # eg `docker-machine create --driver virtualbox nikita || docker-machine start nikita`
     host: 'dind:2375'
     # machine: 'nikita'
-  ldap: 
-    uri: 'ldaps://master3.ryba:636'
-    binddn: 'cn=Manager,dc=ryba'
-    passwd: 'test'
-    suffix_dn: 'ou=users,dc=ryba' # used by ldap_user
   #ssh:
   #  host: '127.0.0.1'
   #  username: process.env.USER
@@ -49,6 +44,6 @@ module.exports =
     host: 'localhost'
     username: 'root'
   service:
-    name: 'nginx-mainline'
-    srv_name: 'nginx'
-    chk_name: 'nginx'
+    name: 'ntp'
+    srv_name: 'ntpd'
+    chk_name: 'ntpd'
