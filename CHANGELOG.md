@@ -4,6 +4,10 @@
 
 ## Trunk
 
+New features:
+
+* service.install: new options pacman_flags and yaourt_flags
+
 Fixes:
 
 * misc.ini.stringify: handle boolean values

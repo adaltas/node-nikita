@@ -28,6 +28,10 @@ Install a service. Yum, Yaourt, Pacman and apt-get are supported.
 * `rootdir` (string)   
   Path to the mount point corresponding to the root directory, required if
   the "arch_chroot" option is activated.
+* `pacman_flags` (array)
+  Additionnal flags passed to the `pacman -S` command.
+* `yaourt_flags` (array)
+  Additionnal flags passed to the `yaourt -S` command.
 
 ## Callback parameters
 
@@ -56,6 +60,16 @@ require('nikita').service.install({
       options.installed ?= @store['nikita:execute:installed'] if options.cache
       options.outpdated ?= @store['nikita:execute:outpdated'] if options.cache
       cacheonly = if options.cacheonly then '-C' else ''
+      options.pacman_flags ?= []
+      for flag, i in options.pacman_flags
+        continue if /^-/.test flag
+        options.pacman_flags[i] = "-#{flag}" if flag.length is 1
+        options.pacman_flags[i] = "--#{flag}" if flag.length > 1
+      options.yaourt_flags ?= []
+      for flag, i in options.yaourt_flags
+        continue if /^-/.test flag
+        options.yaourt_flags[i] = "-#{flag}" if flag.length is 1
+        options.yaourt_flags[i] = "--#{flag}" if flag.length > 1
       # Validation
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name
       # Start real work
@@ -121,9 +135,9 @@ require('nikita').service.install({
         if command -v yum >/dev/null 2>&1; then
           yum install -y #{cacheonly} #{options.name}
         elif command -v yaourt >/dev/null 2>&1; then
-          yaourt --noconfirm -S #{options.name}
+          yaourt --noconfirm -S #{options.name} #{options.yaourt_flags.join ' '}
         elif command -v pacman >/dev/null 2>&1; then
-          pacman --noconfirm -S #{options.name}
+          pacman --noconfirm -S #{options.name} #{options.pacman_flags.join ' '}
         elif command -v apt-get >/dev/null 2>&1; then
           apt-get install -y #{options.name}
         else
@@ -149,11 +163,11 @@ require('nikita').service.install({
           options.outpdated.splice outpdatedIndex, 1 unless outpdatedIndex is -1
       @call
         if: options.cache
-        handler: ->
-          @log message: "Caching installed on \"nikita:execute:installed\"", level: 'INFO', module: 'nikita/lib/service/install'
-          @store['nikita:execute:installed'] = options.installed
-          @log message: "Caching outpdated list on \"nikita:execute:outpdated\"", level: 'INFO', module: 'nikita/lib/service/install'
-          @store['nikita:execute:outpdated'] = options.outpdated
+      , ->
+        @log message: "Caching installed on \"nikita:execute:installed\"", level: 'INFO', module: 'nikita/lib/service/install'
+        @store['nikita:execute:installed'] = options.installed
+        @log message: "Caching outpdated list on \"nikita:execute:outpdated\"", level: 'INFO', module: 'nikita/lib/service/install'
+        @store['nikita:execute:outpdated'] = options.outpdated
 
 ## Dependencies
 

@@ -82,6 +82,8 @@ require('nikita').service([{
         if: pkgname # option name and yum_name are optional, skill installation if not present
         installed: options.installed
         outdated: options.outdated
+        pacman_flags: options.pacman_flags
+        yaourt_flags: options.yaourt_flags
       @service.startup
         name: chkname
         startup: options.startup

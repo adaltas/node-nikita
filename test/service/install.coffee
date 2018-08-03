@@ -67,3 +67,37 @@ describe 'service.install', ->
     , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
+  
+  describe 'specific', ->
+    
+    they 'add pacman options', (ssh) ->
+      message = null
+      nikita
+        ssh: ssh
+      .on 'stdin', (log) ->
+        console.log log
+        message = log.message
+      .service.remove
+        name: config.service.name
+      .service.install
+        name: config.service.name
+        pacman_flags: ['u', 'y']
+      .call ->
+        message.should.containEql "pacman --noconfirm -S #{config.service.name} -u -y"
+      .promise()
+        
+    they 'add yaourt options', (ssh) ->
+      message = null
+      nikita
+        ssh: ssh
+      .on 'stdin', (log) ->
+        console.log log
+        message = log.message
+      .service.remove
+        name: config.service.name
+      .service.install
+        name: config.service.name
+        yaourt_flags: ['u', 'y']
+      .call ->
+        message.should.containEql "yaourt --noconfirm -S #{config.service.name} -u -y"
+      .promise()
