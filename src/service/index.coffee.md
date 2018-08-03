@@ -3,14 +3,13 @@
 
 Install, start/stop/restart and startup a service.
 
-The option "action" takes 3 possible values: "start", "stop" and "restart". A 
-service will only be restarted if it leads to a change of status. Set the value 
-to "['start', 'restart']" to ensure the service will be always started.
+The option "state" takes 3 possible values: "started", "stopped" and
+"restarted". A service will only be restarted if it leads to a change of status.
+Set the value to "['started', 'restarted']" to ensure the service will be always
+started.
 
 ## Options
 
-* `action` (string)   
-  Execute the service with the provided action argument.
 * `cache`   
   Run entirely from system cache to list installed and outdated packages.
 * `cacheonly` (boolean)   
@@ -33,8 +32,13 @@ to "['start', 'restart']" to ensure the service will be always started.
 * `startup` (boolean|string)   
   Run service daemon on startup. If true, startup will be set to '2345', use
   an empty string to not define any run level.
+* `state` (string)   
+  Ensure the service in the requested state; one of "started", "stopped", "restarted".
 * `yum_name` (string)
   Name used by the yum utility, default to "name".
+
+The following options are passed to `nikita.service.install`: `pacman_flags`, 
+`yaourt_flags`.
 
 ## Callback parameters
 
@@ -55,7 +59,7 @@ require('nikita').service([{
   ssh: ssh,
   name: 'ganglia-gmetad-3.5.0-99',
   srv_name: 'gmetad',
-  action: 'stop',
+  state: 'stopped',
   startup: false
 },{
   ssh: ssh,
@@ -74,7 +78,7 @@ require('nikita').service([{
       pkgname = options.yum_name or options.name
       chkname = options.chk_name or options.srv_name or options.name
       srvname = options.srv_name or options.chk_name or options.name
-      options.action = options.action.split(',') if typeof options.action is 'string'
+      options.state = options.state.split(',') if typeof options.state is 'string'
       @service.install
         name: pkgname
         cache: options.cache
@@ -89,7 +93,7 @@ require('nikita').service([{
         startup: options.startup
         if: options.startup?
       @call
-        if: -> options.action
+        if: -> options.state
       , ->
         @service.status
           name: srvname
@@ -98,10 +102,10 @@ require('nikita').service([{
           shy: true
         @service.start
           name: srvname
-          if: -> not @status(-1) and 'start' in options.action
+          if: -> not @status(-1) and 'started' in options.state
         @service.stop
           name: srvname
-          if: -> @status(-2) and 'stop' in options.action
+          if: -> @status(-2) and 'stopped' in options.state
         @service.restart
           name: srvname
-          if: -> @status(-3) and 'restart' in options.action
+          if: -> @status(-3) and 'restarted' in options.state

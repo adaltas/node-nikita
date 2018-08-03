@@ -4,6 +4,11 @@
 
 ## Trunk
 
+Backward incompatibilities:
+
+* service: option action renamed state
+* service: values start, stop, restart renamed started, stopped and restarted
+
 New features:
 
 * service.install: new options pacman_flags and yaourt_flags
