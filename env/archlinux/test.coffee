@@ -1,7 +1,7 @@
 
 module.exports =
   disable_conditions_if_os: false
-  disable_cron: false
+  disable_cron: true
   disable_db: true # can be activated
   disable_docker: true
   disable_docker_volume: true

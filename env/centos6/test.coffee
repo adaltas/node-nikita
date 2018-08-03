@@ -1,7 +1,7 @@
 
 module.exports =
   disable_conditions_if_os: false
-  disable_cron: false
+  disable_cron: true
   disable_db: false # can be activated
   disable_docker: false
   disable_docker_volume: true # centos6 ship docker 1.7 which doesnt support volume
