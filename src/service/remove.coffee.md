@@ -1,7 +1,7 @@
 
 # `nikita.service.remove(options, [callback])`
 
-Status of a service.
+Remove a package or service.
 
 ## Options
 
