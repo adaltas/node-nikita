@@ -1,5 +1,5 @@
 
-# `nikita.fs.readlink(options, callback)`
+# `nikita.fs.readlink`
 
 Delete a name and possibly the file it refers to.
 

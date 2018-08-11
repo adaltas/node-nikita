@@ -1,5 +1,5 @@
 
-# `nikita.system.etc_group.read(options, [callback])`
+# `nikita.system.etc_group.read`
 
 Read and parse the group definition file located in "/etc/group".
 

@@ -1,5 +1,5 @@
 
-# `nikita.log.md(options, [callback])`
+# `nikita.log.md`
 
 Write log to the host filesystem in Markdown.
 

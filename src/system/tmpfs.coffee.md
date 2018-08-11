@@ -1,5 +1,5 @@
 
-# `nikita.system.tmpfs(options, callback)`
+# `nikita.system.tmpfs`
 
 Mount a directory with tmpfs.d as a [tmpfs](https://www.freedesktop.org/software/systemd/man/tmpfiles.d.html) configuration file.
 

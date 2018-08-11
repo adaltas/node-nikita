@@ -1,5 +1,5 @@
 
-# `nikita.db.user(options, callback)`
+# `nikita.db.user`
 
 Create a user for the destination database.
 

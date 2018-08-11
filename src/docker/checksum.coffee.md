@@ -1,5 +1,5 @@
 
-# `nikita.docker.build(options, [callback])`
+# `nikita.docker.build`
 
 Return the checksum of repository:tag, if it exists. Function not native to docker.
 

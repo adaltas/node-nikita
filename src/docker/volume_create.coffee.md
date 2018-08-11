@@ -1,5 +1,5 @@
 
-# `nikita.volume_create(options, [callback])`
+# `nikita.volume_create`
 
 Create a volume. 
 

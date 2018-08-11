@@ -1,5 +1,5 @@
 
-# `nikita.fs.chown(options, callback)`
+# `nikita.fs.chown`
 
 Change ownership of a file.
 

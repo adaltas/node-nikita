@@ -1,5 +1,5 @@
 
-# `nikita.ssh.close(options, [callback])`
+# `nikita.ssh.close`
 
 Close the existing connection if any.
 

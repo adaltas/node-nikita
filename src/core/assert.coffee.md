@@ -1,5 +1,5 @@
 
-# `nikita.assert(options, [callback])`
+# `nikita.assert`
 
 A set of assertion tools.
 

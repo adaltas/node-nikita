@@ -1,5 +1,5 @@
 
-# `nikita.file(options, callback)`
+# `nikita.file`
 
 Write a file or a portion of an existing file.
 

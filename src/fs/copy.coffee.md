@@ -1,5 +1,5 @@
 
-# `nikita.fs.copy(options, callback)`
+# `nikita.fs.copy`
 
 Change permissions of a file.
 

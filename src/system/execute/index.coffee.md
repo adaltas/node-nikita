@@ -1,5 +1,5 @@
 
-# `nikita.system.execute(options, [callback])`
+# `nikita.system.execute`
 
 Run a command locally or with ssh if `host` or `ssh` is provided.
 

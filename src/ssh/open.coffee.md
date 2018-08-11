@@ -1,5 +1,5 @@
 
-# `nikita.ssh.open(options, [callback])`
+# `nikita.ssh.open`
 
 Initialize an SSH connection.
 

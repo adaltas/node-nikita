@@ -1,5 +1,5 @@
 
-# `nikita.log.csv(options, [callback])`
+# `nikita.log.csv`
 
 Write log to the host filesystem in CSV.
 

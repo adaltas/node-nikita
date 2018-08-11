@@ -1,5 +1,5 @@
 
-# `nikita.tools.repo(options, callback)`
+# `nikita.tools.repo`
 
 Setup packet manager repository. Only support yum for now.
 

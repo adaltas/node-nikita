@@ -1,5 +1,5 @@
 
-# `nikita.docker_rmi(options, [callback])`
+# `nikita.docker_rmi`
 
 Remove images. All container using image should be stopped to delete it unless
 force options is set.

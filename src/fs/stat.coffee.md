@@ -1,5 +1,5 @@
 
-# `nikita.fs.stat(options, callback)`
+# `nikita.fs.stat`
 
 Retrieve file information.
 

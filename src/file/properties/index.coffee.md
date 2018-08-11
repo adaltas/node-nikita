@@ -1,5 +1,5 @@
 
-# `nikita.file.properties(options, callback)`
+# `nikita.file.properties`
 
 Write a file in the Java properties format.
 

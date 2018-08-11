@@ -1,5 +1,5 @@
 
-# `nikita.system.group.remove(options, [callback])`
+# `nikita.system.group.remove`
 
 Create or modify a Unix user.
 

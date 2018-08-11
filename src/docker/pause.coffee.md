@@ -1,5 +1,5 @@
 
-# `nikita.docker.pause(options, [callback])`
+# `nikita.docker.pause`
 
 Pause all processes within a container
 

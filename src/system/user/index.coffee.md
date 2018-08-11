@@ -1,5 +1,5 @@
 
-# `nikita.system.user.add(options, [callback])`
+# `nikita.system.user.add`
 
 Create or modify a Unix user.
 

@@ -1,5 +1,5 @@
 
-# `nikita.tools.backup(options, [callback])`
+# `nikita.tools.backup`
 
 Backup a file, a directory or the output of a command.
 

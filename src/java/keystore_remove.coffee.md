@@ -1,5 +1,5 @@
 
-# `nikita.java.keystore_remove(options, [callback])`
+# `nikita.java.keystore_remove`
 
 Remove certificates, private keys and certificate authorities from java
 keystores and truststores.

@@ -1,5 +1,5 @@
 
-# `nikita.docker.build(options, [callback])`
+# `nikita.docker.build`
 
 Build docker repository from Dockerfile, from content or from current working
 directory (exclusive options).

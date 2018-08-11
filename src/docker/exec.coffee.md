@@ -1,5 +1,5 @@
 
-# `nikita.docker.exec(options, [callback])`
+# `nikita.docker.exec`
 
 Run a command in a running container
 

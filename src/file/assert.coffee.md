@@ -1,5 +1,5 @@
 
-# `nikita.file.assert(options)`
+# `nikita.file.assert`
 
 Assert a file exists or a provided text match the content of a text file.
 

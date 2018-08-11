@@ -1,5 +1,5 @@
 
-# `nikita.file.touch(options, [callback])`
+# `nikita.file.touch`
 
 Create a empty file if it does not yet exists.
 

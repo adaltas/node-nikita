@@ -1,5 +1,5 @@
 
-# `nikita.system.info.disks(options, [callback])`
+# `nikita.system.info.disks`
 
 Expose disk information. Internally, it parse the result of the "df" command. 
 The properties "total", "used" and "available" are expressed in bytes.

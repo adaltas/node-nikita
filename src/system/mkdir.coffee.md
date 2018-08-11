@@ -1,5 +1,5 @@
 
-# `nikita.system.mkdir(options, [callback])`
+# `nikita.system.mkdir`
 
 Recursively create a directory. The behavior is similar to the Unix command
 `mkdir -p`. It supports an alternative syntax where options is simply the path

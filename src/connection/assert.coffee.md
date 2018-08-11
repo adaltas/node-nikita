@@ -1,5 +1,5 @@
 
-# `nikita.connection.assert(options, [callback])`
+# `nikita.connection.assert`
 
 Assert a TCP or HTTP server is listening. 
 

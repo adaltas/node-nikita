@@ -1,5 +1,5 @@
 
-# `nikita.tools.git(options, [callback])`
+# `nikita.tools.git`
 
 Create and synchronize a git repository.
 

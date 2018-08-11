@@ -1,5 +1,5 @@
 
-# `nikita.wait(options, [callback])`
+# `nikita.wait`
 
 Simple nikita action that calls setTimeout. Thus, time is in millisecond.
 

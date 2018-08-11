@@ -1,5 +1,5 @@
 
-# `nikita.db.user.remove(options, callback)`
+# `nikita.db.user.remove`
 
 Create a user for the destination database.
 

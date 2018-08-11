@@ -1,5 +1,5 @@
 
-# `nikita.system.etc_passwd.read(options, [callback])`
+# `nikita.system.etc_passwd.read`
 
 Read and parse the passwd definition file located in "/etc/passwd".
 

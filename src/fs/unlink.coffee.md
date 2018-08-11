@@ -1,5 +1,5 @@
 
-# `nikita.fs.unlink(options, callback)`
+# `nikita.fs.unlink`
 
 Delete a name and possibly the file it refers to.
 

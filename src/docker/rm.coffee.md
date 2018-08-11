@@ -1,5 +1,5 @@
 
-# `nikita.docker.rm(options, [callback])`
+# `nikita.docker.rm`
 
 Remove one or more containers. Containers need to be stopped to be deleted unless
 force options is set.

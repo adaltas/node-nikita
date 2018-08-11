@@ -1,5 +1,5 @@
 
-# `nikita.file.cson(options, callback)`
+# `nikita.file.cson`
 
 ## Options
 

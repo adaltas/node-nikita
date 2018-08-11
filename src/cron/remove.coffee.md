@@ -1,5 +1,5 @@
 
-# `nikita.cron.remove(options, [callback])`
+# `nikita.cron.remove`
 
 Remove job(s) on crontab.
 

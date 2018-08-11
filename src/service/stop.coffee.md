@@ -1,5 +1,5 @@
 
-# `nikita.service.stop(options, [callback])`
+# `nikita.service.stop`
 
 Start a service. Note, does not throw an error if service is not installed.
 

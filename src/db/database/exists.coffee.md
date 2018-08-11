@@ -1,5 +1,5 @@
 
-# `nikita.db.database.exists(options, callback)`
+# `nikita.db.database.exists`
 
 Check if a database exists.
 

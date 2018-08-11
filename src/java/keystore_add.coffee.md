@@ -1,5 +1,5 @@
 
-# `nikita.java.keystore_add(options, [callback])`
+# `nikita.java.keystore_add`
 
 Add certificates, private keys and certificate authorities to java keystores
 and truststores.

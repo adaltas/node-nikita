@@ -1,5 +1,5 @@
 
-# `nikita.docker.restart(options, [callback])`
+# `nikita.docker.restart`
 
 Start a container.
 

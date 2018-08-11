@@ -1,5 +1,5 @@
 
-# `nikita.docker.start(options, [callback])`
+# `nikita.docker.start`
 
 Start stopped containers or restart (stop + starts) a started container.
 

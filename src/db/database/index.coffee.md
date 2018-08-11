@@ -1,5 +1,5 @@
 
-# `nikita.db.database(options, callback)`
+# `nikita.db.database`
 
 Create a database for the destination database.
 

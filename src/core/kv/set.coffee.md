@@ -1,5 +1,5 @@
 
-# `nikita.kv.set(options, [callback])`
+# `nikita.kv.set`
 
 ## Source Code
 

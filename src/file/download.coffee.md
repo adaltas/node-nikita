@@ -1,5 +1,5 @@
 
-# `nikita.file.download(options, [callback])`
+# `nikita.file.download`
 
 Download files using various protocols.
 

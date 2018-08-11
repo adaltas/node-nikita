@@ -1,5 +1,5 @@
 
-# `nikita.fs.rmdir(options, callback)`
+# `nikita.fs.rmdir`
 
 Delete a directory.
 

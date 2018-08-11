@@ -1,5 +1,5 @@
 
-# `nikita.fs.mkdir(options, callback)`
+# `nikita.fs.mkdir`
 
 Make directories.
 

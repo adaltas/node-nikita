@@ -1,5 +1,5 @@
 
-# `nikita.system.iptables(options, [callback])`
+# `nikita.system.iptables`
 
 Iptables  is  used to set up, maintain, and inspect the tables of IPv4 packet 
 filter rules in the Linux kernel.

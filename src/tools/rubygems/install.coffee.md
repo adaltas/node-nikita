@@ -1,5 +1,5 @@
 
-# `nikita.tools.gem.install(options, [callback])`
+# `nikita.tools.gem.install`
 
 Install a Ruby gem.
 

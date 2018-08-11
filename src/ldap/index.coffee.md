@@ -1,5 +1,5 @@
 
-# `nikita.ldap.index(options, [callback])`
+# `nikita.ldap.index`
 
 Create new [index](index) for the OpenLDAP server.
 

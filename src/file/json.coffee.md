@@ -1,5 +1,5 @@
 
-# `nikita.file.json(options, callback)`
+# `nikita.file.json`
 
 ## Options
 

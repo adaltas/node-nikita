@@ -1,5 +1,5 @@
 
-# `nikita.service.install(options, [callback])`
+# `nikita.service.install`
 
 Install a service. Yum, Yaourt, Pacman and apt-get are supported.
 

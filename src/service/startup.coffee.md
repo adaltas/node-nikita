@@ -1,5 +1,5 @@
 
-# `nikita.service.startup(options, [callback])`
+# `nikita.service.startup`
 
 Activate or desactivate a service on startup.
 

@@ -1,5 +1,5 @@
 
-# `nikita.ldap.user(options, [callback])`
+# `nikita.ldap.user`
 
 Create and modify a user store inside an OpenLDAP server.   
 

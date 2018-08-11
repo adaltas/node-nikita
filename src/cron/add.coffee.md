@@ -1,5 +1,5 @@
 
-# `nikita.cron.add(options, [callback])`
+# `nikita.cron.add`
 
 Create a new Kerberos principal with a password or an optional keytab.
 

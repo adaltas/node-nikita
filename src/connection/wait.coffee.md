@@ -1,5 +1,5 @@
 
-# `nikita.connection.wait(options, [callback])`
+# `nikita.connection.wait`
 
 Check if one or multiple hosts listen one or multiple ports periodically and
 continue once all the connections succeed. Status will be set to "false" if the

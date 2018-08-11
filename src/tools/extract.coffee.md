@@ -1,5 +1,5 @@
 
-# `nikita.tools.extract(options, [callback])`
+# `nikita.tools.extract`
 
 Extract an archive. Multiple compression types are supported. Unless
 specified as an option, format is derived from the source extension. At the

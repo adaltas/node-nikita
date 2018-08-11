@@ -1,5 +1,5 @@
 
-# `nikita.docker.pull(options, [callback])`
+# `nikita.docker.pull`
 
 Pull a container
 

@@ -1,5 +1,5 @@
 
-# `nikita.docker.cp(options, [callback])`
+# `nikita.docker.cp`
 
 Copy files/folders between a container and the local filesystem.
 

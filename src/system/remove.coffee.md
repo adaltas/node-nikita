@@ -1,5 +1,5 @@
 
-# `nikita.system.remove(options, [callback])`
+# `nikita.system.remove`
 
 Recursively remove files, directories and links.
 

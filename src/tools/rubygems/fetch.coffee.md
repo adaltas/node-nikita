@@ -1,5 +1,5 @@
 
-# `nikita.tools.gem.fetch(options, [callback])`
+# `nikita.tools.gem.fetch`
 
 Fetch a Ruby gem.
 

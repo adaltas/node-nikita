@@ -1,5 +1,5 @@
 
-# `nikita.file.yaml(options, callback)`
+# `nikita.file.yaml`
 
 Write an object serialized in YAML format. Note, we are internally using the [js-yaml] module.
 However, there is a subtile difference. Any key provided with value of

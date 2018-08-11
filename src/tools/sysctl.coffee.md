@@ -1,5 +1,5 @@
 
-# `nikita.tools.sysctl(options, callback)`
+# `nikita.tools.sysctl`
 
 Configure kernel parameters at runtime.
 

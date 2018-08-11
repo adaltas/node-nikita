@@ -1,5 +1,5 @@
 
-# `nikita.service.restart(options, [callback])`
+# `nikita.service.restart`
 
 Start a service.
 

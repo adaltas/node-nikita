@@ -1,5 +1,5 @@
 
-# `nikita.docker.login(options, [callback])`
+# `nikita.docker.login`
 
 Register or log in to a Docker registry server.
 

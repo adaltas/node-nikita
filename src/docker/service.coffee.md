@@ -1,5 +1,5 @@
 
-# `nikita.docker.service(options, [callback])`
+# `nikita.docker.service`
 
 Run a container in a service mode. This module is just a wrapper for docker.run
 with correct options.

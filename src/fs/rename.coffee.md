@@ -1,5 +1,5 @@
 
-# `nikita.fs.rename(options, callback)`
+# `nikita.fs.rename`
 
 Change the name or location of a file.
 

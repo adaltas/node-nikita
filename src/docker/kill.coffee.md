@@ -1,5 +1,5 @@
 
-# `nikita.docker.kill(options, [callback])`
+# `nikita.docker.kill`
 
 Send signal to containers using SIGKILL or a specified signal.
 Note if container is not running , SIGKILL is not executed and

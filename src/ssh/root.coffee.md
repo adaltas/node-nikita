@@ -1,5 +1,5 @@
 
-# `nikita.ssh.root(options, [callback])`
+# `nikita.ssh.root`
 
 Prepare the system to receive password-less root login with SSL/TLS keys.
 

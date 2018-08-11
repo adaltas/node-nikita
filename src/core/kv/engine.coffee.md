@@ -1,5 +1,5 @@
 
-# `nikita.kv.memory(options, [callback])`
+# `nikita.kv.memory`
 
 ## Source Code
 

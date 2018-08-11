@@ -1,5 +1,5 @@
 
-# `nikita.fs.symlink(options, callback)`
+# `nikita.fs.symlink`
 
 Delete a name and possibly the file it refers to.
 

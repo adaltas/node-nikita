@@ -1,5 +1,5 @@
 
-# `nikita.service(options, [callback])`
+# `nikita.service`
 
 Install, start/stop/restart and startup a service.
 

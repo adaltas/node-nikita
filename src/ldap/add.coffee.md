@@ -1,5 +1,5 @@
 
-# `nikita.ldap.add(options, [callback])`
+# `nikita.ldap.add`
 
 Insert or modify an entry inside an OpenLDAP server.   
 

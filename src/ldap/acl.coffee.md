@@ -1,5 +1,5 @@
 
-# `nikita.ldap.acl(options, [callback])`
+# `nikita.ldap.acl`
 
 Create new [ACLs](acls) for the OpenLDAP server.
 

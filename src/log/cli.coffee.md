@@ -1,5 +1,5 @@
 
-# `nikita.log.cli(options, [callback])`
+# `nikita.log.cli`
 
 Write log to the host filesystem in a user provided format.
 

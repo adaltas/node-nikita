@@ -1,5 +1,5 @@
 
-# `nikita.system.move(options, [callback])`
+# `nikita.system.move`
 
 Move files and directories. It is ok to overwrite the target file if it
 exists, in which case the source file will no longer exists.

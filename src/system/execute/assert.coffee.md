@@ -1,5 +1,5 @@
 
-# `nikita.system.execute.assert(options)`
+# `nikita.system.execute.assert`
 
 Assert a shell command.
 

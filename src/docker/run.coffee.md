@@ -1,5 +1,5 @@
 
-# `nikita.docker.run(options, [callback])`
+# `nikita.docker.run`
 
 Run Docker Containers
 

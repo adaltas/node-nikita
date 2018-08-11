@@ -1,5 +1,5 @@
 
-# `nikita.db.database.wait(options, callback)`
+# `nikita.db.database.wait`
 
 Wait for the creation of a database.
 

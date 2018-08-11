@@ -1,5 +1,5 @@
 
-# `nikita.service.init(options, [callback])`
+# `nikita.service.init`
 
 Render startup script.
 Reload the service daemon provider depending on the os.

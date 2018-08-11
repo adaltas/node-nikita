@@ -1,5 +1,5 @@
 
-# `nikita.ldap.delete(options, [callback])`
+# `nikita.ldap.delete`
 
 Insert or modify an entry inside an OpenLDAP server.   
 

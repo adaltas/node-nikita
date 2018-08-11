@@ -1,5 +1,5 @@
 
-# `pidfile_running(ssh, pidfile, callback)`
+# `pidfile_running`
 
 Check if the pid (Process Id) stored inside a file match a running process. Any
 file referencing a dead process will be removed.

@@ -1,5 +1,5 @@
 
-# `nikita.system.info.system(options, [callback])`
+# `nikita.system.info.system`
 
 Expose system information. Internally, it uses the command `uname` to retrieve
 information.

@@ -1,5 +1,5 @@
 
-# `nikita.ldap.schema(options, [callback])`
+# `nikita.ldap.schema`
 
 Register a new ldap schema.
 

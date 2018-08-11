@@ -1,5 +1,5 @@
 
-# `nikita.ping(options, [callback])`
+# `nikita.ping`
 
 Call ping, receive pong.
 

@@ -1,5 +1,5 @@
 
-# `nikita.system.group(options, [callback])`
+# `nikita.system.group`
 
 Create or modify a Unix group.
 

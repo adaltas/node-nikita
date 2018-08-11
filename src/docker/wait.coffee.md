@@ -1,5 +1,5 @@
 
-# `nikita.docker.wait(options, [callback])`
+# `nikita.docker.wait`
 
 Block until a container stops.
 

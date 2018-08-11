@@ -1,5 +1,5 @@
 
-# `nikita.system.chown(options, [callback])`
+# `nikita.system.chown`
 
 Change the ownership of a file or a directory.
 

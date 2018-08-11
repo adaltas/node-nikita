@@ -1,5 +1,5 @@
 
-# `nikita.docker.status(options, [callback])`
+# `nikita.docker.status`
 
 Return true if container is running. This function is not native to docker. 
 

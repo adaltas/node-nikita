@@ -1,5 +1,5 @@
 
-# `nikita.log(options)`
+# `nikita.log`
 
 Send a log message.
 

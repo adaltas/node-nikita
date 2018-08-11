@@ -1,5 +1,5 @@
 
-# `nikita.service.status(options, [callback])`
+# `nikita.service.status`
 
 Status of a service. Note, does not throw an error if service is not installed.
 

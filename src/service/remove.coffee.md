@@ -1,5 +1,5 @@
 
-# `nikita.service.remove(options, [callback])`
+# `nikita.service.remove`
 
 Remove a package or service.
 

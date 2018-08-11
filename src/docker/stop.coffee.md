@@ -1,5 +1,5 @@
 
-# `nikita.docker.stop(options, [callback])`
+# `nikita.docker.stop`
 
 Stop a started container.
 

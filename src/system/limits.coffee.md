@@ -1,5 +1,5 @@
 
-# `nikita.system.limits(options, [callback])`
+# `nikita.system.limits`
 
 Control system limits for a user.
 

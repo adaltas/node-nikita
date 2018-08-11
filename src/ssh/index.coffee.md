@@ -1,5 +1,5 @@
 
-# `nikita.ssh(options)`
+# `nikita.ssh`
 
 Get the ssh connection if any.
 

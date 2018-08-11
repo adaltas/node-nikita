@@ -1,5 +1,5 @@
 
-# `nikita.system.cgroups(options, [callback])`
+# `nikita.system.cgroups`
 
 Nikita action to manipulate cgroups. [cgconfig.conf(5)] describes the 
 configuration file used by libcgroup to define control groups, their parameters 

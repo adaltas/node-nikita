@@ -1,5 +1,5 @@
 
-# `nikita.service(options, [callback])`
+# `nikita.service`
 
 Assert service information and status.
 

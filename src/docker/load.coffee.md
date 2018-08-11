@@ -1,5 +1,5 @@
 
-# `nikita.docker.load(options, [callback])`
+# `nikita.docker.load`
 
 Load Docker images.
 

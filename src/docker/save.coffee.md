@@ -1,5 +1,5 @@
 
-# `nikita.docker.save(options, [callback])`
+# `nikita.docker.save`
 
 Save Docker images.
 

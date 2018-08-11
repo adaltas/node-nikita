@@ -1,5 +1,5 @@
 
-# `nikita.system.discover(options, [callback])`
+# `nikita.system.discover`
 
 Discover the OS.
 For now it only supports Centos/Redhat OS in version 6 or 7, ubuntu.

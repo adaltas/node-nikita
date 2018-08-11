@@ -1,5 +1,5 @@
 
-# `nikita.system.chmod(options, [callback])`
+# `nikita.system.chmod`
 
 Change the permissions of a file or directory.
 

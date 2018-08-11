@@ -1,5 +1,5 @@
 
-# `nikita.volume_rm(options, [callback])`
+# `nikita.volume_rm`
 
 Remove a volume. 
 
