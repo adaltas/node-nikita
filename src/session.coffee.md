@@ -364,14 +364,10 @@
                 arguments[0][1] ?= {}
                 arguments[0][1].status ?= false
               else
-                if typeof args is 'boolean'
-                  arguments[0][1] = {status: args}
-                else if not args
-                  arguments[0][1] = { status: false }
-                else if typeof args isnt 'object'
-                  arguments[0][0] = Error "Invalid Argument: expect an object or a boolean, got #{JSON.stringify args}"
-                else
-                  arguments[0][1].status ?= false
+                if typeof args is 'boolean' then arguments[0][1] = {status: args}
+                else if not args then arguments[0][1] = { status: false }
+                else if typeof args isnt 'object' then arguments[0][0] = Error "Invalid Argument: expect an object or a boolean, got #{JSON.stringify args}"
+                else arguments[0][1].status ?= false
               proxy.log message: err.message, level: 'ERROR', index: index, module: 'nikita' if err
               if err and ( options.retry is true or options.attempt < options.retry - 1 )
                 proxy.log message: "Retry on error, attempt #{options.attempt+1}", level: 'WARN', index: index, module: 'nikita'
