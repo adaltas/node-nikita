@@ -15,7 +15,7 @@ Global options can be alternatively set with the "log_stream" property.
 
 ## Source Code
 
-    module.exports = ssh: false, handler: (options) ->
+    module.exports = ssh: false, handler: ({options}) ->
       # Obtains options from "log_stream" namespace
       options.log_stream ?= {}
       options[k] = v for k, v of options.log_stream

@@ -63,20 +63,21 @@ parameters
 ## Rendering with Nunjucks
 
 ```js
-require('nikita').file.render({
+require('nikita')
+.file.render({
   source: './some/a_template.j2',
   target: '/tmp/a_file',
   context: {
     username: 'a_user'
   }
-}, function(err, status){
-  console.log(err ? err.message : 'File rendered: ' + !!status);
+}, function(err, {status}){
+  console.log(err ? err.message : 'File rendered: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering file.render", level: 'DEBUG', module: 'nikita/lib/file/render'
       # Validate parameters
       options.encoding ?= 'utf8'

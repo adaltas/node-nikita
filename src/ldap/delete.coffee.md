@@ -22,19 +22,20 @@ Insert or modify an entry inside an OpenLDAP server.
 ## Example
 
 ```js
-require('nikita').ldap.delete({
+require('nikita')
+.ldap.delete({
   url: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
   dn: 'cn=group1,ou=groups,dc=company,dc=com'
-}, function(err, deleted){
-  console.log(err ? err.message : 'Entry deleted: ' + deleted);
+}, function(err, {status}){
+  console.log(err ? err.message : 'Entry deleted: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       # Auth related options
       binddn = if options.binddn then "-D #{options.binddn}" else ''
       passwd = if options.passwd then "-w #{options.passwd}" else ''

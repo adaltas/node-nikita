@@ -47,7 +47,7 @@ Create and start containers according to a docker-compose file
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering Docker Compose", level: 'DEBUG', module: 'nikita/lib/docker/compose/up'
       # Global options
       options.docker ?= {}

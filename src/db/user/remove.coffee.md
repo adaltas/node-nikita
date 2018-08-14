@@ -18,7 +18,7 @@ Create a user for the destination database.
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       # Import options from `options.db`
       options.db ?= {}
       options[k] ?= v for k, v of options.db

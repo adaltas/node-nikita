@@ -25,17 +25,18 @@ The following action make sure the git repository is synchronized to the latest
 HEAD revision.
 
 ```javascript
-require('nikita').tools.git({
+require('nikita')
+.tools.git({
   source: 'https://github.com/wdavidw/node-nikita.git'
   target: '/tmp/nikita'
-}, function(err, synchronized){
-  console.log(err ? err.message : 'Repo was synchronized: ' + synchronized);
+}, function(err, {status}){
+  console.log(err ? err.message : 'Repo was synchronized: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering git", level: 'DEBUG', module: 'nikita/lib/tools/git'
       # SSH connection
       ssh = @ssh options.ssh

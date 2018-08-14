@@ -39,7 +39,7 @@ of the directory to create.
 
 ```js
 require('nikita')
-.system.mkdir('./some/dir', function(err, status){
+.system.mkdir('./some/dir', function(err, {status}){
   console.info(err ? err.message : "Directory created: " + status);
 });
 ```
@@ -54,14 +54,14 @@ require('nikita')
   uid: 'a_user',
   gid: 'a_group'
   mode: 0o0777 // or '777'
-}, function(err, status){
+}, function(err, {status}){
   console.info(err ? err.message : 'Directory created: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       @log message: "Entering mkdir", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
       # SSH connection
       ssh = @ssh options.ssh

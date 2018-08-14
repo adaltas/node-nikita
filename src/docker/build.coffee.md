@@ -52,15 +52,16 @@ Status unmodified if the repository is identical to a previous one
 * `stderr`   
   Stderr value(s) unless `stderr` option is provided.   
 
-## Example
+## Examples
 
 ### Builds a repository from dockerfile without any resourcess
 
 ```javascript
-nikita.docker.build({
+require('nikita')
+.docker.build({
   image: 'ryba/targe-build',
   source: '/home/ryba/Dockerfile'
-}, function(err, status, stdout, stderr){
+}, function(err, {status}){
   console.log( err ? err.message : 'Container built: ' + status);
 });
 ```
@@ -86,12 +87,12 @@ Build directory tree :
 ```
 
 ```javascript
-nikita.docker.build({
-  ssh: ssh
-  tag: 'ryba/target-build'
-  source: '/home/ryba/Dockerfile'
+require('nikita')
+.docker.build({
+  tag: 'ryba/target-build',
+  source: '/home/ryba/Dockerfile',
   resources: ['http://url.com/package.tar.gz/','/home/configuration.sh']
-}, function(err, status, stdout, stderr){
+}, function(err, {status}){
   console.log( err ? err.message : 'Container built: ' + status);
 });
 ```
@@ -99,18 +100,19 @@ nikita.docker.build({
 ### Builds an repository from stdin
 
 ```javascript
-nikita.docker.build({
+require('nikita')
+.docker.build({
   ssh: ssh,
   tag: 'ryba/target-build'
   content: "FROM ubuntu\nRUN echo 'helloworld'"
-}, function(err, is_built, stdout, stderr){
+}, function(err, {status}){
   console.log( err ? err.message : 'Container built: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       @log message: "Entering Docker build", level: 'DEBUG', module: 'nikita/lib/docker/build'
       # SSH connection
       ssh = @ssh options.ssh

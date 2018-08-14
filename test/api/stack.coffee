@@ -11,13 +11,13 @@ describe 'api stack', ->
     msgs = []
     n = nikita()
     n.on 'text', (log) -> msgs.push log.message
-    n.call (options) ->
+    n.call ->
       @log 'a1'
-      n.call (options) ->
+      n.call ->
         @log 'c'
-        n.call (options) ->
+        n.call ->
           @log 'd'
-      n.call (options) ->
+      n.call ->
         @log 'e'
       @log 'b'
     , (err, status) ->
@@ -30,12 +30,12 @@ describe 'api stack', ->
     msgs = []
     n = nikita()
     n.on 'text', (log) -> msgs.push log.message
-    n.call (options, next) ->
+    n.call ({}, next) ->
       @log 'a'
-      n.call (options, next) ->
+      n.call ({}, next) ->
         @log 'c'
         setImmediate next
-      n.call (options, next) ->
+      n.call ({}, next) ->
         @log 'd'
         setImmediate next
       setImmediate next
@@ -48,12 +48,12 @@ describe 'api stack', ->
     msgs = []
     n = nikita()
     n.on 'text', (log) -> msgs.push log.message
-    n.call (options, next) ->
+    n.call ({}, next) ->
       @log 'a'
-      n.call (options, next) ->
+      n.call ({}, next) ->
         @log 'c'
         next()
-      n.call (options, next) ->
+      n.call ({}, next) ->
         @log 'd'
         next()
       next()
@@ -68,15 +68,15 @@ describe 'api stack', ->
     n = nikita()
     n.on 'text', (log) -> msgs.push log.message
     n
-    .call (options, callback) ->
+    .call ({}, callback) ->
       @log 'a'
       callback()
-    .call (options, callback) ->
+    .call ({}, callback) ->
       @log 'b'
       callback()
     .next ->
       n
-      .call (options, callback) ->
+      .call ({}, callback) ->
         @log 'c'
         callback()
       .next (err, changed) ->
@@ -87,15 +87,15 @@ describe 'api stack', ->
     msgs = []
     n = nikita()
     n.on 'text', (log) -> msgs.push log.message
-    n.call (options, callback) ->
+    n.call ({}, callback) ->
       @log 'a'
       callback()
-    n.call (options, callback) ->
+    n.call ({}, callback) ->
       @log 'b'
       callback()
     , (err, changed) ->
       return next err if err
-      n.call (options, callback) ->
+      n.call ({}, callback) ->
         @log 'c'
         callback()
       n.next (err, changed) ->

@@ -43,14 +43,14 @@ nikita.docker({
   image: 'test-image'
   compression: 'gzip'
   entrypoint: '/bin/true'
-}, function(err, status, stdout, stderr){
+}, function(err, {status}){
   console.log( err ? err.message : 'Container saved: ' + status);
 })
 ```
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering Docker save", level: 'DEBUG', module: 'nikita/lib/docker/save'
       # Global options
       options.docker ?= {}

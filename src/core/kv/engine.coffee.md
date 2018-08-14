@@ -3,5 +3,5 @@
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @options.kv = options.engine

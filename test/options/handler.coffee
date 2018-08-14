@@ -23,7 +23,7 @@ describe 'options "handler"', ->
 
     it 'throw in sync action', ->
       nikita()
-      .registry.register 'anaction', (options, callback) ->
+      .registry.register 'anaction', ({options}, callback) ->
         throw Error 'Catchme'
       .anaction
         key: "value"
@@ -48,7 +48,7 @@ describe 'options "handler"', ->
 
     it 'passed as argument in same tick', ->
       nikita()
-      .registry.register 'anaction', (options, callback) ->
+      .registry.register 'anaction', ({options}, callback) ->
         callback Error 'Catchme'
       .anaction
         key: "value"
@@ -60,7 +60,7 @@ describe 'options "handler"', ->
 
     it 'passed as argument', ->
       nikita()
-      .registry.register 'anaction', (options, callback) ->
+      .registry.register 'anaction', ({options}, callback) ->
         process.nextTick -> callback Error 'Catchme'
       .anaction
         key: "value"
@@ -72,7 +72,7 @@ describe 'options "handler"', ->
 
     it 'thrown', ->
       nikita
-      .call (options, next) ->
+      .call ({options}, next) ->
         throw Error 'Catchme'
       .next (err) ->
         err.message.should.eql 'Catchme'

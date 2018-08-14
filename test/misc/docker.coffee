@@ -5,7 +5,7 @@ docker = require '../../src/misc/docker'
 test = require '../test'
 they = require 'ssh2-they'
 
-describe 'docker exec', ->
+describe 'misc.docker exec', ->
 
   scratch = test.scratch @
   source = "#{scratch}"

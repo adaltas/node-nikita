@@ -25,7 +25,8 @@ Start a service. Note, does not throw an error if service is not installed.
 ## Example
 
 ```js
-require('nikita').service.stop([{
+require('nikita')
+.service.stop([{
   ssh: ssh,
   name: 'gmetad'
 }, function(err, status){ /* do sth */ });
@@ -33,7 +34,7 @@ require('nikita').service.stop([{
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering service.stop", level: 'DEBUG', module: 'nikita/lib/service/stop'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'

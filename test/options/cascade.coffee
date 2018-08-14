@@ -11,10 +11,10 @@ describe 'options "cascade"', ->
       session.cascade.global_option_false = false
       nikita
       # Test the cascade option
-      .call (options) ->
+      .call ({options}) ->
         options.cascade.global_option_true.should.true()
         options.cascade.global_option_false.should.false()
-        @call (options) ->
+        @call ({options}) ->
           options.cascade.global_option_true.should.true()
           options.cascade.global_option_false.should.false()
       # Cleanup
@@ -31,13 +31,13 @@ describe 'options "cascade"', ->
       .call
         global_option_true: 'value'
         global_option_false: 'value'
-      , (options) ->
+      , ({options}) ->
         options.global_option_true.should.equal 'value'
         (options.global_option_false is undefined).should.be.true()
-        @call (options) ->
+        @call ({options}) ->
           options.global_option_true.should.equal 'value'
           (options.global_option_false is undefined).should.be.true()
-          @call (options) ->
+          @call ({options}) ->
             options.global_option_true.should.equal 'value'
             (options.global_option_false is undefined).should.be.true()
       # Cleanup
@@ -54,12 +54,12 @@ describe 'options "cascade"', ->
           option_true: true
           option_false: false
       # Test the cascade option
-      .call (options) ->
+      .call ({options}) ->
         options.cascade.option_true.should.be.true()
         options.cascade.option_false.should.be.false()
         (options.cascade.option_undefined is undefined).should.be.true()
         # Call child
-        @call (options) ->
+        @call ({options}) ->
           options.cascade.option_true.should.be.true()
           options.cascade.option_false.should.be.false()
           (options.cascade.option_undefined is undefined).should.be.true()
@@ -75,12 +75,12 @@ describe 'options "cascade"', ->
         option_true: 'value'
         option_false: 'value'
         option_undefined: 'value'
-      , (options) ->
+      , ({options}) ->
         options.option_true.should.eql 'value'
         (options.option_false is undefined).should.be.true()
         options.option_undefined.should.eql 'value'
         # Call child
-        @call (options) ->
+        @call ({options}) ->
           options.option_true.should.eql 'value'
           (options.option_false is undefined).should.be.true()
           (options.option_undefined is undefined).should.be.true()
@@ -92,15 +92,15 @@ describe 'options "cascade"', ->
         cascade:
           a_session_key: true
       # Get the session value
-      .call (options) ->
+      .call ({options}) ->
         options.a_session_key.should.eql 'value'
         # Overwrite the option with null value
-        @call a_session_key: null, (options) ->
+        @call a_session_key: null, ({options}) ->
           (options.a_session_key is null).should.be.true()
-          @call (options) ->
+          @call ({options}) ->
             (options.a_session_key is null).should.be.true()
       # Ensure the session value is preserve
-      .call (options) ->
+      .call ({options}) ->
         options.a_session_key.should.eql 'value'
       .promise()
         
@@ -112,10 +112,10 @@ describe 'options "cascade"', ->
         cascade:
           option_true: true
           option_false: false
-      , (options) ->
+      , ({options}) ->
         options.cascade.option_true.should.be.true()
         options.cascade.option_false.should.be.false()
-        @call (options) ->
+        @call ({options}) ->
           options.cascade.option_true.should.be.true()
           options.cascade.option_false.should.be.false()
       .promise()
@@ -129,11 +129,11 @@ describe 'options "cascade"', ->
         cascade:
           key_a: true
           key_c: true
-      , (options) ->
+      , ({options}) ->
         options.cascade.key_a.should.be.true()
         options.cascade.key_b.should.be.true()
         options.cascade.key_c.should.be.true()
-        @call (options) ->
+        @call ({options}) ->
           # Check if key_* are cascaded into child
           options.cascade.key_a.should.be.true()
           options.cascade.key_b.should.be.true()
@@ -155,13 +155,13 @@ describe 'options "cascade"', ->
         overwritten_false: 'a'
         session_b: 'b'
         action_c: 'c'
-      , (options) ->
+      , ({options}) ->
         options.overwritten_true.should.equal 'a'
         (options.overwritten_false is undefined).should.be.true()
         options.session_b.should.equal 'b'
         options.action_c.should.equal 'c'
         # Check if key_* are cascaded into child
-        @call (options) ->
+        @call ({options}) ->
           options.overwritten_true.should.equal 'a'
           (options.overwritten_false is undefined).should.be.true()
           options.session_b.should.equal 'b'
@@ -173,8 +173,8 @@ describe 'options "cascade"', ->
       .call
         cascade: ['an_option']
         an_option: true
-      , (options) ->
+      , ({options}) ->
         options.an_option.should.be.true()
-        @call (options) ->
+        @call ({options}) ->
           (options.an_option is undefined).should.be.true()
       .promise()

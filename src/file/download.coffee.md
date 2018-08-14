@@ -65,7 +65,7 @@ calculated if neither sha256, sh1 nor md5 is provided.
 * `sha256` (SHA-256 Hash)   
   Hash of the file using SHA-256. Used to check integrity.   
 * `source` (path)   
-  File, HTTP URL, FTP, GIT repository. File is the default protocol if source
+  File, HTTP URL, GIT repository. File is the default protocol if source
   is provided without any.   
 * `target` (path)   
   Path where to write the destination file.   
@@ -82,37 +82,32 @@ calculated if neither sha256, sh1 nor md5 is provided.
 ## File example
 
 ```js
-require('nikita').download({
+require('nikita')
+.download({
   source: 'file://path/to/something',
   target: 'node-sigar.tgz'
-}, function(err, downloaded){
-  console.info(err ? err.message : 'File was downloaded: ' + downloaded);
+}, function(err, {status}){
+  console.info(err ? err.message : 'File was downloaded: ' + status);
 });
 ```
 
 ## HTTP example
 
 ```coffee
-nikita.download
+require('nikita')
+.file.download
   source: 'https://github.com/wdavidw/node-nikita/tarball/v0.0.1'
   target: 'node-sigar.tgz'
-, (err, downloaded) -> ...
+, (err, {status}) -> ...
 ```
 
-## FTP example
+## TODO
 
-```coffee
-nikita.download
-  source: 'ftp://myhost.com:3334/wdavidw/node-nikita/tarball/v0.0.1'
-  target: 'node-sigar.tgz'
-  user: 'johndoe',
-  pass: '12345'
-, (err, downloaded) -> ...
-```
+It would be nice to support alternatives sources such as FTP(S) or SFTP.
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: 'Entering file.download', level: 'DEBUG', module: 'nikita/lib/file/download'
       # SSH connection
       ssh = @ssh options.ssh

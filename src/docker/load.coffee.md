@@ -31,18 +31,19 @@ Load Docker images.
 ## Example
 
 ```javascript
-nikita.docker.load({
+require('nikita')
+.docker.load({
   image: 'nikita/load_test:latest',
   machine: machine,
   source: source + "/nikita_load.tar"
-}, function(err, status, stdout, stderr) {
+}, function(err, {status}) {
   console.log( err ? err.message : 'Container loaded: ' + status);
 })
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       @log message: "Entering Docker load", level: 'DEBUG', module: 'nikita/lib/docker/load'
       # Global options
       options.docker ?= {}

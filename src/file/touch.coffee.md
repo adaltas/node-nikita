@@ -33,17 +33,18 @@ Status will only be true if the file was created.
 ## Example
 
 ```js
-require('nikita').file.touch({
+require('nikita')
+.file.touch({
   ssh: ssh,
   target: '/tmp/a_file'
-}, function(err, touched){
-  console.log(err ? err.message : 'File touched: ' + !!touched);
+}, function(err, {status}){
+  console.log(err ? err.message : 'File touched: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering file.touch", level: 'DEBUG', module: 'nikita/lib/file/touch'
       # SSH connection
       ssh = @ssh options.ssh
@@ -53,7 +54,7 @@ require('nikita').file.touch({
 
 Test if file exists.
 
-      @call (_, callback) ->
+      @call ({}, callback) ->
         @log message: "Check if target exists \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/file/touch'
         @fs.exists ssh: options.ssh, target: options.target, (err, {exists}) ->
           @log message: "Destination does not exists", level: 'INFO', module: 'nikita/lib/file/touch' if not err and not exists

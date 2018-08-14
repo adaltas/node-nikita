@@ -37,7 +37,7 @@ uninstall -i /usr/share/gems json"
 
 ## Source code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering rubygem.remove", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/remove'
       # Global Options
       options.ruby ?= {}

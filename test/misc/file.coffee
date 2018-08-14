@@ -5,7 +5,7 @@ crypto = require 'crypto'
 test = require '../test'
 they = require 'ssh2-they'
 
-describe 'file', ->
+describe 'misc.file', ->
 
   scratch = test.scratch @
 
@@ -29,19 +29,30 @@ describe 'file', ->
         should.not.exist md5
         next()
 
-    they 'returns the directory md5', (ssh, next) ->
-      misc.file.hash ssh, "#{__dirname}/../resources", (err, md5) ->
-        return next err if err
-        md5.should.eql 'fecbff1eff387b8059e08130dfda56cf'
-        next()
+    they 'returns the directory md5', (ssh) ->
+      nikita
+        ssh: ssh
+      .system.mkdir
+        target: "#{scratch}/an_empty_dir"
+      .file
+        target: "#{scratch}/a_dir/a_file"
+        content: 'hello'
+      .call ({}, callback)->
+        misc.file.hash ssh, "#{scratch}", (err, md5) ->
+          md5.should.eql '5d41402abc4b2a76b9719d911017c592' unless err
+          callback err
+      .promise()
 
-    they 'returns the directory md5 when empty', (ssh, next) ->
-      nikita.system.mkdir "#{scratch}/a_dir", (err, created) ->
-        return next err if err
+    they 'returns the directory md5 when empty', (ssh) ->
+      nikita
+        ssh: ssh
+      .system.mkdir
+        target: "#{scratch}/a_dir"
+      .call ({}, callback)->
         misc.file.hash ssh, "#{scratch}/a_dir", (err, md5) ->
-          return next err if err
-          md5.should.eql crypto.createHash('md5').update('').digest('hex')
-          next()
+          md5.should.eql crypto.createHash('md5').update('').digest('hex') unless err
+          callback err
+      .promise()
 
   describe 'compare', ->
 

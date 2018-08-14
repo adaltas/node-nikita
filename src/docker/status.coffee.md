@@ -26,20 +26,21 @@ Return true if container is running. This function is not native to docker.
 ## Example
 
 ```javascript
-nikita.docker({
+require('nikita')
+.docker({
   ssh: ssh
   target: 'test-image.tar'
   image: 'test-image'
   compression: 'gzip'
   entrypoint: '/bin/true'
-}, function(err, status, stdout, stderr){
+}, function(err, {status}){
   console.log( err ? err.message : 'Container running: ' + status);
 })
 ```
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       # Global options
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker

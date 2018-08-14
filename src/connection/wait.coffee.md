@@ -69,7 +69,7 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering wait for connection", level: 'DEBUG', module: 'nikita/connection/wait'
       extract_servers = (options) ->
         throw Error "Invalid host: #{server.host}" if (options.port or options.ports) and not options.host

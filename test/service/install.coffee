@@ -47,14 +47,14 @@ describe 'service.install', ->
       ssh: ssh
     .service.remove
       name: config.service.name
-    .call (options) ->
+    .call ->
       (@store['nikita:execute:installed'] is undefined).should.be.true()
     .service
       name: config.service.name
       cache: true
     , (err, {status}) ->
       status.should.be.true() unless err
-    .call (options) ->
+    .call ->
       @store['nikita:execute:installed'].should.containEql config.service.name
     .promise()
 

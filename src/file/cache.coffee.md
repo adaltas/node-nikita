@@ -44,18 +44,21 @@ Download a file and place it on a local or remote folder for later usage.
 
 ## HTTP example
 
+Cache can be used from the `file.download` action:
+
 ```js
-require('nikita').download({
+require('nikita')
+.file.download({
   source: 'https://github.com/wdavidw/node-nikita/tarball/v0.0.1',
   cache_dir: '/var/tmp'
-}, function(err, status){
+}, function(err, {status}){
   console.info(err ? err.message : 'File downloaded: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       @log message: "Entering file.cache", level: 'DEBUG', module: 'nikita/lib/file/cache'
       # SSH connection
       ssh = @ssh options.ssh
@@ -98,7 +101,7 @@ require('nikita').download({
       # - file doesnt exist
       # - option force is provided
       # - hash isnt true and doesnt match
-      @call shy: true, (_, callback) ->
+      @call shy: true, ({}, callback) ->
         @log message: "Check if target (#{options.target}) exists", level: 'DEBUG', module: 'nikita/lib/file/cache'
         @fs.exists ssh: options.ssh, target: options.target, (err, {exists}) =>
           return callback err if err

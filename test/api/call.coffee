@@ -14,9 +14,9 @@ describe 'api call', ->
       logs = []
       nikita
       .call [
-        (options) -> logs.push 'a'
+         -> logs.push 'a'
       ,
-        (options, callback) -> logs.push('b'); callback()
+        ({}, callback) -> logs.push('b'); callback()
       ], (err, {status}) ->
         logs.push 'c'
         status.should.be.false() unless err
@@ -63,7 +63,7 @@ describe 'api call', ->
       # as a function or as a value assiated to the handler key
       nikita()
       .call 'gotit',
-        handler: (options) -> options.argument.should.eql 'gotit'
+        handler: ({options}) -> options.argument.should.eql 'gotit'
       .promise()
 
   describe 'sync', ->
@@ -76,7 +76,7 @@ describe 'api call', ->
         target: "#{scratch}/file_a"
       , (err) ->
         touched++
-      .call (options) ->
+      .call ->
         called++
       .file.touch
         target: "#{scratch}/file_b"
@@ -104,13 +104,13 @@ describe 'api call', ->
 
     it 'pass options', ->
       nikita
-      .call test: true, (options) ->
+      .call test: true, ({options}) ->
         options.test.should.be.true()
       .promise()
 
     it 'pass multiple options', ->
       nikita
-      .call {test1: true}, {test2: true}, (options) ->
+      .call {test1: true}, {test2: true}, ({options}) ->
         options.test1.should.be.true()
         options.test2.should.be.true()
       .promise()
@@ -125,7 +125,7 @@ describe 'api call', ->
         target: "#{scratch}/a_file"
       , (err) ->
         touched++
-      .call (options, next) ->
+      .call ({}, next) ->
         process.nextTick ->
           called++
           next()
@@ -146,7 +146,7 @@ describe 'api call', ->
         target: "#{scratch}/a_file"
       , (err) ->
         touched++
-      .call (options, next) ->
+      .call ({}, next) ->
         process.nextTick ->
           next()
       , (err) ->
@@ -162,14 +162,14 @@ describe 'api call', ->
 
     it 'pass options', ->
       nikita
-      .call test: true, (options, next) ->
+      .call test: true, ({options}, next) ->
         options.test.should.be.true()
         next()
       .promise()
 
     it 'pass multiple options', ->
       nikita
-      .call {test1: true}, {test2: true}, (options, next) ->
+      .call {test1: true}, {test2: true}, ({options}, next) ->
         options.test1.should.be.true()
         options.test2.should.be.true()
         next()
@@ -179,7 +179,7 @@ describe 'api call', ->
 
     it 'in a user callback', ->
       nikita
-      .call (options, next) ->
+      .call ({}, next) ->
         @file
           target: "#{scratch}/a_file"
           content: 'ok'
@@ -193,7 +193,7 @@ describe 'api call', ->
 
     it 'in then with changes', ->
       nikita
-      .call (options, next) ->
+      .call ({}, next) ->
         @file
           content: 'ok'
           target: "#{scratch}/a_file"
@@ -207,7 +207,7 @@ describe 'api call', ->
 
     it 'in then without changes', ->
       nikita
-      .call (options, next) ->
+      .call ({}, next) ->
         @file
           content: 'ok'
           target: "#{scratch}/a_file"
@@ -220,7 +220,7 @@ describe 'api call', ->
     it 'pass user arguments', ->
       callback_called = false
       nikita
-      .call (options, next) ->
+      .call ({}, next) ->
         setImmediate ->
           next null, status: true, argument: 'argument'
       , (err, {status, argument}) ->

@@ -26,8 +26,8 @@ SSH would be too slow.
 
 ```js
 require('nikita')
-.system.remove('./some/dir', function(err, status){
-  console.log(err ? err.message : "File removed: " + !!status);
+.system.remove('./some/dir', function(err, {status}){
+  console.log(err ? err.message : "File removed: " + status);
 });
 ```
 
@@ -38,8 +38,8 @@ require('nikita')
 .system.remove({
   target: './some/dir',
   unless_exists: './some/file'
-}, function(err, status){
-  console.log(err ? err.message : "File removed: " + !!status);
+}, function(err, {status}){
+  console.log(err ? err.message : "File removed: " + status);
 });
 ```
 
@@ -51,13 +51,13 @@ require('nikita')
   { target: './some/dir', unless_exists: './some/file' },
   './some/file'
 ], function(err, status){
-  console.log(err ? err.message : 'File removed: ' + !!status);
+  console.log(err ? err.message : 'File removed: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       @log message: "Entering remove", level: 'DEBUG', module: 'nikita/lib/system/remove'
       # SSH connection
       ssh = @ssh options.ssh

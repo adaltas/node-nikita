@@ -29,14 +29,16 @@ Backup a file, a directory or the output of a command.
   Error object if any.   
 * `status`  (boolean)   
   Value is "true" if backup was created.   
-* `info` (object)   
-  backup passes options to a callback. Info contains _options_ properties with default
-  and/or generated missing values.   
+* `base_dir` (string)   
+* `name` (string)   
+* `filename` (string)   
+* `target` (string)   
 
 ## Backup a directory
 
 ```js
-nikita.tools.backup({
+require('nikita')
+.tools.backup({
   name: 'my_backup'
   source: '/etc'
   target: '/tmp/backup'
@@ -47,14 +49,14 @@ nikita.tools.backup({
   #   date: '2015-01-01-00:00:00'
   #   age: month: 2
   # }
-}, function(err, status, info){
+}, function(err, {status, info}){
   console.log(info);
 });
 ```
 
 ## Source code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       @log message: "Entering backup", level: 'DEBUG', module: 'nikita/lib/tools/backup'
       throw  Error 'Missing option: "target"' unless options.target
       throw  Error 'Missing option: "name"' unless options.name

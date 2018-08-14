@@ -10,17 +10,17 @@ describe 'options "parent"', ->
   it 'default values', ->
     nikita
     # First level
-    .call (options) ->
+    .call ({options}) ->
       (options.parent is undefined).should.be.true()
     # Second level
     .call ->
-      @call (options) ->
+      @call ({options}) ->
         (options.parent.parent is undefined).should.be.true()
         options.parent.disabled.should.be.false()
     # Third level
     .call ->
       @call ->
-        @call (options) ->
+        @call ({options}) ->
           (options.parent.parent.parent is undefined).should.be.true()
           options.parent.parent.disabled.should.be.false()
     .promise()
@@ -29,12 +29,12 @@ describe 'options "parent"', ->
     nikita
     # Second level
     .call my_key: 'value 1', ->
-      @call (options) ->
+      @call ({options}) ->
         options.parent.my_key.should.eql 'value 1'
     # Third level
     .call my_key: 'value 1', ->
       @call my_key: 'value 2', ->
-        @call (options) ->
+        @call ({options}) ->
           options.parent.parent.my_key.should.eql 'value 1'
           options.parent.my_key.should.eql 'value 2'
     .promise()
@@ -42,14 +42,14 @@ describe 'options "parent"', ->
   it 'defined in action', ->
     nikita()
     .registry.register( 'level_1', key: 'value 1', handler: ->
-      @call (options) ->
+      @call ({options}) ->
         options.parent.key.should.eql 'value 1'
     )
     .registry.register( 'level_2_1', key: 'value 1', handler: ->
       @level_2_2()
     )
     .registry.register( 'level_2_2', key: 'value 2', handler: ->
-      @call (options) ->
+      @call ({options}) ->
         options.parent.parent.key.should.eql 'value 1'
         options.parent.key.should.eql 'value 2'
     )

@@ -19,20 +19,21 @@ Remove a Kerberos principal and optionally its keytab.
 ## Example
 
 ```
-require('nikita').krb5_delrinc({
+require('nikita')
+.krb5_delrinc({
   principal: 'myservice/my.fqdn@MY.REALM',
   keytab: '/etc/security/keytabs/my.service.keytab',
   kadmin_principal: 'me/admin@MY_REALM',
   kadmin_password: 'pass',
   kadmin_server: 'localhost'
-}, function(err, removed){
-  console.log(err ? err.message : 'Principal removed: ' + !!removed);
+}, function(err, status){
+  console.log(err ? err.message : 'Principal removed: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       return throw Error 'Property principal is required' unless options.principal
       # Normalize realm and principal for later usage of options
       options.realm ?= options.kadmin_principal.split('@')[1] if /.*@.*/.test options.kadmin_principal

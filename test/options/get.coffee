@@ -29,7 +29,7 @@ describe 'options "get"', ->
       n.call
         get: true
       , my_options
-      , (options) ->
+      , ({options}) ->
         options['a_key'] = 'should not be visible'
       n.next ->
         my_options['a_key'].should.eql 'a value'
@@ -44,7 +44,7 @@ describe 'options "get"', ->
         cascade:
           option_true: true
           option_false: false
-        handler: (options) ->
+        handler: ({options}) ->
           return 
             option_true: options.option_true
             option_false: options.option_false
@@ -66,12 +66,12 @@ describe 'options "get"', ->
           cascade:
             option_true: true
             option_false: false
-          handler: (options) ->
+          handler: ({options}) ->
             return
               option_true: options.option_true
               option_false: options.option_false
         """
-      .call (options) ->
+      .call ({options}) ->
         nikita()
         .registry.register 'my_action', "#{scratch}/my_action"
         .my_action

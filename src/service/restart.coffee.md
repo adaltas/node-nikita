@@ -30,12 +30,12 @@ Start a service.
 require('nikita').service.start([{
   ssh: ssh,
   name: 'gmetad'
-}, function(err, status){ /* do sth */ });
+}, function(err, {status}){ /* do sth */ });
 ```
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering service.restart", level: 'DEBUG', module: 'nikita/lib/service/restart'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'

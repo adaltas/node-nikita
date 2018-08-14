@@ -33,7 +33,8 @@ Register a new ldap schema.
 ## Example
 
 ```js
-require('nikita').ldap.schema({
+require('nikita')
+.ldap.schema({
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
   name: 'kerberos',
@@ -45,7 +46,7 @@ require('nikita').ldap.schema({
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering ldap.schema", level: 'DEBUG', module: 'nikita/lib/ldap/schema'
       # SSH connection
       ssh = @ssh options.ssh

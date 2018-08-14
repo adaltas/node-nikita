@@ -10,7 +10,7 @@ describe 'options "sleep"', ->
   it 'enforce default to 3s', ->
     times = []
     nikita
-    .call retry: 2, relax: true, (options) ->
+    .call retry: 2, relax: true, ->
       times.push Date.now()
       throw Error 'Catchme'
     .next (err) ->
@@ -21,7 +21,7 @@ describe 'options "sleep"', ->
   it 'is set by user', ->
     times = []
     nikita
-    .call sleep: 1, retry: 2, relax: true, (options) ->
+    .call sleep: 1, retry: 2, relax: true, ->
       times.push Date.now()
       throw Error 'Catchme'
     .next (err) ->

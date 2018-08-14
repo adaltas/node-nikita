@@ -30,7 +30,7 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = status: false, handler: (options, callback) ->
+    module.exports = status: false, handler: ({options}, callback) ->
       @log message: "Entering file.properties", level: 'DEBUG', module: 'nikita/lib/file/properties/read'
       # Options
       options.separator ?= '='

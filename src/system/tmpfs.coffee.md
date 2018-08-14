@@ -47,7 +47,7 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
     
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering tmpfs action", level: 'DEBUG', module: 'nikita/tmpfs/index'
       # SSH connection
       ssh = @ssh options.ssh

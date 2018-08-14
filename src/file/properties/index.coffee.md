@@ -43,7 +43,7 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering file.properties", level: 'DEBUG', module: 'nikita/lib/file/properties'
       # Options
       throw Error "Missing argument options.target" unless options.target
@@ -72,7 +72,7 @@ require('nikita')
       , (err, {properties}) ->
         org_props = properties or {} unless err
       # Diff
-      @call (_, callback) ->
+      @call ({}, callback) ->
         status = false
         keys = {}
         for k in Object.keys(org_props) then keys[k] = true

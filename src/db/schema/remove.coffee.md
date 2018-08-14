@@ -19,7 +19,7 @@ Create a user for the destination database.
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       # Import options from `options.db`
       options.db ?= {}
       options[k] ?= v for k, v of options.db
@@ -31,7 +31,7 @@ Create a user for the destination database.
       throw Error 'Missing option: "admin_password"' unless options.admin_password
       # Deprecation
       if options.engine is 'postgres'
-        console.log 'Deprecated Value: options "postgres" is deprecated in favor of "postgresql"'
+        console.error 'Deprecated Value: options "postgres" is deprecated in favor of "postgresql"'
         options.engine = 'postgresql'
       # Defines and check the engine type 
       options.engine = options.engine.toLowerCase()

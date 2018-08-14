@@ -55,7 +55,7 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = shy: true, handler: (options, callback) ->
+    module.exports = shy: true, handler: ({options}, callback) ->
       @log message: "Entering etc_group.read", level: 'DEBUG', module: 'nikita/lib/system/etc_group/read'
       options.target ?= '/etc/group'
       # Retrieve groups from cache

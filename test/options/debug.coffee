@@ -12,7 +12,7 @@ describe 'options "debug"', ->
     write = process.stderr.write
     process.stderr.write = (chunk) -> data.push chunk
     nikita
-    .call debug: true, (options) ->
+    .call debug: true, ->
       @log 'Some message'
     .next (err) ->
       throw err if err
@@ -26,7 +26,7 @@ describe 'options "debug"', ->
     write = process.stdout.write
     process.stdout.write = (chunk) -> data.push chunk
     nikita
-    .call debug: 'stdout', (options) ->
+    .call debug: 'stdout', ->
       @log 'Some message'
     .next (err) ->
       throw err if err

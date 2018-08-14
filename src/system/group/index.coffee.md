@@ -25,7 +25,8 @@ Create or modify a Unix group.
 ## Example
 
 ```js
-require('nikita').system.group({
+require('nikita')
+.system.group({
   name: 'myself'
   system: true
   gid: 490
@@ -40,7 +41,7 @@ The result of the above action can be viewed with the command
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering group", level: 'DEBUG', module: 'nikita/lib/system/group'
       # SSH connection
       ssh = @ssh options.ssh

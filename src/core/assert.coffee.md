@@ -15,7 +15,7 @@ A set of assertion tools.
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering assert", level: 'DEBUG', module: 'nikita/lib/assert'
 
 ## Check current status
@@ -32,6 +32,6 @@ nikita.assert({
       status = @status()
       @call
         if: options.status? and status isnt options.status
-        handler: ->
-          message = "Invalid status: expected #{JSON.stringify options.status}, got #{JSON.stringify status}"
-          throw Error message
+      , ->
+        message = "Invalid status: expected #{JSON.stringify options.status}, got #{JSON.stringify status}"
+        throw Error message

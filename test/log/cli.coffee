@@ -23,10 +23,10 @@ describe 'log.cli', ->
       ssh: ssh
       log_cli: colors: false, time: false
     .log.cli stream: new MyWritable data
-    .call header: 'h1', (options) ->
-      @call header: 'h2a', (options) ->
-      @call header: 'h2b', (options) ->
-        @call header: 'h3', (options, callback) ->
+    .call header: 'h1', ->
+      @call header: 'h2a', ->
+      @call header: 'h2b', ->
+        @call header: 'h3', ({}, callback) ->
           callback null, true
     .wait 200
     .call ->
@@ -44,11 +44,11 @@ describe 'log.cli', ->
       ssh: ssh
       log_cli: colors: false, time: false
     .log.cli stream: new MyWritable data
-    .call header: 'h1', (options) ->
-      @call header: 'h2a', (options) ->
-      @call (options) ->
-        @call (options) ->
-          @call header: 'h2b', (options, callback) ->
+    .call header: 'h1', ->
+      @call header: 'h2a', ->
+      @call  ->
+        @call  ->
+          @call header: 'h2b', ({}, callback) ->
             callback null, true
     .wait 200
     .call ->
@@ -101,10 +101,10 @@ describe 'log.cli', ->
       ssh: ssh
       log_cli: colors: false, time: false
     .log.cli depth_max: 2, stream: new MyWritable data
-    .call header: 'h1', (options) ->
-      @call header: 'h2a', (options) ->
-      @call header: 'h2b', (options) ->
-        @call header: 'h3', (options) ->
+    .call header: 'h1', ->
+      @call header: 'h2a', ->
+      @call header: 'h2b', ->
+        @call header: 'h3', ->
     .call ->
       data.should.eql [
         'localhost   h1 : h2a   -\n'
@@ -119,10 +119,10 @@ describe 'log.cli', ->
       ssh: ssh
       log_cli: colors: false, time: false
     .log.cli divider: ' # ', stream: new MyWritable data
-    .call header: 'h1', (options) ->
-      @call header: 'h2a', (options) ->
-      @call header: 'h2b', (options) ->
-        @call header: 'h3', (options) ->
+    .call header: 'h1', ->
+      @call header: 'h2a', ->
+      @call header: 'h2b', ->
+        @call header: 'h3', ->
     .call ->
       data.should.eql [
         'localhost   h1 # h2a   -\n'
@@ -138,10 +138,10 @@ describe 'log.cli', ->
       ssh: ssh
       log_cli: colors: false, time: false
     .log.cli pad: {host: 14, header: 18}, stream: new MyWritable data
-    .call header: 'h1', (options) ->
-      @call header: 'h2a', (options) ->
-      @call header: 'h2b', (options) ->
-        @call header: 'h3', (options) ->
+    .call header: 'h1', ->
+      @call header: 'h2a', ->
+      @call header: 'h2b', ->
+        @call header: 'h3', ->
     .call ->
       data.should.eql [
         'localhost      h1 : h2a           -\n'

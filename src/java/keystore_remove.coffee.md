@@ -30,7 +30,8 @@ require('nikita').java.keystore_remove([{
 ## Removing a certificate authority
 
 ```js
-require('nikita').java.keystore_add([{
+require('nikita')
+.java.keystore_add([{
   keystore: java_home + '/lib/security/cacerts',
   storepass: 'changeit',
   caname: 'my_ca_certificate'
@@ -38,7 +39,7 @@ require('nikita').java.keystore_add([{
 ```
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       throw Error "Required option 'keystore'" unless options.keystore
       throw Error "Required option 'storepass'" unless options.storepass
       throw Error "Required option 'name' or 'caname'" unless options.name or options.caname

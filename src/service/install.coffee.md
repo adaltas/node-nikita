@@ -43,17 +43,18 @@ Install a service. Yum, Yaourt, Pacman and apt-get are supported.
 ## Example
 
 ```js
-require('nikita').service.install({
+require('nikita')
+.service.install({
   ssh: ssh,
   name: 'ntp'
-}, function(err, status){
+}, function(err, {status}){
   console.log(err || "Package installed: " + status ? 'yes' : 'no');
 });
 ```
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering service.install", level: 'DEBUG', module: 'nikita/lib/service/install'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'

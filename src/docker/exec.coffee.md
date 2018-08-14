@@ -35,18 +35,18 @@ Run a command in a running container
 ## Example
 
 ```javascript
-nikita.docker({
-  ssh: ssh,
+require('nikita')
+.docker.exec({
   container: 'myContainer',
   cmd: '/bin/bash -c "echo toto"'
-}, function(err, status, stdout, stderr){
+}, function(err, {status}){
   console.log( err ? err.message : 'Command executed: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       @log message: "Entering Docker exec", level: 'DEBUG', module: 'nikita/lib/docker/exec'
       # Global options
       options.docker ?= {}

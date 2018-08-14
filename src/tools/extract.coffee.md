@@ -26,7 +26,7 @@ moment, supported extensions are '.tgz', '.tar.gz', tar.bz2, 'tar.xz' and '.zip'
 
 * `err`   
   Error object if any.   
-* `extracted`   
+* `status`   
   Value is "true" if archive was extracted.   
 
 ## Example
@@ -35,14 +35,14 @@ moment, supported extensions are '.tgz', '.tar.gz', tar.bz2, 'tar.xz' and '.zip'
 require('nikita').tools.extract({
   source: '/path/to/file.tgz'
   destation: '/tmp'
-}, function(err, status){
+}, function(err, {status}){
   console.log(err ? err.message : 'File was extracted: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       @log message: "Entering extract", level: 'DEBUG', module: 'nikita/lib/tools/extract'
       # SSH connection
       ssh = @ssh options.ssh

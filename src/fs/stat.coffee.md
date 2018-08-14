@@ -59,7 +59,7 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = status: false, handler: (options, callback) ->
+    module.exports = status: false, handler: ({options}, callback) ->
       @log message: "Entering fs.stat", level: 'DEBUG', module: 'nikita/lib/fs/stat'
       # Normalize options
       options.target = options.argument if options.argument?

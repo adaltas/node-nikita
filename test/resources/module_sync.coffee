@@ -1,3 +1,3 @@
 
-module.exports = (options) ->
+module.exports = ({options}) ->
   @log "Hello #{options.who or 'world'}"

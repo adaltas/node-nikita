@@ -15,27 +15,29 @@ Store properties in the nikita store object.
 ## Callback parameters
 
 * `err`   
-  Error object if any.   
+  Error object if any.
 * `status`   
-  True if information was fetch from system, false if retrieved from cache.   
-* `info`   
-  List of info about system   
+  True if information was fetch from system, false if retrieved from cache.
+* `type`   
+  OS type.
+* `release`   
+  Release number.
 
 ## Example
 
 ```javascript
 nikita.system.discover({
   ssh: ssh
-}, function(err, status, info){
+}, function(err, {status, type, release}){
   console.log(err || 'Use cache: ' + status);
-  console.log(err || 'System: ' + info.type);     // eg "redhat" or "centos"
-  console.log(err || 'Release: ' + info.release); // eg "6" or "7"
+  console.log(err || 'System: ' + type);     // eg "redhat" or "centos"
+  console.log(err || 'Release: ' + release); // eg "6" or "7"
 });
 ```
 
 ## Source Code
 
-    module.exports = shy: true, handler: (options, callback) ->
+    module.exports = shy: true, handler: ({options}, callback) ->
       detected = false
       os = {}
       os.type = null

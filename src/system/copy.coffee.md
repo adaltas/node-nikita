@@ -51,14 +51,14 @@ require('nikita').system.copy({
   uid: 'my_user'
   gid: 'my_group'
   mode: '0755'
-}, function(err, status){
+}, function(err, {status}){
   console.log(err ? err.message : 'File was copied: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering copy", level: 'DEBUG', module: 'nikita/lib/system/copy'
       # SSH connection
       ssh = @ssh options.ssh
@@ -77,7 +77,7 @@ Validate parameters.
 
 Retrieve stats information about the source unless provided through the "source_stats" option.
 
-      @call (_, callback) ->
+      @call ({}, callback) ->
         if options.source_stats
           @log message: "Source Stats: using short circuit", level: 'DEBUG', module: 'nikita/lib/system/copy'
           return callback()
@@ -89,7 +89,7 @@ Retrieve stats information about the source unless provided through the "source_
 
 Retrieve stat information about the traget unless provided through the "target_stats" option.
 
-      @call (_, callback) ->
+      @call ({}, callback) ->
         if options.target_stats
           @log message: "Target Stats: using short circuit", level: 'DEBUG', module: 'nikita/lib/system/copy'
           return callback()
@@ -118,13 +118,13 @@ exists. Let's consider a source directory "/tmp/a_source" and a target directory
 copied into "/tmp/a_target/a_source". With an ending slash, all the files
 present inside "/tmp/a_source" are copied inside "/tmp/a_target".
 
-      @call (_, callback) ->
+      @call ({}, callback) ->
         return callback() unless misc.stats.isDirectory options.source_stats.mode
         sourceEndWithSlash = options.source.lastIndexOf('/') is options.source.length - 1
         if options.target_stats and not sourceEndWithSlash
           options.target = path.resolve options.target, path.basename options.source
         @log message: "Source is a directory", level: 'INFO', module: 'nikita/lib/system/copy'
-        @call (_, callback) -> 
+        @call ({}, callback) -> 
           glob ssh, "#{options.source}/**", dot: true, (err, sources) =>
             return callback err if err
             for source in sources then do (source) =>
@@ -166,7 +166,7 @@ target into a file.
 
 Copy the file if content doesn't match.
 
-      @call (_, callback) ->
+      @call ({}, callback) ->
         # Copy a file
         misc.file.compare ssh, [options.source, options.target], (err, md5) =>
           # Destination may not exists

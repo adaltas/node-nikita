@@ -59,7 +59,7 @@ describe 'system.discover', ->
     , ->
       @system.discover cache: true, (err, {status}) -> status.should.be.true() unless err
       @system.discover cache: true, (err, {status}) -> status.should.be.false() unless err
-      @call (options) ->
+      @call ->
         @store['nikita:system:type'].should.match /^((redhat)|(centos))/
         @store['nikita:system:release'].should.match /^[6|7]./
     .promise()
@@ -72,7 +72,7 @@ describe 'system.discover', ->
     , ->
       @system.discover cache: true, (err, {status}) -> status.should.be.true() unless err
       @system.discover cache: true, (err, {status}) -> status.should.be.false() unless err
-      @call (options) ->
+      @call ->
         @store['nikita:system:type'].should.match /^(ubuntu)/
         @store['nikita:system:release'].should.match /^\d+./
     .promise()

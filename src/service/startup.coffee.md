@@ -32,7 +32,8 @@ Activate or desactivate a service on startup.
 ## Example
 
 ```js
-require('nikita').service.startup([{
+require('nikita')
+.service.startup([{
   ssh: ssh,
   name: 'gmetad',
   startup: false
@@ -41,7 +42,7 @@ require('nikita').service.startup([{
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering service.startup", level: 'DEBUG', module: 'nikita/lib/service/startup'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'

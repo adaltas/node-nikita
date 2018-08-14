@@ -23,7 +23,8 @@ Create new [index](index) for the OpenLDAP server.
 ## Example
 
 ```js
-require('nikita').ldap.index({
+require('nikita')
+.ldap.index({
   url: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
@@ -31,8 +32,8 @@ require('nikita').ldap.index({
   indexes: {
     krbPrincipalName: 'sub,eq'
   }
-}, function(err, modified){
-  console.log(err ? err.message : 'Index modified: ' + !!modified);
+}, function(err, status){
+  console.log(err ? err.message : 'Index modified: ' + status);
 });
 ```
 

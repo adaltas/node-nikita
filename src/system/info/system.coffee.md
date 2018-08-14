@@ -49,7 +49,7 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       # Note, kernel version is executed separately because it contains spaces.
       @system.execute
         header: 'Server'

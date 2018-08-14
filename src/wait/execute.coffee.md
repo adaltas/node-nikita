@@ -32,14 +32,14 @@ change had occured. Otherwise it will be set to "true".
 require('nikita')
 .wait.execute({
   cmd: "test -f /tmp/sth"
-}, function(err, status){
+}, function(err, {status}){
   // Command succeed, the file "/tmp/sth" now exists
 })
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       @log message: "Entering wait for execution", level: 'DEBUG', module: 'nikita/lib/wait/execute'
       # Validate parameters
       options.cmd ?= options.argument if typeof options.argument?

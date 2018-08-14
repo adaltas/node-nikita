@@ -49,14 +49,14 @@ require('nikita').tools.sysctl({
   properties: {
     'vm.swappiness': 1
   }
-}, function(err, status){
-  console.log(err ? err.message : 'Systcl reloaded: ' + !!status);
+}, function(err, {status}){
+  console.log(err ? err.message : 'Systcl reloaded: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering sysctl", level: 'DEBUG', module: 'nikita/lib/tools/sysctl'
       # Options
       options.load ?= true

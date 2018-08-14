@@ -29,14 +29,14 @@ Block until a container stops.
 ```javascript
 nikita.docker.wait({
   container: 'toto'
-}, function(err, is_true){
-  console.log( err ? err.message : 'Volume removed: ' + status);
+}, function(err, status){
+  console.log( err ? err.message : 'Did we really had to wait: ' + status);
 })
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       @log message: "Entering Docker wait", level: 'DEBUG', module: 'nikita/lib/docker/wait'
       # Global options
       options.docker ?= {}

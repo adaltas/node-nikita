@@ -27,7 +27,8 @@ SIGNAL is not sent.
 ## Example
 
 ```javascript
-nikita.docker.kill({
+require('nikita')
+.docker.kill({
   container: 'toto',
   signal: 9
 }, function(err, status){  
@@ -37,7 +38,7 @@ nikita.docker.kill({
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering Docker kill", level: 'DEBUG', module: 'nikita/lib/docker/kill'
       # Global options
       options.docker ?= {}

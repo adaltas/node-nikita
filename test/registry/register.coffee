@@ -16,9 +16,9 @@ describe 'registry.register', ->
 
     it 'register an object with options', ->
       value_a = value_b = null
-      nikita.registry.register 'my_function', shy: true, handler: (options) ->
+      nikita.registry.register 'my_function', shy: true, handler: ({options}) ->
         value_a = "hello #{options.value}"
-      nikita.registry.register 'my': 'function': shy: true, handler: (options, callback) ->
+      nikita.registry.register 'my': 'function': shy: true, handler: ({options}, callback) ->
         value_b = "hello #{options.value}"
         callback null, true
       nikita
@@ -44,11 +44,11 @@ describe 'registry.register', ->
     it 'overwrite middleware options', ->
       value_a = value_b = null
       nikita.registry.register 'my_function', key: 'a', handler: (->)
-      nikita.registry.register 'my_function', key: 'b', handler: (options) -> value_a = "Got #{options.key}"
+      nikita.registry.register 'my_function', key: 'b', handler: ({options}) -> value_a = "Got #{options.key}"
       nikita.registry.register
         'my': 'function': key: 'a', handler: (->)
       nikita.registry.register
-        'my': 'function': key: 'b', handler: (options) ->
+        'my': 'function': key: 'b', handler: ({options}) ->
           value_b = "Got #{options.key}"
       nikita()
       .call (_, callback) ->
@@ -63,7 +63,7 @@ describe 'registry.register', ->
       .promise()
 
     it 'is available from nikita instance', ->
-      nikita.registry.register 'my_function', (options, callback) ->
+      nikita.registry.register 'my_function', ({options}, callback) ->
         options.my_option.should.eql 'my value'
         process.nextTick ->
           callback null, true
@@ -79,7 +79,7 @@ describe 'registry.register', ->
 
     it 'namespace accept array', ->
       value = null
-      nikita.registry.register ['this', 'is', 'a', 'function'], (options, callback) ->
+      nikita.registry.register ['this', 'is', 'a', 'function'], ({options}, callback) ->
         value = options.value
         callback null, true
       n = nikita()
@@ -95,10 +95,10 @@ describe 'registry.register', ->
       value_a = value_b = null
       nikita.registry.register
         namespace:
-          "": (options, callback) ->
+          "": ({options}, callback) ->
             value_a = options.value
             callback null, true
-          "child": (options, callback) ->
+          "child": ({options}, callback) ->
             value_b = options.value
             callback null, true
       nikita
@@ -116,10 +116,10 @@ describe 'registry.register', ->
 
     it 'namespace call function with children', ->
       value_a = value_b = null
-      nikita.registry.register ['a', 'function'], (options, callback) ->
+      nikita.registry.register ['a', 'function'], ({options}, callback) ->
         value_a = options.value
         callback null, true
-      nikita.registry.register ['a', 'function', 'with', 'a', 'child'], (options, callback) ->
+      nikita.registry.register ['a', 'function', 'with', 'a', 'child'], ({options}, callback) ->
         value_b = options.value
         callback null, true
       nikita.registry.registered(['a', 'function']).should.be.true()
@@ -163,12 +163,12 @@ describe 'registry.register', ->
     it 'register an object with options', ->
       value_a = value_b = null
       nikita()
-      .registry.register( 'my_function', shy: true, handler: (options, callback) ->
+      .registry.register( 'my_function', shy: true, handler: ({options}, callback) ->
         value_a = "hello #{options.value}"
         callback null, true
       )
       .registry.register
-        'my': 'function': shy: true, handler: (options, callback) ->
+        'my': 'function': shy: true, handler: ({options}, callback) ->
           value_b = "hello #{options.value}"
           callback null, true
       .my_function value: 'world a'
@@ -184,11 +184,11 @@ describe 'registry.register', ->
       value_a = value_b = null
       nikita()
       .registry.register( 'my_function', key: 'a', handler: (->) )
-      .registry.register( 'my_function', key: 'b', handler: (options) -> value_a = "Got #{options.key}" )
+      .registry.register( 'my_function', key: 'b', handler: ({options}) -> value_a = "Got #{options.key}" )
       .registry.register
         'my': 'function': key: 'a', handler: (->)
       .registry.register
-        'my': 'function': key: 'b', handler: (options) -> value_b = "Got #{options.key}"
+        'my': 'function': key: 'b', handler: ({options}) -> value_b = "Got #{options.key}"
       .my_function()
       .my.function()
       .call ->
@@ -198,7 +198,7 @@ describe 'registry.register', ->
 
     it 'receive options', ->
       n = nikita()
-      .registry.register 'my_function', (options, callback) ->
+      .registry.register 'my_function', ({options}, callback) ->
         options.my_option.should.eql 'my value'
         process.nextTick ->
           callback null, true
@@ -227,7 +227,7 @@ describe 'registry.register', ->
     it 'namespace accept array', ->
       value = null
       nikita()
-      .registry.register ['this', 'is', 'a', 'function'], (options, callback) ->
+      .registry.register ['this', 'is', 'a', 'function'], ({options}, callback) ->
         value = options.value
         callback null, true
       .this.is.a.function value: 'yes'
@@ -241,10 +241,10 @@ describe 'registry.register', ->
       nikita()
       .registry.register
         namespace:
-          "": (options, callback) ->
+          "": ({options}, callback) ->
             value_a = options.value
             callback null, true
-          "child": (options, callback) ->
+          "child": ({options}, callback) ->
             value_b = options.value
             callback null, true
       .namespace value: 'a'
@@ -259,10 +259,10 @@ describe 'registry.register', ->
     it 'namespace call function with children', ->
       value_a = value_b = null
       nikita()
-      .registry.register ['a', 'function'], (options, callback) ->
+      .registry.register ['a', 'function'], ({options}, callback) ->
         value_a = options.value
         callback null, true
-      .registry.register ['a', 'function', 'with', 'a', 'child'], (options, callback) ->
+      .registry.register ['a', 'function', 'with', 'a', 'child'], ({options}, callback) ->
         value_b = options.value
         callback null, true
       .a.function value: 'a'

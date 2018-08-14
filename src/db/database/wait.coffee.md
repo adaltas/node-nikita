@@ -23,29 +23,19 @@ Wait for the creation of a database.
 ## Create Database example
 
 ```js
-require('nikita').database.db.wait({
+require('nikita')
+.database.db.wait({
   admin_username: 'test',
   admin_password: 'test',
-  database: 'my_db',
-}, function(err, status){
-  console.log(err ? err.message : 'Did database existed initially: ' + status);
+  database: 'my_db'
+}, function(err, {status}){
+  console.info(err ? err.message : 'Did database existed initially: ' + !status);
 });
-```
-
-## Run the tests
-
-```
-cd docker/centos6
-# then
-docker-compose run --rm nodejs test/db/database.coffee
-# or
-docker-compose run --rm nodejs
-npm test test/db/database.coffee
 ```
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       # Import options from `options.db`
       options.db ?= {}
       options[k] ?= v for k, v of options.db

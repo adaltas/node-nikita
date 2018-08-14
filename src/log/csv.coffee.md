@@ -21,7 +21,7 @@ Global options can be alternatively set with the "log_csv" property.
 
 ## Source Code
 
-    module.exports = ssh: false, handler: (options) ->
+    module.exports = ssh: false, handler: ({options}) ->
       # Obtains options from "log_csv" namespace
       options.log_csv ?= {}
       options[k] = v for k, v of options.log_csv

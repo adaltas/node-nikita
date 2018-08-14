@@ -98,7 +98,7 @@ require('nikita')({
 
 ## Source code
 
-    module.exports = handler: (options) ->
+    module.exports = handler: ({options}) ->
       @log message: "Entering ssh.open", level: 'DEBUG', module: 'nikita/lib/ssh/open'
       # No need to connect if ssh is a connection
       if ssh.is options.ssh
@@ -130,7 +130,7 @@ require('nikita')({
         return if ssh.compare @store['nikita:ssh:connection'], options
         throw Error "SSH Connection Already Set: call `ssh.close` before attempting to create a new connection with `ssh.open`."
       # Read private key if option is a path
-      @call unless: options.private_key, (_, callback) ->
+      @call unless: options.private_key, ({}, callback) ->
         @log message: "Read Private Key from: #{options.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/open'
         misc.path.normalize options.private_key_path, (location) ->
           fs.readFile location, 'ascii', (err, data) ->
@@ -139,7 +139,7 @@ require('nikita')({
             options.private_key = data
             callback()
       # Establish connection
-      @call relax: true, (_, callback) ->
+      @call relax: true, ({}, callback) ->
         @log message: "Read Private Key: #{JSON.stringify options.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/open'
         connect options, (err, conn) =>
           @log unless err
@@ -154,7 +154,7 @@ require('nikita')({
         @log message: "Bootstrap Root Access", level: 'INFO', module: 'nikita/lib/ssh/open'
         console.log 'Deprecated Options: public_key' if options.public_key
         @ssh.root options.root
-      @call retry: 3, (_, callback) ->
+      @call retry: 3, ({}, callback) ->
         @log message: "Establish Connection: attempt after enabling root access", level: 'DEBUG', module: 'nikita/lib/ssh/open'
         connect options, (err, conn) =>
           @store['nikita:ssh:connection'] = conn unless err

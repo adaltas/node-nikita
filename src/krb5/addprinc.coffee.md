@@ -37,13 +37,13 @@ require('nikita').krb5.addprinc({
   kadmin_password: 'pass',
   kadmin_server: 'localhost'
 }, function(err, {status}){
-  console.log(err ? err.message : 'Principal created or modified: ' + !!status);
+  console.log(err ? err.message : 'Principal created or modified: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       return throw Error 'Property principal is required' unless options.principal
       return throw Error 'Password or randkey missing' if not options.password and not options.randkey
       # Normalize realm and principal for later usage of options

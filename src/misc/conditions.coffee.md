@@ -11,15 +11,16 @@ none of the negative conditions are "true".
 
 ## Run an action for a user defined condition: `if`
 
-Work on the property `if` in `options`.
+Condition the execution of an action to a user defined condition interpreted as
+`true`. It is available as the `unless` of `options`.
 
 When `if` is a boolean, a string, a number or null, its value determine the
 output.
 
 If it's a function, the arguments vary depending on the callback signature. With
-1 argument, the argument is an options object and the handler is run
-synchronously. With 2 arguments, the arguments are an options object plus a
-callback and the handler is run asynchronously.
+1 argument, the argument is an context object including the `options` object and
+the handler is run synchronously. With 2 arguments, the arguments are an options
+object plus a callback and the handler is run asynchronously.
 
 If it's an array, all its element must positively resolve for the condition to
 pass.
@@ -29,7 +30,7 @@ Updating the content of a file if we are the owner
 ```js
 nikita.file.render({
   source:'./file',
-  if: function(options, callback){
+  if: function({options}, callback){
     fs.stat(options.source, function(err, stats){
       # Render the file if we own it
       callback(err, stats.uid == process.getuid())
@@ -38,7 +39,7 @@ nikita.file.render({
 }, fonction(err, rendered){});
 ```
 
-      if: (options, succeed, skip) ->
+      if: ({options}, succeed, skip) ->
         options.if = [options.if] unless Array.isArray options.if
         ok = true
         each(options.if)
@@ -54,17 +55,17 @@ nikita.file.render({
           else if type is 'function'
             if si.length < 2
               try
-                ok = false unless si.call @, options
+                ok = false unless si.call @, options: options
                 next()
               catch err then next err
             else if si.length is 2
-              si.call @, options, (err, is_ok) ->
+              si.call @, options: options, (err, is_ok) ->
                 return next err if err
                 ok = false unless is_ok
                 next()
             else next Error "Invalid argument length, expecting 2 or less, got #{si.length}"
           else if type is 'string' or (type is 'object' and Buffer.isBuffer si)
-            si = template si.toString(), options
+            si = template si.toString(), options: options
             ok = false if si.length is 0
             next()
           else
@@ -74,20 +75,21 @@ nikita.file.render({
 
 ## Run an action if false: `unless`
 
-Work on the property `unless` in `options`.
+Condition the execution of an action to a user defined condition interpreted as
+`false`. It is available as the `unless` of `options`.
 
 When `if` is a boolean, a string, a number or null, its value determine the
 output.
 
 If it's a function, the arguments vary depending on the callback signature. With
-1 argument, the argument is an options object and the handler is run
-synchronously. With 2 arguments, the arguments are an options object plus a
-callback and the handler is run asynchronously.
+1 argument, the argument is an context object including the `options` object and
+the handler is run synchronously. With 2 arguments, the arguments are an options
+object plus a callback and the handler is run asynchronously.
 
 If it's an array, all its element must negatively resolve for the condition to
 pass.
 
-      unless: (options, succeed, skip) ->
+      unless: ({options}, succeed, skip) ->
         options.unless = [options.unless] unless Array.isArray options.unless
         ok = true
         each(options.unless)
@@ -103,17 +105,17 @@ pass.
           else if type is 'function'
             if not_if.length < 2
               try
-                ok = false if not_if.call @, options
+                ok = false if not_if.call @, options: options
                 next()
               catch err then next err
             else if not_if.length is 2
-              not_if.call @, options, (err, is_ok) ->
+              not_if.call @, options: options, (err, is_ok) ->
                 return next err if err
                 ok = false if is_ok
                 next()
             else next Error "Invalid callback"
           else if type is 'string' or (type is 'object' and Buffer.isBuffer not_if)
-            not_if = template not_if.toString(), options
+            not_if = template not_if.toString(), options: options
             ok = false if not_if.length isnt 0
             next()
           else
@@ -129,7 +131,7 @@ be a single shell command or an array of commands.
 The callback `succeed` is called if all the provided command 
 were executed successfully otherwise the callback `skip` is called.
 
-      if_exec: (options, succeed, skip) ->
+      if_exec: ({options}, succeed, skip) ->
         # SSH connection
         ssh = @ssh options.ssh
         each(options.if_exec)
@@ -153,7 +155,7 @@ be a single shell command or an array of commands.
 The callback `succeed` is called if all the provided command 
 were executed with failure otherwise the callback `skip` is called.
 
-      unless_exec: (options, succeed, skip) ->
+      unless_exec: ({options}, succeed, skip) ->
         # SSH connection
         ssh = @ssh options.ssh
         each(options.unless_exec)
@@ -177,7 +179,7 @@ be a single condition command or an array of conditions.
 The callback `succeed` is called if any of the provided filter passed otherwise
 the callback `skip` is called.
 
-      if_os: (options, succeed, skip) ->
+      if_os: ({options}, succeed, skip) ->
         # SSH connection
         ssh = @ssh options.ssh
         options.if_os = [options.if_os] unless Array.isArray options.if_os
@@ -215,7 +217,7 @@ be a single condition command or an array of conditions.
 The callback `succeed` is called if none of the provided filter passed otherwise
 the callback `skip` is called.
 
-      unless_os: (options, succeed, skip) ->
+      unless_os: ({options}, succeed, skip) ->
         # SSH connection
         ssh = @ssh options.ssh
         options.unless_os = [options.unless_os] unless Array.isArray options.unless_os
@@ -255,9 +257,10 @@ option.
 The callback `succeed` is called if all the provided paths 
 exists otherwise the callback `skip` is called.
 
-      if_exists: (options, succeed, skip) ->
+      if_exists: ({options}, succeed, skip) ->
         # SSH connection
         ssh = @ssh options.ssh
+        # Default to `options.target` if "true"
         if typeof options.if_exists is 'boolean' and options.target
           options.if_exists = if options.if_exists then [options.target] else null
         each(options.if_exists)
@@ -281,7 +284,7 @@ option.
 The callback `succeed` is called if none of the provided paths 
 exists otherwise the callback `skip` is called.
 
-      unless_exists: (options, succeed, skip) ->
+      unless_exists: ({options}, succeed, skip) ->
         # SSH connection
         ssh = @ssh options.ssh
         if typeof options.unless_exists is 'boolean' and options.target
@@ -306,7 +309,7 @@ be a file path or an array of file paths.
 The callback `succeed` is called if all of the provided paths 
 exists otherwise the callback `skip` is called with an error.
 
-      should_exist: (options, succeed, skip) ->
+      should_exist: ({options}, succeed, skip) ->
         # SSH connection
         ssh = @ssh options.ssh
         each(options.should_exist)
@@ -327,7 +330,7 @@ be a file path or an array of file paths.
 The callback `succeed` is called if none of the provided paths 
 exists otherwise the callback `skip` is called with an error.
 
-      should_not_exist: (options, succeed, skip) ->
+      should_not_exist: ({options}, succeed, skip) ->
         # SSH connection
         ssh = @ssh options.ssh
         each(options.should_not_exist)
@@ -362,7 +365,7 @@ conditions.all({
 })
 ```
 
-      all: (session, options, succeed, failed) ->
+      all: (session, {options}, succeed, failed) ->
         return succeed() unless options? and (typeof options is 'object' and not Array.isArray options)
         keys = Object.keys options
         i = 0
@@ -371,7 +374,7 @@ conditions.all({
           return succeed() unless key?
           return next() if key is 'all'
           return next() unless module.exports[key]?
-          module.exports[key].call session, options, next, (err) ->
+          module.exports[key].call session, options: options, next, (err) ->
             # @log "Nikita `#{key}`: skipping action"
             failed err
         next()

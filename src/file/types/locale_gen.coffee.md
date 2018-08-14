@@ -17,7 +17,8 @@ Update the locale definition file located in "/etc/locale.gen".
 ## Example
 
 ```javascript
-require('nikita').file.types.locale_gen({
+require('nikita')
+.file.types.locale_gen({
   target: '/etc/locale.gen',
   rootdir: '/mnt',
   locales: ['fr_FR.UTF-8', 'en_US.UTF-8'],
@@ -25,13 +26,13 @@ require('nikita').file.types.locale_gen({
 })
 ```
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering file.types.local_gen", level: 'DEBUG', module: 'nikita/lib/file/types/local_gen'
       # Options
       options.target ?= '/etc/locale.gen'
       options.target = "#{path.join options.rootdir, options.target}" if options.rootdir
       # Write configuration
-      @call (_, callback) ->
+      @call ({}, callback) ->
         @fs.readFile ssh: options.ssh, target: options.target, encoding: 'ascii', (err, {data}) ->
           return callback err if err
           status = false

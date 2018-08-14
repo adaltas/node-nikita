@@ -37,7 +37,7 @@ describe 'file', ->
       .file
         target: "#{scratch}/file"
         trigger: true
-        content: (options) -> content if options.trigger
+        content: ({options}) -> content if options.trigger
       .file.assert
         target: "#{scratch}/file"
         content: 'valid'
@@ -282,7 +282,9 @@ describe 'file', ->
   describe 'from and to', ->
   
     they 'with from and with to', (ssh) ->
-      nikita.file
+      nikita
+        ssh: ssh
+      .file
         ssh: ssh
         target: "#{scratch}/fromto.md"
         from: '# from'

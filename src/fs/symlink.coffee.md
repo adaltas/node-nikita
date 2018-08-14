@@ -5,7 +5,7 @@ Delete a name and possibly the file it refers to.
 
 ## Source Code
 
-    module.exports = status: false, handler: (options, callback) ->
+    module.exports = status: false, handler: ({options}, callback) ->
       @log message: "Entering fs.symlink", level: 'DEBUG', module: 'nikita/lib/fs/symlink'
       # Normalize options
       options.target = options.argument if options.argument?

@@ -28,7 +28,7 @@ retrieve information from external identity provideds.
 require('nikita').system.uid_gid({
   uid: 'myuser',
   gid: 'mygroup'
-}, function(err, {status, uid, gid}){
+}, function(err, {uid, gid}){
   console.log(options.uid)
   console.log(options.gid)
 })
@@ -36,7 +36,7 @@ require('nikita').system.uid_gid({
 
 ## Source Code
 
-    module.exports = handler: (options, callback) ->
+    module.exports = handler: ({options}, callback) ->
       options.uid = parseInt options.uid, 10 if typeof options.uid is 'string' and /\d+/.test options.uid
       options.gid = parseInt options.gid, 10 if typeof options.gid is 'string' and /\d+/.test options.gid
       @file.types.etc_passwd.read

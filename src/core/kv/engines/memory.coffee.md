@@ -3,7 +3,7 @@
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ->
       db: {}
       set: (key, value) ->
         @db[key] ?= {}

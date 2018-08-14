@@ -184,7 +184,7 @@
         return get: false unless options.get is true
         options = enrich_options options
         opts = options_filter_cascade options
-        values = options.handler.call proxy, opts, options.callback
+        values = options.handler.call proxy, options: opts, options.callback
         get: true, values: values
       options_filter_cascade = (options) ->
         opts = {}
@@ -242,7 +242,7 @@
         options.original = options_original
         if options.action is 'next'
           {err, status} = state.todos
-          status = status.some (status) -> not status.shy and !!status.value
+          status = status.some (status) -> not status.shy and status.value
           state.todos.final_err = err
           todos_reset state.todos
           options.handler?.call proxy, err, {status: status}
@@ -250,7 +250,7 @@
           return
         if options.action is 'promise'
           {err, status} = state.todos
-          status = status.some (status) -> not status.shy and !!status.value
+          status = status.some (status) -> not status.shy and status.value
           state.todos.final_err = err
           todos_reset state.todos
           options.handler?.call proxy, err, status
@@ -260,7 +260,7 @@
           return
         return if state.killed
         if array.compare options.action, ['end']
-          return conditions.all proxy, options
+          return conditions.all proxy, options: options
           , ->
             while state.todos[0] and state.todos[0].action not in ['next', 'promise'] then state.todos.shift()
             callback err, {} if callback
@@ -343,7 +343,7 @@
             .error (err) -> do_callback [err, status: false]
             .next do_conditions
           do_conditions = ->
-            conditions.all proxy, options
+            conditions.all proxy, options: options
             , ->
               for k, v of options # Remove conditions from options
                 delete options[k] if /^if.*/.test(k) or /^unless.*/.test(k)
@@ -401,14 +401,14 @@
                   do_next args
               if options_handler_length is 2 # Async style
                 promise_returned = false
-                result = options_handler.call proxy, opts, ->
+                result = options_handler.call proxy, options: opts, ->
                   return if promise_returned
                   handle_async_and_promise.apply null, arguments
                 if promise.is result
                   promise_returned = true
                   return handle_async_and_promise Error 'Invalid Promise: returning promise is not supported in asynchronuous mode'
               else # Sync style
-                result = options_handler.call proxy, opts
+                result = options_handler.call proxy, options: opts
                 if promise.is result # result is a promisee
                   result.then (value) ->
                     value = [value] unless Array.isArray value
@@ -548,13 +548,13 @@
         proxy
       state.properties.status = get: -> (index) ->
         if arguments.length is 0
-          return state.stack[0].status.some (status) -> not status.shy and !!status.value
+          return state.stack[0].status.some (status) -> not status.shy and status.value
         else if index is false
-          value = state.stack[0].status.some (status) -> not status.shy and !!status.value
+          value = state.stack[0].status.some (status) -> not status.shy and status.value
           status.value = false for status in state.stack[0].status
           return value
         else if index is true
-          value = state.stack[0].status.some (status) -> not status.shy and !!status.value
+          value = state.stack[0].status.some (status) -> not status.shy and status.value
           status.value = true for status in state.stack[0].status
           return value
         else

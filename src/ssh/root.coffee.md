@@ -52,7 +52,7 @@ require('nikita')
 
 ## Source code
 
-    module.exports = handler: (options) ->
+    module.exports = handler: ({options}) ->
       @log message: "Entering ssh.root", level: 'DEBUG', module: 'nikita/lib/ssh/root'
       options.host ?= options.ip
       # options.cmd ?= 'su -'
@@ -67,7 +67,7 @@ require('nikita')
       @call
         if: options.public_key_path
         unless: options.public_key
-      , (_, callback) ->
+      , ({}, callback) ->
         misc.path.normalize options.public_key_path, (location) =>
           fs.readFile location, 'ascii', (err, data) =>
             return callback Error "Private key doesnt exists: #{JSON.stringify location}" if err and err.code is 'ENOENT'
@@ -78,7 +78,7 @@ require('nikita')
       @call
         if: options.private_key_path
         unless: options.private_key
-      , (_, callback) ->
+      , ({}, callback) ->
         @log message: "Read Private Key: #{JSON.stringify options.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/root'
         misc.path.normalize options.private_key_path, (location) ->
           fs.readFile location, 'ascii', (err, data) ->
@@ -86,7 +86,7 @@ require('nikita')
             return callback err if err
             options.private_key = data
             callback()
-      @call (_, callback) ->
+      @call ({}, callback) ->
         @log message: "Connecting", level: 'DEBUG', module: 'nikita/lib/ssh/root'
         connect options, (err, ssh) =>
           return callback err if err
@@ -141,7 +141,7 @@ require('nikita')
             @log message: data, type: 'stderr', module: 'nikita/lib/ssh/root'
           child.stderr.on 'end', (data) =>
             @log message: null, type: 'stderr', module: 'nikita/lib/ssh/root'
-      @call retry: true, sleep: 3000, if: (-> rebooting), (_, callback) ->
+      @call retry: true, sleep: 3000, if: (-> rebooting), ({}, callback) ->
         connect options, (err, conn) =>
           return callback err if err
           conn.end()

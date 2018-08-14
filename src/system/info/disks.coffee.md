@@ -113,7 +113,7 @@ Here is how the output may look like:
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       options.output ?= [
         'source', 'fstype', 'itotal', 'iused',
         'iavail', 'ipcent', 'size', 'used', 'avail',

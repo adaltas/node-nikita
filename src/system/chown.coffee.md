@@ -46,7 +46,7 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering chown", level: 'DEBUG', module: 'nikita/lib/system/chown'
       if options.stat
         console.log 'Deprecated Option: receive options.stat instead of options.stats in system.chown'
@@ -69,7 +69,7 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
         options.uid = uid
         options.gid = gid
       # Use option 'stat' short-circuit or discover
-      @call unless: !!options.stats, (_, callback) ->
+      @call unless: !!options.stats, ({}, callback) ->
         @log message: "Stat #{options.target}", level: 'DEBUG', module: 'nikita/lib/chown'
         @fs.stat ssh: options.ssh, target: options.target, (err, {stats}) ->
           return callback Error "Target Does Not Exist: #{JSON.stringify options.target}" if err?.code is 'ENOENT'
@@ -77,13 +77,13 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
           options.stats = stats
           callback()
       # Detect changes
-      @call (_, callback) ->
+      @call ({}, callback) ->
         if (not options.uid? or options.stats.uid is options.uid) and (not options.gid? or options.stats.gid is options.gid)
           @log message: "Matching ownerships on '#{options.target}'", level: 'INFO', module: 'nikita/lib/chown'
           return callback()
         callback null, true
       # Apply changes
-      @call if: (-> @status -1), (_, callback) ->
+      @call if: (-> @status -1), ({}, callback) ->
         options.uid ?= options.stats.uid
         options.gid ?= options.stats.gid
         @fs.chown ssh: options.ssh, target: options.target, uid: options.uid, gid: options.gid, sudo: options.sudo, (err) ->

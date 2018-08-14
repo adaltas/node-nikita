@@ -11,7 +11,7 @@ describe 'api after', ->
       nikita()
       .registry.register 'good_handler', (->)
       .registry.register 'bad_handler', (->)
-      .after 'good_handler', (options) -> history.push options.key
+      .after 'good_handler', ({options}) -> history.push options.key
       .good_handler key: 'value 1'
       .good_handler key: 'value 2'
       .call ->
@@ -22,7 +22,7 @@ describe 'api after', ->
       history = []
       nikita()
       .registry.register 'handler', (->)
-      .after action: 'handler', key: 'value 2', (options) ->
+      .after action: 'handler', key: 'value 2', ({options}) ->
         history.push options.key
       .handler key: 'value 1'
       .handler key: 'value 2'

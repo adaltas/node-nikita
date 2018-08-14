@@ -20,35 +20,23 @@ Send a log message.
     module.exports = ssh: false, get: true, cascade:
       action: false
       cascade: false
-      # disabled: false
       get: false
-      # handler: false
-      # index: false
-      # level: false
-      # line: false
       log: false # TODO shall be removed after the deprecation of log
-      # parent: false
       retry: false
       ssh: false
       shy: true
-      # status: false
-    , handler: (options) ->
+    , handler: ({options}) ->
       # Options
       options.message = options.argument if options.argument?
       options.level ?= 'INFO'
       options.time ?= Date.now()
       options.module ?= undefined
-      # options.headers ?= header for header in state.headers
-      # options.depth ?= state.stack.length
       options.type ?= 'text'
       options.depth = options.depth - 1
-      # log.shy ?= options.shy
-      # args = if 1 <= arguments.length then [].slice.call(arguments, 0) else []
       stackTrace = require 'stack-trace'
       frame = stackTrace.get()[1]
       file = path.basename(frame.getFileName())
       line = frame.getLineNumber()
-      # method = frame.getFunctionName()
       options.file = file
       options.line = line
       parent = options.parent

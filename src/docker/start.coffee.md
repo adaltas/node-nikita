@@ -35,7 +35,8 @@ Start a container.
 1- builds an image from dockerfile without any resourcess
 
 ```javascript
-nikita.docker.start({
+require('nikita')
+.docker.start({
   container: 'toto',
   attach: true
 }, function(err, is_true, stdout, stderr){
@@ -45,7 +46,7 @@ nikita.docker.start({
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering Docker start", level: 'DEBUG', module: 'nikita/lib/docker/start'
       # Global options
       options.docker ?= {}

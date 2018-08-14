@@ -28,12 +28,12 @@ Start a service. Note, does not throw an error if service is not installed.
 require('nikita').service.start([{
   ssh: ssh,
   name: 'gmetad'
-}, function(err, status){ /* do sth */ });
+}, function(err, {status}){ /* do sth */ });
 ```
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering service.start", level: 'DEBUG', module: 'nikita/lib/service/start'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'

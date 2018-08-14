@@ -15,7 +15,7 @@ before = Date.now();
 require('nikita')
 .wait({
   time: 5000
-}, function(err, status){
+}, function(err, {status}){
   throw Error 'TOO LATE!' if (Date.now() - before) > 5200
   throw Error 'TOO SOON!' if (Date.now() - before) < 5000
 })
@@ -23,7 +23,7 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       options.time ?= options.argument
       return callback Error "Missing time: #{JSON.stringify options.time}" unless options.time?
       options.time = parseInt options.time if typeof options.time is 'string'

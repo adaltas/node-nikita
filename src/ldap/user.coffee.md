@@ -22,20 +22,21 @@ Create and modify a user store inside an OpenLDAP server.
 ## Example
 
 ```js
-require('nikita').ldap.user({
+require('nikita')
+.ldap.user({
   url: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
   user: {
   }
-}, function(err, modified){
-  console.log(err ? err.message : 'Index modified: ' + !!modified);
+}, function(err, {status}){
+  console.log(err ? err.message : 'Index modified: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       # Auth related options
       binddn = if options.binddn then "-D #{options.binddn}" else ''
       passwd = if options.passwd then "-w #{options.passwd}" else ''

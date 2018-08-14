@@ -24,10 +24,11 @@ Create or modify a Unix user.
 ## Example
 
 ```coffee
-require('nikita').user.remove({
+require('nikita')
+.system.user.remove({
   name: 'a_user'
-}, function(err, status){
-  console.log(err ? err.message : 'User removed: ' + !!status);
+}, function(err, {status}){
+  console.log(err ? err.message : 'User removed: ' + status);
 })
 ```
 

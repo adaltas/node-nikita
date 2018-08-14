@@ -27,16 +27,20 @@ Note, stream are not yet supported.
 ## Uploading a file
 
 ```javascript
-nikita.docker({
+require('nikita')
+.docker({
   source: readable_stream or '/path/to/source'
   target: 'my_container:/path/to/target'
-}, function(err, status){})
+}, function(err, {status}){
+  console.log( err ? err.message : 'Container copied' + status)
+)
 ```
 
 ## Downloading a file
 
 ```javascript
-nikita.docker({
+require('nikita')
+.docker({
   source: 'my_container:/path/to/source',
   target: writable_stream or '/path/to/target'
 }, function(err, status){
@@ -63,7 +67,7 @@ nikita.docker({
       source_mkdir = false
       target_mkdir = false
       # Source is on the host, normalize path
-      @call (_, callback) ->
+      @call ({}, callback) ->
         return callback() if source_container
         if /\/$/.test source_path
           source_path = "#{source_path}/#{path.basename target_path}"
@@ -78,7 +82,7 @@ nikita.docker({
         target: source_path
         if: -> source_mkdir
       # Destination is on the host
-      @call (_, callback)  ->
+      @call ({}, callback)  ->
         return callback() if target_container
         if /\/$/.test target_path
           target_path = "#{target_path}/#{path.basename target_path}"

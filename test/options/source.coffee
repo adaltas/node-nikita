@@ -10,7 +10,7 @@ describe 'options "target"', ->
   they 'home', (ssh) ->
     nikita
       ssh: ssh
-    .call target: '~', (options) ->
+    .call target: '~', ({options}) ->
       unless ssh
       then options.target.should.eql "#{process.env.HOME}"
       else options.target.should.eql "."
@@ -19,7 +19,7 @@ describe 'options "target"', ->
   they 'relative to home', (ssh) ->
     nikita
       ssh: ssh
-    .call target: '~/.profile', (options) ->
+    .call target: '~/.profile', ({options}) ->
       unless ssh
       then options.target.should.eql "#{process.env.HOME}/.profile"
       else options.target.should.eql ".profile"

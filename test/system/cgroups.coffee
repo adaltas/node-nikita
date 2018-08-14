@@ -296,7 +296,7 @@ describe 'system.cgroups', ->
             'cpu.rt_runtime_us': '"0"'
             'cpu.cfs_period_us': '"100000"'
         merge: true
-      .call (options) ->
+      .call ->
         @store['nikita:system:type'].should.match /^((redhat)|(centos))/
       .promise()
 

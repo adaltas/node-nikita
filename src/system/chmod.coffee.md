@@ -23,7 +23,8 @@ Change the permissions of a file or directory.
 ## Example
 
 ```js
-require('nikita').system.chmod({
+require('nikita')
+.system.chmod({
   target: '~/my/project',
   mode: 0o755
 }, function(err, status){
@@ -33,7 +34,7 @@ require('nikita').system.chmod({
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering chmod", level: 'DEBUG', module: 'nikita/lib/system/chmod'
       if options.stat
         console.log 'Deprecated Option: receive options.stat instead of options.stats in system.chmod'
@@ -53,7 +54,7 @@ require('nikita').system.chmod({
         , (err, {stats}) ->
           options.stats = stats unless err
           callback err
-      @call (_, callback) ->
+      @call ({}, callback) ->
         # Detect changes
         if misc.mode.compare options.stats.mode, options.mode
           @log message: "Identical permissions on \"#{options.target}\"", level: 'INFO', module: 'nikita/lib/system/chmod'

@@ -32,13 +32,13 @@ require('nikita').cron.remove({
   when: '0 */9 * * *'
   user: 'service'
 }, function(err, status){
-  console.log(err ? err.message : 'Cron entry created or modified: ' + !!status);
+  console.log(err ? err.message : 'Cron entry created or modified: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       return callback Error 'valid cmd is required' unless options.cmd?.length > 0
       if options.user?
         @log message: "Using user #{options.user}", level: 'INFO', module: 'nikita/cron/remove'

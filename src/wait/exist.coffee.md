@@ -19,14 +19,14 @@ Example:
 require('nikita')
 .wait.exist({
   target: "/path/to/file_or_directory"
-}, function(err, status){
+}, function(err, {status}){
   // Command succeed, the file now exists
 })
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       @log message: "Entering wait.exists", level: 'DEBUG', module: 'nikita/lib/wait/exist'
       # SSH connection
       ssh = @ssh options.ssh

@@ -57,7 +57,8 @@ nikita.file.assert({
 Ensure a file does not exists:
 
 ```js
-nikita.file.assert({
+require('nikita')
+.file.assert({
   ssh: connection
   target: '/tmp/a_file'     
   not: true
@@ -68,7 +69,7 @@ nikita.file.assert({
 
 ## Source code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering file.assert", level: 'DEBUG', module: 'nikita/lib/file/assert'
       # SSH connection
       ssh = @ssh options.ssh
@@ -105,7 +106,7 @@ nikita.file.assert({
       # Assert file exists
       @call
         unless: options.content? or options.md5 or options.sha1 or options.sha256 or options.mode.length
-      , (_, callback) ->
+      , ({}, callback) ->
         @fs.exists ssh: options.ssh, target: options.target.toString(), (err, {exists}) ->
           unless options.not
             unless exists
@@ -142,7 +143,7 @@ nikita.file.assert({
       # Assert content equal
       @call
         if: options.content? and (typeof options.content is 'string' or Buffer.isBuffer options.content)
-      , (_, callback) ->
+      , ({}, callback) ->
         @fs.readFile ssh: options.ssh, target: options.target, (err, {data}) ->
           return callback err if err
           data = buffer.trim data, options.encoding if options.trim
@@ -158,7 +159,7 @@ nikita.file.assert({
       # Assert content match
       @call
         if: options.content? and options.content instanceof RegExp
-      , (_, callback) ->
+      , ({}, callback) ->
         @fs.readFile ssh: options.ssh, target: options.target, (err, {data}) ->
           return callback err if err
           unless options.not
@@ -176,7 +177,7 @@ nikita.file.assert({
       (algo = 'sha256'; hash = options.sha256) if options.sha256
       @call
         if: algo
-      , (_, callback) ->
+      , ({}, callback) ->
         file.hash ssh, options.target, algo, (err, h) =>
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
           return callback err if err
@@ -192,7 +193,7 @@ nikita.file.assert({
       # Assert uid ownerships
       @call
         if: options.uid?
-      , (_, callback) ->
+      , ({}, callback) ->
         @fs.stat ssh: options.ssh, target: options.target, (err, {stats}) ->
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
           unless options.not
@@ -207,7 +208,7 @@ nikita.file.assert({
       # Assert gid ownerships
       @call
         if: options.gid?
-      , (_, callback) ->
+      , ({}, callback) ->
         @fs.stat ssh: options.ssh, target: options.target, (err, {stats}) ->
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
           unless options.not
@@ -222,7 +223,7 @@ nikita.file.assert({
       # Assert file permissions
       @call
         if: options.mode.length
-      , (_, callback) ->
+      , ({}, callback) ->
         @fs.stat ssh: options.ssh, target: options.target, (err, {stats}) ->
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
           unless options.not

@@ -12,8 +12,8 @@ describe 'options "after"', ->
     nikita
     .call
       key: '1'
-      after: (options) -> history.push "after #{options.key}"
-      handler: (options) -> history.push "handler #{options.key}"
+      after: ({options}) -> history.push "after #{options.key}"
+      handler: ({options}) -> history.push "handler #{options.key}"
     .call ->
       history.should.eql ['handler 1', 'after 1']
     .promise()
@@ -23,8 +23,8 @@ describe 'options "after"', ->
      nikita
      .call
        key: '1'
-       after: key: 2, handler: (options) -> history.push "after #{options.key}"
-       handler: (options) -> history.push "handler #{options.key}"
+       after: key: 2, handler: ({options}) -> history.push "after #{options.key}"
+       handler: ({options}) -> history.push "handler #{options.key}"
      .call ->
        history.should.eql ['handler 1', 'after 2']
      .promise()
@@ -34,10 +34,10 @@ describe 'options "after"', ->
       nikita
       .call
         key: 'parent'
-        after: (options) ->
+        after: ({options}) ->
           history.push "after #{options.key}"
-          @call key: 'child', (options) -> history.push "handler #{options.key}"
-        handler: (options) -> history.push "handler #{options.key}"
+          @call key: 'child', ({options}) -> history.push "handler #{options.key}"
+        handler: ({options}) -> history.push "handler #{options.key}"
       .call ->
         history.should.eql ['handler parent', 'after parent', 'handler child']
       .promise()

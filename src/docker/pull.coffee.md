@@ -30,16 +30,17 @@ Pull a container
 1- builds an image from dockerfile without any resourcess
 
 ```javascript
-nikita.docker_pull({
+require('nikita')
+.docker.pull({
   tag: 'postgresql'
-}, function(err, status, stdout, stderr){
+}, function(err, {status}){
   console.log( err ? err.message : 'Container pulled: ' + status);
 })
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       @log message: "Entering Docker pull", level: 'DEBUG', module: 'nikita/lib/docker/pull'
       # Global options
       options.docker ?= {}

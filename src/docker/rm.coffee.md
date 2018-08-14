@@ -29,7 +29,8 @@ force options is set.
 ## Example Code
 
 ```javascript
-nikita.docker.rm({
+require('nikita')
+.docker.rm({
   container: 'toto'
 }, function(err, status){
   console.log( err ? err.message : 'Container removed: ' + status);
@@ -38,7 +39,7 @@ nikita.docker.rm({
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering Docker rm", level: 'DEBUG', module: 'nikita/lib/docker/rm'
       # Global options
       options.docker ?= {}

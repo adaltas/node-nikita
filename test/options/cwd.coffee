@@ -11,7 +11,7 @@ describe 'options "cwd"', ->
     history = []
     nikita
     .call cwd: "#{scratch}/a_dir", ->
-      @call (options) ->
+      @call ({options}) ->
         options.cwd.should.eql "#{scratch}/a_dir"
     .promise()
   

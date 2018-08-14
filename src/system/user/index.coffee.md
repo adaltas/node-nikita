@@ -59,14 +59,15 @@ ownerships and 0644 permissions unless it already exists.
 ## Example
 
 ```coffee
-require('nikita').user({
+require('nikita')
+.system.user({
   name: 'a_user',
   system: true,
   uid: 490,
   gid: 10,
   comment: 'A System User'
-}, function(err, created){
-  console.log(err ? err.message : 'User created: ' + !!created);
+}, function(err, {status}){
+  console.log(err ? err.message : 'User created: ' + status);
 })
 ```
 
@@ -79,7 +80,7 @@ you are a member of the "wheel" group (gid of "10") with the command
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering user", level: 'DEBUG', module: 'nikita/lib/system/user/add'
       # SSH connection
       ssh = @ssh options.ssh

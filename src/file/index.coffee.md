@@ -94,13 +94,14 @@ string value will be converted to a regular expression. For example the string
 ## Replacing part of a file using from and to markers
 
 ```js
-require('nikita').file({
+require('nikita')
+.file({
   content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin',
   from: '# from\n',
   to: '# to',
   replace: 'my friend\n',
   target: scratch+'/a_file'
-}, function(err, written){
+}, function(err, {status}){
   // '# here we are\n# from\nmy friend\n# to\nyou coquin'
 })
 ```
@@ -108,12 +109,13 @@ require('nikita').file({
 ## Replacing a matched line by a string
 
 ```js
-require('nikita').file({
+require('nikita')
+.file({
   content: 'email=david(at)adaltas(dot)com\nusername=root',
   match: /(username)=(.*)/,
   replace: '$1=david (was $2)',
   target: scratch+'/a_file'
-}, function(err, written){
+}, function(err, {status}){
   // '# email=david(at)adaltas(dot)com\nusername=david (was root)'
 })
 ```
@@ -121,12 +123,13 @@ require('nikita').file({
 ## Replacing part of a file using a regular expression
 
 ```js
-require('nikita').file({
+require('nikita')
+.file({
   content: 'here we are\nlets try to replace that one\nyou coquin',
   match: /(.*try) (.*)/,
   replace: ['my friend, $1'],
   target: scratch+'/a_file'
-}, function(err, written){
+}, function(err, {status}){
   // '# here we are\nmy friend, lets try\nyou coquin'
 })
 ```
@@ -134,12 +137,13 @@ require('nikita').file({
 ## Replacing with the global and multiple lines options
 
 ```js
-require('nikita').file({
+require('nikita')
+.file({
   content: '#A config file\n#property=30\nproperty=10\n#End of Config',
   match: /^property=.*$/mg,
   replace: 'property=50',
   target: scratch+'/a_file'
-}, function(err, written){
+}, function(err, {status}){
   // '# A config file\n#property=30\nproperty=50\n#End of Config'
 })
 ```
@@ -147,13 +151,14 @@ require('nikita').file({
 ## Appending a line after each line containing "property"
 
 ```js
-require('nikita').file({
+require('nikita')
+.file({
   content: '#A config file\n#property=30\nproperty=10\n#End of Config',
   match: /^.*comment.*$/mg,
   replace: '# comment',
   target: scratch+'/a_file',
   append: 'property'
-}, function(err, written){
+}, function(err, {status}){
   // '# A config file\n#property=30\n# comment\nproperty=50\n# comment\n#End of Config'
 })
 ```
@@ -161,7 +166,8 @@ require('nikita').file({
 ## Multiple transformations
 
 ```js
-require('nikita').file({
+require('nikita')
+.file({
   content: 'username: me\nemail: my@email\nfriends: you',
   write: [
     {match: /^(username).*$/mg, replace: '$1: you'},
@@ -169,17 +175,19 @@ require('nikita').file({
     {match: /^(friends).*$/mg, replace: '$1: me'}
   ],
   target: scratch+'/a_file'
-}, function(err, written){
+}, function(err, {status}){
   // 'username: you\n\nfriends: me'
 })
 ```
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering file", level: 'DEBUG', module: 'nikita/lib/file'
       # SSH connection
       ssh = @ssh options.ssh
+      # Content: pass all arguments to function calls
+      context = arguments[0]
       # Validate parameters
       return throw Error 'Missing source or content' unless (options.source or options.content?) or options.replace or options.write?
       return throw Error 'Define either source or content' if options.source and options.content
@@ -187,7 +195,7 @@ require('nikita').file({
       @log message: "Source is \"#{options.source}\"", level: 'DEBUG', module: 'nikita/lib/file'
       @log message: "Destination is \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/file'
       options.content = options.content.toString() if options.content and Buffer.isBuffer options.content
-      options.content = options.content options if typeof options.content is 'function'
+      options.content = options.content.call @, context if typeof options.content is 'function'
       options.diff ?= options.diff or !!options.stdout
       options.engine ?= 'nunjunks'
       options.unlink ?= false
@@ -217,7 +225,7 @@ require('nikita').file({
         if not w.from? and not w.to? and not w.match? and w.replace?
           w.match = w.replace
       # Start work
-      @call (_, callback) -> # read source
+      @call ({}, callback) -> # read source
         if options.content?
           options.content = "#{options.content}" if typeof options.content is 'number'
           return callback()
@@ -244,7 +252,7 @@ require('nikita').file({
             options.content = data
             callback()
       targetStats = null
-      @call (_, callback) -> # read target
+      @call ({}, callback) -> # read target
         # no need to test changes if target is a callback
         return callback() if typeof options.target is 'function'
         exists = =>
@@ -322,7 +330,7 @@ require('nikita').file({
         unless string.endsWith options.content, options.eof
           @log message: 'Add eof', level: 'INFO', module: 'nikita/lib/file'
           options.content += options.eof
-      @call (_, callback) -> # diff
+      @call ({}, callback) -> # diff
         return callback() if targetHash is string.hash options.content
         @log message: "File content has changed: #{options.target}", level: 'WARN', module: 'nikita/lib/file'
         {raw, text} = diff target, options.content, options
@@ -340,7 +348,7 @@ require('nikita').file({
           source: options.target
           target: "#{options.target}#{backup}"
           mode: options.backup_mode
-      @call (_, callback) -> # file
+      @call ({}, callback) -> # file
         return callback() unless @status()
         if typeof options.target is 'function'
           @log message: 'Write target with user function', level: 'INFO', module: 'nikita/lib/file'

@@ -32,7 +32,7 @@ in "/etc/pacman.conf".
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering file.types.pacman_conf", level: 'DEBUG', module: 'nikita/lib/file/types/pacman_conf'
       options.target ?= '/etc/pacman.conf'
       options.target = "#{path.join options.rootdir, options.target}" if options.rootdir

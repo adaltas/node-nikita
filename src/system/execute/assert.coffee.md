@@ -27,7 +27,7 @@ nikita.system.execute({
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       options.trim ?= false
       options.content = options.content.toString() if Buffer.isBuffer options.content
       options.content = options.content.trim() if options.content and options.trim

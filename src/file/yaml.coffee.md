@@ -61,25 +61,26 @@ provided in the `content` option.
 
 * `err`   
   Error object if any.
-* `written`   
-  Number of written actions with modifications.
+* `status`   
+  Indicate modifications in the target file.
 
 ## Example
 
 ```js
-require('nikita').file.yaml({
+require('nikita')
+.file.yaml({
   content: {
     'my_key': 'my value'
   },
   target: '/tmp/my_file'
-}, function(err, written){
-  console.info(err ? err.message : 'Content was updated: ' + !!written);
+}, function(err, status){
+  console.info(err ? err.message : 'Content was updated: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       options.line_width ?= 160
       @log message: "Entering file.yaml", level: 'DEBUG', module: 'nikita/lib/file/yaml'
       options.clean ?= true

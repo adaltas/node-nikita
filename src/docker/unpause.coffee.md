@@ -22,16 +22,17 @@ Unpause all processes within a container.
 ## Example
 
 ```javascript
-nikita.docker.pause({
+require('nikita')
+.docker.pause({
   container: 'toto'
-}, function(err, is_true){
+}, function(err, {status}){
   console.log( err ? err.message : 'Container was unpaused: ' + status);
 })
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       @log message: "Entering Docker unpause", level: 'DEBUG', module: 'nikita/lib/docker/unpause'
       # Global options
       options.docker ?= {}

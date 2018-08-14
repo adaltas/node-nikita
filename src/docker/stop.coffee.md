@@ -24,16 +24,17 @@ Stop a started container.
 ## Example
 
 ```javascript
-nikita.docker.stop({
+require('nikita')
+.docker.stop({
   container: 'toto'
-}, function(err, is_true){
+}, function(err, {status}){
   console.log( err ? err.message : 'Container state changed to stopped: ' + status);
 })
 ```
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering Docker stop", level: 'DEBUG', module: 'nikita/lib/docker/stop'
       # Global options
       options.docker ?= {}

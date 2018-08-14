@@ -23,10 +23,11 @@ Remove a package or service.
 ## Example
 
 ```js
-require('nikita').service.start([{
+require('nikita')
+.service.start([{
   ssh: ssh,
   name: 'gmetad'
-}, function(err, status){ /* do sth */ });
+}, function(err, {status}){ /* do sth */ });
 ```
 
 ## Source Code

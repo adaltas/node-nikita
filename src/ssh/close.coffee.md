@@ -9,7 +9,7 @@ There are no options.
 
 ## Source code
 
-    module.exports = handler: (options, callback) ->
+    module.exports = handler: ({options}, callback) ->
       @log message: "Entering ssh.close", level: 'DEBUG', module: 'nikita/lib/ssh/close'
       return callback() unless @store['nikita:ssh:connection']
       ssh = @store['nikita:ssh:connection']

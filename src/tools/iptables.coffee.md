@@ -81,19 +81,20 @@ modules are:
 
 ```coffee
 var after = {chain: 'INPUT', jump: 'ACCEPT', 'in-interface': 'lo'}
-require('nikita').iptables({
+require('nikita')
+.tools.iptables({
   ssh: ssh,
   rules: [
     chain: 'INPUT', after: after, jump: 'ACCEPT', dport: 22, protocol: 'tcp'
   ]
-}, function(err, updated){
-  console.log(err ? err.message : 'Iptables was updated: ' + !!written);
+}, function(err, {status}){
+  console.log(err ? err.message : 'Iptables was updated: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       @log message: "Entering iptables", level: 'DEBUG', module: 'nikita/lib/iptables'
       @log message: "List existing rules", level: 'INFO', module: 'nikita/lib/iptables'
       @system.execute

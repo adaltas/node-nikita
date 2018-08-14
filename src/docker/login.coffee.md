@@ -24,8 +24,8 @@ Register or log in to a Docker registry server.
 
 * `err`   
   Error object if any.   
-* `executed`   
-  if command was executed   
+* `status`   
+  True when the command was executed successfully.   
 * `stdout`   
   Stdout value(s) unless `stdout` option is provided.   
 * `stderr`   
@@ -33,7 +33,7 @@ Register or log in to a Docker registry server.
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       @log message: "Entering Docker login", level: 'DEBUG', module: 'nikita/lib/docker/login'
       # Global options
       options.docker ?= {}

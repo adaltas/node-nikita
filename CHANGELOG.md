@@ -6,6 +6,7 @@
 
 Backward incompatibilities:
 
+* context: 1st arg of handlers with the options key
 * service: option action renamed state
 * service: values start, stop, restart renamed started, stopped and restarted
 

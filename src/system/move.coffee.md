@@ -7,39 +7,39 @@ exists, in which case the source file will no longer exists.
 ## Options
 
 * `target`   
-  Final name of the moved resource.   
+  Final name of the moved resource.
 * `force`   
   Force the replacement of the file without checksum verification, speed up
-  the action and disable the `moved` indicator in the callback.   
+  the action and disable the `moved` indicator in the callback.
 * `source`   
-  File or directory to move.   
+  File or directory to move.
 * `target_md5`   
-  Destination md5 checkum if known, otherwise computed if target
-  exists.   
+  Destination md5 checkum if known, otherwise computed if target exists.
 * `source_md5`   
-  Source md5 checkum if known, otherwise computed.   
+  Source md5 checkum if known, otherwise computed.
 
 ## Callback parameters
 
 * `err`   
-  Error object if any.   
+  Error object if any.
 * `status`   
-  Value is "true" if resource was moved.   
+  Value is "true" if resource was moved.
 
 ## Example
 
 ```js
-require('nikita').system.move({
+require('nikita')
+.system.move({
   source: __dirname,
   desination: '/tmp/my_dir'
-}, function(err, status){
-  console.log(err ? err.message : 'File moved: ' + !!status);
+}, function(err, {status}){
+  console.log(err ? err.message : 'File moved: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       @log message: "Entering move", level: 'DEBUG', module: 'nikita/lib/system/move'
       # SSH connection
       ssh = @ssh options.ssh

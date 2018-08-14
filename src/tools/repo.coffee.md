@@ -29,17 +29,18 @@ Setup packet manager repository. Only support yum for now.
 ## Example
 
 ```js
-require('nikita').tools.repo({
+require('nikita')
+.tools.repo({
   source: '/tmp/centos.repo',
   clean: 'CentOs*'
 }, function(err, {status}){
-  console.info(err ? err.message : 'Repo updated: ' + !!status);
+  console.info(err ? err.message : 'Repo updated: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering tools.repo", level: 'DEBUG', module: 'nikita/lib/tools/repo'
       # SSH connection
       ssh = @ssh options.ssh

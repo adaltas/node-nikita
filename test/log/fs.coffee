@@ -23,7 +23,7 @@ describe 'log.fs', ->
     .log.fs
       basedir: scratch
       serializer: {}
-    .call (options) ->
+    .call ->
       @log message: 'ok'
     .file.assert
       source: "#{scratch}/localhost.log"
@@ -37,7 +37,7 @@ describe 'log.fs', ->
       ssh: ssh
       log_fs: basedir: scratch, serializer: text: (log) -> "#{log.message}\n"
     .log.fs()
-    .call (options) ->
+    .call ->
       @log message: 'ok'
     .file.assert
       source: "#{scratch}/localhost.log"
@@ -54,7 +54,7 @@ describe 'log.fs', ->
         basedir: scratch
         serializer: text: (log) -> "#{log.message}\n"
         archive: true
-      .call (options) ->
+      .call ->
         @log message: 'ok'
       .call ->
         now = new Date()
@@ -73,7 +73,7 @@ describe 'log.fs', ->
         basedir: scratch
         serializer: text: (log) -> "#{log.message}\n"
         archive: true
-      .call (options) ->
+      .call ->
         @log message: 'ok'
       .call (_, callback) ->
         @fs.lstat "#{scratch}/latest", (err, {stats}) ->

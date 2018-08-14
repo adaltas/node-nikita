@@ -23,7 +23,7 @@ throw an Error if it does not exists.
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       throw Error "Required Option: target, got #{JSON.stringify options.target}" unless options.target
       throw Error "Required Option: keys, got #{JSON.stringify options.keys}" unless options.keys
       throw Error "Invallid Option: keys must be an array, got #{JSON.stringify options.keys}" unless Array.isArray options.keys

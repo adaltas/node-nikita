@@ -96,7 +96,8 @@ Run Docker Containers
 ## Example
 
 ```javascript
-nikita.docker({
+require('nikita')
+.docker({
   ssh: ssh
   name: 'myContainer'
   image: 'test-image'
@@ -109,7 +110,7 @@ nikita.docker({
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       @log message: "Entering Docker run", level: 'DEBUG', module: 'nikita/lib/docker/run'
       # Global options
       options.docker ?= {}

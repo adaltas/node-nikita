@@ -41,10 +41,10 @@ nikita
 })
 .file.types.etc_passwd.read({
   target: "/tmp/etc/passwd"
-}, function (err, status, users){
+}, function (err, {status, users}){
   if(err) throw err;
-  status.should.be.false()
-  users.should.eql({
+  assert(status, false)
+  assert(users, {
     "root": { user: 'root', uid: 0, gid: 0, comment: 'root', home: '/root', shell: '/bin/bash' }
   })
 });
@@ -52,7 +52,7 @@ nikita
 
 ## Source Code
 
-    module.exports = shy: true, handler: (options, callback) ->
+    module.exports = shy: true, handler: ({options}, callback) ->
       @log message: "Entering etc_passwd.read", level: 'DEBUG', module: 'nikita/lib/system/etc_passwd/read'
       throw Error 'Invalid Option: uid must be a string or a number' if options.uid and not typeof options.uid in ['string', 'number']
       options.uid = parseInt options.uid, 10 if typeof options.uid is 'string' and /\d+/.test options.uid

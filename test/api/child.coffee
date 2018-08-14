@@ -10,7 +10,7 @@ describe 'api child', ->
   it 'dont change status of parent action', ->
     touched = 0
     n = nikita()
-    n.call (options, next) ->
+    n.call ({}, next) ->
       n
       .child()
       .file.touch
@@ -27,7 +27,7 @@ describe 'api child', ->
   # it 'accept conditions', (next) ->
   #   touched = 0
   #   m = nikita
-  #   .call (options, next) ->
+  #   .call ({}, next) ->
   #     m
   #     .child()
   #     .file.touch

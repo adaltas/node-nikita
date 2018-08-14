@@ -20,17 +20,18 @@ Renew the Kerberos ticket of a user principal inside a Unix session.
 ## Keytab example
 
 ```js
-require('nikita').krb5.ticket({
+require('nikita')
+.krb5.ticket({
   principal: 'myservice/my.fqdn@MY.REALM',
   keytab: '/etc/security/keytabs/my.service.keytab',
-}, function(err, status){
-  console.log(err ? err.message : 'Is ticket renewed: ' + !!status);
+}, function(err, {status}){
+  console.log(err ? err.message : 'Is ticket renewed: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       throw Error "Incoherent options: expects one of keytab or password" if not options.keytab and not options.password
       # SSH connection
       ssh = @ssh options.ssh

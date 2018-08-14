@@ -29,16 +29,17 @@ Start stopped containers or restart (stop + starts) a started container.
 ## Example
 
 ```javascript
-nikita.docker.restart({
+require('nikita')
+.docker.restart({
   container: 'toto'
-}, function(err, status){
+}, function(err, {status}){
   console.log( err ? err.message : 'Container restarted: ' + status);
 })
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       @log message: "Entering Docker restart", level: 'DEBUG', module: 'nikita/lib/docker/restart'
       # Global options
       options.docker ?= {}

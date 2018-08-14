@@ -11,7 +11,7 @@ describe 'ssh.open', ->
   it 'with handler options', ->
     config = test.config()
     nikita
-    .call (options) ->
+    .call ->
       (!!@ssh()).should.be.false()
     .ssh.open
       host: config.ssh.host
@@ -22,7 +22,7 @@ describe 'ssh.open', ->
       public_key: config.ssh.publicKey
     , (err, {status}) ->
       status.should.be.true() unless err
-    .call (options) ->
+    .call ->
       (!!@ssh()).should.be.true()
       ssh.is( @ssh() ).should.be.true()
     .ssh.close()
@@ -39,7 +39,7 @@ describe 'ssh.open', ->
         private_key: config.ssh.privateKey
         public_key: config.ssh.publicKey
     .ssh.open()
-    .call (options) ->
+    .call ->
       (!!@ssh()).should.be.true()
       ssh.is( @ssh() ).should.be.true()
     .ssh.close {}, (err, {status}) ->

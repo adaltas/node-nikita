@@ -55,18 +55,19 @@ function with the addition of the "binary" option.
 ## Example
 
 ```js
-require('nikita').upload({
+require('nikita')
+.file.upload({
   ssh: ssh
   source: '/tmp/local_file',
   target: '/tmp/remote_file'
-}, function(err, status){
+}, function(err, {status}){
   console.info(err ? err.message : 'File uploaded: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering file.upload", level: 'DEBUG', module: 'nikita/lib/file/upload'
       # SSH connection
       ssh = @ssh options.ssh
@@ -82,18 +83,11 @@ require('nikita').upload({
       if options.md5?
         return callback Error "Invalid MD5 Hash:#{options.md5}" unless typeof options.md5 in ['string', 'boolean']
         algo = 'md5'
-        # source_hash = options.md5
       else if options.sha1?
         return callback Error "Invalid SHA-1 Hash:#{options.sha1}" unless typeof options.sha1 in ['string', 'boolean']
         algo = 'sha1'
-        # source_hash = options.sha1
       else
         algo = 'md5'
-      # @call (_, callback) ->
-      #   @fs.stat ssh: options.ssh, target: options.source, (err, {stats}) ->
-      #     callback err if err and err.code isnt 'ENOENT'
-      #     source_stats = stats
-      #     callback()
       @call (_, callback) ->
         @fs.stat ssh: false, target: options.target, (err, {stats}) ->
           return callback() if err and err.code is 'ENOENT'
@@ -107,7 +101,7 @@ require('nikita').upload({
             target_stats = stats if misc.stats.isFile stats.mode
             return callback() if misc.stats.isFile stats.mode
             callback Error "Invalid target: #{options.target}"
-      @call (_, callback) ->
+      @call ({}, callback) ->
         return callback null, true unless target_stats
         file.compare_hash ssh, options.source, null, options.target, algo, (err, match) =>
           callback err, not match

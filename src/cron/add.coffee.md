@@ -36,13 +36,13 @@ require('nikita').cron.add({
   when: '0 */9 * * *'
   user: 'service'
 }, function(err, status){
-  console.log(err ? err.message : 'Cron entry created or modified: ' + !!status);
+  console.log(err ? err.message : 'Cron entry created or modified: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       return callback Error 'valid when is required' unless options.when and typeof options.when is 'string'
       return callback Error 'valid cmd is required' unless options.cmd
       if options.user?

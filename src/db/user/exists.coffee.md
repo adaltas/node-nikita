@@ -27,7 +27,7 @@ Check if a user exists in the database.
 
 ## Source Code
 
-    module.exports = shy: true, handler: (options) ->
+    module.exports = shy: true, handler: ({options}) ->
       # Import options from `options.db`
       options.db ?= {}
       options[k] ?= v for k, v of options.db

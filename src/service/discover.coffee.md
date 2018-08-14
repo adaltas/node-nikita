@@ -24,7 +24,7 @@ Store properties in the nikita store object.
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       detected = false
       loader = null
       options.strict ?= false

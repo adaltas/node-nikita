@@ -168,20 +168,20 @@ nikita
   system: true,
   nofile: true
 }, function(err, {status}){
-  console.log(err ? err.message : 'Limits modified: ' + modified);
+  console.log(err ? err.message : 'Limits modified: ' + status);
 });
 ```
 
 ## Callback parameters
 
 * `err`   
-    Error object if any.   
+  Error object if any.   
 * `status`   
-    Value is "true" if limits configuration file has been modified.   
+  Value is "true" if limits configuration file has been modified.   
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering system_limits", level: 'DEBUG', module: 'nikita/lib/system_limits'
       return callback Error "Incoherent options: both options system and user defined, #{JSON.stringify system: options.system, user: options.user}" if options.system and options.user
       options.user = '*' if options.system

@@ -17,7 +17,8 @@ Options include
 ## Example
 
 ```javascript
-nikita.fs.createWriteStream({
+require('nikita')
+.fs.createWriteStream({
   target: '/path/to/file'
   stream: function(ws){
     ws.write('some content');
@@ -30,7 +31,7 @@ nikita.fs.createWriteStream({
 
 ## Source Code
 
-    module.exports = status: false, handler: (options) ->
+    module.exports = status: false, handler: ({options}) ->
       @log message: "Entering fs.writeFile", level: 'DEBUG', module: 'nikita/lib/fs/writeFile'
       ssh = @ssh options.ssh
       # Normalize options

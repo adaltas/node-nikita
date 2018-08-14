@@ -12,8 +12,8 @@ describe 'options "before"', ->
     nikita
     .call
       key: '1'
-      before: (options) -> history.push "before #{options.key}"
-      handler: (options) -> history.push "handler #{options.key}"
+      before: ({options}) -> history.push "before #{options.key}"
+      handler: ({options}) -> history.push "handler #{options.key}"
     .next (err) ->
       history.should.eql ['before 1', 'handler 1'] unless err
     .promise()
@@ -23,8 +23,8 @@ describe 'options "before"', ->
      nikita
      .call
        key: '1'
-       before: key: 2, handler: (options) -> history.push "before #{options.key}"
-       handler: (options) -> history.push "handler #{options.key}"
+       before: key: 2, handler: ({options}) -> history.push "before #{options.key}"
+       handler: ({options}) -> history.push "handler #{options.key}"
      .next (err) ->
        history.should.eql ['before 2', 'handler 1'] unless err
      .promise()
@@ -34,10 +34,10 @@ describe 'options "before"', ->
       nikita
       .call
         key: 'parent'
-        before: (options) ->
+        before: ({options}) ->
           history.push "before #{options.key}"
-          @call key: 'child', (options) -> history.push "handler #{options.key}"
-        handler: (options) -> history.push "handler #{options.key}"
+          @call key: 'child', ({options}) -> history.push "handler #{options.key}"
+        handler: ({options}) -> history.push "handler #{options.key}"
       .next (err) ->
         history.should.eql ['before parent', 'handler child', 'handler parent'] unless err
       .promise()

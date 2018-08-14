@@ -29,7 +29,7 @@ Return the checksum of repository:tag, if it exists. Function not native to dock
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       @log message: "Entering Docker checksum", level: 'DEBUG', module: 'nikita/lib/docker/checksum'
       # Global options
       options.docker ?= {}

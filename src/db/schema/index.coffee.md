@@ -25,18 +25,19 @@ Create a database for the destination database.
 ## Create Schema example
 
 ```js
-require('nikita').database.schema({
+require('nikita')
+.database.schema({
   admin_username: 'test',
   admin_password: 'test',
-  database: 'my_db',
-}, function(err, modified){
-  console.log(err ? err.message : 'Principal created or modified: ' + !!modified);
+  database: 'my_db'
+}, function(err, {status}){
+  console.log(err ? err.message : 'Principal created or modified: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       # Import options from `options.db`
       options.db ?= {}
       options[k] ?= v for k, v of options.db

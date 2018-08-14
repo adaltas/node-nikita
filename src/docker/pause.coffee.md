@@ -1,7 +1,7 @@
 
 # `nikita.docker.pause`
 
-Pause all processes within a container
+Pause all processes within a container.
 
 ## Options
 
@@ -27,25 +27,25 @@ Pause all processes within a container
 ## Example
 
 ```javascript
-nikita.docker.pause({
+require('nikita')
+.docker.pause({
   container: 'toto'
-}, function(err, status){
+}, function(err, {status}){
   console.log( err ? err.message : 'Container paused: ' + status);
 })
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       @log message: "Entering Docker pause", level: 'DEBUG', module: 'nikita/lib/docker/pause'
       # Global parameters
       options.docker ?= {}
       options[k] ?= v for k, v of options.docker
       # Validate parameters
       return callback Error 'Missing container parameter' unless options.container?
-      cmd = "pause #{options.container}"
       @system.execute
-        cmd: docker.wrap options, cmd
+        cmd: docker.wrap options, "pause #{options.container}"
       , docker.callback
 
 ## Modules Dependencies

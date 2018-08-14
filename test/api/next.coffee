@@ -45,9 +45,9 @@ describe 'api next', ->
         target: "#{scratch}/a_file"
       , (err) ->
         false
-      .call (options, next) ->
+      .call ({}, next) ->
         next.property.does.not.exist
-      .call (options) ->
+      .call ({}) ->
         next Error 'Shouldnt be called'
       , (err) ->
     d.on 'error', (err) ->

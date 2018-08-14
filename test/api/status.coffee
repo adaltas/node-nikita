@@ -9,7 +9,7 @@ describe 'api status', ->
 
     it 'default to false', ->
       nikita
-      .call (options) ->
+      .call ->
         return true
       .call ->
         @status().should.be.false()
@@ -17,7 +17,7 @@ describe 'api status', ->
 
     it 'set status to true', ->
       nikita
-      .call (options) ->
+      .call ->
         @call (_, callback) ->
           callback null, true
       .call ->
@@ -26,7 +26,7 @@ describe 'api status', ->
 
     it 'set status to false', ->
       nikita
-      .call (options) ->
+      .call ->
         @call (_, callback) ->
           callback null, false
       .call ->
@@ -35,7 +35,7 @@ describe 'api status', ->
 
     it 'catch error', ->
       nikita
-      .call (options) ->
+      .call ->
         throw Error 'Catchme'
       .next (err) ->
         err.message.should.eql 'Catchme'
@@ -45,7 +45,7 @@ describe 'api status', ->
 
     it 'set status to true', ->
       nikita
-      .call (options, next) ->
+      .call ({}, next) ->
         process.nextTick ->
           next null, true
       .call ->
@@ -54,7 +54,7 @@ describe 'api status', ->
 
     it 'set status to false', ->
       nikita
-      .call (options, next) ->
+      .call ({}, next) ->
         process.nextTick ->
           next null, false
       .call ->
@@ -63,7 +63,7 @@ describe 'api status', ->
 
     it 'set status to false while child module is true', ->
       n = nikita()
-      n.call (options, callback) ->
+      n.call ({}, callback) ->
         n.system.execute
           cmd: 'ls -l'
         , (err, {status}) ->
@@ -75,7 +75,7 @@ describe 'api status', ->
 
     it 'set status to true while module sending is false', ->
       n = nikita()
-      n.call (options, callback) ->
+      n.call ({}, callback) ->
         n.system.execute
           cmd: 'ls -l'
           if: false
@@ -90,30 +90,30 @@ describe 'api status', ->
 
     it 'get without arguments', ->
       nikita
-      .call (options, callback) ->
+      .call ({}, callback) ->
         @status().should.be.false()
         callback null, false
       , (err, status) ->
         @status().should.be.false()
-      .call (options, callback) ->
+      .call ({}, callback) ->
         @status().should.be.false()
         callback null, true
-      .call (options, callback) ->
+      .call ({}, callback) ->
         @status().should.be.true()
         callback null, false
-      .call (options, callback) ->
+      .call ({}, callback) ->
         @status().should.be.true()
         callback null, false
       .promise()
 
     it 'get current', ->
       nikita
-      .call (options, callback) ->
+      .call ({}, callback) ->
         (@status(0) is undefined).should.be.true()
         callback null, false
       , (err, status) ->
         @status(0).should.be.false()
-      .call (options, callback) ->
+      .call ({}, callback) ->
         (@status(0) is undefined).should.be.true()
         callback null, true
       , (err, status) ->
@@ -122,40 +122,40 @@ describe 'api status', ->
 
     it 'get previous', ->
       nikita
-      .call (options, callback) ->
+      .call ({}, callback) ->
         (@status(-1) is undefined).should.be.true()
         callback null, false
       , (err, status) ->
         (@status(-1) is undefined).should.be.true()
-      .call (options, callback) ->
+      .call ({}, callback) ->
         @status(-1).should.be.false()
         callback null, true
-      .call (options, callback) ->
+      .call ({}, callback) ->
         @status(-1).should.be.true()
         callback null, false
-      .call (options, callback) ->
+      .call ({}, callback) ->
         @status(-1).should.be.false()
         callback null, false
       .promise()
 
     it 'get previous n', ->
       nikita
-      .call (options, callback) ->
+      .call ({}, callback) ->
         callback null, false
-      .call (options, callback) ->
+      .call ({}, callback) ->
         (@status(0) is undefined).should.be.true()
         @status(-1).should.be.false()
         callback null, false
       , (err) ->
         @status(0).should.be.false()
         @status(-1).should.be.false()
-      .call (options, callback) ->
+      .call ({}, callback) ->
         callback null, true
       , (err, status) ->
         @status(0).should.be.true()
         @status(-1).should.be.false()
         @status(-2).should.be.false()
-      .call (options, callback) ->
+      .call ({}, callback) ->
         (@status(0) is undefined).should.be.true()
         @status(-1).should.be.true()
         @status(-2).should.be.false()
@@ -166,13 +166,13 @@ describe 'api status', ->
       nikita
       .call
         if: -> true
-      , (options, callback) ->
+      , ({}, callback) ->
         callback null, true
       .next (err, {status}) ->
         status.should.be.true() unless err
       .call
         if: -> false
-      , (options, callback) ->
+      , ({}, callback) ->
         callback null, true
       .call ->
         @status().should.be.false()
@@ -183,13 +183,13 @@ describe 'api status', ->
       nikita
       .call
         if: -> @status()
-      , (options, callback) ->
+      , ({}, callback) ->
         callback Error 'Shouldnt be called'
-      .call (options, callback) ->
+      .call ({}, callback) ->
         callback null, true
       .call
         if: -> @status()
-      , (options, callback) ->
+      , ({}, callback) ->
         condition_called = true
         callback()
       .call ->
@@ -198,7 +198,7 @@ describe 'api status', ->
 
     it 'set status to false', ->
       nikita
-      .call (options, callback) ->
+      .call ({}, callback) ->
         callback null, true
       .call ->
         status = @status false
@@ -209,7 +209,7 @@ describe 'api status', ->
 
     it 'set status to true', ->
       nikita
-      .call (options, callback) ->
+      .call ({}, callback) ->
         callback null, false
       .call ->
         status = @status true

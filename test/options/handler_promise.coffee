@@ -107,7 +107,7 @@ describe 'options "handler" return promise', ->
     it 'is incompatible with async mode', ->
       nikita
       .call
-        handler: (options, callback) ->
+        handler: ({options}, callback) ->
           new Promise (resolve, reject) ->
             setImmediate -> resolve()
       , (err, value) ->

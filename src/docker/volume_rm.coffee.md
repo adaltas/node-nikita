@@ -33,7 +33,7 @@ nikita.docker.volume_rm({
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering Docker volume_rm", level: 'DEBUG', module: 'nikita/lib/docker/volume_rm'
       # Global options
       options.docker ?= {}

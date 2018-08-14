@@ -64,14 +64,14 @@ require('nikita').service([{
 },{
   ssh: ssh,
   name: 'ganglia-web-3.5.7-99'
-}], function(err, status){
-  console.log(err ? err.message : 'Service status: ' + !!status);
+}], function(err, {status}){
+  console.log(err ? err.message : 'Service status: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering service", level: 'DEBUG', module: 'nikita/lib/service'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'

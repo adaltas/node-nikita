@@ -24,19 +24,20 @@
 ## Example
 
 ```js
-require('nikita').file.yaml({
+require('nikita')
+.file.yaml({
   content: {
     'my_key': 'my value'
   },
   target: '/tmp/my_file'
-}, function(err, written){
-  console.log(err ? err.message : 'Content was updated: ' + !!written);
+}, function(err, {status}){
+  console.log(err ? err.message : 'Content was updated: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering file.yaml", level: 'DEBUG', module: 'nikita/lib/file/yaml'
       # SSH connection
       ssh = @ssh options.ssh

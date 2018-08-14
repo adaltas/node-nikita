@@ -45,7 +45,7 @@ couldn't find any suitable parser on NPM.
 
 ## Source code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       @log message: "Entering rubygem.fetch", level: 'DEBUG', module: 'nikita/lib/tools/rubygem/fetch'
       # Global Options
       options.ruby ?= {}

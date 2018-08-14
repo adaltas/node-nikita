@@ -61,7 +61,8 @@ alias value is "my-alias", the aliases will be "my-alias-0" then "my-alias-1"...
 ## Uploading public and private keys into a keystore
 
 ```js
-require('nikita').java.keystore_add([{
+require('nikita')
+.java.keystore_add([{
   keystore: java_home + '/lib/security/cacerts',
   storepass: 'changeit',
   caname: 'my_ca_certificate',
@@ -76,7 +77,8 @@ require('nikita').java.keystore_add([{
 ## Uploading a certificate authority
 
 ```js
-require('nikita').java.keystore_add([{
+require('nikita')
+.java.keystore_add([{
   keystore: java_home + '/lib/security/cacerts',
   storepass: 'changeit',
   caname: 'my_ca_certificate',
@@ -86,7 +88,7 @@ require('nikita').java.keystore_add([{
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       throw Error "Required Option: 'keystore'" unless options.keystore
       throw Error "Required Option: 'storepass'" unless options.storepass
       throw Error "Required Options: 'cacert' or 'cert'" unless options.cacert or options.cert

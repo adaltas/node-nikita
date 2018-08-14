@@ -22,7 +22,8 @@ Insert or modify an entry inside an OpenLDAP server.
 ## Example
 
 ```js
-require('nikita').ldap.index({
+require('nikita')
+.ldap.index({
   url: 'ldap://openldap.server/',
   binddn: 'cn=admin,cn=config',
   passwd: 'password',
@@ -33,14 +34,14 @@ require('nikita').ldap.index({
     objectClass: 'posixGroup'
     gidNumber: 9601
   }
-}, function(err, modified){
-  console.log(err ? err.message : 'Entry modified: ' + !!modified);
+}, function(err, status){
+  console.log(err ? err.message : 'Entry modified: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       # Auth related options
       binddn = if options.binddn then "-D #{options.binddn}" else ''
       passwd = if options.passwd then "-w #{options.passwd}" else ''

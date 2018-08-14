@@ -7,9 +7,9 @@ describe 'api each', ->
   it 'over an array', ->
     data =[]
     nikita()
-    .each ['a', 'b'], (options) ->
+    .each ['a', 'b'], ({options}) ->
       @call -> data.push "#{options.key}"
-    .each ['c', 'd'], (options, next) ->
+    .each ['c', 'd'], ({options}, next) ->
       @call -> data.push "#{options.key}"
       @next next
     .call ->
@@ -19,9 +19,9 @@ describe 'api each', ->
   it 'over an object', ->
     data =[]
     nikita()
-    .each {a: '1', b: '2'}, (options) ->
+    .each {a: '1', b: '2'}, ({options}) ->
       @call -> data.push "#{options.key}:#{options.value}"
-    .each {c: '3', d: '4'}, (options, next) ->
+    .each {c: '3', d: '4'}, ({options}, next) ->
       @call -> data.push "#{options.key}:#{options.value}"
       @next next
     .call ->
@@ -31,7 +31,7 @@ describe 'api each', ->
   it 'validate 1st argument', ->
     data =[]
     nikita()
-    .each 'a string', ((options) ->)
+    .each 'a string', (({options}) ->)
     .next (err) ->
       err.message.should.eql 'Invalid Argument: first argument must be an array or an object to iterate, got "a string"'
     .promise()

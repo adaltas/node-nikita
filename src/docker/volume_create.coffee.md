@@ -28,16 +28,17 @@ Create a volume.
 ## Example
 
 ```javascript
-nikita.docker.pause({
+require('nikita')
+.docker.pause({
   name: 'my_volume'
-}, function(err, created){
+}, function(err, status){
   console.log( err ? err.message : 'Volume created: ' + status);
 })
 ```
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering Docker volume_create", level: 'DEBUG', module: 'nikita/lib/docker/volume_create'
       # Global options
       options.docker ?= {}

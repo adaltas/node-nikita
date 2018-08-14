@@ -12,7 +12,7 @@ describe 'log.md', ->
     nikita
       ssh: ssh
     .log.md basedir: scratch
-    .call (options) ->
+    .call ->
       @log 'ok'
     .file.assert
       source: "#{scratch}/localhost.log"
@@ -26,7 +26,7 @@ describe 'log.md', ->
     nikita
       ssh: ssh
     .log.md basedir: scratch
-    .call (options) ->
+    .call ->
       @log message: 'ok'
     .file.assert
       source: "#{scratch}/localhost.log"
@@ -40,7 +40,7 @@ describe 'log.md', ->
     nikita
       ssh: ssh
     .log.md basedir: scratch
-    .call (options) ->
+    .call ->
       @log message: 'ok', module: 'nikita/test/log/md'
     .file.assert
       source: "#{scratch}/localhost.log"
@@ -55,7 +55,7 @@ describe 'log.md', ->
       ssh: ssh
       log_md: basedir: scratch
     .log.md()
-    .call (options) ->
+    .call ->
       @log 'ok'
     .file.assert
       source: "#{scratch}/localhost.log"
@@ -71,7 +71,7 @@ describe 'log.md', ->
       m = nikita
         ssh: ssh
       .log.md basedir: scratch
-      .call (options) ->
+      .call ->
         @log message: 'this is a one line output', type: 'stdout_stream'
         @log message: null, type: 'stdout_stream'
       .file.assert

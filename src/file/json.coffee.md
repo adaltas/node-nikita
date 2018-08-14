@@ -46,7 +46,7 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering file.json", level: 'DEBUG', module: 'nikita/lib/file/json'
       # Options
       options.content ?= {}

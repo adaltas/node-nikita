@@ -46,8 +46,8 @@ describe 'options "domain"', ->
       domain: d
     .file.touch
       target: "#{scratch}/a_file"
-    .call (options, next) ->
-      next.property.does.not.exist
-    .call (options) ->
+    .call ({}, callback) ->
+      callback.property.does.not.exist
+    .call ->
       next Error 'Shouldnt be called'
     null

@@ -25,7 +25,7 @@ describe 'system.execute', ->
   they 'cmd as a function', (ssh) ->
     nikita
       ssh: ssh
-    .call (options) ->
+    .call ->
       @store['test:a_key'] = 'test context'
     .system.execute
       cmd: -> "text='#{@store['test:a_key']}'; echo $text"
@@ -33,7 +33,7 @@ describe 'system.execute', ->
       stdout.should.eql 'test context\n' unless err
     .system.execute
       a_key: 'test options'
-      cmd: (options) -> "text='#{options.a_key}'; echo $text"
+      cmd: ({options}) -> "text='#{options.a_key}'; echo $text"
     , (err, {status, stdout}) ->
       stdout.should.eql 'test options\n' unless err
     .promise()

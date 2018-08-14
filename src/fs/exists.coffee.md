@@ -6,7 +6,7 @@ stat-ed, not the file that it refers to.
 
 ## Source Code
 
-    module.exports = status: false, handler: (options, callback) ->
+    module.exports = status: false, handler: ({options}, callback) ->
       @log message: "Entering fs.exists", level: 'DEBUG', module: 'nikita/lib/fs/exists'
       # Normalize options
       options.target = options.argument if options.argument?

@@ -24,7 +24,8 @@ Status of a service. Note, does not throw an error if service is not installed.
 ## Example
 
 ```js
-require('nikita').service.start([{
+require('nikita')
+.service.start([{
   ssh: ssh,
   name: 'gmetad'
 }, function(err, status){ /* do sth */ });
@@ -45,7 +46,7 @@ We might think about re-integrating them.
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering service.status", level: 'DEBUG', module: 'nikita/lib/service/status'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'

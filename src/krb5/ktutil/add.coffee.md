@@ -30,14 +30,14 @@ require('nikita').krb5.ktutil.add({
   principal: 'myservice/my.fqdn@MY.REALM',
   keytab: '/etc/security/keytabs/my.service.keytab',
   password: 'password'
-}, function(err, created){
-  console.log(err ? err.message : 'Keytab created: ' + !!created);
+}, function(err, status){
+  console.log(err ? err.message : 'Keytab created or modified: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       throw Error 'Property principal is required' unless options.principal
       throw Error 'Property keytab is required' unless options.keytab
       throw Error 'Property password is required' unless options.password

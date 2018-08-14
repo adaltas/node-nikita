@@ -21,7 +21,8 @@ module are loaded on reboot by writing the file "/etc/modules-load.d/{name}.conf
 Activate the module "vboxpci" in the file "/etc/modules-load.d/vboxpci.conf":
 
 ```
-require('nikita').system.mod({
+require('nikita')
+.system.mod({
   name: 'vboxpci'
 });
 ```
@@ -29,13 +30,14 @@ require('nikita').system.mod({
 Activate the module "vboxpci" in the file "/etc/modules-load.d/my_modules.conf":
 
 ```
-require('nikita').system.mod({
+require('nikita')
+.system.mod({
   target: 'my_modules.conf',
   name: 'vboxpci'
 });
 ```
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       options.name = options.argument if options.argument?
       options.target ?= "#{options.name}.conf"
       options.target = path.resolve '/etc/modules-load.d', options.target

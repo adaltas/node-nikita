@@ -16,7 +16,7 @@ following options:
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering file.types.yum_repo", level: 'DEBUG', module: 'nikita/lib/file/types/yum_repo'
       throw Error "Required Option: option 'target' is mandatory" unless options.target
       # Set the targeyt directory to yum's default path if target is a file name

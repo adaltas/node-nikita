@@ -30,14 +30,14 @@ Note, it is valid for the "source" file to not exist.
 require('nikita').system.link({
   source: __dirname,
   target: '/tmp/a_link'
-}, function(err, status){
+}, function(err, {status}){
   console.info(err ? err.message : 'Link created: ' + status);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       @log message: "Entering link", level: 'DEBUG', module: 'nikita/lib/system/link'
       count = 0
       sym_exists = (options, callback) =>

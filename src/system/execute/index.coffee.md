@@ -95,13 +95,9 @@ nikita.system.execute({
   ssh: ssh,
   cmd: 'useradd myfriend',
   code_skipped: 9
-}, function(err, created){
+}, function(err, {status}){
   if(err) return;
-  if(created){
-    console.info('User created');
-  }else{
-    console.info('User already exists');
-  }
+  console.info(status ? 'User created' : 'User already exists')
 });
 ```
 
@@ -111,14 +107,14 @@ nikita.system.execute({
 nikita.system.execute({
   bash: true,
   cmd: 'env'
-}, function(err, status, stdout, stderr){
+}, function(err, {stdout}){
   console.info(err || stdout);
 });
 ```
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       @log message: "Entering execute", level: 'DEBUG', module: 'nikita/lib/system/execute'
       # SSH connection
       ssh = @ssh options.ssh
@@ -133,7 +129,7 @@ nikita.system.execute({
       options.stderr_log ?= true
       options.stdout_callback = true if options.stdout_callback is undefined
       options.stderr_callback = true if options.stderr_callback is undefined
-      options.cmd = options.cmd.call @, options if typeof options.cmd is 'function'
+      options.cmd = options.cmd.call @, arguments[0] if typeof options.cmd is 'function'
       options.bash = 'bash' if options.bash is true
       options.arch_chroot = 'arch-chroot' if options.arch_chroot is true
       options.cmd = "set -e\n#{options.cmd}" if options.cmd and options.trap
@@ -193,7 +189,7 @@ nikita.system.execute({
         return unless options.sudo
         options.cmd = "sudo #{options.cmd}" if options.sudo
       # Execute
-      @call (_, callback) ->
+      @call ({}, callback) ->
         @log message: options.cmd_original, type: 'stdin', level: 'INFO', module: 'nikita/lib/system/execute' if options.stdin_log
         child = exec options, ssh: ssh
         result.stdout = []; result.stderr = []

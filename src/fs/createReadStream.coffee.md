@@ -5,7 +5,8 @@
 
 ```js
 buffers = []
-nikita.fs.createReadStream({
+require('nikita')
+.fs.createReadStream({
   target: '/path/to/file'
   stream: function(rs){
     stream.on('readable', function(){
@@ -21,7 +22,8 @@ nikita.fs.createReadStream({
 
 ```js
 buffers = []
-nikita.fs.createReadStream({
+require('nikita')
+.fs.createReadStream({
   target: '/path/to/file'
   on_readable: function(rs){
     while(buffer = rs.read()){
@@ -35,7 +37,7 @@ nikita.fs.createReadStream({
 
 ## Source Code
 
-    module.exports = status: false, handler: (options, callback) ->
+    module.exports = status: false, handler: ({options}, callback) ->
       @log message: "Entering fs.createReadStream", level: 'DEBUG', module: 'nikita/lib/fs/createReadStream'
       ssh = @ssh options.ssh
       p = if ssh then path.posix else path
@@ -67,7 +69,7 @@ nikita.fs.createReadStream({
         else message: "Failed to place original file in temporary path", level: 'ERROR', module: 'nikita/lib/fs/createReadStream'
         callback err if err
       callback_args = null
-      @call (_, callback) ->
+      @call ({}, callback) ->
         buffers = []
         @log message: "Reading file #{options.target_tmp or options.target}", level: 'DEBUG', module: 'nikita/lib/fs/createReadStream'
         fs.createReadStream ssh, options.target_tmp or options.target, (err, rs) =>
