@@ -61,8 +61,11 @@ describe 'system.copy', ->
     they 'with a filename inside a existing directory', (ssh) ->
       nikita
         ssh: ssh
+      .file
+        target: "#{scratch}/a_file"
+        content: 'a content'
       .system.copy
-        source: "#{__dirname}/../resources/a_dir/a_file"
+        source: "#{scratch}/a_file"
         target: "#{scratch}/a_target"
       , (err, {status}) ->
         status.should.be.true() unless err
@@ -70,8 +73,7 @@ describe 'system.copy', ->
         target: "#{scratch}/a_target"
         md5: '3fb7c40c70b0ed19da713bd69ee12014'
       .system.copy
-        ssh: ssh
-        source: "#{__dirname}/../resources/a_dir/a_file"
+        source: "#{scratch}/a_file"
         target: "#{scratch}/a_target"
       , (err, {status}) ->
         status.should.be.false() unless err
@@ -80,11 +82,14 @@ describe 'system.copy', ->
     they 'into a directory', (ssh) ->
       nikita
         ssh: ssh
+      .file
+        target: "#{scratch}/a_file"
+        content: 'a content'
       .system.mkdir
         target: "#{scratch}/existing_dir"
       .system.copy # Copy non existing file
         target: "#{scratch}/existing_dir"
-        source: "#{__dirname}/../resources/a_dir/a_file"
+        source: "#{scratch}/a_file"
       , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
@@ -95,11 +100,14 @@ describe 'system.copy', ->
       nikita
         ssh: ssh
       .file
+        target: "#{scratch}/a_file"
+        content: 'a content'
+      .file
         target: "#{scratch}/a_target_file"
         content: 'Hello you'
       .system.copy
         target: "#{scratch}/a_target_file"
-        source: "#{__dirname}/../resources/a_dir/a_file"
+        source: "#{scratch}/a_file"
       , (err, {status}) ->
         status.should.be.true() unless err
       .file.assert
@@ -107,7 +115,7 @@ describe 'system.copy', ->
         md5: '3fb7c40c70b0ed19da713bd69ee12014'
       .system.copy
         target: "#{scratch}/a_target_file"
-        source: "#{__dirname}/../resources/a_dir/a_file"
+        source: "#{scratch}/a_file"
       , (err, {status}) ->
         status.should.be.false() unless err
       .promise()
