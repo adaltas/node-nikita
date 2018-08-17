@@ -134,6 +134,7 @@ nikita.system.execute({
       options.arch_chroot = 'arch-chroot' if options.arch_chroot is true
       options.cmd = "set -e\n#{options.cmd}" if options.cmd and options.trap
       options.cmd_original = "#{options.cmd}"
+      options.dirty ?= false
       throw Error "Required Option: the \"cmd\" option is not provided" unless options.cmd?
       throw Error "Incompatible Options: bash, arch_chroot" if ['bash', 'arch_chroot'].filter((k) -> options[k]).length > 1
       throw Error "Required Option: \"rootdir\" with \"arch_chroot\"" if options.arch_chroot and not options.rootdir
@@ -242,7 +243,7 @@ nikita.system.execute({
           , 1
       @next (err1, {status}) ->
         @system.remove
-          if: not options.dirty and options.target
+          if: not options.dirty and options.target?
           target: options.target
           always: true # todo, need to create this option (run even on error)
           sudo: false
