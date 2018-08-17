@@ -41,14 +41,14 @@ require('nikita')
       options.flags ?= 'w' # Note, Node.js docs version 8 & 9 mention "flag" and not "flags"
       options.target_tmp ?= "/tmp/nikita_#{string.hash options.target}" if options.sudo or options.flags[0] is 'a'
       options.mode ?= 0o644 # Node.js default to 0o666
-      @call if: options.flags[0] is 'a', ->
-        @system.execute
-          if: options.flags[0] is 'a'
-          cmd: """
-          [ ! -f '#{options.target}' ] && exit
-          cp '#{options.target}' '#{options.target_tmp}'
-          """
-      , (err, status) ->
+      @system.execute
+        if: options.flags[0] is 'a'
+        cmd: """
+        [ ! -f '#{options.target}' ] && exit
+        cp '#{options.target}' '#{options.target_tmp}'
+        """
+      , (err, {status}) ->
+        return unless status # Condition with flag "a" didnt pass
         @log unless err
         then message: "Append prepared by placing original file in temporary path", level: 'INFO', module: 'nikita/lib/fs/write'
         else message: "Failed to place original file in temporary path", level: 'ERROR', module: 'nikita/lib/fs/writeFile'
