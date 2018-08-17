@@ -4,7 +4,7 @@ test = require '../../test'
 fs = require 'fs'
 path = require 'path'
 
-describe 'api call', ->
+describe 'api call module', ->
 
   scratch = test.scratch @
 

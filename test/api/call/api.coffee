@@ -1,18 +1,14 @@
 
 nikita = require '../../../src'
-test = require '../../test'
-fs = require 'fs'
-path = require 'path'
 
-describe 'api.call.module', ->
-
-  scratch = test.scratch @
+describe 'api call', ->
 
   it 'accept an array of handlers and a callback', ->
     logs = []
     nikita
+    .system.remove target: "/tmp/nikita-test"
     .call [
-       -> logs.push 'a'
+      -> logs.push 'a'
     ,
       ({}, callback) -> logs.push('b'); callback()
     ], (err, {status}) ->

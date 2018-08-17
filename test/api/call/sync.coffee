@@ -1,10 +1,8 @@
 
 nikita = require '../../../src'
 test = require '../../test'
-fs = require 'fs'
-path = require 'path'
 
-describe 'api call', ->
+describe 'api call sync', ->
 
   scratch = test.scratch @
 
