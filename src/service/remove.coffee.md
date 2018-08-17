@@ -32,7 +32,7 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering service.remove", level: 'DEBUG', module: 'nikita/lib/service/remove'
       # Options
       options.name ?= options.argument if typeof options.argument is 'string'

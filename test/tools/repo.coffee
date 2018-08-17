@@ -181,8 +181,8 @@ describe 'tools.repo', ->
           'gpgcheck':'1'
           'enabled':'1'
           'gpgkey':'https://www.mongodb.org/static/pgp/server-3.4.asc'
-      , (err, {status}) ->
-        status.should.be.false() unless err
+    , (err, {status}) ->
+      status.should.be.false() unless err
     .system.execute
       cmd: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.2'"
     .promise()
