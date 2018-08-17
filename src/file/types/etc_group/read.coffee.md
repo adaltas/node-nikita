@@ -70,6 +70,7 @@ require('nikita')
         unless: options.cache and !!@store['nikita:etc_group']
         target: options.target
         encoding: 'ascii'
+        log: if typeof options.log is 'boolean' then options.log else false
       , (err, {data}) ->
         throw err if err
         return unless data?

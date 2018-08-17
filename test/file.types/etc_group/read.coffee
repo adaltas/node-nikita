@@ -118,4 +118,65 @@ describe 'file.types.etc_group.read', ->
       throw err if err
       logs.some( (log) -> log.message is 'Get group definition from cache' ).should.be.true()
     .promise()
-      
+
+  they 'option.log can be true, false, undefined', (ssh) ->
+    logs = []
+    nikita
+      ssh: ssh
+    .on 'text', (log) -> logs.push log
+    .file
+      target: "#{scratch}/etc/group"
+      content: """
+      root:x:0:root
+      bin:x:1:root,bin,daemon
+      """
+      log: false
+    # Value true enable logs
+    .file.types.etc_group.read
+      target: "#{scratch}/etc/group"
+      log: true
+    , (err) ->
+      logs.some( (log) -> log.message is 'Entering fs.readFile').should.be.true() unless err
+      logs = []
+    # Value undefined disable logs
+    .file.types.etc_group.read
+      target: "#{scratch}/etc/group"
+      log: undefined
+    , (err) ->
+      logs.some( (log) -> log.message is 'Entering fs.readFile').should.not.be.true() unless err
+    # Value false disable logs
+    .file.types.etc_group.read
+      target: "#{scratch}/etc/group"
+      log: false
+    , (err) ->
+      logs.some( (log) -> log.message is 'Entering fs.readFile').should.not.be.true() unless err
+    .promise()
+  
+  they.skip 'should not honor cascading', (ssh) ->
+    # Well, this is arguably a good idea
+    logs = []
+    nikita
+      ssh: ssh
+    .on 'text', (log) -> logs.push log
+    .file
+      target: "#{scratch}/etc/group"
+      content: """
+      root:x:0:root
+      bin:x:1:root,bin,daemon
+      """
+      log: false
+    # Value undefined preserve default behavior
+    .call log: true, ->
+      @file.types.etc_group.read
+        target: "#{scratch}/etc/group"
+        log: undefined
+      , (err) ->
+        logs.some( (log) -> log.message is 'Entering fs.readFile').should.not.be.true() unless err
+    .call log: false, ->
+      @file.types.etc_group.read
+        target: "#{scratch}/etc/group"
+        log: undefined
+      , (err) ->
+        logs.some( (log) -> log.message is 'Entering fs.readFile').should.not.be.true() unless err
+    .promise()
+  

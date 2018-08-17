@@ -16,6 +16,7 @@ New features:
 
 Fixes:
 
+* file.types.etc_group.read: reduce log verbosity
 * misc.ini.stringify: handle boolean values
 * misc.ini.stringify: fix eol for array values
 * service: 2nd argument is not a callback
