@@ -10,49 +10,61 @@ describe 'tools.compress', ->
   they 'should see extension .tgz', (ssh) ->
     nikita
       ssh: ssh
+    .file
+      target: "#{scratch}/a_dir/a_file"
+      content: 'some content'
     .tools.compress
-      source: "#{__dirname}/../resources/a_dir"
+      source: "#{scratch}/a_dir/a_file"
       target: "#{scratch}/a_dir.tgz"
     , (err, {status}) ->
       status.should.be.true()
-    .system.remove
-      target: "#{scratch}/a_dir.tgz"
+    .file.assert
+      source: "#{scratch}/a_dir.tgz"
     .promise()
 
   they 'should see extension .zip', (ssh) ->
     nikita
       ssh: ssh
+    .file
+      target: "#{scratch}/a_dir/a_file"
+      content: 'some content'
     .tools.compress
-      source: "#{__dirname}/../resources/a_dir"
+      source: "#{scratch}/a_dir/a_file"
       target: "#{scratch}/a_dir.zip"
     , (err, {status}) ->
       status.should.be.true()
-    .system.remove
-      target: "#{scratch}/a_dir.zip"
+    .file.assert
+      source: "#{scratch}/a_dir.zip"
     .promise()
 
   they 'should see extension .tar.bz2', (ssh) ->
     nikita
       ssh: ssh
+    .file
+      target: "#{scratch}/a_dir/a_file"
+      content: 'some content'
     .tools.compress
-      source: "#{__dirname}/../resources/a_dir"
+      source: "#{scratch}/a_dir/a_file"
       target: "#{scratch}/a_dir.tar.bz2"
     , (err, {status}) ->
       status.should.be.true()
-    .system.remove
-      target: "#{scratch}/a_dir.tar.bz2"
+    .file.assert
+      source: "#{scratch}/a_dir.tar.bz2"
     .promise()
 
   they 'should see extension .tar.xz', (ssh) ->
     nikita
       ssh: ssh
+    .file
+      target: "#{scratch}/a_dir/a_file"
+      content: 'some content'
     .tools.compress
-      source: "#{__dirname}/../resources/a_dir"
+      source: "#{scratch}/a_dir/a_file"
       target: "#{scratch}/a_dir.tar.xz"
     , (err, {status}) ->
       status.should.be.true()
-    .system.remove
-      target: "#{scratch}/a_dir.tar.xz"
+    .file.assert
+      source: "#{scratch}/a_dir.tar.xz"
     .promise()
   
   they 'remove source file with clean option', (ssh) ->
