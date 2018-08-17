@@ -39,3 +39,17 @@ describe 'api call', ->
     .call ->
       logs[0].should.eql 'Hello us'
     .promise()
+
+  it 'user undefined value should not overwrite default values', ->
+    logs = []
+    nikita
+    .file
+      target: "#{scratch}/module.coffee"
+      content: """
+      module.exports = an_option: false, handler: ({options}, callback) ->
+        callback null, an_option: options.an_option
+      """
+    .call ->
+      @call an_option: undefined, "#{scratch}/module", (err, {an_option}) ->
+        an_option.should.be.false()
+    .promise()

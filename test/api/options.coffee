@@ -1,6 +1,5 @@
 
 nikita = require '../../src'
-test = require '../test'
 fs = require 'fs'
 
 describe 'api options', ->
@@ -40,4 +39,10 @@ describe 'api options', ->
       , ->
         opts1.should.eql {a: 1, b: 0}
         opts2.should.eql {b: 2, c: 3}
+      .promise()
+
+    it 'undefined should not overwrite previous options', ->
+      nikita
+      .call {option: 'value'}, {option: undefined}, ({options}) ->
+        options.option.should.eql 'value'
       .promise()

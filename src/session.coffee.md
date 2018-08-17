@@ -116,7 +116,7 @@
             if typeof opt isnt 'object'
               opt = argument: opt
             for k, v of opt
-              # continue if v is undefined
+              continue if newaction[k] isnt undefined and v is undefined
               newaction[k] = v
           newaction
         # Normalize
