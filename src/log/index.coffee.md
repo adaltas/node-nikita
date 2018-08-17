@@ -21,7 +21,7 @@ Send a log message.
       action: false
       cascade: false
       get: false
-      log: false # TODO shall be removed after the deprecation of log
+      # log: false # TODO shall be removed after the deprecation of log
       retry: false
       ssh: false
       shy: true
@@ -41,7 +41,7 @@ Send a log message.
       options.line = line
       parent = options.parent
       delete options.parent
-      if typeof parent?.log is 'function'
+      if typeof options.log is 'function'
         parent?.log options
       else
         return if parent?.log is false

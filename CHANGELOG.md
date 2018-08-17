@@ -12,6 +12,7 @@ Backward incompatibilities:
 
 New features:
 
+* session: dont overwrite options when undefined
 * service.install: new options pacman_flags and yaourt_flags
 
 Fixes:
@@ -27,6 +28,7 @@ Fixes:
 
 Cleanup:
 
+* log: remove log from cascade and parent usage 
 * fs.createWriteStream: code simplification
 * env: emulate systemctl
 * env: rename MECANO_TEST to NIKITA_TEST_MODULE
