@@ -8,14 +8,34 @@ describe 'api call', ->
 
   scratch = test.scratch @
 
-  it 'string requires a module', ->
+  it 'string referencing a sync module', ->
     logs = []
     nikita
     .on 'text', (log) -> logs.push log.message
-    .call who: 'sync', 'test/resources/module_sync'
-    .call who: 'async', 'test/resources/module_async'
+    .file
+      target: "#{scratch}/sync.coffee"
+      content: """
+      module.exports = ({options}) ->
+        @log "Hello \#{options.who or 'world'}"
+      """
+      log: false
     .call ->
-      logs.should.eql ['Hello sync', 'Hello async']
+      @call who: 'sync', "#{scratch}/sync"
+    .call ->
+      logs.should.eql ['Hello sync']
+    .promise()
+
+  it 'string referencing an async module', ->
+    nikita
+    .file
+      target: "#{scratch}/async.coffee"
+      content: """
+      module.exports = ({options}, callback) ->
+        callback null, {message: 'hello'}
+      """
+    .call ->
+      @call who: 'async', "#{scratch}/async", (err, {message}) ->
+        message.should.eql 'hello' unless err
     .promise()
 
   it 'string requires a module from process cwd', ->
