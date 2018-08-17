@@ -17,6 +17,7 @@ New features:
 
 Fixes:
 
+* system.mkdir: removed zombie call to uid_gid
 * options.log: true enabling/forcing logs
 * file.types.etc_passwd.read: reduce log verbosity
 * file.types.etc_group.read: reduce log verbosity

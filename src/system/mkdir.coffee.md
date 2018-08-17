@@ -66,6 +66,8 @@ require('nikita')
       # SSH connection
       ssh = @ssh options.ssh
       p = if ssh then path.posix else path
+      # logs for children
+      options.log = if typeof options.log is 'boolean' then options.log else false
       # Validate options
       options.target = options.argument if options.argument?
       options.directory ?= options.target
@@ -97,29 +99,21 @@ require('nikita')
           each(directories)
           .call (directory, i, next) =>
             @log message: "Stat '#{directory}'", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
-            @fs.stat ssh: options.ssh, target: directory, (err, {stats}) ->
+            @fs.stat ssh: options.ssh, target: directory, log: options.log, (err, {stats}) ->
               if err?.code is 'ENOENT' # if the directory is not yet created
                 directory.stats = stats
                 dirs.push directory
                 if i is directories.length - 1
-                then return do_create_parent(dirs)
+                then return do_create dirs
                 else return next()
               if misc.stats.isDirectory stats.mode
                 end = true
-                return  if i is 0 then do_update(stats) else do_create_parent(dirs)
+                return  if i is 0 then do_update(stats) else do_create dirs
               if err
                 return next err
               else # a file or symlink exists at this location
                 return next Error "Not a directory: #{JSON.stringify directory}"
           .next callback
-        do_create_parent = (directories) =>
-          @system.uid_gid
-            uid: options.uid
-            gid: options.gid
-          , (err, {uid, gid}) ->
-            options.uid = uid
-            options.gid = gid
-            do_create directories
         do_create = (directories) =>
           each(directories.reverse())
           .call (directory, i, callback) =>
@@ -132,7 +126,7 @@ require('nikita')
             for attr in ['mode', 'uid', 'gid', 'size', 'atime', 'mtime']
               val = if i is directories.length - 1 then options[attr] else options.parent?[attr]
               opts[attr] = val if val?
-            @fs.mkdir ssh: options.ssh, target: directory, opts, (err) ->
+            @fs.mkdir ssh: options.ssh, target: directory, log: options.log, opts, (err) ->
               return callback err if err
               @log message: "Directory \"#{directory}\" created ", level: 'INFO', module: 'nikita/lib/system/mkdir'
               state.status = true
