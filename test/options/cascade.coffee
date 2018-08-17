@@ -178,3 +178,26 @@ describe 'options "cascade"', ->
         @call ({options}) ->
           (options.an_option is undefined).should.be.true()
       .promise()
+        
+  describe 'values', ->
+    
+    it 'discard undefined values', ->
+      nikita
+        cascade:
+          an_option: true
+      .call
+        an_option: 'is preserved'
+      , ({options}) ->
+        @call an_option: undefined, ({options}) ->
+          options.an_option.should.eql 'is preserved'
+      .promise()
+        
+    it 'cascade null values', ->
+      nikita
+        cascade: ['an_option']
+      .call
+        an_option: 'is overwritten by null'
+      , ({options}) ->
+        @call an_option: null, ({options}) ->
+          (options.an_option is null).should.be.true()
+      .promise()
