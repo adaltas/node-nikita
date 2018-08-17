@@ -41,7 +41,7 @@ you are a member of the "wheel" group (gid of "10") with the command
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering remove", level: 'DEBUG', module: 'nikita/lib/system/user/remove'
       options.name = options.argument if options.argument?
       throw Error "Option 'name' is required" unless options.name
