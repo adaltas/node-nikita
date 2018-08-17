@@ -141,4 +141,37 @@ describe 'file.types.etc_passwd.read', ->
       throw err if err
       logs.some( (log) -> log.message is 'Get passwd definition from cache' ).should.be.true()
     .promise()
+
+  they 'option.log can be true, false, undefined', (ssh) ->
+    logs = []
+    nikita
+      ssh: ssh
+    .on 'text', (log) -> logs.push log
+    .file
+      target: "#{scratch}/etc/passwd"
+      content: """
+      root:x:0:0:root:/root:/bin/bash
+      bin:x:1:1:bin:/bin:/usr/bin/nologin
+      """
+      log: false
+    # Value true enable logs
+    .file.types.etc_passwd.read
+      target: "#{scratch}/etc/passwd"
+      log: true
+    , (err) ->
+      logs.some( (log) -> log.message is 'Entering fs.readFile').should.be.true() unless err
+      logs = []
+    # Value undefined disable logs
+    .file.types.etc_passwd.read
+      target: "#{scratch}/etc/passwd"
+      log: undefined
+    , (err) ->
+      logs.some( (log) -> log.message is 'Entering fs.readFile').should.not.be.true() unless err
+    # Value false disable logs
+    .file.types.etc_passwd.read
+      target: "#{scratch}/etc/passwd"
+      log: false
+    , (err) ->
+      logs.some( (log) -> log.message is 'Entering fs.readFile').should.not.be.true() unless err
+    .promise()
       

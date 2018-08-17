@@ -16,6 +16,7 @@ New features:
 
 Fixes:
 
+* file.types.etc_passwd.read: reduce log verbosity
 * file.types.etc_group.read: reduce log verbosity
 * misc.ini.stringify: handle boolean values
 * misc.ini.stringify: fix eol for array values
