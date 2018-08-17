@@ -57,17 +57,33 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
       options.target = options.argument if options.argument?
       options.uid = null if options.uid is false
       options.gid = null if options.gid is false
+      options.uid = parseInt options.uid if (typeof options.uid is 'string') and /\d+/.test options.uid
+      options.gid = parseInt options.gid if (typeof options.gid is 'string') and /\d+/.test options.gid
       # Validate parameters
       throw Error "Missing target option" unless options.target?
       throw Error "Missing one of uid or gid option" unless options.uid? or options.gid?
       # Convert user and group names to uid and gid if necessary
-      @system.uid_gid
-        uid: options.uid
-        gid: options.gid
+      @system.execute
+        if: typeof options.uid is 'string'
+        cmd: """
+        getent passwd #{options.uid}
+        """
         shy: true
-      , (err, {status, uid, gid}) ->
-        options.uid = uid
-        options.gid = gid
+      , (err, {status, stdout}) ->
+        return if err or not status
+        line = /(.*)\:\w\:(.*)\:(.*)\:(.*)\:(.*)\:(.*)/.exec stdout
+        options.uid = parseInt line[2]
+      @system.execute
+        if: typeof options.uid is 'string'
+        cmd: """
+        getent group #{options.gid}
+        """
+        shy: true
+      , (err, {status, stdout}) ->
+        # console.log 'group', options.gid, err, stdout
+        return if err or not status
+        line = /(.*)\:(.*)\:(.*)\:(.*)/.exec stdout
+        options.gid = parseInt line[3]
       # Use option 'stat' short-circuit or discover
       @call unless: !!options.stats, ({}, callback) ->
         @log message: "Stat #{options.target}", level: 'DEBUG', module: 'nikita/lib/chown'
