@@ -87,18 +87,20 @@ require('nikita')
   source: 'file://path/to/something',
   target: 'node-sigar.tgz'
 }, function(err, {status}){
-  console.info(err ? err.message : 'File was downloaded: ' + status);
-});
+  console.info(err ? err.message : 'File downloaded ' + status)
+})
 ```
 
 ## HTTP example
 
-```coffee
+```javascript
 require('nikita')
-.file.download
-  source: 'https://github.com/wdavidw/node-nikita/tarball/v0.0.1'
+.file.download({
+  source: 'https://github.com/wdavidw/node-nikita/tarball/v0.0.1',
   target: 'node-sigar.tgz'
-, (err, {status}) -> ...
+}, (err, {status}) => {
+  console.info(err ? err.message : 'File downloaded ' + status)
+})
 ```
 
 ## TODO
