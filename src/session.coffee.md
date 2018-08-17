@@ -74,32 +74,32 @@
         # Get middleware
         middleware = obj.registry.get(action_name) or registry.get(action_name) if Array.isArray(action_name)
         # Multiply arguments
-        options = null
+        actions = null
         for __arguments, i in _arguments
-          newoptions = for __argument, j in __arguments
+          newactions = for __argument, j in __arguments
             if i is 0
               [[middleware, __argument]]
             else
-              for __options, i in options
-                [__options..., __argument]
-          options = array.flatten newoptions, 0
+              for action, i in actions
+                [action..., __argument]
+          actions = array.flatten newactions, 0
         # Load module
         unless middleware
-          for opts in options
+          for action in actions
             middleware = null
-            for opt in opts
-              if typeof opt is 'string'
-                middleware = opt
-                middleware = path.resolve process.cwd(), opt if opt.substr(0, 1) is '.'
+            for option in action
+              if typeof option is 'string'
+                middleware = option
+                middleware = path.resolve process.cwd(), option if option.substr(0, 1) is '.'
                 middleware = require.main.require middleware
-            opts.unshift middleware if middleware
+            action.unshift middleware if middleware
         # Build actions
-        options = for opts in options
-          action = {}
-          for opt in opts
-            continue unless opts?
+        actions = for action in actions
+          newaction = {}
+          for opt in action
+            continue unless action?
             if typeof opt is 'string'
-              if not action.argument
+              if not newaction.argument
                 opt = argument: opt
               else
                 throw Error 'Invalid option: encountered a string while argument is already defined'
@@ -107,40 +107,41 @@
               # todo: handler could be registed later by an external module,
               # in such case, the user provided function should be interpreted
               # as a callback
-              if not action.handler
+              if not newaction.handler
                 opt = handler: opt
-              else if not action.callback
+              else if not newaction.callback
                 opt = callback: opt
               else
                 throw Error 'Invalid option: encountered a function while both handler and callback options are defined.'
             if typeof opt isnt 'object'
               opt = argument: opt
             for k, v of opt
-              action[k] = v
-          action
+              # continue if v is undefined
+              newaction[k] = v
+          newaction
         # Normalize
-        options = for opts in options
+        actions = for action in actions
           # Enrich
-          opts.action = action_name if action_name
-          opts.action = [opts.action] unless Array.isArray opts.action
-          opts.user_args = true if params.enrich and opts.callback?.length > 2
-          opts.once = ['handler'] if opts.once is true
-          delete opts.once if opts.once is false
-          opts.once = opts.once.sort() if Array.isArray opts.once
-          opts.sleep ?= 3000 # Wait 3s between retry
-          opts.retry ?= 0
-          opts.disabled ?= false
-          opts.status ?= true
-          opts.depth = state.stack.length + 1
-          throw Error 'Incompatible Options: status "false" implies shy "true"' if opts.status is false and opts.shy is false # Room for argument, leave it strict for now until we come accross a usecase justifying it.
-          opts.shy ?= true if opts.status is false
+          action.action = action_name if action_name
+          action.action = [action.action] unless Array.isArray action.action
+          action.user_args = true if params.enrich and action.callback?.length > 2
+          action.once = ['handler'] if action.once is true
+          delete action.once if action.once is false
+          action.once = action.once.sort() if Array.isArray action.once
+          action.sleep ?= 3000 # Wait 3s between retry
+          action.retry ?= 0
+          action.disabled ?= false
+          action.status ?= true
+          action.depth = state.stack.length + 1
+          throw Error 'Incompatible Options: status "false" implies shy "true"' if action.status is false and action.shy is false # Room for argument, leave it strict for now until we come accross a usecase justifying it.
+          action.shy ?= true if action.status is false
           # Validation
           if params.handler
-            throw Error 'Missing handler option' unless opts.handler
-            throw Error "Invalid Handler: expect a function, got '#{opts.handler}'" unless typeof opts.handler is 'function'
-          jump_to_error Error "Invalid options sleep, got #{JSON.stringify opts.sleep}" unless typeof opts.sleep is 'number' and opts.sleep >= 0
-          opts
-        options
+            throw Error 'Missing handler option' unless action.handler
+            throw Error "Invalid Handler: expect a function, got '#{action.handler}'" unless typeof action.handler is 'function'
+          jump_to_error Error "Invalid options sleep, got #{JSON.stringify action.sleep}" unless typeof action.sleep is 'number' and action.sleep >= 0
+          action
+        actions
       normalize_options = obj.internal.options
       enrich_options = (options_action) ->
         options_session = obj.options
