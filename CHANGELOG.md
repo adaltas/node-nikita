@@ -16,6 +16,7 @@ New features:
 
 Fixes:
 
+* options.log: true enabling/forcing logs
 * file.types.etc_passwd.read: reduce log verbosity
 * file.types.etc_group.read: reduce log verbosity
 * misc.ini.stringify: handle boolean values

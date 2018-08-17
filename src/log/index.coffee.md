@@ -41,9 +41,10 @@ Send a log message.
       options.line = line
       parent = options.parent
       delete options.parent
-      return if parent?.log is false
-      if parent?.log
-         parent?.log options
+      if typeof parent?.log is 'function'
+        parent?.log options
+      else
+        return if parent?.log is false
       if options.debug
         if options.type in ['text', 'stdin', 'stdout_stream', 'stderr_stream']
           unless options.type in ['stdout_stream', 'stderr_stream'] and options.message is null

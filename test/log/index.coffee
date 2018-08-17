@@ -8,13 +8,14 @@ describe 'log', ->
 
   scratch = test.scratch @
 
-  it 'requires option "serializer"', ->
+  it 'string is converted to message', ->
     startTS = Date.now()
     nikita
     .call ->
       @log 'some text'
     .on 'text', (log) ->
-      return unless log.message is 'some text'
+      # There should be only on log emited, thus
+      # there is no need to filter incoming logs
       Object.keys(log).sort().should.eql [
         'argument', 'depth', 'file', 'headers'
         'level', 'line', 'message', 'module'

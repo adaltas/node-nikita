@@ -62,20 +62,40 @@ describe 'options "log"', ->
         logs_child[0].depth.should.eql 2
       .promise()
   
-    it 'disable if set to false', ->
+    it 'false disable logging', ->
       log = null
       nikita
       .on 'text', ({message}) ->
         log = message
+      .call ->
+        @log 'is nikita around'
       .call
-        handler: ->
-          @log 'is nikita around'
-      .call
-        log: false
-        handler: ->
+        log: true
+      , ->
+        @call
+          log: false
+        , ->
           @log 'no, u wont find her'
       .call ->
         log.should.eql 'is nikita around'
+      .promise()
+  
+    it 'true enable logging', ->
+      logs = []
+      nikita
+      .on 'text', ({message}) ->
+        logs.push message
+      .call ->
+        @log 'is nikita around'
+      .call
+        call: false
+      , ->
+        @call
+          log: true
+        , ->
+          @log 'yes it is'
+      .call ->
+        logs.should.eql ['is nikita around', 'yes it is']
       .promise()
   
     it 'can be safely passed to the options of a child handler', ->
@@ -88,66 +108,8 @@ describe 'options "log"', ->
         @log 'is nikita around'
         @call
           log: options.log
-          handler: ->
-            @log 'yes, dont kill her'
+        , ->
+          @log 'yes, dont kill her'
       .call ->
         logs.should.eql ['is nikita around', 'yes, dont kill her']
       .promise()
-  
-  describe 'global via on', ->
-  
-    it 'convert string to objects', ->
-      logs = []
-      nikita
-      .on 'text', (l) -> logs.push l
-      .call -> @log 'handler'
-      .call ->
-        logs.length.should.eql 1
-        logs[0].level.should.eql 'INFO'
-        logs[0].message.should.eql 'handler'
-        (logs[0].module is undefined).should.be.true()
-        logs[0].time.should.be.a.Number()
-        logs[0].depth.should.eql 1
-      .promise()
-      
-  it.skip 'serialize into string with default serializer', ->
-    # log_serializer isnt yet activated
-    log = null
-    nikita
-      log_serializer: true
-    .on 'text', (l) -> log = l
-    .call ->
-      @log 'handler'
-    .call ->
-      log.should.match /^\[INFO \d+\] handler/
-    .promise()
-      
-  it.skip 'serialize into string with user serializer', ->
-    # log_serializer isnt yet activated
-    log = null
-    nikita
-      log_serializer: (log) -> "[#{log.level}] #{log.message}"
-    .on 'text', (l) -> log = l
-    .call ->
-      @log 'handler'
-    .call ->
-      log.should.eql "[INFO] handler"
-    .promise()
-      
-  it.skip 'print value', ->
-    # Doesnt work for now
-    # The idea is that log shouldnt be an option
-    # But be part of Nikita session
-    # which will make it also available inside callbacks
-    logs = []
-    nikita
-    .on 'text', (l) -> log.push l
-    .call ->
-      @log 'handler'
-    , (err, status) ->
-      @log 'callback' unless err
-    .call ->
-      logs
-      .map (log) -> log.message
-      .should.eql ['handler', 'callback']
-    .promise()
