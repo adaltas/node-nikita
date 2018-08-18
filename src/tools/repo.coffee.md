@@ -63,7 +63,7 @@ require('nikita')
         if: options.clean
       , (_, callback) ->
         @log message: "Searching repositories inside \"/etc/yum.repos.d/\"", level: 'DEBUG', module: 'nikita/lib/tools/repo'
-        glob ssh, options.clean, (err, files) ->
+        @file.glob options.clean, (err, {files}) ->
           return callback err if err
           remote_files = for file in files
             continue if file is options.target
@@ -138,6 +138,5 @@ require('nikita')
 
     string = require '../misc/string'
     path = require 'path'
-    glob = require '../misc/glob'
     misc = require '../misc'
     url = require 'url'

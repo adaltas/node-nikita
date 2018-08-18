@@ -94,9 +94,9 @@ require('nikita')
           [name, version] = line.match(/(.*?)(?:$| \((?:default:\s+)?([\d\., ]+)\))/)[1..3]
           current_gems[name] = version.split(', ')
       @call if: options.source, (_, callback) ->
-        glob ssh, options.source, (err, sources) ->
+        @file.glob options.source, (err, {files}) ->
           return callback err if err
-          options.source = sources.filter (source) ->
+          options.source = files.filter (source) ->
             filename = path.basename source
             current_filenames = for n, v of current_gems then "#{n}-#{v}.gem"
             true unless filename in current_filenames
@@ -149,5 +149,4 @@ require('nikita')
 
     path = require 'path'
     semver = require 'semver'
-    glob = require '../../misc/glob'
     string = require '../../misc/string'

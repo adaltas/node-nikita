@@ -32,6 +32,7 @@ Important: for now, only the "dot" options has been tested.
 ###
 
 module.exports = (ssh, pattern, options, callback) ->
+  console.warn 'misc.glob is deprecated, use nikita.file.glob instead'
   if arguments.length is 3
     callback = options
     options = {}

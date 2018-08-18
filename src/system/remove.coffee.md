@@ -66,7 +66,7 @@ require('nikita')
       options.target ?= options.source
       return callback Error "Missing option: \"target\"" unless options.target?
       # Start real work
-      glob ssh, options.target, (err, files) =>
+      @file.glob options.target, (err, {files}) ->
         return callback err if err
         each files
         .call (file, callback) =>
@@ -81,6 +81,5 @@ require('nikita')
 
     each = require 'each'
     misc = require '../misc'
-    glob = require '../misc/glob'
 
 [rimraf]: https://github.com/isaacs/rimraf

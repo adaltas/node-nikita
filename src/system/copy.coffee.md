@@ -124,35 +124,31 @@ present inside "/tmp/a_source" are copied inside "/tmp/a_target".
         if options.target_stats and not sourceEndWithSlash
           options.target = path.resolve options.target, path.basename options.source
         @log message: "Source is a directory", level: 'INFO', module: 'nikita/lib/system/copy'
-        @call ({}, callback) -> 
-          glob ssh, "#{options.source}/**", dot: true, (err, sources) =>
-            return callback err if err
-            for source in sources then do (source) =>
-              target = path.resolve options.target, path.relative options.source, source
-              @call (_, callback) -> # TODO: remove this line and indent up next line
-                @fs.stat ssh: options.ssh, target: source, (err, {stats}) =>
-                  uid = options.uid
-                  uid ?= stats.uid if options.preserve
-                  gid = options.gid
-                  gid ?= stats.gid if options.preserve
-                  mode = options.mode
-                  mode ?= stats.mode if options.preserve
-                  if misc.stats.isDirectory stats.mode
-                    @system.mkdir
-                      target: target
-                      uid: uid
-                      gid: gid
-                      mode: mode
-                  else
-                    @system.copy
-                      target: target
-                      source: source
-                      source_stat: stats
-                      uid: uid
-                      gid: gid
-                      mode: mode
-                  @next callback
-            @next callback
+        @file.glob "#{options.source}/**", dot: true, (err, {files}) =>
+          return callback err if err
+          for source in files then do (source) =>
+            target = path.resolve options.target, path.relative options.source, source
+            @fs.stat ssh: options.ssh, target: source, (err, {stats}) =>
+              uid = options.uid
+              uid ?= stats.uid if options.preserve
+              gid = options.gid
+              gid ?= stats.gid if options.preserve
+              mode = options.mode
+              mode ?= stats.mode if options.preserve
+              if misc.stats.isDirectory stats.mode
+                @system.mkdir
+                  target: target
+                  uid: uid
+                  gid: gid
+                  mode: mode
+              else
+                @system.copy
+                  target: target
+                  source: source
+                  source_stat: stats
+                  uid: uid
+                  gid: gid
+                  mode: mode
         @next (err, {status}) -> callback err, {status: status, end: true}
       , (err, {end}) ->
         @end() if not err and end
@@ -205,4 +201,3 @@ File ownership and permissions
 
     path = require 'path'
     misc = require '../misc'
-    glob = require '../misc/glob'
