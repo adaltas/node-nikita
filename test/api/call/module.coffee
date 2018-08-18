@@ -44,20 +44,27 @@ describe 'api call module', ->
     nikita
     .file
       target: "#{scratch}/a_dir/ping.coffee"
-      content: 'module.exports = (_, callback) -> callback null, status: true, message: "pong"'
+      content: """
+      module.exports = (_, callback) ->
+        callback null, status: true, message: "pong"
+      """
     .call ->
       @call './a_dir/ping', (err, {status, message}) ->
         message.should.eql 'pong' unless err
     .call -> process.chdir cwd
     .promise()
 
-  it 'string requires a module which export an object', ->
-    logs = []
+  it 'string requires a module exporting an object', ->
     nikita
-    .on 'text', (l) -> logs.push l.message
-    .call who: 'us', 'test/resources/module_async_object'
+    .file
+      target: "#{scratch}/async.coffee"
+      content: """
+      module.exports = handler: ({options}, callback) ->
+        callback null, {message: 'hello'}
+      """
     .call ->
-      logs[0].should.eql 'Hello us'
+      @call who: 'async', "#{scratch}/async", (err, {message}) ->
+        message.should.eql 'hello' unless err
     .promise()
 
   it 'user undefined value should not overwrite default values', ->
