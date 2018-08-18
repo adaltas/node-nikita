@@ -12,6 +12,7 @@ Backward incompatibilities:
 
 New features:
 
+* file.hash: new action
 * system.chown: use getent
 * session: dont overwrite options when undefined
 * service.install: new options pacman_flags and yaourt_flags

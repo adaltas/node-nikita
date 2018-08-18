@@ -64,6 +64,7 @@ available to every Nikita sessions.
         cache: 'nikita/file/cache'
         cson: 'nikita/file/cson'
         download: 'nikita/file/download'
+        hash: 'nikita/file/hash'
         ini: 'nikita/file/ini'
         json: 'nikita/file/json'
         properties:
