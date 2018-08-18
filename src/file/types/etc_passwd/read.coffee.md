@@ -64,7 +64,14 @@ nikita
       , ->
         @log message: "Get passwd definition from cache", level: 'INFO', module: 'nikita/lib/system/etc_passwd/read'
         passwd = @store['nikita:etc_passwd']
-      parsePasswd = (err, {data}) ->
+      # Read system passwd and place in cache if requested
+      @fs.readFile
+        unless: options.getent
+        unless: options.cache and !!@store['nikita:etc_passwd']
+        target: options.target
+        encoding: 'ascii'
+        log: options.log
+      , (err, {data}) ->
         throw err if err
         return unless data?
         passwd = {}
@@ -73,22 +80,6 @@ nikita
           continue unless line
           passwd[line[1]] = user: line[1], uid: parseInt(line[2]), gid: parseInt(line[3]), comment: line[4], home: line[5], shell: line[6]
         @store['nikita:etc_passwd'] = passwd if options.cache
-      @system.execute
-        if: options.getent
-        unless: options.cache and !!@store['nikita:etc_passwd']
-        log: if typeof options.log is 'boolean' then options.log else false
-        cmd: """
-        getent passwd
-        """
-      , parsePasswd
-      # Read system passwd and place in cache if requested
-      @fs.readFile
-        unless: options.getent
-        unless: options.cache and !!@store['nikita:etc_passwd']
-        target: options.target
-        encoding: 'ascii'
-        log: if typeof options.log is 'boolean' then options.log else false
-      , parsePasswd
       # Pass the passwd information
       @next (err) ->
         return callback err if err

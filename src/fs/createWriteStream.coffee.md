@@ -31,7 +31,7 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = status: false, handler: ({options}) ->
+    module.exports = status: false, log: false, handler: ({options}) ->
       @log message: "Entering fs.writeFile", level: 'DEBUG', module: 'nikita/lib/fs/writeFile'
       ssh = @ssh options.ssh
       # Normalize options

@@ -5,7 +5,7 @@ Change permissions of a file.
 
 ## Source Code
 
-    module.exports = status: false, handler: ({options}, callback) ->
+    module.exports = status: false, log: false, handler: ({options}, callback) ->
       @log message: "Entering fs.copy", level: 'DEBUG', module: 'nikita/lib/fs/copy'
       # Normalize options
       options.target = options.argument if options.argument?

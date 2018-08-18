@@ -5,7 +5,7 @@ Change the name or location of a file.
 
 ## Source Code
 
-    module.exports = status: false, handler: ({options}, callback) ->
+    module.exports = status: false, log: false, handler: ({options}, callback) ->
       @log message: "Entering fs.rename", level: 'DEBUG', module: 'nikita/lib/fs/rename'
       # Normalize options
       options.target = options.argument if options.argument?

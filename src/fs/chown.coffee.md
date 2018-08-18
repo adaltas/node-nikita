@@ -5,7 +5,7 @@ Change ownership of a file.
 
 ## Source Code
 
-    module.exports = status: false, handler: ({options}, callback) ->
+    module.exports = status: false, log: false, handler: ({options}, callback) ->
       @log message: "Entering fs.chown", level: 'DEBUG', module: 'nikita/lib/fs/chown'
       # Normalize options
       options.target = options.argument if options.argument?

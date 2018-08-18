@@ -11,7 +11,7 @@ Options:
 
 ## Source Code
 
-    module.exports = status: false, handler: ({options}, callback) ->
+    module.exports = status: false, log: false, handler: ({options}, callback) ->
       @log message: "Entering fs.readFile", level: 'DEBUG', module: 'nikita/lib/fs/readFile'
       # Normalize options
       options.target = options.argument if options.argument?

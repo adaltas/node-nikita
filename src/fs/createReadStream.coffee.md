@@ -37,7 +37,7 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = status: false, handler: ({options}, callback) ->
+    module.exports = status: false, log: false, handler: ({options}, callback) ->
       @log message: "Entering fs.createReadStream", level: 'DEBUG', module: 'nikita/lib/fs/createReadStream'
       ssh = @ssh options.ssh
       p = if ssh then path.posix else path
