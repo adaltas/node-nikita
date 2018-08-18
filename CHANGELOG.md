@@ -12,6 +12,7 @@ Backward incompatibilities:
 
 New features:
 
+* file.glob: new action
 * file.hash: new action
 * system.chown: use getent
 * session: dont overwrite options when undefined
