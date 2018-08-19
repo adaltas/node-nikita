@@ -478,7 +478,7 @@
             state.todos = state.stack.shift() if state.todos.length is 0
             jump_to_error args[0] if args[0] and not options.relax
             state.todos.throw_if_error = false if args[0] and options.callback
-            state.todos.status[0].value = args[1].status if options.status
+            state.todos.status[0].value = if options.status then args[1].status else false
             call_callback options.callback, args if options.callback
             args[0] = null if options.relax
             args[1] ?= {}

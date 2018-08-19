@@ -22,6 +22,7 @@ New features:
 
 Fixes:
 
+* options status: dont return undefined when false
 * fs: disable log
 * system.mkdir: removed zombie call to uid_gid
 * options.log: true enabling/forcing logs
