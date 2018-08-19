@@ -1,11 +1,8 @@
 
 misc = require '../../src/misc'
-test = require '../test'
 they = require 'ssh2-they'
 
 describe 'misc', ->
-
-  scratch = test.scratch @
 
   describe 'object', ->
 
@@ -75,7 +72,7 @@ describe 'misc', ->
           memory = /cgroup/memorybis;
           devices = /cgroup/devicesbis;
         }
-        
+
       """
       misc.cgconfig.parse(mount_obj).should.eql {
         mounts: [

@@ -1,6 +1,5 @@
 
 ini = require '../../src/misc/ini'
-test = require '../test'
 
 describe 'misc.ini parse_multi_brackets_multi_lines', ->
 
@@ -10,7 +9,7 @@ describe 'misc.ini parse_multi_brackets_multi_lines', ->
       # Some comments
 
       [group1]
-        
+
         key1a="value1a"
 
         # comment

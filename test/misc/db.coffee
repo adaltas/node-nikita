@@ -1,10 +1,7 @@
 
 db = require '../../src/misc/db'
-test = require '../test'
 
 describe 'misc.db', ->
-
-  scratch = test.scratch @
 
   describe 'jdbc', ->
 

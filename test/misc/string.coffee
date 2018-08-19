@@ -1,7 +1,5 @@
 
 string = require '../../src/misc/string'
-test = require '../test'
-they = require 'ssh2-they'
 
 describe 'misc string', ->
 

@@ -1,6 +1,5 @@
 
 ini = require '../../src/misc/ini'
-test = require '../test'
 
 describe 'misc.ini stringify', ->
 
@@ -11,7 +10,7 @@ describe 'misc.ini stringify', ->
     .should.eql """
     [user.preference]
     color:rouge
-    
+
     """
 
   it 'handle boolean', ->
@@ -24,5 +23,5 @@ describe 'misc.ini stringify', ->
     [user.preference]
     a_string = a value
     a_boolean_true
-    
+
     """

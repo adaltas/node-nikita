@@ -1,7 +1,5 @@
 
 misc = require '../../src/misc'
-path = require 'path'
-crypto = require 'crypto'
 
 describe 'misc.path', ->
 

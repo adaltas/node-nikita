@@ -1,7 +1,5 @@
 
 krb5 = require '../../src/misc/krb5'
-test = require '../test'
-they = require 'ssh2-they'
 
 describe 'misc krb5', ->
 

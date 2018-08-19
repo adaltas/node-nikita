@@ -1,6 +1,5 @@
 
 ini = require '../../src/misc/ini'
-test = require '../test'
 
 describe 'misc.ini stringify_multi_brackets', ->
 

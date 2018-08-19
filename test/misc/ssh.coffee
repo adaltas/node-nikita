@@ -2,7 +2,6 @@
 ssh = require '../../src/misc/ssh'
 connect = require 'ssh2-connect'
 test = require '../test'
-# they = require 'ssh2-they'
 
 describe 'misc ssh', ->
 

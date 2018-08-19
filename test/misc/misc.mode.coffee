@@ -1,6 +1,5 @@
 
 misc = require '../../src/misc'
-test = require '../test'
 they = require 'ssh2-they'
 
 describe 'misc mode', ->

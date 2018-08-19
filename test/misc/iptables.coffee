@@ -1,6 +1,5 @@
 
 iptables = require '../../src/misc/iptables'
-test = require '../test'
 they = require 'ssh2-they'
 
 describe 'misc iptables', ->
@@ -8,7 +7,7 @@ describe 'misc iptables', ->
   describe 'normalize', ->
 
     it 'normalize with shortcut for protocol', ->
-      iptables.normalize([ # Nothing to do 
+      iptables.normalize([ # Nothing to do
         { chain: 'INPUT', jump: 'ACCEPT', dport: 22, '-p': 'tcp' }
       ]).should.eql [
         { chain: 'INPUT', '--jump': 'ACCEPT', '--protocol': 'tcp', 'tcp|--dport': '22', 'after': {'-A': 'INPUT', '--jump': 'ACCEPT', 'chain': 'INPUT'} }
@@ -56,7 +55,7 @@ describe 'misc iptables', ->
     it 'discard default log-level value', ->
       iptables.normalize([
         { chain: 'LOGGING', command: '-A', '--limit': '2/min', jump: 'LOG', 'log-level': 4 }
-      ]).should.eql [ 
+      ]).should.eql [
         {chain: 'LOGGING', command: '-A', 'limit|--limit': '2/min', '--jump': 'LOG' }
       ]
 
@@ -67,13 +66,13 @@ describe 'misc iptables', ->
       -P INPUT ACCEPT
       -P FORWARD ACCEPT
       -P OUTPUT ACCEPT
-      -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT 
-      -A INPUT -p icmp -j ACCEPT 
-      -A INPUT -i lo -j ACCEPT 
-      -A INPUT -p tcp -m tcp --dport 88 -m state --state NEW -m comment --comment "krb5kdc daemon" -j ACCEPT 
-      -A INPUT -p udp -m udp --dport 88 -m state --state NEW -m comment --comment "krb5kdc daemon" -j ACCEPT 
-      -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT 
-      -A INPUT -j REJECT --reject-with icmp-host-prohibited 
+      -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+      -A INPUT -p icmp -j ACCEPT
+      -A INPUT -i lo -j ACCEPT
+      -A INPUT -p tcp -m tcp --dport 88 -m state --state NEW -m comment --comment "krb5kdc daemon" -j ACCEPT
+      -A INPUT -p udp -m udp --dport 88 -m state --state NEW -m comment --comment "krb5kdc daemon" -j ACCEPT
+      -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
+      -A INPUT -j REJECT --reject-with icmp-host-prohibited
       -A FORWARD -j REJECT --reject-with icmp-host-prohibited
       """).should.eql [
         { '-P': 'INPUT ACCEPT', command: '-P', chain: 'INPUT', target: 'ACCEPT' }
@@ -98,7 +97,7 @@ describe 'misc iptables', ->
       """).should.eql [
         { '-N': 'LOGGING', command: '-N', chain: 'LOGGING' }
       ]
-    
+
     it 'parse logs', -> #  --log-tcp-sequence --log-tcp-options --log-ip-options --log-uid
       iptables.parse("""
       -A LOGGING -j LOG --log-level 5 --log-prefix "IPTables-Dropped: "
@@ -132,15 +131,15 @@ describe 'misc iptables', ->
       -P FORWARD ACCEPT
       -P OUTPUT ACCEPT
       -N LOGGING
-      -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT 
-      -A INPUT -p icmp -j ACCEPT 
-      -A INPUT -i lo -j ACCEPT 
-      -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT 
-      -A INPUT -j LOGGING 
-      -A INPUT -j REJECT --reject-with icmp-host-prohibited 
-      -A FORWARD -j REJECT --reject-with icmp-host-prohibited 
-      -A LOGGING -m limit --limit 2/min -j LOG --log-prefix "IPTables-Dropped: " --log-level 7 
-      -A LOGGING -j DROP 
+      -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+      -A INPUT -p icmp -j ACCEPT
+      -A INPUT -i lo -j ACCEPT
+      -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
+      -A INPUT -j LOGGING
+      -A INPUT -j REJECT --reject-with icmp-host-prohibited
+      -A FORWARD -j REJECT --reject-with icmp-host-prohibited
+      -A LOGGING -m limit --limit 2/min -j LOG --log-prefix "IPTables-Dropped: " --log-level 7
+      -A LOGGING -j DROP
       """
       iptables.cmd(oldrules, iptables.normalize [
         { chain: 'LOGGING', command: '-A', '--limit': '2/min', jump: 'LOG', 'log-prefix': 'IPTables-Dropped: ', 'log-level': 5 }
@@ -153,13 +152,13 @@ describe 'misc iptables', ->
       -P INPUT ACCEPT
       -P FORWARD ACCEPT
       -P OUTPUT ACCEPT
-      -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT 
-      -A INPUT -p icmp -j ACCEPT 
-      -A INPUT -i lo -j ACCEPT 
-      -A INPUT -p tcp -m tcp --dport 88 -m state --state NEW -m comment --comment "krb5kdc daemon" -j ACCEPT 
-      -A INPUT -p udp -m udp --dport 88 -m state --state NEW -m comment --comment "krb5kdc daemon" -j ACCEPT 
-      -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT 
-      -A INPUT -j REJECT --reject-with icmp-host-prohibited 
+      -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+      -A INPUT -p icmp -j ACCEPT
+      -A INPUT -i lo -j ACCEPT
+      -A INPUT -p tcp -m tcp --dport 88 -m state --state NEW -m comment --comment "krb5kdc daemon" -j ACCEPT
+      -A INPUT -p udp -m udp --dport 88 -m state --state NEW -m comment --comment "krb5kdc daemon" -j ACCEPT
+      -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
+      -A INPUT -j REJECT --reject-with icmp-host-prohibited
       -A FORWARD -j REJECT --reject-with icmp-host-prohibited
       """
       iptables.cmd(oldrules, iptables.normalize [
@@ -169,7 +168,7 @@ describe 'misc iptables', ->
 
     it 'compare minus sign (IPTable silently remove minus sign)', ->
       oldrules = iptables.parse """
-      -A INPUT -p tcp -m tcp --dport 389 -m state --state NEW -m comment --comment "LDAP (non-secured)" -j ACCEPT 
+      -A INPUT -p tcp -m tcp --dport 389 -m state --state NEW -m comment --comment "LDAP (non-secured)" -j ACCEPT
       -A INPUT -p tcp -m tcp --dport 636 -m state --state NEW -m comment --comment "LDAP (secured)" -j ACCEPT
       """
       iptables.cmd(oldrules, iptables.normalize [
@@ -179,8 +178,8 @@ describe 'misc iptables', ->
 
     it 'compare comment without any special char', ->
       oldrules = iptables.parse """
-      -A INPUT -p udp -m udp --dport 53 -m state --state NEW -m comment --comment "Named" -j ACCEPT 
-      -A INPUT -p tcp -m tcp --dport 53 -m state --state NEW -m comment --comment "Named" -j ACCEPT 
+      -A INPUT -p udp -m udp --dport 53 -m state --state NEW -m comment --comment "Named" -j ACCEPT
+      -A INPUT -p tcp -m tcp --dport 53 -m state --state NEW -m comment --comment "Named" -j ACCEPT
       """
       iptables.cmd(oldrules, iptables.normalize [
         { chain: 'INPUT', jump: 'ACCEPT', dport: 53, protocol: 'tcp', state: 'NEW', comment: "Named" }
@@ -192,10 +191,10 @@ describe 'misc iptables', ->
       -P INPUT ACCEPT
       -P FORWARD ACCEPT
       -P OUTPUT ACCEPT
-      -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT 
-      -A INPUT -p icmp -j ACCEPT 
-      -A INPUT -i lo -j ACCEPT 
-      -A INPUT -j REJECT --reject-with icmp-host-prohibited 
+      -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+      -A INPUT -p icmp -j ACCEPT
+      -A INPUT -i lo -j ACCEPT
+      -A INPUT -j REJECT --reject-with icmp-host-prohibited
       -A FORWARD -j REJECT --reject-with icmp-host-prohibited
       """
       iptables.cmd(oldrules, iptables.normalize [
@@ -212,9 +211,9 @@ describe 'misc iptables', ->
     it 'discard existing rune in new chain (N)', ->
       oldrules = iptables.parse """
       -N LOGGING
-      -A INPUT -j LOGGING 
-      -A FORWARD -j REJECT --reject-with icmp-host-prohibited 
-      -A LOGGING -m limit --limit 2/min -j LOG --log-level 5 --log-prefix "IPTables-Dropped: " 
+      -A INPUT -j LOGGING
+      -A FORWARD -j REJECT --reject-with icmp-host-prohibited
+      -A LOGGING -m limit --limit 2/min -j LOG --log-level 5 --log-prefix "IPTables-Dropped: "
       -A LOGGING -j DROP
       """
       iptables.cmd(oldrules, iptables.normalize [
@@ -230,12 +229,12 @@ describe 'misc iptables', ->
       -P INPUT ACCEPT
       -P FORWARD ACCEPT
       -P OUTPUT ACCEPT
-      -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT 
-      -A INPUT -p icmp -j ACCEPT 
-      -A INPUT -i lo -j ACCEPT 
-      -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT 
-      -A INPUT -j REJECT --reject-with icmp-host-prohibited 
-      -A FORWARD -j REJECT --reject-with icmp-host-prohibited 
+      -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+      -A INPUT -p icmp -j ACCEPT
+      -A INPUT -i lo -j ACCEPT
+      -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
+      -A INPUT -j REJECT --reject-with icmp-host-prohibited
+      -A FORWARD -j REJECT --reject-with icmp-host-prohibited
       """
       iptables.cmd(oldrules, iptables.normalize [
         { chain: 'INPUT', jump: 'ACCEPT', source: "10.10.10.0/24", comment: 'Local Network' }
@@ -246,12 +245,12 @@ describe 'misc iptables', ->
       -P INPUT ACCEPT
       -P FORWARD ACCEPT
       -P OUTPUT ACCEPT
-      -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT 
-      -A INPUT -p icmp -j ACCEPT 
-      -A INPUT -i lo -j ACCEPT 
-      -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT 
-      -A INPUT -j REJECT --reject-with icmp-host-prohibited 
-      -A FORWARD -j REJECT --reject-with icmp-host-prohibited 
+      -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+      -A INPUT -p icmp -j ACCEPT
+      -A INPUT -i lo -j ACCEPT
+      -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
+      -A INPUT -j REJECT --reject-with icmp-host-prohibited
+      -A FORWARD -j REJECT --reject-with icmp-host-prohibited
       """
       iptables.cmd(oldrules, iptables.normalize [
         { chain: 'INPUT', jump: 'ACCEPT', source: "10.10.10.0/24", comment: 'Local Network', after: {'in-interface': 'lo', jump: 'ACCEPT' } }
@@ -262,13 +261,13 @@ describe 'misc iptables', ->
       -P INPUT ACCEPT
       -P FORWARD ACCEPT
       -P OUTPUT ACCEPT
-      -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT 
-      -A INPUT -p icmp -j ACCEPT 
+      -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+      -A INPUT -p icmp -j ACCEPT
       -A INPUT -i lo -j ACCEPT
       -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
       -A INPUT -s 10.10.10.0/24 -m comment --comment "Local Network" -j ACCEPT
-      -A INPUT -j REJECT --reject-with icmp-host-prohibited 
-      -A FORWARD -j REJECT --reject-with icmp-host-prohibited 
+      -A INPUT -j REJECT --reject-with icmp-host-prohibited
+      -A FORWARD -j REJECT --reject-with icmp-host-prohibited
       """
       iptables.cmd(oldrules, iptables.normalize [
         { chain: 'INPUT', jump: 'ACCEPT', source: "10.10.10.0/24", comment: 'Local Network', after: {'in-interface': 'lo', jump: 'ACCEPT' } }
@@ -279,11 +278,11 @@ describe 'misc iptables', ->
       -P INPUT ACCEPT
       -P FORWARD ACCEPT
       -P OUTPUT ACCEPT
-      -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT 
-      -A INPUT -p icmp -j ACCEPT 
+      -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+      -A INPUT -p icmp -j ACCEPT
       -A INPUT -i lo -j ACCEPT
-      -A INPUT -p tcp -m tcp --dport 22 -j ACCEPT 
-      -A INPUT -j REJECT --reject-with icmp-host-prohibited 
+      -A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
+      -A INPUT -j REJECT --reject-with icmp-host-prohibited
       -A FORWARD -j REJECT --reject-with icmp-host-prohibited
       """
       iptables.cmd(oldrules, iptables.normalize [
@@ -300,12 +299,12 @@ describe 'misc iptables', ->
       -P INPUT ACCEPT
       -P FORWARD ACCEPT
       -P OUTPUT ACCEPT
-      -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT 
-      -A INPUT -p icmp -j ACCEPT 
-      -A INPUT -i lo -j ACCEPT 
-      -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT 
-      -A INPUT -j REJECT --reject-with icmp-host-prohibited 
-      -A FORWARD -j REJECT --reject-with icmp-host-prohibited 
+      -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+      -A INPUT -p icmp -j ACCEPT
+      -A INPUT -i lo -j ACCEPT
+      -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
+      -A INPUT -j REJECT --reject-with icmp-host-prohibited
+      -A FORWARD -j REJECT --reject-with icmp-host-prohibited
       """
       iptables.cmd(oldrules, iptables.normalize [
         { chain: 'INPUT', jump: 'ACCEPT', source: "10.10.10.0/24", comment: 'Local Network', before: {'in-interface': 'lo', jump: 'ACCEPT' } }
@@ -317,12 +316,12 @@ describe 'misc iptables', ->
       -P FORWARD ACCEPT
       -P OUTPUT ACCEPT
       -A INPUT -s 10.10.10.0/24 -m comment --comment "Local Network" -j ACCEPT
-      -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT 
-      -A INPUT -p icmp -j ACCEPT 
+      -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+      -A INPUT -p icmp -j ACCEPT
       -A INPUT -i lo -j ACCEPT
       -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
-      -A INPUT -j REJECT --reject-with icmp-host-prohibited 
-      -A FORWARD -j REJECT --reject-with icmp-host-prohibited 
+      -A INPUT -j REJECT --reject-with icmp-host-prohibited
+      -A FORWARD -j REJECT --reject-with icmp-host-prohibited
       """
       iptables.cmd(oldrules, iptables.normalize [
         { chain: 'INPUT', jump: 'ACCEPT', source: "10.10.10.0/24", comment: 'Local Network', before: {'in-interface': 'lo', jump: 'ACCEPT' } }

@@ -1,7 +1,5 @@
 
 ldap = require '../../src/misc/ldap'
-test = require '../test'
-path = require 'path'
 
 describe 'misc ldap acl', ->
 

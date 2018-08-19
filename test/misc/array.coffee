@@ -1,10 +1,7 @@
 
 array = require '../../src/misc/array'
-test = require '../test'
 
 describe 'misc.array', ->
-
-  scratch = test.scratch @
 
   it 'compare', ->
     array.compare(['a'], ['a']).should.be.true()
