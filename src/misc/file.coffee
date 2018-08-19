@@ -14,6 +14,7 @@ module.exports = file =
   if the file are the same or false otherwise.
   ###
   compare: (ssh, files, callback) ->
+    console.warn 'misc.file.compare is deprecated, use nikita.file.compare instead'
     return callback Error 'Minimum of 2 files' if files.length < 2
     result = null
     each files
@@ -50,6 +51,7 @@ module.exports = file =
 
   ###
   hash: (ssh, file, algorithm, callback) ->
+    console.warn 'misc.file.hash is deprecated, use nikita.file.hash instead'
     if arguments.length is 3
       callback = algorithm
       algorithm = 'md5'

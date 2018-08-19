@@ -56,7 +56,7 @@ describe 'file.download file', ->
         target: "#{scratch}/download_test"
         relax: true
       , (err, {status}) ->
-        err.message.should.eql "Does not exist: #{__dirname}/doesnotexists"
+        err.message.should.eql "Missing File: no file exists for target \"#{__dirname}/doesnotexists\""
         err.code.should.eql 'ENOENT'
       .promise()
 

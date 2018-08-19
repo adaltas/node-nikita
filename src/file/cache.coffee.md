@@ -71,31 +71,32 @@ require('nikita')
       options.target = path.resolve options.cache_dir, options.target
       options.source = options.source.substr 7 if /^file:\/\//.test options.source
       options.headers ?= []
+      # todo, also support options.algo and options.hash
       if options.md5?
         throw Error "Invalid MD5 Hash:#{options.md5}" unless typeof options.md5 in ['string', 'boolean']
         algo = 'md5'
-        hash = options.md5
+        _hash = options.md5
       else if options.sha1?
         throw Error "Invalid SHA-1 Hash:#{options.sha1}" unless typeof options.sha1 in ['string', 'boolean']
         algo = 'sha1'
-        hash = options.sha1
+        _hash = options.sha1
       else if options.sha256?
         throw Error "Invalid SHA-1 Hash:#{options.sha256}" unless typeof options.sha256 in ['string', 'boolean']
         algo = 'sha256'
-        hash = options.sha256
+        _hash = options.sha256
       else
         algo = 'md5'
-        hash = false
+        _hash = false
       u = url.parse options.source
       @call (_, callback) ->
         unless u.protocol is null
           @log message: "Bypass source hash computation for non-file protocols", level: 'WARN', module: 'nikita/lib/file/cache'
           return callback()
-        return callback() if hash isnt true
-        file.hash ssh, options.source, algo, (err, value) =>
+        return callback() if _hash isnt true
+        @file.hash options.source, (err, {hash}) ->
           return callback err if err
-          @log message: "Computed hash value is '#{value}'", level: 'INFO', module: 'nikita/lib/file/cache'
-          hash = value
+          @log message: "Computed hash value is '#{hash}'", level: 'INFO', module: 'nikita/lib/file/cache'
+          _hash = hash
           callback()
       # Download the file if
       # - file doesnt exist
@@ -111,13 +112,13 @@ require('nikita')
             if options.force
               @log message: "Force mode, cache will be overwritten", level: 'DEBUG', module: 'nikita/lib/file/cache'
               return callback null, true
-            else if hash and typeof hash is 'string'
+            else if _hash and typeof _hash is 'string'
               # then we compute the checksum of the file
               @log message: "Comparing #{algo} hash", level: 'DEBUG', module: 'nikita/lib/file/cache'
-              file.hash ssh, options.target, algo, (err, c_hash) =>
+              @file.hash options.target, (err, {hash}) =>
                 return callback err if err
                 # And compare with the checksum provided by the user
-                if hash is c_hash
+                if _hash is hash
                   @log message: "Hashes match, skipping", level: 'DEBUG', module: 'nikita/lib/file/cache'
                   return callback null, false
                 @log message: "Hashes don't match, delete then re-download", level: 'WARN', module: 'nikita/lib/file/cache'
@@ -165,4 +166,3 @@ require('nikita')
     path = require 'path'
     url = require 'url'
     curl = require '../misc/curl'
-    file = require '../misc/file'

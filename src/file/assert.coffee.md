@@ -172,22 +172,23 @@ require('nikita')
               err = Error options.error
           callback err
       # Assert hash match
-      (algo = 'md5'; hash = options.md5) if options.md5
-      (algo = 'sha1'; hash = options.sha1) if options.sha1
-      (algo = 'sha256'; hash = options.sha256) if options.sha256
+      # todo, also support options.algo and options.hash
+      (algo = 'md5'; _hash = options.md5) if options.md5
+      (algo = 'sha1'; _hash = options.sha1) if options.sha1
+      (algo = 'sha256'; _hash = options.sha256) if options.sha256
       @call
         if: algo
       , ({}, callback) ->
-        file.hash ssh, options.target, algo, (err, h) =>
+        @file.hash options.target, algo: algo, (err, {hash}) =>
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
           return callback err if err
           unless options.not
-            if hash isnt h
-              options.error ?= "Invalid #{algo} signature: expect #{JSON.stringify hash} and got #{JSON.stringify h}"
+            if _hash isnt hash
+              options.error ?= "Invalid #{algo} signature: expect #{JSON.stringify _hash} and got #{JSON.stringify hash}"
               err = Error options.error
           else
-            if hash is h
-              options.error ?= "Matching #{algo} signature: #{JSON.stringify hash}"
+            if _hash is hash
+              options.error ?= "Matching #{algo} signature: #{JSON.stringify _hash}"
               err = Error options.error
           callback err
       # Assert uid ownerships

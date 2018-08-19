@@ -103,8 +103,19 @@ require('nikita')
             callback Error "Invalid target: #{options.target}"
       @call ({}, callback) ->
         return callback null, true unless target_stats
-        file.compare_hash ssh, options.source, null, options.target, algo, (err, match) =>
-          callback err, not match
+        hash_source = hash_target = null
+        @file.hash target: options.source, algo: algo, (err, {hash}) ->
+          return callback err if err
+          hash_source = hash
+        @file.hash target: options.target, algo: algo, ssh: false, (err, {hash}) ->
+          return callback err if err
+          hash_target = hash
+        @call ->
+          match = hash_source is hash_target
+          @log if match
+          then message: "Hash matches as '#{hash_source}'", level: 'INFO', module: 'nikita/lib/file/download' 
+          else message: "Hash dont match, source is '#{hash_source}' and target is '#{hash_target}'", level: 'WARN', module: 'nikita/lib/file/download'
+          callback null, not match
       @system.mkdir
         if: -> @status -1
         ssh: false

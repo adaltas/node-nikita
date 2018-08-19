@@ -54,7 +54,7 @@ require('nikita')
       do_srchash = =>
         return do_dsthash() if options.source_md5
         @log message: "Get source md5", level: 'DEBUG', module: 'nikita/lib/system/move'
-        file.hash ssh, options.source, 'md5', (err, hash) =>
+        @file.hash options.source, (err, {hash}) ->
           return callback err if err
           @log message: "Source md5 is \"hash\"", level: 'INFO', module: 'nikita/lib/system/move'
           options.source_md5 = hash
@@ -62,7 +62,7 @@ require('nikita')
       do_dsthash = =>
         return do_chkhash() if options.target_md5
         @log message: "Get target md5", level: 'DEBUG', module: 'nikita/lib/system/move'
-        file.hash ssh, options.target, 'md5', (err, hash) =>
+        @file.hash options.target, (err, {hash}) =>
           return callback err if err
           @log message: "Destination md5 is \"hash\"", level: 'INFO', module: 'nikita/lib/system/move'
           options.target_md5 = hash

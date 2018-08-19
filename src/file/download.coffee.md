@@ -32,52 +32,51 @@ calculated if neither sha256, sh1 nor md5 is provided.
 
 * `cache` (boolean)   
   Activate the cache, default to true if either "cache_dir" or "cache_file" is
-  activated.   
+  activated.
 * `cache_dir` (path)   
   If local_cache is not a string, the cache file path is resolved from cache
-  dir and cache file.   
-  By default: './'   
+  dir and cache file. By default: './'
 * `cache_file` (string | boolean)   
   Cache the file on the executing machine, equivalent to cache unless an ssh
-  connection is provided. If a string is provided, it will be the cache path.   
-  By default: basename of source   
+  connection is provided. If a string is provided, it will be the cache path.
+  By default: basename of source
 * `force` (boolean)   
-  Overwrite target file if it exists.   
+  Overwrite target file if it exists.
 * `force_cache` (boolean)   
-  Force cache overwrite if it exists   
+  Force cache overwrite if it exists
 * `gid`   
-  Group name or id who owns the target file.   
+  Group name or id who owns the target file.
 * `headers` (array)   
-  Extra  header  to include in the request when sending HTTP to a server.   
+  Extra  header  to include in the request when sending HTTP to a server.
 * `location` (boolean)   
   If the server reports that the requested page has moved to a different
   location (indicated with a Location: header and a 3XX response code), this
-  option will make curl redo the request on the new place.   
+  option will make curl redo the request on the new place.
 * `md5` (MD5 Hash)   
   Hash of the file using MD5. Used to check integrity
 * `mode` (octal mode)   
-  Permissions of the target. If specified, nikita will chmod after download   
+  Permissions of the target. If specified, nikita will chmod after download.
 * `proxy` (string)   
   Use the specified HTTP proxy. If the port number is not specified, it is
-  assumed at port 1080. See curl(1) man page.   
+  assumed at port 1080. See curl(1) man page.
 * `sha1` (SHA-1 Hash)   
-  Hash of the file using SHA-1. Used to check integrity.   
+  Hash of the file using SHA-1. Used to check integrity.
 * `sha256` (SHA-256 Hash)   
-  Hash of the file using SHA-256. Used to check integrity.   
+  Hash of the file using SHA-256. Used to check integrity.
 * `source` (path)   
   File, HTTP URL, GIT repository. File is the default protocol if source
-  is provided without any.   
+  is provided without any.
 * `target` (path)   
-  Path where to write the destination file.   
+  Path where to write the destination file.
 * `uid`   
-  User name or id who owns the target file.   
+  User name or id who owns the target file.
 
 ## Callback parameters
 
 * `err`   
-  Error object if any.   
+  Error object if any.
 * `downloaded`   
-  Value is "true" if file was downloaded.   
+  Value is "true" if file was downloaded.
 
 ## File example
 
@@ -143,19 +142,25 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
       # Normalization
       options.target = if options.cwd then p.resolve options.cwd, options.target else p.normalize options.target
       throw Error "Non Absolute Path: target is #{JSON.stringify options.target}, SSH requires absolute paths, you must provide an absolute path in the target or the cwd option" if ssh and not p.isAbsolute options.target
-      @call # Accelerator in case we know the target signature
+      # Shortcircuit accelerator:
+      # If we know the source signature and if the target file exists
+      # we compare it with the target file singature and stop if they match
+      @call
         if: typeof source_hash is 'string'
         shy: true
       , (_, callback) ->
         @log message: "Shortcircuit check if provided hash match target", level: 'WARN', module: 'nikita/lib/file/download'
-        file.hash ssh, options.target, algo, (err, hash) ->
+        @file.hash options.target, algo: algo, (err, {hash}) ->
           err = null if err?.code is 'ENOENT'
           callback err, source_hash is hash
       , (err, {status}) ->
         return unless status
         @log message: "Destination with valid signature, download aborted", level: 'INFO', module: 'nikita/lib/file/download'
         @end()
-      @file.cache # Download the file and place it inside local cache
+      # Download the file and place it inside local cache
+      # Overwrite the options.source and source_url properties to make them
+      # look like a local file instead of an HTTP URL
+      @file.cache
         if: options.cache
         ssh: false
         sudo: false # Local file must be readable by the current process
@@ -170,7 +175,11 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         throw err if err
         options.source = target if options.cache
         source_url = url.parse options.source
-      @fs.stat ssh: options.ssh, target: options.target, relax: true, (err, {stats}) ->
+      # TODO
+      # The current implementation seems inefficient. By modifying stageDestination,
+      # we download the file, check the hash, and again treat it the HTTP URL 
+      # as a local file and check hash again.
+      @fs.stat target: options.target, relax: true, (err, {stats}) ->
         throw err if err and err.code isnt 'ENOENT'
         if not err and misc.stats.isDirectory stats.mode
           @log message: "Destination is a directory", level: 'DEBUG', module: 'nikita/lib/file/download'
@@ -185,23 +194,31 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         cmd = "curl #{fail} #{k} -s #{options.source} -o #{stageDestination}"
         cmd += " -x #{options.proxy}" if options.proxy
         @log message: "Download file from url using curl", level: 'INFO', module: 'nikita/lib/file/download'
+        # Ensure target directory exists
         @system.mkdir
           shy: true
           target: path.dirname stageDestination
+        # Download the file
         @system.execute
           cmd: cmd
           shy: true
-        @call
-          if: typeof source_hash is 'string'
-        , (_, callback) ->
-          file.hash ssh, stageDestination, algo, (err, hash) ->
-            return callback Error "Invalid downloaded checksum, found '#{hash}' instead of '#{source_hash}'" if source_hash isnt hash
-            callback()
-        @call (_, callback) ->
-          file.compare_hash (if options.cache then null else ssh), stageDestination, ssh, options.target, algo, (err, match, hash1, hash2) =>
-            @log message: "Hash dont match, source is '#{hash1}' and target is '#{hash2}'", level: 'WARN', module: 'nikita/lib/file/download' unless match
-            @log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'nikita/lib/file/download' if match
-            callback err, not match
+        hash_source = hash_target = null
+        @file.hash stageDestination, algo: algo, (err, {hash}) ->
+          throw err if err
+          # Hash validation
+          # Probably not the best to check hash, it only applies to HTTP for now
+          if typeof source_hash is 'string' and source_hash isnt hash
+            throw Error "Invalid downloaded checksum, found '#{hash}' instead of '#{source_hash}'" if source_hash isnt hash
+          hash_source = hash
+        @file.hash options.target, algo: algo, relax: true, (err, {hash}) ->
+          throw err if err and err.code isnt 'ENOENT'
+          hash_target = hash
+        @call ({}, callback)->
+          match = hash_source is hash_target
+          @log if match
+          then message: "Hash matches as '#{hash_source}'", level: 'INFO', module: 'nikita/lib/file/download' 
+          else message: "Hash dont match, source is '#{hash_source}' and target is '#{hash_target}'", level: 'WARN', module: 'nikita/lib/file/download'
+          callback null, not match
         @system.remove
           unless: -> @status -1
           shy: true
@@ -210,11 +227,19 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         if: -> source_url.protocol not in protocols_http and not ssh
       , ->
         @log message: "File Download without ssh (with or without cache)", level: 'DEBUG', module: 'nikita/lib/file/download'
-        @call (_, callback) ->
-          file.compare_hash null, options.source, null, options.target, algo, (err, match, hash1, hash2) =>
-            @log message: "Hash dont match, source is '#{hash1}' and target is '#{hash2}'", level: 'WARN', module: 'nikita/lib/file/download' unless match
-            @log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'nikita/lib/file/download' if match
-            callback err, not match
+        hash_source = hash_target = null
+        @file.hash target: options.source, algo: algo, (err, {hash}) ->
+          throw err if err
+          hash_source = hash
+        @file.hash target: options.target, algo: algo, if_exists: true, (err, {hash}) ->
+          throw err if err
+          hash_target = hash
+        @call ({}, callback)->
+          match = hash_source is hash_target
+          @log if match
+          then message: "Hash matches as '#{hash_source}'", level: 'INFO', module: 'nikita/lib/file/download' 
+          else message: "Hash dont match, source is '#{hash_source}' and target is '#{hash_target}'", level: 'WARN', module: 'nikita/lib/file/download'
+          callback null, not match
         @system.mkdir
           if: -> @status -1
           shy: true
@@ -227,11 +252,19 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         if: -> source_url.protocol not in protocols_http and ssh
       , ->
         @log message: "File Download with ssh (with or without cache)", level: 'DEBUG', module: 'nikita/lib/file/download'
-        @call (_, callback) ->
-          file.compare_hash null, options.source, ssh, options.target, algo, (err, match, hash1, hash2) =>
-            @log message: "Hash dont match, source is '#{hash1}' and target is '#{hash2}'", level: 'WARN', module: 'nikita/lib/file/download' unless match
-            @log message: "Hash matches as '#{hash1}'", level: 'INFO', module: 'nikita/lib/file/download' if match
-            callback err, not match
+        hash_source = hash_target = null
+        @file.hash target: options.source, algo: algo, ssh: null, (err, {hash}) ->
+          throw err if err
+          hash_source = hash
+        @file.hash target: options.target, algo: algo, if_exists: true, (err, {hash}) ->
+          throw err if err
+          hash_target = hash
+        @call ({}, callback)->
+          match = hash_source is hash_target
+          @log if match
+          then message: "Hash matches as '#{hash_source}'", level: 'INFO', module: 'nikita/lib/file/download' 
+          else message: "Hash dont match, source is '#{hash_source}' and target is '#{hash_target}'", level: 'WARN', module: 'nikita/lib/file/download'
+          callback null, not match
         @system.mkdir
           if: -> @status -1
           shy: true

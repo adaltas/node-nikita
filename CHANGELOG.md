@@ -6,6 +6,7 @@
 
 Backward incompatibilities:
 
+* misc.file: deprecate usage of hash and compare
 * misc.glob: deprecated in favor of file.glob
 * context: 1st arg of handlers with the options key
 * service: option action renamed state

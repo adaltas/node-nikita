@@ -52,7 +52,7 @@ require('nikita').system.copy({
   gid: 'my_group'
   mode: '0755'
 }, function(err, {status}){
-  console.log(err ? err.message : 'File was copied: ' + status);
+  console.info(err ? err.message : 'File was copied: ' + status);
 });
 ```
 
@@ -162,22 +162,30 @@ target into a file.
 
 Copy the file if content doesn't match.
 
-      @call ({}, callback) ->
-        # Copy a file
-        misc.file.compare ssh, [options.source, options.target], (err, md5) =>
-          # Destination may not exists
-          return callback err if err and err.message.indexOf('Does not exist') isnt 0
-          # Files are the same, we can skip copying
-          return callback null, false if md5
-          @log message: "Copy file from #{options.source} into #{options.target}", level: 'WARN', module: 'nikita/lib/system/copy'
+      @call ->
+        hash_source = hash_target = null
+        @file.hash options.source, (err, {hash}) ->
+          throw err if err
+          hash_source = hash
+        @file.hash options.target, relax: true, (err, {hash}) ->
+          throw err if err and not err.code is 'ENOENT'
+          hash_target = hash
+        @call ({}, callback) ->
+          match = hash_source is hash_target
+          @log if match
+          then message: "Hash matches as '#{hash_source}'", level: 'INFO', module: 'nikita/lib/file/download' 
+          else message: "Hash dont match, source is '#{hash_source}' and target is '#{hash_target}'", level: 'WARN', module: 'nikita/lib/file/download'
+          callback null, not match
+        @call
+          if: -> @status -1
+        , ->
+          # Copy a file
+          @log message: "Copy file from #{options.source} into #{options.target}", level: 'DEBUG', module: 'nikita/lib/system/copy'
           @fs.copy
-            ssh: options.ssh
             source: options.source
             target: options.target
-          , (err) ->
-            callback err, true
-      , (err, status) ->
-        @log message: "File #{options.source} copied", level: 'DEBUG', module: 'nikita/lib/system/copy'
+          , (err, status) ->
+            @log message: "File copied from #{options.source} into #{options.target}", level: 'INFO', module: 'nikita/lib/system/copy' if status
 
 File ownership and permissions
 
