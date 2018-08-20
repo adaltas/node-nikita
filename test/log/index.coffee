@@ -19,7 +19,7 @@ describe 'log', ->
       Object.keys(log).sort().should.eql [
         'argument', 'depth', 'file', 'headers'
         'level', 'line', 'message', 'module'
-        'status', 'time', 'type'
+        'shy', 'status', 'time', 'type'
       ]
       log.argument.should.eql 'some text'
       log.level.should.eql 'INFO'

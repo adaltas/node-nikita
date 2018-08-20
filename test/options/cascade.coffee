@@ -201,3 +201,34 @@ describe 'options "cascade"', ->
         @call an_option: null, ({options}) ->
           (options.an_option is null).should.be.true()
       .promise()
+
+    it 'cascade default values set by session', ->
+      nikita()
+      .registry.register('a_module', cascade: {sleep: true, retry: true, depth: true, shy: true}, handler: ({options}, callback) ->
+        callback null,
+          sleep: options.sleep
+          retry: options.retry
+          depth: options.depth
+          shy: options.shy
+      )
+      .call sleep: 0, retry: 3, depth: 4, shy: true,  ->
+        @a_module (err, {sleep, retry, depth, shy}) ->
+          throw err if err
+          sleep.should.be.equal 0
+          retry.should.be.equal 3
+          depth.should.be.equal 4
+          shy.should.be.true()
+      .promise()
+
+    it.skip 'print status', ->
+      # This is open for debate
+      # Currently, default options are not overwritten by cascaded options
+      # We probably want the contrary
+      nikita()
+      .registry.register('a_module', a_key: false, cascade: {'a_key': true}, handler: ({options}, callback) ->
+        callback null, a_key: options.a_key
+      )
+      .call a_key: true, ->
+        @a_module (err, {a_key}) ->
+          a_key.should.be.true() unless err
+      .promise()

@@ -5,14 +5,36 @@ describe 'registry.register', ->
 
   describe 'global', ->
 
-    it 'set property', ->
-      nikita.registry.register 'my_function', -> 'my_function'
+    it 'register a function', ->
+      nikita.registry.register 'my_function', (->)
       nikita.registry.registered('my_function').should.be.true()
       nikita.registry.unregister 'my_function'
 
-    it 'register twice', ->
+    it 'register twice a function', ->
       nikita.registry.register 'my_function', -> 'my_function'
       nikita.registry.register 'my_function', -> 'my_function'
+
+    it 'call a function', ->
+      nikita
+      .call ->
+        nikita.registry.register 'my_function', ({options}, callback) -> callback null, a_key: options.a_key
+      .call ({}, callback) ->
+        nikita
+        .my_function a_key: 'a value', (err, {a_key}) ->
+          a_key.should.eql 'a value'
+        .next callback
+      .call ->
+        nikita.registry.unregister 'my_function'
+      .promise()
+
+    it 'register an object', ->
+      value_a = value_b = null
+      nikita.registry.register 'my_function', shy: true, handler: (->)
+      nikita.registry.register 'my': 'function': shy: true, handler: (->)
+      nikita.registry.registered('my_function').should.be.true()
+      nikita.registry.registered(['my', 'function']).should.be.true()
+      nikita.registry.unregister 'my_function'
+      nikita.registry.unregister ['my', 'function']
 
     it 'register an object with options', ->
       value_a = value_b = null
@@ -147,11 +169,16 @@ describe 'registry.register', ->
 
   describe 'local', ->
 
-    it 'set property', ->
+    it 'register a function', ->
       n = nikita()
-      n.registry.register 'my_function', -> 'my_function'
+      n.registry.register 'my_function', (->)
       n.registry.registered('my_function').should.be.true()
-      n.registry.unregister 'my_function'
+
+    it 'call a function', ->
+      nikita()
+      .registry.register 'my_function', ({options}, callback) -> callback null, a_key: options.a_key
+      .my_function a_key: 'a value', (err, {a_key}) ->
+        a_key.should.eql 'a value'
       .promise()
 
     it 'overwrite a middleware', ->
@@ -160,24 +187,27 @@ describe 'registry.register', ->
       .registry.register 'my_function', -> 'my_function'
       .promise()
 
-    it 'register an object with options', ->
+    it 'register an object', ->
       value_a = value_b = null
+      n = nikita()
+      n.registry.register 'my_function', shy: true, handler: (->)
+      n.registry.register  'my': 'function': shy: true, handler: (->)
+      n.registry.registered('my_function').should.be.true()
+      n.registry.registered(['my', 'function']).should.be.true()
+      n.promise()
+
+    it 'call an object', ->
       nikita()
       .registry.register( 'my_function', shy: true, handler: ({options}, callback) ->
-        value_a = "hello #{options.value}"
-        callback null, true
+        callback null, a_key: options.a_key
       )
-      .registry.register
-        'my': 'function': shy: true, handler: ({options}, callback) ->
-          value_b = "hello #{options.value}"
-          callback null, true
-      .my_function value: 'world a'
-      .my.function value: 'world b'
-      .next (err, {status}) ->
-        throw err if err
-        status.should.be.false()
-        value_a.should.eql "hello world a"
-        value_b.should.eql "hello world b"
+      .registry.register( 'my': 'function': shy: true, handler: ({options}, callback) ->
+        callback null, a_key: options.a_key
+      )
+      .my_function a_key: 'a value', (err, {a_key}) ->
+        a_key.should.eql 'a value'
+      .my.function a_key: 'a value', (err, {a_key}) ->
+        a_key.should.eql 'a value'
       .promise()
 
     it 'overwrite middleware options', ->

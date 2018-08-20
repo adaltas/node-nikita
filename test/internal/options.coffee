@@ -7,7 +7,7 @@ describe 'api callback', ->
 
   scratch = test.scratch @
 
-  it 'multiple options', ->
+  it 'internal.options', ->
     nikita()
     .internal.options [
       [{key_1_1: '1.1'}, {key_1_2: '1.2'}]
@@ -17,10 +17,6 @@ describe 'api callback', ->
     .map((action) ->
       (action.handler is undefined).should.be.a.true()
       action.action.should.eql ['call']
-      action.sleep.should.eql 3000
-      action.retry.should.eql 0
-      action.disabled.should.be.false()
-      action.status.should.be.true()
       action
     )
     .map((action) ->

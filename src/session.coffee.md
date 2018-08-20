@@ -124,22 +124,24 @@
           # Enrich
           action.action = action_name if action_name
           action.action = [action.action] unless Array.isArray action.action
-          action.user_args = true if params.enrich and action.callback?.length > 2
+          action.user_args = true if params.enrich and action.callback?.length > 2 # Doesnt seem to be used anywhere
           action.once = ['handler'] if action.once is true
           delete action.once if action.once is false
           action.once = action.once.sort() if Array.isArray action.once
-          action.sleep ?= 3000 # Wait 3s between retry
-          action.retry ?= 0
-          action.disabled ?= false
-          action.status ?= true
-          action.depth = state.stack.length + 1
-          throw Error 'Incompatible Options: status "false" implies shy "true"' if action.status is false and action.shy is false # Room for argument, leave it strict for now until we come accross a usecase justifying it.
-          action.shy ?= true if action.status is false
+          action.once = action.once.sort() if Array.isArray action.once
+          # action.sleep ?= 3000 # Wait 3s between retry
+          # action.retry ?= 0
+          # action.disabled ?= false
+          # action.status ?= true
+          # action.depth = state.stack.length + 1
+          # throw Error 'Incompatible Options: status "false" implies shy "true"' if action.status is false and action.shy is false # Room for argument, leave it strict for now until we come accross a usecase justifying it.
+          # action.shy ?= true if action.status is false
+          # action.shy ?= false
           # Validation
           if params.handler
             throw Error 'Missing handler option' unless action.handler
             throw Error "Invalid Handler: expect a function, got '#{action.handler}'" unless typeof action.handler is 'function'
-          jump_to_error Error "Invalid options sleep, got #{JSON.stringify action.sleep}" unless typeof action.sleep is 'number' and action.sleep >= 0
+          # jump_to_error Error "Invalid options sleep, got #{JSON.stringify action.sleep}" unless typeof action.sleep is 'number' and action.sleep >= 0
           action
         actions
       normalize_options = obj.internal.options
@@ -170,6 +172,16 @@
           push_headers options.parent if options.parent
         push_headers options
         options.headers = headers.reverse()
+        # Default values
+        options.sleep ?= 3000 # Wait 3s between retry
+        options.retry ?= 0
+        options.disabled ?= false
+        options.status ?= true
+        options.depth = if options.depth? then options.depth else state.stack.length + 1
+        # throw Error 'Incompatible Options: status "false" implies shy "true"' if options.status is false and options.shy is false # Room for argument, leave it strict for now until we come accross a usecase justifying it.
+        # options.shy ?= true if options.status is false
+        options.shy ?= false
+        # Goodies
         if options.source and match = /~($|\/.*)/.exec options.source
           unless obj.store['nikita:ssh:connection']
           then options.source = path.join process.env.HOME, match[1]
@@ -239,7 +251,6 @@
         obj.cascade = {...obj.options.cascade, ...module.exports.cascade}
         for k, v of options_parent
           options_original[k] = v if options_original[k] is undefined and obj.cascade[k] is true
-        options = enrich_options options
         options.original = options_original
         if options.action is 'next'
           {err, status} = state.todos
@@ -269,13 +280,23 @@
           , (err) ->
             callback err, {} if callback
             run()
+        options = enrich_options options
         index = state.index_counter++
         state.todos.status.unshift shy: options.shy, value: undefined
         state.stack.unshift state.todos
         state.todos = todos_create()
         state.todos.options = options
         proxy.log message: options.header, type: 'header', index: index, headers: options.headers if options.header
-        wrap.options options, (err) ->
+        do () ->
+          do_options = ->
+            try
+              # Validation
+              throw Error "Invalid options sleep, got #{JSON.stringify options.sleep}" unless typeof options.sleep is 'number' and options.sleep >= 0
+            catch err
+              do_callback [err, status: false]
+              return
+            wrap.options options, (err) ->
+              do_disabled()
           do_disabled = ->
             unless options.disabled
               proxy.log type: 'lifecycle', message: 'disabled_false', level: 'DEBUG', index: index, error: null, status: false
@@ -486,7 +507,7 @@
             args[1] = merge {}, args[1]
             callback args[0], args[1] if callback
             run()
-          do_disabled()
+          do_options()
       state.properties.child = get: -> ->
         module.exports(obj.options)
       state.properties.next = get: -> ->

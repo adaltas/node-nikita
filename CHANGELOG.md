@@ -22,6 +22,7 @@ New features:
 
 Fixes:
 
+* cascade: overwrite default values set in session
 * options status: dont return undefined when false
 * fs: disable log
 * system.mkdir: removed zombie call to uid_gid

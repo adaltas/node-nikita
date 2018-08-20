@@ -34,7 +34,7 @@ describe 'options "disable"', ->
       log.level.should.eql 'INFO'
       log.message.should.eql 'disabled_true'
       (log.module is undefined).should.be.true()
-      log.shy.should.be.true()
+      log.shy.should.be.false()
       log.status.should.be.false()
       log.type.should.eql 'lifecycle'
       # log.file.should.eql 'session.coffee.md'
