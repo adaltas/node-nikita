@@ -22,6 +22,7 @@ New features:
 
 Fixes:
 
+* file.upload: refactor and use file.hash
 * cascade: overwrite default values set in session
 * options status: dont return undefined when false
 * fs: disable log

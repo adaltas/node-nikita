@@ -79,7 +79,7 @@ require('nikita')
       status = false
       # source_stats = null
       target_stats = null
-      stage_target = "#{options.target}.#{Date.now()}#{Math.round(Math.random()*1000)}"
+      stage_target = null
       if options.md5?
         return callback Error "Invalid MD5 Hash:#{options.md5}" unless typeof options.md5 in ['string', 'boolean']
         algo = 'md5'
@@ -88,12 +88,21 @@ require('nikita')
         algo = 'sha1'
       else
         algo = 'md5'
+      # Stat the target and redefine its path if a directory
       @call (_, callback) ->
         @fs.stat ssh: false, target: options.target, (err, {stats}) ->
-          return callback() if err and err.code is 'ENOENT'
-          return callback err if err
-          target_stats = stats if misc.stats.isFile stats.mode
-          return callback() unless misc.stats.isDirectory stats.mode
+          # Unexpected err
+          return callback err if err and err.code isnt 'ENOENT'
+          # Target does not exists
+          return callback() if err
+          # Target is a file
+          if misc.stats.isFile stats.mode
+            target_stats = stats
+            return callback()
+          # Target is invalid
+          else unless misc.stats.isDirectory stats.mode
+            throw Error "Invalid Target: expect a file, a symlink or a directory for #{JSON.stringify options.target}"
+          # Target is a directory
           options.target = path.resolve options.target, path.basename options.source
           @fs.stat ssh: false, target: options.target, (err, {stats}) ->
             return callback() if err and err.code is 'ENOENT'
@@ -101,6 +110,9 @@ require('nikita')
             target_stats = stats if misc.stats.isFile stats.mode
             return callback() if misc.stats.isFile stats.mode
             callback Error "Invalid target: #{options.target}"
+      @call ->
+        # Now that we know the real name of the target, define a temporary file to write
+        stage_target = "#{options.target}.#{Date.now()}#{Math.round(Math.random()*1000)}"
       @call ({}, callback) ->
         return callback null, true unless target_stats
         hash_source = hash_target = null
@@ -116,35 +128,34 @@ require('nikita')
           then message: "Hash matches as '#{hash_source}'", level: 'INFO', module: 'nikita/lib/file/download' 
           else message: "Hash dont match, source is '#{hash_source}' and target is '#{hash_target}'", level: 'WARN', module: 'nikita/lib/file/download'
           callback null, not match
-      @system.mkdir
+      @call
         if: -> @status -1
-        ssh: false
-        target: path.dirname stage_target
-      @fs.createReadStream
-        if: -> @status -2
-        target: options.source
-        stream: (rs) ->
-          ws = fs.createWriteStream stage_target
-          rs.pipe ws
-      @call ->
+      , ->
+        @system.mkdir
+          ssh: false
+          target: path.dirname stage_target
+        @fs.createReadStream
+          target: options.source
+          stream: (rs) ->
+            ws = fs.createWriteStream stage_target
+            rs.pipe ws
         @system.move
           ssh: false
-          if: @status()
           source: stage_target
           target: options.target
         , (err, {status}) ->
           @log message: "Unstaged uploaded file", level: 'INFO', module: 'nikita/lib/file/upload' if status
-        @system.chmod
-          ssh: false
-          target: options.target
-          mode: options.mode
-          if: options.mode?
-        @system.chown
-          ssh: false
-          target: options.target
-          uid: options.uid
-          gid: options.gid
-          if: options.uid? or options.gid?
+      @system.chmod
+        ssh: false
+        target: options.target
+        mode: options.mode
+        if: options.mode?
+      @system.chown
+        ssh: false
+        target: options.target
+        uid: options.uid
+        gid: options.gid
+        if: options.uid? or options.gid?
 
 ## Dependencies
 
