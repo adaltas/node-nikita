@@ -177,7 +177,7 @@
         options.retry ?= 0
         options.disabled ?= false
         options.status ?= true
-        options.depth = if options.depth? then options.depth else state.stack.length + 1
+        options.depth = if options.depth? then options.depth else (options.parent?.depth or 0) + 1
         # throw Error 'Incompatible Options: status "false" implies shy "true"' if options.status is false and options.shy is false # Room for argument, leave it strict for now until we come accross a usecase justifying it.
         # options.shy ?= true if options.status is false
         options.shy ?= false

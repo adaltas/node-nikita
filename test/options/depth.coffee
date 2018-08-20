@@ -23,3 +23,23 @@ describe 'options "depth"', ->
         @call ({options}) ->
           options.depth.should.eql 3
     .promise()
+
+  it 'set root level', ->
+    nikita
+    .call ->
+      @call ({options}) ->
+        options.depth.should.eql 2
+        @call depth: 0, ({options}) ->
+          options.depth.should.eql 0
+          @call ({options}) ->
+            options.depth.should.eql 1
+    .call ->
+      @call ({options}) ->
+        options.depth.should.eql 2
+        @call depth: 4, ({options}) ->
+          options.depth.should.eql 4
+          @call ({options}) ->
+            options.depth.should.eql 5
+            @call ({options}) ->
+              options.depth.should.eql 6
+    .promise()

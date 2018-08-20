@@ -14,6 +14,7 @@ Backward incompatibilities:
 
 New features:
 
+* options.depth: definable by user
 * file.glob: new action
 * file.hash: new action
 * system.chown: use getent
