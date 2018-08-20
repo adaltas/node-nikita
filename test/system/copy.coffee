@@ -1,6 +1,5 @@
 
 nikita = require '../../src'
-glob = require '../../src/misc/glob'
 test = require '../test'
 they = require 'ssh2-they'
 
@@ -297,15 +296,13 @@ describe 'system.copy', ->
       .system.copy
         source: "#{scratch}/a_dir"
         target: "#{scratch}/a_copy"
-      .call (_, callback) ->
-        glob ssh, "#{scratch}/a_copy/**", dot: true, (err, files) ->
-          return callback err if err
-          files.sort().should.eql [
-            '/tmp/nikita-test/a_copy',
-            '/tmp/nikita-test/a_copy/.a_hidden_file',
-            '/tmp/nikita-test/a_copy/a_file'
-          ]
-          callback()
+      .file.glob "#{scratch}/a_copy/**", dot: true, (err, {files}) ->
+        throw err if err
+        files.sort().should.eql [
+          '/tmp/nikita-test/a_copy',
+          '/tmp/nikita-test/a_copy/.a_hidden_file',
+          '/tmp/nikita-test/a_copy/a_file'
+        ]
       .promise()
     
     they 'set permissions', (ssh) ->
@@ -373,7 +370,6 @@ describe 'system.copy', ->
         target: "#{scratch}"
       , (err, {status}) ->
         status.should.be.true() unless err
-      .call (_, callback) ->
-        glob ssh, "#{scratch}/**", dot: true, (err, files) ->
+      .file.glob "#{scratch}/**", dot: true, (err, {files}) ->
           callback err
       .promise()
