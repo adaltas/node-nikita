@@ -496,7 +496,7 @@
             proxy.log type: 'handled', index: index, error: args[0], status: args[1].status
             return if state.killed
             args[0] = undefined unless args[0] # Error is undefined and not null or false
-            state.todos = state.stack.shift() if state.todos.length is 0
+            state.todos = state.stack.shift() # Exit action state and move back to parent state
             jump_to_error args[0] if args[0] and not options.relax
             state.todos.throw_if_error = false if args[0] and options.callback
             state.todos.status[0].value = if options.status then args[1].status else false
