@@ -40,6 +40,7 @@ Fixes:
 
 Cleanup:
 
+* package: update license field to reflect MIT
 * log: remove log from cascade and parent usage 
 * fs.createWriteStream: code simplification
 * env: emulate systemctl
