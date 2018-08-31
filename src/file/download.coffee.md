@@ -253,7 +253,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
       , ->
         @log message: "File Download with ssh (with or without cache)", level: 'DEBUG', module: 'nikita/lib/file/download'
         hash_source = hash_target = null
-        @file.hash target: options.source, algo: algo, ssh: null, (err, {hash}) ->
+        @file.hash target: options.source, algo: algo, ssh: false, (err, {hash}) ->
           throw err if err
           hash_source = hash
         @file.hash target: options.target, algo: algo, if_exists: true, (err, {hash}) ->

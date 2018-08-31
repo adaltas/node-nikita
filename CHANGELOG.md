@@ -1,6 +1,9 @@
 
 # Changelog
 
+## Trunk
+
+* file.download: ssh null replaced by false
 
 ## Version 0.8.0
 
