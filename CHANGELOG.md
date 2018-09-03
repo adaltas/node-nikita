@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* ldap: options as destructuring object
 * file.download: ssh null replaced by false
 
 ## Version 0.8.0

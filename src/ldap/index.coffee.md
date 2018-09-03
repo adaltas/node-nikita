@@ -39,7 +39,7 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       modified = false
       indexes = {}
       add = {}

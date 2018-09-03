@@ -59,7 +59,7 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = (options, callback) ->
+    module.exports = ({options}, callback) ->
       # # Auth related options
       # binddn = if options.binddn then "-D #{options.binddn}" else ''
       # passwd = if options.passwd then "-w #{options.passwd}" else ''
