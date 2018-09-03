@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* file.cache: fix undefined status argument
 * ldap: options as destructuring object
 * file.download: ssh null replaced by false
 

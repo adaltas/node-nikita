@@ -131,7 +131,7 @@ require('nikita')
           else
             @log message: "Target file does not exists", level: 'INFO', module: 'nikita/lib/file/cache'
             callback null, true
-      , (err, status) ->
+      , (err, {status}) ->
         @end() unless status
       # Place into cache
       if u.protocol in protocols_http
