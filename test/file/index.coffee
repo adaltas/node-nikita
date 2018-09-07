@@ -228,17 +228,30 @@ describe 'file', ->
   describe 'ownerships and permissions', ->
 
     they 'set permission', (ssh) ->
-      nikita.file
+      nikita
         ssh: ssh
+      .file
         target: "#{scratch}/a_file"
         content: 'ok'
         mode: 0o0700
       .file.assert
         target: "#{scratch}/a_file"
         mode: 0o0700
+      .promise()
+
+    they 'does not modify parent', (ssh) ->
+      nikita
+        ssh: ssh
+      .system.mkdir
+        target: "#{scratch}/a_dir"
+        mode: 0o0744
+      .file
+        target: "#{scratch}/a_file"
+        content: 'ok'
+        mode: 0o0700
       .file.assert
-        target: "#{scratch}"
-        mode: [0o0755, 0o0775]
+        target: "#{scratch}/a_dir"
+        mode: 0o0744
       .promise()
 
     they 'change permission', (ssh) ->
