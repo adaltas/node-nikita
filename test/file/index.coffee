@@ -253,6 +253,21 @@ describe 'file', ->
         target: "#{scratch}/a_dir"
         mode: 0o0744
       .promise()
+      
+    they 'ensure mode is preserve on content update', (ssh) ->
+      nikita
+        ssh: ssh
+      .file
+        target: "#{scratch}/file"
+        content: 'hello'
+        mode: 0o0755
+      .file
+        target: "#{scratch}/file"
+        content: "hello nikita"
+      .file.assert
+        target: "#{scratch}/file"
+        mode: 0o0755
+      .promise()
 
     they 'change permission', (ssh) ->
       nikita

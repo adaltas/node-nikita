@@ -356,12 +356,14 @@ require('nikita')
           return callback()
         options.flags ?= 'a' if options.append
         # Ownership and permission are also handled
-        # Mode is setted by default here to avoid a chmod 644 on existing file if option.mode is not specified
-        options.mode ?= 0o0644
+        # Preserved the file mode if the file exists. Otherwise,
+        # delegate to fs.createWriteStream` the creation of the default
+        # mode of "744".
         @fs.writeFile
           target: options.target
           flags: options.flags
           content: options.content
+          mode: targetStats?.mode
         , callback
       @system.uid_gid
         uid: options.uid
@@ -375,7 +377,7 @@ require('nikita')
         @system.chown
           target: options.target
           stats: targetStats
-          ssh: options.ssh
+          # ssh: options.ssh
           sudo: options.sudo
           uid: options.uid
           gid: options.gid
@@ -384,7 +386,7 @@ require('nikita')
         @system.chmod
           target: options.target
           stats: targetStats
-          ssh: options.ssh
+          # ssh: options.ssh
           sudo: options.sudo
           mode: options.mode
           if: options.mode?
