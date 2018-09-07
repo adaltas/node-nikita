@@ -69,7 +69,13 @@ require('nikita')
       @system.execute
         cmd: """
         [ ! -e #{options.target} ] && exit 3
-        stat #{dereference} -c '%f|%u|%g|%s|%X|%Y' #{options.target}
+        if [ -d /private ]; then
+          # MacOS
+          stat #{dereference} -f '%Xp|%u|%g|%z|%a|%m' #{options.target}
+        else
+          # Linux
+          stat #{dereference} -c '%f|%u|%g|%s|%X|%Y' #{options.target}
+        fi
         """
         sudo: options.sudo
         bash: options.bash
@@ -88,6 +94,26 @@ require('nikita')
           size: parseInt size, 10
           atime: parseInt atime, 10
           mtime: parseInt mtime, 10
+
+## Stat implementation
+
+On Linux, the format argument is '-c'. The following codes are used:
+
+- `%f`  The raw mode in hexadecimal.
+- `%u`  The user ID of owner.
+- `%g`  The group ID of owner.
+- `%s`  The block size of file.
+- `%X`  The time of last access, seconds since Epoch.
+- `%y`  The time of last modification, human-readable.
+
+On MacOS, the format argument is '-f'. The following codes are used:
+
+- `%Xp` File type and permissions in hexadecimal.
+- `%u`  The user ID of owner.
+- `%g`  The group ID of owner.
+- `%z`  The size of file in bytes.
+- `%a`  The time file was last accessed.
+- `%m`  The time file was last modified.
 
 ## Dependencies
 
