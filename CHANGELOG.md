@@ -5,6 +5,7 @@
 
 New features:
 
+* system.execute.assert: honors execute options
 * misc: export db and docker
 
 Fixes:

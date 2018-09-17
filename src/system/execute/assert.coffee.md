@@ -14,6 +14,8 @@ Assert a shell command.
 * `trim` (boolean)   
   Trim the actuel and expected content before matching, default is "false".
 
+All options are passed to `system.execute`.
+
 ## Assert a command stdout
 
 ```javascript
@@ -31,10 +33,11 @@ nikita.system.execute({
       options.trim ?= false
       options.content = options.content.toString() if Buffer.isBuffer options.content
       options.content = options.content.trim() if options.content and options.trim
+      # Content is a string or a buffer
       @call
         if: options.content? and (typeof options.content is 'string' or Buffer.isBuffer options.content)
       , ->
-        @system.execute options.cmd, (err, {stdout}) ->
+        @system.execute options, options.cmd, (err, {stdout}) ->
           throw err if err
           stdout = stdout.trim() if options.trim
           unless options.not
@@ -46,10 +49,11 @@ nikita.system.execute({
               options.error ?= "Unexpected content: #{JSON.stringify options.content.toString()}"
               err = Error options.error
           throw err if err
+      # Content is a regexp
       @call
         if: options.content? and options.content instanceof RegExp
       , ->
-        @system.execute options.cmd, (err, {stdout}) ->
+        @system.execute options, options.cmd, (err, {stdout}) ->
           throw err if err
           stdout = stdout.trim() if options.trim
           unless options.not
