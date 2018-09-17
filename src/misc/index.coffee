@@ -10,9 +10,13 @@ tilde = require 'tilde-expansion'
 file = require './file'
 string = require './string'
 array = require './array'
+db = require './db'
+docker = require './docker'
 ssh = require './ssh'
 
 misc = module.exports =
+  db: require './db'
+  docker: require './docker'
   stats: require './stats'
   ssh: require './ssh'
   # TODO: to move

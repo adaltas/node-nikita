@@ -3,6 +3,10 @@
 
 ## Trunk
 
+New features:
+
+* misc: export db and docker
+
 Fixes:
 
 * fs.mkdir: ensure macos compatiblity by using shortcut params
@@ -19,7 +23,7 @@ Fixes:
 Backward incompatibilities:
 
 * misc.file: deprecate usage of hash and compare
-* misc.glob: deprecated in favor of file.glob
+* misc.glob: deprecated in favour of file.glob
 * context: 1st arg of handlers with the options key
 * service: option action renamed state
 * service: values start, stop, restart renamed started, stopped and restarted
