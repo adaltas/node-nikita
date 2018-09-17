@@ -28,8 +28,8 @@ Make directories.
       if options.mode
         options.mode = options.mode.toString(8).substr(-4) if typeof options.mode is 'number'
         cmd += "-m '#{options.mode}' "
-      cmd += " --owner #{options.uid} " if options.uid
-      cmd += " --group #{options.gid} " if options.gid
+      cmd += " -o #{options.uid} " if options.uid
+      cmd += " -g #{options.gid} " if options.gid
       cmd +=  if options.uid or options.gid then " -d #{options.target}" else "#{options.target}"
       @system.execute
         cmd: cmd
