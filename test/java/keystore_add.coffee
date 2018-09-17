@@ -35,7 +35,7 @@ describe 'java.keystore_add', ->
 
     they 'detect existing cacert signature', (ssh) ->
       nikita
-        ssh: ssh
+        ssh: null
       .java.keystore_add
         keystore: "#{scratch}/keystore"
         storepass: "changeit"

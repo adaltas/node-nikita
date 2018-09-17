@@ -3,6 +3,11 @@
 
 ## Trunk
 
+Fixes:
+
+* java.keystore_add: dont copy certs unless ssh and local
+* java.keystore_add: new tmpdir option
+* file: preserve origin permissions on update
 * fs.stat: macos compatibility
 * file.cache: fix undefined status argument
 * ldap: options as destructuring object

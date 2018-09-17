@@ -22,6 +22,10 @@ and truststores.
   system options if "true".
 * `storepass` (string)   
   Password to manage the keystore.
+* `tmpdir` (string)   
+  Temporary directory used to isolate certificate from their container file as
+  well as to store uploaded file when the option `local`
+  is "true"; default to "/tmp/nikita/java_keystore_#{Date.now()}". 
 
 ## Callback parameters
 
@@ -89,86 +93,97 @@ require('nikita')
 ## Source Code
 
     module.exports = ({options}) ->
+      @log message: "Entering java.keystore_add", level: 'DEBUG', module: 'nikita/lib/java/keystore_add'
+      ssh = @ssh options.ssh
+      p = if ssh then path.posix else path
+      # Validate options
       throw Error "Required Option: 'keystore'" unless options.keystore
       throw Error "Required Option: 'storepass'" unless options.storepass
       throw Error "Required Options: 'cacert' or 'cert'" unless options.cacert or options.cert
       throw Error "Required Option: 'key' for certificate" if options.cert and not options.key
       throw Error "Required Option: 'keypass' for certificate" if options.cert and not options.keypass
       throw Error "Required Option: 'name' for certificate" if options.cert and not options.name
-      # throw Error "Required option 'caname'" unless options.caname
-      # throw Error "Required option 'cacert'" unless options.cacert
+      # Default options
       options.parent ?= {}
       options.openssl ?= 'openssl'
-      tmp_location = "/tmp/nikita/java_keystore_#{Date.now()}"
+      options.tmpdir ?= "/tmp/nikita/java_keystore_#{Date.now()}"
+      # Update paths in case of download
       files =
-        cert: if options.cert? and options.local then  "#{tmp_location}/#{path.basename options.cert}" else options.cert
-        cacert: if options.cacert?  and options.local then  "#{tmp_location}/#{path.basename options.cacert}" else options.cacert
-        key: if options.key? and options.local then  "#{tmp_location}/#{path.basename options.key}" else options.key
+        cert: if ssh and options.local and options.cert? then  "#{options.tmpdir}/#{path.basename options.cert}" else options.cert
+        cacert: if ssh and options.local and options.cacert? then  "#{options.tmpdir}/#{path.basename options.cacert}" else options.cacert
+        key: if ssh and options.local and options.key? then  "#{options.tmpdir}/#{path.basename options.key}" else options.key
+      # Temporary directory
+      # Used to upload certificates and to isolate certificates from their file
       @system.mkdir
-        target: "#{tmp_location}"
+        if: options.tmpdir
+        target: "#{options.tmpdir}"
         mode: 0o0700
         shy: true
+      # Upload certificates
       @file.download
-        if: options.local and options.cacert
+        if: ssh and options.local and options.cacert
         source: options.cacert
         target: files.cacert
         mode: 0o0600
         shy: true
       @file.download
-        if: options.local and options.cert
+        if: ssh and options.local and options.cert
         source: options.cert
         target: files.cert
         mode: 0o0600
         shy: true
       @file.download
-        if: options.local and options.key
+        if: ssh and options.local and options.key
         source: options.key
         target: files.key
         mode: 0o0600
         shy: true
+      # Prepare parent directory
       @system.mkdir options, options.parent,
-        header: null
+        # header: null
         unless_exists: true
-        target: path.dirname options.keystore
-      @system.execute # Deal with key and certificate
+        target: p.dirname options.keystore
+      # Deal with key and certificate
+      @system.execute
+        if: !!options.cert
         bash: true
         cmd: """
         cleanup () {
-          [ -n "#{if options.cacert then '1' else ''}" ] || rm -rf #{tmp_location};
+          [ -n "#{if options.cacert then '1' else ''}" ] || rm -rf #{options.tmpdir};
         }
         if ! which #{options.openssl}; then echo 'OpenSSL command line tool not detected'; cleanup; exit 4; fi
         [ -f #{files.cert} ] || (cleanup; exit 6)
-        # mkdir -p -m 700 #{tmp_location}
+        # mkdir -p -m 700 #{options.tmpdir}
         user=`#{options.openssl} x509  -noout -in "#{files.cert}" -sha1 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/' | cat`
         # We are only retrieving the first certificate found in the chain with `head -n 1`
         keystore=`keytool -list -v -keystore #{options.keystore} -storepass #{options.storepass} -alias #{options.name} | grep SHA1: | head -n 1 | sed -E 's/.+SHA1: +(.*)/\\1/'`
         echo "User Certificate: $user"
         echo "Keystore Certificate: $keystore"
-        if [[ "$user" == "$keystore" ]]; then cleanup; exit 5; fi
+        if [ "$user" = "$keystore" ]; then cleanup; exit 5; fi
         # Create a PKCS12 file that contains key and certificate
         #{options.openssl} pkcs12 -export \
           -in "#{files.cert}" -inkey "#{files.key}" \
-          -out "#{tmp_location}/pkcs12" -name #{options.name} \
+          -out "#{options.tmpdir}/pkcs12" -name #{options.name} \
           -password pass:#{options.keypass}
         # Import PKCS12 into keystore
         keytool -noprompt -importkeystore \
           -destkeystore #{options.keystore} \
           -deststorepass #{options.storepass} \
           -destkeypass #{options.keypass} \
-          -srckeystore "#{tmp_location}/pkcs12" -srcstoretype PKCS12 -srcstorepass #{options.keypass} \
+          -srckeystore "#{options.tmpdir}/pkcs12" -srcstoretype PKCS12 -srcstorepass #{options.keypass} \
           -alias #{options.name}
         """
         trap: true
-        if: !!options.cert
         code_skipped: 5 # OpenSSL exit 3 if file does not exists
       , (err) ->
         throw Error "OpenSSL command line tool not detected" if err?.code is 4
         throw Error "Keystore file does not exists" if err?.code is 6
-      @system.execute # Deal with CACert
+      # Deal with CACert
+      @system.execute
         if: options.cacert
         bash: true
         cmd: """
-        # cleanup () { rm -rf #{tmp_location}; }
+        # cleanup () { rm -rf #{options.tmpdir}; }
         cleanup () { echo 'clean'; }
         # Check password
         if [ -f #{options.keystore} ] && ! keytool -list -keystore #{options.keystore} -storepass #{options.storepass} >/dev/null; then
@@ -182,13 +197,13 @@ require('nikita')
         CERTS=$(grep 'END CERTIFICATE' $PEM_FILE| wc -l)
         code=5
         for N in $(seq 0 $(($CERTS - 1))); do
-          if [[ $CERTS == '1' ]]; then
+          if [ $CERTS -eq '1' ]; then
             ALIAS="#{options.caname}"
           else
             ALIAS="#{options.caname}-$N"
           fi
           # Isolate cert into a file
-          CACERT_FILE=#{tmp_location}/$ALIAS
+          CACERT_FILE=#{options.tmpdir}/$ALIAS
           cat $PEM_FILE | awk "n==$N { print }; /END CERTIFICATE/ { n++ }" > $CACERT_FILE
           # Read user CACert signature
           user=`#{options.openssl} x509  -noout -in "$CACERT_FILE" -sha1 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/'`
@@ -196,15 +211,15 @@ require('nikita')
           keystore=`keytool -list -v -keystore #{options.keystore} -storepass #{options.storepass} -alias $ALIAS | grep SHA1: | sed -E 's/.+SHA1: +(.*)/\\1/'`
           echo "User CA Cert: $user"
           echo "Keystore CA Cert: $keystore"
-          if [[ "$user" == "$keystore" ]]; then echo 'Identical Signature'; code=5; continue; fi
+          if [ "$user" = "$keystore" ]; then echo 'Identical Signature'; code=5; continue; fi
           # Remove CACert if signature doesnt match
-          if [[ "$keystore" != "" ]]; then
+          if [ "$keystore" != "" ]; then
             keytool -delete \
               -keystore #{options.keystore} \
               -storepass #{options.storepass} \
               -alias $ALIAS
           fi
-          keytool -noprompt -import -trustcacerts -keystore #{options.keystore} -storepass #{options.storepass} -alias $ALIAS -file #{tmp_location}/$ALIAS
+          keytool -noprompt -import -trustcacerts -keystore #{options.keystore} -storepass #{options.storepass} -alias $ALIAS -file #{options.tmpdir}/$ALIAS
           code=0
         done
         cleanup
@@ -214,6 +229,7 @@ require('nikita')
         code_skipped: 5
       , (err) ->
         throw Error "CA file does not exist: #{files.cacert}" if err?.code is 3
+      # Ensure ownerships and permissions
       @system.chown
         target: options.keystore
         uid: options.uid
@@ -223,6 +239,11 @@ require('nikita')
         target: options.keystore
         mode: options.mode
         if: options.mode?
+      # Cleanup
+      @system.remove
+        shy: true
+        always: true # TODO: not yet implemented
+        target: "#{options.tmpdir}"
 
 ## Dependencies
 
