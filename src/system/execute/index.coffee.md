@@ -169,6 +169,7 @@ nikita.system.execute({
         @log message: "Writing bash script to #{JSON.stringify options.target}", level: 'INFO'
         options.cmd = "#{options.bash} #{options.target}"
         options.cmd = "su - #{options.uid} -c '#{options.cmd}'" if options.uid
+        options.cmd += ";code=`echo $?`; rm '#{options.target}'; exit $code" if not options.dirty and options.target?
         @fs.writeFile
           target: options.target
           content: cmd
@@ -181,6 +182,7 @@ nikita.system.execute({
         options.target = "/var/tmp/nikita_#{string.hash options.cmd}" if typeof options.target isnt 'string'
         @log message: "Writing arch-chroot script to #{JSON.stringify options.target}", level: 'INFO'
         options.cmd = "arch-chroot #{options.rootdir} bash #{options.target}"
+        options.cmd += ";code=`echo $?`; rm '#{options.target}'; exit $code" if not options.dirty and options.target?
         @fs.writeFile
           target: "#{path.join options.rootdir, options.target}"
           content: "#{cmd}"
@@ -241,14 +243,12 @@ nikita.system.execute({
               @log message: "Skip exit code \"#{code}\"", level: 'INFO', module: 'nikita/lib/system/execute'
             callback null, status
           , 1
-      @next (err1, {status}) ->
-        @system.remove
-          if: not options.dirty and options.target?
-          target: options.target
-          always: true # todo, need to create this option (run even on error)
-          sudo: false
-        @next (err2) ->
-          callback err1 or err2, status: status, stdout: result.stdout, stderr: result.stderr, code: result.code
+      @next (err, {status}) ->
+        callback err,
+          status: status
+          stdout: result.stdout
+          stderr: result.stderr
+          code: result.code
 
 ## Dependencies
 

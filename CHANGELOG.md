@@ -12,6 +12,7 @@ New features:
 
 Fixes:
 
+* system.execute: clean up tmp file
 * docker.cp: migrate to options as destructured assignment
 * fs.mkdir: ensure macos compatiblity by using shortcut params
 * java.keystore_add: dont copy certs unless ssh and local
