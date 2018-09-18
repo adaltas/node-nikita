@@ -1,5 +1,8 @@
 
 misc = require '../../src/misc'
+{tags} = require '../test'
+
+return unless tags.api
 
 describe 'merge', ->
 

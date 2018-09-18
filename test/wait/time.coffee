@@ -1,11 +1,11 @@
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh, scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.posix
 
 describe 'wait.time', ->
-
-  scratch = test.scratch @
 
   they 'time as main argument', (ssh) ->
     before = Date.now()

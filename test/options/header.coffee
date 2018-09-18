@@ -1,11 +1,10 @@
 
 nikita = require '../../src'
-test = require '../test'
-fs = require 'fs'
+{tags} = require '../test'
+
+return unless tags.api
 
 describe 'options "header"', ->
-
-  scratch = test.scratch @
   
   it 'print value', ->
     headers = []
@@ -15,10 +14,10 @@ describe 'options "header"', ->
     .call header: '1', ->
       @call header: '1.1', ->
         @call header: '1.1.1', (->)
-      @file.touch header: '1.2', target: "#{scratch}/file_h2"
-    .file.touch
+      @call header: '1.2', (->)
+    .call
       header: '2'
-      target: "#{scratch}/file_h1"
+    , (->)
     .call ->
       headers.should.eql [
         { message: '1', headers: ['1'], depth: 1 }

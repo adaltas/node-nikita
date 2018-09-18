@@ -1,47 +1,46 @@
 
-nikita = require '../../src'
-ssh = require '../../src/misc/ssh'
-test = require '../test'
 connect = require 'ssh2-connect'
+nikita = require '../../src'
+misc = require '../../src/misc'
+test = require '../test'
+{tags, ssh} = require '../test'
+
+return unless tags.posix
 
 describe 'ssh.open', ->
 
-  scratch = test.scratch @
-
   it 'with handler options', ->
-    config = test.config()
     nikita
     .call ->
       (!!@ssh()).should.be.false()
     .ssh.open
-      host: config.ssh.host
-      port: config.ssh.port
-      username: config.ssh.username
-      password: config.ssh.password
-      private_key: config.ssh.privateKey
-      public_key: config.ssh.publicKey
+      host: ssh.host
+      port: ssh.port
+      username: ssh.username
+      password: ssh.password
+      private_key: ssh.privateKey
+      public_key: ssh.publicKey
     , (err, {status}) ->
       status.should.be.true() unless err
     .call ->
       (!!@ssh()).should.be.true()
-      ssh.is( @ssh() ).should.be.true()
+      misc.ssh.is( @ssh() ).should.be.true()
     .ssh.close()
     .promise()
 
   it 'with global options', ->
-    config = test.config()
     nikita
       ssh:
-        host: config.ssh.host
-        port: config.ssh.port
-        username: config.ssh.username
-        password: config.ssh.password
-        private_key: config.ssh.privateKey
-        public_key: config.ssh.publicKey
+        host: ssh.host
+        port: ssh.port
+        username: ssh.username
+        password: ssh.password
+        private_key: ssh.privateKey
+        public_key: ssh.publicKey
     .ssh.open()
     .call ->
       (!!@ssh()).should.be.true()
-      ssh.is( @ssh() ).should.be.true()
+      misc.ssh.is( @ssh() ).should.be.true()
     .ssh.close {}, (err, {status}) ->
       status.should.be.true() unless err
     .ssh.close {}, (err, {status}) ->
@@ -49,14 +48,13 @@ describe 'ssh.open', ->
     .promise()
 
   it 'check status with properties', ->
-    config = test.config()
     options = 
-      host: config.ssh.host
-      port: config.ssh.port
-      username: config.ssh.username
-      password: config.ssh.password
-      private_key: config.ssh.privateKey
-      public_key: config.ssh.publicKey
+      host: ssh.host
+      port: ssh.port
+      username: ssh.username
+      password: ssh.password
+      private_key: ssh.privateKey
+      public_key: ssh.publicKey
     nikita
     .ssh.open options
     .ssh.open options, (err, {status}) ->
@@ -65,14 +63,13 @@ describe 'ssh.open', ->
     .promise()
 
   it 'check status with instance', (next) ->
-    config = test.config()
     connect
-      host: config.ssh.host
-      port: config.ssh.port
-      username: config.ssh.username
-      password: config.ssh.password
-      private_key: config.ssh.privateKey
-      public_key: config.ssh.publicKey
+      host: ssh.host
+      port: ssh.port
+      username: ssh.username
+      password: ssh.password
+      private_key: ssh.privateKey
+      public_key: ssh.publicKey
     , (err, ssh) ->
       return next err if err
       nikita

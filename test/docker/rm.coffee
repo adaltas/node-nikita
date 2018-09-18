@@ -1,20 +1,17 @@
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
-docker = require '../../src/misc/docker'
+{tags, ssh, scratch, docker} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.docker
 
 describe 'docker.rm', ->
-
-  scratch = test.scratch @
-  config = test.config()
-  return if config.disable_docker
 
   they 'remove stopped container', (ssh) ->
     @timeout 30000
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm
       force: true
       container: 'nikita_rm'
@@ -33,7 +30,7 @@ describe 'docker.rm', ->
     @timeout 30000
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm
       container: 'nikita_rm'
       force: true
@@ -56,7 +53,7 @@ describe 'docker.rm', ->
     @timeout 30000
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm
       container: 'nikita_rm'
       force: true

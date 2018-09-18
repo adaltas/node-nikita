@@ -1,13 +1,11 @@
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.system_user
 
 describe 'system.group.remove', ->
-  
-  config = test.config()
-  return if config.disable_system_user
-  scratch = test.scratch @
   
   they 'handle status', (ssh) ->
     nikita

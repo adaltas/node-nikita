@@ -15,4 +15,3 @@ services:
       - ../..:/nikita
     environment:
       NIKITA_TEST_MODULE: /nikita/env/centos7/test.coffee
-      TMPDIR: '/var/tmp'

@@ -19,5 +19,5 @@ if test -t 0; then
     /bin/bash
   fi
 else
-  node_modules/.bin/mocha $@
+  npm test
 fi

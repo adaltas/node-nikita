@@ -1,11 +1,11 @@
 
 nikita = require '../../src'
-test = require '../test'
-fs = require 'fs'
+{tags} = require '../test'
+
+return unless tags.api
 
 describe 'options "after"', ->
 
-  scratch = test.scratch @
   
   it 'is a function', ->
     history = []

@@ -1,72 +1,74 @@
 
-they = require 'ssh2-they'
 conditions = require '../../src/misc/conditions'
+{tags} = require '../test'
+
+return unless tags.api
 
 describe 'if', ->
 
-  # they 'bypass if not present', (ssh, next) ->
+  # it 'bypass if not present', (next) ->
   #   conditions.if
   #     ssh: ssh
   #     () -> false.should.be.true()
   #     next
 
-  they 'succeed if `true`', (ssh, next) ->
+  it 'succeed if `true`', (next) ->
     conditions.if
       options:
         if: true
       next
       () -> false.should.be.true()
 
-  they 'succeed if `1`', (ssh, next) ->
+  it 'succeed if `1`', (next) ->
     conditions.if
       options:
         if: 1
       next
       () -> false.should.be.true()
 
-  they 'succeed if buffer and length > 1', (ssh, next) ->
+  it 'succeed if buffer and length > 1', (next) ->
     conditions.if
       options:
         if: Buffer.from 'abc'
       next
       () -> false.should.be.true()
 
-  they 'fail if buffer and length is 0', (ssh, next) ->
+  it 'fail if buffer and length is 0', (next) ->
     conditions.if
       options:
         if: Buffer.from ''
       () -> false.should.be.true()
       next
 
-  they 'fail if `false`', (ssh, next) ->
+  it 'fail if `false`', (next) ->
     conditions.if
       options:
         if: false
       () -> false.should.be.true()
       next
 
-  they 'fail if `null`', (ssh, next) ->
+  it 'fail if `null`', (next) ->
     conditions.if
       options:
         if: null
       () -> false.should.be.true()
       next
 
-  they 'fail if `undefined`', (ssh, next) ->
+  it 'fail if `undefined`', (next) ->
     conditions.if
       options:
         if: undefined
       () -> false.should.be.true()
       next
 
-  they 'succeed if string not empty', (ssh, next) ->
+  it 'succeed if string not empty', (next) ->
     conditions.if
       options:
         if: 'abc'
       next
       () -> false.should.be.true()
 
-  they 'succeed if template string not empty', (ssh, next) ->
+  it 'succeed if template string not empty', (next) ->
     conditions.if
       options:
         if: '{{options.db.test}}'
@@ -74,14 +76,14 @@ describe 'if', ->
       next
       () -> false.should.be.true()
 
-  they 'fail if string empty', (ssh, next) ->
+  it 'fail if string empty', (next) ->
     conditions.if
       options:
         if: ''
       () -> false.should.be.true()
       next
 
-  they 'fail if template string empty', (ssh, next) ->
+  it 'fail if template string empty', (next) ->
     conditions.if
       options:
         if: '{{options.db.test}}'
@@ -89,7 +91,7 @@ describe 'if', ->
       () -> false.should.be.true()
       next
 
-  they 'function pass options', (ssh, next) ->
+  it 'function pass options', (next) ->
     conditions.if
       options:
         if: ({options}) ->
@@ -98,7 +100,7 @@ describe 'if', ->
       next
       (err) -> false.should.be.true()
 
-  they 'function is sync with 0 arguments', (ssh, next) ->
+  it 'function is sync with 0 arguments', (next) ->
     called = false
     conditions.if
       options:
@@ -108,7 +110,7 @@ describe 'if', ->
         next()
       (err) -> false.should.be.true()
 
-  they 'function is sync with 1 arguments', (ssh, next) ->
+  it 'function is sync with 1 arguments', (next) ->
     called = false
     conditions.if
       options:
@@ -118,14 +120,14 @@ describe 'if', ->
         next()
       (err) -> false.should.be.true()
 
-  they 'succeed if function is sync and return false', (ssh, next) ->
+  it 'succeed if function is sync and return false', (next) ->
     conditions.if
       options:
         if: -> false
       () -> false.should.be.true()
       next
 
-  they 'succed if function is async and pass true', (ssh, next) ->
+  it 'succed if function is async and pass true', (next) ->
     called = true
     conditions.if
       options:
@@ -135,14 +137,14 @@ describe 'if', ->
         next()
       (err) -> false.should.be.true()
 
-  they 'fail if function is async and pass false', (ssh, next) ->
+  it 'fail if function is async and pass false', (next) ->
     conditions.if
       options:
         if: ({}, callback) -> callback null, false
       () -> false.should.be.true()
       next
 
-  they 'function pass error object on `failed` callback', (ssh, next) ->
+  it 'function pass error object on `failed` callback', (next) ->
     conditions.if
       options:
         if: ({}, callback) -> callback new Error 'cool'
@@ -151,7 +153,7 @@ describe 'if', ->
 
   describe 'error', ->
 
-    they 'fail if an object', (ssh, next) ->
+    it 'fail if an object', (next) ->
       conditions.if
         options:
           if: {}
@@ -162,104 +164,104 @@ describe 'if', ->
 
 describe 'unless', ->
 
-  # they 'bypass if not present', (ssh, next) ->
+  # it 'bypass if not present', (next) ->
   #   conditions.unless
   #     {}
   #     next
   #     () -> false.should.be.true()
 
-  they 'succeed if `true`', (ssh, next) ->
+  it 'succeed if `true`', (next) ->
     conditions.unless
       options:
         unless: true
       () -> false.should.be.true()
       next
 
-  they 'skip if all true', (ssh, next) ->
+  it 'skip if all true', (next) ->
     conditions.unless
       options:
         unless: [true, true, true]
       () -> false.should.be.true()
       next
 
-  they 'skip if at least one is true', (ssh, next) ->
+  it 'skip if at least one is true', (next) ->
     conditions.unless
       options:
         unless: [false, true, false]
       () -> false.should.be.true()
       next
 
-  they 'run if all false', (ssh, next) ->
+  it 'run if all false', (next) ->
     conditions.unless
       options:
         unless: [false, false, false]
       next
       () -> false.should.be.true()
 
-  they 'succeed if `1`', (ssh, next) ->
+  it 'succeed if `1`', (next) ->
     conditions.unless
       options:
         unless: 1
       () -> false.should.be.true()
       next
 
-  they 'succeed if buffer and length > 1', (ssh, next) ->
+  it 'succeed if buffer and length > 1', (next) ->
     conditions.unless
       options:
         unless: Buffer.from 'abc'
       () -> false.should.be.true()
       next
 
-  they 'fail if buffer and length is 0', (ssh, next) ->
+  it 'fail if buffer and length is 0', (next) ->
     conditions.unless
       options:
         unless: Buffer.from ''
       next
       () -> false.should.be.true()
 
-  they 'fail if `false`', (ssh, next) ->
+  it 'fail if `false`', (next) ->
     conditions.unless
       options:
         unless: false
       next
       () -> false.should.be.true()
 
-  they 'fail if `null`', (ssh, next) ->
+  it 'fail if `null`', (next) ->
     conditions.unless
       options:
         unless: null
       next
       () -> false.should.be.true()
 
-  they 'fail if string not empty', (ssh, next) ->
+  it 'fail if string not empty', (next) ->
     conditions.unless
       options:
         unless: 'abc'
       () -> false.should.be.true()
       next
 
-  they 'fail if string not empty', (ssh, next) ->
+  it 'fail if string not empty', (next) ->
     conditions.unless
       options:
         unless: ''
       next
       () -> false.should.be.true()
 
-  they 'function succeed on `succeed` callback', (ssh, next) ->
+  it 'function succeed on `succeed` callback', (next) ->
     conditions.unless
       options:
         unless: ({}, callback) -> callback null, true
       () -> false.should.be.true()
       next
 
-  they 'function fail on `failed` callback', (ssh, next) ->
+  it 'function fail on `failed` callback', (next) ->
     conditions.unless
       options:
         unless: ({}, callback) -> callback null, false
       next
       () -> false.should.be.true()
 
-  they 'function pass error object on `failed` callback', (ssh, next) ->
+  it 'function pass error object on `failed` callback', (next) ->
     conditions.unless
       options:
         unless: ({}, callback) -> callback new Error 'cool'
@@ -268,7 +270,7 @@ describe 'unless', ->
 
   describe 'error', ->
 
-    they 'fail if an object', (ssh, next) ->
+    it 'fail if an object', (next) ->
       conditions.unless
         options:
           unless: {}

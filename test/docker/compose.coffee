@@ -1,13 +1,12 @@
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh, scratch, docker} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.docker
 
 describe 'docker.compose', ->
 
-  config = test.config()
-  return if config.disable_docker
-  scratch = test.scratch @
   @timeout 90000
   
   it 'fetch image to avoid timeout later', ->
@@ -21,7 +20,7 @@ describe 'docker.compose', ->
     # to be downloaded. We shall prefetch the image at container creation
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm
       container: 'nikita_docker_compose_up_content'
       force: true
@@ -52,7 +51,7 @@ describe 'docker.compose', ->
   they 'up from content to file', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm
       container: 'nikita_docker_docker_compose_up_content_to_file'
       force: true
@@ -84,7 +83,7 @@ describe 'docker.compose', ->
   they 'up from file', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm
       container: 'nikita_docker_compose_up_file'
       force: true
@@ -116,7 +115,7 @@ describe 'docker.compose', ->
   they 'up with service name', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm
       container: 'nikita_docker_compose_up_service'
       force: true
@@ -149,7 +148,7 @@ describe 'docker.compose', ->
   they 'status not modified', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm
       container: 'nikita_docker_compose_idem'
       force: true

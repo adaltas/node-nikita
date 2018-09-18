@@ -1,12 +1,11 @@
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.system_info
 
 describe 'system.info.system', ->
-
-  config = test.config()
-  return if config.disable_system_info
 
   they 'with no options', (ssh) ->
     nikita

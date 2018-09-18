@@ -1,5 +1,8 @@
 
 db = require '../../src/misc/db'
+{tags} = require '../test'
+
+return unless tags.api
 
 describe 'misc.db', ->
 

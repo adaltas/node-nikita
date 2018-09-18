@@ -1,11 +1,11 @@
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh, scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.posix
 
 describe 'system.copy', ->
-
-  scratch = test.scratch @
   
   describe 'options parent', ->
     
@@ -182,8 +182,8 @@ describe 'system.copy', ->
         target: "#{scratch}/a_source_file"
         mode: 0o0606
       .system.copy
-        target: "#{scratch}/a_target_file"
         source: "#{scratch}/a_source_file"
+        target: "#{scratch}/a_target_file"
         preserve: true
       .file.assert
         target: "#{scratch}/a_target_file"
@@ -347,8 +347,8 @@ describe 'system.copy', ->
         target: "#{scratch}/a_source/a_dir/a_file"
         mode: 0o0644
       .system.copy
-        target: "#{scratch}/a_target"
         source: "#{scratch}/a_source"
+        target: "#{scratch}/a_target"
         preserve: true
       .file.assert
         target: "#{scratch}/a_target/a_file"

@@ -1,47 +1,16 @@
-# Be aware to specify the machine if docker mahcine is used
-# Some other docker test uses docker.run
-# as a conseauence docker.run should not docker an other command from docker family
-# For this purpos ip, and clean are used
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
-docker = require '../../src/misc/docker'
+{tags, ssh, docker} = require '../test'
+they = require('ssh2-they').configure(ssh)
 
-ip = (ssh, machine, callback) ->
-  nikita
-  .system.execute
-    cmd: """
-    export SHELL=/bin/bash
-    export PATH=/opt/local/bin/:/opt/local/sbin/:/usr/local/bin/:/usr/local/sbin/:$PATH
-    bin_boot2docker=$(command -v boot2docker)
-    bin_machine=$(command -v docker-machine)
-    if [ -f $bin_machine -a $bin_machine ];
-      then
-        if [ \"#{machine}\" = \"--\" ];then exit 5;fi
-        eval $(${bin_machine} env #{machine}) && $bin_machine  ip #{machine}
-    elif [ -f $bin_boot2docker -a $bin_boot2docker ];
-      then
-        eval $(${bin_boot2docker} shellinit) && $bin_boot2docker ip
-    else
-      echo '127.0.0.1'
-    fi
-    """
-    , (err, {stdout}) ->
-      return callback err if err
-      ipadress = stdout.trim()
-      return callback null, ipadress
+return unless tags.docker
 
 describe 'docker.service', ->
-
-  config = test.config()
-  return if config.disable_docker
-  scratch = test.scratch @
 
   they 'simple service', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm
       force: true
       container: 'nikita_test_unique'
@@ -60,7 +29,7 @@ describe 'docker.service', ->
   they 'invalid options', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm
       container: 'nikita_test'
       force: true
@@ -84,7 +53,7 @@ describe 'docker.service', ->
   they 'status not modified', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm
       force: true
       container: 'nikita_test'

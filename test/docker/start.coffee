@@ -1,18 +1,16 @@
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh, docker} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.docker
 
 describe 'docker.start', ->
-
-  config = test.config()
-  return if config.disable_docker
-  scratch = test.scratch @
 
   they 'on stopped container', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm
       container: 'nikita_test_start'
       force: true
@@ -33,7 +31,7 @@ describe 'docker.start', ->
   they 'on started container', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm
       container: 'nikita_test_start'
       force: true

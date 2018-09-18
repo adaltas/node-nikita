@@ -1,19 +1,22 @@
 
-they = require 'ssh2-they'
 conditions = require '../../src/misc/conditions'
 nikita = require '../../src'
+{tags, ssh} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.posix
 
 describe 'should_exist', ->
 
   they 'should succeed if file exists', (ssh, next) ->
-    conditions.should_exist.call nikita(),
+    conditions.should_exist.call nikita(ssh: ssh),
       options:
         should_exist: __filename
       -> next()
       () -> false.should.be.true()
 
   they 'should fail if file does not exist', (ssh, next) ->
-    conditions.should_exist.call nikita(),
+    conditions.should_exist.call nikita(ssh: ssh),
       options:
         should_exist: './oh_no'
       () -> false.should.be.true()
@@ -22,7 +25,7 @@ describe 'should_exist', ->
         next()
 
   they 'should fail if at least one file does not exist', (ssh, next) ->
-    conditions.should_exist.call nikita(),
+    conditions.should_exist.call nikita(ssh: ssh),
       options:
         should_exist: ['./oh_no', __filename]
       () -> false.should.be.true()
@@ -32,6 +35,7 @@ describe 'should_exist', ->
 
   they 'error propagated to session', (ssh, next) ->
     nikita
+      ssh: ssh
     .call should_exist: '/does/not/exist', ->
       throw Error 'Oh no'
     .next (err) ->
@@ -41,14 +45,14 @@ describe 'should_exist', ->
 describe 'should_not_exist', ->
 
   they 'should succeed if file doesnt exist', (ssh, next) ->
-    conditions.should_not_exist.call nikita(),
+    conditions.should_not_exist.call nikita(ssh: ssh),
       options:
         should_not_exist: './oh_no'
       next
       () -> false.should.be.true()
 
   they 'should fail if file exists', (ssh, next) ->
-    conditions.should_not_exist.call nikita(),
+    conditions.should_not_exist.call nikita(ssh: ssh),
       options:
         should_not_exist: __filename
       () -> false.should.be.true()
@@ -57,7 +61,7 @@ describe 'should_not_exist', ->
         next()
 
   they 'should fail if at least one file exists', (ssh, next) ->
-    conditions.should_not_exist.call nikita(),
+    conditions.should_not_exist.call nikita(ssh: ssh),
       options:
         should_not_exist: ['./oh_no', __filename]
       () -> false.should.be.true()
@@ -67,6 +71,7 @@ describe 'should_not_exist', ->
 
   they 'error propagated to session', (ssh, next) ->
     nikita
+      ssh: ssh
     .call should_not_exist: __filename, ->
       throw Error 'Oh no'
     .next (err) ->

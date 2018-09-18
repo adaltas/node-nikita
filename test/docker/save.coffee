@@ -2,17 +2,17 @@
 nikita = require '../../src'
 test = require '../test'
 they = require 'ssh2-they'
+{tags, ssh, scratch, docker} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.docker
 
 describe 'docker.save', ->
-
-  scratch = test.scratch @
-  config = test.config()
-  return if config.disable_docker
 
   they 'saves a simple image', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.build
       image: 'nikita/load_test'
       content: "FROM alpine\nCMD ['echo \"hello build from text\"']"
@@ -27,7 +27,7 @@ describe 'docker.save', ->
     # For now, there are no mechanism to compare the checksum between an old and a new target
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.build
       image: 'nikita/load_test'
       content: "FROM alpine\nCMD ['echo \"hello build from text\"']"

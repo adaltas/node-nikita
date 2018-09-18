@@ -1,14 +1,12 @@
 
 os = require 'os'
 nikita = require '../../src'
-they = require 'ssh2-they'
-test = require '../test'
+{tags, ssh, scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.system_limits
 
 describe 'system.limits', ->
-
-  scratch = test.scratch @
-  config = test.config()
-  return if config.disable_system_limits
 
   they 'do nothing without any limits', (ssh) ->
     nikita

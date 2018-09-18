@@ -1,5 +1,8 @@
 
 nikita = require '../../src'
+{tags} = require '../test'
+  
+return tags.api
 
 describe 'api proxy', ->
 

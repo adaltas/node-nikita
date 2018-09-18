@@ -1,12 +1,11 @@
 
-fs = require 'fs'
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh, scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.posix
 
 describe 'log.md', ->
-  
-  scratch = test.scratch @
   
   they 'write string', (ssh) ->
     nikita

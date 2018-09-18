@@ -1,23 +1,16 @@
-# Be aware to specify the machine if docker mahcine is used
-# Some other docker test uses docker.run
-# as a conseauence docker.run should not docker an other command from docker family
-# For this purpos ip, and clean are used
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh, scratch, docker} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.docker or tags.docker_volume
 
 describe 'docker.volume_rm', ->
-
-  config = test.config()
-  return if config.disable_docker
-  return if config.disable_docker_volume
-  scratch = test.scratch @
 
   they 'a named volume', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.volume_rm
       name: 'my_volume'
       relax: true

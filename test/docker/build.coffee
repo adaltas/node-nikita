@@ -1,23 +1,18 @@
-# Be aware to specify the machine if docker mahcine is used
-# docker.build like, docker.run , docker.rm is used by other docker.command inside
-# test amd should not relie on them
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
-docker = require '../../src/misc/docker'
+{tags, ssh, scratch, docker} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.docker
 
 describe 'docker.build', ->
 
-  config = test.config()
-  return if config.disable_docker
-  scratch = test.scratch @
   @timeout 60000
 
   they 'fail with missing image parameter', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.build
       false_source: 'Dockerfile'
     .next (err) ->
@@ -28,7 +23,7 @@ describe 'docker.build', ->
   they 'fail with exclusive parameters', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.build
       image: 'nikita/should_not_exists_1'
       file: "#{__dirname}/Dockerfile"
@@ -40,7 +35,7 @@ describe 'docker.build', ->
   they 'from text', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rmi
       image: 'nikita/should_exists_2'
     .docker.build
@@ -59,7 +54,7 @@ describe 'docker.build', ->
   they 'from cwd',  (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rmi
       image: 'nikita/should_exists_3'
     .file
@@ -80,7 +75,7 @@ describe 'docker.build', ->
   they 'from Dockerfile (exist)', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rmi
       image: 'nikita/should_exists_3'
     .file
@@ -101,7 +96,7 @@ describe 'docker.build', ->
   they 'from Dockerfile (not exist)', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.build
       image: 'nikita/should_not_exists_4'
       file: "#{scratch}/file/does/not/exist"
@@ -115,7 +110,7 @@ describe 'docker.build', ->
     status_false = []
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rmi
       image: 'nikita/should_exists_5'
     .file

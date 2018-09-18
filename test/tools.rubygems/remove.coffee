@@ -1,18 +1,16 @@
 
 nikita = require '../../src'
-they = require 'ssh2-they'
-test = require '../test'
+{tags, ssh, scratch, ruby} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.tools_rubygems
 
 describe 'tools.rubygems.remove', ->
-
-  config = test.config()
-  return if config.disable_tools_rubygems
-  scratch = test.scratch @
 
   they 'remove an existing package', (ssh) ->
     nikita
       ssh: ssh
-      ruby: config.ruby
+      ruby: ruby
     .tools.rubygems.install
       name: 'execjs'
     .tools.rubygems.remove
@@ -24,7 +22,7 @@ describe 'tools.rubygems.remove', ->
   they 'remove a non existing package', (ssh) ->
     nikita
       ssh: ssh
-      ruby: config.ruby
+      ruby: ruby
     .tools.rubygems.install
       name: 'execjs'
     .tools.rubygems.remove
@@ -38,7 +36,7 @@ describe 'tools.rubygems.remove', ->
   they 'remove multiple versions', (ssh) ->
     nikita
       ssh: ssh
-      ruby: config.ruby
+      ruby: ruby
     .tools.rubygems.install
       name: 'execjs'
       version: '2.6.0'

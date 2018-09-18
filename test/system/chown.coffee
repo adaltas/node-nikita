@@ -1,13 +1,11 @@
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh, scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.system_user
 
 describe 'system.chown', ->
-
-  config = test.config()
-  return if config.disable_system_user
-  scratch = test.scratch @
 
   they 'throw error if target does not exists', (ssh) ->
     nikita

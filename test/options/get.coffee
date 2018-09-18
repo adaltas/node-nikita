@@ -1,10 +1,10 @@
 
 nikita = require '../../src'
-test = require '../test'
+{tags, scratch} = require '../test'
+
+return unless tags.api
 
 describe 'options "get"', ->
-  
-  scratch = test.scratch @
   
   describe 'passed to action', ->
 

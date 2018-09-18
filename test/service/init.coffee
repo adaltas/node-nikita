@@ -1,14 +1,13 @@
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.service_systemctl
 
 describe 'service.init', ->
   
   @timeout 60000
-  config = test.config()
-  
-  return if config.disable_service_systemctl
 
   they 'init file with target and source (default)', (ssh) ->
     nikita
@@ -46,8 +45,6 @@ describe 'service.init', ->
     .promise()
   
   describe 'daemon-reload', ->
-    
-    return if config.disable_service_systemctl
   
     they 'with systemctl sysv-generator', (ssh) ->
       nikita

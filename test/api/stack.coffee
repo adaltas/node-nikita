@@ -1,11 +1,10 @@
 
 nikita = require '../../src'
-test = require '../test'
-fs = require 'fs'
+{tags, scratch} = require '../test'
+
+return unless tags.api
 
 describe 'api stack', ->
-
-  scratch = test.scratch @
 
   it 'sync handler register actions', ->
     msgs = []

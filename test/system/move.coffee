@@ -1,11 +1,11 @@
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh, scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.posix
 
 describe 'system.move', ->
-
-  scratch = test.scratch @
 
   they 'rename a file', (ssh) ->
     nikita

@@ -1,17 +1,11 @@
 
-fs = require 'fs'
-path = require 'path'
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
-misc = require '../../src/misc'
+{tags, ssh, scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
 
+return unless tags.system_tmpfs
 
 describe 'system.tmpfs', ->
-  
-  scratch = test.scratch @
-  config = test.config()
-  return  if config.disable_system_tmpfs
   
   describe 'generate without merge', ->
     

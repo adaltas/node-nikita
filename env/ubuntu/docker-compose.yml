@@ -9,17 +9,7 @@ services:
     image: nikita_ubuntu_nodejs
     volumes:
       - ../..:/nikita
-    depends_on:
-      - krb5
     environment:
       NIKITA_TEST_MODULE: /nikita/env/ubuntu/test.coffee
-      # TEST_FILES: test/krb5/ktadd.coffee
-      # TEST_FILES: test
       DEBUG: 1
       # DEBUG: 0
-  krb5:
-    image: sequenceiq/kerberos
-    volumes:
-      - /dev/urandom:/dev/random
-    environment:
-      BOOTSTRAP: 1

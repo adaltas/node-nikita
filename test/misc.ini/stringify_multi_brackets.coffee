@@ -1,5 +1,8 @@
 
 ini = require '../../src/misc/ini'
+{tags} = require '../test'
+
+return unless tags.api
 
 describe 'misc.ini stringify_multi_brackets', ->
 

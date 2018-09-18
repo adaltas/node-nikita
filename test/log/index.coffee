@@ -1,12 +1,11 @@
 
-fs = require 'fs'
-path = require 'path'
 nikita = require '../../src'
-test = require '../test'
+{tags, ssh, scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.posix
 
 describe 'log', ->
-
-  scratch = test.scratch @
 
   it 'string is converted to message', ->
     startTS = Date.now()

@@ -1,13 +1,12 @@
 
-nikita = require '../../src'
-misc = require '../../src/misc'
 path = require 'path'
-test = require '../test'
-they = require 'ssh2-they'
+nikita = require '../../src'
+{tags, ssh, scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.posix
 
 describe 'file.upload', ->
-
-  scratch = test.scratch @
 
   they 'file into a file', (ssh) ->
     return @skip() unless ssh

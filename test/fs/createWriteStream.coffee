@@ -1,12 +1,11 @@
 
 nikita = require '../../src'
-they = require 'ssh2-they'
-fs = require 'ssh2-fs'
-test = require '../test'
+{tags, ssh, scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.posix
 
 describe 'fs.createWriteStream', ->
-
-  scratch = test.scratch @
 
   they 'write a file', (ssh) ->
     nikita

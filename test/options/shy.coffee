@@ -1,11 +1,10 @@
 
 nikita = require '../../src'
-test = require '../test'
-fs = require 'fs'
+{tags, scratch} = require '../test'
+
+return unless tags.api
 
 describe 'options "shy"', ->
-
-  scratch = test.scratch @
 
   it 'dont alter status', ->
     nikita

@@ -1,11 +1,11 @@
 
 nikita = require '../../src'
-test = require '../test'
-fs = require 'fs'
+{tags, ssh, scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.posix
 
 describe 'api callback', ->
-
-  scratch = test.scratch @
 
   it 'internal.options', ->
     nikita()

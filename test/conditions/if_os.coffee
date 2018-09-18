@@ -1,11 +1,10 @@
 
-they = require 'ssh2-they'
-test = require '../test'
 conditions = require '../../src/misc/conditions'
 nikita = require '../../src'
+{tags, ssh} = require '../test'
+they = require('ssh2-they').configure(ssh)
 
-config = test.config()
-return if config.disable_conditions_if_os
+return unless tags.api_if_os
 
 describe 'if_os', ->
 

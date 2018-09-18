@@ -1,21 +1,21 @@
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh, service} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.service_install
 
 describe 'service.install', ->
   
   @timeout 50000
-  config = test.config()
-  return if config.disable_service_install
 
   they 'new package', (ssh) ->
     nikita
       ssh: ssh
     .service.remove
-      name: config.service.name
+      name: service.name
     .service
-      name: config.service.name
+      name: service.name
     , (err, {status}) ->
       status.should.be.true() unless err
     .promise()
@@ -24,11 +24,11 @@ describe 'service.install', ->
     nikita
       ssh: ssh
     .service.remove
-      name: config.service.name
+      name: service.name
     .service
-      name: config.service.name
+      name: service.name
     .service
-      name: config.service.name
+      name: service.name
     , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
@@ -37,8 +37,8 @@ describe 'service.install', ->
     nikita
       ssh: ssh
     .service.remove
-      name: config.service.name
-    .service config.service.name, (err, {status}) ->
+      name: service.name
+    .service service.name, (err, {status}) ->
       status.should.be.true() unless err
     .promise()
   
@@ -46,16 +46,16 @@ describe 'service.install', ->
     nikita
       ssh: ssh
     .service.remove
-      name: config.service.name
+      name: service.name
     .call ->
       (@store['nikita:execute:installed'] is undefined).should.be.true()
     .service
-      name: config.service.name
+      name: service.name
       cache: true
     , (err, {status}) ->
       status.should.be.true() unless err
     .call ->
-      @store['nikita:execute:installed'].should.containEql config.service.name
+      @store['nikita:execute:installed'].should.containEql service.name
     .promise()
 
   they 'skip code when error', (ssh) ->
@@ -78,12 +78,12 @@ describe 'service.install', ->
         console.log log
         message = log.message
       .service.remove
-        name: config.service.name
+        name: service.name
       .service.install
-        name: config.service.name
+        name: service.name
         pacman_flags: ['u', 'y']
       .call ->
-        message.should.containEql "pacman --noconfirm -S #{config.service.name} -u -y"
+        message.should.containEql "pacman --noconfirm -S #{service.name} -u -y"
       .promise()
         
     they 'add yaourt options', (ssh) ->
@@ -94,10 +94,10 @@ describe 'service.install', ->
         console.log log
         message = log.message
       .service.remove
-        name: config.service.name
+        name: service.name
       .service.install
-        name: config.service.name
+        name: service.name
         yaourt_flags: ['u', 'y']
       .call ->
-        message.should.containEql "yaourt --noconfirm -S #{config.service.name} -u -y"
+        message.should.containEql "yaourt --noconfirm -S #{service.name} -u -y"
       .promise()

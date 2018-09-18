@@ -1,115 +1,112 @@
 
 nikita = require '../../src'
-test = require '../test'
-fs = require 'fs'
+{tags} = require '../test'
+
+return unless tags.api
 
 describe 'options "log"', ->
-
-  scratch = test.scratch @
   
-  describe 'local via log option', ->
-  
-    it 'convert string to objects', ->
-      logs = []
-      nikita
-      .call
-        log: (l) -> logs.push l if l.type is 'text'
-        handler: -> @log 'handler'
-      .call ->
-        logs.length.should.eql 1
-        logs[0].level.should.eql 'INFO'
-        logs[0].message.should.eql 'handler'
-        (logs[0].module is undefined).should.be.true()
-        logs[0].time.should.be.a.Number()
-        logs[0].depth.should.eql 1
-      .promise()
+  it 'convert string to objects', ->
+    logs = []
+    nikita
+    .call
+      log: (l) -> logs.push l if l.type is 'text'
+      handler: -> @log 'handler'
+    .call ->
+      logs.length.should.eql 1
+      logs[0].level.should.eql 'INFO'
+      logs[0].message.should.eql 'handler'
+      (logs[0].module is undefined).should.be.true()
+      logs[0].time.should.be.a.Number()
+      logs[0].depth.should.eql 1
+    .promise()
 
-    it 'work recursively', ->
-      logs = []
-      nikita
-      .call
-        log: (l) -> logs.push l if l.type is 'text'
-        handler: ->
-          @call ->
+  it 'work recursively', ->
+    logs = []
+    nikita
+    .call
+      log: (l) -> logs.push l if l.type is 'text'
+      handler: ->
+        @call ->
+          @log 'handler'
+    .call ->
+      logs.length.should.eql 1
+      logs[0].level.should.eql 'INFO'
+      logs[0].message.should.eql 'handler'
+      (logs[0].module is undefined).should.be.true()
+      logs[0].time.should.be.a.Number()
+      logs[0].depth.should.eql 2
+    .promise()
+
+  it 'is overwritteable', ->
+    logs_parent = []
+    logs_child = []
+    nikita
+    .call
+      log: (l) -> logs_parent.push l if l.type is 'text'
+      handler: ->
+        @call
+          log: (l) -> logs_child.push l if l.type is 'text'
+          handler: ->
             @log 'handler'
-      .call ->
-        logs.length.should.eql 1
-        logs[0].level.should.eql 'INFO'
-        logs[0].message.should.eql 'handler'
-        (logs[0].module is undefined).should.be.true()
-        logs[0].time.should.be.a.Number()
-        logs[0].depth.should.eql 2
-      .promise()
+    .call ->
+      logs_parent.length.should.eql 0
+      logs_child.length.should.eql 1
+      logs_child[0].level.should.eql 'INFO'
+      logs_child[0].message.should.eql 'handler'
+      (logs_child[0].module is undefined).should.be.true()
+      logs_child[0].time.should.be.a.Number()
+      logs_child[0].depth.should.eql 2
+    .promise()
 
-    it 'is overwritteable', ->
-      logs_parent = []
-      logs_child = []
-      nikita
-      .call
-        log: (l) -> logs_parent.push l if l.type is 'text'
-        handler: ->
-          @call
-            log: (l) -> logs_child.push l if l.type is 'text'
-            handler: ->
-              @log 'handler'
-      .call ->
-        logs_parent.length.should.eql 0
-        logs_child.length.should.eql 1
-        logs_child[0].level.should.eql 'INFO'
-        logs_child[0].message.should.eql 'handler'
-        (logs_child[0].module is undefined).should.be.true()
-        logs_child[0].time.should.be.a.Number()
-        logs_child[0].depth.should.eql 2
-      .promise()
-  
-    it 'false disable logging', ->
-      log = null
-      nikita
-      .on 'text', ({message}) ->
-        log = message
-      .call ->
-        @log 'is nikita around'
-      .call
+  it 'false disable logging', ->
+    log = null
+    nikita
+    .on 'text', ({message}) ->
+      log = message
+    .call ->
+      @log 'is nikita around'
+    .call
+      log: true
+    , ->
+      @call
+        log: false
+      , ->
+        @log 'no, u wont find her'
+    .call ->
+      log.should.eql 'is nikita around'
+    .promise()
+
+  it 'true enable logging', ->
+    logs = []
+    nikita
+    .on 'text', ({message}) ->
+      logs.push message
+    .call ->
+      @log 'is nikita around'
+    .call
+      call: false
+    , ->
+      @call
         log: true
       , ->
-        @call
-          log: false
-        , ->
-          @log 'no, u wont find her'
-      .call ->
-        log.should.eql 'is nikita around'
-      .promise()
-  
-    it 'true enable logging', ->
-      logs = []
-      nikita
-      .on 'text', ({message}) ->
-        logs.push message
-      .call ->
-        @log 'is nikita around'
-      .call
-        call: false
+        @log 'yes it is'
+    .call ->
+      logs.should.eql ['is nikita around', 'yes it is']
+    .promise()
+
+  it 'can be safely passed to the options of a child handler', ->
+    # Fix a bug in which the child log "yes, dont kill her was called twice"
+    logs = []
+    nikita
+    .on 'text', ({message}) ->
+      logs.push message
+    .call ({options}) ->
+      @log 'is nikita around'
+      @call
+        log: options.log
       , ->
-        @call
-          log: true
-        , ->
-          @log 'yes it is'
-      .call ->
-        logs.should.eql ['is nikita around', 'yes it is']
-      .promise()
-  
-    it 'can be safely passed to the options of a child handler', ->
-      # Fix a bug in which the child log "yes, dont kill her was called twice"
-      logs = []
-      nikita
-      .on 'text', ({message}) ->
-        logs.push message
-      .call ({options}) ->
-        @log 'is nikita around'
-        @call
-          log: options.log
-        , ->
-          @log 'yes, dont kill her'
-      .call ->
-        logs.should.eql ['is nikita around', 'yes, dont kill her']
-      .promise()
+        @log 'yes, dont kill her'
+    .call ->
+      logs.should.eql ['is nikita around', 'yes, dont kill her']
+    .promise()

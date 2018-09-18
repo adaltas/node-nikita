@@ -1,15 +1,11 @@
 
-{EventEmitter} = require 'events'
-stream = require 'stream'
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.system_execute_arc_chroot
 
 describe 'system.execute', ->
-
-  config = test.config()
-  return  if config.disable_system_execute_arc_chroot
-  scratch = test.scratch @
 
   they 'target as string', (ssh) ->
     nikita

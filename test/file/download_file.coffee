@@ -1,12 +1,12 @@
 
 path = require 'path'
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh, scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.posix
 
 describe 'file.download file', ->
-
-  scratch = test.scratch @
   
   describe 'source', ->
 

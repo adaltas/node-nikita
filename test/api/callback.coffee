@@ -1,11 +1,11 @@
 
-nikita = require '../../src'
-test = require '../test'
 fs = require 'fs'
+nikita = require '../../src'
+{tags, scratch} = require '../test'
+
+return unless tags.api
 
 describe 'api callback', ->
-
-  scratch = test.scratch @
 
   it 'call callback multiple times if options an array', ->
     callbacks = []

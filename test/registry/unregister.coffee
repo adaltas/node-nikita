@@ -1,10 +1,10 @@
 
 nikita = require '../../src'
-test = require '../test'
+{tags} = require '../test'
+
+return unless tags.api
 
 describe 'registry.unregister', ->
-
-  scratch = test.scratch @
 
   describe 'global', ->
 

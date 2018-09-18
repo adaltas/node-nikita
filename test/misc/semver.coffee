@@ -1,6 +1,8 @@
 
 semver = require '../../src/misc/semver'
-they = require 'ssh2-they'
+{tags} = require '../test'
+
+return unless tags.api
 
 describe 'misc semver', ->
 

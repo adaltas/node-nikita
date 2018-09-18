@@ -1,21 +1,19 @@
 
 nikita = require '../../src'
 path = require 'path'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh, scratch, docker} = require '../test'
+they = require('ssh2-they').configure(ssh)
 
+return unless tags.docker
 
 describe 'docker.cp', ->
 
-  config = test.config()
-  return if config.disable_docker
-  scratch = test.scratch @
   @timeout 20000
   
   they 'a remote file to a local file', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm
       container: 'nikita_extract'
     .docker.run
@@ -37,7 +35,7 @@ describe 'docker.cp', ->
   they 'a remote file to a local directory', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm container: 'nikita_extract'
     .docker.run
       name: 'nikita_extract'
@@ -57,7 +55,7 @@ describe 'docker.cp', ->
   they 'a local file to a remote file', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm container: 'nikita_extract'
     .docker.run
       name: 'nikita_extract'
@@ -81,7 +79,7 @@ describe 'docker.cp', ->
   they 'a local file to a remote directory', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm container: 'nikita_extract'
     .docker.run
       name: 'nikita_extract'

@@ -1,6 +1,9 @@
 
 nikita = require '../../src'
 session = require '../../src/session'
+{tags} = require '../test'
+
+return unless tags.api
 
 describe 'options "cascade"', ->
   

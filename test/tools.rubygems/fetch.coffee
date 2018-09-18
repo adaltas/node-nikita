@@ -1,18 +1,16 @@
 
 nikita = require '../../src'
-they = require 'ssh2-they'
-test = require '../test'
+{tags, ssh, scratch, ruby} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.tools_rubygems
 
 describe 'tools.rubygems.fetch', ->
-
-  config = test.config()
-  return if config.disable_tools_rubygems
-  scratch = test.scratch @
 
   they 'with a version', (ssh) ->
     nikita
       ssh: ssh
-      ruby: config.ruby
+      ruby: ruby
     .tools.rubygems.fetch
       name: 'execjs'
       version: '2.7.0'
@@ -29,7 +27,7 @@ describe 'tools.rubygems.fetch', ->
   they 'without a version', (ssh) ->
     nikita
       ssh: ssh
-      ruby: config.ruby
+      ruby: ruby
     .tools.rubygems.fetch
       name: 'execjs'
       cwd: "#{scratch}"

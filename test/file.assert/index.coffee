@@ -1,13 +1,12 @@
 
-nikita = require '../../src'
-misc = require '../../src/misc'
-test = require '../test'
-they = require 'ssh2-they'
 fs = require 'fs'
+nikita = require '../../src'
+{tags, ssh, scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.posix
 
 describe 'file.assert', ->
-
-  scratch = test.scratch @
   
   describe 'exists', ->
 

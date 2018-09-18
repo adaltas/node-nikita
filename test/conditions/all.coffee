@@ -1,5 +1,8 @@
 
 conditions = require '../../src/misc/conditions'
+{tags} = require '../test'
+
+return unless tags.api
 
 describe 'conditions', ->
 

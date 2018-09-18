@@ -17,8 +17,6 @@ services:
       - mysql
     environment:
       NIKITA_TEST_MODULE: /nikita/env/mysql5/test.coffee
-      DOCKER_HOST: 'tcp://dind:2375'
-      TMPDIR: '/var/tmp'
   mysql:
     image: mysql:5.7
     environment:

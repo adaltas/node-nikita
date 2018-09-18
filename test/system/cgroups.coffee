@@ -1,15 +1,13 @@
 
 fs = require 'fs'
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
 misc = require '../../src/misc'
+{tags, ssh, scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.system_cgroups
 
 describe 'system.cgroups', ->
-  
-  scratch = test.scratch @
-  config = test.config()
-  return if config.disable_system_cgroups
   
   describe 'generate without merge', ->
     

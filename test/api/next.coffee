@@ -1,11 +1,11 @@
 
 domain = require 'domain'
-test = require '../test'
 nikita = require '../../src'
+{tags, scratch} = require '../test'
+
+return unless tags.api
 
 describe 'api next', ->
-
-  scratch = test.scratch @
   
   it 'throw error if no more element', (next) ->
     d = domain.create()

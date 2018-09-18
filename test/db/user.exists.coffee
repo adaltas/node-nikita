@@ -1,18 +1,18 @@
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh, db} = require '../test'
+they = require('ssh2-they').configure(ssh)
 
-config = test.config()
-return if config.disable_db
-for engine, _ of config.db
+return unless tags.db
+
+for engine, _ of db
 
   describe "db.user.exists #{engine}", ->
 
     they 'with status as false', (ssh) ->
       nikita
         ssh: ssh
-        db: config.db[engine]
+        db: db[engine]
       .db.user.remove 'test_user_exists_1_user', shy: true
       .db.user.exists
         username: 'test_user_exists_1_user'
@@ -27,7 +27,7 @@ for engine, _ of config.db
     they 'with status as false as true', (ssh) ->
       nikita
         ssh: ssh
-        db: config.db[engine]
+        db: db[engine]
       .db.user.remove 'test_user_exists_2_user', shy: true
       .db.user
         username: 'test_user_exists_2_user'

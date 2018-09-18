@@ -1,5 +1,8 @@
 
 krb5 = require '../../src/misc/krb5'
+{tags} = require '../test'
+
+return unless tags.api
 
 describe 'misc krb5', ->
 

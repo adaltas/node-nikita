@@ -1,13 +1,13 @@
 
+http = require 'http'
 nikita = require '../../src'
 memory = require '../../src/core/kv/engines/memory'
-test = require '../test'
-they = require 'ssh2-they'
-http = require 'http'
+{tags, ssh, scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.posix
 
 describe 'kv', ->
-
-  scratch = test.scratch @
   
   they 'set then get', (ssh) ->
     engine = memory()

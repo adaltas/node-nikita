@@ -1,13 +1,13 @@
 
 http = require 'http'
-nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
 path = require 'path'
+nikita = require '../../src'
+{tags, ssh, scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.posix
 
 describe 'file.cache', ->
-
-  scratch = test.scratch @
 
   describe 'http', ->
 

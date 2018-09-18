@@ -17,7 +17,6 @@ services:
       - mariadb
     environment:
       NIKITA_TEST_MODULE: /nikita/env/mariadb/test.coffee
-      TMPDIR: '/var/tmp'
   mariadb:
     image: mariadb:latest
     environment:

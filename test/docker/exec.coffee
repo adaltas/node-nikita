@@ -1,18 +1,16 @@
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh, scratch, docker} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.docker
 
 describe 'docker.exec', ->
-
-  config = test.config()
-  return if config.disable_docker
-  scratch = test.scratch @
 
   they 'simple command', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm
       container: 'nikita_test_exec'
       force: true
@@ -33,7 +31,7 @@ describe 'docker.exec', ->
   they 'on stopped container', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm
       container: 'nikita_test_exec'
       force: true
@@ -56,7 +54,7 @@ describe 'docker.exec', ->
   they 'on non existing container', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.exec
       container: 'nikita_fake_container'
       cmd: 'echo toto'
@@ -68,7 +66,7 @@ describe 'docker.exec', ->
   they 'skip exit code', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm
       container: 'nikita_test_exec'
       force: true

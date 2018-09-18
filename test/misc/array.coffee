@@ -1,5 +1,8 @@
 
 array = require '../../src/misc/array'
+{tags} = require '../test'
+
+return unless tags.api
 
 describe 'misc.array', ->
 

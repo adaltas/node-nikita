@@ -1,13 +1,11 @@
 
 nikita = require '../../src'
-misc = require '../../src/misc'
-test = require '../test'
-they = require 'ssh2-they'
-fs = require 'fs'
+{tags, ssh, scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.posix
 
 describe 'file.assert option trim', ->
-
-  scratch = test.scratch @
 
   they 'trim source', (ssh) ->
     nikita

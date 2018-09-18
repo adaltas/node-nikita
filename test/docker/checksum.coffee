@@ -1,23 +1,17 @@
-# Be aware to specify the machine if docker mahcine is used
-# docker.build like, docker.run , docker.rm is used by other docker.command inside
-# test amd should not relie on them
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
-docker = require '../../src/misc/docker'
+{tags, ssh, docker} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.docker
 
 describe 'docker.checksum', ->
-
-  config = test.config()
-  return if config.disable_docker
-  scratch = test.scratch @
 
   they 'checksum on existing repository', (ssh) ->
     image_id = null
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rmi
       image: 'nikita/checksum'
     .docker.build
@@ -37,7 +31,7 @@ describe 'docker.checksum', ->
   they 'checksum on not existing repository', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.checksum
       image: 'nikita/invalid_checksum'
       tag: 'latest'

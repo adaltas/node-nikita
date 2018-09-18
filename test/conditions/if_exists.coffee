@@ -2,6 +2,9 @@
 they = require 'ssh2-they'
 conditions = require '../../src/misc/conditions'
 nikita = require '../../src'
+{tags} = require '../test'
+
+return unless tags.api
 
 describe 'if_exists', ->
 

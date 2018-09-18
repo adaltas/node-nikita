@@ -18,10 +18,6 @@ RUN apt-get install -y openssh-server \
 # Install Java
 RUN apt-get install -y openjdk-7-jdk
 
-# Install Krb5 client
-RUN apt-get install -y krb5-user
-ADD ./krb5.conf /etc/krb5.conf
-
 # Install Misc dependencies
 RUN apt-get install -y zip git
 

@@ -1,12 +1,11 @@
 
 nikita = require '../../src'
-misc = require '../../src/misc'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh, scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.posix
 
 describe 'file.yaml', ->
-
-  scratch = test.scratch @
 
   they 'stringify an object', (ssh) ->
     nikita

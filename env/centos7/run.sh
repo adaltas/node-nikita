@@ -16,5 +16,5 @@ if test -t 0; then
 else
   # Run supervisord in foreground, which will stay until container is stopped.
   supervisord -c /etc/supervisord.conf
-  node_modules/.bin/mocha $@
+  npm test
 fi

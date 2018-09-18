@@ -1,12 +1,12 @@
 
-nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
 crypto = require 'crypto'
+nikita = require '../../src'
+{tags, ssh, scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.posix
 
 describe 'file.hash', ->
-
-  scratch = test.scratch @
 
   they 'from a file', (ssh) ->
     nikita

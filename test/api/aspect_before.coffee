@@ -1,10 +1,10 @@
 
 nikita = require '../../src'
-test = require '../test'
+{tags, scratch} = require '../test'
+  
+return unless tags.api
 
 describe 'api before', ->
-
-  scratch = test.scratch @
 
   describe 'event', ->
 

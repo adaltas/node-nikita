@@ -1,11 +1,11 @@
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.posix
 
 describe 'system.execute.assert', ->
-
-  scratch = test.scratch @
 
   they 'assert stdout match content', (ssh) ->
     nikita
@@ -47,6 +47,7 @@ describe 'system.execute.assert', ->
   they 'option trim on content', (ssh) ->
     nikita
       ssh: ssh
+      bash: true
     .system.execute.assert
       cmd: "echo -n 'yo'"
       content: '\nyo\n'

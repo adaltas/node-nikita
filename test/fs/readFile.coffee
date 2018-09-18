@@ -1,12 +1,12 @@
 
-nikita = require '../../src'
-they = require 'ssh2-they'
 fs = require 'ssh2-fs'
-test = require '../test'
+nikita = require '../../src'
+{tags, ssh, scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.posix
 
 describe 'fs.read', ->
-
-  scratch = test.scratch @
 
   they 'read a file', (ssh) ->
     nikita

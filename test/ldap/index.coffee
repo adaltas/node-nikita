@@ -1,16 +1,16 @@
 
 nikita = require '../../src'
-test = require '../test'
+{tags, ssh, ldap} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.ldap_index
 
 describe 'ldap.index', ->
-
-  scratch = test.scratch @
-  config = test.config()
-  return if config.disable_ldap_index
+  
   client = olcDbIndex = null
   beforeEach (next) ->
-    client = ldap.createClient url: config.ldap.url
-    client.bind config.ldap.binddn, config.ldap.passwd, (err) ->
+    client = ldap.createClient url: ldap.url
+    client.bind ldap.binddn, ldap.passwd, (err) ->
       return next err if err
       client.search 'olcDatabase={2}bdb,cn=config',
         scope: 'base'

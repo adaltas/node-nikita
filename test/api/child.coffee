@@ -1,11 +1,11 @@
 
 nikita = require '../../src'
-test = require '../test'
 fs = require 'fs'
+{tags, scratch} = require '../test'
+
+return tags.api
 
 describe 'api child', ->
-
-  scratch = test.scratch @
 
   it 'dont change status of parent action', ->
     touched = 0

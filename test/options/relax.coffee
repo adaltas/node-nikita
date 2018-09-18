@@ -1,11 +1,10 @@
 
 nikita = require '../../src'
-test = require '../test'
-fs = require 'fs'
+{tags} = require '../test'
+
+return unless tags.api
 
 describe 'options "relax"', ->
-
-  scratch = test.scratch @
 
   it 'sync', ->
     nikita

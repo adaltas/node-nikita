@@ -17,7 +17,6 @@ services:
       - postgres
     environment:
       NIKITA_TEST_MODULE: /nikita/env/postgresql/test.coffee
-      TMPDIR: '/var/tmp'
   postgres:
     image: postgres:9.5
     environment:

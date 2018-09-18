@@ -1,21 +1,16 @@
-#Be aware to specify the machine if docker mahcine is used
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh, docker} = require '../test'
+they = require('ssh2-they').configure(ssh)
 
-machine = 'ryba'
+return unless tags.docker
 
 describe 'docker.stop', ->
-
-  scratch = test.scratch @
-  config = test.config()
-  return if config.disable_docker
 
   they 'on running container', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.service
       image: 'httpd'
       name: 'nikita_test_stop'
@@ -31,7 +26,7 @@ describe 'docker.stop', ->
   they 'on stopped container', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.service
       image: 'httpd'
       name: 'nikita_test_stop'

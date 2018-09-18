@@ -1,18 +1,16 @@
-#Be aware to specify the machine if docker mahcine is used
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh, docker} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.docker
 
 describe 'docker.pull', ->
-
-  config = test.config()
-  return if config.disable_docker
 
   they 'No Image', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rmi
       image: 'alpine'
     .docker.pull
@@ -24,7 +22,7 @@ describe 'docker.pull', ->
   they 'Status Not Modified', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rmi
       image: 'alpine'
     .docker.pull

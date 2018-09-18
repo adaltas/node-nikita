@@ -1,12 +1,11 @@
 
 domain = require 'domain'
 nikita = require '../../src'
-test = require '../test'
-fs = require 'fs'
+{tags} = require '../test'
+
+return unless tags.api
 
 describe 'options "domain"', ->
-
-  scratch = test.scratch @
 
   it 'uncatchable error in sync handler', ->
     nikita
@@ -44,8 +43,6 @@ describe 'options "domain"', ->
       next()
     nikita
       domain: d
-    .file.touch
-      target: "#{scratch}/a_file"
     .call ({}, callback) ->
       callback.property.does.not.exist
     .call ->

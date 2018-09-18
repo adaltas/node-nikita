@@ -1,11 +1,11 @@
 
 nikita = require '../../src'
-test = require '../test'
 fs = require 'fs'
+{tags} = require '../test'
+
+return unless tags.api
 
 describe 'api promise', ->
-
-  scratch = test.scratch @
 
   it 'call resolve', ->
     nikita

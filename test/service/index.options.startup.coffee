@@ -1,29 +1,28 @@
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh, service} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.service_startup or tags.service_systemctl
 
 describe 'service options startup', ->
   
   @timeout 30000
-  config = test.config()
-  return if config.disable_service_startup
-  return if config.disable_service_systemctl
 
   they 'activate startup with boolean true', (ssh) ->
     nikita
       ssh: ssh
     .service.remove
-      name: config.service.name
+      name: service.name
     .service
-      name: config.service.name
-      chk_name: config.service.chk_name
+      name: service.name
+      chk_name: service.chk_name
       startup: true
     , (err, {status}) ->
       status.should.be.true() unless err
     .service
-      name: config.service.name
-      chk_name: config.service.chk_name
+      name: service.name
+      chk_name: service.chk_name
       startup: true
     , (err, {status}) ->
       status.should.be.false() unless err
@@ -33,16 +32,16 @@ describe 'service options startup', ->
     nikita
       ssh: ssh
     .service.remove
-      name: config.service.name
+      name: service.name
     .service
-      name: config.service.name
-      chk_name: config.service.chk_name
+      name: service.name
+      chk_name: service.chk_name
       startup: false
     , (err, {status}) ->
       status.should.be.true() unless err
     .service
-      name: config.service.name
-      chk_name: config.service.chk_name
+      name: service.name
+      chk_name: service.chk_name
       startup: false
     , (err, {status}) ->
       status.should.be.false() unless err
@@ -54,15 +53,15 @@ describe 'service options startup', ->
     .system.execute 'which chkconfig', code_skipped: 1, (err, {status}) ->
       @end() unless status
     .service.remove
-      name: config.service.name
+      name: service.name
     .service
-      name: config.service.name
-      chk_name: config.service.chk_name
+      name: service.name
+      chk_name: service.chk_name
       startup: '235'
     , (err, {status}) ->
       status.should.be.true() unless err
     .service
-      chk_name: config.service.chk_name
+      chk_name: service.chk_name
       startup: '235'
     , (err, {status}) ->
       status.should.be.false() unless err
@@ -77,14 +76,14 @@ describe 'service options startup', ->
     .system.execute '! command -v systemctl && command -v chkconfig', relax: true, (err) ->
       @end() if err
     .service.remove
-      name: config.service.name
+      name: service.name
     .service
-      chk_name: config.service.chk_name
+      chk_name: service.chk_name
       startup: '2345'
     , (err, {status}) ->
       status.should.be.true() unless err
     .service
-      chk_name: config.service.chk_name
+      chk_name: service.chk_name
       startup: '2345'
     , (err, {status}) ->
       status.should.be.false() unless err

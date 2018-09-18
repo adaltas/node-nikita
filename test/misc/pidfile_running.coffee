@@ -1,12 +1,12 @@
 
 nikita = require '../../src'
 pidfile_running = require '../../src/misc/pidfile_running'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh, scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.posix
 
 describe 'pidfile_running', ->
-
-  scratch = test.scratch @
 
   they 'give 0 if pidfile math a running process', (ssh, next) ->
     nikita(ssh: ssh).fs.writeFile target: "#{scratch}/pid", content: "#{process.pid}", (err) ->

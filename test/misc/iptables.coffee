@@ -1,6 +1,8 @@
 
 iptables = require '../../src/misc/iptables'
-they = require 'ssh2-they'
+{tags} = require '../test'
+
+return unless tags.api
 
 describe 'misc iptables', ->
 

@@ -1,5 +1,8 @@
 
 ldap = require '../../src/misc/ldap'
+{tags} = require '../test'
+
+return unless tags.api
 
 describe 'misc ldap acl', ->
 

@@ -1,12 +1,11 @@
 
 nikita = require '../../../src'
-test = require '../../test'
-fs = require 'fs'
-path = require 'path'
+{tags, scratch} = require '../../test'
+# TODO: usage of scratch dir is irrelevant for this test, should be removed
+
+return unless tags.api
 
 describe 'api call module', ->
-
-  scratch = test.scratch @
 
   it 'string referencing a sync module', ->
     logs = []
@@ -40,7 +39,7 @@ describe 'api call module', ->
 
   it 'string requires a module from process cwd', ->
     cwd = process.cwd()
-    process.chdir path.resolve __dirname, "#{scratch}"
+    process.chdir "#{scratch}"
     nikita
     .file
       target: "#{scratch}/a_dir/ping.coffee"

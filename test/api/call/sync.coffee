@@ -1,10 +1,11 @@
 
 nikita = require '../../../src'
-test = require '../../test'
+{tags, scratch} = require '../../test'
+# TODO: usage of scratch dir is irrelevant for this test, should be removed
+
+return unless tags.api
 
 describe 'api call sync', ->
-
-  scratch = test.scratch @
 
   describe 'sync', ->
 

@@ -17,7 +17,6 @@ services:
       - krb5
     environment:
       NIKITA_TEST_MODULE: /nikita/env/krb5/test.coffee
-      TMPDIR: '/var/tmp'
   krb5:
     build: ./server
     image: nikita_krb5_server

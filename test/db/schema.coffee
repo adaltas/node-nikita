@@ -1,18 +1,18 @@
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh, db} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.db
 
 describe 'db.schema postgres', ->
 
-  config = test.config()
-  return if config.disable_db
-  return unless config.db.postgresql
+  return unless db.postgresql
 
   they 'add new schema with no owner (existing db)', (ssh) ->
     nikita
       ssh: ssh
-      db: config.db.postgresql
+      db: db.postgresql
     .db.database.remove 'postgres_db_0'
     .db.database 'postgres_db_0'
     .db.schema
@@ -26,7 +26,7 @@ describe 'db.schema postgres', ->
   they 'add new schema with not existing owner (existing db)', (ssh) ->
     nikita
       ssh: ssh
-      db: config.db.postgresql
+      db: db.postgresql
     .db.database.remove 'postgres_db_1'
     .db.database 'postgres_db_1'
     .db.schema
@@ -42,7 +42,7 @@ describe 'db.schema postgres', ->
   they 'add new schema with existing owner (existing db)', (ssh) ->
     nikita
       ssh: ssh
-      db: config.db.postgresql
+      db: db.postgresql
     .db.schema.remove 'postgres_schema_2'
     .db.database.remove 'postgres_db_2'
     .db.user.remove 'postgres_user_2'
@@ -66,7 +66,7 @@ describe 'db.schema postgres', ->
   they 'add new schema with no owner (not existing db)', (ssh) ->
     nikita
       ssh: ssh
-      db: config.db.postgresql
+      db: db.postgresql
     .db.schema
       schema: 'postgres_schema_4'
       database: 'postgres_db_4'
@@ -78,7 +78,7 @@ describe 'db.schema postgres', ->
   they 'add new schema after adding database and user', (ssh) ->
     nikita
       ssh: ssh
-      db: config.db.postgresql
+      db: db.postgresql
     .db.schema.remove 'postgres_db_5'
     .db.database.remove 'postgres_db_5'
     .db.user.remove 'nikita_test_5'

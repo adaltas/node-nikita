@@ -1,13 +1,12 @@
 
 nikita = require '../../src'
 path = require 'path'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh, scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.posix
 
 describe 'system.mkdir', ->
-
-  config = test.config()
-  scratch = test.scratch @
 
   they 'as a directory option or as a string', (ssh) ->
     nikita
@@ -183,27 +182,6 @@ describe 'system.mkdir', ->
       .file.assert
         target: "#{scratch}/a_dir"
         mode: 0o0744
-      .promise()
-      
-  describe  'ownership', ->
-
-    they 'change owner uid/gid on creation', (ssh) ->
-      # 40744: 4 for directory, 744 for permissions
-      return if config.disable_system_user
-      nikita
-        ssh: ssh
-      .system.user.remove 'toto'
-      .system.group.remove 'toto'
-      .system.group 'toto', gid: 1234
-      .system.user 'toto', uid: 1234, gid: 1234
-      .system.mkdir
-        directory: "#{scratch}/ssh_dir_string"
-        uid: 1234
-        gid: 1234
-      .file.assert
-        target: "#{scratch}/ssh_dir_string"
-        uid: 1234
-        gid: 1234
       .promise()
   
   describe 'error', ->

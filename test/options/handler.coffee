@@ -1,6 +1,8 @@
 
 nikita = require '../../src'
-fs = require 'fs'
+{tags} = require '../test'
+
+return unless tags.api
 
 describe 'options "handler"', ->
 

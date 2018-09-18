@@ -23,6 +23,10 @@ Fixes:
 * ldap: options as destructuring object
 * file.download: ssh null replaced by false
 
+Cleanup:
+
+* test: filter all test with tags
+
 ## Version 0.8.0
 
 Backward incompatibilities:

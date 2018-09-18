@@ -1,12 +1,12 @@
 
 nikita = require '../../src'
-db = require '../../src/misc/db'
-test = require '../test'
-they = require 'ssh2-they'
+misc = require '../../src/misc'
+{tags, ssh, db} = require '../test'
+they = require('ssh2-they').configure(ssh)
 
-config = test.config()
-return if config.disable_db
-for engine, _ of config.db
+return unless tags.db
+
+for engine, _ of db
 
   describe "db.user #{engine}", ->
 
@@ -16,8 +16,8 @@ for engine, _ of config.db
       .db.user
         port: 5432
         engine: engine
-        admin_username: config.db[engine].admin_username
-        admin_password: config.db[engine].admin_password
+        admin_username: db[engine].admin_username
+        admin_password: db[engine].admin_password
         relax: true
       , (err) ->
         err.message.should.eql 'Missing option: "host"'
@@ -25,7 +25,7 @@ for engine, _ of config.db
         host: 'localhost'
         port: 5432
         engine: engine
-        admin_password: config.db[engine].admin_password
+        admin_password: db[engine].admin_password
         relax: true
       , (err) ->
         err.message.should.eql 'Missing option: "admin_username"'
@@ -34,7 +34,7 @@ for engine, _ of config.db
     they 'add new user', (ssh) ->
       nikita
         ssh: ssh
-        db: config.db[engine]
+        db: db[engine]
       .db.user.remove 'test_user_1_user'
       .db.user
         username: 'test_user_1_user'
@@ -61,7 +61,7 @@ for engine, _ of config.db
           '\\dt'
       nikita
         ssh: ssh
-        db: config.db[engine]
+        db: db[engine]
       .db.database.remove 'test_user_2_db'
       .db.user.remove 'test_user_2_user'
       .db.user
@@ -74,10 +74,10 @@ for engine, _ of config.db
         username: 'test_user_2_user'
         password: 'test_user_2_valid'
       .system.execute
-        cmd: db.cmd
+        cmd: misc.db.cmd
           engine: engine
-          host: config.db[engine].host
-          port: config.db[engine].port
+          host: db[engine].host
+          port: db[engine].port
           database: 'test_user_2_db'
           username: 'test_user_2_user'
           password: 'test_user_2_valid'

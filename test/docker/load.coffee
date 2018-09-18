@@ -1,14 +1,11 @@
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh, scratch, docker} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.docker
 
 describe 'docker.load', ->
-
-  machine= 'dev'
-  config = test.config()
-  return if config.disable_docker
-  scratch = test.scratch @
 
 # timestamp ensures that hash of the built image will be unique and
 # image checksum is also unique
@@ -17,7 +14,7 @@ describe 'docker.load', ->
     @timeout 30000
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .system.remove
       target: "#{scratch}/nikita_load.tar"
     .docker.build
@@ -44,7 +41,7 @@ describe 'docker.load', ->
     expect_checksum = null
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .system.remove
       target: "#{scratch}/nikita_load.tar"
     .docker.build
@@ -69,7 +66,7 @@ describe 'docker.load', ->
     @timeout 30000
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .system.remove
       target: "#{scratch}/nikita_load.tar"
     .docker.rmi

@@ -1,10 +1,10 @@
 
 nikita = require '../../../src'
-test = require '../../test'
+{tags, scratch} = require '../../test'
+
+return unless tags.api
 
 describe 'api call async', ->
-
-  scratch = test.scratch @
 
   describe 'async', ->
 

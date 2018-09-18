@@ -1,22 +1,19 @@
-#Be aware to specify the machine if docker mahcine is used
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh, scratch, docker} = require '../test'
+they = require('ssh2-they').configure(ssh)
 
+return unless tags.docker
 
 describe 'docker.kill', ->
 
-  scratch = test.scratch @
   target = "#{scratch}/default.script"
   source = '/usr/share/udhcpc/default.script'
-  config = test.config()
-  return if config.disable_docker
 
   they 'running container', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm
       container: 'nikita_test_kill'
       force: true
@@ -34,7 +31,7 @@ describe 'docker.kill', ->
     @timeout 120000
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm
       container: 'nikita_test_kill'
       force: true
@@ -53,7 +50,7 @@ describe 'docker.kill', ->
   they 'status not modified (not living)', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm
       container: 'nikita_test_kill'
     .docker.run

@@ -1,6 +1,8 @@
 
 misc = require '../../src/misc'
-they = require 'ssh2-they'
+{tags} = require '../test'
+
+return unless tags.api
 
 describe 'misc', ->
 

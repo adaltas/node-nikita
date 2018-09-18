@@ -1,7 +1,9 @@
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.cron
 
 ###
 Note on OSX, by default, I got the message "crontab: no crontab for {user} - using an empty one"
@@ -15,8 +17,6 @@ crontab -l
 
 describe 'cron', ->
 
-  config = test.config()
-  return if config.disable_cron
   rand = Math.random().toString(36).substring(7);
 
   they 'add a job', (ssh) ->

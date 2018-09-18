@@ -1,25 +1,16 @@
-# Be aware to specify the machine if docker mahcine is used
-# Some other docker test uses docker.status (start, stop)
-# So docker.status should is used by other docker command
-# For this purpos ip, and clean are used
 
-stream = require 'stream'
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
-docker = require '../../src/misc/docker'
+{tags, ssh, scratch, docker} = require '../test'
+they = require('ssh2-they').configure(ssh)
 
+return unless tags.docker
 
 describe 'docker.status', ->
-
-  scratch = test.scratch @
-  config = test.config()
-  return if config.disable_docker
 
   they 'on stopped  container', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm
       container: 'nikita_status'
       force: true
@@ -40,7 +31,7 @@ describe 'docker.status', ->
   they 'on running container', (ssh) ->
     nikita
       ssh: ssh
-      docker: config.docker
+      docker: docker
     .docker.rm
       container: 'nikita_status'
       force: true

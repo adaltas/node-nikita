@@ -15,4 +15,3 @@ services:
       - ../..:/home/nikita/work
     environment:
       NIKITA_TEST_MODULE: /home/nikita/work/env/sudo/test.coffee
-      TMPDIR: '/var/tmp'

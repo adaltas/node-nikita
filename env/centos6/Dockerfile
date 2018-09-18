@@ -24,30 +24,14 @@ RUN yum install -y openssh-server openssh-clients \
   && cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys \
   && ssh-keygen -f /etc/ssh/ssh_host_rsa_key
 
-# Install Java
-RUN yum install -y java
+# Install Java, OpenSSL, GIT and compression dependencies
+RUN yum install -y \
+  java \
+  openssl \
+  git \
+  zip unzip bzip2
 
-# Install Krb5 client
-RUN yum install -y krb5-workstation
-ADD ./krb5.conf /etc/krb5.conf
-
-# Install Misc dependencies
-RUN yum install -y zip unzip git
-
-# Install PostgreSQL client
-RUN yum install -y postgresql
-
-## Install Mysql client
-RUN yum install -y mysql
-
-# Install docker
-# RUN curl -fsSL https://raw.githubusercontent.com/docker/docker-install/868abfe9603db7d320e6231978dbda1d1f58aec5/install.sh | sh
-RUN yum install -y docker-io
-RUN curl -L https://github.com/docker/compose/releases/download/1.5.1/docker-compose-Linux-x86_64 > /usr/local/bin/docker-compose
-RUN chmod +x /usr/local/bin/docker-compose
-
-# Install openssl
-RUN yum install -y openssl
+RUN yum clean all
 
 ADD ./run.sh /run.sh
 RUN mkdir -p /nikita

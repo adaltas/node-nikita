@@ -1,11 +1,11 @@
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.posix
 
 describe 'options "target"', ->
-
-  scratch = test.scratch @
 
   they 'home', (ssh) ->
     nikita

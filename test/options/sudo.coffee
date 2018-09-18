@@ -1,13 +1,11 @@
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh,scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.sudo
 
 describe 'options "sudo"', ->
-
-  scratch = test.scratch @
-  config = test.config()
-  return if config.disable_sudo
 
   they 'readFile', (ssh) ->
     nikita

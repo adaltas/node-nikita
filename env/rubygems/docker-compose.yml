@@ -15,4 +15,3 @@ services:
       - ../..:/nikita
     environment:
       NIKITA_TEST_MODULE: /nikita/env/rubygems/test.coffee
-      TMPDIR: '/var/tmp'

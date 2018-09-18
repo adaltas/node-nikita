@@ -1,13 +1,11 @@
 
 nikita = require '../../src'
-misc = require '../../src/misc'
-path = require 'path'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh, scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.posix
 
 describe 'system.remove', ->
-  
-  scratch = test.scratch @
   
   they 'accept an option', (ssh) ->
     nikita

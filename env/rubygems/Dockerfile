@@ -1,6 +1,9 @@
 FROM centos:7
 MAINTAINER David Worms
 
+LABEL project=nikita \
+      project.tests="tools.rubygems"
+
 # Install Node.js
 ENV NPM_CONFIG_LOGLEVEL info
 ENV NODE_VERSION 9.4.0
@@ -18,10 +21,15 @@ RUN \
   easy_install supervisor
 ADD ./supervisord.conf /etc/supervisord.conf
 
+RUN groupadd -r sshuser && useradd --no-log-init -m -r -g sshuser sshuser
+
 # Install SSH
 RUN yum install -y openssh-server openssh-clients \
   && ssh-keygen -t rsa -f ~/.ssh/id_rsa -N '' \
-  && cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys \
+  && mkdir /home/sshuser/.ssh \
+  && chmod 700 /home/sshuser \
+  && cat ~/.ssh/id_rsa.pub > /home/sshuser/.ssh/authorized_keys \
+  && chown -R sshuser /home/sshuser/.ssh \
   && ssh-keygen -f /etc/ssh/ssh_host_rsa_key
 
 # Ruby & Gem

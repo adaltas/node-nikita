@@ -1,17 +1,16 @@
 
 nikita = require '../../src'
-test = require '../test'
+{tags, ssh, ldap} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.ldap_acl
 
 describe 'ldap.acl', ->
-
-  scratch = test.scratch @
-  config = test.config()
   
-  return if config.disable_ldap_acl
   client = olcAccess = null
   beforeEach (next) ->
-    client = ldap.createClient url: config.ldap.url
-    client.bind config.ldap.binddn, config.ldap.passwd, (err) ->
+    client = ldap.createClient url: ldap.url
+    client.bind ldap.binddn, ldap.passwd, (err) ->
       return next err if err
       client.search 'olcDatabase={2}bdb,cn=config',
         scope: 'base'
@@ -29,13 +28,14 @@ describe 'ldap.acl', ->
       client.unbind (err) ->
         next err
 
-  it 'create a new permission', ->
+  they 'create a new permission', (ssh) ->
     nikita
+      ssh: ssh
     .ldap.acl
       # ldap: client
-      url: config.ldap.url
-      binddn: config.ldap.binddn
-      passwd: config.ldap.passwd
+      url: ldap.url
+      binddn: ldap.binddn
+      passwd: ldap.passwd
       name: 'olcDatabase={2}bdb,cn=config'
       to: 'dn.base="dc=test,dc=com"'
       by: [
@@ -54,8 +54,9 @@ describe 'ldap.acl', ->
       status.should.be.false()
     .promise()
 
-  it 'respect order in creation', ->
+  they 'respect order in creation', (ssh) ->
     nikita
+      ssh: ssh
     .ldap.acl
       ldap: client
       name: 'olcDatabase={2}bdb,cn=config'

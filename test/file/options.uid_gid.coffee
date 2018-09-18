@@ -1,13 +1,11 @@
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh, scratch} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.system_user
 
 describe 'file options uid gid', ->
-
-  config = test.config()
-  return if config.disable_system_user
-  scratch = test.scratch @
 
   they 'default to user gid on creation', (ssh) ->
     nikita

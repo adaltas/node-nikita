@@ -1,11 +1,10 @@
 
 nikita = require '../../src'
-test = require '../test'
-fs = require 'fs'
+{tags} = require '../test'
+
+return unless tags.api
 
 describe 'options "parent"', ->
-
-  scratch = test.scratch @
     
   it 'default values', ->
     nikita

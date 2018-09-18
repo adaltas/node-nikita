@@ -1,41 +1,24 @@
 
 nikita = require '../../src'
 misc = require '../../src/misc'
-test = require '../test'
-they = require 'ssh2-they'
+{tags} = require '../test'
+
+return unless tags.api
 
 describe 'misc.stats', ->
 
-  scratch = test.scratch @
+  it 'directory is true', ->
+    mode = parseInt '40755', 8
+    misc.stats.isDirectory(mode).should.be.true()
 
-  they 'directory is true', (ssh) ->
-    nikita
-      ssh: ssh
-    .system.mkdir "#{scratch}/a_dir"
-    .fs.stat "#{scratch}/a_dir", (err, {stats}) ->
-      misc.stats.isDirectory(stats.mode).should.be.true() unless err
-    .promise()
+  it 'directory is false', ->
+    mode = parseInt '100644', 8
+    misc.stats.isDirectory(mode).should.be.false()
 
-  they 'directory is false', (ssh) ->
-    nikita
-      ssh: ssh
-    .file.touch "#{scratch}/a_file"
-    .fs.stat "#{scratch}/a_file", (err, {stats}) ->
-      misc.stats.isDirectory(stats.mode).should.be.false() unless err
-    .promise()
+  it 'file is true', ->
+    mode = parseInt '100644', 8
+    misc.stats.isFile(mode).should.be.true()
 
-  they 'file is true', (ssh) ->
-    nikita
-      ssh: ssh
-    .file.touch "#{scratch}/a_file"
-    .fs.stat "#{scratch}/a_file", (err, {stats}) ->
-      misc.stats.isFile(stats.mode).should.be.true() unless err
-    .promise()
-
-  they 'file is false', (ssh) ->
-    nikita
-      ssh: ssh
-    .system.mkdir "#{scratch}/a_dir"
-    .fs.stat "#{scratch}/a_dir", (err, {stats}) ->
-      misc.stats.isFile(stats.mode).should.be.false() unless err
-    .promise()
+  it 'file is false', ->
+    mode = parseInt '40755', 8
+    misc.stats.isFile(mode).should.be.false()

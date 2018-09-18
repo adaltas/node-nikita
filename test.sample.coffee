@@ -1,31 +1,36 @@
 
 module.exports =
-  disable_conditions_if_os: true
-  disable_cron: true
-  disable_db: true
-  disable_docker: true
-  disable_docker_volume: true
-  disable_krb5_addprinc: true
-  disable_krb5_delprinc: true
-  disable_krb5_ktadd: true
-  disable_ldap_acl: true
-  disable_ldap_index: true
-  disable_ldap_user: true
-  disable_service_install: true
-  disable_service_startup: true
-  disable_service_systemctl: true
-  disable_sudo: true
-  disable_system_chmod: true
-  disable_system_cgroups: true
-  disable_system_discover: true
-  disable_system_execute_arc_chroot: true
-  disable_system_info: true
-  disable_system_limits: true
-  disable_system_tmpfs: true
-  disable_system_user: true
-  disable_tools_repo: true
-  disable_tools_rubygems: true
-  disable_yum_conf: true
+  tags:
+    api: true
+    api_if_os: false # disable_conditions_if_os
+    conditions_if_os: false
+    cron: false # disable_cron
+    db: false # disable_db
+    docker: false # disable_docker
+    docker_volume: false
+    krb5_addprinc: false
+    krb5_delprinc: false
+    krb5_ktadd: false
+    ldap_acl: false
+    ldap_index: false
+    ldap_user: false
+    posix: true
+    rubygem: false # disable_tools_rubygems
+    service_install: false
+    service_startup: false
+    service_systemctl: false
+    sudo: false
+    system_chmod: false
+    system_cgroups: false
+    system_discover: false
+    system_execute_arc_chroot: false
+    system_info: false
+    system_limits: false
+    system_tmpfs: false
+    tools_repo: false
+    tools_rubygems: false
+    system_user: false
+    yum_conf: false
   docker: # eg `docker-machine create --driver virtualbox nikita`
     machine: 'nikita'
   krb5:

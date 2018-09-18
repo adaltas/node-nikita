@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
-test = require '../test'
-they = require 'ssh2-they'
+{tags, ssh} = require '../test'
+they = require('ssh2-they').configure(ssh)
+
+return unless tags.system_discover
 
 describe 'system.discover', ->
   
   @timeout 30000
-  config = test.config()
-  return if config.disable_system_discover
 
   they 'return info on RH', (ssh) ->
     nikita
