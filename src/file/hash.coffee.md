@@ -58,7 +58,7 @@ used for comparaison.
         , (err, {stdout}) ->
           throw Error "Command does not exist: openssl" if err?.code is 2
           throw err if err
-          hashs = string.lines(stdout).filter (line) -> /\w+/.test line
+          hashs = string.lines(stdout).filter( (line) -> /\w+/.test line ).sort()
           info.hash = if hashs.length is 0
             crypto.createHash(options.algo).update('').digest('hex')
           else if hashs.length is 1
@@ -74,9 +74,9 @@ used for comparaison.
         """
         trim: true
       , (err, {status, stdout}) ->
-        return unless status
         throw Error "Command does not exist: openssl" if err?.code is 2
         throw err if err
+        return unless status
         info.hash = stdout
       @call
         if: options.hash

@@ -5,6 +5,7 @@
 
 New features:
 
+* file.hash: predictable hash using sort
 * log: honors debug when log is disabled
 * system.execute.assert: honors execute options
 * misc: export db and docker
