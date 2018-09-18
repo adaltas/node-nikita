@@ -50,7 +50,7 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = (options) ->
+    module.exports = ({options}) ->
       @log message: "Entering Docker cp", level: 'DEBUG', module: 'nikita/lib/docker/cp'
       # SSH connection
       ssh = @ssh options.ssh

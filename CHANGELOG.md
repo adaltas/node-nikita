@@ -10,6 +10,7 @@ New features:
 
 Fixes:
 
+* docker.cp: migrate to options as destructured assignment
 * fs.mkdir: ensure macos compatiblity by using shortcut params
 * java.keystore_add: dont copy certs unless ssh and local
 * java.keystore_add: new tmpdir option
