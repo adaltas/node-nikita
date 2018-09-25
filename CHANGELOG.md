@@ -27,6 +27,10 @@ Cleanup:
 
 * test: filter all test with tags
 
+Management:
+
+* package: latest dependencies
+
 ## Version 0.8.0
 
 Backward incompatibilities:
