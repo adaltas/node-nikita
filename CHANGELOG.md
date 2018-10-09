@@ -1,7 +1,7 @@
 
 # Changelog
 
-## Trunk
+## Version 0.8.1
 
 New features:
 
