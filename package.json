@@ -1,6 +1,6 @@
 {
   "name": "nikita",
-  "description": "Automation of system deployments for applications and infrastructures.",
+  "description": "Automation and deployment solution of applications and infrastructures.",
   "keywords": [
     "build",
     "cli",
