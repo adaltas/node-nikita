@@ -50,8 +50,8 @@
               proxy.action = []
               {get, values} = handle_get proxy, options
               return values if get
-              state.current_level.push opts for opts in options
-              setImmediate _run_ if state.current_level.length is options.length # Activate the pump
+              state.current_level.todos.push opts for opts in options
+              setImmediate _run_ if state.current_level.todos.length is options.length # Activate the pump
               proxy
             new Proxy builder,
               get: (target, name) ->
@@ -129,14 +129,6 @@
           delete action.once if action.once is false
           action.once = action.once.sort() if Array.isArray action.once
           action.once = action.once.sort() if Array.isArray action.once
-          # action.sleep ?= 3000 # Wait 3s between retry
-          # action.retry ?= 0
-          # action.disabled ?= false
-          # action.status ?= true
-          # action.depth = state.parent_levels.length + 1
-          # throw Error 'Incompatible Options: status "false" implies shy "true"' if action.status is false and action.shy is false # Room for argument, leave it strict for now until we come accross a usecase justifying it.
-          # action.shy ?= true if action.status is false
-          # action.shy ?= false
           # Validation
           if params.handler
             throw Error 'Missing handler option' unless action.handler
@@ -217,21 +209,21 @@
           return run()
         mtodos = state.current_level
         state.current_level = state.parent_levels.shift()
-        state.current_level.unshift mtodos... if mtodos.length
+        state.current_level.todos.unshift mtodos.todos... if mtodos.todos.length
       handle_multiple_call = (err) ->
         state.killed = true
         state.current_level = state.parent_levels.shift() while state.parent_levels.length
         jump_to_error err
         run()
       jump_to_error = (err) ->
-        while state.current_level[0] and state.current_level[0].action not in ['catch', 'next', 'promise'] then state.current_level.shift()
+        while state.current_level.todos[0] and state.current_level.todos[0].action not in ['catch', 'next', 'promise'] then state.current_level.todos.shift()
         state.current_level.err = err
       _run_ = ->
         if obj.options.domain
         then obj.options.domain.run run
         else run()
       run = (options, callback) ->
-        options = state.current_level.shift() unless options
+        options = state.current_level.todos.shift() unless options
         # Nothing more to do in current queue
         unless options
           obj.options.domain?.removeListener 'error', domain_on_error
@@ -272,7 +264,7 @@
         if array.compare options.action, ['end']
           return conditions.all proxy, options: options
           , ->
-            while state.current_level[0] and state.current_level[0].action not in ['next', 'promise'] then state.current_level.shift()
+            while state.current_level.todos[0] and state.current_level.todos[0].action not in ['next', 'promise'] then state.current_level.todos.shift()
             callback err, {} if callback
             run()
           , (err) ->
@@ -447,10 +439,10 @@
                   called = true
                   status_sync = false
                   wait_children = ->
-                    unless state.current_level.length
+                    unless state.current_level.todos.length
                       return setImmediate ->
                         do_next [null, status_sync]
-                    loptions = state.current_level.shift()
+                    loptions = state.current_level.todos.shift()
                     run loptions, (err, {status}) ->
                       return do_next [err] if err
                       # Discover status of all unshy children
@@ -458,7 +450,7 @@
                       wait_children()
                   wait_children()
             catch err
-              state.current_level = []
+              state.current_level = state_create_level()
               do_next [err]
           do_intercept_after = (args, callback) ->
             return do_options_after args if options.intercepting
@@ -514,30 +506,30 @@
       state.properties.child = get: -> ->
         module.exports(obj.options)
       state.properties.next = get: -> ->
-        state.current_level.push action: 'next', handler: arguments[0]
-        setImmediate _run_ if state.current_level.length is 1 # Activate the pump
+        state.current_level.todos.push action: 'next', handler: arguments[0]
+        setImmediate _run_ if state.current_level.todos.length is 1 # Activate the pump
         proxy
       state.properties.promise = get: -> ->
         deferred = {}
         promise = new Promise (resolve, reject)->
           deferred.resolve = resolve
           deferred.reject = reject
-        state.current_level.push action: 'promise', deferred: deferred # handler: arguments[0],
-        setImmediate _run_ if state.current_level.length is 1 # Activate the pump
+        state.current_level.todos.push action: 'promise', deferred: deferred # handler: arguments[0],
+        setImmediate _run_ if state.current_level.todos.length is 1 # Activate the pump
         promise
       state.properties.end = get: -> ->
         args = [].slice.call(arguments)
         options = normalize_options args, 'end'
-        state.current_level.push opts for opts in options
-        setImmediate _run_ if state.current_level.length is options.length # Activate the pump
+        state.current_level.todos.push opts for opts in options
+        setImmediate _run_ if state.current_level.todos.length is options.length # Activate the pump
         proxy
       state.properties.call = get: -> ->
         args = [].slice.call(arguments)
         options = normalize_options args, 'call'
         {get, values} = handle_get proxy, options
         return values if get
-        state.current_level.push opts for opts in options
-        setImmediate _run_ if state.current_level.length is options.length # Activate the pump
+        state.current_level.todos.push opts for opts in options
+        setImmediate _run_ if state.current_level.todos.length is options.length # Activate the pump
         proxy
       state.properties.each = get: -> ->
         args = [].slice.call(arguments)
@@ -629,13 +621,16 @@
 ## Helper functions
 
     state_create_level = ->
-      todos = []
-      state_reset_level todos
-      todos
-    state_reset_level = (todos) ->
-      todos.err = null
-      todos.status = []
-      todos.throw_if_error = true
+      level =
+        err: null
+        status: []
+        todos: []
+        throw_if_error: true
+    # Called after next and promise
+    state_reset_level = (level) ->
+      level.err = null
+      level.status = []
+      level.throw_if_error = true
 
 ## Dependencies
 
