@@ -25,9 +25,9 @@
       state.index_counter = 0
       # Domain
       obj.options.domain =  domain.create() if obj.options.domain is true
-      domain_on_error = (err) ->
-        err.message = "Invalid State Error [#{err.message}]"
-        handle_multiple_call err
+      domain_on_error = (error) ->
+        error.message = "Invalid State Error [#{error.message}]"
+        handle_multiple_call error
       obj.options.domain?.on 'error', domain_on_error
       # Proxify
       proxy = new Proxy obj,
@@ -133,7 +133,6 @@
           if params.handler
             throw Error 'Missing handler option' unless action.handler
             throw Error "Invalid Handler: expect a function, got '#{action.handler}'" unless typeof action.handler is 'function'
-          # jump_to_error Error "Invalid options sleep, got #{JSON.stringify action.sleep}" unless typeof action.sleep is 'number' and action.sleep >= 0
           action
         actions
       normalize_options = obj.internal.options
@@ -202,22 +201,22 @@
         state.current_level = state_create_level()
         try
           fn.apply proxy, args
-        catch err
+        catch error
           state.current_level = state.parent_levels.shift()
-          jump_to_error err
-          args[0] = err
+          jump_to_error error
+          args[0] = error
           return run()
         mtodos = state.current_level
         state.current_level = state.parent_levels.shift()
         state.current_level.todos.unshift mtodos.todos... if mtodos.todos.length
-      handle_multiple_call = (err) ->
+      handle_multiple_call = (error) ->
         state.killed = true
         state.current_level = state.parent_levels.shift() while state.parent_levels.length
-        jump_to_error err
+        jump_to_error error
         run()
-      jump_to_error = (err) ->
+      jump_to_error = (error) ->
         while state.current_level.todos[0] and state.current_level.todos[0].action not in ['catch', 'next', 'promise'] then state.current_level.todos.shift()
-        state.current_level.err = err
+        state.current_level.error = error
       _run_ = ->
         if obj.options.domain
         then obj.options.domain.run run
@@ -229,14 +228,14 @@
           obj.options.domain?.removeListener 'error', domain_on_error
           # Run is called with a callback
           if callback
-            callback state.current_level.err if callback
+            callback state.current_level.error if callback
             return
           else
-            if not state.killed and state.parent_levels.length is 0 and state.current_level.err and state.current_level.throw_if_error
-              obj.emit 'error', state.current_level.err
-              throw state.current_level.err unless obj.listenerCount() is 0
+            if not state.killed and state.parent_levels.length is 0 and state.current_level.error and state.current_level.throw_if_error
+              obj.emit 'error', state.current_level.error
+              throw state.current_level.error unless obj.listenerCount() is 0
           if state.parent_levels.length is 0
-            obj.emit 'end', level: 'INFO' unless state.current_level.err
+            obj.emit 'end', level: 'INFO' unless state.current_level.error
           return
         options_original = options
         options_parent = state.current_level.options
@@ -245,19 +244,19 @@
           options_original[k] = v if options_original[k] is undefined and obj.cascade[k] is true
         options.original = options_original
         if options.action is 'next'
-          {err, status} = state.current_level
+          {error, status} = state.current_level
           status = status.some (status) -> not status.shy and status.value
-          options.handler?.call proxy, err, {status: status}
+          options.handler?.call proxy, error, {status: status}
           state_reset_level state.current_level
           run()
           return
         if options.action is 'promise'
-          {err, status} = state.current_level
+          {error, status} = state.current_level
           status = status.some (status) -> not status.shy and status.value
-          options.handler?.call proxy, err, status
-          unless err
+          options.handler?.call proxy, error, status
+          unless error
           then options.deferred.resolve status
-          else options.deferred.reject err
+          else options.deferred.reject error
           state_reset_level state.current_level
           return
         return if state.killed
@@ -265,10 +264,10 @@
           return conditions.all proxy, options: options
           , ->
             while state.current_level.todos[0] and state.current_level.todos[0].action not in ['next', 'promise'] then state.current_level.todos.shift()
-            callback err, {} if callback
+            callback error, {} if callback
             run()
-          , (err) ->
-            callback err, {} if callback
+          , (error) ->
+            callback error, {} if callback
             run()
         options = enrich_options options
         index = state.index_counter++
@@ -282,10 +281,10 @@
             try
               # Validation
               throw Error "Invalid options sleep, got #{JSON.stringify options.sleep}" unless typeof options.sleep is 'number' and options.sleep >= 0
-            catch err
-              do_callback [err, status: false]
+            catch error
+              do_callback [error, status: false]
               return
-            wrap.options options, (err) ->
+            wrap.options options, (error) ->
               do_disabled()
           do_disabled = ->
             unless options.disabled
@@ -335,7 +334,7 @@
                 continue if k in ['handler', 'callback']
                 opts[k] ?= v
               run opts, next
-            .error (err) -> do_callback [err, status: false]
+            .error (error) -> do_callback [error, status: false]
             .next do_intercept_before
           do_intercept_before = ->
             return do_conditions() if options.intercepting
@@ -352,7 +351,7 @@
                 continue if k in ['handler', 'callback']
                 opts[k] ?= v
               run opts, next
-            .error (err) -> do_callback [err, status: false]
+            .error (error) -> do_callback [error, status: false]
             .next do_conditions
           do_conditions = ->
             conditions.all proxy, options: options
@@ -361,18 +360,18 @@
                 delete options[k] if /^if.*/.test(k) or /^unless.*/.test(k)
               proxy.log type: 'lifecycle', message: 'conditions_passed', index: index, error: null, status: false
               do_handler()
-            , (err) ->
-              proxy.log type: 'lifecycle', message: 'conditions_failed', index: index, error: err, status: false
-              do_callback [err, status: false]
+            , (error) ->
+              proxy.log type: 'lifecycle', message: 'conditions_failed', index: index, error: error, status: false
+              do_callback [error, status: false]
           options.attempt = -1
           do_handler = ->
             options.attempt++
-            do_next = ([err, args]) ->
+            do_next = ([error, args]) ->
               options.handler = options_handler
               options.callback = options_callback
-              if err and err not instanceof Error
-                err = Error 'First argument not a valid error'
-                arguments[0][0] = err
+              if error and error not instanceof Error
+                error = Error 'First argument not a valid error'
+                arguments[0][0] = error
                 arguments[0][1] ?= {}
                 arguments[0][1].status ?= false
               else
@@ -380,8 +379,8 @@
                 else if not args then arguments[0][1] = { status: false }
                 else if typeof args isnt 'object' then arguments[0][0] = Error "Invalid Argument: expect an object or a boolean, got #{JSON.stringify args}"
                 else arguments[0][1].status ?= false
-              proxy.log message: err.message, level: 'ERROR', index: index, module: 'nikita' if err
-              if err and ( options.retry is true or options.attempt < options.retry - 1 )
+              proxy.log message: error.message, level: 'ERROR', index: index, module: 'nikita' if error
+              if error and ( options.retry is true or options.attempt < options.retry - 1 )
                 proxy.log message: "Retry on error, attempt #{options.attempt+1}", level: 'WARN', index: index, module: 'nikita'
                 return setTimeout do_handler, options.sleep
               do_intercept_after arguments...
@@ -443,15 +442,15 @@
                       return setImmediate ->
                         do_next [null, status_sync]
                     loptions = state.current_level.todos.shift()
-                    run loptions, (err, {status}) ->
-                      return do_next [err] if err
+                    run loptions, (error, {status}) ->
+                      return do_next [error] if error
                       # Discover status of all unshy children
                       status_sync = true if status and not loptions.shy
                       wait_children()
                   wait_children()
-            catch err
+            catch error
               state.current_level = state_create_level()
-              do_next [err]
+              do_next [error]
           do_intercept_after = (args, callback) ->
             return do_options_after args if options.intercepting
             each state.afters
@@ -468,7 +467,7 @@
                 opts[k] ?= v
               opts.callback_arguments = args
               run opts, next
-            .error (err) -> do_callback [err, status: false]
+            .error (error) -> do_callback [error, status: false]
             .next -> do_options_after args
           do_options_after = (args) ->
             return do_callback args if options.options_after
@@ -485,7 +484,7 @@
                 continue if k in ['handler', 'callback']
                 opts[k] ?= v
               run opts, next
-            .error (err) -> do_callback [err, status: false]
+            .error (error) -> do_callback [error, status: false]
             .next -> do_callback args
           do_callback = (args) ->
             proxy.log type: 'handled', index: index, error: args[0], status: args[1].status
@@ -622,13 +621,13 @@
 
     state_create_level = ->
       level =
-        err: null
+        error: null
         status: []
         todos: []
         throw_if_error: true
     # Called after next and promise
     state_reset_level = (level) ->
-      level.err = null
+      level.error = null
       level.status = []
       level.throw_if_error = true
 
