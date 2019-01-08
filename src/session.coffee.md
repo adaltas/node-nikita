@@ -16,8 +16,8 @@
       # Internal state
       state = {}
       state.properties = {}
-      state.stack = []
-      state.todos = todos_create()
+      state.parent_levels = []
+      state.current_level = state_create_level()
       state.befores = []
       state.afters = []
       state.once = {}
@@ -50,8 +50,8 @@
               proxy.action = []
               {get, values} = handle_get proxy, options
               return values if get
-              state.todos.push opts for opts in options
-              setImmediate _run_ if state.todos.length is options.length # Activate the pump
+              state.current_level.push opts for opts in options
+              setImmediate _run_ if state.current_level.length is options.length # Activate the pump
               proxy
             new Proxy builder,
               get: (target, name) ->
@@ -133,7 +133,7 @@
           # action.retry ?= 0
           # action.disabled ?= false
           # action.status ?= true
-          # action.depth = state.stack.length + 1
+          # action.depth = state.parent_levels.length + 1
           # throw Error 'Incompatible Options: status "false" implies shy "true"' if action.status is false and action.shy is false # Room for argument, leave it strict for now until we come accross a usecase justifying it.
           # action.shy ?= true if action.status is false
           # action.shy ?= false
@@ -148,7 +148,7 @@
       enrich_options = (options_action) ->
         options_session = obj.options
         options_session.cascade ?= {}
-        options_parent = state.todos.options
+        options_parent = state.current_level.options
         options = {}
         options.parent = options_parent
         # Merge cascade action options with default session options
@@ -206,75 +206,73 @@
           opts[k] = v
         opts
       call_callback = (fn, args) ->
-        state.stack.unshift state.todos
-        state.todos = todos_create()
+        state.parent_levels.unshift state.current_level
+        state.current_level = state_create_level()
         try
           fn.apply proxy, args
         catch err
-          state.todos = state.stack.shift()
+          state.current_level = state.parent_levels.shift()
           jump_to_error err
           args[0] = err
           return run()
-        mtodos = state.todos
-        state.todos = state.stack.shift()
-        state.todos.unshift mtodos... if mtodos.length
+        mtodos = state.current_level
+        state.current_level = state.parent_levels.shift()
+        state.current_level.unshift mtodos... if mtodos.length
       handle_multiple_call = (err) ->
         state.killed = true
-        state.todos = state.stack.shift() while state.stack.length
+        state.current_level = state.parent_levels.shift() while state.parent_levels.length
         jump_to_error err
         run()
       jump_to_error = (err) ->
-        while state.todos[0] and state.todos[0].action not in ['catch', 'next', 'promise'] then state.todos.shift()
-        state.todos.err = err
+        while state.current_level[0] and state.current_level[0].action not in ['catch', 'next', 'promise'] then state.current_level.shift()
+        state.current_level.err = err
       _run_ = ->
         if obj.options.domain
         then obj.options.domain.run run
         else run()
       run = (options, callback) ->
-        options = state.todos.shift() unless options
+        options = state.current_level.shift() unless options
         # Nothing more to do in current queue
         unless options
           obj.options.domain?.removeListener 'error', domain_on_error
           # Run is called with a callback
           if callback
-            callback state.todos.err if callback
+            callback state.current_level.err if callback
             return
           else
-            if not state.killed and state.stack.length is 0 and state.todos.err and state.todos.throw_if_error
-              obj.emit 'error', state.todos.err
-              throw state.todos.err unless obj.listenerCount() is 0
-          if state.stack.length is 0
-            obj.emit 'end', level: 'INFO' unless state.todos.err
+            if not state.killed and state.parent_levels.length is 0 and state.current_level.err and state.current_level.throw_if_error
+              obj.emit 'error', state.current_level.err
+              throw state.current_level.err unless obj.listenerCount() is 0
+          if state.parent_levels.length is 0
+            obj.emit 'end', level: 'INFO' unless state.current_level.err
           return
         options_original = options
-        options_parent = state.todos.options
+        options_parent = state.current_level.options
         obj.cascade = {...obj.options.cascade, ...module.exports.cascade}
         for k, v of options_parent
           options_original[k] = v if options_original[k] is undefined and obj.cascade[k] is true
         options.original = options_original
         if options.action is 'next'
-          {err, status} = state.todos
+          {err, status} = state.current_level
           status = status.some (status) -> not status.shy and status.value
-          state.todos.final_err = err
-          todos_reset state.todos
           options.handler?.call proxy, err, {status: status}
+          state_reset_level state.current_level
           run()
           return
         if options.action is 'promise'
-          {err, status} = state.todos
+          {err, status} = state.current_level
           status = status.some (status) -> not status.shy and status.value
-          state.todos.final_err = err
-          todos_reset state.todos
           options.handler?.call proxy, err, status
           unless err
           then options.deferred.resolve status
           else options.deferred.reject err
+          state_reset_level state.current_level
           return
         return if state.killed
         if array.compare options.action, ['end']
           return conditions.all proxy, options: options
           , ->
-            while state.todos[0] and state.todos[0].action not in ['next', 'promise'] then state.todos.shift()
+            while state.current_level[0] and state.current_level[0].action not in ['next', 'promise'] then state.current_level.shift()
             callback err, {} if callback
             run()
           , (err) ->
@@ -282,10 +280,10 @@
             run()
         options = enrich_options options
         index = state.index_counter++
-        state.todos.status.unshift shy: options.shy, value: undefined
-        state.stack.unshift state.todos
-        state.todos = todos_create()
-        state.todos.options = options
+        state.current_level.status.unshift shy: options.shy, value: undefined
+        state.parent_levels.unshift state.current_level
+        state.current_level = state_create_level()
+        state.current_level.options = options
         proxy.log message: options.header, type: 'header', index: index, headers: options.headers if options.header
         do () ->
           do_options = ->
@@ -444,10 +442,10 @@
                   called = true
                   status_sync = false
                   wait_children = ->
-                    unless state.todos.length
+                    unless state.current_level.length
                       return setImmediate ->
                         do_next [null, status_sync]
-                    loptions = state.todos.shift()
+                    loptions = state.current_level.shift()
                     run loptions, (err, {status}) ->
                       return do_next [err] if err
                       # Discover status of all unshy children
@@ -455,7 +453,7 @@
                       wait_children()
                   wait_children()
             catch err
-              state.todos = []
+              state.current_level = []
               do_next [err]
           do_intercept_after = (args, callback) ->
             return do_options_after args if options.intercepting
@@ -496,10 +494,10 @@
             proxy.log type: 'handled', index: index, error: args[0], status: args[1].status
             return if state.killed
             args[0] = undefined unless args[0] # Error is undefined and not null or false
-            state.todos = state.stack.shift() # Exit action state and move back to parent state
+            state.current_level = state.parent_levels.shift() # Exit action state and move back to parent state
             jump_to_error args[0] if args[0] and not options.relax
-            state.todos.throw_if_error = false if args[0] and options.callback
-            state.todos.status[0].value = if options.status then args[1].status else false
+            state.current_level.throw_if_error = false if args[0] and options.callback
+            state.current_level.status[0].value = if options.status then args[1].status else false
             call_callback options.callback, args if options.callback
             args[0] = null if options.relax
             args[1] ?= {}
@@ -511,30 +509,30 @@
       state.properties.child = get: -> ->
         module.exports(obj.options)
       state.properties.next = get: -> ->
-        state.todos.push action: 'next', handler: arguments[0]
-        setImmediate _run_ if state.todos.length is 1 # Activate the pump
+        state.current_level.push action: 'next', handler: arguments[0]
+        setImmediate _run_ if state.current_level.length is 1 # Activate the pump
         proxy
       state.properties.promise = get: -> ->
         deferred = {}
         promise = new Promise (resolve, reject)->
           deferred.resolve = resolve
           deferred.reject = reject
-        state.todos.push action: 'promise', deferred: deferred # handler: arguments[0],
-        setImmediate _run_ if state.todos.length is 1 # Activate the pump
+        state.current_level.push action: 'promise', deferred: deferred # handler: arguments[0],
+        setImmediate _run_ if state.current_level.length is 1 # Activate the pump
         promise
       state.properties.end = get: -> ->
         args = [].slice.call(arguments)
         options = normalize_options args, 'end'
-        state.todos.push opts for opts in options
-        setImmediate _run_ if state.todos.length is options.length # Activate the pump
+        state.current_level.push opts for opts in options
+        setImmediate _run_ if state.current_level.length is options.length # Activate the pump
         proxy
       state.properties.call = get: -> ->
         args = [].slice.call(arguments)
         options = normalize_options args, 'call'
         {get, values} = handle_get proxy, options
         return values if get
-        state.todos.push opts for opts in options
-        setImmediate _run_ if state.todos.length is options.length # Activate the pump
+        state.current_level.push opts for opts in options
+        setImmediate _run_ if state.current_level.length is options.length # Activate the pump
         proxy
       state.properties.each = get: -> ->
         args = [].slice.call(arguments)
@@ -570,17 +568,17 @@
         proxy
       state.properties.status = get: -> (index) ->
         if arguments.length is 0
-          return state.stack[0].status.some (status) -> not status.shy and status.value
+          return state.parent_levels[0].status.some (status) -> not status.shy and status.value
         else if index is false
-          value = state.stack[0].status.some (status) -> not status.shy and status.value
-          status.value = false for status in state.stack[0].status
+          value = state.parent_levels[0].status.some (status) -> not status.shy and status.value
+          status.value = false for status in state.parent_levels[0].status
           return value
         else if index is true
-          value = state.stack[0].status.some (status) -> not status.shy and status.value
-          status.value = true for status in state.stack[0].status
+          value = state.parent_levels[0].status.some (status) -> not status.shy and status.value
+          status.value = true for status in state.parent_levels[0].status
           return value
         else
-          state.stack[0].status[Math.abs index]?.value
+          state.parent_levels[0].status[Math.abs index]?.value
       Object.defineProperties obj, state.properties
       reg = registry.registry {}
       Object.defineProperty obj.registry, 'get', get: -> (name, handler) ->
@@ -625,11 +623,11 @@
 
 ## Helper functions
 
-    todos_create = ->
+    state_create_level = ->
       todos = []
-      todos_reset todos
+      state_reset_level todos
       todos
-    todos_reset = (todos) ->
+    state_reset_level = (todos) ->
       todos.err = null
       todos.status = []
       todos.throw_if_error = true
