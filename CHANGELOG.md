@@ -5,6 +5,7 @@
 
 Management:
 
+* events: isolate tests into api/events
 * aspect: isolate tests into api/aspect
 * doc: minor updates
 
