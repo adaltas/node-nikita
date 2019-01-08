@@ -5,6 +5,14 @@ nikita = require '../../src'
 return unless tags.api
 
 describe 'options "handler"', ->
+  
+  describe 'context', ->
+
+    it 'pass properties', ->
+      nikita
+      .call (context) ->
+        Object.keys(context).should.eql ['options', 'session']
+      .promise()
 
   describe 'sync', ->
 

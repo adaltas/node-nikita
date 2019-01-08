@@ -419,16 +419,21 @@
                 args = [].slice.call(arguments, 0)
                 setImmediate ->
                   do_next args
+              # Prepare the Context
+              context =
+                options: opts
+                session: proxy
+              # Call the action
               if options_handler_length is 2 # Async style
                 promise_returned = false
-                result = options_handler.call proxy, options: opts, ->
+                result = options_handler.call proxy, context, ->
                   return if promise_returned
                   handle_async_and_promise.apply null, arguments
                 if promise.is result
                   promise_returned = true
                   return handle_async_and_promise Error 'Invalid Promise: returning promise is not supported in asynchronuous mode'
               else # Sync style
-                result = options_handler.call proxy, options: opts
+                result = options_handler.call proxy, context
                 if promise.is result # result is a promisee
                   result.then (value) ->
                     value = [value] unless Array.isArray value

@@ -3,6 +3,10 @@
 
 ## Trunk
 
+New features:
+
+* handler: pass session to context
+
 Management:
 
 * events: isolate tests into api/events
