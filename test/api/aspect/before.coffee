@@ -1,6 +1,6 @@
 
-nikita = require '../../src'
-{tags, scratch} = require '../test'
+nikita = require '../../../src'
+{tags, scratch} = require '../../test'
   
 return unless tags.api
 

@@ -3,7 +3,10 @@
 
 ## Trunk
 
-* update readme
+Management:
+
+* aspect: isolate tests into api/aspect
+* doc: minor updates
 
 ## Version 0.8.1
 
