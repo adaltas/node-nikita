@@ -206,9 +206,9 @@
           jump_to_error error
           args[0] = error
           return run()
-        mtodos = state.current_level
+        current_level = state.current_level
         state.current_level = state.parent_levels.shift()
-        state.current_level.todos.unshift mtodos.todos... if mtodos.todos.length
+        state.current_level.todos.unshift current_level.todos... if current_level.todos.length
       handle_multiple_call = (error) ->
         state.killed = true
         state.current_level = state.parent_levels.shift() while state.parent_levels.length
@@ -244,15 +244,15 @@
           options_original[k] = v if options_original[k] is undefined and obj.cascade[k] is true
         options.original = options_original
         if options.action is 'next'
-          {error, status} = state.current_level
-          status = status.some (status) -> not status.shy and status.value
+          {error, history} = state.current_level
+          status = history.some (action) -> not action.shy and action.status
           options.handler?.call proxy, error, {status: status}
           state_reset_level state.current_level
           run()
           return
         if options.action is 'promise'
-          {error, status} = state.current_level
-          status = status.some (status) -> not status.shy and status.value
+          {error, history} = state.current_level
+          status = history.some (action) -> not action.shy and action.status
           options.handler?.call proxy, error, status
           unless error
           then options.deferred.resolve status
@@ -271,7 +271,7 @@
             run()
         options = enrich_options options
         index = state.index_counter++
-        state.current_level.status.unshift shy: options.shy, value: undefined
+        state.current_level.history.unshift shy: options.shy, status: undefined
         state.parent_levels.unshift state.current_level
         state.current_level = state_create_level()
         state.current_level.options = options
@@ -493,8 +493,9 @@
             state.current_level = state.parent_levels.shift() # Exit action state and move back to parent state
             jump_to_error args[0] if args[0] and not options.relax
             state.current_level.throw_if_error = false if args[0] and options.callback
-            state.current_level.status[0].value = if options.status then args[1].status else false
+            state.current_level.history[0].status = if options.status then args[1].status else false
             call_callback options.callback, args if options.callback
+            # TODO: indifferent/apathetic/nonchalant/insouciant option: doesnt care if success or error
             args[0] = null if options.relax
             args[1] ?= {}
             args[1].status ?= false
@@ -564,17 +565,17 @@
         proxy
       state.properties.status = get: -> (index) ->
         if arguments.length is 0
-          return state.parent_levels[0].status.some (status) -> not status.shy and status.value
+          return state.parent_levels[0].history.some (action) -> not action.shy and action.status
         else if index is false
-          value = state.parent_levels[0].status.some (status) -> not status.shy and status.value
-          status.value = false for status in state.parent_levels[0].status
-          return value
+          status = state.parent_levels[0].history.some (action) -> not action.shy and action.status
+          action.status = false for action in state.parent_levels[0].history
+          return status
         else if index is true
-          value = state.parent_levels[0].status.some (status) -> not status.shy and status.value
-          status.value = true for status in state.parent_levels[0].status
-          return value
+          status = state.parent_levels[0].history.some (action) -> not action.shy and action.status
+          action.status = true for action in state.parent_levels[0].history
+          return status
         else
-          state.parent_levels[0].status[Math.abs index]?.value
+          state.parent_levels[0].history[Math.abs index]?.status
       Object.defineProperties obj, state.properties
       reg = registry.registry {}
       Object.defineProperty obj.registry, 'get', get: -> (name, handler) ->
@@ -622,13 +623,13 @@
     state_create_level = ->
       level =
         error: null
-        status: []
+        history: []
         todos: []
         throw_if_error: true
     # Called after next and promise
     state_reset_level = (level) ->
       level.error = null
-      level.status = []
+      level.history = []
       level.throw_if_error = true
 
 ## Dependencies
