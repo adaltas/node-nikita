@@ -7,6 +7,7 @@ Breaking changes:
 * misc.file: remove module
 
 New features:
+* misc.file.type: print the file type given a mode
 * handler: pass session to context
 
 Management:

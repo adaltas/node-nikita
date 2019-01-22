@@ -38,6 +38,21 @@ module.exports =
     (mode & constants.S_IFMT) is constants.S_IFIFO
   isSocket: (mode) ->
     (mode & constants.S_IFMT) is constants.S_IFSOCK
+  type: (mode) ->
+    if @isDirectory mode
+      'Directory'
+    else if @isFile mode
+      'File'
+    else if @isBlockDevice mode
+      'Block Device'
+    else if @isCharacterDevice mode
+      'Character Device'
+    else if @isSymbolicLink mode
+      'Symbolic Link'
+    else if @isFIFO mode
+      'FIFO'
+    else if @isSocket mode
+      'Socket'
 
 ## Dependencies
 
