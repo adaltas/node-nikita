@@ -10,6 +10,7 @@ Breaking changes:
 New features:
 * misc.file.type: print the file type given a mode
 * handler: pass session to context
+* file.cache: enforce hash
 
 Fixes:
 * file.cache: handle false ssh options

@@ -104,7 +104,7 @@ require('nikita')
       # - hash isnt true and doesnt match
       @call shy: true, ({}, callback) ->
         @log message: "Check if target (#{options.target}) exists", level: 'DEBUG', module: 'nikita/lib/file/cache'
-        @fs.exists ssh: options.ssh, target: options.target, (err, {exists}) =>
+        @fs.exists target: options.target, (err, {exists}) =>
           return callback err if err
           if exists
             @log message: "Target file exists", level: 'INFO', module: 'nikita/lib/file/cache'
@@ -122,7 +122,7 @@ require('nikita')
                   @log message: "Hashes match, skipping", level: 'DEBUG', module: 'nikita/lib/file/cache'
                   return callback null, false
                 @log message: "Hashes don't match, delete then re-download", level: 'WARN', module: 'nikita/lib/file/cache'
-                @fs.unlink ssh: options.ssh, target: options.target, (err) ->
+                @fs.unlink target: options.target, (err) ->
                   return callback err if err
                   callback null, true
             else
@@ -154,7 +154,14 @@ require('nikita')
         @system.copy
           source: "#{options.source}"
           target: "#{options.target}"
-      # TODO: validate the cache
+      # Validate the cache
+      @file.hash
+        target: options.target
+        if: _hash
+      , (err, {status, hash}) ->
+        throw err if err
+        return unless status
+        throw Error "Invalid Target Hash: target #{JSON.stringify options.target} got #{hash} instead of #{_hash}" unless _hash is hash
       @next (err, {status}) ->
         callback err, status: status, target: options.target
 
