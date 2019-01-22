@@ -196,3 +196,15 @@ describe 'system.mkdir', ->
       , (err) ->
         err.message.should.eql 'Non Absolute Path: target is "download_test", SSH requires absolute paths, you must provide an absolute path in the target or the cwd option'
       .promise()
+
+    they 'target exist but is not a directory', (ssh) ->
+      nikita
+        ssh: ssh
+      .file.touch
+        target: "#{scratch}/a_file"
+      .system.mkdir
+        target: "#{scratch}/a_file"
+        relax: true
+      , (err) ->
+        err.message.should.eql "Invalid Directory: path \"#{scratch}/a_file\" exists but is not a directory, got \"File\" type"
+      .promise()

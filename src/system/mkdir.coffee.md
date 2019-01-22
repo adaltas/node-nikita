@@ -108,11 +108,11 @@ require('nikita')
                 else return next()
               if misc.stats.isDirectory stats.mode
                 end = true
-                return  if i is 0 then do_update(stats) else do_create dirs
+                return if i is 0 then do_update(stats) else do_create dirs
               if err
                 return next err
               else # a file or symlink exists at this location
-                return next Error "Not a directory: #{JSON.stringify directory}"
+                return next Error "Invalid Directory: path #{JSON.stringify directory} exists but is not a directory, got \"#{misc.stats.type stats.mode}\" type"
           .next callback
         do_create = (directories) =>
           each(directories.reverse())
