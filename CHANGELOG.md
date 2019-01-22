@@ -3,12 +3,13 @@
 
 ## Trunk
 
-New features:
+Breaking changes:
+* misc.file: remove module
 
+New features:
 * handler: pass session to context
 
 Management:
-
 * events: isolate tests into api/events
 * aspect: isolate tests into api/aspect
 * doc: minor updates
@@ -16,14 +17,12 @@ Management:
 ## Version 0.8.1
 
 New features:
-
 * file.hash: predictable hash using sort
 * log: honors debug when log is disabled
 * system.execute.assert: honors execute options
 * misc: export db and docker
 
 Fixes:
-
 * system.execute: clean up tmp file
 * docker.cp: migrate to options as destructured assignment
 * fs.mkdir: ensure macos compatiblity by using shortcut params
@@ -36,11 +35,9 @@ Fixes:
 * file.download: ssh null replaced by false
 
 Cleanup:
-
 * test: filter all test with tags
 
 Management:
-
 * package: latest dependencies
 
 ## Version 0.8.0
@@ -54,7 +51,6 @@ Backward incompatibilities:
 * service: values start, stop, restart renamed started, stopped and restarted
 
 New features:
-
 * options.depth: definable by user
 * file.glob: new action
 * file.hash: new action
@@ -63,7 +59,6 @@ New features:
 * service.install: new options pacman_flags and yaourt_flags
 
 Fixes:
-
 * session: remove unused condition while unstacking
 * file.upload: refactor and use file.hash
 * cascade: overwrite default values set in session
@@ -80,7 +75,6 @@ Fixes:
 * tools.iptables: 2nd arg is not a callback
 
 Cleanup:
-
 * package: update license field to reflect MIT
 * log: remove log from cascade and parent usage 
 * fs.createWriteStream: code simplification
@@ -94,24 +88,20 @@ Cleanup:
 ## Version 0.7.0
 
 Backward incompatibilities:
-
 * session: renamed from context
 * actions: 2nd arg in callback is now an object
 * file.types.etc_group.read: rename output params user_list ot users
 * file.render: remove eco dependency
 
 New features:
-
 * system.info.disk: new action
 * system.info.system: new action
 
 Fixes:
-
 * ssh: fix conflict with session options
 * db: honors the port property
 
 Cleanup and minor enhancements:
-
 * ssh: test arguments
 * cascade: test array when defined in action
 * mysql: isolate tests into their container
@@ -120,7 +110,6 @@ Cleanup and minor enhancements:
 * mysql: freeze version 5.7 to avoid authentication issues
 
 Management:
-
 * package: push to current branch
 * package: use https url for issues
 * misc.doc: remove unused module
@@ -133,7 +122,6 @@ Management:
 ## Version 0.6.8
 
 Backward incompatibilities:
-
 * wrap: remove connection
 * log: move options.log to nikita.log 
 * option depth: renaming, was total_depth
@@ -144,7 +132,6 @@ Backward incompatibilities:
 * log.cli: print to stderr
 
 New features:
-
 * ssh.open: accept connection
 * options headers: inject parent headers
 * option parent: inject parent options
@@ -157,14 +144,12 @@ New features:
 * cwd: marked as propagated
 
 Fixes:
-
 * context: fix default param handler value 
 * ssh: no longer reference ssh2
 * cascade: honored by get actions
 * cascade: global, session and action merge
 
 Cleanup and minor enhancements:
-
 * option cascade: test false value in action
 * attempt: new test
 * event end: new test
@@ -177,7 +162,6 @@ Cleanup and minor enhancements:
 * src: ensure target paths are absolute over SSH
 
 Management:
-
 * travis: test against Node.js versions 8 and 10
 * changelog: organize messages by group
 * package: latest dependencies

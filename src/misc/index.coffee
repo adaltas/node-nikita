@@ -7,7 +7,6 @@ Stream = require 'stream'
 exec = require 'ssh2-exec'
 ini = require './ini'
 tilde = require 'tilde-expansion'
-file = require './file'
 string = require './string'
 array = require './array'
 db = require './db'
@@ -88,7 +87,6 @@ misc = module.exports =
           l = Math.min m.length, mode.length
           m.substr(-l) is mode.substr(-l)
       true
-  file: require './file'
   ###
   `isPortOpen(port, host, callback)`: Check if a port is already open
 

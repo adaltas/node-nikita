@@ -8,6 +8,16 @@ return unless tags.posix
 
 describe 'file.hash', ->
 
+  they 'error if target does not exist', (ssh) ->
+    nikita
+      ssh: ssh
+    .file.hash
+      target: "#{scratch}/unkown"
+      relax: true
+    , (err) ->
+      err.message.should.eql "Missing File: no file exists for target \"#{scratch}/unkown\""
+    .promise()
+
   they 'from a file', (ssh) ->
     nikita
       ssh: ssh

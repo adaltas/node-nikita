@@ -302,4 +302,3 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
     url = require 'url'
     misc = require '../misc'
     curl = require '../misc/curl'
-    file = require '../misc/file'

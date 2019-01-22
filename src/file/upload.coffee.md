@@ -162,4 +162,3 @@ require('nikita')
     fs = require 'fs'
     path = require 'path'
     misc = require '../misc'
-    file = require '../misc/file'

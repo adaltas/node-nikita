@@ -244,5 +244,4 @@ require('nikita')
     pad = require 'pad'
     fs = require 'fs'
     misc = require '../misc'
-    file = require '../misc/file'
     buffer = require '../misc/buffer'

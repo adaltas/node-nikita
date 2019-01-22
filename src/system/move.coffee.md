@@ -90,7 +90,3 @@ require('nikita')
         , (err) ->
           callback err
       do_exists()
-
-## Dependencies
-
-    file = require '../misc/file'
