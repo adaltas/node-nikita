@@ -18,7 +18,7 @@ Download a file and place it on a local or remote folder for later usage.
   option of the same name.   
 * `force` (boolean)   
   Overwrite the target file if it exists, bypass md5 verification.   
-* `headers` (array)   
+* `http_headers` (array)   
   Extra header  to include in the request when sending HTTP to a server.   
 * `location` (boolean)   
   If the server reports that the requested page has moved to a different
@@ -70,7 +70,7 @@ require('nikita')
       options.target ?= path.basename options.source
       options.target = path.resolve options.cache_dir, options.target
       options.source = options.source.substr 7 if /^file:\/\//.test options.source
-      options.headers ?= []
+      options.http_headers ?= []
       # todo, also support options.algo and options.hash
       if options.md5?
         throw Error "Invalid MD5 Hash:#{options.md5}" unless typeof options.md5 in ['string', 'boolean']
@@ -139,7 +139,7 @@ require('nikita')
         k = if u.protocol is 'https:' then '-k' else ''
         cmd = "curl #{fail} #{k} -s #{options.source} -o #{options.target}"
         cmd += " --location" if options.location
-        cmd += " --header \"#{header}\"" for header in options.headers
+        cmd += " --header \"#{header}\"" for header in options.http_headers
         cmd += " -x #{options.proxy}" if options.proxy
         @system.mkdir
           ssh: if options.cache_local then false else options.ssh

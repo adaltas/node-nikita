@@ -5,6 +5,7 @@
 
 Breaking changes:
 * misc.file: remove module
+* file.cache: rename headers to http_headers to avoid conflict
 
 New features:
 * misc.file.type: print the file type given a mode
