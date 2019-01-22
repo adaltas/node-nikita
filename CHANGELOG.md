@@ -10,6 +10,9 @@ New features:
 * misc.file.type: print the file type given a mode
 * handler: pass session to context
 
+Fixes:
+* file.cache: handle false ssh options
+
 Management:
 * events: isolate tests into api/events
 * aspect: isolate tests into api/aspect

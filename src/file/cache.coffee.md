@@ -142,11 +142,11 @@ require('nikita')
         cmd += " --header \"#{header}\"" for header in options.headers
         cmd += " -x #{options.proxy}" if options.proxy
         @system.mkdir
-          ssh: if options.cache_local then false else ssh
+          ssh: if options.cache_local then false else options.ssh
           target: path.dirname options.target
         @system.execute
           cmd: cmd
-          ssh: if options.cache_local then false else ssh
+          ssh: if options.cache_local then false else options.ssh
           unless_exists: options.target
       else
         @system.mkdir # todo: copy shall handle this
