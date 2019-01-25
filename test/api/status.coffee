@@ -218,3 +218,21 @@ describe 'api status', ->
       .call ->
         @status().should.be.true()
       .promise()
+
+    it.skip 'set status when sync is called in async', ->
+      console.log '---------'
+      nikita
+      .call ({}, callback) ->
+        @call ->
+          console.log '1 - first callback', @status()
+          callback null, true
+      # , (err, {status}) ->
+      #   console.log 'callback', status
+      # .call ({}, callback) ->
+      #   @call ->
+      #     callback null, false
+      .call
+        if: -> console.log '2 - second if condition', @status()
+      , ->
+        console.log '3 - second callback', @status()
+      .promise()
