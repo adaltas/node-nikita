@@ -140,7 +140,7 @@ require('nikita')
         elif command -v pacman >/dev/null 2>&1; then
           pacman --noconfirm -S #{options.name} #{options.pacman_flags.join ' '}
         elif command -v apt-get >/dev/null 2>&1; then
-          apt-get install -y #{options.name}
+          env DEBIAN_FRONTEND=noninteractive apt-get install -y #{options.name}
         else
           echo "Unsupported Package Manager: yum, pacman, apt-get supported" >&2
           exit 2
