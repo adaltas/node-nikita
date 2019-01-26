@@ -1,8 +1,10 @@
 .*
 /node_modules
+/packages/*/node_modules
 !.travis.yml
 !.gitignore
 !.gitattributes
 !.npmignore
-/test.coffee
-!/test.coffee.sample
+/yarn.lock
+/packages/*/test.coffee
+!/packages/*/test.coffee.sample

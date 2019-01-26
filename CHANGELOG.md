@@ -8,6 +8,7 @@
 ## Trunk
 
 Breaking changes:
+* package: split package under a single monorepo
 * misc.file: remove module
 * file.cache: rename headers to http_headers to avoid conflict
 

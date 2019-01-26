@@ -1,0 +1,54 @@
+
+# `nikita.docker.pause`
+
+Pause all processes within a container.
+
+## Options
+
+* `boot2docker` (boolean)   
+  Whether to use boot2docker or not, default to false.   
+* `container` (string)   
+  Name/ID of the container, required.
+* `machine` (string)   
+  Name of the docker-machine, required.
+* `code` (int|array)   
+  Expected code(s) returned by the command, int or array of int, default to 0.
+* `code_skipped`   
+  Expected code(s) returned by the command if it has no effect, executed will
+  not be incremented, int or array of int.
+
+## Callback parameters
+
+* `err`   
+  Error object if any.
+* `status`   
+  True if container was pulled.
+
+## Example
+
+```javascript
+require('nikita')
+.docker.pause({
+  container: 'toto'
+}, function(err, {status}){
+  console.log( err ? err.message : 'Container paused: ' + status);
+})
+```
+
+## Source Code
+
+    module.exports = ({options}, callback) ->
+      @log message: "Entering Docker pause", level: 'DEBUG', module: 'nikita/lib/docker/pause'
+      # Global parameters
+      options.docker ?= {}
+      options[k] ?= v for k, v of options.docker
+      # Validate parameters
+      return callback Error 'Missing container parameter' unless options.container?
+      @system.execute
+        cmd: docker.wrap options, "pause #{options.container}"
+      , docker.callback
+
+## Modules Dependencies
+
+    docker = require '@nikita/core/lib/misc/docker'
+    util = require 'util'

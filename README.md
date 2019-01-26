@@ -42,10 +42,12 @@ For the tests to execute successfully, you must:
 *   be able to ssh yourself (eg `ssh $(whoami)@localhost`) without a password   
 
 ```bash
-# run all tests
-npm test
-# or a subset
-npm run coffee && mocha test/api
+# run all package tests from the package directory
+cd packages/core && npm test
+# run all package tests from the project directory
+yarn workspace @nikita/core run test
+# or a subset of the tests
+npm run coffee && mocha test/api/**.coffee
 ```
 
 Some of the tests require a specific environment. You are encouraged to 
