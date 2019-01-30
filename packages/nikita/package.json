@@ -33,7 +33,13 @@
     }
   ],
   "dependencies": {
-    "@nikita/core": "~0.8.1"
+    "@nikita/core": "~0.8.1",
+    "@nikita/db": "~0.8.1",
+    "@nikita/docker": "~0.8.1",
+    "@nikita/filetypes": "~0.8.1",
+    "@nikita/krb5": "~0.8.1",
+    "@nikita/ldap": "~0.8.1",
+    "@nikita/tools": "~0.8.1"
   },
   "homepage": "http://www.adaltas.com/projects/node-nikita/",
   "license": "MIT",

@@ -13,11 +13,13 @@ Breaking changes:
 * file.cache: rename headers to http_headers to avoid conflict
 
 New features:
+* nikita: require all dependencies
 * misc.file.type: print the file type given a mode
 * handler: pass session to context
 * file.cache: enforce hash
 
 Fixes:
+* core: clean up file with arch chroot
 * file.cache: handle false ssh options
 
 Management:
