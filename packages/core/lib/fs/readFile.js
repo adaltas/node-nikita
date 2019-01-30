@@ -9,6 +9,18 @@
 //   Return a string with a particular encoding, otherwise a buffer is returned; 
 //   optional.
 
+// Exemple:
+
+// ```js
+// require('nikita')
+// .fs.readFile({
+//   target: "#{scratch}/a_file",
+//   encoding: 'ascii'
+// }, function(err, {data}){
+//   assert(data, 'hello')
+// })
+// ```
+
 // ## Source Code
 module.exports = {
   status: false,

@@ -8,6 +8,7 @@
 ## Trunk
 
 Breaking changes:
+* fs.readFile: show exemple
 * system.execute: cleanup temp file with arch chroot
 * package: split package under a single monorepo
 * misc.file: remove module
