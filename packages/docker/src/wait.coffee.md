@@ -52,5 +52,5 @@ nikita.docker.wait({
 
 ## Modules Dependencies
 
-    docker = require '@nikita/core/lib/misc/docker'
+    docker = require '@nikitajs/core/lib/misc/docker'
     util = require 'util'

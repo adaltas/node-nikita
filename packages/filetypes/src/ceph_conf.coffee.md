@@ -45,6 +45,6 @@ as ceph daemons expect it.
 ## Dependencies
 
     path = require 'path'
-    misc = require '@nikita/core/lib/misc'
+    misc = require '@nikitajs/core/lib/misc'
 
 [ceph-conf]:(http://docs.ceph.com/docs/jewel/rados/configuration/ceph-conf/)

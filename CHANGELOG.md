@@ -8,6 +8,7 @@
 ## Trunk
 
 Breaking changes:
+* package: rename scope to nikitajs
 * fs.readFile: show exemple
 * system.execute: cleanup temp file with arch chroot
 * package: split package under a single monorepo

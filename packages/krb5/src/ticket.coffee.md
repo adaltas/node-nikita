@@ -56,4 +56,4 @@ require('nikita')
 
 ## Dependencies
 
-    krb5 = require '@nikita/core/lib/misc/krb5'
+    krb5 = require '@nikitajs/core/lib/misc/krb5'

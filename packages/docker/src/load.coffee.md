@@ -106,6 +106,6 @@ require('nikita')
 
 ## Modules Dependencies
 
-    docker = require '@nikita/core/lib/misc/docker'
-    string = require '@nikita/core/lib/misc/string'
+    docker = require '@nikitajs/core/lib/misc/docker'
+    string = require '@nikitajs/core/lib/misc/string'
     util = require 'util'

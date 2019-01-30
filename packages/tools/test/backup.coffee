@@ -1,6 +1,6 @@
 
 console.log '!! backup'
-nikita = require '@nikita/core'
+nikita = require '@nikitajs/core'
 {tags, ssh, scratch} = require './test'
 they = require('ssh2-they').configure(ssh)
 

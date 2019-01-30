@@ -102,5 +102,5 @@ require('nikita')
 ## Modules Dependencies
 
     path = require 'path'
-    docker = require '@nikita/core/lib/misc/docker'
-    misc = require '@nikita/core/lib/misc'
+    docker = require '@nikitajs/core/lib/misc/docker'
+    misc = require '@nikitajs/core/lib/misc'

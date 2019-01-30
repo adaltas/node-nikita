@@ -1,10 +1,10 @@
 
-require('@nikita/core/lib/registry')
+require('@nikitajs/core/lib/registry')
 .register
   ldap:
-    acl: '@nikita/ldap/src/acl'
-    add: '@nikita/ldap/src/add'
-    delete: '@nikita/ldap/src/delete'
-    index: '@nikita/ldap/src/index'
-    schema: '@nikita/ldap/src/schema'
-    user: '@nikita/ldap/src/user'
+    acl: '@nikitajs/ldap/src/acl'
+    add: '@nikitajs/ldap/src/add'
+    delete: '@nikitajs/ldap/src/delete'
+    index: '@nikitajs/ldap/src/index'
+    schema: '@nikitajs/ldap/src/schema'
+    user: '@nikitajs/ldap/src/user'

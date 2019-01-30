@@ -193,9 +193,9 @@ require('nikita')
 ## Dependencies
 
     each = require 'each'
-    misc = require '@nikita/core/lib/misc'
-    ldap = require '@nikita/core/lib/misc/ldap'
-    string = require '@nikita/core/lib/misc/string'
+    misc = require '@nikitajs/core/lib/misc'
+    ldap = require '@nikitajs/core/lib/misc/ldap'
+    string = require '@nikitajs/core/lib/misc/string'
 
 [acls]: http://www.openldap.org/doc/admin24/access-control.html
 [tuto]: https://documentation.fusiondirectory.org/fr/documentation/convert_acl

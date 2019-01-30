@@ -37,4 +37,4 @@ module.exports = function({options}) {
 // ## Dependencies
 path = require('path');
 
-misc = require('@nikita/core/lib/misc');
+misc = require('@nikitajs/core/lib/misc');

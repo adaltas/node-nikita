@@ -1,5 +1,5 @@
 
-nikita = require '@nikita/core'
+nikita = require '@nikitajs/core'
 fs = require 'fs'
 # Read configuration
 try

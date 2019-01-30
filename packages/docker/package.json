@@ -1,5 +1,5 @@
 {
-  "name": "@nikita/docker",
+  "name": "@nikitajs/docker",
   "description": "Nikita docker actions.",
   "keywords": [
     "build",
@@ -24,7 +24,7 @@
     }
   ],
   "peerDependencies": {
-    "@nikita/core": "~0.8.1"
+    "@nikitajs/core": "^0.9.1"
   },
   "devDependencies": {
     "coffeescript": "^2.3.2",

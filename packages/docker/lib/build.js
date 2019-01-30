@@ -321,12 +321,12 @@ module.exports = function({options}, callback) {
 };
 
 // ## Modules Dependencies
-docker = require('@nikita/core/lib/misc/docker');
+docker = require('@nikitajs/core/lib/misc/docker');
 
-string = require('@nikita/core/lib/misc/string');
+string = require('@nikitajs/core/lib/misc/string');
 
 path = require('path');
 
 util = require('util');
 
-({merge} = require('@nikita/core/lib/misc'));
+({merge} = require('@nikitajs/core/lib/misc'));

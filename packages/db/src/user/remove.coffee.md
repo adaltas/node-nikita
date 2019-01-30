@@ -28,4 +28,4 @@ Create a user for the destination database.
 
 ## Dependencies
 
-    db = require '@nikita/core/lib/misc/db'
+    db = require '@nikitajs/core/lib/misc/db'

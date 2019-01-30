@@ -70,4 +70,4 @@ nikita.docker({
 ## Modules Dependencies
 
     util = require 'util'  
-    docker = require '@nikita/core/lib/misc/docker'
+    docker = require '@nikitajs/core/lib/misc/docker'

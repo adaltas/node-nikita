@@ -62,4 +62,4 @@ module.exports = function({options}) {
 };
 
 // ## Dependencies
-misc = require('@nikita/core/lib/misc');
+misc = require('@nikitajs/core/lib/misc');

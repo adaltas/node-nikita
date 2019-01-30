@@ -108,5 +108,5 @@ Create and start containers according to a docker-compose file
 
 ## Modules Dependencies
 
-    docker = require '@nikita/core/lib/misc/docker'
+    docker = require '@nikitajs/core/lib/misc/docker'
     path = require 'path'

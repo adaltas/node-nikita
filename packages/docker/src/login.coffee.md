@@ -51,6 +51,6 @@ Register or log in to a Docker registry server.
 
 ## Modules Dependencies
 
-    docker = require '@nikita/core/lib/misc/docker'
+    docker = require '@nikitajs/core/lib/misc/docker'
     path = require 'path'
     util = require 'util'

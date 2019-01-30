@@ -116,7 +116,7 @@ require('nikita')
 
 ## Dependencies
 
-    iptables = require '@nikita/core/lib/misc/iptables'
+    iptables = require '@nikitajs/core/lib/misc/iptables'
 
 ## IPTables References
 

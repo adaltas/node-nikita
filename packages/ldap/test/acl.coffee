@@ -1,5 +1,5 @@
 
-nikita = require '@nikita/core'
+nikita = require '@nikitajs/core'
 {tags, ssh, ldap} = require './test'
 they = require('ssh2-they').configure(ssh)
 

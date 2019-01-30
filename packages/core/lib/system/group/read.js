@@ -150,4 +150,4 @@ module.exports = {
 
 
 // ## Dependencies
-string = require('@nikita/core/lib/misc/string');
+string = require('@nikitajs/core/lib/misc/string');

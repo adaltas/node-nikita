@@ -1,16 +1,16 @@
 
-require('@nikita/core/lib/registry')
+require('@nikitajs/core/lib/registry')
 .register
   db:
     database:
-      '': '@nikita/db/src/database'
-      exists: '@nikita/db/src/database/exists'
-      remove: '@nikita/db/src/database/remove'
-      wait: '@nikita/db/src/database/wait'
+      '': '@nikitajs/db/src/database'
+      exists: '@nikitajs/db/src/database/exists'
+      remove: '@nikitajs/db/src/database/remove'
+      wait: '@nikitajs/db/src/database/wait'
     schema:
-      '': '@nikita/db/src/schema'
-      remove: '@nikita/db/src/schema/remove'
+      '': '@nikitajs/db/src/schema'
+      remove: '@nikitajs/db/src/schema/remove'
     user:
-      '': '@nikita/db/src/user'
-      exists: '@nikita/db/src/user/exists'
-      remove: '@nikita/db/src/user/remove'
+      '': '@nikitajs/db/src/user'
+      exists: '@nikitajs/db/src/user/exists'
+      remove: '@nikitajs/db/src/user/remove'

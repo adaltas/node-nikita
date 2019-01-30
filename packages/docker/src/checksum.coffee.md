@@ -53,4 +53,4 @@ Return the checksum of repository:tag, if it exists. Function not native to dock
 
 ## Modules Dependencies
 
-    docker = require '@nikita/core/lib/misc/docker'
+    docker = require '@nikitajs/core/lib/misc/docker'

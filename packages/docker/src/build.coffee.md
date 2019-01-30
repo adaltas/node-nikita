@@ -219,8 +219,8 @@ require('nikita')
 
 ## Modules Dependencies
 
-    docker = require '@nikita/core/lib/misc/docker'
-    string = require '@nikita/core/lib/misc/string'
+    docker = require '@nikitajs/core/lib/misc/docker'
+    string = require '@nikitajs/core/lib/misc/string'
     path = require 'path'
     util = require 'util'
-    {merge} = require '@nikita/core/lib/misc'
+    {merge} = require '@nikitajs/core/lib/misc'

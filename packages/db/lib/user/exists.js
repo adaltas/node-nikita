@@ -93,4 +93,4 @@ module.exports = {
 };
 
 // ## Dependencies
-db = require('@nikita/core/lib/misc/db');
+db = require('@nikitajs/core/lib/misc/db');

@@ -159,5 +159,5 @@ data-type[1]
 ## Dependencies
 
     path = require 'path'
-    misc = require '@nikita/core/lib/misc'
-    string = require '@nikita/core/lib/misc/string'
+    misc = require '@nikitajs/core/lib/misc'
+    string = require '@nikitajs/core/lib/misc/string'

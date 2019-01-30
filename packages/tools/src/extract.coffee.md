@@ -112,4 +112,4 @@ require('nikita').tools.extract({
 ## Dependencies
 
     path = require 'path'
-    misc = require '@nikita/core/lib/misc'
+    misc = require '@nikitajs/core/lib/misc'

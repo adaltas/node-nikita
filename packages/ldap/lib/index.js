@@ -132,8 +132,8 @@ module.exports = function({options}) {
 };
 
 // ## Dependencies
-misc = require('@nikita/core/lib/misc');
+misc = require('@nikitajs/core/lib/misc');
 
-string = require('@nikita/core/lib/misc/string');
+string = require('@nikitajs/core/lib/misc/string');
 
 // [index]: http://www.zytrax.com/books/ldap/apa/indeces.html

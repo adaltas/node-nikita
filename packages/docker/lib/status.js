@@ -67,4 +67,4 @@ module.exports = function({options}) {
 };
 
 // ## Modules Dependencies
-docker = require('@nikita/core/lib/misc/docker');
+docker = require('@nikitajs/core/lib/misc/docker');

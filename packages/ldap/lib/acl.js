@@ -263,11 +263,11 @@ module.exports = function({options}, callback) {
 // ## Dependencies
 each = require('each');
 
-misc = require('@nikita/core/lib/misc');
+misc = require('@nikitajs/core/lib/misc');
 
-ldap = require('@nikita/core/lib/misc/ldap');
+ldap = require('@nikitajs/core/lib/misc/ldap');
 
-string = require('@nikita/core/lib/misc/string');
+string = require('@nikitajs/core/lib/misc/string');
 
 // [acls]: http://www.openldap.org/doc/admin24/access-control.html
 // [tuto]: https://documentation.fusiondirectory.org/fr/documentation/convert_acl

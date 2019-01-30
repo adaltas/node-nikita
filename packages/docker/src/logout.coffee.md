@@ -42,5 +42,5 @@ Log out from a Docker registry or the one defined by the `registry` option.
 
 ## Modules Dependencies
 
-    docker = require '@nikita/core/lib/misc/docker'
+    docker = require '@nikitajs/core/lib/misc/docker'
     util = require 'util'
