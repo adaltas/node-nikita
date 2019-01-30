@@ -35,6 +35,9 @@
   "engines": {
     "node": ">= 6.2.2"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "homepage": "http://www.adaltas.com/projects/node-nikita/",
   "license": "MIT",
   "repository": {
