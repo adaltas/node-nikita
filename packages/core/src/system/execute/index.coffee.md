@@ -182,7 +182,7 @@ nikita.system.execute({
         options.target = "/var/tmp/nikita_#{string.hash options.cmd}" if typeof options.target isnt 'string'
         @log message: "Writing arch-chroot script to #{JSON.stringify options.target}", level: 'INFO'
         options.cmd = "arch-chroot #{options.rootdir} bash #{options.target}"
-        options.cmd += ";code=`echo $?`; rm '#{options.target}'; exit $code" if not options.dirty and options.target?
+        options.cmd += ";code=`echo $?`; rm '#{path.join options.rootdir, options.target}'; exit $code" if not options.dirty and options.target?
         @fs.writeFile
           target: "#{path.join options.rootdir, options.target}"
           content: "#{cmd}"

@@ -279,7 +279,7 @@ module.exports = function({options}, callback) {
     });
     options.cmd = `arch-chroot ${options.rootdir} bash ${options.target}`;
     if (!options.dirty && (options.target != null)) {
-      options.cmd += `;code=\`echo $?\`; rm '${options.target}'; exit $code`;
+      options.cmd += `;code=\`echo $?\`; rm '${path.join(options.rootdir, options.target)}'; exit $code`;
     }
     return this.fs.writeFile({
       target: `${path.join(options.rootdir, options.target)}`,
