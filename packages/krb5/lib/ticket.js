@@ -30,7 +30,7 @@
 // ```
 
 // ## Source Code
-var misc;
+var krb5;
 
 module.exports = function({options}) {
   var ssh;
@@ -39,14 +39,13 @@ module.exports = function({options}) {
   }
   // SSH connection
   ssh = this.ssh(options.ssh);
-  this.system.uid_gid({
-    uid: options.uid,
-    gid: options.gid,
-    shy: true
-  }, function(err, {status, uid, gid, default_gid}) {
-    options.uid = uid;
-    return options.gid = gid;
-  });
+  // @system.uid_gid
+  //   uid: options.uid
+  //   gid: options.gid
+  //   shy: true
+  // , (err, {status, uid, gid, default_gid}) ->
+  //   options.uid = uid
+  //   options.gid = gid
   this.system.execute({
     cmd: `if ${krb5.su(options, 'klist -s')}; then exit 3; fi\n${krb5.kinit(options)}`,
     code_skipped: 3
@@ -60,4 +59,4 @@ module.exports = function({options}) {
 };
 
 // ## Dependencies
-misc = require('@nikita/core/lib/misc');
+krb5 = require('@nikita/core/lib/misc/krb5');
