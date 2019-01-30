@@ -76,7 +76,8 @@ module.exports = function({options}) {
     return this.fs.readFile({
       ssh: options.ssh,
       target: options.target,
-      encoding: options.encoding
+      encoding: options.encoding,
+      relax: true
     }, function(err, {data}) {
       // File does not exists, this is ok, there is simply nothing to merge
       if ((err != null ? err.code : void 0) === 'ENOENT') {

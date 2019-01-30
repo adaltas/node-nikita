@@ -57,6 +57,7 @@ require('nikita')
           ssh: options.ssh
           target: options.target
           encoding: options.encoding
+          relax: true
         , (err, {data}) ->
           # File does not exists, this is ok, there is simply nothing to merge
           if err?.code is 'ENOENT'

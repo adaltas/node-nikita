@@ -7,6 +7,10 @@
 
 ## Trunk
 
+* file.cson: fix merging when target is missing
+
+## Version 0.9.1
+
 Breaking changes:
 * package: rename scope to nikitajs
 * fs.readFile: show exemple

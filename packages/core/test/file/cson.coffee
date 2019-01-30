@@ -39,3 +39,17 @@ describe 'file.cson', ->
       target: "#{scratch}/target.cson"
       content: 'user: \"torval\"\nmerge: true'
     .promise()
+
+  they 'merge target which does not exists', (ssh) ->
+    nikita
+      ssh: ssh
+    .file.cson
+      target: "#{scratch}/target.cson"
+      content: 'user': 'torval'
+      merge: true
+    , (err, {status}) ->
+      status.should.be.true() unless err
+    .file.assert
+      target: "#{scratch}/target.cson"
+      content: 'user: \"torval\"'
+    .promise()
