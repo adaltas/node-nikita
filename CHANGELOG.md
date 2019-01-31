@@ -8,6 +8,7 @@
 ## Trunk
 
 * file.cson: fix merging when target is missing
+* service.install: add yay support
 
 ## Version 0.9.1
 

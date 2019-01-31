@@ -1,7 +1,7 @@
 
 # `nikita.service.install`
 
-Install a service. Yum, Yaourt, Pacman and apt-get are supported.
+Install a service. Yum, Yay, Yaourt, Pacman and apt-get are supported.
 
 ## Options
 
@@ -32,6 +32,8 @@ Install a service. Yum, Yaourt, Pacman and apt-get are supported.
   Additionnal flags passed to the `pacman -S` command.
 * `yaourt_flags` (array)
   Additionnal flags passed to the `yaourt -S` command.
+* `yay_flags` (array)
+  Additionnal flags passed to the `yay -S` command.
 
 ## Callback parameters
 
@@ -66,6 +68,11 @@ require('nikita')
         continue if /^-/.test flag
         options.pacman_flags[i] = "-#{flag}" if flag.length is 1
         options.pacman_flags[i] = "--#{flag}" if flag.length > 1
+      options.yay_flags ?= []
+      for flag, i in options.yay_flags
+        continue if /^-/.test flag
+        options.yay_flags[i] = "-#{flag}" if flag.length is 1
+        options.yay_flags[i] = "--#{flag}" if flag.length > 1
       options.yaourt_flags ?= []
       for flag, i in options.yaourt_flags
         continue if /^-/.test flag
@@ -135,6 +142,8 @@ require('nikita')
         cmd: """
         if command -v yum >/dev/null 2>&1; then
           yum install -y #{cacheonly} #{options.name}
+        elif command -v yay >/dev/null 2>&1; then
+          yay --noconfirm -S #{options.name} #{options.yay_flags.join ' '}
         elif command -v yaourt >/dev/null 2>&1; then
           yaourt --noconfirm -S #{options.name} #{options.yaourt_flags.join ' '}
         elif command -v pacman >/dev/null 2>&1; then

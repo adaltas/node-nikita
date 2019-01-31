@@ -75,7 +75,6 @@ describe 'service.install', ->
       nikita
         ssh: ssh
       .on 'stdin', (log) ->
-        console.log log
         message = log.message
       .service.remove
         name: service.name
@@ -91,7 +90,6 @@ describe 'service.install', ->
       nikita
         ssh: ssh
       .on 'stdin', (log) ->
-        console.log log
         message = log.message
       .service.remove
         name: service.name
@@ -100,4 +98,19 @@ describe 'service.install', ->
         yaourt_flags: ['u', 'y']
       .call ->
         message.should.containEql "yaourt --noconfirm -S #{service.name} -u -y"
+      .promise()
+        
+    they 'add yay options', (ssh) ->
+      message = null
+      nikita
+        ssh: ssh
+      .on 'stdin', (log) ->
+        message = log.message
+      .service.remove
+        name: service.name
+      .service.install
+        name: service.name
+        yay_flags: ['u', 'y']
+      .call ->
+        message.should.containEql "yay --noconfirm -S #{service.name} -u -y"
       .promise()
