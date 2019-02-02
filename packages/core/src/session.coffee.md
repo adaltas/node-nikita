@@ -196,15 +196,15 @@
           continue if options.cascade[k] is false
           opts[k] = v
         opts
-      call_callback = (fn, args) ->
+      call_callback = (fn, callbackargs) ->
         state.parent_levels.unshift state.current_level
         state.current_level = state_create_level()
         try
-          fn.apply proxy, args
+          fn.call proxy, callbackargs.error, callbackargs.output, (callbackargs.args or [])...
         catch error
           state.current_level = state.parent_levels.shift()
           jump_to_error error
-          args[0] = error
+          callbackargs.error = error
           return run()
         current_level = state.current_level
         state.current_level = state.parent_levels.shift()
@@ -282,7 +282,7 @@
               # Validation
               throw Error "Invalid options sleep, got #{JSON.stringify options.sleep}" unless typeof options.sleep is 'number' and options.sleep >= 0
             catch error
-              do_callback [error, status: false]
+              do_callback error: error, output: status: false
               return
             wrap.options options, (error) ->
               do_disabled()
@@ -292,7 +292,7 @@
               do_once()
             else
               proxy.log type: 'lifecycle', message: 'disabled_true', level: 'INFO', index: index, error: null, status: false
-              do_callback [null, status: false]
+              do_callback error: undefined, output: status: false
           do_once = ->
             hashme = (value) ->
               if typeof value is 'string'
@@ -316,7 +316,7 @@
                 hash = string.hash options.once.map((k) -> hashme options[k]).join '|'
               else
                 throw Error "Invalid Option 'once': #{JSON.stringify options.once} must be a string or an array of string"
-              return do_callback [null, status: false] if state.once[hash]
+              return do_callback error: undefined, output: status: false if state.once[hash]
               state.once[hash] = true
             do_options_before()
           do_options_before = ->
@@ -334,7 +334,7 @@
                 continue if k in ['handler', 'callback']
                 opts[k] ?= v
               run opts, next
-            .error (error) -> do_callback [error, status: false]
+            .error (error) -> do_callback error: error, output: status: false
             .next do_intercept_before
           do_intercept_before = ->
             return do_conditions() if options.intercepting
@@ -351,7 +351,7 @@
                 continue if k in ['handler', 'callback']
                 opts[k] ?= v
               run opts, next
-            .error (error) -> do_callback [error, status: false]
+            .error (error) -> do_callback error: error, output: status: false
             .next do_conditions
           do_conditions = ->
             conditions.all proxy, options: options
@@ -362,28 +362,29 @@
               do_handler()
             , (error) ->
               proxy.log type: 'lifecycle', message: 'conditions_failed', index: index, error: error, status: false
-              do_callback [error, status: false]
+              do_callback error: error, output: status: false
           options.attempt = -1
           do_handler = ->
             options.attempt++
-            do_next = ([error, args]) ->
+            do_next = ({error, output, args}) ->
+              callbackargs = error: error, output: output, args: args
               options.handler = options_handler
               options.callback = options_callback
               if error and error not instanceof Error
                 error = Error 'First argument not a valid error'
-                arguments[0][0] = error
-                arguments[0][1] ?= {}
-                arguments[0][1].status ?= false
+                callbackargs.error = error
+                callbackargs.output ?= {}
+                callbackargs.output.status ?= false
               else
-                if typeof args is 'boolean' then arguments[0][1] = {status: args}
-                else if not args then arguments[0][1] = { status: false }
-                else if typeof args isnt 'object' then arguments[0][0] = Error "Invalid Argument: expect an object or a boolean, got #{JSON.stringify args}"
-                else arguments[0][1].status ?= false
+                if typeof output is 'boolean' then callbackargs.output = {status: output}
+                else if not output then callbackargs.output = { status: false }
+                else if typeof output isnt 'object' then callbackargs.error = Error "Invalid Argument: expect an object or a boolean, got #{JSON.stringify output}"
+                else callbackargs.output.status ?= false
               proxy.log message: error.message, level: 'ERROR', index: index, module: 'nikita' if error
               if error and ( options.retry is true or options.attempt < options.retry - 1 )
                 proxy.log message: "Retry on error, attempt #{options.attempt+1}", level: 'WARN', index: index, module: 'nikita'
                 return setTimeout do_handler, options.sleep
-              do_intercept_after arguments...
+              do_intercept_after callbackargs
             options.handler ?= obj.registry.get(options.action)?.handler or registry.get(options.action)?.handler
             return handle_multiple_call Error "Unregistered Middleware: #{options.action.join('.')}" unless options.handler
             options_handler = options.handler
@@ -404,12 +405,12 @@
                 else "#{options.action.join '/'} is deprecated, use #{options.deprecate}"
               )(options_handler) if options.deprecate
               handle_async_and_promise = ->
+                [error, output, args...] = arguments
                 return if state.killed
                 return handle_multiple_call Error 'Multiple call detected' if called
                 called = true
-                args = [].slice.call(arguments, 0)
                 setImmediate ->
-                  do_next args
+                  do_next error: error, output: output, args: args
               # Prepare the Context
               context =
                 options: opts
@@ -427,10 +428,17 @@
                 result = options_handler.call proxy, context
                 if promise.is result # result is a promisee
                   result.then (value) ->
-                    value = [value] unless Array.isArray value
-                    handle_async_and_promise null, value...
+                    if Array.isArray value
+                      [output, args...] = value
+                    else
+                      output = value
+                      args = []
+                    # value = [value] unless Array.isArray value
+                    # handle_async_and_promise error: null, output: output, args: args
+                    handle_async_and_promise undefined, output, args...
                   , (reason) ->
                     reason = Error 'Rejected Promise: reject called without any arguments' unless reason?
+                    # handle_async_and_promise error: reason
                     handle_async_and_promise reason
                 else
                   return if state.killed
@@ -440,19 +448,19 @@
                   wait_children = ->
                     unless state.current_level.todos.length
                       return setImmediate ->
-                        do_next [null, status_sync]
+                        do_next output: status: status_sync
                     loptions = state.current_level.todos.shift()
                     run loptions, (error, {status}) ->
-                      return do_next [error] if error
+                      return do_next error: error if error
                       # Discover status of all unshy children
                       status_sync = true if status and not loptions.shy
                       wait_children()
                   wait_children()
             catch error
               state.current_level = state_create_level()
-              do_next [error]
-          do_intercept_after = (args, callback) ->
-            return do_options_after args if options.intercepting
+              do_next error: error
+          do_intercept_after = (callbackargs, callback) ->
+            return do_options_after callbackargs if options.intercepting
             each state.afters
             .call (after, next) ->
               for k, v of after then switch k
@@ -465,12 +473,12 @@
               for k, v of options
                 continue if k in ['handler', 'callback']
                 opts[k] ?= v
-              opts.callback_arguments = args
+              opts.callback_arguments = callbackargs
               run opts, next
-            .error (error) -> do_callback [error, status: false]
-            .next -> do_options_after args
-          do_options_after = (args) ->
-            return do_callback args if options.options_after
+            .error (error) -> do_callback error: error, output: status: false
+            .next -> do_options_after callbackargs
+          do_options_after = (callbackargs) ->
+            return do_callback callbackargs if options.options_after
             options.after ?= []
             options.after = [options.after] unless Array.isArray options.after
             each options.after
@@ -484,23 +492,24 @@
                 continue if k in ['handler', 'callback']
                 opts[k] ?= v
               run opts, next
-            .error (error) -> do_callback [error, status: false]
-            .next -> do_callback args
-          do_callback = (args) ->
-            proxy.log type: 'handled', index: index, error: args[0], status: args[1].status
+            .error (error) -> do_callback error: error, output: status: false
+            .next -> do_callback callbackargs
+          do_callback = (callbackargs) ->
+            proxy.log type: 'handled', index: index, error: callbackargs.error, status: callbackargs.output.status
             return if state.killed
-            args[0] = undefined unless args[0] # Error is undefined and not null or false
+            callbackargs.error = undefined unless callbackargs.error # Error is undefined and not null or false
             state.current_level = state.parent_levels.shift() # Exit action state and move back to parent state
-            jump_to_error args[0] if args[0] and not options.relax
-            state.current_level.throw_if_error = false if args[0] and options.callback
-            state.current_level.history[0].status = if options.status then args[1].status else false
-            call_callback options.callback, args if options.callback
-            # TODO: indifferent/apathetic/nonchalant/insouciant option: doesnt care if success or error
-            args[0] = null if options.relax
-            args[1] ?= {}
-            args[1].status ?= false
-            args[1] = merge {}, args[1]
-            callback args[0], args[1] if callback
+            jump_to_error callbackargs.error if callbackargs.error and not options.relax
+            state.current_level.throw_if_error = false if callbackargs.error and options.callback
+            state.current_level.history[0].status = if options.status then callbackargs.output.status else false
+            state.current_level.history[0].error = options.error
+            state.current_level.history[0].output = options.output
+            call_callback options.callback, callbackargs if options.callback
+            callbackargs.error = null if options.relax
+            callbackargs.output ?= {}
+            callbackargs.output.status ?= false
+            callbackargs.output = merge {}, callbackargs.output
+            callback callbackargs.error, callbackargs.output if callback
             run()
           do_options()
       state.properties.child = get: -> ->
