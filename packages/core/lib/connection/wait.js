@@ -27,6 +27,10 @@
 // Status is set to "true" if the first connection attempt was a failure and the 
 // connection finaly succeeded.
 
+// ## TODO
+
+// The `server` and `servers` options shall be renamed `address` and `addresses`.
+
 // ## Examples
 
 // Wait for two domains on the same port.
@@ -80,10 +84,10 @@ module.exports = function({options}) {
   extract_servers = function(options) {
     var host, hosts, i, j, k, l, len, len1, len2, len3, m, port, ports, ref, ref1, ref2, ref3, servers;
     if ((options.port || options.ports) && !options.host) {
-      throw Error(`Invalid host: ${server.host}`);
+      throw Error(`Invalid host: ${options.host}`);
     }
     if ((options.host || options.hosts) && !options.port) {
-      throw Error(`Invalid port: ${server.port}`);
+      throw Error(`Invalid port: ${options.port}`);
     }
     ref = ['host', 'hosts'];
     for (i = 0, len = ref.length; i < len; i++) {

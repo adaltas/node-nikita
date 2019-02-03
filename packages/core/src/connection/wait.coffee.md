@@ -27,6 +27,10 @@ Otherwise it will be set to "true".
 Status is set to "true" if the first connection attempt was a failure and the 
 connection finaly succeeded.
 
+## TODO
+
+The `server` and `servers` options shall be renamed `address` and `addresses`.
+
 ## Examples
 
 Wait for two domains on the same port.
@@ -72,8 +76,8 @@ require('nikita')
     module.exports = ({options}) ->
       @log message: "Entering wait for connection", level: 'DEBUG', module: 'nikita/connection/wait'
       extract_servers = (options) ->
-        throw Error "Invalid host: #{server.host}" if (options.port or options.ports) and not options.host
-        throw Error "Invalid port: #{server.port}" if (options.host or options.hosts) and not options.port
+        throw Error "Invalid host: #{options.host}" if (options.port or options.ports) and not options.host
+        throw Error "Invalid port: #{options.port}" if (options.host or options.hosts) and not options.port
         for k in ['host', 'hosts']
           options[k] ?= []
           throw Error "Invalid option '#{options[k]}'" if typeof options[k] not in ['string', 'object']

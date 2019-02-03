@@ -8,10 +8,12 @@ return unless tags.posix
 
 describe 'connection.wait', ->
 
-  port = 12345
+  portincr = 12345
 
-  server = (port) ->
+  server = ->
     _ = null
+    port = portincr++
+    port: port
     listen: (callback) ->
       _ = http.createServer (req, res) ->
         res.writeHead 200, {'Content-Type': 'text/plain'}
@@ -23,199 +25,196 @@ describe 'connection.wait', ->
   describe 'connection', ->
 
     they 'a single host and a single port', (ssh) ->
-      port = port++
+      srv = server()
       nikita
         ssh: ssh
-        server1: server port
+        srv1: srv
       .call ->
-        setTimeout @options.server1.listen, 200
+        setTimeout @options.srv1.listen, 200
       .connection.wait
         host: 'localhost'
-        port: port
+        port: srv.port
       , (err, {status}) ->
         status.should.be.true() unless err
       .call (_, callback) ->
-        @options.server1.close callback
+        @options.srv1.close callback
       .promise()
 
     they 'server object', (ssh) ->
-      port1 = port++
-      port2 = port++
+      srv1 = server()
+      srv2 = server()
       nikita
         ssh: ssh
-        server1: server port1
-        server2: server port2
-      .call -> setTimeout @options.server1.listen, 200
-      .call -> setTimeout @options.server2.listen, 200
+        srv1: srv1
+        srv2: srv2
+      .call -> setTimeout @options.srv1.listen, 200
+      .call -> setTimeout @options.srv2.listen, 200
       .connection.wait
-        server: host: 'localhost', port: port1
+        server: host: 'localhost', port: srv1.port
       , (err, {status}) ->
         status.should.be.true() unless err
       .connection.wait
-        server: host: 'localhost', port: [port1, port2]
+        server: host: 'localhost', port: [srv1.port, srv2.port]
       , (err, {status}) ->
         status.should.be.false()
-      .call  (_, callback) -> @options.server1.close callback
-      .call  (_, callback) -> @options.server2.close callback
-      .call -> setTimeout @options.server1.listen, 200
-      .call -> setTimeout @options.server2.listen, 200
+      .call (_, callback) -> @options.srv1.close callback
+      .call (_, callback) -> @options.srv2.close callback
+      .call -> setTimeout @options.srv1.listen, 200
+      .call -> setTimeout @options.srv2.listen, 200
       .connection.wait
         server: [
-          [{host: 'localhost', port: port1}]
-          [{host: 'localhost', port: port2}]
+          [{host: 'localhost', port: srv1.port}]
+          [{host: 'localhost', port: srv2.port}]
         ]
       , (err, {status}) ->
         status.should.be.true() unless err
-      .call  (_, callback) -> @options.server1.close callback
-      .call  (_, callback) -> @options.server2.close callback
+      .call (_, callback) -> @options.srv1.close callback
+      .call (_, callback) -> @options.srv2.close callback
       .promise()
 
     they 'server string', (ssh) ->
-      port = port++
+      srv = server()
       nikita
         ssh: ssh
-        server1: server port
-      .call ->
-        setTimeout @options.server1.listen, 200
+        srv: srv
+      .call -> setTimeout @options.srv.listen, 200
       .connection.wait
-        server: "localhost:#{port}"
+        server: "localhost:#{srv.port}"
       , (err, {status}) ->
         status.should.be.true() unless err
-      .call  (_, callback) ->
-        @options.server1.close callback
+      .call (_, callback) -> @options.srv.close callback
       .promise()
 
     they 'multiple connection', (ssh) ->
-      port = port++
+      srv = server()
       nikita
         ssh: ssh
-        server1: server port
-      .call ->
-        setTimeout @options.server1.listen, 200
+        srv: srv
+      .call -> setTimeout @options.srv.listen, 200
       .connection.wait
         servers: for i in [0...12]
-          {host: 'localhost', port: port}
+          {host: 'localhost', port: srv.port}
       , (err, {status}) ->
         status.should.be.true() unless err
-      .call  (_, callback) ->
-        @options.server1.close callback
+      .call (_, callback) -> @options.srv.close callback
       .promise()
 
   describe 'options', ->
 
     they 'test status', (ssh) ->
-      port = port++
+      srv = server()
       nikita
         ssh: ssh
-        server1: server port
+        srv: srv
       # Status false
       .call (_, callback) ->
-        @options.server1.listen callback
+        @options.srv.listen callback
       .connection.wait
         host: 'localhost'
-        port: port
+        port: srv.port
       , (err, {status}) ->
         status.should.be.false() unless err
-      .call  (_, callback) ->
-        @options.server1.close callback
+      .call (_, callback) ->
+        @options.srv.close callback
       # Status true
       .call ->
-        setTimeout @options.server1.listen, 200
+        setTimeout @options.srv.listen, 200
       .connection.wait
         host: 'localhost'
-        port: port
+        port: srv.port
       , (err, {status}) ->
         status.should.be.true() unless err
-      .call  (_, callback) ->
-        @options.server1.close callback
+      .call (_, callback) ->
+        @options.srv.close callback
       .promise()
 
     they 'quorum true', (ssh) ->
-      port1 = port++
-      port2 = port++
-      port3 = port++
+      srv1 = server()
+      srv2 = server()
+      srv3 = server()
       nikita
         ssh: ssh
-        server1: server port1
-        server2: server port2
+        srv1: srv1
+        srv2: srv2
       .call ->
-        setTimeout @options.server1.listen, 200
+        setTimeout @options.srv1.listen, 200
       .call ->
-        setTimeout @options.server2.listen, 200
+        setTimeout @options.srv2.listen, 200
       .connection.wait
         servers: [
-          { host: 'localhost', port: port1 }
-          { host: 'localhost', port: port2 }
-          { host: 'localhost', port: port3 }
+          { host: 'localhost', port: srv1.port }
+          { host: 'localhost', port: srv2.port }
+          { host: 'localhost', port: srv3.port }
         ]
         quorum: true
         interval: 500
       , (err, {status}) ->
         status.should.be.true() unless err
       .call (_, callback) ->
-        @options.server1.close callback
+        @options.srv1.close callback
       .call (_, callback) ->
-        @options.server2.close callback
+        @options.srv2.close callback
       .promise()
 
     they 'quorum even number', (ssh) ->
-      port1 = port++
-      port2 = port++
+      srv1 = server()
+      srv2 = server()
       nikita
         ssh: ssh
-        server1: server port1
+        srv1: srv1
+        srv2: srv2
       .call (_, callback) ->
-        @options.server1.listen callback
+        @options.srv1.listen callback
       .connection.wait
         servers: [
-          { host: 'localhost', port: port1 }
-          { host: 'localhost', port: port2 }
+          { host: 'localhost', port: srv1.port }
+          { host: 'localhost', port: srv2.port }
         ]
         quorum: 1
         interval: 500
       , (err, {status}) ->
         status.should.be.true() unless err
-      .call  (_, callback) ->
-        @options.server1.close callback
+      .call (_, callback) ->
+        @options.srv1.close callback
       .promise()
 
     they 'quorum odd number', (ssh) ->
-      port1 = port++
-      port2 = port++
-      port3 = port++
+      srv1 = server()
+      srv2 = server()
+      srv3 = server()
       nikita
         ssh: ssh
-        server1: server port1
-        server2: server port2
+        srv1: srv1
+        srv2: srv2
       .call (_, callback) ->
-        @options.server1.listen callback
+        @options.srv1.listen callback
       .call (_, callback) ->
-        @options.server2.listen callback
+        @options.srv2.listen callback
       .connection.wait
         servers: [
-          { host: 'localhost', port: port1 }
-          { host: 'localhost', port: port2 }
-          { host: 'localhost', port: port3 }
+          { host: 'localhost', port: srv1.port }
+          { host: 'localhost', port: srv2.port }
+          { host: 'localhost', port: srv3.port }
         ]
         quorum: 2
         interval: 500
       , (err, {status}) ->
         status.should.be.true() unless err
-      .call  (_, callback) ->
-        @options.server1.close callback
-      .call  (_, callback) ->
-        @options.server2.close callback
+      .call (_, callback) ->
+        @options.srv1.close callback
+      .call (_, callback) ->
+        @options.srv2.close callback
       .promise()
 
   describe 'options', ->
 
     they 'validate host', (ssh) ->
-      port = port++
+      srv = server()
       nikita
         ssh: ssh
       .connection.wait
         servers: [
-          { host: undefined, port: port }
+          { host: undefined, port: srv.port }
         ]
         relax: true
       , (err) ->
