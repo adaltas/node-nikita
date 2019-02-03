@@ -203,6 +203,8 @@
           fn.call proxy, callbackargs.error, callbackargs.output, (callbackargs.args or [])...
         catch error
           state.current_level = state.parent_levels.shift()
+          # state.current_level.error = error
+          # jump_to_error()
           jump_to_error error
           callbackargs.error = error
           return run()
@@ -212,6 +214,8 @@
       handle_multiple_call = (error) ->
         state.killed = true
         state.current_level = state.parent_levels.shift() while state.parent_levels.length
+        # state.current_level.error = error
+        # jump_to_error()
         jump_to_error error
         run()
       jump_to_error = (error) ->
@@ -245,14 +249,20 @@
         options.original = options_original
         if options.action is 'next'
           {error, history} = state.current_level
-          status = history.some (action) -> not action.shy and action.status
+          # unless error
+          #   errors = history.some (action) -> not action.options.tolerant and error
+          #   error = errors[errors.length - 1]
+          status = history.some (action) -> not action.options.shy and action.status
           options.handler?.call proxy, error, {status: status}
           state_reset_level state.current_level
           run()
           return
         if options.action is 'promise'
           {error, history} = state.current_level
-          status = history.some (action) -> not action.shy and action.status
+          # unless error
+          #   errors = history.some (action) -> not action.options.tolerant and error
+          #   error = errors[errors.length - 1]
+          status = history.some (action) -> not action.options.shy and action.status
           options.handler?.call proxy, error, status
           unless error
           then options.deferred.resolve status
@@ -271,7 +281,7 @@
             run()
         options = enrich_options options
         index = state.index_counter++
-        state.current_level.history.unshift shy: options.shy, status: undefined
+        state.current_level.history.unshift status: undefined, options: shy: options.shy
         state.parent_levels.unshift state.current_level
         state.current_level = state_create_level()
         state.current_level.options = options
@@ -499,6 +509,7 @@
             return if state.killed
             callbackargs.error = undefined unless callbackargs.error # Error is undefined and not null or false
             state.current_level = state.parent_levels.shift() # Exit action state and move back to parent state
+            # jump_to_error() if callbackargs.error and not options.relax
             jump_to_error callbackargs.error if callbackargs.error and not options.relax
             state.current_level.throw_if_error = false if callbackargs.error and options.callback
             state.current_level.history[0].status = if options.status then callbackargs.output.status else false
@@ -544,6 +555,8 @@
         args = [].slice.call(arguments)
         arg = args.shift()
         if not arg? or typeof arg isnt 'object'
+          # state.current_level.error = Error "Invalid Argument: first argument must be an array or an object to iterate, got #{JSON.stringify arg}"
+          # jump_to_error() 
           jump_to_error Error "Invalid Argument: first argument must be an array or an object to iterate, got #{JSON.stringify arg}"
           return proxy
         options = normalize_options args, 'call'
@@ -574,13 +587,13 @@
         proxy
       state.properties.status = get: -> (index) ->
         if arguments.length is 0
-          return state.parent_levels[0].history.some (action) -> not action.shy and action.status
+          return state.parent_levels[0].history.some (action) -> not action.options.shy and action.status
         else if index is false
-          status = state.parent_levels[0].history.some (action) -> not action.shy and action.status
+          status = state.parent_levels[0].history.some (action) -> not action.options.shy and action.status
           action.status = false for action in state.parent_levels[0].history
           return status
         else if index is true
-          status = state.parent_levels[0].history.some (action) -> not action.shy and action.status
+          status = state.parent_levels[0].history.some (action) -> not action.options.shy and action.status
           action.status = true for action in state.parent_levels[0].history
           return status
         else
@@ -638,6 +651,8 @@
     # Called after next and promise
     state_reset_level = (level) ->
       level.error = null
+      # History elements contains the following keys:
+      # options, status, output, args
       level.history = []
       level.throw_if_error = true
 

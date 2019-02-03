@@ -408,6 +408,8 @@ module.exports = function() {
     } catch (error1) {
       error = error1;
       state.current_level = state.parent_levels.shift();
+      // state.current_level.error = error
+      // jump_to_error()
       jump_to_error(error);
       callbackargs.error = error;
       return run();
@@ -423,6 +425,8 @@ module.exports = function() {
     while (state.parent_levels.length) {
       state.current_level = state.parent_levels.shift();
     }
+    // state.current_level.error = error
+    // jump_to_error()
     jump_to_error(error);
     return run();
   };
@@ -485,8 +489,11 @@ module.exports = function() {
     options.original = options_original;
     if (options.action === 'next') {
       ({error, history} = state.current_level);
+      // unless error
+      //   errors = history.some (action) -> not action.options.tolerant and error
+      //   error = errors[errors.length - 1]
       status = history.some(function(action) {
-        return !action.shy && action.status;
+        return !action.options.shy && action.status;
       });
       if ((ref2 = options.handler) != null) {
         ref2.call(proxy, error, {
@@ -499,8 +506,11 @@ module.exports = function() {
     }
     if (options.action === 'promise') {
       ({error, history} = state.current_level);
+      // unless error
+      //   errors = history.some (action) -> not action.options.tolerant and error
+      //   error = errors[errors.length - 1]
       status = history.some(function(action) {
-        return !action.shy && action.status;
+        return !action.options.shy && action.status;
       });
       if ((ref3 = options.handler) != null) {
         ref3.call(proxy, error, status);
@@ -538,8 +548,10 @@ module.exports = function() {
     options = enrich_options(options);
     index = state.index_counter++;
     state.current_level.history.unshift({
-      shy: options.shy,
-      status: void 0
+      status: void 0,
+      options: {
+        shy: options.shy
+      }
     });
     state.parent_levels.unshift(state.current_level);
     state.current_level = state_create_level();
@@ -1065,6 +1077,7 @@ module.exports = function() {
         }
         state.current_level = state.parent_levels.shift(); // Exit action state and move back to parent state
         if (callbackargs.error && !options.relax) {
+          // jump_to_error() if callbackargs.error and not options.relax
           jump_to_error(callbackargs.error);
         }
         if (callbackargs.error && options.callback) {
@@ -1180,6 +1193,8 @@ module.exports = function() {
         args = [].slice.call(arguments);
         arg = args.shift();
         if ((arg == null) || typeof arg !== 'object') {
+          // state.current_level.error = Error "Invalid Argument: first argument must be an array or an object to iterate, got #{JSON.stringify arg}"
+          // jump_to_error() 
           jump_to_error(Error(`Invalid Argument: first argument must be an array or an object to iterate, got ${JSON.stringify(arg)}`));
           return proxy;
         }
@@ -1257,11 +1272,11 @@ module.exports = function() {
         var action, l, len, len1, m, ref1, ref2, ref3, status;
         if (arguments.length === 0) {
           return state.parent_levels[0].history.some(function(action) {
-            return !action.shy && action.status;
+            return !action.options.shy && action.status;
           });
         } else if (index === false) {
           status = state.parent_levels[0].history.some(function(action) {
-            return !action.shy && action.status;
+            return !action.options.shy && action.status;
           });
           ref1 = state.parent_levels[0].history;
           for (l = 0, len = ref1.length; l < len; l++) {
@@ -1271,7 +1286,7 @@ module.exports = function() {
           return status;
         } else if (index === true) {
           status = state.parent_levels[0].history.some(function(action) {
-            return !action.shy && action.status;
+            return !action.options.shy && action.status;
           });
           ref2 = state.parent_levels[0].history;
           for (m = 0, len1 = ref2.length; m < len1; m++) {
@@ -1367,6 +1382,8 @@ state_create_level = function() {
 // Called after next and promise
 state_reset_level = function(level) {
   level.error = null;
+  // History elements contains the following keys:
+  // options, status, output, args
   level.history = [];
   return level.throw_if_error = true;
 };
