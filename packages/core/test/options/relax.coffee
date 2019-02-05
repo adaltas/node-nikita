@@ -20,7 +20,7 @@ describe 'options "relax"', ->
     .call ({}, callback) ->
       callback null, true
     .next (err, {status}) ->
-      (err is null).should.be.true()
+      (err is undefined).should.be.true()
       status.should.be.true() unless err
     .promise()
 
@@ -51,7 +51,7 @@ describe 'options "relax"', ->
     .call ({}, callback) ->
       callback null, true
     .next (err, {status}) ->
-      (err is null).should.be.true()
+      (err is undefined).should.be.true()
       status.should.be.true() unless err
     .promise()
 
@@ -65,6 +65,6 @@ describe 'options "relax"', ->
     .call ({}, callback) ->
       callback null, true
     .next (err, {status}) ->
-      (err is null).should.be.true()
+      (err is undefined).should.be.true()
       status.should.be.true() unless err
     .promise()

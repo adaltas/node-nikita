@@ -40,7 +40,7 @@
 // .wait_connect({
 //   hosts: [ '1.domain.com', '2.domain.com' ],
 //   port: 80
-// }, function(err, status){
+// }, function(err, {status}){
 //   // Servers listening on port 80
 // })
 // ```
@@ -52,7 +52,7 @@
 // .wait_connect({
 //   host: 'my.domain.com',
 //   ports: [80, 443]
-// }, function(err, status){
+// }, function(err, {status}){
 //   // Server listening on ports 80 and 443
 // })
 // ```
@@ -66,7 +66,7 @@
 //     {host: '1.domain.com', port: 80},
 //     {host: '2.domain.com', port: 443}
 //   ]
-// }, function(err, status){
+// }, function(err, {status}){
 //   // Servers listening
 // })
 // ```

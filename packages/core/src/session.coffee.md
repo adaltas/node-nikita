@@ -203,9 +203,8 @@
           fn.call proxy, callbackargs.error, callbackargs.output, (callbackargs.args or [])...
         catch error
           state.current_level = state.parent_levels.shift()
-          # state.current_level.error = error
-          # jump_to_error()
-          jump_to_error error
+          state.current_level.error = error
+          jump_to_error()
           callbackargs.error = error
           return run()
         current_level = state.current_level
@@ -214,17 +213,18 @@
       handle_multiple_call = (error) ->
         state.killed = true
         state.current_level = state.parent_levels.shift() while state.parent_levels.length
-        # state.current_level.error = error
-        # jump_to_error()
-        jump_to_error error
-        run()
-      jump_to_error = (error) ->
-        while state.current_level.todos[0] and state.current_level.todos[0].action not in ['catch', 'next', 'promise'] then state.current_level.todos.shift()
         state.current_level.error = error
+        jump_to_error()
+        run()
+      jump_to_error = ->
+        while state.current_level.todos[0] and state.current_level.todos[0].action not in ['catch', 'next', 'promise'] then state.current_level.todos.shift()
       _run_ = ->
         if obj.options.domain
         then obj.options.domain.run run
         else run()
+      run_next = (callback) ->
+        options = state.current_level.todos.shift()
+        run options, callback
       run = (options, callback) ->
         options = state.current_level.todos.shift() unless options
         # Nothing more to do in current queue
@@ -249,9 +249,9 @@
         options.original = options_original
         if options.action is 'next'
           {error, history} = state.current_level
-          # unless error
-          #   errors = history.some (action) -> not action.options.tolerant and error
-          #   error = errors[errors.length - 1]
+          unless error
+            errors = history.some (action) -> not action.options.tolerant and error
+            error = errors[errors.length - 1]
           status = history.some (action) -> not action.options.shy and action.status
           options.handler?.call proxy, error, {status: status}
           state_reset_level state.current_level
@@ -259,9 +259,9 @@
           return
         if options.action is 'promise'
           {error, history} = state.current_level
-          # unless error
-          #   errors = history.some (action) -> not action.options.tolerant and error
-          #   error = errors[errors.length - 1]
+          unless error
+            errors = history.some (action) -> not action.options.tolerant and error
+            error = errors[errors.length - 1]
           status = history.some (action) -> not action.options.shy and action.status
           options.handler?.call proxy, error, status
           unless error
@@ -509,12 +509,13 @@
             return if state.killed
             callbackargs.error = undefined unless callbackargs.error # Error is undefined and not null or false
             state.current_level = state.parent_levels.shift() # Exit action state and move back to parent state
-            # jump_to_error() if callbackargs.error and not options.relax
-            jump_to_error callbackargs.error if callbackargs.error and not options.relax
             state.current_level.throw_if_error = false if callbackargs.error and options.callback
             state.current_level.history[0].status = if options.status then callbackargs.output.status else false
-            state.current_level.history[0].error = options.error
-            state.current_level.history[0].output = options.output
+            state.current_level.history[0].error = callbackargs.error
+            state.current_level.history[0].output = callbackargs.output
+            if callbackargs.error and not options.relax
+              state.current_level.error = callbackargs.error
+              jump_to_error()
             call_callback options.callback, callbackargs if options.callback
             callbackargs.error = null if options.relax
             callbackargs.output ?= {}
@@ -555,9 +556,8 @@
         args = [].slice.call(arguments)
         arg = args.shift()
         if not arg? or typeof arg isnt 'object'
-          # state.current_level.error = Error "Invalid Argument: first argument must be an array or an object to iterate, got #{JSON.stringify arg}"
-          # jump_to_error() 
-          jump_to_error Error "Invalid Argument: first argument must be an array or an object to iterate, got #{JSON.stringify arg}"
+          state.current_level.error = Error "Invalid Argument: first argument must be an array or an object to iterate, got #{JSON.stringify arg}"
+          jump_to_error() 
           return proxy
         options = normalize_options args, 'call'
         for opts in options

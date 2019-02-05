@@ -171,7 +171,7 @@ describe 'connection.wait', ->
           { host: 'localhost', port: srv2.port }
         ]
         quorum: 1
-        interval: 500
+        interval: 300
       , (err, {status}) ->
         status.should.be.true() unless err
       .call (_, callback) ->

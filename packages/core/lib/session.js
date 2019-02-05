@@ -3,7 +3,7 @@
 var EventEmitter, array, conditions, domain, each, merge, path, promise, registry, state_create_level, state_reset_level, string, util, wrap;
 
 module.exports = function() {
-  var _run_, call_callback, domain_on_error, enrich_options, handle_get, handle_multiple_call, jump_to_error, normalize_options, obj, options_filter_cascade, proxy, ref, reg, run, state;
+  var _run_, call_callback, domain_on_error, enrich_options, handle_get, handle_multiple_call, jump_to_error, normalize_options, obj, options_filter_cascade, proxy, ref, reg, run, run_next, state;
   if (arguments.length === 2) {
     obj = arguments[0];
     obj.options = arguments[1];
@@ -408,9 +408,8 @@ module.exports = function() {
     } catch (error1) {
       error = error1;
       state.current_level = state.parent_levels.shift();
-      // state.current_level.error = error
-      // jump_to_error()
-      jump_to_error(error);
+      state.current_level.error = error;
+      jump_to_error();
       callbackargs.error = error;
       return run();
     }
@@ -425,17 +424,17 @@ module.exports = function() {
     while (state.parent_levels.length) {
       state.current_level = state.parent_levels.shift();
     }
-    // state.current_level.error = error
-    // jump_to_error()
-    jump_to_error(error);
+    state.current_level.error = error;
+    jump_to_error();
     return run();
   };
-  jump_to_error = function(error) {
-    var ref1;
+  jump_to_error = function() {
+    var ref1, results;
+    results = [];
     while (state.current_level.todos[0] && ((ref1 = state.current_level.todos[0].action) !== 'catch' && ref1 !== 'next' && ref1 !== 'promise')) {
-      state.current_level.todos.shift();
+      results.push(state.current_level.todos.shift());
     }
-    return state.current_level.error = error;
+    return results;
   };
   _run_ = function() {
     if (obj.options.domain) {
@@ -444,8 +443,13 @@ module.exports = function() {
       return run();
     }
   };
+  run_next = function(callback) {
+    var options;
+    options = state.current_level.todos.shift();
+    return run(options, callback);
+  };
   run = function(options, callback) {
-    var error, history, index, k, options_original, options_parent, ref1, ref2, ref3, status, v;
+    var error, errors, history, index, k, options_original, options_parent, ref1, ref2, ref3, status, v;
     if (!options) {
       options = state.current_level.todos.shift();
     }
@@ -489,9 +493,12 @@ module.exports = function() {
     options.original = options_original;
     if (options.action === 'next') {
       ({error, history} = state.current_level);
-      // unless error
-      //   errors = history.some (action) -> not action.options.tolerant and error
-      //   error = errors[errors.length - 1]
+      if (!error) {
+        errors = history.some(function(action) {
+          return !action.options.tolerant && error;
+        });
+        error = errors[errors.length - 1];
+      }
       status = history.some(function(action) {
         return !action.options.shy && action.status;
       });
@@ -506,9 +513,12 @@ module.exports = function() {
     }
     if (options.action === 'promise') {
       ({error, history} = state.current_level);
-      // unless error
-      //   errors = history.some (action) -> not action.options.tolerant and error
-      //   error = errors[errors.length - 1]
+      if (!error) {
+        errors = history.some(function(action) {
+          return !action.options.tolerant && error;
+        });
+        error = errors[errors.length - 1];
+      }
       status = history.some(function(action) {
         return !action.options.shy && action.status;
       });
@@ -1076,16 +1086,16 @@ module.exports = function() {
           callbackargs.error = void 0;
         }
         state.current_level = state.parent_levels.shift(); // Exit action state and move back to parent state
-        if (callbackargs.error && !options.relax) {
-          // jump_to_error() if callbackargs.error and not options.relax
-          jump_to_error(callbackargs.error);
-        }
         if (callbackargs.error && options.callback) {
           state.current_level.throw_if_error = false;
         }
         state.current_level.history[0].status = options.status ? callbackargs.output.status : false;
-        state.current_level.history[0].error = options.error;
-        state.current_level.history[0].output = options.output;
+        state.current_level.history[0].error = callbackargs.error;
+        state.current_level.history[0].output = callbackargs.output;
+        if (callbackargs.error && !options.relax) {
+          state.current_level.error = callbackargs.error;
+          jump_to_error();
+        }
         if (options.callback) {
           call_callback(options.callback, callbackargs);
         }
@@ -1193,9 +1203,8 @@ module.exports = function() {
         args = [].slice.call(arguments);
         arg = args.shift();
         if ((arg == null) || typeof arg !== 'object') {
-          // state.current_level.error = Error "Invalid Argument: first argument must be an array or an object to iterate, got #{JSON.stringify arg}"
-          // jump_to_error() 
-          jump_to_error(Error(`Invalid Argument: first argument must be an array or an object to iterate, got ${JSON.stringify(arg)}`));
+          state.current_level.error = Error(`Invalid Argument: first argument must be an array or an object to iterate, got ${JSON.stringify(arg)}`);
+          jump_to_error();
           return proxy;
         }
         options = normalize_options(args, 'call');
