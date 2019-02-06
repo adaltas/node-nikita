@@ -69,15 +69,15 @@ module.exports = function({options}) {
     options.lxd_target = `${path.join(options.name, options.target)}`;
   }
   // Execution
-  cmd_push = ['lxc', options.name, options.source, options.lxd_target, options.create_dirs ? '--create-dirs' : void 0, options.gid ? '--gid' : void 0, options.uid ? '--uid' : void 0, options.mode ? '--mode' : void 0].join(' ');
-  return this.system.execute({
-    cmd: `# Ensure source is a file\n[ -f "${options.target}" ] && exit 2\ncommand -v openssl >/dev/null || exit 3\nsourceDgst=\`openssl dgst -${options.algo} ${options.source} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'\`\n# Get target hash\ntargetDgst=\`cat <<EOF | lxc exec ${options.name} -- bash\n# Ensure openssl is available\ncommand -v openssl >/dev/null || exit 4\nopenssl dgst -${options.algo} ${options.target} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'\nEOF\`\n[ "$sourceDgst" == "$targetDgst" ] && exit 42\n${cmd_push}`,
+  cmd_push = ['lxc', 'file', 'push', options.source, options.lxd_target, options.create_dirs ? '--create-dirs' : void 0, (options.gid != null) && typeof options.gid === 'number' ? '--gid' : void 0, (options.uid != null) && typeof options.uid === 'number' ? '--uid' : void 0, options.mode ? `--mode ${options.mode}` : void 0].join(' ');
+  this.system.execute({
+    cmd: `# Ensure source is a file\n[ -f "${options.source}" ] || exit 2\ncommand -v openssl >/dev/null || exit 3\nsourceDgst=\`openssl dgst -${options.algo} ${options.source} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'\`\n# Get target hash\ntargetDgst=\`cat <<EOF | lxc exec ${options.name} -- bash\n# Ensure openssl is available\ncommand -v openssl >/dev/null || exit 4\nopenssl dgst -${options.algo} ${options.target} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'\nEOF\`\n[ "$sourceDgst" == "$targetDgst" ] && exit 42\n${cmd_push}`,
     code_skipped: 42,
     trap: true,
     trim: true
   }, function(err, {status, stdout}) {
     if ((err != null ? err.code : void 0) === 2) {
-      throw Error(`Invalid Option: source is not a file ${JSON.stringify(options.source)}`);
+      throw Error(`Invalid Option: source is not a file, got ${JSON.stringify(options.source)}`);
     }
     if ((err != null ? err.code : void 0) === 3) {
       throw Error("Invalid Requirement: openssl not installed on host");
@@ -85,6 +85,16 @@ module.exports = function({options}) {
     if ((err != null ? err.code : void 0) === 4) {
       throw Error("Invalid Requirement: openssl not installed on container");
     }
+  });
+  this.lxd.exec({
+    if: typeof options.gid === 'string',
+    name: options.name,
+    cmd: `chgrp ${options.gid} ${options.target}`
+  });
+  return this.lxd.exec({
+    if: typeof options.uid === 'string',
+    name: options.name,
+    cmd: `chown ${options.uid} ${options.target}`
   });
 };
 

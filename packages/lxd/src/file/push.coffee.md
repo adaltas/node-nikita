@@ -54,18 +54,18 @@ require('nikita')
       options.lxd_target ?= "#{path.join options.name, options.target}"
       # Execution
       cmd_push = [
-        'lxc', options.name
+        'lxc', 'file', 'push'
         options.source
         options.lxd_target
         '--create-dirs' if options.create_dirs
-        '--gid' if options.gid
-        '--uid' if options.uid
-        '--mode' if options.mode
+        '--gid' if options.gid? and typeof options.gid is 'number'
+        '--uid' if options.uid? and typeof options.uid is 'number'
+        "--mode #{options.mode}" if options.mode
       ].join ' '
       @system.execute
         cmd: """
         # Ensure source is a file
-        [ -f "#{options.target}" ] && exit 2
+        [ -f "#{options.source}" ] || exit 2
         command -v openssl >/dev/null || exit 3
         sourceDgst=`openssl dgst -#{options.algo} #{options.source} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'`
         # Get target hash
@@ -81,9 +81,17 @@ require('nikita')
         trap: true
         trim: true
       , (err, {status, stdout}) ->
-        throw Error "Invalid Option: source is not a file #{JSON.stringify options.source}" if err?.code is 2
+        throw Error "Invalid Option: source is not a file, got #{JSON.stringify options.source}" if err?.code is 2
         throw Error "Invalid Requirement: openssl not installed on host" if err?.code is 3
         throw Error "Invalid Requirement: openssl not installed on container" if err?.code is 4
+      @lxd.exec
+        if: typeof options.gid is 'string'
+        name: options.name
+        cmd: "chgrp #{options.gid} #{options.target}"
+      @lxd.exec
+        if: typeof options.uid is 'string'
+        name: options.name
+        cmd: "chown #{options.uid} #{options.target}"
 
 ## Dependencies
 
