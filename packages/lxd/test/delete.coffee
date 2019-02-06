@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/core'
-{tags, ssh, scratch, lxd} = require './test'
+{tags, ssh} = require './test'
 they = require('ssh2-they').configure(ssh)
 
 return unless tags.lxd_delete
@@ -10,7 +10,6 @@ describe 'lxd.delete' ->
   they 'Delete a container', (ssh) ->
     nikita
       ssh: ssh
-      lxd: lxd
     .lxd.init
       image: 'ubuntu:'
       name: 'container1'
@@ -24,7 +23,6 @@ describe 'lxd.delete' ->
   they 'Force deletion of a running container', (ssh) ->
     nikita
       ssh: ssh
-      lxd: lxd
     .lxd.init
       image: 'ubuntu:'
       name: 'container1'
@@ -40,7 +38,6 @@ describe 'lxd.delete' ->
   they 'Not found', (ssh) ->
     nikita
       ssh: ssh
-      lxd: lxd
     lxd.delete  # repeated to be sure the container is absent
       name: 'container1'
     .lxd.delete
