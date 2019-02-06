@@ -48,8 +48,8 @@
     "regexp-quote": "~0.0.0",
     "semver": "^5.6.0",
     "ssh2-connect": "~2.0.5",
-    "ssh2-exec": "~0.5.1",
-    "ssh2-fs": "^0.3.6",
+    "ssh2-exec": "~0.5.2",
+    "ssh2-fs": "^0.3.7",
     "stack-trace": "~0.0.10",
     "tilde-expansion": "~0.0.0"
   },

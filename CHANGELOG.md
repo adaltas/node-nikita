@@ -8,6 +8,7 @@
 
 ## Trunk
 
+* core: latest dependencies
 * domain: remove option and support
 * lxd: new project
 * file.cson: fix merging when target is missing
