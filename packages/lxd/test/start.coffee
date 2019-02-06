@@ -1,22 +1,22 @@
 nikita = require '@nikitajs/core'
-{tags, ssh, scratch, lxc} = require './test'
+{tags, ssh, scratch, lxd} = require './test'
 they = require('ssh2-they').configure(ssh)
 
-return unless tags.lxc_start
+return unless tags.lxd_start
 
-describe 'lxc.start' ->
+describe 'lxd.start' ->
 
   they 'Start a container', (ssh) ->
     nikita
       ssh: ssh
-      lxc: lxc
-    .lxc.delete
+      lxd: lxd
+    .lxd.delete
       name: 'u1'
       force: true
-    .lxc.init
+    .lxd.init
       image: 'ubuntu:16.04'
       name: 'u1'
-    .lxc.start
+    .lxd.start
       name: 'u1'
     , (err, {status}) ->
       status.should.be.true()
@@ -25,15 +25,15 @@ describe 'lxc.start' ->
   they 'Already started', (ssh) ->
     nikita
       ssh: ssh
-      lxc: lxc
-    .lxc.delete
+      lxd: lxd
+    .lxd.delete
       name: 'u1'
-    .lxc.init
+    .lxd.init
       image: 'ubuntu:16.04'
       name: 'u1'
-    .lxc.start
+    .lxd.start
       name: 'u1'
-    .lxc.start
+    .lxd.start
       name: 'u1'
     , (err, {status}) ->
       status.should.be.false()

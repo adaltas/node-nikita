@@ -1,19 +1,19 @@
 
 nikita = require '@nikitajs/core'
-{tags, ssh, scratch, lxc} = require './test'
+{tags, ssh, scratch, lxd} = require './test'
 they = require('ssh2-they').configure(ssh)
 
-return unless tags.lxc_init
+return unless tags.lxd_init
 
-describe 'lxc.init' ->
+describe 'lxd.init' ->
 
   they 'Init new container', (ssh) ->
     nikita
       ssh: ssh
-      lxc: lxc
-    .lxc.delete
+      lxd: lxd
+    .lxd.delete
       name: 'u1'
-    .lxc.init
+    .lxd.init
       image: 'ubuntu:16.04'
       name: 'u1'
       network: 'net1'
@@ -27,13 +27,13 @@ describe 'lxc.init' ->
   they 'Container already exist', (ssh) ->
     nikita
       ssh: ssh
-      lxc: lxc
-    .lxc.delete
+      lxd: lxd
+    .lxd.delete
       name: 'u1'
-    .lxc.init
+    .lxd.init
       image: 'ubuntu:16.04'
       name: 'u1'
-    .lxc.init
+    .lxd.init
       image: 'ubuntu:18.04'
       name: 'u1'
     , (err, {status}) ->

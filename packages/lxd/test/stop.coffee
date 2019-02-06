@@ -1,9 +1,9 @@
 nikita = require '@nikitajs/core'
-{tags, ssh, scratch, lxc} = require './test'
+{tags, ssh, scratch, lxd} = require './test'
 they = require('ssh2-they').configure(ssh)
 
-return unless tags.lxc_stop
+return unless tags.lxd_stop
 
-describe 'lxc.stop' ->
+describe 'lxd.stop' ->
 
   they 'Stop a container'

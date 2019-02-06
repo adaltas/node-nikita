@@ -1,11 +1,11 @@
 
 module.exports =
   tags:
-    lxc_init: true
-    lxc_delete: true
-    lxc_network: false
-    lxc_start: false
-    lxc_stop: false
+    lxd_init: true
+    lxd_delete: true
+    lxd_network: false
+    lxd_start: false
+    lxd_stop: false
   ssh:
     host: '127.0.0.1'
     username: process.env.USER

@@ -1,19 +1,19 @@
 nikita = require '@nikitajs/core'
-{tags, ssh, scratch, lxc} = require './test'
+{tags, ssh, scratch, lxd} = require './test'
 they = require('ssh2-they').configure(ssh)
 
-return unless tags.lxc_network
+return unless tags.lxd_network
 
-describe 'lxc.network' ->
+describe 'lxd.network' ->
 
   describe 'Network creation' ->
     they 'Network creation with options', (ssh) ->
       nikita
         ssh: ssh
-        lxc: lxc
-      .lxc.network.delete
+        lxd: lxd
+      .lxd.network.delete
         name: 'lxdnetwork0test'
-      .lxc.network.create
+      .lxd.network.create
         name: 'lxdnetwork0test'
         config:
           ipv4.adress: "174.89.0.0/24"
@@ -26,12 +26,12 @@ describe 'lxc.network' ->
     they 'Network already exist', (ssh) ->
       nikita
         ssh: ssh
-        lxc: lxc
-      .lxc.network.delete
+        lxd: lxd
+      .lxd.network.delete
         name: 'lxdnetwork0test'
-      .lxc.network.create
+      .lxd.network.create
         name: 'lxdnetwork0test'
-      .lxc.network.create
+      .lxd.network.create
         name: 'lxdnetwork0test'
       , (err, {status}) ->
         status.should.be.false()
@@ -41,10 +41,10 @@ describe 'lxc.network' ->
     they 'Delete a network', (ssh) ->
       nikita
         ssh: ssh
-        lxc: lxc
-      .lxc.network.create
+        lxd: lxd
+      .lxd.network.create
         name: 'lxdnetwork0test'
-      .lxc.network.delete
+      .lxd.network.delete
         name: 'lxdnetwork0test'
       , (err, {status}) ->
         status.should.be.true()
@@ -53,12 +53,12 @@ describe 'lxc.network' ->
     they 'Network does not exist', (ssh) ->
       nikita
         ssh: ssh
-        lxc: lxc
-      .lxc.network.create
+        lxd: lxd
+      .lxd.network.create
         name: 'lxdnetwork0test'
-      .lxc.network.delete
+      .lxd.network.delete
         name: 'lxdnetwork0test'
-      .lxc.network.delete
+      .lxd.network.delete
         name: 'lxdnetwork0test'
       , (err, {status}) ->
         status.should.be.false()
@@ -67,10 +67,10 @@ describe 'lxc.network' ->
   they 'Configure Network', (ssh) ->
     nikita
       ssh: ssh
-      lxc: lxc
-    .lxc.network.create
+      lxd: lxd
+    .lxd.network.create
       name: 'lxdnetwork0test'
-    .lxc.network.configure
+    .lxd.network.configure
       name: 'lxdnetwork0test'
       config:
         ipv4.address="172.18.0.1/24"
@@ -88,13 +88,13 @@ describe 'lxc.network' ->
     they 'Attach to a container', (ssh) ->
       nikita
         ssh: ssh
-        lxc: lxc
-      .lxc.init
+        lxd: lxd
+      .lxd.init
         image: 'ubuntu:16.04'
         name: 'u1'
-      .lxc.network.create
+      .lxd.network.create
         name: 'lxdnetwork0test'
-      .lxc.network.attach
+      .lxd.network.attach
         network: 'lxdnetwork0test'
         container: 'u1'
       , (err, {status}) ->
@@ -108,16 +108,16 @@ describe 'lxc.network' ->
     they 'Detach from a container', (ssh) ->
       nikita
         ssh: ssh
-        lxc: lxc
-      .lxc.init
+        lxd: lxd
+      .lxd.init
         image: 'ubuntu:16.04'
         name: 'u1'
-      .lxc.network.create
+      .lxd.network.create
         name: 'lxdnetwork0test'
-      .lxc.network.attach
+      .lxd.network.attach
         network: 'lxdnetwork0test'
         container: 'u1'
-      .lxc.network.detach
+      .lxd.network.detach
         network: 'lxdnetwork0test'
         container: 'u1'
       , (err, {status}) ->
