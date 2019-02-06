@@ -544,7 +544,7 @@ module.exports = function() {
       });
     }
     return (function() {
-      var do_callback, do_conditions, do_disabled, do_handler, do_intercept_after, do_intercept_before, do_once, do_options, do_options_after, do_options_before;
+      var do_callback, do_conditions, do_disabled, do_end, do_handler, do_intercept_after, do_intercept_before, do_once, do_options, do_options_after, do_options_before;
       do_options = function() {
         try {
           if (!(typeof options.sleep === 'number' && options.sleep >= 0)) {
@@ -945,7 +945,7 @@ module.exports = function() {
           });
         }
       };
-      do_intercept_after = function(callbackargs, callback) {
+      do_intercept_after = function(callbackargs) {
         if (options.intercepting) {
           return do_options_after(callbackargs);
         }
@@ -1078,6 +1078,9 @@ module.exports = function() {
           base.status = false;
         }
         callbackargs.output = merge({}, callbackargs.output);
+        return do_end(callbackargs);
+      };
+      do_end = function(callbackargs) {
         if (callback) {
           callback(callbackargs.error, callbackargs.output);
         }
@@ -1351,6 +1354,12 @@ state_create_level = function() {
   return level = {
     error: null,
     history: [],
+    current: {
+      options: {},
+      status: void 0,
+      output: null,
+      args: null
+    },
     todos: [],
     throw_if_error: true
   };
@@ -1359,8 +1368,6 @@ state_create_level = function() {
 // Called after next and promise
 state_reset_level = function(level) {
   level.error = null;
-  // History elements contains the following keys:
-  // options, status, output, args
   level.history = [];
   return level.throw_if_error = true;
 };

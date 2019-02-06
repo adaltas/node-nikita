@@ -453,7 +453,7 @@
             catch error
               state.current_level = state_create_level()
               do_next error: error
-          do_intercept_after = (callbackargs, callback) ->
+          do_intercept_after = (callbackargs) ->
             return do_options_after callbackargs if options.intercepting
             each state.afters
             .call (after, next) ->
@@ -505,6 +505,8 @@
             callbackargs.output ?= {}
             callbackargs.output.status ?= false
             callbackargs.output = merge {}, callbackargs.output
+            do_end callbackargs
+          do_end = (callbackargs) ->
             callback callbackargs.error, callbackargs.output if callback
             run_next()
           do_options()
@@ -629,13 +631,16 @@
       level =
         error: null
         history: []
+        current:
+          options: {}
+          status: undefined
+          output: null
+          args: null
         todos: []
         throw_if_error: true
     # Called after next and promise
     state_reset_level = (level) ->
       level.error = null
-      # History elements contains the following keys:
-      # options, status, output, args
       level.history = []
       level.throw_if_error = true
 
