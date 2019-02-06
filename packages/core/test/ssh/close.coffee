@@ -15,8 +15,7 @@ describe 'ssh.close', ->
       port: ssh.config.port
       username: ssh.config.username
       password: ssh.config.password
-      private_key: ssh.config.privateKey.privateOrig
-      public_key: ssh.config.publicKey.publicOrig
+      private_key: ssh.config.privateKey
     .ssh.close (err, {status}) ->
       status.should.be.true() unless err
     .ssh.close (err, {status}) ->

@@ -3,6 +3,7 @@
 
 ## TODO
 
+* ssh: fix tests
 * fix test/api/status "set status when sync is called in async" test
 
 ## Trunk

@@ -6,7 +6,7 @@ they = require('ssh2-they').configure(ssh)
 
 return unless tags.posix
 
-describe 'ssh.close', ->
+describe 'ssh.index', ->
 
   they 'argument is true', (ssh) ->
     return @skip() unless ssh
@@ -16,8 +16,7 @@ describe 'ssh.close', ->
       port: ssh.config.port
       username: ssh.config.username
       password: ssh.config.password
-      private_key: ssh.config.privateKey.privateOrig
-      public_key: ssh.config.publicKey.publicOrig
+      private_key: ssh.config.privateKey
     .call ->
       misc.ssh.is(@ssh true).should.be.true()
     .ssh.close()
@@ -31,8 +30,7 @@ describe 'ssh.close', ->
       port: ssh.config.port
       username: ssh.config.username
       password: ssh.config.password
-      private_key: ssh.config.privateKey.privateOrig
-      public_key: ssh.config.publicKey.publicOrig
+      private_key: ssh.config.privateKey
     .call ->
       (@ssh(false) is null).should.be.true()
     .ssh.close()
@@ -46,8 +44,7 @@ describe 'ssh.close', ->
         port: ssh.config.port
         username: ssh.config.username
         password: ssh.config.password
-        private_key: ssh.config.privateKey.privateOrig
-        public_key: ssh.config.publicKey.publicOrig
+        private_key: ssh.config.privateKey
     .ssh.open()
     .call ->
       misc.ssh.is(@ssh true).should.be.true()
