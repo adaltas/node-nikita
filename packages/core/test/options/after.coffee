@@ -6,7 +6,6 @@ return unless tags.api
 
 describe 'options "after"', ->
 
-  
   it 'is a function', ->
     history = []
     nikita

@@ -5,6 +5,7 @@
 !.gitignore
 !.gitattributes
 !.npmignore
-/yarn.lock
+yarn.lock
+package-lock.json
 /packages/*/test.coffee
 !/packages/*/test.coffee.sample
