@@ -1,6 +1,6 @@
 {
-  "name": "@nikitajs/lxc",
-  "description": "Nikita lxc actions.",
+  "name": "@nikitajs/lxd",
+  "description": "Nikita LXD actions.",
   "version": "0.0.1",
   "bugs": {
     "url": "https://github.com/adaltas/node-nikita/issues"
