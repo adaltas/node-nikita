@@ -35,7 +35,7 @@ require('nikita')
 
 ## Source Code
 
-    module.exports =  ({options}, callback) ->
+    module.exports =  ({options}) ->
       @log message: "Entering init", level: 'DEBUG', module: 'nikita/lxc/init'
       # Building command
       cmd = ['lxc', options.image, options.name]
@@ -47,4 +47,3 @@ require('nikita')
       # Execution
       @system.execute
         cmd: cmd.join ' '
-      , callback

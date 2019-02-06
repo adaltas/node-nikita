@@ -1,7 +1,7 @@
 
 require('@nikitajs/core/lib/registry')
 .register
-  lxc:
-    delete:  '@nikitajs/lxc/src/delete'
-    init:    '@nikitajs/lxc/src/init'
-    network: '@nikitajs/lxc/src/network'
+  lxd:
+    delete:  '@nikitajs/lxd/src/delete'
+    init:    '@nikitajs/lxd/src/init'
+    network: '@nikitajs/lxd/src/network'
