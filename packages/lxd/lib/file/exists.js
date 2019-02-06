@@ -39,11 +39,11 @@ module.exports = {
       level: 'DEBUG',
       module: '@nikitajs/lxd/lib/exists'
     });
-    if (!option.name) {
-      throw Error(`Invalid Option: name is required, got ${JSON.stringify(option.name)}`);
+    if (!options.name) {
+      throw Error("Invalid Option: name is required");
     }
-    if (!option.target) {
-      throw Error(`Invalid Option: target is required, got ${JSON.stringify(option.target)}`);
+    if (!options.target) {
+      throw Error("Invalid Option: target is required");
     }
     return this.system.execute({
       cmd: `lxc exec ${options.name} -- stat ${options.target}`,

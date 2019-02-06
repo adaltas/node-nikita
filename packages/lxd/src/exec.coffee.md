@@ -30,8 +30,8 @@ require('nikita')
 ## Source Code
 
     module.exports =  ({options}, callback) ->
-      @log message: "Entering lxd.file.exec", level: 'DEBUG', module: '@nikitajs/lxd/lib/exec'
-      throw Error "Invalid Option: name is required, got #{JSON.stringify option.name}" unless option.name # note, name could be obtained from lxd_target
+      @log message: "Entering lxd.exec", level: 'DEBUG', module: '@nikitajs/lxd/lib/exec'
+      throw Error "Invalid Option: name is required" unless options.name
       @system.execute options,
         cmd: """
         cat <<EOF | lxc exec #{options.name} -- bash

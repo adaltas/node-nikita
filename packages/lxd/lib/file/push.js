@@ -44,21 +44,23 @@
 // * Detect name from lxd_target
 
 // ## Source Code
+var path;
+
 module.exports = function({options}) {
-  var mk_push_command;
+  var cmd_push;
   this.log({
     message: "Entering lxd.file.push",
     level: 'DEBUG',
     module: '@nikitajs/lxd/lib/push'
   });
-  if (!option.name) { // note, name could be obtained from lxd_target
-    throw Error(`Invalid Option: name is required, got ${JSON.stringify(option.name)}`);
+  if (!options.name) { // note, name could be obtained from lxd_target
+    throw Error("Invalid Option: name is required");
   }
-  if (!option.source) {
-    throw Error(`Invalid Option: source is required, got ${JSON.stringify(option.source)}`);
+  if (!options.source) {
+    throw Error("Invalid Option: source is required");
   }
-  if (!(option.target && options.lxd_target)) {
-    throw Error(`Invalid Option: target is required, got ${JSON.stringify(option.target)}`);
+  if (!(options.target || options.lxd_target)) {
+    throw Error("Invalid Option: target is required");
   }
   if (options.algo == null) {
     options.algo = 'md5';
@@ -67,12 +69,10 @@ module.exports = function({options}) {
     options.lxd_target = `${path.join(options.name, options.target)}`;
   }
   // Execution
-  mk_push_command = function() {
-    return ['lxc', options.name, options.source, options.lxd_target, options.create_dirs ? '--create-dirs' : void 0, options.gid ? '--gid' : void 0, options.uid ? '--uid' : void 0, options.mode ? '--mode' : void 0].join(' ');
-  };
+  cmd_push = ['lxc', options.name, options.source, options.lxd_target, options.create_dirs ? '--create-dirs' : void 0, options.gid ? '--gid' : void 0, options.uid ? '--uid' : void 0, options.mode ? '--mode' : void 0].join(' ');
   return this.system.execute({
-    cmd: `# Ensure source is a file\n[ -f "${options.target}" ] && exit 2\nwhich openssl >/dev/null || exit 3\nsourceDgst=\`openssl dgst -${options.algo} ${options.source} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'\`\n# Get target hash\ntargetDgst = \`cat <<EOF | lxc exec ${options.name} -- bash\n# Ensure openssl is available\nwhich openssl >/dev/null || exit 4\nopenssl dgst -${options.algo} ${options.target} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'\nEOF\`\n[ $sourceDgst == $targetDgst ] && exit 34\n${mk_push_command()}`,
-    code_skipped: 34,
+    cmd: `# Ensure source is a file\n[ -f "${options.target}" ] && exit 2\ncommand -v openssl >/dev/null || exit 3\nsourceDgst=\`openssl dgst -${options.algo} ${options.source} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'\`\n# Get target hash\ntargetDgst=\`cat <<EOF | lxc exec ${options.name} -- bash\n# Ensure openssl is available\ncommand -v openssl >/dev/null || exit 4\nopenssl dgst -${options.algo} ${options.target} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'\nEOF\`\n[ "$sourceDgst" == "$targetDgst" ] && exit 42\n${cmd_push}`,
+    code_skipped: 42,
     trap: true,
     trim: true
   }, function(err, {status, stdout}) {
@@ -87,3 +87,6 @@ module.exports = function({options}) {
     }
   });
 };
+
+// ## Dependencies
+path = require('path');

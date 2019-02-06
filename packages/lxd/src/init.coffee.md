@@ -40,14 +40,18 @@ require('nikita')
 ## Source Code
 
     module.exports =  ({options}) ->
-      @log message: "Entering init", level: 'DEBUG', module: '@nikitajs/lxd/init'
-      # Building command
-      cmd = ['lxc', 'init', options.image, options.name]
-      #TODO: message/error if network is inexistant
-      cmd.push "--network #{options.network}" if options.network
-      #TODO: message/error if stotage does not exist
-      cmd.push "--storage #{options.storage}" if options.storage
-      cmd.push "--ephemeral" if options.ephemeral
+      @log message: "Entering lxd.init", level: 'DEBUG', module: '@nikitajs/lxd/lib/init'
+      cmd_init = [
+        'lxc', 'init', options.image, options.name
+        "--network #{options.network}" if options.network
+        "--storage #{options.storage}" if options.storage
+        "--ephemeral" if options.ephemeral
+      ].join ' '
       # Execution
       @system.execute
-        cmd: cmd.join ' '
+        name: options.name
+        cmd: """
+        lxc info #{options.name} >/dev/null && exit 42
+        #{cmd_init}
+        """
+        code_skipped: 42

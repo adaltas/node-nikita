@@ -6,7 +6,7 @@
 // ## Options
 
 // * `image`
-//   The image the container will use, <name>:[version] e.g: ubuntu:16.04
+//   The image the container will use, name:[version] e.g: ubuntu:16.04
 // * `name`
 //   The name of the container
 // * `network` (optional)
@@ -39,27 +39,17 @@
 
 // ## Source Code
 module.exports = function({options}) {
-  var cmd;
+  var cmd_init;
   this.log({
-    message: "Entering init",
+    message: "Entering lxd.init",
     level: 'DEBUG',
-    module: '@nikitajs/lxd/init'
+    module: '@nikitajs/lxd/lib/init'
   });
-  // Building command
-  cmd = ['lxc', 'init', options.image, options.name];
-  if (options.network) {
-    //TODO: message/error if network is inexistant
-    cmd.push(`--network ${options.network}`);
-  }
-  if (options.storage) {
-    //TODO: message/error if stotage does not exist
-    cmd.push(`--storage ${options.storage}`);
-  }
-  if (options.ephemeral) {
-    cmd.push("--ephemeral");
-  }
+  cmd_init = ['lxc', 'init', options.image, options.name, options.network ? `--network ${options.network}` : void 0, options.storage ? `--storage ${options.storage}` : void 0, options.ephemeral ? "--ephemeral" : void 0].join(' ');
   // Execution
   return this.system.execute({
-    cmd: cmd.join(' ')
+    name: options.name,
+    cmd: `lxc info ${options.name} >/dev/null && exit 42\n${cmd_init}`,
+    code_skipped: 42
   });
 };

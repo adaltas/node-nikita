@@ -47,41 +47,44 @@ require('nikita')
 
     module.exports =  ({options}) ->
       @log message: "Entering lxd.file.push", level: 'DEBUG', module: '@nikitajs/lxd/lib/push'
-      throw Error "Invalid Option: name is required, got #{JSON.stringify option.name}" unless option.name # note, name could be obtained from lxd_target
-      throw Error "Invalid Option: source is required, got #{JSON.stringify option.source}" unless option.source
-      throw Error "Invalid Option: target is required, got #{JSON.stringify option.target}" unless option.target and options.lxd_target
+      throw Error "Invalid Option: name is required" unless options.name # note, name could be obtained from lxd_target
+      throw Error "Invalid Option: source is required" unless options.source
+      throw Error "Invalid Option: target is required" unless options.target or options.lxd_target
       options.algo ?= 'md5'
       options.lxd_target ?= "#{path.join options.name, options.target}"
       # Execution
-      mk_push_command = ->
-        [
-          'lxc', options.name
-          options.source
-          options.lxd_target
-          '--create-dirs' if options.create_dirs
-          '--gid' if options.gid
-          '--uid' if options.uid
-          '--mode' if options.mode
-        ].join ' '
+      cmd_push = [
+        'lxc', options.name
+        options.source
+        options.lxd_target
+        '--create-dirs' if options.create_dirs
+        '--gid' if options.gid
+        '--uid' if options.uid
+        '--mode' if options.mode
+      ].join ' '
       @system.execute
         cmd: """
         # Ensure source is a file
         [ -f "#{options.target}" ] && exit 2
-        which openssl >/dev/null || exit 3
+        command -v openssl >/dev/null || exit 3
         sourceDgst=`openssl dgst -#{options.algo} #{options.source} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'`
         # Get target hash
-        targetDgst = `cat <<EOF | lxc exec #{options.name} -- bash
+        targetDgst=`cat <<EOF | lxc exec #{options.name} -- bash
         # Ensure openssl is available
-        which openssl >/dev/null || exit 4
+        command -v openssl >/dev/null || exit 4
         openssl dgst -#{options.algo} #{options.target} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'
         EOF`
-        [ $sourceDgst == $targetDgst ] && exit 34
-        #{mk_push_command()}
+        [ "$sourceDgst" == "$targetDgst" ] && exit 42
+        #{cmd_push}
         """
-        code_skipped: 34
+        code_skipped: 42
         trap: true
         trim: true
       , (err, {status, stdout}) ->
         throw Error "Invalid Option: source is not a file #{JSON.stringify options.source}" if err?.code is 2
         throw Error "Invalid Requirement: openssl not installed on host" if err?.code is 3
         throw Error "Invalid Requirement: openssl not installed on container" if err?.code is 4
+
+## Dependencies
+
+    path = require 'path'

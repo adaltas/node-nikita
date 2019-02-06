@@ -30,12 +30,12 @@
 // ## Source Code
 module.exports = function({options}, callback) {
   this.log({
-    message: "Entering lxd.file.exec",
+    message: "Entering lxd.exec",
     level: 'DEBUG',
     module: '@nikitajs/lxd/lib/exec'
   });
-  if (!option.name) { // note, name could be obtained from lxd_target
-    throw Error(`Invalid Option: name is required, got ${JSON.stringify(option.name)}`);
+  if (!options.name) {
+    throw Error("Invalid Option: name is required");
   }
   return this.system.execute(options, {
     cmd: `cat <<EOF | lxc exec ${options.name} -- bash\n${options.cmd}\nEOF`
