@@ -27,7 +27,7 @@ require('nikita')
     module.exports =  ({options}) ->
       @log message: "Entering delete", level: 'DEBUG', module: '@nikitajs/lxd/delete'
       # Building command
-      cmd = ['lxd', options.name]
+      cmd = ['lxc', 'delete', options.name]
       cmd.push "--force" if options.force
       # Execution
       @system.execute

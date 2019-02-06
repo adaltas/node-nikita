@@ -6,7 +6,7 @@ Initialize a Linux Container with given image name, container name and options.
 ## Options
 
 * `image`
-  The image the container will use, <name>:[version] e.g: ubuntu:16.04
+  The image the container will use, name:[version] e.g: ubuntu:16.04
 * `name`
   The name of the container
 * `network` (optional)
@@ -42,7 +42,7 @@ require('nikita')
     module.exports =  ({options}) ->
       @log message: "Entering init", level: 'DEBUG', module: '@nikitajs/lxd/init'
       # Building command
-      cmd = ['lxd', options.image, options.name]
+      cmd = ['lxc', 'init', options.image, options.name]
       #TODO: message/error if network is inexistant
       cmd.push "--network #{options.network}" if options.network
       #TODO: message/error if stotage does not exist
