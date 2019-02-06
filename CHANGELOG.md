@@ -7,6 +7,7 @@
 
 ## Trunk
 
+* domain: remove option and support
 * lxd: new project
 * file.cson: fix merging when target is missing
 * service.install: add yay support

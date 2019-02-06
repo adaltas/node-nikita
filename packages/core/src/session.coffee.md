@@ -23,12 +23,6 @@
       state.once = {}
       state.killed = false
       state.index_counter = 0
-      # Domain
-      obj.options.domain =  domain.create() if obj.options.domain is true
-      domain_on_error = (error) ->
-        error.message = "Invalid State Error [#{error.message}]"
-        handle_multiple_call error
-      obj.options.domain?.on 'error', domain_on_error
       # Proxify
       proxy = new Proxy obj,
         has: (target, name) ->
@@ -37,7 +31,7 @@
           console.warn 'apply'
         get: (target, name) ->
           return target[name] if obj[name]?
-          return target[name] if name in ['domain', '_events', '_maxListeners', 'internal']
+          return target[name] if name in ['_events', '_maxListeners', 'internal']
           proxy.action = []
           proxy.action.push name
           if not obj.registry.registered(proxy.action, parent: true) and not registry.registered(proxy.action, parent: true)
@@ -51,7 +45,7 @@
               {get, values} = handle_get proxy, options
               return values if get
               state.current_level.todos.push opts for opts in options
-              setImmediate _run_ if state.current_level.todos.length is options.length # Activate the pump
+              setImmediate run_next if state.current_level.todos.length is options.length # Activate the pump
               proxy
             new Proxy builder,
               get: (target, name) ->
@@ -206,7 +200,7 @@
           state.current_level.error = error
           jump_to_error()
           callbackargs.error = error
-          return run()
+          return run_next()
         current_level = state.current_level
         state.current_level = state.parent_levels.shift()
         state.current_level.todos.unshift current_level.todos... if current_level.todos.length
@@ -215,32 +209,22 @@
         state.current_level = state.parent_levels.shift() while state.parent_levels.length
         state.current_level.error = error
         jump_to_error()
-        run()
+        run_next()
       jump_to_error = ->
         while state.current_level.todos[0] and state.current_level.todos[0].action not in ['catch', 'next', 'promise'] then state.current_level.todos.shift()
-      _run_ = ->
-        if obj.options.domain
-        then obj.options.domain.run run
-        else run()
       run_next = (callback) ->
         options = state.current_level.todos.shift()
-        run options, callback
-      run = (options, callback) ->
-        options = state.current_level.todos.shift() unless options
         # Nothing more to do in current queue
         unless options
-          obj.options.domain?.removeListener 'error', domain_on_error
-          # Run is called with a callback
-          if callback
-            callback state.current_level.error if callback
-            return
-          else
-            if not state.killed and state.parent_levels.length is 0 and state.current_level.error and state.current_level.throw_if_error
-              obj.emit 'error', state.current_level.error
-              throw state.current_level.error unless obj.listenerCount() is 0
+          if not state.killed and state.parent_levels.length is 0 and state.current_level.error and state.current_level.throw_if_error
+            obj.emit 'error', state.current_level.error
+            throw state.current_level.error unless obj.listenerCount() is 0
           if state.parent_levels.length is 0
             obj.emit 'end', level: 'INFO' unless state.current_level.error
           return
+        run options
+      run = (options, callback) ->
+        # options = state.current_level.todos.shift() unless options
         options_original = options
         options_parent = state.current_level.options
         obj.cascade = {...obj.options.cascade, ...module.exports.cascade}
@@ -255,7 +239,7 @@
           status = history.some (action) -> not action.options.shy and action.status
           options.handler?.call proxy, error, {status: status}
           state_reset_level state.current_level
-          run()
+          run_next()
           return
         if options.action is 'promise'
           {error, history} = state.current_level
@@ -275,10 +259,10 @@
           , ->
             while state.current_level.todos[0] and state.current_level.todos[0].action not in ['next', 'promise'] then state.current_level.todos.shift()
             callback error, {} if callback
-            run()
+            run_next()
           , (error) ->
             callback error, {} if callback
-            run()
+            run_next()
         options = enrich_options options
         index = state.index_counter++
         state.current_level.history.unshift status: undefined, options: shy: options.shy
@@ -522,13 +506,13 @@
             callbackargs.output.status ?= false
             callbackargs.output = merge {}, callbackargs.output
             callback callbackargs.error, callbackargs.output if callback
-            run()
+            run_next()
           do_options()
       state.properties.child = get: -> ->
         module.exports(obj.options)
       state.properties.next = get: -> ->
         state.current_level.todos.push action: 'next', handler: arguments[0]
-        setImmediate _run_ if state.current_level.todos.length is 1 # Activate the pump
+        setImmediate run_next if state.current_level.todos.length is 1 # Activate the pump
         proxy
       state.properties.promise = get: -> ->
         deferred = {}
@@ -536,13 +520,13 @@
           deferred.resolve = resolve
           deferred.reject = reject
         state.current_level.todos.push action: 'promise', deferred: deferred # handler: arguments[0],
-        setImmediate _run_ if state.current_level.todos.length is 1 # Activate the pump
+        setImmediate run_next if state.current_level.todos.length is 1 # Activate the pump
         promise
       state.properties.end = get: -> ->
         args = [].slice.call(arguments)
         options = normalize_options args, 'end'
         state.current_level.todos.push opts for opts in options
-        setImmediate _run_ if state.current_level.todos.length is options.length # Activate the pump
+        setImmediate run_next if state.current_level.todos.length is options.length # Activate the pump
         proxy
       state.properties.call = get: -> ->
         args = [].slice.call(arguments)
@@ -550,7 +534,7 @@
         {get, values} = handle_get proxy, options
         return values if get
         state.current_level.todos.push opts for opts in options
-        setImmediate _run_ if state.current_level.todos.length is options.length # Activate the pump
+        setImmediate run_next if state.current_level.todos.length is options.length # Activate the pump
         proxy
       state.properties.each = get: -> ->
         args = [].slice.call(arguments)
@@ -631,7 +615,6 @@
       cascade: true
       depth: null
       disabled: false
-      domain: false
       handler: false
       header: null
       once: false
@@ -659,7 +642,6 @@
 ## Dependencies
 
     registry = require './registry'
-    domain = require 'domain'
     each = require 'each'
     path = require 'path'
     util = require 'util'
