@@ -1,0 +1,87 @@
+
+# `nikita.lxd.file.push`
+
+Push files into containers.
+
+## Options
+
+* `name` (string, required)   
+  The name of the container.
+* `create_dirs` (boolean, optional, false)
+  Create any directories necessary.
+* `gid` (integer, optional)   
+  Set the file's gid on push.
+  overwrite the `source` option.
+* `lxd_target` (string, required)   
+  File destination in the form of "[<remote>:]<container>/<path>",
+  overwrite the `target` option.
+* `mode` (integer|string, optional)   
+  Set the file's perms on push.
+* `source` (string, required)   
+  File to push in the form of "<path>".
+* `target` (string, required)   
+  File destination in the form of "<path>".
+* `uid` (integer, optional)   
+  Set the file's uid on push.
+
+## Example
+
+```
+require('nikita')
+.lxd.file.push({
+  name: "myubuntu"
+}, function(err, {status}) {
+  console.log( err ? err.message : 'The container was deleted')
+});
+
+```
+
+## Todo
+
+* Push recursive directories
+* Handle unmatched target permissions
+* Handle unmatched target ownerships
+* Detect name from lxd_target
+
+## Source Code
+
+    module.exports =  ({options}) ->
+      @log message: "Entering lxd.file.push", level: 'DEBUG', module: '@nikitajs/lxd/lib/push'
+      throw Error "Invalid Option: name is required, got #{JSON.stringify option.name}" unless option.name # note, name could be obtained from lxd_target
+      throw Error "Invalid Option: source is required, got #{JSON.stringify option.source}" unless option.source
+      throw Error "Invalid Option: target is required, got #{JSON.stringify option.target}" unless option.target and options.lxd_target
+      options.algo ?= 'md5'
+      options.lxd_target ?= "#{path.join options.name, options.target}"
+      # Execution
+      mk_push_command = ->
+        [
+          'lxc', options.name
+          options.source
+          options.lxd_target
+          '--create-dirs' if options.create_dirs
+          '--gid' if options.gid
+          '--uid' if options.uid
+          '--mode' if options.mode
+        ].join ' '
+      @system.execute
+        cmd: """
+        # Ensure source is a file
+        [ -f "#{options.target}" ] && exit 2
+        which openssl >/dev/null || exit 3
+        sourceDgst=`openssl dgst -#{options.algo} #{options.source} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'`
+        # Get target hash
+        targetDgst = `cat <<EOF | lxc exec #{options.name} -- bash
+        # Ensure openssl is available
+        which openssl >/dev/null || exit 4
+        openssl dgst -#{options.algo} #{options.target} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'
+        EOF`
+        [ $sourceDgst == $targetDgst ] && exit 34
+        #{mk_push_command()}
+        """
+        code_skipped: 34
+        trap: true
+        trim: true
+      , (err, {status, stdout}) ->
+        throw Error "Invalid Option: source is not a file #{JSON.stringify options.source}" if err?.code is 2
+        throw Error "Invalid Requirement: openssl not installed on host" if err?.code is 3
+        throw Error "Invalid Requirement: openssl not installed on container" if err?.code is 4

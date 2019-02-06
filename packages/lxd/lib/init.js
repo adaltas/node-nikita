@@ -46,7 +46,7 @@ module.exports = function({options}) {
     module: '@nikitajs/lxd/init'
   });
   // Building command
-  cmd = ['lxd', options.image, options.name];
+  cmd = ['lxc', 'init', options.image, options.name];
   if (options.network) {
     //TODO: message/error if network is inexistant
     cmd.push(`--network ${options.network}`);

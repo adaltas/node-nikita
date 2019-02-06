@@ -31,7 +31,7 @@ module.exports = function({options}) {
     module: '@nikitajs/lxd/delete'
   });
   // Building command
-  cmd = ['lxd', options.name];
+  cmd = ['lxc', options.name];
   if (options.force) {
     cmd.push("--force");
   }

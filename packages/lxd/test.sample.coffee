@@ -1,6 +1,7 @@
 
 module.exports =
   tags:
+    lxd: false
     lxd_init: true
     lxd_delete: true
     lxd_network: false
