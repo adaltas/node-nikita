@@ -1,7 +1,7 @@
 {
   "name": "@nikitajs/lxd",
   "description": "Nikita LXD actions.",
-  "version": "0.9.3-alpha.1",
+  "version": "0.9.3-alpha.2",
   "bugs": {
     "url": "https://github.com/adaltas/node-nikita/issues"
   },
