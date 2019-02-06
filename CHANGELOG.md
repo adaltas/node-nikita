@@ -7,6 +7,7 @@
 
 ## Trunk
 
+* lxd: new project
 * file.cson: fix merging when target is missing
 * service.install: add yay support
 
@@ -97,7 +98,7 @@ Fixes:
 
 Cleanup:
 * package: update license field to reflect MIT
-* log: remove log from cascade and parent usage 
+* log: remove log from cascade and parent usage
 * fs.createWriteStream: code simplification
 * env: emulate systemctl
 * env: rename MECANO_TEST to NIKITA_TEST_MODULE
@@ -144,7 +145,7 @@ Management:
 
 Backward incompatibilities:
 * wrap: remove connection
-* log: move options.log to nikita.log 
+* log: move options.log to nikita.log
 * option depth: renaming, was total_depth
 * option log: remove depth and header_depth
 * option action: rename option, was type
@@ -165,7 +166,7 @@ New features:
 * cwd: marked as propagated
 
 Fixes:
-* context: fix default param handler value 
+* context: fix default param handler value
 * ssh: no longer reference ssh2
 * cascade: honored by get actions
 * cascade: global, session and action merge
