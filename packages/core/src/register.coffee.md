@@ -100,6 +100,7 @@ available to every Nikita sessions.
         mod: 'nikita/system/mod'
         move: 'nikita/system/move'
         remove: 'nikita/system/remove'
+        running: 'nikita/system/running'
         tmpfs: 'nikita/system/tmpfs'
         uid_gid: 'nikita/system/uid_gid'
         user:

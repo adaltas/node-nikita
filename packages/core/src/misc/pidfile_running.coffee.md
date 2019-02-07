@@ -14,6 +14,7 @@ pidfile_running ssh, pidfile, function(err, running){
 ```
 
     module.exports = (ssh, pidfile, callback) ->
+      console.error 'misc.pidfile_running is deprecated, used nikita.system.running'
       throw Error 'Argument "options" removed' if arguments.length is 4
       child = exec ssh, """
       if [ ! -f '#{pidfile}' ]; then exit 1; fi

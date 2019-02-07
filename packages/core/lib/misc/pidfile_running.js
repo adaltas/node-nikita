@@ -16,6 +16,7 @@ var exec;
 
 module.exports = function(ssh, pidfile, callback) {
   var child;
+  console.error('misc.pidfile_running is deprecated, used nikita.system.running');
   if (arguments.length === 4) {
     throw Error('Argument "options" removed');
   }

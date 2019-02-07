@@ -7,8 +7,9 @@
 
   // *   `rootdir` (string)   
   //     Path to the mount point corresponding to the root directory, optional.   
-  // *   `generate` (string)   
-  //     Run `locale-gen` if target was modified.   
+  // *   `generate` (boolean, optional)   
+  //     Run `locale-gen` by default if target was modified or force running the 
+  //     command if value is a boolean.   
   // *   `locales` (string)   
   //     List of supported locales, required.   
   // *   `target` (string)   
@@ -40,6 +41,9 @@ module.exports = function({options}) {
   }
   if (options.rootdir) {
     options.target = `${path.join(options.rootdir, options.target)}`;
+  }
+  if (options.generate == null) {
+    options.generate = null;
   }
   // Write configuration
   this.call(function({}, callback) {
@@ -85,7 +89,11 @@ module.exports = function({options}) {
   // Reload configuration
   return this.system.execute({
     if: function() {
-      return options.generate && this.status(-1);
+      if (options.generate != null) {
+        return options.generate;
+      } else {
+        return this.status(-1);
+      }
     },
     cmd: "locale-gen"
   });
