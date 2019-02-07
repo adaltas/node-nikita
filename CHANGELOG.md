@@ -8,6 +8,7 @@
 
 ## Trunk
 
+* locale_gen: force generation if boolean
 * core: latest dependencies
 * domain: remove option and support
 * lxd: new project

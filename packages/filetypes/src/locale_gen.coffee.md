@@ -7,8 +7,9 @@ Update the locale definition file located in "/etc/locale.gen".
 
 *   `rootdir` (string)   
     Path to the mount point corresponding to the root directory, optional.   
-*   `generate` (string)   
-    Run `locale-gen` if target was modified.   
+*   `generate` (boolean, optional)   
+    Run `locale-gen` by default if target was modified or force running the 
+    command if value is a boolean.   
 *   `locales` (string)   
     List of supported locales, required.   
 *   `target` (string)   
@@ -31,6 +32,7 @@ require('nikita')
       # Options
       options.target ?= '/etc/locale.gen'
       options.target = "#{path.join options.rootdir, options.target}" if options.rootdir
+      options.generate ?= null
       # Write configuration
       @call ({}, callback) ->
         @fs.readFile ssh: options.ssh, target: options.target, encoding: 'ascii', (err, {data}) ->
@@ -52,7 +54,7 @@ require('nikita')
             callback err, true
       # Reload configuration
       @system.execute
-        if: -> options.generate and @status -1
+        if: -> if options.generate? then options.generate else @status -1
         cmd: "locale-gen"
 
 ## Dependencies
