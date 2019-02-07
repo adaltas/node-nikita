@@ -1,5 +1,6 @@
 
 module.exports =
+  scratch: '/tmp/nikita-test-tools'
   tags:
     posix: true
     tools_repo: false

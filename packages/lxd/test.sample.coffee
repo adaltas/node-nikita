@@ -1,12 +1,8 @@
 
 module.exports =
+  scratch: '/tmp/nikita-test-lxd'
   tags:
     lxd: false
-    lxd_init: true
-    lxd_delete: true
-    lxd_network: false
-    lxd_start: false
-    lxd_stop: false
   ssh:
     host: '127.0.0.1'
     username: process.env.USER

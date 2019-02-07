@@ -1,5 +1,6 @@
 
 module.exports =
+  scratch: '/tmp/nikita-test-ldap'
   tags:
     ldap_acl: false
     ldap_index: false

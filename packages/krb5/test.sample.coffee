@@ -1,5 +1,6 @@
 
 module.exports =
+  scratch: '/tmp/nikita-test-krb5'
   tags:
     krb5_addprinc: false
     krb5_delprinc: false

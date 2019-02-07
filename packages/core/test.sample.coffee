@@ -1,5 +1,6 @@
 
 module.exports =
+  scratch: '/tmp/nikita-test-core'
   tags:
     api: true
     api_if_os: false # disable_conditions_if_os
