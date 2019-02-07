@@ -5,7 +5,7 @@ they = require('ssh2-they').configure(ssh)
 
 return unless tags.lxd_delete
 
-describe 'lxd.exec' ->
+describe 'lxd.exec', ->
 
   they 'a command with pipe inside', (ssh) ->
     nikita

@@ -1,11 +1,11 @@
 
 nikita = require '@nikitajs/core'
-{tags, scratch, lxd} = require './test'
+{tags, ssh, scratch, lxd} = require '../test'
 they = require('ssh2-they').configure(ssh)
 
 return unless tags.lxd
 
-describe 'lxd.file.push' ->
+describe 'lxd.file.push', ->
 
   they 'a new file', (ssh) ->
     nikita

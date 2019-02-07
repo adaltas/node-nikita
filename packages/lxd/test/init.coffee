@@ -5,7 +5,7 @@ they = require('ssh2-they').configure(ssh)
 
 return unless tags.lxd_init
 
-describe 'lxd.init' ->
+describe 'lxd.init', ->
 
   they 'Init new container', (ssh) ->
     nikita

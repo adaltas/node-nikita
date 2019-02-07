@@ -5,7 +5,7 @@ they = require('ssh2-they').configure(ssh)
 
 return unless tags.lxd_delete
 
-describe 'lxd.delete' ->
+describe 'lxd.delete', ->
 
   they 'Delete a container', (ssh) ->
     nikita
