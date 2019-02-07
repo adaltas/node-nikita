@@ -151,7 +151,7 @@ require('nikita')
         cleanup () {
           [ -n "#{if options.cacert then '1' else ''}" ] || rm -rf #{options.tmpdir};
         }
-        if ! which #{options.openssl}; then echo 'OpenSSL command line tool not detected'; cleanup; exit 4; fi
+        if ! command -v #{options.openssl}; then echo 'OpenSSL command line tool not detected'; cleanup; exit 4; fi
         [ -f #{files.cert} ] || (cleanup; exit 6)
         # mkdir -p -m 700 #{options.tmpdir}
         user=`#{options.openssl} x509  -noout -in "#{files.cert}" -sha1 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/' | cat`
