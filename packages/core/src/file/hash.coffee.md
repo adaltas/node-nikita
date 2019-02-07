@@ -50,7 +50,7 @@ used for comparaison.
         throw err if err
         @system.execute
           cmd: [
-            'which openssl >/dev/null || exit 2'
+            'command -v openssl >/dev/null || exit 2'
             ...files.map (file) -> "[ -f #{file} ] && openssl dgst -#{options.algo} #{file} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'"
             'exit 0'
           ].join '\n'
@@ -69,7 +69,7 @@ used for comparaison.
       @system.execute
         if: -> misc.stats.isFile options.stats.mode
         cmd: """
-        which openssl >/dev/null || exit 2
+        command -v openssl >/dev/null || exit 2
         openssl dgst -#{options.algo} #{options.target} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'
         """
         trim: true

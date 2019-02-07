@@ -75,7 +75,7 @@ module.exports = {
       }
       return this.system.execute({
         cmd: [
-          'which openssl >/dev/null || exit 2',
+          'command -v openssl >/dev/null || exit 2',
           ...files.map(function(file) {
             return `[ -f ${file} ] && openssl dgst -${options.algo} ${file} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'`;
           }),
@@ -101,7 +101,7 @@ module.exports = {
       if: function() {
         return misc.stats.isFile(options.stats.mode);
       },
-      cmd: `which openssl >/dev/null || exit 2\nopenssl dgst -${options.algo} ${options.target} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'`,
+      cmd: `command -v openssl >/dev/null || exit 2\nopenssl dgst -${options.algo} ${options.target} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'`,
       trim: true
     }, function(err, {status, stdout}) {
       if ((err != null ? err.code : void 0) === 2) {

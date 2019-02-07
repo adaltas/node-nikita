@@ -8,6 +8,8 @@
 
 ## Trunk
 
+* file.hash: use command instead of which
+* keystore_add: use command instead of which
 * locale_gen: force generation if boolean
 * core: latest dependencies
 * domain: remove option and support
