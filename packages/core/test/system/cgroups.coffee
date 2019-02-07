@@ -1,5 +1,4 @@
 
-fs = require 'fs'
 nikita = require '../../src'
 misc = require '../../src/misc'
 {tags, ssh, scratch} = require '../test'
@@ -251,13 +250,14 @@ describe 'system.cgroups', ->
         merge: true
       , (err, {status}) ->
         status.should.be.true() unless err
-      .call (_, callback) ->
-        fs.readFile "#{scratch}/a_file_merge_mount_groups.cgconfig.conf", 'utf8', (err, data) ->
-          return callback err if err
-          data = misc.cgconfig.parse data
-          data.mounts.should.not.be.empty()
-          data.groups.should.eql groups
-          callback()
+      .fs.readFile
+        target: "#{scratch}/a_file_merge_mount_groups.cgconfig.conf"
+        encoding: 'utf8'
+      , (err, {data}) ->
+        throw err if err
+        data = misc.cgconfig.parse data
+        data.mounts.should.not.be.empty()
+        data.groups.should.eql groups
       .promise()
     
     they 'status not modified', (ssh) ->

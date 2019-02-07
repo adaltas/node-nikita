@@ -59,7 +59,7 @@ describe 'file.cache file', ->
       md5: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
       relax: true
     , (err) ->
-      err.message.should.eql 'Invalid Target Hash: target "/tmp/nikita-test/cache/my_file" got df8fede7ff71608e24a5576326e41c75 instead of xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+      err.message.should.eql "Invalid Target Hash: target \"#{scratch}/cache/my_file\" got df8fede7ff71608e24a5576326e41c75 instead of xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
     .promise()
 
   they 'into local cache_dir', (ssh) ->
@@ -117,5 +117,5 @@ describe 'file.cache file', ->
         md5: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
         relax: true
       , (err) ->
-        err.message.should.eql 'Invalid Target Hash: target "/tmp/nikita-test/target" got df8fede7ff71608e24a5576326e41c75 instead of xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+        err.message.should.eql "Invalid Target Hash: target \"#{scratch}/target\" got df8fede7ff71608e24a5576326e41c75 instead of xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
       .promise()

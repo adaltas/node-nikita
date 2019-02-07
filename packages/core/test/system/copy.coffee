@@ -34,7 +34,7 @@ describe 'system.copy', ->
         target: "#{scratch}/a_dir/a_new_file"
         parent: false
       .promise()
-      .should.be.rejectedWith 'Invalid Target: no such file or directory, open "/tmp/nikita-test/a_dir/a_new_file"'
+      .should.be.rejectedWith "Invalid Target: no such file or directory, open \"#{scratch}/a_dir/a_new_file\""
         
     they 'pass mode attribute', (ssh) ->
       nikita
@@ -299,9 +299,9 @@ describe 'system.copy', ->
       .file.glob "#{scratch}/a_copy/**", dot: true, (err, {files}) ->
         throw err if err
         files.sort().should.eql [
-          '/tmp/nikita-test/a_copy',
-          '/tmp/nikita-test/a_copy/.a_hidden_file',
-          '/tmp/nikita-test/a_copy/a_file'
+          "#{scratch}/a_copy",
+          "#{scratch}/a_copy/.a_hidden_file",
+          "#{scratch}/a_copy/a_file"
         ]
       .promise()
     

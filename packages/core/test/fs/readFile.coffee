@@ -19,7 +19,7 @@ describe 'fs.read', ->
         target: "#{scratch}/a_file"
         encoding: 'ascii'
       , (err, {data}) ->
-        data.toString().should.eql 'hello' unless err
+        data.should.eql 'hello' unless err
         callback err
     .promise()
   

@@ -115,7 +115,7 @@ describe 'file.cache http', ->
         md5: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
         relax: true
       , (err) ->
-        err.message.should.eql 'Invalid Target Hash: target "/tmp/nikita-test/cache/missing" got 9e076f5885f5cc16a4b5aeb8de4adff5 instead of xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+        err.message.should.eql "Invalid Target Hash: target \"#{scratch}/cache/missing\" got 9e076f5885f5cc16a4b5aeb8de4adff5 instead of xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
       .promise()
 
     they 'md5', (ssh) ->
@@ -152,5 +152,5 @@ describe 'file.cache http', ->
         md5: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
         relax: true
       , (err, {status}) ->
-        err.message.should.eql 'Invalid Target Hash: target "/tmp/nikita-test/target" got df8fede7ff71608e24a5576326e41c75 instead of xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+        err.message.should.eql "Invalid Target Hash: target \"#{scratch}/target\" got df8fede7ff71608e24a5576326e41c75 instead of xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
       .promise()

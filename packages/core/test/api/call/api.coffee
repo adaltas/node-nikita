@@ -1,6 +1,6 @@
 
 nikita = require '../../../src'
-{tags} = require '../../test'
+{scratch, tags} = require '../../test'
 
 return unless tags.api
 
@@ -9,7 +9,7 @@ describe 'api call', ->
   it 'accept an array of handlers and a callback', ->
     logs = []
     nikita
-    .system.remove target: "/tmp/nikita-test"
+    .system.remove target: "#{scratch}"
     .call [
       -> logs.push 'a'
     ,
