@@ -1,5 +1,4 @@
 
-console.log '!! r fetch'
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch, ruby} = require '../test'
 they = require('ssh2-they').configure(ssh)
