@@ -14,7 +14,7 @@ describe 'lxd.delete', ->
       image: 'ubuntu:'
       name: 'container1'
     .lxd.delete
-      name: 'delme'
+      name: 'container1'
     , (err, {status}) ->
       status.should.be.true()
     .promise()
@@ -28,7 +28,7 @@ describe 'lxd.delete', ->
       name: 'container1'
     .lxd.start
       name: 'container1'
-    .delete
+    .lxd.delete
       name: 'container1'
       force: true
     , (err, {status}) ->
@@ -38,7 +38,7 @@ describe 'lxd.delete', ->
   they 'Not found', (ssh) ->
     nikita
       ssh: ssh
-    lxd.delete  # repeated to be sure the container is absent
+    .lxd.delete  # repeated to be sure the container is absent
       name: 'container1'
     .lxd.delete
       name: 'container1'

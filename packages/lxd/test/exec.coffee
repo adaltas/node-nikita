@@ -17,10 +17,10 @@ describe 'lxd.exec', ->
       image: 'ubuntu:'
       name: 'container1'
     .lxd.exec
-      name: 'delme'
+      name: 'container1'
       cmd: """
       cat /etc/lsb-release | grep DISTRIB_ID
       """
     , (err, {status, stdout}) ->
-      stdout.should.eql 'DISTRIB_ID=Ubuntu'
+      stdout.trim().should.eql 'DISTRIB_ID=Ubuntu'
     .promise()
