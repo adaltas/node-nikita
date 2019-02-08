@@ -1,5 +1,5 @@
 
-# `nikita.system.etc_group.read`
+# `nikita.system.group.read`
 
 Read and parse the group definition file located in "/etc/group".
 
@@ -36,7 +36,7 @@ Retrieve all groups informations:
 
 ```js
 require('nikita')
-.file.types.etc_group.read(function(err, {groups}){
+.system.group.read(function(err, {groups}){
   assert(Array.isArray(groups), true)
 })
 ```
@@ -45,7 +45,7 @@ Retrieve information of an individual group:
 
 ```js
 require('nikita')
-.file.types.etc_group.read({
+.system.group.read({
   gid: 0
 }, function(err, {group}){
   assert(group.gid, 0)
@@ -56,14 +56,14 @@ require('nikita')
 ## Source Code
 
     module.exports = shy: true, handler: ({options}, callback) ->
-      @log message: "Entering etc_group.read", level: 'DEBUG', module: 'nikita/lib/system/etc_group/read'
+      @log message: "Entering system.group.read", level: 'DEBUG', module: 'nikita/lib/system/group/read'
       options.target ?= '/etc/group'
       # Retrieve groups from cache
       groups = null
       @call
         if: options.cache and !!@store['nikita:etc_group']
       , ->
-        @log message: "Get group definition from cache", level: 'INFO', module: 'nikita/lib/system/etc_group/read'
+        @log message: "Get group definition from cache", level: 'INFO', module: 'nikita/lib/system/group/read'
         groups = @store['nikita:etc_group']
       # Read system groups and place in cache if requested
       @fs.readFile

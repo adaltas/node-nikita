@@ -1,5 +1,5 @@
 
-# `nikita.system.etc_passwd.read`
+# `nikita.system.user.read`
 
 Read and parse the passwd definition file located in "/etc/passwd".
 
@@ -39,7 +39,7 @@ nikita
   target: "/tmp/etc/passwd",
   content: "root:x:0:0:root:/root:/bin/bash"
 })
-.file.types.etc_passwd.read({
+.system.user.read({
   target: "/tmp/etc/passwd"
 }, function (err, {status, users}){
   if(err) throw err;
@@ -53,7 +53,7 @@ nikita
 ## Source Code
 
     module.exports = shy: true, handler: ({options}, callback) ->
-      @log message: "Entering etc_passwd.read", level: 'DEBUG', module: 'nikita/lib/system/etc_passwd/read'
+      @log message: "Entering system.user.read", level: 'DEBUG', module: 'nikita/lib/system/user/read'
       throw Error 'Invalid Option: uid must be a string or a number' if options.uid and not typeof options.uid in ['string', 'number']
       options.uid = parseInt options.uid, 10 if typeof options.uid is 'string' and /\d+/.test options.uid
       options.target ?= '/etc/passwd'
@@ -62,7 +62,7 @@ nikita
       @call
         if: options.cache and !!@store['nikita:etc_passwd']
       , ->
-        @log message: "Get passwd definition from cache", level: 'INFO', module: 'nikita/lib/system/etc_passwd/read'
+        @log message: "Get passwd definition from cache", level: 'INFO', module: 'nikita/lib/system/user/read'
         passwd = @store['nikita:etc_passwd']
       # Read system passwd and place in cache if requested
       @fs.readFile
