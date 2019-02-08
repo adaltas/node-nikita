@@ -8,6 +8,7 @@
 
 ## Trunk
 
+* lxd: added network actions
 * lxd.stop: new action
 * lxd.start: new action
 * file.hash: use command instead of which

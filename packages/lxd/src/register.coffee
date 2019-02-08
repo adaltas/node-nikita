@@ -2,12 +2,17 @@
 require('@nikitajs/core/lib/registry')
 .register
   lxd:
-    exec: '@nikitajs/lxd/src/exec'
-    delete: '@nikitajs/lxd/src/delete'
-    file:
-      exists: '@nikitajs/lxd/src/file/exists'
-      push: '@nikitajs/lxd/src/file/push'
     init: '@nikitajs/lxd/src/init'
-    network: '@nikitajs/lxd/src/network'
+    delete: '@nikitajs/lxd/src/delete'
     start: '@nikitajs/lxd/src/start'
     stop: '@nikitajs/lxd/src/stop'
+    exec: '@nikitajs/lxd/src/exec'
+    file:
+      push: '@nikitajs/lxd/src/file/push'
+      exists: '@nikitajs/lxd/src/file/exists'
+    network:
+      '': '@nikitajs/lxd/src/network'
+      create: '@nikitajs/lxd/src/network'
+      attach: '@nikitajs/lxd/src/network/attach'
+      detach: '@nikitajs/lxd/src/network/detach'
+      delete: '@nikitajs/lxd/src/network/delete'
