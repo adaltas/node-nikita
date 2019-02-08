@@ -10,3 +10,4 @@ require('@nikitajs/core/lib/registry')
     init: '@nikitajs/lxd/src/init'
     network: '@nikitajs/lxd/src/network'
     start: '@nikitajs/lxd/src/start'
+    stop: '@nikitajs/lxd/src/stop'
