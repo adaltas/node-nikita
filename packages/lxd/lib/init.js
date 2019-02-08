@@ -22,7 +22,7 @@
 
 // * `err`
 //   Error object if any
-// * `status`
+// * `info.status`
 //   Was the container successfully created
 
 // ## Example
@@ -31,7 +31,7 @@
 // require('nikita')
 // .lxd.init({
 //   image: "ubuntu:18.04",
-//   name: "myubuntu"
+//   name: "my_container"
 // }, function(err, {status}) {
 //   console.log( err ? err.message : 'The container was created')
 // });
@@ -45,6 +45,9 @@ module.exports = function({options}) {
     level: 'DEBUG',
     module: '@nikitajs/lxd/lib/init'
   });
+  if (!options.name) {
+    throw Error("Invalid Option: name is required");
+  }
   cmd_init = ['lxc', 'init', options.image, options.name, options.network ? `--network ${options.network}` : void 0, options.storage ? `--storage ${options.storage}` : void 0, options.ephemeral ? "--ephemeral" : void 0].join(' ');
   // Execution
   return this.system.execute({

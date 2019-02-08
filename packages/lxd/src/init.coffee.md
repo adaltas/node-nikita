@@ -22,7 +22,7 @@ Initialize a Linux Container with given image name, container name and options.
 
 * `err`
   Error object if any
-* `status`
+* `info.status`
   Was the container successfully created
 
 ## Example
@@ -31,7 +31,7 @@ Initialize a Linux Container with given image name, container name and options.
 require('nikita')
 .lxd.init({
   image: "ubuntu:18.04",
-  name: "myubuntu"
+  name: "my_container"
 }, function(err, {status}) {
   console.log( err ? err.message : 'The container was created')
 });
@@ -41,6 +41,7 @@ require('nikita')
 
     module.exports =  ({options}) ->
       @log message: "Entering lxd.init", level: 'DEBUG', module: '@nikitajs/lxd/lib/init'
+      throw Error "Invalid Option: name is required" unless options.name
       cmd_init = [
         'lxc', 'init', options.image, options.name
         "--network #{options.network}" if options.network

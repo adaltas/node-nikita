@@ -9,3 +9,4 @@ require('@nikitajs/core/lib/registry')
       push: '@nikitajs/lxd/src/file/push'
     init: '@nikitajs/lxd/src/init'
     network: '@nikitajs/lxd/src/network'
+    start: '@nikitajs/lxd/src/start'

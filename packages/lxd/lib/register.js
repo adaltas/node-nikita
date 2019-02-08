@@ -8,6 +8,7 @@ require('@nikitajs/core/lib/registry').register({
       push: '@nikitajs/lxd/lib/file/push'
     },
     init: '@nikitajs/lxd/lib/init',
-    network: '@nikitajs/lxd/lib/network'
+    network: '@nikitajs/lxd/lib/network',
+    start: '@nikitajs/lxd/lib/start'
   }
 });
