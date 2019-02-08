@@ -8,6 +8,7 @@
 
 ## Trunk
 
+* lxd.stop: new action
 * lxd.start: new action
 * file.hash: use command instead of which
 * keystore_add: use command instead of which
