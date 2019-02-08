@@ -14,6 +14,8 @@ describe 'lxd.file.exists', ->
     .lxd.init
       image: 'ubuntu:18.04'
       name: 'c1'
+    .lxd.start
+      name: 'c1'
     .system.execute
       cmd: "lxc exec c1 -- stat /root/a_file"
     .lxd.file.exists

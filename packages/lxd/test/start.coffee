@@ -28,6 +28,7 @@ describe 'lxd.start', ->
       lxd: lxd
     .lxd.delete
       name: 'u1'
+      force: true
     .lxd.init
       image: 'ubuntu:16.04'
       name: 'u1'

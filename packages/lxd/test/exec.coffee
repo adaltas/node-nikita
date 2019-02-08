@@ -14,7 +14,9 @@ describe 'lxd.exec', ->
     .lxd.delete
       name: 'container1'
     .lxd.init
-      image: 'ubuntu:'
+      image: 'ubuntu:16.04'
+      name: 'container1'
+    .lxd.start
       name: 'container1'
     .lxd.exec
       name: 'container1'

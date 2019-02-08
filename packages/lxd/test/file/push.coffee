@@ -15,6 +15,8 @@ describe 'lxd.file.push', ->
     .lxd.init
       image: 'ubuntu:18.04'
       name: 'c1'
+    .lxd.start
+      name: 'c1'
     .file
       target: "#{scratch}/a_file"
       content: 'something'
@@ -38,6 +40,8 @@ describe 'lxd.file.push', ->
       name: 'c1'
     .lxd.init
       image: 'ubuntu:18.04'
+      name: 'c1'
+    .lxd.start
       name: 'c1'
     .file
       target: "#{scratch}/a_file"
