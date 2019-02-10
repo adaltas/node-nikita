@@ -85,7 +85,7 @@
   // have a well formatted file. Nonetheless if docker is installed and started, 
   // informations about live containers could be printed, that's why all path under 
   // docker/* are ignored.
-var merge, misc, path, string,
+var misc, mixme, path, string,
   indexOf = [].indexOf;
 
 module.exports = function({options}, callback) {
@@ -225,7 +225,7 @@ module.exports = function({options}, callback) {
             groups[name] = group;
           }
         }
-        options.cgconfig.groups = merge(groups, options.groups);
+        options.cgconfig.groups = mixme(groups, options.groups);
         return options.cgconfig.mounts.push(...cgconfig.mounts);
       }
     });
@@ -257,7 +257,7 @@ misc = require('../misc');
 
 string = require('../misc/string');
 
-({merge} = misc);
+mixme = mixme;
 
 path = require('path');
 

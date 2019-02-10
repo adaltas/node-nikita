@@ -2,6 +2,7 @@
 fs = require 'fs'
 path = require 'path'
 each = require 'each'
+mixme = require 'mixme'
 util = require 'util'
 Stream = require 'stream'
 exec = require 'ssh2-exec'
@@ -54,7 +55,7 @@ misc = module.exports =
         diff[k][1] = v
       diff
     clone: (obj) ->
-      misc.merge {}, obj
+      mixme {}, obj
   path:
     normalize: (location, callback) ->
       tilde location, (location) ->
@@ -128,6 +129,7 @@ misc = module.exports =
 
   ###
   merge: () ->
+    console.warn 'Function merge is deprecated, use mixme instead'
     target = arguments[0]
     from = 1
     to = arguments.length

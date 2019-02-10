@@ -504,7 +504,7 @@
             callbackargs.error = null if options.relax
             callbackargs.output ?= {}
             callbackargs.output.status ?= false
-            callbackargs.output = merge {}, callbackargs.output
+            callbackargs.output = mixme {}, callbackargs.output
             do_end callbackargs
           do_end = (callbackargs) ->
             callback callbackargs.error, callbackargs.output if callback
@@ -648,6 +648,7 @@
 
     registry = require './registry'
     each = require 'each'
+    mixme = require 'mixme'
     path = require 'path'
     util = require 'util'
     array = require './misc/array'
@@ -655,5 +656,4 @@
     conditions = require './misc/conditions'
     wrap = require './misc/wrap'
     string = require './misc/string'
-    {merge} = require './misc'
     {EventEmitter} = require 'events'

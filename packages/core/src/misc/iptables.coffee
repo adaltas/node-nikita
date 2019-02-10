@@ -3,6 +3,7 @@ misc = require './index'
 string = require './string'
 jsesc = require 'jsesc'
 array = require '../misc/array'
+mixme = require 'mixme'
 
 module.exports = iptables = 
   # add_properties: ['target', 'protocol', 'dport', 'in-interface', 'out-interface', 'source', 'target']
@@ -133,12 +134,12 @@ module.exports = iptables =
           # Check if we need to update
           if not misc.object.equals newrule, oldrule, iptables.modify_properties
             # Remove the command
-            baserule = misc.merge {}, oldrule
+            baserule = mixme {}, oldrule
             for k, v of baserule
               baserule[k] = undefined if iptables.commands_arguments[k]
               baserule.command = undefined
               newrule.rulenum = undefined
-            cmds.push iptables.cmd_replace misc.merge baserule, newrule
+            cmds.push iptables.cmd_replace mixme baserule, newrule
         # Add properties are different
       if create
         cmds.push if newrule.command is '-A' then iptables.cmd_append newrule else iptables.cmd_insert newrule
@@ -147,7 +148,7 @@ module.exports = iptables =
     oldrules = if Array.isArray rules then rules else [rules]
     newrules = []
     for rule in oldrules
-      rule = misc.merge {}, rule
+      rule = mixme {}, rule
       newrule = {}
       # Search for commands and parameters
       for k, v of rule

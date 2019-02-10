@@ -46,7 +46,7 @@
 // Setting uid/gid to '-', make the os creating the target owned by root:root. 
 
 // ## Source Code
-var merge, misc;
+var misc, mixme;
 
 module.exports = function({options}) {
   var i, key, len, ref, ssh;
@@ -118,7 +118,7 @@ module.exports = function({options}) {
         }
       } else {
         source = misc.tmpfs.parse(data);
-        options.content = merge({}, source, options.content);
+        options.content = mixme({}, source, options.content);
         this.log({
           message: "content has been merged",
           level: 'DEBUG',
@@ -157,6 +157,6 @@ module.exports = function({options}) {
 // ## Dependencies
 misc = require('../misc');
 
-({merge} = require('../misc'));
+mixme = require('mixme');
 
 // [conf-tmpfs]: https://www.freedesktop.org/software/systemd/man/tmpfiles.d.html

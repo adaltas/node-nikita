@@ -111,7 +111,7 @@
   // ```
 
   // ## Source Code
-var docker, merge, path, string, util,
+var docker, path, string, util,
   indexOf = [].indexOf;
 
 module.exports = function({options}, callback) {
@@ -328,5 +328,3 @@ string = require('@nikitajs/core/lib/misc/string');
 path = require('path');
 
 util = require('util');
-
-({merge} = require('@nikitajs/core/lib/misc'));

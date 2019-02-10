@@ -4,7 +4,7 @@
 // Management facility to register and unregister actions.
 
 // ## Register all functions
-var is_object, load, merge, registry;
+var is_object, load, mixme, registry;
 
 load = function(middleware) {
   var ref, result;
@@ -62,7 +62,7 @@ registry = function(obj) {
                   if (v.deprecate && !options.deprecate) {
                     continue;
                   }
-                  results.push(flatobj[keys.join('.')] = merge({}, v));
+                  results.push(flatobj[keys.join('.')] = mixme({}, v));
                 } else {
                   results.push(walk(v, [...keys, k]));
                 }
@@ -82,7 +82,7 @@ registry = function(obj) {
                   if (v.deprecate && !options.deprecate) {
                     continue;
                   }
-                  res[k] = merge({}, v);
+                  res[k] = mixme({}, v);
                 } else {
                   v = walk(v, [...keys, k]);
                   if (Object.values(v).length !== 0) {
@@ -96,7 +96,7 @@ registry = function(obj) {
           }
         }
         if (typeof name === 'string') {
-          // return merge {}, obj if arguments.length is 0
+          // return mixme {}, obj if arguments.length is 0
           name = [name];
         }
         cnames = obj;
@@ -190,7 +190,7 @@ registry = function(obj) {
             cnames[name1] = {};
           }
           cnames[name[name.length - 1]][''] = handler;
-          return merge(obj, names);
+          return mixme.mutate(obj, names);
         } else {
           walk = function(obj) {
             var k, results, v;
@@ -209,7 +209,7 @@ registry = function(obj) {
             return results;
           };
           walk(name);
-          return merge(obj, name);
+          return mixme.mutate(obj, name);
         }
       };
     }
@@ -329,7 +329,7 @@ Object.defineProperty(module.exports, 'registry', {
 });
 
 // ## Dependencies
-({merge} = require('./misc'));
+mixme = require('mixme');
 
 ({is_object} = require('./misc/object'));
 

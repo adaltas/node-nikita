@@ -40,7 +40,7 @@ Options include: flatten, deprecate
                 for k, v of obj
                   if k is ''
                     continue if v.deprecate and not options.deprecate
-                    flatobj[keys.join '.'] = merge {}, v
+                    flatobj[keys.join '.'] = mixme {}, v
                   else
                     walk v, [keys..., k]
               walk obj, []
@@ -52,13 +52,13 @@ Options include: flatten, deprecate
                 for k, v of obj
                   if k is ''
                     continue if v.deprecate and not options.deprecate
-                    res[k] = merge {}, v
+                    res[k] = mixme {}, v
                   else
                     v = walk v, [keys..., k]
                     res[k] = v unless Object.values(v).length is 0
                 res
               return walk obj, []
-            # return merge {}, obj if arguments.length is 0
+            # return mixme {}, obj if arguments.length is 0
           name = [name] if typeof name is 'string'
           cnames = obj
           for n, i in name
@@ -135,7 +135,7 @@ nikita
               cnames = cnames[n]
             cnames[name[name.length-1]] ?= {}
             cnames[name[name.length-1]][''] = handler
-            merge obj, names
+            mixme.mutate obj, names
           else
             walk = (obj) ->
               for k, v of obj
@@ -145,7 +145,7 @@ nikita
                   v = load v
                   obj[k] = if k is '' then v else '': v
             walk name
-            merge obj, name
+            mixme.mutate obj, name
 
 ## Deprecate
 
@@ -223,7 +223,7 @@ Remove an action from registry.
 
 ## Dependencies
 
-    {merge} = require './misc'
+    mixme = require 'mixme'
     {is_object} = require './misc/object'
 
 [deprecate]: https://nodejs.org/api/util.html#util_util_deprecate_function_string

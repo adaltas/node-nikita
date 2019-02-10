@@ -223,4 +223,3 @@ require('nikita')
     string = require '@nikitajs/core/lib/misc/string'
     path = require 'path'
     util = require 'util'
-    {merge} = require '@nikitajs/core/lib/misc'

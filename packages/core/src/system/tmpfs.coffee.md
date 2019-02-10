@@ -76,7 +76,7 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
               return callback err if err
             else
               source = misc.tmpfs.parse data
-              options.content = merge {}, source, options.content
+              options.content = mixme {}, source, options.content
               @log message: "content has been merged", level: 'DEBUG', module: 'nikita/tmpfs/index'
               callback null, false
       @call ->
@@ -93,6 +93,6 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
 ## Dependencies
 
     misc = require '../misc'
-    {merge} = require '../misc'
+    mixme = require 'mixme'
 
 [conf-tmpfs]: https://www.freedesktop.org/software/systemd/man/tmpfiles.d.html

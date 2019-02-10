@@ -45,7 +45,7 @@
 // ```
 
 // ## Source Code
-var merge;
+var mixme;
 
 module.exports = function({options}) {
   this.log({
@@ -85,7 +85,7 @@ module.exports = function({options}) {
         return callback();
       }
       if (!err) {
-        options.content = merge(JSON.parse(data), options.content);
+        options.content = mixme(JSON.parse(data), options.content);
       }
       return callback(err);
     });
@@ -99,7 +99,7 @@ module.exports = function({options}) {
       encoding: 'utf8'
     }, function(err, {data}) {
       if (!err) {
-        options.content = merge(JSON.parse(data), options.content);
+        options.content = mixme(JSON.parse(data), options.content);
       }
       return callback(err);
     });
@@ -124,4 +124,4 @@ module.exports = function({options}) {
 };
 
 // ## Dependencies
-({merge} = require('../misc'));
+mixme = require('mixme');
