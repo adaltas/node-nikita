@@ -15,7 +15,7 @@
 
 // ```
 // require('nikita')
-// .lxd.file.push({
+// .lxd.file.exists({
 //   name: "myubuntu"
 // }, function(err, {status}) {
 //   console.log( err ? err.message : 'The container was deleted')
@@ -37,7 +37,7 @@ module.exports = {
     this.log({
       message: "Entering lxd.file.exists",
       level: 'DEBUG',
-      module: '@nikitajs/lxd/lib/exists'
+      module: '@nikitajs/lxd/lib/file/exists'
     });
     if (!options.name) {
       throw Error("Invalid Option: name is required");

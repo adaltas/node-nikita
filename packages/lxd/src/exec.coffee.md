@@ -1,5 +1,5 @@
 
-# `nikita.lxd.file.push`
+# `nikita.lxd.exec`
 
 Push files into containers.
 
@@ -14,7 +14,7 @@ Push files into containers.
 
 ```
 require('nikita')
-.lxd.file.exec({
+.lxd.exec({
   name: "my-container"
   cmd: "whoami"
 }, function(err, {status, stdout, stderr}) {

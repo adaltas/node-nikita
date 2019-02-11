@@ -15,7 +15,7 @@ Push files into containers.
 
 ```
 require('nikita')
-.lxd.file.push({
+.lxd.file.exists({
   name: "myubuntu"
 }, function(err, {status}) {
   console.log( err ? err.message : 'The container was deleted')
@@ -33,7 +33,7 @@ require('nikita')
 ## Source Code
 
     module.exports =  shy: true, handler: ({options}) ->
-      @log message: "Entering lxd.file.exists", level: 'DEBUG', module: '@nikitajs/lxd/lib/exists'
+      @log message: "Entering lxd.file.exists", level: 'DEBUG', module: '@nikitajs/lxd/lib/file/exists'
       throw Error "Invalid Option: name is required" unless options.name
       throw Error "Invalid Option: target is required" unless options.target
       @system.execute

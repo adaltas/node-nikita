@@ -32,31 +32,30 @@ require('nikita')
 });
 ```
 
-## Todo
-
-* Push recursive directories
-* Handle unmatched target permissions
-* Handle unmatched target ownerships
-* Detect name from lxd_target
-
 ## Source Code
 
     module.exports =  ({options}) ->
       @log message: "Entering lxd.config.device.add", level: 'DEBUG', module: '@nikitajs/lxd/lib/config/device/add'
-      #Execute
+      throw Error "Invalid Option: name is required" unless options.name
+      throw Error "Invalid Option: device is required" unless options.device
+      options.config ?= {}
+      @lxd.config.device.exists
+        name: options.name
+        device: options.device
       @system.execute
+        unless: -> @status -1
         cmd: """
         #{[
-          'lxc', 'config', 'device', 'show'
-          options.container
+          'lxc', 'config', 'device', 'add'
+          options.name
+          options.device
+          options.type
+          ...(
+            "#{key}='#{value.replace '\'', '\\\''}'" for key, value of options.config
+          )
         ].join ' '}
         """
         code_skipped: 42
-      , (err, {stdout}) ->
-        throw err if err
-        config = yaml.safeLoad stdout
-        console.log config
-        throw Error 'stop'
 
 ## Dependencies
 

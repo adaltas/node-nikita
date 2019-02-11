@@ -32,34 +32,55 @@
 // });
 // ```
 
-// ## Todo
-
-// * Push recursive directories
-// * Handle unmatched target permissions
-// * Handle unmatched target ownerships
-// * Detect name from lxd_target
-
 // ## Source Code
 var diff, yaml;
 
 module.exports = function({options}) {
+  var key, value;
   this.log({
     message: "Entering lxd.config.device.add",
     level: 'DEBUG',
     module: '@nikitajs/lxd/lib/config/device/add'
   });
-  //Execute
+  if (!options.name) {
+    throw Error("Invalid Option: name is required");
+  }
+  if (!options.device) {
+    throw Error("Invalid Option: device is required");
+  }
+  if (options.config == null) {
+    options.config = {};
+  }
+  this.lxd.config.device.exists({
+    name: options.name,
+    device: options.device
+  });
   return this.system.execute({
-    cmd: `${['lxc', 'config', 'device', 'show', options.container].join(' ')}`,
+    unless: function() {
+      return this.status(-1);
+    },
+    cmd: `${[
+      'lxc',
+      'config',
+      'device',
+      'add',
+      options.name,
+      options.device,
+      options.type,
+      ...((function() {
+        var ref,
+      results;
+        ref = options.config;
+        results = [];
+        for (key in ref) {
+          value = ref[key];
+          results.push(`${key}='${value.replace('\'',
+      '\\\'')}'`);
+        }
+        return results;
+      })())
+    ].join(' ')}`,
     code_skipped: 42
-  }, function(err, {stdout}) {
-    var config;
-    if (err) {
-      throw err;
-    }
-    config = yaml.safeLoad(stdout);
-    console.log(config);
-    throw Error('stop');
   });
 };
 

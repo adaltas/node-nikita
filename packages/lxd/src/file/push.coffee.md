@@ -48,49 +48,58 @@ require('nikita')
 ## Source Code
 
     module.exports =  ({options}) ->
-      @log message: "Entering lxd.file.push", level: 'DEBUG', module: '@nikitajs/lxd/lib/push'
+      @log message: "Entering lxd.file.push", level: 'DEBUG', module: '@nikitajs/lxd/lib/file/push'
       throw Error "Invalid Option: name is required" unless options.name # note, name could be obtained from lxd_target
       throw Error "Invalid Option: source or content are required" unless options.source or options.content?
-      throw Error "Invalid Option: target is required" unless options.target or options.lxd_target
+      throw Error "Invalid Option: target is required" if not options.target and not options.lxd_target
       options.algo ?= 'md5'
       options.lxd_target ?= "#{path.join options.name, options.target}"
       options.tmp_file ?= "/tmp/nikita.#{Date.now()}#{Math.round(Math.random()*1000)}"
       # Execution
       @fs.writeFile
         if: options.content?
-        source: options.tmp_file
+        target: options.tmp_file
         content: options.content
-      cmd_push = [
-        'lxc', 'file', 'push'
-        options.source
-        options.lxd_target
-        '--create-dirs' if options.create_dirs
-        '--gid' if options.gid? and typeof options.gid is 'number'
-        '--uid' if options.uid? and typeof options.uid is 'number'
-        "--mode #{options.mode}" if options.mode
-      ].join ' '
+      @lxd.running
+        name: options.name
       @system.execute
+        if: -> @status -1
         cmd: """
         # Ensure source is a file
-        [ -f "#{options.source}" ] || exit 2
+        [ -f "#{options.source or options.tmp_file}" ] || exit 2
         command -v openssl >/dev/null || exit 3
-        sourceDgst=`openssl dgst -#{options.algo} #{options.source} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'`
+        sourceDgst=`openssl dgst -#{options.algo} #{options.source or options.tmp_file} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'`
         # Get target hash
         targetDgst=`cat <<EOF | lxc exec #{options.name} -- bash
         # Ensure openssl is available
         command -v openssl >/dev/null || exit 4
+        # Target does not exist
+        [ ! -f "#{options.target}" ] && exit 0
         openssl dgst -#{options.algo} #{options.target} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'
         EOF`
-        [ "$sourceDgst" == "$targetDgst" ] && exit 42
-        #{cmd_push}
+        [ "$sourceDgst" != "$targetDgst" ] || exit 42
         """
         code_skipped: 42
         trap: true
-        trim: true
-      , (err, {status, stdout}) ->
-        throw Error "Invalid Option: source is not a file, got #{JSON.stringify options.source}" if err?.code is 2
+      , (err) ->
+        throw Error "Invalid Option: source is not a file, got #{JSON.stringify options.source or options.tmp_file}" if err?.code is 2
         throw Error "Invalid Requirement: openssl not installed on host" if err?.code is 3
         throw Error "Invalid Requirement: openssl not installed on container" if err?.code is 4
+      @system.execute
+        if: -> @status(-2) or @status(-1)
+        cmd: """
+        #{[
+          'lxc', 'file', 'push'
+          options.source or options.tmp_file
+          options.lxd_target
+          '--create-dirs' if options.create_dirs
+          '--gid' if options.gid? and typeof options.gid is 'number'
+          '--uid' if options.uid? and typeof options.uid is 'number'
+          "--mode #{options.mode}" if options.mode
+        ].join ' '}
+        """
+        trap: true
+        trim: true
       @lxd.exec
         if: typeof options.gid is 'string'
         name: options.name
