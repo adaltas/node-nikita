@@ -8,6 +8,7 @@
 
 ## Trunk
 
+* lxd.config.set: new action
 * lxd.config.device.exists: new action
 * lxd.running: new action
 * lxd: added network actions
