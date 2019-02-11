@@ -21,6 +21,7 @@ require('@nikitajs/core/lib/registry').register({
       attach: '@nikitajs/lxd/lib/network/attach',
       detach: '@nikitajs/lxd/lib/network/detach',
       delete: '@nikitajs/lxd/lib/network/delete'
-    }
+    },
+    running: '@nikitajs/lxd/lib/running'
   }
 });

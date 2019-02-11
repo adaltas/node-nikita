@@ -19,3 +19,4 @@ require('@nikitajs/core/lib/registry')
       attach: '@nikitajs/lxd/src/network/attach'
       detach: '@nikitajs/lxd/src/network/detach'
       delete: '@nikitajs/lxd/src/network/delete'
+    running: '@nikitajs/lxd/src/running'
