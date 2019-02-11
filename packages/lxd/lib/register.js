@@ -5,6 +5,8 @@ require('@nikitajs/core/lib/registry').register({
       device: {
         add: '@nikitajs/lxd/lib/config/device/add'
       }
+        exists: '@nikitajs/lxd/lib/config/device/exists'
+      },
     },
     init: '@nikitajs/lxd/lib/init',
     delete: '@nikitajs/lxd/lib/delete',

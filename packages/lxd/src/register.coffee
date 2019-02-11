@@ -5,6 +5,7 @@ require('@nikitajs/core/lib/registry')
     config:
       device:
         add: '@nikitajs/lxd/src/config/device/add'
+        exists: '@nikitajs/lxd/src/config/device/exists'
     init: '@nikitajs/lxd/src/init'
     delete: '@nikitajs/lxd/src/delete'
     start: '@nikitajs/lxd/src/start'
