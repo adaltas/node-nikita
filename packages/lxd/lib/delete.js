@@ -5,7 +5,7 @@
 
 // ## Options
 
-// * `name`
+// * `name` (required, string)
 //   The name of the container
 // * `force` (optional default: false)
 //   If true, the container will be deleted even if running
@@ -19,24 +19,25 @@
 // }, function(err, {status}) {
 //   console.log( err ? err.message : 'The container was deleted')
 // });
-
 // ```
 
 // ## Source Code
 module.exports = function({options}) {
-  var cmd;
+  var cmd_del;
   this.log({
     message: "Entering delete",
     level: 'DEBUG',
-    module: '@nikitajs/lxd/delete'
+    module: '@nikitajs/lxd/lib/delete'
   });
-  // Building command
-  cmd = ['lxc', 'delete', options.name];
-  if (options.force) {
-    cmd.push("--force");
+  if (!options.name) {
+    //Check args
+    throw Error("Argument 'name' is required to delete a container");
   }
+  // Building command
+  cmd_del = ['lxc', 'delete', options.name, options.force ? "--force" : void 0].join(' ');
   // Execution
   return this.system.execute({
-    cmd: cmd.join(' ')
+    cmd: `lxc info ${options.name} > /dev/null || exit 42\n${cmd_del}`,
+    code_skipped: 42
   });
 };

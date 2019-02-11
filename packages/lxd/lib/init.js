@@ -5,17 +5,17 @@
 
 // ## Options
 
-// * `image`
+// * `image` (required, string)
 //   The image the container will use, name:[version] e.g: ubuntu:16.04
-// * `name`
+// * `name` (required, string)
 //   The name of the container
-// * `network` (optional)
+// * `network` (optional, string, )
 //   Network name to add to the container (see lxd.network)
-// * `storage` (optional)
+// * `storage` (optional, string, [default_storage])
 //   Storage name where to store the container
-// * `profile` (optional)
+// * `profile` (optional, string, default)
 //   Profile to set this container up
-// * `ephemeral` (optional, default=false)
+// * `ephemeral` (optional, boolean, false)
 //   If true, the container will be deleted when stopped
 
 // ## Callback Parameters

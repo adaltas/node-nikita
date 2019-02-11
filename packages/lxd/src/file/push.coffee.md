@@ -7,6 +7,8 @@ Push files into containers.
 
 * `name` (string, required)   
   The name of the container.
+* `content` (string, optional*)   
+  Content of the target file; required if `source` is not set
 * `create_dirs` (boolean, optional, false)
   Create any directories necessary.
 * `gid` (integer, optional)   
@@ -17,8 +19,8 @@ Push files into containers.
   overwrite the `target` option.
 * `mode` (integer|string, optional)   
   Set the file's perms on push.
-* `source` (string, required)   
-  File to push in the form of "<path>".
+* `source` (string, optional*)   
+  File to push in the form of "<path>"; required if `content` is not set.
 * `target` (string, required)   
   File destination in the form of "<path>".
 * `uid` (integer, optional)   
@@ -48,11 +50,16 @@ require('nikita')
     module.exports =  ({options}) ->
       @log message: "Entering lxd.file.push", level: 'DEBUG', module: '@nikitajs/lxd/lib/push'
       throw Error "Invalid Option: name is required" unless options.name # note, name could be obtained from lxd_target
-      throw Error "Invalid Option: source is required" unless options.source
+      throw Error "Invalid Option: source or content are required" unless options.source or options.content?
       throw Error "Invalid Option: target is required" unless options.target or options.lxd_target
       options.algo ?= 'md5'
       options.lxd_target ?= "#{path.join options.name, options.target}"
+      options.tmp_file ?= "/tmp/nikita.#{Date.now()}#{Math.round(Math.random()*1000)}"
       # Execution
+      @fs.writeFile
+        if: options.content?
+        source: options.tmp_file
+        content: options.content
       cmd_push = [
         'lxc', 'file', 'push'
         options.source
@@ -92,6 +99,10 @@ require('nikita')
         if: typeof options.uid is 'string'
         name: options.name
         cmd: "chown #{options.uid} #{options.target}"
+      @fs.unlink
+        if: options.content?
+        target: options.tmp_file
+        tolerant: true # TODO, not yet implemented
 
 ## Dependencies
 

@@ -7,6 +7,8 @@
 
 // * `name` (string, required)   
 //   The name of the container.
+// * `content` (string, optional*)   
+//   Content of the target file; required if `source` is not set
 // * `create_dirs` (boolean, optional, false)
 //   Create any directories necessary.
 // * `gid` (integer, optional)   
@@ -17,8 +19,8 @@
 //   overwrite the `target` option.
 // * `mode` (integer|string, optional)   
 //   Set the file's perms on push.
-// * `source` (string, required)   
-//   File to push in the form of "<path>".
+// * `source` (string, optional*)   
+//   File to push in the form of "<path>"; required if `content` is not set.
 // * `target` (string, required)   
 //   File destination in the form of "<path>".
 // * `uid` (integer, optional)   
@@ -56,8 +58,8 @@ module.exports = function({options}) {
   if (!options.name) { // note, name could be obtained from lxd_target
     throw Error("Invalid Option: name is required");
   }
-  if (!options.source) {
-    throw Error("Invalid Option: source is required");
+  if (!(options.source || (options.content != null))) {
+    throw Error("Invalid Option: source or content are required");
   }
   if (!(options.target || options.lxd_target)) {
     throw Error("Invalid Option: target is required");
@@ -68,7 +70,15 @@ module.exports = function({options}) {
   if (options.lxd_target == null) {
     options.lxd_target = `${path.join(options.name, options.target)}`;
   }
+  if (options.tmp_file == null) {
+    options.tmp_file = `/tmp/nikita.${Date.now()}${Math.round(Math.random() * 1000)}`;
+  }
   // Execution
+  this.fs.writeFile({
+    if: options.content != null,
+    source: options.tmp_file,
+    content: options.content
+  });
   cmd_push = ['lxc', 'file', 'push', options.source, options.lxd_target, options.create_dirs ? '--create-dirs' : void 0, (options.gid != null) && typeof options.gid === 'number' ? '--gid' : void 0, (options.uid != null) && typeof options.uid === 'number' ? '--uid' : void 0, options.mode ? `--mode ${options.mode}` : void 0].join(' ');
   this.system.execute({
     cmd: `# Ensure source is a file\n[ -f "${options.source}" ] || exit 2\ncommand -v openssl >/dev/null || exit 3\nsourceDgst=\`openssl dgst -${options.algo} ${options.source} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'\`\n# Get target hash\ntargetDgst=\`cat <<EOF | lxc exec ${options.name} -- bash\n# Ensure openssl is available\ncommand -v openssl >/dev/null || exit 4\nopenssl dgst -${options.algo} ${options.target} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'\nEOF\`\n[ "$sourceDgst" == "$targetDgst" ] && exit 42\n${cmd_push}`,
@@ -91,12 +101,18 @@ module.exports = function({options}) {
     name: options.name,
     cmd: `chgrp ${options.gid} ${options.target}`
   });
-  return this.lxd.exec({
+  this.lxd.exec({
     if: typeof options.uid === 'string',
     name: options.name,
     cmd: `chown ${options.uid} ${options.target}`
   });
+  return this.fs.unlink({
+    if: options.content != null,
+    target: options.tmp_file,
+    tolerant: true // TODO, not yet implemented
+  });
 };
+
 
 // ## Dependencies
 path = require('path');
