@@ -199,21 +199,18 @@ module.exports = {
     // SSH connection
     ssh = this.ssh(options.ssh);
     return each(options.if_exec).call((cmd, next) => {
-      var run;
       this.log({
         message: `Nikita \`if_exec\`: ${cmd}`,
         level: 'DEBUG',
         module: 'nikita/misc/conditions'
       });
-      run = exec({
-        ssh: ssh,
-        cmd: cmd
-      });
-      // if options.stdout
-      //   run.stdout.pipe options.stdout, end: false
-      // if options.stderr
-      //   run.stderr.pipe options.stderr, end: false
-      return run.on("exit", (code) => {
+      return this.system.execute({
+        cmd: cmd,
+        relax: true,
+        stderr_log: false,
+        stdin_log: false,
+        stdout_log: false
+      }, function(err, {code}) {
         this.log({
           message: `Nikita \`if_exec\`: code is "${code}"`,
           level: 'INFO',
@@ -225,6 +222,14 @@ module.exports = {
           return skip();
         }
       });
+    // run = exec ssh: ssh, cmd: cmd
+    // # if options.stdout
+    // #   run.stdout.pipe options.stdout, end: false
+    // # if options.stderr
+    // #   run.stderr.pipe options.stderr, end: false
+    // run.on "exit", (code) =>
+    //   @log message: "Nikita `if_exec`: code is \"#{code}\"", level: 'INFO', module: 'nikita/misc/conditions'
+    //   if code is 0 then next() else skip()
     }).next(succeed);
   },
   // ## Run an action unless a command succeed: `unless_exec`
@@ -239,21 +244,19 @@ module.exports = {
     // SSH connection
     ssh = this.ssh(options.ssh);
     return each(options.unless_exec).call((cmd, next) => {
-      var run;
       this.log({
         message: `Nikita \`unless_exec\`: ${cmd}`,
         level: 'DEBUG',
         module: 'nikita/misc/conditions'
       });
-      run = exec({
-        ssh: ssh,
-        cmd: cmd
-      });
-      // if options.stdout
-      //   run.stdout.pipe options.stdout, end: false
-      // if options.stderr
-      //   run.stderr.pipe options.stderr, end: false
-      return run.on("exit", (code) => {
+      console.log('!!!!');
+      return this.system.execute({
+        cmd: cmd,
+        relax: true,
+        stderr_log: false,
+        stdin_log: false,
+        stdout_log: false
+      }, function(err, {code}) {
         this.log({
           message: `Nikita \`unless_exec\`: code is "${code}"`,
           level: 'INFO',
@@ -265,6 +268,14 @@ module.exports = {
           return next();
         }
       });
+    // run = exec ssh: ssh, cmd: cmd
+    // # if options.stdout
+    // #   run.stdout.pipe options.stdout, end: false
+    // # if options.stderr
+    // #   run.stderr.pipe options.stderr, end: false
+    // run.on "exit", (code) =>
+    //   @log message: "Nikita `unless_exec`: code is \"#{code}\"", level: 'INFO', module: 'nikita/misc/conditions'
+    //   if code is 0 then skip() else next()
     }).next(succeed);
   },
   // ## Run an action if OS match: `if_os`
@@ -451,7 +462,9 @@ module.exports = {
       options.if_exists = options.if_exists ? [options.target] : null;
     }
     return each(options.if_exists).call((if_exists, next) => {
-      return fs.exists(ssh, if_exists, (err, exists) => {
+      return this.fs.exists({
+        target: if_exists
+      }, (err, {exists}) => {
         if (exists) {
           this.log({
             message: `File exists ${if_exists}, continuing`,
@@ -487,7 +500,9 @@ module.exports = {
       options.unless_exists = options.unless_exists ? [options.target] : null;
     }
     return each(options.unless_exists).call((unless_exists, next) => {
-      return fs.exists(ssh, unless_exists, (err, exists) => {
+      return this.fs.exists({
+        target: unless_exists
+      }, (err, {exists}) => {
         if (exists) {
           this.log({
             message: `File exists ${unless_exists}, skipping`,

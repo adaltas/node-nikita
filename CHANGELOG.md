@@ -8,6 +8,7 @@
 
 ## Trunk
 
+* conditions: support sudo
 * lxd.config.set: new action
 * lxd.config.device.exists: new action
 * lxd.running: new action

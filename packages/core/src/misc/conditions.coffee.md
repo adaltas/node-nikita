@@ -137,14 +137,23 @@ were executed successfully otherwise the callback `skip` is called.
         each(options.if_exec)
         .call (cmd, next) =>
           @log message: "Nikita `if_exec`: #{cmd}", level: 'DEBUG', module: 'nikita/misc/conditions'
-          run = exec ssh: ssh, cmd: cmd
-          # if options.stdout
-          #   run.stdout.pipe options.stdout, end: false
-          # if options.stderr
-          #   run.stderr.pipe options.stderr, end: false
-          run.on "exit", (code) =>
+          @system.execute
+            cmd: cmd
+            relax: true
+            stderr_log: false
+            stdin_log: false
+            stdout_log: false
+          , (err, {code}) ->
             @log message: "Nikita `if_exec`: code is \"#{code}\"", level: 'INFO', module: 'nikita/misc/conditions'
             if code is 0 then next() else skip()
+          # run = exec ssh: ssh, cmd: cmd
+          # # if options.stdout
+          # #   run.stdout.pipe options.stdout, end: false
+          # # if options.stderr
+          # #   run.stderr.pipe options.stderr, end: false
+          # run.on "exit", (code) =>
+          #   @log message: "Nikita `if_exec`: code is \"#{code}\"", level: 'INFO', module: 'nikita/misc/conditions'
+          #   if code is 0 then next() else skip()
         .next succeed
 
 ## Run an action unless a command succeed: `unless_exec`
@@ -161,14 +170,23 @@ were executed with failure otherwise the callback `skip` is called.
         each(options.unless_exec)
         .call (cmd, next) =>
           @log message: "Nikita `unless_exec`: #{cmd}", level: 'DEBUG', module: 'nikita/misc/conditions'
-          run = exec ssh: ssh, cmd: cmd
-          # if options.stdout
-          #   run.stdout.pipe options.stdout, end: false
-          # if options.stderr
-          #   run.stderr.pipe options.stderr, end: false
-          run.on "exit", (code) =>
+          @system.execute
+            cmd: cmd
+            relax: true
+            stderr_log: false
+            stdin_log: false
+            stdout_log: false
+          , (err, {code}) ->
             @log message: "Nikita `unless_exec`: code is \"#{code}\"", level: 'INFO', module: 'nikita/misc/conditions'
             if code is 0 then skip() else next()
+          # run = exec ssh: ssh, cmd: cmd
+          # # if options.stdout
+          # #   run.stdout.pipe options.stdout, end: false
+          # # if options.stderr
+          # #   run.stderr.pipe options.stderr, end: false
+          # run.on "exit", (code) =>
+          #   @log message: "Nikita `unless_exec`: code is \"#{code}\"", level: 'INFO', module: 'nikita/misc/conditions'
+          #   if code is 0 then skip() else next()
         .next succeed
 
 ## Run an action if OS match: `if_os`
@@ -265,7 +283,7 @@ exists otherwise the callback `skip` is called.
           options.if_exists = if options.if_exists then [options.target] else null
         each(options.if_exists)
         .call (if_exists, next) =>
-          fs.exists ssh, if_exists, (err, exists) =>
+          @fs.exists target: if_exists, (err, {exists}) =>
             if exists
               @log message: "File exists #{if_exists}, continuing", level: 'DEBUG', module: 'nikita/misc/conditions'
               next()
@@ -291,7 +309,7 @@ exists otherwise the callback `skip` is called.
           options.unless_exists = if options.unless_exists then [options.target] else null
         each(options.unless_exists)
         .call (unless_exists, next) =>
-          fs.exists ssh, unless_exists, (err, exists) =>
+          @fs.exists target: unless_exists, (err, {exists}) =>
             if exists
               @log message: "File exists #{unless_exists}, skipping", level: 'INFO', module: 'nikita/misc/conditions'
               skip()
