@@ -4,6 +4,16 @@
 Retrieve file information. If path is a symbolic link, then the link itself is
 stat-ed, not the file that it refers to.
 
+```js
+require(nikita)
+.fs.exists({
+  target: '/path/to/file'
+}, (err, {exists}){
+  console.log(err ? err.message :
+    exists ? 'File exists' : 'File is missing')
+})
+```
+
 ## Source Code
 
     module.exports = status: false, log: false, handler: ({options}, callback) ->
