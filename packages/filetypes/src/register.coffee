@@ -6,6 +6,7 @@ registry.register
     types:
       ceph_conf: '@nikitajs/filetypes/src/ceph_conf'
       locale_gen: '@nikitajs/filetypes/src/locale_gen'
+      my_cnf: '@nikitajs/filetypes/src/my_cnf'
       pacman_conf: '@nikitajs/filetypes/src/pacman_conf'
       ssh_authorized_keys: '@nikitajs/filetypes/src/ssh_authorized_keys'
       yum_repo: '@nikitajs/filetypes/src/yum_repo'

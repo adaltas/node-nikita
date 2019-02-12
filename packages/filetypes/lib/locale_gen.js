@@ -7,7 +7,7 @@
 
   // *   `rootdir` (string)   
   //     Path to the mount point corresponding to the root directory, optional.   
-  // *   `generate` (boolean, optional)   
+  // *   `generate` (boolean, optional, null)   
   //     Run `locale-gen` by default if target was modified or force running the 
   //     command if value is a boolean.   
   // *   `locales` (string)   
@@ -89,10 +89,13 @@ module.exports = function({options}) {
   // Reload configuration
   return this.system.execute({
     if: function() {
-      if (options.generate != null) {
-        return options.generate;
-      } else {
-        return this.status(-1);
+      switch (options.generate) {
+        case true:
+          return true;
+        case false:
+          return false;
+        default:
+          return this.status(-1);
       }
     },
     cmd: "locale-gen"

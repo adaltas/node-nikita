@@ -8,6 +8,7 @@
 
 ## Trunk
 
+* filetypes: new my_cnf action
 * conditions: support sudo
 * lxd.config.set: new action
 * lxd.config.device.exists: new action

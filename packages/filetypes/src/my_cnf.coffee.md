@@ -1,8 +1,7 @@
 
-`nikita.file.types.pacman_conf`
+`nikita.file.types.my_cnf`
 
-Pacman is a package manager utility for Arch Linux. The file is usually located 
-in "/etc/pacman.conf".
+Write file in the mysql ini format by default located in "/etc/my.cnf".
 
 ## Options
 
@@ -24,14 +23,12 @@ in "/etc/pacman.conf".
 ## Source Code
 
     module.exports = ({options}) ->
-      @log message: "Entering file.types.pacman_conf", level: 'DEBUG', module: 'nikita/lib/file/types/pacman_conf'
-      options.target ?= '/etc/pacman.conf'
-      options.target = "#{path.join options.rootdir, options.target}" if options.rootdir
+      @log message: "Entering file.types.my_cnf", level: 'DEBUG', module: 'nikita/lib/file/types/my_cnf'
+      options.target ?= '/etc/my.cnf'
       @file.ini
         stringify: misc.ini.stringify_single_key
       , options
 
 ## Dependencies
 
-    path = require 'path'
     misc = require '@nikitajs/core/lib/misc'
