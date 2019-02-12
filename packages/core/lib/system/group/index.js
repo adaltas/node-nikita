@@ -72,6 +72,9 @@ module.exports = function({options}) {
   this.system.group.read({
     cache: options.cache
   }, function(err, {status, groups}) {
+    if (err) {
+      throw err;
+    }
     info = groups[options.name];
     return this.log(info ? {
       message: `Got group information for ${JSON.stringify(options.name)}`,

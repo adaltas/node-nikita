@@ -56,6 +56,7 @@ The result of the above action can be viewed with the command
       @system.group.read
         cache: options.cache
       , (err, {status, groups}) ->
+        throw err if err
         info = groups[options.name]
         @log if info
         then message: "Got group information for #{JSON.stringify options.name}", level: 'DEBUG', module: 'nikita/lib/system/group'
