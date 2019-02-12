@@ -249,7 +249,6 @@ module.exports = {
         level: 'DEBUG',
         module: 'nikita/misc/conditions'
       });
-      console.log('!!!!');
       return this.system.execute({
         cmd: cmd,
         relax: true,
