@@ -12,7 +12,7 @@
     "system",
     "task"
   ],
-  "version": "0.9.3-alpha.4",
+  "version": "0.9.3-alpha.5",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "email": "open@adaltas.com",
@@ -33,14 +33,14 @@
     }
   ],
   "dependencies": {
-    "@nikitajs/core": "^0.9.3-alpha.4",
-    "@nikitajs/db": "^0.9.3-alpha.0",
-    "@nikitajs/docker": "^0.9.3-alpha.0",
-    "@nikitajs/filetypes": "^0.9.3-alpha.0",
-    "@nikitajs/krb5": "^0.9.3-alpha.0",
-    "@nikitajs/ldap": "^0.9.3-alpha.0",
-    "@nikitajs/lxd": "^0.9.3-alpha.3",
-    "@nikitajs/tools": "^0.9.3-alpha.0"
+    "@nikitajs/core": "^0.9.3-alpha.5",
+    "@nikitajs/db": "^0.9.3-alpha.1",
+    "@nikitajs/docker": "^0.9.3-alpha.1",
+    "@nikitajs/filetypes": "^0.9.3-alpha.1",
+    "@nikitajs/krb5": "^0.9.3-alpha.1",
+    "@nikitajs/ldap": "^0.9.3-alpha.1",
+    "@nikitajs/lxd": "^0.9.3-alpha.4",
+    "@nikitajs/tools": "^0.9.3-alpha.1"
   },
   "homepage": "http://www.adaltas.com/projects/node-nikita/",
   "license": "MIT",
