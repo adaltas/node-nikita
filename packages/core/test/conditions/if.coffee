@@ -1,4 +1,5 @@
 
+nikita = require '../../src'
 conditions = require '../../src/misc/conditions'
 {tags} = require '../test'
 
@@ -12,155 +13,199 @@ describe 'if', ->
   #     () -> false.should.be.true()
   #     next
 
-  it 'succeed if `true`', (next) ->
-    conditions.if
-      options:
-        if: true
-      next
-      () -> false.should.be.true()
+  it 'succeed if `true`', ->
+    count = 0
+    nikita
+    .call
+      if: true
+    , ->
+      count++
+    .call ->
+      count.should.equal 1
+    .promise()
 
-  it 'succeed if `1`', (next) ->
-    conditions.if
-      options:
-        if: 1
-      next
-      () -> false.should.be.true()
+  it 'succeed if `1`', ->
+    count = 0
+    nikita
+    .call
+      if: 1
+    , ->
+      count++
+    .call ->
+      count.should.equal 1
+    .promise()
 
-  it 'succeed if buffer and length > 1', (next) ->
-    conditions.if
-      options:
-        if: Buffer.from 'abc'
-      next
-      () -> false.should.be.true()
+  it 'succeed if buffer and length > 1', ->
+    count = 0
+    nikita
+    .call
+      if: Buffer.from 'abc'
+    , ->
+      count++
+    .call ->
+      count.should.equal 1
+    .promise()
 
-  it 'fail if buffer and length is 0', (next) ->
-    conditions.if
-      options:
-        if: Buffer.from ''
-      () -> false.should.be.true()
-      next
+  it 'fail if buffer and length is 0', ->
+    nikita
+    .call
+      if: Buffer.from ''
+    , ->
+      throw Error 'You are not welcome here'
+    .promise()
 
-  it 'fail if `false`', (next) ->
-    conditions.if
-      options:
-        if: false
-      () -> false.should.be.true()
-      next
+  it 'fail if `false`', ->
+    nikita
+    .call
+      if: false
+    , ->
+      throw Error 'You are not welcome here'
+    .promise()
 
-  it 'fail if `null`', (next) ->
-    conditions.if
-      options:
-        if: null
-      () -> false.should.be.true()
-      next
+  it 'fail if `null`', ->
+    nikita
+    .call
+      if: null
+    , ->
+      throw Error 'You are not welcome here'
+    .promise()
 
-  it 'fail if `undefined`', (next) ->
-    conditions.if
-      options:
-        if: undefined
-      () -> false.should.be.true()
-      next
+  it 'fail if `undefined`', ->
+    nikita
+    .call
+      if: undefined
+    , ->
+      throw Error 'You are not welcome here'
+    .promise()
+  
+  it 'succeed if string not empty', ->
+    count = 0
+    nikita
+    .call
+      if: 'abc'
+    , ->
+      count++
+    .call ->
+      count.should.equal 1
+    .promise()
 
-  it 'succeed if string not empty', (next) ->
-    conditions.if
-      options:
-        if: 'abc'
-      next
-      () -> false.should.be.true()
+  it 'succeed if template string not empty', ->
+    count = 0
+    nikita
+    .call
+      if: '{{options.db.test}}'
+      db: test: 'abc'
+    , ->
+      count++
+    .call ->
+      count.should.equal 1
+    .promise()
 
-  it 'succeed if template string not empty', (next) ->
-    conditions.if
-      options:
-        if: '{{options.db.test}}'
-        db: test: 'abc'
-      next
-      () -> false.should.be.true()
+  it 'fail if string empty', ->
+    nikita
+    .call
+      if: ''
+    , ->
+      throw Error 'You are not welcome here'
+    .promise()
 
-  it 'fail if string empty', (next) ->
-    conditions.if
-      options:
-        if: ''
-      () -> false.should.be.true()
-      next
-
-  it 'fail if template string empty', (next) ->
-    conditions.if
-      options:
-        if: '{{options.db.test}}'
+  it 'fail if template string empty',->
+    nikita
+    .call
+      if: '{{options.db.test}}'
       db: test: ''
-      () -> false.should.be.true()
-      next
+    , ->
+      throw Error 'You are not welcome here'
+    .promise()
 
-  it 'function pass options', (next) ->
-    conditions.if
-      options:
-        if: ({options}) ->
-          options.a_key.should.eql 'a value'
-        a_key: 'a value'
-      next
-      (err) -> false.should.be.true()
+  it 'function pass options', ->
+    nikita
+    .call
+      if: ({options}) ->
+        options.a_key.should.eql 'a value'
+      a_key: 'a value'
+    , (->) 
+    .promise()
 
-  it 'function is sync with 0 arguments', (next) ->
-    called = false
-    conditions.if
-      options:
-        if: -> called = true
-      ->
-        called.should.be.true()
-        next()
-      (err) -> false.should.be.true()
+  it 'function is sync with 0 arguments', ->
+    called = 0
+    nikita
+    .call
+      if: ->
+        called++
+        true
+    , ->
+      called++
+    .call ->
+      called.should.equal 2
+    .promise()
 
-  it 'function is sync with 1 arguments', (next) ->
-    called = false
-    conditions.if
-      options:
-        if: -> called = true
-      ->
-        called.should.be.true()
-        next()
-      (err) -> false.should.be.true()
+  it 'function is sync with 1 arguments', ->
+    called = 0
+    nikita
+    .call
+      if: ({options}) ->
+        called++ if options.test
+        true
+      test: true
+    , ->
+      called++
+    .call ->
+      called.should.equal 2
+    .promise()
 
-  it 'succeed if function is sync and return false', (next) ->
-    conditions.if
-      options:
-        if: -> false
-      () -> false.should.be.true()
-      next
+  it 'succeed if function is sync and return false', ->
+    nikita
+    .call
+      if: -> false
+    , ->
+      throw Error 'You are not welcome here'
+    .promise()
 
-  it 'succed if function is async and pass true', (next) ->
-    called = true
-    conditions.if
-      options:
-        if: ({}, calback) -> calback null, true
-      ->
-        called.should.be.true()
-        next()
-      (err) -> false.should.be.true()
+  it 'succed if function is async and pass true', ->
+    called = 0
+    nikita
+    .call
+      if: ({}, callback)->
+        called++
+        callback null, true
+    , ->
+      called++
+    .call ->
+      called.should.eql 2
+    .promise()
 
-  it 'fail if function is async and pass false', (next) ->
-    conditions.if
-      options:
-        if: ({}, callback) -> callback null, false
-      () -> false.should.be.true()
-      next
+  it 'fail if function is async and pass false', ->
+    nikita
+    .call
+      if: ({}, callback) ->
+        callback null, false
+    , ->
+      throw Error 'You are not welcome here'
+    .promise()
 
-  it 'function pass error object on `failed` callback', (next) ->
-    conditions.if
-      options:
-        if: ({}, callback) -> callback new Error 'cool'
-      () -> false.should.be.true()
-      (err) -> err.message is 'cool' and next()
-
+  it 'function pass error object on `failed` callback', ->
+    nikita
+    .call
+      if: ({}, callback) ->
+        callback new Error 'cool'
+    , ->
+      throw Error 'You are not welcome here'
+    .next (err) ->
+      err.message is 'cool'
+    .promise()
+    
   describe 'error', ->
 
-    it 'fail if an object', (next) ->
-      conditions.if
-        options:
-          if: {}
-        () -> false.should.be.true()
-        (err) ->
-          err.message.should.eql "Invalid condition \"if\": {}"
-          next()
+    it 'fail if an object', ->
+      nikita
+      .call
+        if: {}
+      , ->
+        throw Error 'You are not welcome here'
+      .next (err) ->
+        err.message is 'Invalid condition "if": {}'
+      .promise()
 
 describe 'unless', ->
 
@@ -170,111 +215,157 @@ describe 'unless', ->
   #     next
   #     () -> false.should.be.true()
 
-  it 'succeed if `true`', (next) ->
-    conditions.unless
-      options:
-        unless: true
-      () -> false.should.be.true()
-      next
+  it 'succeed if `true`', ->
+    nikita
+    .call
+      unless: true
+    , ->
+      throw Error 'You are not welcome here'
+    .promise()
 
-  it 'skip if all true', (next) ->
-    conditions.unless
-      options:
-        unless: [true, true, true]
-      () -> false.should.be.true()
-      next
+  it 'skip if all true', ->
+    nikita
+    .call
+      unless: [true, true, true]
+    , ->
+      throw Error 'You are not welcome here'
+    .promise()
 
-  it 'skip if at least one is true', (next) ->
-    conditions.unless
-      options:
-        unless: [false, true, false]
-      () -> false.should.be.true()
-      next
+  it 'skip if at least one is true', ->
+    nikita
+    .call
+      unless: [false, true, false]
+    , ->
+      throw Error 'You are not welcome here'
+    .promise()
 
-  it 'run if all false', (next) ->
-    conditions.unless
-      options:
-        unless: [false, false, false]
-      next
-      () -> false.should.be.true()
+  it 'run if all false', ->
+    count = 0
+    nikita
+    .call
+      unless: [false, false, false]
+    , ->
+      count++
+    .call ->
+      count.should.eql 1
+    .promise()
 
-  it 'succeed if `1`', (next) ->
-    conditions.unless
-      options:
-        unless: 1
-      () -> false.should.be.true()
-      next
+  it 'skip if `1`', ->
+    nikita
+    .call
+      unless: 1
+    , ->
+      throw Error 'You are not welcome here'
+    .promise()
 
-  it 'succeed if buffer and length > 1', (next) ->
-    conditions.unless
-      options:
-        unless: Buffer.from 'abc'
-      () -> false.should.be.true()
-      next
+  it 'run if `0`', ->
+    count = 0
+    nikita
+    .call
+      unless: 0
+    , ->
+      count++
+    .call ->
+      count.should.eql 1
+    .promise()
 
-  it 'fail if buffer and length is 0', (next) ->
-    conditions.unless
-      options:
-        unless: Buffer.from ''
-      next
-      () -> false.should.be.true()
+  it 'succeed if buffer and length > 1', ->
+    nikita
+    .call
+      unless: Buffer.from 'abc'
+    , ->
+      throw Error 'You are not welcome here'
+    .promise()
 
-  it 'fail if `false`', (next) ->
-    conditions.unless
-      options:
-        unless: false
-      next
-      () -> false.should.be.true()
+  it 'run if buffer and length is 0', ->
+    count = 0
+    nikita
+    .call
+      unless: Buffer.from ''
+    , ->
+      count++
+    .call ->
+      count.should.eql 1
+    .promise()
 
-  it 'fail if `null`', (next) ->
-    conditions.unless
-      options:
-        unless: null
-      next
-      () -> false.should.be.true()
+  it 'run if `false`', ->
+    count = 0
+    nikita
+    .call
+      unless: false
+    , ->
+      count++
+    .call ->
+      count.should.eql 1
+    .promise()
 
-  it 'fail if string not empty', (next) ->
-    conditions.unless
-      options:
-        unless: 'abc'
-      () -> false.should.be.true()
-      next
+  it 'run if `null`', ->
+    count = 0
+    nikita
+    .call
+      unless: null
+    , ->
+      count++
+    .call ->
+      count.should.eql 1
+    .promise()
 
-  it 'fail if string not empty', (next) ->
-    conditions.unless
-      options:
-        unless: ''
-      next
-      () -> false.should.be.true()
+  it 'skip if string not empty', ->
+    nikita
+    .call
+      unless: 'abc'
+    , ->
+      throw Error 'You are not welcome here'
+    .promise()
 
-  it 'function succeed on `succeed` callback', (next) ->
-    conditions.unless
-      options:
-        unless: ({}, callback) -> callback null, true
-      () -> false.should.be.true()
-      next
+  it 'run if string empty', ->
+    count = 0
+    nikita
+    .call
+      unless: ''
+    , ->
+      count++
+    .call ->
+      count.should.eql 1
+    .promise()
 
-  it 'function fail on `failed` callback', (next) ->
-    conditions.unless
-      options:
-        unless: ({}, callback) -> callback null, false
-      next
-      () -> false.should.be.true()
+  it 'skip on `positive` callback', ->
+    nikita
+    .call
+      unless: ({}, callback) -> callback null, true
+    , ->
+      throw Error 'You are not welcome here'
+    .promise()
 
-  it 'function pass error object on `failed` callback', (next) ->
-    conditions.unless
-      options:
-        unless: ({}, callback) -> callback new Error 'cool'
-      () -> false.should.be.true()
-      (err) -> err.message is 'cool' and next()
+  it 'run on `negative` callback', ->
+    count = 0
+    nikita
+    .call
+      unless: ({}, callback) -> callback null, false
+    , ->
+      count++
+    .call ->
+      count.should.eql 1
+    .promise()
+
+  it 'function pass error object on `failed` callback', ->
+    nikita
+    .call
+      unless: ({}, callback) -> callback new Error 'Cool'
+    , ->
+      throw Error 'You are not welcome here'
+    .next (err) ->
+      err.message.should.eql 'Cool'
+    .promise()
 
   describe 'error', ->
 
-    it 'fail if an object', (next) ->
-      conditions.unless
-        options:
-          unless: {}
-        () -> false.should.be.true()
-        (err) ->
-          err.message.should.eql "Invalid condition \"unless\": {}"
-          next()
+    it 'fail if an object', ->
+      nikita
+      .call
+        unless: {}
+      , ->
+        throw Error 'You are not welcome here'
+      .next (err) ->
+        err.message.should.eql 'Invalid condition "unless": {}'
+      .promise()

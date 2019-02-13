@@ -59,10 +59,12 @@ nikita.file.render({
                 next()
               catch err then next err
             else if si.length is 2
-              si.call @, options: options, (err, is_ok) ->
-                return next err if err
-                ok = false unless is_ok
-                next()
+              try
+                si.call @, options: options, (err, is_ok) =>
+                  return next err if err
+                  ok = false unless is_ok
+                  next()
+              catch err then next err
             else next Error "Invalid argument length, expecting 2 or less, got #{si.length}"
           else if type is 'string' or (type is 'object' and Buffer.isBuffer si)
             si = template si.toString(), options: options
@@ -109,10 +111,12 @@ pass.
                 next()
               catch err then next err
             else if not_if.length is 2
-              not_if.call @, options: options, (err, is_ok) ->
-                return next err if err
-                ok = false if is_ok
-                next()
+              try
+                not_if.call @, options: options, (err, is_ok) =>
+                  return next err if err
+                  ok = false if is_ok
+                  next()
+              catch err then next err
             else next Error "Invalid callback"
           else if type is 'string' or (type is 'object' and Buffer.isBuffer not_if)
             not_if = template not_if.toString(), options: options
@@ -132,8 +136,6 @@ The callback `succeed` is called if all the provided command
 were executed successfully otherwise the callback `skip` is called.
 
       if_exec: ({options}, succeed, skip) ->
-        # SSH connection
-        ssh = @ssh options.ssh
         each(options.if_exec)
         .call (cmd, next) =>
           @log message: "Nikita `if_exec`: #{cmd}", level: 'DEBUG', module: 'nikita/misc/conditions'
@@ -146,14 +148,6 @@ were executed successfully otherwise the callback `skip` is called.
           , (err, {code}) ->
             @log message: "Nikita `if_exec`: code is \"#{code}\"", level: 'INFO', module: 'nikita/misc/conditions'
             if code is 0 then next() else skip()
-          # run = exec ssh: ssh, cmd: cmd
-          # # if options.stdout
-          # #   run.stdout.pipe options.stdout, end: false
-          # # if options.stderr
-          # #   run.stderr.pipe options.stderr, end: false
-          # run.on "exit", (code) =>
-          #   @log message: "Nikita `if_exec`: code is \"#{code}\"", level: 'INFO', module: 'nikita/misc/conditions'
-          #   if code is 0 then next() else skip()
         .next succeed
 
 ## Run an action unless a command succeed: `unless_exec`
@@ -165,8 +159,6 @@ The callback `succeed` is called if all the provided command
 were executed with failure otherwise the callback `skip` is called.
 
       unless_exec: ({options}, succeed, skip) ->
-        # SSH connection
-        ssh = @ssh options.ssh
         each(options.unless_exec)
         .call (cmd, next) =>
           @log message: "Nikita `unless_exec`: #{cmd}", level: 'DEBUG', module: 'nikita/misc/conditions'
@@ -179,14 +171,6 @@ were executed with failure otherwise the callback `skip` is called.
           , (err, {code}) ->
             @log message: "Nikita `unless_exec`: code is \"#{code}\"", level: 'INFO', module: 'nikita/misc/conditions'
             if code is 0 then skip() else next()
-          # run = exec ssh: ssh, cmd: cmd
-          # # if options.stdout
-          # #   run.stdout.pipe options.stdout, end: false
-          # # if options.stderr
-          # #   run.stderr.pipe options.stderr, end: false
-          # run.on "exit", (code) =>
-          #   @log message: "Nikita `unless_exec`: code is \"#{code}\"", level: 'INFO', module: 'nikita/misc/conditions'
-          #   if code is 0 then skip() else next()
         .next succeed
 
 ## Run an action if OS match: `if_os`
@@ -198,7 +182,6 @@ The callback `succeed` is called if any of the provided filter passed otherwise
 the callback `skip` is called.
 
       if_os: ({options}, succeed, skip) ->
-        # SSH connection
         ssh = @ssh options.ssh
         options.if_os = [options.if_os] unless Array.isArray options.if_os
         for rule in options.if_os
@@ -276,8 +259,6 @@ The callback `succeed` is called if all the provided paths
 exists otherwise the callback `skip` is called.
 
       if_exists: ({options}, succeed, skip) ->
-        # SSH connection
-        ssh = @ssh options.ssh
         # Default to `options.target` if "true"
         if typeof options.if_exists is 'boolean' and options.target
           options.if_exists = if options.if_exists then [options.target] else null
@@ -303,8 +284,7 @@ The callback `succeed` is called if none of the provided paths
 exists otherwise the callback `skip` is called.
 
       unless_exists: ({options}, succeed, skip) ->
-        # SSH connection
-        ssh = @ssh options.ssh
+        # Default to `options.target` if "true"
         if typeof options.unless_exists is 'boolean' and options.target
           options.unless_exists = if options.unless_exists then [options.target] else null
         each(options.unless_exists)
@@ -393,7 +373,6 @@ conditions.all({
           return next() if key is 'all'
           return next() unless module.exports[key]?
           module.exports[key].call session, options: options, next, (err) ->
-            # @log "Nikita `#{key}`: skipping action"
             failed err
         next()
         null

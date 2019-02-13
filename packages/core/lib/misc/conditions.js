@@ -72,17 +72,22 @@ module.exports = {
             return next(err);
           }
         } else if (si.length === 2) {
-          return si.call(this, {
-            options: options
-          }, function(err, is_ok) {
-            if (err) {
-              return next(err);
-            }
-            if (!is_ok) {
-              ok = false;
-            }
-            return next();
-          });
+          try {
+            return si.call(this, {
+              options: options
+            }, (err, is_ok) => {
+              if (err) {
+                return next(err);
+              }
+              if (!is_ok) {
+                ok = false;
+              }
+              return next();
+            });
+          } catch (error) {
+            err = error;
+            return next(err);
+          }
         } else {
           return next(Error(`Invalid argument length, expecting 2 or less, got ${si.length}`));
         }
@@ -154,17 +159,22 @@ module.exports = {
             return next(err);
           }
         } else if (not_if.length === 2) {
-          return not_if.call(this, {
-            options: options
-          }, function(err, is_ok) {
-            if (err) {
-              return next(err);
-            }
-            if (is_ok) {
-              ok = false;
-            }
-            return next();
-          });
+          try {
+            return not_if.call(this, {
+              options: options
+            }, (err, is_ok) => {
+              if (err) {
+                return next(err);
+              }
+              if (is_ok) {
+                ok = false;
+              }
+              return next();
+            });
+          } catch (error) {
+            err = error;
+            return next(err);
+          }
         } else {
           return next(Error("Invalid callback"));
         }
@@ -195,9 +205,6 @@ module.exports = {
   // The callback `succeed` is called if all the provided command 
   // were executed successfully otherwise the callback `skip` is called.
   if_exec: function({options}, succeed, skip) {
-    var ssh;
-    // SSH connection
-    ssh = this.ssh(options.ssh);
     return each(options.if_exec).call((cmd, next) => {
       this.log({
         message: `Nikita \`if_exec\`: ${cmd}`,
@@ -222,14 +229,6 @@ module.exports = {
           return skip();
         }
       });
-    // run = exec ssh: ssh, cmd: cmd
-    // # if options.stdout
-    // #   run.stdout.pipe options.stdout, end: false
-    // # if options.stderr
-    // #   run.stderr.pipe options.stderr, end: false
-    // run.on "exit", (code) =>
-    //   @log message: "Nikita `if_exec`: code is \"#{code}\"", level: 'INFO', module: 'nikita/misc/conditions'
-    //   if code is 0 then next() else skip()
     }).next(succeed);
   },
   // ## Run an action unless a command succeed: `unless_exec`
@@ -240,9 +239,6 @@ module.exports = {
   // The callback `succeed` is called if all the provided command 
   // were executed with failure otherwise the callback `skip` is called.
   unless_exec: function({options}, succeed, skip) {
-    var ssh;
-    // SSH connection
-    ssh = this.ssh(options.ssh);
     return each(options.unless_exec).call((cmd, next) => {
       this.log({
         message: `Nikita \`unless_exec\`: ${cmd}`,
@@ -267,14 +263,6 @@ module.exports = {
           return next();
         }
       });
-    // run = exec ssh: ssh, cmd: cmd
-    // # if options.stdout
-    // #   run.stdout.pipe options.stdout, end: false
-    // # if options.stderr
-    // #   run.stderr.pipe options.stderr, end: false
-    // run.on "exit", (code) =>
-    //   @log message: "Nikita `unless_exec`: code is \"#{code}\"", level: 'INFO', module: 'nikita/misc/conditions'
-    //   if code is 0 then skip() else next()
     }).next(succeed);
   },
   // ## Run an action if OS match: `if_os`
@@ -286,7 +274,6 @@ module.exports = {
   // the callback `skip` is called.
   if_os: function({options}, succeed, skip) {
     var j, len, ref, rule, ssh;
-    // SSH connection
     ssh = this.ssh(options.ssh);
     if (!Array.isArray(options.if_os)) {
       options.if_os = [options.if_os];
@@ -453,9 +440,6 @@ module.exports = {
   // The callback `succeed` is called if all the provided paths 
   // exists otherwise the callback `skip` is called.
   if_exists: function({options}, succeed, skip) {
-    var ssh;
-    // SSH connection
-    ssh = this.ssh(options.ssh);
     // Default to `options.target` if "true"
     if (typeof options.if_exists === 'boolean' && options.target) {
       options.if_exists = options.if_exists ? [options.target] : null;
@@ -492,9 +476,7 @@ module.exports = {
   // The callback `succeed` is called if none of the provided paths 
   // exists otherwise the callback `skip` is called.
   unless_exists: function({options}, succeed, skip) {
-    var ssh;
-    // SSH connection
-    ssh = this.ssh(options.ssh);
+    // Default to `options.target` if "true"
     if (typeof options.unless_exists === 'boolean' && options.target) {
       options.unless_exists = options.unless_exists ? [options.target] : null;
     }
@@ -610,7 +592,6 @@ module.exports = {
       return module.exports[key].call(session, {
         options: options
       }, next, function(err) {
-        // @log "Nikita `#{key}`: skipping action"
         return failed(err);
       });
     };

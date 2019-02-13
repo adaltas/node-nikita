@@ -350,15 +350,19 @@
             .error (error) -> do_callback error: error, output: status: false
             .next do_conditions
           do_conditions = ->
-            conditions.all proxy, options: options
+            opts = {}
+            for k, v of options
+              continue if k in ['handler', 'callback', 'header', 'after', 'before']
+              opts[k] ?= v
+            conditions.all proxy, options: opts
             , ->
+              proxy.log type: 'lifecycle', message: 'conditions_passed', index: index, error: null, status: false
               for k, v of options # Remove conditions from options
                 delete options[k] if /^if.*/.test(k) or /^unless.*/.test(k)
-              proxy.log type: 'lifecycle', message: 'conditions_passed', index: index, error: null, status: false
-              do_handler()
+              setImmediate -> do_handler()
             , (error) ->
               proxy.log type: 'lifecycle', message: 'conditions_failed', index: index, error: error, status: false
-              do_callback error: error, output: status: false
+              setImmediate -> do_callback error: error, output: status: false
           options.attempt = -1
           do_handler = ->
             options.attempt++
@@ -502,7 +506,7 @@
             if callbackargs.error and not options.relax
               state.current_level.error = callbackargs.error
               jump_to_error()
-            call_callback options, options.callback, callbackargs if options.callback
+            call_callback options.callback, callbackargs if options.callback
             callbackargs.error = null if options.relax
             callbackargs.output ?= {}
             callbackargs.output.status ?= false

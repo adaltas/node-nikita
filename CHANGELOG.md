@@ -8,6 +8,8 @@
 
 ## Trunk
 
+* conditions: executed as actions
+* cascade: implement cascaded options in callbacks
 * filetypes: new my_cnf action
 * conditions: support sudo
 * lxd.config.set: new action

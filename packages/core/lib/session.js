@@ -730,16 +730,20 @@ module.exports = function() {
         }).next(do_conditions);
       };
       do_conditions = function() {
-        return conditions.all(proxy, {
-          options: options
-        }, function() {
-// Remove conditions from options
-          for (k in options) {
-            v = options[k];
-            if (/^if.*/.test(k) || /^unless.*/.test(k)) {
-              delete options[k];
-            }
+        var opts;
+        opts = {};
+        for (k in options) {
+          v = options[k];
+          if (k === 'handler' || k === 'callback' || k === 'header' || k === 'after' || k === 'before') {
+            continue;
           }
+          if (opts[k] == null) {
+            opts[k] = v;
+          }
+        }
+        return conditions.all(proxy, {
+          options: opts
+        }, function() {
           proxy.log({
             type: 'lifecycle',
             message: 'conditions_passed',
@@ -747,7 +751,16 @@ module.exports = function() {
             error: null,
             status: false
           });
-          return do_handler();
+// Remove conditions from options
+          for (k in options) {
+            v = options[k];
+            if (/^if.*/.test(k) || /^unless.*/.test(k)) {
+              delete options[k];
+            }
+          }
+          return setImmediate(function() {
+            return do_handler();
+          });
         }, function(error) {
           proxy.log({
             type: 'lifecycle',
@@ -756,11 +769,13 @@ module.exports = function() {
             error: error,
             status: false
           });
-          return do_callback({
-            error: error,
-            output: {
-              status: false
-            }
+          return setImmediate(function() {
+            return do_callback({
+              error: error,
+              output: {
+                status: false
+              }
+            });
           });
         });
       };
@@ -1068,7 +1083,7 @@ module.exports = function() {
           jump_to_error();
         }
         if (options.callback) {
-          call_callback(options, options.callback, callbackargs);
+          call_callback(options.callback, callbackargs);
         }
         if (options.relax) {
           callbackargs.error = null;

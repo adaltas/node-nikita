@@ -44,6 +44,27 @@ describe 'if_exec', ->
       -> next()
       (err) -> false.should.be.true()
 
+  they 'dont change status of previous action', (ssh) ->
+    nikita
+      ssh: ssh
+    .call ({}, callback) ->
+      callback null, true
+    .call
+      unless_exec: 'exit 1'
+    , ({}, callback) ->
+      callback null, true
+    .call
+      if: ->
+        @status(-1).should.be.true()
+        @status(-2).should.be.true()
+        (@status(-3) is undefined).should.be.true()
+        true
+    , ->
+      @status(-1).should.be.true()
+      @status(-2).should.be.true()
+      (@status(-3) is undefined).should.be.true()
+    .promise()
+
 describe 'unless_exec', ->
 
   they 'string succeed if command fail', (ssh, next) ->
