@@ -295,9 +295,7 @@ require('nikita')
             mode: if options.mode then (options.mode | 0o111) else 0o755 
             # Modify uid and gid if the dir does not yet exists
             unless_exists: path.dirname options.target
-          , (err, created) ->
-            return callback err if err
-            callback()
+          , callback
         do_read = =>
           @log message: "Reading target", level: 'DEBUG', module: 'nikita/lib/file'
           @fs.readFile target: options.target, encoding: options.encoding, (err, {data}) ->

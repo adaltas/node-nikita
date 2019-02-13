@@ -416,12 +416,7 @@ module.exports = function({options}) {
         
         // Modify uid and gid if the dir does not yet exists
         unless_exists: path.dirname(options.target)
-      }, function(err, created) {
-        if (err) {
-          return callback(err);
-        }
-        return callback();
-      });
+      }, callback);
     };
     do_read = () => {
       this.log({
