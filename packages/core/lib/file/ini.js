@@ -79,7 +79,7 @@
 // ```
 
 // ## Source Code
-var ini, merge;
+var ini, mixme;
 
 module.exports = function({options}) {
   var default_props, org_props, parse;
@@ -124,7 +124,7 @@ module.exports = function({options}) {
     if (err) {
       throw err;
     }
-    return org_props = merge(parse(data, options));
+    return org_props = parse(data, options);
   });
   // Default properties
   this.fs.readFile({
@@ -145,13 +145,13 @@ module.exports = function({options}) {
       return;
     }
     content = ini.clean(options.content, true);
-    return options.content = merge(parse(data, options), options.content);
+    return options.content = mixme(parse(data, options), options.content);
   });
   // Merge
   this.call({
     if: options.merge
   }, function({}, callback) {
-    options.content = merge(org_props, options.content);
+    options.content = mixme(org_props, options.content);
     this.log({
       message: "Get content for merge",
       level: 'DEBUG',
@@ -191,6 +191,6 @@ module.exports = function({options}) {
 // ## Dependencies
 ini = require('../misc/ini');
 
-({merge} = require('../misc'));
+mixme = require('mixme');
 
 // [ini]: https://github.com/isaacs/ini

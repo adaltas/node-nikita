@@ -102,7 +102,7 @@ require('nikita')
       , (err, {data}) ->
         return if err?.code is 'ENOENT'
         throw err if err
-        org_props = merge parse(data, options)
+        org_props = parse(data, options)
       # Default properties
       @fs.readFile
         if: options.source
@@ -115,10 +115,10 @@ require('nikita')
         throw err if err
         return unless options.source
         content = ini.clean options.content, true
-        options.content = merge parse(data, options), options.content
+        options.content = mixme parse(data, options), options.content
       # Merge
       @call if: options.merge , ({}, callback) ->
-        options.content = merge org_props, options.content
+        options.content = mixme org_props, options.content
         @log message: "Get content for merge", level: 'DEBUG', module: 'nikita/lib/file/ini'
         callback()
       @call ->
@@ -140,6 +140,6 @@ require('nikita')
 ## Dependencies
 
     ini = require '../misc/ini'
-    {merge} = require '../misc'
+    mixme = require 'mixme'
 
 [ini]: https://github.com/isaacs/ini
