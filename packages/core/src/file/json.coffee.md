@@ -57,7 +57,6 @@ require('nikita')
       throw Error "Invalid options: \"transform\"" if options.transform and typeof options.transform isnt 'function'
       @call if: options.merge, (_, callback) ->
         @fs.readFile
-          ssh: options.ssh
           target: options.target
           encoding: 'utf8'
           relax: true

@@ -95,7 +95,6 @@ require('nikita')
       parse = options.parse or ini.parse
       # Original properties
       @fs.readFile
-        ssh: options.ssh
         target: options.target
         encoding: options.encoding
         relax: true

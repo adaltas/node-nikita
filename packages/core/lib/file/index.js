@@ -331,7 +331,6 @@ module.exports = function({options}) {
         module: 'nikita/lib/file'
       });
       return this.fs.lstat({
-        ssh: options.ssh,
         target: options.target,
         relax: true
       }, function(err, {stats}) {
@@ -351,7 +350,6 @@ module.exports = function({options}) {
           });
           // Destination is the parent directory, let's see if the file exist inside
           return this.fs.stat({
-            ssh: options.ssh,
             target: options.target
           }, function(err, {stats}) {
             if ((err != null ? err.code : void 0) === 'ENOENT') {
@@ -386,7 +384,6 @@ module.exports = function({options}) {
             return do_read();
           }
           return this.fs.unlink({
-            ssh: options.ssh,
             target: options.target
           }, function(err) {
             if (err) {
@@ -433,7 +430,6 @@ module.exports = function({options}) {
         module: 'nikita/lib/file'
       });
       return this.fs.readFile({
-        ssh: options.ssh,
         target: options.target,
         encoding: options.encoding
       }, function(err, {data}) {
@@ -549,7 +545,6 @@ module.exports = function({options}) {
     }
     backup = typeof options.backup === 'string' ? options.backup : `.${Date.now()}`;
     return this.system.copy({
-      ssh: options.ssh,
       source: options.target,
       target: `${options.target}${backup}`,
       mode: options.backup_mode
@@ -597,7 +592,6 @@ module.exports = function({options}) {
     this.system.chown({
       target: options.target,
       stats: targetStats,
-      // ssh: options.ssh
       sudo: options.sudo,
       uid: options.uid,
       gid: options.gid,
@@ -607,7 +601,6 @@ module.exports = function({options}) {
     return this.system.chmod({
       target: options.target,
       stats: targetStats,
-      // ssh: options.ssh
       sudo: options.sudo,
       mode: options.mode,
       if: options.mode != null,

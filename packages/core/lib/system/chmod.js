@@ -64,7 +64,6 @@ module.exports = function({options}) {
       module: 'nikita/lib/system/chmod'
     });
     return this.fs.stat({
-      ssh: options.ssh,
       target: options.target
     }, function(err, {stats}) {
       if (!err) {
@@ -85,7 +84,6 @@ module.exports = function({options}) {
     }
     // Apply changes
     return this.fs.chmod({
-      ssh: options.ssh,
       target: options.target,
       mode: options.mode,
       sudo: options.sudo

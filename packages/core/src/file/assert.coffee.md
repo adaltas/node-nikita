@@ -107,7 +107,7 @@ require('nikita')
       @call
         unless: options.content? or options.md5 or options.sha1 or options.sha256 or options.mode.length
       , ({}, callback) ->
-        @fs.exists ssh: options.ssh, target: options.target.toString(), (err, {exists}) ->
+        @fs.exists target: options.target.toString(), (err, {exists}) ->
           unless options.not
             unless exists
               options.error ?= "File does not exists: #{JSON.stringify options.target}"
@@ -121,7 +121,7 @@ require('nikita')
       @call
         if: options.filetype.length
       , (_, callback) ->
-        @fs.lstat ssh: options.ssh, target: options.target, (err, {stats}) ->
+        @fs.lstat target: options.target, (err, {stats}) ->
           return callback err if err
           if fs.constants.S_IFREG in options.filetype
             return callback Error "Invalid filetype: expect a regular file" unless misc.stats.isFile stats.mode
@@ -144,7 +144,7 @@ require('nikita')
       @call
         if: options.content? and (typeof options.content is 'string' or Buffer.isBuffer options.content)
       , ({}, callback) ->
-        @fs.readFile ssh: options.ssh, target: options.target, (err, {data}) ->
+        @fs.readFile target: options.target, (err, {data}) ->
           return callback err if err
           data = buffer.trim data, options.encoding if options.trim
           unless options.not
@@ -160,7 +160,7 @@ require('nikita')
       @call
         if: options.content? and options.content instanceof RegExp
       , ({}, callback) ->
-        @fs.readFile ssh: options.ssh, target: options.target, (err, {data}) ->
+        @fs.readFile target: options.target, (err, {data}) ->
           return callback err if err
           unless options.not
             unless options.content.test data 
@@ -195,7 +195,7 @@ require('nikita')
       @call
         if: options.uid?
       , ({}, callback) ->
-        @fs.stat ssh: options.ssh, target: options.target, (err, {stats}) ->
+        @fs.stat target: options.target, (err, {stats}) ->
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
           unless options.not
             unless "#{stats.uid}" is "#{options.uid}"
@@ -210,7 +210,7 @@ require('nikita')
       @call
         if: options.gid?
       , ({}, callback) ->
-        @fs.stat ssh: options.ssh, target: options.target, (err, {stats}) ->
+        @fs.stat target: options.target, (err, {stats}) ->
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
           unless options.not
             unless "#{stats.gid}" is "#{options.gid}"
@@ -225,7 +225,7 @@ require('nikita')
       @call
         if: options.mode.length
       , ({}, callback) ->
-        @fs.stat ssh: options.ssh, target: options.target, (err, {stats}) ->
+        @fs.stat target: options.target, (err, {stats}) ->
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
           unless options.not
             unless misc.mode.compare options.mode, stats.mode

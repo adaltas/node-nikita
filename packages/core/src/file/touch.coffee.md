@@ -56,7 +56,7 @@ Test if file exists.
 
       @call ({}, callback) ->
         @log message: "Check if target exists \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/file/touch'
-        @fs.exists ssh: options.ssh, target: options.target, (err, {exists}) ->
+        @fs.exists target: options.target, (err, {exists}) ->
           @log message: "Destination does not exists", level: 'INFO', module: 'nikita/lib/file/touch' if not err and not exists
           return callback err, !exists
 

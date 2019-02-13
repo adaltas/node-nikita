@@ -72,7 +72,7 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
       # Use option 'stat' short-circuit or discover
       @call unless: !!options.stats, ({}, callback) ->
         @log message: "Stat #{options.target}", level: 'DEBUG', module: 'nikita/lib/chown'
-        @fs.stat ssh: options.ssh, target: options.target, (err, {stats}) ->
+        @fs.stat target: options.target, (err, {stats}) ->
           return callback Error "Target Does Not Exist: #{JSON.stringify options.target}" if err?.code is 'ENOENT'
           return callback err if err
           options.stats = stats
@@ -87,7 +87,7 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
       @call if: (-> @status -1), ({}, callback) ->
         options.uid ?= options.stats.uid
         options.gid ?= options.stats.gid
-        @fs.chown ssh: options.ssh, target: options.target, uid: options.uid, gid: options.gid, sudo: options.sudo, (err) ->
+        @fs.chown target: options.target, uid: options.uid, gid: options.gid, sudo: options.sudo, (err) ->
           @log message: "change uid from #{options.stats.uid} to #{options.uid}", level: 'WARN', module: 'nikita/lib/chown' if options.stats.uid is not options.uid
           @log message: "change gid from #{options.stats.gid} to #{options.gid}", level: 'WARN', module: 'nikita/lib/chown' if options.stats.gid is not options.gid
           callback err

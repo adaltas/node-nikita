@@ -8,24 +8,34 @@
 
 ## Trunk
 
-* conditions: executed as actions
-* cascade: implement cascaded options in callbacks
+
+Breaking changes:
+* domain: remove option and support
+
+New features:
 * filetypes: new my_cnf action
+* conditions: executed as actions
 * conditions: support sudo
+* service.install: add yay support
 * lxd.config.set: new action
 * lxd.config.device.exists: new action
 * lxd.running: new action
 * lxd: added network actions
 * lxd.stop: new action
 * lxd.start: new action
-* file.hash: use command instead of which
-* keystore_add: use command instead of which
 * locale_gen: force generation if boolean
-* core: latest dependencies
-* domain: remove option and support
-* lxd: new project
+
+Fix:
+* cascade: implement cascaded options in callbacks
 * file.cson: fix merging when target is missing
-* service.install: add yay support
+* keystore_add: use command instead of which
+* file.hash: use command instead of which
+
+Cleaup:
+* core: remove unnecessary transmission of ssh
+
+Management:
+* core: latest dependencies
 
 ## Version 0.9.1
 

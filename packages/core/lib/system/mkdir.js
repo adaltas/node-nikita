@@ -140,7 +140,6 @@ module.exports = function({options}, callback) {
           module: 'nikita/lib/system/mkdir'
         });
         return this.fs.stat({
-          ssh: options.ssh,
           target: directory,
           log: options.log
         }, function(err, {stats}) {
@@ -194,7 +193,6 @@ module.exports = function({options}, callback) {
           }
         }
         return this.fs.mkdir({
-          ssh: options.ssh,
           target: directory,
           log: options.log
         }, opts, function(err) {

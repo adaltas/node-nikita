@@ -67,7 +67,6 @@ module.exports = function({options}) {
       module: 'nikita/lib/file/touch'
     });
     return this.fs.exists({
-      ssh: options.ssh,
       target: options.target
     }, function(err, {exists}) {
       if (!err && !exists) {

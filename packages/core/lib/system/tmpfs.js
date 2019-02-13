@@ -104,7 +104,6 @@ module.exports = function({options}) {
       module: 'nikita/tmpfs/index'
     });
     return this.fs.readFile({
-      ssh: options.ssh,
       target: options.target,
       encoding: 'utf8'
     }, function(err, {data}) {

@@ -113,7 +113,6 @@ module.exports = function({options}) {
   parse = options.parse || ini.parse;
   // Original properties
   this.fs.readFile({
-    ssh: options.ssh,
     target: options.target,
     encoding: options.encoding,
     relax: true

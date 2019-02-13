@@ -99,7 +99,7 @@ require('nikita')
           each(directories)
           .call (directory, i, next) =>
             @log message: "Stat '#{directory}'", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
-            @fs.stat ssh: options.ssh, target: directory, log: options.log, (err, {stats}) ->
+            @fs.stat target: directory, log: options.log, (err, {stats}) ->
               if err?.code is 'ENOENT' # if the directory is not yet created
                 directory.stats = stats
                 dirs.push directory
@@ -126,7 +126,7 @@ require('nikita')
             for attr in ['mode', 'uid', 'gid', 'size', 'atime', 'mtime']
               val = if i is directories.length - 1 then options[attr] else options.parent?[attr]
               opts[attr] = val if val?
-            @fs.mkdir ssh: options.ssh, target: directory, log: options.log, opts, (err) ->
+            @fs.mkdir target: directory, log: options.log, opts, (err) ->
               return callback err if err
               @log message: "Directory \"#{directory}\" created ", level: 'INFO', module: 'nikita/lib/system/mkdir'
               state.status = true

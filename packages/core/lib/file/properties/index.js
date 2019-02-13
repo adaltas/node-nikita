@@ -86,7 +86,6 @@ module.exports = function({options}) {
   // Read Original
   this.file.properties.read({
     if_exists: true,
-    ssh: options.ssh,
     target: options.target,
     separator: options.separator,
     comment: options.comment,

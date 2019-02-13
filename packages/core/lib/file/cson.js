@@ -74,7 +74,6 @@ module.exports = function({options}) {
       module: 'nikita/lib/file/cson'
     });
     return this.fs.readFile({
-      ssh: options.ssh,
       target: options.target,
       encoding: options.encoding,
       relax: true

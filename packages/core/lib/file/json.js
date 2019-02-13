@@ -76,7 +76,6 @@ module.exports = function({options}) {
     if: options.merge
   }, function(_, callback) {
     return this.fs.readFile({
-      ssh: options.ssh,
       target: options.target,
       encoding: 'utf8',
       relax: true

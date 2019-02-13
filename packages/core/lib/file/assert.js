@@ -173,7 +173,6 @@ module.exports = function({options}) {
     unless: (options.content != null) || options.md5 || options.sha1 || options.sha256 || options.mode.length
   }, function({}, callback) {
     return this.fs.exists({
-      ssh: options.ssh,
       target: options.target.toString()
     }, function(err, {exists}) {
       if (!options.not) {
@@ -199,7 +198,6 @@ module.exports = function({options}) {
     if: options.filetype.length
   }, function(_, callback) {
     return this.fs.lstat({
-      ssh: options.ssh,
       target: options.target
     }, function(err, {stats}) {
       var ref, ref1, ref2, ref3, ref4, ref5, ref6;
@@ -245,7 +243,6 @@ module.exports = function({options}) {
     if: (options.content != null) && (typeof options.content === 'string' || Buffer.isBuffer(options.content))
   }, function({}, callback) {
     return this.fs.readFile({
-      ssh: options.ssh,
       target: options.target
     }, function(err, {data}) {
       if (err) {
@@ -277,7 +274,6 @@ module.exports = function({options}) {
     if: (options.content != null) && options.content instanceof RegExp
   }, function({}, callback) {
     return this.fs.readFile({
-      ssh: options.ssh,
       target: options.target
     }, function(err, {data}) {
       if (err) {
@@ -347,7 +343,6 @@ module.exports = function({options}) {
     if: options.uid != null
   }, function({}, callback) {
     return this.fs.stat({
-      ssh: options.ssh,
       target: options.target
     }, function(err, {stats}) {
       if ((err != null ? err.code : void 0) === 'ENOENT') {
@@ -376,7 +371,6 @@ module.exports = function({options}) {
     if: options.gid != null
   }, function({}, callback) {
     return this.fs.stat({
-      ssh: options.ssh,
       target: options.target
     }, function(err, {stats}) {
       if ((err != null ? err.code : void 0) === 'ENOENT') {
@@ -405,7 +399,6 @@ module.exports = function({options}) {
     if: options.mode.length
   }, function({}, callback) {
     return this.fs.stat({
-      ssh: options.ssh,
       target: options.target
     }, function(err, {stats}) {
       var expect;

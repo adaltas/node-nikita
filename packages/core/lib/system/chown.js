@@ -99,7 +99,6 @@ module.exports = function({options}) {
       module: 'nikita/lib/chown'
     });
     return this.fs.stat({
-      ssh: options.ssh,
       target: options.target
     }, function(err, {stats}) {
       if ((err != null ? err.code : void 0) === 'ENOENT') {
@@ -137,7 +136,6 @@ module.exports = function({options}) {
       options.gid = options.stats.gid;
     }
     return this.fs.chown({
-      ssh: options.ssh,
       target: options.target,
       uid: options.uid,
       gid: options.gid,

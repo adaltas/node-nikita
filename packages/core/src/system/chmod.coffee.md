@@ -49,7 +49,6 @@ require('nikita')
       , (_, callback) ->
         @log message: "Stat information: \"#{options.target}\"", level: 'DEBUG', module: 'nikita/lib/system/chmod'
         @fs.stat
-          ssh: options.ssh
           target: options.target
         , (err, {stats}) ->
           options.stats = stats unless err
@@ -60,7 +59,7 @@ require('nikita')
           @log message: "Identical permissions on \"#{options.target}\"", level: 'INFO', module: 'nikita/lib/system/chmod'
           return callback()
         # Apply changes
-        @fs.chmod ssh: options.ssh, target: options.target, mode: options.mode, sudo: options.sudo, (err) ->
+        @fs.chmod target: options.target, mode: options.mode, sudo: options.sudo, (err) ->
           @log message: "Change permissions from \"#{options.stats.mode.toString 8}\" to \"#{options.mode.toString 8}\" on \"#{options.target}\"", level: 'WARN', module: 'nikita/lib/system/chmod'
           callback err, true
 

@@ -48,7 +48,6 @@ module.exports = function({options}, callback) {
   count = 0;
   sym_exists = (options, callback) => {
     return this.fs.readlink({
-      ssh: options.ssh,
       target: options.target
     }, function(err, {target}) {
       if (err) {
@@ -58,7 +57,6 @@ module.exports = function({options}, callback) {
         return callback(null, true);
       }
       return this.fs.unlink({
-        ssh: options.ssh,
         target: options.target
       }, function(err) {
         if (err) {
@@ -70,7 +68,6 @@ module.exports = function({options}, callback) {
   };
   sym_create = (options, callback) => {
     return this.fs.symlink({
-      ssh: options.ssh,
       source: options.source,
       target: options.target
     }, function(err) {
@@ -83,14 +80,12 @@ module.exports = function({options}, callback) {
   };
   exec_exists = (options, callback) => {
     return this.fs.exists({
-      ssh: options.ssh,
       target: options.target
     }, function(err, {exists}) {
       if (!exists) {
         return callback(null, false);
       }
       return this.fs.readFile({
-        ssh: options.ssh,
         target: options.target,
         encoding: 'utf8'
       }, function(err, {data}) {
@@ -107,7 +102,6 @@ module.exports = function({options}, callback) {
     var content;
     content = `#!/bin/bash\nexec ${options.source} $@`;
     return this.fs.writeFile({
-      ssh: options.ssh,
       target: options.target,
       content: content
     }, function(err) {
@@ -115,7 +109,6 @@ module.exports = function({options}, callback) {
         return callback(err);
       }
       return this.fs.chmod({
-        ssh: options.ssh,
         target: options.target,
         mode: options.mode
       }, function(err) {
@@ -138,7 +131,6 @@ module.exports = function({options}, callback) {
   }
   do_mkdir = () => {
     return this.system.mkdir({
-      ssh: options.ssh,
       target: path.dirname(options.target)
     }, function(err, created) {
       if (err && err.code !== 'EEXIST') {

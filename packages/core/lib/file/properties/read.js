@@ -53,7 +53,6 @@ module.exports = {
       throw Error("Missing argument options.target");
     }
     return this.fs.readFile({
-      ssh: options.ssh,
       target: options.target,
       encoding: options.encoding
     }, function(err, {data}) {

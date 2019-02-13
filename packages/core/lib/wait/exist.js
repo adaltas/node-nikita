@@ -64,7 +64,6 @@ module.exports = function({options}, callback) {
         module: 'nikita/wait/exist'
       });
       return this.fs.stat({
-        ssh: options.ssh,
         target: options.target
       }, function(err) {
         if (err && err.code !== 'ENOENT') {

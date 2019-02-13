@@ -112,7 +112,6 @@ module.exports = function({options}) {
       module: 'nikita/lib/system/copy'
     });
     return this.fs.stat({
-      ssh: options.ssh,
       target: options.source
     }, function(err, {stats}) {
       if (err) {
@@ -140,7 +139,6 @@ module.exports = function({options}) {
       module: 'nikita/lib/system/copy'
     });
     return this.fs.stat({
-      ssh: options.ssh,
       target: options.target
     }, function(err, {stats}) {
       if (err && err.code !== 'ENOENT') {
@@ -197,7 +195,6 @@ module.exports = function({options}) {
           var target;
           target = path.resolve(options.target, path.relative(options.source, source));
           return this.fs.stat({
-            ssh: options.ssh,
             target: source
           }, (err, {stats}) => {
             var gid, mode, uid;

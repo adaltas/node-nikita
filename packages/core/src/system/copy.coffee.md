@@ -82,7 +82,7 @@ Retrieve stats information about the source unless provided through the "source_
           @log message: "Source Stats: using short circuit", level: 'DEBUG', module: 'nikita/lib/system/copy'
           return callback()
         @log message: "Stats source file #{options.source}", level: 'DEBUG', module: 'nikita/lib/system/copy'
-        @fs.stat ssh: options.ssh, target: options.source, (err, {stats}) ->
+        @fs.stat target: options.source, (err, {stats}) ->
           return callback err if err
           options.source_stats = stats unless err
           callback()
@@ -94,7 +94,7 @@ Retrieve stat information about the traget unless provided through the "target_s
           @log message: "Target Stats: using short circuit", level: 'DEBUG', module: 'nikita/lib/system/copy'
           return callback()
         @log message: "Stats target file #{options.target}", level: 'DEBUG', module: 'nikita/lib/system/copy'
-        @fs.stat ssh: options.ssh, target: options.target, (err, {stats}) ->
+        @fs.stat target: options.target, (err, {stats}) ->
           # Note, target file doesnt necessarily exist
           return callback err if err and err.code isnt 'ENOENT'
           options.target_stats = stats if stats
@@ -128,7 +128,7 @@ present inside "/tmp/a_source" are copied inside "/tmp/a_target".
           return callback err if err
           for source in files then do (source) =>
             target = path.resolve options.target, path.relative options.source, source
-            @fs.stat ssh: options.ssh, target: source, (err, {stats}) =>
+            @fs.stat target: source, (err, {stats}) =>
               uid = options.uid
               uid ?= stats.uid if options.preserve
               gid = options.gid

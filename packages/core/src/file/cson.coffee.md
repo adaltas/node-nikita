@@ -54,7 +54,6 @@ require('nikita')
       , ->
         @log message: "Get Target Content", level: 'DEBUG', module: 'nikita/lib/file/cson'
         @fs.readFile
-          ssh: options.ssh
           target: options.target
           encoding: options.encoding
           relax: true

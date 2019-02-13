@@ -41,21 +41,21 @@ require('nikita').system.link({
       @log message: "Entering link", level: 'DEBUG', module: 'nikita/lib/system/link'
       count = 0
       sym_exists = (options, callback) =>
-        @fs.readlink ssh: options.ssh, target: options.target, (err, {target}) ->
+        @fs.readlink target: options.target, (err, {target}) ->
           return callback null, false if err
           return callback null, true if target is options.source
-          @fs.unlink ssh: options.ssh, target: options.target, (err) ->
+          @fs.unlink target: options.target, (err) ->
             return callback err if err
             callback null, false
       sym_create = (options, callback) =>
-        @fs.symlink ssh: options.ssh, source: options.source, target: options.target, (err) ->
+        @fs.symlink source: options.source, target: options.target, (err) ->
           return callback err if err
           count++
           callback()
       exec_exists = (options, callback) =>
-        @fs.exists ssh: options.ssh, target: options.target, (err, {exists}) ->
+        @fs.exists target: options.target, (err, {exists}) ->
           return callback null, false unless exists
-          @fs.readFile ssh: options.ssh, target: options.target, encoding: 'utf8', (err, {data}) ->
+          @fs.readFile target: options.target, encoding: 'utf8', (err, {data}) ->
             return callback err if err
             exec_cmd = /exec (.*) \$@/.exec(data)[1]
             callback null, exec_cmd and exec_cmd is options.source
@@ -64,9 +64,9 @@ require('nikita').system.link({
         #!/bin/bash
         exec #{options.source} $@
         """
-        @fs.writeFile ssh: options.ssh, target: options.target, content: content, (err) ->
+        @fs.writeFile target: options.target, content: content, (err) ->
           return callback err if err
-          @fs.chmod ssh: options.ssh, target: options.target, mode: options.mode, (err) ->
+          @fs.chmod target: options.target, mode: options.mode, (err) ->
             return callback err if err
             count++
             callback()
@@ -75,7 +75,6 @@ require('nikita').system.link({
       options.mode ?= 0o0755
       do_mkdir = =>
         @system.mkdir
-          ssh: options.ssh
           target: path.dirname options.target
         , (err, created) ->
           # It is possible to have collision if to symlink

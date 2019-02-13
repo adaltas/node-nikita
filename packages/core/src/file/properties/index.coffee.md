@@ -64,7 +64,6 @@ require('nikita')
       # Read Original
       @file.properties.read
         if_exists: true
-        ssh: options.ssh
         target: options.target
         separator: options.separator
         comment: options.comment

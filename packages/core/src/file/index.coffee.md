@@ -257,7 +257,7 @@ require('nikita')
         return callback() if typeof options.target is 'function'
         exists = =>
           @log message: "Stat target", level: 'DEBUG', module: 'nikita/lib/file'
-          @fs.lstat ssh: options.ssh, target: options.target, relax: true, (err, {stats}) ->
+          @fs.lstat target: options.target, relax: true, (err, {stats}) ->
             return do_mkdir() if err?.code is 'ENOENT'
             return callback err if err
             targetStats = stats
@@ -265,7 +265,7 @@ require('nikita')
               options.target = "#{options.target}/#{path.basename options.source}"
               @log message: "Destination is a directory and is now \"options.target\"", level: 'INFO', module: 'nikita/lib/file'
               # Destination is the parent directory, let's see if the file exist inside
-              @fs.stat ssh: options.ssh, target: options.target, (err, {stats}) ->
+              @fs.stat target: options.target, (err, {stats}) ->
                 if err?.code is 'ENOENT'
                   @log message: "New target does not exist", level: 'INFO', module: 'nikita/lib/file'
                   return callback()
@@ -277,7 +277,7 @@ require('nikita')
             else if misc.stats.isSymbolicLink stats.mode
               @log message: "Destination is a symlink", level: 'INFO', module: 'nikita/lib/file'
               return do_read() unless options.unlink
-              @fs.unlink ssh: options.ssh, target: options.target, (err) ->
+              @fs.unlink target: options.target, (err) ->
                 return callback err if err
                 callback() # Dont go to mkdir since parent dir exists
             else if misc.stats.isFile stats.mode
@@ -286,7 +286,7 @@ require('nikita')
             else
               callback Error "Invalid File Type Destination: #{options.target}"
         do_mkdir = =>
-          options.mode = parseInt(options.mode, 8) if typeof options.mode is 'string' 
+          options.mode = parseInt(options.mode, 8) if typeof options.mode is 'string'
           @system.mkdir
             target: path.dirname options.target
             uid: options.uid
@@ -300,7 +300,7 @@ require('nikita')
             callback()
         do_read = =>
           @log message: "Reading target", level: 'DEBUG', module: 'nikita/lib/file'
-          @fs.readFile ssh: options.ssh, target: options.target, encoding: options.encoding, (err, {data}) ->
+          @fs.readFile target: options.target, encoding: options.encoding, (err, {data}) ->
             return callback err if err
             target = data # only used by diff
             targetHash = string.hash data
@@ -344,7 +344,6 @@ require('nikita')
         options.backup_mode ?= 0o0400
         backup = if typeof options.backup is 'string' then options.backup else ".#{Date.now()}"
         @system.copy
-          ssh: options.ssh
           source: options.target
           target: "#{options.target}#{backup}"
           mode: options.backup_mode
@@ -377,7 +376,6 @@ require('nikita')
         @system.chown
           target: options.target
           stats: targetStats
-          # ssh: options.ssh
           sudo: options.sudo
           uid: options.uid
           gid: options.gid
@@ -386,7 +384,6 @@ require('nikita')
         @system.chmod
           target: options.target
           stats: targetStats
-          # ssh: options.ssh
           sudo: options.sudo
           mode: options.mode
           if: options.mode?
