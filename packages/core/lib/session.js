@@ -389,9 +389,11 @@ module.exports = function() {
     return opts;
   };
   call_callback = function(fn, callbackargs) {
-    var current_level, error;
+    var current_level, error, options;
+    options = state.current_level.options;
     state.parent_levels.unshift(state.current_level);
     state.current_level = state_create_level();
+    state.current_level.options = options;
     try {
       fn.call(proxy, callbackargs.error, callbackargs.output, ...(callbackargs.args || []));
     } catch (error1) {
@@ -1066,7 +1068,7 @@ module.exports = function() {
           jump_to_error();
         }
         if (options.callback) {
-          call_callback(options.callback, callbackargs);
+          call_callback(options, options.callback, callbackargs);
         }
         if (options.relax) {
           callbackargs.error = null;

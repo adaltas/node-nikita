@@ -235,3 +235,29 @@ describe 'options "cascade"', ->
         @a_module (err, {a_key}) ->
           a_key.should.be.true() unless err
       .promise()
+
+    it 'transmitted to get handler', ->
+      batons = []
+      nikita
+        cascade: baton: true
+      .registry.register( 'my_action', get: true, handler: ({options}) ->
+        batons.push "#{options.argument} #{options.baton}"
+      )
+      .call
+        baton: 'transmitted'
+      , ->
+        @call
+          if: ->
+            @my_action 'condition'
+            true
+        , ->
+          @my_action 'handler'
+        , ->
+          @my_action 'callback'
+      .call ->
+        batons.should.eql [
+          'condition transmitted'
+          'handler transmitted'
+          'callback transmitted'
+        ]
+      .promise()

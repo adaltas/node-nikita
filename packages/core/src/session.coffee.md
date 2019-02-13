@@ -191,8 +191,10 @@
           opts[k] = v
         opts
       call_callback = (fn, callbackargs) ->
+        options = state.current_level.options
         state.parent_levels.unshift state.current_level
         state.current_level = state_create_level()
+        state.current_level.options = options
         try
           fn.call proxy, callbackargs.error, callbackargs.output, (callbackargs.args or [])...
         catch error
@@ -500,7 +502,7 @@
             if callbackargs.error and not options.relax
               state.current_level.error = callbackargs.error
               jump_to_error()
-            call_callback options.callback, callbackargs if options.callback
+            call_callback options, options.callback, callbackargs if options.callback
             callbackargs.error = null if options.relax
             callbackargs.output ?= {}
             callbackargs.output.status ?= false

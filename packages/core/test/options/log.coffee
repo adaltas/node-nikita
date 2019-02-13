@@ -38,6 +38,38 @@ describe 'options "log"', ->
       logs[0].depth.should.eql 2
     .promise()
 
+  it 'is cascaded to conditions when true', ->
+    logs = []
+    nikita
+    .on 'text', (log) ->
+      logs.push log.message
+    .call
+      log: false
+      if: ({options}) ->
+        options.log.should.be.false()
+        @log 'inside condition'
+    , (->)
+    .next (err) ->
+      throw err if err
+      logs.should.eql []
+    .promise()
+
+  it 'is cascaded to conditions when false', ->
+    logs = []
+    nikita
+    .on 'text', (log) ->
+      logs.push log.message
+    .call
+      log: true
+      if: ({options}) ->
+        options.log.should.be.true()
+        @log 'inside condition'
+    , (->)
+    .next (err) ->
+      throw err if err
+      logs.should.eql ['inside condition']
+    .promise()
+
   it 'is overwritteable', ->
     logs_parent = []
     logs_child = []

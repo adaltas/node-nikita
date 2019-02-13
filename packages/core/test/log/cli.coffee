@@ -16,7 +16,7 @@ class MyWritable extends Writable
     callback()
 
 describe 'log.cli', ->
-  
+    
   they 'default options', (ssh) ->
     data = []
     nikita
