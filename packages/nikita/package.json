@@ -50,8 +50,6 @@
     "url": "https://github.com/adaltas/node-nikita"
   },
   "scripts": {
-    "coffee": "coffee -b -o lib src",
-    "pretest": "coffee -b -o lib src",
-    "test": "mocha test/**/*.coffee"
+    "test": "mocha"
   }
 }
