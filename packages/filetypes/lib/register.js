@@ -16,6 +16,6 @@ registry.register({
   }
 });
 
-registry.deprecate(['file', 'type', 'etc_group', 'read'], '@nikitajs/core/lib/system/group/read');
+registry.deprecate(['file', 'type', 'etc_group', 'read'], ['system', 'group', 'read'], '@nikitajs/core/lib/system/group/read');
 
-registry.deprecate(['file', 'type', 'etc_passwd', 'read'], '@nikitajs/core/lib/system/user/read');
+registry.deprecate(['file', 'type', 'etc_passwd', 'read'], ['system', 'user', 'read'], '@nikitajs/core/lib/system/user/read');
