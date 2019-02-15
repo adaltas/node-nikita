@@ -54,7 +54,7 @@ module.exports = function({options}) {
       'network',
       'create',
       options.name,
-      (function() {
+      ...((function() {
         var ref,
       results;
         ref = options.config;
@@ -65,7 +65,7 @@ module.exports = function({options}) {
       '\\\'')}'`);
         }
         return results;
-      })()
+      })())
     ].join(' ')}`,
     code_skipped: 42
   }, function(err, {stdout, code}) {

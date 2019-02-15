@@ -49,7 +49,9 @@ require('nikita')
           'network',
           'create'
           options.name
-          "#{key}='#{value.replace '\'', '\\\''}'" for key, value of options.config
+          ...(
+            "#{key}='#{value.replace '\'', '\\\''}'" for key, value of options.config
+          )
         ].join ' '}
         """
         code_skipped: 42
