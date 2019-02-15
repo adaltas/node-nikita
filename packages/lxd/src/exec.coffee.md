@@ -34,7 +34,7 @@ require('nikita')
       throw Error "Invalid Option: name is required" unless options.name
       @system.execute options,
         cmd: """
-        cat <<EOF | lxc exec #{options.name} -- bash
+        cat <<'EOF' | lxc exec #{options.name} -- bash
         #{options.cmd}
         EOF
         """
