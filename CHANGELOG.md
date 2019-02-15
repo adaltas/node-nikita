@@ -24,6 +24,7 @@ New features:
 * lxd.stop: new action
 * lxd.start: new action
 * locale_gen: force generation if boolean
+* core env: working lxd prototype
 
 Fix:
 * cascade: implement cascaded options in callbacks
