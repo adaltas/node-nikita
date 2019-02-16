@@ -426,7 +426,7 @@
                   return handle_async_and_promise Error 'Invalid Promise: returning promise is not supported in asynchronuous mode'
               else # Sync style
                 result = options_handler.call proxy, context
-                if promise.is result # result is a promisee
+                if promise.is result # result is a promise
                   result.then (value) ->
                     if Array.isArray value
                       [output, args...] = value

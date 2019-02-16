@@ -898,7 +898,7 @@ module.exports = function() {
             }
           } else {
             result = options_handler.call(proxy, context);
-            if (promise.is(result)) { // result is a promisee
+            if (promise.is(result)) { // result is a promise
               return result.then(function(value) {
                 var args, output;
                 if (Array.isArray(value)) {
