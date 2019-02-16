@@ -1,3 +1,4 @@
+
 nikita = require '@nikitajs/core'
 fs = require 'fs'
 # Read configuration

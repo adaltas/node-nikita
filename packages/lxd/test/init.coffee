@@ -1,7 +1,7 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.lxd
 
@@ -12,6 +12,7 @@ describe 'lxd.init', ->
       ssh: ssh
     .lxd.delete
       name: 'u1'
+      force: true
     .lxd.init
       image: 'ubuntu:16.04'
       name: 'u1'
@@ -28,6 +29,7 @@ describe 'lxd.init', ->
       ssh: ssh
     .lxd.delete
       name: 'u1'
+      force: true
     .lxd.init
       image: 'ubuntu:16.04'
       name: 'u1'
