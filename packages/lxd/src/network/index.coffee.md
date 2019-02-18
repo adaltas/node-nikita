@@ -38,6 +38,9 @@ require('nikita')
       @log message: "Entering lxd network", level: "DEBUG", module: "@nikitajs/lxd/lib/network"
       #Check args
       throw Error "Argument 'name' is required to create a network" unless options.name
+      for k, v of options.config
+        continue if typeof v is 'string'
+        options.config[k] = if typeof v is 'boolean' then if v then 'true' else 'false'
       # Command if the network does not yet exist
       @system.execute
         # return code 5 indicates a version of lxc where 'network' command is not implemented

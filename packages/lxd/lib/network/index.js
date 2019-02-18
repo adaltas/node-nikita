@@ -36,7 +36,7 @@
 var diff, yaml;
 
 module.exports = function({options}) {
-  var key, value;
+  var k, key, ref, v, value;
   this.log({
     message: "Entering lxd network",
     level: "DEBUG",
@@ -45,6 +45,14 @@ module.exports = function({options}) {
   if (!options.name) {
     //Check args
     throw Error("Argument 'name' is required to create a network");
+  }
+  ref = options.config;
+  for (k in ref) {
+    v = ref[k];
+    if (typeof v === 'string') {
+      continue;
+    }
+    options.config[k] = typeof v === 'boolean' ? v ? 'true' : 'false' : void 0;
   }
   // Command if the network does not yet exist
   return this.system.execute({
@@ -55,12 +63,12 @@ module.exports = function({options}) {
       'create',
       options.name,
       ...((function() {
-        var ref,
+        var ref1,
       results;
-        ref = options.config;
+        ref1 = options.config;
         results = [];
-        for (key in ref) {
-          value = ref[key];
+        for (key in ref1) {
+          value = ref1[key];
           results.push(`${key}='${value.replace('\'',
       '\\\'')}'`);
         }
