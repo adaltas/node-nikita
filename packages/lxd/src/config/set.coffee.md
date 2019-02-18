@@ -28,22 +28,38 @@ require('nikita')
 
     module.exports =  ({options}) ->
       @log message: "Entering lxd.config.set", level: 'DEBUG', module: '@nikitajs/lxd/lib/config/set'
-      #Execute
+      keys = {}
       @system.execute
         cmd: """
         #{[
           'lxc', 'config', 'show'
-          options.container
+          options.name
         ].join ' '}
         """
+        shy: true
         code_skipped: 42
       , (err, {stdout}) ->
         throw err if err
         config = yaml.safeLoad stdout
-        console.log config
-        throw Error 'stop'
+        config = yaml.safeLoad stdout
+        keys = diff config.config, mixme config.config, options.config
+      @call ->
+        @system.execute
+          if: Object.keys(keys).length
+          cmd: """
+          #{[
+            'lxc', 'config', 'set'
+            options.name
+            ...[
+              "#{k} '#{v.replace '\'', '\\\''}'" for k, v of keys
+            ]
+          ].join ' '}
+          """
+          code_skipped: 42
+        
 
 ## Dependencies
 
+    mixme = require 'mixme'
     yaml = require 'js-yaml'
     diff = require 'object-diff'

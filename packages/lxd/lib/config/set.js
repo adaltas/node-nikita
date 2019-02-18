@@ -25,17 +25,19 @@
 // ```
 
 // ## Source Code
-var diff, yaml;
+var diff, mixme, yaml;
 
 module.exports = function({options}) {
+  var keys;
   this.log({
     message: "Entering lxd.config.set",
     level: 'DEBUG',
     module: '@nikitajs/lxd/lib/config/set'
   });
-  //Execute
-  return this.system.execute({
-    cmd: `${['lxc', 'config', 'show', options.container].join(' ')}`,
+  keys = {};
+  this.system.execute({
+    cmd: `${['lxc', 'config', 'show', options.name].join(' ')}`,
+    shy: true,
     code_skipped: 42
   }, function(err, {stdout}) {
     var config;
@@ -43,12 +45,40 @@ module.exports = function({options}) {
       throw err;
     }
     config = yaml.safeLoad(stdout);
-    console.log(config);
-    throw Error('stop');
+    config = yaml.safeLoad(stdout);
+    return keys = diff(config.config, mixme(config.config, options.config));
+  });
+  return this.call(function() {
+    var k, v;
+    return this.system.execute({
+      if: Object.keys(keys).length,
+      cmd: `${[
+        'lxc',
+        'config',
+        'set',
+        options.name,
+        ...[
+          (function() {
+            var results;
+            results = [];
+            for (k in keys) {
+              v = keys[k];
+              results.push(`${k} '${v.replace('\'',
+          '\\\'')}'`);
+            }
+            return results;
+          })()
+        ]
+      ].join(' ')}`,
+      code_skipped: 42
+    });
   });
 };
 
+
 // ## Dependencies
+mixme = require('mixme');
+
 yaml = require('js-yaml');
 
 diff = require('object-diff');

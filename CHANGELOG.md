@@ -12,6 +12,7 @@ Breaking changes:
 * domain: remove option and support
 
 New features:
+* lxd.config.set: implement new action
 * tools.ssh.keygen: new action
 * filetypes: new my_cnf action
 * conditions: executed as actions
