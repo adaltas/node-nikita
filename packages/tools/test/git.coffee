@@ -1,7 +1,7 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
@@ -14,7 +14,7 @@ describe 'tools.git', ->
       target: "#{scratch}"
     .promise()
 
-  they 'clones repo into new dir', (ssh) ->
+  they 'clones repo into new dir', ({ssh}) ->
     nikita
       ssh: ssh
     .tools.git
@@ -29,7 +29,7 @@ describe 'tools.git', ->
       status.should.be.false()
     .promise()
 
-  they 'honores revision', (ssh) ->
+  they 'honores revision', ({ssh}) ->
     nikita
       ssh: ssh
     .tools.git
@@ -49,7 +49,7 @@ describe 'tools.git', ->
       status.should.be.false()
     .promise()
 
-  they 'preserves existing directory', (ssh) ->
+  they 'preserves existing directory', ({ssh}) ->
     nikita
       ssh: ssh
     .system.mkdir

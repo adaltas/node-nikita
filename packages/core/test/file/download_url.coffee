@@ -2,7 +2,7 @@
 http = require 'http'
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
@@ -20,7 +20,7 @@ describe 'file.download url', ->
     server.close()
     server.on 'close', next
 
-  they 'download without cache and md5', (ssh) ->
+  they 'download without cache and md5', ({ssh}) ->
     @timeout 100000
     # Download a non existing file
     nikita
@@ -40,7 +40,7 @@ describe 'file.download url', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'should chmod', (ssh) ->
+  they 'should chmod', ({ssh}) ->
     @timeout 10000
     nikita
       ssh: ssh
@@ -57,7 +57,7 @@ describe 'file.download url', ->
 
   describe 'cache', ->
 
-    they 'cache file', (ssh) ->
+    they 'cache file', ({ssh}) ->
       @timeout 100000
       # Download a non existing file
       nikita
@@ -76,7 +76,7 @@ describe 'file.download url', ->
         content: /okay/
       .promise()
 
-    they 'cache file defined globally', (ssh) ->
+    they 'cache file defined globally', ({ssh}) ->
       @timeout 100000
       # Download a non existing file
       source = 'http://localhost:12345'
@@ -94,7 +94,7 @@ describe 'file.download url', ->
         content: 'okay'
       .promise()
 
-    they 'cache dir', (ssh) ->
+    they 'cache dir', ({ssh}) ->
       @timeout 100000
       # Download a non existing file
       source = 'http://localhost:12345'
@@ -114,7 +114,7 @@ describe 'file.download url', ->
 
   describe 'md5', ->
 
-    they 'use shortcircuit if target match md5', (ssh) ->
+    they 'use shortcircuit if target match md5', ({ssh}) ->
       logs = []
       nikita
         ssh: ssh
@@ -132,7 +132,7 @@ describe 'file.download url', ->
         ("[INFO] Destination with valid signature, download aborted" in logs).should.be.true()
       .promise()
 
-    they 'bypass shortcircuit if target dont match md5', (ssh) ->
+    they 'bypass shortcircuit if target dont match md5', ({ssh}) ->
       logs = []
       nikita
         ssh: ssh
@@ -151,7 +151,7 @@ describe 'file.download url', ->
         content: /okay/
       .promise()
 
-    they 'check signature on downloaded file', (ssh) ->
+    they 'check signature on downloaded file', ({ssh}) ->
       # Download with invalid checksum
       nikita
         ssh: ssh
@@ -164,7 +164,7 @@ describe 'file.download url', ->
         err.message.should.eql "Invalid downloaded checksum, found 'df8fede7ff71608e24a5576326e41c75' instead of '2f74dbbee4142b7366c93b115f914fff'"
       .promise()
 
-    they 'count 1 if new file has correct checksum', (ssh) ->
+    they 'count 1 if new file has correct checksum', ({ssh}) ->
       # Download with invalid checksum
       nikita
       .file.download
@@ -176,7 +176,7 @@ describe 'file.download url', ->
         status.should.be.true() unless err
       .promise()
 
-    they 'count 0 if a file exist with same checksum', (ssh) ->
+    they 'count 0 if a file exist with same checksum', ({ssh}) ->
       # Download with invalid checksum
       nikita
         ssh: ssh
@@ -195,7 +195,7 @@ describe 'file.download url', ->
       
   describe 'error', ->
 
-    they 'path must be absolute over ssh', (ssh) ->
+    they 'path must be absolute over ssh', ({ssh}) ->
       return unless ssh
       nikita
         ssh: ssh

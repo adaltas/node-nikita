@@ -5,7 +5,7 @@ they = require('ssh2-they').configure ssh...
 
 describe 'tools.ssh.keygen', ->
 
-  they 'a new key', (ssh) ->
+  they 'a new key', ({ssh}) ->
     nikita
       ssh: ssh
     .tools.ssh.keygen

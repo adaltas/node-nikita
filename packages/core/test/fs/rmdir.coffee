@@ -2,13 +2,13 @@
 fs = require 'ssh2-fs'
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'fs.rmdir', ->
 
-  they 'remove', (ssh) ->
+  they 'remove', ({ssh}) ->
     nikita
       ssh: ssh
     .fs.mkdir
@@ -20,7 +20,7 @@ describe 'fs.rmdir', ->
       not: true
     .promise()
 
-  they 'error missing', (ssh) ->
+  they 'error missing', ({ssh}) ->
     validate_error = (err) ->
       err.message.should.eql "ENOENT: no such file or directory, rmdir '#{scratch}/missing'"
       err.errno.should.eql -2

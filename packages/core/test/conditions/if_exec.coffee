@@ -8,21 +8,21 @@ return unless tags.posix
 
 describe 'if_exec', ->
 
-  they 'string succeed if command succeed', (ssh, next) ->
+  they 'string succeed if command succeed', ({ssh}, next) ->
     conditions.if_exec.call nikita(ssh: ssh),
       options:
         if_exec: "exit 0"
       -> next()
       (err) -> false.should.be.true()
 
-  they 'string fail if command succeed', (ssh, next) ->
+  they 'string fail if command succeed', ({ssh}, next) ->
     conditions.if_exec.call nikita(ssh: ssh),
       options:
         if_exec: "exit 1"
       -> false.should.be.true()
       () -> next()
 
-  they 'array fail if at least one command fail', (ssh, next) ->
+  they 'array fail if at least one command fail', ({ssh}, next) ->
     conditions.if_exec.call nikita(ssh: ssh),
       options:
         if_exec: [
@@ -33,7 +33,7 @@ describe 'if_exec', ->
       -> false.should.be.true()
       next
 
-  they 'array succeed if all commands succeed', (ssh, next) ->
+  they 'array succeed if all commands succeed', ({ssh}, next) ->
     conditions.if_exec.call nikita(ssh: ssh),
       options:
         if_exec: [
@@ -44,7 +44,7 @@ describe 'if_exec', ->
       -> next()
       (err) -> false.should.be.true()
 
-  they 'dont change status of previous action', (ssh) ->
+  they 'dont change status of previous action', ({ssh}) ->
     nikita
       ssh: ssh
     .call ({}, callback) ->
@@ -67,21 +67,21 @@ describe 'if_exec', ->
 
 describe 'unless_exec', ->
 
-  they 'string succeed if command fail', (ssh, next) ->
+  they 'string succeed if command fail', ({ssh}, next) ->
     conditions.unless_exec.call nikita(ssh: ssh),
       options:
         unless_exec: "exit 0"
       -> false.should.be.true()
       next
 
-  they 'string fail if command fail', (ssh, next) ->
+  they 'string fail if command fail', ({ssh}, next) ->
     conditions.unless_exec.call nikita(ssh: ssh),
       options:
         unless_exec: "exit 1"
       -> next()
       () -> false.should.be.true()
 
-  they 'array fail if at least one command succeed', (ssh, next) ->
+  they 'array fail if at least one command succeed', ({ssh}, next) ->
     conditions.unless_exec.call nikita(ssh: ssh),
       options:
         unless_exec: [
@@ -92,7 +92,7 @@ describe 'unless_exec', ->
       -> false.should.be.true()
       next
 
-  they 'array succeed if all commands fail', (ssh, next) ->
+  they 'array succeed if all commands fail', ({ssh}, next) ->
     conditions.unless_exec.call nikita(ssh: ssh),
       options:
         unless_exec: [

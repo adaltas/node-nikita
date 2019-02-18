@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.system_execute_arc_chroot
 
 describe 'system.execute', ->
 
-  they 'target as string', (ssh) ->
+  they 'target as string', ({ssh}) ->
     nikita
       ssh: ssh
     .system.execute
@@ -35,7 +35,7 @@ describe 'system.execute', ->
       not: true
     .promise()
 
-  they 'require ', (ssh) ->
+  they 'require ', ({ssh}) ->
     nikita
       ssh: ssh
     .system.execute

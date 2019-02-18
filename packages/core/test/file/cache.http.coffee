@@ -3,7 +3,7 @@ http = require 'http'
 path = require 'path'
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
@@ -26,7 +26,7 @@ describe 'file.cache http', ->
     server.close()
     server.on 'close', next
 
-  they 'handles string argument', (ssh) ->
+  they 'handles string argument', ({ssh}) ->
     nikita
       ssh: ssh
     .file.cache 'http://localhost:12345/my_file',
@@ -36,7 +36,7 @@ describe 'file.cache http', ->
       target.should.eql "#{scratch}/my_cache_dir/my_file" unless err
     .promise()
 
-  they 'into local cache_dir', (ssh) ->
+  they 'into local cache_dir', ({ssh}) ->
     nikita
       ssh: ssh
     .file.cache
@@ -55,7 +55,7 @@ describe 'file.cache http', ->
       target: "#{scratch}/my_cache_dir/my_file"
     .promise()
 
-  they 'option fail with invalid exit code', (ssh) ->
+  they 'option fail with invalid exit code', ({ssh}) ->
     nikita
       ssh: ssh
     .file.cache
@@ -74,7 +74,7 @@ describe 'file.cache http', ->
 
   describe 'hash', ->
 
-    they 'current cache file match provided hash', (ssh) ->
+    they 'current cache file match provided hash', ({ssh}) ->
       logs = []
       nikita
         ssh: ssh
@@ -92,7 +92,7 @@ describe 'file.cache http', ->
         ('Hashes match, skipping' in logs).should.be.true() unless err
       .promise()
 
-    they 'current cache file dont match provided hash', (ssh) ->
+    they 'current cache file dont match provided hash', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -106,7 +106,7 @@ describe 'file.cache http', ->
         status.should.be.true() unless err
       .promise()
 
-    they 'target file must match the hash', (ssh) ->
+    they 'target file must match the hash', ({ssh}) ->
       nikita
         ssh: ssh
       .file.cache
@@ -118,7 +118,7 @@ describe 'file.cache http', ->
         err.message.should.eql "Invalid Target Hash: target \"#{scratch}/cache/missing\" got 9e076f5885f5cc16a4b5aeb8de4adff5 instead of xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
       .promise()
 
-    they 'md5', (ssh) ->
+    they 'md5', ({ssh}) ->
       logs = []
       nikita
         ssh: ssh

@@ -1,13 +1,13 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch, krb5} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.krb5_delprinc
 
 describe 'krb5.delprinc', ->
 
-  they 'a principal which exists', (ssh) ->
+  they 'a principal which exists', ({ssh}) ->
     nikita
       ssh: ssh
       kadmin_server: krb5.kadmin_server
@@ -22,7 +22,7 @@ describe 'krb5.delprinc', ->
       status.should.be.true() unless err
     .promise()
 
-  they 'a principal which does not exist', (ssh) ->
+  they 'a principal which does not exist', ({ssh}) ->
     nikita
       ssh: ssh
       kadmin_server: krb5.kadmin_server

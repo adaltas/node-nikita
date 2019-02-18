@@ -2,13 +2,13 @@
 nikita = require '../../src'
 misc = require '../../src/misc'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'file.ini option stringify_single_key', ->
 
-  they 'stringify write only key on props', (ssh) ->
+  they 'stringify write only key on props', ({ssh}) ->
     nikita
       ssh: ssh
     .file.ini
@@ -26,7 +26,7 @@ describe 'file.ini option stringify_single_key', ->
       content: '[user]\nname = toto\n--hasACar\n'
     .promise()
 
-  they 'merge ini containing single key lines', (ssh) ->
+  they 'merge ini containing single key lines', ({ssh}) ->
     nikita
       ssh: ssh
     .file

@@ -1,13 +1,13 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'file.types.my_cnf', ->
 
-  they 'generate from content', (ssh) ->
+  they 'generate from content', ({ssh}) ->
     nikita
       ssh: ssh
     .file.types.my_cnf

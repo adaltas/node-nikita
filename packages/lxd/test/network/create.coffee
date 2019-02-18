@@ -6,7 +6,7 @@ they = require('ssh2-they').configure ssh...
 return unless tags.lxd
 
 describe 'lxd.network.create', ->
-  they 'Create a new network', (ssh) ->
+  they 'Create a new network', ({ssh}) ->
     nikita
       ssh: ssh
       lxd: lxd
@@ -21,7 +21,7 @@ describe 'lxd.network.create', ->
     .promise()
 
 
-  they 'Update a network', (ssh) ->
+  they 'Update a network', ({ssh}) ->
     nikita
       ssh: ssh
       lxd: lxd
@@ -39,7 +39,7 @@ describe 'lxd.network.create', ->
       status.should.be.true()
     .promise()
 
-  they 'Configuration unchanged', (ssh) ->
+  they 'Configuration unchanged', ({ssh}) ->
     nikita
       ssh: ssh
       lxd: lxd

@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'log.md', ->
   
-  they 'write string', (ssh) ->
+  they 'write string', ({ssh}) ->
     nikita
       ssh: ssh
     .log.md basedir: scratch
@@ -21,7 +21,7 @@ describe 'log.md', ->
       status: false
     .promise()
   
-  they 'write message', (ssh) ->
+  they 'write message', ({ssh}) ->
     nikita
       ssh: ssh
     .log.md basedir: scratch
@@ -35,7 +35,7 @@ describe 'log.md', ->
       status: false
     .promise()
   
-  they 'write message and module', (ssh) ->
+  they 'write message and module', ({ssh}) ->
     nikita
       ssh: ssh
     .log.md basedir: scratch
@@ -49,7 +49,7 @@ describe 'log.md', ->
       status: false
     .promise()
     
-  they 'default options', (ssh) ->
+  they 'default options', ({ssh}) ->
     nikita
       ssh: ssh
       log_md: basedir: scratch
@@ -66,7 +66,7 @@ describe 'log.md', ->
 
   describe 'stdout', ->
     
-    they 'in base directory', (ssh) ->
+    they 'in base directory', ({ssh}) ->
       m = nikita
         ssh: ssh
       .log.md basedir: scratch

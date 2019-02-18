@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'system.user.read', ->
 
-  they 'shy doesnt modify the status', (ssh) ->
+  they 'shy doesnt modify the status', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -24,7 +24,7 @@ describe 'system.user.read', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'activate locales', (ssh) ->
+  they 'activate locales', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -44,7 +44,7 @@ describe 'system.user.read', ->
 
   describe 'option "uid"', ->
 
-    they 'map a username to group record', (ssh) ->
+    they 'map a username to group record', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -62,7 +62,7 @@ describe 'system.user.read', ->
         user.should.eql user: 'nobody', uid: 99, gid: 99, comment: 'nobody', home: '/', shell: '/usr/bin/nologin'
       .promise()
 
-    they 'map a uid to user record', (ssh) ->
+    they 'map a uid to user record', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -80,7 +80,7 @@ describe 'system.user.read', ->
         user.should.eql user: 'nobody', uid: 99, gid: 99, comment: 'nobody', home: '/', shell: '/usr/bin/nologin'
       .promise()
 
-    they 'throw error if uid dont match any user', (ssh) ->
+    they 'throw error if uid dont match any user', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -105,7 +105,7 @@ describe 'system.user.read', ->
 
   describe 'option "cache"', ->
 
-    they 'is disabled by default', (ssh) ->
+    they 'is disabled by default', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -121,7 +121,7 @@ describe 'system.user.read', ->
         (@store['nikita:etc_passwd'] is undefined).should.be.true()
       .promise()
 
-    they 'place group in store', (ssh) ->
+    they 'place group in store', ({ssh}) ->
       logs = []
       nikita
         ssh: ssh
@@ -148,7 +148,7 @@ describe 'system.user.read', ->
 
   describe 'option "log"', ->
 
-    they 'can be true, false, undefined', (ssh) ->
+    they 'can be true, false, undefined', ({ssh}) ->
       logs = []
       nikita
         ssh: ssh

@@ -1,14 +1,14 @@
 
 nikita = require '../../src'
 {tags, ssh, service} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 describe 'service.assert installed', ->
   
   @timeout 50000
   return unless tags.service_install
 
-  they 'succeed if package is installed', (ssh) ->
+  they 'succeed if package is installed', ({ssh}) ->
     nikita
       ssh: ssh
     .service.remove
@@ -20,7 +20,7 @@ describe 'service.assert installed', ->
       installed: true
     .promise()
 
-  they 'fail if package isnt installed', (ssh) ->
+  they 'fail if package isnt installed', ({ssh}) ->
     nikita
       ssh: ssh
     .service.remove
@@ -38,7 +38,7 @@ describe 'service.assert started', ->
   @timeout 50000
   return unless tags.service_systemctl
 
-  they 'succeed if service is started', (ssh) ->
+  they 'succeed if service is started', ({ssh}) ->
     nikita
       ssh: ssh
     .service.remove
@@ -58,7 +58,7 @@ describe 'service.assert started', ->
       err.message.should.eql "Service Started: #{service.srv_name}"
     .promise()
 
-  they 'fail if service isnt started', (ssh) ->
+  they 'fail if service isnt started', ({ssh}) ->
     nikita
       ssh: ssh
     .service.remove
@@ -83,7 +83,7 @@ describe 'service.assert stopped', ->
   @timeout 50000
   return unless tags.service_systemctl
 
-  they 'succeed if service is started', (ssh) ->
+  they 'succeed if service is started', ({ssh}) ->
     nikita
       ssh: ssh
     .service.remove
@@ -103,7 +103,7 @@ describe 'service.assert stopped', ->
       err.message.should.eql "Service Stopped: #{service.srv_name}"
     .promise()
 
-  they 'fail if service isnt started', (ssh) ->
+  they 'fail if service isnt started', ({ssh}) ->
     nikita
       ssh: ssh
     .service.remove

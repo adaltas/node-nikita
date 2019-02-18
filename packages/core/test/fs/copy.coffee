@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'fs.copy', ->
 
-  they 'a file to a directory', (ssh) ->
+  they 'a file to a directory', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -23,7 +23,7 @@ describe 'fs.copy', ->
       content: 'some content'
     .promise()
 
-  they 'a file to a file', (ssh) ->
+  they 'a file to a file', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -40,7 +40,7 @@ describe 'fs.copy', ->
       content: 'some source content'
     .promise()
 
-  they 'option argument default to target', (ssh) ->
+  they 'option argument default to target', ({ssh}) ->
     nikita
       ssh: ssh
     .file.touch "#{scratch}/a_source"

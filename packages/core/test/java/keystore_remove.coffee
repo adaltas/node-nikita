@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
@@ -9,7 +9,7 @@ describe 'java.keystore_remove', ->
 
   describe 'options', ->
 
-    they 'keystore doesnt need to exists', (ssh) ->
+    they 'keystore doesnt need to exists', ({ssh}) ->
       nikita
         ssh: ssh
       .java.keystore_remove
@@ -20,7 +20,7 @@ describe 'java.keystore_remove', ->
         status.should.be.false() unless err
       .promise()
 
-    they 'caname or name must be provided', (ssh) ->
+    they 'caname or name must be provided', ({ssh}) ->
       nikita
         ssh: ssh
       .java.keystore_remove
@@ -33,7 +33,7 @@ describe 'java.keystore_remove', ->
 
   describe 'cacert', ->
 
-    they 'remove cacerts', (ssh) ->
+    they 'remove cacerts', ({ssh}) ->
       keystore =  "#{scratch}/cacerts"
       caname = 'my_alias'
       storepass = 'changeit'
@@ -65,7 +65,7 @@ describe 'java.keystore_remove', ->
 
   describe 'key', ->
 
-    they 'remove cacerts file', (ssh) ->
+    they 'remove cacerts file', ({ssh}) ->
       keystore =  "#{scratch}/cacerts"
       caname = 'my_alias'
       storepass = 'changeit'

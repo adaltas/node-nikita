@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'wait.time', ->
 
-  they 'time as main argument', (ssh) ->
+  they 'time as main argument', ({ssh}) ->
     before = Date.now()
     nikita
       ssh: ssh
@@ -19,7 +19,7 @@ describe 'wait.time', ->
       (interval >= 1000 and interval < 1500).should.be.true()
     .promise()
 
-  they 'before callback', (ssh) ->
+  they 'before callback', ({ssh}) ->
     before = Date.now()
     nikita
       ssh: ssh
@@ -30,7 +30,7 @@ describe 'wait.time', ->
       (interval >= 1000 and interval < 1500).should.be.true()
     .promise()
 
-  they 'wait before sync call', (ssh) ->
+  they 'wait before sync call', ({ssh}) ->
     before = Date.now()
     nikita
       ssh: ssh
@@ -41,7 +41,7 @@ describe 'wait.time', ->
       (interval >= 1000 and interval < 1500).should.be.true()
     .promise()
   
-  they  'validate argument', (ssh) ->
+  they  'validate argument', ({ssh}) ->
     before = Date.now()
     nikita
       ssh: ssh

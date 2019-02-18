@@ -1,13 +1,13 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch, ruby} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.tools_rubygems
 
 describe 'tools.rubygems.fetch', ->
 
-  they 'with a version', (ssh) ->
+  they 'with a version', ({ssh}) ->
     nikita
       ssh: ssh
       ruby: ruby
@@ -24,7 +24,7 @@ describe 'tools.rubygems.fetch', ->
       target: "#{scratch}/execjs-2.7.0.gem"
     .promise()
 
-  they 'without a version', (ssh) ->
+  they 'without a version', ({ssh}) ->
     nikita
       ssh: ssh
       ruby: ruby

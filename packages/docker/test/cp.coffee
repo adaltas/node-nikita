@@ -2,7 +2,7 @@
 nikita = require '@nikitajs/core'
 path = require 'path'
 {tags, ssh, scratch, docker} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.docker
 
@@ -10,7 +10,7 @@ describe 'docker.cp', ->
 
   @timeout 20000
   
-  they 'a remote file to a local file', (ssh) ->
+  they 'a remote file to a local file', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -32,7 +32,7 @@ describe 'docker.cp', ->
       container: 'nikita_extract'
     .promise()
 
-  they 'a remote file to a local directory', (ssh) ->
+  they 'a remote file to a local directory', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -52,7 +52,7 @@ describe 'docker.cp', ->
     .docker.rm container: 'nikita_extract'
     .promise()
 
-  they 'a local file to a remote file', (ssh) ->
+  they 'a local file to a remote file', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -76,7 +76,7 @@ describe 'docker.cp', ->
     .docker.rm container: 'nikita_extract'
     .promise()
 
-  they 'a local file to a remote directory', (ssh) ->
+  they 'a local file to a remote directory', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker

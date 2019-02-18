@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
@@ -9,7 +9,7 @@ describe 'system.copy', ->
   
   describe 'options parent', ->
     
-    they 'create parent directory', (ssh) ->
+    they 'create parent directory', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -23,7 +23,7 @@ describe 'system.copy', ->
         content: 'hello'
       .promise()
   
-    they 'throw error if false', (ssh) ->
+    they 'throw error if false', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -36,7 +36,7 @@ describe 'system.copy', ->
       .promise()
       .should.be.rejectedWith "Invalid Target: no such file or directory, open \"#{scratch}/a_dir/a_new_file\""
         
-    they 'pass mode attribute', (ssh) ->
+    they 'pass mode attribute', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -57,7 +57,7 @@ describe 'system.copy', ->
 
   describe 'file', ->
 
-    they 'with a filename inside a existing directory', (ssh) ->
+    they 'with a filename inside a existing directory', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -78,7 +78,7 @@ describe 'system.copy', ->
         status.should.be.false() unless err
       .promise()
 
-    they 'into a directory', (ssh) ->
+    they 'into a directory', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -95,7 +95,7 @@ describe 'system.copy', ->
         target: "#{scratch}/existing_dir/a_file"
       .promise()
 
-    they 'over an existing file', (ssh) ->
+    they 'over an existing file', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -119,7 +119,7 @@ describe 'system.copy', ->
         status.should.be.false() unless err
       .promise()
 
-    they 'change permissions', (ssh) ->
+    they 'change permissions', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -148,7 +148,7 @@ describe 'system.copy', ->
         mode: 0o0755
       .promise()
 
-    they 'handle hidden files', (ssh) ->
+    they 'handle hidden files', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -162,7 +162,7 @@ describe 'system.copy', ->
         content: 'hello'
       .promise()
     
-    they 'set permissions', (ssh) ->
+    they 'set permissions', ({ssh}) ->
       nikita
       .file.touch
         target: "#{scratch}/a_source_file"
@@ -176,7 +176,7 @@ describe 'system.copy', ->
         mode: 0o0644
       .promise()
     
-    they 'preserve permissions', (ssh) ->
+    they 'preserve permissions', ({ssh}) ->
       nikita
       .file.touch
         target: "#{scratch}/a_source_file"
@@ -192,7 +192,7 @@ describe 'system.copy', ->
   
   describe 'link', ->
 
-    they 'file into file', (ssh) ->
+    they 'file into file', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -209,7 +209,7 @@ describe 'system.copy', ->
         content: 'hello'
       .promise()
 
-    they 'file parent dir', (ssh) ->
+    they 'file parent dir', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -232,7 +232,7 @@ describe 'system.copy', ->
 
   describe 'directory', ->
 
-    they 'should copy without slash at the end', (ssh) ->
+    they 'should copy without slash at the end', ({ssh}) ->
       nikita
         ssh: ssh
       .system.mkdir "#{scratch}/source/a_dir"
@@ -258,7 +258,7 @@ describe 'system.copy', ->
       .file.assert "#{scratch}/target_2/source/a_file"
       .promise()
 
-    they 'should copy the files when dir end with slash', (ssh) ->
+    they 'should copy the files when dir end with slash', ({ssh}) ->
       nikita
         ssh: ssh
       .system.mkdir "#{scratch}/source/a_dir"
@@ -284,7 +284,7 @@ describe 'system.copy', ->
       .file.assert "#{scratch}/target_2/a_file"
       .promise()
 
-    they 'should copy hidden files', (ssh) ->
+    they 'should copy hidden files', ({ssh}) ->
       nikita
         ssh: ssh
       .system.mkdir
@@ -305,7 +305,7 @@ describe 'system.copy', ->
         ]
       .promise()
     
-    they 'set permissions', (ssh) ->
+    they 'set permissions', ({ssh}) ->
       nikita
       .system.mkdir
         target: "#{scratch}/a_source"
@@ -333,7 +333,7 @@ describe 'system.copy', ->
         mode: 0o0700
       .promise()
     
-    they 'preserve permissions', (ssh) ->
+    they 'preserve permissions', ({ssh}) ->
       nikita
       .system.mkdir
         target: "#{scratch}/a_source"
@@ -361,7 +361,7 @@ describe 'system.copy', ->
         mode: 0o0644
       .promise()
 
-    they.skip 'should copy with globing and hidden files', (ssh) ->
+    they.skip 'should copy with globing and hidden files', ({ssh}) ->
       nikita
         ssh: ssh
       # if the target doesn't exists, then copy as target

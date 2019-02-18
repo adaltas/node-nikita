@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 {tags, ssh, service} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.service_startup
 
@@ -11,7 +11,7 @@ describe 'service.startup', ->
   
   describe 'startup', ->
 
-    they 'from service', (ssh) ->
+    they 'from service', ({ssh}) ->
       nikita
         ssh: ssh
       .service.remove
@@ -42,7 +42,7 @@ describe 'service.startup', ->
         status.should.be.false() unless err
       .promise()
 
-    they 'string argument', (ssh) ->
+    they 'string argument', ({ssh}) ->
       nikita
         ssh: ssh
       .service.remove

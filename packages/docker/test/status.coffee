@@ -1,13 +1,13 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch, docker} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.docker
 
 describe 'docker.status', ->
 
-  they 'on stopped  container', (ssh) ->
+  they 'on stopped  container', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -28,7 +28,7 @@ describe 'docker.status', ->
       force: true
     .promise()
 
-  they 'on running container', (ssh) ->
+  they 'on running container', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker

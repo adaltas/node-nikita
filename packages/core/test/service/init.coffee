@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 {tags, ssh} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.service_systemctl
 
@@ -9,7 +9,7 @@ describe 'service.init', ->
   
   @timeout 60000
 
-  they 'init file with target and source (default)', (ssh) ->
+  they 'init file with target and source (default)', ({ssh}) ->
     nikita
       ssh: ssh
     .service.remove 'cronie'
@@ -21,7 +21,7 @@ describe 'service.init', ->
     .file.assert '/etc/init.d/crond'
     .promise()
   
-  they 'init file with source only (default)', (ssh) ->
+  they 'init file with source only (default)', ({ssh}) ->
     nikita
       ssh: ssh
     .service.remove 'cronie'
@@ -32,7 +32,7 @@ describe 'service.init', ->
     .file.assert '/etc/init.d/crond'
     .promise()
   
-  they 'init file with source and name (default)', (ssh) ->
+  they 'init file with source and name (default)', ({ssh}) ->
     nikita
       ssh: ssh
     .service.remove 'cronie'
@@ -46,7 +46,7 @@ describe 'service.init', ->
   
   describe 'daemon-reload', ->
   
-    they 'with systemctl sysv-generator', (ssh) ->
+    they 'with systemctl sysv-generator', ({ssh}) ->
       nikita
         ssh: ssh
         if_os: name: ['redhat','centos'], version: '7'
@@ -66,7 +66,7 @@ describe 'service.init', ->
         name: 'stop'
       .promise()
 
-    they 'daemon-reload with systemctl systemd script', (ssh) ->
+    they 'daemon-reload with systemctl systemd script', ({ssh}) ->
       nikita
         ssh: ssh
       .call

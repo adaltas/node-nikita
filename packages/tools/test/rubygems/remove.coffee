@@ -1,13 +1,13 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch, ruby} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.tools_rubygems
 
 describe 'tools.rubygems.remove', ->
 
-  they 'remove an existing package', (ssh) ->
+  they 'remove an existing package', ({ssh}) ->
     nikita
       ssh: ssh
       ruby: ruby
@@ -19,7 +19,7 @@ describe 'tools.rubygems.remove', ->
       status.should.be.true() unless err
     .promise()
 
-  they 'remove a non existing package', (ssh) ->
+  they 'remove a non existing package', ({ssh}) ->
     nikita
       ssh: ssh
       ruby: ruby
@@ -33,7 +33,7 @@ describe 'tools.rubygems.remove', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'remove multiple versions', (ssh) ->
+  they 'remove multiple versions', ({ssh}) ->
     nikita
       ssh: ssh
       ruby: ruby

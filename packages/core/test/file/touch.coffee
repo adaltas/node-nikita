@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'file.touch', ->
   
-  they 'as a target option', (ssh) ->
+  they 'as a target option', ({ssh}) ->
     nikita
       ssh: ssh
     .file.touch
@@ -23,7 +23,7 @@ describe 'file.touch', ->
       content: ''
     .promise()
 
-  they 'as a string', (ssh) ->
+  they 'as a string', ({ssh}) ->
     nikita
       ssh: ssh
     .file.touch "#{scratch}/a_file", (err, {status}) ->
@@ -35,7 +35,7 @@ describe 'file.touch', ->
       content: ''
     .promise()
 
-  they 'as an array of strings', (ssh) ->
+  they 'as an array of strings', ({ssh}) ->
     nikita
       ssh: ssh
     .file.touch [
@@ -51,7 +51,7 @@ describe 'file.touch', ->
       content: ''
     .promise()
 
-  they 'an existing file', (ssh) ->
+  they 'an existing file', ({ssh}) ->
     nikita
       ssh: ssh
     .file.touch
@@ -64,7 +64,7 @@ describe 'file.touch', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'valid default permissions', (ssh) ->
+  they 'valid default permissions', ({ssh}) ->
     nikita
       ssh: ssh
     .file.touch
@@ -74,7 +74,7 @@ describe 'file.touch', ->
       mode: 0o0644
     .promise()
 
-  they 'change permissions', (ssh) ->
+  they 'change permissions', ({ssh}) ->
     nikita
       ssh: ssh
     .file.touch
@@ -85,7 +85,7 @@ describe 'file.touch', ->
       mode: 0o0700
     .promise()
 
-  they 'do not change permissions on existing file if not specified', (ssh) ->
+  they 'do not change permissions on existing file if not specified', ({ssh}) ->
     nikita
       ssh: ssh
     .file.touch
@@ -98,7 +98,7 @@ describe 'file.touch', ->
       mode: 0o0666
     .promise()
 
-  they 'create valid parent dir', (ssh) ->
+  they 'create valid parent dir', ({ssh}) ->
     nikita
       ssh: ssh
     .file.touch
@@ -109,7 +109,7 @@ describe 'file.touch', ->
       mode: 0o0751
     .promise()
 
-  they 'modify time but not status', (ssh) ->
+  they 'modify time but not status', ({ssh}) ->
     stat_org = null
     stat_new = null
     nikita

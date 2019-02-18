@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'system.remove', ->
   
-  they 'accept an option', (ssh) ->
+  they 'accept an option', ({ssh}) ->
     nikita
       ssh: ssh
     .file.touch "#{scratch}/a_file"
@@ -17,7 +17,7 @@ describe 'system.remove', ->
       status.should.be.true() unless err
     .promise()
 
-  they 'accept a string', (ssh) ->
+  they 'accept a string', ({ssh}) ->
     nikita
       ssh: ssh
     .file.touch "#{scratch}/a_file"
@@ -25,7 +25,7 @@ describe 'system.remove', ->
       status.should.be.true() unless err
     .promise()
 
-  they 'accept an array of strings', (ssh) ->
+  they 'accept an array of strings', ({ssh}) ->
     nikita
       ssh: ssh
     .file.touch "#{scratch}/file_1"
@@ -37,7 +37,7 @@ describe 'system.remove', ->
       status.should.be.true() unless err
     .promise()
 
-  they 'a file', (ssh) ->
+  they 'a file', ({ssh}) ->
     nikita
       ssh: ssh
     .file.touch
@@ -52,7 +52,7 @@ describe 'system.remove', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'a link', (ssh) ->
+  they 'a link', ({ssh}) ->
     nikita
       ssh: ssh
     .file.touch "#{scratch}/a_file"
@@ -66,7 +66,7 @@ describe 'system.remove', ->
       not: true
     .promise()
 
-  they 'use a pattern', (ssh) ->
+  they 'use a pattern', ({ssh}) ->
     nikita
       ssh: ssh
     .file.touch "#{scratch}/a_dir/a_file"
@@ -83,7 +83,7 @@ describe 'system.remove', ->
     .file.assert "#{scratch}/a_dir", type: 'directory'
     .promise()
 
-  they 'a dir', (ssh) ->
+  they 'a dir', ({ssh}) ->
     nikita
       ssh: ssh
     .system.mkdir

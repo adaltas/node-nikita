@@ -86,7 +86,7 @@ require('nikita')
         throw Error "Invalid Requirement: openssl not installed on host" if err?.code is 3
         throw Error "Invalid Requirement: openssl not installed on container" if err?.code is 4
       @system.execute
-        if: -> @status(-2) or @status(-1)
+        if: -> not @status(-2) or @status(-1)
         cmd: """
         #{[
           'lxc', 'file', 'push'

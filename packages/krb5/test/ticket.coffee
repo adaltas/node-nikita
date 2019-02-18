@@ -1,13 +1,13 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch, krb5} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.krb5_addprinc
 
 describe 'krb5.ticket', ->
 
-  they 'create a new principal without a randkey', (ssh) ->
+  they 'create a new principal without a randkey', ({ssh}) ->
     nikita
       ssh: ssh
       kadmin_server: krb5.kadmin_server

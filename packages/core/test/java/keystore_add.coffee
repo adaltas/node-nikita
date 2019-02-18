@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
@@ -9,7 +9,7 @@ describe 'java.keystore_add', ->
 
   describe 'cacert', ->
 
-    they 'create new cacerts file', (ssh) ->
+    they 'create new cacerts file', ({ssh}) ->
       nikita
         ssh: ssh
       .java.keystore_add
@@ -21,7 +21,7 @@ describe 'java.keystore_add', ->
         status.should.be.true() unless err
       .promise()
 
-    they 'create parent directory', (ssh) ->
+    they 'create parent directory', ({ssh}) ->
       nikita
         ssh: ssh
       .java.keystore_add
@@ -33,7 +33,7 @@ describe 'java.keystore_add', ->
         status.should.be.true() unless err
       .promise()
 
-    they 'detect existing cacert signature', (ssh) ->
+    they 'detect existing cacert signature', ({ssh}) ->
       nikita
         ssh: null
       .java.keystore_add
@@ -51,7 +51,7 @@ describe 'java.keystore_add', ->
         status.should.be.false() unless err
       .promise()
 
-    they 'update a new cacert with same alias', (ssh) ->
+    they 'update a new cacert with same alias', ({ssh}) ->
       nikita
         ssh: ssh
       .java.keystore_add
@@ -72,7 +72,7 @@ describe 'java.keystore_add', ->
         content: /^my_alias,/m
       .promise()
 
-    they 'fail if ca file does not exist', (ssh) ->
+    they 'fail if ca file does not exist', ({ssh}) ->
       nikita
         ssh: ssh
       .java.keystore_add
@@ -85,7 +85,7 @@ describe 'java.keystore_add', ->
         err.message.should.eql 'CA file does not exist: /path/to/missing/ca.cert.pem'
       .promise()
 
-    they 'import certificate chain', (ssh) ->
+    they 'import certificate chain', ({ssh}) ->
       nikita
         ssh: ssh
       .system.execute
@@ -123,7 +123,7 @@ describe 'java.keystore_add', ->
         content: /^my_alias-2,/m
       .promise()
 
-    they 'honors status with certificate chain', (ssh) ->
+    they 'honors status with certificate chain', ({ssh}) ->
       nikita
         ssh: ssh
       .system.execute
@@ -157,7 +157,7 @@ describe 'java.keystore_add', ->
 
   describe 'key', ->
 
-    they 'create new cacerts file', (ssh) ->
+    they 'create new cacerts file', ({ssh}) ->
       nikita
         ssh: ssh
       .java.keystore_add
@@ -173,7 +173,7 @@ describe 'java.keystore_add', ->
         status.should.be.true() unless err
       .promise()
 
-    they 'detect existing cacert signature', (ssh) ->
+    they 'detect existing cacert signature', ({ssh}) ->
       nikita
         ssh: ssh
       .java.keystore_add
@@ -200,7 +200,7 @@ describe 'java.keystore_add', ->
         status.should.be.false() unless err
       .promise()
 
-    they 'update a new cacert with same alias', (ssh) ->
+    they 'update a new cacert with same alias', ({ssh}) ->
       nikita
         ssh: ssh
       .java.keystore_add
@@ -227,7 +227,7 @@ describe 'java.keystore_add', ->
 
   describe 'keystore', ->
 
-    they.skip 'change password', (ssh) ->
+    they.skip 'change password', ({ssh}) ->
       nikita
         ssh: ssh
       .java.keystore_add
@@ -246,7 +246,7 @@ describe 'java.keystore_add', ->
   
   describe 'option openssl', ->
 
-    they 'throw error if not detected', (ssh) ->
+    they 'throw error if not detected', ({ssh}) ->
       nikita
         ssh: ssh
       .java.keystore_add

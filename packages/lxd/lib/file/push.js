@@ -101,7 +101,7 @@ module.exports = function({options}) {
   });
   this.system.execute({
     if: function() {
-      return this.status(-2) || this.status(-1);
+      return !this.status(-2) || this.status(-1);
     },
     cmd: `${['lxc', 'file', 'push', options.source || options.tmp_file, options.lxd_target, options.create_dirs ? '--create-dirs' : void 0, (options.gid != null) && typeof options.gid === 'number' ? '--gid' : void 0, (options.uid != null) && typeof options.uid === 'number' ? '--uid' : void 0, options.mode ? `--mode ${options.mode}` : void 0].join(' ')}`,
     trap: true,

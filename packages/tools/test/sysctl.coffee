@@ -1,13 +1,13 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'tools.sysctl', ->
 
-  they 'Write properties', (ssh) ->
+  they 'Write properties', ({ssh}) ->
     nikita
       ssh: ssh
     .tools.sysctl
@@ -33,7 +33,7 @@ describe 'tools.sysctl', ->
       """
     .promise()
   
-  they 'Overwrite properties by default', (ssh) ->
+  they 'Overwrite properties by default', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -56,7 +56,7 @@ describe 'tools.sysctl', ->
       """
     .promise()
 
-  they 'Merge properties', (ssh) ->
+  they 'Merge properties', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -88,7 +88,7 @@ describe 'tools.sysctl', ->
       """
     .promise()
 
-  they 'Merge properties with file containing empty lines', (ssh) ->
+  they 'Merge properties with file containing empty lines', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -111,7 +111,7 @@ describe 'tools.sysctl', ->
       """
     .promise()
 
-  they 'honors backup option', (ssh) ->
+  they 'honors backup option', ({ssh}) ->
     nikita
       ssh: ssh
     .tools.sysctl
@@ -134,7 +134,7 @@ describe 'tools.sysctl', ->
 
   describe 'comment', ->
 
-    they 'Not preserved by default', (ssh) ->
+    they 'Not preserved by default', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -161,7 +161,7 @@ describe 'tools.sysctl', ->
         """
       .promise()
 
-    they 'preserved when enabled', (ssh) ->
+    they 'preserved when enabled', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -191,7 +191,7 @@ describe 'tools.sysctl', ->
         """
       .promise()
 
-    they 'handle equal sign in comment', (ssh) ->
+    they 'handle equal sign in comment', ({ssh}) ->
       nikita
         ssh: ssh
       .file

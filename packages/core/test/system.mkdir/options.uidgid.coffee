@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.system_user
 
 describe 'system.mkdir options uid/gid', ->
 
-  they 'change owner uid/gid on creation', (ssh) ->
+  they 'change owner uid/gid on creation', ({ssh}) ->
     # 40744: 4 for directory, 744 for permissions
     nikita
       ssh: ssh

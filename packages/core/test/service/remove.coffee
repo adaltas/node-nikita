@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 {tags, ssh, service} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.service_install
 
@@ -9,7 +9,7 @@ describe 'service.remove', ->
   
   @timeout 20000
 
-  they 'new package', (ssh) ->
+  they 'new package', ({ssh}) ->
     nikita
       ssh: ssh
     .service.install

@@ -2,13 +2,13 @@
 nikita = require '../../src'
 misc = require '../../src/misc'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'fs.lstat', ->
 
-  they 'with a file link', (ssh) ->
+  they 'with a file link', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -25,7 +25,7 @@ describe 'fs.lstat', ->
       misc.stats.isSymbolicLink(stats.mode).should.be.true()
     .promise()
 
-  they 'with a directory link', (ssh) ->
+  they 'with a directory link', ({ssh}) ->
     nikita
       ssh: ssh
     .system.mkdir
@@ -41,7 +41,7 @@ describe 'fs.lstat', ->
       misc.stats.isSymbolicLink(stats.mode).should.be.true()
     .promise()
 
-  they 'option argument default to target', (ssh) ->
+  they 'option argument default to target', ({ssh}) ->
     nikita
       ssh: ssh
     .file.touch "#{scratch}/a_source"

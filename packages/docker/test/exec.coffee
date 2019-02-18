@@ -1,13 +1,13 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch, docker} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.docker
 
 describe 'docker.exec', ->
 
-  they 'simple command', (ssh) ->
+  they 'simple command', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -28,7 +28,7 @@ describe 'docker.exec', ->
       force: true
     .promise()
 
-  they 'on stopped container', (ssh) ->
+  they 'on stopped container', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -51,7 +51,7 @@ describe 'docker.exec', ->
       force: true
     .promise()
 
-  they 'on non existing container', (ssh) ->
+  they 'on non existing container', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -63,7 +63,7 @@ describe 'docker.exec', ->
       err.message.should.eql 'Error: No such container: nikita_fake_container'
     .promise()
 
-  they 'skip exit code', (ssh) ->
+  they 'skip exit code', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker

@@ -1,7 +1,7 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch, docker} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.docker
 
@@ -10,7 +10,7 @@ describe 'docker.load', ->
 # timestamp ensures that hash of the built image will be unique and
 # image checksum is also unique
 
-  they 'loads simple image', (ssh) ->
+  they 'loads simple image', ({ssh}) ->
     @timeout 30000
     nikita
       ssh: ssh
@@ -37,7 +37,7 @@ describe 'docker.load', ->
       image: 'nikita/load_test'
     .promise()
 
-  they 'not loading if checksum', (ssh) ->
+  they 'not loading if checksum', ({ssh}) ->
     expect_checksum = null
     nikita
       ssh: ssh
@@ -62,7 +62,7 @@ describe 'docker.load', ->
         status.should.be.false() unless err
     .promise()
 
-  they 'status not modified if same image', (ssh) ->
+  they 'status not modified if same image', ({ssh}) ->
     @timeout 30000
     nikita
       ssh: ssh

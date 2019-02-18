@@ -1,7 +1,7 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.tools_repo
 
@@ -9,7 +9,7 @@ describe 'tools.repo', ->
 
   @timeout 200000
 
-  they 'Write with source option', (ssh) ->
+  they 'Write with source option', ({ssh}) ->
     nikita
       ssh: ssh
     .system.mkdir "#{scratch}/repo"
@@ -36,7 +36,7 @@ describe 'tools.repo', ->
     .file.assert "#{scratch}/repo/centos.repo"
     .promise()
   
-  they 'Write with content option', (ssh) ->
+  they 'Write with content option', ({ssh}) ->
     nikita
       ssh: ssh
     .system.mkdir "#{scratch}/repo"
@@ -63,7 +63,7 @@ describe 'tools.repo', ->
       content: '[base]\nname = CentOS-$releasever - Base\nbaseurl = http://mirror.centos.org/centos/$releasever/os/$basearch/\ngpgcheck = 0\n'
     .promise()
   
-  they 'delete files with replace option', (ssh) ->
+  they 'delete files with replace option', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -93,7 +93,7 @@ describe 'tools.repo', ->
       not: true
     .promise()
   
-  they 'Download GPG Keys option', (ssh) ->
+  they 'Download GPG Keys option', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -114,7 +114,7 @@ describe 'tools.repo', ->
     .file.assert "#{scratch}/RPM-GPG-KEY-Jenkins"
     .promise()
   
-  they 'Download repo from remote location', (ssh) ->
+  they 'Download repo from remote location', ({ssh}) ->
     nikita
       ssh: ssh
     .system.remove '/etc/yum.repos.d/hdp.repo'
@@ -129,7 +129,7 @@ describe 'tools.repo', ->
     .file.assert '/etc/yum.repos.d/hdp.repo'
     .promise()
 
-  they 'Do Not update Package', (ssh) ->
+  they 'Do Not update Package', ({ssh}) ->
     nikita
       ssh: ssh
     .system.remove '/etc/yum.repos.d/mongodb.repo'
@@ -186,7 +186,7 @@ describe 'tools.repo', ->
       cmd: "mongo --version | grep shell | awk '{ print $4 }' | grep '3.2'"
     .promise()
 
-  they 'Update Package', (ssh) ->
+  they 'Update Package', ({ssh}) ->
     nikita
       ssh: ssh
     .system.remove '/etc/yum.repos.d/mongodb.repo'

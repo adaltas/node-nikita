@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'fs.createWriteStream', ->
 
-  they 'write a file', (ssh) ->
+  they 'write a file', ({ssh}) ->
     nikita
       ssh: ssh
     .fs.createWriteStream
@@ -20,7 +20,7 @@ describe 'fs.createWriteStream', ->
       content: 'hello'
     .promise()
 
-  they 'throw error if parent direction does not exist', (ssh) ->
+  they 'throw error if parent direction does not exist', ({ssh}) ->
     nikita
       ssh: ssh
     .fs.createWriteStream
@@ -37,7 +37,7 @@ describe 'fs.createWriteStream', ->
       err.path.should.eql "#{scratch}/a_dir/a_file"
     .promise()
   
-  they 'option flags a', (ssh) ->
+  they 'option flags a', ({ssh}) ->
     nikita
       ssh: ssh
     .fs.createWriteStream

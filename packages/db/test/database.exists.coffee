@@ -1,7 +1,7 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, db} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.db
 
@@ -9,7 +9,7 @@ for engine, _ of db
 
   describe "db.database.exists #{engine}", ->
 
-    they 'database missing', (ssh) ->
+    they 'database missing', ({ssh}) ->
       nikita
         ssh: ssh
         db: db[engine]
@@ -20,7 +20,7 @@ for engine, _ of db
       .assert status: false
       .promise()
 
-    they 'database exists', (ssh) ->
+    they 'database exists', ({ssh}) ->
       nikita
         ssh: ssh
         db: db[engine]

@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'options "target"', ->
 
-  they 'home', (ssh) ->
+  they 'home', ({ssh}) ->
     nikita
       ssh: ssh
     .call target: '~', ({options}) ->
@@ -16,7 +16,7 @@ describe 'options "target"', ->
       else options.target.should.eql "."
     .promise()
 
-  they 'relative to home', (ssh) ->
+  they 'relative to home', ({ssh}) ->
     nikita
       ssh: ssh
     .call target: '~/.profile', ({options}) ->

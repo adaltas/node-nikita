@@ -1,13 +1,13 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch, krb5} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.krb5_ktadd
 
 describe 'krb5.ktadd', ->
 
-  they 'create a new keytab', (ssh) ->
+  they 'create a new keytab', ({ssh}) ->
     nikita
       ssh: ssh
       kadmin_server: krb5.kadmin_server
@@ -28,7 +28,7 @@ describe 'krb5.ktadd', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'detect kvno', (ssh) ->
+  they 'detect kvno', ({ssh}) ->
     nikita
       ssh: ssh
       kadmin_server: krb5.kadmin_server
@@ -55,7 +55,7 @@ describe 'krb5.ktadd', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'change permission', (ssh) ->
+  they 'change permission', ({ssh}) ->
     nikita
       ssh: ssh
       kadmin_server: krb5.kadmin_server

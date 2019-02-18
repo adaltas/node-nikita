@@ -2,7 +2,7 @@
 nikita = require '@nikitajs/core'
 misc = require '@nikitajs/core/src/misc'
 {tags, ssh, db} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.db
 
@@ -10,7 +10,7 @@ for engine, _ of db
 
   describe "db.user #{engine}", ->
 
-    they 'validate options', (ssh) ->
+    they 'validate options', ({ssh}) ->
       nikita
         ssh: ssh
       .db.user
@@ -31,7 +31,7 @@ for engine, _ of db
         err.message.should.eql 'Missing option: "admin_username"'
       .promise()
 
-    they 'add new user', (ssh) ->
+    they 'add new user', ({ssh}) ->
       nikita
         ssh: ssh
         db: db[engine]
@@ -53,7 +53,7 @@ for engine, _ of db
       .db.user.remove 'test_user_1_user'
       .promise()
 
-    they 'change password', (ssh) ->
+    they 'change password', ({ssh}) ->
       sql_list_tables = switch engine
         when 'mariadb', 'mysql'
           'show tables'

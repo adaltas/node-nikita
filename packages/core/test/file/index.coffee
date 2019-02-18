@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
@@ -9,7 +9,7 @@ describe 'file', ->
 
   describe 'options content', ->
   
-    they 'is a string', (ssh) ->
+    they 'is a string', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -27,7 +27,7 @@ describe 'file', ->
         content: 'Hello'
       .promise()
   
-    they 'is a function', (ssh) ->
+    they 'is a function', ({ssh}) ->
       content = 'invalid'
       nikita
         ssh: ssh
@@ -42,7 +42,7 @@ describe 'file', ->
         content: 'valid'
       .promise()
 
-    they 'status is false is content is the same', (ssh) ->
+    they 'status is false is content is the same', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -55,7 +55,7 @@ describe 'file', ->
         status.should.be.false() unless err
       .promise()
 
-    they 'with source is a file', (ssh) ->
+    they 'with source is a file', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -79,7 +79,7 @@ describe 'file', ->
         content: 'Hello'
       .promise()
 
-    they 'empty file', (ssh) ->
+    they 'empty file', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -92,7 +92,7 @@ describe 'file', ->
         content: ''
       .promise()
 
-    they 'touch file', (ssh) ->
+    they 'touch file', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -118,7 +118,7 @@ describe 'file', ->
         content: 'toto'
       .promise()
 
-    they 'handle integer type', (ssh) ->
+    they 'handle integer type', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -131,7 +131,7 @@ describe 'file', ->
         content: '123'
       .promise()
 
-    they 'create parent directory', (ssh) ->
+    they 'create parent directory', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -146,7 +146,7 @@ describe 'file', ->
 
   describe 'link', ->
 
-    they 'follow link by default', (ssh) ->
+    they 'follow link by default', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -166,7 +166,7 @@ describe 'file', ->
         content: 'ok'
       .promise()
 
-    they 'throw error if link is a directory', (ssh) ->
+    they 'throw error if link is a directory', ({ssh}) ->
       nikita
         ssh: ssh
       .system.mkdir
@@ -182,7 +182,7 @@ describe 'file', ->
         err.code.should.eql 'EISDIR'
       .promise()
 
-    they 'dont follow link if option "unlink"', (ssh) ->
+    they 'dont follow link if option "unlink"', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -203,7 +203,7 @@ describe 'file', ->
         content: 'ok'
       .promise()
 
-    they 'dont follow link if option "unlink" and link is directory', (ssh) ->
+    they 'dont follow link if option "unlink" and link is directory', ({ssh}) ->
       nikita
         ssh: ssh
       .system.mkdir
@@ -226,7 +226,7 @@ describe 'file', ->
 
   describe 'ownerships and permissions', ->
 
-    they 'set permission', (ssh) ->
+    they 'set permission', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -238,7 +238,7 @@ describe 'file', ->
         mode: 0o0700
       .promise()
 
-    they 'does not modify parent', (ssh) ->
+    they 'does not modify parent', ({ssh}) ->
       nikita
         ssh: ssh
       .system.mkdir
@@ -253,7 +253,7 @@ describe 'file', ->
         mode: 0o0744
       .promise()
       
-    they 'ensure mode is preserve on content update', (ssh) ->
+    they 'ensure mode is preserve on content update', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -268,7 +268,7 @@ describe 'file', ->
         mode: 0o0755
       .promise()
 
-    they 'change permission', (ssh) ->
+    they 'change permission', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -289,7 +289,7 @@ describe 'file', ->
         status.should.be.false() unless err
       .promise()
 
-    they 'change permission after modification', (ssh) ->
+    they 'change permission after modification', ({ssh}) ->
       nikita
       .file
         ssh: ssh
@@ -308,7 +308,7 @@ describe 'file', ->
 
   describe 'from and to', ->
   
-    they 'with from and with to', (ssh) ->
+    they 'with from and with to', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -325,7 +325,7 @@ describe 'file', ->
         content: 'here we are\n# from\nmy friend\n# to\nyou coquin'
       .promise()
 
-    they 'with from and with to append', (ssh) ->
+    they 'with from and with to append', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -356,7 +356,7 @@ describe 'file', ->
         content: 'here we are\nyou coquin\n# from\nmy best friend\n# to\n'
       .promise()
 
-    they 'with from and without to', (ssh) ->
+    they 'with from and without to', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -371,7 +371,7 @@ describe 'file', ->
         content: 'here we are\n# from\nmy friend'
       .promise()
 
-    they 'without from and with to', (ssh) ->
+    they 'without from and with to', ({ssh}) ->
       nikita.file
         ssh: ssh
         target: "#{scratch}/fromto.md"
@@ -387,7 +387,7 @@ describe 'file', ->
 
   describe 'replace', ->
   
-    they 'without match and place_before a string', (ssh) ->
+    they 'without match and place_before a string', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -400,7 +400,7 @@ describe 'file', ->
         content: 'here we are\nmy friend\nyou+coquin'
       .promise()
   
-    they 'without match and place_before a regexp', (ssh) ->
+    they 'without match and place_before a regexp', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -415,7 +415,7 @@ describe 'file', ->
 
   describe 'match & replace', ->
   
-    they 'with match a line as a string', (ssh) ->
+    they 'with match a line as a string', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -436,7 +436,7 @@ describe 'file', ->
         content: 'here we are\nmy friend\nyou coquin'
       .promise()
   
-    they 'with match a word as a string', (ssh) ->
+    they 'with match a word as a string', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -451,7 +451,7 @@ describe 'file', ->
         content: 'switch that one\nand\nswitch this one\nand not this one'
       .promise()
   
-    they 'with match as a regular expression', (ssh) ->
+    they 'with match as a regular expression', ({ssh}) ->
       # With a match
       nikita
         ssh: ssh
@@ -473,7 +473,7 @@ describe 'file', ->
         content: 'email=david(at)adaltas(dot)com\nusername=david (was root)'
       .promise()
 
-    they 'with match as a regular expression and multiple content', (ssh) ->
+    they 'with match as a regular expression and multiple content', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -488,7 +488,7 @@ describe 'file', ->
         content: 'here we are\nmy friend, lets try\nyou coquin'
       .promise()
 
-    they 'with match with global and multilines', (ssh) ->
+    they 'with match with global and multilines', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -509,7 +509,7 @@ describe 'file', ->
         content: '#A config file\n#property=30\nproperty=50\nproperty=50\n#End of Config'
       .promise()
 
-    they 'will replace target if source or content does not exists', (ssh) ->
+    they 'will replace target if source or content does not exists', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -534,7 +534,7 @@ describe 'file', ->
 
   describe 'place_before', ->
 
-    they 'append content to missing file', (ssh) ->
+    they 'append content to missing file', ({ssh}) ->
       # File does not exist, it create it with the content
       nikita.file
         ssh: ssh
@@ -546,7 +546,7 @@ describe 'file', ->
         content: 'hello'
       .promise()
 
-    they 'is true, prepend the content', (ssh) ->
+    they 'is true, prepend the content', ({ssh}) ->
       # File doesnt exists, creates one
       nikita
         ssh: ssh
@@ -565,7 +565,7 @@ describe 'file', ->
 
   describe 'append', ->
 
-    they 'append content to missing file', (ssh) ->
+    they 'append content to missing file', ({ssh}) ->
       # File does not exist, it create it with the content
       nikita.file
         ssh: ssh
@@ -577,7 +577,7 @@ describe 'file', ->
         content: 'hello'
       .promise()
 
-    they 'append content to existing file', (ssh) ->
+    they 'append content to existing file', ({ssh}) ->
       # File does not exists, it create one
       nikita
         ssh: ssh
@@ -598,7 +598,7 @@ describe 'file', ->
 
     describe 'will not prepend/append if match', ->
 
-      they 'place_before true, replace a string, match a regexp', (ssh) ->
+      they 'place_before true, replace a string, match a regexp', ({ssh}) ->
         # Prepare by creating a file with content
         nikita
           ssh: ssh
@@ -628,7 +628,7 @@ describe 'file', ->
           content: 'new coquin\nhere we are\n'
         .promise()
 
-      they 'place_before true, replace a string, match a string', (ssh) ->
+      they 'place_before true, replace a string, match a string', ({ssh}) ->
         nikita
           ssh: ssh
         .file
@@ -657,7 +657,7 @@ describe 'file', ->
           content: 'new coquin\nhere we are\n'
         .promise()
 
-      they 'place_after', (ssh) ->
+      they 'place_after', ({ssh}) ->
         # Prepare by creating a file with content
         nikita
           ssh: ssh
@@ -687,7 +687,7 @@ describe 'file', ->
           content: 'here we are\nnew coquin\n'
         .promise()
 
-    they 'will append if no match', (ssh) ->
+    they 'will append if no match', ({ssh}) ->
       # Prepare by creating a file with content
       nikita
         ssh: ssh
@@ -708,7 +708,7 @@ describe 'file', ->
 
     describe 'place_before/place_after a match if it is a regexp', ->
 
-      they 'place_before', (ssh) ->
+      they 'place_before', ({ssh}) ->
         # Prepare by creating a file with content
         nikita
           ssh: ssh
@@ -727,7 +727,7 @@ describe 'file', ->
           content: 'Add this line\nhere we are\nyou coquin\nshould we\nhave fun'
         .promise()
 
-      they 'place_after', (ssh) ->
+      they 'place_after', ({ssh}) ->
         # Prepare by creating a file with content
         nikita
           ssh: ssh
@@ -748,7 +748,7 @@ describe 'file', ->
 
     describe 'place_before/place_after multiple times if regexp with global flag', ->
 
-      they 'place_before', (ssh) ->
+      they 'place_before', ({ssh}) ->
         nikita
           ssh: ssh
         .file
@@ -766,7 +766,7 @@ describe 'file', ->
           content: 'Add this line\nhere we are\nyou coquin\nAdd this line\nshould we\nhave fun'
         .promise()
 
-      they 'place_after', (ssh) ->
+      they 'place_after', ({ssh}) ->
         # Prepare by creating a file with content
         nikita
           ssh: ssh
@@ -785,7 +785,7 @@ describe 'file', ->
           content: 'here we are\nAdd this line\nyou coquin\nshould we\nAdd this line\nhave fun'
         .promise()
 
-    they 'will append place_after a match if append is a string', (ssh) ->
+    they 'will append place_after a match if append is a string', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -805,7 +805,7 @@ describe 'file', ->
 
     describe 'will detect new line if no match', ->
 
-      they 'place_before', (ssh) ->
+      they 'place_before', ({ssh}) ->
         nikita
           ssh: ssh
         .file
@@ -823,7 +823,7 @@ describe 'file', ->
           content: 'Add this line\nhere we are\nyou coquin'
         .promise()
 
-      they 'place_after', (ssh) ->
+      they 'place_after', ({ssh}) ->
         nikita
           ssh: ssh
         .file
@@ -843,7 +843,7 @@ describe 'file', ->
 
     describe 'create file if not exists', ->
 
-      they 'place_before', (ssh) ->
+      they 'place_before', ({ssh}) ->
         nikita
           ssh: ssh
         .file
@@ -858,7 +858,7 @@ describe 'file', ->
           content: 'Add this line'
         .promise()
 
-      they 'place_after', (ssh) ->
+      they 'place_after', ({ssh}) ->
         nikita
           ssh: ssh
         .file
@@ -873,7 +873,7 @@ describe 'file', ->
           content: 'Add this line'
         .promise()
 
-    they 'match is optional', (ssh) ->
+    they 'match is optional', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -906,7 +906,7 @@ describe 'file', ->
 
   describe 'backup', ->
   
-    they 'create a file', (ssh) ->
+    they 'create a file', ({ssh}) ->
       # First we create a file
       nikita
         ssh: ssh
@@ -933,7 +933,7 @@ describe 'file', ->
         content: 'Hello'
       .promise()
   
-    they 'a non-existing file', (ssh) ->
+    they 'a non-existing file', ({ssh}) ->
       nikita.file
         ssh: ssh
         target: "#{scratch}/new_file"
@@ -943,7 +943,7 @@ describe 'file', ->
         status.should.be.true() unless err
       .promise()
 
-    they 'with specific permissions', (ssh) ->
+    they 'with specific permissions', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -976,7 +976,7 @@ describe 'file', ->
 
   describe 'write', ->
   
-    they 'do multiple replace', (ssh) ->
+    they 'do multiple replace', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -1001,7 +1001,7 @@ describe 'file', ->
         content: 'username: you\n\nfriends: me'
       .promise()
   
-    they 'use append', (ssh) ->
+    they 'use append', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -1027,7 +1027,7 @@ describe 'file', ->
         content: 'username: you\nemail: your@email\nfriends: me'
       .promise()
   
-    they 'handle partial match', (ssh) ->
+    they 'handle partial match', ({ssh}) ->
       # First we create a file
       nikita
         ssh: ssh
@@ -1056,7 +1056,7 @@ describe 'file', ->
 
   describe 'error', ->
 
-    they 'can not define source and content', (ssh) ->
+    they 'can not define source and content', ({ssh}) ->
       nikita.file
         ssh: ssh
         target: 'abc'
@@ -1067,7 +1067,7 @@ describe 'file', ->
         err.message.should.eql 'Define either source or content'
       .promise()
 
-    they 'if source doesn\'t exists', (ssh) ->
+    they 'if source doesn\'t exists', ({ssh}) ->
       nikita.file
         ssh: ssh
         target: "#{scratch}/file"
@@ -1077,7 +1077,7 @@ describe 'file', ->
         err.message.should.eql "Source does not exist: \"#{scratch}/does/not/exists\""
       .promise()
 
-    they 'if local source doesn\'t exists', (ssh) ->
+    they 'if local source doesn\'t exists', ({ssh}) ->
       nikita.file
         ssh: ssh
         target: "#{scratch}/file"
@@ -1090,7 +1090,7 @@ describe 'file', ->
 
   describe 'eof', ->
 
-    they 'auto-detected', (ssh) ->
+    they 'auto-detected', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -1104,7 +1104,7 @@ describe 'file', ->
         content: 'this is\r\nsome content\r\n'
       .promise()
 
-    they 'not detected', (ssh) ->
+    they 'not detected', ({ssh}) ->
       nikita
         ssh: ssh
       .file

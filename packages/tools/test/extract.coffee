@@ -1,13 +1,13 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'tools.extract', ->
 
-  they 'should see extension .tgz', (ssh) ->
+  they 'should see extension .tgz', ({ssh}) ->
     # Test a non existing extracted dir
     nikita
       ssh: ssh
@@ -18,7 +18,7 @@ describe 'tools.extract', ->
       status.should.be.true() unless err
     .promise()
 
-  they 'should see extension .zip', (ssh) ->
+  they 'should see extension .zip', ({ssh}) ->
     nikita
       ssh: ssh
     .tools.extract
@@ -28,7 +28,7 @@ describe 'tools.extract', ->
       status.should.be.true() unless err
     .promise()
 
-  they 'should see extension .tar.bz2', (ssh) ->
+  they 'should see extension .tar.bz2', ({ssh}) ->
     nikita
       ssh: ssh
     .tools.extract
@@ -38,7 +38,7 @@ describe 'tools.extract', ->
       status.should.be.true() unless err
     .promise()
 
-  they 'should see extension .tar.xz', (ssh) ->
+  they 'should see extension .tar.xz', ({ssh}) ->
     nikita
       ssh: ssh
     .tools.extract
@@ -48,7 +48,7 @@ describe 'tools.extract', ->
       status.should.be.true() unless err
     .promise()
 
-  they 'should validate a created file', (ssh) ->
+  they 'should validate a created file', ({ssh}) ->
     # Test with invalid creates option
     nikita
       ssh: ssh
@@ -67,7 +67,7 @@ describe 'tools.extract', ->
       status.should.be.true() unless err
     .promise()
 
-  they 'should # option # unless_exists', (ssh) ->
+  they 'should # option # unless_exists', ({ssh}) ->
     # Test with invalid creates option
     nikita
       ssh: ssh
@@ -79,7 +79,7 @@ describe 'tools.extract', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'should pass error for invalid extension', (ssh) ->
+  they 'should pass error for invalid extension', ({ssh}) ->
     nikita
       ssh: ssh
     .tools.extract
@@ -89,7 +89,7 @@ describe 'tools.extract', ->
       err.message.should.eql 'Unsupported extension, got ".coffee"'
     .promise()
 
-  they 'should pass error for missing source file', (ssh) ->
+  they 'should pass error for missing source file', ({ssh}) ->
     nikita
       ssh: ssh
     .tools.extract
@@ -99,7 +99,7 @@ describe 'tools.extract', ->
       err.message.should.eql 'File does not exist: /does/not/exist.tgz'
     .promise()
 
-  they 'should strip component level 1', (ssh) ->
+  they 'should strip component level 1', ({ssh}) ->
     # Test a non existing status dir
     nikita
       ssh: ssh
@@ -113,7 +113,7 @@ describe 'tools.extract', ->
       target: "#{scratch}/a_file"
     .promise()
 
-  they 'should strip component level 2', (ssh) ->
+  they 'should strip component level 2', ({ssh}) ->
     # Test a non existing extracted dir
     nikita
       ssh: ssh

@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'file.ini', ->
 
-  they 'stringify an object', (ssh) ->
+  they 'stringify an object', ({ssh}) ->
     nikita
       ssh: ssh
     .file.ini
@@ -25,7 +25,7 @@ describe 'file.ini', ->
       content: '[user.preference]\ncolor = rouge\n'
     .promise()
 
-  they 'merge an object', (ssh) ->
+  they 'merge an object', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -42,7 +42,7 @@ describe 'file.ini', ->
       content: '[user.preference]\nlanguage = node\ncolor = violet\n'
     .promise()
 
-  they 'discard undefined and null', (ssh) ->
+  they 'discard undefined and null', ({ssh}) ->
     nikita
       ssh: ssh
     .file.ini
@@ -56,7 +56,7 @@ describe 'file.ini', ->
       content: '[user.preference]\ncolor = violet\n'
     .promise()
 
-  they 'remove null within merge', (ssh) ->
+  they 'remove null within merge', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -73,7 +73,7 @@ describe 'file.ini', ->
       content: '[user.preference]\nlanguage = node\n'
     .promise()
 
-  they 'disregard undefined within merge', (ssh) ->
+  they 'disregard undefined within merge', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -87,7 +87,7 @@ describe 'file.ini', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'use default source file', (ssh) ->
+  they 'use default source file', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -110,7 +110,7 @@ describe 'file.ini', ->
       content: '[user.preference]\nlanguage = node\n'
     .promise()
 
-  they 'options source file + content', (ssh) ->
+  they 'options source file + content', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -128,7 +128,7 @@ describe 'file.ini', ->
       content: '[user.preference]\nlanguage = node\nremember = me\n'
     .promise()
 
-  they 'options missing source file + content', (ssh) ->
+  they 'options missing source file + content', ({ssh}) ->
     nikita
       ssh: ssh
     .file.ini
@@ -143,7 +143,7 @@ describe 'file.ini', ->
       content: '[user.preference]\nremember = me\n'
     .promise()
 
-  they 'options source file + merge', (ssh) ->
+  they 'options source file + merge', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -169,7 +169,7 @@ describe 'file.ini', ->
       content: '[user.preference]\nlanguage = node\n'
     .promise()
 
-  they 'use default source file with merge and content', (ssh) ->
+  they 'use default source file with merge and content', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -197,7 +197,7 @@ describe 'file.ini', ->
       {status}.sh
     .promise()
 
-  they 'generate from content object with escape', (ssh) ->
+  they 'generate from content object with escape', ({ssh}) ->
     nikita
       ssh: ssh
     .file.ini

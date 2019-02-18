@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'file.json', ->
 
-  they 'stringify content to target', (ssh) ->
+  they 'stringify content to target', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -23,7 +23,7 @@ describe 'file.json', ->
       content: '{"user":"usrval"}'
     .promise()
 
-  they 'merge target', (ssh) ->
+  they 'merge target', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -40,7 +40,7 @@ describe 'file.json', ->
       content: '{"target":"tarval","user":"usrval"}'
     .promise()
 
-  they 'merge source', (ssh) ->
+  they 'merge source', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -57,7 +57,7 @@ describe 'file.json', ->
       content: '{"source":"srcval","user":"usrval"}'
     .promise()
 
-  they 'merge source and traget', (ssh) ->
+  they 'merge source and traget', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -78,7 +78,7 @@ describe 'file.json', ->
       content: '{"source":"srcval","target":"tarval","user":"usrval"}'
     .promise()
   
-  they 'merge with target not yet created', (ssh) ->
+  they 'merge with target not yet created', ({ssh}) ->
     nikita
       ssh: ssh
     .file.json
@@ -92,7 +92,7 @@ describe 'file.json', ->
       content: '{"user":"usrval"}'
     .promise()
   
-  they 'transform', (ssh) ->
+  they 'transform', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -114,7 +114,7 @@ describe 'file.json', ->
       content: '{"target":"transform tarval","user":"transform usrval","transform":"tfmval"}'
     .promise()
   
-  they 'pretty', (ssh) ->
+  they 'pretty', ({ssh}) ->
     nikita
       ssh: ssh
     .file.json
@@ -126,7 +126,7 @@ describe 'file.json', ->
       content: '{\n  \"user\": {\n    \"preferences\": {\n      \"language\": \"french\"\n    }\n  }\n}'
     .promise()
   
-  they 'pretty with user indentation', (ssh) ->
+  they 'pretty with user indentation', ({ssh}) ->
     nikita
       ssh: ssh
     .file.json

@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.system_user
 
 describe 'system.group.remove', ->
   
-  they 'handle status', (ssh) ->
+  they 'handle status', ({ssh}) ->
     nikita
       ssh: ssh
     .system.user.remove 'toto'

@@ -1,7 +1,7 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
@@ -9,7 +9,7 @@ describe 'tools.backup', ->
 
   describe 'file', ->
 
-    they 'backup to a directory', (ssh) ->
+    they 'backup to a directory', ({ssh}) ->
       nikita
         ssh: ssh
       .tools.backup
@@ -33,7 +33,7 @@ describe 'tools.backup', ->
           filetype: 'file'
       .promise()
 
-    they 'compress', (ssh) ->
+    they 'compress', ({ssh}) ->
       nikita
         ssh: ssh
       .tools.backup
@@ -50,7 +50,7 @@ describe 'tools.backup', ->
 
   describe 'cmd', ->
 
-    they 'pipe to a file', (ssh) ->
+    they 'pipe to a file', ({ssh}) ->
       nikita
         ssh: ssh
       .tools.backup

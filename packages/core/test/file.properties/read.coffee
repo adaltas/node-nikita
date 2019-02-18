@@ -2,13 +2,13 @@
 nikita = require '../../src'
 misc = require '../../src/misc'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'file.properties.read', ->
 
-  they 'read single key', (ssh) ->
+  they 'read single key', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -20,7 +20,7 @@ describe 'file.properties.read', ->
       properties.should.eql another_key: 'another value'
     .promise()
 
-  they 'option separator', (ssh) ->
+  they 'option separator', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -33,7 +33,7 @@ describe 'file.properties.read', ->
       properties.should.eql another_key: 'another value'
     .promise()
 
-  they 'option trim', (ssh) ->
+  they 'option trim', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -47,7 +47,7 @@ describe 'file.properties.read', ->
       properties.should.eql another_key: 'another value'
     .promise()
   
-  they 'error if target does not exist', (ssh) ->
+  they 'error if target does not exist', ({ssh}) ->
     nikita
       ssh: ssh
     .file.properties.read

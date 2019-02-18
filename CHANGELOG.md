@@ -8,11 +8,11 @@
 
 ## Trunk
 
-
 Breaking changes:
 * domain: remove option and support
 
 New features:
+* tools.ssh.keygen: new action
 * filetypes: new my_cnf action
 * conditions: executed as actions
 * conditions: support sudo
@@ -36,6 +36,7 @@ Cleaup:
 * core: remove unnecessary transmission of ssh
 
 Management:
+* tests: update ssh2-they
 * core: latest dependencies
 
 ## Version 0.9.1

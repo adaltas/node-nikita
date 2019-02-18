@@ -2,13 +2,13 @@
 os = require 'os'
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.system_limits
 
 describe 'system.limits', ->
 
-  they 'do nothing without any limits', (ssh) ->
+  they 'do nothing without any limits', ({ssh}) ->
     nikita
       ssh: ssh
     .system.limits
@@ -21,7 +21,7 @@ describe 'system.limits', ->
       not: true
     .promise()
 
-  they 'nofile and noproc accept int', (ssh) ->
+  they 'nofile and noproc accept int', ({ssh}) ->
     nikita
       ssh: ssh
     .system.limits
@@ -40,7 +40,7 @@ describe 'system.limits', ->
       """
     .promise()
 
-  they 'set global value', (ssh) ->
+  they 'set global value', ({ssh}) ->
     nikita
       ssh: ssh
     .system.limits
@@ -59,7 +59,7 @@ describe 'system.limits', ->
       """
     .promise()
 
-  they 'specify hard and soft values', (ssh) ->
+  they 'specify hard and soft values', ({ssh}) ->
     nikita
       ssh: ssh
     .system.limits
@@ -79,7 +79,7 @@ describe 'system.limits', ->
       """
     .promise()
 
-  they 'detect changes', (ssh) ->
+  they 'detect changes', ({ssh}) ->
     nikita
       ssh: ssh
     .system.limits
@@ -97,7 +97,7 @@ describe 'system.limits', ->
       status.should.be.true() unless err
     .promise()
 
-  they 'detect no change', (ssh) ->
+  they 'detect no change', ({ssh}) ->
     nikita
       ssh: ssh
     .system.limits
@@ -115,7 +115,7 @@ describe 'system.limits', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'nofile and noproc default to 75% of kernel limits', (ssh) ->
+  they 'nofile and noproc default to 75% of kernel limits', ({ssh}) ->
     nproc = null
     nofile = null
     nikita
@@ -151,7 +151,7 @@ describe 'system.limits', ->
         """
     .promise()
 
-  they 'raise an error if nofile is too high', (ssh) ->
+  they 'raise an error if nofile is too high', ({ssh}) ->
     nikita
       ssh: ssh
     .system.limits
@@ -163,7 +163,7 @@ describe 'system.limits', ->
       err.message.should.match /^Invalid nofile options.*$/
     .promise()
 
-  they 'raise an error if nproc is too high', (ssh) ->
+  they 'raise an error if nproc is too high', ({ssh}) ->
     nikita
       ssh: ssh
     .system.limits
@@ -175,7 +175,7 @@ describe 'system.limits', ->
       err.message.should.match /^Invalid nproc options.*$/
     .promise()
 
-  they 'raise an error if hardness is incoherent', (ssh) ->
+  they 'raise an error if hardness is incoherent', ({ssh}) ->
     nikita
       ssh: ssh
     .system.limits
@@ -189,7 +189,7 @@ describe 'system.limits', ->
       err.message.should.match /^Invalid option.*$/
     .promise()
 
-  they 'accept value \'unlimited\'', (ssh) ->
+  they 'accept value \'unlimited\'', ({ssh}) ->
     nikita
       ssh: ssh
     .system.limits

@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
-{tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+{tags, ssh} = require '../test'
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'ssh.close', ->
 
-  they 'check status', (ssh) ->
+  they 'check status', ({ssh}) ->
     return @skip() unless ssh
     nikita
     .ssh.open

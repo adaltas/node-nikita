@@ -2,13 +2,13 @@
 crypto = require 'crypto'
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'file.hash', ->
 
-  they 'error if target does not exist', (ssh) ->
+  they 'error if target does not exist', ({ssh}) ->
     nikita
       ssh: ssh
     .file.hash
@@ -18,7 +18,7 @@ describe 'file.hash', ->
       err.message.should.eql "Missing File: no file exists for target \"#{scratch}/unkown\""
     .promise()
 
-  they 'from a file', (ssh) ->
+  they 'from a file', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -35,7 +35,7 @@ describe 'file.hash', ->
       status.should.be.false()
     .promise()
 
-  they 'from a link', (ssh) ->
+  they 'from a link', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -54,7 +54,7 @@ describe 'file.hash', ->
       status.should.be.true()
     .promise()
 
-  they 'assert', (ssh) ->
+  they 'assert', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -75,7 +75,7 @@ describe 'file.hash', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'throws error if file does not exist', (ssh) ->
+  they 'throws error if file does not exist', ({ssh}) ->
     nikita
       ssh: ssh
     .file.hash
@@ -85,7 +85,7 @@ describe 'file.hash', ->
       err.message.should.eql "Missing File: no file exists for target \"#{__dirname}/does/not/exist\""
     .promise()
 
-  they 'returns the file md5 if globbing match only one file', (ssh) ->
+  they 'returns the file md5 if globbing match only one file', ({ssh}) ->
     nikita
       ssh: ssh
     .system.mkdir
@@ -97,7 +97,7 @@ describe 'file.hash', ->
       hash.should.eql '9893532233caff98cd083a116b013c0b' unless err
     .promise()
 
-  they 'returns the directory md5', (ssh) ->
+  they 'returns the directory md5', ({ssh}) ->
     nikita
       ssh: ssh
     .system.mkdir
@@ -112,7 +112,7 @@ describe 'file.hash', ->
       hash.should.eql 'df940215c7446254f1334d923b3053c6' unless err
     .promise()
 
-  they 'returns the directory md5 when empty', (ssh) ->
+  they 'returns the directory md5 when empty', ({ssh}) ->
     nikita
       ssh: ssh
     .system.mkdir

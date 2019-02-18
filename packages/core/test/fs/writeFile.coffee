@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'fs.writeFile', ->
 
-  they 'content is a string', (ssh) ->
+  they 'content is a string', ({ssh}) ->
     nikita
       ssh: ssh
     .fs.writeFile
@@ -18,7 +18,7 @@ describe 'fs.writeFile', ->
       content: 'some content'
     .promise()
 
-  they 'content is empty', (ssh) ->
+  they 'content is empty', ({ssh}) ->
     nikita
       ssh: ssh
     .fs.writeFile
@@ -29,7 +29,7 @@ describe 'fs.writeFile', ->
       content: ''
     .promise()
   
-  they 'option append on missing file', (ssh) ->
+  they 'option append on missing file', ({ssh}) ->
     nikita
       ssh: ssh
     .fs.writeFile
@@ -41,7 +41,7 @@ describe 'fs.writeFile', ->
       content: 'some content'
     .promise()
   
-  they 'option append on existing file', (ssh) ->
+  they 'option append on existing file', ({ssh}) ->
     nikita
       ssh: ssh
     .fs.writeFile

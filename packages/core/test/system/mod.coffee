@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'system.mod', ->
 
-  they 'activate a module', (ssh) ->
+  they 'activate a module', ({ssh}) ->
     nikita
       ssh: ssh
     .system.mod 

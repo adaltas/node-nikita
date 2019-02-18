@@ -7,7 +7,7 @@ return unless tags.lxd
 
 describe 'lxd.exec', ->
 
-  they 'a command with pipe inside', (ssh) ->
+  they 'a command with pipe inside', ({ssh}) ->
     nikita
       ssh: ssh
       lxd: lxd

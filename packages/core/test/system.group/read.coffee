@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'system.group.read', ->
   
-  they 'shy doesnt modify the status', (ssh) ->
+  they 'shy doesnt modify the status', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -24,7 +24,7 @@ describe 'system.group.read', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'activate locales', (ssh) ->
+  they 'activate locales', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -44,7 +44,7 @@ describe 'system.group.read', ->
   
   describe 'option "gid"', ->
   
-    they 'map a username to group record', (ssh) ->
+    they 'map a username to group record', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -62,7 +62,7 @@ describe 'system.group.read', ->
         group.should.eql group: 'docker', password: 'x', gid: 994, users: [ 'wdavidw' ]
       .promise()
     
-    they 'map a gid to group record', (ssh) ->
+    they 'map a gid to group record', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -82,7 +82,7 @@ describe 'system.group.read', ->
   
   describe 'option "cache"', ->
 
-    they 'option cache is disabled by default', (ssh) ->
+    they 'option cache is disabled by default', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -98,7 +98,7 @@ describe 'system.group.read', ->
         (@store['nikita:etc_group'] is undefined).should.be.true()
       .promise()
 
-    they 'option cache place group in store', (ssh) ->
+    they 'option cache place group in store', ({ssh}) ->
       logs = []
       nikita
         ssh: ssh
@@ -125,7 +125,7 @@ describe 'system.group.read', ->
   
   describe 'option "log"', ->
 
-    they 'can be true, false, undefined', (ssh) ->
+    they 'can be true, false, undefined', ({ssh}) ->
       logs = []
       nikita
         ssh: ssh
@@ -158,7 +158,7 @@ describe 'system.group.read', ->
         logs.some( (log) -> log.message is 'Entering fs.readFile').should.not.be.true() unless err
       .promise()
     
-    they 'honor cascading', (ssh) ->
+    they 'honor cascading', ({ssh}) ->
       # Well, this is arguably a good or a bad idea
       logs = []
       nikita

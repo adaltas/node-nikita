@@ -1,13 +1,13 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch, ruby} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.tools_rubygems
 
 describe 'tools.rubygems.install', ->
 
-  they 'install a non existing package', (ssh) ->
+  they 'install a non existing package', ({ssh}) ->
     nikita
       ssh: ssh
       ruby: ruby
@@ -21,7 +21,7 @@ describe 'tools.rubygems.install', ->
       name: 'execjs'
     .promise()
 
-  they 'bypass existing package', (ssh) ->
+  they 'bypass existing package', ({ssh}) ->
     nikita
       ssh: ssh
       ruby: ruby
@@ -37,7 +37,7 @@ describe 'tools.rubygems.install', ->
       name: 'execjs'
     .promise()
 
-  they 'install multiple versions', (ssh) ->
+  they 'install multiple versions', ({ssh}) ->
     nikita
       ssh: ssh
       ruby: ruby
@@ -65,7 +65,7 @@ describe 'tools.rubygems.install', ->
       name: 'execjs'
     .promise()
 
-  they 'local gem from file', (ssh) ->
+  they 'local gem from file', ({ssh}) ->
     nikita
       ssh: ssh
       ruby: ruby
@@ -89,7 +89,7 @@ describe 'tools.rubygems.install', ->
       name: 'execjs'
     .promise()
 
-  they 'local gem from glob', (ssh) ->
+  they 'local gem from glob', ({ssh}) ->
     nikita
       ssh: ssh
       ruby: ruby

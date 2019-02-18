@@ -1,13 +1,13 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, docker} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.docker
 
 describe 'docker.checksum', ->
 
-  they 'checksum on existing repository', (ssh) ->
+  they 'checksum on existing repository', ({ssh}) ->
     image_id = null
     nikita
       ssh: ssh
@@ -28,7 +28,7 @@ describe 'docker.checksum', ->
       image: 'nikita/checksum'
     .promise()
 
-  they 'checksum on not existing repository', (ssh) ->
+  they 'checksum on not existing repository', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker

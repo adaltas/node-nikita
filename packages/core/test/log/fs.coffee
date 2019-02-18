@@ -2,20 +2,20 @@
 nikita = require '../../src'
 misc = require '../../src/misc'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'log.fs', ->
 
-  they 'requires option "serializer"', (ssh) ->
+  they 'requires option "serializer"', ({ssh}) ->
     nikita ssh: ssh
     .log.fs basedir: scratch
     .next (err) ->
       err.message.should.eql 'Missing option: serializer'
     .promise()
 
-  they 'serializer can be empty', (ssh) ->
+  they 'serializer can be empty', ({ssh}) ->
     nikita
       ssh: ssh
     .log.fs
@@ -30,7 +30,7 @@ describe 'log.fs', ->
     .assert status: false
     .promise()
 
-  they 'default options', (ssh) ->
+  they 'default options', ({ssh}) ->
     nikita
       ssh: ssh
       log_fs: basedir: scratch, serializer: text: (log) -> "#{log.message}\n"
@@ -45,7 +45,7 @@ describe 'log.fs', ->
 
   describe 'archive', ->
 
-    they 'archive default directory name', (ssh) ->
+    they 'archive default directory name', ({ssh}) ->
       nikita
         ssh: ssh
       .log.fs
@@ -64,7 +64,7 @@ describe 'log.fs', ->
       .assert status: false
       .promise()
 
-    they 'latest', (ssh) ->
+    they 'latest', ({ssh}) ->
       nikita
         ssh: ssh
       .log.fs

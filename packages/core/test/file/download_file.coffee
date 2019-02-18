@@ -2,7 +2,7 @@
 path = require 'path'
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
@@ -10,7 +10,7 @@ describe 'file.download file', ->
   
   describe 'source', ->
 
-    they 'with file protocol', (ssh) ->
+    they 'with file protocol', ({ssh}) ->
       nikita
         ssh: ssh
       .file.download
@@ -28,7 +28,7 @@ describe 'file.download file', ->
         status.should.be.false() unless err
       .promise()
 
-    they 'without protocol', (ssh) ->
+    they 'without protocol', ({ssh}) ->
       source = 
       # Download a non existing file
       nikita
@@ -48,7 +48,7 @@ describe 'file.download file', ->
         status.should.be.false() unless err
       .promise()
 
-    they 'doesnt exists', (ssh) ->
+    they 'doesnt exists', ({ssh}) ->
       nikita
         ssh: ssh
       .file.download
@@ -60,7 +60,7 @@ describe 'file.download file', ->
         err.code.should.eql 'ENOENT'
       .promise()
 
-    they 'into an existing directory', (ssh) ->
+    they 'into an existing directory', ({ssh}) ->
       nikita
         ssh: ssh
       .system.mkdir
@@ -74,7 +74,7 @@ describe 'file.download file', ->
 
   describe 'cache', ->
 
-    they 'validate md5', (ssh) ->
+    they 'validate md5', ({ssh}) ->
       source = "#{__dirname}/download.zip"
       target = "#{scratch}/download"
       nikita
@@ -90,7 +90,7 @@ describe 'file.download file', ->
       .file.assert "#{scratch}/cache_dir/#{path.basename source}"
       .promise()
 
-    they 'cache dir', (ssh) ->
+    they 'cache dir', ({ssh}) ->
       # Download a non existing file
       target = "#{scratch}/download"
       nikita
@@ -105,7 +105,7 @@ describe 'file.download file', ->
       .file.assert "#{scratch}/cache_dir/#{path.basename __filename}"
       .promise()
 
-    they 'detect file already present', (ssh) ->
+    they 'detect file already present', ({ssh}) ->
       ssh = null
       nikita
         ssh: ssh
@@ -135,7 +135,7 @@ describe 'file.download file', ->
   
   describe 'md5', ->
 
-    they 'cache dir with md5 string', (ssh) ->
+    they 'cache dir with md5 string', ({ssh}) ->
       # Download a non existing file
       target = "#{scratch}/download"
       nikita
@@ -159,7 +159,7 @@ describe 'file.download file', ->
         content: 'okay'
       .promise()
 
-    they 'is computed if true', (ssh) ->
+    they 'is computed if true', ({ssh}) ->
       # return @skip() unless ssh
       logs = []
       # Download with invalid checksum
@@ -188,7 +188,7 @@ describe 'file.download file', ->
       
   describe 'error', ->
 
-    they 'path must be absolute over ssh', (ssh) ->
+    they 'path must be absolute over ssh', ({ssh}) ->
       return unless ssh
       nikita
         ssh: ssh

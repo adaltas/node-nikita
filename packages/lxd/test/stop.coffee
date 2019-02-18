@@ -7,7 +7,7 @@ return unless tags.lxd
 
 describe 'lxd.stop', ->
 
-  they 'Stop a container', (ssh) ->
+  they 'Stop a container', ({ssh}) ->
     nikita
       ssh: ssh
       lxd: lxd
@@ -25,7 +25,7 @@ describe 'lxd.stop', ->
       status.should.be.true()
     .promise()
 
-  they 'Already stopped', (ssh) ->
+  they 'Already stopped', ({ssh}) ->
     nikita
       ssh: ssh
       lxd: lxd

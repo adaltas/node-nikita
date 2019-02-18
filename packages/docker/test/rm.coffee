@@ -1,13 +1,13 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch, docker} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.docker
 
 describe 'docker.rm', ->
 
-  they 'remove stopped container', (ssh) ->
+  they 'remove stopped container', ({ssh}) ->
     @timeout 30000
     nikita
       ssh: ssh
@@ -26,7 +26,7 @@ describe 'docker.rm', ->
       status.should.be.true() unless err
     .promise()
 
-  they 'remove live container (no force)', (ssh) ->
+  they 'remove live container (no force)', ({ssh}) ->
     @timeout 30000
     nikita
       ssh: ssh
@@ -49,7 +49,7 @@ describe 'docker.rm', ->
       container: 'nikita_rm'
     .promise()
 
-  they 'remove live container (with force)', (ssh) ->
+  they 'remove live container (with force)', ({ssh}) ->
     @timeout 30000
     nikita
       ssh: ssh

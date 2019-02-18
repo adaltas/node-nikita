@@ -2,13 +2,13 @@
 nikita = require '../../src'
 path = require 'path'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'system.mkdir', ->
 
-  they 'as a directory option or as a string', (ssh) ->
+  they 'as a directory option or as a string', ({ssh}) ->
     nikita
       ssh: ssh
     .system.mkdir directory: "#{scratch}/a_dir", (err, {status}) ->
@@ -21,7 +21,7 @@ describe 'system.mkdir', ->
       status.should.be.false()
     .promise()
 
-  they 'should take source if first argument is a string', (ssh) ->
+  they 'should take source if first argument is a string', ({ssh}) ->
     source = "#{scratch}/a_dir"
     nikita
       ssh: ssh
@@ -31,7 +31,7 @@ describe 'system.mkdir', ->
       status.should.be.false()
     .promise()
   
-  they 'should create dir recursively', (ssh) ->
+  they 'should create dir recursively', ({ssh}) ->
     nikita
       ssh: ssh
     .system.mkdir
@@ -44,7 +44,7 @@ describe 'system.mkdir', ->
       status.should.be.true() unless err
     .promise()
   
-  they 'should create multiple directories', (ssh) ->
+  they 'should create multiple directories', ({ssh}) ->
     nikita
       ssh: ssh
     .system.mkdir
@@ -59,7 +59,7 @@ describe 'system.mkdir', ->
 
   describe 'parent', ->
 
-    they 'true set default permissions', (ssh) ->
+    they 'true set default permissions', ({ssh}) ->
       nikita
         ssh: ssh
       .system.mkdir
@@ -75,7 +75,7 @@ describe 'system.mkdir', ->
         not: true
       .promise()
 
-    they 'object set custom permissions', (ssh) ->
+    they 'object set custom permissions', ({ssh}) ->
       nikita
         ssh: ssh
       .system.mkdir
@@ -95,7 +95,7 @@ describe 'system.mkdir', ->
 
   describe 'exclude', ->
   
-    they 'should stop when `exclude` match', (ssh) ->
+    they 'should stop when `exclude` match', ({ssh}) ->
       source = "#{scratch}/a_parent_dir/a_dir/do_not_create_this"
       nikita
         ssh: ssh
@@ -113,7 +113,7 @@ describe 'system.mkdir', ->
 
   describe 'cwd', ->
 
-    they 'should honore `cwd` for relative paths', (ssh) ->
+    they 'should honore `cwd` for relative paths', ({ssh}) ->
       nikita.system.mkdir
         ssh: ssh
         directory: './a_dir'
@@ -126,7 +126,7 @@ describe 'system.mkdir', ->
 
   describe 'mode', ->
 
-    they 'change mode as string', (ssh) ->
+    they 'change mode as string', ({ssh}) ->
       # 40744: 4 for directory, 744 for permissions
       nikita
         ssh: ssh
@@ -138,7 +138,7 @@ describe 'system.mkdir', ->
         mode: 0o0744
       .promise()
 
-    they 'change mode as octal', (ssh) ->
+    they 'change mode as octal', ({ssh}) ->
       # 40744: 4 for directory, 744 for permissions
       nikita
         ssh: ssh
@@ -150,7 +150,7 @@ describe 'system.mkdir', ->
         mode: 0o0744
       .promise()
 
-    they 'detect a permission change', (ssh) ->
+    they 'detect a permission change', ({ssh}) ->
       # 40744: 4 for directory, 744 for permissions
       nikita
         ssh: ssh
@@ -169,7 +169,7 @@ describe 'system.mkdir', ->
         status.should.be.false()
       .promise()
 
-    they 'dont ovewrite permission', (ssh) ->
+    they 'dont ovewrite permission', ({ssh}) ->
       nikita
         ssh: ssh
       .system.mkdir
@@ -186,7 +186,7 @@ describe 'system.mkdir', ->
   
   describe 'error', ->
 
-    they 'path must be absolute over ssh', (ssh) ->
+    they 'path must be absolute over ssh', ({ssh}) ->
       return unless ssh
       nikita
         ssh: ssh
@@ -197,7 +197,7 @@ describe 'system.mkdir', ->
         err.message.should.eql 'Non Absolute Path: target is "download_test", SSH requires absolute paths, you must provide an absolute path in the target or the cwd option'
       .promise()
 
-    they 'target exist but is not a directory', (ssh) ->
+    they 'target exist but is not a directory', ({ssh}) ->
       nikita
         ssh: ssh
       .file.touch

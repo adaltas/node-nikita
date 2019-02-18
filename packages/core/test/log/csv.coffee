@@ -2,13 +2,13 @@
 fs = require 'fs'
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'log.csv', ->
   
-  they 'write string', (ssh) ->
+  they 'write string', ({ssh}) ->
     nikita
       ssh: ssh
     .log.csv basedir: scratch
@@ -22,7 +22,7 @@ describe 'log.csv', ->
     .assert status: false
     .promise()
 
-  they 'default options', (ssh) ->
+  they 'default options', ({ssh}) ->
     nikita
       ssh: ssh
       log_csv: basedir: scratch

@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.system_user
 
 describe 'system.user', ->
   
-  they 'accept only user name', (ssh) ->
+  they 'accept only user name', ({ssh}) ->
     nikita
       ssh: ssh
     .system.user.remove 'toto'
@@ -18,7 +18,7 @@ describe 'system.user', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'created with a uid', (ssh) ->
+  they 'created with a uid', ({ssh}) ->
     nikita
       ssh: ssh
     .system.user.remove 'toto'
@@ -33,7 +33,7 @@ describe 'system.user', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'created without a uid', (ssh) ->
+  they 'created without a uid', ({ssh}) ->
     nikita
       ssh: ssh
     .system.user.remove 'toto'
@@ -46,7 +46,7 @@ describe 'system.user', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'parent home does not exist', (ssh) ->
+  they 'parent home does not exist', ({ssh}) ->
     nikita
       ssh: ssh
     .system.user.remove 'toto'

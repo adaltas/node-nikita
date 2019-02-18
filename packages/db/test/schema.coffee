@@ -1,7 +1,7 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, db} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.db
 
@@ -9,7 +9,7 @@ describe 'db.schema postgres', ->
 
   return unless db.postgresql
 
-  they 'add new schema with no owner (existing db)', (ssh) ->
+  they 'add new schema with no owner (existing db)', ({ssh}) ->
     nikita
       ssh: ssh
       db: db.postgresql
@@ -23,7 +23,7 @@ describe 'db.schema postgres', ->
     .db.database.remove 'postgres_db_0'
     .promise()
 
-  they 'add new schema with not existing owner (existing db)', (ssh) ->
+  they 'add new schema with not existing owner (existing db)', ({ssh}) ->
     nikita
       ssh: ssh
       db: db.postgresql
@@ -39,7 +39,7 @@ describe 'db.schema postgres', ->
     .db.database.remove 'postgres_db_1'
     .promise()
 
-  they 'add new schema with existing owner (existing db)', (ssh) ->
+  they 'add new schema with existing owner (existing db)', ({ssh}) ->
     nikita
       ssh: ssh
       db: db.postgresql
@@ -63,7 +63,7 @@ describe 'db.schema postgres', ->
     .db.user.remove 'postgres_user_2'
     .promise()
   
-  they 'add new schema with no owner (not existing db)', (ssh) ->
+  they 'add new schema with no owner (not existing db)', ({ssh}) ->
     nikita
       ssh: ssh
       db: db.postgresql
@@ -75,7 +75,7 @@ describe 'db.schema postgres', ->
       err.message.should.eql 'Database does not exist postgres_db_4'
     .promise()
   
-  they 'add new schema after adding database and user', (ssh) ->
+  they 'add new schema after adding database and user', ({ssh}) ->
     nikita
       ssh: ssh
       db: db.postgresql

@@ -2,13 +2,13 @@
 path = require 'path'
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'file.upload', ->
 
-  they 'file into a file', (ssh) ->
+  they 'file into a file', ({ssh}) ->
     return @skip() unless ssh
     nikita
       ssh: ssh
@@ -26,7 +26,7 @@ describe 'file.upload', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'file into a directory', (ssh) ->
+  they 'file into a directory', ({ssh}) ->
     return @skip() unless ssh
     nikita
       ssh: ssh

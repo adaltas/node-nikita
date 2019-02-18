@@ -2,13 +2,13 @@
 nikita = require '../../src'
 misc = require '../../src/misc'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'file.properties', ->
 
-  they 'overwrite by default', (ssh) ->
+  they 'overwrite by default', ({ssh}) ->
     nikita
       ssh: ssh
     .file.properties
@@ -31,7 +31,7 @@ describe 'file.properties', ->
       content: "another_key=another value\n"
     .promise()
 
-  they 'option merge', (ssh) ->
+  they 'option merge', ({ssh}) ->
     nikita
       ssh: ssh
     .file.properties
@@ -56,7 +56,7 @@ describe 'file.properties', ->
       content: "a_key=a value\nanother_key=another value\n"
     .promise()
 
-  they 'honor separator', (ssh) ->
+  they 'honor separator', ({ssh}) ->
     nikita
       ssh: ssh
     .file.properties
@@ -73,7 +73,7 @@ describe 'file.properties', ->
       content: "a_key a value\nanother_key another value\n"
     .promise()
 
-  they 'honor sort', (ssh) ->
+  they 'honor sort', ({ssh}) ->
     nikita
       ssh: ssh
     .file.properties
@@ -96,7 +96,7 @@ describe 'file.properties', ->
       content: "a_key=value\nb_key=value\n"
     .promise()
 
-  they 'option comments', (ssh) ->
+  they 'option comments', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -118,7 +118,7 @@ describe 'file.properties', ->
       content: "a_key=new value\n# comment\nb_key=new value\n"
     .promise()
 
-  they 'option trim + merge', (ssh) ->
+  they 'option trim + merge', ({ssh}) ->
     nikita
       ssh: ssh
     .file

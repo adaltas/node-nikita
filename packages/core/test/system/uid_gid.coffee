@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.system_user
 
 describe 'system.uid_gid', ->
 
-  they 'convert names to id', (ssh) ->
+  they 'convert names to id', ({ssh}) ->
     nikita
       ssh: ssh
     .system.user.remove 'toto'
@@ -27,7 +27,7 @@ describe 'system.uid_gid', ->
       default_gid.should.eql 1235
     .promise()
 
-  they 'leave id untouched', (ssh) ->
+  they 'leave id untouched', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -56,7 +56,7 @@ describe 'system.uid_gid', ->
       gid.should.eql 994
     .promise()
 
-  they 'accept missing uid and gid', (ssh) ->
+  they 'accept missing uid and gid', ({ssh}) ->
     nikita
       ssh: ssh
     .system.uid_gid

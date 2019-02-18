@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 {tags, ssh} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
@@ -21,7 +21,7 @@ describe 'system.execute.assert', ->
       err.message.should.eql 'Invalid content: expect "hello" and got "hello\\n"'
     .promise()
 
-  they 'assert stdout match regexp', (ssh) ->
+  they 'assert stdout match regexp', ({ssh}) ->
     nikita
       ssh: ssh
     .system.execute.assert
@@ -35,7 +35,7 @@ describe 'system.execute.assert', ->
       err.message.should.eql 'Invalid content match'
     .promise()
 
-  they 'option trim on cmd', (ssh) ->
+  they 'option trim on cmd', ({ssh}) ->
     nikita
       ssh: ssh
     .system.execute.assert
@@ -44,7 +44,7 @@ describe 'system.execute.assert', ->
       trim: true
     .promise()
 
-  they 'option trim on content', (ssh) ->
+  they 'option trim on content', ({ssh}) ->
     nikita
       ssh: ssh
       bash: true

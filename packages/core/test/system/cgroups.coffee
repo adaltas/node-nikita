@@ -2,7 +2,7 @@
 nikita = require '../../src'
 misc = require '../../src/misc'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.system_cgroups
 
@@ -39,7 +39,7 @@ describe 'system.cgroups', ->
         'cpu.rt_runtime_us': '"0"'
         'cpu.cfs_period_us': '"100000"'
     
-    they 'simple mount group configuration file', (ssh) ->
+    they 'simple mount group configuration file', ({ssh}) ->
       nikita
         ssh: ssh
       .system.cgroups
@@ -62,7 +62,7 @@ describe 'system.cgroups', ->
         """
       .promise()
     
-    they 'simple cgroup configuration file', (ssh) ->
+    they 'simple cgroup configuration file', ({ssh}) ->
       nikita
         ssh: ssh
       .system.cgroups
@@ -95,7 +95,7 @@ describe 'system.cgroups', ->
         """
       .promise()
       
-    they 'default only configuration file', (ssh) ->
+    they 'default only configuration file', ({ssh}) ->
       nikita
         ssh: ssh
       .system.cgroups
@@ -128,7 +128,7 @@ describe 'system.cgroups', ->
         """
       .promise()
     
-    they 'complete configuration file', (ssh) ->
+    they 'complete configuration file', ({ssh}) ->
       nikita
         ssh: ssh
       .system.cgroups
@@ -187,7 +187,7 @@ describe 'system.cgroups', ->
         """
       .promise()
 
-    they 'status not modifed', (ssh) ->
+    they 'status not modifed', ({ssh}) ->
       nikita
         ssh: ssh
       .system.cgroups
@@ -240,7 +240,7 @@ describe 'system.cgroups', ->
         'cpu.rt_runtime_us': '"0"'
         'cpu.cfs_period_us': '"100000"'
     
-    they 'read mount from system and merge group', (ssh) ->
+    they 'read mount from system and merge group', ({ssh}) ->
       nikita
         ssh: ssh
       .system.cgroups
@@ -260,7 +260,7 @@ describe 'system.cgroups', ->
         data.groups.should.eql groups
       .promise()
     
-    they 'status not modified', (ssh) ->
+    they 'status not modified', ({ssh}) ->
       nikita
         ssh: ssh
       .system.cgroups
@@ -279,7 +279,7 @@ describe 'system.cgroups', ->
 
   describe 'centos only', ->
     
-    they 'cache system type', (ssh) ->
+    they 'cache system type', ({ssh}) ->
       nikita
         ssh: ssh
       .system.cgroups
@@ -298,7 +298,7 @@ describe 'system.cgroups', ->
         @store['nikita:system:type'].should.match /^((redhat)|(centos))/
       .promise()
 
-    they 'get cgroups attributes', (ssh) ->
+    they 'get cgroups attributes', ({ssh}) ->
       nikita
         ssh: ssh
       .system.cgroups

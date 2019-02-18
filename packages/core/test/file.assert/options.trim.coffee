@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'file.assert option trim', ->
 
-  they 'trim source', (ssh) ->
+  they 'trim source', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -19,7 +19,7 @@ describe 'file.assert option trim', ->
       trim: true
     .promise()
 
-  they 'trim content string', (ssh) ->
+  they 'trim content string', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -31,7 +31,7 @@ describe 'file.assert option trim', ->
       trim: true
     .promise()
 
-  they 'trim content buffer', (ssh) ->
+  they 'trim content buffer', ({ssh}) ->
     nikita
       ssh: ssh
     .file

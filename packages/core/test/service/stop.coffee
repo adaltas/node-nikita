@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 {tags, ssh, service} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.service_systemctl
 
@@ -9,7 +9,7 @@ describe 'service.stop', ->
   
   @timeout 20000
 
-  they 'should stop', (ssh) ->
+  they 'should stop', ({ssh}) ->
     nikita
       ssh: ssh
     .service.install service.name
@@ -20,7 +20,7 @@ describe 'service.stop', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'no error when invalid service name', (ssh) ->
+  they 'no error when invalid service name', ({ssh}) ->
     nikita
       ssh: ssh
     .service.stop

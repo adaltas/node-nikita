@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.system_user
 
 describe 'file options uid gid', ->
 
-  they 'default to user gid on creation', (ssh) ->
+  they 'default to user gid on creation', ({ssh}) ->
     nikita
       ssh: null
     .system.user.remove 'toto'
@@ -21,7 +21,7 @@ describe 'file options uid gid', ->
       gid: 2345
     .promise()
 
-  they 'preserve gid if uid changed on update', (ssh) ->
+  they 'preserve gid if uid changed on update', ({ssh}) ->
     nikita
       ssh: null
     .system.user.remove 'toto'
@@ -40,7 +40,7 @@ describe 'file options uid gid', ->
       gid: 2345
     .promise()
 
-  they 'throw Error is username does not exists', (ssh) ->
+  they 'throw Error is username does not exists', ({ssh}) ->
     nikita
       ssh: null
     .system.user.remove 'toto'

@@ -7,7 +7,7 @@ return unless tags.lxd
 
 describe 'lxd.file.exists', ->
 
-  they 'when created', (ssh) ->
+  they 'when created', ({ssh}) ->
     nikita
       ssh: ssh
       lxd: lxd
@@ -25,7 +25,7 @@ describe 'lxd.file.exists', ->
       status.should.be.true()
     .promise()
 
-  they 'when missing', (ssh) ->
+  they 'when missing', ({ssh}) ->
     nikita
       ssh: ssh
       lxd: lxd

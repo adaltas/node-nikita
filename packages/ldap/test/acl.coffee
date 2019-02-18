@@ -1,7 +1,7 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, ldap} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.ldap_acl
 
@@ -28,7 +28,7 @@ describe 'ldap.acl', ->
       client.unbind (err) ->
         next err
 
-  they 'create a new permission', (ssh) ->
+  they 'create a new permission', ({ssh}) ->
     nikita
       ssh: ssh
     .ldap.acl
@@ -54,7 +54,7 @@ describe 'ldap.acl', ->
       status.should.be.false()
     .promise()
 
-  they 'respect order in creation', (ssh) ->
+  they 'respect order in creation', ({ssh}) ->
     nikita
       ssh: ssh
     .ldap.acl

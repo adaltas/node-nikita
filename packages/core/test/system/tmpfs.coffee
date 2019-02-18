@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.system_tmpfs
 
@@ -9,7 +9,7 @@ describe 'system.tmpfs', ->
   
   describe 'generate without merge', ->
     
-    they 'simple mount group configuration with target', (ssh) ->
+    they 'simple mount group configuration with target', ({ssh}) ->
       nikita
         ssh: ssh
       .system.remove
@@ -35,7 +35,7 @@ describe 'system.tmpfs', ->
         """
       .promise()
 
-    they 'status not modified', (ssh) ->
+    they 'status not modified', ({ssh}) ->
       nikita
         ssh: ssh
       .system.tmpfs
@@ -70,7 +70,7 @@ describe 'system.tmpfs', ->
         """
       .promise()
   
-    they 'Override existing configuration file with target', (ssh) ->
+    they 'Override existing configuration file with target', ({ssh}) ->
       nikita
         ssh: ssh
       .system.remove
@@ -108,7 +108,7 @@ describe 'system.tmpfs', ->
   
   describe 'generate with merge', ->
     
-    they 'multiple file with target', (ssh) ->
+    they 'multiple file with target', ({ssh}) ->
       nikita
         ssh: ssh
       .system.remove
@@ -147,7 +147,7 @@ describe 'system.tmpfs', ->
         """
       .promise()
 
-    they 'multiple file merge status not modifed with target', (ssh) ->
+    they 'multiple file merge status not modifed with target', ({ssh}) ->
       nikita
         ssh: ssh
       .system.remove
@@ -199,7 +199,7 @@ describe 'system.tmpfs', ->
 
   describe 'default target Centos/Redhat 7', ->
     
-    they 'simple mount group configuration', (ssh) ->
+    they 'simple mount group configuration', ({ssh}) ->
       nikita
         ssh: ssh
       .system.remove
@@ -221,7 +221,7 @@ describe 'system.tmpfs', ->
         content: "d /var/run/file_1 0644 root root 10s -"
       .promise()
 
-    they 'simple mount group no uid', (ssh) ->
+    they 'simple mount group no uid', ({ssh}) ->
       nikita
         ssh: ssh
       .system.remove '/etc/tmpfiles.d/root.conf'

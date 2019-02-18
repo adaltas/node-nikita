@@ -2,7 +2,7 @@
 http = require 'http'
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
@@ -14,7 +14,7 @@ describe 'connection.assert', ->
     server.close() for server in servers
     servers = []
 
-  they 'port and host', (ssh) ->
+  they 'port and host', ({ssh}) ->
     nikita
       ssh: ssh
     .call (_, handler) ->
@@ -30,7 +30,7 @@ describe 'connection.assert', ->
       @status().should.be.false()
     .promise()
 
-  they 'multiple servers', (ssh) ->
+  they 'multiple servers', ({ssh}) ->
     nikita
       ssh: ssh
     .call (_, handler) ->
@@ -55,7 +55,7 @@ describe 'connection.assert', ->
       @status().should.be.false()
     .promise()
 
-  they 'port is not listening', (ssh) ->
+  they 'port is not listening', ({ssh}) ->
     nikita
       ssh: ssh
     .connection.assert

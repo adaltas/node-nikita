@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 {tags, ssh} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.system_discover
 
@@ -9,7 +9,7 @@ describe 'system.discover', ->
   
   @timeout 30000
 
-  they 'return info on RH', (ssh) ->
+  they 'return info on RH', ({ssh}) ->
     nikita
       ssh: ssh
     .call
@@ -20,7 +20,7 @@ describe 'system.discover', ->
         release.should.match /^[6|7]./ unless err
     .promise()
 
-  they 'return info on Ubuntu', (ssh) ->
+  they 'return info on Ubuntu', ({ssh}) ->
     nikita
       ssh: ssh
     .call
@@ -31,7 +31,7 @@ describe 'system.discover', ->
         release.should.match /^\d+./
     .promise()
 
-  they 'dont cache by default on RH', (ssh) ->
+  they 'dont cache by default on RH', ({ssh}) ->
     nikita
       ssh: ssh
     .call
@@ -41,7 +41,7 @@ describe 'system.discover', ->
       @system.discover (err, {status}) -> status.should.be.true() unless err
     .promise()
 
-  they 'dont cache by default on Ubuntu', (ssh) ->
+  they 'dont cache by default on Ubuntu', ({ssh}) ->
     nikita
       ssh: ssh
     .call
@@ -51,7 +51,7 @@ describe 'system.discover', ->
       @system.discover (err, {status}) -> status.should.be.true() unless err
     .promise()
 
-  they 'honors cache on RH', (ssh) ->
+  they 'honors cache on RH', ({ssh}) ->
     nikita
       ssh: ssh
     .call
@@ -64,7 +64,7 @@ describe 'system.discover', ->
         @store['nikita:system:release'].should.match /^[6|7]./
     .promise()
 
-  they 'honors cache on Ubuntu', (ssh) ->
+  they 'honors cache on Ubuntu', ({ssh}) ->
     nikita
       ssh: ssh
     .call

@@ -1,13 +1,13 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, docker} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.docker
 
 describe 'docker.service', ->
 
-  they 'simple service', (ssh) ->
+  they 'simple service', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -26,7 +26,7 @@ describe 'docker.service', ->
       container: 'nikita_test_unique'
     .promise()
 
-  they 'invalid options', (ssh) ->
+  they 'invalid options', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -50,7 +50,7 @@ describe 'docker.service', ->
       container: 'nikita_test'
     .promise()
 
-  they 'status not modified', (ssh) ->
+  they 'status not modified', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker

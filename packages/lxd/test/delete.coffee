@@ -7,7 +7,7 @@ return unless tags.lxd
 
 describe 'lxd.delete', ->
 
-  they 'Delete a container', (ssh) ->
+  they 'Delete a container', ({ssh}) ->
     nikita
       ssh: ssh
     .lxd.init
@@ -20,7 +20,7 @@ describe 'lxd.delete', ->
     .promise()
 
 
-  they 'Force deletion of a running container', (ssh) ->
+  they 'Force deletion of a running container', ({ssh}) ->
     nikita
       ssh: ssh
     .lxd.init
@@ -35,7 +35,7 @@ describe 'lxd.delete', ->
       status.should.be.true()
     .promise()
 
-  they 'Not found', (ssh) ->
+  they 'Not found', ({ssh}) ->
     nikita
       ssh: ssh
     .lxd.delete  # repeated to be sure the container is absent

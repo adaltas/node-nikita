@@ -7,7 +7,7 @@ return unless tags.lxd
 
 describe 'lxd.file.push', ->
 
-  they 'a new file', (ssh) ->
+  they 'a new file', ({ssh}) ->
     nikita
       ssh: ssh
     .lxd.delete
@@ -34,7 +34,7 @@ describe 'lxd.file.push', ->
       status.should.be.true()
     .promise()
 
-  they 'the same file', (ssh) ->
+  they 'the same file', ({ssh}) ->
     nikita
       ssh: ssh
     .lxd.delete
@@ -62,7 +62,7 @@ describe 'lxd.file.push', ->
   
   describe 'content', ->
     
-    they 'a new file', (ssh) ->
+    they 'a new file', ({ssh}) ->
       nikita
         ssh: ssh
       .lxd.delete
@@ -86,7 +86,7 @@ describe 'lxd.file.push', ->
         stdout.trim().should.eql 'something'
       .promise()
         
-    they 'the same file', (ssh) ->
+    they 'the same file', ({ssh}) ->
       nikita
         ssh: ssh
       .lxd.delete

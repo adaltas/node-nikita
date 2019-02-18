@@ -1,13 +1,13 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch, krb5} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.krb5_addprinc
 
 describe 'krb5.addprinc', ->
 
-  they 'create a new principal without a randkey', (ssh) ->
+  they 'create a new principal without a randkey', ({ssh}) ->
     nikita
       ssh: ssh
       kadmin_server: krb5.kadmin_server
@@ -27,7 +27,7 @@ describe 'krb5.addprinc', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'create a new principal with a password', (ssh) ->
+  they 'create a new principal with a password', ({ssh}) ->
     nikita
       ssh: ssh
       kadmin_server: krb5.kadmin_server
@@ -54,7 +54,7 @@ describe 'krb5.addprinc', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'dont overwrite password', (ssh) ->
+  they 'dont overwrite password', ({ssh}) ->
     nikita
       ssh: ssh
       kadmin_server: krb5.kadmin_server
@@ -77,7 +77,7 @@ describe 'krb5.addprinc', ->
       cmd: "echo password1 | kinit nikita@#{krb5.realm}"
     .promise()
 
-  they 'call function with new style', (ssh) ->
+  they 'call function with new style', ({ssh}) ->
     krb5_conf =
       etc_krb5_conf:
         libdefaults: 

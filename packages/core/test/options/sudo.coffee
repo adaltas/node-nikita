@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh,scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.sudo
 
 describe 'options "sudo"', ->
 
-  they 'readFile', (ssh) ->
+  they 'readFile', ({ssh}) ->
     nikita
       ssh: ssh
       sudo: false
@@ -27,7 +27,7 @@ describe 'options "sudo"', ->
         callback err
     .promise()
 
-  they 'writeFile', (ssh) ->
+  they 'writeFile', ({ssh}) ->
     uid = gid = null
     nikita
       ssh: ssh
@@ -62,7 +62,7 @@ describe 'options "sudo"', ->
       sudo: true
     .promise()
   
-  they 'execute', (ssh) ->
+  they 'execute', ({ssh}) ->
     nikita
       ssh: ssh
       sudo: false

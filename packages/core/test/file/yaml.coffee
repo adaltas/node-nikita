@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'file.yaml', ->
 
-  they 'stringify an object', (ssh) ->
+  they 'stringify an object', ({ssh}) ->
     nikita
       ssh: ssh
     .file.yaml
@@ -20,7 +20,7 @@ describe 'file.yaml', ->
       content: 'user:\n  preference:\n    color: rouge\n'
     .promise()
 
-  they 'merge an object', (ssh) ->
+  they 'merge an object', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -37,7 +37,7 @@ describe 'file.yaml', ->
       content: 'user:\n  preference:\n    language: french\n'
     .promise()
 
-  they 'discard undefined and null', (ssh) ->
+  they 'discard undefined and null', ({ssh}) ->
     nikita
       ssh: ssh
     .file.yaml
@@ -51,7 +51,7 @@ describe 'file.yaml', ->
       content: 'user:\n  preference:\n    color: violet\n'
     .promise()
 
-  they 'remove null within merge', (ssh) ->
+  they 'remove null within merge', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -70,7 +70,7 @@ describe 'file.yaml', ->
       content: 'user:\n  preference:\n    color: rouge\n    country: france\n'
     .promise()
 
-  they 'disregard undefined within merge', (ssh) ->
+  they 'disregard undefined within merge', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -89,7 +89,7 @@ describe 'file.yaml', ->
       content: 'user:\n  preference:\n    language: node\n'
     .promise()
 
-  they 'disregard undefined within merge', (ssh) ->
+  they 'disregard undefined within merge', ({ssh}) ->
     nikita
     .file
       target: "#{scratch}/user.yml"

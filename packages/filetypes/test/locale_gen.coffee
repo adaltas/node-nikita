@@ -1,13 +1,13 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'file.types.locale_gen', ->
 
-  they 'activate locales', (ssh) ->
+  they 'activate locales', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -39,7 +39,7 @@ describe 'file.types.locale_gen', ->
       """
     .promise()
 
-  they 'desactivate locales', (ssh) ->
+  they 'desactivate locales', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -71,7 +71,7 @@ describe 'file.types.locale_gen', ->
       """
     .promise()
 
-  they 'rootdir with default target', (ssh) ->
+  they 'rootdir with default target', ({ssh}) ->
     nikita
       ssh: ssh
     .file

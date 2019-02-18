@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 {tags, ssh, service} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.service_startup or tags.service_systemctl
 
@@ -9,7 +9,7 @@ describe 'service options startup', ->
   
   @timeout 30000
 
-  they 'activate startup with boolean true', (ssh) ->
+  they 'activate startup with boolean true', ({ssh}) ->
     nikita
       ssh: ssh
     .service.remove
@@ -28,7 +28,7 @@ describe 'service options startup', ->
       status.should.be.false() unless err
     .promise()
   
-  they 'activate startup with boolean false', (ssh) ->
+  they 'activate startup with boolean false', ({ssh}) ->
     nikita
       ssh: ssh
     .service.remove
@@ -47,7 +47,7 @@ describe 'service options startup', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'activate startup with string', (ssh) ->
+  they 'activate startup with string', ({ssh}) ->
     nikita
       ssh: ssh
     .system.execute 'which chkconfig', code_skipped: 1, (err, {status}) ->
@@ -67,7 +67,7 @@ describe 'service options startup', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'detect change in startup', (ssh) ->
+  they 'detect change in startup', ({ssh}) ->
     # Startup levels only apply to chkconfig
     # Note, on CentOS 7, chkconfig is installed but Nikita wont use it 
     # if it detect systemctl

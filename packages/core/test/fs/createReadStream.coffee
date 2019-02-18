@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'fs.createReadStream', ->
 
-  they 'option on_readable', (ssh) ->
+  they 'option on_readable', ({ssh}) ->
     buffers = []
     nikita
       ssh: ssh
@@ -23,7 +23,7 @@ describe 'fs.createReadStream', ->
       Buffer.concat(buffers).toString().should.eql 'hello' unless err
     .promise()
 
-  they 'option stream', (ssh) ->
+  they 'option stream', ({ssh}) ->
     buffers = []
     nikita
       ssh: ssh

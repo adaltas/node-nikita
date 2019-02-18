@@ -1,7 +1,7 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch, docker} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.docker
 
@@ -10,7 +10,7 @@ describe 'docker.kill', ->
   target = "#{scratch}/default.script"
   source = '/usr/share/udhcpc/default.script'
 
-  they 'running container', (ssh) ->
+  they 'running container', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -27,7 +27,7 @@ describe 'docker.kill', ->
       status.should.be.true()
     .promise()
 
-  they 'status not modified (previously killed)', (ssh) ->
+  they 'status not modified (previously killed)', ({ssh}) ->
     @timeout 120000
     nikita
       ssh: ssh
@@ -47,7 +47,7 @@ describe 'docker.kill', ->
       status.should.be.false()
     .promise()
 
-  they 'status not modified (not living)', (ssh) ->
+  they 'status not modified (not living)', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker

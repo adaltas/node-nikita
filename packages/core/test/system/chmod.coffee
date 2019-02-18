@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'system.chmod', ->
 
-  they 'change a permission of a file', (ssh) ->
+  they 'change a permission of a file', ({ssh}) ->
     nikita
       ssh: ssh
     .file.touch
@@ -18,7 +18,7 @@ describe 'system.chmod', ->
       mode: 0o0600
     .promise()
 
-  they 'change status', (ssh) ->
+  they 'change status', ({ssh}) ->
     nikita
       ssh: ssh
     .file.touch

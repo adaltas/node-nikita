@@ -2,13 +2,13 @@
 nikita = require '../../src'
 misc = require '../../src/misc'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'file.ini option stringify_square_then_curly', ->
 
-  they 'call stringify udf', (ssh) ->
+  they 'call stringify udf', ({ssh}) ->
     nikita
       ssh: ssh
     .file.ini
@@ -22,7 +22,7 @@ describe 'file.ini option stringify_square_then_curly', ->
       content: '[user]\n preference = {\n  color = true\n }\n\n'
     .promise()
 
-  they 'convert array to multiple keys', (ssh) ->
+  they 'convert array to multiple keys', ({ssh}) ->
     nikita
       ssh: ssh
     # Create a new file

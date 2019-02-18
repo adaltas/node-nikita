@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'wait.execute', ->
 
-  they 'take a single cmd', (ssh) ->
+  they 'take a single cmd', ({ssh}) ->
     nikita
       ssh: ssh
     .wait.execute
@@ -25,7 +25,7 @@ describe 'wait.execute', ->
       status.should.be.true() unless err
     .promise()
 
-  they 'take a multiple cmds', (ssh) ->
+  they 'take a multiple cmds', ({ssh}) ->
     nikita
       ssh: ssh
     .wait.execute
@@ -52,7 +52,7 @@ describe 'wait.execute', ->
 
   describe 'log', ->
 
-    they 'attemps', (ssh) ->
+    they 'attemps', ({ssh}) ->
       logs = []
       nikita
         ssh: ssh
@@ -69,7 +69,7 @@ describe 'wait.execute', ->
         logs.length.should.be.within 2, 4
       .promise()
 
-    they 'honors *_log as true', (ssh) ->
+    they 'honors *_log as true', ({ssh}) ->
       logs = 0
       nikita
         ssh: ssh
@@ -85,7 +85,7 @@ describe 'wait.execute', ->
         logs.should.eql 3
       .promise()
 
-    they 'honors *_log as false', (ssh) ->
+    they 'honors *_log as false', ({ssh}) ->
       logs = 0
       nikita
         ssh: ssh
@@ -103,7 +103,7 @@ describe 'wait.execute', ->
 
   describe 'quorum', ->
 
-    they 'is not defined', (ssh) ->
+    they 'is not defined', ({ssh}) ->
       nikita
         ssh: ssh
       .call ->
@@ -131,7 +131,7 @@ describe 'wait.execute', ->
         content: '1\n2\n3\n'
       .promise()
 
-    they 'is a number', (ssh) ->
+    they 'is a number', ({ssh}) ->
       nikita
         ssh: ssh
       .call ->
@@ -159,7 +159,7 @@ describe 'wait.execute', ->
         content: '1\n2\n'
       .promise()
 
-    they 'is "true"', (ssh) ->
+    they 'is "true"', ({ssh}) ->
       nikita
         ssh: ssh
       .call ->

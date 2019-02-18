@@ -2,13 +2,13 @@
 fs = require 'ssh2-fs'
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'fs.read', ->
 
-  they 'read a file', (ssh) ->
+  they 'read a file', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -25,7 +25,7 @@ describe 'fs.read', ->
   
   describe 'error', ->
   
-    they 'read a missing file', (ssh) ->
+    they 'read a missing file', ({ssh}) ->
       validate_error = (err) ->
         err.message.should.eql "ENOENT: no such file or directory, open '#{scratch}/whereareu'"
         err.errno.should.eql -2
@@ -42,7 +42,7 @@ describe 'fs.read', ->
         validate_error err
       .promise()
   
-    they 'read a directory', (ssh) ->
+    they 'read a directory', ({ssh}) ->
       validate_error = (err) ->
         err.message.should.eql 'EISDIR: illegal operation on a directory, read'
         err.errno.should.eql -21

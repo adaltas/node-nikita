@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
@@ -9,7 +9,7 @@ describe 'file.render', ->
 
   describe 'error', ->
 
-    they 'when option "source" doesnt exist', (ssh) ->
+    they 'when option "source" doesnt exist', ({ssh}) ->
       nikita
         ssh: ssh
       .file.render
@@ -21,7 +21,7 @@ describe 'file.render', ->
         err.message.should.eql "ENOENT: no such file or directory, open '#{scratch}/oups.j2'"
       .promise()
 
-    they 'when option "context" is missing', (ssh) ->
+    they 'when option "context" is missing', ({ssh}) ->
       nikita
         ssh: ssh
       .file.render
@@ -32,7 +32,7 @@ describe 'file.render', ->
         err.message.should.eql 'Required option: context'
       .promise()
 
-    they 'unsuppoorted source extension', (ssh) ->
+    they 'unsuppoorted source extension', ({ssh}) ->
       nikita
         ssh: ssh
       .file.render
@@ -46,7 +46,7 @@ describe 'file.render', ->
 
   describe 'nunjunks', ->
 
-    they 'use `content`', (ssh) ->
+    they 'use `content`', ({ssh}) ->
       nikita
         ssh: ssh
       .file.render
@@ -61,7 +61,7 @@ describe 'file.render', ->
         content: 'Hello you'
       .promise()
 
-    they 'detect `source`', (ssh) ->
+    they 'detect `source`', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -78,7 +78,7 @@ describe 'file.render', ->
         content: 'Hello you'
       .promise()
 
-    they 'test nikita type filters', (ssh) ->
+    they 'test nikita type filters', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -103,7 +103,7 @@ describe 'file.render', ->
         content: '\nHello\nworld'
       .promise()
 
-    they 'test nikita isEmpty filter', (ssh) ->
+    they 'test nikita isEmpty filter', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -131,7 +131,7 @@ describe 'file.render', ->
         content: '\nsucceed\n'
       .promise()
 
-    they 'test personal filter', (ssh) ->
+    they 'test personal filter', ({ssh}) ->
       nikita
         ssh: ssh
       .file
@@ -152,7 +152,7 @@ describe 'file.render', ->
         content: 'Hello you 42 ok'
       .promise()
 
-    they 'check autoescaping (disabled)', (ssh) ->
+    they 'check autoescaping (disabled)', ({ssh}) ->
       nikita
         ssh: ssh
       .file

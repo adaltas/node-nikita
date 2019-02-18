@@ -21,6 +21,7 @@ module.exports =
     service_startup: false
     service_systemctl: false
     sudo: false
+    system_authconfig: false
     system_chmod: false
     system_cgroups: false
     system_discover: false
@@ -44,8 +45,10 @@ module.exports =
     binddn: 'cn=manager,cn=config'
     passwd: 'test'
     suffix_dn: 'ou=users,dc=domain,dc=com' # used by ldap_user
-  ssh:
-    host: '127.0.0.1'
-    username: process.env.USER
+  ssh: [
+    null
+  ,
+    ssh: host: '127.0.0.1', username: process.env.USER
     # no password, will use private key
     # if found in "~/.ssh/id_rsa"
+  ]

@@ -1,13 +1,13 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'file.types.yum_repo', ->
 
-  they 'generate from content object', (ssh) ->
+  they 'generate from content object', ({ssh}) ->
     nikita
       ssh: ssh
     .file.types.yum_repo
@@ -36,7 +36,7 @@ describe 'file.types.yum_repo', ->
       target: "#{scratch}/test.repo"
     .promise()
 
-  they 'merge with content object', (ssh) ->
+  they 'merge with content object', ({ssh}) ->
     nikita
       ssh: ssh
     .file.types.yum_repo
@@ -63,7 +63,7 @@ describe 'file.types.yum_repo', ->
       target: "#{scratch}/test.repo"
     .promise()
 
-  they 'write to default repository dir', (ssh) ->
+  they 'write to default repository dir', ({ssh}) ->
     nikita
     .file.types.yum_repo
       target: "#{scratch}/test.repo"
@@ -85,7 +85,7 @@ describe 'file.types.yum_repo', ->
       trim: true
     .promise()
 
-  they 'default from source with content', (ssh) ->
+  they 'default from source with content', ({ssh}) ->
     nikita
       ssh: ssh
     .file.types.yum_repo

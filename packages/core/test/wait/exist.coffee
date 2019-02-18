@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'wait.exist', ->
 
-  they 'take a single cmd', (ssh) ->
+  they 'take a single cmd', ({ssh}) ->
     nikita
       ssh: ssh
     .wait.exist

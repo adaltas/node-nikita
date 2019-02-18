@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 {tags, ssh} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.cron
 
@@ -19,7 +19,7 @@ describe 'cron', ->
 
   rand = Math.random().toString(36).substring(7);
 
-  they 'add a job', (ssh) ->
+  they 'add a job', ({ssh}) ->
     nikita
       ssh: ssh
     .service 'cronie'
@@ -47,7 +47,7 @@ describe 'cron', ->
 
   describe 'match', ->
 
-    they 'regexp', (ssh) ->
+    they 'regexp', ({ssh}) ->
       nikita
         ssh: ssh
       .service 'cronie'
@@ -79,7 +79,7 @@ describe 'cron', ->
         when: '0 * * * *'
       .promise()
 
-    they 'string', (ssh) ->
+    they 'string', ({ssh}) ->
       nikita
         ssh: ssh
       .service 'cronie'
@@ -113,7 +113,7 @@ describe 'cron', ->
 
   describe 'error', ->
 
-    they 'invalid job: no time', (ssh) ->
+    they 'invalid job: no time', ({ssh}) ->
       nikita
         ssh: ssh
       .service 'cronie'
@@ -124,7 +124,7 @@ describe 'cron', ->
         err.message.should.eql 'valid when is required'
       .promise()
 
-    they 'invalid job: invalid time', (ssh) ->
+    they 'invalid job: invalid time', ({ssh}) ->
       nikita
         ssh: ssh
       .service 'cronie'
@@ -136,7 +136,7 @@ describe 'cron', ->
         err.message.should.eql 'valid when is required'
       .promise()
 
-    they 'invalid job: no cmd', (ssh) ->
+    they 'invalid job: no cmd', ({ssh}) ->
       nikita
         ssh: ssh
       .service 'cronie'
@@ -147,7 +147,7 @@ describe 'cron', ->
         err.message.should.eql 'valid cmd is required'
       .promise()
 
-    they 'invalid job: invalid cmd', (ssh) ->
+    they 'invalid job: invalid cmd', ({ssh}) ->
       nikita
         ssh: ssh
       .service 'cronie'
@@ -159,7 +159,7 @@ describe 'cron', ->
         err.message.should.eql 'valid cmd is required'
       .promise()
 
-    they 'invalid job: invalid cmd to exec', (ssh) ->
+    they 'invalid job: invalid cmd to exec', ({ssh}) ->
       nikita
         ssh: ssh
       .service 'cronie'

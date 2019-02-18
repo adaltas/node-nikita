@@ -1,13 +1,13 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch, docker} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.docker
 
 describe 'docker.run', ->
 
-  they 'simple command', (ssh) ->
+  they 'simple command', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -19,7 +19,7 @@ describe 'docker.run', ->
       stdout.should.match /^test.*/ unless err
     .promise()
   
-  they '--rm (flag option)', (ssh) ->
+  they '--rm (flag option)', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -38,7 +38,7 @@ describe 'docker.run', ->
       container: 'nikita_test_rm'
     .promise()
 
-  they 'unique option from array option', (ssh) ->
+  they 'unique option from array option', ({ssh}) ->
     @timeout 0
     nikita
       ssh: ssh
@@ -57,7 +57,7 @@ describe 'docker.run', ->
       container: 'nikita_test_unique'
     .promise()
 
-  they 'array options', (ssh) ->
+  they 'array options', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -78,7 +78,7 @@ describe 'docker.run', ->
       container: 'nikita_test_array'
     .promise()
 
-  they 'existing container', (ssh) ->
+  they 'existing container', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -102,7 +102,7 @@ describe 'docker.run', ->
       container: 'nikita_test'
     .promise()
 
-  they 'status not modified', (ssh) ->
+  they 'status not modified', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker

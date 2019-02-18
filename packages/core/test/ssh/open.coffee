@@ -2,24 +2,25 @@
 connect = require 'ssh2-connect'
 nikita = require '../../src'
 misc = require '../../src/misc'
-test = require '../test'
 {tags, ssh} = require '../test'
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'ssh.open', ->
 
-  it 'with handler options', ->
+  they 'with handler options', ({ssh}) ->
+    return @skip() unless ssh
     nikita
     .call ->
       (!!@ssh()).should.be.false()
     .ssh.open
-      host: ssh.host
-      port: ssh.port
-      username: ssh.username
-      password: ssh.password
-      private_key: ssh.privateKey
-      public_key: ssh.publicKey
+      host: ssh.config.host
+      port: ssh.config.port
+      username: ssh.config.username
+      password: ssh.config.password
+      private_key: ssh.config.privateKey
+      public_key: ssh.config.publicKey
     , (err, {status}) ->
       status.should.be.true() unless err
     .call ->
@@ -28,15 +29,16 @@ describe 'ssh.open', ->
     .ssh.close()
     .promise()
 
-  it 'with global options', ->
+  they 'with global options', ({ssh}) ->
+    return @skip() unless ssh
     nikita
       ssh:
-        host: ssh.host
-        port: ssh.port
-        username: ssh.username
-        password: ssh.password
-        private_key: ssh.privateKey
-        public_key: ssh.publicKey
+        host: ssh.config.host
+        port: ssh.config.port
+        username: ssh.config.username
+        password: ssh.config.password
+        private_key: ssh.config.privateKey
+        public_key: ssh.config.publicKey
     .ssh.open()
     .call ->
       (!!@ssh()).should.be.true()
@@ -47,14 +49,15 @@ describe 'ssh.open', ->
       status.should.be.false() unless err
     .promise()
 
-  it 'check status with properties', ->
-    options = 
-      host: ssh.host
-      port: ssh.port
-      username: ssh.username
-      password: ssh.password
-      private_key: ssh.privateKey
-      public_key: ssh.publicKey
+  they 'check status with properties', ({ssh}) ->
+    return @skip() unless ssh
+    options =
+      host: ssh.config.host
+      port: ssh.config.port
+      username: ssh.config.username
+      password: ssh.config.password
+      private_key: ssh.config.privateKey
+      public_key: ssh.config.publicKey
     nikita
     .ssh.open options
     .ssh.open options, (err, {status}) ->
@@ -62,14 +65,15 @@ describe 'ssh.open', ->
     .ssh.close()
     .promise()
 
-  it 'check status with instance', (next) ->
+  they 'check status with instance', ({ssh}, next) ->
+    return @skip() unless ssh
     connect
-      host: ssh.host
-      port: ssh.port
-      username: ssh.username
-      password: ssh.password
-      private_key: ssh.privateKey
-      public_key: ssh.publicKey
+      host: ssh.config.host
+      port: ssh.config.port
+      username: ssh.config.username
+      password: ssh.config.password
+      private_key: ssh.config.privateKey
+      public_key: ssh.config.publicKey
     , (err, ssh) ->
       return next err if err
       nikita

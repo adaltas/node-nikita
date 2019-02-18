@@ -1,13 +1,13 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'file.types.yum_repo', ->
 
-  they 'generate from content', (ssh) ->
+  they 'generate from content', ({ssh}) ->
     nikita
       ssh: ssh
     .file.types.ceph_conf
@@ -24,7 +24,7 @@ describe 'file.types.yum_repo', ->
       content: "[global]\nfsid = a7-a6-d0\nprop with spaces = 2spaces\nprop ip = 192.168.10.1\n"
     .promise()
 
-  they 'status not modified', (ssh) ->
+  they 'status not modified', ({ssh}) ->
     nikita
       ssh: ssh
     .file.types.ceph_conf

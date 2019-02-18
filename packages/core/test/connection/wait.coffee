@@ -2,7 +2,7 @@
 http = require 'http'
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
@@ -24,7 +24,7 @@ describe 'connection.wait', ->
 
   describe 'connection', ->
 
-    they 'a single host and a single port', (ssh) ->
+    they 'a single host and a single port', ({ssh}) ->
       srv = server()
       nikita
         ssh: ssh
@@ -40,7 +40,7 @@ describe 'connection.wait', ->
         @options.srv1.close callback
       .promise()
 
-    they 'server object', (ssh) ->
+    they 'server object', ({ssh}) ->
       srv1 = server()
       srv2 = server()
       nikita
@@ -72,7 +72,7 @@ describe 'connection.wait', ->
       .call (_, callback) -> @options.srv2.close callback
       .promise()
 
-    they 'server string', (ssh) ->
+    they 'server string', ({ssh}) ->
       srv = server()
       nikita
         ssh: ssh
@@ -85,7 +85,7 @@ describe 'connection.wait', ->
       .call (_, callback) -> @options.srv.close callback
       .promise()
 
-    they 'multiple connection', (ssh) ->
+    they 'multiple connection', ({ssh}) ->
       srv = server()
       nikita
         ssh: ssh
@@ -101,7 +101,7 @@ describe 'connection.wait', ->
 
   describe 'options', ->
 
-    they 'test status', (ssh) ->
+    they 'test status', ({ssh}) ->
       srv = server()
       nikita
         ssh: ssh
@@ -128,7 +128,7 @@ describe 'connection.wait', ->
         @options.srv.close callback
       .promise()
 
-    they 'quorum true', (ssh) ->
+    they 'quorum true', ({ssh}) ->
       srv1 = server()
       srv2 = server()
       srv3 = server()
@@ -156,7 +156,7 @@ describe 'connection.wait', ->
         @options.srv2.close callback
       .promise()
 
-    they 'quorum even number', (ssh) ->
+    they 'quorum even number', ({ssh}) ->
       srv1 = server()
       srv2 = server()
       nikita
@@ -178,7 +178,7 @@ describe 'connection.wait', ->
         @options.srv1.close callback
       .promise()
 
-    they 'quorum odd number', (ssh) ->
+    they 'quorum odd number', ({ssh}) ->
       srv1 = server()
       srv2 = server()
       srv3 = server()
@@ -208,7 +208,7 @@ describe 'connection.wait', ->
 
   describe 'options', ->
 
-    they 'validate host', (ssh) ->
+    they 'validate host', ({ssh}) ->
       srv = server()
       nikita
         ssh: ssh
@@ -221,7 +221,7 @@ describe 'connection.wait', ->
         err.message.should.eql 'Invalid host: undefined'
       .promise()
 
-    they 'validate port', (ssh) ->
+    they 'validate port', ({ssh}) ->
       nikita
         ssh: ssh
       .connection.wait

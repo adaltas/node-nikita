@@ -1,7 +1,7 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch, docker} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.docker
 
@@ -9,7 +9,7 @@ describe 'docker.build', ->
 
   @timeout 60000
 
-  they 'fail with missing image parameter', (ssh) ->
+  they 'fail with missing image parameter', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -20,7 +20,7 @@ describe 'docker.build', ->
       err.message.should.eql 'Required option "image"'
     .promise()
 
-  they 'fail with exclusive parameters', (ssh) ->
+  they 'fail with exclusive parameters', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -32,7 +32,7 @@ describe 'docker.build', ->
       err.message.should.eql 'Can not build from Dockerfile and content'
     .promise()
 
-  they 'from text', (ssh) ->
+  they 'from text', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -51,7 +51,7 @@ describe 'docker.build', ->
       image: 'nikita/should_exists_2'
     .promise()
 
-  they 'from cwd',  (ssh) ->
+  they 'from cwd',  ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -72,7 +72,7 @@ describe 'docker.build', ->
       image: 'nikita/should_exists_3'
     .promise()
 
-  they 'from Dockerfile (exist)', (ssh) ->
+  they 'from Dockerfile (exist)', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -93,7 +93,7 @@ describe 'docker.build', ->
       image: 'nikita/should_exists_3'
     .promise()
 
-  they 'from Dockerfile (not exist)', (ssh) ->
+  they 'from Dockerfile (not exist)', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -105,7 +105,7 @@ describe 'docker.build', ->
       err.code.should.eql 'ENOENT'
     .promise()
 
-  they 'status not modified', (ssh) ->
+  they 'status not modified', ({ssh}) ->
     status_true = []
     status_false = []
     nikita

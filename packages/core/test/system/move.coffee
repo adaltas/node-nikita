@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'system.move', ->
 
-  they 'rename a file', (ssh) ->
+  they 'rename a file', ({ssh}) ->
     nikita
       ssh: ssh
     .file.touch
@@ -26,7 +26,7 @@ describe 'system.move', ->
       not: true
     .promise()
 
-  they 'rename a directory', (ssh) ->
+  they 'rename a directory', ({ssh}) ->
     nikita
       ssh: ssh
     .file.touch
@@ -46,7 +46,7 @@ describe 'system.move', ->
       not: true
     .promise()
 
-  they 'overwrite a file', (ssh) ->
+  they 'overwrite a file', ({ssh}) ->
     nikita
       ssh: ssh
     .file [
@@ -77,7 +77,7 @@ describe 'system.move', ->
       not: true
     .promise()
 
-  they 'force bypass checksum comparison', (ssh) ->
+  they 'force bypass checksum comparison', ({ssh}) ->
     nikita
       ssh: ssh
     .file [

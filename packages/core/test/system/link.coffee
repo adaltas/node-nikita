@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'system.link', ->
 
-  they 'should link file', (ssh) ->
+  they 'should link file', ({ssh}) ->
     # Create a non existing link
     nikita
       ssh: ssh
@@ -26,7 +26,7 @@ describe 'system.link', ->
       filetype: 'symlink'
     .promise()
   
-  they 'should link dir', (ssh) ->
+  they 'should link dir', ({ssh}) ->
     # Create a non existing link
     nikita
       ssh: ssh
@@ -46,7 +46,7 @@ describe 'system.link', ->
       filetype: 'symlink'
     .promise()
   
-  they 'should create parent directories', (ssh) ->
+  they 'should create parent directories', ({ssh}) ->
     # Create a non existing link
     nikita
       ssh: ssh
@@ -70,7 +70,7 @@ describe 'system.link', ->
       status.should.be.true() unless err
     .promise()
 
-  they 'should override invalid link', (ssh) ->
+  they 'should override invalid link', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -95,7 +95,7 @@ describe 'system.link', ->
 
   describe 'error', ->
 
-    they 'for invalid arguments', (ssh) ->
+    they 'for invalid arguments', ({ssh}) ->
       # Test missing source
       nikita
         ssh: ssh

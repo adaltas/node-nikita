@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'system.running', ->
     
-  they 'pid not running', (ssh) ->
+  they 'pid not running', ({ssh}) ->
     logs = []
     nikita
       ssh: ssh
@@ -20,7 +20,7 @@ describe 'system.running', ->
       logs.filter((log) -> /PID \d+ is not running/.test log).length.should.eql 1
     .promise()
         
-  they 'pid running', (ssh) ->
+  they 'pid running', ({ssh}) ->
     pid = null
     logs = []
     nikita
@@ -45,7 +45,7 @@ describe 'system.running', ->
       logs.filter((log) -> /PID \d+ is running/.test log).length.should.eql 1
     .promise()
         
-  they 'pid file does not exists', (ssh) ->
+  they 'pid file does not exists', ({ssh}) ->
     logs = []
     nikita
       ssh: ssh
@@ -58,7 +58,7 @@ describe 'system.running', ->
       logs.filter((log) -> /PID file [^\s]+ does not exists/.test log).length.should.eql 1
     .promise()
         
-  they 'pid file not running', (ssh) ->
+  they 'pid file not running', ({ssh}) ->
     logs = []
     nikita
       ssh: ssh
@@ -74,7 +74,7 @@ describe 'system.running', ->
       logs.filter((log) -> /PID \d+ is not running/.test log).length.should.eql 1
     .promise()
         
-  they 'pid file running', (ssh) ->
+  they 'pid file running', ({ssh}) ->
     pid = null
     logs = []
     nikita

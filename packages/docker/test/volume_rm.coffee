@@ -1,13 +1,13 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch, docker} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.docker or tags.docker_volume
 
 describe 'docker.volume_rm', ->
 
-  they 'a named volume', (ssh) ->
+  they 'a named volume', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker

@@ -2,13 +2,13 @@
 nikita = require '../../src'
 misc = require '../../src/misc'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'ssh.index', ->
 
-  they 'argument is true', (ssh) ->
+  they 'argument is true', ({ssh}) ->
     return @skip() unless ssh
     nikita
     .ssh.open
@@ -22,7 +22,7 @@ describe 'ssh.index', ->
     .ssh.close()
     .promise()
 
-  they 'argument is false', (ssh) ->
+  they 'argument is false', ({ssh}) ->
     return @skip() unless ssh
     nikita
     .ssh.open
@@ -36,7 +36,7 @@ describe 'ssh.index', ->
     .ssh.close()
     .promise()
 
-  they 'argument does not conflict with session', (ssh) ->
+  they 'argument does not conflict with session', ({ssh}) ->
     return @skip() unless ssh
     nikita
       ssh: 

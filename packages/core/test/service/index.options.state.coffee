@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 {tags, ssh, service} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.service_systemctl
 
@@ -9,7 +9,7 @@ describe 'service options state', ->
   
   @timeout 30000
 
-  they 'should start', (ssh) ->
+  they 'should start', ({ssh}) ->
     nikita
       ssh: ssh
     .service.remove
@@ -31,7 +31,7 @@ describe 'service options state', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'should stop', (ssh) ->
+  they 'should stop', ({ssh}) ->
     nikita
       ssh: ssh
     .service.remove
@@ -53,7 +53,7 @@ describe 'service options state', ->
       status.should.be.false() unless err
     .promise()
 
-  they 'should restart', (ssh) ->
+  they 'should restart', ({ssh}) ->
     nikita
       ssh: ssh
     .service.remove

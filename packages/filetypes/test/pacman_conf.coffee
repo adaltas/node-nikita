@@ -1,13 +1,13 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'file.types.pacman_conf', ->
 
-  they 'empty values dont print values', (ssh) ->
+  they 'empty values dont print values', ({ssh}) ->
     nikita
       ssh: ssh
     .file.types.pacman_conf
@@ -22,7 +22,7 @@ describe 'file.types.pacman_conf', ->
       content: '[options]\nArchitecture = auto\nCheckSpace\n'
     .promise()
 
-  they 'boolean values dont print values', (ssh) ->
+  they 'boolean values dont print values', ({ssh}) ->
     nikita
       ssh: ssh
     .file.types.pacman_conf
@@ -37,7 +37,7 @@ describe 'file.types.pacman_conf', ->
       content: '[options]\nArchitecture = auto\nCheckSpace\n'
     .promise()
 
-  they 'rootdir with default target', (ssh) ->
+  they 'rootdir with default target', ({ssh}) ->
     nikita
       ssh: ssh
     .file.types.pacman_conf

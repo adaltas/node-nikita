@@ -1,7 +1,7 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch, docker} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.docker
 
@@ -15,7 +15,7 @@ describe 'docker.compose', ->
     .docker.pull tag: 'httpd'
     .promise()
 
-  they 'up from content', (ssh) ->
+  they 'up from content', ({ssh}) ->
     # Note, this fail the first time because the container take some time
     # to be downloaded. We shall prefetch the image at container creation
     nikita
@@ -48,7 +48,7 @@ describe 'docker.compose', ->
       force: true
     .promise()
   
-  they 'up from content to file', (ssh) ->
+  they 'up from content to file', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -80,7 +80,7 @@ describe 'docker.compose', ->
       force: true
     .promise()
 
-  they 'up from file', (ssh) ->
+  they 'up from file', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -112,7 +112,7 @@ describe 'docker.compose', ->
       force: true
     .promise()
   
-  they 'up with service name', (ssh) ->
+  they 'up with service name', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -145,7 +145,7 @@ describe 'docker.compose', ->
       force: true
     .promise()
   
-  they 'status not modified', (ssh) ->
+  they 'status not modified', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker

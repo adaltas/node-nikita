@@ -7,7 +7,7 @@ return unless tags.lxd
 
 describe 'lxd.init', ->
 
-  they 'Init new container', (ssh) ->
+  they 'Init new container', ({ssh}) ->
     nikita
       ssh: ssh
     .lxd.delete
@@ -24,7 +24,7 @@ describe 'lxd.init', ->
       status.should.be.true()
     .promise()
 
-  they 'Container already exist', (ssh) ->
+  they 'Container already exist', ({ssh}) ->
     nikita
       ssh: ssh
     .lxd.delete

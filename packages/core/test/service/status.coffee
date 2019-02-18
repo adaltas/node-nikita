@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 {tags, ssh, service} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.service_systemctl
 
@@ -9,7 +9,7 @@ describe 'service.status', ->
   
   @timeout 20000
   
-  they 'store status', (ssh) ->
+  they 'store status', ({ssh}) ->
     nikita
       ssh: ssh
     .service

@@ -1,13 +1,13 @@
 
 nikita = require '@nikitajs/core'
 {tags, ssh, docker} = require './test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.docker
 
 describe 'docker.pull', ->
 
-  they 'No Image', (ssh) ->
+  they 'No Image', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
@@ -19,7 +19,7 @@ describe 'docker.pull', ->
       status.should.be.true()
     .promise()
 
-  they 'Status Not Modified', (ssh) ->
+  they 'Status Not Modified', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker

@@ -2,7 +2,7 @@
 fs = require 'fs'
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
@@ -17,7 +17,7 @@ class MyWritable extends Writable
 
 describe 'log.cli', ->
     
-  they 'default options', (ssh) ->
+  they 'default options', ({ssh}) ->
     data = []
     nikita
       ssh: ssh
@@ -38,7 +38,7 @@ describe 'log.cli', ->
       ]
     .promise()
   
-  they 'pass over actions without header', (ssh) ->
+  they 'pass over actions without header', ({ssh}) ->
     data = []
     nikita
       ssh: ssh
@@ -59,7 +59,7 @@ describe 'log.cli', ->
       ]
     .promise()
 
-  they 'print status', (ssh) ->
+  they 'print status', ({ssh}) ->
     data = []
     nikita
       ssh: ssh
@@ -78,7 +78,7 @@ describe 'log.cli', ->
       ]
     .promise()
 
-  they 'bypass disabled and false conditionnal', (ssh) ->
+  they 'bypass disabled and false conditionnal', ({ssh}) ->
     data = []
     nikita
       ssh: ssh
@@ -95,7 +95,7 @@ describe 'log.cli', ->
       ]
     .promise()
 
-  they 'option depth', (ssh) ->
+  they 'option depth', ({ssh}) ->
     data = []
     nikita
       ssh: ssh
@@ -113,7 +113,7 @@ describe 'log.cli', ->
       ]
     .promise()
 
-  they 'option divider', (ssh) ->
+  they 'option divider', ({ssh}) ->
     data = []
     nikita
       ssh: ssh
@@ -132,7 +132,7 @@ describe 'log.cli', ->
       ]
     .promise()
 
-  they 'option pad', (ssh) ->
+  they 'option pad', ({ssh}) ->
     data = []
     nikita
       ssh: ssh
@@ -151,7 +151,7 @@ describe 'log.cli', ->
       ]
     .promise()
 
-  they 'option colors', (ssh) ->
+  they 'option colors', ({ssh}) ->
     data = []
     nikita
       ssh: ssh
@@ -168,7 +168,7 @@ describe 'log.cli', ->
       ]
     .promise()
   
-  they 'option time', (ssh) ->
+  they 'option time', ({ssh}) ->
     data = []
     nikita
       ssh: ssh

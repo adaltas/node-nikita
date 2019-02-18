@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'system.execute', ->
 
-  they 'in generated path', (ssh) ->
+  they 'in generated path', ({ssh}) ->
     nikita
       ssh: ssh
     .system.execute
@@ -17,7 +17,7 @@ describe 'system.execute', ->
       stdout.should.containEql 'bash'
     .promise()
 
-  they 'in user path', (ssh) ->
+  they 'in user path', ({ssh}) ->
     nikita
       ssh: ssh
     .system.execute
@@ -41,7 +41,7 @@ describe 'system.execute', ->
       not: true
     .promise()
 
-  they 'honors exit code', (ssh) ->
+  they 'honors exit code', ({ssh}) ->
     nikita
       ssh: ssh
     .system.execute

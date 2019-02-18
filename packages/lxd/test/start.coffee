@@ -7,7 +7,7 @@ return unless tags.lxd
 
 describe 'lxd.start', ->
 
-  they 'Start a container', (ssh) ->
+  they 'Start a container', ({ssh}) ->
     nikita
       ssh: ssh
       lxd: lxd
@@ -23,7 +23,7 @@ describe 'lxd.start', ->
       status.should.be.true()
     .promise()
 
-  they 'Already started', (ssh) ->
+  they 'Already started', ({ssh}) ->
     nikita
       ssh: ssh
       lxd: lxd

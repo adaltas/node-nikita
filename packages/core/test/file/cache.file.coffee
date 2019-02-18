@@ -3,13 +3,13 @@ http = require 'http'
 path = require 'path'
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'file.cache file', ->
 
-  they 'current cache file match provided hash', (ssh) ->
+  they 'current cache file match provided hash', ({ssh}) ->
     logs = []
     nikita
       ssh: ssh
@@ -30,7 +30,7 @@ describe 'file.cache file', ->
       ('Hashes match, skipping' in logs).should.be.true() unless err
     .promise()
 
-  they 'current cache file dont match provided hash', (ssh) ->
+  they 'current cache file dont match provided hash', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -47,7 +47,7 @@ describe 'file.cache file', ->
       status.should.be.true() unless err
     .promise()
 
-  they 'target file must match the hash', (ssh) ->
+  they 'target file must match the hash', ({ssh}) ->
     nikita
       ssh: ssh
     .file
@@ -62,7 +62,7 @@ describe 'file.cache file', ->
       err.message.should.eql "Invalid Target Hash: target \"#{scratch}/cache/my_file\" got df8fede7ff71608e24a5576326e41c75 instead of xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
     .promise()
 
-  they 'into local cache_dir', (ssh) ->
+  they 'into local cache_dir', ({ssh}) ->
     nikita
       ssh: ssh
     .file.cache
@@ -83,7 +83,7 @@ describe 'file.cache file', ->
 
   describe 'md5', ->
 
-    they 'bypass cache if string match', (ssh) ->
+    they 'bypass cache if string match', ({ssh}) ->
       logs = []
       nikita
         ssh: ssh

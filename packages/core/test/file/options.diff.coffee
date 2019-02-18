@@ -1,13 +1,13 @@
 
 nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure(ssh)
+they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
 describe 'file options diff', ->
 
-  they 'type is a function', (ssh) ->
+  they 'type is a function', ({ssh}) ->
     diffcalled = false
     nikita
       ssh: ssh
@@ -28,7 +28,7 @@ describe 'file options diff', ->
       diffcalled.should.be.true()
     .promise()
 
-  they 'emit logs', (ssh) ->
+  they 'emit logs', ({ssh}) ->
     # Prepare by creating a file with content
     logs = []
     nikita
@@ -47,7 +47,7 @@ describe 'file options diff', ->
       ]
     .promise()
 
-  they 'write a buffer', (ssh) ->
+  they 'write a buffer', ({ssh}) ->
     # Passing a buffer as content resulted to a diff error 
     # with message "#{content} has no method 'split'",
     # make sure this is fixed for ever
@@ -59,7 +59,7 @@ describe 'file options diff', ->
       diff: (diff) -> # we dont need diff argument
     .promise()
 
-  they 'empty source on empty file', (ssh) ->
+  they 'empty source on empty file', ({ssh}) ->
     logs = []
     nikita
       ssh: ssh
@@ -74,7 +74,7 @@ describe 'file options diff', ->
       logs.should.eql ['']
     .promise()
 
-  they 'content on created file', (ssh) ->
+  they 'content on created file', ({ssh}) ->
     diff = null
     nikita.file
       ssh: ssh
