@@ -13,4 +13,6 @@ registry.register
     iptables: '@nikitajs/tools/src/iptables'
     git: '@nikitajs/tools/src/git'
     repo: '@nikitajs/tools/src/repo'
+    ssh:
+      keygen: '@nikitajs/tools/src/ssh/keygen'
     sysctl: '@nikitajs/tools/src/sysctl'

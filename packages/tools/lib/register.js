@@ -16,6 +16,9 @@ registry.register({
     iptables: '@nikitajs/tools/lib/iptables',
     git: '@nikitajs/tools/lib/git',
     repo: '@nikitajs/tools/lib/repo',
+    ssh: {
+      keygen: '@nikitajs/tools/lib/ssh/keygen'
+    },
     sysctl: '@nikitajs/tools/lib/sysctl'
   }
 });
