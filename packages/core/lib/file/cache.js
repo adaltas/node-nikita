@@ -8,32 +8,34 @@
   // * `cache_dir` (path)    
   //   If local_cache is not a string, the cache file path is resolved from cache dir and cache file.
   //   By default: './'    
-  // * `cache_file` (string | boolean)   
-  //   Alias for "target".   
+  // * `cache_file` (string | boolean)
+  //   Alias for "target".
   // * `cache_local` (boolean)   
   //   Apply to SSH mode, treat the cache file and directories as local from where
-  //   the command is used instead of over SSH.   
+  //   the command is used instead of over SSH.
+  // * `cookies` (array)   
+  //   Extra cookies  to include in the request when sending HTTP to a server.
   // * `fail` (boolean)   
   //   Send an error if the HTTP response code is invalid. Similar to the curl
-  //   option of the same name.   
+  //   option of the same name.
   // * `force` (boolean)   
-  //   Overwrite the target file if it exists, bypass md5 verification.   
+  //   Overwrite the target file if it exists, bypass md5 verification.
   // * `http_headers` (array)   
-  //   Extra header  to include in the request when sending HTTP to a server.   
+  //   Extra header  to include in the request when sending HTTP to a server.
   // * `location` (boolean)   
   //   If the server reports that the requested page has moved to a different
   //   location (indicated with a Location: header and a 3XX response code), this
-  //   option will make curl redo the request on the new place.   
+  //   option will make curl redo the request on the new place.
   // * `proxy` (string)   
   //   Use the specified HTTP proxy. If the port number is not specified, it is
-  //   assumed at port 1080. See curl(1) man page.   
+  //   assumed at port 1080. See curl(1) man page.
   // * `source` (path)   
   //   File, HTTP URL, FTP, GIT repository. File is the default protocol if source
-  //   is provided without any.   
+  //   is provided without any.
   // * `target` (string | boolean)   
   //   Cache the file on the executing machine, equivalent to cache unless an ssh
   //   connection is provided. If a string is provided, it will be the cache path.
-  //   Default to the basename of source.   
+  //   Default to the basename of source.
 
   // ## Callback Parameters
 
@@ -61,7 +63,7 @@ var curl, path, protocols_ftp, protocols_http, url,
   indexOf = [].indexOf;
 
 module.exports = function({options}, callback) {
-  var _hash, algo, cmd, fail, header, i, k, len, ref, ref1, ref2, ref3, ref4, ssh, u;
+  var _hash, algo, cookie, header, ref, ref1, ref2, ref3, ssh, u;
   this.log({
     message: "Entering file.cache",
     level: 'DEBUG',
@@ -91,6 +93,9 @@ module.exports = function({options}, callback) {
   }
   if (options.http_headers == null) {
     options.http_headers = [];
+  }
+  if (options.cookies == null) {
+    options.cookies = [];
   }
   // todo, also support options.algo and options.hash
   if (options.md5 != null) {
@@ -231,26 +236,48 @@ module.exports = function({options}, callback) {
   });
   // Place into cache
   if (ref3 = u.protocol, indexOf.call(protocols_http, ref3) >= 0) {
-    fail = options.fail ? "--fail" : '';
-    k = u.protocol === 'https:' ? '-k' : '';
-    cmd = `curl ${fail} ${k} -s ${options.source} -o ${options.target}`;
-    if (options.location) {
-      cmd += " --location";
-    }
-    ref4 = options.http_headers;
-    for (i = 0, len = ref4.length; i < len; i++) {
-      header = ref4[i];
-      cmd += ` --header "${header}"`;
-    }
-    if (options.proxy) {
-      cmd += ` -x ${options.proxy}`;
-    }
     this.system.mkdir({
       ssh: options.cache_local ? false : options.ssh,
       target: path.dirname(options.target)
     });
     this.system.execute({
-      cmd: cmd,
+      cmd: [
+        'curl',
+        options.fail ? '--fail' : void 0,
+        u.protocol === 'https:' ? '-k' : void 0,
+        options.location ? "--location" : void 0,
+        (function() {
+          var i,
+        len,
+        ref4,
+        results;
+          ref4 = options.http_headers;
+          results = [];
+          for (i = 0, len = ref4.length; i < len; i++) {
+            header = ref4[i];
+            results.push(`--header'${header.replace('\'',
+        '\\\'')}'`);
+          }
+          return results;
+        })(),
+        (function() {
+          var i,
+        len,
+        ref4,
+        results;
+          ref4 = options.cookies;
+          results = [];
+          for (i = 0, len = ref4.length; i < len; i++) {
+            cookie = ref4[i];
+            results.push(`--cookie'${cookie.replace('\'',
+        '\\\'')}'`);
+          }
+          return results;
+        })(),
+        `-s ${options.source}`,
+        `-o ${options.target}`,
+        options.proxy ? `-x ${options.proxy}` : void 0
+      ].join(' '),
       ssh: options.cache_local ? false : options.ssh,
       unless_exists: options.target
     });

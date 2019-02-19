@@ -40,13 +40,15 @@ calculated if neither sha256, sh1 nor md5 is provided.
   Cache the file on the executing machine, equivalent to cache unless an ssh
   connection is provided. If a string is provided, it will be the cache path.
   By default: basename of source
+* `cookies` (array)   
+  Extra cookies to include in the request when sending HTTP to a server.
 * `force` (boolean)   
   Overwrite target file if it exists.
 * `force_cache` (boolean)   
   Force cache overwrite if it exists
 * `gid`   
   Group name or id who owns the target file.
-* `headers` (array)   
+* `http_headers` (array)   
   Extra  header  to include in the request when sending HTTP to a server.
 * `location` (boolean)   
   If the server reports that the requested page has moved to a different
@@ -167,7 +169,8 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         source: options.source
         cache_dir: options.cache_dir
         cache_file: options.cache_file
-        headers: options.headers
+        http_headers: options.http_headers
+        cookies: options.cookies
         md5: options.md5
         proxy: options.proxy
         location: options.location

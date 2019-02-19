@@ -8,32 +8,34 @@ Download a file and place it on a local or remote folder for later usage.
 * `cache_dir` (path)    
   If local_cache is not a string, the cache file path is resolved from cache dir and cache file.
   By default: './'    
-* `cache_file` (string | boolean)   
-  Alias for "target".   
+* `cache_file` (string | boolean)
+  Alias for "target".
 * `cache_local` (boolean)   
   Apply to SSH mode, treat the cache file and directories as local from where
-  the command is used instead of over SSH.   
+  the command is used instead of over SSH.
+* `cookies` (array)   
+  Extra cookies  to include in the request when sending HTTP to a server.
 * `fail` (boolean)   
   Send an error if the HTTP response code is invalid. Similar to the curl
-  option of the same name.   
+  option of the same name.
 * `force` (boolean)   
-  Overwrite the target file if it exists, bypass md5 verification.   
+  Overwrite the target file if it exists, bypass md5 verification.
 * `http_headers` (array)   
-  Extra header  to include in the request when sending HTTP to a server.   
+  Extra header  to include in the request when sending HTTP to a server.
 * `location` (boolean)   
   If the server reports that the requested page has moved to a different
   location (indicated with a Location: header and a 3XX response code), this
-  option will make curl redo the request on the new place.   
+  option will make curl redo the request on the new place.
 * `proxy` (string)   
   Use the specified HTTP proxy. If the port number is not specified, it is
-  assumed at port 1080. See curl(1) man page.   
+  assumed at port 1080. See curl(1) man page.
 * `source` (path)   
   File, HTTP URL, FTP, GIT repository. File is the default protocol if source
-  is provided without any.   
+  is provided without any.
 * `target` (string | boolean)   
   Cache the file on the executing machine, equivalent to cache unless an ssh
   connection is provided. If a string is provided, it will be the cache path.
-  Default to the basename of source.   
+  Default to the basename of source.
 
 ## Callback Parameters
 
@@ -71,6 +73,7 @@ require('nikita')
       options.target = path.resolve options.cache_dir, options.target
       options.source = options.source.substr 7 if /^file:\/\//.test options.source
       options.http_headers ?= []
+      options.cookies ?= []
       # todo, also support options.algo and options.hash
       if options.md5?
         throw Error "Invalid MD5 Hash:#{options.md5}" unless typeof options.md5 in ['string', 'boolean']
@@ -135,17 +138,21 @@ require('nikita')
         @end() unless status
       # Place into cache
       if u.protocol in protocols_http
-        fail = if options.fail then "--fail" else ''
-        k = if u.protocol is 'https:' then '-k' else ''
-        cmd = "curl #{fail} #{k} -s #{options.source} -o #{options.target}"
-        cmd += " --location" if options.location
-        cmd += " --header \"#{header}\"" for header in options.http_headers
-        cmd += " -x #{options.proxy}" if options.proxy
         @system.mkdir
           ssh: if options.cache_local then false else options.ssh
           target: path.dirname options.target
         @system.execute
-          cmd: cmd
+          cmd: [
+            'curl'
+            '--fail' if options.fail
+            '-k' if u.protocol is 'https:'
+            "--location" if options.location
+            "--header'#{header.replace '\'', '\\\''}'" for header in options.http_headers
+            "--cookie'#{cookie.replace '\'', '\\\''}'" for cookie in options.cookies
+            "-s #{options.source}"
+            "-o #{options.target}"
+            "-x #{options.proxy}" if options.proxy
+          ].join ' '
           ssh: if options.cache_local then false else options.ssh
           unless_exists: options.target
       else
