@@ -44,8 +44,11 @@ Send a log message.
       if options.debug
         if options.type in ['text', 'stdin', 'stdout_stream', 'stderr_stream']
           unless options.type in ['stdout_stream', 'stderr_stream'] and options.message is null
-            msg = if options.message?.toString? then options.message.toString() else options.message
-            msg = "[#{options.depth}.#{options.level} #{options.module}] #{JSON.stringify msg}"
+            msg = if typeof options.message is 'string' then options.message.trim()
+            else if typeof options.message is 'number' then options.message
+            else if options.message?.toString? then options.message.toString().trim()
+            else JSON.stringify options.message
+            msg = "[#{options.depth}.#{options.level} #{options.module}] #{ msg}"
             msg = switch options.type
               when 'stdin' then "\x1b[33m#{msg}\x1b[39m"
               when 'stdout_stream' then "\x1b[36m#{msg}\x1b[39m"

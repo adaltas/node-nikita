@@ -59,8 +59,8 @@ module.exports = {
     if (options.debug) {
       if ((ref = options.type) === 'text' || ref === 'stdin' || ref === 'stdout_stream' || ref === 'stderr_stream') {
         if (!(((ref1 = options.type) === 'stdout_stream' || ref1 === 'stderr_stream') && options.message === null)) {
-          msg = ((ref2 = options.message) != null ? ref2.toString : void 0) != null ? options.message.toString() : options.message;
-          msg = `[${options.depth}.${options.level} ${options.module}] ${JSON.stringify(msg)}`;
+          msg = typeof options.message === 'string' ? options.message.trim() : typeof options.message === 'number' ? options.message : ((ref2 = options.message) != null ? ref2.toString : void 0) != null ? options.message.toString().trim() : JSON.stringify(options.message);
+          msg = `[${options.depth}.${options.level} ${options.module}] ${msg}`;
           msg = (function() {
             switch (options.type) {
               case 'stdin':
