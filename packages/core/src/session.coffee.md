@@ -199,7 +199,7 @@
           fn.call proxy, callbackargs.error, callbackargs.output, (callbackargs.args or [])...
         catch error
           state.current_level = state.parent_levels.shift()
-          state.current_level.error = error
+          state.current_level.error = error #unless options.relax
           jump_to_error()
           callbackargs.error = error
           return run_next()
@@ -235,9 +235,9 @@
         options.original = options_original
         if options.action is 'next'
           {error, history} = state.current_level
-          unless error
-            errors = history.some (action) -> not action.options.tolerant and error
-            error = errors[errors.length - 1]
+          # unless error
+          #   errors = history.some (action) -> not action.options.tolerant and error
+          #   error = errors[errors.length - 1]
           status = history.some (action) -> not action.options.shy and action.status
           options.handler?.call proxy, error, {status: status}
           state_reset_level state.current_level
@@ -245,9 +245,9 @@
           return
         if options.action is 'promise'
           {error, history} = state.current_level
-          unless error
-            errors = history.some (action) -> not action.options.tolerant and error
-            error = errors[errors.length - 1]
+          # unless error
+          #   errors = history.some (action) -> not action.options.tolerant and error
+          #   error = errors[errors.length - 1]
           status = history.some (action) -> not action.options.shy and action.status
           options.handler?.call proxy, error, status
           unless error
@@ -635,7 +635,7 @@
 
     state_create_level = ->
       level =
-        error: null
+        error: undefined
         history: []
         current:
           options: {}
@@ -646,7 +646,7 @@
         throw_if_error: true
     # Called after next and promise
     state_reset_level = (level) ->
-      level.error = null
+      level.error = undefined
       level.history = []
       level.throw_if_error = true
 

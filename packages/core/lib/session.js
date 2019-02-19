@@ -399,7 +399,7 @@ module.exports = function() {
     } catch (error1) {
       error = error1;
       state.current_level = state.parent_levels.shift();
-      state.current_level.error = error;
+      state.current_level.error = error; //unless options.relax
       jump_to_error();
       callbackargs.error = error;
       return run_next();
@@ -450,7 +450,7 @@ module.exports = function() {
     return run(options);
   };
   run = function(options, callback) {
-    var error, errors, history, index, k, options_original, options_parent, ref, ref1, status, v;
+    var error, history, index, k, options_original, options_parent, ref, ref1, status, v;
     // options = state.current_level.todos.shift() unless options
     options_original = options;
     options_parent = state.current_level.options;
@@ -464,12 +464,9 @@ module.exports = function() {
     options.original = options_original;
     if (options.action === 'next') {
       ({error, history} = state.current_level);
-      if (!error) {
-        errors = history.some(function(action) {
-          return !action.options.tolerant && error;
-        });
-        error = errors[errors.length - 1];
-      }
+      // unless error
+      //   errors = history.some (action) -> not action.options.tolerant and error
+      //   error = errors[errors.length - 1]
       status = history.some(function(action) {
         return !action.options.shy && action.status;
       });
@@ -484,12 +481,9 @@ module.exports = function() {
     }
     if (options.action === 'promise') {
       ({error, history} = state.current_level);
-      if (!error) {
-        errors = history.some(function(action) {
-          return !action.options.tolerant && error;
-        });
-        error = errors[errors.length - 1];
-      }
+      // unless error
+      //   errors = history.some (action) -> not action.options.tolerant and error
+      //   error = errors[errors.length - 1]
       status = history.some(function(action) {
         return !action.options.shy && action.status;
       });
@@ -1369,7 +1363,7 @@ module.exports.cascade = {
 state_create_level = function() {
   var level;
   return level = {
-    error: null,
+    error: void 0,
     history: [],
     current: {
       options: {},
@@ -1384,7 +1378,7 @@ state_create_level = function() {
 
 // Called after next and promise
 state_reset_level = function(level) {
-  level.error = null;
+  level.error = void 0;
   level.history = [];
   return level.throw_if_error = true;
 };
