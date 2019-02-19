@@ -42,8 +42,7 @@ paths locally using the Minimatch package.
       , (err, {stdout}) ->
         # `find` return exit code 1 when no match is found,
         # we treat this scenario as an empty output
-        files = string.lines stdout
-        files = files.filter (file) ->
+        files = string.lines(stdout).filter (file) ->
           minimatch.match file
         for s in minimatch.set
           n = 0

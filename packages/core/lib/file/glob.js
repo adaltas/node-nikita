@@ -64,8 +64,7 @@ module.exports = {
       var files, j, len1, n, ref1;
       // `find` return exit code 1 when no match is found,
       // we treat this scenario as an empty output
-      files = string.lines(stdout);
-      files = files.filter(function(file) {
+      files = string.lines(stdout).filter(function(file) {
         return minimatch.match(file);
       });
       ref1 = minimatch.set;
