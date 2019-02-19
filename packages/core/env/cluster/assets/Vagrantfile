@@ -13,6 +13,7 @@ Vagrant.configure("2") do |config|
   config.vbguest.auto_update = false
 
   config.vm.provider "virtualbox" do |vb|
+    vb.name = 'lxd'
     # Do this as a linked clone if we can.
     vb.linked_clone = true if Gem::Version.new(Vagrant::VERSION) >= Gem::Version.new('1.8.0')
     # Containers are light, but we should still have some resources.

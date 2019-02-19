@@ -70,6 +70,7 @@ nikita
       header: 'SSH key'
       target: './assets/id_rsa'
       bits: 2048
+      key_format: 'PEM'
       comment: 'nikita'
   provision_container: ({options}) ->
     @lxd.exec

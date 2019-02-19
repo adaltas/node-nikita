@@ -18,6 +18,9 @@ network:
 containers:
   nikita
     image: images:centos/7
+    config:
+      environment:
+        MY_VAR: 'my value'
     disk:
       nikitadir:
         source: /nikita
@@ -64,13 +67,19 @@ containers:
           name: network
           config: config
       for container, config of options.containers
+        config.config ?= {}
         ssh = config.ssh or {}
         ssh.enabled ?= false
         # throw Error 'Required Option: ssh.id_rsa is record if ssh is enabled' if ssh.enabled and not ssh.id_rsa
         @lxd.init
           header: 'Init'
-          image: config.image
           name: container
+          image: config.image
+        @lxd.config.set
+          header: 'Config'
+          name: container
+          image: config.image
+          config: config.config
         for device, configdisk of config.disk
           @lxd.config.device.add
             header: "Device #{device} disk"
@@ -149,7 +158,7 @@ containers:
             code_skipped: 42
           @lxd.exec
             header: 'Sudo'
-            if: config.sudo
+            if: configuser.sudo
             name: container
             cmd: """
             yum install -y sudo
@@ -161,18 +170,19 @@ containers:
             code_skipped: 42
           @lxd.file.push
             header: 'Authorize'
-            if: config.authorized_keys
+            if: configuser.authorized_keys
             name: container
             gid: "#{user}"
             uid: "#{user}"
             mode: 600
-            source: "#{configuser.key}"
+            source: "#{configuser.authorized_keys}"
             target: "/home/#{user}/.ssh/authorized_keys"
       @call
         if: options.provision
       , options,  options.provision
       for container, config of options.containers
         @call
-          if: options.provision_container
-        , options, container: container, config: config,  options.provision_container
+          if: !!options.provision_container
+        , container: container, config: config
+        , options.provision_container
       
