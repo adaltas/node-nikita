@@ -23,16 +23,16 @@ Make directories.
       # Normalize options
       options.target = options.argument if options.argument?
       # Validate parameters
-      throw Error "Missing target: #{JSON.stringify options.target}" unless options.target
-      cmd = if options.uid or options.gid then 'install ' else 'mkdir '
-      if options.mode
-        options.mode = options.mode.toString(8).substr(-4) if typeof options.mode is 'number'
-        cmd += "-m '#{options.mode}' "
-      cmd += " -o #{options.uid} " if options.uid
-      cmd += " -g #{options.gid} " if options.gid
-      cmd +=  if options.uid or options.gid then " -d #{options.target}" else "#{options.target}"
+      throw Error "Required Option: target is required, got #{JSON.stringify options.target}" unless options.target
+      options.mode = options.mode.toString(8).substr(-4) if typeof options.mode is 'number'
       @system.execute
-        cmd: cmd
+        cmd: [
+          if options.uid or options.gid then 'install' else 'mkdir'
+          "-m '#{options.mode}'" if options.mode
+          "-o #{options.uid}" if options.uid
+          "-g #{options.gid}" if options.gid
+          if options.uid or options.gid then " -d #{options.target}" else "#{options.target}"
+        ].join ' '
         sudo: options.sudo
         bash: options.bash
         arch_chroot: options.arch_chroot

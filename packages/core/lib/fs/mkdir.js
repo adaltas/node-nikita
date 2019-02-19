@@ -21,7 +21,6 @@ module.exports = {
   status: false,
   log: false,
   handler: function({options}, callback) {
-    var cmd;
     this.log({
       message: "Entering fs.mkdir",
       level: 'DEBUG',
@@ -33,24 +32,13 @@ module.exports = {
     }
     if (!options.target) {
       // Validate parameters
-      throw Error(`Missing target: ${JSON.stringify(options.target)}`);
+      throw Error(`Required Option: target is required, got ${JSON.stringify(options.target)}`);
     }
-    cmd = options.uid || options.gid ? 'install ' : 'mkdir ';
-    if (options.mode) {
-      if (typeof options.mode === 'number') {
-        options.mode = options.mode.toString(8).substr(-4);
-      }
-      cmd += `-m '${options.mode}' `;
+    if (typeof options.mode === 'number') {
+      options.mode = options.mode.toString(8).substr(-4);
     }
-    if (options.uid) {
-      cmd += ` -o ${options.uid} `;
-    }
-    if (options.gid) {
-      cmd += ` -g ${options.gid} `;
-    }
-    cmd += options.uid || options.gid ? ` -d ${options.target}` : `${options.target}`;
     return this.system.execute({
-      cmd: cmd,
+      cmd: [options.uid || options.gid ? 'install' : 'mkdir', options.mode ? `-m '${options.mode}'` : void 0, options.uid ? `-o ${options.uid}` : void 0, options.gid ? `-g ${options.gid}` : void 0, options.uid || options.gid ? ` -d ${options.target}` : `${options.target}`].join(' '),
       sudo: options.sudo,
       bash: options.bash,
       arch_chroot: options.arch_chroot
