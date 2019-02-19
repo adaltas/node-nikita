@@ -5,7 +5,7 @@
     "lerna": "^3.13.0",
     "mocha": "5.2.0",
     "should": "~13.2.3",
-    "ssh2-they": "^2.0.1"
+    "ssh2-they": "^2.0.3"
   },
   "scripts": {
     "compile": "lerna run compile",
