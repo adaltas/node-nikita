@@ -12,6 +12,7 @@ Breaking changes:
 * domain: remove option and support
 
 New features:
+* system.authconfig: new action
 * file.cache: new cookies option
 * lxd.config.set: implement new action
 * tools.ssh.keygen: new action
