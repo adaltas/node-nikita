@@ -12,6 +12,7 @@ Breaking changes:
 * domain: remove option and support
 
 New features:
+* file.ini: new parse_bracket_then_curly
 * file.types.krb5_conf: new action
 * debug: print lines
 * system.authconfig: new action

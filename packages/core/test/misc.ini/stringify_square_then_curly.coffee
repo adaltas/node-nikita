@@ -4,10 +4,10 @@ ini = require '../../src/misc/ini'
 
 return unless tags.api
 
-describe 'misc.ini stringify_square_then_curly', ->
+describe 'misc.ini stringify_brackets_then_curly', ->
 
     it 'option eol', ->
-      ini.stringify_square_then_curly
+      ini.stringify_brackets_then_curly
         user: preference: color: true
         group:
           name: 'us'
@@ -16,7 +16,7 @@ describe 'misc.ini stringify_square_then_curly', ->
       .should.eql '[user]| preference = {|  color = true| }||[group]| name = us||'
 
     it 'stringify simple values before array values', ->
-      ini.stringify_square_then_curly
+      ini.stringify_brackets_then_curly
         group1:
           key1: 'value1'
           group1b:

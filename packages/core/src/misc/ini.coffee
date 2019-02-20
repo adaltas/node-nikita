@@ -27,6 +27,96 @@ module.exports =
   }`
   parse: (content, options) ->
     ini.parse content
+  # parse: (str, options={}) ->
+  #   TODO: braket level might be good, to parse sub curly sub levels 
+  #   shall be delegated to `parse_brackets_then_curly` like its
+  #   stringify counterpart is doing
+  #   lines = require('@nikitajs/core/lib/misc/string').lines str
+  #   current = data = {}
+  #   stack = [current]
+  #   comment = options.comment or ';'
+  #   lines.forEach (line, _, __) ->
+  #     return if not line or line.match(/^\s*$/)
+  #     # Category level 1
+  #     if match = line.match /^\s*\[(.+?)\]\s*$/
+  #       keys = match[1].split '.'
+  #       depth = keys.length
+  #       # Create intermediate levels if they dont exist
+  #       d = data
+  #       if depth > 1 then for i in keys[0...keys.length]
+  #         throw Error "Invalid Key: #{keys[i]}" if data[keys[i]]? and not typeof data[keys[i]] is 'object'
+  #         d[keys[i]] ?= {}
+  #         d = d[keys[i]]
+  #       # if depth > 1 then for i in [0 ... depth]
+  #       #   stack.push {}
+  #       # Add a child
+  #       if depth is stack.length
+  #         parent = stack[depth - 1]
+  #         parent[match[1]] = current = {}
+  #         stack.push current
+  #       # Move to parent or at the same level
+  #       else if depth is stack.length - 1
+  #         stack.splice depth, stack.length - depth
+  #         parent = stack[depth - 1]
+  #         parent[match[1]] = current = {}
+  #         stack.push current
+  #       # Invalid child hierarchy
+  #       else
+  #         throw Error "Invalid child #{match[1]}"
+  #     else if match = line.match /^\s*(.+?)\s*=\s*\{\s*$/
+  #       throw Error "Invalid Depth: inferior to 2, got #{depth}" if depth < 2
+  #       # Add a child
+  #       parent = stack[stack.length - 1]
+  #       parent[match[1]] = current = {}
+  #       stack.push current
+  #     else if match = line.match /^\s*\}\s*$/
+  #       throw Error "Invalid Depth: inferior to 2, got #{depth}" if depth < 2
+  #       stack.pop()
+  #     # comment
+  #     else if comment and match = line.match ///^\s*(#{comment}.*)$///
+  #       current[match[1]] = null
+  #     # key value
+  #     else if match = line.match /^\s*(.+?)\s*=\s*(.+)\s*$/
+  #       if textmatch = match[2].match /^"(.*)"$/
+  #         match[2] = textmatch[1].replace '\\"', '"'
+  #       current[match[1]] = match[2]
+  #     # else
+  #     else if match = line.match /^\s*(.+?)\s*$/
+  #       current[match[1]] = null
+  #   data
+  parse_brackets_then_curly: (str, options={}) ->
+    lines = require('@nikitajs/core/lib/misc/string').lines str
+    current = data = {}
+    stack = [current]
+    comment = options.comment or ';'
+    lines.forEach (line, _, __) ->
+      return if not line or line.match(/^\s*$/)
+      # Category level 1
+      if match = line.match /^\s*\[(.+?)\]\s*$/
+        key = match[1]
+        current = data[key] = {}
+        stack = [current]
+      else if match = line.match /^\s*(.+?)\s*=\s*\{\s*$/
+        # Add a child
+        parent = stack[stack.length - 1]
+        parent[match[1]] = current = {}
+        stack.push current
+      else if match = line.match /^\s*\}\s*$/
+        throw Error "Invalid Syntax: found extra \"}\"" if stack.length is 0
+        stack.pop()
+        current = stack[stack.length - 1]
+      # comment
+      else if comment and match = line.match ///^\s*(#{comment}.*)$///
+        current[match[1]] = null
+      # key value
+      else if match = line.match /^\s*(.+?)\s*=\s*(.+)\s*$/
+        if textmatch = match[2].match /^"(.*)"$/
+          match[2] = textmatch[1].replace '\\"', '"'
+        current[match[1]] = match[2]
+      # else
+      else if match = line.match /^\s*(.+?)\s*$/
+        current[match[1]] = null
+    data
   ###
   
   Each category is surrounded by one or several square brackets. The number of brackets indicates
@@ -188,6 +278,9 @@ module.exports =
       out += child
     out
   stringify_square_then_curly: (content, depth=0, options={}) ->
+    console.error 'Deprecated Function: use stringify_brackets_then_curly instead of stringify_square_then_curly'
+    module.exports.stringify_brackets_then_curly content, depth, options
+  stringify_brackets_then_curly: (content, depth=0, options={}) ->
     if arguments.length is 2
       options = depth
       depth = 0
@@ -207,11 +300,11 @@ module.exports =
       if isObj
         if depth is 0
           out += "#{prefix}[#{k}]#{options.eol}"
-          out += module.exports.stringify_square_then_curly v, depth + 1, options
+          out += module.exports.stringify_brackets_then_curly v, depth + 1, options
           out += "#{options.eol}"
         else
           out += "#{prefix}#{k}#{options.separator}{#{options.eol}"
-          out += module.exports.stringify_square_then_curly v, depth + 1, options
+          out += module.exports.stringify_brackets_then_curly v, depth + 1, options
           out += "#{prefix}}#{options.eol}"
       else
         if isArray

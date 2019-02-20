@@ -28,10 +28,10 @@
 //   Read the target if it exists and merge its content.
 // * `parse`   
 //   User-defined function to parse the content from ini format, default to
-//   `require('ini').parse`, see 'misc.ini.parse_multi_brackets'.
+//   `require('ini').parse`, see 'misc.ini.parse\_multi\_brackets'.
 // * `stringify`   
 //   User-defined function to stringify the content to ini format, default to
-//   `require('ini').stringify`, see 'misc.ini.stringify_square_then_curly' for
+//   `require('ini').stringify`, see 'misc.ini.stringify\_brackets\_then_curly' for
 //   an example.
 // * `eol` (string)   
 //   Characters for line delimiter, usage depends on the stringify option, with 

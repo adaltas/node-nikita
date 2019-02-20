@@ -6,13 +6,13 @@ they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
-describe 'file.ini option stringify_square_then_curly', ->
+describe 'file.ini option stringify_brackets_then_curly', ->
 
   they 'call stringify udf', ({ssh}) ->
     nikita
       ssh: ssh
     .file.ini
-      stringify: misc.ini.stringify_square_then_curly
+      stringify: misc.ini.stringify_brackets_then_curly
       target: "#{scratch}/user.ini"
       content: user: preference: color: true
     , (err, {status}) ->
@@ -27,7 +27,7 @@ describe 'file.ini option stringify_square_then_curly', ->
       ssh: ssh
     # Create a new file
     .file.ini
-      stringify: misc.ini.stringify_square_then_curly
+      stringify: misc.ini.stringify_brackets_then_curly
       target: "#{scratch}/user.ini"
       content: user: preference: language: ['c', 'c++', 'ada']
     , (err, {status}) ->
