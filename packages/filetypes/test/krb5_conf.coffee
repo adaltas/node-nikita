@@ -131,33 +131,15 @@ describe 'file.types.krb5_conf', ->
       trim: true
     .promise()
   
-  they.skip 'test depth 2 curly braket', ({ssh}, next) ->
+  they 'test depth 2 curly braket', ({ssh}) ->
     nikita
       ssh: ssh
     .file
       target: "#{scratch}/krb5.conf"
       content: """
-      [logging]
-       default = SYSLOG:INFO:LOCAL1
-       kdc = SYSLOG:NOTICE:LOCAL1
-       admin_server = SYSLOG:WARNING:LOCAL1
-
-      [libdefaults]
-       dns_lookup_realm = false
-       dns_lookup_kdc = false
-       ticket_lifetime = 24h
-       renew_lifetime = 7d
-       forwardable = true
-       allow_weak_crypto = false
-       clockskew = 300
-       rdns = false
-       default_realm = DOMAIN.COM
-
       [realms]
        DOMAIN.COM = {
         kdc = krb5.domain.com:4603
-        admin_server = krb5.domain.com:4604
-        kpasswd_server = krb5.domain.com:4605
        }
 
       [domain_realm]
@@ -167,23 +149,39 @@ describe 'file.types.krb5_conf', ->
       [appdefaults]
        pam = {
         debug = false
-        ticket_lifetime = 36000
-        renew_lifetime = 36000
-        forwardable = true
-        krb4_convert = false
        }
 
       [dbmodules]
-
       """
     .file.types.krb5_conf
       target: "#{scratch}/krb5.conf"
       content:
-        'libdefaults':
-          'default_ccache_name': 'FILE:/tmp/krb5cc_%{uid}'
+        'realms':
+          'DOMAIN2.COM': {
+            'kdc': 'krb5.domain2.com:4603'
+          }
       merge: true
-    .fs.readFile
+    .file.assert
       target: "#{scratch}/krb5.conf"
-      encoding: 'ascii'
-    , (err, {data}) ->
-      console.log data
+      content: """
+      [realms]
+       DOMAIN.COM = {
+        kdc = krb5.domain.com:4603
+       }
+       DOMAIN2.COM = {
+        kdc = krb5.domain2.com:4603
+       }
+
+      [domain_realm]
+       .domain.com = DOMAIN.COM
+       domain.com = DOMAIN.COM
+
+      [appdefaults]
+       pam = {
+        debug = false
+       }
+
+      [dbmodules]
+      """
+      trim: true
+    .promise()

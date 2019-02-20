@@ -58,7 +58,8 @@ module.exports = function({options}) {
     options.target = '/etc/krb5.conf';
   }
   return this.file.ini({
-    stringify: misc.ini.stringify_square_then_curly
+    parse: misc.ini.parse_brackets_then_curly,
+    stringify: misc.ini.stringify_brackets_then_curly
   }, options);
 };
 

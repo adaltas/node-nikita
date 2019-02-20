@@ -18,15 +18,8 @@
 //   Object to stringify.
 // * `merge`   
 //   Read the target if it exists and merge its content.
-// * `parse`   
-//   User-defined function to parse the content from ini format, default to
-//   `require('ini').parse`, see 'misc.ini.parse_multi_brackets'.
 // * `separator`   
 //   Default separator between keys and values, default to " : ".
-// * `stringify`   
-//   User-defined function to stringify the content to ini format, default to
-//   `require('ini').stringify`, see 'misc.ini.stringify_square_then_curly' for
-//   an example.
 // * `target` (string)   
 //   File to write, default to "/etc/pacman.conf".
 
