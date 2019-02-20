@@ -7,6 +7,7 @@ registry.register({
   file: {
     types: {
       ceph_conf: '@nikitajs/filetypes/lib/ceph_conf',
+      krb5_conf: '@nikitajs/filetypes/lib/krb5_conf',
       locale_gen: '@nikitajs/filetypes/lib/locale_gen',
       my_cnf: '@nikitajs/filetypes/lib/my_cnf',
       pacman_conf: '@nikitajs/filetypes/lib/pacman_conf',

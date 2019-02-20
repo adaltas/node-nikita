@@ -12,6 +12,7 @@ Breaking changes:
 * domain: remove option and support
 
 New features:
+* file.types.krb5_conf: new action
 * debug: print lines
 * system.authconfig: new action
 * file.cache: new cookies option
