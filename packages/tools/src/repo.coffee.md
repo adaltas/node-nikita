@@ -81,7 +81,7 @@ require('nikita')
         location: options.location
         cache: false
       # Write
-      @filetypes.yum_repo
+      @file.types.yum_repo
         if: options.content?
         content: options.content
         mode: options.mode
@@ -90,20 +90,20 @@ require('nikita')
         target: options.target
       # Parse the definition file
       keys = []
-      @log "Read GPG keys from #{options.target}", level: 'DEBUG', module: 'nikita/lib/tools/repo'
-      @fs.readFile
-        ssh: options.ssh
-        target: options.target
-        encoding: 'utf8'
-      , (err, {data}) =>
-        throw err if err
-        data  = misc.ini.parse_multi_brackets data
-        keys = for name, section of data
-          repoids.push name
-          continue unless section.gpgcheck is '1'
-          throw Error 'Missing gpgkey' unless section.gpgkey?
-          continue unless /^http(s)??:\/\//.test section.gpgkey
-          section.gpgkey
+      @call ->
+        @log "Read GPG keys from #{options.target}", level: 'DEBUG', module: 'nikita/lib/tools/repo'
+        @fs.readFile
+          target: options.target
+          encoding: 'utf8'
+        , (err, {data}) =>
+          throw err if err
+          data  = misc.ini.parse_multi_brackets data
+          keys = for name, section of data
+            repoids.push name
+            continue unless section.gpgcheck is '1'
+            throw Error 'Missing gpgkey' unless section.gpgkey?
+            continue unless /^http(s)??:\/\//.test section.gpgkey
+            section.gpgkey
       # Download GPG Keys
       @call
         if: options.verify

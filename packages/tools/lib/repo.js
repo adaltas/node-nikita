@@ -128,7 +128,7 @@ module.exports = function({options}) {
     cache: false
   });
   // Write
-  this.filetypes.yum_repo({
+  this.file.types.yum_repo({
     if: options.content != null,
     content: options.content,
     mode: options.mode,
@@ -138,39 +138,40 @@ module.exports = function({options}) {
   });
   // Parse the definition file
   keys = [];
-  this.log(`Read GPG keys from ${options.target}`, {
-    level: 'DEBUG',
-    module: 'nikita/lib/tools/repo'
-  });
-  this.fs.readFile({
-    ssh: options.ssh,
-    target: options.target,
-    encoding: 'utf8'
-  }, (err, {data}) => {
-    var name, section;
-    if (err) {
-      throw err;
-    }
-    data = misc.ini.parse_multi_brackets(data);
-    return keys = (function() {
-      var results;
-      results = [];
-      for (name in data) {
-        section = data[name];
-        repoids.push(name);
-        if (section.gpgcheck !== '1') {
-          continue;
-        }
-        if (section.gpgkey == null) {
-          throw Error('Missing gpgkey');
-        }
-        if (!/^http(s)??:\/\//.test(section.gpgkey)) {
-          continue;
-        }
-        results.push(section.gpgkey);
+  this.call(function() {
+    this.log(`Read GPG keys from ${options.target}`, {
+      level: 'DEBUG',
+      module: 'nikita/lib/tools/repo'
+    });
+    return this.fs.readFile({
+      target: options.target,
+      encoding: 'utf8'
+    }, (err, {data}) => {
+      var name, section;
+      if (err) {
+        throw err;
       }
-      return results;
-    })();
+      data = misc.ini.parse_multi_brackets(data);
+      return keys = (function() {
+        var results;
+        results = [];
+        for (name in data) {
+          section = data[name];
+          repoids.push(name);
+          if (section.gpgcheck !== '1') {
+            continue;
+          }
+          if (section.gpgkey == null) {
+            throw Error('Missing gpgkey');
+          }
+          if (!/^http(s)??:\/\//.test(section.gpgkey)) {
+            continue;
+          }
+          results.push(section.gpgkey);
+        }
+        return results;
+      })();
+    });
   });
   // Download GPG Keys
   this.call({
