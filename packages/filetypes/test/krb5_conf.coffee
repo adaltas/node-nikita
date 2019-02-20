@@ -11,7 +11,7 @@ describe 'file.types.krb5_conf', ->
     nikita
       ssh: ssh
     .file.types.krb5_conf
-      target: "#{scratch}/krb5.cnf"
+      target: "#{scratch}/krb5.conf"
       content:
         'logging':
           'default': 'SYSLOG:INFO:LOCAL1'
@@ -40,7 +40,7 @@ describe 'file.types.krb5_conf', ->
     , (err, {status}) ->
       status.should.be.true() unless err
     .file.assert
-      target: "#{scratch}/krb5.cnf"
+      target: "#{scratch}/krb5.conf"
       content: """
       [logging]
        default = SYSLOG:INFO:LOCAL1
@@ -82,7 +82,7 @@ describe 'file.types.krb5_conf', ->
     nikita
       ssh: ssh
     .file.types.krb5_conf
-      target: "#{scratch}/krb5.cnf"
+      target: "#{scratch}/krb5.conf"
       content:
         'libdefaults':
           'default_realm': 'AU.ADALTAS.CLOUD'
@@ -96,7 +96,7 @@ describe 'file.types.krb5_conf', ->
           'default_ccache_name': 'KEYRING:persistent:%{uid}'
         'domain_realm': {}
     .file.types.krb5_conf
-      target: "#{scratch}/krb5.cnf"
+      target: "#{scratch}/krb5.conf"
       content:
         'libdefaults':
           'default_ccache_name': 'FILE:/tmp/krb5cc_%{uid}'
@@ -104,7 +104,7 @@ describe 'file.types.krb5_conf', ->
     , (err, {status}) ->
       status.should.be.true() unless err
     .file.types.krb5_conf
-      target: "#{scratch}/krb5.cnf"
+      target: "#{scratch}/krb5.conf"
       content:
         'libdefaults':
           'default_ccache_name': 'FILE:/tmp/krb5cc_%{uid}'
@@ -112,7 +112,7 @@ describe 'file.types.krb5_conf', ->
     , (err, {status}) ->
       status.should.be.false() unless err
     .file.assert
-      target: "#{scratch}/krb5.cnf"
+      target: "#{scratch}/krb5.conf"
       content: """
       [libdefaults]
        default_realm = AU.ADALTAS.CLOUD
@@ -130,3 +130,60 @@ describe 'file.types.krb5_conf', ->
       """
       trim: true
     .promise()
+  
+  they.skip 'test depth 2 curly braket', ({ssh}, next) ->
+    nikita
+      ssh: ssh
+    .file
+      target: "#{scratch}/krb5.conf"
+      content: """
+      [logging]
+       default = SYSLOG:INFO:LOCAL1
+       kdc = SYSLOG:NOTICE:LOCAL1
+       admin_server = SYSLOG:WARNING:LOCAL1
+
+      [libdefaults]
+       dns_lookup_realm = false
+       dns_lookup_kdc = false
+       ticket_lifetime = 24h
+       renew_lifetime = 7d
+       forwardable = true
+       allow_weak_crypto = false
+       clockskew = 300
+       rdns = false
+       default_realm = DOMAIN.COM
+
+      [realms]
+       DOMAIN.COM = {
+        kdc = krb5.domain.com:4603
+        admin_server = krb5.domain.com:4604
+        kpasswd_server = krb5.domain.com:4605
+       }
+
+      [domain_realm]
+       .domain.com = DOMAIN.COM
+       domain.com = DOMAIN.COM
+
+      [appdefaults]
+       pam = {
+        debug = false
+        ticket_lifetime = 36000
+        renew_lifetime = 36000
+        forwardable = true
+        krb4_convert = false
+       }
+
+      [dbmodules]
+
+      """
+    .file.types.krb5_conf
+      target: "#{scratch}/krb5.conf"
+      content:
+        'libdefaults':
+          'default_ccache_name': 'FILE:/tmp/krb5cc_%{uid}'
+      merge: true
+    .fs.readFile
+      target: "#{scratch}/krb5.conf"
+      encoding: 'ascii'
+    , (err, {data}) ->
+      console.log data
