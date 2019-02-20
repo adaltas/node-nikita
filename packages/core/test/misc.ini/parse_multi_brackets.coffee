@@ -71,3 +71,24 @@ describe 'misc.ini parse_multi_brackets', ->
             key1b1: 'value1b1'
         group2:
           key1: 'value1b'
+
+    it 'jump multi levels', ->
+      ini.parse_multi_brackets """
+      # Some = comments
+      [group1]
+        [[group1b]]
+          [[[group1c]]]
+            [[[[group1d]]]]
+              key1d1 = value1d1
+      [group2]
+        key1=value1b
+      """, comment: '#'
+      .should.eql
+        '# Some = comments': null
+        group1:
+          group1b:
+            group1c:
+              group1d:
+                key1d1: 'value1d1'
+        group2:
+          key1: 'value1b'
