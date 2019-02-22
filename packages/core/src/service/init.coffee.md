@@ -6,14 +6,15 @@ Reload the service daemon provider depending on the os.
 
 ## Options
 
-* `backup` (string|boolean)   
+* `backup` (string|boolean, optional)   
   Create a backup, append a provided string to the filename extension or a
   timestamp if value is not a string, only apply if the target file exists and
   is modified.
-* `context` (object)   
-  The context object used to render the scripts file.
-* `engine`   
-  Template engine to use. Nunjucks by default.
+* `context` (object, optional)   
+  The context object used to render the scripts file; templating is disabled if
+  no context is provided.
+* `engine` (string, optional, "nunjunks")   
+  Template engine to use; Nunjucks by default.
 * `filters` (function)   
   Filter function to extend the nunjucks engine.
 * `local`   
@@ -57,11 +58,12 @@ Reload the service daemon provider depending on the os.
       options.name ?= path.basename(options.source).split('.')[0]
       options.name = path.basename(options.target).split('.service')[0] if options.target?
       options.target ?= "/etc/init.d/#{options.name}"
-      options.context ?= {}
+      options.context ?= null
       @service.discover (err, system) ->
         options.loader ?= system.loader
       # discover loader to put in cache
         @file.render
+          if: options.context?
           target: options.target
           source: options.source
           mode: options.mode

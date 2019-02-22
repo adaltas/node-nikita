@@ -6,14 +6,15 @@
 
 // ## Options
 
-// * `backup` (string|boolean)   
+// * `backup` (string|boolean, optional)   
 //   Create a backup, append a provided string to the filename extension or a
 //   timestamp if value is not a string, only apply if the target file exists and
 //   is modified.
-// * `context` (object)   
-//   The context object used to render the scripts file.
-// * `engine`   
-//   Template engine to use. Nunjucks by default.
+// * `context` (object, optional)   
+//   The context object used to render the scripts file; templating is disabled if
+//   no context is provided.
+// * `engine` (string, optional, "nunjunks")   
+//   Template engine to use; Nunjucks by default.
 // * `filters` (function)   
 //   Filter function to extend the nunjucks engine.
 // * `local`   
@@ -75,7 +76,7 @@ module.exports = function({options}) {
     options.target = `/etc/init.d/${options.name}`;
   }
   if (options.context == null) {
-    options.context = {};
+    options.context = null;
   }
   return this.service.discover(function(err, system) {
     if (options.loader == null) {
@@ -83,6 +84,7 @@ module.exports = function({options}) {
     }
     // discover loader to put in cache
     this.file.render({
+      if: options.context != null,
       target: options.target,
       source: options.source,
       mode: options.mode,

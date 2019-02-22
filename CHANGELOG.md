@@ -35,6 +35,7 @@ New features:
 * core env: working lxd prototype
 
 Fix:
+* service.init: disable templating if no context
 * cascade: implement cascaded options in callbacks
 * file.cson: fix merging when target is missing
 * keystore_add: use command instead of which
