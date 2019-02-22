@@ -12,7 +12,7 @@
     "system",
     "task"
   ],
-  "version": "0.9.3-alpha.2",
+  "version": "0.9.3-alpha.3",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "url": "https://github.com/adaltas/node-nikita/issues"
