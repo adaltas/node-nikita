@@ -35,6 +35,7 @@ New features:
 * core env: working lxd prototype
 
 Fix:
+* file.download: honors sudo
 * service.init: disable templating if no context
 * cascade: implement cascaded options in callbacks
 * file.cson: fix merging when target is missing

@@ -409,7 +409,8 @@ module.exports = function({options}) {
     this.file.hash({
       target: options.source,
       algo: algo,
-      ssh: false
+      ssh: false,
+      sudo: false
     }, function(err, {hash}) {
       if (err) {
         throw err;
