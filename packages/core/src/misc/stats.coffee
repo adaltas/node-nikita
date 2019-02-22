@@ -53,6 +53,8 @@ module.exports =
       'FIFO'
     else if @isSocket mode
       'Socket'
+    else
+      'Unknown'
 
 ## Dependencies
 

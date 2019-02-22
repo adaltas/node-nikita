@@ -62,6 +62,8 @@ module.exports = {
       return 'FIFO';
     } else if (this.isSocket(mode)) {
       return 'Socket';
+    } else {
+      return 'Unknown';
     }
   }
 };
