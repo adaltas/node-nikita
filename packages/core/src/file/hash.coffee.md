@@ -39,7 +39,7 @@ used for comparaison.
       , (err, {stats}) ->
         throw err if err
         options.stats = stats
-        throw Error 'Unsupported file type' unless misc.stats.isFile(stats.mode) or misc.stats.isDirectory(stats.mode)
+        throw Error "Unsupported File Type: expect \"File\" or \"Directory\", got #{misc.stats.type stats.mode}" unless misc.stats.isFile(stats.mode) or misc.stats.isDirectory(stats.mode)
       # Target is a directory
       @file.glob
         if: -> misc.stats.isDirectory options.stats.mode
