@@ -57,9 +57,15 @@ require('nikita')
 })
 ```
 
+## Note
+
+The `stat` command return an empty stdout in some circounstances like uploading
+a large file with `file.download`, thus the activation of `retry` and `sleep`
+options.
+
 ## Source Code
 
-    module.exports = status: false, log: false, handler: ({options}, callback) ->
+    module.exports = status: false, log: false, retry: 3, sleep: 500, handler: ({options}, callback) ->
       @log message: "Entering fs.stat", level: 'DEBUG', module: 'nikita/lib/fs/stat'
       # Normalize options
       options.target = options.argument if options.argument?
@@ -87,8 +93,10 @@ require('nikita')
           return callback err
         return callback err if err
         [rawmodehex, uid, gid, size, atime, mtime] = stdout.trim().split '|'
+        mode = parseInt '0x' + rawmodehex, 16
+        return callback Error "System Kaput: invalid stdout, got #{JSON.stringify stdout}" if isNaN mode
         callback null, stats:
-          mode: parseInt '0x' + rawmodehex, 16
+          mode: mode
           uid: parseInt uid, 10
           gid: parseInt gid, 10
           size: parseInt size, 10

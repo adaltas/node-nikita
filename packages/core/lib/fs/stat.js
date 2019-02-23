@@ -57,12 +57,20 @@
 // })
 // ```
 
+// ## Note
+
+// The `stat` command return an empty stdout in some circounstances like uploading
+// a large file with `file.download`, thus the activation of `retry` and `sleep`
+// options.
+
 // ## Source Code
 var constants;
 
 module.exports = {
   status: false,
   log: false,
+  retry: 3,
+  sleep: 500,
   handler: function({options}, callback) {
     var dereference;
     this.log({
@@ -87,7 +95,7 @@ module.exports = {
       bash: options.bash,
       arch_chroot: options.arch_chroot
     }, function(err, {status, stdout, stderr}) {
-      var atime, gid, mtime, rawmodehex, size, uid;
+      var atime, gid, mode, mtime, rawmodehex, size, uid;
       if ((err != null ? err.code : void 0) === 3) {
         err = Error(`Missing File: no file exists for target ${JSON.stringify(options.target)}`);
         err.code = 'ENOENT';
@@ -97,9 +105,13 @@ module.exports = {
         return callback(err);
       }
       [rawmodehex, uid, gid, size, atime, mtime] = stdout.trim().split('|');
+      mode = parseInt('0x' + rawmodehex, 16);
+      if (isNaN(mode)) {
+        return callback(Error(`System Kaput: invalid stdout, got ${JSON.stringify(stdout)}`));
+      }
       return callback(null, {
         stats: {
-          mode: parseInt('0x' + rawmodehex, 16),
+          mode: mode,
           uid: parseInt(uid, 10),
           gid: parseInt(gid, 10),
           size: parseInt(size, 10),

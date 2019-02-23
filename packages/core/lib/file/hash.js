@@ -56,7 +56,7 @@ module.exports = {
       }
       options.stats = stats;
       if (!(misc.stats.isFile(stats.mode) || misc.stats.isDirectory(stats.mode))) {
-        throw Error(`Unsupported File Type: expect "File" or "Directory", got ${misc.stats.type(stats.mode)}`);
+        throw Error(`Unsupported File Type: expect "File" or "Directory", got ${misc.stats.type(stats.mode)} for mode ${stats.mode.toString(8)}`);
       }
     });
     // Target is a directory
