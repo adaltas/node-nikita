@@ -246,7 +246,7 @@ module.exports = function({options}, callback) {
         options.fail ? '--fail' : void 0,
         u.protocol === 'https:' ? '-k' : void 0,
         options.location ? "--location" : void 0,
-        (function() {
+        ...((function() {
           var i,
         len,
         ref4,
@@ -255,12 +255,12 @@ module.exports = function({options}, callback) {
           results = [];
           for (i = 0, len = ref4.length; i < len; i++) {
             header = ref4[i];
-            results.push(`--header'${header.replace('\'',
+            results.push(`--header '${header.replace('\'',
         '\\\'')}'`);
           }
           return results;
-        })(),
-        (function() {
+        })()),
+        ...((function() {
           var i,
         len,
         ref4,
@@ -269,11 +269,11 @@ module.exports = function({options}, callback) {
           results = [];
           for (i = 0, len = ref4.length; i < len; i++) {
             cookie = ref4[i];
-            results.push(`--cookie'${cookie.replace('\'',
+            results.push(`--cookie '${cookie.replace('\'',
         '\\\'')}'`);
           }
           return results;
-        })(),
+        })()),
         `-s ${options.source}`,
         `-o ${options.target}`,
         options.proxy ? `-x ${options.proxy}` : void 0

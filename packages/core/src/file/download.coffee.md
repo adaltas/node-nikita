@@ -30,13 +30,12 @@ calculated if neither sha256, sh1 nor md5 is provided.
 
 ## Options
 
-* `cache` (boolean)   
+* `cache` (boolean, optional)   
   Activate the cache, default to true if either "cache_dir" or "cache_file" is
   activated.
-* `cache_dir` (path)   
-  If local_cache is not a string, the cache file path is resolved from cache
-  dir and cache file. By default: './'
-* `cache_file` (string | boolean)   
+* `cache_dir` (string, optional)   
+  Path of the cache directory.
+* `cache_file` (string|boolean, optional)   
   Cache the file on the executing machine, equivalent to cache unless an ssh
   connection is provided. If a string is provided, it will be the cache path.
   By default: basename of source
@@ -141,6 +140,8 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
       # Disable caching if source is a local file and cache isnt exlicitly set by user
       options.cache = false if not options.cache? and source_url.protocol is null
       options.cache ?= !!(options.cache_dir or options.cache_file)
+      options.http_headers ?= []
+      options.cookies ?= []
       # Normalization
       options.target = if options.cwd then p.resolve options.cwd, options.target else p.normalize options.target
       throw Error "Non Absolute Path: target is #{JSON.stringify options.target}, SSH requires absolute paths, you must provide an absolute path in the target or the cwd option" if ssh and not p.isAbsolute options.target
@@ -192,10 +193,6 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         if: -> source_url.protocol in protocols_http
       , ->
         @log message: "HTTP Download", level: 'DEBUG', module: 'nikita/lib/file/download'
-        fail = if options.fail then "--fail" else ''
-        k = if source_url.protocol is 'https:' then '-k' else ''
-        cmd = "curl #{fail} #{k} -s #{options.source} -o #{stageDestination}"
-        cmd += " -x #{options.proxy}" if options.proxy
         @log message: "Download file from url using curl", level: 'INFO', module: 'nikita/lib/file/download'
         # Ensure target directory exists
         @system.mkdir
@@ -203,7 +200,17 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
           target: path.dirname stageDestination
         # Download the file
         @system.execute
-          cmd: cmd
+          cmd: [
+            'curl'
+            '--fail' if options.fail
+            '--insecure' if source_url.protocol is 'https:'
+            '--location' if options.location
+            ...("--header '#{header.replace '\'', '\\\''}'" for header in options.http_headers)
+            ...("--cookie '#{cookie.replace '\'', '\\\''}'" for cookie in options.cookies)
+            "-s #{options.source}"
+            "-o #{stageDestination}"
+            "-x #{options.proxy}" if options.proxy
+          ].join ' '
           shy: true
         hash_source = hash_target = null
         @file.hash stageDestination, algo: algo, (err, {hash}) ->

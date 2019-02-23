@@ -171,6 +171,12 @@ module.exports = function({options}) {
   if (options.cache == null) {
     options.cache = !!(options.cache_dir || options.cache_file);
   }
+  if (options.http_headers == null) {
+    options.http_headers = [];
+  }
+  if (options.cookies == null) {
+    options.cookies = [];
+  }
   // Normalization
   options.target = options.cwd ? p.resolve(options.cwd, options.target) : p.normalize(options.target);
   if (ssh && !p.isAbsolute(options.target)) {
@@ -258,18 +264,12 @@ module.exports = function({options}) {
       return ref3 = source_url.protocol, indexOf.call(protocols_http, ref3) >= 0;
     }
   }, function() {
-    var cmd, fail, hash_source, hash_target, k;
+    var cookie, hash_source, hash_target, header;
     this.log({
       message: "HTTP Download",
       level: 'DEBUG',
       module: 'nikita/lib/file/download'
     });
-    fail = options.fail ? "--fail" : '';
-    k = source_url.protocol === 'https:' ? '-k' : '';
-    cmd = `curl ${fail} ${k} -s ${options.source} -o ${stageDestination}`;
-    if (options.proxy) {
-      cmd += ` -x ${options.proxy}`;
-    }
     this.log({
       message: "Download file from url using curl",
       level: 'INFO',
@@ -282,7 +282,43 @@ module.exports = function({options}) {
     });
     // Download the file
     this.system.execute({
-      cmd: cmd,
+      cmd: [
+        'curl',
+        options.fail ? '--fail' : void 0,
+        source_url.protocol === 'https:' ? '-k' : void 0,
+        options.location ? "--location" : void 0,
+        ...((function() {
+          var i,
+        len,
+        ref3,
+        results;
+          ref3 = options.http_headers;
+          results = [];
+          for (i = 0, len = ref3.length; i < len; i++) {
+            header = ref3[i];
+            results.push(`--header '${header.replace('\'',
+        '\\\'')}'`);
+          }
+          return results;
+        })()),
+        ...((function() {
+          var i,
+        len,
+        ref3,
+        results;
+          ref3 = options.cookies;
+          results = [];
+          for (i = 0, len = ref3.length; i < len; i++) {
+            cookie = ref3[i];
+            results.push(`--cookie '${cookie.replace('\'',
+        '\\\'')}'`);
+          }
+          return results;
+        })()),
+        `-s ${options.source}`,
+        `-o ${stageDestination}`,
+        options.proxy ? `-x ${options.proxy}` : void 0
+      ].join(' '),
       shy: true
     });
     hash_source = hash_target = null;

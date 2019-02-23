@@ -5,9 +5,8 @@ Download a file and place it on a local or remote folder for later usage.
 
 ## Options
 
-* `cache_dir` (path)    
-  If local_cache is not a string, the cache file path is resolved from cache dir and cache file.
-  By default: './'    
+* `cache_dir` (path)   
+  Path of the cache directory.
 * `cache_file` (string | boolean)
   Alias for "target".
 * `cache_local` (boolean)   
@@ -145,10 +144,10 @@ require('nikita')
           cmd: [
             'curl'
             '--fail' if options.fail
-            '-k' if u.protocol is 'https:'
-            "--location" if options.location
-            "--header'#{header.replace '\'', '\\\''}'" for header in options.http_headers
-            "--cookie'#{cookie.replace '\'', '\\\''}'" for cookie in options.cookies
+            '--insecure' if u.protocol is 'https:'
+            '--location' if options.location
+            ...("--header '#{header.replace '\'', '\\\''}'" for header in options.http_headers)
+            ...("--cookie '#{cookie.replace '\'', '\\\''}'" for cookie in options.cookies)
             "-s #{options.source}"
             "-o #{options.target}"
             "-x #{options.proxy}" if options.proxy
