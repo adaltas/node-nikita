@@ -63,7 +63,7 @@ require('nikita')
           cp '#{options.target}' '#{options.target_tmp}'
           chown '#{current_username}' '#{options.target_tmp}'
           """
-      , (err, status) ->
+      , (err) ->
         @log unless err
         then message: "Placing original file in temporary path before reading", level: 'INFO', module: 'nikita/lib/fs/createReadStream'
         else message: "Failed to place original file in temporary path", level: 'ERROR', module: 'nikita/lib/fs/createReadStream'

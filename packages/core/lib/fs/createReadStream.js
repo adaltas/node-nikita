@@ -78,7 +78,7 @@ module.exports = {
         arch_chroot: options.arch_chroot,
         cmd: `[ ! -f '${options.target}' ] && exit\ncp '${options.target}' '${options.target_tmp}'\nchown '${current_username}' '${options.target_tmp}'`
       });
-    }, function(err, status) {
+    }, function(err) {
       this.log(!err ? {
         message: "Placing original file in temporary path before reading",
         level: 'INFO',

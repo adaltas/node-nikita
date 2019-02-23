@@ -21,7 +21,7 @@ Delete a directory.
         sudo: options.sudo
         bash: options.bash
         arch_chroot: options.arch_chroot
-      , (err, status) ->
+      , (err) ->
         if err?.code is 2
           err = Error "ENOENT: no such file or directory, rmdir '#{options.target}'"
           err.errno = -2

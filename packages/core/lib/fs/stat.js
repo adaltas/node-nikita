@@ -94,7 +94,7 @@ module.exports = {
       sudo: options.sudo,
       bash: options.bash,
       arch_chroot: options.arch_chroot
-    }, function(err, {status, stdout, stderr}) {
+    }, function(err, {stdout}) {
       var atime, gid, mode, mtime, rawmodehex, size, uid;
       if ((err != null ? err.code : void 0) === 3) {
         err = Error(`Missing File: no file exists for target ${JSON.stringify(options.target)}`);

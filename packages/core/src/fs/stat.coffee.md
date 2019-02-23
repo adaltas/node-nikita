@@ -86,7 +86,7 @@ options.
         sudo: options.sudo
         bash: options.bash
         arch_chroot: options.arch_chroot
-      , (err, {status, stdout, stderr}) ->
+      , (err, {stdout}) ->
         if err?.code is 3
           err = Error "Missing File: no file exists for target #{JSON.stringify options.target}"
           err.code = 'ENOENT'

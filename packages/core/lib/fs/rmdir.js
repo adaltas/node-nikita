@@ -28,7 +28,7 @@ module.exports = {
       sudo: options.sudo,
       bash: options.bash,
       arch_chroot: options.arch_chroot
-    }, function(err, status) {
+    }, function(err) {
       if ((err != null ? err.code : void 0) === 2) {
         err = Error(`ENOENT: no such file or directory, rmdir '${options.target}'`);
         err.errno = -2;
