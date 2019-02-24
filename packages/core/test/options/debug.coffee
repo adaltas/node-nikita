@@ -16,7 +16,7 @@ describe 'options "debug"', ->
     .next (err) ->
       throw err if err
       # TODO: detect isTTY
-      data.join().should.eql '\u001b[32m[1.INFO undefined] "Some message"\u001b[39m\n'
+      data.join().should.eql '\u001b[32m[1.INFO undefined] Some message\u001b[39m\n'
       process.stderr.write = write
     .promise()
     
@@ -30,7 +30,7 @@ describe 'options "debug"', ->
     .next (err) ->
       throw err if err
       # TODO: detect isTTY
-      data.join().should.eql '\u001b[32m[1.INFO undefined] "Some message"\u001b[39m\n'
+      data.join().should.eql '\u001b[32m[1.INFO undefined] Some message\u001b[39m\n'
       process.stdout.write = write
     .promise()
   
