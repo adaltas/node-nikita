@@ -30,13 +30,12 @@
 
   // ## Options
 
-  // * `cache` (boolean)   
+  // * `cache` (boolean, optional)   
   //   Activate the cache, default to true if either "cache_dir" or "cache_file" is
   //   activated.
-  // * `cache_dir` (path)   
-  //   If local_cache is not a string, the cache file path is resolved from cache
-  //   dir and cache file. By default: './'
-  // * `cache_file` (string | boolean)   
+  // * `cache_dir` (string, optional)   
+  //   Path of the cache directory.
+  // * `cache_file` (string|boolean, optional)   
   //   Cache the file on the executing machine, equivalent to cache unless an ssh
   //   connection is provided. If a string is provided, it will be the cache path.
   //   By default: basename of source
@@ -285,8 +284,8 @@ module.exports = function({options}) {
       cmd: [
         'curl',
         options.fail ? '--fail' : void 0,
-        source_url.protocol === 'https:' ? '-k' : void 0,
-        options.location ? "--location" : void 0,
+        source_url.protocol === 'https:' ? '--insecure' : void 0,
+        options.location ? '--location' : void 0,
         ...((function() {
           var i,
         len,

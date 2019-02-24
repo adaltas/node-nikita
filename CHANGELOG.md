@@ -36,6 +36,7 @@ New features:
 * core env: working lxd prototype
 
 Fix:
+* status: more expressive tests
 * file.stat: handle empty stdout
 * file.hash: enrich error message
 * file.download: honors sudo

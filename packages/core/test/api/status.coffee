@@ -112,13 +112,14 @@ describe 'api status', ->
       .call ({}, callback) ->
         (@status(0) is undefined).should.be.true()
         callback null, false
-      , (err, status) ->
-        @status(0).should.be.false()
+      , (err, {status}) ->
+        console.log @status(0), '=== false'
+        status.should.be.false()
       .call ({}, callback) ->
         (@status(0) is undefined).should.be.true()
         callback null, true
-      , (err, status) ->
-        @status(0).should.be.true()
+      , (err, {status}) ->
+        status.should.be.true()
       .promise()
 
     it 'get previous', ->
@@ -126,8 +127,6 @@ describe 'api status', ->
       .call ({}, callback) ->
         (@status(-1) is undefined).should.be.true()
         callback null, false
-      , (err, status) ->
-        (@status(-1) is undefined).should.be.true()
       .call ({}, callback) ->
         @status(-1).should.be.false()
         callback null, true
@@ -139,28 +138,55 @@ describe 'api status', ->
         callback null, false
       .promise()
 
-    it 'get previous n', ->
+    it 'get asc 0', ->
       nikita
-      .call ({}, callback) ->
-        callback null, false
-      .call ({}, callback) ->
+      .call ->
         (@status(0) is undefined).should.be.true()
+      .call ->
         @status(-1).should.be.false()
-        callback null, false
       , (err) ->
-        @status(0).should.be.false()
         @status(-1).should.be.false()
       .call ({}, callback) ->
         callback null, true
       , (err, status) ->
         @status(0).should.be.true()
         @status(-1).should.be.false()
+      .call ->
+        @status(-1).should.be.true()
+      .promise()
+
+    it 'get desc n-1', ->
+      nikita
+      .call ->
+        (@status(-1) is undefined).should.be.true()
+      .call ->
+        @status(-1).should.be.false()
+      , (err) ->
+        @status(-1).should.be.false()
+      .call ({}, callback) ->
+        callback null, true
+      , (err, status) ->
+        @status(0).should.be.true()
+        @status(-1).should.be.false()
+      .call ->
+        @status(-1).should.be.true()
+      .promise()
+
+    it 'get desc n-2', ->
+      nikita
+      .call (->)
+      .call ->
+        (@status(-2) is undefined).should.be.true()
+      .call ->
+        @status(-2).should.be.false()
+      , (err) ->
         @status(-2).should.be.false()
       .call ({}, callback) ->
-        (@status(0) is undefined).should.be.true()
-        @status(-1).should.be.true()
+        callback null, true
+      .call ->
         @status(-2).should.be.false()
-        callback null, false
+      .call ->
+        @status(-2).should.be.true()
       .promise()
 
     it 'report conditions', ->

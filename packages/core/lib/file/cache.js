@@ -5,9 +5,8 @@
 
   // ## Options
 
-  // * `cache_dir` (path)    
-  //   If local_cache is not a string, the cache file path is resolved from cache dir and cache file.
-  //   By default: './'    
+  // * `cache_dir` (path)   
+  //   Path of the cache directory.
   // * `cache_file` (string | boolean)
   //   Alias for "target".
   // * `cache_local` (boolean)   
@@ -244,8 +243,8 @@ module.exports = function({options}, callback) {
       cmd: [
         'curl',
         options.fail ? '--fail' : void 0,
-        u.protocol === 'https:' ? '-k' : void 0,
-        options.location ? "--location" : void 0,
+        u.protocol === 'https:' ? '--insecure' : void 0,
+        options.location ? '--location' : void 0,
         ...((function() {
           var i,
         len,
