@@ -50,26 +50,18 @@ module.exports = function({options}) {
   });
   return this.call(function() {
     var k, v;
+    // Note, it doesnt seem possible to set multiple keys in one command
     return this.system.execute({
       if: Object.keys(keys).length,
-      cmd: `${[
-        'lxc',
-        'config',
-        'set',
-        options.name,
-        ...[
-          (function() {
-            var results;
-            results = [];
-            for (k in keys) {
-              v = keys[k];
-              results.push(`${k} '${v.replace('\'',
-          '\\\'')}'`);
-            }
-            return results;
-          })()
-        ]
-      ].join(' ')}`,
+      cmd: `${((function() {
+        var results;
+        results = [];
+        for (k in keys) {
+          v = keys[k];
+          results.push(['lxc', 'config', 'set', options.name, `${k} '${v.replace('\'', '\\\'')}'`].join(' '));
+        }
+        return results;
+      })()).join('\n')}`,
       code_skipped: 42
     });
   });

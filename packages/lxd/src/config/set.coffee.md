@@ -44,16 +44,16 @@ require('nikita')
         config = yaml.safeLoad stdout
         keys = diff config.config, mixme config.config, options.config
       @call ->
+        # Note, it doesnt seem possible to set multiple keys in one command
         @system.execute
           if: Object.keys(keys).length
           cmd: """
-          #{[
-            'lxc', 'config', 'set'
-            options.name
-            ...[
-              "#{k} '#{v.replace '\'', '\\\''}'" for k, v of keys
-            ]
-          ].join ' '}
+          #{(
+            [
+              'lxc', 'config', 'set', options.name
+              "#{k} '#{v.replace '\'', '\\\''}'"
+            ].join ' ' for k, v of keys
+          ).join '\n'}
           """
           code_skipped: 42
         
