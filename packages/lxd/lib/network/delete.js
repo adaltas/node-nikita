@@ -28,7 +28,6 @@
 
 // ## Source Code
 module.exports = function({options}) {
-  var cmd_delete;
   this.log({
     message: "Entering lxd network delete",
     level: "DEBUG",
@@ -38,11 +37,9 @@ module.exports = function({options}) {
     //Check args
     throw Error("Invalid Option: network is required");
   }
-  //Build command
-  cmd_delete = ['lxc', 'network', 'delete', options.network].join(' ');
   //Execute
   return this.system.execute({
-    cmd: `lxc network list --format csv | grep ${options.network} || exit 42\n${cmd_delete}`,
+    cmd: `lxc network list --format csv | grep ${options.network} || exit 42\n${['lxc', 'network', 'delete', options.network].join(' ')}`,
     code_skipped: 42
   });
 };

@@ -26,18 +26,16 @@ require('nikita')
     module.exports =  ({options}) ->
       @log message: "Entering delete", level: 'DEBUG', module: '@nikitajs/lxd/lib/delete'
       #Check args
-      throw Error "Argument 'name' is required to delete a container" unless options.name
-      # Building command
-      cmd_del = [
-        'lxc',
-        'delete',
-        options.name
-        "--force" if options.force
-      ].join ' '
+      throw Error "Invalid Option: name is required" unless options.name
       # Execution
       @system.execute
         cmd: """
         lxc info #{options.name} > /dev/null || exit 42
-        #{cmd_del}
+        #{[
+          'lxc',
+          'delete',
+          options.name
+          "--force" if options.force
+        ].join ' '}
         """
         code_skipped: 42

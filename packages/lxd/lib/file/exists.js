@@ -13,12 +13,12 @@
 
 // ## Example
 
-// ```
+// ```js
 // require('nikita')
 // .lxd.file.exists({
-//   name: "myubuntu"
+//   name: "my_container"
 // }, function(err, {status}) {
-//   console.log( err ? err.message : 'The container was deleted')
+//   console.info( err ? err.message : 'The container was deleted')
 // });
 
 // ```

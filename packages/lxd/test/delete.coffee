@@ -12,11 +12,17 @@ describe 'lxd.delete', ->
       ssh: ssh
     .lxd.init
       image: 'ubuntu:'
-      name: 'container1'
+      name: 'c1'
+    .lxd.stop
+      name: 'c1'
     .lxd.delete
-      name: 'container1'
+      name: 'c1'
     , (err, {status}) ->
-      status.should.be.true()
+      status.should.be.true() unless err
+    .lxd.delete
+      name: 'c1'
+    , (err, {status}) ->
+      status.should.be.false() unless err
     .promise()
 
 

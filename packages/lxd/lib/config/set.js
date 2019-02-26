@@ -45,7 +45,6 @@ module.exports = function({options}) {
       throw err;
     }
     config = yaml.safeLoad(stdout);
-    config = yaml.safeLoad(stdout);
     return keys = diff(config.config, mixme(config.config, options.config));
   });
   return this.call(function() {

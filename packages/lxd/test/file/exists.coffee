@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/core'
-{tags, ssh, scratch, lxd} = require '../test'
+{tags, ssh, scratch} = require '../test'
 they = require('ssh2-they').configure ssh...
 
 return unless tags.lxd
@@ -10,7 +10,6 @@ describe 'lxd.file.exists', ->
   they 'when created', ({ssh}) ->
     nikita
       ssh: ssh
-      lxd: lxd
     .lxd.init
       image: 'ubuntu:18.04'
       name: 'c1'
@@ -28,7 +27,6 @@ describe 'lxd.file.exists', ->
   they 'when missing', ({ssh}) ->
     nikita
       ssh: ssh
-      lxd: lxd
     .lxd.init
       image: 'ubuntu:18.04'
       name: 'c1'

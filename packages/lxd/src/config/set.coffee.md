@@ -41,7 +41,6 @@ require('nikita')
       , (err, {stdout}) ->
         throw err if err
         config = yaml.safeLoad stdout
-        config = yaml.safeLoad stdout
         keys = diff config.config, mixme config.config, options.config
       @call ->
         # Note, it doesnt seem possible to set multiple keys in one command

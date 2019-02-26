@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/core'
-{tags, ssh, scratch, lxd} = require '../test'
+{tags, ssh, scratch} = require '../test'
 they = require('ssh2-they').configure ssh...
 
 return unless tags.lxd
@@ -10,7 +10,6 @@ describe 'lxd.config.set', ->
   they 'multiple keys', ({ssh}) ->
     nikita
       ssh: ssh
-      lxd: lxd
     .lxd.delete
       name: 'c1'
       force: true
