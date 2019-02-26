@@ -13,6 +13,7 @@ Breaking changes:
 * domain: remove option and support
 
 New features:
+* lxd.goodies.prlimit: print container limits
 * file.download: http_headers and cookies with no cache
 * file.types.krb5_conf: implement merge
 * file.ini: new parse_bracket_then_curly

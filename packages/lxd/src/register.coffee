@@ -15,6 +15,8 @@ require('@nikitajs/core/lib/registry')
     file:
       push: '@nikitajs/lxd/src/file/push'
       exists: '@nikitajs/lxd/src/file/exists'
+    goodies:
+      prlimit: '@nikitajs/lxd/src/goodies/prlimit'
     network:
       '': '@nikitajs/lxd/src/network'
       create: '@nikitajs/lxd/src/network'

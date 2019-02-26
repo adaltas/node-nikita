@@ -17,6 +17,9 @@ require('@nikitajs/core/lib/registry').register({
       push: '@nikitajs/lxd/lib/file/push',
       exists: '@nikitajs/lxd/lib/file/exists'
     },
+    goodies: {
+      prlimit: '@nikitajs/lxd/lib/goodies/prlimit'
+    },
     network: {
       '': '@nikitajs/lxd/lib/network',
       create: '@nikitajs/lxd/lib/network',
