@@ -5,16 +5,17 @@
 
 // ## Options
 
-// * `name` (required, string)
-//   The network name
-// * `config` (optional, object, {})
-//   The network configuration, see available fields here: https://lxd.readthedocs.io/en/latest/networks/
+// * `network` (required, string)   
+//   The network name.
+// * `config` (optional, object, {})   
+//   The network configuration, see
+//   [available fields](https://lxd.readthedocs.io/en/latest/networks/).
 
 // ## Callback parameters
 
-// * `err`
+// * `err`   
 //   Error object if any
-// * `status`
+// * `status`   
 //   True if the network was created/updated
 
 // ## Example
@@ -22,7 +23,7 @@
 // ```js
 // require('nikita')
 // .lxd.network({
-//   name: 'lxbr0'
+//   network: 'lxbr0'
 //   config: {
 //     'ipv4.address': '172.89.0.0/24',
 //     'ipv6.address': 'none'
@@ -42,9 +43,9 @@ module.exports = function({options}) {
     level: "DEBUG",
     module: "@nikitajs/lxd/lib/network"
   });
-  if (!options.name) {
+  if (!options.network) {
     //Check args
-    throw Error("Argument 'name' is required to create a network");
+    throw Error("Invalid Option: network is required to create a network");
   }
   ref = options.config;
   for (k in ref) {
@@ -57,11 +58,11 @@ module.exports = function({options}) {
   // Command if the network does not yet exist
   return this.system.execute({
     // return code 5 indicates a version of lxc where 'network' command is not implemented
-    cmd: `lxc network > /dev/null || exit 5\nlxc network show ${options.name} && exit 42\n${[
+    cmd: `lxc network > /dev/null || exit 5\nlxc network show ${options.network} && exit 42\n${[
       'lxc',
       'network',
       'create',
-      options.name,
+      options.network,
       ...((function() {
         var ref1,
       results;
@@ -93,7 +94,7 @@ module.exports = function({options}) {
       value = changes[key];
       // if config is empty status is false because no command were executed
       results.push(this.system.execute({
-        cmd: ['lxc', 'network', 'set', options.name, key, `'${value.replace('\'', '\\\'')}'`].join(' ')
+        cmd: ['lxc', 'network', 'set', options.network, key, `'${value.replace('\'', '\\\'')}'`].join(' ')
       }));
     }
     return results;

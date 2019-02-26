@@ -5,24 +5,24 @@ Attach an existing network to a container.
 
 ## Options
 
-* `name` (required, string)
-  The network name
-* `container` (required, string)
-  The container name
+* `network` (required, string)   
+  The network network.
+* `container` (required, string)   
+  The container name.
 
 ## Callback parameters
 
-* `err`
-  Error object if any
-* `status`
-  True if the network was attached
+* `err`   
+  Error object if any.
+* `status`   
+  True if the network was attached.
 
 ## Example
 
 ```js
 require('nikita')
 .lxd.network.attach({
-  name: 'network0',
+  network: 'network0',
   container: 'container1'
 }, function(err, {status}){
   console.log( err ? err.message : 'Network attached: ' + status);
@@ -34,20 +34,20 @@ require('nikita')
     module.exports = ({options}) ->
       @log message: "Entering lxd network attach", level: "DEBUG", module: "@nikitajs/lxd/lib/network/attach"
       #Check args
-      throw Error "Argument 'name' is required to attach a network" unless options.name
-      throw Error "Argument 'container' is required to attach a network" unless options.container
+      throw Error "Invalid Option: network is required" unless options.network
+      throw Error "Invalid Option: container is required" unless options.container
       #Build command
       cmd_attach = [
         'lxc'
         'network'
         'attach'
-        options.name
+        options.network
         options.container
       ].join ' '
       #Execute
       @system.execute
         cmd: """
-        lxc config device list #{options.container} | grep #{options.name} && exit 42
+        lxc config device list #{options.container} | grep #{options.network} && exit 42
         #{cmd_attach}
         """
         code_skipped: 42

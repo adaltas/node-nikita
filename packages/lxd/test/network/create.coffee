@@ -11,9 +11,9 @@ describe 'lxd.network.create', ->
       ssh: ssh
       lxd: lxd
     .lxd.network.delete
-      name: 'net0'
+      network: 'net0'
     .lxd.network
-      name: 'net0'
+      network: 'net0'
       config:
         "ipv4.address": "178.16.0.1/24"
     , (err, {status}) ->
@@ -26,13 +26,13 @@ describe 'lxd.network.create', ->
       ssh: ssh
       lxd: lxd
     .lxd.network.delete
-      name: 'net0'
+      network: 'net0'
     .lxd.network
-      name: 'net0'
+      network: 'net0'
       config:
         "ipv4.address": "178.16.0.1/24"
     .lxd.network
-      name: 'net0'
+      network: 'net0'
       config:
         "ipv4.address": "179.16.0.1/24"
     , (err, {status}) ->
@@ -44,13 +44,13 @@ describe 'lxd.network.create', ->
       ssh: ssh
       lxd: lxd
     .lxd.network.delete
-      name: 'net0'
+      network: 'net0'
     .lxd.network
-      name: 'net0'
+      network: 'net0'
       config:
         "ipv4.address": "178.16.0.1/24"
     .lxd.network
-      name: 'net0'
+      network: 'net0'
       config:
         "ipv4.address": "178.16.0.1/24"
     , (err, {status}) ->

@@ -5,22 +5,22 @@ Delete an existing lxd network.
 
 ## Options
 
-* `name` (required, string)
-  The network name
+* `network` (required, string)   
+  The network name.
 
 ## Callback parameters
 
-* `err`
-  Error object if any
-* `status`
-  True if the network was deleted
+* `err`   
+  Error object if any.
+* `status`   
+  True if the network was deleted.
 
 ## Example
 
 ```js
 require('nikita')
 .lxd.network.delete({
-  name: 'network0'
+  network: 'network0'
 }, function(err, {status}){
   console.log( err ? err.message : 'Network deleted: ' + status);
 })
@@ -31,18 +31,16 @@ require('nikita')
     module.exports = ({options}) ->
       @log message: "Entering lxd network delete", level: "DEBUG", module: "@nikitajs/lxd/lib/network/delete"
       #Check args
-      throw Error "Argument 'name' is required to delete a network" unless options.name
-      #Build command
-      cmd_delete = [
-        'lxc'
-        'network'
-        'delete'
-         options.name
-      ].join ' '
+      throw Error "Invalid Option: network is required" unless options.network
       #Execute
       @system.execute
         cmd: """
-        lxc network list --format csv | grep #{options.name} || exit 42
-        #{cmd_delete}
+        lxc network list --format csv | grep #{options.network} || exit 42
+        #{[
+          'lxc'
+          'network'
+          'delete'
+           options.network
+        ].join ' '}
         """
         code_skipped: 42

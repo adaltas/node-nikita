@@ -5,10 +5,10 @@ Detach a network from a container.
 
 ## Options
 
-* `name` (required, string)
-  The network name
-* `container` (required, string)
-  The container name
+* `network` (required, string)   
+  The network name.
+* `container` (required, string)   
+  The container name.
 
 ## Callback parameters
 
@@ -22,7 +22,7 @@ Detach a network from a container.
 ```js
 require('nikita')
 .lxd.network.detach({
-  name: 'network0'
+  network: 'network0'
   container: 'container1'
 }, function(err, {status}){
   console.log( err ? err.message : 'Network detached  : ' + status);
@@ -34,20 +34,18 @@ require('nikita')
     module.exports = ({options}) ->
       @log message: "Entering lxd network detach", level: "DEBUG", module: "@nikitajs/lxd/lib/network/detach"
       #Check args
-      throw Error "Argument 'name' is required to detach a container from a network" unless options.name
-      throw Error "Argument 'container' is required to detach a container from a network" unless options.name
-      #Build command
-      cmd_detach = [
-        'lxc'
-        'network'
-        'detach'
-         options.name
-         options.container
-      ].join ' '
+      throw Error "Invalid Option: network is required" unless options.network
+      throw Error "Invalid Option: container is required" unless options.container
       #Execute
       @system.execute
         cmd: """
-        lxc config device list #{options.container} | grep #{options.name} || exit 42
-        #{cmd_detach}
+        lxc config device list #{options.container} | grep #{options.network} || exit 42
+        #{[
+          'lxc'
+          'network'
+          'detach'
+           options.network
+           options.container
+        ].join ' '}
         """
         code_skipped: 42

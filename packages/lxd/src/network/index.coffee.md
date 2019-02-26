@@ -5,16 +5,17 @@ Create a network or update a network configuration
 
 ## Options
 
-* `name` (required, string)
-  The network name
-* `config` (optional, object, {})
-  The network configuration, see available fields here: https://lxd.readthedocs.io/en/latest/networks/
+* `network` (required, string)   
+  The network name.
+* `config` (optional, object, {})   
+  The network configuration, see
+  [available fields](https://lxd.readthedocs.io/en/latest/networks/).
 
 ## Callback parameters
 
-* `err`
+* `err`   
   Error object if any
-* `status`
+* `status`   
   True if the network was created/updated
 
 ## Example
@@ -22,7 +23,7 @@ Create a network or update a network configuration
 ```js
 require('nikita')
 .lxd.network({
-  name: 'lxbr0'
+  network: 'lxbr0'
   config: {
     'ipv4.address': '172.89.0.0/24',
     'ipv6.address': 'none'
@@ -37,7 +38,7 @@ require('nikita')
     module.exports = ({options}) ->
       @log message: "Entering lxd network", level: "DEBUG", module: "@nikitajs/lxd/lib/network"
       #Check args
-      throw Error "Argument 'name' is required to create a network" unless options.name
+      throw Error "Invalid Option: network is required to create a network" unless options.network
       for k, v of options.config
         continue if typeof v is 'string'
         options.config[k] = if typeof v is 'boolean' then if v then 'true' else 'false'
@@ -46,12 +47,12 @@ require('nikita')
         # return code 5 indicates a version of lxc where 'network' command is not implemented
         cmd: """
         lxc network > /dev/null || exit 5
-        lxc network show #{options.name} && exit 42
+        lxc network show #{options.network} && exit 42
         #{[
           'lxc',
           'network',
           'create'
-          options.name
+          options.network
           ...(
             "#{key}='#{value.replace '\'', '\\\''}'" for key, value of options.config
           )
@@ -69,7 +70,7 @@ require('nikita')
         @system.execute (
           cmd: [
             'lxc', 'network', 'set'
-            options.name
+            options.network
             key, "'#{value.replace '\'', '\\\''}'"
           ].join ' '
         ) for key, value of changes

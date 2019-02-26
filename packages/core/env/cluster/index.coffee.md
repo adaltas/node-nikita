@@ -64,7 +64,7 @@ containers:
       for network, config of options.network
         @lxd.network
           header: 'Bridge'
-          name: network
+          network: network
           config: config
       for container, config of options.containers
         config.config ?= {}
