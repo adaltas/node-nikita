@@ -65,7 +65,7 @@ options.
 
 ## Source Code
 
-    module.exports = status: false, log: false, retry: 3, sleep: 500, handler: ({options}, callback) ->
+    module.exports = status: false, log: false, handler: ({options}, callback) ->
       @log message: "Entering fs.stat", level: 'DEBUG', module: 'nikita/lib/fs/stat'
       # Normalize options
       options.target = options.argument if options.argument?
@@ -76,25 +76,24 @@ options.
         cmd: """
         [ ! -e #{options.target} ] && exit 3
         if [ -d /private ]; then
-          # MacOS
-          stat #{dereference} -f '%Xp|%u|%g|%z|%a|%m' #{options.target}
+          stat #{dereference} -f '%Xp|%u|%g|%z|%a|%m' #{options.target} # MacOS
         else
-          # Linux
-          stat #{dereference} -c '%f|%u|%g|%s|%X|%Y' #{options.target}
+          stat #{dereference} -c '%f|%u|%g|%s|%X|%Y' #{options.target} # Linux
         fi
         """
         sudo: options.sudo
         bash: options.bash
         arch_chroot: options.arch_chroot
+        trim: true
       , (err, {stdout}) ->
         if err?.code is 3
           err = Error "Missing File: no file exists for target #{JSON.stringify options.target}"
           err.code = 'ENOENT'
           return callback err
         return callback err if err
-        [rawmodehex, uid, gid, size, atime, mtime] = stdout.trim().split '|'
+        [rawmodehex, uid, gid, size, atime, mtime] = stdout.split '|'
         mode = parseInt '0x' + rawmodehex, 16
-        return callback Error "System Kaput: invalid stdout, got #{JSON.stringify stdout}" if isNaN mode
+        return retry_callback Error "System Kaput: invalid stdout, got #{JSON.stringify stdout}" if isNaN mode
         callback null, stats:
           mode: mode
           uid: parseInt uid, 10

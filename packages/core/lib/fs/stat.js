@@ -69,8 +69,6 @@ var constants;
 module.exports = {
   status: false,
   log: false,
-  retry: 3,
-  sleep: 500,
   handler: function({options}, callback) {
     var dereference;
     this.log({
@@ -90,10 +88,11 @@ module.exports = {
       throw Error("Required Option: the \"target\" option is mandatory");
     }
     return this.system.execute({
-      cmd: `[ ! -e ${options.target} ] && exit 3\nif [ -d /private ]; then\n  # MacOS\n  stat ${dereference} -f '%Xp|%u|%g|%z|%a|%m' ${options.target}\nelse\n  # Linux\n  stat ${dereference} -c '%f|%u|%g|%s|%X|%Y' ${options.target}\nfi`,
+      cmd: `[ ! -e ${options.target} ] && exit 3\nif [ -d /private ]; then\n  stat ${dereference} -f '%Xp|%u|%g|%z|%a|%m' ${options.target} # MacOS\nelse\n  stat ${dereference} -c '%f|%u|%g|%s|%X|%Y' ${options.target} # Linux\nfi`,
       sudo: options.sudo,
       bash: options.bash,
-      arch_chroot: options.arch_chroot
+      arch_chroot: options.arch_chroot,
+      trim: true
     }, function(err, {stdout}) {
       var atime, gid, mode, mtime, rawmodehex, size, uid;
       if ((err != null ? err.code : void 0) === 3) {
@@ -104,10 +103,10 @@ module.exports = {
       if (err) {
         return callback(err);
       }
-      [rawmodehex, uid, gid, size, atime, mtime] = stdout.trim().split('|');
+      [rawmodehex, uid, gid, size, atime, mtime] = stdout.split('|');
       mode = parseInt('0x' + rawmodehex, 16);
       if (isNaN(mode)) {
-        return callback(Error(`System Kaput: invalid stdout, got ${JSON.stringify(stdout)}`));
+        return retry_callback(Error(`System Kaput: invalid stdout, got ${JSON.stringify(stdout)}`));
       }
       return callback(null, {
         stats: {
