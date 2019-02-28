@@ -10,6 +10,8 @@ keystores and truststores.
   Alias of the key and the certificate, required if "caname" isn't provided.   
 * `caname` (string|array)   
   Alias of the certificate authority (CA), required if "name" isn't provided.   
+* `keytool` (boolean, optioanl)   
+  Path to the `keytool` command, detetected from `$PATH` by default.
 * `keystore` (string)   
   Path to the keystore (doesn't need to exists).   
 * `storepass` (string)   
@@ -46,15 +48,22 @@ require('nikita')
       options.caname = [options.caname] unless Array.isArray options.caname
       options.name = [options.name] unless Array.isArray options.name
       aliases = [options.caname..., options.name...].join(' ').trim()
+      options.keytool ?= 'keytool'
       @system.execute
         bash: true
         cmd: """
+        # Detect keytool command
+        keytoolbin=#{options.keytool}
+        command -v $keytoolbin >/dev/null || {
+          if [ -x /usr/java/default/bin/keytool ]; then keytoolbin='/usr/java/default/bin/keytool';
+          else exit 7; fi
+        }
         test -f "#{options.keystore}" || # Nothing to do if not a file
         exit 3
         count=0
         for alias in #{aliases}; do
-          if keytool -list -keystore "#{options.keystore}" -storepass "#{options.storepass}" -alias "$alias"; then
-             keytool -delete -keystore "#{options.keystore}" -storepass "#{options.storepass}" -alias "$alias"
+          if ${keytoolbin} -list -keystore "#{options.keystore}" -storepass "#{options.storepass}" -alias "$alias"; then
+             ${keytoolbin} -delete -keystore "#{options.keystore}" -storepass "#{options.storepass}" -alias "$alias"
              (( count++ ))
           fi
         done

@@ -12,6 +12,8 @@
 //   Name of the certificate authority (CA), required.
 // * `cacert` (string)   
 //   Path to the certificate authority (CA), required.
+// * `keytool` (boolean, optioanl)   
+//   Path to the `keytool` command, detetected from `$PATH` by default.
 // * `local` (boolean)    
 //   treat the source file (key, cert or cacert) as a local file present on the 
 //   host, only apply with remote actions over SSH, default is "false".
@@ -90,6 +92,12 @@
 // }, function(err, status){ /* do sth */ });
 // ```
 
+// ## Requirements
+
+// This action relies on the `openssl` and `keytool` commands. If not detected
+// from the path, Nikita will look for "/usr/java/default/bin/keytool" which is the
+// default location of the Oracle JDK installation.
+
 // ## Source Code
 var path;
 
@@ -124,6 +132,9 @@ module.exports = function({options}) {
   // Default options
   if (options.parent == null) {
     options.parent = {};
+  }
+  if (options.keytool == null) {
+    options.keytool = 'keytool';
   }
   if (options.openssl == null) {
     options.openssl = 'openssl';
@@ -177,7 +188,7 @@ module.exports = function({options}) {
   this.system.execute({
     if: !!options.cert,
     bash: true,
-    cmd: `cleanup () {\n  [ -n "${(options.cacert ? '1' : '')}" ] || rm -rf ${options.tmpdir};\n}\nif ! command -v ${options.openssl}; then echo 'OpenSSL command line tool not detected'; cleanup; exit 4; fi\n[ -f ${files.cert} ] || (cleanup; exit 6)\n# mkdir -p -m 700 ${options.tmpdir}\nuser=\`${options.openssl} x509  -noout -in "${files.cert}" -sha1 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/' | cat\`\n# We are only retrieving the first certificate found in the chain with \`head -n 1\`\nkeystore=\`keytool -list -v -keystore ${options.keystore} -storepass ${options.storepass} -alias ${options.name} | grep SHA1: | head -n 1 | sed -E 's/.+SHA1: +(.*)/\\1/'\`\necho "User Certificate: $user"\necho "Keystore Certificate: $keystore"\nif [ "$user" = "$keystore" ]; then cleanup; exit 5; fi\n# Create a PKCS12 file that contains key and certificate\n${options.openssl} pkcs12 -export -in "${files.cert}" -inkey "${files.key}" -out "${options.tmpdir}/pkcs12" -name ${options.name} -password pass:${options.keypass}\n# Import PKCS12 into keystore\nkeytool -noprompt -importkeystore -destkeystore ${options.keystore} -deststorepass ${options.storepass} -destkeypass ${options.keypass} -srckeystore "${options.tmpdir}/pkcs12" -srcstoretype PKCS12 -srcstorepass ${options.keypass} -alias ${options.name}`,
+    cmd: `cleanup () {\n  [ -n "${(options.cacert ? '1' : '')}" ] || rm -rf ${options.tmpdir};\n}\nif ! command -v ${options.openssl}; then echo 'OpenSSL command line tool not detected'; cleanup; exit 4; fi\n# Detect keytool command\nkeytoolbin=${options.keytool}\ncommand -v $keytoolbin >/dev/null || {\n  if [ -x /usr/java/default/bin/keytool ]; then keytoolbin='/usr/java/default/bin/keytool';\n  else exit 7; fi\n}\n[ -f ${files.cert} ] || (cleanup; exit 6)\n# mkdir -p -m 700 ${options.tmpdir}\nuser=\`${options.openssl} x509  -noout -in "${files.cert}" -sha1 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/' | cat\`\n# We are only retrieving the first certificate found in the chain with \`head -n 1\`\nkeystore=\`\${keytoolbin} -list -v -keystore ${options.keystore} -storepass ${options.storepass} -alias ${options.name} | grep SHA1: | head -n 1 | sed -E 's/.+SHA1: +(.*)/\\1/'\`\necho "User Certificate: $user"\necho "Keystore Certificate: $keystore"\nif [ "$user" = "$keystore" ]; then cleanup; exit 5; fi\n# Create a PKCS12 file that contains key and certificate\n${options.openssl} pkcs12 -export -in "${files.cert}" -inkey "${files.key}" -out "${options.tmpdir}/pkcs12" -name ${options.name} -password pass:${options.keypass}\n# Import PKCS12 into keystore\n\${keytoolbin} -noprompt -importkeystore -destkeystore ${options.keystore} -deststorepass ${options.storepass} -destkeypass ${options.keypass} -srckeystore "${options.tmpdir}/pkcs12" -srcstoretype PKCS12 -srcstorepass ${options.keypass} -alias ${options.name}`,
     trap: true,
     code_skipped: 5 // OpenSSL exit 3 if file does not exists
   }, function(err) {
@@ -187,12 +198,15 @@ module.exports = function({options}) {
     if ((err != null ? err.code : void 0) === 6) {
       throw Error("Keystore file does not exists");
     }
+    if ((err != null ? err.code : void 0) === 6) {
+      throw Error("Missing Requirement: command keytool is not detected");
+    }
   });
   // Deal with CACert
   this.system.execute({
     if: options.cacert,
     bash: true,
-    cmd: `# cleanup () { rm -rf ${options.tmpdir}; }\ncleanup () { echo 'clean'; }\n# Check password\nif [ -f ${options.keystore} ] && ! keytool -list -keystore ${options.keystore} -storepass ${options.storepass} >/dev/null; then\n  # Keystore password is invalid, change it manually with:\n  # keytool -storepasswd -keystore ${options.keystore} -storepass \${old_pasword} -new ${options.storepass}\n  cleanup; exit 2\nfi\n[ -f ${files.cacert} ] || (echo 'CA file doesnt not exists: ${files.cacert} 1>&2'; cleanup; exit 3)\n# Import CACert\nPEM_FILE=${files.cacert}\nCERTS=$(grep 'END CERTIFICATE' $PEM_FILE| wc -l)\ncode=5\nfor N in $(seq 0 $(($CERTS - 1))); do\n  if [ $CERTS -eq '1' ]; then\n    ALIAS="${options.caname}"\n  else\n    ALIAS="${options.caname}-$N"\n  fi\n  # Isolate cert into a file\n  CACERT_FILE=${options.tmpdir}/$ALIAS\n  cat $PEM_FILE | awk "n==$N { print }; /END CERTIFICATE/ { n++ }" > $CACERT_FILE\n  # Read user CACert signature\n  user=\`${options.openssl} x509  -noout -in "$CACERT_FILE" -sha1 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/'\`\n  # Read registered CACert signature\n  keystore=\`keytool -list -v -keystore ${options.keystore} -storepass ${options.storepass} -alias $ALIAS | grep SHA1: | sed -E 's/.+SHA1: +(.*)/\\1/'\`\n  echo "User CA Cert: $user"\n  echo "Keystore CA Cert: $keystore"\n  if [ "$user" = "$keystore" ]; then echo 'Identical Signature'; code=5; continue; fi\n  # Remove CACert if signature doesnt match\n  if [ "$keystore" != "" ]; then\n    keytool -delete -keystore ${options.keystore} -storepass ${options.storepass} -alias $ALIAS\n  fi\n  keytool -noprompt -import -trustcacerts -keystore ${options.keystore} -storepass ${options.storepass} -alias $ALIAS -file ${options.tmpdir}/$ALIAS\n  code=0\ndone\ncleanup\nexit $code`,
+    cmd: `# cleanup () { rm -rf ${options.tmpdir}; }\ncleanup () { echo 'clean'; }\n# Detect keytool command\nkeytoolbin=${options.keytool}\ncommand -v $keytoolbin >/dev/null || {\n  if [ -x /usr/java/default/bin/keytool ]; then keytoolbin='/usr/java/default/bin/keytool';\n  else exit 7; fi\n}\n# Check password\nif [ -f ${options.keystore} ] && ! \${keytoolbin} -list -keystore ${options.keystore} -storepass ${options.storepass} >/dev/null; then\n  # Keystore password is invalid, change it manually with:\n  # keytool -storepasswd -keystore ${options.keystore} -storepass \${old_pasword} -new ${options.storepass}\n  cleanup; exit 2\nfi\n[ -f ${files.cacert} ] || (echo 'CA file doesnt not exists: ${files.cacert} 1>&2'; cleanup; exit 3)\n# Import CACert\nPEM_FILE=${files.cacert}\nCERTS=$(grep 'END CERTIFICATE' $PEM_FILE| wc -l)\ncode=5\nfor N in $(seq 0 $(($CERTS - 1))); do\n  if [ $CERTS -eq '1' ]; then\n    ALIAS="${options.caname}"\n  else\n    ALIAS="${options.caname}-$N"\n  fi\n  # Isolate cert into a file\n  CACERT_FILE=${options.tmpdir}/$ALIAS\n  cat $PEM_FILE | awk "n==$N { print }; /END CERTIFICATE/ { n++ }" > $CACERT_FILE\n  # Read user CACert signature\n  user=\`${options.openssl} x509  -noout -in "$CACERT_FILE" -sha1 -fingerprint | sed 's/\\(.*\\)=\\(.*\\)/\\2/'\`\n  # Read registered CACert signature\n  keystore=\`\${keytoolbin} -list -v -keystore ${options.keystore} -storepass ${options.storepass} -alias $ALIAS | grep SHA1: | sed -E 's/.+SHA1: +(.*)/\\1/'\`\n  echo "User CA Cert: $user"\n  echo "Keystore CA Cert: $keystore"\n  if [ "$user" = "$keystore" ]; then echo 'Identical Signature'; code=5; continue; fi\n  # Remove CACert if signature doesnt match\n  if [ "$keystore" != "" ]; then\n    \${keytoolbin} -delete -keystore ${options.keystore} -storepass ${options.storepass} -alias $ALIAS\n  fi\n  \${keytoolbin} -noprompt -import -trustcacerts -keystore ${options.keystore} -storepass ${options.storepass} -alias $ALIAS -file ${options.tmpdir}/$ALIAS\n  code=0\ndone\ncleanup\nexit $code`,
     trap: true,
     code_skipped: 5
   }, function(err) {

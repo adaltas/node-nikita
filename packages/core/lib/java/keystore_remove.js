@@ -10,6 +10,8 @@
 //   Alias of the key and the certificate, required if "caname" isn't provided.   
 // * `caname` (string|array)   
 //   Alias of the certificate authority (CA), required if "name" isn't provided.   
+// * `keytool` (boolean, optioanl)   
+//   Path to the `keytool` command, detetected from `$PATH` by default.
 // * `keystore` (string)   
 //   Path to the keystore (doesn't need to exists).   
 // * `storepass` (string)   
@@ -56,9 +58,12 @@ module.exports = function({options}) {
     options.name = [options.name];
   }
   aliases = [...options.caname, ...options.name].join(' ').trim();
+  if (options.keytool == null) {
+    options.keytool = 'keytool';
+  }
   return this.system.execute({
     bash: true,
-    cmd: `test -f "${options.keystore}" || # Nothing to do if not a file\nexit 3\ncount=0\nfor alias in ${aliases}; do\n  if keytool -list -keystore "${options.keystore}" -storepass "${options.storepass}" -alias "$alias"; then\n     keytool -delete -keystore "${options.keystore}" -storepass "${options.storepass}" -alias "$alias"\n     (( count++ ))\n  fi\ndone\n[ $count -eq 0 ] && exit 3\nexit 0`,
+    cmd: `# Detect keytool command\nkeytoolbin=${options.keytool}\ncommand -v $keytoolbin >/dev/null || {\n  if [ -x /usr/java/default/bin/keytool ]; then keytoolbin='/usr/java/default/bin/keytool';\n  else exit 7; fi\n}\ntest -f "${options.keystore}" || # Nothing to do if not a file\nexit 3\ncount=0\nfor alias in ${aliases}; do\n  if \${keytoolbin} -list -keystore "${options.keystore}" -storepass "${options.storepass}" -alias "$alias"; then\n     \${keytoolbin} -delete -keystore "${options.keystore}" -storepass "${options.storepass}" -alias "$alias"\n     (( count++ ))\n  fi\ndone\n[ $count -eq 0 ] && exit 3\nexit 0`,
     code_skipped: 3
   });
 };
