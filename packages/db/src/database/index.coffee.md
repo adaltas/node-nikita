@@ -72,7 +72,16 @@ npm test test/db/database.coffee
       @log message: "Check if database #{options.database} exists", level: 'DEBUG', module: 'nikita/db/database'
       switch options.engine
         when 'mariadb', 'mysql'
-          cmd_database_create = db.cmd options, database: null, "CREATE DATABASE #{options.database} DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;"
+          options.character_set ?= 'latin1' # MySQL default
+          switch options.character_set
+            when 'latin1' then options.collation ?= 'latin1_swedish_ci' # MySQL default
+            when 'utf8' then options.collation ?= 'utf8_general_ci'
+          cmd_database_create = db.cmd options, database: null, [
+            "CREATE DATABASE #{options.database}"
+            "DEFAULT CHARACTER SET #{options.character_set}"
+            "DEFAULT COLLATE #{options.collation}" if options.collation
+            ';'
+          ].join ' '
           cmd_database_exists = db.cmd options, database: options.database, "USE #{options.database};"
         when 'postgresql'
           cmd_database_create = db.cmd options, database: null, "CREATE DATABASE #{options.database};"

@@ -38,6 +38,7 @@ New features:
 * core env: working lxd prototype
 
 Fix:
+* db.database: mysql/mariadb default to latin1
 * status: more expressive tests
 * file.stat: handle empty stdout
 * file.hash: enrich error message

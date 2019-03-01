@@ -110,9 +110,23 @@ module.exports = function({options}) {
   switch (options.engine) {
     case 'mariadb':
     case 'mysql':
+      if (options.character_set == null) {
+        options.character_set = 'latin1';
+      }
+      switch (options.character_set) {
+        case 'latin1':
+          if (options.collation == null) {
+            options.collation = 'latin1_swedish_ci';
+          }
+          break;
+        case 'utf8':
+          if (options.collation == null) {
+            options.collation = 'utf8_general_ci';
+          }
+      }
       cmd_database_create = db.cmd(options, {
         database: null
-      }, `CREATE DATABASE ${options.database} DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;`);
+      }, [`CREATE DATABASE ${options.database}`, `DEFAULT CHARACTER SET ${options.character_set}`, options.collation ? `DEFAULT COLLATE ${options.collation}` : void 0, ';'].join(' '));
       cmd_database_exists = db.cmd(options, {
         database: options.database
       }, `USE ${options.database};`);
