@@ -511,12 +511,12 @@
               state.current_level.error = callbackargs.error
               jump_to_error()
             call_callback options.callback, callbackargs if options.callback
+            # callbackargs.output = mixme {}, callbackargs.output
+            do_end callbackargs
+          do_end = (callbackargs) ->
             callbackargs.error = null if options.relax
             callbackargs.output ?= {}
             callbackargs.output.status ?= false
-            callbackargs.output = mixme {}, callbackargs.output
-            do_end callbackargs
-          do_end = (callbackargs) ->
             callback callbackargs.error, callbackargs.output if callback
             run_next()
           do_options()

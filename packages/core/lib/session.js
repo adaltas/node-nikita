@@ -1087,7 +1087,7 @@ module.exports = function() {
         if ((base = callbackargs.output).status == null) {
           base.status = false;
         }
-        callbackargs.output = mixme({}, callbackargs.output);
+        // callbackargs.output = mixme {}, callbackargs.output
         return do_end(callbackargs);
       };
       do_end = function(callbackargs) {
