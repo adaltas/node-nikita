@@ -501,16 +501,13 @@
             callbackargs.error = undefined unless callbackargs.error # Error is undefined and not null or false
             state.current_level = state.parent_levels.shift() # Exit action state and move back to parent state
             state.current_level.throw_if_error = false if callbackargs.error and options.callback
-            # state.current_level.history[0].status = if options.status then callbackargs.output.status else false
-            # state.current_level.history[0].error = callbackargs.error
-            # state.current_level.history[0].output = callbackargs.output
             current = {}
             current.options = options
             current.error = callbackargs.error
             current.output = callbackargs.output
             current.status = if options.status then callbackargs.output.status else false
             state.current_level.history.push current
-            if callbackargs.error and not options.relax
+            if current.error and not options.relax
               state.current_level.error = callbackargs.error
               jump_to_error()
             call_callback options.callback, callbackargs if options.callback
@@ -555,9 +552,7 @@
         args = [].slice.call(arguments)
         arg = args.shift()
         if not arg? or typeof arg isnt 'object'
-          state.current_level.error = Error "Invalid Argument: first argument must be an array or an object to iterate, got #{JSON.stringify arg}"
-          jump_to_error() 
-          return proxy
+          throw Error "Invalid Argument: first argument must be an array or an object to iterate, got #{JSON.stringify arg}"
         options = normalize_options args, 'call'
         for opts in options
           if Array.isArray arg

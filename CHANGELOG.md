@@ -10,6 +10,7 @@
 ## Trunk
 
 Breaking changes:
+* each: invalid args throw error instead of passing it
 * domain: remove option and support
 
 New features:

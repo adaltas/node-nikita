@@ -32,8 +32,7 @@ describe 'api each', ->
 
   it 'validate 1st argument', ->
     data =[]
-    nikita()
-    .each 'a string', (({options}) ->)
-    .next (err) ->
-      err.message.should.eql 'Invalid Argument: first argument must be an array or an object to iterate, got "a string"'
-    .promise()
+    (->
+      nikita()
+      .each 'a string', (({options}) ->)
+    ).should.throw 'Invalid Argument: first argument must be an array or an object to iterate, got "a string"'

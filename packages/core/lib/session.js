@@ -1065,16 +1065,13 @@ module.exports = function() {
         if (callbackargs.error && options.callback) {
           state.current_level.throw_if_error = false;
         }
-        // state.current_level.history[0].status = if options.status then callbackargs.output.status else false
-        // state.current_level.history[0].error = callbackargs.error
-        // state.current_level.history[0].output = callbackargs.output
         current = {};
         current.options = options;
         current.error = callbackargs.error;
         current.output = callbackargs.output;
         current.status = options.status ? callbackargs.output.status : false;
         state.current_level.history.push(current);
-        if (callbackargs.error && !options.relax) {
+        if (current.error && !options.relax) {
           state.current_level.error = callbackargs.error;
           jump_to_error();
         }
@@ -1188,9 +1185,7 @@ module.exports = function() {
         args = [].slice.call(arguments);
         arg = args.shift();
         if ((arg == null) || typeof arg !== 'object') {
-          state.current_level.error = Error(`Invalid Argument: first argument must be an array or an object to iterate, got ${JSON.stringify(arg)}`);
-          jump_to_error();
-          return proxy;
+          throw Error(`Invalid Argument: first argument must be an array or an object to iterate, got ${JSON.stringify(arg)}`);
         }
         options = normalize_options(args, 'call');
         for (m = 0, len = options.length; m < len; m++) {
