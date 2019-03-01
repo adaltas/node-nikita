@@ -59,7 +59,7 @@ module.exports = function() {
       get_proxy_builder = function() {
         var builder;
         builder = function() {
-          var args, get, l, len, options, opts, values;
+          var args, get, len, m, options, opts, values;
           args = [].slice.call(arguments);
           options = normalize_options(args, proxy.action);
           proxy.action = [];
@@ -67,8 +67,8 @@ module.exports = function() {
           if (get) {
             return values;
           }
-          for (l = 0, len = options.length; l < len; l++) {
-            opts = options[l];
+          for (m = 0, len = options.length; m < len; m++) {
+            opts = options[m];
             state.current_level.todos.push(opts);
           }
           if (state.current_level.todos.length === options.length) { // Activate the pump
@@ -99,7 +99,7 @@ module.exports = function() {
   });
   obj.internal = {};
   obj.internal.options = function(_arguments, action_name, params = {}) {
-    var __argument, __arguments, action, actions, args, i, j, k, l, len, len1, len2, len3, m, middleware, n, newaction, newactions, o, opt, option, v;
+    var __argument, __arguments, action, actions, args, i, j, k, len, len1, len2, len3, m, middleware, n, newaction, newactions, o, opt, option, p, v;
     if (params.enrich == null) {
       params.enrich = true;
     }
@@ -111,7 +111,7 @@ module.exports = function() {
       _arguments = [{}];
     }
 // Convert every argument to an array
-    for (i = l = 0, len = _arguments.length; l < len; i = ++l) {
+    for (i = m = 0, len = _arguments.length; m < len; i = ++m) {
       args = _arguments[i];
       if (!Array.isArray(args)) {
         _arguments[i] = [args];
@@ -123,20 +123,20 @@ module.exports = function() {
     }
     // Multiply arguments
     actions = null;
-    for (i = m = 0, len1 = _arguments.length; m < len1; i = ++m) {
+    for (i = n = 0, len1 = _arguments.length; n < len1; i = ++n) {
       __arguments = _arguments[i];
       newactions = (function() {
-        var len2, n, results;
+        var len2, o, results;
         results = [];
-        for (j = n = 0, len2 = __arguments.length; n < len2; j = ++n) {
+        for (j = o = 0, len2 = __arguments.length; o < len2; j = ++o) {
           __argument = __arguments[j];
           if (i === 0) {
             results.push([[middleware, __argument]]);
           } else {
             results.push((function() {
-              var len3, o, results1;
+              var len3, p, results1;
               results1 = [];
-              for (i = o = 0, len3 = actions.length; o < len3; i = ++o) {
+              for (i = p = 0, len3 = actions.length; p < len3; i = ++p) {
                 action = actions[i];
                 results1.push([...action, __argument]);
               }
@@ -150,11 +150,11 @@ module.exports = function() {
     }
     // Load module
     if (!middleware) {
-      for (n = 0, len2 = actions.length; n < len2; n++) {
-        action = actions[n];
+      for (o = 0, len2 = actions.length; o < len2; o++) {
+        action = actions[o];
         middleware = null;
-        for (o = 0, len3 = action.length; o < len3; o++) {
-          option = action[o];
+        for (p = 0, len3 = action.length; p < len3; p++) {
+          option = action[p];
           if (typeof option === 'string') {
             middleware = option;
             if (option.substr(0, 1) === '.') {
@@ -170,13 +170,13 @@ module.exports = function() {
     }
     // Build actions
     actions = (function() {
-      var len4, len5, p, q, results;
+      var len4, len5, q, r, results;
       results = [];
-      for (p = 0, len4 = actions.length; p < len4; p++) {
-        action = actions[p];
+      for (q = 0, len4 = actions.length; q < len4; q++) {
+        action = actions[q];
         newaction = {};
-        for (q = 0, len5 = action.length; q < len5; q++) {
-          opt = action[q];
+        for (r = 0, len5 = action.length; r < len5; r++) {
+          opt = action[r];
           if (action == null) {
             continue;
           }
@@ -224,10 +224,10 @@ module.exports = function() {
     })();
     // Normalize
     actions = (function() {
-      var len4, p, ref, results;
+      var len4, q, ref, results;
       results = [];
-      for (p = 0, len4 = actions.length; p < len4; p++) {
-        action = actions[p];
+      for (q = 0, len4 = actions.length; q < len4; q++) {
+        action = actions[q];
         if (action_name) {
           // Enrich
           action.action = action_name;
@@ -451,17 +451,6 @@ module.exports = function() {
   };
   run = function(options, callback) {
     var error, history, index, k, options_original, options_parent, ref, ref1, status, v;
-    // options = state.current_level.todos.shift() unless options
-    options_original = options;
-    options_parent = state.current_level.options;
-    obj.cascade = {...obj.options.cascade, ...module.exports.cascade};
-    for (k in options_parent) {
-      v = options_parent[k];
-      if (options_original[k] === void 0 && obj.cascade[k] === true) {
-        options_original[k] = v;
-      }
-    }
-    options.original = options_original;
     if (options.action === 'next') {
       ({error, history} = state.current_level);
       // unless error
@@ -520,16 +509,23 @@ module.exports = function() {
         return run_next();
       });
     }
+    options_original = options;
+    options_parent = state.current_level.options;
+    obj.cascade = {...obj.options.cascade, ...module.exports.cascade};
+    for (k in options_parent) {
+      v = options_parent[k];
+      if (options_original[k] === void 0 && obj.cascade[k] === true) {
+        options_original[k] = v;
+      }
+    }
+    options.original = options_original;
     options = enrich_options(options);
     index = state.index_counter++;
-    state.current_level.history.unshift({
-      status: void 0,
-      options: {
-        shy: options.shy
-      }
-    });
+    // TODO: replace by current
+    // state.current_level.history.unshift status: undefined, options: shy: options.shy
     state.parent_levels.unshift(state.current_level);
     state.current_level = state_create_level();
+    // state.current_level.status = undefined
     state.current_level.options = options;
     if (options.header) {
       proxy.log({
@@ -1052,7 +1048,7 @@ module.exports = function() {
         });
       };
       do_callback = function(callbackargs) {
-        var base;
+        var base, current;
         proxy.log({
           type: 'handled',
           index: index,
@@ -1069,9 +1065,15 @@ module.exports = function() {
         if (callbackargs.error && options.callback) {
           state.current_level.throw_if_error = false;
         }
-        state.current_level.history[0].status = options.status ? callbackargs.output.status : false;
-        state.current_level.history[0].error = callbackargs.error;
-        state.current_level.history[0].output = callbackargs.output;
+        // state.current_level.history[0].status = if options.status then callbackargs.output.status else false
+        // state.current_level.history[0].error = callbackargs.error
+        // state.current_level.history[0].output = callbackargs.output
+        current = {};
+        current.options = options;
+        current.error = callbackargs.error;
+        current.output = callbackargs.output;
+        current.status = options.status ? callbackargs.output.status : false;
+        state.current_level.history.push(current);
         if (callbackargs.error && !options.relax) {
           state.current_level.error = callbackargs.error;
           jump_to_error();
@@ -1144,11 +1146,11 @@ module.exports = function() {
   state.properties.end = {
     get: function() {
       return function() {
-        var args, l, len, options, opts;
+        var args, len, m, options, opts;
         args = [].slice.call(arguments);
         options = normalize_options(args, 'end');
-        for (l = 0, len = options.length; l < len; l++) {
-          opts = options[l];
+        for (m = 0, len = options.length; m < len; m++) {
+          opts = options[m];
           state.current_level.todos.push(opts);
         }
         if (state.current_level.todos.length === options.length) { // Activate the pump
@@ -1161,15 +1163,15 @@ module.exports = function() {
   state.properties.call = {
     get: function() {
       return function() {
-        var args, get, l, len, options, opts, values;
+        var args, get, len, m, options, opts, values;
         args = [].slice.call(arguments);
         options = normalize_options(args, 'call');
         ({get, values} = handle_get(proxy, options));
         if (get) {
           return values;
         }
-        for (l = 0, len = options.length; l < len; l++) {
-          opts = options[l];
+        for (m = 0, len = options.length; m < len; m++) {
+          opts = options[m];
           state.current_level.todos.push(opts);
         }
         if (state.current_level.todos.length === options.length) { // Activate the pump
@@ -1182,7 +1184,7 @@ module.exports = function() {
   state.properties.each = {
     get: function() {
       return function() {
-        var arg, args, key, l, len, len1, m, options, opts, value;
+        var arg, args, key, len, len1, m, n, options, opts, value;
         args = [].slice.call(arguments);
         arg = args.shift();
         if ((arg == null) || typeof arg !== 'object') {
@@ -1191,11 +1193,11 @@ module.exports = function() {
           return proxy;
         }
         options = normalize_options(args, 'call');
-        for (l = 0, len = options.length; l < len; l++) {
-          opts = options[l];
+        for (m = 0, len = options.length; m < len; m++) {
+          opts = options[m];
           if (Array.isArray(arg)) {
-            for (m = 0, len1 = arg.length; m < len1; m++) {
-              key = arg[m];
+            for (n = 0, len1 = arg.length; n < len1; n++) {
+              key = arg[n];
               opts.key = key;
               this.call(opts);
             }
@@ -1215,7 +1217,7 @@ module.exports = function() {
   state.properties.before = {
     get: function() {
       return function() {
-        var l, len, options, opts;
+        var len, m, options, opts;
         if (typeof arguments[0] === 'string' || Array.isArray(arguments[0])) {
           arguments[0] = {
             action: arguments[0]
@@ -1224,8 +1226,8 @@ module.exports = function() {
         options = normalize_options(arguments, null, {
           enrich: false
         });
-        for (l = 0, len = options.length; l < len; l++) {
-          opts = options[l];
+        for (m = 0, len = options.length; m < len; m++) {
+          opts = options[m];
           if (typeof opts.handler !== 'function') {
             throw Error(`Invalid handler ${JSON.stringify(opts.handler)}`);
           }
@@ -1238,7 +1240,7 @@ module.exports = function() {
   state.properties.after = {
     get: function() {
       return function() {
-        var l, len, options, opts;
+        var len, m, options, opts;
         if (typeof arguments[0] === 'string' || Array.isArray(arguments[0])) {
           arguments[0] = {
             action: arguments[0]
@@ -1247,8 +1249,8 @@ module.exports = function() {
         options = normalize_options(arguments, null, {
           enrich: false
         });
-        for (l = 0, len = options.length; l < len; l++) {
-          opts = options[l];
+        for (m = 0, len = options.length; m < len; m++) {
+          opts = options[m];
           if (typeof opts.handler !== 'function') {
             throw Error(`Invalid handler ${JSON.stringify(opts.handler)}`);
           }
@@ -1261,7 +1263,7 @@ module.exports = function() {
   state.properties.status = {
     get: function() {
       return function(index) {
-        var action, l, len, len1, m, ref, ref1, ref2, status;
+        var action, l, len, len1, m, n, ref, ref1, ref2, status;
         if (arguments.length === 0) {
           return state.parent_levels[0].history.some(function(action) {
             return !action.options.shy && action.status;
@@ -1271,8 +1273,8 @@ module.exports = function() {
             return !action.options.shy && action.status;
           });
           ref = state.parent_levels[0].history;
-          for (l = 0, len = ref.length; l < len; l++) {
-            action = ref[l];
+          for (m = 0, len = ref.length; m < len; m++) {
+            action = ref[m];
             action.status = false;
           }
           return status;
@@ -1281,13 +1283,17 @@ module.exports = function() {
             return !action.options.shy && action.status;
           });
           ref1 = state.parent_levels[0].history;
-          for (m = 0, len1 = ref1.length; m < len1; m++) {
-            action = ref1[m];
+          for (n = 0, len1 = ref1.length; n < len1; n++) {
+            action = ref1[n];
             action.status = true;
           }
           return status;
         } else {
-          return (ref2 = state.parent_levels[0].history[Math.abs(index)]) != null ? ref2.status : void 0;
+          l = state.parent_levels[0].history.length;
+          if (index < 0) {
+            index = l + index;
+          }
+          return (ref2 = state.parent_levels[0].history[index]) != null ? ref2.status : void 0;
         }
       };
     }

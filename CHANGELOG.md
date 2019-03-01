@@ -49,6 +49,7 @@ Fix:
 * file.hash: use command instead of which
 
 Cleaup:
+* session: isolate current action from history
 * core: remove unnecessary transmission of ssh
 
 Management:

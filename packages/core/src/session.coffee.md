@@ -226,13 +226,6 @@
           return
         run options
       run = (options, callback) ->
-        # options = state.current_level.todos.shift() unless options
-        options_original = options
-        options_parent = state.current_level.options
-        obj.cascade = {...obj.options.cascade, ...module.exports.cascade}
-        for k, v of options_parent
-          options_original[k] = v if options_original[k] is undefined and obj.cascade[k] is true
-        options.original = options_original
         if options.action is 'next'
           {error, history} = state.current_level
           # unless error
@@ -265,11 +258,19 @@
           , (error) ->
             callback error, {} if callback
             run_next()
+        options_original = options
+        options_parent = state.current_level.options
+        obj.cascade = {...obj.options.cascade, ...module.exports.cascade}
+        for k, v of options_parent
+          options_original[k] = v if options_original[k] is undefined and obj.cascade[k] is true
+        options.original = options_original
         options = enrich_options options
         index = state.index_counter++
-        state.current_level.history.unshift status: undefined, options: shy: options.shy
+        # TODO: replace by current
+        # state.current_level.history.unshift status: undefined, options: shy: options.shy
         state.parent_levels.unshift state.current_level
         state.current_level = state_create_level()
+        # state.current_level.status = undefined
         state.current_level.options = options
         proxy.log message: options.header, type: 'header', index: index, headers: options.headers if options.header
         do () ->
@@ -500,9 +501,15 @@
             callbackargs.error = undefined unless callbackargs.error # Error is undefined and not null or false
             state.current_level = state.parent_levels.shift() # Exit action state and move back to parent state
             state.current_level.throw_if_error = false if callbackargs.error and options.callback
-            state.current_level.history[0].status = if options.status then callbackargs.output.status else false
-            state.current_level.history[0].error = callbackargs.error
-            state.current_level.history[0].output = callbackargs.output
+            # state.current_level.history[0].status = if options.status then callbackargs.output.status else false
+            # state.current_level.history[0].error = callbackargs.error
+            # state.current_level.history[0].output = callbackargs.output
+            current = {}
+            current.options = options
+            current.error = callbackargs.error
+            current.output = callbackargs.output
+            current.status = if options.status then callbackargs.output.status else false
+            state.current_level.history.push current
             if callbackargs.error and not options.relax
               state.current_level.error = callbackargs.error
               jump_to_error()
@@ -589,7 +596,9 @@
           action.status = true for action in state.parent_levels[0].history
           return status
         else
-          state.parent_levels[0].history[Math.abs index]?.status
+          l = state.parent_levels[0].history.length
+          index = (l + index) if index < 0
+          state.parent_levels[0].history[index]?.status
       Object.defineProperties obj, state.properties
       reg = registry.registry {}
       Object.defineProperty obj.registry, 'get', get: -> (name, handler) ->
