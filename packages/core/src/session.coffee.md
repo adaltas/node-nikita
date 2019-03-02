@@ -163,6 +163,7 @@
         options.disabled ?= false
         options.status ?= true
         options.depth = if options.depth? then options.depth else (options.parent?.depth or 0) + 1
+        options.attempt = -1# Clone and filter cascaded options
         # throw Error 'Incompatible Options: status "false" implies shy "true"' if options.status is false and options.shy is false # Room for argument, leave it strict for now until we come accross a usecase justifying it.
         # options.shy ?= true if options.status is false
         options.shy ?= false
@@ -258,6 +259,7 @@
           , (error) ->
             callback error, {} if callback
             run_next()
+        index = state.index_counter++
         options_original = options
         options_parent = state.current_level.options
         obj.cascade = {...obj.options.cascade, ...module.exports.cascade}
@@ -265,12 +267,24 @@
           options_original[k] = v if options_original[k] is undefined and obj.cascade[k] is true
         options.original = options_original
         options = enrich_options options
-        index = state.index_counter++
-        # TODO: replace by current
-        # state.current_level.history.unshift status: undefined, options: shy: options.shy
+        opts = options_filter_cascade options
+        opts.handler = undefined
+        opts.callback = undefined
+        # Prepare the Context
+        context =
+          action:
+            after: options.after
+            before: options.before
+            index: index
+          original: options.original
+          options: opts
+          session: proxy
+          handler: options.handler
+          callback: options.callback
+        options.handler = undefined
+        options.callback = undefined
         state.parent_levels.unshift state.current_level
         state.current_level = state_create_level()
-        # state.current_level.status = undefined
         state.current_level.options = options
         proxy.log message: options.header, type: 'header', index: index, headers: options.headers if options.header
         do () ->
@@ -310,67 +324,69 @@
               if typeof options.once is 'string'
                 hash = string.hash options.once
               else if Array.isArray options.once
-                hash = string.hash options.once.map((k) -> hashme options[k]).join '|'
+                hash = string.hash options.once.map((k) ->
+                  if k is 'handler'
+                  then hashme context.handler 
+                  else hashme options[k]
+                ).join '|'
               else
                 throw Error "Invalid Option 'once': #{JSON.stringify options.once} must be a string or an array of string"
               return do_callback error: undefined, output: status: false if state.once[hash]
               state.once[hash] = true
             do_options_before()
           do_options_before = ->
-            return do_intercept_before() if options.options_before
-            options.before ?= []
-            options.before = [options.before] unless Array.isArray options.before
-            each options.before
+            return do_intercept_before() if context.original.options_before
+            context.action.before ?= []
+            context.action.before = [context.action.before] unless Array.isArray context.action.before
+            each context.action.before
             .call (before, next) ->
               before = normalize_options [before], 'call', enrich: false
               before = before[0]
-              opts = options_before: true
+              _opts = options_before: true
               for k, v of before
-                opts[k] = v
-              for k, v of options
-                continue if k in ['handler', 'callback']
-                opts[k] ?= v
-              run opts, next
+                _opts[k] = v
+              for k, v of context.options
+                # continue if k in ['handler', 'callback']
+                _opts[k] ?= v
+              run _opts, next
             .error (error) -> do_callback error: error, output: status: false
             .next do_intercept_before
           do_intercept_before = ->
-            return do_conditions() if options.intercepting
+            return do_conditions() if context.options.intercepting
             each state.befores
             .call (before, next) ->
               for k, v of before then switch k
                 when 'handler' then continue
-                when 'action' then return next() unless array.compare v, options[k]
-                else return next() unless v is options[k]
-              opts = intercepting: true
+                when 'action' then return next() unless array.compare v, context.options[k]
+                else return next() unless v is context.options[k]
+              _opts = intercepting: true
               for k, v of before
-                opts[k] = v
-              for k, v of options
-                continue if k in ['handler', 'callback']
-                opts[k] ?= v
-              run opts, next
+                _opts[k] = v
+              for k, v of context.options
+                _opts[k] ?= v
+              run _opts, next
             .error (error) -> do_callback error: error, output: status: false
             .next do_conditions
           do_conditions = ->
-            opts = {}
-            for k, v of options
+            _opts = {}
+            for k, v of context.options
               continue if k in ['handler', 'callback', 'header', 'after', 'before']
-              opts[k] ?= v
-            conditions.all proxy, options: opts
+              _opts[k] ?= v
+            conditions.all proxy, options: _opts
             , ->
               proxy.log type: 'lifecycle', message: 'conditions_passed', index: index, error: null, status: false
-              for k, v of options # Remove conditions from options
-                delete options[k] if /^if.*/.test(k) or /^unless.*/.test(k)
+              for k, v of context.options # Remove conditions from options
+                delete context.options[k] if /^if.*/.test(k) or /^unless.*/.test(k)
               setImmediate -> do_handler()
             , (error) ->
               proxy.log type: 'lifecycle', message: 'conditions_failed', index: index, error: error, status: false
               setImmediate -> do_callback error: error, output: status: false
-          options.attempt = -1
           do_handler = ->
-            options.attempt++
+            context.options.attempt++
             do_next = ({error, output, args}) ->
               callbackargs = error: error, output: output, args: args
-              options.handler = options_handler
-              options.callback = options_callback
+              # options.handler = context.handler
+              options.callback = context.callback # to be removed once do_callback take callback from context and not options
               if error and error not instanceof Error
                 error = Error 'First argument not a valid error'
                 callbackargs.error = error
@@ -382,29 +398,23 @@
                 else if typeof output isnt 'object' then callbackargs.error = Error "Invalid Argument: expect an object or a boolean, got #{JSON.stringify output}"
                 else callbackargs.output.status ?= false
               proxy.log message: error.message, level: 'ERROR', index: index, module: 'nikita' if error
-              if error and ( options.retry is true or options.attempt < options.retry - 1 )
-                proxy.log message: "Retry on error, attempt #{options.attempt+1}", level: 'WARN', index: index, module: 'nikita'
-                return setTimeout do_handler, options.sleep
+              if error and ( context.options.retry is true or context.options.attempt < context.options.retry - 1 )
+                proxy.log message: "Retry on error, attempt #{context.options.attempt+1}", level: 'WARN', index: index, module: 'nikita'
+                return setTimeout do_handler, context.options.sleep
               do_intercept_after callbackargs
-            options.handler ?= obj.registry.get(options.action)?.handler or registry.get(options.action)?.handler
-            return handle_multiple_call Error "Unregistered Middleware: #{options.action.join('.')}" unless options.handler
-            options_handler = options.handler
-            options_handler_length = options.handler.length
-            options.handler = undefined
-            options_callback = options.callback
-            options.callback = undefined
+            context.handler ?= obj.registry.get(context.options.action)?.handler or registry.get(context.options.action)?.handler
+            return handle_multiple_call Error "Unregistered Middleware: #{context.options.action.join('.')}" unless context.handler
+            
             called = false
             try
-              # Clone and filter cascaded options
-              opts = options_filter_cascade options
               # Handle deprecation
-              options_handler = ( (options_handler) ->
+              context.handler = ( (options_handler) ->
                 util.deprecate ->
                   options_handler.apply @, arguments
                 , if options.deprecate is true
                 then "#{options.action.join '/'} is deprecated"
                 else "#{options.action.join '/'} is deprecated, use #{options.deprecate}"
-              )(options_handler) if options.deprecate
+              )(context.handler) if context.options.deprecate
               handle_async_and_promise = ->
                 [error, output, args...] = arguments
                 return if state.killed
@@ -412,34 +422,27 @@
                 called = true
                 setImmediate ->
                   do_next error: error, output: output, args: args
-              # Prepare the Context
-              context =
-                options: opts
-                session: proxy
               # Call the action
-              if options_handler_length is 2 # Async style
+              if context.handler.length is 2 # Async style
                 promise_returned = false
-                result = options_handler.call proxy, context, ->
+                result = context.handler.call proxy, context, ->
                   return if promise_returned
                   handle_async_and_promise.apply null, arguments
                 if promise.is result
                   promise_returned = true
                   return handle_async_and_promise Error 'Invalid Promise: returning promise is not supported in asynchronuous mode'
               else # Sync style
-                result = options_handler.call proxy, context
-                if promise.is result # result is a promise
+                result = context.handler.call proxy, context
+                if promise.is result
                   result.then (value) ->
                     if Array.isArray value
                       [output, args...] = value
                     else
                       output = value
                       args = []
-                    # value = [value] unless Array.isArray value
-                    # handle_async_and_promise error: null, output: output, args: args
                     handle_async_and_promise undefined, output, args...
                   , (reason) ->
                     reason = Error 'Rejected Promise: reject called without any arguments' unless reason?
-                    # handle_async_and_promise error: reason
                     handle_async_and_promise reason
                 else
                   return if state.killed
@@ -461,38 +464,37 @@
               state.current_level = state_create_level()
               do_next error: error
           do_intercept_after = (callbackargs) ->
-            return do_options_after callbackargs if options.intercepting
+            return do_options_after callbackargs if context.options.intercepting
             each state.afters
             .call (after, next) ->
               for k, v of after then switch k
                 when 'handler' then continue
-                when 'action' then return next() unless array.compare v, options[k]
-                else return next() unless v is options[k]
-              opts = intercepting: true
+                when 'action' then return next() unless array.compare v, context.options[k]
+                else return next() unless v is context.options[k]
+              _opts = intercepting: true
               for k, v of after
-                opts[k] = v
-              for k, v of options
-                continue if k in ['handler', 'callback']
-                opts[k] ?= v
-              opts.callback_arguments = callbackargs
-              run opts, next
+                _opts[k] = v
+              for k, v of context.options
+                _opts[k] ?= v
+              _opts.callback_arguments = callbackargs
+              run _opts, next
             .error (error) -> do_callback error: error, output: status: false
             .next -> do_options_after callbackargs
           do_options_after = (callbackargs) ->
-            return do_callback callbackargs if options.options_after
-            options.after ?= []
-            options.after = [options.after] unless Array.isArray options.after
-            each options.after
+            return do_callback callbackargs if context.original.options_after
+            context.action.after ?= []
+            context.action.after = [context.action.after] unless Array.isArray context.action.after
+            each context.action.after
             .call (after, next) ->
               after = normalize_options [after], 'call', enrich: false
               after = after[0]
-              opts = options_after: true
+              _opts = options_after: true
               for k, v of after
-                opts[k] = v
-              for k, v of options
-                continue if k in ['handler', 'callback']
-                opts[k] ?= v
-              run opts, next
+                _opts[k] = v
+              for k, v of context.options
+                # continue if k in ['handler', 'callback']
+                _opts[k] ?= v
+              run _opts, next
             .error (error) -> do_callback error: error, output: status: false
             .next -> do_callback callbackargs
           do_callback = (callbackargs) ->
@@ -500,7 +502,7 @@
             return if state.killed
             callbackargs.error = undefined unless callbackargs.error # Error is undefined and not null or false
             state.current_level = state.parent_levels.shift() # Exit action state and move back to parent state
-            state.current_level.throw_if_error = false if callbackargs.error and options.callback
+            state.current_level.throw_if_error = false if callbackargs.error and context.callback
             current = {}
             current.options = options
             current.error = callbackargs.error
@@ -510,7 +512,7 @@
             if current.error and not options.relax
               state.current_level.error = callbackargs.error
               jump_to_error()
-            call_callback options.callback, callbackargs if options.callback
+            call_callback context.callback, callbackargs if context.callback
             # callbackargs.output = mixme {}, callbackargs.output
             do_end callbackargs
           do_end = (callbackargs) ->

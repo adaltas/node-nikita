@@ -331,6 +331,7 @@ module.exports = function() {
       options.status = true;
     }
     options.depth = options.depth != null ? options.depth : (((ref = options.parent) != null ? ref.depth : void 0) || 0) + 1;
+    options.attempt = -1; // Clone and filter cascaded options
     // throw Error 'Incompatible Options: status "false" implies shy "true"' if options.status is false and options.shy is false # Room for argument, leave it strict for now until we come accross a usecase justifying it.
     // options.shy ?= true if options.status is false
     if (options.shy == null) {
@@ -450,7 +451,7 @@ module.exports = function() {
     return run(options);
   };
   run = function(options, callback) {
-    var error, history, index, k, options_original, options_parent, ref, ref1, status, v;
+    var context, error, history, index, k, options_original, options_parent, opts, ref, ref1, status, v;
     if (options.action === 'next') {
       ({error, history} = state.current_level);
       // unless error
@@ -509,6 +510,7 @@ module.exports = function() {
         return run_next();
       });
     }
+    index = state.index_counter++;
     options_original = options;
     options_parent = state.current_level.options;
     obj.cascade = {...obj.options.cascade, ...module.exports.cascade};
@@ -520,12 +522,26 @@ module.exports = function() {
     }
     options.original = options_original;
     options = enrich_options(options);
-    index = state.index_counter++;
-    // TODO: replace by current
-    // state.current_level.history.unshift status: undefined, options: shy: options.shy
+    opts = options_filter_cascade(options);
+    opts.handler = void 0;
+    opts.callback = void 0;
+    // Prepare the Context
+    context = {
+      action: {
+        after: options.after,
+        before: options.before,
+        index: index
+      },
+      original: options.original,
+      options: opts,
+      session: proxy,
+      handler: options.handler,
+      callback: options.callback
+    };
+    options.handler = void 0;
+    options.callback = void 0;
     state.parent_levels.unshift(state.current_level);
     state.current_level = state_create_level();
-    // state.current_level.status = undefined
     state.current_level.options = options;
     if (options.header) {
       proxy.log({
@@ -612,7 +628,11 @@ module.exports = function() {
             hash = string.hash(options.once);
           } else if (Array.isArray(options.once)) {
             hash = string.hash(options.once.map(function(k) {
-              return hashme(options[k]);
+              if (k === 'handler') {
+                return hashme(context.handler);
+              } else {
+                return hashme(options[k]);
+              }
             }).join('|'));
           } else {
             throw Error(`Invalid Option 'once': ${JSON.stringify(options.once)} must be a string or an array of string`);
@@ -630,38 +650,38 @@ module.exports = function() {
         return do_options_before();
       };
       do_options_before = function() {
-        if (options.options_before) {
+        var base;
+        if (context.original.options_before) {
           return do_intercept_before();
         }
-        if (options.before == null) {
-          options.before = [];
+        if ((base = context.action).before == null) {
+          base.before = [];
         }
-        if (!Array.isArray(options.before)) {
-          options.before = [options.before];
+        if (!Array.isArray(context.action.before)) {
+          context.action.before = [context.action.before];
         }
-        return each(options.before).call(function(before, next) {
-          var opts;
+        return each(context.action.before).call(function(before, next) {
+          var _opts, ref2;
           before = normalize_options([before], 'call', {
             enrich: false
           });
           before = before[0];
-          opts = {
+          _opts = {
             options_before: true
           };
           for (k in before) {
             v = before[k];
-            opts[k] = v;
+            _opts[k] = v;
           }
-          for (k in options) {
-            v = options[k];
-            if (k === 'handler' || k === 'callback') {
-              continue;
-            }
-            if (opts[k] == null) {
-              opts[k] = v;
+          ref2 = context.options;
+          for (k in ref2) {
+            v = ref2[k];
+            // continue if k in ['handler', 'callback']
+            if (_opts[k] == null) {
+              _opts[k] = v;
             }
           }
-          return run(opts, next);
+          return run(_opts, next);
         }).error(function(error) {
           return do_callback({
             error: error,
@@ -672,44 +692,42 @@ module.exports = function() {
         }).next(do_intercept_before);
       };
       do_intercept_before = function() {
-        if (options.intercepting) {
+        if (context.options.intercepting) {
           return do_conditions();
         }
         return each(state.befores).call(function(before, next) {
-          var opts;
+          var _opts, ref2;
           for (k in before) {
             v = before[k];
             switch (k) {
               case 'handler':
                 continue;
               case 'action':
-                if (!array.compare(v, options[k])) {
+                if (!array.compare(v, context.options[k])) {
                   return next();
                 }
                 break;
               default:
-                if (v !== options[k]) {
+                if (v !== context.options[k]) {
                   return next();
                 }
             }
           }
-          opts = {
+          _opts = {
             intercepting: true
           };
           for (k in before) {
             v = before[k];
-            opts[k] = v;
+            _opts[k] = v;
           }
-          for (k in options) {
-            v = options[k];
-            if (k === 'handler' || k === 'callback') {
-              continue;
-            }
-            if (opts[k] == null) {
-              opts[k] = v;
+          ref2 = context.options;
+          for (k in ref2) {
+            v = ref2[k];
+            if (_opts[k] == null) {
+              _opts[k] = v;
             }
           }
-          return run(opts, next);
+          return run(_opts, next);
         }).error(function(error) {
           return do_callback({
             error: error,
@@ -720,20 +738,22 @@ module.exports = function() {
         }).next(do_conditions);
       };
       do_conditions = function() {
-        var opts;
-        opts = {};
-        for (k in options) {
-          v = options[k];
+        var _opts, ref2;
+        _opts = {};
+        ref2 = context.options;
+        for (k in ref2) {
+          v = ref2[k];
           if (k === 'handler' || k === 'callback' || k === 'header' || k === 'after' || k === 'before') {
             continue;
           }
-          if (opts[k] == null) {
-            opts[k] = v;
+          if (_opts[k] == null) {
+            _opts[k] = v;
           }
         }
         return conditions.all(proxy, {
-          options: opts
+          options: _opts
         }, function() {
+          var ref3;
           proxy.log({
             type: 'lifecycle',
             message: 'conditions_passed',
@@ -741,11 +761,12 @@ module.exports = function() {
             error: null,
             status: false
           });
-// Remove conditions from options
-          for (k in options) {
-            v = options[k];
+          ref3 = context.options;
+          // Remove conditions from options
+          for (k in ref3) {
+            v = ref3[k];
             if (/^if.*/.test(k) || /^unless.*/.test(k)) {
-              delete options[k];
+              delete context.options[k];
             }
           }
           return setImmediate(function() {
@@ -769,10 +790,9 @@ module.exports = function() {
           });
         });
       };
-      options.attempt = -1;
       do_handler = function() {
-        var called, context, do_next, handle_async_and_promise, options_callback, options_handler, options_handler_length, opts, promise_returned, ref2, ref3, result, status_sync, wait_children;
-        options.attempt++;
+        var called, do_next, handle_async_and_promise, promise_returned, ref2, ref3, result, status_sync, wait_children;
+        context.options.attempt++;
         do_next = function({error, output, args}) {
           var base, base1, callbackargs;
           callbackargs = {
@@ -780,8 +800,8 @@ module.exports = function() {
             output: output,
             args: args
           };
-          options.handler = options_handler;
-          options.callback = options_callback;
+          // options.handler = context.handler
+          options.callback = context.callback; // to be removed once do_callback take callback from context and not options
           if (error && !(error instanceof Error)) {
             error = Error('First argument not a valid error');
             callbackargs.error = error;
@@ -816,39 +836,32 @@ module.exports = function() {
               module: 'nikita'
             });
           }
-          if (error && (options.retry === true || options.attempt < options.retry - 1)) {
+          if (error && (context.options.retry === true || context.options.attempt < context.options.retry - 1)) {
             proxy.log({
-              message: `Retry on error, attempt ${options.attempt + 1}`,
+              message: `Retry on error, attempt ${context.options.attempt + 1}`,
               level: 'WARN',
               index: index,
               module: 'nikita'
             });
-            return setTimeout(do_handler, options.sleep);
+            return setTimeout(do_handler, context.options.sleep);
           }
           return do_intercept_after(callbackargs);
         };
-        if (options.handler == null) {
-          options.handler = ((ref2 = obj.registry.get(options.action)) != null ? ref2.handler : void 0) || ((ref3 = registry.get(options.action)) != null ? ref3.handler : void 0);
+        if (context.handler == null) {
+          context.handler = ((ref2 = obj.registry.get(context.options.action)) != null ? ref2.handler : void 0) || ((ref3 = registry.get(context.options.action)) != null ? ref3.handler : void 0);
         }
-        if (!options.handler) {
-          return handle_multiple_call(Error(`Unregistered Middleware: ${options.action.join('.')}`));
+        if (!context.handler) {
+          return handle_multiple_call(Error(`Unregistered Middleware: ${context.options.action.join('.')}`));
         }
-        options_handler = options.handler;
-        options_handler_length = options.handler.length;
-        options.handler = void 0;
-        options_callback = options.callback;
-        options.callback = void 0;
         called = false;
         try {
-          // Clone and filter cascaded options
-          opts = options_filter_cascade(options);
-          if (options.deprecate) {
+          if (context.options.deprecate) {
             // Handle deprecation
-            options_handler = (function(options_handler) {
+            context.handler = (function(options_handler) {
               return util.deprecate(function() {
                 return options_handler.apply(this, arguments);
               }, options.deprecate === true ? `${options.action.join('/')} is deprecated` : `${options.action.join('/')} is deprecated, use ${options.deprecate}`);
-            })(options_handler);
+            })(context.handler);
           }
           handle_async_and_promise = function() {
             var args, output;
@@ -868,15 +881,10 @@ module.exports = function() {
               });
             });
           };
-          // Prepare the Context
-          context = {
-            options: opts,
-            session: proxy
-          };
           // Call the action
-          if (options_handler_length === 2) { // Async style
+          if (context.handler.length === 2) { // Async style
             promise_returned = false;
-            result = options_handler.call(proxy, context, function() {
+            result = context.handler.call(proxy, context, function() {
               if (promise_returned) {
                 return;
               }
@@ -887,8 +895,8 @@ module.exports = function() {
               return handle_async_and_promise(Error('Invalid Promise: returning promise is not supported in asynchronuous mode')); // Sync style
             }
           } else {
-            result = options_handler.call(proxy, context);
-            if (promise.is(result)) { // result is a promise
+            result = context.handler.call(proxy, context);
+            if (promise.is(result)) {
               return result.then(function(value) {
                 var args, output;
                 if (Array.isArray(value)) {
@@ -897,14 +905,11 @@ module.exports = function() {
                   output = value;
                   args = [];
                 }
-                // value = [value] unless Array.isArray value
-                // handle_async_and_promise error: null, output: output, args: args
                 return handle_async_and_promise(void 0, output, ...args);
               }, function(reason) {
                 if (reason == null) {
                   reason = Error('Rejected Promise: reject called without any arguments');
                 }
-                // handle_async_and_promise error: reason
                 return handle_async_and_promise(reason);
               });
             } else {
@@ -953,45 +958,43 @@ module.exports = function() {
         }
       };
       do_intercept_after = function(callbackargs) {
-        if (options.intercepting) {
+        if (context.options.intercepting) {
           return do_options_after(callbackargs);
         }
         return each(state.afters).call(function(after, next) {
-          var opts;
+          var _opts, ref2;
           for (k in after) {
             v = after[k];
             switch (k) {
               case 'handler':
                 continue;
               case 'action':
-                if (!array.compare(v, options[k])) {
+                if (!array.compare(v, context.options[k])) {
                   return next();
                 }
                 break;
               default:
-                if (v !== options[k]) {
+                if (v !== context.options[k]) {
                   return next();
                 }
             }
           }
-          opts = {
+          _opts = {
             intercepting: true
           };
           for (k in after) {
             v = after[k];
-            opts[k] = v;
+            _opts[k] = v;
           }
-          for (k in options) {
-            v = options[k];
-            if (k === 'handler' || k === 'callback') {
-              continue;
-            }
-            if (opts[k] == null) {
-              opts[k] = v;
+          ref2 = context.options;
+          for (k in ref2) {
+            v = ref2[k];
+            if (_opts[k] == null) {
+              _opts[k] = v;
             }
           }
-          opts.callback_arguments = callbackargs;
-          return run(opts, next);
+          _opts.callback_arguments = callbackargs;
+          return run(_opts, next);
         }).error(function(error) {
           return do_callback({
             error: error,
@@ -1004,38 +1007,38 @@ module.exports = function() {
         });
       };
       do_options_after = function(callbackargs) {
-        if (options.options_after) {
+        var base;
+        if (context.original.options_after) {
           return do_callback(callbackargs);
         }
-        if (options.after == null) {
-          options.after = [];
+        if ((base = context.action).after == null) {
+          base.after = [];
         }
-        if (!Array.isArray(options.after)) {
-          options.after = [options.after];
+        if (!Array.isArray(context.action.after)) {
+          context.action.after = [context.action.after];
         }
-        return each(options.after).call(function(after, next) {
-          var opts;
+        return each(context.action.after).call(function(after, next) {
+          var _opts, ref2;
           after = normalize_options([after], 'call', {
             enrich: false
           });
           after = after[0];
-          opts = {
+          _opts = {
             options_after: true
           };
           for (k in after) {
             v = after[k];
-            opts[k] = v;
+            _opts[k] = v;
           }
-          for (k in options) {
-            v = options[k];
-            if (k === 'handler' || k === 'callback') {
-              continue;
-            }
-            if (opts[k] == null) {
-              opts[k] = v;
+          ref2 = context.options;
+          for (k in ref2) {
+            v = ref2[k];
+            // continue if k in ['handler', 'callback']
+            if (_opts[k] == null) {
+              _opts[k] = v;
             }
           }
-          return run(opts, next);
+          return run(_opts, next);
         }).error(function(error) {
           return do_callback({
             error: error,
@@ -1048,7 +1051,7 @@ module.exports = function() {
         });
       };
       do_callback = function(callbackargs) {
-        var base, current;
+        var current;
         proxy.log({
           type: 'handled',
           index: index,
@@ -1062,7 +1065,7 @@ module.exports = function() {
           callbackargs.error = void 0;
         }
         state.current_level = state.parent_levels.shift(); // Exit action state and move back to parent state
-        if (callbackargs.error && options.callback) {
+        if (callbackargs.error && context.callback) {
           state.current_level.throw_if_error = false;
         }
         current = {};
@@ -1075,9 +1078,14 @@ module.exports = function() {
           state.current_level.error = callbackargs.error;
           jump_to_error();
         }
-        if (options.callback) {
-          call_callback(options.callback, callbackargs);
+        if (context.callback) {
+          call_callback(context.callback, callbackargs);
         }
+        // callbackargs.output = mixme {}, callbackargs.output
+        return do_end(callbackargs);
+      };
+      do_end = function(callbackargs) {
+        var base;
         if (options.relax) {
           callbackargs.error = null;
         }
@@ -1087,10 +1095,6 @@ module.exports = function() {
         if ((base = callbackargs.output).status == null) {
           base.status = false;
         }
-        // callbackargs.output = mixme {}, callbackargs.output
-        return do_end(callbackargs);
-      };
-      do_end = function(callbackargs) {
         if (callback) {
           callback(callbackargs.error, callbackargs.output);
         }
