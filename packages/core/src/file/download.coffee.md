@@ -45,7 +45,7 @@ calculated if neither sha256, sh1 nor md5 is provided.
   Overwrite target file if it exists.
 * `force_cache` (boolean)   
   Force cache overwrite if it exists
-* `gid`   
+* `gid` (number|string, optional)   
   Group name or id who owns the target file.
 * `http_headers` (array)   
   Extra  header  to include in the request when sending HTTP to a server.
@@ -69,14 +69,14 @@ calculated if neither sha256, sh1 nor md5 is provided.
   is provided without any.
 * `target` (path)   
   Path where to write the destination file.
-* `uid`   
+* `uid` (number|string, optional)   
   User name or id who owns the target file.
 
 ## Callback parameters
 
-* `err`   
+* `err` (Error)   
   Error object if any.
-* `downloaded`   
+* `output.status` (boolean)   
   Value is "true" if file was downloaded.
 
 ## File example
@@ -147,7 +147,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
       throw Error "Non Absolute Path: target is #{JSON.stringify options.target}, SSH requires absolute paths, you must provide an absolute path in the target or the cwd option" if ssh and not p.isAbsolute options.target
       # Shortcircuit accelerator:
       # If we know the source signature and if the target file exists
-      # we compare it with the target file singature and stop if they match
+      # we compare it with the target file signature and stop if they match
       @call
         if: typeof source_hash is 'string'
         shy: true
@@ -296,14 +296,14 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
           source: stageDestination
           target: options.target
         @system.chmod
+          if: options.mode?
           target: options.target
           mode: options.mode
-          if: options.mode?
         @system.chown
+          if: options.uid? or options.gid?
           target: options.target
           uid: options.uid
           gid: options.gid
-          if: options.uid? or options.gid?
 
 ## Module Dependencies
 

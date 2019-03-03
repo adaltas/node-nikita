@@ -45,7 +45,7 @@
   //   Overwrite target file if it exists.
   // * `force_cache` (boolean)   
   //   Force cache overwrite if it exists
-  // * `gid`   
+  // * `gid` (number|string, optional)   
   //   Group name or id who owns the target file.
   // * `http_headers` (array)   
   //   Extra  header  to include in the request when sending HTTP to a server.
@@ -69,14 +69,14 @@
   //   is provided without any.
   // * `target` (path)   
   //   Path where to write the destination file.
-  // * `uid`   
+  // * `uid` (number|string, optional)   
   //   User name or id who owns the target file.
 
   // ## Callback parameters
 
-  // * `err`   
+  // * `err` (Error)   
   //   Error object if any.
-  // * `downloaded`   
+  // * `output.status` (boolean)   
   //   Value is "true" if file was downloaded.
 
   // ## File example
@@ -183,7 +183,7 @@ module.exports = function({options}) {
   }
   // Shortcircuit accelerator:
   // If we know the source signature and if the target file exists
-  // we compare it with the target file singature and stop if they match
+  // we compare it with the target file signature and stop if they match
   this.call({
     if: typeof source_hash === 'string',
     shy: true
@@ -517,15 +517,15 @@ module.exports = function({options}) {
       target: options.target
     });
     this.system.chmod({
+      if: options.mode != null,
       target: options.target,
-      mode: options.mode,
-      if: options.mode != null
+      mode: options.mode
     });
     return this.system.chown({
+      if: (options.uid != null) || (options.gid != null),
       target: options.target,
       uid: options.uid,
-      gid: options.gid,
-      if: (options.uid != null) || (options.gid != null)
+      gid: options.gid
     });
   });
 };
