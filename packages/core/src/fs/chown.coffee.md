@@ -17,8 +17,8 @@ Change ownership of a file.
       @system.execute
         if: options.uid? or options.gid?
         cmd: """
-        [ ! -z '#{if options.uid? then options.uid else ''}' ] && chown #{options.uid} #{options.target}
-        [ ! -z '#{if options.gid? then options.gid else ''}' ] && chgrp #{options.gid} #{options.target}
+        [ -n '#{if options.uid? then options.uid else ''}' ] && chown #{options.uid} #{options.target}
+        [ -n '#{if options.gid? then options.gid else ''}' ] && chgrp #{options.gid} #{options.target}
         """
         sudo: options.sudo
         bash: options.bash

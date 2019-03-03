@@ -32,7 +32,7 @@ module.exports = {
     }
     return this.system.execute({
       if: (options.uid != null) || (options.gid != null),
-      cmd: `[ ! -z '${(options.uid != null ? options.uid : '')}' ] && chown ${options.uid} ${options.target}\n[ ! -z '${(options.gid != null ? options.gid : '')}' ] && chgrp ${options.gid} ${options.target}`,
+      cmd: `[ -n '${(options.uid != null ? options.uid : '')}' ] && chown ${options.uid} ${options.target}\n[ -n '${(options.gid != null ? options.gid : '')}' ] && chgrp ${options.gid} ${options.target}`,
       sudo: options.sudo,
       bash: options.bash,
       arch_chroot: options.arch_chroot
