@@ -5,13 +5,15 @@
 
 // ## Options
 
-// * `content` (string|buffer)   
+// * `content` (string|buffer, optional)   
 //   Content to match, optional.
-// * `cmd`   
+// * `cmd` (string, required)   
 //   String, Object or array; Command to execute.
-// * `not` (boolean)   
+// * `error` (string, optional)   
+//   The error message to throw if assert failed.
+// * `not` (boolean, optional)   
 //   Negates the validation.   
-// * `trim` (boolean)   
+// * `trim` (boolean, optional)   
 //   Trim the actuel and expected content before matching, default is "false".
 
 // All options are passed to `system.execute`.
@@ -19,7 +21,7 @@
 // ## Assert a command stdout
 
 // ```javascript
-// nikita.system.execute({
+// nikita.system.execute.assert({
 //   cmd: 'echo hello'
 //   assert: 'hello'
 // }, function(err){
