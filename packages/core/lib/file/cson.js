@@ -36,7 +36,7 @@
 // ```
 
 // ## Source Code
-var misc, season;
+var mixme, season;
 
 module.exports = function({options}) {
   var ssh;
@@ -92,7 +92,7 @@ module.exports = function({options}) {
       }
       try {
         data = season.parse(data);
-        options.content = misc.merge(data, options.content);
+        options.content = mixme(data, options.content);
         return this.log({
           message: "Target Merged",
           level: 'DEBUG',
@@ -120,7 +120,7 @@ module.exports = function({options}) {
 };
 
 // ## Dependencies
-misc = require('../misc');
+mixme = require('mixme');
 
 season = require('season');
 
