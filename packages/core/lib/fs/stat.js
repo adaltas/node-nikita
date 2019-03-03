@@ -38,22 +38,22 @@
 // Check if target is a file:
 
 // ```js
-// stats = require('nikita/lib/misc/stats')
+// stats = require('@nikitajs/core/lib/misc/stats')
 // require('nikita')
 // .file.touch("#{scratch}/a_file")
 // .fs.stat("#{scratch}/a_file", function(err, {stats}){
-//   (stats.isFile(stats.mode), true)
+//   assert(stats.isFile(stats.mode) === true)
 // })
 // ```
 
 // Check if target is a directory:
 
 // ```js
-// stats = require('nikita/lib/misc/stats')
+// stats = require('@nikitajs/core/lib/misc/stats')
 // require('nikita')
 // .system.mkdir("#{scratch}/a_file")
 // .fs.stat("#{scratch}/a_file", function(err, {stats}){
-//   (stats.isDirectory(stats.mode), true)
+//   assert(stats.isDirectory(stats.mode) === true)
 // })
 // ```
 
