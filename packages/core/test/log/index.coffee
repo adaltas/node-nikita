@@ -16,7 +16,7 @@ describe 'log', ->
       # There should be only on log emited, thus
       # there is no need to filter incoming logs
       Object.keys(log).sort().should.eql [
-        'argument', 'depth', 'file', 'headers'
+        'argument', 'attempt', 'depth', 'file', 'headers'
         'level', 'line', 'message', 'module'
         'shy', 'status', 'time', 'type'
       ]

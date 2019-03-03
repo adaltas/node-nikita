@@ -22,7 +22,7 @@ describe 'options "disable"', ->
       throw Error 'Achtung'
     .on 'lifecycle', (log) ->
       Object.keys(log).sort().should.eql [
-        'depth', 'error', 'file', 'headers', 'index', 
+        'attempt', 'depth', 'error', 'file', 'headers', 'index', 
         'level', 'line', 'message', 'module', 'shy', 
         'status', 'time', 'type'
       ]
