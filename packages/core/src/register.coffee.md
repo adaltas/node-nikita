@@ -11,6 +11,10 @@ available to every Nikita sessions.
     # Action registration
     registry.register
       assert: 'nikita/core/assert'
+      connection:
+        assert: 'nikita/connection/assert'
+        http: 'nikita/connection/http'
+        wait: '': 'nikita/connection/wait'
       kv:
         get: 'nikita/core/kv/get'
         engine: 'nikita/core/kv/engine'
@@ -63,9 +67,6 @@ available to every Nikita sessions.
         fs: 'nikita/log/fs'
         md: 'nikita/log/md'
         csv: 'nikita/log/csv'
-      connection:
-        assert: 'nikita/connection/assert'
-        wait: '': 'nikita/connection/wait'
       service:
         '': 'nikita/service'
         assert: 'nikita/service/assert'

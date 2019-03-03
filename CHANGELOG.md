@@ -14,6 +14,7 @@ Breaking changes:
 * domain: remove option and support
 
 New features:
+* connection.http: new action
 * java.keytool: new keytool option, improve discovery
 * lxd.goodies.prlimit: print container limits
 * file.download: http_headers and cookies with no cache
