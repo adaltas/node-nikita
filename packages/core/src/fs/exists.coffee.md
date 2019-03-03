@@ -8,7 +8,7 @@ stat-ed, not the file that it refers to.
 require(nikita)
 .fs.exists({
   target: '/path/to/file'
-}, (err, {exists}){
+}, function(err, {exists}){
   console.log(err ? err.message :
     exists ? 'File exists' : 'File is missing')
 })
