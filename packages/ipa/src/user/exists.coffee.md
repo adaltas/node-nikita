@@ -1,5 +1,5 @@
 
-# `nikita.ipa.user_exists`
+# `nikita.ipa.user.exists`
 
 Check if a user exists inside FreeIPA.
 
@@ -9,9 +9,9 @@ Check if a user exists inside FreeIPA.
   The HTTP referer of the request, required unless provided inside the `Referer`
   header.
 * `uid` (string, required)   
-  UID of the user to add, same as the username.
+  Name of the user to check for existence, same as the username.
 * `username` (string, required)   
-  UID of the user to add, alias of `uid`.
+  Name of the user to add, alias of `uid`.
 * `url` (string, required)    
   The IPA HTTP endpoint, for example "https://ipa.domain.com/ipa/session/json"
 

@@ -1,19 +1,17 @@
 
-# `nikita.ipa.user`
+# `nikita.ipa.group`
 
-Add or modify a user in FreeIPA.
+Add or modify a group in FreeIPA.
 
 ## Options
 
 * `attributes` (object, required)   
-  Attributes associated with the user to add or modify.
+  Attributes associated with the group to add or modify.
 * `referer` (string, ?required)   
   The HTTP referer of the request, required unless provided inside the `Referer`
   header.
-* `uid` (string, required)   
-  Name of the user to add, same as the username.
-* `username` (string, required)   
-  Name of the user to add, alias of `uid`.
+* `cn` (string, required)   
+  Name of the group to add.
 * `url` (string, required)    
   The IPA HTTP endpoint, for example "https://ipa.domain.com/ipa/session/json"
 
@@ -21,55 +19,38 @@ Add or modify a user in FreeIPA.
 
 ```js
 require('nikita')
-.ipa.user({
-  uid: 'someone',
-  attributes: {
-    noprivate: true,
-    gidnumber: 1000,
-    userpassword: 'secret'
-  },
+.ipa.group({
+  cn: 'somegroup',
   referer: 'https://my.domain.com',
   url: 'https://ipa.domain.com/ipa/session/json',
   principal: 'admin@DOMAIN.COM',
   password: 'XXXXXX'
 }, function(){
   console.info(err ? err.message : status ?
-    'User was updated' : 'User was already set')
+    'Group was updated' : 'Group was already set')
 })
 ```
 
     module.exports = ({options}, callback) ->
-      options.uid ?= options.username
+      options.attributes ?= {}
       options.http_headers ?= {}
       options.http_headers['Accept'] ?= 'applicaton/json'
       options.http_headers['Referer'] ?= options.referer
-      throw Error "Required Option: uid is required, got #{options.uid}" unless options.uid
+      throw Error "Required Option: cn is required, got #{options.cn}" unless options.cn
       throw Error "Required Option: url is required, got #{options.url}" unless options.url
       throw Error "Required Option: principal is required, got #{options.principal}" unless options.principal
       throw Error "Required Option: password is required, got #{options.password}" unless options.password
       throw Error "Required Option: referer is required, got #{options.http_headers['Referer']}" unless options.http_headers['Referer']
-      # attributes = {}
-      # exists = false
-      # status = false
-      # @call ({}, callback) ->
-      #   @ipa.user.show options,
-      #     uid: options.uid
-      #     relax: true
-      #   , (err, {result}) ->
-      #     return callback err if err and err.code isnt 4001
-      #     exists = !err
-      #     attributes = result unless exists
-      #     callback()
-      @ipa.user.exists options,
-        uid: options.uid
+      @ipa.group.exists options,
+        cn: options.cn
       @call ({}, callback) ->
         @connection.http options,
           negotiate: true
           url: options.url
           method: 'POST'
           data:
-            method: unless @status(-1) then "user_add/1" else "user_mod/1"
-            params: [[options.uid], options.attributes]
+            method: unless @status(-1) then "group_add/1" else "group_mod/1"
+            params: [[options.cn], options.attributes]
             id: 0
           http_headers: options.http_headers
         , (error, {data}) ->
@@ -79,10 +60,38 @@ require('nikita')
             error.code = data.error.code
           callback error, true
       @next callback
+      # attributes = {}
+      # exists = false
+      # status = false
+      # @call ({}, callback) ->
+      #   @ipa.group.show options,
+      #     cn: options.cn
+      #     relax: true
+      #   , (err, {result}) ->
+      #     return callback err if err and err.code isnt 4001
+      #     exists = !err
+      #     attributes = result unless exists
+      #     callback()
+      # @call ({}, callback) ->
+      #   @connection.http options,
+      #     debug: true
+      #     negotiate: true
+      #     url: options.url
+      #     method: 'POST'
+      #     data:
+      #       method: unless exists then "group_add/1" else "group_mod/1"
+      #       params: [[options.cn], options.attributes]
+      #       id: 0
+      #     http_headers: options.http_headers
+      #   , (error, {data}) ->
+      #     if data?.error
+      #       error = Error data.error.message
+      #       error.code = data.error.code
+      #     callback error
       # @call ({}, callback) ->
       #   return callback null, true unless exists
-      #   @ipa.user.show options,
-      #     uid: options.uid
+      #   @ipa.group.show options,
+      #     cn: options.cn
       #   , (err, {result}) ->
       #     return callback err if err
       #     keys = diff result, attributes

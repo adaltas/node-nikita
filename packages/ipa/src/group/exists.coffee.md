@@ -1,17 +1,15 @@
 
-# `nikita.ipa.user.del`
+# `nikita.ipa.group.exists`
 
-Delete a user from FreeIPA.
+Check if a group exists inside FreeIPA.
 
 ## Options
 
 * `referer` (string, ?required)   
   The HTTP referer of the request, required unless provided inside the `Referer`
   header.
-* `uid` (string, required)   
-  Name of the user to delete, same as the username.
-* `username` (string, required)   
-  Name of the user to delete, alias of `uid`.
+* `cn` (string, required)   
+  Name of the group to check for existence.
 * `url` (string, required)    
   The IPA HTTP endpoint, for example "https://ipa.domain.com/ipa/session/json"
 
@@ -19,41 +17,35 @@ Delete a user from FreeIPA.
 
 ```js
 require('nikita')
-.ipa.user.del({
-  uid: 'someone',
+.ipa.group.exists({
+  cn: 'someone',
   referer: 'https://my.domain.com',
   url: 'https://ipa.domain.com/ipa/session/json',
   principal: 'admin@DOMAIN.COM',
   password: 'XXXXXX'
-}, function(){
+}, function(err, {status, exists}){
   console.info(err ? err.message : status ?
-    'User was updated' : 'User was already set')
+    'Group was updated' : 'Group was already set')
 })
 ```
 
-    module.exports = ({options}) ->
-      options.uid ?= options.username
+    module.exports = shy: true, handler: ({options}, callback) ->
       options.http_headers ?= {}
       options.http_headers['Accept'] ?= 'applicaton/json'
       options.http_headers['Referer'] ?= options.referer
-      throw Error "Required Option: uid is required, got #{options.uid}" unless options.uid
+      throw Error "Required Option: cn is required, got #{options.cn}" unless options.cn
       throw Error "Required Option: url is required, got #{options.url}" unless options.url
       throw Error "Required Option: principal is required, got #{options.principal}" unless options.principal
       throw Error "Required Option: password is required, got #{options.password}" unless options.password
       throw Error "Required Option: referer is required, got #{options.http_headers['Referer']}" unless options.http_headers['Referer']
-      @ipa.user.exists options,
-        shy: false
-        uid: options.uid
-      @connection.http options,
-        if: -> @status(-1)
-        negotiate: true
-        url: options.url
-        method: 'POST'
-        data:
-          method: "user_del/1"
-          params: [[options.uid], {}]
-          id: 0
-        http_headers: options.http_headers
+      @ipa.group.show options,
+        cn: options.cn
+        relax: true
+      , (err) ->
+        return callback err if err and err.code isnt 4001
+        exists = !err
+        callback null, status: exists, exists: exists
+      
         
 ## Dependencies
 
