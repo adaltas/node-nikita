@@ -1,6 +1,7 @@
 
 require('@nikitajs/db/lib/register')
 require('@nikitajs/docker/lib/register')
+require('@nikitajs/ipa/lib/register')
 require('@nikitajs/filetypes/lib/register')
 require('@nikitajs/krb5/lib/register')
 require('@nikitajs/ldap/lib/register')
