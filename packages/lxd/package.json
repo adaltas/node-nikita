@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "coffeescript": "^2.3.2",
-    "mocha": "5.2.0",
+    "mocha": "6.0.2",
     "should": "~13.2.3",
     "ssh2-they": "^2.0.3"
   },
@@ -27,7 +27,7 @@
     "test": "mocha test/{.,*}/*.coffee"
   },
   "dependencies": {
-    "js-yaml": "^3.12.1",
+    "js-yaml": "^3.12.2",
     "object-diff": "^0.0.4"
   }
 }

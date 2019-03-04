@@ -36,7 +36,7 @@ available to every Nikita sessions.
         json: 'nikita/file/json'
         properties:
           '': 'nikita/file/properties'
-          'read': 'nikita/file/properties/read'
+          read: 'nikita/file/properties/read'
         render: 'nikita/file/render'
         touch: 'nikita/file/touch'
         upload: 'nikita/file/upload'

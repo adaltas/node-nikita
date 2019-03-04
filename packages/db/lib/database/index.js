@@ -111,12 +111,12 @@ module.exports = function({options}) {
     case 'mariadb':
     case 'mysql':
       if (options.character_set == null) {
-        options.character_set = 'latin1';
+        options.character_set = 'latin1'; // MySQL default
       }
       switch (options.character_set) {
         case 'latin1':
           if (options.collation == null) {
-            options.collation = 'latin1_swedish_ci';
+            options.collation = 'latin1_swedish_ci'; // MySQL default
           }
           break;
         case 'utf8':
