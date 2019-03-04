@@ -14,7 +14,8 @@ Breaking changes:
 * domain: remove option and support
 
 New features:
-* ipa: new package
+* ipa: add group actions
+* ipa: new package with user actions
 * connection.http: new action
 * java.keytool: new keytool option, improve discovery
 * lxd.goodies.prlimit: print container limits

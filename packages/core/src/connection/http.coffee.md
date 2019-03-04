@@ -88,12 +88,13 @@ Perform an HTTP request. It uses internaly the curl command.
       @system.execute
         cmd: """
         #{ unless options.principal then '' else [
-          'echo', options.password, '|', 'kinit', options.principal
+          'echo', options.password, '|', 'kinit', options.principal, '>/dev/null'
         ].join ' '}
         command -v curl >/dev/null || exit 3
         #{[
           'curl'
-          '-i'
+          '--include' # Include protocol headers in the output (H/F)
+          '--silent' # Dont print progression to stderr
           '--fail' if options.fail
           '--insecure' if not options.cacert and url_info.protocol is 'https:'
           '--cacert #{options.cacert}' if options.cacert

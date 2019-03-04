@@ -106,9 +106,10 @@ module.exports = function({options}, callback) {
     type: void 0
   };
   this.system.execute({
-    cmd: `${(!options.principal ? '' : ['echo', options.password, '|', 'kinit', options.principal].join(' '))}\ncommand -v curl >/dev/null || exit 3\n${[
+    cmd: `${(!options.principal ? '' : ['echo', options.password, '|', 'kinit', options.principal, '>/dev/null'].join(' '))}\ncommand -v curl >/dev/null || exit 3\n${[
       'curl',
-      '-i',
+      '--include', // Include protocol headers in the output (H/F)
+      '--silent', // Dont print progression to stderr
       options.fail ? '--fail' : void 0,
       !options.cacert && url_info.protocol === 'https:' ? '--insecure' : void 0,
       options.cacert ? '--cacert #{options.cacert}' : void 0,
