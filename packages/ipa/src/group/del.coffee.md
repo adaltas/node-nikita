@@ -18,7 +18,7 @@ Delete a group from FreeIPA.
 ```js
 require('nikita')
 .ipa.group.del({
-  cn: 'someone',
+  cn: 'somegroup',
   referer: 'https://my.domain.com',
   url: 'https://ipa.domain.com/ipa/session/json',
   principal: 'admin@DOMAIN.COM',

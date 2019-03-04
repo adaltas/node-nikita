@@ -18,7 +18,7 @@ Retrieve group information from FreeIPA.
 ```js
 require('nikita')
 .ipa.group.show({
-  cn: 'someone',
+  cn: 'somegroup',
   referer: 'https://my.domain.com',
   url: 'https://ipa.domain.com/ipa/session/json',
   principal: 'admin@DOMAIN.COM',

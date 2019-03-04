@@ -5,16 +5,18 @@ they = require('ssh2-they').configure ssh...
 
 return unless tags.ipa
 
+ipa =
+  principal: 'admin'
+  password: 'admin_pw'
+  referer: 'https://ipa.nikita/ipa'
+  url: 'https://ipa.nikita/ipa/session/json'
+
 describe 'ipa.user.show', ->
 
   they 'get single user', ({ssh}) ->
     nikita
       ssh: ssh
-    .ipa.user.show
-      principal: 'admin'
-      password: 'admin_pw'
-      referer: 'https://ipa.nikita/ipa'
-      url: 'https://ipa.nikita/ipa/session/json'
+    .ipa.user.show ipa,
       uid: 'admin'
     , (err, {result}) ->
       throw err if err
@@ -24,11 +26,7 @@ describe 'ipa.user.show', ->
   they 'get missing user', ({ssh}) ->
     nikita
       ssh: ssh
-    .ipa.user.show
-      principal: 'admin'
-      password: 'admin_pw'
-      referer: 'https://ipa.nikita/ipa'
-      url: 'https://ipa.nikita/ipa/session/json'
+    .ipa.user.show ipa,
       uid: 'missing'
       relax: true
     , (err, {code, result}) ->

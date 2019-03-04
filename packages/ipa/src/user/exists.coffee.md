@@ -44,12 +44,11 @@ require('nikita')
       @ipa.user.show options,
         uid: options.uid
         relax: true
-      , (err, {result}) ->
+      , (err) ->
         return callback err if err and err.code isnt 4001
         exists = !err
         callback null, status: exists, exists: exists
-      
-        
+
 ## Dependencies
 
     string = require '@nikitajs/core/lib/misc/string'

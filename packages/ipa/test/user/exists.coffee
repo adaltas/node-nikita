@@ -5,22 +5,20 @@ they = require('ssh2-they').configure ssh...
 
 return unless tags.ipa
 
+ipa =
+  principal: 'admin'
+  password: 'admin_pw'
+  referer: 'https://ipa.nikita/ipa'
+  url: 'https://ipa.nikita/ipa/session/json'
+
 describe 'ipa.user.exists', ->
 
   they 'user doesnt exist', ({ssh}) ->
     nikita
       ssh: ssh
-    .ipa.user.del
-      principal: 'admin'
-      password: 'admin_pw'
-      referer: 'https://ipa.nikita/ipa'
-      url: 'https://ipa.nikita/ipa/session/json'
+    .ipa.user.del ipa,
       uid: 'user_exists'
-    .ipa.user.exists
-      principal: 'admin'
-      password: 'admin_pw'
-      referer: 'https://ipa.nikita/ipa'
-      url: 'https://ipa.nikita/ipa/session/json'
+    .ipa.user.exists ipa,
       uid: 'user_exists'
     , (err, {status, exists}) ->
       status.should.be.false() unless err
@@ -30,11 +28,7 @@ describe 'ipa.user.exists', ->
   they 'user exists', ({ssh}) ->
     nikita
       ssh: ssh
-    .ipa.user
-      principal: 'admin'
-      password: 'admin_pw'
-      referer: 'https://ipa.nikita/ipa'
-      url: 'https://ipa.nikita/ipa/session/json'
+    .ipa.user ipa,
       uid: 'user_exists'
       attributes:
         givenname: 'Firstname'
@@ -42,11 +36,7 @@ describe 'ipa.user.exists', ->
         mail: [
           'user@nikita.js.org'
         ]
-    .ipa.user.exists
-      principal: 'admin'
-      password: 'admin_pw'
-      referer: 'https://ipa.nikita/ipa'
-      url: 'https://ipa.nikita/ipa/session/json'
+    .ipa.user.exists ipa,
       uid: 'user_exists'
     , (err, {status, exists}) ->
       status.should.be.true() unless err

@@ -18,7 +18,7 @@ Check if a group exists inside FreeIPA.
 ```js
 require('nikita')
 .ipa.group.exists({
-  cn: 'someone',
+  cn: 'somegroup',
   referer: 'https://my.domain.com',
   url: 'https://ipa.domain.com/ipa/session/json',
   principal: 'admin@DOMAIN.COM',
