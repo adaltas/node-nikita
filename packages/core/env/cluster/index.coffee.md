@@ -112,6 +112,8 @@ containers:
             PEERDNS=no
             """
         for device, configproxy of config.proxy
+          # todo: add host detection and port forwarding to VirtualBox
+          # VBoxManage controlvm 'lxd' natpf1 'ipa_ui,tcp,0.0.0.0,2443,,2443'
           @lxd.config.device.add
             header: "Device #{device} proxy"
             name: container
