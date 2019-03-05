@@ -66,7 +66,7 @@ module.exports = {
     return this.ipa.user.show(options, {
       uid: options.uid,
       relax: true
-    }, function(err, {result}) {
+    }, function(err) {
       var exists;
       if (err && err.code !== 4001) {
         return callback(err);
@@ -79,7 +79,6 @@ module.exports = {
     });
   }
 };
-
 
 // ## Dependencies
 string = require('@nikitajs/core/lib/misc/string');

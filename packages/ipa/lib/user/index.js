@@ -68,18 +68,6 @@ module.exports = function({options}, callback) {
   if (!options.http_headers['Referer']) {
     throw Error(`Required Option: referer is required, got ${options.http_headers['Referer']}`);
   }
-  // attributes = {}
-  // exists = false
-  // status = false
-  // @call ({}, callback) ->
-  //   @ipa.user.show options,
-  //     uid: options.uid
-  //     relax: true
-  //   , (err, {result}) ->
-  //     return callback err if err and err.code isnt 4001
-  //     exists = !err
-  //     attributes = result unless exists
-  //     callback()
   this.ipa.user.exists(options, {
     uid: options.uid
   });
@@ -108,16 +96,6 @@ module.exports = function({options}, callback) {
   return this.next(callback);
 };
 
-// @call ({}, callback) ->
-//   return callback null, true unless exists
-//   @ipa.user.show options,
-//     uid: options.uid
-//   , (err, {result}) ->
-//     return callback err if err
-//     keys = diff result, attributes
-//     callback null, !!Object.keys(keys).length
-// @call ->
-//   callback null, status: @status()
 
 // ## Dependencies
 string = require('@nikitajs/core/lib/misc/string');

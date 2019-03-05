@@ -48,18 +48,6 @@ require('nikita')
       throw Error "Required Option: principal is required, got #{options.principal}" unless options.principal
       throw Error "Required Option: password is required, got #{options.password}" unless options.password
       throw Error "Required Option: referer is required, got #{options.http_headers['Referer']}" unless options.http_headers['Referer']
-      # attributes = {}
-      # exists = false
-      # status = false
-      # @call ({}, callback) ->
-      #   @ipa.user.show options,
-      #     uid: options.uid
-      #     relax: true
-      #   , (err, {result}) ->
-      #     return callback err if err and err.code isnt 4001
-      #     exists = !err
-      #     attributes = result unless exists
-      #     callback()
       @ipa.user.exists options,
         uid: options.uid
       @call ({}, callback) ->
@@ -79,16 +67,6 @@ require('nikita')
             error.code = data.error.code
           callback error, true
       @next callback
-      # @call ({}, callback) ->
-      #   return callback null, true unless exists
-      #   @ipa.user.show options,
-      #     uid: options.uid
-      #   , (err, {result}) ->
-      #     return callback err if err
-      #     keys = diff result, attributes
-      #     callback null, !!Object.keys(keys).length
-      # @call ->
-      #   callback null, status: @status()
       
         
 ## Dependencies

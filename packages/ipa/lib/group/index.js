@@ -33,7 +33,7 @@
 var diff, string;
 
 module.exports = function({options}, callback) {
-  var base, base1;
+  var base, base1, output;
   if (options.attributes == null) {
     options.attributes = {};
   }
@@ -61,6 +61,7 @@ module.exports = function({options}, callback) {
   if (!options.http_headers['Referer']) {
     throw Error(`Required Option: referer is required, got ${options.http_headers['Referer']}`);
   }
+  output = {};
   this.ipa.group.exists(options, {
     cn: options.cn
   });
@@ -83,50 +84,31 @@ module.exports = function({options}, callback) {
         error = Error(data.error.message);
         error.code = data.error.code;
       }
+      output.result = data.result.result;
       return callback(error, true);
     });
   });
-  return this.next(callback);
+  this.call({
+    unless: function() {
+      return this.status(-1);
+    }
+  }, function() {
+    return this.ipa.group.show(options, {
+      cn: options.cn
+    }, function(err, {result}) {
+      if (!err) {
+        return output.result = result;
+      }
+    });
+  });
+  return this.next(function(err, {status}) {
+    return callback(err, {
+      status: status,
+      result: output.result
+    });
+  });
 };
 
-// attributes = {}
-// exists = false
-// status = false
-// @call ({}, callback) ->
-//   @ipa.group.show options,
-//     cn: options.cn
-//     relax: true
-//   , (err, {result}) ->
-//     return callback err if err and err.code isnt 4001
-//     exists = !err
-//     attributes = result unless exists
-//     callback()
-// @call ({}, callback) ->
-//   @connection.http options,
-//     debug: true
-//     negotiate: true
-//     url: options.url
-//     method: 'POST'
-//     data:
-//       method: unless exists then "group_add/1" else "group_mod/1"
-//       params: [[options.cn], options.attributes]
-//       id: 0
-//     http_headers: options.http_headers
-//   , (error, {data}) ->
-//     if data?.error
-//       error = Error data.error.message
-//       error.code = data.error.code
-//     callback error
-// @call ({}, callback) ->
-//   return callback null, true unless exists
-//   @ipa.group.show options,
-//     cn: options.cn
-//   , (err, {result}) ->
-//     return callback err if err
-//     keys = diff result, attributes
-//     callback null, !!Object.keys(keys).length
-// @call ->
-//   callback null, status: @status()
 
 // ## Dependencies
 string = require('@nikitajs/core/lib/misc/string');

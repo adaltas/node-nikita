@@ -3,6 +3,7 @@ require('@nikitajs/core/lib/registry').register({
   ipa: {
     group: {
       '': '@nikitajs/ipa/lib/group',
+      add_member: '@nikitajs/ipa/lib/group/add_member',
       del: '@nikitajs/ipa/lib/group/del',
       exists: '@nikitajs/ipa/lib/group/exists',
       show: '@nikitajs/ipa/lib/group/show'
