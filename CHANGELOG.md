@@ -168,7 +168,6 @@ Cleanup and minor enhancements:
 * cascade: test array when defined in action
 * mysql: isolate tests into their container
 * mariadb: isolate tests into their container
-* krb5: isolate tests into their own container
 * mysql: freeze version 5.7 to avoid authentication issues
 
 Management:
@@ -391,7 +390,6 @@ Management:
 * java.keystore_add: chwon and chmod support
 * service: disable stdin log for installed and outpdated
 * file.properties: internal parse fn take source as first argument
-* krb5.addprinc: dont pass header to child action
 * conditions: normalize redhat name
 * system discover: default to shy
 * database: create user with grant options
