@@ -93,7 +93,6 @@ Fixes:
 * file: preserve origin permissions on update
 * fs.stat: macos compatibility
 * file.cache: fix undefined status argument
-* ldap: options as destructuring object
 * file.download: ssh null replaced by false
 
 Cleanup:
@@ -133,12 +132,14 @@ Fixes:
 * misc.ini.stringify: handle boolean values
 * misc.ini.stringify: fix eol for array values
 * service: 2nd argument is not a callback
-* ldap: 2nd argument is not a callback
-
-Cleanup:
-* package: update license field to reflect MIT
 * log: remove log from cascade and parent usage
+
+
+Minor enhancements:
 * fs.createWriteStream: code simplification
+
+Management:
+* package: update license field to reflect MIT
 * env: emulate systemctl
 * env: rename MECANO_TEST to NIKITA_TEST_MODULE
 * misc.ini: isolate misc ini into its own module
@@ -387,16 +388,12 @@ Management:
 * tools.repo: fix documentation
 * tools.repo: repo udpate disabled by default
 * tools.repo: fix path resolution
-* ldap.user: discard SASL passwords
 * java.keystore_add: chwon and chmod support
 * service: disable stdin log for installed and outpdated
 * file.properties: internal parse fn take source as first argument
 * krb5.addprinc: dont pass header to child action
-* ldap.add: enforce auto detection of first attribute
 * conditions: normalize redhat name
 * system discover: default to shy
-* ldap schema: refactor
-* ldap index: refactor
 * database: create user with grant options
 * service.init: daemon-reload based on loader only and not system.discover
 * disable repo test for archlinux, ubuntu test environment
