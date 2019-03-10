@@ -16,7 +16,6 @@ Breaking changes:
 New features:
 * connection.http: new action
 * java.keytool: new keytool option, improve discovery
-* lxd.goodies.prlimit: print container limits
 * file.download: http_headers and cookies with no cache
 * file.types.krb5_conf: implement merge
 * file.ini: new parse_bracket_then_curly
@@ -24,18 +23,11 @@ New features:
 * debug: print lines
 * system.authconfig: new action
 * file.cache: new cookies option
-* lxd.config.set: implement new action
 * tools.ssh.keygen: new action
 * filetypes: new my_cnf action
 * conditions: executed as actions
 * conditions: support sudo
 * service.install: add yay support
-* lxd.config.set: new action
-* lxd.config.device.exists: new action
-* lxd.running: new action
-* lxd: added network actions
-* lxd.stop: new action
-* lxd.start: new action
 * locale_gen: force generation if boolean
 * core env: working lxd prototype
 
