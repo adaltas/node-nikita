@@ -26,6 +26,7 @@ nikita
           config: name: 'eth0', nictype: 'bridged', parent: 'lxdbr0public'
       proxy:
         ssh: listen: 'tcp:0.0.0.0:2200', connect: 'tcp:127.0.0.1:22'
+        ipa_ui: listen: 'tcp:0.0.0.0:2443', connect: 'tcp:127.0.0.1:443'
       ssh: enabled: true
       user:
         nikita: sudo: true, authorized_keys: './assets/id_rsa.pub'

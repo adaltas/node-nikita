@@ -67,7 +67,6 @@ require('nikita')
             error.code = data.error.code
           callback error, true
       @next callback
-      
         
 ## Dependencies
 
