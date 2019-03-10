@@ -23,7 +23,6 @@ New features:
 * debug: print lines
 * system.authconfig: new action
 * file.cache: new cookies option
-* tools.ssh.keygen: new action
 * filetypes: new my_cnf action
 * conditions: executed as actions
 * conditions: support sudo
@@ -135,7 +134,6 @@ Fixes:
 * misc.ini.stringify: fix eol for array values
 * service: 2nd argument is not a callback
 * ldap: 2nd argument is not a callback
-* tools.iptables: 2nd arg is not a callback
 
 Cleanup:
 * package: update license field to reflect MIT
