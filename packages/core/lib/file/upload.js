@@ -115,6 +115,7 @@ module.exports = function({options}) {
   this.call(function(_, callback) {
     return this.fs.stat({
       ssh: false,
+      sudo: false,
       target: options.target
     }, function(err, {stats}) {
       if (err && err.code !== 'ENOENT') {
@@ -137,6 +138,7 @@ module.exports = function({options}) {
       options.target = path.resolve(options.target, path.basename(options.source));
       return this.fs.stat({
         ssh: false,
+        sudo: false,
         target: options.target
       }, function(err, {stats}) {
         if (err && err.code === 'ENOENT') {
@@ -177,7 +179,8 @@ module.exports = function({options}) {
     this.file.hash({
       target: options.target,
       algo: algo,
-      ssh: false
+      ssh: false,
+      sudo: false
     }, function(err, {hash}) {
       if (err) {
         return callback(err);
@@ -206,6 +209,7 @@ module.exports = function({options}) {
   }, function() {
     this.system.mkdir({
       ssh: false,
+      sudo: false,
       target: path.dirname(stage_target)
     });
     this.fs.createReadStream({
@@ -218,6 +222,7 @@ module.exports = function({options}) {
     });
     return this.system.move({
       ssh: false,
+      sudo: false,
       source: stage_target,
       target: options.target
     }, function(err, {status}) {
@@ -232,12 +237,14 @@ module.exports = function({options}) {
   });
   this.system.chmod({
     ssh: false,
+    sudo: false,
     target: options.target,
     mode: options.mode,
     if: options.mode != null
   });
   return this.system.chown({
     ssh: false,
+    sudo: false,
     target: options.target,
     uid: options.uid,
     gid: options.gid,

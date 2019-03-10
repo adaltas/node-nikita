@@ -90,7 +90,7 @@ require('nikita')
         algo = 'md5'
       # Stat the target and redefine its path if a directory
       @call (_, callback) ->
-        @fs.stat ssh: false, target: options.target, (err, {stats}) ->
+        @fs.stat ssh: false, sudo: false, target: options.target, (err, {stats}) ->
           # Unexpected err
           return callback err if err and err.code isnt 'ENOENT'
           # Target does not exists
@@ -104,7 +104,7 @@ require('nikita')
             throw Error "Invalid Target: expect a file, a symlink or a directory for #{JSON.stringify options.target}"
           # Target is a directory
           options.target = path.resolve options.target, path.basename options.source
-          @fs.stat ssh: false, target: options.target, (err, {stats}) ->
+          @fs.stat ssh: false, sudo: false, target: options.target, (err, {stats}) ->
             return callback() if err and err.code is 'ENOENT'
             return callback err if err
             target_stats = stats if misc.stats.isFile stats.mode
@@ -119,7 +119,7 @@ require('nikita')
         @file.hash target: options.source, algo: algo, (err, {hash}) ->
           return callback err if err
           hash_source = hash
-        @file.hash target: options.target, algo: algo, ssh: false, (err, {hash}) ->
+        @file.hash target: options.target, algo: algo, ssh: false, sudo: false, (err, {hash}) ->
           return callback err if err
           hash_target = hash
         @call ->
@@ -133,6 +133,7 @@ require('nikita')
       , ->
         @system.mkdir
           ssh: false
+          sudo: false
           target: path.dirname stage_target
         @fs.createReadStream
           target: options.source
@@ -141,17 +142,20 @@ require('nikita')
             rs.pipe ws
         @system.move
           ssh: false
+          sudo: false
           source: stage_target
           target: options.target
         , (err, {status}) ->
           @log message: "Unstaged uploaded file", level: 'INFO', module: 'nikita/lib/file/upload' if status
       @system.chmod
         ssh: false
+        sudo: false
         target: options.target
         mode: options.mode
         if: options.mode?
       @system.chown
         ssh: false
+        sudo: false
         target: options.target
         uid: options.uid
         gid: options.gid
