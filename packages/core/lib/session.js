@@ -389,20 +389,20 @@ module.exports = function() {
     }
     return opts;
   };
-  call_callback = function(fn, callbackargs) {
+  call_callback = function(context) {
     var current_level, error, options;
     options = state.current_level.options;
     state.parent_levels.unshift(state.current_level);
     state.current_level = state_create_level();
     state.current_level.options = options;
     try {
-      fn.call(proxy, callbackargs.error, callbackargs.output, ...(callbackargs.args || []));
+      context.callback.call(proxy, context.error, context.output, ...(context.args || []));
     } catch (error1) {
       error = error1;
       state.current_level = state.parent_levels.shift();
       state.current_level.error = error; //unless options.relax
       jump_to_error();
-      callbackargs.error = error;
+      context.error = error;
       return run_next();
     }
     current_level = state.current_level;
@@ -556,17 +556,16 @@ module.exports = function() {
       do_options = function() {
         try {
           if (!(typeof options.sleep === 'number' && options.sleep >= 0)) {
-            // Validation
+            // Validate sleep option, more can be added
             throw Error(`Invalid options sleep, got ${JSON.stringify(options.sleep)}`);
           }
         } catch (error1) {
           error = error1;
-          do_callback({
-            error: error,
-            output: {
-              status: false
-            }
-          });
+          context.error = error;
+          context.output = {
+            status: false
+          };
+          do_callback();
           return;
         }
         return wrap.options(options, function(error) {
@@ -593,12 +592,11 @@ module.exports = function() {
             error: null,
             status: false
           });
-          return do_callback({
-            error: void 0,
-            output: {
-              status: false
-            }
-          });
+          context.error = void 0;
+          context.output = {
+            status: false
+          };
+          return do_callback();
         }
       };
       do_once = function() {
@@ -638,12 +636,11 @@ module.exports = function() {
             throw Error(`Invalid Option 'once': ${JSON.stringify(options.once)} must be a string or an array of string`);
           }
           if (state.once[hash]) {
-            return do_callback({
-              error: void 0,
-              output: {
-                status: false
-              }
-            });
+            context.error = void 0;
+            context.output = {
+              status: false
+            };
+            return do_callback();
           }
           state.once[hash] = true;
         }
@@ -683,12 +680,11 @@ module.exports = function() {
           }
           return run(_opts, next);
         }).error(function(error) {
-          return do_callback({
-            error: error,
-            output: {
-              status: false
-            }
-          });
+          context.error = error;
+          context.output = {
+            status: false
+          };
+          return do_callback();
         }).next(do_intercept_before);
       };
       do_intercept_before = function() {
@@ -729,12 +725,11 @@ module.exports = function() {
           }
           return run(_opts, next);
         }).error(function(error) {
-          return do_callback({
-            error: error,
-            output: {
-              status: false
-            }
-          });
+          context.error = error;
+          context.output = {
+            status: false
+          };
+          return do_callback();
         }).next(do_conditions);
       };
       do_conditions = function() {
@@ -781,12 +776,11 @@ module.exports = function() {
             status: false
           });
           return setImmediate(function() {
-            return do_callback({
-              error: error,
-              output: {
-                status: false
-              }
-            });
+            context.error = error;
+            context.output = {
+              status: false
+            };
+            return do_callback();
           });
         });
       };
@@ -794,35 +788,32 @@ module.exports = function() {
         var called, do_next, handle_async_and_promise, promise_returned, ref2, ref3, result, status_sync, wait_children;
         context.options.attempt++;
         do_next = function({error, output, args}) {
-          var base, base1, callbackargs;
-          callbackargs = {
-            error: error,
-            output: output,
-            args: args
-          };
-          // options.callback = context.callback # to be removed once do_callback take callback from context and not options
+          var base, base1;
+          context.error = error != null ? error : void 0; // ensure null is converted to undefined 
+          context.output = output;
+          context.args = args;
           if (error && !(error instanceof Error)) {
             error = Error('First argument not a valid error');
-            callbackargs.error = error;
-            if (callbackargs.output == null) {
-              callbackargs.output = {};
+            context.error = error;
+            if (context.output == null) {
+              context.output = {};
             }
-            if ((base = callbackargs.output).status == null) {
+            if ((base = context.output).status == null) {
               base.status = false;
             }
           } else {
             if (typeof output === 'boolean') {
-              callbackargs.output = {
+              context.output = {
                 status: output
               };
             } else if (!output) {
-              callbackargs.output = {
+              context.output = {
                 status: false
               };
             } else if (typeof output !== 'object') {
-              callbackargs.error = Error(`Invalid Argument: expect an object or a boolean, got ${JSON.stringify(output)}`);
+              context.error = Error(`Invalid Argument: expect an object or a boolean, got ${JSON.stringify(output)}`);
             } else {
-              if ((base1 = callbackargs.output).status == null) {
+              if ((base1 = context.output).status == null) {
                 base1.status = false;
               }
             }
@@ -844,7 +835,7 @@ module.exports = function() {
             });
             return setTimeout(do_handler, context.options.sleep);
           }
-          return do_intercept_after(callbackargs);
+          return do_intercept_after();
         };
         if (context.handler == null) {
           context.handler = ((ref2 = obj.registry.get(context.options.action)) != null ? ref2.handler : void 0) || ((ref3 = registry.get(context.options.action)) != null ? ref3.handler : void 0);
@@ -956,9 +947,9 @@ module.exports = function() {
           });
         }
       };
-      do_intercept_after = function(callbackargs) {
+      do_intercept_after = function() {
         if (context.options.intercepting) {
-          return do_options_after(callbackargs);
+          return do_options_after();
         }
         return each(state.afters).call(function(after, next) {
           var _opts, ref2;
@@ -992,23 +983,21 @@ module.exports = function() {
               _opts[k] = v;
             }
           }
-          _opts.callback_arguments = callbackargs;
           return run(_opts, next);
         }).error(function(error) {
-          return do_callback({
-            error: error,
-            output: {
-              status: false
-            }
-          });
+          context.error = error;
+          context.output = {
+            status: false
+          };
+          return do_callback();
         }).next(function() {
-          return do_options_after(callbackargs);
+          return do_options_after();
         });
       };
-      do_options_after = function(callbackargs) {
+      do_options_after = function() {
         var base;
         if (context.original.options_after) {
-          return do_callback(callbackargs);
+          return do_callback();
         }
         if ((base = context.action).after == null) {
           base.after = [];
@@ -1039,44 +1028,37 @@ module.exports = function() {
           }
           return run(_opts, next);
         }).error(function(error) {
-          return do_callback({
-            error: error,
-            output: {
-              status: false
-            }
-          });
+          context.error = error;
+          context.output = {
+            status: false
+          };
+          return do_callback();
         }).next(function() {
-          return do_callback(callbackargs);
+          return do_callback();
         });
       };
-      do_callback = function(callbackargs) {
+      do_callback = function() {
         proxy.log({
           type: 'handled',
           index: index,
-          error: callbackargs.error,
-          status: callbackargs.output.status
+          error: context.error,
+          status: context.output.status
         });
         if (state.killed) {
           return;
         }
-        if (!callbackargs.error) { // Error is undefined and not null or false
-          callbackargs.error = void 0;
-        }
         state.current_level = state.parent_levels.shift(); // Exit action state and move back to parent state
-        if (callbackargs.error && context.callback) {
+        if (context.error && context.callback) {
           state.current_level.throw_if_error = false;
         }
-        context.error = callbackargs.error;
-        context.output = callbackargs.output;
-        context.status = options.status ? callbackargs.output.status : false;
-        context.args = callbackargs.args; // private callback arguments, might be removed in the future
+        context.status = options.status ? context.output.status : false;
         state.current_level.history.push(context);
         if (context.error && !options.relax) {
           state.current_level.error = context.error;
           jump_to_error();
         }
         if (context.callback) {
-          call_callback(context.callback, context);
+          call_callback(context);
         }
         return do_end(context);
       };
