@@ -232,7 +232,7 @@
           # unless error
           #   errors = history.some (action) -> not action.options.tolerant and error
           #   error = errors[errors.length - 1]
-          status = history.some (action) -> not action.options.shy and action.status
+          status = history.some (action) -> not action.original.shy and action.status
           options.handler?.call proxy, error, {status: status}
           state_reset_level state.current_level
           run_next()
@@ -242,7 +242,7 @@
           # unless error
           #   errors = history.some (action) -> not action.options.tolerant and error
           #   error = errors[errors.length - 1]
-          status = history.some (action) -> not action.options.shy and action.status
+          status = history.some (action) -> not action.original.shy and action.status
           options.handler?.call proxy, error, status
           unless error
           then options.deferred.resolve status
@@ -290,7 +290,7 @@
         do () ->
           do_options = ->
             try
-              # Validation
+              # Validate sleep option, more can be added
               throw Error "Invalid options sleep, got #{JSON.stringify options.sleep}" unless typeof options.sleep is 'number' and options.sleep >= 0
             catch error
               do_callback error: error, output: status: false
@@ -385,8 +385,6 @@
             context.options.attempt++
             do_next = ({error, output, args}) ->
               callbackargs = error: error, output: output, args: args
-              # options.handler = context.handler
-              options.callback = context.callback # to be removed once do_callback take callback from context and not options
               if error and error not instanceof Error
                 error = Error 'First argument not a valid error'
                 callbackargs.error = error
@@ -404,7 +402,6 @@
               do_intercept_after callbackargs
             context.handler ?= obj.registry.get(context.options.action)?.handler or registry.get(context.options.action)?.handler
             return handle_multiple_call Error "Unregistered Middleware: #{context.options.action.join('.')}" unless context.handler
-            
             called = false
             try
               # Handle deprecation
@@ -503,23 +500,21 @@
             callbackargs.error = undefined unless callbackargs.error # Error is undefined and not null or false
             state.current_level = state.parent_levels.shift() # Exit action state and move back to parent state
             state.current_level.throw_if_error = false if callbackargs.error and context.callback
-            current = {}
-            current.options = options
-            current.error = callbackargs.error
-            current.output = callbackargs.output
-            current.status = if options.status then callbackargs.output.status else false
-            state.current_level.history.push current
-            if current.error and not options.relax
-              state.current_level.error = callbackargs.error
+            context.error = callbackargs.error
+            context.output = callbackargs.output
+            context.status = if options.status then callbackargs.output.status else false
+            context.args = callbackargs.args # private callback arguments, might be removed in the future
+            state.current_level.history.push context
+            if context.error and not options.relax
+              state.current_level.error = context.error
               jump_to_error()
-            call_callback context.callback, callbackargs if context.callback
-            # callbackargs.output = mixme {}, callbackargs.output
-            do_end callbackargs
-          do_end = (callbackargs) ->
-            callbackargs.error = null if options.relax
-            callbackargs.output ?= {}
-            callbackargs.output.status ?= false
-            callback callbackargs.error, callbackargs.output if callback
+            call_callback context.callback, context if context.callback
+            do_end context
+          do_end = (context) ->
+            error = if options.relax then null else context.error
+            context.output ?= {}
+            context.output.status ?= false
+            callback error, context.output if callback
             run_next()
           do_options()
       state.properties.child = get: -> ->
@@ -583,13 +578,13 @@
         proxy
       state.properties.status = get: -> (index) ->
         if arguments.length is 0
-          return state.parent_levels[0].history.some (action) -> not action.options.shy and action.status
+          return state.parent_levels[0].history.some (action) -> not action.original.shy and action.status
         else if index is false
-          status = state.parent_levels[0].history.some (action) -> not action.options.shy and action.status
+          status = state.parent_levels[0].history.some (action) -> not action.original.shy and action.status
           action.status = false for action in state.parent_levels[0].history
           return status
         else if index is true
-          status = state.parent_levels[0].history.some (action) -> not action.options.shy and action.status
+          status = state.parent_levels[0].history.some (action) -> not action.original.shy and action.status
           action.status = true for action in state.parent_levels[0].history
           return status
         else

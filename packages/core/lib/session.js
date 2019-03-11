@@ -458,7 +458,7 @@ module.exports = function() {
       //   errors = history.some (action) -> not action.options.tolerant and error
       //   error = errors[errors.length - 1]
       status = history.some(function(action) {
-        return !action.options.shy && action.status;
+        return !action.original.shy && action.status;
       });
       if ((ref = options.handler) != null) {
         ref.call(proxy, error, {
@@ -475,7 +475,7 @@ module.exports = function() {
       //   errors = history.some (action) -> not action.options.tolerant and error
       //   error = errors[errors.length - 1]
       status = history.some(function(action) {
-        return !action.options.shy && action.status;
+        return !action.original.shy && action.status;
       });
       if ((ref1 = options.handler) != null) {
         ref1.call(proxy, error, status);
@@ -800,8 +800,7 @@ module.exports = function() {
             output: output,
             args: args
           };
-          // options.handler = context.handler
-          options.callback = context.callback; // to be removed once do_callback take callback from context and not options
+          // options.callback = context.callback # to be removed once do_callback take callback from context and not options
           if (error && !(error instanceof Error)) {
             error = Error('First argument not a valid error');
             callbackargs.error = error;
@@ -1051,7 +1050,6 @@ module.exports = function() {
         });
       };
       do_callback = function(callbackargs) {
-        var current;
         proxy.log({
           type: 'handled',
           index: index,
@@ -1068,35 +1066,31 @@ module.exports = function() {
         if (callbackargs.error && context.callback) {
           state.current_level.throw_if_error = false;
         }
-        current = {};
-        current.options = options;
-        current.error = callbackargs.error;
-        current.output = callbackargs.output;
-        current.status = options.status ? callbackargs.output.status : false;
-        state.current_level.history.push(current);
-        if (current.error && !options.relax) {
-          state.current_level.error = callbackargs.error;
+        context.error = callbackargs.error;
+        context.output = callbackargs.output;
+        context.status = options.status ? callbackargs.output.status : false;
+        context.args = callbackargs.args; // private callback arguments, might be removed in the future
+        state.current_level.history.push(context);
+        if (context.error && !options.relax) {
+          state.current_level.error = context.error;
           jump_to_error();
         }
         if (context.callback) {
-          call_callback(context.callback, callbackargs);
+          call_callback(context.callback, context);
         }
-        // callbackargs.output = mixme {}, callbackargs.output
-        return do_end(callbackargs);
+        return do_end(context);
       };
-      do_end = function(callbackargs) {
+      do_end = function(context) {
         var base;
-        if (options.relax) {
-          callbackargs.error = null;
+        error = options.relax ? null : context.error;
+        if (context.output == null) {
+          context.output = {};
         }
-        if (callbackargs.output == null) {
-          callbackargs.output = {};
-        }
-        if ((base = callbackargs.output).status == null) {
+        if ((base = context.output).status == null) {
           base.status = false;
         }
         if (callback) {
-          callback(callbackargs.error, callbackargs.output);
+          callback(error, context.output);
         }
         return run_next();
       };
@@ -1265,11 +1259,11 @@ module.exports = function() {
         var action, l, len, len1, m, n, ref, ref1, ref2, status;
         if (arguments.length === 0) {
           return state.parent_levels[0].history.some(function(action) {
-            return !action.options.shy && action.status;
+            return !action.original.shy && action.status;
           });
         } else if (index === false) {
           status = state.parent_levels[0].history.some(function(action) {
-            return !action.options.shy && action.status;
+            return !action.original.shy && action.status;
           });
           ref = state.parent_levels[0].history;
           for (m = 0, len = ref.length; m < len; m++) {
@@ -1279,7 +1273,7 @@ module.exports = function() {
           return status;
         } else if (index === true) {
           status = state.parent_levels[0].history.some(function(action) {
-            return !action.options.shy && action.status;
+            return !action.original.shy && action.status;
           });
           ref1 = state.parent_levels[0].history;
           for (n = 0, len1 = ref1.length; n < len1; n++) {
