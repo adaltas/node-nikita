@@ -7,7 +7,7 @@ return unless tags.posix
 
 describe 'system.execute.assert', ->
 
-  they 'assert stdout match content', (ssh) ->
+  they 'assert stdout match content', ({ssh}) ->
     nikita
       ssh: ssh
     .system.execute.assert

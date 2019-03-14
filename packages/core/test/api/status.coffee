@@ -107,52 +107,25 @@ describe 'api status', ->
         callback null, false
       .promise()
 
-    it 'get current', ->
-      nikita
-      .call ({}, callback) ->
-        (@status(0) is undefined).should.be.true()
-        callback null, false
-      , (err, {status}) ->
-        console.log @status(0), '=== false'
-        status.should.be.false()
-      .call ({}, callback) ->
-        (@status(0) is undefined).should.be.true()
-        callback null, true
-      , (err, {status}) ->
-        status.should.be.true()
-      .promise()
-
-    it 'get previous', ->
-      nikita
-      .call ({}, callback) ->
-        (@status(-1) is undefined).should.be.true()
-        callback null, false
-      .call ({}, callback) ->
-        @status(-1).should.be.false()
-        callback null, true
-      .call ({}, callback) ->
-        @status(-1).should.be.true()
-        callback null, false
-      .call ({}, callback) ->
-        @status(-1).should.be.false()
-        callback null, false
-      .promise()
-
     it 'get asc 0', ->
       nikita
       .call ->
         (@status(0) is undefined).should.be.true()
-      .call ->
-        @status(-1).should.be.false()
       , (err) ->
-        @status(-1).should.be.false()
+        @status(0).should.be.false()
+      .call ->
+        @call ({}, callback) ->
+          callback null, true
+      , (err) ->
+        @status(0).should.be.true()
+      .call ({}, callback) ->
+        callback null, false
+      , (err) ->
+        @status(0).should.be.false()
       .call ({}, callback) ->
         callback null, true
-      , (err, status) ->
+      , (err) ->
         @status(0).should.be.true()
-        @status(-1).should.be.false()
-      .call ->
-        @status(-1).should.be.true()
       .promise()
 
     it 'get desc n-1', ->
@@ -166,7 +139,6 @@ describe 'api status', ->
       .call ({}, callback) ->
         callback null, true
       , (err, status) ->
-        @status(0).should.be.true()
         @status(-1).should.be.false()
       .call ->
         @status(-1).should.be.true()

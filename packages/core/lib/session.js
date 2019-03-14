@@ -417,6 +417,7 @@ module.exports = function() {
     while (state.parent_levels.length) {
       state.current_level = state.parent_levels.shift();
     }
+    // TODO: error
     // context.error = error
     state.current_level.error = error;
     jump_to_error();
@@ -456,11 +457,6 @@ module.exports = function() {
       }
       return;
     }
-    // if not state.killed and state.parent_levels.length is 0 and state.current_level.error and state.current_level.throw_if_error
-    //   obj.emit 'error', state.current_level.error
-    //   throw state.current_level.error unless obj.listenerCount() is 0
-    // if state.parent_levels.length is 0
-    //   obj.emit 'end', level: 'INFO' unless state.current_level.error
     return run(options);
   };
   run = function(options, callback) {
@@ -558,6 +554,7 @@ module.exports = function() {
     options.handler = void 0;
     options.callback = void 0;
     state.parent_levels.unshift(state.current_level);
+    state.current_level.current = context;
     state.current_level = state_create_level();
     state.current_level.options = options;
     if (options.header) {
@@ -1068,27 +1065,25 @@ module.exports = function() {
         if (context.error && context.callback) {
           state.current_level.throw_if_error = false;
         }
+        // context.output.status ?= false
         context.status = options.status ? context.output.status : false;
-        state.current_level.history.push(context);
         if (context.error && !options.relax) {
           // TODO: error
           state.current_level.error = context.error;
           jump_to_error();
         }
         if (context.callback) {
+          // console.log ':context.status:', context.status
           call_callback(context);
         }
+        state.current_level.history.push(context);
+        state.current_level.current = {
+          output: {}
+        };
         return do_end(context);
       };
       do_end = function(context) {
-        var base;
         error = options.relax ? null : context.error;
-        if (context.output == null) {
-          context.output = {};
-        }
-        if ((base = context.output).status == null) {
-          base.status = false;
-        }
         if (callback) {
           callback(error, context.output);
         }
@@ -1256,7 +1251,7 @@ module.exports = function() {
   state.properties.status = {
     get: function() {
       return function(index) {
-        var action, l, len, len1, m, n, ref, ref1, ref2, status;
+        var action, l, len, len1, m, n, ref, ref1, ref2, ref3, ref4, status;
         if (arguments.length === 0) {
           return state.parent_levels[0].history.some(function(action) {
             return !action.original.shy && action.status;
@@ -1281,12 +1276,14 @@ module.exports = function() {
             action.status = true;
           }
           return status;
+        } else if (index === 0) {
+          return (ref2 = state.parent_levels[0].current) != null ? (ref3 = ref2.output) != null ? ref3.status : void 0 : void 0;
         } else {
           l = state.parent_levels[0].history.length;
           if (index < 0) {
             index = l + index;
           }
-          return (ref2 = state.parent_levels[0].history[index]) != null ? ref2.status : void 0;
+          return (ref4 = state.parent_levels[0].history[index]) != null ? ref4.status : void 0;
         }
       };
     }
@@ -1364,12 +1361,11 @@ state_create_level = function() {
   return level = {
     error: void 0,
     history: [],
-    current: {
-      options: {},
-      status: void 0,
-      output: null,
-      args: null
-    },
+    // current:
+    //   options: {}
+    //   status: undefined
+    //   output: null
+    //   args: null
     todos: [],
     throw_if_error: true
   };

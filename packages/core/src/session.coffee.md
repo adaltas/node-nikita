@@ -297,6 +297,7 @@
         options.handler = undefined
         options.callback = undefined
         state.parent_levels.unshift state.current_level
+        state.current_level.current = context
         state.current_level = state_create_level()
         state.current_level.options = options
         proxy.log message: options.header, type: 'header', index: index, headers: options.headers if options.header
@@ -535,18 +536,19 @@
             return if state.killed
             state.current_level = state.parent_levels.shift() # Exit action state and move back to parent state
             state.current_level.throw_if_error = false if context.error and context.callback
+            # context.output.status ?= false
             context.status = if options.status then context.output.status else false
-            state.current_level.history.push context
             if context.error and not options.relax
               # TODO: error
               state.current_level.error = context.error
               jump_to_error()
+            # console.log ':context.status:', context.status
             call_callback context if context.callback
+            state.current_level.history.push context
+            state.current_level.current = output: {}
             do_end context
           do_end = (context) ->
             error = if options.relax then null else context.error
-            context.output ?= {}
-            context.output.status ?= false
             callback error, context.output if callback
             run_next()
           do_options()
@@ -620,6 +622,8 @@
           status = state.parent_levels[0].history.some (action) -> not action.original.shy and action.status
           action.status = true for action in state.parent_levels[0].history
           return status
+        else if index is 0
+          state.parent_levels[0].current?.output?.status
         else
           l = state.parent_levels[0].history.length
           index = (l + index) if index < 0
@@ -671,11 +675,11 @@
       level =
         error: undefined
         history: []
-        current:
-          options: {}
-          status: undefined
-          output: null
-          args: null
+        # current:
+        #   options: {}
+        #   status: undefined
+        #   output: null
+        #   args: null
         todos: []
         throw_if_error: true
     # Called after next and promise
