@@ -43,6 +43,7 @@ module.exports = {
   log: false,
   handler: function({options}, callback) {
     var callback_args, current_username, p, ssh;
+    console.log('createReadStream.sudo:', options.sudo);
     this.log({
       message: "Entering fs.createReadStream",
       level: 'DEBUG',
@@ -73,7 +74,7 @@ module.exports = {
       if: options.target_tmp
     }, function() {
       return this.system.execute({
-        sudo: options.sudo,
+        // sudo: options.sudo
         bash: options.bash,
         arch_chroot: options.arch_chroot,
         cmd: `[ ! -f '${options.target}' ] && exit\ncp '${options.target}' '${options.target_tmp}'\nchown '${current_username}' '${options.target_tmp}'`
@@ -123,7 +124,7 @@ module.exports = {
     });
     return this.system.execute({
       if: options.target_tmp,
-      sudo: options.sudo,
+      // sudo: options.sudo
       bash: options.bash,
       arch_chroot: options.arch_chroot,
       cmd: `rm '${options.target_tmp}'`

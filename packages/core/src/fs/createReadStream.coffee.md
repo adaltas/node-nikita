@@ -55,7 +55,7 @@ require('nikita')
         else process.env['USER']
       @call if: options.target_tmp, ->
         @system.execute
-          sudo: options.sudo
+          # sudo: options.sudo
           bash: options.bash
           arch_chroot: options.arch_chroot
           cmd: """
@@ -86,7 +86,7 @@ require('nikita')
           rs.on 'end', done
       @system.execute
         if: options.target_tmp
-        sudo: options.sudo
+        # sudo: options.sudo
         bash: options.bash
         arch_chroot: options.arch_chroot
         cmd: """
