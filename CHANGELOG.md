@@ -17,13 +17,10 @@ New features:
 * connection.http: new action
 * java.keytool: new keytool option, improve discovery
 * file.download: http_headers and cookies with no cache
-* file.types.krb5_conf: implement merge
 * file.ini: new parse_bracket_then_curly
-* file.types.krb5_conf: new action
 * debug: print lines
 * system.authconfig: new action
 * file.cache: new cookies option
-* filetypes: new my_cnf action
 * conditions: executed as actions
 * conditions: support sudo
 * service.install: add yay support
