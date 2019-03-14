@@ -400,10 +400,11 @@ module.exports = function() {
     } catch (error1) {
       error = error1;
       state.current_level = state.parent_levels.shift();
+      // TODO: error
+      context.error = error;
       state.current_level.error = error; //unless options.relax
       jump_to_error();
-      context.error = error;
-      return run_next();
+      return;
     }
     current_level = state.current_level;
     state.current_level = state.parent_levels.shift();
@@ -411,11 +412,12 @@ module.exports = function() {
       return state.current_level.todos.unshift(...current_level.todos);
     }
   };
-  handle_multiple_call = function(error) {
+  handle_multiple_call = function(context, error) {
     state.killed = true;
     while (state.parent_levels.length) {
       state.current_level = state.parent_levels.shift();
     }
+    // context.error = error
     state.current_level.error = error;
     jump_to_error();
     return run_next();
@@ -428,19 +430,25 @@ module.exports = function() {
     }
     return results;
   };
-  run_next = function(callback) {
-    var options;
+  run_next = function() {
+    var error, history, options;
     options = state.current_level.todos.shift();
     // Nothing more to do in current queue
     if (!options) {
-      if (!state.killed && state.parent_levels.length === 0 && state.current_level.error && state.current_level.throw_if_error) {
-        obj.emit('error', state.current_level.error);
-        if (obj.listenerCount() !== 0) {
-          throw state.current_level.error;
+      // TODO: error
+      ({error, history} = state.current_level);
+      // unless error
+      //   errors = history.map (context) -> not context.options.tolerant and not context.options.relax and context.error
+      //   error = errors[errors.length - 1]
+      if (!state.killed && state.parent_levels.length === 0 && error && state.current_level.throw_if_error) {
+        if (obj.listenerCount('error') === 0) {
+          throw error;
+        } else {
+          obj.emit('error', state.current_level.error);
         }
       }
       if (state.parent_levels.length === 0) {
-        if (!state.current_level.error) {
+        if (!error) {
           obj.emit('end', {
             level: 'INFO'
           });
@@ -448,17 +456,23 @@ module.exports = function() {
       }
       return;
     }
+    // if not state.killed and state.parent_levels.length is 0 and state.current_level.error and state.current_level.throw_if_error
+    //   obj.emit 'error', state.current_level.error
+    //   throw state.current_level.error unless obj.listenerCount() is 0
+    // if state.parent_levels.length is 0
+    //   obj.emit 'end', level: 'INFO' unless state.current_level.error
     return run(options);
   };
   run = function(options, callback) {
     var context, error, history, index, k, options_original, options_parent, opts, ref, ref1, status, v;
     if (options.action === 'next') {
       ({error, history} = state.current_level);
+      // TODO: error
       // unless error
-      //   errors = history.some (action) -> not action.options.tolerant and error
+      //   errors = history.map (context) -> not context.options.tolerant and not context.options.relax and context.error
       //   error = errors[errors.length - 1]
-      status = history.some(function(action) {
-        return !action.original.shy && action.status;
+      status = history.some(function(context) {
+        return !context.original.shy && context.status;
       });
       if ((ref = options.handler) != null) {
         ref.call(proxy, error, {
@@ -471,11 +485,12 @@ module.exports = function() {
     }
     if (options.action === 'promise') {
       ({error, history} = state.current_level);
+      // TODO: error
       // unless error
-      //   errors = history.some (action) -> not action.options.tolerant and error
+      //   errors = history.map (context) -> not context.options.tolerant and not context.options.relax and context.error
       //   error = errors[errors.length - 1]
-      status = history.some(function(action) {
-        return !action.original.shy && action.status;
+      status = history.some(function(context) {
+        return !context.original.shy && context.status;
       });
       if ((ref1 = options.handler) != null) {
         ref1.call(proxy, error, status);
@@ -500,6 +515,8 @@ module.exports = function() {
           state.current_level.todos.shift();
         }
         if (callback) {
+          // TODO: error
+          // callback undefined, {} if callback
           callback(error, {});
         }
         return run_next();
@@ -841,7 +858,7 @@ module.exports = function() {
           context.handler = ((ref2 = obj.registry.get(context.options.action)) != null ? ref2.handler : void 0) || ((ref3 = registry.get(context.options.action)) != null ? ref3.handler : void 0);
         }
         if (!context.handler) {
-          return handle_multiple_call(Error(`Unregistered Middleware: ${context.options.action.join('.')}`));
+          return handle_multiple_call(context, Error(`Unregistered Middleware: ${context.options.action.join('.')}`));
         }
         called = false;
         try {
@@ -860,7 +877,7 @@ module.exports = function() {
               return;
             }
             if (called) {
-              return handle_multiple_call(Error('Multiple call detected'));
+              return handle_multiple_call(context, Error('Multiple call detected'));
             }
             called = true;
             return setImmediate(function() {
@@ -871,8 +888,8 @@ module.exports = function() {
               });
             });
           };
-          // Call the action
-          if (context.handler.length === 2) { // Async style
+          // Async style
+          if (context.handler.length === 2) {
             promise_returned = false;
             result = context.handler.call(proxy, context, function() {
               if (promise_returned) {
@@ -907,7 +924,7 @@ module.exports = function() {
                 return;
               }
               if (called) {
-                return handle_multiple_call(Error('Multiple call detected'));
+                return handle_multiple_call(context, Error('Multiple call detected'));
               }
               called = true;
               status_sync = false;
@@ -1054,6 +1071,7 @@ module.exports = function() {
         context.status = options.status ? context.output.status : false;
         state.current_level.history.push(context);
         if (context.error && !options.relax) {
+          // TODO: error
           state.current_level.error = context.error;
           jump_to_error();
         }

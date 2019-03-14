@@ -49,7 +49,6 @@ describe 'api next', ->
         next.property.does.not.exist
       .call ({}) ->
         next Error 'Shouldnt be called'
-      , (err) ->
     d.on 'error', (err) ->
       err.name.should.eql 'TypeError'
       d.exit()

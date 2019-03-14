@@ -200,49 +200,60 @@
           context.callback.call proxy, context.error, context.output, (context.args or [])...
         catch error
           state.current_level = state.parent_levels.shift()
+          # TODO: error
+          context.error = error
           state.current_level.error = error #unless options.relax
           jump_to_error()
-          context.error = error
-          return run_next()
+          return
         current_level = state.current_level
         state.current_level = state.parent_levels.shift()
         state.current_level.todos.unshift current_level.todos... if current_level.todos.length
-      handle_multiple_call = (error) ->
+      handle_multiple_call = (context, error) ->
         state.killed = true
         state.current_level = state.parent_levels.shift() while state.parent_levels.length
+        # TODO: error
+        # context.error = error
         state.current_level.error = error
         jump_to_error()
         run_next()
       jump_to_error = ->
         while state.current_level.todos[0] and state.current_level.todos[0].action not in ['catch', 'next', 'promise'] then state.current_level.todos.shift()
-      run_next = (callback) ->
+      run_next = ->
         options = state.current_level.todos.shift()
         # Nothing more to do in current queue
         unless options
-          if not state.killed and state.parent_levels.length is 0 and state.current_level.error and state.current_level.throw_if_error
-            obj.emit 'error', state.current_level.error
-            throw state.current_level.error unless obj.listenerCount() is 0
+          # TODO: error
+          {error, history} = state.current_level
+          # unless error
+          #   errors = history.map (context) -> not context.options.tolerant and not context.options.relax and context.error
+          #   error = errors[errors.length - 1]
+          if not state.killed and state.parent_levels.length is 0 and error and state.current_level.throw_if_error
+            if obj.listenerCount('error') is 0
+            then throw error 
+            else obj.emit 'error', state.current_level.error
           if state.parent_levels.length is 0
-            obj.emit 'end', level: 'INFO' unless state.current_level.error
+            obj.emit 'end', level: 'INFO' unless error
           return
         run options
       run = (options, callback) ->
         if options.action is 'next'
           {error, history} = state.current_level
+          # TODO: error
           # unless error
-          #   errors = history.some (action) -> not action.options.tolerant and error
+          #   errors = history.map (context) -> not context.options.tolerant and not context.options.relax and context.error
           #   error = errors[errors.length - 1]
-          status = history.some (action) -> not action.original.shy and action.status
+          status = history.some (context) -> not context.original.shy and context.status
           options.handler?.call proxy, error, {status: status}
           state_reset_level state.current_level
           run_next()
           return
         if options.action is 'promise'
           {error, history} = state.current_level
+          # TODO: error
           # unless error
-          #   errors = history.some (action) -> not action.options.tolerant and error
+          #   errors = history.map (context) -> not context.options.tolerant and not context.options.relax and context.error
           #   error = errors[errors.length - 1]
-          status = history.some (action) -> not action.original.shy and action.status
+          status = history.some (context) -> not context.original.shy and context.status
           options.handler?.call proxy, error, status
           unless error
           then options.deferred.resolve status
@@ -254,6 +265,8 @@
           return conditions.all proxy, options: options
           , ->
             while state.current_level.todos[0] and state.current_level.todos[0].action not in ['next', 'promise'] then state.current_level.todos.shift()
+            # TODO: error
+            # callback undefined, {} if callback
             callback error, {} if callback
             run_next()
           , (error) ->
@@ -419,7 +432,7 @@
                 return setTimeout do_handler, context.options.sleep
               do_intercept_after()
             context.handler ?= obj.registry.get(context.options.action)?.handler or registry.get(context.options.action)?.handler
-            return handle_multiple_call Error "Unregistered Middleware: #{context.options.action.join('.')}" unless context.handler
+            return handle_multiple_call context, Error "Unregistered Middleware: #{context.options.action.join('.')}" unless context.handler
             called = false
             try
               # Handle deprecation
@@ -433,12 +446,12 @@
               handle_async_and_promise = ->
                 [error, output, args...] = arguments
                 return if state.killed
-                return handle_multiple_call Error 'Multiple call detected' if called
+                return handle_multiple_call context, Error 'Multiple call detected' if called
                 called = true
                 setImmediate ->
                   do_next error: error, output: output, args: args
-              # Call the action
-              if context.handler.length is 2 # Async style
+              # Async style
+              if context.handler.length is 2
                 promise_returned = false
                 result = context.handler.call proxy, context, ->
                   return if promise_returned
@@ -461,7 +474,7 @@
                     handle_async_and_promise reason
                 else
                   return if state.killed
-                  return handle_multiple_call Error 'Multiple call detected' if called
+                  return handle_multiple_call context, Error 'Multiple call detected' if called
                   called = true
                   status_sync = false
                   wait_children = ->
@@ -525,6 +538,7 @@
             context.status = if options.status then context.output.status else false
             state.current_level.history.push context
             if context.error and not options.relax
+              # TODO: error
               state.current_level.error = context.error
               jump_to_error()
             call_callback context if context.callback

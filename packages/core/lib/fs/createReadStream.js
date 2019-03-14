@@ -43,7 +43,6 @@ module.exports = {
   log: false,
   handler: function({options}, callback) {
     var callback_args, current_username, p, ssh;
-    console.log('createReadStream.sudo:', options.sudo);
     this.log({
       message: "Entering fs.createReadStream",
       level: 'DEBUG',
