@@ -11,6 +11,3 @@ registry.register
       pacman_conf: '@nikitajs/filetypes/src/pacman_conf'
       ssh_authorized_keys: '@nikitajs/filetypes/src/ssh_authorized_keys'
       yum_repo: '@nikitajs/filetypes/src/yum_repo'
-
-registry.deprecate ['file', 'type', 'etc_group', 'read'], ['system', 'group', 'read'], '@nikitajs/core/lib/system/group/read'
-registry.deprecate ['file', 'type', 'etc_passwd', 'read'], ['system', 'user', 'read'], '@nikitajs/core/lib/system/user/read'

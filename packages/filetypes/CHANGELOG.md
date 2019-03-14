@@ -3,6 +3,9 @@
 
 ## Trunk
 
+Breaking changes:
+* filetype: remove deprecated read actions
+
 New features:
 * file.types.krb5_conf: implement merge
 * file.types.krb5_conf: new action
