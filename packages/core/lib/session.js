@@ -400,9 +400,7 @@ module.exports = function() {
     } catch (error1) {
       error = error1;
       state.current_level = state.parent_levels.shift();
-      // TODO: error
       context.error = error;
-      state.current_level.error = error; //unless options.relax
       jump_to_error();
       return;
     }
@@ -417,9 +415,11 @@ module.exports = function() {
     while (state.parent_levels.length) {
       state.current_level = state.parent_levels.shift();
     }
-    // TODO: error
-    // context.error = error
-    state.current_level.error = error;
+    context.error = error;
+    state.current_level.history.push(context);
+    state.current_level.current = {
+      output: {}
+    };
     jump_to_error();
     return run_next();
   };
@@ -432,20 +432,19 @@ module.exports = function() {
     return results;
   };
   run_next = function() {
-    var error, history, options;
+    var error, errors, options;
     options = state.current_level.todos.shift();
     // Nothing more to do in current queue
     if (!options) {
-      // TODO: error
-      ({error, history} = state.current_level);
-      // unless error
-      //   errors = history.map (context) -> not context.options.tolerant and not context.options.relax and context.error
-      //   error = errors[errors.length - 1]
+      errors = state.current_level.history.map(function(context) {
+        return !context.options.tolerant && !context.options.relax && context.error;
+      });
+      error = errors[errors.length - 1];
       if (!state.killed && state.parent_levels.length === 0 && error && state.current_level.throw_if_error) {
         if (obj.listenerCount('error') === 0) {
           throw error;
         } else {
-          obj.emit('error', state.current_level.error);
+          obj.emit('error', error);
         }
       }
       if (state.parent_levels.length === 0) {
@@ -460,14 +459,13 @@ module.exports = function() {
     return run(options);
   };
   run = function(options, callback) {
-    var context, error, history, index, k, options_original, options_parent, opts, ref, ref1, status, v;
+    var context, error, errors, index, k, options_original, options_parent, opts, ref, ref1, status, v;
     if (options.action === 'next') {
-      ({error, history} = state.current_level);
-      // TODO: error
-      // unless error
-      //   errors = history.map (context) -> not context.options.tolerant and not context.options.relax and context.error
-      //   error = errors[errors.length - 1]
-      status = history.some(function(context) {
+      errors = state.current_level.history.map(function(context) {
+        return !context.options.tolerant && !context.original.relax && context.error;
+      });
+      error = errors[errors.length - 1];
+      status = state.current_level.history.some(function(context) {
         return !context.original.shy && context.status;
       });
       if ((ref = options.handler) != null) {
@@ -480,12 +478,11 @@ module.exports = function() {
       return;
     }
     if (options.action === 'promise') {
-      ({error, history} = state.current_level);
-      // TODO: error
-      // unless error
-      //   errors = history.map (context) -> not context.options.tolerant and not context.options.relax and context.error
-      //   error = errors[errors.length - 1]
-      status = history.some(function(context) {
+      errors = state.current_level.history.map(function(context) {
+        return !context.options.tolerant && !context.original.relax && context.error;
+      });
+      error = errors[errors.length - 1];
+      status = state.current_level.history.some(function(context) {
         return !context.original.shy && context.status;
       });
       if ((ref1 = options.handler) != null) {
@@ -511,9 +508,7 @@ module.exports = function() {
           state.current_level.todos.shift();
         }
         if (callback) {
-          // TODO: error
-          // callback undefined, {} if callback
-          callback(error, {});
+          callback(void 0, {});
         }
         return run_next();
       }, function(error) {
@@ -1065,24 +1060,20 @@ module.exports = function() {
         if (context.error && context.callback) {
           state.current_level.throw_if_error = false;
         }
-        // context.output.status ?= false
         context.status = options.status ? context.output.status : false;
         if (context.error && !options.relax) {
-          // TODO: error
-          state.current_level.error = context.error;
           jump_to_error();
         }
         if (context.callback) {
-          // console.log ':context.status:', context.status
           call_callback(context);
         }
+        return do_end(context);
+      };
+      do_end = function(context) {
         state.current_level.history.push(context);
         state.current_level.current = {
           output: {}
         };
-        return do_end(context);
-      };
-      do_end = function(context) {
         error = options.relax ? null : context.error;
         if (callback) {
           callback(error, context.output);
@@ -1124,7 +1115,7 @@ module.exports = function() {
         });
         state.current_level.todos.push({
           action: 'promise',
-          deferred: deferred // handler: arguments[0],
+          deferred: deferred
         });
         if (state.current_level.todos.length === 1) { // Activate the pump
           setImmediate(run_next);

@@ -200,9 +200,7 @@
           context.callback.call proxy, context.error, context.output, (context.args or [])...
         catch error
           state.current_level = state.parent_levels.shift()
-          # TODO: error
           context.error = error
-          state.current_level.error = error #unless options.relax
           jump_to_error()
           return
         current_level = state.current_level
@@ -211,9 +209,9 @@
       handle_multiple_call = (context, error) ->
         state.killed = true
         state.current_level = state.parent_levels.shift() while state.parent_levels.length
-        # TODO: error
-        # context.error = error
-        state.current_level.error = error
+        context.error = error
+        state.current_level.history.push context
+        state.current_level.current = output: {}
         jump_to_error()
         run_next()
       jump_to_error = ->
@@ -222,38 +220,34 @@
         options = state.current_level.todos.shift()
         # Nothing more to do in current queue
         unless options
-          # TODO: error
-          {error, history} = state.current_level
-          # unless error
-          #   errors = history.map (context) -> not context.options.tolerant and not context.options.relax and context.error
-          #   error = errors[errors.length - 1]
+          errors = state.current_level.history.map (context) ->
+            not context.options.tolerant and not context.options.relax and context.error
+          error = errors[errors.length - 1]
           if not state.killed and state.parent_levels.length is 0 and error and state.current_level.throw_if_error
             if obj.listenerCount('error') is 0
             then throw error 
-            else obj.emit 'error', state.current_level.error
+            else obj.emit 'error', error
           if state.parent_levels.length is 0
             obj.emit 'end', level: 'INFO' unless error
           return
         run options
       run = (options, callback) ->
         if options.action is 'next'
-          {error, history} = state.current_level
-          # TODO: error
-          # unless error
-          #   errors = history.map (context) -> not context.options.tolerant and not context.options.relax and context.error
-          #   error = errors[errors.length - 1]
-          status = history.some (context) -> not context.original.shy and context.status
+          errors = state.current_level.history.map (context) ->
+            not context.options.tolerant and not context.original.relax and context.error
+          error = errors[errors.length - 1]
+          status = state.current_level.history.some (context) ->
+            not context.original.shy and context.status
           options.handler?.call proxy, error, {status: status}
           state_reset_level state.current_level
           run_next()
           return
         if options.action is 'promise'
-          {error, history} = state.current_level
-          # TODO: error
-          # unless error
-          #   errors = history.map (context) -> not context.options.tolerant and not context.options.relax and context.error
-          #   error = errors[errors.length - 1]
-          status = history.some (context) -> not context.original.shy and context.status
+          errors = state.current_level.history.map (context) ->
+            not context.options.tolerant and not context.original.relax and context.error
+          error = errors[errors.length - 1]
+          status = state.current_level.history.some (context) ->
+            not context.original.shy and context.status
           options.handler?.call proxy, error, status
           unless error
           then options.deferred.resolve status
@@ -265,9 +259,7 @@
           return conditions.all proxy, options: options
           , ->
             while state.current_level.todos[0] and state.current_level.todos[0].action not in ['next', 'promise'] then state.current_level.todos.shift()
-            # TODO: error
-            # callback undefined, {} if callback
-            callback error, {} if callback
+            callback undefined, {} if callback
             run_next()
           , (error) ->
             callback error, {} if callback
@@ -536,18 +528,14 @@
             return if state.killed
             state.current_level = state.parent_levels.shift() # Exit action state and move back to parent state
             state.current_level.throw_if_error = false if context.error and context.callback
-            # context.output.status ?= false
             context.status = if options.status then context.output.status else false
             if context.error and not options.relax
-              # TODO: error
-              state.current_level.error = context.error
               jump_to_error()
-            # console.log ':context.status:', context.status
             call_callback context if context.callback
-            state.current_level.history.push context
-            state.current_level.current = output: {}
             do_end context
           do_end = (context) ->
+            state.current_level.history.push context
+            state.current_level.current = output: {}
             error = if options.relax then null else context.error
             callback error, context.output if callback
             run_next()
@@ -563,7 +551,7 @@
         promise = new Promise (resolve, reject)->
           deferred.resolve = resolve
           deferred.reject = reject
-        state.current_level.todos.push action: 'promise', deferred: deferred # handler: arguments[0],
+        state.current_level.todos.push action: 'promise', deferred: deferred
         setImmediate run_next if state.current_level.todos.length is 1 # Activate the pump
         promise
       state.properties.end = get: -> ->
