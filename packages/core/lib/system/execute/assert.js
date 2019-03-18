@@ -18,6 +18,16 @@
 
 // All options are passed to `system.execute`.
 
+// ## Assert a command succeed
+
+// ```javascript
+// nikita.system.execute.assert({
+//   cmd: 'exit 0'
+// }, function(err){
+//   console.log(err || 'ok');
+// });
+// ```
+
 // ## Assert a command stdout
 
 // ```javascript
@@ -31,6 +41,9 @@
 
 // ## Source Code
 module.exports = function({options}) {
+  if (!options.cmd) {
+    throw Error('Required Option: option `cmd` is not defined');
+  }
   if (options.trim == null) {
     options.trim = false;
   }
@@ -40,6 +53,38 @@ module.exports = function({options}) {
   if (options.content && options.trim) {
     options.content = options.content.trim();
   }
+  // Command exit code
+  this.call({
+    unless: options.content != null
+  }, function() {
+    return this.system.execute({
+      cmd: options.cmd,
+      relax: true
+    }, function(err, {code}) {
+      console.log('assert exec callback?', err != null ? err.message : void 0);
+      if (!options.not) {
+        if (code !== 10) {
+          if (options.error == null) {
+            options.error = `Invalid command: exit code is ${code}`;
+          }
+          err = Error(options.error);
+        }
+      } else {
+        if (code === 10) {
+          if (options.error == null) {
+            options.error = `Invalid command: exit code is ${code}`;
+          }
+          err = Error(options.error);
+        }
+      }
+      if (err) {
+        console.log('- throw err');
+      }
+      if (err) {
+        throw err;
+      }
+    });
+  });
   // Content is a string or a buffer
   this.call({
     if: (options.content != null) && (typeof options.content === 'string' || Buffer.isBuffer(options.content))

@@ -14,6 +14,7 @@ Breaking changes:
 * domain: remove option and support
 
 New features:
+* system.execute.assert: assert exit code
 * connection.http: new action
 * java.keytool: new keytool option, improve discovery
 * file.download: http_headers and cookies with no cache
