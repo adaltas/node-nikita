@@ -465,10 +465,15 @@ module.exports = function() {
       }
       return;
     }
-    return run(options);
+    return run(options, function() {
+      return run_next();
+    });
   };
   run = function(options, callback) {
     var context, error, errors, index, options_parent, ref, ref1, status;
+    if (!(options && callback)) {
+      throw Error('Invalid Argument');
+    }
     if (options.action === 'next') {
       errors = state.current_level.history.map(function(context) {
         return (context.error_in_callback || !context.options.tolerant && !context.original.relax) && context.error;
@@ -483,8 +488,7 @@ module.exports = function() {
         });
       }
       state_reset_level(state.current_level);
-      run_next();
-      return;
+      return callback(null, {});
     }
     if (options.action === 'promise') {
       errors = state.current_level.history.map(function(context) {
@@ -504,7 +508,7 @@ module.exports = function() {
         options.deferred.reject(error);
       }
       state_reset_level(state.current_level);
-      return;
+      return callback(null, {});
     }
     if (state.killed) {
       return;
@@ -517,15 +521,9 @@ module.exports = function() {
         while (state.current_level.todos[0] && ((ref2 = state.current_level.todos[0].action) !== 'next' && ref2 !== 'promise')) {
           state.current_level.todos.shift();
         }
-        if (callback) {
-          callback(void 0, {});
-        }
-        return run_next();
+        return callback(null, {});
       }, function(error) {
-        if (callback) {
-          callback(error, {});
-        }
-        return run_next();
+        return callback(error, {});
       });
     }
     index = state.index_counter++;
@@ -1064,10 +1062,7 @@ module.exports = function() {
           output: {}
         };
         error = (context.error_in_callback || !context.options.tolerant && !context.original.relax) && context.error;
-        if (callback) {
-          callback(error, context.output);
-        }
-        return run_next();
+        return callback(error, context.output);
       };
       return do_options();
     })();

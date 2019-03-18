@@ -236,8 +236,10 @@
           if state.parent_levels.length is 0
             obj.emit 'end', level: 'INFO' unless error
           return
-        run options
+        run options, ->
+          run_next()
       run = (options, callback) ->
+        throw Error 'Invalid Argument' unless options and callback
         if options.action is 'next'
           errors = state.current_level.history.map (context) ->
             (context.error_in_callback or not context.options.tolerant and not context.original.relax) and context.error
@@ -246,8 +248,7 @@
             not context.original.shy and context.status
           options.handler?.call proxy, error, {status: status}
           state_reset_level state.current_level
-          run_next()
-          return
+          return callback null, {}
         if options.action is 'promise'
           errors = state.current_level.history.map (context) ->
             (context.error_in_callback or not context.options.tolerant and not context.original.relax) and context.error
@@ -260,17 +261,15 @@
           then options.deferred.resolve status
           else options.deferred.reject error
           state_reset_level state.current_level
-          return
+          return callback null, {}
         return if state.killed
         if array.compare options.action, ['end']
           return conditions.all proxy, options: options
           , ->
             while state.current_level.todos[0] and state.current_level.todos[0].action not in ['next', 'promise'] then state.current_level.todos.shift()
-            callback undefined, {} if callback
-            run_next()
+            callback null, {}
           , (error) ->
-            callback error, {} if callback
-            run_next()
+            callback error, {}
         index = state.index_counter++
         options_parent = state.current_level.options
         context = make_context obj.options, options_parent, options
@@ -529,8 +528,7 @@
             state.current_level.history.push context
             state.current_level.current = output: {}
             error = (context.error_in_callback or not context.options.tolerant and not context.original.relax) and context.error
-            callback error, context.output if callback
-            run_next()
+            callback error, context.output
           do_options()
       state.properties.child = get: -> ->
         module.exports(obj.options)
