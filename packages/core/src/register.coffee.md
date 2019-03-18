@@ -58,9 +58,6 @@ available to every Nikita sessions.
         symlink: 'nikita/fs/symlink'
         unlink: 'nikita/fs/unlink'
         writeFile: 'nikita/fs/writeFile'
-      java:
-        keystore_add: 'nikita/java/keystore_add'
-        keystore_remove: 'nikita/java/keystore_remove'
       log:
         '': 'nikita/log'
         cli: 'nikita/log/cli'
@@ -129,8 +126,6 @@ available to every Nikita sessions.
     registry.deprecate 'execute', 'nikita/system/execute'
     registry.deprecate 'cache', 'nikita/file/cache'
     registry.deprecate 'group', 'nikita/system/group'
-    registry.deprecate 'java_keystore_add', 'nikita/java/keystore_add'
-    registry.deprecate 'java_keystore_remove', 'nikita/java/keystore_remove'
     registry.deprecate 'link', 'nikita/system/link'
     registry.deprecate 'mkdir', 'nikita/system/mkdir'
     registry.deprecate 'move', 'nikita/system/move'

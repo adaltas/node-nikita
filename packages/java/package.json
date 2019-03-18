@@ -1,0 +1,50 @@
+{
+  "name": "@nikitajs/java",
+  "description": "Nikita Java actions.",
+  "keywords": [
+    "build",
+    "cli",
+    "deploy",
+    "ssh",
+    "install",
+    "java",
+    "keystore"
+  ],
+  "version": "0.0.0",
+  "author": "David Worms <david@adaltas.com>",
+  "bugs": {
+    "url": "https://github.com/adaltas/node-nikita/issues"
+  },
+  "contributors": [
+    {
+      "name": "David Worms",
+      "email": "david@adaltas.com"
+    }
+  ],
+  "peerDependencies": {
+    "@nikitajs/core": "^0.9.1"
+  },
+  "devDependencies": {
+    "coffeescript": "^2.3.2",
+    "mocha": "6.0.2",
+    "should": "~13.2.3",
+    "ssh2-they": "^2.0.3"
+  },
+  "engines": {
+    "node": ">= 6.2.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "http://www.adaltas.com/projects/node-nikita/",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adaltas/node-nikita"
+  },
+  "scripts": {
+    "coffee": "coffee -b -o lib src && sed -i -e 's/src/lib/g' lib/register.js",
+    "pretest": "npm run coffee",
+    "test": "mocha test/*.coffee"
+  }
+}

@@ -20,7 +20,8 @@
 // ## Removing a key and its certificate
 
 // ```js
-// require('nikita').java.keystore_remove([{
+// require('nikita')
+// .java.keystore_remove([{
 //   keystore: java_home + '/lib/security/cacerts',
 //   storepass: 'changeit',
 //   caname: 'my_ca_certificate',
