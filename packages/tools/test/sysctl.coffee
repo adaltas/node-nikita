@@ -121,7 +121,7 @@ describe 'tools.sysctl', ->
       load: false
       backup: true
     .system.execute.assert
-      cmd: "[[ `ls #{scratch}/sysctl.* | wc -l` == '1' ]]"
+      cmd: "[[ `ls #{scratch}/sysctl.* | wc -l | sed 's/[ ]*//'` == '1' ]]" # sed to strip trailing space
     .tools.sysctl
       target: "#{scratch}/sysctl.conf"
       properties:
@@ -129,7 +129,7 @@ describe 'tools.sysctl', ->
       load: false
       backup: true
     .system.execute.assert
-      cmd: "[[ `ls #{scratch}/sysctl.* | wc -l` == '2' ]]"
+      cmd: "[[ `ls #{scratch}/sysctl.* | wc -l | sed 's/[ ]*//'` == '2' ]]"
     .promise()
 
   describe 'comment', ->
