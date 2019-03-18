@@ -5,6 +5,8 @@
 
 // ## Options
 
+// * `code` (number, optional, 0)   
+//   Expected exit code, activated by default unless content is provided.
 // * `content` (string|buffer, optional)   
 //   Content to match, optional.
 // * `cmd` (string, required)   
@@ -24,7 +26,7 @@
 // nikita.system.execute.assert({
 //   cmd: 'exit 0'
 // }, function(err){
-//   console.log(err || 'ok');
+//   console.info(err || 'ok');
 // });
 // ```
 
@@ -35,7 +37,7 @@
 //   cmd: 'echo hello'
 //   assert: 'hello'
 // }, function(err){
-//   console.log(err || 'ok');
+//   console.info(err || 'ok');
 // });
 // ```
 
@@ -43,6 +45,11 @@
 module.exports = function({options}) {
   if (!options.cmd) {
     throw Error('Required Option: option `cmd` is not defined');
+  }
+  if (!options.content) {
+    if (options.code == null) {
+      options.code = 0;
+    }
   }
   if (options.trim == null) {
     options.trim = false;
@@ -55,33 +62,25 @@ module.exports = function({options}) {
   }
   // Command exit code
   this.call({
-    unless: options.content != null
+    if: options.code != null
   }, function() {
-    return this.system.execute({
-      cmd: options.cmd,
+    return this.system.execute(options, {
       relax: true
     }, function(err, {code}) {
-      console.log('assert exec callback?', err != null ? err.message : void 0);
       if (!options.not) {
-        if (code !== 10) {
+        if (code !== options.code) {
           if (options.error == null) {
-            options.error = `Invalid command: exit code is ${code}`;
+            options.error = `Invalid command: exit code is ${code}, expect ${options.code}`;
           }
-          err = Error(options.error);
+          throw Error(options.error);
         }
       } else {
-        if (code === 10) {
+        if (code === options.code) {
           if (options.error == null) {
-            options.error = `Invalid command: exit code is ${code}`;
+            options.error = `Invalid command: exit code is ${code}, expect anything but ${options.code}`;
           }
-          err = Error(options.error);
+          throw Error(options.error);
         }
-      }
-      if (err) {
-        console.log('- throw err');
-      }
-      if (err) {
-        throw err;
       }
     });
   });
