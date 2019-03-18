@@ -16,7 +16,7 @@ describe 'options "relax"', ->
       @call relax: true, (_, callback) ->
         callback Error 'Dont cry, laugh outloud'
       , (err) ->
-        err.message.should.eql 'Dont worry, laugh outloud'
+        err.message.should.eql 'Dont cry, laugh outloud'
     .call ({}, callback) ->
       callback null, true
     .next (err, {status}) ->
@@ -41,18 +41,40 @@ describe 'options "relax"', ->
         @call ->
           throw Error 'Dont cry, laugh outloud'
       , (err) ->
-        err.message.should.eql 'Dont worry, laugh outloud'
+        err.message.should.eql 'Dont cry, laugh outloud'
     .call -> # with parent
       @call relax: true, ->
         @call (_, callback) ->
           callback Error 'Dont cry, laugh outloud'
       , (err) ->
-        err.message.should.eql 'Dont worry, laugh outloud'
+        err.message.should.eql 'Dont cry, laugh outloud'
     .call ({}, callback) ->
       callback null, true
     .next (err, {status}) ->
       (err is undefined).should.be.true()
       status.should.be.true() unless err
+    .promise()
+  
+  it 'thrown error in callback are handled as an error', ->
+    nikita
+    .call
+      relax: true
+    , (->), ->
+      throw Error 'Catch me'
+    .next (err) ->
+      err.message.should.eql 'Catch me'
+    .promise()
+  
+  it 'thrown error in callback are followed to parent sync call', ->
+    nikita
+    .call level: 'parent', ->
+      @call
+        level: 'child'
+        relax: true
+      ,(->), ->
+        throw Error 'Catch me'
+    .next (err) ->
+      err.message.should.eql 'Catch me'
     .promise()
 
   it 'async', ->

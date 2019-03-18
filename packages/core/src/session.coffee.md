@@ -528,7 +528,7 @@
           do_end = (context) ->
             state.current_level.history.push context
             state.current_level.current = output: {}
-            error = if context.internal.relax then null else context.error
+            error = (context.error_in_callback or not context.options.tolerant and not context.original.relax) and context.error
             callback error, context.output if callback
             run_next()
           do_options()

@@ -28,6 +28,7 @@ New features:
 * core env: working lxd prototype
 
 Fix:
+* relax: callback error are propagated to parent
 * file.upload: honors sudo
 * db.database: mysql/mariadb default to latin1
 * status: more expressive tests

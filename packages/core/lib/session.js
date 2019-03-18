@@ -1063,7 +1063,7 @@ module.exports = function() {
         state.current_level.current = {
           output: {}
         };
-        error = context.internal.relax ? null : context.error;
+        error = (context.error_in_callback || !context.options.tolerant && !context.original.relax) && context.error;
         if (callback) {
           callback(error, context.output);
         }
