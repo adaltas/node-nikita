@@ -55,3 +55,20 @@ describe 'api call sync', ->
         options.test1.should.be.true()
         options.test2.should.be.true()
       .promise()
+
+    it 'handler is called only once', ->
+      counts = a: 0, b: 0, c: 0
+      nikita
+      .system.remove target: "#{scratch}"
+      .call ({}) ->
+        counts.a++
+        @call ({}) ->
+          counts.b++
+          @call ({}) ->
+            counts.c++
+      .next (err) ->
+        throw err if err
+        counts.a.should.eql 1
+        counts.b.should.eql 1
+        counts.c.should.eql 1
+      .promise()

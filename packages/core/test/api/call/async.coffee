@@ -66,6 +66,26 @@ describe 'api call async', ->
         next()
       .promise()
 
+    it 'handler is called only once', ->
+      counts = a: 0, b: 0, c: 0
+      nikita
+      .system.remove target: "#{scratch}"
+      .call ({}, callback) ->
+        counts.a++
+        @call ({}, callback) ->
+          counts.b++
+          @call ({}, callback) ->
+            counts.c++
+            callback()
+          @next callback
+        @next callback
+      .next (err) ->
+        throw err if err
+        counts.a.should.eql 1
+        counts.b.should.eql 1
+        counts.c.should.eql 1
+      .promise()
+
   describe 'async nested', ->
 
     it 'in a user callback', ->
