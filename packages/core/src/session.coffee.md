@@ -13,6 +13,7 @@
         obj.options = {}
       obj.registry ?= {}
       obj.store ?= {}
+      obj.cascade = {...module.exports.cascade, ...obj.options.cascade}
       # Internal state
       state = {}
       state.properties = {}
@@ -130,67 +131,70 @@
           action
         actions
       normalize_options = obj.internal.options
-      enrich_options = (options_action) ->
-        options_session = obj.options
-        options_session.cascade ?= {}
-        options_parent = state.current_level.options
-        options = {}
-        options.parent = options_parent
+      make_context = (options_global, options_parent, options_action) ->
+        context =
+          internal: {}
+          options: {}
+          original: (->
+            # Create original and filter with cascade
+            options_original = options_action
+            for k, v of options_parent
+              options_original[k] = v if options_original[k] is undefined and obj.cascade[k] is true
+            options_original
+          )()
+        context.internal.parent = options_parent
         # Merge cascade action options with default session options
-        options.cascade = {...module.exports.cascade, ...options_session.cascade, ...options_action.cascade}
+        context.internal.cascade = {...module.exports.cascade, ...options_global.cascade, ...options_action.cascade}
         # Copy initial options
         for k, v of options_action
           continue if k is 'cascade'
-          options[k] = options_action[k]
+          context.internal[k] = options_action[k]
         # Merge parent cascaded options
         for k, v of options_parent
-          continue unless options.cascade[k] is true
-          options[k] = v if options[k] is undefined
+          continue unless context.internal.cascade[k] is true
+          context.internal[k] = v if context.internal[k] is undefined
         # Merge action options with default session options 
-        for k, v of options_session
+        for k, v of options_global
           continue if k is 'cascade'
-          options[k] = v if options[k] is undefined
+          context.internal[k] = v if context.internal[k] is undefined
         # Build headers option
         headers = []
         push_headers = (options) ->
           headers.push options.header if options.header
           push_headers options.parent if options.parent
-        push_headers options
-        options.headers = headers.reverse()
+        push_headers context.internal
+        context.internal.headers = headers.reverse()
         # Default values
-        options.sleep ?= 3000 # Wait 3s between retry
-        options.retry ?= 0
-        options.disabled ?= false
-        options.status ?= true
-        options.depth = if options.depth? then options.depth else (options.parent?.depth or 0) + 1
-        options.attempt = -1# Clone and filter cascaded options
+        context.internal.sleep ?= 3000 # Wait 3s between retry
+        context.internal.retry ?= 0
+        context.internal.disabled ?= false
+        context.internal.status ?= true
+        context.internal.depth = if context.internal.depth? then context.internal.depth else (context.internal.parent?.depth or 0) + 1
+        context.internal.attempt = -1# Clone and filter cascaded options
         # throw Error 'Incompatible Options: status "false" implies shy "true"' if options.status is false and options.shy is false # Room for argument, leave it strict for now until we come accross a usecase justifying it.
         # options.shy ?= true if options.status is false
-        options.shy ?= false
+        context.internal.shy ?= false
         # Goodies
-        if options.source and match = /~($|\/.*)/.exec options.source
+        if context.internal.source and match = /~($|\/.*)/.exec context.internal.source
           unless obj.store['nikita:ssh:connection']
-          then options.source = path.join process.env.HOME, match[1]
-          else options.source = path.posix.join '.', match[1]
-        if options.target and match = /~($|\/.*)/.exec options.target
+          then context.internal.source = path.join process.env.HOME, match[1]
+          else context.internal.source = path.posix.join '.', match[1]
+        if context.internal.target and match = /~($|\/.*)/.exec context.internal.target
           unless obj.store['nikita:ssh:connection']
-          then options.target = path.join process.env.HOME, match[1]
-          else options.target = path.posix.join '.', match[1]
-        options
+          then context.internal.target = path.join process.env.HOME, match[1]
+          else context.internal.target = path.posix.join '.', match[1]
+        # Filter cascaded options
+        for k, v of context.internal
+          continue if context.internal.cascade[k] is false
+          context.options[k] = v
+        context
       handle_get = (proxy, options) ->
         return get: false unless options.length is 1
         options = options[0]
         return get: false unless options.get is true
-        options = enrich_options options
-        opts = options_filter_cascade options
-        values = options.handler.call proxy, options: opts, options.callback
+        context = make_context obj.options, state.current_level.options, options
+        values = context.internal.handler.call proxy, options: context.options, context.internal.callback
         get: true, values: values
-      options_filter_cascade = (options) ->
-        opts = {}
-        for k, v of options
-          continue if options.cascade[k] is false
-          opts[k] = v
-        opts
       call_callback = (context) ->
         options = state.current_level.options
         state.parent_levels.unshift state.current_level
@@ -200,6 +204,8 @@
           context.callback.call proxy, context.error, context.output, (context.args or [])...
         catch error
           state.current_level = state.parent_levels.shift()
+          # error.fatal = true
+          context.error_in_callback = true
           context.error = error
           jump_to_error()
           return
@@ -221,7 +227,7 @@
         # Nothing more to do in current queue
         unless options
           errors = state.current_level.history.map (context) ->
-            not context.options.tolerant and not context.options.relax and context.error
+            (context.error_in_callback or not context.options.tolerant and not context.original.relax) and context.error
           error = errors[errors.length - 1]
           if not state.killed and state.parent_levels.length is 0 and error and state.current_level.throw_if_error
             if obj.listenerCount('error') is 0
@@ -234,7 +240,7 @@
       run = (options, callback) ->
         if options.action is 'next'
           errors = state.current_level.history.map (context) ->
-            not context.options.tolerant and not context.original.relax and context.error
+            (context.error_in_callback or not context.options.tolerant and not context.original.relax) and context.error
           error = errors[errors.length - 1]
           status = state.current_level.history.some (context) ->
             not context.original.shy and context.status
@@ -244,7 +250,8 @@
           return
         if options.action is 'promise'
           errors = state.current_level.history.map (context) ->
-            not context.options.tolerant and not context.original.relax and context.error
+            (context.error_in_callback or not context.options.tolerant and not context.original.relax) and context.error
+            # context.error and (context.error.fatal or (not context.options.tolerant and not context.original.relax))
           error = errors[errors.length - 1]
           status = state.current_level.history.some (context) ->
             not context.original.shy and context.status
@@ -265,48 +272,33 @@
             callback error, {} if callback
             run_next()
         index = state.index_counter++
-        options_original = options
         options_parent = state.current_level.options
-        obj.cascade = {...obj.options.cascade, ...module.exports.cascade}
-        for k, v of options_parent
-          options_original[k] = v if options_original[k] is undefined and obj.cascade[k] is true
-        options.original = options_original
-        options = enrich_options options
-        opts = options_filter_cascade options
-        opts.handler = undefined
-        opts.callback = undefined
+        context = make_context obj.options, options_parent, options
         # Prepare the Context
-        context =
-          action:
-            after: options.after
-            before: options.before
-            index: index
-          original: options.original
-          options: opts
-          session: proxy
-          handler: options.handler
-          callback: options.callback
-        options.handler = undefined
-        options.callback = undefined
+        context.session = proxy
+        context.handler = context.internal.handler
+        context.internal.handler = undefined
+        context.callback = context.internal.callback
+        context.internal.callback = undefined
         state.parent_levels.unshift state.current_level
         state.current_level.current = context
         state.current_level = state_create_level()
-        state.current_level.options = options
-        proxy.log message: options.header, type: 'header', index: index, headers: options.headers if options.header
+        state.current_level.options = context.internal
+        proxy.log message: context.internal.header, type: 'header', index: index, headers: context.internal.headers if context.internal.header
         do () ->
           do_options = ->
             try
               # Validate sleep option, more can be added
-              throw Error "Invalid options sleep, got #{JSON.stringify options.sleep}" unless typeof options.sleep is 'number' and options.sleep >= 0
+              throw Error "Invalid options sleep, got #{JSON.stringify context.internal.sleep}" unless typeof context.internal.sleep is 'number' and context.internal.sleep >= 0
             catch error
               context.error = error
               context.output = status: false
               do_callback()
               return
-            wrap.options options, (error) ->
+            wrap.options context.internal, (error) ->
               do_disabled()
           do_disabled = ->
-            unless options.disabled
+            unless context.internal.disabled
               proxy.log type: 'lifecycle', message: 'disabled_false', level: 'DEBUG', index: index, error: null, status: false
               do_once()
             else
@@ -330,17 +322,17 @@
                 value = 'object'
               else throw Error "Invalid data type: #{JSON.stringify value}"
               value
-            if options.once
-              if typeof options.once is 'string'
-                hash = string.hash options.once
-              else if Array.isArray options.once
-                hash = string.hash options.once.map((k) ->
+            if context.internal.once
+              if typeof context.internal.once is 'string'
+                hash = string.hash context.internal.once
+              else if Array.isArray context.internal.once
+                hash = string.hash context.internal.once.map((k) ->
                   if k is 'handler'
                   then hashme context.handler 
-                  else hashme options[k]
+                  else hashme context.internal[k]
                 ).join '|'
               else
-                throw Error "Invalid Option 'once': #{JSON.stringify options.once} must be a string or an array of string"
+                throw Error "Invalid Option 'once': #{JSON.stringify context.internal.once} must be a string or an array of string"
               if state.once[hash]
                 context.error = undefined
                 context.output = status: false
@@ -349,9 +341,9 @@
             do_options_before()
           do_options_before = ->
             return do_intercept_before() if context.original.options_before
-            context.action.before ?= []
-            context.action.before = [context.action.before] unless Array.isArray context.action.before
-            each context.action.before
+            context.internal.before ?= []
+            context.internal.before = [context.internal.before] unless Array.isArray context.internal.before
+            each context.internal.before
             .call (before, next) ->
               before = normalize_options [before], 'call', enrich: false
               before = before[0]
@@ -432,9 +424,9 @@
               context.handler = ( (options_handler) ->
                 util.deprecate ->
                   options_handler.apply @, arguments
-                , if options.deprecate is true
-                then "#{options.action.join '/'} is deprecated"
-                else "#{options.action.join '/'} is deprecated, use #{options.deprecate}"
+                , if context.internal.deprecate is true
+                then "#{context.internal.action.join '/'} is deprecated"
+                else "#{context.internal.action.join '/'} is deprecated, use #{context.internal.deprecate}"
               )(context.handler) if context.options.deprecate
               handle_async_and_promise = ->
                 [error, output, args...] = arguments
@@ -505,9 +497,9 @@
             .next -> do_options_after()
           do_options_after = ->
             return do_callback() if context.original.options_after
-            context.action.after ?= []
-            context.action.after = [context.action.after] unless Array.isArray context.action.after
-            each context.action.after
+            context.internal.after ?= []
+            context.internal.after = [context.internal.after] unless Array.isArray context.internal.after
+            each context.internal.after
             .call (after, next) ->
               after = normalize_options [after], 'call', enrich: false
               after = after[0]
@@ -528,15 +520,15 @@
             return if state.killed
             state.current_level = state.parent_levels.shift() # Exit action state and move back to parent state
             state.current_level.throw_if_error = false if context.error and context.callback
-            context.status = if options.status then context.output.status else false
-            if context.error and not options.relax
+            context.status = if context.internal.status then context.output.status else false
+            if context.error and not context.internal.relax
               jump_to_error()
             call_callback context if context.callback
             do_end context
           do_end = (context) ->
             state.current_level.history.push context
             state.current_level.current = output: {}
-            error = if options.relax then null else context.error
+            error = if context.internal.relax then null else context.error
             callback error, context.output if callback
             run_next()
           do_options()
@@ -638,23 +630,24 @@
       proxy
 
     module.exports.cascade =
-      cwd: true
-      ssh: true
-      log: true
-      stdout: true
-      stderr: true
-      debug: true
       after: false
       before: false
+      callback: false
       cascade: true
+      cwd: true
+      debug: true
       depth: null
       disabled: false
       handler: false
       header: null
+      log: true
       once: false
       relax: false
       shy: false
       sleep: false
+      ssh: true
+      stdout: true
+      stderr: true
       sudo: true
 
 ## Helper functions

@@ -3,7 +3,7 @@
 var EventEmitter, array, conditions, each, mixme, path, promise, registry, state_create_level, state_reset_level, string, util, wrap;
 
 module.exports = function() {
-  var call_callback, enrich_options, handle_get, handle_multiple_call, jump_to_error, normalize_options, obj, options_filter_cascade, proxy, reg, run, run_next, state;
+  var call_callback, handle_get, handle_multiple_call, jump_to_error, make_context, normalize_options, obj, proxy, reg, run, run_next, state;
   if (arguments.length === 2) {
     obj = arguments[0];
     obj.options = arguments[1];
@@ -20,6 +20,7 @@ module.exports = function() {
   if (obj.store == null) {
     obj.store = {};
   }
+  obj.cascade = {...module.exports.cascade, ...obj.options.cascade};
   // Internal state
   state = {};
   state.properties = {};
@@ -266,43 +267,53 @@ module.exports = function() {
     return actions;
   };
   normalize_options = obj.internal.options;
-  enrich_options = function(options_action) {
-    var headers, k, match, options, options_parent, options_session, push_headers, ref, v;
-    options_session = obj.options;
-    if (options_session.cascade == null) {
-      options_session.cascade = {};
-    }
-    options_parent = state.current_level.options;
-    options = {};
-    options.parent = options_parent;
+  make_context = function(options_global, options_parent, options_action) {
+    var base, base1, base2, base3, base4, context, headers, k, match, push_headers, ref, ref1, v;
+    context = {
+      internal: {},
+      options: {},
+      original: (function() {
+        var k, options_original, v;
+        // Create original and filter with cascade
+        options_original = options_action;
+        for (k in options_parent) {
+          v = options_parent[k];
+          if (options_original[k] === void 0 && obj.cascade[k] === true) {
+            options_original[k] = v;
+          }
+        }
+        return options_original;
+      })()
+    };
+    context.internal.parent = options_parent;
     // Merge cascade action options with default session options
-    options.cascade = {...module.exports.cascade, ...options_session.cascade, ...options_action.cascade};
+    context.internal.cascade = {...module.exports.cascade, ...options_global.cascade, ...options_action.cascade};
 // Copy initial options
     for (k in options_action) {
       v = options_action[k];
       if (k === 'cascade') {
         continue;
       }
-      options[k] = options_action[k];
+      context.internal[k] = options_action[k];
     }
 // Merge parent cascaded options
     for (k in options_parent) {
       v = options_parent[k];
-      if (options.cascade[k] !== true) {
+      if (context.internal.cascade[k] !== true) {
         continue;
       }
-      if (options[k] === void 0) {
-        options[k] = v;
+      if (context.internal[k] === void 0) {
+        context.internal[k] = v;
       }
     }
 // Merge action options with default session options 
-    for (k in options_session) {
-      v = options_session[k];
+    for (k in options_global) {
+      v = options_global[k];
       if (k === 'cascade') {
         continue;
       }
-      if (options[k] === void 0) {
-        options[k] = v;
+      if (context.internal[k] === void 0) {
+        context.internal[k] = v;
       }
     }
     // Build headers option
@@ -315,47 +326,56 @@ module.exports = function() {
         return push_headers(options.parent);
       }
     };
-    push_headers(options);
-    options.headers = headers.reverse();
+    push_headers(context.internal);
+    context.internal.headers = headers.reverse();
     // Default values
-    if (options.sleep == null) {
-      options.sleep = 3000; // Wait 3s between retry
+    if ((base = context.internal).sleep == null) {
+      base.sleep = 3000; // Wait 3s between retry
     }
-    if (options.retry == null) {
-      options.retry = 0;
+    if ((base1 = context.internal).retry == null) {
+      base1.retry = 0;
     }
-    if (options.disabled == null) {
-      options.disabled = false;
+    if ((base2 = context.internal).disabled == null) {
+      base2.disabled = false;
     }
-    if (options.status == null) {
-      options.status = true;
+    if ((base3 = context.internal).status == null) {
+      base3.status = true;
     }
-    options.depth = options.depth != null ? options.depth : (((ref = options.parent) != null ? ref.depth : void 0) || 0) + 1;
-    options.attempt = -1; // Clone and filter cascaded options
+    context.internal.depth = context.internal.depth != null ? context.internal.depth : (((ref = context.internal.parent) != null ? ref.depth : void 0) || 0) + 1;
+    context.internal.attempt = -1; // Clone and filter cascaded options
     // throw Error 'Incompatible Options: status "false" implies shy "true"' if options.status is false and options.shy is false # Room for argument, leave it strict for now until we come accross a usecase justifying it.
     // options.shy ?= true if options.status is false
-    if (options.shy == null) {
-      options.shy = false;
+    if ((base4 = context.internal).shy == null) {
+      base4.shy = false;
     }
     // Goodies
-    if (options.source && (match = /~($|\/.*)/.exec(options.source))) {
+    if (context.internal.source && (match = /~($|\/.*)/.exec(context.internal.source))) {
       if (!obj.store['nikita:ssh:connection']) {
-        options.source = path.join(process.env.HOME, match[1]);
+        context.internal.source = path.join(process.env.HOME, match[1]);
       } else {
-        options.source = path.posix.join('.', match[1]);
+        context.internal.source = path.posix.join('.', match[1]);
       }
     }
-    if (options.target && (match = /~($|\/.*)/.exec(options.target))) {
+    if (context.internal.target && (match = /~($|\/.*)/.exec(context.internal.target))) {
       if (!obj.store['nikita:ssh:connection']) {
-        options.target = path.join(process.env.HOME, match[1]);
+        context.internal.target = path.join(process.env.HOME, match[1]);
       } else {
-        options.target = path.posix.join('.', match[1]);
+        context.internal.target = path.posix.join('.', match[1]);
       }
     }
-    return options;
+    ref1 = context.internal;
+    // Filter cascaded options
+    for (k in ref1) {
+      v = ref1[k];
+      if (context.internal.cascade[k] === false) {
+        continue;
+      }
+      context.options[k] = v;
+    }
+    return context;
   };
   handle_get = function(proxy, options) {
-    var opts, values;
+    var context, values;
     if (options.length !== 1) {
       return {
         get: false
@@ -367,27 +387,14 @@ module.exports = function() {
         get: false
       };
     }
-    options = enrich_options(options);
-    opts = options_filter_cascade(options);
-    values = options.handler.call(proxy, {
-      options: opts
-    }, options.callback);
+    context = make_context(obj.options, state.current_level.options, options);
+    values = context.internal.handler.call(proxy, {
+      options: context.options
+    }, context.internal.callback);
     return {
       get: true,
       values: values
     };
-  };
-  options_filter_cascade = function(options) {
-    var k, opts, v;
-    opts = {};
-    for (k in options) {
-      v = options[k];
-      if (options.cascade[k] === false) {
-        continue;
-      }
-      opts[k] = v;
-    }
-    return opts;
   };
   call_callback = function(context) {
     var current_level, error, options;
@@ -400,6 +407,8 @@ module.exports = function() {
     } catch (error1) {
       error = error1;
       state.current_level = state.parent_levels.shift();
+      // error.fatal = true
+      context.error_in_callback = true;
       context.error = error;
       jump_to_error();
       return;
@@ -437,7 +446,7 @@ module.exports = function() {
     // Nothing more to do in current queue
     if (!options) {
       errors = state.current_level.history.map(function(context) {
-        return !context.options.tolerant && !context.options.relax && context.error;
+        return (context.error_in_callback || !context.options.tolerant && !context.original.relax) && context.error;
       });
       error = errors[errors.length - 1];
       if (!state.killed && state.parent_levels.length === 0 && error && state.current_level.throw_if_error) {
@@ -459,10 +468,10 @@ module.exports = function() {
     return run(options);
   };
   run = function(options, callback) {
-    var context, error, errors, index, k, options_original, options_parent, opts, ref, ref1, status, v;
+    var context, error, errors, index, options_parent, ref, ref1, status;
     if (options.action === 'next') {
       errors = state.current_level.history.map(function(context) {
-        return !context.options.tolerant && !context.original.relax && context.error;
+        return (context.error_in_callback || !context.options.tolerant && !context.original.relax) && context.error;
       });
       error = errors[errors.length - 1];
       status = state.current_level.history.some(function(context) {
@@ -479,8 +488,9 @@ module.exports = function() {
     }
     if (options.action === 'promise') {
       errors = state.current_level.history.map(function(context) {
-        return !context.options.tolerant && !context.original.relax && context.error;
+        return (context.error_in_callback || !context.options.tolerant && !context.original.relax) && context.error;
       });
+      // context.error and (context.error.fatal or (not context.options.tolerant and not context.original.relax))
       error = errors[errors.length - 1];
       status = state.current_level.history.some(function(context) {
         return !context.original.shy && context.status;
@@ -519,54 +529,33 @@ module.exports = function() {
       });
     }
     index = state.index_counter++;
-    options_original = options;
     options_parent = state.current_level.options;
-    obj.cascade = {...obj.options.cascade, ...module.exports.cascade};
-    for (k in options_parent) {
-      v = options_parent[k];
-      if (options_original[k] === void 0 && obj.cascade[k] === true) {
-        options_original[k] = v;
-      }
-    }
-    options.original = options_original;
-    options = enrich_options(options);
-    opts = options_filter_cascade(options);
-    opts.handler = void 0;
-    opts.callback = void 0;
+    context = make_context(obj.options, options_parent, options);
     // Prepare the Context
-    context = {
-      action: {
-        after: options.after,
-        before: options.before,
-        index: index
-      },
-      original: options.original,
-      options: opts,
-      session: proxy,
-      handler: options.handler,
-      callback: options.callback
-    };
-    options.handler = void 0;
-    options.callback = void 0;
+    context.session = proxy;
+    context.handler = context.internal.handler;
+    context.internal.handler = void 0;
+    context.callback = context.internal.callback;
+    context.internal.callback = void 0;
     state.parent_levels.unshift(state.current_level);
     state.current_level.current = context;
     state.current_level = state_create_level();
-    state.current_level.options = options;
-    if (options.header) {
+    state.current_level.options = context.internal;
+    if (context.internal.header) {
       proxy.log({
-        message: options.header,
+        message: context.internal.header,
         type: 'header',
         index: index,
-        headers: options.headers
+        headers: context.internal.headers
       });
     }
     return (function() {
       var do_callback, do_conditions, do_disabled, do_end, do_handler, do_intercept_after, do_intercept_before, do_once, do_options, do_options_after, do_options_before;
       do_options = function() {
         try {
-          if (!(typeof options.sleep === 'number' && options.sleep >= 0)) {
+          if (!(typeof context.internal.sleep === 'number' && context.internal.sleep >= 0)) {
             // Validate sleep option, more can be added
-            throw Error(`Invalid options sleep, got ${JSON.stringify(options.sleep)}`);
+            throw Error(`Invalid options sleep, got ${JSON.stringify(context.internal.sleep)}`);
           }
         } catch (error1) {
           error = error1;
@@ -577,12 +566,12 @@ module.exports = function() {
           do_callback();
           return;
         }
-        return wrap.options(options, function(error) {
+        return wrap.options(context.internal, function(error) {
           return do_disabled();
         });
       };
       do_disabled = function() {
-        if (!options.disabled) {
+        if (!context.internal.disabled) {
           proxy.log({
             type: 'lifecycle',
             message: 'disabled_false',
@@ -630,19 +619,19 @@ module.exports = function() {
           }
           return value;
         };
-        if (options.once) {
-          if (typeof options.once === 'string') {
-            hash = string.hash(options.once);
-          } else if (Array.isArray(options.once)) {
-            hash = string.hash(options.once.map(function(k) {
+        if (context.internal.once) {
+          if (typeof context.internal.once === 'string') {
+            hash = string.hash(context.internal.once);
+          } else if (Array.isArray(context.internal.once)) {
+            hash = string.hash(context.internal.once.map(function(k) {
               if (k === 'handler') {
                 return hashme(context.handler);
               } else {
-                return hashme(options[k]);
+                return hashme(context.internal[k]);
               }
             }).join('|'));
           } else {
-            throw Error(`Invalid Option 'once': ${JSON.stringify(options.once)} must be a string or an array of string`);
+            throw Error(`Invalid Option 'once': ${JSON.stringify(context.internal.once)} must be a string or an array of string`);
           }
           if (state.once[hash]) {
             context.error = void 0;
@@ -660,14 +649,14 @@ module.exports = function() {
         if (context.original.options_before) {
           return do_intercept_before();
         }
-        if ((base = context.action).before == null) {
+        if ((base = context.internal).before == null) {
           base.before = [];
         }
-        if (!Array.isArray(context.action.before)) {
-          context.action.before = [context.action.before];
+        if (!Array.isArray(context.internal.before)) {
+          context.internal.before = [context.internal.before];
         }
-        return each(context.action.before).call(function(before, next) {
-          var _opts, ref2;
+        return each(context.internal.before).call(function(before, next) {
+          var _opts, k, ref2, v;
           before = normalize_options([before], 'call', {
             enrich: false
           });
@@ -701,7 +690,7 @@ module.exports = function() {
           return do_conditions();
         }
         return each(state.befores).call(function(before, next) {
-          var _opts, ref2;
+          var _opts, k, ref2, v;
           for (k in before) {
             v = before[k];
             switch (k) {
@@ -742,7 +731,7 @@ module.exports = function() {
         }).next(do_conditions);
       };
       do_conditions = function() {
-        var _opts, ref2;
+        var _opts, k, ref2, v;
         _opts = {};
         ref2 = context.options;
         for (k in ref2) {
@@ -859,7 +848,7 @@ module.exports = function() {
             context.handler = (function(options_handler) {
               return util.deprecate(function() {
                 return options_handler.apply(this, arguments);
-              }, options.deprecate === true ? `${options.action.join('/')} is deprecated` : `${options.action.join('/')} is deprecated, use ${options.deprecate}`);
+              }, context.internal.deprecate === true ? `${context.internal.action.join('/')} is deprecated` : `${context.internal.action.join('/')} is deprecated, use ${context.internal.deprecate}`);
             })(context.handler);
           }
           handle_async_and_promise = function() {
@@ -961,7 +950,7 @@ module.exports = function() {
           return do_options_after();
         }
         return each(state.afters).call(function(after, next) {
-          var _opts, ref2;
+          var _opts, k, ref2, v;
           for (k in after) {
             v = after[k];
             switch (k) {
@@ -1008,14 +997,14 @@ module.exports = function() {
         if (context.original.options_after) {
           return do_callback();
         }
-        if ((base = context.action).after == null) {
+        if ((base = context.internal).after == null) {
           base.after = [];
         }
-        if (!Array.isArray(context.action.after)) {
-          context.action.after = [context.action.after];
+        if (!Array.isArray(context.internal.after)) {
+          context.internal.after = [context.internal.after];
         }
-        return each(context.action.after).call(function(after, next) {
-          var _opts, ref2;
+        return each(context.internal.after).call(function(after, next) {
+          var _opts, k, ref2, v;
           after = normalize_options([after], 'call', {
             enrich: false
           });
@@ -1060,8 +1049,8 @@ module.exports = function() {
         if (context.error && context.callback) {
           state.current_level.throw_if_error = false;
         }
-        context.status = options.status ? context.output.status : false;
-        if (context.error && !options.relax) {
+        context.status = context.internal.status ? context.output.status : false;
+        if (context.error && !context.internal.relax) {
           jump_to_error();
         }
         if (context.callback) {
@@ -1074,7 +1063,7 @@ module.exports = function() {
         state.current_level.current = {
           output: {}
         };
-        error = options.relax ? null : context.error;
+        error = context.internal.relax ? null : context.error;
         if (callback) {
           callback(error, context.output);
         }
@@ -1326,23 +1315,24 @@ module.exports = function() {
 };
 
 module.exports.cascade = {
-  cwd: true,
-  ssh: true,
-  log: true,
-  stdout: true,
-  stderr: true,
-  debug: true,
   after: false,
   before: false,
+  callback: false,
   cascade: true,
+  cwd: true,
+  debug: true,
   depth: null,
   disabled: false,
   handler: false,
   header: null,
+  log: true,
   once: false,
   relax: false,
   shy: false,
   sleep: false,
+  ssh: true,
+  stdout: true,
+  stderr: true,
   sudo: true
 };
 

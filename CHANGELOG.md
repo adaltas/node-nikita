@@ -28,7 +28,7 @@ New features:
 * core env: working lxd prototype
 
 Fix:
-* file.upload: honor sudo
+* file.upload: honors sudo
 * db.database: mysql/mariadb default to latin1
 * status: more expressive tests
 * file.stat: handle empty stdout
@@ -40,7 +40,8 @@ Fix:
 * keystore_add: use command instead of which
 * file.hash: use command instead of which
 
-Cleaup:
+Cleanup:
+* session: make_context
 * session: isolate current action from history
 * core: remove unnecessary transmission of ssh
 
