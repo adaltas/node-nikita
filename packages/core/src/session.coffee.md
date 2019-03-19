@@ -274,7 +274,7 @@
         state.current_level = state_create_level()
         state.current_level.options = context.internal
         proxy.log message: context.internal.header, type: 'header', index: index, headers: context.internal.headers if context.internal.header
-        do () ->
+        do ->
           do_options = ->
             try
               # Validate sleep option, more can be added
@@ -284,8 +284,7 @@
               context.output = status: false
               do_callback()
               return
-            wrap.options context.internal, (error) ->
-              do_disabled()
+            do_disabled()
           do_disabled = ->
             unless context.internal.disabled
               proxy.log type: 'lifecycle', message: 'disabled_false', level: 'DEBUG', index: index, error: null, status: false
@@ -334,8 +333,7 @@
             context.internal.before = [context.internal.before] unless Array.isArray context.internal.before
             each context.internal.before
             .call (before, next) ->
-              before = normalize_options [before], 'call'
-              before = before[0]
+              [before] = normalize_options [before], 'call'
               _opts = options_before: true
               for k, v of before
                 _opts[k] = v
@@ -370,6 +368,7 @@
             _opts = {}
             for k, v of context.options
               continue if k in ['handler', 'callback', 'header', 'after', 'before']
+              # continue if k in ['handler', 'callback', 'header', 'after', 'before']
               _opts[k] ?= v
             conditions.all proxy, options: _opts
             , ->
@@ -489,8 +488,7 @@
             context.internal.after = [context.internal.after] unless Array.isArray context.internal.after
             each context.internal.after
             .call (after, next) ->
-              after = normalize_options [after], 'call'
-              after = after[0]
+              [after] = normalize_options [after], 'call'
               _opts = options_after: true
               for k, v of after
                 _opts[k] = v
@@ -667,6 +665,5 @@
     array = require './misc/array'
     promise = require './misc/promise'
     conditions = require './misc/conditions'
-    wrap = require './misc/wrap'
     string = require './misc/string'
     {EventEmitter} = require 'events'

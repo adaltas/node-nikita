@@ -99,4 +99,3 @@ require('nikita').cron.add({
     {regexp} = require '../misc'
     diff = require '../misc/diff'
     string = require '../misc/string'
-    wrap = require '../misc/wrap'

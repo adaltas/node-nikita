@@ -76,4 +76,3 @@ require('nikita').cron.remove({
 ## Dependencies
 
     {regexp} = require '../misc'
-    wrap = require '../misc/wrap'

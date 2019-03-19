@@ -37,7 +37,7 @@
 // ```
 
 // ## Source Code
-var regexp, wrap;
+var regexp;
 
 module.exports = function({options}, callback) {
   var crontab, jobs, ref, status;
@@ -104,5 +104,3 @@ module.exports = function({options}, callback) {
 
 // ## Dependencies
 ({regexp} = require('../misc'));
-
-wrap = require('../misc/wrap');

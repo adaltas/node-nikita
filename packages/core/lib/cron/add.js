@@ -41,7 +41,7 @@
 // ```
 
 // ## Source Code
-var diff, regexp, string, util, wrap;
+var diff, regexp, string, util;
 
 module.exports = function({options}, callback) {
   var crontab, jobs;
@@ -150,5 +150,3 @@ util = require('util');
 diff = require('../misc/diff');
 
 string = require('../misc/string');
-
-wrap = require('../misc/wrap');

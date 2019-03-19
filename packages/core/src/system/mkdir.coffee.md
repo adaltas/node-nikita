@@ -115,7 +115,7 @@ require('nikita')
                 return next Error "Invalid Directory: path #{JSON.stringify directory} exists but is not a directory, got \"#{misc.stats.type stats.mode}\" type"
           .next callback
         do_create = (directories) =>
-          each(directories.reverse())
+          each directories.reverse()
           .call (directory, i, callback) =>
             # Directory name contains variables
             # eg /\${/ on './var/cache/${user}' creates './var/cache/'
@@ -160,4 +160,3 @@ require('nikita')
     path = require('path').posix
     each = require 'each'
     misc = require '../misc'
-    wrap = require '../misc/wrap'

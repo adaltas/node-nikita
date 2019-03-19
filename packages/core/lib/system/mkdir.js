@@ -60,7 +60,7 @@
 // ```
 
 // ## Source Code
-var each, misc, path, wrap;
+var each, misc, path;
 
 module.exports = function({options}, callback) {
   var directory, i, j, len, p, ref, ssh, state;
@@ -255,5 +255,3 @@ path = require('path').posix;
 each = require('each');
 
 misc = require('../misc');
-
-wrap = require('../misc/wrap');
