@@ -26,7 +26,7 @@ var Minimatch, getprefix, path, string;
 module.exports = {
   shy: true,
   handler: function({options}, callback) {
-    var base, cmd, i, info, len, minimatch, prefix, ref, s;
+    var base, info, minimatch, s;
     this.log({
       message: "Entering file.glob",
       level: 'DEBUG',
@@ -49,27 +49,35 @@ module.exports = {
     info = {};
     options.target = path.normalize(options.target);
     minimatch = new Minimatch(options.target, options.minimatch);
-    cmd = "find";
-    ref = minimatch.set;
-    for (i = 0, len = ref.length; i < len; i++) {
-      s = ref[i];
-      prefix = getprefix(s);
-      cmd += ` ${prefix}`;
-    }
     this.system.execute({
-      cmd: cmd,
+      cmd: [
+        'find',
+        ...((function() {
+          var i,
+        len,
+        ref,
+        results;
+          ref = minimatch.set;
+          results = [];
+          for (i = 0, len = ref.length; i < len; i++) {
+            s = ref[i];
+            results.push(getprefix(s));
+          }
+          return results;
+        })())
+      ].join(' '),
       trim: true,
       relax: true
     }, function(err, {stdout}) {
-      var files, j, len1, n, ref1;
+      var files, i, len, n, prefix, ref;
       // `find` return exit code 1 when no match is found,
       // we treat this scenario as an empty output
       files = string.lines(stdout).filter(function(file) {
         return minimatch.match(file);
       });
-      ref1 = minimatch.set;
-      for (j = 0, len1 = ref1.length; j < len1; j++) {
-        s = ref1[j];
+      ref = minimatch.set;
+      for (i = 0, len = ref.length; i < len; i++) {
+        s = ref[i];
         n = 0;
         while (typeof s[n] === "string") {
           n++;

@@ -31,12 +31,11 @@ paths locally using the Minimatch package.
       info = {}
       options.target = path.normalize options.target
       minimatch = new Minimatch options.target, options.minimatch
-      cmd = "find"
-      for s in minimatch.set
-        prefix = getprefix s
-        cmd += " #{prefix}"
       @system.execute
-        cmd: cmd
+        cmd: [
+          'find'
+          ...(getprefix s for s in minimatch.set)
+        ].join ' '
         trim: true
         relax: true
       , (err, {stdout}) ->
