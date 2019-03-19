@@ -170,51 +170,29 @@ module.exports = function({options}) {
       return user_info;
     })
   }, function() {
-    var cmd;
-    cmd = 'useradd';
-    if (options.system) {
-      cmd += " -r";
-    }
-    if (!options.home) {
-      cmd += " -M";
-    }
-    if (options.home) {
-      cmd += " -m";
-    }
-    if (options.home) {
-      cmd += ` -d ${options.home}`;
-    }
-    if (options.shell) {
-      cmd += ` -s ${options.shell}`;
-    }
-    if (options.comment) {
-      cmd += ` -c ${string.escapeshellarg(options.comment)}`;
-    }
-    if (options.uid) {
-      cmd += ` -u ${options.uid}`;
-    }
-    if (options.gid) {
-      cmd += ` -g ${options.gid}`;
-    }
-    if (options.expiredate) {
-      cmd += ` -e ${options.expiredate}`;
-    }
-    if (options.inactive) {
-      cmd += ` -f ${options.inactive}`;
-    }
-    if (options.groups) {
-      cmd += ` -G ${options.groups.join(',')}`;
-    }
-    if (options.skel) {
-      cmd += ` -k ${options.skel}`;
-    }
-    cmd += ` ${options.name}\n`;
-    if (options.home) {
-      cmd += `chown ${options.name}. ${options.home}`;
-    }
-    return this.system.execute({
-      cmd: cmd,
-      code_skipped: 9,
+    return this.system.execute([
+      {
+        code_skipped: 9,
+        cmd: ['useradd',
+      options.system ? '-r' : void 0,
+      !options.home ? '-M' : void 0,
+      options.home ? '-m' : void 0,
+      options.home ? `-d ${options.home}` : void 0,
+      options.shell ? `-s ${options.shell}` : void 0,
+      options.comment ? `-c ${string.escapeshellarg(options.comment)}` : void 0,
+      options.uid ? `-u ${options.uid}` : void 0,
+      options.gid ? `-g ${options.gid}` : void 0,
+      options.expiredate ? `-e ${options.expiredate}` : void 0,
+      options.inactive ? `-f ${options.inactive}` : void 0,
+      options.groups ? `-G ${options.groups.join(',')}` : void 0,
+      options.skel ? `-k ${options.skel}` : void 0,
+      `${options.name}`].join(' ')
+      },
+      {
+        cmd: `chown ${options.name}. ${options.home}`,
+        if: options.home
+      }
+    ], {
       arch_chroot: options.arch_chroot,
       rootdir: options.rootdir,
       sudo: options.sudo
@@ -234,7 +212,7 @@ module.exports = function({options}) {
       return user_info;
     })
   }, function() {
-    var changed, cmd, group, i, j, k, len, len1, ref, ref1;
+    var changed, group, i, j, k, len, len1, ref, ref1;
     changed = [];
     ref = ['uid', 'home', 'shell', 'comment', 'gid'];
     for (i = 0, len = ref.length; i < len; i++) {
@@ -264,28 +242,8 @@ module.exports = function({options}) {
       level: 'DEBUG',
       module: 'nikita/lib/system/user/add'
     });
-    cmd = 'usermod';
-    if (options.home) {
-      cmd += ` -d ${options.home}`;
-    }
-    if (options.shell) {
-      cmd += ` -s ${options.shell}`;
-    }
-    if (options.comment != null) {
-      cmd += ` -c ${string.escapeshellarg(options.comment)}`;
-    }
-    if (options.gid) {
-      cmd += ` -g ${options.gid}`;
-    }
-    if (options.groups) {
-      cmd += ` -G ${options.groups.join(',')}`;
-    }
-    if (options.uid) {
-      cmd += ` -u ${options.uid}`;
-    }
-    cmd += ` ${options.name}`;
     this.system.execute({
-      cmd: cmd,
+      cmd: ['usermod', options.home ? `-d ${options.home}` : void 0, options.shell ? `-s ${options.shell}` : void 0, options.comment != null ? `-c ${string.escapeshellarg(options.comment)}` : void 0, options.gid ? `-g ${options.gid}` : void 0, options.groups ? `-G ${options.groups.join(',')}` : void 0, options.uid ? `-u ${options.uid}` : void 0, `${options.name}`].join(' '),
       if: changed.length,
       arch_chroot: options.arch_chroot,
       rootdir: options.rootdir,

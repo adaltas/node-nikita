@@ -120,24 +120,28 @@ you are a member of the "wheel" group (gid of "10") with the command
           gid: 0
           mode: 0o0644 # Same as '/home'
       @call unless: (-> user_info), ->
-        cmd = 'useradd'
-        cmd += " -r" if options.system
-        cmd += " -M" unless options.home
-        cmd += " -m" if options.home
-        cmd += " -d #{options.home}" if options.home
-        cmd += " -s #{options.shell}" if options.shell
-        cmd += " -c #{string.escapeshellarg options.comment}" if options.comment
-        cmd += " -u #{options.uid}" if options.uid
-        cmd += " -g #{options.gid}" if options.gid
-        cmd += " -e #{options.expiredate}" if options.expiredate
-        cmd += " -f #{options.inactive}" if options.inactive
-        cmd += " -G #{options.groups.join ','}" if options.groups
-        cmd += " -k #{options.skel}" if options.skel
-        cmd += " #{options.name}\n"
-        cmd += "chown #{options.name}. #{options.home}" if options.home
-        @system.execute
-          cmd: cmd
+        @system.execute [
           code_skipped: 9
+          cmd: [
+            'useradd'
+            '-r' if options.system
+            '-M' unless options.home
+            '-m' if options.home
+            "-d #{options.home}" if options.home
+            "-s #{options.shell}" if options.shell
+            "-c #{string.escapeshellarg options.comment}" if options.comment
+            "-u #{options.uid}" if options.uid
+            "-g #{options.gid}" if options.gid
+            "-e #{options.expiredate}" if options.expiredate
+            "-f #{options.inactive}" if options.inactive
+            "-G #{options.groups.join ','}" if options.groups
+            "-k #{options.skel}" if options.skel
+            "#{options.name}"
+            ].join ' '
+        ,
+          cmd: "chown #{options.name}. #{options.home}"
+          if: options.home
+        ], 
           arch_chroot: options.arch_chroot
           rootdir: options.rootdir
           sudo: options.sudo
@@ -154,16 +158,17 @@ you are a member of the "wheel" group (gid of "10") with the command
         @log if changed.length
         then message: "User #{options.name} modified", level: 'WARN', module: 'nikita/lib/system/user/add'
         else message: "User #{options.name} not modified", level: 'DEBUG', module: 'nikita/lib/system/user/add'
-        cmd = 'usermod'
-        cmd += " -d #{options.home}" if options.home
-        cmd += " -s #{options.shell}" if options.shell
-        cmd += " -c #{string.escapeshellarg options.comment}" if options.comment?
-        cmd += " -g #{options.gid}" if options.gid
-        cmd += " -G #{options.groups.join ','}" if options.groups
-        cmd += " -u #{options.uid}" if options.uid
-        cmd += " #{options.name}"
         @system.execute
-          cmd: cmd
+          cmd: [
+            'usermod'
+            "-d #{options.home}" if options.home
+            "-s #{options.shell}" if options.shell
+            "-c #{string.escapeshellarg options.comment}" if options.comment?
+            "-g #{options.gid}" if options.gid
+            "-G #{options.groups.join ','}" if options.groups
+            "-u #{options.uid}" if options.uid
+            "#{options.name}"
+          ].join ' '
           if: changed.length
           arch_chroot: options.arch_chroot
           rootdir: options.rootdir
