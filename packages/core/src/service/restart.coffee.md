@@ -46,12 +46,11 @@ require('nikita').service.start([{
       @service.discover (err, system) -> 
         options.loader ?= system.loader
       @call ->
-        cmd = switch options.loader
-          when 'systemctl' then "systemctl restart #{options.name}"
-          when 'service' then "service #{options.name} restart"
-          else throw Error 'Init System not supported'
         @system.execute
-          cmd: cmd
+          cmd: switch options.loader
+            when 'systemctl' then "systemctl restart #{options.name}"
+            when 'service' then "service #{options.name} restart"
+            else throw Error 'Init System not supported'
         , (err, {status}) ->
           throw err if err
           @store["nikita.service.#{options.name}.status"] = 'started' if status

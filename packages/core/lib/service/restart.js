@@ -60,19 +60,17 @@ module.exports = function({options}) {
     return options.loader != null ? options.loader : options.loader = system.loader;
   });
   return this.call(function() {
-    var cmd;
-    cmd = (function() {
-      switch (options.loader) {
-        case 'systemctl':
-          return `systemctl restart ${options.name}`;
-        case 'service':
-          return `service ${options.name} restart`;
-        default:
-          throw Error('Init System not supported');
-      }
-    })();
     return this.system.execute({
-      cmd: cmd
+      cmd: (function() {
+        switch (options.loader) {
+          case 'systemctl':
+            return `systemctl restart ${options.name}`;
+          case 'service':
+            return `service ${options.name} restart`;
+          default:
+            throw Error('Init System not supported');
+        }
+      })()
     }, function(err, {status}) {
       if (err) {
         throw err;
