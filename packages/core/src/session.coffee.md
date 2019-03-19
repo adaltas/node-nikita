@@ -367,7 +367,6 @@
           do_conditions = ->
             _opts = {}
             for k, v of context.options
-              continue if k in ['handler', 'callback', 'header', 'after', 'before']
               # continue if k in ['handler', 'callback', 'header', 'after', 'before']
               _opts[k] ?= v
             conditions.all proxy, options: _opts

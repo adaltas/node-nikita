@@ -707,9 +707,7 @@ module.exports = function() {
         ref2 = context.options;
         for (k in ref2) {
           v = ref2[k];
-          if (k === 'handler' || k === 'callback' || k === 'header' || k === 'after' || k === 'before') {
-            continue;
-          }
+          // continue if k in ['handler', 'callback', 'header', 'after', 'before']
           if (_opts[k] == null) {
             _opts[k] = v;
           }
