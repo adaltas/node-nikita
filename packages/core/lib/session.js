@@ -99,15 +99,8 @@ module.exports = function() {
     }
   });
   obj.internal = {};
-  obj.internal.options = function(_arguments, action_name, params = {}) {
+  obj.internal.options = function(_arguments, action_name) {
     var __argument, __arguments, action, actions, args, i, j, k, len, len1, len2, len3, m, middleware, n, newaction, newactions, o, opt, option, p, v;
-    if (params.enrich == null) {
-      params.enrich = true;
-    }
-    // Does the actions require a handler
-    if (params.handler == null) {
-      params.handler = false;
-    }
     if (_arguments.length === 0) {
       _arguments = [{}];
     }
@@ -225,19 +218,15 @@ module.exports = function() {
     })();
     // Normalize
     actions = (function() {
-      var len4, q, ref, results;
+      var len4, q, results;
       results = [];
       for (q = 0, len4 = actions.length; q < len4; q++) {
         action = actions[q];
         if (action_name) {
-          // Enrich
           action.action = action_name;
         }
         if (!Array.isArray(action.action)) {
           action.action = [action.action];
-        }
-        if (params.enrich && ((ref = action.callback) != null ? ref.length : void 0) > 2) { // Doesnt seem to be used anywhere
-          action.user_args = true;
         }
         if (action.once === true) {
           action.once = ['handler'];
@@ -251,15 +240,6 @@ module.exports = function() {
         if (Array.isArray(action.once)) {
           action.once = action.once.sort();
         }
-        // Validation
-        if (params.handler) {
-          if (!action.handler) {
-            throw Error('Missing handler option');
-          }
-          if (typeof action.handler !== 'function') {
-            throw Error(`Invalid Handler: expect a function, got '${action.handler}'`);
-          }
-        }
         results.push(action);
       }
       return results;
@@ -272,17 +252,16 @@ module.exports = function() {
     context = {
       internal: {},
       options: {},
-      original: (function() {
-        var k, options_original, v;
-        // Create original and filter with cascade
-        options_original = options_action;
+      original: (function() { // Create original and filter with cascade
+        var k, options, v;
+        options = options_action;
         for (k in options_parent) {
           v = options_parent[k];
-          if (options_original[k] === void 0 && obj.cascade[k] === true) {
-            options_original[k] = v;
+          if (options[k] === void 0 && obj.cascade[k] === true) {
+            options[k] = v;
           }
         }
-        return options_original;
+        return options;
       })()
     };
     context.internal.parent = options_parent;
@@ -446,7 +425,7 @@ module.exports = function() {
     // Nothing more to do in current queue
     if (!options) {
       errors = state.current_level.history.map(function(context) {
-        return (context.error_in_callback || !context.options.tolerant && !context.original.relax) && context.error;
+        return (context.error_in_callback || !context.internal.tolerant && !context.original.relax) && context.error;
       });
       error = errors[errors.length - 1];
       if (!state.killed && state.parent_levels.length === 0 && error && state.current_level.throw_if_error) {
@@ -476,7 +455,7 @@ module.exports = function() {
     }
     if (options.action === 'next') {
       errors = state.current_level.history.map(function(context) {
-        return (context.error_in_callback || !context.options.tolerant && !context.original.relax) && context.error;
+        return (context.error_in_callback || !context.internal.tolerant && !context.original.relax) && context.error;
       });
       error = errors[errors.length - 1];
       status = state.current_level.history.some(function(context) {
@@ -492,9 +471,9 @@ module.exports = function() {
     }
     if (options.action === 'promise') {
       errors = state.current_level.history.map(function(context) {
-        return (context.error_in_callback || !context.options.tolerant && !context.original.relax) && context.error;
+        return (context.error_in_callback || !context.internal.tolerant && !context.original.relax) && context.error;
       });
-      // context.error and (context.error.fatal or (not context.options.tolerant and not context.original.relax))
+      // context.error and (context.error.fatal or (not context.internal.tolerant and not context.original.relax))
       error = errors[errors.length - 1];
       status = state.current_level.history.some(function(context) {
         return !context.original.shy && context.status;
@@ -655,9 +634,7 @@ module.exports = function() {
         }
         return each(context.internal.before).call(function(before, next) {
           var _opts, k, ref2, v;
-          before = normalize_options([before], 'call', {
-            enrich: false
-          });
+          before = normalize_options([before], 'call');
           before = before[0];
           _opts = {
             options_before: true
@@ -669,7 +646,6 @@ module.exports = function() {
           ref2 = context.options;
           for (k in ref2) {
             v = ref2[k];
-            // continue if k in ['handler', 'callback']
             if (_opts[k] == null) {
               _opts[k] = v;
             }
@@ -1003,9 +979,7 @@ module.exports = function() {
         }
         return each(context.internal.after).call(function(after, next) {
           var _opts, k, ref2, v;
-          after = normalize_options([after], 'call', {
-            enrich: false
-          });
+          after = normalize_options([after], 'call');
           after = after[0];
           _opts = {
             options_after: true
@@ -1061,7 +1035,7 @@ module.exports = function() {
         state.current_level.current = {
           output: {}
         };
-        error = (context.error_in_callback || !context.options.tolerant && !context.original.relax) && context.error;
+        error = (context.error_in_callback || !context.internal.tolerant && !context.original.relax) && context.error;
         return callback(error, context.output);
       };
       return do_options();
@@ -1186,9 +1160,7 @@ module.exports = function() {
             action: arguments[0]
           };
         }
-        options = normalize_options(arguments, null, {
-          enrich: false
-        });
+        options = normalize_options(arguments, null);
         for (m = 0, len = options.length; m < len; m++) {
           opts = options[m];
           if (typeof opts.handler !== 'function') {
@@ -1209,9 +1181,7 @@ module.exports = function() {
             action: arguments[0]
           };
         }
-        options = normalize_options(arguments, null, {
-          enrich: false
-        });
+        options = normalize_options(arguments, null);
         for (m = 0, len = options.length; m < len; m++) {
           opts = options[m];
           if (typeof opts.handler !== 'function') {
@@ -1328,7 +1298,8 @@ module.exports.cascade = {
   ssh: true,
   stdout: true,
   stderr: true,
-  sudo: true
+  sudo: true,
+  tolerant: false
 };
 
 // ## Helper functions

@@ -58,10 +58,7 @@
                 get_proxy_builder()
           get_proxy_builder()
       obj.internal = {}
-      obj.internal.options = (_arguments, action_name, params={}) ->
-        params.enrich ?= true
-        # Does the actions require a handler
-        params.handler ?= false
+      obj.internal.options = (_arguments, action_name) ->
         _arguments = [{}] if _arguments.length is 0
         # Convert every argument to an array
         for args, i in _arguments
@@ -116,18 +113,12 @@
           newaction
         # Normalize
         actions = for action in actions
-          # Enrich
           action.action = action_name if action_name
           action.action = [action.action] unless Array.isArray action.action
-          action.user_args = true if params.enrich and action.callback?.length > 2 # Doesnt seem to be used anywhere
           action.once = ['handler'] if action.once is true
           delete action.once if action.once is false
           action.once = action.once.sort() if Array.isArray action.once
           action.once = action.once.sort() if Array.isArray action.once
-          # Validation
-          if params.handler
-            throw Error 'Missing handler option' unless action.handler
-            throw Error "Invalid Handler: expect a function, got '#{action.handler}'" unless typeof action.handler is 'function'
           action
         actions
       normalize_options = obj.internal.options
@@ -135,12 +126,11 @@
         context =
           internal: {}
           options: {}
-          original: (->
-            # Create original and filter with cascade
-            options_original = options_action
+          original: (-> # Create original and filter with cascade
+            options = options_action
             for k, v of options_parent
-              options_original[k] = v if options_original[k] is undefined and obj.cascade[k] is true
-            options_original
+              options[k] = v if options[k] is undefined and obj.cascade[k] is true
+            options
           )()
         context.internal.parent = options_parent
         # Merge cascade action options with default session options
@@ -344,7 +334,7 @@
             context.internal.before = [context.internal.before] unless Array.isArray context.internal.before
             each context.internal.before
             .call (before, next) ->
-              before = normalize_options [before], 'call', enrich: false
+              before = normalize_options [before], 'call'
               before = before[0]
               _opts = options_before: true
               for k, v of before
@@ -499,7 +489,7 @@
             context.internal.after = [context.internal.after] unless Array.isArray context.internal.after
             each context.internal.after
             .call (after, next) ->
-              after = normalize_options [after], 'call', enrich: false
+              after = normalize_options [after], 'call'
               after = after[0]
               _opts = options_after: true
               for k, v of after
@@ -576,14 +566,14 @@
         proxy
       state.properties.before = get: -> ->
         arguments[0] = action: arguments[0] if typeof arguments[0] is 'string' or Array.isArray(arguments[0])
-        options = normalize_options arguments, null, enrich: false
+        options = normalize_options arguments, null
         for opts in options
           throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
           state.befores.push opts
         proxy
       state.properties.after = get: -> ->
         arguments[0] = action: arguments[0] if typeof arguments[0] is 'string' or Array.isArray(arguments[0])
-        options = normalize_options arguments, null, enrich: false
+        options = normalize_options arguments, null
         for opts in options
           throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
           state.afters.push opts
