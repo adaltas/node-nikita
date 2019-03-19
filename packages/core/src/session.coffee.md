@@ -227,7 +227,7 @@
         # Nothing more to do in current queue
         unless options
           errors = state.current_level.history.map (context) ->
-            (context.error_in_callback or not context.options.tolerant and not context.original.relax) and context.error
+            (context.error_in_callback or not context.internal.tolerant and not context.original.relax) and context.error
           error = errors[errors.length - 1]
           if not state.killed and state.parent_levels.length is 0 and error and state.current_level.throw_if_error
             if obj.listenerCount('error') is 0
@@ -242,7 +242,7 @@
         throw Error 'Invalid Argument' unless options and callback
         if options.action is 'next'
           errors = state.current_level.history.map (context) ->
-            (context.error_in_callback or not context.options.tolerant and not context.original.relax) and context.error
+            (context.error_in_callback or not context.internal.tolerant and not context.original.relax) and context.error
           error = errors[errors.length - 1]
           status = state.current_level.history.some (context) ->
             not context.original.shy and context.status
@@ -251,8 +251,8 @@
           return callback null, {}
         if options.action is 'promise'
           errors = state.current_level.history.map (context) ->
-            (context.error_in_callback or not context.options.tolerant and not context.original.relax) and context.error
-            # context.error and (context.error.fatal or (not context.options.tolerant and not context.original.relax))
+            (context.error_in_callback or not context.internal.tolerant and not context.original.relax) and context.error
+            # context.error and (context.error.fatal or (not context.internal.tolerant and not context.original.relax))
           error = errors[errors.length - 1]
           status = state.current_level.history.some (context) ->
             not context.original.shy and context.status
@@ -350,7 +350,6 @@
               for k, v of before
                 _opts[k] = v
               for k, v of context.options
-                # continue if k in ['handler', 'callback']
                 _opts[k] ?= v
               run _opts, next
             .error (error) ->
@@ -527,7 +526,7 @@
           do_end = (context) ->
             state.current_level.history.push context
             state.current_level.current = output: {}
-            error = (context.error_in_callback or not context.options.tolerant and not context.original.relax) and context.error
+            error = (context.error_in_callback or not context.internal.tolerant and not context.original.relax) and context.error
             callback error, context.output
           do_options()
       state.properties.child = get: -> ->
@@ -647,6 +646,7 @@
       stdout: true
       stderr: true
       sudo: true
+      tolerant: false
 
 ## Helper functions
 
