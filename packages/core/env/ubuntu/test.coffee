@@ -18,10 +18,12 @@ module.exports =
     arch: '64'
     name: 'ubuntu'
     version: '14.04'
-  ssh:
-    host: 'localhost'
-    username: 'root'
   service:
     name: 'nginx-light'
     srv_name: 'nginx'
     chk_name: 'nginx'
+  ssh: [
+    null
+  ,
+    ssh: host: 'localhost', username: 'root'
+  ]

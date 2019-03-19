@@ -21,18 +21,12 @@ module.exports =
   docker: # eg `docker-machine create --driver virtualbox nikita || docker-machine start nikita`
     host: 'dind:2375'
     # machine: 'nikita'
-  #ssh:
-  #  host: '127.0.0.1'
-  #  username: process.env.USER
-  #ssh_example:
-  #  host: '172.16.134.11'
-  #  username: 'root'
-  #  uid: 'wdavidw'
-  #  gid: 'wdavidw'
-  ssh:
-    host: 'localhost'
-    username: 'root'
   service:
     name: 'ntp'
     srv_name: 'ntpd'
     chk_name: 'ntpd'
+  ssh: [
+    null
+  ,
+    ssh: host: 'localhost', username: 'root'
+  ]

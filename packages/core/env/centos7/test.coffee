@@ -13,10 +13,12 @@ module.exports =
     arch: '64'
     name: 'centos'
     version: '7.5'
-  ssh:
-    host: 'localhost'
-    username: 'root'
   service:
     name: 'cronie'
     srv_name: 'crond'
     chk_name: 'crond'
+  ssh: [
+    null
+  ,
+    ssh: host: 'localhost', username: 'root'
+  ]

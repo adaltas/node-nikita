@@ -13,18 +13,12 @@ module.exports =
     binddn: 'cn=Manager,dc=ryba'
     passwd: 'test'
     suffix_dn: 'ou=users,dc=ryba' # used by ldap_user
-  #ssh:
-  #  host: '127.0.0.1'
-  #  username: process.env.USER
-  #ssh_example:
-  #  host: '172.16.134.11'
-  #  username: 'root'
-  #  uid: 'wdavidw'
-  #  gid: 'wdavidw'
-  ssh:
-    host: 'localhost'
-    username: 'root'
   service:
     name: 'cronie'
     srv_name: 'crond'
     chk_name: 'crond'
+  ssh: [
+    null
+  ,
+    ssh: host: 'localhost', username: 'root'
+  ]
