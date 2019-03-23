@@ -405,9 +405,7 @@ module.exports = function() {
     }
     context.error = error;
     state.current_level.history.push(context);
-    state.current_level.current = {
-      output: {}
-    };
+    // state.current_level.current = output: {}
     jump_to_error();
     return run_next();
   };
@@ -515,7 +513,7 @@ module.exports = function() {
     context.callback = context.internal.callback;
     context.internal.callback = void 0;
     state.parent_levels.unshift(state.current_level);
-    state.current_level.current = context;
+    state.current_level.context = context;
     state.current_level = state_create_level();
     state.current_level.options = context.internal;
     if (context.internal.header) {
@@ -1026,9 +1024,7 @@ module.exports = function() {
       };
       do_end = function(context) {
         state.current_level.history.push(context);
-        state.current_level.current = {
-          output: {}
-        };
+        // state.current_level.current = output: {}
         error = (context.error_in_callback || !context.internal.tolerant && !context.original.relax) && context.error;
         return callback(error, context.output);
       };
@@ -1216,7 +1212,7 @@ module.exports = function() {
           }
           return status;
         } else if (index === 0) {
-          return (ref2 = state.parent_levels[0].current) != null ? (ref3 = ref2.output) != null ? ref3.status : void 0 : void 0;
+          return (ref2 = state.parent_levels[0].context) != null ? (ref3 = ref2.output) != null ? ref3.status : void 0 : void 0;
         } else {
           l = state.parent_levels[0].history.length;
           if (index < 0) {

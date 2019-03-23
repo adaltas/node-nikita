@@ -207,7 +207,7 @@
         state.current_level = state.parent_levels.shift() while state.parent_levels.length
         context.error = error
         state.current_level.history.push context
-        state.current_level.current = output: {}
+        # state.current_level.current = output: {}
         jump_to_error()
         run_next()
       jump_to_error = ->
@@ -270,7 +270,7 @@
         context.callback = context.internal.callback
         context.internal.callback = undefined
         state.parent_levels.unshift state.current_level
-        state.current_level.current = context
+        state.current_level.context = context
         state.current_level = state_create_level()
         state.current_level.options = context.internal
         proxy.log message: context.internal.header, type: 'header', index: index, headers: context.internal.headers if context.internal.header
@@ -512,7 +512,7 @@
             do_end context
           do_end = (context) ->
             state.current_level.history.push context
-            state.current_level.current = output: {}
+            # state.current_level.current = output: {}
             error = (context.error_in_callback or not context.internal.tolerant and not context.original.relax) and context.error
             callback error, context.output
           do_options()
@@ -587,7 +587,7 @@
           action.status = true for action in state.parent_levels[0].history
           return status
         else if index is 0
-          state.parent_levels[0].current?.output?.status
+          state.parent_levels[0].context?.output?.status
         else
           l = state.parent_levels[0].history.length
           index = (l + index) if index < 0
