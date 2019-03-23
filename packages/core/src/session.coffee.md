@@ -28,7 +28,7 @@
       proxy = new Proxy obj,
         has: (target, name) ->
           console.warns 'proxy has is being called', name
-        apply: (target, thisArg, argumentsList) ->
+        apply: (target, self, argumentsList) ->
           console.warn 'apply'
         get: (target, name) ->
           return target[name] if obj[name]?
@@ -122,7 +122,7 @@
           action
         actions
       normalize_options = obj.internal.options
-      make_context = (options_global, context_parent, options_action) ->
+      make_context = (context_global, context_parent, options_action) ->
         context =
           internal: {}
           options: {}
@@ -134,7 +134,7 @@
           )()
           parent: context_parent
         # Merge cascade action options with default session options
-        context.internal.cascade = {...module.exports.cascade, ...options_global.cascade, ...options_action.cascade}
+        context.internal.cascade = {...context_global.cascade, ...options_action.cascade}
         # Copy initial options
         for k, v of options_action
           continue if k is 'cascade'
@@ -144,7 +144,7 @@
           continue unless context.internal.cascade[k] is true
           context.internal[k] = v if context.internal[k] is undefined
         # Merge action options with default session options 
-        for k, v of options_global
+        for k, v of context_global.options
           continue if k is 'cascade'
           context.internal[k] = v if context.internal[k] is undefined
         # Build headers option
@@ -182,8 +182,8 @@
         return get: false unless options.length is 1
         options = options[0]
         return get: false unless options.get is true
-        context = make_context obj.options, state.current_level.context, options
-        values = context.internal.handler.call proxy, context, context.internal.callback
+        context = make_context obj, state.current_level.context, options
+        values = context.internal.handler.call proxy, context
         get: true, values: values
       call_callback = (context) ->
         state.parent_levels.unshift state.current_level
@@ -259,7 +259,7 @@
             callback error, {}
         index = state.index_counter++
         context_parent = state.current_level.context
-        context = make_context obj.options, context_parent, options
+        context = make_context obj, context_parent, options
         # Prepare the Context
         context.session = proxy
         context.handler = context.internal.handler

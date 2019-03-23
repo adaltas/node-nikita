@@ -36,7 +36,7 @@ module.exports = function() {
     has: function(target, name) {
       return console.warns('proxy has is being called', name);
     },
-    apply: function(target, thisArg, argumentsList) {
+    apply: function(target, self, argumentsList) {
       return console.warn('apply');
     },
     get: function(target, name) {
@@ -247,8 +247,8 @@ module.exports = function() {
     return actions;
   };
   normalize_options = obj.internal.options;
-  make_context = function(options_global, context_parent, options_action) {
-    var base, base1, base2, base3, base4, context, headers, k, match, push_headers, ref, ref1, ref2, ref3, v;
+  make_context = function(context_global, context_parent, options_action) {
+    var base, base1, base2, base3, base4, context, headers, k, match, push_headers, ref, ref1, ref2, ref3, ref4, v;
     context = {
       internal: {},
       options: {},
@@ -266,9 +266,8 @@ module.exports = function() {
       })(),
       parent: context_parent
     };
-    // context.internal.parent = context_parent?.internal
     // Merge cascade action options with default session options
-    context.internal.cascade = {...module.exports.cascade, ...options_global.cascade, ...options_action.cascade};
+    context.internal.cascade = {...context_global.cascade, ...options_action.cascade};
 // Copy initial options
     for (k in options_action) {
       v = options_action[k];
@@ -288,9 +287,10 @@ module.exports = function() {
         context.internal[k] = v;
       }
     }
-// Merge action options with default session options 
-    for (k in options_global) {
-      v = options_global[k];
+    ref1 = context_global.options;
+    // Merge action options with default session options 
+    for (k in ref1) {
+      v = ref1[k];
       if (k === 'cascade') {
         continue;
       }
@@ -323,7 +323,7 @@ module.exports = function() {
     if ((base3 = context.internal).status == null) {
       base3.status = true;
     }
-    context.internal.depth = context.internal.depth != null ? context.internal.depth : (((ref1 = context.parent) != null ? (ref2 = ref1.internal) != null ? ref2.depth : void 0 : void 0) || 0) + 1;
+    context.internal.depth = context.internal.depth != null ? context.internal.depth : (((ref2 = context.parent) != null ? (ref3 = ref2.internal) != null ? ref3.depth : void 0 : void 0) || 0) + 1;
     context.internal.attempt = -1; // Clone and filter cascaded options
     // throw Error 'Incompatible Options: status "false" implies shy "true"' if options.status is false and options.shy is false # Room for argument, leave it strict for now until we come accross a usecase justifying it.
     // options.shy ?= true if options.status is false
@@ -345,10 +345,10 @@ module.exports = function() {
         context.internal.target = path.posix.join('.', match[1]);
       }
     }
-    ref3 = context.internal;
+    ref4 = context.internal;
     // Filter cascaded options
-    for (k in ref3) {
-      v = ref3[k];
+    for (k in ref4) {
+      v = ref4[k];
       if (context.internal.cascade[k] === false) {
         continue;
       }
@@ -369,8 +369,8 @@ module.exports = function() {
         get: false
       };
     }
-    context = make_context(obj.options, state.current_level.context, options);
-    values = context.internal.handler.call(proxy, context, context.internal.callback);
+    context = make_context(obj, state.current_level.context, options);
+    values = context.internal.handler.call(proxy, context);
     return {
       get: true,
       values: values
@@ -503,7 +503,7 @@ module.exports = function() {
     }
     index = state.index_counter++;
     context_parent = state.current_level.context;
-    context = make_context(obj.options, context_parent, options);
+    context = make_context(obj, context_parent, options);
     // Prepare the Context
     context.session = proxy;
     context.handler = context.internal.handler;
