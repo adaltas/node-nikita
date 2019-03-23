@@ -122,17 +122,17 @@
           action
         actions
       normalize_options = obj.internal.options
-      make_context = (options_global, options_parent, options_action) ->
+      make_context = (options_global, context_parent, options_action) ->
         context =
           internal: {}
           options: {}
           original: (-> # Create original and filter with cascade
             options = options_action
-            for k, v of options_parent
+            for k, v of context_parent?.internal
               options[k] = v if options[k] is undefined and obj.cascade[k] is true
             options
           )()
-        context.internal.parent = options_parent
+          parent: context_parent
         # Merge cascade action options with default session options
         context.internal.cascade = {...module.exports.cascade, ...options_global.cascade, ...options_action.cascade}
         # Copy initial options
@@ -140,7 +140,7 @@
           continue if k is 'cascade'
           context.internal[k] = options_action[k]
         # Merge parent cascaded options
-        for k, v of options_parent
+        for k, v of context_parent?.internal
           continue unless context.internal.cascade[k] is true
           context.internal[k] = v if context.internal[k] is undefined
         # Merge action options with default session options 
@@ -149,17 +149,17 @@
           context.internal[k] = v if context.internal[k] is undefined
         # Build headers option
         headers = []
-        push_headers = (options) ->
-          headers.push options.header if options.header
-          push_headers options.parent if options.parent
-        push_headers context.internal
+        push_headers = (context) ->
+          headers.push context.internal.header if context.internal.header
+          push_headers context.parent if context.parent
+        push_headers context
         context.internal.headers = headers.reverse()
         # Default values
         context.internal.sleep ?= 3000 # Wait 3s between retry
         context.internal.retry ?= 0
         context.internal.disabled ?= false
         context.internal.status ?= true
-        context.internal.depth = if context.internal.depth? then context.internal.depth else (context.internal.parent?.depth or 0) + 1
+        context.internal.depth = if context.internal.depth? then context.internal.depth else (context.parent?.internal?.depth or 0) + 1
         context.internal.attempt = -1# Clone and filter cascaded options
         # throw Error 'Incompatible Options: status "false" implies shy "true"' if options.status is false and options.shy is false # Room for argument, leave it strict for now until we come accross a usecase justifying it.
         # options.shy ?= true if options.status is false
@@ -182,19 +182,17 @@
         return get: false unless options.length is 1
         options = options[0]
         return get: false unless options.get is true
-        context = make_context obj.options, state.current_level.options, options
-        values = context.internal.handler.call proxy, options: context.options, context.internal.callback
+        context = make_context obj.options, state.current_level.context, options
+        values = context.internal.handler.call proxy, context, context.internal.callback
         get: true, values: values
       call_callback = (context) ->
-        options = state.current_level.options
         state.parent_levels.unshift state.current_level
         state.current_level = state_create_level()
-        state.current_level.options = options
+        state.current_level.context = context
         try
           context.callback.call proxy, context.error, context.output, (context.args or [])...
         catch error
           state.current_level = state.parent_levels.shift()
-          # error.fatal = true
           context.error_in_callback = true
           context.error = error
           jump_to_error()
@@ -207,7 +205,6 @@
         state.current_level = state.parent_levels.shift() while state.parent_levels.length
         context.error = error
         state.current_level.history.push context
-        # state.current_level.current = output: {}
         jump_to_error()
         run_next()
       jump_to_error = ->
@@ -261,8 +258,8 @@
           , (error) ->
             callback error, {}
         index = state.index_counter++
-        options_parent = state.current_level.options
-        context = make_context obj.options, options_parent, options
+        context_parent = state.current_level.context
+        context = make_context obj.options, context_parent, options
         # Prepare the Context
         context.session = proxy
         context.handler = context.internal.handler
@@ -270,9 +267,8 @@
         context.callback = context.internal.callback
         context.internal.callback = undefined
         state.parent_levels.unshift state.current_level
-        state.current_level.context = context
         state.current_level = state_create_level()
-        state.current_level.options = context.internal
+        state.current_level.context = context
         proxy.log message: context.internal.header, type: 'header', index: index, headers: context.internal.headers if context.internal.header
         do ->
           do_options = ->
@@ -492,7 +488,6 @@
               for k, v of after
                 _opts[k] = v
               for k, v of context.options
-                # continue if k in ['handler', 'callback']
                 _opts[k] ?= v
               run _opts, next
             .error (error) ->
@@ -512,7 +507,6 @@
             do_end context
           do_end = (context) ->
             state.current_level.history.push context
-            # state.current_level.current = output: {}
             error = (context.error_in_callback or not context.internal.tolerant and not context.original.relax) and context.error
             callback error, context.output
           do_options()
@@ -587,7 +581,7 @@
           action.status = true for action in state.parent_levels[0].history
           return status
         else if index is 0
-          state.parent_levels[0].context?.output?.status
+          state.current_level.context.output?.status
         else
           l = state.parent_levels[0].history.length
           index = (l + index) if index < 0
@@ -621,7 +615,7 @@
       cwd: true
       debug: true
       depth: null
-      disabled: false
+      disabled: null
       handler: false
       header: null
       log: true

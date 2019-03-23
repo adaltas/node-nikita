@@ -11,7 +11,7 @@ describe 'options "handler"', ->
     it 'pass properties', ->
       nikita
       .call (context) ->
-        Object.keys(context).should.eql ['internal', 'options', 'original', 'session', 'handler', 'callback']
+        Object.keys(context).should.eql ['internal', 'options', 'original', 'parent', 'session', 'handler', 'callback']
       .promise()
 
   describe 'sync', ->

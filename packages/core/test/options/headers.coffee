@@ -32,8 +32,8 @@ describe 'options "headers"', ->
   it 'get headers', ->
     nikita()
     .registry.register( 'my_action', header: 'default value', handler: ({options}) ->
-      @call header: 'h 1.1.1', ({options}) ->
-        options.headers.should.eql ['h 1', options.parent.assert, 'h 1.1.1']
+      @call header: 'h 1.1.1', ({options, parent}) ->
+        options.headers.should.eql ['h 1', parent.options.assert, 'h 1.1.1']
     )
     .call header: 'h 1', ({options}) ->
       @my_action assert: 'default value'

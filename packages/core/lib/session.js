@@ -247,24 +247,26 @@ module.exports = function() {
     return actions;
   };
   normalize_options = obj.internal.options;
-  make_context = function(options_global, options_parent, options_action) {
-    var base, base1, base2, base3, base4, context, headers, k, match, push_headers, ref, ref1, v;
+  make_context = function(options_global, context_parent, options_action) {
+    var base, base1, base2, base3, base4, context, headers, k, match, push_headers, ref, ref1, ref2, ref3, v;
     context = {
       internal: {},
       options: {},
       original: (function() { // Create original and filter with cascade
-        var k, options, v;
+        var k, options, ref, v;
         options = options_action;
-        for (k in options_parent) {
-          v = options_parent[k];
+        ref = context_parent != null ? context_parent.internal : void 0;
+        for (k in ref) {
+          v = ref[k];
           if (options[k] === void 0 && obj.cascade[k] === true) {
             options[k] = v;
           }
         }
         return options;
-      })()
+      })(),
+      parent: context_parent
     };
-    context.internal.parent = options_parent;
+    // context.internal.parent = context_parent?.internal
     // Merge cascade action options with default session options
     context.internal.cascade = {...module.exports.cascade, ...options_global.cascade, ...options_action.cascade};
 // Copy initial options
@@ -275,9 +277,10 @@ module.exports = function() {
       }
       context.internal[k] = options_action[k];
     }
-// Merge parent cascaded options
-    for (k in options_parent) {
-      v = options_parent[k];
+    ref = context_parent != null ? context_parent.internal : void 0;
+    // Merge parent cascaded options
+    for (k in ref) {
+      v = ref[k];
       if (context.internal.cascade[k] !== true) {
         continue;
       }
@@ -297,15 +300,15 @@ module.exports = function() {
     }
     // Build headers option
     headers = [];
-    push_headers = function(options) {
-      if (options.header) {
-        headers.push(options.header);
+    push_headers = function(context) {
+      if (context.internal.header) {
+        headers.push(context.internal.header);
       }
-      if (options.parent) {
-        return push_headers(options.parent);
+      if (context.parent) {
+        return push_headers(context.parent);
       }
     };
-    push_headers(context.internal);
+    push_headers(context);
     context.internal.headers = headers.reverse();
     // Default values
     if ((base = context.internal).sleep == null) {
@@ -320,7 +323,7 @@ module.exports = function() {
     if ((base3 = context.internal).status == null) {
       base3.status = true;
     }
-    context.internal.depth = context.internal.depth != null ? context.internal.depth : (((ref = context.internal.parent) != null ? ref.depth : void 0) || 0) + 1;
+    context.internal.depth = context.internal.depth != null ? context.internal.depth : (((ref1 = context.parent) != null ? (ref2 = ref1.internal) != null ? ref2.depth : void 0 : void 0) || 0) + 1;
     context.internal.attempt = -1; // Clone and filter cascaded options
     // throw Error 'Incompatible Options: status "false" implies shy "true"' if options.status is false and options.shy is false # Room for argument, leave it strict for now until we come accross a usecase justifying it.
     // options.shy ?= true if options.status is false
@@ -342,10 +345,10 @@ module.exports = function() {
         context.internal.target = path.posix.join('.', match[1]);
       }
     }
-    ref1 = context.internal;
+    ref3 = context.internal;
     // Filter cascaded options
-    for (k in ref1) {
-      v = ref1[k];
+    for (k in ref3) {
+      v = ref3[k];
       if (context.internal.cascade[k] === false) {
         continue;
       }
@@ -366,27 +369,23 @@ module.exports = function() {
         get: false
       };
     }
-    context = make_context(obj.options, state.current_level.options, options);
-    values = context.internal.handler.call(proxy, {
-      options: context.options
-    }, context.internal.callback);
+    context = make_context(obj.options, state.current_level.context, options);
+    values = context.internal.handler.call(proxy, context, context.internal.callback);
     return {
       get: true,
       values: values
     };
   };
   call_callback = function(context) {
-    var current_level, error, options;
-    options = state.current_level.options;
+    var current_level, error;
     state.parent_levels.unshift(state.current_level);
     state.current_level = state_create_level();
-    state.current_level.options = options;
+    state.current_level.context = context;
     try {
       context.callback.call(proxy, context.error, context.output, ...(context.args || []));
     } catch (error1) {
       error = error1;
       state.current_level = state.parent_levels.shift();
-      // error.fatal = true
       context.error_in_callback = true;
       context.error = error;
       jump_to_error();
@@ -405,7 +404,6 @@ module.exports = function() {
     }
     context.error = error;
     state.current_level.history.push(context);
-    // state.current_level.current = output: {}
     jump_to_error();
     return run_next();
   };
@@ -447,7 +445,7 @@ module.exports = function() {
     });
   };
   run = function(options, callback) {
-    var context, error, errors, index, options_parent, ref, ref1, status;
+    var context, context_parent, error, errors, index, ref, ref1, status;
     if (!(options && callback)) {
       throw Error('Invalid Argument');
     }
@@ -504,8 +502,8 @@ module.exports = function() {
       });
     }
     index = state.index_counter++;
-    options_parent = state.current_level.options;
-    context = make_context(obj.options, options_parent, options);
+    context_parent = state.current_level.context;
+    context = make_context(obj.options, context_parent, options);
     // Prepare the Context
     context.session = proxy;
     context.handler = context.internal.handler;
@@ -513,9 +511,8 @@ module.exports = function() {
     context.callback = context.internal.callback;
     context.internal.callback = void 0;
     state.parent_levels.unshift(state.current_level);
-    state.current_level.context = context;
     state.current_level = state_create_level();
-    state.current_level.options = context.internal;
+    state.current_level.context = context;
     if (context.internal.header) {
       proxy.log({
         message: context.internal.header,
@@ -983,7 +980,6 @@ module.exports = function() {
           ref2 = context.options;
           for (k in ref2) {
             v = ref2[k];
-            // continue if k in ['handler', 'callback']
             if (_opts[k] == null) {
               _opts[k] = v;
             }
@@ -1024,7 +1020,6 @@ module.exports = function() {
       };
       do_end = function(context) {
         state.current_level.history.push(context);
-        // state.current_level.current = output: {}
         error = (context.error_in_callback || !context.internal.tolerant && !context.original.relax) && context.error;
         return callback(error, context.output);
       };
@@ -1186,7 +1181,7 @@ module.exports = function() {
   state.properties.status = {
     get: function() {
       return function(index) {
-        var action, l, len, len1, m, n, ref, ref1, ref2, ref3, ref4, status;
+        var action, l, len, len1, m, n, ref, ref1, ref2, ref3, status;
         if (arguments.length === 0) {
           return state.parent_levels[0].history.some(function(action) {
             return !action.original.shy && action.status;
@@ -1212,13 +1207,13 @@ module.exports = function() {
           }
           return status;
         } else if (index === 0) {
-          return (ref2 = state.parent_levels[0].context) != null ? (ref3 = ref2.output) != null ? ref3.status : void 0 : void 0;
+          return (ref2 = state.current_level.context.output) != null ? ref2.status : void 0;
         } else {
           l = state.parent_levels[0].history.length;
           if (index < 0) {
             index = l + index;
           }
-          return (ref4 = state.parent_levels[0].history[index]) != null ? ref4.status : void 0;
+          return (ref3 = state.parent_levels[0].history[index]) != null ? ref3.status : void 0;
         }
       };
     }
@@ -1277,7 +1272,7 @@ module.exports.cascade = {
   cwd: true,
   debug: true,
   depth: null,
-  disabled: false,
+  disabled: null,
   handler: false,
   header: null,
   log: true,

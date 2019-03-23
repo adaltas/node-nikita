@@ -11,7 +11,7 @@ describe 'api events "handled"', ->
     .on 'handled', (log) ->
       arguments.length.should.eql 1
       Object.keys(log).sort().should.eql [
-        'attempt', 'depth', 'error', 'file', 'headers',
+        'attempt', 'depth', 'disabled', 'error', 'file', 'headers',
         'index', 'level', 'line', 'module',
         'shy', 'status', 'time', 'type'
       ]

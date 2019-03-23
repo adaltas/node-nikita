@@ -10,6 +10,7 @@
 ## Trunk
 
 Breaking changes:
+* api: parent part of context
 * each: invalid args throw error instead of passing it
 * domain: remove option and support
 

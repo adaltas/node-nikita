@@ -29,8 +29,8 @@ module.exports = {
     ssh: false,
     shy: true
   },
-  handler: function({options}) {
-    var file, frame, line, msg, parent, ref, ref1, ref2, stackTrace;
+  handler: function({options, parent}) {
+    var file, frame, line, msg, ref, ref1, ref2, ref3, ref4, stackTrace;
     if (options.argument != null) {
       // Options
       options.message = options.argument;
@@ -54,8 +54,6 @@ module.exports = {
     line = frame.getLineNumber();
     options.file = file;
     options.line = line;
-    parent = options.parent;
-    delete options.parent;
     if (options.debug) {
       if ((ref = options.type) === 'text' || ref === 'stdin' || ref === 'stdout_stream' || ref === 'stderr_stream') {
         if (!(((ref1 = options.type) === 'stdout_stream' || ref1 === 'stderr_stream') && options.message === null)) {
@@ -83,10 +81,12 @@ module.exports = {
     }
     if (typeof options.log === 'function') {
       if (parent != null) {
-        parent.log(options);
+        if ((ref3 = parent.options) != null) {
+          ref3.log(options);
+        }
       }
     } else {
-      if ((parent != null ? parent.log : void 0) === false) {
+      if ((parent != null ? (ref4 = parent.options) != null ? ref4.log : void 0 : void 0) === false) {
         return;
       }
     }

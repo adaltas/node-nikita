@@ -8,15 +8,17 @@ return unless tags.posix
 describe 'log', ->
 
   it 'string is converted to message', ->
+    count = 0
     startTS = Date.now()
     nikita
     .call ->
       @log 'some text'
     .on 'text', (log) ->
+      (count++).should.eql 0
       # There should be only on log emited, thus
       # there is no need to filter incoming logs
       Object.keys(log).sort().should.eql [
-        'argument', 'attempt', 'depth', 'file', 'headers'
+        'argument', 'attempt', 'depth', 'disabled', 'file', 'headers'
         'level', 'line', 'message', 'module'
         'shy', 'status', 'time', 'type'
       ]

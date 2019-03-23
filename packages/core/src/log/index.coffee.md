@@ -25,7 +25,7 @@ Send a log message.
       retry: false
       ssh: false
       shy: true
-    , handler: ({options}) ->
+    , handler: ({options, parent}) ->
       # Options
       options.message = options.argument if options.argument?
       options.level ?= 'INFO'
@@ -39,8 +39,6 @@ Send a log message.
       line = frame.getLineNumber()
       options.file = file
       options.line = line
-      parent = options.parent
-      delete options.parent
       if options.debug
         if options.type in ['text', 'stdin', 'stdout_stream', 'stderr_stream']
           unless options.type in ['stdout_stream', 'stderr_stream'] and options.message is null
@@ -59,9 +57,9 @@ Send a log message.
             else
               process.stderr.write "#{msg}\n"
       if typeof options.log is 'function'
-        parent?.log options
+        parent?.options?.log options
       else
-        return if parent?.log is false
+        return if parent?.options?.log is false
       @emit options.type, options #unless log_disabled
 
 ## Dependencies
