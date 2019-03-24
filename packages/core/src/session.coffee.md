@@ -509,8 +509,6 @@
             error = (context.error_in_callback or not context.internal.tolerant and not context.original.relax) and context.error
             callback error, context.output
           do_options()
-      obj.child = ->
-        module.exports(obj.options)
       obj.next = ->
         state.current_level.todos.push action: 'next', handler: arguments[0]
         setImmediate run_next if state.current_level.todos.length is 1 # Activate the pump

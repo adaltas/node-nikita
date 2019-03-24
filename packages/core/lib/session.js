@@ -1025,9 +1025,6 @@ module.exports = function() {
       return do_options();
     })();
   };
-  obj.child = function() {
-    return module.exports(obj.options);
-  };
   obj.next = function() {
     state.current_level.todos.push({
       action: 'next',
