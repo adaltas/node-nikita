@@ -23,7 +23,6 @@ module.exports = function() {
   obj.cascade = {...module.exports.cascade, ...obj.options.cascade};
   // Internal state
   state = {};
-  state.properties = {};
   state.parent_levels = [];
   state.current_level = state_create_level();
   state.befores = [];
@@ -1026,230 +1025,177 @@ module.exports = function() {
       return do_options();
     })();
   };
-  state.properties.child = {
-    get: function() {
-      return function() {
-        return module.exports(obj.options);
+  obj.child = function() {
+    return module.exports(obj.options);
+  };
+  obj.next = function() {
+    state.current_level.todos.push({
+      action: 'next',
+      handler: arguments[0]
+    });
+    if (state.current_level.todos.length === 1) { // Activate the pump
+      setImmediate(run_next);
+    }
+    return proxy;
+  };
+  obj.promise = function() {
+    var deferred, promise;
+    deferred = {};
+    promise = new Promise(function(resolve, reject) {
+      deferred.resolve = resolve;
+      return deferred.reject = reject;
+    });
+    state.current_level.todos.push({
+      action: 'promise',
+      deferred: deferred
+    });
+    if (state.current_level.todos.length === 1) { // Activate the pump
+      setImmediate(run_next);
+    }
+    return promise;
+  };
+  obj.end = function() {
+    var args, len, m, options, opts;
+    args = [].slice.call(arguments);
+    options = normalize_options(args, 'end');
+    for (m = 0, len = options.length; m < len; m++) {
+      opts = options[m];
+      state.current_level.todos.push(opts);
+    }
+    if (state.current_level.todos.length === options.length) { // Activate the pump
+      setImmediate(run_next);
+    }
+    return proxy;
+  };
+  obj.call = function() {
+    var args, get, len, m, options, opts, values;
+    args = [].slice.call(arguments);
+    options = normalize_options(args, 'call');
+    ({get, values} = handle_get(proxy, options));
+    if (get) {
+      return values;
+    }
+    for (m = 0, len = options.length; m < len; m++) {
+      opts = options[m];
+      state.current_level.todos.push(opts);
+    }
+    if (state.current_level.todos.length === options.length) { // Activate the pump
+      setImmediate(run_next);
+    }
+    return proxy;
+  };
+  obj.each = function() {
+    var arg, args, key, len, len1, m, n, options, opts, value;
+    args = [].slice.call(arguments);
+    arg = args.shift();
+    if ((arg == null) || typeof arg !== 'object') {
+      throw Error(`Invalid Argument: first argument must be an array or an object to iterate, got ${JSON.stringify(arg)}`);
+    }
+    options = normalize_options(args, 'call');
+    for (m = 0, len = options.length; m < len; m++) {
+      opts = options[m];
+      if (Array.isArray(arg)) {
+        for (n = 0, len1 = arg.length; n < len1; n++) {
+          key = arg[n];
+          opts.key = key;
+          this.call(opts);
+        }
+      } else {
+        for (key in arg) {
+          value = arg[key];
+          opts.key = key;
+          opts.value = value;
+          this.call(opts);
+        }
+      }
+    }
+    return proxy;
+  };
+  obj.before = function() {
+    var len, m, options, opts;
+    if (typeof arguments[0] === 'string' || Array.isArray(arguments[0])) {
+      arguments[0] = {
+        action: arguments[0]
       };
     }
+    options = normalize_options(arguments, null);
+    for (m = 0, len = options.length; m < len; m++) {
+      opts = options[m];
+      if (typeof opts.handler !== 'function') {
+        throw Error(`Invalid handler ${JSON.stringify(opts.handler)}`);
+      }
+      state.befores.push(opts);
+    }
+    return proxy;
   };
-  state.properties.next = {
-    get: function() {
-      return function() {
-        state.current_level.todos.push({
-          action: 'next',
-          handler: arguments[0]
-        });
-        if (state.current_level.todos.length === 1) { // Activate the pump
-          setImmediate(run_next);
-        }
-        return proxy;
+  obj.after = function() {
+    var len, m, options, opts;
+    if (typeof arguments[0] === 'string' || Array.isArray(arguments[0])) {
+      arguments[0] = {
+        action: arguments[0]
       };
     }
+    options = normalize_options(arguments, null);
+    for (m = 0, len = options.length; m < len; m++) {
+      opts = options[m];
+      if (typeof opts.handler !== 'function') {
+        throw Error(`Invalid handler ${JSON.stringify(opts.handler)}`);
+      }
+      state.afters.push(opts);
+    }
+    return proxy;
   };
-  state.properties.promise = {
-    get: function() {
-      return function() {
-        var deferred, promise;
-        deferred = {};
-        promise = new Promise(function(resolve, reject) {
-          deferred.resolve = resolve;
-          return deferred.reject = reject;
-        });
-        state.current_level.todos.push({
-          action: 'promise',
-          deferred: deferred
-        });
-        if (state.current_level.todos.length === 1) { // Activate the pump
-          setImmediate(run_next);
-        }
-        return promise;
-      };
+  obj.status = function(index) {
+    var action, l, len, len1, m, n, ref, ref1, ref2, ref3, status;
+    if (arguments.length === 0) {
+      return state.parent_levels[0].history.some(function(action) {
+        return !action.original.shy && action.status;
+      });
+    } else if (index === false) {
+      status = state.parent_levels[0].history.some(function(action) {
+        return !action.original.shy && action.status;
+      });
+      ref = state.parent_levels[0].history;
+      for (m = 0, len = ref.length; m < len; m++) {
+        action = ref[m];
+        action.status = false;
+      }
+      return status;
+    } else if (index === true) {
+      status = state.parent_levels[0].history.some(function(action) {
+        return !action.original.shy && action.status;
+      });
+      ref1 = state.parent_levels[0].history;
+      for (n = 0, len1 = ref1.length; n < len1; n++) {
+        action = ref1[n];
+        action.status = true;
+      }
+      return status;
+    } else if (index === 0) {
+      return (ref2 = state.current_level.context.output) != null ? ref2.status : void 0;
+    } else {
+      l = state.parent_levels[0].history.length;
+      if (index < 0) {
+        index = l + index;
+      }
+      return (ref3 = state.parent_levels[0].history[index]) != null ? ref3.status : void 0;
     }
   };
-  state.properties.end = {
-    get: function() {
-      return function() {
-        var args, len, m, options, opts;
-        args = [].slice.call(arguments);
-        options = normalize_options(args, 'end');
-        for (m = 0, len = options.length; m < len; m++) {
-          opts = options[m];
-          state.current_level.todos.push(opts);
-        }
-        if (state.current_level.todos.length === options.length) { // Activate the pump
-          setImmediate(run_next);
-        }
-        return proxy;
-      };
-    }
-  };
-  state.properties.call = {
-    get: function() {
-      return function() {
-        var args, get, len, m, options, opts, values;
-        args = [].slice.call(arguments);
-        options = normalize_options(args, 'call');
-        ({get, values} = handle_get(proxy, options));
-        if (get) {
-          return values;
-        }
-        for (m = 0, len = options.length; m < len; m++) {
-          opts = options[m];
-          state.current_level.todos.push(opts);
-        }
-        if (state.current_level.todos.length === options.length) { // Activate the pump
-          setImmediate(run_next);
-        }
-        return proxy;
-      };
-    }
-  };
-  state.properties.each = {
-    get: function() {
-      return function() {
-        var arg, args, key, len, len1, m, n, options, opts, value;
-        args = [].slice.call(arguments);
-        arg = args.shift();
-        if ((arg == null) || typeof arg !== 'object') {
-          throw Error(`Invalid Argument: first argument must be an array or an object to iterate, got ${JSON.stringify(arg)}`);
-        }
-        options = normalize_options(args, 'call');
-        for (m = 0, len = options.length; m < len; m++) {
-          opts = options[m];
-          if (Array.isArray(arg)) {
-            for (n = 0, len1 = arg.length; n < len1; n++) {
-              key = arg[n];
-              opts.key = key;
-              this.call(opts);
-            }
-          } else {
-            for (key in arg) {
-              value = arg[key];
-              opts.key = key;
-              opts.value = value;
-              this.call(opts);
-            }
-          }
-        }
-        return proxy;
-      };
-    }
-  };
-  state.properties.before = {
-    get: function() {
-      return function() {
-        var len, m, options, opts;
-        if (typeof arguments[0] === 'string' || Array.isArray(arguments[0])) {
-          arguments[0] = {
-            action: arguments[0]
-          };
-        }
-        options = normalize_options(arguments, null);
-        for (m = 0, len = options.length; m < len; m++) {
-          opts = options[m];
-          if (typeof opts.handler !== 'function') {
-            throw Error(`Invalid handler ${JSON.stringify(opts.handler)}`);
-          }
-          state.befores.push(opts);
-        }
-        return proxy;
-      };
-    }
-  };
-  state.properties.after = {
-    get: function() {
-      return function() {
-        var len, m, options, opts;
-        if (typeof arguments[0] === 'string' || Array.isArray(arguments[0])) {
-          arguments[0] = {
-            action: arguments[0]
-          };
-        }
-        options = normalize_options(arguments, null);
-        for (m = 0, len = options.length; m < len; m++) {
-          opts = options[m];
-          if (typeof opts.handler !== 'function') {
-            throw Error(`Invalid handler ${JSON.stringify(opts.handler)}`);
-          }
-          state.afters.push(opts);
-        }
-        return proxy;
-      };
-    }
-  };
-  state.properties.status = {
-    get: function() {
-      return function(index) {
-        var action, l, len, len1, m, n, ref, ref1, ref2, ref3, status;
-        if (arguments.length === 0) {
-          return state.parent_levels[0].history.some(function(action) {
-            return !action.original.shy && action.status;
-          });
-        } else if (index === false) {
-          status = state.parent_levels[0].history.some(function(action) {
-            return !action.original.shy && action.status;
-          });
-          ref = state.parent_levels[0].history;
-          for (m = 0, len = ref.length; m < len; m++) {
-            action = ref[m];
-            action.status = false;
-          }
-          return status;
-        } else if (index === true) {
-          status = state.parent_levels[0].history.some(function(action) {
-            return !action.original.shy && action.status;
-          });
-          ref1 = state.parent_levels[0].history;
-          for (n = 0, len1 = ref1.length; n < len1; n++) {
-            action = ref1[n];
-            action.status = true;
-          }
-          return status;
-        } else if (index === 0) {
-          return (ref2 = state.current_level.context.output) != null ? ref2.status : void 0;
-        } else {
-          l = state.parent_levels[0].history.length;
-          if (index < 0) {
-            index = l + index;
-          }
-          return (ref3 = state.parent_levels[0].history[index]) != null ? ref3.status : void 0;
-        }
-      };
-    }
-  };
-  Object.defineProperties(obj, state.properties);
   reg = registry.registry({});
-  Object.defineProperty(obj.registry, 'get', {
-    get: function() {
-      return function(name, handler) {
-        return reg.get(...arguments);
-      };
-    }
-  });
-  Object.defineProperty(obj.registry, 'register', {
-    get: function() {
-      return function(name, handler) {
-        reg.register(...arguments);
-        return proxy;
-      };
-    }
-  });
-  Object.defineProperty(obj.registry, 'registered', {
-    get: function() {
-      return function(name, handler) {
-        return reg.registered(...arguments);
-      };
-    }
-  });
-  Object.defineProperty(obj.registry, 'unregister', {
-    get: function() {
-      return function(name, handler) {
-        reg.unregister(...arguments);
-        return proxy;
-      };
-    }
-  });
+  obj.registry.get = function() {
+    return reg.get(...arguments);
+  };
+  obj.registry.register = function() {
+    reg.register(...arguments);
+    return proxy;
+  };
+  obj.registry.registered = function() {
+    return reg.registered(...arguments);
+  };
+  obj.registry.unregister = function() {
+    reg.unregister(...arguments);
+    return proxy;
+  };
   // Todo: remove
   if (obj.options.ssh) {
     if (obj.options.ssh.config) {

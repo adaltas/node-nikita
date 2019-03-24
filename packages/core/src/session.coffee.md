@@ -16,7 +16,6 @@
       obj.cascade = {...module.exports.cascade, ...obj.options.cascade}
       # Internal state
       state = {}
-      state.properties = {}
       state.parent_levels = []
       state.current_level = state_create_level()
       state.befores = []
@@ -510,13 +509,13 @@
             error = (context.error_in_callback or not context.internal.tolerant and not context.original.relax) and context.error
             callback error, context.output
           do_options()
-      state.properties.child = get: -> ->
+      obj.child = ->
         module.exports(obj.options)
-      state.properties.next = get: -> ->
+      obj.next = ->
         state.current_level.todos.push action: 'next', handler: arguments[0]
         setImmediate run_next if state.current_level.todos.length is 1 # Activate the pump
         proxy
-      state.properties.promise = get: -> ->
+      obj.promise = ->
         deferred = {}
         promise = new Promise (resolve, reject)->
           deferred.resolve = resolve
@@ -524,13 +523,13 @@
         state.current_level.todos.push action: 'promise', deferred: deferred
         setImmediate run_next if state.current_level.todos.length is 1 # Activate the pump
         promise
-      state.properties.end = get: -> ->
+      obj.end = ->
         args = [].slice.call(arguments)
         options = normalize_options args, 'end'
         state.current_level.todos.push opts for opts in options
         setImmediate run_next if state.current_level.todos.length is options.length # Activate the pump
         proxy
-      state.properties.call = get: -> ->
+      obj.call = ->
         args = [].slice.call(arguments)
         options = normalize_options args, 'call'
         {get, values} = handle_get proxy, options
@@ -538,7 +537,7 @@
         state.current_level.todos.push opts for opts in options
         setImmediate run_next if state.current_level.todos.length is options.length # Activate the pump
         proxy
-      state.properties.each = get: -> ->
+      obj.each = ->
         args = [].slice.call(arguments)
         arg = args.shift()
         if not arg? or typeof arg isnt 'object'
@@ -555,21 +554,21 @@
               opts.value = value
               @call opts
         proxy
-      state.properties.before = get: -> ->
+      obj.before = ->
         arguments[0] = action: arguments[0] if typeof arguments[0] is 'string' or Array.isArray(arguments[0])
         options = normalize_options arguments, null
         for opts in options
           throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
           state.befores.push opts
         proxy
-      state.properties.after = get: -> ->
+      obj.after = ->
         arguments[0] = action: arguments[0] if typeof arguments[0] is 'string' or Array.isArray(arguments[0])
         options = normalize_options arguments, null
         for opts in options
           throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
           state.afters.push opts
         proxy
-      state.properties.status = get: -> (index) ->
+      obj.status = (index) ->
         if arguments.length is 0
           return state.parent_levels[0].history.some (action) -> not action.original.shy and action.status
         else if index is false
@@ -586,16 +585,15 @@
           l = state.parent_levels[0].history.length
           index = (l + index) if index < 0
           state.parent_levels[0].history[index]?.status
-      Object.defineProperties obj, state.properties
       reg = registry.registry {}
-      Object.defineProperty obj.registry, 'get', get: -> (name, handler) ->
+      obj.registry.get = ->
         reg.get arguments...
-      Object.defineProperty obj.registry, 'register', get: -> (name, handler) ->
+      obj.registry.register = ->
         reg.register arguments...
         proxy
-      Object.defineProperty obj.registry, 'registered', get: -> (name, handler) ->
+      obj.registry.registered = ->
         reg.registered arguments...
-      Object.defineProperty obj.registry, 'unregister', get: -> (name, handler) ->
+      obj.registry.unregister = ->
         reg.unregister arguments...
         proxy
       # Todo: remove
