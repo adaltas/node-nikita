@@ -37,6 +37,7 @@
     "@nikitajs/db": "^0.9.3-alpha.5",
     "@nikitajs/docker": "^0.9.3-alpha.4",
     "@nikitajs/filetypes": "^0.9.3-alpha.5",
+    "@nikitajs/ipa": "^0.0.1-alpha.2",
     "@nikitajs/java": "^0.0.1",
     "@nikitajs/krb5": "^0.9.3-alpha.4",
     "@nikitajs/ldap": "^0.9.3-alpha.4",

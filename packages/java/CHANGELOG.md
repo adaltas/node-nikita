@@ -4,6 +4,7 @@
 ## Trunk
 
 New features:
+* project: add ipa package
 * java.keytool: new keytool option, improve discovery
 
 Management
