@@ -32,10 +32,11 @@ require('nikita')
     module.exports =  ({options}, callback) ->
       @log message: "Entering lxd.exec", level: 'DEBUG', module: '@nikitajs/lxd/lib/exec'
       throw Error "Invalid Option: name is required" unless options.name
-      @system.execute options,
-        cmd: """
-        cat <<'EOF' | lxc exec #{options.name} -- bash
-        #{options.cmd}
-        EOF
-        """
+      @system.execute options, trap: false,
+        cmd: [
+          "cat <<'EOF' | lxc exec #{options.name} -- bash"
+          'set -e' if options.trap
+          options.cmd
+          'EOF'
+        ].join '\n'
       , callback

@@ -5,6 +5,10 @@
   "bugs": {
     "url": "https://github.com/adaltas/node-nikita/issues"
   },
+  "dependencies": {
+    "js-yaml": "^3.13.0",
+    "object-diff": "^0.0.4"
+  },
   "peerDependencies": {
     "@nikitajs/core": "^0.9.1"
   },
@@ -28,9 +32,5 @@
     "coffee": "coffee -b -o lib src && sed -i -e 's/src/lib/g' lib/register.js",
     "pretest": "npm run coffee",
     "test": "mocha test/{.,*}/*.coffee"
-  },
-  "dependencies": {
-    "js-yaml": "^3.12.2",
-    "object-diff": "^0.0.4"
   }
 }

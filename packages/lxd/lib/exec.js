@@ -38,6 +38,8 @@ module.exports = function({options}, callback) {
     throw Error("Invalid Option: name is required");
   }
   return this.system.execute(options, {
-    cmd: `cat <<'EOF' | lxc exec ${options.name} -- bash\n${options.cmd}\nEOF`
+    trap: false
+  }, {
+    cmd: [`cat <<'EOF' | lxc exec ${options.name} -- bash`, options.trap ? 'set -e' : void 0, options.cmd, 'EOF'].join('\n')
   }, callback);
 };

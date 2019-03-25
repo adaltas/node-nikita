@@ -4,6 +4,7 @@
 ## Trunk
 
 New features:
+* lxd.exec: enforce trap
 * lxd.goodies.prlimit: print container limits
 * file.cache: new cookies option
 * lxd.config.set: implement new action
