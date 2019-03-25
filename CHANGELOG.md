@@ -49,6 +49,7 @@ Cleanup:
 * core: remove unnecessary transmission of ssh
 
 Management:
+* project: raise Node.js and use files
 * tests: update ssh2-they
 * core: latest dependencies
 

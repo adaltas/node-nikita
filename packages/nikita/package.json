@@ -44,6 +44,12 @@
     "@nikitajs/lxd": "^0.9.3-alpha.9",
     "@nikitajs/tools": "^0.9.4-alpha.0"
   },
+  "engines": {
+    "node": ">= 10.0.0"
+  },
+  "files": [
+    "/lib"
+  ],
   "homepage": "http://www.adaltas.com/projects/node-nikita/",
   "license": "MIT",
   "main": "./lib/index",
