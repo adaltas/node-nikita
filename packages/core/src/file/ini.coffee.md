@@ -2,7 +2,7 @@
 # `nikita.file.ini`
 
 Write an object as .ini file. Note, we are internally using the [ini] module.
-However, there is a subtile difference. Any key provided with value of 
+However, there is a subtle difference. Any key provided with value of 
 `undefined` or `null` will be disregarded. Within a `merge`, it get more
 prowerfull and tricky: the original value will be kept if `undefined` is
 provided while the value will be removed if `null` is provided.
