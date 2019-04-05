@@ -106,6 +106,7 @@ require('nikita')
       @fs.readFile
         if: options.source
         ssh: if options.local then false else options.ssh
+        sudo: if options.local then false else options.sudo
         target: options.source
         encoding: options.encoding
         relax: true

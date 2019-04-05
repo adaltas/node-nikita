@@ -30,6 +30,7 @@ New features:
 * core env: working lxd prototype
 
 Fix:
+* sudo: support local option in file actions
 * relax: callback error are propagated to parent
 * file.upload: honors sudo
 * db.database: mysql/mariadb default to latin1

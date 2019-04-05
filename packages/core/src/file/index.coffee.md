@@ -235,6 +235,7 @@ require('nikita')
         @log message: "Force local source is \"#{if options.local then 'true' else 'false'}\"", level: 'DEBUG', module: 'nikita/lib/file'
         @fs.exists
           ssh: if options.local then false else options.ssh
+          sudo: if options.local then false else options.sudo
           target: source
         , (err, {exists}) ->
           return callback err if err
@@ -245,6 +246,7 @@ require('nikita')
           @log message: "Reading source", level: 'DEBUG', module: 'nikita/lib/file'
           @fs.readFile
             ssh: if options.local then false else options.ssh
+            sudo: if options.local then false else options.sudo
             target: source
             encoding: options.encoding
           , (err, {data}) ->

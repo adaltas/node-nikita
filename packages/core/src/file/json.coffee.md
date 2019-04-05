@@ -67,6 +67,7 @@ require('nikita')
       @call if: options.source, (_, callback) ->
         @fs.readFile
           ssh: if options.local then false else options.ssh
+          sudo: if options.local then false else options.sudo
           target: options.source
           encoding: 'utf8'
         , (err, {data}) ->

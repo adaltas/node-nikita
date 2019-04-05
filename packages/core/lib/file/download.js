@@ -217,8 +217,9 @@ module.exports = function({options}) {
   // look like a local file instead of an HTTP URL
   this.file.cache({
     if: options.cache,
+    // Local file must be readable by the current process
     ssh: false,
-    sudo: false, // Local file must be readable by the current process
+    sudo: false,
     source: options.source,
     cache_dir: options.cache_dir,
     cache_file: options.cache_file,

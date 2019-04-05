@@ -129,6 +129,7 @@ module.exports = function({options}) {
   this.fs.readFile({
     if: options.source,
     ssh: options.local ? false : options.ssh,
+    sudo: options.local ? false : options.sudo,
     target: options.source,
     encoding: options.encoding,
     relax: true

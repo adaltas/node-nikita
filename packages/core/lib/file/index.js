@@ -287,6 +287,7 @@ module.exports = function({options}) {
     });
     return this.fs.exists({
       ssh: options.local ? false : options.ssh,
+      sudo: options.local ? false : options.sudo,
       target: source
     }, function(err, {exists}) {
       if (err) {
@@ -306,6 +307,7 @@ module.exports = function({options}) {
       });
       return this.fs.readFile({
         ssh: options.local ? false : options.ssh,
+        sudo: options.local ? false : options.sudo,
         target: source,
         encoding: options.encoding
       }, function(err, {data}) {
