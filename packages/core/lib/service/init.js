@@ -76,7 +76,7 @@ module.exports = function({options}) {
     options.target = `/etc/init.d/${options.name}`;
   }
   if (options.context == null) {
-    options.context = null;
+    options.context = {};
   }
   return this.service.discover(function(err, system) {
     if (options.loader == null) {
@@ -84,7 +84,6 @@ module.exports = function({options}) {
     }
     // discover loader to put in cache
     this.file.render({
-      if: options.context != null,
       target: options.target,
       source: options.source,
       mode: options.mode,
