@@ -1,5 +1,5 @@
 
-mixme = require 'mixme'
+{merge} = require 'mixme'
 nikita = require '@nikitajs/core'
 {tags, ssh, scratch} = require '../test'
 they = require('ssh2-they').configure ssh...
@@ -39,7 +39,7 @@ describe 'ipa.group', ->
     , (err, {status, result}) ->
       status.should.be.true() unless err
       result.gidnumber.length.should.eql 1
-      result = mixme result, ipauniqueid: null, gidnumber: null
+      result = merge result, ipauniqueid: null, gidnumber: null
       result.should.eql
         objectclass: [
           'top'
@@ -67,7 +67,7 @@ describe 'ipa.group', ->
     , (err, {status, result}) ->
       status.should.be.false() unless err
       result.gidnumber.length.should.eql 1
-      result = mixme result, ipauniqueid: null, gidnumber: null
+      result = merge result, ipauniqueid: null, gidnumber: null
       result.should.eql
         dn: 'cn=group_add,cn=groups,cn=accounts,dc=nikita'
         gidnumber: null

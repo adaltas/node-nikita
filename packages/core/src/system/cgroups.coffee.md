@@ -148,7 +148,7 @@ docker/* are ignored.
             groups = {}
             for name, group of cgconfig.groups
               groups[name] = group unless (name.indexOf('docker/') isnt -1) or (name in options.ignore)
-            options.cgconfig.groups = mixme groups, options.groups
+            options.cgconfig.groups = merge groups, options.groups
             options.cgconfig.mounts.push cgconfig.mounts...
       @call ->
         options.target ?= '/etc/cgconfig.conf' if @store['nikita:system:type'] is 'redhat'
@@ -157,13 +157,12 @@ docker/* are ignored.
       @next (err, {status}) -> callback err, status: status, cgroups:
         cpu_path: @store['nikita:cgroups:cpu_path']
         mount: @store['nikita:cgroups:mount']
-        
 
 ## Dependencies
 
     misc = require '../misc'
     string = require '../misc/string'
-    mixme = mixme
+    {merge} = require 'mixme'
     path = require 'path'
 
 [cgconfig.conf(5)]: https://linux.die.net/man/5/cgconfig.conf

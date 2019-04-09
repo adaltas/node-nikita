@@ -2,7 +2,7 @@
 fs = require 'fs'
 path = require 'path'
 each = require 'each'
-mixme = require 'mixme'
+{merge} = require 'mixme'
 util = require 'util'
 Stream = require 'stream'
 exec = require 'ssh2-exec'
@@ -55,7 +55,7 @@ misc = module.exports =
         diff[k][1] = v
       diff
     clone: (obj) ->
-      mixme {}, obj
+      merge {}, obj
   path:
     normalize: (location, callback) ->
       tilde location, (location) ->

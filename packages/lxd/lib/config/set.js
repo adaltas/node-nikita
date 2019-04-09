@@ -25,7 +25,7 @@
 // ```
 
 // ## Source Code
-var diff, mixme, yaml;
+var diff, merge, yaml;
 
 module.exports = function({options}) {
   var keys;
@@ -45,7 +45,7 @@ module.exports = function({options}) {
       throw err;
     }
     config = yaml.safeLoad(stdout);
-    return keys = diff(config.config, mixme(config.config, options.config));
+    return keys = diff(config.config, merge(config.config, options.config));
   });
   return this.call(function() {
     var k, v;
@@ -68,7 +68,7 @@ module.exports = function({options}) {
 
 
 // ## Dependencies
-mixme = require('mixme');
+({merge} = require('mixme'));
 
 yaml = require('js-yaml');
 

@@ -65,7 +65,7 @@ require('nikita')
           throw err if err
           try
             data = season.parse data
-            options.content = mixme data, options.content
+            options.content = merge data, options.content
             @log message: "Target Merged", level: 'DEBUG', module: 'nikita/lib/file/cson'
           catch err
             # Maybe change error message with sth like "Failed to parse..."
@@ -79,7 +79,7 @@ require('nikita')
 
 ## Dependencies
 
-    mixme = require 'mixme'
+    {merge} = require 'mixme'
     season = require 'season'
 
 ## Resources

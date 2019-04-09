@@ -41,7 +41,7 @@ require('nikita')
       , (err, {stdout}) ->
         throw err if err
         config = yaml.safeLoad stdout
-        keys = diff config.config, mixme config.config, options.config
+        keys = diff config.config, merge config.config, options.config
       @call ->
         # Note, it doesnt seem possible to set multiple keys in one command
         @system.execute
@@ -59,6 +59,6 @@ require('nikita')
 
 ## Dependencies
 
-    mixme = require 'mixme'
+    {merge} = require 'mixme'
     yaml = require 'js-yaml'
     diff = require 'object-diff'

@@ -115,10 +115,10 @@ require('nikita')
         throw err if err
         return unless options.source
         content = ini.clean options.content, true
-        options.content = mixme parse(data, options), options.content
+        options.content = merge parse(data, options), options.content
       # Merge
       @call if: options.merge , ({}, callback) ->
-        options.content = mixme org_props, options.content
+        options.content = merge org_props, options.content
         @log message: "Get content for merge", level: 'DEBUG', module: 'nikita/lib/file/ini'
         callback()
       @call ->
@@ -140,6 +140,6 @@ require('nikita')
 ## Dependencies
 
     ini = require '../misc/ini'
-    mixme = require 'mixme'
+    {merge} = require 'mixme'
 
 [ini]: https://github.com/isaacs/ini

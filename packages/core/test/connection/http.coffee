@@ -1,6 +1,6 @@
 
 http = require 'http'
-mixme = require 'mixme'
+{merge} = require 'mixme'
 nikita = require '../../src'
 {tags, ssh  } = require '../test'
 they = require('ssh2-they').configure ssh...
@@ -88,7 +88,7 @@ describe 'connection.http', ->
       url: "http://localhost:#{srv.port}/request_404"
     , (err, output) ->
       throw err if err
-      output = mixme output, raw: null, headers: Date: null
+      output = merge output, raw: null, headers: Date: null
       output.should.eql
         body: ''
         headers:

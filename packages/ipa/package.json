@@ -22,7 +22,6 @@
     }
   ],
   "dependencies": {
-    "mixme": "^0.0.1",
     "object-diff": "^0.0.4"
   },
   "peerDependencies": {
@@ -31,8 +30,9 @@
   "devDependencies": {
     "@nikitajs/lxd": "^0.9.3-alpha.9",
     "@nikitajs/tools": "^0.9.4-alpha.0",
-    "coffeescript": "^2.3.2",
-    "mocha": "6.0.2",
+    "coffeescript": "^2.4.1",
+    "mixme": "^0.3.0",
+    "mocha": "6.1.2",
     "should": "~13.2.3",
     "ssh2-they": "^2.0.3"
   },

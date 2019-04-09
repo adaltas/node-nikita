@@ -62,7 +62,7 @@ require('nikita')
           relax: true
         , (err, {data}) ->
           return callback() if err?.code is 'ENOENT'
-          options.content = mixme JSON.parse(data), options.content unless err
+          options.content = merge JSON.parse(data), options.content unless err
           callback err
       @call if: options.source, (_, callback) ->
         @fs.readFile
@@ -71,7 +71,7 @@ require('nikita')
           target: options.source
           encoding: 'utf8'
         , (err, {data}) ->
-          options.content = mixme JSON.parse(data), options.content unless err
+          options.content = merge JSON.parse(data), options.content unless err
           callback err
       @call if: options.transform, ->
         options.content = options.transform options.content
@@ -87,4 +87,4 @@ require('nikita')
 
 ## Dependencies
 
-    mixme = require 'mixme'
+    {merge} = require 'mixme'

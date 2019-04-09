@@ -584,7 +584,6 @@
     make_action = require './engine/make_action'
     registry = require './registry'
     each = require 'each'
-    mixme = require 'mixme'
     path = require 'path'
     util = require 'util'
     array = require './misc/array'
