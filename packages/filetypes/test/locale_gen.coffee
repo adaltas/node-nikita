@@ -87,3 +87,4 @@ describe 'file.types.locale_gen', ->
       target: "#{scratch}/etc/locale.gen"
       content: "en_US.UTF-8 UTF-8"
     .promise()
+

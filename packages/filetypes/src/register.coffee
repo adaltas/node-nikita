@@ -11,3 +11,6 @@ registry.register
       pacman_conf: '@nikitajs/filetypes/src/pacman_conf'
       ssh_authorized_keys: '@nikitajs/filetypes/src/ssh_authorized_keys'
       yum_repo: '@nikitajs/filetypes/src/yum_repo'
+      systemd:
+        timesyncd: '@nikitajs/filetypes/src/systemd/timesyncd'
+        resolved: '@nikitajs/filetypes/src/systemd/resolved'
