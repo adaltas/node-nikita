@@ -6,14 +6,14 @@ Update the locale definition file located in "/etc/locale.gen".
 ## Options
 
 *   `rootdir` (string)   
-    Path to the mount point corresponding to the root directory, optional.   
+    Path to the mount point corresponding to the root directory, optional.
 *   `generate` (boolean, optional, null)   
-    Run `locale-gen` by default if target was modified or force running the 
-    command if value is a boolean.   
+    Run `locale-gen` by default if target was modified or force running the
+    command if value is a boolean.
 *   `locales` (string)   
-    List of supported locales, required.   
+    List of supported locales, required.
 *   `target` (string)   
-    File to write, default to "/etc/locale.gen".   
+    File to write, default to "/etc/locale.gen".
 
 ## Example
 
@@ -54,12 +54,13 @@ require('nikita')
             callback err, true
       # Reload configuration
       @system.execute
-        if: -> switch options.generate
-         when true then true
-         when false then false
-         else @status -1
+        if: ->
+          if options.generate?
+          then options.generate
+          else @status -1
         cmd: "locale-gen"
 
 ## Dependencies
 
     path = require 'path'
+
