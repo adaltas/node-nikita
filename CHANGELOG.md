@@ -30,6 +30,7 @@ New features:
 * core env: working lxd prototype
 
 Fix:
+* retry: ensure 1st level of options is immutable
 * sudo: support local option in file actions
 * relax: callback error are propagated to parent
 * file.upload: honors sudo
@@ -45,6 +46,7 @@ Fix:
 * file.hash: use command instead of which
 
 Cleanup:
+* session: externalize args_to_actions and make_action
 * session: make_context
 * session: isolate current action from history
 * core: remove unnecessary transmission of ssh

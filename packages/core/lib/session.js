@@ -586,7 +586,6 @@ module.exports = function() {
         ref2 = context.options;
         for (k in ref2) {
           v = ref2[k];
-          // continue if k in ['handler', 'callback', 'header', 'after', 'before']
           if (_opts[k] == null) {
             _opts[k] = v;
           }
@@ -631,7 +630,7 @@ module.exports = function() {
         });
       };
       do_handler = function() {
-        var called, do_next, handle_async_and_promise, promise_returned, ref2, ref3, result, status_sync, wait_children;
+        var called, ctx, do_next, handle_async_and_promise, promise_returned, ref2, ref3, result, status_sync, wait_children;
         context.options.attempt++;
         do_next = function({error, output, args}) {
           var base, base1;
@@ -717,10 +716,15 @@ module.exports = function() {
               });
             });
           };
+          // Prepare the context
+          ctx = {
+            ...context,
+            options: {...context.options}
+          };
           // Async style
           if (context.handler.length === 2) {
             promise_returned = false;
-            result = context.handler.call(proxy, context, function() {
+            result = context.handler.call(proxy, ctx, function() {
               if (promise_returned) {
                 return;
               }
@@ -728,10 +732,11 @@ module.exports = function() {
             });
             if (promise.is(result)) {
               promise_returned = true;
-              return handle_async_and_promise(Error('Invalid Promise: returning promise is not supported in asynchronuous mode')); // Sync style
+              return handle_async_and_promise(Error('Invalid Promise: returning promise is not supported in asynchronuous mode'));
             }
           } else {
-            result = context.handler.call(proxy, context);
+            // Sync style
+            result = context.handler.call(proxy, ctx);
             if (promise.is(result)) {
               return result.then(function(value) {
                 var args, output;

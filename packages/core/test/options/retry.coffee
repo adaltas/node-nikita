@@ -43,3 +43,11 @@ describe 'options "retry"', ->
     .call retry: true, sleep: 200, ->
       throw Error 'Catchme' if count++ < 10
     .promise()
+
+  it 'ensure options are immutable between retry', ->
+    nikita
+    .call retry: 2, test: 1, ({options}) ->
+      options.test.should.eql 1
+      options.test = 2
+      throw Error 'Retry' if options.attempt is 0
+    .promise()

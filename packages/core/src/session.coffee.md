@@ -300,7 +300,6 @@
           do_conditions = ->
             _opts = {}
             for k, v of context.options
-              # continue if k in ['handler', 'callback', 'header', 'after', 'before']
               _opts[k] ?= v
             conditions.all proxy, options: _opts
             , ->
@@ -354,17 +353,20 @@
                 called = true
                 setImmediate ->
                   do_next error: error, output: output, args: args
+              # Prepare the context
+              ctx = {...context, options: {...context.options}}
               # Async style
               if context.handler.length is 2
                 promise_returned = false
-                result = context.handler.call proxy, context, ->
+                result = context.handler.call proxy, ctx, ->
                   return if promise_returned
                   handle_async_and_promise.apply null, arguments
                 if promise.is result
                   promise_returned = true
                   return handle_async_and_promise Error 'Invalid Promise: returning promise is not supported in asynchronuous mode'
-              else # Sync style
-                result = context.handler.call proxy, context
+              # Sync style
+              else
+                result = context.handler.call proxy, ctx
                 if promise.is result
                   result.then (value) ->
                     if Array.isArray value
