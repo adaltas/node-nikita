@@ -40,7 +40,7 @@
           get_proxy_builder = ->
             builder = ->
               args = [].slice.call(arguments)
-              options = normalize_options args, proxy.action
+              options = args_to_action args, proxy.action
               proxy.action = []
               {get, values} = handle_get proxy, options
               return values if get
@@ -56,8 +56,7 @@
                   return undefined
                 get_proxy_builder()
           get_proxy_builder()
-      obj.internal = {}
-      obj.internal.options = (_arguments, action_name) ->
+      args_to_action = (_arguments, action_name) ->
         _arguments = [{}] if _arguments.length is 0
         # Convert every argument to an array
         for args, i in _arguments
@@ -120,69 +119,12 @@
           action.once = action.once.sort() if Array.isArray action.once
           action
         actions
-      normalize_options = obj.internal.options
-      make_context = (context_global, context_parent, options_action) ->
-        context =
-          internal: {}
-          options: {}
-          original: (-> # Create original and filter with cascade
-            options = options_action
-            for k, v of context_parent?.internal
-              options[k] = v if options[k] is undefined and obj.cascade[k] is true
-            options
-          )()
-          parent: context_parent
-        # Merge cascade action options with default session options
-        context.internal.cascade = {...context_global.cascade, ...options_action.cascade}
-        # Copy initial options
-        for k, v of options_action
-          continue if k is 'cascade'
-          context.internal[k] = options_action[k]
-        # Merge parent cascaded options
-        for k, v of context_parent?.internal
-          continue unless context.internal.cascade[k] is true
-          context.internal[k] = v if context.internal[k] is undefined
-        # Merge action options with default session options 
-        for k, v of context_global.options
-          continue if k is 'cascade'
-          context.internal[k] = v if context.internal[k] is undefined
-        # Build headers option
-        headers = []
-        push_headers = (context) ->
-          headers.push context.internal.header if context.internal.header
-          push_headers context.parent if context.parent
-        push_headers context
-        context.internal.headers = headers.reverse()
-        # Default values
-        context.internal.sleep ?= 3000 # Wait 3s between retry
-        context.internal.retry ?= 0
-        context.internal.disabled ?= false
-        context.internal.status ?= true
-        context.internal.depth = if context.internal.depth? then context.internal.depth else (context.parent?.internal?.depth or 0) + 1
-        context.internal.attempt = -1# Clone and filter cascaded options
-        # throw Error 'Incompatible Options: status "false" implies shy "true"' if options.status is false and options.shy is false # Room for argument, leave it strict for now until we come accross a usecase justifying it.
-        # options.shy ?= true if options.status is false
-        context.internal.shy ?= false
-        # Goodies
-        if context.internal.source and match = /~($|\/.*)/.exec context.internal.source
-          unless obj.store['nikita:ssh:connection']
-          then context.internal.source = path.join process.env.HOME, match[1]
-          else context.internal.source = path.posix.join '.', match[1]
-        if context.internal.target and match = /~($|\/.*)/.exec context.internal.target
-          unless obj.store['nikita:ssh:connection']
-          then context.internal.target = path.join process.env.HOME, match[1]
-          else context.internal.target = path.posix.join '.', match[1]
-        # Filter cascaded options
-        for k, v of context.internal
-          continue if context.internal.cascade[k] is false
-          context.options[k] = v
-        context
       handle_get = (proxy, options) ->
         return get: false unless options.length is 1
         options = options[0]
         return get: false unless options.get is true
-        context = make_context obj, state.current_level.context, options
-        values = context.internal.handler.call proxy, context
+        context = make_action obj, state.current_level.context, options
+        values = context.handler.call proxy, context
         get: true, values: values
       call_callback = (context) ->
         state.parent_levels.unshift state.current_level
@@ -258,13 +200,9 @@
             callback error, {}
         index = state.index_counter++
         context_parent = state.current_level.context
-        context = make_context obj, context_parent, options
+        context = make_action obj, context_parent, options
         # Prepare the Context
         context.session = proxy
-        context.handler = context.internal.handler
-        context.internal.handler = undefined
-        context.callback = context.internal.callback
-        context.internal.callback = undefined
         state.parent_levels.unshift state.current_level
         state.current_level = state_create_level()
         state.current_level.context = context
@@ -328,7 +266,7 @@
             context.internal.before = [context.internal.before] unless Array.isArray context.internal.before
             each context.internal.before
             .call (before, next) ->
-              [before] = normalize_options [before], 'call'
+              [before] = args_to_action [before], 'call'
               _opts = options_before: true
               for k, v of before
                 _opts[k] = v
@@ -482,7 +420,7 @@
             context.internal.after = [context.internal.after] unless Array.isArray context.internal.after
             each context.internal.after
             .call (after, next) ->
-              [after] = normalize_options [after], 'call'
+              [after] = args_to_action [after], 'call'
               _opts = options_after: true
               for k, v of after
                 _opts[k] = v
@@ -523,13 +461,13 @@
         promise
       obj.end = ->
         args = [].slice.call(arguments)
-        options = normalize_options args, 'end'
+        options = args_to_action args, 'end'
         state.current_level.todos.push opts for opts in options
         setImmediate run_next if state.current_level.todos.length is options.length # Activate the pump
         proxy
       obj.call = ->
         args = [].slice.call(arguments)
-        options = normalize_options args, 'call'
+        options = args_to_action args, 'call'
         {get, values} = handle_get proxy, options
         return values if get
         state.current_level.todos.push opts for opts in options
@@ -540,7 +478,7 @@
         arg = args.shift()
         if not arg? or typeof arg isnt 'object'
           throw Error "Invalid Argument: first argument must be an array or an object to iterate, got #{JSON.stringify arg}"
-        options = normalize_options args, 'call'
+        options = args_to_action args, 'call'
         for opts in options
           if Array.isArray arg
             for key in arg
@@ -554,14 +492,14 @@
         proxy
       obj.before = ->
         arguments[0] = action: arguments[0] if typeof arguments[0] is 'string' or Array.isArray(arguments[0])
-        options = normalize_options arguments, null
+        options = args_to_action arguments, null
         for opts in options
           throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
           state.befores.push opts
         proxy
       obj.after = ->
         arguments[0] = action: arguments[0] if typeof arguments[0] is 'string' or Array.isArray(arguments[0])
-        options = normalize_options arguments, null
+        options = args_to_action arguments, null
         for opts in options
           throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
           state.afters.push opts
@@ -628,16 +566,10 @@
 ## Helper functions
 
     state_create_level = ->
-      level =
-        error: undefined
-        history: []
-        # current:
-        #   options: {}
-        #   status: undefined
-        #   output: null
-        #   args: null
-        todos: []
-        throw_if_error: true
+      error: undefined
+      history: []
+      todos: []
+      throw_if_error: true
     # Called after next and promise
     state_reset_level = (level) ->
       level.error = undefined
@@ -646,6 +578,8 @@
 
 ## Dependencies
 
+    # args_to_action = require './engine/args_to_action'
+    make_action = require './engine/make_action'
     registry = require './registry'
     each = require 'each'
     mixme = require 'mixme'

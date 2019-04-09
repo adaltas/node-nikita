@@ -1,18 +1,19 @@
 
 nikita = require '../../src'
+args_to_actions = require '../../src/engine/args_to_actions'
+registry = require '../../src/registry'
 {tags, ssh, scratch} = require '../test'
 they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
-describe 'api callback', ->
+describe 'engine.args_to_actions', ->
 
   it 'internal.options', ->
-    nikita()
-    .internal.options [
+    action_global = registry: registry.registry {}
+    args_to_actions action_global, [
       [{key_1_1: '1.1'}, {key_1_2: '1.2'}]
       [{key_2_1: '2.1'}, {key_2_2: '2.2'}]
-      # (->)
     ] , 'call'
     .map((action) ->
       (action.handler is undefined).should.be.a.true()
@@ -32,8 +33,8 @@ describe 'api callback', ->
     ]
 
   it 'interpret function as handler', ->
-    nikita()
-    .internal.options [
+    action_global = registry: registry.registry {}
+    args_to_actions action_global, [
       [{key_1_1: '1.1'}, {key_1_2: '1.2'}]
       [{key_2_1: '2.1'}, {key_2_2: '2.2'}]
       (->)
@@ -65,7 +66,8 @@ describe 'api callback', ->
       }
       '''
     .call ->
-      @internal.options [
+      action_global = registry: registry.registry {}
+      args_to_actions action_global,  [
         [{key: '1.1'}, {key: '1.2'}]
         "#{scratch}/a_module"
       ] , 'call'
@@ -87,7 +89,8 @@ describe 'api callback', ->
       }
       '''
     .call ->
-      @internal.options [
+      action_global = registry: registry.registry {}
+      args_to_actions action_global,  [
         [{key: '1.1'}, {key: '1.2'}]
         (-> 'user')
         "#{scratch}/module_exported_handler_and_user_provided_handler"
@@ -100,7 +103,8 @@ describe 'api callback', ->
       .map((action) -> action.key )
       .should.eql [ '1.1', '1.2' ]
     .call ->
-      @internal.options [
+      action_global = registry: registry.registry {}
+      args_to_actions action_global,  [
         [{key: '1.1'}, {key: '1.2'}]
         "#{scratch}/module_exported_handler_and_user_provided_handler"
         (-> 'user')
