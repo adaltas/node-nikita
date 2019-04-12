@@ -79,25 +79,47 @@ require('nikita')(
       options.host ?= if ssh then ssh.config.host else 'localhost'
       options.colors ?= process.stdout.isTTY
       options.colors = {
-        # host: colors.cyan.dim
-        # header: colors.cyan.dim
-        # final_status_error: colors.red
-        # final_status_success: colors.blue
-        # final_host_error: colors.red
-        # final_host_success: colors.blue
         status_true: colors.green
         status_false: colors.cyan.dim
         status_error: colors.red
-        # time: colors.cyan.dim
       } if options.colors is true
       # Events
       ids = {}
+      format_line = ({host, header, status, time}) ->
+        host = pad host, options.pad.host if options.pad.host
+        header = pad header, options.pad.header if options.pad.header
+        time = pad time, options.pad.time if options.pad.time
+        [
+          host, options.separator.host
+          header, options.separator.header
+          status, if options.time then options.separator.time else ''
+          time
+        ].join ''
       @call options, stream, serializer:
         'diff': null
         'end': ->
-          "FINISH\n"
+          status = true # TODO: inject status
+          if options.colors
+            color = if status
+            then options.colors.status_true
+            else options.colors.status_false
+          # "FINISH\n"
+          line = format_line
+            host: options.host
+            header: ''
+            status: if status then '✔' else '-'
+            time: ''
+          line = color line if color
+          return line+'\n'
         'error': (err) ->
           "ERROR"
+          color = options.colors.status_error
+          line = format_line
+            host: options.host
+            header: err.message
+            status: if status then '✔' else '-'
+            time: ''
+          line = color line if color
         'header': (log) ->
           return unless options.enabled
           return if options.depth_max and options.depth_max < log.headers.length
@@ -119,16 +141,11 @@ require('nikita')(
           return null if log.disabled
           delete ids[log.index]
           time = if options.time then string.print_time Date.now() - log.time else ''
-          host = options.host
-          host_separator = options.separator.host
-          header = log.headers.join(options.divider)
-          header_separator = options.separator.header
-          time_separator = if options.time then options.separator.time else ''
-          # Padding
-          host = pad host, options.pad.host if options.pad.host
-          header = pad header, options.pad.header if options.pad.header
-          time = pad time, options.pad.time if options.pad.time
-          line = "#{host}#{host_separator}#{header}#{header_separator}#{status}#{time_separator}#{time}"
+          line = format_line
+            host: options.host
+            header: log.headers.join(options.divider)
+            status: status
+            time: time
           line = color line if color
           return line+'\n'
         'stdin': null

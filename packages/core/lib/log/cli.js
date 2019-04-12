@@ -60,7 +60,7 @@ var colors, pad, stream, string;
 module.exports = {
   ssh: false,
   handler: function({options}) {
-    var base, base1, base2, ids, ssh;
+    var base, base1, base2, format_line, ids, ssh;
     this.log({
       message: "Entering log.cli",
       level: 'DEBUG',
@@ -123,15 +123,8 @@ module.exports = {
     if (options.colors == null) {
       options.colors = process.stdout.isTTY;
     }
-    // time: colors.cyan.dim
     if (options.colors === true) {
       options.colors = {
-        // host: colors.cyan.dim
-        // header: colors.cyan.dim
-        // final_status_error: colors.red
-        // final_status_success: colors.blue
-        // final_host_error: colors.red
-        // final_host_success: colors.blue
         status_true: colors.green,
         status_false: colors.cyan.dim,
         status_error: colors.red
@@ -139,14 +132,52 @@ module.exports = {
     }
     // Events
     ids = {};
+    format_line = function({host, header, status, time}) {
+      if (options.pad.host) {
+        host = pad(host, options.pad.host);
+      }
+      if (options.pad.header) {
+        header = pad(header, options.pad.header);
+      }
+      if (options.pad.time) {
+        time = pad(time, options.pad.time);
+      }
+      return [host, options.separator.host, header, options.separator.header, status, options.time ? options.separator.time : '', time].join('');
+    };
     return this.call(options, stream, {
       serializer: {
         'diff': null,
         'end': function() {
-          return "FINISH\n";
+          var color, line, status;
+          status = true; // TODO: inject status
+          if (options.colors) {
+            color = status ? options.colors.status_true : options.colors.status_false;
+          }
+          // "FINISH\n"
+          line = format_line({
+            host: options.host,
+            header: '',
+            status: status ? '✔' : '-',
+            time: ''
+          });
+          if (color) {
+            line = color(line);
+          }
+          return line + '\n';
         },
         'error': function(err) {
-          return "ERROR";
+          "ERROR";
+          var color, line;
+          color = options.colors.status_error;
+          line = format_line({
+            host: options.host,
+            header: err.message,
+            status: status ? '✔' : '-',
+            time: ''
+          });
+          if (color) {
+            return line = color(line);
+          }
         },
         'header': function(log) {
           if (!options.enabled) {
@@ -169,7 +200,7 @@ module.exports = {
           return null;
         },
         'handled': function(log) {
-          var color, header, header_separator, host, host_separator, line, status, time, time_separator;
+          var color, line, status, time;
           status = log.error ? '✘' : log.status && !log.shy ? '✔' : '-';
           color = false;
           if (options.colors) {
@@ -184,22 +215,12 @@ module.exports = {
           }
           delete ids[log.index];
           time = options.time ? string.print_time(Date.now() - log.time) : '';
-          host = options.host;
-          host_separator = options.separator.host;
-          header = log.headers.join(options.divider);
-          header_separator = options.separator.header;
-          time_separator = options.time ? options.separator.time : '';
-          if (options.pad.host) {
-            // Padding
-            host = pad(host, options.pad.host);
-          }
-          if (options.pad.header) {
-            header = pad(header, options.pad.header);
-          }
-          if (options.pad.time) {
-            time = pad(time, options.pad.time);
-          }
-          line = `${host}${host_separator}${header}${header_separator}${status}${time_separator}${time}`;
+          line = format_line({
+            host: options.host,
+            header: log.headers.join(options.divider),
+            status: status,
+            time: time
+          });
           if (color) {
             line = color(line);
           }

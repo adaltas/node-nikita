@@ -30,6 +30,7 @@ New features:
 * core env: working lxd prototype
 
 Fix:
+* log: refactor end and error cli
 * retry: ensure 1st level of options is immutable
 * sudo: support local option in file actions
 * relax: callback error are propagated to parent

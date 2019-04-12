@@ -187,8 +187,8 @@ misc = module.exports = {
   /*
   `merge([inverse], obj1, obj2, ...]`: Recursively merge objects
   --------------------------------------------------------------
-  On matching keys, the last object take precedence over previous ones 
-  unless the inverse arguments is provided as true. Only objects are 
+  On matching keys, the last object take precedence over previous ones
+  unless the inverse arguments is provided as true. Only objects are
   merge, arrays are overwritten.
 
   Enrich an existing object with a second one:
