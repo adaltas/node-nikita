@@ -10,7 +10,7 @@
     "tls",
     "ssl"
   ],
-  "version": "0.0.1-alpha.2",
+  "version": "0.0.1",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "url": "https://github.com/adaltas/node-nikita/issues"
@@ -28,8 +28,8 @@
     "@nikitajs/core": "^0.9.1"
   },
   "devDependencies": {
-    "@nikitajs/lxd": "^0.9.3-alpha.9",
-    "@nikitajs/tools": "^0.9.4-alpha.0",
+    "@nikitajs/lxd": "^0.9.3",
+    "@nikitajs/tools": "^0.9.4",
     "coffeescript": "^2.4.1",
     "mixme": "^0.3.1",
     "mocha": "6.1.3",

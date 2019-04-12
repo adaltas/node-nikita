@@ -12,20 +12,20 @@
     "system",
     "task"
   ],
-  "version": "0.9.3-alpha.12",
+  "version": "0.9.3",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "email": "open@adaltas.com",
     "url": "https://github.com/adaltas/node-nikita/issues"
   },
   "coffeelintConfig": {
-    "indentation" : {
-      "level" : "error",
-      "value" : 2
+    "indentation": {
+      "level": "error",
+      "value": 2
     },
-    "line_endings" : {
-      "level" : "error",
-      "value" : "unix"
+    "line_endings": {
+      "level": "error",
+      "value": "unix"
     },
     "max_line_length": {
       "level": "ignore"
