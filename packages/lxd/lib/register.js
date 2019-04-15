@@ -3,6 +3,7 @@ require('@nikitajs/core/lib/registry').register({
   lxd: {
     config: {
       device: {
+        '': '@nikitajs/lxd/lib/config/device',
         add: '@nikitajs/lxd/lib/config/device/add',
         exists: '@nikitajs/lxd/lib/config/device/exists'
       },

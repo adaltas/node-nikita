@@ -4,6 +4,7 @@ require('@nikitajs/core/lib/registry')
   lxd:
     config:
       device:
+        '': '@nikitajs/lxd/src/config/device'
         add: '@nikitajs/lxd/src/config/device/add'
         exists: '@nikitajs/lxd/src/config/device/exists'
       set: '@nikitajs/lxd/src/config/set'
