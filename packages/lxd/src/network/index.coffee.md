@@ -5,17 +5,17 @@ Create a network or update a network configuration
 
 ## Options
 
-* `network` (required, string)   
+* `network` (required, string)
   The network name.
-* `config` (optional, object, {})   
+* `config` (optional, object, {})
   The network configuration, see
   [available fields](https://lxd.readthedocs.io/en/latest/networks/).
 
 ## Callback parameters
 
-* `err`   
+* `err`
   Error object if any
-* `status`   
+* `status`
   True if the network was created/updated
 
 ## Example
@@ -35,7 +35,7 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = ({options}) ->
+    module.exports = ({options}, callback) ->
       @log message: "Entering lxd network", level: "DEBUG", module: "@nikitajs/lxd/lib/network"
       #Check args
       throw Error "Invalid Option: network is required to create a network" unless options.network
@@ -59,14 +59,11 @@ require('nikita')
         ].join ' '}
         """
         code_skipped: 42
-      , (err, {stdout, code}) ->
-        throw Error "This version of lxc does not support the network command" if code is 5
-        # Network created
-        return unless code is 42
-        # Network already exists, find the changes
+      , (err, {stdout, code, status}) ->
+        return callback Error "This version of lxc does not support the network command" if code is 5
+        return callback err, status: status unless code is 42 # was created
         {config} = yaml.safeLoad stdout
         changes = diff config, options.config
-        # if config is empty status is false because no command were executed
         @system.execute (
           cmd: [
             'lxc', 'network', 'set'
@@ -74,7 +71,7 @@ require('nikita')
             key, "'#{value.replace '\'', '\\\''}'"
           ].join ' '
         ) for key, value of changes
-            # trap  if a command fails ?
+        return callback null, Object.keys(changes).length > 0
 
 ## Dependencies
 

@@ -5,9 +5,9 @@ Set container or server configuration keys.
 
 ## Options
 
-* `name` (string, required)   
+* `container` (string, required)
   The name of the container.
-* `config` (object, required)   
+* `config` (object, required)
   One or multiple keys to set.
 
 ## Set a configuration key
@@ -33,7 +33,7 @@ require('nikita')
         cmd: """
         #{[
           'lxc', 'config', 'show'
-          options.name
+          options.container
         ].join ' '}
         """
         shy: true
@@ -49,13 +49,13 @@ require('nikita')
           cmd: """
           #{(
             [
-              'lxc', 'config', 'set', options.name
+              'lxc', 'config', 'set', options.container
               "#{k} '#{v.replace '\'', '\\\''}'"
             ].join ' ' for k, v of keys
           ).join '\n'}
           """
           code_skipped: 42
-        
+
 
 ## Dependencies
 

@@ -7,7 +7,7 @@ Initialize a Linux Container with given image name, container name and options.
 
 * `image` (required, string)
   The image the container will use, name:[version] e.g: ubuntu:16.04
-* `name` (required, string)
+* `container` (required, string)
   The name of the container
 * `network` (optional, string, )
   Network name to add to the container (see lxd.network)
@@ -31,7 +31,7 @@ Initialize a Linux Container with given image name, container name and options.
 require('nikita')
 .lxd.init({
   image: "ubuntu:18.04",
-  name: "my_container"
+  container: "my_container"
 }, function(err, {status}) {
   console.log( err ? err.message : 'The container was created')
 });
@@ -41,18 +41,18 @@ require('nikita')
 
     module.exports =  ({options}) ->
       @log message: "Entering lxd.init", level: 'DEBUG', module: '@nikitajs/lxd/lib/init'
-      throw Error "Invalid Option: name is required" unless options.name
+      throw Error "Invalid Option: container is required" unless options.container
       cmd_init = [
-        'lxc', 'init', options.image, options.name
+        'lxc', 'init', options.image, options.container
         "--network #{options.network}" if options.network
         "--storage #{options.storage}" if options.storage
         "--ephemeral" if options.ephemeral
       ].join ' '
       # Execution
       @system.execute
-        name: options.name
+        container: options.container
         cmd: """
-        lxc info #{options.name} >/dev/null && exit 42
+        lxc info #{options.container} >/dev/null && exit 42
         #{cmd_init}
         """
         code_skipped: 42

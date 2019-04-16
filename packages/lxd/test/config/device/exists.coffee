@@ -1,13 +1,13 @@
 
 nikita = require '@nikitajs/core'
-{tags, ssh, scratch} = require '../test'
+{tags, ssh, scratch, lxd} = require '../../test'
 they = require('ssh2-they').configure ssh...
 
 return unless tags.lxd
 
-describe 'lxd.file.exists', ->
+describe 'lxd.config.device.exists', ->
 
-  they 'when present', ({ssh}) ->
+  they 'does not exist', ({ssh}) ->
     nikita
       ssh: ssh
     .lxd.delete
@@ -16,18 +16,14 @@ describe 'lxd.file.exists', ->
     .lxd.init
       image: 'ubuntu:18.04'
       container: 'c1'
-    .lxd.start
+    .lxd.config.device.exists
       container: 'c1'
-    .system.execute
-      cmd: "lxc exec c1 -- touch /root/a_file"
-    .lxd.file.exists
-      container: 'c1'
-      target: '/root/a_file'
+      device: 'test'
     , (err, {status}) ->
-      status.should.be.true()
+      status.should.be.false()
     .promise()
 
-  they 'when missing', ({ssh}) ->
+  they 'device exists', ({ssh}) ->
     nikita
       ssh: ssh
     .lxd.delete
@@ -36,11 +32,16 @@ describe 'lxd.file.exists', ->
     .lxd.init
       image: 'ubuntu:18.04'
       container: 'c1'
-    .lxd.start
+    .lxd.config.device
       container: 'c1'
-    .lxd.file.exists
+      device: 'test'
+      type: 'unix-char'
+      config:
+        source: '/dev/urandom'
+        path: '/testrandom'
+    .lxd.config.device.exists
       container: 'c1'
-      target: '/root/a_file'
+      device: 'test'
     , (err, {status}) ->
       status.should.be.false()
     .promise()

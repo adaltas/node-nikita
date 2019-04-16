@@ -12,22 +12,22 @@ describe 'lxd.exec', ->
       ssh: ssh
       lxd: lxd
     .lxd.delete
-      name: 'container1'
+      container: 'container1'
       force: true
     .lxd.init
       image: 'ubuntu:16.04'
-      name: 'container1'
+      container: 'container1'
     .lxd.start
-      name: 'container1'
+      container: 'container1'
     .lxd.exec
-      name: 'container1'
+      container: 'container1'
       cmd: """
       cat /etc/lsb-release | grep DISTRIB_ID
       """
     , (err, {status, stdout}) ->
       stdout.trim().should.eql 'DISTRIB_ID=Ubuntu'
     .promise()
-  
+
 describe 'option trap', ->
 
   they 'is enabled', ({ssh}) ->
@@ -35,15 +35,15 @@ describe 'option trap', ->
       ssh: ssh
       lxd: lxd
     .lxd.delete
-      name: 'container1'
+      container: 'container1'
       force: true
     .lxd.init
       image: 'ubuntu:16.04'
-      name: 'container1'
+      container: 'container1'
     .lxd.start
-      name: 'container1'
+      container: 'container1'
     .lxd.exec
-      name: 'container1'
+      container: 'container1'
       relax: true
       trap: true
       cmd: """
@@ -59,15 +59,15 @@ describe 'option trap', ->
       ssh: ssh
       lxd: lxd
     .lxd.delete
-      name: 'container1'
+      container: 'container1'
       force: true
     .lxd.init
       image: 'ubuntu:16.04'
-      name: 'container1'
+      container: 'container1'
     .lxd.start
-      name: 'container1'
+      container: 'container1'
     .lxd.exec
-      name: 'container1'
+      container: 'container1'
       trap: false
       cmd: """
       false

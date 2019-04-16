@@ -5,9 +5,9 @@ Push files into containers.
 
 ## Options
 
-* `name` (string, required)   
+* `container` (string, required)
   The name of the container.
-* `cmd` (string, required)   
+* `cmd` (string, required)
   The command to execute.
 
 ## Example
@@ -15,7 +15,7 @@ Push files into containers.
 ```
 require('nikita')
 .lxd.exec({
-  name: "my-container"
+  container: "my-container"
   cmd: "whoami"
 }, function(err, {status, stdout, stderr}) {
   console.log( err ? err.message : stdout)
@@ -31,10 +31,10 @@ require('nikita')
 
     module.exports =  ({options}, callback) ->
       @log message: "Entering lxd.exec", level: 'DEBUG', module: '@nikitajs/lxd/lib/exec'
-      throw Error "Invalid Option: name is required" unless options.name
+      throw Error "Invalid Option: container is required" unless options.container
       @system.execute options, trap: false,
         cmd: [
-          "cat <<'EOF' | lxc exec #{options.name} -- bash"
+          "cat <<'EOF' | lxc exec #{options.container} -- bash"
           'set -e' if options.trap
           options.cmd
           'EOF'

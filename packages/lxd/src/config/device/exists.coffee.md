@@ -5,9 +5,9 @@ Add devices to containers or profiles.
 
 ## Options
 
-* `name` (string, required)   
+* `container` (string, required)
   The name of the container.
-* `device` (string, required)   
+* `device` (string, required)
   Name of the device in LXD configuration, for example "eth0".
 
 ## Add a network interface
@@ -15,7 +15,7 @@ Add devices to containers or profiles.
 ```js
 require('nikita')
 .lxd.config.device.exists({
-  name: "my_container",
+  container: "my_container",
   device: 'eth0',
 }, function(err, {status, config}) {
   console.log( err ? err.message : status ?
@@ -27,13 +27,13 @@ require('nikita')
 
     module.exports = shy: true, handler: ({options}, callback) ->
       @log message: "Entering lxd.config.device.exists", level: 'DEBUG', module: '@nikitajs/lxd/lib/config/device/exists'
-      throw Error "Invalid Option: name is required" unless options.name
+      throw Error "Invalid Option: container is required" unless options.container
       throw Error "Invalid Option: device is required" unless options.device
       @system.execute
         cmd: """
         #{[
           'lxc', 'config', 'device', 'show'
-          options.name
+          options.container
         ].join ' '}
         """
         code_skipped: 42

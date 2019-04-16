@@ -12,15 +12,15 @@ describe 'lxd.delete', ->
       ssh: ssh
     .lxd.init
       image: 'ubuntu:'
-      name: 'c1'
+      container: 'c1'
     .lxd.stop
-      name: 'c1'
+      container: 'c1'
     .lxd.delete
-      name: 'c1'
+      container: 'c1'
     , (err, {status}) ->
       status.should.be.true() unless err
     .lxd.delete
-      name: 'c1'
+      container: 'c1'
     , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
@@ -31,11 +31,11 @@ describe 'lxd.delete', ->
       ssh: ssh
     .lxd.init
       image: 'ubuntu:'
-      name: 'container1'
+      container: 'container1'
     .lxd.start
-      name: 'container1'
+      container: 'container1'
     .lxd.delete
-      name: 'container1'
+      container: 'container1'
       force: true
     , (err, {status}) ->
       status.should.be.true()
@@ -45,9 +45,9 @@ describe 'lxd.delete', ->
     nikita
       ssh: ssh
     .lxd.delete  # repeated to be sure the container is absent
-      name: 'container1'
+      container: 'container1'
     .lxd.delete
-      name: 'container1'
+      container: 'container1'
     , (err, {status}) ->
       status.should.be.false()
     .promise()

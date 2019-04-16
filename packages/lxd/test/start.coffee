@@ -12,13 +12,13 @@ describe 'lxd.start', ->
       ssh: ssh
       lxd: lxd
     .lxd.delete
-      name: 'u1'
+      container: 'u1'
       force: true
     .lxd.init
       image: 'ubuntu:16.04'
-      name: 'u1'
+      container: 'u1'
     .lxd.start
-      name: 'u1'
+      container: 'u1'
     , (err, {status}) ->
       status.should.be.true()
     .promise()
@@ -28,15 +28,15 @@ describe 'lxd.start', ->
       ssh: ssh
       lxd: lxd
     .lxd.delete
-      name: 'u1'
+      container: 'u1'
       force: true
     .lxd.init
       image: 'ubuntu:16.04'
-      name: 'u1'
+      container: 'u1'
     .lxd.start
-      name: 'u1'
+      container: 'u1'
     .lxd.start
-      name: 'u1'
+      container: 'u1'
     , (err, {status}) ->
       status.should.be.false()
     .promise()
