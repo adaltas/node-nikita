@@ -5,16 +5,16 @@ Print the process limit associated with a running container.
 
 ## Options
 
-* `container` (string, required)   
+* `container` (string, required)
   The name of the container.
 
 ## Output
 
-* `error` (object)   
+* `error` (object)
   The error object, if any.
 * `output.stdout` (string)
   The standard output from the `prlimit` command.
-* `output.limits` (array)   
+* `output.limits` (array)
   The limit object parsed from `stdout`; each element of the array contains the
   keys `resource`, `description`, `soft`, `hard` and `units`.
 
@@ -23,7 +23,7 @@ Print the process limit associated with a running container.
 ```js
 require('nikita')
 .lxd.goodies.prlimit({
-  name: "my_container"
+  container: "my_container"
 }, function(err, {stdout, limits}) {
   console.info( err ? err.message : stdout + JSON.decode(limits))
 });
@@ -31,7 +31,7 @@ require('nikita')
 
     module.exports = shy: true, handler: ({options}, callback) ->
       @log message: "Entering lxd.goodies.prlimit", level: 'DEBUG', module: '@nikitajs/lxd/lib/goodies/prlimit'
-      throw Error "Invalid Option: name is required" unless options.name
+      throw Error "Invalid Option: name is required" unless options.container
       @system.execute
         cmd: """
         command -p prlimit || exit 3
@@ -49,7 +49,7 @@ require('nikita')
           hard: hard
           units: units
         callback null, stdout: stdout, limits: limits
-      
+
 ## Dependencies
 
     string = require '@nikitajs/core/lib/misc/string'

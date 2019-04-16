@@ -5,7 +5,7 @@ Delete a Linux Container using lxd.
 
 ## Options
 
-* `name` (required, string)
+* `container` (required, string)
   The name of the container
 * `force` (optional default: false)
   If true, the container will be deleted even if running
@@ -15,7 +15,7 @@ Delete a Linux Container using lxd.
 ```
 require('nikita')
 .lxd.delete({
-  name: "myubuntu"
+  container: "myubuntu"
 }, function(err, {status}) {
   console.log( err ? err.message : 'The container was deleted')
 });
@@ -26,15 +26,15 @@ require('nikita')
     module.exports =  ({options}) ->
       @log message: "Entering delete", level: 'DEBUG', module: '@nikitajs/lxd/lib/delete'
       #Check args
-      throw Error "Invalid Option: name is required" unless options.name
+      throw Error "Invalid Option: name is required" unless options.container
       # Execution
       @system.execute
         cmd: """
-        lxc info #{options.name} > /dev/null || exit 42
+        lxc info #{options.container} > /dev/null || exit 42
         #{[
           'lxc',
           'delete',
-          options.name
+          options.container
           "--force" if options.force
         ].join ' '}
         """

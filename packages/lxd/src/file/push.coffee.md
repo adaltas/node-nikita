@@ -5,25 +5,25 @@ Push files into containers.
 
 ## Options
 
-* `name` (string, required)   
+* `container` (string, required)
   The name of the container.
-* `content` (string, optional*)   
+* `content` (string, optional*)
   Content of the target file; required if `source` is not set
 * `create_dirs` (boolean, optional, false)
   Create any directories necessary.
-* `gid` (integer, optional)   
+* `gid` (integer, optional)
   Set the file's gid on push.
   overwrite the `source` option.
-* `lxd_target` (string, required)   
+* `lxd_target` (string, required)
   File destination in the form of "[<remote>:]<container>/<path>",
   overwrite the `target` option.
-* `mode` (integer|string, optional)   
+* `mode` (integer|string, optional)
   Set the file's perms on push.
-* `source` (string, optional*)   
+* `source` (string, optional*)
   File to push in the form of "<path>"; required if `content` is not set.
-* `target` (string, required)   
+* `target` (string, required)
   File destination in the form of "<path>".
-* `uid` (integer, optional)   
+* `uid` (integer, optional)
   Set the file's uid on push.
 
 ## Example
@@ -31,7 +31,7 @@ Push files into containers.
 ```js
 require('nikita')
 .lxd.file.push({
-  name: "my_container"
+  container: "my_container"
 }, function(err, {status}) {
   console.info( err ? err.message : 'The container was deleted')
 });
@@ -48,11 +48,11 @@ require('nikita')
 
     module.exports =  ({options}) ->
       @log message: "Entering lxd.file.push", level: 'DEBUG', module: '@nikitajs/lxd/lib/file/push'
-      throw Error "Invalid Option: name is required" unless options.name # note, name could be obtained from lxd_target
+      throw Error "Invalid Option: name is required" unless options.container # note, name could be obtained from lxd_target
       throw Error "Invalid Option: source or content are required" unless options.source or options.content?
       throw Error "Invalid Option: target is required" if not options.target and not options.lxd_target
       options.algo ?= 'md5'
-      options.lxd_target ?= "#{path.join options.name, options.target}"
+      options.lxd_target ?= "#{path.join options.container, options.target}"
       options.tmp_file ?= "/tmp/nikita.#{Date.now()}#{Math.round(Math.random()*1000)}"
       # Execution
       @fs.writeFile
@@ -60,7 +60,7 @@ require('nikita')
         target: options.tmp_file
         content: options.content
       @lxd.running
-        name: options.name
+        container: options.container
       @system.execute
         if: -> @status -1
         cmd: """
@@ -69,7 +69,7 @@ require('nikita')
         command -v openssl >/dev/null || exit 3
         sourceDgst=`openssl dgst -#{options.algo} #{options.source or options.tmp_file} | sed 's/^.* \\([a-z0-9]*\\)$/\\1/g'`
         # Get target hash
-        targetDgst=`cat <<EOF | lxc exec #{options.name} -- bash
+        targetDgst=`cat <<EOF | lxc exec #{options.container} -- bash
         # Ensure openssl is available
         command -v openssl >/dev/null || exit 4
         # Target does not exist
@@ -101,11 +101,11 @@ require('nikita')
         trim: true
       @lxd.exec
         if: typeof options.gid is 'string'
-        name: options.name
+        container: options.container
         cmd: "chgrp #{options.gid} #{options.target}"
       @lxd.exec
         if: typeof options.uid is 'string'
-        name: options.name
+        container: options.container
         cmd: "chown #{options.uid} #{options.target}"
       @fs.unlink
         if: options.content?

@@ -11,13 +11,13 @@ describe 'lxd.goodie.prlimit', ->
     nikita
       ssh: ssh
     .lxd.delete
-      name: 'c1'
+      container: 'c1'
       force: true
     .lxd.init
       image: 'ubuntu:18.04'
-      name: 'c1'
+      container: 'c1'
     .lxd.start
-      name: 'c1'
+      container: 'c1'
     .lxd.goodies.prlimit
-      name: 'c1'
+      container: 'c1'
     .promise()

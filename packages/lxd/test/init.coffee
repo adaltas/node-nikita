@@ -11,14 +11,11 @@ describe 'lxd.init', ->
     nikita
       ssh: ssh
     .lxd.delete
-      name: 'u1'
+      container: 'u1'
       force: true
     .lxd.init
       image: 'ubuntu:16.04'
-      name: 'u1'
-      network: 'net1'
-      storage: 'pool1'
-      profile: 'profile1'
+      container: 'u1'
       ephemeral: false
     , (err, {status}) ->
       status.should.be.true()
@@ -28,14 +25,14 @@ describe 'lxd.init', ->
     nikita
       ssh: ssh
     .lxd.delete
-      name: 'u1'
+      container: 'u1'
       force: true
     .lxd.init
       image: 'ubuntu:16.04'
-      name: 'u1'
+      container: 'u1'
     .lxd.init
       image: 'ubuntu:18.04'
-      name: 'u1'
+      container: 'u1'
     , (err, {status}) ->
       status.should.be.false()
     .promise()

@@ -11,18 +11,18 @@ describe 'lxd.config.set', ->
     nikita
       ssh: ssh
     .lxd.delete
-      name: 'c1'
+      container: 'c1'
       force: true
     .lxd.init
       image: 'ubuntu:18.04'
-      name: 'c1'
+      container: 'c1'
     .lxd.config.set
-      name: 'c1'
+      container: 'c1'
       config:
         'environment.MY_KEY_1': 'my value 1'
         'environment.MY_KEY_2': 'my value 2'
     .lxd.start
-      name: 'c1'
+      container: 'c1'
     .system.execute
       cmd: "lxc exec c1 -- env | grep MY_KEY_1"
       trim: true

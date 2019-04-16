@@ -5,7 +5,7 @@ Start containers.
 
 ## Options
 
-* `name` (string, required)
+* `container` (string, required)
   The name of the container.
 
 ## Callback Parameters
@@ -20,9 +20,9 @@ Start containers.
 ```
 require('nikita')
 .lxd.start({
-  name: "my_container"
+  container: "my_container"
 }, function(err, {status}) {
-  console.log( err ? err.message : 
+  console.log( err ? err.message :
     status ? 'Container now running' : 'Container already running' )
 });
 ```
@@ -31,15 +31,15 @@ require('nikita')
 
     module.exports =  ({options}) ->
       @log message: "Entering lxd.init", level: 'DEBUG', module: '@nikitajs/lxd/lib/init'
-      throw Error "Invalid Option: name is required" unless options.name
+      throw Error "Invalid Option: name is required" unless options.container
       cmd_init = [
-        'lxc', 'start', options.name
+        'lxc', 'start', options.container
       ].join ' '
       # Execution
       @system.execute
-        name: options.name
+        container: options.container
         cmd: """
-        lxc list -c ns --format csv | grep '#{options.name},RUNNING' && exit 42 
+        lxc list -c ns --format csv | grep '#{options.container},RUNNING' && exit 42
         #{cmd_init}
         """
         code_skipped: 42

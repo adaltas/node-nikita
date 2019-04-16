@@ -5,9 +5,9 @@ Push files into containers.
 
 ## Options
 
-* `name` (string, required)   
+* `container` (string, required)
   The name of the container.
-* `target` (string, required)   
+* `target` (string, required)
   File destination in the form of "<path>".
   overwrite the `target` option.
 
@@ -16,7 +16,7 @@ Push files into containers.
 ```js
 require('nikita')
 .lxd.file.exists({
-  name: "my_container"
+  container: "my_container"
 }, function(err, {status}) {
   console.info( err ? err.message : 'The container was deleted')
 });
@@ -34,10 +34,10 @@ require('nikita')
 
     module.exports =  shy: true, handler: ({options}) ->
       @log message: "Entering lxd.file.exists", level: 'DEBUG', module: '@nikitajs/lxd/lib/file/exists'
-      throw Error "Invalid Option: name is required" unless options.name
+      throw Error "Invalid Option: name is required" unless options.container
       throw Error "Invalid Option: target is required" unless options.target
       @system.execute
         cmd: """
-        lxc exec #{options.name} -- stat #{options.target}
+        lxc exec #{options.container} -- stat #{options.target}
         """
         code_skipped: 1
