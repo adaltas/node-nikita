@@ -91,6 +91,7 @@ registry.register({
     stop: 'nikita/service/stop'
   },
   system: {
+    dconf: 'nikita/system/dconf',
     authconfig: 'nikita/system/authconfig',
     cgroups: 'nikita/system/cgroups',
     chmod: 'nikita/system/chmod',
