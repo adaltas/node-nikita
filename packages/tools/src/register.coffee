@@ -16,3 +16,5 @@ registry.register
     ssh:
       keygen: '@nikitajs/tools/src/ssh/keygen'
     sysctl: '@nikitajs/tools/src/sysctl'
+  system:
+    dconf: '@nikitajs/tools/src/dconf'
