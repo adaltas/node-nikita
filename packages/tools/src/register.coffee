@@ -6,6 +6,7 @@ registry.register
     backup: '@nikitajs/tools/src/backup'
     compress: '@nikitajs/tools/src/compress'
     extract: '@nikitajs/tools/src/extract'
+    dconf: '@nikitajs/tools/lib/dconf'
     rubygems:
       'fetch': '@nikitajs/tools/src/rubygems/fetch'
       'install': '@nikitajs/tools/src/rubygems/install'
