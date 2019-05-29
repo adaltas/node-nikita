@@ -98,28 +98,27 @@ require('nikita')(
       @call options, stream, serializer:
         'diff': null
         'end': ->
-          status = true # TODO: inject status
-          if options.colors
-            color = if status
-            then options.colors.status_true
-            else options.colors.status_false
-          # "FINISH\n"
+          color = if options.colors
+          then options.colors.status_true
+          else false
           line = format_line
             host: options.host
             header: ''
-            status: if status then '✔' else '-'
+            status: '♥'
             time: ''
           line = color line if color
           return line+'\n'
         'error': (err) ->
-          "ERROR"
-          color = options.colors.status_error
+          color = if options.colors
+          then options.colors.status_error
+          else false
           line = format_line
             host: options.host
             header: err.message
-            status: if status then '✔' else '-'
+            status: '✘'
             time: ''
           line = color line if color
+          return line+'\n'
         'header': (log) ->
           return unless options.enabled
           return if options.depth_max and options.depth_max < log.headers.length

@@ -148,16 +148,12 @@ module.exports = {
       serializer: {
         'diff': null,
         'end': function() {
-          var color, line, status;
-          status = true; // TODO: inject status
-          if (options.colors) {
-            color = status ? options.colors.status_true : options.colors.status_false;
-          }
-          // "FINISH\n"
+          var color, line;
+          color = options.colors ? options.colors.status_true : false;
           line = format_line({
             host: options.host,
             header: '',
-            status: status ? '✔' : '-',
+            status: '♥',
             time: ''
           });
           if (color) {
@@ -166,18 +162,18 @@ module.exports = {
           return line + '\n';
         },
         'error': function(err) {
-          "ERROR";
           var color, line;
-          color = options.colors.status_error;
+          color = options.colors ? options.colors.status_error : false;
           line = format_line({
             host: options.host,
             header: err.message,
-            status: status ? '✔' : '-',
+            status: '✘',
             time: ''
           });
           if (color) {
-            return line = color(line);
+            line = color(line);
           }
+          return line + '\n';
         },
         'header': function(log) {
           if (!options.enabled) {

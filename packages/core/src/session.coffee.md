@@ -159,7 +159,7 @@
           error = errors[errors.length - 1]
           if not state.killed and state.parent_levels.length is 0 and error and state.current_level.throw_if_error
             if obj.listenerCount('error') is 0
-            then throw error 
+            then throw error
             else obj.emit 'error', error
           if state.parent_levels.length is 0
             obj.emit 'end', level: 'INFO' unless error
@@ -249,7 +249,7 @@
               else if Array.isArray context.internal.once
                 hash = string.hash context.internal.once.map((k) ->
                   if k is 'handler'
-                  then hashme context.handler 
+                  then hashme context.handler
                   else hashme context.internal[k]
                 ).join '|'
               else
@@ -316,7 +316,7 @@
           do_handler = ->
             context.options.attempt++
             do_next = ({error, output, args}) ->
-              context.error = if error? then error else undefined # ensure null is converted to undefined 
+              context.error = if error? then error else undefined # ensure null is converted to undefined
               context.output = output
               context.args = args
               if error and error not instanceof Error

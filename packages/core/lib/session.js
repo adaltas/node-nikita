@@ -634,7 +634,7 @@ module.exports = function() {
         context.options.attempt++;
         do_next = function({error, output, args}) {
           var base, base1;
-          context.error = error != null ? error : void 0; // ensure null is converted to undefined 
+          context.error = error != null ? error : void 0; // ensure null is converted to undefined
           context.output = output;
           context.args = args;
           if (error && !(error instanceof Error)) {

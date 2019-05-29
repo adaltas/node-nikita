@@ -7,6 +7,11 @@
 * ssh: fix tests
 * fix test/api/status "set status when sync is called in async" test
 
+## Trunk
+
+Fix:
+* events: fix handling next and error events
+
 ## Version 0.9.3
 
 Breaking changes:
