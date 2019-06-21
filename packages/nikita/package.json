@@ -11,7 +11,7 @@
     "system",
     "task"
   ],
-  "version": "0.9.3",
+  "version": "0.9.4",
   "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "email": "open@adaltas.com",
@@ -32,16 +32,16 @@
     }
   ],
   "dependencies": {
-    "@nikitajs/core": "^0.9.3",
-    "@nikitajs/db": "^0.9.3",
-    "@nikitajs/docker": "^0.9.3",
-    "@nikitajs/filetypes": "^0.9.3",
-    "@nikitajs/ipa": "^0.0.1",
-    "@nikitajs/java": "^0.0.2",
-    "@nikitajs/krb5": "^0.9.3",
-    "@nikitajs/ldap": "^0.9.3",
-    "@nikitajs/lxd": "^0.9.3",
-    "@nikitajs/tools": "^0.9.4"
+    "@nikitajs/core": "^0.9.4",
+    "@nikitajs/db": "^0.9.4",
+    "@nikitajs/docker": "^0.9.4",
+    "@nikitajs/filetypes": "^0.9.4",
+    "@nikitajs/ipa": "^0.0.2",
+    "@nikitajs/java": "^0.0.3",
+    "@nikitajs/krb5": "^0.9.4",
+    "@nikitajs/ldap": "^0.9.4",
+    "@nikitajs/lxd": "^0.9.4",
+    "@nikitajs/tools": "^0.9.5"
   },
   "engines": {
     "node": ">= 10.0.0"
