@@ -2,12 +2,11 @@
   "name": "nikita",
   "description": "Automation and deployment solution of applications and infrastructures.",
   "keywords": [
+    "nikita",
+    "automation",
     "build",
-    "cli",
     "deploy",
-    "fs",
     "install",
-    "masson",
     "ssh",
     "system",
     "task"
@@ -50,7 +49,7 @@
   "files": [
     "/lib"
   ],
-  "homepage": "http://www.adaltas.com/projects/node-nikita/",
+  "homepage": "https://nikita.js.org/",
   "license": "MIT",
   "main": "./lib/index",
   "repository": {

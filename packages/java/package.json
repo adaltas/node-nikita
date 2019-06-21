@@ -39,7 +39,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "homepage": "http://www.adaltas.com/projects/node-nikita/",
+  "homepage": "https://nikita.js.org/",
   "license": "MIT",
   "repository": {
     "type": "git",

@@ -1,10 +1,27 @@
 {
   "name": "@nikitajs/lxd",
   "description": "Nikita LXD actions.",
+  "keywords": [
+    "nikita",
+    "automation",
+    "build",
+    "deploy",
+    "install",
+    "ssh",
+    "lxd",
+    "container"
+  ],
   "version": "0.9.3",
+  "author": "David Worms <david@adaltas.com>",
   "bugs": {
     "url": "https://github.com/adaltas/node-nikita/issues"
   },
+  "contributors": [
+    {
+      "name": "David Worms",
+      "email": "david@adaltas.com"
+    }
+  ],
   "dependencies": {
     "js-yaml": "^3.13.1",
     "object-diff": "^0.0.4"
@@ -27,7 +44,12 @@
   "publishConfig": {
     "access": "public"
   },
+  "homepage": "https://nikita.js.org/",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adaltas/node-nikita"
+  },
   "scripts": {
     "coffee": "coffee -b -o lib src && sed -i -e 's/src/lib/g' lib/register.js",
     "pretest": "npm run coffee",
