@@ -54,7 +54,8 @@
   "main": "./lib/index",
   "repository": {
     "type": "git",
-    "url": "https://github.com/adaltas/node-nikita"
+    "url": "https://github.com/adaltas/node-nikita",
+    "directory": "packages/nikita"
   },
   "scripts": {
     "test": "mocha"

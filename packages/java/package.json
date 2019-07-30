@@ -43,7 +43,8 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/adaltas/node-nikita"
+    "url": "https://github.com/adaltas/node-nikita",
+    "directory": "packages/java"
   },
   "scripts": {
     "coffee": "coffee -b -o lib src && sed -i -e 's/src/lib/g' lib/register.js",
