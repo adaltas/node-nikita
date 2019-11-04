@@ -17,6 +17,19 @@
   "bugs": {
     "url": "https://github.com/adaltas/node-nikita/issues"
   },
+  "coffeelintConfig": {
+    "indentation": {
+      "level": "error",
+      "value": 2
+    },
+    "line_endings": {
+      "level": "error",
+      "value": "unix"
+    },
+    "max_line_length": {
+      "level": "ignore"
+    }
+  },
   "contributors": [
     {
       "name": "David Worms",
