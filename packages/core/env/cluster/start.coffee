@@ -75,7 +75,7 @@ nikita
   provision_container: ({options}) ->
     @lxd.exec
       header: 'Node.js'
-      name: options.container
+      container: options.container
       cmd: """
       command -v node && exit 42
       NODE_VERSION=10.12.0
@@ -89,7 +89,7 @@ nikita
     @lxd.file.push
       debug: true
       header: 'Test configuration'
-      name: options.container
+      container: options.container
       gid: 'nikita'
       uid: 'nikita'
       source: './test.coffee'

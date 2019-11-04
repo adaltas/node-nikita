@@ -28,12 +28,12 @@ containers:
     nic:
       eth0:
         config:
-          name: eth0
+          container: eth0
           nictype: bridged
           parent: lxdbr0public
       eth1:
         config:
-          name: eth1
+          container: eth1
           nictype: bridged
           parent: lxdbr1private
           ip: '10.10.10.10'
@@ -59,7 +59,7 @@ containers:
       options.proxy ?= {}
       options.user ?= {}
       @call
-        if: options.prevision
+        if: !!options.prevision
       , options,  options.prevision
       for network, config of options.network
         @lxd.network
@@ -71,19 +71,20 @@ containers:
         ssh = config.ssh or {}
         ssh.enabled ?= false
         # throw Error 'Required Option: ssh.id_rsa is record if ssh is enabled' if ssh.enabled and not ssh.id_rsa
+        console.log('init', container)
         @lxd.init
           header: 'Init'
-          name: container
+          container: container
           image: config.image
         @lxd.config.set
           header: 'Config'
-          name: container
+          container: container
           image: config.image
           config: config.config
         for device, configdisk of config.disk
-          @lxd.config.device.add
+          @lxd.config.device
             header: "Device #{device} disk"
-            name: container
+            container: container
             device: device
             type: 'disk'
             config: configdisk
@@ -91,16 +92,16 @@ containers:
           confignic.name ?= device
           confignic.netmask ?= '255.255.255.0'
           throw Error "Required Property: nic.#{device}.parent" unless confignic.config.parent
-          @lxd.config.device.add
+          @lxd.config.device
             header: "Device #{device} nic"
-            name: container
+            container: container
             device: device
             type: 'nic'
             config: confignic.config
           @lxd.file.push
             header: "ifcfg #{confignic.name}"
-            if: confignic.ip
-            name: container
+            if: !!confignic.ip
+            container: container
             target: "/etc/sysconfig/network-scripts/ifcfg-#{confignic.name}"
             content: """
             NM_CONTROLLED=yes
@@ -114,18 +115,18 @@ containers:
         for device, configproxy of config.proxy
           # todo: add host detection and port forwarding to VirtualBox
           # VBoxManage controlvm 'lxd' natpf1 'ipa_ui,tcp,0.0.0.0,2443,,2443'
-          @lxd.config.device.add
+          @lxd.config.device
             header: "Device #{device} proxy"
-            name: container
+            container: container
             device: device
             type: 'proxy'
             config: configproxy
         @lxd.start
           header: 'Start'
-          name: container
+          container: container
         @lxd.exec
           header: 'OpenSSL'
-          name: container
+          container: container
           cmd: """
           yum update -y
           yum install -y openssl
@@ -136,7 +137,7 @@ containers:
         @lxd.exec
           header: 'SSH'
           if: ssh.enabled
-          name: container
+          container: container
           cmd: """
           systemctl status sshd
           yum install -y openssh-server
@@ -148,7 +149,7 @@ containers:
         for user, configuser of config.user then @call header: "#{user}", ->
           @lxd.exec
             header: "User #{user}"
-            name: container
+            container: container
             cmd: """
             id #{user} && exit 42
             useradd --create-home --system #{user}
@@ -161,7 +162,7 @@ containers:
           @lxd.exec
             header: 'Sudo'
             if: configuser.sudo
-            name: container
+            container: container
             cmd: """
             yum install -y sudo
             command -p sudo
@@ -173,14 +174,14 @@ containers:
           @lxd.file.push
             header: 'Authorize'
             if: configuser.authorized_keys
-            name: container
+            container: container
             gid: "#{user}"
             uid: "#{user}"
             mode: 600
             source: "#{configuser.authorized_keys}"
             target: "/home/#{user}/.ssh/authorized_keys"
       @call
-        if: options.provision
+        if: !!options.provision
       , options,  options.provision
       for container, config of options.containers
         @call

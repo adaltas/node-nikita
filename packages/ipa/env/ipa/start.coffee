@@ -40,7 +40,7 @@ nikita
   provision_container: ({options}) ->
     @lxd.exec
       header: 'Node.js'
-      name: options.container
+      container: options.container
       cmd: """
       command -v node && exit 42
       NODE_VERSION=10.12.0
@@ -53,25 +53,25 @@ nikita
       code_skipped: 42
     @lxd.file.push
       header: 'User Private Key'
-      name: options.container
+      container: options.container
       gid: 'nikita'
       uid: 'nikita'
       source: './assets/id_rsa'
       target: '/home/nikita/.ssh/id_rsa'
     @lxd.exec
       header: 'Root SSH dir'
-      name: options.container
+      container: options.container
       cmd: 'mkdir -p /root/.ssh && chmod 700 /root/.ssh'
     @lxd.file.push
       header: 'Root SSH Private Key'
-      name: options.container
+      container: options.container
       gid: 'root'
       uid: 'root'
       source: './assets/id_rsa'
       target: '/root/.ssh/id_rsa'
     @lxd.exec
       header: 'Install FreeIPA'
-      name: options.container
+      container: options.container
       unless_exists: '/etc/ipa/default.conf'
       cmd: """
       yum install -y freeipa-server
