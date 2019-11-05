@@ -3,7 +3,7 @@ nikita = require '@nikitajs/core'
 {tags, ssh, scratch} = require './test'
 they = require('ssh2-they').configure ssh...
 
-return unless tags.posix
+return unless tags.tools_dconf
 
 describe 'tools.dconf', ->
 
@@ -11,8 +11,8 @@ describe 'tools.dconf', ->
     nikita
       ssh: ssh
     .tools.dconf
-        key: '/org/gnome/desktop/datetime/automatic-timezone'
-        value: "true"
+      key: '/org/gnome/desktop/datetime/automatic-timezone'
+      value: "true"
     .tools.dconf
       key: '/org/gnome/desktop/peripherals/touchpad/click-method'
       value: "fingers"
@@ -20,8 +20,7 @@ describe 'tools.dconf', ->
       key: '/org/gnome/desktop/input-sources/xkb-options'
       value: '[\'ctrl:swap_lalt_lctl\']'
     .promise()
-    
-    
+  
   they 'checking if the settings were changed', ({ssh}) ->
     nikita
       ssh: ssh

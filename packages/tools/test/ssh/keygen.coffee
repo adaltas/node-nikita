@@ -3,6 +3,8 @@ nikita = require '@nikitajs/core'
 {tags, ssh, scratch, ruby} = require '../test'
 they = require('ssh2-they').configure ssh...
 
+return unless tags.posix
+
 describe 'tools.ssh.keygen', ->
 
   they 'a new key', ({ssh}) ->
