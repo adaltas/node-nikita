@@ -3,7 +3,7 @@
 
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/bionic64"
-  config.ssh.insert_key = false
+  config.ssh.insert_key = true
   config.vm.box_check_update = false
   config.vm.synced_folder ".", "/vagrant", disabled: true
   config.vm.synced_folder "../../../../../", "/nikita"
@@ -36,7 +36,8 @@ Vagrant.configure("2") do |config|
     apt-get install -y zfsutils-linux
     zpool create -f lxd /dev/sdc
     lxd init --auto --storage-backend=zfs --storage-pool=lxd
-    chmod a+rx /usr/local/bin/*
+    # wdavidw: nov 12th, 2019: throw the error `chmod: cannot access '/usr/local/bin/*': No such file or directory`
+    # chmod a+rx /usr/local/bin/*
     # If we keep this VM around, let's keep images up to date but not nuke them so fast.
     lxc config set core.https_address '[::]:8443'
     lxc config set core.trust_password "secret"
