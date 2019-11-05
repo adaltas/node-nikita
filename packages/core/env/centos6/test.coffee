@@ -11,7 +11,6 @@ module.exports =
     system_info: true
     system_limits: true
     system_user: true
-    tools_repo: true
   conditions_is_os:
     arch: '64'
     name: 'centos'
@@ -22,6 +21,5 @@ module.exports =
     chk_name: 'crond'
   ssh: [
     null
-  ,
-    ssh: host: 'localhost', username: 'root'
+    { ssh: host: 'localhost', username: 'root' }
   ]

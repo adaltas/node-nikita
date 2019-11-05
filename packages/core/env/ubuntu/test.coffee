@@ -11,9 +11,6 @@ module.exports =
     system_info: false
     system_limits: false
     system_user: false
-  docker: # eg `docker-machine create --driver virtualbox nikita || docker-machine start nikita`
-    host: 'dind:2375'
-    # machine: 'nikita'
   conditions_is_os:
     arch: '64'
     name: 'ubuntu'
@@ -24,6 +21,5 @@ module.exports =
     chk_name: 'nginx'
   ssh: [
     null
-  ,
-    ssh: host: 'localhost', username: 'root'
+    { ssh: host: 'localhost', username: 'root' }
   ]

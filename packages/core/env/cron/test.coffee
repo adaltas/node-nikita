@@ -4,6 +4,5 @@ module.exports =
     cron: true
   ssh: [
     null
-  ,
-    ssh: host: 'localhost', username: 'root'
+    { ssh: host: 'localhost', username: 'root' }
   ]

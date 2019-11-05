@@ -11,9 +11,6 @@ module.exports =
     system_info: true
     system_limits: true
     system_user: true
-  ssh:
-    host: 'localhost'
-    username: 'root'
   conditions_is_os:
     arch: '64'
     name: 'arch'
@@ -27,6 +24,5 @@ module.exports =
     chk_name: 'ntpd'
   ssh: [
     null
-  ,
-    ssh: host: 'localhost', username: 'root'
+    { ssh: host: 'localhost', username: 'root' }
   ]

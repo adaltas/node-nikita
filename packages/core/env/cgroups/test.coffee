@@ -8,6 +8,5 @@ module.exports =
     chk_name: 'crond'
   ssh: [
     null
-  ,
-    ssh: host: 'localhost', username: 'root'
+    { ssh: host: 'localhost', username: 'root' }
   ]
