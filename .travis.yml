@@ -1,14 +1,12 @@
 language: node_js
 node_js:
-  - "8"
   - "10"
-cache:
-  yarn: true
-  directories:
-    - "node_modules"
+  - "12"
 script:
-  - yarn test
+  - lerna run test
 before_script:
-  - "ssh-keygen -t rsa -f ~/.ssh/id_rsa -N ''"
-  - "cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys"
-  - "sudo apt-get install -y openjdk-9-jre gcc make ruby ruby-dev"
+  - ssh-keygen -t rsa -f ~/.ssh/id_rsa -N ''
+  - cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
+  - sudo apt-get install -y openjdk-9-jre gcc make ruby ruby-dev
+  - yarn --version
+  - lerna bootstrap
