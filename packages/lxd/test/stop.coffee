@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/core'
-{tags, ssh, scratch, lxd} = require './test'
+{tags, ssh} = require './test'
 they = require('ssh2-they').configure ssh...
 
 return unless tags.lxd
@@ -10,7 +10,6 @@ describe 'lxd.stop', ->
   they 'Already stopped', ({ssh})  ->
     nikita
       ssh: ssh
-      lxd: lxd
     .lxd.delete
       container: 'u1'
       force: true
@@ -26,7 +25,6 @@ describe 'lxd.stop', ->
   they 'Stop a container', ({ssh}) ->
     nikita
       ssh: ssh
-      lxd: lxd
     .lxd.delete
       container: 'u1'
       force: true

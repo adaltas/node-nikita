@@ -1,7 +1,7 @@
 
 nikita = require '@nikitajs/core'
 assert = require 'assert'
-{tags, ssh, scratch, lxd} = require '../../test'
+{tags, ssh} = require '../../test'
 they = require('ssh2-they').configure ssh...
 
 return unless tags.lxd

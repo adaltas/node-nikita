@@ -37,6 +37,13 @@ require('nikita')
 });
 ```
 
+## Implementation details
+
+The current version 3.18 of lxd has an issue with lxc init waiting for
+configuration from stdin when there is no tty. This used to work before. Use
+`[ -t 0 ] && echo 'tty' || echo 'notty'` to detect the tty. The current
+fix is to prepend the init command with `echo '' | `.
+
 ## Source Code
 
     module.exports =  ({options}) ->
@@ -52,7 +59,8 @@ require('nikita')
       @system.execute
         container: options.container
         cmd: """
+        lxc remote get-default
         lxc info #{options.container} >/dev/null && exit 42
-        #{cmd_init}
+        echo '' | #{cmd_init}
         """
         code_skipped: 42

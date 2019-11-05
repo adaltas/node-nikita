@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/core'
-{tags, ssh, scratch} = require '../test'
+{tags, ssh} = require '../test'
 they = require('ssh2-they').configure ssh...
 
 return unless tags.lxd_prlimit

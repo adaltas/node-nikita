@@ -37,6 +37,13 @@
 // });
 // ```
 
+// ## Implementation details
+
+// The current version 3.18 of lxd has an issue with lxc init waiting for
+// configuration from stdin when there is no tty. This used to work before. Use
+// `[ -t 0 ] && echo 'tty' || echo 'notty'` to detect the tty. The current
+// fix is to prepend the init command with `echo '' | `.
+
 // ## Source Code
 module.exports = function({options}) {
   var cmd_init;
@@ -52,7 +59,7 @@ module.exports = function({options}) {
   // Execution
   return this.system.execute({
     container: options.container,
-    cmd: `lxc info ${options.container} >/dev/null && exit 42\n${cmd_init}`,
+    cmd: `lxc remote get-default\nlxc info ${options.container} >/dev/null && exit 42\necho '' | ${cmd_init}`,
     code_skipped: 42
   });
 };

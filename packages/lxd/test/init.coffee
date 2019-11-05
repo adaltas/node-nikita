@@ -4,6 +4,14 @@ nikita = require '@nikitajs/core'
 they = require('ssh2-they').configure ssh...
 
 return unless tags.lxd
+  
+before () ->
+  nikita
+  .system.execute
+    cmd: "lxc image copy ubuntu:16.04 `lxc remote get-default`:"
+  .system.execute
+    cmd: "lxc image copy ubuntu:18.04 `lxc remote get-default`:"
+  .promise()
 
 describe 'lxd.init', ->
 
@@ -14,7 +22,7 @@ describe 'lxd.init', ->
       container: 'u1'
       force: true
     .lxd.init
-      image: 'ubuntu:16.04'
+      image: 'ubuntu:'
       container: 'u1'
       ephemeral: false
     , (err, {status}) ->
