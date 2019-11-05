@@ -7,8 +7,8 @@
 
 // ## Options
 
-// *   `properties` (object)
-//     Name of the module.
+// * `properties` (object)
+//   Name of the module.
 
 // ## Example
 // ```javascript
