@@ -22,6 +22,30 @@ describe 'connection.wait', ->
     close: (callback) ->
       _.close callback
 
+  describe 'validation', ->
+
+    it 'option host', ->
+      nikita
+      .connection.wait
+        servers: [
+          { host: undefined, port: 80 }
+        ]
+        relax: true
+      , (err) ->
+        err.message.should.eql 'Invalid host: undefined'
+      .promise()
+
+    it 'option port', ->
+      nikita
+      .connection.wait
+        servers: [
+          { host: 'localhost', port: undefined }
+        ]
+        relax: true
+      , (err) ->
+        err.message.should.eql 'Invalid port: undefined'
+      .promise()
+
   describe 'connection', ->
 
     they 'a single host and a single port', ({ssh}) ->
@@ -204,31 +228,4 @@ describe 'connection.wait', ->
         @options.srv1.close callback
       .call (_, callback) ->
         @options.srv2.close callback
-      .promise()
-
-  describe 'options', ->
-
-    they 'validate host', ({ssh}) ->
-      srv = server()
-      nikita
-        ssh: ssh
-      .connection.wait
-        servers: [
-          { host: undefined, port: srv.port }
-        ]
-        relax: true
-      , (err) ->
-        err.message.should.eql 'Invalid host: undefined'
-      .promise()
-
-    they 'validate port', ({ssh}) ->
-      nikita
-        ssh: ssh
-      .connection.wait
-        servers: [
-          { host: 'localhost', port: undefined }
-        ]
-        relax: true
-      , (err) ->
-        err.message.should.eql 'Invalid port: undefined'
       .promise()

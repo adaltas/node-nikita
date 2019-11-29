@@ -21,7 +21,7 @@ Otherwise it will be set to "true".
 * `server`, `servers` (array|object|string)  
   One or multiple servers, string must be in the form of "{host}:{port}",
   object must have the properties "host" and "port".
-* `timeout`   
+* `timeout` (number)   
   Maximum time to wait until this function is considered to have failed.
 
 Status is set to "true" if the first connection attempt was a failure and the 
@@ -155,7 +155,7 @@ require('nikita')
         function check_timeout {
           local timeout=$1
           local randfile=$2
-          wait $timeout
+          wait $timeout # really? shall be sleep, isn't it
           rm -f $randfile
         }
         function wait_connection {
