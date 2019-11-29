@@ -7,6 +7,8 @@ Assert a TCP or HTTP server is listening.
 
 * `host` (string)  
   Host of the targeted server, could be a FQDN, a hostname or an IP.
+* `not` (boolean)   
+  Negates the validation.   
 * `port` (number)  
   Port of the targeted server.
 * `server`, `servers` (array|object|string)  
@@ -25,5 +27,9 @@ Assert a TCP or HTTP server is listening.
       for server in options.servers
         @system.execute
           cmd: "bash -c 'echo > /dev/tcp/#{server.host}/#{server.port}'"
+          relax: true
         , (err) ->
-          throw Error "Address not listening: \"#{server.host}:#{server.port}\"" if err
+          if err and not options.not
+            throw Error "Address not listening: \"#{server.host}:#{server.port}\""
+          else if not err and options.not
+            throw Error "Address listening: \"#{server.host}:#{server.port}\""

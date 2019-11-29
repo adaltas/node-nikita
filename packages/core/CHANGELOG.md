@@ -9,6 +9,9 @@
 
 ## Trunk
 
+New feature:
+connection.assert: new option `not`
+
 Fix:
 * events: fix handling next and error events
 

@@ -65,3 +65,28 @@ describe 'connection.assert', ->
     , (err) ->
       err.message.should.eql 'Address not listening: "localhost:54321"'
     .promise()
+
+  they 'option not', ({ssh}) ->
+    nikita
+      ssh: ssh
+    .connection.assert
+      host: 'localhost'
+      port: '54321'
+      not: true
+    , (err, {status}) ->
+      throw err if err
+      status.should.be.false()
+    .call (_, handler) ->
+      server = http.createServer (req, res) ->
+        res.writeHead 200, {'Content-Type': 'text/plain'}
+        res.end 'okay'
+      server.listen 12348, handler
+      servers.push server
+    .connection.assert
+      host: 'localhost'
+      port: '12348'
+      not: true
+      relax: true
+    , (err) ->
+      err.message.should.eql 'Address listening: "localhost:12348"'
+    .promise()
