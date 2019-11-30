@@ -48,7 +48,10 @@ require('nikita')
 
     module.exports =  ({options}) ->
       @log message: "Entering lxd.file.push", level: 'DEBUG', module: '@nikitajs/lxd/lib/file/push'
-      throw Error "Invalid Option: name is required" unless options.container # note, name could be obtained from lxd_target
+      # Validation
+      # note, name could be obtained from lxd_target
+      throw Error "Invalid Option: container is required" unless options.container
+      validate_container_name options.container
       throw Error "Invalid Option: source or content are required" unless options.source or options.content?
       throw Error "Invalid Option: target is required" if not options.target and not options.lxd_target
       options.algo ?= 'md5'
@@ -115,3 +118,4 @@ require('nikita')
 ## Dependencies
 
     path = require 'path'
+    validate_container_name = require '../misc/validate_container_name'

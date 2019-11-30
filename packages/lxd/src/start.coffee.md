@@ -31,7 +31,9 @@ require('nikita')
 
     module.exports =  ({options}) ->
       @log message: "Entering lxd.init", level: 'DEBUG', module: '@nikitajs/lxd/lib/init'
-      throw Error "Invalid Option: name is required" unless options.container
+      # Validation
+      throw Error "Invalid Option: container is required" unless options.container
+      validate_container_name options.container
       cmd_init = [
         'lxc', 'start', options.container
       ].join ' '
@@ -43,3 +45,7 @@ require('nikita')
         #{cmd_init}
         """
         code_skipped: 42
+
+## Dependencies
+
+    validate_container_name = require './misc/validate_container_name'

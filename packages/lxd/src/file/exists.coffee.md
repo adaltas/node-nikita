@@ -34,10 +34,16 @@ require('nikita')
 
     module.exports =  shy: true, handler: ({options}) ->
       @log message: "Entering lxd.file.exists", level: 'DEBUG', module: '@nikitajs/lxd/lib/file/exists'
-      throw Error "Invalid Option: name is required" unless options.container
+      # Validation
+      throw Error "Invalid Option: container is required" unless options.container
+      validate_container_name options.container
       throw Error "Invalid Option: target is required" unless options.target
       @system.execute
         cmd: """
         lxc exec #{options.container} -- stat #{options.target}
         """
         code_skipped: 1
+
+## Dependencies
+
+    validate_container_name = require '../misc/validate_container_name'

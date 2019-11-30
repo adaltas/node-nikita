@@ -28,6 +28,10 @@ require('nikita')
 
     module.exports =  ({options}) ->
       @log message: "Entering lxd.config.set", level: 'DEBUG', module: '@nikitajs/lxd/lib/config/set'
+      # Validation
+      throw Error "Invalid Option: container is required" unless options.container
+      validate_container_name options.container
+      # Execution
       keys = {}
       @system.execute
         cmd: """
@@ -62,3 +66,4 @@ require('nikita')
     {merge} = require 'mixme'
     yaml = require 'js-yaml'
     diff = require 'object-diff'
+    validate_container_name = require '../misc/validate_container_name'

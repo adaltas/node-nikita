@@ -15,7 +15,6 @@ describe 'lxd.cluster', ->
 
   it 'create network', ->
     nikita
-      debug: true
     .lxd.delete
       container: 'c1'
       force: true

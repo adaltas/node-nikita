@@ -4,6 +4,7 @@
 ## Trunk
 
 New features:
+* lxd: validate container name
 * lxd: import cluster code
 * lxd.exec: enforce trap
 * lxd.goodies.prlimit: print container limits

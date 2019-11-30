@@ -31,7 +31,9 @@ require('nikita')
 
     module.exports = shy: true, handler: ({options}, callback) ->
       @log message: "Entering lxd.goodies.prlimit", level: 'DEBUG', module: '@nikitajs/lxd/lib/goodies/prlimit'
-      throw Error "Invalid Option: name is required" unless options.container
+      # Validation
+      throw Error "Invalid Option: container is required" unless options.container
+      validate_container_name options.container
       @system.execute
         cmd: """
         command -p prlimit || exit 3
@@ -53,3 +55,4 @@ require('nikita')
 ## Dependencies
 
     string = require '@nikitajs/core/lib/misc/string'
+    validate_container_name = require '../misc/validate_container_name'

@@ -33,8 +33,9 @@ require('nikita')
 
     module.exports = ({options}) ->
       @log message: "Entering lxd network attach", level: "DEBUG", module: "@nikitajs/lxd/lib/network/attach"
-      #Check args
-      throw Error "Invalid Option: network is required" unless options.network
+      # Validation
+      throw Error "Invalid Option: container is required" unless options.container
+      validate_container_name options.container
       throw Error "Invalid Option: container is required" unless options.container
       #Build command
       cmd_attach = [
@@ -51,3 +52,7 @@ require('nikita')
         #{cmd_attach}
         """
         code_skipped: 42
+
+## Dependencies
+
+    validate_container_name = require '../misc/validate_container_name'

@@ -25,8 +25,9 @@ require('nikita')
 
     module.exports =  ({options}) ->
       @log message: "Entering delete", level: 'DEBUG', module: '@nikitajs/lxd/lib/delete'
-      #Check args
-      throw Error "Invalid Option: name is required" unless options.container
+      # Validation
+      throw Error "Invalid Option: container is required" unless options.container
+      validate_container_name options.container
       # Execution
       @system.execute
         cmd: """
@@ -39,3 +40,7 @@ require('nikita')
         ].join ' '}
         """
         code_skipped: 42
+
+## Dependencies
+
+    validate_container_name = require './misc/validate_container_name'

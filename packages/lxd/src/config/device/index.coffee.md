@@ -44,9 +44,10 @@ require('nikita')
       @log message: "Entering lxd config.device", level: "DEBUG", module: "@nikitajs/lxd/lib/config/device"
       #Check args
       valid_devices = ['none', 'nic', 'disk', 'unix-char', 'unix-block', 'usb', 'gpu', 'infiniband', 'proxy']
-      throw Error "Invalid Option: Container name (options.container) is required" unless options.container
+      # Validation
+      throw Error "Invalid Option: container is required" unless options.container
+      validate_container_name options.container
       throw Error "Invalid Option: Device name (options.device) is required" unless options.device
-
       @lxd.config.device.exists
         container: options.container
         device: options.device
@@ -87,3 +88,4 @@ require('nikita')
 
     yaml = require 'js-yaml'
     diff = require 'object-diff'
+    validate_container_name = require '../../misc/validate_container_name'

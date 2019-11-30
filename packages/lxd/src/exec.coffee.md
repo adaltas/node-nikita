@@ -31,7 +31,9 @@ require('nikita')
 
     module.exports =  ({options}, callback) ->
       @log message: "Entering lxd.exec", level: 'DEBUG', module: '@nikitajs/lxd/lib/exec'
+      # Validation
       throw Error "Invalid Option: container is required" unless options.container
+      validate_container_name options.container
       @system.execute options, trap: false,
         cmd: [
           "cat <<'EOF' | lxc exec #{options.container} -- bash"
@@ -40,3 +42,7 @@ require('nikita')
           'EOF'
         ].join '\n'
       , callback
+
+## Dependencies
+
+    validate_container_name = require './misc/validate_container_name'

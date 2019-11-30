@@ -78,6 +78,7 @@ containers:
           network: network
           config: config
       for container, config of options.containers
+        validate_container_name container
         config.config ?= {}
         ssh = config.ssh or {}
         ssh.enabled ?= false
@@ -217,4 +218,8 @@ containers:
           if: !!options.provision_container
         , container: container, config: config
         , options.provision_container
+
+## Dependencies
+
+    validate_container_name = require '../misc/validate_container_name'
       

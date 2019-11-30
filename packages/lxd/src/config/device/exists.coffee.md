@@ -27,7 +27,9 @@ require('nikita')
 
     module.exports = shy: true, handler: ({options}, callback) ->
       @log message: "Entering lxd.config.device.exists", level: 'DEBUG', module: '@nikitajs/lxd/lib/config/device/exists'
+      # Validation
       throw Error "Invalid Option: container is required" unless options.container
+      validate_container_name options.container
       throw Error "Invalid Option: device is required" unless options.device
       @system.execute
         cmd: """
@@ -47,3 +49,4 @@ require('nikita')
 
     yaml = require 'js-yaml'
     diff = require 'object-diff'
+    validate_container_name = require '../../misc/validate_container_name'

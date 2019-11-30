@@ -33,8 +33,9 @@ require('nikita')
 
     module.exports = handler: ({options}, callback) ->
       @log message: "Entering lxd config.device", level: "DEBUG", module: "@nikitajs/lxd/lib/config/device/delete"
-      #Check args
-      throw Error "Invalid Option: Container name (options.container) is required" unless options.container
+      # Validation
+      throw Error "Invalid Option: container is required" unless options.container
+      validate_container_name options.container
       throw Error "Invalid Option: Device name (options.device) is required" unless options.device
 
       @lxd.config.device.exists
@@ -50,3 +51,7 @@ require('nikita')
         , (err, {status}) ->
         return callback err if err
         return callback null, status: true
+
+## Dependencies
+
+    validate_container_name = require '../../misc/validate_container_name'

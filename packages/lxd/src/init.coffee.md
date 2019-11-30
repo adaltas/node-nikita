@@ -48,7 +48,9 @@ fix is to prepend the init command with `echo '' | `.
 
     module.exports =  ({options}) ->
       @log message: "Entering lxd.init", level: 'DEBUG', module: '@nikitajs/lxd/lib/init'
+      # Validation
       throw Error "Invalid Option: container is required" unless options.container
+      validate_container_name options.container
       cmd_init = [
         'lxc', 'init', options.image, options.container
         "--network #{options.network}" if options.network
@@ -64,3 +66,7 @@ fix is to prepend the init command with `echo '' | `.
         echo '' | #{cmd_init}
         """
         code_skipped: 42
+
+## Dependencies
+
+    validate_container_name = require './misc/validate_container_name'
