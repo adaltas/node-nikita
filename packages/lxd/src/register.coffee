@@ -2,6 +2,8 @@
 require('@nikitajs/core/lib/registry')
 .register
   lxd:
+    cluster:
+      '': '@nikitajs/lxd/src/cluster'
     config:
       device:
         '': '@nikitajs/lxd/src/config/device'

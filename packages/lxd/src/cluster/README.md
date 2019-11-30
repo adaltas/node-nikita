@@ -16,6 +16,7 @@ Update the VM
 ```
 lxc remote switch local
 lxc remote remove nikita
+# Note, password is "secret"
 lxc remote add nikita 127.0.0.1:8443
 lxc remote switch nikita
 ```

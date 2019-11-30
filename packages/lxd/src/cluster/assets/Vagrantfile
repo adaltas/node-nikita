@@ -51,5 +51,10 @@ Vagrant.configure("2") do |config|
     # lxc delete --force preload
     # lxc launch -e images:ubuntu/xenial preload
     # lxc delete --force preload
+    
+    # Install Node.js to run the tests
+    curl -L https://git.io/n-install | bash -s -- -y
+    # Append lxd group to vagrant user
+    usermod --append --groups lxd vagrant
   SHELL
 end

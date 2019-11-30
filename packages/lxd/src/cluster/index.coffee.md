@@ -1,11 +1,22 @@
 
+# `nikita.lxd.cluster`
+
+Attach an existing network to a container.
+
+## Options
+
+* `networks` (required, object)   
+  Create or update network configurations.
+* `containers` (required, object)   
+  Initialize a Linux Container with given image name, container name and options.
+
 
 # Cluster
 
 ## Exemple
 
 ```yaml
-network:
+networks:
   lxdbr0public:
     ipv4.address: 172.16.0.1/24
     ipv4.nat: true
@@ -55,13 +66,13 @@ containers:
 ```
 
     module.exports = ({options}) ->
-      options.network ?= {}
+      options.networks ?= {}
       options.proxy ?= {}
       options.user ?= {}
       @call
         if: !!options.prevision
       , options,  options.prevision
-      for network, config of options.network
+      for network, config of options.networks
         @lxd.network
           header: 'Bridge'
           network: network
@@ -71,7 +82,6 @@ containers:
         ssh = config.ssh or {}
         ssh.enabled ?= false
         # throw Error 'Required Option: ssh.id_rsa is record if ssh is enabled' if ssh.enabled and not ssh.id_rsa
-        console.log('init', container)
         @lxd.init
           header: 'Init'
           container: container
@@ -124,23 +134,42 @@ containers:
         @lxd.start
           header: 'Start'
           container: container
+        @wait.execute
+          cmd: "lxc info #{container} | grep 'Status: Running'"
+        @connection.wait
+          host: 'linuxfoundation.org'
+          port: 80
+          # timeout: 5000
+        # Not sure why openssl is required
         @lxd.exec
           header: 'OpenSSL'
           container: container
           cmd: """
           yum update -y
           yum install -y openssl
-          command -p openssl
+          command -v openssl
           """
-          retry: 3
+          retry: 10
+          sleep: 5000
           trap: true
         @lxd.exec
           header: 'SSH'
           if: ssh.enabled
           container: container
           cmd: """
-          systemctl status sshd
-          yum install -y openssh-server
+          # systemctl status sshd
+          # yum install -y openssh-server
+          # systemctl start sshd
+          # systemctl enable sshd
+          systemctl status sshd && exit 42
+          if command -v yum >/dev/null 2>&1; then
+            yum -y install openssh-server
+          elif command -v apt-get >/dev/null 2>&1; then
+            apt-get -y install openssh-server
+          else
+            echo "Unsupported Package Manager" >&2 && exit 2
+          fi
+          systemctl status sshd && exit 42
           systemctl start sshd
           systemctl enable sshd
           """
