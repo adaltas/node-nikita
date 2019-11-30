@@ -22,7 +22,7 @@ Otherwise it will be set to "true".
   One or multiple servers, string must be in the form of "{host}:{port}",
   object must have the properties "host" and "port".
 * `timeout` (number)   
-  Maximum time to wait until this function is considered to have failed.
+  Maximum time in millisecond to wait until this function is considered to have failed.
 
 Status is set to "true" if the first connection attempt was a failure and the 
 connection finaly succeeded.
@@ -106,16 +106,18 @@ require('nikita')
           servers.push extract_servers(server)...
       unless servers.length
         @log message: "No connection to wait for", level: 'WARN', module: 'nikita/connection/wait'
-        return 
+        return
       # Validate servers
       options.interval ?= 2000 # 2s
       options.interval = Math.round options.interval / 1000
       quorum_target = options.quorum
-      if quorum_target and quorum_target is true  
+      if quorum_target and quorum_target is true
         quorum_target = Math.ceil servers.length / 2
       else unless quorum_target?
         quorum_target = servers.length
-      options.timeout = '' unless options.timeout > 0
+      # Note, the option is not tested and doesnt seem to work from a manual test
+      options.timeout = 0 unless options.timeout > 0
+      options.timeout = Math.round options.timeout / 1000
       @system.execute
         bash: true
         cmd: """
@@ -155,7 +157,8 @@ require('nikita')
         function check_timeout {
           local timeout=$1
           local randfile=$2
-          wait $timeout # really? shall be sleep, isn't it
+          sleep $timeout
+          echo "[WARN] Reach timeout"
           rm -f $randfile
         }
         function wait_connection {
