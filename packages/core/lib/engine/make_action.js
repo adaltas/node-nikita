@@ -44,7 +44,7 @@ module.exports = function(action_global, action_parent, options_action) {
     }
   }
   ref1 = action_global.options;
-  // Merge action options with default session options 
+  // Merge action options with default session options
   for (k in ref1) {
     v = ref1[k];
     if (k === 'cascade') {

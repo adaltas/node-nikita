@@ -22,7 +22,7 @@ module.exports = (action_global, action_parent, options_action) ->
   for k, v of action_parent?.internal
     continue unless action.internal.cascade[k] is true
     action.internal[k] = v if action.internal[k] is undefined
-  # Merge action options with default session options 
+  # Merge action options with default session options
   for k, v of action_global.options
     continue if k is 'cascade'
     action.internal[k] = v if action.internal[k] is undefined

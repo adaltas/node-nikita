@@ -7,6 +7,8 @@
 
 // * `host` (string)  
 //   Host of the targeted server, could be a FQDN, a hostname or an IP.
+// * `not` (boolean)   
+//   Negates the validation.   
 // * `port` (number)  
 //   Port of the targeted server.
 // * `server`, `servers` (array|object|string)  
@@ -46,10 +48,13 @@ module.exports = {
     for (i = 0, len = ref.length; i < len; i++) {
       server = ref[i];
       results.push(this.system.execute({
-        cmd: `bash -c 'echo > /dev/tcp/${server.host}/${server.port}'`
+        cmd: `bash -c 'echo > /dev/tcp/${server.host}/${server.port}'`,
+        relax: true
       }, function(err) {
-        if (err) {
+        if (err && !options.not) {
           throw Error(`Address not listening: "${server.host}:${server.port}"`);
+        } else if (!err && options.not) {
+          throw Error(`Address listening: "${server.host}:${server.port}"`);
         }
       }));
     }

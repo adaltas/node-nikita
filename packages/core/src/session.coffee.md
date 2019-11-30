@@ -40,7 +40,7 @@
           get_proxy_builder = ->
             builder = ->
               args = [].slice.call(arguments)
-              options = args_to_action args, proxy.action
+              options = args_to_actions obj, args, proxy.action
               proxy.action = []
               {get, values} = handle_get proxy, options
               return values if get
@@ -56,69 +56,6 @@
                   return undefined
                 get_proxy_builder()
           get_proxy_builder()
-      args_to_action = (_arguments, action_name) ->
-        _arguments = [{}] if _arguments.length is 0
-        # Convert every argument to an array
-        for args, i in _arguments
-          _arguments[i] = [args] unless Array.isArray args
-        # Get middleware
-        middleware = obj.registry.get(action_name) or registry.get(action_name) if Array.isArray(action_name)
-        # Multiply arguments
-        actions = null
-        for __arguments, i in _arguments
-          newactions = for __argument, j in __arguments
-            if i is 0
-              [[middleware, __argument]]
-            else
-              for action, i in actions
-                [action..., __argument]
-          actions = array.flatten newactions, 0
-        # Load module
-        unless middleware
-          for action in actions
-            middleware = null
-            for option in action
-              if typeof option is 'string'
-                middleware = option
-                middleware = path.resolve process.cwd(), option if option.substr(0, 1) is '.'
-                middleware = require.main.require middleware
-            action.unshift middleware if middleware
-        # Build actions
-        actions = for action in actions
-          newaction = {}
-          for opt in action
-            continue unless action?
-            if typeof opt is 'string'
-              if not newaction.argument
-                opt = argument: opt
-              else
-                throw Error 'Invalid option: encountered a string while argument is already defined'
-            if typeof opt is 'function'
-              # todo: handler could be registed later by an external module,
-              # in such case, the user provided function should be interpreted
-              # as a callback
-              if not newaction.handler
-                opt = handler: opt
-              else if not newaction.callback
-                opt = callback: opt
-              else
-                throw Error 'Invalid option: encountered a function while both handler and callback options are defined.'
-            if typeof opt isnt 'object'
-              opt = argument: opt
-            for k, v of opt
-              continue if newaction[k] isnt undefined and v is undefined
-              newaction[k] = v
-          newaction
-        # Normalize
-        actions = for action in actions
-          action.action = action_name if action_name
-          action.action = [action.action] unless Array.isArray action.action
-          action.once = ['handler'] if action.once is true
-          delete action.once if action.once is false
-          action.once = action.once.sort() if Array.isArray action.once
-          action.once = action.once.sort() if Array.isArray action.once
-          action
-        actions
       handle_get = (proxy, options) ->
         return get: false unless options.length is 1
         options = options[0]
@@ -266,7 +203,7 @@
             context.internal.before = [context.internal.before] unless Array.isArray context.internal.before
             each context.internal.before
             .call (before, next) ->
-              [before] = args_to_action [before], 'call'
+              [before] = args_to_actions obj, [before], 'call'
               _opts = options_before: true
               for k, v of before
                 _opts[k] = v
@@ -422,7 +359,7 @@
             context.internal.after = [context.internal.after] unless Array.isArray context.internal.after
             each context.internal.after
             .call (after, next) ->
-              [after] = args_to_action [after], 'call'
+              [after] = args_to_actions obj, [after], 'call'
               _opts = options_after: true
               for k, v of after
                 _opts[k] = v
@@ -463,13 +400,13 @@
         promise
       obj.end = ->
         args = [].slice.call(arguments)
-        options = args_to_action args, 'end'
+        options = args_to_actions obj, args, 'end'
         state.current_level.todos.push opts for opts in options
         setImmediate run_next if state.current_level.todos.length is options.length # Activate the pump
         proxy
       obj.call = ->
         args = [].slice.call(arguments)
-        options = args_to_action args, 'call'
+        options = args_to_actions obj, args, 'call'
         {get, values} = handle_get proxy, options
         return values if get
         state.current_level.todos.push opts for opts in options
@@ -480,7 +417,7 @@
         arg = args.shift()
         if not arg? or typeof arg isnt 'object'
           throw Error "Invalid Argument: first argument must be an array or an object to iterate, got #{JSON.stringify arg}"
-        options = args_to_action args, 'call'
+        options = args_to_actions obj, args, 'call'
         for opts in options
           if Array.isArray arg
             for key in arg
@@ -494,14 +431,14 @@
         proxy
       obj.before = ->
         arguments[0] = action: arguments[0] if typeof arguments[0] is 'string' or Array.isArray(arguments[0])
-        options = args_to_action arguments, null
+        options = args_to_actions obj, arguments, null
         for opts in options
           throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
           state.befores.push opts
         proxy
       obj.after = ->
         arguments[0] = action: arguments[0] if typeof arguments[0] is 'string' or Array.isArray(arguments[0])
-        options = args_to_action arguments, null
+        options = args_to_actions obj, arguments, null
         for opts in options
           throw Error "Invalid handler #{JSON.stringify opts.handler}" unless typeof opts.handler is 'function'
           state.afters.push opts
@@ -580,7 +517,7 @@
 
 ## Dependencies
 
-    # args_to_action = require './engine/args_to_action'
+    args_to_actions = require './engine/args_to_actions'
     make_action = require './engine/make_action'
     registry = require './registry'
     each = require 'each'
