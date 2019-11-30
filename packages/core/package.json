@@ -94,7 +94,7 @@
     "directory": "packages/core"
   },
   "scripts": {
-    "coffee": "coffee -b -o lib src",
+    "build": "coffee -b -o lib src",
     "pretest": "coffee -b -o lib src",
     "test": "mocha test/{.,*,*/*}/*.coffee"
   }

@@ -61,8 +61,8 @@
     "directory": "packages/ldap"
   },
   "scripts": {
-    "coffee": "coffee -b -o lib src && sed -i -e 's/src/lib/g' lib/register.js",
-    "pretest": "npm run coffee",
+    "build": "coffee -b -o lib src && sed -i -e 's/src/lib/g' lib/register.js",
+    "pretest": "npm build",
     "test": "mocha test/*.coffee"
   }
 }
