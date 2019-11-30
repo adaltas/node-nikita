@@ -332,7 +332,7 @@
               proxy.log message: error.message, level: 'ERROR', index: index, module: 'nikita' if error
               if error and ( context.options.retry is true or context.options.attempt < context.options.retry - 1 )
                 proxy.log message: "Retry on error, attempt #{context.options.attempt+1}", level: 'WARN', index: index, module: 'nikita'
-                return setTimeout do_handler, context.options.sleep
+                return setTimeout do_handler, context.internal.sleep
               do_intercept_after()
             context.handler ?= obj.registry.get(context.options.action)?.handler or registry.get(context.options.action)?.handler
             return handle_multiple_call context, Error "Unregistered Middleware: #{context.options.action.join('.')}" unless context.handler

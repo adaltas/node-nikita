@@ -678,7 +678,8 @@ module.exports = function() {
               index: index,
               module: 'nikita'
             });
-            return setTimeout(do_handler, context.options.sleep);
+            console.log('!!!', context.internal.sleep);
+            return setTimeout(do_handler, context.internal.sleep);
           }
           return do_intercept_after();
         };

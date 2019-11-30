@@ -7,14 +7,13 @@ return unless tags.api
 describe 'options "sleep"', ->
   
   it 'enforce default to 3s', ->
-    times = []
+    now = Date.now()
     nikita
     .call retry: 2, relax: true, ->
-      times.push Date.now()
       throw Error 'Catchme'
     .next (err) ->
-      times.length.should.eql 2
-      ((times[1] - times[0]) / 1000 - 3).should.be.below 0.01
+      (Date.now() - now).should.be.above 3000
+      (Date.now() - now).should.be.below 3500
     .promise()
 
   it 'is set by user', ->
