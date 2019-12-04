@@ -1,6 +1,11 @@
 
 # Changelog
 
+## Trunk
+
+Cleanup:
+* package: simplify test command
+
 ## 0.0.1
 
 New features:

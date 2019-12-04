@@ -58,6 +58,6 @@
     "directory": "packages/nikita"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha test/**/*.coffee"
   }
 }

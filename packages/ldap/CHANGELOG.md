@@ -3,7 +3,11 @@
 
 ## Trunk
 
+Management
 * project: isolate from nikita package
+
+Cleanup:
+* package: simplify test command
 
 ## Version 0.8.1
 

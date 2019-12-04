@@ -95,7 +95,7 @@
   },
   "scripts": {
     "build": "coffee -b -o lib src",
-    "pretest": "coffee -b -o lib src",
-    "test": "mocha test/{.,*,*/*}/*.coffee"
+    "pretest": "npm build",
+    "test": "mocha test/**/*.coffee"
   }
 }

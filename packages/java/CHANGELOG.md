@@ -9,3 +9,6 @@ New features:
 
 Management
 * java: isolate into its own package
+
+Cleanup:
+* package: simplify test command

@@ -12,6 +12,9 @@ New features:
 * file.cache: new cookies option
 * filetypes: new my_cnf action
 
+Cleanup:
+* package: simplify test command
+
 ## Version 0.9.0
 
 Management:

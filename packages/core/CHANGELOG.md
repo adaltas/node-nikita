@@ -15,6 +15,9 @@ connection.assert: new option `not`
 Fix:
 * events: fix handling next and error events
 
+Cleanup:
+* package: simplify test command
+
 ## Version 0.9.3
 
 Breaking changes:

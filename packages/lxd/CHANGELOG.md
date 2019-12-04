@@ -16,3 +16,6 @@ New features:
 * lxd: added network actions
 * lxd.stop: new action
 * lxd.start: new action
+
+Cleanup:
+* package: simplify test command
