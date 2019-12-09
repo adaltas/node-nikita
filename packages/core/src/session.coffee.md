@@ -147,6 +147,13 @@
         do ->
           do_options = ->
             try
+              if context.internal.schema
+                v = new Validator()
+                {errors} = v.validate context.options, context.internal.schema
+                if errors.length
+                  error = new Error 'Invalid Options'
+                  error.errors = errors
+                  throw error
               # Validate sleep option, more can be added
               throw Error "Invalid options sleep, got #{JSON.stringify context.internal.sleep}" unless typeof context.internal.sleep is 'number' and context.internal.sleep >= 0
             catch error
@@ -528,3 +535,4 @@
     conditions = require './misc/conditions'
     string = require './misc/string'
     {EventEmitter} = require 'events'
+    {Validator} = require 'jsonschema'

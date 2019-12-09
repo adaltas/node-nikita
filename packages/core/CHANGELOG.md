@@ -10,7 +10,8 @@
 ## Trunk
 
 New feature:
-connection.assert: new option `not`
+* connection.assert: new option `not`
+* schema: new option
 
 Fix:
 * events: fix handling next and error events
