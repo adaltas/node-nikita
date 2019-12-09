@@ -65,5 +65,9 @@
     "build": "coffee -b -o lib src && sed -i -e 's/src/lib/g' lib/register.js",
     "pretest": "npm build",
     "test": "mocha test/**/*.coffee"
+  },
+  "dependencies": {
+    "xmlbuilder": "^13.0.2",
+    "xmldom": "^0.1.27"
   }
 }
