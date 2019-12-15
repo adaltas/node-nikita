@@ -47,7 +47,7 @@ cd packages/core && npm test
 # run all package tests from the project directory
 yarn workspace @nikita/core run test
 # or a subset of the tests
-npm run coffee && mocha test/api/**.coffee
+npm run build && npx mocha test/api/**.coffee
 ```
 
 Some of the tests require a specific environment. You are encouraged to 
