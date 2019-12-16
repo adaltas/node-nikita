@@ -1,7 +1,6 @@
 
 const assert = require('assert')
 const nikita = require('..')
-console.log(nikita)
 
 describe('core', () => {
   it('load nikita', () =>
