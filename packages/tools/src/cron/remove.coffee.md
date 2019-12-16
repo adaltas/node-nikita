@@ -1,5 +1,5 @@
 
-# `nikita.cron.remove`
+# `nikita.tools.cron.remove`
 
 Remove job(s) on crontab.
 
@@ -75,4 +75,4 @@ require('nikita').cron.remove({
 
 ## Dependencies
 
-    {regexp} = require '../misc'
+    {regexp} = require '@nikitajs/core/lib/misc'

@@ -1,5 +1,5 @@
 
-nikita = require '../../src'
+nikita = require '@nikitajs/core'
 {tags, ssh} = require '../test'
 they = require('ssh2-they').configure ssh...
 
@@ -17,28 +17,28 @@ crontab -l
 
 describe 'cron', ->
 
-  rand = Math.random().toString(36).substring(7);
+  rand = Math.random().toString(36).substring(7)
 
   they 'add a job', ({ssh}) ->
     nikita
       ssh: ssh
     .service 'cronie'
-    .cron.add
+    .tools.cron.add
       cmd: "/bin/true #{rand}/toto - *.mp3"
       when: '0 * * * *'
     , (err, {status}) ->
       status.should.be.true()
-    .cron.add
+    .tools.cron.add
       cmd: "/bin/true #{rand}/toto - *.mp3"
       when: '0 * * * *'
     , (err, {status}) ->
       status.should.be.false()
-    .cron.remove
+    .tools.cron.remove
       cmd: "/bin/true #{rand}/toto - *.mp3"
       when: '0 * * * *'
     , (err, {status}) ->
       status.should.be.true()
-    .cron.remove
+    .tools.cron.remove
       cmd: "/bin/true #{rand}/toto - *.mp3"
       when: '0 * * * *'
     , (err, {status}) ->
@@ -51,13 +51,13 @@ describe 'cron', ->
       nikita
         ssh: ssh
       .service 'cronie'
-      .cron.add
+      .tools.cron.add
         cmd: "/bin/true #{rand}"
         when: '0 * * * *'
         match: '.*bin.*'
       , (err, {status}) ->
         status.should.be.true()
-      .cron.add
+      .tools.cron.add
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
         match: /.*bin.*/
@@ -68,13 +68,13 @@ describe 'cron', ->
           ]
       , (err, {status}) ->
         status.should.be.true() unless err
-      .cron.add
+      .tools.cron.add
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
         match: /.*bin.*/
       , (err, {status}) ->
         status.should.be.false() unless err
-      .cron.remove
+      .tools.cron.remove
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
       .promise()
@@ -83,13 +83,13 @@ describe 'cron', ->
       nikita
         ssh: ssh
       .service 'cronie'
-      .cron.add
+      .tools.cron.add
         cmd: "/bin/true #{rand}"
         when: '0 * * * *'
         match: '.*bin.*'
       , (err, {status}) ->
         status.should.be.true() unless err
-      .cron.add
+      .tools.cron.add
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
         match: '.*bin.*'
@@ -100,13 +100,13 @@ describe 'cron', ->
           ]
       , (err, {status}) ->
         status.should.be.true() unless err
-      .cron.add
+      .tools.cron.add
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
         match: '.*bin.*'
       , (err, {status}) ->
         status.should.be.false() unless err
-      .cron.remove
+      .tools.cron.remove
         cmd: "/bin/false #{rand}"
         when: '0 * * * *'
       .promise()
@@ -117,7 +117,7 @@ describe 'cron', ->
       nikita
         ssh: ssh
       .service 'cronie'
-      .cron.add
+      .tools.cron.add
         cmd: '/remove/me'
         relax: true
       , (err) ->
@@ -128,7 +128,7 @@ describe 'cron', ->
       nikita
         ssh: ssh
       .service 'cronie'
-      .cron.add
+      .tools.cron.add
         cmd: '/remove/me'
         when: true
         relax: true
@@ -140,7 +140,7 @@ describe 'cron', ->
       nikita
         ssh: ssh
       .service 'cronie'
-      .cron.add
+      .tools.cron.add
         when: '1 2 3 4 5'
         relax: true
       , (err) ->
@@ -151,7 +151,7 @@ describe 'cron', ->
       nikita
         ssh: ssh
       .service 'cronie'
-      .cron.add
+      .tools.cron.add
         cmd: ''
         when: '1 2 3 4 5'
         relax: true
@@ -163,7 +163,7 @@ describe 'cron', ->
       nikita
         ssh: ssh
       .service 'cronie'
-      .cron.add
+      .tools.cron.add
         cmd: 'azertyytreza'
         when: '1 2 3 4 5'
         exec: true

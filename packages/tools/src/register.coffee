@@ -5,6 +5,9 @@ registry.register
   tools:
     backup: '@nikitajs/tools/src/backup'
     compress: '@nikitajs/tools/src/compress'
+    cron:
+      add: '@nikitajs/tools/src/cron/add'
+      remove: '@nikitajs/tools/src/cron/remove'
     extract: '@nikitajs/tools/src/extract'
     dconf: '@nikitajs/tools/lib/dconf'
     rubygems:
@@ -17,3 +20,6 @@ registry.register
     ssh:
       keygen: '@nikitajs/tools/src/ssh/keygen'
     sysctl: '@nikitajs/tools/src/sysctl'
+
+registry.deprecate 'cron_add', '@nikitajs/tools/src/cron/add'
+registry.deprecate 'cron_remove', '@nikitajs/tools/src/cron/remove'

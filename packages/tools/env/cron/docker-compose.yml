@@ -14,4 +14,4 @@ services:
     volumes:
       - ../../../../:/nikita
     environment:
-      NIKITA_TEST_MODULE: /nikita/packages/core/env/cron/test.coffee
+      NIKITA_TEST_MODULE: /nikita/packages/tools/env/cron/test.coffee

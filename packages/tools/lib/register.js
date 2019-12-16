@@ -7,6 +7,10 @@ registry.register({
   tools: {
     backup: '@nikitajs/tools/lib/backup',
     compress: '@nikitajs/tools/lib/compress',
+    cron: {
+      add: '@nikitajs/tools/lib/cron/add',
+      remove: '@nikitajs/tools/lib/cron/remove'
+    },
     extract: '@nikitajs/tools/lib/extract',
     dconf: '@nikitajs/tools/lib/dconf',
     rubygems: {
@@ -23,3 +27,7 @@ registry.register({
     sysctl: '@nikitajs/tools/lib/sysctl'
   }
 });
+
+registry.deprecate('cron_add', '@nikitajs/tools/lib/cron/add');
+
+registry.deprecate('cron_remove', '@nikitajs/tools/lib/cron/remove');

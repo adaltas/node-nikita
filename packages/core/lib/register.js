@@ -29,10 +29,6 @@ registry.register({
   core: {
     ping: 'nikita/core/ping'
   },
-  cron: {
-    add: 'nikita/cron/add',
-    remove: 'nikita/cron/remove'
-  },
   file: {
     '': 'nikita/file',
     assert: 'nikita/file/assert',
@@ -146,10 +142,6 @@ registry.deprecate('chmod', 'nikita/system/chmod');
 registry.deprecate('chown', 'nikita/system/chown');
 
 registry.deprecate('copy', 'nikita/system/copy');
-
-registry.deprecate('cron_add', 'nikita/cron/add');
-
-registry.deprecate('cron_remove', 'nikita/cron/remove');
 
 registry.deprecate('download', 'nikita/file/download');
 

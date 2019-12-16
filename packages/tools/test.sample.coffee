@@ -2,6 +2,7 @@
 module.exports =
   scratch: '/tmp/nikita-test-tools'
   tags:
+    cron: false # disable_cron
     posix: true
     tools_dconf: false
     tools_repo: false

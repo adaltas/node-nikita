@@ -1,5 +1,5 @@
 
-# `nikita.cron.add`
+# `nikita.tools.cron.add`
 
 Register a job on crontab.
 
@@ -96,6 +96,6 @@ require('nikita').cron.add({
 ## Dependencies
 
     util = require 'util'
-    {regexp} = require '../misc'
-    diff = require '../misc/diff'
-    string = require '../misc/string'
+    {regexp} = require '@nikitajs/core/lib/misc'
+    diff = require '@nikitajs/core/lib/misc/diff'
+    string = require '@nikitajs/core/lib/misc/string'

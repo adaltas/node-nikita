@@ -9,6 +9,9 @@
 
 ## Trunk
 
+Breaking changes:
+* cron: move into tools
+
 New feature:
 * system.execute: pipe option.stdin
 * connection.assert: new option `not`

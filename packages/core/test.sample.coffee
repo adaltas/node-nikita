@@ -5,7 +5,6 @@ module.exports =
     api: true
     api_if_os: false # disable_conditions_if_os
     conditions_if_os: false
-    cron: false # disable_cron
     posix: true
     service_install: false
     service_startup: false

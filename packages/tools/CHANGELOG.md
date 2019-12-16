@@ -4,6 +4,7 @@
 ## Trunk
 
 New features:
+* cron: import from core
 * tools.ssh.keygen: new action
 
 Cleanup:
