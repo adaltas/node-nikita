@@ -2,14 +2,14 @@
 nikita = require '../../src'
 misc = require '../../src/misc'
 {tags, ssh, scratch} = require '../test'
-they = require('ssh2-they').configure ssh...
+# All test are executed with an ssh connection passed as an argument
+they = require('ssh2-they').configure ssh.filter( (ssh) -> !!ssh )...
 
 return unless tags.posix
 
 describe 'ssh.index', ->
 
   they 'argument is true', ({ssh}) ->
-    return @skip() unless ssh
     nikita
     .ssh.open
       host: ssh.config.host
@@ -23,7 +23,6 @@ describe 'ssh.index', ->
     .promise()
 
   they 'argument is false', ({ssh}) ->
-    return @skip() unless ssh
     nikita
     .ssh.open
       host: ssh.config.host
@@ -37,9 +36,8 @@ describe 'ssh.index', ->
     .promise()
 
   they 'argument does not conflict with session', ({ssh}) ->
-    return @skip() unless ssh
     nikita
-      ssh: 
+      ssh:
         host: ssh.config.host
         port: ssh.config.port
         username: ssh.config.username

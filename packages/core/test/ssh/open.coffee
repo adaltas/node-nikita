@@ -3,14 +3,14 @@ connect = require 'ssh2-connect'
 nikita = require '../../src'
 misc = require '../../src/misc'
 {tags, ssh} = require '../test'
-they = require('ssh2-they').configure ssh...
+# All test are executed with an ssh connection passed as an argument
+they = require('ssh2-they').configure ssh.filter( (ssh) -> !!ssh )...
 
 return unless tags.posix
 
 describe 'ssh.open', ->
 
   they 'with handler options', ({ssh}) ->
-    return @skip() unless ssh
     nikita
     .call ->
       (!!@ssh()).should.be.false()
@@ -30,7 +30,6 @@ describe 'ssh.open', ->
     .promise()
 
   they 'with global options', ({ssh}) ->
-    return @skip() unless ssh
     nikita
       ssh:
         host: ssh.config.host
@@ -50,7 +49,6 @@ describe 'ssh.open', ->
     .promise()
 
   they 'check status with properties', ({ssh}) ->
-    return @skip() unless ssh
     options =
       host: ssh.config.host
       port: ssh.config.port
@@ -66,7 +64,6 @@ describe 'ssh.open', ->
     .promise()
 
   they 'check status with instance', ({ssh}, next) ->
-    return @skip() unless ssh
     connect
       host: ssh.config.host
       port: ssh.config.port

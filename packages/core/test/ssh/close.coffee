@@ -1,14 +1,14 @@
 
 nikita = require '../../src'
 {tags, ssh} = require '../test'
-they = require('ssh2-they').configure ssh...
+# All test are executed with an ssh connection passed as an argument
+they = require('ssh2-they').configure ssh.filter( (ssh) -> !!ssh )...
 
 return unless tags.posix
 
 describe 'ssh.close', ->
 
   they 'check status', ({ssh}) ->
-    return @skip() unless ssh
     nikita
     .ssh.open
       host: ssh.config.host
