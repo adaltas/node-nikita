@@ -22,6 +22,8 @@
 // ```
 
 // ## Source Code
+var validate_container_name;
+
 module.exports = function({options}) {
   this.log({
     message: "Entering delete",
@@ -29,12 +31,16 @@ module.exports = function({options}) {
     module: '@nikitajs/lxd/lib/delete'
   });
   if (!options.container) {
-    //Check args
-    throw Error("Invalid Option: name is required");
+    // Validation
+    throw Error("Invalid Option: container is required");
   }
+  validate_container_name(options.container);
   // Execution
   return this.system.execute({
     cmd: `lxc info ${options.container} > /dev/null || exit 42\n${['lxc', 'delete', options.container, options.force ? "--force" : void 0].join(' ')}`,
     code_skipped: 42
   });
 };
+
+// ## Dependencies
+validate_container_name = require('./misc/validate_container_name');

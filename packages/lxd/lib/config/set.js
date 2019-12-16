@@ -25,7 +25,7 @@
 // ```
 
 // ## Source Code
-var diff, merge, yaml;
+var diff, merge, validate_container_name, yaml;
 
 module.exports = function({options}) {
   var keys;
@@ -34,6 +34,12 @@ module.exports = function({options}) {
     level: 'DEBUG',
     module: '@nikitajs/lxd/lib/config/set'
   });
+  if (!options.container) {
+    // Validation
+    throw Error("Invalid Option: container is required");
+  }
+  validate_container_name(options.container);
+  // Execution
   keys = {};
   this.system.execute({
     cmd: `${['lxc', 'config', 'show', options.container].join(' ')}`,
@@ -72,3 +78,5 @@ module.exports = function({options}) {
 yaml = require('js-yaml');
 
 diff = require('object-diff');
+
+validate_container_name = require('../misc/validate_container_name');

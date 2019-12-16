@@ -28,6 +28,8 @@
 // ```
 
 // ## Source Code
+var validate_container_name;
+
 module.exports = function({options}) {
   var cmd_init;
   this.log({
@@ -36,8 +38,10 @@ module.exports = function({options}) {
     module: '@nikitajs/lxd/lib/init'
   });
   if (!options.container) {
-    throw Error("Invalid Option: name is required");
+    // Validation
+    throw Error("Invalid Option: container is required");
   }
+  validate_container_name(options.container);
   cmd_init = ['lxc', 'start', options.container].join(' ');
   // Execution
   return this.system.execute({
@@ -46,3 +50,6 @@ module.exports = function({options}) {
     code_skipped: 42
   });
 };
+
+// ## Dependencies
+validate_container_name = require('./misc/validate_container_name');

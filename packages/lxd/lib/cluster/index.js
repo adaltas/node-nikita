@@ -63,6 +63,8 @@
 //     provision: path/to/action
 //     provision_container: path/to/action
 // ```
+var validate_container_name;
+
 module.exports = function({options}) {
   var config, configdisk, confignic, configproxy, configuser, container, device, network, ref, ref1, ref2, ref3, ref4, ref5, ref6, results, ssh, user;
   if (options.networks == null) {
@@ -89,6 +91,7 @@ module.exports = function({options}) {
   ref1 = options.containers;
   for (container in ref1) {
     config = ref1[container];
+    validate_container_name(container);
     if (config.config == null) {
       config.config = {};
     }
@@ -238,3 +241,6 @@ module.exports = function({options}) {
   }
   return results;
 };
+
+// ## Dependencies
+validate_container_name = require('../misc/validate_container_name');

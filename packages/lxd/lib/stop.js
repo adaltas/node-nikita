@@ -20,6 +20,8 @@
 // ```
 
 // ## Source Code
+var validate_container_name;
+
 module.exports = function({options}) {
   this.log({
     message: "Entering stop",
@@ -27,10 +29,15 @@ module.exports = function({options}) {
     module: '@nikitajs/lxd/lib/stop'
   });
   if (!options.container) {
-    throw Error("Argument 'name' is required to stop a container");
+    // Validation
+    throw Error("Invalid Option: container is required");
   }
+  validate_container_name(options.container);
   return this.system.execute({
     cmd: `lxc list -c ns --format csv | grep '${options.container},STOPPED' && exit 42\nlxc stop ${options.container}`,
     code_skipped: 42
   });
 };
+
+// ## Dependencies
+validate_container_name = require('./misc/validate_container_name');

@@ -30,6 +30,8 @@
 // ```
 
 // ## Source Code
+var validate_container_name;
+
 module.exports = {
   handler: function({options}, callback) {
     this.log({
@@ -38,9 +40,10 @@ module.exports = {
       module: "@nikitajs/lxd/lib/config/device/delete"
     });
     if (!options.container) {
-      //Check args
-      throw Error("Invalid Option: Container name (options.container) is required");
+      // Validation
+      throw Error("Invalid Option: container is required");
     }
+    validate_container_name(options.container);
     if (!options.device) {
       throw Error("Invalid Option: Device name (options.device) is required");
     }
@@ -68,3 +71,6 @@ module.exports = {
     });
   }
 };
+
+// ## Dependencies
+validate_container_name = require('../../misc/validate_container_name');

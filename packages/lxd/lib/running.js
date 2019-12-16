@@ -28,6 +28,8 @@
 // ```
 
 // ## Source Code
+var validate_container_name;
+
 module.exports = {
   shy: true,
   handler: function({options}) {
@@ -37,8 +39,10 @@ module.exports = {
       module: '@nikitajs/lxd/lib/init'
     });
     if (!options.container) {
-      throw Error("Invalid Option: name is required");
+      // Validation
+      throw Error("Invalid Option: container is required");
     }
+    validate_container_name(options.container);
     return this.system.execute({
       container: options.container,
       cmd: `lxc list -c ns --format csv | grep '${options.container},RUNNING' || exit 42`,
@@ -46,3 +50,6 @@ module.exports = {
     });
   }
 };
+
+// ## Dependencies
+validate_container_name = require('./misc/validate_container_name');

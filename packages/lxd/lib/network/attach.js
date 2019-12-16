@@ -30,6 +30,8 @@
 // ```
 
 // ## Source Code
+var validate_container_name;
+
 module.exports = function({options}) {
   var cmd_attach;
   this.log({
@@ -37,10 +39,11 @@ module.exports = function({options}) {
     level: "DEBUG",
     module: "@nikitajs/lxd/lib/network/attach"
   });
-  if (!options.network) {
-    //Check args
-    throw Error("Invalid Option: network is required");
+  if (!options.container) {
+    // Validation
+    throw Error("Invalid Option: container is required");
   }
+  validate_container_name(options.container);
   if (!options.container) {
     throw Error("Invalid Option: container is required");
   }
@@ -52,3 +55,6 @@ module.exports = function({options}) {
     code_skipped: 42
   });
 };
+
+// ## Dependencies
+validate_container_name = require('../misc/validate_container_name');

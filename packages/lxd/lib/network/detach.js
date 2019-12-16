@@ -30,18 +30,21 @@
 // ```
 
 // ## Source Code
+var validate_container_name;
+
 module.exports = function({options}) {
   this.log({
     message: "Entering lxd network detach",
     level: "DEBUG",
     module: "@nikitajs/lxd/lib/network/detach"
   });
-  if (!options.network) {
-    //Check args
-    throw Error("Invalid Option: network is required");
-  }
   if (!options.container) {
+    // Validation
     throw Error("Invalid Option: container is required");
+  }
+  validate_container_name(options.container);
+  if (!options.network) {
+    throw Error("Invalid Option: network is required");
   }
   //Execute
   return this.system.execute({
@@ -49,3 +52,6 @@ module.exports = function({options}) {
     code_skipped: 42
   });
 };
+
+// ## Dependencies
+validate_container_name = require('../misc/validate_container_name');

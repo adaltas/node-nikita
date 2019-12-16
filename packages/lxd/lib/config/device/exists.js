@@ -24,7 +24,7 @@
 // ```
 
 // ## Source Code
-var diff, yaml;
+var diff, validate_container_name, yaml;
 
 module.exports = {
   shy: true,
@@ -35,8 +35,10 @@ module.exports = {
       module: '@nikitajs/lxd/lib/config/device/exists'
     });
     if (!options.container) {
+      // Validation
       throw Error("Invalid Option: container is required");
     }
+    validate_container_name(options.container);
     if (!options.device) {
       throw Error("Invalid Option: device is required");
     }
@@ -62,3 +64,5 @@ module.exports = {
 yaml = require('js-yaml');
 
 diff = require('object-diff');
+
+validate_container_name = require('../../misc/validate_container_name');

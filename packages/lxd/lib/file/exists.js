@@ -31,6 +31,8 @@
 // * Detect name from lxd_target
 
 // ## Source Code
+var validate_container_name;
+
 module.exports = {
   shy: true,
   handler: function({options}) {
@@ -40,8 +42,10 @@ module.exports = {
       module: '@nikitajs/lxd/lib/file/exists'
     });
     if (!options.container) {
-      throw Error("Invalid Option: name is required");
+      // Validation
+      throw Error("Invalid Option: container is required");
     }
+    validate_container_name(options.container);
     if (!options.target) {
       throw Error("Invalid Option: target is required");
     }
@@ -51,3 +55,6 @@ module.exports = {
     });
   }
 };
+
+// ## Dependencies
+validate_container_name = require('../misc/validate_container_name');

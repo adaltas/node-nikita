@@ -28,6 +28,8 @@
 // * Support `env` option
 
 // ## Source Code
+var validate_container_name;
+
 module.exports = function({options}, callback) {
   this.log({
     message: "Entering lxd.exec",
@@ -35,11 +37,16 @@ module.exports = function({options}, callback) {
     module: '@nikitajs/lxd/lib/exec'
   });
   if (!options.container) {
+    // Validation
     throw Error("Invalid Option: container is required");
   }
+  validate_container_name(options.container);
   return this.system.execute(options, {
     trap: false
   }, {
     cmd: [`cat <<'EOF' | lxc exec ${options.container} -- bash`, options.trap ? 'set -e' : void 0, options.cmd, 'EOF'].join('\n')
   }, callback);
 };
+
+// ## Dependencies
+validate_container_name = require('./misc/validate_container_name');

@@ -45,7 +45,7 @@
 // * Detect name from lxd_target
 
 // ## Source Code
-var path;
+var path, validate_container_name;
 
 module.exports = function({options}) {
   this.log({
@@ -53,9 +53,12 @@ module.exports = function({options}) {
     level: 'DEBUG',
     module: '@nikitajs/lxd/lib/file/push'
   });
-  if (!options.container) { // note, name could be obtained from lxd_target
-    throw Error("Invalid Option: name is required");
+  if (!options.container) {
+    // Validation
+    // note, name could be obtained from lxd_target
+    throw Error("Invalid Option: container is required");
   }
+  validate_container_name(options.container);
   if (!(options.source || (options.content != null))) {
     throw Error("Invalid Option: source or content are required");
   }
@@ -126,3 +129,5 @@ module.exports = function({options}) {
 
 // ## Dependencies
 path = require('path');
+
+validate_container_name = require('../misc/validate_container_name');

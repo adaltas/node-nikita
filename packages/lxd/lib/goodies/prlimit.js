@@ -28,7 +28,7 @@
 //   console.info( err ? err.message : stdout + JSON.decode(limits))
 // });
 // ```
-var string;
+var string, validate_container_name;
 
 module.exports = {
   shy: true,
@@ -39,8 +39,10 @@ module.exports = {
       module: '@nikitajs/lxd/lib/goodies/prlimit'
     });
     if (!options.container) {
-      throw Error("Invalid Option: name is required");
+      // Validation
+      throw Error("Invalid Option: container is required");
     }
+    validate_container_name(options.container);
     return this.system.execute({
       cmd: `command -p prlimit || exit 3\nprlimit -p $(lxc info ${options.container} | awk '$1=="Pid:"{print $2}')`
     }, function(error, {code, stdout}) {
@@ -81,3 +83,5 @@ module.exports = {
 
 // ## Dependencies
 string = require('@nikitajs/core/lib/misc/string');
+
+validate_container_name = require('../misc/validate_container_name');

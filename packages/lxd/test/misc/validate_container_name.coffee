@@ -1,9 +1,9 @@
 
 validate_container_name = require '../../src/misc/validate_container_name'
 
-describe 'lxd.network.attach', ->
+describe 'misc', ->
   
-  it 'Attach a network to a container', ->
+  it 'validate container name', ->
     (->
       validate_container_name ''
     ).should.throw 'Invalid container name: between 1 and 63 characters long'
