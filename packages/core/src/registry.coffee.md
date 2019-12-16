@@ -16,7 +16,7 @@ Management facility to register and unregister actions.
         result.module = middleware.module
       result
 
-    registry = (obj) ->
+    registry = (obj, options = {}) ->
 
 ## Get
 
@@ -145,6 +145,7 @@ nikita
                   obj[k] = if k is '' then v else '': v
             walk name
             mutate obj, name
+          options.chain
 
 ## Deprecate
 
@@ -174,6 +175,7 @@ nikita.new_function()
           handler.deprecate ?= handler.module if typeof handler.module is 'string'
           handler.deprecate ?= true
           obj.register old_name, handler
+          options.chain
 
 # Registered
 
@@ -182,7 +184,7 @@ Test if a function is registered or not.
 Options:
 
 * `parent` (boolean)   
-  Return true if the name match an parent action name.
+  Return true if the name match a parent action name.
 
       Object.defineProperty obj, 'registered',
         configurable: true
@@ -211,7 +213,8 @@ Remove an action from registry.
           for n, i in name
             delete cnames[n] if i is name.length - 1
             cnames = cnames[n]
-            return unless cnames
+            return options.chain unless cnames
+          options.chain
 
     registry module.exports
 

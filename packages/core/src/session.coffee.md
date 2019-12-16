@@ -467,17 +467,12 @@
           l = state.parent_levels[0].history.length
           index = (l + index) if index < 0
           state.parent_levels[0].history[index]?.status
-      reg = registry.registry {}
-      obj.registry.get = ->
-        reg.get arguments...
-      obj.registry.register = ->
-        reg.register arguments...
-        proxy
-      obj.registry.registered = ->
-        reg.registered arguments...
-      obj.registry.unregister = ->
-        reg.unregister arguments...
-        proxy
+      obj.registry = registry.registry {},
+        chain: proxy
+        on_register: (name, action) ->
+          return unless action.schema
+          name = "/nikita/#{name.join('/')}"
+          obj.schema.add name, action.schema
       # Todo: remove
       if obj.options.ssh
         if obj.options.ssh.config

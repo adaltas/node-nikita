@@ -23,7 +23,7 @@ describe 'options "parent"', ->
           (parent.parent.parent is undefined).should.be.true()
           parent.parent.options.disabled.should.be.false()
     .promise()
-      
+  
   it 'passed to action', ->
     nikita
     # Second level
@@ -37,7 +37,7 @@ describe 'options "parent"', ->
           parent.parent.options.my_key.should.eql 'value 1'
           parent.options.my_key.should.eql 'value 2'
     .promise()
-      
+  
   it 'defined in action', ->
     nikita()
     .registry.register( 'level_1', key: 'value 1', handler: ->

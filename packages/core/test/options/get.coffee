@@ -17,7 +17,7 @@ describe 'options "get"', ->
 
     it 'synchronous registered action', ->
       n = nikita
-      n.registry.register ['an', 'action'], 
+      n.registry.register ['an', 'action'],
         get: true
         handler: -> 'get me'
       result = n.an.action()
@@ -39,13 +39,13 @@ describe 'options "get"', ->
     
     it 'honors cascade in registered action as object', ->
       nikita()
-      .registry.register( 'my_action', 
+      .registry.register( 'my_action',
         get: true
         cascade:
           option_true: true
           option_false: false
         handler: ({options}) ->
-          return 
+          return
             option_true: options.option_true
             option_false: options.option_false
       )

@@ -3,7 +3,7 @@
 var EventEmitter, Validator, args_to_actions, array, conditions, each, make_action, path, promise, registry, state_create_level, state_reset_level, string, util;
 
 module.exports = function() {
-  var call_callback, handle_get, handle_multiple_call, jump_to_error, obj, proxy, reg, run, run_next, state;
+  var call_callback, handle_get, handle_multiple_call, jump_to_error, obj, proxy, run, run_next, state;
   if (arguments.length === 2) {
     obj = arguments[0];
     obj.options = arguments[1];
@@ -931,21 +931,16 @@ module.exports = function() {
       return (ref3 = state.parent_levels[0].history[index]) != null ? ref3.status : void 0;
     }
   };
-  reg = registry.registry({});
-  obj.registry.get = function() {
-    return reg.get(...arguments);
-  };
-  obj.registry.register = function() {
-    reg.register(...arguments);
-    return proxy;
-  };
-  obj.registry.registered = function() {
-    return reg.registered(...arguments);
-  };
-  obj.registry.unregister = function() {
-    reg.unregister(...arguments);
-    return proxy;
-  };
+  obj.registry = registry.registry({}, {
+    chain: proxy,
+    on_register: function(name, action) {
+      if (!action.schema) {
+        return;
+      }
+      name = `/nikita/${name.join('/')}`;
+      return obj.schema.add(name, action.schema);
+    }
+  });
   // Todo: remove
   if (obj.options.ssh) {
     if (obj.options.ssh.config) {

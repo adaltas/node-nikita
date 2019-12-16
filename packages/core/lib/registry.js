@@ -30,7 +30,7 @@ load = function(middleware) {
   return result;
 };
 
-registry = function(obj) {
+registry = function(obj, options = {}) {
   // ## Get
 
   // Retrieve an action by name.
@@ -189,7 +189,7 @@ registry = function(obj) {
             cnames[name1] = {};
           }
           cnames[name[name.length - 1]][''] = handler;
-          return mutate(obj, names);
+          mutate(obj, names);
         } else {
           walk = function(obj) {
             var k, results, v;
@@ -208,8 +208,9 @@ registry = function(obj) {
             return results;
           };
           walk(name);
-          return mutate(obj, name);
+          mutate(obj, name);
         }
+        return options.chain;
       };
     }
   });
@@ -247,7 +248,8 @@ registry = function(obj) {
         if (handler.deprecate == null) {
           handler.deprecate = true;
         }
-        return obj.register(old_name, handler);
+        obj.register(old_name, handler);
+        return options.chain;
       };
     }
   });
@@ -258,7 +260,7 @@ registry = function(obj) {
   // Options:
 
   // * `parent` (boolean)   
-  //   Return true if the name match an parent action name.
+  //   Return true if the name match a parent action name.
   Object.defineProperty(obj, 'registered', {
     configurable: true,
     enumerable: false,
@@ -309,9 +311,10 @@ registry = function(obj) {
           }
           cnames = cnames[n];
           if (!cnames) {
-            return;
+            return options.chain;
           }
         }
+        return options.chain;
       };
     }
   });
