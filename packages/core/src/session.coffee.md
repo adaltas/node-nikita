@@ -148,8 +148,7 @@
           do_options = ->
             try
               if context.internal.schema
-                v = new Validator()
-                {errors} = v.validate context.options, context.internal.schema
+                {errors} = obj.schema.validate context.options, context.internal.schema
                 if errors.length
                   error = new Error 'Invalid Options'
                   error.errors = errors
@@ -473,6 +472,7 @@
           return unless action.schema
           name = "/nikita/#{name.join('/')}"
           obj.schema.add name, action.schema
+      obj.schema = schema()
       # Todo: remove
       if obj.options.ssh
         if obj.options.ssh.config
@@ -521,6 +521,7 @@
 
     args_to_actions = require './engine/args_to_actions'
     make_action = require './engine/make_action'
+    schema = require './engine/schema'
     registry = require './registry'
     each = require 'each'
     path = require 'path'
@@ -530,4 +531,3 @@
     conditions = require './misc/conditions'
     string = require './misc/string'
     {EventEmitter} = require 'events'
-    {Validator} = require 'jsonschema'

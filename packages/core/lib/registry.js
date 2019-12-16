@@ -189,6 +189,9 @@ registry = function(obj, options = {}) {
             cnames[name1] = {};
           }
           cnames[name[name.length - 1]][''] = handler;
+          if (options.on_register) {
+            options.on_register(name, handler);
+          }
           mutate(obj, names);
         } else {
           walk = function(obj) {

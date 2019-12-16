@@ -13,6 +13,7 @@ Breaking changes:
 * cron: move into tools
 
 New feature:
+* schema: initial support
 * system.execute: pipe option.stdin
 * connection.assert: new option `not`
 * schema: new option

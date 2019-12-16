@@ -42,3 +42,36 @@ describe 'options "schema"', ->
         'instance.an_integer must have a minimum value of 1'
       ]
     .promise()
+
+  it 'schema ref inside nikita instance', ->
+    nikita()
+    .registry.register ['test', 'schema'],
+      schema:
+        'type': 'object'
+        'properties':
+          'a_string': 'type': 'string'
+      handler: (->)
+    .call
+      split: a_string: 'a value'
+      schema:
+        'type': 'object'
+        'properties':
+          'split': "$ref": "/nikita/test/schema"
+      relax: true
+    , (->)
+    , (err) ->
+      throw err if err
+    .call
+      split: a_string: 1
+      schema:
+        'type': 'object'
+        'properties':
+          'split': "$ref": "/nikita/test/schema"
+      relax: true
+    , (->)
+    , (err) ->
+      err.message.should.eql 'Invalid Options'
+      err.errors.map( (err) -> "#{err.property} #{err.message}").should.eql [
+        'instance.split.a_string is not of a type(s) string'
+      ]
+    .promise()
