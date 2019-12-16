@@ -2,7 +2,7 @@
 module.exports =
   scratch: '/tmp/nikita-test-ipa'
   tags:
-    ipa: true
+    ipa: false
   ssh: [
     null
   ,
