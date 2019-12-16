@@ -1,4 +1,5 @@
 .*
+/playground
 /node_modules
 /packages/*/node_modules
 !.travis.yml
