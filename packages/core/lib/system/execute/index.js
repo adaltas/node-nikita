@@ -312,6 +312,9 @@ module.exports = function({options}, callback) {
     });
     result.stdout = [];
     result.stderr = [];
+    if (options.stdin) {
+      options.stdin.pipe(child.stdin);
+    }
     if (options.stdout) {
       child.stdout.pipe(options.stdout, {
         end: false

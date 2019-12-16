@@ -196,6 +196,7 @@ nikita.system.execute({
         @log message: options.cmd_original, type: 'stdin', level: 'INFO', module: 'nikita/lib/system/execute' if options.stdin_log
         child = exec options, ssh: ssh
         result.stdout = []; result.stderr = []
+        options.stdin.pipe child.stdin if options.stdin
         child.stdout.pipe options.stdout, end: false if options.stdout
         child.stderr.pipe options.stderr, end: false if options.stderr
         stdout_stream_open = stderr_stream_open = false

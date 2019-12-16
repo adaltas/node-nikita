@@ -10,6 +10,7 @@
 ## Trunk
 
 New feature:
+* system.execute: pipe option.stdin
 * connection.assert: new option `not`
 * schema: new option
 
