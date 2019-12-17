@@ -19,6 +19,7 @@ New feature:
 * schema: new option
 
 Fix:
+* connection.wait: fix race condition with quorum
 * events: fix handling next and error events
 
 Cleanup:

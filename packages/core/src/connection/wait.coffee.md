@@ -139,7 +139,7 @@ require('nikita')
         echo "[INFO] randdir is: $randdir"
         mkdir -p $randdir
         echo 3 > $randdir/signal
-        echo 0 > $randdir/quorum
+        echo '' > $randdir/quorum
         function remove_randdir {
           for address in "${addresses[@]}" ; do
             host="${address%%:*}"
@@ -148,7 +148,8 @@ require('nikita')
           done
         }
         function check_quorum {
-          quorum_current=`cat $randdir/quorum`
+          quorum_current=`wc -l < $randdir/quorum`
+          echo $quorum_current gt? $quorum_target
           if [ $quorum_current -ge $quorum_target ]; then
             echo '[INFO] Quorum is reached'
             remove_randdir
@@ -156,28 +157,28 @@ require('nikita')
         }
         function check_timeout {
           local timeout=$1
-          local randfile=$2
+          local randfile4conn=$2
           sleep $timeout
           echo "[WARN] Reach timeout"
-          rm -f $randfile
+          rm -f $randfile4conn
         }
         function wait_connection {
           local host=$1
           local port=$2
-          local randfile=$3
+          local randfile4conn=$3
           local count=0
           echo "[DEBUG] Start wait for $host:$port"
           isopen="echo > '/dev/tcp/$host/$port'"
-          touch "$randfile"
-          while [[ -f "$randfile" ]] && ! `bash -c "$isopen" 2>/dev/null`; do
+          touch "$randfile4conn"
+          while [[ -f "$randfile4conn" ]] && ! `bash -c "$isopen" 2>/dev/null`; do
             ((count++))
             echo "[DEBUG] Connection failed to $host:$port on attempt $count" >&2
             sleep #{options.interval}
           done
-          if [[ -f "$randfile" ]]; then
+          if [[ -f "$randfile4conn" ]]; then
             echo "[DEBUG] Connection ready to $host:$port"
           fi
-          echo $(( $(cat $randdir/quorum) + 1 )) > $randdir/quorum
+          echo $host:$port >> $randdir/quorum
           check_quorum
           if [ "$count" -gt "0" ]; then
             echo "[WARN] Status is now active, count is $count"
@@ -192,8 +193,8 @@ require('nikita')
         for address in "${addresses[@]}" ; do
           host="${address%%:*}"
           port="${address##*:}"
-          randfile=$randdir/`compute_md5 $host:$port`
-          wait_connection $host $port $randfile &
+          randfile4conn=$randdir/`compute_md5 $host:$port`
+          wait_connection $host $port $randfile4conn &
         done
         wait
         # Clean up
