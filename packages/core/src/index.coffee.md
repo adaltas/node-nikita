@@ -23,7 +23,7 @@ Nikita session.
         proxy = new Proxy builder,
           get: (target, name) ->
             tree.push name
-            if not registry.registered(tree, parent: true)
+            if not registry.registered(tree, partial: true)
               tree = []
               return undefined
             proxy

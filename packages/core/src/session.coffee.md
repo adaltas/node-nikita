@@ -11,7 +11,6 @@
       else
         obj = new EventEmitter
         obj.options = {}
-      obj.registry ?= {}
       obj.store ?= {}
       obj.cascade = {...module.exports.cascade, ...obj.options.cascade}
       # Internal state
@@ -34,7 +33,7 @@
           return target[name] if name in ['_events', '_maxListeners', 'internal']
           proxy.action = []
           proxy.action.push name
-          if not obj.registry.registered(proxy.action, parent: true) and not registry.registered(proxy.action, parent: true)
+          if not obj.registry.registered(proxy.action, partial: true) and not registry.registered(proxy.action, partial: true)
             proxy.action = []
             return undefined
           get_proxy_builder = ->
@@ -51,7 +50,7 @@
               get: (target, name) ->
                 return target[name] if target[name]?
                 proxy.action.push name
-                if not obj.registry.registered(proxy.action, parent: true) and not registry.registered(proxy.action, parent: true)
+                if not obj.registry.registered(proxy.action, partial: true) and not registry.registered(proxy.action, partial: true)
                   proxy.action = []
                   return undefined
                 get_proxy_builder()
@@ -466,7 +465,8 @@
           l = state.parent_levels[0].history.length
           index = (l + index) if index < 0
           state.parent_levels[0].history[index]?.status
-      obj.registry = registry.registry {},
+      obj.registry = registry.registry
+        parent: registry
         chain: proxy
         on_register: (name, action) ->
           return unless action.schema

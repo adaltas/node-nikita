@@ -16,7 +16,9 @@ Management facility to register and unregister actions.
         result.module = middleware.module
       result
 
-    registry = (obj, options = {}) ->
+    registry = ({chain, on_register, parent} = {}) ->
+      store = {}
+      obj = {}
 
 ## Get
 
@@ -24,47 +26,44 @@ Retrieve an action by name.
 
 Options include: flatten, deprecate
 
-      Object.defineProperty obj, 'get',
-        configurable: true
-        enumerable: false
-        get: -> (name, options) ->
-          if arguments.length is 1 and is_object arguments[0]
-            options = name
-            name = null
-          options ?= {}
-          unless name
-            # Flatten result
-            if options.flatten
-              flatobj = {}
-              walk = (obj, keys) ->
-                for k, v of obj
-                  if k is ''
-                    continue if v.deprecate and not options.deprecate
-                    flatobj[keys.join '.'] = merge v
-                  else
-                    walk v, [keys..., k]
-              walk obj, []
-              return flatobj
-            # Tree result
-            else
-              walk = (obj, keys) ->
-                res = {}
-                for k, v of obj
-                  if k is ''
-                    continue if v.deprecate and not options.deprecate
-                    res[k] = merge v
-                  else
-                    v = walk v, [keys..., k]
-                    res[k] = v unless Object.values(v).length is 0
-                res
-              return walk obj, []
-          name = [name] if typeof name is 'string'
-          cnames = obj
-          for n, i in name
-            return null unless cnames[n]
-            return cnames[n][''] if cnames[n] and cnames[n][''] and i is name.length - 1
-            cnames = cnames[n]
-          return null
+      obj.get = (name, options) ->
+        if arguments.length is 1 and is_object arguments[0]
+          options = name
+          name = null
+        options ?= {}
+        unless name
+          # Flatten result
+          if options.flatten
+            flatstore = {}
+            walk = (store, keys) ->
+              for k, v of store
+                if k is ''
+                  continue if v.deprecate and not options.deprecate
+                  flatstore[keys.join '.'] = merge v
+                else
+                  walk v, [keys..., k]
+            walk store, []
+            return flatstore
+          # Tree result
+          else
+            walk = (store, keys) ->
+              res = {}
+              for k, v of store
+                if k is ''
+                  continue if v.deprecate and not options.deprecate
+                  res[k] = merge v
+                else
+                  v = walk v, [keys..., k]
+                  res[k] = v unless Object.values(v).length is 0
+              res
+            return walk store, []
+        name = [name] if typeof name is 'string'
+        cnames = store
+        for n, i in name
+          return null unless cnames[n]
+          return cnames[n][''] if cnames[n] and cnames[n][''] and i is name.length - 1
+          cnames = cnames[n]
+        return null
 
 ## Register
 
@@ -120,34 +119,31 @@ nikita
 .sixth.action(options);
 ```
 
-      Object.defineProperty obj, 'register',
-        configurable: true
-        enumerable: false
-        get: -> (name, handler) ->
-          name = [name] if typeof name is 'string'
-          if Array.isArray name
-            handler = load handler
-            cnames = names = obj
-            for n in [0...name.length - 1]
-              n = name[n]
-              cnames[n] ?= {}
-              cnames = cnames[n]
-            cnames[name[name.length-1]] ?= {}
-            cnames[name[name.length-1]][''] = handler
-            if options.on_register
-              options.on_register name, handler
-            mutate obj, names
-          else
-            walk = (obj) ->
-              for k, v of obj
-                if k isnt '' and v and typeof v is 'object' and not Array.isArray(v) and not v.handler
-                  walk v
-                else
-                  v = load v
-                  obj[k] = if k is '' then v else '': v
-            walk name
-            mutate obj, name
-          options.chain
+      obj.register = (name, handler) ->
+        name = [name] if typeof name is 'string'
+        if Array.isArray name
+          handler = load handler
+          cnames = names = store
+          for n in [0...name.length - 1]
+            n = name[n]
+            cnames[n] ?= {}
+            cnames = cnames[n]
+          cnames[name[name.length-1]] ?= {}
+          cnames[name[name.length-1]][''] = handler
+          if on_register
+            on_register name, handler
+          mutate store, names
+        else
+          walk = (store) ->
+            for k, v of store
+              if k isnt '' and v and typeof v is 'object' and not Array.isArray(v) and not v.handler
+                walk v
+              else
+                v = load v
+                store[k] = if k is '' then v else '': v
+          walk name
+          mutate store, name
+        chain
 
 ## Deprecate
 
@@ -165,19 +161,16 @@ nikita.new_function()
 # (node:75923) DeprecationWarning: old_function is deprecated, use new_function
 ```
 
-      Object.defineProperty obj, 'deprecate',
-        configurable: true
-        enumerable: false
-        get: -> (old_name, new_name, handler) ->
-          if arguments.length is 2
-            handler = new_name
-            new_name = null
-          handler = load handler
-          handler.deprecate = new_name
-          handler.deprecate ?= handler.module if typeof handler.module is 'string'
-          handler.deprecate ?= true
-          obj.register old_name, handler
-          options.chain
+      obj.deprecate = (old_name, new_name, handler) ->
+        if arguments.length is 2
+          handler = new_name
+          new_name = null
+        handler = load handler
+        handler.deprecate = new_name
+        handler.deprecate ?= handler.module if typeof handler.module is 'string'
+        handler.deprecate ?= true
+        obj.register old_name, handler
+        chain
 
 # Registered
 
@@ -188,42 +181,35 @@ Options:
 * `parent` (boolean)   
   Return true if the name match a parent action name.
 
-      Object.defineProperty obj, 'registered',
-        configurable: true
-        enumerable: false
-        get: -> (name, options = {}) ->
-          return true if module.exports isnt obj and module.exports.registered name
-          name = [name] if typeof name is 'string'
-          cnames = obj
-          for n, i in name
-            return false if not cnames[n]? or not cnames.propertyIsEnumerable(n)
-            return true if options.parent and cnames[n] and i is name.length - 1
-            return true if cnames[n][''] and i is name.length - 1
-            cnames = cnames[n]
-          return false
+      obj.registered = (name, options = {}) ->
+        name = [name] if typeof name is 'string'
+        return true if parent and parent.registered name
+        cnames = store
+        for n, i in name
+          return false if not cnames[n]? or not cnames.propertyIsEnumerable(n)
+          return true if options.partial and cnames[n] and i is name.length - 1
+          return true if cnames[n][''] and i is name.length - 1
+          cnames = cnames[n]
+        return false
 
 ## Unregister
 
 Remove an action from registry.
 
-      Object.defineProperty obj, 'unregister',
-        configurable: true
-        enumerable: false
-        get: -> (name) ->
-          name = [name] if typeof name is 'string'
-          cnames = obj
-          for n, i in name
-            delete cnames[n] if i is name.length - 1
-            cnames = cnames[n]
-            return options.chain unless cnames
-          options.chain
+      obj.unregister = (name) ->
+        name = [name] if typeof name is 'string'
+        cnames = store
+        for n, i in name
+          delete cnames[n] if i is name.length - 1
+          cnames = cnames[n]
+          return chain unless cnames
+        chain
+      
+      obj
 
-    registry module.exports
+    module.exports = registry()
 
-    Object.defineProperty module.exports, 'registry',
-      configurable: true
-      enumerable: false
-      get: -> registry
+    module.exports.registry = registry
 
 ## Dependencies
 

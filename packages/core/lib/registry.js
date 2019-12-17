@@ -30,89 +30,86 @@ load = function(middleware) {
   return result;
 };
 
-registry = function(obj, options = {}) {
+registry = function({chain, on_register, parent} = {}) {
+  var obj, store;
+  store = {};
+  obj = {};
   // ## Get
 
   // Retrieve an action by name.
 
   // Options include: flatten, deprecate
-  Object.defineProperty(obj, 'get', {
-    configurable: true,
-    enumerable: false,
-    get: function() {
-      return function(name, options) {
-        var cnames, flatobj, i, j, len, n, walk;
-        if (arguments.length === 1 && is_object(arguments[0])) {
-          options = name;
-          name = null;
-        }
-        if (options == null) {
-          options = {};
-        }
-        if (!name) {
-          // Flatten result
-          if (options.flatten) {
-            flatobj = {};
-            walk = function(obj, keys) {
-              var k, results, v;
-              results = [];
-              for (k in obj) {
-                v = obj[k];
-                if (k === '') {
-                  if (v.deprecate && !options.deprecate) {
-                    continue;
-                  }
-                  results.push(flatobj[keys.join('.')] = merge(v));
-                } else {
-                  results.push(walk(v, [...keys, k]));
-                }
-              }
-              return results;
-            };
-            walk(obj, []);
-            return flatobj;
-          } else {
-            // Tree result
-            walk = function(obj, keys) {
-              var k, res, v;
-              res = {};
-              for (k in obj) {
-                v = obj[k];
-                if (k === '') {
-                  if (v.deprecate && !options.deprecate) {
-                    continue;
-                  }
-                  res[k] = merge(v);
-                } else {
-                  v = walk(v, [...keys, k]);
-                  if (Object.values(v).length !== 0) {
-                    res[k] = v;
-                  }
-                }
-              }
-              return res;
-            };
-            return walk(obj, []);
-          }
-        }
-        if (typeof name === 'string') {
-          name = [name];
-        }
-        cnames = obj;
-        for (i = j = 0, len = name.length; j < len; i = ++j) {
-          n = name[i];
-          if (!cnames[n]) {
-            return null;
-          }
-          if (cnames[n] && cnames[n][''] && i === name.length - 1) {
-            return cnames[n][''];
-          }
-          cnames = cnames[n];
-        }
-        return null;
-      };
+  obj.get = function(name, options) {
+    var cnames, flatstore, i, j, len, n, walk;
+    if (arguments.length === 1 && is_object(arguments[0])) {
+      options = name;
+      name = null;
     }
-  });
+    if (options == null) {
+      options = {};
+    }
+    if (!name) {
+      // Flatten result
+      if (options.flatten) {
+        flatstore = {};
+        walk = function(store, keys) {
+          var k, results, v;
+          results = [];
+          for (k in store) {
+            v = store[k];
+            if (k === '') {
+              if (v.deprecate && !options.deprecate) {
+                continue;
+              }
+              results.push(flatstore[keys.join('.')] = merge(v));
+            } else {
+              results.push(walk(v, [...keys, k]));
+            }
+          }
+          return results;
+        };
+        walk(store, []);
+        return flatstore;
+      } else {
+        // Tree result
+        walk = function(store, keys) {
+          var k, res, v;
+          res = {};
+          for (k in store) {
+            v = store[k];
+            if (k === '') {
+              if (v.deprecate && !options.deprecate) {
+                continue;
+              }
+              res[k] = merge(v);
+            } else {
+              v = walk(v, [...keys, k]);
+              if (Object.values(v).length !== 0) {
+                res[k] = v;
+              }
+            }
+          }
+          return res;
+        };
+        return walk(store, []);
+      }
+    }
+    if (typeof name === 'string') {
+      name = [name];
+    }
+    cnames = store;
+    for (i = j = 0, len = name.length; j < len; i = ++j) {
+      n = name[i];
+      if (!cnames[n]) {
+        return null;
+      }
+      if (cnames[n] && cnames[n][''] && i === name.length - 1) {
+        return cnames[n][''];
+      }
+      cnames = cnames[n];
+    }
+    return null;
+  };
   // ## Register
 
   // Register new actions.
@@ -166,57 +163,51 @@ registry = function(obj, options = {}) {
   // .sixth(options);
   // .sixth.action(options);
   // ```
-  Object.defineProperty(obj, 'register', {
-    configurable: true,
-    enumerable: false,
-    get: function() {
-      return function(name, handler) {
-        var cnames, j, n, name1, names, ref, walk;
-        if (typeof name === 'string') {
-          name = [name];
-        }
-        if (Array.isArray(name)) {
-          handler = load(handler);
-          cnames = names = obj;
-          for (n = j = 0, ref = name.length - 1; (0 <= ref ? j < ref : j > ref); n = 0 <= ref ? ++j : --j) {
-            n = name[n];
-            if (cnames[n] == null) {
-              cnames[n] = {};
-            }
-            cnames = cnames[n];
-          }
-          if (cnames[name1 = name[name.length - 1]] == null) {
-            cnames[name1] = {};
-          }
-          cnames[name[name.length - 1]][''] = handler;
-          if (options.on_register) {
-            options.on_register(name, handler);
-          }
-          mutate(obj, names);
-        } else {
-          walk = function(obj) {
-            var k, results, v;
-            results = [];
-            for (k in obj) {
-              v = obj[k];
-              if (k !== '' && v && typeof v === 'object' && !Array.isArray(v) && !v.handler) {
-                results.push(walk(v));
-              } else {
-                v = load(v);
-                results.push(obj[k] = k === '' ? v : {
-                  '': v
-                });
-              }
-            }
-            return results;
-          };
-          walk(name);
-          mutate(obj, name);
-        }
-        return options.chain;
-      };
+  obj.register = function(name, handler) {
+    var cnames, j, n, name1, names, ref, walk;
+    if (typeof name === 'string') {
+      name = [name];
     }
-  });
+    if (Array.isArray(name)) {
+      handler = load(handler);
+      cnames = names = store;
+      for (n = j = 0, ref = name.length - 1; (0 <= ref ? j < ref : j > ref); n = 0 <= ref ? ++j : --j) {
+        n = name[n];
+        if (cnames[n] == null) {
+          cnames[n] = {};
+        }
+        cnames = cnames[n];
+      }
+      if (cnames[name1 = name[name.length - 1]] == null) {
+        cnames[name1] = {};
+      }
+      cnames[name[name.length - 1]][''] = handler;
+      if (on_register) {
+        on_register(name, handler);
+      }
+      mutate(store, names);
+    } else {
+      walk = function(store) {
+        var k, results, v;
+        results = [];
+        for (k in store) {
+          v = store[k];
+          if (k !== '' && v && typeof v === 'object' && !Array.isArray(v) && !v.handler) {
+            results.push(walk(v));
+          } else {
+            v = load(v);
+            results.push(store[k] = k === '' ? v : {
+              '': v
+            });
+          }
+        }
+        return results;
+      };
+      walk(name);
+      mutate(store, name);
+    }
+    return chain;
+  };
   // ## Deprecate
 
   // `nikita.deprecate(old_function, [new_function], action)`
@@ -232,30 +223,24 @@ registry = function(obj, options = {}) {
   // # Print
   // # (node:75923) DeprecationWarning: old_function is deprecated, use new_function
   // ```
-  Object.defineProperty(obj, 'deprecate', {
-    configurable: true,
-    enumerable: false,
-    get: function() {
-      return function(old_name, new_name, handler) {
-        if (arguments.length === 2) {
-          handler = new_name;
-          new_name = null;
-        }
-        handler = load(handler);
-        handler.deprecate = new_name;
-        if (typeof handler.module === 'string') {
-          if (handler.deprecate == null) {
-            handler.deprecate = handler.module;
-          }
-        }
-        if (handler.deprecate == null) {
-          handler.deprecate = true;
-        }
-        obj.register(old_name, handler);
-        return options.chain;
-      };
+  obj.deprecate = function(old_name, new_name, handler) {
+    if (arguments.length === 2) {
+      handler = new_name;
+      new_name = null;
     }
-  });
+    handler = load(handler);
+    handler.deprecate = new_name;
+    if (typeof handler.module === 'string') {
+      if (handler.deprecate == null) {
+        handler.deprecate = handler.module;
+      }
+    }
+    if (handler.deprecate == null) {
+      handler.deprecate = true;
+    }
+    obj.register(old_name, handler);
+    return chain;
+  };
   // # Registered
 
   // Test if a function is registered or not.
@@ -264,74 +249,57 @@ registry = function(obj, options = {}) {
 
   // * `parent` (boolean)   
   //   Return true if the name match a parent action name.
-  Object.defineProperty(obj, 'registered', {
-    configurable: true,
-    enumerable: false,
-    get: function() {
-      return function(name, options = {}) {
-        var cnames, i, j, len, n;
-        if (module.exports !== obj && module.exports.registered(name)) {
-          return true;
-        }
-        if (typeof name === 'string') {
-          name = [name];
-        }
-        cnames = obj;
-        for (i = j = 0, len = name.length; j < len; i = ++j) {
-          n = name[i];
-          if ((cnames[n] == null) || !cnames.propertyIsEnumerable(n)) {
-            return false;
-          }
-          if (options.parent && cnames[n] && i === name.length - 1) {
-            return true;
-          }
-          if (cnames[n][''] && i === name.length - 1) {
-            return true;
-          }
-          cnames = cnames[n];
-        }
-        return false;
-      };
+  obj.registered = function(name, options = {}) {
+    var cnames, i, j, len, n;
+    if (typeof name === 'string') {
+      name = [name];
     }
-  });
+    if (parent && parent.registered(name)) {
+      return true;
+    }
+    cnames = store;
+    for (i = j = 0, len = name.length; j < len; i = ++j) {
+      n = name[i];
+      if ((cnames[n] == null) || !cnames.propertyIsEnumerable(n)) {
+        return false;
+      }
+      if (options.partial && cnames[n] && i === name.length - 1) {
+        return true;
+      }
+      if (cnames[n][''] && i === name.length - 1) {
+        return true;
+      }
+      cnames = cnames[n];
+    }
+    return false;
+  };
   // ## Unregister
 
   // Remove an action from registry.
-  return Object.defineProperty(obj, 'unregister', {
-    configurable: true,
-    enumerable: false,
-    get: function() {
-      return function(name) {
-        var cnames, i, j, len, n;
-        if (typeof name === 'string') {
-          name = [name];
-        }
-        cnames = obj;
-        for (i = j = 0, len = name.length; j < len; i = ++j) {
-          n = name[i];
-          if (i === name.length - 1) {
-            delete cnames[n];
-          }
-          cnames = cnames[n];
-          if (!cnames) {
-            return options.chain;
-          }
-        }
-        return options.chain;
-      };
+  obj.unregister = function(name) {
+    var cnames, i, j, len, n;
+    if (typeof name === 'string') {
+      name = [name];
     }
-  });
+    cnames = store;
+    for (i = j = 0, len = name.length; j < len; i = ++j) {
+      n = name[i];
+      if (i === name.length - 1) {
+        delete cnames[n];
+      }
+      cnames = cnames[n];
+      if (!cnames) {
+        return chain;
+      }
+    }
+    return chain;
+  };
+  return obj;
 };
 
-registry(module.exports);
+module.exports = registry();
 
-Object.defineProperty(module.exports, 'registry', {
-  configurable: true,
-  enumerable: false,
-  get: function() {
-    return registry;
-  }
-});
+module.exports.registry = registry;
 
 // ## Dependencies
 ({merge, mutate} = require('mixme'));

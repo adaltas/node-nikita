@@ -39,7 +39,7 @@ module.exports = new Proxy((function() {
       get: function(target, name) {
         tree.push(name);
         if (!registry.registered(tree, {
-          parent: true
+          partial: true
         })) {
           tree = [];
           return void 0;

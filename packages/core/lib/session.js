@@ -14,9 +14,6 @@ module.exports = function() {
     obj = new EventEmitter;
     obj.options = {};
   }
-  if (obj.registry == null) {
-    obj.registry = {};
-  }
   if (obj.store == null) {
     obj.store = {};
   }
@@ -49,9 +46,9 @@ module.exports = function() {
       proxy.action = [];
       proxy.action.push(name);
       if (!obj.registry.registered(proxy.action, {
-        parent: true
+        partial: true
       }) && !registry.registered(proxy.action, {
-        parent: true
+        partial: true
       })) {
         proxy.action = [];
         return void 0;
@@ -83,9 +80,9 @@ module.exports = function() {
             }
             proxy.action.push(name);
             if (!obj.registry.registered(proxy.action, {
-              parent: true
+              partial: true
             }) && !registry.registered(proxy.action, {
-              parent: true
+              partial: true
             })) {
               proxy.action = [];
               return void 0;
@@ -929,7 +926,8 @@ module.exports = function() {
       return (ref3 = state.parent_levels[0].history[index]) != null ? ref3.status : void 0;
     }
   };
-  obj.registry = registry.registry({}, {
+  obj.registry = registry.registry({
+    parent: registry,
     chain: proxy,
     on_register: function(name, action) {
       if (!action.schema) {

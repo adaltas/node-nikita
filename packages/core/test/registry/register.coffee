@@ -87,21 +87,6 @@ describe 'registry.register', ->
         nikita.registry.unregister ['my', 'function']
       .promise()
 
-    it 'is available from nikita instance', ->
-      nikita.registry.register 'my_function', ({options}, callback) ->
-        options.my_option.should.eql 'my value'
-        process.nextTick ->
-          callback null, true
-      n = nikita()
-      n.registry.registered('my_function').should.be.true()
-      n.my_function
-        my_option: 'my value'
-      n.next (err, {status}) ->
-        throw err if err
-        status.should.be.true()
-        nikita.registry.unregister 'my_function'
-      n.promise()
-
     it 'namespace accept array', ->
       value = null
       nikita.registry.register ['this', 'is', 'a', 'function'], ({options}, callback) ->
@@ -332,3 +317,21 @@ describe 'registry.register', ->
         n.registry.register ['ok', 'and', 'valid'], (->)
         n.ok.and.invalid()
       ).should.throw 'n.ok.and.invalid is not a function'
+  
+  describe 'parent', ->
+    
+    it 'is available from nikita instance', ->
+      nikita
+      .registry.register 'my_function', ({options}, callback) ->
+        options.my_option.should.eql 'my value'
+        process.nextTick ->
+          callback null, true
+      n = nikita()
+      n.registry.registered('my_function').should.be.true()
+      n.my_function
+        my_option: 'my value'
+      n.next (err, {status}) ->
+        throw err if err
+        status.should.be.true()
+        nikita.registry.unregister 'my_function'
+      n.promise()

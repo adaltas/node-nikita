@@ -27,10 +27,10 @@ describe 'registry.registered', ->
       (nikita.registry.registered ['my']).should.be.false()
       nikita.registry.unregister ['my', 'module']
 
-    it 'option parent', ->
+    it 'option partial', ->
       nikita.registry.register ['my', 'nice', 'module'], (->)
-      nikita.registry.registered(['my'], parent: true).should.be.true()
-      nikita.registry.registered(['my', 'nice'], parent: true).should.be.true()
+      nikita.registry.registered(['my'], partial: true).should.be.true()
+      nikita.registry.registered(['my', 'nice'], partial: true).should.be.true()
       nikita.registry.unregister ['my', 'nice', 'module']
 
   describe 'local', ->
@@ -56,15 +56,26 @@ describe 'registry.registered', ->
 
     it 'ensure non enumerable property are skipped', ->
       n = nikita()
-      n.registry.registered(['register'], parent: true).should.be.false()
+      n.registry.registered(['register'], partial: true).should.be.false()
 
-    it 'option parent', ->
+    it 'option partial', ->
       n = nikita()
       n.registry.register ['my', 'nice', 'module'], (->)
-      n.registry.registered(['my'], parent: true).should.be.true()
-      n.registry.registered(['my', 'nice'], parent: true).should.be.true()
+      n.registry.registered(['my'], partial: true).should.be.true()
+      n.registry.registered(['my', 'nice'], partial: true).should.be.true()
 
-    it 'option parent check all path', ->
+    it 'option partial check all path', ->
       n = nikita()
       n.registry.register ['my', 'nice', 'module'], (->)
-      n.registry.registered(['wrong', 'nice'], parent: true).should.be.false()
+      n.registry.registered(['wrong', 'nice'], partial: true).should.be.false()
+
+  describe 'parent', ->
+
+    it 'check the global registry', ->
+      nikita
+      .registry.register 'my_function', (->)
+      n = nikita()
+      n.registry.registered('my_function').should.be.true()
+      n.next (err, {status}) ->
+        nikita.registry.unregister 'my_function'
+      n.promise()
