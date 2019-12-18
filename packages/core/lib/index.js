@@ -54,6 +54,6 @@ module.exports = new Proxy((function() {
 // ## Dependencies
 session = require('./session');
 
-registry = require('./registry');
+registry = require('./engine/registry');
 
 require('./register');

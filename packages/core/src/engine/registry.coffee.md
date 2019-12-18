@@ -10,7 +10,7 @@ Management facility to register and unregister actions.
       throw Error "Invalid middleware handler: got #{JSON.stringify middleware.handler}" unless typeof middleware.handler in ['function', 'string']
       return middleware unless typeof middleware.handler is 'string'
       middleware.module = middleware.handler
-      result = if /^nikita\//.test(middleware.handler) then require(".#{middleware.handler.substr(6)}") else require.main.require middleware.handler
+      result = if /^nikita\//.test(middleware.handler) then require("..#{middleware.handler.substr(6)}") else require.main.require middleware.handler
       if typeof result is 'function'
         result = handler: result
         result.module = middleware.module

@@ -7,7 +7,7 @@ available to every Nikita sessions.
 ## Source code
 
     # Dependency
-    registry = require './registry'
+    registry = require './engine/registry'
     # Action registration
     registry.register
       assert: 'nikita/core/assert'

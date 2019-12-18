@@ -25,6 +25,7 @@ Fix:
 * events: fix handling next and error events
 
 Cleanup:
+* registry: move into engine
 * package: simplify test command
 
 ## Version 0.9.3

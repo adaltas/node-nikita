@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 args_to_actions = require '../../src/engine/args_to_actions'
-registry = require '../../src/registry'
+registry = require '../../src/engine/registry'
 {tags, ssh, scratch} = require '../test'
 they = require('ssh2-they').configure ssh...
 
