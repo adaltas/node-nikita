@@ -213,7 +213,6 @@ Remove an action from registry.
 
 ## Dependencies
 
-    {merge, mutate} = require 'mixme'
-    {is_object} = require './misc/object'
+    {is_object, merge, mutate} = require 'mixme'
 
 [deprecate]: https://nodejs.org/api/util.html#util_util_deprecate_function_string

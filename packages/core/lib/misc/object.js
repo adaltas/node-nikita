@@ -10,8 +10,5 @@ module.exports = {
       }
     }
     return obj;
-  },
-  is_object: function(obj) {
-    return obj && typeof obj === 'object' && !Array.isArray(obj);
   }
 };

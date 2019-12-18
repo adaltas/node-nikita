@@ -3,6 +3,7 @@
 
 ## TODO
 
+* misc: remove is_object
 * misc.stat: type print unknown if discovery failed
 * ssh: fix tests
 * fix test/api/status "set status when sync is called in async" test
