@@ -1,15 +1,7 @@
 
 module.exports =
   tags:
-    posix: true
-    conditions_if_os: true
-    system_chmod: true
-    system_cgroups: true
-    system_discover: true
-    system_execute_arc_chroot: true
-    system_info: true
-    system_limits: true
-    system_user: true
+    service_install: true
   conditions_is_os:
     arch: '64'
     name: 'arch'
@@ -17,6 +9,10 @@ module.exports =
   docker: # eg `docker-machine create --driver virtualbox nikita || docker-machine start nikita`
     host: 'dind:2375'
     # machine: 'nikita'
+  service:
+    name: 'ntp'
+    srv_name: 'ntpd'
+    chk_name: 'ntpd'
   ssh: [
     null
     { ssh: host: 'localhost', username: 'root' }

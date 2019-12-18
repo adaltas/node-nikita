@@ -73,19 +73,6 @@ registry.register({
     md: 'nikita/log/md',
     csv: 'nikita/log/csv'
   },
-  service: {
-    '': 'nikita/service',
-    assert: 'nikita/service/assert',
-    discover: 'nikita/service/discover',
-    install: 'nikita/service/install',
-    init: 'nikita/service/init',
-    remove: 'nikita/service/remove',
-    restart: 'nikita/service/restart',
-    start: 'nikita/service/start',
-    startup: 'nikita/service/startup',
-    status: 'nikita/service/status',
-    stop: 'nikita/service/stop'
-  },
   system: {
     authconfig: 'nikita/system/authconfig',
     cgroups: 'nikita/system/cgroups',
@@ -160,20 +147,6 @@ registry.deprecate('move', 'nikita/system/move');
 registry.deprecate('remove', 'nikita/system/remove');
 
 registry.deprecate('render', 'nikita/file/render');
-
-registry.deprecate('service_install', 'nikita/service/install');
-
-registry.deprecate('service_remove', 'nikita/service/remove');
-
-registry.deprecate('service_restart', 'nikita/service/restart');
-
-registry.deprecate('service_start', 'nikita/service/start');
-
-registry.deprecate('service_startup', 'nikita/service/startup');
-
-registry.deprecate('service_status', 'nikita/service/status');
-
-registry.deprecate('service_stop', 'nikita/service/stop');
 
 registry.deprecate('system_limits', 'nikita/system/limits');
 

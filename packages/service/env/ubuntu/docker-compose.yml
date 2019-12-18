@@ -1,0 +1,16 @@
+
+# docker-compose up --abort-on-container-exit
+# worth investigating for service: https://github.com/phusion/baseimage-docker#readme
+
+version: '3'
+services:
+  nodejs:
+    build: .
+    image: nikita_service_ubuntu
+    container_name: nikita_service_systemctl
+    volumes:
+      - ../../../../:/nikita
+    environment:
+      NIKITA_TEST_MODULE: /nikita/packages/service/env/ubuntu/test.coffee
+      DEBUG: 1
+      # DEBUG: 0
