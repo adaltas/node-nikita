@@ -1,12 +1,19 @@
 
-{Validator} = require 'jsonschema'
+Ajv = require 'ajv'
 
 module.exports = () ->
-  validator = new Validator()
+  ajv = new Ajv(allErrors: true)
   add: (name, schema) ->
     return unless schema
-    validator.addSchema schema, name
-  validate: (options, schema) ->
-    validator.validate options, schema
+    ajv.addSchema schema, name
+  validate: (data, schema) ->
+    # console.log data, schema
+    validate = ajv.compile schema
+    valid = validate data
+    if validate.errors
+    then validate.errors.map (error) -> Error ajv.errorsText([error])
+    else []
   list: () ->
-    validator.schemas
+    schemas: ajv._schemas
+    refs: ajv._refs
+    fragments: ajv._fragments

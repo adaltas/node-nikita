@@ -260,7 +260,7 @@ module.exports = function() {
       do_options = function() {
         try {
           if (context.internal.schema) {
-            ({errors} = obj.schema.validate(context.options, context.internal.schema));
+            errors = obj.schema.validate(context.options, context.internal.schema);
             if (errors.length) {
               error = new Error('Invalid Options');
               error.errors = errors;

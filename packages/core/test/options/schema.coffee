@@ -36,10 +36,10 @@ describe 'options "schema"', ->
     , (->)
     , (err) ->
       err.message.should.eql 'Invalid Options'
-      err.errors.map( (err) -> "#{err.property} #{err.message}").should.eql [
-        'instance.a_string is not of a type(s) string'
+      err.errors.map( (err) -> err.message).should.eql [
+        'data.a_string should be string'
       ,
-        'instance.an_integer must have a minimum value of 1'
+        'data.an_integer should be >= 1'
       ]
     .promise()
 
@@ -71,7 +71,7 @@ describe 'options "schema"', ->
     , (->)
     , (err) ->
       err.message.should.eql 'Invalid Options'
-      err.errors.map( (err) -> "#{err.property} #{err.message}").should.eql [
-        'instance.split.a_string is not of a type(s) string'
+      err.errors.map( (err) -> err.message).should.eql [
+        'data.split.a_string should be string'
       ]
     .promise()

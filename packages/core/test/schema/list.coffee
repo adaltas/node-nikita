@@ -13,19 +13,8 @@ describe 'schema.list', ->
       'properties':
         'a_string': type: 'string'
         'an_integer': type: 'integer', minimum: 1
-    n.schema.list().should.eql
-      'test#':
-        type: 'object',
-        properties:
-          'a_string': type: 'string'
-          'an_integer': type: 'integer', minimum: 1
-      'test':
-        type: 'object',
-        properties:
-          'a_string': type: 'string'
-          'an_integer': type: 'integer', minimum: 1
-      'test#/properties/a_string':
-        type: 'string'
-      'test#/properties/an_integer':
-        type: 'integer'
-        minimum: 1
+    n.schema.list().schemas.test.schema.should.eql
+      type: 'object'
+      properties:
+        'a_string': type: 'string'
+        'an_integer': type: 'integer', minimum: 1
