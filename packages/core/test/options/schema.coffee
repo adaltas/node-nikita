@@ -12,7 +12,6 @@ describe 'options "schema"', ->
       a_string: 'a value'
       an_integer: 1
       schema:
-        'id': '/SimplePerson'
         'type': 'object'
         'properties':
           'a_string': 'type': 'string'
