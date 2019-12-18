@@ -2,10 +2,7 @@
 # Nikita Session
 
     module.exports = ->
-      if arguments.length is 2
-        obj = arguments[0]
-        obj.options = arguments[1]
-      else if arguments.length is 1
+      if arguments.length is 1
         obj = new EventEmitter
         obj.options = arguments[0]
       else

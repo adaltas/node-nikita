@@ -4,10 +4,7 @@ var EventEmitter, args_to_actions, array, conditions, each, make_action, path, p
 
 module.exports = function() {
   var call_callback, handle_get, handle_multiple_call, jump_to_error, obj, proxy, run, run_next, state;
-  if (arguments.length === 2) {
-    obj = arguments[0];
-    obj.options = arguments[1];
-  } else if (arguments.length === 1) {
+  if (arguments.length === 1) {
     obj = new EventEmitter;
     obj.options = arguments[0];
   } else {
