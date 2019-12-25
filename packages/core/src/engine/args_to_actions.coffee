@@ -1,5 +1,5 @@
 
-registry = require './registry'
+registry = require '../registry'
 array = require '../misc/array'
 path = require 'path'
 

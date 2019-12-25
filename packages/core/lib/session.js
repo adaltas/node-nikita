@@ -996,7 +996,7 @@ make_action = require('./engine/make_action');
 
 schema = require('./engine/schema');
 
-registry = require('./engine/registry');
+registry = require('./registry');
 
 each = require('each');
 

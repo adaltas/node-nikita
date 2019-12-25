@@ -519,7 +519,7 @@
     args_to_actions = require './engine/args_to_actions'
     make_action = require './engine/make_action'
     schema = require './engine/schema'
-    registry = require './engine/registry'
+    registry = require './registry'
     each = require 'each'
     path = require 'path'
     util = require 'util'

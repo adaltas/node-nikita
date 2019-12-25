@@ -32,5 +32,5 @@ Nikita session.
 ## Dependencies
 
     session = require './session'
-    registry = require './engine/registry'
+    registry = require './registry'
     require './register'

@@ -9,7 +9,7 @@
 // Dependency
 var registry;
 
-registry = require('./engine/registry');
+registry = require('./registry');
 
 // Action registration
 registry.register({
