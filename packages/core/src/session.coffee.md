@@ -27,7 +27,7 @@
           console.warn 'apply'
         get: (target, name) ->
           return target[name] if obj[name]?
-          return target[name] if name in ['_events', '_maxListeners', 'internal']
+          return target[name] if name in ['_events', '_maxListeners']
           proxy.action = []
           proxy.action.push name
           if not obj.registry.registered(proxy.action, partial: true) and not registry.registered(proxy.action, partial: true)
@@ -88,7 +88,7 @@
         # Nothing more to do in current queue
         unless options
           errors = state.current_level.history.map (context) ->
-            (context.error_in_callback or not context.internal.tolerant and not context.original.relax) and context.error
+            (context.error_in_callback or not context.metadata.tolerant and not context.original.relax) and context.error
           error = errors[errors.length - 1]
           if not state.killed and state.parent_levels.length is 0 and error and state.current_level.throw_if_error
             if obj.listenerCount('error') is 0
@@ -103,7 +103,7 @@
         throw Error 'Invalid Argument' unless options and callback
         if options.action is 'next'
           errors = state.current_level.history.map (context) ->
-            (context.error_in_callback or not context.internal.tolerant and not context.original.relax) and context.error
+            (context.error_in_callback or not context.metadata.tolerant and not context.original.relax) and context.error
           error = errors[errors.length - 1]
           status = state.current_level.history.some (context) ->
             not context.original.shy and context.status
@@ -112,8 +112,8 @@
           return callback null, {}
         if options.action is 'promise'
           errors = state.current_level.history.map (context) ->
-            (context.error_in_callback or not context.internal.tolerant and not context.original.relax) and context.error
-            # context.error and (context.error.fatal or (not context.internal.tolerant and not context.original.relax))
+            (context.error_in_callback or not context.metadata.tolerant and not context.original.relax) and context.error
+            # context.error and (context.error.fatal or (not context.metadata.tolerant and not context.original.relax))
           error = errors[errors.length - 1]
           status = state.current_level.history.some (context) ->
             not context.original.shy and context.status
@@ -139,18 +139,18 @@
         state.parent_levels.unshift state.current_level
         state.current_level = state_create_level()
         state.current_level.context = context
-        proxy.log message: context.internal.header, type: 'header', index: index, headers: context.internal.headers if context.internal.header
+        proxy.log message: context.metadata.header, type: 'header', index: index, headers: context.metadata.headers if context.metadata.header
         do ->
           do_options = ->
             try
-              if context.internal.schema
-                errors = obj.schema.validate context.options, context.internal.schema
+              if context.metadata.schema
+                errors = obj.schema.validate context.options, context.metadata.schema
                 if errors.length
                   error = new Error 'Invalid Options'
                   error.errors = errors
                   throw error
               # Validate sleep option, more can be added
-              throw Error "Invalid options sleep, got #{JSON.stringify context.internal.sleep}" unless typeof context.internal.sleep is 'number' and context.internal.sleep >= 0
+              throw Error "Invalid options sleep, got #{JSON.stringify context.metadata.sleep}" unless typeof context.metadata.sleep is 'number' and context.metadata.sleep >= 0
             catch error
               context.error = error
               context.output = status: false
@@ -158,7 +158,7 @@
               return
             do_disabled()
           do_disabled = ->
-            unless context.internal.disabled
+            unless context.metadata.disabled
               proxy.log type: 'lifecycle', message: 'disabled_false', level: 'DEBUG', index: index, error: null, status: false
               do_once()
             else
@@ -182,17 +182,17 @@
                 value = 'object'
               else throw Error "Invalid data type: #{JSON.stringify value}"
               value
-            if context.internal.once
-              if typeof context.internal.once is 'string'
-                hash = string.hash context.internal.once
-              else if Array.isArray context.internal.once
-                hash = string.hash context.internal.once.map((k) ->
+            if context.metadata.once
+              if typeof context.metadata.once is 'string'
+                hash = string.hash context.metadata.once
+              else if Array.isArray context.metadata.once
+                hash = string.hash context.metadata.once.map((k) ->
                   if k is 'handler'
                   then hashme context.handler
-                  else hashme context.internal[k]
+                  else hashme context.metadata[k]
                 ).join '|'
               else
-                throw Error "Invalid Option 'once': #{JSON.stringify context.internal.once} must be a string or an array of string"
+                throw Error "Invalid Option 'once': #{JSON.stringify context.metadata.once} must be a string or an array of string"
               if state.once[hash]
                 context.error = undefined
                 context.output = status: false
@@ -201,9 +201,9 @@
             do_options_before()
           do_options_before = ->
             return do_intercept_before() if context.original.options_before
-            context.internal.before ?= []
-            context.internal.before = [context.internal.before] unless Array.isArray context.internal.before
-            each context.internal.before
+            context.metadata.before ?= []
+            context.metadata.before = [context.metadata.before] unless Array.isArray context.metadata.before
+            each context.metadata.before
             .call (before, next) ->
               [before] = args_to_actions obj, [before], 'call'
               _opts = options_before: true
@@ -271,7 +271,7 @@
               proxy.log message: error.message, level: 'ERROR', index: index, module: 'nikita' if error
               if error and ( context.options.retry is true or context.options.attempt < context.options.retry - 1 )
                 proxy.log message: "Retry on error, attempt #{context.options.attempt+1}", level: 'WARN', index: index, module: 'nikita'
-                return setTimeout do_handler, context.internal.sleep
+                return setTimeout do_handler, context.metadata.sleep
               do_intercept_after()
             context.handler ?= obj.registry.get(context.options.action)?.handler or registry.get(context.options.action)?.handler
             return handle_multiple_call context, Error "Unregistered Middleware: #{context.options.action.join('.')}" unless context.handler
@@ -281,9 +281,9 @@
               context.handler = ( (options_handler) ->
                 util.deprecate ->
                   options_handler.apply @, arguments
-                , if context.internal.deprecate is true
-                then "#{context.internal.action.join '/'} is deprecated"
-                else "#{context.internal.action.join '/'} is deprecated, use #{context.internal.deprecate}"
+                , if context.metadata.deprecate is true
+                then "#{context.metadata.action.join '/'} is deprecated"
+                else "#{context.metadata.action.join '/'} is deprecated, use #{context.metadata.deprecate}"
               )(context.handler) if context.options.deprecate
               handle_async_and_promise = ->
                 [error, output, args...] = arguments
@@ -357,9 +357,9 @@
             .next -> do_options_after()
           do_options_after = ->
             return do_callback() if context.original.options_after
-            context.internal.after ?= []
-            context.internal.after = [context.internal.after] unless Array.isArray context.internal.after
-            each context.internal.after
+            context.metadata.after ?= []
+            context.metadata.after = [context.metadata.after] unless Array.isArray context.metadata.after
+            each context.metadata.after
             .call (after, next) ->
               [after] = args_to_actions obj, [after], 'call'
               _opts = options_after: true
@@ -378,14 +378,14 @@
             return if state.killed
             state.current_level = state.parent_levels.shift() # Exit action state and move back to parent state
             state.current_level.throw_if_error = false if context.error and context.callback
-            context.status = if context.internal.status then context.output.status else false
-            if context.error and not context.internal.relax
+            context.status = if context.metadata.status then context.output.status else false
+            if context.error and not context.metadata.relax
               jump_to_error()
             call_callback context if context.callback
             do_end context
           do_end = (context) ->
             state.current_level.history.push context
-            error = (context.error_in_callback or not context.internal.tolerant and not context.original.relax) and context.error
+            error = (context.error_in_callback or not context.metadata.tolerant and not context.original.relax) and context.error
             callback error, context.output
           do_options()
       obj.next = ->

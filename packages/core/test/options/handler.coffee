@@ -11,7 +11,10 @@ describe 'options "handler"', ->
     it 'pass properties', ->
       nikita
       .call (context) ->
-        Object.keys(context).should.eql ['internal', 'options', 'original', 'parent', 'handler', 'callback', 'session']
+        Object.keys(context).should.eql [
+          'metadata', 'options', 'original', 'parent'
+          'handler', 'callback', 'session'
+        ]
       .promise()
 
   describe 'sync', ->
@@ -103,7 +106,7 @@ describe 'options "handler"', ->
       nikita()
       .call (_, callback) ->
         setImmediate ->
-         callback Error 'Catchme'
+          callback Error 'Catchme'
       , (err) ->
         err.message.should.eql 'Catchme'
       .next (err) ->
@@ -114,7 +117,7 @@ describe 'options "handler"', ->
       nikita()
       .call (_, callback) ->
         setImmediate ->
-         callback {message: 'not a valid error'}
+          callback message: 'not a valid error'
       , (err) ->
         err.message.should.eql 'First argument not a valid error'
       .next (err) ->
