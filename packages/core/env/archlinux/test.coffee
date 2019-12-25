@@ -9,7 +9,6 @@ module.exports =
     system_execute_arc_chroot: true
     system_info: true
     system_limits: true
-    system_user: true
   conditions_is_os:
     arch: '64'
     name: 'arch'

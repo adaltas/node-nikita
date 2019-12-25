@@ -7,7 +7,6 @@ module.exports =
     system_discover: false
     system_info: false
     system_limits: false
-    system_user: false
   conditions_is_os:
     arch: '64'
     name: 'ubuntu'

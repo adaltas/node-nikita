@@ -5,10 +5,11 @@
 
 // ## Options
 
-// * `cache` (boolean)   
+// * `cache` (boolean, `false`, optional)   
 //   Cache the result inside the store.
-// * `target` (string)   
-//   Path to the passwd definition file, default to "/etc/passwd".
+// * `target` (string, optional)   
+//   Path to the passwd definition file,use the `getent passwd` by default which
+//   use to "/etc/passwd".
 // * `uid` (string|integer)   
 //   Retrieve the information for a specific user name or uid.
 
@@ -50,13 +51,19 @@
 // });
 // ```
 
+// ## implementation
+
+// The default implementation use the `getent passwd` command. It is possible to
+// read an alternative `/etc/passwd` file by setting the `target` option to the
+// targeted file.
+
 // ## Source Code
 var string;
 
 module.exports = {
   shy: true,
   handler: function({options}, callback) {
-    var passwd, ref;
+    var passwd, ref, str2passwd;
     this.log({
       message: "Entering system.user.read",
       level: 'DEBUG',
@@ -67,9 +74,6 @@ module.exports = {
     }
     if (typeof options.uid === 'string' && /\d+/.test(options.uid)) {
       options.uid = parseInt(options.uid, 10);
-    }
-    if (options.target == null) {
-      options.target = '/etc/passwd';
     }
     // Retrieve passwd from cache
     passwd = null;
@@ -84,20 +88,8 @@ module.exports = {
       return passwd = this.store['nikita:etc_passwd'];
     });
     // Read system passwd and place in cache if requested
-    this.fs.readFile({
-      unless: options.getent,
-      unless: options.cache && !!this.store['nikita:etc_passwd'],
-      target: options.target,
-      encoding: 'ascii',
-      log: options.log
-    }, function(err, {data}) {
+    str2passwd = function(data) {
       var i, len, line, ref1;
-      if (err) {
-        throw err;
-      }
-      if (data == null) {
-        return;
-      }
       passwd = {};
       ref1 = string.lines(data);
       for (i = 0, len = ref1.length; i < len; i++) {
@@ -115,10 +107,39 @@ module.exports = {
           shell: line[6]
         };
       }
-      if (options.cache) {
-        return this.store['nikita:etc_passwd'] = passwd;
-      }
-    });
+      return passwd;
+    };
+    if (!options.target) {
+      this.system.execute({
+        cmd: 'getent passwd'
+      }, function(err, {stdout}) {
+        if (err) {
+          throw err;
+        }
+        passwd = str2passwd(stdout);
+        if (options.cache) {
+          return this.store['nikita:etc_passwd'] = passwd;
+        }
+      });
+    } else {
+      this.fs.readFile({
+        unless: options.cache && !!this.store['nikita:etc_passwd'],
+        target: options.target,
+        encoding: 'ascii',
+        log: options.log
+      }, function(err, {data}) {
+        if (err) {
+          throw err;
+        }
+        if (data == null) {
+          return;
+        }
+        passwd = str2passwd(data);
+        if (options.cache) {
+          return this.store['nikita:etc_passwd'] = passwd;
+        }
+      });
+    }
     // Pass the passwd information
     return this.next(function(err) {
       var user;

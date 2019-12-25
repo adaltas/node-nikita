@@ -3,7 +3,7 @@ nikita = require '../../src'
 {tags, ssh, scratch} = require '../test'
 they = require('ssh2-they').configure ssh...
 
-return unless tags.posix
+return unless tags.system_user
 
 describe 'system.user.read', ->
 
@@ -41,6 +41,22 @@ describe 'system.user.read', ->
         root: user: 'root', uid: 0, gid: 0, comment: 'root', home: '/root', shell: '/bin/bash'
         bin: user: 'bin', uid: 1, gid: 1, comment: 'bin', home: '/bin', shell: '/usr/bin/nologin'
     .promise()
+  
+  describe 'option "getent"', ->
+    
+    they 'use getent command', ({ssh}) ->
+      nikita
+        ssh: ssh
+      .system.user.remove 'toto'
+      .system.group.remove 'toto'
+      .system.user 'toto', (err, {status}) ->
+        status.should.be.true() unless err
+      .system.user.read
+        getent: true
+        uid: 'toto'
+      , (err, {status, user}) ->
+        throw err if err
+      .promise()
 
   describe 'option "uid"', ->
 
