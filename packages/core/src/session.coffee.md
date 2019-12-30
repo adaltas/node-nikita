@@ -56,29 +56,29 @@
         return get: false unless options.length is 1
         options = options[0]
         return get: false unless options.get is true
-        context = make_action obj, state.current_level.context, options
-        values = context.handler.call proxy, context
+        action = make_action obj, state.current_level.action, options
+        values = action.handler.call proxy, action
         get: true, values: values
-      call_callback = (context) ->
+      call_callback = (action) ->
         state.parent_levels.unshift state.current_level
         state.current_level = state_create_level()
-        state.current_level.context = context
+        state.current_level.action = action
         try
-          context.callback.call proxy, context.error, context.output, (context.args or [])...
+          action.callback.call proxy, action.error, action.output, (action.args or [])...
         catch error
           state.current_level = state.parent_levels.shift()
-          context.error_in_callback = true
-          context.error = error
+          action.error_in_callback = true
+          action.error = error
           jump_to_error()
           return
         current_level = state.current_level
         state.current_level = state.parent_levels.shift()
         state.current_level.todos.unshift current_level.todos... if current_level.todos.length
-      handle_multiple_call = (context, error) ->
+      handle_multiple_call = (action, error) ->
         state.killed = true
         state.current_level = state.parent_levels.shift() while state.parent_levels.length
-        context.error = error
-        state.current_level.history.push context
+        action.error = error
+        state.current_level.history.push action
         jump_to_error()
         run_next()
       jump_to_error = ->
@@ -87,8 +87,8 @@
         options = state.current_level.todos.shift()
         # Nothing more to do in current queue
         unless options
-          errors = state.current_level.history.map (context) ->
-            (context.error_in_callback or not context.metadata.tolerant and not context.original.relax) and context.error
+          errors = state.current_level.history.map (action) ->
+            (action.error_in_callback or not action.metadata.tolerant and not action.original.relax) and action.error
           error = errors[errors.length - 1]
           if not state.killed and state.parent_levels.length is 0 and error and state.current_level.throw_if_error
             if obj.listenerCount('error') is 0
@@ -102,21 +102,21 @@
       run = (options, callback) ->
         throw Error 'Invalid Argument' unless options and callback
         if options.action is 'next'
-          errors = state.current_level.history.map (context) ->
-            (context.error_in_callback or not context.metadata.tolerant and not context.original.relax) and context.error
+          errors = state.current_level.history.map (action) ->
+            (action.error_in_callback or not action.metadata.tolerant and not action.original.relax) and action.error
           error = errors[errors.length - 1]
-          status = state.current_level.history.some (context) ->
-            not context.original.shy and context.status
+          status = state.current_level.history.some (action) ->
+            not action.original.shy and action.status
           options.handler?.call proxy, error, {status: status}
           state_reset_level state.current_level
           return callback null, {}
         if options.action is 'promise'
-          errors = state.current_level.history.map (context) ->
-            (context.error_in_callback or not context.metadata.tolerant and not context.original.relax) and context.error
-            # context.error and (context.error.fatal or (not context.metadata.tolerant and not context.original.relax))
+          errors = state.current_level.history.map (action) ->
+            (action.error_in_callback or not action.metadata.tolerant and not action.original.relax) and action.error
+            # action.error and (action.error.fatal or (not action.metadata.tolerant and not action.original.relax))
           error = errors[errors.length - 1]
-          status = state.current_level.history.some (context) ->
-            not context.original.shy and context.status
+          status = state.current_level.history.some (action) ->
+            not action.original.shy and action.status
           options.handler?.call proxy, error, status
           unless error
           then options.deferred.resolve status
@@ -132,39 +132,39 @@
           , (error) ->
             callback error, {}
         index = state.index_counter++
-        context_parent = state.current_level.context
-        context = make_action obj, context_parent, options
+        action_parent = state.current_level.action
+        action = make_action obj, action_parent, options
         # Prepare the Context
-        context.session = proxy
+        action.session = proxy
         state.parent_levels.unshift state.current_level
         state.current_level = state_create_level()
-        state.current_level.context = context
-        proxy.log message: context.metadata.header, type: 'header', index: index, headers: context.metadata.headers if context.metadata.header
+        state.current_level.action = action
+        proxy.log message: action.metadata.header, type: 'header', index: index, headers: action.metadata.headers if action.metadata.header
         do ->
           do_options = ->
             try
-              if context.metadata.schema
-                errors = obj.schema.validate context.options, context.metadata.schema
+              if action.metadata.schema
+                errors = obj.schema.validate action.options, action.metadata.schema
                 if errors.length
                   error = new Error 'Invalid Options'
                   error.errors = errors
                   throw error
               # Validate sleep option, more can be added
-              throw Error "Invalid options sleep, got #{JSON.stringify context.metadata.sleep}" unless typeof context.metadata.sleep is 'number' and context.metadata.sleep >= 0
+              throw Error "Invalid options sleep, got #{JSON.stringify action.metadata.sleep}" unless typeof action.metadata.sleep is 'number' and action.metadata.sleep >= 0
             catch error
-              context.error = error
-              context.output = status: false
+              action.error = error
+              action.output = status: false
               do_callback()
               return
             do_disabled()
           do_disabled = ->
-            unless context.metadata.disabled
+            unless action.metadata.disabled
               proxy.log type: 'lifecycle', message: 'disabled_false', level: 'DEBUG', index: index, error: null, status: false
               do_once()
             else
               proxy.log type: 'lifecycle', message: 'disabled_true', level: 'INFO', index: index, error: null, status: false
-              context.error = undefined
-              context.output = status: false
+              action.error = undefined
+              action.output = status: false
               do_callback()
           do_once = ->
             hashme = (value) ->
@@ -182,122 +182,122 @@
                 value = 'object'
               else throw Error "Invalid data type: #{JSON.stringify value}"
               value
-            if context.metadata.once
-              if typeof context.metadata.once is 'string'
-                hash = string.hash context.metadata.once
-              else if Array.isArray context.metadata.once
-                hash = string.hash context.metadata.once.map((k) ->
+            if action.metadata.once
+              if typeof action.metadata.once is 'string'
+                hash = string.hash action.metadata.once
+              else if Array.isArray action.metadata.once
+                hash = string.hash action.metadata.once.map((k) ->
                   if k is 'handler'
-                  then hashme context.handler
-                  else hashme context.metadata[k]
+                  then hashme action.handler
+                  else hashme action.metadata[k]
                 ).join '|'
               else
-                throw Error "Invalid Option 'once': #{JSON.stringify context.metadata.once} must be a string or an array of string"
+                throw Error "Invalid Option 'once': #{JSON.stringify action.metadata.once} must be a string or an array of string"
               if state.once[hash]
-                context.error = undefined
-                context.output = status: false
+                action.error = undefined
+                action.output = status: false
                 return do_callback()
               state.once[hash] = true
             do_options_before()
           do_options_before = ->
-            return do_intercept_before() if context.original.options_before
-            context.metadata.before ?= []
-            context.metadata.before = [context.metadata.before] unless Array.isArray context.metadata.before
-            each context.metadata.before
+            return do_intercept_before() if action.original.options_before
+            action.metadata.before ?= []
+            action.metadata.before = [action.metadata.before] unless Array.isArray action.metadata.before
+            each action.metadata.before
             .call (before, next) ->
               [before] = args_to_actions obj, [before], 'call'
               _opts = options_before: true
               for k, v of before
                 _opts[k] = v
-              for k, v of context.options
+              for k, v of action.options
                 _opts[k] ?= v
               run _opts, next
             .error (error) ->
-              context.error = error
-              context.output = status: false
+              action.error = error
+              action.output = status: false
               do_callback()
             .next do_intercept_before
           do_intercept_before = ->
-            return do_conditions() if context.options.intercepting
+            return do_conditions() if action.options.intercepting
             each state.befores
             .call (before, next) ->
               for k, v of before then switch k
                 when 'handler' then continue
-                when 'action' then return next() unless array.compare v, context.options[k]
-                else return next() unless v is context.options[k]
+                when 'action' then return next() unless array.compare v, action.options[k]
+                else return next() unless v is action.options[k]
               _opts = intercepting: true
               for k, v of before
                 _opts[k] = v
-              for k, v of context.options
+              for k, v of action.options
                 _opts[k] ?= v
               run _opts, next
             .error (error) ->
-              context.error = error
-              context.output = status: false
+              action.error = error
+              action.output = status: false
               do_callback()
             .next do_conditions
           do_conditions = ->
             _opts = {}
-            for k, v of context.options
+            for k, v of action.options
               _opts[k] ?= v
             conditions.all proxy, options: _opts
             , ->
               proxy.log type: 'lifecycle', message: 'conditions_passed', index: index, error: null, status: false
-              for k, v of context.options # Remove conditions from options
-                delete context.options[k] if /^if.*/.test(k) or /^unless.*/.test(k)
+              for k, v of action.options # Remove conditions from options
+                delete action.options[k] if /^if.*/.test(k) or /^unless.*/.test(k)
               setImmediate -> do_handler()
             , (error) ->
               proxy.log type: 'lifecycle', message: 'conditions_failed', index: index, error: error, status: false
               setImmediate ->
-                context.error = error
-                context.output = status: false
+                action.error = error
+                action.output = status: false
                 do_callback()
           do_handler = ->
-            context.options.attempt++
+            action.options.attempt++
             do_next = ({error, output, args}) ->
-              context.error = if error? then error else undefined # ensure null is converted to undefined
-              context.output = output
-              context.args = args
+              action.error = if error? then error else undefined # ensure null is converted to undefined
+              action.output = output
+              action.args = args
               if error and error not instanceof Error
                 error = Error 'First argument not a valid error'
-                context.error = error
-                context.output ?= {}
-                context.output.status ?= false
+                action.error = error
+                action.output ?= {}
+                action.output.status ?= false
               else
-                if typeof output is 'boolean' then context.output = {status: output}
-                else if not output then context.output = { status: false }
-                else if typeof output isnt 'object' then context.error = Error "Invalid Argument: expect an object or a boolean, got #{JSON.stringify output}"
-                else context.output.status ?= false
+                if typeof output is 'boolean' then action.output = {status: output}
+                else if not output then action.output = { status: false }
+                else if typeof output isnt 'object' then action.error = Error "Invalid Argument: expect an object or a boolean, got #{JSON.stringify output}"
+                else action.output.status ?= false
               proxy.log message: error.message, level: 'ERROR', index: index, module: 'nikita' if error
-              if error and ( context.options.retry is true or context.options.attempt < context.options.retry - 1 )
-                proxy.log message: "Retry on error, attempt #{context.options.attempt+1}", level: 'WARN', index: index, module: 'nikita'
-                return setTimeout do_handler, context.metadata.sleep
+              if error and ( action.options.retry is true or action.options.attempt < action.options.retry - 1 )
+                proxy.log message: "Retry on error, attempt #{action.options.attempt+1}", level: 'WARN', index: index, module: 'nikita'
+                return setTimeout do_handler, action.metadata.sleep
               do_intercept_after()
-            context.handler ?= obj.registry.get(context.options.action)?.handler or registry.get(context.options.action)?.handler
-            return handle_multiple_call context, Error "Unregistered Middleware: #{context.options.action.join('.')}" unless context.handler
+            action.handler ?= obj.registry.get(action.options.action)?.handler or registry.get(action.options.action)?.handler
+            return handle_multiple_call action, Error "Unregistered Middleware: #{action.options.action.join('.')}" unless action.handler
             called = false
             try
               # Handle deprecation
-              context.handler = ( (options_handler) ->
+              action.handler = ( (options_handler) ->
                 util.deprecate ->
                   options_handler.apply @, arguments
-                , if context.metadata.deprecate is true
-                then "#{context.metadata.action.join '/'} is deprecated"
-                else "#{context.metadata.action.join '/'} is deprecated, use #{context.metadata.deprecate}"
-              )(context.handler) if context.options.deprecate
+                , if action.metadata.deprecate is true
+                then "#{action.metadata.action.join '/'} is deprecated"
+                else "#{action.metadata.action.join '/'} is deprecated, use #{action.metadata.deprecate}"
+              )(action.handler) if action.options.deprecate
               handle_async_and_promise = ->
                 [error, output, args...] = arguments
                 return if state.killed
-                return handle_multiple_call context, Error 'Multiple call detected' if called
+                return handle_multiple_call action, Error 'Multiple call detected' if called
                 called = true
                 setImmediate ->
                   do_next error: error, output: output, args: args
               # Prepare the context
-              ctx = {...context, options: {...context.options}}
+              ctx = {...action, options: {...action.options}}
               # Async style
-              if context.handler.length is 2
+              if action.handler.length is 2
                 promise_returned = false
-                result = context.handler.call proxy, ctx, ->
+                result = action.handler.call proxy, ctx, ->
                   return if promise_returned
                   handle_async_and_promise.apply null, arguments
                 if promise.is result
@@ -305,7 +305,7 @@
                   return handle_async_and_promise Error 'Invalid Promise: returning promise is not supported in asynchronuous mode'
               # Sync style
               else
-                result = context.handler.call proxy, ctx
+                result = action.handler.call proxy, ctx
                 if promise.is result
                   result.then (value) ->
                     if Array.isArray value
@@ -319,7 +319,7 @@
                     handle_async_and_promise reason
                 else
                   return if state.killed
-                  return handle_multiple_call context, Error 'Multiple call detected' if called
+                  return handle_multiple_call action, Error 'Multiple call detected' if called
                   called = true
                   status_sync = false
                   wait_children = ->
@@ -337,56 +337,56 @@
               state.current_level = state_create_level()
               do_next error: error
           do_intercept_after = ->
-            return do_options_after() if context.options.intercepting
+            return do_options_after() if action.options.intercepting
             each state.afters
             .call (after, next) ->
               for k, v of after then switch k
                 when 'handler' then continue
-                when 'action' then return next() unless array.compare v, context.options[k]
-                else return next() unless v is context.options[k]
+                when 'action' then return next() unless array.compare v, action.options[k]
+                else return next() unless v is action.options[k]
               _opts = intercepting: true
               for k, v of after
                 _opts[k] = v
-              for k, v of context.options
+              for k, v of action.options
                 _opts[k] ?= v
               run _opts, next
             .error (error) ->
-              context.error = error
-              context.output = status: false
+              action.error = error
+              action.output = status: false
               do_callback()
             .next -> do_options_after()
           do_options_after = ->
-            return do_callback() if context.original.options_after
-            context.metadata.after ?= []
-            context.metadata.after = [context.metadata.after] unless Array.isArray context.metadata.after
-            each context.metadata.after
+            return do_callback() if action.original.options_after
+            action.metadata.after ?= []
+            action.metadata.after = [action.metadata.after] unless Array.isArray action.metadata.after
+            each action.metadata.after
             .call (after, next) ->
               [after] = args_to_actions obj, [after], 'call'
               _opts = options_after: true
               for k, v of after
                 _opts[k] = v
-              for k, v of context.options
+              for k, v of action.options
                 _opts[k] ?= v
               run _opts, next
             .error (error) ->
-              context.error = error
-              context.output = status: false
+              action.error = error
+              action.output = status: false
               do_callback()
             .next -> do_callback()
           do_callback = ->
-            proxy.log type: 'handled', index: index, error: context.error, status: context.output.status
+            proxy.log type: 'handled', index: index, error: action.error, status: action.output.status
             return if state.killed
             state.current_level = state.parent_levels.shift() # Exit action state and move back to parent state
-            state.current_level.throw_if_error = false if context.error and context.callback
-            context.status = if context.metadata.status then context.output.status else false
-            if context.error and not context.metadata.relax
+            state.current_level.throw_if_error = false if action.error and action.callback
+            action.status = if action.metadata.status then action.output.status else false
+            if action.error and not action.metadata.relax
               jump_to_error()
-            call_callback context if context.callback
-            do_end context
-          do_end = (context) ->
-            state.current_level.history.push context
-            error = (context.error_in_callback or not context.metadata.tolerant and not context.original.relax) and context.error
-            callback error, context.output
+            call_callback action if action.callback
+            do_end action
+          do_end = (action) ->
+            state.current_level.history.push action
+            error = (action.error_in_callback or not action.metadata.tolerant and not action.original.relax) and action.error
+            callback error, action.output
           do_options()
       obj.next = ->
         state.current_level.todos.push action: 'next', handler: arguments[0]
@@ -457,7 +457,7 @@
           action.status = true for action in state.parent_levels[0].history
           return status
         else if index is 0
-          state.current_level.context.output?.status
+          state.current_level.action.output?.status
         else
           l = state.parent_levels[0].history.length
           index = (l + index) if index < 0
