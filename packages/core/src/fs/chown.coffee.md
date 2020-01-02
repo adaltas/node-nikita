@@ -5,10 +5,10 @@ Change ownership of a file.
 
 ## Source Code
 
-    module.exports = status: false, log: false, handler: ({options}, callback) ->
+    module.exports = status: false, log: false, handler: ({metadata, options}, callback) ->
       @log message: "Entering fs.chown", level: 'DEBUG', module: 'nikita/lib/fs/chown'
       # Normalize options
-      options.target = options.argument if options.argument?
+      options.target = metadata.argument if metadata.argument?
       options.uid = null if options.uid is false
       options.gid = null if options.gid is false
       # Validate options

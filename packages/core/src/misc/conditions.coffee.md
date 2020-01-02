@@ -39,7 +39,8 @@ nikita.file.render({
 }, fonction(err, rendered){});
 ```
 
-      if: ({options}, succeed, skip) ->
+      if: (action, succeed, skip) ->
+        {options} = action
         options.if = [options.if] unless Array.isArray options.if
         ok = true
         each(options.if)
@@ -55,12 +56,12 @@ nikita.file.render({
           else if type is 'function'
             if si.length < 2
               try
-                ok = false unless si.call @, options: options
+                ok = false unless si.call @, action
                 next()
               catch err then next err
             else if si.length is 2
               try
-                si.call @, options: options, (err, is_ok) =>
+                si.call @, action, (err, is_ok) ->
                   return next err if err
                   ok = false unless is_ok
                   next()
@@ -91,7 +92,8 @@ object plus a callback and the handler is run asynchronously.
 If it's an array, all its element must negatively resolve for the condition to
 pass.
 
-      unless: ({options}, succeed, skip) ->
+      unless: (action, succeed, skip) ->
+        {options} = action
         options.unless = [options.unless] unless Array.isArray options.unless
         ok = true
         each(options.unless)
@@ -107,12 +109,12 @@ pass.
           else if type is 'function'
             if not_if.length < 2
               try
-                ok = false if not_if.call @, options: options
+                ok = false if not_if.call @, action
                 next()
               catch err then next err
             else if not_if.length is 2
               try
-                not_if.call @, options: options, (err, is_ok) =>
+                not_if.call @, action, (err, is_ok) ->
                   return next err if err
                   ok = false if is_ok
                   next()
@@ -182,6 +184,7 @@ The callback `succeed` is called if any of the provided filter passed otherwise
 the callback `skip` is called.
 
       if_os: ({options}, succeed, skip) ->
+        # TODO: this does not honors sudo
         ssh = @ssh options.ssh
         options.if_os = [options.if_os] unless Array.isArray options.if_os
         for rule in options.if_os
@@ -219,6 +222,7 @@ The callback `succeed` is called if none of the provided filter passed otherwise
 the callback `skip` is called.
 
       unless_os: ({options}, succeed, skip) ->
+        # TODO: this does not honors sudo
         # SSH connection
         ssh = @ssh options.ssh
         options.unless_os = [options.unless_os] unless Array.isArray options.unless_os
@@ -308,6 +312,7 @@ The callback `succeed` is called if all of the provided paths
 exists otherwise the callback `skip` is called with an error.
 
       should_exist: ({options}, succeed, skip) ->
+        # TODO: this does not honors sudo
         # SSH connection
         ssh = @ssh options.ssh
         each(options.should_exist)
@@ -329,6 +334,7 @@ The callback `succeed` is called if none of the provided paths
 exists otherwise the callback `skip` is called with an error.
 
       should_not_exist: ({options}, succeed, skip) ->
+        # TODO: this does not honors sudo
         # SSH connection
         ssh = @ssh options.ssh
         each(options.should_not_exist)
@@ -363,7 +369,8 @@ conditions.all({
 })
 ```
 
-      all: (session, {options}, succeed, failed) ->
+      all: (session, action, succeed, failed) ->
+        {options} = action
         return succeed() unless options? and (typeof options is 'object' and not Array.isArray options)
         keys = Object.keys options
         i = 0
@@ -372,7 +379,7 @@ conditions.all({
           return succeed() unless key?
           return next() if key is 'all'
           return next() unless module.exports[key]?
-          module.exports[key].call session, options: options, next, (err) ->
+          module.exports[key].call session, action, next, (err) ->
             failed err
         next()
         null

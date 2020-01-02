@@ -44,12 +44,12 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = ({options}) ->
+    module.exports = ({metadata, options}) ->
       @log message: "Entering file.touch", level: 'DEBUG', module: 'nikita/lib/file/touch'
       # SSH connection
       ssh = @ssh options.ssh
       # Options
-      options.target = options.argument if options.argument?
+      options.target = metadata.argument if metadata.argument?
       throw Error "Missing target: #{options.target}" unless options.target
 
 Test if file exists.

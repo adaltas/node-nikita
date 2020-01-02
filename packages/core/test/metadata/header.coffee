@@ -4,13 +4,13 @@ nikita = require '../../src'
 
 return unless tags.api
 
-describe 'options "header"', ->
+describe 'metadata "header"', ->
   
   it 'print value', ->
     headers = []
     nikita
     .on 'header', (log) ->
-      headers.push message: log.message, headers: log.headers, depth: log.depth
+      headers.push message: log.message, headers: log.metadata.headers, depth: log.depth
     .call header: '1', ->
       @call header: '1.1', ->
         @call header: '1.1.1', (->)

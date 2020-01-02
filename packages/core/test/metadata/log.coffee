@@ -4,13 +4,13 @@ nikita = require '../../src'
 
 return unless tags.api
 
-describe 'options "log"', ->
+describe 'metadata "log"', ->
   
   it 'convert string to objects', ->
     logs = []
     nikita
     .call
-      log: (l) -> logs.push l if l.type is 'text'
+      log: (log) -> logs.push log if log.type is 'text'
       handler: -> @log 'handler'
     .call ->
       logs.length.should.eql 1
@@ -25,7 +25,7 @@ describe 'options "log"', ->
     logs = []
     nikita
     .call
-      log: (l) -> logs.push l if l.type is 'text'
+      log: (log) -> logs.push log if log.type is 'text'
       handler: ->
         @call ->
           @log 'handler'
@@ -45,8 +45,8 @@ describe 'options "log"', ->
       logs.push log.message
     .call
       log: false
-      if: ({options}) ->
-        options.log.should.be.false()
+      if: (action) ->
+        action.metadata.log.should.be.false()
         @log 'inside condition'
     , (->)
     .next (err) ->
@@ -61,8 +61,8 @@ describe 'options "log"', ->
       logs.push log.message
     .call
       log: true
-      if: ({options}) ->
-        options.log.should.be.true()
+      if: ({metadata}) ->
+        metadata.log.should.be.true()
         @log 'inside condition'
     , (->)
     .next (err) ->

@@ -4,7 +4,7 @@ nikita = require '../../src'
 
 return unless tags.api
 
-describe 'options "debug"', ->
+describe 'metadata "debug"', ->
   
   it 'print to stderr', ->
     data = []

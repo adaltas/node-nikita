@@ -23,8 +23,8 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = ({options}, callback) ->
-      options.time ?= options.argument
+    module.exports = ({metadata, options}, callback) ->
+      options.time ?= metadata.argument if metadata.argument?
       return callback Error "Missing time: #{JSON.stringify options.time}" unless options.time?
       options.time = parseInt options.time if typeof options.time is 'string'
       return callback Error "Invalid time format: #{JSON.stringify options.time}" unless typeof options.time is 'number'

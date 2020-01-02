@@ -38,8 +38,6 @@ describe 'log.cli', ->
           'localhost   h1 : h2b   ✔\n'
           'localhost   h1   ✔\n'
         ]
-      .next (err) ->
-        (err is undefined).should.be.true()
       .promise()
     
     they 'pass over actions without header', ({ssh}) ->

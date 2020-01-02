@@ -27,10 +27,10 @@ used for comparaison.
 * `hash`   
   The hash of the file or directory identified by the "target" option.
 
-    module.exports = shy: true, handler: ({options}, callback) ->
+    module.exports = shy: true, handler: ({metadata, options}, callback) ->
       @log message: "Entering file.hash", level: 'DEBUG', module: 'nikita/lib/file/hash'
       options.algo ?= 'md5'
-      options.target = options.argument if options.argument?
+      options.target = metadata.argument if metadata.argument?
       throw Error "Required Option: target, got #{JSON.stringify options.target}" unless options.target
       info = {}
       @fs.stat

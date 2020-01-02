@@ -4,7 +4,7 @@ nikita = require '../../src'
 
 return unless tags.api
 
-describe 'options "parent"', ->
+describe 'action "parent"', ->
     
   it 'default values', ->
     nikita
@@ -15,13 +15,13 @@ describe 'options "parent"', ->
     .call ->
       @call ({parent}) ->
         (parent.parent is undefined).should.be.true()
-        parent.options.disabled.should.be.false()
+        parent.metadata.disabled.should.be.false()
     # Third level
     .call ->
       @call ->
         @call ({parent}) ->
           (parent.parent.parent is undefined).should.be.true()
-          parent.parent.options.disabled.should.be.false()
+          parent.parent.metadata.disabled.should.be.false()
     .promise()
   
   it 'passed to action', ->

@@ -86,7 +86,7 @@ nikita.system.execute.assert({
           throw err if err
           stdout = stdout.trim() if options.trim
           unless options.not
-            unless options.content.test stdout 
+            unless options.content.test stdout
               options.error ?= "Invalid content match"
               err = Error options.error
           else

@@ -37,12 +37,12 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = status: false, log: false, handler: ({options}, callback) ->
+    module.exports = status: false, log: false, handler: ({metadata, options}, callback) ->
       @log message: "Entering fs.createReadStream", level: 'DEBUG', module: 'nikita/lib/fs/createReadStream'
       ssh = @ssh options.ssh
       p = if ssh then path.posix else path
       # Default argument
-      options.target = options.argument if options.argument?
+      options.target = metadata.argument if metadata.argument?
       # Normalization
       throw Error "Required Option: the \"target\" option is mandatory" unless options.target
       options.target = if options.cwd then p.resolve options.cwd, options.target else p.normalize options.target

@@ -37,8 +37,8 @@ require('nikita')
 });
 ```
 
-    module.exports = ({options}) ->
-      options.name = options.argument if options.argument?
+    module.exports = ({metadata, options}) ->
+      options.name = metadata.argument if metadata.argument?
       options.target ?= "#{options.name}.conf"
       options.target = path.resolve '/etc/modules-load.d', options.target
       options.load ?= true

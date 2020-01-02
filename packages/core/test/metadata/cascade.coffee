@@ -5,7 +5,7 @@ session = require '../../src/session'
 
 return unless tags.api
 
-describe 'options "cascade"', ->
+describe 'metadata "cascade"', ->
   
   describe 'globally', ->
   
@@ -14,12 +14,12 @@ describe 'options "cascade"', ->
       session.cascade.global_option_false = false
       nikita
       # Test the cascade option
-      .call ({options}) ->
-        options.cascade.global_option_true.should.true()
-        options.cascade.global_option_false.should.false()
-        @call ({options}) ->
-          options.cascade.global_option_true.should.true()
-          options.cascade.global_option_false.should.false()
+      .call ({options, cascade}) ->
+        cascade.global_option_true.should.true()
+        cascade.global_option_false.should.false()
+        @call ({options, cascade}) ->
+          cascade.global_option_true.should.true()
+          cascade.global_option_false.should.false()
       # Cleanup
       .call ->
         delete session.cascade.global_option_true
@@ -57,15 +57,15 @@ describe 'options "cascade"', ->
           option_true: true
           option_false: false
       # Test the cascade option
-      .call ({options}) ->
-        options.cascade.option_true.should.be.true()
-        options.cascade.option_false.should.be.false()
-        (options.cascade.option_undefined is undefined).should.be.true()
+      .call ({cascade}) ->
+        cascade.option_true.should.be.true()
+        cascade.option_false.should.be.false()
+        (cascade.option_undefined is undefined).should.be.true()
         # Call child
-        @call ({options}) ->
-          options.cascade.option_true.should.be.true()
-          options.cascade.option_false.should.be.false()
-          (options.cascade.option_undefined is undefined).should.be.true()
+        @call ({cascade}) ->
+          cascade.option_true.should.be.true()
+          cascade.option_false.should.be.false()
+          (cascade.option_undefined is undefined).should.be.true()
       .promise()
 
     it 'pass the action cascaded value', ->
@@ -111,16 +111,16 @@ describe 'options "cascade"', ->
     
     it 'cascade option cascaded', ->
       nikita
-      .call 
+      .call
         cascade:
           option_true: true
           option_false: false
-      , ({options}) ->
-        options.cascade.option_true.should.be.true()
-        options.cascade.option_false.should.be.false()
-        @call ({options}) ->
-          options.cascade.option_true.should.be.true()
-          options.cascade.option_false.should.be.false()
+      , ({cascade}) ->
+        cascade.option_true.should.be.true()
+        cascade.option_false.should.be.false()
+        @call ({cascade}) ->
+          cascade.option_true.should.be.true()
+          cascade.option_false.should.be.false()
       .promise()
         
     it 'cascade option merged with session options', ->
@@ -132,15 +132,15 @@ describe 'options "cascade"', ->
         cascade:
           key_a: true
           key_c: true
-      , ({options}) ->
-        options.cascade.key_a.should.be.true()
-        options.cascade.key_b.should.be.true()
-        options.cascade.key_c.should.be.true()
-        @call ({options}) ->
+      , ({cascade}) ->
+        cascade.key_a.should.be.true()
+        cascade.key_b.should.be.true()
+        cascade.key_c.should.be.true()
+        @call ({cascade}) ->
           # Check if key_* are cascaded into child
-          options.cascade.key_a.should.be.true()
-          options.cascade.key_b.should.be.true()
-          options.cascade.key_c.should.be.true()
+          cascade.key_a.should.be.true()
+          cascade.key_b.should.be.true()
+          cascade.key_c.should.be.true()
       .promise()
         
     it 'keys and values are cascaded if true', ->
@@ -207,15 +207,16 @@ describe 'options "cascade"', ->
 
     it 'cascade default values set by session', ->
       nikita()
-      .registry.register('a_module', cascade: {sleep: true, retry: true, depth: true, shy: true}, handler: ({options}, callback) ->
-        callback null,
-          sleep: options.sleep
-          retry: options.retry
-          depth: options.depth
-          shy: options.shy
-      )
-      .call sleep: 0, retry: 3, depth: 4, shy: true,  ->
-        @a_module (err, {sleep, retry, depth, shy}) ->
+      .registry.register 'a_module',
+        cascade: sleep: true, retry: true, depth: true, shy: true
+        handler: ({metadata}, callback) ->
+          callback null,
+            sleep: metadata.sleep
+            retry: metadata.retry
+            depth: metadata.depth
+            shy: metadata.shy
+      .call header:'a', sleep: 0, retry: 3, depth: 4, shy: true, ({metadata}) ->
+        @a_module header:'b', (err, {sleep, retry, depth, shy}) ->
           throw err if err
           sleep.should.be.equal 0
           retry.should.be.equal 3
@@ -240,8 +241,8 @@ describe 'options "cascade"', ->
       batons = []
       nikita
         cascade: baton: true
-      .registry.register( 'my_action', get: true, handler: ({options}) ->
-        batons.push "#{options.argument} #{options.baton}"
+      .registry.register( 'my_action', get: true, handler: ({metadata, options}) ->
+        batons.push "#{metadata.argument} #{options.baton}"
       )
       .call
         baton: 'transmitted'

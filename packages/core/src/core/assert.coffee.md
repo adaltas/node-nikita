@@ -15,7 +15,7 @@ A set of assertion tools.
 
 ## Source Code
 
-    module.exports = ({options}) ->
+    module.exports = ({metadata}) ->
       @log message: "Entering assert", level: 'DEBUG', module: 'nikita/lib/assert'
 
 ## Check current status
@@ -29,9 +29,11 @@ nikita.assert({
 });
 ```
 
+      # Note, this isn't nice, we are hijacking the original status metadata
+      # property and use it as an option
       status = @status()
       @call
-        if: options.status? and status isnt options.status
+        if: metadata.status? and status isnt metadata.status
       , ->
-        message = "Invalid status: expected #{JSON.stringify options.status}, got #{JSON.stringify status}"
+        message = "Invalid status: expected #{JSON.stringify metadata.status}, got #{JSON.stringify status}"
         throw Error message

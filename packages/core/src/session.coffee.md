@@ -139,7 +139,7 @@
         state.parent_levels.unshift state.current_level
         state.current_level = state_create_level()
         state.current_level.action = action
-        proxy.log message: action.metadata.header, type: 'header', index: index, headers: action.metadata.headers if action.metadata.header
+        proxy.log message: action.metadata.header, type: 'header', index: index if action.metadata.header
         do ->
           do_options = ->
             try
@@ -187,9 +187,13 @@
                 hash = string.hash action.metadata.once
               else if Array.isArray action.metadata.once
                 hash = string.hash action.metadata.once.map((k) ->
+                  # TODO, we need a more reliable way to detect metadata,
+                  # options and other action properties
                   if k is 'handler'
                   then hashme action.handler
-                  else hashme action.metadata[k]
+                  else if make_action.metadata[k] isnt undefined
+                  then hashme action.metadata[k]
+                  else hashme action.options[k]
                 ).join '|'
               else
                 throw Error "Invalid Option 'once': #{JSON.stringify action.metadata.once} must be a string or an array of string"
@@ -240,7 +244,7 @@
             _opts = {}
             for k, v of action.options
               _opts[k] ?= v
-            conditions.all proxy, options: _opts
+            conditions.all proxy, options: _opts, metadata: action.metadata
             , ->
               proxy.log type: 'lifecycle', message: 'conditions_passed', index: index, error: null, status: false
               for k, v of action.options # Remove conditions from options
@@ -253,7 +257,7 @@
                 action.output = status: false
                 do_callback()
           do_handler = ->
-            action.options.attempt++
+            action.metadata.attempt++
             do_next = ({error, output, args}) ->
               action.error = if error? then error else undefined # ensure null is converted to undefined
               action.output = output
@@ -269,22 +273,22 @@
                 else if typeof output isnt 'object' then action.error = Error "Invalid Argument: expect an object or a boolean, got #{JSON.stringify output}"
                 else action.output.status ?= false
               proxy.log message: error.message, level: 'ERROR', index: index, module: 'nikita' if error
-              if error and ( action.options.retry is true or action.options.attempt < action.options.retry - 1 )
-                proxy.log message: "Retry on error, attempt #{action.options.attempt+1}", level: 'WARN', index: index, module: 'nikita'
+              if error and ( action.metadata.retry is true or action.metadata.attempt < action.metadata.retry - 1 )
+                proxy.log message: "Retry on error, attempt #{action.metadata.attempt+1}", level: 'WARN', index: index, module: 'nikita'
                 return setTimeout do_handler, action.metadata.sleep
               do_intercept_after()
-            action.handler ?= obj.registry.get(action.options.action)?.handler or registry.get(action.options.action)?.handler
-            return handle_multiple_call action, Error "Unregistered Middleware: #{action.options.action.join('.')}" unless action.handler
+            action.handler ?= obj.registry.get(action.action)?.handler or registry.get(action.action)?.handler
+            return handle_multiple_call action, Error "Unregistered Middleware: #{action.action.join('.')}" unless action.handler
             called = false
             try
               # Handle deprecation
               action.handler = ( (options_handler) ->
                 util.deprecate ->
                   options_handler.apply @, arguments
-                , if action.metadata.deprecate is true
-                then "#{action.metadata.action.join '/'} is deprecated"
-                else "#{action.metadata.action.join '/'} is deprecated, use #{action.metadata.deprecate}"
-              )(action.handler) if action.options.deprecate
+                , if action.deprecate is true
+                then "#{action.action.join '/'} is deprecated"
+                else "#{action.action.join '/'} is deprecated, use #{action.deprecate}"
+              )(action.handler) if action.deprecate
               handle_async_and_promise = ->
                 [error, output, args...] = arguments
                 return if state.killed
@@ -447,7 +451,8 @@
         proxy
       obj.status = (index) ->
         if arguments.length is 0
-          return state.parent_levels[0].history.some (action) -> not action.original.shy and action.status
+          return state.parent_levels[0].history.some (action) ->
+            not action.original.shy and action.status
         else if index is false
           status = state.parent_levels[0].history.some (action) -> not action.original.shy and action.status
           action.status = false for action in state.parent_levels[0].history

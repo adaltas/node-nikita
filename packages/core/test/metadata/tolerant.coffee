@@ -4,7 +4,7 @@ nikita = require '../../src'
 
 return unless tags.api
 
-describe 'options "tolerant"', ->
+describe 'metadata "tolerant"', ->
 
   it.skip 'stop once errorless', ->
     called = false

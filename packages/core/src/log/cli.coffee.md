@@ -56,14 +56,14 @@ require('nikita')(
 
 ## Source Code
 
-    module.exports = ssh: false, handler: ({options}) ->
+    module.exports = ssh: false, handler: ({metadata, options}) ->
       @log message: "Entering log.cli", level: 'DEBUG', module: 'nikita/lib/log/cli'
       # SSH connection
       ssh = @ssh options.ssh
       # Obtains options from "log_cli" namespace
       options = {...options.log_cli, ...options} if options.log_cli
       # Normalize
-      options.enabled ?= options.argument if options.argument?
+      options.enabled ?= metadata.argument if metadata.argument?
       options.enabled ?= true
       options.stream ?= process.stderr
       options.end ?= false
@@ -121,7 +121,7 @@ require('nikita')(
           return line+'\n'
         'header': (log) ->
           return unless options.enabled
-          return if options.depth_max and options.depth_max < log.headers.length
+          return if options.depth_max and options.depth_max < log.metadata.headers.length
           ids[log.index] = log
           null
         'lifecycle': (log) ->
@@ -129,11 +129,11 @@ require('nikita')(
           ids[log.index].disabled = true if log.message in ['conditions_failed', 'disabled_true']
           null
         'handled': (log) ->
-          status = if log.error then '✘' else if log.status and not log.shy then '✔' else '-'
+          status = if log.parent?.error then '✘' else if log.metadata.status and not log.parent?.metadata.shy then '✔' else '-'
           color = false
           if options.colors
-            color = if log.error then options.colors.status_error
-            else if log.status then options.colors.status_true
+            color = if log.parent?.error then options.colors.status_error
+            else if log.metadata.status then options.colors.status_true
             else options.colors.status_false
           log = ids[log.index]
           return null unless log
@@ -142,7 +142,7 @@ require('nikita')(
           time = if options.time then string.print_time Date.now() - log.time else ''
           line = format_line
             host: options.host
-            header: log.headers.join(options.divider)
+            header: log.metadata.headers.join(options.divider)
             status: status
             time: time
           line = color line if color

@@ -23,10 +23,10 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = status: false, log: false, handler: ({options}, callback) ->
+    module.exports = status: false, log: false, handler: ({metadata, options}, callback) ->
       @log message: "Entering fs.readFile", level: 'DEBUG', module: 'nikita/lib/fs/readFile'
       # Normalize options
-      options.target = options.argument if options.argument?
+      options.target = metadata.argument if metadata.argument?
       throw Error "Required Option: the \"target\" option is mandatory" unless options.target
       buffers = []
       @fs.createReadStream

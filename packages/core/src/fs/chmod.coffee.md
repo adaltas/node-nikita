@@ -5,10 +5,10 @@ Change permissions of a file.
 
 ## Source Code
 
-    module.exports = status: false, log: false, handler: ({options}, callback) ->
+    module.exports = status: false, log: false, handler: ({metadata, options}, callback) ->
       @log message: "Entering fs.chmod", level: 'DEBUG', module: 'nikita/lib/fs/chmod'
       # Normalize options
-      options.target = options.argument if options.argument?
+      options.target = metadata.argument if metadata.argument?
       # Validate options
       throw Error "Missing target: #{JSON.stringify options.target}" unless options.target
       throw Error "Missing option 'mode'" unless options.mode

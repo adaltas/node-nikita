@@ -4,7 +4,7 @@ nikita = require '../../src'
 
 return unless tags.api
 
-describe 'options "schema"', ->
+describe 'metadata "schema"', ->
 
   it 'is valid', ->
     nikita

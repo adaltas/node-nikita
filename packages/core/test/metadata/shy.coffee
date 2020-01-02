@@ -4,7 +4,7 @@ nikita = require '../../src'
 
 return unless tags.api
 
-describe 'options "shy"', ->
+describe 'metadata "shy"', ->
 
   it 'dont alter status', ->
     nikita

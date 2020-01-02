@@ -114,12 +114,12 @@ nikita.system.execute({
 
 ## Source Code
 
-    module.exports = ({options}, callback) ->
+    module.exports = ({metadata, options}, callback) ->
       @log message: "Entering execute", level: 'DEBUG', module: 'nikita/lib/system/execute'
       # SSH connection
       ssh = @ssh options.ssh
       # Validate parameters
-      options.cmd = options.argument if typeof options.argument is 'string'
+      options.cmd = metadata.argument if typeof metadata.argument is 'string'
       options.code ?= [0]
       options.code = [options.code] unless Array.isArray options.code
       options.code_skipped ?= []

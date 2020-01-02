@@ -59,12 +59,12 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = ({options}, callback) ->
+    module.exports = ({metadata, options}, callback) ->
       @log message: "Entering file.cache", level: 'DEBUG', module: 'nikita/lib/file/cache'
       # SSH connection
       ssh = @ssh options.ssh
       # Options
-      options.source = options.argument if options.argument?
+      options.source = metadata.argument if metadata.argument?
       throw Error "Missing source: '#{options.source}'" unless options.source
       throw Error "Missing one of 'target', 'cache_file' or 'cache_dir' option" unless options.cache_file or options.target or options.cache_dir
       options.target ?= options.cache_file

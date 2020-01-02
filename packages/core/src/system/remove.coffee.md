@@ -57,12 +57,12 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = ({options}, callback) ->
+    module.exports = ({metadata, options}, callback) ->
       @log message: "Entering remove", level: 'DEBUG', module: 'nikita/lib/system/remove'
       # SSH connection
       ssh = @ssh options.ssh
       # Validate parameters
-      options.target = options.argument if options.argument?
+      options.target = metadata.argument if metadata.argument?
       options.target ?= options.source
       return callback Error "Missing option: \"target\"" unless options.target?
       # Start real work

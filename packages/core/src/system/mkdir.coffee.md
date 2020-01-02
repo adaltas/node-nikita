@@ -61,15 +61,15 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = ({options}, callback) ->
+    module.exports = ({metadata, options}, callback) ->
       @log message: "Entering mkdir", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
       # SSH connection
       ssh = @ssh options.ssh
       p = if ssh then path.posix else path
       # logs for children
-      options.log = if typeof options.log is 'boolean' then options.log else false
+      metadata.log = if typeof metadata.log is 'boolean' then metadata.log else false
       # Validate options
-      options.target = options.argument if options.argument?
+      options.target = metadata.argument if metadata.argument?
       options.directory ?= options.target
       options.directory ?= options.source
       return callback Error 'Missing target option' unless options.directory?
@@ -99,7 +99,7 @@ require('nikita')
           each(directories)
           .call (directory, i, next) =>
             @log message: "Stat '#{directory}'", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
-            @fs.stat target: directory, log: options.log, (err, {stats}) ->
+            @fs.stat target: directory, log: metadata.log, (err, {stats}) ->
               if err?.code is 'ENOENT' # if the directory is not yet created
                 directory.stats = stats
                 dirs.push directory
@@ -126,7 +126,7 @@ require('nikita')
             for attr in ['mode', 'uid', 'gid', 'size', 'atime', 'mtime']
               val = if i is directories.length - 1 then options[attr] else options.parent?[attr]
               opts[attr] = val if val?
-            @fs.mkdir target: directory, log: options.log, opts, (err) ->
+            @fs.mkdir target: directory, log: metadata.log, opts, (err) ->
               return callback err if err
               @log message: "Directory \"#{directory}\" created ", level: 'INFO', module: 'nikita/lib/system/mkdir'
               state.status = true

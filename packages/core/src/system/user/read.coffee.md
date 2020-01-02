@@ -59,7 +59,7 @@ targeted file.
 
 ## Source Code
 
-    module.exports = shy: true, handler: ({options}, callback) ->
+    module.exports = shy: true, handler: ({metadata, options}, callback) ->
       @log message: "Entering system.user.read", level: 'DEBUG', module: 'nikita/lib/system/user/read'
       throw Error 'Invalid Option: uid must be a string or a number' if options.uid and not typeof options.uid in ['string', 'number']
       options.uid = parseInt options.uid, 10 if typeof options.uid is 'string' and /\d+/.test options.uid
@@ -90,7 +90,7 @@ targeted file.
           unless: options.cache and !!@store['nikita:etc_passwd']
           target: options.target
           encoding: 'ascii'
-          log: options.log
+          log: metadata.log
         , (err, {data}) ->
           throw err if err
           return unless data?

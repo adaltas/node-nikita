@@ -11,6 +11,7 @@
 ## Trunk
 
 Breaking changes:
+* metadata: split and independent from options
 * metadata: renamed from internal
 * cron: move into tools
 

@@ -39,10 +39,10 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = ({options}, callback) ->
+    module.exports = ({metadata, options}, callback) ->
       @log message: "Entering wait for execution", level: 'DEBUG', module: 'nikita/lib/wait/execute'
       # Validate parameters
-      options.cmd ?= options.argument if typeof options.argument?
+      options.cmd ?= metadata.argument if typeof metadata.argument?
       return callback Error "Missing cmd: #{options.cmd}" unless options.cmd?
       options.cmd = [options.cmd] unless Array.isArray options.cmd
       options.quorum = options.quorum

@@ -60,7 +60,7 @@ and "{options.basedir}/latest".
         options.archive = "#{now.getFullYear()}".slice(-2) + "0#{now.getFullYear()}".slice(-2) + "0#{now.getDate()}".slice(-2) if options.archive is true
         # dateformat = "#{now.getFullYear()}-#{('0'+now.getMonth()).slice -2}-#{('0'+now.getDate()).slice -2}"
         # dateformat += " #{('0'+now.getHours()).slice -2}-#{('0'+now.getMinutes()).slice -2}-#{('0'+now.getSeconds()).slice -2}"
-        logdir = path.resolve options.basedir, options.archive      
+        logdir = path.resolve options.basedir, options.archive
       @system.mkdir shy: true, logdir
       # Events
       @call ->

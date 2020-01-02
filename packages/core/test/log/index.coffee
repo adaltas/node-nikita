@@ -14,20 +14,25 @@ describe 'log', ->
     .call ->
       @log 'some text'
     .on 'text', (log) ->
-      (count++).should.eql 0
-      # There should be only on log emited, thus
+      # There should be only one log emited, thus
       # there is no need to filter incoming logs
+      (count++).should.eql 0
       Object.keys(log).sort().should.eql [
-        'argument', 'attempt', 'depth', 'disabled', 'file', 'headers'
-        'level', 'line', 'message', 'module'
-        'shy', 'status', 'time', 'type'
+        'depth',    'file',
+        'index',    'level',
+        'line',     'message',
+        'metadata', 'module',
+        'options',  'parent',
+        'time',     'type'
       ]
-      log.argument.should.eql 'some text'
+      log.depth.should.eql 1
+      (log.index is undefined).should.be.true()
       log.level.should.eql 'INFO'
+      log.line.should.be.a.Number()
       log.message.should.eql 'some text'
       (log.module is undefined).should.be.true()
       log.time.should.be.within startTS, Date.now()
       log.type.should.eql 'text'
-      log.headers.should.eql []
-      log.depth.should.eql 1
+      log.metadata.argument.should.eql 'some text'
+      log.parent.metadata.headers.should.eql []
     .promise()

@@ -55,7 +55,7 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = shy: true, handler: ({options}, callback) ->
+    module.exports = shy: true, handler: ({metadata, options}, callback) ->
       @log message: "Entering system.group.read", level: 'DEBUG', module: 'nikita/lib/system/group/read'
       options.target ?= '/etc/group'
       # Retrieve groups from cache
@@ -70,7 +70,7 @@ require('nikita')
         unless: options.cache and !!@store['nikita:etc_group']
         target: options.target
         encoding: 'ascii'
-        log: options.log
+        log: metadata.log
       , (err, {data}) ->
         throw err if err
         return unless data?

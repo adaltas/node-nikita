@@ -16,10 +16,10 @@ require(nikita)
 
 ## Source Code
 
-    module.exports = status: false, log: false, handler: ({options}, callback) ->
+    module.exports = status: false, log: false, handler: ({metadata, options}, callback) ->
       @log message: "Entering fs.exists", level: 'DEBUG', module: 'nikita/lib/fs/exists'
       # Normalize options
-      options.target = options.argument if options.argument?
+      options.target = metadata.argument if metadata.argument?
       @fs.stat
         target: options.target
         dereference: true

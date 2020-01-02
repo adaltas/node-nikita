@@ -80,12 +80,12 @@ you are a member of the "wheel" group (gid of "10") with the command
 
 ## Source Code
 
-    module.exports = ({options}) ->
+    module.exports = ({metadata, options}) ->
       @log message: "Entering user", level: 'DEBUG', module: 'nikita/lib/system/user/add'
       # SSH connection
       ssh = @ssh options.ssh
       # Options
-      options.name = options.argument if options.argument?
+      options.name = metadata.argument if metadata.argument?
       throw Error "Option 'name' is required" unless options.name
       options.shell = "/sbin/nologin" if options.shell is false
       options.shell = "/bin/bash" if options.shell is true

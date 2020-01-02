@@ -4,7 +4,7 @@ nikita = require '../../src'
 
 return unless tags.api
 
-describe 'options "relax"', ->
+describe 'metadata "relax"', ->
 
   it 'sync', ->
     nikita

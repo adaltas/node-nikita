@@ -69,14 +69,14 @@ require('nikita')
 
 ## Source code
 
-    module.exports = ({options}) ->
+    module.exports = ({metadata, options}) ->
       @log message: "Entering file.assert", level: 'DEBUG', module: 'nikita/lib/file/assert'
       # SSH connection
       ssh = @ssh options.ssh
       # Options
       options.trim ?= false
       options.encoding ?= 'utf8'
-      options.target ?= options.argument
+      options.target ?= metadata.argument
       options.target ?= options.source
       options.filetype ?= []
       options.filetype = [options.filetype] unless Array.isArray options.filetype
@@ -163,8 +163,8 @@ require('nikita')
         @fs.readFile target: options.target, (err, {data}) ->
           return callback err if err
           unless options.not
-            unless options.content.test data 
-              options.error ?= "Invalid content match: expect #{JSON.stringify options.content.toString()} and got #{JSON.stringify buffer.toString()}"
+            unless options.content.test data
+              options.error ?= "Invalid content match: expect #{JSON.stringify options.content.toString()} and got #{JSON.stringify data.toString()}"
               err = Error options.error
           else
             if options.content.test data
@@ -179,7 +179,7 @@ require('nikita')
       @call
         if: algo
       , ({}, callback) ->
-        @file.hash options.target, algo: algo, (err, {hash}) =>
+        @file.hash options.target, algo: algo, (err, {hash}) ->
           return callback Error "Target does not exists: #{options.target}" if err?.code is 'ENOENT'
           return callback err if err
           unless options.not

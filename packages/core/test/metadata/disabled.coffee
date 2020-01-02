@@ -4,7 +4,7 @@ nikita = require '../../src'
 
 return unless tags.api
 
-describe 'options "disable"', ->
+describe 'metadata "disable"', ->
 
   it 'dont call handler', ->
     nikita
@@ -22,39 +22,37 @@ describe 'options "disable"', ->
       throw Error 'Achtung'
     .on 'lifecycle', (log) ->
       Object.keys(log).sort().should.eql [
-        'attempt', 'depth', 'disabled', 'error', 'file', 'headers', 'index', 
-        'level', 'line', 'message', 'module', 'shy', 
-        'status', 'time', 'type'
+          'depth', 'file',
+          'index', 'level',
+          'line', 'message',
+          'metadata', 'module',
+          'options', 'parent',
+          'time', 'type'
       ]
       log.depth.should.eql 1
-      (log.error is null).should.be.true()
-      log.headers.should.eql []
       log.index.should.eql 0
       log.level.should.eql 'INFO'
       log.message.should.eql 'disabled_true'
+      log.metadata.headers.should.eql []
+      log.metadata.shy.should.be.false()
       (log.module is undefined).should.be.true()
-      log.shy.should.be.false()
-      log.status.should.be.false()
       log.type.should.eql 'lifecycle'
-      # log.file.should.eql 'session.coffee.md'
     .promise()
 
   it 'emit lifecycle event when not disabled', ->
     nikita
     .call
       disabled: false
-    , (otions) ->
+    , ->
       throw Error 'Achtung'
     .on 'lifecycle', (log) ->
       return if log.message is 'conditions_passed'
-      log.type.should.eql 'lifecycle'
-      log.message.should.eql 'disabled_false'
-      log.index.should.eql 0
-      (log.error is null).should.be.true()
-      log.status.should.be.false()
-      log.level.should.eql 'DEBUG'
-      (log.module is undefined).should.be.true()
-      log.headers.should.eql []
       log.file.should.eql 'session.coffee.md'
+      log.index.should.eql 0
+      log.level.should.eql 'DEBUG'
+      log.metadata.headers.should.eql []
+      log.message.should.eql 'disabled_false'
+      (log.module is undefined).should.be.true()
+      log.type.should.eql 'lifecycle'
     .next (->)
     .promise()

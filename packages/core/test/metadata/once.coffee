@@ -4,7 +4,7 @@ nikita = require '../../src'
 
 return unless tags.api
 
-describe 'options "once"', ->
+describe 'metadata "once"', ->
 
   describe 'true', ->
 

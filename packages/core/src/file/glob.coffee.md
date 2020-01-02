@@ -22,9 +22,9 @@ paths locally using the Minimatch package.
 * `hash`   
   The hash of the file or directory identified by the "target" option.
 
-    module.exports = shy: true, handler: ({options}, callback) ->
+    module.exports = shy: true, handler: ({metadata, options}, callback) ->
       @log message: "Entering file.glob", level: 'DEBUG', module: 'nikita/lib/file/hash'
-      options.target = options.argument if options.argument?
+      options.target = metadata.argument if metadata.argument?
       throw Error "Required Option: target, got #{JSON.stringify options.target}" unless options.target
       options.minimatch ?= {}
       options.minimatch.dot ?= options.dot if options.dot?

@@ -16,12 +16,12 @@ Options include
 
 ## Source Code
 
-    module.exports = status: false, log: false, handler: ({options}) ->
+    module.exports = status: false, log: false, handler: ({metadata, options}) ->
       @log message: "Entering fs.writeFile", level: 'DEBUG', module: 'nikita/lib/fs/writeFile'
       ssh = @ssh options.ssh
       p = if ssh then path.posix else path
       # Default argument
-      options.target = options.argument if options.argument?
+      options.target = metadata.argument if metadata.argument?
       # Validation
       throw Error "Required Option: the \"target\" option is mandatory" unless options.target
       # Normalization

@@ -4,7 +4,14 @@ nikita = require '../../src'
 
 return unless tags.api
 
-describe 'options "sleep"', ->
+describe 'metadata "sleep"', ->
+  
+  it 'is a metadata', ->
+    now = Date.now()
+    nikita
+    .call sleep: 1000, ({metadata}) ->
+      metadata.sleep.should.eql 1000
+    .promise()
   
   it 'enforce default to 3s', ->
     now = Date.now()

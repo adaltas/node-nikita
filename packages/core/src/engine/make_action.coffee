@@ -2,7 +2,21 @@
 path = require 'path'
 
 module.exports = (action_global, action_parent, options_action) ->
+  # Merge cascade action options with default session options
+  cascade = {
+    ...action_global.cascade
+    ...(action_parent?.cascade or {})
+    ...options_action.cascade
+  }
   action =
+    action: options_action.action
+    args: null
+    callback: null
+    cascade: cascade
+    deprecate: false
+    error: null
+    error_in_callback: null
+    handler: null
     metadata: {}
     options: {}
     original: (-> # Create original and filter with cascade
@@ -11,21 +25,34 @@ module.exports = (action_global, action_parent, options_action) ->
         options[k] = v if options[k] is undefined and action_global.cascade[k] is true
       options
     )()
+    output: null
     parent: action_parent
-  # Merge cascade action options with default session options
-  action.metadata.cascade = {...action_global.cascade, ...options_action.cascade}
+    session: null
   # Copy initial options
   for k, v of options_action
     continue if k is 'cascade'
-    action.metadata[k] = options_action[k]
+    continue if k is 'handler'
+    continue if k is 'callback'
+    if k is 'deprecate'
+      action[k] = v
+    # action.metadata[k] = v
+    if metadata[k] isnt undefined
+      action.metadata[k] = v
+    else
+      continue if action.cascade[k] is false
+      action.options[k] = v
   # Merge parent cascaded options
   for k, v of action_parent?.metadata
-    continue unless action.metadata.cascade[k] is true
+    continue unless action.cascade[k] is true
     action.metadata[k] = v if action.metadata[k] is undefined
+  for k, v of action_parent?.options
+    continue unless action.cascade[k] is true
+    action.options[k] = v if action.options[k] is undefined
   # Merge action options with default session options
+  # All options are merge
   for k, v of action_global.options
     continue if k is 'cascade'
-    action.metadata[k] = v if action.metadata[k] is undefined
+    action.options[k] = v if action.options[k] is undefined
   # Build headers option
   headers = []
   push_headers = (action) ->
@@ -34,31 +61,47 @@ module.exports = (action_global, action_parent, options_action) ->
   push_headers action
   action.metadata.headers = headers.reverse()
   # Default values
+  action.metadata.debug ?= false
   action.metadata.sleep ?= 3000 # Wait 3s between retry
   action.metadata.retry ?= 0
   action.metadata.disabled ?= false
   action.metadata.status ?= true
   action.metadata.depth = if action.metadata.depth? then action.metadata.depth else (action.parent?.metadata?.depth or 0) + 1
   action.metadata.attempt = -1# Clone and filter cascaded options
-  # throw Error 'Incompatible Options: status "false" implies shy "true"' if options.status is false and options.shy is false # Room for argument, leave it strict for now until we come accross a usecase justifying it.
-  # options.shy ?= true if options.status is false
   action.metadata.shy ?= false
   # Goodies
-  if action.metadata.source and match = /~($|\/.*)/.exec action.metadata.source
+  if action.options.source and match = /~($|\/.*)/.exec action.options.source
     unless action_global.store['nikita:ssh:connection']
-    then action.metadata.source = path.join process.env.HOME, match[1]
-    else action.metadata.source = path.posix.join '.', match[1]
-  if action.metadata.target and match = /~($|\/.*)/.exec action.metadata.target
+    then action.options.source = path.join process.env.HOME, match[1]
+    else action.options.source = path.posix.join '.', match[1]
+  if action.options.target and match = /~($|\/.*)/.exec action.options.target
     unless action_global.store['nikita:ssh:connection']
-    then action.metadata.target = path.join process.env.HOME, match[1]
-    else action.metadata.target = path.posix.join '.', match[1]
-  # Filter cascaded options
-  for k, v of action.metadata
-    continue if action.metadata.cascade[k] is false
-    action.options[k] = v
+    then action.options.target = path.join process.env.HOME, match[1]
+    else action.options.target = path.posix.join '.', match[1]
   # Move handler and callback at root level
-  action.handler = action.metadata.handler
-  delete action.metadata.handler
-  action.callback = action.metadata.callback
-  delete action.metadata.callback
+  action.handler = options_action.handler
+  # delete action.metadata.handler
+  action.callback = options_action.callback
+  # delete action.metadata.callback
   action
+
+metadata = module.exports.metadata =
+  after: null
+  argument: null
+  attempt: -1
+  before: null
+  cascade: {}
+  debug: false
+  depth: 0
+  disabled: false
+  get: false
+  header: []
+  log: null
+  once: false
+  relax: false
+  retry: 0
+  schema: null
+  shy: false
+  sleep: 3000
+  status: true
+  tolerant: false

@@ -31,11 +31,11 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = status: false, log: false, handler: ({options}) ->
+    module.exports = status: false, log: false, handler: ({metadata, options}) ->
       @log message: "Entering fs.writeFile", level: 'DEBUG', module: 'nikita/lib/fs/writeFile'
       ssh = @ssh options.ssh
       # Normalize options
-      options.target = options.argument if options.argument?
+      options.target = metadata.argument if metadata.argument?
       throw Error "Required Option: the \"target\" option is mandatory" unless options.target
       throw Error "Required Option: the \"stream\" option is mandatory" unless options.stream
       options.flags ?= 'w' # Note, Node.js docs version 8 & 9 mention "flag" and not "flags"

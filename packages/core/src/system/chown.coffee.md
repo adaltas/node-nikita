@@ -46,7 +46,7 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
 
 ## Source Code
 
-    module.exports = ({options}) ->
+    module.exports = ({metadata, options}) ->
       @log message: "Entering chown", level: 'DEBUG', module: 'nikita/lib/system/chown'
       if options.stat
         console.log 'Deprecated Option: receive options.stat instead of options.stats in system.chown'
@@ -54,7 +54,7 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
       # SSH connection
       ssh = @ssh options.ssh
       # Normalize options
-      options.target = options.argument if options.argument?
+      options.target = metadata.argument if metadata.argument?
       options.uid = null if options.uid is false
       options.gid = null if options.gid is false
       options.uid = parseInt options.uid if (typeof options.uid is 'string') and /\d+/.test options.uid

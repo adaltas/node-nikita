@@ -5,10 +5,10 @@ Delete a name and possibly the file it refers to.
 
 ## Source Code
 
-    module.exports = status: false, log: false, handler: ({options}, callback) ->
+    module.exports = status: false, log: false, handler: ({metadata, options}, callback) ->
       @log message: "Entering fs.readlink", level: 'DEBUG', module: 'nikita/lib/fs/readlink'
       # Normalize options
-      options.target = options.argument if options.argument?
+      options.target = metadata.argument if metadata.argument?
       throw Error "Required Option: the \"target\" option is mandatory" unless options.target
       @system.execute
         cmd: "readlink #{options.target}"

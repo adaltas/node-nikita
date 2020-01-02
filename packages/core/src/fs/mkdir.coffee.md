@@ -18,10 +18,10 @@ Make directories.
 
 ## Source Code
 
-    module.exports = status: false, log: false, handler: ({options}, callback) ->
+    module.exports = status: false, log: false, handler: ({metadata, options}, callback) ->
       @log message: "Entering fs.mkdir", level: 'DEBUG', module: 'nikita/lib/fs/mkdir'
       # Normalize options
-      options.target = options.argument if options.argument?
+      options.target = metadata.argument if metadata.argument?
       # Validate parameters
       throw Error "Required Option: target is required, got #{JSON.stringify options.target}" unless options.target
       options.mode = options.mode.toString(8).substr(-4) if typeof options.mode is 'number'

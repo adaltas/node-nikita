@@ -41,12 +41,12 @@ The result of the above action can be viewed with the command
 
 ## Source Code
 
-    module.exports = ({options}) ->
+    module.exports = ({metadata, options}) ->
       @log message: "Entering group", level: 'DEBUG', module: 'nikita/lib/system/group'
       # SSH connection
       ssh = @ssh options.ssh
       # Options
-      options.name = options.argument if options.argument?
+      options.name = metadata.argument if metadata.argument?
       throw Error "Option 'name' is required" unless options.name
       options.system ?= false
       options.gid ?= null

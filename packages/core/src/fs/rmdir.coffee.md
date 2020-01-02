@@ -8,10 +8,10 @@ Delete a directory.
 
 ## Source Code
 
-    module.exports = status: false, log: false, handler: ({options}) ->
+    module.exports = status: false, log: false, handler: ({metadata, options}) ->
       @log message: "Entering fs.rmdir", level: 'DEBUG', module: 'nikita/lib/fs/rmdir'
       # Normalize options
-      options.target = options.argument if options.argument?
+      options.target = metadata.argument if metadata.argument?
       throw Error "Required Option: the \"target\" option is mandatory" unless options.target
       @system.execute
         cmd: """

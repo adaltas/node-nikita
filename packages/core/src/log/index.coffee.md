@@ -21,47 +21,51 @@ Send a log message.
       action: false
       cascade: false
       get: false
-      # log: false # TODO shall be removed after the deprecation of log
       retry: false
       ssh: false
       shy: true
-    , handler: ({options, parent}) ->
+    , handler: ({options, metadata, parent}) ->
       # Options
-      options.message = options.argument if options.argument?
-      options.level ?= 'INFO'
-      options.time ?= Date.now()
-      options.module ?= undefined
-      options.type ?= 'text'
-      options.depth = options.depth - 1
-      stackTrace = require 'stack-trace'
+      log = {}
+      log.message = metadata.argument or options.message #or parent?.metadata.argument
+      log.level = options.level or 'INFO'
+      log.time ?= Date.now()
+      log.index ?= options.index
+      log.module = options.module
+      log.type = options.type or 'text'
+      log.depth = metadata.depth - 1
+      log.metadata = metadata
+      log.options = options
+      log.parent = parent
       frame = stackTrace.get()[1]
       file = path.basename(frame.getFileName())
       line = frame.getLineNumber()
-      options.file = file
-      options.line = line
-      if options.debug
-        if options.type in ['text', 'stdin', 'stdout_stream', 'stderr_stream']
-          unless options.type in ['stdout_stream', 'stderr_stream'] and options.message is null
-            msg = if typeof options.message is 'string' then options.message.trim()
-            else if typeof options.message is 'number' then options.message
-            else if options.message?.toString? then options.message.toString().trim()
-            else JSON.stringify options.message
-            msg = "[#{options.depth}.#{options.level} #{options.module}] #{ msg}"
-            msg = switch options.type
+      log.file = file
+      log.line = line
+      if parent?.metadata.debug
+        if log.type in ['text', 'stdin', 'stdout_stream', 'stderr_stream']
+          unless log.type in ['stdout_stream', 'stderr_stream'] and log.message is null
+            msg = if typeof log.message is 'string' then log.message.trim()
+            else if typeof log.message is 'number' then log.message
+            else if log.message?.toString? then log.message.toString().trim()
+            else JSON.stringify log.message
+            msg = "[#{log.depth}.#{log.level} #{log.module}] #{ msg}"
+            msg = switch log.type
               when 'stdin' then "\x1b[33m#{msg}\x1b[39m"
               when 'stdout_stream' then "\x1b[36m#{msg}\x1b[39m"
               when 'stderr_stream' then "\x1b[35m#{msg}\x1b[39m"
               else "\x1b[32m#{msg}\x1b[39m"
-            if options.debug is 'stdout'
+            if parent?.metadata.debug is 'stdout'
               process.stdout.write "#{msg}\n"
             else
               process.stderr.write "#{msg}\n"
-      if typeof options.log is 'function'
-        parent?.options?.log options
+      if typeof metadata.log is 'function'
+        parent?.metadata?.log log
       else
-        return if parent?.options?.log is false
-      @emit options.type, options #unless log_disabled
+        return if parent?.metadata?.log is false
+      @emit log.type, log #unless log_disabled
 
 ## Dependencies
 
     path = require 'path'
+    stackTrace = require 'stack-trace' # dec 2019, was required at runtime, dont know why

@@ -4,16 +4,21 @@ nikita = require '../../src'
 
 return unless tags.api
 
-describe 'options "handler"', ->
+describe 'action "handler"', ->
   
   describe 'context', ->
 
     it 'pass properties', ->
       nikita
       .call (context) ->
-        Object.keys(context).should.eql [
-          'metadata', 'options', 'original', 'parent'
-          'handler', 'callback', 'session'
+        Object.keys(context).sort().should.eql [
+          'action', 'args',
+          'callback', 'cascade',
+          'deprecate', 'error',
+          'error_in_callback', 'handler',
+          'metadata', 'options',
+          'original', 'output',
+          'parent', 'session'
         ]
       .promise()
 
