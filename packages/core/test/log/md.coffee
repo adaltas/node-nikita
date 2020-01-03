@@ -64,6 +64,57 @@ describe 'log.md', ->
       status: false
     .promise()
 
+  describe 'header', ->
+  
+    they 'honors header', ({ssh}) ->
+      nikita
+        ssh: ssh
+        log_md: basedir: scratch
+      .log.md()
+      .call header: 'h1', ->
+        @log 'ok 1'
+        @call header: 'h2', ->
+          @log 'ok 2'
+      .file.assert
+        source: "#{scratch}/localhost.log"
+        content: """
+        
+        # h1
+        
+        ok 1
+        
+        ## h1 : h2
+        
+        ok 2
+        
+        """
+        log: false
+      .promise()
+      
+    they.skip 'honors header', ({ssh}) ->
+      # this currently fail because there is 2 empty lines between the headers
+      # instead of only one
+      nikita
+        ssh: ssh
+        log_md: basedir: scratch
+      .log.md()
+      .call header: 'h1', ->
+        @call header: 'h2', ->
+          @log 'ok 2'
+      .file.assert
+        source: "#{scratch}/localhost.log"
+        content: """
+        
+        # h1
+        
+        ## h1 : h2
+        
+        ok 2
+        
+        """
+        log: false
+      .promise()
+
   describe 'stdout', ->
     
     they 'in base directory', ({ssh}) ->

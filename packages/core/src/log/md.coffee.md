@@ -46,8 +46,8 @@ Global options can be alternatively set with the "log_md" property.
             for error in err.errors then content.push error
           content.join ''
         'header': (log) ->
-          header = log.headers.join(options.divider)
-          "\n#{'#'.repeat log.headers.length} #{header}\n\n"
+          header = log.metadata.headers.join(options.divider)
+          "\n#{'#'.repeat log.metadata.headers.length} #{header}\n\n"
         'stdin': (log) ->
           out = []
           if log.message.indexOf('\n') is -1

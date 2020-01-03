@@ -72,8 +72,8 @@ module.exports = {
         },
         'header': function(log) {
           var header;
-          header = log.headers.join(options.divider);
-          return `\n${'#'.repeat(log.headers.length)} ${header}\n\n`;
+          header = log.metadata.headers.join(options.divider);
+          return `\n${'#'.repeat(log.metadata.headers.length)} ${header}\n\n`;
         },
         'stdin': function(log) {
           var out;
