@@ -14,11 +14,11 @@ describe 'action "handler"', ->
         Object.keys(context).sort().should.eql [
           'action', 'args',
           'callback', 'cascade',
-          'deprecate', 'error',
-          'error_in_callback', 'handler',
-          'metadata', 'options',
-          'original', 'output',
-          'parent', 'session'
+          'error', 'error_in_callback',
+          'handler', 'metadata',
+          'options', 'original',
+          'output', 'parent',
+          'session'
         ]
       .promise()
 

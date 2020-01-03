@@ -165,11 +165,11 @@ nikita.new_function()
         if arguments.length is 2
           handler = new_name
           new_name = null
-        handler = load handler
-        handler.deprecate = new_name
-        handler.deprecate ?= handler.module if typeof handler.module is 'string'
-        handler.deprecate ?= true
-        obj.register old_name, handler
+        action = load handler
+        action.deprecate = new_name
+        action.deprecate ?= action.module if typeof action.module is 'string'
+        action.deprecate ?= true
+        obj.register old_name, action
         chain
 
 # Registered

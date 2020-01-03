@@ -285,10 +285,10 @@
               action.handler = ( (options_handler) ->
                 util.deprecate ->
                   options_handler.apply @, arguments
-                , if action.deprecate is true
+                , if action.metadata.deprecate is true
                 then "#{action.action.join '/'} is deprecated"
-                else "#{action.action.join '/'} is deprecated, use #{action.deprecate}"
-              )(action.handler) if action.deprecate
+                else "#{action.action.join '/'} is deprecated, use #{action.metadata.deprecate}"
+              )(action.handler) if action.metadata.deprecate
               handle_async_and_promise = ->
                 [error, output, args...] = arguments
                 return if state.killed
