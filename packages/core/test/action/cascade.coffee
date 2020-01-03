@@ -5,7 +5,7 @@ session = require '../../src/session'
 
 return unless tags.api
 
-describe 'metadata "cascade"', ->
+describe 'cascade', ->
   
   describe 'globally', ->
   
