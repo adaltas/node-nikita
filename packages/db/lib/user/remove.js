@@ -19,7 +19,7 @@
 // ## Source Code
 var db;
 
-module.exports = function({options}) {
+module.exports = function({metadata, options}) {
   var k, ref, v;
   // Import options from `options.db`
   if (options.db == null) {
@@ -33,7 +33,7 @@ module.exports = function({options}) {
     }
   }
   if (options.username == null) {
-    options.username = options.argument;
+    options.username = metadata.argument;
   }
   return this.system.execute({
     cmd: db.cmd(options, `DROP USER IF EXISTS ${options.username};`)

@@ -40,17 +40,17 @@
 // ## Source Code
 var each;
 
-module.exports = function({options}, callback) {
+module.exports = function({metadata, options}, callback) {
   var modified, quorum_current;
   this.log({
     message: "Entering wait for execution",
     level: 'DEBUG',
     module: 'nikita/lib/wait/execute'
   });
-  if (typeof (options.argument != null)) {
+  if (typeof (metadata.argument != null)) {
     // Validate parameters
     if (options.cmd == null) {
-      options.cmd = options.argument;
+      options.cmd = metadata.argument;
     }
   }
   if (options.cmd == null) {

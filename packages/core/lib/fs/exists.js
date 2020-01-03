@@ -18,15 +18,15 @@
 module.exports = {
   status: false,
   log: false,
-  handler: function({options}, callback) {
+  handler: function({metadata, options}, callback) {
     this.log({
       message: "Entering fs.exists",
       level: 'DEBUG',
       module: 'nikita/lib/fs/exists'
     });
-    if (options.argument != null) {
+    if (metadata.argument != null) {
       // Normalize options
-      options.target = options.argument;
+      options.target = metadata.argument;
     }
     return this.fs.stat({
       target: options.target,

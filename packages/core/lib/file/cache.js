@@ -61,7 +61,7 @@
 var curl, path, protocols_ftp, protocols_http, url,
   indexOf = [].indexOf;
 
-module.exports = function({options}, callback) {
+module.exports = function({metadata, options}, callback) {
   var _hash, algo, cookie, header, ref, ref1, ref2, ref3, ssh, u;
   this.log({
     message: "Entering file.cache",
@@ -70,9 +70,9 @@ module.exports = function({options}, callback) {
   });
   // SSH connection
   ssh = this.ssh(options.ssh);
-  if (options.argument != null) {
+  if (metadata.argument != null) {
     // Options
-    options.source = options.argument;
+    options.source = metadata.argument;
   }
   if (!options.source) {
     throw Error(`Missing source: '${options.source}'`);

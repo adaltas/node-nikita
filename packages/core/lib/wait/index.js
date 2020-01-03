@@ -22,9 +22,11 @@
 // ```
 
 // ## Source Code
-module.exports = function({options}, callback) {
-  if (options.time == null) {
-    options.time = options.argument;
+module.exports = function({metadata, options}, callback) {
+  if (metadata.argument != null) {
+    if (options.time == null) {
+      options.time = metadata.argument;
+    }
   }
   if (options.time == null) {
     return callback(Error(`Missing time: ${JSON.stringify(options.time)}`));

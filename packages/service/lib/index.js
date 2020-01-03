@@ -72,17 +72,17 @@
 // ## Source Code
 var indexOf = [].indexOf;
 
-module.exports = function({options}) {
+module.exports = function({metadata, options}) {
   var chkname, pkgname, srvname;
   this.log({
     message: "Entering service",
     level: 'DEBUG',
     module: 'nikita/lib/service'
   });
-  if (typeof options.argument === 'string') {
+  if (typeof metadata.argument === 'string') {
     // Options
     if (options.name == null) {
-      options.name = options.argument;
+      options.name = metadata.argument;
     }
   }
   pkgname = options.yum_name || options.name;

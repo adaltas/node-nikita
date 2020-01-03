@@ -23,16 +23,16 @@
 //   the "arch_chroot" option is activated.
 
 // ## Source Code
-module.exports = function({options}) {
+module.exports = function({metadata, options}) {
   this.log({
     message: "Entering service.install",
     level: 'DEBUG',
     module: 'nikita/lib/service/install'
   });
-  if (typeof options.argument === 'string') {
+  if (typeof metadata.argument === 'string') {
     // Options
     if (options.name == null) {
-      options.name = options.argument;
+      options.name = metadata.argument;
     }
   }
   if (options.srv_name == null) {

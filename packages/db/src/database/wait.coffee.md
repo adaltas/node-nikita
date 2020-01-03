@@ -35,11 +35,11 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = ({options}) ->
+    module.exports = ({metadata, options}) ->
       # Import options from `options.db`
       options.db ?= {}
       options[k] ?= v for k, v of options.db
-      options.database ?= options.argument
+      options.database ?= metadata.argument
       # Deprecation
       if options.engine is 'postgres'
         console.log 'Deprecated Value: options "postgres" is deprecated in favor of "postgresql"'

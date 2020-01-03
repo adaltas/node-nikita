@@ -58,7 +58,7 @@
 // ## Source Code
 var each, misc;
 
-module.exports = function({options}, callback) {
+module.exports = function({metadata, options}, callback) {
   var ssh;
   this.log({
     message: "Entering remove",
@@ -67,9 +67,9 @@ module.exports = function({options}, callback) {
   });
   // SSH connection
   ssh = this.ssh(options.ssh);
-  if (options.argument != null) {
+  if (metadata.argument != null) {
     // Validate parameters
-    options.target = options.argument;
+    options.target = metadata.argument;
   }
   if (options.target == null) {
     options.target = options.source;

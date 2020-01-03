@@ -67,18 +67,18 @@ describe 'service options startup', ->
       status.should.be.false() unless err
     .promise()
 
-  they.only 'detect change in startup', ({ssh}) ->
+  they 'detect change in startup', ({ssh}) ->
     # Startup levels only apply to chkconfig
-    # Note, on CentOS 7, chkconfig is installed but Nikita wont use it 
+    # Note, on CentOS 7, chkconfig is installed but Nikita wont use it
     # if it detect systemctl
     nikita
       ssh: ssh
-      debug: true
     .system.execute '! command -v systemctl && command -v chkconfig', relax: true, (err) ->
       @end() if err
     .service.remove
       name: service.name
     .service
+      name: service.name
       chk_name: service.chk_name
       startup: '2345'
     , (err, {status}) ->

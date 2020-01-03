@@ -48,7 +48,7 @@
 // ## Source Code
 var db;
 
-module.exports = function({options}) {
+module.exports = function({metadata, options}) {
   var cmd_database_create, cmd_database_exists, i, k, len, ref, ref1, ref2, results, user, v;
   // Import options from `options.db`
   if (options.db == null) {
@@ -62,7 +62,7 @@ module.exports = function({options}) {
     }
   }
   if (options.database == null) {
-    options.database = options.argument;
+    options.database = metadata.argument;
   }
   if (!options.host) {
     // Validate options

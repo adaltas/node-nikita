@@ -36,7 +36,7 @@
 // ## Source Code
 var db;
 
-module.exports = function({options}) {
+module.exports = function({metadata, options}) {
   var k, ref, ref1, v;
   // Import options from `options.db`
   if (options.db == null) {
@@ -50,7 +50,7 @@ module.exports = function({options}) {
     }
   }
   if (options.database == null) {
-    options.database = options.argument;
+    options.database = metadata.argument;
   }
   // Deprecation
   if (options.engine === 'postgres') {

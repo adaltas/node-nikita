@@ -38,8 +38,9 @@ module.exports = {
   //   }
   // }, fonction(err, rendered){});
   // ```
-  if: function({options}, succeed, skip) {
-    var ok;
+  if: function(action, succeed, skip) {
+    var ok, options;
+    ({options} = action);
     if (!Array.isArray(options.if)) {
       options.if = [options.if];
     }
@@ -61,9 +62,7 @@ module.exports = {
       } else if (type === 'function') {
         if (si.length < 2) {
           try {
-            if (!si.call(this, {
-              options: options
-            })) {
+            if (!si.call(this, action)) {
               ok = false;
             }
             return next();
@@ -73,9 +72,7 @@ module.exports = {
           }
         } else if (si.length === 2) {
           try {
-            return si.call(this, {
-              options: options
-            }, (err, is_ok) => {
+            return si.call(this, action, function(err, is_ok) {
               if (err) {
                 return next(err);
               }
@@ -125,8 +122,9 @@ module.exports = {
 
   // If it's an array, all its element must negatively resolve for the condition to
   // pass.
-  unless: function({options}, succeed, skip) {
-    var ok;
+  unless: function(action, succeed, skip) {
+    var ok, options;
+    ({options} = action);
     if (!Array.isArray(options.unless)) {
       options.unless = [options.unless];
     }
@@ -148,9 +146,7 @@ module.exports = {
       } else if (type === 'function') {
         if (not_if.length < 2) {
           try {
-            if (not_if.call(this, {
-              options: options
-            })) {
+            if (not_if.call(this, action)) {
               ok = false;
             }
             return next();
@@ -160,9 +156,7 @@ module.exports = {
           }
         } else if (not_if.length === 2) {
           try {
-            return not_if.call(this, {
-              options: options
-            }, (err, is_ok) => {
+            return not_if.call(this, action, function(err, is_ok) {
               if (err) {
                 return next(err);
               }
@@ -274,6 +268,7 @@ module.exports = {
   // the callback `skip` is called.
   if_os: function({options}, succeed, skip) {
     var j, len, ref, rule, ssh;
+    // TODO: this does not honors sudo
     ssh = this.ssh(options.ssh);
     if (!Array.isArray(options.if_os)) {
       options.if_os = [options.if_os];
@@ -356,6 +351,7 @@ module.exports = {
   // the callback `skip` is called.
   unless_os: function({options}, succeed, skip) {
     var j, len, ref, rule, ssh;
+    // TODO: this does not honors sudo
     // SSH connection
     ssh = this.ssh(options.ssh);
     if (!Array.isArray(options.unless_os)) {
@@ -512,6 +508,7 @@ module.exports = {
   // exists otherwise the callback `skip` is called with an error.
   should_exist: function({options}, succeed, skip) {
     var ssh;
+    // TODO: this does not honors sudo
     // SSH connection
     ssh = this.ssh(options.ssh);
     return each(options.should_exist).call(function(should_exist, next) {
@@ -534,6 +531,7 @@ module.exports = {
   // exists otherwise the callback `skip` is called with an error.
   should_not_exist: function({options}, succeed, skip) {
     var ssh;
+    // TODO: this does not honors sudo
     // SSH connection
     ssh = this.ssh(options.ssh);
     return each(options.should_not_exist).call(function(should_not_exist, next) {
@@ -570,8 +568,9 @@ module.exports = {
   //   console.info('Conditins failed or pass an error')
   // })
   // ```
-  all: function(session, {options}, succeed, failed) {
-    var i, keys, next;
+  all: function(session, action, succeed, failed) {
+    var i, keys, next, options;
+    ({options} = action);
     if (!((options != null) && (typeof options === 'object' && !Array.isArray(options)))) {
       return succeed();
     }
@@ -589,9 +588,7 @@ module.exports = {
       if (module.exports[key] == null) {
         return next();
       }
-      return module.exports[key].call(session, {
-        options: options
-      }, next, function(err) {
+      return module.exports[key].call(session, action, next, function(err) {
         return failed(err);
       });
     };

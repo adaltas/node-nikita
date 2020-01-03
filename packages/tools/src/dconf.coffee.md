@@ -22,8 +22,8 @@ Run the command "dconf-editor" to navigate the database with a UI.
 
 ## Source Code
 
-    module.exports = ({options}) ->
-      options.properties = options.argument if options.argument?
+    module.exports = ({metadata, options}) ->
+      options.properties = metadata.argument if metadata.argument?
       options.properties ?= {}
       for key, value of options.properties
         @system.execute """

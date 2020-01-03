@@ -19,12 +19,12 @@ Create a user for the destination database.
 
 ## Source Code
 
-    module.exports = ({options}) ->
+    module.exports = ({metadata, options}) ->
       # Import options from `options.db`
       options.db ?= {}
       options[k] ?= v for k, v of options.db
       # Options
-      options.schema ?= options.argument
+      options.schema ?= metadata.argument
       throw Error 'Missing option: "engine"' unless options.engine
       throw Error 'Missing option: "schema"' unless options.schema
       throw Error 'Missing option: "admin_username"' unless options.admin_username

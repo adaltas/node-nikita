@@ -69,16 +69,16 @@ var constants;
 module.exports = {
   status: false,
   log: false,
-  handler: function({options}, callback) {
+  handler: function({metadata, options}, callback) {
     var dereference;
     this.log({
       message: "Entering fs.stat",
       level: 'DEBUG',
       module: 'nikita/lib/fs/stat'
     });
-    if (options.argument != null) {
+    if (metadata.argument != null) {
       // Normalize options
-      options.target = options.argument;
+      options.target = metadata.argument;
     }
     if (options.dereference == null) {
       options.dereference = true;

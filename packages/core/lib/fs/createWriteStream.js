@@ -35,7 +35,7 @@ var fs, string;
 module.exports = {
   status: false,
   log: false,
-  handler: function({options}) {
+  handler: function({metadata, options}) {
     var ssh;
     this.log({
       message: "Entering fs.writeFile",
@@ -43,9 +43,9 @@ module.exports = {
       module: 'nikita/lib/fs/writeFile'
     });
     ssh = this.ssh(options.ssh);
-    if (options.argument != null) {
+    if (metadata.argument != null) {
       // Normalize options
-      options.target = options.argument;
+      options.target = metadata.argument;
     }
     if (!options.target) {
       throw Error("Required Option: the \"target\" option is mandatory");

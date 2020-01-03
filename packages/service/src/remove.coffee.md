@@ -32,10 +32,10 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = ({options}) ->
+    module.exports = ({metadata, options}) ->
       @log message: "Entering service.remove", level: 'DEBUG', module: 'nikita/lib/service/remove'
       # Options
-      options.name ?= options.argument if typeof options.argument is 'string'
+      options.name ?= metadata.argument if typeof metadata.argument is 'string'
       options.manager ?= @store['nikita:service:manager']
       # Validation
       throw Error "Invalid Name: #{JSON.stringify options.name}" unless options.name

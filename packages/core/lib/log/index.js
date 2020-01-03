@@ -15,7 +15,7 @@
 //   when the log action is called.
 
 // ## Source Code
-var path;
+var path, stackTrace;
 
 module.exports = {
   ssh: false,
@@ -24,43 +24,40 @@ module.exports = {
     action: false,
     cascade: false,
     get: false,
-    // log: false # TODO shall be removed after the deprecation of log
     retry: false,
     ssh: false,
     shy: true
   },
-  handler: function({options, parent}) {
-    var file, frame, line, msg, ref, ref1, ref2, ref3, ref4, stackTrace;
-    if (options.argument != null) {
-      // Options
-      options.message = options.argument;
+  handler: function({options, metadata, parent}) {
+    var file, frame, line, log, msg, ref, ref1, ref2, ref3, ref4;
+    // Options
+    log = {};
+    log.message = metadata.argument || options.message; //or parent?.metadata.argument
+    log.level = options.level || 'INFO';
+    if (log.time == null) {
+      log.time = Date.now();
     }
-    if (options.level == null) {
-      options.level = 'INFO';
+    if (log.index == null) {
+      log.index = options.index;
     }
-    if (options.time == null) {
-      options.time = Date.now();
-    }
-    if (options.module == null) {
-      options.module = void 0;
-    }
-    if (options.type == null) {
-      options.type = 'text';
-    }
-    options.depth = options.depth - 1;
-    stackTrace = require('stack-trace');
+    log.module = options.module;
+    log.type = options.type || 'text';
+    log.depth = metadata.depth - 1;
+    log.metadata = metadata;
+    log.options = options;
+    log.parent = parent;
     frame = stackTrace.get()[1];
     file = path.basename(frame.getFileName());
     line = frame.getLineNumber();
-    options.file = file;
-    options.line = line;
-    if (options.debug) {
-      if ((ref = options.type) === 'text' || ref === 'stdin' || ref === 'stdout_stream' || ref === 'stderr_stream') {
-        if (!(((ref1 = options.type) === 'stdout_stream' || ref1 === 'stderr_stream') && options.message === null)) {
-          msg = typeof options.message === 'string' ? options.message.trim() : typeof options.message === 'number' ? options.message : ((ref2 = options.message) != null ? ref2.toString : void 0) != null ? options.message.toString().trim() : JSON.stringify(options.message);
-          msg = `[${options.depth}.${options.level} ${options.module}] ${msg}`;
+    log.file = file;
+    log.line = line;
+    if (parent != null ? parent.metadata.debug : void 0) {
+      if ((ref = log.type) === 'text' || ref === 'stdin' || ref === 'stdout_stream' || ref === 'stderr_stream') {
+        if (!(((ref1 = log.type) === 'stdout_stream' || ref1 === 'stderr_stream') && log.message === null)) {
+          msg = typeof log.message === 'string' ? log.message.trim() : typeof log.message === 'number' ? log.message : ((ref2 = log.message) != null ? ref2.toString : void 0) != null ? log.message.toString().trim() : JSON.stringify(log.message);
+          msg = `[${log.depth}.${log.level} ${log.module}] ${msg}`;
           msg = (function() {
-            switch (options.type) {
+            switch (log.type) {
               case 'stdin':
                 return `\x1b[33m${msg}\x1b[39m`;
               case 'stdout_stream':
@@ -71,7 +68,7 @@ module.exports = {
                 return `\x1b[32m${msg}\x1b[39m`;
             }
           })();
-          if (options.debug === 'stdout') {
+          if ((parent != null ? parent.metadata.debug : void 0) === 'stdout') {
             process.stdout.write(`${msg}\n`);
           } else {
             process.stderr.write(`${msg}\n`);
@@ -79,21 +76,23 @@ module.exports = {
         }
       }
     }
-    if (typeof options.log === 'function') {
+    if (typeof metadata.log === 'function') {
       if (parent != null) {
-        if ((ref3 = parent.options) != null) {
-          ref3.log(options);
+        if ((ref3 = parent.metadata) != null) {
+          ref3.log(log);
         }
       }
     } else {
-      if ((parent != null ? (ref4 = parent.options) != null ? ref4.log : void 0 : void 0) === false) {
+      if ((parent != null ? (ref4 = parent.metadata) != null ? ref4.log : void 0 : void 0) === false) {
         return;
       }
     }
-    return this.emit(options.type, options); //unless log_disabled
+    return this.emit(log.type, log); //unless log_disabled
   }
 };
 
 
 // ## Dependencies
 path = require('path');
+
+stackTrace = require('stack-trace'); // dec 2019, was required at runtime, dont know why

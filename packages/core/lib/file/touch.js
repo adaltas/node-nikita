@@ -43,7 +43,7 @@
 // ```
 
 // ## Source Code
-module.exports = function({options}) {
+module.exports = function({metadata, options}) {
   var ssh;
   this.log({
     message: "Entering file.touch",
@@ -52,9 +52,9 @@ module.exports = function({options}) {
   });
   // SSH connection
   ssh = this.ssh(options.ssh);
-  if (options.argument != null) {
+  if (metadata.argument != null) {
     // Options
-    options.target = options.argument;
+    options.target = metadata.argument;
   }
   if (!options.target) {
     throw Error(`Missing target: ${options.target}`);

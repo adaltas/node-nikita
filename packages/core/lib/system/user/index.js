@@ -81,7 +81,7 @@
 // ## Source Code
 var path, string;
 
-module.exports = function({options}) {
+module.exports = function({metadata, options}) {
   var groups_info, ssh, user_info;
   this.log({
     message: "Entering user",
@@ -90,9 +90,9 @@ module.exports = function({options}) {
   });
   // SSH connection
   ssh = this.ssh(options.ssh);
-  if (options.argument != null) {
+  if (metadata.argument != null) {
     // Options
-    options.name = options.argument;
+    options.name = metadata.argument;
   }
   if (!options.name) {
     throw Error("Option 'name' is required");

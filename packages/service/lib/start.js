@@ -32,16 +32,16 @@
 // ```
 
 // ## Source Code
-module.exports = function({options}) {
+module.exports = function({metadata, options}) {
   this.log({
     message: "Entering service.start",
     level: 'DEBUG',
     module: 'nikita/lib/service/start'
   });
-  if (typeof options.argument === 'string') {
+  if (typeof metadata.argument === 'string') {
     // Options
     if (options.name == null) {
-      options.name = options.argument;
+      options.name = metadata.argument;
     }
   }
   if (!options.name) {

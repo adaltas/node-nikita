@@ -37,7 +37,7 @@ module.exports = function() {
       if (obj[name] != null) {
         return target[name];
       }
-      if (name === '_events' || name === '_maxListeners' || name === 'internal') {
+      if (name === '_events' || name === '_maxListeners') {
         return target[name];
       }
       proxy.action = [];
@@ -92,7 +92,7 @@ module.exports = function() {
     }
   });
   handle_get = function(proxy, options) {
-    var context, values;
+    var action, values;
     if (options.length !== 1) {
       return {
         get: false
@@ -104,25 +104,25 @@ module.exports = function() {
         get: false
       };
     }
-    context = make_action(obj, state.current_level.context, options);
-    values = context.handler.call(proxy, context);
+    action = make_action(obj, state.current_level.action, options);
+    values = action.handler.call(proxy, action);
     return {
       get: true,
       values: values
     };
   };
-  call_callback = function(context) {
+  call_callback = function(action) {
     var current_level, error;
     state.parent_levels.unshift(state.current_level);
     state.current_level = state_create_level();
-    state.current_level.context = context;
+    state.current_level.action = action;
     try {
-      context.callback.call(proxy, context.error, context.output, ...(context.args || []));
+      action.callback.call(proxy, action.error, action.output, ...(action.args || []));
     } catch (error1) {
       error = error1;
       state.current_level = state.parent_levels.shift();
-      context.error_in_callback = true;
-      context.error = error;
+      action.error_in_callback = true;
+      action.error = error;
       jump_to_error();
       return;
     }
@@ -132,13 +132,13 @@ module.exports = function() {
       return state.current_level.todos.unshift(...current_level.todos);
     }
   };
-  handle_multiple_call = function(context, error) {
+  handle_multiple_call = function(action, error) {
     state.killed = true;
     while (state.parent_levels.length) {
       state.current_level = state.parent_levels.shift();
     }
-    context.error = error;
-    state.current_level.history.push(context);
+    action.error = error;
+    state.current_level.history.push(action);
     jump_to_error();
     return run_next();
   };
@@ -155,8 +155,8 @@ module.exports = function() {
     options = state.current_level.todos.shift();
     // Nothing more to do in current queue
     if (!options) {
-      errors = state.current_level.history.map(function(context) {
-        return (context.error_in_callback || !context.internal.tolerant && !context.original.relax) && context.error;
+      errors = state.current_level.history.map(function(action) {
+        return (action.error_in_callback || !action.metadata.tolerant && !action.original.relax) && action.error;
       });
       error = errors[errors.length - 1];
       if (!state.killed && state.parent_levels.length === 0 && error && state.current_level.throw_if_error) {
@@ -180,17 +180,17 @@ module.exports = function() {
     });
   };
   run = function(options, callback) {
-    var context, context_parent, error, errors, index, ref, ref1, status;
+    var action, action_parent, error, errors, index, ref, ref1, status;
     if (!(options && callback)) {
       throw Error('Invalid Argument');
     }
     if (options.action === 'next') {
-      errors = state.current_level.history.map(function(context) {
-        return (context.error_in_callback || !context.internal.tolerant && !context.original.relax) && context.error;
+      errors = state.current_level.history.map(function(action) {
+        return (action.error_in_callback || !action.metadata.tolerant && !action.original.relax) && action.error;
       });
       error = errors[errors.length - 1];
-      status = state.current_level.history.some(function(context) {
-        return !context.original.shy && context.status;
+      status = state.current_level.history.some(function(action) {
+        return !action.original.shy && action.status;
       });
       if ((ref = options.handler) != null) {
         ref.call(proxy, error, {
@@ -201,13 +201,13 @@ module.exports = function() {
       return callback(null, {});
     }
     if (options.action === 'promise') {
-      errors = state.current_level.history.map(function(context) {
-        return (context.error_in_callback || !context.internal.tolerant && !context.original.relax) && context.error;
+      errors = state.current_level.history.map(function(action) {
+        return (action.error_in_callback || !action.metadata.tolerant && !action.original.relax) && action.error;
       });
-      // context.error and (context.error.fatal or (not context.internal.tolerant and not context.original.relax))
+      // action.error and (action.error.fatal or (not action.metadata.tolerant and not action.original.relax))
       error = errors[errors.length - 1];
-      status = state.current_level.history.some(function(context) {
-        return !context.original.shy && context.status;
+      status = state.current_level.history.some(function(action) {
+        return !action.original.shy && action.status;
       });
       if ((ref1 = options.handler) != null) {
         ref1.call(proxy, error, status);
@@ -237,41 +237,40 @@ module.exports = function() {
       });
     }
     index = state.index_counter++;
-    context_parent = state.current_level.context;
-    context = make_action(obj, context_parent, options);
+    action_parent = state.current_level.action;
+    action = make_action(obj, action_parent, options);
     // Prepare the Context
-    context.session = proxy;
+    action.session = proxy;
     state.parent_levels.unshift(state.current_level);
     state.current_level = state_create_level();
-    state.current_level.context = context;
-    if (context.internal.header) {
+    state.current_level.action = action;
+    if (action.metadata.header) {
       proxy.log({
-        message: context.internal.header,
+        message: action.metadata.header,
         type: 'header',
-        index: index,
-        headers: context.internal.headers
+        index: index
       });
     }
     return (function() {
       var do_callback, do_conditions, do_disabled, do_end, do_handler, do_intercept_after, do_intercept_before, do_once, do_options, do_options_after, do_options_before;
       do_options = function() {
         try {
-          if (context.internal.schema) {
-            errors = obj.schema.validate(context.options, context.internal.schema);
+          if (action.metadata.schema) {
+            errors = obj.schema.validate(action.options, action.metadata.schema);
             if (errors.length) {
               error = new Error('Invalid Options');
               error.errors = errors;
               throw error;
             }
           }
-          if (!(typeof context.internal.sleep === 'number' && context.internal.sleep >= 0)) {
+          if (!(typeof action.metadata.sleep === 'number' && action.metadata.sleep >= 0)) {
             // Validate sleep option, more can be added
-            throw Error(`Invalid options sleep, got ${JSON.stringify(context.internal.sleep)}`);
+            throw Error(`Invalid options sleep, got ${JSON.stringify(action.metadata.sleep)}`);
           }
         } catch (error1) {
           error = error1;
-          context.error = error;
-          context.output = {
+          action.error = error;
+          action.output = {
             status: false
           };
           do_callback();
@@ -280,7 +279,7 @@ module.exports = function() {
         return do_disabled();
       };
       do_disabled = function() {
-        if (!context.internal.disabled) {
+        if (!action.metadata.disabled) {
           proxy.log({
             type: 'lifecycle',
             message: 'disabled_false',
@@ -299,8 +298,8 @@ module.exports = function() {
             error: null,
             status: false
           });
-          context.error = void 0;
-          context.output = {
+          action.error = void 0;
+          action.output = {
             status: false
           };
           return do_callback();
@@ -328,23 +327,27 @@ module.exports = function() {
           }
           return value;
         };
-        if (context.internal.once) {
-          if (typeof context.internal.once === 'string') {
-            hash = string.hash(context.internal.once);
-          } else if (Array.isArray(context.internal.once)) {
-            hash = string.hash(context.internal.once.map(function(k) {
+        if (action.metadata.once) {
+          if (typeof action.metadata.once === 'string') {
+            hash = string.hash(action.metadata.once);
+          } else if (Array.isArray(action.metadata.once)) {
+            hash = string.hash(action.metadata.once.map(function(k) {
+              // TODO, we need a more reliable way to detect metadata,
+              // options and other action properties
               if (k === 'handler') {
-                return hashme(context.handler);
+                return hashme(action.handler);
+              } else if (make_action.metadata[k] !== void 0) {
+                return hashme(action.metadata[k]);
               } else {
-                return hashme(context.internal[k]);
+                return hashme(action.options[k]);
               }
             }).join('|'));
           } else {
-            throw Error(`Invalid Option 'once': ${JSON.stringify(context.internal.once)} must be a string or an array of string`);
+            throw Error(`Invalid Option 'once': ${JSON.stringify(action.metadata.once)} must be a string or an array of string`);
           }
           if (state.once[hash]) {
-            context.error = void 0;
-            context.output = {
+            action.error = void 0;
+            action.output = {
               status: false
             };
             return do_callback();
@@ -355,16 +358,16 @@ module.exports = function() {
       };
       do_options_before = function() {
         var base;
-        if (context.original.options_before) {
+        if (action.original.options_before) {
           return do_intercept_before();
         }
-        if ((base = context.internal).before == null) {
+        if ((base = action.metadata).before == null) {
           base.before = [];
         }
-        if (!Array.isArray(context.internal.before)) {
-          context.internal.before = [context.internal.before];
+        if (!Array.isArray(action.metadata.before)) {
+          action.metadata.before = [action.metadata.before];
         }
-        return each(context.internal.before).call(function(before, next) {
+        return each(action.metadata.before).call(function(before, next) {
           var _opts, k, ref2, v;
           [before] = args_to_actions(obj, [before], 'call');
           _opts = {
@@ -374,7 +377,7 @@ module.exports = function() {
             v = before[k];
             _opts[k] = v;
           }
-          ref2 = context.options;
+          ref2 = action.options;
           for (k in ref2) {
             v = ref2[k];
             if (_opts[k] == null) {
@@ -383,15 +386,15 @@ module.exports = function() {
           }
           return run(_opts, next);
         }).error(function(error) {
-          context.error = error;
-          context.output = {
+          action.error = error;
+          action.output = {
             status: false
           };
           return do_callback();
         }).next(do_intercept_before);
       };
       do_intercept_before = function() {
-        if (context.options.intercepting) {
+        if (action.options.intercepting) {
           return do_conditions();
         }
         return each(state.befores).call(function(before, next) {
@@ -402,12 +405,12 @@ module.exports = function() {
               case 'handler':
                 continue;
               case 'action':
-                if (!array.compare(v, context.options[k])) {
+                if (!array.compare(v, action.options[k])) {
                   return next();
                 }
                 break;
               default:
-                if (v !== context.options[k]) {
+                if (v !== action.options[k]) {
                   return next();
                 }
             }
@@ -419,7 +422,7 @@ module.exports = function() {
             v = before[k];
             _opts[k] = v;
           }
-          ref2 = context.options;
+          ref2 = action.options;
           for (k in ref2) {
             v = ref2[k];
             if (_opts[k] == null) {
@@ -428,8 +431,8 @@ module.exports = function() {
           }
           return run(_opts, next);
         }).error(function(error) {
-          context.error = error;
-          context.output = {
+          action.error = error;
+          action.output = {
             status: false
           };
           return do_callback();
@@ -438,7 +441,7 @@ module.exports = function() {
       do_conditions = function() {
         var _opts, k, ref2, v;
         _opts = {};
-        ref2 = context.options;
+        ref2 = action.options;
         for (k in ref2) {
           v = ref2[k];
           if (_opts[k] == null) {
@@ -446,7 +449,8 @@ module.exports = function() {
           }
         }
         return conditions.all(proxy, {
-          options: _opts
+          options: _opts,
+          metadata: action.metadata
         }, function() {
           var ref3;
           proxy.log({
@@ -456,12 +460,12 @@ module.exports = function() {
             error: null,
             status: false
           });
-          ref3 = context.options;
+          ref3 = action.options;
           // Remove conditions from options
           for (k in ref3) {
             v = ref3[k];
             if (/^if.*/.test(k) || /^unless.*/.test(k)) {
-              delete context.options[k];
+              delete action.options[k];
             }
           }
           return setImmediate(function() {
@@ -476,8 +480,8 @@ module.exports = function() {
             status: false
           });
           return setImmediate(function() {
-            context.error = error;
-            context.output = {
+            action.error = error;
+            action.output = {
               status: false
             };
             return do_callback();
@@ -486,34 +490,34 @@ module.exports = function() {
       };
       do_handler = function() {
         var called, ctx, do_next, handle_async_and_promise, promise_returned, ref2, ref3, result, status_sync, wait_children;
-        context.options.attempt++;
+        action.metadata.attempt++;
         do_next = function({error, output, args}) {
           var base, base1;
-          context.error = error != null ? error : void 0; // ensure null is converted to undefined
-          context.output = output;
-          context.args = args;
+          action.error = error != null ? error : void 0; // ensure null is converted to undefined
+          action.output = output;
+          action.args = args;
           if (error && !(error instanceof Error)) {
             error = Error('First argument not a valid error');
-            context.error = error;
-            if (context.output == null) {
-              context.output = {};
+            action.error = error;
+            if (action.output == null) {
+              action.output = {};
             }
-            if ((base = context.output).status == null) {
+            if ((base = action.output).status == null) {
               base.status = false;
             }
           } else {
             if (typeof output === 'boolean') {
-              context.output = {
+              action.output = {
                 status: output
               };
             } else if (!output) {
-              context.output = {
+              action.output = {
                 status: false
               };
             } else if (typeof output !== 'object') {
-              context.error = Error(`Invalid Argument: expect an object or a boolean, got ${JSON.stringify(output)}`);
+              action.error = Error(`Invalid Argument: expect an object or a boolean, got ${JSON.stringify(output)}`);
             } else {
-              if ((base1 = context.output).status == null) {
+              if ((base1 = action.output).status == null) {
                 base1.status = false;
               }
             }
@@ -526,32 +530,32 @@ module.exports = function() {
               module: 'nikita'
             });
           }
-          if (error && (context.options.retry === true || context.options.attempt < context.options.retry - 1)) {
+          if (error && (action.metadata.retry === true || action.metadata.attempt < action.metadata.retry - 1)) {
             proxy.log({
-              message: `Retry on error, attempt ${context.options.attempt + 1}`,
+              message: `Retry on error, attempt ${action.metadata.attempt + 1}`,
               level: 'WARN',
               index: index,
               module: 'nikita'
             });
-            return setTimeout(do_handler, context.internal.sleep);
+            return setTimeout(do_handler, action.metadata.sleep);
           }
           return do_intercept_after();
         };
-        if (context.handler == null) {
-          context.handler = ((ref2 = obj.registry.get(context.options.action)) != null ? ref2.handler : void 0) || ((ref3 = registry.get(context.options.action)) != null ? ref3.handler : void 0);
+        if (action.handler == null) {
+          action.handler = ((ref2 = obj.registry.get(action.action)) != null ? ref2.handler : void 0) || ((ref3 = registry.get(action.action)) != null ? ref3.handler : void 0);
         }
-        if (!context.handler) {
-          return handle_multiple_call(context, Error(`Unregistered Middleware: ${context.options.action.join('.')}`));
+        if (!action.handler) {
+          return handle_multiple_call(action, Error(`Unregistered Middleware: ${action.action.join('.')}`));
         }
         called = false;
         try {
-          if (context.options.deprecate) {
+          if (action.metadata.deprecate) {
             // Handle deprecation
-            context.handler = (function(options_handler) {
+            action.handler = (function(options_handler) {
               return util.deprecate(function() {
                 return options_handler.apply(this, arguments);
-              }, context.internal.deprecate === true ? `${context.internal.action.join('/')} is deprecated` : `${context.internal.action.join('/')} is deprecated, use ${context.internal.deprecate}`);
-            })(context.handler);
+              }, action.metadata.deprecate === true ? `${action.action.join('/')} is deprecated` : `${action.action.join('/')} is deprecated, use ${action.metadata.deprecate}`);
+            })(action.handler);
           }
           handle_async_and_promise = function() {
             var args, output;
@@ -560,7 +564,7 @@ module.exports = function() {
               return;
             }
             if (called) {
-              return handle_multiple_call(context, Error('Multiple call detected'));
+              return handle_multiple_call(action, Error('Multiple call detected'));
             }
             called = true;
             return setImmediate(function() {
@@ -573,13 +577,13 @@ module.exports = function() {
           };
           // Prepare the context
           ctx = {
-            ...context,
-            options: {...context.options}
+            ...action,
+            options: {...action.options}
           };
           // Async style
-          if (context.handler.length === 2) {
+          if (action.handler.length === 2) {
             promise_returned = false;
-            result = context.handler.call(proxy, ctx, function() {
+            result = action.handler.call(proxy, ctx, function() {
               if (promise_returned) {
                 return;
               }
@@ -591,7 +595,7 @@ module.exports = function() {
             }
           } else {
             // Sync style
-            result = context.handler.call(proxy, ctx);
+            result = action.handler.call(proxy, ctx);
             if (promise.is(result)) {
               return result.then(function(value) {
                 var args, output;
@@ -613,7 +617,7 @@ module.exports = function() {
                 return;
               }
               if (called) {
-                return handle_multiple_call(context, Error('Multiple call detected'));
+                return handle_multiple_call(action, Error('Multiple call detected'));
               }
               called = true;
               status_sync = false;
@@ -654,7 +658,7 @@ module.exports = function() {
         }
       };
       do_intercept_after = function() {
-        if (context.options.intercepting) {
+        if (action.options.intercepting) {
           return do_options_after();
         }
         return each(state.afters).call(function(after, next) {
@@ -665,12 +669,12 @@ module.exports = function() {
               case 'handler':
                 continue;
               case 'action':
-                if (!array.compare(v, context.options[k])) {
+                if (!array.compare(v, action.options[k])) {
                   return next();
                 }
                 break;
               default:
-                if (v !== context.options[k]) {
+                if (v !== action.options[k]) {
                   return next();
                 }
             }
@@ -682,7 +686,7 @@ module.exports = function() {
             v = after[k];
             _opts[k] = v;
           }
-          ref2 = context.options;
+          ref2 = action.options;
           for (k in ref2) {
             v = ref2[k];
             if (_opts[k] == null) {
@@ -691,8 +695,8 @@ module.exports = function() {
           }
           return run(_opts, next);
         }).error(function(error) {
-          context.error = error;
-          context.output = {
+          action.error = error;
+          action.output = {
             status: false
           };
           return do_callback();
@@ -702,16 +706,16 @@ module.exports = function() {
       };
       do_options_after = function() {
         var base;
-        if (context.original.options_after) {
+        if (action.original.options_after) {
           return do_callback();
         }
-        if ((base = context.internal).after == null) {
+        if ((base = action.metadata).after == null) {
           base.after = [];
         }
-        if (!Array.isArray(context.internal.after)) {
-          context.internal.after = [context.internal.after];
+        if (!Array.isArray(action.metadata.after)) {
+          action.metadata.after = [action.metadata.after];
         }
-        return each(context.internal.after).call(function(after, next) {
+        return each(action.metadata.after).call(function(after, next) {
           var _opts, k, ref2, v;
           [after] = args_to_actions(obj, [after], 'call');
           _opts = {
@@ -721,7 +725,7 @@ module.exports = function() {
             v = after[k];
             _opts[k] = v;
           }
-          ref2 = context.options;
+          ref2 = action.options;
           for (k in ref2) {
             v = ref2[k];
             if (_opts[k] == null) {
@@ -730,8 +734,8 @@ module.exports = function() {
           }
           return run(_opts, next);
         }).error(function(error) {
-          context.error = error;
-          context.output = {
+          action.error = error;
+          action.output = {
             status: false
           };
           return do_callback();
@@ -743,29 +747,29 @@ module.exports = function() {
         proxy.log({
           type: 'handled',
           index: index,
-          error: context.error,
-          status: context.output.status
+          error: action.error,
+          status: action.output.status
         });
         if (state.killed) {
           return;
         }
         state.current_level = state.parent_levels.shift(); // Exit action state and move back to parent state
-        if (context.error && context.callback) {
+        if (action.error && action.callback) {
           state.current_level.throw_if_error = false;
         }
-        context.status = context.internal.status ? context.output.status : false;
-        if (context.error && !context.internal.relax) {
+        action.status = action.metadata.status ? action.output.status : false;
+        if (action.error && !action.metadata.relax) {
           jump_to_error();
         }
-        if (context.callback) {
-          call_callback(context);
+        if (action.callback) {
+          call_callback(action);
         }
-        return do_end(context);
+        return do_end(action);
       };
-      do_end = function(context) {
-        state.current_level.history.push(context);
-        error = (context.error_in_callback || !context.internal.tolerant && !context.original.relax) && context.error;
-        return callback(error, context.output);
+      do_end = function(action) {
+        state.current_level.history.push(action);
+        error = (action.error_in_callback || !action.metadata.tolerant && !action.original.relax) && action.error;
+        return callback(error, action.output);
       };
       return do_options();
     })();
@@ -914,7 +918,7 @@ module.exports = function() {
       }
       return status;
     } else if (index === 0) {
-      return (ref2 = state.current_level.context.output) != null ? ref2.status : void 0;
+      return (ref2 = state.current_level.action.output) != null ? ref2.status : void 0;
     } else {
       l = state.parent_levels[0].history.length;
       if (index < 0) {

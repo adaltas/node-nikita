@@ -56,10 +56,10 @@ require('nikita')
 
 ## Source Code
 
-    module.exports = ({options}) ->
+    module.exports = ({metadata, options}) ->
       @log message: "Entering service.install", level: 'DEBUG', module: 'nikita/lib/service/install'
       # Options
-      options.name ?= options.argument if typeof options.argument is 'string'
+      options.name ?= metadata.argument if typeof metadata.argument is 'string'
       options.installed ?= @store['nikita:execute:installed'] if options.cache
       options.outpdated ?= @store['nikita:execute:outpdated'] if options.cache
       cacheonly = if options.cacheonly then '-C' else ''

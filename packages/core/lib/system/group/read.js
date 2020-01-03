@@ -58,7 +58,7 @@ var string;
 
 module.exports = {
   shy: true,
-  handler: function({options}, callback) {
+  handler: function({metadata, options}, callback) {
     var groups;
     this.log({
       message: "Entering system.group.read",
@@ -85,7 +85,7 @@ module.exports = {
       unless: options.cache && !!this.store['nikita:etc_group'],
       target: options.target,
       encoding: 'ascii',
-      log: options.log
+      log: metadata.log
     }, function(err, {data}) {
       var i, len, line, ref;
       if (err) {

@@ -11,9 +11,9 @@
 // ## Source code
 module.exports = {
   get: true,
-  handler: function({options}) {
-    if (options.argument != null) {
-      options.ssh = options.argument;
+  handler: function({metadata, options}) {
+    if (metadata.argument != null) {
+      options.ssh = metadata.argument;
     }
     if ((options.ssh != null) && !typeof options.ssh === 'boolean') {
       throw Error(`Invalid Option: ssh must be a boolean value or null or undefined, got ${JSON.stringify(options.ssh)}`);

@@ -59,7 +59,7 @@ var colors, pad, stream, string;
 
 module.exports = {
   ssh: false,
-  handler: function({options}) {
+  handler: function({metadata, options}) {
     var base, base1, base2, format_line, ids, ssh;
     this.log({
       message: "Entering log.cli",
@@ -72,10 +72,10 @@ module.exports = {
       // Obtains options from "log_cli" namespace
       options = {...options.log_cli, ...options};
     }
-    if (options.argument != null) {
+    if (metadata.argument != null) {
       // Normalize
       if (options.enabled == null) {
-        options.enabled = options.argument;
+        options.enabled = metadata.argument;
       }
     }
     if (options.enabled == null) {
@@ -179,7 +179,7 @@ module.exports = {
           if (!options.enabled) {
             return;
           }
-          if (options.depth_max && options.depth_max < log.headers.length) {
+          if (options.depth_max && options.depth_max < log.metadata.headers.length) {
             return;
           }
           ids[log.index] = log;
@@ -196,11 +196,11 @@ module.exports = {
           return null;
         },
         'handled': function(log) {
-          var color, line, status, time;
-          status = log.error ? '✘' : log.status && !log.shy ? '✔' : '-';
+          var color, line, ref, ref1, ref2, status, time;
+          status = ((ref = log.parent) != null ? ref.error : void 0) ? '✘' : log.metadata.status && !((ref1 = log.parent) != null ? ref1.metadata.shy : void 0) ? '✔' : '-';
           color = false;
           if (options.colors) {
-            color = log.error ? options.colors.status_error : log.status ? options.colors.status_true : options.colors.status_false;
+            color = ((ref2 = log.parent) != null ? ref2.error : void 0) ? options.colors.status_error : log.metadata.status ? options.colors.status_true : options.colors.status_false;
           }
           log = ids[log.index];
           if (!log) {
@@ -213,7 +213,7 @@ module.exports = {
           time = options.time ? string.print_time(Date.now() - log.time) : '';
           line = format_line({
             host: options.host,
-            header: log.headers.join(options.divider),
+            header: log.metadata.headers.join(options.divider),
             status: status,
             time: time
           });

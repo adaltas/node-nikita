@@ -47,11 +47,11 @@ npm test test/db/database.coffee
 
 ## Source Code
 
-    module.exports = ({options}) ->
+    module.exports = ({metadata, options}) ->
       # Import options from `options.db`
       options.db ?= {}
       options[k] ?= v for k, v of options.db
-      options.database ?= options.argument
+      options.database ?= metadata.argument
       # Validate options
       throw Error 'Missing option: "host"' unless options.host
       throw Error 'Missing option: "admin_username"' unless options.admin_username

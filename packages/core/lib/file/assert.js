@@ -71,7 +71,7 @@
 var buffer, fs, misc, pad,
   indexOf = [].indexOf;
 
-module.exports = function({options}) {
+module.exports = function({metadata, options}) {
   var _hash, algo, filetype, ssh;
   this.log({
     message: "Entering file.assert",
@@ -88,7 +88,7 @@ module.exports = function({options}) {
     options.encoding = 'utf8';
   }
   if (options.target == null) {
-    options.target = options.argument;
+    options.target = metadata.argument;
   }
   if (options.target == null) {
     options.target = options.source;
@@ -282,7 +282,7 @@ module.exports = function({options}) {
       if (!options.not) {
         if (!options.content.test(data)) {
           if (options.error == null) {
-            options.error = `Invalid content match: expect ${JSON.stringify(options.content.toString())} and got ${JSON.stringify(buffer.toString())}`;
+            options.error = `Invalid content match: expect ${JSON.stringify(options.content.toString())} and got ${JSON.stringify(data.toString())}`;
           }
           err = Error(options.error);
         }
@@ -313,7 +313,7 @@ module.exports = function({options}) {
   }, function({}, callback) {
     return this.file.hash(options.target, {
       algo: algo
-    }, (err, {hash}) => {
+    }, function(err, {hash}) {
       if ((err != null ? err.code : void 0) === 'ENOENT') {
         return callback(Error(`Target does not exists: ${options.target}`));
       }

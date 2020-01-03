@@ -38,9 +38,9 @@
 // ```
 var path, quote;
 
-module.exports = function({options}) {
-  if (options.argument != null) {
-    options.name = options.argument;
+module.exports = function({metadata, options}) {
+  if (metadata.argument != null) {
+    options.name = metadata.argument;
   }
   if (options.target == null) {
     options.target = `${options.name}.conf`;

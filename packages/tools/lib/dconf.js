@@ -21,10 +21,10 @@
 // Run the command "dconf-editor" to navigate the database with a UI.
 
 // ## Source Code
-module.exports = function({options}) {
+module.exports = function({metadata, options}) {
   var key, ref, results, value;
-  if (options.argument != null) {
-    options.properties = options.argument;
+  if (metadata.argument != null) {
+    options.properties = metadata.argument;
   }
   if (options.properties == null) {
     options.properties = {};

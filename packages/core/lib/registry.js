@@ -224,21 +224,22 @@ registry = function({chain, on_register, parent} = {}) {
   // # (node:75923) DeprecationWarning: old_function is deprecated, use new_function
   // ```
   obj.deprecate = function(old_name, new_name, handler) {
+    var action;
     if (arguments.length === 2) {
       handler = new_name;
       new_name = null;
     }
-    handler = load(handler);
-    handler.deprecate = new_name;
-    if (typeof handler.module === 'string') {
-      if (handler.deprecate == null) {
-        handler.deprecate = handler.module;
+    action = load(handler);
+    action.deprecate = new_name;
+    if (typeof action.module === 'string') {
+      if (action.deprecate == null) {
+        action.deprecate = action.module;
       }
     }
-    if (handler.deprecate == null) {
-      handler.deprecate = true;
+    if (action.deprecate == null) {
+      action.deprecate = true;
     }
-    obj.register(old_name, handler);
+    obj.register(old_name, action);
     return chain;
   };
   // # Registered

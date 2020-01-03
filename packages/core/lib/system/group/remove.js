@@ -40,14 +40,14 @@
 // "uid=490(hive) gid=10(wheel) groups=10(wheel)".
 
 // ## Source Code
-module.exports = function({options}) {
+module.exports = function({metadata, options}) {
   this.log({
     message: "Entering remove",
     level: 'DEBUG',
     module: 'nikita/lib/system/group/remove'
   });
-  if (options.argument != null) {
-    options.name = options.argument;
+  if (metadata.argument != null) {
+    options.name = metadata.argument;
   }
   if (!options.name) {
     throw Error("Option 'name' is required");

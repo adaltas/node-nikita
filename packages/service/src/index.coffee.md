@@ -71,10 +71,10 @@ require('nikita').service([{
 
 ## Source Code
 
-    module.exports = ({options}) ->
+    module.exports = ({metadata, options}) ->
       @log message: "Entering service", level: 'DEBUG', module: 'nikita/lib/service'
       # Options
-      options.name ?= options.argument if typeof options.argument is 'string'
+      options.name ?= metadata.argument if typeof metadata.argument is 'string'
       pkgname = options.yum_name or options.name
       chkname = options.chk_name or options.srv_name or options.name
       srvname = options.srv_name or options.chk_name or options.name

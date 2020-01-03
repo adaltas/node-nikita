@@ -24,11 +24,11 @@ Check if a database exists.
 
 ## Source Code
 
-    module.exports = shy: true, handler: ({options}) ->
+    module.exports = shy: true, handler: ({metadata, options}) ->
       # Import options from `options.db`
       options.db ?= {}
       options[k] ?= v for k, v of options.db
-      options.database ?= options.argument
+      options.database ?= metadata.argument
       # Check main options
       throw Error 'Missing option: "host"' unless options.host
       throw Error 'Missing option: "username" or "admin_username"' unless options.admin_username or options.username

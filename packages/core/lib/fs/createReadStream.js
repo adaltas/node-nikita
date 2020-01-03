@@ -41,7 +41,7 @@ var fs, path, string;
 module.exports = {
   status: false,
   log: false,
-  handler: function({options}, callback) {
+  handler: function({metadata, options}, callback) {
     var callback_args, current_username, p, ssh;
     this.log({
       message: "Entering fs.createReadStream",
@@ -50,9 +50,9 @@ module.exports = {
     });
     ssh = this.ssh(options.ssh);
     p = ssh ? path.posix : path;
-    if (options.argument != null) {
+    if (metadata.argument != null) {
       // Default argument
-      options.target = options.argument;
+      options.target = metadata.argument;
     }
     if (!options.target) {
       // Normalization

@@ -57,17 +57,17 @@
 // ## Source Code
 var string;
 
-module.exports = function({options}) {
+module.exports = function({metadata, options}) {
   var cacheonly, flag, i, j, k, l, len, len1, len2, ref, ref1, ref2;
   this.log({
     message: "Entering service.install",
     level: 'DEBUG',
     module: 'nikita/lib/service/install'
   });
-  if (typeof options.argument === 'string') {
+  if (typeof metadata.argument === 'string') {
     // Options
     if (options.name == null) {
-      options.name = options.argument;
+      options.name = metadata.argument;
     }
   }
   if (options.cache) {

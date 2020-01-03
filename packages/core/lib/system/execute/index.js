@@ -115,7 +115,7 @@
 // ## Source Code
 var exec, misc, path, string;
 
-module.exports = function({options}, callback) {
+module.exports = function({metadata, options}, callback) {
   var current_username, result, ssh;
   this.log({
     message: "Entering execute",
@@ -124,9 +124,9 @@ module.exports = function({options}, callback) {
   });
   // SSH connection
   ssh = this.ssh(options.ssh);
-  if (typeof options.argument === 'string') {
+  if (typeof metadata.argument === 'string') {
     // Validate parameters
-    options.cmd = options.argument;
+    options.cmd = metadata.argument;
   }
   if (options.code == null) {
     options.code = [0];

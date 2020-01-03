@@ -7,15 +7,15 @@
 module.exports = {
   status: false,
   log: false,
-  handler: function({options}, callback) {
+  handler: function({metadata, options}, callback) {
     this.log({
       message: "Entering fs.readlink",
       level: 'DEBUG',
       module: 'nikita/lib/fs/readlink'
     });
-    if (options.argument != null) {
+    if (metadata.argument != null) {
       // Normalize options
-      options.target = options.argument;
+      options.target = metadata.argument;
     }
     if (!options.target) {
       throw Error("Required Option: the \"target\" option is mandatory");

@@ -25,15 +25,15 @@ var Minimatch, getprefix, path, string;
 
 module.exports = {
   shy: true,
-  handler: function({options}, callback) {
+  handler: function({metadata, options}, callback) {
     var base, info, minimatch, s;
     this.log({
       message: "Entering file.glob",
       level: 'DEBUG',
       module: 'nikita/lib/file/hash'
     });
-    if (options.argument != null) {
-      options.target = options.argument;
+    if (metadata.argument != null) {
+      options.target = metadata.argument;
     }
     if (!options.target) {
       throw Error(`Required Option: target, got ${JSON.stringify(options.target)}`);

@@ -18,11 +18,11 @@ Create a user for the destination database.
 
 ## Source Code
 
-    module.exports = ({options}) ->
+    module.exports = ({metadata, options}) ->
       # Import options from `options.db`
       options.db ?= {}
       options[k] ?= v for k, v of options.db
-      options.username ?= options.argument
+      options.username ?= metadata.argument
       @system.execute
         cmd: db.cmd options, "DROP USER IF EXISTS #{options.username};"
 

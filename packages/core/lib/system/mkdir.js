@@ -62,7 +62,7 @@
 // ## Source Code
 var each, misc, path;
 
-module.exports = function({options}, callback) {
+module.exports = function({metadata, options}, callback) {
   var directory, i, j, len, p, ref, ssh, state;
   this.log({
     message: "Entering mkdir",
@@ -73,10 +73,10 @@ module.exports = function({options}, callback) {
   ssh = this.ssh(options.ssh);
   p = ssh ? path.posix : path;
   // logs for children
-  options.log = typeof options.log === 'boolean' ? options.log : false;
-  if (options.argument != null) {
+  metadata.log = typeof metadata.log === 'boolean' ? metadata.log : false;
+  if (metadata.argument != null) {
     // Validate options
-    options.target = options.argument;
+    options.target = metadata.argument;
   }
   if (options.directory == null) {
     options.directory = options.target;
@@ -141,7 +141,7 @@ module.exports = function({options}, callback) {
         });
         return this.fs.stat({
           target: directory,
-          log: options.log
+          log: metadata.log
         }, function(err, {stats}) {
           if ((err != null ? err.code : void 0) === 'ENOENT') { // if the directory is not yet created
             directory.stats = stats;
@@ -194,7 +194,7 @@ module.exports = function({options}, callback) {
         }
         return this.fs.mkdir({
           target: directory,
-          log: options.log
+          log: metadata.log
         }, opts, function(err) {
           if (err) {
             return callback(err);

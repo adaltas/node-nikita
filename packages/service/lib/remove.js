@@ -33,17 +33,17 @@
 // ## Source Code
 var string;
 
-module.exports = function({options}) {
+module.exports = function({metadata, options}) {
   var cacheonly, installed;
   this.log({
     message: "Entering service.remove",
     level: 'DEBUG',
     module: 'nikita/lib/service/remove'
   });
-  if (typeof options.argument === 'string') {
+  if (typeof metadata.argument === 'string') {
     // Options
     if (options.name == null) {
-      options.name = options.argument;
+      options.name = metadata.argument;
     }
   }
   if (options.manager == null) {

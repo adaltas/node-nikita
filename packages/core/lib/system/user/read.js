@@ -62,7 +62,7 @@ var string;
 
 module.exports = {
   shy: true,
-  handler: function({options}, callback) {
+  handler: function({metadata, options}, callback) {
     var passwd, ref, str2passwd;
     this.log({
       message: "Entering system.user.read",
@@ -126,7 +126,7 @@ module.exports = {
         unless: options.cache && !!this.store['nikita:etc_passwd'],
         target: options.target,
         encoding: 'ascii',
-        log: options.log
+        log: metadata.log
       }, function(err, {data}) {
         if (err) {
           throw err;

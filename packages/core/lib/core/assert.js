@@ -14,7 +14,7 @@
 //   Error object if assertion failed.   
 
 // ## Source Code
-module.exports = function({options}) {
+module.exports = function({metadata}) {
   var status;
   this.log({
     message: "Entering assert",
@@ -31,12 +31,15 @@ module.exports = function({options}) {
   //   console.log(err ? err.message : 'Assertion is ok');
   // });
   // ```
+
+  // Note, this isn't nice, we are hijacking the original status metadata
+  // property and use it as an option
   status = this.status();
   return this.call({
-    if: (options.status != null) && status !== options.status
+    if: (metadata.status != null) && status !== metadata.status
   }, function() {
     var message;
-    message = `Invalid status: expected ${JSON.stringify(options.status)}, got ${JSON.stringify(status)}`;
+    message = `Invalid status: expected ${JSON.stringify(metadata.status)}, got ${JSON.stringify(status)}`;
     throw Error(message);
   });
 };

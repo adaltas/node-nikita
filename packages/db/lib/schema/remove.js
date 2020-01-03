@@ -20,7 +20,7 @@
 // ## Source Code
 var db;
 
-module.exports = function({options}) {
+module.exports = function({metadata, options}) {
   var k, ref, ref1, v;
   // Import options from `options.db`
   if (options.db == null) {
@@ -35,7 +35,7 @@ module.exports = function({options}) {
   }
   // Options
   if (options.schema == null) {
-    options.schema = options.argument;
+    options.schema = metadata.argument;
   }
   if (!options.engine) {
     throw Error('Missing option: "engine"');

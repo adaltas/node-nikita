@@ -45,7 +45,7 @@
 // ```
 
 // ## Source Code
-module.exports = function({options}) {
+module.exports = function({metadata, options}) {
   var ssh;
   this.log({
     message: "Entering chown",
@@ -58,9 +58,9 @@ module.exports = function({options}) {
   }
   // SSH connection
   ssh = this.ssh(options.ssh);
-  if (options.argument != null) {
+  if (metadata.argument != null) {
     // Normalize options
-    options.target = options.argument;
+    options.target = metadata.argument;
   }
   if (options.uid === false) {
     options.uid = null;

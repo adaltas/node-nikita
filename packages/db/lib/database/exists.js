@@ -27,7 +27,7 @@ var db;
 
 module.exports = {
   shy: true,
-  handler: function({options}) {
+  handler: function({metadata, options}) {
     var cmd, k, ref, ref1, v;
     // Import options from `options.db`
     if (options.db == null) {
@@ -41,7 +41,7 @@ module.exports = {
       }
     }
     if (options.database == null) {
-      options.database = options.argument;
+      options.database = metadata.argument;
     }
     if (!options.host) {
       // Check main options

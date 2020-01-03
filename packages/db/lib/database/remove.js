@@ -19,7 +19,7 @@
 // ## Source Code
 var db;
 
-module.exports = function({options}) {
+module.exports = function({metadata, options}) {
   var database, k, ref, v;
   // Import options from `options.db`
   if (options.db == null) {
@@ -33,7 +33,7 @@ module.exports = function({options}) {
     }
   }
   if (options.database == null) {
-    options.database = options.argument;
+    options.database = metadata.argument;
   }
   if (!options.admin_username) {
     throw Error('Missing option: "admin_username"');

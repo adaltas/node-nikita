@@ -30,7 +30,7 @@ var crypto, misc, string;
 
 module.exports = {
   shy: true,
-  handler: function({options}, callback) {
+  handler: function({metadata, options}, callback) {
     var info;
     this.log({
       message: "Entering file.hash",
@@ -40,8 +40,8 @@ module.exports = {
     if (options.algo == null) {
       options.algo = 'md5';
     }
-    if (options.argument != null) {
-      options.target = options.argument;
+    if (metadata.argument != null) {
+      options.target = metadata.argument;
     }
     if (!options.target) {
       throw Error(`Required Option: target, got ${JSON.stringify(options.target)}`);
