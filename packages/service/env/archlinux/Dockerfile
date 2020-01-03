@@ -1,4 +1,4 @@
-FROM base/archlinux
+FROM archlinux:latest
 MAINTAINER David Worms
 
 RUN pacman --noconfirm -Syu && pacman --noconfirm -S procps grep which sed
@@ -26,11 +26,13 @@ RUN pacman --noconfirm -S zip git
 # Install docker
 RUN pacman -Syy && pacman --noconfirm -S docker docker-compose
 
-# Install arch-chroot
-RUN pacman --noconfirm -S arch-install-scripts tar gzip \
- && curl -L https://mirrors.kernel.org/archlinux/iso/2018.07.01/archlinux-bootstrap-2018.07.01-x86_64.tar.gz -o /var/tmp/archlinux-bootstrap-2018.07.01-x86_64.tar.gz \
- && tar xzf /var/tmp/archlinux-bootstrap-2018.07.01-x86_64.tar.gz -C /var/tmp \
- && rm -f /var/tmp/archlinux-bootstrap-2018.07.01-x86_64.tar.gz
+# # Install arch-chroot
+# Note, jan 3rd 2020: test are passing without this, not sure why it was here
+# in the first place.
+# RUN pacman --noconfirm -S arch-install-scripts tar gzip \
+#  && curl -L https://mirrors.kernel.org/archlinux/iso/2018.07.01/archlinux-bootstrap-2018.07.01-x86_64.tar.gz -o /var/tmp/archlinux-bootstrap-2018.07.01-x86_64.tar.gz \
+#  && tar xzf /var/tmp/archlinux-bootstrap-2018.07.01-x86_64.tar.gz -C /var/tmp \
+#  && rm -f /var/tmp/archlinux-bootstrap-2018.07.01-x86_64.tar.gz
 
 ADD ./run.sh /run.sh
 RUN mkdir -p /nikita
