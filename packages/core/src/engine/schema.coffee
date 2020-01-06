@@ -2,7 +2,7 @@
 Ajv = require 'ajv'
 
 module.exports = () ->
-  ajv = new Ajv(allErrors: true)
+  ajv = new Ajv allErrors: true, useDefaults: true
   add: (name, schema) ->
     return unless schema
     ajv.addSchema schema, name

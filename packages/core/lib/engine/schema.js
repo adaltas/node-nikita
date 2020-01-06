@@ -6,7 +6,8 @@ Ajv = require('ajv');
 module.exports = function() {
   var ajv;
   ajv = new Ajv({
-    allErrors: true
+    allErrors: true,
+    useDefaults: true
   });
   return {
     add: function(name, schema) {

@@ -12,10 +12,10 @@ describe 'metadata "schema"', ->
       a_string: 'a value'
       an_integer: 1
       schema:
-        'type': 'object'
-        'properties':
-          'a_string': 'type': 'string'
-          'an_integer': 'type': 'integer', 'minimum': 1
+        type: 'object'
+        properties:
+          'a_string': type: 'string'
+          'an_integer': type: 'integer', minimum: 1
     , ({options}) ->
       options.a_string.should.be.a.String()
       options.an_integer.should.be.a.Number()
@@ -27,10 +27,10 @@ describe 'metadata "schema"', ->
       a_string: 1
       an_integer: 0
       schema:
-        'type': 'object'
-        'properties':
-          'a_string': 'type': 'string'
-          'an_integer': 'type': 'integer', 'minimum': 1
+        type: 'object'
+        properties:
+          'a_string': type: 'string'
+          'an_integer': type: 'integer', 'minimum': 1
       relax: true
     , (->)
     , (err) ->
@@ -46,16 +46,16 @@ describe 'metadata "schema"', ->
     nikita()
     .registry.register ['test', 'schema'],
       schema:
-        'type': 'object'
-        'properties':
-          'a_string': 'type': 'string'
+        type: 'object'
+        properties:
+          'a_string': type: 'string'
       handler: (->)
     .call
       split: a_string: 'a value'
       schema:
-        'type': 'object'
-        'properties':
-          'split': "$ref": "/nikita/test/schema"
+        type: 'object'
+        properties:
+          'split': $ref: '/nikita/test/schema'
       relax: true
     , (->)
     , (err) ->
@@ -63,9 +63,9 @@ describe 'metadata "schema"', ->
     .call
       split: a_string: 1
       schema:
-        'type': 'object'
-        'properties':
-          'split': "$ref": "/nikita/test/schema"
+        type: 'object'
+        properties:
+          'split': $ref: '/nikita/test/schema'
       relax: true
     , (->)
     , (err) ->
@@ -73,4 +73,17 @@ describe 'metadata "schema"', ->
       err.errors.map( (err) -> err.message).should.eql [
         'data.split.a_string should be string'
       ]
+    .promise()
+
+  it 'set default properties', ->
+    nikita()
+    .call
+      schema:
+        type: 'object'
+        properties:
+          'a_string':
+            type: 'string'
+            default: 'a value'
+    , ({options}) ->
+      options.a_string.should.eql 'a value'
     .promise()
