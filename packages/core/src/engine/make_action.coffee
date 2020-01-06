@@ -17,6 +17,7 @@ module.exports = (action_global, action_parent, options_action) ->
     error_in_callback: null
     handler: options_action.handler
     metadata: {}
+    on_options: options_action.on_options
     options: {}
     original: (-> # Create original and filter with cascade
       options = options_action
@@ -33,6 +34,7 @@ module.exports = (action_global, action_parent, options_action) ->
     continue if k is 'cascade'
     continue if k is 'handler'
     continue if k is 'callback'
+    continue if k is 'on_options'
     if metadata[k] isnt undefined
       action.metadata[k] = v
     else
@@ -76,6 +78,21 @@ module.exports = (action_global, action_parent, options_action) ->
     unless action_global.store['nikita:ssh:connection']
     then action.options.target = path.join process.env.HOME, match[1]
     else action.options.target = path.posix.join '.', match[1]
+  action
+
+propertiesToAction = (userAction) ->
+  action =
+    metadata: {}
+    options: {}
+  for k, v of userAction
+    switch k
+      when 'action', 'callback', 'cascade', 'handler'
+        action[k] = v
+      else
+        if metadata[k] isnt undefined
+          action.metadata[k] = v
+        else
+          action.options[k] = v
   action
 
 metadata = module.exports.metadata =

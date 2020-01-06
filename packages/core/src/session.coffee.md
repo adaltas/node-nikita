@@ -142,6 +142,7 @@
         proxy.log message: action.metadata.header, type: 'header', index: index if action.metadata.header
         do ->
           do_options = ->
+            action.on_options action if action.on_options
             try
               if action.metadata.schema
                 errors = obj.schema.validate action.options, action.metadata.schema

@@ -254,6 +254,9 @@ module.exports = function() {
     return (function() {
       var do_callback, do_conditions, do_disabled, do_end, do_handler, do_intercept_after, do_intercept_before, do_once, do_options, do_options_after, do_options_before;
       do_options = function() {
+        if (action.on_options) {
+          action.on_options(action);
+        }
         try {
           if (action.metadata.schema) {
             errors = obj.schema.validate(action.options, action.metadata.schema);

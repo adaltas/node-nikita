@@ -16,6 +16,7 @@ module.exports = function(action_global, action_parent, options_action) {
     error_in_callback: null,
     handler: options_action.handler,
     metadata: {},
+    on_options: options_action.on_options,
     options: {},
     original: (function() { // Create original and filter with cascade
       var k, options, ref, v;
@@ -46,6 +47,9 @@ module.exports = function(action_global, action_parent, options_action) {
       continue;
     }
     if (k === 'callback') {
+      continue;
+    }
+    if (k === 'on_options') {
       continue;
     }
     if (metadata[k] !== void 0) {
