@@ -72,7 +72,7 @@ require('nikita')
       @call ({}, callback) ->
         buffers = []
         @log message: "Reading file #{options.target_tmp or options.target}", level: 'DEBUG', module: 'nikita/lib/fs/createReadStream'
-        fs.createReadStream ssh, options.target_tmp or options.target, (err, rs) =>
+        fs.createReadStream ssh, options.target_tmp or options.target, (err, rs) ->
           return callback err if err
           done = (err) ->
             callback_args = err

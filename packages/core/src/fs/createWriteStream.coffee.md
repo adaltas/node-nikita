@@ -32,7 +32,7 @@ require('nikita')
 ## Source Code
 
     module.exports = status: false, log: false, handler: ({metadata, options}) ->
-      @log message: "Entering fs.writeFile", level: 'DEBUG', module: 'nikita/lib/fs/writeFile'
+      @log message: "Entering fs.createWriteStream", level: 'DEBUG', module: 'nikita/lib/fs/createWriteStream'
       ssh = @ssh options.ssh
       # Normalize options
       options.target = metadata.argument if metadata.argument?
@@ -50,10 +50,10 @@ require('nikita')
       , (err, {status}) ->
         return unless status # Condition with flag "a" didnt pass
         @log unless err
-        then message: "Append prepared by placing original file in temporary path", level: 'INFO', module: 'nikita/lib/fs/write'
-        else message: "Failed to place original file in temporary path", level: 'ERROR', module: 'nikita/lib/fs/writeFile'
+        then message: "Append prepared by placing original file in temporary path", level: 'INFO', module: 'nikita/lib/fs/createWriteStream'
+        else message: "Failed to place original file in temporary path", level: 'ERROR', module: 'nikita/lib/fs/createWriteStream'
       @call (_, callback) ->
-        @log message: 'Writting file', level: 'DEBUG', module: 'nikita/lib/fs/writeFile'
+        @log message: 'Writting file', level: 'DEBUG', module: 'nikita/lib/fs/createWriteStream'
         fs.createWriteStream ssh, options.target_tmp or options.target, flags: options.flags, mode: options.mode, (err, ws) ->
           return callback err if err
           options.stream ws

@@ -38,9 +38,9 @@ module.exports = {
   handler: function({metadata, options}) {
     var ssh;
     this.log({
-      message: "Entering fs.writeFile",
+      message: "Entering fs.createWriteStream",
       level: 'DEBUG',
-      module: 'nikita/lib/fs/writeFile'
+      module: 'nikita/lib/fs/createWriteStream'
     });
     ssh = this.ssh(options.ssh);
     if (metadata.argument != null) {
@@ -74,18 +74,18 @@ module.exports = {
       return this.log(!err ? {
         message: "Append prepared by placing original file in temporary path",
         level: 'INFO',
-        module: 'nikita/lib/fs/write'
+        module: 'nikita/lib/fs/createWriteStream'
       } : {
         message: "Failed to place original file in temporary path",
         level: 'ERROR',
-        module: 'nikita/lib/fs/writeFile'
+        module: 'nikita/lib/fs/createWriteStream'
       });
     });
     this.call(function(_, callback) {
       this.log({
         message: 'Writting file',
         level: 'DEBUG',
-        module: 'nikita/lib/fs/writeFile'
+        module: 'nikita/lib/fs/createWriteStream'
       });
       return fs.createWriteStream(ssh, options.target_tmp || options.target, {
         flags: options.flags,

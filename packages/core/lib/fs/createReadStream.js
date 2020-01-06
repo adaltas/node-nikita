@@ -101,7 +101,7 @@ module.exports = {
         level: 'DEBUG',
         module: 'nikita/lib/fs/createReadStream'
       });
-      return fs.createReadStream(ssh, options.target_tmp || options.target, (err, rs) => {
+      return fs.createReadStream(ssh, options.target_tmp || options.target, function(err, rs) {
         var done;
         if (err) {
           return callback(err);
