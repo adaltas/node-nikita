@@ -92,7 +92,7 @@ npm test test/db/database.coffee
       , (err, {status}) ->
         @log message: "Database created: #{JSON.stringify options.database}", level: 'WARN', module: 'nikita/db/database' if status
       for user in options.user then do =>
-        @call -> @log message: "Check if user #{user} has PRIVILEGES on #{options.database} ", level: 'DEBUG', module: 'nikita/db/database'     
+        @call -> @log message: "Check if user #{user} has PRIVILEGES on #{options.database} ", level: 'DEBUG', module: 'nikita/db/database'
         @db.user.exists
           engine: options.engine
           username: user
@@ -106,7 +106,7 @@ npm test test/db/database.coffee
           when 'mariadb', 'mysql'
             # cmd_has_privileges = db.cmd options, admin_username: null, username: user.username, password: user.password, database: options.database, "SHOW TABLES FROM pg_database"
             cmd_has_privileges = db.cmd(options, database: 'mysql', "SELECT user FROM db WHERE db='#{options.database}';") + " | grep '#{user}'"
-            cmd_grant_privileges = db.cmd options, database: null, "GRANT ALL PRIVILEGES ON #{options.database}.* TO '#{user}' WITH GRANT OPTION;" # FLUSH PRIVILEGES;
+            cmd_grant_privileges = db.cmd options, database: null, "GRANT ALL PRIVILEGES ON #{options.database}.* TO '#{user}' WITH GRANT OPTION;" # FLUSH PRIVILEGES
           when 'postgresql'
             cmd_has_privileges = db.cmd(options, database: options.database, "\\l") + " | egrep '^#{user}='"
             cmd_grant_privileges = db.cmd options, database: null, "GRANT ALL PRIVILEGES ON DATABASE #{options.database} TO #{user}"

@@ -7,6 +7,7 @@ require('@nikitajs/core/lib/registry')
       exists: '@nikitajs/db/src/database/exists'
       remove: '@nikitajs/db/src/database/remove'
       wait: '@nikitajs/db/src/database/wait'
+    query: '@nikitajs/db/src/query'
     schema:
       '': '@nikitajs/db/src/schema'
       remove: '@nikitajs/db/src/schema/remove'

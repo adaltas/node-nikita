@@ -32,7 +32,7 @@ Check if a user exists in the database.
       options.db ?= {}
       options[k] ?= v for k, v of options.db
       # Check main options
-      throw Error 'Missing option: "hostname"' unless options.host
+      throw Error 'Missing option: "host"' unless options.host
       throw Error 'Missing option: "admin_username"' unless options.admin_username
       throw Error 'Missing option: "admin_password"' unless options.admin_password
       throw Error 'Missing option: "username"' unless options.username

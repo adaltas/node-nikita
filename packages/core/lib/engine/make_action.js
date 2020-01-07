@@ -15,9 +15,9 @@ module.exports = function(action_global, action_parent, options_action) {
     error: null,
     error_in_callback: null,
     handler: options_action.handler,
-    metadata: {},
+    metadata: options_action.metadata || {},
     on_options: options_action.on_options,
-    options: {},
+    options: options_action.options || {},
     original: (function() { // Create original and filter with cascade
       var k, options, ref, v;
       options = options_action;
@@ -52,13 +52,23 @@ module.exports = function(action_global, action_parent, options_action) {
     if (k === 'on_options') {
       continue;
     }
+    if (k === 'options') {
+      continue;
+    }
+    if (k === 'metadata') {
+      continue;
+    }
     if (metadata[k] !== void 0) {
-      action.metadata[k] = v;
+      if (action.metadata[k] === void 0) {
+        action.metadata[k] = v;
+      }
     } else {
       if (action.cascade[k] === false) {
         continue;
       }
-      action.options[k] = v;
+      if (action.metadata[k] === void 0) {
+        action.options[k] = v;
+      }
     }
   }
   ref = action_parent != null ? action_parent.metadata : void 0;

@@ -16,9 +16,9 @@ module.exports = (action_global, action_parent, options_action) ->
     error: null
     error_in_callback: null
     handler: options_action.handler
-    metadata: {}
+    metadata: options_action.metadata or {}
     on_options: options_action.on_options
-    options: {}
+    options: options_action.options or {}
     original: (-> # Create original and filter with cascade
       options = options_action
       for k, v of action_parent?.metadata
@@ -35,11 +35,13 @@ module.exports = (action_global, action_parent, options_action) ->
     continue if k is 'handler'
     continue if k is 'callback'
     continue if k is 'on_options'
+    continue if k is 'options'
+    continue if k is 'metadata'
     if metadata[k] isnt undefined
-      action.metadata[k] = v
+      action.metadata[k] = v if action.metadata[k] is undefined
     else
       continue if action.cascade[k] is false
-      action.options[k] = v
+      action.options[k] = v if action.metadata[k] is undefined
   # Merge parent cascaded options
   for k, v of action_parent?.metadata
     continue unless action.cascade[k] is true

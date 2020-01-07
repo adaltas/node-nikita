@@ -16,6 +16,7 @@ describe 'action "handler"', ->
           'callback', 'cascade',
           'error', 'error_in_callback',
           'handler', 'metadata',
+          'on_options',
           'options', 'original',
           'output', 'parent',
           'session'
