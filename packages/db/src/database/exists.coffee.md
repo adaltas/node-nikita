@@ -43,16 +43,24 @@ Check if a database exists.
       throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mariadb', 'mysql', 'postgresql']
       # Defines port
       options.port ?= 5432
-      cmd = switch options.engine
-        when 'mariadb', 'mysql'
-          db.cmd(options, database: 'mysql', "SHOW DATABASES") + " | grep -w '#{options.database}'"
-        when 'postgresql'
-          # Not sure why we're not using \l
-          db.cmd(options, "SELECT datname FROM pg_database WHERE datname = '#{options.database}'") + " | grep -w '#{options.database}'"
-      @system.execute
-        cmd: cmd
-        code_skipped: 1
+      # @system.execute
+      #   cmd: switch options.engine
+      #     when 'mariadb', 'mysql'
+      #       cmd(options, database: null, "SHOW DATABASES") + " | grep -w '#{options.database}'"
+      #     when 'postgresql'
+      #       # Not sure why we're not using \l
+      #       cmd(options, "SELECT datname FROM pg_database WHERE datname = '#{options.database}'") + " | grep -w '#{options.database}'"
+      #   code_skipped: 1
+      @db.query connection_options(options),
+        cmd: switch options.engine
+          when 'mariadb', 'mysql'
+            'SHOW DATABASES'
+          when 'postgresql'
+            # Not sure why we're not using \l
+            "SELECT datname FROM pg_database WHERE datname = '#{options.database}'"
+        database: null
+        grep: options.database
 
 ## Dependencies
 
-    db = require '@nikitajs/core/lib/misc/db'
+    {cmd, connection_options} = require '../query'

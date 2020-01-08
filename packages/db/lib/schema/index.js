@@ -36,7 +36,7 @@
 // ```
 
 // ## Source Code
-var db;
+var cmd;
 
 module.exports = function({options}) {
   var k, ref, ref1, v;
@@ -72,7 +72,7 @@ module.exports = function({options}) {
     console.log('Deprecated Value: options "postgres" is deprecated in favor of "postgresql"');
     options.engine = 'postgresql';
   }
-  // Defines and check the engine type 
+  // Defines and check the engine type
   options.engine = options.engine.toLowerCase();
   if ((ref1 = options.engine) !== 'postgresql') {
     throw Error(`Unsupport engine: ${JSON.stringify(options.engine)}`);
@@ -83,7 +83,7 @@ module.exports = function({options}) {
   }
   this.system.execute({
     code_skipped: 2,
-    cmd: db.cmd(options, '\\dt')
+    cmd: cmd(options, '\\dt')
   }, function(err, {status}) {
     if (err) {
       throw err;
@@ -93,16 +93,16 @@ module.exports = function({options}) {
     }
   });
   this.system.execute({
-    cmd: db.cmd(options, `CREATE SCHEMA ${options.schema};`),
-    unless_exec: db.cmd(options, `SELECT 1 FROM pg_namespace WHERE nspname = '${options.schema}';`) + " | grep 1"
+    cmd: cmd(options, `CREATE SCHEMA ${options.schema};`),
+    unless_exec: cmd(options, `SELECT 1 FROM pg_namespace WHERE nspname = '${options.schema}';`) + " | grep 1"
   });
   // Check if owner is the good one
   return this.system.execute({
     if: function() {
       return options.owner != null;
     },
-    unless_exec: db.cmd(options, '\\dn') + ` | grep '${options.schema}|${options.owner}'`,
-    cmd: db.cmd(options, `ALTER SCHEMA ${options.schema} OWNER TO ${options.owner};`),
+    unless_exec: cmd(options, '\\dn') + ` | grep '${options.schema}|${options.owner}'`,
+    cmd: cmd(options, `ALTER SCHEMA ${options.schema} OWNER TO ${options.owner};`),
     code_skipped: 1
   }, function(err, {stderr}) {
     if (/^ERROR:\s\srole.*does\snot\sexist/.test(stderr)) {
@@ -112,4 +112,4 @@ module.exports = function({options}) {
 };
 
 // ## Dependencies
-db = require('@nikitajs/core/lib/misc/db');
+({cmd} = require('../query'));

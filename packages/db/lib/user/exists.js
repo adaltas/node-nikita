@@ -17,21 +17,36 @@
 // * `host`   
 //   The hostname of the database.   
 // * `username`   
-//   The new user name.   
-// * `password`   
-//   The new user password.   
+//   The new user name.    
 // * `port`   
 //   Port to the associated database.   
-// * `user` (String)   
-//   User name.   
+
+// ## Schema
+var connection_options;
+
+({
+  schema: {
+    type: 'object',
+    properties: {
+      $ref: '/nikita/db/query',
+      'username': {
+        type: 'string'
+      },
+      'password': {
+        type: 'string'
+      }
+    },
+    // 'connection':
+    //   $ref: '/nikita/db/query'
+    required: ['password', 'username']
+  }
+});
 
 // ## Source Code
-var db;
-
 module.exports = {
   shy: true,
-  handler: function({options}) {
-    var cmd, k, ref, ref1, v;
+  handler: function({options}, callback) {
+    var k, ref, ref1, v;
     // Import options from `options.db`
     if (options.db == null) {
       options.db = {};
@@ -45,7 +60,7 @@ module.exports = {
     }
     if (!options.host) {
       // Check main options
-      throw Error('Missing option: "hostname"');
+      throw Error('Missing option: "host"');
     }
     if (!options.admin_username) {
       throw Error('Missing option: "admin_username"');
@@ -73,24 +88,23 @@ module.exports = {
     if (options.port == null) {
       options.port = 5432;
     }
-    cmd = (function() {
-      switch (options.engine) {
-        case 'mariadb':
-        case 'mysql':
-          return db.cmd(options, {
-            database: 'mysql'
-          }, `select User from user where User = '${options.username}'`) + ` | grep '${options.username}'`;
-        case 'postgresql':
-          // Not sure why we're not using du
-          return db.cmd(options, `SELECT 1 FROM pg_roles WHERE rolname='${options.username}'`) + " | grep 1";
-      }
-    })();
-    return this.system.execute({
-      cmd: cmd,
-      code_skipped: 1
+    return this.db.query(connection_options(options), {
+      database: void 0,
+      cmd: (function() {
+        switch (options.engine) {
+          case 'mariadb':
+          case 'mysql':
+            return `SELECT User FROM mysql.user WHERE User = '${options.username}'`;
+          case 'postgresql':
+            return `SELECT '${options.username}' FROM pg_roles WHERE rolname='${options.username}'`;
+        }
+      })(),
+      trim: true
+    }, function(err, {stdout}) {
+      return callback(err, stdout === options.username);
     });
   }
 };
 
 // ## Dependencies
-db = require('@nikitajs/core/lib/misc/db');
+({connection_options} = require('../query'));

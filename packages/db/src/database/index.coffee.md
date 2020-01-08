@@ -76,16 +76,16 @@ npm test test/db/database.coffee
           switch options.character_set
             when 'latin1' then options.collation ?= 'latin1_swedish_ci' # MySQL default
             when 'utf8' then options.collation ?= 'utf8_general_ci'
-          cmd_database_create = db.cmd options, database: null, [
+          cmd_database_create = cmd options, database: null, [
             "CREATE DATABASE #{options.database}"
             "DEFAULT CHARACTER SET #{options.character_set}"
             "DEFAULT COLLATE #{options.collation}" if options.collation
             ';'
           ].join ' '
-          cmd_database_exists = db.cmd options, database: options.database, "USE #{options.database};"
+          cmd_database_exists = cmd options, database: options.database, "USE #{options.database};"
         when 'postgresql'
-          cmd_database_create = db.cmd options, database: null, "CREATE DATABASE #{options.database};"
-          cmd_database_exists = db.cmd options, database: options.database, "\\dt"
+          cmd_database_create = cmd options, database: null, "CREATE DATABASE #{options.database};"
+          cmd_database_exists = cmd options, database: options.database, "\\dt"
       @system.execute
         cmd: cmd_database_create
         unless_exec: cmd_database_exists
@@ -93,23 +93,18 @@ npm test test/db/database.coffee
         @log message: "Database created: #{JSON.stringify options.database}", level: 'WARN', module: 'nikita/db/database' if status
       for user in options.user then do =>
         @call -> @log message: "Check if user #{user} has PRIVILEGES on #{options.database} ", level: 'DEBUG', module: 'nikita/db/database'
-        @db.user.exists
-          engine: options.engine
+        @db.user.exists connection_options(options),
           username: user
-          admin_username: options.admin_username
-          admin_password: options.admin_password
-          port: options.port
-          host: options.host
         , (err, {status}) ->
           throw Error "DB user does not exists: #{user}" if not err and not status
         switch options.engine
           when 'mariadb', 'mysql'
-            # cmd_has_privileges = db.cmd options, admin_username: null, username: user.username, password: user.password, database: options.database, "SHOW TABLES FROM pg_database"
-            cmd_has_privileges = db.cmd(options, database: 'mysql', "SELECT user FROM db WHERE db='#{options.database}';") + " | grep '#{user}'"
-            cmd_grant_privileges = db.cmd options, database: null, "GRANT ALL PRIVILEGES ON #{options.database}.* TO '#{user}' WITH GRANT OPTION;" # FLUSH PRIVILEGES
+            # cmd_has_privileges = cmd options, admin_username: null, username: user.username, password: user.password, database: options.database, "SHOW TABLES FROM pg_database"
+            cmd_has_privileges = cmd(options, database: 'mysql', "SELECT user FROM db WHERE db='#{options.database}';") + " | grep '#{user}'"
+            cmd_grant_privileges = cmd options, database: null, "GRANT ALL PRIVILEGES ON #{options.database}.* TO '#{user}' WITH GRANT OPTION;" # FLUSH PRIVILEGES
           when 'postgresql'
-            cmd_has_privileges = db.cmd(options, database: options.database, "\\l") + " | egrep '^#{user}='"
-            cmd_grant_privileges = db.cmd options, database: null, "GRANT ALL PRIVILEGES ON DATABASE #{options.database} TO #{user}"
+            cmd_has_privileges = cmd(options, database: options.database, "\\l") + " | egrep '^#{user}='"
+            cmd_grant_privileges = cmd options, database: null, "GRANT ALL PRIVILEGES ON DATABASE #{options.database} TO #{user}"
         @system.execute
           cmd: """
           if #{cmd_has_privileges}; then
@@ -125,4 +120,4 @@ npm test test/db/database.coffee
 
 ## Dependencies
 
-    db = require '@nikitajs/core/lib/misc/db'
+    {cmd, connection_options} = require '../query'

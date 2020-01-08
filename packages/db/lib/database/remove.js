@@ -17,7 +17,7 @@
 //   The database to be removed.   
 
 // ## Source Code
-var db;
+var cmd;
 
 module.exports = function({metadata, options}) {
   var database, k, ref, v;
@@ -45,10 +45,10 @@ module.exports = function({metadata, options}) {
   database = options.database;
   delete options.database;
   return this.system.execute({
-    cmd: db.cmd(options, `DROP DATABASE IF EXISTS ${database};`),
+    cmd: cmd(options, `DROP DATABASE IF EXISTS ${database};`),
     code_skipped: 2
   });
 };
 
 // ## Dependencies
-db = require('@nikitajs/core/lib/misc/db');
+({cmd} = require('../query'));

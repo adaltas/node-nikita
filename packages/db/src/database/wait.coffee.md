@@ -51,10 +51,10 @@ require('nikita')
       @wait.execute
         cmd: switch options.engine
           when 'mariadb', 'mysql'
-            db.cmd(options, database: null, "show databases") + " | grep '#{options.database}'"
+            cmd(options, database: null, "show databases") + " | grep '#{options.database}'"
           when 'postgresql'
-            db.cmd(options, database: null, null) + " -l | cut -d \\| -f 1 | grep -qw '#{options.database}'"
+            cmd(options, database: null, null) + " -l | cut -d \\| -f 1 | grep -qw '#{options.database}'"
 
 ## Dependencies
 
-    db = require '@nikitajs/core/lib/misc/db'
+    {cmd} = require '../query'

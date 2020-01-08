@@ -7,6 +7,7 @@ require('@nikitajs/core/lib/registry').register({
       remove: '@nikitajs/db/lib/database/remove',
       wait: '@nikitajs/db/lib/database/wait'
     },
+    query: '@nikitajs/db/lib/query',
     schema: {
       '': '@nikitajs/db/lib/schema',
       remove: '@nikitajs/db/lib/schema/remove'

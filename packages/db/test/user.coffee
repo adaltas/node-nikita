@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/core'
-misc = require '@nikitajs/core/src/misc'
+{cmd} = require '../src/query'
 {tags, ssh, db} = require './test'
 they = require('ssh2-they').configure ssh...
 
@@ -54,11 +54,6 @@ for engine, _ of db
       .promise()
 
     they 'change password', ({ssh}) ->
-      sql_list_tables = switch engine
-        when 'mariadb', 'mysql'
-          'show tables'
-        when 'postgresql'
-          '\\dt'
       nikita
         ssh: ssh
         db: db[engine]
@@ -74,14 +69,18 @@ for engine, _ of db
         username: 'test_user_2_user'
         password: 'test_user_2_valid'
       .system.execute
-        cmd: misc.db.cmd
+        cmd: cmd
           engine: engine
           host: db[engine].host
           port: db[engine].port
           database: 'test_user_2_db'
-          username: 'test_user_2_user'
-          password: 'test_user_2_valid'
-          , sql_list_tables
+          admin_username: 'test_user_2_user'
+          admin_password: 'test_user_2_valid'
+          , switch engine
+            when 'mariadb', 'mysql'
+              'show tables'
+            when 'postgresql'
+              '\\dt'
       .db.database.remove 'test_user_2_db'
       .db.user.remove 'test_user_2_user'
       .promise()

@@ -23,10 +23,13 @@
 // * `port`   
 //   Port to the associated database.   
 
-// ## Source Code
-var db;
+// ## Schema
+var cmd, handler, schema;
 
-module.exports = function({options}) {
+schema = null;
+
+// ## Hander
+handler = function({options}) {
   var cmd_password_change, cmd_password_is_invalid, cmd_user_create, cmd_user_exists, k, ref, ref1, v;
   // Import options from `options.db`
   if (options.db == null) {
@@ -76,22 +79,22 @@ module.exports = function({options}) {
   switch (options.engine) {
     case 'mariadb':
     case 'mysql':
-      cmd_user_exists = db.cmd(options, `SELECT User FROM mysql.user WHERE User='${options.username}'`) + ` | grep ${options.username}`;
-      cmd_user_create = db.cmd(options, `CREATE USER ${options.username} IDENTIFIED BY '${options.password}';`);
-      cmd_password_is_invalid = db.cmd(options, {
-        admin_username: null,
-        admin_password: null
+      cmd_user_exists = cmd(options, `SELECT User FROM mysql.user WHERE User='${options.username}'`) + ` | grep ${options.username}`;
+      cmd_user_create = cmd(options, `CREATE USER ${options.username} IDENTIFIED BY '${options.password}';`);
+      cmd_password_is_invalid = cmd(options, {
+        admin_username: options.username,
+        admin_password: options.password
       }, '\\dt') + " 2>&1 >/dev/null | grep -e '^ERROR 1045.*'";
-      cmd_password_change = db.cmd(options, `SET PASSWORD FOR ${options.username} = PASSWORD ('${options.password}');`);
+      cmd_password_change = cmd(options, `SET PASSWORD FOR ${options.username} = PASSWORD ('${options.password}');`);
       break;
     case 'postgresql':
-      cmd_user_exists = db.cmd(options, `SELECT 1 FROM pg_roles WHERE rolname='${options.username}'`) + " | grep 1";
-      cmd_user_create = db.cmd(options, `CREATE USER ${options.username} WITH PASSWORD '${options.password}';`);
-      cmd_password_is_invalid = db.cmd(options, {
-        admin_username: null,
-        admin_password: null
+      cmd_user_exists = cmd(options, `SELECT 1 FROM pg_roles WHERE rolname='${options.username}'`) + " | grep 1";
+      cmd_user_create = cmd(options, `CREATE USER ${options.username} WITH PASSWORD '${options.password}';`);
+      cmd_password_is_invalid = cmd(options, {
+        admin_username: options.username,
+        admin_password: options.password
       }, '\\dt') + " 2>&1 >/dev/null | grep -e '^psql:\\sFATAL.*password\\sauthentication\\sfailed\\sfor\\suser.*'";
-      cmd_password_change = db.cmd(options, `ALTER USER ${options.username} WITH PASSWORD '${options.password}';`);
+      cmd_password_change = cmd(options, `ALTER USER ${options.username} WITH PASSWORD '${options.password}';`);
   }
   return this.system.execute({
     cmd: `signal=3\nif ${cmd_user_exists}; then\n  echo '[INFO] User already exists'\nelse\n  ${cmd_user_create}\n  echo '[WARN] User created'\n  signal=0\nfi\nif [ $signal -eq 3 ]; then\n  if ! ${cmd_password_is_invalid}; then\n    echo '[INFO] Password not modified'\n  else\n    ${cmd_password_change}\n    echo '[WARN] Password modified'\n    signal=0\n  fi\nfi\nexit $signal`,
@@ -100,5 +103,11 @@ module.exports = function({options}) {
   });
 };
 
+// ## Source Code
+module.exports = {
+  handler: handler,
+  schema: schema
+};
+
 // ## Dependencies
-db = require('@nikitajs/core/lib/misc/db');
+({cmd} = require('../query'));

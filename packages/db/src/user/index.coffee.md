@@ -23,9 +23,13 @@ Create a user for the destination database.
 * `port`   
   Port to the associated database.   
 
-## Source Code
+## Schema
 
-    module.exports = ({options}) ->
+    schema = null
+
+## Hander
+
+    handler = ({options}) ->
       # Import options from `options.db`
       options.db ?= {}
       options[k] ?= v for k, v of options.db
@@ -48,15 +52,15 @@ Create a user for the destination database.
       # Commands
       switch options.engine
         when 'mariadb', 'mysql'
-          cmd_user_exists = db.cmd(options, "SELECT User FROM mysql.user WHERE User='#{options.username}'") + " | grep #{options.username}"
-          cmd_user_create = db.cmd options, "CREATE USER #{options.username} IDENTIFIED BY '#{options.password}';"
-          cmd_password_is_invalid = db.cmd(options, admin_username: null, admin_password: null, '\\dt') + " 2>&1 >/dev/null | grep -e '^ERROR 1045.*'"
-          cmd_password_change = db.cmd options, "SET PASSWORD FOR #{options.username} = PASSWORD ('#{options.password}');"
+          cmd_user_exists = cmd(options, "SELECT User FROM mysql.user WHERE User='#{options.username}'") + " | grep #{options.username}"
+          cmd_user_create = cmd options, "CREATE USER #{options.username} IDENTIFIED BY '#{options.password}';"
+          cmd_password_is_invalid = cmd(options, admin_username: options.username, admin_password: options.password, '\\dt') + " 2>&1 >/dev/null | grep -e '^ERROR 1045.*'"
+          cmd_password_change = cmd options, "SET PASSWORD FOR #{options.username} = PASSWORD ('#{options.password}');"
         when 'postgresql'
-          cmd_user_exists = db.cmd(options, "SELECT 1 FROM pg_roles WHERE rolname='#{options.username}'") + " | grep 1"
-          cmd_user_create = db.cmd options, "CREATE USER #{options.username} WITH PASSWORD '#{options.password}';"
-          cmd_password_is_invalid = db.cmd(options, admin_username: null, admin_password: null, '\\dt') + " 2>&1 >/dev/null | grep -e '^psql:\\sFATAL.*password\\sauthentication\\sfailed\\sfor\\suser.*'"
-          cmd_password_change = db.cmd options, "ALTER USER #{options.username} WITH PASSWORD '#{options.password}';"
+          cmd_user_exists = cmd(options, "SELECT 1 FROM pg_roles WHERE rolname='#{options.username}'") + " | grep 1"
+          cmd_user_create = cmd options, "CREATE USER #{options.username} WITH PASSWORD '#{options.password}';"
+          cmd_password_is_invalid = cmd(options, admin_username: options.username, admin_password: options.password, '\\dt') + " 2>&1 >/dev/null | grep -e '^psql:\\sFATAL.*password\\sauthentication\\sfailed\\sfor\\suser.*'"
+          cmd_password_change = cmd options, "ALTER USER #{options.username} WITH PASSWORD '#{options.password}';"
       @system.execute
         cmd: """
         signal=3
@@ -80,7 +84,12 @@ Create a user for the destination database.
         """
         code_skipped: 3
         trap: true
+## Source Code
+
+    module.exports =
+      handler: handler
+      schema: schema
 
 ## Dependencies
 
-    db = require '@nikitajs/core/lib/misc/db'
+    {cmd} = require '../query'

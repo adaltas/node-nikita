@@ -51,29 +51,29 @@ require('nikita')
       if options.engine is 'postgres'
         console.log 'Deprecated Value: options "postgres" is deprecated in favor of "postgresql"'
         options.engine = 'postgresql'
-      # Defines and check the engine type 
+      # Defines and check the engine type
       options.engine = options.engine.toLowerCase()
       throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['postgresql']
       # Options
       options.port ?= 5432
       @system.execute
         code_skipped: 2
-        cmd: db.cmd options, '\\dt'
+        cmd: cmd options, '\\dt'
       , (err, {status}) ->
         throw err if err
         throw Error "Database does not exist #{options.database}" if !err and !status
       @system.execute
-        cmd: db.cmd options, "CREATE SCHEMA #{options.schema};"
-        unless_exec: db.cmd(options, "SELECT 1 FROM pg_namespace WHERE nspname = '#{options.schema}';") + " | grep 1"
+        cmd: cmd options, "CREATE SCHEMA #{options.schema};"
+        unless_exec: cmd(options, "SELECT 1 FROM pg_namespace WHERE nspname = '#{options.schema}';") + " | grep 1"
       # Check if owner is the good one
       @system.execute
         if: -> options.owner?
-        unless_exec: db.cmd(options, '\\dn') + " | grep '#{options.schema}|#{options.owner}'"
-        cmd: db.cmd options, "ALTER SCHEMA #{options.schema} OWNER TO #{options.owner};"
+        unless_exec: cmd(options, '\\dn') + " | grep '#{options.schema}|#{options.owner}'"
+        cmd: cmd options, "ALTER SCHEMA #{options.schema} OWNER TO #{options.owner};"
         code_skipped: 1
       , (err, {stderr}) ->
         throw Error "Owner #{options.owner} does not exists" if /^ERROR:\s\srole.*does\snot\sexist/.test stderr
 
 ## Dependencies
 
-    db = require '@nikitajs/core/lib/misc/db'
+    {cmd} = require '../query'

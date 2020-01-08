@@ -24,8 +24,8 @@ Create a user for the destination database.
       options[k] ?= v for k, v of options.db
       options.username ?= metadata.argument
       @system.execute
-        cmd: db.cmd options, "DROP USER IF EXISTS #{options.username};"
+        cmd: cmd options, "DROP USER IF EXISTS #{options.username};"
 
 ## Dependencies
 
-    db = require '@nikitajs/core/lib/misc/db'
+    {cmd} = require '../query'

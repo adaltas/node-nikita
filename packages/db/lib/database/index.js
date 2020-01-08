@@ -46,7 +46,7 @@
 // ```
 
 // ## Source Code
-var db;
+var cmd, connection_options;
 
 module.exports = function({metadata, options}) {
   var cmd_database_create, cmd_database_exists, i, k, len, ref, ref1, ref2, results, user, v;
@@ -124,18 +124,18 @@ module.exports = function({metadata, options}) {
             options.collation = 'utf8_general_ci';
           }
       }
-      cmd_database_create = db.cmd(options, {
+      cmd_database_create = cmd(options, {
         database: null
       }, [`CREATE DATABASE ${options.database}`, `DEFAULT CHARACTER SET ${options.character_set}`, options.collation ? `DEFAULT COLLATE ${options.collation}` : void 0, ';'].join(' '));
-      cmd_database_exists = db.cmd(options, {
+      cmd_database_exists = cmd(options, {
         database: options.database
       }, `USE ${options.database};`);
       break;
     case 'postgresql':
-      cmd_database_create = db.cmd(options, {
+      cmd_database_create = cmd(options, {
         database: null
       }, `CREATE DATABASE ${options.database};`);
-      cmd_database_exists = db.cmd(options, {
+      cmd_database_exists = cmd(options, {
         database: options.database
       }, "\\dt");
   }
@@ -164,13 +164,8 @@ module.exports = function({metadata, options}) {
           module: 'nikita/db/database'
         });
       });
-      this.db.user.exists({
-        engine: options.engine,
-        username: user,
-        admin_username: options.admin_username,
-        admin_password: options.admin_password,
-        port: options.port,
-        host: options.host
+      this.db.user.exists(connection_options(options), {
+        username: user
       }, function(err, {status}) {
         if (!err && !status) {
           throw Error(`DB user does not exists: ${user}`);
@@ -179,21 +174,21 @@ module.exports = function({metadata, options}) {
       switch (options.engine) {
         case 'mariadb':
         case 'mysql':
-          // cmd_has_privileges = db.cmd options, admin_username: null, username: user.username, password: user.password, database: options.database, "SHOW TABLES FROM pg_database"
-          cmd_has_privileges = db.cmd(options, {
+          // cmd_has_privileges = cmd options, admin_username: null, username: user.username, password: user.password, database: options.database, "SHOW TABLES FROM pg_database"
+          cmd_has_privileges = cmd(options, {
             database: 'mysql'
           }, `SELECT user FROM db WHERE db='${options.database}';`) + ` | grep '${user}'`;
-          cmd_grant_privileges = db.cmd(options, {
+          cmd_grant_privileges = cmd(options, {
             database: null
           }, `GRANT ALL PRIVILEGES ON ${options.database}.* TO '${user
-          // FLUSH PRIVILEGES;
+          // FLUSH PRIVILEGES
 }' WITH GRANT OPTION;`);
           break;
         case 'postgresql':
-          cmd_has_privileges = db.cmd(options, {
+          cmd_has_privileges = cmd(options, {
             database: options.database
           }, "\\l") + ` | egrep '^${user}='`;
-          cmd_grant_privileges = db.cmd(options, {
+          cmd_grant_privileges = cmd(options, {
             database: null
           }, `GRANT ALL PRIVILEGES ON DATABASE ${options.database} TO ${user}`);
       }
@@ -215,4 +210,4 @@ module.exports = function({metadata, options}) {
 };
 
 // ## Dependencies
-db = require('@nikitajs/core/lib/misc/db');
+({cmd, connection_options} = require('../query'));

@@ -34,7 +34,7 @@
 // ```
 
 // ## Source Code
-var db;
+var cmd;
 
 module.exports = function({metadata, options}) {
   var k, ref, ref1, v;
@@ -68,11 +68,11 @@ module.exports = function({metadata, options}) {
       switch (options.engine) {
         case 'mariadb':
         case 'mysql':
-          return db.cmd(options, {
+          return cmd(options, {
             database: null
           }, "show databases") + ` | grep '${options.database}'`;
         case 'postgresql':
-          return db.cmd(options, {
+          return cmd(options, {
             database: null
           }, null) + ` -l | cut -d \\| -f 1 | grep -qw '${options.database}'`;
       }
@@ -81,4 +81,4 @@ module.exports = function({metadata, options}) {
 };
 
 // ## Dependencies
-db = require('@nikitajs/core/lib/misc/db');
+({cmd} = require('../query'));

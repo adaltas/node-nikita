@@ -10,12 +10,10 @@ ini = require './ini'
 tilde = require 'tilde-expansion'
 string = require './string'
 array = require './array'
-db = require './db'
 docker = require './docker'
 ssh = require './ssh'
 
 misc = module.exports =
-  db: require './db'
   docker: require './docker'
   stats: require './stats'
   ssh: require './ssh'
@@ -25,6 +23,8 @@ misc = module.exports =
     # eg `///^\*/\w+@#{misc.regexp.escape realm}\s+\*///mg`
     escape: (str) ->
       str.replace /[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"
+    is: (reg) ->
+      reg instanceof RegExp
   object:
     equals: (obj1, obj2, keys) ->
       keys1 = Object.keys obj1

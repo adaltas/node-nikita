@@ -29,9 +29,9 @@ Create a user for the destination database.
       database = options.database
       delete options.database
       @system.execute
-        cmd: db.cmd options, "DROP DATABASE IF EXISTS #{database};"
+        cmd: cmd options, "DROP DATABASE IF EXISTS #{database};"
         code_skipped: 2
 
 ## Dependencies
 
-    db = require '@nikitajs/core/lib/misc/db'
+    {cmd} = require '../query'

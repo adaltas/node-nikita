@@ -33,12 +33,12 @@ Create a user for the destination database.
       if options.engine is 'postgres'
         console.error 'Deprecated Value: options "postgres" is deprecated in favor of "postgresql"'
         options.engine = 'postgresql'
-      # Defines and check the engine type 
+      # Defines and check the engine type
       options.engine = options.engine.toLowerCase()
       throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['postgresql']
       @system.execute
-        cmd: db.cmd options, "DROP SCHEMA IF EXISTS #{options.schema};"
+        cmd: cmd options, "DROP SCHEMA IF EXISTS #{options.schema};"
 
 ## Dependencies
 
-    db = require '@nikitajs/core/lib/misc/db'
+    {cmd} = require '../query'

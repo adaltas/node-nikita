@@ -17,7 +17,7 @@
 //   The new user name.   
 
 // ## Source Code
-var db;
+var cmd;
 
 module.exports = function({metadata, options}) {
   var k, ref, v;
@@ -36,9 +36,9 @@ module.exports = function({metadata, options}) {
     options.username = metadata.argument;
   }
   return this.system.execute({
-    cmd: db.cmd(options, `DROP USER IF EXISTS ${options.username};`)
+    cmd: cmd(options, `DROP USER IF EXISTS ${options.username};`)
   });
 };
 
 // ## Dependencies
-db = require('@nikitajs/core/lib/misc/db');
+({cmd} = require('../query'));

@@ -1,6 +1,6 @@
 
 nikita = require '@nikitajs/core'
-misc = require '@nikitajs/core/src/misc'
+{cmd} = require '../src/query'
 {tags, ssh, db} = require './test'
 they = require('ssh2-they').configure ssh...
 
@@ -39,6 +39,7 @@ for engine, _ of db then do (engine) ->
         nikita
           ssh: ssh
           db: db[engine]
+          debug: true
         .db.database.remove 'postgres_db_3'
         .db.user.remove 'postgres_user_3'
         .db.user
@@ -49,8 +50,8 @@ for engine, _ of db then do (engine) ->
           user: 'postgres_user_3'
         .system.execute
           cmd: switch engine
-            when 'mariadb', 'mysql' then misc.db.cmd(db[engine], database: 'mysql', "SELECT user FROM db WHERE db='postgres_db_3';") + " | grep 'postgres_user_3'"
-            when 'postgresql' then misc.db.cmd(db[engine], database: 'postgres_db_3', '\\l') + " | egrep '^postgres_user_3='"
+            when 'mariadb', 'mysql' then cmd(db[engine], database: 'mysql', "SELECT user FROM db WHERE db='postgres_db_3';") + " | grep 'postgres_user_3'"
+            when 'postgresql' then cmd(db[engine], database: 'postgres_db_3', '\\l') + " | egrep '^postgres_user_3='"
         , (err, {status}) ->
           status.should.be.true() unless err
         .db.database.remove 'postgres_db_3'

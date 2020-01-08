@@ -18,7 +18,7 @@
 //   New schema name.   
 
 // ## Source Code
-var db;
+var cmd;
 
 module.exports = function({metadata, options}) {
   var k, ref, ref1, v;
@@ -54,15 +54,15 @@ module.exports = function({metadata, options}) {
     console.error('Deprecated Value: options "postgres" is deprecated in favor of "postgresql"');
     options.engine = 'postgresql';
   }
-  // Defines and check the engine type 
+  // Defines and check the engine type
   options.engine = options.engine.toLowerCase();
   if ((ref1 = options.engine) !== 'postgresql') {
     throw Error(`Unsupport engine: ${JSON.stringify(options.engine)}`);
   }
   return this.system.execute({
-    cmd: db.cmd(options, `DROP SCHEMA IF EXISTS ${options.schema};`)
+    cmd: cmd(options, `DROP SCHEMA IF EXISTS ${options.schema};`)
   });
 };
 
 // ## Dependencies
-db = require('@nikitajs/core/lib/misc/db');
+({cmd} = require('../query'));

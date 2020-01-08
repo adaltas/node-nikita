@@ -23,12 +23,12 @@
 //   The password of a user with privileges on the database, used unless admin_password is provided.   
 
 // ## Source Code
-var db;
+var cmd, connection_options;
 
 module.exports = {
   shy: true,
   handler: function({metadata, options}) {
-    var cmd, k, ref, ref1, v;
+    var k, ref, ref1, v;
     // Import options from `options.db`
     if (options.db == null) {
       options.db = {};
@@ -70,24 +70,30 @@ module.exports = {
     if (options.port == null) {
       options.port = 5432;
     }
-    cmd = (function() {
-      switch (options.engine) {
-        case 'mariadb':
-        case 'mysql':
-          return db.cmd(options, {
-            database: 'mysql'
-          }, "SHOW DATABASES") + ` | grep -w '${options.database}'`;
-        case 'postgresql':
-          // Not sure why we're not using \l
-          return db.cmd(options, `SELECT datname FROM pg_database WHERE datname = '${options.database}'`) + ` | grep -w '${options.database}'`;
-      }
-    })();
-    return this.system.execute({
-      cmd: cmd,
-      code_skipped: 1
+    // @system.execute
+    //   cmd: switch options.engine
+    //     when 'mariadb', 'mysql'
+    //       cmd(options, database: null, "SHOW DATABASES") + " | grep -w '#{options.database}'"
+    //     when 'postgresql'
+    //       # Not sure why we're not using \l
+    //       cmd(options, "SELECT datname FROM pg_database WHERE datname = '#{options.database}'") + " | grep -w '#{options.database}'"
+    //   code_skipped: 1
+    return this.db.query(connection_options(options), {
+      cmd: (function() {
+        switch (options.engine) {
+          case 'mariadb':
+          case 'mysql':
+            return 'SHOW DATABASES';
+          case 'postgresql':
+            // Not sure why we're not using \l
+            return `SELECT datname FROM pg_database WHERE datname = '${options.database}'`;
+        }
+      })(),
+      database: null,
+      grep: options.database
     });
   }
 };
 
 // ## Dependencies
-db = require('@nikitajs/core/lib/misc/db');
+({cmd, connection_options} = require('../query'));

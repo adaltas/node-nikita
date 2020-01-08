@@ -17,17 +17,26 @@ Check if a user exists in the database.
 * `host`   
   The hostname of the database.   
 * `username`   
-  The new user name.   
-* `password`   
-  The new user password.   
+  The new user name.    
 * `port`   
   Port to the associated database.   
-* `user` (String)   
-  User name.   
+
+## Schema
+
+    schema:
+      type: 'object'
+      properties:
+        $ref: '/nikita/db/query'
+        'username': type: 'string'
+        'password': type: 'string'
+        # 'connection':
+        #   $ref: '/nikita/db/query'
+      required: [
+        'password', 'username' ]
 
 ## Source Code
 
-    module.exports = shy: true, handler: ({options}) ->
+    module.exports = shy: true, handler: ({options}, callback) ->
       # Import options from `options.db`
       options.db ?= {}
       options[k] ?= v for k, v of options.db
@@ -46,16 +55,17 @@ Check if a user exists in the database.
       throw Error "Unsupport engine: #{JSON.stringify options.engine}" unless options.engine in ['mariadb', 'mysql', 'postgresql']
       # Defines port
       options.port ?= 5432
-      cmd = switch options.engine
-        when 'mariadb', 'mysql'
-          db.cmd(options, database: 'mysql', "select User from user where User = '#{options.username}'") + " | grep '#{options.username}'"
-        when 'postgresql'
-          # Not sure why we're not using du
-          db.cmd(options, "SELECT 1 FROM pg_roles WHERE rolname='#{options.username}'") + " | grep 1"
-      @system.execute
-        cmd: cmd
-        code_skipped: 1
+      @db.query connection_options(options),
+        database: undefined
+        cmd: switch options.engine
+          when 'mariadb', 'mysql'
+            "SELECT User FROM mysql.user WHERE User = '#{options.username}'"
+          when 'postgresql'
+            "SELECT '#{options.username}' FROM pg_roles WHERE rolname='#{options.username}'"
+        trim: true
+      , (err, {stdout}) ->
+        callback err, stdout is options.username
 
 ## Dependencies
 
-    db = require '@nikitajs/core/lib/misc/db'
+    {connection_options} = require '../query'
