@@ -21,7 +21,23 @@ describe 'metadata "schema"', ->
       options.an_integer.should.be.a.Number()
     .promise()
 
-  it 'is invalid', ->
+  it 'invalid with one error', ->
+    nikita
+    .call
+      a_string: 1
+      an_integer: 0
+      schema:
+        type: 'object'
+        properties:
+          'an_integer': type: 'integer', 'minimum': 1
+      relax: true
+    , (->)
+    , (err) ->
+      err.message.should.eql 'data.an_integer should be >= 1'
+      (err.errors is undefined).should.be.true()
+    .promise()
+
+  it 'invalid with multiple errors', ->
     nikita
     .call
       a_string: 1
@@ -69,10 +85,7 @@ describe 'metadata "schema"', ->
       relax: true
     , (->)
     , (err) ->
-      err.message.should.eql 'Invalid Options'
-      err.errors.map( (err) -> err.message).should.eql [
-        'data.split.an_integer should be integer'
-      ]
+      err.message.should.eql 'data.split.an_integer should be integer'
     .promise()
   
   describe 'constructor', ->
@@ -133,5 +146,5 @@ describe 'metadata "schema"', ->
         options:
           a_regexp: 'invalid'
       , (->), (err) ->
-        err.message.should.eql 'Invalid Options'
+        err.message.should.eql 'data.a_regexp should pass "instanceof" keyword validation'
       .promise()

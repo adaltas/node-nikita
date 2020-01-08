@@ -147,9 +147,12 @@
               if action.metadata.schema
                 errors = obj.schema.validate action.options, action.metadata.schema
                 if errors.length
-                  error = new Error 'Invalid Options'
-                  error.errors = errors
-                  throw error
+                  if errors.length is 1
+                    throw errors[0]
+                  else
+                    error = new Error 'Invalid Options'
+                    error.errors = errors
+                    throw error
               # Validate sleep option, more can be added
               throw Error "Invalid options sleep, got #{JSON.stringify action.metadata.sleep}" unless typeof action.metadata.sleep is 'number' and action.metadata.sleep >= 0
             catch error

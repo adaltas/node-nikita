@@ -261,9 +261,13 @@ module.exports = function() {
           if (action.metadata.schema) {
             errors = obj.schema.validate(action.options, action.metadata.schema);
             if (errors.length) {
-              error = new Error('Invalid Options');
-              error.errors = errors;
-              throw error;
+              if (errors.length === 1) {
+                throw errors[0];
+              } else {
+                error = new Error('Invalid Options');
+                error.errors = errors;
+                throw error;
+              }
             }
           }
           if (!(typeof action.metadata.sleep === 'number' && action.metadata.sleep >= 0)) {
