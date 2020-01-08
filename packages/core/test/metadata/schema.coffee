@@ -48,10 +48,10 @@ describe 'metadata "schema"', ->
       schema:
         type: 'object'
         properties:
-          'a_string': type: 'string'
+          'an_integer': type: 'integer'
       handler: (->)
     .call
-      split: a_string: 'a value'
+      split: an_integer: 1234
       schema:
         type: 'object'
         properties:
@@ -61,7 +61,7 @@ describe 'metadata "schema"', ->
     , (err) ->
       throw err if err
     .call
-      split: a_string: 1
+      split: an_integer: 'abc'
       schema:
         type: 'object'
         properties:
@@ -71,19 +71,67 @@ describe 'metadata "schema"', ->
     , (err) ->
       err.message.should.eql 'Invalid Options'
       err.errors.map( (err) -> err.message).should.eql [
-        'data.split.a_string should be string'
+        'data.split.an_integer should be integer'
       ]
     .promise()
+  
+  describe 'constructor', ->
 
-  it 'set default properties', ->
-    nikita()
-    .call
-      schema:
-        type: 'object'
-        properties:
-          'a_string':
-            type: 'string'
-            default: 'a value'
-    , ({options}) ->
-      options.a_string.should.eql 'a value'
-    .promise()
+    it 'useDefaults', ->
+      nikita()
+      .call
+        schema:
+          type: 'object'
+          properties:
+            'a_string':
+              type: 'string'
+              default: 'a value'
+      , ({options}) ->
+        options.a_string.should.eql 'a value'
+      .promise()
+
+    it.skip 'coerceTypes', ->
+      # Option is currently disactivated because it is unclear wether we shall
+      # accept its rule or create ours. For exemple, `true` is cast to string `"true"`
+      # and string `""` is cast to `null` which might not be what we want.
+      nikita()
+      .call
+        schema:
+          type: 'object'
+          properties:
+            'int_to_string':
+              type: 'string'
+            'string_to_boolean':
+              type: 'boolean'
+      ,
+        int_to_string: 1234
+        string_to_boolean: ''
+      , ({options}) ->
+        options.int_to_string.should.eql '1234'
+        options.string_to_boolean.should.be.false()
+      .promise()
+  
+  describe 'ajv-keywords', ->
+
+    it 'instanceof', ->
+      nikita()
+      .call
+        schema:
+          type: 'object'
+          properties:
+            'a_regexp': instanceof: 'RegExp'
+        options:
+          a_regexp: /.*/
+      , ({options}) ->
+        'ok'.should.match options.a_regexp
+      .call
+        relax: true
+        schema:
+          type: 'object'
+          properties:
+            'a_regexp': instanceof: 'RegExp'
+        options:
+          a_regexp: 'invalid'
+      , (->), (err) ->
+        err.message.should.eql 'Invalid Options'
+      .promise()

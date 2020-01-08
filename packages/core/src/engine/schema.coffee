@@ -1,13 +1,19 @@
 
 Ajv = require 'ajv'
+ajv_keywords = require 'ajv-keywords'
+
 
 module.exports = () ->
-  ajv = new Ajv allErrors: true, useDefaults: true
+  ajv = new Ajv
+    $data: true
+    allErrors: true
+    useDefaults: true
+    # coerceTypes: true
+  ajv_keywords ajv
   add: (name, schema) ->
     return unless schema
     ajv.addSchema schema, name
   validate: (data, schema) ->
-    # console.log data, schema
     validate = ajv.compile schema
     valid = validate data
     if validate.errors
