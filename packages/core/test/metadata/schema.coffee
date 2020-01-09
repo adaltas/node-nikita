@@ -121,6 +121,70 @@ describe 'metadata "schema"', ->
       , (err) ->
         err.message.should.eql 'data.split.an_integer should be integer'
       .promise()
+
+    it 'global and namespace as an array', ->
+      nikita.registry.register ['test', 'schema'],
+        schema:
+          type: 'object'
+          properties:
+            'an_integer': type: 'integer'
+        handler: (->)
+      await nikita()
+      .call
+        split: an_integer: 1234
+        schema:
+          type: 'object'
+          properties:
+            'split': $ref: '/nikita/test/schema'
+        relax: true
+      , (->)
+      , (err) ->
+        throw err if err
+      .call
+        split: an_integer: 'abc'
+        schema:
+          type: 'object'
+          properties:
+            'split': $ref: '/nikita/test/schema'
+        relax: true
+      , (->)
+      , (err) ->
+        err.message.should.eql 'data.split.an_integer should be integer'
+      .promise()
+    nikita.registry.unregister ['test', 'schema']
+
+  it 'gobal and namespace as an object', ->
+    nikita.registry.register
+      'test':
+        'schema':
+          schema:
+            type: 'object'
+            properties:
+              'an_integer': type: 'integer'
+          handler: (->)
+    await nikita()
+    .call
+      split: an_integer: 1234
+      schema:
+        type: 'object'
+        properties:
+          'split': $ref: '/nikita/test/schema'
+      relax: true
+    , (->)
+    , (err) ->
+      throw err if err
+    .call
+      split: an_integer: 'abc'
+      schema:
+        type: 'object'
+        properties:
+          'split': $ref: '/nikita/test/schema'
+      relax: true
+    , (->)
+    , (err) ->
+      err.message.should.eql 'data.split.an_integer should be integer'
+    .promise()
+    nikita.registry.unregister ['test', 'schema']
   
   describe 'constructor', ->
 

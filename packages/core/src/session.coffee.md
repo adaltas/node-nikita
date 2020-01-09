@@ -476,6 +476,11 @@
           index = (l + index) if index < 0
           state.parent_levels[0].history[index]?.status
       obj.schema = schema()
+      actions = registry.get flatten: true
+      for action in actions
+        if action.schema
+          name = "/nikita/#{action.action.join('/')}"
+          obj.schema.add name, action.schema
       obj.registry = registry.registry
         parent: registry
         chain: proxy

@@ -3,7 +3,7 @@
 var EventEmitter, args_to_actions, array, conditions, each, make_action, path, promise, registry, schema, state_create_level, state_reset_level, string, util;
 
 module.exports = function() {
-  var call_callback, handle_get, handle_multiple_call, jump_to_error, obj, proxy, run, run_next, state;
+  var action, actions, call_callback, handle_get, handle_multiple_call, i, jump_to_error, len, name, obj, proxy, run, run_next, state;
   if (arguments.length === 1) {
     obj = new EventEmitter;
     obj.options = arguments[0];
@@ -405,21 +405,28 @@ module.exports = function() {
           return do_conditions();
         }
         return each(state.befores).call(function(before, next) {
-          var _opts, k, ref2, v;
-          for (k in before) {
-            v = before[k];
-            switch (k) {
-              case 'handler':
-                continue;
-              case 'action':
-                if (!array.compare(v, action.options[k])) {
-                  return next();
-                }
-                break;
-              default:
-                if (v !== action.options[k]) {
-                  return next();
-                }
+          var _opts, k, ref2, ref3, ref4, v;
+          if (before.action) {
+            if (!array.compare(before.action, action.action)) {
+              return next();
+            }
+          }
+          if (before.metadata) {
+            ref2 = before.metadata;
+            for (k in ref2) {
+              v = ref2[k];
+              if (v !== action.metadata[k]) {
+                return next();
+              }
+            }
+          }
+          if (before.options) {
+            ref3 = before.options;
+            for (k in ref3) {
+              v = ref3[k];
+              if (v !== action.options[k]) {
+                return next();
+              }
             }
           }
           _opts = {
@@ -429,9 +436,9 @@ module.exports = function() {
             v = before[k];
             _opts[k] = v;
           }
-          ref2 = action.options;
-          for (k in ref2) {
-            v = ref2[k];
+          ref4 = action.options;
+          for (k in ref4) {
+            v = ref4[k];
             if (_opts[k] == null) {
               _opts[k] = v;
             }
@@ -670,21 +677,28 @@ module.exports = function() {
           return do_options_after();
         }
         return each(state.afters).call(function(after, next) {
-          var _opts, k, ref2, v;
-          for (k in after) {
-            v = after[k];
-            switch (k) {
-              case 'handler':
-                continue;
-              case 'action':
-                if (!array.compare(v, action.options[k])) {
-                  return next();
-                }
-                break;
-              default:
-                if (v !== action.options[k]) {
-                  return next();
-                }
+          var _opts, k, ref2, ref3, ref4, v;
+          if (after.action) {
+            if (!array.compare(after.action, action.action)) {
+              return next();
+            }
+          }
+          if (after.metadata) {
+            ref2 = after.metadata;
+            for (k in ref2) {
+              v = ref2[k];
+              if (v !== action.metadata[k]) {
+                return next();
+              }
+            }
+          }
+          if (after.options) {
+            ref3 = after.options;
+            for (k in ref3) {
+              v = ref3[k];
+              if (v !== action.options[k]) {
+                return next();
+              }
             }
           }
           _opts = {
@@ -694,9 +708,9 @@ module.exports = function() {
             v = after[k];
             _opts[k] = v;
           }
-          ref2 = action.options;
-          for (k in ref2) {
-            v = ref2[k];
+          ref4 = action.options;
+          for (k in ref4) {
+            v = ref4[k];
             if (_opts[k] == null) {
               _opts[k] = v;
             }
@@ -936,6 +950,16 @@ module.exports = function() {
     }
   };
   obj.schema = schema();
+  actions = registry.get({
+    flatten: true
+  });
+  for (i = 0, len = actions.length; i < len; i++) {
+    action = actions[i];
+    if (action.schema) {
+      name = `/nikita/${action.action.join('/')}`;
+      obj.schema.add(name, action.schema);
+    }
+  }
   obj.registry = registry.registry({
     parent: registry,
     chain: proxy,

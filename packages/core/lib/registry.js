@@ -40,7 +40,7 @@ registry = function({chain, on_register, parent} = {}) {
 
   // Options include: flatten, deprecate
   obj.get = function(name, options) {
-    var cnames, flatstore, i, j, len, n, walk;
+    var actions, cnames, i, j, len, n, walk;
     if (arguments.length === 1 && is_object(arguments[0])) {
       options = name;
       name = null;
@@ -51,7 +51,7 @@ registry = function({chain, on_register, parent} = {}) {
     if (!name) {
       // Flatten result
       if (options.flatten) {
-        flatstore = {};
+        actions = [];
         walk = function(store, keys) {
           var k, results, v;
           results = [];
@@ -61,7 +61,9 @@ registry = function({chain, on_register, parent} = {}) {
               if (v.deprecate && !options.deprecate) {
                 continue;
               }
-              results.push(flatstore[keys.join('.')] = merge(v));
+              // flatstore[keys.join '.'] = merge v
+              v.action = keys;
+              results.push(actions.push(merge(v)));
             } else {
               results.push(walk(v, [...keys, k]));
             }
@@ -69,7 +71,7 @@ registry = function({chain, on_register, parent} = {}) {
           return results;
         };
         walk(store, []);
-        return flatstore;
+        return actions;
       } else {
         // Tree result
         walk = function(store, keys) {

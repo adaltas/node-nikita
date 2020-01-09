@@ -34,16 +34,18 @@ Options include: flatten, deprecate
         unless name
           # Flatten result
           if options.flatten
-            flatstore = {}
+            actions = []
             walk = (store, keys) ->
               for k, v of store
                 if k is ''
                   continue if v.deprecate and not options.deprecate
-                  flatstore[keys.join '.'] = merge v
+                  # flatstore[keys.join '.'] = merge v
+                  v.action = keys
+                  actions.push merge v
                 else
                   walk v, [keys..., k]
             walk store, []
-            return flatstore
+            return actions
           # Tree result
           else
             walk = (store, keys) ->
