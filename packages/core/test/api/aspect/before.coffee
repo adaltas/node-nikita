@@ -27,7 +27,7 @@ describe 'api before', ->
       history = []
       nikita()
       .registry.register 'handler', (->)
-      .before action: 'handler', key: 'value 2', ({options}) ->
+      .before action: 'handler', options: key: 'value 2', ({options}) ->
         history.push options.key
       .handler
         key: 'value 1'

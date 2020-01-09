@@ -229,10 +229,12 @@
             return do_conditions() if action.options.intercepting
             each state.befores
             .call (before, next) ->
-              for k, v of before then switch k
-                when 'handler' then continue
-                when 'action' then return next() unless array.compare v, action.options[k]
-                else return next() unless v is action.options[k]
+              if before.action
+                return next() unless array.compare before.action, action.action
+              if before.metadata then for k, v of before.metadata
+                return next() unless v is action.metadata[k]
+              if before.options then for k, v of before.options
+                return next() unless v is action.options[k]
               _opts = intercepting: true
               for k, v of before
                 _opts[k] = v
@@ -348,10 +350,12 @@
             return do_options_after() if action.options.intercepting
             each state.afters
             .call (after, next) ->
-              for k, v of after then switch k
-                when 'handler' then continue
-                when 'action' then return next() unless array.compare v, action.options[k]
-                else return next() unless v is action.options[k]
+              if after.action
+                return next() unless array.compare after.action, action.action
+              if after.metadata then for k, v of after.metadata
+                return next() unless v is action.metadata[k]
+              if after.options then for k, v of after.options
+                return next() unless v is action.options[k]
               _opts = intercepting: true
               for k, v of after
                 _opts[k] = v
