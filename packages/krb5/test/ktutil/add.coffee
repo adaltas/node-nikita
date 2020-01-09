@@ -6,14 +6,12 @@ they = require('ssh2-they').configure ssh...
 
 return unless tags.krb5_ktadd
 
-describe 'krb5.ktadd', ->
+describe 'krb5.kutil.add', ->
 
   they 'create a new keytab', ({ssh}) ->
     nikita
       ssh: ssh
-      kadmin_server: krb5.kadmin_server
-      kadmin_principal: krb5.kadmin_principal
-      kadmin_password: krb5.kadmin_password
+      krb5: admin: krb5
     .krb5.addprinc
       principal: "nikita@#{krb5.realm}"
       password: 'nikita123-1'
@@ -34,9 +32,7 @@ describe 'krb5.ktadd', ->
   they 'detect kvno', ({ssh}) ->
     nikita
       ssh: ssh
-      kadmin_server: krb5.kadmin_server
-      kadmin_principal: krb5.kadmin_principal
-      kadmin_password: krb5.kadmin_password
+      krb5: admin: krb5
     .krb5.addprinc
       principal: "nikita@#{krb5.realm}"
       randkey: true
@@ -45,9 +41,9 @@ describe 'krb5.ktadd', ->
       principal: "nikita@#{krb5.realm}"
       keytab: "#{scratch}/nikita_1.keytab"
       password: 'nikita123-1'
-    .system.execute
-      cmd: misc.kadmin krb5, """
-         change_password -pw nikita123-2 nikita@#{krb5.realm}
+    .krb5.execute
+      cmd: """
+      change_password -pw nikita123-2 nikita@#{krb5.realm}
       """
     .krb5.ktutil.add
       principal: "nikita@#{krb5.realm}"
@@ -66,9 +62,7 @@ describe 'krb5.ktadd', ->
   they 'change permission', ({ssh}) ->
     nikita
       ssh: ssh
-      kadmin_server: krb5.kadmin_server
-      kadmin_principal: krb5.kadmin_principal
-      kadmin_password: krb5.kadmin_password
+      krb5: admin: krb5
     .krb5.addprinc
       principal: "nikita@#{krb5.realm}"
       randkey: true

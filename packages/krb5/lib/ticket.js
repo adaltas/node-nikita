@@ -25,14 +25,23 @@
 //   principal: 'myservice/my.fqdn@MY.REALM',
 //   keytab: '/etc/security/keytabs/my.service.keytab',
 // }, function(err, {status}){
-//   console.log(err ? err.message : 'Is ticket renewed: ' + status);
+//   console.info(err ? err.message : 'Is ticket renewed: ' + status);
 // });
 // ```
 
-// ## Source Code
-var krb5;
+// ## Hooks
+var handler, krb5, mutate, on_options;
 
-module.exports = function({options}) {
+on_options = function({options}) {
+  // Import all properties from `options.krb5`
+  if (options.krb5) {
+    mutate(options, options.krb5);
+    return delete options.krb5;
+  }
+};
+
+// ## Handler
+handler = function({options}) {
   var ssh;
   if (!options.keytab && !options.password) {
     throw Error("Incoherent options: expects one of keytab or password");
@@ -58,5 +67,13 @@ module.exports = function({options}) {
   });
 };
 
+// ## Export
+module.exports = {
+  handler: handler,
+  on_options: on_options
+};
+
 // ## Dependencies
 krb5 = require('@nikitajs/core/lib/misc/krb5');
+
+({mutate} = require('mixme'));

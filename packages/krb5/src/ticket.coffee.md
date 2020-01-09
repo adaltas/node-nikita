@@ -25,13 +25,21 @@ require('nikita')
   principal: 'myservice/my.fqdn@MY.REALM',
   keytab: '/etc/security/keytabs/my.service.keytab',
 }, function(err, {status}){
-  console.log(err ? err.message : 'Is ticket renewed: ' + status);
+  console.info(err ? err.message : 'Is ticket renewed: ' + status);
 });
 ```
 
-## Source Code
+## Hooks
 
-    module.exports = ({options}) ->
+    on_options = ({options}) ->
+      # Import all properties from `options.krb5`
+      if options.krb5
+        mutate options, options.krb5
+        delete options.krb5
+
+## Handler
+
+    handler = ({options}) ->
       throw Error "Incoherent options: expects one of keytab or password" if not options.keytab and not options.password
       # SSH connection
       ssh = @ssh options.ssh
@@ -54,6 +62,13 @@ require('nikita')
         gid: options.gid
         target: options.target
 
+## Export
+
+    module.exports =
+      handler: handler
+      on_options: on_options
+
 ## Dependencies
 
     krb5 = require '@nikitajs/core/lib/misc/krb5'
+    {mutate} = require 'mixme'

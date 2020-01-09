@@ -6,11 +6,11 @@ in the way it can manage several principal on one keytab.
 
 ## Options
 
-* `kadmin_server`   
+* `admin.server`   
   Address of the kadmin server; optional, use "kadmin.local" if missing.   
-* `kadmin_principal`   
+* `admin.principal`   
   KAdmin principal name unless `kadmin.local` is used.   
-* `kadmin_password`   
+* `admin.password`   
   Password associated to the KAdmin principal.   
 * `principal`   
   Principal to be inserted.   
@@ -31,13 +31,21 @@ require('nikita').krb5.ktutil.add({
   keytab: '/etc/security/keytabs/my.service.keytab',
   password: 'password'
 }, function(err, status){
-  console.log(err ? err.message : 'Keytab created or modified: ' + status);
+  console.info(err ? err.message : 'Keytab created or modified: ' + status);
 });
 ```
 
+## Hooks
+
+    on_options = ({options}) ->
+      # Import all properties from `options.krb5`
+      if options.krb5
+        mutate options, options.krb5
+        delete options.krb5
+
 ## Source Code
 
-    module.exports = ({options}) ->
+    handler = ({options}) ->
       throw Error 'Property principal is required' unless options.principal
       throw Error 'Property keytab is required' unless options.keytab
       throw Error 'Property password is required' unless options.password
@@ -72,8 +80,9 @@ require('nikita').krb5.ktutil.add({
             enctype: enctype
         princ_entries = entries.filter((e) -> "#{e.principal}" is "#{options.principal}").reverse()
       # Get principal information and compare to keytab entries kvnos
-      @system.execute
-        cmd: misc.kadmin options, "getprinc -terse #{options.principal}"
+      @krb5.execute
+        admin: options.admin
+        cmd: "getprinc -terse #{options.principal}"
         shy: true
       , (err, {status, stdout}) ->
         return err if err
@@ -133,6 +142,12 @@ require('nikita').krb5.ktutil.add({
         mode: options.mode
         if: options.mode?
 
+## Export
+
+    module.exports =
+      handler: handler
+      on_options: on_options
+
 ## Fields in 'getprinc -terse' output
 
 princ-canonical-name
@@ -161,3 +176,4 @@ data-type[1]
     path = require 'path'
     misc = require '@nikitajs/core/lib/misc'
     string = require '@nikitajs/core/lib/misc/string'
+    {mutate} = require 'mixme'

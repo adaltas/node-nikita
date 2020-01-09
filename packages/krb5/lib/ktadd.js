@@ -6,11 +6,11 @@
 
 // ## Options
 
-// * `kadmin_server`   
+// * `admin.server`   
 //   Address of the kadmin server; optional, use "kadmin.local" if missing.   
-// * `kadmin_principal`   
+// * `admin.principal`   
 //   KAdmin principal name unless `kadmin.local` is used.   
-// * `kadmin_password`   
+// * `admin.password`   
 //   Password associated to the KAdmin principal.   
 // * `principal`   
 //   Principal to be created.   
@@ -24,18 +24,29 @@
 // .krb5_delrinc({
 //   principal: 'myservice/my.fqdn@MY.REALM',
 //   keytab: '/etc/security/keytabs/my.service.keytab',
-//   kadmin_principal: 'me/admin@MY_REALM',
-//   kadmin_password: 'pass',
-//   kadmin_server: 'localhost'
+//   admin: {
+//     principal: 'me/admin@MY_REALM',
+//     password: 'pass',
+//     server: 'localhost'
+//   }
 // }, function(err, status){
-//   console.log(err ? err.message : 'Principal removed: ' + status);
+//   console.info(err ? err.message : 'Principal removed: ' + status);
 // });
 // ```
 
-// ## Source Code
-var misc, path, string;
+// ## Hooks
+var handler, mutate, on_options, path, string;
 
-module.exports = function({options}) {
+on_options = function({options}) {
+  // Import all properties from `options.krb5`
+  if (options.krb5) {
+    mutate(options, options.krb5);
+    return delete options.krb5;
+  }
+};
+
+// ## Handler
+handler = function({options}) {
   var keytab, princ;
   if (!options.principal) {
     throw Error('Property principal is required');
@@ -43,9 +54,9 @@ module.exports = function({options}) {
   if (!options.keytab) {
     throw Error('Property keytab is required');
   }
-  if (/^\S+@\S+$/.test(options.kadmin_principal)) {
+  if (/^\S+@\S+$/.test(options.admin.principal)) {
     if (options.realm == null) {
-      options.realm = options.kadmin_principal.split('@')[1];
+      options.realm = options.admin.principal.split('@')[1];
     }
   } else {
     if (!options.realm) {
@@ -96,8 +107,9 @@ module.exports = function({options}) {
     return results;
   });
   // Get principal information
-  this.system.execute({
-    cmd: misc.kadmin(options, `getprinc -terse ${options.principal}`),
+  this.krb5.execute({
+    admin: options.admin,
+    cmd: `getprinc -terse ${options.principal}`,
     shy: true,
     if: function() {
       return keytab[options.principal] != null;
@@ -135,8 +147,9 @@ module.exports = function({options}) {
     });
   });
   // Remove principal from keytab
-  this.system.execute({
-    cmd: misc.kadmin(options, `ktremove -k ${options.keytab} ${options.principal}`),
+  this.krb5.execute({
+    admin: options.admin,
+    cmd: `ktremove -k ${options.keytab} ${options.principal}`,
     if: function() {
       var ref;
       return (keytab[options.principal] != null) && (((ref = keytab[options.principal]) != null ? ref.kvno : void 0) !== princ.kvno || keytab[options.principal].mdate !== princ.mdate);
@@ -150,8 +163,9 @@ module.exports = function({options}) {
       return (keytab[options.principal] == null) || (((ref = keytab[options.principal]) != null ? ref.kvno : void 0) !== princ.kvno || keytab[options.principal].mdate !== princ.mdate);
     }
   });
-  this.system.execute({
-    cmd: misc.kadmin(options, `ktadd -k ${options.keytab} ${options.principal}`),
+  this.krb5.execute({
+    admin: options.admin,
+    cmd: `ktadd -k ${options.keytab} ${options.principal}`,
     if: function() {
       var ref;
       return (keytab[options.principal] == null) || (((ref = keytab[options.principal]) != null ? ref.kvno : void 0) !== princ.kvno || keytab[options.principal].mdate !== princ.mdate);
@@ -169,6 +183,12 @@ module.exports = function({options}) {
     mode: options.mode,
     if: options.mode != null
   });
+};
+
+// ## Export
+module.exports = {
+  handler: handler,
+  on_options: on_options
 };
 
 // ## Fields in 'getprinc -terse' output
@@ -197,6 +217,6 @@ module.exports = function({options}) {
 // ## Dependencies
 path = require('path');
 
-misc = require('@nikitajs/core/lib/misc');
-
 string = require('@nikitajs/core/lib/misc/string');
+
+({mutate} = require('mixme'));

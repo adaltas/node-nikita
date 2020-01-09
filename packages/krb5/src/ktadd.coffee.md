@@ -6,11 +6,11 @@ called by the `krb5.addprinc` function.
 
 ## Options
 
-* `kadmin_server`   
+* `admin.server`   
   Address of the kadmin server; optional, use "kadmin.local" if missing.   
-* `kadmin_principal`   
+* `admin.principal`   
   KAdmin principal name unless `kadmin.local` is used.   
-* `kadmin_password`   
+* `admin.password`   
   Password associated to the KAdmin principal.   
 * `principal`   
   Principal to be created.   
@@ -24,21 +24,31 @@ require('nikita')
 .krb5_delrinc({
   principal: 'myservice/my.fqdn@MY.REALM',
   keytab: '/etc/security/keytabs/my.service.keytab',
-  kadmin_principal: 'me/admin@MY_REALM',
-  kadmin_password: 'pass',
-  kadmin_server: 'localhost'
+  admin: {
+    principal: 'me/admin@MY_REALM',
+    password: 'pass',
+    server: 'localhost'
+  }
 }, function(err, status){
-  console.log(err ? err.message : 'Principal removed: ' + status);
+  console.info(err ? err.message : 'Principal removed: ' + status);
 });
 ```
 
-## Source Code
+## Hooks
 
-    module.exports = ({options}) ->
+    on_options = ({options}) ->
+      # Import all properties from `options.krb5`
+      if options.krb5
+        mutate options, options.krb5
+        delete options.krb5
+
+## Handler
+
+    handler = ({options}) ->
       throw Error 'Property principal is required' unless options.principal
       throw Error 'Property keytab is required' unless options.keytab
-      if /^\S+@\S+$/.test options.kadmin_principal
-        options.realm ?= options.kadmin_principal.split('@')[1]
+      if /^\S+@\S+$/.test options.admin.principal
+        options.realm ?= options.admin.principal.split('@')[1]
       else
         throw Error 'Property "realm" is required unless present in principal' unless options.realm
         options.principal = "#{options.principal}@#{options.realm}"
@@ -62,8 +72,9 @@ require('nikita')
           if not keytab[principal] or keytab[principal].kvno < kvno
             keytab[principal] = kvno: kvno, mdate: mdate
       # Get principal information
-      @system.execute
-        cmd: misc.kadmin options, "getprinc -terse #{options.principal}"
+      @krb5.execute
+        admin: options.admin
+        cmd: "getprinc -terse #{options.principal}"
         shy: true
         if: -> keytab[options.principal]?
       , (err, {status, stdout}) ->
@@ -80,16 +91,18 @@ require('nikita')
         @log message: "Keytab kvno '#{keytab[options.principal]?.kvno}', principal kvno '#{princ.kvno}'", level: 'INFO', module: 'nikita/krb5/ktadd'
         @log message: "Keytab mdate '#{new Date keytab[options.principal]?.mdate}', principal mdate '#{new Date princ.mdate}'", level: 'INFO', module: 'nikita/krb5/ktadd'
       # Remove principal from keytab
-      @system.execute
-        cmd: misc.kadmin options, "ktremove -k #{options.keytab} #{options.principal}"
+      @krb5.execute
+        admin: options.admin
+        cmd: "ktremove -k #{options.keytab} #{options.principal}"
         if: ->
           keytab[options.principal]? and (keytab[options.principal]?.kvno isnt princ.kvno or keytab[options.principal].mdate isnt princ.mdate)
       # Create keytab and add principal
       @system.mkdir
         target: "#{path.dirname options.keytab}"
         if: -> not keytab[options.principal]? or (keytab[options.principal]?.kvno isnt princ.kvno or keytab[options.principal].mdate isnt princ.mdate)
-      @system.execute
-        cmd: misc.kadmin options, "ktadd -k #{options.keytab} #{options.principal}"
+      @krb5.execute
+        admin: options.admin
+        cmd: "ktadd -k #{options.keytab} #{options.principal}"
         if: -> not keytab[options.principal]? or (keytab[options.principal]?.kvno isnt princ.kvno or keytab[options.principal].mdate isnt princ.mdate)
       # Keytab ownership and permissions
       @system.chown
@@ -101,6 +114,12 @@ require('nikita')
         target: options.keytab
         mode: options.mode
         if: options.mode?
+
+## Export
+
+    module.exports =
+      handler: handler
+      on_options: on_options
 
 ## Fields in 'getprinc -terse' output
 
@@ -128,5 +147,5 @@ data-type[1]
 ## Dependencies
 
     path = require 'path'
-    misc = require '@nikitajs/core/lib/misc'
     string = require '@nikitajs/core/lib/misc/string'
+    {mutate} = require 'mixme'

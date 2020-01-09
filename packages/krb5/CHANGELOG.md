@@ -3,6 +3,11 @@
 
 ## Trunk
 
+New Features
+* schema: start implementing schema on addprinc
+* krb5.execute: new action
+* project: isolate admin arguments inside the config option
+
 Management:
 * project: isolate from nikita package
 

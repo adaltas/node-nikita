@@ -3,6 +3,7 @@ require('@nikitajs/core/lib/registry').register({
   krb5: {
     addprinc: '@nikitajs/krb5/lib/addprinc',
     delprinc: '@nikitajs/krb5/lib/delprinc',
+    execute: '@nikitajs/krb5/lib/execute',
     ktadd: '@nikitajs/krb5/lib/ktadd',
     ticket: '@nikitajs/krb5/lib/ticket',
     ktutil: {

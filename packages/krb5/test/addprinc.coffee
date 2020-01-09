@@ -6,13 +6,32 @@ they = require('ssh2-they').configure ssh...
 return unless tags.krb5_addprinc
 
 describe 'krb5.addprinc', ->
+  
+  it 'validate schema', ->
+    nikita
+    .krb5.addprinc
+      relax: true
+      options: {}
+    , (err) ->
+      err.errors.map( (err) -> err.message).should.eql [
+        'data should have required property \'admin\''
+        'data should have required property \'principal\''
+      ]
+    .krb5.addprinc
+      relax: true
+      options:
+        admin:
+          principal: null
+        principal: 'nikita@REALM'
+        randkey: true
+    , (err) ->
+      err.message.should.eql 'data.admin.principal should be string'
+    .promise()
 
   they 'create a new principal without a randkey', ({ssh}) ->
     nikita
       ssh: ssh
-      kadmin_server: krb5.kadmin_server
-      kadmin_principal: krb5.kadmin_principal
-      kadmin_password: krb5.kadmin_password
+      krb5: admin: krb5
     .krb5.delprinc
       principal: "nikita@#{krb5.realm}"
     .krb5.addprinc
@@ -30,9 +49,7 @@ describe 'krb5.addprinc', ->
   they 'create a new principal with a password', ({ssh}) ->
     nikita
       ssh: ssh
-      kadmin_server: krb5.kadmin_server
-      kadmin_principal: krb5.kadmin_principal
-      kadmin_password: krb5.kadmin_password
+      krb5: admin: krb5
     .krb5.delprinc
       principal: "nikita@#{krb5.realm}"
     .krb5.addprinc
@@ -57,9 +74,7 @@ describe 'krb5.addprinc', ->
   they 'dont overwrite password', ({ssh}) ->
     nikita
       ssh: ssh
-      kadmin_server: krb5.kadmin_server
-      kadmin_principal: krb5.kadmin_principal
-      kadmin_password: krb5.kadmin_password
+      krb5: admin: krb5
     .krb5.delprinc
       principal: "nikita@#{krb5.realm}"
     .krb5.addprinc
@@ -78,32 +93,13 @@ describe 'krb5.addprinc', ->
     .promise()
 
   they 'call function with new style', ({ssh}) ->
-    krb5_conf =
-      etc_krb5_conf:
-        libdefaults: 
-          default_realm: 'NODE.DC1.CONSUL'
-        realms:
-          'NODE.DC1.CONSUL':
-            kadmin_server: 'krb5'
-            kadmin_principal: 'admin/admin@NODE.DC1.CONSUL'
-            kadmin_password: 'admin'
-        domain_realm:
-          ryba: 'NODE.DC1.CONSUL'
-      kdc_conf:
-        realms:
-          'NODE.DC1.CONSUL':
-            kadmin_server: 'krb5'
-            kadmin_principal: 'admin/admin@NODE.DC1.CONSUL'
-            kadmin_password: 'admin'
     user =
       password: 'user123'
       password_sync: true
       principal: 'user2@NODE.DC1.CONSUL'
     nikita
       ssh: ssh
-      kadmin_server: krb5.kadmin_server
-      kadmin_principal: krb5.kadmin_principal
-      kadmin_password: krb5.kadmin_password
+      krb5: admin: krb5
     .system.execute
       cmd: 'rm -f /etc/security/keytabs/user1.service.keytab || true ; exit 0;'
     .krb5.delprinc
@@ -114,7 +110,7 @@ describe 'krb5.addprinc', ->
       principal: "user1/krb5@NODE.DC1.CONSUL"
       randkey: true
       keytab: '/etc/security/keytabs/user1.service.keytab'
-    .krb5.addprinc krb5_conf, user, (err, {status}) ->
+    .krb5.addprinc user, (err, {status}) ->
       status.should.be.true() unless err
     .system.execute
       cmd: "echo #{user.password} | kinit #{user.principal}"

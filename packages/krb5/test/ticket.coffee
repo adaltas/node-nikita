@@ -10,9 +10,7 @@ describe 'krb5.ticket', ->
   they 'create a new principal without a randkey', ({ssh}) ->
     nikita
       ssh: ssh
-      kadmin_server: krb5.kadmin_server
-      kadmin_principal: krb5.kadmin_principal
-      kadmin_password: krb5.kadmin_password
+      krb5: admin: krb5
     .krb5.delprinc
       principal: "nikita@#{krb5.realm}"
     .krb5.addprinc

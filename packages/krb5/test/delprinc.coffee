@@ -10,9 +10,7 @@ describe 'krb5.delprinc', ->
   they 'a principal which exists', ({ssh}) ->
     nikita
       ssh: ssh
-      kadmin_server: krb5.kadmin_server
-      kadmin_principal: krb5.kadmin_principal
-      kadmin_password: krb5.kadmin_password
+      krb5: admin: krb5
     .krb5.addprinc
       principal: "nikita@#{krb5.realm}"
       randkey: true
@@ -25,9 +23,7 @@ describe 'krb5.delprinc', ->
   they 'a principal which does not exist', ({ssh}) ->
     nikita
       ssh: ssh
-      kadmin_server: krb5.kadmin_server
-      kadmin_principal: krb5.kadmin_principal
-      kadmin_password: krb5.kadmin_password
+      krb5: admin: krb5
     .krb5.delprinc
       principal: "nikita@#{krb5.realm}"
     .krb5.delprinc

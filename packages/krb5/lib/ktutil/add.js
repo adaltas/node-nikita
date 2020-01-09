@@ -6,11 +6,11 @@
 
 // ## Options
 
-// * `kadmin_server`   
+// * `admin.server`   
 //   Address of the kadmin server; optional, use "kadmin.local" if missing.   
-// * `kadmin_principal`   
+// * `admin.principal`   
 //   KAdmin principal name unless `kadmin.local` is used.   
-// * `kadmin_password`   
+// * `admin.password`   
 //   Password associated to the KAdmin principal.   
 // * `principal`   
 //   Principal to be inserted.   
@@ -31,14 +31,23 @@
 //   keytab: '/etc/security/keytabs/my.service.keytab',
 //   password: 'password'
 // }, function(err, status){
-//   console.log(err ? err.message : 'Keytab created or modified: ' + status);
+//   console.info(err ? err.message : 'Keytab created or modified: ' + status);
 // });
 // ```
 
-// ## Source Code
-var misc, path, string;
+// ## Hooks
+var handler, misc, mutate, on_options, path, string;
 
-module.exports = function({options}) {
+on_options = function({options}) {
+  // Import all properties from `options.krb5`
+  if (options.krb5) {
+    mutate(options, options.krb5);
+    return delete options.krb5;
+  }
+};
+
+// ## Source Code
+handler = function({options}) {
   var cmd, entries, princ, princ_entries;
   if (!options.principal) {
     throw Error('Property principal is required');
@@ -105,8 +114,9 @@ module.exports = function({options}) {
     }).reverse();
   });
   // Get principal information and compare to keytab entries kvnos
-  this.system.execute({
-    cmd: misc.kadmin(options, `getprinc -terse ${options.principal}`),
+  this.krb5.execute({
+    admin: options.admin,
+    cmd: `getprinc -terse ${options.principal}`,
     shy: true
   }, function(err, {status, stdout}) {
     var kvno, mdate, values;
@@ -219,6 +229,12 @@ module.exports = function({options}) {
   });
 };
 
+// ## Export
+module.exports = {
+  handler: handler,
+  on_options: on_options
+};
+
 // ## Fields in 'getprinc -terse' output
 
 // princ-canonical-name
@@ -248,3 +264,5 @@ path = require('path');
 misc = require('@nikitajs/core/lib/misc');
 
 string = require('@nikitajs/core/lib/misc/string');
+
+({mutate} = require('mixme'));

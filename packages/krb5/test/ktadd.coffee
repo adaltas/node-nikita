@@ -10,9 +10,7 @@ describe 'krb5.ktadd', ->
   they 'create a new keytab', ({ssh}) ->
     nikita
       ssh: ssh
-      kadmin_server: krb5.kadmin_server
-      kadmin_principal: krb5.kadmin_principal
-      kadmin_password: krb5.kadmin_password
+      krb5: admin: krb5
     .krb5.addprinc
       principal: "nikita@#{krb5.realm}"
       randkey: true
@@ -31,9 +29,7 @@ describe 'krb5.ktadd', ->
   they 'detect kvno', ({ssh}) ->
     nikita
       ssh: ssh
-      kadmin_server: krb5.kadmin_server
-      kadmin_principal: krb5.kadmin_principal
-      kadmin_password: krb5.kadmin_password
+      krb5: admin: krb5
     .krb5.addprinc
       principal: "nikita@#{krb5.realm}"
       randkey: true
@@ -58,9 +54,7 @@ describe 'krb5.ktadd', ->
   they 'change permission', ({ssh}) ->
     nikita
       ssh: ssh
-      kadmin_server: krb5.kadmin_server
-      kadmin_principal: krb5.kadmin_principal
-      kadmin_password: krb5.kadmin_password
+      krb5: admin: krb5
     .krb5.addprinc
       principal: "nikita@#{krb5.realm}"
       randkey: true

@@ -5,95 +5,147 @@
 
 // ## Options
 
-// * `kadmin_server`, `admin_server`   
+// * `admin.server`   
 //   Address of the kadmin server; optional, use "kadmin.local" if missing.   
-// * `kadmin_principal`   
+// * `admin.principal`   
 //   KAdmin principal name unless `kadmin.local` is used.   
-// * `kadmin_password`   
+// * `admin.password`   
 //   Password associated to the KAdmin principal.   
-// * `principal`   
-//   Principal to be created.   
+// * `keytab`   
+//   Path to the file storing key entries.   
 // * `password`   
 //   Password associated to this principal; required if no randkey is
 //   provided.   
 // * `password_sync`   
 //   Wether the password should be created if the principal already exists,
 //   default to "false".   
+// * `principal`   
+//   Principal to be created.   
 // * `randkey`   
 //   Generate a random key; required if no password is provided.   
-// * `keytab`   
-//   Path to the file storing key entries.   
 
 // ## Keytab example
 
 // ```js
 // require('nikita').krb5.addprinc({
+//   admin: {
+//     password: 'pass',
+//     principal: 'me/admin@MY_REALM',
+//     server: 'localhost'
+//   },
+//   keytab: '/etc/security/keytabs/my.service.keytab',
+//   gid: 'myservice',
 //   principal: 'myservice/my.fqdn@MY.REALM',
 //   randkey: true,
-//   keytab: '/etc/security/keytabs/my.service.keytab',
-//   uid: 'myservice',
-//   gid: 'myservice',
-//   kadmin_principal: 'me/admin@MY_REALM',
-//   kadmin_password: 'pass',
-//   kadmin_server: 'localhost'
+//   uid: 'myservice'
 // }, function(err, {status}){
-//   console.log(err ? err.message : 'Principal created or modified: ' + status);
+//   console.info(err ? err.message : 'Principal created or modified: ' + status);
 // });
 // ```
 
-// ## Source Code
-var misc;
+// ## Schema
+var handler, misc, mutate, on_options, schema;
 
-module.exports = function({options}) {
-  var cache_name, cmd_addprinc, cmd_getprinc, k, ktadd_options, v;
-  if (!options.principal) {
-    throw Error('Property principal is required');
+schema = {
+  type: 'object',
+  properties: {
+    'admin': {
+      $ref: '/nikita/krb5/execute#/properties/admin'
+    },
+    'keytab': {
+      type: 'string'
+    },
+    'password': {
+      type: 'string'
+    },
+    'password_sync': {
+      type: 'boolean',
+      default: false
+    },
+    'principal': {
+      type: 'string'
+    },
+    'randkey': {
+      type: 'boolean',
+      default: false
+    }
+  },
+  required: ['admin', 'principal']
+};
+
+// ## Hooks
+on_options = function({options}) {
+  var base, ref;
+  // Import all properties from `options.krb5`
+  if (options.krb5) {
+    mutate(options, options.krb5);
+    delete options.krb5;
   }
+  if (/.*@.*/.test((ref = options.admin) != null ? ref.principal : void 0)) {
+    // Extract realm
+    return (base = options.admin).realm != null ? base.realm : base.realm = options.admin.principal.split('@')[1];
+  }
+};
+
+// ## Handler
+handler = function({options}) {
+  var cache_name;
   if (!options.password && !options.randkey) {
     throw Error('Password or randkey missing');
   }
-  if (/.*@.*/.test(options.kadmin_principal)) {
-    // Normalize realm and principal for later usage of options
-    if (options.realm == null) {
-      options.realm = options.kadmin_principal.split('@')[1];
-    }
-  }
   if (!/^\S+@\S+$/.test(options.principal)) {
-    options.principal = `${options.principal}@${options.realm}`;
+    // Normalize realm and principal for later usage of options
+    options.principal = `${options.principal}@${options.admin.realm}`;
   }
-  if (options.password_sync == null) {
-    options.password_sync = false;
-  }
-  if (options.kadmin_server == null) {
-    options.kadmin_server = options.admin_server; // Might deprecated kadmin_server in favor of admin_server
-  }
-  // Prepare commands
-  cmd_getprinc = misc.kadmin(options, `getprinc ${options.principal}`);
-  cmd_addprinc = misc.kadmin(options, options.password ? `addprinc -pw ${options.password} ${options.principal}` : `addprinc -randkey ${options.principal}`);
-  // todo, could be removed once actions acception multiple options arguments
-  // such ash `.krb5.ktadd options, if: options.keytab
-  ktadd_options = {};
-  for (k in options) {
-    v = options[k];
-    ktadd_options[k] = v;
-  }
-  ktadd_options.if = options.keytab;
-  delete ktadd_options.header;
   // Ticket cache location
   cache_name = `/tmp/nikita_${Math.random()}`;
-  this.system.execute({
-    retry: 3,
-    cmd: cmd_addprinc,
-    unless_exec: `${cmd_getprinc} | grep '${options.principal}'`
+  // Start execution
+  this.krb5.execute({
+    options: {
+      admin: options.admin,
+      cmd: `getprinc ${options.principal}`,
+      egrep: new RegExp(`^.*${misc.regexp.escape(options.principal)}$`)
+    },
+    metadata: {
+      shy: true
+    }
   });
-  this.system.execute({
-    retry: 3,
-    cmd: misc.kadmin(options, `cpw -pw ${options.password} ${options.principal}`),
+  this.krb5.execute({
+    unless: function() {
+      return this.status(-1);
+    },
+    options: {
+      admin: options.admin,
+      cmd: options.password ? `addprinc -pw ${options.password} ${options.principal}` : `addprinc -randkey ${options.principal}`
+    },
+    metadata: {
+      retry: 3
+    }
+  });
+  this.krb5.execute({
     if: options.password && options.password_sync,
-    unless_exec: `if ! echo ${options.password} | kinit '${options.principal}' -c '${cache_name}'; then exit 1; else kdestroy -c '${cache_name}'; fi`
+    unless_exec: `if ! echo ${options.password} | kinit '${options.principal}' -c '${cache_name}'; then exit 1; else kdestroy -c '${cache_name}'; fi`,
+    options: {
+      admin: options.admin,
+      cmd: `cpw -pw ${options.password} ${options.principal}`
+    },
+    metadata: {
+      retry: 3
+    }
   });
-  return this.krb5.ktadd(ktadd_options);
+  return this.krb5.ktadd(options, {
+    if: !!options.keytab
+  });
+};
+
+// ## Export
+module.exports = {
+  handler: handler,
+  on_options: on_options,
+  schema: schema
 };
 
 // ## Dependencies
 misc = require('@nikitajs/core/lib/misc');
+
+({mutate} = require('mixme'));
