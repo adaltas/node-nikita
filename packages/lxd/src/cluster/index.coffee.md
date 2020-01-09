@@ -175,7 +175,7 @@ containers:
           systemctl enable sshd
           """
           trap: true
-          code_skipped: 4
+          code_skipped: 42
         for user, configuser of config.user then @call header: "#{user}", ->
           @lxd.exec
             header: "User #{user}"
@@ -195,7 +195,7 @@ containers:
             container: container
             cmd: """
             yum install -y sudo
-            command -p sudo
+            command -v sudo
             cat /etc/sudoers | grep "#{user}" && exit 42
             echo "#{user} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
             """

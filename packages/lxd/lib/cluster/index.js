@@ -189,7 +189,7 @@ module.exports = function({options}) {
       container: container,
       cmd: "# systemctl status sshd\n# yum install -y openssh-server\n# systemctl start sshd\n# systemctl enable sshd\nsystemctl status sshd && exit 42\nif command -v yum >/dev/null 2>&1; then\n  yum -y install openssh-server\nelif command -v apt-get >/dev/null 2>&1; then\n  apt-get -y install openssh-server\nelse\n  echo \"Unsupported Package Manager\" >&2 && exit 2\nfi\nsystemctl status sshd && exit 42\nsystemctl start sshd\nsystemctl enable sshd",
       trap: true,
-      code_skipped: 4
+      code_skipped: 42
     });
     ref5 = config.user;
     for (user in ref5) {
@@ -208,7 +208,7 @@ module.exports = function({options}) {
           header: 'Sudo',
           if: configuser.sudo,
           container: container,
-          cmd: `yum install -y sudo\ncommand -p sudo\ncat /etc/sudoers | grep "${user}" && exit 42\necho "${user} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers`,
+          cmd: `yum install -y sudo\ncommand -v sudo\ncat /etc/sudoers | grep "${user}" && exit 42\necho "${user} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers`,
           trap: true,
           code_skipped: 42
         });

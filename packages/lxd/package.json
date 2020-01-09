@@ -37,7 +37,8 @@
   ],
   "dependencies": {
     "js-yaml": "^3.13.1",
-    "object-diff": "^0.0.4"
+    "object-diff": "^0.0.4",
+    "parameters": "^0.7.2"
   },
   "peerDependencies": {
     "@nikitajs/core": "^0.9.4"
