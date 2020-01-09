@@ -41,6 +41,23 @@ misc = module.exports = {
     },
     is: function(reg) {
       return reg instanceof RegExp;
+    },
+    validate: function(reg) { // start of string
+      // first group start
+      // literals and ^, $
+      // escaped characters
+      // character classes
+      // parenthesis, with recursive content
+      // recursive matching
+      // quantifiers
+      // alternative
+      // repeat content
+      // end first group
+      // end of string
+      // Note, imported from https://stackoverflow.com/questions/172303/is-there-a-regular-expression-to-detect-a-valid-regular-expression
+      // Not yet used/tested
+      // /^((?:(?:[^?+*{}()[\]\\|]+|\\.|\[(?:\^?\\.|\^[^\\]|[^\\^])(?:[^\]\\]+|\\.)*\]|\((?:\?[:=!]|\?<[=!]|\?>)?(?1)??\)|\(\?(?:R|[+-]?\d+)\))(?:(?:[?+*]|\{\d+(?:,\d*)?\})[?+]?)?|\|)*)$/
+      return /^((?:(?:[^?+*{}()[\]\\|]+|\\.|\[(?:\^?\\.|\^[^\\]|[^\\^])(?:[^\]\\]+|\\.)*\]|\((?:\?[:=!]|\?<[=!]|\?>)?(?1)??\)|\(\?(?:R|[+-]?\d+)\))(?:(?:[?+*]|\{\d+(?:,\d*)?\})[?+]?)?|\|)*)$/.test(reg);
     }
   },
   object: {

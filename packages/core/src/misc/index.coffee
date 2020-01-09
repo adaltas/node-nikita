@@ -25,6 +25,27 @@ misc = module.exports =
       str.replace /[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"
     is: (reg) ->
       reg instanceof RegExp
+    validate: (reg) ->
+      # Note, imported from https://stackoverflow.com/questions/172303/is-there-a-regular-expression-to-detect-a-valid-regular-expression
+      # Not yet used/tested
+      # /^((?:(?:[^?+*{}()[\]\\|]+|\\.|\[(?:\^?\\.|\^[^\\]|[^\\^])(?:[^\]\\]+|\\.)*\]|\((?:\?[:=!]|\?<[=!]|\?>)?(?1)??\)|\(\?(?:R|[+-]?\d+)\))(?:(?:[?+*]|\{\d+(?:,\d*)?\})[?+]?)?|\|)*)$/
+      ///
+      ^                                             # start of string
+      (                                             # first group start
+        (?:
+          (?:[^?+*{}()[\]\\|]+                      # literals and ^, $
+           | \\.                                    # escaped characters
+           | \[ (?: \^?\\. | \^[^\\] | [^\\^] )     # character classes
+                (?: [^\]\\]+ | \\. )* \]
+           | \( (?:\?[:=!]|\?<[=!]|\?>)? (?1)?? \)  # parenthesis, with recursive content
+           | \(\? (?:R|[+-]?\d+) \)                 # recursive matching
+           )
+          (?: (?:[?+*]|\{\d+(?:,\d*)?\}) [?+]? )?   # quantifiers
+        | \|                                        # alternative
+        )*                                          # repeat content
+      )                                             # end first group
+      $                                             # end of string
+      ///.test reg
   object:
     equals: (obj1, obj2, keys) ->
       keys1 = Object.keys obj1
