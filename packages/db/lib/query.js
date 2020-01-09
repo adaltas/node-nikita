@@ -119,6 +119,7 @@ handler = function({options}, callback) {
       });
     }
     return callback(null, {
+      status: true,
       stdout: stdout
     });
   });

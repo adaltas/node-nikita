@@ -69,7 +69,7 @@ Check if a user exists in the database.
           return callback null, stdout: stdout, status: stdout.split('\n').some (line) -> line is options.grep
         if options.egrep
           return callback null, stdout: stdout, status: stdout.split('\n').some (line) -> options.egrep.test line
-        callback null, stdout: stdout
+        callback null, status: true, stdout: stdout
         
 ## Escape
 

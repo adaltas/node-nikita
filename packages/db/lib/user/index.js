@@ -28,6 +28,14 @@ var cmd, handler, schema;
 
 schema = null;
 
+// type: 'object'
+// properties:
+//   $ref: '/nikita/db/query'
+//   'username': type: 'string'
+//   'password': type: 'string'
+// required: [
+//   'username', 'password' ]
+
 // ## Hander
 handler = function({options}) {
   var cmd_password_change, cmd_password_is_invalid, cmd_user_create, cmd_user_exists, k, ref, ref1, v;

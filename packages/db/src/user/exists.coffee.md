@@ -23,7 +23,7 @@ Check if a user exists in the database.
 
 ## Schema
 
-    schema:
+    schema: # THIS IS NOT YET REGISTERED
       type: 'object'
       properties:
         $ref: '/nikita/db/query'

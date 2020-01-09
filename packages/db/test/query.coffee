@@ -16,7 +16,7 @@ describe "db.query", ->
         nikita
           ssh: ssh
         .db.query
-          cmd: 'select * from postgres_query'
+          cmd: 'select * from doesntmatter'
           relax: true
         , (err, {stdout}) ->
           err.message.should.eql 'Invalid Options'
@@ -41,7 +41,8 @@ describe "db.query", ->
           INSERT INTO a_table (a_col) VALUES ('value');
           select * from a_table
           """
-        , (err, {stdout}) ->
+        , (err, {status, stdout}) ->
+          status.should.be.true()
           stdout.should.eql 'value\n' unless err
         .promise()
 

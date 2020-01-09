@@ -26,6 +26,13 @@ Create a user for the destination database.
 ## Schema
 
     schema = null
+      # type: 'object'
+      # properties:
+      #   $ref: '/nikita/db/query'
+      #   'username': type: 'string'
+      #   'password': type: 'string'
+      # required: [
+      #   'username', 'password' ]
 
 ## Hander
 
