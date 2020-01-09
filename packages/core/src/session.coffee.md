@@ -106,7 +106,7 @@
             (action.error_in_callback or not action.metadata.tolerant and not action.original.relax) and action.error
           error = errors[errors.length - 1]
           status = state.current_level.history.some (action) ->
-            not action.original.shy and action.status
+            not action.metadata.shy and action.status
           options.handler?.call proxy, error, {status: status}
           state_reset_level state.current_level
           return callback null, {}
@@ -116,7 +116,7 @@
             # action.error and (action.error.fatal or (not action.metadata.tolerant and not action.original.relax))
           error = errors[errors.length - 1]
           status = state.current_level.history.some (action) ->
-            not action.original.shy and action.status
+            not action.metadata.shy and action.status
           options.handler?.call proxy, error, status
           unless error
           then options.deferred.resolve status
@@ -338,7 +338,7 @@
                     run loptions, (error, {status}) ->
                       return do_next error: error if error
                       # Discover status of all unshy children
-                      status_sync = true if status and not loptions.shy
+                      status_sync = true if status and not (loptions.shy or loptions.metadata?.shy)
                       wait_children()
                   wait_children()
             catch error
@@ -456,13 +456,13 @@
       obj.status = (index) ->
         if arguments.length is 0
           return state.parent_levels[0].history.some (action) ->
-            not action.original.shy and action.status
+            not action.metadata.shy and action.status
         else if index is false
-          status = state.parent_levels[0].history.some (action) -> not action.original.shy and action.status
+          status = state.parent_levels[0].history.some (action) -> not action.metadata.shy and action.status
           action.status = false for action in state.parent_levels[0].history
           return status
         else if index is true
-          status = state.parent_levels[0].history.some (action) -> not action.original.shy and action.status
+          status = state.parent_levels[0].history.some (action) -> not action.metadata.shy and action.status
           action.status = true for action in state.parent_levels[0].history
           return status
         else if index is 0
@@ -471,6 +471,7 @@
           l = state.parent_levels[0].history.length
           index = (l + index) if index < 0
           state.parent_levels[0].history[index]?.status
+      obj.schema = schema()
       obj.registry = registry.registry
         parent: registry
         chain: proxy
@@ -478,7 +479,6 @@
           return unless action.schema
           name = "/nikita/#{name.join('/')}"
           obj.schema.add name, action.schema
-      obj.schema = schema()
       # Todo: remove
       if obj.options.ssh
         if obj.options.ssh.config

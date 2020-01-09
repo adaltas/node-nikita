@@ -134,14 +134,18 @@ nikita
             on_register name, handler
           mutate store, names
         else
-          walk = (store) ->
+          walk = (namespace, store) ->
             for k, v of store
               if k isnt '' and v and typeof v is 'object' and not Array.isArray(v) and not v.handler
-                walk v
+                namespace.push k
+                walk namespace, v
               else
                 v = load v
+                namespace.push k
                 store[k] = if k is '' then v else '': v
-          walk name
+                if on_register
+                  on_register namespace, v
+          walk [], name
           mutate store, name
         chain
 

@@ -190,7 +190,7 @@ module.exports = function() {
       });
       error = errors[errors.length - 1];
       status = state.current_level.history.some(function(action) {
-        return !action.original.shy && action.status;
+        return !action.metadata.shy && action.status;
       });
       if ((ref = options.handler) != null) {
         ref.call(proxy, error, {
@@ -207,7 +207,7 @@ module.exports = function() {
       // action.error and (action.error.fatal or (not action.metadata.tolerant and not action.original.relax))
       error = errors[errors.length - 1];
       status = state.current_level.history.some(function(action) {
-        return !action.original.shy && action.status;
+        return !action.metadata.shy && action.status;
       });
       if ((ref1 = options.handler) != null) {
         ref1.call(proxy, error, status);
@@ -641,12 +641,13 @@ module.exports = function() {
                 }
                 loptions = state.current_level.todos.shift();
                 return run(loptions, function(error, {status}) {
+                  var ref4;
                   if (error) {
                     return do_next({
                       error: error
                     });
                   }
-                  if (status && !loptions.shy) {
+                  if (status && !(loptions.shy || ((ref4 = loptions.metadata) != null ? ref4.shy : void 0))) {
                     // Discover status of all unshy children
                     status_sync = true;
                   }
@@ -902,11 +903,11 @@ module.exports = function() {
     var action, i, j, l, len, len1, ref, ref1, ref2, ref3, status;
     if (arguments.length === 0) {
       return state.parent_levels[0].history.some(function(action) {
-        return !action.original.shy && action.status;
+        return !action.metadata.shy && action.status;
       });
     } else if (index === false) {
       status = state.parent_levels[0].history.some(function(action) {
-        return !action.original.shy && action.status;
+        return !action.metadata.shy && action.status;
       });
       ref = state.parent_levels[0].history;
       for (i = 0, len = ref.length; i < len; i++) {
@@ -916,7 +917,7 @@ module.exports = function() {
       return status;
     } else if (index === true) {
       status = state.parent_levels[0].history.some(function(action) {
-        return !action.original.shy && action.status;
+        return !action.metadata.shy && action.status;
       });
       ref1 = state.parent_levels[0].history;
       for (j = 0, len1 = ref1.length; j < len1; j++) {
@@ -934,6 +935,7 @@ module.exports = function() {
       return (ref3 = state.parent_levels[0].history[index]) != null ? ref3.status : void 0;
     }
   };
+  obj.schema = schema();
   obj.registry = registry.registry({
     parent: registry,
     chain: proxy,
@@ -945,7 +947,6 @@ module.exports = function() {
       return obj.schema.add(name, action.schema);
     }
   });
-  obj.schema = schema();
   // Todo: remove
   if (obj.options.ssh) {
     if (obj.options.ssh.config) {

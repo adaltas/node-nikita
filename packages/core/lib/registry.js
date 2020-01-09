@@ -187,23 +187,30 @@ registry = function({chain, on_register, parent} = {}) {
       }
       mutate(store, names);
     } else {
-      walk = function(store) {
+      walk = function(namespace, store) {
         var k, results, v;
         results = [];
         for (k in store) {
           v = store[k];
           if (k !== '' && v && typeof v === 'object' && !Array.isArray(v) && !v.handler) {
-            results.push(walk(v));
+            namespace.push(k);
+            results.push(walk(namespace, v));
           } else {
             v = load(v);
-            results.push(store[k] = k === '' ? v : {
+            namespace.push(k);
+            store[k] = k === '' ? v : {
               '': v
-            });
+            };
+            if (on_register) {
+              results.push(on_register(namespace, v));
+            } else {
+              results.push(void 0);
+            }
           }
         }
         return results;
       };
-      walk(name);
+      walk([], name);
       mutate(store, name);
     }
     return chain;
