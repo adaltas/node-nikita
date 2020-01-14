@@ -22,44 +22,65 @@ Add or modify a user in FreeIPA.
 ```js
 require('nikita')
 .ipa.user({
-  uid: 'someone',
+  uid: "someone",
   attributes: {
     noprivate: true,
     gidnumber: 1000,
-    userpassword: 'secret'
+    userpassword: "secret"
   },
-  referer: 'https://my.domain.com',
-  url: 'https://ipa.domain.com/ipa/session/json',
-  principal: 'admin@DOMAIN.COM',
-  password: 'XXXXXX'
+  connection: {
+    referer: "https://my.domain.com",
+    url: "https://ipa.domain.com/ipa/session/json",
+    principal: "admin@DOMAIN.COM",
+    password: "mysecret"
+  }
 }, function(){
   console.info(err ? err.message : status ?
-    'User was updated' : 'User was already set')
+    "User was updated" : "User was already set")
 })
 ```
 
-    module.exports = ({options}, callback) ->
+## Options
+
+    on_options = ({options}) ->
       options.uid ?= options.username
-      options.http_headers ?= {}
-      options.http_headers['Accept'] ?= 'applicaton/json'
-      options.http_headers['Referer'] ?= options.referer
-      throw Error "Required Option: uid is required, got #{options.uid}" unless options.uid
-      throw Error "Required Option: url is required, got #{options.url}" unless options.url
-      throw Error "Required Option: principal is required, got #{options.principal}" unless options.principal
-      throw Error "Required Option: password is required, got #{options.password}" unless options.password
-      throw Error "Required Option: referer is required, got #{options.http_headers['Referer']}" unless options.http_headers['Referer']
-      @ipa.user.exists options,
+      delete options.username
+
+## Schema
+
+    schema =
+      type: 'object'
+      properties:
+        'uid': type: 'string'
+        'username': type: 'string'
+        'attributes':
+          type: 'object'
+          properties:
+            'givenname': type: 'string' # Firstname
+            'sn': type: 'string' # Lastname
+            'mail': type: 'array', minItems: 1, uniqueItems: true, items: type: 'string'
+        'connection':
+          $ref: '/nikita/connection/http'
+      required: ['attributes', 'connection', 'uid']
+
+## Handler
+
+    handler = ({options}, callback) ->
+      options.connection.http_headers ?= {}
+      options.connection.http_headers['Referer'] ?= options.connection.referer or options.connection.url
+      throw Error "Required Option: principal is required, got #{options.connection.principal}" unless options.connection.principal
+      throw Error "Required Option: password is required, got #{options.connection.password}" unless options.connection.password
+      @ipa.user.exists
+        connection: options.connection
         uid: options.uid
       @call ({}, callback) ->
-        @connection.http options,
+        @connection.http options.connection,
           negotiate: true
-          url: options.url
           method: 'POST'
           data:
-            method: unless @status(-1) then "user_add/1" else "user_mod/1"
+            method: unless @status(-1) then 'user_add/1' else 'user_mod/1'
             params: [[options.uid], options.attributes]
             id: 0
-          http_headers: options.http_headers
         , (error, {data}) ->
           if data?.error
             return callback null, false if data.error.code is 4202 # no modifications to be performed
@@ -67,7 +88,14 @@ require('nikita')
             error.code = data.error.code
           callback error, true
       @next callback
-        
+
+## Exports
+
+    module.exports =
+      handler: handler
+      on_options: on_options
+      schema: schema
+
 ## Dependencies
 
     string = require '@nikitajs/core/lib/misc/string'

@@ -1,28 +1,22 @@
 
 nikita = require '@nikitajs/core'
-{tags, ssh, scratch} = require '../test'
+{tags, ssh, scratch, ipa} = require '../test'
 they = require('ssh2-they').configure ssh...
 
 return unless tags.ipa
-
-ipa =
-  principal: 'admin'
-  password: 'admin_pw'
-  referer: 'https://ipa.nikita/ipa'
-  url: 'https://ipa.nikita/ipa/session/json'
 
 describe 'ipa.group.del', ->
 
   they 'delete a group', ({ssh}) ->
     nikita
       ssh: ssh
-    .ipa.group ipa,
+    .ipa.group connection: ipa,
       cn: 'group_del'
-    .ipa.group.del ipa,
+    .ipa.group.del connection: ipa,
       cn: 'group_del'
     , (err, {status}) ->
       status.should.be.true()
-    .ipa.group.del ipa,
+    .ipa.group.del connection: ipa,
       cn: 'group_del'
     , (err, {status}) ->
       status.should.be.false()

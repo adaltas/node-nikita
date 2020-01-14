@@ -1,6 +1,7 @@
 
 nikita = require 'nikita'
 
+key = "#{__dirname}/../../../assets/.vagrant/machines/default/virtualbox/private_key"
 module.exports = ({params}) ->
   nikita
     debug: params.debug
@@ -30,8 +31,14 @@ module.exports = ({params}) ->
     }
     '''
   .call ->
-    # Print information
-    key = "#{__dirname}/../../../assets/.vagrant/machines/default/virtualbox/private_key"
+    disabled: true
+    cmd: """
+    ssh -i #{key} -qtt -p 2222 vagrant@127.0.0.1 -- "cd /nikita && bash"\n
+    """
+    stdin: process.stdin
+    stderr: process.stderr
+    stdout: process.stdout
+  .call ->
     process.stdout.write """
     ssh -i #{key} -qtt -p 2222 vagrant@127.0.0.1 -- "cd /nikita && bash"\n
     """

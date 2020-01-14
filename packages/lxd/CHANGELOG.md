@@ -4,6 +4,7 @@
 ## Trunk
 
 New features:
+* lxd.cluster: refactor cli
 * lxd: validate container name
 * lxd: import cluster code
 * lxd.exec: enforce trap

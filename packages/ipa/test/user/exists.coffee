@@ -1,24 +1,18 @@
 
 nikita = require '@nikitajs/core'
-{tags, ssh, scratch} = require '../test'
+{tags, ssh, scratch, ipa} = require '../test'
 they = require('ssh2-they').configure ssh...
 
 return unless tags.ipa
-
-ipa =
-  principal: 'admin'
-  password: 'admin_pw'
-  referer: 'https://ipa.nikita/ipa'
-  url: 'https://ipa.nikita/ipa/session/json'
 
 describe 'ipa.user.exists', ->
 
   they 'user doesnt exist', ({ssh}) ->
     nikita
       ssh: ssh
-    .ipa.user.del ipa,
+    .ipa.user.del connection: ipa,
       uid: 'user_exists'
-    .ipa.user.exists ipa,
+    .ipa.user.exists connection: ipa,
       uid: 'user_exists'
     , (err, {status, exists}) ->
       status.should.be.false() unless err
@@ -28,7 +22,7 @@ describe 'ipa.user.exists', ->
   they 'user exists', ({ssh}) ->
     nikita
       ssh: ssh
-    .ipa.user ipa,
+    .ipa.user connection: ipa,
       uid: 'user_exists'
       attributes:
         givenname: 'Firstname'
@@ -36,7 +30,7 @@ describe 'ipa.user.exists', ->
         mail: [
           'user@nikita.js.org'
         ]
-    .ipa.user.exists ipa,
+    .ipa.user.exists connection: ipa,
       uid: 'user_exists'
     , (err, {status, exists}) ->
       status.should.be.true() unless err

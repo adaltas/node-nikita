@@ -19,39 +19,59 @@ Delete a group from FreeIPA.
 require('nikita')
 .ipa.group.del({
   cn: 'somegroup',
-  referer: 'https://my.domain.com',
-  url: 'https://ipa.domain.com/ipa/session/json',
-  principal: 'admin@DOMAIN.COM',
-  password: 'XXXXXX'
+  connection: {
+    referer: "https://my.domain.com",
+    url: "https://ipa.domain.com/ipa/session/json",
+    principal: "admin@DOMAIN.COM",
+    password: "mysecret"
+  }
 }, function(){
   console.info(err ? err.message : status ?
     'Group was updated' : 'Group was already set')
 })
 ```
 
-    module.exports = ({options}) ->
-      options.http_headers ?= {}
-      options.http_headers['Accept'] ?= 'applicaton/json'
-      options.http_headers['Referer'] ?= options.referer
-      throw Error "Required Option: cn is required, got #{options.cn}" unless options.cn
-      throw Error "Required Option: url is required, got #{options.url}" unless options.url
-      throw Error "Required Option: principal is required, got #{options.principal}" unless options.principal
-      throw Error "Required Option: password is required, got #{options.password}" unless options.password
-      throw Error "Required Option: referer is required, got #{options.http_headers['Referer']}" unless options.http_headers['Referer']
-      @ipa.group.exists options,
+## Schema
+
+    schema =
+      type: 'object'
+      properties:
+        'cn': type: 'string'
+        'attributes':
+          type: 'object'
+          properties:
+            'user': type: 'array', minItems: 1, uniqueItems: true, items: type: 'string'
+        'connection':
+          $ref: '/nikita/connection/http'
+      required: ['cn', 'connection']
+
+## Handler
+
+    handler = ({options}) ->
+      options.connection.http_headers ?= {}
+      options.connection.http_headers['Referer'] ?= options.connection.referer or options.connection.url
+      throw Error "Required Option: principal is required, got #{options.connection.principal}" unless options.connection.principal
+      throw Error "Required Option: password is required, got #{options.connection.password}" unless options.connection.password
+      @ipa.group.exists
+        connection: options.connection
         shy: false
         cn: options.cn
-      @connection.http options,
+      @connection.http options.connection,
         if: -> @status(-1)
         negotiate: true
-        url: options.url
         method: 'POST'
         data:
           method: "group_del/1"
           params: [[options.cn], {}]
           id: 0
         http_headers: options.http_headers
-        
+
+## Export
+
+    module.exports =
+      handler: handler
+      schema: schema
+
 ## Dependencies
 
     string = require '@nikitajs/core/lib/misc/string'

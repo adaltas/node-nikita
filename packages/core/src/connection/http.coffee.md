@@ -64,7 +64,23 @@ Perform an HTTP request. It uses internaly the curl command.
 * `output.type` (string)   
   The format type if provided or detected, possible values is only "json" for now.
 
-    module.exports = ({options}, callback) ->
+## Schema
+
+    schema =
+      type: 'object'
+      properties:
+        http_headers: type: 'object'
+        password: type: 'string'
+        principal: type: 'string'
+        url: type: 'string'
+        referer:
+          type: string
+          description: 'An alias for connection.http_headers[\'Referer\']'
+      required: ['url']
+
+## Handler
+
+    handler = ({options}, callback) ->
       options.method ?= options.request
       options.method ?= 'GET'
       throw Error "Required Option: `url` is required, got #{options.url}" unless options.url
@@ -72,6 +88,7 @@ Perform an HTTP request. It uses internaly the curl command.
       throw Error "Required Option: `data` is required with POST and PUT requests" if options.method in ['POST', 'PUT'] and not options.data
       if options.data? and typeof options.data isnt 'string'
         options.http_headers['Accept'] ?= 'application/json'
+        options.http_headers['Content-Type'] ?= 'application/json'
         options.data = JSON.stringify options.data
       url_info = url.parse options.url
       options.http_headers ?= []
@@ -151,6 +168,12 @@ Perform an HTTP request. It uses internaly the curl command.
         switch output.type
           when 'json' then output.data = JSON.parse output.body
         callback null, output
+
+# Export
+
+    module.exports =
+      handler: handler
+      schema: schema
 
 ## Dependencies
 

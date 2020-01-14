@@ -3,6 +3,12 @@
 
 ## Trunk
 
+Breaking changes:
+* options: isolate connection options
+
+New feature:
+* schema: implemented on every action
+
 Cleanup:
 * package: simplify test command
 

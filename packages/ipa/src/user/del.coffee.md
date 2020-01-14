@@ -18,43 +18,65 @@ Delete a user from FreeIPA.
 ## Exemple
 
 ```js
-require('nikita')
+require("nikita")
 .ipa.user.del({
-  uid: 'someone',
-  referer: 'https://my.domain.com',
-  url: 'https://ipa.domain.com/ipa/session/json',
-  principal: 'admin@DOMAIN.COM',
-  password: 'XXXXXX'
+  uid: "someone",
+  connection: {
+    referer: "https://my.domain.com",
+    url: "https://ipa.domain.com/ipa/session/json",
+    principal: "admin@DOMAIN.COM",
+    password: "mysecret"
+  }
 }, function(){
   console.info(err ? err.message : status ?
-    'User was updated' : 'User was already set')
+    "User was updated" : "User was already set")
 })
 ```
 
-    module.exports = ({options}) ->
+## Options
+
+    on_options = ({options}) ->
       options.uid ?= options.username
-      options.http_headers ?= {}
-      options.http_headers['Accept'] ?= 'applicaton/json'
-      options.http_headers['Referer'] ?= options.referer
-      throw Error "Required Option: uid is required, got #{options.uid}" unless options.uid
-      throw Error "Required Option: url is required, got #{options.url}" unless options.url
-      throw Error "Required Option: principal is required, got #{options.principal}" unless options.principal
-      throw Error "Required Option: password is required, got #{options.password}" unless options.password
-      throw Error "Required Option: referer is required, got #{options.http_headers['Referer']}" unless options.http_headers['Referer']
-      @ipa.user.exists options,
+      delete options.username
+
+## Schema
+
+    schema =
+      type: 'object'
+      properties:
+        'uid': type: 'string'
+        'username': type: 'string'
+        'connection':
+          $ref: '/nikita/connection/http'
+      required: ['connection', 'uid']
+
+## Handler
+
+    handler = ({options}) ->
+      options.connection.http_headers ?= {}
+      options.connection.http_headers['Referer'] ?= options.connection.referer or options.connection.url
+      throw Error "Required Option: principal is required, got #{options.connection.principal}" unless options.connection.principal
+      throw Error "Required Option: password is required, got #{options.connection.password}" unless options.connection.password
+      @ipa.user.exists
+        connection: options.connection
         shy: false
         uid: options.uid
-      @connection.http options,
+      @connection.http options.connection,
         if: -> @status(-1)
         negotiate: true
-        url: options.url
         method: 'POST'
         data:
           method: "user_del/1"
           params: [[options.uid], {}]
           id: 0
         http_headers: options.http_headers
-        
+
+## Export
+
+    module.exports =
+      handler: handler
+      schema: schema
+
 ## Dependencies
 
     string = require '@nikitajs/core/lib/misc/string'

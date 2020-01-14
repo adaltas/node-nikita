@@ -1,19 +1,48 @@
 
+path = require 'path'
+os = require 'os'
 nikita = require '@nikitajs/core'
 require '@nikitajs/lxd/lib/register'
 require '@nikitajs/tools/lib/register'
-cluster = '@nikitajs/core/env/cluster'
+require '@nikitajs/lxd/lib/register'
+
+# Note:
+# Jan 20th, 2020: upgrading ubuntu to 19.10
+# lead to an error while installing freeipa
+# complaining that it cannot write into /tmp
+# solution involve `echo '0' > /proc/sys/fs/protected_regular && sysctl -p`
+
+# console.log path.join os.tmpdir(), 'nikita_ipa_lxd_install'
+# parameters({
+#   name: 'nikita_lxd'
+#   description: 'Nikita LXD tests'
+#   commands:
+#     enter:
+#       description: 'Run all the tests'
+#       options:
+#         debug:
+#           description: 'Print debug information to the console'
+#           shortcut: 'd'
+#     exec:
+#       description: 'Run all or a subset of the tests'
+#       options:
+#         debug:
+#           description: 'Print debug information to the console'
+#           shortcut: 'd'
+# })
 
 nikita
 .log.cli pad: host: 20, header: 60
-.call cluster,
+.log.md filename: '/tmp/nikita_ipa_lxd_install'
+.lxd.cluster
   header: 'Container'
-  network:
+  debug: true # params.debug
+  networks:
     lxdbr0public:
       'ipv4.address': '172.16.0.1/24'
       'ipv4.nat': true
       'ipv6.address': 'none'
-      'dns.domain': 'nikita'
+      'dns.domain': 'nikita.local'
   containers:
     freeipa:
       image: 'images:centos/7'
@@ -26,7 +55,8 @@ nikita
           config: name: 'eth0', nictype: 'bridged', parent: 'lxdbr0public'
       proxy:
         ssh: listen: 'tcp:0.0.0.0:2200', connect: 'tcp:127.0.0.1:22'
-        ipa_ui: listen: 'tcp:0.0.0.0:2443', connect: 'tcp:127.0.0.1:443'
+        ipa_ui_http: listen: 'tcp:0.0.0.0:2080', connect: 'tcp:127.0.0.1:80'
+        ipa_ui_https: listen: 'tcp:0.0.0.0:2443', connect: 'tcp:127.0.0.1:443'
       ssh: enabled: true
       user:
         nikita: sudo: true, authorized_keys: './assets/id_rsa.pub'
@@ -72,20 +102,22 @@ nikita
     @lxd.exec
       header: 'Install FreeIPA'
       container: options.container
-      unless_exists: '/etc/ipa/default.conf'
+      unless_exists: '/etc/ipa/default.conf' # Not enough
+      # unless_exec: 'echo > /dev/tcp/localhost/443'
+      # unless_exec: 'echo admin_pw | kinit admin'
       cmd: """
       yum install -y freeipa-server
-      hostnamectl set-hostname ipa.nikita --static
+      hostnamectl set-hostname freeipa.nikita.local --static
+      # [ -f /etc/ipa/default.conf ] ||
       #{[
         'ipa-server-install', '-U'
         #  Basic options
         "-a admin_pw"
         "-p manager_pw"
-        "--hostname ipa.nikita"
-        "--domain nikita"
-        # "--ip-address 127.0.0.1"
+        "--hostname freeipa.nikita.local"
+        "--domain nikita.local"
         # Kerberos REALM
-        "-r NIKITA"
+        "-r NIKITA.LOCAL"
       ].join ' '}
       """
 .next (err) ->

@@ -40,6 +40,7 @@ Comments will be preserved if the `comments` and `merge` options are enabled.
 * Set a kernel variable
   `echo "value" > /proc/sys/location/variable`
   `echo 'variable = value' >> /etc/sysctl.conf && sysctl -p`
+  `echo '0' > /proc/sys/fs/protected_regular && sysctl -p && sysctl -a | grep 'fs.protected_regular = 0'`
 
 ## Example
 

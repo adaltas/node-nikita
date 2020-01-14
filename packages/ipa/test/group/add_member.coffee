@@ -1,15 +1,9 @@
 
 nikita = require '@nikitajs/core'
-{tags, ssh, scratch} = require '../test'
+{tags, ssh, scratch, ipa} = require '../test'
 they = require('ssh2-they').configure ssh...
 
 return unless tags.ipa
-
-ipa =
-  principal: 'admin'
-  password: 'admin_pw'
-  referer: 'https://ipa.nikita/ipa'
-  url: 'https://ipa.nikita/ipa/session/json'
 
 describe 'ipa.group.add_member', ->
 
@@ -17,30 +11,31 @@ describe 'ipa.group.add_member', ->
     gidnumber = null
     nikita
       ssh: ssh
-    .ipa.group.del ipa, [
+    .ipa.group.del connection: ipa, [
       cn: 'group_add_member'
     ,
       cn: 'group_add_member_user'
     ]
-    .ipa.user.del ipa,
+    .ipa.user.del connection: ipa,
       uid: 'group_add_member_user'
-    .ipa.group ipa,
+    .ipa.group connection: ipa,
       cn: 'group_add_member'
     , (err, {result}) ->
+      throw err if err
       gidnumber = result.gidnumber
-    .ipa.user ipa,
+    .ipa.user connection: ipa,
       uid: 'group_add_member_user'
       attributes:
         givenname: 'Firstname'
         sn: 'Lastname'
         mail: [ 'user@nikita.js.org' ]
-    .ipa.group.add_member ipa,
+    .ipa.group.add_member connection: ipa,
       cn: 'group_add_member'
       attributes:
         user: ['group_add_member_user']
     , (err, {status}) ->
       status.should.be.true() unless err
-    .ipa.group.show ipa,
+    .ipa.group.show connection: ipa,
       cn: 'group_add_member'
     , (err, {result}) ->
       result.gidnumber.should.eql gidnumber

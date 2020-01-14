@@ -1,29 +1,23 @@
 
 {merge} = require 'mixme'
 nikita = require '@nikitajs/core'
-{tags, ssh, scratch} = require '../test'
+{tags, ssh, scratch, ipa} = require '../test'
 they = require('ssh2-they').configure ssh...
 
 return unless tags.ipa
-
-ipa =
-  principal: 'admin'
-  password: 'admin_pw'
-  referer: 'https://ipa.nikita/ipa'
-  url: 'https://ipa.nikita/ipa/session/json'
 
 describe 'ipa.group', ->
 
   they 'create a group', ({ssh}) ->
     nikita
       ssh: ssh
-    .ipa.group.del ipa,
+    .ipa.group.del connection: ipa,
       cn: 'group_add'
-    .ipa.group ipa,
+    .ipa.group connection: ipa,
       cn: 'group_add'
     , (err, {status}) ->
       status.should.be.true() unless err
-    .ipa.group ipa,
+    .ipa.group connection: ipa,
       cn: 'group_add'
     , (err, {status}) ->
       status.should.be.false() unless err
@@ -32,9 +26,9 @@ describe 'ipa.group', ->
   they 'print result such as gidnumber', ({ssh}) ->
     nikita
       ssh: ssh
-    .ipa.group.del ipa,
+    .ipa.group.del connection: ipa,
       cn: 'group_add'
-    .ipa.group ipa,
+    .ipa.group connection: ipa,
       cn: 'group_add'
     , (err, {status, result}) ->
       status.should.be.true() unless err
@@ -49,7 +43,7 @@ describe 'ipa.group', ->
           'ipaobject'
           'posixgroup'
         ]
-        dn: 'cn=group_add,cn=groups,cn=accounts,dc=nikita'
+        dn: 'cn=group_add,cn=groups,cn=accounts,dc=nikita,dc=local'
         gidnumber: null
         cn: [ 'group_add' ]
         ipauniqueid: null
@@ -58,18 +52,18 @@ describe 'ipa.group', ->
   they 'print result even if no modification is performed', ({ssh}) ->
     nikita
       ssh: ssh
-    .ipa.group.del ipa,
+    .ipa.group.del connection: ipa,
       cn: 'group_add'
-    .ipa.group ipa,
+    .ipa.group connection: ipa,
       cn: 'group_add'
-    .ipa.group ipa,
+    .ipa.group connection: ipa,
       cn: 'group_add'
     , (err, {status, result}) ->
       status.should.be.false() unless err
       result.gidnumber.length.should.eql 1
       result = merge result, ipauniqueid: null, gidnumber: null
       result.should.eql
-        dn: 'cn=group_add,cn=groups,cn=accounts,dc=nikita'
+        dn: 'cn=group_add,cn=groups,cn=accounts,dc=nikita,dc=local'
         gidnumber: null
         cn: [ 'group_add' ]
         ipauniqueid: null

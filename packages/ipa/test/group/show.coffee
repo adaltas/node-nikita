@@ -1,28 +1,24 @@
 
 nikita = require '@nikitajs/core'
-{tags, ssh, scratch} = require '../test'
+{tags, ssh, scratch, ipa} = require '../test'
 they = require('ssh2-they').configure ssh...
 
 return unless tags.ipa
-
-ipa =
-  principal: 'admin'
-  password: 'admin_pw'
-  referer: 'https://ipa.nikita/ipa'
-  url: 'https://ipa.nikita/ipa/session/json'
 
 describe 'ipa.group.show', ->
 
   they 'get single group', ({ssh}) ->
     nikita
       ssh: ssh
-    .ipa.group.show ipa,
+    .ipa.group.show connection: ipa,
       cn: 'admins'
     , (err, {result}) ->
       throw err if err
+      result.gidnumber[0].should.match /\d+/
+      result.gidnumber[0] = '0000000000'
       result.should.eql
-        dn: 'cn=admins,cn=groups,cn=accounts,dc=nikita',
-        gidnumber: [ '168000000' ],
+        dn: 'cn=admins,cn=groups,cn=accounts,dc=nikita,dc=local',
+        gidnumber: [ '0000000000' ],
         member_user: [ 'admin' ],
         description: [ 'Account administrators group' ],
         cn: [ 'admins' ]
@@ -31,7 +27,7 @@ describe 'ipa.group.show', ->
   they 'get missing group', ({ssh}) ->
     nikita
       ssh: ssh
-    .ipa.group.show ipa,
+    .ipa.group.show connection: ipa,
       cn: 'missing'
       relax: true
     , (err, {code, result}) ->

@@ -21,33 +21,56 @@ Check if a user exists inside FreeIPA.
 require('nikita')
 .ipa.user.exists({
   uid: 'someone',
-  referer: 'https://my.domain.com',
-  url: 'https://ipa.domain.com/ipa/session/json',
-  principal: 'admin@DOMAIN.COM',
-  password: 'XXXXXX'
+  connection: {
+    referer: "https://my.domain.com",
+    url: "https://ipa.domain.com/ipa/session/json",
+    principal: "admin@DOMAIN.COM",
+    password: "mysecret"
+  }
 }, function(err, {status, exists}){
   console.info(err ? err.message : status ?
     'User was updated' : 'User was already set')
 })
 ```
 
-    module.exports = shy: true, handler: ({options}, callback) ->
+## Options
+
+    on_options = ({options}) ->
       options.uid ?= options.username
-      options.http_headers ?= {}
-      options.http_headers['Accept'] ?= 'applicaton/json'
-      options.http_headers['Referer'] ?= options.referer
-      throw Error "Required Option: uid is required, got #{options.uid}" unless options.uid
-      throw Error "Required Option: url is required, got #{options.url}" unless options.url
-      throw Error "Required Option: principal is required, got #{options.principal}" unless options.principal
-      throw Error "Required Option: password is required, got #{options.password}" unless options.password
-      throw Error "Required Option: referer is required, got #{options.http_headers['Referer']}" unless options.http_headers['Referer']
-      @ipa.user.show options,
+      delete options.username
+
+## Schema
+
+    schema =
+      type: 'object'
+      properties:
+        'uid': type: 'string'
+        'username': type: 'string'
+        'connection':
+          $ref: '/nikita/connection/http'
+      required: ['connection', 'uid']
+
+    handler = ({options}, callback) ->
+      options.connection.http_headers ?= {}
+      options.connection.http_headers['Referer'] ?= options.connection.referer or options.connection.url
+      throw Error "Required Option: principal is required, got #{options.connection.principal}" unless options.connection.principal
+      throw Error "Required Option: password is required, got #{options.connection.password}" unless options.connection.password
+      @ipa.user.show
+        connection: options.connection
         uid: options.uid
         relax: true
       , (err) ->
         return callback err if err and err.code isnt 4001
         exists = !err
         callback null, status: exists, exists: exists
+
+## Export
+
+    module.exports =
+      handler: handler
+      on_options: on_options
+      schema: schema
+      shy: true
 
 ## Dependencies
 
