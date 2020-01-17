@@ -423,6 +423,7 @@ module.exports = function({metadata, options}, callback) {
         }
         if (options.code.indexOf(code) === -1 && options.code_skipped.indexOf(code) === -1) {
           err = Error(`Invalid Exit Code: ${code}`);
+          err.command = options.cmd_original;
           err.code = code;
           return callback(err, null);
         }

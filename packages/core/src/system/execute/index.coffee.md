@@ -236,6 +236,7 @@ nikita.system.execute({
               child.stderr.unpipe options.stderr
             if options.code.indexOf(code) is -1 and options.code_skipped.indexOf(code) is -1
               err = Error "Invalid Exit Code: #{code}"
+              err.command = options.cmd_original
               err.code = code
               return callback err, null
             if options.code_skipped.indexOf(code) is -1

@@ -206,7 +206,7 @@ describe 'system.execute', ->
 
   describe 'error', ->
 
-    they 'provide stdout and stderr', ({ssh}) ->
+    they 'provide `stdout` and `stderr`', ({ssh}) ->
       nikita
         ssh: ssh
       .system.execute
@@ -218,6 +218,18 @@ describe 'system.execute', ->
         err.message.should.eql 'Invalid Exit Code: 2'
         stdout.should.eql ''
         stderr.should.eql 'Some Error\n'
+      .promise()
+
+    they 'provide `command`', ({ssh}) ->
+      nikita
+        ssh: ssh
+      .system.execute
+        cmd: """
+        echo ohno && exit 1
+        """
+        relax: true
+      , (err) ->
+        err.command.should.eql 'echo ohno && exit 1'
       .promise()
 
     they 'trap on error', ({ssh}) ->
