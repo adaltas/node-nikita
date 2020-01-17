@@ -58,6 +58,7 @@ registry.register({
     lstat: 'nikita/fs/lstat',
     mkdir: 'nikita/fs/mkdir',
     rmdir: 'nikita/fs/rmdir',
+    readdir: 'nikita/fs/readdir',
     readFile: 'nikita/fs/readFile',
     readlink: 'nikita/fs/readlink',
     rename: 'nikita/fs/rename',

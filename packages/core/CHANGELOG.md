@@ -16,6 +16,7 @@ Breaking changes:
 * cron: move into tools
 
 New feature:
+* fs.readdir: new action
 * on_options: new hook
 * system.user.read: use getent passwd command
 * schema: initial support
