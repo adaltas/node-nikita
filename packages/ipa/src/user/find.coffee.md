@@ -12,7 +12,6 @@ require('nikita')
     in_group: ["user_find_group"]
   }
   connection: {
-    referer: "https://my.domain.com",
     url: "https://ipa.domain.com/ipa/session/json",
     principal: "admin@DOMAIN.COM",
     password: "mysecret"
@@ -22,12 +21,6 @@ require('nikita')
     "User was updated" : "User was already set")
 })
 ```
-
-## Options
-
-    on_options = ({options}) ->
-      options.uid ?= options.username
-      delete options.username
 
 ## Schema
 

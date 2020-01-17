@@ -5,13 +5,8 @@
 
 // ## Options
 
-// * `referer` (string, ?required)   
-//   The HTTP referer of the request, required unless provided inside the `Referer`
-//   header.
 // * `cn` (string, required)   
 //   Name of the group to delete.
-// * `url` (string, required)    
-//   The IPA HTTP endpoint, for example "https://ipa.domain.com/ipa/session/json"
 
 // ## Exemple
 
@@ -20,7 +15,6 @@
 // .ipa.group.del({
 //   cn: 'somegroup',
 //   connection: {
-//     referer: "https://my.domain.com",
 //     url: "https://ipa.domain.com/ipa/session/json",
 //     principal: "admin@DOMAIN.COM",
 //     password: "mysecret"

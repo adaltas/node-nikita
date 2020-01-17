@@ -12,7 +12,6 @@
 //     in_group: ["user_find_group"]
 //   }
 //   connection: {
-//     referer: "https://my.domain.com",
 //     url: "https://ipa.domain.com/ipa/session/json",
 //     principal: "admin@DOMAIN.COM",
 //     password: "mysecret"
@@ -23,17 +22,9 @@
 // })
 // ```
 
-// ## Options
-var handler, merge, on_options, schema;
-
-on_options = function({options}) {
-  if (options.uid == null) {
-    options.uid = options.username;
-  }
-  return delete options.username;
-};
-
 // ## Schema
+var handler, merge, schema;
+
 schema = {
   criterias: {
     type: 'object',

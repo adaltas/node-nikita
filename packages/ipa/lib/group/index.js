@@ -7,13 +7,8 @@
 
 // * `attributes` (object, required)   
 //   Attributes associated with the group to add or modify.
-// * `referer` (string, ?required)   
-//   The HTTP referer of the request, required unless provided inside the `Referer`
-//   header.
 // * `cn` (string, required)   
 //   Name of the group to add.
-// * `url` (string, required)    
-//   The IPA HTTP endpoint, for example "https://ipa.domain.com/ipa/session/json"
 
 // ## Exemple
 
@@ -22,7 +17,6 @@
 // .ipa.group({
 //   cn: 'somegroup',
 //   connection: {
-//     referer: "https://my.domain.com",
 //     url: "https://ipa.domain.com/ipa/session/json",
 //     principal: "admin@DOMAIN.COM",
 //     password: "mysecret"
@@ -64,15 +58,15 @@ schema = {
 
 // ## Handler
 handler = function({options}, callback) {
-  var base, base1, base2, output;
-  if ((base = options.connection).attributes == null) {
-    base.attributes = {};
+  var base, base1, output;
+  if (options.attributes == null) {
+    options.attributes = {};
   }
-  if ((base1 = options.connection).http_headers == null) {
-    base1.http_headers = {};
+  if ((base = options.connection).http_headers == null) {
+    base.http_headers = {};
   }
-  if ((base2 = options.connection.http_headers)['Referer'] == null) {
-    base2['Referer'] = options.connection.referer || options.connection.url;
+  if ((base1 = options.connection.http_headers)['Referer'] == null) {
+    base1['Referer'] = options.connection.referer || options.connection.url;
   }
   if (!options.connection.principal) {
     throw Error(`Required Option: principal is required, got ${options.connection.principal}`);
@@ -91,7 +85,7 @@ handler = function({options}, callback) {
       method: 'POST',
       data: {
         method: !this.status(-1) ? "group_add/1" : "group_mod/1",
-        params: [[options.cn], options.connection.attributes],
+        params: [[options.cn], options.attributes],
         id: 0
       },
       http_headers: options.http_headers

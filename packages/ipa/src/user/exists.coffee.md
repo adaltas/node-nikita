@@ -5,15 +5,10 @@ Check if a user exists inside FreeIPA.
 
 ## Options
 
-* `referer` (string, ?required)   
-  The HTTP referer of the request, required unless provided inside the `Referer`
-  header.
 * `uid` (string, required)   
   Name of the user to check for existence, same as the username.
-* `username` (string, required)   
-  Name of the user to add, alias of `uid`.
-* `url` (string, required)    
-  The IPA HTTP endpoint, for example "https://ipa.domain.com/ipa/session/json"
+* `connection` (object, required)   
+  See the `nikita.connection.http` action.
 
 ## Exemple
 
@@ -22,7 +17,6 @@ require('nikita')
 .ipa.user.exists({
   uid: 'someone',
   connection: {
-    referer: "https://my.domain.com",
     url: "https://ipa.domain.com/ipa/session/json",
     principal: "admin@DOMAIN.COM",
     password: "mysecret"

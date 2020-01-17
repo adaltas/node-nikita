@@ -7,15 +7,10 @@ Add or modify a user in FreeIPA.
 
 * `attributes` (object, required)   
   Attributes associated with the user to add or modify.
-* `referer` (string, ?required)   
-  The HTTP referer of the request, required unless provided inside the `Referer`
-  header.
 * `uid` (string, required)   
   Name of the user to add, same as the username.
 * `username` (string, required)   
   Name of the user to add, alias of `uid`.
-* `url` (string, required)    
-  The IPA HTTP endpoint, for example "https://ipa.domain.com/ipa/session/json"
 
 ## Exemple
 
@@ -29,7 +24,6 @@ require('nikita')
     userpassword: "secret"
   },
   connection: {
-    referer: "https://my.domain.com",
     url: "https://ipa.domain.com/ipa/session/json",
     principal: "admin@DOMAIN.COM",
     password: "mysecret"

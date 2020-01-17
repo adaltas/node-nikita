@@ -8,13 +8,8 @@ Add member to a group in FreeIPA.
 * `attributes` (object, required)   
   Attributes associated with the group such as `ipaexternalmember`,
   `no_members`, `user` and `group`.
-* `referer` (string, ?required)   
-  The HTTP referer of the request, required unless provided inside the `Referer`
-  header.
 * `cn` (string, required)   
   Name of the group to add.
-* `url` (string, required)    
-  The IPA HTTP endpoint, for example "https://ipa.domain.com/ipa/session/json"
 
 ## Exemple
 
@@ -26,7 +21,6 @@ require("nikita")
     user: ["someone"]
   },
   connection: {
-    referer: "https://my.domain.com",
     url: "https://ipa.domain.com/ipa/session/json",
     principal: "admin@DOMAIN.COM",
     password: "mysecret"

@@ -23,6 +23,21 @@ describe 'ipa.group', ->
       status.should.be.false() unless err
     .promise()
 
+  they 'attribute option', ({ssh}) ->
+    nikita
+      ssh: ssh
+    .ipa.group.del connection: ipa,
+      cn: 'group_add'
+    .ipa.group connection: ipa,
+      cn: 'group_add'
+    , (err, {status}) ->
+      status.should.be.true() unless err
+    .ipa.group connection: ipa,
+      cn: 'group_add'
+    , (err, {status}) ->
+      status.should.be.false() unless err
+    .promise()
+
   they 'print result such as gidnumber', ({ssh}) ->
     nikita
       ssh: ssh

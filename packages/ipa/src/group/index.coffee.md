@@ -7,13 +7,8 @@ Add or modify a group in FreeIPA.
 
 * `attributes` (object, required)   
   Attributes associated with the group to add or modify.
-* `referer` (string, ?required)   
-  The HTTP referer of the request, required unless provided inside the `Referer`
-  header.
 * `cn` (string, required)   
   Name of the group to add.
-* `url` (string, required)    
-  The IPA HTTP endpoint, for example "https://ipa.domain.com/ipa/session/json"
 
 ## Exemple
 
@@ -22,7 +17,6 @@ require('nikita')
 .ipa.group({
   cn: 'somegroup',
   connection: {
-    referer: "https://my.domain.com",
     url: "https://ipa.domain.com/ipa/session/json",
     principal: "admin@DOMAIN.COM",
     password: "mysecret"
@@ -50,7 +44,7 @@ require('nikita')
 ## Handler
 
     handler = ({options}, callback) ->
-      options.connection.attributes ?= {}
+      options.attributes ?= {}
       options.connection.http_headers ?= {}
       options.connection.http_headers['Referer'] ?= options.connection.referer or options.connection.url
       throw Error "Required Option: principal is required, got #{options.connection.principal}" unless options.connection.principal
@@ -65,7 +59,7 @@ require('nikita')
           method: 'POST'
           data:
             method: unless @status(-1) then "group_add/1" else "group_mod/1"
-            params: [[options.cn], options.connection.attributes]
+            params: [[options.cn], options.attributes]
             id: 0
           http_headers: options.http_headers
         , (error, {data}) ->

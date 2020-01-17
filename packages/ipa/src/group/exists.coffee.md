@@ -5,13 +5,8 @@ Check if a group exists inside FreeIPA.
 
 ## Options
 
-* `referer` (string, ?required)   
-  The HTTP referer of the request, required unless provided inside the `Referer`
-  header.
 * `cn` (string, required)   
   Name of the group to check for existence.
-* `url` (string, required)    
-  The IPA HTTP endpoint, for example "https://ipa.domain.com/ipa/session/json"
 
 ## Exemple
 
@@ -20,7 +15,6 @@ require('nikita')
 .ipa.group.exists({
   cn: 'somegroup',
   connection: {
-    referer: "https://my.domain.com",
     url: "https://ipa.domain.com/ipa/session/json",
     principal: "admin@DOMAIN.COM",
     password: "mysecret"
