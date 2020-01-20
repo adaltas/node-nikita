@@ -8,7 +8,7 @@ return unless tags.lxd
 before () ->
   nikita
   .system.execute
-    cmd: "lxc image copy ubuntu:16.04 `lxc remote get-default`:"
+    cmd: "lxc image copy ubuntu:18.04 `lxc remote get-default`:"
   .system.execute
     cmd: "lxc image copy ubuntu:18.04 `lxc remote get-default`:"
   .promise()
@@ -36,7 +36,7 @@ describe 'lxd.init', ->
       container: 'u1'
       force: true
     .lxd.init
-      image: 'ubuntu:16.04'
+      image: 'ubuntu:18.04'
       container: 'u1'
     .lxd.init
       image: 'ubuntu:18.04'

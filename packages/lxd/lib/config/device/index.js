@@ -18,7 +18,7 @@
 
 // * `err`
   //   Error object if any.
-  // * `status`
+  // * `result.status`
   //   True if the device was created or the configuraion updated.
 
 // ## Example
@@ -39,7 +39,7 @@
   // ```
 
 // ## Source Code
-var diff, validate_container_name, yaml,
+var diff, stderr_to_error_message, validate_container_name,
   indexOf = [].indexOf;
 
 module.exports = {
@@ -60,7 +60,7 @@ module.exports = {
     if (!options.device) {
       throw Error("Invalid Option: Device name (options.device) is required");
     }
-    return this.lxd.config.device.exists({
+    return this.lxd.config.device.show({
       container: options.container,
       device: options.device
     }, function(err, {status, config}) {
@@ -68,7 +68,7 @@ module.exports = {
       if (err) {
         return callback(err);
       }
-      if (!status) {
+      if (!config) {
         if (ref = options.type, indexOf.call(valid_devices, ref) < 0) {
           return callback(Error(`Invalid Option: Unrecognized device type: ${options.type}, valid devices are: ${valid_devices.join(', ')}`));
         }
@@ -81,7 +81,7 @@ module.exports = {
           options.config[k] = typeof v === 'boolean' ? v ? 'true' : 'false' : void 0;
         }
         return this.system.execute({
-          cmd: `${[
+          cmd: [
             'lxc',
             'config',
             'device',
@@ -101,32 +101,41 @@ module.exports = {
               }
               return results;
             })())
-          ].join(' ')}`
-        }, function(err, {status}) {
+          ].join(' ')
+        }, function(err, {stderr}) {
           if (err) {
-            return callback(err, {
-              status: false
-            });
+            stderr_to_error_message(err, stderr);
           }
-          return callback(null, {
+          return callback(err, {
             status: true
           });
         });
       } else {
-        changes = diff(config[options.device], options.config);
+        changes = diff(config, options.config);
         if (!Object.keys(changes).length) {
           return callback(null, {
             status: false
           });
         }
-        for (key in changes) {
-          value = changes[key];
-          this.system.execute({
-            cmd: ['lxc', 'config', 'device', 'set', options.container, options.device, key, `'${value.replace('\'', '\\\'')}'`].join(' ')
+        this.system.execute({
+          cmd: ((function() {
+            var results;
+            results = [];
+            for (key in changes) {
+              value = changes[key];
+              results.push(['lxc', 'config', 'device', 'set', options.container, options.device, key, `'${value.replace('\'', '\\\'')}'`].join(' '));
+            }
+            return results;
+          })()).join('\n')
+        }, function(err, {stderr}) {
+          if (err) {
+            return stderr_to_error_message(err, stderr);
+          }
+        });
+        return this.next(function(err) {
+          return callback(err, {
+            status: true
           });
-        }
-        return callback(null, {
-          status: true
         });
       }
     });
@@ -134,8 +143,8 @@ module.exports = {
 };
 
 // ## Dependencies
-yaml = require('js-yaml');
-
 diff = require('object-diff');
 
 validate_container_name = require('../../misc/validate_container_name');
+
+stderr_to_error_message = require('../../misc/stderr_to_error_message');

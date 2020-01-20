@@ -8,7 +8,8 @@ require('@nikitajs/core/lib/registry').register({
       device: {
         '': '@nikitajs/lxd/lib/config/device',
         delete: '@nikitajs/lxd/lib/config/device/delete',
-        exists: '@nikitajs/lxd/lib/config/device/exists'
+        exists: '@nikitajs/lxd/lib/config/device/exists',
+        show: '@nikitajs/lxd/lib/config/device/show'
       },
       set: '@nikitajs/lxd/lib/config/set'
     },

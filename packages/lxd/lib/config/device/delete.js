@@ -14,7 +14,7 @@
 
 // * `err`
 //   Error object if any.
-// * `status`
+// * `result.status`
 //   True if the device was removed False otherwise.
 
 // ## Example
@@ -47,20 +47,17 @@ module.exports = {
     if (!options.device) {
       throw Error("Invalid Option: Device name (options.device) is required");
     }
-    return this.lxd.config.device.exists({
+    return this.lxd.config.device.show({
       container: options.container,
       device: options.device
     }, function(err, {status, config}) {
-      if (err) {
-        return callback(err);
-      }
-      if (!status) {
-        return callback(null, {
+      if (err || !config) {
+        return callback(err, {
           status: false
         });
       }
       this.system.execute({
-        cmd: `lxc config device remove ${options.container} ${options.device}`
+        cmd: ['lxc', 'config', 'device', 'remove', options.container, options.device].join(' ')
       }, function(err, {status}) {});
       if (err) {
         return callback(err);

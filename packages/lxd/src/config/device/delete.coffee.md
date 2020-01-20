@@ -14,7 +14,7 @@ Delete a device from a container
 
 * `err`
   Error object if any.
-* `status`
+* `result.status`
   True if the device was removed False otherwise.
 
 ## Example
@@ -37,17 +37,17 @@ require('nikita')
       throw Error "Invalid Option: container is required" unless options.container
       validate_container_name options.container
       throw Error "Invalid Option: Device name (options.device) is required" unless options.device
-
-      @lxd.config.device.exists
+      @lxd.config.device.show
         container: options.container
         device: options.device
       , (err, {status, config}) ->
-        return callback err if err
-        return callback null, status: false unless status
+        return callback err, status: false if err or not config
         @system.execute
-          cmd:"""
-          lxc config device remove #{options.container} #{options.device}
-          """
+          cmd: [
+            'lxc', 'config', 'device', 'remove'
+            options.container
+            options.device
+          ].join ' '
         , (err, {status}) ->
         return callback err if err
         return callback null, status: true

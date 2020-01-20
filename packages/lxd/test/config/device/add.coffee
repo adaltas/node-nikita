@@ -16,7 +16,7 @@ describe 'lxd.config.device.add', ->
       force: true
     .lxd.init
       container: 'c1'
-      image: 'ubuntu:16.04'
+      image: 'ubuntu:18.04'
     .lxd.config.device
       container: 'c1'
       device: 'test'
@@ -52,4 +52,25 @@ describe 'lxd.config.device.add', ->
       cmd: "lxc config device list c1 | grep test"
     , (err, {status}) ->
       status.should.be.true()
+    .promise()
+
+  they 'catch and format error', ({ssh}) ->
+    nikita
+      ssh: ssh
+    .lxd.delete
+      container: 'c1'
+      force: true
+    .lxd.init
+      image: 'ubuntu:18.04'
+      container: 'c1'
+    .lxd.config.device
+      container: 'c1'
+      device: 'vpn'
+      type: 'proxy'
+      config:
+        listen: 'udp:127.0.0.1:1195'
+        connect: 'udp:127.0.0.999:1194'
+      relax: true
+    , (err) ->
+      err.message.should.eql 'Error: Invalid devices: Invalid value for device option connect: Not an IP address: 127.0.0.999'
     .promise()

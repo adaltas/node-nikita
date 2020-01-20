@@ -9,6 +9,7 @@ require('@nikitajs/core/lib/registry')
         '': '@nikitajs/lxd/src/config/device'
         delete: '@nikitajs/lxd/src/config/device/delete'
         exists: '@nikitajs/lxd/src/config/device/exists'
+        show: '@nikitajs/lxd/src/config/device/show'
       set: '@nikitajs/lxd/src/config/set'
     init: '@nikitajs/lxd/src/init'
     delete: '@nikitajs/lxd/src/delete'

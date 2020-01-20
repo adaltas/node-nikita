@@ -27,6 +27,9 @@
     },
     "max_line_length": {
       "level": "ignore"
+    },
+    "no_nested_string_interpolation": {
+      "level": "ignore"
     }
   },
   "contributors": [

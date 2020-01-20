@@ -10,6 +10,13 @@
 // * `device` (string, required)
 //   Name of the device in LXD configuration, for example "eth0".
 
+// ## Callback parameters
+
+// * `err`
+//   Error object if any.
+// * `result.status`
+//   True if the device exist, false otherwise.
+
 // ## Add a network interface
 
 // ```js
@@ -42,18 +49,15 @@ module.exports = {
     if (!options.device) {
       throw Error("Invalid Option: device is required");
     }
-    return this.system.execute({
-      cmd: `${['lxc', 'config', 'device', 'show', options.container].join(' ')}`,
-      code_skipped: 42,
-      shy: true
-    }, function(err, {stdout}) {
-      var config;
+    return this.lxd.config.device.show({
+      container: options.container,
+      device: options.device
+    }, function(err, {config}) {
       if (err) {
         return callback(err);
       }
-      config = yaml.safeLoad(stdout);
       return callback(null, {
-        status: !!config[options.device],
+        status: !!config,
         config: config
       });
     });

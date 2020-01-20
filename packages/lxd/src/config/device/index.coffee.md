@@ -18,7 +18,7 @@ Create a device or update its configuration.
 
 * `err`
   Error object if any.
-* `status`
+* `result.status`
   True if the device was created or the configuraion updated.
 
 ## Example
@@ -48,44 +48,48 @@ require('nikita')
       throw Error "Invalid Option: container is required" unless options.container
       validate_container_name options.container
       throw Error "Invalid Option: Device name (options.device) is required" unless options.device
-      @lxd.config.device.exists
+      @lxd.config.device.show
         container: options.container
         device: options.device
       , (err, {status, config}) ->
         return callback err if err
-        if not status
+        unless config
           return callback Error "Invalid Option: Unrecognized device type: #{options.type}, valid devices are: #{valid_devices.join ', '}" unless options.type in valid_devices
           for k, v of options.config
             continue if typeof v is 'string'
             options.config[k] = if typeof v is 'boolean' then if v then 'true' else 'false'
           @system.execute
-            cmd: """
-            #{[
+            cmd: [
               'lxc', 'config', 'device', 'add',
-              options.container, options.device, options.type
+              options.container
+              options.device
+              options.type
               ...(
                 "#{key}='#{value.replace '\'', '\\\''}'" for key, value of options.config
               )
-            ].join ' '}
-            """
-          , (err, {status}) ->
-            return callback err, status: false if err
-            return callback null, status: true
-        else
-          changes = diff config[options.device], options.config
-          return callback null, status: false if not Object.keys(changes).length
-          @system.execute (
-            cmd: [
-              'lxc', 'config', 'device', 'set'
-              options.container
-              options.device
-              key, "'#{value.replace '\'', '\\\''}'"
             ].join ' '
-          ) for key, value of changes
-          return callback null, status: true
+          , (err, {stderr}) ->
+            stderr_to_error_message err, stderr if err
+            return callback err, status: true
+        else
+          changes = diff config, options.config
+          return callback null, status: false if not Object.keys(changes).length
+          @system.execute
+            cmd: (
+              [
+                'lxc', 'config', 'device', 'set'
+                options.container
+                options.device
+                key, "'#{value.replace '\'', '\\\''}'"
+              ].join ' ' for key, value of changes
+            ).join '\n'
+          , (err, {stderr}) ->
+            stderr_to_error_message err, stderr if err
+          @next (err) ->
+            return callback err, status: true
 
 ## Dependencies
 
-    yaml = require 'js-yaml'
     diff = require 'object-diff'
     validate_container_name = require '../../misc/validate_container_name'
+    stderr_to_error_message = require '../../misc/stderr_to_error_message'

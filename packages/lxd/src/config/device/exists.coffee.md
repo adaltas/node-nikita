@@ -9,6 +9,13 @@ Add devices to containers or profiles.
   The name of the container.
 * `device` (string, required)
   Name of the device in LXD configuration, for example "eth0".
+  
+## Callback parameters
+
+* `err`
+  Error object if any.
+* `result.status`
+  True if the device exist, false otherwise.
 
 ## Add a network interface
 
@@ -31,19 +38,12 @@ require('nikita')
       throw Error "Invalid Option: container is required" unless options.container
       validate_container_name options.container
       throw Error "Invalid Option: device is required" unless options.device
-      @system.execute
-        cmd: """
-        #{[
-          'lxc', 'config', 'device', 'show'
-          options.container
-        ].join ' '}
-        """
-        code_skipped: 42
-        shy: true
-      , (err, {stdout}) ->
+      @lxd.config.device.show
+        container: options.container
+        device: options.device
+      , (err, {config}) ->
         return callback err if err
-        config = yaml.safeLoad stdout
-        callback null, status: !!config[options.device], config: config
+        callback null, status: !!config, config: config
 
 ## Dependencies
 

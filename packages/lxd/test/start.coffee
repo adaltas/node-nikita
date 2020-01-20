@@ -14,7 +14,7 @@ describe 'lxd.start', ->
       container: 'u1'
       force: true
     .lxd.init
-      image: 'ubuntu:16.04'
+      image: 'ubuntu:18.04'
       container: 'u1'
     .lxd.start
       container: 'u1'
@@ -29,7 +29,7 @@ describe 'lxd.start', ->
       container: 'u1'
       force: true
     .lxd.init
-      image: 'ubuntu:16.04'
+      image: 'ubuntu:18.04'
       container: 'u1'
     .lxd.start
       container: 'u1'
