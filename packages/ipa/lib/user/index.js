@@ -41,7 +41,12 @@ on_options = function({options}) {
   if (options.uid == null) {
     options.uid = options.username;
   }
-  return delete options.username;
+  delete options.username;
+  if (options.attributes) {
+    if (typeof options.attributes.mail === 'string') {
+      return options.attributes.mail = [options.attributes.mail];
+    }
+  }
 };
 
 // ## Schema

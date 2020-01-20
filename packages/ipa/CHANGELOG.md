@@ -7,6 +7,7 @@ Breaking changes:
 * options: isolate connection options
 
 New feature:
+* lxd.user: `mail` attribute coercion
 * schema: implemented on every action
 
 Cleanup:

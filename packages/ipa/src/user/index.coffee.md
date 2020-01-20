@@ -39,6 +39,8 @@ require('nikita')
     on_options = ({options}) ->
       options.uid ?= options.username
       delete options.username
+      if options.attributes
+        options.attributes.mail = [options.attributes.mail] if typeof options.attributes.mail is 'string'
 
 ## Schema
 
