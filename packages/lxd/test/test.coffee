@@ -3,9 +3,9 @@ nikita = require '@nikitajs/core'
 fs = require 'fs'
 # Write default configuration
 if not process.env['NIKITA_TEST_MODULE'] and (
-  not fs.existsSync '../test.js' or
-  not fs.existsSync '../test.json' or
-  not fs.existsSync '../test.coffee'
+  not fs.existsSync("#{__dirname}/../test.js") and
+  not fs.existsSync("#{__dirname}/../test.json") and
+  not fs.existsSync("#{__dirname}/../test.coffee")
 )
   config = fs.readFileSync "#{__dirname}/../test.sample.coffee"
   fs.writeFileSync "#{__dirname}/../test.coffee", config
