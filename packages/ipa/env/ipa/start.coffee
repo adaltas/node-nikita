@@ -36,7 +36,7 @@ nikita
 .log.md filename: '/tmp/nikita_ipa_lxd_install'
 .lxd.cluster
   header: 'Container'
-  debug: true # params.debug
+  # debug: true # params.debug
   networks:
     lxdbr0public:
       'ipv4.address': '172.16.0.1/24'
@@ -102,13 +102,14 @@ nikita
     @lxd.exec
       header: 'Install FreeIPA'
       container: options.container
-      unless_exists: '/etc/ipa/default.conf' # Not enough
-      # unless_exec: 'echo > /dev/tcp/localhost/443'
-      # unless_exec: 'echo admin_pw | kinit admin'
+      code_skipped: 42
+      # Other possibilities to check ipa status:
+      # echo > /dev/tcp/localhost/443
+      # echo admin_pw | kinit admin
       cmd: """
+      [ -f /etc/ipa/default.conf ] && exit 42
       yum install -y freeipa-server
       hostnamectl set-hostname freeipa.nikita.local --static
-      # [ -f /etc/ipa/default.conf ] ||
       #{[
         'ipa-server-install', '-U'
         #  Basic options
