@@ -12,6 +12,12 @@
 // * `username` (string, required)   
 //   Name of the user to add, alias of `uid`.
 
+// ## Implementation
+
+// The `userpassword` attribute is only used on user creation. To force the
+// password to be re-initialized on user update, pass the 'force_userpassword'
+// option.
+
 // ## Exemple
 
 // ```js
@@ -75,11 +81,17 @@ schema = {
           items: {
             type: 'string'
           }
+        },
+        'userpassword': {
+          type: 'string'
         }
       }
     },
     'connection': {
       $ref: '/nikita/connection/http'
+    },
+    'force_userpassword': {
+      type: 'boolean'
     }
   },
   required: ['attributes', 'connection', 'uid']
@@ -105,11 +117,16 @@ handler = function({options}, callback) {
     uid: options.uid
   });
   this.call(function({}, callback) {
+    var exists;
+    exists = this.status(-1);
+    if (exists && !options.force_userpassword) {
+      options.attributes.userpassword = void 0;
+    }
     return this.connection.http(options.connection, {
       negotiate: true,
       method: 'POST',
       data: {
-        method: !this.status(-1) ? 'user_add/1' : 'user_mod/1',
+        method: !exists ? 'user_add/1' : 'user_mod/1',
         params: [[options.uid], options.attributes],
         id: 0
       }

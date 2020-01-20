@@ -12,6 +12,12 @@ Add or modify a user in FreeIPA.
 * `username` (string, required)   
   Name of the user to add, alias of `uid`.
 
+## Implementation
+
+The `userpassword` attribute is only used on user creation. To force the
+password to be re-initialized on user update, pass the 'force_userpassword'
+option.
+
 ## Exemple
 
 ```js
@@ -55,8 +61,10 @@ require('nikita')
             'givenname': type: 'string' # Firstname
             'sn': type: 'string' # Lastname
             'mail': type: 'array', minItems: 1, uniqueItems: true, items: type: 'string'
+            'userpassword': type: 'string'
         'connection':
           $ref: '/nikita/connection/http'
+        'force_userpassword': type: 'boolean'
       required: ['attributes', 'connection', 'uid']
 
 ## Handler
@@ -70,11 +78,13 @@ require('nikita')
         connection: options.connection
         uid: options.uid
       @call ({}, callback) ->
+        exists = @status(-1)
+        options.attributes.userpassword = undefined if exists and not options.force_userpassword
         @connection.http options.connection,
           negotiate: true
           method: 'POST'
           data:
-            method: unless @status(-1) then 'user_add/1' else 'user_mod/1'
+            method: unless exists then 'user_add/1' else 'user_mod/1'
             params: [[options.uid], options.attributes]
             id: 0
         , (error, {data}) ->

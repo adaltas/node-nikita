@@ -7,6 +7,7 @@ Breaking changes:
 * options: isolate connection options
 
 New feature:
+* lxd.user: don't update password, unless `force_userpassword`
 * lxd.user: `mail` attribute coercion
 * schema: implemented on every action
 

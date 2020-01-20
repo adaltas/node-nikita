@@ -57,14 +57,16 @@ describe 'ipa.user', ->
     they 'create a user', ({ssh}) ->
       nikita
         ssh: ssh
-      .ipa.user.del connection: ipa,
+      .ipa.user.del
         uid: 'user_add'
-      .ipa.user connection: ipa,
+        connection: ipa
+      .ipa.user
         uid: 'user_add'
         attributes:
           givenname: 'Firstname'
           sn: 'Lastname'
           mail: [ 'user@nikita.js.org' ]
+        connection: ipa
       , (err, {status}) ->
         status.should.be.true() unless err
       .ipa.user
@@ -104,4 +106,51 @@ describe 'ipa.user', ->
         connection: ipa
       , (err, {result}) ->
         result.givenname.should.eql ['Firstname 2']
+      .promise()
+
+    they 'modify password', ({ssh}) ->
+      nikita
+        ssh: ssh
+      .ipa.user.del
+        connection: ipa
+        uid: 'user_add'
+      .ipa.user
+        attributes:
+          givenname: 'Firstname 1'
+          sn: 'Lastname'
+          mail: [ 'user@nikita.js.org' ]
+          userpassword: 'toto'
+        connection: ipa
+        uid: 'user_add'
+      .ipa.user
+        uid: 'user_add'
+        attributes:
+          userpassword: 'toto'
+        connection: ipa
+      , (err, {status}) ->
+        status.should.be.false() unless err
+      .promise()
+
+    they 'modify password', ({ssh}) ->
+      nikita
+        ssh: ssh
+      .ipa.user.del
+        connection: ipa
+        uid: 'user_add'
+      .ipa.user
+        attributes:
+          givenname: 'Firstname 1'
+          sn: 'Lastname'
+          mail: [ 'user@nikita.js.org' ]
+          userpassword: 'toto'
+        connection: ipa
+        uid: 'user_add'
+      .ipa.user
+        attributes:
+          userpassword: 'toto'
+        connection: ipa
+        force_userpassword: true
+        uid: 'user_add'
+      , (err, {status}) ->
+        status.should.be.true() unless err
       .promise()
