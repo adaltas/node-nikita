@@ -77,12 +77,15 @@ containers:
           header: 'Bridge'
           network: network
           config: config
-      for container, config of options.containers
+      for container, config of options.containers then @call
+        header: "Container #{container}"
+        container: container
+        config: config
+      , ({options : {container, config}}) ->
         validate_container_name container
         config.config ?= {}
         ssh = config.ssh or {}
         ssh.enabled ?= false
-        # throw Error 'Required Option: ssh.id_rsa is record if ssh is enabled' if ssh.enabled and not ssh.id_rsa
         @lxd.init
           header: 'Init'
           container: container
@@ -176,9 +179,13 @@ containers:
           """
           trap: true
           code_skipped: 42
-        for user, configuser of config.user then @call header: "#{user}", ->
+        for user, configuser of config.user then @call
+          header: "User #{user}"
+          user: user
+          configuser: configuser
+        , ({options = {user, configuser}}) ->
           @lxd.exec
-            header: "User #{user}"
+            header: 'Create'
             container: container
             cmd: """
             id #{user} && exit 42
