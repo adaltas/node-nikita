@@ -29,7 +29,7 @@ require('nikita')
 ## Source Code
 
     module.exports = ({options}) ->
-      @log message: "Entering lxd storage delete", level: "DEBUG", module: "@nikitajs/lxd/lib/storage/delete"
+      @log message: "Entering lxd.storage.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/storage/delete"
       #Check args
       throw Error "Argument 'name' is required to delete a storage" unless options.name
       #Build command

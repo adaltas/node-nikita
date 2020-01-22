@@ -39,7 +39,7 @@ var diff, yaml;
 module.exports = function({options}, callback) {
   var k, key, ref, v, value;
   this.log({
-    message: "Entering lxd network",
+    message: "Entering lxd.network",
     level: "DEBUG",
     module: "@nikitajs/lxd/lib/network"
   });

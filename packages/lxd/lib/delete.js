@@ -26,7 +26,7 @@ var validate_container_name;
 
 module.exports = function({options}) {
   this.log({
-    message: "Entering delete",
+    message: "Entering lxd.delete",
     level: 'DEBUG',
     module: '@nikitajs/lxd/lib/delete'
   });

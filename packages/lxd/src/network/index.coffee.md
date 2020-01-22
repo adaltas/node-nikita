@@ -36,7 +36,7 @@ require('nikita')
 ## Source Code
 
     module.exports = ({options}, callback) ->
-      @log message: "Entering lxd network", level: "DEBUG", module: "@nikitajs/lxd/lib/network"
+      @log message: "Entering lxd.network", level: "DEBUG", module: "@nikitajs/lxd/lib/network"
       #Check args
       throw Error "Invalid Option: network is required to create a network" unless options.network
       for k, v of options.config

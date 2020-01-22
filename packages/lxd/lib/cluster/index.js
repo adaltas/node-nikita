@@ -66,7 +66,7 @@
 var validate_container_name;
 
 module.exports = function({options}) {
-  var config, configdisk, confignic, configproxy, configuser, container, device, network, ref, ref1, ref2, ref3, ref4, ref5, ref6, results, ssh, user;
+  var config, container, network, ref, ref1, ref2, results;
   if (options.networks == null) {
     options.networks = {};
   }
@@ -91,111 +91,118 @@ module.exports = function({options}) {
   ref1 = options.containers;
   for (container in ref1) {
     config = ref1[container];
-    validate_container_name(container);
-    if (config.config == null) {
-      config.config = {};
-    }
-    ssh = config.ssh || {};
-    if (ssh.enabled == null) {
-      ssh.enabled = false;
-    }
-    // throw Error 'Required Option: ssh.id_rsa is record if ssh is enabled' if ssh.enabled and not ssh.id_rsa
-    this.lxd.init({
-      header: 'Init',
+    this.call({
+      header: `Container ${container}`,
       container: container,
-      image: config.image
-    });
-    this.lxd.config.set({
-      header: 'Config',
-      container: container,
-      image: config.image,
-      config: config.config
-    });
-    ref2 = config.disk;
-    for (device in ref2) {
-      configdisk = ref2[device];
-      this.lxd.config.device({
-        header: `Device ${device} disk`,
+      config: config
+    }, function({
+        options: {container, config}
+      }) {
+      var configdisk, confignic, configproxy, configuser, device, ref2, ref3, ref4, ref5, results, ssh, user;
+      validate_container_name(container);
+      if (config.config == null) {
+        config.config = {};
+      }
+      ssh = config.ssh || {};
+      if (ssh.enabled == null) {
+        ssh.enabled = false;
+      }
+      this.lxd.init({
+        header: 'Init',
         container: container,
-        device: device,
-        type: 'disk',
-        config: configdisk
+        image: config.image
       });
-    }
-    ref3 = config.nic;
-    for (device in ref3) {
-      confignic = ref3[device];
-      if (confignic.name == null) {
-        confignic.name = device;
-      }
-      if (confignic.netmask == null) {
-        confignic.netmask = '255.255.255.0';
-      }
-      if (!confignic.config.parent) {
-        throw Error(`Required Property: nic.${device}.parent`);
-      }
-      this.lxd.config.device({
-        header: `Device ${device} nic`,
+      this.lxd.config.set({
+        header: 'Config',
         container: container,
-        device: device,
-        type: 'nic',
-        config: confignic.config
+        image: config.image,
+        config: config.config
       });
-      this.lxd.file.push({
-        header: `ifcfg ${confignic.name}`,
-        if: !!confignic.ip,
-        container: container,
-        target: `/etc/sysconfig/network-scripts/ifcfg-${confignic.name}`,
-        content: `NM_CONTROLLED=yes
+      ref2 = config.disk;
+      for (device in ref2) {
+        configdisk = ref2[device];
+        this.lxd.config.device({
+          header: `Device ${device} disk`,
+          container: container,
+          device: device,
+          type: 'disk',
+          config: configdisk
+        });
+      }
+      ref3 = config.nic;
+      for (device in ref3) {
+        confignic = ref3[device];
+        if (confignic.name == null) {
+          confignic.name = device;
+        }
+        if (confignic.netmask == null) {
+          confignic.netmask = '255.255.255.0';
+        }
+        if (!confignic.config.parent) {
+          throw Error(`Required Property: nic.${device}.parent`);
+        }
+        this.lxd.config.device({
+          header: `Device ${device} nic`,
+          container: container,
+          device: device,
+          type: 'nic',
+          config: confignic.config
+        });
+        this.lxd.file.push({
+          header: `ifcfg ${confignic.name}`,
+          if: !!confignic.ip,
+          container: container,
+          target: `/etc/sysconfig/network-scripts/ifcfg-${confignic.name}`,
+          content: `NM_CONTROLLED=yes
 BOOTPROTO=none
 ONBOOT=yes
 IPADDR=${confignic.ip}
 NETMASK=${confignic.netmask}
 DEVICE=${confignic.name}
 PEERDNS=no`
+        });
+      }
+      ref4 = config.proxy;
+      for (device in ref4) {
+        configproxy = ref4[device];
+        // todo: add host detection and port forwarding to VirtualBox
+        // VBoxManage controlvm 'lxd' natpf1 'ipa_ui,tcp,0.0.0.0,2443,,2443'
+        this.lxd.config.device({
+          header: `Device ${device} proxy`,
+          container: container,
+          device: device,
+          type: 'proxy',
+          config: configproxy
+        });
+      }
+      this.lxd.start({
+        header: 'Start',
+        container: container
       });
-    }
-    ref4 = config.proxy;
-    for (device in ref4) {
-      configproxy = ref4[device];
-      // todo: add host detection and port forwarding to VirtualBox
-      // VBoxManage controlvm 'lxd' natpf1 'ipa_ui,tcp,0.0.0.0,2443,,2443'
-      this.lxd.config.device({
-        header: `Device ${device} proxy`,
+      this.wait.execute({
+        cmd: `lxc info ${container} | grep 'Status: Running'`
+      });
+      this.connection.wait({
+        host: 'linuxfoundation.org',
+        port: 80
+      });
+      // timeout: 5000
+      // Not sure why openssl is required
+      this.lxd.exec({
+        header: 'OpenSSL',
         container: container,
-        device: device,
-        type: 'proxy',
-        config: configproxy
-      });
-    }
-    this.lxd.start({
-      header: 'Start',
-      container: container
-    });
-    this.wait.execute({
-      cmd: `lxc info ${container} | grep 'Status: Running'`
-    });
-    this.connection.wait({
-      host: 'linuxfoundation.org',
-      port: 80
-    });
-    // timeout: 5000
-    // Not sure why openssl is required
-    this.lxd.exec({
-      header: 'OpenSSL',
-      container: container,
-      cmd: `yum update -y
+        cmd: `yum update -y
 yum install -y openssl
 command -v openssl`,
-      retry: 10,
-      sleep: 5000,
-      trap: true
-    });
-    this.lxd.exec({
-      header: 'SSH',
-      if: ssh.enabled,
-      container: container,
-      cmd: `# systemctl status sshd
+        retry: 10,
+        sleep: 5000,
+        trap: true
+      });
+      this.lxd.exec({
+        header: 'SSH',
+        if: ssh.enabled,
+        container: container,
+        cmd: `# systemctl status sshd
 # yum install -y openssh-server
 # systemctl start sshd
 # systemctl enable sshd
@@ -210,57 +217,62 @@ fi
 systemctl status sshd && exit 42
 systemctl start sshd
 systemctl enable sshd`,
-      trap: true,
-      code_skipped: 42
-    });
-    ref5 = config.user;
-    for (user in ref5) {
-      configuser = ref5[user];
-      this.call({
-        header: `${user}`
-      }, function() {
-        this.lxd.exec({
+        trap: true,
+        code_skipped: 42
+      });
+      ref5 = config.user;
+      results = [];
+      for (user in ref5) {
+        configuser = ref5[user];
+        results.push(this.call({
           header: `User ${user}`,
-          container: container,
-          cmd: `id ${user} && exit 42
+          user: user,
+          configuser: configuser
+        }, function({options = {user, configuser}}) {
+          this.lxd.exec({
+            header: 'Create',
+            container: container,
+            cmd: `id ${user} && exit 42
 useradd --create-home --system ${user}
 mkdir -p /home/${user}/.ssh
 chown ${user}.${user} /home/${user}/.ssh
 chmod 700 /home/${user}/.ssh`,
-          trap: true,
-          code_skipped: 42
-        });
-        this.lxd.exec({
-          header: 'Sudo',
-          if: configuser.sudo,
-          container: container,
-          cmd: `yum install -y sudo
+            trap: true,
+            code_skipped: 42
+          });
+          this.lxd.exec({
+            header: 'Sudo',
+            if: configuser.sudo,
+            container: container,
+            cmd: `yum install -y sudo
 command -v sudo
 cat /etc/sudoers | grep "${user}" && exit 42
 echo "${user} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers`,
-          trap: true,
-          code_skipped: 42
-        });
-        return this.lxd.file.push({
-          header: 'Authorize',
-          if: configuser.authorized_keys,
-          container: container,
-          gid: `${user}`,
-          uid: `${user}`,
-          mode: 600,
-          source: `${configuser.authorized_keys}`,
-          target: `/home/${user}/.ssh/authorized_keys`
-        });
-      });
-    }
+            trap: true,
+            code_skipped: 42
+          });
+          return this.lxd.file.push({
+            header: 'Authorize',
+            if: configuser.authorized_keys,
+            container: container,
+            gid: `${user}`,
+            uid: `${user}`,
+            mode: 600,
+            source: `${configuser.authorized_keys}`,
+            target: `/home/${user}/.ssh/authorized_keys`
+          });
+        }));
+      }
+      return results;
+    });
   }
   this.call({
     if: !!options.provision
   }, options, options.provision);
-  ref6 = options.containers;
+  ref2 = options.containers;
   results = [];
-  for (container in ref6) {
-    config = ref6[container];
+  for (container in ref2) {
+    config = ref2[container];
     results.push(this.call({
       if: !!options.provision_container
     }, {

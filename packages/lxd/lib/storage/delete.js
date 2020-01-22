@@ -30,7 +30,7 @@
 module.exports = function({options}) {
   var cmd_delete;
   this.log({
-    message: "Entering lxd storage delete",
+    message: "Entering lxd.storage.delete",
     level: "DEBUG",
     module: "@nikitajs/lxd/lib/storage/delete"
   });

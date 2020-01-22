@@ -29,7 +29,7 @@ require('nikita')
 ## Source Code
 
     module.exports = ({options}) ->
-      @log message: "Entering lxd network delete", level: "DEBUG", module: "@nikitajs/lxd/lib/network/delete"
+      @log message: "Entering lxd.network.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/network/delete"
       #Check args
       throw Error "Invalid Option: network is required" unless options.network
       #Execute

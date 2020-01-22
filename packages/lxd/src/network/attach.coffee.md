@@ -32,7 +32,7 @@ require('nikita')
 ## Source Code
 
     module.exports = ({options}) ->
-      @log message: "Entering lxd network attach", level: "DEBUG", module: "@nikitajs/lxd/lib/network/attach"
+      @log message: "Entering lxd.network.attach", level: "DEBUG", module: "@nikitajs/lxd/lib/network/attach"
       # Validation
       throw Error "Invalid Option: container is required" unless options.container
       validate_container_name options.container

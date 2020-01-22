@@ -35,7 +35,7 @@ var validate_container_name;
 module.exports = {
   handler: function({options}, callback) {
     this.log({
-      message: "Entering lxd config.device",
+      message: "Entering lxd config.device.delete",
       level: "DEBUG",
       module: "@nikitajs/lxd/lib/config/device/delete"
     });

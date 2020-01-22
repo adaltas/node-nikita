@@ -32,7 +32,7 @@ require('nikita')
 ## Source Code
 
     module.exports = handler: ({options}, callback) ->
-      @log message: "Entering lxd config.device", level: "DEBUG", module: "@nikitajs/lxd/lib/config/device/delete"
+      @log message: "Entering lxd config.device.delete", level: "DEBUG", module: "@nikitajs/lxd/lib/config/device/delete"
       # Validation
       throw Error "Invalid Option: container is required" unless options.container
       validate_container_name options.container

@@ -33,9 +33,9 @@ var validate_container_name;
 module.exports = function({options}) {
   var cmd_init;
   this.log({
-    message: "Entering lxd.init",
+    message: "Entering lxd.start",
     level: 'DEBUG',
-    module: '@nikitajs/lxd/lib/init'
+    module: '@nikitajs/lxd/lib/start'
   });
   if (!options.container) {
     // Validation

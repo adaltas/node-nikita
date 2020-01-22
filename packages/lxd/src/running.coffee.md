@@ -30,7 +30,7 @@ require('nikita')
 ## Source Code
 
     module.exports = shy: true, handler: ({options}) ->
-      @log message: "Entering lxd.init", level: 'DEBUG', module: '@nikitajs/lxd/lib/init'
+      @log message: "Entering lxd.running", level: 'DEBUG', module: '@nikitajs/lxd/lib/running'
       # Validation
       throw Error "Invalid Option: container is required" unless options.container
       validate_container_name options.container

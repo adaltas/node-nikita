@@ -34,7 +34,7 @@ var validate_container_name;
 
 module.exports = function({options}) {
   this.log({
-    message: "Entering lxd network detach",
+    message: "Entering lxd.network.detach",
     level: "DEBUG",
     module: "@nikitajs/lxd/lib/network/detach"
   });

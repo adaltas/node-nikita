@@ -35,7 +35,7 @@ var validate_container_name;
 module.exports = function({options}) {
   var cmd_attach;
   this.log({
-    message: "Entering lxd network attach",
+    message: "Entering lxd.network.attach",
     level: "DEBUG",
     module: "@nikitajs/lxd/lib/network/attach"
   });

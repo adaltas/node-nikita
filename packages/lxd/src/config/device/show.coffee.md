@@ -44,7 +44,7 @@ require('nikita')
 ## Handler
 
     handler = ({options}, callback) ->
-      @log message: "Entering lxd config.device", level: "DEBUG", module: "@nikitajs/lxd/lib/config/device"
+      @log message: "Entering lxd config.device.show", level: "DEBUG", module: "@nikitajs/lxd/lib/config/device/show"
       # Validation
       throw Error "Invalid Option: container is required" unless options.container
       validate_container_name options.container

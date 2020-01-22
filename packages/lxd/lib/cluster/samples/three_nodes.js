@@ -7,6 +7,14 @@ require('@nikitajs/tools/lib/register');
 
 require('../../register');
 
+/*
+
+Notes:
+
+SSH private and public keys will be generated in an "assets" directory inside
+the current working directory.
+
+*/
 nikita.log.cli({
   pad: {
     host: 20,
@@ -57,102 +65,102 @@ nikita.log.cli({
       },
       proxy: {
         ssh: {
-          listen: 'tcp:0.0.0.0:2200',
+          listen: 'tcp:0.0.0.0:2201',
           connect: 'tcp:127.0.0.1:22'
         }
       },
       ssh: {
         enabled: true
+      },
+      user: {
+        nikita: {
+          sudo: true,
+          authorized_keys: './assets/id_rsa.pub'
+        }
       }
     },
-    user: {
-      nikita: {
-        sudo: true,
-        authorized_keys: './assets/id_rsa.pub'
-      }
-    }
-  },
-  n2: {
-    image: 'images:centos/7',
-    disk: {
-      nikitadir: {
-        source: '/nikita',
-        path: '/nikita'
-      }
-    },
-    nic: {
-      eth0: {
-        config: {
-          name: 'eth0',
-          nictype: 'bridged',
-          parent: 'lxdbr0public'
+    n2: {
+      image: 'images:centos/7',
+      disk: {
+        nikitadir: {
+          source: '/nikita',
+          path: '/nikita'
         }
       },
-      eth1: {
-        config: {
-          name: 'eth1',
-          nictype: 'bridged',
-          parent: 'lxdbr1private'
+      nic: {
+        eth0: {
+          config: {
+            name: 'eth0',
+            nictype: 'bridged',
+            parent: 'lxdbr0public'
+          }
         },
-        ip: '10.10.10.12',
-        netmask: '255.255.255.0'
-      }
-    },
-    proxy: {
-      ssh: {
-        listen: 'tcp:0.0.0.0:2200',
-        connect: 'tcp:127.0.0.1:22'
-      }
-    },
-    ssh: {
-      enabled: true
-    },
-    user: {
-      nikita: {
-        sudo: true,
-        authorized_keys: './assets/id_rsa.pub'
-      }
-    }
-  },
-  n3: {
-    image: 'images:centos/7',
-    disk: {
-      nikitadir: {
-        source: '/nikita',
-        path: '/nikita'
-      }
-    },
-    nic: {
-      eth0: {
-        config: {
-          name: 'eth0',
-          nictype: 'bridged',
-          parent: 'lxdbr0public'
+        eth1: {
+          config: {
+            name: 'eth1',
+            nictype: 'bridged',
+            parent: 'lxdbr1private'
+          },
+          ip: '10.10.10.12',
+          netmask: '255.255.255.0'
         }
       },
-      eth1: {
-        config: {
-          name: 'eth1',
-          nictype: 'bridged',
-          parent: 'lxdbr1private'
-        },
-        ip: '10.10.10.13',
-        netmask: '255.255.255.0'
-      }
-    },
-    proxy: {
+      proxy: {
+        ssh: {
+          listen: 'tcp:0.0.0.0:2202',
+          connect: 'tcp:127.0.0.1:22'
+        }
+      },
       ssh: {
-        listen: 'tcp:0.0.0.0:2200',
-        connect: 'tcp:127.0.0.1:22'
+        enabled: true
+      },
+      user: {
+        nikita: {
+          sudo: true,
+          authorized_keys: './assets/id_rsa.pub'
+        }
       }
     },
-    ssh: {
-      enabled: true
-    },
-    user: {
-      nikita: {
-        sudo: true,
-        authorized_keys: './assets/id_rsa.pub'
+    n3: {
+      image: 'images:centos/7',
+      disk: {
+        nikitadir: {
+          source: '/nikita',
+          path: '/nikita'
+        }
+      },
+      nic: {
+        eth0: {
+          config: {
+            name: 'eth0',
+            nictype: 'bridged',
+            parent: 'lxdbr0public'
+          }
+        },
+        eth1: {
+          config: {
+            name: 'eth1',
+            nictype: 'bridged',
+            parent: 'lxdbr1private'
+          },
+          ip: '10.10.10.13',
+          netmask: '255.255.255.0'
+        }
+      },
+      proxy: {
+        ssh: {
+          listen: 'tcp:0.0.0.0:2203',
+          connect: 'tcp:127.0.0.1:22'
+        }
+      },
+      ssh: {
+        enabled: true
+      },
+      user: {
+        nikita: {
+          sudo: true,
+          authorized_keys: './assets/id_rsa.pub'
+        }
       }
     }
   },
@@ -166,28 +174,24 @@ nikita.log.cli({
     });
   },
   provision_container: function({options}) {
-    this.lxd.exec({
+    return this.lxd.exec({
       header: 'Node.js',
       container: options.container,
       cmd: `command -v node && exit 42
-NODE_VERSION=10.12.0
-yum install -y xz
-curl -SL "https://nodejs.org/dist/v\${NODE_VERSION}/node-v\${NODE_VERSION}-linux-x64.tar.xz" -o /tmp/node.tar.xz
-tar -xJf "/tmp/node.tar.xz" -C /usr/local --strip-components=1
-rm -f "/tmp/node.tar.xz"`,
+curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o n
+bash n lts`,
       trap: true,
       code_skipped: 42
     });
-    return this.lxd.file.push({
-      debug: true,
-      header: 'Test configuration',
-      container: options.container,
-      gid: 'nikita',
-      uid: 'nikita',
-      source: './test.coffee',
-      target: '/nikita/packages/core/test.coffee'
-    });
   }
+// @lxd.file.push
+//   debug: true
+//   header: 'Test configuration'
+//   container: options.container
+//   gid: 'nikita'
+//   uid: 'nikita'
+//   source: './test.coffee'
+//   target: '/nikita/packages/core/test.coffee'
 }).next(function(err) {
   if (err) {
     throw err;

@@ -34,9 +34,9 @@ module.exports = {
   shy: true,
   handler: function({options}) {
     this.log({
-      message: "Entering lxd.init",
+      message: "Entering lxd.running",
       level: 'DEBUG',
-      module: '@nikitajs/lxd/lib/init'
+      module: '@nikitajs/lxd/lib/running'
     });
     if (!options.container) {
       // Validation

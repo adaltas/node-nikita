@@ -29,7 +29,7 @@
 // ## Source Code
 module.exports = function({options}) {
   this.log({
-    message: "Entering lxd network delete",
+    message: "Entering lxd.network.delete",
     level: "DEBUG",
     module: "@nikitajs/lxd/lib/network/delete"
   });

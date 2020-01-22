@@ -49,9 +49,9 @@ schema = {
 // ## Handler
 handler = function({options}, callback) {
   this.log({
-    message: "Entering lxd config.device",
+    message: "Entering lxd config.device.show",
     level: "DEBUG",
-    module: "@nikitajs/lxd/lib/config/device"
+    module: "@nikitajs/lxd/lib/config/device/show"
   });
   if (!options.container) {
     // Validation
