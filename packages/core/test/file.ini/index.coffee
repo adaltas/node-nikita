@@ -225,3 +225,15 @@ describe 'file.ini', ->
     , (err, {status}) ->
       status.should.be.false() unless err
     .promise()
+  
+  they 'content encode string true correctly', ({ssh}) ->
+    nikita
+      ssh: ssh
+    .file.ini
+      target: "#{scratch}/test.ini"
+      merge: true
+      content: color: ui: 'true'
+    .file.assert
+      target: "#{scratch}/test.ini"
+      content: '[color]\nui = true\n'
+    .promise()
