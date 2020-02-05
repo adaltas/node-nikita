@@ -294,7 +294,7 @@ require('nikita')
             uid: options.uid
             gid: options.gid
             # force execution right on mkdir
-            mode: if options.mode then (options.mode | 0o111) else 0o755 
+            mode: if options.mode then (options.mode | 0o111) else 0o755
             # Modify uid and gid if the dir does not yet exists
             unless_exists: path.dirname options.target
           , callback
@@ -324,7 +324,7 @@ require('nikita')
               break
             if char is '\n' or char is '\u2028'
               options.eof = char
-              break;
+              break
           options.eof = '\n' if options.eof is true
           @log message: "Option eof is true, guessing as #{JSON.stringify options.eof}", level: 'INFO', module: 'nikita/lib/file'
         unless string.endsWith options.content, options.eof
