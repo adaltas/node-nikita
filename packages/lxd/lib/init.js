@@ -17,6 +17,8 @@
 //   Profile to set this container up
 // * `ephemeral` (optional, boolean, false)
 //   If true, the container will be deleted when stopped
+// * `vm` (optional, boolean, false)
+//   If true, instantiate a VM instead of a container
 
 // ## Callback Parameters
 
@@ -59,7 +61,7 @@ module.exports = function({options}) {
     throw Error("Invalid Option: container is required");
   }
   validate_container_name(options.container);
-  cmd_init = ['lxc', 'init', options.image, options.container, options.network ? `--network ${options.network}` : void 0, options.storage ? `--storage ${options.storage}` : void 0, options.ephemeral ? "--ephemeral" : void 0].join(' ');
+  cmd_init = ['lxc', 'init', options.image, options.container, options.network ? `--network ${options.network}` : void 0, options.storage ? `--storage ${options.storage}` : void 0, options.ephemeral ? "--ephemeral" : void 0, options.vm ? "--vm" : void 0, options.profile ? `--profile ${options.profile}` : void 0].join(' ');
   // Execution
   return this.system.execute({
     container: options.container,

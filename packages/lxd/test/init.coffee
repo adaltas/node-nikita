@@ -44,3 +44,36 @@ describe 'lxd.init', ->
     , (err, {status}) ->
       status.should.be.false()
     .promise()
+
+  they 'Init new VM', ({ssh}) ->
+    nikita
+      ssh: ssh
+    .lxd.delete
+      container: 'vm1'
+      force: true
+    .lxd.init
+      image: 'ubuntu:'
+      container: 'vm1'
+      ephemeral: false
+      vm: true
+    , (err, {status}) ->
+      status.should.be.true()
+    .promise()
+
+  they 'VM already exist', ({ssh}) ->
+    nikita
+      ssh: ssh
+    .lxd.delete
+      container: 'vm1'
+      force: true
+    .lxd.init
+      image: 'ubuntu:'
+      container: 'vm1'
+      vm: true
+    .lxd.init
+      image: 'ubuntu:'
+      container: 'vm1'
+      vm: true
+    , (err, {status}) ->
+      status.should.be.false()
+    .promise()

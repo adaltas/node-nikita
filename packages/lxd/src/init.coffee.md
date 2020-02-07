@@ -17,6 +17,8 @@ Initialize a Linux Container with given image name, container name and options.
   Profile to set this container up
 * `ephemeral` (optional, boolean, false)
   If true, the container will be deleted when stopped
+* `vm` (optional, boolean, false)
+  If true, instantiate a VM instead of a container
 
 ## Callback Parameters
 
@@ -56,6 +58,8 @@ fix is to prepend the init command with `echo '' | `.
         "--network #{options.network}" if options.network
         "--storage #{options.storage}" if options.storage
         "--ephemeral" if options.ephemeral
+        "--vm" if options.vm
+        "--profile #{options.profile}" if options.profile
       ].join ' '
       # Execution
       @system.execute
