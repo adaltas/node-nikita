@@ -50,7 +50,7 @@ module.exports = {
     }
     validate_container_name(options.container);
     if (!(options.device = this.system.execute({
-      cmd: ['lxc', 'query', ['1.0', 'containers', options.container, 'state'].join('/')].join(' ')
+      cmd: ['lxc', 'query', ['1.0', 'instances', options.container, 'state'].join('/')].join(' ')
     }, function(err, {stdout}) {
       var config;
       if (err) {
@@ -72,7 +72,7 @@ validate_container_name = require('../../misc/validate_container_name');
 // ## Output example
 
 // ```
-// lxc query /1.0/containers/c1/state
+// lxc query /1.0/instances/c1/state
 // {
 //  "cpu": {
 //    "usage": 800378470122

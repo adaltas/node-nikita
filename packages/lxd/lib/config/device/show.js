@@ -62,7 +62,7 @@ handler = function({options}, callback) {
     throw Error("Invalid Option: Device name (options.device) is required");
   }
   return this.system.execute({
-    cmd: ['lxc', 'query', '/' + ['1.0', 'containers', options.container].join('/')].join(' ')
+    cmd: ['lxc', 'query', '/' + ['1.0', 'instances', options.container].join('/')].join(' ')
   }, function(err, {stdout}) {
     var config;
     if (err) {

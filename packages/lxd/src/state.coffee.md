@@ -45,7 +45,7 @@ require('nikita')
         cmd: [
           'lxc', 'query',
           [
-            '1.0', 'containers', options.container, 'state'
+            '1.0', 'instances', options.container, 'state'
           ].join '/'
         ].join ' '
       , (err, {stdout}) ->
@@ -60,7 +60,7 @@ require('nikita')
 ## Output example
 
 ```
-lxc query /1.0/containers/c1/state
+lxc query /1.0/instances/c1/state
 {
  "cpu": {
    "usage": 800378470122
