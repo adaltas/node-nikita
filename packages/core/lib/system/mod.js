@@ -6,8 +6,10 @@
 
 // ## Options
 
-// *   `name` (string)
-//     Name of the module.
+// *   `modules` (object|string)   
+//     Names of the modules.
+// *   `names` (object|string)   
+//     Deprecated, see `modules`.
 // *   `load` (booleaan)   
 //     Load the module, default is "true".
 // *   `persist` (booleaan)   
@@ -36,14 +38,31 @@
 //   name: 'vboxpci'
 // });
 // ```
-var path, quote;
 
-module.exports = function({metadata, options}) {
+// ## Options
+var handler, on_options, path, quote;
+
+on_options = function({options}) {
+  if (options.name) {
+    console.warn('Module system.mod: options `name` is deprecated in favor of `modules`');
+    options.modules = options.name;
+    delete options.name;
+  }
+  if (options.name && typeof options.name === 'string') {
+    return options.name = {
+      [options.name]: true
+    };
+  }
+};
+
+// ## Handler
+handler = function({metadata, options}) {
+  var active, module, modules;
   if (metadata.argument != null) {
-    options.name = metadata.argument;
+    options.modules = metadata.argument;
   }
   if (options.target == null) {
-    options.target = `${options.name}.conf`;
+    options.target = `${options.modules}.conf`;
   }
   options.target = path.resolve('/etc/modules-load.d', options.target);
   if (options.load == null) {
@@ -52,23 +71,43 @@ module.exports = function({metadata, options}) {
   if (options.persist == null) {
     options.persist = true;
   }
-  if (!options.name) {
-    throw Error("Required Option: name");
+  if (!options.modules) {
+    throw Error("Required Option: modules");
   }
+  modules = (function() {
+    var ref, results;
+    ref = options.modules;
+    results = [];
+    for (module in ref) {
+      active = ref[module];
+      if (active) {
+        results.push(module);
+      } else {
+        results.push(void 0);
+      }
+    }
+    return results;
+  })();
   this.system.execute({
     if: options.load,
-    cmd: `lsmod | grep ${options.name} && exit 3
-sudo modprobe ${options.name}`,
+    cmd: `lsmod | grep ${options.modules} && exit 3
+sudo modprobe ${modules.join(' ')}`,
     code_skipped: 3
   });
   return this.file({
     if: options.persist,
     target: options.target,
-    match: RegExp(`^${quote(options.name)}$`, "m"),
-    replace: options.name,
+    match: RegExp(`^${quote(options.modules)}$`, "m"),
+    replace: options.modules,
     append: true,
     eof: true
   });
+};
+
+// ## Exports
+module.exports = {
+  on_options: on_options,
+  handler: handler
 };
 
 // ## Dependencies

@@ -11,6 +11,7 @@
 ## Trunk
 
 Breaking changes:
+* system.mod: name is renamed module
 * metadata: split and independent from options
 * metadata: renamed from internal
 * cron: move into tools

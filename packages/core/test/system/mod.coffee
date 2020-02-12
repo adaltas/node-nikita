@@ -10,13 +10,13 @@ describe 'system.mod', ->
   they 'activate a module', ({ssh}) ->
     nikita
       ssh: ssh
-    .system.mod 
+    .system.mod
       name: 'a_module'
       target: "#{scratch}/mods/modules.conf"
       load: false
     , (err, {status}) ->
       status.should.be.true() unless err
-    .system.mod 
+    .system.mod
       name: 'a_module'
       target: "#{scratch}/mods/modules.conf"
       load: false

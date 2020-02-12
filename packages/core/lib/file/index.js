@@ -415,7 +415,6 @@ module.exports = function({options}) {
         gid: options.gid,
         // force execution right on mkdir
         mode: options.mode ? options.mode | 0o111 : 0o755,
-        
         // Modify uid and gid if the dir does not yet exists
         unless_exists: path.dirname(options.target)
       }, callback);
