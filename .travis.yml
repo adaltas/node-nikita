@@ -5,11 +5,8 @@ node_js:
 cache:
   npm: false
   yarn: true
-  # test 2
-  # directories:
-  #   - "node_modules"
 script:
-  - lerna run test
+  - lerna run test --stream
 before_script:
   - ssh-keygen -t rsa -f ~/.ssh/id_rsa -N ''
   - cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys

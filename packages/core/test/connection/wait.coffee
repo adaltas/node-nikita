@@ -54,9 +54,9 @@ describe 'connection.wait', ->
         ssh: ssh
         srv1: srv
       .call ->
-        setTimeout @options.srv1.listen, 100
+        setTimeout @options.srv1.listen, 300
       .connection.wait
-        interval: 200
+        interval: 400
         host: 'localhost'
         port: srv.port
       , (err, {status}) ->
@@ -72,24 +72,24 @@ describe 'connection.wait', ->
         ssh: ssh
         srv1: srv1
         srv2: srv2
-      .call -> setTimeout @options.srv1.listen, 100
-      .call -> setTimeout @options.srv2.listen, 100
+      .call -> setTimeout @options.srv1.listen, 300
+      .call -> setTimeout @options.srv2.listen, 300
       .connection.wait
-        interval: 200
+        interval: 400
         server: host: 'localhost', port: srv1.port
       , (err, {status}) ->
         status.should.be.true() unless err
       .connection.wait
-        interval: 200
+        interval: 400
         server: host: 'localhost', port: [srv1.port, srv2.port]
       , (err, {status}) ->
         status.should.be.false()
       .call (_, callback) -> @options.srv1.close callback
       .call (_, callback) -> @options.srv2.close callback
-      .call -> setTimeout @options.srv1.listen, 100
-      .call -> setTimeout @options.srv2.listen, 100
+      .call -> setTimeout @options.srv1.listen, 300
+      .call -> setTimeout @options.srv2.listen, 300
       .connection.wait
-        interval: 200
+        interval: 400
         server: [
           [{host: 'localhost', port: srv1.port}]
           [{host: 'localhost', port: srv2.port}]
@@ -105,9 +105,9 @@ describe 'connection.wait', ->
       nikita
         ssh: ssh
         srv: srv
-      .call -> setTimeout @options.srv.listen, 100
+      .call -> setTimeout @options.srv.listen, 300
       .connection.wait
-        interval: 200
+        interval: 400
         server: "localhost:#{srv.port}"
       , (err, {status}) ->
         status.should.be.true() unless err
@@ -119,9 +119,9 @@ describe 'connection.wait', ->
       nikita
         ssh: ssh
         srv: srv
-      .call -> setTimeout @options.srv.listen, 100
+      .call -> setTimeout @options.srv.listen, 300
       .connection.wait
-        interval: 200
+        interval: 400
         servers: for i in [0...12]
           {host: 'localhost', port: srv.port}
       , (err, {status}) ->
@@ -149,9 +149,9 @@ describe 'connection.wait', ->
         @options.srv.close callback
       # Status true
       .call ->
-        setTimeout @options.srv.listen, 200
+        setTimeout @options.srv.listen, 300
       .connection.wait
-        interval: 200
+        interval: 400
         host: 'localhost'
         port: srv.port
       , (err, {status}) ->

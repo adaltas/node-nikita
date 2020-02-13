@@ -111,7 +111,7 @@ describe 'tools.sysctl', ->
       """
     .promise()
 
-  they.only 'honors backup option', ({ssh}) ->
+  they 'honors backup option', ({ssh}) ->
     nikita
       ssh: ssh
     .tools.sysctl
@@ -121,7 +121,6 @@ describe 'tools.sysctl', ->
       load: false
       backup: true
     .system.execute.assert
-      debug: true
       bash: true
       cmd: "[[ `ls #{scratch}/sysctl.* | wc -l | sed 's/[ ]*//'` == '1' ]]" # sed to strip trailing space
     .tools.sysctl

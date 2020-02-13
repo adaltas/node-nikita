@@ -43,6 +43,10 @@
     "@nikitajs/lxd": "^0.9.5",
     "@nikitajs/tools": "^0.9.6"
   },
+  "devDependencies": {
+    "mocha": "7.0.0",
+    "should": "~13.2.3"
+  },
   "engines": {
     "node": ">= 10.0.0"
   },

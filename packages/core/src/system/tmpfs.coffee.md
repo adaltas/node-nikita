@@ -69,26 +69,26 @@ Setting uid/gid to '-', make the os creating the target owned by root:root.
         shy: true
         if: options.merge
       , (_, callback) ->
-          @log message: "opening target file for merge", level: 'DEBUG', module: 'nikita/tmpfs/index'
-          @fs.readFile target: options.target, encoding: 'utf8', (err, {data}) ->
-            if err
-              return callback null, false if err.code is 'ENOENT'
-              return callback err if err
-            else
-              source = misc.tmpfs.parse data
-              options.content = merge source, options.content
-              @log message: "content has been merged", level: 'DEBUG', module: 'nikita/tmpfs/index'
-              callback null, false
+        @log message: "opening target file for merge", level: 'DEBUG', module: 'nikita/tmpfs/index'
+        @fs.readFile target: options.target, encoding: 'utf8', (err, {data}) ->
+          if err
+            return callback null, false if err.code is 'ENOENT'
+            return callback err if err
+          else
+            source = misc.tmpfs.parse data
+            options.content = merge source, options.content
+            @log message: "content has been merged", level: 'DEBUG', module: 'nikita/tmpfs/index'
+            callback null, false
       @call ->
         @file options, content: misc.tmpfs.stringify(options.content), merge: false, target: options.target
         @call
           if: -> @status -1
         , ->
-            @log message: "re-creating #{options.mount} tmpfs file", level: 'INFO', module: 'nikita/tmpfs/index'
-            @system.execute
-              cmd: "systemd-tmpfiles --remove #{options.target}"
-            @system.execute
-              cmd: "systemd-tmpfiles --create #{options.target}"
+          @log message: "re-creating #{options.mount} tmpfs file", level: 'INFO', module: 'nikita/tmpfs/index'
+          @system.execute
+            cmd: "systemd-tmpfiles --remove #{options.target}"
+          @system.execute
+            cmd: "systemd-tmpfiles --create #{options.target}"
 
 ## Dependencies
 

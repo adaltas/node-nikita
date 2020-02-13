@@ -56,6 +56,7 @@ describe 'fs.readdir', ->
     .fs.writeFile "#{scratch}/parent/file_1", content: 'hello'
     .fs.writeFile "#{scratch}/parent/file_2", content: 'hello'
     .fs.readdir "#{scratch}/parent", withFileTypes: true, (err, {files}) ->
+      throw err if err
       files = files.sort()
       files.map (file) -> JSON.parse JSON.stringify file # Convert Dirent to object literal
       .should.eql [

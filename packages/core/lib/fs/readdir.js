@@ -80,7 +80,8 @@ handler = function({metadata, options}, callback) {
     '1', // (The numeric digit ``one''.)  Force output to be one entry per line.  This is the default when output is not to a terminal.
     'a', // Include directory entries whose names begin with a dot (.)
     extended ? 'n' : void 0, // Display user and group IDs numerically, rather than converting to a user or group name in a long (-l) output.  This option turns on the -l option.
-    'w', // Force raw printing of non-printable characters. This is the default when output is not to a terminal.
+    // Note: -w work on macos, not on linux
+    // 'w'             # Force raw printing of non-printable characters. This is the default when output is not to a terminal.
     extended ? 'l' : void 0
   ].join('');
   this.system.execute({
