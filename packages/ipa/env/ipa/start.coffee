@@ -49,7 +49,7 @@ nikita
       config:
         'environment.NIKITA_TEST_MODULE': '/nikita/packages/ipa/env/ipa/test.coffee'
       disk:
-        nikitadir: source: '/nikita', path: '/nikita'
+        nikitadir: source: path.join(__dirname, '../../../../'), path: '/nikita'
       nic:
         eth0:
           config: name: 'eth0', nictype: 'bridged', parent: 'lxdbr0public'

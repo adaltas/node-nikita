@@ -191,7 +191,7 @@ PEERDNS=no`
       this.lxd.exec({
         header: 'OpenSSL',
         container: container,
-        cmd: `yum update -y
+        cmd: `#yum update -y
 yum install -y openssl
 command -v openssl`,
         retry: 10,

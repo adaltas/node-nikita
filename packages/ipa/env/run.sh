@@ -1,8 +1,8 @@
 #!/bin/bash
-HOME=`pwd dirname "${BASH_SOURCE}"`
+HOME=`pwd`/`dirname ${BASH_SOURCE}`
 
-coffee ipa/start.coffee
-lxc exec authconfig bash <<EOF
-cd /nikita/packages/core
+npx coffee $HOME/ipa/start.coffee
+lxc exec freeipa bash <<EOF
+cd /nikita/packages/ipa
 npm test
 EOF

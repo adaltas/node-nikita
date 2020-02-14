@@ -149,7 +149,7 @@ containers:
           header: 'OpenSSL'
           container: container
           cmd: """
-          yum update -y
+          #yum update -y
           yum install -y openssl
           command -v openssl
           """
