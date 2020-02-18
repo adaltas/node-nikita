@@ -31,6 +31,7 @@ Fix:
 * session: remove support for 2nd argument
 * connection.wait: fix race condition with quorum
 * events: fix handling next and error events
+* connection.wait: fix tests
 
 Cleanup:
 * registry: move into engine

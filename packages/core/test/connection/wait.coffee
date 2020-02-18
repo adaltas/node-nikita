@@ -53,10 +53,11 @@ describe 'connection.wait', ->
       nikita
         ssh: ssh
         srv1: srv
-      .call ->
-        setTimeout @options.srv1.listen, 300
+      .on 'stderr_stream', (log) ->
+        if /Connection failed/.test log.message?.toString()
+          @options.srv1.listen()
       .connection.wait
-        interval: 400
+        interval: 200
         host: 'localhost'
         port: srv.port
       , (err, {status}) ->
@@ -65,31 +66,46 @@ describe 'connection.wait', ->
         @options.srv1.close callback
       .promise()
 
-    they 'server object', ({ssh}) ->
+    they 'server as an object `{host, [port]}`', ({ssh}) ->
       srv1 = server()
       srv2 = server()
       nikita
         ssh: ssh
         srv1: srv1
         srv2: srv2
-      .call -> setTimeout @options.srv1.listen, 300
-      .call -> setTimeout @options.srv2.listen, 300
+      .on 'stderr_stream', (log) ->
+        if /Connection failed/.test log.message?.toString()
+          @options.srv1.listen()
+          @options.srv2.listen()
       .connection.wait
-        interval: 400
+        interval: 200
         server: host: 'localhost', port: srv1.port
       , (err, {status}) ->
         status.should.be.true() unless err
       .connection.wait
-        interval: 400
+        interval: 200
         server: host: 'localhost', port: [srv1.port, srv2.port]
       , (err, {status}) ->
         status.should.be.false()
       .call (_, callback) -> @options.srv1.close callback
       .call (_, callback) -> @options.srv2.close callback
-      .call -> setTimeout @options.srv1.listen, 300
-      .call -> setTimeout @options.srv2.listen, 300
+      .promise()
+      
+    they 'server as an array `[{host, port}]`', ({ssh}) ->
+      srv1 = server()
+      srv2 = server()
+      nikita
+        ssh: ssh
+        srv1: srv1
+        srv2: srv2
+      .on 'stderr_stream', (log) ->
+        if /Connection failed/.test log.message?.toString()
+          @options.srv1.listen()
+          @options.srv2.listen()
+      # .call -> setTimeout @options.srv1.listen, 300
+      # .call -> setTimeout @options.srv2.listen, 300
       .connection.wait
-        interval: 400
+        interval: 200
         server: [
           [{host: 'localhost', port: srv1.port}]
           [{host: 'localhost', port: srv2.port}]
@@ -100,14 +116,16 @@ describe 'connection.wait', ->
       .call (_, callback) -> @options.srv2.close callback
       .promise()
 
-    they 'server string', ({ssh}) ->
+    they 'server string `host:port`', ({ssh}) ->
       srv = server()
       nikita
         ssh: ssh
         srv: srv
-      .call -> setTimeout @options.srv.listen, 300
+      .on 'stderr_stream', (log) ->
+        if /Connection failed/.test log.message?.toString()
+          @options.srv.listen()
       .connection.wait
-        interval: 400
+        interval: 200
         server: "localhost:#{srv.port}"
       , (err, {status}) ->
         status.should.be.true() unless err
@@ -119,9 +137,11 @@ describe 'connection.wait', ->
       nikita
         ssh: ssh
         srv: srv
-      .call -> setTimeout @options.srv.listen, 300
+      .on 'stderr_stream', (log) ->
+        if /Connection failed/.test log.message?.toString()
+          @options.srv.listen()
       .connection.wait
-        interval: 400
+        interval: 200
         servers: for i in [0...12]
           {host: 'localhost', port: srv.port}
       , (err, {status}) ->
@@ -131,12 +151,11 @@ describe 'connection.wait', ->
 
   describe 'options', ->
 
-    they 'test status', ({ssh}) ->
+    they 'test status `false`', ({ssh}) ->
       srv = server()
       nikita
         ssh: ssh
         srv: srv
-      # Status false
       .call (_, callback) ->
         @options.srv.listen callback
       .connection.wait
@@ -147,11 +166,18 @@ describe 'connection.wait', ->
         status.should.be.false() unless err
       .call (_, callback) ->
         @options.srv.close callback
-      # Status true
-      .call ->
-        setTimeout @options.srv.listen, 300
+      .promise()
+    
+    they 'test status `true`', ({ssh}) ->
+      srv = server()
+      nikita
+        ssh: ssh
+        srv: srv
+      .on 'stderr_stream', (log) ->
+        if /Connection failed/.test log.message?.toString()
+          @options.srv.listen()
       .connection.wait
-        interval: 400
+        interval: 200
         host: 'localhost'
         port: srv.port
       , (err, {status}) ->
@@ -168,10 +194,10 @@ describe 'connection.wait', ->
         ssh: ssh
         srv1: srv1
         srv2: srv2
-      .call ->
-        setTimeout @options.srv1.listen, 200
-      .call ->
-        setTimeout @options.srv2.listen, 200
+      .on 'stderr_stream', (log) ->
+        if (new RegExp "Connection failed to localhost:#{srv1.port}").test log.message?.toString()
+          @options.srv1.listen()
+          @options.srv2.listen()
       .connection.wait
         servers: [
           { host: 'localhost', port: srv1.port }
@@ -179,7 +205,7 @@ describe 'connection.wait', ->
           { host: 'localhost', port: srv3.port }
         ]
         quorum: true
-        interval: 300 # Move back to 500 if it occasionnaly fail
+        interval: 200
       , (err, {status}) ->
         status.should.be.true() unless err
       .call (_, callback) ->
@@ -195,8 +221,9 @@ describe 'connection.wait', ->
         ssh: ssh
         srv1: srv1
         srv2: srv2
-      .call (_, callback) ->
-        @options.srv1.listen callback
+      .on 'stderr_stream', (log) ->
+        if (new RegExp "Connection failed to localhost:#{srv1.port}").test log.message?.toString()
+          @options.srv1.listen()
       .connection.wait
         interval: 200
         servers: [
@@ -218,10 +245,10 @@ describe 'connection.wait', ->
         ssh: ssh
         srv1: srv1
         srv2: srv2
-      .call (_, callback) ->
-        @options.srv1.listen callback
-      .call (_, callback) ->
-        @options.srv2.listen callback
+      .on 'stderr_stream', (log) ->
+        if (new RegExp "Connection failed to localhost:#{srv1.port}").test log.message?.toString()
+          @options.srv1.listen()
+          @options.srv2.listen()
       .connection.wait
         interval: 200
         servers: [
