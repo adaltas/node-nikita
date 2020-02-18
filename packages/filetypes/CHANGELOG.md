@@ -13,6 +13,9 @@ New features:
 * file.cache: new cookies option
 * filetypes: new my_cnf action
 
+Fix:
+* locale_gen: pass arch_chroot
+
 Cleanup:
 * package: simplify test command
 

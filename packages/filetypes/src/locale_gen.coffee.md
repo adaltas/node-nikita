@@ -58,9 +58,9 @@ require('nikita')
           if options.generate?
           then options.generate
           else @status -1
+        arch_chroot: options.arch_chroot
         cmd: "locale-gen"
 
 ## Dependencies
 
     path = require 'path'
-
