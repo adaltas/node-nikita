@@ -167,7 +167,7 @@ module.exports = {
     }
     // Read private key if option is a path
     this.call({
-      unless: options.private_key
+      unless: options.private_key || options.password
     }, function({}, callback) {
       this.log({
         message: `Read Private Key from: ${options.private_key_path}`,

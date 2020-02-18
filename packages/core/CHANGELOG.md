@@ -27,6 +27,7 @@ New feature:
 * schema: new option
 
 Fix:
+* ssh: dont attempt to read private key if password provided
 * session: remove support for 2nd argument
 * connection.wait: fix race condition with quorum
 * events: fix handling next and error events
