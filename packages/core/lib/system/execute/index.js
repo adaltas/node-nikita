@@ -284,7 +284,7 @@ module.exports = function({metadata, options}, callback) {
       message: `Writing arch-chroot script to ${JSON.stringify(options.target)}`,
       level: 'INFO'
     });
-    options.cmd = `arch-chroot ${options.rootdir} bash ${options.target}`;
+    options.cmd = `${options.arch_chroot} ${options.rootdir} bash ${options.target}`;
     if (!options.dirty && (options.target != null)) {
       options.cmd += `;code=\`echo $?\`; rm '${path.join(options.rootdir, options.target)}'; exit $code`;
     }

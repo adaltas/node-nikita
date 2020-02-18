@@ -17,6 +17,7 @@ Breaking changes:
 * cron: move into tools
 
 New feature:
+* system.execute: inject arch_chroot path
 * system.execute: new command property in error object
 * fs.readdir: new action
 * on_options: new hook
