@@ -49,7 +49,11 @@ nikita
       config:
         'environment.NIKITA_TEST_MODULE': '/nikita/packages/ipa/env/ipa/test.coffee'
       disk:
-        nikitadir: source: path.join(__dirname, '../../../../'), path: '/nikita'
+        # nikitadir: source: path.join(__dirname, '../../../../'), path: '/nikita'
+        # Vagrant for MacOS and Windows users
+        nikitadir:
+          path: '/nikita'
+          source: process.env['NIKITA_HOME'] or path.join(__dirname, '../../../../')
       nic:
         eth0:
           config: name: 'eth0', nictype: 'bridged', parent: 'lxdbr0public'

@@ -8,6 +8,7 @@ The tests require a local LXD client. On a Linux hosts, you can follow the [inst
 ```
 # For windows and osx user
 ../lxd/bin/cluster start
+export NIKITA_HOME=/nikita
 # Start the server
 coffee ./env/ipa/start.coffee
 # Run all the tests
