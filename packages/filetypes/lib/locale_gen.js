@@ -96,6 +96,7 @@ module.exports = function({options}) {
       }
     },
     arch_chroot: options.arch_chroot,
+    rootdir: options.rootdir,
     cmd: "locale-gen"
   });
 };

@@ -59,6 +59,7 @@ require('nikita')
           then options.generate
           else @status -1
         arch_chroot: options.arch_chroot
+        rootdir: options.rootdir
         cmd: "locale-gen"
 
 ## Dependencies
