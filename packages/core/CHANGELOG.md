@@ -34,6 +34,7 @@ Fix:
 * connection.wait: fix tests
 
 Cleanup:
+* system.execute: document events
 * registry: move into engine
 * package: simplify test command
 

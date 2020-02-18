@@ -81,6 +81,13 @@ creating any modifications.
 * `info.stderr`   
   Stderr value(s) unless `stderr` option is provided.
 
+## Events
+
+* `stdout`
+* `stdout_stream`
+* `stderr`
+* `stderr_stream`
+
 ## Create a user over SSH
 
 This example create a user on a remote server with the `useradd` command. It
