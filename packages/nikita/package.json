@@ -41,6 +41,7 @@
     "@nikitajs/krb5": "^0.9.7-alpha.0",
     "@nikitajs/ldap": "^0.9.7-alpha.0",
     "@nikitajs/lxd": "^0.9.7-alpha.0",
+    "@nikitajs/service": "^0.9.7-alpha.0",
     "@nikitajs/tools": "^0.9.7-alpha.0"
   },
   "devDependencies": {
