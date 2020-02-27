@@ -55,7 +55,7 @@ containers:
         connect: tcp:127.0.0.1:22
     ssh:
       enabled: true
-      id_rsa: assets/id_rsa
+      #id_rsa: assets/id_rsa
     user:
       nikita:
         sudo: true
@@ -93,7 +93,7 @@ containers:
         @lxd.config.set
           header: 'Config'
           container: container
-          image: config.image
+          # image: config.image
           config: config.config
         for device, configdisk of config.disk
           @lxd.config.device
