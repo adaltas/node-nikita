@@ -63,7 +63,7 @@ require('nikita')
         if: options.load
         cmd: """
         lsmod | grep #{options.modules} && exit 3
-        sudo modprobe #{modules.join ' '}
+        modprobe #{modules.join ' '}
         """
         code_skipped: 3
       @file
