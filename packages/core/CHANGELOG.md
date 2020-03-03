@@ -10,6 +10,15 @@
 
 ## Trunk
 
+New feature:
+* system.execute: inject arch_chroot path
+* system.execute: new command property in error object
+
+Fix:
+* system.mod: remove sudo
+
+## Version 0.9.6
+
 Breaking changes:
 * system.mod: name is renamed module
 * metadata: split and independent from options
@@ -17,8 +26,6 @@ Breaking changes:
 * cron: move into tools
 
 New feature:
-* system.execute: inject arch_chroot path
-* system.execute: new command property in error object
 * fs.readdir: new action
 * on_options: new hook
 * system.user.read: use getent passwd command
