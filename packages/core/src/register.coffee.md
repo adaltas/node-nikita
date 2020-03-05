@@ -4,12 +4,13 @@
 Register actions into the global namespace. The actions registered below will be
 available to every Nikita sessions.
 
-## Source code
+## Dependency
 
-    # Dependency
-    registry = require './registry'
-    # Action registration
-    registry.register
+    {register} = require './registry'
+
+## Action registration
+
+    register
       assert: 'nikita/core/assert'
       connection:
         assert: 'nikita/connection/assert'
@@ -101,28 +102,3 @@ available to every Nikita sessions.
         '': 'nikita/wait'
         execute: 'nikita/wait/execute'
         exist: 'nikita/wait/exist'
-    # Backward compatibility
-    registry.deprecate 'cgroups', 'nikita/system/cgroups'
-    registry.deprecate 'chmod', 'nikita/system/chmod'
-    registry.deprecate 'chown', 'nikita/system/chown'
-    registry.deprecate 'copy', 'nikita/system/copy'
-    registry.deprecate 'download', 'nikita/file/download'
-    registry.deprecate 'execute', 'nikita/system/execute'
-    registry.deprecate 'cache', 'nikita/file/cache'
-    registry.deprecate 'group', 'nikita/system/group'
-    registry.deprecate 'link', 'nikita/system/link'
-    registry.deprecate 'mkdir', 'nikita/system/mkdir'
-    registry.deprecate 'move', 'nikita/system/move'
-    registry.deprecate 'remove', 'nikita/system/remove'
-    registry.deprecate 'render', 'nikita/file/render'
-    registry.deprecate 'system_limits', 'nikita/system/limits'
-    registry.deprecate 'touch', 'nikita/file/touch'
-    registry.deprecate 'upload', 'nikita/file/upload'
-    registry.deprecate 'user', 'nikita/system/user'
-    registry.deprecate 'wait_connect', 'nikita/connection/wait'
-    registry.deprecate 'wait_execute', 'nikita/wait/execute'
-    registry.deprecate 'wait_exist', 'nikita/wait/exist'
-    registry.deprecate 'write', 'nikita/file'
-    registry.deprecate 'write_ini', 'nikita/file/ini'
-    registry.deprecate 'write_properties', 'nikita/file/properties'
-    registry.deprecate 'write_yaml', 'nikita/file/yaml'
