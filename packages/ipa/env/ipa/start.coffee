@@ -4,7 +4,6 @@ os = require 'os'
 nikita = require '@nikitajs/core'
 require '@nikitajs/lxd/lib/register'
 require '@nikitajs/tools/lib/register'
-require '@nikitajs/lxd/lib/register'
 
 # Note:
 # Jan 20th, 2020: upgrading ubuntu to 19.10
