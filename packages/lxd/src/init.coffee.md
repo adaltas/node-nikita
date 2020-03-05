@@ -46,6 +46,11 @@ configuration from stdin when there is no tty. This used to work before. Use
 `[ -t 0 ] && echo 'tty' || echo 'notty'` to detect the tty. The current
 fix is to prepend the init command with `echo '' | `.
 
+## TODO
+
+We do not honors the configuration (`-c`) argument. Use the `lxd.config.set` for
+now.
+
 ## Source Code
 
     module.exports =  ({options}) ->
