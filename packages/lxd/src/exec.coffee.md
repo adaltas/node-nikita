@@ -36,10 +36,10 @@ require('nikita')
       validate_container_name options.container
       @system.execute options, trap: false,
         cmd: [
-          "cat <<'EOF' | lxc exec #{options.container} -- bash"
+          "cat <<'NIKITALXDEXEC' | lxc exec #{options.container} -- bash"
           'set -e' if options.trap
           options.cmd
-          'EOF'
+          'NIKITALXDEXEC'
         ].join '\n'
       , callback
 

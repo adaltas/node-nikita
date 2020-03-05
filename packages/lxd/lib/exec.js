@@ -44,7 +44,7 @@ module.exports = function({options}, callback) {
   return this.system.execute(options, {
     trap: false
   }, {
-    cmd: [`cat <<'EOF' | lxc exec ${options.container} -- bash`, options.trap ? 'set -e' : void 0, options.cmd, 'EOF'].join('\n')
+    cmd: [`cat <<'NIKITALXDEXEC' | lxc exec ${options.container} -- bash`, options.trap ? 'set -e' : void 0, options.cmd, 'NIKITALXDEXEC'].join('\n')
   }, callback);
 };
 

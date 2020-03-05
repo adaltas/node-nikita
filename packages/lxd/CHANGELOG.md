@@ -4,6 +4,7 @@
 ## Trunk
 
 New features:
+* lxd.exec: reduce collision risk in heredoc
 * lxd.show: new action
 * lxd.cluster: refactor cli
 * lxd: validate container name
