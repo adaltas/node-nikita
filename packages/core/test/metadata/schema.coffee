@@ -50,7 +50,11 @@ describe 'metadata "schema"', ->
       relax: true
     , (->)
     , (err) ->
-      err.message.should.eql 'Invalid Options'
+      err.message.should.eql """
+      Invalid Options: got 2 errors
+      data.a_string should be string
+      data.an_integer should be >= 1
+      """
       err.errors.map( (err) -> err.message).should.eql [
         'data.a_string should be string'
       ,

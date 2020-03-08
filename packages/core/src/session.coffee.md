@@ -142,17 +142,19 @@
         proxy.log message: action.metadata.header, type: 'header', index: index if action.metadata.header
         do ->
           do_options = ->
-            action.on_options action if action.on_options
             try
+              action.on_options action if action.on_options
               if action.metadata.schema
                 errors = obj.schema.validate action.options, action.metadata.schema
                 if errors.length
                   if errors.length is 1
-                    throw errors[0]
+                    error = errors[0]
                   else
-                    error = new Error 'Invalid Options'
+                    error = new Error "Invalid Options: got #{errors.length} errors\n#{errors.map((error) -> error.message).join('\n')}"
                     error.errors = errors
-                    throw error
+                  error.options = action.options
+                  error.action = action.action
+                  throw error
               # Validate sleep option, more can be added
               throw Error "Invalid options sleep, got #{JSON.stringify action.metadata.sleep}" unless typeof action.metadata.sleep is 'number' and action.metadata.sleep >= 0
             catch error

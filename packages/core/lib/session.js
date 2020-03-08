@@ -254,20 +254,24 @@ module.exports = function() {
     return (function() {
       var do_callback, do_conditions, do_disabled, do_end, do_handler, do_intercept_after, do_intercept_before, do_once, do_options, do_options_after, do_options_before;
       do_options = function() {
-        if (action.on_options) {
-          action.on_options(action);
-        }
         try {
+          if (action.on_options) {
+            action.on_options(action);
+          }
           if (action.metadata.schema) {
             errors = obj.schema.validate(action.options, action.metadata.schema);
             if (errors.length) {
               if (errors.length === 1) {
-                throw errors[0];
+                error = errors[0];
               } else {
-                error = new Error('Invalid Options');
+                error = new Error(`Invalid Options: got ${errors.length} errors \n${errors.map(function(error) {
+                  return error.message;
+                }).join('\n')}`);
                 error.errors = errors;
-                throw error;
               }
+              error.options = action.options;
+              error.action = action.action;
+              throw error;
             }
           }
           if (!(typeof action.metadata.sleep === 'number' && action.metadata.sleep >= 0)) {
