@@ -3,61 +3,6 @@
 
 // Write a file or a portion of an existing file.
 
-// ## Options
-
-// * `append`   
-//   Append the content to the target file. If target does not exist,
-//   the file will be created.
-// * `backup` (string|boolean)   
-//   Create a backup, append a provided string to the filename extension or a
-//   timestamp if value is not a string, only apply if the target file exists and
-//   is modified.
-// * `backup_mode`   
-//   Backup file mode (permission and sticky bits), defaults to `0o0400`, in the 
-//   form of `{mode: 0o0400}` or `{mode: "0400"}`.
-// * `content`   
-//   Text to be written, an alternative to source which reference a file.
-// * `diff` (boolean | function)   
-//   Print diff information, pass a readable diff and the result of [jsdiff.diffLines][diffLines] as
-//   arguments if a function, default to true.
-// * `eof`   
-//   Ensure the file ends with this charactere sequence, special values are
-//   'windows', 'mac', 'unix' and 'unicode' (respectively "\r\n", "\r", "\n",
-//   "\u2028"), will be auto-detected if "true", default to false or "\n" if
-//   "true" and not detected.
-// * `from`   
-//   Replace from after this marker, a string or a regular expression.
-// * `gid`   
-//   File group name or group id.
-// * `local`   
-//   Treat the source as local instead of remote, only apply with "ssh"
-//   option.
-// * `match`   
-//   Replace this marker, a string or a regular expression, default to the
-//   replaced string if missing.
-// * `mode`   
-//   File mode (permission and sticky bits), default to `0o0644`, in the form of
-//   `{mode: 0o0744}` or `{mode: "0744"}`.
-// * `place_before` (string, boolean, regex)   
-//   Place the content before the match.
-// * `replace`   
-//   The content to be inserted, used conjointly with the from, to or match
-//   options.
-// * `source`   
-//   File path from where to extract the content, do not use conjointly with
-//   content.
-// * `target`   
-//   File path where to write content to.
-// * `to`   
-//   Replace to before this marker, a string or a regular expression.
-// * `uid`   
-//   File user name or user id.
-// * `unlink` (boolean)   
-//   Replace the existing link, leaving the refered file untouched.
-// * `write`   
-//   An array containing multiple transformation where a transformation is an
-//   object accepting the options `from`, `to`, `match` and `replace`.
-
 // ## Callback parameters
 
 // * `err`   
@@ -180,20 +125,10 @@
 // })
 // ```
 
-// ## Source Code
-var diff, misc, nunjucks, path, string;
+// ## On options
+var diff, handler, misc, nunjucks, on_options, path, schema, string;
 
-module.exports = function({options}) {
-  var context, j, len, ref, ssh, target, targetHash, targetStats, w;
-  this.log({
-    message: "Entering file",
-    level: 'DEBUG',
-    module: 'nikita/lib/file'
-  });
-  // SSH connection
-  ssh = this.ssh(options.ssh);
-  // Content: pass all arguments to function calls
-  context = arguments[0];
+on_options = function({options}) {
   if (!((options.source || (options.content != null)) || options.replace || (options.write != null))) {
     // Validate parameters
     throw Error('Missing source or content');
@@ -204,6 +139,277 @@ module.exports = function({options}) {
   if (!options.target) {
     throw Error('Missing target');
   }
+  if (options.content) {
+    if (typeof options.content === 'number') {
+      options.content = `${options.content}`;
+    } else if (Buffer.isBuffer(options.content)) {
+      options.content = options.content.toString();
+    }
+  }
+  if (typeof options.backup_mode === 'string') {
+    options.backup_mode = parseInt(options.backup_mode, 8);
+  }
+  if (typeof options.mode === 'string') {
+    return options.mode = parseInt(options.mode, 8);
+  }
+};
+
+// ## Schema
+schema = {
+  type: 'object',
+  properties: {
+    'append': {
+      oneOf: [
+        {
+          type: 'string'
+        },
+        {
+          type: 'boolean'
+        },
+        {
+          instanceof: 'RegExp'
+        }
+      ],
+      default: false,
+      description: `Append the content to the target file. If target does not exist, the
+file will be created.`
+    },
+    'backup': {
+      oneOf: [
+        {
+          type: 'string'
+        },
+        {
+          typeof: 'boolean'
+        }
+      ],
+      description: `Create a backup, append a provided string to the filename extension or
+a timestamp if value is not a string, only apply if the target file
+exists and is modified.`
+    },
+    'backup_mode': {
+      type: 'integer',
+      default: 0o0400,
+      description: `Backup file mode (permission and sticky bits), defaults to \`0o0400\`,
+in the  form of \`{mode: 0o0400}\` or \`{mode: "0400"}\`.`
+    },
+    'content': {
+      oneOf: [
+        {
+          type: 'string'
+        },
+        {
+          typeof: 'function'
+        }
+      ],
+      description: `Text to be written, an alternative to source which reference a file.`
+    },
+    'context': {
+      type: 'object',
+      description: `Context provided to the template engine.`
+    },
+    'diff': {
+      typeof: 'function',
+      description: `Print diff information, pass a readable diff and the result of [jsdiff.diffLines][diffLines] as
+arguments if a function, default to true.`
+    },
+    'eof': {
+      oneOf: [
+        {
+          type: 'string'
+        },
+        {
+          type: 'boolean'
+        }
+      ],
+      description: `Ensure the file ends with this charactere sequence, special values are
+'windows', 'mac', 'unix' and 'unicode' (respectively "\r\n", "\r", "\n",
+"\u2028"), will be auto-detected if "true", default to false or "\n" if
+"true" and not detected.`
+    },
+    'encoding': {
+      type: 'string',
+      default: 'utf8',
+      description: `Encoding of the source and target files.`
+    },
+    'engine': {
+      type: 'string',
+      default: 'nunjunks',
+      description: `Template engine being used.`
+    },
+    'from': {
+      oneOf: [
+        {
+          type: 'string'
+        },
+        {
+          instanceof: 'RegExp'
+        }
+      ],
+      description: `Name of the marker from where the content will be replaced.`
+    },
+    'gid': {
+      oneOf: [
+        {
+          type: 'string'
+        },
+        {
+          type: 'number'
+        }
+      ],
+      description: `File group name or group id.`
+    },
+    'local': {
+      type: 'boolean',
+      default: false,
+      description: `Treat the source as local instead of remote, only apply with "ssh"
+option.`
+    },
+    'match': {
+      oneOf: [
+        {
+          type: 'string'
+        },
+        {
+          instanceof: 'RegExp'
+        }
+      ],
+      description: `Replace this marker, default to the replaced string if missing.`
+    },
+    'mode': {
+      type: 'integer',
+      description: `File mode (permission and sticky bits), default to \`0o0644\`, in the
+form of \`{mode: 0o0744}\` or \`{mode: "0744"}\`.`
+    },
+    'place_before': {
+      oneOf: [
+        {
+          type: 'string'
+        },
+        {
+          type: 'boolean'
+        },
+        {
+          instanceof: 'RegExp'
+        }
+      ],
+      description: `Place the content before the match.`
+    },
+    'replace': {
+      oneOf: [
+        {
+          type: 'string'
+        },
+        {
+          type: 'array',
+          items: {
+            type: 'string'
+          }
+        }
+      ],
+      description: `The content to be inserted, used conjointly with the from, to or match
+options.`
+    },
+    'source': {
+      type: 'string',
+      description: `File path from where to extract the content, do not use conjointly
+with content.`
+    },
+    'target': {
+      type: 'string',
+      description: `File path where to write content to.`
+    },
+    'to': {
+      oneOf: [
+        {
+          type: 'string'
+        },
+        {
+          instanceof: 'RegExp'
+        }
+      ],
+      description: `Name of the marker until where the content will be replaced.`
+    },
+    'uid': {
+      oneOf: [
+        {
+          type: 'string'
+        },
+        {
+          type: 'number'
+        }
+      ],
+      description: `File user name or user id.`
+    },
+    'unlink': {
+      type: 'boolean',
+      default: false,
+      description: `Replace the existing link, leaving the refered file untouched.`
+    },
+    'write': {
+      description: `An array containing multiple transformation where a transformation is
+an object accepting the options \`from\`, \`to\`, \`match\` and \`replace\`.`,
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          'from': {
+            oneOf: [
+              {
+                type: 'string'
+              },
+              {
+                instanceof: 'RegExp'
+              }
+            ],
+            description: `File path from where to extract the content, do not use conjointly
+with content.`
+          },
+          'to': {
+            oneOf: [
+              {
+                type: 'string'
+              },
+              {
+                instanceof: 'RegExp'
+              }
+            ],
+            description: `Name of the marker until where the content will be replaced.`
+          },
+          'match': {
+            oneOf: [
+              {
+                type: 'string'
+              },
+              {
+                instanceof: 'RegExp'
+              }
+            ],
+            description: `Replace this marker, default to the replaced string if missing.`
+          },
+          'replace': {
+            type: 'string',
+            description: `The content to be inserted, used conjointly with the from, to or match
+options.`
+          }
+        }
+      }
+    }
+  }
+};
+
+// ## Handler
+handler = function({options}) {
+  var context, j, len, ref, ssh, target, targetHash, targetStats, w;
+  this.log({
+    message: "Entering file",
+    level: 'DEBUG',
+    module: 'nikita/lib/file'
+  });
+  // SSH connection
+  ssh = this.ssh(options.ssh);
+  // Content: pass all arguments to function calls
+  context = arguments[0];
   this.log({
     message: `Source is \"${options.source}\"`,
     level: 'DEBUG',
@@ -214,24 +420,16 @@ module.exports = function({options}) {
     level: 'DEBUG',
     module: 'nikita/lib/file'
   });
-  if (options.content && Buffer.isBuffer(options.content)) {
-    options.content = options.content.toString();
-  }
   if (typeof options.content === 'function') {
+    // options.content = options.content.toString() if options.content and Buffer.isBuffer options.content
     options.content = options.content.call(this, context);
   }
   if (options.diff == null) {
     options.diff = options.diff || !!options.stdout;
   }
-  if (options.engine == null) {
-    options.engine = 'nunjunks';
-  }
-  if (options.unlink == null) {
-    options.unlink = false;
-  }
-  if (options.encoding == null) {
-    options.encoding = 'utf8';
-  }
+  // options.engine ?= 'nunjunks'
+  // options.unlink ?= false
+  // options.encoding ?= 'utf8'
   switch (options.eof) {
     case 'unix':
       options.eof = "\n";
@@ -406,9 +604,6 @@ module.exports = function({options}) {
       });
     };
     do_mkdir = () => {
-      if (typeof options.mode === 'string') {
-        options.mode = parseInt(options.mode, 8);
-      }
       return this.system.mkdir({
         target: path.dirname(options.target),
         uid: options.uid,
@@ -603,6 +798,13 @@ module.exports = function({options}) {
       unless: options.target === 'function'
     });
   });
+};
+
+// ## Exports
+module.exports = {
+  on_options: on_options,
+  schema: schema,
+  handler: handler
 };
 
 // ## Dependencies

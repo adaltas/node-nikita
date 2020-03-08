@@ -13,7 +13,7 @@ module.exports = {
   /*
   `string.hash(file, [algorithm], callback)`
   ------------------------------------------
-  Output the hash of a supplied string in hexadecimal 
+  Output the hash of a supplied string in hexadecimal
   form. The default algorithm to compute the hash is md5.
   */
   hash: function(data, algorithm) {
@@ -28,9 +28,9 @@ module.exports = {
   /*
   `string.endsWith(search, [position])`
   -------------------------------------
-  Determines whether a string ends with the characters of another string, 
-  returning true or false as appropriate.   
-  This method has been added to the ECMAScript 6 specification and its code 
+  Determines whether a string ends with the characters of another string,
+  returning true or false as appropriate.
+  This method has been added to the ECMAScript 6 specification and its code
   was borrowed from [Mozilla](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith)
   */
   endsWith: function(str, search, position) {

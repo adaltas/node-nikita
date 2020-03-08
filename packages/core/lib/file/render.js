@@ -118,7 +118,7 @@ module.exports = function({options}) {
     encoding: options.encoding
   }, function(err, {data}) {
     if (data != null) {
-      options.source = null;
+      options.source = void 0;
       return options.content = data;
     }
   });

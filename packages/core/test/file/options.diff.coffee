@@ -48,7 +48,7 @@ describe 'file options diff', ->
     .promise()
 
   they 'write a buffer', ({ssh}) ->
-    # Passing a buffer as content resulted to a diff error 
+    # Passing a buffer as content resulted to a diff error
     # with message "#{content} has no method 'split'",
     # make sure this is fixed for ever
     nikita

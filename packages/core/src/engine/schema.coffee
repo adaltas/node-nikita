@@ -2,7 +2,6 @@
 Ajv = require 'ajv'
 ajv_keywords = require 'ajv-keywords'
 
-
 module.exports = () ->
   ajv = new Ajv
     $data: true

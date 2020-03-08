@@ -99,7 +99,7 @@ require('nikita')
         encoding: options.encoding
       , (err, {data}) ->
         if data?
-          options.source = null
+          options.source = undefined
           options.content = data
       @call ->
         @file options

@@ -14,6 +14,9 @@ New feature:
 * system.execute: inject arch_chroot path
 * system.execute: new command property in error object
 
+Enhancments
+* file: add schema
+
 Fix:
 * system.mod: remove sudo
 
