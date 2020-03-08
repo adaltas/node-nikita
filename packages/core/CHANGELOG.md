@@ -15,6 +15,7 @@ New feature:
 * system.execute: new command property in error object
 
 Enhancments
+* file.ini: add schema
 * file: add schema
 
 Fix:

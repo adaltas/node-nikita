@@ -18,18 +18,18 @@ provided in the `content` option.
   Create a backup, append a provided string to the filename extension or a
   timestamp if value is not a string, only apply if the target file exists and
   is modified.
-* `clean`   
+* `clean` (boolean)   
   Remove all the lines whithout a key and a value, default to "true".
 * `content` (object)   
   Object to stringify.
 * `escape` (boolean)   
   Escape the section's header title replace '.' by '\.'; "true" by default.
-* `merge`   
+* `merge` (boolean)   
   Read the target if it exists and merge its content.
-* `parse`   
+* `parse` (function)   
   User-defined function to parse the content from ini format, default to
   `require('ini').parse`, see 'misc.ini.parse\_multi\_brackets'.
-* `stringify`   
+* `stringify` (function)   
   User-defined function to stringify the content to ini format, default to
   `require('ini').stringify`, see 'misc.ini.stringify\_brackets\_then_curly' for
   an example.
@@ -42,7 +42,7 @@ provided in the `content` option.
   Path to a ini file providing default options; lower precedence than the
   content object; may be used conjointly with the local option; optional, use
   should_exists to enforce its presence.
-* `target`   
+* `target` (string)   
   File path where to write content to or a callback.
 
 Available values for the `stringify` option are:
@@ -78,9 +78,23 @@ require('nikita')
 });
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({options}) ->
+    schema =
+      type: 'object'
+      properties:
+        $ref: '/nikita/file'
+        'clean': type: 'boolean'
+        'content': type: 'object'
+        'escape': type: 'boolean'
+        'merge': type: 'boolean'
+        'parse': typeof: 'function'
+        'stringify': typeof: 'function'
+        'eol': type: 'string'
+
+## Handler
+
+    handler = ({options}) ->
       @log message: "Entering file.ini", level: 'DEBUG', module: 'nikita/lib/file/ini'
       # Normalization
       options.clean ?= true
@@ -136,6 +150,12 @@ require('nikita')
           gid: options.gid
           uid: options.uid
           mode: options.mode
+
+## Exports
+
+    module.exports =
+      # schema: schema
+      handler: handler
 
 ## Dependencies
 
