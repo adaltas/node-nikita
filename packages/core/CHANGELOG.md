@@ -21,6 +21,7 @@ Enhancements
 * connection.http: escape data argument
 
 Fix:
+* misc.ini: handle array in multi brackets
 * misc.string: escape shell single quotes using double quotes
 * system.mod: remove sudo
 

@@ -82,9 +82,10 @@
 var handler, ini, merge, schema;
 
 schema = {
+  // name: '@nikitajs/core/lib/file/ini'
+  // $ref: '@nikitajs/core/lib/file'
   type: 'object',
   properties: {
-    $ref: '/nikita/file',
     'clean': {
       type: 'boolean'
     },
@@ -219,7 +220,7 @@ handler = function({options}) {
 
 // ## Exports
 module.exports = {
-  // schema: schema
+  schema: schema,
   handler: handler
 };
 

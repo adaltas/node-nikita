@@ -2,7 +2,7 @@
 ini = require 'ini'
 string = require './string'
 
-module.exports = 
+module.exports =
   # Remove undefined and null values
   clean: (content, undefinedOnly) ->
     for k, v of content
@@ -28,7 +28,7 @@ module.exports =
   parse: (content, options) ->
     ini.parse content
   # parse: (str, options={}) ->
-  #   TODO: braket level might be good, to parse sub curly sub levels 
+  #   TODO: braket level might be good, to parse sub curly sub levels
   #   shall be delegated to `parse_brackets_then_curly` like its
   #   stringify counterpart is doing
   #   lines = require('@nikitajs/core/lib/misc/string').lines str
@@ -121,7 +121,7 @@ module.exports =
   
   Each category is surrounded by one or several square brackets. The number of brackets indicates
   the depth of the category.
-  Options are   
+  Options are
 
   *   `comment`   Default to ";"
 
@@ -226,8 +226,8 @@ module.exports =
     Object.keys(obj).forEach (k, _, __) ->
       val = obj[k]
       if val and Array.isArray val
-          val.forEach (item) ->
-              out += safe("#{k}[]") + options.separator + safe(item) + options.eol
+        val.forEach (item) ->
+          out += safe("#{k}[]") + options.separator + safe(item) + options.eol
       else if val and typeof val is "object"
         children.push k
       else if typeof val is 'boolean'
@@ -239,7 +239,7 @@ module.exports =
         out += safe(k) + options.separator + safe(val) + options.eol
     if section and out.length
       out = "[" + safe(section) + "]" + options.eol + out
-    children.forEach (k, _, __) =>
+    children.forEach (k, _, __) ->
       # escape the section name dot as some daemon could not parse it
       nk = if options.escape then dotSplit(k).join '\\.'  else k
       child = module.exports.stringify(obj[k], (if section then section + "." else "") + nk, options)
@@ -262,8 +262,8 @@ module.exports =
     Object.keys(obj).forEach (k, _, __) ->
       val = obj[k]
       if val and Array.isArray val
-          val.forEach (item) ->
-              out += if val is '' or val is true then "#{k}" + "\n" else safe("#{k}[]") + options.separator + safe(item) + "\n"
+        val.forEach (item) ->
+          out += if val is '' or val is true then "#{k}" + "\n" else safe("#{k}[]") + options.separator + safe(item) + "\n"
       else if val and typeof val is "object"
         children.push k
       else
@@ -337,21 +337,29 @@ module.exports =
     for i in [0...depth]
       prefix += indent
     for k, v of content
-      # isUndefined = typeof v is 'undefined'
       isBoolean = typeof v is 'boolean'
       isNull = v is null
-      isObj = typeof v is 'object' and not isNull
+      isArray = Array.isArray v
+      isObj = typeof v is 'object' and not isArray and not isNull
       continue if isObj
       if isNull
         out += "#{prefix}#{k}"
       else if isBoolean
         out += "#{prefix}#{k}#{options.separator}#{if v then 'true' else 'false'}"
+      else if isArray
+        out += v
+        .filter (vv) -> vv?
+        .map (vv) ->
+          throw Error "Stringify Invalid Value: expect a string for key #{k}, got #{vv}" unless typeof vv is 'string'
+          "#{prefix}#{k}#{options.separator}#{vv}"
+        .join options.eol
       else
         out += "#{prefix}#{k}#{options.separator}#{v}"
       out += "#{options.eol}"
     for k, v of content
       isNull = v is null
-      isObj = typeof v is 'object' and not isNull
+      isArray = Array.isArray v
+      isObj = typeof v is 'object' and not isArray and not isNull
       continue unless isObj
       out += "#{prefix}#{string.repeat '[', depth+1}#{k}#{string.repeat ']', depth+1}#{options.eol}"
       out += module.exports.stringify_multi_brackets v, depth + 1, options

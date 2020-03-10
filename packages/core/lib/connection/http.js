@@ -179,7 +179,6 @@ ${[
       options.target ? `-o ${options.target}` : void 0,
       options.proxy ? `-x ${options.proxy}` : void 0,
       options.method !== 'GET' ? `-X ${options.method}` : void 0,
-      // "--data '#{options.data.replace '\'', '\\\''}'" if options.data
       options.data ? `--data ${string.escapeshellarg(options.data)}` : void 0,
       `${options.url}`
     ].join(' ')}`,

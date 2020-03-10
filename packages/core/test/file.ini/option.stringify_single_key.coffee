@@ -7,6 +7,8 @@ they = require('ssh2-they').configure ssh...
 return unless tags.posix
 
 describe 'file.ini option stringify_single_key', ->
+  
+  # TODO: move to `misc.ini` tests
 
   they 'stringify write only key on props', ({ssh}) ->
     nikita

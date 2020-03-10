@@ -482,14 +482,16 @@
       for action in actions
         if action.schema
           name = "/nikita/#{action.action.join('/')}"
-          obj.schema.add name, action.schema
+          obj.schema.add action.schema, name
+          # obj.schema.add action.schema, action.schema.name if action.schema.name
       obj.registry = registry.registry
         parent: registry
         chain: proxy
         on_register: (name, action) ->
           return unless action.schema
           name = "/nikita/#{name.join('/')}"
-          obj.schema.add name, action.schema
+          obj.schema.add action.schema, name
+          # obj.schema.add action.schema, action.schema.name if action.schema.name
       # Todo: remove
       if obj.options.ssh
         if obj.options.ssh.config

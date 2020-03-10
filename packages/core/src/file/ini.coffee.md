@@ -81,9 +81,10 @@ require('nikita')
 ## Schema
 
     schema =
+      # name: '@nikitajs/core/lib/file/ini'
+      # $ref: '@nikitajs/core/lib/file'
       type: 'object'
       properties:
-        $ref: '/nikita/file'
         'clean': type: 'boolean'
         'content': type: 'object'
         'escape': type: 'boolean'
@@ -154,7 +155,7 @@ require('nikita')
 ## Exports
 
     module.exports =
-      # schema: schema
+      schema: schema
       handler: handler
 
 ## Dependencies

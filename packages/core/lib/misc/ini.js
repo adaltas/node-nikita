@@ -6,7 +6,6 @@ ini = require('ini');
 string = require('./string');
 
 module.exports = {
-  
   // Remove undefined and null values
   clean: function(content, undefinedOnly) {
     var k, v;
@@ -44,7 +43,7 @@ module.exports = {
     return ini.parse(content);
   },
   // parse: (str, options={}) ->
-  //   TODO: braket level might be good, to parse sub curly sub levels 
+  //   TODO: braket level might be good, to parse sub curly sub levels
   //   shall be delegated to `parse_brackets_then_curly` like its
   //   stringify counterpart is doing
   //   lines = require('@nikitajs/core/lib/misc/string').lines str
@@ -147,7 +146,7 @@ module.exports = {
 
   Each category is surrounded by one or several square brackets. The number of brackets indicates
   the depth of the category.
-  Options are   
+  Options are
 
   *   `comment`   Default to ";"
 
@@ -301,7 +300,7 @@ module.exports = {
     if (section && out.length) {
       out = "[" + safe(section) + "]" + options.eol + out;
     }
-    children.forEach((k, _, __) => {
+    children.forEach(function(k, _, __) {
       var child, nk;
       // escape the section name dot as some daemon could not parse it
       nk = options.escape ? dotSplit(k).join('\\.') : k;
@@ -423,7 +422,7 @@ module.exports = {
   Taking now indent option into consideration: some file are indent aware ambari-agent .ini file
   */
   stringify_multi_brackets: function(content, depth = 0, options = {}) {
-    var i, indent, isBoolean, isNull, isObj, j, k, out, prefix, ref, v;
+    var i, indent, isArray, isBoolean, isNull, isObj, j, k, out, prefix, ref, v;
     if (arguments.length === 2) {
       options = depth;
       depth = 0;
@@ -442,10 +441,10 @@ module.exports = {
     }
     for (k in content) {
       v = content[k];
-      // isUndefined = typeof v is 'undefined'
       isBoolean = typeof v === 'boolean';
       isNull = v === null;
-      isObj = typeof v === 'object' && !isNull;
+      isArray = Array.isArray(v);
+      isObj = typeof v === 'object' && !isArray && !isNull;
       if (isObj) {
         continue;
       }
@@ -453,6 +452,15 @@ module.exports = {
         out += `${prefix}${k}`;
       } else if (isBoolean) {
         out += `${prefix}${k}${options.separator}${v ? 'true' : 'false'}`;
+      } else if (isArray) {
+        out += v.filter(function(vv) {
+          return vv != null;
+        }).map(function(vv) {
+          if (typeof vv !== 'string') {
+            throw Error(`Stringify Invalid Value: expect a string for key ${k}, got ${vv}`);
+          }
+          return `${prefix}${k}${options.separator}${vv}`;
+        }).join(options.eol);
       } else {
         out += `${prefix}${k}${options.separator}${v}`;
       }
@@ -461,7 +469,8 @@ module.exports = {
     for (k in content) {
       v = content[k];
       isNull = v === null;
-      isObj = typeof v === 'object' && !isNull;
+      isArray = Array.isArray(v);
+      isObj = typeof v === 'object' && !isArray && !isNull;
       if (!isObj) {
         continue;
       }

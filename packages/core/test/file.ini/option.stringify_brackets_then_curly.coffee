@@ -7,6 +7,8 @@ they = require('ssh2-they').configure ssh...
 return unless tags.posix
 
 describe 'file.ini option stringify_brackets_then_curly', ->
+  
+  # TODO: move to `misc.ini` tests
 
   they 'call stringify udf', ({ssh}) ->
     nikita

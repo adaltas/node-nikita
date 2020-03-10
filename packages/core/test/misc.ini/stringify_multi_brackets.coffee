@@ -73,3 +73,25 @@ describe 'misc.ini stringify_multi_brackets', ->
         key1 = value1b
 
       """
+
+  it 'validate array values', ->
+    (->
+      ini.stringify_multi_brackets
+        user:
+          preference:
+            language: [true, 'ok']
+    ).should.throw 'Stringify Invalid Value: expect a string for key language, got true'
+
+  it 'convert array to multiple keys', ->
+    ini.stringify_multi_brackets
+      'user':
+        'preference':
+          'language': ['c', 'c++', 'ada']
+    .should.eql """
+    [user]
+      [[preference]]
+        language = c
+        language = c++
+        language = ada
+    
+    """

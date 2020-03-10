@@ -10,9 +10,6 @@ module.exports = {
     });
     return `'${result}'`;
   },
-  // result = arg.replace /[^\\]'/g, (match) ->
-  //   match.slice(0, 1) + '\\\''
-  // "'#{result}'"
   /*
   `string.hash(file, [algorithm], callback)`
   ------------------------------------------

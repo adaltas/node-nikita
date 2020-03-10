@@ -10,12 +10,20 @@ module.exports = function() {
   ajv = new Ajv({
     $data: true,
     allErrors: true,
-    useDefaults: true
+    useDefaults: true,
+    // extendRefs: 'ignore'
+    extendRefs: true
   });
   // coerceTypes: true
+  // loadSchema: (uri) ->
+  //   new Promise (accept, reject) ->
+  //     uri = if /^@nikitajs\/core/.test(middleware.handler)
+  //     then require "../#{middleware.handler.substr(14)}"
+  //     else require.main.require uri
+  //     result = uri
   ajv_keywords(ajv);
   return {
-    add: function(name, schema) {
+    add: function(schema, name) {
       if (!schema) {
         return;
       }
@@ -23,6 +31,8 @@ module.exports = function() {
     },
     validate: function(data, schema) {
       var valid, validate;
+      // validate = ajv.compileAsync schema
+      // valid = await validate data
       validate = ajv.compile(schema);
       valid = validate(data);
       if (validate.errors) {

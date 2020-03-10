@@ -145,6 +145,7 @@ require('nikita')
 ## Schema
 
     schema =
+      # name: '@nikitajs/core/lib/file'
       type: 'object'
       properties:
         'append':

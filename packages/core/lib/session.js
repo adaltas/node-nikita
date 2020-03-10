@@ -961,9 +961,10 @@ module.exports = function() {
     action = actions[i];
     if (action.schema) {
       name = `/nikita/${action.action.join('/')}`;
-      obj.schema.add(name, action.schema);
+      obj.schema.add(action.schema, name);
     }
   }
+  // obj.schema.add action.schema, action.schema.name if action.schema.name
   obj.registry = registry.registry({
     parent: registry,
     chain: proxy,
@@ -972,9 +973,10 @@ module.exports = function() {
         return;
       }
       name = `/nikita/${name.join('/')}`;
-      return obj.schema.add(name, action.schema);
+      return obj.schema.add(action.schema, name);
     }
   });
+  // obj.schema.add action.schema, action.schema.name if action.schema.name
   // Todo: remove
   if (obj.options.ssh) {
     if (obj.options.ssh.config) {
