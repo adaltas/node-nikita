@@ -99,6 +99,9 @@ handler = function({options}, callback) {
   if (options.method == null) {
     options.method = 'GET';
   }
+  if (options.http_headers == null) {
+    options.http_headers = {};
+  }
   if (!options.url) {
     throw Error(`Required Option: \`url\` is required, got ${options.url}`);
   }
@@ -176,11 +179,12 @@ ${[
       options.target ? `-o ${options.target}` : void 0,
       options.proxy ? `-x ${options.proxy}` : void 0,
       options.method !== 'GET' ? `-X ${options.method}` : void 0,
-      options.data ? `--data '${options.data.replace('\'',
-      '\\\'')}'` : void 0,
+      // "--data '#{options.data.replace '\'', '\\\''}'" if options.data
+      options.data ? `--data ${string.escapeshellarg(options.data)}` : void 0,
       `${options.url}`
     ].join(' ')}`,
     trap: true
+  // relax: true
   }, function(_err, {code, stdout}) {
     var done_with_header, http_version, i, j, just_finished_header, len, line, name, ref1, results, status_code, status_message;
     if (_err && code === 3) {
@@ -188,6 +192,9 @@ ${[
     }
     if (_err) {
       return err = _err;
+    }
+    if (err) {
+      return callback(err);
     }
     output.raw = stdout;
     done_with_header = false;

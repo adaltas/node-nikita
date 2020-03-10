@@ -7,7 +7,7 @@ return unless tags.api
 describe 'misc string', ->
 
   it 'escapeshellarg', ->
-    string.escapeshellarg("try to 'parse this").should.eql "'try to \\'parse this'"
+    string.escapeshellarg("try to 'parse this").should.eql "'try to '\"'\"'parse this'"
 
   it 'hash', ->
     md5 = string.hash "hello"

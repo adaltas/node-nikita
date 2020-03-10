@@ -5,11 +5,14 @@ var crypto, nunjucks, quote,
 module.exports = {
   escapeshellarg: function(arg) {
     var result;
-    result = arg.replace(/[^\\]'/g, function(match) {
-      return match.slice(0, 1) + '\\\'';
+    result = arg.replace(/'/g, function(match) {
+      return '\'"\'"\'';
     });
     return `'${result}'`;
   },
+  // result = arg.replace /[^\\]'/g, (match) ->
+  //   match.slice(0, 1) + '\\\''
+  // "'#{result}'"
   /*
   `string.hash(file, [algorithm], callback)`
   ------------------------------------------

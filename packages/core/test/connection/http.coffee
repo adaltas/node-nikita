@@ -20,13 +20,19 @@ server = ->
         when '/'
           res.writeHead 200, 'OK', {'Content-Type': 'application/json'}
           res.end '{"key": "value"}'
+        when '/ping'
+          body = ''
+          req.on 'data', (chunk) ->
+            body += chunk.toString()
+          req.on 'end', () ->
+            res.writeHead 200, 'OK', {'Content-Type': 'application/json'}
+            res.end body
         when '/request_404'
           res.writeHead 404, 'Not found'
           res.end()
         when '/request_301'
           res.writeHead 301, 'Moved Permanently',
             'Server': 'Apache/2.4.6 (CentOS) mod_auth_gssapi/1.5.1 mod_nss/1.0.14 NSS/3.28.4 mod_wsgi/3.4 Python/2.7.5'
-            'Set-Cookie': 'ipa_session=;Max-Age=0;path=/ipa;httponly;secure;'
             'X-Frame-Options': 'DENY'
             'Content-Security-Policy': 'frame-ancestors \'none\''
             'Location': 'http://ipa.nikita/ipa/session/json'
@@ -67,6 +73,29 @@ describe 'connection.http', ->
       srv.listen callback
     .connection.http
       url: "http://localhost:#{srv.port}"
+    , (err, {body, data, headers, status_code, status_message, type}) ->
+      throw err if err
+      status_code.should.eql 200
+      status_message.should.eql 'OK'
+      body.should.eql '{"key": "value"}'
+      data.should.eql { key: 'value' }
+      headers['Content-Type'].should.eql 'application/json'
+      type.should.eql 'json'
+    .call ({}, callback) -> srv.close callback
+    .promise()
+
+  they 'escape single and double quotes', ({ssh}) ->
+    srv = server()
+    nikita
+      ssh: ssh
+      debug: true
+    .call ({}, callback) ->
+      srv.listen callback
+    .connection.http
+      url: "http://localhost:#{srv.port}/ping"
+      data:
+        'te\'st': 'va\'lue'
+        'te"st': 'va"lue'
     , (err, {body, data, headers, status_code, status_message, type}) ->
       throw err if err
       status_code.should.eql 200

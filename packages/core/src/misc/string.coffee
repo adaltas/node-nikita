@@ -1,8 +1,7 @@
 
 module.exports =
     escapeshellarg: (arg) ->
-      result = arg.replace /[^\\]'/g, (match) ->
-        match.slice(0, 1) + '\\\''
+      result = arg.replace /'/g, (match) -> '\'"\'"\''
       "'#{result}'"
     ###
     `string.hash(file, [algorithm], callback)`

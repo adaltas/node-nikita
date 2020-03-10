@@ -264,7 +264,7 @@ module.exports = function() {
               if (errors.length === 1) {
                 error = errors[0];
               } else {
-                error = new Error(`Invalid Options: got ${errors.length} errors \n${errors.map(function(error) {
+                error = new Error(`Invalid Options: got ${errors.length} errors\n${errors.map(function(error) {
                   return error.message;
                 }).join('\n')}`);
                 error.errors = errors;

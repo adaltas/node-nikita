@@ -14,12 +14,14 @@ New feature:
 * system.execute: inject arch_chroot path
 * system.execute: new command property in error object
 
-Enhancments
+Enhancements
 * schema: improve multiple errors message
 * file.ini: add schema
 * file: add schema
+* connection.http: escape data argument
 
 Fix:
+* misc.string: escape shell single quotes using double quotes
 * system.mod: remove sudo
 
 ## Version 0.9.6

@@ -83,6 +83,7 @@ Perform an HTTP request. It uses internaly the curl command.
     handler = ({options}, callback) ->
       options.method ?= options.request
       options.method ?= 'GET'
+      options.http_headers ?= {}
       throw Error "Required Option: `url` is required, got #{options.url}" unless options.url
       throw Error "Required Option: `password` is required is principal is provided" if options.principal and not options.password
       throw Error "Required Option: `data` is required with POST and PUT requests" if options.method in ['POST', 'PUT'] and not options.data
@@ -122,14 +123,16 @@ Perform an HTTP request. It uses internaly the curl command.
           "-o #{options.target}" if options.target
           "-x #{options.proxy}" if options.proxy
           "-X #{options.method}" if options.method isnt 'GET'
-          "--data '#{options.data.replace '\'', '\\\''}'" if options.data
+          "--data #{string.escapeshellarg options.data}" if options.data
           "#{options.url}"
         ].join ' '}
         """
         trap: true
+        # relax: true
       , (_err, {code, stdout}) ->
         return err = Error "Required Dependencies: curl is required to perform HTTP requests" if _err and code is 3
         return err = _err if _err
+        return callback err if err
         output.raw = stdout
         done_with_header = false
         for line, i in string.lines stdout
