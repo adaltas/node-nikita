@@ -7,6 +7,7 @@ Breaking changes:
 * filetype: remove deprecated read actions
 
 New features:
+* file.type.wireguard: new action
 * file.types.hfile: import new action
 * file.types.krb5_conf: implement merge
 * file.types.krb5_conf: new action

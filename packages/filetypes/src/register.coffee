@@ -3,6 +3,7 @@
 
 ## Dependency
 
+    require '@nikitajs/core/lib/register'
     {register} = require '@nikitajs/core/lib/registry'
 
 ## Action registration
@@ -17,6 +18,7 @@
           my_cnf: '@nikitajs/filetypes/src/my_cnf'
           pacman_conf: '@nikitajs/filetypes/src/pacman_conf'
           ssh_authorized_keys: '@nikitajs/filetypes/src/ssh_authorized_keys'
+          wireguard_conf: '@nikitajs/filetypes/src/wireguard_conf'
           yum_repo: '@nikitajs/filetypes/src/yum_repo'
           systemd:
             timesyncd: '@nikitajs/filetypes/src/systemd/timesyncd'

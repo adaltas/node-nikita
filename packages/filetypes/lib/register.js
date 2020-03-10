@@ -4,6 +4,8 @@
 //# Dependency
 var register;
 
+require('@nikitajs/core/lib/register');
+
 ({register} = require('@nikitajs/core/lib/registry'));
 
 //# Action registration
@@ -17,6 +19,7 @@ register({
       my_cnf: '@nikitajs/filetypes/lib/my_cnf',
       pacman_conf: '@nikitajs/filetypes/lib/pacman_conf',
       ssh_authorized_keys: '@nikitajs/filetypes/lib/ssh_authorized_keys',
+      wireguard_conf: '@nikitajs/filetypes/lib/wireguard_conf',
       yum_repo: '@nikitajs/filetypes/lib/yum_repo',
       systemd: {
         timesyncd: '@nikitajs/filetypes/lib/systemd/timesyncd',

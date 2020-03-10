@@ -130,7 +130,7 @@ module.exports = function({options}) {
       if (typeof v === 'number') {
         v = `${v}`;
       }
-      if (typeof v === 'undefined' || v === null) {
+      if (v == null) {
         results.push(delete fnl_props[k]);
       } else if (Array.isArray(v)) {
         results.push(fnl_props[k] = v.join(','));
@@ -180,8 +180,8 @@ module.exports = function({options}) {
   });
   return this.call(function() {
     options.content = stringify(fnl_props);
-    options.source = null;
-    options.header = null;
+    options.source = void 0;
+    options.header = void 0;
     return this.file(options);
   });
 };
@@ -202,7 +202,7 @@ parse = function(markup, property) {
     if (((ref1 = propertyChild.tagName) != null ? ref1.toUpperCase() : void 0) !== 'PROPERTY') {
       continue;
     }
-    name = value = null;
+    name = value = void 0;
     ref2 = propertyChild.childNodes;
     for (j = 0, len1 = ref2.length; j < len1; j++) {
       child = ref2[j];

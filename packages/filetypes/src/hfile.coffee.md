@@ -66,7 +66,7 @@ value properties.
         @log message: "Merge user properties", level: 'DEBUG', module: '@nikita/filetypes/lib/hfile'
         for k, v of options.properties
           v = "#{v}" if typeof v is 'number'
-          if typeof v is 'undefined' or v is null
+          unless v?
             delete fnl_props[k]
           else if Array.isArray v
             fnl_props[k] = v.join ','
@@ -86,8 +86,8 @@ value properties.
           @log message: "Property '#{k}' was '#{org_props[k]}' and is now '#{fnl_props[k]}'", level: 'WARN', module: '@nikita/filetypes/lib/hfile'
       @call ->
         options.content = stringify fnl_props
-        options.source = null
-        options.header = null
+        options.source = undefined
+        options.header = undefined
         @file options
 
 ## `parse(xml, [property])`
@@ -102,7 +102,7 @@ Retrieve a property: `value = parse(xml, property)`
       doc = new xmldom.DOMParser().parseFromString markup
       for propertyChild in doc.documentElement.childNodes
         continue unless propertyChild.tagName?.toUpperCase() is 'PROPERTY'
-        name = value = null
+        name = value = undefined
         for child in propertyChild.childNodes
           if child.tagName?.toUpperCase() is 'NAME'
             name = child.childNodes[0].nodeValue
