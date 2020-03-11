@@ -35,7 +35,6 @@ nikita
 .log.md filename: '/tmp/nikita_ipa_lxd_install'
 .lxd.cluster
   header: 'Container'
-  # debug: true # params.debug
   networks:
     lxdbr0public:
       'ipv4.address': '172.16.0.1/24'
