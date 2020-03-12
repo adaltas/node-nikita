@@ -1,10 +1,14 @@
 
 nikita = require 'nikita'
+path = require 'path'
 
-key = "#{__dirname}/../../../assets/.vagrant/machines/default/virtualbox/private_key"
+key = path.relative process.cwd(), "#{__dirname}/../../../assets/.vagrant/machines/default/virtualbox/private_key"
+
 module.exports = ({params}) ->
   nikita
     debug: params.debug
+  .log.cli pad: host: 20, header: 60
+  .log.md basename: 'start', basedir: params.log, archive: false, if: params.log
   .system.execute
     header: 'Dependencies'
     unless_exec: 'vagrant plugin list | egrep \'^vagrant-vbguest \''
@@ -22,6 +26,7 @@ module.exports = ({params}) ->
     lxc remote switch nikita
     '''
   .system.execute
+    debug: true
     cmd: '''
     lxc ls || {
       lxc remote switch local

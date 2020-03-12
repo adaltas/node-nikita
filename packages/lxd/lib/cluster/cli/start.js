@@ -3,11 +3,23 @@ var key, nikita, path;
 
 nikita = require('nikita');
 
-key = `${__dirname}/../../../assets/.vagrant/machines/default/virtualbox/private_key`;
+path = require('path');
+
+key = path.relative(process.cwd(), `${__dirname}/../../../assets/.vagrant/machines/default/virtualbox/private_key`);
 
 module.exports = function({params}) {
   return nikita({
     debug: params.debug
+  }).log.cli({
+    pad: {
+      host: 20,
+      header: 60
+    }
+  }).log.md({
+    basename: 'start',
+    basedir: params.log,
+    archive: false,
+    if: params.log
   }).system.execute({
     header: 'Dependencies',
     unless_exec: 'vagrant plugin list | egrep \'^vagrant-vbguest \'',
@@ -19,6 +31,7 @@ module.exports = function({params}) {
     cmd: `lxc remote add nikita 127.0.0.1:8443 --accept-certificate --password secret
 lxc remote switch nikita`
   }).system.execute({
+    debug: true,
     cmd: `lxc ls || {
   lxc remote switch local
   lxc remote remove nikita

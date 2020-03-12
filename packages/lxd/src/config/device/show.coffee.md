@@ -61,7 +61,7 @@ require('nikita')
         config = JSON.parse stdout
         callback null, status: true, config: config.devices[options.device]
 
-## Source Code
+## Exports
 
     module.exports =
       handler: handler

@@ -4,6 +4,11 @@
 ## Trunk
 
 New features:
+lxd: start/stop cluster log
+
+## 0.9.6
+
+New features:
 * lxd.exec: reduce collision risk in heredoc
 * lxd.show: new action
 * lxd.cluster: refactor cli

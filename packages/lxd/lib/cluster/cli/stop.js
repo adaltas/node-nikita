@@ -6,8 +6,17 @@ nikita = require('nikita');
 module.exports = function({params}) {
   return nikita({
     debug: params.debug
+  }).log.cli({
+    pad: {
+      host: 20,
+      header: 60
+    }
+  }).log.md({
+    basename: 'start',
+    basedir: params.log,
+    archive: false,
+    if: params.log
   }).system.execute({
-    debug: params.debug,
     cwd: `${__dirname}/../../../assets`,
     cmd: `vagrant halt`
   });

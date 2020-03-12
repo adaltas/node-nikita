@@ -10,7 +10,12 @@ parameters({
     'start': {
       options: {
         debug: {
-          'type': 'boolean'
+          type: 'boolean',
+          description: 'Print debug output'
+        },
+        log: {
+          type: 'string',
+          description: 'Path to the directory storing logs.'
         }
       },
       route: require('./start')
@@ -18,7 +23,12 @@ parameters({
     'stop': {
       options: {
         debug: {
-          'type': 'boolean'
+          type: 'boolean',
+          description: 'Print debug output'
+        },
+        log: {
+          type: 'string',
+          description: 'Path to the directory storing logs.'
         }
       },
       route: require('./stop')
