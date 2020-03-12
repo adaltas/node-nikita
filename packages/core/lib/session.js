@@ -252,41 +252,8 @@ module.exports = function() {
       });
     }
     return (function() {
-      var do_callback, do_conditions, do_disabled, do_end, do_handler, do_intercept_after, do_intercept_before, do_once, do_options, do_options_after, do_options_before;
-      do_options = function() {
-        try {
-          if (action.on_options) {
-            action.on_options(action);
-          }
-          if (action.metadata.schema) {
-            errors = obj.schema.validate(action.options, action.metadata.schema);
-            if (errors.length) {
-              if (errors.length === 1) {
-                error = errors[0];
-              } else {
-                error = new Error(`Invalid Options: got ${errors.length} errors\n${errors.map(function(error) {
-                  return error.message;
-                }).join('\n')}`);
-                error.errors = errors;
-              }
-              error.options = action.options;
-              error.action = action.action;
-              throw error;
-            }
-          }
-          if (!(typeof action.metadata.sleep === 'number' && action.metadata.sleep >= 0)) {
-            // Validate sleep option, more can be added
-            throw Error(`Invalid options sleep, got ${JSON.stringify(action.metadata.sleep)}`);
-          }
-        } catch (error1) {
-          error = error1;
-          action.error = error;
-          action.output = {
-            status: false
-          };
-          do_callback();
-          return;
-        }
+      var do_callback, do_conditions, do_disabled, do_end, do_handler, do_intercept_after, do_intercept_before, do_once, do_options, do_options_after, do_options_before, do_start;
+      do_start = function() {
         return do_disabled();
       };
       do_disabled = function() {
@@ -487,7 +454,7 @@ module.exports = function() {
             }
           }
           return setImmediate(function() {
-            return do_handler();
+            return do_options();
           });
         }, function(error) {
           proxy.log({
@@ -505,6 +472,42 @@ module.exports = function() {
             return do_callback();
           });
         });
+      };
+      do_options = function() {
+        try {
+          if (action.on_options) {
+            action.on_options(action);
+          }
+          if (action.metadata.schema) {
+            errors = obj.schema.validate(action.options, action.metadata.schema);
+            if (errors.length) {
+              if (errors.length === 1) {
+                error = errors[0];
+              } else {
+                error = new Error(`Invalid Options: got ${errors.length} errors\n${errors.map(function(error) {
+                  return error.message;
+                }).join('\n')}`);
+                error.errors = errors;
+              }
+              error.options = action.options;
+              error.action = action.action;
+              throw error;
+            }
+          }
+          if (!(typeof action.metadata.sleep === 'number' && action.metadata.sleep >= 0)) {
+            // Validate sleep option, more can be added
+            throw Error(`Invalid options sleep, got ${JSON.stringify(action.metadata.sleep)}`);
+          }
+        } catch (error1) {
+          error = error1;
+          action.error = error;
+          action.output = {
+            status: false
+          };
+          do_callback();
+          return;
+        }
+        return do_handler();
       };
       do_handler = function() {
         var called, ctx, do_next, handle_async_and_promise, promise_returned, ref2, ref3, result, status_sync, wait_children;
@@ -797,7 +800,7 @@ module.exports = function() {
         error = (action.error_in_callback || !action.metadata.tolerant && !action.original.relax) && action.error;
         return callback(error, action.output);
       };
-      return do_options();
+      return do_start();
     })();
   };
   obj.next = function() {

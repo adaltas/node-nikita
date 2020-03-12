@@ -141,27 +141,7 @@
         state.current_level.action = action
         proxy.log message: action.metadata.header, type: 'header', index: index if action.metadata.header
         do ->
-          do_options = ->
-            try
-              action.on_options action if action.on_options
-              if action.metadata.schema
-                errors = obj.schema.validate action.options, action.metadata.schema
-                if errors.length
-                  if errors.length is 1
-                    error = errors[0]
-                  else
-                    error = new Error "Invalid Options: got #{errors.length} errors\n#{errors.map((error) -> error.message).join('\n')}"
-                    error.errors = errors
-                  error.options = action.options
-                  error.action = action.action
-                  throw error
-              # Validate sleep option, more can be added
-              throw Error "Invalid options sleep, got #{JSON.stringify action.metadata.sleep}" unless typeof action.metadata.sleep is 'number' and action.metadata.sleep >= 0
-            catch error
-              action.error = error
-              action.output = status: false
-              do_callback()
-              return
+          do_start = ->
             do_disabled()
           do_disabled = ->
             unless action.metadata.disabled
@@ -257,13 +237,35 @@
               proxy.log type: 'lifecycle', message: 'conditions_passed', index: index, error: null, status: false
               for k, v of action.options # Remove conditions from options
                 delete action.options[k] if /^if.*/.test(k) or /^unless.*/.test(k)
-              setImmediate -> do_handler()
+              setImmediate -> do_options()
             , (error) ->
               proxy.log type: 'lifecycle', message: 'conditions_failed', index: index, error: error, status: false
               setImmediate ->
                 action.error = error
                 action.output = status: false
                 do_callback()
+          do_options = ->
+            try
+              action.on_options action if action.on_options
+              if action.metadata.schema
+                errors = obj.schema.validate action.options, action.metadata.schema
+                if errors.length
+                  if errors.length is 1
+                    error = errors[0]
+                  else
+                    error = new Error "Invalid Options: got #{errors.length} errors\n#{errors.map((error) -> error.message).join('\n')}"
+                    error.errors = errors
+                  error.options = action.options
+                  error.action = action.action
+                  throw error
+              # Validate sleep option, more can be added
+              throw Error "Invalid options sleep, got #{JSON.stringify action.metadata.sleep}" unless typeof action.metadata.sleep is 'number' and action.metadata.sleep >= 0
+            catch error
+              action.error = error
+              action.output = status: false
+              do_callback()
+              return
+            do_handler()
           do_handler = ->
             action.metadata.attempt++
             do_next = ({error, output, args}) ->
@@ -401,7 +403,7 @@
             state.current_level.history.push action
             error = (action.error_in_callback or not action.metadata.tolerant and not action.original.relax) and action.error
             callback error, action.output
-          do_options()
+          do_start()
       obj.next = ->
         state.current_level.todos.push action: 'next', handler: arguments[0]
         setImmediate run_next if state.current_level.todos.length is 1 # Activate the pump

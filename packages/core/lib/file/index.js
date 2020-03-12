@@ -129,6 +129,16 @@
 var diff, handler, misc, nunjucks, on_options, path, schema, string;
 
 on_options = function({options}) {
+  if (!((options.source || (options.content != null)) || options.replace || (options.write != null))) {
+    // Validate parameters
+    throw Error('Missing source or content');
+  }
+  if (options.source && options.content) {
+    throw Error('Define either source or content');
+  }
+  if (!options.target) {
+    throw Error('Missing target');
+  }
   if (options.content) {
     if (typeof options.content === 'number') {
       options.content = `${options.content}`;
@@ -392,16 +402,6 @@ options.`
 // ## Handler
 handler = function({options}) {
   var context, j, len, ref, ssh, target, targetHash, targetStats, w;
-  if (!((options.source || (options.content != null)) || options.replace || (options.write != null))) {
-    // Validate parameters
-    throw Error('Missing source or content');
-  }
-  if (options.source && options.content) {
-    throw Error('Define either source or content');
-  }
-  if (!options.target) {
-    throw Error('Missing target');
-  }
   this.log({
     message: "Entering file",
     level: 'DEBUG',

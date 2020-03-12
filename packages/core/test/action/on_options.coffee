@@ -5,7 +5,7 @@ session = require '../../src/session'
 
 return unless tags.api
 
-describe 'on_options hook', ->
+describe 'hook on_options', ->
   
   it 'modify an option', ->
     nikita
@@ -15,4 +15,13 @@ describe 'on_options hook', ->
         options.a_key = 'a new value'
     , ({options, cascade}) ->
       options.a_key.should.eql 'a new value'
+    .promise()
+      
+  it 'called after conditions', ->
+    nikita
+    .call
+      if: false
+      on_options: ({options}) ->
+        throw Error 'NoWay'
+    , (->)
     .promise()
