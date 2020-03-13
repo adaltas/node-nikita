@@ -24,4 +24,4 @@ Change ownership of a file.
         bash: options.bash
         arch_chroot: options.arch_chroot
       , (err) ->
-       callback err
+        callback err
