@@ -1,0 +1,88 @@
+{
+  "name": "@nikitajs/engine",
+  "version": "0.9.7-alpha.2",
+  "description": "Automation and deployment solution of applications and infrastructures.",
+  "keywords": [
+    "build",
+    "cli",
+    "deploy",
+    "fs",
+    "install",
+    "masson",
+    "ssh",
+    "system",
+    "task"
+  ],
+  "author": "David Worms <david@adaltas.com>",
+  "bugs": {
+    "email": "open@adaltas.com",
+    "url": "https://github.com/adaltas/node-nikita/issues"
+  },
+  "coffeelintConfig": {
+    "indentation": {
+      "level": "error",
+      "value": 2
+    },
+    "line_endings": {
+      "level": "error",
+      "value": "unix"
+    },
+    "max_line_length": {
+      "level": "ignore"
+    },
+    "no_backticks": {
+      "level": "ignore"
+    },
+    "no_nested_string_interpolation": {
+      "level": "ignore"
+    }
+  },
+  "contributors": [
+    {
+      "name": "David Worms",
+      "email": "david@adaltas.com"
+    },
+    {
+      "name": "Pierre Sauvage",
+      "email": "pierre@adaltas.com"
+    },
+    {
+      "name": "Lucas Bakalian",
+      "email": "lucas@adaltas.com"
+    }
+  ],
+  "dependencies": {
+    "ajv": "^6.10.2",
+    "ajv-keywords": "^3.4.1",
+    "each": "^1.2.2",
+    "minimatch": "~3.0.4",
+    "mixme": "^0.3.5"
+  },
+  "devDependencies": {
+    "coffeescript": "^2.5.0",
+    "mocha": "7.0.0",
+    "should": "~13.2.3"
+  },
+  "engines": {
+    "node": ">= 10.0.0"
+  },
+  "files": [
+    "/lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://nikita.js.org/",
+  "license": "MIT",
+  "main": "./lib/index",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adaltas/node-nikita",
+    "directory": "packages/core"
+  },
+  "scripts": {
+    "build": "coffee -b -o lib src",
+    "pretest": "npm build",
+    "test": "mocha test/{*,*/*,*/*/*}.coffee"
+  }
+}

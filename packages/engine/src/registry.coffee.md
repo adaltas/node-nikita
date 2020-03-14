@@ -5,18 +5,19 @@ Management facility to register and unregister actions.
 
 ## Register all functions
 
-    load = (middleware) ->
-      middleware = handler: middleware unless typeof middleware is 'object' and middleware? and not Array.isArray middleware
-      throw Error "Invalid middleware handler: got #{JSON.stringify middleware.handler}" unless typeof middleware.handler in ['function', 'string']
-      return middleware unless typeof middleware.handler is 'string'
-      middleware.module = middleware.handler
-      result = if /^nikita\//.test(middleware.handler) then require(".#{middleware.handler.substr(6)}") else require.main.require middleware.handler
-      if typeof result is 'function'
-        result = handler: result
-        result.module = middleware.module
-      result
+    load = (namespace) ->
+      throw Error "Invalid Argument: namespace must be a string, got #{namespace.toString()}" unless typeof namespace is 'string'
+      # middleware = handler: middleware unless typeof middleware is 'object' and middleware? and not Array.isArray middleware
+      # throw Error "Invalid middleware handler: got #{JSON.stringify middleware.handler}" unless typeof middleware.handler in ['function', 'string']
+      # return middleware unless typeof middleware.handler is 'string'
+      # middleware.module = handler
+      action = if /^nikita\//.test(namespace) then require(".#{namespace.substr(6)}") else require.main.require namespace
+      if typeof action is 'function'
+        action = handler: action
+        action.module = middleware.module
+      action
 
-    registry = ({chain, on_register, parent} = {}) ->
+    create = ({chain, on_register, parent} = {}) ->
       store = {}
       obj = {}
 
@@ -24,7 +25,10 @@ Management facility to register and unregister actions.
 
 Retrieve an action by name.
 
-Options include: flatten, deprecate
+Options include:
+
+* `flatten`
+* `deprecate`
 
       obj.get = (name, options) ->
         if arguments.length is 1 and is_object arguments[0]
@@ -61,11 +65,13 @@ Options include: flatten, deprecate
             return walk store, []
         name = [name] if typeof name is 'string'
         cnames = store
-        for n, i in name
-          return null unless cnames[n]
-          return cnames[n][''] if cnames[n] and cnames[n][''] and i is name.length - 1
+        for n, i in name.concat ['']
+          continue unless cnames[n]
+          return cnames[n] if cnames[n] and i is name.length
           cnames = cnames[n]
-        return null
+        if parent
+        then parent.get name, options
+        else null
 
 ## Register
 
@@ -90,7 +96,7 @@ With an action object:
 ```javascript
 nikita.register('third_action', {
   relax: true,
-  handler: function(options){ console.log(options.relax) }
+  handler: function(options){ console.info(options.relax) }
 })
 nikita.third_action(options);
 ```
@@ -100,7 +106,7 @@ With a namespace and an action object:
 ```javascript
 nikita.register(['fourth', 'action'], {
   relax: true,
-  handler: function(options){ console.log(options.relax) }
+  handler: function(options){ console.info(options.relax) }
 })
 nikita.fourth.action(options);
 ```
@@ -124,7 +130,9 @@ nikita
       obj.register = (name, handler) ->
         name = [name] if typeof name is 'string'
         if Array.isArray name
-          handler = load handler
+          return chain if handler is undefined
+          if typeof handler is 'string'
+            handler = load handler
           cnames = names = store
           for n in [0...name.length - 1]
             n = name[n]
@@ -142,7 +150,10 @@ nikita
                 namespace.push k
                 walk namespace, v
               else
-                v = load v
+                if typeof v.handler is 'string'
+                  v = merge v, load v
+                if v.handler? and typeof v.handler isnt 'function'
+                  throw Error "Invalid Handler: expect a function, got #{v.handler}"
                 namespace.push k
                 store[k] = if k is '' then v else '': v
                 if on_register
@@ -191,14 +202,14 @@ Options:
 
       obj.registered = (name, options = {}) ->
         name = [name] if typeof name is 'string'
-        return true if parent and parent.registered name
+        return true if options.parent and parent and parent.registered name
         cnames = store
         for n, i in name
           return false if not cnames[n]? or not cnames.propertyIsEnumerable(n)
           return true if options.partial and cnames[n] and i is name.length - 1
           return true if cnames[n][''] and i is name.length - 1
           cnames = cnames[n]
-        return false
+        false
 
 ## Unregister
 
@@ -215,9 +226,9 @@ Remove an action from registry.
       
       obj
 
-    module.exports = registry()
+    module.exports = create()
 
-    module.exports.registry = registry
+    module.exports.create = create
 
 ## Dependencies
 
