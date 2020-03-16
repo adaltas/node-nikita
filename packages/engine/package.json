@@ -75,6 +75,16 @@
   "homepage": "https://nikita.js.org/",
   "license": "MIT",
   "main": "./lib/index",
+  "mocha": {
+    "throw-deprecation": true,
+    "require": [
+      "should",
+      "coffeescript/register"
+    ],
+    "timeout": 40000,
+    "reporter": "spec",
+    "recursive": true
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/adaltas/node-nikita",
