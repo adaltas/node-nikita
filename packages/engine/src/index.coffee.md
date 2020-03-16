@@ -9,28 +9,27 @@ Nikita session.
     module.exports = new Proxy (-> session arguments...),
       get: (target, name) ->
         return registry if name in ['registry']
-        ctx = session()
-        return undefined unless ctx[name]
-        return ctx[name] if name in ['cascade']
-        tree = []
-        tree.push name
-        builder = ->
-          a = ctx[tree.shift()]
-          return a unless typeof a is 'function'
-          while name = tree.shift()
-            a[name]
-          a.apply ctx, arguments
-        proxy = new Proxy builder,
-          get: (target, name) ->
-            tree.push name
-            if not registry.registered(tree, partial: true)
-              tree = []
-              return undefined
-            proxy
-        proxy
+        namespace = []
+        namespace.push name
+        on_call = ->
+          unless registry.registered namespace
+            throw Error "No action named #{namespace.join '.'}"
+          # actions = args_to_actions
+          #   namespace: namespace
+          #   args: arguments
+          # action.metadata.namespace = namespace
+          session namespace, arguments
+        on_get = (target, name) ->
+          namespace.push name
+          if not registry.registered(namespace, partial: true)
+            namespace = []
+            return undefined
+          proxy
+        new Proxy on_call, get: on_get
 
 ## Dependencies
 
-    # require './register'
-    session = require './session'
+    require './register'
+    # args_to_actions = require './args_to_action'
     registry = require './registry'
+    session = require './session'

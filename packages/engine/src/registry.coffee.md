@@ -133,16 +133,14 @@ nikita
           return chain if handler is undefined
           if typeof handler is 'string'
             handler = load handler
-          cnames = names = store
-          for n in [0...name.length - 1]
-            n = name[n]
-            cnames[n] ?= {}
-            cnames = cnames[n]
-          cnames[name[name.length-1]] ?= {}
-          cnames[name[name.length-1]][''] = handler
+          child_store = store
+          for i in [0...name.length]
+            property = name[i]
+            child_store[property] ?= {}
+            child_store = child_store[property]
+          child_store[''] = handler: handler
           if on_register
             on_register name, handler
-          mutate store, names
         else
           walk = (namespace, store) ->
             for k, v of store
@@ -195,14 +193,14 @@ Test if a function is registered or not.
 
 Options:
 
-* `parent` (boolean)   
+* `local` (boolean)   
   Search action in the parent registries.
 * `partial` (boolean)   
   Return true if name match a namespace and not a leaf action.
 
       obj.registered = (name, options = {}) ->
         name = [name] if typeof name is 'string'
-        return true if options.parent and parent and parent.registered name
+        return true if not options.local and parent and parent.registered name, options
         cnames = store
         for n, i in name
           return false if not cnames[n]? or not cnames.propertyIsEnumerable(n)

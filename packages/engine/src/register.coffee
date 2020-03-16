@@ -2,7 +2,7 @@
 registry = require './registry'
 
 registry.register
-  '': {}
+  '': handler: (->)
   'action':
     '': handler: ({metadata}) ->
       @an.action()

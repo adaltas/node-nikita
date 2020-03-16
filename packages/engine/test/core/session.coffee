@@ -1,5 +1,5 @@
 
-nikita = require '../../src/session'
+nikita = require '../../src'
 
 describe 'session', ->
 
