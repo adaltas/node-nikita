@@ -1,7 +1,9 @@
 
 nikita = require '../../src'
 
-describe 'session', ->
+# Test the construction of the session namespace stored in state
+
+describe 'namespace', ->
 
   it 'call registered action', ->
     n = nikita()

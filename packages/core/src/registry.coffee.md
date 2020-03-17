@@ -125,16 +125,13 @@ nikita
         name = [name] if typeof name is 'string'
         if Array.isArray name
           handler = load handler
-          cnames = names = store
-          for n in [0...name.length - 1]
+          cnames = store
+          for n in [0...name.length]
             n = name[n]
             cnames[n] ?= {}
             cnames = cnames[n]
-          cnames[name[name.length-1]] ?= {}
-          cnames[name[name.length-1]][''] = handler
-          if on_register
-            on_register name, handler
-          mutate store, names
+          cnames[''] = handler
+          on_register name, handler if on_register
         else
           walk = (namespace, store) ->
             for k, v of store

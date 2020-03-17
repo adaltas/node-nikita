@@ -133,12 +133,14 @@ nikita
           return chain if handler is undefined
           if typeof handler is 'string'
             handler = load handler
+          if typeof handler is 'function'
+            handler = handler: handler
           child_store = store
           for i in [0...name.length]
             property = name[i]
             child_store[property] ?= {}
             child_store = child_store[property]
-          child_store[''] = handler: handler
+          child_store[''] = handler
           if on_register
             on_register name, handler
         else

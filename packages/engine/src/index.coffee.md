@@ -14,11 +14,7 @@ Nikita session.
         on_call = ->
           unless registry.registered namespace
             throw Error "No action named #{namespace.join '.'}"
-          # actions = args_to_actions
-          #   namespace: namespace
-          #   args: arguments
-          # action.metadata.namespace = namespace
-          session namespace, arguments
+          session metadata: namespace: namespace, arguments
         on_get = (target, name) ->
           namespace.push name
           if not registry.registered(namespace, partial: true)
@@ -30,6 +26,5 @@ Nikita session.
 ## Dependencies
 
     require './register'
-    # args_to_actions = require './args_to_action'
     registry = require './registry'
     session = require './session'
