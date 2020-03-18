@@ -10,7 +10,7 @@ available to every Nikita sessions.
 
 ## Action registration
 
-    register
+    register module.exports =
       assert: 'nikita/core/assert'
       connection:
         assert: 'nikita/connection/assert'

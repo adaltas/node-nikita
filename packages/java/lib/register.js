@@ -7,7 +7,7 @@ var register;
 ({register} = require('@nikitajs/core/lib/registry'));
 
 //# Action registration
-register({
+register(module.exports = {
   java: {
     keystore_add: '@nikitajs/java/lib/keystore_add',
     keystore_remove: '@nikitajs/java/lib/keystore_remove'

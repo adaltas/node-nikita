@@ -7,7 +7,7 @@
 
 ## Action registration
 
-    register
+    register module.exports =
       db:
         database:
           '': '@nikitajs/db/src/database'

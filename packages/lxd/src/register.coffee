@@ -7,7 +7,7 @@
 
 ## Action registration
 
-    register
+    register module.exports =
       lxd:
         cluster:
           '': '@nikitajs/lxd/src/cluster'

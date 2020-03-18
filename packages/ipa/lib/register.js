@@ -7,7 +7,7 @@ var register;
 ({register} = require('@nikitajs/core/lib/registry'));
 
 //# Action registration
-register({
+register(module.exports = {
   ipa: {
     group: {
       '': '@nikitajs/ipa/lib/group',

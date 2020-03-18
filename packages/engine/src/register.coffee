@@ -1,7 +1,7 @@
 
 registry = require './registry'
 
-registry.register
+registry.register module.exports =
   '': handler: (->)
   'action':
     '': handler: ({metadata}) ->

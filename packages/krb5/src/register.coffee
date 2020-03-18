@@ -7,7 +7,7 @@
 
 ## Action registration
 
-    register
+    register module.exports =
       krb5:
         addprinc: '@nikitajs/krb5/src/addprinc'
         delprinc: '@nikitajs/krb5/src/delprinc'

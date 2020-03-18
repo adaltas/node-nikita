@@ -7,7 +7,7 @@
 
 ## Action registration
 
-    register
+    register module.exports =
       java:
         keystore_add: '@nikitajs/java/src/keystore_add'
         keystore_remove: '@nikitajs/java/src/keystore_remove'

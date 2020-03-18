@@ -9,7 +9,7 @@ require('@nikitajs/core/lib/register');
 ({register} = require('@nikitajs/core/lib/registry'));
 
 //# Action registration
-register({
+register(module.exports = {
   file: {
     types: {
       ceph_conf: '@nikitajs/filetypes/lib/ceph_conf',

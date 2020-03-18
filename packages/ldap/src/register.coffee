@@ -7,7 +7,7 @@
 
 ## Action registration
 
-    register
+    register module.exports =
       ldap:
         acl: '@nikitajs/ldap/src/acl'
         add: '@nikitajs/ldap/src/add'

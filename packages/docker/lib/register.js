@@ -7,7 +7,7 @@ var register;
 ({register} = require('@nikitajs/core/lib/registry'));
 
 //# Action registration
-register({
+register(module.exports = {
   docker: {
     build: '@nikitajs/docker/lib/build',
     checksum: '@nikitajs/docker/lib/checksum',

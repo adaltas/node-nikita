@@ -7,7 +7,7 @@ var register;
 ({register} = require('@nikitajs/core/lib/registry'));
 
 //# Action registration
-register({
+register(module.exports = {
   tools: {
     backup: '@nikitajs/tools/lib/backup',
     compress: '@nikitajs/tools/lib/compress',

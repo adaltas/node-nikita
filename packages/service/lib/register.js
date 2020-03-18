@@ -7,7 +7,7 @@ var register;
 ({register} = require('@nikitajs/core/lib/registry'));
 
 //# Action registration
-register({
+register(module.exports = {
   service: {
     '': '@nikitajs/service/lib',
     assert: '@nikitajs/service/lib/assert',

@@ -7,7 +7,7 @@
 
 ## Action registration
 
-    register
+    register module.exports =
       service:
         '': '@nikitajs/service/src'
         assert: '@nikitajs/service/src/assert'

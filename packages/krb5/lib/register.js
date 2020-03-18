@@ -7,7 +7,7 @@ var register;
 ({register} = require('@nikitajs/core/lib/registry'));
 
 //# Action registration
-register({
+register(module.exports = {
   krb5: {
     addprinc: '@nikitajs/krb5/lib/addprinc',
     delprinc: '@nikitajs/krb5/lib/delprinc',

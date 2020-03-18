@@ -7,7 +7,7 @@ var register;
 ({register} = require('@nikitajs/core/lib/registry'));
 
 //# Action registration
-register({
+register(module.exports = {
   ldap: {
     acl: '@nikitajs/ldap/lib/acl',
     add: '@nikitajs/ldap/lib/add',

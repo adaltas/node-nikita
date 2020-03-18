@@ -7,7 +7,7 @@
 
 ## Action registration
 
-    register
+    register module.exports =
       docker:
         build: '@nikitajs/docker/src/build'
         checksum: '@nikitajs/docker/src/checksum'

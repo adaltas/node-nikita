@@ -10,7 +10,7 @@ var register;
 ({register} = require('./registry'));
 
 // ## Action registration
-register({
+register(module.exports = {
   assert: 'nikita/core/assert',
   connection: {
     assert: 'nikita/connection/assert',

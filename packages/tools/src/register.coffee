@@ -7,7 +7,7 @@
 
 ## Action registration
 
-    register
+    register module.exports =
       tools:
         backup: '@nikitajs/tools/src/backup'
         compress: '@nikitajs/tools/src/compress'

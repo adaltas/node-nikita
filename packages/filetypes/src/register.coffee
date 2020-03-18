@@ -8,7 +8,7 @@
 
 ## Action registration
 
-    register
+    register module.exports =
       file:
         types:
           ceph_conf: '@nikitajs/filetypes/src/ceph_conf'

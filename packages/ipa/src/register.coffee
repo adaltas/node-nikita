@@ -7,7 +7,7 @@
 
 ## Action registration
 
-    register
+    register module.exports =
       ipa:
         group:
           '': '@nikitajs/ipa/src/group'

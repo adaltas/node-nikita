@@ -7,7 +7,7 @@ var register;
 ({register} = require('@nikitajs/core/lib/registry'));
 
 //# Action registration
-register({
+register(module.exports = {
   lxd: {
     cluster: {
       '': '@nikitajs/lxd/lib/cluster'
