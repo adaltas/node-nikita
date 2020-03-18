@@ -59,7 +59,11 @@
     "mixme": "^0.3.5"
   },
   "devDependencies": {
+    "@babel/core": "^7.8.7",
+    "@babel/preset-env": "^7.8.7",
     "coffeescript": "^2.5.0",
+    "eslint": "^6.0.0",
+    "eslint-plugin-coffee": "^0.1.12",
     "mocha": "7.0.0",
     "should": "~13.2.3"
   },
@@ -79,7 +83,7 @@
     "throw-deprecation": true,
     "require": [
       "should",
-      "coffeescript/register"
+      "./coffee.config.js"
     ],
     "timeout": 40000,
     "reporter": "spec",
@@ -92,7 +96,9 @@
   },
   "scripts": {
     "build": "coffee -b -o lib src",
+    "lint": "eslint 'src/**/*.coffee'",
+    "lint-fix": "eslint --fix 'src/**/*.coffee'",
     "pretest": "npm build",
-    "test": "mocha test/*/*.coffee"
+    "test": "mocha 'test/**/*.coffee'"
   }
 }
