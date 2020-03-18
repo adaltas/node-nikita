@@ -166,28 +166,24 @@ registry = function({chain, on_register, parent} = {}) {
   // .sixth.action(options);
   // ```
   obj.register = function(name, handler) {
-    var cnames, j, n, name1, names, ref, walk;
+    var cnames, j, n, ref, walk;
     if (typeof name === 'string') {
       name = [name];
     }
     if (Array.isArray(name)) {
       handler = load(handler);
-      cnames = names = store;
-      for (n = j = 0, ref = name.length - 1; (0 <= ref ? j < ref : j > ref); n = 0 <= ref ? ++j : --j) {
+      cnames = store;
+      for (n = j = 0, ref = name.length; (0 <= ref ? j < ref : j > ref); n = 0 <= ref ? ++j : --j) {
         n = name[n];
         if (cnames[n] == null) {
           cnames[n] = {};
         }
         cnames = cnames[n];
       }
-      if (cnames[name1 = name[name.length - 1]] == null) {
-        cnames[name1] = {};
-      }
-      cnames[name[name.length - 1]][''] = handler;
+      cnames[''] = handler;
       if (on_register) {
         on_register(name, handler);
       }
-      mutate(store, names);
     } else {
       walk = function(namespace, store) {
         var k, results, v;
@@ -258,7 +254,9 @@ registry = function({chain, on_register, parent} = {}) {
   // Options:
 
   // * `parent` (boolean)   
-  //   Return true if the name match a parent action name.
+  //   Search action in the parent registries.
+  // * `partial` (boolean)   
+  //   Return true if name match a namespace and not a leaf action.
   obj.registered = function(name, options = {}) {
     var cnames, i, j, len, n;
     if (typeof name === 'string') {
