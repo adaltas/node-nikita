@@ -11,10 +11,10 @@ Management facility to register and unregister actions.
       # throw Error "Invalid middleware handler: got #{JSON.stringify middleware.handler}" unless typeof middleware.handler in ['function', 'string']
       # return middleware unless typeof middleware.handler is 'string'
       # middleware.module = handler
-      action = if /^nikita\//.test(namespace) then require(".#{namespace.substr(6)}") else require.main.require namespace
+      action = require.main.require namespace
       if typeof action is 'function'
         action = handler: action
-        action.module = middleware.module
+      action.module = middleware.module
       action
 
     create = ({chain, on_register, parent} = {}) ->

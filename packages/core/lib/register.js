@@ -11,111 +11,111 @@ var register;
 
 // ## Action registration
 register(module.exports = {
-  assert: 'nikita/core/assert',
+  assert: '@nikitajs/core/src/core/assert',
   connection: {
-    assert: 'nikita/connection/assert',
-    http: 'nikita/connection/http',
+    assert: '@nikitajs/core/src/connection/assert',
+    http: '@nikitajs/core/src/connection/http',
     wait: {
-      '': 'nikita/connection/wait'
+      '': '@nikitajs/core/src/connection/wait'
     }
   },
   kv: {
-    get: 'nikita/core/kv/get',
-    engine: 'nikita/core/kv/engine',
-    set: 'nikita/core/kv/set'
+    get: '@nikitajs/core/src/core/kv/get',
+    engine: '@nikitajs/core/src/core/kv/engine',
+    set: '@nikitajs/core/src/core/kv/set'
   },
   core: {
-    ping: 'nikita/core/ping'
+    ping: '@nikitajs/core/src/core/ping'
   },
   file: {
-    '': 'nikita/file',
-    assert: 'nikita/file/assert',
-    cache: 'nikita/file/cache',
-    cson: 'nikita/file/cson',
-    download: 'nikita/file/download',
-    glob: 'nikita/file/glob',
-    hash: 'nikita/file/hash',
-    ini: 'nikita/file/ini',
-    json: 'nikita/file/json',
+    '': '@nikitajs/core/src/file',
+    assert: '@nikitajs/core/src/file/assert',
+    cache: '@nikitajs/core/src/file/cache',
+    cson: '@nikitajs/core/src/file/cson',
+    download: '@nikitajs/core/src/file/download',
+    glob: '@nikitajs/core/src/file/glob',
+    hash: '@nikitajs/core/src/file/hash',
+    ini: '@nikitajs/core/src/file/ini',
+    json: '@nikitajs/core/src/file/json',
     properties: {
-      '': 'nikita/file/properties',
-      read: 'nikita/file/properties/read'
+      '': '@nikitajs/core/src/file/properties',
+      read: '@nikitajs/core/src/file/properties/read'
     },
-    render: 'nikita/file/render',
-    touch: 'nikita/file/touch',
-    upload: 'nikita/file/upload',
-    yaml: 'nikita/file/yaml'
+    render: '@nikitajs/core/src/file/render',
+    touch: '@nikitajs/core/src/file/touch',
+    upload: '@nikitajs/core/src/file/upload',
+    yaml: '@nikitajs/core/src/file/yaml'
   },
   fs: {
-    chmod: 'nikita/fs/chmod',
-    chown: 'nikita/fs/chown',
-    copy: 'nikita/fs/copy',
-    createReadStream: 'nikita/fs/createReadStream',
-    createWriteStream: 'nikita/fs/createWriteStream',
-    exists: 'nikita/fs/exists',
-    lstat: 'nikita/fs/lstat',
-    mkdir: 'nikita/fs/mkdir',
-    rmdir: 'nikita/fs/rmdir',
-    readdir: 'nikita/fs/readdir',
-    readFile: 'nikita/fs/readFile',
-    readlink: 'nikita/fs/readlink',
-    rename: 'nikita/fs/rename',
-    stat: 'nikita/fs/stat',
-    symlink: 'nikita/fs/symlink',
-    unlink: 'nikita/fs/unlink',
-    writeFile: 'nikita/fs/writeFile'
+    chmod: '@nikitajs/core/src/fs/chmod',
+    chown: '@nikitajs/core/src/fs/chown',
+    copy: '@nikitajs/core/src/fs/copy',
+    createReadStream: '@nikitajs/core/src/fs/createReadStream',
+    createWriteStream: '@nikitajs/core/src/fs/createWriteStream',
+    exists: '@nikitajs/core/src/fs/exists',
+    lstat: '@nikitajs/core/src/fs/lstat',
+    mkdir: '@nikitajs/core/src/fs/mkdir',
+    rmdir: '@nikitajs/core/src/fs/rmdir',
+    readdir: '@nikitajs/core/src/fs/readdir',
+    readFile: '@nikitajs/core/src/fs/readFile',
+    readlink: '@nikitajs/core/src/fs/readlink',
+    rename: '@nikitajs/core/src/fs/rename',
+    stat: '@nikitajs/core/src/fs/stat',
+    symlink: '@nikitajs/core/src/fs/symlink',
+    unlink: '@nikitajs/core/src/fs/unlink',
+    writeFile: '@nikitajs/core/src/fs/writeFile'
   },
   log: {
-    '': 'nikita/log',
-    cli: 'nikita/log/cli',
-    fs: 'nikita/log/fs',
-    md: 'nikita/log/md',
-    csv: 'nikita/log/csv'
+    '': '@nikitajs/core/src/log',
+    cli: '@nikitajs/core/src/log/cli',
+    fs: '@nikitajs/core/src/log/fs',
+    md: '@nikitajs/core/src/log/md',
+    csv: '@nikitajs/core/src/log/csv'
   },
   system: {
-    authconfig: 'nikita/system/authconfig',
-    cgroups: 'nikita/system/cgroups',
-    chmod: 'nikita/system/chmod',
-    chown: 'nikita/system/chown',
-    copy: 'nikita/system/copy',
-    discover: 'nikita/system/discover',
+    authconfig: '@nikitajs/core/src/system/authconfig',
+    cgroups: '@nikitajs/core/src/system/cgroups',
+    chmod: '@nikitajs/core/src/system/chmod',
+    chown: '@nikitajs/core/src/system/chown',
+    copy: '@nikitajs/core/src/system/copy',
+    discover: '@nikitajs/core/src/system/discover',
     execute: {
-      '': 'nikita/system/execute',
-      'assert': 'nikita/system/execute/assert'
+      '': '@nikitajs/core/src/system/execute',
+      'assert': '@nikitajs/core/src/system/execute/assert'
     },
     group: {
-      '': 'nikita/system/group/index',
-      read: 'nikita/system/group/read',
-      remove: 'nikita/system/group/remove'
+      '': '@nikitajs/core/src/system/group/index',
+      read: '@nikitajs/core/src/system/group/read',
+      remove: '@nikitajs/core/src/system/group/remove'
     },
     info: {
-      'disks': 'nikita/system/info/disks',
-      'system': 'nikita/system/info/system'
+      'disks': '@nikitajs/core/src/system/info/disks',
+      'system': '@nikitajs/core/src/system/info/system'
     },
-    limits: 'nikita/system/limits',
-    link: 'nikita/system/link',
-    mkdir: 'nikita/system/mkdir',
-    mod: 'nikita/system/mod',
-    move: 'nikita/system/move',
-    remove: 'nikita/system/remove',
-    running: 'nikita/system/running',
-    tmpfs: 'nikita/system/tmpfs',
-    uid_gid: 'nikita/system/uid_gid',
+    limits: '@nikitajs/core/src/system/limits',
+    link: '@nikitajs/core/src/system/link',
+    mkdir: '@nikitajs/core/src/system/mkdir',
+    mod: '@nikitajs/core/src/system/mod',
+    move: '@nikitajs/core/src/system/move',
+    remove: '@nikitajs/core/src/system/remove',
+    running: '@nikitajs/core/src/system/running',
+    tmpfs: '@nikitajs/core/src/system/tmpfs',
+    uid_gid: '@nikitajs/core/src/system/uid_gid',
     user: {
-      '': 'nikita/system/user/index',
-      read: 'nikita/system/user/read',
-      remove: 'nikita/system/user/remove'
+      '': '@nikitajs/core/src/system/user/index',
+      read: '@nikitajs/core/src/system/user/read',
+      remove: '@nikitajs/core/src/system/user/remove'
     }
   },
   ssh: {
-    '': 'nikita/ssh',
-    open: 'nikita/ssh/open',
-    close: 'nikita/ssh/close',
-    root: 'nikita/ssh/root'
+    '': '@nikitajs/core/src/ssh',
+    open: '@nikitajs/core/src/ssh/open',
+    close: '@nikitajs/core/src/ssh/close',
+    root: '@nikitajs/core/src/ssh/root'
   },
   wait: {
-    '': 'nikita/wait',
-    execute: 'nikita/wait/execute',
-    exist: 'nikita/wait/exist'
+    '': '@nikitajs/core/src/wait',
+    execute: '@nikitajs/core/src/wait/execute',
+    exist: '@nikitajs/core/src/wait/exist'
   }
 });

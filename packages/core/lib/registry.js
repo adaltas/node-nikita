@@ -20,13 +20,13 @@ load = function(middleware) {
     return middleware;
   }
   middleware.module = middleware.handler;
-  result = /^nikita\//.test(middleware.handler) ? require(`.${middleware.handler.substr(6)}`) : require.main.require(middleware.handler);
+  result = /^@nikitajs\/core\//.test(middleware.handler) ? require(`.${middleware.handler.substr(14 + 4)}`) : require.main.require(middleware.handler);
   if (typeof result === 'function') {
     result = {
       handler: result
     };
-    result.module = middleware.module;
   }
+  result.module = middleware.module;
   return result;
 };
 
