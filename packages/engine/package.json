@@ -52,7 +52,7 @@
     }
   ],
   "dependencies": {
-    "ajv": "^6.10.2",
+    "ajv": "^6.12.0",
     "ajv-keywords": "^3.4.1",
     "each": "^1.2.2",
     "minimatch": "~3.0.4",
@@ -61,10 +61,10 @@
   "devDependencies": {
     "@babel/core": "^7.8.7",
     "@babel/preset-env": "^7.8.7",
-    "coffeescript": "^2.5.0",
-    "eslint": "^6.0.0",
+    "coffeescript": "^2.5.1",
+    "eslint": "^6.8.0",
     "eslint-plugin-coffee": "^0.1.12",
-    "mocha": "7.0.0",
+    "mocha": "7.1.1",
     "should": "~13.2.3"
   },
   "engines": {
@@ -83,7 +83,7 @@
     "throw-deprecation": true,
     "require": [
       "should",
-      "./coffee.config.js"
+      "coffeescript/register"
     ],
     "timeout": 40000,
     "reporter": "spec",
