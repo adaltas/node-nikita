@@ -1,4 +1,4 @@
-FROM base/archlinux
+FROM archlinux:latest
 MAINTAINER David Worms
 
 RUN pacman --noconfirm -Syu && pacman --noconfirm -S procps grep which sed
@@ -28,9 +28,9 @@ RUN pacman -Syy && pacman --noconfirm -S docker docker-compose
 
 # Install arch-chroot
 RUN pacman --noconfirm -S arch-install-scripts tar gzip \
- && curl -L https://mirrors.kernel.org/archlinux/iso/2018.07.01/archlinux-bootstrap-2018.07.01-x86_64.tar.gz -o /var/tmp/archlinux-bootstrap-2018.07.01-x86_64.tar.gz \
- && tar xzf /var/tmp/archlinux-bootstrap-2018.07.01-x86_64.tar.gz -C /var/tmp \
- && rm -f /var/tmp/archlinux-bootstrap-2018.07.01-x86_64.tar.gz
+ && curl -L https://mirrors.edge.kernel.org/archlinux/iso/latest/archlinux-bootstrap-2020.03.01-x86_64.tar.gz -o /var/tmp/archlinux-bootstrap.tar.gz \
+ && tar xzf /var/tmp/archlinux-bootstrap.tar.gz -C /var/tmp \
+ && rm -f /var/tmp/archlinux-bootstrap.tar.gz
 
 ADD ./run.sh /run.sh
 RUN mkdir -p /nikita
