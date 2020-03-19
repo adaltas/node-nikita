@@ -89,11 +89,11 @@ Options include:
               res
             return walk store, []
         name = [name] if typeof name is 'string'
-        cnames = store
+        child_store = store
         for n, i in name.concat ['']
-          continue unless cnames[n]
-          return cnames[n] if cnames[n] and i is name.length
-          cnames = cnames[n]
+          break unless child_store[n]
+          return child_store[n] if child_store[n] and i is name.length
+          child_store = child_store[n]
         if parent
         then parent.get name, options
         else null
@@ -203,11 +203,13 @@ nikita.new_function()
 # (node:75923) DeprecationWarning: old_function is deprecated, use new_function
 ```
 
-      obj.deprecate = (old_name, new_name, handler) ->
+      obj.deprecate = (old_name, new_name, action) ->
         if arguments.length is 2
           handler = new_name
           new_name = null
-        action = obj.load handler
+        action = obj.load action if typeof action is 'string'
+        if typeof handler is 'function'
+          action = handler: handler
         action.deprecate = new_name
         action.deprecate ?= action.module if typeof action.module is 'string'
         action.deprecate ?= true
@@ -228,12 +230,12 @@ Options:
       obj.registered = (name, options = {}) ->
         name = [name] if typeof name is 'string'
         return true if not options.local and parent and parent.registered name, options
-        cnames = store
+        child_store = store
         for n, i in name
-          return false if not cnames[n]? or not cnames.propertyIsEnumerable(n)
-          return true if options.partial and cnames[n] and i is name.length - 1
-          return true if cnames[n][''] and i is name.length - 1
-          cnames = cnames[n]
+          return false if not child_store[n]? or not child_store.propertyIsEnumerable(n)
+          return true if options.partial and child_store[n] and i is name.length - 1
+          return true if child_store[n][''] and i is name.length - 1
+          child_store = child_store[n]
         false
 
 ## Unregister
@@ -242,11 +244,11 @@ Remove an action from registry.
 
       obj.unregister = (name) ->
         name = [name] if typeof name is 'string'
-        cnames = store
+        child_store = store
         for n, i in name
-          delete cnames[n] if i is name.length - 1
-          cnames = cnames[n]
-          return chain unless cnames
+          delete child_store[n] if i is name.length - 1
+          child_store = child_store[n]
+          return chain unless child_store
         chain
       
       obj
