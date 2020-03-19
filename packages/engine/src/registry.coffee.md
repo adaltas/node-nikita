@@ -5,21 +5,46 @@ Management facility to register and unregister actions.
 
 ## Register all functions
 
-    load = (namespace) ->
-      throw Error "Invalid Argument: namespace must be a string, got #{namespace.toString()}" unless typeof namespace is 'string'
-      # middleware = handler: middleware unless typeof middleware is 'object' and middleware? and not Array.isArray middleware
-      # throw Error "Invalid middleware handler: got #{JSON.stringify middleware.handler}" unless typeof middleware.handler in ['function', 'string']
-      # return middleware unless typeof middleware.handler is 'string'
-      # middleware.module = handler
-      action = require.main.require namespace
-      if typeof action is 'function'
-        action = handler: action
-      action.module = middleware.module
-      action
-
     create = ({chain, on_register, parent} = {}) ->
       store = {}
       obj = {}
+
+## Create
+
+Create a new registry.
+
+Options include:
+
+* `chain`   
+  Default object to return, used by `register`, `deprecate` and `unregister`.
+  Could be used to provide a chained style API.
+* `on_register`   
+  User function called on action registration.
+* `parent`   
+  Parent registry.
+        
+      obj.create = (options={}) ->
+        # Inherit options from parent
+        options = merge
+          chain: chain
+          on_register: on_register
+          parent: parent
+        , options
+        # Create the child registry
+        create options
+
+## load
+
+Load an action from the module name.
+
+      obj.load = (module) ->
+        throw Error "Invalid Argument: module must be a string, got #{module.toString()}" unless typeof module is 'string'
+        action = require.main.require module
+        if typeof action is 'function'
+          action = handler: action
+        action.metadata ?= {}
+        action.metadata.module = middleware.module
+        action
 
 ## Get
 
@@ -132,7 +157,7 @@ nikita
         if Array.isArray name
           return chain if handler is undefined
           if typeof handler is 'string'
-            handler = load handler
+            handler = obj.load handler
           if typeof handler is 'function'
             handler = handler: handler
           child_store = store
@@ -151,7 +176,7 @@ nikita
                 walk namespace, v
               else
                 if typeof v.handler is 'string'
-                  v = merge v, load v
+                  v = merge v, obj.load v
                 if v.handler? and typeof v.handler isnt 'function'
                   throw Error "Invalid Handler: expect a function, got #{v.handler}"
                 namespace.push k
@@ -182,7 +207,7 @@ nikita.new_function()
         if arguments.length is 2
           handler = new_name
           new_name = null
-        action = load handler
+        action = obj.load handler
         action.deprecate = new_name
         action.deprecate ?= action.module if typeof action.module is 'string'
         action.deprecate ?= true
@@ -227,8 +252,6 @@ Remove an action from registry.
       obj
 
     module.exports = create()
-
-    module.exports.create = create
 
 ## Dependencies
 
