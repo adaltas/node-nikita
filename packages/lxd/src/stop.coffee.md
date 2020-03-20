@@ -1,7 +1,7 @@
 
 # `nikita.lxd.stop`
 
-Start a running Linux Container.
+Stop a running Linux Container.
 
 ## Options
 
