@@ -18,77 +18,16 @@ describe 'registry.register', ->
       reg.register 'my_function', key: 2, handler: -> 'my_function'
       reg
       .get 'my_function'
-      .key.should.eql 2
+      .options.key.should.eql 2
 
-    it.skip 'call a function', ->
-      console.log '-----'
-      nikita
-      .call ->
-        nikita.registry.register 'my_function', ({options}) ->
-          a_key: options.a_key
-      .call ->
-        # nikita
-        # .my_function a_key: 'a value', (err, {a_key}) ->
-        #   a_key.should.eql 'a value'
-      .call ->
-        nikita.registry.unregister 'my_function'
-
-    it.skip 'register an object', ->
-      value_a = value_b = null
-      nikita.registry.register 'my_function', shy: true, handler: (->)
-      nikita.registry.register 'my': 'function': shy: true, handler: (->)
-      nikita.registry.registered('my_function').should.be.true()
-      nikita.registry.registered(['my', 'function']).should.be.true()
-      nikita.registry.unregister 'my_function'
-      nikita.registry.unregister ['my', 'function']
-
-    it.skip 'register an object with options', ->
-      value_a = value_b = null
-      nikita.registry.register 'my_function', shy: true, handler: ({options}) ->
-        value_a = "hello #{options.value}"
-      nikita.registry.register 'my': 'function': shy: true, handler: ({options}, callback) ->
-        value_b = "hello #{options.value}"
-        callback null, true
-      nikita
-      .call (_, callback) ->
-        nikita
-        .my_function value: 'world'
-        .next (err, {status}) ->
-          status.should.be.false() unless err
-          callback err
-      .call (_, callback) ->
-        nikita
-        .my.function value: 'world'
-        .next (err, {status}) ->
-          status.should.be.false() unless err
-          callback err
-      .call ->
-        value_a.should.eql "hello world"
-        value_b.should.eql "hello world"
-        nikita.registry.unregister 'my_function'
-        nikita.registry.unregister ['my', 'function']
-      .promise()
-
-    it.skip 'overwrite middleware options', ->
-      value_a = value_b = null
-      nikita.registry.register 'my_function', key: 'a', handler: (->)
-      nikita.registry.register 'my_function', key: 'b', handler: ({options}) -> value_a = "Got #{options.key}"
-      nikita.registry.register
-        'my': 'function': key: 'a', handler: (->)
-      nikita.registry.register
-        'my': 'function': key: 'b', handler: ({options}) ->
-          value_b = "Got #{options.key}"
-      nikita()
-      .call (_, callback) ->
-        nikita.my_function callback
-      .call (_, callback) ->
-        nikita.my.function callback
-      .call ->
-        value_a.should.eql "Got b"
-        value_b.should.eql "Got b"
-        nikita.registry.unregister 'my_function'
-        nikita.registry.unregister ['my', 'function']
-      .promise()
+    it 'register an object', ->
+      reg = registry.create()
+      reg.register 'my_function', shy: true, handler: (->)
+      reg.register 'my': 'function': shy: true, handler: (->)
+      reg.registered('my_function').should.be.true()
+      reg.registered(['my', 'function']).should.be.true()
+      reg.unregister 'my_function'
+      reg.unregister ['my', 'function']
 
     it.skip 'namespace accept array', ->
       value = null

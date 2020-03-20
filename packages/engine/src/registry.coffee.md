@@ -7,7 +7,8 @@ Management facility to register and unregister actions.
 
     create = ({chain, on_register, parent} = {}) ->
       store = {}
-      obj = {}
+      obj =
+        chain: chain
 
 ## Create
 
@@ -26,7 +27,7 @@ Options include:
       obj.create = (options={}) ->
         # Inherit options from parent
         options = merge
-          chain: chain
+          chain: obj.chain
           on_register: on_register
           parent: parent
         , options
@@ -67,7 +68,7 @@ Options include:
             walk = (store, keys) ->
               for k, v of store
                 if k is ''
-                  continue if v.deprecate and not options.deprecate
+                  continue if v.metadata.deprecate and not options.deprecate
                   # flatstore[keys.join '.'] = merge v
                   v.action = keys
                   actions.push merge v
@@ -81,7 +82,7 @@ Options include:
               res = {}
               for k, v of store
                 if k is ''
-                  continue if v.deprecate and not options.deprecate
+                  continue if v.metadata.deprecate and not options.deprecate
                   res[k] = merge v
                 else
                   v = walk v, [keys..., k]
@@ -155,19 +156,22 @@ nikita
       obj.register = (name, handler) ->
         name = [name] if typeof name is 'string'
         if Array.isArray name
-          return chain if handler is undefined
+          return obj.chain if handler is undefined
           if typeof handler is 'string'
-            handler = obj.load handler
+            action = obj.load handler
           if typeof handler is 'function'
-            handler = handler: handler
+            action = handler: handler
+          else
+            action = handler
           child_store = store
           for i in [0...name.length]
             property = name[i]
             child_store[property] ?= {}
             child_store = child_store[property]
-          child_store[''] = handler
+          [action] = ventilate [action]
+          child_store[''] = action
           if on_register
-            on_register name, handler
+            on_register name, action
         else
           walk = (namespace, store) ->
             for k, v of store
@@ -180,12 +184,13 @@ nikita
                 if v.handler? and typeof v.handler isnt 'function'
                   throw Error "Invalid Handler: expect a function, got #{v.handler}"
                 namespace.push k
+                [v] = ventilate [v]
                 store[k] = if k is '' then v else '': v
                 if on_register
                   on_register namespace, v
           walk [], name
           mutate store, name
-        chain
+        obj.chain
 
 ## Deprecate
 
@@ -198,7 +203,7 @@ For example:
 
 ```javascript
 nikita.deprecate('old_function', 'new_function', -> 'my_function')
-nikita.new_function()
+nikita.old_function()
 # Print
 # (node:75923) DeprecationWarning: old_function is deprecated, use new_function
 ```
@@ -210,11 +215,12 @@ nikita.new_function()
         action = obj.load action if typeof action is 'string'
         if typeof handler is 'function'
           action = handler: handler
-        action.deprecate = new_name
-        action.deprecate ?= action.module if typeof action.module is 'string'
-        action.deprecate ?= true
+        action.metadata ?= {}
+        action.metadata.deprecate = new_name
+        action.metadata.deprecate ?= action.module if typeof action.module is 'string'
+        action.metadata.deprecate ?= true
         obj.register old_name, action
-        chain
+        obj.chain
 
 # Registered
 
@@ -248,8 +254,8 @@ Remove an action from registry.
         for n, i in name
           delete child_store[n] if i is name.length - 1
           child_store = child_store[n]
-          return chain unless child_store
-        chain
+          return obj.chain unless child_store
+        obj.chain
       
       obj
 
@@ -258,5 +264,6 @@ Remove an action from registry.
 ## Dependencies
 
     {is_object, merge, mutate} = require 'mixme'
+    {ventilate} = require './args_to_actions'
 
 [deprecate]: https://nodejs.org/api/util.html#util_util_deprecate_function_string

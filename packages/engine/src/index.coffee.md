@@ -14,7 +14,7 @@ Nikita session.
         on_call = ->
           unless registry.registered namespace
             throw Error "No action named #{namespace.join '.'}"
-          session metadata: namespace: namespace, arguments
+          session metadata: namespace: namespace, ...arguments
         on_get = (target, name) ->
           namespace.push name
           if not registry.registered(namespace, partial: true)

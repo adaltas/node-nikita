@@ -15,6 +15,8 @@ describe 'registry.get', ->
     action = reg.get ['get', 'an', 'action']
     action.should.eql
       handler: (->)
+      metadata: {}
+      options: {}
 
   it 'get all', ->
     reg = registry.create()
@@ -22,8 +24,8 @@ describe 'registry.get', ->
     reg.register ['get', 'second', 'action'], (->)
     reg.get().should.eql
       get:
-        first: action: '': handler: (->)
-        second: action: '': handler: (->)
+        first: action: '': handler: (->), metadata: {}, options: {}
+        second: action: '': handler: (->), metadata: {}, options: {}
 
   it 'option `deprecated`', ->
     reg = registry.create()

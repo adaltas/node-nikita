@@ -45,10 +45,12 @@ describe 'args_to_actions', ->
     it 'handle function as handler', ->
       expect = [
         handler: (->)
-        b: ''
+        metadata: {}
+        options: b: ''
       ,
         handler: (->)
-        c: ''
+        metadata: {}
+        options: c: ''
       ]
       # String is place before objects
       args_to_actions [
@@ -66,10 +68,10 @@ describe 'args_to_actions', ->
     it 'handle string as metadata.argument', ->
       expect = [
         metadata: argument: 'a'
-        b: ''
+        options: b: ''
       ,
         metadata: argument: 'a'
-        c: ''
+        options: c: ''
       ]
       # String is place before objects
       args_to_actions [
