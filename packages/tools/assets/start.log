@@ -1,0 +1,62 @@
+
+# Dependencies
+
+Nikita `unless_exec`: vagrant plugin list | egrep '^vagrant-vbguest ' (1.DEBUG, written by nikita/misc/conditions)
+Entering execute (2.DEBUG, written by nikita/lib/system/execute)
+Nikita `unless_exec`: code is "0" (2.INFO, written by nikita/misc/conditions)
+Entering execute (1.DEBUG, written by nikita/lib/system/execute)
+
+Running Command: `vagrant up`
+
+
+```stdout
+Bringing machine 'default' up with 'virtualbox' provider...
+==> default: Resuming suspended VM...
+==> default: Booting VM...
+==> default: Waiting for machine to boot. This may take a few minutes...
+    default: SSH address: 127.0.0.1:2203
+    default: SSH username: vagrant
+    default: SSH auth method: private key
+==> default: Machine booted and ready!
+==> default: Machine already provisioned. Run `vagrant provision` or use the `--provision`
+==> default: flag to force provisioning. Provisioners marked to run always will still run.
+
+```
+
+Entering execute (1.DEBUG, written by nikita/lib/system/execute)
+
+```stdin
+lxc remote add nikita 127.0.0.1:8443 --accept-certificate --password secret
+lxc remote switch nikita
+```
+
+
+```stderr
+Error: Remote nikita exists as <https://127.0.0.1:8443>
+```
+
+Entering execute (1.DEBUG, written by nikita/lib/system/execute)
+
+```stdin
+lxc ls || {
+  lxc remote switch local
+  lxc remote remove nikita
+  lxc remote add nikita --accept-certificate --password secret 127.0.0.1:8443
+  lxc remote switch nikita
+}
+```
+
+
+```stdout
++----------------+---------+-----------------------+---------------------------------------------+-----------+-----------+
+|      NAME      |  STATE  |         IPV4          |                    IPV6                     |   TYPE    | SNAPSHOTS |
++----------------+---------+-----------------------+---------------------------------------------+-----------+-----------+
+| freeipa        | RUNNING | 172.16.0.164 (eth0)   |                                             | CONTAINER | 0         |
++----------------+---------+-----------------------+---------------------------------------------+-----------+-----------+
+| tools-rubygems | RUNNING | 10.192.217.227 (eth0) | fd42:ce45:8a68:1a:216:3eff:fe04:dde5 (eth0) | CONTAINER | 0         |
++----------------+---------+-----------------------+---------------------------------------------+-----------+-----------+
+
+```
+
+
+FINISHED WITH SUCCESS

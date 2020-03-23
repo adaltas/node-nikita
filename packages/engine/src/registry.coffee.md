@@ -156,7 +156,7 @@ nikita
       obj.register = (name, handler) ->
         name = [name] if typeof name is 'string'
         if Array.isArray name
-          return obj.chain if handler is undefined
+          return obj.chain or obj if handler is undefined
           if typeof handler is 'string'
             action = obj.load handler
           if typeof handler is 'function'
@@ -190,7 +190,7 @@ nikita
                   on_register namespace, v
           walk [], name
           mutate store, name
-        obj.chain
+        obj.chain or obj
 
 ## Deprecate
 
@@ -220,7 +220,7 @@ nikita.old_function()
         action.metadata.deprecate ?= action.module if typeof action.module is 'string'
         action.metadata.deprecate ?= true
         obj.register old_name, action
-        obj.chain
+        obj.chain or obj
 
 # Registered
 
@@ -254,8 +254,8 @@ Remove an action from registry.
         for n, i in name
           delete child_store[n] if i is name.length - 1
           child_store = child_store[n]
-          return obj.chain unless child_store
-        obj.chain
+          return obj.chain or obj unless child_store
+        obj.chain or obj
       
       obj
 
