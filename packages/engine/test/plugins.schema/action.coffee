@@ -108,8 +108,8 @@ describe 'plugin.schema.action', ->
   
   describe 'constructor', ->
 
-    it.skip 'useDefaults', ->
-      nikita()
+    it 'useDefaults', ->
+      nikita
       .call
         schema:
           type: 'object'
@@ -119,13 +119,12 @@ describe 'plugin.schema.action', ->
               default: 'a value'
       , ({options}) ->
         options.a_string.should.eql 'a value'
-      .promise()
 
     it.skip 'coerceTypes', ->
       # Option is currently disactivated because it is unclear wether we shall
       # accept its rule or create ours. For exemple, `true` is cast to string `"true"`
       # and string `""` is cast to `null` which might not be what we want.
-      nikita()
+      nikita
       .call
         schema:
           type: 'object'
@@ -140,12 +139,11 @@ describe 'plugin.schema.action', ->
       , ({options}) ->
         options.int_to_string.should.eql '1234'
         options.string_to_boolean.should.be.false()
-      .promise()
   
   describe 'ajv-keywords', ->
 
-    it.skip 'instanceof', ->
-      nikita()
+    it 'instanceof valid', ->
+      nikita
       .call
         schema:
           type: 'object'
@@ -155,6 +153,9 @@ describe 'plugin.schema.action', ->
           a_regexp: /.*/
       , ({options}) ->
         'ok'.should.match options.a_regexp
+
+    it 'instanceof invalid', ->
+      nikita
       .call
         relax: true
         schema:
@@ -163,6 +164,8 @@ describe 'plugin.schema.action', ->
             'a_regexp': instanceof: 'RegExp'
         options:
           a_regexp: 'invalid'
-      , (->), (err) ->
+        handler: (->)
+      .then ->
+        throw Error 'Error not thrown as expected'
+      .catch (err) ->
         err.message.should.eql 'data.a_regexp should pass "instanceof" keyword validation'
-      .promise()

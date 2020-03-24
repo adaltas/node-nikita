@@ -1,6 +1,7 @@
 
 nikita = require '../../src'
 registry = require '../../src/registry'
+register = require '../../src/register'
 
 describe 'options `depth`', ->
 
@@ -9,7 +10,7 @@ describe 'options `depth`', ->
       key: "root value, depth #{metadata.depth}"
     {key} = await nikita()
     key.should.eql 'root value, depth 0'
-    registry.unregister []
+    registry.unregister [], register['']
 
   it 'start at depth 0 with action argument', ->
     {key} = await nikita ({metadata}) ->
