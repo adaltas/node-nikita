@@ -68,6 +68,7 @@ module.exports.ventilate = ventilate = (action) ->
 module.exports.properties = properties =
   handler: null
   metadata:
+    # address: null
     after: null
     argument: null
     attempt: -1
@@ -91,6 +92,7 @@ module.exports.properties = properties =
   parent: null
   registry: null
   options: {}
+  plugins: undefined
 
 properties_root = Object.keys properties
 properties_metadata = Object.keys properties.metadata

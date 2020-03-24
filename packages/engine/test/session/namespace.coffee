@@ -6,7 +6,7 @@ nikita = require '../../src'
 describe 'namespace', ->
 
   it 'call registered action', ->
-    n = nikita ({registry}) ->
+    nikita ({registry}) ->
       registry.register
         'action':
           '': handler: ({metadata}) ->
@@ -16,10 +16,10 @@ describe 'namespace', ->
           'action':
             '': handler: ({metadata}) ->
               "an.action value, depth #{metadata.depth}"
-    result = await n.action()
-    result.should.eql 'action value, depth 1'
-    result = await n.an.action()
-    result.should.eql 'an.action value, depth 1'
+      result = await @action()
+      result.should.eql 'action value, depth 1'
+      result = await @an.action()
+      result.should.eql 'an.action value, depth 1'
 
   it 'chain calls', ->
     n = nikita ({registry}) ->
@@ -32,10 +32,10 @@ describe 'namespace', ->
           'action':
             '': handler: ({metadata}) ->
               "an.action value, depth #{metadata.depth}"
-    result = await n.action().action()
-    result.should.eql 'action value, depth 1'
-    result = await n.an.action().an.action()
-    result.should.eql 'an.action value, depth 1'
+      result = await @action().action()
+      result.should.eql 'action value, depth 1'
+      result = await @an.action().an.action()
+      result.should.eql 'an.action value, depth 1'
 
   it 'call unregisted action', ->
     try
@@ -50,6 +50,18 @@ describe 'namespace', ->
       e.message.should.eql 'Cannot read property \'action\' of undefined'
 
   it 'call unregisted action withing registered namespace', ->
+    try
+      await nikita ({registry, context}) ->
+        registry.register
+          'an': 'action':
+            '': handler: (->)
+        context.an.action.broken()
+        throw Error 'CulDeSac'
+    catch e
+      e.message.should.eql 'context.an.action.broken is not a function'
+
+  it.skip 'call unregisted action withing registered namespace', ->
+    # No longer working now that inner handler is run asynchronuously
     try
       nikita ({registry}) ->
         registry.register

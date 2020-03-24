@@ -20,7 +20,8 @@ Options include:
   Default object to return, used by `register`, `deprecate` and `unregister`.
   Could be used to provide a chained style API.
 * `on_register`   
-  User function called on action registration.
+  User function called on action registration. Takes two arguments: the action
+  name and the action itself.
 * `parent`   
   Parent registry.
         

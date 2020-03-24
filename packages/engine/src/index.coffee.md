@@ -4,9 +4,15 @@
 This is the main Nikita entry point. It expose a function to initialize a new
 Nikita session.
 
+## Dependencies
+
+    require './register'
+    registry = require './registry'
+    session = require './session'
+
 ## Source Code
 
-    module.exports = new Proxy (-> session arguments...),
+    module.exports = new Proxy session,
       get: (target, name) ->
         return registry if name in ['registry']
         namespace = []
@@ -25,9 +31,3 @@ Nikita session.
             return undefined
           new Proxy on_call, get: on_get
         new Proxy on_call, get: on_get
-
-## Dependencies
-
-    require './register'
-    registry = require './registry'
-    session = require './session'
