@@ -69,24 +69,32 @@ describe 'plugin.schema.action', ->
   
   describe '$ref', ->
 
-    it 'instance and namespace as an array', ->
-      n = nikita
-      n.registry.register ['test', 'schema'],
+    it 'valid', ->
+      nikita
+      .registry.register ['test', 'schema'],
         schema:
           type: 'object'
           properties:
             'an_integer': type: 'integer'
         handler: (->)
       # Valid schema
-      n.call
+      .call
         split: an_integer: 1234
         schema:
           type: 'object'
           properties:
             'split': $ref: 'registry://test/schema'
         handler: (->)
-      # Invalid schema
-      n.call
+
+    it 'invalid', ->
+      nikita
+      .registry.register ['test', 'schema'],
+        schema:
+          type: 'object'
+          properties:
+            'an_integer': type: 'integer'
+        handler: (->)
+      .call
         split: an_integer: 'abc'
         schema:
           type: 'object'
@@ -97,103 +105,6 @@ describe 'plugin.schema.action', ->
         throw Error 'Error not thrown as expected'
       .catch (err) ->
         err.message.should.eql 'data.split.an_integer should be integer'
-
-    it.skip 'instance and namespace as an object', ->
-      # Currently disabled, didn't investigate why
-      nikita()
-      .registry.register
-        'test':
-          'schema':
-            schema:
-              type: 'object'
-              properties:
-                'an_integer': type: 'integer'
-            handler: (->)
-      .call
-        split: an_integer: 1234
-        schema:
-          type: 'object'
-          properties:
-            'split': $ref: '/nikita/test/schema'
-        relax: true
-      , (->)
-      , (err) ->
-        throw err if err
-      .call
-        split: an_integer: 'abc'
-        schema:
-          type: 'object'
-          properties:
-            'split': $ref: '/nikita/test/schema'
-        relax: true
-      , (->)
-      , (err) ->
-        err.message.should.eql 'data.split.an_integer should be integer'
-      .promise()
-
-    it.skip 'global and namespace as an array', ->
-      nikita.registry.register ['test', 'schema'],
-        schema:
-          type: 'object'
-          properties:
-            'an_integer': type: 'integer'
-        handler: (->)
-      await nikita()
-      .call
-        split: an_integer: 1234
-        schema:
-          type: 'object'
-          properties:
-            'split': $ref: '/nikita/test/schema'
-        relax: true
-      , (->)
-      , (err) ->
-        throw err if err
-      .call
-        split: an_integer: 'abc'
-        schema:
-          type: 'object'
-          properties:
-            'split': $ref: '/nikita/test/schema'
-        relax: true
-      , (->)
-      , (err) ->
-        err.message.should.eql 'data.split.an_integer should be integer'
-      .promise()
-    nikita.registry.unregister ['test', 'schema']
-
-  it.skip 'gobal and namespace as an object', ->
-    nikita.registry.register
-      'test':
-        'schema':
-          schema:
-            type: 'object'
-            properties:
-              'an_integer': type: 'integer'
-          handler: (->)
-    await nikita()
-    .call
-      split: an_integer: 1234
-      schema:
-        type: 'object'
-        properties:
-          'split': $ref: '/nikita/test/schema'
-      relax: true
-    , (->)
-    , (err) ->
-      throw err if err
-    .call
-      split: an_integer: 'abc'
-      schema:
-        type: 'object'
-        properties:
-          'split': $ref: '/nikita/test/schema'
-      relax: true
-    , (->)
-    , (err) ->
-      err.message.should.eql 'data.split.an_integer should be integer'
-    .promise()
-    nikita.registry.unregister ['test', 'schema']
   
   describe 'constructor', ->
 

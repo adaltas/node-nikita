@@ -55,11 +55,13 @@ describe 'error', ->
     ).should.throw 'nikita(...).invalid is not a function'
 
   it 'action undefined inside a registered namespace', ->
-    (->
-      nikita ({regitry}) ->
-        registry.register ['ok', 'and', 'valid'], (->)
-      .ok.and.invalid()
-    ).should.throw 'nikita(...).ok.and.invalid is not a function'
+    nikita ({regitry}) ->
+      registry.register ['ok', 'and', 'valid'], (->)
+      @ok.and.invalid()
+    .then ->
+      throw Error 'Error not thrown as expected'
+    .catch (err) ->
+      err.message.should.eql 'this.ok.and.invalid is not a function'
 
   it 'parent name not defined child action undefined', ->
     (->

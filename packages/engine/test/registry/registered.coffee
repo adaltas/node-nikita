@@ -7,23 +7,23 @@ describe 'registry.registered', ->
   describe 'global', ->
 
     it 'return false with 1 level', ->
-      (nikita.registry.registered 'does_not_exists').should.be.false()
-      (nikita.registry.registered ['does_not_exists']).should.be.false()
+      registry.registered('does_not_exists').should.be.false()
+      registry.registered(['does_not_exists']).should.be.false()
 
     it 'return false with multi level', ->
-      (nikita.registry.registered ['does', 'not', 'exists']).should.be.false()
+      registry.registered(['does', 'not', 'exists']).should.be.false()
 
     it 'return true with 1 level', ->
-      nikita.registry.register ['my_module'], (->)
-      (nikita.registry.registered 'my_module').should.be.true()
-      (nikita.registry.registered ['my_module']).should.be.true()
-      nikita.registry.unregister ['my_module']
+      registry.register ['my_module'], (->)
+      registry.registered('my_module').should.be.true()
+      registry.registered(['my_module']).should.be.true()
+      registry.unregister ['my_module']
 
     it 'return true with multi level', ->
-      nikita.registry.register ['my', 'module'], (->)
-      (nikita.registry.registered ['my', 'module']).should.be.true()
-      (nikita.registry.registered ['my']).should.be.false()
-      nikita.registry.unregister ['my', 'module']
+      registry.register ['my', 'module'], (->)
+      registry.registered(['my', 'module']).should.be.true()
+      registry.registered(['my']).should.be.false()
+      registry.unregister ['my', 'module']
 
   describe 'local', ->
 

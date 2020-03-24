@@ -14,7 +14,7 @@ Nikita session.
 
     module.exports = new Proxy session,
       get: (target, name) ->
-        return registry if name in ['registry']
+        return session().registry if name in ['registry']
         namespace = []
         namespace.push name
         if not registry.registered(namespace, partial: true)
