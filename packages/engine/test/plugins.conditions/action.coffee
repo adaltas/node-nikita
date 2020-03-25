@@ -3,10 +3,9 @@ nikita = require '../../src'
 
 describe 'plugin.condition.action', ->
 
-  it 'function', ->
-    nikita ({schema}) ->
-      output = await @call
+  it.skip 'function', ->
+    nikita ->
+      @call
         if: true
-        handler: ->
-          'called'
-      output.should.eql 'called'
+      , ({conditions}) ->
+        conditions.if.should.be.True()

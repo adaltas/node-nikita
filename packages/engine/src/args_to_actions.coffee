@@ -9,6 +9,16 @@ module.exports = (args) ->
   actions = values actions
   actions
 
+module.exports.build = (args) ->
+  actions = multiply args
+  actions = reconstituate actions
+  actions
+
+module.exports.normalize = (actions) ->
+  actions = ventilate actions
+  actions = values actions
+  actions
+  
 module.exports.multiply = multiply = (args) ->
   # Convert every argument to an array
   for arg, i in args
@@ -66,11 +76,12 @@ module.exports.ventilate = ventilate = (action) ->
       new_action.options[property] = value
   new_action
 
-module.exports.values = values = (actions) ->
-  for action in actions
-    for property, value of properties.metadata
-      action.metadata[property] ?= value
-  actions
+module.exports.values = values = (action) ->
+  if Array.isArray action
+    return action.map (action) -> values action
+  for property, value of properties.metadata
+    action.metadata[property] ?= value
+  action
 
 module.exports.properties = properties =
   handler: null
@@ -101,6 +112,7 @@ module.exports.properties = properties =
   registry: null
   options: {}
   plugins: undefined
+  scheduler: undefined
   state:
     namespace: []
 
