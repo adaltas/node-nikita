@@ -10,22 +10,20 @@ describe 'registry.get', ->
     (action is null).should.be.True()
 
   it 'a registered function', ->
-    reg = registry.create()
-    reg.register ['get', 'an', 'action'], (->)
-    action = reg.get ['get', 'an', 'action']
-    action.should.eql
-      handler: (->)
-      metadata: {}
-      options: {}
+    registry
+    .create()
+    .register ['get', 'an', 'action'], key: 'value', (->)
+    .get ['get', 'an', 'action']
+    .options.key.should.eql 'value'
 
   it 'get all', ->
-    reg = registry.create()
-    reg.register ['get', 'first', 'action'], (->)
-    reg.register ['get', 'second', 'action'], (->)
-    reg.get().should.eql
-      get:
-        first: action: '': handler: (->), metadata: {}, options: {}
-        second: action: '': handler: (->), metadata: {}, options: {}
+    Object.keys(
+      registry
+      .create()
+      .register ['get', 'first', 'action'], (->)
+      .register ['get', 'second', 'action'], (->)
+      .get().get
+    ).should.eql [ 'first', 'second' ]
 
   it 'option `deprecated`', ->
     reg = registry.create()

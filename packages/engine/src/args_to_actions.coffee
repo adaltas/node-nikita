@@ -6,6 +6,7 @@ module.exports = (args) ->
   actions = multiply args
   actions = reconstituate actions
   actions = ventilate actions
+  actions = values actions
   actions
 
 module.exports.multiply = multiply = (args) ->
@@ -65,11 +66,17 @@ module.exports.ventilate = ventilate = (action) ->
       new_action.options[property] = value
   new_action
 
+module.exports.values = values = (actions) ->
+  for action in actions
+    for property, value of properties.metadata
+      action.metadata[property] ?= value
+  actions
+
 module.exports.properties = properties =
   handler: null
   metadata:
     # address: null
-    namespace: null
+    namespace: []
     after: null
     argument: null
     attempt: -1
@@ -94,6 +101,8 @@ module.exports.properties = properties =
   registry: null
   options: {}
   plugins: undefined
+  state:
+    namespace: []
 
 properties_root = Object.keys properties
 properties_metadata = Object.keys properties.metadata

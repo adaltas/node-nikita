@@ -1,6 +1,6 @@
 
 args_to_actions = require '../../src/args_to_actions'
-{multiply} = args_to_actions
+{multiply, reconstituate, ventilate} = args_to_actions
 
 # Test the construction of the session namespace stored in state
 
@@ -53,13 +53,13 @@ describe 'args_to_actions', ->
         options: c: ''
       ]
       # String is place before objects
-      args_to_actions [
+      ventilate reconstituate multiply [
         (->)
         [{b: ''}, {c: ''}]
       ]
       .should.eql expect
       # String is place after objects
-      args_to_actions [
+      ventilate reconstituate multiply [
         [{b: ''}, {c: ''}]
         (->)
       ]
@@ -74,13 +74,13 @@ describe 'args_to_actions', ->
         options: c: ''
       ]
       # String is place before objects
-      args_to_actions [
+      ventilate reconstituate multiply [
         'a'
         [{b: ''}, {c: ''}]
       ]
       .should.eql expect
       # String is place after objects
-      args_to_actions [
+      ventilate reconstituate multiply [
         [{b: ''}, {c: ''}]
         'a'
       ]

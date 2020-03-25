@@ -5,29 +5,35 @@ module.exports = ->
   running = false
   events =
     end: []
-  on_end: (fn) ->
-    events.end.push fn
-    @
-  pump: ->
-    return if running
-    running = true
-    if fn = @next()
-      fn.call()
-      .catch (err) ->
-        running = false
-        throw err
-      .then =>
-        running = false
-        setImmediate =>
-          @pump()
-    else
-      for fn in events.end
+  scheduler =
+    on_end: (fn) ->
+      events.end.push fn
+      @
+    pump: ->
+      return if running
+      running = true
+      if @has_next()
+        [fn, resolve, reject] = @next()
         fn.call()
-  next: ->
-    stack.shift()
-  add: (fn) ->
-    stack.push fn
-    # Pump execution
-    setImmediate =>
-      @pump()
-    fn
+        .then ->
+          running = false
+          resolve.apply fn, arguments
+          setImmediate ->
+            scheduler.pump()
+        , (err) ->
+          running = false
+          reject err
+      else
+        for fn in events.end
+          fn.call()
+    has_next: ->
+      stack.length
+    next: ->
+      stack.shift()
+    add: (fn) ->
+      prom = new Promise (resolve, reject) ->
+        stack.push [fn, resolve, reject]
+        # Pump execution
+        setImmediate ->
+          scheduler.pump()
+      prom
