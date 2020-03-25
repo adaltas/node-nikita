@@ -49,4 +49,4 @@ lxc remote switch nikita
 [error] IOError: [Errno 13] Permission denied: '/tmp/tmp_Tm1l_'
 ```
 
-Host must have `fs.protected_regular` set to `0`, eg `echo '0' > /proc/sys/fs/protected_regular && sysctl -p && sysctl -a`. In our Physical -> VM -> LXD setup, the parameters shall be set in the VM, nor restart is required to install the FreeIPA server, just uninstall it first with `ipa-server-install --uninstall` before re-executing the install command.
+Host must have `fs.protected_regular` set to `0`, eg `echo '0' > /proc/sys/fs/protected_regular && sysctl -p && sysctl -a`. In our Physical -> VM -> LXD setup, the parameters shall be set in the VM, no restart is required to install the FreeIPA server, just uninstall it first with `ipa-server-install --uninstall` before re-executing the install command.
