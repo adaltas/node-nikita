@@ -36,12 +36,13 @@ module.exports = ({action, chain, parent, plugins = []} = {}) ->
         ]
       hooks = [hooks] if typeof hooks is 'function'
       # Call parent hooks
-      if parent then await parent.hook.call parent,
-        name: name
-        args: args
-        hooks: hooks
-        handler: handler
-        silent: true
+      if parent
+        handler = await parent.hook.call parent,
+          name: name
+          args: args
+          hooks: hooks
+          handler: handler
+          silent: true
       # Call local hooks
       for hook in store
         handler = await hook[name].call @, args, handler if hook[name]

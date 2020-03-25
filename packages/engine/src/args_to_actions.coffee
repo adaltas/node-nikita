@@ -69,6 +69,7 @@ module.exports.properties = properties =
   handler: null
   metadata:
     # address: null
+    namespace: null
     after: null
     argument: null
     attempt: -1

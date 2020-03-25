@@ -18,6 +18,23 @@ session = (action={}) ->
   scheduler = schedule()
   setImmediate ->
     scheduler.pump()
+  action.run = ->
+    # Convert arguments to array
+    args = [].slice.call arguments
+    # Are we scheduling multiple actions
+    args_is_array = args.some (arg) -> Array.isArray arg
+    actions = args_to_actions [
+      metadata:
+        depth: action.metadata.depth + 1
+      parent: action
+      ...args
+    ]
+    proms = actions.map (action) ->
+      new Promise (resolve, reject) ->
+        scheduler.add ->
+          session action
+          .then resolve, reject
+    prom = if args_is_array then Promise.all(proms) else proms[0]
   on_call = () ->
     # Extract action namespace and reset the state
     namespace = action.state.namespace.slice()
@@ -25,24 +42,7 @@ session = (action={}) ->
     # Validate the namespace
     unless action.registry.registered namespace
       throw Error "No action named #{JSON.stringify namespace.join '.'}"
-    # Are we scheduling multiple actions
-    args = [].slice.call arguments
-    args_is_array = args.some (arg) -> Array.isArray arg
-    # Convert arguments to actions
-    actions = args_to_actions [
-      metadata:
-        namespace: namespace
-        depth: action.metadata.depth + 1
-      parent: action
-      ...args
-    ]
-    parent = action
-    proms = actions.map (action) ->
-      new Promise (resolve, reject) ->
-        scheduler.add ->
-          session action
-          .then resolve, reject
-    prom = if args_is_array then Promise.all(proms) else proms[0]
+    prom = action.run ...arguments, metadata: namespace: namespace
     new Proxy prom, get: on_get
   on_get = (target, name) ->
     return target[name].bind target if target[name]? and not action.registry.get(name)
@@ -90,23 +90,20 @@ session = (action={}) ->
     action.context = context
     # Hook attented to alter the execution of an action handler
     try
-      await action.plugins.hook
+      output = action.plugins.hook
         name: 'nikita:session:handler:call',
         args:
           context: context
           action: action
         handler: ({context, action}) ->
-          try
-            output = action.handler.call context, action
-            unless output and output.then
-              output = new Promise (resolve, reject) ->
-                resolve output
-            Promise.all([output, on_end])
-            .then (values) ->
-              resolve values.shift()
-            .catch reject
-          catch err
-            reject err
+          action.handler.call context, action
+      unless output and output.then
+        output = new Promise (resolve, reject) ->
+          resolve output
+      Promise.all([output, on_end])
+      .then (values) ->
+        resolve values.shift()
+      .catch reject
     catch err
       reject err
   # Returning a proxified promise:
@@ -114,19 +111,6 @@ session = (action={}) ->
   # - resolve when all registered actions are fulfilled
   # - resolved with the result of handler
   new Proxy result, get: on_get
-  # on_result_call = ->
-  #   args = [].slice.call arguments
-  #   prom = new Promise (resolve, reject) ->
-  #     result.then ->
-  #       prom1 = on_call.apply null, args
-  #       prom1.then resolve, reject
-  #   new Proxy prom, get: on_result_call
-  # on_result_get = ->
-  #   args = [].slice.call arguments
-  #   result.then ->
-  #     on_get.apply null, args
-  #   new Proxy on_result_call, get: on_result_call
-  # new Proxy result, get: on_result_get
 
 module.exports = ->
   # Convert arguments to an array
