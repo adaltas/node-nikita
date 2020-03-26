@@ -50,9 +50,10 @@ describe 'session registry', ->
 describe 'error', ->
 
   it 'root action not defined', ->
-    (->
-      nikita().invalid()
-    ).should.throw 'nikita(...).invalid is not a function'
+    try
+      await nikita().invalid()
+    catch err
+      err.message.should.eql 'No action named "invalid"'
 
   it 'action undefined inside a registered namespace', ->
     nikita ({regitry}) ->
@@ -61,9 +62,10 @@ describe 'error', ->
     .then ->
       throw Error 'Error not thrown as expected'
     .catch (err) ->
-      err.message.should.eql 'this.ok.and.invalid is not a function'
+      err.message.should.eql 'No action named "ok.and.invalid"'
 
   it 'parent name not defined child action undefined', ->
-    (->
-      nikita().not.an.action()
-    ).should.throw 'Cannot read property \'an\' of undefined'
+    try
+      await nikita().not.an.action()
+    catch err
+      err.message.should.eql 'No action named "not.an.action"'

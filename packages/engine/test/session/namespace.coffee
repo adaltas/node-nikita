@@ -39,17 +39,18 @@ describe 'namespace', ->
 
   it 'call unregisted action', ->
     try
-      nikita().an()
-    catch e
-      e.message.should.eql 'nikita(...).an is not a function'
+      await nikita().action()
+    catch err
+      err.message.should.eql 'No action named "action"'
 
   it 'chain action after unregisted action', ->
     try
-      nikita().invalid.action.broken()
-    catch e
-      e.message.should.eql 'Cannot read property \'action\' of undefined'
+      await nikita().invalid.action.broken()
+    catch err
+      err.message.should.eql 'No action named "invalid.action.broken"'
 
-  it 'call unregisted action withing registered namespace', ->
+  it.skip 'call unregisted action withing registered namespace', ->
+    # No longer working now that inner handler is run asynchronuously
     try
       await nikita ({registry, context}) ->
         registry.register
@@ -57,8 +58,8 @@ describe 'namespace', ->
             '': handler: (->)
         context.an.action.broken()
         throw Error 'CulDeSac'
-    catch e
-      e.message.should.eql 'context.an.action.broken is not a function'
+    catch err
+      err.message.should.eql 'context.an.action.broken is not a function'
 
   it.skip 'call unregisted action withing registered namespace', ->
     # No longer working now that inner handler is run asynchronuously

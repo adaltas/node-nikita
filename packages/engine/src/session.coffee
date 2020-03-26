@@ -31,11 +31,11 @@ session = (action={}) ->
     # Extract action namespace and reset the state
     namespace = action.state.namespace.slice()
     action.state.namespace = []
-    # Validate the namespace
-    unless action.registry.registered namespace
-      throw Error "No action named #{JSON.stringify namespace.join '.'}"
     args = arguments
     prom = action.scheduler.add ->
+      # Validate the namespace
+      unless action.registry.registered namespace
+        return Promise.reject Error "No action named #{JSON.stringify namespace.join '.'}"
       action.run ...args, metadata: namespace: namespace
     new Proxy prom, get: on_get
   # Building the namespace before calling an action
@@ -46,9 +46,6 @@ session = (action={}) ->
         when 'registry' then return action.registry
         when 'plugins' then return action.plugins
     action.state.namespace.push name
-    unless action.registry.registered action.state.namespace, partial: true
-      action.state.namespace = []
-      return undefined
     new Proxy on_call, get: on_get
   # Initialize the registry to manage action registration
   action.registry = registry.create
