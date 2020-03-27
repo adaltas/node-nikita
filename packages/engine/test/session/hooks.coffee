@@ -3,7 +3,7 @@ nikita = require '../../src'
 
 # Test the construction of the session namespace stored in state
 
-describe 'namespace', ->
+describe 'hooks', ->
 
   describe 'nikita:registry:action:register', ->
     
@@ -14,11 +14,10 @@ describe 'namespace', ->
             action.options.key = 'new value'
             handler
         context.registry.register
-          options:
+          action:
             namespace: ['an', 'action']
-            action:
-              key: 'value'
-              handler: (->)
+            key: 'value'
+            handler: (->)
         context.an.action ({options}) ->
           options.key.should.eql 'new value'
 
@@ -31,11 +30,10 @@ describe 'namespace', ->
                 action.options.key = 'new value'
                 accept handler
         context.registry.register
-          options:
+          action:
             namespace: ['an', 'action']
-            action:
-              key: 'value'
-              handler: (->)
+            key: 'value'
+            handler: (->)
         context.an.action ({options}) ->
           options.key.should.eql 'new value'
             
@@ -62,11 +60,10 @@ describe 'namespace', ->
                   action.options.new_key = 'new value'
                   handler.call context, action: action, context: context
         context.registry.register
-          options:
+          action:
             namespace: ['an', 'action']
-            action:
-              key: 'value'
-              handler: ({options}) -> options
+            key: 'value'
+            handler: ({options}) -> options
         context.an.action().should.be.finally.eql
           key: 'value'
           new_key: 'new value'

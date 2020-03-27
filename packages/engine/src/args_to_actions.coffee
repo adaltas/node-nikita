@@ -115,6 +115,7 @@ module.exports.properties = properties =
   scheduler: undefined
   state:
     namespace: []
+  run: undefined
 
 properties_root = Object.keys properties
 properties_metadata = Object.keys properties.metadata

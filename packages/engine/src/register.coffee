@@ -9,7 +9,7 @@ module.exports =
     'get': handler: ({parent, options}) ->
       parent.registry.get options.namespace
     'register': handler: ({parent, options}) ->
-      parent.registry.register options.namespace, options.action
+      parent.registry.register options.action.namespace, options.action
     'registered': handler: ({parent, options}) ->
       parent.registry.registered options.namespace
     'unregister': handler: ({parent, options}) ->

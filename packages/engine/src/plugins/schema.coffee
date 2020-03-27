@@ -47,9 +47,11 @@ module.exports = ({registry}) ->
       schemas: ajv._schemas
       refs: ajv._refs
       fragments: ajv._fragments
-  'nikita:session:action:create': ({action}, handler) ->
-    action.schema = schema
-    handler
+  'nikita:session:normalize:user': ({action}, handler) ->
+    ({action, context}) ->
+      action = handler.call context, action: action, context: context
+      action.schema = schema
+      action
   'nikita:session:handler:call': ({action}, handler) ->
     return handler unless action.metadata.schema
     errors = await schema.validate action.options, action.metadata.schema

@@ -23,7 +23,7 @@ describe 'registry.unregister', ->
     it 'remove property', ->
       nikita
       .registry.register
-        options:
+        action:
           namespace: 'my_function'
           handler: (->)
       .registry.unregister
@@ -35,7 +35,7 @@ describe 'registry.unregister', ->
     it 'work on already removed property', ->
       nikita
       .registry.register
-        options:
+        action:
           namespace: 'my_function'
           handler: (->)
       .registry.unregister

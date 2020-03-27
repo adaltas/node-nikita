@@ -73,25 +73,20 @@ session = (action={}) ->
     action.scheduler.pump()
   # Execute the action
   result = new Promise (resolve, reject) ->
-    action = await action.plugins.hook
-      name: 'nikita:session:action:normalize'
-      args:
-        action: action
-      handler: ({action}) ->
-        args_to_actions.normalize action
     # Register run helper
     action.run = ->
       run action, ...arguments
-    # Hook attented to modify the current action being created
-    action.plugins.hook
-      name: 'nikita:session:action:create'
-      args:
-        # context: context
-        action: action
     # Make sure the promise is resolved after the scheduler and its children
     on_end = new Promise (resolve, reject) ->
       action.scheduler.on_end ->
         resolve()
+    # Hook attented to modify the current action being created
+    action = await action.plugins.hook
+      name: 'nikita:session:normalize:user'
+      args:
+        action: action
+      handler: ({action}) ->
+        args_to_actions.normalize action
     if action.metadata.namespace
       action_from_registry = action.registry.get action.metadata.namespace
       action = merge action_from_registry, action

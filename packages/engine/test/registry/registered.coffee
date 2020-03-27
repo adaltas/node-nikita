@@ -45,9 +45,9 @@ describe 'registry.registered', ->
 
     it 'return true with 1 level', ->
       n = nikita.registry.register
-        options:
+        action:
           namespace: 'my_action'
-          action: handler: (->)
+          handler: (->)
       result = await n.registry.registered(options: namespace: 'my_action')
       result.should.be.true()
       result = await n.registry.registered(options: namespace: ['my_action'])
@@ -55,9 +55,9 @@ describe 'registry.registered', ->
 
     it 'return true with multi level', ->
       n = nikita.registry.register
-        options:
+        action:
           namespace: ['my', 'module']
-          action: handler: (->)
+          handler: (->)
       result = await n.registry.registered(options: namespace: ['my', 'module'])
       result.should.be.true()
       result = await n.registry.registered(options: namespace: ['my'])
