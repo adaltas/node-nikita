@@ -71,12 +71,15 @@ describe 'plugin.schema.action', ->
 
     it 'valid', ->
       nikita
-      .registry.register ['test', 'schema'],
-        schema:
-          type: 'object'
-          properties:
-            'an_integer': type: 'integer'
-        handler: (->)
+      .registry.register
+        options:
+          namespace: ['test', 'schema']
+          action:
+            schema:
+              type: 'object'
+              properties:
+                'an_integer': type: 'integer'
+            handler: (->)
       # Valid schema
       .call
         split: an_integer: 1234
@@ -88,12 +91,15 @@ describe 'plugin.schema.action', ->
 
     it 'invalid', ->
       nikita
-      .registry.register ['test', 'schema'],
-        schema:
-          type: 'object'
-          properties:
-            'an_integer': type: 'integer'
-        handler: (->)
+      .registry.register
+        options:
+          namespace: ['test', 'schema']
+          action:
+            schema:
+              type: 'object'
+              properties:
+                'an_integer': type: 'integer'
+            handler: (->)
       .call
         split: an_integer: 'abc'
         schema:

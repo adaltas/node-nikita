@@ -10,8 +10,8 @@ describe 'registry.create', ->
     registry.create().create.should.be.a.Function()
 
   it 'instance inherit parent chain', ->
-    chain = 'hello'
+    res = await chain = 'hello'
     registry
     .create(chain: chain)
     .create().register 'key': (->)
-    .should.eql chain
+    res.should.eql chain

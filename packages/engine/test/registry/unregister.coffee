@@ -5,12 +5,14 @@ describe 'registry.unregister', ->
 
   describe 'global', ->
 
-    it 'remove property', ->
+    it.skip 'remove property', ->
+      # This is no longer relevant, registry is part of the nikita session
       nikita.registry.register 'my_function', -> 'my_function'
       nikita.registry.unregister 'my_function'
-      nikita.registry.registered('my_function').should.be.false()
+      nikita.registry.registered('my_function').should.be.finally.false()
 
-    it 'work on already removed property', ->
+    it.skip 'work on already removed property', ->
+      # This is no longer relevant, registry is part of the nikita session
       nikita.registry.register 'my_function', -> 'my_function'
       nikita.registry.unregister 'my_function'
       nikita.registry.unregister 'my_function'
@@ -19,18 +21,30 @@ describe 'registry.unregister', ->
   describe 'local', ->
 
     it 'remove property', ->
-      nikita()
-      .registry.register 'my_function', -> 'my_function'
-      .registry.unregister 'my_function'
-      .registry.registered('my_function').should.be.false()
+      nikita
+      .registry.register
+        options:
+          namespace: 'my_function'
+          handler: (->)
+      .registry.unregister
+        options: namespace: 'my_function'
+      .registry.registered
+        options: namespace: 'my_function'
+      .should.be.finally.false()
 
     it 'work on already removed property', ->
-      m = nikita()
-      m
-      .registry.register 'my_function', -> 'my_function'
-      .registry.unregister 'my_function'
-      .registry.unregister 'my_function'
-      .registry.registered('my_function').should.be.false()
+      nikita
+      .registry.register
+        options:
+          namespace: 'my_function'
+          handler: (->)
+      .registry.unregister
+        options: namespace: 'my_function'
+      .registry.unregister
+        options: namespace: 'my_function'
+      .registry.registered
+        options: namespace: 'my_function'
+      .should.be.finally.false()
 
   describe 'mixed', ->
 

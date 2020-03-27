@@ -172,7 +172,7 @@ nikita
           [action] = ventilate [action]
           child_store[''] = action
           if on_register
-            on_register name, action
+            await on_register name, action
         else
           walk = (namespace, store) ->
             for k, v of store
@@ -188,7 +188,7 @@ nikita
                 [v] = ventilate [v]
                 store[k] = if k is '' then v else '': v
                 if on_register
-                  on_register namespace, v
+                  await on_register namespace, v
           walk [], name
           mutate store, name
         obj.chain or obj

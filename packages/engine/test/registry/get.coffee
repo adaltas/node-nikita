@@ -10,19 +10,18 @@ describe 'registry.get', ->
     (action is null).should.be.True()
 
   it 'a registered function', ->
-    registry
+    reg = await registry
     .create()
     .register ['get', 'an', 'action'], key: 'value', (->)
-    .get ['get', 'an', 'action']
+    reg.get ['get', 'an', 'action']
     .options.key.should.eql 'value'
 
   it 'get all', ->
+    reg = registry.create()
+    await reg.register ['get', 'first', 'action'], (->)
+    await reg.register ['get', 'second', 'action'], (->)
     Object.keys(
-      registry
-      .create()
-      .register ['get', 'first', 'action'], (->)
-      .register ['get', 'second', 'action'], (->)
-      .get().get
+      reg.get().get
     ).should.eql [ 'first', 'second' ]
 
   it 'option `deprecated`', ->

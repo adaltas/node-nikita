@@ -1,15 +1,19 @@
 
 registry = require './registry'
 
-registry.register module.exports =
+module.exports =
   '': handler: (->)
-  # 'action':
-  #   '': handler: ({metadata}) ->
-  #     @an.action()
-  #     key: "action value, depth #{metadata.depth}"
-  # 'an':
-  #   'action':
-  #     '': handler: ({metadata}) ->
-  #       key: "an.action value, depth #{metadata.depth}"
   'call':
     '': {}
+  'registry':
+    'get': handler: ({parent, options}) ->
+      parent.registry.get options.namespace
+    'register': handler: ({parent, options}) ->
+      parent.registry.register options.namespace, options.action
+    'registered': handler: ({parent, options}) ->
+      parent.registry.registered options.namespace
+    'unregister': handler: ({parent, options}) ->
+      parent.registry.unregister options.namespace
+(->
+  await registry.register module.exports
+)()

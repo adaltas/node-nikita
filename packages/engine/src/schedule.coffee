@@ -14,8 +14,8 @@ module.exports = ->
       running = true
       if @has_next()
         [fn, resolve, reject] = @next()
-        fn.call()
-        .then ->
+        res = fn.call()
+        res.then ->
           running = false
           resolve.apply fn, arguments
           setImmediate ->

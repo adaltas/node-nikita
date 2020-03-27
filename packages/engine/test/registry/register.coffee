@@ -8,27 +8,36 @@ describe 'registry.register', ->
 
     it 'options chain default to current registry', ->
       reg = registry.create()
-      reg.register('action', (->)).should.eql reg
+      (await reg.register('action', (->))).should.eql reg
 
     it 'namespace is an array', ->
-      registry
+      reg = await registry
       .create()
       .register ['this', 'is', 'a', 'function'], key: 'value', handler: (->)
-      .get ['this', 'is', 'a', 'function']
+      reg.get ['this', 'is', 'a', 'function']
       .options.key.should.eql 'value'
 
     it 'register is a string', ->
-      registry
+      reg = await registry
       .create()
       .register 'my_function', key: 'value', handler: (->)
+      reg
       .get 'my_function'
       .options.key.should.eql 'value'
+      # action = await nikita
+      # .registry.register
+      #   options:
+      #     namespace: 'my_function'
+      #     action: key: 'value', handler: (->)
+      # .registry.get options: namespace: 'my_function'
+      # action.options.key.should.eql 'value'
 
     it 'register an object', ->
-      registry
+      reg = await registry
       .create()
       .register
         'my': 'function': key: 'value', handler: (->)
+      reg
       .get ['my', 'function']
       .options.key.should.eql 'value'
 
