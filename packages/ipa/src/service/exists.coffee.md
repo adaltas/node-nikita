@@ -1,12 +1,12 @@
 
-# `nikita.ipa.service`
+# `nikita.ipa.service.exists`
 
-Add a service in FreeIPA.
+Check if a service exists inside FreeIPA.
 
 ## Options
 
 * `principal` (string, required)   
-  Name of the service to add.
+  Name of the service to check for existence.
 * `connection` (object, required)   
   See the `nikita.connection.http` action.
 
@@ -14,17 +14,16 @@ Add a service in FreeIPA.
 
 ```js
 require('nikita')
-.ipa.service({
-  principal: "myprincipal/my.domain.com"
-  },
+.ipa.service.exists({
+  principal: 'myprincipal/my.domain.com',
   connection: {
     url: "https://ipa.domain.com/ipa/session/json",
     principal: "admin@DOMAIN.COM",
     password: "mysecret"
   }
-}, function(){
+}, function(err, {status, exists}){
   console.info(err ? err.message : status ?
-    "Service was updated" : " Service was already set")
+    'Service exists' : 'Service does not exist')
 })
 ```
 
@@ -38,35 +37,26 @@ require('nikita')
           $ref: '/nikita/connection/http'
       required: ['connection', 'principal']
 
-## Handler
-
     handler = ({options}, callback) ->
       options.connection.http_headers ?= {}
       options.connection.http_headers['Referer'] ?= options.connection.referer or options.connection.url
       throw Error "Required Option: principal is required, got #{options.connection.principal}" unless options.connection.principal
       throw Error "Required Option: password is required, got #{options.connection.password}" unless options.connection.password
-      @ipa.service.exists
+      @ipa.service.show
         connection: options.connection
         principal: options.principal
-      @connection.http options.connection,
-        negotiate: true
-        method: 'POST'
-        data:
-          method: "service_add/1"
-          params: [[options.principal], {}]
-          id: 0
-      , (error, {data}) ->
-        if data?.error
-          return callback null, false if data.error.code is 4002 # principal alredy exists
-          error = Error data.error.message
-          error.code = data.error.code
-        callback error, true
+        relax: true
+      , (err) ->
+        return callback err if err and err.code isnt 4001
+        exists = !err
+        callback null, status: exists, exists: exists
 
-## Exports
+## Export
 
     module.exports =
       handler: handler
       schema: schema
+      shy: true
 
 ## Dependencies
 

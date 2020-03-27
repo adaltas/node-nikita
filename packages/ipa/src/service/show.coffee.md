@@ -1,30 +1,32 @@
 
-# `nikita.ipa.service`
+# `nikita.ipa.service.show`
 
-Add a service in FreeIPA.
+Retrieve service information from FreeIPA.
 
 ## Options
 
 * `principal` (string, required)   
   Name of the service to add.
-* `connection` (object, required)   
-  See the `nikita.connection.http` action.
 
 ## Exemple
 
 ```js
-require('nikita')
-.ipa.service({
-  principal: "myprincipal/my.domain.com"
-  },
+require("nikita")
+.ipa.service.show({
+  principal: "myprincipal/my.domain.com",
   connection: {
     url: "https://ipa.domain.com/ipa/session/json",
     principal: "admin@DOMAIN.COM",
     password: "mysecret"
   }
-}, function(){
-  console.info(err ? err.message : status ?
-    "Service was updated" : " Service was already set")
+}, function(err, {result}){
+  console.info(err ? err.message :
+    `Service is ${result.principal[0]}`)
+}
+switch(err.code){
+  case 4001:
+   assert("missing: service not found", err.message)
+  break
 })
 ```
 
@@ -45,24 +47,22 @@ require('nikita')
       options.connection.http_headers['Referer'] ?= options.connection.referer or options.connection.url
       throw Error "Required Option: principal is required, got #{options.connection.principal}" unless options.connection.principal
       throw Error "Required Option: password is required, got #{options.connection.password}" unless options.connection.password
-      @ipa.service.exists
-        connection: options.connection
-        principal: options.principal
       @connection.http options.connection,
         negotiate: true
         method: 'POST'
         data:
-          method: "service_add/1"
-          params: [[options.principal], {}]
+          method: 'service_show/1'
+          params: [[options.principal],{}]
           id: 0
-      , (error, {data}) ->
-        if data?.error
-          return callback null, false if data.error.code is 4002 # principal alredy exists
+      , (err, {data}) ->
+        return callback err if err
+        if data.error
           error = Error data.error.message
           error.code = data.error.code
-        callback error, true
+          return callback error
+        callback null, result: data.result.result
 
-## Exports
+## Export
 
     module.exports =
       handler: handler
@@ -71,4 +71,3 @@ require('nikita')
 ## Dependencies
 
     string = require '@nikitajs/core/lib/misc/string'
-    diff = require 'object-diff'
