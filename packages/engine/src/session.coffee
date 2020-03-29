@@ -55,7 +55,19 @@ session = (action={}) ->
   result = new Promise (resolve, reject) ->
     # Register run helper
     action.run = ->
-      run action, ...arguments
+      # actions = args_to_actions.build [
+      #   metadata:
+      #     # namespace: []
+      #     depth: if parent then parent.metadata.depth + 1 else 0
+      #   state:
+      #     namespace: []
+      #   parent: parent
+      #   ...args
+      # ]
+      run
+        metadata: depth: action.metadata.depth + 1
+        parent: action
+      , ...arguments
     # Make sure the promise is resolved after the scheduler and its children
     on_end = new Promise (resolve, reject) ->
       action.scheduler.on_end ->
@@ -97,16 +109,12 @@ session = (action={}) ->
   # - resolved with the result of handler
   new Proxy result, get: on_get
 
-module.exports = run = (parent, ...args) ->
+module.exports = run = (...args) ->
   # Are we scheduling multiple actions
   args_is_array = args.some (arg) -> Array.isArray arg
   actions = args_to_actions.build [
-    metadata:
-      # namespace: []
-      depth: if parent then parent.metadata.depth + 1 else 0
     state:
       namespace: []
-    parent: parent
     ...args
   ]
   proms = actions.map (action) ->

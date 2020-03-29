@@ -7,20 +7,19 @@ Nikita session.
 ## Dependencies
 
     require './register'
-    registry = require './registry'
     conditions = require './plugins/conditions'
     schema = require './plugins/schema'
-    run = require './session'
+    session = require './session'
       
-    session = ->
-      run null, plugins: [
+    create = ->
+      session plugins: [
         conditions
         schema
       ], ...arguments
 
 ## Source Code
 
-    module.exports = new Proxy session,
+    module.exports = new Proxy create,
       get: (target, name) ->
-        n = session()
+        n = create()
         n[name]
