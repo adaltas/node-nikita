@@ -84,6 +84,7 @@ module.exports.values = values = (action) ->
   action
 
 module.exports.properties = properties =
+  context: undefined
   handler: null
   metadata:
     # address: null

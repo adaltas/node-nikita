@@ -86,7 +86,8 @@ session = (action={}) ->
       args:
         action: action
       handler: ({action}) ->
-        args_to_actions.normalize action
+        action = args_to_actions.normalize action
+        action
     if action.metadata.namespace
       action_from_registry = action.registry.get action.metadata.namespace
       action = merge action_from_registry, action
