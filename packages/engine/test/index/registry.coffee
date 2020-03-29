@@ -18,19 +18,16 @@ describe 'index registry', ->
   describe 'error', ->
 
     it 'root action not defined', ->
-      (->
-        nikita.invalid()
-      ).should.throw 'nikita.invalid is not a function'
+      nikita.invalid()
+      .should.be.rejectedWith 'No action named "invalid"'
 
     it 'undefined action inside a registered namespace', ->
       # Internally, the proxy for nikita is not the same as for its children
       registry.register ['ok', 'and', 'valid'], (->)
-      (->
-        nikita.ok.and.invalid()
-      ).should.throw 'nikita.ok.and.invalid is not a function'
+      nikita.ok.and.invalid()
+      .should.be.rejectedWith 'No action named "ok.and.invalid"'
       registry.unregister ['ok', 'and', 'valid']
 
     it 'parent name not defined child action undefined', ->
-      (->
-        nikita.not.an.action()
-      ).should.throw 'Cannot read property \'an\' of undefined'
+      nikita.not.an.action()
+      .should.be.rejectedWith 'No action named "not.an.action"'
