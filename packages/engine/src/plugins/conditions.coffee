@@ -25,24 +25,32 @@ module.exports = ({}) ->
       action
   'nikita:session:handler:call': ({action}, handler) ->
     return handler unless action.conditions.hasOwnProperty('if')
-    return (->) unless action.conditions.if?
-    # return handler unless action.conditions.if?
-    if action.conditions.if is false or action.conditions.if is ''
-      return (->)
-    if typeof action.conditions.if is 'number'
-      return if action.conditions.if then handler else (->)
-    if typeof action.conditions.if is 'string'
-      return if action.conditions.if.length then handler else (->)
-    if Buffer.isBuffer action.conditions.if
-      return if action.conditions.if.length then handler else (->)
-    return handler if action.conditions.if is true
-    res = await session null, ({run}) ->
-      run
-        metadata:
-          condition: true
-          depth: action.metadata.depth
-        parent: action
-        handler: action.conditions.if
-        options: action.options
-    if res then handler else (->)
+    run = switch typeof action.conditions.if
+      when 'undefined'
+        false
+      when 'boolean'
+        action.conditions.if
+      when 'number'
+        !!action.conditions.if
+      when 'string'
+        action.conditions.if.length
+      when 'object'
+        if Buffer.isBuffer action.conditions.if
+          action.conditions.if.length
+        else if Array.isArray action.conditions.if
+          action.conditions.if.length
+        else if action.conditions.if is null
+          false
+        else
+          Object.keys(action.conditions.if).length
+      when 'function'
+        await session null, ({run}) ->
+          run
+            metadata:
+              condition: true
+              depth: action.metadata.depth
+            parent: action
+            handler: action.conditions.if
+            options: action.options
+    if run then handler else (->)
   
