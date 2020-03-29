@@ -3,27 +3,7 @@
 registry = require './registry'
 schedule = require './schedule'
 plugins = require './plugins'
-conditions = require './plugins/conditions'
-schema = require './plugins/schema'
 args_to_actions = require './args_to_actions'
-
-run = (parent, ...args) ->
-  # Convert arguments to array
-  # args = [].slice.call arguments
-  # Are we scheduling multiple actions
-  args_is_array = args.some (arg) -> Array.isArray arg
-  actions = args_to_actions.build [
-    metadata:
-      # namespace: []
-      depth: if parent then parent.metadata.depth + 1 else 0
-    state:
-      namespace: []
-    parent: parent
-    ...args
-  ]
-  proms = actions.map (action) ->
-    session action
-  if args_is_array then Promise.all(proms) else proms[0]
 
 session = (action={}) ->
   # Catch calls to new actions
@@ -117,8 +97,18 @@ session = (action={}) ->
   # - resolved with the result of handler
   new Proxy result, get: on_get
 
-module.exports = ->
-  run null, plugins: [
-    conditions
-    schema
-  ], ...arguments
+module.exports = run = (parent, ...args) ->
+  # Are we scheduling multiple actions
+  args_is_array = args.some (arg) -> Array.isArray arg
+  actions = args_to_actions.build [
+    metadata:
+      # namespace: []
+      depth: if parent then parent.metadata.depth + 1 else 0
+    state:
+      namespace: []
+    parent: parent
+    ...args
+  ]
+  proms = actions.map (action) ->
+    session action
+  if args_is_array then Promise.all(proms) else proms[0]

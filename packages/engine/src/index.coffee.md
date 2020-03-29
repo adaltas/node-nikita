@@ -8,7 +8,15 @@ Nikita session.
 
     require './register'
     registry = require './registry'
-    session = require './session'
+    conditions = require './plugins/conditions'
+    schema = require './plugins/schema'
+    run = require './session'
+      
+    session = ->
+      run null, plugins: [
+        conditions
+        schema
+      ], ...arguments
 
 ## Source Code
 
