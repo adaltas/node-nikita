@@ -31,11 +31,12 @@ module.exports = ({}) ->
       return (->)
     if typeof action.conditions.if is 'number'
       return if action.conditions.if then handler else (->)
+    if typeof action.conditions.if is 'string'
+      return if action.conditions.if.length then handler else (->)
     if Buffer.isBuffer action.conditions.if
       return if action.conditions.if.length then handler else (->)
     return handler if action.conditions.if is true
-    # res = action.run
-    res = await session ({run}) ->
+    res = await session null, ({run}) ->
       run
         metadata:
           condition: true

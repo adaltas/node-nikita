@@ -4,10 +4,10 @@ nikita = require '../../src'
 describe 'if', ->
 
   it 'boolean true - success', ->
-    output = await nikita.call
+    nikita.call
       if: true
-    , -> 'called'
-    output.should.eql 'called'
+      handler: -> 'called'
+    .should.be.finally.eql 'called'
 
   it 'boolean false - failure', ->
     nikita.call
@@ -27,19 +27,6 @@ describe 'if', ->
     , ->
       throw Error 'Handler is not expected to be called'
 
-  it 'buffer with content - sucess', ->
-    output = await nikita.call
-      if: Buffer.from 'abc'
-    , -> 'called'
-    output.should.eql 'called'
-
-  it 'buffer empty - failure', ->
-    nikita
-    .call
-      if: Buffer.from ''
-    , ->
-      throw Error 'You are not welcome here'
-
   it 'fail if `null`', ->
     nikita
     .call
@@ -54,121 +41,89 @@ describe 'if', ->
     , ->
       throw Error 'Handler is not expected to be called'
   
-  it.skip 'succeed if string not empty', ->
-    count = 0
-    nikita
-    .call
-      if: 'abc'
-    , ->
-      count++
-    .call ->
-      count.should.equal 1
-    .promise()
+  describe 'string + buffer', ->
+  
+    it 'succeed if string not empty', ->
+      nikita.call
+        if: 'abc'
+        handler: -> 'called'
+      .should.be.finally.eql 'called'
 
-  it.skip 'succeed if template string not empty', ->
-    count = 0
-    nikita
-    .call
-      if: '{{options.db.test}}'
-      db: test: 'abc'
-    , ->
-      count++
-    .call ->
-      count.should.equal 1
-    .promise()
+    it.skip 'succeed if template string not empty', ->
+      count = 0
+      nikita
+      .call
+        if: '{{options.db.test}}'
+        db: test: 'abc'
+      , ->
+        count++
+      .call ->
+        count.should.equal 1
+      .promise()
 
-  it.skip 'fail if string empty', ->
-    nikita
-    .call
-      if: ''
-    , ->
-      throw Error 'You are not welcome here'
-    .promise()
+    it.skip 'fail if string empty', ->
+      nikita
+      .call
+        if: ''
+      , ->
+        throw Error 'You are not welcome here'
+      .promise()
 
-  it.skip 'fail if template string empty',->
-    nikita
-    .call
-      if: '{{options.db.test}}'
-      db: test: ''
-    , ->
-      throw Error 'You are not welcome here'
-    .promise()
+    it.skip 'fail if template string empty',->
+      nikita
+      .call
+        if: '{{options.db.test}}'
+        db: test: ''
+      , ->
+        throw Error 'You are not welcome here'
+      .promise()
 
-  it.skip 'function pass options', ->
-    nikita.call
-      if: ({options}) ->
-        console.log '!!', arguments
-        options.a_key.should.eql 'a value'
-      a_key: 'a value'
-      handler: (->)
+    it 'buffer with content - sucess', ->
+      output = await nikita.call
+        if: Buffer.from 'abc'
+      , -> 'called'
+      output.should.eql 'called'
 
-  it.skip 'function is sync with 0 arguments', ->
-    called = 0
-    nikita
-    .call
-      if: ->
-        called++
-        true
-    , ->
-      called++
-    .call ->
-      called.should.equal 2
-    .promise()
+    it 'buffer empty - failure', ->
+      nikita
+      .call
+        if: Buffer.from ''
+      , ->
+        throw Error 'You are not welcome here'
+  
+  describe 'function', ->
 
-  it.skip 'function is sync with 1 arguments', ->
-    called = 0
-    nikita
-    .call
-      if: ({options}) ->
-        called++ if options.test
-        true
-      test: true
-    , ->
-      called++
-    .call ->
-      called.should.equal 2
-    .promise()
+    it 'function execute handler if return true', ->
+      called = 0
+      nikita
+      .call
+        if: ->
+          called++
+          true
+        handler: ->
+          called++
+      .call ->
+        called.should.equal 2
 
-  it.skip 'succeed if function is sync and return false', ->
-    nikita
-    .call
-      if: -> false
-    , ->
-      throw Error 'You are not welcome here'
-    .promise()
+    it 'function skip handler if return true', ->
+      called = 0
+      nikita
+      .call
+        if: ->
+          called++
+          false
+        handler: ->
+          throw Error 'You are not welcome here'
+      .call ->
+        called.should.equal 1
 
-  it.skip 'succed if function is async and pass true', ->
-    called = 0
-    nikita
-    .call
-      if: ({}, callback)->
-        called++
-        callback null, true
-    , ->
-      called++
-    .call ->
-      called.should.eql 2
-    .promise()
-
-  it.skip 'fail if function is async and pass false', ->
-    nikita
-    .call
-      if: ({}, callback) ->
-        callback null, false
-    , ->
-      throw Error 'You are not welcome here'
-    .promise()
-
-  it.skip 'function pass error object on `failed` callback', ->
-    nikita
-    .call
-      if: ({}, callback) ->
-        callback new Error 'cool'
-    , ->
-      throw Error 'You are not welcome here'
-    .next (err) ->
-      err.message is 'cool'
-    .promise()
+    it 'function pass options', ->
+      nikita.call
+        if: ({options}) ->
+          options.a_key.should.eql 'a value'
+        a_key: 'a value'
+        handler: -> 'success'
+      .should.be.finally.eql 'success'
     
   describe 'error', ->
 
