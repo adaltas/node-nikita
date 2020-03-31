@@ -27,13 +27,11 @@ session = (action={}) ->
         return target[name]
     if action.state.namespace.length is 0
       switch name
-        # when 'registry' then return action.registry
         when 'plugins' then return action.plugins
     action.state.namespace.push name
     new Proxy on_call, get: on_get
   # Initialize the registry to manage action registration
   action.registry = registry.create
-    # chain: new Proxy on_call, get: on_get
     parent: if action.parent then action.parent.registry else registry
     on_register: (name, act) ->
       await action.plugins.hook
@@ -49,25 +47,16 @@ session = (action={}) ->
     action: action
   # Local scheduler
   action.scheduler = schedule()
+  # Register run helper
+  action.run = ->
+    run
+      metadata: depth: action.metadata.depth + 1
+      parent: action
+    , ...arguments
   setImmediate ->
     action.scheduler.pump()
   # Execute the action
   result = new Promise (resolve, reject) ->
-    # Register run helper
-    action.run = ->
-      # actions = args_to_actions.build [
-      #   metadata:
-      #     # namespace: []
-      #     depth: if parent then parent.metadata.depth + 1 else 0
-      #   state:
-      #     namespace: []
-      #   parent: parent
-      #   ...args
-      # ]
-      run
-        metadata: depth: action.metadata.depth + 1
-        parent: action
-      , ...arguments
     # Make sure the promise is resolved after the scheduler and its children
     on_end = new Promise (resolve, reject) ->
       action.scheduler.on_end ->
@@ -80,8 +69,10 @@ session = (action={}) ->
       handler: ({action}) ->
         action = args_to_actions.normalize action
         action
+    # Load action from registry
     if action.metadata.namespace
       action_from_registry = action.registry.get action.metadata.namespace
+      # Merge the registry action with the user action properties
       action = merge action_from_registry, action
     context = new Proxy on_call, get: on_get
     action.context = context
@@ -100,7 +91,7 @@ session = (action={}) ->
       Promise.all([output, on_end])
       .then (values) ->
         resolve values.shift()
-      .catch reject
+      , reject
     catch err
       reject err
   # Returning a proxified promise:

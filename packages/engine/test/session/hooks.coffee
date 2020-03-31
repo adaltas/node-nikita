@@ -67,3 +67,49 @@ describe 'hooks', ->
         context.an.action().should.be.finally.eql
           key: 'value'
           new_key: 'new value'
+            
+    it.skip 'catch thrown errors', ->
+      nikita ({context, plugins, registry}) ->
+        plugins.register
+          'nikita:session:handler:call': ({action}, handler) ->
+            if action.metadata.namespace.join('.') is 'an.action'
+            then throw Error 'Catch me'
+            else handler
+        context.registry.register
+          action:
+            namespace: ['an', 'action']
+            handler: -> throw Error 'You are not invited'
+        context
+        .an.action()
+        .should.be.rejectedWith 'Catch me'
+        
+    it 'catch promise errors in parent action', ->
+      nikita ({context, plugins, registry}) ->
+        plugins.register
+          'nikita:session:handler:call': ({action}, handler) ->
+            new Promise (accept, reject) ->
+              if action.metadata.namespace.join('.') is 'an.action'
+              then reject Error 'Catch me'
+              else accept handler
+        context.registry.register
+          action:
+            namespace: ['an', 'action']
+            handler: -> throw Error 'You are not invited'
+        context
+        .an.action()
+      .should.be.rejectedWith 'Catch me'
+        
+    it 'catch thrown errors in parent action', ->
+      nikita ({context, plugins, registry}) ->
+        plugins.register
+          'nikita:session:handler:call': ({action}, handler) ->
+            if action.metadata.namespace.join('.') is 'an.action'
+            then throw Error 'Catch me'
+            else handler
+        context.registry.register
+          action:
+            namespace: ['an', 'action']
+            handler: -> throw Error 'You are not invited'
+        context
+        .an.action()
+      .should.be.rejectedWith 'Catch me'

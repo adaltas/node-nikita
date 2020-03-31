@@ -3,38 +3,38 @@ nikita = require '../../src'
 
 describe 'if', ->
 
-  it 'boolean true - success', ->
+  it 'run if `true`', ->
     nikita.call
       if: true
       handler: -> 'called'
     .should.be.finally.eql 'called'
 
-  it 'boolean false - failure', ->
+  it 'skip if `false`', ->
     nikita.call
       if: false
     , ->
       throw Error 'Handler is not expected to be called'
 
-  it 'integer 1 - success', ->
-    output = await nikita.call
+  it 'run if `1`', ->
+    nikita.call
       if: 1
-    , -> 'called'
-    output.should.eql 'called'
+      handler: -> 'called'
+    .should.finally.eql 'called'
 
-  it 'boolean 0 - failure', ->
+  it 'skip if `0`', ->
     nikita.call
       if: 0
     , ->
       throw Error 'Handler is not expected to be called'
 
-  it 'fail if `null`', ->
+  it 'skip if `null`', ->
     nikita
     .call
       if: null
     , ->
       throw Error 'You are not welcome here'
 
-  it 'fail if `undefined`', ->
+  it 'skip if `undefined`', ->
     nikita
     .call
       if: undefined
@@ -43,13 +43,13 @@ describe 'if', ->
   
   describe 'string + buffer', ->
   
-    it 'succeed if string not empty', ->
+    it 'run if `"string"`', ->
       nikita.call
         if: 'abc'
         handler: -> 'called'
       .should.be.finally.eql 'called'
 
-    it.skip 'succeed if template string not empty', ->
+    it.skip 'run if `{{"string"}}`', ->
       count = 0
       nikita
       .call
@@ -59,37 +59,28 @@ describe 'if', ->
         count++
       .call ->
         count.should.equal 1
-      .promise()
 
-    it.skip 'fail if string empty', ->
-      nikita
-      .call
+    it 'skip if `""`', ->
+      nikita.call
         if: ''
-      , ->
-        throw Error 'You are not welcome here'
-      .promise()
+        handler: -> throw Error 'You are not welcome here'
 
-    it.skip 'fail if template string empty',->
-      nikita
-      .call
+    it.skip 'skip if `{{""}}`',->
+      nikita.call
         if: '{{options.db.test}}'
         db: test: ''
-      , ->
-        throw Error 'You are not welcome here'
-      .promise()
+        handler: -> throw Error 'You are not welcome here'
 
     it 'buffer with content - sucess', ->
-      output = await nikita.call
+      nikita.call
         if: Buffer.from 'abc'
-      , -> 'called'
-      output.should.eql 'called'
+        handler: -> 'called'
+      .should.finally.eql 'called'
 
     it 'buffer empty - failure', ->
-      nikita
-      .call
+      nikita.call
         if: Buffer.from ''
-      , ->
-        throw Error 'You are not welcome here'
+        handler: -> throw Error 'You are not welcome here'
   
   describe 'function', ->
 
@@ -139,154 +130,94 @@ describe 'if', ->
 
 describe 'unless', ->
 
-  # it.skip 'bypass if not present', (next) ->
-  #   conditions.unless
-  #     {}
-  #     next
-  #     () -> false.should.be.true()
-
-  it.skip 'succeed if `true`', ->
-    nikita
-    .call
+  it 'skip if `true`', ->
+    nikita.call
       unless: true
-    , ->
-      throw Error 'You are not welcome here'
-    .promise()
+      handler: -> throw Error 'You are not welcome here'
 
-  it.skip 'skip if all true', ->
-    nikita
-    .call
+  it 'skip if all true', ->
+    nikita .call
       unless: [true, true, true]
-    , ->
-      throw Error 'You are not welcome here'
-    .promise()
+      handler: -> throw Error 'You are not welcome here'
 
-  it.skip 'skip if at least one is true', ->
-    nikita
-    .call
+  it 'skip if at least one is true', ->
+    nikita.call
       unless: [false, true, false]
-    , ->
-      throw Error 'You are not welcome here'
-    .promise()
+      handler: -> throw Error 'You are not welcome here'
 
-  it.skip 'run if all false', ->
-    count = 0
-    nikita
-    .call
+  it 'run if all false', ->
+    nikita.call
       unless: [false, false, false]
-    , ->
-      count++
-    .call ->
-      count.should.eql 1
-    .promise()
+      handler: -> 'called'
+    .should.be.finally.eql 'called'
 
-  it.skip 'skip if `1`', ->
-    nikita
-    .call
+  it 'skip if `1`', ->
+    nikita.call
       unless: 1
-    , ->
-      throw Error 'You are not welcome here'
-    .promise()
+      handler: -> throw Error 'You are not welcome here'
 
-  it.skip 'run if `0`', ->
-    count = 0
-    nikita
-    .call
+  it 'run if `0`', ->
+    nikita.call
       unless: 0
-    , ->
-      count++
-    .call ->
-      count.should.eql 1
-    .promise()
+      handler: -> 'called'
+    .should.be.finally.eql 'called'
 
-  it.skip 'succeed if buffer and length > 1', ->
-    nikita
-    .call
+  it 'succeed if buffer and length > 1', ->
+    nikita.call
       unless: Buffer.from 'abc'
-    , ->
-      throw Error 'You are not welcome here'
-    .promise()
+      handler: -> throw Error 'You are not welcome here'
 
-  it.skip 'run if buffer and length is 0', ->
-    count = 0
-    nikita
-    .call
+  it 'run if buffer and length is 0', ->
+    nikita.call
       unless: Buffer.from ''
-    , ->
-      count++
-    .call ->
-      count.should.eql 1
-    .promise()
+      handler: -> 'called'
+    .should.be.finally.eql 'called'
 
-  it.skip 'run if `false`', ->
-    count = 0
-    nikita
-    .call
+  it 'run if `false`', ->
+    nikita.call
       unless: false
-    , ->
-      count++
-    .call ->
-      count.should.eql 1
-    .promise()
+      handler: -> 'called'
+    .should.be.finally.eql 'called'
 
-  it.skip 'run if `null`', ->
-    count = 0
-    nikita
-    .call
+  it 'run if `null`', ->
+    nikita.call
       unless: null
-    , ->
-      count++
-    .call ->
-      count.should.eql 1
-    .promise()
+      handler: -> 'called'
+    .should.be.finally.eql 'called'
 
-  it.skip 'skip if string not empty', ->
-    nikita
-    .call
+  it 'skip if string not empty', ->
+    nikita.call
       unless: 'abc'
-    , ->
-      throw Error 'You are not welcome here'
-    .promise()
+      handler: -> throw Error 'You are not welcome here'
 
-  it.skip 'run if string empty', ->
-    count = 0
-    nikita
-    .call
+  it 'run if string empty', ->
+    nikita.call
       unless: ''
-    , ->
-      count++
-    .call ->
-      count.should.eql 1
-    .promise()
+      handler: -> 'called'
+    .should.be.finally.eql 'called'
 
-  it.skip 'skip on `positive` callback', ->
-    nikita
-    .call
-      unless: ({}, callback) -> callback null, true
-    , ->
-      throw Error 'You are not welcome here'
-    .promise()
+  it 'skip on `positive` callback', ->
+    nikita.call
+      unless: ({}) ->
+        new Promise (accept, reject) -> accept true
+      handler: -> throw Error 'You are not welcome here'
 
-  it.skip 'run on `negative` callback', ->
-    count = 0
-    nikita
-    .call
-      unless: ({}, callback) -> callback null, false
-    , ->
-      count++
-    .call ->
-      count.should.eql 1
-    .promise()
+  it 'run on `negative` callback', ->
+    nikita.call
+      unless: ({}) ->
+        new Promise (accept, reject) -> accept false
+      handler: -> 'called'
+    .should.finally.eql 'called'
 
   it.skip 'function pass error object on `failed` callback', ->
-    nikita
-    .call
-      unless: ({}, callback) -> callback new Error 'Cool'
-    , ->
-      throw Error 'You are not welcome here'
-    .next (err) ->
+    # CURRENT WORK
+    nikita.call
+      unless: ({}) ->
+        new Promise (accept, reject) ->
+          reject Error 'Cool'
+      handler: throw Error 'You are not welcome here'
+    .catch (err) ->
       err.message.should.eql 'Cool'
-    .promise()
 
   describe 'error', ->
 
