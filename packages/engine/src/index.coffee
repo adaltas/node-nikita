@@ -21,5 +21,4 @@ create = ->
 
 module.exports = new Proxy create,
   get: (target, name) ->
-    n = create()
-    n[name]
+    create()[name]
