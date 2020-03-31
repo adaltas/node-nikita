@@ -44,7 +44,7 @@ handlers =
           if Buffer.isBuffer(condition)
             !!condition.length
           else if condition is null then false
-          else Object.keys(condition).length
+          else !!Object.keys(condition).length
         when 'function'
           await session null, ({run}) ->
             run
