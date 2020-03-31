@@ -7,7 +7,6 @@ util = require 'util'
 Stream = require 'stream'
 exec = require 'ssh2-exec'
 ini = require './ini'
-tilde = require 'tilde-expansion'
 string = require './string'
 array = require './array'
 docker = require './docker'
@@ -77,20 +76,6 @@ misc = module.exports =
       diff
     clone: (obj) ->
       merge {}, obj
-  path:
-    normalize: (location, callback) ->
-      tilde location, (location) ->
-        callback path.normalize location
-    resolve: (locations..., callback) ->
-      normalized = []
-      each(locations)
-      .call (location, next) ->
-        misc.path.normalize location, (location) ->
-          normalized.push location
-          next()
-      .next ->
-        callback path.resolve normalized...
-      null
   mode:
     stringify: (mode) ->
       if typeof mode is 'number' then mode.toString(8) else mode
