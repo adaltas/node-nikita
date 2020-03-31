@@ -32,8 +32,7 @@ describe 'plugin.schema.action', ->
       an_integer.should.be.a.Number()
 
   it 'invalid with one error', ->
-    nikita
-    .call
+    nikita.call
       a_string: 1
       an_integer: 0
       schema:
@@ -41,12 +40,10 @@ describe 'plugin.schema.action', ->
         properties:
           'an_integer': type: 'integer', 'minimum': 1
       handler: (->)
-    .catch (err) ->
-      err.message.should.eql 'data.an_integer should be >= 1'
+    .should.be.rejectedWith 'data.an_integer should be >= 1'
 
   it 'invalid with multiple errors', ->
-    nikita
-    .call
+    nikita.call
       a_string: 1
       an_integer: 0
       schema:
@@ -55,6 +52,7 @@ describe 'plugin.schema.action', ->
           'a_string': type: 'string'
           'an_integer': type: 'integer', 'minimum': 1
       handler: ->
+    .should.be.rejected()
     .catch (err) ->
       err.message.should.eql """
       Invalid Options: got 2 errors
@@ -105,31 +103,26 @@ describe 'plugin.schema.action', ->
           properties:
             'split': $ref: 'registry://test/schema'
         handler: (->)
-      .then ->
-        throw Error 'Error not thrown as expected'
-      .catch (err) ->
-        err.message.should.eql 'data.split.an_integer should be integer'
+      .should.be.rejectedWith 'data.split.an_integer should be integer'
   
   describe 'constructor', ->
 
     it 'useDefaults', ->
-      nikita
-      .call
+      nikita.call
         schema:
           type: 'object'
           properties:
             'a_string':
               type: 'string'
               default: 'a value'
-      , ({options}) ->
-        options.a_string.should.eql 'a value'
+        handler: ({options}) ->
+          options.a_string.should.eql 'a value'
 
     it.skip 'coerceTypes', ->
       # Option is currently disactivated because it is unclear wether we shall
       # accept its rule or create ours. For exemple, `true` is cast to string `"true"`
       # and string `""` is cast to `null` which might not be what we want.
-      nikita
-      .call
+      nikita.call
         schema:
           type: 'object'
           properties:
@@ -137,30 +130,27 @@ describe 'plugin.schema.action', ->
               type: 'string'
             'string_to_boolean':
               type: 'boolean'
-      ,
         int_to_string: 1234
         string_to_boolean: ''
-      , ({options}) ->
-        options.int_to_string.should.eql '1234'
-        options.string_to_boolean.should.be.false()
+        handler: ({options}) ->
+          options.int_to_string.should.eql '1234'
+          options.string_to_boolean.should.be.false()
   
   describe 'ajv-keywords', ->
 
     it 'instanceof valid', ->
-      nikita
-      .call
+      nikita.call
         schema:
           type: 'object'
           properties:
             'a_regexp': instanceof: 'RegExp'
         options:
           a_regexp: /.*/
-      , ({options}) ->
-        'ok'.should.match options.a_regexp
+        handler: ({options}) ->
+          'ok'.should.match options.a_regexp
 
     it 'instanceof invalid', ->
-      nikita
-      .call
+      nikita.call
         relax: true
         schema:
           type: 'object'
@@ -169,7 +159,4 @@ describe 'plugin.schema.action', ->
         options:
           a_regexp: 'invalid'
         handler: (->)
-      .then ->
-        throw Error 'Error not thrown as expected'
-      .catch (err) ->
-        err.message.should.eql 'data.a_regexp should pass "instanceof" keyword validation'
+      .should.be.rejectedWith 'data.a_regexp should pass "instanceof" keyword validation'
