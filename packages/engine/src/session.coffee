@@ -64,9 +64,9 @@ session = (action={}) ->
     # Hook attented to modify the current action being created
     action = await action.plugins.hook
       name: 'nikita:session:normalize'
-      args:
-        action: action
-      handler: ({action}) ->
+      args: action
+      hooks: action.hooks?.on_normalize or action.on_normalize
+      handler: (action) ->
         action = args_to_actions.normalize action
         action
     # Load action from registry
