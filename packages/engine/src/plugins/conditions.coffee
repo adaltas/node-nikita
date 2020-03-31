@@ -4,12 +4,12 @@ session = require '../session'
 # condition_if: (value)
 
 module.exports = ({}) ->
-  'nikita:session:normalize': (args, handler) ->
+  'nikita:session:normalize': (action, handler) ->
     # return handler
     # Ventilate conditions properties defined at root
     new_action = {}
     conditions = {}
-    for property, value of args.action
+    for property, value of action
       if /^(if|unless)($|_[\w_]+$)/.test property
         throw Error 'CONDITIONS_DUPLICATED_DECLARATION', [
           "Property #{property} is defined multiple times,"
@@ -20,7 +20,7 @@ module.exports = ({}) ->
       else
         new_action[property] = value
     ->
-      arguments[0].action = new_action
+      arguments[0] = new_action
       action = handler.call null, ...arguments
       action.conditions = conditions
       action

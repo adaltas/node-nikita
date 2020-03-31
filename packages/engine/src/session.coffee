@@ -74,17 +74,20 @@ session = (action={}) ->
       action_from_registry = action.registry.get action.metadata.namespace
       # Merge the registry action with the user action properties
       action = merge action_from_registry, action
-    context = new Proxy on_call, get: on_get
-    action.context = context
+    action.context = new Proxy on_call, get: on_get
+    await action.plugins.hook
+      name: 'nikita:session:action'
+      args: action
+      hooks: action.hooks.on_action
+      silent: true
     # Hook attented to alter the execution of an action handler
     try
       output = action.plugins.hook
         name: 'nikita:session:handler:call',
         args:
-          context: context
           action: action
-        handler: ({context, action}) ->
-          action.handler.call context, action
+        handler: ({action}) ->
+          action.handler.call action.context, action
       unless output and output.then
         output = new Promise (resolve, reject) ->
           resolve output
