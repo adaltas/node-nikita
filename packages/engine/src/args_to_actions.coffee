@@ -2,13 +2,6 @@
 {is_object, merge, mutate} = require 'mixme'
 array = require './misc/array'
 
-module.exports = (args) ->
-  actions = multiply args
-  actions = reconstituate actions
-  actions = ventilate actions
-  actions = values actions
-  actions
-
 module.exports.build = (args) ->
   actions = multiply args
   actions = reconstituate actions
@@ -63,15 +56,22 @@ module.exports.ventilate = ventilate = (action) ->
   new_action =
     metadata: action.metadata or {}
     options: action.options or {}
+    hooks: action.hooks or {}
+  for property, value of merge properties
+    new_action[property] = action[property] or value
   for property, value of action
     if property is 'metadata'
       continue # Already merged before
     else if property is 'options'
       continue # Already merged before
+    else if property is 'hooks'
+      continue # Already merged before
     else if property in properties_root
       new_action[property] = value
     else if property in properties_metadata
       new_action.metadata[property] = value
+    else if /^on_/.test property
+      new_action.hooks[property] = value
     else
       new_action.options[property] = value
   new_action
@@ -85,20 +85,21 @@ module.exports.values = values = (action) ->
 
 module.exports.properties = properties =
   context: undefined
-  handler: null
+  handler: undefined
+  hooks: {}
   metadata:
     # address: null
     namespace: []
-    after: null
+    # after: null
     argument: null
     attempt: -1
-    before: null
-    cascade: {}
+    # before: null
+    # cascade: {}
     debug: false
     deprecate: false
     depth: 0
     disabled: false
-    get: false
+    # get: false
     header: []
     log: null
     once: false

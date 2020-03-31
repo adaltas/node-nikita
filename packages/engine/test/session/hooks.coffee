@@ -53,12 +53,12 @@ describe 'hooks', ->
     it 'alter action - async', ->
       nikita ({context, plugins, registry}) ->
         plugins.register
-          'nikita:session:handler:call': ({action, context}, handler) ->
+          'nikita:session:handler:call': ({action}, handler) ->
             new Promise (accept, reject) ->
               setImmediate ->
-                accept ({action, context}) ->
+                accept ({action}) ->
                   action.options.new_key = 'new value'
-                  handler.call context, action: action, context: context
+                  handler.call action.context, action: action
         context.registry.register
           action:
             namespace: ['an', 'action']

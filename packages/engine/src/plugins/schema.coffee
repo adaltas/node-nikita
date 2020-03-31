@@ -47,9 +47,9 @@ module.exports = ({registry}) ->
       schemas: ajv._schemas
       refs: ajv._refs
       fragments: ajv._fragments
-  'nikita:session:normalize': ({action}, handler) ->
-    ({action, context}) ->
-      action = handler.call context, action: action, context: context
+  'nikita:session:normalize': (action, handler) ->
+    (action) ->
+      action = handler.call action.context, action
       action.schema = schema
       action
   'nikita:session:handler:call': ({action}, handler) ->
