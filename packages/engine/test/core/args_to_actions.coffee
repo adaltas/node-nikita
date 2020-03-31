@@ -45,11 +45,9 @@ describe 'args_to_actions', ->
     it 'handle function as handler', ->
       expect = [
         handler: (->)
-        metadata: {}
         options: b: ''
       ,
         handler: (->)
-        metadata: {}
         options: c: ''
       ]
       # String is place before objects
@@ -57,12 +55,20 @@ describe 'args_to_actions', ->
         (->)
         [{b: ''}, {c: ''}]
       ]
+      # Filter only metadata.argument and options
+      .map (el) ->
+        handler: el.handler
+        options: el.options
       .should.eql expect
       # String is place after objects
       ventilate reconstituate multiply [
         [{b: ''}, {c: ''}]
         (->)
       ]
+      # Filter only metadata.argument and options
+      .map (el) ->
+        handler: el.handler
+        options: el.options
       .should.eql expect
     
     it 'handle string as metadata.argument', ->
@@ -78,10 +84,18 @@ describe 'args_to_actions', ->
         'a'
         [{b: ''}, {c: ''}]
       ]
+      # Filter only metadata.argument and options
+      .map (el) ->
+        metadata: argument: el.metadata.argument
+        options: el.options
       .should.eql expect
       # String is place after objects
       ventilate reconstituate multiply [
         [{b: ''}, {c: ''}]
         'a'
       ]
+      # Filter only metadata.argument and options
+      .map (el) ->
+        metadata: argument: el.metadata.argument
+        options: el.options
       .should.eql expect
