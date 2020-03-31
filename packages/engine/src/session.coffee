@@ -63,7 +63,7 @@ session = (action={}) ->
         resolve()
     # Hook attented to modify the current action being created
     action = await action.plugins.hook
-      name: 'nikita:session:normalize:user'
+      name: 'nikita:session:normalize'
       args:
         action: action
       handler: ({action}) ->
@@ -91,7 +91,8 @@ session = (action={}) ->
       Promise.all([output, on_end])
       .then (values) ->
         resolve values.shift()
-      , reject
+      , (err) ->
+        reject err
     catch err
       reject err
   # Returning a proxified promise:

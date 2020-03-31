@@ -4,7 +4,7 @@ session = require '../session'
 # condition_if: (value)
 
 module.exports = ({}) ->
-  'nikita:session:normalize:user': (args, handler) ->
+  'nikita:session:normalize': (args, handler) ->
     # return handler
     # Ventilate conditions properties defined at root
     new_action = {}

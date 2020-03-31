@@ -22,10 +22,10 @@ module.exports = ->
             scheduler.pump()
         , (err) ->
           running = false
+          fn.call() for fn in events.end
           reject err
       else
-        for fn in events.end
-          fn.call()
+        fn.call() for fn in events.end
     has_next: ->
       stack.length
     next: ->
