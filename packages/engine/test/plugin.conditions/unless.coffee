@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 
-describe 'unless', ->
+describe 'plugin.condition unless', ->
 
   it 'skip if `true`', ->
     nikita.call

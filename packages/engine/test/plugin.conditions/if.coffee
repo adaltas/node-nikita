@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 
-describe 'if', ->
+describe 'plugin.condition if', ->
 
   it 'run if `true`', ->
     nikita.call

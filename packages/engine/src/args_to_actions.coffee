@@ -38,8 +38,6 @@ module.exports.ventilate = ventilate = (action) ->
     metadata: action.metadata or {}
     options: action.options or {}
     hooks: action.hooks or {}
-  for property, value of merge properties
-    new_action[property] = action[property] or value
   for property, value of action
     if property is 'metadata'
       continue # Already merged before
