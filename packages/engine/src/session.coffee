@@ -69,6 +69,7 @@ session = (action={}) ->
       args: action
       hooks: action.hooks?.on_normalize or action.on_normalize
       handler: (action) ->
+        # TODO: remove default from normalize
         action = args_to_actions.normalize action
         action
     # Load action from registry
@@ -76,15 +77,16 @@ session = (action={}) ->
       action_from_registry = action.registry.get action.metadata.namespace
       # Merge the registry action with the user action properties
       action = merge action_from_registry, action
-    await action.plugins.hook
-      name: 'nikita:session:action'
-      args: action
-      hooks: action.hooks.on_action
-      silent: true
-    # Hook attented to alter the execution of an action handler
     try
+      # Hook attented to alter the execution of an action handler
+      await action.plugins.hook
+        name: 'nikita:session:action'
+        args: action
+        hooks: action.hooks.on_action
+        silent: true # TODO: support undefined handler in plugins
       output = action.plugins.hook
-        name: 'nikita:session:handler:call',
+        name: 'nikita:session:handler:call'
+        # promisify: true # TODO: convert output and error to promises if already one
         args:
           action: action
         handler: ({action}) ->
