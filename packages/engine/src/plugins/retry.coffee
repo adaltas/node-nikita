@@ -7,7 +7,6 @@ module.exports = ->
     # Move property from action to metadata
     for property in ['attempt', 'sleep', 'retry']
       if action.hasOwnProperty property
-        action.metadata ?= {}
         action.metadata[property] = action[property]
         delete action[property]
     handler

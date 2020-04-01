@@ -116,6 +116,7 @@ module.exports = run = (...args) ->
   # Are we scheduling multiple actions
   args_is_array = args.some (arg) -> Array.isArray arg
   actions = args_to_actions.build [
+    metadata: {}
     state:
       namespace: []
     ...args

@@ -2,8 +2,11 @@
 nikita = require '../../src'
 registry = require '../../src/registry'
 register = require '../../src/register'
+{tags} = require '../test'
 
-describe 'options `depth`', ->
+return unless tags.api
+
+describe 'metadata "depth"', ->
 
   it 'start at depth 0 with registered action', ->
     registry.register [], ({metadata}) ->
