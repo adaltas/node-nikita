@@ -12,7 +12,7 @@ module.exports = ->
     pump: ->
       return if running
       running = true
-      if @has_next()
+      if stack.length
         [fn, resolve, reject] = @next()
         res = fn.call()
         res.then ->
@@ -26,8 +26,6 @@ module.exports = ->
           reject err
       else
         fn.call() for fn in events.end
-    has_next: ->
-      stack.length
     next: ->
       stack.shift()
     add: (fn) ->

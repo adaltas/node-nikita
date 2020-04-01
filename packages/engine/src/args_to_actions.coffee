@@ -75,7 +75,7 @@ module.exports.properties = properties =
     # cascade: {}
     debug: false
     deprecate: false
-    depth: 0
+    # depth: 0
     # disabled: false
     # get: false
     header: []
