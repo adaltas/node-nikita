@@ -9,12 +9,14 @@
 require './register'
 conditions = require './plugins/conditions'
 schema = require './plugins/schema'
+disabled = require './plugins/disabled'
 session = require './session'
   
 create = ->
   session plugins: [
     conditions
     schema
+    disabled
   ], ...arguments
 
 # Source Code

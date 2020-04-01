@@ -1,20 +1,20 @@
 
 nikita = require '../../src'
-{tags} = require '../test'
 
-return unless tags.api
+describe 'plugin.disable', ->
 
-describe 'metadata "disable"', ->
-
-  it 'dont call handler', ->
-    nikita
-    .call
+  it 'when `true`', ->
+    nikita.call
       disabled: true
-    , (otions) ->
-      throw Error 'Achtung'
-    .promise()
+      handler: -> throw Error 'forbidden'
 
-  it 'emit lifecycle event when disabled', ->
+  it 'when `false`', ->
+    nikita.call
+      disabled: false
+      handler: -> 'called'
+    .should.be.resolvedWith 'called'
+
+  it.skip 'emit lifecycle event when disabled', ->
     nikita
     .call
       disabled: true
@@ -39,7 +39,7 @@ describe 'metadata "disable"', ->
       log.type.should.eql 'lifecycle'
     .promise()
 
-  it 'emit lifecycle event when not disabled', ->
+  it.skip 'emit lifecycle event when not disabled', ->
     nikita
     .call
       disabled: false
