@@ -1,35 +1,11 @@
 
 {is_object, merge, mutate} = require 'mixme'
-array = require './utils/array'
+{multiply} = require './utils/array'
 
 module.exports.build = (args) ->
-  actions = multiply args
-  actions = reconstituate actions
-  actions
-
-module.exports.normalize = (actions) ->
-  actions = ventilate actions
-  actions = values actions
-  actions
-  
-module.exports.multiply = multiply = (args) ->
-  # Convert every argument to an array
-  for arg, i in args
-    args[i] = [arg] unless Array.isArray arg
-  # Multiply arguments
-  actions = []
-  for arg, i in args
-    newactions = for arg_element, j in arg
-      # Every element of the first argument will initialize actions
-      if i is 0
-        [[arg_element]]
-      else
-        for action, i in actions
-          [action..., arg_element]
-    actions = array.flatten newactions, 0
-  actions
-
-module.exports.reconstituate = reconstituate = (actions) ->
+  # Multiply the arguments
+  actions = multiply ...args
+  # Reconstituate the action
   for action in actions
     new_action = {}
     for arg in action
@@ -49,6 +25,11 @@ module.exports.reconstituate = reconstituate = (actions) ->
         else
           mutate new_action, metadata: argument: arg
     new_action
+
+module.exports.normalize = (actions) ->
+  actions = ventilate actions
+  actions = values actions
+  actions
 
 module.exports.ventilate = ventilate = (action) ->
   if Array.isArray action
