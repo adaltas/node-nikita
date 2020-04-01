@@ -71,7 +71,7 @@ module.exports.properties = properties =
     namespace: []
     # after: null
     argument: null
-    attempt: -1
+    # attempt: -1
     # before: null
     # cascade: {}
     debug: false
@@ -83,10 +83,10 @@ module.exports.properties = properties =
     log: null
     once: false
     relax: false
-    retry: 0
+    # retry: 0
     schema: null
     shy: false
-    sleep: 3000
+    # sleep: 3000
     status: true
     tolerant: false
   parent: null
