@@ -57,6 +57,7 @@
     "each": "^1.2.2",
     "minimatch": "~3.0.4",
     "mixme": "^0.3.5",
+    "ssh2-they": "^2.1.0",
     "tilde-expansion": "^0.0.0"
   },
   "devDependencies": {
@@ -99,7 +100,7 @@
     "build": "coffee -b -o lib src",
     "lint": "eslint 'src/**/*.coffee'",
     "lint-fix": "eslint --fix 'src/**/*.coffee'",
-    "pretest": "npm build",
+    "pretest": "npm run build",
     "test": "mocha 'test/**/*.coffee'"
   }
 }

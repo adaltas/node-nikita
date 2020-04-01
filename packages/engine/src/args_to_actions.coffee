@@ -1,6 +1,6 @@
 
 {is_object, merge, mutate} = require 'mixme'
-array = require './misc/array'
+array = require './utils/array'
 
 module.exports.build = (args) ->
   actions = multiply args
