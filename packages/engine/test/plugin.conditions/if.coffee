@@ -12,8 +12,7 @@ describe 'plugin.condition if', ->
   it 'skip if `false`', ->
     nikita.call
       if: false
-    , ->
-      throw Error 'Handler is not expected to be called'
+      handler: -> throw Error 'forbidden'
 
   it 'run if `1`', ->
     nikita.call
@@ -24,22 +23,17 @@ describe 'plugin.condition if', ->
   it 'skip if `0`', ->
     nikita.call
       if: 0
-    , ->
-      throw Error 'Handler is not expected to be called'
+      handler: -> throw Error 'forbidden'
 
   it 'skip if `null`', ->
-    nikita
-    .call
+    nikita.call
       if: null
-    , ->
-      throw Error 'You are not welcome here'
+      handler: -> throw Error 'forbidden'
 
   it 'skip if `undefined`', ->
-    nikita
-    .call
+    nikita.call
       if: undefined
-    , ->
-      throw Error 'Handler is not expected to be called'
+      handler: -> throw Error 'forbidden'
   
   describe 'string + buffer', ->
   
@@ -63,15 +57,15 @@ describe 'plugin.condition if', ->
     it 'skip if `""`', ->
       nikita.call
         if: ''
-        handler: -> throw Error 'You are not welcome here'
+        handler: -> throw Error 'forbidden'
 
     it.skip 'skip if `{{""}}`',->
       nikita.call
         if: '{{options.db.test}}'
         db: test: ''
-        handler: -> throw Error 'You are not welcome here'
+        handler: -> throw Error 'forbidden'
 
-    it 'buffer with content - sucess', ->
+    it 'buffer with content - success', ->
       nikita.call
         if: Buffer.from 'abc'
         handler: -> 'called'
@@ -80,7 +74,7 @@ describe 'plugin.condition if', ->
     it 'buffer empty - failure', ->
       nikita.call
         if: Buffer.from ''
-        handler: -> throw Error 'You are not welcome here'
+        handler: -> throw Error 'forbidden'
     
   describe 'object', ->
 
@@ -93,7 +87,7 @@ describe 'plugin.condition if', ->
     it 'skip if `{}`', ->
       nikita.call
         if: {}
-        handler: -> throw Error 'You are not welcome here'
+        handler: -> throw Error 'forbidden'
   
   describe 'function', ->
 

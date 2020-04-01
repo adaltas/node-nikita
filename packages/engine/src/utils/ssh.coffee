@@ -25,7 +25,7 @@ module.exports = ssh =
       # SSH instance with SSH configuration
       ssh.is(ssh1) and not ssh.is(ssh2) and
       compare_config ssh1.config, ssh2
-    )  or (
+    ) or (
       # SSH instance with SSH configuration
       not ssh.is(ssh1) and ssh.is(ssh2) and
       compare_config ssh1, ssh2.config
