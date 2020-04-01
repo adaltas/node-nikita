@@ -34,6 +34,22 @@ module.exports =
       else
         ret.push arr[i]
     ret
+  multiply: (...args) ->
+    # Convert every argument to an array
+    for arg, i in args
+      args[i] = [arg] unless Array.isArray arg
+    # Multiply arguments
+    results = []
+    for arg, i in args
+      newresults = for arg_element, j in arg
+        # Every element of the first argument will initialize results
+        if i is 0
+          [[arg_element]]
+        else
+          for action, i in results
+            [action..., arg_element]
+      results = module.exports.flatten newresults, 0
+    results
   # merge: (arrays...) ->
   #   r = []
   #   for array in arrays
