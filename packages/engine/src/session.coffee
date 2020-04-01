@@ -7,6 +7,11 @@ args_to_actions = require './args_to_actions'
 error = require './utils/error'
 
 session = (action={}) ->
+  action = merge
+    metadata: {}
+    state:
+      namespace: []
+  , action
   # Catch calls to new actions
   on_call = () ->
     # Extract action namespace and reset the state
@@ -20,7 +25,6 @@ session = (action={}) ->
           'no action is registered under this namespace,'
           "got #{JSON.stringify namespace}."
         ]
-        # Error "No action named #{JSON.stringify namespace.join '.'}"
       action.run ...args, metadata: namespace: namespace
     new Proxy prom, get: on_get
   # Building the namespace before calling an action
@@ -115,12 +119,6 @@ session = (action={}) ->
 module.exports = run = (...args) ->
   # Are we scheduling multiple actions
   args_is_array = args.some (arg) -> Array.isArray arg
-  actions = args_to_actions.build [
-    metadata: {}
-    state:
-      namespace: []
-    ...args
-  ]
-  proms = actions.map (action) ->
-    session action
+  actions = args_to_actions.build args
+  proms = actions.map (action) -> session action
   if args_is_array then Promise.all(proms) else proms[0]
