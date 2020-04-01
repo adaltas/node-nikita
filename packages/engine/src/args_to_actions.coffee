@@ -68,7 +68,6 @@ module.exports.properties = properties =
   hooks: {}
   metadata:
     # address: null
-    namespace: []
     # after: null
     argument: null
     # attempt: -1
@@ -81,8 +80,9 @@ module.exports.properties = properties =
     # get: false
     header: []
     log: null
+    namespace: []
     once: false
-    relax: false
+    # relax: false
     # retry: 0
     schema: null
     shy: false

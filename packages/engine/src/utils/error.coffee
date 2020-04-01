@@ -2,6 +2,7 @@
 class NikitaError extends Error
   constructor: (code, message, ...contexts) ->
     message = message.join(' ') if Array.isArray message
+    message = "#{code}: #{message}"
     super message
     if Error.captureStackTrace isnt undefined
       Error.captureStackTrace(this, NikitaError)
