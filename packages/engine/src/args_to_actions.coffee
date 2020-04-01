@@ -77,7 +77,7 @@ module.exports.properties = properties =
     debug: false
     deprecate: false
     depth: 0
-    disabled: false
+    # disabled: false
     # get: false
     header: []
     log: null

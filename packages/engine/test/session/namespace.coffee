@@ -55,7 +55,6 @@ describe 'namespace', ->
       .should.be.rejectedWith 'No action named "invalid"'
 
     it 'unregisted action within a registered namespace outside handler', ->
-      # No longer working now that inner handler is run asynchronuously
       nikita ({registry}) ->
         registry.register
           'an': 'action':
@@ -64,7 +63,6 @@ describe 'namespace', ->
       .should.be.rejectedWith 'No action named "an.action.broken"'
 
     it 'unregisted action within a registered namespace inside handler', ->
-      # No longer working now that inner handler is run asynchronuously
       nikita ({registry, context}) ->
         registry.register
           'an': 'action':

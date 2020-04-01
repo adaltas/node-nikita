@@ -55,6 +55,8 @@ session = (action={}) ->
     , ...arguments
   setImmediate ->
     action.scheduler.pump()
+  # Expose the action context
+  action.context = new Proxy on_call, get: on_get
   # Execute the action
   result = new Promise (resolve, reject) ->
     # Make sure the promise is resolved after the scheduler and its children
@@ -74,7 +76,6 @@ session = (action={}) ->
       action_from_registry = action.registry.get action.metadata.namespace
       # Merge the registry action with the user action properties
       action = merge action_from_registry, action
-    action.context = new Proxy on_call, get: on_get
     await action.plugins.hook
       name: 'nikita:session:action'
       args: action
