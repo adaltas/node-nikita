@@ -37,22 +37,32 @@ describe 'namespace', ->
       result.should.eql 'action value, depth 1'
       result = await @an.action().an.action()
       result.should.eql 'an.action value, depth 1'
-
-  it 'chain action after unregisted action', ->
-    try
-      await nikita().invalid.action.broken()
-    catch err
-      err.message.should.eql 'No action named "invalid.action.broken"'
   
-  describe 'error', ->
+  describe 'error unregistered namespace', ->
 
     it 'unregisted root action from static', ->
       nikita.invalid()
-      .should.be.rejectedWith 'No action named "invalid"'
+      .should.be.rejectedWith [
+        'ACTION_UNREGISTERED_NAMESPACE:'
+        'no action is registered under this namespace,'
+        'got ["invalid"].'
+      ].join ' '
 
     it 'unregisted root action from instance', ->
       nikita().invalid()
-      .should.be.rejectedWith 'No action named "invalid"'
+      .should.be.rejectedWith [
+        'ACTION_UNREGISTERED_NAMESPACE:'
+        'no action is registered under this namespace,'
+        'got ["invalid"].'
+      ].join ' '
+
+    it 'chain action after unregisted action', ->
+      nikita().invalid.action()
+      .should.be.rejectedWith [
+        'ACTION_UNREGISTERED_NAMESPACE:'
+        'no action is registered under this namespace,'
+        'got ["invalid","action"].'
+      ].join ' '
 
     it 'unregisted action within a registered namespace outside handler', ->
       nikita ({registry}) ->
@@ -60,7 +70,11 @@ describe 'namespace', ->
           'an': 'action':
             '': handler: (->)
       .an.action.broken()
-      .should.be.rejectedWith 'No action named "an.action.broken"'
+      .should.be.rejectedWith [
+        'ACTION_UNREGISTERED_NAMESPACE:'
+        'no action is registered under this namespace,'
+        'got ["an","action","broken"].'
+      ].join ' '
 
     it 'unregisted action within a registered namespace inside handler', ->
       nikita ({registry, context}) ->
@@ -68,15 +82,19 @@ describe 'namespace', ->
           'an': 'action':
             '': handler: (->)
         context.an.action.broken()
-      .should.be.rejectedWith 'No action named "an.action.broken"'
+      .should.be.rejectedWith [
+        'ACTION_UNREGISTERED_NAMESPACE:'
+        'no action is registered under this namespace,'
+        'got ["an","action","broken"].'
+      ].join ' '
 
     it 'unregisted action within a registered static namespace', ->
       # Internally, the proxy for nikita is not the same as for its children
       registry.register ['an', 'action'], (->)
       nikita.an.action.invalid()
-      .should.be.rejectedWith 'No action named "an.action.invalid"'
+      .should.be.rejectedWith [
+        'ACTION_UNREGISTERED_NAMESPACE:'
+        'no action is registered under this namespace,'
+        'got ["an","action","invalid"].'
+      ].join ' '
       registry.unregister ['an', 'action']
-
-    it 'parent name not defined child action undefined', ->
-      nikita.not.an.action()
-      .should.be.rejectedWith 'No action named "not.an.action"'
