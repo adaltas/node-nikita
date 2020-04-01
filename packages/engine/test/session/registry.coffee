@@ -46,26 +46,3 @@ describe 'session registry', ->
           'my': 'function': key: 'b', handler: ({options}) -> options.key
         result = await @my.function()
         result.should.eql 'b'
-
-describe 'error', ->
-
-  it 'root action not defined', ->
-    try
-      await nikita().invalid()
-    catch err
-      err.message.should.eql 'No action named "invalid"'
-
-  it 'action undefined inside a registered namespace', ->
-    nikita ({regitry}) ->
-      registry.register ['ok', 'and', 'valid'], (->)
-      @ok.and.invalid()
-    .then ->
-      throw Error 'Error not thrown as expected'
-    .catch (err) ->
-      err.message.should.eql 'No action named "ok.and.invalid"'
-
-  it 'parent name not defined child action undefined', ->
-    try
-      await nikita().not.an.action()
-    catch err
-      err.message.should.eql 'No action named "not.an.action"'

@@ -4,6 +4,7 @@ registry = require './registry'
 schedule = require './schedule'
 plugins = require './plugins'
 args_to_actions = require './args_to_actions'
+error = require './utils/error'
 
 session = (action={}) ->
   # Catch calls to new actions
@@ -15,7 +16,11 @@ session = (action={}) ->
     prom = action.scheduler.add ->
       # Validate the namespace
       unless action.registry.registered namespace
-        return Promise.reject Error "No action named #{JSON.stringify namespace.join '.'}"
+        return Promise.reject error 'ACTION_UNREGISTERED_NAMESPACE', [
+          'no action is registered under this namespace,'
+          "got #{JSON.stringify namespace}."
+        ]
+        # Error "No action named #{JSON.stringify namespace.join '.'}"
       action.run ...args, metadata: namespace: namespace
     new Proxy prom, get: on_get
   # Building the namespace before calling an action
