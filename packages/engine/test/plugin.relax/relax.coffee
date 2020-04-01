@@ -6,7 +6,7 @@ return unless tags.api
 
 describe 'metadata "relax"', ->
 
-  it 'sync', ->
+  it.skip 'sync', ->
     nikita
     .call relax: true, ->
       throw Error 'Dont worry, be happy'
@@ -22,9 +22,8 @@ describe 'metadata "relax"', ->
     .next (err, {status}) ->
       (err is undefined).should.be.true()
       status.should.be.true() unless err
-    .promise()
 
-  it 'sync with error throw in child', ->
+  it.skip 'sync with error throw in child', ->
     nikita
     .call relax: true, ->
       @call ->
@@ -55,7 +54,7 @@ describe 'metadata "relax"', ->
       status.should.be.true() unless err
     .promise()
   
-  it 'thrown error in callback are handled as an error', ->
+  it.skip 'thrown error in callback are handled as an error', ->
     nikita
     .call
       relax: true
@@ -65,7 +64,7 @@ describe 'metadata "relax"', ->
       err.message.should.eql 'Catch me'
     .promise()
   
-  it 'thrown error in callback are followed to parent sync call', ->
+  it.skip 'thrown error in callback are followed to parent sync call', ->
     nikita
     .call level: 'parent', ->
       @call
@@ -77,7 +76,7 @@ describe 'metadata "relax"', ->
       err.message.should.eql 'Catch me'
     .promise()
 
-  it 'async', ->
+  it.skip 'async', ->
     nikita
     .call relax: true, ({}, callback) ->
       setImmediate ->
