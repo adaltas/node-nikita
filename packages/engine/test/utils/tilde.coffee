@@ -1,5 +1,5 @@
 
-tilde = require '../../src/misc/tilde'
+tilde = require '../../src/utils/tilde'
 
 describe 'tilde', ->
 
