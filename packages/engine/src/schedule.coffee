@@ -19,15 +19,9 @@ module.exports = ->
         if Array.isArray res
           running = false
           handlers = res
-          # stack.unshift handler for handler in handlers
-          promises = for handler in handlers.reverse()
-            new Promise (resolve, reject) ->
-              stack.unshift [handler, resolve, reject]
-          Promise.all promises.reverse()
-          .then resolve, reject
+          scheduler.add(handlers).then resolve, reject
           setImmediate ->
             scheduler.pump()
-          # handlers.map stack.unshift
         else if res.then
           res.then ->
             running = false
@@ -47,9 +41,17 @@ module.exports = ->
         handler.call() for handler in events.end
     next: ->
       stack.shift()
-    add: (handler) ->
+    add: (handlers, options={}) ->
       prom = new Promise (resolve, reject) ->
-        stack.push [handler, resolve, reject]
+        dir = if options.first then 'unshift' else 'push'
+        unless Array.isArray handlers
+          stack[dir] [handlers, resolve, reject]
+        else
+          handlers = [handlers] unless Array.isArray handlers
+          promises = for handler in handlers
+            new Promise (resolve, reject) ->
+              stack[dir] [handler, resolve, reject]
+          Promise.all(promises).then resolve, reject
         # Pump execution
         setImmediate ->
           scheduler.pump()

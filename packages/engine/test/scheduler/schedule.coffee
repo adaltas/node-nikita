@@ -54,26 +54,3 @@ describe 'core schedule', ->
     result = await app
     result.should.eql 'value @ 0'
   
-  describe 'handler', ->
-    
-    it 'return a promise', ->
-      scheduler = schedule()
-      promises = Promise.all [
-        scheduler.add -> new Promise (resolve) -> resolve 1
-        scheduler.add -> new Promise (resolve) -> resolve 2
-      ]
-      scheduler.pump()
-      promises.should.be.resolvedWith [1, 2]
-        
-    it 'return a function', ->
-      scheduler = schedule()
-      promises = Promise.all [
-        scheduler.add -> [
-          -> new Promise (resolve) -> resolve 1
-          -> new Promise (resolve) -> resolve 2
-        ]
-        scheduler.add -> new Promise (resolve) -> resolve 3
-      ]
-      scheduler.pump()
-      promises.should.be.resolvedWith [[1, 2], 3]
-    
