@@ -13,11 +13,10 @@ session = (action={}) ->
       namespace: []
   , action
   # Catch calls to new actions
-  on_call = () ->
+  on_call = (...args) ->
     # Extract action namespace and reset the state
     namespace = action.state.namespace.slice()
     action.state.namespace = []
-    args = arguments
     prom = action.scheduler.add ->
       # Validate the namespace
       unless action.registry.registered namespace
@@ -25,7 +24,12 @@ session = (action={}) ->
           'no action is registered under this namespace,'
           "got #{JSON.stringify namespace}."
         ]
-      action.run ...args, metadata: namespace: namespace
+      args = [...args, parent: action, metadata: namespace: namespace]
+      args_is_array = args.some (arg) -> Array.isArray arg
+      actions = args_to_actions.build args
+      unless args_is_array
+      then session actions[0]
+      else actions.map (action) -> -> session action
     new Proxy prom, get: on_get
   # Building the namespace before calling an action
   on_get = (target, name) ->
