@@ -11,29 +11,24 @@ module.exports = ->
       events.end.push fn
       @
     pump: ->
-      # console.log 'stack.length', stack.length
       return if running
       running = true
       if stack.length
         [handler, resolve, reject] = @next()
-        # console.log 'handler'
         res = handler.call()
         if Array.isArray res
           running = false
           handlers = res
           # stack.unshift handler for handler in handlers
-          promises = for handler in handlers
+          promises = for handler in handlers.reverse()
             new Promise (resolve, reject) ->
-              # console.log '  push'
               stack.unshift [handler, resolve, reject]
-          Promise.all promises
+          Promise.all promises.reverse()
           .then resolve, reject
           setImmediate ->
-            # console.log stack
             scheduler.pump()
           # handlers.map stack.unshift
         else if res.then
-          # console.log '  execute'
           res.then ->
             running = false
             resolve.apply handler, arguments
