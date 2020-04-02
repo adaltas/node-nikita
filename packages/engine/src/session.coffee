@@ -59,7 +59,6 @@ session = (action={}) ->
   # Register run helper
   action.run = ->
     run
-      metadata: depth: action.metadata.depth + 1
       parent: action
     , ...arguments
   setImmediate ->
