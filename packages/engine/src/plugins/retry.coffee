@@ -3,13 +3,12 @@
 error = require '../utils/error'
 
 module.exports = ->
-  'nikita:session:normalize': (action, handler) ->
+  'nikita:session:normalize': (action) ->
     # Move property from action to metadata
     for property in ['attempt', 'sleep', 'retry']
       if action.hasOwnProperty property
         action.metadata[property] = action[property]
         delete action[property]
-    handler
   'nikita:session:action': (action) ->
     action.metadata.attempt ?= 0
     action.metadata.retry ?= 1

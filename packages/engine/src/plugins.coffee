@@ -45,10 +45,14 @@ module.exports = ({action, chain, parent, plugins = []} = {}) ->
           silent: true
       # Call local hooks
       for hook in store
-        handler = await hook[name].call @, args, handler if hook[name]
+        if hook[name] then switch hook[name].length
+          when 1 then await hook[name].call @, args
+          when 2 then handler = await hook[name].call @, args, handler
       # Call user provided hooks
       if hooks then for hook in hooks
-        handler = await hook.call @, args, handler
+        switch hook.length
+          when 1 then await hook.call @, args
+          when 2 then handler = await hook.call @, args, handler
       # Call the final handler
       return handler if silent
       handler.call @, args if handler

@@ -3,12 +3,11 @@
 error = require '../utils/error'
 
 module.exports = ->
-  'nikita:session:normalize': (action, handler) ->
+  'nikita:session:normalize': (action) ->
     # Move property from action to metadata
     if action.hasOwnProperty 'relax'
       action.metadata.relax = action.relax
       delete action.relax
-    handler
   'nikita:session:action': (action) ->
     action.metadata.relax ?= false
     unless typeof action.metadata.relax is 'boolean'
