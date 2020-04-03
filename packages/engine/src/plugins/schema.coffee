@@ -48,25 +48,17 @@ module.exports = (action) ->
       schemas: ajv._schemas
       refs: ajv._refs
       fragments: ajv._fragments
-  'nikita:registry:normalize': (action, handler) ->
+  'nikita:registry:normalize': (action) ->
     action.metadata ?= {}
     if action.hasOwnProperty 'schema'
       action.metadata.schema = action.schema
       delete action.schema
-    action.metadata.schema ?= null
-    handler
-  'nikita:session:normalize': (action, handler) ->
-    # Move property from action to metadata
-    # schema = action.schema
+  'nikita:session:normalize': (action) ->
     if action.hasOwnProperty 'schema'
       action.metadata.schema = action.schema
-    action.metadata.schema ?= null
-    (action) ->
-      action = handler.call action.context, action
-      action.schema = schema
-      action
+      delete action.schema
   'nikita:session:action': (action) ->
-    action.metadata.schema ?= null
+    action.schema = schema
     if action.metadata.schema? and not is_object_literal action.metadata.schema
       throw error 'METADATA_SCHEMA_INVALID_VALUE', [
         "option `schema` expect aN object literal value,"
