@@ -6,22 +6,23 @@ return unless tags.api
 
 describe 'metadata "relax"', ->
 
-  it.skip 'sync', ->
-    nikita
-    .call relax: true, ->
+  it 'handler throw error', ->
+    {error} = await nikita.call relax: true, ->
       throw Error 'Dont worry, be happy'
-    , (err) ->
-      err.message.should.eql 'Dont worry, be happy'
-    .call -> # with parent
-      @call relax: true, (_, callback) ->
-        callback Error 'Dont cry, laugh outloud'
-      , (err) ->
-        err.message.should.eql 'Dont cry, laugh outloud'
-    .call ({}, callback) ->
-      callback null, true
-    .next (err, {status}) ->
-      (err is undefined).should.be.true()
-      status.should.be.true() unless err
+    error.message.should.eql 'Dont worry, be happy'
+
+  it 'handler return rejected promise', ->
+    {error} = await nikita.call relax: true, ->
+      new Promise (resolve, reject) ->
+        setImmediate ->
+          reject Error 'Dont worry, be happy'
+    error.message.should.eql 'Dont worry, be happy'
+
+  it 'handler return rejected promise', ->
+    nikita.call ({context}) ->
+      context.call ({context}) -> # with parent
+        context.call relax: true, ->
+          throw Error 'Dont cry, laugh outloud'
 
   it.skip 'sync with error throw in child', ->
     nikita

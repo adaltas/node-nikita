@@ -15,5 +15,19 @@ module.exports = ->
         "option `relax` expect a boolean value,"
         "got #{JSON.stringify action.metadata.relax}."
       ]
-  'nikita:session:handler:call': ({}, handler) ->
-    handler
+  'nikita:session:handler:call': ({action}, handler) ->
+    return handler unless action.metadata.relax
+    ({action}) ->
+      args = arguments
+      new Promise (resolve, reject) ->
+        try
+          prom = handler.apply action.context, args
+          if prom and prom.then
+            prom
+            .then resolve
+            .catch (err) ->
+              resolve error: err
+          else
+            prom
+        catch err
+          resolve error: err
