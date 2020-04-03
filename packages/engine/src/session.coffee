@@ -108,8 +108,7 @@ session = (action={}) ->
       Promise.all([output, on_end])
       .then (values) ->
         resolve values.shift()
-      , (err) ->
-        reject err
+      , reject
     catch err
       reject err
   # Returning a proxified promise:
