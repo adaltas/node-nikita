@@ -15,10 +15,11 @@ module.exports = ->
         ] if conditions[property]
         value = [value] unless Array.isArray value
         conditions[property] = value
-      else
-        new_action[property] = value
+        delete action[property]
+      # else
+      #   new_action[property] = value
     ->
-      arguments[0] = new_action
+      # arguments[0] = new_action
       action = handler.call null, ...arguments
       action.conditions = conditions
       action
