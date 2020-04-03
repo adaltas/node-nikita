@@ -3,13 +3,12 @@
 error = require '../utils/error'
 
 module.exports = ->
-  'nikita:session:normalize': (action, handler) ->
+  'nikita:session:normalize': (action) ->
     # Move property from action to metadata
     if action.hasOwnProperty 'depth'
       action.metadata.depth = action.depth
       delete action.depth
     action.metadata.depth = if action.parent then action.parent.metadata.depth + 1 else 0
-    handler
   'nikita:session:action': (action) ->
     # action.metadata.depth ?= 0
     unless typeof action.metadata.depth is 'number'
