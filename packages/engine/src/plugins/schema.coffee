@@ -2,6 +2,7 @@
 error = require '../utils/error'
 Ajv = require 'ajv'
 ajv_keywords = require 'ajv-keywords'
+{is_object_literal} = require 'mixme'
 
 parse = (uri) ->
   matches = /^(\w+:)\/\/(.*)/.exec uri
@@ -13,7 +14,7 @@ parse = (uri) ->
   protocol: matches[1]
   pathname: matches[2]
 
-module.exports = ({registry}) ->
+module.exports = (action) ->
   ajv = new Ajv
     $data: true
     allErrors: true
@@ -30,7 +31,7 @@ module.exports = ({registry}) ->
             accept action.schema
           when 'registry:'
             module = pathname.split '/'
-            action = registry.get module
+            action = action.registry.get module
             accept action.metadata.schema
   ajv_keywords ajv
   schema =
@@ -47,11 +48,30 @@ module.exports = ({registry}) ->
       schemas: ajv._schemas
       refs: ajv._refs
       fragments: ajv._fragments
+  'nikita:registry:normalize': (action, handler) ->
+    action.metadata ?= {}
+    if action.hasOwnProperty 'schema'
+      action.metadata.schema = action.schema
+      delete action.schema
+    action.metadata.schema ?= null
+    handler
   'nikita:session:normalize': (action, handler) ->
+    # Move property from action to metadata
+    # schema = action.schema
+    if action.hasOwnProperty 'schema'
+      action.metadata.schema = action.schema
+    action.metadata.schema ?= null
     (action) ->
       action = handler.call action.context, action
       action.schema = schema
       action
+  'nikita:session:action': (action) ->
+    action.metadata.schema ?= null
+    if action.metadata.schema? and not is_object_literal action.metadata.schema
+      throw error 'METADATA_SCHEMA_INVALID_VALUE', [
+        "option `schema` expect aN object literal value,"
+        "got #{JSON.stringify action.metadata.schema}."
+      ]
   'nikita:session:handler:call': ({action}, handler) ->
     return handler unless action.metadata.schema
     errors = await schema.validate action.options, action.metadata.schema

@@ -5,7 +5,7 @@ Management facility to register and unregister actions.
 
 ## Register all functions
 
-    create = ({chain, on_register, parent} = {}) ->
+    create = ({chain, on_register, parent, plugins} = {}) ->
       store = {}
       obj =
         chain: chain
@@ -169,7 +169,15 @@ nikita
             property = name[i]
             child_store[property] ?= {}
             child_store = child_store[property]
-          [action] = ventilate [action]
+          # Hook attented to modify the current action being created
+          if plugins
+            action = await plugins.hook
+              name: 'nikita:registry:normalize'
+              args: action
+              handler: (action) ->
+                args_to_actions.normalize action
+          else
+            action = args_to_actions.normalize action
           child_store[''] = action
           if on_register
             await on_register name, action
@@ -178,18 +186,27 @@ nikita
             for k, v of store
               if k isnt '' and v and typeof v is 'object' and not Array.isArray(v) and not v.handler
                 namespace.push k
-                walk namespace, v
+                await walk namespace, v
               else
-                if typeof v.handler is 'string'
-                  v = merge v, obj.load v
-                if v.handler? and typeof v.handler isnt 'function'
-                  throw Error "Invalid Handler: expect a function, got #{v.handler}"
+                action = v
+                if typeof action.handler is 'string'
+                  action = merge action, obj.load action
+                if action.handler? and typeof action.handler isnt 'function'
+                  throw Error "Invalid Handler: expect a function, got #{action.handler}"
                 namespace.push k
-                [v] = ventilate [v]
-                store[k] = if k is '' then v else '': v
+                if plugins
+                  action = await plugins.hook
+                    name: 'nikita:registry:normalize'
+                    args: action
+                    handler: (action) ->
+                      args_to_actions.normalize action
+                else
+                  action = args_to_actions.normalize action
+                store[k] = if k is '' then action else
+                  '': action
                 if on_register
-                  await on_register namespace, v
-          walk [], name
+                  await on_register namespace, action
+          await walk [], name
           mutate store, name
         obj.chain or obj
 
@@ -265,6 +282,6 @@ Remove an action from registry.
 ## Dependencies
 
     {is_object, merge, mutate} = require 'mixme'
-    {ventilate} = require './args_to_actions'
+    args_to_actions = require './args_to_actions'
 
 [deprecate]: https://nodejs.org/api/util.html#util_util_deprecate_function_string

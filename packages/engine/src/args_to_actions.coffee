@@ -26,18 +26,16 @@ module.exports.build = (args) ->
           mutate new_action, metadata: argument: arg
     new_action
 
-module.exports.normalize = (actions) ->
-  actions = ventilate actions
-  actions = values actions
-  actions
-
-module.exports.ventilate = ventilate = (action) ->
+module.exports.normalize = normalize = (action) ->
   if Array.isArray action
-    return action.map (action) -> ventilate action
+    return action.map (action) -> normalize action
   new_action =
     metadata: action.metadata or {}
     options: action.options or {}
     hooks: action.hooks or {}
+  if action.namespace
+    action.metadata.namespace = action.namespace
+    delete action.namespace
   for property, value of action
     if property is 'metadata'
       continue # Already merged before
@@ -55,40 +53,11 @@ module.exports.ventilate = ventilate = (action) ->
       new_action.options[property] = value
   new_action
 
-module.exports.values = values = (action) ->
-  if Array.isArray action
-    return action.map (action) -> values action
-  for property, value of properties.metadata
-    action.metadata[property] ?= value
-  action
-
 module.exports.properties = properties =
   context: undefined
   handler: undefined
   hooks: {}
-  metadata:
-    # address: null
-    # after: null
-    argument: null
-    # attempt: -1
-    # before: null
-    # cascade: {}
-    debug: false
-    deprecate: false
-    # depth: 0
-    # disabled: false
-    # get: false
-    header: []
-    log: null
-    namespace: []
-    once: false
-    # relax: false
-    # retry: 0
-    schema: null
-    shy: false
-    # sleep: 3000
-    status: true
-    tolerant: false
+  metadata: {}
   parent: null
   registry: null
   options: {}
