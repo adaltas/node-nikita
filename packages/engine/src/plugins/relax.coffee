@@ -11,7 +11,7 @@ module.exports = ->
     handler
   'nikita:session:action': (action) ->
     action.metadata.relax ?= false
-    unless typeof action.metadata[property] is 'boolean'
+    unless typeof action.metadata.relax is 'boolean'
       throw error 'METADATA_RELAX_INVALID_VALUE', [
         "option `relax` expect a boolean value,"
         "got #{JSON.stringify action.metadata.relax}."

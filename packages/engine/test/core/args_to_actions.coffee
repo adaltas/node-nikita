@@ -1,6 +1,6 @@
 
 args_to_actions = require '../../src/args_to_actions'
-{build, ventilate} = args_to_actions
+{build, normalize} = args_to_actions
 
 # Test the construction of the session namespace stored in state
 
@@ -17,7 +17,7 @@ describe 'args_to_actions', ->
         options: c: ''
       ]
       # String is place before objects
-      ventilate build [
+      normalize build [
         (->)
         [{b: ''}, {c: ''}]
       ]
@@ -27,7 +27,7 @@ describe 'args_to_actions', ->
         options: el.options
       .should.eql expect
       # String is place after objects
-      ventilate build [
+      normalize build [
         [{b: ''}, {c: ''}]
         (->)
       ]
@@ -46,7 +46,7 @@ describe 'args_to_actions', ->
         options: c: ''
       ]
       # String is place before objects
-      ventilate build [
+      normalize build [
         'a'
         [{b: ''}, {c: ''}]
       ]
@@ -56,7 +56,7 @@ describe 'args_to_actions', ->
         options: el.options
       .should.eql expect
       # String is place after objects
-      ventilate build [
+      normalize build [
         [{b: ''}, {c: ''}]
         'a'
       ]

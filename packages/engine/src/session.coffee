@@ -8,7 +8,8 @@ error = require './utils/error'
 
 session = (action={}) ->
   action = merge
-    metadata: {}
+    metadata:
+      namespace: []
     state:
       namespace: []
   , action
@@ -43,8 +44,15 @@ session = (action={}) ->
         when 'plugins' then return action.plugins
     action.state.namespace.push name
     new Proxy on_call, get: on_get
+  # Initialize the plugins manager
+  action.plugins = plugins
+    plugins: action.plugins
+    chain: new Proxy on_call, get: on_get
+    parent: if action.parent then action.parent.plugins else undefined
+    action: action
   # Initialize the registry to manage action registration
   action.registry = registry.create
+    plugins: action.plugins
     parent: if action.parent then action.parent.registry else registry
     on_register: (name, act) ->
       await action.plugins.hook
@@ -52,12 +60,6 @@ session = (action={}) ->
         args:
           name: name
           action: act
-  # Initialize the plugins manager
-  action.plugins = plugins
-    plugins: action.plugins
-    chain: new Proxy on_call, get: on_get
-    parent: if action.parent then action.parent.plugins else undefined
-    action: action
   # Local scheduler
   action.scheduler = schedule()
   # Register run helper
@@ -73,17 +75,14 @@ session = (action={}) ->
   result = new Promise (resolve, reject) ->
     # Make sure the promise is resolved after the scheduler and its children
     on_end = new Promise (resolve, reject) ->
-      action.scheduler.on_end ->
-        resolve()
+      action.scheduler.on_end resolve
     # Hook attented to modify the current action being created
     action = await action.plugins.hook
       name: 'nikita:session:normalize'
       args: action
       hooks: action.hooks?.on_normalize or action.on_normalize
       handler: (action) ->
-        # TODO: remove default from normalize
-        action = args_to_actions.normalize action
-        action
+        args_to_actions.normalize action
     # Load action from registry
     if action.metadata.namespace
       action_from_registry = action.registry.get action.metadata.namespace
@@ -98,7 +97,7 @@ session = (action={}) ->
         silent: true # TODO: support undefined handler in plugins
       output = action.plugins.hook
         name: 'nikita:session:handler:call'
-        # promisify: true # TODO: convert output and error to promises if already one
+        # promisify: true # TODO: convert output and error to promises unless already one
         args:
           action: action
         handler: ({action}) ->

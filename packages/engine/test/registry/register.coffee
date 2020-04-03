@@ -51,7 +51,7 @@ describe 'registry.register', ->
 
     it 'namespace is object with empty key', ->
       reg = registry.create()
-      reg.register
+      await reg.register
         'my': 'actions':
           '': key: 1, handler: (->)
           'child': key: 2, handler: (->)

@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 
-describe 'plugin.schema.action', ->
+describe 'plugin.schema', ->
 
   it 'registered inside action', ->
     nikita ({schema}) ->
@@ -79,11 +79,11 @@ describe 'plugin.schema.action', ->
           handler: (->)
       # Valid schema
       .call
-        split: an_integer: 1234
+        an_object: an_integer: 1234
         schema:
           type: 'object'
           properties:
-            'split': $ref: 'registry://test/schema'
+            'an_object': $ref: 'registry://test/schema'
         handler: (->)
 
     it 'invalid', ->
@@ -97,13 +97,13 @@ describe 'plugin.schema.action', ->
               'an_integer': type: 'integer'
           handler: (->)
       .call
-        split: an_integer: 'abc'
+        an_object: an_integer: 'abc'
         schema:
           type: 'object'
           properties:
-            'split': $ref: 'registry://test/schema'
+            'an_object': $ref: 'registry://test/schema'
         handler: (->)
-      .should.be.rejectedWith 'data.split.an_integer should be integer'
+      .should.be.rejectedWith 'data.an_object.an_integer should be integer'
   
   describe 'constructor', ->
 
