@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 
-describe 'actions `on_normalize`', ->
+describe 'action `on_normalize`', ->
 
   it 'call action from global registry', ->
     nikita.call

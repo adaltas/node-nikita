@@ -4,35 +4,28 @@ registry = require '../../src/registry'
 
 describe 'registry.register', ->
 
-  describe 'global', ->
+  describe 'namespace', ->
 
     it 'options chain default to current registry', ->
       reg = registry.create()
       (await reg.register('action', (->))).should.eql reg
 
-    it 'namespace is an array', ->
+    it 'is an array', ->
       reg = await registry
       .create()
       .register ['this', 'is', 'a', 'function'], key: 'value', handler: (->)
       reg.get ['this', 'is', 'a', 'function']
       .options.key.should.eql 'value'
 
-    it 'register is a string', ->
+    it 'is a string', ->
       reg = await registry
       .create()
       .register 'my_function', key: 'value', handler: (->)
       reg
       .get 'my_function'
       .options.key.should.eql 'value'
-      # action = await nikita
-      # .registry.register
-      #   options:
-      #     namespace: 'my_function'
-      #     action: key: 'value', handler: (->)
-      # .registry.get options: namespace: 'my_function'
-      # action.options.key.should.eql 'value'
 
-    it 'register an object', ->
+    it 'is an object', ->
       reg = await registry
       .create()
       .register
@@ -65,64 +58,45 @@ describe 'registry.register', ->
       reg.get(['a', 'function']).options.key.should.eql 1
       reg.get(['a', 'function', 'with', 'child']).options.key.should.eql 2
 
-  describe 'local', ->
+  describe 'value', ->
 
-    it.skip 'register a function', ->
-      n = nikita()
-      n.registry.register 'my_function', (->)
-      n.registry.registered('my_function').should.be.true()
+    it 'is a function', ->
+      reg = registry.create()
+      reg.register 'an_action', (-> 'ok')
+      reg.registered 'an_action'
 
-    it.skip 'call a function', ->
-      nikita()
-      .registry.register 'my_function', ({options}, callback) -> callback null, a_key: options.a_key
-      .my_function a_key: 'a value', (err, {a_key}) ->
-        a_key.should.eql 'a value'
-      .promise()
+    it 'is an object', ->
+      reg = registry.create()
+      reg.register 'an_action', a_key: 'a value', handler: (->)
+      reg.registered 'an_action'
 
-    it.skip 'overwrite a middleware', ->
-      nikita()
-      .registry.register 'my_function', -> 'my_function'
-      .registry.register 'my_function', -> 'my_function'
-      .promise()
+    it 'is a string', ->
+      # Room for improvement in the future
+      nikita ({registry}) ->
+        await registry.register 'an_action', '@nikitajs/engine/src/actions/ssh'
+        result = await @registry.registered options: namespace: 'an_action'
+        .should.resolvedWith true
+        {metadata, options} = await @registry.get options: namespace: 'an_action'
+        metadata.module.should.eql '@nikitajs/engine/src/actions/ssh'
+        options.should.eql {}
 
-    it.skip 'register an object', ->
-      value_a = value_b = null
-      n = nikita()
-      n.registry.register 'my_function', shy: true, handler: (->)
-      n.registry.register  'my': 'function': shy: true, handler: (->)
-      n.registry.registered('my_function').should.be.true()
-      n.registry.registered(['my', 'function']).should.be.true()
-      n.promise()
-
-    it.skip 'call an object', ->
-      nikita()
-      .registry.register( 'my_function', shy: true, handler: ({options}, callback) ->
-        callback null, a_key: options.a_key
-      )
-      .registry.register( 'my': 'function': shy: true, handler: ({options}, callback) ->
-        callback null, a_key: options.a_key
-      )
-      .my_function a_key: 'a value', (err, {a_key}) ->
-        a_key.should.eql 'a value'
-      .my.function a_key: 'a value', (err, {a_key}) ->
-        a_key.should.eql 'a value'
-      .promise()
-
-    it.skip 'overwrite middleware options', ->
-      value_a = value_b = null
-      nikita()
-      .registry.register( 'my_function', key: 'a', handler: (->) )
-      .registry.register( 'my_function', key: 'b', handler: ({options}) -> value_a = "Got #{options.key}" )
-      .registry.register
-        'my': 'function': key: 'a', handler: (->)
-      .registry.register
-        'my': 'function': key: 'b', handler: ({options}) -> value_b = "Got #{options.key}"
-      .my_function()
-      .my.function()
-      .call ->
-        value_a.should.eql "Got b"
-        value_b.should.eql "Got b"
-      .promise()
+    it 'is a string', ->
+      # Room for improvement in the future
+      nikita ({registry}) ->
+        await registry.register
+          'an_action':
+            '': '@nikitajs/engine/src/actions/ssh'
+            'child': '@nikitajs/engine/src/actions/ssh'
+        result = await @registry.registered options: namespace: 'an_action'
+        .should.resolvedWith true
+        result = await @registry.registered options: namespace: ['an_action', 'child']
+        .should.resolvedWith true
+        {metadata, options} = await @registry.get options: namespace: 'an_action'
+        metadata.module.should.eql '@nikitajs/engine/src/actions/ssh'
+        options.should.eql {}
+        {metadata, options} = await @registry.get options: namespace: ['an_action', 'child']
+        metadata.module.should.eql '@nikitajs/engine/src/actions/ssh'
+        options.should.eql {}
 
     it.skip 'receive options', ->
       n = nikita()

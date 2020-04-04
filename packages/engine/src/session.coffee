@@ -34,7 +34,7 @@ session = (action={}) ->
     new Proxy prom, get: on_get
   # Building the namespace before calling an action
   on_get = (target, name) ->
-    if target[name]? and not action.registry.get(name)
+    if target[name]? and not action.registry.registered name
       if typeof target[name] is 'function'
         return target[name].bind target
       else
@@ -60,13 +60,11 @@ session = (action={}) ->
         args:
           name: name
           action: act
-  # Local scheduler
-  action.scheduler = schedule()
   # Register run helper
   action.run = ->
-    run
-      parent: action
-    , ...arguments
+    run parent: action, ...arguments
+  # Local scheduler
+  action.scheduler = schedule()
   setImmediate ->
     action.scheduler.pump()
   # Expose the action context
@@ -76,7 +74,7 @@ session = (action={}) ->
     # Make sure the promise is resolved after the scheduler and its children
     on_end = new Promise (resolve, reject) ->
       action.scheduler.on_end resolve
-    # Hook attented to modify the current action being created
+    # Hook intented to modify the current action being created
     action = await action.plugins.hook
       name: 'nikita:session:normalize'
       args: action
@@ -107,9 +105,13 @@ session = (action={}) ->
           resolve output
       Promise.all([output, on_end])
       .then (values) ->
-        resolve values.shift()
-      , reject
+        action.output = values.shift()
+        resolve action.output
+      , (err) ->
+        action.error = err
+        reject err
     catch err
+      action.error = err
       reject err
   # Returning a proxified promise:
   # - news action can be registered to it as long as the promised has not fulfilled
