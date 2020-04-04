@@ -14,6 +14,9 @@ module.exports =
       parent.registry.registered options.namespace
     'unregister': handler: ({parent, options}) ->
       parent.registry.unregister options.namespace
+  'ssh':
+    '': '@nikitajs/engine/src/actions/ssh'
+    'open': '@nikitajs/engine/src/actions/ssh/open'
 (->
   await registry.register module.exports
 )()
