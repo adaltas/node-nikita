@@ -45,8 +45,6 @@ module.exports.normalize = normalize = (action) ->
       continue # Already merged before
     else if property in properties_root
       new_action[property] = value
-    else if property in properties_metadata
-      new_action.metadata[property] = value
     else if /^on_/.test property
       new_action.hooks[property] = value
     else
@@ -68,4 +66,3 @@ module.exports.properties = properties =
   run: undefined
 
 properties_root = Object.keys properties
-properties_metadata = Object.keys properties.metadata

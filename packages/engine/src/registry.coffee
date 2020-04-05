@@ -64,6 +64,7 @@ create = ({chain, on_register, parent, plugins} = {}) ->
       options = namespace
       namespace = null
     options ?= {}
+    options.normalize ?= true
     unless namespace
       # Flatten result
       if options.flatten
@@ -99,6 +100,7 @@ create = ({chain, on_register, parent, plugins} = {}) ->
       # return child_store[n] if child_store[n] and i is namespace.length
       if child_store[n] and i is namespace.length
         action = child_store[n]
+        return action unless options.normalize
         return if plugins
           # Hook attented to modify an action returned by the registry
           await plugins.hook
@@ -110,7 +112,17 @@ create = ({chain, on_register, parent, plugins} = {}) ->
           args_to_actions.normalize action
       child_store = child_store[n]
     if parent
-    then parent.get namespace, options
+      action = await parent.get namespace, {...options, normalize: false}
+      return null unless action?
+      action = if plugins
+        action = await plugins.hook
+          name: 'nikita:registry:normalize'
+          args: action
+          handler: (action) ->
+            args_to_actions.normalize action
+      else
+        args_to_actions.normalize action
+      return action
     else null
 
 # ## Register
