@@ -83,7 +83,7 @@ session = (action={}) ->
         args_to_actions.normalize action
     # Load action from registry
     if action.metadata.namespace
-      action_from_registry = action.registry.get action.metadata.namespace
+      action_from_registry = await action.registry.get action.metadata.namespace
       # Merge the registry action with the user action properties
       action = merge action_from_registry, action
     try
