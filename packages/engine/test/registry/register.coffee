@@ -15,15 +15,14 @@ describe 'registry.register', ->
       .create()
       .register ['this', 'is', 'a', 'function'], key: 'value', handler: (->)
       reg.get ['this', 'is', 'a', 'function']
-      .options.key.should.eql 'value'
+      .then ({options}) -> options.key.should.eql 'value'
 
     it 'is a string', ->
       reg = await registry
       .create()
       .register 'my_function', key: 'value', handler: (->)
-      reg
-      .get 'my_function'
-      .options.key.should.eql 'value'
+      reg.get 'my_function'
+      .then ({options}) -> options.key.should.eql 'value'
 
     it 'is an object', ->
       reg = await registry
@@ -32,7 +31,7 @@ describe 'registry.register', ->
         'my': 'function': key: 'value', handler: (->)
       reg
       .get ['my', 'function']
-      .options.key.should.eql 'value'
+      .then ({options}) -> options.key.should.eql 'value'
 
     it 'overwrite an existing action', ->
       reg = registry.create()
@@ -40,7 +39,7 @@ describe 'registry.register', ->
       reg.register 'my_function', key: 2, handler: -> 'my_function'
       reg
       .get 'my_function'
-      .options.key.should.eql 2
+      .then ({options}) -> options.key.should.eql 2
 
     it 'namespace is object with empty key', ->
       reg = registry.create()
@@ -48,15 +47,19 @@ describe 'registry.register', ->
         'my': 'actions':
           '': key: 1, handler: (->)
           'child': key: 2, handler: (->)
-      reg.get(['my', 'actions']).options.key.should.eql 1
-      reg.get(['my', 'actions', 'child']).options.key.should.eql 2
+      reg.get(['my', 'actions'])
+      .then ({options}) -> options.key.should.eql 1
+      reg.get(['my', 'actions', 'child'])
+      .then ({options}) -> options.key.should.eql 2
 
     it 'namespace with children', ->
       reg = registry.create()
       reg.register ['a', 'function'], key: 1, handler: (->)
       reg.register ['a', 'function', 'with', 'child'], key: 2, handler: (->)
-      reg.get(['a', 'function']).options.key.should.eql 1
-      reg.get(['a', 'function', 'with', 'child']).options.key.should.eql 2
+      reg.get(['a', 'function'])
+      .then ({options}) -> options.key.should.eql 1
+      reg.get(['a', 'function', 'with', 'child'])
+      .then ({options}) -> options.key.should.eql 2
 
   describe 'value', ->
 

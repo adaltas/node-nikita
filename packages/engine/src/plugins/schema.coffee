@@ -31,7 +31,7 @@ module.exports = (action) ->
             accept action.schema
           when 'registry:'
             module = pathname.split '/'
-            action = action.registry.get module
+            action = await action.registry.get module
             accept action.metadata.schema
   ajv_keywords ajv
   schema =
