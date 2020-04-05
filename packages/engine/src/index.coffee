@@ -10,6 +10,7 @@ session = require './session'
 create = ->
   session plugins: [
     require './plugins/depth'
+    require './plugins/status'
     require './plugins/conditions'
     require './plugins/schema'
     require './plugins/disabled'
