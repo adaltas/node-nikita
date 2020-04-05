@@ -59,19 +59,19 @@ create = ({chain, on_register, parent, plugins} = {}) ->
 # * `flatten`
 # * `deprecate`
 
-  obj.get = (name, options) ->
+  obj.get = (namespace, options) ->
     if arguments.length is 1 and is_object arguments[0]
-      options = name
-      name = null
+      options = namespace
+      namespace = null
     options ?= {}
-    unless name
+    unless namespace
       # Flatten result
       if options.flatten
         actions = []
         walk = (store, keys) ->
           for k, v of store
             if k is ''
-              continue if v.metadata.deprecate and not options.deprecate
+              continue if v.metadata?.deprecate and not options.deprecate
               # flatstore[keys.join '.'] = merge v
               v.action = keys
               actions.push merge v
@@ -85,21 +85,32 @@ create = ({chain, on_register, parent, plugins} = {}) ->
           res = {}
           for k, v of store
             if k is ''
-              continue if v.metadata.deprecate and not options.deprecate
+              continue if v.metadata?.deprecate and not options.deprecate
               res[k] = merge v
             else
               v = walk v, [keys..., k]
               res[k] = v unless Object.values(v).length is 0
           res
         return walk store, []
-    name = [name] if typeof name is 'string'
+    namespace = [namespace] if typeof namespace is 'string'
     child_store = store
-    for n, i in name.concat ['']
+    for n, i in namespace.concat ['']
       break unless child_store[n]
-      return child_store[n] if child_store[n] and i is name.length
+      # return child_store[n] if child_store[n] and i is namespace.length
+      if child_store[n] and i is namespace.length
+        action = child_store[n]
+        return if plugins
+          # Hook attented to modify an action returned by the registry
+          await plugins.hook
+            name: 'nikita:registry:normalize'
+            args: action
+            handler: (action) ->
+              args_to_actions.normalize action
+        else
+          args_to_actions.normalize action
       child_store = child_store[n]
     if parent
-    then parent.get name, options
+    then parent.get namespace, options
     else null
 
 # ## Register
@@ -156,31 +167,22 @@ create = ({chain, on_register, parent, plugins} = {}) ->
 # .sixth.action(options);
 # ```
 
-  obj.register = (name, action) ->
-    name = [name] if typeof name is 'string'
-    if Array.isArray name
+  obj.register = (namespace, action) ->
+    namespace = [namespace] if typeof namespace is 'string'
+    if Array.isArray namespace
       return obj.chain or obj if action is undefined
       if typeof action is 'string'
         action = obj.load action
       else if typeof action is 'function'
         action = handler: action
       child_store = store
-      for i in [0...name.length]
-        property = name[i]
+      for i in [0...namespace.length]
+        property = namespace[i]
         child_store[property] ?= {}
         child_store = child_store[property]
-      # Hook attented to modify the current action being created
-      if plugins
-        action = await plugins.hook
-          name: 'nikita:registry:normalize'
-          args: action
-          handler: (action) ->
-            args_to_actions.normalize action
-      else
-        action = args_to_actions.normalize action
       child_store[''] = action
       if on_register
-        await on_register name, action
+        await on_register namespace, action
     else
       walk = (namespace, store) ->
         for k, action of store
@@ -193,20 +195,12 @@ create = ({chain, on_register, parent, plugins} = {}) ->
             else if typeof action is 'function'
               action = handler: action
             namespace.push k
-            if plugins
-              action = await plugins.hook
-                name: 'nikita:registry:normalize'
-                args: action
-                handler: (action) ->
-                  args_to_actions.normalize action
-            else
-              action = args_to_actions.normalize action
             store[k] = if k is '' then action else
               '': action
             if on_register
               await on_register namespace, action
-      await walk [], name
-      mutate store, name
+      await walk [], namespace
+      mutate store, namespace
     obj.chain or obj
 
 # ## Deprecate

@@ -11,7 +11,7 @@ describe 'hooks', ->
       nikita ({context, plugins, registry}) ->
         plugins.register
           'nikita:registry:action:register': ({action}, handler)->
-            action.options.key = 'new value'
+            action.key = 'new value'
             handler
         context.registry.register
           action:
@@ -27,7 +27,7 @@ describe 'hooks', ->
           'nikita:registry:action:register': ({action}, handler)->
             new Promise (accept, reject) ->
               setImmediate ->
-                action.options.key = 'new value'
+                action.key = 'new value'
                 accept handler
         context.registry.register
           action:
