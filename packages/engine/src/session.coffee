@@ -25,12 +25,21 @@ session = (action={}) ->
           'no action is registered under this namespace,'
           "got #{JSON.stringify namespace}."
         ]
-      args = [...args, parent: action, metadata: namespace: namespace]
       args_is_array = args.some (arg) -> Array.isArray arg
-      actions = args_to_actions.build args
+      actions = await action.plugins.hook
+        name: 'nikita:session:actions:arguments'
+        args:
+          args: args
+          parent: action
+          namespace: namespace
+        handler: ->
+          args = [...args, parent: action, metadata: namespace: namespace]
+          args_to_actions.build args
       unless args_is_array
       then session actions[0]
-      else actions.map (action) -> -> session action
+      else
+        handlers = actions.map (action) -> -> session action
+        action.scheduler.add(handlers, force: true)
     new Proxy prom, get: on_get
   # Building the namespace before calling an action
   on_get = (target, name) ->
