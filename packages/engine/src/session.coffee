@@ -3,7 +3,8 @@
 registry = require './registry'
 schedule = require './schedule'
 plugins = require './plugins'
-args_to_actions = require './args_to_actions'
+contextualize = require './action/contextualize'
+normalize = require './action/normalize'
 error = require './utils/error'
 
 session = (action={}) ->
@@ -20,23 +21,24 @@ session = (action={}) ->
     action.state.namespace = []
     prom = action.scheduler.add ->
       # Validate the namespace
-      unless action.registry.registered namespace
+      child = await action.registry.get namespace
+      unless child
         return Promise.reject error 'ACTION_UNREGISTERED_NAMESPACE', [
           'no action is registered under this namespace,'
           "got #{JSON.stringify namespace}."
         ]
-      args_is_array = args.some (arg) -> Array.isArray arg
       actions = await action.plugins.hook
         name: 'nikita:session:actions:arguments'
         args:
           args: args
+          child: child
           parent: action
           namespace: namespace
-        handler: ->
-          args = [...args, parent: action, metadata: namespace: namespace]
-          args_to_actions.build args
-      unless args_is_array
-      then session actions[0]
+        handler: ({args, parent, namespace}) ->
+          args = [...args, parent: parent, metadata: namespace: namespace]
+          contextualize args
+      unless Array.isArray actions
+        session actions
       else
         handlers = actions.map (action) -> -> session action
         action.scheduler.add(handlers, force: true)
@@ -89,7 +91,7 @@ session = (action={}) ->
       args: action
       hooks: action.hooks?.on_normalize or action.on_normalize
       handler: (action) ->
-        args_to_actions.normalize action
+        normalize action
     # Load action from registry
     if action.metadata.namespace
       action_from_registry = await action.registry.get action.metadata.namespace
@@ -129,8 +131,8 @@ session = (action={}) ->
   new Proxy result, get: on_get
 
 module.exports = run = (...args) ->
-  # Are we scheduling multiple actions
-  args_is_array = args.some (arg) -> Array.isArray arg
-  actions = args_to_actions.build args
-  proms = actions.map (action) -> session action
-  if args_is_array then Promise.all(proms) else proms[0]
+  actions = contextualize args
+  # Are we scheduling one or multiple actions
+  if Array.isArray actions
+  then Promise.all actions.map (action) -> session action
+  else session actions

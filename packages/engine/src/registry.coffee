@@ -107,9 +107,9 @@ create = ({chain, on_register, parent, plugins} = {}) ->
             name: 'nikita:registry:normalize'
             args: action
             handler: (action) ->
-              args_to_actions.normalize action
+              normalize action
         else
-          args_to_actions.normalize action
+          normalize action
       child_store = child_store[n]
     if parent
       action = await parent.get namespace, {...options, normalize: false}
@@ -119,9 +119,9 @@ create = ({chain, on_register, parent, plugins} = {}) ->
           name: 'nikita:registry:normalize'
           args: action
           handler: (action) ->
-            args_to_actions.normalize action
+            normalize action
       else
-        args_to_actions.normalize action
+        normalize action
       return action
     else null
 
@@ -287,4 +287,4 @@ module.exports = create()
 ## Dependencies
 
 {is_object, merge, mutate} = require 'mixme'
-args_to_actions = require './args_to_actions'
+normalize = require './action/normalize'

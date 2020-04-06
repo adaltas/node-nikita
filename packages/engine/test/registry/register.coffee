@@ -77,9 +77,9 @@ describe 'registry.register', ->
       # Room for improvement in the future
       nikita ({registry}) ->
         await registry.register 'an_action', '@nikitajs/engine/src/actions/ssh'
-        result = await @registry.registered options: namespace: 'an_action'
+        result = await @registry.registered 'an_action'
         .should.resolvedWith true
-        {metadata, options} = await @registry.get options: namespace: 'an_action'
+        {metadata, options} = await @registry.get 'an_action'
         metadata.module.should.eql '@nikitajs/engine/src/actions/ssh'
         options.should.eql {}
 
@@ -90,14 +90,14 @@ describe 'registry.register', ->
           'an_action':
             '': '@nikitajs/engine/src/actions/ssh'
             'child': '@nikitajs/engine/src/actions/ssh'
-        result = await @registry.registered options: namespace: 'an_action'
+        result = await @registry.registered 'an_action'
         .should.resolvedWith true
-        result = await @registry.registered options: namespace: ['an_action', 'child']
+        result = await @registry.registered ['an_action', 'child']
         .should.resolvedWith true
-        {metadata, options} = await @registry.get options: namespace: 'an_action'
+        {metadata, options} = await @registry.get 'an_action'
         metadata.module.should.eql '@nikitajs/engine/src/actions/ssh'
         options.should.eql {}
-        {metadata, options} = await @registry.get options: namespace: ['an_action', 'child']
+        {metadata, options} = await @registry.get ['an_action', 'child']
         metadata.module.should.eql '@nikitajs/engine/src/actions/ssh'
         options.should.eql {}
 

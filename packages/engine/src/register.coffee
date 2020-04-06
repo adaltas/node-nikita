@@ -6,14 +6,14 @@ module.exports =
   'call':
     '': {}
   'registry':
-    'get': raw: true, handler: ({parent, options}) ->
-      parent.registry.get options.namespace
-    'register': raw: true, handler: ({parent, options}) ->
-      parent.registry.register options.action.namespace, options.action
-    'registered': raw: true, handler: ({parent, options}) ->
-      parent.registry.registered options.namespace
-    'unregister': raw: true, handler: ({parent, options}) ->
-      parent.registry.unregister options.namespace
+    'get': raw: true, handler: ({parent, options: [namespace]}) ->
+      parent.registry.get namespace
+    'register': raw: true, handler: ({parent, options: [namespace, action]}) ->
+      parent.registry.register namespace, action
+    'registered': raw: true, handler: ({parent, options: [namespace]}) ->
+      parent.registry.registered namespace
+    'unregister': raw: true, handler: ({parent, options: [namespace]}) ->
+      parent.registry.unregister namespace
   'ssh':
     '': '@nikitajs/engine/src/actions/ssh'
     'open': '@nikitajs/engine/src/actions/ssh/open'

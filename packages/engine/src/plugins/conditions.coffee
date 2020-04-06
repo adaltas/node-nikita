@@ -3,7 +3,7 @@ session = require '../session'
 
 module.exports = ->
   # Require the `raw` option
-  # require: '@nikitajs/engine/src/plugins/status'
+  # require: '@nikitajs/engine/src/plugins/raw'
   'nikita:session:normalize': (action, handler) ->
     # return handler
     # Ventilate conditions properties defined at root
@@ -52,7 +52,7 @@ handlers =
               metadata:
                 condition: true
                 depth: action.metadata.depth
-                raw: true
+                raw_output: true
               parent: action
               handler: condition
               options: action.options
@@ -76,7 +76,7 @@ handlers =
               metadata:
                 condition: true
                 depth: action.metadata.depth
-                raw: true
+                raw_output: true
               parent: action
               handler: condition
               options: action.options

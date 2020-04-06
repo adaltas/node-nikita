@@ -10,31 +10,22 @@ describe 'plugin.original', ->
 
   it 'argument is an object', ->
     nikita
-    .registry.register
-      action:
-        namespace: ['an', 'action']
-        handler: (action) -> action
+    .registry.register  ['an', 'action'], (action) -> action
     .an.action a_key: 'a value'
     .then (action) ->
       action.metadata.original.should.eql [ a_key: 'a value' ]
 
   it 'argument is a string', ->
     nikita
-    .registry.register
-      action:
-        namespace: ['an', 'action']
-        handler: (action) -> action
+    .registry.register ['an', 'action'], (action) -> action
     .an.action 'a value'
     .then (action) ->
       action.metadata.original.should.eql [ 'a value' ]
 
   it 'argument is an [object]', ->
     nikita
-    .registry.register
-      action:
-        namespace: ['an', 'action']
-        handler: (action) ->
-          action.metadata.original
+    .registry.register ['an', 'action'],
+      handler: ({metadata}) -> metadata.original
     .an.action [{a_key: 1}, {a_key: 2}]
     .then (actions) ->
       actions.should.eql [
@@ -44,11 +35,8 @@ describe 'plugin.original', ->
 
   it 'argument is an [object], [string]', ->
     nikita
-    .registry.register
-      action:
-        namespace: ['an', 'action']
-        handler: (action) ->
-          action.metadata.original
+    .registry.register  ['an', 'action'],
+      handler: ({metadata}) -> metadata.original
     .an.action [{a_key: 1}, {a_key: 2}], ['a_string', 'b_string']
     .then (actions) ->
       actions.should.eql [
