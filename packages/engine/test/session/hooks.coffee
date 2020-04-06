@@ -3,7 +3,7 @@ nikita = require '../../src'
 
 # Test the construction of the session namespace stored in state
 
-describe 'hooks', ->
+describe 'session.hooks', ->
 
   describe 'nikita:registry:action:register', ->
     
@@ -13,11 +13,9 @@ describe 'hooks', ->
           'nikita:registry:action:register': ({action}, handler)->
             action.key = 'new value'
             handler
-        context.registry.register
-          action:
-            namespace: ['an', 'action']
-            key: 'value'
-            handler: (->)
+        context.registry.register ['an', 'action'],
+          key: 'value'
+          handler: (->)
         context.an.action ({options}) ->
           options.key.should.eql 'new value'
 
@@ -29,11 +27,9 @@ describe 'hooks', ->
               setImmediate ->
                 action.key = 'new value'
                 accept handler
-        context.registry.register
-          action:
-            namespace: ['an', 'action']
-            key: 'value'
-            handler: (->)
+        context.registry.register ['an', 'action'],
+          key: 'value'
+          handler: (->)
         context.an.action ({options}) ->
           options.key.should.eql 'new value'
             
@@ -43,10 +39,7 @@ describe 'hooks', ->
           'nikita:registry:action:register': ({action}, handler)->
             (handler is undefined).should.be.ok()
             handler
-        context.registry.register
-          options:
-            namespace: ['an', 'action']
-            action: {}
+        context.registry.register ['an', 'action'], {}
 
   describe 'nikita:session:handler:call', ->
     
@@ -59,11 +52,9 @@ describe 'hooks', ->
                 accept ({action}) ->
                   action.options.new_key = 'new value'
                   handler.call action.context, action: action
-        context.registry.register
-          action:
-            namespace: ['an', 'action']
-            key: 'value'
-            handler: ({options}) -> options
+        context.registry.register ['an', 'action'],
+          key: 'value'
+          handler: ({options}) -> options
         context.an.action().should.be.finally.eql
           key: 'value'
           new_key: 'new value'
@@ -75,10 +66,8 @@ describe 'hooks', ->
             if action.metadata.namespace.join('.') is 'an.action'
             then throw Error 'Catch me'
             else handler
-        context.registry.register
-          action:
-            namespace: ['an', 'action']
-            handler: -> throw Error 'You are not invited'
+        context.registry.register ['an', 'action'],
+          handler: -> throw Error 'You are not invited'
         context
         .an.action()
         .should.be.rejectedWith 'Catch me'
@@ -90,10 +79,8 @@ describe 'hooks', ->
             if action.metadata.namespace.join('.') is 'an.action'
             then throw Error 'Catch me'
             else handler
-        context.registry.register
-          action:
-            namespace: ['an', 'action']
-            handler: -> throw Error 'You are not invited'
+        context.registry.register ['an', 'action'],
+          handler: -> throw Error 'You are not invited'
         context
         .an.action()
       .should.be.rejectedWith 'Catch me'
@@ -106,10 +93,8 @@ describe 'hooks', ->
               if action.metadata.namespace.join('.') is 'an.action'
               then reject Error 'Catch me'
               else accept handler
-        context.registry.register
-          action:
-            namespace: ['an', 'action']
-            handler: -> throw Error 'You are not invited'
+        context.registry.register ['an', 'action'],
+          handler: -> throw Error 'You are not invited'
         context
         .an.action()
         .should.be.rejectedWith 'Catch me'
@@ -122,10 +107,8 @@ describe 'hooks', ->
               if action.metadata.namespace.join('.') is 'an.action'
               then reject Error 'Catch me'
               else accept handler
-        context.registry.register
-          action:
-            namespace: ['an', 'action']
-            handler: -> throw Error 'You are not invited'
+        context.registry.register ['an', 'action'],
+          handler: -> throw Error 'You are not invited'
         context
         .an.action()
       .should.be.rejectedWith 'Catch me'

@@ -2,7 +2,7 @@
 nikita = require '../../src'
 registry = require '../../src/registry'
 
-describe 'session registry', ->
+describe 'session.registry', ->
 
   describe 'access', ->
     

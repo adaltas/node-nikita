@@ -69,14 +69,12 @@ describe 'plugin.schema', ->
 
     it 'valid', ->
       nikita
-      .registry.register
-        action:
-          namespace: ['test', 'schema']
-          schema:
-            type: 'object'
-            properties:
-              'an_integer': type: 'integer'
-          handler: (->)
+      .registry.register ['test', 'schema'],
+        schema:
+          type: 'object'
+          properties:
+            'an_integer': type: 'integer'
+        handler: (->)
       # Valid schema
       .call
         an_object: an_integer: 1234
@@ -88,14 +86,12 @@ describe 'plugin.schema', ->
 
     it 'invalid', ->
       nikita
-      .registry.register
-        action:
-          namespace: ['test', 'schema']
-          schema:
-            type: 'object'
-            properties:
-              'an_integer': type: 'integer'
-          handler: (->)
+      .registry.register ['test', 'schema'],
+        schema:
+          type: 'object'
+          properties:
+            'an_integer': type: 'integer'
+        handler: (->)
       .call
         an_object: an_integer: 'abc'
         schema:

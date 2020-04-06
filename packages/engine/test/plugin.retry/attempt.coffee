@@ -4,7 +4,7 @@ nikita = require '../../src'
 
 return unless tags.api
 
-describe 'metadata "attempt"', ->
+describe 'plugin.retry metadata "attempt"', ->
   
   describe 'validation', ->
 
