@@ -5,9 +5,12 @@ array = require '../utils/array'
 module.exports = ->
   'nikita:session:actions:arguments': ({args}, handler) ->
     ->
-      actions = handler.apply null, handler
+      actions = handler.apply null, arguments
       args = array.multiply ...args
-      # console.log ':multiply:', args, test #JSON.stringify test, null, 2
-      actions.map (action,i) ->
-        action.metadata.original = args[i]
-      actions
+      if Array.isArray actions
+        actions.map (action,i) ->
+          action.metadata.original = args[i]
+          action
+      else
+        actions.metadata.original = args[0]
+        actions

@@ -4,7 +4,7 @@ registry = require '../../src/registry'
 
 # Test the construction of the session namespace stored in state
 
-describe 'namespace', ->
+describe 'session.namespace', ->
 
   it 'call registered action', ->
     nikita ({registry}) ->
