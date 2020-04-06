@@ -2,7 +2,7 @@
 nikita = require '../../src'
 schedule = require '../../src/schedule'
 
-describe 'core schedule', ->
+describe 'scheduler.schedule', ->
 
   it 'executed 1 args with 2 actions sequentially', ->
     stack = []

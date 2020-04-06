@@ -43,7 +43,7 @@ module.exports.normalize = normalize = (action) ->
       continue # Already merged before
     else if property is 'hooks'
       continue # Already merged before
-    else if property in properties_root
+    else if property in properties
       new_action[property] = value
     else if /^on_/.test property
       new_action.hooks[property] = value
@@ -51,18 +51,16 @@ module.exports.normalize = normalize = (action) ->
       new_action.options[property] = value
   new_action
 
-module.exports.properties = properties =
-  context: undefined
-  handler: undefined
-  hooks: {}
-  metadata: {}
-  parent: null
-  registry: null
-  options: {}
-  plugins: undefined
-  scheduler: undefined
-  state:
-    namespace: []
-  run: undefined
-
-properties_root = Object.keys properties
+properties = [
+  'context'
+  'handler'
+  'hooks'
+  'metadata'
+  'parent'
+  'registry'
+  'options'
+  'plugins'
+  'scheduler'
+  'state'
+  'run'
+]

@@ -47,12 +47,12 @@ module.exports = ->
         unless Array.isArray handlers
           stack[dir] [handlers, resolve, reject]
         else
-          handlers = [handlers] unless Array.isArray handlers
           promises = for handler in handlers
             new Promise (resolve, reject) ->
               stack[dir] [handler, resolve, reject]
           Promise.all(promises).then resolve, reject
         # Pump execution
         setImmediate ->
+          running = false if options.force
           scheduler.pump()
       prom
