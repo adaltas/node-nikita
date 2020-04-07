@@ -3,44 +3,34 @@
 error = require '../utils/error'
 
 module.exports = ->
-  # Recommand the `raw` option
-  # recommand: '@nikitajs/engine/src/plugins/raw'
-  'nikita:session:handler:call': ({}, handler) ->
-    # return handler
-    ({action}) ->
-      args = arguments
-      new Promise (resolve, reject) ->
-        inherit = ->
-          resolve status: false
-        interpret = (output) ->
-          return resolve output if action.metadata.raw_output
+  'nikita:session:result': ({}, handler) ->
+    ({action, error, output}) ->
+      inherit = (output = {})->
+        output.status = action.children.some (child) ->
+          child.output?.status is true
+        output
+      if not error and not action.metadata.raw_output
+        arguments[0].output =
           if typeof output is 'boolean'
-            resolve status: output
+            status: output
           else if is_object_literal output
             if output.hasOwnProperty 'status'
               output.status = !!output.status
-              resolve output
+              output
             else
-              # inherit()
-              resolve output
-          else if not output? or is_object output
-            # inherit()
-            resolve output
+              inherit output
+          else if not output?
+            inherit output
+          else if is_object output
+            output
+          else if Array.isArray(output) or typeof output in ['string', 'number']
+            output
           else
-            resolve output
-            # reject error 'HANDLER_INVALID_OUTPUT', [
-            #   'expect a boolean or an object or nothing'
-            #   'unless the `raw_output` option is activated,'
-            #   "got #{JSON.stringify output}"
-            # ]
-        try
-          result = handler.apply action.context, args
-          if result and result.then
-            result.then interpret, reject
-          else if result and result.catch
-            result.catch reject
-          else
-            interpret result
-        catch err
-          reject err
-          
+            throw error 'HANDLER_INVALID_OUTPUT', [
+              'expect a boolean or an object or nothing'
+              'unless the `raw_output` option is activated,'
+              "got #{JSON.stringify output}"
+            ]
+      handler.apply null, arguments
+      
+            

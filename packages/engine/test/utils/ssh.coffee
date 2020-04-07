@@ -4,7 +4,7 @@ utils = require '../../src/utils'
 # All test are executed with an ssh connection passed as an argument
 they = require('ssh2-they').configure ssh.filter (ssh) -> !!ssh
 
-describe 'utils ssh', ->
+describe 'utils.ssh', ->
 
   they 'compare two null', ({ssh}) ->
     utils.ssh.compare(null, null).should.be.true()

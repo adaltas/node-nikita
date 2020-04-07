@@ -12,7 +12,7 @@ describe 'plugin.raw.output', ->
     .should.be.resolvedWith true
 
   it 'leave `{}` as is', ->
-    nikita.call -> {}
+    nikita.call raw_output: true,-> {}
     .should.be.resolvedWith {}
   
   

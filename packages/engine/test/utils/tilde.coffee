@@ -1,11 +1,11 @@
 
 tilde = require '../../src/utils/tilde'
 
-describe 'tilde', ->
+describe 'utils.tilde', ->
 
   describe 'normalize', ->
 
-    it 'hanle ~', ->
+    it 'handle ~', ->
       # wdavidw: 2004 not sure how HOME can be undefined, maybe on windows
       # return unless process.env.HOME
       tilde
@@ -14,7 +14,7 @@ describe 'tilde', ->
 
   describe 'resolve', ->
 
-    it 'hanle ~', ->
+    it 'handle ~', ->
       # wdavidw: 2004 not sure how HOME can be undefined, maybe on windows
       # return unless process.env.HOME
       tilde

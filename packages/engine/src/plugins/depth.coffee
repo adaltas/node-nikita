@@ -1,5 +1,4 @@
 
-{merge} = require 'mixme'
 error = require '../utils/error'
 
 module.exports = ->

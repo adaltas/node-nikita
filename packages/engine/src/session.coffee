@@ -8,12 +8,11 @@ normalize = require './action/normalize'
 error = require './utils/error'
 
 session = (action={}) ->
-  action = merge
-    metadata:
-      namespace: []
-    state:
-      namespace: []
-  , action
+  action.children ?= []
+  action.metadata ?= {}
+  action.metadata.namespace ?= []
+  action.state ?= {}
+  action.state.namespace ?= []
   # Catch calls to new actions
   on_call = (...args) ->
     # Extract action namespace and reset the state
@@ -29,18 +28,13 @@ session = (action={}) ->
         ]
       actions = await action.plugins.hook
         name: 'nikita:session:actions:arguments'
-        args:
-          args: args
-          child: child
-          parent: action
-          namespace: namespace
+        args: args: args, child: child, parent: action, namespace: namespace
         handler: ({args, parent, namespace}) ->
-          args = [...args, parent: parent, metadata: namespace: namespace]
-          contextualize args
+          contextualize [...args, parent: parent, metadata: namespace: namespace]
       unless Array.isArray actions
-        session actions
+        session(actions)
       else
-        handlers = actions.map (action) -> -> session action
+        handlers = actions.map (action) -> -> session(action)
         action.scheduler.add(handlers, force: true)
     new Proxy prom, get: on_get
   # Building the namespace before calling an action
@@ -68,16 +62,13 @@ session = (action={}) ->
     on_register: (name, act) ->
       await action.plugins.hook
         name: 'nikita:registry:action:register'
-        args:
-          name: name
-          action: act
+        args: name: name, action: act
   # Register run helper
   action.run = ->
     run parent: action, ...arguments
   # Local scheduler
   action.scheduler = schedule()
-  setImmediate ->
-    action.scheduler.pump()
+  setImmediate -> action.scheduler.pump()
   # Expose the action context
   action.context = new Proxy on_call, get: on_get
   # Execute the action
@@ -96,34 +87,44 @@ session = (action={}) ->
     if action.metadata.namespace
       action_from_registry = await action.registry.get action.metadata.namespace
       # Merge the registry action with the user action properties
-      action = merge action_from_registry, action
+      for k, v of action_from_registry
+        action[k] = merge action_from_registry[k], action[k]
+    # Hook to catch error and format output once all children are executed
+    on_result = (error, output) ->
+      try
+        resolve await action.plugins.hook
+          name: 'nikita:session:result'
+          args: action: action, error: error, output: output
+          hooks: action.hooks.on_result
+          handler: ({action, error, output}) ->
+            if action.parent
+              action.parent.children.push
+                metadata: action.metadata
+                options: action.options
+                error: error
+                output: output
+            if error then throw error else output
+      catch err
+        reject err
     try
       # Hook attented to alter the execution of an action handler
-      await action.plugins.hook
+      output = action.plugins.hook
         name: 'nikita:session:action'
+        # promisify: true # TODO: convert output and error to promises unless already one
         args: action
         hooks: action.hooks.on_action
-        silent: true # TODO: support undefined handler in plugins
-      output = action.plugins.hook
-        name: 'nikita:session:handler:call'
-        # promisify: true # TODO: convert output and error to promises unless already one
-        args:
-          action: action
-        handler: ({action}) ->
+        handler: (action) ->
           action.handler.call action.context, action
       unless output and output.then
         output = new Promise (resolve, reject) ->
           resolve output
-      Promise.all([output, on_end])
+      Promise.all [output, on_end]
       .then (values) ->
-        action.output = values.shift()
-        resolve action.output
+        on_result undefined, values.shift()
       , (err) ->
-        action.error = err
-        reject err
+        on_result err
     catch err
-      action.error = err
-      reject err
+      on_result err
   # Returning a proxified promise:
   # - news action can be registered to it as long as the promised has not fulfilled
   # - resolve when all registered actions are fulfilled

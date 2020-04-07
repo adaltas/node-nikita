@@ -1,7 +1,7 @@
 
 {multiply} = require '../../src/utils/array'
 
-describe 'utils array', ->
+describe 'utils.array', ->
   
   it 'object with object', ->
     multiply {a: ''}, {b: ''}
