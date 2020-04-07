@@ -10,7 +10,7 @@ describe 'action `handler`', ->
         handler: ({options}) ->
           new Promise (accept, reject) ->
             setImmediate -> accept output: 'ok'
-      .should.be.resolvedWith output: 'ok'
+      .should.be.resolvedWith output: 'ok', status: false
 
     it 'return an action resolved promise', ->
       nikita.call
@@ -19,5 +19,5 @@ describe 'action `handler`', ->
             handler: ->
               new Promise (accept, reject) ->
                 setImmediate -> accept output: 'ok'
-      .should.be.resolvedWith output: 'ok'
+      .should.be.resolvedWith output: 'ok', status: false
           

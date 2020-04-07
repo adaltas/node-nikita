@@ -2,38 +2,34 @@
 module.exports = normalize = (action) ->
   if Array.isArray action
     return action.map (action) -> normalize action
-  new_action =
-    metadata: action.metadata or {}
-    options: action.options or {}
-    hooks: action.hooks or {}
+  action.metadata ?= {}
+  action.options ?= {}
+  action.hooks ?= {}
   if action.namespace
     action.metadata.namespace = action.namespace
     delete action.namespace
   for property, value of action
-    if property is 'metadata'
-      continue # Already merged before
-    else if property is 'options'
-      continue # Already merged before
-    else if property is 'hooks'
-      continue # Already merged before
-    else if property in properties
-      new_action[property] = value
-    else if /^on_/.test property
-      new_action.hooks[property] = value
+    continue if property in properties
+    if /^on_/.test property
+      action.hooks[property] = value
+      delete action[property]
     else
-      new_action.options[property] = value
-  new_action
+      action.options[property] = value
+      delete action[property]
+  action
 
 properties = [
+  'children'
   'context'
   'handler'
   'hooks'
   'metadata'
-  'parent'
-  'registry'
   'options'
+  'parent'
   'plugins'
-  'scheduler'
-  'state'
+  'registry'
   'run'
+  'scheduler'
+  'sibling'
+  'state'
 ]

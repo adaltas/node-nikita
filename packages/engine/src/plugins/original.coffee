@@ -1,5 +1,4 @@
 
-session = require '../session'
 array = require '../utils/array'
 
 module.exports = ->

@@ -5,7 +5,6 @@ module.exports = ->
     if action.hasOwnProperty 'disabled'
       action.metadata.disabled = action.disabled
       delete action.disabled
-  'nikita:session:action': (action) ->
+  'nikita:session:action': (action, handler) ->
     action.metadata.disabled ?= false
-  'nikita:session:handler:call': ({action}, handler) ->
     if action.metadata.disabled then (->) else handler

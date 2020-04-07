@@ -9,7 +9,7 @@ module.exports = ->
       if action.hasOwnProperty property
         action.metadata[property] = action[property]
         delete action[property]
-  'nikita:session:action': (action) ->
+  'nikita:session:action': (action, handler) ->
     action.metadata.attempt ?= 0
     action.metadata.retry ?= 1
     action.metadata.sleep ?= 3000
@@ -25,8 +25,7 @@ module.exports = ->
           "option `#{property}` expect a number or a boolean value,"
           "got #{JSON.stringify action.metadata[property]}."
         ]
-  'nikita:session:handler:call': ({}, handler) ->
-    ({action}) ->
+    (action) ->
       args = arguments
       {retry} = action.metadata
       options = merge {}, action.options

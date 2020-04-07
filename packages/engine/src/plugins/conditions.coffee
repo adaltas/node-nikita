@@ -7,7 +7,6 @@ module.exports = ->
   'nikita:session:normalize': (action, handler) ->
     # return handler
     # Ventilate conditions properties defined at root
-    new_action = {}
     conditions = {}
     for property, value of action
       if /^(if|unless)($|_[\w_]+$)/.test property
@@ -18,14 +17,11 @@ module.exports = ->
         value = [value] unless Array.isArray value
         conditions[property] = value
         delete action[property]
-      # else
-      #   new_action[property] = value
     ->
-      # arguments[0] = new_action
       action = handler.call null, ...arguments
       action.conditions = conditions
       action
-  'nikita:session:handler:call': ({action}, handler) ->
+  'nikita:session:action': (action, handler) ->
     final_run = true
     for k, v of action.conditions
       local_run = await handlers[k].call null, action
