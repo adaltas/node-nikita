@@ -57,14 +57,13 @@ module.exports = (action) ->
     if action.hasOwnProperty 'schema'
       action.metadata.schema = action.schema
       delete action.schema
-  'nikita:session:action': (action) ->
+  'nikita:session:action': (action, handler) ->
     action.schema = schema
     if action.metadata.schema? and not is_object_literal action.metadata.schema
       throw error 'METADATA_SCHEMA_INVALID_VALUE', [
         "option `schema` expect aN object literal value,"
         "got #{JSON.stringify action.metadata.schema}."
       ]
-  'nikita:session:handler:call': ({action}, handler) ->
     return handler unless action.metadata.schema
     errors = await schema.validate action.options, action.metadata.schema
     if errors.length

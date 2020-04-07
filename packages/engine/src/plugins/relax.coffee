@@ -1,5 +1,4 @@
 
-{merge} = require 'mixme'
 error = require '../utils/error'
 
 module.exports = ->
@@ -8,16 +7,15 @@ module.exports = ->
     if action.hasOwnProperty 'relax'
       action.metadata.relax = action.relax
       delete action.relax
-  'nikita:session:action': (action) ->
+  'nikita:session:action': (action, handler) ->
     action.metadata.relax ?= false
     unless typeof action.metadata.relax is 'boolean'
       throw error 'METADATA_RELAX_INVALID_VALUE', [
         "option `relax` expect a boolean value,"
         "got #{JSON.stringify action.metadata.relax}."
       ]
-  'nikita:session:handler:call': ({action}, handler) ->
     return handler unless action.metadata.relax
-    ({action}) ->
+    (action) ->
       args = arguments
       new Promise (resolve, reject) ->
         try
