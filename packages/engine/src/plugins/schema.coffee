@@ -27,7 +27,7 @@ module.exports = (action) ->
         {protocol, pathname} = parse uri
         switch protocol
           when 'module:'
-            action = require.main.require uri
+            action = require.main.require pathname
             accept action.schema
           when 'registry:'
             module = pathname.split '/'

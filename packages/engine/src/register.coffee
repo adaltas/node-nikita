@@ -6,6 +6,8 @@ module.exports =
   '': handler: (->)
   'call':
     '': {}
+  'log':
+    '': handler: (->)
   'registry':
     'get': raw: true, handler: ({parent, options: [namespace]}) ->
       parent.registry.get namespace
@@ -15,6 +17,10 @@ module.exports =
       parent.registry.registered namespace
     'unregister': raw: true, handler: ({parent, options: [namespace]}) ->
       parent.registry.unregister namespace
+  'ssh':
+    '': '@nikitajs/engine/src/actions/ssh'
+    'open': '@nikitajs/engine/src/actions/ssh/open'
+    'close': '@nikitajs/engine/src/actions/ssh/close'
   'status': raw: true, handler: ({parent, options: [position]}) ->
     # console.log position, parent.children.slice(-1)[0].output.status
     if typeof position is 'number'
@@ -26,10 +32,6 @@ module.exports =
         'argument position must be an integer if defined,'
         "get #{JSON.stringify position}"
       ]
-      
-  'ssh':
-    '': '@nikitajs/engine/src/actions/ssh'
-    'open': '@nikitajs/engine/src/actions/ssh/open'
 (->
   await registry.register module.exports
 )()

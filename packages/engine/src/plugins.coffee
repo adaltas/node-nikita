@@ -35,6 +35,12 @@ module.exports = ({action, chain, parent, plugins = []} = {}) ->
           "got #{arguments[0]} argument."
         ]
       hooks = [hooks] if typeof hooks is 'function'
+      # Call user provided hooks
+      if hooks then for hook in hooks
+        # console.log hook.toString()
+        switch hook.length
+          when 1 then await hook.call @, args
+          when 2 then handler = await hook.call @, args, handler
       # Call parent hooks
       if parent
         handler = await parent.hook.call parent,
@@ -48,11 +54,6 @@ module.exports = ({action, chain, parent, plugins = []} = {}) ->
         if hook[name] then switch hook[name].length
           when 1 then await hook[name].call @, args
           when 2 then handler = await hook[name].call @, args, handler
-      # Call user provided hooks
-      if hooks then for hook in hooks
-        switch hook.length
-          when 1 then await hook.call @, args
-          when 2 then handler = await hook.call @, args, handler
       # Call the final handler
       return handler if silent
       handler.call @, args if handler
