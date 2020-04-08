@@ -3,6 +3,7 @@
 error = require '../utils/error'
 
 module.exports = ->
+  # require '@nikitajs/engine/plugins/history'
   'nikita:session:result': ({}, handler) ->
     ({action, error, output}) ->
       inherit = (output = {})->

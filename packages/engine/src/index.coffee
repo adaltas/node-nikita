@@ -12,6 +12,7 @@ create = ->
     require './plugins/raw'
     require './plugins/original'
     require './plugins/depth'
+    require './plugins/history'
     require './plugins/status'
     require './plugins/conditions'
     require './plugins/schema'
