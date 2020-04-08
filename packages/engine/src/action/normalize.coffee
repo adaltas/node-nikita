@@ -19,7 +19,6 @@ module.exports = normalize = (action) ->
   action
 
 properties = [
-  'children'
   'context'
   'handler'
   'hooks'
