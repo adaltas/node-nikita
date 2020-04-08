@@ -10,26 +10,22 @@ return unless tags.posix
 
 describe 'ssh.open', ->
 
-  they.skip 'with handler options', ({ssh}) ->
+  they 'with handler options', ({ssh}) ->
     nikita ->
-      @call ->
-        (!!@ssh()).should.be.false()
-      # {status} = await @ssh.open
-      #   host: ssh.config.host
-      #   port: ssh.config.port
-      #   username: ssh.config.username
-      #   password: ssh.config.password
-      #   private_key: ssh.config.privateKey
-      #   public_key: ssh.config.publicKey
-      # status.should.be.true()
-      # @call ->
-      #   (!!@ssh()).should.be.true()
-      #   utils.ssh.is( @ssh() ).should.be.true()
-      # @ssh.close()
+      @ssh.open
+        host: ssh.config.host
+        port: ssh.config.port
+        username: ssh.config.username
+        password: ssh.config.password
+        private_key: ssh.config.privateKey
+        public_key: ssh.config.publicKey
+      .then ({ssh}) ->
+        utils.ssh.is( ssh ).should.be.true()
+      @ssh.close()
 
   they.skip 'with global options', ({ssh}) ->
     nikita
-      ssh:
+      global: ssh:
         host: ssh.config.host
         port: ssh.config.port
         username: ssh.config.username
@@ -38,13 +34,8 @@ describe 'ssh.open', ->
         public_key: ssh.config.publicKey
     .ssh.open()
     .call ->
-      (!!@ssh()).should.be.true()
-      utils.ssh.is( @ssh() ).should.be.true()
-    .ssh.close {}, (err, {status}) ->
-      status.should.be.true() unless err
-    .ssh.close {}, (err, {status}) ->
-      status.should.be.false() unless err
-    .promise()
+      @ssh().then ({ssh}) -> utils.ssh.is ssh
+    @ssh.close()
 
   they.skip 'check status with properties', ({ssh}) ->
     options =
