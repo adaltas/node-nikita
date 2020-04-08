@@ -1,5 +1,6 @@
 
 registry = require './registry'
+error = require './utils/error'
 
 module.exports =
   '': handler: (->)
@@ -14,6 +15,18 @@ module.exports =
       parent.registry.registered namespace
     'unregister': raw: true, handler: ({parent, options: [namespace]}) ->
       parent.registry.unregister namespace
+  'status': raw: true, handler: ({parent, options: [position]}) ->
+    # console.log position, parent.children.slice(-1)[0].output.status
+    if typeof position is 'number'
+      parent.children.slice(position)[0].output.status
+    else unless position?
+      parent.children.some (child) -> child.output.status
+    else
+      throw error 'NIKITA_STATUS_POSITION_INVALID', [
+        'argument position must be an integer if defined,'
+        "get #{JSON.stringify position}"
+      ]
+      
   'ssh':
     '': '@nikitajs/engine/src/actions/ssh'
     'open': '@nikitajs/engine/src/actions/ssh/open'
