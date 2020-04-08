@@ -19,6 +19,8 @@ Initialize a Linux Container with given image name, container name and options.
   If true, the container will be deleted when stopped
 * `vm` (optional, boolean, false)
   If true, instantiate a VM instead of a container
+* `target` (optional, string)
+  If the LXC is clustered, instantiate the container on a specific node
 
 ## Callback Parameters
 
@@ -65,6 +67,7 @@ now.
         "--ephemeral" if options.ephemeral
         "--vm" if options.vm
         "--profile #{options.profile}" if options.profile
+        "--target #{options.target}" if options.target
       ].join ' '
       # Execution
       @system.execute
