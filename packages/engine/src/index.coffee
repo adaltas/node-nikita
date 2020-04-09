@@ -19,6 +19,7 @@ create = ->
     require './metadata/disabled'
     require './metadata/relax'
     require './metadata/retry'
+    require './plugins/operation_find'
   ], ...arguments
 
 module.exports = new Proxy create,
