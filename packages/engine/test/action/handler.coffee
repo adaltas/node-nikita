@@ -7,14 +7,14 @@ describe 'action `handler`', ->
 
     it 'return a user resolved promise', ->
       nikita.call
-        handler: ({options}) ->
+        handler: ({config}) ->
           new Promise (accept, reject) ->
             setImmediate -> accept output: 'ok'
       .should.be.resolvedWith output: 'ok', status: false
 
     it 'return an action resolved promise', ->
       nikita.call
-        handler: ({options}) ->
+        handler: ({config}) ->
           @call
             handler: ->
               new Promise (accept, reject) ->

@@ -7,57 +7,57 @@ describe 'action.contextualize', ->
   it 'handle function as handler', ->
     expect = [
       handler: (->)
-      options: b: ''
+      config: b: ''
     ,
       handler: (->)
-      options: c: ''
+      config: c: ''
     ]
     # String is place before objects
     normalize contextualize [
       (->)
       [{b: ''}, {c: ''}]
     ]
-    # Filter only metadata.argument and options
+    # Filter only metadata.argument and config
     .map (el) ->
       handler: el.handler
-      options: el.options
+      config: el.config
     .should.eql expect
     # String is place after objects
     normalize contextualize [
       [{b: ''}, {c: ''}]
       (->)
     ]
-    # Filter only metadata.argument and options
+    # Filter only metadata.argument and config
     .map (el) ->
       handler: el.handler
-      options: el.options
+      config: el.config
     .should.eql expect
   
   it 'handle string as metadata.argument', ->
     expect = [
       metadata: argument: 'a'
-      options: b: ''
+      config: b: ''
     ,
       metadata: argument: 'a'
-      options: c: ''
+      config: c: ''
     ]
     # String is place before objects
     normalize contextualize [
       'a'
       [{b: ''}, {c: ''}]
     ]
-    # Filter only metadata.argument and options
+    # Filter only metadata.argument and config
     .map (el) ->
       metadata: argument: el.metadata.argument
-      options: el.options
+      config: el.config
     .should.eql expect
     # String is place after objects
     normalize contextualize [
       [{b: ''}, {c: ''}]
       'a'
     ]
-    # Filter only metadata.argument and options
+    # Filter only metadata.argument and config
     .map (el) ->
       metadata: argument: el.metadata.argument
-      options: el.options
+      config: el.config
     .should.eql expect

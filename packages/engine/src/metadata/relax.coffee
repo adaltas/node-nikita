@@ -13,7 +13,7 @@ module.exports = ->
       action.metadata.relax ?= false
       unless typeof action.metadata.relax is 'boolean'
         throw error 'METADATA_RELAX_INVALID_VALUE', [
-          "option `relax` expect a boolean value,"
+          "configuration `relax` expect a boolean value,"
           "got #{JSON.stringify action.metadata.relax}."
         ]
       return handler unless action.metadata.relax

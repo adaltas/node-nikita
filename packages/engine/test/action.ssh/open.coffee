@@ -19,7 +19,7 @@ describe 'ssh.open', ->
       
   describe 'connection properties', ->
 
-    they 'with handler options', ({ssh}) ->
+    they 'with handler config', ({ssh}) ->
       nikita ->
         @ssh.open
           host: ssh.config.host
@@ -34,7 +34,7 @@ describe 'ssh.open', ->
         @ssh.close()
 
     they 'check status and return connection', ({ssh}) ->
-      options =
+      config =
         host: ssh.config.host
         port: ssh.config.port
         username: ssh.config.username
@@ -42,8 +42,8 @@ describe 'ssh.open', ->
         private_key: ssh.config.privateKey
         public_key: ssh.config.publicKey
       nikita
-      .ssh.open options
-      .ssh.open options
+      .ssh.open config
+      .ssh.open config
       .call ({sibling, siblings}) ->
         # Status
         siblings
@@ -56,7 +56,7 @@ describe 'ssh.open', ->
   
   describe 'connection instance', ->
 
-    they.skip 'with global options', ({ssh}) ->
+    they.skip 'with global config', ({ssh}) ->
       nikita
         global: ssh:
           host: ssh.config.host
@@ -90,10 +90,15 @@ describe 'ssh.open', ->
         utils.ssh.is(sibling.output.ssh).should.be.true()
         utils.ssh.compare(...siblings.map((sibling) -> sibling.output.ssh)).should.be.true()
       .ssh.close()
+
+    they.skip 'directly as the main argument', ({ssh}) ->
+      nikita
+      .ssh.open ssh
+      .ssh.close()
   
   describe 'errors', ->
     
-    they 'NIKITA_SSH_OPEN_UNMATCHING_SSH_INSTANCE', ({ssh}) ->
+    they.only 'NIKITA_SSH_OPEN_UNMATCHING_SSH_INSTANCE', ({ssh}) ->
       conn = await connect ssh.config
       conn.config.host = 'something.else' # Fake another connection
       nikita ->
@@ -103,7 +108,7 @@ describe 'ssh.open', ->
         @ssh.close ssh: conn
     
     they 'NIKITA_SSH_OPEN_UNMATCHING_SSH_CONFIG', ({ssh}) ->
-      options =
+      config =
         host: ssh.config.host
         port: ssh.config.port
         username: ssh.config.username
@@ -111,8 +116,8 @@ describe 'ssh.open', ->
         private_key: ssh.config.privateKey
         public_key: ssh.config.publicKey
       nikita ->
-        @ssh.open options
-        await @ssh.open options, host: 'something.else'
+        @ssh.open config
+        await @ssh.open config, host: 'something.else'
         .should.be.rejectedWith code: 'NIKITA_SSH_OPEN_UNMATCHING_SSH_CONFIG'
         @ssh.close()
     

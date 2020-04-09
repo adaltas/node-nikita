@@ -11,7 +11,7 @@ describe 'ssh.index', ->
   
   describe 'active connection', ->
 
-    they 'options ssh `true`', ({ssh}) ->
+    they 'config ssh `true`', ({ssh}) ->
       nikita
       .ssh.open
         host: ssh.config.host

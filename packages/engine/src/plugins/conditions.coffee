@@ -53,7 +53,7 @@ handlers =
                 raw_output: true
               parent: action
               handler: condition
-              options: action.options
+              config: action.config
       final_run = false if run is false
     final_run
   unless: (action) ->
@@ -77,6 +77,6 @@ handlers =
                 raw_output: true
               parent: action
               handler: condition
-              options: action.options
+              config: action.config
       final_run = false if run is false
     final_run

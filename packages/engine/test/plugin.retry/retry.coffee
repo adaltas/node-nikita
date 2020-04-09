@@ -13,7 +13,11 @@ describe 'plugin.retry metadata "retry"', ->
       .call retry: 0, (->)
       .call retry: 1, (->)
       .call retry: -1, (->)
-      .should.be.rejectedWith 'METADATA_RETRY_INVALID_RANGE: option `retry` expect a number above or equal to 0, got -1.'
+      .should.be.rejectedWith [
+        'METADATA_RETRY_INVALID_RANGE:'
+        'configuration `retry` expect a number above or equal to 0,'
+        'got -1.'
+      ].join ' '
 
   describe 'handler', ->
 
@@ -57,9 +61,9 @@ describe 'plugin.retry metadata "retry"', ->
         else "success #{metadata.attempt}"
       .should.be.resolvedWith 'success 10'
 
-    it 'ensure options are immutable between retry', ->
+    it 'ensure config are immutable between retry', ->
       nikita
-      .call retry: 3, test: 1, sleep: 100, ({metadata, options}) ->
-        options.test.should.eql 1
-        options.test = 2
+      .call retry: 3, test: 1, sleep: 100, ({metadata, config}) ->
+        config.test.should.eql 1
+        config.test = 2
         throw Error 'Retry' if metadata.attempt < 2

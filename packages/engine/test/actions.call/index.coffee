@@ -7,8 +7,8 @@ describe 'actions.call', ->
   it 'call action from global registry', ->
     nikita
     .call ->
-      registry.register 'my_function', ({options}) ->
-        pass_a_key: options.a_key
+      registry.register 'my_function', ({config}) ->
+        pass_a_key: config.a_key
     .call ->
       {pass_a_key} = await nikita.my_function a_key: 'a value'
       pass_a_key.should.eql 'a value'

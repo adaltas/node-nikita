@@ -15,14 +15,14 @@ describe 'registry.register', ->
       .create()
       .register ['this', 'is', 'a', 'function'], key: 'value', handler: (->)
       reg.get ['this', 'is', 'a', 'function']
-      .then ({options}) -> options.key.should.eql 'value'
+      .then ({config}) -> config.key.should.eql 'value'
 
     it 'is a string', ->
       reg = await registry
       .create()
       .register 'my_function', key: 'value', handler: (->)
       reg.get 'my_function'
-      .then ({options}) -> options.key.should.eql 'value'
+      .then ({config}) -> config.key.should.eql 'value'
 
     it 'is an object', ->
       reg = await registry
@@ -31,7 +31,7 @@ describe 'registry.register', ->
         'my': 'function': key: 'value', handler: (->)
       reg
       .get ['my', 'function']
-      .then ({options}) -> options.key.should.eql 'value'
+      .then ({config}) -> config.key.should.eql 'value'
 
     it 'overwrite an existing action', ->
       reg = registry.create()
@@ -39,7 +39,7 @@ describe 'registry.register', ->
       reg.register 'my_function', key: 2, handler: -> 'my_function'
       reg
       .get 'my_function'
-      .then ({options}) -> options.key.should.eql 2
+      .then ({config}) -> config.key.should.eql 2
 
     it 'namespace is object with empty key', ->
       reg = registry.create()
@@ -48,18 +48,18 @@ describe 'registry.register', ->
           '': key: 1, handler: (->)
           'child': key: 2, handler: (->)
       reg.get(['my', 'actions'])
-      .then ({options}) -> options.key.should.eql 1
+      .then ({config}) -> config.key.should.eql 1
       reg.get(['my', 'actions', 'child'])
-      .then ({options}) -> options.key.should.eql 2
+      .then ({config}) -> config.key.should.eql 2
 
     it 'namespace with children', ->
       reg = registry.create()
       reg.register ['a', 'function'], key: 1, handler: (->)
       reg.register ['a', 'function', 'with', 'child'], key: 2, handler: (->)
       reg.get(['a', 'function'])
-      .then ({options}) -> options.key.should.eql 1
+      .then ({config}) -> config.key.should.eql 1
       reg.get(['a', 'function', 'with', 'child'])
-      .then ({options}) -> options.key.should.eql 2
+      .then ({config}) -> config.key.should.eql 2
 
   describe 'value', ->
 
@@ -79,9 +79,9 @@ describe 'registry.register', ->
         await registry.register 'an_action', '@nikitajs/engine/src/actions/ssh'
         result = await @registry.registered 'an_action'
         .should.resolvedWith true
-        {metadata, options} = await @registry.get 'an_action'
+        {metadata, config} = await @registry.get 'an_action'
         metadata.module.should.eql '@nikitajs/engine/src/actions/ssh'
-        options.should.eql {}
+        config.should.eql {}
 
     it 'is a string', ->
       # Room for improvement in the future
@@ -94,17 +94,17 @@ describe 'registry.register', ->
         .should.resolvedWith true
         result = await @registry.registered ['an_action', 'child']
         .should.resolvedWith true
-        {metadata, options} = await @registry.get 'an_action'
+        {metadata, config} = await @registry.get 'an_action'
         metadata.module.should.eql '@nikitajs/engine/src/actions/ssh'
-        options.should.eql {}
-        {metadata, options} = await @registry.get ['an_action', 'child']
+        config.should.eql {}
+        {metadata, config} = await @registry.get ['an_action', 'child']
         metadata.module.should.eql '@nikitajs/engine/src/actions/ssh'
-        options.should.eql {}
+        config.should.eql {}
 
-    it.skip 'receive options', ->
+    it.skip 'receive config', ->
       n = nikita()
-      .registry.register 'my_function', ({options}, callback) ->
-        options.my_option.should.eql 'my value'
+      .registry.register 'my_function', ({config}, callback) ->
+        config.my_option.should.eql 'my value'
         process.nextTick ->
           callback null, true
       .my_function
@@ -122,15 +122,15 @@ describe 'registry.register', ->
       .file
         target: "#{scratch}/module_sync.coffee"
         content: """
-        module.exports = ({options}) ->
-          @log "Hello \#{options.who or 'world'}"
+        module.exports = ({config}) ->
+          @log "Hello \#{config.who or 'world'}"
         """
       .file
         target: "#{scratch}/module_async.coffee"
         content: """
-        module.exports = ({options}, callback) ->
+        module.exports = ({config}, callback) ->
           setImmediate =>
-            @log "Hello \#{options.who or 'world'}"
+            @log "Hello \#{config.who or 'world'}"
             callback null, true
         """
       .call ->
@@ -148,8 +148,8 @@ describe 'registry.register', ->
     it.skip 'namespace accept array', ->
       value = null
       nikita()
-      .registry.register ['this', 'is', 'a', 'function'], ({options}, callback) ->
-        value = options.value
+      .registry.register ['this', 'is', 'a', 'function'], ({config}, callback) ->
+        value = config.value
         callback null, true
       .this.is.a.function value: 'yes'
       .next (err, {status}) ->
@@ -162,11 +162,11 @@ describe 'registry.register', ->
       nikita()
       .registry.register
         namespace:
-          "": ({options}, callback) ->
-            value_a = options.value
+          "": ({config}, callback) ->
+            value_a = config.value
             callback null, true
-          "child": ({options}, callback) ->
-            value_b = options.value
+          "child": ({config}, callback) ->
+            value_b = config.value
             callback null, true
       .namespace value: 'a'
       .namespace.child value: 'b'
@@ -180,11 +180,11 @@ describe 'registry.register', ->
     it.skip 'namespace call function with children', ->
       value_a = value_b = null
       nikita()
-      .registry.register ['a', 'function'], ({options}, callback) ->
-        value_a = options.value
+      .registry.register ['a', 'function'], ({config}, callback) ->
+        value_a = config.value
         callback null, true
-      .registry.register ['a', 'function', 'with', 'a', 'child'], ({options}, callback) ->
-        value_b = options.value
+      .registry.register ['a', 'function', 'with', 'a', 'child'], ({config}, callback) ->
+        value_b = config.value
         callback null, true
       .a.function value: 'a'
       .a.function.with.a.child value: 'b'
@@ -209,8 +209,8 @@ describe 'registry.register', ->
     
     it.skip 'is available from nikita instance', ->
       nikita
-      .registry.register 'my_function', ({options}, callback) ->
-        options.my_option.should.eql 'my value'
+      .registry.register 'my_function', ({config}, callback) ->
+        config.my_option.should.eql 'my value'
         process.nextTick ->
           callback null, true
       n = nikita()

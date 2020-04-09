@@ -47,7 +47,7 @@ describe 'plugin.condition if', ->
       count = 0
       nikita
       .call
-        if: '{{options.db.test}}'
+        if: '{{config.db.test}}'
         db: test: 'abc'
       , ->
         count++
@@ -61,7 +61,7 @@ describe 'plugin.condition if', ->
 
     it.skip 'skip if `{{""}}`',->
       nikita.call
-        if: '{{options.db.test}}'
+        if: '{{config.db.test}}'
         db: test: ''
         handler: -> throw Error 'forbidden'
 
@@ -115,10 +115,10 @@ describe 'plugin.condition if', ->
       .call ->
         called.should.equal 1
 
-    it 'function pass options', ->
+    it 'function pass config', ->
       nikita.call
-        if: ({options}) ->
-          options.a_key.should.eql 'a value'
+        if: ({config}) ->
+          config.a_key.should.eql 'a value'
         a_key: 'a value'
         handler: -> 'success'
       .should.be.finally.eql 'success'
