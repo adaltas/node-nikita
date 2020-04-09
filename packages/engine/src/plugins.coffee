@@ -37,7 +37,6 @@ module.exports = ({action, chain, parent, plugins = []} = {}) ->
       hooks = [hooks] if typeof hooks is 'function'
       # Call user provided hooks
       if hooks then for hook in hooks
-        # console.log hook.toString()
         switch hook.length
           when 1 then await hook.call @, args
           when 2 then handler = await hook.call @, args, handler
@@ -50,10 +49,10 @@ module.exports = ({action, chain, parent, plugins = []} = {}) ->
           handler: handler
           silent: true
       # Call local hooks
-      for hook in store
-        if hook[name] then switch hook[name].length
-          when 1 then await hook[name].call @, args
-          when 2 then handler = await hook[name].call @, args, handler
+      for plugin in store
+        if plugin.hooks[name] then switch plugin.hooks[name].length
+          when 1 then await plugin.hooks[name].call @, args
+          when 2 then handler = await plugin.hooks[name].call @, args, handler
       # Call the final handler
       return handler if silent
       handler.call @, args if handler
