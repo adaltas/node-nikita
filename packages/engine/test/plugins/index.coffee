@@ -5,7 +5,7 @@ describe 'plugins', ->
 
   it 'hook handler alter args with 1 argument', ->
     plugs = plugins()
-    plugs.register 'my:hook': (test) ->
+    plugs.register hooks: 'my:hook': (test) ->
       test.a_key = 'a value'
     test = {}
     await plugs.hook
@@ -16,7 +16,7 @@ describe 'plugins', ->
 
   it 'hook handler alter args with 2 arguments', ->
     plugs = plugins()
-    plugs.register 'my:hook': (test, handler) ->
+    plugs.register hooks: 'my:hook': (test, handler) ->
       test.a_key = 'a value'
       handler
     test = {}

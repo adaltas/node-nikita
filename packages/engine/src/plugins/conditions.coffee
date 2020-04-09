@@ -2,31 +2,33 @@
 session = require '../session'
 
 module.exports = ->
-  # Require the `raw` option
-  # require: '@nikitajs/engine/src/plugins/raw'
-  'nikita:session:normalize': (action, handler) ->
-    # return handler
-    # Ventilate conditions properties defined at root
-    conditions = {}
-    for property, value of action
-      if /^(if|unless)($|_[\w_]+$)/.test property
-        throw Error 'CONDITIONS_DUPLICATED_DECLARATION', [
-          "Property #{property} is defined multiple times,"
-          'at the root of the action and inside conditions'
-        ] if conditions[property]
-        value = [value] unless Array.isArray value
-        conditions[property] = value
-        delete action[property]
-    ->
-      action = handler.call null, ...arguments
-      action.conditions = conditions
-      action
-  'nikita:session:action': (action, handler) ->
-    final_run = true
-    for k, v of action.conditions
-      local_run = await handlers[k].call null, action
-      final_run = false if local_run is false
-    if final_run then handler else (->)
+  name: 'conditions'
+  hooks:
+    # Require the `raw` option
+    # require: '@nikitajs/engine/src/plugins/raw'
+    'nikita:session:normalize': (action, handler) ->
+      # return handler
+      # Ventilate conditions properties defined at root
+      conditions = {}
+      for property, value of action
+        if /^(if|unless)($|_[\w_]+$)/.test property
+          throw Error 'CONDITIONS_DUPLICATED_DECLARATION', [
+            "Property #{property} is defined multiple times,"
+            'at the root of the action and inside conditions'
+          ] if conditions[property]
+          value = [value] unless Array.isArray value
+          conditions[property] = value
+          delete action[property]
+      ->
+        action = handler.call null, ...arguments
+        action.conditions = conditions
+        action
+    'nikita:session:action': (action, handler) ->
+      final_run = true
+      for k, v of action.conditions
+        local_run = await handlers[k].call null, action
+        final_run = false if local_run is false
+      if final_run then handler else (->)
 
 handlers =
   if: (action) ->
