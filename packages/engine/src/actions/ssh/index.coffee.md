@@ -29,14 +29,18 @@ was created and available.
 
 ## Source code
 
-    handler = ({options, parent: {state}}) ->
-      # throw Error "Invalid Option: ssh must be a boolean value or null or undefined, got #{JSON.stringify options.ssh}" if options.ssh? and not typeof options.ssh is 'boolean'
-      throw error 'SSH_UNAVAILABLE_CONNECTION', [
+    handler = ({options, parent}) ->
+      # Local execution, we dont want an SSH connection, no need to pursue
+      return undefined if options.ssh is false
+      conn = await @operations.find (action) ->
+        action.state['nikita:ssh:connection']
+      # We dont force the retrieval of a connection, returning what we found
+      if conn or not options.ssh?
+      then conn
+      else throw error 'SSH_UNAVAILABLE_CONNECTION', [
         'action was requested to return an SSH connection'
         'but none is opened and available'
-      ] if options.ssh is true and not state['nikita:ssh:connection']
-      return undefined if options.ssh is false
-      return state['nikita:ssh:connection']
+      ]
 
 ## Exports
 
