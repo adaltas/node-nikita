@@ -13,7 +13,11 @@ describe 'plugin.retry metadata "attempt"', ->
       .call attempt: 0, (->)
       .call attempt: 1, (->)
       .call attempt: -1, (->)
-      .should.be.rejectedWith 'METADATA_ATTEMPT_INVALID_RANGE: option `attempt` expect a number above or equal to 0, got -1.'
+      .should.be.rejectedWith [
+        'METADATA_ATTEMPT_INVALID_RANGE:'
+        'configuration `attempt` expect a number above or equal to 0,'
+        'got -1.'
+      ].join ' '
 
   describe 'handler', ->
 

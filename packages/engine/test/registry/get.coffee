@@ -13,8 +13,8 @@ describe 'registry.get', ->
     reg = await registry
     .create()
     .register ['get', 'an', 'action'], key: 'value', (->)
-    {options} = await reg.get ['get', 'an', 'action']
-    options.key.should.eql 'value'
+    {config} = await reg.get ['get', 'an', 'action']
+    config.key.should.eql 'value'
 
   it 'get all', ->
     reg = registry.create()
@@ -36,13 +36,13 @@ describe 'registry.get', ->
     actions['new']['function'][''].handler.should.be.type 'function'
     actions['old']['function'][''].handler.should.be.type 'function'
 
-  it 'get all with flatten options', ->
+  it 'get all with flatten config', ->
     reg = registry.create()
     reg.register ['my', 'function'], handler: (->)
     actions = await reg.get flatten: true
     actions.some( (action) -> action.action.join('.') is 'my.function').should.be.true()
 
-  it 'get all with flatten options and deprecate', ->
+  it 'get all with flatten config and deprecate', ->
     reg = registry.create()
     reg.register ['new', 'function'], handler: (->)
     reg.deprecate ['old', 'function'], ['new', 'function'], handler: (->)

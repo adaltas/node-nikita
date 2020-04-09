@@ -16,7 +16,7 @@ module.exports = ->
         action.parent.children.push
           children: action.children
           metadata: action.metadata
-          options: action.options
+          config: action.config
           error: error
           output: output
         handler.apply null, arguments

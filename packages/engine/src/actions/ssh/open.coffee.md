@@ -37,7 +37,7 @@ require('nikita')
   password: 'my_secret'
 })
 .call({ssh: false}, function(){
-  assert(@ssh(options.ssh), null)
+  assert(@ssh(config.ssh), null)
 })
 .system.execute({
   ssh: false
@@ -47,7 +47,7 @@ require('nikita')
 .ssh.close()
 ```
 
-It is possible to group all the options inside the `ssh` property. This is
+It is possible to group all the config properties inside the `ssh` property. This is
 provided for conveniency and is often used to pass `ssh` information when
 initializing the session.
 
@@ -60,35 +60,34 @@ require('nikita')({
   }
 })
 .ssh.open()
-.call(function(options){
+.call(function({config}){
   assert(!!@ssh(), true)
 })
 .ssh.close()
 ```
 
-## Events
+## Hooks
 
-    on_action = ({options, state}) ->
+    on_action = ({config, state}) ->
       # Merge SSH config namespace
-      if options.ssh and not ssh.is options.ssh
-        options[k] ?= v for k, v of options.ssh or {}
-        delete options.ssh
+      if config.ssh and not ssh.is config.ssh
+        config[k] ?= v for k, v of config.ssh or {}
+        delete config.ssh
       # Define host from ip
-      if options.ip and not options.host
-        options.host = options.ip
+      if config.ip and not config.host
+        config.host = config.ip
       # Default root properties
-      options.root ?= {}
-      if options.root.ip and not options.root.host
-        options.root.host = options.root.ip
-      options.root.host ?= options.host
-      options.root.port ?= options.port
+      config.root ?= {}
+      if config.root.ip and not config.root.host
+        config.root.host = config.root.ip
+      config.root.host ?= config.host
+      config.root.port ?= config.port
 
 ## Schema
 
-
-Options are transfered as is to the ssh2 module to create a new SSH connection.
+Configuration propeties are transfered as is to the ssh2 module to create a new SSH connection.
 Only will they be converted from snake case to came case. It is also possible to
-pass all the options through the `ssh` property.
+pass all the properties through the `ssh` property.
 
     schema =
       type: 'object'
@@ -128,20 +127,21 @@ pass all the options through the `ssh` property.
           type: 'string'
           default: '~/.ssh/id_rsa'
           description: """
-          Local file location of the private key used to anthenticate the user and
-          create the SSH connection. It is only used if `password` and
+          Local file location of the private key used to anthenticate the user
+          and create the SSH connection. It is only used if `password` and
           `private_key` are not provided.
           """
         'root':
           $ref: 'module://@nikitajs/engine/src/actions/ssh/root'
           description: """
-          Options passed to `nikita.ssh.root` to enable password-less root login.
+          Configuration passed to `nikita.ssh.root` to enable password-less root
+          login.
           """
         'ssh':
           instanceof: 'Object'
           description: """
-          Append the content to the target file. If target does not exist, the
-          file will be created.
+          Associate an existing SSH connection to the current action and its
+          siblings.
           """
         'username':
           type: 'string'
@@ -153,25 +153,25 @@ pass all the options through the `ssh` property.
 
 ## Handler
 
-    handler = ({options, parent: {state}}) ->
+    handler = ({config, parent: {state}}) ->
       # @log message: "Entering ssh.open", level: 'DEBUG', module: 'nikita/lib/ssh/open'
       # No need to connect if ssh is a connection
-      if ssh.is options.ssh
+      if ssh.is config.ssh
         if not state['nikita:ssh:connection']
-          state['nikita:ssh:connection'] = options.ssh
+          state['nikita:ssh:connection'] = config.ssh
           return status: true, ssh: state['nikita:ssh:connection']
-        else if ssh.compare state['nikita:ssh:connection'], options.ssh
+        else if ssh.compare state['nikita:ssh:connection'], config.ssh
           return status: false, ssh: state['nikita:ssh:connection']
         else
           throw error 'NIKITA_SSH_OPEN_UNMATCHING_SSH_INSTANCE', [
             'attempting to set an SSH connection'
-            'while an instance is already registered with adifferent configuration'
-            "got #{JSON.stringify object.copy options.ssh.config, ['host', 'port', 'username']}"
+            'while an instance is already registered with a different configuration'
+            "got #{JSON.stringify object.copy config.ssh.config, ['host', 'port', 'username']}"
           ]
       # Get from cache
       if state['nikita:ssh:connection']
         # The new connection refer to the same target and the current one
-        if ssh.compare state['nikita:ssh:connection'], options
+        if ssh.compare state['nikita:ssh:connection'], config
           return status: false, ssh: state['nikita:ssh:connection']
         else
           throw error 'NIKITA_SSH_OPEN_UNMATCHING_SSH_CONFIG', [
@@ -180,34 +180,34 @@ pass all the options through the `ssh` property.
             'the current SSH connection stored in state,'
             'one possible solution is to close the current connection'
             'with `nikita.ssh.close` before attempting to open a new one'
-            "got #{JSON.stringify object.copy options, ['host', 'port', 'username']}"
+            "got #{JSON.stringify object.copy config, ['host', 'port', 'username']}"
           ]
       # Read private key if option is a path
-      unless options.private_key or options.password
-        @log message: "Read Private Key from: #{options.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/open'
-        location = await tilde.normalize options.private_key_path
+      unless config.private_key or config.password
+        @log message: "Read Private Key from: #{config.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/open'
+        location = await tilde.normalize config.private_key_path
         try
           data = await fs.readFile location, 'ascii'
-          options.private_key = data
+          config.private_key = data
         catch err
           throw Error "Private key doesnt exists: #{JSON.stringify location}" if err.code is 'ENOENT'
           throw err
       # Establish connection
       try
-        @log message: "Read Private Key: #{JSON.stringify options.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/open'
-        conn = await connect options
+        @log message: "Read Private Key: #{JSON.stringify config.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/open'
+        conn = await connect config
         state['nikita:ssh:connection'] = conn
         @log message: "Connection is established", level: 'INFO', module: 'nikita/lib/ssh/open'
         return status: true, ssh: conn
       catch err
         @log message: "Connection failed", level: 'WARN', module: 'nikita/lib/ssh/open'
       # Enable root access
-      if options.root.username
+      if config.root.username
         @log message: "Bootstrap Root Access", level: 'INFO', module: 'nikita/lib/ssh/open'
-        @ssh.root options.root
+        @ssh.root config.root
       @log message: "Establish Connection: attempt after enabling root access", level: 'DEBUG', module: 'nikita/lib/ssh/open'
       @call retry: 3, ->
-        conn = await connect options
+        conn = await connect config
         state['nikita:ssh:connection'] = conn
         status: true, ssh: conn
 

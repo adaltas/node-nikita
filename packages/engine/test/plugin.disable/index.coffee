@@ -26,7 +26,7 @@ describe 'plugin.disable', ->
           'index', 'level',
           'line', 'message',
           'metadata', 'module',
-          'options', 'parent',
+          'config', 'parent',
           'time', 'type'
       ]
       log.depth.should.eql 1

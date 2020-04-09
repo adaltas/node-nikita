@@ -17,8 +17,8 @@ describe 'session.hooks', ->
         context.registry.register ['an', 'action'],
           key: 'value'
           handler: (->)
-        context.an.action ({options}) ->
-          options.key.should.eql 'new value'
+        context.an.action ({config}) ->
+          config.key.should.eql 'new value'
 
     it 'alter action - async', ->
       nikita ({context, plugins, registry}) ->
@@ -32,8 +32,8 @@ describe 'session.hooks', ->
         context.registry.register ['an', 'action'],
           key: 'value'
           handler: (->)
-        context.an.action ({options}) ->
-          options.key.should.eql 'new value'
+        context.an.action ({config}) ->
+          config.key.should.eql 'new value'
             
     it 'handler is undefined', ->
       nikita ({context, plugins, registry}) ->
@@ -54,11 +54,11 @@ describe 'session.hooks', ->
               new Promise (accept, reject) ->
                 setImmediate ->
                   accept (action) ->
-                    action.options.new_key = 'new value'
+                    action.config.new_key = 'new value'
                     handler.call action.context, action
         context.registry.register ['an', 'action'],
           key: 'value'
-          handler: ({options}) -> options
+          handler: ({config}) -> config
         context.an.action().should.be.finally.eql
           key: 'value'
           new_key: 'new value'

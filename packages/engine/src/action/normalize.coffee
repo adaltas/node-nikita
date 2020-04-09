@@ -3,7 +3,7 @@ module.exports = normalize = (action) ->
   if Array.isArray action
     return action.map (action) -> normalize action
   action.metadata ?= {}
-  action.options ?= {}
+  action.config ?= {}
   action.hooks ?= {}
   if action.namespace
     action.metadata.namespace = action.namespace
@@ -14,7 +14,7 @@ module.exports = normalize = (action) ->
       action.hooks[property] = value
       delete action[property]
     else
-      action.options[property] = value
+      action.config[property] = value
       delete action[property]
   action
 
@@ -23,7 +23,7 @@ properties = [
   'handler'
   'hooks'
   'metadata'
-  'options'
+  'config'
   'parent'
   'plugins'
   'registry'

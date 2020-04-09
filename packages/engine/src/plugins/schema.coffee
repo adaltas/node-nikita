@@ -69,10 +69,10 @@ module.exports = (action) ->
       action.schema = schema
       if action.metadata.schema? and not is_object_literal action.metadata.schema
         throw error 'METADATA_SCHEMA_INVALID_VALUE', [
-          "option `schema` expect aN object literal value,"
+          "option `schema` expect an object literal value,"
           "got #{JSON.stringify action.metadata.schema}."
         ]
       return handler unless action.metadata.schema
-      err = await schema.validate action.options, action.metadata.schema
+      err = await schema.validate action.config, action.metadata.schema
       if err then throw err else handler
   

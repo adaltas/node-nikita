@@ -17,14 +17,14 @@ module.exports = (action) ->
         action.registry.register ['operations', 'find'],
           raw: true
           handler: (action) ->
-            if action.options.length is 1
-              [finder] = action.options
-            else if action.options.length is 2
-              [action, finder] = action.options
+            if action.config.length is 1
+              [finder] = action.config
+            else if action.config.length is 2
+              [action, finder] = action.config
             else throw error 'OPERATION_FIND_INVALID_ARGUMENT', [
                 'action signature is expected to be'
                 '`finder` or `action, finder`'
-                "got #{JSON.stringify action.options}"
+                "got #{JSON.stringify action.config}"
             ] unless action
             throw error 'OPERATION_FIND_ACTION_FINDER_REQUIRED', [
                 'argument `action` is missing and must be a valid action'
