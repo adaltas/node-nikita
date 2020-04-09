@@ -13,7 +13,11 @@ describe 'plugin.retry metadata "sleep"', ->
       .call sleep: 0, (->)
       .call sleep: 1, (->)
       .call sleep: -1, (->)
-      .should.be.rejectedWith 'METADATA_SLEEP_INVALID_RANGE: option `sleep` expect a number above or equal to 0, got -1.'
+      .should.be.rejectedWith [
+        'METADATA_SLEEP_INVALID_RANGE:'
+        'configuration `sleep` expect a number above or equal to 0,'
+        'got -1.'
+      ].join ' '
   
   describe 'handler', ->
 
@@ -45,6 +49,6 @@ describe 'plugin.retry metadata "sleep"', ->
       nikita
       .call sleep: 'a string', (->)
       .next (err) ->
-        err.message.should.eql 'Invalid options sleep, got "a string"'
+        err.message.should.eql 'Invalid config sleep, got "a string"'
       .promise()
     

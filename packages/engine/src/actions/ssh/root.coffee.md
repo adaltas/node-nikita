@@ -94,38 +94,38 @@ require('nikita')
 
 ## Handler
 
-    handler = ({metadata, options}) ->
+    handler = ({metadata, config}) ->
       @log message: "Entering ssh.root", level: 'DEBUG', module: 'nikita/lib/ssh/root'
-      options.host ?= options.ip
-      # options.cmd ?= 'su -'
-      options.username ?= null
-      options.password ?= null
-      options.selinux ?= false
-      options.selinux = 'permissive' if options.selinux is true
+      config.host ?= config.ip
+      # config.cmd ?= 'su -'
+      config.username ?= null
+      config.password ?= null
+      config.selinux ?= false
+      config.selinux = 'permissive' if config.selinux is true
       # Validation
-      throw Error "Invalid option \"selinux\": #{options.selinux}" if options.selinux and options.selinux not in ['enforcing', 'permissive', 'disabled']
+      throw Error "Invalid option \"selinux\": #{config.selinux}" if config.selinux and config.selinux not in ['enforcing', 'permissive', 'disabled']
       rebooting = false
       # Read public key if option is a path
-      if options.public_key_path and not options.public_key
-        location = await tilde.normalize options.public_key_path
+      if config.public_key_path and not config.public_key
+        location = await tilde.normalize config.public_key_path
         try
-          options.public_key = await fs.readFile location, 'ascii'
+          config.public_key = await fs.readFile location, 'ascii'
         catch err
           throw Error "Private key doesnt exists: #{JSON.stringify location}" if err.code is 'ENOENT'
           throw err
       # Read private key if option is a path
-      if options.private_key_path and not options.private_key
-        @log message: "Read Private Key: #{JSON.stringify options.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/root'
-        location = await tilde.normalize options.private_key_path
+      if config.private_key_path and not config.private_key
+        @log message: "Read Private Key: #{JSON.stringify config.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/root'
+        location = await tilde.normalize config.private_key_path
         try
-          options.private_key = await fs.readFile location, 'ascii'
+          config.private_key = await fs.readFile location, 'ascii'
         catch err
           throw Error "Private key doesnt exists: #{JSON.stringify location}" if err.code is 'ENOENT'
           throw err
       await @call ->
         @log message: "Connecting", level: 'DEBUG', module: 'nikita/lib/ssh/root'
         conn = unless metadata.dry
-        then await connect options
+        then await connect config
         else null
         @log message: "Connected", level: 'INFO', module: 'nikita/lib/ssh/root'
         cmd = []
@@ -134,11 +134,11 @@ require('nikita')
         """
         cmd.push """
         mkdir -p /root/.ssh; chmod 700 /root/.ssh;
-        echo '#{options.public_key}' >> /root/.ssh/authorized_keys;
-        """ if options.public_key
+        echo '#{config.public_key}' >> /root/.ssh/authorized_keys;
+        """ if config.public_key
         cmd.push """
         sed -i.back 's/.*PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config;
-        selinux="#{options.selinux or ''}";
+        selinux="#{config.selinux or ''}";
         if [ -n "$selinux" ] && [ -f /etc/selinux/config ] && grep ^SELINUX="$selinux" /etc/selinux/config;
         then
           sed -i.back "s/^SELINUX=enforcing/SELINUX=$selinux/" /etc/selinux/config;
@@ -147,18 +147,18 @@ require('nikita')
         fi;
         """
         cmd = cmd.join '\n'
-        if options.username isnt 'root'
+        if config.username isnt 'root'
           cmd = cmd.replace /\n/g, ' '
-          if typeof options.cmd is 'function'
-            cmd = options.cmd cmd
-          else if typeof options.cmd is 'string'
-            cmd = "#{options.cmd} #{cmd}"
+          if typeof config.cmd is 'function'
+            cmd = config.cmd cmd
+          else if typeof config.cmd is 'string'
+            cmd = "#{config.cmd} #{cmd}"
           else
-            options.cmd = 'sudo '
-            options.cmd += "-u #{options.user} " if options.user
-            options.cmd = "echo -e \"#{options.password}\\n\" | #{options.cmd} -S " if options.password
-            options.cmd += "-- sh -c \"#{cmd}\""
-            cmd = options.cmd
+            config.cmd = 'sudo '
+            config.cmd += "-u #{config.user} " if config.user
+            config.cmd = "echo -e \"#{config.password}\\n\" | #{config.cmd} -S " if config.password
+            config.cmd += "-- sh -c \"#{cmd}\""
+            cmd = config.cmd
         @log message: "Enable Root Access", level: 'DEBUG', module: 'nikita/lib/ssh/root'
         @log message: cmd, type: 'stdin', module: 'nikita/lib/ssh/root'
         unless metadata.dry
@@ -180,7 +180,7 @@ require('nikita')
           child.stderr.on 'end', (data) =>
             @log message: null, type: 'stderr', module: 'nikita/lib/ssh/root'
       @call retry: true, sleep: 3000, if: rebooting, ->
-        conn = connect options
+        conn = await connect config
         conn.end()
 
 ## Exports

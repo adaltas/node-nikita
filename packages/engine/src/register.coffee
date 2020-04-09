@@ -9,20 +9,20 @@ module.exports =
   'log':
     '': handler: (->)
   'registry':
-    'get': raw: true, handler: ({parent, options: [namespace]}) ->
+    'get': raw: true, handler: ({parent, config: [namespace]}) ->
       parent.registry.get namespace
-    'register': raw: true, handler: ({parent, options: [namespace, action]}) ->
+    'register': raw: true, handler: ({parent, config: [namespace, action]}) ->
       parent.registry.register namespace, action
-    'registered': raw: true, handler: ({parent, options: [namespace]}) ->
+    'registered': raw: true, handler: ({parent, config: [namespace]}) ->
       parent.registry.registered namespace
-    'unregister': raw: true, handler: ({parent, options: [namespace]}) ->
+    'unregister': raw: true, handler: ({parent, config: [namespace]}) ->
       parent.registry.unregister namespace
   'ssh':
     '': '@nikitajs/engine/src/actions/ssh'
     'open': '@nikitajs/engine/src/actions/ssh/open'
     'close': '@nikitajs/engine/src/actions/ssh/close'
     'root': '@nikitajs/engine/src/actions/ssh/root'
-  'status': raw: true, handler: ({parent, options: [position]}) ->
+  'status': raw: true, handler: ({parent, config: [position]}) ->
     # console.log position, parent.children.slice(-1)[0].output.status
     if typeof position is 'number'
       parent.children.slice(position)[0].output.status

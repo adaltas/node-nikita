@@ -31,7 +31,7 @@ module.exports = ->
             else
               throw error 'HANDLER_INVALID_OUTPUT', [
                 'expect a boolean or an object or nothing'
-                'unless the `raw_output` option is activated,'
+                'unless the `raw_output` configuration is activated,'
                 "got #{JSON.stringify output}"
               ]
         handler.apply null, arguments

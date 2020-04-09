@@ -24,5 +24,5 @@ module.exports = ->
     'nikita:session:actions:arguments': ({args, child, namespace, parent}, handler) ->
       return handler unless child.metadata.raw_input
       (context) ->
-        context.args = [options: context.args]
+        context.args = [config: context.args]
         handler.call null, context

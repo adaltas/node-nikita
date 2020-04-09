@@ -27,9 +27,9 @@ describe 'registry.unregister', ->
           namespace: 'my_function'
           handler: (->)
       .registry.unregister
-        options: namespace: 'my_function'
+        config: namespace: 'my_function'
       .registry.registered
-        options: namespace: 'my_function'
+        config: namespace: 'my_function'
       .should.be.finally.false()
 
     it 'work on already removed property', ->
@@ -39,11 +39,11 @@ describe 'registry.unregister', ->
           namespace: 'my_function'
           handler: (->)
       .registry.unregister
-        options: namespace: 'my_function'
+        config: namespace: 'my_function'
       .registry.unregister
-        options: namespace: 'my_function'
+        config: namespace: 'my_function'
       .registry.registered
-        options: namespace: 'my_function'
+        config: namespace: 'my_function'
       .should.be.finally.false()
 
   describe 'mixed', ->

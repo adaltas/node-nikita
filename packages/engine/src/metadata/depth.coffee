@@ -14,6 +14,6 @@ module.exports = ->
       # action.metadata.depth ?= 0
       unless typeof action.metadata.depth is 'number'
         throw error 'METADATA_DEPTH_INVALID_VALUE', [
-          "option `depth` expect an integer value,"
+          "configuration `depth` expect an integer value,"
           "got #{JSON.stringify action.metadata.depth}."
         ]
