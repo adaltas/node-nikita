@@ -40,10 +40,16 @@ module.exports = (action) ->
       ajv.addSchema schema, name
     validate: (data, schema) ->
       validate = await ajv.compileAsync schema
-      valid = validate data
-      if validate.errors
-      then validate.errors.map (error) -> Error ajv.errorsText([error])
-      else []
+      return if validate data
+      error 'NIKITA_SCHEMA_VALIDATION_CONFIG', [
+        if validate.errors.length is 1
+        then 'one error was found in the configuration:'
+        else 'multiple errors where found in the configuration:'
+        validate.errors
+        .map (err) -> err.schemaPath+' '+ajv.errorsText([err]).replace /^data/, 'config'
+        .sort()
+        .join('; ')+'.'
+      ]
     list: () ->
       schemas: ajv._schemas
       refs: ajv._refs
@@ -65,15 +71,6 @@ module.exports = (action) ->
         "got #{JSON.stringify action.metadata.schema}."
       ]
     return handler unless action.metadata.schema
-    errors = await schema.validate action.options, action.metadata.schema
-    if errors.length
-      if errors.length is 1
-        error = errors[0]
-      else
-        error = new Error "Invalid Options: got #{errors.length} errors\n#{errors.map((error) -> error.message).join('\n')}"
-        error.errors = errors
-      error.options = action.options
-      error.metadata = action.metadata
-      throw error
-    handler
+    err = await schema.validate action.options, action.metadata.schema
+    if err then throw err else handler
   
