@@ -10,9 +10,10 @@ describe 'session.hooks', ->
     it 'alter action - sync', ->
       nikita ({context, plugins, registry}) ->
         plugins.register
-          'nikita:registry:action:register': ({action}, handler)->
-            action.key = 'new value'
-            handler
+          'hooks':
+            'nikita:registry:action:register': ({action}, handler)->
+              action.key = 'new value'
+              handler
         context.registry.register ['an', 'action'],
           key: 'value'
           handler: (->)
@@ -22,11 +23,12 @@ describe 'session.hooks', ->
     it 'alter action - async', ->
       nikita ({context, plugins, registry}) ->
         plugins.register
-          'nikita:registry:action:register': ({action}, handler)->
-            new Promise (accept, reject) ->
-              setImmediate ->
-                action.key = 'new value'
-                accept handler
+          hooks:
+            'nikita:registry:action:register': ({action}, handler)->
+              new Promise (accept, reject) ->
+                setImmediate ->
+                  action.key = 'new value'
+                  accept handler
         context.registry.register ['an', 'action'],
           key: 'value'
           handler: (->)
@@ -36,9 +38,10 @@ describe 'session.hooks', ->
     it 'handler is undefined', ->
       nikita ({context, plugins, registry}) ->
         plugins.register
-          'nikita:registry:action:register': ({action}, handler)->
-            (handler is undefined).should.be.ok()
-            handler
+          'hooks':
+            'nikita:registry:action:register': ({action}, handler)->
+              (handler is undefined).should.be.ok()
+              handler
         context.registry.register ['an', 'action'], {}
 
   describe 'nikita:session:action', ->
@@ -46,12 +49,13 @@ describe 'session.hooks', ->
     it 'alter action - async', ->
       nikita ({context, plugins, registry}) ->
         plugins.register
-          'nikita:session:action': (action, handler) ->
-            new Promise (accept, reject) ->
-              setImmediate ->
-                accept (action) ->
-                  action.options.new_key = 'new value'
-                  handler.call action.context, action
+          'hooks':
+            'nikita:session:action': (action, handler) ->
+              new Promise (accept, reject) ->
+                setImmediate ->
+                  accept (action) ->
+                    action.options.new_key = 'new value'
+                    handler.call action.context, action
         context.registry.register ['an', 'action'],
           key: 'value'
           handler: ({options}) -> options
@@ -63,10 +67,11 @@ describe 'session.hooks', ->
     it 'error throw in current context', ->
       nikita ({context, plugins, registry}) ->
         plugins.register
-          'nikita:session:action': (action, handler) ->
-            if action.metadata.namespace.join('.') is 'an.action'
-            then throw Error 'Catch me'
-            else handler
+          'hooks':
+            'nikita:session:action': (action, handler) ->
+              if action.metadata.namespace.join('.') is 'an.action'
+              then throw Error 'Catch me'
+              else handler
         context.registry.register ['an', 'action'],
           handler: -> throw Error 'You are not invited'
         context
@@ -76,10 +81,11 @@ describe 'session.hooks', ->
     it 'error thrown parent session', ->
       nikita ({context, plugins, registry}) ->
         plugins.register
-          'nikita:session:action': (action, handler) ->
-            if action.metadata.namespace.join('.') is 'an.action'
-            then throw Error 'Catch me'
-            else handler
+          'hooks':
+            'nikita:session:action': (action, handler) ->
+              if action.metadata.namespace.join('.') is 'an.action'
+              then throw Error 'Catch me'
+              else handler
         context.registry.register ['an', 'action'],
           handler: -> throw Error 'You are not invited'
         context
@@ -89,11 +95,12 @@ describe 'session.hooks', ->
     it 'error promise in current context', ->
       nikita ({context, plugins, registry}) ->
         plugins.register
-          'nikita:session:action': (action, handler) ->
-            new Promise (accept, reject) ->
-              if action.metadata.namespace.join('.') is 'an.action'
-              then reject Error 'Catch me'
-              else accept handler
+          'hooks':
+            'nikita:session:action': (action, handler) ->
+              new Promise (accept, reject) ->
+                if action.metadata.namespace.join('.') is 'an.action'
+                then reject Error 'Catch me'
+                else accept handler
         context.registry.register ['an', 'action'],
           handler: -> throw Error 'You are not invited'
         context
@@ -103,11 +110,12 @@ describe 'session.hooks', ->
     it 'error promise in parent session', ->
       nikita ({context, plugins, registry}) ->
         plugins.register
-          'nikita:session:action': (action, handler) ->
-            new Promise (accept, reject) ->
-              if action.metadata.namespace.join('.') is 'an.action'
-              then reject Error 'Catch me'
-              else accept handler
+          'hooks':
+            'nikita:session:action': (action, handler) ->
+              new Promise (accept, reject) ->
+                if action.metadata.namespace.join('.') is 'an.action'
+                then reject Error 'Catch me'
+                else accept handler
         context.registry.register ['an', 'action'],
           handler: -> throw Error 'You are not invited'
         context

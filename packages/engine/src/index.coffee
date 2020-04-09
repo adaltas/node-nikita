@@ -9,16 +9,16 @@ session = require './session'
   
 create = ->
   session plugins: [
-    require './plugins/raw'
-    require './plugins/original'
-    require './plugins/depth'
+    require './metadata/raw'
+    require './metadata/original'
+    require './metadata/depth'
     require './plugins/history'
-    require './plugins/status'
+    require './metadata/status'
     require './plugins/conditions'
     require './plugins/schema'
-    require './plugins/disabled'
-    require './plugins/relax'
-    require './plugins/retry'
+    require './metadata/disabled'
+    require './metadata/relax'
+    require './metadata/retry'
   ], ...arguments
 
 module.exports = new Proxy create,
