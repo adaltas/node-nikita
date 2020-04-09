@@ -8,7 +8,7 @@ return unless tags.posix
 
 describe 'ssh.close', ->
 
-  they 'check status', ({ssh}) ->
+  they 'status is true with a connection', ({ssh}) ->
     nikita
     .ssh.open
       host: ssh.config.host
@@ -16,8 +16,17 @@ describe 'ssh.close', ->
       username: ssh.config.username
       password: ssh.config.password
       private_key: ssh.config.privateKey
-    .ssh.close (err, {status}) ->
-      status.should.be.true() unless err
-    .ssh.close (err, {status}) ->
-      status.should.be.false() unless err
-    .promise()
+    .ssh.close()
+    .should.be.resolvedWith status: true
+
+  they 'status is false without a connection', ({ssh}) ->
+    nikita
+    .ssh.open
+      host: ssh.config.host
+      port: ssh.config.port
+      username: ssh.config.username
+      password: ssh.config.password
+      private_key: ssh.config.privateKey
+    .ssh.close()
+    .ssh.close()
+    .should.be.resolvedWith status: false
