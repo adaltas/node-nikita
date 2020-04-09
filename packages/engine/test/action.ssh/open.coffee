@@ -9,65 +9,110 @@ they = require('ssh2-they').configure ssh.filter (ssh) -> !!ssh
 return unless tags.posix
 
 describe 'ssh.open', ->
+  
+  describe 'schema', ->
+    
+    they 'config.host', ({ssh}) ->
+      nikita
+      .ssh.open {...ssh.config, host: '_invalid_'}
+      .should.be.rejectedWith code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+      
+  describe 'connection properties', ->
 
-  they 'with handler options', ({ssh}) ->
-    nikita ->
-      @ssh.open
+    they 'with handler options', ({ssh}) ->
+      nikita ->
+        @ssh.open
+          host: ssh.config.host
+          port: ssh.config.port
+          username: ssh.config.username
+          password: ssh.config.password
+          private_key: ssh.config.privateKey
+          public_key: ssh.config.publicKey
+        .then ({status, ssh}) ->
+          status.should.be.true()
+          utils.ssh.is( ssh ).should.be.true()
+        @ssh.close()
+
+    they 'check status and return connection', ({ssh}) ->
+      options =
         host: ssh.config.host
         port: ssh.config.port
         username: ssh.config.username
         password: ssh.config.password
         private_key: ssh.config.privateKey
         public_key: ssh.config.publicKey
-      .then ({ssh}) ->
-        utils.ssh.is( ssh ).should.be.true()
+      nikita
+      .ssh.open options
+      .ssh.open options
+      .call ({sibling, siblings}) ->
+        # Status
+        siblings
+        .map (sibling) -> sibling.output.status
+        .should.eql [true, false]
+        # Connection
+        utils.ssh.is(sibling.output.ssh).should.be.true()
+        utils.ssh.compare(...siblings.map((sibling) -> sibling.output.ssh)).should.be.true()
+      .ssh.close()
+  
+  describe 'connection instance', ->
+
+    they.skip 'with global options', ({ssh}) ->
+      nikita
+        global: ssh:
+          host: ssh.config.host
+          port: ssh.config.port
+          username: ssh.config.username
+          password: ssh.config.password
+          private_key: ssh.config.privateKey
+          public_key: ssh.config.publicKey
+      .ssh.open()
+      .call ->
+        @ssh().then ({ssh}) -> utils.ssh.is ssh
       @ssh.close()
 
-  they.skip 'with global options', ({ssh}) ->
-    nikita
-      global: ssh:
+    they 'check status with instance', ({ssh}) ->
+      conn = await connect
         host: ssh.config.host
         port: ssh.config.port
         username: ssh.config.username
         password: ssh.config.password
         private_key: ssh.config.privateKey
         public_key: ssh.config.publicKey
-    .ssh.open()
-    .call ->
-      @ssh().then ({ssh}) -> utils.ssh.is ssh
-    @ssh.close()
-
-  they.skip 'check status with properties', ({ssh}) ->
-    options =
-      host: ssh.config.host
-      port: ssh.config.port
-      username: ssh.config.username
-      password: ssh.config.password
-      private_key: ssh.config.privateKey
-      public_key: ssh.config.publicKey
-    nikita
-    .ssh.open options
-    .ssh.open options, (err, {status}) ->
-      status.should.be.false() unless err
-    .ssh.close()
-    .promise()
-
-  they.skip 'check status with instance', ({ssh}, next) ->
-    connect
-      host: ssh.config.host
-      port: ssh.config.port
-      username: ssh.config.username
-      password: ssh.config.password
-      private_key: ssh.config.privateKey
-      public_key: ssh.config.publicKey
-    , (err, ssh) ->
-      return next err if err
       nikita
-      .ssh.open ssh: ssh, (err, {status}) ->
-        status.should.eql true unless err
-      .ssh.open ssh: ssh, (err, {status}) ->
-        status.should.be.false() unless err
+      .ssh.open ssh: conn
+      .ssh.open ssh: conn
+      .call ({sibling, siblings}) ->
+        # Status
+        siblings
+        .map (sibling) -> sibling.output.status
+        .should.eql [true, false]
+        # Connection
+        utils.ssh.is(sibling.output.ssh).should.be.true()
+        utils.ssh.compare(...siblings.map((sibling) -> sibling.output.ssh)).should.be.true()
       .ssh.close()
-      .next (err) ->
-        ssh.end()
-        next err
+  
+  describe 'errors', ->
+    
+    they 'NIKITA_SSH_OPEN_UNMATCHING_SSH_INSTANCE', ({ssh}) ->
+      conn = await connect ssh.config
+      conn.config.host = 'something.else' # Fake another connection
+      nikita ->
+        @ssh.open ssh: ssh
+        await @ssh.open ssh: conn
+        .should.be.rejectedWith code: 'NIKITA_SSH_OPEN_UNMATCHING_SSH_INSTANCE'
+        @ssh.close ssh: conn
+    
+    they 'NIKITA_SSH_OPEN_UNMATCHING_SSH_CONFIG', ({ssh}) ->
+      options =
+        host: ssh.config.host
+        port: ssh.config.port
+        username: ssh.config.username
+        password: ssh.config.password
+        private_key: ssh.config.privateKey
+        public_key: ssh.config.publicKey
+      nikita ->
+        @ssh.open options
+        await @ssh.open options, host: 'something.else'
+        .should.be.rejectedWith code: 'NIKITA_SSH_OPEN_UNMATCHING_SSH_CONFIG'
+        @ssh.close()
+    

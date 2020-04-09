@@ -94,7 +94,7 @@ require('nikita')
 
 ## Handler
 
-    handler = ({options}) ->
+    handler = ({metadata, options}) ->
       @log message: "Entering ssh.root", level: 'DEBUG', module: 'nikita/lib/ssh/root'
       options.host ?= options.ip
       # options.cmd ?= 'su -'
@@ -124,7 +124,9 @@ require('nikita')
           throw err
       await @call ->
         @log message: "Connecting", level: 'DEBUG', module: 'nikita/lib/ssh/root'
-        conn = await connect options
+        conn = unless metadata.dry
+        then await connect options
+        else null
         @log message: "Connected", level: 'INFO', module: 'nikita/lib/ssh/root'
         cmd = []
         cmd.push """
@@ -159,23 +161,24 @@ require('nikita')
             cmd = options.cmd
         @log message: "Enable Root Access", level: 'DEBUG', module: 'nikita/lib/ssh/root'
         @log message: cmd, type: 'stdin', module: 'nikita/lib/ssh/root'
-        child = exec
-          ssh: conn
-          cmd: cmd
-        , (err) =>
-          if err?.code is 2
-            @log message: "Root Access Enabled", level: 'WARN', module: 'nikita/lib/ssh/root'
-            err = null
-            rebooting = true
-          else throw err
-        child.stdout.on 'data', (data) =>
-          @log message: data, type: 'stdout', module: 'nikita/lib/ssh/root'
-        child.stdout.on 'end', (data) =>
-          @log message: null, type: 'stdout', module: 'nikita/lib/ssh/root'
-        child.stderr.on 'data', (data) =>
-          @log message: data, type: 'stderr', module: 'nikita/lib/ssh/root'
-        child.stderr.on 'end', (data) =>
-          @log message: null, type: 'stderr', module: 'nikita/lib/ssh/root'
+        unless metadata.dry
+          child = exec
+            ssh: conn
+            cmd: cmd
+          , (err) =>
+            if err?.code is 2
+              @log message: "Root Access Enabled", level: 'WARN', module: 'nikita/lib/ssh/root'
+              err = null
+              rebooting = true
+            else throw err
+          child.stdout.on 'data', (data) =>
+            @log message: data, type: 'stdout', module: 'nikita/lib/ssh/root'
+          child.stdout.on 'end', (data) =>
+            @log message: null, type: 'stdout', module: 'nikita/lib/ssh/root'
+          child.stderr.on 'data', (data) =>
+            @log message: data, type: 'stderr', module: 'nikita/lib/ssh/root'
+          child.stderr.on 'end', (data) =>
+            @log message: null, type: 'stderr', module: 'nikita/lib/ssh/root'
       @call retry: true, sleep: 3000, if: rebooting, ->
         conn = connect options
         conn.end()

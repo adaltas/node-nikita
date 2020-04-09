@@ -11,7 +11,7 @@ describe 'ssh.index', ->
   
   describe 'active connection', ->
 
-    they.skip 'options ssh `true`', ({ssh}) ->
+    they 'options ssh `true`', ({ssh}) ->
       nikita
       .ssh.open
         host: ssh.config.host
@@ -20,9 +20,9 @@ describe 'ssh.index', ->
         password: ssh.config.password
         private_key: ssh.config.privateKey
       .call ->
-        utils.ssh.is(@ssh true).should.be.true()
+        conn = await @ssh true
+        utils.ssh.is(conn).should.be.true()
       .ssh.close()
-      .promise()
 
     they.skip 'argument is false with an active connection', ({ssh}) ->
       nikita

@@ -93,11 +93,6 @@ available to every Nikita sessions.
           '': '@nikitajs/core/src/system/user/index'
           read: '@nikitajs/core/src/system/user/read'
           remove: '@nikitajs/core/src/system/user/remove'
-      ssh:
-        '': '@nikitajs/core/src/ssh'
-        open: '@nikitajs/core/src/ssh/open'
-        close: '@nikitajs/core/src/ssh/close'
-        root: '@nikitajs/core/src/ssh/root'
       wait:
         '': '@nikitajs/core/src/wait'
         execute: '@nikitajs/core/src/wait/execute'

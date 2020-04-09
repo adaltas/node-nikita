@@ -95,7 +95,7 @@ pass all the options through the `ssh` property.
       properties:
         'host':
           type: 'string'
-          # oneOf: [{format: 'ipv4'}, {format: 'hostname'}]
+          anyOf: [{format: 'ipv4'}, {format: 'hostname'}]
           default: '127.0.0.1'
           description: """
           Hostname or IP address of the remove server.
@@ -138,8 +138,7 @@ pass all the options through the `ssh` property.
           Options passed to `nikita.ssh.root` to enable password-less root login.
           """
         'ssh':
-          # instanceof: 'Object'
-          default: false
+          instanceof: 'Object'
           description: """
           Append the content to the target file. If target does not exist, the
           file will be created.
@@ -160,11 +159,29 @@ pass all the options through the `ssh` property.
       if ssh.is options.ssh
         if not state['nikita:ssh:connection']
           state['nikita:ssh:connection'] = options.ssh
-          return status: true, ssh: options.ssh
+          return status: true, ssh: state['nikita:ssh:connection']
         else if ssh.compare state['nikita:ssh:connection'], options.ssh
-          return status: false, ssh: undefined
+          return status: false, ssh: state['nikita:ssh:connection']
         else
-          throw Error 'SSH Connection Already Set: call `ssh.close` before attempting to associate a new connection with `ssh.open`.'
+          throw error 'NIKITA_SSH_OPEN_UNMATCHING_SSH_INSTANCE', [
+            'attempting to set an SSH connection'
+            'while an instance is already registered with adifferent configuration'
+            "got #{JSON.stringify object.copy options.ssh.config, ['host', 'port', 'username']}"
+          ]
+      # Get from cache
+      if state['nikita:ssh:connection']
+        # The new connection refer to the same target and the current one
+        if ssh.compare state['nikita:ssh:connection'], options
+          return status: false, ssh: state['nikita:ssh:connection']
+        else
+          throw error 'NIKITA_SSH_OPEN_UNMATCHING_SSH_CONFIG', [
+            'attempting to retrieve an SSH connection'
+            'with user SSH configuration not matching'
+            'the current SSH connection stored in state,'
+            'one possible solution is to close the current connection'
+            'with `nikita.ssh.close` before attempting to open a new one'
+            "got #{JSON.stringify object.copy options, ['host', 'port', 'username']}"
+          ]
       # Read private key if option is a path
       unless options.private_key or options.password
         @log message: "Read Private Key from: #{options.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/open'
@@ -181,7 +198,7 @@ pass all the options through the `ssh` property.
         conn = await connect options
         state['nikita:ssh:connection'] = conn
         @log message: "Connection is established", level: 'INFO', module: 'nikita/lib/ssh/open'
-        return ssh: conn
+        return status: true, ssh: conn
       catch err
         @log message: "Connection failed", level: 'WARN', module: 'nikita/lib/ssh/open'
       # Enable root access
@@ -192,7 +209,7 @@ pass all the options through the `ssh` property.
       @call retry: 3, ->
         conn = await connect options
         state['nikita:ssh:connection'] = conn
-        ssh: conn
+        status: true, ssh: conn
 
 ## Export
 
@@ -204,6 +221,8 @@ pass all the options through the `ssh` property.
 ## Dependencies
 
     fs = require('fs').promises
+    error = require '../../utils/error'
+    object = require '../../utils/object'
     tilde = require '../../utils/tilde'
     ssh = require '../../utils/ssh'
     connect = require 'ssh2-connect'
