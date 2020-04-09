@@ -40,7 +40,11 @@ describe 'plugin.schema', ->
         properties:
           'an_integer': type: 'integer', 'minimum': 1
       handler: (->)
-    .should.be.rejectedWith 'data.an_integer should be >= 1'
+    .should.be.rejectedWith [
+      'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+      'one error was found in the configuration:'
+      '#/properties/an_integer/minimum config.an_integer should be >= 1.'
+    ].join ' '
 
   it 'invalid with multiple errors', ->
     nikita.call
@@ -99,7 +103,11 @@ describe 'plugin.schema', ->
           properties:
             'an_object': $ref: 'registry://test/schema'
         handler: (->)
-      .should.be.rejectedWith 'data.an_object.an_integer should be integer'
+      .should.be.rejectedWith [
+        'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+        'one error was found in the configuration:'
+        'registry://test/schema/properties/an_integer/type config.an_object.an_integer should be integer.'
+      ].join ' '
   
   describe 'constructor', ->
 
@@ -155,4 +163,8 @@ describe 'plugin.schema', ->
         options:
           a_regexp: 'invalid'
         handler: (->)
-      .should.be.rejectedWith 'data.a_regexp should pass "instanceof" keyword validation'
+      .should.be.rejectedWith [
+        'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+        'one error was found in the configuration:'
+        '#/properties/a_regexp/instanceof config.a_regexp should pass "instanceof" keyword validation.'
+      ].join ' '
