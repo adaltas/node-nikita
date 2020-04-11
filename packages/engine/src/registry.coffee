@@ -104,7 +104,7 @@ create = ({chain, on_register, parent, plugins} = {}) ->
         return if plugins
           # Hook attented to modify an action returned by the registry
           await plugins.hook
-            name: 'nikita:registry:normalize'
+            event: 'nikita:registry:normalize'
             args: action
             handler: (action) ->
               normalize action
@@ -116,7 +116,7 @@ create = ({chain, on_register, parent, plugins} = {}) ->
       return null unless action?
       action = if plugins
         action = await plugins.hook
-          name: 'nikita:registry:normalize'
+          event: 'nikita:registry:normalize'
           args: action
           handler: (action) ->
             normalize action

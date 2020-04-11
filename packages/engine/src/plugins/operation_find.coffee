@@ -8,7 +8,7 @@ find = (action, finder) ->
   find action.parent, finder
 
 module.exports = (action) ->
-  name: 'operation_find'
+  module: '@nikitajs/engine/src/plugins/operation_find'
   hooks:
     'nikita:session:normalize': (action, handler) ->
       ->

@@ -2,12 +2,10 @@
 session = require '../session'
 
 module.exports = ->
-  name: 'conditions'
+  module: '@nikitajs/engine/src/plugins/conditions'
+  after: '@nikitajs/engine/src/metadata/raw'
   hooks:
-    # Require the `raw` option
-    # require: '@nikitajs/engine/src/plugins/raw'
     'nikita:session:normalize': (action, handler) ->
-      # return handler
       # Ventilate conditions properties defined at root
       conditions = {}
       for property, value of action

@@ -9,7 +9,7 @@ describe 'plugins', ->
       test.a_key = 'a value'
     test = {}
     await plugs.hook
-      name: 'my:hook'
+      event: 'my:hook'
       args: test
       handler: (->)
     test.a_key.should.eql 'a value'
@@ -21,7 +21,7 @@ describe 'plugins', ->
       handler
     test = {}
     await plugs.hook
-      name: 'my:hook'
+      event: 'my:hook'
       args: test
       handler: (->)
     test.a_key.should.eql 'a value'

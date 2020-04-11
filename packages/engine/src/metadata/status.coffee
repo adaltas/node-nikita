@@ -3,9 +3,9 @@
 error = require '../utils/error'
 
 module.exports = ->
-  name: 'metadata_status'
+  module: '@nikitajs/engine/src/metadata/status'
+  after: '@nikitajs/engine/src/plugins/history'
   hooks:
-    # require '@nikitajs/engine/plugins/history'
     'nikita:session:result': ({}, handler) ->
       ({action, error, output}) ->
         inherit = (output = {})->

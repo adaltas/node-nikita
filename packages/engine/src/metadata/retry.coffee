@@ -3,7 +3,7 @@
 error = require '../utils/error'
 
 module.exports = ->
-  name: 'metadata_retry'
+  module: '@nikitajs/engine/src/metadata/retry'
   hooks:
     'nikita:session:normalize': (action) ->
       # Move property from action to metadata
