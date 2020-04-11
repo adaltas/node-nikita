@@ -15,6 +15,7 @@ parse = (uri) ->
   pathname: matches[2]
 
 module.exports = (action) ->
+  # schema = create(action)
   ajv = new Ajv
     $data: true
     allErrors: true
@@ -54,7 +55,7 @@ module.exports = (action) ->
       schemas: ajv._schemas
       refs: ajv._refs
       fragments: ajv._fragments
-  name: 'schema'
+  module: '@nikitajs/engine/src/plugins/schema'
   hooks:
     'nikita:registry:normalize': (action) ->
       action.metadata ?= {}

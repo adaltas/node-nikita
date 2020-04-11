@@ -1,6 +1,6 @@
 
 module.exports = ->
-  name: 'metadata_raw'
+  module: '@nikitajs/engine/src/metadata/raw'
   hooks:
     'nikita:registry:normalize': (action) ->
       action.metadata ?= {}

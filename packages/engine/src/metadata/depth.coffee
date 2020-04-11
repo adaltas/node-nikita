@@ -2,7 +2,7 @@
 error = require '../utils/error'
 
 module.exports = ->
-  name: 'metadata_depth'
+  module: '@nikitajs/engine/src/metadata/depth'
   hooks:
     'nikita:session:normalize': (action) ->
       # Move property from action to metadata
