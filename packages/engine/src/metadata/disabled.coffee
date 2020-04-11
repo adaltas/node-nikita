@@ -1,6 +1,6 @@
 
 module.exports = ->
-  name: 'metadata_disabled'
+  module: '@nikitajs/engine/src/metadata/disabled'
   hooks:
     'nikita:session:normalize': (action) ->
       # Move property from action to metadata

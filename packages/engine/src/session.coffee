@@ -26,7 +26,7 @@ session = (action={}) ->
           "got #{JSON.stringify namespace}."
         ]
       actions = await action.plugins.hook
-        name: 'nikita:session:actions:arguments'
+        event: 'nikita:session:actions:arguments'
         args: args: args, child: child, parent: action, namespace: namespace
         handler: ({args, parent, namespace}) ->
           contextualize [...args, parent: parent, metadata: namespace: namespace]
@@ -60,7 +60,7 @@ session = (action={}) ->
     parent: if action.parent then action.parent.registry else registry
     on_register: (name, act) ->
       await action.plugins.hook
-        name: 'nikita:registry:action:register'
+        event: 'nikita:registry:action:register'
         args: name: name, action: act
   # Register run helper
   action.run = ->
@@ -77,7 +77,7 @@ session = (action={}) ->
       action.scheduler.on_end resolve
     # Hook intented to modify the current action being created
     action = await action.plugins.hook
-      name: 'nikita:session:normalize'
+      event: 'nikita:session:normalize'
       args: action
       hooks: action.hooks?.on_normalize or action.on_normalize
       handler: (action) ->
@@ -92,7 +92,7 @@ session = (action={}) ->
     on_result = (error, output) ->
       try
         resolve await action.plugins.hook
-          name: 'nikita:session:result'
+          event: 'nikita:session:result'
           args: action: action, error: error, output: output
           hooks: action.hooks.on_result
           handler: ({action, error, output}) ->
@@ -102,7 +102,7 @@ session = (action={}) ->
     try
       # Hook attented to alter the execution of an action handler
       output = action.plugins.hook
-        name: 'nikita:session:action'
+        event: 'nikita:session:action'
         args: action
         hooks: action.hooks.on_action
         handler: (action) ->
