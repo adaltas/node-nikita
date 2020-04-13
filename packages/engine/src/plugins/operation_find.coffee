@@ -7,33 +7,43 @@ find = (action, finder) ->
   return undefined unless action.parent
   find action.parent, finder
 
+validate = (action, args) ->
+  if args.length is 1
+    [finder] = args
+  else if args.length is 2
+    [action, finder] = args
+  else throw error 'OPERATION_FIND_INVALID_ARGUMENT', [
+    'action signature is expected to be'
+    '`finder` or `action, finder`'
+    "got #{JSON.stringify args}"
+  ] unless action
+  throw error 'OPERATION_FIND_ACTION_FINDER_REQUIRED', [
+    'argument `action` is missing and must be a valid action'
+  ] unless action
+  throw error 'OPERATION_FIND_FINDER_REQUIRED', [
+    'argument `finder` is missing and must be a function'
+  ] unless finder
+  throw error 'OPERATION_FIND_FINDER_INVALID', [
+    'argument `finder` is missing and must be a function'
+  ] unless typeof finder is 'function'
+  [action, finder]
+
 module.exports = (action) ->
   module: '@nikitajs/engine/src/plugins/operation_find'
   hooks:
     'nikita:session:normalize': (action, handler) ->
       ->
+        # Handler execution
         action = handler.apply null, arguments
-        return action unless action.metadata.depth is 0
+        # Register function
+        action.operations ?= {}
+        action.operations.find = ->
+          [action, finder] = validate action, arguments
+          await find action, finder
+        # Register action
         action.registry.register ['operations', 'find'],
           raw: true
           handler: (action) ->
-            if action.config.length is 1
-              [finder] = action.config
-            else if action.config.length is 2
-              [action, finder] = action.config
-            else throw error 'OPERATION_FIND_INVALID_ARGUMENT', [
-                'action signature is expected to be'
-                '`finder` or `action, finder`'
-                "got #{JSON.stringify action.config}"
-            ] unless action
-            throw error 'OPERATION_FIND_ACTION_FINDER_REQUIRED', [
-                'argument `action` is missing and must be a valid action'
-            ] unless action
-            throw error 'OPERATION_FIND_FINDER_REQUIRED', [
-                'argument `finder` is missing and must be a function'
-            ] unless finder
-            throw error 'OPERATION_FIND_FINDER_INVALID', [
-                'argument `finder` is missing and must be a function'
-            ] unless typeof finder is 'function'
+            [action, finder] = validate action, action.config
             await find action.parent, finder
         action
