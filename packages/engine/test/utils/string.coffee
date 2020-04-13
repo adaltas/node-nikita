@@ -1,5 +1,5 @@
 
-string = require '../../src/misc/string'
+string = require '../../src/utils/string'
 {tags} = require '../test'
 
 return unless tags.api
