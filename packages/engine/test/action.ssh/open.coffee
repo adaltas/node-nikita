@@ -98,7 +98,7 @@ describe 'ssh.open', ->
   
   describe 'errors', ->
     
-    they.only 'NIKITA_SSH_OPEN_UNMATCHING_SSH_INSTANCE', ({ssh}) ->
+    they 'NIKITA_SSH_OPEN_UNMATCHING_SSH_INSTANCE', ({ssh}) ->
       conn = await connect ssh.config
       conn.config.host = 'something.else' # Fake another connection
       nikita ->
