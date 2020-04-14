@@ -102,12 +102,7 @@ module.exports = ({action, chain, parent, plugins = []} = {}) ->
           'function hook expect a event properties in its first argument,'
           "got #{JSON.stringify arguments[0]} argument."
         ]
-      # Normalize and validate user hooks
-      # hooks = [hooks] unless Array.isArray hooks
-      # hooks = hooks.map (hook) -> normalize_hook event, hook
-      # hooks = normalize_hook event, hooks
-      # # Enrich with registered hooks
-      # hooks = [...hooks, ...this.get(event: event)]
+      # Retrieve the event hooks
       hooks = this.get hooks: hooks, event: event
       # Call the hooks
       for hook in hooks
