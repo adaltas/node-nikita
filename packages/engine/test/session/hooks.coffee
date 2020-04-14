@@ -1,5 +1,6 @@
 
 nikita = require '../../src'
+session = require '../../src/session'
 
 # Test the construction of the session namespace stored in state
 
@@ -25,10 +26,10 @@ describe 'session.hooks', ->
         plugins.register
           hooks:
             'nikita:registry:action:register': ({action}, handler)->
-              new Promise (accept, reject) ->
+              new Promise (resolve, reject) ->
                 setImmediate ->
                   action.key = 'new value'
-                  accept handler
+                  resolve handler
         context.registry.register ['an', 'action'],
           key: 'value'
           handler: (->)
@@ -51,9 +52,9 @@ describe 'session.hooks', ->
         plugins.register
           'hooks':
             'nikita:session:action': (action, handler) ->
-              new Promise (accept, reject) ->
+              new Promise (resolve, reject) ->
                 setImmediate ->
-                  accept (action) ->
+                  resolve (action) ->
                     action.config.new_key = 'new value'
                     handler.call action.context, action
         context.registry.register ['an', 'action'],
@@ -97,10 +98,10 @@ describe 'session.hooks', ->
         plugins.register
           'hooks':
             'nikita:session:action': (action, handler) ->
-              new Promise (accept, reject) ->
+              new Promise (resolve, reject) ->
                 if action.metadata.namespace.join('.') is 'an.action'
                 then reject Error 'Catch me'
-                else accept handler
+                else resolve handler
         context.registry.register ['an', 'action'],
           handler: -> throw Error 'You are not invited'
         context
@@ -112,12 +113,24 @@ describe 'session.hooks', ->
         plugins.register
           'hooks':
             'nikita:session:action': (action, handler) ->
-              new Promise (accept, reject) ->
+              new Promise (resolve, reject) ->
                 if action.metadata.namespace.join('.') is 'an.action'
                 then reject Error 'Catch me'
-                else accept handler
+                else resolve handler
         context.registry.register ['an', 'action'],
           handler: -> throw Error 'You are not invited'
         context
         .an.action()
       .should.be.rejectedWith 'Catch me'
+      
+    it 'plugin return a promise, ensure child is executed', ->
+      session ({context, plugins, registry}) ->
+        plugins.register
+          'hooks':
+            'nikita:session:action': (action, handler) ->
+              await new Promise (resolve) -> setImmediate resolve
+              handler
+        @call name: 'parent', ->
+          @call name: 'child', ->
+            'ok'
+      .should.be.resolvedWith 'ok'

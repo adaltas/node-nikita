@@ -67,7 +67,7 @@ session = (action={}) ->
     run parent: action, ...arguments
   # Local scheduler to execute children and be notified on finish
   action.scheduler = schedule()
-  setImmediate -> action.scheduler.pump()
+  # setImmediate -> action.scheduler.pump()
   # Expose the action context
   action.context = new Proxy on_call, get: on_get
   # Execute the action
@@ -101,12 +101,14 @@ session = (action={}) ->
         reject err
     try
       # Hook attented to alter the execution of an action handler
-      output = action.plugins.hook
+      output = await action.plugins.hook
         event: 'nikita:session:action'
         args: action
         hooks: action.hooks.on_action
         handler: (action) ->
           action.handler.call action.context, action
+      # setImmediate -> action.scheduler.pump()
+      action.scheduler.pump()
       Promise.all [output, on_end]
       .then (values) ->
         on_result undefined, values.shift()
