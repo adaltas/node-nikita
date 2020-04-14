@@ -9,8 +9,7 @@ return unless tags.api
 describe 'metadata "tmpdir"', ->
 
   they 'current action', ({ssh}) ->
-    # TODO: inject SSH in nikita
-    tmpdir = await nikita.call tmpdir: true, ({metadata})->
+    tmpdir = await nikita.call ssh: ssh, tmpdir: true, ({metadata, ssh})->
       await fs.exists ssh, metadata.tmpdir
       .should.be.resolvedWith true
       metadata.tmpdir
@@ -18,8 +17,7 @@ describe 'metadata "tmpdir"', ->
     .should.be.resolvedWith false
 
   they 'in children', ({ssh}) ->
-    # TODO: inject SSH in nikita
-    nikita.call tmpdir: true, ({metadata})->
+    nikita.call ssh: ssh, tmpdir: true, ({metadata, ssh})->
       parent = metadata.tmpdir
       @call -> @call ({operations}) ->
         child = await operations.find (action) ->

@@ -24,10 +24,15 @@ Close the existing connection if any.
 
     handler = ({config, parent: {state}}) ->
       @log message: "Entering ssh.close", level: 'DEBUG', module: 'nikita/lib/ssh/close'
-      return false unless state['nikita:ssh:connection']
+      # Retrieve connection from parameters or state
       conn = if config.ssh
       then config.ssh
       else state['nikita:ssh:connection']
+      # Exit unless their is a connection to close
+      return false unless conn
+      # Exit if the connection is already close
+      return false unless conn._sshstream?.writable and conn._sock?.writable
+      # Terminate the connection
       new Promise (resolve, reject) ->
         conn.end()
         conn.on 'error', reject

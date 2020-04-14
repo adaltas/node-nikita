@@ -70,9 +70,9 @@ require('nikita')({
 
     on_action = ({config, state}) ->
       # Merge SSH config namespace
-      if config.ssh and not ssh.is config.ssh
-        config[k] ?= v for k, v of config.ssh or {}
-        delete config.ssh
+      # if config.ssh and not ssh.is config.ssh
+      #   config[k] ?= v for k, v of config.ssh or {}
+      #   delete config.ssh
       # Define host from ip
       if config.ip and not config.host
         config.host = config.ip
@@ -154,7 +154,7 @@ pass all the properties through the `ssh` property.
 ## Handler
 
     handler = ({config, parent: {state}}) ->
-      # @log message: "Entering ssh.open", level: 'DEBUG', module: 'nikita/lib/ssh/open'
+      @log message: "Entering ssh.open", level: 'DEBUG', module: 'nikita/lib/ssh/open'
       # No need to connect if ssh is a connection
       if ssh.is config.ssh
         if not state['nikita:ssh:connection']
@@ -182,6 +182,12 @@ pass all the properties through the `ssh` property.
             'with `nikita.ssh.close` before attempting to open a new one'
             "got #{JSON.stringify object.copy config, ['host', 'port', 'username']}"
           ]
+      # Validate authentication
+      throw error 'NIKITA_SSH_OPEN_NO_AUTH_METHOD_FOUND', [
+        'unable to authenticate the SSH connection,'
+        'at least one of the "private_key", "password", "private_key_path"'
+        'configuration properties must be provided'
+      ] unless config.private_key or config.password or config.private_key_path
       # Read private key if option is a path
       unless config.private_key or config.password
         @log message: "Read Private Key from: #{config.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/open'
