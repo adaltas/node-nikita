@@ -57,13 +57,15 @@
     "each": "^1.2.2",
     "minimatch": "~3.0.4",
     "mixme": "^0.3.5",
+    "ssh2-exec": "^0.5.3",
+    "ssh2-fs": "^1.0.0",
     "ssh2-they": "^2.1.0",
     "tilde-expansion": "^0.0.0",
     "toposort": "^2.0.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.8.7",
-    "@babel/preset-env": "^7.8.7",
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
     "coffeescript": "^2.5.1",
     "eslint": "^6.8.0",
     "eslint-plugin-coffee": "^0.1.12",
