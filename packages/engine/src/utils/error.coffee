@@ -11,6 +11,7 @@ class NikitaError extends Error
     this.code = code
     for context in contexts
       for key of context
+        continue if key is 'code'
         value = context[key]
         this[key] = if Buffer.isBuffer value
         then value.toString()
