@@ -7,8 +7,8 @@ module.exports = ->
   events =
     end: []
   scheduler =
-    on_end: (fn) ->
-      events.end.push fn
+    on_end: (resolve, reject) ->
+      events.end.push resolve: resolve, reject: reject
       @
     pump: ->
       return if running
@@ -30,17 +30,26 @@ module.exports = ->
               scheduler.pump()
           , (err) ->
             running = false
-            handler.call() for handler in events.end
             reject err
+            setImmediate ->
+              # console.log ':engine:error:pump'
+              for prom in events.end
+                {reject} = prom
+                reject.call()
         else
           throw error 'SCHEDULER_INVALID_HANDLER', [
             'scheduled handler must return a promise or an array of handlers,'
             "got #{JSON.stringify res}"
           ]
       else
-        handler.call() for handler in events.end
+        for prom in events.end
+          {resolve} = prom
+          resolve.call()
     next: ->
       stack.shift()
+    clear: ->
+      # console.log 'clear', running
+      stack = []
     add: (handlers, options={}) ->
       prom = new Promise (resolve, reject) ->
         dir = if options.first then 'unshift' else 'push'

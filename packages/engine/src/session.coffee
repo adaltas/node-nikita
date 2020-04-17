@@ -72,9 +72,6 @@ session = (action={}) ->
   action.context = new Proxy on_call, get: on_get
   # Execute the action
   result = new Promise (resolve, reject) ->
-    # Make sure the promise is resolved after the scheduler and its children
-    on_end = new Promise (resolve, reject) ->
-      action.scheduler.on_end resolve
     # Hook intented to modify the current action being created
     action = await action.plugins.hook
       event: 'nikita:session:normalize'
@@ -88,34 +85,37 @@ session = (action={}) ->
       # Merge the registry action with the user action properties
       for k, v of action_from_registry
         action[k] = merge action_from_registry[k], action[k]
+    # Hook attented to alter the execution of an action handler
+    output = action.plugins.hook
+      event: 'nikita:session:action'
+      args: action
+      hooks: action.hooks.on_action
+      handler: (action) ->
+        # Execution of an action handler
+        action.handler.call action.context, action
+    output
+    .then () ->
+      action.scheduler.pump()
+    , (err) ->
+      action.scheduler.pump()
+    # Make sure the promise is resolved after the scheduler and its children
+    on_end = new Promise (resolve, reject) ->
+      action.scheduler.on_end resolve, (err) ->
+        reject err
+    Promise.all [output, on_end]
+    .then (values) ->
+      on_result undefined, values.shift()
+    , (err) ->
+      on_result err
     # Hook to catch error and format output once all children are executed
     on_result = (error, output) ->
-      try
-        resolve await action.plugins.hook
-          event: 'nikita:session:result'
-          args: action: action, error: error, output: output
-          hooks: action.hooks.on_result
-          handler: ({action, error, output}) ->
-            if error then throw error else output
-      catch err
-        reject err
-    try
-      # Hook attented to alter the execution of an action handler
-      output = await action.plugins.hook
-        event: 'nikita:session:action'
-        args: action
-        hooks: action.hooks.on_action
-        handler: (action) ->
-          action.handler.call action.context, action
-      # setImmediate -> action.scheduler.pump()
-      action.scheduler.pump()
-      Promise.all [output, on_end]
-      .then (values) ->
-        on_result undefined, values.shift()
-      , (err) ->
-        on_result err
-    catch err
-      on_result err
+      action.plugins.hook
+        event: 'nikita:session:result'
+        args: action: action, error: error, output: output
+        hooks: action.hooks.on_result
+        handler: ({action, error, output}) ->
+          if error then throw error else output
+      .then resolve, reject
   # Returning a proxified promise:
   # - news action can be registered to it as long as the promised has not fulfilled
   # - resolve when all registered actions are fulfilled
