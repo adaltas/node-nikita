@@ -16,7 +16,6 @@ describe 'system.execute', ->
       target: '/mnt/root/hello'
       content: "you"
     .system.execute
-      cmd: "echo $BASH"
       arch_chroot: true
       rootdir: '/mnt'
       # target is written to "/tmp" by default which is a mount point
