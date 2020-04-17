@@ -6,6 +6,7 @@ module.exports =
   '': handler: (->)
   'call':
     '': {}
+  'execute': '@nikitajs/engine/src/actions/execute'
   'fs':
     'createReadStream': '@nikitajs/engine/src/actions/fs/createReadStream'
     'createWriteStream': '@nikitajs/engine/src/actions/fs/createWriteStream'

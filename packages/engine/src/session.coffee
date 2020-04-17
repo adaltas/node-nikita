@@ -17,6 +17,7 @@ session = (action={}) ->
     # Extract action namespace and reset the state
     namespace = action.state.namespace.slice()
     action.state.namespace = []
+    # Schedule the action and get the result as a promise
     prom = action.scheduler.add ->
       # Validate the namespace
       child = await action.registry.get namespace
