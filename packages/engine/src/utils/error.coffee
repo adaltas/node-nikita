@@ -6,11 +6,11 @@ class NikitaError extends Error
     .join(' ') if Array.isArray message
     message = "#{code}: #{message}"
     super message
-    if Error.captureStackTrace isnt undefined
-      Error.captureStackTrace(this, NikitaError)
+    if Error.captureStackTrace
+      Error.captureStackTrace this, NikitaError
     this.code = code
-    for context of contexts
-      for key in context
+    for context in contexts
+      for key of context
         value = context[key]
         this[key] = if Buffer.isBuffer value
         then value.toString()

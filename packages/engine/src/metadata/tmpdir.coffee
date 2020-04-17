@@ -45,7 +45,9 @@ module.exports = ->
       await fs.mkdir ssh, action.metadata.tmpdir
       handler
     'nikita:session:result': ({action}, handler) ->
-      return handler unless action.metadata.tmpdir
+      # Value of tmpdir could still be true if there was an error in
+      # one of the on_action hook, such as a invalid schema validation
+      return handler unless typeof action.metadata.tmpdir is 'string'
       # SSH connection extraction
       ssh = if action.config.ssh is false
       then undefined

@@ -185,7 +185,7 @@ pass all the properties through the `ssh` property.
       # Validate authentication
       throw error 'NIKITA_SSH_OPEN_NO_AUTH_METHOD_FOUND', [
         'unable to authenticate the SSH connection,'
-        'at least one of the "private_key", "password", "private_key_path"'
+        'one of the "private_key", "password", "private_key_path"'
         'configuration properties must be provided'
       ] unless config.private_key or config.password or config.private_key_path
       # Read private key if option is a path
