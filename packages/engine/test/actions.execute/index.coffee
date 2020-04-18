@@ -6,7 +6,7 @@ they = require('ssh2-they').configure ssh
 
 return unless tags.posix
 
-describe 'system.execute', ->
+describe 'action `execute`', ->
 
   describe 'config `cmd`', ->
 
@@ -99,7 +99,7 @@ describe 'system.execute', ->
         @execute
           cmd: "exit 42"
         .should.be.rejectedWith [
-          'NIKITA_EXECUTE_EXIT_CODE_ERROR:'
+          'NIKITA_EXECUTE_EXIT_CODE_INVALID:'
           'an unexpected exit code was encountered,'
           'got 42 while expecting 0.'
         ].join ' '
@@ -107,7 +107,7 @@ describe 'system.execute', ->
           cmd: "exit 42"
           code: [1,2,3]
         .should.be.rejectedWith [
-          'NIKITA_EXECUTE_EXIT_CODE_ERROR:'
+          'NIKITA_EXECUTE_EXIT_CODE_INVALID:'
           'an unexpected exit code was encountered,'
           'got 42 while expecting one of [1,2,3].'
         ].join ' '
@@ -213,8 +213,8 @@ describe 'system.execute', ->
           sh -c '>&2 echo "Some Error"; exit 2'
           """
         .should.be.rejectedWith
-          code: 'NIKITA_EXECUTE_EXIT_CODE_ERROR'
-          message: 'NIKITA_EXECUTE_EXIT_CODE_ERROR: an unexpected exit code was encountered, got 2 while expecting 0.'
+          code: 'NIKITA_EXECUTE_EXIT_CODE_INVALID'
+          message: 'NIKITA_EXECUTE_EXIT_CODE_INVALID: an unexpected exit code was encountered, got 2 while expecting 0.'
           command: 'sh -c \'>&2 echo "Some Error"; exit 2\''
           exit_code: 2
           stdout: ''
