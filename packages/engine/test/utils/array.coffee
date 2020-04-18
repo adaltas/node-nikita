@@ -43,5 +43,11 @@ describe 'utils.array', ->
         
   describe 'multiply', ->
     
+    it 'empty array', ->
+      shuffle([]).sort().should.eql []
+        
+    it 'one element array', ->
+      shuffle([0]).sort().should.eql [0]
+      
     it 'ensure all elements are still inside', ->
       shuffle([1,2,3]).sort().should.eql [1,2,3]

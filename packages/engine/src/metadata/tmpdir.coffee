@@ -9,7 +9,6 @@ exec = require 'ssh2-exec'
 module.exports = ->
   module: '@nikitajs/engine/src/metadata/status'
   require: '@nikitajs/engine/src/plugins/operation_find'
-  cascade: false
   hooks:
     'nikita:registry:normalize': (action) ->
       action.metadata ?= {}
