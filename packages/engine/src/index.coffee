@@ -9,19 +9,19 @@ session = require './session'
   
 create = ->
   session plugins: [
-    require './metadata/raw'
-    require './metadata/ssh'
-    require './metadata/original'
     require './metadata/depth'
-    require './plugins/history'
-    require './metadata/status'
-    require './plugins/conditions'
-    require './plugins/schema'
     require './metadata/disabled'
+    require './metadata/original'
+    require './metadata/raw'
     require './metadata/relax'
     require './metadata/retry'
+    require './metadata/ssh'
+    require './metadata/status'
     require './metadata/tmpdir'
+    require './plugins/conditions'
+    require './plugins/history'
     require './plugins/operation_find'
+    require './plugins/schema'
   ], ...arguments
 
 module.exports = new Proxy create,

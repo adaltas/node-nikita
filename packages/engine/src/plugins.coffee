@@ -2,7 +2,7 @@
 {is_object_literal, is_object, merge} = require 'mixme'
 toposort = require 'toposort'
 error = require './utils/error'
-{flatten} = require './utils/array'
+array = require './utils/array'
 
 normalize_hook = (event, hook) ->
   unless Array.isArray hook
@@ -36,27 +36,26 @@ module.exports = ({action, chain, parent, plugins = []} = {}) ->
         'associated with function implementing the hook,'
         "got #{plugin}."
       ]) unless is_object_literal plugin
-      plugin.after ?= []
-      plugin.after = [plugin.after] if typeof plugin.after is 'string'
-      plugin.before ?= []
-      plugin.before = [plugin.before] if typeof plugin.before is 'string'
       plugin.hooks ?= {}
       for event, hook of plugin.hooks
         plugin.hooks[event] = normalize_hook event, hook
       store.push plugin
       chain or @
-    get: ({event, hooks = []}) ->
-      hooks = normalize_hook event, hooks
-      hooks.push ...flatten( for plugin in store
-        continue unless plugin.hooks[event]
-        for hook in plugin.hooks[event]
-          merge
-            module: plugin.module
-            # after: plugin.after
-            # before: plugin.before
-          , hook
-      )
-      hooks.push ...parent.get event: event if parent
+    get: ({event, hooks = [], sort = true}) ->
+      hooks = [
+        ...normalize_hook event, hooks
+        ...array.flatten( for plugin in store
+          continue unless plugin.hooks[event]
+          for hook in plugin.hooks[event]
+            merge
+              module: plugin.module
+            , hook
+        )
+        ...if parent
+        then parent.get event: event, sort: false
+        else []
+      ]
+      return hooks unless sort
       # Topological sort
       index = {}
       index[hook.module] = hook for hook in hooks
@@ -67,7 +66,7 @@ module.exports = ({action, chain, parent, plugins = []} = {}) ->
           throw error 'PLUGINS_HOOK_AFTER_INVALID', [
             "the hook #{JSON.stringify event}"
             "in plugin #{JSON.stringify hook.module}" if hook.module
-            'reference an after dependency'
+            'references an after dependency'
             "in plugin #{JSON.stringify after} which does not exists"
           ] unless index[after]
           [index[after], hook]
@@ -77,12 +76,12 @@ module.exports = ({action, chain, parent, plugins = []} = {}) ->
           throw error 'PLUGINS_HOOK_BEFORE_INVALID', [
             "the hook #{JSON.stringify event}"
             "in plugin #{JSON.stringify hook.module}" if hook.module
-            'reference an before dependency'
+            'references a before dependency'
             "in plugin #{JSON.stringify before} which does not exists"
           ] unless index[before]
           [hook, index[before]]
       edges = [...edges_after, ...edges_before]
-      edges = flatten edges, 0
+      edges = array.flatten edges, 0
       toposort.array hooks, edges
     # Call a hook against each registered plugin matching the hook event
     hook: ({args = [], handler, hooks = [], event, silent})->

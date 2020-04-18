@@ -3,7 +3,7 @@ session = require '../session'
 
 module.exports = ->
   module: '@nikitajs/engine/src/plugins/conditions'
-  after: '@nikitajs/engine/src/metadata/raw'
+  require: '@nikitajs/engine/src/metadata/raw'
   hooks:
     'nikita:session:normalize': (action, handler) ->
       # Ventilate conditions properties defined at root

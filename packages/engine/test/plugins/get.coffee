@@ -31,7 +31,7 @@ describe 'plugins.get', ->
     ).should.throw [
       'PLUGINS_HOOK_AFTER_INVALID:'
       'the hook "my:hook"'
-      'reference an after dependency'
+      'references an after dependency'
       'in plugin "module/after" which does not exists'
     ].join ' '
 
@@ -46,7 +46,7 @@ describe 'plugins.get', ->
     ).should.throw [
       'PLUGINS_HOOK_BEFORE_INVALID:'
       'the hook "my:hook"'
-      'reference an before dependency'
+      'references a before dependency'
       'in plugin "module/before" which does not exists'
     ].join ' '
 
