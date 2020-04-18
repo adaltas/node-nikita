@@ -227,6 +227,7 @@ nikita.execute({
     handler = ({config, metadata, ssh}) ->
       @log message: "Entering execute", level: 'DEBUG', module: 'nikita/lib/system/execute'
       # Validate parameters
+      config.mode ?= 0o500
       config.cmd = await @call config: config, config.cmd if typeof config.cmd is 'function'
       config.bash = 'bash' if config.bash is true
       config.arch_chroot = 'arch-chroot' if config.arch_chroot is true
@@ -256,23 +257,24 @@ nikita.execute({
       # Write script
       if config.bash
         cmd = config.cmd
-        config.target = "/tmp/nikita_#{string.hash config.cmd}" if typeof config.target isnt 'string'
+        config.target = "#{metadata.tmpdir}/#{string.hash config.cmd}" if typeof config.target isnt 'string'
         @log message: "Writing bash script to #{JSON.stringify config.target}", level: 'INFO'
         config.cmd = "#{config.bash} #{config.target}"
         config.cmd = "su - #{config.uid} -c '#{config.cmd}'" if config.uid
-        config.cmd += ";code=`echo $?`; rm '#{config.target}'; exit $code" if not config.dirty and config.target?
-        @fs.writeFile
+        config.cmd += ";code=`echo $?`; rm '#{config.target}'; exit $code" unless config.dirty
+        await @fs.writeFile
           target: config.target
           content: cmd
           uid: config.uid
+          mode: config.mode
           sudo: false
       if config.arch_chroot
         cmd = config.cmd
-        config.target = "/var/tmp/nikita_#{string.hash config.cmd}" if typeof config.target isnt 'string'
+        config.target = "#{metadata.tmpdir}/#{string.hash config.cmd}" if typeof config.target isnt 'string'
         @log message: "Writing arch-chroot script to #{JSON.stringify config.target}", level: 'INFO'
         config.cmd = "#{config.arch_chroot} #{config.rootdir} bash #{config.target}"
-        config.cmd += ";code=`echo $?`; rm '#{path.join config.rootdir, config.target}'; exit $code" if not config.dirty and config.target?
-        @fs.writeFile
+        config.cmd += ";code=`echo $?`; rm '#{path.join config.rootdir, config.target}'; exit $code" unless config.dirty
+        await @fs.writeFile
           target: "#{path.join config.rootdir, config.target}"
           content: "#{cmd}"
           mode: config.mode
@@ -293,17 +295,29 @@ nikita.execute({
             stdout_stream_open = true if config.stdout_log
             @log message: data, type: 'stdout_stream', module: 'nikita/lib/system/execute' if config.stdout_log
             if config.stdout_return
-              if Array.isArray result.stdout # A string on exit
+              if Array.isArray result.stdout # A string once `exit` is called
                 result.stdout.push data
-              else console.warn 'stdout coming after child exit'
+              else console.warn [
+                'NIKITA_EXECUTE_EXIT_CODE_INVALID:'
+                'stdout coming after child exit,'
+                "got #{JSON.stringify data.toString()},"
+                'this is embarassing and we never found how to catch this bug,'
+                'we would really enjoy some help to replicate or fix this one.'
+              ].join ' '
         if config.stderr_return or config.stderr_log
           child.stderr.on 'data', (data) =>
             stderr_stream_open = true if config.stderr_log
             @log message: data, type: 'stderr_stream', module: 'nikita/lib/system/execute' if config.stderr_log
             if config.stderr_return
-              if Array.isArray result.stderr # A string on exit
+              if Array.isArray result.stderr # A string once `exit` is called
                 result.stderr.push data
-              else console.warn 'stderr coming after child exit'
+              else console.warn [
+                'NIKITA_EXECUTE_EXIT_CODE_INVALID:'
+                'stderr coming after child exit,'
+                "got #{JSON.stringify data.toString()},"
+                'this is embarassing and we never found how to catch this bug,'
+                'we would really enjoy some help to replicate or fix this one.'
+              ].join ' '
         child.on "exit", (code) =>
           result.code = code
           # Give it some time because the "exit" event is sometimes
@@ -323,7 +337,7 @@ nikita.execute({
             if config.stderr
               child.stderr.unpipe config.stderr
             if config.code.indexOf(code) is -1 and config.code_skipped.indexOf(code) is -1
-              return reject error 'NIKITA_EXECUTE_EXIT_CODE_ERROR', [
+              return reject error 'NIKITA_EXECUTE_EXIT_CODE_INVALID', [
                 'an unexpected exit code was encountered,'
                 "got #{JSON.stringify result.code}"
                 if config.code.length is 1
@@ -341,7 +355,10 @@ nikita.execute({
 
     module.exports =
       handler: handler
-      on_action: on_action
+      hooks:
+        on_action: on_action
+      metadata:
+        tmpdir: true
       schema: schema
 
 ## Dependencies
