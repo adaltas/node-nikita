@@ -56,6 +56,11 @@ module.exports =
   #     for el in array
   #       r.push el
   #   r
+  shuffle: (a) ->
+    for i in [a.length-1..0]
+      j = Math.floor Math.random() * (i + 1)
+      [a[i], a[j]] = [a[j], a[i]]
+    a
   # unique: (array) ->
   #   o = {}
   #   for el in array then o[el] = true
