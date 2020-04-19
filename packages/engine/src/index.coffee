@@ -22,6 +22,7 @@ create = ->
     require './plugins/history'
     require './plugins/operation_find'
     require './plugins/schema'
+    require './plugins/templated'
   ], ...arguments
 
 module.exports = new Proxy create,
