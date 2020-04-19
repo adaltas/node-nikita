@@ -9,48 +9,45 @@ describe 'fs.createReadStream', ->
 
   they 'option on_readable', ({ssh}) ->
     buffers = []
-    nikita
+    await nikita
       ssh: ssh
       tmpdir: true
-    , ({metadata: {tmpdir}}) ->
-      @fs.writeFile
-        target: "#{tmpdir}/a_file"
-        content: 'hello'
-      await @fs.createReadStream
-        target: "#{tmpdir}/a_file"
-        on_readable: (rs) ->
-          while buffer = rs.read()
-            buffers.push buffer
-      Buffer.concat(buffers).toString().should.eql 'hello'
+    .fs.writeFile
+      target: "{{parent.metadata.tmpdir}}/a_file"
+      content: 'hello'
+    .fs.createReadStream
+      target: "{{parent.metadata.tmpdir}}/a_file"
+      on_readable: (rs) ->
+        while buffer = rs.read()
+          buffers.push buffer
+    Buffer.concat(buffers).toString().should.eql 'hello'
 
   they 'option stream', ({ssh}) ->
     buffers = []
     nikita
       ssh: ssh
       tmpdir: true
-    , ({metadata: {tmpdir}}) ->
-      @fs.writeFile
-        target: "#{tmpdir}/a_file"
-        content: 'hello'
-      @fs.createReadStream
-        target: "#{tmpdir}/a_file"
-        stream: (rs) ->
-          rs.on 'readable', ->
-            while buffer = rs.read()
-              buffers.push buffer
-      .then ->
-        Buffer.concat(buffers).toString().should.eql 'hello'
+    .fs.writeFile
+      target: "{{parent.metadata.tmpdir}}/a_file"
+      content: 'hello'
+    .fs.createReadStream
+      target: "{{parent.metadata.tmpdir}}/a_file"
+      stream: (rs) ->
+        rs.on 'readable', ->
+          while buffer = rs.read()
+            buffers.push buffer
+    .then ->
+      Buffer.concat(buffers).toString().should.eql 'hello'
       
   describe 'errors', ->
 
     they 'schema', ({ssh}) ->
       nikita
         ssh: ssh
-      , ->
-        @fs.createReadStream
-          stream: (->)
-        .should.be.rejectedWith
-          message: 'NIKITA_SCHEMA_VALIDATION_CONFIG: one error was found in the configuration: #/required config should have required property \'target\'.'
+      .fs.createReadStream
+        stream: (->)
+      .should.be.rejectedWith
+        message: 'NIKITA_SCHEMA_VALIDATION_CONFIG: one error was found in the configuration: #/required config should have required property \'target\'.'
     
     they 'NIKITA_FS_CRS_TARGET_ENOENT if file does not exist', ({ssh}) ->
       nikita
