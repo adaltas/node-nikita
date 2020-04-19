@@ -12,25 +12,23 @@ describe 'fs.readFile', ->
     nikita
       ssh: ssh
       tmpdir: true
-    , ({metadata: {tmpdir}}) ->
-      @fs.writeFile
-        target: "#{tmpdir}/a_file"
-        content: 'hello'
-      @fs.readFile
-        target: "#{tmpdir}/a_file"
-        encoding: 'ascii'
-      .should.be.resolvedWith 'hello'
+    .fs.writeFile
+      target: "{{parent.metadata.tmpdir}}/a_file"
+      content: 'hello'
+    .fs.readFile
+      target: "{{parent.metadata.tmpdir}}/a_file"
+      encoding: 'ascii'
+    .should.be.resolvedWith 'hello'
 
   they 'argument `target`', ({ssh}) ->
     nikita
       ssh: ssh
       tmpdir: true
-    , ({metadata: {tmpdir}}) ->
-      @fs.writeFile
-        target: "#{tmpdir}/a_file"
-        content: 'hello'
-      content = await @fs.readFile "#{tmpdir}/a_file"
-      content.toString().should.eql 'hello'
+    .fs.writeFile
+      target: "{{parent.metadata.tmpdir}}/a_file"
+      content: 'hello'
+    .fs.readFile "{{parent.metadata.tmpdir}}/a_file"
+    .should.be.resolvedWith 'hello'
   
   describe 'error', ->
   
