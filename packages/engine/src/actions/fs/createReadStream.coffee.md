@@ -86,9 +86,9 @@ console.info(Buffer.concat(buffers).toString())
         else if /^win/.test(process.platform) then process.env['USERPROFILE'].split(path.sep)[2]
         else process.env['USER']
       try if config.target_tmp
-        await @system.execute
-          bash: config.bash
-          arch_chroot: config.arch_chroot
+        await @execute
+          # bash: config.bash
+          # arch_chroot: config.arch_chroot
           cmd: """
           [ ! -f '#{config.target}' ] && exit
           cp '#{v.target}' '#{config.target_tmp}'
@@ -137,7 +137,8 @@ console.info(Buffer.concat(buffers).toString())
 
     module.exports =
       handler: handler
-      on_action: on_action
+      hooks:
+        on_action: on_action
       metadata:
         status: false
         log: false

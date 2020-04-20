@@ -5,5 +5,6 @@ module.exports =
   object: require './object'
   schema: require './schema'
   ssh: require './ssh'
+  stats: require './stats'
   string: require './string'
   tilde: require './tilde'

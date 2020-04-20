@@ -64,7 +64,8 @@ content = await require('nikita')
 
     module.exports =
       handler: handler
-      on_action: on_action
+      hooks:
+        on_action: on_action
       metadata:
         status: false
         log: false
