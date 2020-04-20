@@ -104,9 +104,9 @@ require('nikita')
           cmd: """
           mv '#{config.target_tmp}' '#{config.target}'
           """
-          sudo: config.sudo
-          bash: config.bash
-          arch_chroot: config.arch_chroot
+          # sudo: config.sudo
+          # bash: config.bash
+          # arch_chroot: config.arch_chroot
 
 ## Exports
 
