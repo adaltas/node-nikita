@@ -1,5 +1,5 @@
 
-# `nikita.system.gsettings`
+# `nikita.tools.gsettings`
 
 GSettings configuration tool
 

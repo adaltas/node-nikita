@@ -1,5 +1,5 @@
 
-# `nikital.system.apm`
+# `nikita.tools.apm`
 
 Install Atom packages with APM.
 

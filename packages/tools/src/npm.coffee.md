@@ -1,5 +1,5 @@
 
-# `nikital.system.npm`
+# `nikita.tools.npm`
 
 Install Node.js packages with NPM.
 
@@ -11,6 +11,27 @@ Install Node.js packages with NPM.
     Name of the package(s).
 *   `upgrade` (boolean)
     Upgrade all packages, default to "false".
+
+## Callback Parameters
+
+* `err`   
+  Error object if any.   
+* `status`   
+  Value "true" if the package was installed.
+
+## Example
+
+The following action installs the coffescript package globally.
+
+```javascript
+require('nikita')
+.tools.npm({
+  global: '-g',
+  name: 'coffeescript'
+}, function(err, {status}){
+  console.log(err ? err.message : 'Package installed ' + status);
+});
+```
 
 ## Source code
 

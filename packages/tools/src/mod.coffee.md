@@ -1,5 +1,5 @@
 
-# `nikita.system.mod`
+# `nikita.tools.mod`
 
 Load a kernel module.
 
