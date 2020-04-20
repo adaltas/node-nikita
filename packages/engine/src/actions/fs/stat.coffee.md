@@ -3,13 +3,6 @@
 
 Retrieve file information.
 
-## Options
-
-* `dereference` (boolean)   
-  Follow links, similar to `lstat`, default is "true".
-* `target` (string)   
-  Path to the file to analyse.
-
 ## Output parameters
 
 The parameters include a subset as the one of the Node.js native 
@@ -30,8 +23,9 @@ The parameters include a subset as the one of the Node.js native
 
 ## File information
 
-The `mode` parameter indicates the file type. For conveniency, the 
-`nikita/misc/stats` module provide functions to check each possible file types.
+The `mode` parameter indicates the file type. For conveniency, the
+`@nikitajs/engine/lib/utils/stats` module provide functions to check each
+possible file types.
 
 ## Examples
 
@@ -49,7 +43,7 @@ require('nikita')
 Check if target is a directory:
 
 ```js
-stats = require('@nikitajs/core/lib/misc/stats')
+stats = require('@nikitajs/engine/lib/utils/stats')
 require('nikita')
 .system.mkdir("#{scratch}/a_file")
 .fs.stat("#{scratch}/a_file", function(err, {stats}){
@@ -61,46 +55,89 @@ require('nikita')
 
 The `stat` command return an empty stdout in some circounstances like uploading
 a large file with `file.download`, thus the activation of `retry` and `sleep`
-options.
+confguration properties.
 
-## Source Code
+## Hook
 
-    module.exports = status: false, log: false, handler: ({metadata, options}, callback) ->
+    on_action = ({config, metadata}) ->
+      config.target = metadata.argument if metadata.argument?
+
+## schema
+
+    schema =
+      type: 'object'
+      properties:
+        'dereference':
+          type: 'boolean'
+          description: """
+          Follow links, similar to `lstat`, default is "true", just like in the
+          native Node.js `fs.stat` function, use `nikita.fs.lstat` to retrive
+          link information.
+          """
+        'target':
+          oneOf: [{type: 'string'}, 'instanceof': 'Buffer']
+          description: """
+          Location of the file to analyse
+          """
+      required: ['target']
+
+## Handler
+
+    handler = ({config, metadata}) ->
       @log message: "Entering fs.stat", level: 'DEBUG', module: 'nikita/lib/fs/stat'
-      # Normalize options
-      options.target = metadata.argument if metadata.argument?
-      options.dereference ?= true
-      dereference = if options.dereference then '-L' else ''
-      throw Error "Required Option: the \"target\" option is mandatory" unless options.target
-      @system.execute
-        cmd: """
-        [ ! -e #{options.target} ] && exit 3
-        if [ -d /private ]; then
-          stat #{dereference} -f '%Xp|%u|%g|%z|%a|%m' #{options.target} # MacOS
-        else
-          stat #{dereference} -c '%f|%u|%g|%s|%X|%Y' #{options.target} # Linux
-        fi
-        """
-        sudo: options.sudo
-        bash: options.bash
-        arch_chroot: options.arch_chroot
-        trim: true
-      , (err, {stdout}) ->
-        if err?.code is 3
-          err = Error "Missing File: no file exists for target #{JSON.stringify options.target}"
-          err.code = 'ENOENT'
-          return callback err
-        return callback err if err
+      # Normalize configuration
+      config.dereference ?= true
+      dereference = if config.dereference then '-L' else ''
+      try
+        {stdout} = await @execute
+          cmd: """
+          [ ! -e #{config.target} ] && exit 3
+          if [ -d /private ]; then
+            stat #{dereference} -f '%Xp|%u|%g|%z|%a|%m' #{config.target} # MacOS
+          else
+            stat #{dereference} -c '%f|%u|%g|%s|%X|%Y' #{config.target} # Linux
+          fi
+          """
+          # sudo: config.sudo
+          # bash: config.bash
+          # arch_chroot: config.arch_chroot
+          trim: true
         [rawmodehex, uid, gid, size, atime, mtime] = stdout.split '|'
-        mode = parseInt '0x' + rawmodehex, 16
-        return retry_callback Error "System Kaput: invalid stdout, got #{JSON.stringify stdout}" if isNaN mode
-        callback null, stats:
-          mode: mode
+        stats:
+          mode: parseInt '0xa1ed' + rawmodehex, 16
           uid: parseInt uid, 10
           gid: parseInt gid, 10
           size: parseInt size, 10
           atime: parseInt atime, 10
           mtime: parseInt mtime, 10
+      catch err
+        if err.exit_code is 3
+          throw error 'NIKITA_FS_STAT_TARGET_ENOENT', [
+            'failed to stat the target, no file exists for target,'
+            "got #{JSON.stringify config.target}"
+          ],
+            exit_code: err.exit_code
+            errno: -2
+            syscall: 'rmdir'
+            path: config.target
+        else
+          throw err
+
+## Exports
+
+    module.exports =
+      handler: handler
+      hooks:
+        on_action: on_action
+      metadata:
+        log: false
+        status: false
+      schema: schema
+
+## Dependencies
+
+    constants = require('fs').constants
+    error = require '../../utils/error'
 
 ## Stat implementation
 
@@ -121,7 +158,3 @@ On MacOS, the format argument is '-f'. The following codes are used:
 - `%z`  The size of file in bytes.
 - `%a`  The time file was last accessed.
 - `%m`  The time file was last modified.
-
-## Dependencies
-
-    constants = require('fs').constants
