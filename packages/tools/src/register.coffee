@@ -26,3 +26,4 @@
         ssh:
           keygen: '@nikitajs/tools/src/ssh/keygen'
         sysctl: '@nikitajs/tools/src/sysctl'
+        npm: '@nikitajs/tools/src/npm'

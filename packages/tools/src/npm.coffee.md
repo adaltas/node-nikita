@@ -5,18 +5,18 @@ Install Node.js packages with NPM.
 
 ## Options
 
-*   `global` (string|array)
-    Install packages globally.
-*   `name` (string|array)
-    Name of the package(s).
-*   `upgrade` (boolean)
-    Upgrade all packages, default to "false".
+* `name` (string|array)
+  Name of the package(s).
+* `global` (boolean)
+  Install packages globally.
+* `upgrade` (boolean)
+  Upgrade all packages, default to "false".
 
 ## Callback Parameters
 
-* `err`   
-  Error object if any.   
-* `status`   
+* `err`
+  Error object if any.
+* `status`
   Value "true" if the package was installed.
 
 ## Example
@@ -26,9 +26,9 @@ The following action installs the coffescript package globally.
 ```javascript
 require('nikita')
 .tools.npm({
-  global: '-g',
-  name: 'coffeescript'
-}, function(err, {status}){
+  name: 'coffeescript',
+  global: true
+}, (err, {status}) => {
   console.log(err ? err.message : 'Package installed ' + status);
 });
 ```
