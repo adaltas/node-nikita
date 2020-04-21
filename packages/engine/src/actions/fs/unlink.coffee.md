@@ -1,35 +1,31 @@
 
-# `nikita.fs.readlink`
+# `nikita.fs.unlink`
 
-Read a link to retrieve its destination path.
+Delete a name and possibly the file it refers to.
 
 ## Hook
 
     on_action = ({config, metadata}) ->
       config.target = metadata.argument if metadata.argument?
 
-## schema
+## Schema
 
     schema =
       type: 'object'
       properties:
         'target':
-          oneOf: [{type: 'string'}, 'instanceof': 'Buffer']
+          type: 'string'
           description: """
-          Location of the link to read.
+          Location of the file to remove.
           """
       required: ['target']
 
 ## Handler
 
     handler = ({config, metadata}) ->
-      @log message: "Entering fs.readlink", level: 'DEBUG', module: 'nikita/lib/fs/readlink'
-      {stdout} = await @execute
-        cmd: "readlink #{config.target}"
-        # sudo: config.sudo
-        # bash: config.bash
-        # arch_chroot: config.arch_chroot
-      target: stdout.trim()
+      @log message: "Entering fs.unlink", level: 'DEBUG', module: 'nikita/lib/fs/unlink'
+      @execute
+        cmd: "unlink #{config.target}"
 
 ## Exports
 
@@ -41,3 +37,7 @@ Read a link to retrieve its destination path.
         log: false
         raw_output: true
       schema: schema
+
+## Dependencies
+
+    error = require '../../utils/error'

@@ -10,6 +10,8 @@ module.exports =
     '': '@nikitajs/engine/src/actions/execute'
     'assert': '@nikitajs/engine/src/actions/execute/assert'
   'fs':
+    'chmod': '@nikitajs/engine/src/actions/fs/chmod'
+    'chown': '@nikitajs/engine/src/actions/fs/chown'
     'copy': '@nikitajs/engine/src/actions/fs/copy'
     'createReadStream': '@nikitajs/engine/src/actions/fs/createReadStream'
     'createWriteStream': '@nikitajs/engine/src/actions/fs/createWriteStream'
@@ -19,9 +21,11 @@ module.exports =
     'readdir': '@nikitajs/engine/src/actions/fs/readdir'
     'readFile': '@nikitajs/engine/src/actions/fs/readFile'
     'readlink': '@nikitajs/engine/src/actions/fs/readlink'
+    'rename': '@nikitajs/engine/src/actions/fs/rename'
     'rmdir': '@nikitajs/engine/src/actions/fs/rmdir'
     'stat': '@nikitajs/engine/src/actions/fs/stat'
     'symlink': '@nikitajs/engine/src/actions/fs/symlink'
+    'unlink': '@nikitajs/engine/src/actions/fs/unlink'
     'writeFile': '@nikitajs/engine/src/actions/fs/writeFile'
   'log':
     '': handler: (->)

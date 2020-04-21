@@ -113,8 +113,8 @@ require('nikita')
     module.exports =
       handler: handler
       metadata:
-        status: false
         log: false
+        raw_output: true
         tmpdir: true
       hooks:
         on_action: on_action

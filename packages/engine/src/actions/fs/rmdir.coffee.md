@@ -56,7 +56,7 @@ Delete a directory.
         on_action: on_action
       metadata:
         log: false
-        status: false
+        raw_output: true
       schema: schema
 
 ## Dependencies
