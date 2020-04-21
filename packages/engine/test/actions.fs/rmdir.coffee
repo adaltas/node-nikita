@@ -18,7 +18,7 @@ describe 'fs.rmdir', ->
       target: "{{parent.metadata.tmpdir}}/a_file"
     .fs.exists
       target: "{{parent.metadata.tmpdir}}/a_file"
-    .should.be.finally.containEql exists: false
+    .should.be.resolvedWith false
 
   they 'error missing', ({ssh}) ->
     nikita

@@ -6,7 +6,7 @@ they = require('ssh2-they').configure ssh
 
 return unless tags.posix
 
-describe 'fs.symlink', ->
+describe 'fs.rename', ->
 
   they 'create', ({ssh}) ->
     {stats} = await nikita
@@ -15,10 +15,9 @@ describe 'fs.symlink', ->
     .fs.writeFile
       target: "{{parent.metadata.tmpdir}}/a_source"
       content: 'hello'
-    .fs.symlink
+    .fs.rename
       source: "{{parent.metadata.tmpdir}}/a_source"
       target: "{{parent.metadata.tmpdir}}/a_target"
     .fs.stat
       target: "{{parent.metadata.tmpdir}}/a_target"
-      dereference: false
-    utils.stats.isSymbolicLink(stats.mode).should.be.true()
+    utils.stats.isFile(stats.mode).should.be.true()

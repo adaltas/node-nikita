@@ -40,5 +40,5 @@ stated, not the file that it refers to.
         on_action: on_action
       metadata:
         log: false
-        status: false
+        raw_output: true
       schema: schema
