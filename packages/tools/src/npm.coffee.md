@@ -5,7 +5,7 @@ Install Node.js packages with NPM.
 
 ## Options
 
-* `name` (string|array)
+* `name` (string|array, required)
   Name of the package(s).
 * `global` (boolean)
   Install packages globally.
@@ -33,9 +33,19 @@ require('nikita')
 });
 ```
 
-## Source code
+## Schema
 
-    module.exports = ({options}) ->
+    schema =
+      type: 'object'
+      properties:
+        'name': type: 'string'
+        'global': type: 'boolean'
+        'upgrade': type: 'boolean'
+      required: ['name']
+
+## Handler
+
+    handler = ({options}, callback) ->
       options.name = options.argument if options.argument?
       options.name = [options.name] if typeof options.name is 'string'
       global = if options.global then ' -g' else ''
@@ -82,3 +92,13 @@ require('nikita')
           sudo: options.sudo
         , (err) =>
           @log message: "NPM Installed Packages: #{install.join ', '}"
+
+## Export
+
+    module.exports =
+      handler: handler
+      schema: schema
+
+## Dependencies
+
+    string = require '@nikitajs/core/lib/misc/string'
