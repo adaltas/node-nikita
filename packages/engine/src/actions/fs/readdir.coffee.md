@@ -129,8 +129,8 @@ require('nikita')
       hooks:
         on_action: on_action
       metadata:
-        status: false
         log: false
+        raw_output: true
       schema: schema
 
 ## Dependencies

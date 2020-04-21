@@ -43,10 +43,10 @@ require(nikita)
           # bash: config.bash
           # arch_chroot: config.arch_chroot
           # relax: true
-        exists: true
+        true
       catch err
         if err.code is 'NIKITA_FS_STAT_TARGET_ENOENT'
-          exists: false
+          false
         else
           throw err
 
@@ -58,5 +58,5 @@ require(nikita)
         on_action: on_action
       metadata:
         log: false
-        status: false
+        raw_output: true
       schema: schema

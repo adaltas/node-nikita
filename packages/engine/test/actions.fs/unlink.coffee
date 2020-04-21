@@ -6,19 +6,17 @@ they = require('ssh2-they').configure ssh
 
 return unless tags.posix
 
-describe 'fs.symlink', ->
+describe 'fs.unlink', ->
 
-  they 'create', ({ssh}) ->
-    {stats} = await nikita
+  they 'a file', ({ssh}) ->
+    nikita
       ssh: ssh
       tmpdir: true
     .fs.writeFile
-      target: "{{parent.metadata.tmpdir}}/a_source"
+      target: "{{parent.metadata.tmpdir}}/a_target"
       content: 'hello'
-    .fs.symlink
-      source: "{{parent.metadata.tmpdir}}/a_source"
+    .fs.unlink
       target: "{{parent.metadata.tmpdir}}/a_target"
-    .fs.stat
+    .fs.exists
       target: "{{parent.metadata.tmpdir}}/a_target"
-      dereference: false
-    utils.stats.isSymbolicLink(stats.mode).should.be.true()
+    .should.be.resolvedWith false

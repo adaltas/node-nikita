@@ -6,19 +6,18 @@ they = require('ssh2-they').configure ssh
 
 return unless tags.posix
 
-describe 'fs.symlink', ->
+describe 'fs.chmod', ->
 
   they 'create', ({ssh}) ->
     {stats} = await nikita
       ssh: ssh
       tmpdir: true
     .fs.writeFile
-      target: "{{parent.metadata.tmpdir}}/a_source"
+      target: "{{parent.metadata.tmpdir}}/a_target"
       content: 'hello'
-    .fs.symlink
-      source: "{{parent.metadata.tmpdir}}/a_source"
+    .fs.chmod
+      mode: 0o600
       target: "{{parent.metadata.tmpdir}}/a_target"
     .fs.stat
       target: "{{parent.metadata.tmpdir}}/a_target"
-      dereference: false
-    utils.stats.isSymbolicLink(stats.mode).should.be.true()
+    (stats.mode & 0o777).toString(8).should.eql '600'

@@ -1,39 +1,37 @@
 
-# `nikita.fs.symlink`
+# `nikita.fs.rename`
 
-Delete a name and possibly the file it refers to.
+Change the name or location of a file.
 
 ## Hook
 
     on_action = ({config, metadata}) ->
       config.target = metadata.argument if metadata.argument?
 
-## schema
+## Schema
 
     schema =
       type: 'object'
       properties:
         'source':
-          oneOf: [{type: 'string'}, 'instanceof': 'Buffer']
+          type: 'string'
           description: """
-          Location of the file to reference.
+          Location of the file to rename.
           """
         'target':
-          oneOf: [{type: 'string'}, 'instanceof': 'Buffer']
+          type: 'string'
           description: """
-          Destination of the link to create.
+          New name of the file.
           """
       required: ['source', 'target']
 
 ## Handler
 
     handler = ({config, metadata}) ->
-      @log message: "Entering fs.symlink", level: 'DEBUG', module: 'nikita/lib/fs/symlink'
+      @log message: "Entering fs.rename", level: 'DEBUG', module: 'nikita/lib/fs/rename'
       @execute
-        cmd: "ln -sf #{config.source} #{config.target}"
-        # sudo: config.sudo
-        # bash: config.bash
-        # arch_chroot: config.arch_chroot
+        cmd: "mv #{config.source} #{config.target}"
+        trim: true
 
 ## Exports
 
@@ -45,3 +43,7 @@ Delete a name and possibly the file it refers to.
         log: false
         raw_output: true
       schema: schema
+
+## Dependencies
+
+    error = require '../../utils/error'
