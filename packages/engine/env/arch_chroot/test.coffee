@@ -1,13 +1,7 @@
 
 module.exports =
   tags:
-    posix: true
-    conditions_if_os: true
-    system_chmod: true
-    system_cgroups: true
-    system_discover: true
-    system_info: true
-    system_limits: true
+    system_execute_arc_chroot: true
   conditions_is_os:
     arch: '64'
     name: 'arch'

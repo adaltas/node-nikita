@@ -3,6 +3,7 @@ module.exports =
   scratch: '/tmp/nikita-test-core'
   tags:
     api: true
+    system_execute_arc_chroot: false
   ssh: [
     null
   ,
