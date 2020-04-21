@@ -213,7 +213,10 @@ nikita.execute({
         'target':
           type: 'string'
           description: """
-          Temporary path storing the script, only apply with the `bash` and `arch_chroot` properties, always disposed once executed.
+          Temporary path storing the script, only apply with the `bash` and
+          `arch_chroot` properties, always disposed once executed. Unless
+          provided, the default location is `{metadata.tmpdir}/{string.hash
+          config.cmd}`. See the `tmpdir` plugin for additionnal information.
           """
         'uid':
           type: 'integer'
@@ -236,7 +239,6 @@ nikita.execute({
       # throw Error "Required Option: the \"cmd\" option is not provided" unless config.cmd?
       throw Error "Incompatible properties: bash, arch_chroot" if ['bash', 'arch_chroot'].filter((k) -> config[k]).length > 1
       throw Error "Required Option: \"rootdir\" with \"arch_chroot\"" if config.arch_chroot and not config.rootdir
-      throw Error "Invalid Option: the \"target\" option requires either one of the \"bash\" or \"arch_chroot\" config" if config.target and not ['bash', 'arch_chroot'].filter((k) -> config[k]).length
       # Guess current username
       current_username =
         if ssh then ssh.config.username
