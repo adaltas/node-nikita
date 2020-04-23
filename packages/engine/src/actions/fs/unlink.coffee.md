@@ -1,7 +1,7 @@
 
 # `nikita.fs.unlink`
 
-Delete a name and possibly the file it refers to.
+Remove a non-directory type file.
 
 ## Hook
 
@@ -24,8 +24,18 @@ Delete a name and possibly the file it refers to.
 
     handler = ({config, metadata}) ->
       @log message: "Entering fs.unlink", level: 'DEBUG', module: 'nikita/lib/fs/unlink'
-      @execute
-        cmd: "unlink #{config.target}"
+      try
+        # Not, error codes are arbitrary, unlink command always exit with code 1
+        await @execute """
+        [ ! -e '#{config.target}' ] && exit 2
+        [ -d '#{config.target}' ] && exit 3
+        unlink '#{config.target}'
+        """
+      catch err
+        switch err.exit_code
+          when 2 then err = errors.NIKITA_FS_UNLINK_ENOENT config: config
+          when 3 then err = errors.NIKITA_FS_UNLINK_EPERM config: config
+        throw err
 
 ## Exports
 
@@ -37,6 +47,20 @@ Delete a name and possibly the file it refers to.
         log: false
         raw_output: true
       schema: schema
+
+## Errors
+
+    errors =
+      NIKITA_FS_UNLINK_ENOENT: ({config}) ->
+        error 'NIKITA_FS_UNLINK_ENOENT', [
+          'the file to remove does not exists,'
+          "got #{JSON.stringify config.target}"
+        ]
+      NIKITA_FS_UNLINK_EPERM: ({config}) ->
+        error 'NIKITA_FS_UNLINK_ENOENT', [
+          'you do not have the permission to remove the file,'
+          "got #{JSON.stringify config.target}"
+        ]
 
 ## Dependencies
 
