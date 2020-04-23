@@ -42,7 +42,7 @@ describe 'file', ->
         content: 'valid'
       .promise()
 
-    they 'status is false is content is the same', ({ssh}) ->
+    they 'status is false if content is the same', ({ssh}) ->
       nikita
         ssh: ssh
       .file
