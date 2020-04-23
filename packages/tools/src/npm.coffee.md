@@ -8,9 +8,9 @@ Install Node.js packages with NPM.
 * `name` (string|array, required)
   Name of the package(s).
 * `global` (boolean)
-  Install packages globally.
+  Installs the current package context as a global package.
 * `upgrade` (boolean)
-  Upgrade all packages, default to "false".
+  Upgrade all packages, defaults to "false".
 
 ## Callback Parameters
 
@@ -38,9 +38,17 @@ require('nikita')
     schema =
       type: 'object'
       properties:
-        'name': type: 'string'
-        'global': type: 'boolean'
-        'upgrade': type: 'boolean'
+        'name':
+          oneOf: [{type: 'string'}, {type: 'array', items: type: 'string'}]
+          description: 'Name of the package(s).'
+        'global':
+          type: 'boolean'
+          default: false
+          description: 'Installs the current package context as a global package.'
+        'upgrade': 
+          type: 'boolean'
+          default: false
+          description: 'Upgrade all packages, defaults to "false".'
       required: ['name']
 
 ## Handler
