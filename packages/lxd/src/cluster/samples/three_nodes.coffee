@@ -16,7 +16,7 @@ nikita
 .log.cli pad: host: 20, header: 60
 .lxd.cluster
   header: 'Container'
-  network:
+  networks:
     lxdbr0public:
       'ipv4.address': '172.16.0.1/24'
       'ipv4.nat': true
