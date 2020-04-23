@@ -39,8 +39,7 @@ Change ownership of a file.
       config.gid = null if config.gid is false
       # Validation
       throw Error "Missing one of uid or gid option" unless config.uid? or config.gid?
-      @execute
-        cmd: """
+      @execute """
         [ -n '#{if config.uid? then config.uid else ''}' ] && chown #{config.uid} #{config.target}
         [ -n '#{if config.gid? then config.gid else ''}' ] && chgrp #{config.gid} #{config.target}
         """

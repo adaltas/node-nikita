@@ -4,7 +4,7 @@ utils = require '../utils'
 session = require '../session'
 
 module.exports = ->
-  module: '@nikitajs/engine/src/metadata/retry'
+  module: '@nikitajs/engine/src/metadata/ssh'
   hooks:
     'nikita:session:normalize': (action, handler) ->
       # Dont interfere with ssh actions

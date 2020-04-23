@@ -75,21 +75,14 @@ console.info(Buffer.concat(buffers).toString())
       config.target = if config.cwd then p.resolve config.cwd, config.target else p.normalize config.target
       throw Error "Non Absolute Path: target is #{JSON.stringify config.target}, SSH requires absolute paths, you must provide an absolute path in the target or the cwd option" if ssh and not p.isAbsolute config.target
       config.target_tmp ?= "#{metadata.tmpdir}/#{string.hash config.target}" if config.sudo
-      throw error 'NIKITA_FS_CRS_NO_EVENT_HANDLER', [
-        'unable to consume the readable stream,'
-        'one of the "on_readable" or "stream"'
-        'hooks must be provided'
-      ] unless hooks.on_readable or config.stream
+      throw error.NIKITA_FS_CRS_NO_EVENT_HANDLER() unless hooks.on_readable or config.stream
       # Guess current username
       current_username =
         if ssh then ssh.config.username
         else if /^win/.test(process.platform) then process.env['USERPROFILE'].split(path.sep)[2]
         else process.env['USER']
       try if config.target_tmp
-        await @execute
-          # bash: config.bash
-          # arch_chroot: config.arch_chroot
-          cmd: """
+        await @execute """
           [ ! -f '#{config.target}' ] && exit
           cp '#{v.target}' '#{config.target_tmp}'
           chown '#{current_username}' '#{config.target_tmp}'
@@ -107,29 +100,10 @@ console.info(Buffer.concat(buffers).toString())
         then rs.on 'readable', -> hooks.on_readable rs
         else config.stream rs
         rs.on 'error', (err) ->
-          # "NIKITA_FS_CWS_TARGET_INVALID: fail to write a file, location is \"#{tmpdir}/a_dir/a_file\""
           if err.code is 'ENOENT'
-            err = error 'NIKITA_FS_CRS_TARGET_ENOENT', [
-              'fail to read a file because it does not exist,'
-              unless config.target_tmp
-              then "location is #{JSON.stringify config.target}."
-              else "location is #{JSON.stringify config.target_tmp} (temporary file, target is #{JSON.stringify config.target})."
-            ],
-              errno: err.errno
-              code: 'NIKITA_FS_CRS_TARGET_ENOENT'
-              syscall: err.syscall
-              path: err.path
+            err = errors.NIKITA_FS_CRS_TARGET_ENOENT config: config, err: err
           else if err.code is 'EISDIR'
-            err = error 'NIKITA_FS_CRS_TARGET_EISDIR', [
-              'fail to read a file because it is a directory,'
-              unless config.target_tmp
-              then "location is #{JSON.stringify config.target}."
-              else "location is #{JSON.stringify config.target_tmp} (temporary file, target is #{JSON.stringify config.target})."
-            ],
-              errno: err.errno
-              code: 'NIKITA_FS_CRS_TARGET_EISDIR'
-              syscall: err.syscall
-              path: config.target_tmp or config.target # Native Node.js api doesn't provide path
+            err = errors.NIKITA_FS_CRS_TARGET_EISDIR config: config, err: err
           reject err
         rs.on 'end', resolve
 
@@ -144,6 +118,36 @@ console.info(Buffer.concat(buffers).toString())
         raw_output: true
         tmpdir: true
       schema: schema
+
+## Errors
+
+    errors =
+      NIKITA_FS_CRS_NO_EVENT_HANDLER: ->
+        error 'NIKITA_FS_CRS_NO_EVENT_HANDLER', [
+          'unable to consume the readable stream,'
+          'one of the "on_readable" or "stream"'
+          'hooks must be provided'
+        ]
+      NIKITA_FS_CRS_TARGET_ENOENT: ({err, config}) ->
+        error 'NIKITA_FS_CRS_TARGET_ENOENT', [
+          'fail to read a file because it does not exist,'
+          unless config.target_tmp
+          then "location is #{JSON.stringify config.target}."
+          else "location is #{JSON.stringify config.target_tmp} (temporary file, target is #{JSON.stringify config.target})."
+        ],
+          errno: err.errno
+          syscall: err.syscall
+          path: err.path
+      NIKITA_FS_CRS_TARGET_EISDIR: ({err, config}) ->
+        error 'NIKITA_FS_CRS_TARGET_EISDIR', [
+          'fail to read a file because it is a directory,'
+          unless config.target_tmp
+          then "location is #{JSON.stringify config.target}."
+          else "location is #{JSON.stringify config.target_tmp} (temporary file, target is #{JSON.stringify config.target})."
+        ],
+          errno: err.errno
+          syscall: err.syscall
+          path: config.target_tmp or config.target # Native Node.js api doesn't provide path
 
 ## Dependencies
 

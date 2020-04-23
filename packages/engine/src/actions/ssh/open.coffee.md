@@ -19,7 +19,7 @@ require('nikita')
 .call(function(){
   assert(!!@ssh(), true)
 })
-.system.execute({
+.execute({
   header: 'Print remote hostname',
   cmd: 'hostname'
 })
@@ -39,7 +39,7 @@ require('nikita')
 .call({ssh: false}, function(){
   assert(@ssh(config.ssh), null)
 })
-.system.execute({
+.execute({
   ssh: false
   header: 'Print local hostname',
   cmd: 'hostname'

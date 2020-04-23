@@ -73,7 +73,7 @@ require('nikita')
       p = if ssh then path.posix else path
       # Normalization
       config.target = if config.cwd then p.resolve config.cwd, config.target else p.normalize config.target
-      throw Error "Non Absolute Path: target is #{JSON.stringify config.target}, SSH requires absolute paths, you must provide an absolute path in the target or the cwd option" if ssh and not p.isAbsolute config.target
+      throw NIKITA_FS_STAT_TARGET_ENOENT config: config, err: err if ssh and not p.isAbsolute config.target
       # Real work
       @fs.createWriteStream
         target: config.target
@@ -82,6 +82,21 @@ require('nikita')
         stream: (ws) ->
           ws.write config.content
           ws.end()
+
+## Errors
+
+    errors =
+      NIKITA_FS_STAT_TARGET_ENOENT: ({config, err}) ->
+        error 'NIKITA_FS_TARGET_INVALID', [
+          'the target location is absolute'
+          'but this is not suported in SSH mode,'
+          'you must provide an absolute path or the cwd option,'
+          "got #{JSON.stringify config.target}"
+        ],
+          exit_code: err.exit_code
+          errno: -2
+          syscall: 'rmdir'
+          path: config.target
 
 ## Exports
 

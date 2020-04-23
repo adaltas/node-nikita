@@ -5,12 +5,12 @@ Assert the execution or the output of a command.
 
 ## Configuration
 
-All configuration properties are passed to `system.execute`.
+All configuration properties are passed to `nikita.execute`.
 
 ## Assert a command succeed
 
 ```javascript
-nikita.system.execute.assert({
+nikita.execute.assert({
   cmd: 'exit 0'
 }, function(err){
   console.info(err || 'ok');
@@ -20,7 +20,7 @@ nikita.system.execute.assert({
 ## Assert a command stdout
 
 ```javascript
-nikita.system.execute.assert({
+nikita.execute.assert({
   cmd: 'echo hello'
   assert: 'hello'
 }, function(err){

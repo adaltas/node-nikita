@@ -110,14 +110,7 @@ require('nikita')
             if config.extended then new Dirent(file.name, file.type) else file.name
       catch err
         if err.exit_code is 2
-          throw error 'NIKITA_FS_READDIR_TARGET_ENOENT', [
-            'fail to read a directory, target is not a directory,'
-            "got #{JSON.stringify config.target}"
-          ],
-            exit_code: err.exit_code
-            errno: -2
-            syscall: 'rmdir'
-            path: config.target
+          throw NIKITA_FS_READDIR_TARGET_ENOENT config: config, err: err
         else
           throw err
         throw err
@@ -132,6 +125,20 @@ require('nikita')
         log: false
         raw_output: true
       schema: schema
+
+## Errors
+
+    errors =
+      NIKITA_FS_READDIR_TARGET_ENOENT = ({config, err}) ->
+        error 'NIKITA_FS_READDIR_TARGET_ENOENT', [
+          'fail to read a directory, target is not a directory,'
+          "got #{JSON.stringify config.target}"
+        ],
+          exit_code: err.exit_code
+          errno: -2
+          syscall: 'rmdir'
+          path: config.target
+        
 
 ## Dependencies
 
