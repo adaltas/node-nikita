@@ -83,16 +83,7 @@ require('nikita')
         err = false # Quick fix ws sending both the error and close events on error
         ws.on 'error', (err) ->
           if err.code is 'ENOENT'
-            err = error 'NIKITA_FS_CWS_TARGET_ENOENT', [
-              'fail to write a file,'
-              unless config.target_tmp
-              then "location is #{JSON.stringify config.target}."
-              else "location is #{JSON.stringify config.target_tmp} (temporary file, target is #{JSON.stringify config.target})."
-            ],
-              errno: -2
-              code: 'NIKITA_FS_CWS_TARGET_ENOENT'
-              syscall: 'open'
-              path: config.target_tmp or config.target # Native Node.js api doesn't provide path
+            err = errors.NIKITA_FS_CWS_TARGET_ENOENT config: config
           reject err
         ws.on 'end', ->
           ws.destroy()
@@ -119,6 +110,20 @@ require('nikita')
       hooks:
         on_action: on_action
       schema: schema
+
+## Errors
+
+    errors =
+      NIKITA_FS_CWS_TARGET_ENOENT: ({config}) ->
+        error 'NIKITA_FS_CWS_TARGET_ENOENT', [
+          'fail to write a file,'
+          unless config.target_tmp
+          then "location is #{JSON.stringify config.target}."
+          else "location is #{JSON.stringify config.target_tmp} (temporary file, target is #{JSON.stringify config.target})."
+        ],
+          errno: -2
+          path: config.target_tmp or config.target # Native Node.js api doesn't provide path
+          syscall: 'open'
 
 ## Dependencies
 

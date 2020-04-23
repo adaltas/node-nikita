@@ -134,3 +134,17 @@ describe 'session.hooks', ->
           @call name: 'child', ->
             'ok'
       .should.be.resolvedWith 'ok'
+
+  describe 'nikita:session:result', ->
+    
+    it 'is called before action and children resolved', ->
+      called = false
+      await session plugins: [
+        ->
+          hooks: 'nikita:session:result': ({action}, handler) ->
+            await new Promise (resolved) ->
+              called = true
+              setImmediate resolved
+            handler
+      ], (->)
+      called.should.be.true()

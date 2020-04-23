@@ -30,10 +30,9 @@ Delete a name and possibly the file it refers to.
     handler = ({config, metadata}) ->
       @log message: "Entering fs.symlink", level: 'DEBUG', module: 'nikita/lib/fs/symlink'
       @execute
-        cmd: "ln -sf #{config.source} #{config.target}"
-        # sudo: config.sudo
-        # bash: config.bash
-        # arch_chroot: config.arch_chroot
+        cmd: """
+        ln -sf #{config.source} #{config.target}
+        """
 
 ## Exports
 

@@ -28,9 +28,6 @@ stated, not the file that it refers to.
       @fs.stat
         target: config.target
         dereference: false
-        # sudo: config.sudo
-        # bash: config.bash
-        # arch_chroot: config.arch_chroot
 
 ## Exports
 

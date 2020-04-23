@@ -26,9 +26,6 @@ Read a link to retrieve its destination path.
       @log message: "Entering fs.readlink", level: 'DEBUG', module: 'nikita/lib/fs/readlink'
       {stdout} = await @execute
         cmd: "readlink #{config.target}"
-        # sudo: config.sudo
-        # bash: config.bash
-        # arch_chroot: config.arch_chroot
       target: stdout.trim()
 
 ## Exports

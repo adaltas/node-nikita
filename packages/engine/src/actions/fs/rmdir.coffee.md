@@ -30,23 +30,10 @@ Delete a directory.
           [ ! -d '#{config.target}' ] && exit 2
           rmdir '#{config.target}'
           """
-          # sudo: config.sudo
-          # bash: config.bash
-          # arch_chroot: config.arch_chroot
         @log message: "Directory successfully removed", level: 'INFO', module: 'nikita/lib/fs/write'
       catch err
-        @log message: "Fail to remove directory", level: 'ERROR', module: 'nikita/lib/fs/write'
-        if err.exit_code is 2
-          throw error 'NIKITA_FS_RMDIR_TARGET_ENOENT', [
-            'fail to remove a directory, target is not a directory,'
-            "got #{JSON.stringify config.target}"
-          ],
-            exit_code: err.exit_code
-            errno: -2
-            syscall: 'rmdir'
-            path: config.target
-        else
-          throw err
+        err = NIKITA_FS_RMDIR_TARGET_ENOENT config: config, err: err if err.exit_code is 2
+        throw err
 
 ## Exports
 
@@ -58,6 +45,19 @@ Delete a directory.
         log: false
         raw_output: true
       schema: schema
+
+## Errors
+
+    errors =
+      NIKITA_FS_RMDIR_TARGET_ENOENT: ({config, err}) ->
+        error 'NIKITA_FS_RMDIR_TARGET_ENOENT', [
+          'fail to remove a directory, target is not a directory,'
+          "got #{JSON.stringify config.target}"
+        ],
+          exit_code: err.exit_code
+          errno: -2
+          syscall: 'rmdir'
+          path: config.target
 
 ## Dependencies
 

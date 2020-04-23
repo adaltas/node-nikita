@@ -111,17 +111,8 @@ confguration properties.
           atime: parseInt atime, 10
           mtime: parseInt mtime, 10
       catch err
-        if err.exit_code is 3
-          throw error 'NIKITA_FS_STAT_TARGET_ENOENT', [
-            'failed to stat the target, no file exists for target,'
-            "got #{JSON.stringify config.target}"
-          ],
-            exit_code: err.exit_code
-            errno: -2
-            syscall: 'rmdir'
-            path: config.target
-        else
-          throw err
+        err = NIKITA_FS_STAT_TARGET_ENOENT config:config, err: err if err.exit_code is 3
+        throw err
 
 ## Exports
 
@@ -133,6 +124,19 @@ confguration properties.
         log: false
         raw_output: true
       schema: schema
+
+## Errors
+
+    errors =
+      NIKITA_FS_STAT_TARGET_ENOENT: ({config, err}) ->
+        error 'NIKITA_FS_STAT_TARGET_ENOENT', [
+          'failed to stat the target, no file exists for target,'
+          "got #{JSON.stringify config.target}"
+        ],
+          exit_code: err.exit_code
+          errno: -2
+          syscall: 'rmdir'
+          path: config.target
 
 ## Dependencies
 
