@@ -15,25 +15,23 @@ describe 'tools.npm', ->
       .tools.npm
         global: true
       , (err, {status}) ->
-        status.should.be.false() unless err
+        err.message.should.eql "should have required property '.name'"
       .promise()
 
-    they 'is valid', ({ssh}) ->
+    they 'name is valid', ({ssh}) ->
       nikita
         ssh: ssh
       .tools.npm
-        name: 'coffeescripts'
+        name: 'coffeescript'
       , ({options}) ->
-        options.name.should.be.an.Array()
-        options.global.should.be.Boolean()
-        options.upgrade.should.be.Boolean()
+        options.name.should.eql 'coffeescript'
       .promise()
 
     they 'use defaults', ({ssh}) ->
       nikita
         ssh: ssh
       .tools.npm
-        name: 'coffeescripts'
+        name: 'coffeescript'
       , ({options}) ->
         options.global.should.be.false()
         options.upgrade.should.be.false()
