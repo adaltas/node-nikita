@@ -111,7 +111,7 @@ confguration properties.
           atime: parseInt atime, 10
           mtime: parseInt mtime, 10
       catch err
-        err = NIKITA_FS_STAT_TARGET_ENOENT config:config, err: err if err.exit_code is 3
+        err = errors.NIKITA_FS_STAT_TARGET_ENOENT config:config, err: err if err.exit_code is 3
         throw err
 
 ## Exports

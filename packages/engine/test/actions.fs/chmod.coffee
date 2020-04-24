@@ -9,15 +9,16 @@ return unless tags.posix
 describe 'fs.chmod', ->
 
   they 'create', ({ssh}) ->
-    {stats} = await nikita
+    nikita
       ssh: ssh
       tmpdir: true
-    .fs.writeFile
-      target: "{{parent.metadata.tmpdir}}/a_target"
-      content: 'hello'
-    .fs.chmod
-      mode: 0o600
-      target: "{{parent.metadata.tmpdir}}/a_target"
-    .fs.stat
-      target: "{{parent.metadata.tmpdir}}/a_target"
-    (stats.mode & 0o777).toString(8).should.eql '600'
+    , ->
+      @fs.writeFile
+        target: "{{parent.metadata.tmpdir}}/a_target"
+        content: 'hello'
+      @fs.chmod
+        mode: 0o600
+        target: "{{parent.metadata.tmpdir}}/a_target"
+      {stats} = await @fs.stat
+        target: "{{parent.metadata.tmpdir}}/a_target"
+      (stats.mode & 0o777).toString(8).should.eql '600'

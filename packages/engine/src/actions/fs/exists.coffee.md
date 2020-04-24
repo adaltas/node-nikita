@@ -9,7 +9,7 @@ require(nikita)
 .fs.exists({
   target: '/path/to/file'
 }, function(err, {exists}){
-  console.log(err ? err.message :
+  console.info(err ? err.message :
     exists ? 'File exists' : 'File is missing')
 })
 ```
@@ -39,10 +39,6 @@ require(nikita)
         await @fs.stat
           target: config.target
           dereference: true
-          # sudo: config.sudo
-          # bash: config.bash
-          # arch_chroot: config.arch_chroot
-          # relax: true
         true
       catch err
         if err.code is 'NIKITA_FS_STAT_TARGET_ENOENT'

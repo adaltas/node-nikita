@@ -55,7 +55,7 @@ require('nikita')
           """
         'mode':
           oneOf: [{type: 'integer'}, {type: 'string'}]
-          default: 0o644
+          # default: 0o644
           description: """
           Permission mode, a bit-field describing the file type and mode.
           """
