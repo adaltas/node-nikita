@@ -16,10 +16,16 @@ module.exports = ->
       if action.hasOwnProperty 'tmpdir'
         action.metadata.tmpdir = action.tmpdir
         delete action.tmpdir
+      if action.hasOwnProperty 'dirty'
+        action.metadata.dirty = action.dirty
+        delete action.dirty
     'nikita:session:normalize': (action) ->
       if action.hasOwnProperty 'tmpdir'
         action.metadata.tmpdir = action.tmpdir
         delete action.tmpdir
+      if action.hasOwnProperty 'dirty'
+        action.metadata.dirty = action.dirty
+        delete action.dirty
     'nikita:session:action':
       after: '@nikitajs/engine/src/metadata/ssh'
       handler: (action, handler) ->
@@ -61,6 +67,7 @@ module.exports = ->
         # Value of tmpdir could still be true if there was an error in
         # one of the on_action hook, such as a invalid schema validation
         return handler unless typeof action.metadata.tmpdir is 'string'
+        return handler if action.metadata.dirty
         # SSH connection extraction
         ssh = if action.config.ssh is false
         then undefined
