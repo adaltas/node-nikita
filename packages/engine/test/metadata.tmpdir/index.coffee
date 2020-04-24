@@ -47,3 +47,22 @@ describe 'metadata "tmpdir"', ->
         tmpdir.should.eql unless !!ssh
         then path.resolve os.tmpdir(), './a_dir'
         else path.resolve '/tmp', './a_dir'
+
+  describe 'option dirty', ->
+
+    they 'is true', ({ssh}) ->
+      nikita
+        ssh: ssh
+      , ->
+        @call tmpdir: true, dirty: true, (->)
+        @fs.exists '{{siblings.0.metadata.tmpdir}}'
+        .should.resolvedWith true
+        @fs.rmdir '{{siblings.0.metadata.tmpdir}}'
+
+    they 'is true', ({ssh}) ->
+      nikita
+        ssh: ssh
+      , ->
+        @call tmpdir: true, dirty: false, (->)
+        @fs.exists '{{siblings.0.metadata.tmpdir}}'
+        .should.resolvedWith false
