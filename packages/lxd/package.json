@@ -50,7 +50,7 @@
     "coffeescript": "^2.5.1",
     "mocha": "7.1.1",
     "should": "~13.2.3",
-    "ssh2-they": "^2.0.4"
+    "ssh2-they": "^2.1.0"
   },
   "engines": {
     "node": ">= 10.0.0"
