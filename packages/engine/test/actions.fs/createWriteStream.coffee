@@ -11,45 +11,48 @@ describe 'fs.createWriteStream', ->
     nikita
       ssh: ssh
       tmpdir: true
-    .fs.createWriteStream
-      target: "{{parent.metadata.tmpdir}}/a_file"
-      stream: (ws) ->
-        ws.write 'hello'
-        ws.end()
-    .fs.readFile
-      target: "{{parent.metadata.tmpdir}}/a_file"
-    .should.be.resolvedWith 'hello'
+    , ->
+      @fs.createWriteStream
+        target: "{{parent.metadata.tmpdir}}/a_file"
+        stream: (ws) ->
+          ws.write 'hello'
+          ws.end()
+      @fs.readFile
+        target: "{{parent.metadata.tmpdir}}/a_file"
+      .should.be.resolvedWith 'hello'
 
   they 'argument `target`', ({ssh}) ->
     nikita
       ssh: ssh
       tmpdir: true
-    .fs.createWriteStream "{{parent.metadata.tmpdir}}/a_file",
-      stream: (ws) ->
-        ws.write 'hello'
-        ws.end()
-    .fs.readFile
-      target: "{{parent.metadata.tmpdir}}/a_file"
-    .should.be.resolvedWith 'hello'
+    , ->
+      @fs.createWriteStream "{{parent.metadata.tmpdir}}/a_file",
+        stream: (ws) ->
+          ws.write 'hello'
+          ws.end()
+      @fs.readFile
+        target: "{{parent.metadata.tmpdir}}/a_file"
+      .should.be.resolvedWith 'hello'
   
   they.skip 'option flags a', ({ssh}) ->
     nikita
       ssh: ssh
       tmpdir: true
-    .fs.createWriteStream
-      target: "{{parent.metadata.tmpdir}}/a_file"
-      stream: (ws) ->
-        ws.write 'hello'
-        ws.end()
-    .fs.createWriteStream
-      target: "{{parent.metadata.tmpdir}}/a_file"
-      flags: 'a'
-      stream: (ws) ->
-        ws.write ' nikita'
-        ws.end()
-    .fs.readFile
-      target: "{{parent.metadata.tmpdir}}/a_file"
-    .should.be.resolvedWith "hello nikita"
+    , ->
+      @fs.createWriteStream
+        target: "{{parent.metadata.tmpdir}}/a_file"
+        stream: (ws) ->
+          ws.write 'hello'
+          ws.end()
+      @fs.createWriteStream
+        target: "{{parent.metadata.tmpdir}}/a_file"
+        flags: 'a'
+        stream: (ws) ->
+          ws.write ' nikita'
+          ws.end()
+      @fs.readFile
+        target: "{{parent.metadata.tmpdir}}/a_file"
+      .should.be.resolvedWith "hello nikita"
   
   describe 'errors', ->
   

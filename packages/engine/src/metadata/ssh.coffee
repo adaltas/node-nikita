@@ -21,17 +21,17 @@ module.exports = ->
       ssh = await action.operations.find (action) ->
         action.ssh
       if ssh and not utils.ssh.is ssh
-        dispose = true
         {ssh} = await session ({run}) -> run
           metadata:
             namespace: ['ssh', 'open']
           config: ssh
+        action.metadata.ssh_dispose = true
       action.ssh = ssh
-      ->
-        output = handler.apply null, arguments
-        if dispose
-          await session ({run}) -> run
-            metadata:
-              namespace: ['ssh', 'close']
-            config: ssh: ssh
-        output
+      handler
+    'nikita:session:result': ({action}, handler) ->
+      if action.metadata.ssh_dispose
+        await session ({run}) -> run
+          metadata:
+            namespace: ['ssh', 'close']
+          config: ssh: action.ssh
+      handler
