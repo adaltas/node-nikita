@@ -37,8 +37,8 @@ module.exports =
         "#{time / 1000}s"
       else
         "#{time}ms"
-    underscore: (str) ->
-      trim(str).replace(/([a-z\d])([A-Z]+)/g, '$1_$2').replace(/[-\s]+/g, '_').toLowerCase()
+    snake_case: (str) ->
+      str.replace(/([a-z\d])([A-Z]+)/g, '$1_$2').replace(/[-\s]+/g, '_').toLowerCase()
     render: (options) ->
       @log message: "Rendering with #{options.engine}", level: 'DEBUG', module: 'nikita/lib/write'
       try

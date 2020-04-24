@@ -5,22 +5,21 @@ they = require('ssh2-they').configure ssh...
 
 return unless tags.posix
 
-describe 'system.execute', ->
+describe 'action `execute` config `bash`', ->
 
   they 'in generated path', ({ssh}) ->
     nikita
       ssh: ssh
-    .system.execute
+    .execute
       cmd: "echo $BASH"
       bash: true
-    , (err, {stdout}) ->
+    .then ({stdout}) ->
       stdout.should.containEql 'bash'
-    .promise()
 
-  they 'in user path', ({ssh}) ->
+  they.skip 'in user path', ({ssh}) ->
     nikita
       ssh: ssh
-    .system.execute
+    .execute
       cmd: "echo $BASH"
       bash: true
       dirty: true
@@ -29,7 +28,7 @@ describe 'system.execute', ->
       stdout.should.containEql 'bash'
     .file.assert
       target: "#{scratch}/my_script"
-    .system.execute
+    .execute
       cmd: "echo $BASH"
       bash: true
       dirty: false
@@ -41,10 +40,10 @@ describe 'system.execute', ->
       not: true
     .promise()
 
-  they 'honors exit code', ({ssh}) ->
+  they.skip 'honors exit code', ({ssh}) ->
     nikita
       ssh: ssh
-    .system.execute
+    .execute
       cmd: "exit 2"
       bash: true
       code_skipped: 2
