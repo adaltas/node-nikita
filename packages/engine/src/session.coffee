@@ -68,7 +68,6 @@ session = (action={}) ->
     run parent: action, ...arguments
   # Local scheduler to execute children and be notified on finish
   action.scheduler = schedule()
-  # setImmediate -> action.scheduler.pump()
   # Expose the action context
   action.context = new Proxy on_call, get: on_get
   # Execute the action
@@ -94,11 +93,9 @@ session = (action={}) ->
       handler: (action) ->
         # Execution of an action handler
         action.handler.call action.context, action
-    output
-    .then () ->
-      action.scheduler.pump()
-    , (err) ->
-      action.scheduler.pump()
+    # Ensure child actions are executed
+    pump = -> action.scheduler.pump()
+    output.then pump, pump
     # Make sure the promise is resolved after the scheduler and its children
     on_end = new Promise (resolve, reject) ->
       action.scheduler.on_end resolve, (err) ->

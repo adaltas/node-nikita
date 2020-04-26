@@ -227,7 +227,7 @@ nikita.execute({
           
 ## Source Code
 
-    handler = ({config, metadata, ssh}) ->
+    handler = ({config, metadata, operations: {path}, ssh}) ->
       @log message: "Entering execute", level: 'DEBUG', module: 'nikita/lib/system/execute'
       # Validate parameters
       config.mode ?= 0o500
@@ -242,7 +242,7 @@ nikita.execute({
       # Guess current username
       current_username =
         if ssh then ssh.config.username
-        else if /^win/.test(process.platform) then process.env['USERPROFILE'].split(path.sep)[2]
+        else if /^win/.test(process.platform) then process.env['USERPROFILE'].split(path.win32.sep)[2]
         else process.env['USER']
       # Sudo
       if config.sudo
@@ -365,7 +365,6 @@ nikita.execute({
 
 ## Dependencies
 
-    path = require 'path'
     exec = require 'ssh2-exec'
     error = require '../../utils/error'
     string = require '../../utils/string'

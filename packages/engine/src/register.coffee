@@ -44,7 +44,6 @@ module.exports =
     'close': '@nikitajs/engine/src/actions/ssh/close'
     'root': '@nikitajs/engine/src/actions/ssh/root'
   'status': raw: true, handler: ({parent, config: [position]}) ->
-    # console.log position, parent.children.slice(-1)[0].output.status
     if typeof position is 'number'
       parent.children.slice(position)[0].output.status
     else unless position?

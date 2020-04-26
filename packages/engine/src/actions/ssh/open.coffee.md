@@ -220,9 +220,9 @@ pass all the properties through the `ssh` property.
 ## Export
 
     module.exports =
-    handler: handler
-    on_action: on_action
-    schema: schema
+      handler: handler
+      on_action: on_action
+      schema: schema
     
 ## Dependencies
 
