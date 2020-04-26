@@ -21,7 +21,7 @@ require('nikita')
   "private_key_path": "/Users/wdavidw/.vagrant.d/insecure_private_key"
   "public_key_path": "~/.ssh/id_rsa.pub"
 }, function(err){
-  console.log(err || "Public key updoaded for root user");
+  console.info(err || "Public key updoaded for root user");
 });
 ```
 

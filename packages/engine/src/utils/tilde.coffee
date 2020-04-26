@@ -2,6 +2,13 @@
 tilde = require 'tilde-expansion'
 path = require 'path'
 
+###
+Not, those function are not aware of an SSH connection
+and can't use `path.posix` when appropriate over SSH.
+It could be assumed that a path starting with `~` is 
+always posix but this is not yet handled and tested.
+###
+
 module.exports =
   normalize: (location) ->
     new Promise (accept, reject) ->

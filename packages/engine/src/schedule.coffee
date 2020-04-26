@@ -32,7 +32,6 @@ module.exports = ->
             running = false
             reject err
             setImmediate ->
-              # console.log ':engine:error:pump'
               for prom in events.end
                 {reject} = prom
                 reject.call()
@@ -48,7 +47,6 @@ module.exports = ->
     next: ->
       stack.shift()
     clear: ->
-      # console.log 'clear', running
       stack = []
     add: (handlers, options={}) ->
       prom = new Promise (resolve, reject) ->
