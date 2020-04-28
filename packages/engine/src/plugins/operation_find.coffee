@@ -44,6 +44,6 @@ module.exports = (action) ->
         action.registry.register ['operations', 'find'],
           raw: true
           handler: (action) ->
-            [action, finder] = validate action, action.config
+            [action, finder] = validate action, action.args
             await find action.parent, finder
         action
