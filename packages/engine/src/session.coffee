@@ -27,7 +27,7 @@ session = (action={}) ->
           "got #{JSON.stringify namespace}."
         ]
       actions = await action.plugins.hook
-        event: 'nikita:session:actions:arguments'
+        event: 'nikita:session:arguments'
         args: args: args, child: child, parent: action, namespace: namespace
         handler: ({args, parent, namespace}) ->
           contextualize [...args, parent: parent, metadata: namespace: namespace]
@@ -61,7 +61,7 @@ session = (action={}) ->
     parent: if action.parent then action.parent.registry else registry
     on_register: (name, act) ->
       await action.plugins.hook
-        event: 'nikita:registry:action:register'
+        event: 'nikita:session:register'
         args: name: name, action: act
   # Register run helper
   action.run = ->
