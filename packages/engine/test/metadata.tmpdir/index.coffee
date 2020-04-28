@@ -46,7 +46,7 @@ describe 'metadata "tmpdir"', ->
       .then (tmpdir) ->
         tmpdir.should.eql unless !!ssh
         then path.resolve os.tmpdir(), './a_dir'
-        else path.resolve '/tmp', './a_dir'
+        else path.posix.resolve '/tmp', './a_dir'
 
   describe 'option dirty', ->
 

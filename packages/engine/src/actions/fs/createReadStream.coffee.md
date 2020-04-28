@@ -67,13 +67,12 @@ console.info(Buffer.concat(buffers).toString())
 
 ## Source Code
 
-    handler = ({config, hooks, metadata, ssh}) ->
+    handler = ({config, hooks, metadata, operations: {path}, ssh}) ->
       @log message: "Entering fs.createReadStream", level: 'DEBUG', module: 'nikita/lib/fs/createReadStream'
-      p = if ssh then path.posix else path
       # Normalization
       # throw Error "Required Option: the \"target\" option is mandatory" unless config.target
-      config.target = if config.cwd then p.resolve config.cwd, config.target else p.normalize config.target
-      throw Error "Non Absolute Path: target is #{JSON.stringify config.target}, SSH requires absolute paths, you must provide an absolute path in the target or the cwd option" if ssh and not p.isAbsolute config.target
+      config.target = if config.cwd then path.resolve config.cwd, config.target else path.normalize config.target
+      throw Error "Non Absolute Path: target is #{JSON.stringify config.target}, SSH requires absolute paths, you must provide an absolute path in the target or the cwd option" if ssh and not path.isAbsolute config.target
       config.target_tmp ?= "#{metadata.tmpdir}/#{string.hash config.target}" if config.sudo
       throw error.NIKITA_FS_CRS_NO_EVENT_HANDLER() unless hooks.on_readable or config.stream
       # Guess current username
@@ -152,6 +151,5 @@ console.info(Buffer.concat(buffers).toString())
 ## Dependencies
 
     fs = require 'ssh2-fs'
-    path = require 'path'
     string = require '../../utils/string'
     error = require '../../utils/error'

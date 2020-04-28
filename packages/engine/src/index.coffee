@@ -21,6 +21,7 @@ create = ->
     require './plugins/conditions'
     require './plugins/history'
     require './plugins/operation_find'
+    require './plugins/operation_path'
     require './plugins/schema'
     require './plugins/templated'
   ], ...arguments
