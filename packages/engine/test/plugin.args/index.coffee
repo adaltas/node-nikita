@@ -1,31 +1,31 @@
 
 nikita = require '../../src'
 
-describe 'plugin.original', ->
+describe 'plugin.args', ->
 
   it 'argument is a function', ->
-    nikita.call ({metadata})->
-      metadata.original.length.should.eql 1
-      metadata.original[0].should.be.a.Function()
+    nikita.call ({args})->
+      args.length.should.eql 1
+      args[0].should.be.a.Function()
 
   it 'argument is an object', ->
     nikita
     .registry.register  ['an', 'action'], (action) -> action
     .an.action a_key: 'a value'
     .then (action) ->
-      action.metadata.original.should.eql [ a_key: 'a value' ]
+      action.args.should.eql [ a_key: 'a value' ]
 
   it 'argument is a string', ->
     nikita
     .registry.register ['an', 'action'], (action) -> action
     .an.action 'a value'
     .then (action) ->
-      action.metadata.original.should.eql [ 'a value' ]
+      action.args.should.eql [ 'a value' ]
 
   it 'argument is an [object]', ->
     nikita
     .registry.register ['an', 'action'],
-      handler: ({metadata}) -> metadata.original
+      handler: ({args}) -> args
     .an.action [{a_key: 1}, {a_key: 2}]
     .then (actions) ->
       actions.should.eql [
@@ -36,7 +36,7 @@ describe 'plugin.original', ->
   it 'argument is an [object], [string]', ->
     nikita
     .registry.register  ['an', 'action'],
-      handler: ({metadata}) -> metadata.original
+      handler: ({args}) -> args
     .an.action [{a_key: 1}, {a_key: 2}], ['a_string', 'b_string']
     .then (actions) ->
       actions.should.eql [
@@ -50,8 +50,6 @@ describe 'plugin.original', ->
     nikita
     .registry.register ['an', 'action'],
       raw_input: true
-      handler: ({metadata}) ->
-        console.log metadata.original
-        metadata.original
+      handler: ({args}) -> args
     .an.action [{a_key: 1}, {a_key: 2}]
-    .should.be.resolvedWith [ { a_key: 1 }, {a_key: 2} ]
+    .should.be.resolvedWith [[ { a_key: 1 }, {a_key: 2} ]]

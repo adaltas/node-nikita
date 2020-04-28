@@ -29,6 +29,5 @@ properties = [
   'registry'
   'run'
   'scheduler'
-  'sibling'
   'state'
 ]
