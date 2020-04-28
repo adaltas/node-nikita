@@ -68,12 +68,11 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, metadata, ssh}) ->
+    handler = ({config, metadata, operations: {path}, ssh}) ->
       @log message: "Entering fs.writeFile", level: 'DEBUG', module: 'nikita/lib/fs/writeFile'
-      p = if ssh then path.posix else path
       # Normalization
-      config.target = if config.cwd then p.resolve config.cwd, config.target else p.normalize config.target
-      throw NIKITA_FS_STAT_TARGET_ENOENT config: config, err: err if ssh and not p.isAbsolute config.target
+      config.target = if config.cwd then path.resolve config.cwd, config.target else path.normalize config.target
+      throw NIKITA_FS_STAT_TARGET_ENOENT config: config, err: err if ssh and not path.isAbsolute config.target
       # Real work
       @fs.createWriteStream
         target: config.target
@@ -108,7 +107,3 @@ require('nikita')
         log: false
         raw_output: true
       schema: schema
-
-## Dependencies
-
-    path = require 'path'
