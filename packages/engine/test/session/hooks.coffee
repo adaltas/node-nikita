@@ -6,13 +6,13 @@ session = require '../../src/session'
 
 describe 'session.hooks', ->
 
-  describe 'nikita:registry:action:register', ->
+  describe 'nikita:session:register', ->
     
     it 'alter action - sync', ->
       nikita ({context, plugins, registry}) ->
         plugins.register
           'hooks':
-            'nikita:registry:action:register': ({action}, handler)->
+            'nikita:session:register': ({action}, handler)->
               action.key = 'new value'
               handler
         context.registry.register ['an', 'action'],
@@ -25,7 +25,7 @@ describe 'session.hooks', ->
       nikita ({context, plugins, registry}) ->
         plugins.register
           hooks:
-            'nikita:registry:action:register': ({action}, handler)->
+            'nikita:session:register': ({action}, handler)->
               new Promise (resolve, reject) ->
                 setImmediate ->
                   action.key = 'new value'
@@ -40,7 +40,7 @@ describe 'session.hooks', ->
       nikita ({context, plugins, registry}) ->
         plugins.register
           'hooks':
-            'nikita:registry:action:register': ({action}, handler)->
+            'nikita:session:register': ({action}, handler)->
               (handler is undefined).should.be.ok()
               handler
         context.registry.register ['an', 'action'], {}
