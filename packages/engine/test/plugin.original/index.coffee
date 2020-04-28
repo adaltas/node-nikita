@@ -45,3 +45,13 @@ describe 'plugin.original', ->
         [ { a_key: 1 }, 'b_string' ]
         [ { a_key: 2 }, 'b_string' ]
       ]
+
+  it 'with raw_input option', ->
+    nikita
+    .registry.register ['an', 'action'],
+      raw_input: true
+      handler: ({metadata}) ->
+        console.log metadata.original
+        metadata.original
+    .an.action [{a_key: 1}, {a_key: 2}]
+    .should.be.resolvedWith [ { a_key: 1 }, {a_key: 2} ]
