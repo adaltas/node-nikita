@@ -4,7 +4,7 @@ array = require '../utils/array'
 module.exports = ->
   module: '@nikitajs/engine/src/metadata/original'
   hooks:
-    'nikita:session:actions:arguments': ({args}, handler) ->
+    'nikita:session:arguments': ({args}, handler) ->
       ->
         actions = handler.apply null, arguments
         args = array.multiply ...args
