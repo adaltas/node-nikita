@@ -1,4 +1,5 @@
 
+path = require 'path'
 nikita = require '@nikitajs/core'
 require '@nikitajs/tools/lib/register'
 require '../../register'
@@ -16,7 +17,7 @@ nikita
 .log.cli pad: host: 20, header: 60
 .lxd.cluster
   header: 'Container'
-  network:
+  networks:
     lxdbr0public:
       'ipv4.address': '172.16.0.1/24'
       'ipv4.nat': true
@@ -31,7 +32,9 @@ nikita
     n1:
       image: 'images:centos/7'
       disk:
-        nikitadir: source: '/nikita', path: '/nikita'
+        nikitadir:
+          path: '/nikita'
+          source: process.env['NIKITA_HOME'] or path.join(__dirname, '../../../../')
       nic:
         eth0:
           config: name: 'eth0', nictype: 'bridged', parent: 'lxdbr0public'
@@ -46,7 +49,9 @@ nikita
     n2:
       image: 'images:centos/7'
       disk:
-        nikitadir: source: '/nikita', path: '/nikita'
+        nikitadir:
+          path: '/nikita'
+          source: process.env['NIKITA_HOME'] or path.join(__dirname, '../../../../')
       nic:
         eth0:
           config: name: 'eth0', nictype: 'bridged', parent: 'lxdbr0public'
@@ -61,7 +66,9 @@ nikita
     n3:
       image: 'images:centos/7'
       disk:
-        nikitadir: source: '/nikita', path: '/nikita'
+        nikitadir:
+          path: '/nikita'
+          source: process.env['NIKITA_HOME'] or path.join(__dirname, '../../../../')
       nic:
         eth0:
           config: name: 'eth0', nictype: 'bridged', parent: 'lxdbr0public'
