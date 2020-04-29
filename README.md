@@ -2,31 +2,31 @@
 
 # Node.js Nikita
 
-Nikita gather a set of functions usually used during system deployment.
+Nikita gathers a set of functionality, commonly used during system deployment.
 Documentation is available on the [project website](https://nikita.js.org).
 
-## Main features 
+## Main features
 
-* Consistent Usage   
-  All the functions share the same API, accepting options and a user callback in a flexible manner. Once you learn the core usage, you only learn the options of the actions you wish to execute.  
+* Consistent Usage
+  All functions share the same API, accepting options and a user callback in a flexible manner. Once you learn the core usage, you need only learn the options of the actions you wish to perform.  
 * Everything is a file   
-  No agent to install, no database to depends on. Your project is just another Node.js package easily versionned in Git and any SCM, easily integrated with your CI and CD DevOps tools.
-* Idempotence   
-  Call a function multiple times and expect the same result. You’ll be informed of any modifications and can retrieve defailed information.
+  There is no agent to install and no database to depend on. Your project is just another Node.js package, easily versioned in Git or any SCM, easily integrated with your CI and CD DevOps tools.
+* Idempotence  
+  Call a function multiple times and expect the same result. You’ll be informed of and receive detailed information about any variation in the result.
 * Documentation
-  Learn fast. Source code is self-documented with the most commons usages enriched by many examples. Don’t forget to look at the tests as well.
+  Learn fast. Nikita source code is self-documented and there are a wealth of examples covering the most common use cases. Don’t forget to look at the tests as well.
 * Flexibility
-  Deliberatly sacrifying speed for a maximum of strength, ease of use and flexibility. The simple API allows us to constantly add new functionnality without affecting the API.
+  Nikita deliberately chooses robustness, ease of use and flexibility over speed. The simple API allows us to constantly add new functionality without affecting the API.
 * Composition
-  Built from small and reusable actions imbracated into complex system. It follows the Unix philosophie of building small small single-building blocks with a clear API.
+  Nikita enables complex systems to be built from small and reusable actions. Following the Unix philosophy, its API is clear and its functions are small and well defined.
 * SSH support
   All the functions run transparently over SSH. Look at the tests, they are all executed both locally and remotely.
 * Reporting
-  Advanced reports can be optained by providing a log function, listening to stdout and stderr streams, generating diffs and backups.
+  Advanced reports can be obtained by providing a log function, listening to stdout and stderr streams, generating diffs and backups.
 * Reliability
-  Feel confident. The modules are used in production for years and the code is enforced by an extensive test coverage.
-* Suppport
-  The package is open sourced with one of the least restrictive license. Involve yourself and contributes to open source development by sending pull requests or requesting commercial support offered by [Adaltas](http://www.adaltas.com).
+  Feel confident. These modules are used in production, and have been for several years. Also, the project has extensive test coverage.
+* Support
+  The Nikita package is open sourced with one of the least restrictive license. Involve yourself and contribute to open source development by sending pull requests or requesting commercial support offered by [Adaltas](http://www.adaltas.com).
 
 ## Installation
 
@@ -50,7 +50,7 @@ yarn workspace @nikita/core run test
 npm run build && npx mocha test/api/**.coffee
 ```
 
-Some of the tests require a specific environment. You are encouraged to 
+Some of the tests require a specific environment. You are encouraged to
 customize which tests you wish to run and to use docker container.
 
 To filter and configure your tests, you can either create a "test.coffee" at the
