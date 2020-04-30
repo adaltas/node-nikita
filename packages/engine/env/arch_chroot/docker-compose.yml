@@ -3,7 +3,7 @@ version: '2'
 services:
   nodejs:
     build: .
-    image: nikita_arch_nodejs
+    image: nikita_engine_arch_nodejs
     volumes:
       - ../../../../:/nikita
     environment:

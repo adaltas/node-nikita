@@ -67,23 +67,21 @@ console.info(Buffer.concat(buffers).toString())
 
 ## Source Code
 
-    handler = ({config, hooks, metadata, operations: {path}, ssh}) ->
+    handler = ({config, hooks, metadata, operations: {path, find}, ssh}) ->
       @log message: "Entering fs.createReadStream", level: 'DEBUG', module: 'nikita/lib/fs/createReadStream'
+      sudo = await find ({config: {sudo}}) -> sudo
       # Normalization
       # throw Error "Required Option: the \"target\" option is mandatory" unless config.target
       config.target = if config.cwd then path.resolve config.cwd, config.target else path.normalize config.target
       throw Error "Non Absolute Path: target is #{JSON.stringify config.target}, SSH requires absolute paths, you must provide an absolute path in the target or the cwd option" if ssh and not path.isAbsolute config.target
-      config.target_tmp ?= "#{metadata.tmpdir}/#{string.hash config.target}" if config.sudo
+      config.target_tmp ?= "#{metadata.tmpdir}/#{string.hash config.target}" if sudo
       throw error.NIKITA_FS_CRS_NO_EVENT_HANDLER() unless hooks.on_readable or config.stream
       # Guess current username
-      current_username =
-        if ssh then ssh.config.username
-        else if /^win/.test(process.platform) then process.env['USERPROFILE'].split(path.sep)[2]
-        else process.env['USER']
+      current_username = os.whoami ssh: ssh
       try if config.target_tmp
         await @execute """
           [ ! -f '#{config.target}' ] && exit
-          cp '#{v.target}' '#{config.target_tmp}'
+          cp '#{config.target}' '#{config.target_tmp}'
           chown '#{current_username}' '#{config.target_tmp}'
           """
         @log message: "Placing original file in temporary path before reading", level: 'INFO', module: 'nikita/lib/fs/createReadStream'
@@ -103,6 +101,8 @@ console.info(Buffer.concat(buffers).toString())
             err = errors.NIKITA_FS_CRS_TARGET_ENOENT config: config, err: err
           else if err.code is 'EISDIR'
             err = errors.NIKITA_FS_CRS_TARGET_EISDIR config: config, err: err
+          else if err.code is 'EACCES'
+            err = errors.NIKITA_FS_CRS_TARGET_EACCES config: config, err: err
           reject err
         rs.on 'end', resolve
 
@@ -147,9 +147,20 @@ console.info(Buffer.concat(buffers).toString())
           errno: err.errno
           syscall: err.syscall
           path: config.target_tmp or config.target # Native Node.js api doesn't provide path
+      NIKITA_FS_CRS_TARGET_EACCES: ({err, config}) ->
+        error 'NIKITA_FS_CRS_TARGET_EACCES', [
+          'fail to read a file because permission was denied,'
+          unless config.target_tmp
+          then "location is #{JSON.stringify config.target}."
+          else "location is #{JSON.stringify config.target_tmp} (temporary file, target is #{JSON.stringify config.target})."
+        ],
+          errno: err.errno
+          syscall: err.syscall
+          path: config.target_tmp or config.target # Native Node.js api doesn't provide path
 
 ## Dependencies
 
     fs = require 'ssh2-fs'
-    string = require '../../utils/string'
     error = require '../../utils/error'
+    os = require '../../utils/os'
+    string = require '../../utils/string'
