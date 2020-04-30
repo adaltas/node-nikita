@@ -61,6 +61,7 @@
     "ssh2-exec": "^0.5.3",
     "ssh2-fs": "^1.0.3",
     "ssh2-they": "^2.1.0",
+    "stack-trace": "^0.0.10",
     "tilde-expansion": "^0.0.0",
     "toposort": "^2.0.2"
   },
