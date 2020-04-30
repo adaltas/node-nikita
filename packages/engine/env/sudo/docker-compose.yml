@@ -10,8 +10,8 @@ version: '2'
 services:
   nodejs:
     build: .
-    image: nikita_sudo_nodejs
+    image: nikita_engine_sudo_nodejs
     volumes:
       - ../../../../:/home/nikita/work
     environment:
-      NIKITA_TEST_MODULE: /home/nikita/work/packages/core/env/sudo/test.coffee
+      NIKITA_TEST_MODULE: /home/nikita/work/packages/engine/env/sudo/test.coffee

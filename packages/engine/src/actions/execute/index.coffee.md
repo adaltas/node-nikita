@@ -206,7 +206,7 @@ nikita.execute({
           """
         'sudo':
           type: 'boolean'
-          default: false
+          # default: false
           description: """
           Run a command as sudo, desactivated if user is "root".
           """
@@ -227,7 +227,7 @@ nikita.execute({
           
 ## Source Code
 
-    handler = ({config, metadata, operations: {path}, ssh}) ->
+    handler = ({config, metadata, operations: {find, path}, ssh}) ->
       @log message: "Entering execute", level: 'DEBUG', module: 'nikita/lib/system/execute'
       # Validate parameters
       config.mode ?= 0o500
@@ -236,6 +236,7 @@ nikita.execute({
       config.arch_chroot = 'arch-chroot' if config.arch_chroot is true
       config.cmd = "set -e\n#{config.cmd}" if config.cmd and config.trap
       config.cmd_original = "#{config.cmd}"
+      sudo = await find ({config: {sudo}}) -> sudo
       # throw Error "Required Option: the \"cmd\" option is not provided" unless config.cmd?
       throw Error "Incompatible properties: bash, arch_chroot" if ['bash', 'arch_chroot'].filter((k) -> config[k]).length > 1
       throw Error "Required Option: \"rootdir\" with \"arch_chroot\"" if config.arch_chroot and not config.rootdir
@@ -245,9 +246,9 @@ nikita.execute({
         else if /^win/.test(process.platform) then process.env['USERPROFILE'].split(path.win32.sep)[2]
         else process.env['USER']
       # Sudo
-      if config.sudo
+      if sudo
         if current_username is 'root'
-          config.sudo = false
+          sudo = false
         else
           config.bash = 'bash' unless ['bash', 'arch_chroot'].some (k) -> config[k]
       # User substitution
@@ -281,7 +282,7 @@ nikita.execute({
           content: "#{cmd}"
           mode: config.mode
           sudo: false
-      if config.sudo
+      if sudo
         config.cmd = "sudo #{config.cmd}"
       # Execute
       new Promise (resolve, reject) =>

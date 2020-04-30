@@ -61,20 +61,22 @@ require('nikita')
 
 ## Source Code
 
-    handler = ({config, metadata, ssh}) ->
+    handler = ({config, metadata, operations: {find}, ssh}) ->
       @log message: "Entering fs.createWriteStream", level: 'DEBUG', module: 'nikita/lib/fs/createWriteStream'
+      sudo = await find ({config: {sudo}}) -> sudo
       # Normalize config
-      config.target_tmp ?= "#{metadata.tmpdir}/#{string.hash config.target}" if config.sudo or config.flags[0] is 'a'
+      config.target_tmp ?= "#{metadata.tmpdir}/#{string.hash config.target}" if sudo or config.flags[0] is 'a'
       # config.mode ?= 0o644 # Node.js default to 0o666
       # In append mode, we write to a copy of the target file located in a temporary location
       try if config.flags[0] is 'a'
-        @execute """
+        await @execute """
         [ ! -f '#{config.target}' ] && exit
         cp '#{config.target}' '#{config.target_tmp}'
         """
         @log message: "Append prepared by placing a copy of the original file in a temporary path", level: 'INFO', module: 'nikita/lib/fs/createWriteStream'
       catch err
         @log message: "Failed to place original file in temporary path", level: 'ERROR', module: 'nikita/lib/fs/createWriteStream'
+        throw err
       # Start writing the content
       @log message: 'Writting file', level: 'DEBUG', module: 'nikita/lib/fs/createWriteStream'
       await new Promise (resolve, reject) ->
@@ -91,13 +93,10 @@ require('nikita')
           resolve() unless err
       # Replace the target file in append or sudo mode
       if config.target_tmp
-        @execute
+        await @execute
           cmd: """
           mv '#{config.target_tmp}' '#{config.target}'
           """
-          # sudo: config.sudo
-          # bash: config.bash
-          # arch_chroot: config.arch_chroot
 
 ## Exports
 
