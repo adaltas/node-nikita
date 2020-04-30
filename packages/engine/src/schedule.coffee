@@ -12,34 +12,37 @@ module.exports = ->
       @
     pump: ->
       return if running
-      running = true
       if stack.length
+        running = true
         [handler, resolve, reject] = @next()
-        res = handler.call()
-        if Array.isArray res
-          running = false
-          handlers = res
-          scheduler.add(handlers).then resolve, reject
-          setImmediate ->
-            scheduler.pump()
-        else if res.then
-          res.then ->
+        setImmediate ->
+          res = handler.call()
+          if Array.isArray res
             running = false
-            resolve.apply handler, arguments
+            handlers = res
+            scheduler.add(handlers).then resolve, reject
             setImmediate ->
               scheduler.pump()
-          , (err) ->
-            running = false
-            reject err
-            setImmediate ->
-              for prom in events.end
-                {reject} = prom
-                reject.call()
-        else
-          throw error 'SCHEDULER_INVALID_HANDLER', [
-            'scheduled handler must return a promise or an array of handlers,'
-            "got #{JSON.stringify res}"
-          ]
+          else if res.then
+            res.then ->
+              # console.log 'pump done', running, stack.length
+              running = false
+              resolve.apply handler, arguments
+              setImmediate ->
+                scheduler.pump()
+            , (err) ->
+              # console.log 'pump done', running, stack.length
+              running = false
+              reject err
+              setImmediate ->
+                for prom in events.end
+                  {reject} = prom
+                  reject.call()
+          else
+            throw error 'SCHEDULER_INVALID_HANDLER', [
+              'scheduled handler must return a promise or an array of handlers,'
+              "got #{JSON.stringify res}"
+            ]
       else
         for prom in events.end
           {resolve} = prom
