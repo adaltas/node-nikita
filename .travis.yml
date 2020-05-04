@@ -6,7 +6,7 @@ cache:
   npm: false
   yarn: true
 install:
-  - sudo snap refresh snap
+  - sudo apt update snap
   - sudo snap refresh snapd
   - sudo apt remove -y --purge lxd lxd-client
   - sudo snap install lxd
