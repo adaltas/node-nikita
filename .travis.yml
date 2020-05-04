@@ -6,6 +6,8 @@ cache:
   npm: false
   yarn: true
 install:
+  - sudo snap install lxd --channel=4.0/stable
+  - sudo apt remove -y --purge lxd lxd-client
   - sudo snap install lxd
   - sudo sh -c 'echo PATH=/snap/bin:$PATH >> /etc/environment'
   - sudo lxd waitready
