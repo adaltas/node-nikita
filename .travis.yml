@@ -6,9 +6,11 @@ cache:
   npm: false
   yarn: true
 install:
-  - sudo apt remove -y --purge lxd lxd-client
+  - sudo apt remove -y --purge --auto-remove lxd lxd-client
+  - sudo apt autoremove
   - sudo snap install lxd
   - sudo sh -c 'echo PATH=/snap/bin:$PATH >> /etc/environment'
+  - sudo lxd init
   - sudo lxd waitready
   - sudo lxd init --auto
   - sudo usermod -a -G lxd $USER
