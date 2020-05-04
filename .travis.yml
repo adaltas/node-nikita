@@ -11,7 +11,8 @@ install:
   - sudo sh -c 'echo PATH=/snap/bin:$PATH >> /etc/environment'
   #- sudo lxd waitready
   - sudo lxd init #--auto
-  - sleep 90
+  #- sleep 90
+  - sudo lxd waitready
   - sudo usermod -a -G lxd $USER
   - yarn install
 before_script:
