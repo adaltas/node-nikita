@@ -24,6 +24,7 @@ create = ->
     require './plugins/log'
     require './plugins/operation_find'
     require './plugins/operation_path'
+    require './plugins/operation_walk'
     require './plugins/schema'
     require './plugins/templated'
   ], ...arguments
