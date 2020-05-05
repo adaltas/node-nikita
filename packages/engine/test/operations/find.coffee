@@ -11,7 +11,7 @@ describe 'operation.find', ->
           action.config.a_key
         .should.be.resolvedWith 'a value'
 
-    it 'start traverse the parent hierarchy', ->
+    it 'traverse the parent hierarchy', ->
       nikita.call a_key: 'a value', ->
         @call ->
           count = 0
@@ -22,7 +22,7 @@ describe 'operation.find', ->
           .should.be.resolvedWith a_key: 'a value', depth: 1
           .then -> count.should.eql 2
 
-    it 'start traverse the parent hierarchy', ->
+    it 'traverse from parent', ->
       nikita.call a_key: 'a value', ->
         @call -> @call -> @call -> @call (action) ->
           count = 0
