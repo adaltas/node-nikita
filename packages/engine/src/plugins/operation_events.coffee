@@ -6,7 +6,9 @@ module.exports = ->
   hooks:
     'nikita:session:action': (action) ->
       if action.parent
-        action.events = action.parent.operations.events
+        action.operations ?= {}
+        action.operations.events = action.parent.operations.events
       else
         action.operations ?= {}
         action.operations.events = new EventEmitter()
+      action.operations.events.emit 'header', action.config.header if action.config.header
