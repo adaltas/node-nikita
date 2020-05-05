@@ -53,6 +53,7 @@ module.exports =
         'argument position must be an integer if defined,'
         "get #{JSON.stringify position}"
       ]
+  'wait': '@nikitajs/engine/src/actions/wait'
 (->
   await registry.register module.exports
 )()
