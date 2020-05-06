@@ -30,3 +30,13 @@ describe 'scheduler.flow', ->
       await new Promise (resolve, reject) ->
         setTimeout resolve, 10
       @call (->)
+
+  it 'status with relax false', ->
+    # Note, there was a bug where the last action was executed but the error
+    # was swallowed
+    nikita ->
+      try await @call -> throw Error 'ok'
+      catch err
+      @call ->
+        throw Error 'Catch me'
+    .should.be.rejectedWith 'Catch me'
