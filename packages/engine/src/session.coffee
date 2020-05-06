@@ -120,6 +120,7 @@ session = (action={}) ->
       event: 'nikita:session:resolved'
       args: action: action, output: output
   , (err) ->
+    return unless action.parent is undefined
     action.plugins.hook
       event: 'nikita:session:rejected'
       args: action: action, error: err
