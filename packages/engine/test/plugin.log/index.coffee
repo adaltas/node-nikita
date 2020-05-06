@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 
-describe 'plugin.events', ->
+describe 'plugin.log', ->
   
   it 'emit events', ->
     nikita ({log, operations: {events}}) ->
@@ -27,6 +27,7 @@ describe 'plugin.events', ->
           relax: false
           attempt: 0
           retry: 1
+          shy: false
           sleep: 3000
         config: {}
         file: 'index.coffee'
