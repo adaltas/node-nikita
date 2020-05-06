@@ -3,7 +3,10 @@ session = require '../session'
 
 module.exports = ->
   module: '@nikitajs/engine/src/plugins/conditions'
-  require: '@nikitajs/engine/src/metadata/raw'
+  require: [
+    '@nikitajs/engine/src/metadata/raw'
+    '@nikitajs/engine/src/metadata/disabled'
+  ]
   hooks:
     'nikita:session:normalize': (action, handler) ->
       # Ventilate conditions properties defined at root
@@ -21,12 +24,14 @@ module.exports = ->
         action = handler.call null, ...arguments
         action.conditions = conditions
         action
-    'nikita:session:action': (action, handler) ->
-      final_run = true
-      for k, v of action.conditions
-        local_run = await handlers[k].call null, action
-        final_run = false if local_run is false
-      if final_run then handler else (->)
+    'nikita:session:action':
+      before: '@nikitajs/engine/src/metadata/disabled'
+      handler: (action, handler) ->
+        final_run = true
+        for k, v of action.conditions
+          local_run = await handlers[k].call null, action
+          final_run = false if local_run is false
+        if final_run then handler else action.metadata.disabled = true
 
 handlers =
   if: (action) ->
