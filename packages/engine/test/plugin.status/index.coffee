@@ -38,22 +38,22 @@ describe 'plugin.status', ->
   describe 'inherit', ->
 
     it '`true` when children are [`false`, `true`]', ->
-      await nikita.call type: 'the_parent', count: 0, ({context}) ->
-        @call type: 'the_child_1', -> false
-        @call type: 'the_child_2', -> true
+      nikita.call count: 0, ({context}) ->
+        @call -> false
+        @call -> true
         {}
       .should.be.resolvedWith status: true
 
     it '`true` when children are [`true`, `false`]', ->
-      await nikita.call type: 'the_parent', count: 0, ({context}) ->
-        @call type: 'the_child_1', -> false
-        @call type: 'the_child_2', -> true
+      nikita.call count: 0, ({context}) ->
+        @call -> false
+        @call -> true
         {}
       .should.be.resolvedWith status: true
 
     it '`false` when children are [`false`, `false`]', ->
-      await nikita.call type: 'the_parent', count: 0, ({context}) ->
-        @call type: 'the_child_1', -> false
-        @call type: 'the_child_2', -> false
+      nikita.call count: 0, ({context}) ->
+        @call -> false
+        @call -> false
         {}
       .should.be.resolvedWith status: false
