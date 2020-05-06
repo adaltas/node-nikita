@@ -114,6 +114,15 @@ session = (action={}) ->
         handler: ({action, error, output}) ->
           if error then throw error else output
       .then resolve, reject
+  result.then (output) ->
+    return unless action.parent is undefined
+    action.plugins.hook
+      event: 'nikita:session:resolved'
+      args: action: action, output: output
+  , (err) ->
+    action.plugins.hook
+      event: 'nikita:session:rejected'
+      args: action: action, error: err
   # Returning a proxified promise:
   # - news action can be registered to it as long as the promised has not fulfilled
   # - resolve when all registered actions are fulfilled
