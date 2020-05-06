@@ -11,7 +11,7 @@ module.exports = ->
       after: '@nikitajs/engine/src/plugins/events'
       handler: (action) ->
         action.log = (log) ->
-          # log.message = log.message
+          log = message: log if typeof log is 'string'
           log.level ?= 'INFO'
           log.time ?= Date.now()
           log.index ?= action.metadata.index
@@ -46,4 +46,4 @@ module.exports = ->
             action.metadata?.log log
           else
             return if action.metadata?.log is false
-          action.operations.events.emit log.type, log
+          action.operations.events.emit log.type, log, action

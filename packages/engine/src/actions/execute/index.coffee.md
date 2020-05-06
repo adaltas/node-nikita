@@ -227,8 +227,8 @@ nikita.execute({
           
 ## Source Code
 
-    handler = ({config, metadata, operations: {find, path}, ssh}) ->
-      @log message: "Entering execute", level: 'DEBUG', module: 'nikita/lib/system/execute'
+    handler = ({config, log, metadata, operations: {find, path}, ssh}) ->
+      # @log message: "Entering execute", level: 'DEBUG', module: 'nikita/lib/system/execute'
       # Validate parameters
       config.mode ?= 0o500
       config.cmd = await @call config: config, config.cmd if typeof config.cmd is 'function'
@@ -261,7 +261,7 @@ nikita.execute({
       if config.bash
         cmd = config.cmd
         config.target = "#{metadata.tmpdir}/#{string.hash config.cmd}" if typeof config.target isnt 'string'
-        @log message: "Writing bash script to #{JSON.stringify config.target}", level: 'INFO'
+        log message: "Writing bash script to #{JSON.stringify config.target}", level: 'INFO'
         config.cmd = "#{config.bash} #{config.target}"
         config.cmd = "su - #{config.uid} -c '#{config.cmd}'" if config.uid
         config.cmd += ";code=`echo $?`; rm '#{config.target}'; exit $code" unless config.dirty
@@ -274,7 +274,7 @@ nikita.execute({
       if config.arch_chroot
         cmd = config.cmd
         config.target = "#{metadata.tmpdir}/#{string.hash config.cmd}" if typeof config.target isnt 'string'
-        @log message: "Writing arch-chroot script to #{JSON.stringify config.target}", level: 'INFO'
+        log message: "Writing arch-chroot script to #{JSON.stringify config.target}", level: 'INFO'
         config.cmd = "#{config.arch_chroot} #{config.rootdir} bash #{config.target}"
         config.cmd += ";code=`echo $?`; rm '#{path.join config.rootdir, config.target}'; exit $code" unless config.dirty
         await @fs.writeFile
@@ -286,7 +286,7 @@ nikita.execute({
         config.cmd = "sudo #{config.cmd}"
       # Execute
       new Promise (resolve, reject) =>
-        @log message: config.cmd_original, type: 'stdin', level: 'INFO', module: 'nikita/lib/system/execute' if config.stdin_log
+        log message: config.cmd_original, type: 'stdin', level: 'INFO', module: 'nikita/lib/system/execute' if config.stdin_log
         child = exec config, ssh: ssh
         result = stdout: [], stderr: [], code: null, status: false, command: config.cmd_original
         config.stdin.pipe child.stdin if config.stdin
@@ -296,7 +296,7 @@ nikita.execute({
         if config.stdout_return or config.stdout_log
           child.stdout.on 'data', (data) =>
             stdout_stream_open = true if config.stdout_log
-            @log message: data, type: 'stdout_stream', module: 'nikita/lib/system/execute' if config.stdout_log
+            log message: data, type: 'stdout_stream', module: 'nikita/lib/system/execute' if config.stdout_log
             if config.stdout_return
               if Array.isArray result.stdout # A string once `exit` is called
                 result.stdout.push data
@@ -310,7 +310,7 @@ nikita.execute({
         if config.stderr_return or config.stderr_log
           child.stderr.on 'data', (data) =>
             stderr_stream_open = true if config.stderr_log
-            @log message: data, type: 'stderr_stream', module: 'nikita/lib/system/execute' if config.stderr_log
+            log message: data, type: 'stderr_stream', module: 'nikita/lib/system/execute' if config.stderr_log
             if config.stderr_return
               if Array.isArray result.stderr # A string once `exit` is called
                 result.stderr.push data
@@ -327,14 +327,14 @@ nikita.execute({
           # called before the "stdout" "data" event when running
           # `npm test`
           setTimeout =>
-            @log message: null, type: 'stdout_stream', module: 'nikita/lib/system/execute' if stdout_stream_open and config.stdout_log
-            @log message: null, type: 'stderr_stream', module: 'nikita/lib/system/execute' if  stderr_stream_open and config.stderr_log
+            log message: null, type: 'stdout_stream', module: 'nikita/lib/system/execute' if stdout_stream_open and config.stdout_log
+            log message: null, type: 'stderr_stream', module: 'nikita/lib/system/execute' if  stderr_stream_open and config.stderr_log
             result.stdout = result.stdout.map((d) -> d.toString()).join('')
             result.stdout = result.stdout.trim() if config.trim or config.stdout_trim
             result.stderr = result.stderr.map((d) -> d.toString()).join('')
             result.stderr = result.stderr.trim() if config.trim or config.stderr_trim
-            @log message: result.stdout, type: 'stdout', module: 'nikita/lib/system/execute' if result.stdout and result.stdout isnt '' and config.stdout_log
-            @log message: result.stderr, type: 'stderr', module: 'nikita/lib/system/execute' if result.stderr and result.stderr isnt '' and config.stderr_log
+            log message: result.stdout, type: 'stdout', module: 'nikita/lib/system/execute' if result.stdout and result.stdout isnt '' and config.stdout_log
+            log message: result.stderr, type: 'stderr', module: 'nikita/lib/system/execute' if result.stderr and result.stderr isnt '' and config.stderr_log
             if config.stdout
               child.stdout.unpipe config.stdout
             if config.stderr
@@ -350,7 +350,7 @@ nikita.execute({
             if config.code_skipped.indexOf(code) is -1
               result.status = true
             else
-              @log message: "Skip exit code \"#{code}\"", level: 'INFO', module: 'nikita/lib/system/execute'
+              log message: "Skip exit code \"#{code}\"", level: 'INFO', module: 'nikita/lib/system/execute'
             resolve result
           , 1
 

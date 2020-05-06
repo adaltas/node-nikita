@@ -29,6 +29,10 @@ module.exports =
     'writeFile': '@nikitajs/engine/src/actions/fs/writeFile'
   'log':
     '': handler: (->)
+    'cli': '@nikitajs/engine/src/actions/log/cli'
+    'csv': '@nikitajs/engine/src/actions/log/csv'
+    'fs': '@nikitajs/engine/src/actions/log/fs'
+    'md': '@nikitajs/engine/src/actions/log/md'
   'registry':
     'get': raw: true, handler: ({parent, args: [namespace]}) ->
       parent.registry.get namespace
