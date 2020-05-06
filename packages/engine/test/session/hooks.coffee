@@ -148,3 +148,18 @@ describe 'session.hooks', ->
             handler
       ], (->)
       called.should.be.true()
+
+  describe 'nikita:session:resolved', ->
+    
+    it 'test', ->
+      await nikita ({context, plugins, registry}) ->
+        plugins.register
+          'hooks':
+            'nikita:session:resolved': (action, output) ->
+              console.log 'ok'
+        @call ->
+          console.log 'child 1'
+        @call ->
+          console.log 'child 2'
+      .call ->
+        console.log 'child 3'
