@@ -1,7 +1,7 @@
 
 # `nikita.fs.mkdir`
 
-Create a directory.
+Create a directory. Missing parent directories are created as required.
 
 ## Hook
 
@@ -41,17 +41,21 @@ Create a directory.
       @log message: "Entering fs.mkdir", level: 'DEBUG', module: 'nikita/lib/fs/mkdir'
       # Convert mode into a string
       config.mode = config.mode.toString(8).substr(-4) if typeof config.mode is 'number'
-      @execute
-        cmd: [
-          if config.uid or config.gid then 'install' else 'mkdir'
-          "-m '#{config.mode}'" if config.mode
-          "-o #{config.uid}" if config.uid
-          "-g #{config.gid}" if config.gid
-          if config.uid or config.gid then " -d #{config.target}" else "#{config.target}"
-        ].join ' '
-        # sudo: config.sudo
-        # bash: config.bash
-        # arch_chroot: config.arch_chroot
+      try
+        await @execute [
+          "[ -d '#{config.target}' ] && exit 17"
+          [
+            'install'
+            "-m '#{config.mode}'" if config.mode
+            "-o '#{config.uid}'" if config.uid
+            "-g '#{config.gid}'" if config.gid
+            "-d '#{config.target}'"
+          ].join ' '
+        ].join '\n'
+      catch err
+        if err.exit_code is 17
+          err = errors.NIKITA_FS_MKDIR_TARGET_EEXIST config: config
+        throw err
 
 ## Exports
 
@@ -63,3 +67,21 @@ Create a directory.
         log: false
         raw_output: true
       schema: schema
+
+## Errors
+
+    errors =
+      NIKITA_FS_MKDIR_TARGET_EEXIST: ({config}) ->
+        error 'NIKITA_FS_MKDIR_TARGET_EEXIST', [
+          'fail to create a directory,'
+          'one already exists,'
+          "location is #{JSON.stringify config.target}."
+        ],
+          error_code: 'EEXIST'
+          errno: -17
+          path: config.target_tmp or config.target # Native Node.js api doesn't provide path
+          syscall: 'mkdir'
+
+## Dependencies
+
+    error = require '../../utils/error'
