@@ -3,8 +3,8 @@
 registry = require './registry'
 schedule = require './schedule'
 plugins = require './plugins'
-contextualize = require './action/contextualize'
-normalize = require './action/normalize'
+contextualize = require './session/contextualize'
+normalize = require './session/normalize'
 error = require './utils/error'
 
 session = (action={}) ->

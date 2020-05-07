@@ -6,13 +6,12 @@ module.exports = ->
   module: '@nikitajs/engine/src/metadata/status'
   require: '@nikitajs/engine/src/plugins/history'
   hooks:
-    'nikita:registry:normalize': (action) ->
-      # Metadata `shy`
-      action.metadata ?= {}
-      if action.hasOwnProperty 'shy'
-        action.metadata.shy = action.shy
-        delete action.shy
-      action.metadata.shy ?= false
+    # 'nikita:registry:normalize': (action) ->
+    #   action.metadata ?= {}
+    #   if action.hasOwnProperty 'shy'
+    #     action.metadata.shy = action.shy
+    #     delete action.shy
+    #   action.metadata.shy ?= false
     'nikita:session:normalize': (action, handler) ->
       # Metadata `shy`
       # Move property from action to metadata
@@ -20,6 +19,19 @@ module.exports = ->
         action.metadata.shy = action.shy
         delete action.shy
       action.metadata.shy ?= false
+      # Register action
+      action.registry.register ['status'],
+        metadata: raw: true
+        handler: ({parent, args: [position]}) ->
+          if typeof position is 'number'
+            parent.children.slice(position)[0].output.status
+          else unless position?
+            parent.children.some (child) -> child.output.status
+          else
+            throw error 'NIKITA_STATUS_POSITION_INVALID', [
+              'argument position must be an integer if defined,'
+              "get #{JSON.stringify position}"
+            ]
       ->
         # Handler execution
         action = handler.apply null, arguments

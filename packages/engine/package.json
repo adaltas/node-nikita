@@ -93,6 +93,7 @@
       "should",
       "coffeescript/register"
     ],
+    "inline-diffs": true,
     "timeout": 40000,
     "reporter": "spec",
     "recursive": true

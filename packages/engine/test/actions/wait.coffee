@@ -5,7 +5,7 @@ they = require('ssh2-they').configure ssh
 
 return unless tags.posix
 
-describe 'action wait', ->
+describe 'actions.wait', ->
 
   they 'time as main argument', ({ssh}) ->
     before = Date.now()

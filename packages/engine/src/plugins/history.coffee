@@ -12,7 +12,6 @@ module.exports = ->
         action
     'nikita:session:result': ({action, error, output}) ->
       return unless action.parent
-      # console.log 'b', output.status
       action.parent.children.push
         children: action.children
         metadata: action.metadata

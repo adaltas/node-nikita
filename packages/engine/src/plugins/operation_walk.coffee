@@ -43,7 +43,7 @@ module.exports = (action) ->
           await walk action, walker
         # Register action
         action.registry.register ['operations', 'walk'],
-          raw: true
+          metadata: raw: true
           handler: (action) ->
             [action, walker] = validate action, action.args
             await walk action.parent, walker
