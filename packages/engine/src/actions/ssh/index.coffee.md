@@ -45,7 +45,8 @@ was created and available.
 ## Exports
 
     module.exports =
-      metadata: raw_output: true
+      metadata:
+        raw_output: true
       handler: handler
       on_action: on_action
       schema: schema
