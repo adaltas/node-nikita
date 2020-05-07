@@ -287,4 +287,4 @@ module.exports = create()
 ## Dependencies
 
 {is_object, merge, mutate} = require 'mixme'
-normalize = require './action/normalize'
+normalize = require './session/normalize'

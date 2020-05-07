@@ -4,10 +4,11 @@ module.exports = ->
   hooks:
     'nikita:registry:normalize': (action) ->
       action.metadata ?= {}
-      for property in ['raw', 'raw_input', 'raw_output']
-        if action.hasOwnProperty property
-          action.metadata[property] = action[property]
-          delete action[property]
+      # for property in ['raw', 'raw_input', 'raw_output']
+      #   if action.hasOwnProperty property
+      #     console.log action
+      #     action.metadata[property] = action[property]
+      #     delete action[property]
       action.metadata.raw ?= false
       action.metadata.raw_input ?= action.metadata.raw
       action.metadata.raw_output ?= action.metadata.raw
