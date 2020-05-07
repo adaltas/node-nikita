@@ -28,10 +28,9 @@ module.exports = ->
         action.metadata.ssh_dispose = true
       action.ssh = ssh
       handler
-    'nikita:session:result': ({action}, handler) ->
+    'nikita:session:result': ({action}) ->
       if action.metadata.ssh_dispose
         await session ({run}) -> run
           metadata:
             namespace: ['ssh', 'close']
           config: ssh: action.ssh
-      handler
