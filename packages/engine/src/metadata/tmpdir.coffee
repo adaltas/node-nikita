@@ -66,11 +66,11 @@ module.exports = ->
         handler
     'nikita:session:result':
       before: '@nikitajs/engine/src/metadata/ssh'
-      handler: ({action}, handler) ->
+      handler: ({action}) ->
         # Value of tmpdir could still be true if there was an error in
         # one of the on_action hook, such as a invalid schema validation
-        return handler unless typeof action.metadata.tmpdir is 'string'
-        return handler if action.metadata.dirty
+        return unless typeof action.metadata.tmpdir is 'string'
+        return if action.metadata.dirty
         # SSH connection extraction
         ssh = if action.config.ssh is false
         then undefined
@@ -90,4 +90,3 @@ module.exports = ->
         await new Promise (resolve, reject) ->
           exec ssh, "rm -r '#{action.metadata.tmpdir}'", (err) ->
             if err then reject err else resolve()
-        handler
