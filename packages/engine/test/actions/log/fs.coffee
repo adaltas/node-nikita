@@ -32,7 +32,7 @@ describe 'actions.log.fs', ->
       #   source: "#{tmpdir}/localhost.log"
       #   content: ''
       #   log: false
-      @fs.readFile
+      @fs.base.readFile
         target: "#{tmpdir}/localhost.log"
         # log: false
       .should.be.resolvedWith ''
@@ -52,7 +52,7 @@ describe 'actions.log.fs', ->
       #   source: "#{tmpdir}/localhost.log"
       #   content: /^ok\n/
       #   log: false
-      @fs.readFile
+      @fs.base.readFile
         target: "#{tmpdir}/localhost.log"
         # log: false
       .should.be.resolvedWith 'ok\n'
@@ -72,7 +72,7 @@ describe 'actions.log.fs', ->
           log message: 'ok'
         now = new Date()
         dir = "#{now.getFullYear()}".slice(-2) + "0#{now.getFullYear()}".slice(-2) + "0#{now.getDate()}".slice(-2)
-        @fs.readFile
+        @fs.base.readFile
           target: "#{tmpdir}/#{dir}/localhost.log"
         .should.be.resolvedWith 'ok\n'
 
@@ -87,12 +87,12 @@ describe 'actions.log.fs', ->
           archive: true
         @call ({log})->
           log message: 'ok'
-        {stats} = await @fs.lstat "#{tmpdir}/latest"
+        {stats} = await @fs.base.lstat "#{tmpdir}/latest"
         utils.stats.isSymbolicLink(stats.mode).should.be.true()
         # @file.assert
         #   source: "#{tmpdir}/latest/localhost.log"
         #   content: /ok/m
         #   log: false
-        @fs.readFile
+        @fs.base.readFile
           target: "#{tmpdir}/latest/localhost.log"
         .should.be.resolvedWith 'ok\n'

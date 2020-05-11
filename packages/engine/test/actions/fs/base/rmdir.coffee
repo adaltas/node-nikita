@@ -1,0 +1,37 @@
+
+fs = require 'ssh2-fs'
+nikita = require '../../../../src'
+{tags, ssh} = require '../../../test'
+they = require('ssh2-they').configure ssh
+
+return unless tags.posix
+
+describe 'actions.fs.rmdir', ->
+
+  they 'remove', ({ssh}) ->
+    nikita
+      ssh: ssh
+      tmpdir: true
+    , ->
+      @fs.base.mkdir
+        target: "{{parent.metadata.tmpdir}}/a_file"
+      @fs.base.rmdir
+        target: "{{parent.metadata.tmpdir}}/a_file"
+      @fs.base.exists
+        target: "{{parent.metadata.tmpdir}}/a_file"
+      .should.be.resolvedWith false
+
+  they 'error missing', ({ssh}) ->
+    nikita
+      ssh: ssh
+      tmpdir: true
+    , ->
+      @fs.base.rmdir
+        target: "{{parent.metadata.tmpdir}}/missing"
+      .should.be.rejectedWith
+        code: 'NIKITA_FS_RMDIR_TARGET_ENOENT'
+        message: /NIKITA_FS_RMDIR_TARGET_ENOENT: fail to remove a directory, target is not a directory, got ".*\/missing"/
+        exit_code: 2
+        errno: -2
+        syscall: 'rmdir'
+        path: /.*\/missing/

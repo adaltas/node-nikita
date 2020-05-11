@@ -55,14 +55,14 @@ describe 'metadata.tmpdir', ->
         ssh: ssh
       , ->
         @call tmpdir: true, dirty: true, (->)
-        @fs.exists '{{siblings.0.metadata.tmpdir}}'
+        @fs.base.exists '{{siblings.0.metadata.tmpdir}}'
         .should.resolvedWith true
-        @fs.rmdir '{{siblings.0.metadata.tmpdir}}'
+        @fs.base.rmdir '{{siblings.0.metadata.tmpdir}}'
 
     they 'is true', ({ssh}) ->
       nikita
         ssh: ssh
       , ->
         @call tmpdir: true, dirty: false, (->)
-        @fs.exists '{{siblings.0.metadata.tmpdir}}'
+        @fs.base.exists '{{siblings.0.metadata.tmpdir}}'
         .should.resolvedWith false

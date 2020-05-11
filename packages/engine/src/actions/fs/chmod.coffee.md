@@ -1,50 +1,74 @@
 
-# `nikita.fs.chmod`
+# `nikita.system.chmod`
 
-Change permissions of a file.
+Change the permissions of a file or directory.
 
-## Hook
+## config
 
-    on_action = ({config, metadata}) ->
-      config.target = metadata.argument if metadata.argument?
+* `mode`   
+  Permissions of the file or the parent directory.   
+* `stats` (Stat instance, optional)   
+  Pass the Stat object relative to the target file or directory, to be
+  used as an optimization.     
+* `target`   
+  Where the file or directory is copied.   
 
-## Schema
+## Callback Parameters
 
-    schema =
-      type: 'object'
-      properties:
-        'mode':
-          oneOf: [{type: 'integer'}, {type: 'string'}]
-          default: 0o644
-          description: """
-          Location of the file which ownership will change.
-          """
-        'target':
-          type: 'string'
-          description: """
-          Destination file where to copy the source file.
-          """
-      required: ['mode', 'target']
+* `err`   
+  Error object if any.   
+* `status`   
+  Value is "true" if file permissions was created or modified.   
 
-## Handler
+## Example
 
-    handler = ({config, metadata}) ->
-      @log message: "Entering fs.chmod", level: 'DEBUG', module: 'nikita/lib/fs/chmod'
-      config.mode = config.mode.toString(8).substr(-4) if typeof config.mode is 'number'
-      @execute
-        cmd: "chmod #{config.mode} #{config.target}"
+```js
+require('nikita')
+.system.chmod({
+  target: '~/my/project',
+  mode: 0o755
+}, function(err, status){
+  console.log(err ? err.message : 'File was modified: ' + status);
+});
+```
+
+## Source Code
+
+    handler = ({config}) ->
+      @log message: "Entering chmod", level: 'DEBUG', module: 'nikita/lib/system/chmod'
+      if config.stat
+        console.log 'Deprecated Option: receive config.stat instead of config.stats in system.chmod'
+        config.stats = config.stat
+      # SSH connection
+      ssh = @ssh config.ssh
+      # Validate parameters
+      throw Error "Missing target: #{JSON.stringify config.target}" unless config.target
+      throw Error "Missing option 'mode'" unless config.mode
+      @call
+        unless: !!config.stats # Option 'stat' short-circuit
+      , (_, callback) ->
+        @log message: "Stat information: \"#{config.target}\"", level: 'DEBUG', module: 'nikita/lib/system/chmod'
+        @fs.base.stat
+          target: config.target
+        , (err, {stats}) ->
+          config.stats = stats unless err
+          callback err
+      @call ({}, callback) ->
+        # Detect changes
+        if misc.mode.compare config.stats.mode, config.mode
+          @log message: "Identical permissions on \"#{config.target}\"", level: 'INFO', module: 'nikita/lib/system/chmod'
+          return callback()
+        # Apply changes
+        @fs.base.chmod target: config.target, mode: config.mode, sudo: config.sudo, (err) ->
+          @log message: "Change permissions from \"#{config.stats.mode.toString 8}\" to \"#{config.mode.toString 8}\" on \"#{config.target}\"", level: 'WARN', module: 'nikita/lib/system/chmod'
+          callback err, true
 
 ## Exports
 
-    module.exports =
+    module.exports
       handler: handler
-      hooks:
-        on_action: on_action
-      metadata:
-        log: false
-        raw_output: true
       schema: schema
 
 ## Dependencies
 
-    error = require '../../utils/error'
+    misc = require '../misc'
