@@ -21,7 +21,7 @@ describe 'actions.log.csv', ->
       #   trim: true
       #   log: false
       # .assert status: false
-      @fs.readFile
+      @fs.base.readFile
         target: "#{tmpdir}/localhost.log"
       .should.be.resolvedWith 'text,INFO,"ok"\n'
 
@@ -32,7 +32,7 @@ describe 'actions.log.csv', ->
     , ({metadata: {tmpdir}}) ->
       @log.csv basedir: tmpdir
       @call header: 'h1', ({log}) -> true
-      @fs.readFile
+      @fs.base.readFile
         target: "#{tmpdir}/localhost.log"
       .should.be.resolvedWith 'header,,"h1"\n'
     
