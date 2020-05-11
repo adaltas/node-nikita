@@ -65,14 +65,14 @@ module.exports = ({action, chain, parent, plugins = []} = {}) ->
           # This check assume the plugin has the same hooks which is not always the case
           unless index[after]
             throw errors.PLUGINS_HOOK_AFTER_INVALID
-              event: event, module: module, after: after
+              event: event, module: hook.module, after: after
           [index[after], hook]
       edges_before = for hook in hooks
         continue unless hook.before
         for before in hook.before
           unless index[before]
             throw errors.PLUGINS_HOOK_BEFORE_INVALID
-              event: event, module: module, after: after
+              event: event, module: hook.module, before: before
           [hook, index[before]]
       edges = [...edges_after, ...edges_before]
       edges = array.flatten edges, 0
@@ -119,7 +119,7 @@ errors =
       'references an after dependency'
       "in plugin #{JSON.stringify after} which does not exists"
     ]
-  PLUGINS_HOOK_BEFORE_INVALID: ({event, module, after}) ->
+  PLUGINS_HOOK_BEFORE_INVALID: ({event, module, before}) ->
     throw error 'PLUGINS_HOOK_BEFORE_INVALID', [
       "the hook #{JSON.stringify event}"
       "in plugin #{JSON.stringify module}" if module
