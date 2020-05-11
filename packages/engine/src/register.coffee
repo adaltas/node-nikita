@@ -28,6 +28,8 @@ module.exports =
       'symlink': '@nikitajs/engine/src/actions/fs/base/symlink'
       'unlink': '@nikitajs/engine/src/actions/fs/base/unlink'
       'writeFile': '@nikitajs/engine/src/actions/fs/base/writeFile'
+    'chmod': '@nikitajs/engine/src/actions/fs/chmod'
+    'chown': '@nikitajs/engine/src/actions/fs/chown'
   'log':
     '': handler: (->)
     'cli': '@nikitajs/engine/src/actions/log/cli'
