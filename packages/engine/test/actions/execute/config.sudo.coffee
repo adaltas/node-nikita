@@ -23,24 +23,24 @@ describe 'actions.execute.config.sudo', ->
       sudo: false
       tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.writeFile
+      @fs.base.writeFile
         target: "#{tmpdir}/a_file"
         content: 'hello'
         uid: 0
         gid: 0
         sudo: true
-      @fs.chown
+      @fs.base.chown
         target: "#{tmpdir}/a_file"
         uid: 0
         gid: 0
         sudo: true
-      @fs.chmod
+      @fs.base.chmod
         target: "#{tmpdir}/a_file"
         mode: 0o600
         sudo: true
       # Note, we are testing EACCESS error because it is impossible to do it
       # without sudo inside fs.readFile
-      @fs.readFile
+      @fs.base.readFile
         target: "#{tmpdir}/a_file"
         encoding: 'ascii'
       .should.be.rejectedWith
@@ -56,22 +56,22 @@ describe 'actions.execute.config.sudo', ->
       sudo: false
       tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @fs.writeFile
+      @fs.base.writeFile
         target: "#{tmpdir}/a_file"
         content: 'hello'
         uid: 0
         gid: 0
         sudo: true
-      @fs.chown
+      @fs.base.chown
         target: "#{tmpdir}/a_file"
         uid: 0
         gid: 0
         sudo: true
-      @fs.chmod
+      @fs.base.chmod
         target: "#{tmpdir}/a_file"
         mode: 0o600
         sudo: true
-      @fs.readFile
+      @fs.base.readFile
         target: "#{tmpdir}/a_file"
         encoding: 'ascii'
         sudo: true
@@ -82,22 +82,22 @@ describe 'actions.execute.config.sudo', ->
       ssh: ssh
       tmpdir: true
     , ({metadata: {tmpdir}})->
-      await @fs.mkdir
+      await @fs.base.mkdir
         target: "#{tmpdir}/a_dir"
-      await @fs.chown
+      await @fs.base.chown
         target: "#{tmpdir}/a_dir"
         uid: 0
         gid: 0
         sudo: true
-      @fs.writeFile
+      @fs.base.writeFile
         target: "#{tmpdir}/a_dir/a_file"
         content: 'some content'
         sudo: true
-      @fs.readFile
+      @fs.base.readFile
         target: "#{tmpdir}/a_dir/a_file"
         sudo: true
       .should.resolvedWith 'some content'
-      @fs.unlink
+      @fs.base.unlink
         target: "#{tmpdir}/a_dir/a_file"
         sudo: true
     

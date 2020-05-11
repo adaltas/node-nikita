@@ -77,14 +77,14 @@ and "{config.basedir}/latest".
         # dateformat += " #{('0'+now.getHours()).slice -2}-#{('0'+now.getMinutes()).slice -2}-#{('0'+now.getSeconds()).slice -2}"
         logdir = path.resolve config.basedir, config.archive
       try
-        await @fs.mkdir logdir
+        await @fs.base.mkdir logdir
       catch err
         throw err unless err.code is 'NIKITA_FS_MKDIR_TARGET_EEXIST'
       # Events
       config.stream ?= fs.createWriteStream path.resolve logdir, config.filename
       await @call config, stream
       # Handle link to latest directory
-      @fs.symlink
+      @fs.base.symlink
         if: latestdir
         source: logdir
         target: latestdir
