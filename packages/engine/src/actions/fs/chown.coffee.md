@@ -1,60 +1,93 @@
 
-# `nikita.fs.chown`
+# `nikita.system.chown`
 
-Change ownership of a file.
+Change the ownership of a file or a directory.
 
-## Hook
+## Options
 
-    on_action = ({config, metadata}) ->
-      config.target = metadata.argument if metadata.argument?
+* `gid`   
+  Group name or id who owns the target file.   
+* `stats` (Stat instance, optional)   
+  Pass the Stats object relative to the target file or directory, to be
+  used as an optimization, discovered otherwise.   
+* `target`   
+  Where the file or directory is copied.   
+* `uid`   
+  User name or id who owns the target file.   
 
-## Schema
+## Callback Parameters
 
-    schema =
-      type: 'object'
-      properties:
-        'gid':
-          oneOf: [{type: 'integer'}, {type: 'string'}]
-          description: """
-          Unix group id.
-          """
-        'target':
-          type: 'string'
-          description: """
-          Location of the file which permissions will change.
-          """
-        'uid':
-          oneOf: [{type: 'integer'}, {type: 'string'}]
-          description: """
-          Unix user id.
-          """
-      required: ['target']
+* `err`   
+  Error object if any.   
+* `status`   
+  Value is "true" if file ownership was created or modified.   
 
-## Handler
+## Example
 
-    handler = ({config, metadata}) ->
-      @log message: "Entering fs.chown", level: 'DEBUG', module: 'nikita/lib/fs/chown'
-      # Normalization
-      config.uid = null if config.uid is false
-      config.gid = null if config.gid is false
-      # Validation
-      throw Error "Missing one of uid or gid option" unless config.uid? or config.gid?
-      @execute """
-        [ -n '#{if config.uid? then config.uid else ''}' ] && chown #{config.uid} #{config.target}
-        [ -n '#{if config.gid? then config.gid else ''}' ] && chgrp #{config.gid} #{config.target}
-        """
+```js
+require('nikita').system.chown({
+  target: '~/my/project',
+  uid: 'my_user'
+  gid: 'my_group'
+}, function(err, modified){
+  console.log(err ? err.message : 'File was modified: ' + modified);
+});
+```
 
-## Exports
+## Note
 
-    module.exports =
-      handler: handler
-      hooks:
-        on_action: on_action
-      metadata:
-        log: false
-        raw_output: true
-      schema: schema
+To list all files owner by a user or a uid, run:
 
-## Dependencies
+```bash
+find /var/tmp -user `whoami`
+find /var/tmp -uid 1000
+find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
+```
 
-    error = require '../../utils/error'
+## Source Code
+
+    module.exports = ({metadata, options}) ->
+      @log message: "Entering chown", level: 'DEBUG', module: 'nikita/lib/system/chown'
+      if options.stat
+        console.log 'Deprecated Option: receive options.stat instead of options.stats in system.chown'
+        options.stats = options.stat
+      # SSH connection
+      ssh = @ssh options.ssh
+      # Normalize options
+      options.target = metadata.argument if metadata.argument?
+      options.uid = null if options.uid is false
+      options.gid = null if options.gid is false
+      options.uid = parseInt options.uid if (typeof options.uid is 'string') and /\d+/.test options.uid
+      options.gid = parseInt options.gid if (typeof options.gid is 'string') and /\d+/.test options.gid
+      # Validate parameters
+      throw Error "Missing target option" unless options.target?
+      throw Error "Missing one of uid or gid option" unless options.uid? or options.gid?
+      # Convert user and group names to uid and gid if necessary
+      @system.uid_gid
+        uid: options.uid
+        gid: options.gid
+      , (err, {uid, gid}) ->
+        options.uid = uid
+        options.gid = gid
+      # Use option 'stat' short-circuit or discover
+      @call unless: !!options.stats, ({}, callback) ->
+        @log message: "Stat #{options.target}", level: 'DEBUG', module: 'nikita/lib/chown'
+        @fs.base.stat target: options.target, (err, {stats}) ->
+          return callback Error "Target Does Not Exist: #{JSON.stringify options.target}" if err?.code is 'ENOENT'
+          return callback err if err
+          options.stats = stats
+          callback()
+      # Detect changes
+      @call ({}, callback) ->
+        if (not options.uid? or options.stats.uid is options.uid) and (not options.gid? or options.stats.gid is options.gid)
+          @log message: "Matching ownerships on '#{options.target}'", level: 'INFO', module: 'nikita/lib/chown'
+          return callback()
+        callback null, true
+      # Apply changes
+      @call if: (-> @status -1), ({}, callback) ->
+        options.uid ?= options.stats.uid
+        options.gid ?= options.stats.gid
+        @fs.base.chown target: options.target, uid: options.uid, gid: options.gid, sudo: options.sudo, (err) ->
+          @log message: "change uid from #{options.stats.uid} to #{options.uid}", level: 'WARN', module: 'nikita/lib/chown' if options.stats.uid is not options.uid
+          @log message: "change gid from #{options.stats.gid} to #{options.gid}", level: 'WARN', module: 'nikita/lib/chown' if options.stats.gid is not options.gid
+          callback err

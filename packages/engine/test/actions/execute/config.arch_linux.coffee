@@ -14,7 +14,7 @@ describe 'actions.execute.config.arch_linux', ->
     , ->
       @execute
         cmd: "mount --bind /var/tmp/root.x86_64 /mnt"
-      @fs.writeFile
+      @fs.base.writeFile
         target: '/mnt/root/hello'
         content: "you"
       {stdout} = await @execute
@@ -30,7 +30,7 @@ describe 'actions.execute.config.arch_linux', ->
         cmd: """
         umount /mnt
         """
-      {stats} = await @fs.stat
+      {stats} = await @fs.base.stat
         target: '/mnt/root/hello'
       utils.stats.isFile(stats.mode).should.be.true()
 

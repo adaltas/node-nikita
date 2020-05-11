@@ -19,7 +19,7 @@ describe 'actions.log.md', ->
       #   source: "#{tmpdir}/localhost.log"
       #   content: /^ok\n/
       #   log: false
-      @fs.readFile
+      @fs.base.readFile
         target: "#{tmpdir}/localhost.log"
       .should.be.resolvedWith 'ok\n'
   
@@ -35,7 +35,7 @@ describe 'actions.log.md', ->
       #   source: "#{tmpdir}/localhost.log"
       #   content: /^ok \(1.INFO, written by nikita\/test\/log\/md\)\n/
       #   log: false
-      @fs.readFile
+      @fs.base.readFile
         target: "#{tmpdir}/localhost.log"
       .should.be.resolvedWith 'ok (1.INFO, written by nikita/test/log/md)\n'
 
@@ -56,7 +56,7 @@ describe 'actions.log.md', ->
               , 500
           @call header: 'h2', ({log}) ->
             log message: 'ok 2'
-        @fs.readFile
+        @fs.base.readFile
           target: "#{tmpdir}/localhost.log"
         .should.be.resolvedWith """
         
@@ -81,7 +81,7 @@ describe 'actions.log.md', ->
         @call header: 'h1', ->
           @call header: 'h2', ({log}) ->
             log message: 'ok 2'
-        @fs.readFile
+        @fs.base.readFile
           target: "#{tmpdir}/localhost.log"
         .should.be.resolvedWith """
           
@@ -108,7 +108,7 @@ describe 'actions.log.md', ->
         #   log message: 'this is a one line output', type: 'stdout_stream'
         #   log message: null, type: 'stdout_stream'
         # /^\n```stdout\nthis is a one line output\n```\n\n/
-        @fs.readFile
+        @fs.base.readFile
           target: "#{tmpdir}/localhost.log"
         .should.finally.containEql """
         
@@ -133,7 +133,7 @@ describe 'actions.log.md', ->
         #   log message: 'this is a one line output', type: 'stdout_stream'
         #   log message: null, type: 'stdout_stream'
         # /^\n```stdout\nthis is a one line output\n```\n\n/
-        @fs.readFile
+        @fs.base.readFile
           target: "#{tmpdir}/localhost.log"
         .should.finally.containEql """
         
@@ -156,7 +156,7 @@ describe 'actions.log.md', ->
         #   log message: 'this is a one line output', type: 'stdout_stream'
         #   log message: null, type: 'stdout_stream'
         # /^\n```stdout\nthis is a one line output\n```\n\n/
-        @fs.readFile
+        @fs.base.readFile
           target: "#{tmpdir}/localhost.log"
         .should.finally.containEql """
         

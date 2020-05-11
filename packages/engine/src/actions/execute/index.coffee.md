@@ -265,7 +265,7 @@ nikita.execute({
         config.cmd = "#{config.bash} #{config.target}"
         config.cmd = "su - #{config.uid} -c '#{config.cmd}'" if config.uid
         config.cmd += ";code=`echo $?`; rm '#{config.target}'; exit $code" unless config.dirty
-        await @fs.writeFile
+        await @fs.base.writeFile
           target: config.target
           content: cmd
           uid: config.uid
@@ -277,7 +277,7 @@ nikita.execute({
         log message: "Writing arch-chroot script to #{JSON.stringify config.target}", level: 'INFO'
         config.cmd = "#{config.arch_chroot} #{config.rootdir} bash #{config.target}"
         config.cmd += ";code=`echo $?`; rm '#{path.join config.rootdir, config.target}'; exit $code" unless config.dirty
-        await @fs.writeFile
+        await @fs.base.writeFile
           target: "#{path.join config.rootdir, config.target}"
           content: "#{cmd}"
           mode: config.mode
