@@ -16,7 +16,7 @@ Change ownership of a file.
         'gid':
           oneOf: [{type: 'integer'}, {type: 'string'}]
           description: """
-          Unix group id.
+          Unix group name or id who owns the target file.
           """
         'target':
           type: 'string'
@@ -26,7 +26,7 @@ Change ownership of a file.
         'uid':
           oneOf: [{type: 'integer'}, {type: 'string'}]
           description: """
-          Unix user id.
+          Unix user name or id who owns the target file.
           """
       required: ['target']
 
@@ -39,10 +39,10 @@ Change ownership of a file.
       config.gid = null if config.gid is false
       # Validation
       throw Error "Missing one of uid or gid option" unless config.uid? or config.gid?
-      @execute """
-        [ -n '#{if config.uid? then config.uid else ''}' ] && chown #{config.uid} #{config.target}
-        [ -n '#{if config.gid? then config.gid else ''}' ] && chgrp #{config.gid} #{config.target}
-        """
+      @execute [
+        "chown #{config.uid} #{config.target}" if config.uid?
+        "chgrp #{config.gid} #{config.target}" if config.gid?
+      ].join '\n'
 
 ## Exports
 
