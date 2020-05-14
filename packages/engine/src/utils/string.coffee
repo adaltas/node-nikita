@@ -30,6 +30,10 @@ module.exports =
       return lastIndex isnt -1 and lastIndex is position
     lines: (str) ->
       str.split /\r\n|[\n\r\u0085\u2028\u2029]/g
+    max: (str, max) ->
+      if str.length > max
+      then str.slice(0, max) + '…'
+      else str
     print_time: (time) ->
       if time > 1000*60
         "#{time / 1000}m"
