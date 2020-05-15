@@ -1,5 +1,5 @@
 
-# `nikita.system.chown`
+# `nikita.fs.chown`
 
 Change the ownership of a file or a directory.
 
@@ -13,7 +13,7 @@ Change the ownership of a file or a directory.
 ## Example
 
 ```js
-require('nikita').system.chown({
+require('nikita').fs.chown({
   target: '~/my/project',
   uid: 'my_user'
   gid: 'my_group'
@@ -40,7 +40,6 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
       # config.gid = null if config.gid is false
       config.uid = parseInt config.uid if (typeof config.uid is 'string') and /\d+/.test config.uid
       config.gid = parseInt config.gid if (typeof config.gid is 'string') and /\d+/.test config.gid
-      throw Error "Missing one of uid or gid option" unless config.uid? or config.gid?
 
 ## Schema
 
@@ -73,6 +72,7 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
 ## Handler
 
     handler = ({config, log}) ->
+      throw Error "Missing one of uid or gid option" unless config.uid? or config.gid?
       if config.uid?
         uid = if typeof config.uid is 'number' then config.uid
         else

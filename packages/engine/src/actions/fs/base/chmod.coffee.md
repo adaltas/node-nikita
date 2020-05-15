@@ -17,12 +17,14 @@ Change permissions of a file.
           oneOf: [{type: 'integer'}, {type: 'string'}]
           default: 0o644
           description: """
-          Location of the file which ownership will change.
+          File mode. Modes may be absolute or symbolic. An absolute mode is
+          an octal number. A symbolic mode is a string with a particular syntax
+          describing `who`, `op` and `perm` symbols.
           """
         'target':
           type: 'string'
           description: """
-          Destination file where to copy the source file.
+          Location of the file which permission will change.
           """
       required: ['mode', 'target']
 

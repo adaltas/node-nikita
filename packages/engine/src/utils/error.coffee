@@ -13,6 +13,7 @@ class NikitaError extends Error
       for key of context
         continue if key is 'code'
         value = context[key]
+        continue if value is undefined
         this[key] = if Buffer.isBuffer value
         then value.toString()
         else if value is null

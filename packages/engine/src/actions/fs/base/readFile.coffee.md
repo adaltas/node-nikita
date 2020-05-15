@@ -32,14 +32,13 @@ content = await require('nikita')
         'encoding':
           type: 'string'
           enum: require('../../../utils/schema').encodings
-          default: 'utf8'
           description: """
           The encoding used to decode the buffer into a string. The encoding can
           be any one of those accepted by Buffer. When not defined, this action
           return a Buffer instance.
           """
         'target':
-          oneOf: [{type: 'string'}, 'instanceof': 'Buffer']
+          oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
           description: """
           Source location of the file to read.
           """
