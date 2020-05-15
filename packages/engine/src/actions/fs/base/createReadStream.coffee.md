@@ -59,7 +59,7 @@ console.info(Buffer.concat(buffers).toString())
           The user is responsible for pumping new content from it.
           """
         'target':
-          oneOf: [{type: 'string'}, 'instanceof': 'Buffer']
+          oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
           description: """
           Source location of the file to read.
           """

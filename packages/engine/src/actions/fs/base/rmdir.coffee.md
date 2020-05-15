@@ -14,7 +14,7 @@ Delete a directory.
       type: 'object'
       properties:
         'target':
-          oneOf: [{type: 'string'}, 'instanceof': 'Buffer']
+          oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
           description: """
           Location of the directory to remove.
           """

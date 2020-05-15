@@ -260,7 +260,7 @@ nikita.execute({
       # Write script
       if config.bash
         cmd = config.cmd
-        config.target = "#{metadata.tmpdir}/#{string.hash config.cmd}" if typeof config.target isnt 'string'
+        config.target = "#{metadata.tmpdir}/#{utils.string.hash config.cmd}" if typeof config.target isnt 'string'
         log message: "Writing bash script to #{JSON.stringify config.target}", level: 'INFO'
         config.cmd = "#{config.bash} #{config.target}"
         config.cmd = "su - #{config.uid} -c '#{config.cmd}'" if config.uid
@@ -273,7 +273,7 @@ nikita.execute({
           sudo: false
       if config.arch_chroot
         cmd = config.cmd
-        config.target = "#{metadata.tmpdir}/#{string.hash config.cmd}" if typeof config.target isnt 'string'
+        config.target = "#{metadata.tmpdir}/#{utils.string.hash config.cmd}" if typeof config.target isnt 'string'
         log message: "Writing arch-chroot script to #{JSON.stringify config.target}", level: 'INFO'
         config.cmd = "#{config.arch_chroot} #{config.rootdir} bash #{config.target}"
         config.cmd += ";code=`echo $?`; rm '#{path.join config.rootdir, config.target}'; exit $code" unless config.dirty
@@ -301,7 +301,7 @@ nikita.execute({
               if Array.isArray result.stdout # A string once `exit` is called
                 result.stdout.push data
               else console.warn [
-                'NIKITA_EXECUTE_EXIT_CODE_INVALID:'
+                'NIKITA_EXECUTE_STDOUT_INVALID:'
                 'stdout coming after child exit,'
                 "got #{JSON.stringify data.toString()},"
                 'this is embarassing and we never found how to catch this bug,'
@@ -315,7 +315,7 @@ nikita.execute({
               if Array.isArray result.stderr # A string once `exit` is called
                 result.stderr.push data
               else console.warn [
-                'NIKITA_EXECUTE_EXIT_CODE_INVALID:'
+                'NIKITA_EXECUTE_STDERR_INVALID:'
                 'stderr coming after child exit,'
                 "got #{JSON.stringify data.toString()},"
                 'this is embarassing and we never found how to catch this bug,'
@@ -342,9 +342,10 @@ nikita.execute({
             if config.code.indexOf(code) is -1 and config.code_skipped.indexOf(code) is -1
               return reject error 'NIKITA_EXECUTE_EXIT_CODE_INVALID', [
                 'an unexpected exit code was encountered,'
+                "command is #{JSON.stringify utils.string.max config.cmd_original, 50}"
                 "got #{JSON.stringify result.code}"
                 if config.code.length is 1
-                then "while expecting #{config.code}."
+                then "instead of #{config.code}."
                 else "while expecting one of #{JSON.stringify config.code}."
               ], {...result, exit_code: code}
             if config.code_skipped.indexOf(code) is -1
@@ -367,5 +368,5 @@ nikita.execute({
 ## Dependencies
 
     exec = require 'ssh2-exec'
+    utils = require '../../utils'
     error = require '../../utils/error'
-    string = require '../../utils/string'
