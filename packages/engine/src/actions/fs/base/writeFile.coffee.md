@@ -29,7 +29,7 @@ require('nikita')
       type: 'object'
       properties:
         'content':
-          oneOf: [{type: 'string'}, 'instanceof': 'Buffer']
+          oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
           description: """
           Content to write.
           """
@@ -60,7 +60,7 @@ require('nikita')
           Permission mode, a bit-field describing the file type and mode.
           """
         'target':
-          oneOf: [{type: 'string'}, 'instanceof': 'Buffer']
+          oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
           description: """
           Final destination path.
           """

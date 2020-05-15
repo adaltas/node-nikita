@@ -68,6 +68,19 @@ describe 'action.schema', ->
       ,
         'data.an_integer should be >= 1'
       ]
+    
+  it 'doesnt apply when condition is false', ->
+    nikita
+    .call
+      schema:
+        type: 'object'
+        properties:
+          'a_string': type: 'string'
+        required: ['a_string']
+      if: false
+    , -> throw Error 'KO'
+    .should.be.resolved()
+        
   
   describe '$ref', ->
 

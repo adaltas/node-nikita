@@ -53,7 +53,7 @@ require('nikita')
           stream.
           """
         'target':
-          oneOf: [{type: 'string'}, 'instanceof': 'Buffer']
+          oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
           description: """
           Final destination path.
           """

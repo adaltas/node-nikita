@@ -4,9 +4,8 @@ utils = require '../../../src/utils'
 {tags, ssh} = require '../../test'
 they = require('ssh2-they').configure ssh...
 
-return unless tags.posix
-
 describe 'actions.fs.chmod', ->
+  return unless tags.posix
 
   they 'change a permission of a file', ({ssh}) ->
     nikita
