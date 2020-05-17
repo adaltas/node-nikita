@@ -30,6 +30,8 @@ module.exports =
       'writeFile': '@nikitajs/engine/src/actions/fs/base/writeFile'
     'chmod': '@nikitajs/engine/src/actions/fs/chmod'
     'chown': '@nikitajs/engine/src/actions/fs/chown'
+    'glob': '@nikitajs/engine/src/actions/fs/glob'
+    'hash': '@nikitajs/engine/src/actions/fs/hash'
   'log':
     '': handler: (->)
     'cli': '@nikitajs/engine/src/actions/log/cli'

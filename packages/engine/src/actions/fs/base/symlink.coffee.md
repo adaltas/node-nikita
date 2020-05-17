@@ -14,12 +14,12 @@ Delete a name and possibly the file it refers to.
       type: 'object'
       properties:
         'source':
-          oneOf: [{type: 'string'}, 'instanceof': 'Buffer']
+          oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
           description: """
           Location of the file to reference.
           """
         'target':
-          oneOf: [{type: 'string'}, 'instanceof': 'Buffer']
+          oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
           description: """
           Destination of the link to create.
           """

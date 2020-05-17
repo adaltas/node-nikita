@@ -14,7 +14,7 @@ Read a link to retrieve its destination path.
       type: 'object'
       properties:
         'target':
-          oneOf: [{type: 'string'}, 'instanceof': 'Buffer']
+          oneOf: [{type: 'string'}, {instanceof: 'Buffer'}]
           description: """
           Location of the link to read.
           """
