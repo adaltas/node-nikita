@@ -34,6 +34,10 @@ register(module.exports = {
     npm: {
       '': '@nikitajs/tools/lib/npm',
       uninstall: '@nikitajs/tools/lib/npm/uninstall'
+    },
+    apm: {
+      'install': '@nikitajs/tools/lib/apm/install',
+      'uninstall': '@nikitajs/tools/lib/apm/uninstall'
     }
   }
 });

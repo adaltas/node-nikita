@@ -27,6 +27,9 @@
         ssh:
           keygen: '@nikitajs/tools/src/ssh/keygen'
         sysctl: '@nikitajs/tools/src/sysctl'
-        npm: 
+        npm:
           '': '@nikitajs/tools/src/npm'
           uninstall: '@nikitajs/tools/src/npm/uninstall'
+        apm:
+          'install': '@nikitajs/tools/src/apm/install'
+          'uninstall': '@nikitajs/tools/src/apm/uninstall'

@@ -7,6 +7,7 @@ module.exports =
     tools_dconf: false
     tools_repo: false
     tools_rubygems: false
+    tools_apm: false
   ssh: [
     null
     { host: '127.0.0.1', username: process.env.USER }

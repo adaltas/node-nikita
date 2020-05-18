@@ -11,10 +11,10 @@ nikita
   header: 'Container'
   remote_force_accept_cert: true
   containers:
-    'tools-rubygems':
+    'tools-apm':
       image: 'images:centos/7'
       config:
-        'environment.NIKITA_TEST_MODULE': '/nikita/packages/tools/env/rubygems/test.coffee'
+        'environment.NIKITA_TEST_MODULE': '/nikita/packages/tools/env/apm/test.coffee'
       disk:
         nikitadir:
           path: '/nikita'
@@ -62,12 +62,6 @@ nikita
       source: "#{__dirname}/../../assets/id_rsa"
       target: '/root/.ssh/id_rsa'
     @lxd.exec
-      header: 'Dependencies'
-      container: options.container
-      cmd: """
-      yum install -y gcc ruby ruby-devel
-      """
-    @lxd.exec
       header: 'Install Atom'
       container: options.container
       cmd: """
@@ -75,5 +69,7 @@ nikita
       sh -c 'echo -e "[Atom]\nname=Atom Editor\nbaseurl=https://packagecloud.io/AtomEditor/atom/el/7/\$basearch\nenabled=1\ngpgcheck=0\nrepo_gpgcheck=1\ngpgkey=https://packagecloud.io/AtomEditor/atom/gpgkey" > /etc/yum.repos.d/atom.repo'
       yum install atom-0:1.46.0-0.1.x86_64
       """
+      trap: true
+      code_skipped: 42
 .next (err) ->
   throw err if err
