@@ -6,10 +6,9 @@ require '@nikitajs/tools/lib/register'
 
 nikita
 .log.cli pad: host: 20, header: 60
-.log.md filename: '/tmp/nikita_ipa_lxd_install'
+.log.md filename: '/tmp/nikita_apm_lxd_install'
 .lxd.cluster
   header: 'Container'
-  remote_force_accept_cert: true
   containers:
     'tools-apm':
       image: 'images:centos/7'

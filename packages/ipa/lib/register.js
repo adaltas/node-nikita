@@ -16,6 +16,12 @@ register(module.exports = {
       exists: '@nikitajs/ipa/lib/group/exists',
       show: '@nikitajs/ipa/lib/group/show'
     },
+    service: {
+      '': '@nikitajs/ipa/lib/service/add',
+      del: '@nikitajs/ipa/lib/service/del',
+      show: '@nikitajs/ipa/lib/service/show',
+      exists: '@nikitajs/ipa/lib/service/exists'
+    },
     user: {
       '': '@nikitajs/ipa/lib/user',
       del: '@nikitajs/ipa/lib/user/del',

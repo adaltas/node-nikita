@@ -10,7 +10,7 @@ Remove one or more apm packages.
 
 ## Source code
 
-    uninstall = ({options}) ->
+    handler = ({options}) ->
       options.name = options.argument if options.argument?
       options.name = [options.name] if typeof options.name is 'string'
       options.name = options.name.map (pkg) -> pkg.toLowerCase()
@@ -32,7 +32,8 @@ Remove one or more apm packages.
 
 ## Exports
 
-    module.exports = uninstall
+    module.exports =
+      handler: handler
 
 ## Dependencies
 
