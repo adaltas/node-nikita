@@ -11,10 +11,14 @@ module.exports = ->
         delete action.relax
     'nikita:session:action': (action, handler) ->
       action.metadata.relax ?= false
-      unless typeof action.metadata.relax is 'boolean'
+      if typeof action.metadata.relax is 'string' or
+      action.metadata.relax instanceof RegExp
+        action.metadata.relax = [action.metadata.relax]
+      unless typeof action.metadata.relax is 'boolean' or
+      action.metadata.relax instanceof Array
         throw error 'METADATA_RELAX_INVALID_VALUE', [
-          "configuration `relax` expect a boolean value,"
-          "got #{JSON.stringify action.metadata.relax}."
+          "configuration `relax` expects a boolean, string, array or regexp",
+          "value, got #{JSON.stringify action.metadata.relax}."
         ]
       return handler unless action.metadata.relax
       (action) ->
@@ -26,7 +30,11 @@ module.exports = ->
               prom
               .then resolve
               .catch (err) ->
-                resolve error: err
+                if typeof action.metadata.relax is 'boolean' or
+                err.code in action.metadata.relax or
+                action.metadata.relax.some((v) -> err.code.match v)
+                  resolve error: err
+                reject err
             else
               prom
           catch err
