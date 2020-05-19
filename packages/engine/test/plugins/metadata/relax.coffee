@@ -1,6 +1,7 @@
 
 nikita = require '../../../src'
 {tags} = require '../../test'
+err = require '../../../src/utils/error'
 
 return unless tags.api
 
@@ -90,3 +91,51 @@ describe 'metadata.relax', ->
       (err is undefined).should.be.true()
       status.should.be.true() unless err
     .promise()
+
+  it 'value should be of type boolean, string, array or regexp', ->
+    nikita
+    .call relax: 1, (->)
+    .should.be.rejectedWith
+      message: 'METADATA_RELAX_INVALID_VALUE: configuration `relax` expect a boolean, string, array or regexp value, got 1.'
+      code: 'METADATA_RELAX_INVALID_VALUE'
+
+  it 'handler return rejected promise', ->
+    {error} = await nikita.call relax: 'NIKITA_ERR', ->
+      new Promise (resolve, reject) ->
+        setImmediate ->
+          reject err 'NIKITA_ERR', ['an error']
+    error.message.should.eql 'NIKITA_ERR: an error'
+
+  it 'handler rejects promise with string as param', ->
+    nikita.call relax: 'NIKITA_ERR', ->
+      new Promise (resolve, reject) ->
+        setImmediate ->
+          reject err 'NIKITA_OTHER_ERR', ['other error']
+    .should.be.rejectedWith
+      message: 'NIKITA_OTHER_ERR: other error'
+      code: 'NIKITA_OTHER_ERR'
+
+  it 'handler rejects promise with array as param', ->
+    nikita.call relax: ['NIKITA_ERR', 'NIKITA_ERR_OTHER'], ->
+      new Promise (resolve, reject) ->
+        setImmediate ->
+          reject err 'NIKITA_OTHER_ERR', ['other error']
+    .should.be.rejectedWith
+      message: 'NIKITA_OTHER_ERR: other error'
+      code: 'NIKITA_OTHER_ERR'
+
+  it 'handler return rejected promise with regexp as param', ->
+    {error} = await nikita.call relax: /^NIKITA_/, ->
+      new Promise (resolve, reject) ->
+        setImmediate ->
+          reject err 'NIKITA_ERR', ['an error']
+    error.message.should.eql 'NIKITA_ERR: an error'
+
+  it 'handler rejects promise with regexp as param', ->
+    nikita.call relax: /^NIKITA_ERR/, ->
+      new Promise (resolve, reject) ->
+        setImmediate ->
+          reject err 'NIKITA_OTHER_ERR', ['other error']
+    .should.be.rejectedWith
+      message: 'NIKITA_OTHER_ERR: other error'
+      code: 'NIKITA_OTHER_ERR'
