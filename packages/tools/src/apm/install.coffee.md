@@ -1,7 +1,7 @@
 
 # `nikita.tools.apm`
 
-Action to install Atom packages with APM.
+Install Atom packages with APM.
 
 ## Options
 
@@ -12,7 +12,7 @@ Action to install Atom packages with APM.
 
 ## Source code
 
-    install = ({options}) ->
+    handler = ({options}) ->
       options.name = options.argument if options.argument?
       options.name = [options.name] if typeof options.name is 'string'
       options.name = options.name.map (pkg) -> pkg.toLowerCase()
@@ -56,7 +56,8 @@ Action to install Atom packages with APM.
 
 ## Exports
 
-    module.exports = install
+    module.exports =
+      handler: handler
 
 ## Dependencies
 

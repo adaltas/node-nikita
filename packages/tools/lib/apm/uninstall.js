@@ -9,10 +9,10 @@
   //   Name of the package(s).
 
 // ## Source code
-var string, uninstall,
+var handler, string,
   indexOf = [].indexOf;
 
-uninstall = function({options}) {
+handler = function({options}) {
   var installed;
   if (options.argument != null) {
     options.name = options.argument;
@@ -54,7 +54,9 @@ uninstall = function({options}) {
 };
 
 // ## Exports
-module.exports = uninstall;
+module.exports = {
+  handler: handler
+};
 
 // ## Dependencies
 string = require('@nikitajs/core/lib/misc/string');

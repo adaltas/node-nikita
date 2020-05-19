@@ -9,7 +9,6 @@ nikita
 .log.md filename: '/tmp/nikita_ipa_lxd_install'
 .lxd.cluster
   header: 'Container'
-  remote_force_accept_cert: true
   containers:
     'tools-npm':
       image: 'images:centos/7'
