@@ -25,6 +25,7 @@ handler = function({options}) {
   });
   installed = [];
   this.system.execute({
+    shy: true,
     cmd: "apm list --installed --json"
   }, function(err, {stdout}) {
     var pkgs;

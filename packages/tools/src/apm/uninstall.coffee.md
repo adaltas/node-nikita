@@ -16,6 +16,7 @@ Remove one or more apm packages.
       options.name = options.name.map (pkg) -> pkg.toLowerCase()
       installed = []
       @system.execute
+        shy: true
         cmd: "apm list --installed --json"
       , (err, {stdout}) ->
         throw err if err
