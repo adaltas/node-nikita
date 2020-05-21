@@ -28,6 +28,7 @@ module.exports =
       'symlink': '@nikitajs/engine/src/actions/fs/base/symlink'
       'unlink': '@nikitajs/engine/src/actions/fs/base/unlink'
       'writeFile': '@nikitajs/engine/src/actions/fs/base/writeFile'
+    'assert': '@nikitajs/engine/src/actions/fs/assert'
     'chmod': '@nikitajs/engine/src/actions/fs/chmod'
     'chown': '@nikitajs/engine/src/actions/fs/chown'
     'glob': '@nikitajs/engine/src/actions/fs/glob'
