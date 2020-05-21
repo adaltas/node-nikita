@@ -1,6 +1,7 @@
 
 module.exports =
   array: require './array'
+  buffer: require './buffer'
   error: require './error'
   mode: require './mode'
   object: require './object'
