@@ -26,16 +26,15 @@ module.exports = ->
         new Promise (resolve, reject) ->
           try
             prom = handler.apply action.context, args
-            if prom and prom.then
-              prom
-              .then resolve
-              .catch (err) ->
-                if typeof action.metadata.relax is 'boolean' or
-                err.code in action.metadata.relax or
-                action.metadata.relax.some((v) -> err.code.match v)
-                  resolve error: err
-                reject err
-            else
-              prom
+            # Not, might need to get inspiration from retry to 
+            # handle the returned promise
+            prom
+            .then resolve
+            .catch (err) ->
+              if typeof action.metadata.relax is 'boolean' or
+              err.code in action.metadata.relax or
+              action.metadata.relax.some((v) -> err.code.match v)
+                resolve error: err
+              reject err
           catch err
             resolve error: err
