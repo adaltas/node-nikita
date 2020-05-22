@@ -64,9 +64,9 @@ nikita
       header: 'Install Atom'
       container: options.container
       cmd: """
-      rpm --import https://packagecloud.io/AtomEditor/atom/gpgkey
-      sh -c 'echo -e "[Atom]\nname=Atom Editor\nbaseurl=https://packagecloud.io/AtomEditor/atom/el/7/\$basearch\nenabled=1\ngpgcheck=0\nrepo_gpgcheck=1\ngpgkey=https://packagecloud.io/AtomEditor/atom/gpgkey" > /etc/yum.repos.d/atom.repo'
-      yum install atom-0:1.46.0-0.1.x86_64
+      yum install -y wget
+      wget https://github.com/atom/atom/releases/download/v1.47.0/atom.x86_64.rpm
+      yum install -y atom.x86_64.rpm
       """
       trap: true
       code_skipped: 42

@@ -4,5 +4,5 @@ module.exports =
     tools_apm: true
   ssh: [
     null
-    { ssh: host: 'localhost', username: 'sshuser' }
+    { ssh: host: 'localhost', username: 'nikita' }
   ]
