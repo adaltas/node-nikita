@@ -33,6 +33,7 @@ module.exports =
     'chown': '@nikitajs/engine/src/actions/fs/chown'
     'glob': '@nikitajs/engine/src/actions/fs/glob'
     'hash': '@nikitajs/engine/src/actions/fs/hash'
+    'mkdir': '@nikitajs/engine/src/actions/fs/mkdir'
   'log':
     '': handler: (->)
     'cli': '@nikitajs/engine/src/actions/log/cli'

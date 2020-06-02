@@ -2,31 +2,8 @@
 # `nikita.system.mkdir`
 
 Recursively create a directory. The behavior is similar to the Unix command
-`mkdir -p`. It supports an alternative syntax where options is simply the path
+`mkdir -p`. It supports an alternative syntax where config is simply the path
 of the directory to create.
-
-## Options
-
-* `cwd`   
-  Current working directory for relative paths.   
-* `uid`   
-  Unix user id.   
-* `gid`   
-  Unix group id.   
-* `mode`   
-  Default to "0755".   
-* `directory`   
-  Path or array of paths.   
-* `target`   
-  Alias for `directory`.   
-* `exclude`   
-  Regular expression.   
-* `parent` (boolean|object)   
-  Create parent directory with provided attributes if an object or default 
-  system options if "true", supported attributes include 'mode', 'uid', 'gid', 
-  'size', 'atime', and 'mtime'.   
-* `source`   
-  Alias for `directory`.   
 
 ## Callback Parameters
 
@@ -39,7 +16,7 @@ of the directory to create.
 
 ```js
 require('nikita')
-.system.mkdir('./some/dir', function(err, {status}){
+.fs.mkdir('./some/dir', function(err, {status}){
   console.info(err ? err.message : "Directory created: " + status);
 });
 ```
@@ -48,7 +25,7 @@ require('nikita')
 
 ```js
 require('nikita')
-.system.mkdir({
+.fs.mkdir({
   ssh: ssh,
   target: './some/dir',
   uid: 'a_user',
@@ -59,104 +36,149 @@ require('nikita')
 });
 ```
 
-## Source Code
+## Hook
 
-    module.exports = ({metadata, options}, callback) ->
-      @log message: "Entering mkdir", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
-      # SSH connection
-      ssh = @ssh options.ssh
-      p = if ssh then path.posix else path
-      # logs for children
-      metadata.log = if typeof metadata.log is 'boolean' then metadata.log else false
-      # Validate options
-      options.target = metadata.argument if metadata.argument?
-      options.directory ?= options.target
-      options.directory ?= options.source
-      return callback Error 'Missing target option' unless options.directory?
-      options.cwd = process.cwd() if not ssh and (options.cwd is true or not options.cwd)
-      options.directory = [options.directory] unless Array.isArray options.directory
-      options.parent = {} if options.parent is true
-      for directory, i in options.directory
-        # Note: path.resolve also normalize
-        options.directory[i] = directory = if options.cwd then p.resolve options.cwd, directory else p.normalize directory
-        if ssh
-          throw Error "Non Absolute Path: target is #{JSON.stringify directory}, SSH requires absolute paths, you must provide an absolute path in the target or the cwd option" unless p.isAbsolute directory
-      # State
-      state = status: false
-      each options.directory
-      .call (directory, callback) =>
-        # first, we need to find which directory need to be created
-        # @log message: "Creating directory '#{directory}'", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
-        do_stats = =>
-          end = false
-          dirs = []
-          # Create directory and its parent directories
-          directories = directory.split('/')
-          directories.shift() # first element is empty with absolute path
-          directories.pop() if directories[directories.length-1] is ''
-          directories = for i in [0...directories.length]
-            '/' + directories.slice(0, directories.length - i).join '/'
-          each(directories)
-          .call (directory, i, next) =>
-            @log message: "Stat '#{directory}'", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
-            @fs.base.stat target: directory, log: metadata.log, (err, {stats}) ->
-              if err?.code is 'ENOENT' # if the directory is not yet created
-                directory.stats = stats
-                dirs.push directory
-                if i is directories.length - 1
-                then return do_create dirs
-                else return next()
-              if misc.stats.isDirectory stats.mode
-                end = true
-                return if i is 0 then do_update(stats) else do_create dirs
-              if err
-                return next err
-              else # a file or symlink exists at this location
-                return next Error "Invalid Directory: path #{JSON.stringify directory} exists but is not a directory, got \"#{misc.stats.type stats.mode}\" type"
-          .next callback
-        do_create = (directories) =>
-          each directories.reverse()
-          .call (directory, i, callback) =>
-            # Directory name contains variables
-            # eg /\${/ on './var/cache/${user}' creates './var/cache/'
-            if options.exclude? and options.exclude instanceof RegExp
-              return callback() if options.exclude.test path.basename directory
-            @log message: "Create directory \"#{directory}\"", level: 'DEBUG', module: 'nikita/lib/system/mkdir' # unless directory is options.directory
-            opts = {}
-            for attr in ['mode', 'uid', 'gid', 'size', 'atime', 'mtime']
-              val = if i is directories.length - 1 then options[attr] else options.parent?[attr]
-              opts[attr] = val if val?
-            @fs.base.mkdir target: directory, log: metadata.log, opts, (err) ->
-              return callback err if err
-              @log message: "Directory \"#{directory}\" created ", level: 'INFO', module: 'nikita/lib/system/mkdir'
-              state.status = true
-              callback()
-          .next (err) ->
-            return callback err if err
-            callback()
-        do_update = (stats) =>
-          @log message: "Directory already exists", level: 'INFO', module: 'nikita/lib/system/mkdir'
-          @system.chown
-            target: directory
-            stats: stats
-            uid: options.uid
-            gid: options.gid
-            if: options.uid? or options.gid?
-          @system.chmod
-            target: directory
-            stats: stats
-            mode: options.mode
-            if: options.mode?
-          @next (err, {status}) ->
-            return callback err if err
-            state.status = true if status
-            callback()
-        do_stats()
-      .next (err) ->
-        callback err, state.status
+    on_action = ({config, metadata}) ->
+      config.target = metadata.argument if metadata.argument?
+
+## Schema
+
+    schema =
+      type: 'object'
+      properties:
+        'cwd':
+          oneOf: [{type: 'boolean'}, {type: 'string'}]
+          description: """
+          Current working directory for relative paths. A boolean value only
+          apply without an SSH connection and default to `process.cwd()`.
+          """
+        'exclude':
+          instanceof: 'RegExp'
+          description: """
+          Exclude directories matching a regular expression. For exemple, the
+          expression `/\${/` on './var/cache/${user}' exclude the directories
+          containing a variables and only apply to `./var/cache/`. 
+          """
+        'gid':
+          oneOf: [{type: 'integer'}, {type: 'string'}]
+          description: """
+          Unix group name or id who owns the target directory.
+          """
+        'mode':
+          oneOf: [{type: 'integer'}, {type: 'string'}]
+          # default: 0o755
+          description: """
+          Directory mode. Modes may be absolute or symbolic. An absolute mode is
+          an octal number. A symbolic mode is a string with a particular syntax
+          describing `who`, `op` and `perm` symbols.
+          """
+        'parent':
+          oneOf: [{
+            type: 'boolean'
+          }, {
+            type: 'object'
+            properties:
+              'mode':
+                $ref: '#/properties/mode'
+          }]
+          description: """
+          Create parent directory with provided attributes if an object or default 
+          system options if "true", supported attributes include 'mode', 'uid', 'gid', 
+          'size', 'atime', and 'mtime'.
+          """
+        'target':
+          type: 'string'
+          description: """
+          Location of the directory to be created.
+          """
+        'uid':
+          oneOf: [{type: 'integer'}, {type: 'string'}]
+          description: """
+          Unix user name or id who owns the target directory.
+          """
+      required: ['target']
+        
+## Handler
+
+    handler = ({config, log, metadata, operations: {path}, ssh}) ->
+      # @log message: "Entering mkdir", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
+      # Configuration validation
+      config.cwd = process.cwd() if not ssh and (config.cwd is true or not config.cwd)
+      config.parent = {} if config.parent is true
+      config.target = if config.cwd then path.resolve config.cwd, config.target else path.normalize config.target
+      if ssh and not path.isAbsolute config.target
+        throw errors.NIKITA_MKDIR_TARGET_RELATIVE config: config
+      # Retrieve every directories including parents
+      parents = config.target.split path.sep
+      parents.shift() # first element is empty with absolute path
+      parents.pop() if parents[parents.length - 1] is ''
+      parents = for i in [0...parents.length]
+        '/' + parents.slice(0, parents.length - i).join '/'
+      # Discovery of directories to create
+      target_stats = null
+      creates = []
+      for target, i in parents
+        try
+          {stats} = await @fs.base.stat target
+          target_stats = status if i is parents.length - 1
+          break if utils.stats.isDirectory stats.mode
+          throw errors.NIKITA_MKDIR_TARGET_INVALID_TYPE stats: stats, target: target
+        catch err
+          if err.code is 'NIKITA_FS_STAT_TARGET_ENOENT'
+            creates.push target
+          else throw err
+      # Target and parent directory creation
+      for target, i in creates.reverse()
+        if config.exclude? and config.exclude instanceof RegExp
+          break if config.exclude.test path.basename target
+        opts = {}
+        for attr in ['mode', 'uid', 'gid', 'size', 'atime', 'mtime']
+          val = if i is creates.length - 1 then config[attr] else config.parent?[attr]
+          opts[attr] = val if val?
+        await @fs.base.mkdir target, opts
+        log message: "Directory \"#{target}\" created ", level: 'INFO', module: 'nikita/lib/system/mkdir'
+      # Target directory update
+      if creates.length is 0
+        log message: "Directory already exists", level: 'DEBUG', module: 'nikita/lib/system/mkdir'
+        @fs.chown
+          target: config.target
+          stats: stats
+          uid: config.uid
+          gid: config.gid
+          if: config.uid? or config.gid?
+        @fs.chmod
+          target: config.target
+          stats: stats
+          mode: config.mode
+          if: config.mode?
+      {}
+
+## Exports
+
+    module.exports =
+      handler: handler
+      hooks:
+        on_action: on_action
+      schema: schema
+
+## Errors
+
+    errors =
+      NIKITA_MKDIR_TARGET_RELATIVE: ({config}) ->
+        error 'NIKITA_MKDIR_TARGET_RELATIVE', [
+          'only absolute path are supported over SSH,'
+          'target is relative and config `cwd` is not provided,'
+          "got #{JSON.stringify config.target}"
+        ],
+          target: config.target
+      NIKITA_MKDIR_TARGET_INVALID_TYPE: ({stats, target}) ->
+        error 'NIKITA_MKDIR_TARGET_INVALID_TYPE', [
+          'target exists but it is not a directory,'
+          "got #{JSON.stringify utils.stats.type stats.mode} type"
+        ],
+          target: target
 
 ## Dependencies
 
-    path = require('path').posix
-    each = require 'each'
-    misc = require '../misc'
+    utils = require '../../utils'
+    error = require '../../utils/error'
