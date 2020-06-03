@@ -101,7 +101,8 @@ describe 'actions.execute', ->
         .should.be.rejectedWith [
           'NIKITA_EXECUTE_EXIT_CODE_INVALID:'
           'an unexpected exit code was encountered,'
-          'got 42 while expecting 0.'
+          'command is "exit 42",'
+          'got 42 instead of 0.'
         ].join ' '
         @execute
           cmd: "exit 42"
@@ -109,6 +110,7 @@ describe 'actions.execute', ->
         .should.be.rejectedWith [
           'NIKITA_EXECUTE_EXIT_CODE_INVALID:'
           'an unexpected exit code was encountered,'
+          'command is "exit 42",'
           'got 42 while expecting one of [1,2,3].'
         ].join ' '
 
@@ -214,7 +216,11 @@ describe 'actions.execute', ->
           """
         .should.be.rejectedWith
           code: 'NIKITA_EXECUTE_EXIT_CODE_INVALID'
-          message: 'NIKITA_EXECUTE_EXIT_CODE_INVALID: an unexpected exit code was encountered, got 2 while expecting 0.'
+          message: [
+            'NIKITA_EXECUTE_EXIT_CODE_INVALID: an unexpected exit code was encountered,'
+            'command is "sh -c \'>&2 echo \\"Some Error\\"; exit 2\'",'
+            'got 2 instead of 0.'
+          ].join ' '
           command: 'sh -c \'>&2 echo "Some Error"; exit 2\''
           exit_code: 2
           stdout: ''

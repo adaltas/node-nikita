@@ -22,6 +22,7 @@ describe 'actions.fs.copy', ->
         target: "{{parent.metadata.tmpdir}}/a_directory"
       @fs.base.readFile
         target: "{{parent.metadata.tmpdir}}/a_directory/a_file"
+        encoding: 'utf8'
       .should.be.finally.containEql 'some content'
 
   they 'a file to a file', ({ssh}) ->
@@ -40,6 +41,7 @@ describe 'actions.fs.copy', ->
         target: "{{parent.metadata.tmpdir}}/a_target"
       @fs.base.readFile
         target: "{{parent.metadata.tmpdir}}/a_target"
+        encoding: 'utf8'
       .should.be.finally.containEql 'some source content'
 
   they 'option argument default to target', ({ssh}) ->
@@ -52,5 +54,7 @@ describe 'actions.fs.copy', ->
         content: 'some content'
       @fs.base.copy "{{parent.metadata.tmpdir}}/a_target",
         source: "{{parent.metadata.tmpdir}}/a_source"
-      @fs.base.readFile "{{parent.metadata.tmpdir}}/a_target"
+      @fs.base.readFile
+        target: "{{parent.metadata.tmpdir}}/a_target"
+        encoding: 'utf8'
       .should.be.finally.containEql 'some content'

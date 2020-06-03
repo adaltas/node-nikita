@@ -8,7 +8,7 @@ they = require('ssh2-they').configure ssh
 
 return unless tags.api
 
-describe 'metadata.tmpdir', ->
+describe 'plugins.metadata.tmpdir', ->
   
   describe 'cascade', ->
 

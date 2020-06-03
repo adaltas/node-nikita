@@ -23,7 +23,7 @@ describe 'actions.log.csv', ->
       # .assert status: false
       @fs.base.readFile
         target: "#{tmpdir}/localhost.log"
-      .should.be.resolvedWith 'text,INFO,"ok"\n'
+        content: 'text,INFO,"ok"\n'
 
   they 'write header', ({ssh}) ->
     nikita
@@ -34,5 +34,5 @@ describe 'actions.log.csv', ->
       @call header: 'h1', ({log}) -> true
       @fs.base.readFile
         target: "#{tmpdir}/localhost.log"
-      .should.be.resolvedWith 'header,,"h1"\n'
+        content: 'header,,"h1"\n'
     

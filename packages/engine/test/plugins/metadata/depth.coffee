@@ -6,7 +6,7 @@ register = require '../../../src/register'
 
 return unless tags.api
 
-describe 'metadata.depth', ->
+describe 'plugins.metadata.depth', ->
 
   it 'start at depth 0 with registered action', ->
     registry.register [], ({metadata}) ->

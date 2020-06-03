@@ -32,10 +32,9 @@ describe 'actions.log.fs', ->
       #   source: "#{tmpdir}/localhost.log"
       #   content: ''
       #   log: false
-      @fs.base.readFile
+      @fs.assert
         target: "#{tmpdir}/localhost.log"
-        # log: false
-      .should.be.resolvedWith ''
+        content: ''
 
   they 'default options', ({ssh}) ->
     # Note, the fs stream is at the moment never closed
@@ -48,14 +47,9 @@ describe 'actions.log.fs', ->
         serializer: text: (log) -> "#{log.message}\n"
       @call ({log, operations: {events}}) ->
         log message: 'ok'
-      # @file.assert
-      #   source: "#{tmpdir}/localhost.log"
-      #   content: /^ok\n/
-      #   log: false
-      @fs.base.readFile
+      @fs.assert
         target: "#{tmpdir}/localhost.log"
-        # log: false
-      .should.be.resolvedWith 'ok\n'
+        content: 'ok\n'
 
   describe 'archive', ->
 
@@ -72,9 +66,9 @@ describe 'actions.log.fs', ->
           log message: 'ok'
         now = new Date()
         dir = "#{now.getFullYear()}".slice(-2) + "0#{now.getFullYear()}".slice(-2) + "0#{now.getDate()}".slice(-2)
-        @fs.base.readFile
+        @fs.assert
           target: "#{tmpdir}/#{dir}/localhost.log"
-        .should.be.resolvedWith 'ok\n'
+          content: 'ok\n'
 
     they 'latest', ({ssh}) ->
       nikita
@@ -93,6 +87,6 @@ describe 'actions.log.fs', ->
         #   source: "#{tmpdir}/latest/localhost.log"
         #   content: /ok/m
         #   log: false
-        @fs.base.readFile
+        @fs.assert
           target: "#{tmpdir}/latest/localhost.log"
-        .should.be.resolvedWith 'ok\n'
+          content: 'ok\n'

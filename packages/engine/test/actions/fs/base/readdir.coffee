@@ -13,8 +13,8 @@ describe 'actions.fs.readdir', ->
     nikita tmpdir: true, ({metadata: {tmpdir}}) ->
       await fs.mkdir "#{tmpdir}/parent"
       await fs.mkdir "#{tmpdir}/parent/a_dir"
-      await fs.writeFile "#{tmpdir}/parent/file_1"
-      await fs.writeFile "#{tmpdir}/parent/file_2"
+      await fs.writeFile "#{tmpdir}/parent/file_1", ''
+      await fs.writeFile "#{tmpdir}/parent/file_2", ''
       # No options
       files = await fs.readdir "#{tmpdir}/parent"
       files.should.eql ['a_dir', 'file_1', 'file_2']
