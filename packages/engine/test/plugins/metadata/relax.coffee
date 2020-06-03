@@ -5,7 +5,7 @@ err = require '../../../src/utils/error'
 
 return unless tags.api
 
-describe 'metadata.relax', ->
+describe 'plugins.metadata.relax', ->
 
   it 'handler throw error', ->
     {error} = await nikita.call relax: true, ->
@@ -96,8 +96,11 @@ describe 'metadata.relax', ->
     nikita
     .call relax: 1, (->)
     .should.be.rejectedWith
-      message: 'METADATA_RELAX_INVALID_VALUE: configuration `relax` expect a boolean, string, array or regexp value, got 1.'
       code: 'METADATA_RELAX_INVALID_VALUE'
+      message: [
+        'METADATA_RELAX_INVALID_VALUE:'
+        'configuration `relax` expects a boolean, string, array or regexp value, got 1.'
+      ].join ' '
 
   it 'handler return rejected promise', ->
     {error} = await nikita.call relax: 'NIKITA_ERR', ->

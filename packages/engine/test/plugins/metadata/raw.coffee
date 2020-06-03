@@ -1,7 +1,7 @@
 
 nikita = require '../../../src'
 
-describe 'metadata.raw', ->
+describe 'plugins.metadata.raw', ->
 
   describe 'input', ->
     

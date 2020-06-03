@@ -342,7 +342,7 @@ nikita.execute({
             if config.code.indexOf(code) is -1 and config.code_skipped.indexOf(code) is -1
               return reject error 'NIKITA_EXECUTE_EXIT_CODE_INVALID', [
                 'an unexpected exit code was encountered,'
-                "command is #{JSON.stringify utils.string.max config.cmd_original, 50}"
+                "command is #{JSON.stringify utils.string.max config.cmd_original, 50},"
                 "got #{JSON.stringify result.code}"
                 if config.code.length is 1
                 then "instead of #{config.code}."
