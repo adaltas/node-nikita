@@ -1,7 +1,7 @@
 
 nikita = require '../../../src'
 
-describe 'plugins.disabled', ->
+describe 'plugins.metadata.disabled', ->
   
   it 'default', ->
     nikita.call

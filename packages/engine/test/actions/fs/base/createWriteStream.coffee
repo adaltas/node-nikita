@@ -19,7 +19,7 @@ describe 'actions.fs.createWriteStream', ->
           ws.end()
       @fs.base.readFile
         target: "{{parent.metadata.tmpdir}}/a_file"
-      .should.be.resolvedWith 'hello'
+      .should.be.resolvedWith Buffer.from 'hello'
 
   they 'argument `target`', ({ssh}) ->
     nikita
@@ -32,7 +32,7 @@ describe 'actions.fs.createWriteStream', ->
           ws.end()
       @fs.base.readFile
         target: "{{parent.metadata.tmpdir}}/a_file"
-      .should.be.resolvedWith 'hello'
+      .should.be.resolvedWith Buffer.from 'hello'
   
   they.skip 'option flags a', ({ssh}) ->
     nikita

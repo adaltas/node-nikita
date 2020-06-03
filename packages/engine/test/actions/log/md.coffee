@@ -19,9 +19,9 @@ describe 'actions.log.md', ->
       #   source: "#{tmpdir}/localhost.log"
       #   content: /^ok\n/
       #   log: false
-      @fs.base.readFile
+      @fs.assert
         target: "#{tmpdir}/localhost.log"
-      .should.be.resolvedWith 'ok\n'
+        content: 'ok\n'
   
   they 'write message and module', ({ssh}) ->
     nikita
@@ -31,13 +31,9 @@ describe 'actions.log.md', ->
       @log.md basedir: tmpdir
       @call ({log}) ->
         log message: 'ok', module: 'nikita/test/log/md'
-      # @file.assert
-      #   source: "#{tmpdir}/localhost.log"
-      #   content: /^ok \(1.INFO, written by nikita\/test\/log\/md\)\n/
-      #   log: false
-      @fs.base.readFile
+      @fs.assert
         target: "#{tmpdir}/localhost.log"
-      .should.be.resolvedWith 'ok (1.INFO, written by nikita/test/log/md)\n'
+        content: 'ok (1.INFO, written by nikita/test/log/md)\n'
 
   describe 'header', ->
   
@@ -56,19 +52,19 @@ describe 'actions.log.md', ->
               , 500
           @call header: 'h2', ({log}) ->
             log message: 'ok 2'
-        @fs.base.readFile
+        @fs.assert
           target: "#{tmpdir}/localhost.log"
-        .should.be.resolvedWith """
-        
-        # h1
-        
-        ok 1
-        
-        ## h1 : h2
-        
-        ok 2
-        
-        """
+          content: """
+          
+          # h1
+          
+          ok 1
+          
+          ## h1 : h2
+          
+          ok 2
+          
+          """
       
     they 'honors header', ({ssh}) ->
       # this currently fail because there is 2 empty lines between the headers
@@ -81,9 +77,9 @@ describe 'actions.log.md', ->
         @call header: 'h1', ->
           @call header: 'h2', ({log}) ->
             log message: 'ok 2'
-        @fs.base.readFile
+        @fs.assert
           target: "#{tmpdir}/localhost.log"
-        .should.be.resolvedWith """
+          content: """
           
           # h1
           
@@ -110,15 +106,17 @@ describe 'actions.log.md', ->
         # /^\n```stdout\nthis is a one line output\n```\n\n/
         @fs.base.readFile
           target: "#{tmpdir}/localhost.log"
+          encoding: 'utf8'
         .should.finally.containEql """
-        
-        ```stdout
-        this is a one line output
-        
-        ```
-        
-        
-        """
+          
+          
+          ```stdout
+          this is a one line output
+          
+          ```
+          
+          
+          """
           
     they 'stdin one line', ({ssh}) ->
       nikita
@@ -135,12 +133,13 @@ describe 'actions.log.md', ->
         # /^\n```stdout\nthis is a one line output\n```\n\n/
         @fs.base.readFile
           target: "#{tmpdir}/localhost.log"
+          encoding: 'utf8'
         .should.finally.containEql """
-        
-        Running Command: `echo 'this is a first line'`
-        
-        
-        """
+          
+          Running Command: `echo 'this is a first line'`
+          
+          
+          """
           
     they 'stdin multi line', ({ssh}) ->
       nikita
@@ -158,12 +157,13 @@ describe 'actions.log.md', ->
         # /^\n```stdout\nthis is a one line output\n```\n\n/
         @fs.base.readFile
           target: "#{tmpdir}/localhost.log"
+          encoding: 'utf8'
         .should.finally.containEql """
-        
-        ```stdin
-        echo 'this is a first line'
-        echo 'this is a second line'
-        ```
-        
-        
-        """
+          
+          ```stdin
+          echo 'this is a first line'
+          echo 'this is a second line'
+          ```
+          
+          
+          """

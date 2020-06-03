@@ -30,7 +30,7 @@ describe 'actions.fs.readFile', ->
         target: "{{parent.metadata.tmpdir}}/a_file"
         content: 'hello'
       @fs.base.readFile "{{parent.metadata.tmpdir}}/a_file"
-      .should.be.resolvedWith 'hello'
+      .should.be.resolvedWith Buffer.from 'hello'
   
   describe 'error', ->
   
