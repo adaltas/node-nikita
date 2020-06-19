@@ -104,7 +104,7 @@ confguration properties.
           trim: true
         [rawmodehex, uid, gid, size, atime, mtime] = stdout.split '|'
         stats:
-          mode: parseInt '0xa1ed' + rawmodehex, 16
+          mode: parseInt rawmodehex, 16 # dont know why `rawmodehex` was prefixed by `"0xa1ed"`
           uid: parseInt uid, 10
           gid: parseInt gid, 10
           size: parseInt size, 10
