@@ -115,12 +115,10 @@ require('nikita')
       parents = for i in [0...parents.length]
         '/' + parents.slice(0, parents.length - i).join '/'
       # Discovery of directories to create
-      target_stats = null
       creates = []
       for target, i in parents
         try
           {stats} = await @fs.base.stat target
-          target_stats = status if i is parents.length - 1
           break if utils.stats.isDirectory stats.mode
           throw errors.NIKITA_MKDIR_TARGET_INVALID_TYPE stats: stats, target: target
         catch err
