@@ -58,3 +58,26 @@ describe 'actions.fs.copy', ->
         target: "{{parent.metadata.tmpdir}}/a_target"
         encoding: 'utf8'
       .should.be.finally.containEql 'some content'
+    
+  they 'NIKITA_FS_COPY_TARGET_ENOENT target does not exits', ({ssh}) ->
+    nikita
+      ssh: ssh
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      @fs.base.writeFile
+        target: "{{parent.metadata.tmpdir}}/a_source"
+        content: 'some content'
+      @fs.base.copy
+        source: "{{parent.metadata.tmpdir}}/a_source"
+        target: "{{parent.metadata.tmpdir}}/a_dir/a_target"
+      .should.be.rejectedWith
+        code: 'NIKITA_FS_COPY_TARGET_ENOENT'
+        message: [
+          'NIKITA_FS_COPY_TARGET_ENOENT:'
+          'target parent directory does not exists or is not a directory,'
+          "got #{JSON.stringify "#{tmpdir}/a_dir/a_target"}"
+        ].join ' '
+        exit_code: 2
+        errno: -2
+        syscall: 'open'
+        path: "#{tmpdir}/a_dir/a_target"
