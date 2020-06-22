@@ -14,7 +14,7 @@ Change permissions of a file.
       type: 'object'
       properties:
         'mode':
-          oneOf: [{type: 'integer'}, {type: 'string'}]
+          type: 'integer'
           default: 0o644
           description: """
           File mode. Modes may be absolute or symbolic. An absolute mode is
@@ -30,7 +30,7 @@ Change permissions of a file.
 
 ## Handler
 
-    handler = ({config, metadata}) ->
+    handler = ({config}) ->
       @log message: "Entering fs.chmod", level: 'DEBUG', module: 'nikita/lib/fs/chmod'
       config.mode = config.mode.toString(8).substr(-4) if typeof config.mode is 'number'
       @execute

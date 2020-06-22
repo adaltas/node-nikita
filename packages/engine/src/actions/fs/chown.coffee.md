@@ -36,8 +36,7 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
 
     on_action = ({config, metadata}) ->
       config.target = metadata.argument if metadata.argument?
-      # config.uid = null if config.uid is false
-      # config.gid = null if config.gid is false
+      # String to integer coercion
       config.uid = parseInt config.uid if (typeof config.uid is 'string') and /\d+/.test config.uid
       config.gid = parseInt config.gid if (typeof config.gid is 'string') and /\d+/.test config.gid
 
@@ -47,7 +46,8 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
       type: 'object'
       properties:
         'gid':
-          oneOf: [{type: 'integer'}, {type: 'string'}]
+          type: 'integer'
+          # oneOf: [{type: 'integer'}, {type: 'string'}]
           description: """
           Unix group name or id who owns the target file.
           """
@@ -63,7 +63,8 @@ find / -uid $old_uid -print | xargs chown $new_uid:$new_gid
           Location of the file which permissions will change.
           """
         'uid':
-          oneOf: [{type: 'integer'}, {type: 'string'}]
+          type: 'integer'
+          # oneOf: [{type: 'integer'}, {type: 'string'}]
           description: """
           Unix user name or id who owns the target file.
           """
