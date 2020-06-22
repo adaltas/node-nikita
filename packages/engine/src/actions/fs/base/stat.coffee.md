@@ -3,24 +3,6 @@
 
 Retrieve file information.
 
-## Output parameters
-
-The parameters include a subset as the one of the Node.js native 
-[`fs.Stats`](https://nodejs.org/api/fs.html#fs_class_fs_stats) object.
-
-* `mode` (integer)   
-  A bit-field describing the file type and mode.
-* `uid` (integer)   
-  The numeric user identifier of the user that owns the file (POSIX).
-* `gid` (integer)   
-  The numeric group identifier of the group that owns the file (POSIX).
-* `size` (integer)   
-  The size of the file in bytes.
-* `atime` (integer)   
-  The timestamp indicating the last time this file was accessed expressed in milliseconds since the POSIX Epoch.
-* `mtime` (integer)   
-  The timestamp indicating the last time this file was modified expressed in milliseconds since the POSIX Epoch.
-
 ## File information
 
 The `mode` parameter indicates the file type. For conveniency, the
@@ -63,6 +45,51 @@ confguration properties.
       config.target = metadata.argument if metadata.argument?
 
 ## schema
+
+The parameters include a subset as the one of the Node.js native 
+[`fs.Stats`](https://nodejs.org/api/fs.html#fs_class_fs_stats) object.
+
+TODO: we shall be able to reference this as a `$ref` once schema does apply to
+returned values.
+
+    schema_output =
+      type: 'object'
+      properties:
+        'stats':
+          type: 'object'
+          properties:
+            'mode':
+              type: 'integer'
+              description: """
+              A bit-field describing the file type and mode.
+              """
+            'uid':
+              type: 'integer'
+              description: """
+              The numeric user identifier of the user that owns the file (POSIX).
+              """
+            'gid':
+              type: 'integer'
+              description: """
+              The numeric group identifier of the group that owns the file (POSIX).
+              """
+            'size':
+              type: 'integer'
+              description: """
+              The size of the file in bytes.
+              """
+            'atime':
+              type: 'integer'
+              description: """
+              The timestamp indicating the last time this file was accessed
+              expressed in milliseconds since the POSIX Epoch.
+              """
+            'mtime':
+              type: 'integer'
+              description: """
+              The timestamp indicating the last time this file was modified
+              expressed in milliseconds since the POSIX Epoch.
+              """
 
     schema =
       type: 'object'
@@ -124,6 +151,7 @@ confguration properties.
         log: false
         raw_output: true
       schema: schema
+      schema_output: schema_output
 
 ## Errors
 

@@ -74,7 +74,7 @@ paths locally using the Minimatch package.
           if file.slice(-1) is '/'
           then file.slice 0, -1
           else file
-      files
+      files: files
 
 ## Exports
 
