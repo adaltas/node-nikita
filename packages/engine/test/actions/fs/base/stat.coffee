@@ -8,7 +8,7 @@ return unless tags.posix
 
 describe 'actions.fs.stat', ->
 
-  they 'handle missing file', ({ssh}) ->
+  they 'NIKITA_FS_STAT_TARGET_ENOENT target does not exists', ({ssh}) ->
     nikita
       ssh: ssh
       tmpdir: true
