@@ -46,7 +46,7 @@ content = await require('nikita')
 
 ## Handler
 
-    handler = ({config, metadata, ssh}) ->
+    handler = ({config}) ->
       @log message: "Entering fs.readFile", level: 'DEBUG', module: 'nikita/lib/fs/readFile'
       # Normalize options
       buffers = []

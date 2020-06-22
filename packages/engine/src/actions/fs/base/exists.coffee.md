@@ -33,7 +33,7 @@ require(nikita)
 
 ## Handler
 
-    handler = ({config, metadata}) ->
+    handler = ({config}) ->
       @log message: "Entering fs.exists", level: 'DEBUG', module: 'nikita/lib/fs/exists'
       try
         await @fs.base.stat

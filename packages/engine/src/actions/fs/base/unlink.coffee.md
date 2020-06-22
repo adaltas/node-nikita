@@ -22,7 +22,7 @@ Remove a non-directory type file.
 
 ## Handler
 
-    handler = ({config, metadata}) ->
+    handler = ({config}) ->
       @log message: "Entering fs.unlink", level: 'DEBUG', module: 'nikita/lib/fs/unlink'
       try
         # Not, error codes are arbitrary, unlink command always exit with code 1
