@@ -7,6 +7,9 @@ Change ownership of a file.
 
     on_action = ({config, metadata}) ->
       config.target = metadata.argument if metadata.argument?
+      # String to integer coercion
+      config.uid = parseInt config.uid if (typeof config.uid is 'string') and /\d+/.test config.uid
+      config.gid = parseInt config.gid if (typeof config.gid is 'string') and /\d+/.test config.gid
 
 ## Schema
 
@@ -14,7 +17,7 @@ Change ownership of a file.
       type: 'object'
       properties:
         'gid':
-          oneOf: [{type: 'integer'}, {type: 'string'}]
+          type: 'integer'
           description: """
           Unix group name or id who owns the target file.
           """
@@ -24,7 +27,7 @@ Change ownership of a file.
           Location of the file which permissions will change.
           """
         'uid':
-          oneOf: [{type: 'integer'}, {type: 'string'}]
+          type: 'integer'
           description: """
           Unix user name or id who owns the target file.
           """
@@ -32,7 +35,7 @@ Change ownership of a file.
 
 ## Handler
 
-    handler = ({config, metadata}) ->
+    handler = ({config}) ->
       @log message: "Entering fs.chown", level: 'DEBUG', module: 'nikita/lib/fs/chown'
       # Normalization
       config.uid = null if config.uid is false
