@@ -27,7 +27,7 @@ describe 'plugins.log', ->
           relax: false
           attempt: 0
           retry: 1
-          shy: false
+          # shy: false
           sleep: 3000
         config: {}
         file: 'log.coffee'
