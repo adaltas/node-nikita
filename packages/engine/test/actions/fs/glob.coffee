@@ -17,7 +17,7 @@ describe 'actions.fs.glob', ->
       @fs.base.writeFile "#{tmpdir}/test/a_file", content: ''
       @fs.base.mkdir "#{tmpdir}/test/a_dir"
       @fs.base.writeFile "#{tmpdir}/test/a_dir/a_file", content: ''
-      files = await @fs.glob "#{tmpdir}/test/*"
+      {files} = await @fs.glob "#{tmpdir}/test/*"
       files.should.eql [
         path.normalize "#{tmpdir}/test/a_file"
         path.normalize "#{tmpdir}/test/a_dir"
@@ -33,7 +33,7 @@ describe 'actions.fs.glob', ->
       @fs.base.mkdir "#{tmpdir}/test/a_dir"
       @fs.base.mkdir "#{tmpdir}/test/a_dir/a_sub_dir"
       @fs.base.writeFile "#{tmpdir}/test/a_dir/a_sub_dir/a_file", content: ''
-      files = await @fs.glob "#{tmpdir}/test/**"
+      {files} = await @fs.glob "#{tmpdir}/test/**"
       files.should.eql [
         "#{tmpdir}/test"
         "#{tmpdir}/test/a_file"
@@ -53,7 +53,7 @@ describe 'actions.fs.glob', ->
       @fs.base.writeFile "#{tmpdir}/test/a_file.coffee", content: ''
       @fs.base.mkdir "#{tmpdir}/test/a_dir"
       @fs.base.writeFile "#{tmpdir}/test/a_dir/a_file.coffee", content: ''
-      files = await @fs.glob "#{tmpdir}/test/*.coffee"
+      {files} = await @fs.glob "#{tmpdir}/test/*.coffee"
       files.should.eql [
         path.normalize "#{tmpdir}/test/a_file.coffee"
       ]
@@ -68,7 +68,7 @@ describe 'actions.fs.glob', ->
       @fs.base.writeFile "#{tmpdir}/test/a_file.coffee", content: ''
       @fs.base.mkdir "#{tmpdir}/test/a_dir"
       @fs.base.writeFile "#{tmpdir}/test/a_dir/a_file.coffee", content: ''
-      files = await @fs.glob "#{tmpdir}/test/**/*.coffee"
+      {files} = await @fs.glob "#{tmpdir}/test/**/*.coffee"
       files.should.eql [
         path.normalize "#{tmpdir}/test/a_file.coffee"
         path.normalize "#{tmpdir}/test/a_dir/a_file.coffee"
@@ -79,7 +79,7 @@ describe 'actions.fs.glob', ->
       ssh: ssh
       tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      files = await @fs.glob "#{tmpdir}/invalid/*.coffee"
+      {files} = await @fs.glob "#{tmpdir}/invalid/*.coffee"
       files.should.eql []
   
   they 'config `dot`', ({ssh}) ->
@@ -91,7 +91,7 @@ describe 'actions.fs.glob', ->
       @fs.base.writeFile "#{tmpdir}/test/.git", content: ''
       @fs.base.mkdir "#{tmpdir}/test/a_dir"
       @fs.base.writeFile "#{tmpdir}/test/a_dir/.gitignore", content: ''
-      files = await @fs.glob "#{tmpdir}/test/**", dot: true
+      {files} = await @fs.glob "#{tmpdir}/test/**", dot: true
       files.should.eql [
         "#{tmpdir}/test"
         "#{tmpdir}/test/.git"
@@ -108,7 +108,7 @@ describe 'actions.fs.glob', ->
       @fs.base.writeFile "#{tmpdir}/test/a_file", content: ''
       @fs.base.mkdir "#{tmpdir}/test/a_dir"
       @fs.base.writeFile "#{tmpdir}/test/a_dir/a_file", content: ''
-      files = await @fs.glob "#{tmpdir}/test/**", trailing: true
+      {files} = await @fs.glob "#{tmpdir}/test/**", trailing: true
       files.should.eql [
         "#{tmpdir}/test/"
         "#{tmpdir}/test/a_file"

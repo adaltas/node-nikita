@@ -1,5 +1,6 @@
 
 nikita = require '../../../../src'
+utils = require '../../../../src/utils'
 {tags, ssh} = require '../../../test'
 they = require('ssh2-they').configure ssh
 
@@ -33,8 +34,20 @@ describe 'actions.fs.createWriteStream', ->
       @fs.base.readFile
         target: "{{parent.metadata.tmpdir}}/a_file"
       .should.be.resolvedWith Buffer.from 'hello'
+
+  they 'config `mode`', ({ssh}) ->
+    nikita
+      ssh: ssh
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      @fs.base.writeFile
+        target: "#{tmpdir}/a_file"
+        content: ''
+        mode: 0o0611
+      {stats} = await @fs.base.stat "#{tmpdir}/a_file"
+      utils.mode.compare(stats.mode, 0o0611).should.be.true()
   
-  they.skip 'option flags a', ({ssh}) ->
+  they.skip 'config `flags` equal "a"', ({ssh}) ->
     nikita
       ssh: ssh
       tmpdir: true

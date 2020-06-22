@@ -18,7 +18,10 @@ module.exports = ->
       if action.hasOwnProperty 'shy'
         action.metadata.shy = action.shy
         delete action.shy
-      action.metadata.shy ?= false
+      # action.metadata.shy ?= false
+      # Do not default shy to false or metadata from the registry will be overwritten
+      # Todo: create a test to illutrate it
+      # action.metadata.shy ?= false
       # Register action
       action.registry.register ['status'],
         metadata: raw: true

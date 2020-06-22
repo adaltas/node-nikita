@@ -34,7 +34,7 @@ session = (action={}) ->
           actions = contextualize [...args, metadata: namespace: namespace]
           (if Array.isArray actions then actions else [actions]).map (action) ->
             actions.config ?= {}
-            action.config.parent = action.parent if action.parent
+            action.config.parent = action.parent if action.parent?
             action.parent = parent
           actions
       unless Array.isArray actions

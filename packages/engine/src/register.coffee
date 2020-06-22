@@ -31,6 +31,7 @@ module.exports =
     'assert': '@nikitajs/engine/src/actions/fs/assert'
     'chmod': '@nikitajs/engine/src/actions/fs/chmod'
     'chown': '@nikitajs/engine/src/actions/fs/chown'
+    'copy': '@nikitajs/engine/src/actions/fs/copy'
     'glob': '@nikitajs/engine/src/actions/fs/glob'
     'hash': '@nikitajs/engine/src/actions/fs/hash'
     'mkdir': '@nikitajs/engine/src/actions/fs/mkdir'
