@@ -30,7 +30,7 @@ Change permissions of a file.
     handler = ({config}) ->
       @log message: "Entering fs.copy", level: 'DEBUG', module: 'nikita/lib/fs/copy'
       try
-        @execute """
+        await @execute """
           [ ! -d `dirname "#{config.target}"` ] && exit 2
           cp #{config.source} #{config.target}
           """
@@ -52,10 +52,10 @@ Change permissions of a file.
 
 ## Errors
 
-    errors:
+    errors =
       NIKITA_FS_COPY_TARGET_ENOENT: ({config, err}) ->
         error 'NIKITA_FS_COPY_TARGET_ENOENT', [
-          'fail to list files of a directory, target is invalid,'
+          'target parent directory does not exists or is not a directory,'
           "got #{JSON.stringify config.target}"
         ],
           exit_code: err.exit_code

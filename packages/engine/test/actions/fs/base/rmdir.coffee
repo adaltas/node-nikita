@@ -21,7 +21,7 @@ describe 'actions.fs.rmdir', ->
         target: "{{parent.metadata.tmpdir}}/a_file"
       .should.be.resolvedWith false
 
-  they 'error missing', ({ssh}) ->
+  they 'NIKITA_FS_RMDIR_TARGET_ENOENT target does not exists', ({ssh}) ->
     nikita
       ssh: ssh
       tmpdir: true
