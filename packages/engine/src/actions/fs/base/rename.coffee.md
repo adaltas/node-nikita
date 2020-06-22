@@ -27,7 +27,7 @@ Change the name or location of a file.
 
 ## Handler
 
-    handler = ({config, metadata}) ->
+    handler = ({config}) ->
       @log message: "Entering fs.rename", level: 'DEBUG', module: 'nikita/lib/fs/rename'
       @execute
         cmd: "mv #{config.source} #{config.target}"
