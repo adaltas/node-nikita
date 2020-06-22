@@ -27,7 +27,7 @@ Change permissions of a file.
 
 ## Handler
 
-    handler = ({config, metadata}) ->
+    handler = ({config}) ->
       @log message: "Entering fs.copy", level: 'DEBUG', module: 'nikita/lib/fs/copy'
       try
         @execute """

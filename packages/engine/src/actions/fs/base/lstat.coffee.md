@@ -23,7 +23,7 @@ stated, not the file that it refers to.
 
 ## Handler
 
-    handler = ({config, metadata}) ->
+    handler = ({config}) ->
       @log message: "Entering fs.lstat", level: 'DEBUG', module: 'nikita/lib/fs/lstat'
       @fs.base.stat
         target: config.target

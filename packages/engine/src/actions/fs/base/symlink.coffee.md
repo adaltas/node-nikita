@@ -27,7 +27,7 @@ Delete a name and possibly the file it refers to.
 
 ## Handler
 
-    handler = ({config, metadata}) ->
+    handler = ({config}) ->
       @log message: "Entering fs.symlink", level: 'DEBUG', module: 'nikita/lib/fs/symlink'
       @execute
         cmd: """
