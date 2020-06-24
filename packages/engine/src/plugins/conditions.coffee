@@ -26,12 +26,13 @@ module.exports = ->
         action
     'nikita:session:action':
       before: '@nikitajs/engine/src/metadata/disabled'
-      handler: (action, handler) ->
+      handler: (action) ->
         final_run = true
         for k, v of action.conditions
+          continue unless handlers[k]?
           local_run = await handlers[k].call null, action
           final_run = false if local_run is false
-        if final_run then handler else action.metadata.disabled = true
+        action.metadata.disabled = true unless final_run
 
 handlers =
   if: (action) ->

@@ -66,7 +66,7 @@ used for comparaison.
       try
       # Target is a directory
         if utils.stats.isDirectory stats.mode
-          files = await @fs.glob  "#{config.target}/**", dot: true
+          {files} = await @fs.glob  "#{config.target}/**", dot: true
           {stdout} = await @execute
             cmd: [
               'command -v openssl >/dev/null || exit 2'
