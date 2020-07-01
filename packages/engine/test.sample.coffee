@@ -4,7 +4,7 @@ module.exports =
   tags:
     api: true
     posix: true
-    system_execute_arc_chroot: false|
+    system_execute_arc_chroot: false
   ssh: [
     null
   ,
