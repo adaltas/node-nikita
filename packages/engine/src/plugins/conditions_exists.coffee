@@ -41,7 +41,7 @@ handlers =
     final_run = true
     for condition in action.conditions.unless_exists
       try
-        {stats} = ! await session null, ({run}) ->
+        {stats} = await session null, ({run}) ->
           run
             metadata:
               condition: true
@@ -49,8 +49,8 @@ handlers =
             parent: action
           , ->
             @fs.base.stat target: condition
+        final_run = false
       catch err
-        if err.code is 'NIKITA_FS_STAT_TARGET_ENOENT'
-          final_run = false
-        else throw err
+        unless err.code is 'NIKITA_FS_STAT_TARGET_ENOENT'
+          throw err
     final_run

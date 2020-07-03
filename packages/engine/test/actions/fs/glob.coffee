@@ -2,7 +2,7 @@
 path = require 'path'
 {Minimatch} = require 'minimatch'
 nikita = require '../../../src'
-{tags, ssh, scratch} = require '../../test'
+{tags, ssh} = require '../../test'
 they = require('ssh2-they').configure ssh
 
 describe 'actions.fs.glob', ->
@@ -69,7 +69,7 @@ describe 'actions.fs.glob', ->
       @fs.base.mkdir "#{tmpdir}/test/a_dir"
       @fs.base.writeFile "#{tmpdir}/test/a_dir/a_file.coffee", content: ''
       {files} = await @fs.glob "#{tmpdir}/test/**/*.coffee"
-      files.should.eql [
+      files.sort().should.eql [
         path.normalize "#{tmpdir}/test/a_dir/a_file.coffee"
         path.normalize "#{tmpdir}/test/a_file.coffee"
       ]
@@ -92,7 +92,7 @@ describe 'actions.fs.glob', ->
       @fs.base.mkdir "#{tmpdir}/test/a_dir"
       @fs.base.writeFile "#{tmpdir}/test/a_dir/.gitignore", content: ''
       {files} = await @fs.glob "#{tmpdir}/test/**", dot: true
-      files.should.eql [
+      files.sort().should.eql [
         "#{tmpdir}/test"
         "#{tmpdir}/test/.git"
         "#{tmpdir}/test/a_dir"

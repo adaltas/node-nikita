@@ -1,6 +1,6 @@
 
 nikita = require '../../../src'
-{tags, ssh, scratch} = require '../../test'
+{tags, ssh} = require '../../test'
 they = require('ssh2-they').configure ssh
 
 return unless tags.posix
