@@ -70,8 +70,8 @@ describe 'actions.fs.glob', ->
       @fs.base.writeFile "#{tmpdir}/test/a_dir/a_file.coffee", content: ''
       {files} = await @fs.glob "#{tmpdir}/test/**/*.coffee"
       files.should.eql [
-        path.normalize "#{tmpdir}/test/a_file.coffee"
         path.normalize "#{tmpdir}/test/a_dir/a_file.coffee"
+        path.normalize "#{tmpdir}/test/a_file.coffee"
       ]
   
   they 'return an empty array on no match', ({ssh}) ->
