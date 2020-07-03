@@ -307,8 +307,8 @@ describe 'fs.copy', ->
         .should.finally.containEql
           files: [
             "#{tmpdir}/a_copy",
-            "#{tmpdir}/a_copy/.a_hidden_file",
-            "#{tmpdir}/a_copy/a_file"
+            "#{tmpdir}/a_copy/a_file",
+            "#{tmpdir}/a_copy/.a_hidden_file"
           ]
   
     they 'set permissions', ({ssh}) ->
