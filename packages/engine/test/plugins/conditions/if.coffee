@@ -2,38 +2,55 @@
 nikita = require '../../../src'
 
 describe 'plugin.condition if', ->
+  
+  describe 'array', ->
 
-  it 'run if `true`', ->
-    nikita.call
-      if: true
-      handler: -> 'called'
-    .should.be.finally.eql 'called'
+    it 'run if all conditions are `true`', ->
+      nikita.call
+        if: [true, true]
+        handler: -> 'called'
+      .should.be.finally.eql 'called'
 
-  it 'skip if `false`', ->
-    nikita.call
-      if: false
-      handler: -> throw Error 'forbidden'
+    it 'skip if one conditions is `false`', ->
+      nikita.call
+        if: [true, false, true]
+        handler: -> throw Error 'forbidden'
+  
+  describe 'boolean, integer', ->
 
-  it 'run if `1`', ->
-    nikita.call
-      if: 1
-      handler: -> 'called'
-    .should.finally.eql 'called'
+    it 'run if `true`', ->
+      nikita.call
+        if: true
+        handler: -> 'called'
+      .should.be.finally.eql 'called'
 
-  it 'skip if `0`', ->
-    nikita.call
-      if: 0
-      handler: -> throw Error 'forbidden'
+    it 'skip if `false`', ->
+      nikita.call
+        if: false
+        handler: -> throw Error 'forbidden'
 
-  it 'skip if `null`', ->
-    nikita.call
-      if: null
-      handler: -> throw Error 'forbidden'
+    it 'run if `1`', ->
+      nikita.call
+        if: 1
+        handler: -> 'called'
+      .should.finally.eql 'called'
 
-  it 'skip if `undefined`', ->
-    nikita.call
-      if: undefined
-      handler: -> throw Error 'forbidden'
+    it 'skip if `0`', ->
+      nikita.call
+        if: 0
+        handler: -> throw Error 'forbidden'
+          
+  describe 'null, undefined', ->
+
+    it 'skip if `null`', ->
+      nikita.call
+        if: null
+        handler: -> throw Error 'forbidden'
+
+    it 'skip if `undefined`', ->
+      nikita.call
+        if: undefined
+        handler: -> throw Error 'forbidden'
   
   describe 'string + buffer', ->
   
