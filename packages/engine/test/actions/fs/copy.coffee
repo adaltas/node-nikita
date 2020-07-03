@@ -303,13 +303,12 @@ describe 'fs.copy', ->
         @fs.copy
           source: "#{tmpdir}/a_dir"
           target: "#{tmpdir}/a_copy"
-        @fs.glob "#{tmpdir}/a_copy/**", dot: true
-        .should.finally.containEql
-          files: [
-            "#{tmpdir}/a_copy",
-            "#{tmpdir}/a_copy/a_file",
-            "#{tmpdir}/a_copy/.a_hidden_file"
-          ]
+        {files} = await @fs.glob "#{tmpdir}/a_copy/**", dot: true
+        files.sort().should.eql [
+          "#{tmpdir}/a_copy"
+          "#{tmpdir}/a_copy/.a_hidden_file"
+          "#{tmpdir}/a_copy/a_file"
+        ]
   
     they 'set permissions', ({ssh}) ->
       nikita
