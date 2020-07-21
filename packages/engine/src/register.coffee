@@ -34,6 +34,7 @@ module.exports =
     'copy': '@nikitajs/engine/src/actions/fs/copy'
     'glob': '@nikitajs/engine/src/actions/fs/glob'
     'hash': '@nikitajs/engine/src/actions/fs/hash'
+    'link': '@nikitajs/engine/src/actions/fs/link'
     'mkdir': '@nikitajs/engine/src/actions/fs/mkdir'
   'log':
     '': handler: (->)

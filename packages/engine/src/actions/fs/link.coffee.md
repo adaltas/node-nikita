@@ -1,5 +1,5 @@
 
-# `nikita.system.link`
+# `nikita.fs.link`
 
 Create a symbolic link and it's parent directories if they don't yet
 exist.
@@ -27,7 +27,7 @@ Note, it is valid for the "source" file to not exist.
 ## Example
 
 ```js
-require('nikita').system.link({
+require('nikita').fs.link({
   source: __dirname,
   target: '/tmp/a_link'
 }, function(err, {status}){
@@ -35,65 +35,103 @@ require('nikita').system.link({
 });
 ```
 
-## Source Code
+## Hook
 
-    module.exports = ({options}, callback) ->
+    on_action = ({config}) ->
+      throw Error "Missing source, got #{JSON.stringify(config.source)}" unless config.source
+      throw Error "Missing target, got #{JSON.stringify(config.target)}" unless config.target
+
+## Schema
+
+    schema =
+      type: 'object'
+      properties:
+        'source':
+          type: 'string'
+          description: """
+          Referenced file to be linked.
+          """
+        'target':
+          type: 'string'
+          description: """
+          Symbolic link to be created.   
+          """
+        'exec':
+          type: 'boolean'
+          description: """
+          Create an executable file with an `exec` command.   
+          """
+        'mode':
+          oneOf: [{type: 'integer'}, {type: 'string'}]
+          default: 0o755
+          description: """
+          Directory mode. Modes may be absolute or symbolic. An absolute mode is
+          an octal number. A symbolic mode is a string with a particular syntax
+          describing `who`, `op` and `perm` symbols.
+          """
+      required: ['source', 'target']
+
+## Handler
+
+    handler = ({config, log, metadata, operations: {path, status}, ssh}) ->
       @log message: "Entering link", level: 'DEBUG', module: 'nikita/lib/system/link'
       count = 0
-      sym_exists = (options, callback) =>
-        @fs.base.readlink target: options.target, (err, {target}) ->
-          return callback null, false if err
-          return callback null, true if target is options.source
-          @fs.base.unlink target: options.target, (err) ->
-            return callback err if err
-            callback null, false
-      sym_create = (options, callback) =>
-        @fs.base.symlink source: options.source, target: options.target, (err) ->
-          return callback err if err
-          count++
-          callback()
-      exec_exists = (options, callback) =>
-        @fs.base.exists target: options.target, (err, {exists}) ->
-          return callback null, false unless exists
-          @fs.base.readFile target: options.target, encoding: 'utf8', (err, {data}) ->
-            return callback err if err
-            exec_cmd = /exec (.*) \$@/.exec(data)[1]
-            callback null, exec_cmd and exec_cmd is options.source
-      exec_create = (options, callback) =>
+      # Set default
+      config.mode ?= 0o0755
+      # It is possible to have collision if two symlink
+      # have the same parent directory
+      await @fs.mkdir
+        target: path.dirname config.target
+        relax: 'EEXIST'
+      if config.exec
+        exists = await @call raw_output: true, ->
+          exists = await @fs.base.exists target: config.target
+          return false unless exists
+          data = await @fs.base.readFile
+            target: config.target
+            encoding: 'utf8'
+          exec_cmd = /exec (.*) \$@/.exec(data)[1]
+          exec_cmd and exec_cmd is config.source
+        if exists
+          status: !!count, count: count if exists
+          return
         content = """
         #!/bin/bash
-        exec #{options.source} $@
+        exec #{config.source} $@
         """
-        @fs.base.writeFile target: options.target, content: content, (err) ->
-          return callback err if err
-          @fs.base.chmod target: options.target, mode: options.mode, (err) ->
-            return callback err if err
-            count++
-            callback()
-      return callback Error "Missing source, got #{JSON.stringify(options.source)}" unless options.source
-      return callback Error "Missing target, got #{JSON.stringify(options.target)}" unless options.target
-      options.mode ?= 0o0755
-      do_mkdir = =>
-        @system.mkdir
-          target: path.dirname options.target
-        , (err, created) ->
-          # It is possible to have collision if to symlink
-          # have the same parent directory
-          return callback err if err and err.code isnt 'EEXIST'
-          do_dispatch()
-      do_dispatch = =>
-        if options.exec
-          exec_exists options, (err, exists) ->
-            return do_end() if exists
-            exec_create options, do_end
-        else
-          sym_exists options, (err, exists) ->
-            return do_end() if exists
-            sym_create options, do_end
-      do_end = ->
-        callback null, status: !!count, count: count
-      do_mkdir()
+        @fs.base.writeFile
+          target: config.target
+          content: content
+        @fs.base.chmod
+          target: config.target
+          mode: config.mode
+        count++
+      else
+        exists = await @call raw_output: true, ->
+          try
+            {target} = await @fs.base.readlink target: config.target
+            return true if target is config.source
+            @fs.base.unlink target: config.target
+            false
+          catch err
+            false
+        if exists
+          status: !!count, count: count if exists
+          return
+        @fs.base.symlink
+          source: config.source
+          target: config.target
+        count++
+      {}
+
+## Exports
+
+    module.exports =
+      handler: handler
+      hooks:
+        on_action: on_action
+      schema: schema
 
 ## Dependencies
 
-    path = require 'path'
+    # path = require 'path'
