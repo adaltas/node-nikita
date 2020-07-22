@@ -215,4 +215,4 @@ require('nikita')
 
     path = require 'path'
     url = require 'url'
-    curl = require '@nikitajs/engine/src/utils/curl'
+    curl = require './utils/curl'
