@@ -81,7 +81,7 @@ require('nikita')
 ## Handler
 
     handler = ({config, log, metadata, operations: {status, events}, ssh}) ->
-      @log message: "Entering file.json", level: 'DEBUG', module: 'nikita/lib/file/json'
+      log message: "Entering file.json", level: 'DEBUG', module: 'nikita/lib/file/json'
       @call if: config.merge, ->
         try
           data = await @fs.base.readFile
