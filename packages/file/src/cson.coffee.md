@@ -63,12 +63,10 @@ require('nikita')
 
 ## Source Code
 
-    handler = ({config, log, metadata, operations: {status}, ssh}) ->
+    handler = ({config, log}) ->
       log message: "Entering file.yaml", level: 'DEBUG', module: 'nikita/lib/file/yaml'
-      # SSH connection
-      ssh = @ssh config.ssh
       # Start real work
-      @call if: config.merge, ->
+      if config.merge
         log message: "Get Target Content", level: 'DEBUG', module: 'nikita/lib/file/cson'
         try
           data = await @fs.base.readFile
