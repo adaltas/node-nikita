@@ -25,10 +25,13 @@ Remove a non-directory type file.
     handler = ({config}) ->
       @log message: "Entering fs.unlink", level: 'DEBUG', module: 'nikita/lib/fs/unlink'
       try
-        # Not, error codes are arbitrary, unlink command always exit with code 1
+        # ! -e: file does not exist
+        # `! -L && -d`: file is not a symlink and is a directory, symlink test
+        # is required because the `-d` operator follow the test if the file is
+        # a symlink
         await @execute """
         [ ! -e '#{config.target}' ] && exit 2
-        [ ! -h '#{config.target}' -a -d '#{config.target}' ] && exit 3
+        [[ ! -L '#{config.target}' && -d '#{config.target}' ]] && exit 3
         unlink '#{config.target}'
         """
       catch err
@@ -57,7 +60,7 @@ Remove a non-directory type file.
           "got #{JSON.stringify config.target}"
         ]
       NIKITA_FS_UNLINK_EPERM: ({config}) ->
-        error 'NIKITA_FS_UNLINK_ENOENT', [
+        error 'NIKITA_FS_UNLINK_EPERM', [
           'you do not have the permission to remove the file,'
           "got #{JSON.stringify config.target}"
         ]
