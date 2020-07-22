@@ -28,7 +28,7 @@ Remove a non-directory type file.
         # Not, error codes are arbitrary, unlink command always exit with code 1
         await @execute """
         [ ! -e '#{config.target}' ] && exit 2
-        [ -d '#{config.target}' ] && exit 3
+        [ ! -h '#{config.target}' -a -d '#{config.target}' ] && exit 3
         unlink '#{config.target}'
         """
       catch err
