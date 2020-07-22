@@ -82,27 +82,24 @@ require('nikita')
 
     handler = ({config, log, metadata, operations: {status, events}, ssh}) ->
       log message: "Entering file.json", level: 'DEBUG', module: 'nikita/lib/file/json'
-      @call if: config.merge, ->
+      if config.merge
         try
           data = await @fs.base.readFile
             target: config.target
             encoding: 'utf8'
           config.content = merge JSON.parse(data), config.content
-          return
         catch err
           if not err.code is 'NIKITA_FS_CRS_TARGET_ENOENT'
             throw err
-      @call if: config.source, ->
+      if config.source
         data = await @fs.base.readFile
-          ssh: if config.local then false else config.ssh
-          sudo: if config.local then false else config.sudo
+          ssh: if config.local then false else undefined
+          sudo: if config.local then false else undefined
           target: config.source
           encoding: 'utf8'
         config.content = merge JSON.parse(data), config.content
-        return
-      @call if: config.transform, ->
+      if config.transform
         config.content = config.transform config.content
-        return
       @file
         target: config.target
         content: -> JSON.stringify config.content, null, config.pretty
