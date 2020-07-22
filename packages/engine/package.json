@@ -49,13 +49,16 @@
     {
       "name": "Lucas Bakalian",
       "email": "lucas@adaltas.com"
+    },
+    {
+      "name": "Alexander Hoffmann",
+      "email": "alexander@adaltas.com"
     }
   ],
   "dependencies": {
     "ajv": "^6.12.2",
     "ajv-keywords": "^3.4.1",
     "colors": "^1.4.0",
-    "each": "^1.2.2",
     "minimatch": "~3.0.4",
     "mixme": "^0.3.5",
     "pad": "^3.2.0",

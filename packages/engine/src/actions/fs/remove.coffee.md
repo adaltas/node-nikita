@@ -1,14 +1,7 @@
 
-# `nikita.system.remove`
+# `nikita.fs.remove`
 
 Recursively remove files, directories and links.
-
-## Options
-
-* `target` (string|[string])      
-  File, directory or glob (pattern matching based on wildcard characters).   
-* `source` (alias)   
-  Alias for "target".   
 
 ## Callback parameters
 
@@ -55,31 +48,50 @@ require('nikita')
 });
 ```
 
-## Source Code
+## Hook
 
-    module.exports = ({metadata, options}, callback) ->
-      @log message: "Entering remove", level: 'DEBUG', module: 'nikita/lib/system/remove'
-      # SSH connection
-      ssh = @ssh options.ssh
+    on_action = ({config, metadata}) ->
       # Validate parameters
-      options.target = metadata.argument if metadata.argument?
-      options.target ?= options.source
-      return callback Error "Missing option: \"target\"" unless options.target?
+      config.target = metadata.argument if metadata.argument?
+      config.target ?= config.source
+      throw Error "Missing option: \"target\"" unless config.target?
+
+## Schema
+
+    schema =
+      type: 'object'
+      properties:
+        'source':
+          type: 'string'
+          description: """
+          Alias for "target".
+          """
+        'target':
+          oneOf:[{type: 'string'}, {type: 'array'}]
+          description: """
+          File, directory or glob (pattern matching based on wildcard characters).   
+          """
+
+## Handler
+
+    handler = ({config, log, metadata, operations: {status, events}, ssh}) ->
+      log message: "Entering remove", level: 'DEBUG', module: 'nikita/lib/fs/remove'
+      # SSH connection
+      ssh = @ssh config.ssh
       # Start real work
-      @file.glob options.target, (err, {files}) ->
-        return callback err if err
-        each files
-        .call (file, callback) =>
-          @log message: "Removing file #{file}", level: 'INFO', module: 'nikita/lib/system/remove'
-          @system.execute
-            cmd: "rm -rf '#{file}'"
-          , callback
-        .next (err) ->
-          callback err, status: !!files.length, count: files.length
+      {files} = await @fs.glob config.target
+      for file in files
+        log message: "Removing file #{file}", level: 'INFO', module: 'nikita/lib/fs/remove'
+        @execute
+          cmd: "rm -rf '#{file}'"
+      {}
 
-## Dependencies
+## Exports
 
-    each = require 'each'
-    misc = require '../misc'
+    module.exports =
+      handler: handler
+      hooks:
+        on_action: on_action
+      schema: schema
 
 [rimraf]: https://github.com/isaacs/rimraf
