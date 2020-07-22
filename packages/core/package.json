@@ -74,9 +74,6 @@
     "ssh2-fs": "^1.0.3",
     "stack-trace": "~0.0.10"
   },
-  "optionalDependencies": {
-    "season": "^6.0.2"
-  },
   "devDependencies": {
     "coffeescript": "^2.5.1",
     "mocha": "7.1.1",
