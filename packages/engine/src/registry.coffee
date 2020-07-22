@@ -41,9 +41,10 @@ create = ({chain, on_register, parent, plugins} = {}) ->
 
   obj.load = (module) ->
     throw Error "Invalid Argument: module must be a string, got #{module.toString()}" unless typeof module is 'string'
-    action = if /^@nikitajs\/engine\//.test module
-    then require.main.require module
-    else require './' + module.substr 21
+    # action = if /^@nikitajs\/engine\//.test module
+    # then require.main.require module
+    # else require './' + module.substr 21
+    action = require.main.require module
     if typeof action is 'function'
       action = handler: action
     action.metadata ?= {}

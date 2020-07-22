@@ -1,0 +1,101 @@
+{
+  "name": "@nikitajs/file",
+  "version": "0.9.7-alpha.2",
+  "description": "Automation and deployment solution of applications and infrastructures.",
+  "keywords": [
+    "build",
+    "cli",
+    "deploy",
+    "fs",
+    "install",
+    "masson",
+    "ssh",
+    "system",
+    "task"
+  ],
+  "author": "David Worms <david@adaltas.com>",
+  "bugs": {
+    "email": "open@adaltas.com",
+    "url": "https://github.com/adaltas/node-nikita/issues"
+  },
+  "coffeelintConfig": {
+    "indentation": {
+      "level": "error",
+      "value": 2
+    },
+    "line_endings": {
+      "level": "error",
+      "value": "unix"
+    },
+    "max_line_length": {
+      "level": "ignore"
+    },
+    "no_backticks": {
+      "level": "ignore"
+    },
+    "no_nested_string_interpolation": {
+      "level": "ignore"
+    }
+  },
+  "contributors": [
+    {
+      "name": "David Worms",
+      "email": "david@adaltas.com"
+    },
+    {
+      "name": "Alexander Hoffmann",
+      "email": "alexander@adaltas.com"
+    }
+  ],
+  "dependencies": {
+    "diff": "^4.0.2",
+    "mixme": "^0.3.5"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
+    "coffeescript": "^2.5.1",
+    "eslint": "^6.8.0",
+    "eslint-plugin-coffee": "^0.1.12",
+    "mocha": "7.1.2",
+    "should": "~13.2.3",
+    "ssh2-they": "^2.1.0"
+  },
+  "peerDependencies": {
+    "@nikitajs/engine": "^0.9.5"
+  },
+  "engines": {
+    "node": ">= 10.0.0"
+  },
+  "files": [
+    "/lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://nikita.js.org/",
+  "license": "MIT",
+  "main": "./lib/index",
+  "mocha": {
+    "throw-deprecation": true,
+    "require": [
+      "should",
+      "coffeescript/register",
+      "@nikitajs/file/src/register"
+    ],
+    "inline-diffs": true,
+    "timeout": 40000,
+    "reporter": "spec",
+    "recursive": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adaltas/node-nikita",
+    "directory": "packages/file"
+  },
+  "scripts": {
+    "build": "coffee -b -o lib src",
+    "_pretest": "npm run build",
+    "test": "mocha 'test/**/*.coffee'"
+  }
+}
