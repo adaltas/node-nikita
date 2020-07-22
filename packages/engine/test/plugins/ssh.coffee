@@ -37,3 +37,21 @@ describe '`plugins.ssh`', ->
     nikita ssh: ssh, (action) ->
       @call -> @call ->
         utils.ssh.compare(action.ssh, ssh).should.be.true()
+
+  they 'local if null', ({ssh}) ->
+    nikita ssh: ssh, ->
+      @call ->
+        @call ssh: null, (action) ->
+          (action.ssh is null).should.be.true()
+          @call (action) ->
+            # Ensure the ssh value is propagated to children
+            (action.ssh is null).should.be.true()
+
+  they 'local if false', ({ssh}) ->
+    nikita ssh: ssh, ->
+      @call ->
+        @call ssh: false, (action) ->
+          (action.ssh is null).should.be.true()
+          @call (action) ->
+            # Ensure the ssh value is propagated to children
+            (action.ssh is null).should.be.true()
