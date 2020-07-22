@@ -6,17 +6,6 @@ exist.
 
 Note, it is valid for the "source" file to not exist.
 
-## Options
-
-* `source`   
-  Referenced file to be linked.   
-* `target`   
-  Symbolic link to be created.   
-* `exec`   
-  Create an executable file with an `exec` command.   
-* `mode`   
-  Default to `0o0755`.   
-
 ## Callback Parameters
 
 * `err`   
@@ -74,13 +63,12 @@ require('nikita').fs.link({
 ## Handler
 
     handler = ({config, log, metadata, operations: {path, status}, ssh}) ->
-      @log message: "Entering link", level: 'DEBUG', module: 'nikita/lib/system/link'
-      count = 0
+      # @log message: "Entering link", level: 'DEBUG', module: 'nikita/lib/system/link'
       # Set default
       config.mode ?= 0o0755
       # It is possible to have collision if two symlink
       # have the same parent directory
-      await @fs.mkdir
+      await @fs.base.mkdir
         target: path.dirname config.target
         relax: 'EEXIST'
       if config.exec
@@ -92,9 +80,7 @@ require('nikita').fs.link({
             encoding: 'utf8'
           exec_cmd = /exec (.*) \$@/.exec(data)[1]
           exec_cmd and exec_cmd is config.source
-        if exists
-          status: !!count, count: count if exists
-          return
+        return if exists
         content = """
         #!/bin/bash
         exec #{config.source} $@
@@ -105,7 +91,6 @@ require('nikita').fs.link({
         @fs.base.chmod
           target: config.target
           mode: config.mode
-        count++
       else
         exists = await @call raw_output: true, ->
           try
@@ -115,14 +100,11 @@ require('nikita').fs.link({
             false
           catch err
             false
-        if exists
-          status: !!count, count: count if exists
-          return
+        return if exists
         @fs.base.symlink
           source: config.source
           target: config.target
-        count++
-      {}
+      true
 
 ## Exports
 
