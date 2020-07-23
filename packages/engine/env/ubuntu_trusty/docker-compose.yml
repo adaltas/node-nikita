@@ -10,6 +10,6 @@ services:
     volumes:
       - ../../../../:/nikita
     environment:
-      NIKITA_TEST_MODULE: /nikita/packages/engine/env/ubuntu/test.coffee
+      NIKITA_TEST_MODULE: /nikita/packages/engine/env/ubuntu_trusty/test.coffee
       DEBUG: 1
       # DEBUG: 0
