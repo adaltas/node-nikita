@@ -31,7 +31,7 @@ Remove a non-directory type file.
         # a symlink
         await @execute """
         [ ! -e '#{config.target}' ] && exit 2
-        [[ ! -L '#{config.target}' && -d '#{config.target}' ]] && exit 3
+        [ ! -L '#{config.target}' ] && [ -d '#{config.target}' ] && exit 3
         unlink '#{config.target}'
         """
       catch err
