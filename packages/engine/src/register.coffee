@@ -36,6 +36,7 @@ module.exports =
     'hash': '@nikitajs/engine/src/actions/fs/hash'
     'link': '@nikitajs/engine/src/actions/fs/link'
     'mkdir': '@nikitajs/engine/src/actions/fs/mkdir'
+    'move': '@nikitajs/engine/src/actions/fs/move'
     'remove': '@nikitajs/engine/src/actions/fs/remove'
   'log':
     '': handler: (->)
