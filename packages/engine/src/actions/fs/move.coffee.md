@@ -1,22 +1,8 @@
 
-# `nikita.system.move`
+# `nikita.fs.move`
 
 Move files and directories. It is ok to overwrite the target file if it
 exists, in which case the source file will no longer exists.
-
-## Options
-
-* `target`   
-  Final name of the moved resource.
-* `force`   
-  Force the replacement of the file without checksum verification, speed up
-  the action and disable the `moved` indicator in the callback.
-* `source`   
-  File or directory to move.
-* `target_md5`   
-  Destination md5 checkum if known, otherwise computed if target exists.
-* `source_md5`   
-  Source md5 checkum if known, otherwise computed.
 
 ## Callback parameters
 
@@ -37,56 +23,80 @@ require('nikita')
 });
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({options}, callback) ->
-      @log message: "Entering move", level: 'DEBUG', module: 'nikita/lib/system/move'
+    schema =
+      type: 'object'
+      properties:
+        'force':
+          oneOf: [{type: 'integer'}, {type: 'boolean'}]
+          default: false
+          description: """
+          Force the replacement of the file without checksum verification, speed up
+          the action and disable the `moved` indicator in the callback.
+          """
+        'source':
+          type: 'string'
+          description: """
+          File or directory to move.
+          """
+        'source_md5':
+          type: 'string'
+          description: """
+          Source md5 checkum if known, otherwise computed.
+          """
+        'target':
+          type: 'string'
+          description: """
+          Final name of the moved resource.
+          """
+        'target_md5':
+          type: 'string'
+          description: """
+          Destination md5 checkum if known, otherwise computed if target exists.
+          """
+      required: ['source', 'target']
+
+## Handler
+
+    handler = ({config, log, metadata, operations: {path}, ssh}) ->
+      log message: "Entering move", level: 'DEBUG', module: 'nikita/lib/system/move'
       # SSH connection
-      ssh = @ssh options.ssh
-      do_exists = =>
-        @log message: "Stat target", level: 'DEBUG', module: 'nikita/lib/system/move'
-        @fs.base.exists options.target, (err, {exists}) ->
-          return callback err if err
-          return do_move() unless exists
-          if options.force
-          then do_replace_dest()
-          else do_srchash()
-      do_srchash = =>
-        return do_dsthash() if options.source_md5
-        @log message: "Get source md5", level: 'DEBUG', module: 'nikita/lib/system/move'
-        @file.hash options.source, (err, {hash}) ->
-          return callback err if err
-          @log message: "Source md5 is \"hash\"", level: 'INFO', module: 'nikita/lib/system/move'
-          options.source_md5 = hash
-          do_dsthash()
-      do_dsthash = =>
-        return do_chkhash() if options.target_md5
-        @log message: "Get target md5", level: 'DEBUG', module: 'nikita/lib/system/move'
-        @file.hash options.target, (err, {hash}) =>
-          return callback err if err
-          @log message: "Destination md5 is \"hash\"", level: 'INFO', module: 'nikita/lib/system/move'
-          options.target_md5 = hash
-          do_chkhash()
-      do_chkhash = ->
-        if options.source_md5 is options.target_md5
-        then do_remove_src()
-        else do_replace_dest()
-      do_replace_dest = =>
-        @log message: "Remove #{options.target}", level: 'WARN', module: 'nikita/lib/system/move'
-        @system.remove
-          target: options.target
-        , (err) ->
-          return callback err if err
-          do_move()
-      do_move = =>
-        @log message: "Rename #{options.source} to #{options.target}", level: 'WARN', module: 'nikita/lib/system/move'
-        @fs.base.rename source: options.source, target: options.target, (err) ->
-          return callback err if err
-          callback null, true
-      do_remove_src = =>
-        @log message: "Remove #{options.source}", level: 'WARN', module: 'nikita/lib/system/move'
-        @system.remove
-          target: options.source
-        , (err) ->
-          callback err
-      do_exists()
+      ssh = @ssh config.ssh
+      log message: "Stat target", level: 'DEBUG', module: 'nikita/lib/system/move'
+      exists = await @fs.base.exists config.target
+      if not exists
+        log message: "Rename #{config.source} to #{config.target}", level: 'WARN', module: 'nikita/lib/system/move'
+        @fs.base.rename source: config.source, target: config.target
+        return true
+      if config.force
+        log message: "Remove #{config.target}", level: 'WARN', module: 'nikita/lib/system/move'
+        @fs.remove target: config.target
+        log message: "Rename #{config.source} to #{config.target}", level: 'WARN', module: 'nikita/lib/system/move'
+        @fs.base.rename source: config.source, target: config.target
+        return true
+      if not config.target_md5
+        log message: "Get target md5", level: 'DEBUG', module: 'nikita/lib/system/move'
+        {hash} = await @fs.hash config.target
+        log message: "Destination md5 is \"hash\"", level: 'INFO', module: 'nikita/lib/system/move'
+        config.target_md5 = hash
+      if not config.source_md5
+        log message: "Get source md5", level: 'DEBUG', module: 'nikita/lib/system/move'
+        {hash} = await @fs.hash config.source
+        log message: "Source md5 is \"hash\"", level: 'INFO', module: 'nikita/lib/system/move'
+        config.source_md5 = hash
+      if config.source_md5 is config.target_md5
+        log message: "Remove #{config.source}", level: 'WARN', module: 'nikita/lib/system/move'
+        @fs.remove target: config.source
+        return false
+      log message: "Remove #{config.target}", level: 'WARN', module: 'nikita/lib/system/move'
+      @fs.remove target: config.target
+      log message: "Rename #{config.source} to #{config.target}", level: 'WARN', module: 'nikita/lib/system/move'
+      @fs.base.rename source: config.source, target: config.target
+      {}
+
+## Exports
+
+    module.exports =
+      handler: handler
+      schema: schema
