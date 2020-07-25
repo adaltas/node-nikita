@@ -18,9 +18,9 @@ describe 'actions.fs.glob', ->
       @fs.base.mkdir "#{tmpdir}/test/a_dir"
       @fs.base.writeFile "#{tmpdir}/test/a_dir/a_file", content: ''
       {files} = await @fs.glob "#{tmpdir}/test/*"
-      files.should.eql [
-        path.normalize "#{tmpdir}/test/a_file"
+      files.sort().should.eql [
         path.normalize "#{tmpdir}/test/a_dir"
+        path.normalize "#{tmpdir}/test/a_file"
       ]
 
   they 'should traverse a directory recursively', ({ssh}) ->
@@ -34,12 +34,12 @@ describe 'actions.fs.glob', ->
       @fs.base.mkdir "#{tmpdir}/test/a_dir/a_sub_dir"
       @fs.base.writeFile "#{tmpdir}/test/a_dir/a_sub_dir/a_file", content: ''
       {files} = await @fs.glob "#{tmpdir}/test/**"
-      files.should.eql [
+      files.sort().should.eql [
         "#{tmpdir}/test"
-        "#{tmpdir}/test/a_file"
         "#{tmpdir}/test/a_dir"
         "#{tmpdir}/test/a_dir/a_sub_dir"
         "#{tmpdir}/test/a_dir/a_sub_dir/a_file"
+        "#{tmpdir}/test/a_file"
       ]
       # Default behavior
       (new Minimatch('/a_dir/**').match '/a_dir/').should.be.true()
@@ -54,7 +54,7 @@ describe 'actions.fs.glob', ->
       @fs.base.mkdir "#{tmpdir}/test/a_dir"
       @fs.base.writeFile "#{tmpdir}/test/a_dir/a_file.coffee", content: ''
       {files} = await @fs.glob "#{tmpdir}/test/*.coffee"
-      files.should.eql [
+      files.sort().should.eql [
         path.normalize "#{tmpdir}/test/a_file.coffee"
       ]
 
@@ -80,7 +80,7 @@ describe 'actions.fs.glob', ->
       tmpdir: true
     , ({metadata: {tmpdir}}) ->
       {files} = await @fs.glob "#{tmpdir}/invalid/*.coffee"
-      files.should.eql []
+      files.sort().should.eql []
   
   they 'config `dot`', ({ssh}) ->
     nikita
@@ -109,9 +109,9 @@ describe 'actions.fs.glob', ->
       @fs.base.mkdir "#{tmpdir}/test/a_dir"
       @fs.base.writeFile "#{tmpdir}/test/a_dir/a_file", content: ''
       {files} = await @fs.glob "#{tmpdir}/test/**", trailing: true
-      files.should.eql [
+      files.sort().should.eql [
         "#{tmpdir}/test/"
-        "#{tmpdir}/test/a_file"
         "#{tmpdir}/test/a_dir/"
         "#{tmpdir}/test/a_dir/a_file"
+        "#{tmpdir}/test/a_file"
       ]
