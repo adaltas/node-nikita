@@ -140,5 +140,5 @@ describe 'plugins.metadata.relax', ->
         setImmediate ->
           reject err 'NIKITA_OTHER_ERR', ['other error']
     .should.be.rejectedWith
-      message: 'NIKITA_OTHER_ERR: other error'
       code: 'NIKITA_OTHER_ERR'
+      message: 'NIKITA_OTHER_ERR: other error'

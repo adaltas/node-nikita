@@ -14,7 +14,7 @@ describe 'actions.ssh.root', ->
     
     they 'config.selinux is invalid', ({ssh}) ->
       nikita
-      .ssh.root {...ssh.config, selinux: '_invalid_'}
+      .ssh.root {...ssh.config, selinux: '_invalid_', debug: undefined}
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
         message: [
@@ -26,5 +26,5 @@ describe 'actions.ssh.root', ->
           
     they 'config.selinux is valid', ({ssh}) ->
       nikita
-      .ssh.root {...ssh.config, selinux: 'permissive'}, metadata: dry: true
+      .ssh.root {...ssh.config, selinux: 'permissive', debug: undefined}, metadata: dry: true
       .should.be.resolvedWith status: false
