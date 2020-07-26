@@ -3,7 +3,7 @@ nikita = require '../../../src'
 
 describe 'session.handler.parent', ->
     
-  it 'parent is interpreted as a config', ->
+  it 'parent config dont conflict', ->
     nikita.call
       parent: true
     , ({config}) ->
