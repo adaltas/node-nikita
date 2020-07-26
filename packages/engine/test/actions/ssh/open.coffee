@@ -14,7 +14,7 @@ describe 'actions.ssh.open', ->
     
     they 'config.host', ({ssh}) ->
       nikita
-      .ssh.open {...ssh.config, host: '_invalid_'}
+      .ssh.open {...ssh.config, host: '_invalid_', debug: undefined}
       .should.be.rejectedWith code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
       
   describe 'connection properties', ->
