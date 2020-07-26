@@ -75,6 +75,7 @@ session = (action={}) ->
   # Local scheduler to execute children and be notified on finish
   action.scheduler = schedule()
   # Expose the action context
+  action.config.context = action.context if action.context
   action.context = new Proxy on_call, get: on_get
   # Execute the action
   result = new Promise (resolve, reject) ->
