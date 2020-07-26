@@ -9,6 +9,7 @@ session = require './session'
   
 create = ->
   session plugins: [
+    require './metadata/debug'
     require './metadata/depth'
     require './metadata/disabled'
     require './metadata/raw'
