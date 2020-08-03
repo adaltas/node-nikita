@@ -29,6 +29,7 @@ describe 'plugins.log', ->
           retry: 1
           # shy: false
           sleep: 3000
+          templated: true
         config: {}
         file: 'log.coffee'
         filename: __filename
