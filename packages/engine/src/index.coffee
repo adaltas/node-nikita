@@ -17,7 +17,6 @@ create = ->
     require './metadata/retry'
     require './metadata/ssh'
     require './metadata/status'
-    require './metadata/templated'
     require './metadata/tmpdir'
     require './plugins/args'
     require './plugins/conditions'
