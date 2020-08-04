@@ -21,6 +21,16 @@ describe 'plugins.templated', ->
       .should.be.finally.containEql
         key: 'get value from parent'
 
+  it 'default', ->
+    nikita.call ({metadata: {templated}}) ->
+      templated.should.be.true()
+
+  it 'when `false`', ->
+    nikita.call
+      templated: false
+    , ({metadata: {templated}}) ->
+      templated.should.be.false()
+
   it 'disable plugin', ->
     nikita
       templated: false
