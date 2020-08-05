@@ -224,7 +224,7 @@ require('nikita')
           Replace this marker, default to the replaced string if missing.
           """
         'mode':
-          type: 'integer'
+          oneOf: [{type: 'string'}, {type: 'number'}]
           description: """
           File mode (permission and sticky bits), default to `0o0644`, in the
           form of `{mode: 0o0744}` or `{mode: "0744"}`.
