@@ -22,6 +22,22 @@ describe 'actions.fs.chmod', ->
       {stats} = await @fs.base.stat "#{tmpdir}/a_file"
       utils.mode.compare(stats.mode, 0o0600).should.be.true()
 
+  they 'mode as string', ({ssh}) ->
+    nikita
+      ssh: ssh
+      tmpdir: true
+    , ({metadata: {tmpdir}}) ->
+      @fs.base.writeFile
+        content: ''
+        mode: 0o0644
+        target: "#{tmpdir}/a_file"
+      @fs.chmod
+        mode: '600'
+        target: "#{tmpdir}/a_file"
+      .should.be.resolvedWith status: true
+      {stats} = await @fs.base.stat "#{tmpdir}/a_file"
+      utils.mode.compare(stats.mode, 0o0600).should.be.true()
+
   they 'change status', ({ssh}) ->
     nikita
       ssh: ssh

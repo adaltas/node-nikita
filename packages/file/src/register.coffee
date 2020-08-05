@@ -18,8 +18,8 @@ module.exports =
     #   '': '@nikitajs/file/src/properties'
     #   read: '@nikitajs/file/src/properties/read'
     # render: '@nikitajs/file/src/render'
-    # touch: '@nikitajs/file/src/touch'
-    # upload: '@nikitajs/file/src/upload'
+    touch: '@nikitajs/file/src/touch'
+    upload: '@nikitajs/file/src/upload'
     # yaml: '@nikitajs/file/src/yaml'
 (->
   await registry.register module.exports
