@@ -59,6 +59,43 @@ describe 'metadata "debug"', ->
       await nikita.call debug: ws, ({log}) ->
         log 'Some message'
       data.join().should.eql '\u001b[32m[1.INFO undefined] Some message\u001b[39m\n'
+    
+  describe 'cascade', ->
+  
+    it 'available in children', ->
+      data = []
+      ws = new stream.Writable()
+      ws.write = (chunk) -> data.push chunk
+      await nikita.call debug: ws, ({log}) ->
+        log 'Parent message'
+        @call ({log}) ->
+          log 'Child message'
+      data.join().should.eql [
+        '\u001b[32m[1.INFO undefined] Parent message\u001b[39m\n'
+        '\u001b[32m[2.INFO undefined] Child message\u001b[39m\n'
+      ].join ','
+      
+    it 'not available in parent', ->
+      data = []
+      ws = new stream.Writable()
+      ws.write = (chunk) -> data.push chunk
+      await nikita.call ({log}) ->
+        log 'Parent message'
+        @call debug: ws, ({log}) ->
+          log 'Child message'
+      data.join().should.eql '\u001b[32m[2.INFO undefined] Child message\u001b[39m\n'
+      
+    it 'not available in parent sibling', ->
+      data = []
+      ws = new stream.Writable()
+      ws.write = (chunk) -> data.push chunk
+      await nikita
+      .call ({log}) ->
+        @call debug: ws, ({log}) ->
+          log 'Child message'
+      .call ({log}) ->
+        log 'Sibling message'
+      data.join().should.eql '\u001b[32m[2.INFO undefined] Child message\u001b[39m\n'
   
   describe 'error', ->
       
