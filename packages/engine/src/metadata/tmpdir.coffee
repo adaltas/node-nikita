@@ -14,14 +14,6 @@ module.exports = ->
     '@nikitajs/engine/src/plugins/operation_path'
   ]
   hooks:
-    # 'nikita:registry:normalize': (action) ->
-    #   action.metadata ?= {}
-    #   if action.hasOwnProperty 'tmpdir'
-    #     action.metadata.tmpdir = action.tmpdir
-    #     delete action.tmpdir
-    #   if action.hasOwnProperty 'dirty'
-    #     action.metadata.dirty = action.dirty
-    #     delete action.dirty
     'nikita:session:normalize': (action) ->
       if action.hasOwnProperty 'tmpdir'
         action.metadata.tmpdir = action.tmpdir
