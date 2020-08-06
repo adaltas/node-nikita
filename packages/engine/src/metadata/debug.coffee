@@ -27,8 +27,18 @@ module.exports = ->
           "the string \"stdout\", or a Node.js Stream Writer,"
           "got #{JSON.stringify debug}."
         ]
-      if debug
-        print = (log) ->
+      unless debug
+        action.metadata.debug = false
+        return
+      debug = action.metadata.debug =
+        ws:
+          if debug is 'stdout'
+            action.metadata.debug.ws = process.stdout
+          else if debug instanceof stream.Writable
+            action.metadata.debug.ws = debug
+          else
+            action.metadata.debug.ws = process.stderr
+        listener: (log) ->
           unless log.type in ['stdout_stream', 'stderr_stream'] and log.message is null
             msg = if typeof log.message is 'string' then log.message.trim()
             else if typeof log.message is 'number' then log.message
@@ -40,13 +50,17 @@ module.exports = ->
               when 'stdout_stream' then "\x1b[36m#{msg}\x1b[39m"
               when 'stderr_stream' then "\x1b[35m#{msg}\x1b[39m"
               else "\x1b[32m#{msg}\x1b[39m"
-            if debug is 'stdout'
-              process.stdout.write "#{msg}\n"
-            else if debug instanceof stream.Writable
-              debug.write "#{msg}\n"
-            else
-              process.stderr.write "#{msg}\n"
-        action.operations.events.on 'text', print
-        action.operations.events.on 'stdin', print
-        action.operations.events.on 'stdout_stream', print
-        action.operations.events.on 'stderr_stream', print
+            debug.ws.write "#{msg}\n"
+      action.operations.events.addListener 'text', debug.listener
+      action.operations.events.addListener 'stdin', debug.listener
+      action.operations.events.addListener 'stdout_stream', debug.listener
+      action.operations.events.addListener 'stderr_stream', debug.listener
+    'nikita:session:result':
+      # after: '@nikitajs/engine/src/plugins/log'
+      handler: ({action}) ->
+        debug = action.metadata.debug
+        return unless debug and debug.listener # undefined with invalid value error
+        action.operations.events.removeListener 'text', debug.listener
+        action.operations.events.removeListener 'stdin', debug.listener
+        action.operations.events.removeListener 'stdout_stream', debug.listener
+        action.operations.events.removeListener 'stderr_stream', debug.listener
