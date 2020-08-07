@@ -27,7 +27,6 @@ require('nikita')
       config.pretty ?= false
       config.pretty = 2 if config.pretty is true
       config.transform ?= null
-      throw Error "Required Option: the 'target' option is required" unless config.target
       throw Error "Invalid config: \"transform\"" if config.transform and typeof config.transform isnt 'function'
 
 ## Schema
@@ -77,10 +76,11 @@ require('nikita')
           User provided function to modify the javascript before it is stringified
           into JSON.
           """
+      required: ['target']
 
 ## Handler
 
-    handler = ({config, log, metadata, operations: {status, events}, ssh}) ->
+    handler = ({config, log}) ->
       log message: "Entering file.json", level: 'DEBUG', module: 'nikita/lib/file/json'
       if config.merge
         try
@@ -89,8 +89,7 @@ require('nikita')
             encoding: 'utf8'
           config.content = merge JSON.parse(data), config.content
         catch err
-          if not err.code is 'NIKITA_FS_CRS_TARGET_ENOENT'
-            throw err
+          throw err if err.code isnt 'NIKITA_FS_CRS_TARGET_ENOENT'
       if config.source
         data = await @fs.base.readFile
           ssh: if config.local then false else undefined
@@ -98,8 +97,7 @@ require('nikita')
           target: config.source
           encoding: 'utf8'
         config.content = merge JSON.parse(data), config.content
-      if config.transform
-        config.content = config.transform config.content
+      config.content = config.transform config.content if config.transform
       @file
         target: config.target
         content: -> JSON.stringify config.content, null, config.pretty
@@ -109,6 +107,7 @@ require('nikita')
         gid: config.gid
         uid: config.uid
         mode: config.mode
+      {}
 
 ## Exports
 
