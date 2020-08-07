@@ -359,7 +359,7 @@ require('nikita')
           throw err if err.code isnt 'NIKITA_FS_CRS_TARGET_ENOENT'
           config.content = ''
       # Stat the target
-      stats = await @call raw_output: true, ({}, callback) ->
+      stats = await @call raw_output: true, ->
         if typeof config.target != 'function'
           log message: "Stat target", level: 'DEBUG', module: 'nikita/lib/file'
           try
