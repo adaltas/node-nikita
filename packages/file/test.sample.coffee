@@ -1,6 +1,5 @@
 
 module.exports =
-  scratch: '/tmp/nikita-test-core'
   tags:
     api: true
     posix: true

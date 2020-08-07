@@ -1,6 +1,5 @@
 
 module.exports =
-  scratch: '/tmp/nikita-test-db'
   tags:
     db: false # disable_db
   docker: # eg `docker-machine create --driver virtualbox nikita`
