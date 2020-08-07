@@ -25,10 +25,6 @@ require('nikita')
 ## On config
 
     on_action = ({config, metadata}) ->
-      # Validate parameters
-      throw Error 'Required Option: content' unless config.content
-      throw Error 'Required Option: target' unless config.target
-      # config
       config.line_width ?= 160
       config.clean ?= true
       config.encoding ?= 'utf8'
@@ -51,7 +47,7 @@ require('nikita')
           Object to stringify.   
           """
         'target':
-          type: 'string'
+          oneOf: [{type: 'string'}, {typeof: 'function'}]
           description: """
           File path where to write content to or a callback.   
           """
@@ -60,6 +56,7 @@ require('nikita')
           description: """
           Read the target if it exists and merge its content.
           """
+      required: ['target', 'content']
 
 ## Source Code
 
@@ -76,16 +73,15 @@ require('nikita')
           config.content = merge data, config.content
           log message: "Target Merged", level: 'DEBUG', module: 'nikita/lib/file/cson'
         catch err
-          if not err.code is 'NIKITA_FS_CRS_TARGET_ENOENT'
-            throw err
+          throw err if err.code isnt 'NIKITA_FS_CRS_TARGET_ENOENT'
           # File does not exists, this is ok, there is simply nothing to merge
           log message: "No Target To Merged", level: 'DEBUG', module: 'nikita/lib/file/cson'
-      @call ->
-        log message: "Serialize Content", level: 'DEBUG', module: 'nikita/lib/file/cson'
-        @file
-          content: season.stringify config.content
-          target: config.target
-          backup: config.backup
+      log message: "Serialize Content", level: 'DEBUG', module: 'nikita/lib/file/cson'
+      @file
+        content: season.stringify config.content
+        target: config.target
+        backup: config.backup
+      {}
 
 ## Exports
 
