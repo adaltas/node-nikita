@@ -5,17 +5,26 @@ NikitaError = class NikitaError extends Error {
   constructor(code, message, ...contexts) {
     var context, i, key, len, value;
     if (Array.isArray(message)) {
-      message = message.join(' ');
+      message = message.filter(function(line) {
+        return !!line;
+      }).join(' ');
     }
+    message = `${code}: ${message}`;
     super(message);
-    if (Error.captureStackTrace !== void 0) {
+    if (Error.captureStackTrace) {
       Error.captureStackTrace(this, NikitaError);
     }
     this.code = code;
-    for (context in contexts) {
-      for (i = 0, len = context.length; i < len; i++) {
-        key = context[i];
+    for (i = 0, len = contexts.length; i < len; i++) {
+      context = contexts[i];
+      for (key in context) {
+        if (key === 'code') {
+          continue;
+        }
         value = context[key];
+        if (value === void 0) {
+          continue;
+        }
         this[key] = Buffer.isBuffer(value) ? value.toString() : value === null ? value : JSON.parse(JSON.stringify(value));
       }
     }

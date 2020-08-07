@@ -3,53 +3,54 @@ var handlers, session;
 
 session = require('../session');
 
-// condition_if: (value)
-module.exports = function({}) {
+module.exports = function() {
   return {
-    'nikita:session:normalize': function(args, handler) {
-      var conditions, new_action, property, ref, value;
-      // return handler
-      // Ventilate conditions properties defined at root
-      new_action = {};
-      conditions = {};
-      ref = args.action;
-      for (property in ref) {
-        value = ref[property];
-        if (/^(if|unless)($|_[\w_]+$)/.test(property)) {
-          if (conditions[property]) {
-            throw Error('CONDITIONS_DUPLICATED_DECLARATION', [`Property ${property} is defined multiple times,`, 'at the root of the action and inside conditions']);
+    module: '@nikitajs/engine/src/plugins/conditions',
+    require: ['@nikitajs/engine/src/metadata/raw', '@nikitajs/engine/src/metadata/disabled'],
+    hooks: {
+      'nikita:session:normalize': function(action, handler) {
+        var conditions, property, value;
+        // Ventilate conditions properties defined at root
+        conditions = {};
+        for (property in action) {
+          value = action[property];
+          if (/^(if|unless)($|_[\w_]+$)/.test(property)) {
+            if (conditions[property]) {
+              throw Error('CONDITIONS_DUPLICATED_DECLARATION', [`Property ${property} is defined multiple times,`, 'at the root of the action and inside conditions']);
+            }
+            if (!Array.isArray(value)) {
+              value = [value];
+            }
+            conditions[property] = value;
+            delete action[property];
           }
-          if (!Array.isArray(value)) {
-            value = [value];
+        }
+        return function() {
+          action = handler.call(null, ...arguments);
+          action.conditions = conditions;
+          return action;
+        };
+      },
+      'nikita:session:action': {
+        before: '@nikitajs/engine/src/metadata/disabled',
+        handler: async function(action) {
+          var final_run, k, local_run, ref, v;
+          final_run = true;
+          ref = action.conditions;
+          for (k in ref) {
+            v = ref[k];
+            if (handlers[k] == null) {
+              continue;
+            }
+            local_run = (await handlers[k].call(null, action));
+            if (local_run === false) {
+              final_run = false;
+            }
           }
-          conditions[property] = value;
-        } else {
-          new_action[property] = value;
+          if (!final_run) {
+            return action.metadata.disabled = true;
+          }
         }
-      }
-      return function() {
-        var action;
-        arguments[0].action = new_action;
-        action = handler.call(null, ...arguments);
-        action.conditions = conditions;
-        return action;
-      };
-    },
-    'nikita:session:handler:call': async function({action}, handler) {
-      var final_run, k, local_run, ref, v;
-      final_run = true;
-      ref = action.conditions;
-      for (k in ref) {
-        v = ref[k];
-        local_run = (await handlers[k].call(null, action));
-        if (local_run === false) {
-          final_run = false;
-        }
-      }
-      if (final_run) {
-        return handler;
-      } else {
-        return function() {};
       }
     }
   };
@@ -86,11 +87,12 @@ handlers = {
               return run({
                 metadata: {
                   condition: true,
-                  depth: action.metadata.depth
+                  depth: action.metadata.depth,
+                  raw_output: true
                 },
                 parent: action,
                 handler: condition,
-                options: action.options
+                config: action.config
               });
             }));
         }
@@ -131,11 +133,12 @@ handlers = {
               return run({
                 metadata: {
                   condition: true,
-                  depth: action.metadata.depth
+                  depth: action.metadata.depth,
+                  raw_output: true
                 },
                 parent: action,
                 handler: condition,
-                options: action.options
+                config: action.config
               });
             }));
         }
