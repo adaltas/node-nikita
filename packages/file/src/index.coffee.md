@@ -145,7 +145,6 @@ require('nikita')
 ## Schema
 
     schema =
-      # name: '@nikitajs/core/lib/file'
       type: 'object'
       properties:
         'append':
@@ -208,10 +207,7 @@ require('nikita')
           Name of the marker from where the content will be replaced.
           """
         'gid':
-          oneOf: [{type: 'string'}, {type: 'number'}]
-          description: """
-          File group name or group id.
-          """
+          $ref: 'module://@nikitajs/engine/src/actions/fs/base/chown#/properties/gid'
         'local':
           type: 'boolean', default: false
           description: """
@@ -224,11 +220,7 @@ require('nikita')
           Replace this marker, default to the replaced string if missing.
           """
         'mode':
-          oneOf: [{type: 'string'}, {type: 'number'}]
-          description: """
-          File mode (permission and sticky bits), default to `0o0644`, in the
-          form of `{mode: 0o0744}` or `{mode: "0744"}`.
-          """
+          $ref: 'module://@nikitajs/engine/src/actions/fs/base/chmod#/properties/mode'
         'place_before':
           oneOf: [{type: 'string'}, {type: 'boolean'}, {instanceof: 'RegExp'}]
           description: """
@@ -262,10 +254,7 @@ require('nikita')
           Name of the marker until where the content will be replaced.
           """
         'uid':
-          oneOf: [{type: 'string'}, {type: 'number'}]
-          description: """
-          File user name or user id.
-          """
+          $ref: 'module://@nikitajs/engine/src/actions/fs/base/chown#/properties/uid'
         'unlink':
           type: 'boolean', default: false
           description: """
@@ -305,187 +294,180 @@ require('nikita')
 
 ## Handler
 
-    handler = ({config, log, metadata, operations: {status}, ssh}) ->
-      {status} = await @call ->
-        log message: "Entering file", level: 'DEBUG', module: 'nikita/lib/file'
-        # Content: pass all arguments to function calls
-        context = arguments[0]
-        log message: "Source is \"#{config.source}\"", level: 'DEBUG', module: 'nikita/lib/file'
-        log message: "Destination is \"#{config.target}\"", level: 'DEBUG', module: 'nikita/lib/file'
-        config.content = config.content.call @, context if typeof config.content is 'function'
-        config.diff ?= config.diff or !!config.stdout
-        switch config.eof
-          when 'unix'
-            config.eof = "\n"
-          when 'mac'
-            config.eof = "\r"
-          when 'windows'
-            config.eof = "\r\n"
-          when 'unicode'
-            config.eof = "\u2028"
-        target  = null
-        targetContentHash = null
-        config.write ?= []
-        if config.from? or config.to? or config.match? or config.replace? or config.place_before?
-          config.write.push
-            from: config.from
-            to: config.to
-            match: config.match
-            replace: config.replace
-            append: config.append
-            place_before: config.place_before
-          config.append = false
-        for w in config.write
-          if not w.from? and not w.to? and not w.match? and w.replace?
-            w.match = w.replace
-        # Start work
-        if config.source?
-          # Option "local" force to bypass the ssh
-          # connection, use by the upload function
-          source = config.source or config.target
-          log message: "Force local source is \"#{if config.local then 'true' else 'false'}\"", level: 'DEBUG', module: 'nikita/lib/file'
-          exists = await @fs.base.exists
-            ssh: config.ssh unless config.local
-            sudo: if config.local then false else config.sudo
-            target: source
-          unless exists
-            throw Error "Source does not exist: #{JSON.stringify config.source}" if config.source
-            config.content = ''
-          log message: "Reading source", level: 'DEBUG', module: 'nikita/lib/file'
+    handler = ({config, log}) ->
+      log message: "Entering file", level: 'DEBUG', module: 'nikita/lib/file'
+      # Content: pass all arguments to function calls
+      context = arguments[0]
+      log message: "Source is \"#{config.source}\"", level: 'DEBUG', module: 'nikita/lib/file'
+      log message: "Destination is \"#{config.target}\"", level: 'DEBUG', module: 'nikita/lib/file'
+      config.content = config.content.call @, context if typeof config.content is 'function'
+      config.diff ?= config.diff or !!config.stdout
+      switch config.eof
+        when 'unix'
+          config.eof = "\n"
+        when 'mac'
+          config.eof = "\r"
+        when 'windows'
+          config.eof = "\r\n"
+        when 'unicode'
+          config.eof = "\u2028"
+      if typeof config.target is 'function'
+        log message: 'Write target with user function', level: 'INFO', module: 'nikita/lib/file'
+        config.target content: config.content
+      target  = null
+      targetContentHash = null
+      config.write ?= []
+      if config.from? or config.to? or config.match? or config.replace? or config.place_before?
+        config.write.push
+          from: config.from
+          to: config.to
+          match: config.match
+          replace: config.replace
+          append: config.append
+          place_before: config.place_before
+        config.append = false
+      for w in config.write
+        if not w.from? and not w.to? and not w.match? and w.replace?
+          w.match = w.replace
+      # Start work
+      if config.source?
+        # Option "local" force to bypass the ssh
+        # connection, use by the upload function
+        source = config.source or config.target
+        log message: "Force local source is \"#{if config.local then 'true' else 'false'}\"", level: 'DEBUG', module: 'nikita/lib/file'
+        exists = await @fs.base.exists
+          ssh: config.ssh unless config.local
+          sudo: if config.local then false else config.sudo
+          target: source
+        unless exists
+          throw Error "Source does not exist: #{JSON.stringify config.source}" if config.source
+          config.content = ''
+        log message: "Reading source", level: 'DEBUG', module: 'nikita/lib/file'
+        config.content = await @fs.base.readFile
+          ssh: if config.local then false else config.ssh
+          sudo: if config.local then false else config.sudo
+          target: source
+          encoding: config.encoding
+      else if not config.content?
+        try
           config.content = await @fs.base.readFile
             ssh: if config.local then false else config.ssh
             sudo: if config.local then false else config.sudo
-            target: source
-            encoding: config.encoding
-        else if not config.content?
-          try
-            config.content = await @fs.base.readFile
-              ssh: if config.local then false else config.ssh
-              sudo: if config.local then false else config.sudo
-              target: config.target
-              encoding: config.encoding
-          catch err
-            throw err if err.code isnt 'NIKITA_FS_CRS_TARGET_ENOENT'
-            config.content = ''
-        # Stat the target
-        stats = await @call raw_output: true, ({}, callback) ->
-          if typeof config.target != 'function'
-            log message: "Stat target", level: 'DEBUG', module: 'nikita/lib/file'
-            try
-              {stats} = await @fs.base.lstat target: config.target
-              if utils.stats.isDirectory stats.mode
-                throw Error 'Incoherent situation, target is a directory and there is no source to guess the filename'
-                config.target = "#{config.target}/#{path.basename config.source}"
-                log message: "Destination is a directory and is now \"config.target\"", level: 'INFO', module: 'nikita/lib/file'
-                # Destination is the parent directory, let's see if the file exist inside
-                {stats} = await @fs.base.stat target: config.target, relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
-                throw Error "Destination is not a file: #{config.target}" unless utils.stats.isFile stats.mode
-                log message: "New target exists", level: 'INFO', module: 'nikita/lib/file'
-              else if utils.stats.isSymbolicLink stats.mode
-                log message: "Destination is a symlink", level: 'INFO', module: 'nikita/lib/file'
-                if config.unlink
-                  @fs.base.unlink target: config.target
-                  stats = null
-              else if utils.stats.isFile stats.mode
-                log message: "Destination is a file", level: 'INFO', module: 'nikita/lib/file'
-              else
-                throw Error "Invalid File Type Destination: #{config.target}"
-              stats
-            catch err
-              switch err.code
-                when 'NIKITA_FS_STAT_TARGET_ENOENT'
-                  await @fs.mkdir
-                    target: path.dirname config.target
-                    uid: config.uid
-                    gid: config.gid
-                    # force execution right on mkdir
-                    mode: if config.mode then (config.mode | 0o111) else 0o755
-                else
-                  throw err
-              null
-        @call  -> # render
-          utils.string.render.call @, config if config.context?
-        @call -> # remove_empty_lines
-          return unless config.remove_empty_lines?
-          log message: "Remove empty lines", level: 'DEBUG', module: 'nikita/lib/file'
-          config.content = config.content.replace /(\r\n|[\n\r\u0085\u2028\u2029])\s*(\r\n|[\n\r\u0085\u2028\u2029])/g, "$1"
-        @call -> # replace_partial
-          utils.string.replace_partial.call @, config if config.write.length
-        @call -> # eof
-          return unless config.eof?
-          log message: 'Checking option eof', level: 'DEBUG', module: 'nikita/lib/file'
-          if config.eof is true
-            for char, i in config.content
-              if char is '\r'
-                config.eof = if config.content[i+1] is '\n' then '\r\n' else char
-                break
-              if char is '\n' or char is '\u2028'
-                config.eof = char
-                break
-            config.eof = '\n' if config.eof is true
-            log message: "Option eof is true, guessing as #{JSON.stringify config.eof}", level: 'INFO', module: 'nikita/lib/file'
-          unless utils.string.endsWith config.content, config.eof
-            log message: 'Add eof', level: 'INFO', module: 'nikita/lib/file'
-            config.content += config.eof
-        await @call -> # diff
-          targetContent = await @fs.base.readFile target: config.target, encoding: config.encoding, relax: 'NIKITA_FS_CRS_TARGET_ENOENT'
-          return true if targetContent.error?.code is 'NIKITA_FS_CRS_TARGET_ENOENT'
-          targetContentHash = utils.string.hash targetContent
-          {raw, text} = diff targetContent, config.content, config
-          config.diff text, raw if typeof config.diff is 'function'
-          log message: text, type: 'diff', level: 'INFO', module: 'nikita/lib/file'
-          false
-        if config.content?
-          contentChanged = not stats? or targetContentHash isnt utils.string.hash config.content
-        await @call -> # backup
-          return unless config.backup and contentChanged
-          log message: "Create backup", level: 'INFO', module: 'nikita/lib/file'
-          config.backup_mode ?= 0o0400
-          backup = if typeof config.backup is 'string' then config.backup else ".#{Date.now()}"
-          @fs.copy
-            source: config.target
-            target: "#{config.target}#{backup}"
-            mode: config.backup_mode
-            relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
-        # Ownership and permission are also handled
-        # Preserved the file mode if the file exists. Otherwise,
-        # delegate to fs.createWriteStream` the creation of the default
-        # mode of "744".
-        if typeof config.target is 'function'
-          log message: 'Write target with user function', level: 'INFO', module: 'nikita/lib/file'
-          config.target
-            content: config.content
-            status: contentChanged
-        else
-          # https://github.com/nodejs/node/issues/1104
-          # `mode` specifies the permissions to use in case a new file is created.
-          if contentChanged
-            @call ->
-              config.flags ?= 'a' if config.append
-              @fs.base.writeFile
-                target: config.target
-                flags: config.flags
-                content: config.content
-                mode: stats?.mode
-              status: true
-          if config.mode
-            @fs.chmod
-              target: config.target
-              stats: stats
-              mode: config.mode
-          else if stats
-            @fs.chmod
-              target: config.target
-              stats: stats
-              mode: stats.mode
-          # Option gid is set at runtime if target is a new file
-          @fs.chown
             target: config.target
-            stats: stats
-            uid: config.uid
-            gid: config.gid
-            if: config.uid? or config.gid?
-        {}
+            encoding: config.encoding
+        catch err
+          throw err if err.code isnt 'NIKITA_FS_CRS_TARGET_ENOENT'
+          config.content = ''
+      # Stat the target
+      stats = await @call raw_output: true, ({}, callback) ->
+        if typeof config.target != 'function'
+          log message: "Stat target", level: 'DEBUG', module: 'nikita/lib/file'
+          try
+            {stats} = await @fs.base.lstat target: config.target
+            if utils.stats.isDirectory stats.mode
+              throw Error 'Incoherent situation, target is a directory and there is no source to guess the filename'
+              config.target = "#{config.target}/#{path.basename config.source}"
+              log message: "Destination is a directory and is now \"config.target\"", level: 'INFO', module: 'nikita/lib/file'
+              # Destination is the parent directory, let's see if the file exist inside
+              {stats} = await @fs.base.stat target: config.target, relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
+              throw Error "Destination is not a file: #{config.target}" unless utils.stats.isFile stats.mode
+              log message: "New target exists", level: 'INFO', module: 'nikita/lib/file'
+            else if utils.stats.isSymbolicLink stats.mode
+              log message: "Destination is a symlink", level: 'INFO', module: 'nikita/lib/file'
+              if config.unlink
+                @fs.base.unlink target: config.target
+                stats = null
+            else if utils.stats.isFile stats.mode
+              log message: "Destination is a file", level: 'INFO', module: 'nikita/lib/file'
+            else
+              throw Error "Invalid File Type Destination: #{config.target}"
+            stats
+          catch err
+            switch err.code
+              when 'NIKITA_FS_STAT_TARGET_ENOENT'
+                await @fs.mkdir
+                  target: path.dirname config.target
+                  uid: config.uid
+                  gid: config.gid
+                  # force execution right on mkdir
+                  mode: if config.mode then (config.mode | 0o111) else 0o755
+              else
+                throw err
+            null
+      utils.string.render.call @, config if config.context
+      if config.remove_empty_lines
+        log message: "Remove empty lines", level: 'DEBUG', module: 'nikita/lib/file'
+        config.content = config.content.replace /(\r\n|[\n\r\u0085\u2028\u2029])\s*(\r\n|[\n\r\u0085\u2028\u2029])/g, "$1"
+      utils.string.replace_partial.call @, config if config.write.length
+      if config.eof
+        log message: 'Checking option eof', level: 'DEBUG', module: 'nikita/lib/file'
+        if config.eof is true
+          for char, i in config.content
+            if char is '\r'
+              config.eof = if config.content[i+1] is '\n' then '\r\n' else char
+              break
+            if char is '\n' or char is '\u2028'
+              config.eof = char
+              break
+          config.eof = '\n' if config.eof is true
+          log message: "Option eof is true, guessing as #{JSON.stringify config.eof}", level: 'INFO', module: 'nikita/lib/file'
+        unless utils.string.endsWith config.content, config.eof
+          log message: 'Add eof', level: 'INFO', module: 'nikita/lib/file'
+          config.content += config.eof
+      try
+        targetContent = await @fs.base.readFile
+          target: config.target
+          encoding: config.encoding
+        targetContentHash = utils.string.hash targetContent
+        {raw, text} = diff targetContent, config.content, config
+        config.diff text, raw if typeof config.diff is 'function'
+        log message: text, type: 'diff', level: 'INFO', module: 'nikita/lib/file'
+      catch err
+        throw err if err.code isnt 'NIKITA_FS_CRS_TARGET_ENOENT'
+      if config.content?
+        contentChanged = not stats? or targetContentHash isnt utils.string.hash config.content
+      if config.backup and contentChanged
+        log message: "Create backup", level: 'INFO', module: 'nikita/lib/file'
+        config.backup_mode ?= 0o0400
+        backup = if typeof config.backup is 'string' then config.backup else ".#{Date.now()}"
+        @fs.copy
+          source: config.target
+          target: "#{config.target}#{backup}"
+          mode: config.backup_mode
+          relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
+      # Ownership and permission are also handled
+      # Preserved the file mode if the file exists. Otherwise,
+      # delegate to fs.createWriteStream` the creation of the default
+      # mode of "744".
+      # https://github.com/nodejs/node/issues/1104
+      # `mode` specifies the permissions to use in case a new file is created.
+      if contentChanged
+        @call ->
+          config.flags ?= 'a' if config.append
+          @fs.base.writeFile
+            target: config.target
+            flags: config.flags
+            content: config.content
+            mode: stats?.mode
+          status: true
+      if config.mode
+        @fs.chmod
+          target: config.target
+          stats: stats
+          mode: config.mode
+      else if stats
+        @fs.chmod
+          target: config.target
+          stats: stats
+          mode: stats.mode
+      # Option gid is set at runtime if target is a new file
+      @fs.chown
+        target: config.target
+        stats: stats
+        uid: config.uid
+        gid: config.gid
+        if: config.uid? or config.gid?
+      {}
 
 ## Exports
 
