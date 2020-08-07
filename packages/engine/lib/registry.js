@@ -4,9 +4,9 @@
 // Management facility to register and unregister actions.
 
 // ## Register all functions
-var create, is_object, merge, mutate, ventilate;
+var create, is_object, merge, mutate, normalize;
 
-create = function({chain, on_register, parent} = {}) {
+create = function({chain, on_register, parent, plugins} = {}) {
   var obj, store;
   store = {};
   obj = {
@@ -18,13 +18,13 @@ create = function({chain, on_register, parent} = {}) {
 
   // Options include:
 
-  // * `chain`   
+  // * `chain`
   //   Default object to return, used by `register`, `deprecate` and `unregister`.
   //   Could be used to provide a chained style API.
-  // * `on_register`   
+  // * `on_register`
   //   User function called on action registration. Takes two arguments: the action
   //   name and the action itself.
-  // * `parent`   
+  // * `parent`
   //   Parent registry.
   obj.create = function(options = {}) {
     // Inherit options from parent
@@ -44,6 +44,9 @@ create = function({chain, on_register, parent} = {}) {
     if (typeof module !== 'string') {
       throw Error(`Invalid Argument: module must be a string, got ${module.toString()}`);
     }
+    // action = if /^@nikitajs\/engine\//.test module
+    // then require.main.require module
+    // else require './' + module.substr 21
     action = require.main.require(module);
     if (typeof action === 'function') {
       action = {
@@ -53,7 +56,7 @@ create = function({chain, on_register, parent} = {}) {
     if (action.metadata == null) {
       action.metadata = {};
     }
-    action.metadata.module = middleware.module;
+    action.metadata.module = module;
     return action;
   };
   // ## Get
@@ -64,26 +67,29 @@ create = function({chain, on_register, parent} = {}) {
 
   // * `flatten`
   // * `deprecate`
-  obj.get = function(name, options) {
-    var actions, child_store, i, j, len, n, ref, walk;
+  obj.get = async function(namespace, options) {
+    var action, actions, child_store, i, j, len, n, ref, walk;
     if (arguments.length === 1 && is_object(arguments[0])) {
-      options = name;
-      name = null;
+      options = namespace;
+      namespace = null;
     }
     if (options == null) {
       options = {};
     }
-    if (!name) {
+    if (options.normalize == null) {
+      options.normalize = true;
+    }
+    if (!namespace) {
       // Flatten result
       if (options.flatten) {
         actions = [];
         walk = function(store, keys) {
-          var k, results, v;
+          var k, ref, results, v;
           results = [];
           for (k in store) {
             v = store[k];
             if (k === '') {
-              if (v.metadata.deprecate && !options.deprecate) {
+              if (((ref = v.metadata) != null ? ref.deprecate : void 0) && !options.deprecate) {
                 continue;
               }
               // flatstore[keys.join '.'] = merge v
@@ -100,12 +106,12 @@ create = function({chain, on_register, parent} = {}) {
       } else {
         // Tree result
         walk = function(store, keys) {
-          var k, res, v;
+          var k, ref, res, v;
           res = {};
           for (k in store) {
             v = store[k];
             if (k === '') {
-              if (v.metadata.deprecate && !options.deprecate) {
+              if (((ref = v.metadata) != null ? ref.deprecate : void 0) && !options.deprecate) {
                 continue;
               }
               res[k] = merge(v);
@@ -121,23 +127,53 @@ create = function({chain, on_register, parent} = {}) {
         return walk(store, []);
       }
     }
-    if (typeof name === 'string') {
-      name = [name];
+    if (typeof namespace === 'string') {
+      namespace = [namespace];
     }
     child_store = store;
-    ref = name.concat(['']);
+    ref = namespace.concat(['']);
     for (i = j = 0, len = ref.length; j < len; i = ++j) {
       n = ref[i];
       if (!child_store[n]) {
         break;
       }
-      if (child_store[n] && i === name.length) {
-        return child_store[n];
+      // return child_store[n] if child_store[n] and i is namespace.length
+      if (child_store[n] && i === namespace.length) {
+        action = child_store[n];
+        if (!options.normalize) {
+          return action;
+        }
+        if (plugins) {
+          // Hook attented to modify an action returned by the registry
+          return (await plugins.hook({
+            event: 'nikita:registry:normalize',
+            args: action,
+            handler: function(action) {
+              return normalize(action);
+            }
+          }));
+        } else {
+          return normalize(action);
+        }
       }
       child_store = child_store[n];
     }
     if (parent) {
-      return parent.get(name, options);
+      action = (await parent.get(namespace, {
+        ...options,
+        normalize: false
+      }));
+      if (action == null) {
+        return null;
+      }
+      action = plugins ? action = (await plugins.hook({
+        event: 'nikita:registry:normalize',
+        args: action,
+        handler: function(action) {
+          return normalize(action);
+        }
+      })) : normalize(action);
+      return action;
     } else {
       return null;
     }
@@ -195,61 +231,57 @@ create = function({chain, on_register, parent} = {}) {
   // .sixth(options);
   // .sixth.action(options);
   // ```
-  obj.register = async function(name, handler) {
-    var action, child_store, i, j, property, ref, walk;
-    if (typeof name === 'string') {
-      name = [name];
+  obj.register = async function(namespace, action) {
+    var child_store, i, j, property, ref, walk;
+    if (typeof namespace === 'string') {
+      namespace = [namespace];
     }
-    if (Array.isArray(name)) {
-      if (handler === void 0) {
+    if (Array.isArray(namespace)) {
+      if (action === void 0) {
         return obj.chain || obj;
       }
-      if (typeof handler === 'string') {
-        action = obj.load(handler);
-      }
-      if (typeof handler === 'function') {
+      if (typeof action === 'string') {
+        action = obj.load(action);
+      } else if (typeof action === 'function') {
         action = {
-          handler: handler
+          handler: action
         };
-      } else {
-        action = handler;
       }
       child_store = store;
-      for (i = j = 0, ref = name.length; (0 <= ref ? j < ref : j > ref); i = 0 <= ref ? ++j : --j) {
-        property = name[i];
+      for (i = j = 0, ref = namespace.length; (0 <= ref ? j < ref : j > ref); i = 0 <= ref ? ++j : --j) {
+        property = namespace[i];
         if (child_store[property] == null) {
           child_store[property] = {};
         }
         child_store = child_store[property];
       }
-      [action] = ventilate([action]);
       child_store[''] = action;
       if (on_register) {
-        await on_register(name, action);
+        await on_register(namespace, action);
       }
     } else {
       walk = async function(namespace, store) {
-        var k, results, v;
+        var k, results;
         results = [];
         for (k in store) {
-          v = store[k];
-          if (k !== '' && v && typeof v === 'object' && !Array.isArray(v) && !v.handler) {
+          action = store[k];
+          if (k !== '' && action && typeof action === 'object' && !Array.isArray(action) && !(action.handler || action.module)) {
             namespace.push(k);
-            results.push(walk(namespace, v));
+            results.push((await walk(namespace, action)));
           } else {
-            if (typeof v.handler === 'string') {
-              v = merge(v, obj.load(v));
-            }
-            if ((v.handler != null) && typeof v.handler !== 'function') {
-              throw Error(`Invalid Handler: expect a function, got ${v.handler}`);
+            if (typeof action === 'string') {
+              action = obj.load(action);
+            } else if (typeof action === 'function') {
+              action = {
+                handler: action
+              };
             }
             namespace.push(k);
-            [v] = ventilate([v]);
-            store[k] = k === '' ? v : {
-              '': v
+            store[k] = k === '' ? action : {
+              '': action
             };
             if (on_register) {
-              results.push((await on_register(namespace, v)));
+              results.push((await on_register(namespace, action)));
             } else {
               results.push(void 0);
             }
@@ -257,8 +289,8 @@ create = function({chain, on_register, parent} = {}) {
         }
         return results;
       };
-      walk([], name);
-      mutate(store, name);
+      await walk([], namespace);
+      mutate(store, namespace);
     }
     return obj.chain || obj;
   };
@@ -266,8 +298,8 @@ create = function({chain, on_register, parent} = {}) {
 
   // `nikita.deprecate(old_function, [new_function], action)`
 
-  // Deprecate an old or renamed action. Internally, it leverages 
-  // [Node.js `util.deprecate`][deprecate].
+  // Deprecate an old or renamed action. Internally, it leverages
+  // [Node.js `util.deprecate`](https://nodejs.org/api/util.html#util_util_deprecate_function_string).
 
   // For example:
 
@@ -312,9 +344,9 @@ create = function({chain, on_register, parent} = {}) {
 
   // Options:
 
-  // * `local` (boolean)   
+  // * `local` (boolean)
   //   Search action in the parent registries.
-  // * `partial` (boolean)   
+  // * `partial` (boolean)
   //   Return true if name match a namespace and not a leaf action.
   obj.registered = function(name, options = {}) {
     var child_store, i, j, len, n;
@@ -366,9 +398,7 @@ create = function({chain, on_register, parent} = {}) {
 
 module.exports = create();
 
-// ## Dependencies
+//# Dependencies
 ({is_object, merge, mutate} = require('mixme'));
 
-({ventilate} = require('./args_to_actions'));
-
-// [deprecate]: https://nodejs.org/api/util.html#util_util_deprecate_function_string
+normalize = require('./session/normalize');
