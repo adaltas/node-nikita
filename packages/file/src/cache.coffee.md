@@ -29,7 +29,6 @@ require('nikita')
     on_action = ({config, metadata}) ->
       # Options
       config.source = metadata.argument if metadata.argument?
-      throw Error "Missing source: '#{config.source}'" unless config.source
       throw Error "Missing one of 'target', 'cache_file' or 'cache_dir' option" unless config.cache_file or config.target or config.cache_dir
       config.target ?= config.cache_file
       config.target ?= path.basename config.source
@@ -87,11 +86,32 @@ require('nikita')
           location (indicated with a Location: header and a 3XX response code), this
           option will make curl redo the request on the new place.
           """
+        'md5':
+          oneOf:[{type: 'string'}, {typeof: 'boolean'}]
+          default: false
+          description: """
+          Validate file with md5 checksum (only for binary upload for now),
+          may be the string checksum or will be deduced from source if "true".
+          """
         'proxy':
           type: 'string'
           description: """
           Use the specified HTTP proxy. If the port number is not specified, it is
           assumed at port 1080. See curl(1) man page.
+          """
+        'sha1':
+          default: false
+          oneOf:[{type: 'string'}, {typeof: 'boolean'}]
+          description: """
+          Validate file with sha1 checksum (only for binary upload for now),
+          may be the string checksum or will be deduced from source if "true".
+          """
+        'sha256':
+          default: false
+          oneOf:[{type: 'string'}, {typeof: 'boolean'}]
+          description: """
+          Validate file with sha256 checksum (only for binary upload for now),
+          may be the string checksum or will be deduced from source if "true".
           """
         'source':
           type: 'string'
@@ -106,38 +126,33 @@ require('nikita')
           connection is provided. If a string is provided, it will be the cache path.
           Default to the basename of source.
           """
+      required: ['source']
 
 ## Handler
 
-    handler = ({config, log, metadata, operations: {status, events}, ssh}) ->
+    handler = ({config, log}) ->
       log message: "Entering file.cache", level: 'DEBUG', module: 'nikita/lib/file/cache'
-      # SSH connection
-      ssh = @ssh config.ssh
       # todo, also support config.algo and config.hash
       if config.md5?
-        throw Error "Invalid MD5 Hash:#{config.md5}" unless typeof config.md5 in ['string', 'boolean']
         algo = 'md5'
         _hash = config.md5
       else if config.sha1?
-        throw Error "Invalid SHA-1 Hash:#{config.sha1}" unless typeof config.sha1 in ['string', 'boolean']
         algo = 'sha1'
         _hash = config.sha1
       else if config.sha256?
-        throw Error "Invalid SHA-1 Hash:#{config.sha256}" unless typeof config.sha256 in ['string', 'boolean']
         algo = 'sha256'
         _hash = config.sha256
       else
         algo = 'md5'
         _hash = false
       u = url.parse config.source
-      @call ->
-        unless u.protocol is null
-          log message: "Bypass source hash computation for non-file protocols", level: 'WARN', module: 'nikita/lib/file/cache'
-          return
-        return if _hash isnt true
-        _hash = await @fs.hash config.source
-        _hash = if _hash?.hash then _hash.hash else false
-        log message: "Computed hash value is '#{_hash}'", level: 'INFO', module: 'nikita/lib/file/cache'
+      if u.protocol isnt null
+        log message: "Bypass source hash computation for non-file protocols", level: 'WARN', module: 'nikita/lib/file/cache'
+      else
+        if _hash is true
+          _hash = await @fs.hash config.source
+          _hash = if _hash?.hash then _hash.hash else false
+          log message: "Computed hash value is '#{_hash}'", level: 'INFO', module: 'nikita/lib/file/cache'
       # Download the file if
       # - file doesnt exist
       # - option force is provided
@@ -199,7 +214,8 @@ require('nikita')
         target: config.target
         if: _hash
       hash ?= false
-      throw Error "Invalid Target Hash: target #{JSON.stringify config.target} got #{hash} instead of #{_hash}" unless _hash is hash
+      throw errors.NIKITA_FILE_INVALID_TARGET_HASH config: config, hash: hash, _hash: _hash unless _hash is hash
+      {}
 
 ## Exports
 
@@ -211,8 +227,17 @@ require('nikita')
     module.exports.protocols_http = protocols_http = ['http:', 'https:']
     module.exports.protocols_ftp = protocols_ftp = ['ftp:', 'ftps:']
 
+## Errors
+
+    errors =
+      NIKITA_FILE_INVALID_TARGET_HASH: ({config, hash, _hash}) ->
+        error 'NIKITA_FILE_INVALID_TARGET_HASH', [
+          "target #{JSON.stringify config.target} got #{hash} instead of #{_hash}"
+        ]
+
 ## Dependencies
 
     path = require 'path'
     url = require 'url'
     curl = require './utils/curl'
+    error = require '@nikitajs/engine/src/utils/error'

@@ -1127,17 +1127,16 @@ describe 'file', ->
 
   describe 'config `target`', ->
 
-    they.skip 'catch error', ({ssh}) ->
+    they 'catch error', ({ssh}) ->
       nikita
         ssh: ssh
         tmpdir: true
       , ({metadata: {tmpdir}}) ->
         @file
           content: 'hello'
-          eof: true
           target: ({content: content}) ->
-            throw Error 'Catchme'
-        .should.be.rejectedWith 'Catchme'
+            throw Error content
+        .should.be.rejectedWith 'hello'
 
     they.skip 'function called on content change', ({ssh}) ->
       new Promise ({resolve}) ->

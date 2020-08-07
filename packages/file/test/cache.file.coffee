@@ -62,7 +62,7 @@ describe 'file.cache file', ->
         source: "#{tmpdir}/my_file"
         cache_dir: "#{tmpdir}/cache"
         md5: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-      .should.be.rejectedWith message: "Invalid Target Hash: target \"#{tmpdir}/cache/my_file\" got df8fede7ff71608e24a5576326e41c75 instead of xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      .should.be.rejectedWith message: "NIKITA_FILE_INVALID_TARGET_HASH: target \"#{tmpdir}/cache/my_file\" got df8fede7ff71608e24a5576326e41c75 instead of xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
   they 'into local cache_dir', ({ssh}) ->
     nikita
@@ -119,4 +119,4 @@ describe 'file.cache file', ->
           source: "#{tmpdir}/source"
           cache_file: "#{tmpdir}/target"
           md5: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-        .should.be.rejectedWith message: "Invalid Target Hash: target \"#{tmpdir}/target\" got df8fede7ff71608e24a5576326e41c75 instead of xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        .should.be.rejectedWith message: "NIKITA_FILE_INVALID_TARGET_HASH: target \"#{tmpdir}/target\" got df8fede7ff71608e24a5576326e41c75 instead of xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
