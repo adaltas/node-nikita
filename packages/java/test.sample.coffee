@@ -1,6 +1,5 @@
 
 module.exports =
-  scratch: '/tmp/nikita-test-java'
   tags:
     posix: true
   ssh: [
