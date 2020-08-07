@@ -1,6 +1,5 @@
 
 module.exports =
-  scratch: '/tmp/nikita-test-tools'
   tags:
     service_install: false
     service_systemctl: false

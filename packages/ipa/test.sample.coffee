@@ -1,6 +1,5 @@
 
 module.exports =
-  scratch: '/tmp/nikita-test-ipa'
   tags:
     ipa: false
   ssh: [

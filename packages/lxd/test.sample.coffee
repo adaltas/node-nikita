@@ -1,6 +1,5 @@
 
 module.exports =
-  scratch: '/tmp/nikita-test-lxd'
   tags:
     lxd: false
     lxd_prlimit: false

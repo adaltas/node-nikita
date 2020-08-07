@@ -1,6 +1,5 @@
 
 module.exports =
-  scratch: '/tmp/nikita-test-docker'
   tags:
     docker: false # disable_docker
     docker_volume: false
