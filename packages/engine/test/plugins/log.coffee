@@ -22,6 +22,7 @@ describe 'plugins.log', ->
           raw_input: false
           raw_output: false
           namespace: []
+          debug: false
           depth: 0
           disabled: false
           relax: false
