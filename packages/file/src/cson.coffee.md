@@ -49,7 +49,7 @@ require('nikita')
         'target':
           oneOf: [{type: 'string'}, {typeof: 'function'}]
           description: """
-          File path where to write content to or a callback.   
+          File path where to write content to or a function that returns a valid file path.   
           """
         'merge':
           type: 'boolean'
