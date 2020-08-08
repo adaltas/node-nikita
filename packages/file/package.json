@@ -96,7 +96,7 @@
     "directory": "packages/file"
   },
   "scripts": {
-    "build": "coffee -b -o lib src",
+    "build": "coffee -b -o lib src && sed -i -e 's/src/lib/g' lib/register.js",
     "_pretest": "npm run build",
     "test": "mocha 'test/**/*.coffee'"
   }
