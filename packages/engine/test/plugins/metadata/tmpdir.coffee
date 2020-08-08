@@ -10,6 +10,18 @@ return unless tags.api
 
 describe 'plugins.metadata.tmpdir', ->
   
+  describe 'validation', ->
+
+    they 'invalid value', ({ssh}) ->
+      nikita.call ssh: ssh, tmpdir: {}, (->)
+      .should.be.rejectedWith
+        code: 'METADATA_TMPDIR_INVALID'
+        message: [
+          'METADATA_TMPDIR_INVALID:'
+          'the "tmpdir" metadata value must be a boolean or a string,'
+          "got {}"
+        ].join ' '
+  
   describe 'cascade', ->
 
     they 'current action', ({ssh}) ->
