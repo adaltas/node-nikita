@@ -32,13 +32,15 @@ module.exports = function() {
       'nikita:session:action': {
         after: '@nikitajs/engine/src/metadata/ssh',
         handler: async function(action, handler) {
-          var err, now, rootdir, ssh, tmpdir;
+          var err, now, ref, rootdir, ssh, tmpdir;
+          if ((ref = typeof action.metadata.tmpdir) !== 'boolean' && ref !== 'string' && ref !== 'undefined') {
+            throw error('METADATA_TMPDIR_INVALID', ['the "tmpdir" metadata value must be a boolean or a string,', `got ${JSON.stringify(action.metadata.tmpdir)}`]);
+          }
           if (!action.metadata.tmpdir) {
             return handler;
           }
           // SSH connection extraction
           ssh = action.config.ssh === false ? void 0 : (await action.operations.find(function(action) {
-            // action.state['nikita:ssh:connection']
             return action.ssh;
           }));
           tmpdir = ssh ? '/tmp' : os.tmpdir();

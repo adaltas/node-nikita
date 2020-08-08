@@ -24,12 +24,15 @@ module.exports = ->
     'nikita:session:action':
       after: '@nikitajs/engine/src/metadata/ssh'
       handler: (action, handler) ->
+        throw error 'METADATA_TMPDIR_INVALID', [
+          'the "tmpdir" metadata value must be a boolean or a string,'
+          "got #{JSON.stringify action.metadata.tmpdir}"
+        ] unless typeof action.metadata.tmpdir in ['boolean', 'string', 'undefined']
         return handler unless action.metadata.tmpdir
         # SSH connection extraction
         ssh = if action.config.ssh is false
         then undefined
         else await action.operations.find (action) ->
-          # action.state['nikita:ssh:connection']
           action.ssh
         tmpdir = if ssh then '/tmp' else os.tmpdir()
         # Generate temporary location
