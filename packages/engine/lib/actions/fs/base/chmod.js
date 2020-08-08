@@ -17,7 +17,14 @@ schema = {
   type: 'object',
   properties: {
     'mode': {
-      type: 'integer',
+      oneOf: [
+        {
+          type: 'integer'
+        },
+        {
+          type: 'string'
+        }
+      ],
       default: 0o644,
       description: `File mode. Modes may be absolute or symbolic. An absolute mode is
 an octal number. A symbolic mode is a string with a particular syntax

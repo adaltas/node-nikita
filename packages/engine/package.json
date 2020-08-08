@@ -109,7 +109,7 @@
     "directory": "packages/engine"
   },
   "scripts": {
-    "build": "coffee -b -o lib src",
+    "build": "coffee -b -o lib src && sed -i -e 's/src/lib/g' lib/register.js",
     "lint": "eslint 'src/**/*.coffee'",
     "lint-fix": "eslint --fix 'src/**/*.coffee'",
     "_pretest": "npm run build",
