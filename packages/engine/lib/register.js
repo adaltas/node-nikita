@@ -13,48 +13,48 @@ module.exports = {
     '': {}
   },
   'execute': {
-    '': '@nikitajs/engine/src/actions/execute',
-    'assert': '@nikitajs/engine/src/actions/execute/assert'
+    '': '@nikitajs/engine/lib/actions/execute',
+    'assert': '@nikitajs/engine/lib/actions/execute/assert'
   },
   'fs': {
     'base': {
-      'chmod': '@nikitajs/engine/src/actions/fs/base/chmod',
-      'chown': '@nikitajs/engine/src/actions/fs/base/chown',
-      'copy': '@nikitajs/engine/src/actions/fs/base/copy',
-      'createReadStream': '@nikitajs/engine/src/actions/fs/base/createReadStream',
-      'createWriteStream': '@nikitajs/engine/src/actions/fs/base/createWriteStream',
-      'exists': '@nikitajs/engine/src/actions/fs/base/exists',
-      'lstat': '@nikitajs/engine/src/actions/fs/base/lstat',
-      'mkdir': '@nikitajs/engine/src/actions/fs/base/mkdir',
-      'readdir': '@nikitajs/engine/src/actions/fs/base/readdir',
-      'readFile': '@nikitajs/engine/src/actions/fs/base/readFile',
-      'readlink': '@nikitajs/engine/src/actions/fs/base/readlink',
-      'rename': '@nikitajs/engine/src/actions/fs/base/rename',
-      'rmdir': '@nikitajs/engine/src/actions/fs/base/rmdir',
-      'stat': '@nikitajs/engine/src/actions/fs/base/stat',
-      'symlink': '@nikitajs/engine/src/actions/fs/base/symlink',
-      'unlink': '@nikitajs/engine/src/actions/fs/base/unlink',
-      'writeFile': '@nikitajs/engine/src/actions/fs/base/writeFile'
+      'chmod': '@nikitajs/engine/lib/actions/fs/base/chmod',
+      'chown': '@nikitajs/engine/lib/actions/fs/base/chown',
+      'copy': '@nikitajs/engine/lib/actions/fs/base/copy',
+      'createReadStream': '@nikitajs/engine/lib/actions/fs/base/createReadStream',
+      'createWriteStream': '@nikitajs/engine/lib/actions/fs/base/createWriteStream',
+      'exists': '@nikitajs/engine/lib/actions/fs/base/exists',
+      'lstat': '@nikitajs/engine/lib/actions/fs/base/lstat',
+      'mkdir': '@nikitajs/engine/lib/actions/fs/base/mkdir',
+      'readdir': '@nikitajs/engine/lib/actions/fs/base/readdir',
+      'readFile': '@nikitajs/engine/lib/actions/fs/base/readFile',
+      'readlink': '@nikitajs/engine/lib/actions/fs/base/readlink',
+      'rename': '@nikitajs/engine/lib/actions/fs/base/rename',
+      'rmdir': '@nikitajs/engine/lib/actions/fs/base/rmdir',
+      'stat': '@nikitajs/engine/lib/actions/fs/base/stat',
+      'symlink': '@nikitajs/engine/lib/actions/fs/base/symlink',
+      'unlink': '@nikitajs/engine/lib/actions/fs/base/unlink',
+      'writeFile': '@nikitajs/engine/lib/actions/fs/base/writeFile'
     },
-    'assert': '@nikitajs/engine/src/actions/fs/assert',
-    'chmod': '@nikitajs/engine/src/actions/fs/chmod',
-    'chown': '@nikitajs/engine/src/actions/fs/chown',
-    'copy': '@nikitajs/engine/src/actions/fs/copy',
-    'glob': '@nikitajs/engine/src/actions/fs/glob',
-    'hash': '@nikitajs/engine/src/actions/fs/hash',
-    'link': '@nikitajs/engine/src/actions/fs/link',
-    'mkdir': '@nikitajs/engine/src/actions/fs/mkdir',
-    'move': '@nikitajs/engine/src/actions/fs/move',
-    'remove': '@nikitajs/engine/src/actions/fs/remove'
+    'assert': '@nikitajs/engine/lib/actions/fs/assert',
+    'chmod': '@nikitajs/engine/lib/actions/fs/chmod',
+    'chown': '@nikitajs/engine/lib/actions/fs/chown',
+    'copy': '@nikitajs/engine/lib/actions/fs/copy',
+    'glob': '@nikitajs/engine/lib/actions/fs/glob',
+    'hash': '@nikitajs/engine/lib/actions/fs/hash',
+    'link': '@nikitajs/engine/lib/actions/fs/link',
+    'mkdir': '@nikitajs/engine/lib/actions/fs/mkdir',
+    'move': '@nikitajs/engine/lib/actions/fs/move',
+    'remove': '@nikitajs/engine/lib/actions/fs/remove'
   },
   'log': {
     '': {
       handler: (function() {})
     },
-    'cli': '@nikitajs/engine/src/actions/log/cli',
-    'csv': '@nikitajs/engine/src/actions/log/csv',
-    'fs': '@nikitajs/engine/src/actions/log/fs',
-    'md': '@nikitajs/engine/src/actions/log/md'
+    'cli': '@nikitajs/engine/lib/actions/log/cli',
+    'csv': '@nikitajs/engine/lib/actions/log/csv',
+    'fs': '@nikitajs/engine/lib/actions/log/fs',
+    'md': '@nikitajs/engine/lib/actions/log/md'
   },
   'registry': {
     'get': {
@@ -103,10 +103,10 @@ module.exports = {
     }
   },
   'ssh': {
-    '': '@nikitajs/engine/src/actions/ssh',
-    'open': '@nikitajs/engine/src/actions/ssh/open',
-    'close': '@nikitajs/engine/src/actions/ssh/close',
-    'root': '@nikitajs/engine/src/actions/ssh/root'
+    '': '@nikitajs/engine/lib/actions/ssh',
+    'open': '@nikitajs/engine/lib/actions/ssh/open',
+    'close': '@nikitajs/engine/lib/actions/ssh/close',
+    'root': '@nikitajs/engine/lib/actions/ssh/root'
   },
   // 'status':
   //   metadata: raw: true
@@ -120,7 +120,7 @@ module.exports = {
   //         'argument position must be an integer if defined,'
   //         "get #{JSON.stringify position}"
   //       ]
-  'wait': '@nikitajs/engine/src/actions/wait'
+  'wait': '@nikitajs/engine/lib/actions/wait'
 };
 
 (async function() {
