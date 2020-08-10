@@ -197,7 +197,7 @@ require('nikita')
           Encoding of the source and target files.
           """
         'engine':
-          type: 'string', default: 'mustache'
+          type: 'string', default: 'handlebars'
           description: """
           Template engine being used.
           """
