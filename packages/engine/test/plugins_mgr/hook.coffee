@@ -1,5 +1,5 @@
 
-plugins = require '../../../src/plugins'
+plugins = require '../../src/plugins'
 
 describe 'session.plugins.hook', ->
 
@@ -82,3 +82,4 @@ describe 'session.plugins.hook', ->
       handler: (args) ->
         ['origin']
     .should.be.resolvedWith ['origin', 'alter_1', 'alter_2']
+        
