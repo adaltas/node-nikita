@@ -56,14 +56,15 @@
     }
   ],
   "dependencies": {
-    "ajv": "^6.12.2",
-    "ajv-keywords": "^3.4.1",
+    "ajv": "^6.12.3",
+    "ajv-keywords": "^3.5.2",
     "colors": "^1.4.0",
     "minimatch": "~3.0.4",
     "mixme": "^0.3.5",
     "pad": "^3.2.0",
     "regexp-quote": "~0.0.0",
     "self-templated": "^0.0.4",
+    "ssh2-connect": "^3.0.0",
     "ssh2-exec": "^0.5.3",
     "ssh2-fs": "^1.0.5",
     "ssh2-they": "^2.1.0",
@@ -72,12 +73,12 @@
     "toposort": "^2.0.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.6",
-    "@babel/preset-env": "^7.9.6",
+    "@babel/core": "^7.11.1",
+    "@babel/preset-env": "^7.11.0",
     "coffeescript": "^2.5.1",
-    "eslint": "^6.8.0",
+    "eslint": "^7.6.0",
     "eslint-plugin-coffee": "^0.1.12",
-    "mocha": "7.1.2",
+    "mocha": "8.1.1",
     "should": "~13.2.3"
   },
   "engines": {
