@@ -394,7 +394,7 @@ require('nikita')
               else
                 throw err
             null
-      config.content = config.transform.call undefined, config: config if config.transform
+      config.content = await config.transform.call undefined, config: config if config.transform
       if config.remove_empty_lines
         log message: "Remove empty lines", level: 'DEBUG', module: 'nikita/lib/file'
         config.content = config.content.replace /(\r\n|[\n\r\u0085\u2028\u2029])\s*(\r\n|[\n\r\u0085\u2028\u2029])/g, "$1"
