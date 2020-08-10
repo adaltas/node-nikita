@@ -394,6 +394,8 @@ require('nikita')
               else
                 throw err
             null
+      # if the transform function returns null or undefined, the file is not written
+      # else if transform throws an error, the error isnt caught but rather thrown
       config.content = await config.transform.call undefined, config: config if config.transform
       if config.remove_empty_lines
         log message: "Remove empty lines", level: 'DEBUG', module: 'nikita/lib/file'
