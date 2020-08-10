@@ -4,7 +4,7 @@
 // Write log to custom destinations in a user provided format.
 
 // ## Schema
-var fs, handler, mustache, path, schema;
+var fs, handler, path, schema;
 
 schema = {
   type: 'object',
@@ -158,5 +158,3 @@ module.exports = {
 fs = require('fs');
 
 path = require('path');
-
-mustache = require('mustache');

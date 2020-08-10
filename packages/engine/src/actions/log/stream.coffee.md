@@ -101,4 +101,3 @@ Write log to custom destinations in a user provided format.
 
     fs = require 'fs'
     path = require 'path'
-    mustache = require 'mustache'
