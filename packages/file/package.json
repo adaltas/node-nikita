@@ -49,6 +49,7 @@
   ],
   "dependencies": {
     "diff": "^4.0.2",
+    "handlebars": "^4.7.6",
     "mixme": "^0.3.5",
     "season": "^6.0.2"
   },

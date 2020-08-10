@@ -43,16 +43,6 @@ module.exports =
         "#{time}ms"
     snake_case: (str) ->
       str.replace(/([a-z\d])([A-Z]+)/g, '$1_$2').replace(/[-\s]+/g, '_').toLowerCase()
-    render: (options) ->
-      # @log message: "Rendering with #{options.engine}", level: 'DEBUG', module: 'nikita/lib/write'
-      try
-        switch options.engine
-          when 'handlebars'
-            template = handlebars.compile options.content.toString()
-            options.content = template options.context
-          else throw Error "Invalid engine: #{options.engine}"
-      catch err
-        throw (if typeof err is 'string' then Error(err) else err)
     replace_partial: (options) ->
       return unless options.write?.length
       @log message: "Replacing sections of the file", level: 'DEBUG', module: 'nikita/lib/misc/string'
@@ -136,4 +126,3 @@ module.exports =
 # nunjucks = require 'nunjucks/src/environment'
 quote = require 'regexp-quote'
 crypto = require 'crypto'
-handlebars = require 'handlebars'

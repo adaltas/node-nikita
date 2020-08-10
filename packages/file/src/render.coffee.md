@@ -61,6 +61,8 @@ require('nikita')
           $ref: 'module://@nikitajs/engine/src/actions/fs/base/chmod#/properties/mode'
         'local':
           $ref: 'module://@nikitajs/file/src/index#/properties/local'
+        'remove_empty_lines':
+          $ref: 'module://@nikitajs/file/src/index#/properties/remove_empty_lines'
         'source':
           $ref: 'module://@nikitajs/file/src/index#/properties/source'
         'target':
@@ -83,6 +85,10 @@ require('nikita')
         if data?
           config.source = undefined
           config.content = data
+      log message: "Rendering with #{config.engine}", level: 'DEBUG', module: 'nikita/lib/file/render'
+      config.transform = ({config}) ->
+        template = handlebars.compile config.content.toString()
+        template config.context
       @file config
       {}
 
@@ -97,3 +103,4 @@ require('nikita')
 ## Dependencies
 
     path = require 'path'
+    handlebars = require 'handlebars'

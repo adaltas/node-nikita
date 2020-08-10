@@ -1125,6 +1125,23 @@ describe 'file', ->
           target: "#{tmpdir}/file"
           content: 'this is some content\n'
 
+  describe 'config `transform`', ->
+
+    they 'transform content', ({ssh}) ->
+      nikita
+        ssh: ssh
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @file
+          target: "#{tmpdir}/file"
+          content: 'hello'
+          transform: ({config}) ->
+            "#{config.content} world"
+        .should.be.resolvedWith status: true
+        @fs.assert
+          target: "#{tmpdir}/file"
+          content: 'hello world'
+
   describe 'config `target`', ->
 
     they 'catch error', ({ssh}) ->
