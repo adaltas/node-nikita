@@ -1153,7 +1153,63 @@ describe 'file', ->
           target: "#{tmpdir}/file"
           content: 'hello world'
 
-    they 'transform returns null', ({ssh}) ->
+    they 'transform resolve promise status', ({ssh}) ->
+      nikita
+        ssh: ssh
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @file
+          target: "#{tmpdir}/file"
+          content: 'hello'
+          transform: ->
+            new Promise (resolve, reject) ->
+              resolve('hello')
+        .should.be.resolvedWith status: true
+
+    they 'transform resolve promise value', ({ssh}) ->
+      nikita
+        ssh: ssh
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @file
+          target: "#{tmpdir}/file"
+          content: 'hello'
+          transform: ->
+            new Promise (resolve, reject) ->
+              resolve('hello world')
+        @fs.assert
+          target: "#{tmpdir}/file"
+          content: 'hello world'
+
+    they 'transform reject promise status', ({ssh}) ->
+      nikita
+        ssh: ssh
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @file
+          target: "#{tmpdir}/file"
+          content: 'hello'
+          transform: ->
+            new Promise (resolve, reject) ->
+              reject('nope')
+        .should.be.rejectedWith undefined
+
+    they 'transform reject promise value', ({ssh}) ->
+      nikita
+        ssh: ssh
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @file
+          target: "#{tmpdir}/file"
+          content: 'hello'
+          transform: ->
+            new Promise (resolve, reject) ->
+              reject()
+        @fs.assert
+          target: "#{tmpdir}/file"
+          not: true
+
+    they 'transform returns null status', ({ssh}) ->
       nikita
         ssh: ssh
         tmpdir: true
@@ -1165,6 +1221,46 @@ describe 'file', ->
             null
         .should.be.resolvedWith status: false
 
+    they 'transform returns null file doesnt exist', ({ssh}) ->
+      nikita
+        ssh: ssh
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @file
+          target: "#{tmpdir}/file"
+          content: 'hello'
+          transform: ({config}) ->
+            null
+        @fs.assert
+          target: "#{tmpdir}/file"
+          not: true
+
+    they 'transform returns undefined status', ({ssh}) ->
+      nikita
+        ssh: ssh
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @file
+          target: "#{tmpdir}/file"
+          content: 'hello'
+          transform: ({config}) ->
+            undefined
+        .should.be.resolvedWith status: false
+
+    they 'transform returns undefined file doesnt exist', ({ssh}) ->
+      nikita
+        ssh: ssh
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @file
+          target: "#{tmpdir}/file"
+          content: 'hello'
+          transform: ({config}) ->
+            undefined
+        @fs.assert
+          target: "#{tmpdir}/file"
+          not: true
+        
     they 'transform throws error', ({ssh}) ->
       nikita
         ssh: ssh
