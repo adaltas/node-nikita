@@ -1127,7 +1127,7 @@ describe 'file', ->
 
   describe 'config `transform`', ->
 
-    they 'transform content', ({ssh}) ->
+    they 'transform content status', ({ssh}) ->
       nikita
         ssh: ssh
         tmpdir: true
@@ -1138,9 +1138,44 @@ describe 'file', ->
           transform: ({config}) ->
             "#{config.content} world"
         .should.be.resolvedWith status: true
+
+    they 'transform content value', ({ssh}) ->
+      nikita
+        ssh: ssh
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @file
+          target: "#{tmpdir}/file"
+          content: 'hello'
+          transform: ({config}) ->
+            "#{config.content} world"
         @fs.assert
           target: "#{tmpdir}/file"
           content: 'hello world'
+
+    they 'transform returns null', ({ssh}) ->
+      nikita
+        ssh: ssh
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @file
+          target: "#{tmpdir}/file"
+          content: 'hello'
+          transform: ({config}) ->
+            null
+        .should.be.resolvedWith status: false
+
+    they 'transform throws error', ({ssh}) ->
+      nikita
+        ssh: ssh
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @file
+          target: "#{tmpdir}/file"
+          content: 'hello'
+          transform: ({config}) ->
+            throw Error('error')
+        .should.be.rejectedWith 'error'
 
   describe 'config `target`', ->
 
