@@ -1,5 +1,5 @@
 
-plugins = require '../../../src/plugins'
+plugins = require '../../src/plugins'
 
 describe 'session.plugins.get', ->
 
