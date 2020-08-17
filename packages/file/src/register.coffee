@@ -11,9 +11,9 @@ module.exports =
     download: '@nikitajs/file/src/download'
     # ini: '@nikitajs/file/src/ini'
     json: '@nikitajs/file/src/json'
-    # properties:
-    #   '': '@nikitajs/file/src/properties'
-    #   read: '@nikitajs/file/src/properties/read'
+    properties:
+      '': '@nikitajs/file/src/properties'
+      read: '@nikitajs/file/src/properties/read'
     render: '@nikitajs/file/src/render'
     touch: '@nikitajs/file/src/touch'
     upload: '@nikitajs/file/src/upload'
