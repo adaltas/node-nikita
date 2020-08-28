@@ -55,14 +55,15 @@ module.exports = function(action) {
       }
       return ajv.addSchema(schema, name);
     },
-    validate: async function(data, schema) {
+    validate: async function(action, schema) {
       var validate;
       validate = (await ajv.compileAsync(schema));
-      if (validate(data)) {
+      if (validate(action.config)) {
         return;
       }
       return error('NIKITA_SCHEMA_VALIDATION_CONFIG', [
         validate.errors.length === 1 ? 'one error was found in the configuration:' : 'multiple errors where found in the configuration:',
+        action.metadata.namespace,
         validate.errors.map(function(err) {
           return err.schemaPath + ' ' + ajv.errorsText([err]).replace(/^data/,
         'config');
@@ -109,7 +110,7 @@ module.exports = function(action) {
           if (!action.metadata.schema) {
             return handler;
           }
-          err = (await schema.validate(action.config, action.metadata.schema));
+          err = (await schema.validate(action, action.metadata.schema));
           if (err) {
             throw err;
           } else {

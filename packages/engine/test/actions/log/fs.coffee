@@ -16,7 +16,11 @@ describe 'actions.log.fs', ->
       @log.fs basedir: tmpdir
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
-        message: 'NIKITA_SCHEMA_VALIDATION_CONFIG: one error was found in the configuration: #/required config should have required property \'serializer\'.'
+        message: [
+          'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+          'one error was found in the configuration of action log.fs:'
+          '#/required config should have required property \'serializer\'.'
+        ].join ' '
 
   they 'serializer can be empty', ({ssh}) ->
     nikita
