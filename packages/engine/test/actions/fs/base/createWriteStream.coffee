@@ -75,10 +75,20 @@ describe 'actions.fs.createWriteStream', ->
       , ->
         @fs.base.createWriteStream
           target: "a_file"
-        .should.be.rejectedWith 'NIKITA_SCHEMA_VALIDATION_CONFIG: one error was found in the configuration: #/required config should have required property \'stream\'.'
+        .should.be.rejectedWith [
+          'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+          'one error was found in the configuration of'
+          'action fs.base.createWriteStream:'
+          '#/required config should have required property \'stream\'.'
+        ].join ' '
         @fs.base.createWriteStream
           stream: (->)
-        .should.be.rejectedWith 'NIKITA_SCHEMA_VALIDATION_CONFIG: one error was found in the configuration: #/required config should have required property \'target\'.'
+        .should.be.rejectedWith [
+          'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+          'one error was found in the configuration of'
+          'action fs.base.createWriteStream:'
+          '#/required config should have required property \'target\'.'
+        ].join ' '
 
     they 'NIKITA_FS_CWS_TARGET_ENOENT if parent direction does not exist', ({ssh}) ->
       nikita

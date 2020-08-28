@@ -42,7 +42,7 @@ describe 'action.schema', ->
       handler: (->)
     .should.be.rejectedWith [
       'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-      'one error was found in the configuration:'
+      'one error was found in the configuration of action call:'
       '#/properties/an_integer/minimum config.an_integer should be >= 1.'
     ].join ' '
 
@@ -56,18 +56,12 @@ describe 'action.schema', ->
           'a_string': type: 'string'
           'an_integer': type: 'integer', 'minimum': 1
       handler: ->
-    .should.be.rejected()
-    .catch (err) ->
-      err.message.should.eql """
-      Invalid Configuration: got 2 errors
-      data.a_string should be string
-      data.an_integer should be >= 1
-      """
-      err.errors.map( (err) -> err.message).should.eql [
-        'data.a_string should be string'
-      ,
-        'data.an_integer should be >= 1'
-      ]
+    .should.be.rejectedWith [
+        'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+        'multiple errors where found in the configuration of action call:'
+        '#/properties/a_string/type config.a_string should be string;'
+        '#/properties/an_integer/minimum config.an_integer should be >= 1.'
+      ].join ' '
     
   it 'doesnt apply when condition is false', ->
     nikita
@@ -118,7 +112,7 @@ describe 'action.schema', ->
         handler: (->)
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-        'one error was found in the configuration:'
+        'one error was found in the configuration of action call:'
         'registry://test/schema/properties/an_integer/type config.an_object.an_integer should be integer.'
       ].join ' '
   
@@ -178,6 +172,6 @@ describe 'action.schema', ->
         handler: (->)
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-        'one error was found in the configuration:'
+        'one error was found in the configuration of action call:'
         '#/properties/a_regexp/instanceof config.a_regexp should pass "instanceof" keyword validation.'
       ].join ' '

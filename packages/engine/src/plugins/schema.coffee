@@ -39,13 +39,16 @@ module.exports = (action) ->
     add: (schema, name) ->
       return unless schema
       ajv.addSchema schema, name
-    validate: (data, schema) ->
+    validate: (action, schema) ->
       validate = await ajv.compileAsync schema
-      return if validate data
+      return if validate action.config
       error 'NIKITA_SCHEMA_VALIDATION_CONFIG', [
         if validate.errors.length is 1
-        then 'one error was found in the configuration:'
-        else 'multiple errors where found in the configuration:'
+        then 'one error was found in the configuration of'
+        else 'multiple errors where found in the configuration of'
+        if action.metadata.namespace.length
+        then "action #{action.metadata.namespace.join('.')}:"
+        else "anonymous action:"
         validate.errors
         .map (err) -> err.schemaPath+' '+ajv.errorsText([err]).replace /^data/, 'config'
         .sort()
@@ -80,6 +83,6 @@ module.exports = (action) ->
             "got #{JSON.stringify action.metadata.schema}."
           ]
         return handler unless action.metadata.schema
-        err = await schema.validate action.config, action.metadata.schema
+        err = await schema.validate action, action.metadata.schema
         if err then throw err else handler
   
