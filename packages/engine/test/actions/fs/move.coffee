@@ -14,7 +14,11 @@ describe 'system.move', ->
     , ({metadata: {tmpdir}}) ->
       @fs.move
         source: "#{tmpdir}/a_file"
-      .should.be.rejectedWith message: "NIKITA_SCHEMA_VALIDATION_CONFIG: one error was found in the configuration: #/required config should have required property \'target\'."
+      .should.be.rejectedWith [
+        'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+        'one error was found in the configuration of'
+        'action fs.move: #/required config should have required property \'target\'.'
+      ].join ' '
 
   they 'error missing source', ({ssh}) ->
     nikita
@@ -23,7 +27,11 @@ describe 'system.move', ->
     , ({metadata: {tmpdir}}) ->
       @fs.move
         target: "#{tmpdir}/a_file"
-      .should.be.rejectedWith message: "NIKITA_SCHEMA_VALIDATION_CONFIG: one error was found in the configuration: #/required config should have required property \'source\'."
+      .should.be.rejectedWith [
+        'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+        'one error was found in the configuration of'
+        'action fs.move: #/required config should have required property \'source\'.'
+      ].join ' '
 
   they 'rename a file', ({ssh}) ->
     nikita
