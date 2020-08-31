@@ -18,7 +18,11 @@ describe 'file.render', ->
           source: "#{tmpdir}/oups.hbs"
           target: "#{tmpdir}/output"
           context: {}
-        .should.be.rejectedWith message: "NIKITA_FS_CRS_TARGET_ENOENT: fail to read a file because it does not exist, location is \"#{tmpdir}/oups.hbs\"."
+        .should.be.rejectedWith [
+          'NIKITA_FS_CRS_TARGET_ENOENT:'
+          'fail to read a file because it does not exist,'
+          "location is \"#{tmpdir}/oups.hbs\"."
+        ].join ' '
 
     they 'when option "context" is missing', ({ssh}) ->
       nikita
@@ -28,7 +32,11 @@ describe 'file.render', ->
         @file.render
           content: 'Hello {{ who }}'
           target: "#{tmpdir}/output"
-        .should.be.rejectedWith message: 'NIKITA_SCHEMA_VALIDATION_CONFIG: one error was found in the configuration: #/required config should have required property \'context\'.' 
+        .should.be.rejectedWith [
+          'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+          'one error was found in the configuration of action file.render:'
+          '#/required config should have required property \'context\'.'
+        ].join ' '
 
     they 'unsupported source extension', ({ssh}) ->
       nikita
