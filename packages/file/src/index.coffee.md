@@ -125,7 +125,7 @@ require('nikita')
 })
 ```
 
-## On config
+## Hook
 
     on_action = ({config}) ->
       # Validate parameters
@@ -341,8 +341,8 @@ require('nikita')
           config.content = ''
         log message: "Reading source", level: 'DEBUG', module: 'nikita/lib/file'
         config.content = await @fs.base.readFile
-          ssh: if config.local then false else config.ssh
-          sudo: if config.local then false else config.sudo
+          ssh: if config.local then false else undefined
+          sudo: if config.local then false else undefined
           target: source
           encoding: config.encoding
       else if not config.content?
