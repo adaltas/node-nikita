@@ -1286,31 +1286,13 @@ describe 'file', ->
             throw Error content
         .should.be.rejectedWith 'hello'
 
-    they.skip 'function called on content change', ({ssh}) ->
-      new Promise ({resolve}) ->
-        nikita
-          ssh: ssh
-          tmpdir: true
-        , ({metadata: {tmpdir}}) ->
-          @file
-            content: 'hello'
-            eof: true
-            target: ({content: content, status: status}) ->
-              content.should.eql 'hello\n'
-              status.should.be.true()
-              resolve()
-
-    they.skip 'function called even if content didnt change', ({ssh}) ->
-      new Promise ({resolve}) ->
-        nikita
-          ssh: ssh
-          tmpdir: true
-        , ({metadata: {tmpdir}}) ->
-          @file
-            content: 'hello\n'
-            eof: true
-            target: ({content: content, status: status}) ->
-                content.should.eql 'hello\n'
-                status.should.be.false()
-                resolve()
-
+    they 'function called on content change', ({ssh}) ->
+      nikita
+        ssh: ssh
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @file
+          content: 'hello'
+          eof: true
+          target: ({content: content}) ->
+            content.should.eql 'hello\n'
