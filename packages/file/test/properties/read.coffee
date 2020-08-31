@@ -62,4 +62,8 @@ describe 'file.properties.read', ->
     , ({metadata: {tmpdir}}) ->
       @file.properties.read
         separator: ':'
-      .should.be.rejectedWith message: "NIKITA_SCHEMA_VALIDATION_CONFIG: one error was found in the configuration: #/required config should have required property \'target\'."
+      .should.be.rejectedWith [
+        'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+        'one error was found in the configuration of action file.properties.read:'
+        '#/required config should have required property \'target\'.'
+      ].join ' '

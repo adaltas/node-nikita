@@ -15,7 +15,11 @@ describe 'file.upload', ->
     , ({metadata: {tmpdir}}) ->
       @file.upload
         target: "#{tmpdir}/#{path.basename __filename}"
-      .should.be.rejectedWith message: 'NIKITA_SCHEMA_VALIDATION_CONFIG: one error was found in the configuration: #/required config should have required property \'source\'.'
+      .should.be.rejectedWith [
+        'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+        'one error was found in the configuration of action file.upload:'
+        '#/required config should have required property \'source\'.'
+      ].join ' '
 
   they 'target is missing', ({ssh}) ->
     nikita
@@ -24,7 +28,11 @@ describe 'file.upload', ->
     , ({metadata: {tmpdir}}) ->
       @file.upload
         source: "#{__filename}"
-      .should.be.rejectedWith message: 'NIKITA_SCHEMA_VALIDATION_CONFIG: one error was found in the configuration: #/required config should have required property \'target\'.'
+      .should.be.rejectedWith [
+        'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+        'one error was found in the configuration of action file.upload:'
+        '#/required config should have required property \'target\'.'
+      ].join ' '
 
   they 'file into a file', ({ssh}) ->
     nikita
