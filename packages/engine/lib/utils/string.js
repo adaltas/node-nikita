@@ -62,31 +62,6 @@ module.exports = {
   snake_case: function(str) {
     return str.replace(/([a-z\d])([A-Z]+)/g, '$1_$2').replace(/[-\s]+/g, '_').toLowerCase();
   },
-  // render: (options) ->
-  //   @log message: "Rendering with #{options.engine}", level: 'DEBUG', module: 'nikita/lib/write'
-  //   try
-  //     switch options.engine
-  //       when 'nunjunks'
-  //         env = new nunjucks.Environment null, autoescape: false
-  //         options.filters ?= {}
-  //         options.filters.isString ?= (obj) -> typeof obj is 'string'
-  //         options.filters.isArray ?= (obj) -> Array.isArray obj
-  //         options.filters.isObject ?= (obj) -> typeof obj is 'object' and not Array.isArray obj
-  //         options.filters.contains ?= (arr, obj) -> if Array.isArray arr then obj in arr else false
-  //         options.filters.isEmpty ?= (obj) ->
-  //           return true if !obj? or obj is ''
-  //           return true if Array.isArray obj and obj.length is 0
-  //           return true if typeof obj is 'object' and Object.keys(obj).length is 0
-  //           return false
-  //         for filter, func of options.filters
-  //           if typeof func is 'function'
-  //             env.addFilter filter, func
-  //           else
-  //             @log message: "Option filter not a function and ignored", level: 'WARN', module: 'nikita/lib/write'
-  //         options.content = env.renderString options.content.toString(), options.context
-  //       else throw Error "Invalid engine: #{options.engine}"
-  //   catch err
-  //     throw (if typeof err is 'string' then Error(err) else err)
   replace_partial: function(options) {
     var from, from_index, i, len, linebreak, opts, orgContent, place_before, pos, posoffset, ref, ref1, res, results, to;
     if (!((ref = options.write) != null ? ref.length : void 0)) {
