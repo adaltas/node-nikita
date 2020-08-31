@@ -114,6 +114,6 @@
     "lint": "eslint 'src/**/*.coffee'",
     "lint-fix": "eslint --fix 'src/**/*.coffee'",
     "_pretest": "npm run build",
-    "test": "mocha 'test/**/*.coffee'"
+    "test": "npm run build && mocha 'test/**/*.coffee'"
   }
 }
