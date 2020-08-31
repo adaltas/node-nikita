@@ -311,9 +311,6 @@ require('nikita')
           config.eof = "\r\n"
         when 'unicode'
           config.eof = "\u2028"
-      if typeof config.target is 'function'
-        log message: 'Write target with user function', level: 'INFO', module: 'nikita/lib/file'
-        config.target content: config.content
       target  = null
       targetContentHash = null
       config.write ?= []
@@ -360,40 +357,40 @@ require('nikita')
           config.content = ''
       # Stat the target
       stats = await @call raw_output: true, ->
-        if typeof config.target != 'function'
-          log message: "Stat target", level: 'DEBUG', module: 'nikita/lib/file'
-          try
-            {stats} = await @fs.base.lstat target: config.target
-            if utils.stats.isDirectory stats.mode
-              throw Error 'Incoherent situation, target is a directory and there is no source to guess the filename'
-              config.target = "#{config.target}/#{path.basename config.source}"
-              log message: "Destination is a directory and is now \"config.target\"", level: 'INFO', module: 'nikita/lib/file'
-              # Destination is the parent directory, let's see if the file exist inside
-              {stats} = await @fs.base.stat target: config.target, relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
-              throw Error "Destination is not a file: #{config.target}" unless utils.stats.isFile stats.mode
-              log message: "New target exists", level: 'INFO', module: 'nikita/lib/file'
-            else if utils.stats.isSymbolicLink stats.mode
-              log message: "Destination is a symlink", level: 'INFO', module: 'nikita/lib/file'
-              if config.unlink
-                @fs.base.unlink target: config.target
-                stats = null
-            else if utils.stats.isFile stats.mode
-              log message: "Destination is a file", level: 'INFO', module: 'nikita/lib/file'
+        return null unless typeof config.target is 'string'
+        log message: "Stat target", level: 'DEBUG', module: 'nikita/lib/file'
+        try
+          {stats} = await @fs.base.lstat target: config.target
+          if utils.stats.isDirectory stats.mode
+            throw Error 'Incoherent situation, target is a directory and there is no source to guess the filename'
+            config.target = "#{config.target}/#{path.basename config.source}"
+            log message: "Destination is a directory and is now \"config.target\"", level: 'INFO', module: 'nikita/lib/file'
+            # Destination is the parent directory, let's see if the file exist inside
+            {stats} = await @fs.base.stat target: config.target, relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
+            throw Error "Destination is not a file: #{config.target}" unless utils.stats.isFile stats.mode
+            log message: "New target exists", level: 'INFO', module: 'nikita/lib/file'
+          else if utils.stats.isSymbolicLink stats.mode
+            log message: "Destination is a symlink", level: 'INFO', module: 'nikita/lib/file'
+            if config.unlink
+              @fs.base.unlink target: config.target
+              stats = null
+          else if utils.stats.isFile stats.mode
+            log message: "Destination is a file", level: 'INFO', module: 'nikita/lib/file'
+          else
+            throw Error "Invalid File Type Destination: #{config.target}"
+          stats
+        catch err
+          switch err.code
+            when 'NIKITA_FS_STAT_TARGET_ENOENT'
+              await @fs.mkdir
+                target: path.dirname config.target
+                uid: config.uid
+                gid: config.gid
+                # force execution right on mkdir
+                mode: if config.mode then (config.mode | 0o111) else 0o755
             else
-              throw Error "Invalid File Type Destination: #{config.target}"
-            stats
-          catch err
-            switch err.code
-              when 'NIKITA_FS_STAT_TARGET_ENOENT'
-                await @fs.mkdir
-                  target: path.dirname config.target
-                  uid: config.uid
-                  gid: config.gid
-                  # force execution right on mkdir
-                  mode: if config.mode then (config.mode | 0o111) else 0o755
-              else
-                throw err
-            null
+              throw err
+          null
       # if the transform function returns null or undefined, the file is not written
       # else if transform throws an error, the error isnt caught but rather thrown
       config.content = await config.transform.call undefined, config: config if config.transform
@@ -416,7 +413,8 @@ require('nikita')
         unless utils.string.endsWith config.content, config.eof
           log message: 'Add eof', level: 'INFO', module: 'nikita/lib/file'
           config.content += config.eof
-      try
+      # Read the target, compute its hash and diff its content
+      if stats
         targetContent = await @fs.base.readFile
           target: config.target
           encoding: config.encoding
@@ -424,8 +422,6 @@ require('nikita')
         {raw, text} = diff targetContent, config.content, config
         config.diff text, raw if typeof config.diff is 'function'
         log message: text, type: 'diff', level: 'INFO', module: 'nikita/lib/file'
-      catch err
-        throw err if err.code isnt 'NIKITA_FS_CRS_TARGET_ENOENT'
       if config.content?
         contentChanged = not stats? or targetContentHash isnt utils.string.hash config.content
       if config.backup and contentChanged
@@ -437,38 +433,43 @@ require('nikita')
           target: "#{config.target}#{backup}"
           mode: config.backup_mode
           relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
-      # Ownership and permission are also handled
-      # Preserved the file mode if the file exists. Otherwise,
-      # delegate to fs.createWriteStream` the creation of the default
-      # mode of "744".
-      # https://github.com/nodejs/node/issues/1104
-      # `mode` specifies the permissions to use in case a new file is created.
-      if contentChanged
-        @call ->
-          config.flags ?= 'a' if config.append
-          @fs.base.writeFile
+      # Call the target with the content when a function
+      if typeof config.target is 'function'
+        log message: 'Write target with user function', level: 'INFO', module: 'nikita/lib/file'
+        await config.target content: config.content
+      else
+        # Ownership and permission are also handled
+        # Preserved the file mode if the file exists. Otherwise,
+        # delegate to fs.createWriteStream` the creation of the default
+        # mode of "744".
+        # https://github.com/nodejs/node/issues/1104
+        # `mode` specifies the permissions to use in case a new file is created.
+        if contentChanged
+          @call ->
+            config.flags ?= 'a' if config.append
+            @fs.base.writeFile
+              target: config.target
+              flags: config.flags
+              content: config.content
+              mode: stats?.mode
+            status: true
+        if config.mode
+          @fs.chmod
             target: config.target
-            flags: config.flags
-            content: config.content
-            mode: stats?.mode
-          status: true
-      if config.mode
-        @fs.chmod
+            stats: stats
+            mode: config.mode
+        else if stats
+          @fs.chmod
+            target: config.target
+            stats: stats
+            mode: stats.mode
+        # Option gid is set at runtime if target is a new file
+        @fs.chown
           target: config.target
           stats: stats
-          mode: config.mode
-      else if stats
-        @fs.chmod
-          target: config.target
-          stats: stats
-          mode: stats.mode
-      # Option gid is set at runtime if target is a new file
-      @fs.chown
-        target: config.target
-        stats: stats
-        uid: config.uid
-        gid: config.gid
-        if: config.uid? or config.gid?
+          uid: config.uid
+          gid: config.gid
+          if: config.uid? or config.gid?
       {}
 
 ## Exports
