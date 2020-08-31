@@ -125,7 +125,7 @@
 // })
 // ```
 
-// ## On config
+// ## Hook
 var diff, handler, on_action, path, schema, utils;
 
 on_action = function({config}) {
@@ -430,16 +430,6 @@ handler = async function({config, log}) {
     case 'unicode':
       config.eof = "\u2028";
   }
-  if (typeof config.target === 'function') {
-    log({
-      message: 'Write target with user function',
-      level: 'INFO',
-      module: 'nikita/lib/file'
-    });
-    config.target({
-      content: config.content
-    });
-  }
   target = null;
   targetContentHash = null;
   if (config.write == null) {
@@ -490,8 +480,8 @@ handler = async function({config, log}) {
       module: 'nikita/lib/file'
     });
     config.content = (await this.fs.base.readFile({
-      ssh: config.local ? false : config.ssh,
-      sudo: config.local ? false : config.sudo,
+      ssh: config.local ? false : void 0,
+      sudo: config.local ? false : void 0,
       target: source,
       encoding: config.encoding
     }));
@@ -515,76 +505,77 @@ handler = async function({config, log}) {
   stats = (await this.call({
     raw_output: true
   }, async function() {
-    if (typeof config.target !== 'function') {
-      log({
-        message: "Stat target",
-        level: 'DEBUG',
-        module: 'nikita/lib/file'
-      });
-      try {
-        ({stats} = (await this.fs.base.lstat({
-          target: config.target
+    if (typeof config.target !== 'string') {
+      return null;
+    }
+    log({
+      message: "Stat target",
+      level: 'DEBUG',
+      module: 'nikita/lib/file'
+    });
+    try {
+      ({stats} = (await this.fs.base.lstat({
+        target: config.target
+      })));
+      if (utils.stats.isDirectory(stats.mode)) {
+        throw Error('Incoherent situation, target is a directory and there is no source to guess the filename');
+        config.target = `${config.target}/${path.basename(config.source)}`;
+        log({
+          message: "Destination is a directory and is now \"config.target\"",
+          level: 'INFO',
+          module: 'nikita/lib/file'
+        });
+        // Destination is the parent directory, let's see if the file exist inside
+        ({stats} = (await this.fs.base.stat({
+          target: config.target,
+          relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
         })));
-        if (utils.stats.isDirectory(stats.mode)) {
-          throw Error('Incoherent situation, target is a directory and there is no source to guess the filename');
-          config.target = `${config.target}/${path.basename(config.source)}`;
-          log({
-            message: "Destination is a directory and is now \"config.target\"",
-            level: 'INFO',
-            module: 'nikita/lib/file'
-          });
-          // Destination is the parent directory, let's see if the file exist inside
-          ({stats} = (await this.fs.base.stat({
-            target: config.target,
-            relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
-          })));
-          if (!utils.stats.isFile(stats.mode)) {
-            throw Error(`Destination is not a file: ${config.target}`);
-          }
-          log({
-            message: "New target exists",
-            level: 'INFO',
-            module: 'nikita/lib/file'
-          });
-        } else if (utils.stats.isSymbolicLink(stats.mode)) {
-          log({
-            message: "Destination is a symlink",
-            level: 'INFO',
-            module: 'nikita/lib/file'
-          });
-          if (config.unlink) {
-            this.fs.base.unlink({
-              target: config.target
-            });
-            stats = null;
-          }
-        } else if (utils.stats.isFile(stats.mode)) {
-          log({
-            message: "Destination is a file",
-            level: 'INFO',
-            module: 'nikita/lib/file'
-          });
-        } else {
-          throw Error(`Invalid File Type Destination: ${config.target}`);
+        if (!utils.stats.isFile(stats.mode)) {
+          throw Error(`Destination is not a file: ${config.target}`);
         }
-        return stats;
-      } catch (error) {
-        err = error;
-        switch (err.code) {
-          case 'NIKITA_FS_STAT_TARGET_ENOENT':
-            await this.fs.mkdir({
-              target: path.dirname(config.target),
-              uid: config.uid,
-              gid: config.gid,
-              // force execution right on mkdir
-              mode: config.mode ? config.mode | 0o111 : 0o755
-            });
-            break;
-          default:
-            throw err;
+        log({
+          message: "New target exists",
+          level: 'INFO',
+          module: 'nikita/lib/file'
+        });
+      } else if (utils.stats.isSymbolicLink(stats.mode)) {
+        log({
+          message: "Destination is a symlink",
+          level: 'INFO',
+          module: 'nikita/lib/file'
+        });
+        if (config.unlink) {
+          this.fs.base.unlink({
+            target: config.target
+          });
+          stats = null;
         }
-        return null;
+      } else if (utils.stats.isFile(stats.mode)) {
+        log({
+          message: "Destination is a file",
+          level: 'INFO',
+          module: 'nikita/lib/file'
+        });
+      } else {
+        throw Error(`Invalid File Type Destination: ${config.target}`);
       }
+      return stats;
+    } catch (error) {
+      err = error;
+      switch (err.code) {
+        case 'NIKITA_FS_STAT_TARGET_ENOENT':
+          await this.fs.mkdir({
+            target: path.dirname(config.target),
+            uid: config.uid,
+            gid: config.gid,
+            // force execution right on mkdir
+            mode: config.mode ? config.mode | 0o111 : 0o755
+          });
+          break;
+        default:
+          throw err;
+      }
+      return null;
     }
   }));
   if (config.transform) {
@@ -642,7 +633,8 @@ handler = async function({config, log}) {
       config.content += config.eof;
     }
   }
-  try {
+  // Read the target, compute its hash and diff its content
+  if (stats) {
     targetContent = (await this.fs.base.readFile({
       target: config.target,
       encoding: config.encoding
@@ -658,11 +650,6 @@ handler = async function({config, log}) {
       level: 'INFO',
       module: 'nikita/lib/file'
     });
-  } catch (error) {
-    err = error;
-    if (err.code !== 'NIKITA_FS_CRS_TARGET_ENOENT') {
-      throw err;
-    }
   }
   if (config.content != null) {
     contentChanged = (stats == null) || targetContentHash !== utils.string.hash(config.content);
@@ -684,51 +671,63 @@ handler = async function({config, log}) {
       relax: 'NIKITA_FS_STAT_TARGET_ENOENT'
     });
   }
-  // Ownership and permission are also handled
-  // Preserved the file mode if the file exists. Otherwise,
-  // delegate to fs.createWriteStream` the creation of the default
-  // mode of "744".
-  // https://github.com/nodejs/node/issues/1104
-  // `mode` specifies the permissions to use in case a new file is created.
-  if (contentChanged) {
-    this.call(function() {
-      if (config.append) {
-        if (config.flags == null) {
-          config.flags = 'a';
+  // Call the target with the content when a function
+  if (typeof config.target === 'function') {
+    log({
+      message: 'Write target with user function',
+      level: 'INFO',
+      module: 'nikita/lib/file'
+    });
+    await config.target({
+      content: config.content
+    });
+  } else {
+    // Ownership and permission are also handled
+    // Preserved the file mode if the file exists. Otherwise,
+    // delegate to fs.createWriteStream` the creation of the default
+    // mode of "744".
+    // https://github.com/nodejs/node/issues/1104
+    // `mode` specifies the permissions to use in case a new file is created.
+    if (contentChanged) {
+      this.call(function() {
+        if (config.append) {
+          if (config.flags == null) {
+            config.flags = 'a';
+          }
         }
-      }
-      this.fs.base.writeFile({
-        target: config.target,
-        flags: config.flags,
-        content: config.content,
-        mode: stats != null ? stats.mode : void 0
+        this.fs.base.writeFile({
+          target: config.target,
+          flags: config.flags,
+          content: config.content,
+          mode: stats != null ? stats.mode : void 0
+        });
+        return {
+          status: true
+        };
       });
-      return {
-        status: true
-      };
-    });
-  }
-  if (config.mode) {
-    this.fs.chmod({
+    }
+    if (config.mode) {
+      this.fs.chmod({
+        target: config.target,
+        stats: stats,
+        mode: config.mode
+      });
+    } else if (stats) {
+      this.fs.chmod({
+        target: config.target,
+        stats: stats,
+        mode: stats.mode
+      });
+    }
+    // Option gid is set at runtime if target is a new file
+    this.fs.chown({
       target: config.target,
       stats: stats,
-      mode: config.mode
-    });
-  } else if (stats) {
-    this.fs.chmod({
-      target: config.target,
-      stats: stats,
-      mode: stats.mode
+      uid: config.uid,
+      gid: config.gid,
+      if: (config.uid != null) || (config.gid != null)
     });
   }
-  // Option gid is set at runtime if target is a new file
-  this.fs.chown({
-    target: config.target,
-    stats: stats,
-    uid: config.uid,
-    gid: config.gid,
-    if: (config.uid != null) || (config.gid != null)
-  });
   return {};
 };
 
