@@ -393,7 +393,7 @@ options.`
 
 // ## Handler
 handler = async function({config, log}) {
-  var backup, char, contentChanged, context, err, exists, i, j, k, len, len1, raw, ref, ref1, source, stats, target, targetContent, targetContentHash, text, w;
+  var backup, char, contentChanged, context, err, exists, i, j, k, len, len1, raw, ref, ref1, source, target, targetContent, targetContentHash, targetStats, text, w;
   log({
     message: "Entering file",
     level: 'DEBUG',
@@ -502,9 +502,10 @@ handler = async function({config, log}) {
     }
   }
   // Stat the target
-  stats = (await this.call({
+  targetStats = (await this.call({
     raw_output: true
   }, async function() {
+    var stats;
     if (typeof config.target !== 'string') {
       return null;
     }
@@ -634,25 +635,27 @@ handler = async function({config, log}) {
     }
   }
   // Read the target, compute its hash and diff its content
-  if (stats) {
+  if (targetStats) {
     targetContent = (await this.fs.base.readFile({
       target: config.target,
       encoding: config.encoding
     }));
     targetContentHash = utils.string.hash(targetContent);
+  }
+  if (config.content != null) {
+    contentChanged = (targetStats == null) || targetContentHash !== utils.string.hash(config.content);
+  }
+  if (contentChanged) {
     ({raw, text} = diff(targetContent, config.content, config));
     if (typeof config.diff === 'function') {
       config.diff(text, raw);
     }
     log({
-      message: text,
       type: 'diff',
+      message: text,
       level: 'INFO',
       module: 'nikita/lib/file'
     });
-  }
-  if (config.content != null) {
-    contentChanged = (stats == null) || targetContentHash !== utils.string.hash(config.content);
   }
   if (config.backup && contentChanged) {
     log({
@@ -699,7 +702,7 @@ handler = async function({config, log}) {
           target: config.target,
           flags: config.flags,
           content: config.content,
-          mode: stats != null ? stats.mode : void 0
+          mode: targetStats != null ? targetStats.mode : void 0
         });
         return {
           status: true
@@ -709,20 +712,20 @@ handler = async function({config, log}) {
     if (config.mode) {
       this.fs.chmod({
         target: config.target,
-        stats: stats,
+        stats: targetStats,
         mode: config.mode
       });
-    } else if (stats) {
+    } else if (targetStats) {
       this.fs.chmod({
         target: config.target,
-        stats: stats,
-        mode: stats.mode
+        stats: targetStats,
+        mode: targetStats.mode
       });
     }
     // Option gid is set at runtime if target is a new file
     this.fs.chown({
       target: config.target,
-      stats: stats,
+      stats: targetStats,
       uid: config.uid,
       gid: config.gid,
       if: (config.uid != null) || (config.gid != null)
