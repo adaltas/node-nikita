@@ -35,23 +35,6 @@ describe 'file.touch', ->
         target: "#{tmpdir}/a_file"
         content: ''
 
-  they.skip 'as an array of strings', ({ssh}) ->
-    nikita
-      ssh: ssh
-      tmpdir: true
-    , ({metadata: {tmpdir}}) ->
-      @file.touch [
-        "#{tmpdir}/file_1"
-        "#{tmpdir}/file_2"
-      ]
-      .should.be.resolvedWith status: true
-      @fs.assert
-        target: "#{tmpdir}/file_1"
-        content: ''
-      @fs.assert
-        target: "#{tmpdir}/file_2"
-        content: ''
-
   they 'an existing file', ({ssh}) ->
     nikita
       ssh: ssh
@@ -118,22 +101,18 @@ describe 'file.touch', ->
         target: "#{tmpdir}/subdir"
         mode: 0o0751
 
-  they.skip 'modify time but not status', ({ssh}) ->
-    stat_org = null
-    stat_new = null
+  they 'modify time but not status', ({ssh}) ->
     nikita
       ssh: ssh
       tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.touch "#{tmpdir}/a_file"
-      {stats} = await @fs.base.stat target: "#{tmpdir}/a_file"
-      stat_org = stats
+      {stats: stat_org} = await @fs.base.stat target: "#{tmpdir}/a_file"
       # Bypass fs cache, a value of 500 is not always enough
-      setTimeout -> console.log '1000', 1000
+      await new Promise (resolve) -> setTimeout resolve, 1000
       @file.touch "#{tmpdir}/a_file"
-      .should.be.resolvedWith stats: false
-      {stats} = await @fs.base.stat target: "#{tmpdir}/a_file"
-      stat_new = stats
+      .should.be.resolvedWith status: false
+      {stats: stat_new} = await @fs.base.stat target: "#{tmpdir}/a_file"
       stat_org.mtime.should.not.eql stat_new.mtime
 
   they 'missing target', ({ssh}) ->

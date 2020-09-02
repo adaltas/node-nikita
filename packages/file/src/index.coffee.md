@@ -356,7 +356,7 @@ require('nikita')
           throw err if err.code isnt 'NIKITA_FS_CRS_TARGET_ENOENT'
           config.content = ''
       # Stat the target
-      stats = await @call raw_output: true, ->
+      targetStats = await @call raw_output: true, ->
         return null unless typeof config.target is 'string'
         log message: "Stat target", level: 'DEBUG', module: 'nikita/lib/file'
         try
@@ -414,16 +414,17 @@ require('nikita')
           log message: 'Add eof', level: 'INFO', module: 'nikita/lib/file'
           config.content += config.eof
       # Read the target, compute its hash and diff its content
-      if stats
+      if targetStats
         targetContent = await @fs.base.readFile
           target: config.target
           encoding: config.encoding
         targetContentHash = utils.string.hash targetContent
+      if config.content?
+        contentChanged = not targetStats? or targetContentHash isnt utils.string.hash config.content
+      if contentChanged
         {raw, text} = diff targetContent, config.content, config
         config.diff text, raw if typeof config.diff is 'function'
-        log message: text, type: 'diff', level: 'INFO', module: 'nikita/lib/file'
-      if config.content?
-        contentChanged = not stats? or targetContentHash isnt utils.string.hash config.content
+        log type: 'diff', message: text, level: 'INFO', module: 'nikita/lib/file'
       if config.backup and contentChanged
         log message: "Create backup", level: 'INFO', module: 'nikita/lib/file'
         config.backup_mode ?= 0o0400
@@ -451,22 +452,22 @@ require('nikita')
               target: config.target
               flags: config.flags
               content: config.content
-              mode: stats?.mode
+              mode: targetStats?.mode
             status: true
         if config.mode
           @fs.chmod
             target: config.target
-            stats: stats
+            stats: targetStats
             mode: config.mode
-        else if stats
+        else if targetStats
           @fs.chmod
             target: config.target
-            stats: stats
-            mode: stats.mode
+            stats: targetStats
+            mode: targetStats.mode
         # Option gid is set at runtime if target is a new file
         @fs.chown
           target: config.target
-          stats: stats
+          stats: targetStats
           uid: config.uid
           gid: config.gid
           if: config.uid? or config.gid?
