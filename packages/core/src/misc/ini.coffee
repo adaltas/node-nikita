@@ -4,14 +4,6 @@ string = require './string'
 
 module.exports =
   # Remove undefined and null values
-  clean: (content, undefinedOnly) ->
-    for k, v of content
-      if v and typeof v is 'object'
-        content[k] = module.exports.clean v, undefinedOnly
-        continue
-      delete content[k] if typeof v is 'undefined'
-      delete content[k] if not undefinedOnly and v is null
-    content
   safe: (val) ->
     if ( typeof val isnt "string" or val.match(/[\r\n]/) or val.match(/^\[/) or (val.length > 1 and val.charAt(0) is "\"" and val.slice(-1) is "\"") or val isnt val.trim() )
     then JSON.stringify(val)

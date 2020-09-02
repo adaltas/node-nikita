@@ -4,6 +4,23 @@ var snake_case;
 ({snake_case} = require('./string'));
 
 module.exports = {
+  clean: function(content, undefinedOnly) {
+    var k, v;
+    for (k in content) {
+      v = content[k];
+      if (v && typeof v === 'object') {
+        module.exports.clean(v, undefinedOnly);
+        continue;
+      }
+      if (typeof v === 'undefined') {
+        delete content[k];
+      }
+      if (!undefinedOnly && v === null) {
+        delete content[k];
+      }
+    }
+    return content;
+  },
   copy: function(source, properties) {
     var i, len, obj, property;
     obj = {};
