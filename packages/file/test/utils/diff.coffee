@@ -7,7 +7,7 @@ return unless tags.posix
 
 describe 'file options diff', ->
 
-  they 'type.only is a function', ({ssh}) ->
+  they 'type is a function', ({ssh}) ->
     diffcalled = false
     nikita
       ssh: ssh
@@ -28,14 +28,14 @@ describe 'file options diff', ->
           ]
       .should.be.resolvedWith status: true
 
-  they.skip 'emit logs', ({ssh}) ->
+  they 'emit logs', ({ssh}) ->
     # Prepare by creating a file with content
     logs = []
     nikita
       ssh: ssh
       tmpdir: true
-    , ({metadata: {tmpdir}}) ->
-      @on 'diff', (log) -> logs.push log.message
+    , ({metadata: {tmpdir}, operations: {events}}) ->
+      events.on 'diff', (log) -> logs.push log.message
       @file
         target: "#{tmpdir}/file"
         content: 'Testing diff\noriginal text'
@@ -55,27 +55,32 @@ describe 'file options diff', ->
     nikita
       ssh: ssh
       tmpdir: true
-    , ({metadata: {tmpdir}}) ->
+    , ({metadata: {tmpdir}, operations: {events}}) ->
+      diffs = []
+      events.on 'diff', (log) ->
+        # logs.push log.message
+        diffs.push log.message
       @file
         target: "#{tmpdir}/file"
-        content: Buffer.from 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDMKgZ7/2BG9T0vCJT8qlaH1KJNLSqEiJDHZMirPdzVsbI8x1AiT0EO5D47aROAKXTimVY3YsFr2ETXbLxjFFDP64WqqJ0b+3s2leReNq7ld70pVn1m8npyAZKvUc4/uo7WVLm0A1/U1f+iW9eqpYPKN/BY/+Ta2fp6ui0KUtha3B0xMICD66OLwrnmoFmxElEohL4OLZe7rnOW2G9M6Gej+LO5SeJip0YfiG+ImKQ1ngmGxpuopUOvcT1La/1TGki2gEV4AEm4QHW0fZ4Bjz0tdMVPGexUHQW/si9RWF8tJPsoykUcvS6slpbmil2ls9e7tcT6F4KZUCJv9nn6lWSf hdfs@hadoop'
-        diff: (diff) -> # we dont need diff argument
+        content: Buffer.from 'ABC'
+      @call ->
+        diffs.should.eql [ '1 + ABC\n' ]
 
-  they.skip 'empty source on empty file', ({ssh}) ->
+  they 'empty source on empty file', ({ssh}) ->
     logs = []
     nikita
       ssh: ssh
       tmpdir: true
-    , ({metadata: {tmpdir}}) ->
-      .on 'diff', (log) -> logs.push log.message
-      @file
+    , ({metadata: {tmpdir}, operations: {events}}) ->
+      events.on 'diff', (log) ->
+        logs.push log.message
+      await @file
         target: "#{tmpdir}/file"
         content: ''
-      @file
+      await @file
         target: "#{tmpdir}/file"
         content: ''
-      @call ->
-        logs.should.eql ['']
+      logs.should.eql ['']
 
   they 'content on created file', ({ssh}) ->
     diff = null
@@ -83,9 +88,8 @@ describe 'file options diff', ->
       ssh: ssh
       tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file
+      await @file
         target: "#{tmpdir}/file"
         content: 'some content'
         diff: (text, raw) -> diff = text
-      , (err) ->
-        diff.should.eql '1 + some content\n' unless err
+      diff.should.eql '1 + some content\n'
