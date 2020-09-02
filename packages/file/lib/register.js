@@ -18,10 +18,11 @@ module.exports = {
     },
     render: '@nikitajs/file/lib/render',
     touch: '@nikitajs/file/lib/touch',
-    upload: '@nikitajs/file/lib/upload'
+    upload: '@nikitajs/file/lib/upload',
+    yaml: '@nikitajs/file/lib/yaml'
   }
 };
 
-(async function() {  // yaml: '@nikitajs/file/lib/yaml'
+(async function() {
   return (await registry.register(module.exports));
 })();
