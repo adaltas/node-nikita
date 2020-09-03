@@ -12,11 +12,11 @@ Options:
 Exemple:
 
 ```js
-content = await require('nikita')
-.fs.readFile({
+{data} = await nikita.fs.readFile({
   target: "#{scratch}/a_file",
   encoding: 'ascii'
 })
+console.log(data)
 ```
 
 ## Hook
@@ -57,7 +57,7 @@ content = await require('nikita')
             buffers.push buffer
       data = Buffer.concat buffers
       data = data.toString config.encoding if config.encoding
-      data
+      data: data
 
 ## Exports
 

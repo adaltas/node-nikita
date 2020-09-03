@@ -95,16 +95,16 @@ handler = async function({
       raw_output: true
     }, async function() {
       var data, exec_cmd;
-      exists = (await this.fs.base.exists({
+      ({exists} = (await this.fs.base.exists({
         target: config.target
-      }));
+      })));
       if (!exists) {
         return false;
       }
-      data = (await this.fs.base.readFile({
+      ({data} = (await this.fs.base.readFile({
         target: config.target,
         encoding: 'utf8'
-      }));
+      })));
       exec_cmd = /exec (.*) \$@/.exec(data)[1];
       return exec_cmd && exec_cmd === config.source;
     }));

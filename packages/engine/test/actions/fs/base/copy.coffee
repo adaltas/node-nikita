@@ -23,7 +23,7 @@ describe 'actions.fs.copy', ->
       @fs.base.readFile
         target: "{{parent.metadata.tmpdir}}/a_directory/a_file"
         encoding: 'utf8'
-      .should.be.finally.containEql 'some content'
+      .should.be.finally.containEql data: 'some content'
 
   they 'a file to a file', ({ssh}) ->
     nikita
@@ -42,7 +42,7 @@ describe 'actions.fs.copy', ->
       @fs.base.readFile
         target: "{{parent.metadata.tmpdir}}/a_target"
         encoding: 'utf8'
-      .should.be.finally.containEql 'some source content'
+      .should.be.finally.containEql data: 'some source content'
 
   they 'option argument default to target', ({ssh}) ->
     nikita
@@ -57,7 +57,7 @@ describe 'actions.fs.copy', ->
       @fs.base.readFile
         target: "{{parent.metadata.tmpdir}}/a_target"
         encoding: 'utf8'
-      .should.be.finally.containEql 'some content'
+      .should.be.finally.containEql data: 'some content'
     
   they 'NIKITA_FS_COPY_TARGET_ENOENT target does not exits', ({ssh}) ->
     nikita

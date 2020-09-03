@@ -39,10 +39,10 @@ require(nikita)
         await @fs.base.stat
           target: config.target
           dereference: true
-        true
+        exists: true
       catch err
         if err.code is 'NIKITA_FS_STAT_TARGET_ENOENT'
-          false
+          exists: false
         else
           throw err
 

@@ -14,7 +14,7 @@ describe 'actions.fs.exists', ->
     , ->
       @fs.base.exists
         target: "{{parent.metadata.tmpdir}}/not_here"
-      .should.be.resolvedWith false
+      .should.be.resolvedWith exists: false
 
   they 'exists', ({ssh}) ->
     nikita
@@ -26,7 +26,7 @@ describe 'actions.fs.exists', ->
         content: "some content"
       @fs.base.exists
         target: "{{parent.metadata.tmpdir}}/a_file"
-      .should.be.resolvedWith true
+      .should.be.resolvedWith exists: true
 
   they 'option argument default to target', ({ssh}) ->
     nikita
@@ -37,4 +37,4 @@ describe 'actions.fs.exists', ->
         target: "{{parent.metadata.tmpdir}}/a_file"
         content: ''
       @fs.base.exists "{{parent.metadata.tmpdir}}/a_file"
-      .should.be.resolvedWith true
+      .should.be.resolvedWith exists: true

@@ -16,7 +16,7 @@ describe 'actions.fs.writeFile', ->
         target: "{{parent.metadata.tmpdir}}/a_file"
         content: 'some content'
       @fs.base.readFile "{{parent.metadata.tmpdir}}/a_file"
-      .should.be.resolvedWith Buffer.from 'some content'
+      .should.be.resolvedWith data: Buffer.from 'some content'
 
   they 'content is empty', ({ssh}) ->
     nikita
@@ -27,7 +27,7 @@ describe 'actions.fs.writeFile', ->
         target: "{{parent.metadata.tmpdir}}/a_file"
         content: ''
       @fs.base.readFile "{{parent.metadata.tmpdir}}/a_file"
-      .should.be.resolvedWith Buffer.from ''
+      .should.be.resolvedWith data: Buffer.from ''
   
   they.skip 'option append on missing file', ({ssh}) ->
     nikita
@@ -39,7 +39,7 @@ describe 'actions.fs.writeFile', ->
         content: 'some content'
         flags: 'a'
       @fs.base.readFile "{{parent.metadata.tmpdir}}/a_file"
-      .should.be.resolvedWith Buffer.from 'some content'
+      .should.be.resolvedWith data: Buffer.from 'some content'
   
   they.skip 'option append on existing file', ({ssh}) ->
     # TODO, for now, this test fail with `some` instead of `something`,

@@ -193,8 +193,7 @@ pass all the properties through the `ssh` property.
         @log message: "Read Private Key from: #{config.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/open'
         location = await tilde.normalize config.private_key_path
         try
-          data = await fs.readFile location, 'ascii'
-          config.private_key = data
+          {data: config.private_key} = await fs.readFile location, 'ascii'
         catch err
           throw Error "Private key doesnt exists: #{JSON.stringify location}" if err.code is 'ENOENT'
           throw err

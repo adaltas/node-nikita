@@ -176,11 +176,11 @@ describe 'file.download file', ->
           target: "#{tmpdir}/check_md5"
           md5: true
         .should.be.resolvedWith status: false
-        logs = await @fs.base.readFile
+        {data} = await @fs.base.readFile
           target: "#{tmpdir}/localhost.log"
           encoding: 'utf8'
-        (logs.includes "[WARN] Hash dont match, source is 'df8fede7ff71608e24a5576326e41c75' and target is 'null'").should.be.true()
-        (logs.includes "[INFO] Hash matches as 'df8fede7ff71608e24a5576326e41c75'").should.be.true()
+        (data.includes "[WARN] Hash dont match, source is 'df8fede7ff71608e24a5576326e41c75' and target is 'null'").should.be.true()
+        (data.includes "[INFO] Hash matches as 'df8fede7ff71608e24a5576326e41c75'").should.be.true()
       
   describe 'error', ->
 

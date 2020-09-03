@@ -84,14 +84,14 @@ require('nikita')
       log message: "Entering file.json", level: 'DEBUG', module: 'nikita/lib/file/json'
       if config.merge
         try
-          data = await @fs.base.readFile
+          {data} = await @fs.base.readFile
             target: config.target
             encoding: 'utf8'
           config.content = merge JSON.parse(data), config.content
         catch err
           throw err if err.code isnt 'NIKITA_FS_CRS_TARGET_ENOENT'
       if config.source
-        data = await @fs.base.readFile
+        {data} = await @fs.base.readFile
           ssh: if config.local then false else undefined
           sudo: if config.local then false else undefined
           target: config.source

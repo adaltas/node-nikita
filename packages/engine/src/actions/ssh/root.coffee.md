@@ -109,7 +109,7 @@ require('nikita')
       if config.public_key_path and not config.public_key
         location = await tilde.normalize config.public_key_path
         try
-          config.public_key = await fs.readFile location, 'ascii'
+          {data: config.public_key} = await fs.readFile location, 'ascii'
         catch err
           throw Error "Private key doesnt exists: #{JSON.stringify location}" if err.code is 'ENOENT'
           throw err
@@ -118,7 +118,7 @@ require('nikita')
         @log message: "Read Private Key: #{JSON.stringify config.private_key_path}", level: 'DEBUG', module: 'nikita/lib/ssh/root'
         location = await tilde.normalize config.private_key_path
         try
-          config.private_key = await fs.readFile location, 'ascii'
+          {data: config.private_key} = await fs.readFile location, 'ascii'
         catch err
           throw Error "Private key doesnt exists: #{JSON.stringify location}" if err.code is 'ENOENT'
           throw err

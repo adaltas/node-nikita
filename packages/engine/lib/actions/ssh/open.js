@@ -164,7 +164,7 @@ handler = async function({
     config,
     parent: {state}
   }) {
-  var conn, data, err, location;
+  var conn, err, location;
   this.log({
     message: "Entering ssh.open",
     level: 'DEBUG',
@@ -212,8 +212,9 @@ handler = async function({
     });
     location = (await tilde.normalize(config.private_key_path));
     try {
-      data = (await fs.readFile(location, 'ascii'));
-      config.private_key = data;
+      ({
+        data: config.private_key
+      } = (await fs.readFile(location, 'ascii')));
     } catch (error1) {
       err = error1;
       if (err.code === 'ENOENT') {
