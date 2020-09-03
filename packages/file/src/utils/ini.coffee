@@ -1,6 +1,6 @@
 
 ini = require 'ini'
-string = require './string'
+utils = require '@nikitajs/engine/lib/utils/string'
 
 module.exports =
   # Remove undefined and null values
@@ -77,7 +77,7 @@ module.exports =
   #       current[match[1]] = null
   #   data
   parse_brackets_then_curly: (str, options={}) ->
-    lines = require('@nikitajs/core/lib/misc/string').lines str
+    lines = utils.string.lines str
     current = data = {}
     stack = [current]
     comment = options.comment or ';'
@@ -119,7 +119,7 @@ module.exports =
 
   ###
   parse_multi_brackets: (str, options={}) ->
-    lines = string.lines str
+    lines = utils.string.lines str
     current = data = {}
     stack = [current]
     comment = options.comment or ';'
@@ -160,7 +160,7 @@ module.exports =
 
   ###
   parse_multi_brackets_multi_lines: (str, options={}) ->
-    lines = string.lines str
+    lines = utils.string.lines str
     current = data = {}
     stack = [current]
     comment = options.comment or ';'
@@ -353,6 +353,7 @@ module.exports =
       isArray = Array.isArray v
       isObj = typeof v is 'object' and not isArray and not isNull
       continue unless isObj
-      out += "#{prefix}#{string.repeat '[', depth+1}#{k}#{string.repeat ']', depth+1}#{options.eol}"
+      # out += "#{prefix}#{utils.string.repeat '[', depth+1}#{k}#{utils.string.repeat ']', depth+1}#{options.eol}"
+      out += "#{prefix}#{'['.repeat depth+1}#{k}#{']'.repeat depth+1}#{options.eol}"
       out += module.exports.stringify_multi_brackets v, depth + 1, options
     out
