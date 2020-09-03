@@ -137,7 +137,7 @@ require('nikita')
       parse = config.parse or ini.parse
       # Original properties
       try
-        data = await @fs.base.readFile
+        {data} = await @fs.base.readFile
           target: config.target
           encoding: config.encoding
         org_props = parse data, config
@@ -145,7 +145,7 @@ require('nikita')
         throw err unless err.code is 'NIKITA_FS_CRS_TARGET_ENOENT'
       # Default properties
       try if config.source
-        data = await @fs.base.readFile
+        {data} = await @fs.base.readFile
           if: config.source
           ssh: if config.local then false else undefined
           sudo: if config.local then false else undefined

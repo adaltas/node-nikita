@@ -340,14 +340,14 @@ require('nikita')
           throw Error "Source does not exist: #{JSON.stringify config.source}" if config.source
           config.content = ''
         log message: "Reading source", level: 'DEBUG', module: 'nikita/lib/file'
-        config.content = await @fs.base.readFile
+        {data: config.content} = await @fs.base.readFile
           ssh: if config.local then false else undefined
           sudo: if config.local then false else undefined
           target: source
           encoding: config.encoding
       else if not config.content?
         try
-          config.content = await @fs.base.readFile
+          {data: config.content} = await @fs.base.readFile
             ssh: if config.local then false else config.ssh
             sudo: if config.local then false else config.sudo
             target: config.target
@@ -415,7 +415,7 @@ require('nikita')
           config.content += config.eof
       # Read the target, compute its hash and diff its content
       if targetStats
-        targetContent = await @fs.base.readFile
+        {data: targetContent} = await @fs.base.readFile
           target: config.target
           encoding: config.encoding
         targetContentHash = utils.string.hash targetContent

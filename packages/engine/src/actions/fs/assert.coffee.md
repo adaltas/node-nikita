@@ -143,7 +143,7 @@ require('nikita')
         config.content = utils.buffer.trim config.content, config.encoding if config.trim
       # Assert file exists
       unless config.content? or config.md5 or config.sha1 or config.sha256 or config.mode?.length
-        exists = await @fs.base.exists config.target.toString()
+        {exists} = await @fs.base.exists config.target.toString()
         unless config.not
           unless exists
             err = errors.NIKITA_FS_ASSERT_FILE_MISSING config: config
@@ -170,7 +170,7 @@ require('nikita')
           throw errors.NIKITA_FS_ASSERT_FILETYPE_INVALID config: config, expect: 'Socket', stats: stats
       # Assert content equal
       if config.content? and (typeof config.content is 'string' or Buffer.isBuffer config.content)
-        data = await @fs.base.readFile config.target
+        {data} = await @fs.base.readFile config.target
         data = utils.buffer.trim data, config.encoding if config.trim
         unless config.not
           unless data.equals config.content
@@ -181,7 +181,7 @@ require('nikita')
         throw err if err
       # Assert content match
       if config.content? and config.content instanceof RegExp
-        data = await @fs.base.readFile config.target
+        {data} = await @fs.base.readFile config.target
         unless config.not
           unless config.content.test data
             throw errors.NIKITA_FS_ASSERT_CONTENT_UNMATCH config: config, expect: data

@@ -19,7 +19,7 @@ describe 'actions.fs.readFile', ->
       @fs.base.readFile
         target: "{{parent.metadata.tmpdir}}/a_file"
         encoding: 'ascii'
-      .should.be.resolvedWith 'hello'
+      .should.be.resolvedWith data: 'hello'
 
   they 'argument `target`', ({ssh}) ->
     nikita
@@ -30,7 +30,7 @@ describe 'actions.fs.readFile', ->
         target: "{{parent.metadata.tmpdir}}/a_file"
         content: 'hello'
       @fs.base.readFile "{{parent.metadata.tmpdir}}/a_file"
-      .should.be.resolvedWith Buffer.from 'hello'
+      .should.be.resolvedWith data: Buffer.from 'hello'
   
   describe 'error', ->
   

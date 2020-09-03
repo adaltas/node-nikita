@@ -20,7 +20,7 @@ describe 'actions.fs.createWriteStream', ->
           ws.end()
       @fs.base.readFile
         target: "{{parent.metadata.tmpdir}}/a_file"
-      .should.be.resolvedWith Buffer.from 'hello'
+      .should.be.resolvedWith data: Buffer.from 'hello'
 
   they 'argument `target`', ({ssh}) ->
     nikita
@@ -33,7 +33,7 @@ describe 'actions.fs.createWriteStream', ->
           ws.end()
       @fs.base.readFile
         target: "{{parent.metadata.tmpdir}}/a_file"
-      .should.be.resolvedWith Buffer.from 'hello'
+      .should.be.resolvedWith data: Buffer.from 'hello'
 
   they 'config `mode`', ({ssh}) ->
     nikita
@@ -65,7 +65,7 @@ describe 'actions.fs.createWriteStream', ->
           ws.end()
       @fs.base.readFile
         target: "{{parent.metadata.tmpdir}}/a_file"
-      .should.be.resolvedWith "hello nikita"
+      .should.be.resolvedWith data: "hello nikita"
   
   describe 'errors', ->
   

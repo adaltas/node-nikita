@@ -75,7 +75,7 @@ describe 'actions.execute.config.sudo', ->
         target: "#{tmpdir}/a_file"
         encoding: 'ascii'
         sudo: true
-      .should.be.resolvedWith 'hello'
+      .should.be.resolvedWith data: 'hello'
 
   they 'writeFile', ({ssh}) ->
     nikita
@@ -96,7 +96,7 @@ describe 'actions.execute.config.sudo', ->
       @fs.base.readFile
         target: "#{tmpdir}/a_dir/a_file"
         sudo: true
-      .should.resolvedWith 'some content'
+      .should.resolvedWith data: 'some content'
       @fs.base.unlink
         target: "#{tmpdir}/a_dir/a_file"
         sudo: true

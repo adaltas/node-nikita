@@ -48,11 +48,15 @@ handler = async function({config}) {
       target: config.target,
       dereference: true
     });
-    return true;
+    return {
+      exists: true
+    };
   } catch (error) {
     err = error;
     if (err.code === 'NIKITA_FS_STAT_TARGET_ENOENT') {
-      return false;
+      return {
+        exists: false
+      };
     } else {
       throw err;
     }

@@ -28,10 +28,10 @@ describe 'file.cache file', ->
         cache_file: "#{tmpdir}/my_cache_file"
         md5: 'df8fede7ff71608e24a5576326e41c75'
       .should.be.resolvedWith status: false
-      logs = await @fs.base.readFile
+      {data} = await @fs.base.readFile
         target: "#{tmpdir}/localhost.log"
         encoding: 'utf8'
-      (logs.includes 'Hashes match, skipping').should.be.true()
+      (data.includes 'Hashes match, skipping').should.be.true()
 
   they 'current cache file dont match provided hash', ({ssh}) ->
     nikita
@@ -102,19 +102,19 @@ describe 'file.cache file', ->
           cache_file: "#{tmpdir}/target"
           md5: true
         .should.be.resolvedWith status: false
-        logs = await @fs.base.readFile
+        {data} = await @fs.base.readFile
           target: "#{tmpdir}/localhost.log"
           encoding: 'utf8'
-        (logs.includes '[DEBUG] Hashes match, skipping').should.be.true()
+        (data.includes '[DEBUG] Hashes match, skipping').should.be.true()
         @file.cache
           source: "#{tmpdir}/source"
           cache_file: "#{tmpdir}/target"
           md5: 'df8fede7ff71608e24a5576326e41c75'
         .should.be.resolvedWith status: false
-        logs = await @fs.base.readFile
+        {data} = await @fs.base.readFile
           target: "#{tmpdir}/localhost.log"
           encoding: 'utf8'
-        (logs.includes '[DEBUG] Hashes match, skipping').should.be.true()
+        (data.includes '[DEBUG] Hashes match, skipping').should.be.true()
         @file.cache
           source: "#{tmpdir}/source"
           cache_file: "#{tmpdir}/target"

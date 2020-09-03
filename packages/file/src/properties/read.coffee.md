@@ -56,7 +56,7 @@ require('nikita')
 
     handler = ({config, log}) ->
       log message: "Entering file.properties", level: 'DEBUG', module: 'nikita/lib/file/properties/read'
-      data = await @fs.base.readFile
+      {data} = await @fs.base.readFile
         target: config.target
         encoding: config.encoding
       properties = {}

@@ -77,7 +77,7 @@ require('nikita')
       log message: "Entering file.render", level: 'DEBUG', module: 'nikita/lib/file/render'
       # Read source
       if config.source
-        data = await @fs.base.readFile
+        {data} = await @fs.base.readFile
           ssh: if config.local then false else config.ssh
           sudo: if config.local then false else config.sudo
           target: config.source

@@ -66,7 +66,7 @@ require('nikita')
       if config.merge
         log message: "Get Target Content", level: 'DEBUG', module: 'nikita/lib/file/cson'
         try
-          data = await @fs.base.readFile
+          {data} = await @fs.base.readFile
             target: config.target
             encoding: config.encoding
           data = season.parse data
