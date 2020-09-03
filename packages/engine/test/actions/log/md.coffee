@@ -100,22 +100,14 @@ describe 'actions.log.md', ->
         @execute """
         echo 'this is a one line output'
         """
-        # @call ({log}) ->
-        #   log message: 'this is a one line output', type: 'stdout_stream'
-        #   log message: null, type: 'stdout_stream'
-        # /^\n```stdout\nthis is a one line output\n```\n\n/
-        @fs.base.readFile
+        {data} = await @fs.base.readFile
           target: "#{tmpdir}/localhost.log"
           encoding: 'utf8'
-        .should.finally.containEql """
-          
-          
+        data.should.containEql """
           ```stdout
           this is a one line output
           
           ```
-          
-          
           """
           
     they 'stdin one line', ({ssh}) ->
@@ -127,18 +119,11 @@ describe 'actions.log.md', ->
         @execute """
         echo 'this is a first line'
         """
-        # @call ({log}) ->
-        #   log message: 'this is a one line output', type: 'stdout_stream'
-        #   log message: null, type: 'stdout_stream'
-        # /^\n```stdout\nthis is a one line output\n```\n\n/
-        @fs.base.readFile
+        {data} = await @fs.base.readFile
           target: "#{tmpdir}/localhost.log"
           encoding: 'utf8'
-        .should.finally.containEql """
-          
+        data.should.containEql """
           Running Command: `echo 'this is a first line'`
-          
-          
           """
           
     they 'stdin multi line', ({ssh}) ->
@@ -151,19 +136,12 @@ describe 'actions.log.md', ->
         echo 'this is a first line'
         echo 'this is a second line'
         """
-        # @call ({log}) ->
-        #   log message: 'this is a one line output', type: 'stdout_stream'
-        #   log message: null, type: 'stdout_stream'
-        # /^\n```stdout\nthis is a one line output\n```\n\n/
-        @fs.base.readFile
+        {data} = await @fs.base.readFile
           target: "#{tmpdir}/localhost.log"
           encoding: 'utf8'
-        .should.finally.containEql """
-          
+        data.should.containEql """
           ```stdin
           echo 'this is a first line'
           echo 'this is a second line'
           ```
-          
-          
           """

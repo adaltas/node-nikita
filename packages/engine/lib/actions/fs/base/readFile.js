@@ -12,11 +12,11 @@
 // Exemple:
 
 // ```js
-// content = await require('nikita')
-// .fs.readFile({
+// {data} = await nikita.fs.readFile({
 //   target: "#{scratch}/a_file",
 //   encoding: 'ascii'
 // })
+// console.log(data)
 // ```
 
 // ## Hook
@@ -79,7 +79,9 @@ handler = async function({config}) {
   if (config.encoding) {
     data = data.toString(config.encoding);
   }
-  return data;
+  return {
+    data: data
+  };
 };
 
 // ## Exports

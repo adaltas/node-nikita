@@ -15,8 +15,8 @@ describe 'actions.log.csv', ->
     , ({metadata: {tmpdir}}) ->
       @log.csv basedir: tmpdir
       @call ({log}) -> log 'ok'
-      content = await @fs.base.readFile "#{tmpdir}/localhost.log", encoding: 'ascii'
-      content.should.eql 'text,INFO,"ok"\n'
+      {data} = await @fs.base.readFile "#{tmpdir}/localhost.log", encoding: 'ascii'
+      data.should.eql 'text,INFO,"ok"\n'
 
   they 'write header', ({ssh}) ->
     nikita
@@ -25,6 +25,6 @@ describe 'actions.log.csv', ->
     , ({metadata: {tmpdir}}) ->
       @log.csv basedir: tmpdir
       @call header: 'h1', ({log}) -> true
-      content = await @fs.base.readFile "#{tmpdir}/localhost.log", encoding: 'ascii'
-      content.should.eql 'header,,"h1"\n'
+      {data} = await @fs.base.readFile "#{tmpdir}/localhost.log", encoding: 'ascii'
+      data.should.eql 'header,,"h1"\n'
     

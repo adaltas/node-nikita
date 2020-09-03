@@ -83,7 +83,7 @@ handler = async function({
     level: 'DEBUG',
     module: 'nikita/lib/system/move'
   });
-  exists = (await this.fs.base.exists(config.target));
+  ({exists} = (await this.fs.base.exists(config.target)));
   if (!exists) {
     log({
       message: `Rename ${config.source} to ${config.target}`,

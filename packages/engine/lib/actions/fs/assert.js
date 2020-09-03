@@ -222,7 +222,7 @@ handler = async function({metadata, config}) {
   }
   // Assert file exists
   if (!((config.content != null) || config.md5 || config.sha1 || config.sha256 || ((ref = config.mode) != null ? ref.length : void 0))) {
-    exists = (await this.fs.base.exists(config.target.toString()));
+    ({exists} = (await this.fs.base.exists(config.target.toString())));
     if (!config.not) {
       if (!exists) {
         err = errors.NIKITA_FS_ASSERT_FILE_MISSING({
@@ -295,7 +295,7 @@ handler = async function({metadata, config}) {
   }
   // Assert content equal
   if ((config.content != null) && (typeof config.content === 'string' || Buffer.isBuffer(config.content))) {
-    data = (await this.fs.base.readFile(config.target));
+    ({data} = (await this.fs.base.readFile(config.target)));
     if (config.trim) {
       data = utils.buffer.trim(data, config.encoding);
     }
@@ -320,7 +320,7 @@ handler = async function({metadata, config}) {
   }
   // Assert content match
   if ((config.content != null) && config.content instanceof RegExp) {
-    data = (await this.fs.base.readFile(config.target));
+    ({data} = (await this.fs.base.readFile(config.target)));
     if (!config.not) {
       if (!config.content.test(data)) {
         throw errors.NIKITA_FS_ASSERT_CONTENT_UNMATCH({

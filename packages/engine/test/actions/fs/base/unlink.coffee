@@ -20,7 +20,7 @@ describe 'actions.fs.unlink', ->
         target: "{{parent.metadata.tmpdir}}/a_target"
       @fs.base.exists
         target: "{{parent.metadata.tmpdir}}/a_target"
-      .should.be.resolvedWith false
+      .should.be.resolvedWith exists: false
 
   they 'a link referencing a directory', ({ssh}) ->
     nikita

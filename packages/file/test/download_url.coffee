@@ -128,10 +128,10 @@ describe 'file.download url', ->
           target: "#{tmpdir}/target"
           md5: 'df8fede7ff71608e24a5576326e41c75'
         .should.be.resolvedWith status: false
-        logs = await @fs.base.readFile
+        {data} = await @fs.base.readFile
           target: "#{tmpdir}/localhost.log"
           encoding: 'utf8'
-        (logs.includes "[INFO] Destination with valid signature, download aborted").should.be.true()
+        (data.includes "[INFO] Destination with valid signature, download aborted").should.be.true()
 
     they 'bypass shortcircuit if target dont match md5', ({ssh}) ->
       nikita

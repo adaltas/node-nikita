@@ -68,7 +68,7 @@ describe 'plugins.metadata.tmpdir', ->
       , ->
         @call tmpdir: true, dirty: true, (->)
         @fs.base.exists '{{siblings.0.metadata.tmpdir}}'
-        .should.resolvedWith true
+        .should.resolvedWith exists: true
         @fs.base.rmdir '{{siblings.0.metadata.tmpdir}}'
 
     they 'is true', ({ssh}) ->
@@ -77,4 +77,4 @@ describe 'plugins.metadata.tmpdir', ->
       , ->
         @call tmpdir: true, dirty: false, (->)
         @fs.base.exists '{{siblings.0.metadata.tmpdir}}'
-        .should.resolvedWith false
+        .should.resolvedWith exists: false

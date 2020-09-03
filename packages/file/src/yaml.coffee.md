@@ -148,7 +148,7 @@ require('nikita')
       @log message: "Entering file.yaml", level: 'DEBUG', module: 'nikita/lib/file/yaml'
       # Start real work
       try
-        data = await @fs.base.readFile
+        {data} = await @fs.base.readFile
           if: config.merge
           target: config.target
           encoding: 'utf8'

@@ -142,7 +142,9 @@ handler = async function({metadata, config}) {
   if (config.public_key_path && !config.public_key) {
     location = (await tilde.normalize(config.public_key_path));
     try {
-      config.public_key = (await fs.readFile(location, 'ascii'));
+      ({
+        data: config.public_key
+      } = (await fs.readFile(location, 'ascii')));
     } catch (error) {
       err = error;
       if (err.code === 'ENOENT') {
@@ -160,7 +162,9 @@ handler = async function({metadata, config}) {
     });
     location = (await tilde.normalize(config.private_key_path));
     try {
-      config.private_key = (await fs.readFile(location, 'ascii'));
+      ({
+        data: config.private_key
+      } = (await fs.readFile(location, 'ascii')));
     } catch (error) {
       err = error;
       if (err.code === 'ENOENT') {

@@ -73,9 +73,9 @@ require('nikita').fs.link({
         relax: 'EEXIST'
       if config.exec
         exists = await @call raw_output: true, ->
-          exists = await @fs.base.exists target: config.target
+          {exists} = await @fs.base.exists target: config.target
           return false unless exists
-          data = await @fs.base.readFile
+          {data} = await @fs.base.readFile
             target: config.target
             encoding: 'utf8'
           exec_cmd = /exec (.*) \$@/.exec(data)[1]
