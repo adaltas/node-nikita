@@ -58,6 +58,18 @@
   "files": [
     "/lib"
   ],
+  "mocha": {
+    "throw-deprecation": true,
+    "require": [
+      "should",
+      "coffeescript/register",
+      "@nikitajs/lxd/src/register"
+    ],
+    "inline-diffs": true,
+    "timeout": 40000,
+    "reporter": "spec",
+    "recursive": true
+  },
   "publishConfig": {
     "access": "public"
   },
