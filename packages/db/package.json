@@ -2,6 +2,7 @@
   "name": "@nikitajs/db",
   "description": "Nikita databases actions.",
   "keywords": [
+    "nikita",
     "build",
     "cli",
     "deploy",

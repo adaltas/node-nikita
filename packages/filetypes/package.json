@@ -2,6 +2,7 @@
   "name": "@nikitajs/filetypes",
   "description": "Nikita filetypes actions.",
   "keywords": [
+    "nikita",
     "build",
     "cli",
     "deploy",

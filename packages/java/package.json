@@ -2,6 +2,7 @@
   "name": "@nikitajs/java",
   "description": "Nikita Java actions.",
   "keywords": [
+    "nikita",
     "build",
     "cli",
     "deploy",
