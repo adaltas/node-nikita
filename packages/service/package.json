@@ -2,6 +2,7 @@
   "name": "@nikitajs/service",
   "description": "Nikita service actions.",
   "keywords": [
+    "nikita",
     "build",
     "cli",
     "deploy",

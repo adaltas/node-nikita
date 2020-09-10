@@ -2,6 +2,7 @@
   "name": "@nikitajs/krb5",
   "description": "Nikita Kerberos actions.",
   "keywords": [
+    "nikita",
     "build",
     "cli",
     "deploy",

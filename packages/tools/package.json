@@ -2,6 +2,7 @@
   "name": "@nikitajs/tools",
   "description": "Nikita tools actions.",
   "keywords": [
+    "nikita",
     "build",
     "cli",
     "deploy",
