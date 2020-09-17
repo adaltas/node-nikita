@@ -60,8 +60,8 @@
     "coffeescript": "^2.5.1",
     "eslint": "^6.8.0",
     "eslint-plugin-coffee": "^0.1.12",
-    "mocha": "7.1.2",
-    "should": "~13.2.3",
+    "mocha": "^7.1.2",
+    "should": "^13.2.3",
     "ssh2-they": "^2.1.0"
   },
   "peerDependencies": {
