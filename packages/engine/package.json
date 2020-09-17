@@ -60,10 +60,10 @@
     "ajv": "^6.12.3",
     "ajv-keywords": "^3.5.2",
     "colors": "^1.4.0",
-    "minimatch": "~3.0.4",
+    "minimatch": "^3.0.4",
     "mixme": "^0.3.5",
     "pad": "^3.2.0",
-    "regexp-quote": "~0.0.0",
+    "regexp-quote": "^0.0.0",
     "self-templated": "^0.0.4",
     "ssh2-connect": "^3.0.0",
     "ssh2-exec": "^0.5.3",
@@ -79,8 +79,8 @@
     "coffeescript": "^2.5.1",
     "eslint": "^7.6.0",
     "eslint-plugin-coffee": "^0.1.12",
-    "mocha": "8.1.1",
-    "should": "~13.2.3"
+    "mocha": "^8.1.1",
+    "should": "^13.2.3"
   },
   "engines": {
     "node": ">= 10.0.0"
