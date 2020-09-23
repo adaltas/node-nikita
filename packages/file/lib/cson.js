@@ -91,10 +91,10 @@ handler = async function({config, log}) {
       module: 'nikita/lib/file/cson'
     });
     try {
-      data = (await this.fs.base.readFile({
+      ({data} = (await this.fs.base.readFile({
         target: config.target,
         encoding: config.encoding
-      }));
+      })));
       data = season.parse(data);
       config.content = merge(data, config.content);
       log({

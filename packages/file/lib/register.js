@@ -10,7 +10,7 @@ module.exports = {
     cache: '@nikitajs/file/lib/cache',
     cson: '@nikitajs/file/lib/cson',
     download: '@nikitajs/file/lib/download',
-    // ini: '@nikitajs/file/lib/ini'
+    ini: '@nikitajs/file/lib/ini',
     json: '@nikitajs/file/lib/json',
     properties: {
       '': '@nikitajs/file/lib/properties',

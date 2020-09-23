@@ -463,11 +463,11 @@ handler = async function({config, log}) {
       level: 'DEBUG',
       module: 'nikita/lib/file'
     });
-    exists = (await this.fs.base.exists({
+    ({exists} = (await this.fs.base.exists({
       ssh: !config.local ? config.ssh : void 0,
       sudo: config.local ? false : config.sudo,
       target: source
-    }));
+    })));
     if (!exists) {
       if (config.source) {
         throw Error(`Source does not exist: ${JSON.stringify(config.source)}`);
@@ -479,20 +479,24 @@ handler = async function({config, log}) {
       level: 'DEBUG',
       module: 'nikita/lib/file'
     });
-    config.content = (await this.fs.base.readFile({
+    ({
+      data: config.content
+    } = (await this.fs.base.readFile({
       ssh: config.local ? false : void 0,
       sudo: config.local ? false : void 0,
       target: source,
       encoding: config.encoding
-    }));
+    })));
   } else if (config.content == null) {
     try {
-      config.content = (await this.fs.base.readFile({
+      ({
+        data: config.content
+      } = (await this.fs.base.readFile({
         ssh: config.local ? false : config.ssh,
         sudo: config.local ? false : config.sudo,
         target: config.target,
         encoding: config.encoding
-      }));
+      })));
     } catch (error) {
       err = error;
       if (err.code !== 'NIKITA_FS_CRS_TARGET_ENOENT') {
@@ -636,10 +640,12 @@ handler = async function({config, log}) {
   }
   // Read the target, compute its hash and diff its content
   if (targetStats) {
-    targetContent = (await this.fs.base.readFile({
+    ({
+      data: targetContent
+    } = (await this.fs.base.readFile({
       target: config.target,
       encoding: config.encoding
-    }));
+    })));
     targetContentHash = utils.string.hash(targetContent);
   }
   if (config.content != null) {

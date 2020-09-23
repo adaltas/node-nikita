@@ -159,7 +159,7 @@ require('nikita')
       # - hash isnt true and doesnt match
       {status} = await @call ->
         log message: "Check if target (#{config.target}) exists", level: 'DEBUG', module: 'nikita/lib/file/cache'
-        exists = await @fs.base.exists target: config.target
+        {exists} = await @fs.base.exists target: config.target
         if exists
           log message: "Target file exists", level: 'INFO', module: 'nikita/lib/file/cache'
           # If no checksum , we ignore MD5 check
