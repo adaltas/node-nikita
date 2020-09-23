@@ -66,10 +66,10 @@ handler = async function({config, log}) {
     level: 'DEBUG',
     module: 'nikita/lib/file/properties/read'
   });
-  data = (await this.fs.base.readFile({
+  ({data} = (await this.fs.base.readFile({
     target: config.target,
     encoding: config.encoding
-  }));
+  })));
   properties = {};
   // Parse
   lines = data.split(/\r\n|[\n\r\u0085\u2028\u2029]/g);

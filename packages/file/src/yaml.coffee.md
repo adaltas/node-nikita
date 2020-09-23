@@ -147,13 +147,12 @@ require('nikita')
     handler = ({config}) ->
       @log message: "Entering file.yaml", level: 'DEBUG', module: 'nikita/lib/file/yaml'
       # Start real work
-      try
+      try if config.merge
         {data} = await @fs.base.readFile
-          if: config.merge
           target: config.target
           encoding: 'utf8'
-        if data? then yaml.safeLoadAll data, (data) ->
-          config.content = merge data, config.content
+        data = yaml.safeLoad data
+        config.content = merge data, config.content
       catch err
         throw err unless err.code is 'NIKITA_FS_CRS_TARGET_ENOENT'
       if config.clean

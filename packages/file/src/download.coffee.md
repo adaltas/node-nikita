@@ -269,7 +269,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         # Probably not the best to check hash, it only applies to HTTP for now
         throw Error "Invalid downloaded checksum, found '#{hash}' instead of '#{source_hash}'" if typeof source_hash is 'string' and source_hash isnt hash
         hash_source = hash
-        exists = await @fs.base.exists target: config.target
+        {exists} = await @fs.base.exists target: config.target
         if exists
           {hash} = await @fs.hash target: config.target, algo: algo
           hash_target = hash
@@ -286,7 +286,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         hash_source = hash_target = null
         {hash} = await @fs.hash target: config.source, algo: algo
         hash_source = hash
-        exists = await @fs.base.exists target: config.target
+        {exists} = await @fs.base.exists target: config.target
         if exists
           {hash} = await @fs.hash target: config.target, algo: algo
           hash_target = hash
@@ -306,7 +306,7 @@ It would be nice to support alternatives sources such as FTP(S) or SFTP.
         hash_source = hash_target = null
         {hash} = await @fs.hash target: config.source, algo: algo, ssh: false, sudo: false
         hash_source = hash
-        exists = await @fs.base.exists target: config.target
+        {exists} = await @fs.base.exists target: config.target
         if exists
           {hash} = await @fs.hash target: config.target, algo: algo
           hash_target = hash

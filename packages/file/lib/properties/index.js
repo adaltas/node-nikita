@@ -98,9 +98,9 @@ handler = async function({config, log}) {
     module: 'nikita/lib/file/properties'
   });
   // Read Original
-  exists = (await this.fs.base.exists({
+  ({exists} = (await this.fs.base.exists({
     target: config.target
-  }));
+  })));
   if (exists) {
     ({properties} = (await this.file.properties.read({
       target: config.target,

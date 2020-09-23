@@ -57,7 +57,7 @@ require('nikita')
       # status is false if the file doesn't exist and true otherwise
       {status} = await @call ->
         log message: "Check if target exists \"#{config.target}\"", level: 'DEBUG', module: 'nikita/lib/file/touch'
-        exists = await @fs.base.exists target: config.target
+        {exists} = await @fs.base.exists target: config.target
         log message: "Destination does not exists", level: 'INFO', module: 'nikita/lib/file/touch' if not exists
         !exists
       # if the file doesn't exist, create a new one

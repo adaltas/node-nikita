@@ -103,12 +103,12 @@ handler = async function({config, log}) {
   });
   // Read source
   if (config.source) {
-    data = (await this.fs.base.readFile({
+    ({data} = (await this.fs.base.readFile({
       ssh: config.local ? false : config.ssh,
       sudo: config.local ? false : config.sudo,
       target: config.source,
       encoding: config.encoding
-    }));
+    })));
     if (data != null) {
       config.source = void 0;
       config.content = data;

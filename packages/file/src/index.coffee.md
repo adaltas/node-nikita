@@ -332,7 +332,7 @@ require('nikita')
         # connection, use by the upload function
         source = config.source or config.target
         log message: "Force local source is \"#{if config.local then 'true' else 'false'}\"", level: 'DEBUG', module: 'nikita/lib/file'
-        exists = await @fs.base.exists
+        {exists} = await @fs.base.exists
           ssh: config.ssh unless config.local
           sudo: if config.local then false else config.sudo
           target: source

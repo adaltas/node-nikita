@@ -108,10 +108,10 @@ handler = async function({config, log}) {
   });
   if (config.merge) {
     try {
-      data = (await this.fs.base.readFile({
+      ({data} = (await this.fs.base.readFile({
         target: config.target,
         encoding: 'utf8'
-      }));
+      })));
       config.content = merge(JSON.parse(data), config.content);
     } catch (error) {
       err = error;
@@ -121,12 +121,12 @@ handler = async function({config, log}) {
     }
   }
   if (config.source) {
-    data = (await this.fs.base.readFile({
+    ({data} = (await this.fs.base.readFile({
       ssh: config.local ? false : void 0,
       sudo: config.local ? false : void 0,
       target: config.source,
       encoding: 'utf8'
-    }));
+    })));
     config.content = merge(JSON.parse(data), config.content);
   }
   if (config.transform) {

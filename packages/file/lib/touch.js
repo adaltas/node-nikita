@@ -80,9 +80,9 @@ handler = async function({config, log}) {
       level: 'DEBUG',
       module: 'nikita/lib/file/touch'
     });
-    exists = (await this.fs.base.exists({
+    ({exists} = (await this.fs.base.exists({
       target: config.target
-    }));
+    })));
     if (!exists) {
       log({
         message: "Destination does not exists",
