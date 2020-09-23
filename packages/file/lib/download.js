@@ -414,9 +414,9 @@ handler = async function({
       throw Error(`Invalid downloaded checksum, found '${hash}' instead of '${source_hash}'`);
     }
     hash_source = hash;
-    exists = (await this.fs.base.exists({
+    ({exists} = (await this.fs.base.exists({
       target: config.target
-    }));
+    })));
     if (exists) {
       ({hash} = (await this.fs.hash({
         target: config.target,
@@ -452,9 +452,9 @@ handler = async function({
       algo: algo
     })));
     hash_source = hash;
-    exists = (await this.fs.base.exists({
+    ({exists} = (await this.fs.base.exists({
       target: config.target
-    }));
+    })));
     if (exists) {
       ({hash} = (await this.fs.hash({
         target: config.target,
@@ -496,9 +496,9 @@ handler = async function({
       sudo: false
     })));
     hash_source = hash;
-    exists = (await this.fs.base.exists({
+    ({exists} = (await this.fs.base.exists({
       target: config.target
-    }));
+    })));
     if (exists) {
       ({hash} = (await this.fs.hash({
         target: config.target,

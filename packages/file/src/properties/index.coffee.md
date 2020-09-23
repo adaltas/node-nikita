@@ -76,7 +76,7 @@ require('nikita')
       org_props = {}
       log message: "Merging \"#{if config.merge then 'true' else 'false'}\"", level: 'DEBUG', module: 'nikita/lib/file/properties'
       # Read Original
-      exists = await @fs.base.exists target: config.target
+      {exists} = await @fs.base.exists target: config.target
       if exists
         {properties} = await @file.properties.read
           target: config.target

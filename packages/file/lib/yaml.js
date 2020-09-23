@@ -176,15 +176,13 @@ handler = async function({config}) {
   });
   try {
     // Start real work
-    data = (await this.fs.base.readFile({
-      if: config.merge,
-      target: config.target,
-      encoding: 'utf8'
-    }));
-    if (data != null) {
-      yaml.safeLoadAll(data, function(data) {
-        return config.content = merge(data, config.content);
-      });
+    if (config.merge) {
+      ({data} = (await this.fs.base.readFile({
+        target: config.target,
+        encoding: 'utf8'
+      })));
+      data = yaml.safeLoad(data);
+      config.content = merge(data, config.content);
     }
   } catch (error) {
     err = error;
