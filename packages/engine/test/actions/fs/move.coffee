@@ -44,7 +44,7 @@ describe 'system.move', ->
       @fs.move
         target: "#{tmpdir}/new_name"
         source: "#{tmpdir}/org_file"
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       # The target file should exists
       @fs.assert
         target: "#{tmpdir}/new_name"
@@ -65,7 +65,7 @@ describe 'system.move', ->
       @fs.move
         source: "#{tmpdir}/a_dir"
         target: "#{tmpdir}/moved"
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       # The target file should exists
       @fs.assert
         target: "#{tmpdir}/moved"
@@ -92,11 +92,11 @@ describe 'system.move', ->
       @fs.move
         source: "#{tmpdir}/src1.txt"
         target: "#{tmpdir}/dest.txt"
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @fs.move # Move a file with the same content
         source: "#{tmpdir}/src2.txt"
         target: "#{tmpdir}/dest.txt"
-      .should.be.resolvedWith status: false
+      .should.be.finally.containEql status: false
       @fs.assert
         target: "#{tmpdir}/dest.txt"
         content: 'hello'
@@ -119,4 +119,4 @@ describe 'system.move', ->
         source: "#{tmpdir}/src.txt"
         target: "#{tmpdir}/dest.txt"
         force: 1
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true

@@ -6,7 +6,7 @@ they = require('ssh2-they').configure ssh
 
 return unless tags.posix
 
-describe 'actions.fs.createWriteStream', ->
+describe 'actions.fs.base.createWriteStream', ->
 
   they 'write a file', ({ssh}) ->
     nikita
@@ -20,7 +20,7 @@ describe 'actions.fs.createWriteStream', ->
           ws.end()
       @fs.base.readFile
         target: "{{parent.metadata.tmpdir}}/a_file"
-      .should.be.resolvedWith data: Buffer.from 'hello'
+      .should.be.finally.containEql data: Buffer.from 'hello'
 
   they 'argument `target`', ({ssh}) ->
     nikita
@@ -33,7 +33,7 @@ describe 'actions.fs.createWriteStream', ->
           ws.end()
       @fs.base.readFile
         target: "{{parent.metadata.tmpdir}}/a_file"
-      .should.be.resolvedWith data: Buffer.from 'hello'
+      .should.be.finally.containEql data: Buffer.from 'hello'
 
   they 'config `mode`', ({ssh}) ->
     nikita
@@ -65,7 +65,7 @@ describe 'actions.fs.createWriteStream', ->
           ws.end()
       @fs.base.readFile
         target: "{{parent.metadata.tmpdir}}/a_file"
-      .should.be.resolvedWith data: "hello nikita"
+      .should.be.finally.containEql data: "hello nikita"
   
   describe 'errors', ->
   

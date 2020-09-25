@@ -1,7 +1,7 @@
 
 nikita = require '../../../src'
 
-describe 'session.hooks.on_action', ->
+describe 'session.plugins.on_action', ->
 
   it 'call action from global registry', ->
     nikita.call

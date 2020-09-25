@@ -39,7 +39,7 @@ describe 'plugins.metadata.raw', ->
         nikita true, raw_input: true, (action) ->
           config: action.config
           argument: action.metadata.argument
-        .should.be.resolvedWith
+        .should.be.finally.containEql
           config: {}
           argument: true
           status: false

@@ -23,9 +23,9 @@ describe 'actions.fs.mkdir', ->
       tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.mkdir "#{tmpdir}/a_dir"
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @fs.mkdir "#{tmpdir}/a_dir"
-      .should.be.resolvedWith status: false
+      .should.be.finally.containEql status: false
     
   they 'should create dir recursively', ({ssh}) ->
     nikita
@@ -33,7 +33,7 @@ describe 'actions.fs.mkdir', ->
       tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @fs.mkdir "#{tmpdir}/a_parent_dir/a_dir"
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       {stats} = await @fs.base.stat "#{tmpdir}/a_parent_dir/a_dir"
       utils.stats.isDirectory(stats.mode).should.be.true()
 
@@ -80,7 +80,7 @@ describe 'actions.fs.mkdir', ->
         @fs.mkdir
           target: source
           exclude: /^do/
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: source
           not: true
@@ -97,7 +97,7 @@ describe 'actions.fs.mkdir', ->
         @fs.mkdir
           target: './a_dir'
           cwd: tmpdir
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/a_dir"
 
@@ -141,11 +141,11 @@ describe 'actions.fs.mkdir', ->
         @fs.mkdir
           target: "#{tmpdir}/ssh_dir_string"
           mode: 0o755
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.mkdir
           target: "#{tmpdir}/ssh_dir_string"
           mode: 0o755
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
 
     they 'dont ovewrite permission', ({ssh}) ->
       nikita
@@ -157,7 +157,7 @@ describe 'actions.fs.mkdir', ->
           mode: 0o744
         @fs.mkdir
           target: "#{tmpdir}/a_dir"
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
         @fs.assert
           target: "#{tmpdir}/a_dir"
           mode: 0o0744

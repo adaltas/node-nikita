@@ -65,7 +65,7 @@ describe 'fs.copy', ->
         @fs.copy
           source: "#{tmpdir}/a_file"
           target: "#{tmpdir}/a_target"
-        .should.be.resolvedWith
+        .should.be.finally.containEql
           status: true
         @fs.assert
           target: "#{tmpdir}/a_target"
@@ -73,7 +73,7 @@ describe 'fs.copy', ->
         @fs.copy
           source: "#{tmpdir}/a_file"
           target: "#{tmpdir}/a_target"
-        .should.be.resolvedWith
+        .should.be.finally.containEql
           status: false
   
     they 'into a directory', ({ssh}) ->
@@ -87,7 +87,7 @@ describe 'fs.copy', ->
         @fs.copy # Copy non existing file
           source: "#{tmpdir}/a_file"
           target: "#{tmpdir}/existing_dir"
-        .should.be.resolvedWith
+        .should.be.finally.containEql
           status: true
         @fs.assert
           target: "#{tmpdir}/existing_dir/a_file"
@@ -102,7 +102,7 @@ describe 'fs.copy', ->
         @fs.copy
           source: "#{tmpdir}/source_file"
           target: "#{tmpdir}/target_file"
-        .should.be.resolvedWith
+        .should.be.finally.containEql
           status: true
         @fs.assert
           target: "#{tmpdir}/target_file"
@@ -110,7 +110,7 @@ describe 'fs.copy', ->
         @fs.copy
           source: "#{tmpdir}/source_file"
           target: "#{tmpdir}/target_file"
-        .should.be.resolvedWith
+        .should.be.finally.containEql
           status: false
   
     they 'change permissions', ({ssh}) ->
@@ -130,7 +130,7 @@ describe 'fs.copy', ->
           target: "#{tmpdir}/target_file"
           source: "#{tmpdir}/source_file"
           mode: 0o0750
-        .should.be.resolvedWith
+        .should.be.finally.containEql
           status: true
         @fs.assert
           target: "#{tmpdir}/target_file"
@@ -245,7 +245,7 @@ describe 'fs.copy', ->
         @fs.copy
           source: "#{tmpdir}/source"
           target: "#{tmpdir}/target_1"
-        .should.be.resolvedWith
+        .should.be.finally.containEql
           status: true
         @fs.assert "#{tmpdir}/target_1/a_dir/a_file"
         @fs.assert "#{tmpdir}/target_1/a_file"
@@ -255,7 +255,7 @@ describe 'fs.copy', ->
         @fs.copy
           source: "#{tmpdir}/source"
           target: "#{tmpdir}/target_2"
-        .should.be.resolvedWith
+        .should.be.finally.containEql
           status: true
         @fs.assert "#{tmpdir}/target_2/source/a_dir/a_file"
         @fs.assert "#{tmpdir}/target_2/source/a_file"
@@ -272,7 +272,7 @@ describe 'fs.copy', ->
         @fs.copy
           source: "#{tmpdir}/source/"
           target: "#{tmpdir}/target_1"
-        .should.be.resolvedWith
+        .should.be.finally.containEql
           status: true
         @fs.assert "#{tmpdir}/target_1/a_dir/a_file"
         @fs.assert "#{tmpdir}/target_1/a_file"
@@ -282,7 +282,7 @@ describe 'fs.copy', ->
         @fs.copy
           source: "#{tmpdir}/source/"
           target: "#{tmpdir}/target_2"
-        .should.be.resolvedWith
+        .should.be.finally.containEql
           status: true
         @fs.assert "#{tmpdir}/target_2/a_dir/a_file"
         @fs.assert "#{tmpdir}/target_2/a_file"

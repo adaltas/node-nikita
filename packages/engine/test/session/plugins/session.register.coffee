@@ -4,7 +4,7 @@ session = require '../../../src/session'
 
 # Test the construction of the session namespace stored in state
 
-describe 'session.hooks.session.register', ->
+describe 'session.plugins.session.register', ->
   
   it 'alter action - sync', ->
     nikita ({plugins, registry}) ->

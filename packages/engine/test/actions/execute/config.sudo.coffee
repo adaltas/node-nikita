@@ -75,7 +75,7 @@ describe 'actions.execute.config.sudo', ->
         target: "#{tmpdir}/a_file"
         encoding: 'ascii'
         sudo: true
-      .should.be.resolvedWith data: 'hello'
+      .should.be.finally.containEql data: 'hello'
 
   they 'writeFile', ({ssh}) ->
     nikita

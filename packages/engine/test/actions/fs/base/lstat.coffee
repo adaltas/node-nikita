@@ -6,7 +6,7 @@ they = require('ssh2-they').configure ssh
 
 return unless tags.posix
 
-describe 'actions.fs.lstat', ->
+describe 'actions.fs.base.lstat', ->
 
   they 'with a file link', ({ssh}) ->
     nikita

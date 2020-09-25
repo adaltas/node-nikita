@@ -6,7 +6,7 @@ they = require('ssh2-they').configure ssh
 
 return unless tags.posix
 
-describe 'actions.fs.stat', ->
+describe 'actions.fs.base.stat', ->
 
   they 'NIKITA_FS_STAT_TARGET_ENOENT target does not exists', ({ssh}) ->
     nikita

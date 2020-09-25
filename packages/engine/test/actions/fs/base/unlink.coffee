@@ -6,7 +6,7 @@ they = require('ssh2-they').configure ssh
 
 return unless tags.posix
 
-describe 'actions.fs.unlink', ->
+describe 'actions.fs.base.unlink', ->
 
   they 'a file', ({ssh}) ->
     nikita
@@ -20,7 +20,7 @@ describe 'actions.fs.unlink', ->
         target: "{{parent.metadata.tmpdir}}/a_target"
       @fs.base.exists
         target: "{{parent.metadata.tmpdir}}/a_target"
-      .should.be.resolvedWith exists: false
+      .should.be.finally.containEql exists: false
 
   they 'a link referencing a directory', ({ssh}) ->
     nikita

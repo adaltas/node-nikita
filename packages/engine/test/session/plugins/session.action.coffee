@@ -4,7 +4,7 @@ session = require '../../../src/session'
 
 # Test the construction of the session namespace stored in state
 
-describe 'session.hooks.session.action', ->
+describe 'session.plugins.session.action', ->
   
   describe 'runtime', ->
   
@@ -21,7 +21,7 @@ describe 'session.hooks.session.action', ->
         context.registry.register ['an', 'action'],
           key: 'value'
           handler: ({config}) -> config
-        context.an.action().should.be.finally.eql
+        context.an.action().should.be.finally.containEql
           key: 'value'
           new_key: 'new value'
           status: false
