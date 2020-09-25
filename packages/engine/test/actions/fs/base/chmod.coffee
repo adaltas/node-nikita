@@ -6,7 +6,7 @@ they = require('ssh2-they').configure ssh
 
 return unless tags.posix
 
-describe 'actions.fs.chmod', ->
+describe 'actions.fs.base.chmod', ->
 
   they 'create', ({ssh}) ->
     nikita

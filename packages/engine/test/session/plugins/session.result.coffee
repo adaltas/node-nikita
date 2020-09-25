@@ -4,7 +4,7 @@ session = require '../../../src/session'
 
 # Test the construction of the session namespace stored in state
 
-describe 'session.hooks.session.result', ->
+describe 'session.plugins.session.result', ->
 
   it 'is called before action and children resolved', ->
     called = false

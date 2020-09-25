@@ -6,7 +6,7 @@ they = require('ssh2-they').configure ssh
 
 return unless tags.posix
 
-describe 'actions.fs.symlink', ->
+describe 'actions.fs.base.symlink', ->
 
   they 'create', ({ssh}) ->
     nikita

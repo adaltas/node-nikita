@@ -18,7 +18,7 @@ describe 'actions.ssh.close', ->
       password: ssh.config.password
       private_key: ssh.config.privateKey
     .ssh.close()
-    .should.be.resolvedWith status: true
+    .should.be.finally.containEql status: true
 
   they 'status is false without a connection', ({ssh}) ->
     nikita
@@ -30,7 +30,7 @@ describe 'actions.ssh.close', ->
       private_key: ssh.config.privateKey
     .ssh.close()
     .ssh.close()
-    .should.be.resolvedWith status: false
+    .should.be.finally.containEql status: false
 
   they 'connection argument', ({ssh}) ->
     conn = await connect
@@ -42,6 +42,6 @@ describe 'actions.ssh.close', ->
       public_key: ssh.config.publicKey
     nikita ->
       @ssh.close ssh: conn
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       # @ssh.close ssh: conn
-      # .should.be.resolvedWith status: false
+      # .should.be.finally.containEql status: false

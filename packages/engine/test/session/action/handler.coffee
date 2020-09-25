@@ -1,7 +1,7 @@
 
-nikita = require '../../src'
+nikita = require '../../../src'
 
-describe 'action.handler', ->
+describe 'session.action.handler', ->
   
   describe 'root action', ->
     
@@ -36,7 +36,7 @@ describe 'action.handler', ->
         handler: ({config}) ->
           new Promise (accept, reject) ->
             setImmediate -> accept output: 'ok'
-      .should.be.resolvedWith output: 'ok', status: false
+      .should.be.finally.containEql output: 'ok', status: false
 
     it 'return an action resolved promise', ->
       nikita.call
@@ -45,4 +45,4 @@ describe 'action.handler', ->
             handler: ->
               new Promise (accept, reject) ->
                 setImmediate -> accept output: 'ok'
-      .should.be.resolvedWith output: 'ok', status: false
+      .should.be.finally.containEql output: 'ok', status: false

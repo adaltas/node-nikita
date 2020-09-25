@@ -5,7 +5,7 @@ they = require('ssh2-they').configure ssh
 
 return unless tags.posix
 
-describe 'actions.fs.copy', ->
+describe 'actions.fs.base.copy', ->
 
   they 'a file to a directory', ({ssh}) ->
     nikita
