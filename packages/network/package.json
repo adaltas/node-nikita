@@ -1,0 +1,81 @@
+{
+  "name": "@nikitajs/network",
+  "description": "Nikita network actions.",
+  "keywords": [
+    "nikita",
+    "build",
+    "cli",
+    "deploy",
+    "network",
+    "tcp",
+    "http",
+    "ssh"
+  ],
+  "version": "0.9.7-alpha.0",
+  "author": "David Worms <david@adaltas.com>",
+  "bugs": {
+    "url": "https://github.com/adaltas/node-nikita/issues"
+  },
+  "coffeelintConfig": {
+    "indentation": {
+      "level": "error",
+      "value": 2
+    },
+    "line_endings": {
+      "level": "error",
+      "value": "unix"
+    },
+    "max_line_length": {
+      "level": "ignore"
+    }
+  },
+  "contributors": [
+    {
+      "name": "David Worms",
+      "email": "david@adaltas.com"
+    }
+  ],
+  "dependencies": {},
+  "peerDependencies": {
+    "@nikitajs/engine": "^0.9.5"
+  },
+  "devDependencies": {
+    "coffeescript": "^2.5.1",
+    "mocha": "^7.1.1",
+    "should": "^13.2.3",
+    "ssh2-they": "^2.1.0"
+  },
+  "engines": {
+    "node": ">= 10.0.0"
+  },
+  "files": [
+    "/lib"
+  ],
+  "mocha": {
+    "throw-deprecation": true,
+    "require": [
+      "should",
+      "coffeescript/register",
+      "@nikitajs/network/src/register"
+    ],
+    "inline-diffs": true,
+    "timeout": 40000,
+    "reporter": "spec",
+    "recursive": true
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://nikita.js.org/",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adaltas/node-nikita",
+    "directory": "packages/network"
+  },
+  "scripts": {
+    "build": "coffee -b -o lib src && sed -i -e 's/src/lib/g' lib/register.js",
+    "pretest": "npm build",
+    "test": "mocha 'test/**/*.coffee'"
+  }
+}
