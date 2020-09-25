@@ -17,7 +17,7 @@ describe 'fs.remove', ->
         content: ''
       @fs.remove
         source: "#{tmpdir}/a_file"
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
 
   they 'accept a string', ({ssh}) ->
     nikita
@@ -27,8 +27,8 @@ describe 'fs.remove', ->
       @fs.base.writeFile
         target: "#{tmpdir}/a_file"
         content: ''
-      @fs.remove "#{tmpdir}/a_file"
-      .should.be.resolvedWith status: true
+      {status} = await @fs.remove "#{tmpdir}/a_file"
+      status.should.be.true()
 
   they 'accept an array of strings', ({ssh}) ->
     nikita
@@ -41,11 +41,12 @@ describe 'fs.remove', ->
       @fs.base.writeFile
         target: "#{tmpdir}/file_2"
         content: ''
-      @fs.remove [
+      (await @fs.remove [
         "#{tmpdir}/file_1"
         "#{tmpdir}/file_2"
-      ]
-      .should.be.resolvedWith [{status: true}, {status: true}]
+      ])
+      .map ({status}) -> status
+      .should.eql [true, true]
 
   they 'a file', ({ssh}) ->
     nikita
@@ -57,10 +58,10 @@ describe 'fs.remove', ->
         content: ''
       @fs.remove
         source: "#{tmpdir}/a_file"
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @fs.remove
         source: "#{tmpdir}/a_file"
-      .should.be.resolvedWith status: false
+      .should.be.finally.containEql status: false
 
   they 'a link', ({ssh}) ->
     nikita
@@ -73,7 +74,7 @@ describe 'fs.remove', ->
       @fs.base.symlink source: "#{tmpdir}/a_file", target: "#{tmpdir}/a_link"
       @fs.remove
         source: "#{tmpdir}/a_link"
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @fs.assert
         target: "#{tmpdir}/a_link"
         not: true
@@ -99,7 +100,7 @@ describe 'fs.remove', ->
         content: ''
       @fs.remove
         source: "#{tmpdir}/*gz"
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @fs.assert "#{tmpdir}/a_dir.tar.gz", not: true
       @fs.assert "#{tmpdir}/a_dir.tgz", not: true
       @fs.assert "#{tmpdir}/a_dir.zip"
@@ -114,7 +115,7 @@ describe 'fs.remove', ->
         target: "#{tmpdir}/remove_dir"
       @fs.remove
         target: "#{tmpdir}/remove_dir"
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @fs.remove
         target: "#{tmpdir}/remove_dir"
-      .should.be.resolvedWith status: false
+      .should.be.finally.containEql status: false

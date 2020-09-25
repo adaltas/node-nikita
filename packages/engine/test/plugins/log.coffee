@@ -3,39 +3,48 @@ nikita = require '../../src'
 stream = require 'stream'
 
 describe 'plugins.log', ->
-  
-  it 'emit events', ->
-    nikita ({log, operations: {events}}) ->
-      new Promise (resolve) ->
-        events.on 'text', (msg) ->
-          resolve msg
-        log message: 'getme'
-      .should.finally.containEql
-        message: 'getme'
-        level: 'INFO'
-        index: undefined
-        module: undefined
-        namespace: []
-        type: 'text'
-        depth: 0
-        metadata:
-          raw: false
-          raw_input: false
-          raw_output: false
+
+  describe 'events', ->
+    
+    it 'are emitted', ->
+      nikita ({log, operations: {events}}) ->
+        new Promise (resolve) ->
+          events.on 'text', (msg) ->
+            resolve msg
+          log message: 'getme'
+        .should.finally.containEql
+          message: 'getme'
+          level: 'INFO'
+          index: undefined
+          module: undefined
           namespace: []
-          debug: false
+          type: 'text'
           depth: 0
-          disabled: false
-          relax: false
-          attempt: 0
-          retry: 1
-          # shy: false
-          sleep: 3000
-          templated: true
-        config: {}
-        file: 'log.coffee'
-        filename: __filename
-        line: 18
+          metadata:
+            raw: false
+            raw_input: false
+            raw_output: false
+            namespace: []
+            debug: false
+            depth: 0
+            disabled: false
+            relax: false
+            attempt: 0
+            retry: 1
+            # shy: false
+            sleep: 3000
+            templated: true
+          config: {}
+          file: 'log.coffee'
+          filename: __filename
+          line: 19
+          
+    it 'argument is immutable', ->
+      arg = key: 'value'
+      {logs} = await nikita.call ({log}) ->
+        log arg
+        true
+      arg.should.eql key: 'value'
   
   describe 'is a `boolean`', ->
       

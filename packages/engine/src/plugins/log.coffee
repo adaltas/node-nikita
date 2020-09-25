@@ -2,6 +2,7 @@
 {EventEmitter} = require 'events'
 stackTrace = require 'stack-trace'
 path = require 'path'
+{merge} = require 'mixme'
 
 ###
 The `log` plugin inject a log fonction into the action.handler argument.
@@ -27,6 +28,7 @@ module.exports = ->
       after: '@nikitajs/engine/src/plugins/events'
       handler: (action) ->
         action.log = (log) ->
+          log = merge log
           log = message: log if typeof log is 'string'
           log.level ?= 'INFO'
           log.time ?= Date.now()
@@ -49,3 +51,4 @@ module.exports = ->
           else
             return if action.metadata?.log is false
           action.operations.events.emit log.type, log, action
+          log

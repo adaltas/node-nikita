@@ -6,7 +6,7 @@ they = require('ssh2-they').configure ssh
 
 return unless tags.posix
 
-describe 'actions.fs.rename', ->
+describe 'actions.fs.base.rename', ->
 
   they 'create', ({ssh}) ->
     nikita

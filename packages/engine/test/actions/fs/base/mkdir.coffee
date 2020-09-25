@@ -6,7 +6,7 @@ they = require('ssh2-they').configure ssh
 
 return unless tags.posix
 
-describe 'actions.fs.mkdir', ->
+describe 'actions.fs.base.mkdir', ->
 
   they 'a new directory', ({ssh}) ->
     nikita

@@ -34,7 +34,7 @@ describe 'actions.fs.chmod', ->
       @fs.chmod
         mode: '600'
         target: "#{tmpdir}/a_file"
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       {stats} = await @fs.base.stat "#{tmpdir}/a_file"
       utils.mode.compare(stats.mode, 0o0600).should.be.true()
 

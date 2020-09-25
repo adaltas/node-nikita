@@ -7,23 +7,23 @@ return unless tags.api
 describe 'plugins.metadata.shy', ->
 
   it 'dont alter status', ->
-    nikita ->
+    {status} = await nikita ->
       @call shy: true, -> true
       @call -> false
       null
-    .should.be.resolvedWith status: false
+    status.should.eql false
 
   it 'doesnt apply to output', ->
-    nikita ->
-      @call shy: true, -> true
-      .should.be.resolvedWith status: true
+    {status} = await nikita ->
+      {status} = await @call shy: true, -> true
+      status.should.eql true
       null
-    .should.be.resolvedWith status: false
+    status.should.eql false
 
   it 'output from array', ->
     count = 0
     nikita ->
-      @call ->
+      {status} = await @call ->
         [act1, act2] = await @call [
           shy: true
           handler: -> true
@@ -34,8 +34,8 @@ describe 'plugins.metadata.shy', ->
         act1.status.should.be.true()
         act2.status.should.be.false()
         null
-      .should.be.resolvedWith status: false
-      @call ->
+      status.should.be.false()
+      {status} = await @call ->
         [act1, act2] = await @call [
           shy: false
           handler: -> true
@@ -46,4 +46,4 @@ describe 'plugins.metadata.shy', ->
         act1.status.should.be.true()
         act2.status.should.be.false()
         null
-      .should.be.resolvedWith status: true
+      status.should.be.true()

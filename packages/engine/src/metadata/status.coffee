@@ -4,7 +4,10 @@ error = require '../utils/error'
 
 module.exports = ->
   module: '@nikitajs/engine/src/metadata/status'
-  require: '@nikitajs/engine/src/plugins/history'
+  require: [
+    '@nikitajs/engine/src/plugins/history'
+    '@nikitajs/engine/src/metadata/raw'
+  ]
   hooks:
     # 'nikita:registry:normalize': (action) ->
     #   action.metadata ?= {}

@@ -5,7 +5,7 @@ they = require('ssh2-they').configure ssh
 
 return unless tags.posix
 
-describe 'actions.fs.createReadStream', ->
+describe 'actions.fs.base.createReadStream', ->
 
   they 'option on_readable', ({ssh}) ->
     buffers = []

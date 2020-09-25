@@ -7,7 +7,7 @@ they = require('ssh2-they').configure ssh
 
 return unless tags.posix
 
-describe 'actions.fs.readdir', ->
+describe 'actions.fs.base.readdir', ->
   
   it 'get native behavior', ->
     nikita tmpdir: true, ({metadata: {tmpdir}}) ->
