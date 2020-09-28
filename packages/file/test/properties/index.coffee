@@ -15,15 +15,15 @@ describe 'file.properties', ->
       @file.properties
         target: "#{tmpdir}/file.properties"
         content: a_key: 'a value'
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @file.properties
         target: "#{tmpdir}/file.properties"
         content: another_key: 'another value'
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @file.properties
         target: "#{tmpdir}/file.properties"
         content: another_key: 'another value'
-      .should.be.resolvedWith status: false
+      .should.be.finally.containEql status: false
       @fs.assert
         target: "#{tmpdir}/file.properties"
         content: "another_key=another value\n"
@@ -36,17 +36,17 @@ describe 'file.properties', ->
       @file.properties
         target: "#{tmpdir}/file.properties"
         content: a_key: 'a value'
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @file.properties
         target: "#{tmpdir}/file.properties"
         content: another_key: 'another value'
         merge: true
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @file.properties
         target: "#{tmpdir}/file.properties"
         content: another_key: 'another value'
         merge: true
-      .should.be.resolvedWith status: false
+      .should.be.finally.containEql status: false
       @fs.assert
         target: "#{tmpdir}/file.properties"
         content: "a_key=a value\nanother_key=another value\n"

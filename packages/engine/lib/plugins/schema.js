@@ -78,6 +78,9 @@ module.exports = function(action) {
               results = [];
               for (key in ref) {
                 value = ref[key];
+                if (key === 'missingProperty') {
+                  continue;
+                }
                 results.push(`, ${key} is ${JSON.stringify(value)}`);
               }
               return results;

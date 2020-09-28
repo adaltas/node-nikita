@@ -18,7 +18,7 @@ describe 'file.json', ->
       @file.json
         target: "#{tmpdir}/target.json"
         content: 'user': 'usrval'
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @fs.assert
         target: "#{tmpdir}/target.json"
         content: '{"user":"usrval"}'
@@ -35,7 +35,7 @@ describe 'file.json', ->
         target: "#{tmpdir}/target.json"
         content: 'user': 'usrval'
         merge: true
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @fs.assert
         target: "#{tmpdir}/target.json"
         content: '{"target":"tarval","user":"usrval"}'
@@ -52,7 +52,7 @@ describe 'file.json', ->
         source: "#{tmpdir}/source.json"
         target: "#{tmpdir}/target.json"
         content: 'user': 'usrval'
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @fs.assert
         target: "#{tmpdir}/target.json"
         content: '{"source":"srcval","user":"usrval"}'
@@ -73,7 +73,7 @@ describe 'file.json', ->
         target: "#{tmpdir}/target.json"
         content: 'user': 'usrval'
         merge: true
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @fs.assert
         target: "#{tmpdir}/target.json"
         content: '{"source":"srcval","target":"tarval","user":"usrval"}'
@@ -87,7 +87,7 @@ describe 'file.json', ->
         target: "#{tmpdir}/target.json"
         content: 'user': 'usrval'
         merge: true
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @fs.assert
         target: "#{tmpdir}/target.json"
         content: '{"user":"usrval"}'
@@ -109,7 +109,7 @@ describe 'file.json', ->
           json.user = "#{json.user} usrval"
           json.transform = "tfmval"
           json
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @fs.assert
         target: "#{tmpdir}/target.json"
         content: '{"target":"transform tarval","user":"transform usrval","transform":"tfmval"}'
