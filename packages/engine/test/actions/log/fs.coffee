@@ -18,8 +18,8 @@ describe 'actions.log.fs', ->
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
         message: [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-          'one error was found in the configuration of action log.fs:'
-          '#/required config should have required property \'serializer\'.'
+          'one error was found in the configuration of action `log.fs`:'
+          '#/required config should have required property \'serializer\', missingProperty is "serializer".'
         ].join ' '
 
   they 'serializer can be empty', ({ssh}) ->

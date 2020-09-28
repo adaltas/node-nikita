@@ -1,7 +1,7 @@
 
 nikita = require '../../src'
 
-describe 'action.schema', ->
+describe 'plugins.schema', ->
 
   it 'registered inside action', ->
     nikita ({schema}) ->
@@ -30,38 +30,6 @@ describe 'action.schema', ->
         handler: ({config}) -> config
       a_string.should.be.a.String()
       an_integer.should.be.a.Number()
-
-  it 'invalid with one error', ->
-    nikita.call
-      a_string: 1
-      an_integer: 0
-      schema:
-        type: 'object'
-        properties:
-          'an_integer': type: 'integer', 'minimum': 1
-      handler: (->)
-    .should.be.rejectedWith [
-      'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-      'one error was found in the configuration of action call:'
-      '#/properties/an_integer/minimum config.an_integer should be >= 1.'
-    ].join ' '
-
-  it 'invalid with multiple errors', ->
-    nikita.call
-      a_string: 1
-      an_integer: 0
-      schema:
-        type: 'object'
-        properties:
-          'a_string': type: 'string'
-          'an_integer': type: 'integer', 'minimum': 1
-      handler: ->
-    .should.be.rejectedWith [
-        'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-        'multiple errors where found in the configuration of action call:'
-        '#/properties/a_string/type config.a_string should be string;'
-        '#/properties/an_integer/minimum config.an_integer should be >= 1.'
-      ].join ' '
     
   it 'doesnt apply when condition is false', ->
     nikita
@@ -74,7 +42,41 @@ describe 'action.schema', ->
       if: false
     , -> throw Error 'KO'
     .should.be.resolved()
-        
+  
+  describe 'errors', ->
+
+    it 'invalid with one error', ->
+      nikita.call
+        a_string: 1
+        an_integer: 0
+        schema:
+          type: 'object'
+          properties:
+            'an_integer': type: 'integer', 'minimum': 1
+        handler: (->)
+      .should.be.rejectedWith [
+        'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+        'one error was found in the configuration of action `call`:'
+        '#/properties/an_integer/minimum config.an_integer should be >= 1,'
+        'comparison is ">=", limit is 1, exclusive is false.'
+      ].join ' '
+
+    it 'nice message with additionalProperties', ->
+      nikita.call
+        a_string: 'ok'
+        lonely_duck: true
+        schema:
+          type: 'object'
+          properties:
+            'a_string': type: 'string'
+          additionalProperties: false
+        handler: (->)
+      .should.be.rejectedWith [
+        'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+        'one error was found in the configuration of action `call`:'
+        '#/additionalProperties config should NOT have additional properties,'
+        'additionalProperty is "lonely_duck".'
+      ].join ' '
   
   describe '$ref', ->
 
@@ -112,8 +114,9 @@ describe 'action.schema', ->
         handler: (->)
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-        'one error was found in the configuration of action call:'
-        'registry://test/schema/properties/an_integer/type config.an_object.an_integer should be integer.'
+        'one error was found in the configuration of action `call`:'
+        'registry://test/schema/properties/an_integer/type config.an_object.an_integer should be integer,'
+        'type is "integer".'
       ].join ' '
   
   describe 'constructor', ->
@@ -172,6 +175,7 @@ describe 'action.schema', ->
         handler: (->)
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-        'one error was found in the configuration of action call:'
-        '#/properties/a_regexp/instanceof config.a_regexp should pass "instanceof" keyword validation.'
+        'one error was found in the configuration of action `call`:'
+        '#/properties/a_regexp/instanceof config.a_regexp should pass "instanceof" keyword validation,'
+        'keyword is "instanceof".'
       ].join ' '
