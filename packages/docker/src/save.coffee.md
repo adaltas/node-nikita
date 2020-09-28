@@ -3,26 +3,6 @@
 
 Save Docker images.
 
-## Options
-
-* `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.
-* `image` (string)   
-  Name/ID of base image, required.
-* `tag` (string)   
-  Tag of the image.
-* `machine` (string)   
-  Name of the docker-machine, required if using docker-machine.
-* `output` (string).   
-  TAR archive output path, required.
-* `target` (string).   
-  Shortcut for "output" option, required.
-* `code` (int | array)   
-  Expected code(s) returned by the command, int or array of int, default to 0.
-* `code_skipped`   
-  Expected code(s) returned by the command if it has no effect, executed will
-  not be incremented, int or array of int.
-
 ## Callback parameters
 
 * `err`   
@@ -48,26 +28,63 @@ nikita.docker({
 })
 ```
 
-## Source Code
+## Hooks
 
-    module.exports = ({options}) ->
-      @log message: "Entering Docker save", level: 'DEBUG', module: 'nikita/lib/docker/save'
-      # Global options
-      options.docker ?= {}
-      options[k] ?= v for k, v of options.docker
-      # Validate parameters
-      throw Error 'Missing image parameter' unless options.image?
-      options.output ?= options.target
-      throw Error 'Missing output parameter' unless options.output?
+    on_action = ({config}) ->
+      config.output ?= config.target
+
+## Schema
+
+    schema =
+      type: 'object'
+      properties:
+        'image':
+          type: 'string'
+          description: """
+          Name/ID of base image, required.
+          """
+        'tag':
+          type: 'string'
+          description: """
+          Tag of the image.
+          """  
+        'output':
+          type: 'string'
+          description: """
+          TAR archive output path, required.
+          """
+        'target':
+          type: 'string'
+          description: """
+          Shortcut for "output" option, required.
+          """
+        'boot2docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+        'compose':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+        'machine':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+      required: ['image', 'output']
+
+## Handler
+
+    handler = ({config, log, operations: {find}}) ->
+      log message: "Entering Docker save", level: 'DEBUG', module: 'nikita/lib/docker/save'
+      # Global config
+      config.docker = await find ({config: {docker}}) -> docker
+      config[k] ?= v for k, v of config.docker
       # Saves image to local tmp path, than copy it
-      cmd = "save -o #{options.output} #{options.image}"
-      cmd += ":#{options.tag}" if options.tag?
-      @log message: "Extracting image #{options.output} to file:#{options.image}", level: 'INFO', module: 'nikita/lib/docker/save'
-      @system.execute
-        cmd: docker.wrap options, cmd
-      , docker.callback
+      log message: "Extracting image #{config.output} to file:#{config.image}", level: 'INFO', module: 'nikita/lib/docker/save'
+      @docker.tools.execute
+        cmd: [
+          "save -o #{config.output} #{config.image}"
+          ":#{config.tag}" if config.tag?
+        ].join ''
 
-## Modules Dependencies
+## Exports
 
-    util = require 'util'  
-    docker = require '@nikitajs/core/lib/misc/docker'
+    module.exports =
+      handler: handler
+      hooks:
+        on_action: on_action
+      schema: schema

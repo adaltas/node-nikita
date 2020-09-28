@@ -25,32 +25,54 @@ Register or log in to a Docker registry server.
 * `err`   
   Error object if any.   
 * `status`   
-  True when the command was executed successfully.   
+  True when the command was executed successfully.
 * `stdout`   
-  Stdout value(s) unless `stdout` option is provided.   
+  Stdout value(s) unless `stdout` option is provided.
 * `stderr`   
-  Stderr value(s) unless `stderr` option is provided.   
+  Stderr value(s) unless `stderr` option is provided.
 
-## Source Code
+## Schema
 
-    module.exports = ({options}, callback) ->
-      @log message: "Entering Docker login", level: 'DEBUG', module: 'nikita/lib/docker/login'
-      # Global options
-      options.docker ?= {}
-      options[k] ?= v for k, v of options.docker
+    schema =
+      type: 'object'
+      properties:
+        '':
+          type: ''
+          description: """
+          """
+        'boot2docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+        'compose':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+        'machine':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+
+## Handler
+
+    handler = ({config, log, operations: {find}}) ->
+      log message: "Entering Docker login", level: 'DEBUG', module: 'nikita/lib/docker/login'
+      # Global config
+      config.docker = await find ({config: {docker}}) -> docker
+      config[k] ?= v for k, v of config.docker
       # Validate parameters and madatory conditions
-      return callback  Error 'Missing image parameter' unless options.image?
-      return callback  Error 'Can not build from Dockerfile and content' if options.content? and options.dockerfile?
+      return callback  Error 'Missing image parameter' unless config.image?
+      return callback  Error 'Can not build from Dockerfile and content' if config.content? and config.dockerfile?
       cmd = 'login'
       for opt in ['email', 'user', 'password']
-        cmd += " -#{opt.charAt 0} #{options[opt]}" if options[opt]?
-      cmd += " \"#{options.registry}\"" if options.registry?
-      @system.execute
-        cmd: docker.wrap options, cmd
+        cmd += " -#{opt.charAt 0} #{config[opt]}" if config[opt]?
+      cmd += " \"#{config.registry}\"" if config.registry?
+      @execute
+        cmd: docker.wrap config, cmd
       , docker.callback
 
-## Modules Dependencies
+## Exports
 
-    docker = require '@nikitajs/core/lib/misc/docker'
+    module.exports =
+      handler: handler
+      schema: schema
+
+## Dependencies
+
+    docker = require './utils'
     path = require 'path'
     util = require 'util'

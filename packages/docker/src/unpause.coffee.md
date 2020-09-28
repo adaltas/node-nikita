@@ -30,20 +30,32 @@ require('nikita')
 })
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({options}, callback) ->
-      @log message: "Entering Docker unpause", level: 'DEBUG', module: 'nikita/lib/docker/unpause'
-      # Global options
-      options.docker ?= {}
-      options[k] ?= v for k, v of options.docker
+    schema =
+      type: 'object'
+      properties:
+        'boot2docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+        'compose':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+        'machine':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+
+## Handler
+
+    handler = ({config, log, operations: {find}}) ->
+      log message: "Entering Docker unpause", level: 'DEBUG', module: 'nikita/lib/docker/unpause'
+      # Global config
+      config.docker = await find ({config: {docker}}) -> docker
+      config[k] ?= v for k, v of config.docker
       # Validation
-      throw Error 'Missing container parameter' unless options.container?
-      @system.execute
-        cmd: docker.wrap options, "unpause #{options.container}"
-      , -> docker.callback callback, arguments...
+      throw Error 'Missing container parameter' unless config.container?
+      @docker.tools.execute
+        cmd: "unpause #{config.container}"
 
-## Modules Dependencies
+## Exports
 
-    docker = require '@nikitajs/core/lib/misc/docker'
-    util = require 'util'
+    module.exports =
+      handler: handler
+      schema: schema

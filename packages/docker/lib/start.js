@@ -44,52 +44,62 @@
 // })
 // ```
 
-// ## Source Code
-var docker, util;
+// ## Schema
+var docker, handler, schema, util;
 
-module.exports = function({options}) {
+schema = {
+  type: 'object',
+  properties: {}
+};
+
+// ## Handler
+handler = function({
+    config,
+    log,
+    operations: {find}
+  }) {
   var cmd, k, ref, v;
-  this.log({
+  log({
     message: "Entering Docker start",
     level: 'DEBUG',
     module: 'nikita/lib/docker/start'
   });
-  // Global options
-  if (options.docker == null) {
-    options.docker = {};
+  // Global config
+  if (config.docker == null) {
+    config.docker = {};
   }
-  ref = options.docker;
+  ref = config.docker;
   for (k in ref) {
     v = ref[k];
-    if (options[k] == null) {
-      options[k] = v;
+    if (config[k] == null) {
+      config[k] = v;
     }
   }
-  if (options.container == null) {
+  if (config.container == null) {
     // Validation
     throw Error('Missing container parameter');
   }
-  // rm is false by default only if options.service is true
+  // rm is false by default only if config.service is true
   cmd = 'start';
-  if (options.attach) {
+  if (config.attach) {
     cmd += ' -a';
   }
-  cmd += ` ${options.container}`;
+  cmd += ` ${config.container}`;
   this.docker.status({
     shy: true
-  }, options, function(err, {status}) {
+  }, config, function(err, {status}) {
     if (err) {
       throw err;
     }
     if (status) {
-      this.log({
-        message: `Container already started ${options.container} (Skipping)`,
+      log({
+        message: `Container already started ${config.container} (Skipping)`,
         level: 'INFO',
         module: 'nikita/lib/docker/start'
       });
     } else {
-      this.log({
-        message: `Starting container ${options.container}`,
+      log({
+        message: `Starting container ${config.container}`,
         level: 'INFO',
         module: 'nikita/lib/docker/start'
       });
@@ -98,12 +108,18 @@ module.exports = function({options}) {
       return this.end();
     }
   });
-  return this.system.execute({
-    cmd: docker.wrap(options, cmd)
+  return this.execute({
+    cmd: docker.wrap(config, cmd)
   }, docker.callback);
 };
 
-// ## Modules Dependencies
-docker = require('@nikitajs/core/lib/misc/docker');
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema
+};
+
+// ## Dependencies
+docker = require('./utils');
 
 util = require('util');

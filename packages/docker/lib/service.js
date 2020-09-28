@@ -11,35 +11,53 @@
 
 // See `docker.run` for list of options.
 
-// ## Source Code
-module.exports = function({options}) {
+// ## Schema
+var handler, schema;
+
+schema = {
+  type: 'object',
+  properties: {}
+};
+
+// ## Handler
+handler = function({
+    config,
+    log,
+    operations: {find}
+  }) {
   var k, ref, v;
-  this.log({
+  log({
     message: "Entering Docker service",
     level: 'DEBUG',
     module: 'nikita/lib/docker/service'
   });
-  // Global options
-  if (options.docker == null) {
-    options.docker = {};
+  // Global config
+  if (config.docker == null) {
+    config.docker = {};
   }
-  ref = options.docker;
+  ref = config.docker;
   for (k in ref) {
     v = ref[k];
-    if (options[k] == null) {
-      options[k] = v;
+    if (config[k] == null) {
+      config[k] = v;
     }
   }
   // Normalization
-  if (options.detach == null) {
-    options.detach = true;
+  if (config.detach == null) {
+    config.detach = true;
   }
-  if (options.rm == null) {
-    options.rm = false;
+  if (config.rm == null) {
+    config.rm = false;
   }
-  if (!((options.name != null) || (options.container != null))) {
+  if (!((config.name != null) || (config.container != null))) {
     // Validation
     throw Error('Missing container name');
   }
-  return this.docker.run(options);
+  return this.docker.run(config);
+};
+
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema
 };

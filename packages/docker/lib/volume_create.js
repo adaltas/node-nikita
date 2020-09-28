@@ -36,63 +36,79 @@
 // })
 // ```
 
-// ## Source Code
-var docker;
+// ## Schema
+var docker, handler, schema;
 
-module.exports = function({options}) {
+schema = {
+  type: 'object',
+  properties: {}
+};
+
+// ## Handler
+handler = function({
+    config,
+    log,
+    operations: {find}
+  }) {
   var cmd, k, ref, v;
-  this.log({
+  log({
     message: "Entering Docker volume_create",
     level: 'DEBUG',
     module: 'nikita/lib/docker/volume_create'
   });
-  // Global options
-  if (options.docker == null) {
-    options.docker = {};
+  // Global config
+  if (config.docker == null) {
+    config.docker = {};
   }
-  ref = options.docker;
+  ref = config.docker;
   for (k in ref) {
     v = ref[k];
-    if (options[k] == null) {
-      options[k] = v;
+    if (config[k] == null) {
+      config[k] = v;
     }
   }
-  if (typeof options.label === 'string') {
-    // Normalize options
-    options.label = [options.label];
+  if (typeof config.label === 'string') {
+    // Normalize config
+    config.label = [config.label];
   }
-  if (typeof options.opt === 'string') {
-    options.opt = [options.opt];
+  if (typeof config.opt === 'string') {
+    config.opt = [config.opt];
   }
   // Build the docker command arguments
   cmd = ["volume create"];
-  if (options.driver) {
-    cmd.push(`--driver ${options.driver}`);
+  if (config.driver) {
+    cmd.push(`--driver ${config.driver}`);
   }
-  if (options.label) {
-    cmd.push(`--label ${options.label.join(',')}`);
+  if (config.label) {
+    cmd.push(`--label ${config.label.join(',')}`);
   }
-  if (options.name) {
-    cmd.push(`--name ${options.name}`);
+  if (config.name) {
+    cmd.push(`--name ${config.name}`);
   }
-  if (options.opt) {
-    cmd.push(`--opt ${options.opt.join(',')}`);
+  if (config.opt) {
+    cmd.push(`--opt ${config.opt.join(',')}`);
   }
   cmd = cmd.join(' ');
-  this.system.execute({
-    if: options.name,
-    cmd: docker.wrap(options, `volume inspect ${options.name}`),
+  this.execute({
+    if: config.name,
+    cmd: docker.wrap(config, `volume inspect ${config.name}`),
     code: 1,
     code_skipped: 0,
     shy: true
   });
-  return this.system.execute({
+  return this.execute({
     if: function() {
-      return !options.name || this.status(-1);
+      return !config.name || this.status(-1);
     },
-    cmd: docker.wrap(options, cmd)
+    cmd: docker.wrap(config, cmd)
   });
 };
 
-// ## Modules Dependencies
-docker = require('@nikitajs/core/lib/misc/docker');
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema
+};
+
+// ## Dependencies
+docker = require('./utils');

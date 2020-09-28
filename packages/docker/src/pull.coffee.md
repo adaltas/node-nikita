@@ -1,18 +1,7 @@
 
 # `nikita.docker.pull`
 
-Pull a container
-
-## Options
-
-* `tag` (string)   
-  Name of the tag to pull.   
-* `version` (string)   
-  Version of the tag to control.  Default to `latest`.   
-* `code_skipped` (string)   
-  The exit code to skip if different from 0.   
-* `all` (Boolean)   
-  Download all tagged images in the repository.  Default to false.   
+Pull a container.
 
 ## Callback parameters
 
@@ -38,35 +27,61 @@ require('nikita')
 })
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({options}, callback) ->
-      @log message: "Entering Docker pull", level: 'DEBUG', module: 'nikita/lib/docker/pull'
-      # Global options
-      options.docker ?= {}
-      options[k] ?= v for k, v of options.docker
+    schema =
+      type: 'object'
+      properties:
+        'tag':
+          type: 'string'
+          description: """
+          Name of the tag to pull.
+          """
+        'version':
+          type: 'string'
+          description: """
+          Version of the tag to control. Default to `latest`.
+          """
+        'all':
+          type: 'boolean'
+          description: """
+          Download all tagged images in the repository.  Default to false.
+          """
+        'boot2docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+        'compose':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+        'machine':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+
+## Handler
+
+    handler = ({config, log, operations: {find}}) ->
+      log message: "Entering Docker pull", level: 'DEBUG', module: 'nikita/lib/docker/pull'
+      # Global config
+      config.docker = await find ({config: {docker}}) -> docker
+      config[k] ?= v for k, v of config.docker
       # Validate parameters
-      version = options.version or options.tag.split(':')[1] or 'latest'
-      delete options.version # present in misc.docker.options, will probably disappear at some point
-      options.all ?= false
-      cmd_images = 'images'
-      cmd_images += " | grep '#{options.tag}'"
-      cmd_images += " | grep '#{version}'" unless options.all
-      throw Error 'Missing Tag Name' unless options.tag?
-      # rm is false by default only if options.service is true
+      version = config.version or config.tag.split(':')[1] or 'latest'
+      delete config.version # present in misc.docker.config, will probably disappear at some point
+      config.all ?= false
+      throw Error 'Missing Tag Name' unless config.tag?
+      # rm is false by default only if config.service is true
       cmd = 'pull'
-      cmd += if options.all then  " -a #{options.tag}" else " #{options.tag}:#{version}"
-      @system.execute
-        cmd: docker.wrap options, cmd_images
+      cmd += if config.all then  " -a #{config.tag}" else " #{config.tag}:#{version}"
+      {status} = await @docker.tools.execute
+        cmd: [
+          'images'
+          "| grep '#{config.tag}'"
+          "| grep '#{version}'" unless config.all
+        ].join ' '
         code_skipped: 1
-      @system.execute
-        unless: -> @status -1
-        cmd: docker.wrap options, cmd
-        code_skipped: options.code_skipped
-      , callback
+      @docker.tools.execute
+        unless: status
+        cmd: cmd
 
-## Modules Dependencies
+## Exports
 
-
-    docker = require '@nikitajs/core/lib/misc/docker'
-    util = require 'util'
+    module.exports =
+      handler: handler
+      schema: schema

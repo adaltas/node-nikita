@@ -37,42 +37,58 @@
 // })
 // ```
 
-// ## Source Code
-var docker, util;
+// ## Schema
+var docker, handler, schema, util;
 
-module.exports = function({options}, callback) {
+schema = {
+  type: 'object',
+  properties: {}
+};
+
+// ## Handler
+handler = function({
+    config,
+    log,
+    operations: {find}
+  }) {
   var cmd, k, ref, v;
-  this.log({
+  log({
     message: "Entering Docker restart",
     level: 'DEBUG',
     module: 'nikita/lib/docker/restart'
   });
-  // Global options
-  if (options.docker == null) {
-    options.docker = {};
+  // Global config
+  if (config.docker == null) {
+    config.docker = {};
   }
-  ref = options.docker;
+  ref = config.docker;
   for (k in ref) {
     v = ref[k];
-    if (options[k] == null) {
-      options[k] = v;
+    if (config[k] == null) {
+      config[k] = v;
     }
   }
-  if (options.container == null) {
+  if (config.container == null) {
     // Validate parameters
     return callback(Error('Missing container parameter'));
   }
   cmd = 'restart';
-  if (options.timeout != null) {
-    cmd += ` -t ${options.timeout}`;
+  if (config.timeout != null) {
+    cmd += ` -t ${config.timeout}`;
   }
-  cmd += ` ${options.container}`;
-  return this.system.execute({
-    cmd: docker.wrap(options, cmd)
+  cmd += ` ${config.container}`;
+  return this.execute({
+    cmd: docker.wrap(config, cmd)
   }, docker.callback);
 };
 
-// ## Modules Dependencies
-docker = require('@nikitajs/core/lib/misc/docker');
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema
+};
+
+// ## Dependencies
+docker = require('./utils');
 
 util = require('util');

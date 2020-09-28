@@ -5,14 +5,6 @@ Stop a started container.
 
 ## Options
 
-* `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.
-* `container` (string)   
-  Name/ID of the container, required.
-* `machine` (string)   
-  Name of the docker-machine, required if using docker-machine.
-* `timeout` (int)   
-  Seconds to wait for stop before killing it
 
 ## Callback parameters
 
@@ -32,30 +24,57 @@ require('nikita')
 })
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({options}) ->
-      @log message: "Entering Docker stop", level: 'DEBUG', module: 'nikita/lib/docker/stop'
-      # Global options
-      options.docker ?= {}
-      options[k] ?= v for k, v of options.docker
-      # Validate parameters
-      throw Error 'Missing container parameter' unless options.container?
-      # rm is false by default only if options.service is true
-      cmd = 'stop'
-      cmd += " -t #{options.timeout}" if options.timeout?
-      cmd += " #{options.container}"
-      @docker.status shy: true, options, (err, {status}) ->
-        throw err if err
-        if status
-        then @log message: "Stopping container #{options.container}", level: 'INFO', module: 'nikita/lib/docker/stop'
-        else @log message: "Container already stopped #{options.container} (Skipping)", level: 'INFO', module: 'nikita/lib/docker/stop'
-        @end() unless status
-      @system.execute
-        cmd: docker.wrap options, cmd
-      , docker.callback
+    schema =
+      type: 'object'
+      properties:
+        'container':
+          type: 'string'
+          description: """
+          Name/ID of the container.
+          """
+        'timeout':
+          type: 'integer'
+          description: """
+          Seconds to wait for stop before killing the container (Docker default
+          is 10).
+          """
+        'boot2docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+        'compose':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+        'machine':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+      required: ['container']
 
-## Modules Dependencies
+## Handler
 
-    docker = require '@nikitajs/core/lib/misc/docker'
+    handler = ({config, log, operations: {find}}) ->
+      log message: "Entering Docker stop", level: 'DEBUG', module: 'nikita/lib/docker/stop'
+      # Global config
+      config.docker = await find ({config: {docker}}) -> docker
+      config[k] ?= v for k, v of config.docker
+      # rm is false by default only if config.service is true
+      {status} = await @docker.tools.status shy: true, config
+      if status
+      then log message: "Stopping container #{config.container}", level: 'INFO', module: 'nikita/lib/docker/stop'
+      else log message: "Container already stopped #{config.container} (Skipping)", level: 'INFO', module: 'nikita/lib/docker/stop'
+      @docker.tools.execute
+        if: status
+        cmd: [
+          'stop'
+          "-t #{config.timeout}" if config.timeout?
+          "#{config.container}"
+        ].join ' '
+
+## Exports
+
+    module.exports =
+      handler: handler
+      schema: schema
+
+## Dependencies
+
+    docker = require './utils'
     util = require 'util'

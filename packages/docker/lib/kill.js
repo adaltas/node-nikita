@@ -36,47 +36,63 @@
 // })
 // ```
 
-// ## Source Code
-var docker;
+// ## Schema
+var docker, handler, schema;
 
-module.exports = function({options}) {
+schema = {
+  type: 'object',
+  properties: {}
+};
+
+// ## Handler
+handler = function({
+    config,
+    log,
+    operations: {find}
+  }) {
   var cmd, k, ref, v;
-  this.log({
+  log({
     message: "Entering Docker kill",
     level: 'DEBUG',
     module: 'nikita/lib/docker/kill'
   });
-  // Global options
-  if (options.docker == null) {
-    options.docker = {};
+  // Global config
+  if (config.docker == null) {
+    config.docker = {};
   }
-  ref = options.docker;
+  ref = config.docker;
   for (k in ref) {
     v = ref[k];
-    if (options[k] == null) {
-      options[k] = v;
+    if (config[k] == null) {
+      config[k] = v;
     }
   }
-  if (options.container == null) {
+  if (config.container == null) {
     // Validate parameters
     return callback(Error('Missing container parameter'));
   }
   cmd = 'kill';
-  if (options.signal != null) {
-    cmd += ` -s ${options.signal}`;
+  if (config.signal != null) {
+    cmd += ` -s ${config.signal}`;
   }
-  cmd += ` ${options.container}`;
-  this.system.execute({
-    cmd: docker.wrap(options, `ps | grep '${options.container}' | grep 'Up'`),
+  cmd += ` ${config.container}`;
+  this.execute({
+    cmd: docker.wrap(config, `ps | grep '${config.container}' | grep 'Up'`),
     code_skipped: 1
   }, docker.callback);
-  return this.system.execute({
+  return this.execute({
     if: function() {
       return this.status(-1);
     },
-    cmd: docker.wrap(options, cmd)
+    cmd: docker.wrap(config, cmd)
   }, docker.callback);
 };
 
-// ## Modules Dependencies
-docker = require('@nikitajs/core/lib/misc/docker');
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema
+};
+
+// ## Dependencies
+docker = require('./utils');

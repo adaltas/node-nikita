@@ -3,24 +3,6 @@
 
 Run a command in a running container
 
-## Options
-
-* `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.
-* `container` (string)   
-  Name/ID of the container, required.
-* `code_skipped` (int | array)   
-  The exit code(s) to skip.
-* `machine` (string)   
-  Name of the docker-machine, required using docker-machine.
-* `service` (boolean)   
-  if true, run container as a service, else run as a command, true by default.
-* `uid` (name | uid)   
-  Username or uid.
-* `gid` (name | gid)   
-  Groupname or gid.
-
-
 ## Callback parameters
 
 * `err`   
@@ -44,37 +26,77 @@ require('nikita')
 });
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({options}, callback) ->
-      @log message: "Entering Docker exec", level: 'DEBUG', module: 'nikita/lib/docker/exec'
-      # Global options
-      options.docker ?= {}
-      options[k] ?= v for k, v of options.docker
-      # Validate parameters
-      throw Error 'Missing container' unless options.container?
-      throw Error 'Missing cmd' unless options.cmd?
-      options.service ?= false
+    schema =
+      type: 'object'
+      properties:
+        'container':
+          type: 'string'
+          description: """
+          Name/ID of the container
+          """
+        'code_skipped':
+          oneOf: [
+            {type: 'integer'}
+            {type: 'array', items: type: 'integer'}
+          ]
+          description: """
+          The exit code(s) to skip.
+          """
+        'service':
+          type: 'boolean'
+          default: false
+          description: """
+          If true, run container as a service, else run as a command, true by default.
+          """
+        'uid':
+          oneOf: [
+            {type: 'integer'}
+            {type: 'string'}
+          ]
+          description: """
+          Username or uid.
+          """
+        'gid':
+          oneOf: [
+            {type: 'integer'}
+            {type: 'string'}
+          ]
+          description: """
+          Groupname or gid.
+          """
+        'boot2docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+        'compose':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+        'machine':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+      required: ['container', 'cmd']
+
+## Handler
+
+    handler = ({config, log, operations: {find}}) ->
+      log message: "Entering Docker exec", level: 'DEBUG', module: 'nikita/lib/docker/exec'
+      # Global config
+      config.docker = await find ({config: {docker}}) -> docker
+      config[k] ?= v for k, v of config.docker
+      config.service ?= false
       # Construct exec command
       cmd = 'exec'
-      if options.uid?
-        cmd += " -u #{options.uid}"
-        cmd += ":#{options.gid}" if options.gid?
-      else if options.gid?
-        @log message: 'options.gid ignored unless options.uid is provided', level: 'WARN', module: 'nikita/lib/docker/exec'
-      cmd += " #{options.container} #{options.cmd}"
-      delete options.cmd
-      @system.execute
-        cmd: docker.wrap options, cmd
-        code_skipped: options.code_skipped
-      # Note: There is no way to pass additionnal arguments in sync mode without
-      # a callback, or we would have ', docker.callback' as next line
-      , ->
-        try
-          docker.callback.call null, arguments...
-        catch e then arguments[0] = e
-        callback arguments...
+      if config.uid?
+        cmd += " -u #{config.uid}"
+        cmd += ":#{config.gid}" if config.gid?
+      else if config.gid?
+        log message: 'config.gid ignored unless config.uid is provided', level: 'WARN', module: 'nikita/lib/docker/exec'
+      cmd += " #{config.container} #{config.cmd}"
+      delete config.cmd
+      @docker.tools.execute
+        cmd: cmd
+        code_skipped: config.code_skipped
 
-## Modules Dependencies
+## Exports
 
-    docker = require '@nikitajs/core/lib/misc/docker'
+    module.exports =
+      handler: handler
+      schema: schema

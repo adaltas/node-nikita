@@ -6,17 +6,6 @@ Note if container is not running , SIGKILL is not executed and
 return status is UNMODIFIED. If container does not exist nor is running
 SIGNAL is not sent.
 
-## Options
-
-* `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.
-* `container` (string)   
-  Name/ID of the container, required.   
-* `machine` (string)   
-  Name of the docker-machine, required if using docker-machine.
-* `signal` (int|string)   
-  Use a specified signal. SIGKILL by default.
-
 ## Callback parameters
 
 * `err`   
@@ -36,27 +25,52 @@ require('nikita')
 })
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({options}) ->
-      @log message: "Entering Docker kill", level: 'DEBUG', module: 'nikita/lib/docker/kill'
-      # Global options
-      options.docker ?= {}
-      options[k] ?= v for k, v of options.docker
-      # Validate parameters
-      return callback Error 'Missing container parameter' unless options.container?
-      cmd = 'kill'
-      cmd += " -s #{options.signal}" if options.signal?
-      cmd += " #{options.container}"
-      @system.execute
-        cmd: docker.wrap options, "ps | grep '#{options.container}' | grep 'Up'"
+    schema =
+      type: 'object'
+      properties:
+        'container':
+          type: 'string'
+          description: """
+          Name/ID of the container.
+          """
+        'signal':
+          oneOf: [
+            {type: 'integer'}
+            {type: 'string'}
+          ]
+          description: """
+          Use a specified signal. SIGKILL by default.
+          """
+        'boot2docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+        'compose':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+        'machine':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+      required: ['container']
+
+## Handler
+
+    handler = ({config, log, operations: {find}}) ->
+      log message: "Entering Docker kill", level: 'DEBUG', module: 'nikita/lib/docker/kill'
+      # Global config
+      config.docker = await find ({config: {docker}}) -> docker
+      config[k] ?= v for k, v of config.docker
+      {status} = await @docker.tools.execute
+        cmd: "ps | egrep ' #{config.container}$' | grep 'Up'"
         code_skipped: 1
-      , docker.callback
-      @system.execute
-        if: -> @status -1
-        cmd: docker.wrap options, cmd
-      , docker.callback
+      @docker.tools.execute
+        if: -> status
+        cmd: [
+          'kill'
+          "-s #{config.signal}" if config.signal?
+          "#{config.container}"
+        ].join ' '
 
-## Modules Dependencies
+## Exports
 
-    docker = require '@nikitajs/core/lib/misc/docker'
+    module.exports =
+      handler: handler
+      schema: schema

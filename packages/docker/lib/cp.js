@@ -48,43 +48,53 @@
 // });
 // ```
 
-// ## Source Code
-var docker, misc, path;
+// ## Schema
+var docker, handler, misc, path, schema;
 
-module.exports = function({options}) {
+schema = {
+  type: 'object',
+  properties: {}
+};
+
+// ## Handler
+handler = function({
+    config,
+    log,
+    operations: {find}
+  }) {
   var _, k, ref, source_container, source_mkdir, source_path, ssh, target_container, target_mkdir, target_path, v;
-  this.log({
+  log({
     message: "Entering Docker cp",
     level: 'DEBUG',
     module: 'nikita/lib/docker/cp'
   });
   // SSH connection
-  ssh = this.ssh(options.ssh);
-  // Global options
-  if (options.docker == null) {
-    options.docker = {};
+  ssh = this.ssh(config.ssh);
+  // Global config
+  if (config.docker == null) {
+    config.docker = {};
   }
-  ref = options.docker;
+  ref = config.docker;
   for (k in ref) {
     v = ref[k];
-    if (options[k] == null) {
-      options[k] = v;
+    if (config[k] == null) {
+      config[k] = v;
     }
   }
-  if (!options.source) {
+  if (!config.source) {
     // Validate parameters
     throw Error('Missing option "source"');
   }
-  if (!options.target) {
+  if (!config.target) {
     throw Error('Missing option "target"');
   }
-  [_, source_container, source_path] = /(.*:)?(.*)/.exec(options.source);
-  [_, target_container, target_path] = /(.*:)?(.*)/.exec(options.target);
+  [_, source_container, source_path] = /(.*:)?(.*)/.exec(config.source);
+  [_, target_container, target_path] = /(.*:)?(.*)/.exec(config.target);
   if (source_container && target_container) {
-    throw Error('Incompatible source and target options');
+    throw Error('Incompatible source and target config');
   }
   if (!source_container && !target_container) {
-    throw Error('Incompatible source and target options');
+    throw Error('Incompatible source and target config');
   }
   source_mkdir = false;
   target_mkdir = false;
@@ -98,7 +108,7 @@ module.exports = function({options}) {
       return callback();
     }
     return this.fs.stat({
-      ssh: options.ssh,
+      ssh: config.ssh,
       target: source_path
     }, function(err, {stats}) {
       if (err && err.code !== 'ENOENT') {
@@ -130,7 +140,7 @@ module.exports = function({options}) {
       return callback();
     }
     return this.fs.stat({
-      ssh: options.ssh,
+      ssh: config.ssh,
       target: target_path
     }, function(err, {stats}) {
       if (err && err.code !== 'ENOENT') {
@@ -151,14 +161,20 @@ module.exports = function({options}) {
       return target_mkdir;
     }
   });
-  return this.system.execute({
-    cmd: docker.wrap(options, `cp ${options.source} ${options.target}`)
+  return this.docker.tools.execute({
+    cmd: `cp ${config.source} ${config.target}`
   }, docker.callback);
 };
 
-// ## Modules Dependencies
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema
+};
+
+// ## Dependencies
 path = require('path');
 
-docker = require('@nikitajs/core/lib/misc/docker');
+docker = require('./utils');
 
 misc = require('@nikitajs/core/lib/misc');

@@ -3,20 +3,6 @@
 
 Block until a container stops.
 
-## Options
-
-* `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.
-* `container` (string)   
-  Name/ID of the container, optional.
-* `machine` (string)   
-  Name of the docker-machine, optional if using docker-machine.
-* `code` (int|array)   
-  Expected code(s) returned by the command, int or array of int, default to 0.
-* `code_skipped`   
-  Expected code(s) returned by the command if it has no effect, executed will
-  not be incremented, int or array of int.
-
 ## Callback parameters
 
 * `err`   
@@ -34,23 +20,36 @@ nikita.docker.wait({
 })
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({options}, callback) ->
-      @log message: "Entering Docker wait", level: 'DEBUG', module: 'nikita/lib/docker/wait'
-      # Global options
-      options.docker ?= {}
-      options[k] ?= v for k, v of options.docker
-      # Validation
-      return callback Error 'Missing container parameter' unless options.container?
-      # rm is false by default only if options.service is true
-      cmd = "wait #{options.container} | read r; return $r"
-      # Construct other exec parameter
-      @system.execute
-        cmd: docker.wrap options, cmd
-      , docker.callback
+    schema =
+      type: 'object'
+      properties:
+        'container':
+          type: 'string'
+          description: """
+          Name/ID of the container.
+          """
+        'boot2docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+        'compose':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+        'machine':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+      require: ['container']
 
-## Modules Dependencies
+## Handler
 
-    docker = require '@nikitajs/core/lib/misc/docker'
-    util = require 'util'
+    handler = ({config, log, operations: {find}}) ->
+      log message: "Entering Docker wait", level: 'DEBUG', module: 'nikita/lib/docker/wait'
+      # Global config
+      config.docker = await find ({config: {docker}}) -> docker
+      config[k] ?= v for k, v of config.docker
+      # Old implementation was `wait {container} | read r; return $r`
+      @docker.tools.execute "wait #{config.container}"
+
+## Exports
+
+    module.exports =
+      handler: handler
+      schema: schema
