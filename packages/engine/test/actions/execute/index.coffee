@@ -226,3 +226,16 @@ describe 'actions.execute', ->
           stdout: ''
           stderr: 'Some Error\n'
           status: false
+
+  describe 'dry', ->
+    
+    they 'dont execute the command', ({ssh}) ->
+      res = await nikita.execute
+        cmd: "exit 1"
+        dry: true
+      res.should.match
+        stdout: []
+        stderr: []
+        code: null
+        status: false
+        logs: (it) -> it.should.be.an.Array()
