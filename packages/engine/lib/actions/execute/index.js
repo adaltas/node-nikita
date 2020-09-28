@@ -148,6 +148,10 @@ will not be incremented, int or array of int.`
       default: false,
       description: `Leave temporary files on the filesystem.`
     },
+    'dry': {
+      type: 'boolean',
+      description: `Run the action without executing any real command.`
+    },
     'trap': {
       type: 'boolean',
       default: false,
@@ -158,9 +162,6 @@ will not be incremented, int or array of int.`
     },
     'gid': {
       description: `Unix group id.`
-    },
-    'log': {
-      description: `Function called with a log related messages.`
     },
     'stdin_log': {
       type: 'boolean',
@@ -241,7 +242,7 @@ handler = async function({
     operations: {find, path},
     ssh
   }) {
-  var cmd, current_username, stdout, sudo;
+  var cmd, current_username, dry, stdout, sudo;
   // @log message: "Entering execute", level: 'DEBUG', module: 'nikita/lib/system/execute'
   // Validate parameters
   if (config.mode == null) {
@@ -266,6 +267,11 @@ handler = async function({
       config: {sudo}
     }) {
     return sudo;
+  }));
+  dry = (await find(function({
+      config: {dry}
+    }) {
+    return dry;
   }));
   if (['bash', 'arch_chroot'].filter(function(k) {
     return config[k];
@@ -360,9 +366,6 @@ handler = async function({
         module: 'nikita/lib/system/execute'
       });
     }
-    child = exec(config, {
-      ssh: ssh
-    });
     result = {
       stdout: [],
       stderr: [],
@@ -370,6 +373,12 @@ handler = async function({
       status: false,
       command: config.cmd_original
     };
+    if (config.dry) {
+      return resolve(result);
+    }
+    child = exec(config, {
+      ssh: ssh
+    });
     if (config.stdin) {
       config.stdin.pipe(child.stdin);
     }
