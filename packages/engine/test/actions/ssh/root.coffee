@@ -18,10 +18,10 @@ describe 'actions.ssh.root', ->
       .should.be.rejectedWith
         code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
         message: [
-          'NIKITA_SCHEMA_VALIDATION_CONFIG: multiple errors where found in the configuration of action ssh.root:'
-          '#/properties/selinux/oneOf config.selinux should match exactly one schema in oneOf;'
-          '#/properties/selinux/oneOf/0/enum config.selinux should be equal to one of the allowed values;'
-          '#/properties/selinux/oneOf/1/type config.selinux should be boolean.'
+          'NIKITA_SCHEMA_VALIDATION_CONFIG: multiple errors where found in the configuration of action `ssh.root`:'
+          '#/properties/selinux/oneOf config.selinux should match exactly one schema in oneOf, passingSchemas is null;'
+          '#/properties/selinux/oneOf/0/enum config.selinux should be equal to one of the allowed values, allowedValues is ["disabled","enforcing","permissive"];'
+          '#/properties/selinux/oneOf/1/type config.selinux should be boolean, type is "boolean".'
         ].join ' '
           
     they 'config.selinux is valid', ({ssh}) ->

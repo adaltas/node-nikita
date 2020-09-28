@@ -47,10 +47,13 @@ module.exports = (action) ->
         then 'one error was found in the configuration of'
         else 'multiple errors where found in the configuration of'
         if action.metadata.namespace.length
-        then "action #{action.metadata.namespace.join('.')}:"
+        then "action `#{action.metadata.namespace.join('.')}`:"
         else "anonymous action:"
         validate.errors
-        .map (err) -> err.schemaPath+' '+ajv.errorsText([err]).replace /^data/, 'config'
+        .map (err) ->
+          msg = err.schemaPath+' '+ajv.errorsText([err]).replace /^data/, 'config'
+          msg += (", #{key} is #{JSON.stringify value}" for key, value of err.params).join '' if err.params
+          msg
         .sort()
         .join('; ')+'.'
       ]

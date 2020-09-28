@@ -63,10 +63,27 @@ module.exports = function(action) {
       }
       return error('NIKITA_SCHEMA_VALIDATION_CONFIG', [
         validate.errors.length === 1 ? 'one error was found in the configuration of' : 'multiple errors where found in the configuration of',
-        action.metadata.namespace.length ? `action ${action.metadata.namespace.join('.')}:` : "anonymous action:",
+        action.metadata.namespace.length ? `action \`${action.metadata.namespace.join('.')}\`:` : "anonymous action:",
         validate.errors.map(function(err) {
-          return err.schemaPath + ' ' + ajv.errorsText([err]).replace(/^data/,
+          var key,
+        msg,
+        value;
+          msg = err.schemaPath + ' ' + ajv.errorsText([err]).replace(/^data/,
         'config');
+          if (err.params) {
+            msg += ((function() {
+              var ref,
+        results;
+              ref = err.params;
+              results = [];
+              for (key in ref) {
+                value = ref[key];
+                results.push(`, ${key} is ${JSON.stringify(value)}`);
+              }
+              return results;
+            })()).join('');
+          }
+          return msg;
         }).sort().join('; ') + '.'
       ]);
     },
