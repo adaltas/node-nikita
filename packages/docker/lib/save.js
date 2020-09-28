@@ -48,53 +48,69 @@
 // })
 // ```
 
-// ## Source Code
-var docker, util;
+// ## Schema
+var docker, handler, schema, util;
 
-module.exports = function({options}) {
+schema = {
+  type: 'object',
+  properties: {}
+};
+
+// ## Handler
+handler = function({
+    config,
+    log,
+    operations: {find}
+  }) {
   var cmd, k, ref, v;
-  this.log({
+  log({
     message: "Entering Docker save",
     level: 'DEBUG',
     module: 'nikita/lib/docker/save'
   });
-  // Global options
-  if (options.docker == null) {
-    options.docker = {};
+  // Global config
+  if (config.docker == null) {
+    config.docker = {};
   }
-  ref = options.docker;
+  ref = config.docker;
   for (k in ref) {
     v = ref[k];
-    if (options[k] == null) {
-      options[k] = v;
+    if (config[k] == null) {
+      config[k] = v;
     }
   }
-  if (options.image == null) {
+  if (config.image == null) {
     // Validate parameters
     throw Error('Missing image parameter');
   }
-  if (options.output == null) {
-    options.output = options.target;
+  if (config.output == null) {
+    config.output = config.target;
   }
-  if (options.output == null) {
+  if (config.output == null) {
     throw Error('Missing output parameter');
   }
   // Saves image to local tmp path, than copy it
-  cmd = `save -o ${options.output} ${options.image}`;
-  if (options.tag != null) {
-    cmd += `:${options.tag}`;
+  cmd = `save -o ${config.output} ${config.image}`;
+  if (config.tag != null) {
+    cmd += `:${config.tag}`;
   }
-  this.log({
-    message: `Extracting image ${options.output} to file:${options.image}`,
+  log({
+    message: `Extracting image ${config.output} to file:${config.image}`,
     level: 'INFO',
     module: 'nikita/lib/docker/save'
   });
-  return this.system.execute({
-    cmd: docker.wrap(options, cmd)
+  return this.execute({
+    cmd: docker.wrap(config, cmd)
   }, docker.callback);
 };
 
-// ## Modules Dependencies
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema
+};
+
+// ## Dependencies
 util = require('util');
 
-docker = require('@nikitajs/core/lib/misc/docker');
+docker = require('./utils');

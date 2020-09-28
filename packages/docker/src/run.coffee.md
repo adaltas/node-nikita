@@ -3,85 +3,6 @@
 
 Run Docker Containers
 
-## Options
-
-* `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.
-* `container` (string)   
-  Alias of name.
-* `name` (string)   
-   Assign a name to the container to run.
-* `image` (string)   
-  Name/ID of base image, required.
-* `machine` (string)   
-  Name of the docker-machine, required if using docker-machine.
-* `cmd` (string)   
-  Overwrite the default ENTRYPOINT of the image, equivalent to 
-  `--entrypoint docker parameter`
-* `hostname` (string)   
-  Hostname in the docker container.
-* `port` ( 'int:int' | [] )   
-  Port mapping.
-* `volume` ( 'path:path' | [] )   
-  Path mapping.
-* `device` ('path' | [] )   
-  Send host device(s) to container.
-* `dns` (ip-address | [] )   
-  Set custom DNS server(s).
-* `dns_search` (ip-address | [] )   
-  Set custom DNS search domain(s).
-* `expose` ( int | string | [] )   
-  Export port(s).
-* `link` ( containerName | containerID | [] )   
-  Link to other container(s).
-* `label` (string | [] )   
-  Set meta data on a container.
-* `label_file` (path)   
-  Read in a line delimited file of labels.
-* `add_host` ('host:ip' | [] )   
-  Add a custom host-to-IP mapping (host:ip).
-* `cap_add` ( | [] )   
-  Add Linux Capabilities.
-* `cap_drop` ( | [] )   
-  Drop Linux Capabilities.
-* `blkio_weight` (int)   
-  Block IO (relative weight), between 10 and 1000.
-* `cgroup_parent`   
-  Optional parent cgroup for the container.
-* `cid_file` ( path )   
-  Write the container ID to the file.
-* `cpuset_cpus` (string)   
-  CPUs in which to allow execution (ex: 0-3 0,1 ...).
-* `entrypoint` ()   
-  Overwrite the default ENTRYPOINT of the image.
-* `ipc` ()   
-  IPC namespace to use.
-* `ulimit`  ( | [] )   
-  Ulimit options.
-* `volumes_from` (containerName | containerID | [] )   
-  Mount volumes from the specified container(s).
-* `detach` (boolean)   
-  if true, run container in background.
-* `env` ('VAR=value' | [] )   
-  Environment variables for the container..
-* `env_file` ( path | [] )   
-  Read in a file of environment variables.
-* `rm` (boolean)   
-  Delete the container when it ends. True by default.
-* `cwd` (path)   
-  Working directory of container.
-* `net` (string)   
-  Set the Network mode for the container.
-* `pid` (string)   
-  PID namespace to use.
-* `publish_all` (boolean)   
-  Publish all exposed ports to random ports.
-* `code`   (int|array)   
-  Expected code(s) returned by the command, int or array of int, default to 0..
-* `code_skipped`   
-  Expected code(s) returned by the command if it has no effect, executed will
-  not be incremented, int or array of int.
-
 ## Callback parameters
 
 * `err`   
@@ -108,66 +29,297 @@ require('nikita')
 })
 ```
 
-## Source Code
+## Hooks
 
-    module.exports = ({options}, callback) ->
-      @log message: "Entering Docker run", level: 'DEBUG', module: 'nikita/lib/docker/run'
-      # Global options
-      options.docker ?= {}
-      options[k] ?= v for k, v of options.docker
+    on_action = ({config}) ->
+      # throw Error 'Property "container" no longer exists' if config.container
+      # config.name = config.container if not config.name? and config.container?
+      config.name ?= config.container
+      config.expose = parseInt config.expose if typeof config.expose is 'string'
+
+## Schema
+
+    schema =
+      type: 'object'
+      properties:
+        'container':
+          type: 'string'
+          description: """
+          Alias of name.
+          """
+        'name':
+          type: 'string'
+          description: """
+          Assign a name to the container to run.
+          """
+        'image':
+          type: 'string'
+          description: """
+          Name/ID of base image, required.
+          """
+        'entrypoint':
+          type: 'string'
+          description: """
+          Overwrite the default ENTRYPOINT of the image, equivalent to 
+          `--entrypoint docker parameter`
+          """
+        'hostname':
+          type: 'string'
+          description: """
+          Hostname in the docker container.
+          """
+        'port':
+          oneOf: [
+            {type: 'string'}
+            {type: 'array', items: type: 'string'}
+          ]
+          description: """
+          Port mapping in the form of `int:int`.
+          """
+        'volume':
+          oneOf: [
+            {type: 'string'}
+            {type: 'array', items: type: 'string'}
+          ]
+          description: """
+          Volume mapping, in the form of `path:path`.
+          """
+        'device':
+          oneOf: [
+            {type: 'string'}
+            {type: 'array', items: type: 'string'}
+          ]
+          description: """
+          Send host device(s) to container.
+          """
+        'dns':
+          oneOf: [
+            {type: 'string'}
+            {type: 'array', items: type: 'string'}
+          ]
+          description: """
+          Set custom DNS server(s).
+          """
+        'dns_search':
+          oneOf: [
+            {type: 'string'}
+            {type: 'array', items: type: 'string'}
+          ]
+          description: """
+          Set custom DNS search domain(s).
+          """
+        'expose':
+          oneOf: [
+            {type: 'string'}
+            {type: 'array', items: type: 'string'}
+          ]
+          description: """
+          Export port(s).
+          """
+        'link':
+          oneOf: [
+            {type: 'string'}
+            {type: 'array', items: type: 'string'}
+          ]
+          description: """
+          Link to other container(s) in the form of a container name or a
+          container ID.
+          """
+        'label':
+          oneOf: [
+            {type: 'string'}
+            {type: 'array', items: type: 'string'}
+          ]
+          description: """
+          Set meta data on a container.
+          """
+        'label_file':
+          type: 'string'
+          description: """
+          Path to read in a line delimited file of labels.
+          """
+        'add_host':
+          oneOf: [
+            {type: 'string'}
+            {type: 'array', items: type: 'string'}
+          ]
+          description: """
+          Add a custom host-to-IP mapping (host:ip) in the form of `host:ip`.
+          """
+        'cap_add':
+          oneOf: [
+            {type: 'string'}
+            {type: 'array', items: type: 'string'}
+          ]
+          description: """
+          Add Linux Capabilities.
+          """
+        'cap_drop':
+          oneOf: [
+            {type: 'string'}
+            {type: 'array', items: type: 'string'}
+          ]
+          description: """
+          Drop Linux Capabilities.
+          """
+        'blkio_weight':
+          type: 'integer'
+          description: """
+          Block IO (relative weight), between 10 and 1000.
+          """
+        'cgroup_parent':
+          type: 'string'
+          description: """
+          Optional parent cgroup for the container.
+          """
+        'cid_file':
+          type: 'string'
+          description: """
+          Write the container ID to the file.
+          """
+        'cpuset_cpus':
+          type: 'string'
+          description: """
+          CPUs in which to allow execution (ex: 0-3 0,1 ...).
+          """
+        'entrypoint':
+          type: 'string'
+          description: """
+          Overwrite the default ENTRYPOINT of the image.
+          """
+        'ipc':
+          type: 'string'
+          description: """
+          IPC namespace to use.
+          """
+        'ulimit':
+          oneOf: [
+            {type: 'string'}
+            {type: 'integer'}
+            {type: 'array', items: oneOf: [ {type: 'string'}, {type: 'integer'} ]}
+          ]
+          description: """
+          Ulimit options.
+          """
+        'volumes_from':
+          oneOf: [
+            {type: 'string'}
+            {type: 'array', items: type: 'string'}
+          ]
+          description: """
+          Mount volumes from the specified container(s).
+          """
+        'detach':
+          type: 'boolean'
+          description: """
+          if true, run container in background.
+          """
+        'env':
+          oneOf: [
+            {type: 'string'}
+            {type: 'array', items: type: 'string'}
+          ]
+          description: """
+          Environment variables for the container in the form of `VAR=value`.
+          """
+        'env_file':
+          oneOf: [
+            {type: 'string'}
+            {type: 'array', items: type: 'string'}
+          ]
+          description: """
+          Read in a file of environment variables.
+          """
+        'rm':
+          type: 'boolean'
+          default: true
+          description: """
+          Delete the container when it ends. True by default.
+          """
+        'cwd':
+          type: 'string'
+          description: """
+          Working directory of container.
+          """
+        'net':
+          type: 'string'
+          description: """
+          Set the Network mode for the container.
+          """
+        'pid':
+          type: 'string'
+          description: """
+          PID namespace to use.
+          """
+        'publish_all':
+          type: 'boolean'
+          description: """
+          Publish all exposed ports to random ports.
+          """
+        'boot2docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+        'compose':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+        'machine':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+      required: ['image']
+
+## Handler
+
+    handler = ({config, log, operations: {find}}) ->
+      log message: "Entering Docker run", level: 'DEBUG', module: 'nikita/lib/docker/run'
+      # Global config
+      config.docker = await find ({config: {docker}}) -> docker
+      config[k] ?= v for k, v of config.docker
       # Validate parameters
-      return callback Error 'Missing image' unless options.image?
-      options.rm ?= true
-      options.name ?= options.container
-      @log message: "Should specify a container name if rm is false", level: 'WARN', module: 'nikita/docker/run' unless options.name? or options.rm
+      log message: "Should specify a container name if rm is false", level: 'WARN', module: 'nikita/docker/run' unless config.name? or config.rm
       # Construct exec command
       cmd = 'run'
-      # Classic options
+      # Classic config
       for opt, flag of { name: '--name', hostname: '-h', cpu_shares: '-c',
       cgroup_parent: '--cgroup-parent', cid_file: '--cidfile', blkio_weight: '--blkio-weight',
       cpuset_cpus: '--cpuset-cpus', entrypoint: '--entrypoint', ipc: '--ipc',
       log_driver: '--log-driver', memory: '-m', mac_address: '--mac-address',
       memory_swap: '--memory-swap', net: '--net', pid: '--pid', cwd: '-w'}
-        cmd += " #{flag} #{options[opt]}" if options[opt]?
-      cmd += ' -d' if options.detach # else ' -t'
-      # Flag options
+        cmd += " #{flag} #{config[opt]}" if config[opt]?
+      cmd += ' -d' if config.detach # else ' -t'
+      # Flag config
       for opt, flag of { rm: '--rm', publish_all: '-P', privileged: '--privileged', read_only: '--read-only' }
-        cmd += " #{flag}" if options[opt]
-      # Arrays Options
+        cmd += " #{flag}" if config[opt]
+      # Arrays config
       for opt, flag of { port:'-p', volume: '-v', device: '--device', label: '-l',
       label_file: '--label-file', expose: '--expose', env: '-e', env_file: '--env-file',
       dns: '--dns', dns_search: '--dns-search', volumes_from: '--volumes-from',
       cap_add: '--cap-add', cap_drop: '--cap-drop', ulimit: '--ulimit', add_host: '--add-host' }
-        if options[opt]?
-          if typeof options[opt] is 'string' or typeof options[opt] is 'number'
-            cmd += " #{flag} #{options[opt]}"
-          else if Array.isArray options[opt]
-            for p in options[opt]
+        if config[opt]?
+          if typeof config[opt] is 'string' or typeof config[opt] is 'number'
+            cmd += " #{flag} #{config[opt]}"
+          else if Array.isArray config[opt]
+            for p in config[opt]
               if typeof p in ['string', 'number']
                 cmd += " #{flag} #{p}"
               else callback Error "Invalid parameter, '#{opt}' array should only contains string or number"
           else callback Error "Invalid parameter, '#{opt}' should be string, number or array"
-      cmd += " #{options.image}"
-      cmd += " #{options.cmd}" if options.cmd
-      # need to delete the cmd options or it will be used in docker.exec
-      delete options.cmd
-      @system.execute
-        if: options.name?
-        cmd: docker.wrap options, "ps -a | grep '#{options.name}'"
+      cmd += " #{config.image}"
+      cmd += " #{config.cmd}" if config.cmd
+      # need to delete the cmd config or it will be used in docker.exec
+      # delete config.cmd
+      {status} = await @docker.tools.execute
+        if: config.name?
+        cmd: "ps -a | egrep ' #{config.name}$'"
         code_skipped: 1
         shy: true
-      , (err, {status}) ->
-        docker.callback arguments...
-        @log message: "Container already running. Skipping", level: 'INFO', module: 'nikita/docker/run' if status
-      @system.execute
-        cmd: docker.wrap options, cmd
-        if: ->
-          not options.name? or @status(-1) is false
-      , (err, {status}) ->
-        docker.callback arguments...
-        @log message: "Container now running", level: 'WARN', module: 'nikita/docker/run' if status
-        callback arguments...
+      log message: "Container already running. Skipping", level: 'INFO', module: 'nikita/docker/run' if status
+      result = await @docker.tools.execute
+        cmd: cmd
+        if: -> not config.name? or status is false
+      log message: "Container now running", level: 'WARN', module: 'nikita/docker/run' if result.status
+      result
 
-## Modules Dependencies
+## Exports
 
-    docker = require '@nikitajs/core/lib/misc/docker'
+    module.exports =
+      handler: handler
+      hooks:
+        on_action: on_action
+      schema: schema

@@ -37,28 +37,38 @@
 // })
 // ```
 
-// ## Source Code
-var docker;
+// ## Schema
+var docker, handler, schema;
 
-module.exports = function({options}) {
+schema = {
+  type: 'object',
+  properties: {}
+};
+
+// ## Handler
+handler = function({
+    config,
+    log,
+    operations: {find}
+  }) {
   var cmd, k, opt, ref, v;
-  this.log({
+  log({
     message: "Entering Docker rm",
     level: 'DEBUG',
     module: 'nikita/lib/docker/rm'
   });
-  // Global options
-  if (options.docker == null) {
-    options.docker = {};
+  // Global config
+  if (config.docker == null) {
+    config.docker = {};
   }
-  ref = options.docker;
+  ref = config.docker;
   for (k in ref) {
     v = ref[k];
-    if (options[k] == null) {
-      options[k] = v;
+    if (config[k] == null) {
+      config[k] = v;
     }
   }
-  if (options.container == null) {
+  if (config.container == null) {
     // Validate parameters and madatory conditions
     return callback(Error('Missing container parameter'));
   }
@@ -68,7 +78,7 @@ module.exports = function({options}) {
     results = [];
     for (i = 0, len = ref1.length; i < len; i++) {
       opt = ref1[i];
-      if (options[opt]) {
+      if (config[opt]) {
         results.push(`-${opt.charAt(0)}`);
       } else {
         results.push(void 0);
@@ -76,26 +86,32 @@ module.exports = function({options}) {
     }
     return results;
   })();
-  cmd = `rm ${cmd.join(' ')} ${options.container}`;
-  this.system.execute({
-    cmd: docker.wrap(options, `ps | grep '${options.container}'`),
+  cmd = `rm ${cmd.join(' ')} ${config.container}`;
+  this.execute({
+    cmd: docker.wrap(config, `ps | grep '${config.container}'`),
     code_skipped: 1
   }, (err, {status}) => {
-    if (status && !options.force) {
+    if (status && !config.force) {
       throw Error('Container must be stopped to be removed without force', null);
     }
   });
-  this.system.execute({
-    cmd: docker.wrap(options, `ps -a | grep '${options.container}'`),
+  this.execute({
+    cmd: docker.wrap(config, `ps -a | grep '${config.container}'`),
     code_skipped: 1
   }, docker.callback);
-  return this.system.execute({
-    cmd: docker.wrap(options, cmd),
+  return this.execute({
+    cmd: docker.wrap(config, cmd),
     if: function() {
       return this.status(-1);
     }
   }, docker.callback);
 };
 
-// ## Modules Dependencies
-docker = require('@nikitajs/core/lib/misc/docker');
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema
+};
+
+// ## Dependencies
+docker = require('./utils');

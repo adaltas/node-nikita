@@ -3,22 +3,6 @@
 
 Start a container.
 
-## Options
-
-* `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.
-* `container` (string)   
-  Name/ID of the container, required.
-* `machine` (string)   
-  Name of the docker-machine, required if using docker-machine.
-* `attach` (boolean)   
-  attach STDOUT/STDERR, default to false.
-* `code` (int|array)   
-  Expected code(s) returned by the command, int or array of int, default to 0.
-* `code_skipped`   
-  Expected code(s) returned by the command if it has no effect, executed will
-  not be incremented, int or array of int.
-
 ## Callback parameters
 
 * `err`   
@@ -44,30 +28,56 @@ require('nikita')
 })
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({options}) ->
-      @log message: "Entering Docker start", level: 'DEBUG', module: 'nikita/lib/docker/start'
-      # Global options
-      options.docker ?= {}
-      options[k] ?= v for k, v of options.docker
-      # Validation
-      throw Error 'Missing container parameter' unless options.container?
-      # rm is false by default only if options.service is true
-      cmd = 'start'
-      cmd += ' -a' if options.attach
-      cmd += " #{options.container}"
-      @docker.status shy: true, options, (err, {status}) ->
-        throw err if err
-        if status
-        then @log message: "Container already started #{options.container} (Skipping)", level: 'INFO', module: 'nikita/lib/docker/start'
-        else @log message: "Starting container #{options.container}", level: 'INFO', module: 'nikita/lib/docker/start'
-        @end() if status
-      @system.execute
-        cmd: docker.wrap options, cmd
-      , docker.callback
+    schema =
+      type: 'object'
+      properties:
+        'attach':
+          type: 'boolean'
+          default: false
+          description: """
+          Attach STDOUT/STDERR.
+          """
+        'container':
+          type: 'string'
+          description: """
+          Name/ID of the container, required.
+          """
+        'boot2docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+        'compose':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+        'machine':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+      required: ['container']
 
-## Modules Dependencies
+## Handler
 
-    docker = require '@nikitajs/core/lib/misc/docker'
+    handler = ({config, log, operations: {find}}) ->
+      log message: "Entering Docker start", level: 'DEBUG', module: 'nikita/lib/docker/start'
+      # Global config
+      config.docker = await find ({config: {docker}}) -> docker
+      config[k] ?= v for k, v of config.docker
+      {status} = await @docker.tools.status shy: true, config
+      if status
+      then log message: "Container already started #{config.container} (Skipping)", level: 'INFO', module: 'nikita/lib/docker/start'
+      else log message: "Starting container #{config.container}", level: 'INFO', module: 'nikita/lib/docker/start'
+      @docker.tools.execute
+        unless: status
+        cmd: [
+          'start'
+          '-a' if config.attach
+          "#{config.container}"
+        ].join ' '
+
+## Exports
+
+    module.exports =
+      handler: handler
+      schema: schema
+
+## Dependencies
+
+    docker = require './utils'
     util = require 'util'

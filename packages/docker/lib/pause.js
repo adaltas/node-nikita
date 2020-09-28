@@ -35,37 +35,53 @@
 // })
 // ```
 
-// ## Source Code
-var docker, util;
+// ## Schema
+var docker, handler, schema, util;
 
-module.exports = function({options}, callback) {
+schema = {
+  type: 'object',
+  properties: {}
+};
+
+// ## Handler
+handler = function({
+    config,
+    log,
+    operations: {find}
+  }) {
   var k, ref, v;
-  this.log({
+  log({
     message: "Entering Docker pause",
     level: 'DEBUG',
     module: 'nikita/lib/docker/pause'
   });
-  // Global parameters
-  if (options.docker == null) {
-    options.docker = {};
+  // Global config
+  if (config.docker == null) {
+    config.docker = {};
   }
-  ref = options.docker;
+  ref = config.docker;
   for (k in ref) {
     v = ref[k];
-    if (options[k] == null) {
-      options[k] = v;
+    if (config[k] == null) {
+      config[k] = v;
     }
   }
-  if (options.container == null) {
+  if (config.container == null) {
     // Validate parameters
     return callback(Error('Missing container parameter'));
   }
-  return this.system.execute({
-    cmd: docker.wrap(options, `pause ${options.container}`)
+  return this.execute({
+    cmd: docker.wrap(config, `pause ${config.container}`)
   }, docker.callback);
 };
 
-// ## Modules Dependencies
-docker = require('@nikitajs/core/lib/misc/docker');
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema
+};
+
+// ## Dependencies
+docker = require('./utils');
 
 util = require('util');

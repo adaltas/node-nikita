@@ -48,83 +48,87 @@
 // ## Source Code
 var docker, path;
 
-module.exports = function({options}) {
+module.exports = function({
+    config,
+    log,
+    operations: {find}
+  }) {
   var clean_target, cmd, cmd_ps, cmd_up, k, ref, services, source_dir, v;
-  this.log({
+  log({
     message: "Entering Docker Compose",
     level: 'DEBUG',
     module: 'nikita/lib/docker/compose/up'
   });
-  // Global options
-  if (options.docker == null) {
-    options.docker = {};
+  // Global config
+  if (config.docker == null) {
+    config.docker = {};
   }
-  ref = options.docker;
+  ref = config.docker;
   for (k in ref) {
     v = ref[k];
-    if (options[k] == null) {
-      options[k] = v;
+    if (config[k] == null) {
+      config[k] = v;
     }
   }
-  if ((options.target == null) && (options.content == null)) {
+  if ((config.target == null) && (config.content == null)) {
     // Validate parameters
     throw Error('Missing docker-compose content or target');
   }
-  if (options.content && (options.target == null)) {
-    if (options.target == null) {
-      options.target = `/tmp/nikita_docker_compose_${Date.now()}/docker-compose.yml`;
+  if (config.content && (config.target == null)) {
+    if (config.target == null) {
+      config.target = `/tmp/nikita_docker_compose_${Date.now()}/docker-compose.yml`;
     }
     clean_target = true;
   }
-  if (options.detached == null) {
-    options.detached = true;
+  if (config.detached == null) {
+    config.detached = true;
   }
-  if (options.force == null) {
-    options.force = false;
+  if (config.force == null) {
+    config.force = false;
   }
-  if (options.recreate == null) {
-    options.recreate = false;
+  if (config.recreate == null) {
+    config.recreate = false;
   }
-  if (options.services == null) {
-    options.services = [];
+  if (config.services == null) {
+    config.services = [];
   }
-  if (!Array.isArray(options.services)) {
-    options.services = [options.services];
+  if (!Array.isArray(config.services)) {
+    config.services = [config.services];
   }
-  services = options.services.join(' ');
+  services = config.services.join(' ');
   // Construct exec command
-  cmd = ` --file ${options.target}`;
-  cmd_ps = `${cmd} ps -q | xargs docker ${docker.opts(options)} inspect`;
+  cmd = ` --file ${config.target}`;
+  cmd_ps = `${cmd} ps -q | xargs docker ${docker.opts(config)} inspect`;
   cmd_up = `${cmd} up`;
-  if (options.detached) {
+  if (config.detached) {
     cmd_up += ' -d ';
   }
-  if (options.force) {
+  if (config.force) {
     cmd_up += ' --force-recreate ';
   }
   cmd_up += ` ${services}`;
-  source_dir = `${path.dirname(options.target)}`;
-  if (options.eof == null) {
-    options.eof = true;
+  source_dir = `${path.dirname(config.target)}`;
+  if (config.eof == null) {
+    config.eof = true;
   }
-  if (options.backup == null) {
-    options.backup = false;
+  if (config.backup == null) {
+    config.backup = false;
   }
-  options.compose = true;
+  config.compose = true;
   this.call(function() {
     return this.file.yaml({
-      if: options.content != null,
-      eof: options.eof,
-      backup: options.backup,
-      target: options.target,
-      content: options.content
+      if: config.content != null,
+      eof: config.eof,
+      backup: config.backup,
+      target: config.target,
+      content: config.content
     });
   });
   this.call(function(_, callback) {
-    return this.system.execute({
-      cmd: docker.wrap(options, cmd_ps),
-      cwd: options.cwd,
-      uid: options.uid,
+    return this.execute({
+      cmd: docker.wrap(config, cmd_ps),
+      cwd: config.cwd,
+      uid: config.uid,
       code_skipped: 123,
       stdout_log: false
     }, function(err, {status, stdout}) {
@@ -140,28 +144,28 @@ module.exports = function({options}) {
         return !container.State.Running;
       });
       if (status) {
-        this.log("Docker created, need start");
+        log("Docker created, need start");
       }
       return callback(null, status);
     });
   });
-  this.system.execute({
+  this.execute({
     if: function() {
-      return options.force || this.status();
+      return config.force || this.status();
     },
     cwd: source_dir,
-    uid: options.uid,
-    cmd: docker.wrap(options, cmd_up)
+    uid: config.uid,
+    cmd: docker.wrap(config, cmd_up)
   }, docker.callback);
   return this.system.remove({
     if: clean_target,
-    target: options.target,
+    target: config.target,
     always: true // Not yet implemented
   });
 };
 
 
-// ## Modules Dependencies
-docker = require('@nikitajs/core/lib/misc/docker');
+// ## Dependencies
+docker = require('./utils');
 
 path = require('path');

@@ -108,39 +108,49 @@
 // })
 // ```
 
-// ## Source Code
-var docker;
+// ## Schema
+var docker, handler, schema;
 
-module.exports = function({options}, callback) {
+schema = {
+  type: 'object',
+  properties: {}
+};
+
+// ## Handler
+handler = function({
+    config,
+    log,
+    operations: {find}
+  }) {
   var cmd, flag, i, k, len, opt, p, ref, ref1, ref2, ref3, ref4, ref5, v;
-  this.log({
+  log({
     message: "Entering Docker run",
     level: 'DEBUG',
     module: 'nikita/lib/docker/run'
   });
-  // Global options
-  if (options.docker == null) {
-    options.docker = {};
+  // Global config
+  if (config.docker == null) {
+    config.docker = {};
   }
-  ref = options.docker;
+  ref = config.docker;
   for (k in ref) {
     v = ref[k];
-    if (options[k] == null) {
-      options[k] = v;
+    if (config[k] == null) {
+      config[k] = v;
     }
   }
-  if (options.image == null) {
+  if (config.image == null) {
     // Validate parameters
     return callback(Error('Missing image'));
   }
-  if (options.rm == null) {
-    options.rm = true;
+  if (config.rm == null) {
+    config.rm = true;
   }
-  if (options.name == null) {
-    options.name = options.container;
+  if (config.name == null) {
+    config.name = config.container;
   }
-  if (!((options.name != null) || options.rm)) {
-    this.log({
+  if (!((config.name != null) || config.rm)) {
+    log({
       message: "Should specify a container name if rm is false",
       level: 'WARN',
       module: 'nikita/docker/run'
@@ -166,14 +176,14 @@ module.exports = function({options}, callback) {
     pid: '--pid',
     cwd: '-w'
   };
-  // Classic options
+  // Classic config
   for (opt in ref1) {
     flag = ref1[opt];
-    if (options[opt] != null) {
-      cmd += ` ${flag} ${options[opt]}`;
+    if (config[opt] != null) {
+      cmd += ` ${flag} ${config[opt]}`;
     }
   }
-  if (options.detach) { // else ' -t'
+  if (config.detach) { // else ' -t'
     cmd += ' -d';
   }
   ref2 = {
@@ -182,10 +192,10 @@ module.exports = function({options}, callback) {
     privileged: '--privileged',
     read_only: '--read-only'
   };
-  // Flag options
+  // Flag config
   for (opt in ref2) {
     flag = ref2[opt];
-    if (options[opt]) {
+    if (config[opt]) {
       cmd += ` ${flag}`;
     }
   }
@@ -206,14 +216,14 @@ module.exports = function({options}, callback) {
     ulimit: '--ulimit',
     add_host: '--add-host'
   };
-  // Arrays Options
+  // Arrays config
   for (opt in ref3) {
     flag = ref3[opt];
-    if (options[opt] != null) {
-      if (typeof options[opt] === 'string' || typeof options[opt] === 'number') {
-        cmd += ` ${flag} ${options[opt]}`;
-      } else if (Array.isArray(options[opt])) {
-        ref4 = options[opt];
+    if (config[opt] != null) {
+      if (typeof config[opt] === 'string' || typeof config[opt] === 'number') {
+        cmd += ` ${flag} ${config[opt]}`;
+      } else if (Array.isArray(config[opt])) {
+        ref4 = config[opt];
         for (i = 0, len = ref4.length; i < len; i++) {
           p = ref4[i];
           if ((ref5 = typeof p) === 'string' || ref5 === 'number') {
@@ -227,36 +237,36 @@ module.exports = function({options}, callback) {
       }
     }
   }
-  cmd += ` ${options.image}`;
-  if (options.cmd) {
-    cmd += ` ${options.cmd}`;
+  cmd += ` ${config.image}`;
+  if (config.cmd) {
+    cmd += ` ${config.cmd}`;
   }
-  // need to delete the cmd options or it will be used in docker.exec
-  delete options.cmd;
-  this.system.execute({
-    if: options.name != null,
-    cmd: docker.wrap(options, `ps -a | grep '${options.name}'`),
+  // need to delete the cmd config or it will be used in docker.exec
+  delete config.cmd;
+  this.execute({
+    if: config.name != null,
+    cmd: docker.wrap(config, `ps -a | grep '${config.name}'`),
     code_skipped: 1,
     shy: true
   }, function(err, {status}) {
     docker.callback(...arguments);
     if (status) {
-      return this.log({
+      return log({
         message: "Container already running. Skipping",
         level: 'INFO',
         module: 'nikita/docker/run'
       });
     }
   });
-  return this.system.execute({
-    cmd: docker.wrap(options, cmd),
+  return this.execute({
+    cmd: docker.wrap(config, cmd),
     if: function() {
-      return (options.name == null) || this.status(-1) === false;
+      return (config.name == null) || this.status(-1) === false;
     }
   }, function(err, {status}) {
     docker.callback(...arguments);
     if (status) {
-      this.log({
+      log({
         message: "Container now running",
         level: 'WARN',
         module: 'nikita/docker/run'
@@ -266,5 +276,11 @@ module.exports = function({options}, callback) {
   });
 };
 
-// ## Modules Dependencies
-docker = require('@nikitajs/core/lib/misc/docker');
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema
+};
+
+// ## Dependencies
+docker = require('./utils');

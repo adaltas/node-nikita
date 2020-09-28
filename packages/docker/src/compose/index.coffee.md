@@ -4,36 +4,6 @@
 Create and start containers according to a docker-compose file
 `nikita.docker.compose` is an alias to `nikita.docker.compose.up`
 
-## Options
-
-* `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.
-* `machine` (string)   
-  Name of the docker-machine, required if using docker-machine.
-* `content` (string)   
-  The content of the docker-compose.yml to write if not exist.
-* `eof` (string)   
-  Inherited from nikita.file use when writing docker-compose.yml file.
-* `backup` (string|boolean)   
-  Create a backup, append a provided string to the filename extension or a
-  timestamp if value is not a string, only apply if the target file exists and
-  is modified.
-* `detached` (boolean)   
-  Run Containers in detached mode. Default to true.
-* `force` (boolean)   
-  Force to re-create the containers if the config and image have not changed
-  Default to false
-* `services` (string|array)
-  Specify specific services to create.
-* `target` (string)   
-  The docker-compose.yml absolute's file's path, required if no content is 
-  specified.
-* `code` (int|array)   
-  Expected code(s) returned by the command, int or array of int, default to 0.
-* `code_skipped`   
-  Expected code(s) returned by the command if it has no effect, executed will
-  not be incremented, int or array of int.
-
 ## Callback parameters
 
 *   `err`   
@@ -45,68 +15,121 @@ Create and start containers according to a docker-compose file
 *   `stderr`   
     Stderr value(s) unless `stderr` option is provided.   
 
+## Schema
+
+    schema =
+      type: 'object'
+      properties:
+        'content':
+          type: 'object'
+          description: """
+          The content of the docker-compose.yml to write if not exist.
+          """
+        'eof':
+          type: 'boolean'
+          default: true
+          description: """
+          Inherited from nikita.file use when writing docker-compose.yml file.
+          """
+        'backup':
+          oneOf: [
+            {type: 'string'}
+            {type: 'boolean'}
+          ]
+          default: false
+          description: """
+          Create a backup, append a provided string to the filename extension or a
+          timestamp if value is not a string, only apply if the target file exists and
+          is modified.
+          """
+        'detached':
+          type: 'boolean'
+          default: true
+          description: """
+          Run Containers in detached mode. Default to true.
+          """
+        'force':
+          type: 'boolean'
+          default: false
+          description: """
+          Force to re-create the containers if the config and image have not changed
+          Default to false
+          """
+        'services':
+          oneOf: [
+            {type: 'string'}
+            {type: 'array', items: type: 'string'}
+          ]
+          description: """
+          Specify specific services to create.
+          """
+        'target':
+          type: 'string'
+          description: """ 
+          The docker-compose.yml absolute's file's path, required if no content is 
+          specified.
+          """
+
 ## Source Code
 
-    module.exports = ({options}) ->
-      @log message: "Entering Docker Compose", level: 'DEBUG', module: 'nikita/lib/docker/compose/up'
-      # Global options
-      options.docker ?= {}
-      options[k] ?= v for k, v of options.docker
+    handler = ({config, log, operations: {find}}) ->
+      log message: "Entering Docker Compose", level: 'DEBUG', module: 'nikita/lib/docker/compose/up'
+      # Global config
+      config.docker ?= {}
+      config[k] ?= v for k, v of config.docker
       # Validate parameters
-      throw Error 'Missing docker-compose content or target' if not options.target? and not options.content?
-      if options.content and not options.target?
-        options.target ?= "/tmp/nikita_docker_compose_#{Date.now()}/docker-compose.yml"
+      throw Error 'Missing docker-compose content or target' if not config.target? and not config.content?
+      if config.content and not config.target?
+        config.target ?= "/tmp/nikita_docker_compose_#{Date.now()}/docker-compose.yml"
         clean_target = true
-      options.detached ?= true
-      options.force ?= false
-      options.recreate ?= false
-      options.services ?= []
-      options.services = [options.services] if not Array.isArray options.services
-      services = options.services.join ' '
-      # Construct exec command
-      cmd = " --file #{options.target}"
-      cmd_ps = "#{cmd} ps -q | xargs docker #{docker.opts options} inspect"
-      cmd_up = "#{cmd} up"
-      cmd_up += ' -d ' if options.detached
-      cmd_up += ' --force-recreate ' if options.force
-      cmd_up +=  " #{services}"
-      source_dir = "#{path.dirname options.target}"
-      options.eof ?= true
-      options.backup ?= false
-      options.compose = true
-      @call ->
-        @file.yaml
-          if: options.content?
-          eof: options.eof
-          backup: options.backup
-          target: options.target
-          content: options.content
-      @call (_, callback) ->
-        @system.execute
-          cmd: docker.wrap options, cmd_ps
-          cwd: options.cwd
-          uid: options.uid
-          code_skipped: 123
-          stdout_log: false
-        , (err, {status, stdout}) ->
-          return callback err if err
-          return callback null, true unless status
-          containers = JSON.parse stdout
-          status = containers.some (container) -> not container.State.Running
-          @log "Docker created, need start" if status
-          callback null, status
-      @system.execute
-        if: -> options.force or @status()
-        cwd: source_dir
-        uid: options.uid
-        cmd: docker.wrap options, cmd_up
-      , docker.callback
-      @system.remove
-        if: clean_target
-        target: options.target
-        always: true # Not yet implemented
+      config.recreate ?= false # TODO: move to schema
+      config.services ?= []
+      config.services = [config.services] if not Array.isArray config.services
+      # services = config.services.join ' '
+      @file.yaml
+        if: config.content?
+        eof: config.eof
+        backup: config.backup
+        target: config.target
+        content: config.content
+      {status, stdout} = await @docker.tools.execute
+        cmd: "--file #{config.target} ps -q | xargs docker #{docker.opts config} inspect"
+        compose: true
+        cwd: config.cwd
+        uid: config.uid
+        code_skipped: 123
+        stdout_log: false
+        shy: true
+      unless status
+        status = true
+      else
+        containers = JSON.parse stdout
+        status = containers.some (container) -> not container.State.Running
+        log "Docker created, need start" if status
+      try
+        await @docker.tools.execute
+          if: config.force or status
+          cmd: [
+            "--file #{config.target} up"
+            '-d' if config.detached
+            '--force-recreate' if config.force
+            ...config.services
+          ].join ' '
+          compose: true
+          cwd: path.dirname config.target
+          uid: config.uid
+      finally
+        @fs.remove
+          if: clean_target
+          target: config.target
 
-## Modules Dependencies
+## Exports
 
-    docker = require '@nikitajs/core/lib/misc/docker'
+    module.exports =
+      handler: handler
+      schema: schema
+
+## Dependencies
+
+    docker = require '../utils'
     path = require 'path'

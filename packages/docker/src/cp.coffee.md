@@ -13,17 +13,6 @@ the following forms:
 
 Note, stream are not yet supported.
 
-## Options
-
-* `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.
-* `machine` (string)   
-  Name of the docker-machine, required if using docker-machine or boot2docker.
-* `source` (string)   
-  The path to upload or the container followed by the path to download.
-* `target` (string)   
-  The path to download or the container followed by the path to upload.
-
 ## Uploading a file
 
 ```javascript
@@ -48,59 +37,79 @@ require('nikita')
 });
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({options}) ->
-      @log message: "Entering Docker cp", level: 'DEBUG', module: 'nikita/lib/docker/cp'
-      # SSH connection
-      ssh = @ssh options.ssh
-      # Global options
-      options.docker ?= {}
-      options[k] ?= v for k, v of options.docker
-      # Validate parameters
-      throw Error 'Missing option "source"' unless options.source
-      throw Error 'Missing option "target"' unless options.target
-      [_, source_container, source_path] = /(.*:)?(.*)/.exec options.source
-      [_, target_container, target_path] = /(.*:)?(.*)/.exec options.target
-      throw Error 'Incompatible source and target options' if source_container and target_container
-      throw Error 'Incompatible source and target options' if not source_container and not target_container
+    schema =
+      type: 'object'
+      properties:
+        'source':
+          type: 'string'
+          description: """
+          The path to upload or the container followed by the path to download.
+          """
+        'target':
+          type: 'string'
+          description: """
+          The path to download or the container followed by the path to upload.
+          """
+        'boot2docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+        'compose':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+        'machine':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+      required: ['source', 'target']
+
+## Handler
+
+    handler = ({config, log, operations: {find}}) ->
+      log message: "Entering Docker cp", level: 'DEBUG', module: 'nikita/lib/docker/cp'
+      # Global config
+      config.docker = await find ({config: {docker}}) -> docker
+      config[k] ?= v for k, v of config.docker
+      [_, source_container, source_path] = /(.*:)?(.*)/.exec config.source
+      [_, target_container, target_path] = /(.*:)?(.*)/.exec config.target
+      throw Error 'Incompatible source and target config' if source_container and target_container
+      throw Error 'Incompatible source and target config' if not source_container and not target_container
       source_mkdir = false
       target_mkdir = false
       # Source is on the host, normalize path
-      @call ({}, callback) ->
-        return callback() if source_container
+      unless source_container
         if /\/$/.test source_path
           source_path = "#{source_path}/#{path.basename target_path}"
-          return callback()
-        @fs.stat ssh: options.ssh, target: source_path, (err, {stats}) ->
-          return callback err if err and err.code isnt 'ENOENT'
+        try
+          {stats} = await @fs.base.stat ssh: config.ssh, target: source_path
+          source_path = "#{source_path}/#{path.basename target_path}" if utils.stats.isDirectory stats.mode
+        catch err
+          throw err unless err.code is 'NIKITA_FS_STAT_TARGET_ENOENT'
           # TODO wdavidw: seems like a mistake to me, we shall have source_mkdir instead
-          return target_mkdir = true and callback() if err?.code is 'ENOENT'
-          source_path = "#{source_path}/#{path.basename target_path}" if misc.stats.isDirectory stats.mode
-          callback()
-      @system.mkdir
+          target_mkdir = true
+      @fs.mkdir
         target: source_path
-        if: -> source_mkdir
+        if: source_mkdir
       # Destination is on the host
-      @call ({}, callback)  ->
-        return callback() if target_container
+      unless target_container
         if /\/$/.test target_path
           target_path = "#{target_path}/#{path.basename target_path}"
-          return callback()
-        @fs.stat ssh: options.ssh, target: target_path, (err, {stats}) ->
-          return callback err if err and err.code isnt 'ENOENT'
-          return target_mkdir = true and callback() if err?.code is 'ENOENT'
-          target_path = "#{target_path}/#{path.basename target_path}" if misc.stats.isDirectory stats.mode
-          callback()
-      @system.mkdir
+        try
+          {stats} = await @fs.base.stat target: target_path
+          target_path = "#{target_path}/#{path.basename target_path}" if utils.stats.isDirectory stats.mode
+        catch err
+          throw err unless err.code is 'NIKITA_FS_STAT_TARGET_ENOENT'
+          target_mkdir = true
+      @fs.base.mkdir
         target: target_path
-        if: -> target_mkdir
-      @system.execute
-        cmd: docker.wrap options, "cp #{options.source} #{options.target}"
-      , docker.callback
+        if: target_mkdir
+      @docker.tools.execute
+        cmd: "cp #{config.source} #{config.target}"
 
-## Modules Dependencies
+## Exports
+
+    module.exports =
+      handler: handler
+      schema: schema
+
+## Dependencies
 
     path = require 'path'
-    docker = require '@nikitajs/core/lib/misc/docker'
-    misc = require '@nikitajs/core/lib/misc'
+    utils = require '@nikitajs/engine/lib/utils'

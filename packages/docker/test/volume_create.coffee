@@ -1,7 +1,7 @@
 
-nikita = require '@nikitajs/core'
-{tags, ssh, scratch, docker} = require './test'
-they = require('ssh2-they').configure ssh...
+nikita = require '@nikitajs/engine/src'
+{tags, ssh, docker} = require './test'
+they = require('ssh2-they').configure ssh
 
 return unless tags.docker or tags.docker_volume
 
@@ -11,17 +11,15 @@ describe 'docker.volume_create', ->
     nikita
       ssh: ssh
       docker: docker
-    .docker.volume_rm
-      name: 'my_volume'
-      relax: true
-    .docker.volume_create
-      name: 'my_volume'
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .docker.volume_create
-      name: 'my_volume'
-    , (err, {status}) ->
-      status.should.be.false() unless err
-    .docker.volume_rm
-      name: 'my_volume'
-    .promise()
+    , ->
+      @docker.volume_rm
+        name: 'my_volume'
+        relax: true
+      {status} = await @docker.volume_create
+        name: 'my_volume'
+      status.should.be.true()
+      {status} = await @docker.volume_create
+        name: 'my_volume'
+      status.should.be.false()
+      @docker.volume_rm
+        name: 'my_volume'

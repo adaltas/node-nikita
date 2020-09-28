@@ -1,7 +1,7 @@
 
-nikita = require '@nikitajs/core'
+nikita = require '@nikitajs/engine/src'
 {tags, ssh, docker} = require './test'
-they = require('ssh2-they').configure ssh...
+they = require('ssh2-they').configure ssh
 
 return unless tags.docker
 
@@ -11,24 +11,22 @@ describe 'docker.pull', ->
     nikita
       ssh: ssh
       docker: docker
-    .docker.rmi
-      image: 'alpine'
-    .docker.pull
-      tag: 'alpine'
-    , (err, {status}) ->
+    , ->
+      @docker.rmi
+        image: 'alpine'
+      {status} = await @docker.pull
+        tag: 'alpine'
       status.should.be.true()
-    .promise()
 
   they 'Status Not Modified', ({ssh}) ->
     nikita
       ssh: ssh
       docker: docker
-    .docker.rmi
-      image: 'alpine'
-    .docker.pull
-      tag: 'alpine'
-    .docker.pull
-      tag: 'alpine'
-    , (err, {status}) ->
+    , ->
+      @docker.rmi
+        image: 'alpine'
+      @docker.pull
+        tag: 'alpine'
+      {status} = await @docker.pull
+        tag: 'alpine'
       status.should.be.false()
-    .promise()

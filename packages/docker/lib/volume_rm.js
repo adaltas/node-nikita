@@ -31,37 +31,53 @@
 // })
 // ```
 
-// ## Source Code
-var docker;
+// ## Schema
+var docker, handler, schema;
 
-module.exports = function({options}) {
+schema = {
+  type: 'object',
+  properties: {}
+};
+
+// ## Handler
+handler = function({
+    config,
+    log,
+    operations: {find}
+  }) {
   var k, ref, v;
-  this.log({
+  log({
     message: "Entering Docker volume_rm",
     level: 'DEBUG',
     module: 'nikita/lib/docker/volume_rm'
   });
-  // Global options
-  if (options.docker == null) {
-    options.docker = {};
+  // Global config
+  if (config.docker == null) {
+    config.docker = {};
   }
-  ref = options.docker;
+  ref = config.docker;
   for (k in ref) {
     v = ref[k];
-    if (options[k] == null) {
-      options[k] = v;
+    if (config[k] == null) {
+      config[k] = v;
     }
   }
-  if (!options.name) {
+  if (!config.name) {
     // Validation
     throw Error("Missing required option name");
   }
-  return this.system.execute({
-    cmd: docker.wrap(options, `volume rm ${options.name}`),
+  return this.execute({
+    cmd: docker.wrap(config, `volume rm ${config.name}`),
     code: 0,
     code_skipped: 1
   });
 };
 
-// ## Modules Dependencies
-docker = require('@nikitajs/core/lib/misc/docker');
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema
+};
+
+// ## Dependencies
+docker = require('./utils');
