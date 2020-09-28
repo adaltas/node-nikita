@@ -132,12 +132,6 @@ nikita.execute({
           description: """
           Run the action without executing any real command.
           """
-        'trap':
-          type: 'boolean'
-          default: false
-          description: """
-          Exit immediately if a commands exits with a non-zero status.
-          """
         'env':
           description: """
           Environment variables, default to `process.env`.
@@ -218,6 +212,12 @@ nikita.execute({
           `arch_chroot` properties, always disposed once executed. Unless
           provided, the default location is `{metadata.tmpdir}/{string.hash
           config.cmd}`. See the `tmpdir` plugin for additionnal information.
+          """
+        'trap':
+          type: 'boolean'
+          default: false
+          description: """
+          Exit immediately if a commands exits with a non-zero status.
           """
         'uid':
           type: 'integer'
