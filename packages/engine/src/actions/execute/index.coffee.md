@@ -127,6 +127,11 @@ nikita.execute({
           description: """
           Leave temporary files on the filesystem.
           """
+        'dry':
+          type: 'boolean'
+          description: """
+          Run the action without executing any real command.
+          """
         'trap':
           type: 'boolean'
           default: false
@@ -140,10 +145,6 @@ nikita.execute({
         'gid':
           description: """
           Unix group id.
-          """
-        'log':
-          description: """
-          Function called with a log related messages.
           """
         'stdin_log':
           type: 'boolean'
@@ -237,6 +238,7 @@ nikita.execute({
       config.cmd = "set -e\n#{config.cmd}" if config.cmd and config.trap
       config.cmd_original = "#{config.cmd}"
       sudo = await find ({config: {sudo}}) -> sudo
+      dry = await find ({config: {dry}}) -> dry
       # throw Error "Required Option: the \"cmd\" option is not provided" unless config.cmd?
       throw Error "Incompatible properties: bash, arch_chroot" if ['bash', 'arch_chroot'].filter((k) -> config[k]).length > 1
       throw Error "Required Option: \"rootdir\" with \"arch_chroot\"" if config.arch_chroot and not config.rootdir
@@ -287,8 +289,9 @@ nikita.execute({
       # Execute
       new Promise (resolve, reject) =>
         log message: config.cmd_original, type: 'stdin', level: 'INFO', module: 'nikita/lib/system/execute' if config.stdin_log
-        child = exec config, ssh: ssh
         result = stdout: [], stderr: [], code: null, status: false, command: config.cmd_original
+        return resolve result if config.dry
+        child = exec config, ssh: ssh
         config.stdin.pipe child.stdin if config.stdin
         child.stdout.pipe config.stdout, end: false if config.stdout
         child.stderr.pipe config.stderr, end: false if config.stderr
