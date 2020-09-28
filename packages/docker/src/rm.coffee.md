@@ -4,21 +4,6 @@
 Remove one or more containers. Containers need to be stopped to be deleted unless
 force options is set.
 
-## Options
-
-* `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.
-* `container` (string)   
-  Name/ID of the container, required.
-* `machine` (string)   
-  Name of the docker-machine, required if docker-machine installed.
-* `link` (boolean)   
-  Remove the specified link.
-* `volumes` (boolean)   
-  Remove the volumes associated with the container.
-* `force` (boolean)   
-  Force the removal of a running container (uses SIGKILL).
-
 ## Callback parameters
 
 * `err`   
@@ -37,32 +22,73 @@ require('nikita')
 })
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({options}) ->
-      @log message: "Entering Docker rm", level: 'DEBUG', module: 'nikita/lib/docker/rm'
-      # Global options
-      options.docker ?= {}
-      options[k] ?= v for k, v of options.docker
-      # Validate parameters and madatory conditions
-      return callback Error 'Missing container parameter' unless options.container?
-      cmd = for opt in ['link', 'volumes', 'force']
-        "-#{opt.charAt 0}" if options[opt]
-      cmd = "rm #{cmd.join ' '} #{options.container}"
-      @system.execute
-        cmd: docker.wrap options, "ps | grep '#{options.container}'"
+    schema =
+      type: 'object'
+      properties:
+        'container':
+          type: 'string'
+          description: """
+          Name/ID of the container, required.
+          """
+        'link':
+          type: 'boolean'
+          description: """
+          Remove the specified link.
+          """
+        'volumes':
+          type: 'boolean'
+          description: """
+          Remove the volumes associated with the container.
+          """
+        'force':
+          type: 'boolean'
+          description: """
+          Force the removal of a running container (uses SIGKILL).
+          """
+        'boot2docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+        'compose':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+        'machine':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+      required: ['container']
+
+## Handler
+
+    handler = ({config, log, operations: {find}}) ->
+      log message: "Entering Docker rm", level: 'DEBUG', module: 'nikita/lib/docker/rm'
+      # Global config
+      config.docker = await find ({config: {docker}}) -> docker
+      config[k] ?= v for k, v of config.docker
+      # cmd = for opt in ['link', 'volumes', 'force']
+      #   "-#{opt.charAt 0}" if config[opt]
+      # cmd = "rm #{cmd.join ' '} #{config.container}"
+      {status} = await @docker.tools.execute
+        cmd: "ps | egrep ' #{config.container}$'"
         code_skipped: 1
-      , (err, {status}) =>
-        throw Error 'Container must be stopped to be removed without force', null if status and not options.force
-      @system.execute
-        cmd: docker.wrap options, "ps -a | grep '#{options.container}'"
+      throw Error 'Container must be stopped to be removed without force' if status and not config.force
+      {status} = await @docker.tools.execute
+        cmd: "ps -a | egrep ' #{config.container}$'"
         code_skipped: 1
-      , docker.callback
-      @system.execute
-        cmd: docker.wrap options, cmd
-        if: -> @status -1
-      , docker.callback
+      @docker.tools.execute
+        cmd: [
+          'rm'
+          ...( ['link', 'volumes', 'force']
+            .filter (opt) -> config[opt]
+            .map (opt) -> "-#{opt.charAt 0}"
+          )
+          config.container
+        ].join ' '
+        if: -> status
 
-## Modules Dependencies
+## Exports
 
-    docker = require '@nikitajs/core/lib/misc/docker'
+    module.exports =
+      handler: handler
+      schema: schema
+
+## Dependencies
+
+    docker = require './utils'

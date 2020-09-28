@@ -24,23 +24,41 @@ Log out from a Docker registry or the one defined by the `registry` option.
 * `status`   
   True if logout.
 
-## Source Code
+## Schema
 
-    module.exports = ({options}, callback) ->
-      @log message: "Entering Docker logout", level: 'DEBUG', module: 'nikita/lib/docker/logout'
-      # Global options
-      options.docker ?= {}
-      options[k] ?= v for k, v of options.docker
+    schema =
+      type: 'object'
+      properties:
+        'boot2docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+        'compose':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+        'machine':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+
+## Handler
+
+    handler = ({config, log, operations: {find}}) ->
+      log message: "Entering Docker logout", level: 'DEBUG', module: 'nikita/lib/docker/logout'
+      # Global config
+      config.docker = await find ({config: {docker}}) -> docker
+      config[k] ?= v for k, v of config.docker
       # Validate parameters
-      return callback Error 'Missing container parameter' unless options.container?
-      # rm is false by default only if options.service is true
+      return callback Error 'Missing container parameter' unless config.container?
+      # rm is false by default only if config.service is true
       cmd = 'logout'
-      cmd += " \"#{options.registry}\"" if options.registry?
-      @system.execute
-        cmd: docker.wrap options, cmd
+      cmd += " \"#{config.registry}\"" if config.registry?
+      @execute
+        cmd: docker.wrap config, cmd
       , docker.callback
 
-## Modules Dependencies
+## Exports
 
-    docker = require '@nikitajs/core/lib/misc/docker'
+    module.exports =
+      handler: handler
+      schema: schema
+
+## Dependencies
+
+    docker = require './utils'
     util = require 'util'

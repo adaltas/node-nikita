@@ -1,18 +1,7 @@
 
 # `nikita.volume_rm`
 
-Remove a volume. 
-
-## Options
-
-* `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.
-* `container` (string|array).   
-  Name or Id of the container, required.   
-* `machine` (string)   
-  Name of the docker-machine, required if using docker-machine.
-* `name` (string)   
-  Specify volume name.
+Remove a volume.
 
 ## Callback parameters
 
@@ -31,20 +20,39 @@ nikita.docker.volume_rm({
 })
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({options}) ->
-      @log message: "Entering Docker volume_rm", level: 'DEBUG', module: 'nikita/lib/docker/volume_rm'
-      # Global options
-      options.docker ?= {}
-      options[k] ?= v for k, v of options.docker
+    schema =
+      type: 'object'
+      properties:
+        'name':
+          type: 'string'
+          description: """
+          Specify volume name.
+          """
+        'boot2docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+        'compose':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+        'machine':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+
+## Handler
+
+    handler = ({config, log, operations: {find}}) ->
+      log message: "Entering Docker volume_rm", level: 'DEBUG', module: 'nikita/lib/docker/volume_rm'
+      # Global config
+      config.docker = await find ({config: {docker}}) -> docker
+      config[k] ?= v for k, v of config.docker
       # Validation
-      throw Error "Missing required option name" unless options.name
-      @system.execute
-        cmd: docker.wrap options, "volume rm #{options.name}"
+      throw Error "Missing required option name" unless config.name
+      @docker.tools.execute
+        cmd: "volume rm #{config.name}"
         code: 0
         code_skipped: 1
 
-## Modules Dependencies
+## Exports
 
-    docker = require '@nikitajs/core/lib/misc/docker'
+    module.exports =
+      handler: handler
+      schema: schema

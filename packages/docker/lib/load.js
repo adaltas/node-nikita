@@ -41,64 +41,74 @@
 // })
 // ```
 
-// ## Source Code
-var docker, string, util;
+// ## Schema
+var docker, handler, schema, string, util;
 
-module.exports = function({options}, callback) {
+schema = {
+  type: 'object',
+  properties: {}
+};
+
+// ## Handler
+handler = function({
+    config,
+    log,
+    operations: {find}
+  }) {
   var cmd, images, k, ref, v;
-  this.log({
+  log({
     message: "Entering Docker load",
     level: 'DEBUG',
     module: 'nikita/lib/docker/load'
   });
-  // Global options
-  if (options.docker == null) {
-    options.docker = {};
+  // Global config
+  if (config.docker == null) {
+    config.docker = {};
   }
-  ref = options.docker;
+  ref = config.docker;
   for (k in ref) {
     v = ref[k];
-    if (options[k] == null) {
-      options[k] = v;
+    if (config[k] == null) {
+      config[k] = v;
     }
   }
   // Validate parameters
-  if (options.input == null) {
-    options.input = options.source;
+  if (config.input == null) {
+    config.input = config.source;
   }
-  if (options.input == null) {
+  if (config.input == null) {
     return callback(Error('Missing input parameter'));
   }
-  cmd = `load -i ${options.input}`;
+  cmd = `load -i ${config.input}`;
   // need to records the list of image to see if status is modified or not after load
   // for this we print the existing images as REPOSITORY:TAG:IMAGE
   // parse the result to record images as an array of   {'REPOSITORY:TAG:'= 'IMAGE'}
   images = {};
-  delete options.cmd;
-  this.log({
+  delete config.cmd;
+  log({
     message: 'Storing previous state of image',
     level: 'INFO',
     module: 'nikita/lib/docker/load'
   });
-  if (options.checksum == null) {
-    this.log({
+  if (config.checksum == null) {
+    log({
       message: 'No checksum provided',
       level: 'INFO',
       module: 'nikita/lib/docker/load'
     });
   }
-  if (options.checksum) {
-    this.log({
-      message: `Checksum provided :${options.checksum}`,
+  if (config.checksum) {
+    log({
+      message: `Checksum provided :${config.checksum}`,
       level: 'INFO',
       module: 'nikita/lib/docker/load'
     });
   }
-  if (options.checksum == null) {
-    options.checksum = '';
+  if (config.checksum == null) {
+    config.checksum = '';
   }
-  return this.system.execute({
-    cmd: docker.wrap(options, " images | grep -v '<none>' | awk '{ print $1\":\"$2\":\"$3 }'")
+  return this.execute({
+    cmd: docker.wrap(config, " images | grep -v '<none>' | awk '{ print $1\":\"$2\":\"$3 }'")
   }, (err, {stdout}) => {
     var i, image, infos, len, ref1;
     if (err) {
@@ -113,31 +123,31 @@ module.exports = function({options}, callback) {
         image = image.trim();
         if (image !== '') {
           infos = image.split(':');
-          if (infos[2] === options.checksum) {
+          if (infos[2] === config.checksum) {
             // if image is here we skip
-            this.log({
-              message: `Image already exist checksum :${options.checksum}, repo:tag ${`${infos[0]}:${infos[1]}`}`,
+            log({
+              message: `Image already exist checksum :${config.checksum}, repo:tag ${`${infos[0]}:${infos[1]}`}`,
               level: 'INFO',
               module: 'nikita/lib/docker/load'
             });
           }
-          if (infos[2] === options.checksum) {
+          if (infos[2] === config.checksum) {
             return callback(null, false);
           }
           images[`${infos[0]}:${infos[1]}`] = `${infos[2]}`;
         }
       }
     }
-    this.log({
-      message: `Start Loading ${options.input} `,
+    log({
+      message: `Start Loading ${config.input} `,
       level: 'INFO',
       module: 'nikita/lib/docker/load'
     });
-    this.system.execute({
-      cmd: docker.wrap(options, cmd)
+    this.execute({
+      cmd: docker.wrap(config, cmd)
     });
-    return this.system.execute({
-      cmd: docker.wrap(options, 'images | grep -v \'<none>\' | awk \'{ print $1":"$2":"$3 }\'')
+    return this.execute({
+      cmd: docker.wrap(config, 'images | grep -v \'<none>\' | awk \'{ print $1":"$2":"$3 }\'')
     }, function(err, {stdout, stderr}) {
       var j, len1, new_image, new_images, new_k, ref2, status;
       if (err) {
@@ -145,7 +155,7 @@ module.exports = function({options}, callback) {
       }
       new_images = {};
       status = false;
-      this.log({
+      log({
         message: 'Comparing new images',
         level: 'INFO',
         module: 'nikita/lib/docker/load'
@@ -170,7 +180,7 @@ module.exports = function({options}, callback) {
             image = images[k];
             if (image !== new_image && new_k === k) {
               status = true;
-              this.log({
+              log({
                 message: 'Identical images',
                 level: 'INFO',
                 module: 'nikita/lib/docker/load'
@@ -189,8 +199,15 @@ module.exports = function({options}, callback) {
   });
 };
 
-// ## Modules Dependencies
-docker = require('@nikitajs/core/lib/misc/docker');
+
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema
+};
+
+// ## Dependencies
+docker = require('./utils');
 
 string = require('@nikitajs/core/lib/misc/string');
 

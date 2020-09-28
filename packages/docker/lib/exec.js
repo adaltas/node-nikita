@@ -43,56 +43,66 @@
 // });
 // ```
 
-// ## Source Code
-var docker;
+// ## Schema
+var docker, handler, schema;
 
-module.exports = function({options}, callback) {
+schema = {
+  type: 'object',
+  properties: {}
+};
+
+// ## Handler
+handler = function({
+    config,
+    log,
+    operations: {find}
+  }) {
   var cmd, k, ref, v;
-  this.log({
+  log({
     message: "Entering Docker exec",
     level: 'DEBUG',
     module: 'nikita/lib/docker/exec'
   });
-  // Global options
-  if (options.docker == null) {
-    options.docker = {};
+  // Global config
+  if (config.docker == null) {
+    config.docker = {};
   }
-  ref = options.docker;
+  ref = config.docker;
   for (k in ref) {
     v = ref[k];
-    if (options[k] == null) {
-      options[k] = v;
+    if (config[k] == null) {
+      config[k] = v;
     }
   }
-  if (options.container == null) {
+  if (config.container == null) {
     // Validate parameters
     throw Error('Missing container');
   }
-  if (options.cmd == null) {
+  if (config.cmd == null) {
     throw Error('Missing cmd');
   }
-  if (options.service == null) {
-    options.service = false;
+  if (config.service == null) {
+    config.service = false;
   }
   // Construct exec command
   cmd = 'exec';
-  if (options.uid != null) {
-    cmd += ` -u ${options.uid}`;
-    if (options.gid != null) {
-      cmd += `:${options.gid}`;
+  if (config.uid != null) {
+    cmd += ` -u ${config.uid}`;
+    if (config.gid != null) {
+      cmd += `:${config.gid}`;
     }
-  } else if (options.gid != null) {
-    this.log({
-      message: 'options.gid ignored unless options.uid is provided',
+  } else if (config.gid != null) {
+    log({
+      message: 'config.gid ignored unless config.uid is provided',
       level: 'WARN',
       module: 'nikita/lib/docker/exec'
     });
   }
-  cmd += ` ${options.container} ${options.cmd}`;
-  delete options.cmd;
-  return this.system.execute({
-    cmd: docker.wrap(options, cmd),
-    code_skipped: options.code_skipped
+  cmd += ` ${config.container} ${config.cmd}`;
+  delete config.cmd;
+  return this.execute({
+    cmd: docker.wrap(config, cmd),
+    code_skipped: config.code_skipped
   }, function() {    // Note: There is no way to pass additionnal arguments in sync mode without
     // a callback, or we would have ', docker.callback' as next line
     var e;
@@ -106,5 +116,11 @@ module.exports = function({options}, callback) {
   });
 };
 
-// ## Modules Dependencies
-docker = require('@nikitajs/core/lib/misc/docker');
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema
+};
+
+// ## Dependencies
+docker = require('./utils');

@@ -5,18 +5,6 @@ Create a volume.
 
 ## Options
 
-* `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.
-* `driver` (string)   
-  Specify volume driver name.
-* `label` (string|array)   
-  Set metadata for a volume.
-* `machine` (string)   
-  Name of the docker-machine, required if using docker-machine.
-* `name` (string)   
-  Specify volume name.
-* `opt` (string|array)   
-  Set driver specific options.
 
 ## Callback parameters
 
@@ -36,33 +24,76 @@ require('nikita')
 })
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({options}) ->
-      @log message: "Entering Docker volume_create", level: 'DEBUG', module: 'nikita/lib/docker/volume_create'
-      # Global options
-      options.docker ?= {}
-      options[k] ?= v for k, v of options.docker
-      # Normalize options
-      options.label = [options.label] if typeof options.label is 'string'
-      options.opt = [options.opt] if typeof options.opt is 'string'
-      # Build the docker command arguments
-      cmd = ["volume create"]
-      cmd.push "--driver #{options.driver}" if options.driver
-      cmd.push "--label #{options.label.join ','}" if options.label
-      cmd.push "--name #{options.name}" if options.name
-      cmd.push "--opt #{options.opt.join ','}" if options.opt
-      cmd = cmd.join ' '
-      @system.execute
-        if: options.name
-        cmd: docker.wrap options, "volume inspect #{options.name}"
+    schema =
+      type: 'object'
+      properties:
+        'driver':
+          type: 'string'
+          description: """
+          Specify volume driver name.
+          """
+        'label':
+          oneOf: [
+            {type: 'string'}
+            {type: 'array', items: type: 'string'}
+          ]
+          description: """
+          Set metadata for a volume.
+          """
+        'name':
+          type: 'string'
+          description: """
+          Specify volume name.
+          """
+        'opt':
+          oneOf: [
+            {type: 'string'}
+            {type: 'array', items: type: 'string'}
+          ]
+          description: """
+          Set driver specific options.
+          """
+        'boot2docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+        'compose':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+        'machine':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+
+## Handler
+
+    handler = ({config, log, operations: {find}}) ->
+      log message: "Entering Docker volume_create", level: 'DEBUG', module: 'nikita/lib/docker/volume_create'
+      # Global config
+      config.docker = await find ({config: {docker}}) -> docker
+      config[k] ?= v for k, v of config.docker
+      # Normalize config
+      config.label = [config.label] if typeof config.label is 'string'
+      config.opt = [config.opt] if typeof config.opt is 'string'
+      {status} = await @docker.tools.execute
+        if: config.name
+        cmd: "volume inspect #{config.name}"
         code: 1
         code_skipped: 0
         shy: true
-      @system.execute
-        if: -> not options.name or @status -1
-        cmd: docker.wrap options, cmd
+      @docker.tools.execute
+        if: -> not config.name or status
+        cmd: [
+          "volume create"
+          "--driver #{config.driver}" if config.driver
+          "--label #{config.label.join ','}" if config.label
+          "--name #{config.name}" if config.name
+          "--opt #{config.opt.join ','}" if config.opt
+        ].join ' '
 
-## Modules Dependencies
+## Exports
 
-    docker = require '@nikitajs/core/lib/misc/docker'
+    module.exports =
+      handler: handler
+      schema: schema
+
+## Dependencies
+
+    docker = require './utils'

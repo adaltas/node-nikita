@@ -4,17 +4,6 @@
 // Remove images. All container using image should be stopped to delete it unless
 // force options is set.
 
-// ## Options
-
-// * `boot2docker` (boolean)   
-//   Whether to use boot2docker or not, default to false.
-// * `image` (string)   
-//   Name of the image, required.
-// * `machine` (string)   
-//   Name of the docker-machine, required if docker-machine installed.
-// * `no_prune` (boolean)   
-//   Do not delete untagged parents.
-
 // ## Callback parameters
 
 // * `err`   
@@ -22,61 +11,106 @@
 // * `status`   
 //   True if image was removed.
 
-// ## Source Code
-var docker, util;
+// ## Hook
+var docker, handler, on_action, schema, util;
 
-module.exports = function({options}) {
-  var cmd_images, cmd_rmi, i, k, len, opt, ref, ref1, v;
-  this.log({
+on_action = function({config, metadata}) {
+  if (metadata.argument != null) {
+    return config.image = metadata.argument;
+  }
+};
+
+// ## Schema
+schema = {
+  type: 'object',
+  properties: {
+    // ...docker.wrap_schema
+    'cwd': {
+      type: 'string',
+      description: `Change the build working directory.`
+    },
+    'image': {
+      type: 'string',
+      description: `Name of the Docker image present in the registry.`
+    },
+    'no_prune': {
+      type: 'boolean',
+      description: `Do not delete untagged parents.`
+    },
+    'tag': {
+      type: 'string',
+      description: `Tag of the Docker image, default to latest.`
+    },
+    'boot2docker': {
+      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/boot2docker'
+    },
+    'compose': {
+      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/compose'
+    },
+    'machine': {
+      $ref: 'module://@nikitajs/docker/lib/tools/execute#/properties/machine'
+    }
+  },
+  required: ['image']
+};
+
+// ## Handler
+handler = async function({
+    config,
+    log,
+    operations: {find}
+  }) {
+  var k, ref, v;
+  log({
     message: "Entering Docker rmi",
     level: 'DEBUG',
     module: 'nikita/lib/docker/rmi'
   });
-  // Global options
-  if (options.docker == null) {
-    options.docker = {};
-  }
-  ref = options.docker;
+  config.docker = (await find(function({
+      config: {docker}
+    }) {
+    return docker;
+  }));
+  ref = config.docker;
   for (k in ref) {
     v = ref[k];
-    if (options[k] == null) {
-      options[k] = v;
+    if (config[k] == null) {
+      config[k] = v;
     }
   }
-  if (options.image == null) {
-    // Validate parameters and madatory conditions
-    throw Error('Missing image parameter');
-  }
-  cmd_images = 'images';
-  cmd_images += ` | grep '${options.image} '`;
-  if (options.tag != null) {
-    cmd_images += ` | grep ' ${options.tag} '`;
-  }
-  cmd_rmi = 'rmi';
-  ref1 = ['force', 'no_prune'];
-  for (i = 0, len = ref1.length; i < len; i++) {
-    opt = ref1[i];
-    if (options[opt] != null) {
-      cmd_rmi += ` --${opt.replace('_', '-')}`;
+  await this.docker.tools.execute({
+    cmd: ['images', `| grep '${config.image} '`, config.tag != null ? `| grep ' ${config.tag} '` : void 0].join(' '),
+    code_skipped: [1]
+  });
+  return (await this.docker.tools.execute({
+    cmd: [
+      'rmi',
+      ['force',
+      'no_prune'].filter(function(opt) {
+        return config[opt] != null;
+      }).map(function(opt) {
+        return ` --${opt.replace('_',
+      '-')}`;
+      }),
+      ` ${config.image}`,
+      config.tag != null ? `:${config.tag}` : void 0
+    ].join(''),
+    if: function({parent}) {
+      return parent.parent.operations.status(-1);
     }
-  }
-  cmd_rmi += ` ${options.image}`;
-  if (options.tag != null) {
-    cmd_rmi += `:${options.tag}`;
-  }
-  this.system.execute({
-    cmd: docker.wrap(options, cmd_images),
-    code_skipped: 1
-  }, docker.callback);
-  return this.system.execute({
-    cmd: docker.wrap(options, cmd_rmi),
-    if: function() {
-      return this.status(-1);
-    }
-  }, docker.callback);
+  }));
 };
 
-// ## Modules Dependencies
-docker = require('@nikitajs/core/lib/misc/docker');
+// ## Exports
+module.exports = {
+  handler: handler,
+  hooks: {
+    on_action: on_action
+  },
+  schema: schema
+};
+
+// ## Dependencies
+docker = require('./utils');
 
 util = require('util');

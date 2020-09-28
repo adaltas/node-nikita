@@ -1,7 +1,7 @@
 
-nikita = require '@nikitajs/core'
-{tags, ssh, scratch, docker} = require './test'
-they = require('ssh2-they').configure ssh...
+nikita = require '@nikitajs/engine/src'
+{tags, ssh, docker} = require './test'
+they = require('ssh2-they').configure ssh
 
 return unless tags.docker
 
@@ -9,131 +9,129 @@ describe 'docker.build', ->
 
   @timeout 60000
 
-  they 'fail with missing image parameter', ({ssh}) ->
-    nikita
-      ssh: ssh
-      docker: docker
-    .docker.build
-      false_source: 'Dockerfile'
-    .next (err) ->
-      return next Error 'Expect error' unless err
-      err.message.should.eql 'Required option "image"'
-    .promise()
+  describe 'errors', ->
 
-  they 'fail with exclusive parameters', ({ssh}) ->
-    nikita
-      ssh: ssh
-      docker: docker
-    .docker.build
-      image: 'nikita/should_not_exists_1'
-      file: "#{__dirname}/Dockerfile"
-      content: "FROM scratch \ CMD ['echo \"hello world\"']"
-    .next (err) ->
-      err.message.should.eql 'Can not build from Dockerfile and content'
-    .promise()
+    they 'fail with missing image parameter', ({ssh}) ->
+      nikita
+        ssh: ssh
+        docker: docker
+      .docker.build
+        false_source: 'Dockerfile'
+      .should.be.rejectedWith
+        code: 'NIKITA_SCHEMA_VALIDATION_CONFIG'
+        message: [
+          'NIKITA_SCHEMA_VALIDATION_CONFIG:'
+          'one error was found in the configuration of action `docker.build`:'
+          '#/required config should have required property \'image\'.'
+        ].join ' '
 
-  they 'from text', ({ssh}) ->
-    nikita
-      ssh: ssh
-      docker: docker
-    .docker.rmi
-      image: 'nikita/should_exists_2'
-    .docker.build
-      image: 'nikita/should_exists_2'
-      content: """
-      FROM scratch
-      CMD echo hello
-      """
-    , (err, {status, stdout}) ->
-      status.should.be.true() unless err
-      stdout.should.containEql 'Step 2/2 : CMD echo hello' unless err
-    .docker.rmi
-      image: 'nikita/should_exists_2'
-    .promise()
+    they 'fail with exclusive parameters', ({ssh}) ->
+      nikita
+        ssh: ssh
+        docker: docker
+      .docker.build
+        image: 'nikita/should_not_exists_1'
+        file: "#{__dirname}/Dockerfile"
+        content: "FROM scratch \ CMD ['echo \"hello world\"']"
+      .should.be.rejectedWith
+        code: 'NIKITA_DOCKER_BUILD_CONTENT_FILE_REQUIRED'
+        message: 'NIKITA_DOCKER_BUILD_CONTENT_FILE_REQUIRED: could not build the container, one of the `content` or `file` config property must be provided'
 
-  they 'from cwd',  ({ssh}) ->
-    nikita
-      ssh: ssh
-      docker: docker
-    .docker.rmi
-      image: 'nikita/should_exists_3'
-    .file
-      target: "#{scratch}/Dockerfile"
-      content: """
-      FROM scratch
-      CMD echo hello
-      """
-    .docker.build
-      image: 'nikita/should_exists_3'
-      cwd: scratch
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .docker.rmi
-      image: 'nikita/should_exists_3'
-    .promise()
 
-  they 'from Dockerfile (exist)', ({ssh}) ->
-    nikita
-      ssh: ssh
-      docker: docker
-    .docker.rmi
-      image: 'nikita/should_exists_3'
-    .file
-      content: """
-      FROM scratch
-      CMD ['echo "hello build from Dockerfile #{Date.now()}"']
-      """
-      target: "#{scratch}/nikita_Dockerfile"
-    .docker.build
-      image: 'nikita/should_exists_4'
-      file: "#{scratch}/nikita_Dockerfile"
-    , (err, {status}) ->
-      status.should.be.true() unless err
-    .docker.rmi
-      image: 'nikita/should_exists_3'
-    .promise()
+  describe 'usage', ->
+    
+    they 'from text', ({ssh}) ->
+      nikita
+        ssh: ssh
+        docker: docker
+      , ->
+        @docker.rmi 'nikita/should_exists_1'
+        {status, stdout} = await @docker.build
+          image: 'nikita/should_exists_1'
+          content: """
+          FROM scratch
+          CMD echo hello 1
+          """
+        status.should.be.true()
+        stdout.should.containEql 'Step 2/2 : CMD echo hello'
+        @docker.rmi 'nikita/should_exists_1'
 
-  they 'from Dockerfile (not exist)', ({ssh}) ->
-    nikita
-      ssh: ssh
-      docker: docker
-    .docker.build
-      image: 'nikita/should_not_exists_4'
-      file: "#{scratch}/file/does/not/exist"
-      relax: true
-    , (err) ->
-      err.code.should.eql 'ENOENT'
-    .promise()
+    they 'from cwd',  ({ssh}) ->
+      nikita
+        ssh: ssh
+        docker: docker
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @docker.rmi 'nikita/should_exists_2'
+        @file
+          target: "#{tmpdir}/Dockerfile"
+          content: """
+          FROM scratch
+          CMD echo hello 2
+          """
+        {status} = await @docker.build
+          image: 'nikita/should_exists_2'
+          cwd: tmpdir
+        status.should.be.true()
+        @docker.rmi 'nikita/should_exists_2'
 
-  they 'status not modified', ({ssh}) ->
-    status_true = []
-    status_false = []
-    nikita
-      ssh: ssh
-      docker: docker
-    .docker.rmi
-      image: 'nikita/should_exists_5'
-    .file
-      target: "#{scratch}/nikita_Dockerfile"
-      content: """
-      FROM scratch
-      CMD echo hello
-      """
-    .docker.build
-      image: 'nikita/should_exists_5'
-      file: "#{scratch}/nikita_Dockerfile"
-      log: (msg) -> status_true.push msg
-    , (err, {status}) ->
-      status.should.be.true()
-    .docker.build
-      image: 'nikita/should_exists_5'
-      file: "#{scratch}/nikita_Dockerfile"
-      log: (msg) -> status_false.push msg
-    , (err, {status}) ->
-      status.should.be.false()
-    .docker.rmi
-      image: 'nikita/should_exists_5'
-    .call ->
-      status_true.filter( (s) -> /^New image id/.test s?.message ).length.should.eql 1
-      status_false.filter( (s) -> /^Identical image id/.test s?.message ).length.should.eql 1
-    .promise()
+    they 'from Dockerfile (exist)', ({ssh}) ->
+      nikita
+        ssh: ssh
+        docker: docker
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @docker.rmi 'nikita/should_exists_3'
+        @file
+          content: """
+          FROM scratch
+          CMD ['echo "hello build from Dockerfile #{Date.now()}"']
+          """
+          target: "#{tmpdir}/nikita_Dockerfile"
+        {status} = await @docker.build
+          image: 'nikita/should_exists_3'
+          file: "#{tmpdir}/nikita_Dockerfile"
+        status.should.be.true()
+        @docker.rmi 'nikita/should_exists_3'
+
+    they 'from Dockerfile (not exist)', ({ssh}) ->
+      nikita
+        ssh: ssh
+        docker: docker
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        await @docker.build
+          image: 'nikita/should_not_exists_4'
+          file: "#{tmpdir}/file/does/not/exist"
+        .should.be.rejectedWith
+          code: 'NIKITA_FS_CRS_TARGET_ENOENT'
+
+    they 'status not modified', ({ssh}) ->
+      status_true = []
+      status_false = []
+      nikita
+        ssh: ssh
+        docker: docker
+        tmpdir: true
+      , ({metadata: {tmpdir}}) ->
+        @docker.rmi 'nikita/should_exists_5'
+        @file
+          target: "#{tmpdir}/nikita_Dockerfile"
+          content: """
+          FROM scratch
+          CMD echo hello 5
+          """
+        {status, stdout} = await @docker.build
+          image: 'nikita/should_exists_5'
+          file: "#{tmpdir}/nikita_Dockerfile"
+          log: ({log}) -> status_true.push log
+        status.should.be.true()
+        {status} = await @docker.build
+          image: 'nikita/should_exists_5'
+          file: "#{tmpdir}/nikita_Dockerfile"
+          log: ({log}) -> status_false.push log
+        status.should.be.false()
+        @docker.rmi 'nikita/should_exists_5'
+        @call ->
+          status_true.filter( (s) -> /^New image id/.test s?.message ).length.should.eql 1
+          status_false.filter( (s) -> /^Identical image id/.test s?.message ).length.should.eql 1

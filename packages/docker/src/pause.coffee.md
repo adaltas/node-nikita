@@ -3,20 +3,6 @@
 
 Pause all processes within a container.
 
-## Options
-
-* `boot2docker` (boolean)   
-  Whether to use boot2docker or not, default to false.   
-* `container` (string)   
-  Name/ID of the container, required.
-* `machine` (string)   
-  Name of the docker-machine, required.
-* `code` (int|array)   
-  Expected code(s) returned by the command, int or array of int, default to 0.
-* `code_skipped`   
-  Expected code(s) returned by the command if it has no effect, executed will
-  not be incremented, int or array of int.
-
 ## Callback parameters
 
 * `err`   
@@ -35,20 +21,36 @@ require('nikita')
 })
 ```
 
-## Source Code
+## Schema
 
-    module.exports = ({options}, callback) ->
-      @log message: "Entering Docker pause", level: 'DEBUG', module: 'nikita/lib/docker/pause'
-      # Global parameters
-      options.docker ?= {}
-      options[k] ?= v for k, v of options.docker
-      # Validate parameters
-      return callback Error 'Missing container parameter' unless options.container?
-      @system.execute
-        cmd: docker.wrap options, "pause #{options.container}"
-      , docker.callback
+    schema =
+      type: 'object'
+      properties:
+        'container':
+          type: 'string'
+          description: """
+          Name/ID of the container.
+          """
+        'boot2docker':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/boot2docker'
+        'compose':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/compose'
+        'machine':
+          $ref: 'module://@nikitajs/docker/src/tools/execute#/properties/machine'
+      required: ['container']
 
-## Modules Dependencies
+## Handler
 
-    docker = require '@nikitajs/core/lib/misc/docker'
-    util = require 'util'
+    handler = ({config, log, operations: {find}}) ->
+      log message: "Entering Docker pause", level: 'DEBUG', module: 'nikita/lib/docker/pause'
+      # Global config
+      config.docker = await find ({config: {docker}}) -> docker
+      config[k] ?= v for k, v of config.docker
+      @docker.tools.execute
+        cmd: "pause #{config.container}"
+
+## Exports
+
+    module.exports =
+      handler: handler
+      schema: schema

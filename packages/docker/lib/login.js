@@ -25,58 +25,74 @@
 // * `err`   
 //   Error object if any.   
 // * `status`   
-//   True when the command was executed successfully.   
+//   True when the command was executed successfully.
 // * `stdout`   
-//   Stdout value(s) unless `stdout` option is provided.   
+//   Stdout value(s) unless `stdout` option is provided.
 // * `stderr`   
-//   Stderr value(s) unless `stderr` option is provided.   
+//   Stderr value(s) unless `stderr` option is provided.
 
-// ## Source Code
-var docker, path, util;
+// ## Schema
+var docker, handler, path, schema, util;
 
-module.exports = function({options}, callback) {
+schema = {
+  type: 'object',
+  properties: {}
+};
+
+// ## Handler
+handler = function({
+    config,
+    log,
+    operations: {find}
+  }) {
   var cmd, i, k, len, opt, ref, ref1, v;
-  this.log({
+  log({
     message: "Entering Docker login",
     level: 'DEBUG',
     module: 'nikita/lib/docker/login'
   });
-  // Global options
-  if (options.docker == null) {
-    options.docker = {};
+  // Global config
+  if (config.docker == null) {
+    config.docker = {};
   }
-  ref = options.docker;
+  ref = config.docker;
   for (k in ref) {
     v = ref[k];
-    if (options[k] == null) {
-      options[k] = v;
+    if (config[k] == null) {
+      config[k] = v;
     }
   }
-  if (options.image == null) {
+  if (config.image == null) {
     // Validate parameters and madatory conditions
     return callback(Error('Missing image parameter'));
   }
-  if ((options.content != null) && (options.dockerfile != null)) {
+  if ((config.content != null) && (config.dockerfile != null)) {
     return callback(Error('Can not build from Dockerfile and content'));
   }
   cmd = 'login';
   ref1 = ['email', 'user', 'password'];
   for (i = 0, len = ref1.length; i < len; i++) {
     opt = ref1[i];
-    if (options[opt] != null) {
-      cmd += ` -${opt.charAt(0)} ${options[opt]}`;
+    if (config[opt] != null) {
+      cmd += ` -${opt.charAt(0)} ${config[opt]}`;
     }
   }
-  if (options.registry != null) {
-    cmd += ` \"${options.registry}\"`;
+  if (config.registry != null) {
+    cmd += ` \"${config.registry}\"`;
   }
-  return this.system.execute({
-    cmd: docker.wrap(options, cmd)
+  return this.execute({
+    cmd: docker.wrap(config, cmd)
   }, docker.callback);
 };
 
-// ## Modules Dependencies
-docker = require('@nikitajs/core/lib/misc/docker');
+// ## Exports
+module.exports = {
+  handler: handler,
+  schema: schema
+};
+
+// ## Dependencies
+docker = require('./utils');
 
 path = require('path');
 
