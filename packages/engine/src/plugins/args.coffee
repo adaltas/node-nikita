@@ -2,7 +2,7 @@
 array = require '../utils/array'
 
 module.exports = ->
-  module: '@nikitajs/engine/src/metadata/original'
+  module: '@nikitajs/engine/src/plugins/args'
   hooks:
     'nikita:session:arguments':
       handler: ({args, child}, handler) ->

@@ -17,7 +17,7 @@ describe 'file', ->
         @file
           target: "#{tmpdir}/file"
           content: 'Hello'
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/file"
           content: 'Hello'
@@ -42,15 +42,15 @@ describe 'file', ->
         @file
           target: "#{tmpdir}/file"
           content: 'original content'
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @file
           target: "#{tmpdir}/file"
           content: 'new content'
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @file
           target: "#{tmpdir}/file"
           content: 'new content'
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
 
     they 'with source is a file', ({ssh}) ->
       nikita
@@ -63,11 +63,11 @@ describe 'file', ->
         @file
           target: "#{tmpdir}/a_target"
           source: "#{tmpdir}/a_source"
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @file
           target: "#{tmpdir}/a_target"
           source: "#{tmpdir}/a_source"
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
         @fs.assert
           target: "#{tmpdir}/a_source"
           content: 'Hello'
@@ -83,7 +83,7 @@ describe 'file', ->
         @file
           target: "#{tmpdir}/file"
           content: ''
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/file"
           content: ''
@@ -96,14 +96,14 @@ describe 'file', ->
         @file
           target: "#{tmpdir}/empty_file"
           content: ''
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/empty_file"
           content: ''
         @file
           target: "#{tmpdir}/empty_file"
           content: 'toto'
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/empty_file"
           content: 'toto'
@@ -116,7 +116,7 @@ describe 'file', ->
         @file
           target: "#{tmpdir}/file"
           content: 123
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/file"
           content: '123'
@@ -129,7 +129,7 @@ describe 'file', ->
         @file
           target: "#{tmpdir}/a/missing/dir/a_file"
           content: 'hello'
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/a/missing/dir/a_file"
           content: 'hello'
@@ -143,7 +143,7 @@ describe 'file', ->
           target: "#{tmpdir}/a/missing/dir/a_file"
           content: 'hello\r\nworld'
           remove_empty_lines: true
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/a/missing/dir/a_file"
           content: 'hello\rworld'
@@ -290,12 +290,12 @@ describe 'file', ->
           target: "#{tmpdir}/a_file"
           content: 'ok'
           mode: 0o0705
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @file
           target: "#{tmpdir}/a_file"
           content: 'ok'
           mode: 0o0705
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
 
     they 'change permission after modification', ({ssh}) ->
       nikita
@@ -328,7 +328,7 @@ describe 'file', ->
           to: '# to'
           content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
           replace: 'my friend'
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/fromto.md"
           content: 'here we are\n# from\nmy friend\n# to\nyou coquin'
@@ -347,7 +347,7 @@ describe 'file', ->
           to: '# to'
           append: true
           replace: 'my friend'
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/fromto.md"
           content: 'here we are\nyou coquin\n# from\nmy friend\n# to'
@@ -358,7 +358,7 @@ describe 'file', ->
           append: true
           replace: 'my best friend'
           eof: true
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/fromto.md"
           content: 'here we are\nyou coquin\n# from\nmy best friend\n# to\n'
@@ -373,7 +373,7 @@ describe 'file', ->
           from: '# from'
           content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
           replace: 'my friend'
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/fromto.md"
           content: 'here we are\n# from\nmy friend'
@@ -388,7 +388,7 @@ describe 'file', ->
           to: '# to'
           content: 'here we are\n# from\nlets try to replace that one\n# to\nyou coquin'
           replace: 'my friend'
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/fromto.md"
 
@@ -434,12 +434,12 @@ describe 'file', ->
           match: 'lets try to replace that one'
           content: 'here we are\nlets try to replace that one\nyou coquin'
           replace: 'my friend'
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @file
           target: "#{tmpdir}/fromto.md"
           match: 'my friend'
           replace: 'my friend'
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
         @fs.assert
           target: "#{tmpdir}/fromto.md"
           content: 'here we are\nmy friend\nyou coquin'
@@ -454,7 +454,7 @@ describe 'file', ->
           match: 'replace'
           content: 'replace that one\nand\nreplace this one\nand not this one'
           replace: 'switch'
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/fromto.md"
           content: 'switch that one\nand\nswitch this one\nand not this one'
@@ -470,12 +470,12 @@ describe 'file', ->
           content: 'email=david(at)adaltas(dot)com\nusername=root'
           match: /(username)=(.*)/
           replace: '$1=david (was $2)'
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @file # Without a match
           target: "#{tmpdir}/replace"
           match: /this wont work/
           replace: '$1=david (was $2)'
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
         @fs.assert
           target: "#{tmpdir}/replace"
           content: 'email=david(at)adaltas(dot)com\nusername=david (was root)'
@@ -490,7 +490,7 @@ describe 'file', ->
           content: 'here we are\nlets try to replace that one\nyou coquin'
           replace: ['my friend, $1']
           target: "#{tmpdir}/replace"
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/replace"
           content: 'here we are\nmy friend, lets try\nyou coquin'
@@ -505,12 +505,12 @@ describe 'file', ->
           match: /^property=.*$/mg
           content: '#A config file\n#property=30\nproperty=10\nproperty=20\n#End of Config'
           replace: 'property=50'
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @file
           target: "#{tmpdir}/replace"
           match: /^property=50$/mg
           replace: 'property=50'
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
         @fs.assert
           target: "#{tmpdir}/replace"
           content: '#A config file\n#property=30\nproperty=50\nproperty=50\n#End of Config'
@@ -527,12 +527,12 @@ describe 'file', ->
           target: "#{tmpdir}/a_file"
           match: /(.*content)/
           replace: 'a text'
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @file
           target: "#{tmpdir}/a_file"
           match: /(.*content)/
           replace: 'a text'
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
         @fs.assert
           target: "#{tmpdir}/a_file"
           content: 'This is\na text\nfor testing'
@@ -623,7 +623,7 @@ describe 'file', ->
             match: /.*coquin/
             replace: 'new coquin'
             place_before: true
-          .should.be.resolvedWith status: true
+          .should.be.finally.containEql status: true
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'new coquin\nhere we are\n'
@@ -633,7 +633,7 @@ describe 'file', ->
             match: /.*coquin/
             replace: 'new coquin'
             place_before: true
-          .should.be.resolvedWith status: false
+          .should.be.finally.containEql status: false
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'new coquin\nhere we are\n'
@@ -651,7 +651,7 @@ describe 'file', ->
             match: "you coquin"
             replace: 'new coquin'
             place_before: true
-          .should.be.resolvedWith status: true
+          .should.be.finally.containEql status: true
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'new coquin\nhere we are\n'
@@ -661,7 +661,7 @@ describe 'file', ->
             match: "new coquin"
             replace: 'new coquin'
             place_before: true
-          .should.be.resolvedWith status: false
+          .should.be.finally.containEql status: false
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'new coquin\nhere we are\n'
@@ -680,7 +680,7 @@ describe 'file', ->
             match: /.*coquin/
             replace: 'new coquin'
             append: true
-          .should.be.resolvedWith status: true
+          .should.be.finally.containEql status: true
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'here we are\nnew coquin\n'
@@ -690,7 +690,7 @@ describe 'file', ->
             match: /.*coquin/
             replace: 'new coquin'
             append: true
-          .should.be.resolvedWith status: false
+          .should.be.finally.containEql status: false
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'here we are\nnew coquin\n'
@@ -709,7 +709,7 @@ describe 'file', ->
           match: /will never work/
           replace: 'Add this line'
           append: true
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/file"
           content: 'here we are\nyou coquin\nAdd this line'
@@ -730,7 +730,7 @@ describe 'file', ->
             match: /will never work/
             replace: 'Add this line'
             place_before: /^.*we.*$/m
-          .should.be.resolvedWith status: true
+          .should.be.finally.containEql status: true
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'Add this line\nhere we are\nyou coquin\nshould we\nhave fun'
@@ -749,7 +749,7 @@ describe 'file', ->
             match: /will never work/
             replace: 'Add this line'
             append: /^.*we.*$/m
-          .should.be.resolvedWith status: true
+          .should.be.finally.containEql status: true
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'here we are\nAdd this line\nyou coquin\nshould we\nhave fun'
@@ -769,7 +769,7 @@ describe 'file', ->
             match: /will never work/
             replace: 'Add this line'
             place_before: /^.*we.*$/gm
-          .should.be.resolvedWith status: true
+          .should.be.finally.containEql status: true
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'Add this line\nhere we are\nyou coquin\nAdd this line\nshould we\nhave fun'
@@ -788,7 +788,7 @@ describe 'file', ->
             match: /will never work/
             replace: 'Add this line'
             append: /^.*we.*$/gm
-          .should.be.resolvedWith status: true
+          .should.be.finally.containEql status: true
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'here we are\nAdd this line\nyou coquin\nshould we\nAdd this line\nhave fun'
@@ -806,7 +806,7 @@ describe 'file', ->
           match: /will never work/
           replace: 'Add this line'
           append: 'we'
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/file"
           content: 'here we are\nAdd this line\nyou coquin\nshould we\nAdd this line\nhave fun'
@@ -826,7 +826,7 @@ describe 'file', ->
             match: /will never be found/
             replace: 'Add this line'
             place_before: true
-          .should.be.resolvedWith status: true
+          .should.be.finally.containEql status: true
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'Add this line\nhere we are\nyou coquin'
@@ -844,7 +844,7 @@ describe 'file', ->
             match: /will never be found/
             replace: 'Add this line'
             append: true
-          .should.be.resolvedWith status: true
+          .should.be.finally.containEql status: true
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'here we are\nyou coquin\nAdd this line'
@@ -861,7 +861,7 @@ describe 'file', ->
             match: /will never be found/
             replace: 'Add this line'
             place_before: true
-          .should.be.resolvedWith status: true
+          .should.be.finally.containEql status: true
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'Add this line'
@@ -876,7 +876,7 @@ describe 'file', ->
             match: /will never be found/
             replace: 'Add this line'
             append: true
-          .should.be.resolvedWith status: true
+          .should.be.finally.containEql status: true
           @fs.assert
             target: "#{tmpdir}/file"
             content: 'Add this line'
@@ -893,19 +893,19 @@ describe 'file', ->
           target: "#{tmpdir}/a_file"
           replace: 'Add this line'
           append: true
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @file
           target: "#{tmpdir}/a_file"
           replace: 'Add this line'
           append: true
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
         @file
           target: "#{tmpdir}/a_file"
           write: [
             replace: 'Add this line'
             append: true
           ]
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
         @fs.assert
           target: "#{tmpdir}/a_file"
           content: 'Here we are\nyou coquin\nAdd this line'
@@ -924,7 +924,7 @@ describe 'file', ->
           target: "#{tmpdir}/file"
           content: 'Hello'
           backup: '.bck'
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
         @fs.assert
           target: "#{tmpdir}/file.bck"
           not: true
@@ -932,7 +932,7 @@ describe 'file', ->
           target: "#{tmpdir}/file"
           content: 'Hello Node'
           backup: '.bck'
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/file.bck"
           content: 'Hello'
@@ -946,7 +946,7 @@ describe 'file', ->
           target: "#{tmpdir}/file"
           content: 'Hello'
           backup: true
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/file"
           content: 'Hello'
@@ -964,7 +964,7 @@ describe 'file', ->
           content: 'Hello'
           mode: 0o0644
           backup: '.bck1'
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/new_file_perm.bck1"
           content: 'Hello World'
@@ -975,7 +975,7 @@ describe 'file', ->
           backup: '.bck2'
           mode: 0o0644
           backup_mode: 0o0640
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/new_file_perm.bck2"
           content: 'Hello'
@@ -1003,7 +1003,7 @@ describe 'file', ->
             match: /^(friends).*$/m
             replace: "$1: me"
           ]
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/file"
           content: 'username: you\n\nfriends: me'
@@ -1029,7 +1029,7 @@ describe 'file', ->
             match: /^(friends).*$/m
             replace: "$1: me"
           ]
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/file"
           content: 'username: you\nemail: your@email\nfriends: me'
@@ -1055,7 +1055,7 @@ describe 'file', ->
             match: /^(friends).*$/m
             replace: "$1: you"
           ]
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/file"
           content: 'username: me\nemail: my@email\nfriends: you'
@@ -1105,7 +1105,7 @@ describe 'file', ->
           target: "#{tmpdir}/file"
           content: 'this is\r\nsome content'
           eof: true
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/file"
           content: 'this is\r\nsome content\r\n'
@@ -1120,7 +1120,7 @@ describe 'file', ->
           target: "#{tmpdir}/file"
           content: 'this is some content'
           eof: true
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/file"
           content: 'this is some content\n'
@@ -1137,7 +1137,7 @@ describe 'file', ->
           content: 'hello'
           transform: ({config}) ->
             "#{config.content} world"
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
 
     they 'transform content value', ({ssh}) ->
       nikita
@@ -1164,7 +1164,7 @@ describe 'file', ->
           transform: ->
             new Promise (resolve, reject) ->
               resolve('hello')
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
 
     they 'transform resolve promise value', ({ssh}) ->
       nikita
@@ -1219,7 +1219,7 @@ describe 'file', ->
           content: 'hello'
           transform: ({config}) ->
             null
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
 
     they 'transform returns null file doesnt exist', ({ssh}) ->
       nikita
@@ -1245,7 +1245,7 @@ describe 'file', ->
           content: 'hello'
           transform: ({config}) ->
             undefined
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
 
     they 'transform returns undefined file doesnt exist', ({ssh}) ->
       nikita

@@ -14,10 +14,10 @@ describe 'file.touch', ->
     , ({metadata: {tmpdir}}) ->
       @file.touch
         target: "#{tmpdir}/a_file"
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @file.touch
         target: "#{tmpdir}/a_file"
-      .should.be.resolvedWith status: false
+      .should.be.finally.containEql status: false
       @fs.assert
         target: "#{tmpdir}/a_file"
         content: ''
@@ -28,9 +28,9 @@ describe 'file.touch', ->
       tmpdir: true
     , ({metadata: {tmpdir}}) ->
       @file.touch "#{tmpdir}/a_file"
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @file.touch "#{tmpdir}/a_file"
-      .should.be.resolvedWith status: false
+      .should.be.finally.containEql status: false
       @fs.assert
         target: "#{tmpdir}/a_file"
         content: ''
@@ -42,10 +42,10 @@ describe 'file.touch', ->
     , ({metadata: {tmpdir}}) ->
       @file.touch
         target: "#{tmpdir}/a_file"
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @file.touch
         target: "#{tmpdir}/a_file"
-      .should.be.resolvedWith status: false
+      .should.be.finally.containEql status: false
 
   they 'valid default permissions', ({ssh}) ->
     nikita
@@ -54,7 +54,7 @@ describe 'file.touch', ->
     , ({metadata: {tmpdir}}) ->
       @file.touch
         target: "#{tmpdir}/a_file"
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @fs.assert
         target: "#{tmpdir}/a_file"
         mode: 0o0644
@@ -67,7 +67,7 @@ describe 'file.touch', ->
       @file.touch
         target: "#{tmpdir}/a_file"
         mode: 0o0700
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @fs.assert
         target: "#{tmpdir}/a_file"
         mode: 0o0700
@@ -80,10 +80,10 @@ describe 'file.touch', ->
       @file.touch
         target: "#{tmpdir}/a_file"
         mode: 0o666
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @file.touch
         target: "#{tmpdir}/a_file"
-      .should.be.resolvedWith status: false
+      .should.be.finally.containEql status: false
       @fs.assert
         target: "#{tmpdir}/a_file"
         mode: 0o0666
@@ -96,7 +96,7 @@ describe 'file.touch', ->
       @file.touch
         target: "#{tmpdir}/subdir/a_file"
         mode:'0640'
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @fs.assert
         target: "#{tmpdir}/subdir"
         mode: 0o0751
@@ -111,7 +111,7 @@ describe 'file.touch', ->
       # Bypass fs cache, a value of 500 is not always enough
       await new Promise (resolve) -> setTimeout resolve, 1000
       @file.touch "#{tmpdir}/a_file"
-      .should.be.resolvedWith status: false
+      .should.be.finally.containEql status: false
       {stats: stat_new} = await @fs.base.stat target: "#{tmpdir}/a_file"
       stat_org.mtime.should.not.eql stat_new.mtime
 
@@ -124,6 +124,6 @@ describe 'file.touch', ->
         mode: 0o0644
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-        'one error was found in the configuration of action file.touch:'
+        'one error was found in the configuration of action `file.touch`:'
         '#/required config should have required property \'target\'.'
       ].join ' '

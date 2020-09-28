@@ -33,7 +33,7 @@ describe 'file.cache http', ->
     , ({metadata: {tmpdir}}) ->
       @file.cache 'http://localhost:12345/my_file',
         cache_dir: "#{tmpdir}/my_cache_dir"
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @fs.assert
         target: "#{tmpdir}/my_cache_dir/my_file"
 
@@ -45,11 +45,11 @@ describe 'file.cache http', ->
       @file.cache
         source: 'http://localhost:12345/my_file'
         cache_dir: "#{tmpdir}/my_cache_dir"
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @file.cache
         source: 'http://localhost:12345/my_file'
         cache_dir: "#{tmpdir}/my_cache_dir"
-      .should.be.resolvedWith status: false
+      .should.be.finally.containEql status: false
       @fs.assert
         target: "#{tmpdir}/my_cache_dir/my_file"
 
@@ -61,7 +61,7 @@ describe 'file.cache http', ->
       @file.cache
         source: 'http://localhost:12345/missing'
         cache_dir: "#{tmpdir}/cache_dir_1"
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @file.cache
         source: 'http://localhost:12345/missing'
         cache_dir: "#{tmpdir}/cache_dir_2"
@@ -85,7 +85,7 @@ describe 'file.cache http', ->
           source: 'http://localhost:12345/my_file'
           cache_file: "#{tmpdir}/my_cache_file"
           md5: 'df8fede7ff71608e24a5576326e41c75'
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
         {data} = await @fs.base.readFile
           target: "#{tmpdir}/localhost.log"
           encoding: 'utf8'
@@ -103,7 +103,7 @@ describe 'file.cache http', ->
           source: 'http://localhost:12345/my_file'
           cache_file: "#{tmpdir}/my_cache_file"
           md5: 'df8fede7ff71608e24a5576326e41c75'
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
 
     they 'target file must match the hash', ({ssh}) ->
       nikita
@@ -135,7 +135,7 @@ describe 'file.cache http', ->
           source: 'http://localhost:12345/my_file'
           cache_file: "#{tmpdir}/target"
           md5: true
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
         {data} = await @fs.base.readFile
           target: "#{tmpdir}/localhost.log"
           encoding: 'utf8'
@@ -144,7 +144,7 @@ describe 'file.cache http', ->
           source: 'http://localhost:12345/my_file'
           cache_file: "#{tmpdir}/target"
           md5: 'df8fede7ff71608e24a5576326e41c75'
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
         {data} = await @fs.base.readFile
           target: "#{tmpdir}/localhost.log"
           encoding: 'utf8'

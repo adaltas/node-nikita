@@ -18,7 +18,7 @@ describe 'file.cson', ->
       @file.cson
         target: "#{tmpdir}/target.cson"
         content: user: 'torval'
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @fs.assert
         target: "#{tmpdir}/target.cson"
         content: 'user: \"torval\"'
@@ -35,7 +35,7 @@ describe 'file.cson', ->
         target: "#{tmpdir}/target.cson"
         content: 'user': 'torval'
         merge: true
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @fs.assert
         target: "#{tmpdir}/target.cson"
         content: 'user: \"torval\"\nmerge: true'
@@ -49,7 +49,7 @@ describe 'file.cson', ->
         target: "#{tmpdir}/target.cson"
         content: 'user': 'torval'
         merge: true
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @fs.assert
         target: "#{tmpdir}/target.cson"
         content: 'user: \"torval\"'
