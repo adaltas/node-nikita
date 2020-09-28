@@ -52,7 +52,11 @@ module.exports = (action) ->
         validate.errors
         .map (err) ->
           msg = err.schemaPath+' '+ajv.errorsText([err]).replace /^data/, 'config'
-          msg += (", #{key} is #{JSON.stringify value}" for key, value of err.params).join '' if err.params
+          msg += (
+            for key, value of err.params
+              continue if key is 'missingProperty'
+              ", #{key} is #{JSON.stringify value}"
+          ).join '' if err.params
           msg
         .sort()
         .join('; ')+'.'

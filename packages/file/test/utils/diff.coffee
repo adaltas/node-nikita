@@ -26,7 +26,7 @@ describe 'file options diff', ->
             { value: 'original text', count: 1, added: undefined, removed: true }
             { value: 'new text', count: 1, added: true, removed: undefined }
           ]
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
 
   they 'emit logs', ({ssh}) ->
     # Prepare by creating a file with content

@@ -17,7 +17,7 @@ describe 'file.upload', ->
         target: "#{tmpdir}/#{path.basename __filename}"
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-        'one error was found in the configuration of action file.upload:'
+        'one error was found in the configuration of action `file.upload`:'
         '#/required config should have required property \'source\'.'
       ].join ' '
 
@@ -30,7 +30,7 @@ describe 'file.upload', ->
         source: "#{__filename}"
       .should.be.rejectedWith [
         'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-        'one error was found in the configuration of action file.upload:'
+        'one error was found in the configuration of action `file.upload`:'
         '#/required config should have required property \'target\'.'
       ].join ' '
 
@@ -42,13 +42,13 @@ describe 'file.upload', ->
       @file.upload
         source: "#{__filename}"
         target: "#{tmpdir}/#{path.basename __filename}"
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @fs.assert
         target: "#{tmpdir}/#{path.basename __filename}"
       @file.upload
         source: "#{__filename}"
         target: "#{tmpdir}/#{path.basename __filename}"
-      .should.be.resolvedWith status: false
+      .should.be.finally.containEql status: false
 
   they 'file into a directory', ({ssh}) ->
     nikita
@@ -58,10 +58,10 @@ describe 'file.upload', ->
       @file.upload
         source: "#{__filename}"
         target: "#{tmpdir}"
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @fs.assert
         target: "#{tmpdir}/#{path.basename __filename}"
       @file.upload
         source: "#{__filename}"
         target: "#{tmpdir}"
-      .should.be.resolvedWith status: false
+      .should.be.finally.containEql status: false

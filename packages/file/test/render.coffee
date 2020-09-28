@@ -34,7 +34,7 @@ describe 'file.render', ->
           target: "#{tmpdir}/output"
         .should.be.rejectedWith [
           'NIKITA_SCHEMA_VALIDATION_CONFIG:'
-          'one error was found in the configuration of action file.render:'
+          'one error was found in the configuration of action `file.render`:'
           '#/required config should have required property \'context\'.'
         ].join ' '
 
@@ -65,7 +65,7 @@ describe 'file.render', ->
           target: "#{tmpdir}/target.txt"
           context: who: 'you'
           templated: false
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/target.txt"
           content: 'Hello you'
@@ -86,7 +86,7 @@ describe 'file.render', ->
             who: 'you'
             anInt: 42
           templated: false
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/target.txt"
           content: 'Hello "you" \'42\''

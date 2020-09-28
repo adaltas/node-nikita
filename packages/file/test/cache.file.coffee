@@ -23,11 +23,11 @@ describe 'file.cache file', ->
       @file
         target: "#{tmpdir}/my_cache_file"
         content: 'okay'
-      @file.cache
+      {status} = await @file.cache
         source: "#{tmpdir}/my_file"
         cache_file: "#{tmpdir}/my_cache_file"
         md5: 'df8fede7ff71608e24a5576326e41c75'
-      .should.be.resolvedWith status: false
+      status.should.be.false()
       {data} = await @fs.base.readFile
         target: "#{tmpdir}/localhost.log"
         encoding: 'utf8'
@@ -44,11 +44,11 @@ describe 'file.cache file', ->
       @file
         target: "#{tmpdir}/my_cache_file"
         content: 'not okay'
-      @file.cache
+      {status} = await @file.cache
         source: "#{tmpdir}/my_file"
         cache_file: "#{tmpdir}/my_cache_file"
         md5: 'df8fede7ff71608e24a5576326e41c75'
-      .should.be.resolvedWith status: true
+      status.should.be.true()
 
   they 'target file must match the hash', ({ssh}) ->
     nikita
@@ -69,14 +69,14 @@ describe 'file.cache file', ->
       ssh: ssh
       tmpdir: true
     , ({metadata: {tmpdir}}) ->
-      @file.cache
+      {status} = await @file.cache
         source: "#{__filename}"
         cache_dir: "#{tmpdir}/my_cache_dir"
-      .should.be.resolvedWith status: true
-      @file.cache
+      status.should.be.true()
+      {status} = await @file.cache
         source: "#{__filename}"
         cache_dir: "#{tmpdir}/my_cache_dir"
-      .should.be.resolvedWith status: false
+      status.should.be.false()
       @fs.assert
         target: "#{tmpdir}/my_cache_dir/#{path.basename __filename}"
 
@@ -101,7 +101,7 @@ describe 'file.cache file', ->
           source: "#{tmpdir}/source"
           cache_file: "#{tmpdir}/target"
           md5: true
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
         {data} = await @fs.base.readFile
           target: "#{tmpdir}/localhost.log"
           encoding: 'utf8'
@@ -110,7 +110,7 @@ describe 'file.cache file', ->
           source: "#{tmpdir}/source"
           cache_file: "#{tmpdir}/target"
           md5: 'df8fede7ff71608e24a5576326e41c75'
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
         {data} = await @fs.base.readFile
           target: "#{tmpdir}/localhost.log"
           encoding: 'utf8'

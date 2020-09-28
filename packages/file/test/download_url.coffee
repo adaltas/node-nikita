@@ -30,14 +30,14 @@ describe 'file.download url', ->
       @file.download
         source: 'http://localhost:12345'
         target: "#{tmpdir}/download"
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @fs.assert
         target: "#{tmpdir}/download"
         content: /okay/
       @file.download # Download on an existing file
         source: 'http://localhost:12345'
         target: "#{tmpdir}/download"
-      .should.be.resolvedWith status: false
+      .should.be.finally.containEql status: false
 
   they 'should chmod', ({ssh}) ->
     @timeout 10000
@@ -49,7 +49,7 @@ describe 'file.download url', ->
         source: 'http://localhost:12345'
         target: "#{tmpdir}/download_test"
         mode: 0o0770
-      .should.be.resolvedWith status: true
+      .should.be.finally.containEql status: true
       @fs.assert
         target: "#{tmpdir}/download_test"
         mode: 0o0770
@@ -68,7 +68,7 @@ describe 'file.download url', ->
           target: "#{tmpdir}/target"
           cache: true
           cache_file: "#{tmpdir}/cache_file"
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/cache_file"
           content: /okay/
@@ -87,7 +87,7 @@ describe 'file.download url', ->
           ssh: ssh
           source: 'http://localhost:12345'
           target: "#{tmpdir}/download"
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           ssh: null
           target: "#{tmpdir}/download"
@@ -105,7 +105,7 @@ describe 'file.download url', ->
           target: "#{tmpdir}/download"
           cache: true
           cache_dir: "#{tmpdir}/cache_dir"
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           ssh: null
           target: "#{tmpdir}/cache_dir/localhost:12345"
@@ -127,7 +127,7 @@ describe 'file.download url', ->
           source: 'http://localhost:12345'
           target: "#{tmpdir}/target"
           md5: 'df8fede7ff71608e24a5576326e41c75'
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
         {data} = await @fs.base.readFile
           target: "#{tmpdir}/localhost.log"
           encoding: 'utf8'
@@ -145,7 +145,7 @@ describe 'file.download url', ->
           source: 'http://localhost:12345'
           target: "#{tmpdir}/target"
           md5: 'df8fede7ff71608e24a5576326e41c75'
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/target"
           content: /okay/
@@ -172,7 +172,7 @@ describe 'file.download url', ->
           source: 'http://localhost:12345'
           target: "#{tmpdir}/check_md5"
           md5: 'df8fede7ff71608e24a5576326e41c75'
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
 
     they 'count 0 if a file exist with same checksum', ({ssh}) ->
       # Download with invalid checksum
@@ -183,12 +183,12 @@ describe 'file.download url', ->
         @file.download
           source: 'http://localhost:12345'
           target: "#{tmpdir}/check_md5"
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @file.download
           source: 'http://localhost:12345'
           target: "#{tmpdir}/check_md5"
           md5: 'df8fede7ff71608e24a5576326e41c75'
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
       
   describe 'error', ->
 

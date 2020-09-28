@@ -18,14 +18,14 @@ describe 'file.download file', ->
         @file.download
           source: "file://#{__filename}"
           target: "#{tmpdir}/download_test" # Download a non existing file
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/download_test"
           content: /yeah/
         @file.download
           source: "file://#{__filename}"
           target: "#{tmpdir}/download_test" # Download on an existing file
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
 
     they 'without protocol', ({ssh}) ->
       source = 
@@ -37,14 +37,14 @@ describe 'file.download file', ->
         @file.download
           source: "#{__filename}"
           target: "#{tmpdir}/download_test"
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/download_test"
           content: /yeah/
         @file.download # Download on an existing file
           source: "#{__filename}"
           target: "#{tmpdir}/download_test"
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
 
     they 'doesnt exists', ({ssh}) ->
       nikita
@@ -83,7 +83,7 @@ describe 'file.download file', ->
           cache: true
           cache_dir: "#{tmpdir}/cache_dir"
           md5: '3f104676a5f72de08b811dbb725244ff'
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert "#{tmpdir}/cache_dir/#{path.basename source}"
 
     they 'cache dir', ({ssh}) ->
@@ -98,7 +98,7 @@ describe 'file.download file', ->
           target: "#{tmpdir}/download_test"
           cache: true
           cache_dir: "#{tmpdir}/cache_dir"
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert "#{tmpdir}/cache_dir/#{path.basename __filename}"
 
     they 'detect file already present', ({ssh}) ->
@@ -117,7 +117,7 @@ describe 'file.download file', ->
           target: "#{tmpdir}/download_test"
           cache: true
           cache_dir: "#{tmpdir}/cache_dir"
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
         @file
           content: 'abc'
           target: "#{tmpdir}/download_test"
@@ -126,7 +126,7 @@ describe 'file.download file', ->
           target: "#{tmpdir}/download_test"
           cache: true
           cache_dir: "#{tmpdir}/cache_dir"
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
   
   describe 'md5', ->
 
@@ -146,7 +146,7 @@ describe 'file.download file', ->
           cache: true
           cache_dir: "#{tmpdir}/cache_dir"
           md5: 'df8fede7ff71608e24a5576326e41c75'
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @fs.assert
           target: "#{tmpdir}/cache_dir/a_file"
           content: 'okay'
@@ -170,12 +170,12 @@ describe 'file.download file', ->
           source: "#{tmpdir}/source"
           target: "#{tmpdir}/check_md5"
           md5: true
-        .should.be.resolvedWith status: true
+        .should.be.finally.containEql status: true
         @file.download
           source: "#{tmpdir}/source"
           target: "#{tmpdir}/check_md5"
           md5: true
-        .should.be.resolvedWith status: false
+        .should.be.finally.containEql status: false
         {data} = await @fs.base.readFile
           target: "#{tmpdir}/localhost.log"
           encoding: 'utf8'
