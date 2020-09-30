@@ -80,6 +80,7 @@ module.exports = (action) ->
       after: [
         '@nikitajs/engine/src/metadata/disabled'
         '@nikitajs/engine/src/plugins/conditions'
+        '@nikitajs/engine/src/plugins/global'
       ]
       handler: (action, handler) ->
         return handler if action.metadata.disabled
