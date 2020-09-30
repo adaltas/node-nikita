@@ -1,7 +1,7 @@
 
-nikita = require '@nikitajs/core'
+nikita = require '@nikitajs/engine/src'
 {tags, ssh, service} = require './test'
-they = require('ssh2-they').configure ssh...
+they = require('ssh2-they').configure ssh
 
 return unless tags.service_startup or tags.service_systemctl
 

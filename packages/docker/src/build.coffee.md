@@ -171,6 +171,7 @@ require('nikita')
 
     handler = ({config, log, operations: {find}}) ->
       log message: "Entering Docker build", level: 'DEBUG', module: 'nikita/lib/docker/build'
+      # Global config
       config.docker = await find ({config: {docker}}) -> docker
       config[k] ?= v for k, v of config.docker
       number_of_step = 0

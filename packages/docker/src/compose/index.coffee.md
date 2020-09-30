@@ -75,7 +75,7 @@ Create and start containers according to a docker-compose file
     handler = ({config, log, operations: {find}}) ->
       log message: "Entering Docker Compose", level: 'DEBUG', module: 'nikita/lib/docker/compose/up'
       # Global config
-      config.docker ?= {}
+      config.docker = await find ({config: {docker}}) -> docker
       config[k] ?= v for k, v of config.docker
       # Validate parameters
       throw Error 'Missing docker-compose content or target' if not config.target? and not config.content?
