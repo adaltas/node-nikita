@@ -44,9 +44,9 @@ module.exports = function(action) {
     module: '@nikitajs/engine/src/plugins/operation_walk',
     hooks: {
       'nikita:session:normalize': function(action, handler) {
-        return function() {
+        return async function() {
           // Handler execution
-          action = handler.apply(null, arguments);
+          action = (await handler.apply(null, arguments));
           // Register function
           if (action.operations == null) {
             action.operations = {};

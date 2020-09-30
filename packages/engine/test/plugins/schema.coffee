@@ -17,7 +17,11 @@ describe 'plugins.schema', ->
           'a_string': type: 'string'
           'an_integer': type: 'integer', minimum: 1
 
-  it 'is valid', ->
+  # it 'declaration is valid', ->
+  #   TODO: ensure an invalid schema definition error
+  #   is catched and handled by nikita
+
+  it 'config is valid', ->
     nikita ->
       {a_string, an_integer} = await @call
         a_string: 'a value'

@@ -117,7 +117,7 @@ module.exports = function(action) {
         }
       },
       'nikita:session:action': {
-        after: ['@nikitajs/engine/src/metadata/disabled', '@nikitajs/engine/src/plugins/conditions'],
+        after: ['@nikitajs/engine/src/metadata/disabled', '@nikitajs/engine/src/plugins/conditions', '@nikitajs/engine/src/plugins/global'],
         handler: async function(action, handler) {
           var err;
           if (action.metadata.disabled) {

@@ -35,7 +35,7 @@ module.exports = (action) ->
     'nikita:session:normalize': (action, handler) ->
       ->
         # Handler execution
-        action = handler.apply null, arguments
+        action = await handler.apply null, arguments
         # Register function
         action.operations ?= {}
         action.operations.walk = ->
