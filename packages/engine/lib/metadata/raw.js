@@ -8,11 +8,6 @@ module.exports = function() {
         if (action.metadata == null) {
           action.metadata = {};
         }
-        // for property in ['raw', 'raw_input', 'raw_output']
-        //   if action.hasOwnProperty property
-        //     console.log action
-        //     action.metadata[property] = action[property]
-        //     delete action[property]
         if ((base = action.metadata).raw == null) {
           base.raw = false;
         }

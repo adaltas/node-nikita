@@ -2,7 +2,7 @@
 nikita = require '../../../src'
 utils = require '../../../src/utils'
 {tags, ssh} = require '../../test'
-they = require('ssh2-they').configure ssh...
+they = require('ssh2-they').configure ssh
 
 describe 'actions.fs.chmod', ->
   return unless tags.posix

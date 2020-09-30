@@ -10,6 +10,9 @@ is `null` or `false`.
 
 module.exports = ->
   module: '@nikitajs/engine/src/metadata/ssh'
+  require: [
+    '@nikitajs/engine/src/plugins/operation_find'
+  ]
   hooks:
     'nikita:session:normalize': (action, handler) ->
       # Dont interfere with ssh actions

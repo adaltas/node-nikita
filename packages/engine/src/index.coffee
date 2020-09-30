@@ -21,6 +21,7 @@ create = ->
     require './plugins/args'
     require './plugins/conditions'
     require './plugins/conditions_exists'
+    require './plugins/global'
     require './plugins/history'
     require './plugins/log'
     require './plugins/operation_events'
