@@ -1,8 +1,8 @@
 
 {merge} = require 'mixme'
-nikita = require '@nikitajs/core'
+nikita = require '@nikitajs/engine/src'
 {tags, ssh, scratch, ipa} = require '../test'
-they = require('ssh2-they').configure ssh...
+they = require('ssh2-they').configure ssh
 
 return unless tags.ipa
 

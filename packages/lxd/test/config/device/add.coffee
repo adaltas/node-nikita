@@ -1,8 +1,8 @@
 
-nikita = require '@nikitajs/core'
+nikita = require '@nikitajs/engine/src'
 assert = require 'assert'
 {tags, ssh} = require '../../test'
-they = require('ssh2-they').configure ssh...
+they = require('ssh2-they').configure ssh
 
 return unless tags.lxd
 

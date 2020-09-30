@@ -2,7 +2,7 @@
 nikita = require '../../src'
 
 describe 'plugins.history', ->
-        
+
   describe 'children', ->
 
     it 'get previous action', ->

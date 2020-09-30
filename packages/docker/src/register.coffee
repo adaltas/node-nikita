@@ -1,5 +1,5 @@
 
-# registration of `nikita.file` actions
+# registration of `nikita.docker` actions
 
 require '@nikitajs/file/src/register'
 # require '@nikitajs/network/src/register'
