@@ -1,7 +1,7 @@
 
-nikita = require '@nikitajs/core'
+nikita = require '@nikitajs/engine/src'
 {tags, ssh, scratch, ruby} = require '../test'
-they = require('ssh2-they').configure ssh...
+they = require('ssh2-they').configure ssh
 
 return unless tags.tools_rubygems
 

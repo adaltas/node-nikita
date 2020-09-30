@@ -3,7 +3,7 @@ http = require 'http'
 path = require 'path'
 nikita = require '@nikitajs/engine/src'
 {tags, ssh, tmpdir} = require './test'
-they = require('ssh2-they').configure ssh...
+they = require('ssh2-they').configure ssh
 
 return unless tags.posix
 

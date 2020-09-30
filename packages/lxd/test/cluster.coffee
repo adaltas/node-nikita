@@ -1,5 +1,5 @@
 
-nikita = require '@nikitajs/core'
+nikita = require '@nikitajs/engine/src'
 {tags} = require './test'
 
 return unless tags.lxd

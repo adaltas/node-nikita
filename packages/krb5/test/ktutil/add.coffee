@@ -1,8 +1,8 @@
 
-nikita = require '@nikitajs/core'
+nikita = require '@nikitajs/engine/src'
 misc = require '@nikitajs/core/lib/misc'
 {tags, ssh, scratch, krb5} = require '../test'
-they = require('ssh2-they').configure ssh...
+they = require('ssh2-they').configure ssh
 
 return unless tags.krb5_ktadd
 
