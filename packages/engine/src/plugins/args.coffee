@@ -1,4 +1,9 @@
 
+
+###
+The `args` plugin place the original argument into the action "args" property.
+
+###
 array = require '../utils/array'
 
 module.exports = ->

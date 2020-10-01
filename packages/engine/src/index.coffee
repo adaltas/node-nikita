@@ -19,6 +19,7 @@ create = ->
     require './metadata/status'
     require './metadata/tmpdir'
     require './plugins/args'
+    require './plugins/argument'
     require './plugins/conditions'
     require './plugins/conditions_exists'
     require './plugins/global'
