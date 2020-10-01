@@ -11,7 +11,7 @@ session = require('./session');
 
 create = function() {
   return session({
-    plugins: [require('./metadata/debug'), require('./metadata/depth'), require('./metadata/disabled'), require('./metadata/raw'), require('./metadata/relax'), require('./metadata/retry'), require('./metadata/ssh'), require('./metadata/status'), require('./metadata/tmpdir'), require('./plugins/args'), require('./plugins/conditions'), require('./plugins/conditions_exists'), require('./plugins/global'), require('./plugins/history'), require('./plugins/log'), require('./plugins/operation_events'), require('./plugins/operation_find'), require('./plugins/operation_path'), require('./plugins/operation_walk'), require('./plugins/output_logs'), require('./plugins/schema'), require('./plugins/templated')]
+    plugins: [require('./metadata/debug'), require('./metadata/depth'), require('./metadata/disabled'), require('./metadata/raw'), require('./metadata/relax'), require('./metadata/retry'), require('./metadata/ssh'), require('./metadata/status'), require('./metadata/tmpdir'), require('./plugins/args'), require('./plugins/argument'), require('./plugins/conditions'), require('./plugins/conditions_exists'), require('./plugins/global'), require('./plugins/history'), require('./plugins/log'), require('./plugins/operation_events'), require('./plugins/operation_find'), require('./plugins/operation_path'), require('./plugins/operation_walk'), require('./plugins/output_logs'), require('./plugins/schema'), require('./plugins/templated')]
   }, ...arguments);
 };
 
